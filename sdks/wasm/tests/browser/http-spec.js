@@ -59,7 +59,7 @@ describe("The WebAssembly Browser Test Suite",function(){
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [true]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [true, "base/publish/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -74,13 +74,82 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       );
       
-    }, DEFAULT_TIMEOUT);    
+    }, DEFAULT_TIMEOUT);
+
+    it('RequestStream: blob should return size of Stream with streaming', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      var blob = new Blob([JSON.stringify({hello: "world"}, null, 2)], {type : 'application/json'});
+      var blobUrl = URL.createObjectURL(blob);
+      
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [true, blobUrl]).then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            try {
+              assert.equal(result, 22, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+      URL.revokeObjectURL(blobUrl);
+    }, DEFAULT_TIMEOUT);
 
     it('RequestByteArray: should return size of ByteArrray with streaming', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [true]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [true, "base/publish/NowIsTheTime.txt"]).then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            try {
+              assert.equal(result, 500000, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);
+
+    it('RequestByteArray: blob should return size of ByteArrray with streaming', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      var blob = new Blob([JSON.stringify({hello: "world"}, null, 2)], {type : 'application/json'});
+      var blobUrl = URL.createObjectURL(blob);
+
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [true, blobUrl]).then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            try {
+              assert.equal(result, 22, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+      URL.revokeObjectURL(blobUrl);
+    }, DEFAULT_TIMEOUT);
+
+    it('RequestStream: should return size of Stream without streaming', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [false, "base/publish/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -97,17 +166,18 @@ describe("The WebAssembly Browser Test Suite",function(){
       
     }, DEFAULT_TIMEOUT);    
 
-
-    it('RequestStream: should return size of Stream without streaming', (done) => {
+    it('RequestStream: blob should return size of Stream without streaming', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
-      
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [false]).then(
+      var blob = new Blob([JSON.stringify({hello: "world"}, null, 2)], {type : 'application/json'});
+      var blobUrl = URL.createObjectURL(blob);
+
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [false, blobUrl]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
             try {
-              assert.equal(result, 500000, "result doesn't match length");
+              assert.equal(result, 22, "result doesn't match length");
               done()
             } catch (e) {
               done.fail(e);
@@ -117,13 +187,14 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       );
       
+      URL.revokeObjectURL(blobUrl);
     }, DEFAULT_TIMEOUT);    
 
     it('RequestByteArray: should return size of ByteArrray without streaming', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [false]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [false, "base/publish/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -138,8 +209,32 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       );
       
-    }, DEFAULT_TIMEOUT);    
-    
+    }, DEFAULT_TIMEOUT);
+
+    it('RequestByteArray: blob should return size of ByteArrray without streaming', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      var blob = new Blob([JSON.stringify({hello: "world"}, null, 2)], {type : 'application/json'});
+      var blobUrl = URL.createObjectURL(blob);
+
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [false, blobUrl]).then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            try {
+              assert.equal(result, 22, "result doesn't match length");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+      URL.revokeObjectURL(blobUrl);
+    }, DEFAULT_TIMEOUT);
+
     it('GetStreamAsync_ReadZeroBytes_Success: should return 0', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;

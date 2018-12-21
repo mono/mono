@@ -3369,6 +3369,9 @@ namespace System.Windows.Forms
 				if (!virtual_mode) // In virtual mode we don't save the items
 					foreach (ListViewItem item in items)
 						item.Owner = null;
+
+				if (item_tooltip != null)
+					item_tooltip.Dispose();
 			}
 			
 			base.Dispose (disposing);

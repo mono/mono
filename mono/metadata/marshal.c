@@ -124,6 +124,20 @@ get_method_image (MonoMethod *method)
 #ifdef __cplusplus
 template <typename T>
 static void
+register_dyn_icall (T func, const char *name, const char *sigstr, gboolean no_wrapper)
+#else
+static void
+register_dyn_icall (gpointer func, const char *name, const char *sigstr, gboolean no_wrapper)
+#endif
+{
+	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
+
+	mono_register_jit_icall_full (func, name, sig, no_wrapper, NULL);
+}
+
+#ifdef __cplusplus
+template <typename T>
+static void
 register_icall (T func, const char *name, const char *sigstr, gboolean no_wrapper)
 #else
 static void
@@ -132,7 +146,7 @@ register_icall (gpointer func, const char *name, const char *sigstr, gboolean no
 {
 	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
 
-	mono_register_jit_icall (func, name, sig, no_wrapper);
+	mono_register_jit_icall_full (func, name, sig, no_wrapper, name);
 }
 
 #ifdef __cplusplus
@@ -146,7 +160,7 @@ register_icall_no_wrapper (gpointer func, const char *name, const char *sigstr)
 {
 	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
 
-	mono_register_jit_icall (func, name, sig, TRUE);
+	mono_register_jit_icall_full (func, name, sig, TRUE, name);
 }
 
 MonoMethodSignature*
@@ -267,12 +281,12 @@ mono_marshal_init (void)
 		register_icall (mono_marshal_free_array, "mono_marshal_free_array", "void ptr int32", FALSE);
 		register_icall (mono_string_to_byvalstr, "mono_string_to_byvalstr", "void ptr ptr int32", FALSE);
 		register_icall (mono_string_to_byvalwstr, "mono_string_to_byvalwstr", "void ptr ptr int32", FALSE);
-		register_icall (g_free, "g_free", "void ptr", FALSE);
+		register_dyn_icall (g_free, "g_free", "void ptr", FALSE);
 		register_icall_no_wrapper (mono_object_isinst_icall, "mono_object_isinst_icall", "object object ptr");
 		register_icall (mono_struct_delete_old, "mono_struct_delete_old", "void ptr ptr", FALSE);
 		register_icall (mono_delegate_begin_invoke, "mono_delegate_begin_invoke", "object object ptr", FALSE);
 		register_icall (mono_delegate_end_invoke, "mono_delegate_end_invoke", "object object ptr", FALSE);
-		register_icall (mono_gc_wbarrier_generic_nostore_internal, "wb_generic_internal", "void ptr", FALSE);
+		register_dyn_icall (mono_gc_wbarrier_generic_nostore_internal, "wb_generic_internal", "void ptr", FALSE);
 		register_icall (mono_gchandle_get_target_internal, "mono_gchandle_get_target_internal", "object int32", TRUE);
 		register_icall (mono_marshal_isinst_with_cache, "mono_marshal_isinst_with_cache", "object object ptr ptr", FALSE);
 		register_icall (mono_threads_enter_gc_safe_region_unbalanced, "mono_threads_enter_gc_safe_region_unbalanced", "ptr ptr", TRUE);
@@ -288,7 +302,6 @@ mono_marshal_init (void)
 
 		mono_counters_register ("MonoClass::class_marshal_info_count count",
 								MONO_COUNTER_METADATA | MONO_COUNTER_INT, &class_marshal_info_count);
-
 	}
 }
 
@@ -622,15 +635,17 @@ mono_string_from_byvalstr (const char *data, int max_len)
 	if (!data)
 		return NULL;
 
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
 	int len = 0;
 
 	while (len < max_len - 1 && data [len])
 		len++;
 
-	MonoString *result = mono_string_new_len_checked (mono_domain_get (), data, len, error);
+	MonoStringHandle result = mono_string_new_utf8_len (mono_domain_get (), data, len, error);
 	mono_error_set_pending_exception (error);
-	return result;
+
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
 /* This is a JIT icall, it sets the pending exception and return NULL on error */
@@ -1060,9 +1075,9 @@ mono_string_to_byvalstr (char *dst, MonoString *src, int size)
 		return;
 	const gsize len2 = strlen (s);
 	len = MIN (size, len2);
-	if (len >= size)
-		len--;
+	len -= (len >= size);
 	memcpy (dst, s, len);
+	dst [len] = 0;
 	g_free (s);
 }
 
@@ -1099,10 +1114,11 @@ mono_string_to_byvalwstr (gunichar2 *dst, MonoString *src, int size)
 MonoString*
 mono_string_new_len_wrapper (const char *text, guint length)
 {
+	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
-	MonoString *result = mono_string_new_len_checked (mono_domain_get (), text, length, error);
+	MonoStringHandle result = mono_string_new_utf8_len (mono_domain_get (), text, length, error);
 	mono_error_set_pending_exception (error);
-	return result;
+	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
 
 guint
@@ -5064,7 +5080,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (const char
 		mono_error_set_argument_null (error, "ptr", "");
 		return NULL_HANDLE_STRING;
 	}
-	return mono_string_new_utf8_len_handle (mono_domain_get (), ptr, len, error);
+	return mono_string_new_utf8_len (mono_domain_get (), ptr, len, error);
 }
 
 MonoStringHandle

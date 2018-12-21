@@ -86,22 +86,30 @@ namespace System
 		{
 			if (num_args == next_arg)
 				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
-			return IntGetNextArg ();
+			TypedReference result = new TypedReference ();
+			unsafe {
+				IntGetNextArg (&result);
+			}
+			return result;
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern TypedReference IntGetNextArg ();
+		extern unsafe void IntGetNextArg (void *res);
 
 		[CLSCompliant (false)]
 		public TypedReference GetNextArg (RuntimeTypeHandle rth)
 		{
 			if (num_args == next_arg)
 				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
-			return IntGetNextArg (rth.Value);
+			TypedReference result = new TypedReference ();
+			unsafe {
+				IntGetNextArgWithType (&result, rth.Value);
+			}
+			return result;
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern TypedReference IntGetNextArg (IntPtr rth);
+		extern unsafe void IntGetNextArgWithType (void *res, IntPtr rth);
 
 		public RuntimeTypeHandle GetNextArgType ()
 		{
