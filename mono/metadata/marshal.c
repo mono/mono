@@ -960,6 +960,9 @@ mono_string_builder_to_utf16_impl (MonoStringBuilderHandle sb, MonoError *error)
 
 	MonoArrayHandle chunkChars = MONO_HANDLE_NEW (MonoArray, NULL);
 	MonoStringBuilderHandle chunk = MONO_HANDLE_NEW (MonoStringBuilder, MONO_HANDLE_RAW (sb));
+
+	MONO_ENTER_NO_SAFEPOINTS;
+
 	do {
 		const int chunkLength = MONO_HANDLE_GETVAL (chunk, chunkLength);
 		g_assert (chunkLength >= 0);
@@ -970,12 +973,12 @@ mono_string_builder_to_utf16_impl (MonoStringBuilderHandle sb, MonoError *error)
 			g_assert (chunkOffset >= 0);
 			g_assertf ((chunkOffset + chunkLength) >= chunkLength, "integer overflow");
 			g_assertf ((chunkOffset + chunkLength) <= len, "A chunk in the StringBuilder had a length longer than expected from the offset.");
-			gchandle_t gchandle = 0;
-			memcpy (str + chunkOffset, MONO_ARRAY_HANDLE_PIN (chunkChars, gunichar2, 0, &gchandle), chunkLength * sizeof (gunichar2));
-			mono_gchandle_free_internal (gchandle);
+			memcpy (str + chunkOffset, MONO_HANDLE_RAW (chunkChars)->vector, chunkLength * sizeof (gunichar2));
 		}
 		MONO_HANDLE_GET (chunk, chunk, chunkPrevious);
 	} while (MONO_HANDLE_BOOL (chunk));
+
+	MONO_EXIT_NO_SAFEPOINTS;
 
 	return str;
 }
