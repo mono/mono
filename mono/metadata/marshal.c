@@ -835,8 +835,10 @@ mono_string_utf8len_to_builder (MonoStringBuilderHandle sb, const char *text, gs
 	if (!gerror) {
 		MONO_HANDLE_SETRAW (sb, chunkPrevious, NULL);
 		mono_string_utf16_to_builder_copy (sb, ut, copied, error);
-	} else
+	} else {
+		// FIXME? Set error?
 		g_error_free (gerror);
+	}
 
 	g_free (ut);
 }
