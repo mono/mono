@@ -76,6 +76,7 @@ fi
 ${TESTCMD} --label=Mono.Tasklets --timeout=5m make -w -C mcs/class/Mono.Tasklets run-test
 ${TESTCMD} --label=System.Configuration --timeout=5m make -w -C mcs/class/System.Configuration run-test
 ${TESTCMD} --label=System.Transactions --timeout=5m make -w -C mcs/class/System.Transactions run-test
+${TESTCMD} --label=System.Transactions-xunit --timeout=5m make -w -C mcs/class/System.Transactions run-xunit-test
 ${TESTCMD} --label=System.Web.Extensions --timeout=5m make -w -C mcs/class/System.Web.Extensions run-test
 ${TESTCMD} --label=System.Core --timeout=15m make -w -C mcs/class/System.Core run-test
 ${TESTCMD} --label=System.Core-xunit --timeout=15m make -w -C mcs/class/System.Core run-xunit-test
