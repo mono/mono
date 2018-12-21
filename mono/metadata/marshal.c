@@ -198,7 +198,7 @@ mono_object_isinst_icall (MonoObject *obj, MonoClass *klass)
 }
 
 MonoStringHandle
-ves_icall_mono_string_from_utf16 (const gunichar2 *data, MonoError *error)
+ves_icall_mono_string_from_utf16_impl (const gunichar2 *data, MonoError *error)
 {
 	MonoString *s = mono_string_from_utf16_checked (data, error);
 	return_val_if_nok (error, NULL_HANDLE_STRING);
@@ -206,13 +206,13 @@ ves_icall_mono_string_from_utf16 (const gunichar2 *data, MonoError *error)
 }
 
 char*
-ves_icall_mono_string_to_utf8 (MonoStringHandle str, MonoError *error)
+ves_icall_mono_string_to_utf8_impl (MonoStringHandle str, MonoError *error)
 {
 	return mono_string_handle_to_utf8 (str, error);
 }
 
 MonoStringHandle
-ves_icall_string_new_wrapper (const char *text, MonoError *error)
+ves_icall_string_new_wrapper_impl (const char *text, MonoError *error)
 {
 	if (text) {
 		MonoString *s = mono_string_new_checked (mono_domain_get (), text, error);
@@ -233,39 +233,39 @@ mono_marshal_init (void)
 		marshal_mutex_initialized = TRUE;
 
 		register_icall (mono_marshal_string_to_utf16, "mono_marshal_string_to_utf16", "ptr obj", FALSE);
-		register_icall (mono_marshal_string_to_utf16_copy_raw, "mono_marshal_string_to_utf16_copy", "ptr obj", FALSE);
-		register_icall (mono_string_to_utf16_internal_raw, "mono_string_to_utf16_internal", "ptr obj", FALSE);
-		register_icall (ves_icall_mono_string_from_utf16_raw, "ves_icall_mono_string_from_utf16", "obj ptr", FALSE);
-		register_icall (mono_string_from_byvalstr_raw, "mono_string_from_byvalstr", "obj ptr int", FALSE);
-		register_icall (mono_string_from_byvalwstr_raw, "mono_string_from_byvalwstr", "obj ptr int", FALSE);
-		register_icall (mono_string_new_wrapper_internal_raw, "mono_string_new_wrapper_internal", "obj ptr", FALSE);
-		register_icall (ves_icall_string_new_wrapper_raw, "ves_icall_string_new_wrapper", "obj ptr", FALSE);
-		register_icall (mono_string_new_len_wrapper_raw, "mono_string_new_len_wrapper", "obj ptr int", FALSE);
-		register_icall (ves_icall_mono_string_to_utf8_raw, "ves_icall_mono_string_to_utf8", "ptr obj", FALSE);
-		register_icall (mono_string_to_utf8str_raw, "mono_string_to_utf8str", "ptr obj", FALSE);
-		register_icall (mono_string_to_ansibstr_raw, "mono_string_to_ansibstr", "ptr object", FALSE);
-		register_icall (mono_string_builder_to_utf8_raw, "mono_string_builder_to_utf8", "ptr object", FALSE);
-		register_icall (mono_string_builder_to_utf16_raw, "mono_string_builder_to_utf16", "ptr object", FALSE);
-		register_icall (mono_array_to_savearray_raw, "mono_array_to_savearray", "ptr object", FALSE);
-		register_icall (mono_array_to_lparray_raw, "mono_array_to_lparray", "ptr object", FALSE);
-		register_icall (mono_free_lparray_raw, "mono_free_lparray", "void object ptr", FALSE);
-		register_icall (mono_byvalarray_to_byte_array_raw, "mono_byvalarray_to_byte_array", "void object ptr int32", FALSE);
-		register_icall (mono_array_to_byte_byvalarray_raw, "mono_array_to_byte_byvalarray", "void ptr object int32", FALSE);
-		register_icall (mono_delegate_to_ftnptr_raw, "mono_delegate_to_ftnptr", "ptr object", FALSE);
-		register_icall (mono_ftnptr_to_delegate_raw, "mono_ftnptr_to_delegate", "object ptr ptr", FALSE);
-		register_icall (mono_marshal_asany_raw, "mono_marshal_asany", "ptr object int32 int32", FALSE);
-		register_icall (mono_marshal_free_asany_raw, "mono_marshal_free_asany", "void object ptr int32 int32", FALSE);
-		register_icall (ves_icall_marshal_alloc_raw, "ves_icall_marshal_alloc", "ptr ptr", FALSE);
+		register_icall (mono_marshal_string_to_utf16_copy, "mono_marshal_string_to_utf16_copy", "ptr obj", FALSE);
+		register_icall (mono_string_to_utf16_internal, "mono_string_to_utf16_internal", "ptr obj", FALSE);
+		register_icall (ves_icall_mono_string_from_utf16, "ves_icall_mono_string_from_utf16", "obj ptr", FALSE);
+		register_icall (mono_string_from_byvalstr, "mono_string_from_byvalstr", "obj ptr int", FALSE);
+		register_icall (mono_string_from_byvalwstr, "mono_string_from_byvalwstr", "obj ptr int", FALSE);
+		register_icall (mono_string_new_wrapper_internal, "mono_string_new_wrapper_internal", "obj ptr", FALSE);
+		register_icall (ves_icall_string_new_wrapper, "ves_icall_string_new_wrapper", "obj ptr", FALSE);
+		register_icall (mono_string_new_len_wrapper, "mono_string_new_len_wrapper", "obj ptr int", FALSE);
+		register_icall (ves_icall_mono_string_to_utf8, "ves_icall_mono_string_to_utf8", "ptr obj", FALSE);
+		register_icall (mono_string_to_utf8str, "mono_string_to_utf8str", "ptr obj", FALSE);
+		register_icall (mono_string_to_ansibstr, "mono_string_to_ansibstr", "ptr object", FALSE);
+		register_icall (mono_string_builder_to_utf8, "mono_string_builder_to_utf8", "ptr object", FALSE);
+		register_icall (mono_string_builder_to_utf16, "mono_string_builder_to_utf16", "ptr object", FALSE);
+		register_icall (mono_array_to_savearray, "mono_array_to_savearray", "ptr object", FALSE);
+		register_icall (mono_array_to_lparray, "mono_array_to_lparray", "ptr object", FALSE);
+		register_icall (mono_free_lparray, "mono_free_lparray", "void object ptr", FALSE);
+		register_icall (mono_byvalarray_to_byte_array, "mono_byvalarray_to_byte_array", "void object ptr int32", FALSE);
+		register_icall (mono_array_to_byte_byvalarray, "mono_array_to_byte_byvalarray", "void ptr object int32", FALSE);
+		register_icall (mono_delegate_to_ftnptr, "mono_delegate_to_ftnptr", "ptr object", FALSE);
+		register_icall (mono_ftnptr_to_delegate, "mono_ftnptr_to_delegate", "object ptr ptr", FALSE);
+		register_icall (mono_marshal_asany, "mono_marshal_asany", "ptr object int32 int32", FALSE);
+		register_icall (mono_marshal_free_asany, "mono_marshal_free_asany", "void object ptr int32 int32", FALSE);
+		register_icall (ves_icall_marshal_alloc, "ves_icall_marshal_alloc", "ptr ptr", FALSE);
 		register_icall (mono_marshal_free, "mono_marshal_free", "void ptr", FALSE);
 		register_icall (mono_marshal_set_last_error, "mono_marshal_set_last_error", "void", TRUE);
 		register_icall (mono_marshal_set_last_error_windows, "mono_marshal_set_last_error_windows", "void int32", TRUE);
-		register_icall (mono_string_utf8_to_builder_raw, "mono_string_utf8_to_builder", "void ptr ptr", FALSE);
-		register_icall (mono_string_utf8_to_builder2_raw, "mono_string_utf8_to_builder2", "object ptr", FALSE);
-		register_icall (mono_string_utf16_to_builder_raw, "mono_string_utf16_to_builder", "void ptr ptr", FALSE);
-		register_icall (mono_string_utf16_to_builder2_raw, "mono_string_utf16_to_builder2", "object ptr", FALSE);
+		register_icall (mono_string_utf8_to_builder, "mono_string_utf8_to_builder", "void ptr ptr", FALSE);
+		register_icall (mono_string_utf8_to_builder2, "mono_string_utf8_to_builder2", "object ptr", FALSE);
+		register_icall (mono_string_utf16_to_builder, "mono_string_utf16_to_builder", "void ptr ptr", FALSE);
+		register_icall (mono_string_utf16_to_builder2, "mono_string_utf16_to_builder2", "object ptr", FALSE);
 		register_icall (mono_marshal_free_array, "mono_marshal_free_array", "void ptr int32", FALSE);
-		register_icall (mono_string_to_byvalstr_raw, "mono_string_to_byvalstr", "void ptr ptr int32", FALSE);
-		register_icall (mono_string_to_byvalwstr_raw, "mono_string_to_byvalwstr", "void ptr ptr int32", FALSE);
+		register_icall (mono_string_to_byvalstr, "mono_string_to_byvalstr", "void ptr ptr int32", FALSE);
+		register_icall (mono_string_to_byvalwstr, "mono_string_to_byvalwstr", "void ptr ptr int32", FALSE);
 		register_dyn_icall (g_free, "g_free", "void ptr", FALSE);
 		register_icall_no_wrapper (mono_object_isinst_icall, "mono_object_isinst_icall", "object object ptr");
 		register_icall (mono_struct_delete_old, "mono_struct_delete_old", "void ptr ptr", FALSE);
@@ -315,7 +315,7 @@ mono_marshal_unlock_internal (void)
 
 // This is a JIT icall, it sets the pending exception (in wrapper) and return NULL on error.
 gpointer
-mono_delegate_to_ftnptr (MonoDelegateHandle delegate, MonoError *error)
+mono_delegate_to_ftnptr_impl (MonoDelegateHandle delegate, MonoError *error)
 {
 	gpointer result = NULL;
 	MonoMethod *method, *wrapper;
@@ -478,7 +478,7 @@ parse_unmanaged_function_pointer_attr (MonoClass *klass, MonoMethodPInvoke *piin
 
 /* This is a JIT icall, it sets the pending exception (in wrapper) and returns NULL on error */
 MonoDelegateHandle
-mono_ftnptr_to_delegate (MonoClass *klass, gpointer ftn, MonoError *error)
+mono_ftnptr_to_delegate_impl (MonoClass *klass, gpointer ftn, MonoError *error)
 {
 	guint32 gchandle;
 	MonoDelegateHandle d = MONO_HANDLE_NEW (MonoDelegate, NULL);
@@ -589,7 +589,7 @@ mono_delegate_free_ftnptr (MonoDelegate *delegate)
 
 /* This is a JIT icall, it sets the pending exception (in wrapper) and returns NULL on error */
 MonoStringHandle
-mono_string_from_byvalstr (const char *data, int max_len, MonoError *error)
+mono_string_from_byvalstr_impl (const char *data, int max_len, MonoError *error)
 {
 	// FIXME This optimization ok to miss before wrapper? Or null is rare?
 	if (!data)
@@ -607,7 +607,7 @@ mono_string_from_byvalstr (const char *data, int max_len, MonoError *error)
 
 /* This is a JIT icall, it sets the pending exception (in wrapper) and return NULL on error */
 MonoStringHandle
-mono_string_from_byvalwstr (const gunichar2 *data, int max_len, MonoError *error)
+mono_string_from_byvalwstr_impl (const gunichar2 *data, int max_len, MonoError *error)
 {
 	// FIXME This optimization ok to miss before wrapper? Or null is rare?
 	if (!data)
@@ -623,7 +623,7 @@ mono_string_from_byvalwstr (const gunichar2 *data, int max_len, MonoError *error
 }
 
 gpointer
-mono_array_to_savearray (MonoArrayHandle array, MonoError *error)
+mono_array_to_savearray_impl (MonoArrayHandle array, MonoError *error)
 {
 	if (!MONO_HANDLE_BOOL (array))
 		return NULL;
@@ -633,7 +633,7 @@ mono_array_to_savearray (MonoArrayHandle array, MonoError *error)
 }
 
 gpointer
-mono_array_to_lparray (MonoArrayHandle array_handle, MonoError *error)
+mono_array_to_lparray_impl (MonoArrayHandle array_handle, MonoError *error)
 {
 	if (!MONO_HANDLE_BOOL (array_handle))
 		return NULL;
@@ -694,7 +694,7 @@ mono_array_to_lparray (MonoArrayHandle array_handle, MonoError *error)
 }
 
 void
-mono_free_lparray (MonoArrayHandle array, gpointer* nativeArray, MonoError *error)
+mono_free_lparray_impl (MonoArrayHandle array, gpointer* nativeArray, MonoError *error)
 {
 #ifndef DISABLE_COM
 	if (!nativeArray || MONO_HANDLE_IS_NULL (array))
@@ -709,7 +709,7 @@ mono_free_lparray (MonoArrayHandle array, gpointer* nativeArray, MonoError *erro
 
 /* This is a JIT icall, it sets the pending exception (in wrapper) and returns on error */
 void
-mono_byvalarray_to_byte_array (MonoArrayHandle arr, const char *native_arr, guint32 elnum, MonoError *error)
+mono_byvalarray_to_byte_array_impl (MonoArrayHandle arr, const char *native_arr, guint32 elnum, MonoError *error)
 {
 	g_assert (m_class_get_element_class (mono_handle_class (arr)) == mono_defaults.char_class);
 
@@ -729,7 +729,7 @@ mono_byvalarray_to_byte_array (MonoArrayHandle arr, const char *native_arr, guin
 
 /* This is a JIT icall, it sets the pending exception (in wrapper) and returns on error */
 void
-mono_array_to_byte_byvalarray (gpointer native_arr, MonoArrayHandle arr, guint32 elnum, MonoError *error)
+mono_array_to_byte_byvalarray_impl (gpointer native_arr, MonoArrayHandle arr, guint32 elnum, MonoError *error)
 {
 	g_assert (m_class_get_element_class (mono_handle_class (arr)) == mono_defaults.char_class);
 
@@ -800,7 +800,7 @@ mono_string_utf16_to_builder_copy (MonoStringBuilderHandle sb, const gunichar2 *
 }
 
 MonoStringBuilderHandle
-mono_string_utf16_to_builder2 (const gunichar2 *text, MonoError *error)
+mono_string_utf16_to_builder2_impl (const gunichar2 *text, MonoError *error)
 {
 	if (!text)
 		return NULL_HANDLE_STRING_BUILDER;
@@ -840,13 +840,13 @@ mono_string_utf8len_to_builder (MonoStringBuilderHandle sb, const char *text, gs
 }
 
 void
-mono_string_utf8_to_builder (MonoStringBuilderHandle sb, const char *text, MonoError *error)
+mono_string_utf8_to_builder_impl (MonoStringBuilderHandle sb, const char *text, MonoError *error)
 {
 	mono_string_utf8len_to_builder (sb, text, text ? strlen (text) : 0, error);
 }
 
 MonoStringBuilderHandle
-mono_string_utf8_to_builder2 (const char *text, MonoError *error)
+mono_string_utf8_to_builder2_impl (const char *text, MonoError *error)
 {
 	if (!text)
 		return NULL_HANDLE_STRING_BUILDER;
@@ -872,7 +872,7 @@ mono_string_utf16len_to_builder (MonoStringBuilderHandle sb, const gunichar2 *te
 }
 
 void
-mono_string_utf16_to_builder (MonoStringBuilderHandle sb, const gunichar2 *text, MonoError *error)
+mono_string_utf16_to_builder_impl (MonoStringBuilderHandle sb, const gunichar2 *text, MonoError *error)
 {
 	mono_string_utf16_to_builder_copy (sb, text, text ? g_utf16_len (text) : 0, error);
 }
@@ -890,7 +890,7 @@ mono_string_utf16_to_builder (MonoStringBuilderHandle sb, const gunichar2 *text,
  * This is a JIT icall, it sets the pending exception (in wrapper) and returns NULL on error.
  */
 gchar*
-mono_string_builder_to_utf8 (MonoStringBuilderHandle sb, MonoError *error)
+mono_string_builder_to_utf8_impl (MonoStringBuilderHandle sb, MonoError *error)
 {
 	char *res = NULL;
 	GError *gerror = NULL;
@@ -902,7 +902,7 @@ mono_string_builder_to_utf8 (MonoStringBuilderHandle sb, MonoError *error)
 	if (!MONO_HANDLE_BOOL (sb))
 		goto exit;
 
-	str_utf16 = mono_string_builder_to_utf16 (sb, error);
+	str_utf16 = mono_string_builder_to_utf16_impl (sb, error);
 	goto_if_nok (error, exit);
 
 	tmp = g_utf16_to_utf8 (str_utf16, mono_string_builder_string_length (sb), NULL, &byte_count, &gerror);
@@ -940,7 +940,7 @@ exit:
  * This is a JIT icall, it sets the pending exception (in wrapper) and returns NULL on error.
  */
 gunichar2*
-mono_string_builder_to_utf16 (MonoStringBuilderHandle sb, MonoError *error)
+mono_string_builder_to_utf16_impl (MonoStringBuilderHandle sb, MonoError *error)
 {
 	if (!MONO_HANDLE_BOOL (sb))
 		return NULL;
@@ -984,7 +984,7 @@ mono_string_builder_to_utf16 (MonoStringBuilderHandle sb, MonoError *error)
 
 /* This is a JIT icall, it sets the pending exception (in wrapper) and returns NULL on error. */
 gpointer
-mono_string_to_utf8str (MonoStringHandle s, MonoError *error)
+mono_string_to_utf8str_impl (MonoStringHandle s, MonoError *error)
 {
 	return mono_string_handle_to_utf8 (s, error);
 }
@@ -992,7 +992,7 @@ mono_string_to_utf8str (MonoStringHandle s, MonoError *error)
 #endif
 
 gpointer
-mono_string_to_ansibstr (MonoStringHandle string_obj, MonoError *error)
+mono_string_to_ansibstr_impl (MonoStringHandle string_obj, MonoError *error)
 {
 	g_error ("UnmanagedMarshal.BStr is not implemented.");
 	return NULL;
@@ -1008,7 +1008,7 @@ mono_string_to_ansibstr (MonoStringHandle string_obj, MonoError *error)
  * into \p dst, it copies at most \p size bytes into the destination.
  */
 void
-mono_string_to_byvalstr (char *dst, MonoStringHandle src, int size, MonoError *error)
+mono_string_to_byvalstr_impl (char *dst, MonoStringHandle src, int size, MonoError *error)
 {
 	g_assert (dst != NULL);
 	g_assert (size > 0);
@@ -1039,7 +1039,7 @@ mono_string_to_byvalstr (char *dst, MonoStringHandle src, int size, MonoError *e
  * a terminating 16-bit zero terminator).
  */
 void
-mono_string_to_byvalwstr (gunichar2 *dst, MonoStringHandle src, int size, MonoError *error)
+mono_string_to_byvalwstr_impl (gunichar2 *dst, MonoStringHandle src, int size, MonoError *error)
 {
 	g_assert (dst);
 	g_assert (size > 0);
@@ -1059,7 +1059,7 @@ mono_string_to_byvalwstr (gunichar2 *dst, MonoStringHandle src, int size, MonoEr
 
 /* this is an icall, it sets the pending exception and returns NULL on error */
 MonoStringHandle
-mono_string_new_len_wrapper (const char *text, guint length, MonoError *error)
+mono_string_new_len_wrapper_impl (const char *text, guint length, MonoError *error)
 {
 	MonoString *s = mono_string_new_len_checked (mono_domain_get (), text, length, error);
 	return_val_if_nok (error, NULL_HANDLE_STRING);
@@ -4833,7 +4833,7 @@ mono_marshal_alloc (gsize size, MonoError *error)
 
 /* This is a JIT icall, it sets the pending exception (in wrapper) and returns NULL on error. */
 void*
-ves_icall_marshal_alloc (gsize size, MonoError *error)
+ves_icall_marshal_alloc_impl (gsize size, MonoError *error)
 {
 	return mono_marshal_alloc (size, error);
 }
@@ -4881,7 +4881,7 @@ mono_marshal_string_to_utf16 (MonoString *s)
 
 /* This is a JIT icall, it sets the pending exception (in wrapper) and returns NULL on error. */
 gunichar2*
-mono_marshal_string_to_utf16_copy (MonoStringHandle s, MonoError *error)
+mono_marshal_string_to_utf16_copy_impl (MonoStringHandle s, MonoError *error)
 {
 	if (MONO_HANDLE_IS_NULL (s))
 		return NULL;
@@ -5387,13 +5387,13 @@ ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerIn
 	if (!mono_class_init_checked (klass, error))
 		return MONO_HANDLE_CAST (MonoDelegate, NULL_HANDLE);
 
-	return mono_ftnptr_to_delegate (klass, ftn, error);
+	return mono_ftnptr_to_delegate_impl (klass, ftn, error);
 }
 
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_GetFunctionPointerForDelegateInternal (MonoDelegateHandle delegate, MonoError *error)
 {
-	return mono_delegate_to_ftnptr (delegate, error);
+	return mono_delegate_to_ftnptr_impl (delegate, error);
 }
 
 /**
@@ -5794,7 +5794,7 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
  * This is a JIT icall, it sets the pending exception (in wrapper) and returns NULL on error.
  */
 gpointer
-mono_marshal_asany (MonoObjectHandle o, MonoMarshalNative string_encoding, int param_attrs, MonoError *error)
+mono_marshal_asany_impl (MonoObjectHandle o, MonoMarshalNative string_encoding, int param_attrs, MonoError *error)
 {
 	if (MONO_HANDLE_IS_NULL (o))
 		return NULL;
@@ -5818,11 +5818,11 @@ mono_marshal_asany (MonoObjectHandle o, MonoMarshalNative string_encoding, int p
 	case MONO_TYPE_STRING:
 		switch (string_encoding) {
 		case MONO_NATIVE_LPWSTR:
-			return mono_marshal_string_to_utf16_copy (MONO_HANDLE_CAST (MonoString, o), error);
+			return mono_marshal_string_to_utf16_copy_impl (MONO_HANDLE_CAST (MonoString, o), error);
 		case MONO_NATIVE_LPSTR:
 		case MONO_NATIVE_UTF8STR:
 			// Same code path, because in Mono, we treated strings as Utf8
-			return mono_string_to_utf8str (MONO_HANDLE_CAST (MonoString, o), error);
+			return mono_string_to_utf8str_impl (MONO_HANDLE_CAST (MonoString, o), error);
 		default:
 			g_warning ("marshaling conversion %d not implemented", string_encoding);
 			g_assert_not_reached ();
@@ -5865,7 +5865,7 @@ mono_marshal_asany (MonoObjectHandle o, MonoMarshalNative string_encoding, int p
  * This is a JIT icall, it sets the pending exception (in wrapper)
  */
 void
-mono_marshal_free_asany (MonoObjectHandle o, gpointer ptr, MonoMarshalNative string_encoding, int param_attrs, MonoError *error)
+mono_marshal_free_asany_impl (MonoObjectHandle o, gpointer ptr, MonoMarshalNative string_encoding, int param_attrs, MonoError *error)
 {
 	MonoType *t;
 	MonoClass *klass;

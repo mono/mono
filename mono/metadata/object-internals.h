@@ -2027,6 +2027,9 @@ mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoEr
 MonoStringHandle
 mono_string_new_size_handle (MonoDomain *domain, gint32 len, MonoError *error);
 
+MonoString*
+mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
+
 MonoString *
 mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);
 

@@ -454,7 +454,7 @@ MONO_HANDLE_DECLARE_RAW (id, name, func, rettype, n, argtypes)			\
 // Declare the function that takes/returns raw pointers and no MonoError.
 #define MONO_HANDLE_REGISTER_ICALL_DECLARE_RAW(func, rettype, n, argtypes)	\
 ICALL_EXPORT MONO_HANDLE_TYPE_RAWPOINTER (rettype)				\
-func ## _raw ( MONO_HANDLE_FOREACH_ARG_RAWPOINTER_ ## n argtypes)
+func ( MONO_HANDLE_FOREACH_ARG_RAWPOINTER_ ## n argtypes)
 
 // Implement ves_icall_foo_raw over ves_icall_foo.
 //
@@ -484,7 +484,7 @@ MONO_HANDLE_REGISTER_ICALL_DECLARE_RAW (func, rettype, n, argtypes)		\
 										\
 	MONO_HANDLE_RETURN_BEGIN (rettype)					\
 										\
-	func (MONO_HANDLE_REGISTER_ICALL_CALL_ ## n error);			\
+	func ## _impl (MONO_HANDLE_REGISTER_ICALL_CALL_ ## n error);			\
 										\
 	MONO_HANDLE_REGISTER_ICALL_OUT_ ## n argtypes				\
 										\

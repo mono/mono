@@ -278,7 +278,7 @@ mono_type_initialization_init (void)
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
 	mono_coop_mutex_init (&ldstr_section);
-	mono_register_jit_icall (ves_icall_string_alloc_raw, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
+	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
 }
 
 void
@@ -1072,7 +1072,7 @@ mono_class_insecure_overlapping (MonoClass *klass)
 #endif
 
 MonoStringHandle
-ves_icall_string_alloc (int length, MonoError *error)
+ves_icall_string_alloc_impl (int length, MonoError *error)
 {
 	MonoString *s = mono_string_new_size_checked (mono_domain_get (), length, error);
 	return_val_if_nok (error, NULL_HANDLE_STRING);
@@ -6672,18 +6672,15 @@ mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, Mo
 }
 
 MonoString*
-<<<<<<< HEAD
-=======
 mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
-	HANDLE_FUNCTION_RETURN_OBJ (mono_string_new_utf8_len_handle (domain, text, length, error));
+	HANDLE_FUNCTION_RETURN_OBJ (mono_string_new_utf8_len (domain, text, length, error));
 }
 
 static
 MonoString*
->>>>>>> [Coop] Mostly convert 30+ icalls used via register_icall.
 mono_string_new_internal (MonoDomain *domain, const char *text)
 {
 	ERROR_DECL (error);
@@ -6808,7 +6805,7 @@ mono_string_new_wtf8_len_checked (MonoDomain *domain, const char *text, guint le
 }
 
 MonoStringHandle
-mono_string_new_wrapper_internal (const char *text, MonoError *error)
+mono_string_new_wrapper_internal_impl (const char *text, MonoError *error)
 {
 	return MONO_HANDLE_NEW (MonoString, mono_string_new_internal (mono_domain_get (), text));
 }
@@ -6821,7 +6818,7 @@ mono_string_new_wrapper_internal (const char *text, MonoError *error)
 MonoString*
 mono_string_new_wrapper (const char *text)
 {
-	MONO_EXTERNAL_ONLY_GC_UNSAFE (MonoString*, mono_string_new_wrapper_internal_raw (text));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (MonoString*, mono_string_new_wrapper_internal (text));
 }
 
 /**
@@ -7654,7 +7651,7 @@ mono_string_to_utf8_ignore (MonoString *s)
 }
 
 mono_unichar2*
-mono_string_to_utf16_internal (MonoStringHandle s, MonoError *error)
+mono_string_to_utf16_internal_impl (MonoStringHandle s, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
@@ -7685,11 +7682,11 @@ mono_string_to_utf16 (MonoString *string_obj)
 {
 	if (!string_obj)
 		return NULL;
-	MONO_EXTERNAL_ONLY (mono_unichar2*, mono_string_to_utf16_internal_raw (string_obj));
+	MONO_EXTERNAL_ONLY (mono_unichar2*, mono_string_to_utf16_internal (string_obj));
 }
 
 mono_unichar4*
-mono_string_to_utf32_internal (MonoStringHandle s, MonoError *error)
+mono_string_to_utf32_internal_impl (MonoStringHandle s, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 	
@@ -7709,7 +7706,7 @@ mono_string_to_utf32_internal (MonoStringHandle s, MonoError *error)
 mono_unichar4*
 mono_string_to_utf32 (MonoString *string_obj)
 {
-	MONO_EXTERNAL_ONLY (mono_unichar4*, mono_string_to_utf32_internal_raw (string_obj));
+	MONO_EXTERNAL_ONLY (mono_unichar4*, mono_string_to_utf32_internal (string_obj));
 }
 
 /**

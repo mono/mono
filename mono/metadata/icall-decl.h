@@ -56,7 +56,7 @@ typedef enum {
 
 // Generate prototypes for coop icall wrappers and coop icalls.
 #define MONO_HANDLE_REGISTER_ICALL(func, ret, nargs, argtypes) \
-	MONO_HANDLE_DECLARE (,,func, ret, nargs, argtypes); \
+	MONO_HANDLE_DECLARE (,,func ## _impl, ret, nargs, argtypes); \
 	MONO_HANDLE_REGISTER_ICALL_DECLARE_RAW (func, ret, nargs, argtypes);
 #define ICALL_TYPE(id, name, first)	/* nothing */
 #define ICALL(id, name, func) 		/* nothing */

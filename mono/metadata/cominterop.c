@@ -100,7 +100,7 @@ register_icall (gpointer func, const char *name, const char *sigstr, gboolean sa
 }
 
 mono_bstr
-mono_string_to_bstr (MonoStringHandle s, MonoError *error)
+mono_string_to_bstr_impl (MonoStringHandle s, MonoError *error)
 {
 	if (MONO_HANDLE_IS_NULL (s))
 		return NULL;
@@ -688,8 +688,8 @@ mono_cominterop_init (void)
 	The proper fix would be to emit warning, remove them from marshal.c when DISABLE_COM is used and
 	emit an exception in the generated IL.
 	*/
-	register_icall (mono_string_to_bstr_raw, "mono_string_to_bstr", "ptr obj", FALSE);
-	register_icall (mono_string_from_bstr_icall_raw, "mono_string_from_bstr_icall", "obj ptr", FALSE);
+	register_icall (mono_string_to_bstr, "mono_string_to_bstr", "ptr obj", FALSE);
+	register_icall (mono_string_from_bstr_icall, "mono_string_from_bstr_icall", "obj ptr", FALSE);
 	register_icall (mono_free_bstr, "mono_free_bstr", "void ptr", FALSE);
 }
 
@@ -2937,7 +2937,7 @@ mono_string_from_bstr (/*mono_bstr_const*/gpointer bstr)
 }
 
 MonoStringHandle
-mono_string_from_bstr_icall (mono_bstr_const bstr, MonoError *error)
+mono_string_from_bstr_icall_impl (mono_bstr_const bstr, MonoError *error)
 {
 	return mono_string_from_bstr_checked (bstr, error);
 }

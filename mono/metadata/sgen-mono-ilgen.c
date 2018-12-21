@@ -193,7 +193,7 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 			break;
 		case ATYPE_STRING:
 			mono_mb_emit_ldarg (mb, 1);
-			mono_mb_emit_icall (mb, ves_icall_string_alloc_raw);
+			mono_mb_emit_icall (mb, ves_icall_string_alloc);
 			break;
 		default:
 			g_assert_not_reached ();
