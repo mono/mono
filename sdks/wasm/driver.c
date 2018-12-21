@@ -144,22 +144,21 @@ mono_wasm_setenv (const char *name, const char *value)
 }
 
 static void
-assembly_load_hook (MonoAssembly* assembly, void* user_data)
+assembly_load_scripts (MonoAssembly* assembly, void* user_data)
 {
 	MonoAssemblyName *assembly_name = mono_assembly_get_name (assembly);
 	const char *aname = mono_assembly_name_get_name (assembly_name);
-
+	
 	// Can not reflect over mscorlib
-	if (strcmp ("mscorlib", aname))  // not equal
-	{
-		MonoClass* klass = mono_class_from_name(mono_assembly_get_image(assembly), "WebAssembly.Library", "ScriptsSupport");
-		if (klass)
-		{
-			MonoMethod* init_method = mono_class_get_method_from_name(klass, "Initialize", -1);
+	if (strcmp ("mscorlib", aname)) {  // not equal
+
+		MonoClass* klass = mono_class_from_name (mono_assembly_get_image (assembly), "WebAssembly.Library", "ScriptsSupport");
+		if (klass) {
+
+			MonoMethod* init_method = mono_class_get_method_from_name (klass, "Initialize", -1);
 			MonoException* exc = NULL;
-			MonoString* ret = (MonoString*)mono_runtime_invoke(init_method, NULL, NULL, (MonoObject**)&exc);
-			if(!exc)
-			{
+			MonoString* ret = (MonoString*)mono_runtime_invoke (init_method, NULL, NULL, (MonoObject**)&exc);
+			if (!exc) {
 				//fprintf (stdout, "Value of resource is: %s\n", mono_string_to_utf8 (ret));
 				int *invReturn;
 				mono_wasm_invoke_js(ret, invReturn);
@@ -192,8 +191,6 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_method_builder_ilgen_init ();
 	mono_sgen_mono_ilgen_init ();
 #endif
-
-	mono_install_assembly_load_hook (assembly_load_hook, NULL);
 
 	if (assembly_count) {
 		MonoBundledAssembly **bundle_array = (MonoBundledAssembly **)calloc (1, sizeof (MonoBundledAssembly*) * (assembly_count + 1));
@@ -237,6 +234,9 @@ mono_wasm_assembly_load (const char *name)
 	MonoAssembly *res = mono_assembly_load (aname, NULL, &status);
 	mono_assembly_name_free (aname);
 
+	// load any script payloads that need to be loaded.
+	assembly_load_scripts (res, NULL);
+	
 	return res;
 }
 
