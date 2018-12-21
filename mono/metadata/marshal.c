@@ -960,7 +960,7 @@ mono_string_builder_to_utf16_impl (MonoStringBuilderHandle sb, MonoError *error)
 	return_val_if_nok (error, NULL);
 
 	str [len] = 0;
-	str [0] = 0; // Cover the case of original len == 0.
+	str [0] = 0; // Cover the case when original len == 0.
 
 	MonoArrayHandle chunkChars = MONO_HANDLE_NEW (MonoArray, NULL);
 	MonoStringBuilderHandle chunk = MONO_HANDLE_NEW (MonoStringBuilder, MONO_HANDLE_RAW (sb));
