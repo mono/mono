@@ -940,7 +940,6 @@ dump_native_stacktrace (const char *signal, void *ctx)
 	for (i = 0; i < size; ++i) {
 		mono_runtime_printf_err ("\t%s", names [i]);
 	}
-	g_free (names);
 
 	/* Try to get more meaningful information using gdb */
 	// FIXME: Remove locking and reenable. Can race with itself
