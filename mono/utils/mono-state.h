@@ -59,6 +59,11 @@ mono_summarize_double_fault_log (void);
 MonoSummaryStage
 mono_summarize_timeline_read_level (const char *directory, gboolean clear);
 
+// Enable checked-build assertions on summary workflow
+// Turns all potential hangs into instant faults
+void
+mono_summarize_toggle_assertions (gboolean enable);
+
 // Json State Writer
 
 /*

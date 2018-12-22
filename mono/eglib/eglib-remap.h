@@ -120,6 +120,7 @@
 #define g_markup_parse_context_parse monoeg_g_markup_parse_context_parse
 #define g_memdup monoeg_g_memdup
 #define g_mem_set_vtable monoeg_g_mem_set_vtable
+#define g_mem_get_vtable monoeg_g_mem_get_vtable
 #define g_mkdtemp monoeg_g_mkdtemp
 #define g_module_build_path monoeg_g_module_build_path
 #define g_module_close monoeg_g_module_close

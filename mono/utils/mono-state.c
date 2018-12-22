@@ -36,6 +36,82 @@ extern GCStats mono_gc_stats;
 #include <sys/sysctl.h>
 #include <fcntl.h>
 
+#ifdef HAVE_EXECINFO_H
+#include <execinfo.h>
+#endif
+
+// Fixme: put behind preprocessor symbol?
+static void
+assert_not_reached_mem (const char *msg)
+{
+	MOSTLY_ASYNC_SAFE_PRINTF ("%s\n", msg);
+
+#if 0
+	pid_t crashed_pid = getpid ();
+	// Break here
+	MOSTLY_ASYNC_SAFE_PRINTF ("Attach to PID %d. Supervisor thread will signal us shortly.\n", crashed_pid);
+	while (TRUE) {
+		// Sleep for 1 second.
+		g_usleep (1000 * 1000);
+	}
+#endif
+
+	g_error (msg);
+}
+
+static void
+assert_not_reached_fn_ptr_free (gpointer ptr)
+{
+	// Wrap the macro to provide as a function pointer
+	assert_not_reached_mem ("Attempted to call free during merp dump");
+}
+
+static gpointer
+assert_not_reached_fn_ptr_malloc (gsize size)
+{
+	// Wrap the macro to provide as a function pointer
+	assert_not_reached_mem ("Attempted to call malloc during merp dump");
+	return NULL;
+}
+
+static gpointer
+assert_not_reached_fn_ptr_realloc (gpointer obj, gsize size)
+{
+	// Wrap the macro to provide as a function pointer
+	assert_not_reached_mem ("Attempted to call realloc during merp dump");
+	return NULL;
+}
+
+static gpointer
+assert_not_reached_fn_ptr_calloc (gsize n, gsize x)
+{
+	// Wrap the macro to provide as a function pointer
+	assert_not_reached_mem ("Attempted to call calloc during merp dump");
+	return NULL;
+}
+
+void
+mono_summarize_toggle_assertions (gboolean enable)
+{
+#if defined(ENABLE_CHECKED_BUILD_CRASH_REPORTING) && defined (ENABLE_OVERRIDABLE_ALLOCATORS)
+	static GMemVTable g_mem_vtable_backup;
+	static gboolean saved;
+
+	if (enable) {
+		g_mem_get_vtable (&g_mem_vtable_backup);
+		saved = TRUE;
+
+		GMemVTable g_mem_vtable_assert = { assert_not_reached_fn_ptr_malloc, assert_not_reached_fn_ptr_realloc, assert_not_reached_fn_ptr_free, assert_not_reached_fn_ptr_calloc };
+		g_mem_set_vtable (&g_mem_vtable_assert);
+	} else if (saved) {
+		g_mem_set_vtable (&g_mem_vtable_backup);
+		saved = FALSE;
+	}
+
+	mono_memory_barrier ();
+#endif
+}
+
 typedef struct {
 	const char *directory;
 	MonoSummaryStage level;
