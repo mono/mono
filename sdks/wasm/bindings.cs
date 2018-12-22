@@ -106,12 +106,12 @@ namespace WebAssembly
 
         static void UnBindJSObjectAndFree(int js_id)
         {
-            if (bound_objects.ContainsKey(js_id))
+            if (bound_objects.TryGetValue (js_id, out var obj))
             {
                 bound_objects[js_id].RawObject = null;
-                JSObject obj = bound_objects[js_id];
                 bound_objects.Remove(js_id);
                 obj.JSHandle = -1;
+                obj.IsDisposed = true;
                 obj.RawObject = null;
                 obj.Handle.Free();
 
@@ -137,6 +137,7 @@ namespace WebAssembly
                 // Calling Release Handle above only removes the reference from the JavaScript side but does not 
                 // release the bridged JSObject associated with the raw object so we have to do that ourselves.
                 obj.JSHandle = -1;
+                obj.IsDisposed = true;
                 obj.RawObject = null;
 
                 obj.Handle.Free();
@@ -159,6 +160,7 @@ namespace WebAssembly
 
                 jsobj.JSHandle = -1;
                 jsobj.RawObject = null;
+                jsobj.IsDisposed = true;
                 jsobj.Handle.Free();
 
             }
@@ -536,7 +538,7 @@ namespace WebAssembly
         internal GCHandle Handle;
         internal object RawObject;
         // to detect redundant calls
-        private bool disposed = false;
+        public bool IsDisposed { get; internal set; }
          
         internal JSObject(int js_handle)
         {
@@ -654,6 +656,11 @@ namespace WebAssembly
             return JSHandle;
         }
 
+        ~JSObject ()
+        {
+            Dispose(false);
+        }
+
         public void Dispose()
         {
             // Dispose of unmanaged resources.
@@ -665,10 +672,8 @@ namespace WebAssembly
         // Protected implementation of Dispose pattern.
         protected virtual void Dispose(bool disposing)
         {
-            if (JSHandle == -1)
-                return;
 
-            if (!disposed)
+            if (!IsDisposed)
             {
                 if (disposing)
                 {
@@ -678,7 +683,7 @@ namespace WebAssembly
                     RawObject = null;
                 }
 
-                disposed = true;
+                IsDisposed = true;
                 
                 // Free any unmanaged objects here.
                 FreeHandle();

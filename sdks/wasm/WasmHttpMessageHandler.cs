@@ -13,9 +13,6 @@ namespace WebAssembly.Net.Http.HttpClient
     {
         static JSObject fetch;
         static JSObject window;
-        static JSObject global;
-        static JSObject headersObj = null;
-        static JSObject abortObj = null;
 
         /// <summary>
         /// Gets or sets the default value of the 'credentials' option on outbound HTTP requests.
@@ -60,7 +57,6 @@ namespace WebAssembly.Net.Http.HttpClient
         {
             window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
             fetch = (JSObject)WebAssembly.Runtime.GetGlobalObject("fetch");
-            global = (JSObject)WebAssembly.Runtime.GetGlobalObject();
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -115,18 +111,16 @@ namespace WebAssembly.Net.Http.HttpClient
 
                 if (requestHeaders != null && requestHeaders.Length > 0)
                 {
-                    if (headersObj == null || headersObj.JSHandle == -1)
-                        headersObj = (JSObject)WebAssembly.Runtime.GetGlobalObject("Headers");
-                        
-                    using (var jsHeaders = Runtime.NewJSObject(headersObj))
-                    {
-                        for (int i = 0; i < requestHeaders.Length; i++)
+                    using (var headersObj = (JSObject)WebAssembly.Runtime.GetGlobalObject("Headers"))
+                        using (var jsHeaders = Runtime.NewJSObject(headersObj))
                         {
-                            //Console.WriteLine($"append: {requestHeaders[i][0]} / {requestHeaders[i][1]}");
-                            jsHeaders.Invoke("append", requestHeaders[i][0], requestHeaders[i][1]);
+                            for (int i = 0; i < requestHeaders.Length; i++)
+                            {
+                                //Console.WriteLine($"append: {requestHeaders[i][0]} / {requestHeaders[i][1]}");
+                                jsHeaders.Invoke("append", requestHeaders[i][0], requestHeaders[i][1]);
+                            }
+                            requestObject.SetObjectProperty("headers", jsHeaders);
                         }
-                        requestObject.SetObjectProperty("headers", jsHeaders);
-                    }
                 }
 
                 JSObject abortController = null;
@@ -136,9 +130,8 @@ namespace WebAssembly.Net.Http.HttpClient
                 CancellationTokenRegistration abortRegistration = default(CancellationTokenRegistration);
                 if (cancellationToken.CanBeCanceled)
                 {
-                    if (abortObj == null || abortObj.JSHandle == -1)
-                        abortObj = (JSObject)WebAssembly.Runtime.GetGlobalObject("AbortController");
-                    abortController = Runtime.NewJSObject(abortObj);
+                    using (var abortObj = (JSObject)WebAssembly.Runtime.GetGlobalObject("AbortController"))
+                        abortController = Runtime.NewJSObject(abortObj);
 
                     signal = (JSObject)abortController.GetObjectProperty("signal");
                     requestObject.SetObjectProperty("signal", signal);
