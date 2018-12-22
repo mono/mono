@@ -542,8 +542,6 @@ mono_native_state_add_ee_info  (MonoStateWriter *writer)
 #define MONO_ARCHITECTURE MONO_ARCH_ARCHITECTURE
 #endif
 
-static char *mono_runtime_build_info;
-
 static void
 mono_native_state_add_version (MonoStateWriter *writer)
 {
@@ -556,9 +554,7 @@ mono_native_state_add_version (MonoStateWriter *writer)
 	assert_has_space (writer);
 	mono_state_writer_indent (writer);
 	mono_state_writer_object_key (writer, "version");
-	if (!mono_runtime_build_info)
-		mono_runtime_build_info = mono_get_runtime_callbacks ()->get_runtime_build_info ();
-	mono_state_writer_printf(writer, "\"%s\",\n", mono_runtime_build_info);
+	mono_state_writer_printf(writer, "\"(%s) (%s)\",\n", VERSION, mono_get_runtime_callbacks ()->get_runtime_build_version ());
 
 	assert_has_space (writer);
 	mono_state_writer_indent (writer);
