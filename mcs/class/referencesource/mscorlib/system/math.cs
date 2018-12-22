@@ -759,12 +759,7 @@ namespace System {
         [CLSCompliant(false)]
         public static int Sign(sbyte value)
         {
-            if (value < 0)
-                return -1;
-            else if (value > 0)
-                return 1;
-            else
-                return 0;
+            return unchecked (value >> 7 | (int) ((uint) -value >> 7));
         }
 
 
@@ -772,34 +767,19 @@ namespace System {
         // is negative, 0, or positive.  Throws for floating point NaN's.
         public static int Sign(short value)
         {
-            if (value < 0)
-                return -1;
-            else if (value > 0)
-                return 1;
-            else
-                return 0;
+            return unchecked (value >> 15 | (int) ((uint) -value >> 15));
         }
 
         // Sign function for VB.  Returns -1, 0, or 1 if the sign of the number
         // is negative, 0, or positive.  Throws for floating point NaN's.
         public static int Sign(int value)
         {
-            if (value < 0)
-                return -1;
-            else if (value > 0)
-                return 1;
-            else
-                return 0;
+            return unchecked (value >> 31 | (int) ((uint) -value >> 31));
         }
 
         public static int Sign(long value)
         {
-            if (value < 0)
-                return -1;
-            else if (value > 0)
-                return 1;
-            else
-                return 0;
+            return unchecked (value >> 63 | (int) ((uint) -value >> 63));
         }
         
         public static int Sign (float value) 
