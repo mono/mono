@@ -251,17 +251,7 @@ mono_remoting_marshal_init (void)
 static MonoReflectionType *
 type_from_handle (MonoType *handle)
 {
-	ERROR_DECL (error);
-	MonoReflectionType *ret;
-	MonoDomain *domain = mono_domain_get (); 
-	MonoClass *klass = mono_class_from_mono_type_internal (handle);
-
-	mono_class_init_internal (klass);
-
-	ret = mono_type_get_object_checked (domain, handle, error);
-	mono_error_set_pending_exception (error);
-
-	return ret;
+	return mono_type_from_handle (handle);
 }
 
 #ifndef DISABLE_JIT
