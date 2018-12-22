@@ -269,6 +269,8 @@
 #define g_utf8_to_ucs4_fast monoeg_g_utf8_to_ucs4_fast
 #define g_vasprintf monoeg_g_vasprintf
 #define g_win32_getlocale monoeg_g_win32_getlocale
+#define g_assertion_disable_global monoeg_assertion_disable_global
+#define g_assert_abort monoeg_assert_abort
 #define g_assertion_message monoeg_assertion_message
 #define g_get_assertion_message monoeg_get_assertion_message
 #define g_malloc monoeg_malloc
