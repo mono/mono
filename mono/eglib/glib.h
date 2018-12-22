@@ -304,6 +304,7 @@ typedef struct {
 } GMemVTable;
 
 void g_mem_set_vtable (GMemVTable* vtable);
+void g_mem_get_vtable (GMemVTable* vtable);
 
 struct _GMemChunk {
 	guint alloc_size;
