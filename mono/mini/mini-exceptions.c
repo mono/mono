@@ -3220,13 +3220,19 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 	/* prevent infinite loops in crash handling */
 	handle_crash_loop = TRUE;
 
+	//  FIXME:
+	// Not thread safe.
+	// Crashes very, very often
 	/* !jit_tls means the thread was not registered with the runtime */
-	if (jit_tls && mono_thread_internal_current ()) {
-		mono_runtime_printf_err ("Stacktrace:\n");
 
-		/* FIXME: Is MONO_UNWIND_LOOKUP_IL_OFFSET correct here? */
-		mono_walk_stack (print_stack_frame_to_stderr, MONO_UNWIND_LOOKUP_IL_OFFSET, NULL);
-	}
+	// This is not signal safe
+	//
+	// if (jit_tls && mono_thread_internal_current ()) {
+	// 	mono_runtime_printf_err ("Stacktrace:\n");
+
+	// 	/* FIXME: Is MONO_UNWIND_LOOKUP_IL_OFFSET correct here? */
+	// 	mono_walk_stack (print_stack_frame_to_stderr, MONO_UNWIND_LOOKUP_IL_OFFSET, NULL);
+	// }
 
 	mono_dump_native_crash_info (signal, ctx, info);
 
