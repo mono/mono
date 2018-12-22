@@ -694,7 +694,7 @@ var BindingSupportLib = {
 			if (typeof obj  !== "undefined" && obj !== null) {
 				// if this is the global object then do not
 				// unregister it.
-				if (___mono_wasm_global___ && ___mono_wasm_global___ === obj)
+				if (typeof ___mono_wasm_global___ !== "undefined" && ___mono_wasm_global___ === obj)
 					return obj;
 
 				var gc_handle = obj.__mono_gchandle__;
@@ -718,7 +718,7 @@ var BindingSupportLib = {
 			if (typeof obj  !== "undefined" && obj !== null) {
 				// if this is the global object then do not
 				// unregister it.
-				if (___mono_wasm_global___ && ___mono_wasm_global___ === obj)
+				if (typeof ___mono_wasm_global___ !== "undefined" && ___mono_wasm_global___ === obj)
 					return obj;
 
 				var gc_handle = obj.__mono_gchandle__;
