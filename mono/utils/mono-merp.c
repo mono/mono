@@ -45,12 +45,19 @@ static const char *
 os_version_string (void)
 {
 #ifdef HAVE_SYS_UTSNAME_H
-	struct utsname name;
+	static struct utsname name;
+	static const char *version_string;
 
-	memset (&name, 0, sizeof (name)); // WSL does not always nul terminate.
+	if (!version_string) {
+		memset (&name, 0, sizeof (name)); // WSL does not always nul terminate.
 
-	if (uname (&name) >= 0)
-		return g_strdup_printf ("%s", name.release);
+		if (uname (&name) >= 0)
+			version_string = name.release;
+	}
+	if (!version_string)
+		version_string = "";
+
+	return version_string;
 #endif
 	return "";
 }

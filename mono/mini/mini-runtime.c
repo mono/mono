@@ -4205,6 +4205,9 @@ mono_interp_to_native_trampoline (gpointer addr, gpointer ccontext)
 	mini_get_interp_callbacks ()->to_native_trampoline (addr, ccontext);
 }
 
+static const char*
+mono_get_runtime_build_version (void);
+
 MonoDomain *
 mini_init (const char *filename, const char *runtime_version)
 {
@@ -4270,6 +4273,7 @@ mini_init (const char *filename, const char *runtime_version)
 	callbacks.create_ftnptr = mini_create_ftnptr;
 	callbacks.get_addr_from_ftnptr = mini_get_addr_from_ftnptr;
 	callbacks.get_runtime_build_info = mono_get_runtime_build_info;
+	callbacks.get_runtime_build_version = mono_get_runtime_build_version;
 	callbacks.set_cast_details = mono_set_cast_details;
 	callbacks.debug_log = mini_get_dbg_callbacks ()->debug_log;
 	callbacks.debug_log_is_enabled = mini_get_dbg_callbacks ()->debug_log_is_enabled;
@@ -4950,6 +4954,12 @@ void
 mono_set_verbose_level (guint32 level)
 {
 	mini_verbose = level;
+}
+
+static const char*
+mono_get_runtime_build_version (void)
+{
+	return FULL_VERSION;
 }
 
 /**
