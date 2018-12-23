@@ -11,7 +11,7 @@ TEST_MCS_FLAGS = $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
 TEST_LIB_REFS = System System.Core
 LIBRARY_WARN_AS_ERROR = yes
 
-XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks Facades/System.Text.RegularExpressions System.Numerics 
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
 
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.IO.Compression/src/Resources/Strings.resx \
