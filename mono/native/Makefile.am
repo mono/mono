@@ -17,24 +17,7 @@ LDFLAGS = $(MONO_NATIVE_LDFLAGS)
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
 
-common_sources = \
-	pal_config.h \
-	mono-native-platform.h \
-	mono-native-platform.c \
-	../../external/corefx/src/Native/Unix/Common/pal_compiler.h \
-	../../external/corefx/src/Native/Unix/Common/pal_safecrt.h \
-	../../external/corefx/src/Native/Unix/Common/pal_types.h \
-	../../external/corefx/src/Native/Unix/Common/pal_utilities.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_errno.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_errno.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_memory.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_memory.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_uid.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_uid.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_time.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_time.h \
+brotli_sources = \
 	../../external/corefx/src/Native/AnyOS/brotli/tools/brotli.c \
 	../../external/corefx/src/Native/AnyOS/brotli/enc/dictionary_hash.c \
 	../../external/corefx/src/Native/AnyOS/brotli/enc/backward_references_hq.c \
@@ -58,6 +41,25 @@ common_sources = \
 	../../external/corefx/src/Native/AnyOS/brotli/dec/huffman.c \
 	../../external/corefx/src/Native/AnyOS/brotli/dec/bit_reader.c \
 	../../external/corefx/src/Native/AnyOS/brotli/common/dictionary.c
+
+common_sources = \
+	pal_config.h \
+	mono-native-platform.h \
+	mono-native-platform.c \
+	../../external/corefx/src/Native/Unix/Common/pal_compiler.h \
+	../../external/corefx/src/Native/Unix/Common/pal_safecrt.h \
+	../../external/corefx/src/Native/Unix/Common/pal_types.h \
+	../../external/corefx/src/Native/Unix/Common/pal_utilities.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_errno.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_errno.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_maphardwaretype.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_memory.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_memory.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_uid.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_uid.h \
+	../../external/corefx/src/Native/Unix/System.Native/pal_time.c \
+	../../external/corefx/src/Native/Unix/System.Native/pal_time.h
 
 macos_sources = $(unix_sources)
 
@@ -101,7 +103,7 @@ macos_sources += $(gss_sources)
 ios_sources += $(gss_sources)
 endif
 
-EXTRA_libmono_native_la_SOURCES = $(common_sources) $(macos_sources) $(ios_sources) $(linux_sources) $(aix_sources) $(unix_sources) $(gss_sources)
+EXTRA_libmono_native_la_SOURCES = $(common_sources) $(brotli_sources) $(macos_sources) $(ios_sources) $(linux_sources) $(aix_sources) $(unix_sources) $(gss_sources)
 
 if MONO_NATIVE_PLATFORM_MACOS
 platform_sources = $(macos_sources)
