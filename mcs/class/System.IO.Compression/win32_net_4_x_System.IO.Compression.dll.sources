@@ -1,0 +1,3 @@
+#include System.IO.Compression.dll.sources
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs
+
