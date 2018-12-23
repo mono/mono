@@ -370,6 +370,7 @@ namespace System.Net
 				}
 
 				var buffer = await ReadAllAsyncInner (cancellationToken).ConfigureAwait (false);
+				innerStream?.Close ();
 				var bos = new BufferOffsetSize (buffer, 0, buffer.Length, false);
 				innerStream = new BufferedReadStream (Operation, null, bos);
 
@@ -395,6 +396,7 @@ namespace System.Net
 		protected override void Close_internal (ref bool disposed)
 		{
 			WebConnection.Debug ($"{ME} CLOSE: disposed={disposed} closed={closed} nextReadCalled={nextReadCalled}");
+			innerStream?.Close ();
 			if (!closed && !nextReadCalled) {
 				nextReadCalled = true;
 				WebConnection.Debug ($"{ME} CLOSE #1: read_eof={read_eof} bufferedEntireContent={bufferedEntireContent}");
