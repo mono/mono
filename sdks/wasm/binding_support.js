@@ -902,7 +902,6 @@ var BindingSupportLib = {
 	mono_wasm_new_object: function(object_handle, args, is_exception) {
 		BINDING.bindings_lazy_init ();
 
-		//var js_obj_type = BINDING.conv_string (object_type);
 		if (!object_handle) {
 			return BINDING.js_to_mono_obj ({});
 		}
@@ -917,10 +916,15 @@ var BindingSupportLib = {
 			var js_args = BINDING.mono_array_to_js_array(args);
 			
 			try {
+				
 				// This is all experimental !!!!!!
 				var allocator = function(constructor, js_args) {
 					// Not sure if we should be checking for anything here
-					var obj = new (constructor.bind.apply(constructor, js_args));
+					var argsList = new Array();
+					argsList[0] = constructor;
+					if (js_args)
+						argsList = argsList.concat(js_args);
+					var obj = new (constructor.bind.apply(constructor, argsList ));
 					return obj;
 				};
 		

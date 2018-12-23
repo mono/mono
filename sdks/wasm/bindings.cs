@@ -71,7 +71,7 @@ namespace WebAssembly
 
         /// <summary>
 	///   Creates a new JavaScript object 
-        public static JSObject NewJSObject(JSObject js_func_ptr = null, object[] _params = null)
+        public static JSObject NewJSObject(JSObject js_func_ptr = null, params object[] _params)
         {
             int exception;
             var res = NewObjectJS(js_func_ptr?.JSHandle ?? 0, _params, out exception);
