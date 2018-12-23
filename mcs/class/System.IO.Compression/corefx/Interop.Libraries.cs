@@ -6,6 +6,6 @@ internal static partial class Interop
 {
     internal static partial class Libraries
     {
-        internal const string CompressionNative = "System.IO.Compression.Native";
+        internal const string CompressionNative = "System.Native";
     }
 }
