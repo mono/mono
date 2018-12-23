@@ -929,7 +929,7 @@ var BindingSupportLib = {
 				};
 		
 				var res = allocator(requireObject, js_args);
-				return BINDING.js_to_mono_obj (res);
+				return BINDING.extract_mono_obj (res);
 			} catch (e) {
 				var res = e.toString ();
 				setValue (is_exception, 1, "i32");
