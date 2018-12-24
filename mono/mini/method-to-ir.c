@@ -3589,24 +3589,6 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 	return obj;
 }
 
-static MonoInst*
-handle_array_new (MonoCompile *cfg, int rank, MonoInst **sp, guchar *ip)
-{
-	MonoJitICallInfo *info;
-
-	/* Need to register the icall so it gets an icall wrapper */
-	info = mono_get_array_new_va_icall (rank);
-
-	cfg->flags |= MONO_CFG_HAS_VARARGS;
-
-	/* mono_array_new_va () needs a vararg calling convention */
-	cfg->exception_message = g_strdup ("array-new");
-	cfg->disable_llvm = TRUE;
-
-	/* FIXME: This uses info->sig, but it should use the signature of the wrapper */
-	return mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, sp);
-}
-
 /*
  * handle_constrained_gsharedvt_call:
  *
@@ -8573,18 +8555,9 @@ calli_end:
 			if (mini_class_is_system_array (cmethod->klass)) {
 				*sp = emit_get_rgctx_method (cfg, context_used,
 											 cmethod, MONO_RGCTX_INFO_METHOD);
-
-				/* Avoid varargs in the common case */
-				if (fsig->param_count == 1)
-					alloc = mono_emit_jit_icall (cfg, mono_array_new_1, sp);
-				else if (fsig->param_count == 2)
-					alloc = mono_emit_jit_icall (cfg, mono_array_new_2, sp);
-				else if (fsig->param_count == 3)
-					alloc = mono_emit_jit_icall (cfg, mono_array_new_3, sp);
-				else if (fsig->param_count == 4)
-					alloc = mono_emit_jit_icall (cfg, mono_array_new_4, sp);
-				else
-					alloc = handle_array_new (cfg, fsig->param_count, sp, ip);
+				// FIXME raise exception for invalid param_count.
+				gpointer function = mono_get_array_new_function (fsig->param_count);
+				alloc = mono_emit_jit_icall (cfg, function, sp);
 			} else if (cmethod->string_ctor) {
 				g_assert (!context_used);
 				g_assert (!vtable_arg);

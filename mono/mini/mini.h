@@ -2072,9 +2072,10 @@ gboolean  mini_should_insert_breakpoint (MonoMethod *method);
 int mono_target_pagesize (void);
 
 gboolean  mini_class_is_system_array (MonoClass *klass);
-MonoMethodSignature *mono_get_element_address_signature (int arity);
-MonoJitICallInfo    *mono_get_element_address_icall (int rank);
-MonoJitICallInfo    *mono_get_array_new_va_icall (int rank);
+MonoMethodSignature *
+mono_get_array_new_signature (int arity);
+gpointer
+mono_get_array_new_function (int arity);
 
 void      mono_linterval_add_range          (MonoCompile *cfg, MonoLiveInterval *interval, int from, int to);
 void      mono_linterval_print              (MonoLiveInterval *interval);

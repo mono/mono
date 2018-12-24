@@ -381,8 +381,8 @@ typedef struct {
 #endif
 
 /*
- * some icalls like mono_array_new_va needs to be called using a different 
- * calling convention.
+ * Some icalls might need to be called using a different
+ * calling convention. None currently do.
  */
 #define MONO_ARCH_VARARG_ICALLS 1
 

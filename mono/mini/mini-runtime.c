@@ -4820,10 +4820,34 @@ register_icalls (void)
 	register_icall (mono_create_corlib_exception_0, "mono_create_corlib_exception_0", "object int", TRUE);
 	register_icall (mono_create_corlib_exception_1, "mono_create_corlib_exception_1", "object int object", TRUE);
 	register_icall (mono_create_corlib_exception_2, "mono_create_corlib_exception_2", "object int object object", TRUE);
-	register_icall (mono_array_new_1, "mono_array_new_1", "object ptr int", FALSE);
-	register_icall (mono_array_new_2, "mono_array_new_2", "object ptr int int", FALSE);
-	register_icall (mono_array_new_3, "mono_array_new_3", "object ptr int int int", FALSE);
-	register_icall (mono_array_new_4, "mono_array_new_4", "object ptr int int int int", FALSE);
+
+	// Arrays are limited to rank=32. Parameter count can be double rank.
+	// Historically beyond 4 this used varargs but this had some problems.
+	//
+	//  - The parameters were apparently not passed correctly, at least
+	//    not on AMD64, where small JIT tests did not work.
+	//    https://github.com/mono/mono/issues/12193
+	//
+	//  - It complicates JIT icall registration -- these were the only
+	//    non-static JIT icall registrations.
+	//    https://github.com/mono/mono/pull/12188
+	//
+	//  - It fell back to mini from LLVM (due to varargs).
+	//
+	//  - It was a special and unusual case in multiple places,
+	//    with uncertain correctness and comleteness since it did not work.
+	//
+	// varargs should be fixed either way.
+	//
+	// Alternatively, use localalloc in method-to-ir, store
+	// the parameters to that local array, and pass by address.
+	//
+	for (int i = 1; i <= 64; i += 1 + (i >= 32)) {
+		gpointer function = mono_get_array_new_function (i);
+		char *name = g_strdup_printf ("mono_array_new_%d", i);
+		MonoMethodSignature *sig = mono_get_array_new_signature (i);
+		mono_register_jit_icall_full (function, name, sig, FALSE, name);
+	}
 	register_icall (mono_get_native_calli_wrapper, "mono_get_native_calli_wrapper", "ptr ptr ptr ptr", FALSE);
 	register_icall (mono_resume_unwind, "mono_resume_unwind", "void ptr", TRUE);
 	register_icall (mono_gsharedvt_constrained_call, "mono_gsharedvt_constrained_call", "object ptr ptr ptr ptr ptr", FALSE);

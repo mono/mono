@@ -53,8 +53,6 @@ G_EXTERN_C guint64 mono_lshr_un (guint64 a, gint32 shamt);
 
 G_EXTERN_C gint64 mono_lshr (gint64 a, gint32 shamt);
 
-G_EXTERN_C MonoArray *mono_array_new_va (MonoMethod *cm, ...);
-
 G_EXTERN_C MonoArray *mono_array_new_1 (MonoMethod *cm, guint32 length);
 
 G_EXTERN_C MonoArray *mono_array_new_2 (MonoMethod *cm, guint32 length1, guint32 length2);
@@ -62,6 +60,60 @@ G_EXTERN_C MonoArray *mono_array_new_2 (MonoMethod *cm, guint32 length1, guint32
 G_EXTERN_C MonoArray *mono_array_new_3 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 length3);
 
 G_EXTERN_C MonoArray *mono_array_new_4 (MonoMethod *cm, guint32 length1, guint32 length2, guint32 length3, guint32 length4);
+
+// mono_array_new_x is needed for x=5 to 32 and possibly times 2 of those (more tests?).
+// Be careful to avoid leading zeros here -- octal.
+
+#define MONO_ARRAY_NEW_EVEN5(x) \
+	MONO_ARRAY_NEW (x##0)	\
+	MONO_ARRAY_NEW (x##2)	\
+	MONO_ARRAY_NEW (x##4)	\
+	MONO_ARRAY_NEW (x##6)	\
+	MONO_ARRAY_NEW (x##8)
+
+#define MONO_ARRAY_NEW_ODD5(x)	\
+	MONO_ARRAY_NEW (x##1)	\
+	MONO_ARRAY_NEW (x##3)	\
+	MONO_ARRAY_NEW (x##5)	\
+	MONO_ARRAY_NEW (x##7)	\
+	MONO_ARRAY_NEW (x##9)	\
+
+#define MONO_ARRAY_NEW_10(x)	\
+	MONO_ARRAY_NEW_EVEN5 (x) \
+	MONO_ARRAY_NEW_ODD5 (x)	\
+
+// Exclude the hand-written special cases 1-4.
+#define MONO_ARRAY_NEW_ALMOST_ALL \
+	MONO_ARRAY_NEW (5) 	\
+	MONO_ARRAY_NEW (6) 	\
+	MONO_ARRAY_NEW (7) 	\
+	MONO_ARRAY_NEW (8) 	\
+	MONO_ARRAY_NEW (9) 	\
+	MONO_ARRAY_NEW_10(1) 	\
+	MONO_ARRAY_NEW_10(2) 	\
+	MONO_ARRAY_NEW_EVEN5(3) \
+	MONO_ARRAY_NEW (31) 	\
+	MONO_ARRAY_NEW_EVEN5(4) \
+	MONO_ARRAY_NEW_EVEN5(5) \
+	MONO_ARRAY_NEW (60) 	\
+	MONO_ARRAY_NEW (61) 	\
+	MONO_ARRAY_NEW (62) 	\
+	MONO_ARRAY_NEW (63) 	\
+	MONO_ARRAY_NEW (64)
+
+#define MONO_ARRAY_NEW_ALL 	\
+	MONO_ARRAY_NEW (1) 	\
+	MONO_ARRAY_NEW (2) 	\
+	MONO_ARRAY_NEW (3) 	\
+	MONO_ARRAY_NEW (4)	\
+	MONO_ARRAY_NEW_ALMOST_ALL
+
+// Declaring these correctly is tricky and unnecessary.
+// Parameter passing works the same in C and C++ for functions declared varargs or not.
+// If really needed, generate the text, not with the C preprocessor.
+#define MONO_ARRAY_NEW(x) G_EXTERN_C MonoArray *mono_array_new_ ## x (MonoMethod *cm, ...);
+MONO_ARRAY_NEW_ALMOST_ALL
+#undef MONO_ARRAY_NEW
 
 G_EXTERN_C gpointer mono_class_static_field_address (MonoDomain *domain, MonoClassField *field);
 
