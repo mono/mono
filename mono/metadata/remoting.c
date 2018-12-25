@@ -107,7 +107,7 @@ mono_compile_method_icall (MonoMethod *method);
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall (T func, const char *name, const char *sigstr, gboolean save)
+register_icall (T func, const char *name, MonoMethodSignature *sig, gboolean save)
 #else
 static void
 register_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean save)

@@ -681,7 +681,7 @@ mono_dynamic_code_hash_lookup (MonoDomain *domain, MonoMethod *method)
 #ifdef __cplusplus
 template <typename T>
 static void
-register_opcode_emulation (int opcode, const char *name, const char *sigstr, T func, const char *symbol, gboolean no_wrapper)
+register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, T func, const char *symbol, gboolean no_wrapper)
 #else
 static void
 register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
@@ -4644,7 +4644,7 @@ register_icalls (void)
 	register_opcode_emulation (OP_LREM_UN, "__emul_lrem_un", mono_icall_sig_long_long_long, mono_llrem_un, "mono_llrem_un", FALSE);
 #endif
 #if !defined(MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS) || defined(MONO_ARCH_EMULATE_LONG_MUL_OVF_OPTS)
-	register_opcode_emulation (OP_LMUL_OVF_UN, "__emul_lmul_ovf_un", mono_icall_sig_long_long_long", mono_llmult_ovf_un, "mono_llmult_ovf_un", FALSE);
+	register_opcode_emulation (OP_LMUL_OVF_UN, "__emul_lmul_ovf_un", mono_icall_sig_long_long_long, mono_llmult_ovf_un, "mono_llmult_ovf_un", FALSE);
 	register_opcode_emulation (OP_LMUL_OVF, "__emul_lmul_ovf", mono_icall_sig_long_long_long", mono_llmult_ovf, "mono_llmult_ovf", FALSE);
 #endif
 

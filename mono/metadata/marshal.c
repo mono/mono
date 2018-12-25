@@ -119,7 +119,7 @@ get_method_image (MonoMethod *method)
 #ifdef __cplusplus
 template <typename T>
 static void
-register_dyn_icall (T func, const char *name, const char *sigstr, gboolean no_wrapper)
+register_dyn_icall (T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 #else
 static void
 register_dyn_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
@@ -131,7 +131,7 @@ register_dyn_icall (gpointer func, const char *name, MonoMethodSignature *sig, g
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall (T func, const char *name, const char *sigstr, gboolean no_wrapper)
+register_icall (T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
 #else
 static void
 register_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
@@ -143,7 +143,7 @@ register_icall (gpointer func, const char *name, MonoMethodSignature *sig, gbool
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall_no_wrapper (T func, const char *name, const char *sigstr)
+register_icall_no_wrapper (T func, const char *name, MonoMethodSignature *sig)
 #else
 static void
 register_icall_no_wrapper (gpointer func, const char *name, MonoMethodSignature *sig)

@@ -2092,7 +2092,7 @@ void     mono_save_trampoline_xdebug_info   (MonoTrampInfo *info);
 /* This is an exported function */
 void     mono_xdebug_flush                  (void);
 
-void      mono_register_opcode_emulation    (int opcode, const char* name, const char *sigstr, gpointer func, gboolean no_throw);
+void      mono_register_opcode_emulation    (int opcode, const char* name, MonoMethodSignature *sig, gpointer func, gboolean no_throw);
 void      mono_draw_graph                   (MonoCompile *cfg, MonoGraphOptions draw_options);
 void      mono_add_ins_to_end               (MonoBasicBlock *bb, MonoInst *inst);
 
