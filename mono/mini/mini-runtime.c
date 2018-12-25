@@ -4711,8 +4711,8 @@ register_icalls (void)
 		register_opcode_emulation (OP_FADD, "__emul_fadd", mono_icall_sig_double_double_double, mono_fadd, "mono_fadd", FALSE);
 		register_opcode_emulation (OP_FMUL, "__emul_fmul", mono_icall_sig_double_double_double, mono_fmul, "mono_fmul", FALSE);
 		register_opcode_emulation (OP_FNEG, "__emul_fneg", mono_icall_sig_double_double, mono_fneg, "mono_fneg", FALSE);
-		register_opcode_emulation (OP_ICONV_TO_R8, "__emul_iconv_to_r8", mono_icall_sig_double_int32", mono_conv_to_r8, "mono_conv_to_r8", FALSE);
-		register_opcode_emulation (OP_ICONV_TO_R4, "__emul_iconv_to_r4", mono_icall_sig_double_int32", mono_conv_to_r4, "mono_conv_to_r4", FALSE);
+		register_opcode_emulation (OP_ICONV_TO_R8, "__emul_iconv_to_r8", mono_icall_sig_double_int32, mono_conv_to_r8, "mono_conv_to_r8", FALSE);
+		register_opcode_emulation (OP_ICONV_TO_R4, "__emul_iconv_to_r4", mono_icall_sig_double_int32, mono_conv_to_r4, "mono_conv_to_r4", FALSE);
 		register_opcode_emulation (OP_FCONV_TO_R4, "__emul_fconv_to_r4", mono_icall_sig_double_double, mono_fconv_r4, "mono_fconv_r4", FALSE);
 		register_opcode_emulation (OP_FCONV_TO_I1, "__emul_fconv_to_i1", mono_icall_sig_int8_double, mono_fconv_i1, "mono_fconv_i1", FALSE);
 		register_opcode_emulation (OP_FCONV_TO_I2, "__emul_fconv_to_i2", mono_icall_sig_int16_double, mono_fconv_i2, "mono_fconv_i2", FALSE);
