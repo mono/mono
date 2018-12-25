@@ -60,6 +60,7 @@ typedef struct SeqPointInfo SeqPointInfo;
 #include "mono/metadata/security-manager.h"
 #include "mono/metadata/exception.h"
 #include "mono/metadata/callspec.h"
+#include "mono/metadata/icall-signatures.h"
 
 /*
  * The mini code should not have any compile time dependencies on the GC being used, so the same object file from mini/
@@ -356,7 +357,7 @@ extern gboolean mono_do_x86_stack_align;
 extern gboolean	mono_using_xdebug;
 extern int mini_verbose;
 extern int valgrind_register;
-extern MonoMethodSignature *helper_sig_llvmonly_imt_trampoline;
+#define helper_sig_llvmonly_imt_trampoline mono_icall_sig_ptr_ptr_ptr
 
 #define INS_INFO(opcode) (&mini_ins_info [((opcode) - OP_START - 1) * 4])
 
@@ -2066,7 +2067,6 @@ mono_emit_jit_icall (MonoCompile *cfg, T func, MonoInst **args)
 
 MonoInst* mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *info, MonoInst **args);
 MonoInst* mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, MonoInst *this_ins);
-void      mono_create_helper_signatures (void);
 MonoInst* mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig, MonoInst **args);
 gboolean  mini_should_insert_breakpoint (MonoMethod *method);
 int mono_target_pagesize (void);
@@ -2098,14 +2098,14 @@ void      mono_add_ins_to_end               (MonoBasicBlock *bb, MonoInst *inst)
 
 void      mono_replace_ins                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **prev, MonoBasicBlock *first_bb, MonoBasicBlock *last_bb);
 
-void              mini_register_opcode_emulation (int opcode, const char *name, const char *sigstr, gpointer func, const char *symbol, gboolean no_throw);
+void              mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_throw);
 
 #ifdef __cplusplus
 template <typename T>
 inline void
-mini_register_opcode_emulation (int opcode, const char *name, const char *sigstr, T func, const char *symbol, gboolean no_throw)
+mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, T func, const char *symbol, gboolean no_throw)
 {
-	mini_register_opcode_emulation (opcode, name, sigstr, (gpointer)func, symbol, no_throw);
+	mini_register_opcode_emulation (opcode, name, sig, (gpointer)func, symbol, no_throw);
 }
 #endif // __cplusplus
 
