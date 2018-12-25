@@ -13374,8 +13374,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		add_method (acfg, wrapper);
 
 #ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
-		for (int i = 0; i < sizeof (interp_in_static_sigs) / sizeof (const char *); i++) {
-			MonoMethodSignature *sig = mono_create_icall_signature (interp_in_static_sigs [i]);
+		for (int i = 0; i < G_N_ELEMENTS (interp_in_static_sigs); i++) {
+			MonoMethodSignature *sig = *interp_in_static_sigs [i];
 			sig = mono_metadata_signature_dup_full (mono_get_corlib (), sig);
 			sig->pinvoke = FALSE;
 			wrapper = mini_get_interp_in_wrapper (sig);
