@@ -932,6 +932,8 @@ mono_create_jump_table (MonoCompile *cfg, MonoInst *label, MonoBasicBlock **bbs,
 	cfg->patch_info = ji;
 }
 
+#endif // DISABLE_JIT
+
 gpointer
 mono_get_array_new_function (int arity)
 {
@@ -960,6 +962,8 @@ mono_get_array_new_signature (int arity)
 
 	return res;
 }
+
+#ifndef DISABLE_JIT
 
 gboolean
 mini_assembly_can_skip_verification (MonoDomain *domain, MonoMethod *method)
