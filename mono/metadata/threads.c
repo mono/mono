@@ -1703,7 +1703,7 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 
 		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 
-		gboolean interrupt = mono_thread_execute_interruption (&exc);
+		const gboolean interrupt = mono_thread_execute_interruption (&exc);
 
 		if (interrupt)
 			mono_set_pending_exception_handle (exc);
@@ -2174,7 +2174,7 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 
 		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
 
-		gboolean interrupt = mono_thread_execute_interruption (&exc);
+		const gboolean interrupt = mono_thread_execute_interruption (&exc);
 
 		if (interrupt)
 			mono_error_set_exception_handle (error, exc);
