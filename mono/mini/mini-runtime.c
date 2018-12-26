@@ -4842,20 +4842,7 @@ register_icalls (void)
 	// Alternatively, use localalloc in method-to-ir, store
 	// the parameters to that local array, and pass by address.
 	//
-	const int n = 53;
-	/* FIXME n should be 64, but some bug elsewhere, causes
-	   an "unrelated" error:
-		cd mcs/class/corlib
-		make -j11 -C /s/mono4/mono ; make clean ; make run-test FIXTURE=MonoTests.System.DecimalTest
-		make run-test FIXTURE=MonoTests.System.DecimalTest
-		1) TestConstructDouble (MonoTests.System.DecimalTest.TestConstructDouble)
-		System.ExecutionEngineException : Attempting to JIT
-		compile method '(wrapper managed-to-native)
-		ulong object:__icall_wrapper___emul_fconv_to_u8 (double)'
-		while running in aot-only mode.
-		See https://docs.microsoft.com/xamarin/ios/internals/limitations for more information.
-	*/
-	for (int i = 1; i <= n; i += 1 + (i >= 32)) {
+	for (int i = 1; i <= 64; i += 1 + (i >= 32)) {
 		gpointer function = mono_get_array_new_function (i);
 		char *name = g_strdup_printf ("mono_array_new_%d", i);
 		MonoMethodSignature *sig = mono_get_array_new_signature (i);
