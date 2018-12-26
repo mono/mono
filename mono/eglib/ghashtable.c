@@ -665,8 +665,9 @@ guint
 g_str_hash (gconstpointer v1)
 {
 	guint hash = 0;
+	char *p = (char *) v1;
 
-	for (char *p = (char *) v1; *p; ++p)
+	while (*p++)
 		hash = (hash << 5) - (hash + *p);
 
 	return hash;
