@@ -3,7 +3,7 @@
     <TargetFramework>netstandard20</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\sample.cs" />
-    <Reference Include="..\..\Simple.Dependency.dll" />
+    <Compile Include="..\..\..\sample.cs" />
+    <ProjectReference Include="..\Simple.Dependency\Simple.Dependency.csproj" />
   </ItemGroup>
 </Project>
