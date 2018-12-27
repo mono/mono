@@ -170,6 +170,7 @@ mono_jit_info_table_free (MonoJitInfoTable *table)
 static int
 jit_info_table_index (MonoJitInfoTable *table, gint8 *addr)
 {
+	mono_memory_barrier ();
 	int left = 0, right = table->num_chunks;
 
 	g_assert (left < right);
@@ -177,6 +178,7 @@ jit_info_table_index (MonoJitInfoTable *table, gint8 *addr)
 	do {
 		int pos = (left + right) / 2;
 		MonoJitInfoTableChunk *chunk = table->chunks [pos];
+		g_assert (table->num_chunks <= MONO_JIT_INFO_TABLE_CHUNK_SIZE);
 
 		if (addr < chunk->last_code_end)
 			right = pos;
@@ -193,7 +195,7 @@ jit_info_table_index (MonoJitInfoTable *table, gint8 *addr)
 static int
 jit_info_table_chunk_index (MonoJitInfoTableChunk *chunk, MonoThreadHazardPointers *hp, gint8 *addr)
 {
-	int left = 0, right = chunk->num_elements;
+	int left = 0, right = mono_atomic_load_i32 (&chunk->num_elements);
 
 	while (left < right) {
 		int pos = (left + right) / 2;
@@ -229,7 +231,7 @@ jit_info_table_find (MonoJitInfoTable *table, MonoThreadHazardPointers *hp, gint
 	do {
 		MonoJitInfoTableChunk *chunk = table->chunks [chunk_pos];
 
-		while (pos < chunk->num_elements) {
+		while (pos < mono_atomic_load_i32 (&chunk->num_elements)) {
 			ji = (MonoJitInfo *)mono_get_hazardous_pointer ((gpointer volatile*)&chunk->data [pos], hp, JIT_INFO_HAZARD_INDEX);
 
 			++pos;
@@ -347,27 +349,27 @@ jit_info_table_check (MonoJitInfoTable *table)
 		g_assert (chunk->refcount > 0 /* && chunk->refcount <= 8 */);
 		if (chunk->refcount > 10)
 			printf("warning: chunk refcount is %d\n", chunk->refcount);
-		g_assert (chunk->num_elements <= MONO_JIT_INFO_TABLE_CHUNK_SIZE);
+		g_assert (mono_atomic_load_i32 (&chunk->num_elements) <= MONO_JIT_INFO_TABLE_CHUNK_SIZE);
 
-		for (j = 0; j < chunk->num_elements; ++j) {
+		for (j = 0; j < mono_atomic_load_i32 (&chunk->num_elements); ++j) {
 			MonoJitInfo *this_ji = chunk->data [j];
 			MonoJitInfo *next;
 
 			g_assert ((gint8*)this_ji->code_start + this_ji->code_size <= chunk->last_code_end);
 
-			if (j < chunk->num_elements - 1)
+			if (j < mono_atomic_load_i32 (&chunk->num_elements) - 1)
 				next = chunk->data [j + 1];
 			else if (i < table->num_chunks - 1) {
 				int k;
 
 				for (k = i + 1; k < table->num_chunks; ++k)
-					if (table->chunks [k]->num_elements > 0)
+					if (mono_atomic_load_i32 (&table->chunks [k]->num_elements) > 0)
 						break;
 
 				if (k >= table->num_chunks)
 					return;
 
-				g_assert (table->chunks [k]->num_elements > 0);
+				g_assert (mono_atomic_load_i32 (&table->chunks [k]->num_elements) > 0);
 				next = table->chunks [k]->data [0];
 			} else
 				return;
@@ -408,7 +410,7 @@ jit_info_table_realloc (MonoJitInfoTable *old)
 	new_element = 0;
 	for (i = 0; i < old->num_chunks; ++i) {
 		MonoJitInfoTableChunk *chunk = old->chunks [i];
-		int chunk_num_elements = chunk->num_elements;
+		int chunk_num_elements = mono_atomic_load_i32 (&chunk->num_elements);
 		int j;
 
 		for (j = 0; j < chunk_num_elements; ++j) {
@@ -416,7 +418,10 @@ jit_info_table_realloc (MonoJitInfoTable *old)
 				g_assert (new_chunk < num_chunks);
 				result->chunks [new_chunk]->data [new_element] = chunk->data [j];
 				if (++new_element >= JIT_INFO_TABLE_FILLED_NUM_ELEMENTS) {
-					result->chunks [new_chunk]->num_elements = new_element;
+
+					g_assert (new_element < 30000);
+					mono_atomic_store_i32 (&result->chunks [new_chunk]->num_elements, new_element);
+
 					++new_chunk;
 					new_element = 0;
 				}
@@ -426,17 +431,22 @@ jit_info_table_realloc (MonoJitInfoTable *old)
 
 	if (new_chunk < num_chunks) {
 		g_assert (new_chunk == num_chunks - 1);
-		result->chunks [new_chunk]->num_elements = new_element;
-		g_assert (result->chunks [new_chunk]->num_elements > 0);
+
+		g_assert (new_element < 30000);
+		mono_atomic_store_i32 (&result->chunks [new_chunk]->num_elements, new_element);
+		g_assert (new_element > 0);
 	}
 
 	for (i = 0; i < num_chunks; ++i) {
 		MonoJitInfoTableChunk *chunk = result->chunks [i];
-		MonoJitInfo *ji = chunk->data [chunk->num_elements - 1];
+		MonoJitInfo *ji = chunk->data [mono_atomic_load_i32 (&chunk->num_elements) - 1];
 
 		result->chunks [i]->last_code_end = (gint8*)ji->code_start + ji->code_size;
 	}
 
+	for (int i=0; i < result->num_chunks; i++) {
+		g_assert (mono_atomic_load_i32 (&result->chunks [i]->num_elements) < 30000);
+	}
 	return result;
 }
 
@@ -446,10 +456,12 @@ jit_info_table_split_chunk (MonoJitInfoTableChunk *chunk, MonoJitInfoTableChunk 
 	MonoJitInfoTableChunk *new1 = jit_info_table_new_chunk ();
 	MonoJitInfoTableChunk *new2 = jit_info_table_new_chunk ();
 
-	g_assert (chunk->num_elements == MONO_JIT_INFO_TABLE_CHUNK_SIZE);
+	g_assert (mono_atomic_load_i32 (&chunk->num_elements) == MONO_JIT_INFO_TABLE_CHUNK_SIZE);
 
 	new1->num_elements = MONO_JIT_INFO_TABLE_CHUNK_SIZE / 2;
 	new2->num_elements = MONO_JIT_INFO_TABLE_CHUNK_SIZE - new1->num_elements;
+	g_assert (new1->num_elements < 300000);
+	g_assert (new2->num_elements < 300000);
 
 	memcpy ((void*)new1->data, (void*)chunk->data, sizeof (MonoJitInfo*) * new1->num_elements);
 	memcpy ((void*)new2->data, (void*)(chunk->data + new1->num_elements), sizeof (MonoJitInfo*) * new2->num_elements);
@@ -498,12 +510,15 @@ jit_info_table_purify_chunk (MonoJitInfoTableChunk *old)
 	int i, j;
 
 	j = 0;
-	for (i = 0; i < old->num_elements; ++i) {
+	int num_elements = mono_atomic_load_i32 (&old->num_elements);
+	for (i = 0; i < num_elements; ++i) {
 		if (!IS_JIT_INFO_TOMBSTONE (old->data [i]))
 			result->data [j++] = old->data [i];
 	}
 
 	result->num_elements = j;
+	g_assert (j < 300000);
+
 	if (result->num_elements > 0)
 		result->last_code_end = (gint8*)result->data [j - 1]->code_start + result->data [j - 1]->code_size;
 	else
@@ -603,14 +618,14 @@ jit_info_table_add (MonoDomain *domain, MonoJitInfoTable *volatile *table_ptr, M
 	int num_elements;
 	int i;
 
-	table = *table_ptr;
+	table = (MonoJitInfoTable *) mono_atomic_load_ptr ((volatile gpointer *) table_ptr);
 
  restart:
 	chunk_pos = jit_info_table_index (table, (gint8*)ji->code_start + ji->code_size);
 	g_assert (chunk_pos < table->num_chunks);
 	chunk = table->chunks [chunk_pos];
 
-	if (chunk->num_elements >= MONO_JIT_INFO_TABLE_CHUNK_SIZE) {
+	if (mono_atomic_load_i32 (&chunk->num_elements) >= MONO_JIT_INFO_TABLE_CHUNK_SIZE) {
 		MonoJitInfoTable *new_table = jit_info_table_chunk_overflow (table, chunk);
 
 		/* Debugging code, should be removed. */
@@ -628,7 +643,7 @@ jit_info_table_add (MonoDomain *domain, MonoJitInfoTable *volatile *table_ptr, M
 	/* Debugging code, should be removed. */
 	//jit_info_table_check (table);
 
-	num_elements = chunk->num_elements;
+	num_elements = mono_atomic_load_i32 (&chunk->num_elements);
 
 	pos = jit_info_table_chunk_index (chunk, NULL, (gint8*)ji->code_start + ji->code_size);
 
@@ -640,7 +655,8 @@ jit_info_table_add (MonoDomain *domain, MonoJitInfoTable *volatile *table_ptr, M
 	else
 		chunk->data [0] = ji;
 	mono_memory_write_barrier ();
-	chunk->num_elements = ++num_elements;
+	mono_atomic_store_i32 (&chunk->num_elements, ++num_elements);
+	g_assert (num_elements < 300000);
 
 	/* Shift the elements up one by one. */
 	for (i = num_elements - 2; i >= pos; --i) {
@@ -653,13 +669,14 @@ jit_info_table_add (MonoDomain *domain, MonoJitInfoTable *volatile *table_ptr, M
 	chunk->data [pos] = ji;
 
 	/* Set the high code end address chunk entry. */
-	chunk->last_code_end = (gint8*)chunk->data [chunk->num_elements - 1]->code_start
-		+ chunk->data [chunk->num_elements - 1]->code_size;
+	chunk->last_code_end = (gint8*)chunk->data [mono_atomic_load_i32 (&chunk->num_elements) - 1]->code_start
+		+ chunk->data [mono_atomic_load_i32 (&chunk->num_elements) - 1]->code_size;
 
 	++table->num_valid;
 
 	/* Debugging code, should be removed. */
 	//jit_info_table_check (table);
+	mono_memory_write_barrier ();
 }
 
 void
@@ -727,7 +744,7 @@ jit_info_table_remove (MonoJitInfoTable *table, MonoJitInfo *ji)
 	do {
 		chunk = table->chunks [chunk_pos];
 
-		while (pos < chunk->num_elements) {
+		while (pos < mono_atomic_load_i32 (&chunk->num_elements)) {
 			if (chunk->data [pos] == ji)
 				goto found;
 
@@ -750,6 +767,7 @@ jit_info_table_remove (MonoJitInfoTable *table, MonoJitInfo *ji)
 
 	/* Debugging code, should be removed. */
 	//jit_info_table_check (table);
+	mono_memory_write_barrier ();
 }
 
 void
