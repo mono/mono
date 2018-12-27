@@ -1,5 +1,7 @@
 // Test for creating multi-dimensional arrays.
 // See https://github.com/mono/mono/issues/12193.
+// See mono_array_new_n_icall.
+// FIXME Coverage of the doubled parameter count, with lower_bounds.
 
 using System;
 

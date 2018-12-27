@@ -8588,8 +8588,8 @@ calli_end:
 					EMIT_NEW_UNALU (cfg, ins, OP_MOVE, alloc_preg (cfg), dreg);
 					ins->type = STACK_PTR;
 					sp [2] = ins;
-					// FIXME Adjust sp by n - 3?
-					function = mono_array_new_n_icall;
+					// FIXME Adjust sp by n - 3? Attempts failed.
+					function = (gpointer)mono_array_new_n_icall;
 					break;
 				}
 				alloc = mono_emit_jit_icall (cfg, function, sp);
