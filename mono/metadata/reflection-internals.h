@@ -136,7 +136,4 @@ mono_runtime_get_caller_no_system_or_reflection (void);
 MonoAssembly*
 mono_runtime_get_caller_from_stack_mark (MonoStackCrawlMark *stack_mark);
 
-MonoReflectionType *
-mono_type_from_handle (MonoType *handle);
-
 #endif /* __MONO_METADATA_REFLECTION_INTERNALS_H__ */

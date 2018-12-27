@@ -631,7 +631,8 @@ cominterop_get_interface (MonoComObject *obj_raw, MonoClass *ic)
 	HANDLE_FUNCTION_RETURN_VAL (itf);
 }
 
-// This is an icall, it will return NULL and set pending exception on failure.
+// This is an icall, it will return NULL and set pending exception (in
+// mono_type_from_handle wrapper) on failure.
 static MonoReflectionType *
 cominterop_type_from_handle (MonoType *handle)
 {
