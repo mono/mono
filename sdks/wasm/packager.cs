@@ -151,6 +151,7 @@ class Driver {
 		root_search_paths.ForEach(resolver.AddSearchDirectory);
 		resolver.AddSearchDirectory(bcl_facades_prefix);
 		resolver.AddSearchDirectory(bcl_prefix);
+		resolver.AddSearchDirectory(framework_prefix);		
 		rp.AssemblyResolver = resolver;
 
 		rp.InMemory = true;
