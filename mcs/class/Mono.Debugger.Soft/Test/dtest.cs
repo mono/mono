@@ -4509,6 +4509,20 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void CheckElapsedTime() {
+		Event e = run_until ("elapsed_time");
+
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over(); //Thread.Sleep(100)
+		Assert.IsTrue (e.Thread. ElapsedTime() >= 100);
+		e = step_over(); //Thread.Sleep(00);
+		e = step_over(); //Thread.Sleep(200);
+		Assert.IsTrue (e.Thread. ElapsedTime() >= 200);
+	}
+
+	[Test]
 	// Uses a fixed port
 	[Category("NotWorking")]
 	public void Attach () {
