@@ -642,9 +642,10 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void elapsed_time () {
-		Thread.Sleep(100);
-		Thread.Sleep(00);
 		Thread.Sleep(200);
+		Thread.Sleep(00);
+		Thread.Sleep(100);
+		Thread.Sleep(300);
 	}
 	
 
