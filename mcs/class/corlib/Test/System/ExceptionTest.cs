@@ -532,6 +532,7 @@ namespace MonoTests.System
 
 		[Test]
 		[Category("NotOnWindows")]
+		[Category("NotOnLinux")]
 		public void DumpICallTotalLogged ()
 		{
 			DumpLogSet ();
