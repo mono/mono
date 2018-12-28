@@ -5932,7 +5932,7 @@ ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char *path_suffix, c
 #endif
 }
 
-void
+ICALL_EXPORT void
 ves_icall_Mono_Runtime_EnableCrashReportingLog (const char *directory, MonoError *error)
 {
 #ifndef DISABLE_CRASH_REPORTING
@@ -5940,7 +5940,7 @@ ves_icall_Mono_Runtime_EnableCrashReportingLog (const char *directory, MonoError
 #endif
 }
 
-int
+ICALL_EXPORT int
 ves_icall_Mono_Runtime_CheckCrashReportingLog (const char *directory, MonoBoolean clear, MonoError *error)
 {
 	int ret;
