@@ -1,9 +1,4 @@
-//
-// WasmCreateRuntimeJs.cs
-//
-// Author:
-//       Mikayla Hutchinson <m.j.hutchinson@gmail.com>
-//
+﻿//
 // Copyright (c) 2018 Microsoft Corp
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,13 +18,40 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
+using System.IO;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using System.Linq;
 namespace Mono.WebAssembly.Build
 {
-	public class WasmCreateRuntimeJs
+	public class WasmCreateRuntimeJs : Task
 	{
-		public WasmCreateRuntimeJs ()
+		public string VfsPrefix { get; set; }
+		public string DeployPrefix { get; set; }
+		public bool EnableDebugging { get; set; }
+		public bool InitBindings { get; set; }
+
+		[Required]
+		public ITaskItem[] FileList { get; set; }
+
+		[Required]
+		public string OutputFile { get; set; }
+
+		public override bool Execute ()
 		{
+			var template = new RuntimeJs {
+				EnableDebugging = EnableDebugging,
+				VfsPrefix = VfsPrefix,
+				DeployPrefix = DeployPrefix,
+				InitBindings = InitBindings,
+				FileList = FileList.Select (f => f.GetMetadata ("Filename") + f.GetMetadata ("Extension"))
+			};
+
+			var text = template.TransformText ();
+			File.WriteAllText (OutputFile, text);
+
+			return false;
 		}
 	}
 }

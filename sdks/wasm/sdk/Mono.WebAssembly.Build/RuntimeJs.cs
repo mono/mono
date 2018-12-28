@@ -9,19 +9,20 @@
 //------------------------------------------------------------------------------
 
 namespace Mono.WebAssembly.Build {
+    using System.Collections.Generic;
     using System;
     
     
     public partial class RuntimeJs : RuntimeJsBase {
         
         
-        #line 17 ""
+        #line 19 ""
 
 public string VfsPrefix { get; set; }
 public string DeployPrefix { get; set; }
-public string EnableDebugging { get; set; }
-public string FileList { get; set; }
-public string BindingsLoading { get; set; }
+public bool EnableDebugging { get; set; }
+public IEnumerable<string> FileList { get; set; }
+public bool InitBindings { get; set; }
 
         #line default
         #line hidden
@@ -38,7 +39,7 @@ public string BindingsLoading { get; set; }
             #line hidden
             
             #line 5 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(VfsPrefix));
+            this.Write(this.ToStringHelper.ToStringWithCulture(VfsPrefix??"managed"));
             
             #line default
             #line hidden
@@ -50,7 +51,7 @@ public string BindingsLoading { get; set; }
             #line hidden
             
             #line 6 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(DeployPrefix));
+            this.Write(this.ToStringHelper.ToStringWithCulture(DeployPrefix??"managed"));
             
             #line default
             #line hidden
@@ -62,37 +63,49 @@ public string BindingsLoading { get; set; }
             #line hidden
             
             #line 7 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(EnableDebugging));
+            this.Write(this.ToStringHelper.ToStringWithCulture(EnableDebugging?1:0));
             
             #line default
             #line hidden
             
             #line 7 ""
-            this.Write(",\n\t\t\t[ ");
+            this.Write(",\n\t\t\t[ \"");
             
             #line default
             #line hidden
             
             #line 8 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(FileList));
+            this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(", ", FileList)));
             
             #line default
             #line hidden
             
             #line 8 ""
-            this.Write(" ],\n\t\t\tfunction () {\n\t\t\t\t");
+            this.Write("\" ],\n\t\t\tfunction () {\n\t\t\t\t");
             
             #line default
             #line hidden
             
             #line 10 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(BindingsLoading));
+if(InitBindings){
             
             #line default
             #line hidden
             
-            #line 10 ""
-            this.Write("\n\t\t\t\tApp.init ();\n\t\t\t});\n\t},\n};\n\n\n");
+            #line 11 ""
+            this.Write("\t\t\t\tModule.mono_bindings_init(\"[WebAssembly.Bindings]WebAssembly.Runtime\");\n\t\t\t\t");
+            
+            #line default
+            #line hidden
+            
+            #line 12 ""
+}
+            
+            #line default
+            #line hidden
+            
+            #line 13 ""
+            this.Write("\t\t\t\tApp.init ();\n\t\t\t});\n\t},\n};\n\n\n");
             
             #line default
             #line hidden

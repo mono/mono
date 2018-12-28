@@ -15,14 +15,7 @@
     <None Include="..\..\..\out\wasm-bcl\wasm_tools\Mono.Cecil.dll" Link="Mono.Cecil.dll" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)" />
     <None Update="Mono.WebAssembly.Build.targets" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)" />
     <None Update="Mono.WebAssembly.Build.props" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)" />
-    <None Update="RuntimeManifest.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>RuntimeManifest.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="RuntimeManifest.cs">
-      <DependentUpon>RuntimeJs.tt</DependentUpon>
-    </Compile>
+    <None Update="RuntimeJs.tt" Generator="TextTemplatingFilePreprocessor" LastGenOutput="RuntimeJs.cs" />
+    <Compile Update="RuntimeJs.cs" DependentUpon="RuntimeJs.tt" />
   </ItemGroup>
 </Project>
