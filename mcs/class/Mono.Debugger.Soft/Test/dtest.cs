@@ -80,8 +80,6 @@ public class DebuggerTests
 
 	Diag.ProcessStartInfo CreateStartInfo (string[] args) {
 		var pi = new Diag.ProcessStartInfo ();
-		pi.RedirectStandardOutput = true;
-		pi.RedirectStandardError = true;
 		if (runtime != null) {
 			pi.FileName = runtime;
 		} else {
