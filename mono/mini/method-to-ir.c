@@ -7827,7 +7827,7 @@ calli_end:
 				if (!(method->flags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
 					if (emitted_funccall_seq_point) {
 						if (cfg->last_seq_point)
-							cfg->last_seq_point->flags = 0;
+							cfg->last_seq_point->flags |= MONO_INST_NESTED_CALL;
 					}
 					else
 						emitted_funccall_seq_point = TRUE;

@@ -2830,7 +2830,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (!(method->flags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
 					if (emitted_funccall_seq_point)	{
 						if (cbb->last_seq_point)
-							cbb->last_seq_point->flags = 0;
+							cbb->last_seq_point->flags |= MONO_SEQ_POINT_FLAG_NESTED_CALL;
 					}
 					else
 						emitted_funccall_seq_point = TRUE;	
