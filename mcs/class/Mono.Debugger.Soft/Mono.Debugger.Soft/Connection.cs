@@ -1665,7 +1665,15 @@ namespace Mono.Debugger.Soft
 					CattrNamedArgInfo arg = new CattrNamedArgInfo ();
 					int arg_type = r.ReadByte ();
 					arg.is_property = arg_type == 0x54;
-					arg.id = r.ReadId ();
+
+					// 2.12 is the only version we can guarantee the server will send a field id
+					// It was added in https://github.com/mono/mono/commit/db0b932cd6c3c93976479ae3f6b5b2a885f681de
+					// In between 2.11 and 2.12
+					if (arg.is_property)
+						arg.id = r.ReadId ();
+					else if (Version.AtLeast (2, 12))
+						arg.id = r.ReadId ();
+
 					arg.value = r.ReadValue ();
 					info.named_args [j] = arg;
 				}

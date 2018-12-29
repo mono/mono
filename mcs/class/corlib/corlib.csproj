@@ -727,6 +727,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleKeyInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleModifiers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleSpecialKey.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Diagnostics.StackTrace\src\System\Diagnostics\SymbolStore\SymbolToken.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.DriveInfo\src\System\IO\DriveNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.DriveInfo\src\System\IO\DriveType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Directory.cs" />
@@ -916,6 +917,7 @@
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\GCHandleType.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\ArraySortHelper.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Globalization\ISOWeek.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Stream.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\InsufficientMemoryException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\MissingFieldException.cs" />
@@ -1351,7 +1353,6 @@
     <Compile Include="System.Diagnostics.SymbolStore\SymDocumentType.cs" />
     <Compile Include="System.Diagnostics.SymbolStore\SymLanguageType.cs" />
     <Compile Include="System.Diagnostics.SymbolStore\SymLanguageVendor.cs" />
-    <Compile Include="System.Diagnostics.SymbolStore\SymbolToken.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventAttribute.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventCommand.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventCommandEventArgs.cs" />

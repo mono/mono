@@ -69,9 +69,6 @@
 	} 							\
 } while (0)
 
-#define mono_string_builder_capacity(sb) sb->chunkOffset + sb->chunkChars->max_length
-#define mono_string_builder_string_length(sb) sb->chunkOffset + sb->chunkLength
-
 /* 
  * Macros which cache the results of lookups locally.
  * These should be used instead of the original versions, if the __GNUC__
@@ -258,6 +255,7 @@ TYPED_HANDLE_DECL (MonoAppDomain);
 TYPED_HANDLE_DECL (MonoAppDomainSetup);
 
 typedef struct _MonoStringBuilder MonoStringBuilder;
+TYPED_HANDLE_DECL (MonoStringBuilder);
 
 struct _MonoStringBuilder {
 	MonoObject object;
@@ -267,6 +265,20 @@ struct _MonoStringBuilder {
 	int chunkOffset;                  // The logial offset (sum of all characters in previous blocks)
 	int maxCapacity;
 };
+
+static inline int
+mono_string_builder_capacity (MonoStringBuilderHandle sbh)
+{
+	MonoStringBuilder *sb = MONO_HANDLE_RAW (sbh);
+	return sb->chunkOffset + sb->chunkChars->max_length;
+}
+
+static inline int
+mono_string_builder_string_length (MonoStringBuilderHandle sbh)
+{
+	MonoStringBuilder *sb = MONO_HANDLE_RAW (sbh);
+	return sb->chunkOffset + sb->chunkLength;
+}
 
 typedef struct {
 	MonoType *type;
@@ -1621,14 +1633,6 @@ ICALL_EXPORT
 MonoReflectionEvent *
 ves_icall_TypeBuilder_get_event_info (MonoReflectionTypeBuilder *tb, MonoReflectionEventBuilder *eb);
 
-ICALL_EXPORT
-MonoArrayHandle
-ves_icall_SignatureHelper_get_signature_local (MonoReflectionSigHelperHandle sig, MonoError *error);
-
-ICALL_EXPORT
-MonoArrayHandle
-ves_icall_SignatureHelper_get_signature_field (MonoReflectionSigHelperHandle sig, MonoError *error);
-
 MonoReflectionMarshalAsAttributeHandle
 mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, MonoClass *klass, MonoMarshalSpec *spec, MonoError *error);
 
@@ -1933,15 +1937,27 @@ mono_string_to_utf8_ignore (MonoString *s);
 gboolean
 mono_monitor_is_il_fastpath_wrapper (MonoMethod *method);
 
-MonoString*
-mono_string_intern_checked (MonoString *str, MonoError *error);
+MonoStringHandle
+mono_string_is_interned_lookup (MonoStringHandle str, gboolean insert, MonoError *error);
+
+/**
+ * mono_string_intern_checked:
+ * \param str String to intern
+ * \param error set on error.
+ * Interns the string passed.
+ * \returns The interned string. On failure returns NULL and sets \p error
+ */
+#define mono_string_intern_checked(str, error) (mono_string_is_interned_lookup ((str), TRUE, (error)))
+
+/**
+ * mono_string_is_interned_internal:
+ * \param o String to probe
+ * \returns Whether the string has been interned.
+ */
+#define mono_string_is_interned_internal(str, error) (mono_string_is_interned_lookup ((str), FALSE, (error)))
 
 char *
 mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc);
-
-ICALL_EXPORT
-MonoStringHandle
-ves_icall_Mono_Runtime_GetNativeStackTrace (MonoExceptionHandle exc, MonoError *erro);
 
 char *
 mono_exception_get_managed_backtrace (MonoException *exc);
@@ -1996,20 +2012,20 @@ mono_object_handle_isinst (MonoObjectHandle obj, MonoClass *klass, MonoError *er
 MonoObjectHandle
 mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoError *error);
 
-MonoString *
-mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);
+MonoStringHandle
+mono_string_new_size_handle (MonoDomain *domain, gint32 len, MonoError *error);
 
 MonoString*
-mono_string_new_internal (MonoDomain *domain, const char *text);
+mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
+
+MonoString *
+mono_string_new_size_checked (MonoDomain *domain, gint32 len, MonoError *error);
 
 MonoString*
 mono_ldstr_checked (MonoDomain *domain, MonoImage *image, uint32_t str_index, MonoError *error);
 
 MonoStringHandle
 mono_ldstr_handle (MonoDomain *domain, MonoImage *image, uint32_t str_index, MonoError *error);
-
-MonoString*
-mono_string_new_len_checked (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
 MONO_PROFILER_API MonoString*
 mono_string_new_checked (MonoDomain *domain, const char *text, MonoError *merror);
@@ -2024,7 +2040,7 @@ MonoStringHandle
 mono_string_new_utf16_handle (MonoDomain *domain, const gunichar2 *text, gint32 len, MonoError *error);
 
 MonoStringHandle
-mono_string_new_utf8_len_handle (MonoDomain *domain, const char *text, guint length, MonoError *error);
+mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, MonoError *error);
 
 MonoString *
 mono_string_from_utf16_checked (const mono_unichar2 *data, MonoError *error);
@@ -2097,20 +2113,6 @@ int
 mono_runtime_try_exec_main (MonoMethod *method, MonoArray *args, MonoObject **exc);
 
 ICALL_EXPORT
-MonoReflectionMethodHandle
-ves_icall_MonoMethod_MakeGenericMethod_impl (MonoReflectionMethodHandle rmethod, MonoArrayHandle types, MonoError *error);
-
-ICALL_EXPORT
-gint32
-ves_icall_ModuleBuilder_getToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, MonoBoolean create_open_instance, MonoError *error);
-
-ICALL_EXPORT
-gint32
-ves_icall_ModuleBuilder_getMethodToken (MonoReflectionModuleBuilderHandle mb,
-					MonoReflectionMethodHandle method,
-					MonoArrayHandle opt_param_types,
-					MonoError *error);
-ICALL_EXPORT
 void
 ves_icall_ModuleBuilder_WriteToFile (MonoReflectionModuleBuilder *mb, gpointer file);
 
@@ -2120,44 +2122,11 @@ ves_icall_ModuleBuilder_build_metadata (MonoReflectionModuleBuilder *mb);
 
 ICALL_EXPORT
 void
-ves_icall_ModuleBuilder_RegisterToken (MonoReflectionModuleBuilderHandle mb, MonoObjectHandle obj, guint32 token, MonoError *error);
-
-ICALL_EXPORT
-MonoObjectHandle
-ves_icall_ModuleBuilder_GetRegisteredToken (MonoReflectionModuleBuilderHandle mb, guint32 token, MonoError *error);
-
-ICALL_EXPORT
-void
 ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilder *assemblyb);
-
-ICALL_EXPORT
-void
-ves_icall_AssemblyBuilder_UpdateNativeCustomAttributes (MonoReflectionAssemblyBuilderHandle assemblyb, MonoError *error);
 
 ICALL_EXPORT
 MonoArray*
 ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues);
-
-ICALL_EXPORT
-void
-ves_icall_DynamicMethod_create_dynamic_method (MonoReflectionDynamicMethodHandle mb, MonoError *error);
-
-ICALL_EXPORT
-void
-ves_icall_EnumBuilder_setup_enum_type (MonoReflectionTypeHandle enumtype,
-				       MonoReflectionTypeHandle t,
-				       MonoError *error);
-ICALL_EXPORT
-void
-ves_icall_ModuleBuilder_basic_init (MonoReflectionModuleBuilderHandle moduleb, MonoError *error);
-
-ICALL_EXPORT
-guint32
-ves_icall_ModuleBuilder_getUSIndex (MonoReflectionModuleBuilderHandle module, MonoStringHandle str, MonoError *error);
-
-ICALL_EXPORT
-void
-ves_icall_ModuleBuilder_set_wrappers_type (MonoReflectionModuleBuilderHandle moduleb, MonoReflectionTypeHandle type, MonoError *error);
 
 MonoAssembly*
 mono_try_assembly_resolve_handle (MonoDomain *domain, MonoStringHandle fname, MonoAssembly *requesting, gboolean refonly, MonoError *error);
@@ -2202,20 +2171,8 @@ mono_string_length_internal (MonoString *s);
 MonoString*
 mono_string_empty_internal (MonoDomain *domain);
 
-MonoString*
-mono_string_is_interned_internal (MonoString *str);
-
-MonoString*
-mono_string_new_wrapper_internal (const char *text);
-
 char*
 mono_string_to_utf8_checked_internal (MonoString *string_obj, MonoError *error);
-
-mono_unichar2*
-mono_string_to_utf16_internal (MonoString *string_obj);
-
-mono_unichar4*
-mono_string_to_utf32_internal (MonoString *string_obj);
 
 mono_bool
 mono_string_equal_internal (MonoString *s1, MonoString *s2);
@@ -2231,7 +2188,7 @@ void
 mono_value_copy_internal (void* dest, /*const*/ void* src, MonoClass *klass);
 
 void
-mono_value_copy_array_internal (MonoArray *dest, int dest_idx, void* src, int count);
+mono_value_copy_array_internal (MonoArray *dest, int dest_idx, const void* src, int count);
 
 MONO_PROFILER_API MonoVTable* mono_object_get_vtable_internal (MonoObject *obj);
 

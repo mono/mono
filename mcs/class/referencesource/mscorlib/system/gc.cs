@@ -101,6 +101,9 @@ namespace System {
             lastRecordedHeapSize = UIntPtr.Zero;
             lastRecordedFragmentation = UIntPtr.Zero;
         }
+
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        public static extern long GetAllocatedBytesForCurrentThread ();
 #else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]

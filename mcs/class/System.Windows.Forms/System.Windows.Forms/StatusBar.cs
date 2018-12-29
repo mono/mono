@@ -220,6 +220,18 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void Dispose (bool disposing) {
+			if (!IsDisposed)
+			{
+				if (disposing)
+				{
+					if (tooltip_timer != null)
+						tooltip_timer.Dispose();
+
+					if (tooltip_window != null)
+						tooltip_window.Dispose();
+				}
+			}
+
 			base.Dispose (disposing);
 		}
 
