@@ -16,7 +16,7 @@
     <MonoWasmSdkPath Condition="'$(MonoWasmSdkPath)'!='' And !HasTrailingSlash('$(MonoWasmSdkPath)')">$(MonoWasmSdkPath)\</MonoWasmSdkPath>
     <MonoWasmFrameworkPath Condition="'$(MonoWasmFrameworkPath)'==''">$(MonoWasmSdkPath)out\wasm-bcl\wasm\</MonoWasmFrameworkPath>
     <MonoWasmTargetsPath Condition="'$(MonoWasmTargetsPath)'==''">$(MonoWasmSdkPath)wasm\sdk\Mono.WebAssembly.Build\bin\Debug\netstandard2.0\</MonoWasmTargetsPath>
-    <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'==''">$(MonoWasmSdkPath)wasm\debug\</MonoWasmRuntimePath>
+    <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'==''">$(MonoWasmSdkPath)wasm\</MonoWasmRuntimePath>
     <MonoWasmBindingsPath Condition="'$(MonoWasmBindingsPath)'==''">$(MonoWasmSdkPath)wasm\</MonoWasmBindingsPath>
   </PropertyGroup>
 

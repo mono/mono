@@ -1,3 +1,4 @@
+<#@ template inherits="TemplateBase" #>
 <#@ import namespace="System.Collections.Generic" #>
 var Module = { 
 	onRuntimeInitialized: function () {
@@ -5,13 +6,14 @@ var Module = {
 			"<#=VfsPrefix??"managed"#>",
 			"<#=DeployPrefix??"managed"#>",
 			<#=EnableDebugging?1:0#>,
-			[ "<#=string.Join(", ", FileList)#>" ],
+			[ "<#=string.Join("\", \"", FileList)#>" ],
 			function () {
-				<#if(InitBindings){#>
+<#if(InitBindings){#>
 				Module.mono_bindings_init("[WebAssembly.Bindings]WebAssembly.Runtime");
-				<#}#>
+<#}#>
 				App.init ();
-			});
+			}
+		);
 	},
 };
 

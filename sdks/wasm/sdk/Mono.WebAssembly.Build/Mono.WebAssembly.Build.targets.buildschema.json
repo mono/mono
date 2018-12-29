@@ -21,7 +21,7 @@
       "kind": "string-list"
     },
     "MonoWasmI18n": {
-      "Description": "Internationalization code pages to be supported. Default is None.",
+      "description": "Internationalization code pages to be supported. Default is None.",
       "values": {
         "cjk": "Chinese, Japanese and Korean",
         "mideast": "Arabic, Hebrew, Turkish and Latin5",
@@ -32,6 +32,11 @@
         "none": "Do not include any additional code pages"
       },
       "valueSeparators": ",;"
+    }
+    "EnableDefaultWebContentItems": {
+      "description": "Whether to automatically include html, js, css, png and jpg files in the project as Content items",
+      "kind": "bool",
+      "default": true
     }
   }
 }

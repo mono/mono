@@ -49,9 +49,11 @@ namespace Mono.WebAssembly.Build
 			};
 
 			var text = template.TransformText ();
+
+			Directory.CreateDirectory (Path.GetDirectoryName (OutputFile));
 			File.WriteAllText (OutputFile, text);
 
-			return false;
+			return true;
 		}
 	}
 }

@@ -132,12 +132,14 @@ namespace Mono.WebAssembly.Build
 			}
 
 			//add references for non-framework assemblies
-			foreach (var asm in Assemblies) {
-				var p = asm.GetMetadata ("FullPath");
-				if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
-					continue;
+			if (Assemblies != null) {
+				foreach (var asm in Assemblies) {
+					var p = asm.GetMetadata ("FullPath");
+					if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
+						continue;
+					}
+					sb.AppendFormat (" -r \"{0}\"", p);
 				}
-				sb.AppendFormat (" -r \"{0}\"", p);
 			}
 
 			if (string.IsNullOrEmpty (I18n)) {
