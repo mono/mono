@@ -822,7 +822,12 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose (bool disposing) {
 			if (disposing)
+			{
 				image_list = null;
+
+				if (tooltip_window != null)
+					tooltip_window.Dispose();
+			}
 
 			base.Dispose (disposing);
 		}

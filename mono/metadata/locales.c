@@ -37,6 +37,7 @@
 #if defined(__APPLE__)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
+#include "icall-decl.h"
 
 #undef DEBUG
 
@@ -722,13 +723,6 @@ ves_icall_System_Globalization_CultureInfo_internal_get_cultures (MonoBoolean ne
 fail:
 	mono_error_set_pending_exception (error);
 	return ret;
-}
-
-int
-ves_icall_System_Threading_Thread_current_lcid (void)
-{
-	/* Invariant */
-	return 0x007F;
 }
 
 static gint32 string_invariant_compare_char (gunichar2 c1, gunichar2 c2,

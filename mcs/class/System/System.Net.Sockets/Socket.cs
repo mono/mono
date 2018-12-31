@@ -1391,6 +1391,8 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
+		public int Receive (Span<byte> buffer) => Receive (buffer, SocketFlags.None);
+
 		public bool ReceiveAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
@@ -1881,6 +1883,8 @@ namespace System.Net.Sockets
 		{
 			return Send (buffer.ToArray(), socketFlags);
 		}
+
+		public int Send (ReadOnlySpan<byte> buffer) => Send (buffer, SocketFlags.None);
 
 		public bool SendAsync (SocketAsyncEventArgs e)
 		{

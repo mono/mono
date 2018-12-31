@@ -483,7 +483,7 @@ namespace System.Windows.Forms.Layout
 			CalculateColumnWidths (settings, actual_positions, max_colspan, settings.ColumnStyles, auto_size, column_widths, false);
 
 			// Calculate available width
-			int available_width = size.Width - (border_width * (columns + 1));
+			int available_width = size.Width < Int16.MaxValue ? size.Width - (border_width * (columns + 1)) : 0;
 			foreach (int width in column_widths)
 				available_width -= width;
 
@@ -516,7 +516,7 @@ namespace System.Windows.Forms.Layout
 			CalculateRowHeights (settings, actual_positions, max_rowspan, settings.RowStyles, auto_size, column_widths, row_heights);
 
 			// Calculate available height
-			int available_height = size.Height - (border_width * (rows + 1));
+			int available_height = size.Height < Int16.MaxValue ? size.Height - (border_width * (rows + 1)) : 0;
 			foreach (int height in row_heights)
 				available_height -= height;
 

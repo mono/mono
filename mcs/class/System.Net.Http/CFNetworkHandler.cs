@@ -57,13 +57,35 @@ namespace System.Net.Http
 			public HttpRequestMessage Request;
 			public CancellationTokenRegistration CancellationTokenRegistration;
 			public CFContentStream ContentStream;
+			public bool StreamCanBeDisposed;
 
 			public void Close ()
 			{
 				CancellationTokenRegistration.Dispose ();
-                                if (ContentStream != null) {
-                                    ContentStream.Close ();
-                                }
+				if (ContentStream != null) {
+					// The Close method of the CFContentStream blocks as you can see:
+					// public void Close ()
+					// {
+					//	data_read_event.WaitOne (); // make sure there's no pending data
+					//
+					//	data_mutex.WaitOne ();
+					//	data = null;
+					//	this.http_stream.ErrorEvent -= HandleErrorEvent;
+					//	data_mutex.ReleaseMutex ();
+					//
+					//	data_event.Set ();
+					// }
+					// This means. that when we want to ignore the data of the content, which happens
+					// in the first request of a redirect, if we want to close, ignoring the content
+					// we will have a deadlock.
+					// Dispose will clean all the data, without waiting for the read, which by design in the
+					// CFContentStream, blocks the thread. This happens ONLY after the first request that gets
+					// a redirect status code. All other cases should call close.
+					if (StreamCanBeDisposed)
+						ContentStream.Dispose ();
+					else
+						ContentStream.Close ();
+				}
 			}
 		}
 
@@ -174,6 +196,11 @@ namespace System.Net.Http
 
 		protected internal override async Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
+			return await SendAsync (request, cancellationToken, true).ConfigureAwait (false);
+		}
+		
+		internal async Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken, bool isFirstRequest)
+		{
 			sentRequest = true;
 
 			CFHTTPStream stream;
@@ -194,7 +221,8 @@ namespace System.Net.Http
 				}
 			}
 
-			stream.ShouldAutoredirect = allowAutoRedirect;
+			if (!isFirstRequest && allowAutoRedirect)
+				stream.ShouldAutoredirect = allowAutoRedirect;
 			stream.HasBytesAvailableEvent += HandleHasBytesAvailableEvent;
 			stream.ErrorEvent += HandleErrorEvent;
 			stream.ClosedEvent += HandleClosedEvent;
@@ -234,9 +262,31 @@ namespace System.Net.Http
 				CloseStream (stream);
 			});
 
+			if (isFirstRequest) {
+				var initialRequest = await response.Task;
+ 				var status = initialRequest.StatusCode;
+ 				if (IsRedirect (status) && allowAutoRedirect) {
+ 					bucket.StreamCanBeDisposed = true;
+					// remove headers in a redirect for Authentication.
+					request.Headers.Authorization = null;
+ 					return await SendAsync (request, cancellationToken, false).ConfigureAwait (false);
+ 				}
+ 				return initialRequest;
+ 			} 
 			return await response.Task;
 		}
 
+		// Decide if we redirect or not, similar to what is done in the managed handler
+		// https://github.com/mono/mono/blob/eca15996c7163f331c9f2cd0a17b63e8f92b1d55/mcs/class/referencesource/System/net/System/Net/HttpWebRequest.cs#L5681
+		static bool IsRedirect (HttpStatusCode status)
+		{
+			return status == HttpStatusCode.Ambiguous || // 300
+				status == HttpStatusCode.Moved || // 301
+				status == HttpStatusCode.Redirect || // 302
+				status == HttpStatusCode.RedirectMethod || // 303
+				status == HttpStatusCode.RedirectKeepVerb; // 307
+		}
+		
 		void HandleErrorEvent (object sender, CFStream.StreamEventArgs e)
 		{
 			var stream = (CFHTTPStream)sender;

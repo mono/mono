@@ -30,8 +30,8 @@
 #include "string-icalls.h"
 #include "threadpool-io.h"
 #include "threadpool.h"
-#include "utils/mono-digest.h"
-#include "utils/mono-forward-internal.h"
+#include "mono/utils/mono-digest.h"
+#include "mono/utils/mono-forward-internal.h"
 #include "w32event.h"
 #include "w32file.h"
 #include "w32mutex.h"
@@ -54,7 +54,10 @@ typedef enum {
 #define NOHANDLES(inner) inner
 #define HANDLES_REUSE_WRAPPER(...) /* nothing */
 
-// Generate prototypes for coop icall wrappers.
+// Generate prototypes for coop icall wrappers and coop icalls.
+#define MONO_HANDLE_REGISTER_ICALL(func, ret, nargs, argtypes) \
+	MONO_HANDLE_DECLARE (,,func ## _impl, ret, nargs, argtypes); \
+	MONO_HANDLE_REGISTER_ICALL_DECLARE_RAW (func, ret, nargs, argtypes);
 #define ICALL_TYPE(id, name, first)	/* nothing */
 #define ICALL(id, name, func) 		/* nothing */
 #define HANDLES(id, name, func, ret, nargs, argtypes) \
@@ -66,6 +69,7 @@ typedef enum {
 #undef HANDLES
 #undef HANDLES_REUSE_WRAPPER
 #undef NOHANDLES
+#undef MONO_HANDLE_REGISTER_ICALL
 
 // This is sorted.
 // grep ICALL_EXPORT | sort | uniq
@@ -73,7 +77,6 @@ ICALL_EXPORT MonoArray* ves_icall_System_Environment_GetEnvironmentVariableNames
 ICALL_EXPORT MonoArray* ves_icall_System_Environment_GetLogicalDrives (void);
 ICALL_EXPORT MonoAssemblyName* ves_icall_System_Reflection_AssemblyName_GetNativeName (MonoAssembly*);
 ICALL_EXPORT MonoBoolean ves_icall_RuntimeTypeHandle_is_subclass_of (MonoType*, MonoType*);
-ICALL_EXPORT MonoBoolean ves_icall_System_Array_FastCopy (MonoArray*, int, MonoArray*, int, int);
 ICALL_EXPORT MonoBoolean ves_icall_System_Buffer_BlockCopyInternal (MonoArray*, gint32, MonoArray*, gint32, gint32);
 ICALL_EXPORT MonoBoolean ves_icall_System_Environment_GetIs64BitOperatingSystem (void);
 ICALL_EXPORT MonoBoolean ves_icall_System_Environment_get_HasShutdownStarted (void);
@@ -89,10 +92,10 @@ ICALL_EXPORT MonoObject* ves_icall_MonoField_GetRawConstantValue (MonoReflection
 ICALL_EXPORT MonoObject* ves_icall_MonoField_GetValueInternal (MonoReflectionField* field, MonoObject* obj);
 ICALL_EXPORT MonoObject* ves_icall_property_info_get_default_value (MonoReflectionProperty*);
 ICALL_EXPORT MonoReflectionType* ves_icall_Remoting_RealProxy_InternalGetProxyType (MonoTransparentProxy*);
-ICALL_EXPORT MonoType* mono_ArgIterator_IntGetNextArgType (MonoArgIterator*);
-ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArg (MonoArgIterator*);
-ICALL_EXPORT MonoTypedRef mono_ArgIterator_IntGetNextArgT (MonoArgIterator*, MonoType*);
-ICALL_EXPORT MonoTypedRef mono_TypedReference_MakeTypedReferenceInternal (MonoObject*, MonoArray*);
+ICALL_EXPORT void ves_icall_System_ArgIterator_Setup (MonoArgIterator*, char*, char*);
+ICALL_EXPORT MonoType* ves_icall_System_ArgIterator_IntGetNextArgType (MonoArgIterator*);
+ICALL_EXPORT void ves_icall_System_ArgIterator_IntGetNextArg (MonoArgIterator*, MonoTypedRef*);
+ICALL_EXPORT void ves_icall_System_ArgIterator_IntGetNextArgWithType (MonoArgIterator*, MonoTypedRef*, MonoType*);
 ICALL_EXPORT double ves_icall_System_Math_Abs_double (double);
 ICALL_EXPORT double ves_icall_System_Math_Acos (double);
 ICALL_EXPORT double ves_icall_System_Math_Acosh (double);
@@ -157,9 +160,9 @@ ICALL_EXPORT int ves_icall_Interop_Sys_DoubleToString (double, char*, char*, int
 ICALL_EXPORT int ves_icall_System_Environment_get_Platform (void);
 ICALL_EXPORT int ves_icall_System_GC_GetCollectionCount (int);
 ICALL_EXPORT int ves_icall_System_GC_GetMaxGeneration (void);
+ICALL_EXPORT gint64 ves_icall_System_GC_GetAllocatedBytesForCurrentThread (void);
 ICALL_EXPORT int ves_icall_System_Threading_Thread_SystemMaxStackSize (void);
 ICALL_EXPORT int ves_icall_get_method_attributes (MonoMethod* method);
-ICALL_EXPORT void mono_ArgIterator_Setup (MonoArgIterator*, char*, char*);
 ICALL_EXPORT void ves_icall_Mono_Runtime_RegisterReportingForNativeLib (const char*, const char*);
 ICALL_EXPORT void ves_icall_System_Array_GetGenericValueImpl (MonoArray*, guint32, gpointer);
 ICALL_EXPORT void ves_icall_System_Array_SetGenericValueImpl (MonoArray*, guint32, gpointer);
