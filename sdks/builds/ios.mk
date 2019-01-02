@@ -17,7 +17,7 @@ PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 #
 # Parameters
 #  $(1): target (target32/target32s/target64)
-#  $(2): host arch (arm or aarch64)
+#  $(2): host triple
 #  $(3): host arch for compiler (armv7 or arm64)
 #
 # Flags:
@@ -171,7 +171,8 @@ $(eval $(call iOSDeviceTemplate,targetwatch64_32,aarch64-apple-darwin10_ilp32,ar
 #
 # Parameters
 #  $(1): target (sim32 or sim64)
-#  $(2): host arch (i386 or x86_64)
+#  $(2): host triple
+#  $(3): host arch (i386 or x86_64)
 #
 # Flags:
 #  ios-$(1)_SYSROOT
@@ -201,18 +202,18 @@ _ios-$(1)_AC_VARS= \
 
 _ios-$(1)_CFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
-	-arch $(2) \
+	-arch $(3) \
 	-Wl,-application_extension
 
 _ios-$(1)_CPPFLAGS= \
 	-DMONOTOUCH=1 \
 	$$(ios-$(1)_SYSROOT) \
-	-arch $(2) \
+	-arch $(3) \
 	-Wl,-application_extension
 
 _ios-$(1)_CXXFLAGS= \
 	$$(ios-$(1)_SYSROOT) \
-	-arch $(2) \
+	-arch $(3) \
 	-Wl,-application_extension
 
 _ios-$(1)_CONFIGURE_FLAGS= \
@@ -237,7 +238,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios,$(1),$(2)-apple-darwin10))
+$$(eval $$(call RuntimeTemplate,ios,$(1),$(2)))
 
 endef
 
@@ -277,10 +278,10 @@ ios-simwatch_AC_VARS =  \
 	ac_cv_func_execvp=no \
 	ac_cv_func_signal=no
 
-$(eval $(call iOSSimulatorTemplate,sim32,i386))
-$(eval $(call iOSSimulatorTemplate,sim64,x86_64))
-$(eval $(call iOSSimulatorTemplate,simtv,x86_64))
-$(eval $(call iOSSimulatorTemplate,simwatch,i386))
+$(eval $(call iOSSimulatorTemplate,sim32,i386-apple-darwin10,i386))
+$(eval $(call iOSSimulatorTemplate,sim64,x86_64-apple-darwin10,x86_64))
+$(eval $(call iOSSimulatorTemplate,simtv,x86_64-apple-darwin10,x86_64))
+$(eval $(call iOSSimulatorTemplate,simwatch,i386-apple-darwin10,i386))
 
 ##
 # Cross compiler builds
