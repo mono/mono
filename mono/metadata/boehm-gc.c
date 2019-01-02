@@ -454,6 +454,19 @@ mono_gc_is_incremental()
 #endif		
 }
 
+void 
+mono_gc_set_incremental(MonoBoolean value)
+{
+#if HAVE_BDWGC_GC
+	if (GC_is_incremental_mode() == value)
+		return;
+    if (value)
+		GC_enable_incremental();
+	else
+		GC_disable_incremental();
+#endif		
+}
+
 gboolean
 mono_gc_is_gc_thread (void)
 {

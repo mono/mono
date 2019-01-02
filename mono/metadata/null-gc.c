@@ -108,6 +108,11 @@ mono_gc_is_incremental()
     return FALSE;
 }
 
+void
+mono_gc_set_incremental(MonoBoolean value)
+{
+}
+
 gboolean
 mono_gc_is_gc_thread (void)
 {
