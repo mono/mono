@@ -2661,6 +2661,11 @@ mono_gc_is_incremental()
 }
 
 void
+mono_gc_set_incremental(MonoBoolean value)
+{
+}
+
+void
 mono_gc_set_max_time_slice_ns(int64_t maxTimeSlice)
 {
 }

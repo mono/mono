@@ -411,6 +411,17 @@ mono_gc_is_incremental()
     return GC_is_incremental_mode();
 }
 
+void 
+mono_gc_set_incremental(MonoBoolean value)
+{
+	if (GC_is_incremental_mode() == value)
+		return;
+	if (value)
+		GC_enable_incremental();
+	else
+		GC_disable_incremental();
+}
+
 gboolean
 mono_gc_is_gc_thread (void)
 {
