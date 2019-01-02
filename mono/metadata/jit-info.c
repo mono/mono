@@ -87,6 +87,7 @@ mono_jit_info_table_new (MonoDomain *domain)
 	table->chunks [0] = jit_info_table_new_chunk ();
 	table->num_valid = 0;
 
+	g_assert (table->chunks [0]->num_elements < MONO_JIT_INFO_TABLE_CHUNK_SIZE + 1);
 	return table;
 }
 
@@ -189,7 +190,6 @@ jit_info_table_index (MonoJitInfoTable *table, gint8 *addr)
 	do {
 		int pos = (left + right) / 2;
 		MonoJitInfoTableChunk *chunk = table->chunks [pos];
-		g_assert (table->num_chunks <= MONO_JIT_INFO_TABLE_CHUNK_SIZE);
 
 		if (addr < chunk->last_code_end)
 			right = pos;
@@ -415,8 +415,10 @@ jit_info_table_realloc (MonoJitInfoTable *old)
 	result->num_chunks = num_chunks;
 	result->num_valid = old->num_valid;
 
-	for (i = 0; i < num_chunks; ++i)
+	for (i = 0; i < num_chunks; ++i) {
 		result->chunks [i] = jit_info_table_new_chunk ();
+		g_assert (result->chunks [i]->num_elements < MONO_JIT_INFO_TABLE_CHUNK_SIZE + 1);
+	}
 
 	new_chunk = 0;
 	new_element = 0;
@@ -431,7 +433,7 @@ jit_info_table_realloc (MonoJitInfoTable *old)
 				result->chunks [new_chunk]->data [new_element] = chunk->data [j];
 				if (++new_element >= JIT_INFO_TABLE_FILLED_NUM_ELEMENTS) {
 
-					g_assert (new_element < 30000);
+					g_assert (new_element < MONO_JIT_INFO_TABLE_CHUNK_SIZE + 1);
 					mono_atomic_store_i32 (&result->chunks [new_chunk]->num_elements, new_element);
 
 					++new_chunk;
@@ -444,7 +446,7 @@ jit_info_table_realloc (MonoJitInfoTable *old)
 	if (new_chunk < num_chunks) {
 		g_assert (new_chunk == num_chunks - 1);
 
-		g_assert (new_element < 30000);
+		g_assert (new_element < MONO_JIT_INFO_TABLE_CHUNK_SIZE + 1);
 		mono_atomic_store_i32 (&result->chunks [new_chunk]->num_elements, new_element);
 		g_assert (new_element > 0);
 	}
@@ -457,7 +459,7 @@ jit_info_table_realloc (MonoJitInfoTable *old)
 	}
 
 	for (int i=0; i < result->num_chunks; i++) {
-		g_assert (mono_atomic_load_i32 (&result->chunks [i]->num_elements) < 30000);
+		g_assert (mono_atomic_load_i32 (&result->chunks [i]->num_elements) < MONO_JIT_INFO_TABLE_CHUNK_SIZE + 1);
 	}
 	return result;
 }
@@ -472,8 +474,6 @@ jit_info_table_split_chunk (MonoJitInfoTableChunk *chunk, MonoJitInfoTableChunk 
 
 	new1->num_elements = MONO_JIT_INFO_TABLE_CHUNK_SIZE / 2;
 	new2->num_elements = MONO_JIT_INFO_TABLE_CHUNK_SIZE - new1->num_elements;
-	g_assert (new1->num_elements < 300000);
-	g_assert (new2->num_elements < 300000);
 
 	memcpy ((void*)new1->data, (void*)chunk->data, sizeof (MonoJitInfo*) * new1->num_elements);
 	memcpy ((void*)new2->data, (void*)(chunk->data + new1->num_elements), sizeof (MonoJitInfo*) * new2->num_elements);
@@ -482,6 +482,11 @@ jit_info_table_split_chunk (MonoJitInfoTableChunk *chunk, MonoJitInfoTableChunk 
 		+ new1->data [new1->num_elements - 1]->code_size;
 	new2->last_code_end = (gint8*)new2->data [new2->num_elements - 1]->code_start
 		+ new2->data [new2->num_elements - 1]->code_size;
+
+	// Do after memcpy
+	mono_memory_barrier ();
+	g_assert (new1->num_elements < MONO_JIT_INFO_TABLE_CHUNK_SIZE + 1);
+	g_assert (new2->num_elements < MONO_JIT_INFO_TABLE_CHUNK_SIZE + 1);
 
 	*new1p = new1;
 	*new2p = new2;
@@ -529,7 +534,7 @@ jit_info_table_purify_chunk (MonoJitInfoTableChunk *old)
 	}
 
 	result->num_elements = j;
-	g_assert (j < 300000);
+	g_assert (j < MONO_JIT_INFO_TABLE_CHUNK_SIZE + 1);
 
 	if (result->num_elements > 0)
 		result->last_code_end = (gint8*)result->data [j - 1]->code_start + result->data [j - 1]->code_size;
@@ -673,7 +678,7 @@ jit_info_table_add (MonoDomain *domain, MonoJitInfoTable *volatile *table_ptr, M
 		chunk->data [0] = ji;
 	mono_memory_write_barrier ();
 	mono_atomic_store_i32 (&chunk->num_elements, ++num_elements);
-	g_assert (num_elements < 300000);
+	g_assert (num_elements < MONO_JIT_INFO_TABLE_CHUNK_SIZE + 1);
 
 	/* Shift the elements up one by one. */
 	for (i = num_elements - 2; i >= pos; --i) {
