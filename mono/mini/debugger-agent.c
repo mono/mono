@@ -741,7 +741,7 @@ static SingleStepReq *ss_req;
 static int ss_count;
 #endif
 
-bool g_unity_pause_point_active;
+gboolean g_unity_pause_point_active;
 
 /* The protocol version of the client */
 static int major_version, minor_version;
