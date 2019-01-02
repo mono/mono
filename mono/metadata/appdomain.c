@@ -633,6 +633,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SETVAL (ad, data, MonoDomain*, data);
 	data->domain = MONO_HANDLE_RAW (ad);
+	mono_gc_wbarrier_generic_nostore (&data->domain);	
 	data->friendly_name = g_strdup (friendly_name);
 
 	MONO_PROFILER_RAISE (domain_name, (data, data->friendly_name));
@@ -660,6 +661,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	goto_if_nok (error, leave);
 
 	data->setup = MONO_HANDLE_RAW (copy_app_domain_setup (data, setup, error));
+	mono_gc_wbarrier_generic_nostore (&data->setup);
 	if (!mono_error_ok (error)) {
 		g_free (data->friendly_name);
 		goto leave;
