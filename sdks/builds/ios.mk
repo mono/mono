@@ -104,37 +104,45 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,ios,$(1),$(2)-apple-darwin10))
+$$(eval $$(call RuntimeTemplate,ios,$(1),$(2)))
+
 
 endef
 
 ios_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$(IOS_VERSION).sdk -miphoneos-version-min=$(IOS_VERSION_MIN)
 tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS$(TVOS_VERSION).sdk 	-mtvos-version-min=$(TVOS_VERSION_MIN)
 watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS_VERSION).sdk -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
+watchos5_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS5_VERSION).sdk -mwatchos-version-min=$(WATCHOS5_VERSION_MIN)
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes --with-monotouch-tv
 ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes --with-monotouch-watch
+ios-targetwatch64_32_CONFIGURE_FLAGS = --enable-cooperative-suspend --with-bitcode=yes --with-monotouch-watch
 
 ios-target32_SYSROOT = $(ios_sysroot)
 ios-target32s_SYSROOT = $(ios_sysroot)
 ios-target64_SYSROOT = $(ios_sysroot)
 ios-targettv_SYSROOT = $(tvos_sysroot)
 ios-targetwatch_SYSROOT = $(watchos_sysroot)
+ios-targetwatch64_32_SYSROOT = $(watchos5_sysroot)
 
 ios-target32_CPPFLAGS = -DHOST_IOS
 ios-target32s_CPPFLAGS = -DHOST_IOS
 ios-target64_CPPFLAGS = -DHOST_IOS
 ios-targettv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
 ios-targetwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
+ios-targetwatch64_32_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
 ios-targettv_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 ios-targettv_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 ios-targetwatch_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 ios-targetwatch_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+ios-targetwatch64_32_CFLAGS = -fembed-bitcode -fno-gnu-inline-asm
+ios-targetwatch64_32_CXXFLAGS = -fembed-bitcode -fno-gnu-inline-asm
 
 ios-targettv_LDFLAGS = -Wl,-bitcode_bundle -framework CoreFoundation -lobjc -lc++
 ios-targetwatch_LDFLAGS = -Wl,-bitcode_bundle -framework CoreFoundation -lobjc -lc++
+ios-targetwatch64_32_LDFLAGS = -Wl,-bitcode_bundle -framework CoreFoundation -lobjc -lc++
 
 ios-targettv_AC_VARS = \
 	ac_cv_func_system=no			\
@@ -147,14 +155,16 @@ ios-targettv_AC_VARS = \
 	ac_cv_func_execvp=no            \
 	ac_cv_func_signal=no
 ios-targetwatch_AC_VARS = $(ios-targettv_AC_VARS)
+ios-targetwatch64_32_AC_VARS = $(ios-targettv_AC_VARS)
 
 # ios-target32_BITCODE_MARKER=-fembed-bitcode-marker
-$(eval $(call iOSDeviceTemplate,target32,arm,armv7))
-$(eval $(call iOSDeviceTemplate,target32s,arm,armv7s))
+$(eval $(call iOSDeviceTemplate,target32,arm-apple-darwin10,armv7))
+$(eval $(call iOSDeviceTemplate,target32s,arm-apple-darwin10,armv7s))
 # ios-target64_BITCODE_MARKER=-fembed-bitcode-marker
-$(eval $(call iOSDeviceTemplate,target64,aarch64,arm64))
-$(eval $(call iOSDeviceTemplate,targettv,aarch64,arm64))
-$(eval $(call iOSDeviceTemplate,targetwatch,armv7k,armv7k))
+$(eval $(call iOSDeviceTemplate,target64,aarch64-apple-darwin10,arm64))
+$(eval $(call iOSDeviceTemplate,targettv,aarch64-apple-darwin10,arm64))
+$(eval $(call iOSDeviceTemplate,targetwatch,armv7k-apple-darwin10,armv7k))
+$(eval $(call iOSDeviceTemplate,targetwatch64_32,aarch64-apple-darwin10_ilp32,arm64_32))
 
 ##
 # Simulator builds
