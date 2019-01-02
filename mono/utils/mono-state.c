@@ -174,12 +174,18 @@ mono_summarize_timeline_phase_log (MonoSummaryStage next)
 			out_level = MonoSummarySuspendHandshake;
 			break;
 		case MonoSummarySuspendHandshake:
-			out_level = MonoSummaryDumpTraversal;
+			out_level = MonoSummaryUnmanagedStacks;
 			break;
-		case MonoSummaryDumpTraversal:
+		case MonoSummaryUnmanagedStacks:
+			out_level = MonoSummaryManagedStacks;
+			break;
+		case MonoSummaryManagedStacks:
 			out_level = MonoSummaryStateWriter;
 			break;
 		case MonoSummaryStateWriter:
+			out_level = MonoSummaryStateWriterDone;
+			break;
+		case MonoSummaryStateWriterDone:
 #ifdef TARGET_OSX
 			if (mono_merp_enabled ()) {
 				out_level = MonoSummaryMerpWriter;
@@ -253,7 +259,8 @@ mono_summarize_timeline_read_level (const char *directory, gboolean clear)
 	gboolean has_level_merp_invoke = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryMerpInvoke);
 	gboolean has_level_merp_writer = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryMerpWriter);
 	gboolean has_level_state_writer = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryStateWriter);
-	gboolean has_level_dump_traversal = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryDumpTraversal);
+	gboolean has_level_managed_stacks = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryManagedStacks);
+	gboolean has_level_unmanaged_stacks = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryUnmanagedStacks);
 	gboolean has_level_suspend_handshake = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummarySuspendHandshake);
 	gboolean has_level_setup = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummarySetup);
 
@@ -267,8 +274,10 @@ mono_summarize_timeline_read_level (const char *directory, gboolean clear)
 		return MonoSummaryMerpWriter;
 	else if (has_level_state_writer)
 		return MonoSummaryStateWriter;
-	else if (has_level_dump_traversal)
-		return MonoSummaryDumpTraversal;
+	else if (has_level_managed_stacks)
+		return MonoSummaryManagedStacks;
+	else if (has_level_unmanaged_stacks)
+		return MonoSummaryUnmanagedStacks;
 	else if (has_level_suspend_handshake)
 		return MonoSummarySuspendHandshake;
 	else if (has_level_setup)
