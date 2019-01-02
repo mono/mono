@@ -6351,48 +6351,59 @@ summary_timedwait (SummarizerGlobalState *state, int timeout_seconds)
 	return;
 }
 
+static MonoThreadSummary *
+summarizer_try_read_thread (SummarizerGlobalState *state, int index)
+{
+	gpointer old_value = NULL;
+	gpointer new_value = GINT_TO_POINTER(-1);
+
+	do {
+		old_value = state->all_threads [index];
+	} while (mono_atomic_cas_ptr ((volatile gpointer *) &state->all_threads [index], new_value, old_value) != old_value);
+
+	MonoThreadSummary *thread = (MonoThreadSummary *) old_value;
+	return thread;
+}
+
 static void
 summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, size_t provided_size, MonoThreadSummary *controlling)
 {
 	// See the array writes
 	mono_memory_barrier ();
 
-	mono_summarize_timeline_phase_log (MonoSummaryStateWriter);
+	MonoThreadSummary *threads [MAX_NUM_THREADS];
+	memset (threads, 0, sizeof(threads));
 
-	mono_summarize_native_state_begin (mem, provided_size);
+	mono_summarize_timeline_phase_log (MonoSummaryManagedStacks);
 	for (int i=0; i < state->nthreads; i++) {
-		gpointer old_value = NULL;
-		while (TRUE) {
-			// Lock array slot with sentinel and get value set previously
-			// This lets late dumpers know that they're late.
-			gpointer new_old_value = mono_atomic_cas_ptr ((volatile gpointer *) &state->all_threads [i], GINT_TO_POINTER(-1), old_value);
-
-			if (new_old_value != old_value)
-				old_value = new_old_value;
-			else
-				break;
-		}
-
-		MonoThreadSummary *thread = (MonoThreadSummary *) old_value;
-		if (!thread)
+		threads [i] = summarizer_try_read_thread (state, i);
+		if (!threads [i])
 			continue;
 
 		// We are doing this dump on the controlling thread because this isn't
-		// an async context. There's still some reliance on malloc here, but it's
+		// an async context sometimes. There's still some reliance on malloc here, but it's
 		// much more stable to do it all from the controlling thread.
 		//
 		// This is non-null, checked in mono_threads_summarize
 		// with early exit there
-		mono_get_eh_callbacks ()->mono_summarize_managed_stack (thread);
+		mono_get_eh_callbacks ()->mono_summarize_managed_stack (threads [i]);
+	}
+
+	mono_summarize_timeline_phase_log (MonoSummaryStateWriter);
+	mono_summarize_native_state_begin (mem, provided_size);
+	for (int i=0; i < state->nthreads; i++) {
+		MonoThreadSummary *thread = threads [i];
+		if (!thread)
+			continue;
 
 		mono_summarize_native_state_add_thread (thread, thread->ctx, thread == controlling);
-
 		// Set non-shared state to notify the waiting thread to clean up
 		// without having to keep our shared state alive
 		mono_atomic_store_i32 (&thread->done, 0x1);
 		mono_os_sem_post (&thread->done_wait);
 	}
 	*out = mono_summarize_native_state_end ();
+	mono_summarize_timeline_phase_log (MonoSummaryStateWriterDone);
 
 	mono_os_sem_destroy (&state->update);
 
@@ -6424,6 +6435,7 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
 		state.silent = silent;
 		summarizer_signal_other_threads (&state, current, current_idx);
+		mono_summarize_timeline_phase_log (MonoSummaryUnmanagedStacks);
 	}
 
 	MonoThreadSummary this_thread;
@@ -6453,7 +6465,6 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 			MOSTLY_ASYNC_SAFE_PRINTF("Finished thread summarizer pause from 0x%zx.\n", MONO_NATIVE_THREAD_ID_TO_UINT (current));
 
 		// Dump and cleanup all the stack memory
-		mono_summarize_timeline_phase_log (MonoSummaryDumpTraversal);
 		summarizer_state_term (&state, out, mem, provided_size, &this_thread);
 	} else {
 		// Wait here, keeping our stack memory alive

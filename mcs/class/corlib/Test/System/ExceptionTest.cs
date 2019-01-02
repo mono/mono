@@ -528,7 +528,7 @@ namespace MonoTests.System
 			var monoType = Type.GetType ("Mono.Runtime", false);
 			var convert = monoType.GetMethod("CheckCrashReportLog", BindingFlags.NonPublic | BindingFlags.Static);
 			var result = (int) convert.Invoke(null, new object[] { "./", true });
-			var monoSummaryDone = 8;
+			var monoSummaryDone = 10;
 			Assert.AreEqual (monoSummaryDone, result, "#DLC1");
 		}
 
