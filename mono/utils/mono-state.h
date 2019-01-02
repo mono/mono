@@ -24,14 +24,16 @@ typedef enum {
 	MonoSummaryNone = 0,
 	MonoSummarySetup = 1,
 	MonoSummarySuspendHandshake = 2,
-	MonoSummaryDumpTraversal = 3,
-	MonoSummaryStateWriter = 4,
-	MonoSummaryMerpWriter = 5,
-	MonoSummaryMerpInvoke = 6,
-	MonoSummaryCleanup = 7,
-	MonoSummaryDone = 8,
+	MonoSummaryUnmanagedStacks = 3,
+	MonoSummaryManagedStacks = 4,
+	MonoSummaryStateWriter = 5,
+	MonoSummaryStateWriterDone = 6,
+	MonoSummaryMerpWriter = 7,
+	MonoSummaryMerpInvoke = 8,
+	MonoSummaryCleanup = 9,
+	MonoSummaryDone = 10,
 
-	MonoSummaryDoubleFault = 9
+	MonoSummaryDoubleFault = 11, 
 } MonoSummaryStage;
 
 typedef struct {
