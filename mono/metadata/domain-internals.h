@@ -62,7 +62,7 @@ typedef struct _MonoJitInfoTableChunk MonoJitInfoTableChunk;
 
 struct _MonoJitInfoTableChunk
 {
-	int		       refcount;
+	volatile gint32       refcount;
 	volatile gint32           num_elements;
 	volatile gint8        *last_code_end;
 	MonoJitInfo *next_tombstone;

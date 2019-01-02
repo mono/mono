@@ -70,7 +70,9 @@ static MonoJitInfoTableChunk*
 jit_info_table_new_chunk (void)
 {
 	MonoJitInfoTableChunk *chunk = g_new0 (MonoJitInfoTableChunk, 1);
+
 	chunk->refcount = 1;
+	mono_memory_barrier ();
 
 	return chunk;
 }
@@ -118,7 +120,10 @@ jit_info_table_free (MonoJitInfoTable *table, gboolean duplicate)
 		MonoJitInfoTableChunk *chunk = table->chunks [i];
 		MonoJitInfo *tombstone;
 
-		if (--chunk->refcount > 0)
+		mono_atomic_dec_i32 (&chunk->refcount);
+		mono_memory_barrier ();
+
+		if (mono_atomic_load_i32 (&chunk->refcount) > 0)
 			continue;
 
 		for (tombstone = chunk->next_tombstone; tombstone; ) {
@@ -346,9 +351,10 @@ jit_info_table_check (MonoJitInfoTable *table)
 		MonoJitInfoTableChunk *chunk = table->chunks [i];
 		int j;
 
-		g_assert (chunk->refcount > 0 /* && chunk->refcount <= 8 */);
-		if (chunk->refcount > 10)
-			printf("warning: chunk refcount is %d\n", chunk->refcount);
+		gint32 refcount = mono_atomic_load_i32 (&chunk->refcount);
+		g_assert (refcount > 0 /* && refcount <= 8 */);
+		if (refcount > 10)
+			printf("warning: chunk refcount is %d\n", refcount);
 		g_assert (mono_atomic_load_i32 (&chunk->num_elements) <= MONO_JIT_INFO_TABLE_CHUNK_SIZE);
 
 		for (j = 0; j < mono_atomic_load_i32 (&chunk->num_elements); ++j) {
@@ -493,7 +499,7 @@ jit_info_table_copy_and_split_chunk (MonoJitInfoTable *table, MonoJitInfoTableCh
 			j += 2;
 		} else {
 			new_table->chunks [j] = table->chunks [i];
-			++new_table->chunks [j]->refcount;
+			mono_atomic_inc_i32 (&new_table->chunks [j]->refcount);
 			++j;
 		}
 	}
@@ -544,7 +550,7 @@ jit_info_table_copy_and_purify_chunk (MonoJitInfoTable *table, MonoJitInfoTableC
 			new_table->chunks [j++] = jit_info_table_purify_chunk (table->chunks [i]);
 		else {
 			new_table->chunks [j] = table->chunks [i];
-			++new_table->chunks [j]->refcount;
+			mono_atomic_inc_i32 (&new_table->chunks [j]->refcount);
 			++j;
 		}
 	}
@@ -631,7 +637,12 @@ jit_info_table_add (MonoDomain *domain, MonoJitInfoTable *volatile *table_ptr, M
 		/* Debugging code, should be removed. */
 		//jit_info_table_check (new_table);
 
-		*table_ptr = new_table;
+		gpointer old_table = mono_atomic_cas_ptr ((volatile gpointer *) table_ptr, new_table, table);
+		if (table != old_table) {
+			jit_info_table_free_non_duplicate (new_table);
+			goto restart;
+		}
+
 		mono_memory_barrier ();
 		domain->num_jit_info_table_duplicates++;
 		mono_thread_hazardous_try_free (table, (MonoHazardousFreeFunc)jit_info_table_free_duplicate);
