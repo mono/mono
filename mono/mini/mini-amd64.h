@@ -380,12 +380,6 @@ typedef struct {
 
 #endif
 
-/*
- * Some icalls might need to be called using a different
- * calling convention. None currently do.
- */
-#define MONO_ARCH_VARARG_ICALLS 1
-
 #if !defined( HOST_WIN32 ) && !defined(__HAIKU__) && defined (HAVE_SIGACTION)
 
 #define MONO_ARCH_USE_SIGACTION 1
