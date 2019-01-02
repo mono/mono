@@ -146,10 +146,16 @@ jit_info_table_free_duplicate (MonoJitInfoTable *table)
 	jit_info_table_free (table, TRUE);
 }
 
+static void
+jit_info_table_free_non_duplicate (MonoJitInfoTable *table)
+{
+	jit_info_table_free (table, FALSE);
+}
+
 void
 mono_jit_info_table_free (MonoJitInfoTable *table)
 {
-	jit_info_table_free (table, FALSE);
+	mono_thread_hazardous_try_free (table, (MonoHazardousFreeFunc)jit_info_table_free_non_duplicate);
 }
 
 /* The jit_info_table is sorted in ascending order by the end
