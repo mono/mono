@@ -7168,7 +7168,9 @@ emit_trampolines (MonoAotCompile *acfg)
 	int tramp_type;
 #endif
 
-	if ((!mono_aot_mode_is_full (&acfg->aot_opts) || acfg->aot_opts.llvm_only) && !mono_aot_mode_is_interp (&acfg->aot_opts))
+	if (!mono_aot_mode_is_full (&acfg->aot_opts) && !mono_aot_mode_is_interp (&acfg->aot_opts))
+		return;
+	if (acfg->aot_opts.llvm_only)
 		return;
 	
 	g_assert (acfg->image->assembly);
