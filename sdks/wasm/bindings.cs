@@ -147,7 +147,7 @@ namespace WebAssembly
 
         public static void FreeObject (object obj)
         {
-            if (raw_to_js.ContainsKey(obj))
+            if (raw_to_js.TryGetValue(obj, out JSObject jsobj))
             {
                 JSObject jsobj = raw_to_js[obj];
                 
