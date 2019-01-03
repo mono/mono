@@ -310,6 +310,7 @@ TESTS_CS_SRC=		\
 	merp-json-valid.cs		\
 	exception19.cs		\
 	exception20.cs		\
+	exception21.cs		\
 	typeload-unaligned.cs	\
 	struct.cs		\
 	valuetype-gettype.cs	\
