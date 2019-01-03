@@ -7,9 +7,9 @@ namespace System.IO.Enumeration
 		public FileSystemEnumerator(string directory, EnumerationOptions options = null) { }
 		bool IEnumerator.MoveNext() => throw new PlatformNotSupportedException ();
 		private string _currentPath = null;
-		private ICollection _pending = null;
 		private TResult _current = default;
 #pragma warning disable 414
+		private ICollection _pending = null;
 		private bool _lastEntryFound = false;
 		private int _entry = 0;
 #pragma warning restore 414
