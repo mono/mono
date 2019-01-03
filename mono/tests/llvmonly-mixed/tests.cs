@@ -52,4 +52,9 @@ public class BitcodeMixedTests
 		Func<int> func = iface.get_Field2;
 		return func ();
 	}
+
+	public static int test_2_invoke () {
+		var res = typeof (InterpOnly).GetMethod ("entry_1").Invoke (null, new object [] { 1 });
+		return (int)res;
+	}
 }
