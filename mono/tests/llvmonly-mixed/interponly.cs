@@ -9,6 +9,8 @@ using System.Runtime.CompilerServices;
 public interface InterpOnlyIFace
 {
 	int get_Field2 ();
+
+	Type virt<T> ();
 }
 
 public class InterpOnly : InterpOnlyIFace
@@ -26,6 +28,10 @@ public class InterpOnly : InterpOnlyIFace
 	public virtual int get_Field2 () {
 		return 1;
 	}
+
+	public virtual Type virt<T> () {
+		return typeof(T);
+	}
 }
 
 public struct InterpOnlyStruct : InterpOnlyIFace
@@ -39,5 +45,9 @@ public struct InterpOnlyStruct : InterpOnlyIFace
 
 	public int get_Field2 () {
 		return Field;
+	}
+
+	public Type virt<T> () {
+		return typeof(T);
 	}
 }
