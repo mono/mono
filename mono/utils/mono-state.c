@@ -36,6 +36,10 @@ extern GCStats mono_gc_stats;
 #include <sys/sysctl.h>
 #include <fcntl.h>
 
+#ifdef HAVE_SYS_MMAN_H
+#include <sys/mman.h>
+#endif
+
 #ifdef HAVE_EXECINFO_H
 #include <execinfo.h>
 #endif
@@ -236,6 +240,62 @@ mono_summarize_timeline_phase_log (MonoSummaryStage next)
 	return;
 }
 
+static void
+mem_file_name (long tag, char *name, size_t limit)
+{
+	name [0] = '\0';
+	pid_t pid = getpid ();
+	g_snprintf (name, limit, "mono_crash.mem.%d.%lx.blob", pid, tag);
+}
+
+gboolean
+mono_state_alloc_mem (MonoStateMem *mem, long tag, size_t size)
+{
+	char name [100];
+	mem_file_name (tag, name, sizeof (name));
+
+	memset (mem, 0, sizeof (*mem));
+	mem->tag = tag;
+	mem->size = size;
+
+	mem->handle = g_open (name, O_RDWR | O_CREAT | O_EXCL, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
+	if (mem->handle < 1)
+		return FALSE;
+
+	lseek (mem->handle, mem->size, SEEK_SET);
+	g_write (mem->handle, "", 1);
+
+	mem->mem = (gpointer *) mmap (0, mem->size, PROT_READ | PROT_WRITE, MAP_SHARED, mem->handle, 0);
+	if (mem->mem == GINT_TO_POINTER (-1))
+		g_assert_not_reached ();
+
+	return TRUE;
+}
+
+void
+mono_state_free_mem (MonoStateMem *mem)
+{
+	if (!mem->mem)
+		return;
+
+  msync(mem->mem, mem->size, MS_SYNC);
+	munmap (mem->mem, mem->size);
+
+	// Note: We aren't calling msync on this file.
+	// There is no guarantee that we're going to persist
+	// changes to it at all, in the case that we fail before
+	// removing it. Don't try to debug where in the crash we were
+	// by the file contents.
+	if (mem->handle)
+		close (mem->handle);
+	else
+		MOSTLY_ASYNC_SAFE_PRINTF ("NULL handle mono-state mem on freeing\n");
+
+	char name [100];
+	mem_file_name (mem->tag, name, sizeof (name));
+	unlink (name);
+}
+
 static gboolean 
 timeline_has_level (const char *directory, char *log_file, size_t log_file_size, gboolean clear, MonoSummaryStage stage)
 {
@@ -253,12 +313,19 @@ mono_summarize_timeline_read_level (const char *directory, gboolean clear)
 {
 	char out_file [200];
 
+	if (!directory)
+		directory = log.directory;
+
+	if (!directory)
+		return MonoSummaryNone;
+
 	// Make sure that clear gets to erase all of these files if they exist
 	gboolean has_level_done = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryDone);
 	gboolean has_level_cleanup = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryCleanup);
 	gboolean has_level_merp_invoke = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryMerpInvoke);
 	gboolean has_level_merp_writer = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryMerpWriter);
 	gboolean has_level_state_writer = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryStateWriter);
+	gboolean has_level_state_writer_done = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryStateWriterDone);
 	gboolean has_level_managed_stacks = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryManagedStacks);
 	gboolean has_level_unmanaged_stacks = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummaryUnmanagedStacks);
 	gboolean has_level_suspend_handshake = timeline_has_level (directory, out_file, sizeof(out_file), clear, MonoSummarySuspendHandshake);
@@ -272,6 +339,8 @@ mono_summarize_timeline_read_level (const char *directory, gboolean clear)
 		return MonoSummaryMerpInvoke;
 	else if (has_level_merp_writer)
 		return MonoSummaryMerpWriter;
+	else if (has_level_state_writer_done)
+		return MonoSummaryStateWriterDone;
 	else if (has_level_state_writer)
 		return MonoSummaryStateWriter;
 	else if (has_level_managed_stacks)
