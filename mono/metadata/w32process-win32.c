@@ -33,6 +33,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/mono-threads-coop.h>
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #include <shellapi.h>
 #endif
@@ -53,10 +54,10 @@ mono_w32process_signal_finished (void)
 {
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 HANDLE
-ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
+ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid, MonoError *error)
 {
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 	HANDLE handle;
 	
 	/* GetCurrentProcess returns a pseudo-handle, so use
@@ -67,8 +68,13 @@ ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
 		/* FIXME: Throw an exception */
 		return NULL;
 	return handle;
-}
+#else
+	g_unsupported_api ("OpenProcess");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "OpenProcess");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return NULL;
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT) */
+}
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 MonoBoolean
@@ -365,35 +371,25 @@ exit:
 	return ret;
 }
 
+MonoArrayHandle
+ves_icall_System_Diagnostics_Process_GetProcesses_internal (MonoError *error)
+{
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static gboolean
-mono_process_win_enum_processes (DWORD *pids, DWORD count, DWORD *needed)
-{
-	gboolean success;
-	MONO_ENTER_GC_SAFE;
-	success = EnumProcesses (pids, count, needed);
-	MONO_EXIT_GC_SAFE;
-	return success;
-}
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
-
-MonoArray *
-ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
-{
-	ERROR_DECL (error);
-	MonoArray *procs = NULL;
+	MonoArrayHandle procs = NULL_HANDLE_ARRAY;
 	DWORD needed = 0;
 	DWORD *pids = NULL;
 	int count = 512;
+	gboolean success;
 
 	do {
 		pids = g_new0 (DWORD, count);
-		if (!mono_process_win_enum_processes (pids, count * sizeof (guint32), &needed)) {
-			// FIXME GetLastError?
-			mono_error_set_not_supported (error, "This system does not support EnumProcesses");
-			mono_error_set_pending_exception (error);
+
+        MONO_ENTER_GC_SAFE;
+        success = EnumProcesses (pids, count, needed);
+        MONO_EXIT_GC_SAFE;
+
+		if (!success)
 			goto exit;
-		}
 		if (needed < (count * sizeof (guint32)))
 			break;
 		g_free (pids);
@@ -402,16 +398,28 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	} while (TRUE);
 
 	count = needed / sizeof (guint32);
-	procs = mono_array_new_checked (mono_domain_get (), mono_get_int32_class (), count, error);
-	if (mono_error_set_pending_exception (error)) {
-		procs = NULL;
+	procs = mono_array_new_handle (mono_domain_get (), mono_get_int32_class (), count, error);
+	if (!is_ok (error)) {
+		procs = NULL_HANDLE_ARRAY;
 		goto exit;
 	}
 
-	memcpy (mono_array_addr_internal (procs, guint32, 0), pids, needed);
+	MONO_ENTER_NO_SAFEPOINTS;
+
+	memcpy (mono_array_addr_internal (MONO_HANDLE_RAW (procs), guint32, 0), pids, needed);
+
+	MONO_EXIT_NO_SAFEPOINTS;
+
 exit:
 	g_free (pids);
 	return procs;
+#else
+	g_unsupported_api ("EnumProcesses");
+	*needed = 0;
+	SetLastError (ERROR_NOT_SUPPORTED);
+	mono_error_set_not_supported (error, "This system does not support EnumProcesses");
+	return NULL_HANDLE_ARRAY;
+#endif
 }
 
 MonoBoolean
@@ -432,60 +440,56 @@ ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gin
 	return GetExitCodeProcess (handle, (PDWORD)exitcode);
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static inline MonoBoolean
-mono_icall_get_process_working_set_size (gpointer handle, gsize *min, gsize *max)
-{
-	return GetProcessWorkingSetSize (handle, (PSIZE_T)min, (PSIZE_T)max);
-}
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
-
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max, MonoError *error)
 {
-	return mono_icall_get_process_working_set_size (handle, min, max);
-}
-
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static inline MonoBoolean
-mono_icall_set_process_working_set_size (gpointer handle, gsize min, gsize max)
-{
-	return SetProcessWorkingSetSize (handle, min, max);
-}
+	return GetProcessWorkingSetSize (handle, (PSIZE_T)min, (PSIZE_T)max);
+#else
+	g_unsupported_api ("GetProcessWorkingSetSize");
+	mono_error_set_not_supported(error, G_UNSUPPORTED_API, "GetProcessWorkingSetSize");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+}
 
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max, MonoError *error)
 {
-	return mono_icall_set_process_working_set_size (handle, min, max);
-}
-
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static inline gint32
-mono_icall_get_priority_class (gpointer handle)
-{
-	return GetPriorityClass (handle);
-}
+	return SetProcessWorkingSetSize (handle, min, max);
+#else
+	g_unsupported_api ("SetProcessWorkingSetSize");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "SetProcessWorkingSetSize");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+}
 
 gint32
 ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoError *error)
 {
-	return mono_icall_get_priority_class (handle);
-}
-
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-static inline MonoBoolean
-mono_icall_set_priority_class (gpointer handle, gint32 priorityClass)
-{
-	return SetPriorityClass (handle, (guint32) priorityClass);
-}
+	return GetPriorityClass (handle);
+#else
+	g_unsupported_api ("GetPriorityClass");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetPriorityClass");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+}
 
 MonoBoolean
 ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass, MonoError *error)
 {
-	return mono_icall_set_priority_class (handle, priorityClass);
+#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+	return SetPriorityClass (handle, (guint32) priorityClass);
+#else
+	g_unsupported_api ("SetPriorityClass");
+	mono_error_set_not_supported(error, G_UNSUPPORTED_API, "SetPriorityClass");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
+#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 }
 
 MonoBoolean
