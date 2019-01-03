@@ -149,8 +149,7 @@ namespace WebAssembly
         {
             if (raw_to_js.TryGetValue(obj, out JSObject jsobj))
             {
-                JSObject jsobj = raw_to_js[obj];
-                
+                raw_to_js[obj].RawObject = null;
                 raw_to_js.Remove(obj);
                  
                 int exception;
