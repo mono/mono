@@ -175,11 +175,9 @@ namespace System.Runtime.CompilerServices
 			data = tmp;
 		}
 
-		public void Add (TKey key, TValue value) => Add (key, value, throwIfExists: true);
+		public void AddOrUpdate (TKey key, TValue value) => throw new NotImplementedException();
 
-		public void AddOrUpdate (TKey key, TValue value) => Add (key, value, throwIfExists: false);
-
-		void Add (TKey key, TValue value, bool throwIfExists)
+		public void Add (TKey key, TValue value)
 		{
 			if (key == default (TKey))
 				throw new ArgumentNullException ("Null key", "key");
@@ -203,10 +201,7 @@ namespace System.Runtime.CompilerServices
 					} else if (k == GC.EPHEMERON_TOMBSTONE && free_slot == -1) { //Add requires us to check for dupes :(
 						free_slot = idx;
 					} else if (k == key) {
-						if (throwIfExists) 
-							throw new ArgumentException ("Key already in the list", "key");
-						else
-							free_slot = idx;
+						throw new ArgumentException ("Key already in the list", "key");
 					}
 
 					if (++idx == len) //Wrap around
