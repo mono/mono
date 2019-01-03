@@ -2451,6 +2451,9 @@ lookup_start:
 	}
 
 	if (!jit_only && !code && mono_aot_only && mono_use_interpreter && method->wrapper_type != MONO_WRAPPER_OTHER) {
+		if (mono_llvm_only)
+			/* Signal to the caller that AOTed code is not found */
+			return NULL;
 		code = mini_get_interp_callbacks ()->create_method_pointer (method, TRUE, error);
 
 		if (!mono_error_ok (error))
