@@ -1699,9 +1699,19 @@ resolve_vcall (MonoVTable *vt, int slot, MonoMethod *imt_method, gpointer *out_a
 	// FIXME: This can throw exceptions
 	addr = compiled_method = mono_compile_method_checked (m, error);
 	mono_error_assert_ok (error);
-	g_assert (addr);
+	if (!addr) {
+		/* Interp entry */
+		// FIXME:
+		g_assert (!gsharedvt);
+		MonoFtnDesc *ftndesc = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (m, need_unbox_tramp, error);
+		mono_error_assert_ok (error);
+		addr = ftndesc->addr;
+		*out_arg = ftndesc->arg;
+	} else {
+		g_assert (addr);
 
-	addr = mini_add_method_wrappers_llvmonly (m, addr, gsharedvt, need_unbox_tramp, out_arg);
+		addr = mini_add_method_wrappers_llvmonly (m, addr, gsharedvt, need_unbox_tramp, out_arg);
+	}
 
 	if (!gsharedvt && generic_virtual) {
 		// FIXME: This wastes memory since add_generic_virtual_invocation ignores it in a lot of cases

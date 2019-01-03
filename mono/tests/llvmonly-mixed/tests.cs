@@ -17,6 +17,16 @@ public class BitcodeMixedTests
 		return alist.Capacity == 5 ? 0 : 1;
 	}
 
+	public static int test_1_entry_vcall () {
+		InterpOnlyIFace iface = new InterpOnly ();
+		return iface.get_Field2 ();
+	}
+
+	public static int test_1_entry_vcall_unbox () {
+		InterpOnlyIFace iface = new InterpOnlyStruct () { Field = 1 };
+		return iface.get_Field2 ();
+	}
+
 	public static int test_2_entry_delegate () {
 		Func<int, int> func = InterpOnly.entry_1;
 
