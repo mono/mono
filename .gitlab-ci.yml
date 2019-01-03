@@ -1,16 +1,17 @@
 stages:
-- runall
+- runall-and-report-to-github-pending
 - build
 - collate
-
-# This is just a config to help trigger rest of the builds
-run_all_builds:
-  image: ubuntu:latest
-  stage: runall
-  variables:
-    GIT_STRATEGY: none
+- report-to-github-done
+  
+###############################################################################
+# report result to github
+###############################################################################
+runall-and-report-to-github-pending:
+  image: python:2.7
+  stage: runall-and-report-to-github-pending
   script:
-  - pwd
+  - python reportCiResult.py "gitlab-ci" "pending"
   when: manual
   allow_failure: false
 
@@ -236,3 +237,21 @@ collate_builds:
     paths:
     - collectedbuilds/builds.7z
     expire_in: 1 week
+
+    
+###############################################################################
+# report result to github
+###############################################################################
+report-to-github-done:failure:
+  image: python:2.7
+  when: on_failure
+  stage: report-to-github-done
+  script:
+  - python reportCiResult.py "gitlab-ci" "failure"
+
+report-to-github-done:success:
+  image: python:2.7
+  when: on_success
+  stage: report-to-github-done
+  script:
+  - python reportCiResult.py "gitlab-ci" "success"
