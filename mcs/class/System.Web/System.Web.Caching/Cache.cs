@@ -609,7 +609,7 @@ namespace System.Web.Caching
 		internal DateTime GetKeyLastChange (string key)
 		{
 			try {
-				cacheLock.EnterReadLock ();
+				cacheLock.EnterWriteLock ();
 				CacheItem it = cache [key];
 
 				if (it == null)
@@ -618,7 +618,7 @@ namespace System.Web.Caching
 				return it.LastChange;
 			} finally {
 				// See comment at the top of the file, above cacheLock declaration
-				cacheLock.ExitReadLock ();
+				cacheLock.ExitWriteLock ();
 			}
 		}
 
