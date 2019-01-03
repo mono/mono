@@ -53,33 +53,64 @@ typedef struct {
 } DateTimeFormatEntry;
 
 typedef struct {
-	const stridx_t currency_decimal_separator;
-	const stridx_t currency_group_separator;
-	const stridx_t number_decimal_separator;
-	const stridx_t number_group_separator;
+	// 12x ushort -- 6 ints
+	stridx_t currency_decimal_separator;
+	stridx_t currency_group_separator;
+	stridx_t number_decimal_separator;
+	stridx_t number_group_separator;
 
-	const stridx_t currency_symbol;
-	const stridx_t percent_symbol;
-	const stridx_t nan_symbol;
-	const stridx_t per_mille_symbol;
-	const stridx_t negative_infinity_symbol;
-	const stridx_t positive_infinity_symbol;
+	stridx_t currency_symbol;
+	stridx_t percent_symbol;
+	stridx_t nan_symbol;
+	stridx_t per_mille_symbol;
+	stridx_t negative_infinity_symbol;
+	stridx_t positive_infinity_symbol;
 
-	const stridx_t negative_sign;
-	const stridx_t positive_sign;
+	stridx_t negative_sign;
+	stridx_t positive_sign;
 
-	const gint8 currency_negative_pattern;
-	const gint8 currency_positive_pattern;
-	const gint8 percent_negative_pattern;
-	const gint8 percent_positive_pattern;
-	const gint8 number_negative_pattern;
+	// 7x gint8 -- FIXME expand to 8, or sort by size.
+	// For this reason, copy the data to a simpler "managed" form.
+	gint8 currency_negative_pattern;
+	gint8 currency_positive_pattern;
+	gint8 percent_negative_pattern;
+	gint8 percent_positive_pattern;
+	gint8 number_negative_pattern;
 
-	const gint8 currency_decimal_digits;
-	const gint8 number_decimal_digits;
+	gint8 currency_decimal_digits;
+	gint8 number_decimal_digits;
 
-	const gint currency_group_sizes [GROUP_SIZE];
-	const gint number_group_sizes [GROUP_SIZE];	
+	gint currency_group_sizes [2];
+	gint number_group_sizes [2];
 } NumberFormatEntry;
+
+// Due to the questionable layout of NumberFormatEntry, in particular
+// 7x byte, make something more guaranteed to match between native and managed.
+struct NumberFormatEntryManaged {
+	int currency_decimal_separator;
+	int currency_group_separator;
+	int number_decimal_separator;
+	int number_group_separator;
+	int currency_symbol;
+	int percent_symbol;
+	int nan_symbol;
+	int per_mille_symbol;
+	int negative_infinity_symbol;
+	int positive_infinity_symbol;
+	int negative_sign;
+	int positive_sign;
+	int currency_negative_pattern;
+	int currency_positive_pattern;
+	int percent_negative_pattern;
+	int percent_positive_pattern;
+	int number_negative_pattern;
+	int currency_decimal_digits;
+	int number_decimal_digits;
+	int currency_group_sizes0;
+	int currency_group_sizes1;
+	int number_group_sizes0;
+	int number_group_sizes1;
+};
 
 typedef struct {
 	const gint ansi;

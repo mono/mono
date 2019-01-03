@@ -34,8 +34,11 @@ MonoBoolean ves_icall_System_Globalization_CalendarData_fill_calendar_data (Mono
 ICALL_EXPORT
 void ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCultureData *this_obj, gint32 datetime_index);
 
+typedef struct NumberFormatEntryManaged NumberFormatEntryManaged;
+
 ICALL_EXPORT
-void ves_icall_System_Globalization_CultureData_fill_number_data (MonoNumberFormatInfo* number, gint32 number_index);
+gconstpointer
+ves_icall_System_Globalization_CultureData_fill_number_data (int index, NumberFormatEntryManaged *managed);
 
 ICALL_EXPORT
 void ves_icall_System_Globalization_CultureInfo_construct_internal_locale (MonoCultureInfo *this_obj, MonoString *locale);

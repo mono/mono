@@ -284,59 +284,39 @@ ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCultureData *t
 	this_obj->CalendarWeekRule = dfe->calendar_week_rule;
 }
 
-void
-ves_icall_System_Globalization_CultureData_fill_number_data (MonoNumberFormatInfo* number, gint32 number_index)
+gconstpointer
+ves_icall_System_Globalization_CultureData_fill_number_data (int index, NumberFormatEntryManaged *managed)
 {
-	ERROR_DECL (error);
-	MonoDomain *domain;
-	const NumberFormatEntry *nfe;
-
-	g_assert (number_index >= 0);
-
-	nfe = &number_format_entries [number_index];
-
-	domain = mono_domain_get ();
-
-	number->currencyDecimalDigits = nfe->currency_decimal_digits;
-
-#define SET_STR(obj,field,domain,expr,err) do {				\
-		MonoString *_tmp_str = mono_string_new_checked ((domain), (expr), (err)); \
-		if (mono_error_set_pending_exception ((err)))		\
-			return;						\
-		MONO_OBJECT_SETREF_INTERNAL ((obj), field, _tmp_str);		\
-	} while (0)
-
-	SET_STR (number, currencyDecimalSeparator, domain, idx2string (nfe->currency_decimal_separator), error);
-	SET_STR (number, currencyGroupSeparator, domain, idx2string (nfe->currency_group_separator), error);
-
-	MonoArray *currency_sizes_arr = create_group_sizes_array (nfe->currency_group_sizes,
-								  GROUP_SIZE, error);
-	if (mono_error_set_pending_exception (error))
-		return;
-	MONO_OBJECT_SETREF_INTERNAL (number, currencyGroupSizes, currency_sizes_arr);
-	number->currencyNegativePattern = nfe->currency_negative_pattern;
-	number->currencyPositivePattern = nfe->currency_positive_pattern;
-
-	SET_STR (number, currencySymbol, domain, idx2string (nfe->currency_symbol), error);
-	SET_STR (number, naNSymbol, domain, idx2string (nfe->nan_symbol), error);
-	SET_STR (number, negativeInfinitySymbol, domain, idx2string (nfe->negative_infinity_symbol), error);
-	SET_STR (number, negativeSign, domain, idx2string (nfe->negative_sign), error);
-	number->numberDecimalDigits = nfe->number_decimal_digits;
-	SET_STR (number, numberDecimalSeparator, domain, idx2string (nfe->number_decimal_separator), error);
-	SET_STR (number, numberGroupSeparator, domain, idx2string (nfe->number_group_separator), error);
-	MonoArray *number_sizes_arr = create_group_sizes_array (nfe->number_group_sizes,
-								GROUP_SIZE, error);
-	if (mono_error_set_pending_exception (error))
-		return;
-	MONO_OBJECT_SETREF_INTERNAL (number, numberGroupSizes, number_sizes_arr);
-	number->numberNegativePattern = nfe->number_negative_pattern;
-	number->percentNegativePattern = nfe->percent_negative_pattern;
-	number->percentPositivePattern = nfe->percent_positive_pattern;
-	SET_STR (number, percentSymbol, domain, idx2string (nfe->percent_symbol), error);
-	SET_STR (number, perMilleSymbol, domain, idx2string (nfe->per_mille_symbol), error);
-	SET_STR (number, positiveInfinitySymbol, domain, idx2string (nfe->positive_infinity_symbol), error);
-	SET_STR (number, positiveSign, domain, idx2string (nfe->positive_sign), error);
-#undef SET_STR
+	g_assert (index >= 0);
+	NumberFormatEntry const * const native = &number_format_entries [index];
+// We could return the pointer directly, but I'm leary of the 7x byte layout.
+// If the data is regenerated, suggest a byte of padding there.
+#define X(x) managed->x = native->x;
+	X (currency_decimal_separator)
+	X (currency_group_separator)
+	X (number_decimal_separator)
+	X (number_group_separator)
+	X (currency_symbol)
+	X (percent_symbol)
+	X (nan_symbol)
+	X (per_mille_symbol)
+	X (negative_infinity_symbol)
+	X (positive_infinity_symbol)
+	X (negative_sign)
+	X (positive_sign)
+	X (currency_negative_pattern)
+	X (currency_positive_pattern)
+	X (percent_negative_pattern)
+	X (percent_positive_pattern)
+	X (number_negative_pattern)
+	X (currency_decimal_digits)
+	X (number_decimal_digits)
+	managed->currency_group_sizes0 = native->currency_group_sizes [0];
+	managed->currency_group_sizes1 = native->currency_group_sizes [1];
+	managed->number_group_sizes0 = native->number_group_sizes [0];
+	managed->number_group_sizes1  = native->number_group_sizes [1];
+#undef X
+	return locale_strings;
 }
 
 static MonoBoolean
