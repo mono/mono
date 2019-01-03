@@ -17,103 +17,52 @@
 #include "mono/metadata/w32process-win32-internals.h"
 #include "icall-decl.h"
 
-gboolean
-mono_process_win_enum_processes (DWORD *pids, DWORD count, DWORD *needed)
-{
-	g_unsupported_api ("EnumProcesses");
-	*needed = 0;
-	SetLastError (ERROR_NOT_SUPPORTED);
-
-	return FALSE;
-}
-
-HANDLE
-ves_icall_System_Diagnostics_Process_GetProcess_internal (guint32 pid)
-{
-	ERROR_DECL (error);
-
-	g_unsupported_api ("OpenProcess");
-
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "OpenProcess");
-	mono_error_set_pending_exception (error);
-
-	SetLastError (ERROR_NOT_SUPPORTED);
-
-	return NULL;
-}
-
 void
-mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error)
+mono_w32process_get_fileversion (MonoObjectHandle filever, MonoStringHandle str, const gunichar2 *filename, MonoError *error)
 {
 	g_unsupported_api ("GetFileVersionInfoSize, GetFileVersionInfo, VerQueryValue, VerLanguageName");
-
-	error_init (error);
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetFileVersionInfoSize, GetFileVersionInfo, VerQueryValue, VerLanguageName");
-
 	SetLastError (ERROR_NOT_SUPPORTED);
 }
 
-MonoObject*
-process_add_module (HANDLE process, HMODULE mod, gunichar2 *filename, gunichar2 *modulename, MonoClass *proc_class, MonoError *error)
+MonoObjectHandle
+process_add_module (MonoObjectHandle item, MonoObjectHandle filever, MonoStringHandle str,
+	HANDLE process, HMODULE mod, const gunichar2 *filename, const gunichar2 *modulename,
+	MonoClass *proc_class, MonoError *error)
 {
 	g_unsupported_api ("GetModuleInformation");
-
-	error_init (error);
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetModuleInformation");
-
 	SetLastError (ERROR_NOT_SUPPORTED);
-
-	return NULL;
+	return NULL_HANDLE;
 }
 
-MonoArray *
-ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, HANDLE process)
+MonoArrayHandle
+ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObjectHandle this_obj, HANDLE process, MonoError *error)
 {
-	ERROR_DECL (error);
-
 	g_unsupported_api ("EnumProcessModules, GetModuleBaseName, GetModuleFileNameEx");
-
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "EnumProcessModules, GetModuleBaseName, GetModuleFileNameEx");
-	mono_error_set_pending_exception (error);
-
 	SetLastError (ERROR_NOT_SUPPORTED);
-
-	return NULL;
+	return NULL_HANDLE_ARRAY;
 }
 
 MonoBoolean
-ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfo *proc_start_info, MonoW32ProcessInfo *process_info)
+ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStartInfo *proc_start_info, MonoW32ProcessInfo *process_info, MonoError *error)
 {
-	ERROR_DECL (error);
-
 	g_unsupported_api ("ShellExecuteEx");
-
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "ShellExecuteEx");
-	mono_error_set_pending_exception (error);
-
 	process_info->pid = (guint32)(-ERROR_NOT_SUPPORTED);
 	SetLastError (ERROR_NOT_SUPPORTED);
-
 	return FALSE;
 }
 
-MonoString *
-ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process)
+MonoStringHandle
+ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoError *error)
 {
-	ERROR_DECL (error);
-	MonoString *string;
-	gunichar2 name[MAX_PATH];
-	guint32 len;
-
-	len = GetModuleFileName (NULL, name, G_N_ELEMENTS (name));
+	gunichar2 name [MAX_PATH]; // FIXME MAX_PATH
+	guint32 len = GetModuleFileNameW (NULL, name, G_N_ELEMENTS (name));
 	if (len == 0)
-		return NULL;
-
-	string = mono_string_new_utf16_checked (mono_domain_get (), name, len, error);
-	if (!mono_error_ok (error))
-		mono_error_set_pending_exception (error);
-
-	return string;
+		return NULL_HANDLE_STRING;
+	return mono_string_new_utf16_handle (mono_domain_get (), name, len, error);
 }
 
 void
@@ -124,90 +73,18 @@ mono_process_init_startup_info (HANDLE stdin_handle, HANDLE stdout_handle, HANDL
 	startinfo->hStdInput = INVALID_HANDLE_VALUE;
 	startinfo->hStdOutput = INVALID_HANDLE_VALUE;
 	startinfo->hStdError = INVALID_HANDLE_VALUE;
-	return;
 }
 
 gboolean
 mono_process_create_process (MonoW32ProcessInfo *mono_process_info, MonoString *cmd, guint32 creation_flags,
-	gunichar2 *env_vars, gunichar2 *dir, STARTUPINFO *start_info, PROCESS_INFORMATION *process_info)
+	gunichar2 *env_vars, gunichar2 *dir, STARTUPINFO *start_info, PROCESS_INFORMATION *process_info,
+	MonoError *error)
 {
-	ERROR_DECL (error);
-	gchar		*api_name = "";
-
-	if (mono_process_info->username) {
-		api_name = "CreateProcessWithLogonW";
-	} else {
-		api_name = "CreateProcess";
-	}
-
-	memset (&process_info, 0, sizeof (PROCESS_INFORMATION));
+	char *api_name = mono_process_info->username ? "CreateProcessWithLogonW" : "CreateProcess";
+	memset (process_info, 0, sizeof (PROCESS_INFORMATION));
 	g_unsupported_api (api_name);
-
 	mono_error_set_not_supported (error, G_UNSUPPORTED_API, api_name);
-	mono_error_set_pending_exception (error);
-
 	SetLastError (ERROR_NOT_SUPPORTED);
-
-	return FALSE;
-}
-
-MonoBoolean
-mono_icall_get_process_working_set_size (gpointer handle, gsize *min, gsize *max)
-{
-	ERROR_DECL (error);
-
-	g_unsupported_api ("GetProcessWorkingSetSize");
-
-	mono_error_set_not_supported(error, G_UNSUPPORTED_API, "GetProcessWorkingSetSize");
-	mono_error_set_pending_exception (error);
-
-	SetLastError (ERROR_NOT_SUPPORTED);
-
-	return FALSE;
-}
-
-MonoBoolean
-mono_icall_set_process_working_set_size (gpointer handle, gsize min, gsize max)
-{
-	ERROR_DECL (error);
-
-	g_unsupported_api ("SetProcessWorkingSetSize");
-
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "SetProcessWorkingSetSize");
-	mono_error_set_pending_exception (error);
-
-	SetLastError (ERROR_NOT_SUPPORTED);
-
-	return FALSE;
-}
-
-gint32
-mono_icall_get_priority_class (gpointer handle)
-{
-	ERROR_DECL (error);
-
-	g_unsupported_api ("GetPriorityClass");
-
-	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetPriorityClass");
-	mono_error_set_pending_exception (error);
-
-	SetLastError (ERROR_NOT_SUPPORTED);
-
-	return FALSE;
-}
-
-MonoBoolean
-mono_icall_set_priority_class (gpointer handle, gint32 priorityClass)
-{
-	ERROR_DECL (error);
-
-	g_unsupported_api ("SetPriorityClass");
-
-	mono_error_set_not_supported(error, G_UNSUPPORTED_API, "SetPriorityClass");
-	mono_error_set_pending_exception (error);
-
-	SetLastError (ERROR_NOT_SUPPORTED);
-
 	return FALSE;
 }
 

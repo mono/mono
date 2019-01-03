@@ -214,8 +214,7 @@ mono_process_list (int *size)
 	*size = i;
 
 cleanup:
-	if (procs)
-		g_free (procs);
+	g_free (procs);
 	return buf;
 #else
 	const char *name;
