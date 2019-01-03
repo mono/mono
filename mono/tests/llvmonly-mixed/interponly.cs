@@ -18,3 +18,13 @@ public class InterpOnly
 		return new ArrayList (5);
 	}
 }
+
+public struct InterpOnlyStruct
+{
+	public int Field;
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public int get_Field () {
+		return Field;
+	}
+}

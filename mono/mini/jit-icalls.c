@@ -1886,19 +1886,33 @@ mono_llvmonly_init_delegate (MonoDelegate *del)
 	 */
 	if (G_UNLIKELY (!ftndesc)) {
 		MonoMethod *m = del->method;
+		gboolean need_unbox = FALSE;
+
 		if (m->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
 			m = mono_marshal_get_synchronized_wrapper (m);
 
-		gpointer addr = mono_compile_method_checked (m, error);
-		if (mono_error_set_pending_exception (error))
-			return;
-
 		if (m_class_is_valuetype (m->klass) && mono_method_signature_internal (m)->hasthis)
-		    addr = mono_aot_get_unbox_trampoline (m, NULL);
+			need_unbox = TRUE;
 
-		gpointer arg = mini_get_delegate_arg (del->method, addr);
+		gpointer addr = mono_compile_method_checked (m, error);
+		if (!addr) {
+			/* Interpreter transition */
+			ftndesc = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (m, need_unbox, error);
+			mono_error_assert_ok (error);
+			// FIXME:
+			if (mono_method_needs_static_rgctx_invoke (m, FALSE))
+				g_assert_not_reached ();
+		} else {
+			if (mono_error_set_pending_exception (error))
+				return;
 
-		ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, arg);
+			if (need_unbox)
+				addr = mono_aot_get_unbox_trampoline (m, NULL);
+
+			gpointer arg = mini_get_delegate_arg (del->method, addr);
+
+			ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, arg);
+		}
 		mono_memory_barrier ();
 		*del->method_code = (guint8*)ftndesc;
 	}
