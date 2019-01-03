@@ -175,11 +175,11 @@ namespace System.Runtime.CompilerServices
 			data = tmp;
 		}
 
-		public void Add (TKey key, TValue value) => Add (key, value, throwIfExists: true);
+		public void Add (TKey key, TValue value) => Add (ref key, ref value, throwIfExists: true);
 
-		public void AddOrUpdate (TKey key, TValue value) => Add (key, value, throwIfExists: false);
+		public void AddOrUpdate (TKey key, TValue value) => Add (ref key, ref value, throwIfExists: false);
 
-		void Add (TKey key, TValue value, bool throwIfExists)
+		void Add (ref TKey key, ref TValue value, bool throwIfExists)
 		{
 			if (key == default (TKey))
 				throw new ArgumentNullException ("Null key", "key");
