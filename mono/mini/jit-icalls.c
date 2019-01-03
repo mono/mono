@@ -1134,6 +1134,7 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointe
 	addr = mono_compile_method_checked (vmethod, error);
 	if (mono_error_set_pending_exception (error))
 		return NULL;
+	g_assert (addr);
 
 	addr = mini_add_method_trampoline (vmethod, addr, mono_method_needs_static_rgctx_invoke (vmethod, FALSE), FALSE);
 
@@ -1352,6 +1353,8 @@ mono_get_native_calli_wrapper (MonoImage *image, MonoMethodSignature *sig, gpoin
 
 	gpointer compiled_ptr = mono_compile_method_checked (m, error);
 	mono_error_set_pending_exception (error);
+	g_assert (compiled_ptr);
+
 	return compiled_ptr;
 }
 
@@ -1934,6 +1937,8 @@ void
 mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, MonoMethod *method)
 {
 	ERROR_DECL (error);
+	gpointer addr;
+	gboolean need_unbox;
 
 	g_assert (target);
 
@@ -1941,14 +1946,27 @@ mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, Mono
 
 	if (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
 		method = mono_marshal_get_synchronized_wrapper (method);
+	need_unbox = m_class_is_valuetype (method->klass);
 
 	del->method = method;
-	del->method_ptr = mono_compile_method_checked (method, error);
+	addr = mono_compile_method_checked (method, error);
 	if (mono_error_set_pending_exception (error))
 		return;
-	if (m_class_is_valuetype (method->klass))
-		del->method_ptr = mono_aot_get_unbox_trampoline (method, NULL);
-	del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
+	if (!addr) {
+		/* Interpreter transition */
+		MonoFtnDesc *ftndesc = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (method, need_unbox, error);
+		mono_error_assert_ok (error);
+		// FIXME:
+		if (mono_method_needs_static_rgctx_invoke (method, FALSE))
+			g_assert_not_reached ();
+		del->method_ptr = ftndesc->addr;
+		del->extra_arg = ftndesc->arg;
+	} else {
+		if (need_unbox)
+			addr = mono_aot_get_unbox_trampoline (method, NULL);
+		del->method_ptr = addr;
+		del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
+	}
 }
 
 MonoObject*

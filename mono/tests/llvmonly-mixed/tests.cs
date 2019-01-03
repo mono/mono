@@ -40,4 +40,11 @@ public class BitcodeMixedTests
 		Func<int> func = s.get_Field;
 		return func ();
 	}
+
+	public static int test_1_entry_delegate_virtual_unbox () {
+		var s = new InterpOnlyStruct () { Field = 1 };
+		InterpOnlyIFace iface = s;
+		Func<int> func = iface.get_Field2;
+		return func ();
+	}
 }
