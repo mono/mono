@@ -15,7 +15,7 @@ namespace System.IO.Enumeration
 #pragma warning restore 414
 
 		private void CloseDirectoryHandle() => throw new PlatformNotSupportedException ();
-		private void DequeueNextDirectory() => throw new PlatformNotSupportedException ();
+		private bool DequeueNextDirectory() => throw new PlatformNotSupportedException ();
 		private unsafe void FindNextEntry() => throw new PlatformNotSupportedException ();
 		private void InternalDispose(bool disposing) { }
 
