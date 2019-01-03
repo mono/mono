@@ -192,7 +192,7 @@ clean-aot-$(1):
 	$(RM) -r obj/aot-$(1) bin/aot-$(1)
 
 check-aot-$(1) run-aot-$(1): build-aot-$(1)
-	(cd bin/aot-$(1) && $$(SM) runtime.js --exclude StackWalks,StaticAotNotWorking,StaticLinkedAotNotWorking $(3))
+	(cd bin/aot-$(1) && $$(SM) runtime.js --exclude StackWalks,StaticAotNotWorking,StaticLinkedAotNotWorking,SRE $(3))
 
 endef
 
