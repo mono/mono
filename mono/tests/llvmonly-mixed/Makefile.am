@@ -30,11 +30,11 @@ TestDriver.dll:
 AOTDIR=linker-output
 AOT_TMPDIR=aot-tmp
 
-$(AOTDIR)/tests.exe$(PLATFORM_AOT_SUFFIX): .linked-stamp
+$(AOTDIR)/tests.exe$(PLATFORM_AOT_SUFFIX): $(AOTDIR)/tests.exe
 	mkdir -p $(AOT_TMPDIR)/tests.exe
 	MONO_PATH=$(AOTDIR) $(MONO_EXE) --aot=llvmonly,interp,temp-path=$(AOT_TMPDIR)/tests.exe $(AOTDIR)/tests.exe
 
-$(AOTDIR)/%.dll$(PLATFORM_AOT_SUFFIX): .linked-stamp
+$(AOTDIR)/%.dll$(PLATFORM_AOT_SUFFIX): $(AOTDIR)/%.dll
 	mkdir -p $(AOT_TMPDIR)/$*.dll
 	MONO_PATH=$(AOTDIR) $(MONO_EXE) --aot=llvmonly,interp,temp-path=$(AOT_TMPDIR)/$*.dll $(AOTDIR)/$*.dll
 
@@ -43,17 +43,26 @@ SOURCES = \
 	interponly.cs
 
 # interponly.dll is not AOT-ed
-ASSEMBLIES = mscorlib.dll tests.exe
+ASSEMBLIES = mscorlib.dll tests.exe TestDriver.dll
 
 AOT_IMAGES = $(patsubst %,$(AOTDIR)/%$(PLATFORM_AOT_SUFFIX),$(ASSEMBLIES))
 
-# Use the linker to speed up AOT
-.linked-stamp: $(CLASS)/mscorlib.dll tests.exe interponly.dll
-	$(RUNTIME) $(CLASS)/monolinker.exe --exclude-feature sre -l none -a tests.exe -a interponly.dll -c link -out $(AOTDIR)
-	touch $@
+$(AOTDIR)/mscorlib.dll:
+	mkdir -p $(AOTDIR)
+	cp $(CLASS)/mscorlib.dll $(AOTDIR)/
+
+$(AOTDIR)/%.dll: %.dll
+	mkdir -p $(AOTDIR)
+	cp $< $@
+
+$(AOTDIR)/%.exe: %.exe
+	mkdir -p $(AOTDIR)
+	cp $< $@
+
+$(AOTDIR)/tests.exe: $(AOTDIR)/TestDriver.dll $(AOTDIR)/interponly.dll
 
 check: $(AOT_IMAGES)
-	MONO_PATH=$(AOTDIR) $(MONO_EXE) --llvmonly-interp tests.exe
+	MONO_PATH=$(AOTDIR) $(MONO_EXE) --aot-path=$(AOTDIR) --llvmonly-interp $(AOTDIR)/tests.exe
 
 CLEANFILES=*.dll *.exe *.pdb
 

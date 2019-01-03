@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Runtime.CompilerServices;
 
 //
@@ -10,5 +11,10 @@ public class InterpOnly
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int entry_1 (int i) {
 		return i + 1;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static ArrayList corlib_call () {
+		return new ArrayList (5);
 	}
 }
