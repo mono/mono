@@ -1737,7 +1737,7 @@ static void
 interp_entry (InterpEntryData *data)
 {
 	InterpFrame frame;
-	InterpMethod *rmethod = data->rmethod;
+	InterpMethod *rmethod;
 	ThreadContext *context;
 	stackval result;
 	stackval *args;
@@ -1746,6 +1746,13 @@ interp_entry (InterpEntryData *data)
 	MonoType *type;
 	gpointer orig_domain, attach_cookie;
 	int i;
+
+	if ((gsize)data->rmethod & 1) {
+		/* Unbox */
+		data->this_arg = mono_object_unbox_internal ((MonoObject*)data->this_arg);
+		data->rmethod = (gpointer)((gsize)data->rmethod & ~1);
+	}
+	rmethod = data->rmethod;
 
 	if (rmethod->needs_thread_attach)
 		orig_domain = mono_threads_attach_coop (mono_domain_get (), &attach_cookie);
@@ -2518,7 +2525,7 @@ no_llvmonly_interp_method_pointer (void)
  *   Return an ftndesc for entering the interpreter and executing METHOD.
  */
 static MonoFtnDesc*
-interp_create_method_pointer_llvmonly (MonoMethod *method, gboolean compile, MonoError *error)
+interp_create_method_pointer_llvmonly (MonoMethod *method, gboolean unbox, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get ();
 	gpointer addr, entry_func, entry_wrapper;
@@ -2530,8 +2537,13 @@ interp_create_method_pointer_llvmonly (MonoMethod *method, gboolean compile, Mon
 	imethod = mono_interp_get_imethod (domain, method, error);
 	return_val_if_nok (error, NULL);
 
-	if (imethod->jit_entry)
-		return (MonoFtnDesc*)imethod->jit_entry;
+	if (unbox) {
+		if (imethod->llvmonly_unbox_entry)
+			return (MonoFtnDesc*)imethod->llvmonly_unbox_entry;
+	} else {
+		if (imethod->jit_entry)
+			return (MonoFtnDesc*)imethod->jit_entry;
+	}
 
 	sig = mono_method_signature_internal (method);
 
@@ -2564,7 +2576,11 @@ interp_create_method_pointer_llvmonly (MonoMethod *method, gboolean compile, Mon
 	}
 	g_assert (entry_func);
 
-	MonoFtnDesc *entry_ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), entry_func, imethod);
+	/* Encode unbox in the lower bit of imethod */
+	gpointer entry_arg = imethod;
+	if (unbox)
+		entry_arg = (gpointer)(((gsize)entry_arg) | 1);
+	MonoFtnDesc *entry_ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), entry_func, entry_arg);
 
 	addr = mini_create_llvmonly_ftndesc (mono_domain_get (), entry_wrapper, entry_ftndesc);
 
@@ -2576,7 +2592,10 @@ interp_create_method_pointer_llvmonly (MonoMethod *method, gboolean compile, Mon
 	mono_domain_unlock (domain);
 
 	mono_memory_barrier ();
-	imethod->jit_entry = addr;
+	if (unbox)
+		imethod->llvmonly_unbox_entry = addr;
+	else
+		imethod->jit_entry = addr;
 
 	return (MonoFtnDesc*)addr;
 }

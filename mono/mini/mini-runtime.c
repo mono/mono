@@ -1452,7 +1452,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			target = mini_add_method_wrappers_llvmonly (patch_info->data.method, (gpointer)target, FALSE, FALSE, &arg);
 			return mini_create_llvmonly_ftndesc (domain, (gpointer)target, arg);
 		} else {
-			target = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (patch_info->data.method, TRUE, error);
+			target = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (patch_info->data.method, FALSE, error);
 			if (!mono_error_ok (error))
 				return NULL;
 		}
