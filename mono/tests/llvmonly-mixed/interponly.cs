@@ -6,7 +6,12 @@ using System.Runtime.CompilerServices;
 // This assembly is not AOT-ed, so all calls into it transition to the interpreter
 //
 
-public class InterpOnly
+public interface InterpOnlyIFace
+{
+	int get_Field2 ();
+}
+
+public class InterpOnly : InterpOnlyIFace
 {
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int entry_1 (int i) {
@@ -17,14 +22,22 @@ public class InterpOnly
 	public static ArrayList corlib_call () {
 		return new ArrayList (5);
 	}
+
+	public virtual int get_Field2 () {
+		return 1;
+	}
 }
 
-public struct InterpOnlyStruct
+public struct InterpOnlyStruct : InterpOnlyIFace
 {
 	public int Field;
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public int get_Field () {
+		return Field;
+	}
+
+	public int get_Field2 () {
 		return Field;
 	}
 }
