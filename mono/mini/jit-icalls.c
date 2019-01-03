@@ -1813,6 +1813,7 @@ mono_resolve_generic_virtual_iface_call (MonoVTable *vt, int imt_slot, MonoMetho
 {
 	ERROR_DECL (error);
 	MonoMethod *m, *variant_iface;
+	MonoFtnDesc *ftndesc;
 	gpointer addr, aot_addr, compiled_method;
 	gboolean need_unbox_tramp = FALSE;
 	gboolean need_rgctx_tramp;
@@ -1836,16 +1837,21 @@ mono_resolve_generic_virtual_iface_call (MonoVTable *vt, int imt_slot, MonoMetho
 	addr = compiled_method = mono_compile_method_checked (m, error);
 	if (!is_ok (error))
 		mono_llvm_raise_exception (mono_error_convert_to_exception (error));
-	g_assert (addr);
+	if (!addr) {
+		/* Interp entry */
+		ftndesc = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (m, need_unbox_tramp, error);
+		mono_error_assert_ok (error);
+	} else {
+		g_assert (addr);
 
-	addr = mini_add_method_wrappers_llvmonly (m, addr, FALSE, need_unbox_tramp, &arg);
-
-	/*
-	 * This wastes memory but the memory usage is bounded since
-	 * mono_method_add_generic_virtual_invocation () eventually builds an imt trampoline for
-	 * this vtable slot so we are not called any more for this instantiation.
-	 */
-	MonoFtnDesc *ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, arg);
+		addr = mini_add_method_wrappers_llvmonly (m, addr, FALSE, need_unbox_tramp, &arg);
+		/*
+		 * This wastes memory but the memory usage is bounded since
+		 * mono_method_add_generic_virtual_invocation () eventually builds an imt trampoline for
+		 * this vtable slot so we are not called any more for this instantiation.
+		 */
+		ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, arg);
+	}
 
 	mono_method_add_generic_virtual_invocation (mono_domain_get (),
 												vt, imt + imt_slot,
