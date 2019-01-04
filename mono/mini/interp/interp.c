@@ -66,6 +66,7 @@
 #include <mono/mini/mini.h>
 #include <mono/mini/mini-runtime.h>
 #include <mono/mini/aot-runtime.h>
+#include <mono/mini/llvmonly-runtime.h>
 #include <mono/mini/jit-icalls.h>
 #include <mono/mini/debugger-agent.h>
 #include <mono/mini/ee.h>
@@ -2571,9 +2572,9 @@ interp_create_method_pointer_llvmonly (MonoMethod *method, gboolean unbox, MonoE
 	gpointer entry_arg = imethod;
 	if (unbox)
 		entry_arg = (gpointer)(((gsize)entry_arg) | 1);
-	MonoFtnDesc *entry_ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), entry_func, entry_arg);
+	MonoFtnDesc *entry_ftndesc = mini_llvmonly_create_ftndesc (mono_domain_get (), entry_func, entry_arg);
 
-	addr = mini_create_llvmonly_ftndesc (mono_domain_get (), entry_wrapper, entry_ftndesc);
+	addr = mini_llvmonly_create_ftndesc (mono_domain_get (), entry_wrapper, entry_ftndesc);
 
 	info = domain_jit_info (domain);
 	mono_domain_lock (domain);
