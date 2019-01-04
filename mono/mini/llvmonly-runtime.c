@@ -91,7 +91,7 @@ mini_llvmonly_get_delegate_arg (MonoMethod *method, gpointer method_ptr)
 	 * Instead, encode that the method is gsharedvt in del->extra_arg,
 	 * the CEE_MONO_CALLI_EXTRA_ARG implementation in the JIT depends on this.
 	 */
-	if (method->is_inflated && (mono_aot_get_method_flags (method_ptr) & MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE)) {
+	if (method->is_inflated && (mono_aot_get_method_flags ((guint8*)method_ptr) & MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE)) {
 		g_assert ((((gsize)arg) & 1) == 0);
 		arg = (gpointer)(((gsize)arg) | 1);
 	}
@@ -164,7 +164,7 @@ mini_llvmonly_add_method_wrappers (MonoMethod *m, gpointer compiled_method, gboo
 	g_assert (mono_llvm_only);
 	g_assert (out_arg);
 
-	callee_gsharedvt = mono_aot_get_method_flags (compiled_method) & MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE;
+	callee_gsharedvt = mono_aot_get_method_flags ((guint8*)compiled_method) & MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE;
 
 	if (!caller_gsharedvt && callee_gsharedvt) {
 		MonoMethodSignature *sig, *gsig;

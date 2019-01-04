@@ -1751,7 +1751,7 @@ interp_entry (InterpEntryData *data)
 	if ((gsize)data->rmethod & 1) {
 		/* Unbox */
 		data->this_arg = mono_object_unbox_internal ((MonoObject*)data->this_arg);
-		data->rmethod = (gpointer)((gsize)data->rmethod & ~1);
+		data->rmethod = (InterpMethod*)(gpointer)((gsize)data->rmethod & ~1);
 	}
 	rmethod = data->rmethod;
 
