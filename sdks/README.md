@@ -4,27 +4,26 @@ This project provides build scripts and sample apps for Mono targeting its suppo
 
 ## Dependencies
 
- - automake 1.16.1
+- automake 1.16.1
 
-   if you have already built before using a previous version of automake you may need to clean the repo.
+  if you have already built before using a previous version of automake you may need to clean the repo.
 
-   ```
-      git clean -xffd
-   ```
+  ```bash
+  git clean -xffd
+  ```
 
-   The previous should be sufficient but if that does not work then try hard resetting
+  The previous should be sufficient but if that does not work then try hard resetting
 
-   ```
-   git reset --hard && git clean -xffd && git submodule foreach --recursive git reset --hard && git submodule foreach --recursive git clean -xffd && git submodule update --init --recursive
-   ```
+  ```bash
+  git reset --hard && git clean -xffd && git submodule foreach --recursive git reset --hard && git submodule foreach --recursive git clean -xffd && git submodule update --init --recursive
+  ```
 
 - [ninja build system](https://ninja-build.org)
 
   - Getting Ninja
 
     You can [download the Ninja binary](https://github.com/ninja-build/ninja/releases) or [find
-it in your system's package manager](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
-
+    it in your system's package manager](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages)
 
 ## Setup
 
@@ -37,7 +36,7 @@ To build Mono for Android, iOS or WebAssembly, the build scripts can be found in
 
 The `make` targets are as follow:
 
-```
+```bash
 # Android
 mono$ make -C sdks/builds provision-android && make -C sdks/android accept-android-license
 mono$ make -C sdks/builds provision-mxe
@@ -60,9 +59,9 @@ mono$ make -C sdks/builds archive-mac [upcoming]
 
 First, ensure the `runtime`, `AOT` and `bcl` have been built and packaged in the `builds` directory:
 
-```
+```bash
 mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
-````
+```
 
 Go to the `wasm` directory for building and testing WebAssembly. Right now the following targets are available:
 

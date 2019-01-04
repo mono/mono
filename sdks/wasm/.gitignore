@@ -1,5 +1,7 @@
 node_modules
-.stamp-jsvu
-.stamp-build-debug-sample
-.stamp-build-test-suite
 package-lock.json
+.stamp*
+*.wasm
+mono.js
+runtime*.js
+Mono.Cecil*
