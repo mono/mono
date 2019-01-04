@@ -10,6 +10,7 @@
 #include "mini.h"
 #include "ir-emit.h"
 #include "mini-runtime.h"
+#include "llvmonly-runtime.h"
 #include "mini-llvm.h"
 #include "jit-icalls.h"
 #include <mono/metadata/abi-details.h>
