@@ -470,8 +470,14 @@ mono_write_wer_template (MERPStruct *merp)
 gboolean
 mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *non_param_data, MonoStackHash *hashes)
 {
-	MERPStruct merp;
-	memset (&merp, 0, sizeof (merp));
+	MonoStateMem mem;
+	int merp_tmp_file_tag = 2;
+	gboolean alloc_success = mono_state_alloc_mem (&mem, merp_tmp_file_tag, sizeof (MERPStruct));
+	if (!alloc_success)
+		return FALSE;
+
+	MERPStruct *merp = (MERPStruct *) mem.mem;
+	memset (merp, 0, sizeof (*merp));
 
 	mono_summarize_timeline_phase_log (MonoSummaryMerpWriter);
 
