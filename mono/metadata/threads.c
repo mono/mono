@@ -6352,20 +6352,23 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, si
 		mono_get_eh_callbacks ()->mono_summarize_managed_stack (threads [i]);
 	}
 
+	MonoStateWriter writer;
+	memset (&writer, 0, sizeof (writer));
+
 	mono_summarize_timeline_phase_log (MonoSummaryStateWriter);
-	mono_summarize_native_state_begin (mem, provided_size);
+	mono_summarize_native_state_begin (&writer, mem, provided_size);
 	for (int i=0; i < state->nthreads; i++) {
 		MonoThreadSummary *thread = threads [i];
 		if (!thread)
 			continue;
 
-		mono_summarize_native_state_add_thread (thread, thread->ctx, thread == controlling);
+		mono_summarize_native_state_add_thread (&writer, thread, thread->ctx, thread == controlling);
 		// Set non-shared state to notify the waiting thread to clean up
 		// without having to keep our shared state alive
 		mono_atomic_store_i32 (&thread->done, 0x1);
 		mono_os_sem_post (&thread->done_wait);
 	}
-	*out = mono_summarize_native_state_end ();
+	*out = mono_summarize_native_state_end (&writer);
 	mono_summarize_timeline_phase_log (MonoSummaryStateWriterDone);
 
 	mono_os_sem_destroy (&state->update);

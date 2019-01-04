@@ -985,6 +985,9 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		int status;
 		pid_t crashed_pid = getpid ();
 
+		MonoStateMem merp_mem;
+		memset (&merp_mem, 0, sizeof (merp_mem));
+
 #ifndef DISABLE_CRASH_REPORTING
 		MonoStackHash hashes;
 		gchar *output = NULL;
@@ -1015,8 +1018,13 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			if (!leave) {
 				mono_summarize_timeline_start ();
 				mono_summarize_toggle_assertions (TRUE);
+
+				int mono_max_summary_len = 500000;
+				int mono_state_tmp_file_tag = 1;
+				mono_state_alloc_mem (&merp_mem, mono_state_tmp_file_tag, mono_max_summary_len * sizeof (gchar));
+
 				// Returns success, so leave if !success
-				leave = !mono_threads_summarize (passed_ctx, &output, &hashes, FALSE, TRUE, NULL, 0);
+				leave = !mono_threads_summarize (passed_ctx, &output, &hashes, FALSE, TRUE, (gchar *) merp_mem.mem, mono_max_summary_len);
 			}
 
 			if (!leave) {
@@ -1096,8 +1104,14 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		mono_runtime_printf_err ("\nDebug info from gdb:\n");
 		waitpid (pid, &status, 0);
 
-		if (double_faulted)
+		if (double_faulted) {
+			mono_runtime_printf_err ("\nExiting early due to double fault.\n");
+			mono_state_free_mem (&merp_mem);
 			exit (-1);
+		}
+
+		output = NULL;
+		mono_state_free_mem (&merp_mem);
 	}
 #endif
 #else
