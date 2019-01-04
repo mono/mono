@@ -86,30 +86,32 @@ typedef struct {
 
 // Due to the questionable layout of NumberFormatEntry, in particular
 // 7x byte, make something more guaranteed to match between native and managed.
+// mono/metadta/culture-info.h NumberFormatEntryManaged must match
+// mcs/class/corlib/ReferenceSources/CultureData.cs NumberFormatEntryManaged.
 struct NumberFormatEntryManaged {
-	int currency_decimal_separator;
-	int currency_group_separator;
-	int number_decimal_separator;
-	int number_group_separator;
-	int currency_symbol;
-	int percent_symbol;
-	int nan_symbol;
-	int per_mille_symbol;
-	int negative_infinity_symbol;
-	int positive_infinity_symbol;
-	int negative_sign;
-	int positive_sign;
-	int currency_negative_pattern;
-	int currency_positive_pattern;
-	int percent_negative_pattern;
-	int percent_positive_pattern;
-	int number_negative_pattern;
-	int currency_decimal_digits;
-	int number_decimal_digits;
-	int currency_group_sizes0;
-	int currency_group_sizes1;
-	int number_group_sizes0;
-	int number_group_sizes1;
+	gint32 currency_decimal_digits;
+	gint32 currency_decimal_separator;
+	gint32 currency_group_separator;
+	gint32 currency_group_sizes0;
+	gint32 currency_group_sizes1;
+	gint32 currency_negative_pattern;
+	gint32 currency_positive_pattern;
+	gint32 currency_symbol;
+	gint32 nan_symbol;
+	gint32 negative_infinity_symbol;
+	gint32 negative_sign;
+	gint32 number_decimal_digits;
+	gint32 number_decimal_separator;
+	gint32 number_group_separator;
+	gint32 number_group_sizes0;
+	gint32 number_group_sizes1;
+	gint32 number_negative_pattern;
+	gint32 per_mille_symbol;
+	gint32 percent_negative_pattern;
+	gint32 percent_positive_pattern;
+	gint32 percent_symbol;
+	gint32 positive_infinity_symbol;
+	gint32 positive_sign;
 };
 
 typedef struct {

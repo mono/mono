@@ -285,37 +285,37 @@ ves_icall_System_Globalization_CultureData_fill_culture_data (MonoCultureData *t
 }
 
 gconstpointer
-ves_icall_System_Globalization_CultureData_fill_number_data (int index, NumberFormatEntryManaged *managed)
+ves_icall_System_Globalization_CultureData_fill_number_data (gint32 number_index,
+	NumberFormatEntryManaged *managed)
 {
-	g_assert (index >= 0);
-	NumberFormatEntry const * const native = &number_format_entries [index];
-// We could return the pointer directly, but I'm leary of the 7x byte layout.
-// If the data is regenerated, suggest a byte of padding there.
-#define X(x) managed->x = native->x;
-	X (currency_decimal_separator)
-	X (currency_group_separator)
-	X (number_decimal_separator)
-	X (number_group_separator)
-	X (currency_symbol)
-	X (percent_symbol)
-	X (nan_symbol)
-	X (per_mille_symbol)
-	X (negative_infinity_symbol)
-	X (positive_infinity_symbol)
-	X (negative_sign)
-	X (positive_sign)
-	X (currency_negative_pattern)
-	X (currency_positive_pattern)
-	X (percent_negative_pattern)
-	X (percent_positive_pattern)
-	X (number_negative_pattern)
-	X (currency_decimal_digits)
-	X (number_decimal_digits)
+	g_assertf (number_index >= 0 && number_index < G_N_ELEMENTS (number_format_entries), "%d", number_index);
+	NumberFormatEntry const * const native = &number_format_entries [number_index];
+	// We could return the pointer directly, but I'm leary of the 7x byte layout.
+	// Does C# match C exactly?
+	// If the data is regenerated, suggest a byte of padding there.
+	managed->currency_decimal_digits = native->currency_decimal_digits;
+	managed->currency_decimal_separator = native->currency_decimal_separator;
+	managed->currency_group_separator = native->currency_group_separator;
 	managed->currency_group_sizes0 = native->currency_group_sizes [0];
 	managed->currency_group_sizes1 = native->currency_group_sizes [1];
+	managed->currency_negative_pattern = native->currency_negative_pattern;
+	managed->currency_positive_pattern = native->currency_positive_pattern;
+	managed->currency_symbol = native->currency_symbol;
+	managed->nan_symbol = native->nan_symbol;
+	managed->negative_infinity_symbol = native->negative_infinity_symbol;
+	managed->negative_sign = native->negative_sign;
+	managed->number_decimal_digits = native->number_decimal_digits;
+	managed->number_decimal_separator = native->number_decimal_separator;
+	managed->number_group_separator = native->number_group_separator;
 	managed->number_group_sizes0 = native->number_group_sizes [0];
 	managed->number_group_sizes1  = native->number_group_sizes [1];
-#undef X
+	managed->number_negative_pattern = native->number_negative_pattern;
+	managed->per_mille_symbol = native->per_mille_symbol;
+	managed->percent_negative_pattern = native->percent_negative_pattern;
+	managed->percent_positive_pattern = native->percent_positive_pattern;
+	managed->percent_symbol = native->percent_symbol;
+	managed->positive_infinity_symbol = native->positive_infinity_symbol;
+	managed->positive_sign = native->positive_sign;
 	return locale_strings;
 }
 
@@ -787,9 +787,9 @@ ves_icall_System_Globalization_CompareInfo_internal_compare (const gunichar2 *us
 	return(string_invariant_compare_char(ustr1[pos], ustr2[pos], options));
 }
 
-int
+gint32
 ves_icall_System_Globalization_CompareInfo_internal_index (const gunichar2 *src, gint32 sindex,
-	gint32 count, const gunichar2 *cmpstr, int lencmpstr, MonoBoolean first)
+	gint32 count, const gunichar2 *cmpstr, gint32 lencmpstr, MonoBoolean first)
 {
 	gint32 pos,i;
 	
