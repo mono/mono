@@ -1510,8 +1510,8 @@ mono_perfcounter_create (const gunichar2 *category, int category_length, const g
 	SharedCategory *cat;
 	gsize name_length = 0;
 	gsize chelp_length = 0;
-	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
 	CounterCreationDataHandle data = MONO_HANDLE_NEW (CounterCreationData, NULL);
+	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
 	gsize j = 0;
 
 	/* FIXME: ensure there isn't a category created already */
@@ -1607,11 +1607,12 @@ mono_perfcounter_instance_exists (const gunichar2 *instance, int instance_length
 MonoArrayHandle
 mono_perfcounter_category_names (MonoError *error)
 {
+	HANDLE_LOOP_PREPARE;
+
 	int i;
 	MonoArrayHandle res;
 	MonoDomain *domain = mono_domain_get ();
 	GSList *custom_categories, *tmp;
-	MonoStringHandle name = MONO_HANDLE_NEW (MonoString, NULL);
 
 	perfctr_lock ();
 
@@ -1625,15 +1626,25 @@ mono_perfcounter_category_names (MonoError *error)
 
 	for (i = 0; i < NUM_CATEGORIES; ++i) {
 		const CategoryDesc *cdesc = &predef_categories [i];
-		mono_string_new_utf8_assign (name, domain, cdesc->name, cdesc->name_length, error);
-		goto_if_nok (error, leave);
+		MonoStringHandle name;
+		SETUP_ICALL_FRAME;
+		name = mono_string_new_utf8_len (domain, cdesc->name, cdesc->name_length, error);
+		goto_if_nok (error, clear_icall_frame1);
 		MONO_HANDLE_ARRAY_SETREF (res, i, name);
+clear_icall_frame1:
+		CLEAR_ICALL_FRAME;
+		goto_if_nok (error, leave);
 	}
 	for (tmp = custom_categories; tmp; tmp = tmp->next) {
 		SharedCategory *scat = (SharedCategory *)tmp->data;
-		mono_string_new_utf8_assign (name, domain, scat->name, strlen (scat->name), error);
-		goto_if_nok (error, leave);
+		MonoStringHandle name;
+		SETUP_ICALL_FRAME;
+		name = mono_string_new_utf8_len (domain, scat->name, strlen (scat->name), error);
+		goto_if_nok (error, clear_icall_frame2);
 		MONO_HANDLE_ARRAY_SETREF (res, i, name);
+clear_icall_frame2:
+		CLEAR_ICALL_FRAME;
+		goto_if_nok (error, leave);
 		i++;
 	}
 leave:
@@ -1645,6 +1656,8 @@ leave:
 MonoArrayHandle
 mono_perfcounter_counter_names (const gunichar2 *category, int category_length, MonoError *error)
 {
+	HANDLE_LOOP_PREPARE;
+
 	int i;
 	SharedCategory *scat;
 	const CategoryDesc *cdesc;
@@ -1655,17 +1668,17 @@ mono_perfcounter_counter_names (const gunichar2 *category, int category_length, 
 	if (cdesc) {
 		res = mono_array_new_handle (domain, mono_get_string_class (), cdesc [1].first_counter - cdesc->first_counter, error);
 		return_val_if_nok (error, NULL_HANDLE_ARRAY);
-		MonoStringHandle name = MONO_HANDLE_NEW (MonoString, NULL);
 		for (i = cdesc->first_counter; i < cdesc [1].first_counter; ++i) {
 			const CounterDesc *desc = &predef_counters [i];
-			mono_string_new_utf8_assign (name, domain, desc->name, desc->name_length, error);
-			return_val_if_nok (error, NULL_HANDLE_ARRAY);
+			MonoStringHandle name;
+			SETUP_ICALL_FRAME;
+			name = mono_string_new_utf8_len (domain, desc->name, desc->name_length, error);
 			MONO_HANDLE_ARRAY_SETREF (res, i - cdesc->first_counter, name);
+			CLEAR_ICALL_FRAME;
+			return_val_if_nok (error, NULL_HANDLE_ARRAY);
 		}
 		return res;
 	}
-
-	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
 
 	perfctr_lock ();
 
@@ -1680,9 +1693,14 @@ mono_perfcounter_counter_names (const gunichar2 *category, int category_length, 
 		}
 
 		for (i = 0; i < scat->num_counters; ++i) {
-			mono_string_new_utf8_assign (str, domain, counter->name, strlen (counter->name), error);
-			goto_if_nok (error, leave);
+			MonoStringHandle str;
+			SETUP_ICALL_FRAME;
+			str = mono_string_new_utf8_len (domain, counter->name, strlen (counter->name), error);
+			goto_if_nok (error, clear_icall_frame);
 			MONO_HANDLE_ARRAY_SETREF (res, i, str);
+clear_icall_frame:
+			CLEAR_ICALL_FRAME;
+			goto_if_nok (error, leave);
 			counter = next_custom_category_counter (counter);
 		}
 	} else
@@ -1696,12 +1714,13 @@ leave:
 static MonoArrayHandle
 get_string_array (void **array, int count, gboolean is_process, MonoError *error)
 {
+	HANDLE_LOOP_PREPARE;
+
 	int i;
 	MonoDomain *domain = mono_domain_get ();
 	error_init (error);
 	MonoArrayHandle res = mono_array_new_handle (domain, mono_get_string_class (), count, error);
 	return_val_if_nok (error, NULL_HANDLE_ARRAY);
-	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
 	for (i = 0; i < count; ++i) {
 		char buf [128];
 		char *p;
@@ -1712,11 +1731,14 @@ get_string_array (void **array, int count, gboolean is_process, MonoError *error
 			sprintf (buf, "%d", GPOINTER_TO_INT (array [i]));
 			p = buf;
 		}
-		mono_string_new_utf8_assign (str, domain, p, strlen (p), error);
+		MonoStringHandle str;
+		SETUP_ICALL_FRAME;
+		str = mono_string_new_utf8_len (domain, p, strlen (p), error);
 		if (p != buf)
 			g_free (p);
-		return_val_if_nok (error, NULL_HANDLE_ARRAY);
 		MONO_HANDLE_ARRAY_SETREF (res, i, str);
+		CLEAR_ICALL_FRAME;
+		return_val_if_nok (error, NULL_HANDLE_ARRAY);
 	}
 	return res;
 }
@@ -1724,17 +1746,21 @@ get_string_array (void **array, int count, gboolean is_process, MonoError *error
 static MonoArrayHandle
 get_string_array_of_strings (void **array, int count, MonoError *error)
 {
+	HANDLE_LOOP_PREPARE;
+
 	int i;
 	MonoDomain *domain = mono_domain_get ();
 	error_init (error);
 	MonoArrayHandle res = mono_array_new_handle (domain, mono_get_string_class (), count, error);
 	return_val_if_nok (error, NULL_HANDLE_ARRAY);
-	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
 	for (i = 0; i < count; ++i) {
 		char* p = (char *)array [i];
-		mono_string_new_utf8_assign (str, domain, p, strlen (p), error);
-		return_val_if_nok (error, NULL_HANDLE_ARRAY);
+		MonoStringHandle str;
+		SETUP_ICALL_FRAME;
+		str = mono_string_new_utf8_len (domain, p, strlen (p), error);
 		MONO_HANDLE_ARRAY_SETREF (res, i, str);
+		CLEAR_ICALL_FRAME;
+		return_val_if_nok (error, NULL_HANDLE_ARRAY);
 	}
 
 	return res;
@@ -1809,6 +1835,8 @@ get_networkinterface_instances (MonoError *error)
 static MonoArrayHandle
 get_custom_instances (const gunichar2 *category, MonoError *error)
 {
+	HANDLE_LOOP_PREPARE;
+
 	SharedCategory *scat;
 	error_init (error);
 	scat = find_custom_category (category);
@@ -1818,19 +1846,21 @@ get_custom_instances (const gunichar2 *category, MonoError *error)
 		GSList *tmp;
 		int i = 0;
 		MonoArrayHandle array = mono_array_new_handle (mono_domain_get (), mono_get_string_class (), g_slist_length (list), error);
-		MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
 		if (!is_ok (error)) {
 			array = NULL_HANDLE_ARRAY;
 			goto exit;
 		}
 		for (tmp = list; tmp; tmp = tmp->next) {
 			SharedInstance *inst = (SharedInstance *)tmp->data;
-			mono_string_new_utf8_assign (str, mono_domain_get (), inst->instance_name, strlen (inst->instance_name), error);
+			MonoStringHandle str;
+			SETUP_ICALL_FRAME;
+			str = mono_string_new_utf8_len (mono_domain_get (), inst->instance_name, strlen (inst->instance_name), error);
+			MONO_HANDLE_ARRAY_SETREF (array, i, str);
+			CLEAR_ICALL_FRAME;
 			if (!is_ok (error)) {
 				array = NULL_HANDLE_ARRAY;
 				goto exit;
 			}
-			MONO_HANDLE_ARRAY_SETREF (array, i, str);
 			i++;
 		}
 exit:
