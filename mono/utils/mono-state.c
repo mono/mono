@@ -355,11 +355,6 @@ mono_summarize_timeline_read_level (const char *directory, gboolean clear)
 		return MonoSummaryNone;
 }
 
-#define MONO_MAX_SUMMARY_LEN 500000
-static gchar static_dump_str [MONO_MAX_SUMMARY_LEN];
-
-static MonoStateWriter static_writer;
-
 static void 
 assert_has_space (MonoStateWriter *writer)
 {
@@ -963,28 +958,24 @@ mono_state_writer_init (MonoStateWriter *writer, gchar *output_str, int len)
 }
 
 void
-mono_summarize_native_state_begin (gchar *mem, int size)
+mono_summarize_native_state_begin (MonoStateWriter *writer, gchar *mem, int size)
 {
-	// Shared global mutable memory, only use when VM crashing
-	if (!mem)
-		mono_state_writer_init (&static_writer, static_dump_str, MONO_MAX_SUMMARY_LEN);
-	else
-		mono_state_writer_init (&static_writer, mem, size);
-
-	mono_native_state_init (&static_writer);
+	g_assert (mem);
+	mono_state_writer_init (writer, mem, size);
+	mono_native_state_init (writer);
 }
 
 char *
-mono_summarize_native_state_end (void)
+mono_summarize_native_state_end (MonoStateWriter *writer)
 {
-	return mono_native_state_emit (&static_writer);
+	return mono_native_state_emit (writer);
 }
 
 void
-mono_summarize_native_state_add_thread (MonoThreadSummary *thread, MonoContext *ctx, gboolean crashing_thread)
+mono_summarize_native_state_add_thread (MonoStateWriter *writer, MonoThreadSummary *thread, MonoContext *ctx, gboolean crashing_thread)
 {
 	static gboolean not_first_thread = FALSE;
-	mono_native_state_add_thread (&static_writer, thread, ctx, !not_first_thread, crashing_thread);
+	mono_native_state_add_thread (writer, thread, ctx, !not_first_thread, crashing_thread);
 	not_first_thread = TRUE;
 }
 

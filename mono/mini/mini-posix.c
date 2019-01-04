@@ -987,6 +987,9 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		gchar *output = NULL;
 		MonoStackHash hashes;
 
+		MonoStateMem merp_mem;
+		memset (&merp_mem, 0, sizeof (merp_mem));
+
 #ifndef DISABLE_CRASH_REPORTING
 		if (!double_faulted) {
 			gboolean leave = FALSE;
@@ -1013,8 +1016,13 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			if (!leave) {
 				mono_summarize_timeline_start ();
 				mono_summarize_toggle_assertions (TRUE);
+
+				int mono_max_summary_len = 500000;
+				int mono_state_tmp_file_tag = 1;
+				mono_state_alloc_mem (&merp_mem, mono_state_tmp_file_tag, mono_max_summary_len * sizeof (gchar));
+
 				// Returns success, so leave if !success
-				leave = !mono_threads_summarize (passed_ctx, &output, &hashes, FALSE, TRUE, NULL, 0);
+				leave = !mono_threads_summarize (passed_ctx, &output, &hashes, FALSE, TRUE, (gchar *) merp_mem.mem, mono_max_summary_len);
 			}
 
 			if (!leave) {
@@ -1094,8 +1102,11 @@ dump_native_stacktrace (const char *signal, void *ctx)
 
 		waitpid (pid, &status, 0);
 
-		if (double_faulted)
+		if (double_faulted) {
+			mono_runtime_printf_err ("\nExiting early due to double fault.\n");
+			mono_state_free_mem (&merp_mem);
 			exit (-1);
+		}
 
 		if (output) {
 			// We've already done our gdb dump and our telemetry steps. Before exiting,
@@ -1104,6 +1115,9 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			// At this point we are accepting that the below step might end in a crash
 			mini_get_dbg_callbacks ()->send_crash (output, &hashes, 0 /* wait # seconds */);
 		}
+
+		output = NULL;
+		mono_state_free_mem (&merp_mem);
 	}
 #endif
 #else
