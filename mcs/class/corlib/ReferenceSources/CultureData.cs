@@ -667,6 +667,14 @@ namespace System.Globalization
 			return Encoding.UTF8.GetString (data + idx, strlen (data + idx));
 		}
 
+		private int [] create_group_sizes_array (int gs0, int gs1)
+		{
+			// group_sizes is an array of up to two integers, -1 terminated.
+			return (gs0 == -1) ? new int [ ] { }
+			     : (gs1 == -1) ? new int [ ] {gs0}
+					   : new int [ ] {gs0, gs1};
+		}
+
 		internal unsafe void GetNFIValues (NumberFormatInfo nfi)
 		{
 			if (this.IsInvariantCulture)
@@ -686,14 +694,12 @@ namespace System.Globalization
 				//
 				var nfe = new NumberFormatEntryManaged ();
 				byte* data = fill_number_data (numberIndex, ref nfe);
-				nfi.currencyGroupSizes = new int [2];
-				nfi.numberGroupSizes = new int [2];
+				nfi.currencyGroupSizes = create_group_sizes_array (nfe.currency_group_sizes0, nfe.currency_group_sizes1);
+				nfi.numberGroupSizes = create_group_sizes_array (nfe.number_group_sizes0, nfe.number_group_sizes1);
 				nfi.NaNSymbol = idx2string (data, nfe.nan_symbol);
 				nfi.currencyDecimalDigits = nfe.currency_decimal_digits;
 				nfi.currencyDecimalSeparator = idx2string (data, nfe.currency_decimal_separator);
 				nfi.currencyGroupSeparator = idx2string (data, nfe.currency_group_separator);
-				nfi.currencyGroupSizes [0] = nfe.currency_group_sizes0;
-				nfi.currencyGroupSizes [1] = nfe.currency_group_sizes1;
 				nfi.currencyNegativePattern = nfe.currency_negative_pattern;
 				nfi.currencyPositivePattern = nfe.currency_positive_pattern;
 				nfi.currencySymbol = idx2string (data, nfe.currency_symbol);
@@ -702,8 +708,6 @@ namespace System.Globalization
 				nfi.numberDecimalDigits = nfe.number_decimal_digits;
 				nfi.numberDecimalSeparator = idx2string (data, nfe.number_decimal_separator);
 				nfi.numberGroupSeparator = idx2string (data, nfe.number_group_separator);
-				nfi.numberGroupSizes [0] = nfe.number_group_sizes0;
-				nfi.numberGroupSizes [1] = nfe.number_group_sizes1;
 				nfi.numberNegativePattern = nfe.number_negative_pattern;
 				nfi.perMilleSymbol = idx2string (data, nfe.per_mille_symbol);
 				nfi.percentNegativePattern = nfe.percent_negative_pattern;
