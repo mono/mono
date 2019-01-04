@@ -2579,6 +2579,31 @@ mini_llvmonly_load_method_ftndesc (MonoMethod *method, gboolean caller_gsharedvt
 	}
 }
 
+/*
+ * Same as load_method, but for delegates.
+ * See mini_get_delegate_arg ().
+ */
+gpointer
+mini_llvmonly_load_method_delegate (MonoMethod *method, gboolean caller_gsharedvt, gboolean need_unbox, gpointer *out_arg, MonoError *error)
+{
+	gpointer addr = mono_compile_method_checked (method, error);
+	return_val_if_nok (error, NULL);
+
+	if (addr) {
+		if (need_unbox)
+			addr = mono_aot_get_unbox_trampoline (method, NULL);
+		*out_arg = mini_get_delegate_arg (method, addr);
+		return addr;
+	} else {
+		MonoFtnDesc *desc = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (method, need_unbox, error);
+		return_val_if_nok (error, NULL);
+
+		g_assert (!caller_gsharedvt);
+		*out_arg = desc->arg;
+		return desc->addr;
+	}
+}
+
 #ifdef MONO_ARCH_HAVE_INVALIDATE_METHOD
 static void
 invalidated_delegate_trampoline (char *desc)

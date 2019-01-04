@@ -1875,26 +1875,11 @@ mono_llvmonly_init_delegate (MonoDelegate *del)
 		if (m_class_is_valuetype (m->klass) && mono_method_signature_internal (m)->hasthis)
 			need_unbox = TRUE;
 
-		/* This handles callee gsharedvt specially, so it can't use mini_llvmonly_load_method () */
-		gpointer addr = mono_compile_method_checked (m, error);
-		if (!addr) {
-			/* Interpreter transition */
-			ftndesc = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (m, need_unbox, error);
-			mono_error_assert_ok (error);
-			// FIXME:
-			if (mono_method_needs_static_rgctx_invoke (m, FALSE))
-				g_assert_not_reached ();
-		} else {
-			if (mono_error_set_pending_exception (error))
-				return;
-
-			if (need_unbox)
-				addr = mono_aot_get_unbox_trampoline (m, NULL);
-
-			gpointer arg = mini_get_delegate_arg (del->method, addr);
-
-			ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, arg);
-		}
+		gpointer arg = NULL;
+		gpointer addr = mini_llvmonly_load_method_delegate (m, FALSE, need_unbox, &arg, error);
+		if (mono_error_set_pending_exception (error))
+			return;
+		ftndesc = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, arg);
 		mono_memory_barrier ();
 		*del->method_code = (guint8*)ftndesc;
 	}
@@ -1906,7 +1891,7 @@ void
 mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, MonoMethod *method)
 {
 	ERROR_DECL (error);
-	gpointer addr;
+	gpointer addr, arg;
 	gboolean need_unbox;
 
 	g_assert (target);
@@ -1918,24 +1903,11 @@ mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, Mono
 	need_unbox = m_class_is_valuetype (method->klass);
 
 	del->method = method;
-	addr = mono_compile_method_checked (method, error);
+	addr = mini_llvmonly_load_method_delegate (method, FALSE, need_unbox, &arg, error);
 	if (mono_error_set_pending_exception (error))
 		return;
-	if (!addr) {
-		/* Interpreter transition */
-		MonoFtnDesc *ftndesc = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (method, need_unbox, error);
-		mono_error_assert_ok (error);
-		// FIXME:
-		if (mono_method_needs_static_rgctx_invoke (method, FALSE))
-			g_assert_not_reached ();
-		del->method_ptr = ftndesc->addr;
-		del->extra_arg = ftndesc->arg;
-	} else {
-		if (need_unbox)
-			addr = mono_aot_get_unbox_trampoline (method, NULL);
-		del->method_ptr = addr;
-		del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
-	}
+	del->method_ptr = addr;
+	del->extra_arg = arg;
 }
 
 MonoObject*
