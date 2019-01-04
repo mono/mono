@@ -2068,8 +2068,6 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 	}
 	case MONO_RGCTX_INFO_METHOD_FTNDESC: {
 		MonoMethod *m = (MonoMethod*)data;
-		gpointer addr;
-		gpointer arg = NULL;
 
 		/* Returns an ftndesc */
 		g_assert (mono_llvm_only);

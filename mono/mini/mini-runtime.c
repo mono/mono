@@ -3744,20 +3744,6 @@ mini_imt_entry_inited (MonoVTable *vt, int imt_slot_index)
 	return (imt [imt_slot_index] != mini_get_imt_trampoline (vt, imt_slot_index));
 }
 
-static gboolean
-is_callee_gsharedvt_variable (gpointer addr)
-{
-	MonoJitInfo *ji;
-	gboolean callee_gsharedvt;
-
-	ji = mini_jit_info_table_find (mono_domain_get (), (char *)mono_get_addr_from_ftnptr (addr), NULL);
-	g_assert (ji);
-	callee_gsharedvt = mini_jit_info_is_gsharedvt (ji);
-	if (callee_gsharedvt)
-		callee_gsharedvt = mini_is_gsharedvt_variable_signature (mono_method_signature_internal (jinfo_get_method (ji)));
-	return callee_gsharedvt;
-}
-
 gpointer
 mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr)
 {
@@ -3772,7 +3758,7 @@ mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr)
 	 * Instead, encode that the method is gsharedvt in del->extra_arg,
 	 * the CEE_MONO_CALLI_EXTRA_ARG implementation in the JIT depends on this.
 	 */
-	if (method->is_inflated && is_callee_gsharedvt_variable (method_ptr)) {
+	if (method->is_inflated && (mono_aot_get_method_flags (method_ptr) & MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE)) {
 		g_assert ((((gsize)arg) & 1) == 0);
 		arg = (gpointer)(((gsize)arg) | 1);
 	}
