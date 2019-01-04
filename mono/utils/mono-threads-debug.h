@@ -7,7 +7,7 @@
 
 /* Logging - enable them below if you need specific logging for the category you need */
 #define MOSTLY_ASYNC_SAFE_FPRINTF(handle, ...) do { \
-	char __buff[1024];	\
+	char __buff [128];	\
 	__buff [0] = '\0';	\
 	g_snprintf (__buff, sizeof(__buff), __VA_ARGS__);	\
 	g_write (handle, __buff, (guint32)strlen (__buff));	\
