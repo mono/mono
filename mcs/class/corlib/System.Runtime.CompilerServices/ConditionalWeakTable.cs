@@ -175,11 +175,10 @@ namespace System.Runtime.CompilerServices
 			data = tmp;
 		}
 
-		public void Add (TKey key, TValue value) => Add (key, value, throwIfExists: true);
-
-		public void AddOrUpdate (TKey key, TValue value) => Add (key, value, throwIfExists: false);
-
-		void Add (TKey key, TValue value, bool throwIfExists)
+		// the whole method is just a copy of `public void Add (TKey key, TValue value)`
+		// the only difference it doesn't throw exceptions if the given key exists
+		// both methods will be merged once a wierd issue (broken acceptence test dev10_535767.cs) is resolved
+		public void AddOrUpdate (TKey key, TValue value)
 		{
 			if (key == default (TKey))
 				throw new ArgumentNullException ("Null key", "key");
@@ -203,10 +202,44 @@ namespace System.Runtime.CompilerServices
 					} else if (k == GC.EPHEMERON_TOMBSTONE && free_slot == -1) { //Add requires us to check for dupes :(
 						free_slot = idx;
 					} else if (k == key) {
-						if (throwIfExists) 
-							throw new ArgumentException ("Key already in the list", "key");
-						else
+						free_slot = idx; 
+					}
+
+					if (++idx == len) //Wrap around
+						idx = 0;
+				} while (idx != initial_idx);
+
+				data [free_slot].key = key;
+				data [free_slot].value = value;
+				++size;
+			}
+		}
+
+		public void Add (TKey key, TValue value)
+		{
+			if (key == default (TKey))
+				throw new ArgumentNullException ("Null key", "key");
+
+			lock (_lock) {
+				if (size >= data.Length * LOAD_FACTOR)
+					Rehash ();
+
+				int len = data.Length;
+				int idx,initial_idx;
+				int free_slot = -1;
+
+				idx = initial_idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
+				do {
+					object k = data [idx].key;
+
+					if (k == null) {
+						if (free_slot == -1)
 							free_slot = idx;
+						break;
+					} else if (k == GC.EPHEMERON_TOMBSTONE && free_slot == -1) { //Add requires us to check for dupes :(
+						free_slot = idx;
+					} else if (k == key) {
+						throw new ArgumentException ("Key already in the list", "key");
 					}
 
 					if (++idx == len) //Wrap around
