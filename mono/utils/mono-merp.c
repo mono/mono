@@ -481,22 +481,25 @@ mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *no
 
 	mono_summarize_timeline_phase_log (MonoSummaryMerpWriter);
 
-	mono_init_merp (crashed_pid, signal, hashes, &merp);
-	if (!mono_merp_write_params (&merp))
+	mono_init_merp (crashed_pid, signal, hashes, merp);
+
+	if (!mono_merp_write_params (merp))
 		return FALSE;
 
-	if (!mono_merp_write_fingerprint_payload (non_param_data, &merp))
+	if (!mono_merp_write_fingerprint_payload (non_param_data, merp))
 		return FALSE;
 
-	if (!mono_write_wer_template (&merp))
+	if (!mono_write_wer_template (merp))
 		return FALSE;
 
 	// Start program
 	mono_summarize_timeline_phase_log (MonoSummaryMerpInvoke);
-	gboolean success = mono_merp_send (&merp);
+	gboolean success = mono_merp_send (merp);
 
 	if (success)
 		mono_summarize_timeline_phase_log (MonoSummaryCleanup);
+
+	mono_state_free_mem (&mem);
 
 	return success;
 }
