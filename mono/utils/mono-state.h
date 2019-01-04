@@ -82,13 +82,13 @@ mono_summarize_toggle_assertions (gboolean enable);
  */
 
 void
-mono_summarize_native_state_begin (char *mem, int size);
+mono_summarize_native_state_begin (MonoStateWriter *writer, gchar *mem, int size);
 
 char *
-mono_summarize_native_state_end (void);
+mono_summarize_native_state_end (MonoStateWriter *writer);
 
 void
-mono_summarize_native_state_add_thread (MonoThreadSummary *thread, MonoContext *ctx, gboolean crashing_thread);
+mono_summarize_native_state_add_thread (MonoStateWriter *writer, MonoThreadSummary *thread, MonoContext *ctx, gboolean crashing_thread);
 
 /*
  * These use memory from the caller
