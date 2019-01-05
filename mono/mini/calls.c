@@ -398,6 +398,13 @@ can_enter_interp (MonoCompile *cfg, MonoMethod *method)
 		return FALSE;
 	if (method->klass->image == cfg->method->klass->image)
 		return FALSE;
+
+	/* See needs_extra_arg () in mini-llvm.c */
+	if (method->string_ctor)
+		return FALSE;
+	if (method->klass == mono_get_string_class () && (strstr (method->name, "memcpy") || strstr (method->name, "bzero")))
+		return FALSE;
+
 	/* Assume all calls outside the assembly can enter the interpreter */
 	return TRUE;
 }
