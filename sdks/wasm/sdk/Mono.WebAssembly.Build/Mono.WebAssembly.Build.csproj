@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>Mono.WebAssembly build targets. This package is not intended to be referenced directly.</Description>
-    <BuildOutputTargetFolder>build\netstandard2.0</BuildOutputTargetFolder>
+    <BuildOutputTargetFolder>build</BuildOutputTargetFolder>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" PrivateAssets="all" />
