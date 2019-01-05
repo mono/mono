@@ -4350,7 +4350,8 @@ mono_aot_can_dedup (MonoMethod *method)
 		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
 		if (info->subtype == WRAPPER_SUBTYPE_PTR_TO_STRUCTURE ||
-			info->subtype == WRAPPER_SUBTYPE_STRUCTURE_TO_PTR)
+			info->subtype == WRAPPER_SUBTYPE_STRUCTURE_TO_PTR ||
+			info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
 			return FALSE;
 		return TRUE;
 	}

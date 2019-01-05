@@ -8782,6 +8782,9 @@ append_mangled_wrapper_subtype (GString *s, WrapperSubtype subtype)
 	case WRAPPER_SUBTYPE_INTERP_IN:
 		label = "interp_in";
 		break;
+	case WRAPPER_SUBTYPE_INTERP_LMF:
+		label = "interp_lmf";
+		break;
 	case WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG:
 		label = "gsharedvt_in_sig";
 		break;
