@@ -396,7 +396,7 @@ can_enter_interp (MonoCompile *cfg, MonoMethod *method)
 {
 	if (method->wrapper_type)
 		return FALSE;
-	if (method->klass->image == cfg->method->klass->image)
+	if (m_class_get_image (method->klass) == cfg->method->klass->image)
 		return FALSE;
 
 	/* See needs_extra_arg () in mini-llvm.c */
