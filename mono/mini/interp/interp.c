@@ -319,11 +319,18 @@ lookup_imethod (MonoDomain *domain, MonoMethod *method)
 }
 
 static gpointer
-interp_get_remoting_invoke (gpointer addr, MonoError *error)
+interp_get_remoting_invoke (MonoMethod *method, gpointer addr, MonoError *error)
 {
 #ifndef DISABLE_REMOTING
-	InterpMethod *imethod = lookup_method_pointer (addr);
+	InterpMethod *imethod;
 
+	if (addr) {
+		imethod = lookup_method_pointer (addr);
+	} else {
+		g_assert (method);
+		imethod = mono_interp_get_imethod (mono_domain_get (), method, error);
+		return_val_if_nok (error, NULL);
+	}
 	g_assert (imethod);
 	g_assert (mono_use_interpreter);
 

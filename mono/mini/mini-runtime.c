@@ -3765,9 +3765,33 @@ mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr)
 	return arg;
 }
 
-void
-mini_init_delegate (MonoDelegate *del)
+static gpointer
+create_delegate_method_ptr (MonoMethod *method, MonoError *error)
 {
+	gpointer func;
+
+	if (method_is_dynamic (method)) {
+		/* Creating a trampoline would leak memory */
+		func = mono_compile_method_checked (method, error);
+		return_val_if_nok (error, NULL);
+	} else {
+		gpointer trampoline = mono_runtime_create_jump_trampoline (mono_domain_get (), method, TRUE, error);
+		return_val_if_nok (error, NULL);
+		func = mono_create_ftnptr (mono_domain_get (), trampoline);
+	}
+	return func;
+}
+
+static void
+mini_init_delegate (MonoDelegateHandle delegate, MonoError *error)
+{
+	MonoDelegate *del = MONO_HANDLE_RAW (delegate);
+
+	if (!del->method_ptr) {
+		del->method_ptr = create_delegate_method_ptr (del->method, error);
+		return_if_nok (error);
+	}
+
 	if (mono_use_interpreter)
 		mini_get_interp_callbacks ()->init_delegate (del);
 	else if (mono_llvm_only)
