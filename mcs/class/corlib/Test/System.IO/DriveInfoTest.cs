@@ -86,7 +86,6 @@ namespace MonoTests.System.IO
 			}
 
 			if (d.DriveType == DriveType.Fixed) { // just consider fixed drives for now
-				Assert.True (d.IsReady);
 				AssertHelper.GreaterOrEqual (d.AvailableFreeSpace, 0);
 				AssertHelper.GreaterOrEqual (d.TotalFreeSpace, 0);
 				AssertHelper.GreaterOrEqual (d.TotalSize, 0);
