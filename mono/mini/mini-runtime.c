@@ -2406,7 +2406,8 @@ lookup_start:
 
 		mono_class_init_internal (method->klass);
 
-		if ((code = mono_aot_get_method (domain, method, error))) {
+		code = mono_aot_get_method (domain, method, error);
+		if (code) {
 			MonoVTable *vtable;
 
 			if (mono_gc_is_critical_method (method)) {
@@ -2443,9 +2444,10 @@ lookup_start:
 	}
 
 	if (!jit_only && !code && mono_aot_only && mono_use_interpreter && method->wrapper_type != MONO_WRAPPER_OTHER) {
-		if (mono_llvm_only)
+		if (mono_llvm_only) {
 			/* Signal to the caller that AOTed code is not found */
 			return NULL;
+		}
 		code = mini_get_interp_callbacks ()->create_method_pointer (method, TRUE, error);
 
 		if (!mono_error_ok (error))
@@ -3567,13 +3569,14 @@ mini_init_delegate (MonoDelegateHandle delegate, MonoError *error)
 	MonoDelegate *del = MONO_HANDLE_RAW (delegate);
 
 	if (!del->method_ptr) {
+		g_assert (del->method);
 		del->method_ptr = create_delegate_method_ptr (del->method, error);
 		return_if_nok (error);
 	}
 
 	if (mono_use_interpreter)
 		mini_get_interp_callbacks ()->init_delegate (del);
-	else if (mono_llvm_only)
+	if (mono_llvm_only)
 		del->extra_arg = mini_llvmonly_get_delegate_arg (del->method, del->method_ptr);
 }
 
