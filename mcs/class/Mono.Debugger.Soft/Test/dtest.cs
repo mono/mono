@@ -2457,34 +2457,43 @@ public class DebuggerTests
 
 	[Test]
 	[Category("NotOnWindows")]
-	[Ignore("https://github.com/mono/mono/issues/11385")]
 	public void Crash () {
 		bool success = false;
-
-		try {
-			vm.Detach ();
-			Start (new string [] { dtest_app_path, "crash-vm" });
-			Event e = run_until ("crash");
-			while (!success) {
-				vm.Resume ();
-				e = GetNextEvent ();
-				var crash = e as CrashEvent;
-				if (crash == null)
-					continue;
-
-				success = true;
-				Assert.AreNotEqual (0, crash.Dump.Length);
-
-				break;
-			}
-		} finally {
+		for (int i = 0 ; i < 10; i++) {
 			try {
 				vm.Detach ();
-			} finally {
-				vm = null;
-			}
-		}
+				Start (new string [] { dtest_app_path, "crash-vm" });
+				Event e = run_until ("crash");
+				while (!success) {
+					vm.Resume ();
+					e = GetNextEvent ();
+					var crash = e as CrashEvent;
+					if (crash == null)
+						continue;
 
+					success = true;
+					Assert.AreNotEqual (0, crash.Dump.Length);
+
+					break;
+				}
+			} catch (VMDisconnectedException vmDisconnect) { //expected behavior because of unreliability of the crash reporter.
+						success = false;
+			} finally {
+				try {
+					vm.Detach ();
+				} catch (VMDisconnectedException vmDisconnect) { //expected behavior because of unreliability of the crash reporter.
+						success = false;
+				} finally {
+					vm = null;
+				}
+			}
+			if (success) 
+				break;
+			System.Console.WriteLine("tentando");
+			//try again because of unreliability of the crash reporter.
+			TearDown();
+			SetUp();
+		}
 		if (!success)
 			Assert.Fail ("Didn't get crash event");
 	}
