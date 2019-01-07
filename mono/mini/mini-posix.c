@@ -956,19 +956,10 @@ dump_native_stacktrace (const char *signal, void *ctx)
 	} else {
 		MOSTLY_ASYNC_SAFE_PRINTF ("\nAn error has occured in the native fault reporting. Some diagnostic information will be unavailable.\n");
 
-
-#if 1
-	pid_t crashed_pid = getpid ();
-	// Break here
-	MOSTLY_ASYNC_SAFE_PRINTF ("Attach to PID %d. Supervisor thread will signal us shortly.\n", crashed_pid);
-	while (TRUE) {
-		// Sleep for 1 second.
-		g_usleep (1000 * 1000);
-	}
-#endif
-
+#ifndef DISABLE_CRASH_REPORTING
 		// In case still enabled
 		mono_summarize_toggle_assertions (FALSE);
+#endif
 	}
 
 #ifdef HAVE_BACKTRACE_SYMBOLS
@@ -1175,17 +1166,24 @@ mono_post_native_crash_handler (const char *signal, void *ctx, MONO_SIG_HANDLER_
 }
 #endif /* !MONO_CROSS_COMPILE */
 
+static gchar *gdb_path;
+static gchar *lldb_path;
+
+void
+mono_init_native_crash_info (void)
+{
+	gdb_path = g_find_program_in_path ("gdb");
+	lldb_path = g_find_program_in_path ("lldb");
+}
+
 
 static gboolean
 native_stack_with_gdb (pid_t crashed_pid, const char **argv, int commands, char* commands_filename)
 {
-	gchar *gdb;
-
-	gdb = g_find_program_in_path ("gdb");
-	if (!gdb)
+	if (!gdb_path)
 		return FALSE;
 
-	argv [0] = gdb;
+	argv [0] = gdb_path;
 	argv [1] = "-batch";
 	argv [2] = "-x";
 	argv [3] = commands_filename;
@@ -1210,13 +1208,10 @@ native_stack_with_gdb (pid_t crashed_pid, const char **argv, int commands, char*
 static gboolean
 native_stack_with_lldb (pid_t crashed_pid, const char **argv, int commands, char* commands_filename)
 {
-	gchar *lldb;
-
-	lldb = g_find_program_in_path ("lldb");
-	if (!lldb)
+	if (!lldb_path)
 		return FALSE;
 
-	argv [0] = lldb;
+	argv [0] = lldb_path;
 	argv [1] = "--batch";
 	argv [2] = "--source";
 	argv [3] = commands_filename;
