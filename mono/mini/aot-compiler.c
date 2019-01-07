@@ -8512,6 +8512,15 @@ mono_aot_is_shared_got_offset (int offset)
 char*
 mono_aot_get_method_name (MonoCompile *cfg)
 {
+	MonoMethod *method = cfg->orig_method;
+
+	/* Use the mangled name if possible */
+	if (method->wrapper_type == MONO_WRAPPER_OTHER) {
+		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+		if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
+			return mono_aot_get_mangled_method_name (method);
+	}
+
 	if (llvm_acfg->aot_opts.static_link)
 		/* Include the assembly name too to avoid duplicate symbol errors */
 		return g_strdup_printf ("%s_%s", llvm_acfg->assembly_name_sym, get_debug_sym (cfg->orig_method, "", llvm_acfg->method_label_hash));
@@ -8872,9 +8881,12 @@ static gboolean
 append_mangled_wrapper (GString *s, MonoMethod *method) 
 {
 	gboolean success = TRUE;
+	gboolean append_sig = TRUE;
 	WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 	g_string_append_printf (s, "wrapper_");
-	g_string_append_printf (s, "%s_", m_class_get_image (method->klass)->assembly->aname.name);
+	/* Most wrappers are in mscorlib */
+	if (m_class_get_image (method->klass) != mono_get_corlib ())
+		g_string_append_printf (s, "%s_", m_class_get_image (method->klass)->assembly->aname.name);
 
 	if (method->wrapper_type != MONO_WRAPPER_OTHER)
 		append_mangled_wrapper_type (s, method->wrapper_type);
@@ -8925,10 +8937,13 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 			success = success && append_mangled_method (s, info->d.array_accessor.method);
 		else if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
 			append_mangled_signature (s, info->d.interp_in.sig);
-		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG)
+		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG) {
 			append_mangled_signature (s, info->d.gsharedvt.sig);
-		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
+			append_sig = FALSE;
+		} else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG) {
 			append_mangled_signature (s, info->d.gsharedvt.sig);
+			append_sig = FALSE;
+		}
 		break;
 	}
 	case MONO_WRAPPER_MANAGED_TO_NATIVE: {
@@ -9005,7 +9020,9 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	default:
 		g_assert_not_reached ();
 	}
-	return success && append_mangled_signature (s, mono_method_signature_internal (method));
+	if (success && append_sig)
+		success = append_mangled_signature (s, mono_method_signature_internal (method));
+	return success;
 }
 
 static void
