@@ -4472,6 +4472,8 @@ mini_init (const char *filename, const char *runtime_version)
 
 	mono_thread_info_signals_init ();
 
+	mono_init_native_crash_info ();
+
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_install_handlers ();
 #endif
