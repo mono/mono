@@ -4491,31 +4491,31 @@ public class DebuggerTests
 		assert_location(e, "ss_nested_with_three_args_wrapper");
 
 		e = step_into();
-		assert_location(e, "ss_nested_arg");
+		assert_location(e, "ss_nested_arg1");
 
 		e = step_over();
-		assert_location(e, "ss_nested_arg");
+		assert_location(e, "ss_nested_arg1");
 
 		e = step_over();
-		assert_location(e, "ss_nested_arg");
-
-		e = step_over();
-		assert_location(e, "ss_nested_with_three_args_wrapper");
-
-		e = step_into();
-		assert_location(e, "ss_nested_arg");
-
-		e = step_over();
-		assert_location(e, "ss_nested_arg");
-
-		e = step_over();
-		assert_location(e, "ss_nested_arg");
+		assert_location(e, "ss_nested_arg1");
 
 		e = step_over();
 		assert_location(e, "ss_nested_with_three_args_wrapper");
 
 		e = step_into();
-		assert_location(e, "ss_nested_arg");
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_with_three_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg3");
 	}
 
 	
@@ -4530,31 +4530,31 @@ public class DebuggerTests
 		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
 
 		e = step_into();
-		assert_location(e, "ss_nested_arg");
+		assert_location(e, "ss_nested_arg1");
 
 		e = step_over();
-		assert_location(e, "ss_nested_arg");
+		assert_location(e, "ss_nested_arg1");
 
 		e = step_over();
-		assert_location(e, "ss_nested_arg");
-
-		e = step_over();
-		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
-
-		e = step_into();
-		assert_location(e, "ss_nested_arg");
-
-		e = step_over();
-		assert_location(e, "ss_nested_arg");
-
-		e = step_over();
-		assert_location(e, "ss_nested_arg");
+		assert_location(e, "ss_nested_arg1");
 
 		e = step_over();
 		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
 
 		e = step_into();
-		assert_location(e, "ss_nested_arg");
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg3");
 	}
 
 	[Test]

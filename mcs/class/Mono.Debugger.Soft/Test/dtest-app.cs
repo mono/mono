@@ -590,7 +590,7 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_nested_twice_with_two_args_wrapper () {
-		ss_nested_with_two_args(ss_nested_arg (), ss_nested_with_two_args(ss_nested_arg (), ss_nested_arg ()));
+		ss_nested_with_two_args(ss_nested_arg1 (), ss_nested_with_two_args(ss_nested_arg2 (), ss_nested_arg3 ()));
 	}
 	
 
