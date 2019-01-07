@@ -13,6 +13,7 @@
 #  _$(1)_CXXCPP
 #  _$(1)_DLLTOOL
 #  _$(1)_LD
+#  _$(1)-$(2)_CMAKE
 #  _$(1)_OBJDUMP
 #  _$(1)_RANLIB
 #  _$(1)_STRIP
@@ -46,6 +47,7 @@ _runtime_$(1)_CONFIGURE_ENVIRONMENT = \
 	$(if $$(_$(1)_LD),LD="$$(_$(1)_LD)") \
 	$(if $$(_$(1)_OBJDUMP),OBJDUMP="$$(_$(1)_OBJDUMP)") \
 	$(if $$(_$(1)_RANLIB),RANLIB="$$(_$(1)_RANLIB)") \
+	$(if $$(_$(1)_CMAKE),CMAKE="$$(_$(1)_CMAKE)") \
 	$(if $$(_$(1)_STRIP),STRIP="$$(_$(1)_STRIP)") \
 	CFLAGS="$$(_runtime_$(1)_CFLAGS)" \
 	CXXFLAGS="$$(_runtime_$(1)_CXXFLAGS)" \
