@@ -70,6 +70,7 @@
 #include <mono/utils/mono-error.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-state.h>
+#include <mono/utils/mono-threads-debug.h>
 
 #include "mini.h"
 #include "trace.h"
@@ -3172,7 +3173,7 @@ mono_handle_hard_stack_ovf (MonoJitTlsData *jit_tls, MonoJitInfo *ji, void *ctx,
 }
 
 static gboolean
-print_stack_frame_to_stderr (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
+print_stack_frame_signal_safe (StackFrameInfo *frame, MonoContext *ctx, gpointer data)
 {
 	MonoMethod *method = NULL;
 
@@ -3180,11 +3181,11 @@ print_stack_frame_to_stderr (StackFrameInfo *frame, MonoContext *ctx, gpointer d
 		method = jinfo_get_method (frame->ji);
 
 	if (method) {
-		gchar *location = mono_debug_print_stack_frame (method, frame->native_offset, mono_domain_get ());
-		mono_runtime_printf_err ("  %s", location);
-		g_free (location);
-	} else
-		mono_runtime_printf_err ("  at <unknown> <0x%05x>", frame->native_offset);
+		const char *name_space = m_class_get_name_space (method->klass);
+		MOSTLY_ASYNC_SAFE_PRINTF("\t  at %s%s%s:%s <0x%05x>\n", name_space, (name_space [0] != '\0' ? "." : ""), m_class_get_name (method->klass), method->name, frame->native_offset);
+	} else {
+		MOSTLY_ASYNC_SAFE_PRINTF("\t  at <unknown> <0x%05x>\n", frame->native_offset);
+	}
 
 	return FALSE;
 }
@@ -3226,7 +3227,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 		return;
 
 	if (mini_get_debug_options ()->suspend_on_native_crash) {
-		mono_runtime_printf_err ("Received %s, suspending...", signal);
+		MOSTLY_ASYNC_SAFE_PRINTF ("Received %s, suspending...\n", signal);
 		while (1) {
 			// Sleep for 1 second.
 			g_usleep (1000 * 1000);
@@ -3236,35 +3237,34 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 	/* prevent infinite loops in crash handling */
 	handle_crash_loop = TRUE;
 
-	//  FIXME:
-	// Not thread safe.
-	// Crashes very, very often
-	/* !jit_tls means the thread was not registered with the runtime */
-
-	// This is not signal safe
-	//
-	// if (jit_tls && mono_thread_internal_current ()) {
-	// 	mono_runtime_printf_err ("Stacktrace:\n");
-
-	// 	/* FIXME: Is MONO_UNWIND_LOOKUP_IL_OFFSET correct here? */
-	// 	mono_walk_stack (print_stack_frame_to_stderr, MONO_UNWIND_LOOKUP_IL_OFFSET, NULL);
-	// }
-
-	mono_dump_native_crash_info (signal, ctx, info);
-
 	/*
 	 * A SIGSEGV indicates something went very wrong so we can no longer depend
 	 * on anything working. So try to print out lots of diagnostics, starting 
 	 * with ones which have a greater chance of working.
 	 */
-	mono_runtime_printf_err (
-			 "\n"
-			 "=================================================================\n"
-			 "Got a %s while executing native code. This usually indicates\n"
-			 "a fatal error in the mono runtime or one of the native libraries \n"
-			 "used by your application.\n"
-			 "=================================================================\n",
-			signal);
+
+	MOSTLY_ASYNC_SAFE_PRINTF("\n=================================================================\n");
+	MOSTLY_ASYNC_SAFE_PRINTF("\tNative Crash Reporting\n");
+	MOSTLY_ASYNC_SAFE_PRINTF("=================================================================\n");
+	MOSTLY_ASYNC_SAFE_PRINTF("Got a %s while executing native code. This usually indicates\n", signal);
+	MOSTLY_ASYNC_SAFE_PRINTF("a fatal error in the mono runtime or one of the native libraries \n");
+	MOSTLY_ASYNC_SAFE_PRINTF("used by your application.\n");
+	MOSTLY_ASYNC_SAFE_PRINTF("=================================================================\n");
+	mono_dump_native_crash_info (signal, ctx, info);
+
+	/* !jit_tls means the thread was not registered with the runtime */
+	// This must be below the native crash dump, because we can't safely
+	// do runtime state probing after we have walked the managed stack here.
+	if (jit_tls && mono_thread_internal_current () && ctx) {
+		MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
+		MOSTLY_ASYNC_SAFE_PRINTF ("\tManaged Stacktrace:\n");
+		MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+
+		MonoContext mctx;
+		mono_sigctx_to_monoctx (ctx, &mctx);
+		mono_walk_stack_full (print_stack_frame_signal_safe, &mctx, mono_domain_get (), jit_tls, mono_get_lmf (), MONO_UNWIND_LOOKUP_IL_OFFSET, NULL, TRUE);
+		MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+	}
 
 #ifdef MONO_ARCH_USE_SIGACTION
 	struct sigaction sa;
