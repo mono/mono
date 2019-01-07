@@ -80,7 +80,8 @@ public class DebuggerTests
 
 	Diag.ProcessStartInfo CreateStartInfo (string[] args) {
 		var pi = new Diag.ProcessStartInfo ();
-
+		pi.RedirectStandardOutput = true;
+		pi.RedirectStandardError = true;
 		if (runtime != null) {
 			pi.FileName = runtime;
 		} else {
@@ -4505,6 +4506,23 @@ public class DebuggerTests
 
 		e = step_into();
 		assert_location(e, "ss_nested_arg");
+	}
+
+	[Test]
+	public void CheckElapsedTime() {
+		Event e = run_until ("elapsed_time");
+
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over(); //Thread.Sleep(200)
+		Assert.IsTrue (e.Thread. ElapsedTime() >= 200);
+		e = step_over(); //Thread.Sleep(00);
+		Assert.IsTrue (e.Thread.ElapsedTime() < 200);
+		e = step_over(); //Thread.Sleep(100);
+		Assert.IsTrue (e.Thread.ElapsedTime() >= 100 && e.Thread. ElapsedTime() < 300);
+		e = step_over(); //Thread.Sleep(300);
+		Assert.IsTrue (e.Thread. ElapsedTime() >= 300);
 	}
 
 	[Test]

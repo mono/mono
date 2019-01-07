@@ -84,6 +84,8 @@ extern int tkill (pid_t tid, int signal);
 #endif
 #endif
 
+#include "icall-decl.h"
+
 /*#define THREAD_DEBUG(a) do { a; } while (0)*/
 #define THREAD_DEBUG(a)
 /*#define THREAD_WAIT_DEBUG(a) do { a; } while (0)*/
@@ -1685,8 +1687,7 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 
 	MonoInternalThread * const thread = mono_thread_internal_current ();
 
-	// Allocate handle outside of the loop.
-	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+	HANDLE_LOOP_PREPARE;
 
 	while (TRUE) {
 		gboolean alerted = FALSE;
@@ -1700,9 +1701,20 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 		if (!alerted)
 			return;
 
-		if (mono_thread_execute_interruption (&exc))
+		SETUP_ICALL_FRAME;
+
+		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+
+		const gboolean interrupt = mono_thread_execute_interruption (&exc);
+
+		if (interrupt)
 			mono_set_pending_exception_handle (exc);
-		else if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
+
+		CLEAR_ICALL_FRAME;
+
+		if (interrupt)
+			return;
+		if (ms == MONO_INFINITE_WAIT) // FIXME: !MONO_INFINITE_WAIT
 			continue;
 		return;
 	}
@@ -2141,10 +2153,10 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 
 	MonoW32HandleWaitRet ret;
 
-	// Allocate handle outside of the loop.
-	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+	HANDLE_LOOP_PREPARE;
 
 	for (;;) {
+
 #ifdef HOST_WIN32
 		MONO_ENTER_GC_SAFE;
 		DWORD const wait_result = (numhandles != 1)
@@ -2160,10 +2172,19 @@ ves_icall_System_Threading_WaitHandle_Wait_internal (gpointer *handles, gint32 n
 		if (ret != MONO_W32HANDLE_WAIT_RET_ALERTED)
 			break;
 
-		if (mono_thread_execute_interruption (&exc)) {
+		SETUP_ICALL_FRAME;
+
+		MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, NULL);
+
+		const gboolean interrupt = mono_thread_execute_interruption (&exc);
+
+		if (interrupt)
 			mono_error_set_exception_handle (error, exc);
+
+		CLEAR_ICALL_FRAME;
+
+		if (interrupt)
 			break;
-		}
 
 		if (timeout != MONO_INFINITE_WAIT) {
 			gint64 const elapsed = mono_msec_ticks () - start;
@@ -2531,7 +2552,11 @@ request_thread_abort (MonoInternalThread *thread, MonoObjectHandle *state, gbool
 // though this would still work efficiently.
 {
 	LOCK_THREAD (thread);
-	
+
+	/* With self abort we always throw a new exception */
+	if (thread == mono_thread_internal_current ())
+		thread->abort_exc = NULL;
+
 	if (thread->state & (ThreadState_AbortRequested | ThreadState_Stopped))
 	{
 		UNLOCK_THREAD (thread);
@@ -2577,11 +2602,13 @@ ves_icall_System_Threading_Thread_Abort (MonoInternalThreadHandle thread_handle,
 {
 	// InternalThreads are always pinned, so shallowly coop-handleize.
 	MonoInternalThread * const thread = mono_internal_thread_handle_ptr (thread_handle);
+	gboolean is_self = thread == mono_thread_internal_current ();
 
-	if (!request_thread_abort (thread, &state, FALSE))
+	/* For self aborts we always process the abort */
+	if (!request_thread_abort (thread, &state, FALSE) && !is_self)
 		return;
 
-	if (thread == mono_thread_internal_current ()) {
+	if (is_self) {
 		self_abort_internal (error);
 	} else {
 		async_abort_internal (thread, TRUE);

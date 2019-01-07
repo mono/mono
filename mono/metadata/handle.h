@@ -206,6 +206,8 @@ Icall macros
 	CLEAR_ICALL_FRAME;			\
 	} while (0)
 
+#define HANDLE_LOOP_PREPARE MonoThreadInfo *mono_thread_info_current_var = mono_thread_info_current ()
+
 // Return a non-pointer or non-managed pointer, e.g. gboolean.
 #define HANDLE_FUNCTION_RETURN_VAL(VAL)		\
 	CLEAR_ICALL_FRAME;			\
@@ -356,6 +358,7 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		} while (0);						\
 	} while (0)
 
+// resultHandle = handle->field
 /* N.B. RESULT is evaluated before HANDLE */
 #define MONO_HANDLE_GET(RESULT, HANDLE, FIELD) do {			\
 		MonoObjectHandle __dest = MONO_HANDLE_CAST (MonoObject, RESULT);	\
@@ -422,8 +425,8 @@ This is why we evaluate index and value before any call to MONO_HANDLE_RAW or ot
 		mono_handle_array_getref (MONO_HANDLE_CAST(MonoObject, (DEST)), (HANDLE), (IDX)); \
 	} while (0)
 
-#define MONO_HANDLE_ASSIGN(DESTH, SRCH)				\
-	mono_handle_assign (MONO_HANDLE_CAST (MonoObject, (DESTH)), MONO_HANDLE_CAST(MonoObject, (SRCH)))
+#define MONO_HANDLE_ASSIGN_RAW(DESTH, SRCP) (mono_handle_assign_raw (MONO_HANDLE_CAST (MonoObject, (DESTH)), SRCP))
+#define MONO_HANDLE_ASSIGN(DESTH, SRCH)     (MONO_HANDLE_ASSIGN_RAW ((DESTH), MONO_HANDLE_RAW (SRCH)))
 
 #define MONO_HANDLE_DOMAIN(HANDLE) MONO_HANDLE_SUPPRESS (mono_object_domain (MONO_HANDLE_RAW (MONO_HANDLE_CAST (MonoObject, MONO_HANDLE_UNSUPPRESS (HANDLE)))))
 
@@ -495,14 +498,16 @@ be reviewed and probably changed FIXME.
 extern const MonoObjectHandle mono_null_value_handle;
 #define NULL_HANDLE mono_null_value_handle
 #define NULL_HANDLE_INIT { 0 }
-#define NULL_HANDLE_STRING (MONO_HANDLE_CAST (MonoString, NULL_HANDLE))
-#define NULL_HANDLE_ARRAY  (MONO_HANDLE_CAST (MonoArray,  NULL_HANDLE))
+#define NULL_HANDLE_STRING 		(MONO_HANDLE_CAST (MonoString, NULL_HANDLE))
+#define NULL_HANDLE_ARRAY  		(MONO_HANDLE_CAST (MonoArray,  NULL_HANDLE))
+#define NULL_HANDLE_STRING_BUILDER	(MONO_HANDLE_CAST (MonoStringBuilder, NULL_HANDLE))
 
-static inline void
-mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
+static inline MonoObjectHandle
+mono_handle_assign_raw (MonoObjectHandleOut dest, void *src)
 {
 	g_assert (dest.__raw);
-	MONO_HANDLE_SUPPRESS (*dest.__raw = src.__raw ? *src.__raw : NULL);
+	MONO_HANDLE_SUPPRESS (*dest.__raw = (MonoObject*)src);
+	return dest;
 }
 
 /* It is unsafe to call this function directly - it does not pin the handle!  Use MONO_HANDLE_GET_FIELD_VAL(). */
@@ -555,6 +560,9 @@ gpointer
 mono_array_handle_pin_with_size (MonoArrayHandle handle, int size, uintptr_t index, uint32_t *gchandle);
 
 #define MONO_ARRAY_HANDLE_PIN(handle,type,index,gchandle_out) ((type*)mono_array_handle_pin_with_size (MONO_HANDLE_CAST(MonoArray,(handle)), sizeof (type), (index), (gchandle_out)))
+
+void
+mono_value_copy_array_handle (MonoArrayHandle dest, int dest_idx, gconstpointer src, int count);
 
 gunichar2 *
 mono_string_handle_pin_chars (MonoStringHandle s, uint32_t *gchandle_out);

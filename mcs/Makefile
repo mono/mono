@@ -28,6 +28,7 @@ orbis_SUBDIRS := build class
 unreal_SUBDIRS := build class
 wasm_SUBDIRS := build class
 wasm_tools_SUBDIRS := build class tools
+netcore_SUBDIRS := build class
 
 include build/rules.make
 
@@ -88,6 +89,7 @@ $(_boot_:%=profile-do--orbis--%):              profile-do--orbis--%:            
 $(_boot_:%=profile-do--unreal--%):              profile-do--unreal--%:              profile-do--build--%
 $(_boot_:%=profile-do--wasm--%):              profile-do--wasm--%:              profile-do--build--%
 $(_boot_:%=profile-do--wasm_tools--%):         profile-do--wasm_tools--%:         profile-do--build--%
+$(_boot_:%=profile-do--netcore--%):         profile-do--netcore--%:         profile-do--build--%
 
 compiler-test:
 	$(MAKE) -C tests test

@@ -447,6 +447,7 @@ public class Tests : TestsBase, ITest2
 			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
 		Bug59649 ();
+		elapsed_time();
 		return 3;
 	}
 
@@ -638,6 +639,15 @@ public class Tests : TestsBase, ITest2
 	public static void ss_nested_with_two_args_wrapper () {
 		ss_nested_with_two_args(ss_nested_arg (), ss_nested_arg ());
 	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void elapsed_time () {
+		Thread.Sleep(200);
+		Thread.Sleep(00);
+		Thread.Sleep(100);
+		Thread.Sleep(300);
+	}
+	
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_with_two_args (int a1, int a2) {

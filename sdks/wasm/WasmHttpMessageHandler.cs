@@ -11,10 +11,8 @@ namespace WebAssembly.Net.Http.HttpClient
 {
     public class WasmHttpMessageHandler : HttpMessageHandler
     {
-        static JSObject json;
         static JSObject fetch;
         static JSObject window;
-        static JSObject global;
 
         /// <summary>
         /// Gets or sets the default value of the 'credentials' option on outbound HTTP requests.
@@ -58,16 +56,7 @@ namespace WebAssembly.Net.Http.HttpClient
         private void handlerInit()
         {
             window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
-            json = (JSObject)WebAssembly.Runtime.GetGlobalObject("JSON");
             fetch = (JSObject)WebAssembly.Runtime.GetGlobalObject("fetch");
-
-            // install our global hook to create a Headers object.
-            Runtime.InvokeJS(@"
-                BINDING.mono_wasm_get_global()[""__mono_wasm_headers_hook__""] = function () { return new Headers(); }
-                BINDING.mono_wasm_get_global()[""__mono_wasm_abortcontroller_hook__""] = function () { return new AbortController(); }
-            ");
-
-            global = (JSObject)WebAssembly.Runtime.GetGlobalObject("");
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -87,7 +76,7 @@ namespace WebAssembly.Net.Http.HttpClient
         {
             try
             {
-                var requestObject = (JSObject)json.Invoke("parse", "{}");
+                var requestObject = Runtime.NewJSObject();
                 requestObject.SetObjectProperty("method", request.Method.Method);
 
                 // See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
@@ -122,15 +111,16 @@ namespace WebAssembly.Net.Http.HttpClient
 
                 if (requestHeaders != null && requestHeaders.Length > 0)
                 {
-                    using (var jsHeaders = (JSObject)global.Invoke("__mono_wasm_headers_hook__"))
-                    {
-                        for (int i = 0; i < requestHeaders.Length; i++)
+                    using (var headersObj = (JSObject)WebAssembly.Runtime.GetGlobalObject("Headers"))
+                        using (var jsHeaders = Runtime.NewJSObject(headersObj))
                         {
-                            //Console.WriteLine($"append: {requestHeaders[i][0]} / {requestHeaders[i][1]}");
-                            jsHeaders.Invoke("append", requestHeaders[i][0], requestHeaders[i][1]);
+                            for (int i = 0; i < requestHeaders.Length; i++)
+                            {
+                                //Console.WriteLine($"append: {requestHeaders[i][0]} / {requestHeaders[i][1]}");
+                                jsHeaders.Invoke("append", requestHeaders[i][0], requestHeaders[i][1]);
+                            }
+                            requestObject.SetObjectProperty("headers", jsHeaders);
                         }
-                        requestObject.SetObjectProperty("headers", jsHeaders);
-                    }
                 }
 
                 JSObject abortController = null;
@@ -140,7 +130,9 @@ namespace WebAssembly.Net.Http.HttpClient
                 CancellationTokenRegistration abortRegistration = default(CancellationTokenRegistration);
                 if (cancellationToken.CanBeCanceled)
                 {
-                    abortController = (JSObject)global.Invoke("__mono_wasm_abortcontroller_hook__");
+                    using (var abortObj = (JSObject)WebAssembly.Runtime.GetGlobalObject("AbortController"))
+                        abortController = Runtime.NewJSObject(abortObj);
+
                     signal = (JSObject)abortController.GetObjectProperty("signal");
                     requestObject.SetObjectProperty("signal", signal);
                     abortRegistration = cancellationToken.Register(() =>
@@ -154,7 +146,7 @@ namespace WebAssembly.Net.Http.HttpClient
                     });
                 }
 
-                var args = (JSObject)json.Invoke("parse", "[]");
+                var args = Runtime.NewJSArray();
                 args.Invoke("push", request.RequestUri.ToString());
                 args.Invoke("push", requestObject);
 

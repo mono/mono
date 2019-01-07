@@ -9,7 +9,7 @@
     <NoWarn>612,618,3001,3002,3003,1635,1699</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
-    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">macos</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
@@ -20,7 +20,7 @@
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
     Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
     is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
@@ -727,6 +727,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleKeyInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleModifiers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Console\src\System\ConsoleSpecialKey.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Diagnostics.StackTrace\src\System\Diagnostics\SymbolStore\SymbolToken.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.DriveInfo\src\System\IO\DriveNotFoundException.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.DriveInfo\src\System\IO\DriveType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Directory.cs" />
@@ -916,6 +917,7 @@
     <Compile Include="..\..\..\external\corert\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
     <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\GCHandleType.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Collections\Generic\ArraySortHelper.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Globalization\ISOWeek.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\IO\Stream.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\InsufficientMemoryException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\MissingFieldException.cs" />
@@ -1351,7 +1353,6 @@
     <Compile Include="System.Diagnostics.SymbolStore\SymDocumentType.cs" />
     <Compile Include="System.Diagnostics.SymbolStore\SymLanguageType.cs" />
     <Compile Include="System.Diagnostics.SymbolStore\SymLanguageVendor.cs" />
-    <Compile Include="System.Diagnostics.SymbolStore\SymbolToken.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventAttribute.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventCommand.cs" />
     <Compile Include="System.Diagnostics.Tracing\EventCommandEventArgs.cs" />

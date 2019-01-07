@@ -49,6 +49,7 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-counters.h>
+#include "icall-decl.h"
 
 static void get_default_param_value_blobs (MonoMethod *method, char **blobs, guint32 *types);
 static MonoType* mono_reflection_get_type_with_rootimage (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve, MonoError *error);
@@ -3089,4 +3090,12 @@ MonoClass*
 mono_class_from_mono_type_handle (MonoReflectionTypeHandle reftype)
 {
 	return mono_class_from_mono_type_internal (MONO_HANDLE_RAW (reftype)->type);
+}
+
+// This is called by calls, it will return NULL and set pending exception (in wrapper) on failure.
+MonoReflectionTypeHandle
+mono_type_from_handle_impl (MonoType *handle, MonoError *error)
+{
+	mono_class_init_internal (mono_class_from_mono_type_internal (handle));
+	return mono_type_get_object_handle (mono_domain_get (), handle, error);
 }

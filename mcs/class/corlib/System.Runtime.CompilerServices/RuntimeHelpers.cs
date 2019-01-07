@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.Serialization;
 using System.Runtime.Versioning;
 using System.Runtime.ConstrainedExecution;
 using System.Reflection;
@@ -187,6 +188,11 @@ namespace System.Runtime.CompilerServices
 		public static bool IsReferenceOrContainsReferences<T>()
 		{
 			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
+		}
+
+		public static object GetUninitializedObject (Type type)
+		{
+			return FormatterServices.GetUninitializedObject (type);
 		}
 	}
 }
