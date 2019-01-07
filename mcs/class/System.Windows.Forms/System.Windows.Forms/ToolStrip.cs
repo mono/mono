@@ -733,7 +733,6 @@ namespace System.Windows.Forms
 					// Event Handler must be stopped before disposing Items.
 					Events.Dispose();
 
-					CloseToolTip (null);
 					// ToolStripItem.Dispose modifes the collection,
 					// so we iterate it in reverse order
 					for (int i = Items.Count - 1; i >= 0; i--)
@@ -743,6 +742,12 @@ namespace System.Windows.Forms
 						this.overflow_button.drop_down.Dispose ();
 
 					ToolStripManager.RemoveToolStrip (this);
+
+					if (tooltip_timer != null)
+						tooltip_timer.Dispose();
+
+					if (tooltip_window != null)
+						tooltip_window.Dispose();
 				}
 				base.Dispose (disposing);
 			}
@@ -1538,8 +1543,10 @@ namespace System.Windows.Forms
 	
 		private void CloseToolTip (ToolStripItem item)
 		{
-			ToolTipTimer.Stop ();
-			ToolTipWindow.Hide (this);
+			if (tooltip_timer != null)
+				tooltip_timer.Stop ();
+			if (tooltip_window != null)
+				tooltip_window.Hide (this);
 			tooltip_currently_showing = null;
 			tooltip_state = ToolTip.TipState.Down;
 		}

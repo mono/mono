@@ -80,7 +80,8 @@ public class DebuggerTests
 
 	Diag.ProcessStartInfo CreateStartInfo (string[] args) {
 		var pi = new Diag.ProcessStartInfo ();
-
+		pi.RedirectStandardOutput = true;
+		pi.RedirectStandardError = true;
 		if (runtime != null) {
 			pi.FileName = runtime;
 		} else {
@@ -4457,11 +4458,11 @@ public class DebuggerTests
 		e = run_until ("threadpool_bp");
 		var req = create_step (e);
 		e = step_out (); // leave threadpool_bp
+		
 		e = step_out (); // leave threadpool_io
 	}
 
 	[Test]
-	[Category("NotWorking")] // flaky, see https://github.com/mono/mono/issues/6997
 	public void StepOutAsync () {
 		vm.Detach ();
 		Start (new string [] { dtest_app_path, "step-out-void-async" });
@@ -4475,8 +4476,8 @@ public class DebuggerTests
 		vm.Resume ();
 		var e3 = GetNextEvent ();
 		//after step-out from async void, execution should continue
-		//and runtime should exit
-		Assert.IsTrue (e3 is VMDeathEvent, e3.GetType().FullName);
+		//and runtime should Step
+		Assert.IsTrue (e3 is StepEvent, e3.GetType().FullName);
 		vm = null;
 	}
 
@@ -4581,6 +4582,23 @@ public class DebuggerTests
 
 		e = step_into();
 		assert_location(e, "ss_nested_arg");
+	}
+
+	[Test]
+	public void CheckElapsedTime() {
+		Event e = run_until ("elapsed_time");
+
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over(); //Thread.Sleep(200)
+		Assert.IsTrue (e.Thread. ElapsedTime() >= 200);
+		e = step_over(); //Thread.Sleep(00);
+		Assert.IsTrue (e.Thread.ElapsedTime() < 200);
+		e = step_over(); //Thread.Sleep(100);
+		Assert.IsTrue (e.Thread.ElapsedTime() >= 100 && e.Thread. ElapsedTime() < 300);
+		e = step_over(); //Thread.Sleep(300);
+		Assert.IsTrue (e.Thread. ElapsedTime() >= 300);
 	}
 
 	[Test]

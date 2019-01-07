@@ -20,6 +20,7 @@ $(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-$(EMSCRIPTEN_VERSION)-64bit
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-$(EMSCRIPTEN_VERSION)-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk/emscripten/$(EMSCRIPTEN_VERSION) && (patch -N -p1 < $(TOP)/sdks/builds/fix-emscripten-7399.diff; exit 0)
 	touch $@
 
 .PHONY: provision-wasm
@@ -116,8 +117,6 @@ endef
 
 # 64 bit cross compiler
 $(eval $(call WasmCrossTemplate,cross,x86_64,wasm32,runtime,llvm-llvm64,wasm32-unknown-unknown))
-# Old 32 bit cross compiler
-$(eval $(call WasmCrossTemplate,cross-32,i686,wasm32,runtime,llvm-llvm32,wasm32-unknown-unknown))
 
 ##
 # Parameters
@@ -151,12 +150,12 @@ _wasm-$(1)_CFLAGS= \
 _wasm-$(1)_CXXFLAGS= \
 	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
 	-static \
-	-static-libgcc
+	-static-libgcc \
+	-static-libstdc++
 
 _wasm-$(1)_LDFLAGS= \
 	-static \
-	-static-libgcc \
-	-static-libstdc++
+	-static-libgcc
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \

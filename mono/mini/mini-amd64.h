@@ -380,12 +380,6 @@ typedef struct {
 
 #endif
 
-/*
- * some icalls like mono_array_new_va needs to be called using a different 
- * calling convention.
- */
-#define MONO_ARCH_VARARG_ICALLS 1
-
 #if !defined( HOST_WIN32 ) && !defined(__HAIKU__) && defined (HAVE_SIGACTION)
 
 #define MONO_ARCH_USE_SIGACTION 1
@@ -448,6 +442,12 @@ typedef struct {
 #define MONO_ARCH_DYN_CALL_PARAM_AREA 0
 
 #define MONO_ARCH_LLVM_SUPPORTED 1
+#if defined(HOST_WIN32) && defined(TARGET_WIN32) && !defined(_MSC_VER)
+// Only supported for Windows cross compiler builds, host == Win32, target != Win32
+// and only using MSVC for none cross compiler builds.
+#undef MONO_ARCH_LLVM_SUPPORTED
+#endif
+
 #define MONO_ARCH_HAVE_CARD_TABLE_WBARRIER 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1

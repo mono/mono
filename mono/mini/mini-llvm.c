@@ -88,6 +88,8 @@ typedef struct {
 	LLVMValueRef init_method, init_method_gshared_mrgctx, init_method_gshared_this, init_method_gshared_vtable;
 	LLVMValueRef code_start, code_end;
 	LLVMValueRef inited_var;
+	LLVMValueRef unbox_tramp_indexes;
+	LLVMValueRef unbox_trampolines;
 	int max_inited_idx, max_method_idx;
 	gboolean has_jitted_code;
 	gboolean static_link;
@@ -101,6 +103,7 @@ typedef struct {
 	void *di_builder, *cu;
 	GHashTable *objc_selector_to_var;
 	GPtrArray *cfgs;
+	int unbox_tramp_num, unbox_tramp_elemsize;
 } MonoLLVMModule;
 
 /*
@@ -160,7 +163,6 @@ typedef struct {
 	gboolean *unreachable;
 	gboolean llvm_only;
 	gboolean has_got_access;
-	gboolean is_linkonce;
 	gboolean emit_dummy_arg;
 	int this_arg_pindex, rgctx_arg_pindex;
 	LLVMValueRef imt_rgctx_loc;
@@ -2704,10 +2706,71 @@ emit_get_unbox_tramp (MonoLLVMModule *module)
 	LLVMBuilderRef builder = LLVMCreateBuilder ();
 	char *name;
 	int i;
+	gboolean emit_table = FALSE;
 
 	/* Similar to emit_get_method () */
 
+#ifndef TARGET_WATCHOS
+	emit_table = TRUE;
+#endif
+
 	rtype = LLVMPointerType (LLVMInt8Type (), 0);
+
+	if (emit_table) {
+		// About 10% of methods have an unbox tramp, so emit a table of indexes for them
+		// that the runtime can search using a binary search
+		int len = 0;
+		for (i = 0; i < module->max_method_idx + 1; ++i) {
+			m = (LLVMValueRef)g_hash_table_lookup (module->idx_to_unbox_tramp, GINT_TO_POINTER (i));
+			if (m)
+				len ++;
+		}
+
+		LLVMTypeRef table_type, elemtype;
+		LLVMValueRef *table_elems;
+		LLVMValueRef table;
+		char *table_name;
+		int table_len;
+		int elemsize;
+
+		table_len = len;
+		elemsize = module->max_method_idx < 65000 ? 2 : 4;
+
+		// The index table
+		elemtype = elemsize == 2 ? LLVMInt16Type () : LLVMInt32Type ();
+		table_type = LLVMArrayType (elemtype, table_len);
+		table_name = g_strdup_printf ("%s_unbox_tramp_indexes", module->assembly->aname.name);
+		table = LLVMAddGlobal (lmodule, table_type, table_name);
+		table_elems = g_new0 (LLVMValueRef, table_len);
+		int idx = 0;
+		for (i = 0; i < module->max_method_idx + 1; ++i) {
+			m = (LLVMValueRef)g_hash_table_lookup (module->idx_to_unbox_tramp, GINT_TO_POINTER (i));
+			if (m)
+				table_elems [idx ++] = LLVMConstInt (elemtype, i, FALSE);
+		}
+		LLVMSetInitializer (table, LLVMConstArray (elemtype, table_elems, table_len));
+		module->unbox_tramp_indexes = table;
+
+		// The trampoline table
+		elemtype = rtype;
+		table_type = LLVMArrayType (elemtype, table_len);
+		table_name = g_strdup_printf ("%s_unbox_trampolines", module->assembly->aname.name);
+		table = LLVMAddGlobal (lmodule, table_type, table_name);
+		table_elems = g_new0 (LLVMValueRef, table_len);
+		idx = 0;
+		for (i = 0; i < module->max_method_idx + 1; ++i) {
+			m = (LLVMValueRef)g_hash_table_lookup (module->idx_to_unbox_tramp, GINT_TO_POINTER (i));
+			if (m)
+				table_elems [idx ++] = LLVMBuildBitCast (builder, m, rtype, "");
+		}
+		LLVMSetInitializer (table, LLVMConstArray (elemtype, table_elems, table_len));
+		module->unbox_trampolines = table;
+
+		module->unbox_tramp_num = table_len;
+		module->unbox_tramp_elemsize = elemsize;
+		return;
+	}
+
 	func = LLVMAddFunction (lmodule, module->get_unbox_tramp_symbol, LLVMFunctionType1 (rtype, LLVMInt32Type (), FALSE));
 	LLVMSetLinkage (func, LLVMExternalLinkage);
 	LLVMSetVisibility (func, LLVMHiddenVisibility);
@@ -7171,7 +7234,6 @@ mono_llvm_emit_method (MonoCompile *cfg)
 {
 	EmitContext *ctx;
 	char *method_name;
-	gboolean is_linkonce = FALSE;
 	int i;
 
 	if (cfg->skip)
@@ -7217,24 +7279,6 @@ mono_llvm_emit_method (MonoCompile *cfg)
 		ctx->module = &aot_module;
 
 		method_name = NULL;
-		/*
-		 * Allow the linker to discard duplicate copies of wrappers, generic instances etc. by using the 'linkonce'
-		 * linkage for them. This requires the following:
-		 * - the method needs to have a unique mangled name
-		 * - llvmonly mode, since the code in aot-runtime.c would initialize got slots in the wrong aot image etc.
-		 */
-		is_linkonce = ctx->module->llvm_only && ctx->module->static_link && mono_aot_can_dedup (cfg->method) && FALSE;
-		if (is_linkonce) {
-			method_name = mono_aot_get_mangled_method_name (cfg->method);
-			if (!method_name)
-				is_linkonce = FALSE;
-			/*
-			if (method_name)
-				printf ("%s %s\n", mono_method_full_name (cfg->method, 1), method_name);
-			else
-				printf ("%s\n", mono_method_full_name (cfg->method, 1));
-			*/
-		}
 		if (!method_name)
 			method_name = mono_aot_get_method_name (cfg);
 		cfg->llvm_method_name = g_strdup (method_name);
@@ -7244,7 +7288,6 @@ mono_llvm_emit_method (MonoCompile *cfg)
 		method_name = mono_method_full_name (cfg->method, TRUE);
 	}
 	ctx->method_name = method_name;
-	ctx->is_linkonce = is_linkonce;
 
 #if LLVM_API_VERSION > 100
 	if (cfg->compile_aot)
@@ -7364,10 +7407,6 @@ emit_method_inner (EmitContext *ctx)
 		if (!cfg->llvm_only && ctx->module->external_symbols) {
 			LLVMSetLinkage (method, LLVMExternalLinkage);
 			LLVMSetVisibility (method, LLVMHiddenVisibility);
-		}
-		if (ctx->is_linkonce) {
-			LLVMSetLinkage (method, LLVMLinkOnceAnyLinkage);
-			LLVMSetVisibility (method, LLVMDefaultVisibility);
 		}
 	} else {
 #if LLVM_API_VERSION > 100
@@ -7726,17 +7765,10 @@ emit_method_inner (EmitContext *ctx)
 		}
 		if (cfg->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)
 			needs_init = FALSE;
-		if (needs_init) {
-			/*
-			 * linkonce methods shouldn't have initialization,
-			 * because they might belong to assemblies which
-			 * haven't been loaded yet.
-			 */
-			g_assert (!ctx->is_linkonce);
+		if (needs_init)
 			emit_init_method (ctx);
-		} else {
+		else
 			LLVMBuildBr (ctx->builder, ctx->inited_bb);
-		}
 	}
 
 	if (cfg->llvm_only) {
@@ -9188,7 +9220,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	info = &module->aot_info;
 
 	/* Create an LLVM type to represent MonoAotFileInfo */
-	nfields = 2 + MONO_AOT_FILE_INFO_NUM_SYMBOLS + 19 + 5;
+	nfields = 2 + MONO_AOT_FILE_INFO_NUM_SYMBOLS + 21 + 5;
 	eltypes = g_new (LLVMTypeRef, nfields);
 	tindex = 0;
 	eltypes [tindex ++] = LLVMInt32Type ();
@@ -9197,7 +9229,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	for (i = 0; i < MONO_AOT_FILE_INFO_NUM_SYMBOLS; ++i)
 		eltypes [tindex ++] = LLVMPointerType (LLVMInt8Type (), 0);
 	/* Scalars */
-	for (i = 0; i < 18; ++i)
+	for (i = 0; i < 20; ++i)
 		eltypes [tindex ++] = LLVMInt32Type ();
 	/* Arrays */
 	eltypes [tindex ++] = LLVMArrayType (LLVMInt32Type (), MONO_AOT_TABLE_NUM);
@@ -9244,7 +9276,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	} else {
 		fields [tindex ++] = LLVMConstNull (eltype);
 		fields [tindex ++] = module->get_method;
-		fields [tindex ++] = module->get_unbox_tramp;
+		fields [tindex ++] = module->get_unbox_tramp ? module->get_unbox_tramp : LLVMConstNull (eltype);
 	}
 	if (module->has_jitted_code) {
 		fields [tindex ++] = AddJitGlobal (module, eltype, "jit_code_start");
@@ -9257,6 +9289,13 @@ emit_aot_file_info (MonoLLVMModule *module)
 		fields [tindex ++] = AddJitGlobal (module, eltype, "method_addresses");
 	else
 		fields [tindex ++] = LLVMConstNull (eltype);
+	if (module->llvm_only) {
+		fields [tindex ++] = module->unbox_tramp_indexes;
+		fields [tindex ++] = module->unbox_trampolines;
+	} else {
+		fields [tindex ++] = LLVMConstNull (eltype);
+		fields [tindex ++] = LLVMConstNull (eltype);
+	}
 	if (info->flags & MONO_AOT_FILE_FLAG_SEPARATE_DATA) {
 		for (i = 0; i < MONO_AOT_TABLE_NUM; ++i)
 			fields [tindex ++] = LLVMConstNull (eltype);
@@ -9337,6 +9376,8 @@ emit_aot_file_info (MonoLLVMModule *module)
 	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), info->tramp_page_size, FALSE);
 	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), info->nshared_got_entries, FALSE);
 	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), info->datafile_size, FALSE);
+	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), module->unbox_tramp_num, FALSE);
+	fields [tindex ++] = LLVMConstInt (LLVMInt32Type (), module->unbox_tramp_elemsize, FALSE);
 	/* Arrays */
 	fields [tindex ++] = llvm_array_from_uints (LLVMInt32Type (), info->table_offsets, MONO_AOT_TABLE_NUM);
 	fields [tindex ++] = llvm_array_from_uints (LLVMInt32Type (), info->num_trampolines, MONO_AOT_TRAMP_NUM);

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Collections.Concurrent;
 #if !MOBILE
 using MonoTests.Helpers;
 #endif
@@ -221,6 +222,65 @@ class TestIfaces : ITest
 	}
 }
 
+public sealed class DebuggerTaskScheduler : TaskScheduler, IDisposable
+{
+	private readonly BlockingCollection<Task> _tasks = new BlockingCollection<Task>();
+	private readonly List<Thread> _threads;
+	private readonly Thread mainThread = null;
+	public DebuggerTaskScheduler(int countThreads)
+	{
+		_threads = Enumerable.Range(0, countThreads).Select(i =>
+		{
+			Thread t = new Thread(() =>
+			{
+				foreach (var task in _tasks.GetConsumingEnumerable())
+				{
+					TryExecuteTask(task);
+				}
+			});
+			//the new task will be executed by a foreground thread ensuring that it will be executed ultil the end.
+			t.IsBackground = false;
+			t.Start();
+			return t;
+
+		}).ToList();
+	}
+
+	/// <inheritdoc />
+	protected override void QueueTask(Task task)
+	{
+		_tasks.Add(task);
+	}
+
+	/// <inheritdoc />
+	public override int MaximumConcurrencyLevel
+	{
+		get
+		{
+			return _threads.Count;
+		}
+	}
+
+	/// <inheritdoc />
+	public void Dispose()
+	{	
+		// Indicate that no new tasks will be coming in
+		_tasks.CompleteAdding();
+	}
+
+	/// <inheritdoc />
+	protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
+	{
+		return false;
+	}
+
+	/// <inheritdoc />
+	protected override IEnumerable<Task> GetScheduledTasks()
+	{
+		return _tasks;
+	}
+}
+
 class TestIfaces<T> : ITest<T>
 {
 	void ITest<T>.Foo () {
@@ -344,9 +404,7 @@ public class Tests : TestsBase, ITest2
 			return 0;
 		}
 		if (args.Length > 0 && args [0] == "step-out-void-async") {
-			var wait = new ManualResetEvent (false);
-			step_out_void_async (wait);
-			wait.WaitOne ();//Don't exist until step_out_void_async is executed...
+			run_step_out_void_async();
 			return 0;
 		}
 		assembly_load ();
@@ -389,6 +447,7 @@ public class Tests : TestsBase, ITest2
 			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
 		Bug59649 ();
+		elapsed_time();
 		return 3;
 	}
 
@@ -591,9 +650,16 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_nested_twice_with_two_args_wrapper () {
 		ss_nested_with_two_args(ss_nested_arg1 (), ss_nested_with_two_args(ss_nested_arg2 (), ss_nested_arg3 ()));
+  }
+  
+  [MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void elapsed_time () {
+		Thread.Sleep(200);
+		Thread.Sleep(00);
+		Thread.Sleep(100);
+		Thread.Sleep(300);
 	}
 	
-
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_with_two_args (int a1, int a2) {
 		return a1 + a2;
@@ -1814,6 +1880,15 @@ public class Tests : TestsBase, ITest2
 	public static void Bug59649 ()
 	{
 		UninitializedClass.Call();//Breakpoint here and step in
+	}
+	
+	public static void run_step_out_void_async()
+	{
+		DebuggerTaskScheduler dts = new DebuggerTaskScheduler(2);
+		var wait =  new ManualResetEvent (false);
+		step_out_void_async (wait);
+		wait.WaitOne ();//Don't exist until step_out_void_async is executed...
+		dts.Dispose();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

@@ -1232,7 +1232,6 @@ typedef struct {
 	gint             spill_count;
 	gint             spill_info_len [16];
 	/* unsigned char   *cil_code; */
-	MonoMethod      *inlined_method; /* the method which is currently inlined */
 	MonoInst        *domainvar; /* a cache for the current domain */
 	MonoInst        *got_var; /* Global Offset Table variable */
 	MonoInst        **locals;
@@ -2074,9 +2073,6 @@ gboolean  mini_should_insert_breakpoint (MonoMethod *method);
 int mono_target_pagesize (void);
 
 gboolean  mini_class_is_system_array (MonoClass *klass);
-MonoMethodSignature *mono_get_element_address_signature (int arity);
-MonoJitICallInfo    *mono_get_element_address_icall (int rank);
-MonoJitICallInfo    *mono_get_array_new_va_icall (int rank);
 
 void      mono_linterval_add_range          (MonoCompile *cfg, MonoLiveInterval *interval, int from, int to);
 void      mono_linterval_print              (MonoLiveInterval *interval);
@@ -2792,5 +2788,15 @@ MonoType*   mini_native_type_replace_type (MonoType *type) MONO_LLVM_INTERNAL;
 
 MonoMethod*
 mini_method_to_shared (MonoMethod *method); // null if not shared
+
+static inline gboolean
+mini_safepoints_enabled (void)
+{
+#if defined (TARGET_WASM)
+	return FALSE;
+#else
+	return TRUE;
+#endif
+}
 
 #endif /* __MONO_MINI_H__ */

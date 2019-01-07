@@ -268,6 +268,7 @@ TESTS_CS_SRC=		\
 	create-instance.cs	\
 	bug-2907.cs		\
 	$(ARRAY_COOP_CS)	\
+	array-12193.cs		\
 	array-init.cs		\
 	arraylist.cs		\
 	assembly-load-remap.cs	\
@@ -319,6 +320,7 @@ TESTS_CS_SRC=		\
 	merp-json-valid.cs		\
 	exception19.cs		\
 	exception20.cs		\
+	exception21.cs		\
 	typeload-unaligned.cs	\
 	struct.cs		\
 	valuetype-gettype.cs	\
@@ -610,6 +612,7 @@ TESTS_CS_SRC=		\
 	priority.cs	\
 	abort-cctor.cs	\
 	abort-try-holes.cs \
+	abort-tests.cs \
 	thread-native-exit.cs \
 	reference-loader.cs \
 	thread-suspend-suspended.cs \

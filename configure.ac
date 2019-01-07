@@ -48,7 +48,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=0C41185A-B349-47B0-B592-2409FE8B0134
+MONO_CORLIB_VERSION=e686c1dd-3c2a-4dc9-b12e-ff0d524d6e6b
 
 #
 # Put a quoted #define in config.h.
@@ -599,6 +599,7 @@ AC_CHECK_HEADERS(linux/magic.h)
 if test x$platform_android = xyes; then
 	AC_CHECK_HEADERS(machine/endian.h sys/endian.h)
 	AC_CHECK_HEADERS(android/legacy_signal_inlines.h, [have_android_signal_inlines=yes], [have_android_signal_inlines=no])
+	AC_CHECK_HEADERS(android/ndk-version.h)
 
 	# Make sure SIGRT{MIN,MAX} work - they will fail to work with unified headers if building for
 	# API level < 21 *and* android/legacy_signal_inlines.h doesn't declare (and define) the required
@@ -608,7 +609,8 @@ if test x$platform_android = xyes; then
 	if test x$have_android_signal_inlines = xyes; then
 		AC_MSG_CHECKING([Whether Android SIGRTMIN/SGRTMAX macros are valid])
 		AC_COMPILE_IFELSE([
-			AC_LANG_PROGRAM([#include <android/legacy_signal_inlines.h>],[
+			AC_LANG_PROGRAM([#include <signal.h>
+				#include <android/legacy_signal_inlines.h>],[
 				int i;
 				for (i = SIGRTMIN + 1; i < SIGRTMAX; ++i) {
 				}
@@ -753,6 +755,13 @@ AC_ARG_WITH(mcs-path, [  --with-mcs-path=/path/to/mcs      Specify an alternate 
 )
 
 AC_ARG_WITH(jumptables, [  --with-jumptables=yes,no      enable/disable support for jumptables (ARM-only for now) (defaults to no)],[],[with_jumptables=no])
+
+AC_ARG_WITH(core,       [  --with-core=yes,no,only       controls whether to build Mono as a .NET Core runtime, not build it, or just build core (defaults to no)],[],[with_core=no])
+if test x$with_core = xyes; then
+    AC_DEFINE(ENABLE_NETCORE,1,[Enables the support for .NET Core Features in the MonoVM])
+fi
+AM_CONDITIONAL(ENABLE_CORE, test x$with_core = xyes)
+AM_CONDITIONAL(ONLY_CORE, test x$with_core = xonly)
 
 #
 # A sanity check to catch cases where the package was unpacked
@@ -1405,6 +1414,7 @@ AM_CONDITIONAL(INSTALL_WINAOT, [test "x$with_winaot" != "xno"])
 AM_CONDITIONAL(INSTALL_ORBIS, [test "x$with_orbis" != "xno"])
 AM_CONDITIONAL(INSTALL_UNREAL, [test "x$with_unreal" != "xno"])
 AM_CONDITIONAL(INSTALL_WASM, [test "x$with_wasm" != "xno"])
+AM_CONDITIONAL(INSTALL_NETCORE, [test "x$with_core" != "xno"])
 AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"] || [test "x$TEST_PROFILE" = "xwasm"])
 AM_CONDITIONAL(HYBRID_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_hybrid"] || [test "x$TEST_PROFILE" = "xunreal"])
 AM_CONDITIONAL(AOT_FULL_INTERP_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full_interp"])
@@ -3825,6 +3835,27 @@ if test "x$enable_llvm" = "xdefault"; then
    enable_llvm=$enable_llvm_default
 fi
 
+enable_llvm_msvc_only="no"
+if test "x$enable_llvm" = "xyes"; then
+	if test "x$host_win32" = "xyes"; then
+		if test "x$cross_compiling" = "xno"; then
+			case "$target" in
+			x86_64*)
+				AC_MSG_WARN("LLVM for host=Windows and target=Windows is only supported on x64 MSVC builds. Disabling LLVM for GCC build.")
+				enable_llvm_msvc_only="yes"
+				;;
+			i686*)
+				AC_MSG_ERROR("LLVM for host=Windows and target=Windows is only supported for x64 builds.")
+				;;
+			esac
+		fi
+		if test "x$enable_loadedllvm" = "xyes"; then
+			AC_MSG_WARN("Loadable LLVM currently not supported on Windows. Disabling feature.")
+			enable_loadedllvm=no
+		fi
+	fi
+fi
+
 internal_llvm="no"
 if test "x$enable_llvm" = "xyes"; then
 	if test "x$with_llvm" != "x"; then
@@ -3870,34 +3901,53 @@ if test "x$enable_llvm" = "xyes"; then
 		EXTERNAL_LLVM_CONFIG_WIN32=$(cygpath -m $EXTERNAL_LLVM_CONFIG)
 		AC_SUBST(EXTERNAL_LLVM_CONFIG_WIN32)
 	fi
-	AC_DEFINE(ENABLE_LLVM, 1, [Enable the LLVM back end])
+	if test "x$enable_llvm_msvc_only" != "xyes"; then
+		AC_DEFINE(ENABLE_LLVM, 1, [Enable the LLVM back end])
+	else
+		AC_DEFINE(ENABLE_LLVM_MSVC_ONLY, 1, [Enable the LLVM back end])
+	fi
 fi # ENABLE_LLVM
 
 # AC_DEFINE necessary for correct restore behavior on Linux
-AM_CONDITIONAL(INTERNAL_LLVM, [test "x$internal_llvm" != "xno"])
+AM_CONDITIONAL(INTERNAL_LLVM, [test "x$internal_llvm" != "xno" && test "x$enable_llvm_msvc_only" != "xyes"])
 if test "x$internal_llvm" != "xno"; then
-   AC_DEFINE(INTERNAL_LLVM, 1, [LLVM used is being build during mono build])
+	if test "x$enable_llvm_msvc_only" != "xyes"; then
+		AC_DEFINE(INTERNAL_LLVM, 1, [LLVM used is being build during mono build])
+	else
+		AC_DEFINE(INTERNAL_LLVM_MSVC_ONLY, 1, [LLVM used is being build during mono build])
+	fi
 fi
 
-AM_CONDITIONAL(INTERNAL_LLVM_ASSERTS, [test "x$enable_llvm_asserts" != "xno"])
+AM_CONDITIONAL(INTERNAL_LLVM_ASSERTS, [test "x$enable_llvm_asserts" != "xno" && test "x$enable_llvm_msvc_only" != "xyes"])
 if test "x$enable_llvm_asserts" != "xno"; then
-   AC_DEFINE(INTERNAL_LLVM_ASSERTS, 1, [Build LLVM with assertions])
+	if test "x$enable_llvm_msvc_only" != "xyes"; then
+		AC_DEFINE(INTERNAL_LLVM_ASSERTS, 1, [Build LLVM with assertions])
+	else
+		AC_DEFINE(INTERNAL_LLVM_ASSERTS_MSVC_ONLY, 1, [Build LLVM with assertions])
+	fi
 fi
 
-AM_CONDITIONAL(ENABLE_LLVM, [test x$enable_llvm = xyes])
+AM_CONDITIONAL(ENABLE_LLVM, [test x$enable_llvm = xyes && test x$enable_llvm_msvc_only != xyes])
 
+AM_CONDITIONAL(LOADED_LLVM, [test x$enable_loadedllvm = xyes && test x$enable_llvm_msvc_only != xyes])
 if test "x$enable_loadedllvm" = "xyes"; then
-   AC_DEFINE(MONO_LLVM_LOADED, 1, [The LLVM back end is dynamically loaded])
+	if test "x$enable_llvm_msvc_only" != "xyes"; then
+		AC_DEFINE(MONO_LLVM_LOADED, 1, [The LLVM back end is dynamically loaded])
+	fi
 fi
-AM_CONDITIONAL(LOADED_LLVM, [test x$enable_loadedllvm = xyes])
 
 if test "x$enable_llvm" = "xyes"; then
-   enable_llvm_runtime=yes
+	enable_llvm_runtime=yes
 fi
+
+AM_CONDITIONAL(ENABLE_LLVM_RUNTIME, [test x$enable_llvm_runtime = xyes && test x$enable_llvm_msvc_only != xyes])
 if test "x$enable_llvm_runtime" = "xyes"; then
-   AC_DEFINE(ENABLE_LLVM_RUNTIME, 1, [Runtime support code for llvm enabled])
+	if test "x$enable_llvm_msvc_only" != "xyes"; then
+		AC_DEFINE(ENABLE_LLVM_RUNTIME, 1, [Runtime support code for llvm enabled])
+	else
+		AC_DEFINE(ENABLE_LLVM_RUNTIME_MSVC_ONLY, 1, [Runtime support code for llvm enabled])
+	fi
 fi
-AM_CONDITIONAL(ENABLE_LLVM_RUNTIME, [test x$enable_llvm_runtime = xyes])
 
 TARGET="unknown"
 ACCESS_UNALIGNED="yes"
@@ -4117,6 +4167,14 @@ case "$host" in
 		arch_target=arm;
 		ACCESS_UNALIGNED="no"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
+		;;
+	aarch64-*darwin*ilp32)
+		TARGET=ARM64;
+		arch_target=arm64
+		AC_DEFINE(MONO_ARCH_ILP32, 1, [64 bit mode with 4 byte longs and pointers])
+		sizeof_register=8
+		# assuming no other target other than watchOS is using aarch64*darwin triple
+		TARGET_SYS=WATCHOS
 		;;
 	aarch64-*)
 		# https://lkml.org/lkml/2012/7/15/133
@@ -5008,6 +5066,7 @@ if test ${TARGET} = RISCV32 -o ${TARGET} = RISCV64; then
 			#error "double"
 			#endif
 		], [
+			fpabi=auto
 		], [
 			fpabi=double
 		])
@@ -5019,6 +5078,7 @@ if test ${TARGET} = RISCV32 -o ${TARGET} = RISCV64; then
 			#error "single"
 			#endif
 		], [
+			fpabi=auto
 		], [
 			fpabi=single
 		])
@@ -5030,6 +5090,7 @@ if test ${TARGET} = RISCV32 -o ${TARGET} = RISCV64; then
 			#error "soft"
 			#endif
 		], [
+			fpabi=auto
 		], [
 			fpabi=soft
 		])
@@ -5326,6 +5387,26 @@ dnl **************
 AC_ARG_ENABLE(btls, [  --disable-btls             Disable the BoringTls provider], enable_btls=$enableval, enable_btls=$BTLS_SUPPORTED)
 AC_ARG_ENABLE(btls-lib, [  --disable-btls-lib             Disable building the BTLS native library], enable_btls_lib=$enableval, enable_btls_lib=$BTLS_SUPPORTED)
 AC_ARG_WITH(btls_android_ndk, [  --with-btls-android-ndk        Android NDK for BoringTls])
+AC_ARG_WITH(btls_android_api, [  --with-btls-android-api        Android NDK API level for BTLS build])
+AC_ARG_WITH(btls_android_cmake_toolchain, [  --with-btls-android-cmake-toolchain        Path to the cmake toolchain file for Android])
+AC_ARG_WITH(btls_android_ndk_asm_workaround, [  --with-btls-android-ndk-asm-workaround        Work around a problem with NDK r18+ clang compiler when compiling some AES assembly for ARM])
+
+if test "x$with_btls_android_api" = "x" ; then
+	case "$BTLS_PLATFORM" in
+		android-armv5)
+			with_btls_android_api=16" ;;
+		android-armv6)
+			with_btls_android_api=16" ;;
+		android-armv7)
+			with_btls_android_api=16 ;;
+		android-v8a)
+			with_btls_android_api=21 ;;
+		android-x86)
+			with_btls_android_api=16 ;;
+		android-x64)
+			with_btls_android_api=21 ;;
+	esac
+fi
 
 if test "x$enable_btls" = "xno"; then
    enable_btls_lib=no
@@ -5402,22 +5483,22 @@ if test "x$enable_btls" = "xyes"; then
 		esac
 		;;
 	android-armv5)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=14"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=$with_btls_android_api"
 		;;
 	android-armv6)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=14"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi\" -DANDROID_NATIVE_API_LEVEL=$with_btls_android_api"
 		;;
 	android-armv7)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi-v7a\" -DANDROID_NATIVE_API_LEVEL=14"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"armeabi-v7a\" -DANDROID_NATIVE_API_LEVEL=$with_btls_android_api"
 		;;
 	android-v8a)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"arm64-v8a\" -DANDROID_NATIVE_API_LEVEL=21"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"arm64-v8a\" -DANDROID_NATIVE_API_LEVEL=$with_btls_android_api"
 		;;
 	android-x86)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"x86\" -DANDROID_NATIVE_API_LEVEL=14"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"x86\" -DANDROID_NATIVE_API_LEVEL=$with_btls_android_api"
 		;;
 	android-x64)
-		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"x86_64\" -DANDROID_NATIVE_API_LEVEL=21"
+		BTLS_CMAKE_ARGS="-DANDROID_ABI=\"x86_64\" -DANDROID_NATIVE_API_LEVEL=$with_btls_android_api"
 		;;
 	riscv32)
 		btls_arch=riscv32
@@ -5430,8 +5511,16 @@ if test "x$enable_btls" = "xyes"; then
 	esac
 
 	if test "x$platform_android" = "xyes"; then
+	   	if test "x$with_btls_android_cmake_toolchain" = "x"; then
+		   with_btls_android_cmake_toolchain="$BTLS_ROOT/util/android-cmake/android.toolchain.cmake"
+		fi
+
+		if test "x$with_btls_android_ndk_asm_workaround" != "x"; then
+		   BTLS_CMAKE_ARGS="$BTLS_CMAKE_ARGS -DENABLE_NDK_ARM_WORKAROUND=ON"
+		fi
+
 		btls_android=yes
-		BTLS_CMAKE_ARGS="$BTLS_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=$BTLS_ROOT/util/android-cmake/android.toolchain.cmake"
+		BTLS_CMAKE_ARGS="$BTLS_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=$with_btls_android_cmake_toolchain"
 		if test "x$with_btls_android_ndk" != "x"; then
 			BTLS_CMAKE_ARGS="$BTLS_CMAKE_ARGS -DANDROID_NDK=\"$with_btls_android_ndk\""
 		else
@@ -6246,7 +6335,7 @@ echo "
 	Engine:        $jit_status
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
-	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm, built in-tree: $internal_llvm, assertions: $enable_llvm_asserts)
+	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm, built in-tree: $internal_llvm, assertions: $enable_llvm_asserts, msvc only: $enable_llvm_msvc_only)
 	Spectre:       $spectre_mitigation_status
 	Mono.Native:   $mono_native_text
 
@@ -6268,6 +6357,7 @@ echo "
 	BTLS:            $enable_btls$btls_platform_string
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
 	crash reporting: $crash_reporting (private crashes: $with_crash_privacy)
+	.NET Core:       $with_core
 	$disabled
 "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then

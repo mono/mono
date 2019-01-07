@@ -1651,7 +1651,7 @@ mono_get_version_info (void)
 #endif
 #endif
 
-	g_string_append_printf (output, "\tSuspend:       %s\n", mono_threads_suspend_policy_name ());
+	g_string_append_printf (output, "\tSuspend:       %s\n", mono_threads_suspend_policy_name (mono_threads_suspend_policy ()));
 
 	return g_string_free (output, FALSE);
 }
@@ -2420,7 +2420,7 @@ mono_main (int argc, char* argv[])
 	}
 
 #ifdef DISABLE_JIT
-	if (!mono_aot_only) {
+	if (!mono_aot_only && !mono_use_interpreter) {
 		fprintf (stderr, "This runtime has been configured with --enable-minimal=jit, so the --full-aot command line option is required.\n");
 		exit (1);
 	}

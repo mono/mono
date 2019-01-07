@@ -36,13 +36,12 @@ Beware that the debugger is in active development so bugs and missing features w
 
 # AOT development
 
-AOT experimentation happens with the following steps:
+AOT experimentation is built targeting `package-wasm-cross`:
 
-1) from `sdks` and configure it to disable all but WASM and BCL. (See sdks/Make.config.sample)
-2) from `sdks/builds` hit `make package`
-3) from `sdks/wasm` hit `make build`
-4) from `sdks/wasm` hit `make build-aot-sample`
-4) from `sdks/wasm/aot` hit `~/.jsvu/sm aot-driver.js`
+```
+mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
+mono$ make -C build
+````
 
 If you don't have jsvu installed, run `make toolchain` from `sdks/wasm`. It requires a recent version of node installed in your system.
 
@@ -50,23 +49,23 @@ Now you can experiment with the `aot-sample` and `link-sample` make targets to t
 
 To update the runtimes used use the following make target in `sdks/build`
 
-`package-wasm-interp` for the interpreter-based runtime
-`package-wasm-aot` for the aot compiler
-`package-wasm-aot-runtime` for the wasm runtime that works with AOT'd code.
+`package-wasm-runtime` for the interpreter-based runtime
+`package-wasm-cross` for the aot compiler
+`package-wasm-bcl` for the wasm bcl code.
 
 
 To update the aot compiler:
 ```
-make -C sdks/builds package-wasm-aot-compiler
-make -C sdks/wasm aot-sample
-make -C sdks/wasm link-sample
+make -C sdks/builds package-wasm-cross
+make -C sdks/wasm build-aot-all
+make -C sdks/wasm run-aot-all
 ```
 
 To update the aot runtime:
 ```
-make -C sdks/builds package-wasm-aot
-make -C sdks/wasm aot-sample
-make -C sdks/wasm link-sample
+make -C sdks/builds package-wasm-runtime
+make -C sdks/wasm build-aot-all
+make -C sdks/wasm run-aot-all
 ```
 
 To build and run AOT test suites:

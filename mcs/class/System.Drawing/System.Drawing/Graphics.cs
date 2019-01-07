@@ -1606,6 +1606,9 @@ namespace System.Drawing
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
+			if (rect == null)
+				throw new ArgumentNullException ("rect");
+				
                         FillRectangle (brush, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
 

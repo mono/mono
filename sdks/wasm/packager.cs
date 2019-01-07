@@ -151,6 +151,7 @@ class Driver {
 		root_search_paths.ForEach(resolver.AddSearchDirectory);
 		resolver.AddSearchDirectory(bcl_facades_prefix);
 		resolver.AddSearchDirectory(bcl_prefix);
+		resolver.AddSearchDirectory(framework_prefix);		
 		rp.AssemblyResolver = resolver;
 
 		rp.InMemory = true;
@@ -299,8 +300,11 @@ class Driver {
 			var resolved = Resolve (ra, out kind);
 			Import (resolved, kind);
 		}
-		if (add_binding)
-			Import (ResolveFramework (BINDINGS_ASM_NAME + ".dll"), AssemblyKind.Framework);
+		if (add_binding) {
+			var bindings = ResolveFramework (BINDINGS_ASM_NAME + ".dll");
+			Import (bindings, AssemblyKind.Framework);
+			root_assemblies.Add (bindings);
+		}
 
 		if (builddir != null) {
 			emit_ninja = true;
@@ -434,7 +438,7 @@ class Driver {
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
-		ninja.WriteLine ("emcc_flags = -Os -g -s EMULATED_FUNCTION_POINTERS=0 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\"");
+		ninja.WriteLine ("emcc_flags = -Os -g -s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\"");
 
 		// Rules
 		ninja.WriteLine ("rule aot");

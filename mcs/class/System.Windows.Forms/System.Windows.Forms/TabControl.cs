@@ -675,7 +675,12 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose (bool disposing)
 		{
-			CloseToolTip ();
+			if (tooltip_timer != null)
+				tooltip_timer.Dispose();
+
+			if (tooltip != null)
+				tooltip.Dispose();
+
 			base.Dispose (disposing);
 		}
 

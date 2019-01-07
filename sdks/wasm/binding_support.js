@@ -428,12 +428,12 @@ var BindingSupportLib = {
 
 		wasm_unbind_js_obj: function (js_obj_id)
 		{
-			return this.call_method (this.unbind_js_obj, null, "i", [js_obj_id]);
+			this.call_method (this.unbind_js_obj, null, "i", [js_obj_id]);
 		},		
 
 		wasm_unbind_js_obj_and_free: function (js_obj_id)
 		{
-			return this.call_method (this.unbind_js_obj_and_free, null, "i", [js_obj_id]);
+			this.call_method (this.unbind_js_obj_and_free, null, "i", [js_obj_id]);
 		},		
 
 		wasm_get_js_id: function (mono_obj)
@@ -694,7 +694,7 @@ var BindingSupportLib = {
 			if (typeof obj  !== "undefined" && obj !== null) {
 				// if this is the global object then do not
 				// unregister it.
-				if (___mono_wasm_global___ && ___mono_wasm_global___ === obj)
+				if (typeof ___mono_wasm_global___ !== "undefined" && ___mono_wasm_global___ === obj)
 					return obj;
 
 				var gc_handle = obj.__mono_gchandle__;
@@ -713,16 +713,26 @@ var BindingSupportLib = {
 		mono_wasm_free_handle: function(handle) {
 			this.mono_wasm_unregister_obj(handle);
 		},
-		mono_wasm_free_object: function(mono_obj) {
-			var js_id = this.call_method (this.get_js_id, null, "m", [mono_obj]);
-			if (js_id)
-			{
-				var obj = this.mono_wasm_object_registry[js_id - 1];
-				if (typeof obj  !== "undefined" && obj !== null) {
-					this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ obj.__mono_gchandle__ ]);
+		mono_wasm_free_raw_object: function(js_id) {
+			var obj = this.mono_wasm_object_registry[js_id - 1];
+			if (typeof obj  !== "undefined" && obj !== null) {
+				// if this is the global object then do not
+				// unregister it.
+				if (typeof ___mono_wasm_global___ !== "undefined" && ___mono_wasm_global___ === obj)
+					return obj;
+
+				var gc_handle = obj.__mono_gchandle__;
+				if (typeof gc_handle  !== "undefined") {
+
+					obj.__mono_gchandle__ = undefined;
+					obj.__mono_jshandle__ = undefined;
+
+					this.mono_wasm_object_registry[js_id - 1] = undefined;
+					this.mono_wasm_free_list.push(js_id - 1);
 				}
 			}
-		},		
+			return obj;
+		},
 		mono_wasm_get_global: function() {
 			function testGlobal(obj) {
 				obj['___mono_wasm_global___'] = obj;
@@ -768,6 +778,8 @@ var BindingSupportLib = {
 		var res;
 		try {
 			var m = obj [js_name];
+			if (typeof m === "undefined")
+				throw new Error("Method: '" + js_name + "' not found for: '" + Object.prototype.toString.call(obj) + "'");
 			var res = m.apply (obj, js_args);
 			return BINDING.js_to_mono_obj (res);
 		} catch (e) {
@@ -879,10 +891,56 @@ var BindingSupportLib = {
 
 		BINDING.mono_wasm_free_handle(js_handle);
 	},	
-	mono_wasm_release_object: function(mono_obj, is_exception) {
+	mono_wasm_release_object: function(js_handle, is_exception) {
 		BINDING.bindings_lazy_init ();
 
-		BINDING.mono_wasm_free_object(mono_obj);
+		BINDING.mono_wasm_free_raw_object(js_handle);
+	},	
+	mono_wasm_new_array: function(is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		return BINDING.js_to_mono_obj ([]);
+	},	
+	mono_wasm_new_object: function(object_handle, args, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		if (!object_handle) {
+			return BINDING.js_to_mono_obj ({});
+		}
+		else {
+
+			var requireObject = BINDING.mono_wasm_require_handle (object_handle);
+			if (!requireObject) {
+				setValue (is_exception, 1, "i32");
+				return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+			}
+
+			var js_args = BINDING.mono_array_to_js_array(args);
+			
+			try {
+				
+				// This is all experimental !!!!!!
+				var allocator = function(constructor, js_args) {
+					// Not sure if we should be checking for anything here
+					var argsList = new Array();
+					argsList[0] = constructor;
+					if (js_args)
+						argsList = argsList.concat(js_args);
+					var obj = new (constructor.bind.apply(constructor, argsList ));
+					return obj;
+				};
+		
+				var res = allocator(requireObject, js_args);
+				return BINDING.extract_mono_obj (res);
+			} catch (e) {
+				var res = e.toString ();
+				setValue (is_exception, 1, "i32");
+				if (res === null || res === undefined)
+					res = "Error allocating object.";
+				return BINDING.js_string_to_mono_string (res);
+			}	
+		}
+
 	},	
 
 };

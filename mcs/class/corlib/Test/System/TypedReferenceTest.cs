@@ -34,6 +34,8 @@ namespace MonoTests.System
 {
 #if !MONODROID // Type load segfaults the runtime on ARM64 (https://gist.github.com/grendello/334d06c45376602a9afc)
 	[TestFixture]
+	// Currently causes the WASM runtime to abort
+	[Category("NotWasm")]
 	public class TypedReferenceTest
 	{
 		struct TestFields

@@ -330,6 +330,7 @@ typedef struct MonoAotCompile {
 	FILE *fp;
 	char *tmpbasename;
 	char *tmpfname;
+	char *temp_dir_to_delete;
 	char *llvm_sfile;
 	char *llvm_ofile;
 	GSList *cie_program;
@@ -10673,6 +10674,8 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 		symbols [sindex ++] = NULL;
 		symbols [sindex ++] = NULL;
 	}
+	symbols [sindex ++] = NULL;
+	symbols [sindex ++] = NULL;
 
 	if (acfg->data_outfile) {
 		for (i = 0; i < MONO_AOT_TABLE_NUM; ++i)
@@ -10771,6 +10774,8 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 	emit_int32 (acfg, info->tramp_page_size);
 	emit_int32 (acfg, info->nshared_got_entries);
 	emit_int32 (acfg, info->datafile_size);
+	emit_int32 (acfg, 0);
+	emit_int32 (acfg, 0);
 
 	for (i = 0; i < MONO_AOT_TABLE_NUM; ++i)
 		emit_int32 (acfg, info->table_offsets [i]);
@@ -12493,6 +12498,11 @@ add_preinit_got_slots (MonoAotCompile *acfg)
 	get_got_offset (acfg, FALSE, ji);
 	get_got_offset (acfg, TRUE, ji);
 
+	ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
+	ji->type = MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG;
+	get_got_offset (acfg, FALSE, ji);
+	get_got_offset (acfg, TRUE, ji);
+
 	for (i = 0; i < TLS_KEY_NUM; i++) {
 		ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
 		ji->type = MONO_PATCH_INFO_GET_TLS_TRAMP;
@@ -12997,7 +13007,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		acfg->is_full_aot = TRUE;
 	}
 
-	if (mono_threads_are_safepoints_enabled ())
+	if (mini_safepoints_enabled ())
 		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_SAFEPOINTS);
 
 	// The methods in dedup-emit amodules must be available on runtime startup
@@ -13193,6 +13203,7 @@ emit_aot_image (MonoAotCompile *acfg)
 			} else {
 				temp_path = g_mkdtemp (g_strdup ("mono_aot_XXXXXX"));
 				g_assertf (temp_path, "mkdtemp failed, error = (%d) %s", errno, g_strerror (errno));
+				acfg->temp_dir_to_delete = g_strdup (temp_path);
 			}
 				
 			acfg->tmpbasename = g_build_filename (temp_path, "temp", NULL);
@@ -13417,6 +13428,12 @@ emit_aot_image (MonoAotCompile *acfg)
 
 	if (acfg->aot_opts.dump_json)
 		aot_dump (acfg);
+
+	if (!acfg->aot_opts.save_temps && acfg->temp_dir_to_delete) {
+		char *command = g_strdup_printf ("rm -r %s", acfg->temp_dir_to_delete);
+		execute_system (command);
+		g_free (command);
+	}
 
 	acfg_free (acfg);
 	

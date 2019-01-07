@@ -37,18 +37,12 @@
 #if defined(__APPLE__)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
+#include "icall-decl.h"
 
 #undef DEBUG
 
 static gint32 string_invariant_compare_char (gunichar2 c1, gunichar2 c2,
 					     gint32 options);
-static gint32 string_invariant_compare (MonoString *str1, gint32 off1,
-					gint32 len1, MonoString *str2,
-					gint32 off2, gint32 len2,
-					gint32 options);
-static gint32 string_invariant_indexof (MonoString *source, gint32 sindex,
-					gint32 count, MonoString *value,
-					MonoBoolean first);
 
 static const CultureInfoEntry* culture_info_entry_from_lcid (int lcid);
 
@@ -731,47 +725,6 @@ fail:
 	return ret;
 }
 
-int ves_icall_System_Globalization_CompareInfo_internal_compare (MonoCompareInfo *this_obj, MonoString *str1, gint32 off1, gint32 len1, MonoString *str2, gint32 off2, gint32 len2, gint32 options)
-{
-	/* Do a normal ascii string compare, as we only know the
-	 * invariant locale if we dont have ICU
-	 */
-	return(string_invariant_compare (str1, off1, len1, str2, off2, len2,
-					 options));
-}
-
-void ves_icall_System_Globalization_CompareInfo_assign_sortkey (MonoCompareInfo *this_obj, MonoSortKey *key, MonoString *source, gint32 options)
-{
-	ERROR_DECL (error);
-	MonoArray *arr;
-	gint32 keylen, i;
-
-	keylen=mono_string_length_internal (source);
-	
-	arr=mono_array_new_checked (mono_domain_get (), mono_get_byte_class (),
-				    keylen, error);
-	if (mono_error_set_pending_exception (error))
-		return;
-
-	for(i=0; i<keylen; i++) {
-		mono_array_set_internal (arr, guint8, i, mono_string_chars_internal (source)[i]);
-	}
-	
-	MONO_OBJECT_SETREF_INTERNAL (key, key, arr);
-}
-
-int ves_icall_System_Globalization_CompareInfo_internal_index (MonoCompareInfo *this_obj, MonoString *source, gint32 sindex, gint32 count, MonoString *value, gint32 options, MonoBoolean first)
-{
-	return(string_invariant_indexof (source, sindex, count, value, first));
-}
-
-int
-ves_icall_System_Threading_Thread_current_lcid (void)
-{
-	/* Invariant */
-	return 0x007F;
-}
-
 static gint32 string_invariant_compare_char (gunichar2 c1, gunichar2 c2,
 					     gint32 options)
 {
@@ -807,28 +760,18 @@ static gint32 string_invariant_compare_char (gunichar2 c1, gunichar2 c2,
 	return ((result < 0) ? -1 : (result > 0) ? 1 : 0);
 }
 
-static gint32 string_invariant_compare (MonoString *str1, gint32 off1,
-					gint32 len1, MonoString *str2,
-					gint32 off2, gint32 len2,
-					gint32 options)
+gint32
+ves_icall_System_Globalization_CompareInfo_internal_compare (const gunichar2 *ustr1, gint32 len1,
+	const gunichar2 *ustr2, gint32 len2, gint32 options)
 {
+	/* Do a normal ascii string compare, as we only know the
+	 * invariant locale if we dont have ICU
+	 */
+
 	/* c translation of C# code from old string.cs.. :) */
-	gint32 length;
+	const gint32 length = MAX (len1, len2);
 	gint32 charcmp;
-	gunichar2 *ustr1;
-	gunichar2 *ustr2;
-	gint32 pos;
-
-	if(len1 >= len2) {
-		length=len1;
-	} else {
-		length=len2;
-	}
-
-	ustr1 = mono_string_chars_internal (str1) + off1;
-	ustr2 = mono_string_chars_internal (str2) + off2;
-
-	pos = 0;
+	gint32 pos = 0;
 
 	for (pos = 0; pos != length; pos++) {
 		if (pos >= len1 || pos >= len2)
@@ -864,20 +807,12 @@ static gint32 string_invariant_compare (MonoString *str1, gint32 off1,
 	return(string_invariant_compare_char(ustr1[pos], ustr2[pos], options));
 }
 
-static gint32 string_invariant_indexof (MonoString *source, gint32 sindex,
-					gint32 count, MonoString *value,
-					MonoBoolean first)
+int
+ves_icall_System_Globalization_CompareInfo_internal_index (const gunichar2 *src, gint32 sindex,
+	gint32 count, const gunichar2 *cmpstr, int lencmpstr, MonoBoolean first)
 {
-	gint32 lencmpstr;
-	gunichar2 *src;
-	gunichar2 *cmpstr;
 	gint32 pos,i;
 	
-	lencmpstr = mono_string_length_internal (value);
-	
-	src = mono_string_chars_internal (source);
-	cmpstr = mono_string_chars_internal (value);
-
 	if(first) {
 		count -= lencmpstr;
 		for(pos=sindex;pos <= sindex+count;pos++) {
@@ -922,5 +857,3 @@ void ves_icall_System_Text_Normalization_load_normalization_resource (guint8 **a
 	*argCombiningClass = (guint8*)combiningClass;
 #endif
 }
-
-

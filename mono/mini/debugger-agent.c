@@ -255,6 +255,7 @@ struct _DebuggerTlsData {
 
 	// The state that the debugger expects the thread to be in
 	MonoDebuggerThreadState thread_state;
+	MonoStopwatch step_time;
 };
 
 typedef struct {
@@ -371,7 +372,8 @@ typedef enum {
 	CMD_THREAD_GET_INFO = 4,
 	CMD_THREAD_GET_ID = 5,
 	CMD_THREAD_GET_TID = 6,
-	CMD_THREAD_SET_IP = 7
+	CMD_THREAD_SET_IP = 7,
+	CMD_THREAD_ELAPSED_TIME = 8
 } CmdThread;
 
 typedef enum {
@@ -684,7 +686,7 @@ static void ids_cleanup (void);
 
 static void suspend_init (void);
 
-static void start_debugger_thread (void);
+static void start_debugger_thread (MonoError *error);
 static void stop_debugger_thread (void);
 
 static void finish_agent_init (gboolean on_startup);
@@ -1064,7 +1066,9 @@ finish_agent_init (gboolean on_startup)
 	if (!on_startup) {
 		/* Do some which is usually done after sending the VMStart () event */
 		vm_start_event_sent = TRUE;
-		start_debugger_thread ();
+		ERROR_DECL (error);
+		start_debugger_thread (error);
+		mono_error_assert_ok (error);
 	}
 }
 
@@ -1613,16 +1617,16 @@ stop_debugger_thread (void)
 }
 
 static void
-start_debugger_thread (void)
+start_debugger_thread (MonoError *error)
 {
-	ERROR_DECL (error);
 	MonoInternalThread *thread;
 
 	thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)debugger_thread, NULL, MONO_THREAD_CREATE_FLAGS_DEBUGGER, error);
-	mono_error_assert_ok (error);
-
+	return_if_nok (error);
+	
 	debugger_thread_handle = mono_threads_open_thread_handle (thread->handle);
 	g_assert (debugger_thread_handle);
+	
 }
 
 /*
@@ -3009,6 +3013,7 @@ suspend_current (void)
 	tls->context.valid = FALSE;
 	tls->async_state.valid = FALSE;
 	invalidate_frames (tls);
+	mono_stopwatch_start (&tls->step_time);
 }
 
 static void
@@ -3755,6 +3760,10 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 			break;
 		case EVENT_KIND_BREAKPOINT:
 		case EVENT_KIND_STEP: {
+			DebuggerTlsData *tls;
+			tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+			g_assert (tls);
+			mono_stopwatch_stop (&tls->step_time);
 			MonoMethod *method = (MonoMethod *)arg;
 
 			buffer_add_methodid (&buf, domain, method);
@@ -3784,8 +3793,13 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 			keepalive_obj = ei->exc;
 			break;
 		}
-		case EVENT_KIND_USER_BREAK:
+		case EVENT_KIND_USER_BREAK: {
+			DebuggerTlsData *tls;
+			tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+			g_assert (tls);
+			mono_stopwatch_stop (&tls->step_time);
 			break;
+		}
 		case EVENT_KIND_USER_LOG: {
 			EventInfo *ei = (EventInfo *)arg;
 			buffer_add_int (&buf, ei->level);
@@ -3803,8 +3817,11 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 
 	if (event == EVENT_KIND_VM_START) {
 		suspend_policy = agent_config.suspend ? SUSPEND_POLICY_ALL : SUSPEND_POLICY_NONE;
-		if (!agent_config.defer)
-			start_debugger_thread ();
+		if (!agent_config.defer) {
+			ERROR_DECL (error);
+			start_debugger_thread (error);
+			mono_error_assert_ok (error);
+		}
 	}
    
 	if (event == EVENT_KIND_VM_DEATH) {
@@ -3889,8 +3906,11 @@ static void
 runtime_initialized (MonoProfiler *prof)
 {
 	process_profiler_event (EVENT_KIND_VM_START, mono_thread_current ());
-	if (agent_config.defer)
-		start_debugger_thread ();
+	if (agent_config.defer) {
+		ERROR_DECL (error);
+		start_debugger_thread (error);
+		mono_error_assert_ok (error);
+	}
 }
 
 static void
@@ -3961,6 +3981,7 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	/* 
 	 * suspend_vm () could have missed this thread, so wait for a resume.
 	 */
+	
 	suspend_current ();
 }
 
@@ -8670,6 +8691,15 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		}
 		break;
 	}
+	case CMD_THREAD_ELAPSED_TIME: {
+		DebuggerTlsData *tls;
+		mono_loader_lock ();
+		tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread);
+		mono_loader_unlock ();
+		g_assert (tls);
+		buffer_add_long (buf, (long)mono_stopwatch_elapsed_ms (&tls->step_time));
+		break;
+	}
 	default:
 		return ERR_NOT_IMPLEMENTED;
 	}
@@ -9720,7 +9750,9 @@ debugger_thread (void *arg)
 	
 	if (!attach_failed && command_set == CMD_SET_VM && command == CMD_VM_DISPOSE && !(vm_death_event_sent || mono_runtime_is_shutting_down ())) {
 		DEBUG_PRINTF (2, "[dbg] Detached - restarting clean debugger thread.\n");
-		start_debugger_thread ();
+		ERROR_DECL (error);
+		start_debugger_thread (error);
+		mono_error_cleanup (error);
 	}
 
 	return 0;

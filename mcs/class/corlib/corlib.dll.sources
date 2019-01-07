@@ -191,7 +191,7 @@ System.Diagnostics.SymbolStore/ISymbolScope.cs
 System.Diagnostics.SymbolStore/ISymbolVariable.cs
 System.Diagnostics.SymbolStore/ISymbolWriter.cs
 System.Diagnostics.SymbolStore/SymAddressKind.cs
-System.Diagnostics.SymbolStore/SymbolToken.cs
+../../../external/corefx/src/System.Diagnostics.StackTrace/src/System/Diagnostics/SymbolStore/SymbolToken.cs
 System.Diagnostics.SymbolStore/SymDocumentType.cs
 System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
@@ -1071,6 +1071,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/BidiCategory.cs
 ../referencesource/mscorlib/system/globalization/calendar.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CalendarAlgorithmType.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Globalization/ISOWeek.cs
 ../referencesource/mscorlib/system/globalization/CalendricalCalculationsHelper.cs
 ../referencesource/mscorlib/system/globalization/calendardata.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CalendarWeekRule.cs
