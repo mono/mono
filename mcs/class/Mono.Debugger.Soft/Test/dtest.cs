@@ -2489,7 +2489,6 @@ public class DebuggerTests
 			}
 			if (success) 
 				break;
-			System.Console.WriteLine("tentando");
 			//try again because of unreliability of the crash reporter.
 			TearDown();
 			SetUp();
