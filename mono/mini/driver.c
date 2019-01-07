@@ -414,7 +414,7 @@ method_should_be_regression_tested (MonoMethod *method, gboolean interp)
 			return FALSE;
 		}
 
-		if ((mono_aot_mode == MONO_AOT_MODE_INTERP_LLVMONLY || mono_aot_mode == MONO_AOT_MODE_LLVMONLY) && !strcmp (utf8_str, "!BITCODE")) {
+		if ((mono_aot_mode == MONO_AOT_MODE_INTERP_LLVMONLY || mono_aot_mode == MONO_AOT_MODE_LLVMONLY || mono_aot_mode == MONO_AOT_MODE_LLVMONLY_INTERP) && !strcmp (utf8_str, "!BITCODE")) {
 			g_print ("skip %s...\n", method->name);
 			return FALSE;
 		}
@@ -520,6 +520,30 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 				if (cfg) {
 					code_size += cfg->code_len;
 					mono_destroy_compile (cfg);
+				}
+			} else if (mono_use_interpreter) {
+				ERROR_DECL (interp_error);
+				MonoObject *exc = NULL;
+
+				// Fallback to interpreter
+				MonoObject *result_obj = mini_get_interp_callbacks ()->runtime_invoke (method, NULL, NULL, &exc, interp_error);
+				if (!mono_error_ok (interp_error)) {
+					cfailed++;
+					g_print ("Test '%s' execution failed.\n", method->name);
+				} else if (exc != NULL) {
+					g_print ("Exception in Test '%s' occured:\n", method->name);
+					mono_object_describe (exc);
+					run++;
+					failed++;
+				} else {
+					result = *(gint32 *) mono_object_unbox_internal (result_obj);
+					expected = atoi (method->name + 5);
+					run++;
+
+					if (result != expected) {
+						failed++;
+						g_print ("Test '%s' failed result (got %d, expected %d).\n", method->name, result, expected);
+					}
 				}
 			} else {
 				cfailed++;
@@ -635,7 +659,7 @@ mini_regression (MonoImage *image, int verbose, int *total_run)
 					continue;
 
 			//we running in AOT only, it makes no sense to try multiple flags
-			if ((mono_aot_mode == MONO_AOT_MODE_FULL || mono_aot_mode == MONO_AOT_MODE_LLVMONLY) && opt_sets [opt] != DEFAULT_OPTIMIZATIONS) {
+			if ((mono_aot_mode == MONO_AOT_MODE_FULL || mono_aot_mode == MONO_AOT_MODE_LLVMONLY || mono_aot_mode == MONO_AOT_MODE_LLVMONLY_INTERP) && opt_sets [opt] != DEFAULT_OPTIMIZATIONS) {
 				continue;
 			}
 
@@ -1889,7 +1913,7 @@ static int
 mono_exec_regression_internal (int verbose_level, int count, char *images [], gboolean single_method)
 {
 	mono_do_single_method_regression = single_method;
-	if (mono_use_interpreter) {
+	if (mono_use_interpreter && mono_ee_features.force_use_interpreter) {
 		if (mono_interp_regression_list (verbose_level, count, images)) {
 			g_print ("Regression ERRORS!\n");
 			return 1;
@@ -2756,6 +2780,7 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 		mono_aot_only = TRUE;
 		mono_use_interpreter = TRUE;
 
+		mono_ee_features.force_use_interpreter = TRUE;
 		mono_ee_features.use_aot_trampolines = TRUE;
 		break;
 
