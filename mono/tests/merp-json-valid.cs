@@ -22,7 +22,7 @@ class C
 	JsonValidateMerp ()
 	{
 		var monoType = Type.GetType ("Mono.Runtime", false);
-		var m = monoType.GetMethod("EnableMicrosoftTelemetry", BindingFlags.NonPublic | BindingFlags.Static);
+		var m = monoType.GetMethod("EnableMicrosoftTelemetryNext", BindingFlags.NonPublic | BindingFlags.Static);
 
 		// This leads to open -a /bin/cat, which errors out, but errors
 		// in invoking merp are only logged errors, not fatal assertions.
