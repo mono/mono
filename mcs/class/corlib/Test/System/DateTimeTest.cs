@@ -2667,5 +2667,18 @@ namespace MonoTests.System
 			Assert.AreEqual (1, res.Day, "#12");
 			Assert.AreEqual (DateTimeKind.Utc, res.Kind, "#13");
 		}
+
+		[Test] // https://github.com/mono/mono/issues/11317
+		public void DateTimeKoCulture ()
+		{
+			foreach (var culture in new [] { new CultureInfo ("ko"), new CultureInfo ("ko-KR") })
+			{
+				var dateTimeAm = new DateTime (2018, 1, 1, 11, 0, 0);
+				var dateTimePm = new DateTime (2018, 1, 1, 13, 0, 0);
+
+				Assert.AreEqual ("오전 11:00:00", dateTimeAm.ToString ("T", culture.DateTimeFormat));
+				Assert.AreEqual ("오후 1:00:00", dateTimePm.ToString ("T", culture.DateTimeFormat));
+			}
+		}
 	}
 }
