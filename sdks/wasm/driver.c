@@ -422,6 +422,12 @@ wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 	return NULL;
 }
 
+#if !defined(ENABLE_AOT) || defined(EE_MODE_LLVMONLY_INTERP)
+#define NEED_INTERP 1
+// FIXME: llvm+interp mode needs this to call icalls
+#define NEED_ICALL_TABLES 1
+#endif
+
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
@@ -433,15 +439,21 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #ifdef ENABLE_AOT
 	// Defined in driver-gen.c
 	register_aot_modules ();
+#ifdef EE_MODE_LLVMONLY_INTERP
+	mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY_INTERP);
+#else
 	mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY);
+#endif
 #else
 	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
 	if (enable_debugging)
 		mono_wasm_enable_debugging ();
 #endif
 
-#ifndef ENABLE_AOT
+#ifdef NEED_ICALL_TABLES
 	mono_icall_table_init ();
+#endif
+#ifdef NEED_INTERP
 	mono_ee_interp_init ("");
 	mono_marshal_ilgen_init ();
 	mono_method_builder_ilgen_init ();
