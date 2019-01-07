@@ -91,6 +91,14 @@
 #include <mono/utils/mono-threads-debug.h>
 #endif
 
+#include <fcntl.h>
+#ifndef HOST_WIN32
+#include <dlfcn.h>
+#endif
+#if HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+
 #if defined(HOST_WATCHOS)
 
 void
@@ -878,21 +886,23 @@ mono_runtime_setup_stat_profiler (void)
 static void
 dump_memory_around_ip (void *ctx)
 {
-#if 0
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 	if (!ctx)
 		return;
+
+	MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
+	MOSTLY_ASYNC_SAFE_PRINTF ("\tBasic Fault Adddress Reporting\n");
+	MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
 
 	MonoContext mctx;
 	mono_sigctx_to_monoctx (ctx, &mctx);
 	gpointer native_ip = MONO_CONTEXT_GET_IP (&mctx);
 	if (native_ip) {
-		mono_runtime_printf_err ("Memory around native instruction pointer (%p):", native_ip);
+		MOSTLY_ASYNC_SAFE_PRINTF ("Memory around native instruction pointer (%p):", native_ip);
 		mono_dump_mem (((guint8 *) native_ip) - 0x10, 0x40);
 	} else {
-		mono_runtime_printf_err ("instruction pointer is NULL, skip dumping");
+		MOSTLY_ASYNC_SAFE_PRINTF ("instruction pointer is NULL, skip dumping");
 	}
-#endif
 #endif
 }
 
@@ -942,41 +952,46 @@ dump_native_stacktrace (const char *signal, void *ctx)
 	mono_memory_write_barrier ();
 
 	if (!double_faulted) {
-		mono_runtime_printf_err ("Dumping, not in media res %d\n", double_faulted);
 		g_assertion_disable_global (assert_printer_callback);
 	} else {
-		mono_runtime_printf_err ("\nAn error has occured in the native fault reporting. Some diagnostic information will be unavailable.\n");
+		MOSTLY_ASYNC_SAFE_PRINTF ("\nAn error has occured in the native fault reporting. Some diagnostic information will be unavailable.\n");
+
+
+#if 1
+	pid_t crashed_pid = getpid ();
+	// Break here
+	MOSTLY_ASYNC_SAFE_PRINTF ("Attach to PID %d. Supervisor thread will signal us shortly.\n", crashed_pid);
+	while (TRUE) {
+		// Sleep for 1 second.
+		g_usleep (1000 * 1000);
+	}
+#endif
 
 		// In case still enabled
 		mono_summarize_toggle_assertions (FALSE);
 	}
 
 #ifdef HAVE_BACKTRACE_SYMBOLS
+
 	void *array [256];
-	char **names;
-	int i, size;
+	int size = backtrace (array, 256);
 
-#if 0
-	// Crashes a lot in backtrace_symbols
-	// FIXME: make this work using dladdr
+	MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
+	MOSTLY_ASYNC_SAFE_PRINTF ("\tNative stacktrace:\n");
+	MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+	if (size == 0)
+		MOSTLY_ASYNC_SAFE_PRINTF ("\t (No frames) \n\n");
 
-	mono_runtime_printf_err ("\nNative stacktrace:\n");
-
-	size = backtrace (array, 256);
-	names = backtrace_symbols (array, size);
-	for (i = 0; i < size; ++i) {
-		mono_runtime_printf_err ("\t%s", names [i]);
+	for (int i = 0; i < size; ++i) {
+		gpointer ip = array [i];
+		Dl_info info;
+		gboolean success = dladdr ((void*) ip, &info);
+		if (!success) {
+			MOSTLY_ASYNC_SAFE_PRINTF ("\t%p - Unknown\n", ip);
+		} else {
+			MOSTLY_ASYNC_SAFE_PRINTF ("\t%p - %s : %s\n", ip, info.dli_fname, info.dli_sname);
+		}
 	}
-#endif
-
-	/* Try to get more meaningful information using gdb */
-	// FIXME: Remove locking and reenable. Can race with itself
-	// due to signals being handled on other threads.
-	//
-	// char *debugger_log = mono_debugger_state_str ();
-	// if (debugger_log) {
-	// 	fprintf (stderr, "\n\tDebugger session state:\n%s\n", debugger_log);
-	// }
 
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_SYSCALL_H) && (defined(SYS_fork) || HAVE_FORK)
 	if (!mini_get_debug_options ()->no_gdb_backtrace) {
@@ -985,13 +1000,12 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		int status;
 		pid_t crashed_pid = getpid ();
 
-		MonoStateMem merp_mem;
-		memset (&merp_mem, 0, sizeof (merp_mem));
-
-#ifndef DISABLE_CRASH_REPORTING
 		MonoStackHash hashes;
 		gchar *output = NULL;
-		MonoContext mctx;
+
+#ifndef DISABLE_CRASH_REPORTING
+		MonoStateMem merp_mem;
+		memset (&merp_mem, 0, sizeof (merp_mem));
 
 		if (!double_faulted) {
 			gboolean leave = FALSE;
@@ -1015,6 +1029,10 @@ dump_native_stacktrace (const char *signal, void *ctx)
 				passed_ctx = &mctx;
 			}
 
+			MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
+			MOSTLY_ASYNC_SAFE_PRINTF ("\tTelemetry Dumper:\n");
+			MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+
 			if (!leave) {
 				mono_summarize_timeline_start ();
 				mono_summarize_toggle_assertions (TRUE);
@@ -1031,7 +1049,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 				// Wait for the other threads to clean up and exit their handlers
 				// We can't lock / wait indefinitely, in case one of these threads got stuck somehow
 				// while dumping. 
-				mono_runtime_printf_err ("\nWaiting for dumping threads to resume\n");
+				MOSTLY_ASYNC_SAFE_PRINTF ("\nWaiting for dumping threads to resume\n");
 				sleep (1);
 			}
 
@@ -1075,20 +1093,19 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		if (!double_faulted && mono_merp_enabled ()) {
 			if (pid == 0) {
 				if (output) {
-					mono_runtime_printf_err ("\nBefore merp upload\n");
 					gboolean merp_upload_success = mono_merp_invoke (crashed_pid, signal, output, &hashes);
 
-					if (!merp_upload_success)
-						mono_runtime_printf_err ("\nThe MERP upload step has failed.\n");
-					else {
+					if (!merp_upload_success) {
+						MOSTLY_ASYNC_SAFE_PRINTF("\nThe MERP upload step has failed.\n");
+					} else {
 						// Remove
-						mono_runtime_printf_err ("\nThe MERP upload step has succeeded.\n");
+						MOSTLY_ASYNC_SAFE_PRINTF("\nThe MERP upload step has succeeded.\n");
 						mono_summarize_timeline_phase_log (MonoSummaryDone);
 					}
 
 					mono_summarize_toggle_assertions (FALSE);
 				} else {
-					mono_runtime_printf_err ("\nMerp dump step not run, no dump created.\n");
+					MOSTLY_ASYNC_SAFE_PRINTF("\nMerp dump step not run, no dump created.\n");
 				}
 			}
 		}
@@ -1097,6 +1114,9 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		if (pid == 0) {
 			dup2 (STDERR_FILENO, STDOUT_FILENO);
 
+			MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
+			MOSTLY_ASYNC_SAFE_PRINTF("\tExternal Debugger Dump:\n");
+			MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
 			mono_gdb_render_native_backtraces (crashed_pid);
 			exit (1);
 		}
@@ -1105,13 +1125,17 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		waitpid (pid, &status, 0);
 
 		if (double_faulted) {
-			mono_runtime_printf_err ("\nExiting early due to double fault.\n");
+			MOSTLY_ASYNC_SAFE_PRINTF("\nExiting early due to double fault.\n");
+#ifndef DISABLE_CRASH_REPORTING
 			mono_state_free_mem (&merp_mem);
+#endif
 			exit (-1);
 		}
 
+#ifndef DISABLE_CRASH_REPORTING
 		output = NULL;
 		mono_state_free_mem (&merp_mem);
+#endif
 	}
 #endif
 #else
@@ -1122,7 +1146,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 	* set this on start-up as DUMPABLE has security implications. */
 	prctl (PR_SET_DUMPABLE, 1);
 
-	mono_runtime_printf_err ("\nNo native Android stacktrace (see debuggerd output).\n");
+	MOSTLY_ASYNC_SAFE_PRINTF("\nNo native Android stacktrace (see debuggerd output).\n");
 #endif
 #endif
 }
@@ -1153,7 +1177,7 @@ mono_post_native_crash_handler (const char *signal, void *ctx, MONO_SIG_HANDLER_
 
 
 static gboolean
-native_stack_with_gdb (pid_t crashed_pid, const char **argv, FILE *commands, char* commands_filename)
+native_stack_with_gdb (pid_t crashed_pid, const char **argv, int commands, char* commands_filename)
 {
 	gchar *gdb;
 
@@ -1167,15 +1191,15 @@ native_stack_with_gdb (pid_t crashed_pid, const char **argv, FILE *commands, cha
 	argv [3] = commands_filename;
 	argv [4] = "-nx";
 
-	fprintf (commands, "attach %ld\n", (long) crashed_pid);
-	fprintf (commands, "info threads\n");
-	fprintf (commands, "thread apply all bt\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "attach %ld\n", (long) crashed_pid);
+	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "info threads\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "thread apply all bt\n");
 	if (mini_get_debug_options ()->verbose_gdb) {
 		for (int i = 0; i < 32; ++i) {
-			fprintf (commands, "info registers\n");
-			fprintf (commands, "info frame\n");
-			fprintf (commands, "info locals\n");
-			fprintf (commands, "up\n");
+			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "info registers\n");
+			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "info frame\n");
+			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "info locals\n");
+			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "up\n");
 		}
 	}
 
@@ -1184,7 +1208,7 @@ native_stack_with_gdb (pid_t crashed_pid, const char **argv, FILE *commands, cha
 
 
 static gboolean
-native_stack_with_lldb (pid_t crashed_pid, const char **argv, FILE *commands, char* commands_filename)
+native_stack_with_lldb (pid_t crashed_pid, const char **argv, int commands, char* commands_filename)
 {
 	gchar *lldb;
 
@@ -1198,19 +1222,19 @@ native_stack_with_lldb (pid_t crashed_pid, const char **argv, FILE *commands, ch
 	argv [3] = commands_filename;
 	argv [4] = "--no-lldbinit";
 
-	fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
-	fprintf (commands, "thread list\n");
-	fprintf (commands, "thread backtrace all\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "process attach --pid %ld\n", (long) crashed_pid);
+	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "thread list\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "thread backtrace all\n");
 	if (mini_get_debug_options ()->verbose_gdb) {
 		for (int i = 0; i < 32; ++i) {
-			fprintf (commands, "reg read\n");
-			fprintf (commands, "frame info\n");
-			fprintf (commands, "frame variable\n");
-			fprintf (commands, "up\n");
+			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "reg read\n");
+			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "frame info\n");
+			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "frame variable\n");
+			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "up\n");
 		}
 	}
-	fprintf (commands, "detach\n");
-	fprintf (commands, "quit\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "detach\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "quit\n");
 
 	return TRUE;
 }
@@ -1220,46 +1244,45 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
 #ifdef HAVE_EXECV
 	const char *argv [10];
-	FILE *commands;
-	char commands_filename [] = "/tmp/mono-gdb-commands.XXXXXX";
+	memset (argv, 0, sizeof (char*) * 10);
 
-	if (mkstemp (commands_filename) == -1)
-		return;
+	char commands_filename [100]; 
+	commands_filename [0] = '\0';
+	g_snprintf (commands_filename, sizeof (commands_filename), "/tmp/mono-gdb-commands.%d", crashed_pid);
 
-	commands = fopen (commands_filename, "w");
-	if (!commands) {
-		unlink (commands_filename);
+	// Create this file, overwriting if it already exists
+	int commands_handle = g_open (commands_filename, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
+	if (commands_handle == -1) {
+		MOSTLY_ASYNC_SAFE_PRINTF ("Could not make debugger temp file %s\n", commands_filename);
 		return;
 	}
 
-	memset (argv, 0, sizeof (char*) * 10);
-
 #if defined(HOST_DARWIN)
-	if (native_stack_with_lldb (crashed_pid, argv, commands, commands_filename))
+	if (native_stack_with_lldb (crashed_pid, argv, commands_handle, commands_filename))
 		goto exec;
 #endif
 
-	if (native_stack_with_gdb (crashed_pid, argv, commands, commands_filename))
+	if (native_stack_with_gdb (crashed_pid, argv, commands_handle, commands_filename))
 		goto exec;
 
 #if !defined(HOST_DARWIN)
-	if (native_stack_with_lldb (crashed_pid, argv, commands, commands_filename))
+	if (native_stack_with_lldb (crashed_pid, argv, commands_handle, commands_filename))
 		goto exec;
 #endif
 
-	fprintf (stderr, "mono_gdb_render_native_backtraces not supported on this platform, unable to find gdb or lldb\n");
+	MOSTLY_ASYNC_SAFE_PRINTF ("mono_gdb_render_native_backtraces not supported on this platform, unable to find gdb or lldb\n");
 
-	fclose (commands);
+	close (commands_handle);
 	unlink (commands_filename);
 	return;
 
 exec:
-	fclose (commands);
+	close (commands_handle);
 	execv (argv [0], (char**)argv);
 
 	_exit (-1);
 #else
-	fprintf (stderr, "mono_gdb_render_native_backtraces not supported on this platform\n");
+	MOSTLY_ASYNC_SAFE_PRINTF ("mono_gdb_render_native_backtraces not supported on this platform\n");
 #endif // HAVE_EXECV
 }
 
