@@ -123,6 +123,7 @@ common_cflags = \
 	-I$(abs_top_srcdir)/external/corefx/src/Native/Unix/Common \
 	-I$(abs_top_srcdir)/external/corefx/src/Native/Unix/System.Native \
 	-I$(abs_top_srcdir)/external/corefx/src/Native/AnyOS/brotli/include \
+	-DBROTLI_BUILD_NO_RBIT \
 	-Wno-typedef-redefinition
 
 libmono_native_la_SOURCES = $(common_sources) $(platform_sources) platform-type.c
