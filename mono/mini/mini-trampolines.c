@@ -476,7 +476,7 @@ mini_add_method_wrappers_llvmonly (MonoMethod *m, gpointer compiled_method, gboo
 	g_assert (mono_llvm_only);
 	g_assert (out_arg);
 
-	callee_gsharedvt = mono_aot_get_method_flags (compiled_method) & MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE;
+	callee_gsharedvt = mono_aot_get_method_flags ((guint8*)compiled_method) & MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE;
 
 	if (!caller_gsharedvt && callee_gsharedvt) {
 		MonoMethodSignature *sig, *gsig;

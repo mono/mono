@@ -6257,7 +6257,7 @@ mono_aot_get_method_flags (guint8 *code)
 	/* Not found and no FLAG_NONE are the same, but its not a problem */
 	flags = GPOINTER_TO_UINT (g_hash_table_lookup (code_to_method_flags, code));
 	mono_aot_unlock ();
-	return flags;
+	return (MonoAotMethodFlags)flags;
 }
 
 #else

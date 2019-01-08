@@ -293,7 +293,7 @@ mono_get_call_filter (void)
 {
 	/* This is called even in llvmonly mode etc. */
 	if (!call_filter_func)
-		return no_call_filter;
+		return (gpointer)no_call_filter;
 	return call_filter_func;
 }
 

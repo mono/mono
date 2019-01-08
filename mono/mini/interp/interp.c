@@ -2495,7 +2495,7 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 {
 #ifndef MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED
 	if (mono_llvm_only)
-		return no_llvmonly_interp_method_pointer;
+		return (gpointer)no_llvmonly_interp_method_pointer;
 	return (gpointer)interp_no_native_to_managed;
 #else
 	gpointer addr, entry_func, entry_wrapper;
@@ -2504,7 +2504,7 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 	InterpMethod *imethod = mono_interp_get_imethod (domain, method, error);
 
 	if (mono_llvm_only)
-		return no_llvmonly_interp_method_pointer;
+		return (gpointer)no_llvmonly_interp_method_pointer;
 
 	if (compile) {
 		/* Return any errors from method compilation */
