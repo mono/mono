@@ -2246,6 +2246,33 @@
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEUid.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Link.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MkDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.MountPoints.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Permissions.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Rename.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemEntry.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemEnumerator.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileStatus.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystem.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
@@ -2269,18 +2296,12 @@
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
         <Compile Include="Mono\MonoNativePlatform.cs" />
         <Compile Include="Mono\MonoNativePlatformType.cs" />
-        <Compile Include="System.IO.Enumeration\FileSystemEntry.NotSupported.cs" />
-        <Compile Include="System.IO.Enumeration\FileSystemEnumerator.NotSupported.cs" />
-        <Compile Include="System.IO\FileSystem.NotSupported.cs" />
-        <Compile Include="System.IO\FileSystemInfo.NotSupported.cs" />
-        <Compile Include="System.IO\PathInternal.NotSupported.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
-        <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />

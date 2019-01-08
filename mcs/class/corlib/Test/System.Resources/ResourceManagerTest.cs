@@ -792,6 +792,7 @@ namespace MonoTests.System.Resources
 
 		[Test]
 		[Category ("StackWalks")]
+		[Category ("NotWasm")]
 		public void TestSatellites ()
 		{
 			ResourceManager manager = new ResourceManager("Resources", GetType ().Assembly);

@@ -1542,6 +1542,7 @@ public class DirectoryTest
 	}
 
 	[Test]
+	[Category ("NotWasm")]
 	public void GetFiles ()
 	{
 		string path = TempFolder;
