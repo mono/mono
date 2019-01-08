@@ -2070,7 +2070,8 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 	InterpBasicBlock *bb_exit = NULL;
 	static gboolean verbose_method_inited;
 	static char* verbose_method_name;
-
+	gboolean emitted_funccall_seq_point = FALSE;
+	
 	if (!verbose_method_inited) {
 		verbose_method_name = g_getenv ("MONO_VERBOSE_METHOD");
 		verbose_method_inited = TRUE;
@@ -2326,6 +2327,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 		switch (*td->ip) {
 		case CEE_NOP: 
 			/* lose it */
+			emitted_funccall_seq_point = FALSE;
 			++td->ip;
 			break;
 		case CEE_BREAK:
@@ -2516,6 +2518,15 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, unsig
 				InterpBasicBlock *cbb = td->offset_to_bb [td->ip - header->code];
 				g_assert (cbb);
 
+				//check is is a nested call and remove the MONO_INST_NONEMPTY_STACK of the last breakpoint, only for non native methods
+				if (!(method->flags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
+					if (emitted_funccall_seq_point)	{
+						if (cbb->last_seq_point)
+							cbb->last_seq_point->flags |= MONO_SEQ_POINT_FLAG_NESTED_CALL;
+					}
+					else
+						emitted_funccall_seq_point = TRUE;	
+				}
 				emit_seq_point (td, td->ip - header->code, cbb, TRUE);
 			}
 
