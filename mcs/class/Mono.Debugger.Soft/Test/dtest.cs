@@ -4482,7 +4482,83 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category("NotWorking")]
+	public void StepOverOnExitFromArgsAfterStepInMethodParameter2() {
+		Event e = run_until ("ss_nested_with_three_args_wrapper");
+
+		var req = create_step(e);
+		req.Enable();
+
+		e = step_once();
+		assert_location(e, "ss_nested_with_three_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_with_three_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_with_three_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg3");
+	}
+
+	
+	[Test]
+	public void StepOverOnExitFromArgsAfterStepInMethodParameter3() {
+		Event e = run_until ("ss_nested_twice_with_two_args_wrapper");
+
+		var req = create_step(e);
+		req.Enable();
+
+		e = step_once();
+		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg3");
+	}
+
+	[Test]
 	public void ShouldCorrectlyStepOverOnExitFromArgsAfterStepInMethodParameter() {
 		Event e = run_until ("ss_nested_with_two_args_wrapper");
 

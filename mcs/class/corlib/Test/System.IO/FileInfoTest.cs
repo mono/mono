@@ -680,6 +680,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void MoveTo_DestFileName_AlreadyExists ()
 		{
 			string sourceFile = TempFolder + DSC + "FIT.MoveTo.Source.Test";

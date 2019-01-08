@@ -8,7 +8,7 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
 
 .stamp-wasm-checkout-and-update-emsdk: | $(EMSCRIPTEN_SDK_DIR)
-	cd $(TOP)/sdks/builds/toolchains/emsdk && git pull
+	cd $(TOP)/sdks/builds/toolchains/emsdk && git clean -xdff && git pull
 	touch $@
 
 #This is a weird rule to workaround the circularity of the next rule.
@@ -150,12 +150,12 @@ _wasm-$(1)_CFLAGS= \
 _wasm-$(1)_CXXFLAGS= \
 	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
 	-static \
-	-static-libgcc
+	-static-libgcc \
+	-static-libstdc++
 
 _wasm-$(1)_LDFLAGS= \
 	-static \
-	-static-libgcc \
-	-static-libstdc++
+	-static-libgcc
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
