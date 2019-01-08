@@ -1500,7 +1500,7 @@ mono_perfcounter_create (const gunichar2 *category, int category_length, const g
 	int help_length, int type, MonoArrayHandle items, MonoError *error)
 {
 	int result = FALSE;
-	int i, size;
+	int i, j = 0, k, size;
 	int num_counters = mono_array_handle_length (items);
 	int counters_data_size;
 	char *name = NULL;
@@ -1512,7 +1512,6 @@ mono_perfcounter_create (const gunichar2 *category, int category_length, const g
 	gsize chelp_length = 0;
 	CounterCreationDataHandle data = MONO_HANDLE_NEW (CounterCreationData, NULL);
 	MonoStringHandle str = MONO_HANDLE_NEW (MonoString, NULL);
-	gsize j = 0;
 
 	/* FIXME: ensure there isn't a category created already */
 	name = mono_utf16_to_utf8len (category, category_length, &name_length, error);
@@ -1524,7 +1523,7 @@ mono_perfcounter_create (const gunichar2 *category, int category_length, const g
 	size = G_STRUCT_OFFSET (SharedCategory, name) + name_length + chelp_length + 2;
 	for (i = 0; i < num_counters; ++i) {
 		MONO_HANDLE_ARRAY_GETREF (data, items, i);
-		for (gsize k = 0; k < 2; ++k) {
+		for (k = 0; k < 2; ++k) {
 			if (k)
 				MONO_HANDLE_GET (str, data, help);
 			else
