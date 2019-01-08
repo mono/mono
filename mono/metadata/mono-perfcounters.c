@@ -1962,49 +1962,52 @@ mono_perfcounter_free_data (void *impl)
 
 /* Category icalls */
 MonoBoolean
-mono_perfcounter_category_del (const gunichar2 *name)
+mono_perfcounter_category_del (const gunichar2 *name, int name_length, MonoError *error)
 {
 	g_assert_not_reached ();
 }
 
 MonoStringHandle
-mono_perfcounter_category_help (const gunichar2 *category)
+mono_perfcounter_category_help (const gunichar2 *category, int category_length, MonoError *error)
 {
 	g_assert_not_reached ();
 }
 
 MonoBoolean
-mono_perfcounter_category_exists (const gunichar2 *counter, const gunichar2 *category)
+mono_perfcounter_category_exists (const gunichar2 *counter, int counter_length, const gunichar2 *category,
+	int category_length, MonoError *error)
 {
 	g_assert_not_reached ();
 }
 
 MonoBoolean
-mono_perfcounter_create (const gunichar2 *category, const gunichar2 *help, int type, MonoArrayHandle items)
+mono_perfcounter_create (const gunichar2 *category, int category_length, const gunichar2 *help,
+	int help_length, int type, MonoArrayHandle items, MonoError *error)
 {
 	g_assert_not_reached ();
 }
 
 MonoBoolean
-mono_perfcounter_instance_exists (const gunichar2 *instance, const gunichar2 *category)
+mono_perfcounter_instance_exists (const gunichar2 *instance, int instance_length,
+	const gunichar2 *category, int category_length, MonoError *error)
 {
 	g_assert_not_reached ();
 }
 
 MonoArrayHandle
-mono_perfcounter_category_names (void)
+mono_perfcounter_category_names (MonoError *error)
 {
 	g_assert_not_reached ();
 }
 
 MonoArrayHandle
-mono_perfcounter_counter_names (const gunichar2 *category)
+mono_perfcounter_counter_names (const gunichar2 *category, int category_length, MonoError *error)
 {
 	g_assert_not_reached ();
 }
 
 MonoArrayHandle
-mono_perfcounter_instance_names (const gunichar2 *category)
+mono_perfcounter_instance_names (const gunichar2 *category, int category_length, MonoError *error)
 {
 	g_assert_not_reached ();
 }
