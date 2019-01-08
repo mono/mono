@@ -529,6 +529,8 @@ public class Tests : TestsBase, ITest2
 		ss_fp_clobber ();
 		ss_no_frames ();
 		ss_await ();
+		ss_nested_with_three_args_wrapper();
+		ss_nested_twice_with_two_args_wrapper();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -641,6 +643,16 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_with_three_args_wrapper () {
+		ss_nested_with_three_args(ss_nested_arg1 (), ss_nested_arg2 (), ss_nested_arg3 ());
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_twice_with_two_args_wrapper () {
+		ss_nested_with_two_args(ss_nested_arg1 (), ss_nested_with_two_args(ss_nested_arg2 (), ss_nested_arg3 ()));
+  }
+  
+  [MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void elapsed_time () {
 		Thread.Sleep(200);
 		Thread.Sleep(00);
@@ -648,14 +660,33 @@ public class Tests : TestsBase, ITest2
 		Thread.Sleep(300);
 	}
 	
-
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_with_two_args (int a1, int a2) {
 		return a1 + a2;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_with_three_args (int a1, int a2, int a3) {
+		return a1 + a2 + a3;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_arg () {
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg1 () {
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg2 () {
+		return 0;
+	}
+	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg3 () {
 		return 0;
 	}
 
