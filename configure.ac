@@ -48,7 +48,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=0F48A001-A1AA-464B-8CA4-7C23325CA358
+MONO_CORLIB_VERSION=e686c1dd-3c2a-4dc9-b12e-ff0d524d6e6b
 
 #
 # Put a quoted #define in config.h.
@@ -117,6 +117,7 @@ ikvm_native=yes
 
 host_win32=no
 target_win32=no
+target_wasm=no
 platform_android=no
 platform_tizen=no
 platform_ios=no
@@ -3058,6 +3059,8 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
+	AC_CHECK_HEADERS([linux/if_packet.h])
+
 	AC_MSG_CHECKING(for struct in_pktinfo)
 	AC_TRY_COMPILE([
 		#ifdef HAVE_LINUX_IN_H
@@ -3117,7 +3120,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_DECL(TIOCGWINSZ,        [AC_DEFINE(HAVE_TIOCGWINSZ, 1, [TIOCGWINSZ])], [], [[#include <sys/ioctl.h>]])
 	AC_CHECK_FUNC(tcgetattr,         [AC_DEFINE(HAVE_TCGETATTR, 1, [tcgetattr])])
 	AC_CHECK_FUNC(tcsetattr,         [AC_DEFINE(HAVE_TCSETATTR, 1, [tcsetattr])])
-	AC_CHECK_FUNC(arc4random,        [AC_DEFINE(HAVE_ARC4RANDOM, 1, [arc4random])])
+	AC_CHECK_FUNC(arc4random_buf,    [AC_DEFINE(HAVE_ARC4RANDOM_BUF, 1, [arc4random_buf])])
 	AC_CHECK_DECL(ECHO,              [AC_DEFINE(HAVE_ECHO, 1, [ECHO])], [], [[#include <termios.h>]])
 	AC_CHECK_DECL(ICANON,            [AC_DEFINE(HAVE_ICANON, 1, [ICANON])], [], [[#include <termios.h>]])
 	AC_CHECK_DECL(TCSANOW,           [AC_DEFINE(HAVE_TCSANOW, 1, [TCSANOW])], [], [[#include <termios.h>]])
@@ -3975,6 +3978,7 @@ case "$host" in
 		BTLS_SUPPORTED=no
 		ACCESS_UNALIGNED="no"
 		with_tls=pthread
+		target_wasm=yes
 		;;
 	mips*)
 		TARGET=MIPS;
@@ -4167,6 +4171,14 @@ case "$host" in
 		arch_target=arm;
 		ACCESS_UNALIGNED="no"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
+		;;
+	aarch64-*darwin*ilp32)
+		TARGET=ARM64;
+		arch_target=arm64
+		AC_DEFINE(MONO_ARCH_ILP32, 1, [64 bit mode with 4 byte longs and pointers])
+		sizeof_register=8
+		# assuming no other target other than watchOS is using aarch64*darwin triple
+		TARGET_SYS=WATCHOS
 		;;
 	aarch64-*)
 		# https://lkml.org/lkml/2012/7/15/133
@@ -6000,6 +6012,23 @@ elif test x$host_linux = xyes; then
 	MONO_NATIVE_PLATFORM=linux
 	AC_MSG_CHECKING([Mono.Native support])
 	AC_MSG_RESULT(linux)
+
+	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_LINUX"
+elif test x$target_wasm = xyes; then
+	mono_native_text="wasm"
+	MONO_NATIVE_CC=$CC
+	MONO_NATIVE_CXX=$CXX
+	# The system.native code uses _WASM_ to check for wasm
+	MONO_NATIVE_CPPFLAGS="$CPPFLAGS -D_WASM_"
+	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
+	MONO_NATIVE_CFLAGS=$CFLAGS
+	MONO_NATIVE_LDFLAGS=$LDFLAGS
+
+	mono_native=yes
+	mono_native_compat=no
+	MONO_NATIVE_PLATFORM=linux
+	AC_MSG_CHECKING([Mono.Native support])
+	AC_MSG_RESULT(wasm)
 
 	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_LINUX"
 elif case $host_os in aix*|os400*) true;; *) false;; esac; then

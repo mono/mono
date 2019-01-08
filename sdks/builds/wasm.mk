@@ -150,12 +150,12 @@ _wasm-$(1)_CFLAGS= \
 _wasm-$(1)_CXXFLAGS= \
 	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
 	-static \
-	-static-libgcc
+	-static-libgcc \
+	-static-libstdc++
 
 _wasm-$(1)_LDFLAGS= \
 	-static \
-	-static-libgcc \
-	-static-libstdc++
+	-static-libgcc
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \

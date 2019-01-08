@@ -91,6 +91,7 @@ namespace MonoTests.System.Diagnostics
 		/// </summary>
 		[Test]
 		[Category("StackWalks")]
+		[Category("NotWasm")]
 		public void TestGetMethod ()
 		{
 			Assert.IsTrue ((frame1.GetMethod () != null), "Method not null (1)");
@@ -182,7 +183,7 @@ namespace MonoTests.System.Diagnostics
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (136,
+			Assert.AreEqual (137,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 
@@ -216,6 +217,7 @@ namespace MonoTests.System.Diagnostics
 		/// </summary>
 		[Test]
 		[Category("StackWalks")]
+		[Category("NotWasm")]
 		public void TestGetMethod ()
 		{
 			Assert.IsNotNull (frame1.GetMethod (),
@@ -323,7 +325,7 @@ namespace MonoTests.System.Diagnostics
 							 frame1.GetFileLineNumber (),
 							 "Line number (1)");
 
-			Assert.AreEqual (273,
+			Assert.AreEqual (275,
 							 frame2.GetFileLineNumber (),
 							 "Line number (2)");
 		}
@@ -385,6 +387,7 @@ namespace MonoTests.System.Diagnostics
 		/// </summary>
 		[Test]
 		[Category("StackWalks")]
+		[Category("NotWasm")]
 		public void TestGetMethod ()
 		{
 			Assert.IsTrue ((frame1.GetMethod () != null), "Method not null (1)");
