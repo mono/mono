@@ -22,9 +22,9 @@
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.UTime.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.RmDir.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.MountPoints.cs
-../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.ReadDir.cs
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeDirectoryHandle.Unix.cs
 
 ../../../external/corefx/src/Common/src/System/IO/DriveInfoInternal.Unix.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.GetRandomBytes.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.ReadDir.cs

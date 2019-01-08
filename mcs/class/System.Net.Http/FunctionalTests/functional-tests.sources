@@ -1,0 +1,42 @@
+../corefx/Configuration.Certificates.cs
+../corefx/Configuration.Http.cs
+../corefx/Interop.VersionInfo.cs
+../corefx/PlatformDetection.cs
+
+# Common Sources
+
+../../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
+
+# Test Utitities
+
+../../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+../../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TestEnvironment.cs
+../../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TheoryExtensions.cs
+
+# Common Test Sources
+
+../../../../external/corefx/src/Common/tests/System/Buffers/NativeMemoryManager.cs
+../../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
+../../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/ConsoleEventListener.cs
+../../../../external/corefx/src/Common/tests/System/IO/DelegateStream.cs
+../../../../external/corefx/src/Common/tests/System/Net/RemoteServerQuery.cs
+../../../../external/corefx/src/Common/tests/System/Net/EventSourceTestLogging.cs
+../../../../external/corefx/src/Common/tests/System/Net/HttpsTestServer.cs
+../../../../external/corefx/src/Common/tests/System/Net/Capability.Security.cs
+../../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
+../../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
+../../../../external/corefx/src/Common/tests/System/Net/Configuration.Security.cs
+../../../../external/corefx/src/Common/tests/System/Net/TestWebProxies.cs
+../../../../external/corefx/src/Common/tests/System/Net/VerboseTestLogging.cs
+../../../../external/corefx/src/Common/tests/System/Net/Http/LoopbackServer.cs
+../../../../external/corefx/src/Common/tests/System/Net/Http/LoopbackServer.AuthenticationHelpers.cs
+../../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
+
+# System.Net.Http FunctionalTests
+
+../../../../external/corefx/src/System.Net.Http/tests/FunctionalTests/*.cs:MultiInterfaceReadOnlyStream.cs,MultiInterfaceNonRewindableReadOnlyStream.cs,HttpClientHandlerTest.ServerCertificates.Windows.cs,HttpClientHandlerTest.SslProtocols.Windows.cs,HttpClientHandlerTest.Decompression.cs,PostScenarioUWPTest.cs,DiagnosticsTests.cs,FakeDiagnosticSourceListenerObserver.cs,PlatformHandlerTest.cs
+
+# Stubbed out
+
+DiagnosticsTests.cs
+HttpClientHandlerTest.Decompression.cs
