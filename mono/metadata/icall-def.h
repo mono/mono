@@ -268,19 +268,19 @@ ICALL(FILEV_1, "GetVersionInfo_internal(string)", ves_icall_System_Diagnostics_F
 ICALL_TYPE(PERFCTR, "System.Diagnostics.PerformanceCounter", PERFCTR_1)
 NOHANDLES(ICALL(PERFCTR_1, "FreeData", mono_perfcounter_free_data))
 HANDLES(PERFCTR_2, "GetImpl_icall", mono_perfcounter_get_impl, gpointer, 8,
-	(const_gunichar2_ptr, int, const_gunichar2_ptr, int, const_gunichar2_ptr, int, int_ref, MonoBoolean_ref))
+	(const_gunichar2_ptr, gint32, const_gunichar2_ptr, gint32, const_gunichar2_ptr, gint32, gint32_ref, MonoBoolean_ref))
 NOHANDLES(ICALL(PERFCTR_3, "GetSample", mono_perfcounter_get_sample))
 NOHANDLES(ICALL(PERFCTR_4, "UpdateValue", mono_perfcounter_update_value))
 
 ICALL_TYPE(PERFCTRCAT, "System.Diagnostics.PerformanceCounterCategory", PERFCTRCAT_1)
-HANDLES(PERFCTRCAT_1, "CategoryDelete_icall", mono_perfcounter_category_del, MonoBoolean, 2, (const_gunichar2_ptr, int))
-HANDLES(PERFCTRCAT_2, "CategoryHelpInternal_icall",   mono_perfcounter_category_help, MonoString, 2, (const_gunichar2_ptr, int))
-HANDLES(PERFCTRCAT_3, "CounterCategoryExists_icall", mono_perfcounter_category_exists, MonoBoolean, 4, (const_gunichar2_ptr, int, const_gunichar2_ptr, int))
-HANDLES(PERFCTRCAT_4, "Create_icall",     mono_perfcounter_create, MonoBoolean, 6, (const_gunichar2_ptr, int, const_gunichar2_ptr, int, int, MonoArray))
+HANDLES(PERFCTRCAT_1, "CategoryDelete_icall", mono_perfcounter_category_del, MonoBoolean, 2, (const_gunichar2_ptr, gint32))
+HANDLES(PERFCTRCAT_2, "CategoryHelpInternal_icall",   mono_perfcounter_category_help, MonoString, 2, (const_gunichar2_ptr, gint32))
+HANDLES(PERFCTRCAT_3, "CounterCategoryExists_icall", mono_perfcounter_category_exists, MonoBoolean, 4, (const_gunichar2_ptr, gint32, const_gunichar2_ptr, gint32))
+HANDLES(PERFCTRCAT_4, "Create_icall",     mono_perfcounter_create, MonoBoolean, 6, (const_gunichar2_ptr, gint32, const_gunichar2_ptr, gint32, gint32, MonoArray))
 HANDLES(PERFCTRCAT_5, "GetCategoryNames", mono_perfcounter_category_names, MonoArray, 0, ())
-HANDLES(PERFCTRCAT_6, "GetCounterNames_icall", mono_perfcounter_counter_names, MonoArray, 2, (const_gunichar2_ptr, int))
-HANDLES(PERFCTRCAT_7, "GetInstanceNames_icall", mono_perfcounter_instance_names, MonoArray, 2, (const_gunichar2_ptr, int))
-HANDLES(PERFCTRCAT_8, "InstanceExistsInternal_icall", mono_perfcounter_instance_exists, MonoBoolean, 4, (const_gunichar2_ptr, int, const_gunichar2_ptr, int))
+HANDLES(PERFCTRCAT_6, "GetCounterNames_icall", mono_perfcounter_counter_names, MonoArray, 2, (const_gunichar2_ptr, gint32))
+HANDLES(PERFCTRCAT_7, "GetInstanceNames_icall", mono_perfcounter_instance_names, MonoArray, 2, (const_gunichar2_ptr, gint32))
+HANDLES(PERFCTRCAT_8, "InstanceExistsInternal_icall", mono_perfcounter_instance_exists, MonoBoolean, 4, (const_gunichar2_ptr, gint32, const_gunichar2_ptr, gint32))
 
 ICALL_TYPE(PROCESS, "System.Diagnostics.Process", PROCESS_1)
 HANDLES(PROCESS_1, "CreateProcess_internal", ves_icall_System_Diagnostics_Process_CreateProcess_internal,

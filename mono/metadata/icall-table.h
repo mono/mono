@@ -73,6 +73,7 @@ typedef gsize *gsize_ref;
 typedef guint32 *guint32_ref;
 typedef guint64 *guint64_ref;
 typedef int *int_ref;
+typedef gint32 *gint32_ref;
 typedef MonoAssemblyName *MonoAssemblyName_ref;
 typedef MonoBoolean *MonoBoolean_ref;
 typedef MonoClassField *MonoClassField_ref;
@@ -166,6 +167,7 @@ typedef MonoReflectionModuleHandle MonoReflectionModuleOutHandle;
 #define MONO_HANDLE_TYPE_WRAP_guint32_ref   		ICALL_HANDLES_WRAP_VALUETYPE_REF
 #define MONO_HANDLE_TYPE_WRAP_guint64_ref   		ICALL_HANDLES_WRAP_VALUETYPE_REF
 #define MONO_HANDLE_TYPE_WRAP_int_ref  			ICALL_HANDLES_WRAP_VALUETYPE_REF
+#define MONO_HANDLE_TYPE_WRAP_gint32_ref  			ICALL_HANDLES_WRAP_VALUETYPE_REF
 #define MONO_HANDLE_TYPE_WRAP_int_ptr_ref  		ICALL_HANDLES_WRAP_VALUETYPE_REF
 #define MONO_HANDLE_TYPE_WRAP_char_ptr_ref		ICALL_HANDLES_WRAP_VALUETYPE_REF
 #define MONO_HANDLE_TYPE_WRAP_guint8_ptr_ref		ICALL_HANDLES_WRAP_VALUETYPE_REF
