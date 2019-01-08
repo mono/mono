@@ -2394,7 +2394,7 @@ mono_main (int argc, char* argv[])
 #endif
 #endif
 
-	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER || action == DO_REGRESSION) {
+	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER) {
 		g_set_prgname (argv[i]);
 	}
 
