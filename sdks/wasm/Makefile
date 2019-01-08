@@ -262,6 +262,9 @@ clean:
 	$(RM) -r mini_tests.dll
 	$(RM) -r main.exe
 	$(RM) -r binding-tests.dll
+	$(RM) -r sdk/**/bin
+	$(RM) -r sdk/**/obj
+	$(RM) -r sdk/packages
 
 package: build build-dbg-proxy build-framework-nuget
 	rm -rf tmp
