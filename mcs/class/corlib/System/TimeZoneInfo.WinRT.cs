@@ -66,6 +66,8 @@ namespace System
 		internal extern static uint EnumDynamicTimeZoneInformation (uint dwIndex, out DYNAMIC_TIME_ZONE_INFORMATION lpTimeZoneInformation);
 		[DllImport ("api-ms-win-core-timezone-l1-1-0.dll")]
 		internal extern static uint GetDynamicTimeZoneInformation (out DYNAMIC_TIME_ZONE_INFORMATION pTimeZoneInformation);
+		[DllImport ("kernel32.dll", EntryPoint="GetDynamicTimeZoneInformation")]
+		internal extern static uint GetDynamicTimeZoneInformationWin32 (out DYNAMIC_TIME_ZONE_INFORMATION pTimeZoneInformation);
 		[DllImport ("api-ms-win-core-timezone-l1-1-0.dll")]
 		internal extern static uint GetDynamicTimeZoneInformationEffectiveYears(ref DYNAMIC_TIME_ZONE_INFORMATION lpTimeZoneInformation, out uint FirstYear, out uint LastYear);
 		[DllImport ("api-ms-win-core-timezone-l1-1-0.dll")]
@@ -310,6 +312,24 @@ namespace System
 				return timeZoneInfo != null ? timeZoneInfo : Utc;
 			} catch {
 				return Utc;
+
+			}
+		}
+
+		internal static string GetLocalTimeZoneKeyNameWin32Fallback ()
+		{
+			try {
+				DYNAMIC_TIME_ZONE_INFORMATION dtzi;
+				var result = GetDynamicTimeZoneInformationWin32 (out dtzi);
+				if (result == TIME_ZONE_ID_INVALID)
+					return null;
+				if (!string.IsNullOrEmpty(dtzi.TimeZoneKeyName))
+					return dtzi.TimeZoneKeyName;
+				else if (!string.IsNullOrEmpty(dtzi.TZI.StandardName))
+					return dtzi.TZI.StandardName;
+				return null;
+			} catch {
+				return null;
 			}
 		}
 

@@ -162,6 +162,8 @@ namespace System
 				if (name == null)
 					name = (string)LocalZoneKey.GetValue ("StandardName"); // windows xp
 				name = TrimSpecial (name);
+				if (string.IsNullOrEmpty(name))
+					name = GetLocalTimeZoneKeyNameWin32Fallback();
 				if (name != null)
 					return TimeZoneInfo.FindSystemTimeZoneById (name);
 			} else if (IsWindows) {
