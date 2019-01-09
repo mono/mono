@@ -215,8 +215,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/wasm build
-	    # Chakra install fails: https://github.com/mono/mono/issues/12331
-            #${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
+            ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
             ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
             ${TESTCMD} --label=sm-mini-test --timeout=60m make -C sdks/wasm run-sm-mini
             ${TESTCMD} --label=jsc-mini-test --timeout=60m make -C sdks/wasm run-jsc-mini
