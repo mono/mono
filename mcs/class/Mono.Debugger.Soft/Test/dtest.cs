@@ -2458,6 +2458,10 @@ public class DebuggerTests
 	[Test]
 	[Category("NotOnWindows")]
 	public void Crash () {
+		bool deleteCrash = true;
+		string [] crashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
+		if (crashFileEntries.Length != 0)
+			deleteCrash = false;
 		bool success = false;
 		for (int i = 0 ; i < 10; i++) {
 			try {
@@ -2492,6 +2496,12 @@ public class DebuggerTests
 			//try again because of unreliability of the crash reporter.
 			TearDown();
 			SetUp();
+		}
+		if (deleteCrash) {
+			crashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
+			foreach (string f in crashFileEntries) {
+        		File.Delete(f);
+    		}
 		}
 		if (!success)
 			Assert.Fail ("Didn't get crash event");
