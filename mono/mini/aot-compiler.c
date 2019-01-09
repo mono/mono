@@ -8952,7 +8952,8 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 		} else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG) {
 			append_mangled_signature (s, info->d.gsharedvt.sig);
 			append_sig = FALSE;
-		}
+		} else if (info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
+			g_string_append_printf (s, "%s", method->name);
 		break;
 	}
 	case MONO_WRAPPER_MANAGED_TO_NATIVE: {
