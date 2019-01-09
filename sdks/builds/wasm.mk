@@ -8,7 +8,7 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
 
 .stamp-wasm-checkout-and-update-emsdk: | $(EMSCRIPTEN_SDK_DIR)
-	cd $(TOP)/sdks/builds/toolchains/emsdk && git clean -xdff && git pull
+	cd $(TOP)/sdks/builds/toolchains/emsdk && git reset --hard && git clean -xdff && git pull
 	touch $@
 
 #This is a weird rule to workaround the circularity of the next rule.
