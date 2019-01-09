@@ -87,7 +87,7 @@ corefx/SR.tests.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Read.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Write.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.Simple.cs
-../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.UnixDomainSockets.cs
+#../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.UnixDomainSockets.cs
 ../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTestBase.cs
 
 # https://github.com/mono/mono/issues/12324
