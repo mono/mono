@@ -351,12 +351,14 @@ mono_conc_hashtable_insert (MonoConcurrentHashTable *hash_table, gpointer key, g
 				kvs [i].value = value;
 				/* The write to values must happen after the write to keys */
 				mono_memory_barrier ();
-				kvs [i].key = key;
+				
 				if (kvs [i].key == TOMBSTONE)
 					--hash_table->tombstone_count;
 				else
 					++hash_table->element_count;	
-					
+				
+				kvs [i].key = key;
+				
 				return NULL;
 			}
 			if (key == kvs [i].key) {
@@ -372,11 +374,14 @@ mono_conc_hashtable_insert (MonoConcurrentHashTable *hash_table, gpointer key, g
 				kvs [i].value = value;
 				/* The write to values must happen after the write to keys */
 				mono_memory_barrier ();
-				kvs [i].key = key;
+				
 				if (kvs [i].key == TOMBSTONE)
 					--hash_table->tombstone_count;
 				else
 					++hash_table->element_count;
+				
+				kvs [i].key = key;
+				
 				return NULL;
 			}
 			if (equal (key, kvs [i].key)) {
