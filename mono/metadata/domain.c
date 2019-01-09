@@ -453,6 +453,7 @@ mono_domain_create (void)
 #endif
 
 	mono_debug_domain_create (domain);
+	mono_profiler_coverage_domain_init (domain);
 
 	if (create_domain_hook)
 		create_domain_hook (domain);
@@ -1270,6 +1271,8 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 
 	if (domain == mono_root_domain)
 		mono_root_domain = NULL;
+
+	mono_profiler_coverage_domain_free(domain);
 }
 
 /**

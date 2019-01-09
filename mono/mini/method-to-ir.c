@@ -7255,7 +7255,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	}
 
 	if (cfg->method == method)
-		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
+		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->domain, cfg->method, header->code_size);
 	if (cfg->compile_aot && cfg->coverage_info)
 		g_error ("Coverage profiling is not supported with AOT.");
 
