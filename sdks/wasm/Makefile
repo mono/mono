@@ -266,6 +266,9 @@ clean:
 	$(RM) -r mini_tests.dll
 	$(RM) -r main.exe
 	$(RM) -r binding-tests.dll
+	$(RM) -r sdk/**/bin
+	$(RM) -r sdk/**/obj
+	$(RM) -r sdk/packages
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.pdb
