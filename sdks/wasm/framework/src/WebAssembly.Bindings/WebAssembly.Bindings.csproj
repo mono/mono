@@ -1,51 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{176A0D0C-41F0-4C2F-A440-617518A30032}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>WebAssembly.Bindings</RootNamespace>
-    <AssemblyName>WebAssembly.Bindings</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>../../</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\WebAssembly.Bindings.xml</DocumentationFile>
-    <ConsolePause>false</ConsolePause>
-    <NoStdLib>true</NoStdLib>
-    <NoWarn>CS1591, CS1570, CS1572, CS1573</NoWarn>
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.Bindings.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>../../</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\WebAssembly.Bindings.xml</DocumentationFile>
-    <ConsolePause>false</ConsolePause>
-    <NoStdLib>true</NoStdLib>
-    <NoWarn>CS1591, CS1570, CS1572, CS1573</NoWarn>
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.Bindings.xml</DocumentationFile>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="mscorlib">
-      <HintPath>..\..\..\..\out\wasm-bcl\wasm\mscorlib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Runtime.cs" />
-    <Compile Include="JSException.cs" />
-    <Compile Include="JSObject.cs" />
-    <Compile Include="Export.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

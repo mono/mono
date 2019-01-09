@@ -53,6 +53,7 @@ MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 WASM_FRAMEWORK=$(TOP)/sdks/wasm/framework
 WASM_FRAMEWORK_SOURCE=$(TOP)/sdks/wasm/framework/src
 WASM_FRAMEWORK_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
+WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
@@ -115,7 +116,7 @@ bcl:
 
 mono: runtime cross bcl
 
-BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll
+BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:$(WASM_BCL_DIR)/Facades/netstandard.dll 
 
 main.exe: $(APP_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(APP_SOURCES)
@@ -124,17 +125,18 @@ mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(MINI_TEST_SOURCES) mini-test-runner.cs
 
 binding_tests.dll: framework $(BINDING_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ /r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(WASM_FRAMEWORK_DEPS) $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
 $(WASM_FRAMEWORK)/.stamp-framework: $(WASM_FRAMEWORK_SOURCES)
-	msbuild $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln /P:Config=Release
+	dotnet build $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln
+	cp -f $(WASM_FRAMEWORK)/netstandard2.0/* $(WASM_FRAMEWORK)
 	touch $@
 
 Simple.Dependency.dll: dependency.cs
-	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll dependency.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ $(BCL_DEPS) dependency.cs
 
-sample.dll: Simple.Dependency.dll sample.cs $(WASM_FRAMEWORK)/.stamp-framework $(WASM_FRAMEWORK)/WebAssembly.Bindings.dll $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll
-	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll sample.cs
+sample.dll: Simple.Dependency.dll sample.cs $(WASM_FRAMEWORK)/.stamp-framework
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) sample.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
@@ -158,7 +160,7 @@ TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corli
 	touch $@
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(WASM_FRAMEWORK)/WebAssembly.Bindings.dll $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll $(BROWSER_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) /r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll $(BROWSER_TEST)/HttpTestSuite.cs 
+	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/HttpTestSuite.cs 
 	mono packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
