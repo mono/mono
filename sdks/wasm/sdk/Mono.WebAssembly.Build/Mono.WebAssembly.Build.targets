@@ -1,6 +1,6 @@
 <Project>
-	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)netstandard2.0/Mono.WebAssembly.Build.dll" TaskName="WasmLinkAssemblies" />
-	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)netstandard2.0/Mono.WebAssembly.Build.dll" TaskName="WasmCreateRuntimeJs" />
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)Mono.WebAssembly.Build.dll" TaskName="WasmLinkAssemblies" />
+	<UsingTask AssemblyFile="$(MSBuildThisFileDirectory)Mono.WebAssembly.Build.dll" TaskName="WasmCreateRuntimeJs" />
 
 	<PropertyGroup>
 		<EnableDefaultWebContentItems Condition="'$(EnableDefaultWebContentItems)' == ''">True</EnableDefaultWebContentItems>

@@ -62,7 +62,12 @@ namespace Mono.WebAssembly.Build
 		protected override string GenerateFullPathToTool ()
 		{
 			var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
-			return Path.Combine (dir, "monolinker.exe");
+			// Check if coming from nuget or local
+			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
+			if (File.Exists(toolsPath))
+				return toolsPath;
+			else 
+				return Path.Combine (dir, "monolinker.exe");
 		}
 
 		protected override bool ValidateParameters ()
@@ -76,6 +81,13 @@ namespace Mono.WebAssembly.Build
 				Log.LogError ("FrameworkDir is required");
 				return false;
 			}
+
+			WasmLinkMode linkme;
+			if (!Enum.TryParse<WasmLinkMode>(LinkMode, out linkme)) {
+				Log.LogError ("LinkMode is invalid.");
+				return false;
+			}
+
 
 			return base.ValidateParameters ();
 		}
@@ -106,7 +118,7 @@ namespace Mono.WebAssembly.Build
 			sb.AppendFormat (" -c {0} -u {1}", coremode, usermode);
 
 			//the linker doesn't consider these core by default
-			sb.AppendFormat (" -p {0} netstandard -p {0} WebAssembly.Bindings -p {0} WebAssembly.Net.Http", coremode);
+			sb.AppendFormat (" -p {0} netstandard -p {1} WebAssembly.Bindings -p {1} WebAssembly.Net.Http", coremode, usermode);
 
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
