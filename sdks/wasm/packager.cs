@@ -345,8 +345,9 @@ class Driver {
 		if (enable_aot) {
 			var to_aot = new Dictionary<string, bool> ();
 			to_aot ["mscorlib"] = true;
-			foreach (var s in aot_assemblies.Split (',')) {
-				to_aot [s] = true;
+			if (aot_assemblies != "") {
+				foreach (var s in aot_assemblies.Split (','))
+					to_aot [s] = true;
 			}
 			foreach (var ass in assemblies) {
 				if (aot_assemblies == "" || to_aot.ContainsKey (ass.name)) {
