@@ -71,7 +71,7 @@ namespace System.Threading {
 		internal int _serialized_principal_version;
 		private IntPtr appdomain_refs;
 		private int interruption_requested;
-		private IntPtr synch_cs;
+		private IntPtr longlived;
 		internal bool threadpool_thread;
 		private bool thread_interrupt_requested;
 		/* These are used from managed code */
