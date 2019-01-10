@@ -510,7 +510,7 @@ struct _MonoInternalThread {
 	gpointer unused3;
 	gunichar2  *name;
 	guint32	    name_len;
-	guint32	    state;
+	guint32	    state;      /* must be accessed while synch_cs is locked */
 	MonoException *abort_exc;
 	int abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
