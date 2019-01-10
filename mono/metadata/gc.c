@@ -946,6 +946,15 @@ finalizer_thread (gpointer unused)
 	mono_coop_cond_signal (&exited_cond);
 	mono_finalizer_unlock ();
 
+	/* HACK - by the time we're finished, the root domain was already
+	 * destroyed, so the reference queue that cleans up
+	 * MonoInternalThread:synch_cs was already cleared since the
+	 * finalizer's MonoInternalThread is in the root domain.
+	 *
+	 * (MonoInternalThread:synch_cs is accessed by mono_thread_detach_internal)
+	 */
+	mono_thread_internal_current ()->synch_cs = NULL;
+
 	return 0;
 }
 
