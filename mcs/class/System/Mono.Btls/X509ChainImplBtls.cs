@@ -132,7 +132,7 @@ namespace Mono.Btls
 
 		public override X509ChainStatus[] ChainStatus {
 			get { 
-				return chainStatusList.ToArray();
+				return chainStatusList?.ToArray() ?? new X509ChainStatus[0];
 			}
 		}
 
