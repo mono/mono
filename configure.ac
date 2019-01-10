@@ -6373,6 +6373,11 @@ fi
 
     echo "MONO_NATIVE_PLATFORM_TYPE=$MONO_NATIVE_PLATFORM_TYPE" >> $srcdir/$mcsdir/build/config.make
     echo "MONO_NATIVE_PLATFORM=$MONO_NATIVE_PLATFORM" >> $srcdir/$mcsdir/build/config.make
+    if test x$enable_compiler_server = xyes; then
+      echo "ENABLE_COMPILER_SERVER?=true" >> $srcdir/$mcsdir/build/config.make
+    else
+      echo "ENABLE_COMPILER_SERVER?=false" >> $srcdir/$mcsdir/build/config.make
+	fi
 
   fi
 
