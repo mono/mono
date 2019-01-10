@@ -302,8 +302,8 @@ package: build build-dbg-proxy
 	cp framework/WebAssembly.Net.Http.pdb tmp/framework
 	mkdir tmp/framework/src
 	cp -r framework/src tmp/framework
-	rm -r tmp/framework/src/**/bin
-	rm -r tmp/framework/src/**/obj
+	$(RM) -r tmp/framework/src/**/bin
+	$(RM) -r tmp/framework/src/**/obj
 	cp sample.html tmp/
 	cp sample.cs tmp/
 	cp dependency.cs tmp/
