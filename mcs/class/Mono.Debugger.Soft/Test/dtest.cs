@@ -2458,10 +2458,8 @@ public class DebuggerTests
 	[Test]
 	[Category("NotOnWindows")]
 	public void Crash () {
-		bool deleteCrash = true;
-		string [] crashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
-		if (crashFileEntries.Length != 0)
-			deleteCrash = false;
+		string [] existingCrashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
+
 		bool success = false;
 		for (int i = 0 ; i < 10; i++) {
 			try {
@@ -2481,12 +2479,12 @@ public class DebuggerTests
 					break;
 				}
 			} catch (VMDisconnectedException vmDisconnect) { //expected behavior because of unreliability of the crash reporter.
-						success = false;
+					success = false;
 			} finally {
 				try {
 					vm.Detach ();
 				} catch (VMDisconnectedException vmDisconnect) { //expected behavior because of unreliability of the crash reporter.
-						success = false;
+					success = false;
 				} finally {
 					vm = null;
 				}
@@ -2497,12 +2495,14 @@ public class DebuggerTests
 			TearDown();
 			SetUp();
 		}
-		if (deleteCrash) {
-			crashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
-			foreach (string f in crashFileEntries) {
-        		File.Delete(f);
-    		}
+
+		// delete crash files created by this test
+		string [] crashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
+		foreach (string f in crashFileEntries) {
+			if (!existingCrashFileEntries.Contains (f))
+				File.Delete(f);
 		}
+
 		if (!success)
 			Assert.Fail ("Didn't get crash event");
 	}
