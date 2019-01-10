@@ -148,7 +148,7 @@ namespace Mono {
 		}
 
 		// All must be set except for configDir_str
-		static void EnableMicrosoftTelemetryNext (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str, string configDir_str)
+		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str)
 		{
 			if (RuntimeInformation.IsOSPlatform (OSPlatform.OSX)) {
 				using (var appBundleID_chars = RuntimeMarshal.MarshalString (appBundleID_str))
@@ -157,19 +157,14 @@ namespace Mono {
 				using (var merpGUIPath_chars = RuntimeMarshal.MarshalString (merpGUIPath_str))
 				using (var eventType_chars = RuntimeMarshal.MarshalString (eventType_str))
 				using (var appPath_chars = RuntimeMarshal.MarshalString (appPath_str))
-				using (var configDir_chars = RuntimeMarshal.MarshalString (configDir_str))
 				{
-					EnableMicrosoftTelemetry_internal (appBundleID_chars.Value, appSignature_chars.Value, appVersion_chars.Value, merpGUIPath_chars.Value, eventType_chars.Value, appPath_chars.Value, configDir_chars.Value);
+					EnableMicrosoftTelemetry_internal (appBundleID_chars.Value, appSignature_chars.Value, appVersion_chars.Value, merpGUIPath_chars.Value, eventType_chars.Value, appPath_chars.Value, IntPtr.Zero);
 				}
 			} else {
 				throw new PlatformNotSupportedException("Merp support is currently only supported on OSX.");
 			}
 		}
 
-		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str)
-		{
-			EnableMicrosoftTelemetryNext (appBundleID_str, appSignature_str, appVersion_str, merpGUIPath_str, eventType_str, appPath_str, null);
-		}
 #endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

@@ -307,7 +307,6 @@ TESTS_CS_SRC=		\
 	exception16.cs		\
 	exception17.cs		\
 	exception18.cs		\
-	merp-json-valid.cs		\
 	exception19.cs		\
 	exception20.cs		\
 	typeload-unaligned.cs	\
