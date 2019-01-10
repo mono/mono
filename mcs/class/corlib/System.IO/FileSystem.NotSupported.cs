@@ -10,7 +10,9 @@ namespace System.IO
 		public static void MoveDirectory(string sourceFullPath, string destFullPath) => throw new PlatformNotSupportedException ();
 		public static void RemoveDirectory(string fullPath, bool recursive) => throw new PlatformNotSupportedException ();
 		public static bool DirectoryExists(string fullPath)  => throw new PlatformNotSupportedException ();
+		public static bool DirectoryExists(ReadOnlySpan<char> fullPath)  => throw new PlatformNotSupportedException ();
 		public static bool FileExists(string fullPath) => throw new PlatformNotSupportedException ();
+		public static bool FileExists(ReadOnlySpan<char> fullPath) => throw new PlatformNotSupportedException ();
 		public static FileAttributes GetAttributes(string fullPath) => throw new PlatformNotSupportedException ();
 		public static void SetAttributes(string fullPath, FileAttributes attributes) => throw new PlatformNotSupportedException ();
 		public static DateTimeOffset GetCreationTime(string fullPath) => throw new PlatformNotSupportedException ();
