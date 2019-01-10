@@ -2097,6 +2097,7 @@
         </When>
         <When Condition="'$(HostPlatform)' == 'unix'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
@@ -2107,7 +2108,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
@@ -3101,6 +3101,7 @@
         </When>
         <When Condition="'$(HostPlatform)' == 'linux'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
@@ -3111,7 +3112,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
@@ -3985,6 +3985,7 @@
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
@@ -3995,7 +3996,6 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
