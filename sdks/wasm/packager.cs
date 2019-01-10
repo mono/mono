@@ -279,11 +279,11 @@ class Driver {
 
 		//are we working from the tree?
 		if (sdkdir != null) {
-			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packager.exe
+			framework_prefix = Path.Combine (tool_prefix, "framework"); //all framework assemblies are currently side built to packager.exe
 			bcl_prefix = Path.Combine (sdkdir, "wasm-bcl/wasm");
 			bcl_tools_prefix = Path.Combine (sdkdir, "wasm-bcl/wasm_tools");
 		} else if (Directory.Exists (Path.Combine (tool_prefix, "../out/wasm-bcl/wasm"))) {
-			framework_prefix = tool_prefix; //all framework assemblies are currently side built to packager.exe
+			framework_prefix = Path.Combine (tool_prefix, "framework"); //all framework assemblies are currently side built to packager.exe
 			bcl_prefix = Path.Combine (tool_prefix, "../out/wasm-bcl/wasm");
 			bcl_tools_prefix = Path.Combine (tool_prefix, "../out/wasm-bcl/wasm_tools");
 			sdkdir = Path.Combine (tool_prefix, "../out");
