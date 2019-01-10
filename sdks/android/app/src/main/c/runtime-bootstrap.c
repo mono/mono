@@ -69,6 +69,7 @@ typedef struct MonoClass_ MonoClass;
 typedef struct MonoImage_ MonoImage;
 typedef struct MonoObject_ MonoObject;
 typedef struct MonoThread_ MonoThread;
+typedef int32_t gboolean;
 
 /* Imported from `mono-logger.h` */
 typedef void (*MonoLogCallback) (const char *log_domain, const char *log_level, const char *message, int32_t fatal, void *user_data);
@@ -112,6 +113,8 @@ typedef void (*mono_debug_init_fn) (MonoDebugFormat format);
 typedef MonoArray *(*mono_array_new_fn) (MonoDomain *domain, MonoClass *eclass, uintptr_t n);
 typedef MonoClass *(*mono_get_string_class_fn) (void);
 typedef void *(*mono_runtime_quit_fn) (void);
+typedef void (*mono_dllmap_insert_fn) (MonoImage *assembly, const char *dll, const char *func, const char *tdll, const char *tfunc);
+typedef void (*mono_add_internal_call_with_flags_fn) (const char *name, const void* method, gboolean cooperative);
 
 static JavaVM *jvm;
 
@@ -145,6 +148,8 @@ static mono_debug_init_fn mono_debug_init;
 static mono_array_new_fn mono_array_new;
 static mono_get_string_class_fn mono_get_string_class;
 static mono_runtime_quit_fn mono_runtime_quit;
+static mono_dllmap_insert_fn mono_dllmap_insert;
+static mono_add_internal_call_with_flags_fn mono_add_internal_call_with_flags;
 
 static MonoAssembly *main_assembly;
 static void *runtime_bootstrap_dso;
@@ -402,6 +407,8 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_method_get_name = dlsym (libmono, "mono_method_get_name");
 	mono_trace_init = dlsym (libmono, "mono_trace_init");
 	mono_trace_set_log_handler = dlsym (libmono, "mono_trace_set_log_handler");
+	mono_dllmap_insert = dlsym (libmono, "mono_dllmap_insert");
+	mono_add_internal_call_with_flags = dlsym (libmono, "mono_add_internal_call_with_flags");
 
 	//MUST HAVE envs
 	setenv ("TMPDIR", cache_dir, 1);
@@ -430,6 +437,11 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 
 	sprintf (buff, "%s/libMonoPosixHelper.so", data_dir);
 	mono_posix_helper_dso = dlopen (buff, RTLD_LAZY);
+
+	sprintf (buff, "%s/libmono-native.so", data_dir);
+
+	mono_dllmap_insert (NULL, "System.Native", NULL, buff, NULL);
+	mono_dllmap_insert (NULL, "System.Net.Security.Native", NULL, buff, NULL);
 
 	wait_for_unmanaged_debugger ();
 

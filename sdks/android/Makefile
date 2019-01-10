@@ -101,11 +101,12 @@ local.properties:
 app/assets/asm:
 	mkdir -p $@
 
-## Package the monosgen-2.0 and MonoPosixHelper libraries
+## Package the monosgen-2.0, MonoPosixHelper and mono-native libraries
 
 MONO_LIBS= \
 	libmonosgen-2.0.so \
-	libMonoPosixHelper.so
+	libMonoPosixHelper.so \
+	libmono-native.so
 
 ##
 # Parameters:
