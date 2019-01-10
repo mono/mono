@@ -629,4 +629,16 @@ mono_assembly_has_reference_assembly_attribute (MonoAssembly *assembly, MonoErro
 GPtrArray*
 mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly);
 
+void
+mono_create_domain_objects (MonoDomain *domain);
+
+void
+mono_domain_install_callbacks (void);
+
+void
+mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data);
+
+void
+mono_context_set_default_context (MonoDomain *domain);
+
 #endif /* __MONO_METADATA_DOMAIN_INTERNALS_H__ */

@@ -4777,8 +4777,6 @@ mini_cleanup (MonoDomain *domain)
 
 	free_jit_tls_data (mono_tls_get_jit_tls ());
 
-	mono_icall_cleanup ();
-
 	mono_runtime_cleanup_handlers ();
 
 #ifndef MONO_CROSS_COMPILE
