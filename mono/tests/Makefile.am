@@ -1048,6 +1048,13 @@ PLATFORM_DISABLED_TESTS=\
 	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
+if HOST_DARWIN
+else
+PLATFORM_DISABLED_TESTS += \
+	merp-json-valid.exe
+endif
+
+
 if HOST_WIN32
 PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe
 
@@ -1888,6 +1895,9 @@ test-runner.exe: test-runner.cs $(TEST_DRIVER_DEPEND)
 
 reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_DEPEND)
 	$(MCS) -r:$(CLASS)/System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
+
+merp-json-valid.exe: merp-json-valid.cs
+	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
 	$(MCS) -target:library -out:$@ $<

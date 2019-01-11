@@ -972,10 +972,12 @@ dump_native_stacktrace (const char *signal, void *ctx)
 
 			if (!leave) {
 				mono_sigctx_to_monoctx (ctx, &mctx);
-				// Do before forking
-				if (!mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0))
-					g_assert_not_reached ();
+				mono_summarize_timeline_start ();
+				// Returns success, so leave if !success
+				leave = !mono_threads_summarize (&mctx, &output, &hashes, FALSE, TRUE, NULL, 0);
+			}
 
+			if (!leave) {
 				// Wait for the other threads to clean up and exit their handlers
 				// We can't lock / wait indefinitely, in case one of these threads got stuck somehow
 				// while dumping. 
@@ -985,8 +987,12 @@ dump_native_stacktrace (const char *signal, void *ctx)
 
 			// We want our crash, and don't have telemetry
 			// So we dump to disk
-			if (!leave && !dump_for_merp)
+			if (!leave && !dump_for_merp) {
+				mono_summarize_timeline_phase_log (MonoSummaryCleanup);
 				mono_crash_dump (output, &hashes);
+				mono_summarize_timeline_phase_log (MonoSummaryDone);
+			}
+
 		}
 #endif
 
@@ -1020,12 +1026,14 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			if (pid == 0) {
 				if (!ctx) {
 					mono_runtime_printf_err ("\nMust always pass non-null context when using merp.\n");
-					exit (1);
+				} else if (output) {
+					gboolean merp_upload_success = mono_merp_invoke (crashed_pid, signal, output, &hashes);
+
+					g_assert (merp_upload_success);
+					mono_summarize_timeline_phase_log (MonoSummaryDone);
+				} else {
+					mono_runtime_printf_err ("\nMerp dump step not run, no dump created.\n");
 				}
-
-				mono_merp_invoke (crashed_pid, signal, output, &hashes);
-
-				exit (1);
 			}
 		}
 #endif
