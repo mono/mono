@@ -82,7 +82,7 @@ mono_unity_socket_security_enabled_set (gboolean enabled)
 
 void mono_unity_set_vprintf_func (vprintf_func func)
 {
-	//set_vprintf_func (func);
+	set_vprintf_func (func);
 }
 
 MONO_API gboolean
@@ -734,6 +734,13 @@ void mono_unity_domain_install_capture_context_runtime_invoke(MonoDomain* domain
 void mono_unity_domain_install_capture_context_method(MonoDomain* domain, gpointer callback)
 {
 	domain->capture_context_method = callback;
+}
+
+
+void mono_unity_domain_unload (MonoDomain* domain, MonoUnityExceptionFunc callback)
+{
+	MonoObject *exc = NULL;
+	mono_domain_try_unload (domain, &exc, callback);
 }
 
 //array

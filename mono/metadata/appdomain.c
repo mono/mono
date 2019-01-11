@@ -633,6 +633,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SETVAL (ad, data, MonoDomain*, data);
 	data->domain = MONO_HANDLE_RAW (ad);
+	mono_gc_wbarrier_generic_nostore (&data->domain);	
 	data->friendly_name = g_strdup (friendly_name);
 
 	MONO_PROFILER_RAISE (domain_name, (data, data->friendly_name));
@@ -660,6 +661,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	goto_if_nok (error, leave);
 
 	data->setup = MONO_HANDLE_RAW (copy_app_domain_setup (data, setup, error));
+	mono_gc_wbarrier_generic_nostore (&data->setup);
 	if (!mono_error_ok (error)) {
 		g_free (data->friendly_name);
 		goto leave;
@@ -2277,7 +2279,7 @@ ves_icall_System_AppDomain_InternalUnload (gint32 domain_id, MonoError *error)
 		return;
 
 	MonoException *exc = NULL;
-	mono_domain_try_unload (domain, (MonoObject**)&exc);
+	mono_domain_try_unload (domain, (MonoObject**)&exc, NULL);
 	if (exc)
 		mono_error_set_exception_instance (error, exc);
 }
@@ -2643,7 +2645,7 @@ void
 mono_domain_unload (MonoDomain *domain)
 {
 	MonoObject *exc = NULL;
-	mono_domain_try_unload (domain, &exc);
+	mono_domain_try_unload (domain, &exc, NULL);
 }
 
 static MonoThreadInfoWaitRet
@@ -2659,9 +2661,12 @@ guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertab
 }
 
 /**
- * mono_domain_unload:
+ * mono_domain_try_unload:
  * \param domain The domain to unload
  * \param exc Exception information
+ * \param callback Passes exception information back to caller before domain is unloaded
+ *
+ *  NOTE: If the callback param is not null the domain unload will continue after executing the callback.
  *
  *  Unloads an appdomain. Follows the process outlined in:
  *  http://blogs.gotdotnet.com/cbrumme
@@ -2678,7 +2683,7 @@ guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertab
  *  process could end up trying to abort the current thread.
  */
 void
-mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
+mono_domain_try_unload (MonoDomain *domain, MonoObject **exc, MonoUnityExceptionFunc callback)
 {
 	MonoError error;
 	MonoThreadHandle *thread_handle;
@@ -2724,10 +2729,14 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	}
 
 	if (*exc) {
-		/* Roll back the state change */
-		domain->state = MONO_APPDOMAIN_CREATED;
-		mono_domain_set (caller_domain, FALSE);
-		return;
+		if (callback != NULL)
+			callback (*exc);
+		else {
+			/* Roll back the state change */
+			domain->state = MONO_APPDOMAIN_CREATED;
+			mono_domain_set (caller_domain, FALSE);
+			return;
+		}
 	}
 	mono_domain_set (caller_domain, FALSE);
 

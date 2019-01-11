@@ -201,6 +201,9 @@ mono_debug_method_lookup_location (MonoDebugMethodInfo *minfo, int il_offset);
 MONO_API MonoDebugSourceLocation *
 mono_debug_lookup_source_location (MonoMethod *method, uint32_t address, MonoDomain *domain);
 
+MONO_API MonoDebugSourceLocation *
+mono_debug_lookup_source_location_by_il (MonoMethod *method, uint32_t il_offset, MonoDomain *domain);
+
 MONO_API int32_t
 mono_debug_il_offset_from_address (MonoMethod *method, MonoDomain *domain, uint32_t native_offset);
 

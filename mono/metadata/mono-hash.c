@@ -37,6 +37,8 @@
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/unlocked.h>
 
+void il2cpp_mono_gc_wbarrier_generic_store (void* ptr, MonoObject* value);
+
 gint32 mono_g_hash_table_max_chain_length;
 
 struct _MonoGHashTable {

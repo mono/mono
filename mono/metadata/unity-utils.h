@@ -102,6 +102,7 @@ guint32 mono_unity_method_get_token(MonoMethod *method);
 void mono_unity_domain_install_finalize_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback);
 void mono_unity_domain_install_capture_context_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback);
 void mono_unity_domain_install_capture_context_method(MonoDomain* domain, void* callback);
+MONO_API void mono_unity_domain_unload (MonoDomain *domain, MonoUnityExceptionFunc callback);
 
 //array
 int mono_unity_array_get_element_size(MonoArray *arr);

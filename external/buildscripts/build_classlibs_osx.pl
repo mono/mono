@@ -12,6 +12,7 @@ my $build = 1;
 my $clean = 1;
 my $mcsOnly = 0;
 my $skipMonoMake = 0;
+my $stevedoreBuildDeps=1;
 
 # Handy troubleshooting/niche options
 
@@ -24,6 +25,7 @@ GetOptions(
    "mcsOnly=i"=>\$mcsOnly,
    'skipmonomake=i'=>\$skipMonoMake,
    'shortprefix=i'=>\$shortPrefix,
+   'stevedorebuilddeps=i'=>\$stevedoreBuildDeps,
 ) or die ("illegal cmdline options");
 
 system(
@@ -37,4 +39,5 @@ system(
 	"--artifactscommon=1",
 	"--buildusandboo=1",
 	"--forcedefaultbuilddeps=1",
+	"--stevedorebuilddeps=$stevedoreBuildDeps",
 	"--shortprefix=$shortPrefix") eq 0 or die ("Failed building mono\n");

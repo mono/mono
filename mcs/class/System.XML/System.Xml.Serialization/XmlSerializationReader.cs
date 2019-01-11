@@ -1193,10 +1193,15 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected string ReadString (string value, bool trim)
 		{
-			throw new NotImplementedException ();
+			readCount++;
+			string str = reader.ReadString ();
+			if (str != null && trim)
+				str = str.Trim();
+			if (value == null || value.Length == 0)
+				return str;
+			return value + str;
 		}
 		
 		[MonoTODO]
