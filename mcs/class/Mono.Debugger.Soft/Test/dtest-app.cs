@@ -87,77 +87,30 @@ public class Tests2 {
 	}
 }
 
-public class TestEnumeratorInsideClass<TKey, TValue>
+public struct TestEnumeratorInsideGenericStruct<TKey, TValue>
 {
-	HashBucket myBucket;
-	internal void Add(TKey key, TValue value)
+	private KeyValuePair<TKey, TValue> _bucket;
+	private Position _currentPosition;
+	internal TestEnumeratorInsideGenericStruct(KeyValuePair<TKey, TValue> bucket)
 	{
-		myBucket._firstValue = new KeyValuePair<TKey, TValue>(key, value);
+		_bucket = bucket;
+		_currentPosition = Position.BeforeFirst;
 	}
-	internal struct HashBucket : IEnumerable<KeyValuePair<TKey, TValue>>
+
+	public KeyValuePair<TKey, TValue> Current
 	{
-		public KeyValuePair<TKey, TValue> _firstValue;
-		public Enumerator GetEnumerator()
+		get
 		{
-			return new Enumerator(this);
+			if (_currentPosition == Position.BeforeFirst)
+				return _bucket;
+			return _bucket;
 		}
-		IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
-		{
-			return this.GetEnumerator();
-		}
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.GetEnumerator();
-		}
-		internal struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
-		{
-			private readonly HashBucket _bucket;
-			private Position _currentPosition;
-			internal Enumerator(HashBucket bucket)
-			{
-				_bucket = bucket;
-				_currentPosition = Position.BeforeFirst;
-			}
-
-			public KeyValuePair<TKey, TValue> Current
-			{
-				get
-				{
-					return _bucket._firstValue;
-				}
-			}
-
-			object IEnumerator.Current
-			{
-				get
-				{
-					return _bucket._firstValue;
-				}
-			}
-
-			public void Dispose()
-			{
-				throw new NotImplementedException();
-			}
-
-			public bool MoveNext()
-			{
-				throw new NotImplementedException();
-			}
-
-			public void Reset()
-			{
-				throw new NotImplementedException();
-			}
-
-			private enum Position
-			{
-				BeforeFirst
-			}
-		}
+	}
+	private enum Position
+	{
+		BeforeFirst
 	}
 }
-
 
 public struct AStruct : ITest2 {
 	public int i;
@@ -521,7 +474,7 @@ public class Tests : TestsBase, ITest2
 		new Tests ().evaluate_method ();
 		Bug59649 ();
 		elapsed_time();
-		inspect_field_content();
+		inspect_enumerator_in_generic_struct();
 		return 3;
 	}
 
@@ -735,9 +688,8 @@ public class Tests : TestsBase, ITest2
 	}
 	
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void inspect_field_content() {
-		TestEnumeratorInsideClass<String, String> files = new TestEnumeratorInsideClass<String, String>();
-		files.Add("0", "f1");
+	public static void inspect_enumerator_in_generic_struct() {
+		TestEnumeratorInsideGenericStruct<String, String> generic_struct = new TestEnumeratorInsideGenericStruct<String, String>(new KeyValuePair<string, string>("0", "f1"));
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
