@@ -2287,7 +2287,8 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 					}
 
 					if (ji->is_interp) {
-						filtered = mini_get_interp_callbacks ()->run_filter (&frame, (MonoException*)ex_obj, i, ei->data.filter);
+						/* The filter ends where the exception handler starts */
+						filtered = mini_get_interp_callbacks ()->run_filter (&frame, (MonoException*)ex_obj, i, ei->data.filter, ei->handler_start);
 					} else {
 						filtered = call_filter (ctx, ei->data.filter);
 					}
@@ -2830,9 +2831,17 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					} else {
 						mini_set_abort_threshold (&frame);
 						if (in_interp) {
-							gboolean has_ex = mini_get_interp_callbacks ()->run_finally (&frame, i, ei->handler_start);
-							if (has_ex)
+							gboolean has_ex = mini_get_interp_callbacks ()->run_finally (&frame, i, ei->handler_start, ei->data.handler_end);
+							if (has_ex) {
+								/*
+								 * If run_finally didn't resume to a context, it means that the handler frame
+								 * is linked to the frame calling finally through interpreter frames. This
+								 * means that we will reach the handler frame by resuming the current context.
+								 */
+								if (MONO_CONTEXT_GET_IP (ctx) != 0)
+									mono_arch_undo_ip_adjustment (ctx);
 								return 0;
+							}
 						} else {
 							call_filter (ctx, ei->handler_start);
 						}
