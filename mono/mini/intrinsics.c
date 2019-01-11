@@ -1231,7 +1231,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				double result;
 				MONO_INST_NEW (cfg, ins, OP_R8CONST);
 				ins->type = STACK_R8;
-				ins->dreg = mono_alloc_dreg (cfg, ins->type);
+				ins->dreg = mono_alloc_dreg (cfg, (MonoStackType) ins->type);
 				ins->inst_p0 = dest;
 				
 				switch (opcode){
