@@ -40,7 +40,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This can be reset to 0 when Mono's version number is bumped
 # since it's part of the corlib version (the prefix '1' in the full
 # version number is to ensure the number isn't treated as octal in C)
-MONO_CORLIB_COUNTER=14
+MONO_CORLIB_COUNTER=16
 MONO_CORLIB_VERSION=`printf "1%02d%02d%02d%03d" $MONO_VERSION_MAJOR $MONO_VERSION_MINOR 0 $MONO_CORLIB_COUNTER`
 
 AC_DEFINE_UNQUOTED(MONO_CORLIB_VERSION,$MONO_CORLIB_VERSION,[Version of the corlib-runtime interface])
@@ -2797,6 +2797,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(setpgid)
 	AC_CHECK_FUNCS(system)
 	AC_CHECK_FUNCS(fork execv execve)
+	AC_CHECK_FUNCS(waitpid)
 	AC_CHECK_FUNCS(accept4)
 	AC_CHECK_FUNCS(localtime_r)
 	AC_CHECK_FUNCS(mkdtemp)
@@ -4595,6 +4596,7 @@ AC_DEFINE(HAVE_UWP_WINAPI_SUPPORT, 0, [Don't use UWP Windows API support])
 AC_CHECK_FUNCS(strlcpy stpcpy strtok_r rewinddir vasprintf)
 AC_CHECK_FUNCS(getrlimit)
 AC_CHECK_FUNCS(fork execv execve)
+AC_CHECK_FUNCS(waitpid)
 
 AC_ARG_WITH([overridable-allocators], [  --with-overridable-allocators	allow g_*alloc/g_free to call custom allocators set via g_mem_set_vtable])
 

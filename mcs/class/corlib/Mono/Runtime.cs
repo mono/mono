@@ -100,7 +100,7 @@ namespace Mono {
 		static extern void DisableMicrosoftTelemetry ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void EnableMicrosoftTelemetry_internal (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath, IntPtr eventType, IntPtr appPath);
+		static extern void EnableMicrosoftTelemetry_internal (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath, IntPtr eventType, IntPtr appPath, IntPtr configDir);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void SendMicrosoftTelemetry_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
@@ -147,6 +147,7 @@ namespace Mono {
 			SendMicrosoftTelemetry (payload_str, portable_hash, unportable_hash);
 		}
 
+		// All must be set except for configDir_str
 		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str)
 		{
 			if (RuntimeInformation.IsOSPlatform (OSPlatform.OSX)) {
@@ -157,12 +158,13 @@ namespace Mono {
 				using (var eventType_chars = RuntimeMarshal.MarshalString (eventType_str))
 				using (var appPath_chars = RuntimeMarshal.MarshalString (appPath_str))
 				{
-					EnableMicrosoftTelemetry_internal (appBundleID_chars.Value, appSignature_chars.Value, appVersion_chars.Value, merpGUIPath_chars.Value, eventType_chars.Value, appPath_chars.Value);
+					EnableMicrosoftTelemetry_internal (appBundleID_chars.Value, appSignature_chars.Value, appVersion_chars.Value, merpGUIPath_chars.Value, eventType_chars.Value, appPath_chars.Value, IntPtr.Zero);
 				}
 			} else {
 				throw new PlatformNotSupportedException("Merp support is currently only supported on OSX.");
 			}
 		}
+
 #endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -200,6 +202,28 @@ namespace Mono {
 			using (var moduleName_chars = RuntimeMarshal.MarshalString (moduleName_str))
 			{
 				RegisterReportingForNativeLib_internal (modulePathSuffix_chars.Value, moduleName_chars.Value);
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void EnableCrashReportLog_internal (IntPtr directory);
+
+		static void EnableCrashReportLog (string directory_str)
+		{
+			using (var directory_chars = RuntimeMarshal.MarshalString (directory_str))
+			{
+				EnableCrashReportLog_internal (directory_chars.Value);
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern int CheckCrashReportLog_internal (IntPtr directory, bool clear);
+
+		static int CheckCrashReportLog (string directory_str, bool clear)
+		{
+			using (var directory_chars = RuntimeMarshal.MarshalString (directory_str))
+			{
+				return CheckCrashReportLog_internal (directory_chars.Value, clear);
 			}
 		}
 
