@@ -141,7 +141,15 @@ check_table_size (MonoConcurrentHashTable *hash_table)
 			rehash_table (hash_table, 1);
 		else
 			rehash_table (hash_table, 2);
-	}
+	
+
+    // now we have to reset the tombstone and element counters to the actual values
+    // because if we don't we will be doomed to finally fill up the entire hashmap 
+    // and the next failing lookup will toast our cpu in an endless cycle
+
+    hash_table->element_count -= hash_table->tombstone_count;
+    hash_table->tombstone_count = 0;
+  }
 }
 
 
