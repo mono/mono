@@ -1226,7 +1226,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				}
 			}
 
-			if (opcode){
+			if (opcode) {
 				double *dest = (double *) mono_domain_alloc (cfg->domain, sizeof (double));
 				double result;
 				MONO_INST_NEW (cfg, ins, OP_R8CONST);
@@ -1383,7 +1383,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		ins = llvm_emit_inst_for_method (cfg, cmethod, fsig, args, in_corlib);
 		if (ins)
 			return ins;
-	} 
+	}
 
 	return mono_arch_emit_inst_for_method (cfg, cmethod, fsig, args);
 }
