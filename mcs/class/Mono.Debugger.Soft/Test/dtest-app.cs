@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
+using System.Collections;
 #if !MOBILE
 using MonoTests.Helpers;
 #endif
@@ -85,6 +86,78 @@ public class Tests2 {
 	public void invoke () {
 	}
 }
+
+public class TestEnumeratorInsideClass<TKey, TValue>
+{
+	HashBucket myBucket;
+	internal void Add(TKey key, TValue value)
+	{
+		myBucket._firstValue = new KeyValuePair<TKey, TValue>(key, value);
+	}
+	internal struct HashBucket : IEnumerable<KeyValuePair<TKey, TValue>>
+	{
+		public KeyValuePair<TKey, TValue> _firstValue;
+		public Enumerator GetEnumerator()
+		{
+			return new Enumerator(this);
+		}
+		IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
+		{
+			return this.GetEnumerator();
+		}
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
+		}
+		internal struct Enumerator : IEnumerator<KeyValuePair<TKey, TValue>>
+		{
+			private readonly HashBucket _bucket;
+			private Position _currentPosition;
+			internal Enumerator(HashBucket bucket)
+			{
+				_bucket = bucket;
+				_currentPosition = Position.BeforeFirst;
+			}
+
+			public KeyValuePair<TKey, TValue> Current
+			{
+				get
+				{
+					return _bucket._firstValue;
+				}
+			}
+
+			object IEnumerator.Current
+			{
+				get
+				{
+					return _bucket._firstValue;
+				}
+			}
+
+			public void Dispose()
+			{
+				throw new NotImplementedException();
+			}
+
+			public bool MoveNext()
+			{
+				throw new NotImplementedException();
+			}
+
+			public void Reset()
+			{
+				throw new NotImplementedException();
+			}
+
+			private enum Position
+			{
+				BeforeFirst
+			}
+		}
+	}
+}
+
 
 public struct AStruct : ITest2 {
 	public int i;
@@ -448,6 +521,7 @@ public class Tests : TestsBase, ITest2
 		new Tests ().evaluate_method ();
 		Bug59649 ();
 		elapsed_time();
+		inspect_field_content();
 		return 3;
 	}
 
@@ -650,9 +724,9 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_nested_twice_with_two_args_wrapper () {
 		ss_nested_with_two_args(ss_nested_arg1 (), ss_nested_with_two_args(ss_nested_arg2 (), ss_nested_arg3 ()));
-  }
+	}
   
-  [MethodImplAttribute (MethodImplOptions.NoInlining)]
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void elapsed_time () {
 		Thread.Sleep(200);
 		Thread.Sleep(00);
@@ -660,6 +734,12 @@ public class Tests : TestsBase, ITest2
 		Thread.Sleep(300);
 	}
 	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void inspect_field_content() {
+		TestEnumeratorInsideClass<String, String> files = new TestEnumeratorInsideClass<String, String>();
+		files.Add("0", "f1");
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_with_two_args (int a1, int a2) {
 		return a1 + a2;

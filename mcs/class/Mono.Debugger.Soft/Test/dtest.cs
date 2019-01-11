@@ -4585,6 +4585,32 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void InspectFieldContent() {
+		//files.myBucket.GetEnumerator().get_Current().Key watching this generates an exception in Debugger
+		Event e = run_until("inspect_field_content");
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over();
+		e = step_over();
+		StackFrame frame = e.Thread.GetFrames () [0];
+		var ginst = frame.Method.GetLocal ("files");
+		Value variable = frame.GetValue (ginst);
+		ObjectMirror thisObj = (ObjectMirror)variable;
+		TypeMirror thisType = thisObj.Type;
+		variable = thisObj.GetValue (thisType.GetField ("myBucket"));
+		StructMirror thisSObj = (StructMirror)variable;
+		thisType = thisSObj.Type;
+		variable = thisSObj.InvokeMethod(e.Thread, thisType.GetMethod("GetEnumerator"), null);
+		thisSObj = (StructMirror)variable;
+		thisType = thisSObj.Type;
+		variable = thisSObj.InvokeMethod(e.Thread, thisType.GetMethod("get_Current"), null);
+		thisSObj = (StructMirror)variable;
+		thisType = thisSObj.Type;
+		AssertValue ("f1", thisSObj["value"]);
+	}
+
+	[Test]
 	public void CheckElapsedTime() {
 		Event e = run_until ("elapsed_time");
 
