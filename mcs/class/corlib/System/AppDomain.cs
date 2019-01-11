@@ -36,7 +36,7 @@
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System.Reflection.Emit;
 #endif
 using System.Threading;
@@ -505,7 +505,7 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
 			return DefineDynamicAssembly (name, access, null, null, null, null, null, false);
@@ -707,25 +707,26 @@ namespace System {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Assembly LoadAssembly (string assemblyRef, Evidence securityEvidence, bool refOnly);
+		internal extern Assembly LoadAssembly (string assemblyRef, Evidence securityEvidence, bool refOnly, ref StackCrawlMark stackMark);
 
 		public Assembly Load (AssemblyName assemblyRef)
 		{
 			return Load (assemblyRef, null);
 		}
 
-		internal Assembly LoadSatellite (AssemblyName assemblyRef, bool throwOnError)
+		internal Assembly LoadSatellite (AssemblyName assemblyRef, bool throwOnError, ref StackCrawlMark stackMark)
 		{
 			if (assemblyRef == null)
 				throw new ArgumentNullException ("assemblyRef");
 
-			Assembly result = LoadAssembly (assemblyRef.FullName, null, false);
+			Assembly result = LoadAssembly (assemblyRef.FullName, null, false, ref stackMark);
 			if (result == null && throwOnError)
 				throw new FileNotFoundException (null, assemblyRef.Name);
 			return result;
 		}
 
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
 			if (assemblyRef == null)
@@ -738,7 +739,8 @@ namespace System {
 					throw new ArgumentException (Locale.GetText ("assemblyRef.Name cannot be empty."), "assemblyRef");
 			}
 
-			Assembly assembly = LoadAssembly (assemblyRef.FullName, assemblySecurity, false);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			Assembly assembly = LoadAssembly (assemblyRef.FullName, assemblySecurity, false, ref stackMark);
 			if (assembly != null)
 				return assembly;
 
@@ -777,18 +779,22 @@ namespace System {
 			return assembly;
 		}
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public Assembly Load (string assemblyString)
 		{
-			return Load (assemblyString, null, false);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return Load (assemblyString, null, false, ref stackMark);
 		}
 
 		[Obsolete ("Use an overload that does not take an Evidence parameter")]
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public Assembly Load (string assemblyString, Evidence assemblySecurity)
 		{
-			return Load (assemblyString, assemblySecurity, false);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return Load (assemblyString, assemblySecurity, false, ref stackMark);
 		}
 		
-		internal Assembly Load (string assemblyString, Evidence assemblySecurity, bool refonly)
+		internal Assembly Load (string assemblyString, Evidence assemblySecurity, bool refonly, ref StackCrawlMark stackMark)
 		{
 			if (assemblyString == null)
 				throw new ArgumentNullException ("assemblyString");
@@ -796,7 +802,7 @@ namespace System {
 			if (assemblyString.Length == 0)
 				throw new ArgumentException ("assemblyString cannot have zero length");
 
-			Assembly assembly = LoadAssembly (assemblyString, assemblySecurity, refonly);
+			Assembly assembly = LoadAssembly (assemblyString, assemblySecurity, refonly, ref stackMark);
 			if (assembly == null)
 				throw new FileNotFoundException (null, assemblyString);
 			return assembly;
@@ -1339,7 +1345,7 @@ namespace System {
 
 			string name;
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 			if (name_or_tb is TypeBuilder)
 				name = ((TypeBuilder) name_or_tb).FullName;
 			else

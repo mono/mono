@@ -724,5 +724,7 @@ namespace System.Threading {
 				throw new ThreadStateException ("Thread is dead; state can not be accessed.");
 			return state;
 		}
+
+		public static int GetCurrentProcessorId() => global::Internal.Runtime.Augments.RuntimeThread.GetCurrentProcessorId();
 	}
 }

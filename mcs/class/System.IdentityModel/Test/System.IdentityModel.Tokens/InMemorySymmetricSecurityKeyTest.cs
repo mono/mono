@@ -38,6 +38,8 @@ using NUnit.Framework;
 using Key = System.IdentityModel.Tokens.InMemorySymmetricSecurityKey;
 using AES = System.Security.Cryptography.RijndaelManaged;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IdentityModel.Tokens
 {
 	[TestFixture]
@@ -49,7 +51,7 @@ namespace MonoTests.System.IdentityModel.Tokens
 
 		static InMemorySymmetricSecurityKeyTest ()
 		{
-			cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			// randomly generated with RijndaelManaged
 			// GenerateIV() and GenerateKey().
 			raw = Convert.FromBase64String ("eX2EeE969RCv/5Lx8OIGLHtJrSD5PzVzO3tTy9JxU58=");

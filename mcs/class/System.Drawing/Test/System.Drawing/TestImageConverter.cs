@@ -38,6 +38,8 @@ using System.Globalization;
 using System.IO;
 using System.Security.Permissions;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]
@@ -52,13 +54,13 @@ namespace MonoTests.System.Drawing
 		[SetUp]
 		public void SetUp ()		
 		{
-			image = Image.FromFile (TestBitmap.getInFile ("bitmaps/almogaver24bits.bmp"));
+			image = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits.bmp"));
 			imageStr = image.ToString ();
 		
 			imgConv = new ImageConverter();
 			imgConvFrmTD = (ImageConverter) TypeDescriptor.GetConverter (image);
 			
-			Stream stream = new FileStream (TestBitmap.getInFile ("bitmaps/almogaver24bits1.bmp"), FileMode.Open);
+			Stream stream = new FileStream (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver24bits1.bmp"), FileMode.Open);
 			int length = (int) stream.Length;
 			imageBytes = new byte [length];
  			

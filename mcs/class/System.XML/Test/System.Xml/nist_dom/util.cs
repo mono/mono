@@ -14,6 +14,8 @@
 using System;
 using System.Xml;
 
+using MonoTests.Helpers;
+
 namespace nist_dom
 {
         public class XmlNodeArrayList : XmlNodeList
@@ -117,12 +119,12 @@ namespace nist_dom
 			try
 			{
 				//System.Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
-				masterDoc.Load("Test/System.Xml/nist_dom/files/staff.xml");
-				originalDoc.Load("Test/System.Xml/nist_dom/files/staff.xml");
-				masterXML.Load("Test/System.Xml/nist_dom/files/staff.html");
-				otherDoc.Load("Test/System.Xml/nist_dom/files/otherDoc.xml");
-				HTMLDoc.Load("Test/System.Xml/nist_dom/files/staff.html");
-				noDTDXMLObject.Load("Test/System.Xml/nist_dom/files/noDTDXMLfile.xml");
+				masterDoc.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/nist_dom/files/staff.xml"));
+				originalDoc.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/nist_dom/files/staff.xml"));
+				masterXML.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/nist_dom/files/staff.html"));
+				otherDoc.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/nist_dom/files/otherDoc.xml"));
+				HTMLDoc.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/nist_dom/files/staff.html"));
+				noDTDXMLObject.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/nist_dom/files/noDTDXMLfile.xml"));
 			}
 			catch (System.Exception ex)
 			{

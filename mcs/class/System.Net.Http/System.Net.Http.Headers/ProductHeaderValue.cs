@@ -41,7 +41,7 @@ namespace System.Net.Http.Headers
 		public ProductHeaderValue (string name, string version)
 			: this (name)
 		{
-			if (version != null)
+			if (!string.IsNullOrEmpty (version))
 				Parser.Token.Check (version);
 
 			Version = version;

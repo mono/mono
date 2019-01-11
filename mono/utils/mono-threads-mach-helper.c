@@ -8,14 +8,14 @@
  * (C) 2014 Xamarin Inc
  */
 
-#include "config.h"
-
 #if defined(__MACH__)
-
+#include "config.h"
+#include <glib.h>
 #include <stdio.h>
 #include <objc/runtime.h>
 #include <objc/message.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-publib.h>
 
 /*
  * We cannot include mono-threads.h as this includes io-layer internal types
@@ -24,7 +24,8 @@
 */
 void mono_threads_init_dead_letter (void);
 void mono_threads_install_dead_letter (void);
-void mono_thread_info_detach (void);
+MONO_API void
+mono_thread_info_detach (void);
 
 static Class nsobject, nsthread, mono_dead_letter_class;
 static SEL dealloc, release, currentThread, threadDictionary, init, alloc, objectForKey, setObjectForKey;
@@ -57,7 +58,11 @@ mono_dead_letter_dealloc (id self, SEL _cmd)
 {
 	struct objc_super super;
 	super.receiver = self;
+#if !defined(__cplusplus) && !__OBJC2__
 	super.class = nsobject;
+#else
+	super.super_class = nsobject;
+#endif
 	objc_msgSendSuper (&super, dealloc);
 
 	mono_thread_info_detach ();

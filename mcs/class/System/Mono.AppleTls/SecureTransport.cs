@@ -1,4 +1,3 @@
-#if MONO_FEATURE_APPLETLS
 // Copyright 2014 Xamarin Inc. All rights reserved.
 
 namespace Mono.AppleTls {
@@ -248,4 +247,3 @@ namespace Mono.AppleTls {
 		TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384		= 0xC032,	// iOS 9+
 	}
 }
-#endif

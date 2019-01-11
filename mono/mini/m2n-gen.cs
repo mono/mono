@@ -33,6 +33,10 @@ class Driver {
 		"VIIII",
 		"VIIIII",
 		"VIIIIII",
+		"VIIIIIII",
+		"VIIIIIIII",
+		"VIIIIIIIII",
+		"VIIIIIIIIII",
 		"I",
 		"II",
 		"III",
@@ -42,18 +46,59 @@ class Driver {
 		"IIIIIII",
 		"IIIIIIII",
 		"IIIIIIIII",
+		"IIIIIIIIII",
+		"IIIIIIIIIII",
+		"IIIIIIIIIIII",
+		"IIIIIIIIIIIII",
+		"IIIIIIIIIIIIII",
 		"IILIIII",
+		"IIF",
+		"IIFI",
+		"IIFF",
+		"IFFII",
+		"IIFII",		
+		"IIFFI",
+		"IIFFF",
+		"IIFFFI",
+		"IIFFII",
+		"IIFIII",
+		"IIFFFFI",
+		"IIFFFFII",
+		"IIIF",
+		"IIIFI",
+		"IIIFII",
+		"IIIFIII",		
+		"IIIIF",
+		"IIIIFI",
+		"IIIIFII",
+		"IIIIFIII",
+		"IIIFFFF",
+		"IIIFFFFF",
+		"IIFFFFFF",		
+		"IIIFFFFFF",
+		"IIIIIIIF",		
+		"IIIIIIIFF",
+		"IIFFFFFFFF",		
+		"IIIFFFFFFFF",
+		"IIIIIIFII",
+		"IIIFFFFFFFFIII",
+		"IIIIIFFFFIIII",
+		"IFFFFFFI",
+		"IIFFIII",
+		"ILI",
 		"L",
 		"LL",
 		"LI",
 		"LIL",
 		"LILII",
 		"DD",
+		"DDI",
 		"DDD",
 		"VIF",
 		"VIFF",
 		"VIFFFF",
 		"VIFFFFFI",
+		"VIIFFI",
 		"FF",
 		"FFF",
 		"DI",
@@ -64,7 +109,6 @@ class Driver {
 		"IDIII",
 		"LII",
 		"VID",
-		"VIIIIIII",
 		"VILLI",
 
 		"DID",
@@ -98,7 +142,7 @@ class Driver {
 			Console.WriteLine ("{");
 
 			
-			Console.Write ($"\t{TypeToSigType (c [0])} (*func)(");
+			Console.Write ($"\ttypedef {TypeToSigType (c [0])} (*T)(");
 			for (int i = 1; i < c.Length; ++i) {
 				char p = c [i];
 				if (i > 1)
@@ -108,7 +152,7 @@ class Driver {
 			if (c.Length == 1)
 				Console.Write ("void");
 
-			Console.WriteLine (") = target_func;\n");
+			Console.WriteLine (");\n\tT func = (T)target_func;");
 
 			var ctx = new EmitCtx ();
 

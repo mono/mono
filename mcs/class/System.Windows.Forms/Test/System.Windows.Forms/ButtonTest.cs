@@ -11,6 +11,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -220,7 +222,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Button B1 = new Button ();
 			B1.Visible = true;
-			B1.Image = Image.FromFile ("M.gif");
+			B1.Image = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 			Assert.AreEqual (ContentAlignment.MiddleCenter, B1.ImageAlign, "#2");
 		}
 
@@ -228,13 +230,13 @@ namespace MonoTests.System.Windows.Forms
 		public void ImageListTest ()
 		{
 			Button B1 = new Button ();
-			B1.Image = Image.FromFile ("M.gif");
+			B1.Image = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 			Assert.AreEqual (null, B1.ImageList, "#3a");
 
 			B1 = new Button ();
 			ImageList ImageList1 = new ImageList ();
-			ImageList1.Images.Add(Image.FromFile ("M.gif"));
-			ImageList1.Images.Add(Image.FromFile ("M.gif"));
+			ImageList1.Images.Add(Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif")));
+			ImageList1.Images.Add(Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif")));
 			Assert.AreEqual (2, ImageList1.Images.Count, "#3b");
 			B1.ImageList = ImageList1;
 			Assert.AreEqual (-1, B1.ImageIndex, "#3c");

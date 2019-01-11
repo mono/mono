@@ -32,6 +32,7 @@ using System;
 
 namespace Mono.Messaging {
 
+	[Serializable]
 	public class ConnectionException : MonoMessagingException {
 		private readonly QueueReference qRef;
 	

@@ -16,6 +16,8 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml.Xsl
 {
 	[TestFixture]
@@ -40,8 +42,8 @@ namespace MonoTests.System.Xml.Xsl
 		{
 			string output = Path.Combine (Path.GetTempPath (), "result.xml");
 			doc.LoadXml ("<root/>");
-			xslt.Load ("Test/XmlFiles/xsl/empty.xsl");
-			xslt.Transform ("Test/XmlFiles/xsl/empty.xsl", output);
+			xslt.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/empty.xsl"));
+			xslt.Transform (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/empty.xsl"), output);
 			result.Load (output);
 			Assert.AreEqual (2, result.ChildNodes.Count, "count");
 		}
@@ -380,10 +382,10 @@ xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-micros
     ";
 
 			XmlDocument d = new XmlDocument ();
-			d.Load ("Test/XmlFiles/xsl/91834.xml");
+			d.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/91834.xml"));
 
 			XslTransform t = new XslTransform ();
-			t.Load ("Test/XmlFiles/xsl/91834.xsl");
+			t.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/91834.xsl"));
 
 			StringWriter sw_raw = new StringWriter ();
 			t.Transform (d, null, sw_raw);
@@ -1912,9 +1914,9 @@ Services
 ";
 
 			XslTransform t = new XslTransform ();
-			t.Load ("Test/XmlFiles/xsl/stripspace.xsl");
+			t.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/stripspace.xsl"));
 			XPathDocument d = new XPathDocument (
-				"Test/XmlFiles/xsl/stripspace.xml", XmlSpace.Preserve);
+				TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/stripspace.xml"), XmlSpace.Preserve);
 			StringWriter sw = new StringWriter ();
 			t.Transform (d, null, sw);
 			Assert.AreEqual (result, sw.ToString ());
@@ -1924,13 +1926,13 @@ Services
 		public void CurrentInSelect ()
 		{
 			XslTransform t = new XslTransform ();
-			t.Load ("Test/XmlFiles/xsl/current-in-select.xsl");
+			t.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/current-in-select.xsl"));
 			XPathDocument d = new XPathDocument (
-				"Test/XmlFiles/xsl/current-in-select.xml", XmlSpace.Preserve);
+				TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/current-in-select.xml"), XmlSpace.Preserve);
 			StringWriter sw = new StringWriter ();
 			t.Transform (d, null, sw);
 			using (StreamReader sr = File.OpenText (
-			       "Test/XmlFiles/xsl/current-in-select.ref")) {
+			       TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/current-in-select.ref"))) {
 				string s = sr.ReadToEnd ();
 				Assert.AreEqual (s, sw.ToString ());
 			}
@@ -1959,9 +1961,9 @@ Services
 		public void Bug82493 ()
 		{
 			XslTransform transformationObj = new XslTransform ();
-			transformationObj.Load ("Test/XmlFiles/xsl/82493.xsl");
+			transformationObj.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/82493.xsl"));
 			XmlDocument doc = new XmlDocument ();
-			doc.Load ("Test/XmlFiles/xsl/82493.xml");
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/82493.xml"));
 			XslExtensionClass GetCalculation = new XslExtensionClass ("a4");
 			XsltArgumentList xslExtensionArgList = new XsltArgumentList ();
 			xslExtensionArgList.AddExtensionObject ("urn:e", GetCalculation);
@@ -1974,9 +1976,9 @@ Services
 		public void BugNovell325482 ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			doc.Load ("Test/XmlFiles/xsl/325482.xml");
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/325482.xml"));
 			XslTransform xt = new XslTransform ();
-			xt.Load ("Test/XmlFiles/xsl/325482.xsl");
+			xt.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/325482.xsl"));
 			xt.Transform (doc, null, TextWriter.Null);
 		}
 
@@ -2167,8 +2169,8 @@ Services
 		[Test] // bug #316238
 		public void ResolveVariableInXsltArgumentList ()
 		{
-			ResolveVariableInXsltArgumentList ("Test/XmlFiles/xsl/316238-1.xsl");
-			ResolveVariableInXsltArgumentList ("Test/XmlFiles/xsl/316238-2.xsl");
+			ResolveVariableInXsltArgumentList (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/316238-1.xsl"));
+			ResolveVariableInXsltArgumentList (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/316238-2.xsl"));
 		}
 
 		void ResolveVariableInXsltArgumentList (string file)
@@ -2360,9 +2362,9 @@ NO
 			XslCompiledTransform xslTransform = new XslCompiledTransform ();
 			XsltSettings settings = new XsltSettings ();
 			settings.EnableDocumentFunction = true;
-			xslTransform.Load ("Test/XmlFiles/xsl/391424.xsl", settings, new XmlUrlResolver ());
+			xslTransform.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/391424.xsl"), settings, new XmlUrlResolver ());
 			StringWriter sw = new StringWriter ();
-			xslTransform.Transform (new XPathDocument ("Test/XmlFiles/xsl/391424.xml", XmlSpace.Preserve), null, sw);
+			xslTransform.Transform (new XPathDocument (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsl/391424.xml"), XmlSpace.Preserve), null, sw);
 			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>Document found", sw.ToString ());
 		}
 

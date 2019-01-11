@@ -978,6 +978,8 @@ namespace System {
 
         // Mono addition: Used on iPhone
         IntPtr[] native_trace_ips;
+
+        int caught_in_unmanaged;
 #endif
 
     // See clr\src\vm\excep.h's EXCEPTION_COMPLUS definition:

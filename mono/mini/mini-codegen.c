@@ -125,10 +125,10 @@ static const regmask_t regbank_callee_regs [] = {
 };
 
 static const int regbank_spill_var_size[] = {
-	sizeof (mgreg_t),
+	sizeof (target_mgreg_t),
 	sizeof (double),
-	sizeof (mgreg_t),
-	sizeof (mgreg_t),
+	sizeof (target_mgreg_t),
+	sizeof (target_mgreg_t),
 	16 /*FIXME make this a constant. Maybe MONO_ARCH_SIMD_VECTOR_SIZE? */
 };
 
@@ -268,12 +268,12 @@ mono_call_inst_add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, int vreg, i
 	if (G_UNLIKELY (bank)) {
 		g_assert (vreg >= regbank_size [bank]);
 		g_assert (hreg < regbank_size [bank]);
-		call->used_fregs |= 1 << hreg;
+		call->used_fregs |= (regmask_t)1 << hreg;
 		call->out_freg_args = g_slist_append_mempool (cfg->mempool, call->out_freg_args, (gpointer)(gssize)(regpair));
 	} else {
 		g_assert (vreg >= MONO_MAX_IREGS);
 		g_assert (hreg < MONO_MAX_IREGS);
-		call->used_iregs |= 1 << hreg;
+		call->used_iregs |= (regmask_t)1 << hreg;
 		call->out_ireg_args = g_slist_append_mempool (cfg->mempool, call->out_ireg_args, (gpointer)(gssize)(regpair));
 	}
 }
@@ -330,14 +330,14 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, int bank)
 	 */
 	info = &cfg->spill_info [bank][spillvar];
 	if (info->offset == -1) {
-		cfg->stack_offset += sizeof (mgreg_t) - 1;
-		cfg->stack_offset &= ~(sizeof (mgreg_t) - 1);
+		cfg->stack_offset += sizeof (target_mgreg_t) - 1;
+		cfg->stack_offset &= ~(sizeof (target_mgreg_t) - 1);
 
 		g_assert (bank < MONO_NUM_REGBANKS);
 		if (G_UNLIKELY (bank))
 			size = regbank_spill_var_size [bank];
 		else
-			size = sizeof (mgreg_t);
+			size = sizeof (target_mgreg_t);
 
 		if (cfg->flags & MONO_CFG_HAS_SPILLUP) {
 			cfg->stack_offset += size - 1;
@@ -567,6 +567,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 	case OP_IOR_IMM:
 	case OP_IXOR_IMM:
 	case OP_SUB_IMM:
+	case OP_MUL_IMM:
 	case OP_STORE_MEMBASE_IMM:
 		g_string_append_printf (sbuf, " [%d]", (int)ins->inst_imm);
 		break;
@@ -723,7 +724,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 	case OP_COND_EXC_INO:
 	case OP_COND_EXC_IC:
 	case OP_COND_EXC_INC:
-		g_string_append_printf (sbuf, " %s", ins->inst_p1);
+		g_string_append_printf (sbuf, " %s", (const char*)ins->inst_p1);
 		break;
 	default:
 		break;
@@ -745,7 +746,7 @@ print_regtrack (RegTrack *t, int num)
 		if (!t [i].born_in)
 			continue;
 		if (i >= MONO_MAX_IREGS) {
-			g_snprintf (buf, sizeof(buf), "R%d", i);
+			g_snprintf (buf, sizeof (buf), "R%d", i);
 			r = buf;
 		} else
 			r = mono_arch_regname (i);
@@ -1147,7 +1148,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		desc_to_fixed_reg_inited = TRUE;
 
 		/* Validate the cpu description against the info in mini-ops.h */
-#if defined(TARGET_AMD64) || defined(TARGET_X86) || defined(TARGET_ARM) || defined(TARGET_ARM64)
+#if defined(TARGET_AMD64) || defined(TARGET_X86) || defined(TARGET_ARM) || defined(TARGET_ARM64) || defined (TARGET_RISCV)
 		for (i = OP_LOAD; i < OP_LAST; ++i) {
 			const char *ispec;
 
@@ -2345,6 +2346,7 @@ mono_opcode_to_cond (int opcode)
 	case OP_CMOV_LEQ:
 		return CMP_EQ;
 	case OP_FCNEQ:
+	case OP_RCNEQ:
 	case OP_ICNEQ:
 	case OP_IBNE_UN:
 	case OP_LBNE_UN:
@@ -2718,12 +2720,12 @@ mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize)
 	MonoType *ftype, *prev_ftype = NULL;
 	int nfields = 0;
 
-	klass = mono_class_from_mono_type (t);
+	klass = mono_class_from_mono_type_internal (t);
 	iter = NULL;
-	while ((field = mono_class_get_fields (klass, &iter))) {
+	while ((field = mono_class_get_fields_internal (klass, &iter))) {
 		if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
-		ftype = mono_field_get_type (field);
+		ftype = mono_field_get_type_internal (field);
 		ftype = mini_native_type_replace_type (ftype);
 
 		if (MONO_TYPE_ISSTRUCT (ftype)) {

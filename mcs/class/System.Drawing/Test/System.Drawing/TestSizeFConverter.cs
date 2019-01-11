@@ -254,7 +254,7 @@ namespace MonoTests.System.Drawing
 			Hashtable ht = new Hashtable ();
 			ht.Add ("Width", 10);
 			ht.Add ("Height", 20);
-			Assert.Throws<InvalidCastException> (() => szconv.CreateInstance (null, ht));
+			Assert.Throws<ArgumentException> (() => szconv.CreateInstance (null, ht));
 		}
 
 		[Test]
@@ -263,7 +263,7 @@ namespace MonoTests.System.Drawing
 			Hashtable ht = new Hashtable ();
 			ht.Add ("width", 20);
 			ht.Add ("Height", 30);
-			Assert.Throws<NullReferenceException> (() => szconv.CreateInstance (null, ht));
+			Assert.Throws<ArgumentException> (() => szconv.CreateInstance (null, ht));
 		}
 
 		[Test]

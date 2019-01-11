@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Mono.Debugger.Soft
 {
@@ -57,7 +58,15 @@ namespace Mono.Debugger.Soft
 		}
 
 		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
-			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+			return ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
+		}
+
+		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			return ObjectMirror.InvokeMethodAsync (vm, thread, method, this, arguments, options);
+		}
+
+		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
+			return ObjectMirror.InvokeMethodAsyncWithResult (vm, thread, method, this, arguments, options);
 		}
 	}
 }

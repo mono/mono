@@ -114,6 +114,7 @@ namespace System.Windows.Forms {
 						ThemeEngine.Current.ColorControlLight = ColorFromGdkColor (style.light[0]);
 						ThemeEngine.Current.ColorControlLightLight = ControlPaint.Light (ThemeEngine.Current.ColorControlLight);
 						ThemeEngine.Current.ColorControlDarkDark = ControlPaint.Dark (ThemeEngine.Current.ColorControlDark);
+						ThemeEngine.Current.ColorButtonFace = ColorFromGdkColor (style.bg[0]);
 
 						// We don't want ControlLight to disappear on a white background!
 						if (ThemeEngine.Current.ColorControlLight.ToArgb () == Color.White.ToArgb ()) {

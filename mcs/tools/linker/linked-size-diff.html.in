@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>BCL Linked Size Diff</title>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans' />
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@4.1.2/dist/css/bootstrap.min.css' />
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/datatables.net-bs4@1.10.19/css/dataTables.bootstrap4.min.css' />
+  </head>
+  <body style="font-family: 'Open Sans'">
+
+    <script type="text/javascript" id="diffsource">/*<![CDATA[
+@diffdata@
+]]>*/
+    </script>
+    <script type="text/javascript" id="oldsource-net_4_x">/*<![CDATA[
+@olddata-net_4_x@
+]]>*/
+    </script>
+    <script type="text/javascript" id="newsource-net_4_x">/*<![CDATA[
+@newdata-net_4_x@
+]]>*/
+    </script>
+    <script type="text/javascript" id="oldsource-monotouch">/*<![CDATA[
+@olddata-monotouch@
+]]>*/
+    </script>
+    <script type="text/javascript" id="newsource-monotouch">/*<![CDATA[
+@newdata-monotouch@
+]]>*/
+    </script>
+    <script type="text/javascript" id="oldsource-monodroid">/*<![CDATA[
+@olddata-monodroid@
+]]>*/
+    </script>
+    <script type="text/javascript" id="newsource-monodroid">/*<![CDATA[
+@newdata-monodroid@
+]]>*/
+    </script>
+    <script type="text/javascript" id="oldsource-wasm">/*<![CDATA[
+@olddata-wasm@
+]]>*/
+    </script>
+    <script type="text/javascript" id="newsource-wasm">/*<![CDATA[
+@newdata-wasm@
+]]>*/
+    </script>
+
+    <div class="container-fluid">
+
+      <h1>BCL Linked Size Diff</h1>
+      <p>Download <a id="diffdownload" href="#">changes.patch</a> to apply the diff manually.</p>
+
+      <div id="navigation">
+        <p>Jump to: <a href="#results-sizediff">Size Diff</a> | <a href="#results-sizebreakdown">Size Breakdown</a>
+      </div>
+
+      <div id="loading"><p>Loading ...</p></div>
+      <div id="results" style="display: none">
+        <div id="results-sizediff">
+          <h2>Size Diff</h2>
+        </div>
+        <div id="results-sizebreakdown">
+          <h2>Size Breakdown</h2>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@1.3.8/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@4.5.0/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/linq@3.1.0/linq.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.2/dist/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.3.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs4@1.10.19/js/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+      var fillColors = {};
+      var borderColors = {};
+      var colorIndex = 0;
+      var prettyColors =
+      [
+        { r: 244, g: 67,  b: 54 },
+        { r: 76,  g: 175, b: 80 },
+        { r: 233, g: 30,  b: 99 },
+        { r: 156, g: 39,  b: 176 },
+        { r: 103, g: 58,  b: 183 },
+        { r: 33,  g: 150, b: 243 },
+        { r: 255, g: 87,  b: 34 },
+        { r: 63,  g: 81,  b: 181 },
+        { r: 205, g: 220, b: 57 },
+        { r: 139, g: 195, b: 74 },
+        { r: 255, g: 235, b: 59 },
+        { r: 121, g: 85,  b: 72 },
+        { r: 158, g: 158, b: 158 },
+        { r: 132, g: 255, b: 255 },
+        { r: 118, g: 255, b: 3 },
+      ];
+
+      function roundPretty(value, decimals) {
+        if (decimals == undefined) decimals = 1;
+
+        var factor = 10 * decimals;
+        return Math.round(value * factor) / factor;
+      }
+
+      function getDiffIndicator(diffInBytes) {
+        if (diffInBytes == 0) return null;
+        var diffText = Math.abs(diffInBytes) > 100 ? roundPretty(diffInBytes / 1024, 2) + " kB" : diffInBytes + " bytes";
+        return $("<span>").attr("style", "font-style: italic; font-weight: bold; " + (diffInBytes < 0 ? "color: green" : "color: red")).text(" (" + (diffInBytes > 0 ? "+" : "") + diffText + ")");
+      }
+
+      function populateColors(assemblies){
+        assemblies.forEach(function(assembly) {
+          if (fillColors[assembly] != undefined) return;
+
+          // pick one of the nice colors or fallback to black
+          var color = colorIndex < prettyColors.length ? prettyColors[colorIndex] : { r: 0, g: 0, b: 0 };
+
+          fillColors[assembly] = "rgba(" + color.r + ", " + + color.g + ", " + color.b + ", 0.8)";
+          borderColors[assembly] = "rgba(" + color.r + ", " + + color.g + ", " + color.b + ", 1.0)";
+          colorIndex++;
+        });
+      }
+
+      function updateVisibleAssemblies(id) {
+        // process columns to hide assemblies without changes
+        window[id + "_table"].columns().every(function () {
+          // return early if we're processing the App/Total columns
+          if (this.index() <= 1) return;
+
+          if (window[id + "_showChangedAssemblies"]) {
+            // detect whether an assembly had changes based on the presence of + or - chars in the column
+            var containsChangedAssemblies = Enumerable.from(this.data()).any(i => i.indexOf ("+") !== -1 || i.indexOf("-") !== -1);
+
+            this.visible(containsChangedAssemblies);
+          } else {
+            this.visible(true);
+          }
+        });
+      }
+
+      function extractCDATAFromElement(element) {
+        var text = element[0].childNodes[0].nodeValue;
+        element.remove();
+        text = text.substring(12, text.length - 10);
+        return text;
+      }
+
+      function compareSizes(title, id, oldCsv, newCsv) {
+        /****** Create basic skeleton of diff table and size breakdown chart ******/
+        $("#results-sizediff").append($("<h3>").attr("style", "margin-top: 20px").text(title));
+        $("#results-sizediff").append($("<div>").attr("class", "form-check")
+          .append($("<input>").attr("class", "form-check-input").attr("type", "checkbox").attr("id", id + "-showChanged").val(id).attr("checked", true))
+          .append($("<label>").attr("class", "form-check-label").attr("for", id + "-showChanged").text("Show only assemblies with changes"))
+        );
+        $("#results-sizediff").append($("<table>").attr("id", id + "-table").attr("class", "table table-striped table-bordered dt-responsive nowrap").attr("style", "width: 100%")
+          .append($("<thead>").attr("id", id + "-table-head"))
+          .append($("<tbody>").attr("id", id + "-table-body"))
+        );
+        $("#results-sizediff").append($("<hr>"));
+        $("#results-sizebreakdown").append($("<h3>").text(title));
+        $("#results-sizebreakdown").append($("<div>").attr("style", "height: 1000px").append($("<canvas>").attr("id", id + "-chart")));
+        $("#results-sizebreakdown").append($("<hr>"));
+
+        // hook up the checkbox for showing only changed assemblies in the diff table
+        $("#"+ id + "-showChanged").change(function () {
+          window[this.value + "_showChangedAssemblies"] = this.checked;
+          updateVisibleAssemblies(this.value);
+        });
+
+        var oldEnumerable = Enumerable.from(oldCsv.data);
+        var newEnumerable = Enumerable.from(newCsv.data);
+
+        // extract all test cases from old and new records, extract all assemblies which had a size > 0 in either old or new
+        var testCases = oldEnumerable.select(i => i.App).union(newEnumerable.select(i => i.App)).orderBy(i => i.toLowerCase());
+        var assemblies = Enumerable.from(oldCsv.meta.fields).union(Enumerable.from(newCsv.meta.fields)).except(Enumerable.from(["App"])).where(assembly => oldEnumerable.any (i => i[assembly] > 0) || newEnumerable.any (i => i[assembly] > 0));
+
+        /****** Create diff table ******/
+        var tableHeadRow = $("<tr>");
+        tableHeadRow.append($("<th>").attr("scope", "col").text("App"));
+        tableHeadRow.append($("<th>").text("Total"));
+        assemblies.forEach(function(assembly) { tableHeadRow.append($("<th>").attr("scope", "col").text(assembly)); });
+        $("#" + id + "-table-head").append(tableHeadRow);
+
+        // fill data for diff table
+        testCases.forEach(function(testCase) {
+          var row = $("<tr>");
+
+          var oldTestCase = oldEnumerable.where(i => i.App === testCase).singleOrDefault();
+          var newTestCase = newEnumerable.where(i => i.App === testCase).singleOrDefault();
+
+          var oldTotalSize = 0;
+          var newTotalSize = 0;
+          assemblies.forEach(function(assembly) {
+            var oldAssemblySize = oldTestCase == null || oldTestCase[assembly] == undefined ? 0 : oldTestCase[assembly];
+            var newAssemblySize = newTestCase == null || newTestCase[assembly] == undefined ? 0 : newTestCase[assembly];
+            var diff = newAssemblySize - oldAssemblySize;
+
+            oldTotalSize += oldAssemblySize;
+            newTotalSize += newAssemblySize;
+
+            row.append($("<td>").attr("data-order", newAssemblySize).attr("data-oldsize", oldAssemblySize).attr("data-newsize", newAssemblySize).attr("data-significant", Math.abs(diff) > 1024 ? true : false).text(roundPretty(newAssemblySize / 1024) + " kB").append(getDiffIndicator(diff)));
+          });
+
+          var totalDiff = newTotalSize - oldTotalSize;
+          row.prepend($("<td>").attr("data-order", newTotalSize).attr("data-oldsize", oldTotalSize).attr("data-newsize", newTotalSize).text(roundPretty(newTotalSize / 1024 / 1024, 2) + " MB").append(getDiffIndicator(totalDiff)));
+          row.prepend($("<th>").attr("scope", "row").text(testCase));
+
+          $("#" + id + "-table-body").append(row);
+        });
+
+        // create table
+        window[id + "_showChangedAssemblies"] = true;
+        window[id + "_table"] = $('#' + id + '-table').DataTable({
+          "paging": false,
+          "searching": false,
+          "info": false
+        });
+
+        updateVisibleAssemblies(id);
+
+        /****** Create size breakdown chart ******/
+
+        // map assembly names to nice colors
+        populateColors(assemblies);
+
+        // fill data for size breakdown chart
+        var datasets = [];
+        assemblies.forEach(function(assembly) {
+          var items = testCases.select(testCase => {
+              var oldTestCase = oldEnumerable.where(i => i.App === testCase).singleOrDefault();
+              var newTestCase = newEnumerable.where(i => i.App === testCase).singleOrDefault();
+
+              var oldAssemblySize = oldTestCase == null || oldTestCase[assembly] == undefined ? 0 : oldTestCase[assembly];
+              var newAssemblySize = newTestCase == null || newTestCase[assembly] == undefined ? 0 : newTestCase[assembly];
+
+              return [oldAssemblySize, newAssemblySize, null];
+            })
+            .selectMany(i => i)  // flatten
+            .toArray();
+
+          datasets.push({
+            label: assembly,
+            backgroundColor: fillColors[assembly],
+            borderColor: borderColors[assembly],
+            borderWidth: 1,
+            hoverBorderWidth: 1.5,
+            hoverBorderColor: "#000",
+            data: items
+          });
+        });
+
+        // create chart
+        var ctx = $("#" + id + "-chart")[0].getContext('2d');
+        new Chart(ctx, {
+          type: 'horizontalBar',
+          data: { datasets: datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              datalabels: {
+                display: function(context) {
+                  // hide disabled items and items with 0kB
+                  return context.chart.isDatasetVisible(context.datasetIndex) && context.dataset.data[context.dataIndex] != 0;
+                },
+                formatter: function(value, context) {
+                    return roundPretty(value / 1024) + ' kB';
+                },
+                color: function(context) {
+                  return context.active ? '#000': '#f5f5f5';
+                }
+              }
+            },
+            scales: {
+              xAxes: [{
+                stacked: true,
+                ticks: {
+                  stepSize: 1024000,
+                  callback: function(value, index, values) {
+                      return value / 1024 + ' kB';
+                  }
+                }
+              }],
+              yAxes: [{
+                stacked: true,
+                categoryPercentage: 0.9,
+                labels: testCases
+                          .select(i => [i + " (old)", i + " (new)", ""])  // we insert one empty item to get a better spacing between the cases in the chart
+                          .selectMany(i => i)  // flatten
+                          .take(testCases.count() * 3 - 1)  // remove the last empty item
+                          .toArray()
+              }]
+            },
+            tooltips: {
+              callbacks: {
+                label: function(tooltipItems, data) {
+                    if (tooltipItems.xLabel === 0) return null;
+                    return data.datasets[tooltipItems.datasetIndex].label + ": " + roundPretty(tooltipItems.xLabel / 1024, 2) + ' kB';
+                }
+              }
+            }
+          }
+        });
+      }
+
+      $(document).ready(function() {
+        var diffText = extractCDATAFromElement($("#diffsource"));
+        $("#diffdownload").click(function() {
+          var blob = new Blob([diffText], { type: "text/plain;charset=utf-8;" });
+          saveAs(blob, "changes.patch", true);
+        });
+
+        var oldsourceNet4xText = extractCDATAFromElement($("#oldsource-net_4_x"));
+        var oldsourceMonotouchText = extractCDATAFromElement($("#oldsource-monotouch"));
+        var oldsourceMonodroidText = extractCDATAFromElement($("#oldsource-monodroid"));
+        var oldsourceWasmText = extractCDATAFromElement($("#oldsource-wasm"));
+
+        var newsourceNet4xText = extractCDATAFromElement($("#newsource-net_4_x"));
+        var newsourceMonotouchText = extractCDATAFromElement($("#newsource-monotouch"));
+        var newsourceMonodroidText = extractCDATAFromElement($("#newsource-monodroid"));
+        var newsourceWasmText = extractCDATAFromElement($("#newsource-wasm"));
+
+        var papaConfig = {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true
+        };
+        var oldsourceNet4xCsv = Papa.parse(oldsourceNet4xText, papaConfig);
+        var oldsourceMonotouchCsv = Papa.parse(oldsourceMonotouchText, papaConfig);
+        var oldsourceMonodroidCsv = Papa.parse(oldsourceMonodroidText, papaConfig);
+        var oldsourceWasmCsv = Papa.parse(oldsourceWasmText, papaConfig);
+
+        var newsourceNet4xCsv = Papa.parse(newsourceNet4xText, papaConfig);
+        var newsourceMonotouchCsv = Papa.parse(newsourceMonotouchText, papaConfig);
+        var newsourceMonodroidCsv = Papa.parse(newsourceMonodroidText, papaConfig);
+        var newsourceWasmCsv = Papa.parse(newsourceWasmText, papaConfig);
+
+        try {
+          compareSizes(".NET 4.x", "net4x-results", oldsourceNet4xCsv, newsourceNet4xCsv);
+          compareSizes("MonoTouch", "monotouch-results", oldsourceMonotouchCsv, newsourceMonotouchCsv);
+          compareSizes("MonoDroid", "monodroid-results", oldsourceMonodroidCsv, newsourceMonodroidCsv);
+          compareSizes("WebAssembly", "wasm-results", oldsourceWasmCsv, newsourceWasmCsv);
+        } catch(err) {
+          $("#results").text("Error: " + err);
+        }
+
+        $("#results").show();
+        $("#loading").remove();
+      });
+    </script>
+  </body>
+</html>

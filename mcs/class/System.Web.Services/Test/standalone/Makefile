@@ -64,7 +64,7 @@ test-wsdl: tools
 	mcs /r:System.Web.Services.dll /r:System.Data /target:library -out:proxies.dll @proxies.sources
 	$(MONO) ../../../../tools/corcompare/mono-api-info.exe proxies.dll > proxies.mono.xml
 	$(MONO) wstest.exe msfix proxies.net.xml
-	$(MONO) ../../../../tools/corcompare/mono-api-diff.exe proxies.net.xml proxies.mono.xml > proxies.diff.xml
+	$(MONO) ../../../../tools/mono-api-diff/mono-api-diff.exe proxies.net.xml proxies.mono.xml > proxies.diff.xml
 	$(MONO) wstest.exe checkdiff proxies.diff.xml
 
 test-clients: tests

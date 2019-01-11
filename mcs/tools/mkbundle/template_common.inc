@@ -18,6 +18,8 @@ void initialize_mono_api (const BundleMonoAPI *info)
 	mono_api.mono_register_machine_config = info->mono_register_machine_config;
 }
 
+#ifdef USE_COMPRESSED_ASSEMBLY
+
 static int
 validate_api_pointer (const char *name, void *ptr)
 {
@@ -47,6 +49,12 @@ validate_api_struct ()
 	exit (1);
 }
 
+#ifdef USE_DEFAULT_MONO_API_STRUCT
+// We don't export in jit.h
+// So declare here, and get it from mono
+void mono_aot_register_module (void *aot_info);
+#endif // USE_DEFAULT_MONO_API_STRUCT
+
 static void
 init_default_mono_api_struct ()
 {
@@ -59,3 +67,5 @@ init_default_mono_api_struct ()
 	mono_api.mono_register_machine_config = mono_register_machine_config;
 #endif // USE_DEFAULT_MONO_API_STRUCT
 }
+
+#endif

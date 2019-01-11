@@ -41,6 +41,7 @@ public class Program
 		public bool Verbose { get; set; }
 		public List<string> ResourcesStrings { get; }
 		public string ILFile { get; set; }
+		public bool MonoMscorlib { get; set; }
 
 		public CmdOptions ()
 		{
@@ -61,6 +62,8 @@ public class Program
 				v => options.Verbose = v != null },
 			{ "ilreplace=", "File with IL code to be used instead",
 				v => options.ILFile = v },
+			{ "mscorlib-debug", "IL customizations for Mono's mscorlib",
+				v => options.MonoMscorlib = v != null },
 		};
 
 		List<string> extra;
@@ -130,6 +133,10 @@ public class Program
 		using (var assembly = AssemblyDefinition.ReadAssembly (assemblyLocation, readerParameters)) {
 			foreach (var module in assembly.Modules) {
 				foreach (var type in module.GetTypes ()) {
+					if (options.MonoMscorlib && type.Name == "Debug" && type.Namespace == "System.Diagnostics") {
+						type.Name = "DebugPrivate";
+					}
+
 					foreach (var method in type.Methods) {
 						if (!method.HasBody)
 							continue;

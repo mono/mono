@@ -38,6 +38,8 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 	[TestFixture]
@@ -441,9 +443,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[Test]
 		public void CheckSignatureDetachedSignedCms ()
 		{
-			string path = Path.Combine ("Test", "System.Security.Cryptography.Pkcs");
-			var signedBytes = File.ReadAllBytes (Path.Combine (path, "detached.data"));
-			var bytes = File.ReadAllBytes (Path.Combine (path, "detached.p7"));
+			var signedBytes = File.ReadAllBytes (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Pkcs/detached.data"));
+			var bytes = File.ReadAllBytes (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Pkcs/detached.p7"));
 
 			var oid = new Oid ("1.2.840.113549.1.7.2");
 			var contentInfo = new ContentInfo (oid, signedBytes);

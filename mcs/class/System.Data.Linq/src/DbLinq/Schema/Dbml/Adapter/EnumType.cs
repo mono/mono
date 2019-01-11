@@ -139,7 +139,7 @@ namespace DbLinq.Schema.Dbml.Adapter
             string literalType = string.IsNullOrEmpty(Name) ? "enum" : Name;
             literalType += " ";
             literalType += string.Join(", ", keyValues.ToArray());
-            MemberInfoExtensions.SetMemberValue(memberInfo, owner, literalType);
+            DbLinqMemberInfoExtensions.SetMemberValue(memberInfo, owner, literalType);
         }
 
         internal EnumType(object owner, MemberInfo memberInfo)

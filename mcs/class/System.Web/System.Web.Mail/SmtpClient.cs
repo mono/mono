@@ -33,6 +33,7 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Net.Sockets;
+using System.Net.Security;
 using System.Security.Permissions;
 using System.Reflection;
 
@@ -68,27 +69,9 @@ namespace System.Web.Mail {
 	    	    
 		void ChangeToSSLSocket ()
 		{
-			// Load Mono.Security.dll
-			Assembly a;
-			try {
-				a = Assembly.Load (Consts.AssemblyMono_Security);
-			} catch (System.IO.FileNotFoundException) {
-				throw new SmtpException ("Cannot load Mono.Security.dll");
-			}
-			Type tSslClientStream = a.GetType ("Mono.Security.Protocol.Tls.SslClientStream");
-			object[] consArgs = new object[4];
-			consArgs[0] = smtp.Stream;
-			consArgs[1] = server;
-			consArgs[2] = true;
-			Type tSecurityProtocolType = a.GetType ("Mono.Security.Protocol.Tls.SecurityProtocolType");
-			int nSsl3Val = (int) Enum.Parse (tSecurityProtocolType, "Ssl3");
-			int nTlsVal = (int) Enum.Parse (tSecurityProtocolType, "Tls");
-			consArgs[3] = Enum.ToObject (tSecurityProtocolType, nSsl3Val | nTlsVal);
-
-			object objSslClientStream = Activator.CreateInstance (tSslClientStream, consArgs); 
-
-			if (objSslClientStream != null)
-				smtp = new SmtpStream ((Stream)objSslClientStream);
+			var sslStream = new SslStream (smtp.Stream);
+			sslStream.AuthenticateAsClient (server);
+			smtp = new SmtpStream (sslStream);
 		}
 		
 		void ReadFields (MailMessageWrapper msg)

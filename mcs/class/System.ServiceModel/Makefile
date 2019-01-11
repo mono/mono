@@ -47,17 +47,14 @@ endif # (2.1, $(FRAMEWORK_VERSION))
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-TEST_EXTRA_FILES = \
-	System.ServiceModel_test_net_3_0.dll.config \
-	Test/config/* \
-	Test/Resources/* \
-	Test/XmlFiles/* \
-	Test/System.ServiceModel.Channels/soap-fault*.xml \
-	Test/System.ServiceModel.Channels/binary-message.raw \
-	Test/System.ServiceModel.Description/dump.xml \
-	Test/MetadataTests/Resources/*
+TEST_RESOURCE_FILES = \
+	$(wildcard Test/config/*) \
+	$(wildcard Test/Resources/*) \
+	$(wildcard Test/MetadataTests/Resources/*)
 
-EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_EXTRA_FILES)
+TEST_MCS_FLAGS += $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
+
+EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES)
 
 # Useful for debugging under Visual Studio 2005
 # NO_SIGN_ASSEMBLY = yes

@@ -366,6 +366,10 @@ void GC_print_callers GC_PROTO((struct callinfo info[NFRAMES]));
 #   define BZERO(x,n) bzero((char *)(x),(int)(n))
 # endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if defined(DARWIN)
 #	if defined(POWERPC)
 #		define GC_MACH_THREAD_STATE_FLAVOR PPC_THREAD_STATE
@@ -413,7 +417,18 @@ void GC_print_callers GC_PROTO((struct callinfo info[NFRAMES]));
  * Stop and restart mutator threads.
  */
 # ifdef PCR
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 #     include "th/PCR_ThCtl.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 #     define STOP_WORLD() \
  	PCR_ThCtl_SetExclusiveMode(PCR_ThCtl_ExclusiveMode_stopNormal, \
  				   PCR_allSigsBlocked, \
@@ -1315,7 +1330,7 @@ void GC_initiate_gc GC_PROTO((void));
   				/* If the mark state is invalid, this	*/
   				/* becomes full colleection.  Otherwise */
   				/* it's partial.			*/
-void GC_push_all GC_PROTO((ptr_t bottom, ptr_t top));
+void GC_push_all (void* bottom, void* top);
 				/* Push everything in a range 		*/
   				/* onto mark stack.			*/
 void GC_push_selected GC_PROTO(( \
@@ -1959,6 +1974,10 @@ void GC_err_puts GC_PROTO((GC_CONST char *s));
 		/* was already done, or there was nothing to do for	*/
 		/* some other reason.					*/
 # endif /* PARALLEL_MARK */
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 # if defined(GC_PTHREADS) && !defined(GC_SOLARIS_THREADS)
   /* We define the thread suspension signal here, so that we can refer	*/

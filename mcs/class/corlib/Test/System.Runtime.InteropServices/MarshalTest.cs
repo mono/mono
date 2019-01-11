@@ -121,6 +121,13 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		public unsafe void Sizeof_Void ()
+		{
+			int size = Marshal.SizeOf (typeof (void));
+			Assert.AreEqual (1, size);
+		}
+
+		[Test]
 		public void PtrToStringWithNull ()
 		{
 			Assert.IsNull (Marshal.PtrToStringAnsi (IntPtr.Zero), "A");

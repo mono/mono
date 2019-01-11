@@ -12,7 +12,7 @@
 #include <config.h>
 #include <glib.h>
 
-#ifdef TARGET_OSX
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
 #include "mono-merp.h"
 
 #include <unistd.h>
@@ -35,8 +35,11 @@
 // To get the apple machine model
 #include <sys/param.h>
 #include <sys/sysctl.h>
+#include <fcntl.h>
 
 #include <mono/utils/json.h>
+#include <mono/utils/mono-state.h>
+#include <utils/mono-threads-debug.h>
 
 static const char *
 os_version_string (void)
@@ -81,6 +84,10 @@ typedef enum
 } MERPExcType;
 
 typedef struct {
+	const char *merpFilePath;
+	const char *crashLogPath;
+	const char *werXmlPath;
+
 	const char *bundleIDArg; // App Bundle ID (required for bucketization)
 	const char *versionArg; // App Version (required for bucketization)
 
@@ -88,31 +95,48 @@ typedef struct {
 	MERPExcType exceptionArg; // Exception type (refer to merpcommon.h and mach/exception_types.h for more info (optional)
 
 	const char *serviceNameArg; // This is the Bootstrap service name that MERP GUI will create to receive mach_task_self on a port created. Bails out if MERP GUI fails to receive mach_task_self from the crashed app. (Required for crash log generation)
+	const char *servicePathArg; // The path to the executable, used to relaunch the crashed app.
 
 	const char *moduleName;
 	const char *moduleVersion;
 	size_t moduleOffset;
 
 	const char *osVersion; 
-	int uiLidArg; // Application LCID 
+	int uiLidArg; // MONO_LOCALE_INVARIANT 0x007F
 
-	const char systemModel [100];
+	char systemModel [100];
 	const char *systemManufacturer;
 
+	const char *eventType;
+
 	MonoStackHash hashes;
+	GSList *annotations;
 } MERPStruct;
 
 typedef struct {
 	gboolean enable_merp;
 
 	const char *appBundleID;
+	const char *appPath;
 	const char *appSignature; 
 	const char *appVersion;
 	const char *merpGUIPath; 
+	const char *eventType;
+	const char *merpFilePath;
+	const char *crashLogPath;
+	const char *werXmlPath;
+	const char *moduleVersion;
+
 	gboolean log;
+	GSList *annotations;
 } MerpOptions;
 
 static MerpOptions config;
+
+typedef struct {
+	char *key;
+	char *value;
+} MonoMerpAnnotationEntry;
 
 static const char *
 get_merp_bitness (MerpArch arch)
@@ -168,8 +192,8 @@ get_merp_exctype (MERPExcType exc)
 		case MERP_EXC_HANG: 
 			return "0x02000000";
 		case MERP_EXC_NONE:
-			// Exception type is optional
-			return "";
+			// Exception type documented as optional, not optional
+			g_assert_not_reached ();
 		default:
 			g_assert_not_reached ();
 	}
@@ -190,104 +214,88 @@ parse_exception_type (const char *signal)
 	if (!strcmp (signal, "SIGABRT"))
 		return MERP_EXC_SIGABRT;
 
+	// Force quit == hang?
+	// We need a default for this
+	if (!strcmp (signal, "SIGTERM"))
+		return MERP_EXC_HANG;
+
 	// FIXME: There are no other such signal
 	// strings passed to mono_handle_native_crash at the
 	// time of writing this
 	g_error ("Merp doesn't know how to handle %s\n", signal);
 }
 
-static gchar *
-mono_encode_merp_params (MERPStruct *merp)
+static int merp_file_permissions = S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH;
+
+static gboolean
+mono_merp_write_params (MERPStruct *merp)
 {
-	GString *output = g_string_new ("");
+	int handle = g_open (merp->merpFilePath, O_TRUNC | O_WRONLY | O_CREAT, merp_file_permissions);
+	g_assertf (handle != -1, "Could not open MERP file at %s", merp->merpFilePath);
+
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "ApplicationBundleId: %s\n", merp->bundleIDArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "ApplicationVersion: %s\n", merp->versionArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "ApplicationBitness: %s\n", get_merp_bitness (merp->archArg));
+
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "ApplicationName: %s\n", merp->serviceNameArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "ApplicationPath: %s\n", merp->servicePathArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "BlameModuleName: %s\n", merp->moduleName);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "BlameModuleVersion: %s\n", merp->moduleVersion);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "BlameModuleOffset: 0x%llx\n", (unsigned long long)merp->moduleOffset);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "ExceptionType: %s\n", get_merp_exctype (merp->exceptionArg));
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "StackChecksum: 0x%llx\n", merp->hashes.offset_free_hash);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "StackHash: 0x%llx\n", merp->hashes.offset_rich_hash);
 
 	// Provided by icall
-	g_string_append_printf (output, "ApplicationBundleId: %s\n", merp->bundleIDArg);
-	g_string_append_printf (output, "ApplicationVersion: %s\n", merp->versionArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "OSVersion: %s\n", merp->osVersion);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "LanguageID: 0x%x\n", merp->uiLidArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "SystemManufacturer: %s\n", merp->systemManufacturer);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "SystemModel: %s\n", merp->systemModel);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "EventType: %s\n", merp->eventType);
 
-	g_string_append_printf (output, "ApplicationBitness: %s\n", get_merp_bitness (merp->archArg));
-
-	// Provided by icall
-	g_string_append_printf (output, "ApplicationName: %s\n", merp->serviceNameArg);
-
-	// Provided by icall
-	g_string_append_printf (output, "BlameModuleName: %s\n", merp->moduleName);
-	g_string_append_printf (output, "BlameModuleVersion: %s\n", merp->moduleVersion);
-	g_string_append_printf (output, "BlameModuleOffset: 0x%x\n", merp->moduleOffset);
-
-	g_string_append_printf (output, "ExceptionType: %s\n", get_merp_exctype (merp->exceptionArg));
-
-	g_string_append_printf (output, "StackChecksum: 0x%x\n", merp->hashes.offset_free_hash);
-	g_string_append_printf (output, "StackHash: 0x%x\n", merp->hashes.offset_rich_hash);
-
-	// Provided by icall
-	g_string_append_printf (output, "OSVersion: %s\n", merp->osVersion);
-	g_string_append_printf (output, "LanguageID: 0x%x\n", merp->uiLidArg);
-	g_string_append_printf (output, "SystemManufacturer: %s\n", merp->systemManufacturer);
-	g_string_append_printf (output, "SystemModel: %s\n", merp->systemModel);
-
-	return g_string_free (output, FALSE);
+	close (handle);
+	return TRUE;
 }
 
-static void
-write_file (const char *payload, const char *fileName)
+static gboolean
+mono_merp_send (MERPStruct *merp)
 {
-	FILE *outfile = fopen (fileName, "w");
-	if (!outfile)
-		g_error ("Could not create file %s\n", fileName);
-	fprintf (outfile, "%s\n", payload);
-	fclose (outfile);
-}
+	gboolean invoke_success = FALSE;
 
-static void
-connect_to_merp (const char *serviceName, mach_port_t *merp_port)
-{
-	// // Create process to launch merp gui application
-	const char *argvOpen[] = {"/usr/bin/open", "-a", config.merpGUIPath, NULL};
-	int status = posix_spawn(NULL, "/usr/bin/open", NULL, NULL, (char *const*)(argvOpen), NULL);
+#if defined(HAVE_EXECV) && defined(HAVE_FORK)
+	pid_t pid = (pid_t) fork ();
 
-	// // FIXME error handling
-	g_assert (status == 0);
+	// Only one we define on OSX
+	if (pid == 0) {
+		const char *open_path = "/usr/bin/open";
+		const char *argvOpen[] = {open_path, "-a", config.merpGUIPath, NULL};
+		execv (open_path, (char**)argvOpen);
+		exit (-1);
+	} else {
+		int status;
+		waitpid (pid, &status, 0);
+		gboolean exit_success = FALSE;
+		int exit_status = FALSE;
 
-}
+		while (TRUE) {
+			if (waitpid(pid, &status, WUNTRACED | WCONTINUED) == -1)
+				break;
 
-static void
-mono_merp_send (const char *merpFile, const char *crashLog, const char *werXml)
-{
-	// Write struct to magic file location
-	// This registers our mach service so we can connect
-	// to the merp process
-	const char *home = g_get_home_dir ();
-	char *merpParamPath = g_strdup_printf ("%s/Library/Group Containers/UBF8T346G9.ms/MERP.uploadparams.txt", home);
-	write_file (merpFile, merpParamPath);
-	g_free (merpParamPath);
-
-	char *crashLogPath = g_strdup_printf ("%s/Library/Group Containers/UBF8T346G9.ms/lastcrashlog.txt", home);
-	write_file (crashLog, crashLogPath);
-	g_free (crashLogPath);
-
-	char *werXmlPath = g_strdup_printf ("%s/Library/Group Containers/UBF8T346G9.ms/WERInternalMetadata.txt", home);
-	write_file (werXml, werXmlPath);
-	g_free (werXmlPath);
-
-	if (config.log) {
-		if (merpFile != NULL)
-			fprintf (stderr, "Crashing MERP File:\n####\n%s\n####\n", merpFile);
-		if (crashLog != NULL)
-			fprintf (stderr, "Crashing Dump File:\n####\n%s\n####\n", crashLog);
-		if (werXml != NULL)
-			fprintf (stderr, "Crashing XML WER File:\n####\n%s\n####\n", werXmlPath);
+			if (WIFEXITED(status)) {
+				exit_status = WEXITSTATUS(status);
+				exit_success = TRUE;
+				invoke_success = exit_status == TRUE;
+				break;
+			} else if (WIFSIGNALED(status)) {
+				break;
+			}
+		}
 	}
 
 	// // Create process to launch merp gui application
-	const char *argvOpen[] = {"/usr/bin/open", "-a", config.merpGUIPath, NULL};
-	int status = posix_spawn(NULL, "/usr/bin/open", NULL, NULL, (char *const*)(argvOpen), NULL);
+#endif
 
-	// // FIXME error handling
-	if (status == 0)
-		g_error ("Could not start merp\n");
-
-	return;
+	return invoke_success;
 }
 
 static void
@@ -306,11 +314,14 @@ get_apple_model (char *buffer, size_t max_length)
 	sysctlbyname("hw.model", buffer, &sz, NULL, 0);
 }
 
-
 static void
-mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *hashes, MERPStruct *merp, const char *version)
+mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *hashes, MERPStruct *merp)
 {
 	g_assert (mono_merp_enabled ());
+
+	merp->merpFilePath = config.merpFilePath;
+	merp->crashLogPath = config.crashLogPath;
+	merp->werXmlPath = config.werXmlPath;
 
 	// If these aren't set, icall wasn't made
 	// don't do merp? / don't set the variable to use merp;
@@ -323,15 +334,14 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 	merp->exceptionArg = parse_exception_type (signal);
 
 	merp->serviceNameArg = config.appBundleID;
+	merp->servicePathArg = config.appPath;
 
 	merp->moduleName = "Mono Exception";
-	merp->moduleVersion = version;
+	merp->moduleVersion = config.moduleVersion;
 
 	merp->moduleOffset = 0;
 
-	ERROR_DECL (error);
-	merp->uiLidArg = ves_icall_System_Threading_Thread_current_lcid (error);
-	mono_error_assert_ok (error);
+	merp->uiLidArg = MONO_LOCALE_INVARIANT;
 
 	merp->osVersion = os_version_string ();
 
@@ -339,180 +349,152 @@ mono_init_merp (const intptr_t crashed_pid, const char *signal, MonoStackHash *h
 	merp->systemManufacturer = "apple";
 	get_apple_model ((char *) merp->systemModel, sizeof (merp->systemModel));
 
+	merp->eventType = config.eventType;
+
 	merp->hashes = *hashes;
+
+	merp->annotations = config.annotations;
 }
 
-static gchar *
-mono_merp_fingerprint_payload (const char *non_param_data, const MERPStruct *merp)
+static gboolean
+mono_merp_write_fingerprint_payload (const char *non_param_data, const MERPStruct *merp)
 {
-	JsonWriter writer;
-	mono_json_writer_init (&writer);
+	int handle = g_open (merp->crashLogPath, O_TRUNC | O_WRONLY | O_CREAT, merp_file_permissions);
+	g_assertf (handle != -1, "Could not open crash log file at %s", merp->crashLogPath);
 
-	mono_json_writer_object_begin(&writer);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "{\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\"payload\" : \n");
+	g_write (handle, non_param_data, (guint32)strlen (non_param_data));	\
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, ",\n");
 
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "payload");
-	mono_json_writer_printf (&writer, "%s,\n", non_param_data);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\"parameters\" : \n{\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"ApplicationBundleId\" : \"%s\",\n", merp->bundleIDArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"ApplicationVersion\" : \"%s\",\n", merp->versionArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"ApplicationBitness\" : \"%s\",\n", get_merp_bitness (merp->archArg));
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"ApplicationName\" : \"%s\",\n", merp->serviceNameArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"BlameModuleName\" : \"%s\",\n", merp->moduleName);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"BlameModuleVersion\" : \"%s\",\n", merp->moduleVersion);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"BlameModuleOffset\" : \"0x%lx\",\n", merp->moduleOffset);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"ExceptionType\" : \"%s\",\n", get_merp_exctype (merp->exceptionArg));
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"StackChecksum\" : \"0x%llx\",\n", merp->hashes.offset_free_hash);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"StackHash\" : \"0x%llx\",\n", merp->hashes.offset_rich_hash);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"Extra\" : \n\t\t{\n");
 
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "parameters");
-	mono_json_writer_object_begin(&writer);
+	for (GSList *cursor = merp->annotations; cursor; cursor = cursor->next) {
+		MonoMerpAnnotationEntry *iter = (MonoMerpAnnotationEntry *) cursor->data;
+		MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\t\"%s\" : \"%s\"\n", iter->key, iter->value);
+	}
 
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "ApplicationBundleId:");
-	mono_json_writer_printf (&writer, "\"%s\",\n", merp->bundleIDArg);
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "ApplicationVersion:");
-	mono_json_writer_printf (&writer, "\"%s\",\n", merp->versionArg);
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "ApplicationBitness:");
-	mono_json_writer_printf (&writer, "\"%s\",\n", get_merp_bitness (merp->archArg));
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "ApplicationName:");
-	mono_json_writer_printf (&writer, "\"%s\",\n", merp->serviceNameArg);
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "BlameModuleName:");
-	mono_json_writer_printf (&writer, "\"%s\",\n", merp->moduleName);
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "BlameModuleVersion:");
-	mono_json_writer_printf (&writer, "\"%s\",\n", merp->moduleVersion);
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "BlameModuleOffset:");
-	mono_json_writer_printf (&writer, "\"0x%x\",\n", merp->moduleOffset);
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "ExceptionType:");
-	mono_json_writer_printf (&writer, "\"%s\",\n", get_merp_exctype (merp->exceptionArg));
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "StackChecksum:");
-	mono_json_writer_printf (&writer, "\"0x%x\",\n", merp->hashes.offset_free_hash);
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "StackHash:");
-	mono_json_writer_printf (&writer, "\"0x%x\",\n", merp->hashes.offset_rich_hash);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t},\n");
 
 	// Provided by icall
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "OSVersion:");
-	mono_json_writer_printf (&writer, "\"%s\",\n", merp->osVersion);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"OSVersion\" : \"%s\",\n", merp->osVersion);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"LanguageID\" : \"0x%x\",\n", merp->uiLidArg);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"SystemManufacturer\" : \"%s\",\n", merp->systemManufacturer);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"SystemModel\" : \"%s\",\n", merp->systemModel);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t\t\"EventType\" : \"%s\"\n", merp->eventType);
 
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "LanguageID:");
-	mono_json_writer_printf (&writer, "\"0x%x\",\n", merp->uiLidArg);
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "SystemManufacturer:");
-	mono_json_writer_printf (&writer, "\"%s\",\n", merp->systemManufacturer);
-
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_key(&writer, "SystemModel:");
-	mono_json_writer_printf (&writer, "\"%s\"\n", merp->systemModel);
-
-	// End of payload
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_end (&writer);
-	mono_json_writer_printf (&writer, "\n");
+	// End of parameters 
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "\t}\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "}\n");
 
 	// End of object
-	mono_json_writer_indent_pop (&writer);
-	mono_json_writer_indent (&writer);
-	mono_json_writer_object_end (&writer);
-	
-	gchar *output = g_strdup (writer.text->str);
-	mono_json_writer_destroy (&writer);
+	close (handle);
 
-	return output;
+	return TRUE;
 }
 
-static gchar *
-mono_wer_template (MERPStruct *merp)
+static gboolean
+mono_write_wer_template (MERPStruct *merp)
 {
 	// Note about missing ProcessInformation block: we have no PID that makes sense
 	// and when mono is embedded and used to run functions without an entry point,
 	// there is no image that would make any semantic sense to send either. 
 	// It's a nuanced problem, each way we can run mono would need a separate fix.
 
-	GString *output = g_string_new ("");
+	int handle = g_open (merp->werXmlPath, O_WRONLY | O_CREAT | O_TRUNC, merp_file_permissions);
+	g_assertf (handle != -1, "Could not open WER XML file at %s", merp->werXmlPath);
 
-	g_string_append_printf (output, "<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n");
-	g_string_append_printf (output, "<WERReportMetadata>\n");
-	g_string_append_printf (output, "<ProblemSignatures>\n");
-	g_string_append_printf (output, "<EventType>MonoAppCrash</EventType>\n");
+	// Provided by icall
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<WERReportMetadata>\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<ProblemSignatures>\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<EventType>%s</EventType>\n", merp->eventType);
 
 	int i=0;
-
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter0>\n", i, merp->bundleIDArg, i);
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->bundleIDArg, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->versionArg, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, get_merp_bitness (merp->archArg), i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->serviceNameArg, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->moduleName, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->moduleVersion, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>0x%zx</Parameter%d>\n", i, merp->moduleOffset, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, get_merp_exctype (merp->exceptionArg), i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>0x%llx</Parameter%d>\n", i, merp->hashes.offset_free_hash, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>0x%llx</Parameter%d>\n", i, merp->hashes.offset_rich_hash, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->osVersion, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>0x%x</Parameter%d>\n", i, merp->uiLidArg, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->systemManufacturer, i);
+	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->systemModel, i);
 	i++;
 
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter%d>\n", i, merp->versionArg, i);
-	i++;
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "</ProblemSignatures>\n");
+	MOSTLY_ASYNC_SAFE_FPRINTF(handle, "</WERReportMetadata>\n");
 
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter%d>\n", i, get_merp_bitness (merp->archArg), i);
-	i++;
+	close (handle);
 
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter%d>\n", i, merp->serviceNameArg, i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter%d>\n", i, merp->moduleName, i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter%d>\n", i, merp->moduleVersion, i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>0x%x</Parameter%d>\n", i, merp->moduleOffset, i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter%d>\n", i, get_merp_exctype (merp->exceptionArg), i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>0x%x</Parameter%d>\n", i, merp->hashes.offset_free_hash, i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>0x%x</Parameter%d>\n", i, merp->hashes.offset_rich_hash, i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter%d>\n", i, merp->osVersion, i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>0x%x</Parameter%d>\n", i, merp->uiLidArg, i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter%d>\n", i, merp->systemManufacturer, i);
-	i++;
-
-	g_string_append_printf (output, "<Parameter%d>%s</Parameter%d>\n", i, merp->systemModel, i);
-	i++;
-
-	g_string_append_printf (output, "</ProblemSignatures>\n");
-	g_string_append_printf (output, "</WERReportMetadata>\n");
-
-	return g_string_free (output, FALSE);
+	return TRUE;
 }
 
-void
-mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *non_param_data, MonoStackHash *hashes, char *version)
+// Returns success
+gboolean
+mono_merp_invoke (const intptr_t crashed_pid, const char *signal, const char *non_param_data, MonoStackHash *hashes)
 {
 	MERPStruct merp;
 	memset (&merp, 0, sizeof (merp));
-	mono_init_merp (crashed_pid, signal, hashes, &merp, version);
 
-	gchar *merpCfg = mono_encode_merp_params (&merp);
-	gchar *fullData = mono_merp_fingerprint_payload (non_param_data, &merp);
-	gchar *werXmlCfg = mono_wer_template (&merp);
+	mono_summarize_timeline_phase_log (MonoSummaryMerpWriter);
 
-	// Write out to disk, start program
-	mono_merp_send (merpCfg, fullData, werXmlCfg);
+	mono_init_merp (crashed_pid, signal, hashes, &merp);
+	if (!mono_merp_write_params (&merp))
+		return FALSE;
 
-	g_free (fullData);
-	g_free (merpCfg);
-	g_free (werXmlCfg);
+	if (!mono_merp_write_fingerprint_payload (non_param_data, &merp))
+		return FALSE;
+
+	if (!mono_write_wer_template (&merp))
+		return FALSE;
+
+	// Start program
+	mono_summarize_timeline_phase_log (MonoSummaryMerpInvoke);
+	gboolean success = mono_merp_send (&merp);
+
+	if (success)
+		mono_summarize_timeline_phase_log (MonoSummaryCleanup);
+
+	return success;
+}
+
+void
+mono_merp_add_annotation (const char *key, const char *value)
+{
+	MonoMerpAnnotationEntry *entry = g_new0 (MonoMerpAnnotationEntry, 1);
+	entry->key = g_strdup (key);
+	entry->value = g_strdup (value);
+	config.annotations = g_slist_prepend (config.annotations, entry);
 }
 
 void
@@ -525,18 +507,39 @@ mono_merp_disable (void)
 	g_free ((char*)config.appSignature);
 	g_free ((char*)config.appVersion);
 	g_free ((char*)config.merpGUIPath);
+	g_free ((char*)config.eventType);
+	g_free ((char*)config.appPath); 
+	g_free ((char*)config.moduleVersion);
+	g_slist_free (config.annotations);
 	memset (&config, 0, sizeof (config));
 }
 
 void
-mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath)
+mono_merp_enable (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath, const char *configDir)
 {
 	g_assert (!config.enable_merp);
+
+	char *prefix = NULL;
+
+	if (!configDir) {
+		const char *home = g_get_home_dir ();
+		prefix = g_strdup_printf ("%s/Library/Group Containers/UBF8T346G9.ms/", home);
+	} else {
+		prefix = g_strdup (configDir);
+	}
+	config.merpFilePath = g_strdup_printf ("%s%s", prefix, "MERP.uploadparams.txt");
+	config.crashLogPath = g_strdup_printf ("%s%s", prefix, "lastcrashlog.txt");
+	config.werXmlPath = g_strdup_printf ("%s%s", prefix, "CustomLogsMetadata.xml");
+	g_free (prefix);
+
+	config.moduleVersion = mono_get_runtime_callbacks ()->get_runtime_build_info ();
 
 	config.appBundleID = g_strdup (appBundleID);
 	config.appSignature = g_strdup (appSignature);
 	config.appVersion = g_strdup (appVersion);
 	config.merpGUIPath = g_strdup (merpGUIPath);
+	config.eventType = g_strdup (eventType);
+	config.appPath = g_strdup (appPath);
 
 	config.log = g_getenv ("MONO_MERP_VERBOSE") != NULL;
 

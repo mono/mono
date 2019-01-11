@@ -511,7 +511,8 @@ namespace System {
                 throw new AmbiguousMatchException(Environment.GetResourceString("Arg_AmbiguousMatchException"));
             return candidates[currentMin];
         }
-        
+
+#if !MONO        
         // Given a set of methods that match the base criteria, select a method based
         // upon an array of types.  This method should return null if no method matchs
         // the criteria.
@@ -588,6 +589,7 @@ namespace System {
                 throw new AmbiguousMatchException(Environment.GetResourceString("Arg_AmbiguousMatchException"));
             return candidates[currentMin];
         }
+#endif
         
         // Given a set of properties that match the base criteria, select one.
         [System.Security.SecuritySafeCritical]  // auto-generated

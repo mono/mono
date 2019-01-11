@@ -46,6 +46,8 @@ using System.Globalization;
 using System.Threading;
 using System.Text;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -91,7 +93,7 @@ namespace MonoTests.System.Data
 		public void ReadXmlSchema ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/own_schema.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/own_schema.xsd"));
 			
 			Assert.AreEqual (2, ds.Tables.Count, "test#01");
 			DataTable Table = ds.Tables [0];
@@ -396,7 +398,7 @@ namespace MonoTests.System.Data
 		public void ReadWriteXml ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/region.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"));
 			TextWriter writer = new StringWriter ();
 			ds.WriteXml (writer);
 		
@@ -454,7 +456,7 @@ namespace MonoTests.System.Data
 		{
 			DataSet ds = new DataSet ();
 			// It is not a diffgram, so no data loading should be done.
-			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.DiffGram);
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"), XmlReadMode.DiffGram);
 			TextWriter writer = new StringWriter ();
 			ds.WriteXml (writer);
 		
@@ -468,10 +470,10 @@ namespace MonoTests.System.Data
 
 			
 			ds = new DataSet ();
-			ds.ReadXml ("Test/System.Data/region.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"));
 			DataTable table = ds.Tables ["Region"];
 			table.Rows [0] [0] = "64";
-			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.DiffGram);
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"), XmlReadMode.DiffGram);
 			ds.WriteXml (writer, XmlWriteMode.DiffGram);
 			
 			TextString = writer.ToString ();
@@ -536,7 +538,7 @@ namespace MonoTests.System.Data
 		public void WriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();			
-			ds.ReadXml ("Test/System.Data/region.xml");
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"));
 			TextWriter writer = new StringWriter ();
 			ds.WriteXmlSchema (writer);
 		
@@ -626,11 +628,11 @@ namespace MonoTests.System.Data
 		public void ReadWriteXmlSchemaIgnoreSchema ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/store.xsd"));
 			AssertDataSet ("read DataSet", ds, "NewDataSet", 3, 2);
 			AssertDataTable ("read bookstore table", ds.Tables [0], "bookstore", 1, 0, 0, 1, 1, 1);
 			AssertDataTable ("read book table", ds.Tables [1], "book", 5, 0, 1, 1, 2, 1);
-			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.IgnoreSchema);
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"), XmlReadMode.IgnoreSchema);
 			TextWriter writer = new StringWriter ();
 			
 			ds.WriteXmlSchema (writer);
@@ -776,7 +778,7 @@ namespace MonoTests.System.Data
 		public void ReadWriteXmlSchema ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/store.xsd"));
 			// check dataset properties before testing write
 			AssertDataSet ("ds", ds, "NewDataSet", 3, 2);
 			AssertDataTable ("tab1", ds.Tables [0], "bookstore", 1, 0, 0, 1, 1, 1);
@@ -786,7 +788,7 @@ namespace MonoTests.System.Data
 			AssertDataRelation ("rel1", ds.Relations ["book_author"], "book_author", true, new string [] {"book_Id"}, new string [] {"book_Id"}, true, true);
 			AssertDataRelation ("rel2", ds.Relations ["bookstore_book"], "bookstore_book", true, new string [] {"bookstore_Id"}, new string [] {"bookstore_Id"}, true, true);
 
-			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.InferSchema);
+			ds.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/region.xml"), XmlReadMode.InferSchema);
 
 			TextWriter writer = new StringWriter ();
 			ds.WriteXmlSchema (writer);
@@ -1169,7 +1171,7 @@ namespace MonoTests.System.Data
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml (sw, XmlWriteMode.DiffGram);
 			string xml = sw.ToString ();
-			string result = new StreamReader ("Test/System.Data/DataSetReadXmlTest1.xml", Encoding.ASCII).ReadToEnd ();
+			string result = new StreamReader (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/DataSetReadXmlTest1.xml"), Encoding.ASCII).ReadToEnd ();
 			Assert.AreEqual (result, xml, "#01");
 
 			// load diffgram above
@@ -1177,7 +1179,7 @@ namespace MonoTests.System.Data
 			sw = new StringWriter ();
 			ds.WriteXml (sw, XmlWriteMode.WriteSchema);
 			xml = sw.ToString ();
-			result = new StreamReader ("Test/System.Data/DataSetReadXmlTest2.xml", Encoding.ASCII).ReadToEnd ();
+			result = new StreamReader (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/DataSetReadXmlTest2.xml"), Encoding.ASCII).ReadToEnd ();
 			Assert.AreEqual (result, xml, "#02");
 		}
 		*/
@@ -1281,7 +1283,7 @@ namespace MonoTests.System.Data
 		public void CloneCopy2 ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/store.xsd"));
 			ds.Clone ();
 		}
 

@@ -32,9 +32,14 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Text;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class HtmlFormatter : Formatter {
+	class HtmlFormatter : Formatter {
+
+		public HtmlFormatter (State state)
+			: base (state)
+		{
+		}
 
 		public override string LesserThan => "&lt;";
 		public override string GreaterThan => "&gt;";
@@ -230,7 +235,7 @@ namespace Xamarin.ApiDiff {
 				output.WriteLine ("<p>Removed value{0}:</p>", list.Count () > 1 ? "s" : String.Empty);
 				output.WriteLine ("<pre class='removed' data-is-breaking>");
 			} else {
-				output.WriteLine ("<p>Removed {0}:</p>\n", list.Count () > 1 ? member.GroupName : member.ElementName);
+				output.WriteLine ("<p>Removed {0}:</p>", list.Count () > 1 ? member.GroupName : member.ElementName);
 				output.WriteLine ("<pre>");
 			}
 			State.Indent++;
@@ -298,7 +303,7 @@ namespace Xamarin.ApiDiff {
 		public override void Diff (TextWriter output, ApiChange apichange)
 		{
 			output.Write ("<div {0}>", apichange.Breaking ? "data-is-breaking" : "data-is-non-breaking");
-			foreach (var line in apichange.Member.ToString ().Split ('\n')) {
+			foreach (var line in apichange.Member.ToString ().Split (new[] { Environment.NewLine }, 0)) {
 				output.Write ('\t');
 				output.WriteLine (line);
 			}

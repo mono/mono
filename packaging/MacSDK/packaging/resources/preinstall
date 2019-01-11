@@ -1,0 +1,9 @@
+#!/bin/sh -x
+
+PREVIOUS_INSTALL=/Library/Frameworks/Mono.framework/Versions/@@MONO_VERSION@@
+
+# delete any preexisting install of this version
+# to make sure we're starting from a clean slate
+if [ -d "$PREVIOUS_INSTALL" ]; then
+    rm -rf "$PREVIOUS_INSTALL"
+fi

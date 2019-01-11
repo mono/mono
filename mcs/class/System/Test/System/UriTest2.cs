@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System
 {
 	// help bring Moonlight tests back to mono/mcs nunit
@@ -108,7 +110,7 @@ namespace MonoTests.System
 		[Ignore ("Tests needs to be updated for 2.0")]
 		public void AbsoluteUriFromFile ()
 		{
-			FromResource ("test-uri-props.txt", null);
+			FromResource ("Test/System/test-uri-props.txt", null);
 		}
 		
 		[Test]
@@ -118,21 +120,19 @@ namespace MonoTests.System
 		{
 			if (Path.DirectorySeparatorChar == '\\')
 				return;
-			FromResource ("test-uri-props-manual.txt", null);
+			FromResource ("Test/System/test-uri-props-manual.txt", null);
 		}
 		
 		[Test]
 		[Ignore ("Tests needs to be updated for 2.0")]
 		public void RelativeUriFromFile ()
 		{
-			FromResource ("test-uri-relative-props.txt", new Uri ("http://www.go-mono.com"));
+			FromResource ("Test/System/test-uri-relative-props.txt", new Uri ("http://www.go-mono.com"));
 		}
 		
 		private void FromResource (string res, Uri baseUri)
 		{
-			Assembly a = Assembly.GetExecutingAssembly ();
-			Stream s = a.GetManifestResourceStream (res);
-			StreamReader sr = new StreamReader (s, Encoding.UTF8);
+			StreamReader sr = new StreamReader (TestResourceHelper.GetFullPathOfResource (res), Encoding.UTF8);
 			while (sr.Peek () > 0) {
 				sr.ReadLine (); // skip
 				string uriString = sr.ReadLine ();

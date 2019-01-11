@@ -25,7 +25,6 @@
 #include <mono/metadata/w32event.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-compiler.h>
-#include <mono/utils/mono-complex.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-proclib.h>
@@ -34,6 +33,7 @@
 #include <mono/utils/mono-rand.h>
 #include <mono/utils/refcount.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/mono-complex.h> // This header has defines to muck with names, so put it late.
 
 #define CPU_USAGE_LOW 80
 #define CPU_USAGE_HIGH 95
@@ -307,20 +307,20 @@ mono_threadpool_worker_cleanup (void)
 static void
 work_item_push (void)
 {
-	gint32 old, new;
+	gint32 old, new_;
 
 	do {
 		old = mono_atomic_load_i32 (&worker.work_items_count);
 		g_assert (old >= 0);
 
-		new = old + 1;
-	} while (mono_atomic_cas_i32 (&worker.work_items_count, new, old) != old);
+		new_ = old + 1;
+	} while (mono_atomic_cas_i32 (&worker.work_items_count, new_, old) != old);
 }
 
 static gboolean
 work_item_try_pop (void)
 {
-	gint32 old, new;
+	gint32 old, new_;
 
 	do {
 		old = mono_atomic_load_i32 (&worker.work_items_count);
@@ -329,8 +329,8 @@ work_item_try_pop (void)
 		if (old == 0)
 			return FALSE;
 
-		new = old - 1;
-	} while (mono_atomic_cas_i32 (&worker.work_items_count, new, old) != old);
+		new_ = old - 1;
+	} while (mono_atomic_cas_i32 (&worker.work_items_count, new_, old) != old);
 
 	return TRUE;
 }
@@ -362,7 +362,7 @@ worker_park (void)
 {
 	gboolean timeout = FALSE;
 	gboolean interrupted = FALSE;
-	gint32 old, new;
+	gint32 old, new_;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] worker parking",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
@@ -385,8 +385,8 @@ worker_park (void)
 			old = mono_atomic_load_i32 (&worker.parked_threads_count);
 			g_assert (old >= G_MININT32);
 
-			new = old + 1;
-		} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
+			new_ = old + 1;
+		} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new_, old) != old);
 
 		switch (mono_coop_sem_timedwait (&worker.parked_threads_sem, rand_next (&rand_handle, 5 * 1000, 60 * 1000), MONO_SEM_FLAGS_ALERTABLE)) {
 		case MONO_SEM_TIMEDWAIT_RET_SUCCESS:
@@ -407,8 +407,8 @@ worker_park (void)
 				old = mono_atomic_load_i32 (&worker.parked_threads_count);
 				g_assert (old > G_MININT32);
 
-				new = old - 1;
-			} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
+				new_ = old - 1;
+			} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new_, old) != old);
 		}
 
 		COUNTER_ATOMIC (counter, {
@@ -427,7 +427,7 @@ static gboolean
 worker_try_unpark (void)
 {
 	gboolean res = TRUE;
-	gint32 old, new;
+	gint32 old, new_;
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try unpark worker",
 		GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())));
@@ -441,8 +441,8 @@ worker_try_unpark (void)
 			break;
 		}
 
-		new = old - 1;
-	} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new, old) != old);
+		new_ = old - 1;
+	} while (mono_atomic_cas_i32 (&worker.parked_threads_count, new_, old) != old);
 
 	if (res)
 		mono_coop_sem_post (&worker.parked_threads_sem);
@@ -558,7 +558,7 @@ worker_try_create (void)
 		counter._.starting ++;
 	});
 
-	thread = mono_thread_create_internal (mono_get_root_domain (), worker_thread, NULL, MONO_THREAD_CREATE_FLAGS_THREADPOOL, error);
+	thread = mono_thread_create_internal (mono_get_root_domain (), (gpointer)worker_thread, NULL, MONO_THREAD_CREATE_FLAGS_THREADPOOL, error);
 	if (!thread) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_THREADPOOL, "[%p] try create worker, failed: could not create thread due to %s",
 			GUINT_TO_POINTER (MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ())), mono_error_get_message (error));
@@ -787,7 +787,7 @@ monitor_ensure_running (void)
 				return;
 			if (mono_atomic_cas_i32 (&worker.monitor_status, MONITOR_STATUS_REQUESTED, MONITOR_STATUS_NOT_RUNNING) == MONITOR_STATUS_NOT_RUNNING) {
 				// printf ("monitor_thread: creating\n");
-				if (!mono_thread_create_internal (mono_get_root_domain (), monitor_thread, NULL, MONO_THREAD_CREATE_FLAGS_THREADPOOL | MONO_THREAD_CREATE_FLAGS_SMALL_STACK, error)) {
+				if (!mono_thread_create_internal (mono_get_root_domain (), (gpointer)monitor_thread, NULL, (MonoThreadCreateFlags)(MONO_THREAD_CREATE_FLAGS_THREADPOOL | MONO_THREAD_CREATE_FLAGS_SMALL_STACK), error)) {
 					// printf ("monitor_thread: creating failed\n");
 					worker.monitor_status = MONITOR_STATUS_NOT_RUNNING;
 					mono_error_cleanup (error);

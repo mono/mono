@@ -11,17 +11,18 @@ LIB_MCS_FLAGS = /unsafe /publicsign /nowarn:0618
 
 XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
 
-xunit-test-local: log-profiler-test.exe
+xunit-test-local: $(topdir)/class/lib/$(PROFILE_DIRECTORY)/tests/log-profiler-test.exe
 
-log-profiler-test.exe: Test/log-profiler-test.cs
+$(topdir)/class/lib/$(PROFILE_DIRECTORY)/tests/log-profiler-test.exe: Test/log-profiler-test.cs
+	mkdir -p $(dir $@)
 	$(CSCOMPILE) $(PLATFORM_DEBUG_FLAGS) /unsafe $(if $(MCS_MODE),,/warnaserror) /r:$(build_libdir)/mscorlib.dll /r:$(build_lib) /out:$@ $<
 
 EXTRA_DISTFILES = \
 	Test/log-profiler-test.cs
 
 CLEAN_FILES = \
-	log-profiler-test.exe \
-	log-profiler-test.exe.mdb \
-	log-profiler-test.pdb
+	$(topdir)/class/lib/$(PROFILE_DIRECTORY)/tests/log-profiler-test.exe \
+	$(topdir)/class/lib/$(PROFILE_DIRECTORY)/tests/log-profiler-test.exe.mdb \
+	$(topdir)/class/lib/$(PROFILE_DIRECTORY)/tests/log-profiler-test.pdb
 
 include ../../build/library.make

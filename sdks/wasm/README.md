@@ -1,11 +1,11 @@
-## Contents
+# Contents
 - **bcl** directory: Core libraries to be used with the runtime.
 - **driver.c**, **libmonosgen-2.0.a**, **library_mono.js**: Source / Binaries for custom building the runtime. See compilation instructions down.
 - **debug**, **release** directories: Pre-compiled runtimes using the above driver in release and debug configurations.
 - **sample.html**, **sample.cs**: Sample code, see sample details below.
 
 
-## Compiling mono
+# Compiling mono
 
 Mono requires the latest [emscripten][1] installed and built. Emscripten is *not* required if simply using the sample.
 The pre-built binaries are compiled using the following command line for the debug build:
@@ -14,54 +14,67 @@ The pre-built binaries are compiled using the following command line for the deb
 emcc -g4 -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s ASSERTIONS=2 --js-library library_mono.js driver.o $(TOP)/sdks/out/wasm-interp/lib/libmonosgen-2.0.a -o debug/mono.js -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']"
 ```
 
-## Sample
+# Sample
 
-### Step 1
-To setup the sample, first you need to compile & setup a directory to serve binaries:
+See [Getting Started Guides](./docs/getting-started)
 
-**Linux / Mac**
-```
-mkdir managed
-cp bcl/mscorlib.dll managed/
-csc /nostdlib /target:library /r:managed/mscorlib.dll /out:managed/sample.dll sample.cs 
-```
-**Windows**
 
-The **csc** executable is a build tool that is installed with Visual Studio. For the commands below, using a command window opened using a [*Developer Command Prompt for Visual Studio*][2] is convenient.
-```
-md managed
-copy bcl\mscorlib.dll managed
-csc /nostdlib /target:library /r:managed/mscorlib.dll /out:managed/sample.dll sample.cs 
-```
+# Debugging
 
-### Step 2
-Pick a pre-built runtime from one of the directories and copy all files to the root SDK directory. Allow file overwrites if necessary:
+The debugger requires dotnet core version 2.1.301 or greater installed.
 
-**Linux / Mac**
-```
-cp debug/* .
-```
-**Windows**
-```
-copy debug\* .
-```
+To experiment with the debugger, do the following steps:
 
-### Step 3
-Start a web server from the SDK directory (where sample.html is):
+- When calling `packager.exe` pass the `-debug` argument to it.
+- Start Chrome with remote debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222`)
+- Run the proxy: `dotnet dbg-proxy/ProxyDriver.dll`
+- Connect to the remote debugged Chrome and pick the page which is running the wasm code
+- Rewrite the request URL (just the `ws` argument) to use the proxy port instead of the browser port
+- Refresh the debugged page and you should be set
+
+Beware that the debugger is in active development so bugs and missing features will be present.
+
+# AOT development
+
+AOT experimentation is built targeting `package-wasm-cross`:
 
 ```
-python -m SimpleHTTPServer
+mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
+mono$ make -C build
+````
+
+If you don't have jsvu installed, run `make toolchain` from `sdks/wasm`. It requires a recent version of node installed in your system.
+
+Now you can experiment with the `aot-sample` and `link-sample` make targets to try the toolchain. The first invokes the AOT compiler and the second links the results.
+
+To update the runtimes used use the following make target in `sdks/build`
+
+`package-wasm-runtime` for the interpreter-based runtime
+`package-wasm-cross` for the aot compiler
+`package-wasm-bcl` for the wasm bcl code.
+
+
+To update the aot compiler:
+```
+make -C sdks/builds package-wasm-cross
+make -C sdks/wasm build-aot-all
+make -C sdks/wasm run-aot-all
 ```
 
-Unfortunately, the above http server does not give wasm binaries the right mime type, which disables WebAssembly stream compilation.
-The included server.py script solves this and can be used instead:
+To update the aot runtime:
 ```
-python server.py
+make -C sdks/builds package-wasm-runtime
+make -C sdks/wasm build-aot-all
+make -C sdks/wasm run-aot-all
 ```
 
-### Step 4
-From within a browser, go to `locahost:8000/sample.html` to see the sample app, which will show a text box (allowing C# code to be entered) and **Run** button when successfully built.
+To build and run AOT test suites:
+```
+make -C sdks/wasm build-aot-<suite name>
+make -C sdks/wasm check-aot-<suite name>
+```
 
+# Notes
 
 [1]: https://github.com/kripken/emscripten
 

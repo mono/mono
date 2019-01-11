@@ -136,7 +136,7 @@ mono_icall_get_environment_variable_names (MonoError *error)
 				str = mono_string_new_utf16_checked (domain, env_string, (gint32)(equal_str - env_string), error);
 				goto_if_nok (error, cleanup);
 
-				mono_array_setref (names, n, str);
+				mono_array_setref_internal (names, n, str);
 				n++;
 			}
 			while (*env_string != '\0')
@@ -152,22 +152,6 @@ cleanup:
 	if (!is_ok (error))
 		return NULL;
 	return names;
-}
-
-void
-mono_icall_set_environment_variable (MonoString *name, MonoString *value)
-{
-	gunichar2 *utf16_name, *utf16_value;
-
-	utf16_name = name ? mono_string_chars (name) : NULL;
-	if ((value == NULL) || (mono_string_length (value) == 0) || (mono_string_chars (value)[0] == 0)) {
-		SetEnvironmentVariable (utf16_name, NULL);
-		return;
-	}
-
-	utf16_value = mono_string_chars (value);
-
-	SetEnvironmentVariable (utf16_name, utf16_value);
 }
 
 #if HAVE_API_SUPPORT_WIN32_SH_GET_FOLDER_PATH
@@ -192,12 +176,10 @@ mono_icall_get_windows_folder_path (int folder, MonoError *error)
 #endif
 
 #if HAVE_API_SUPPORT_WIN32_SEND_MESSAGE_TIMEOUT
-MonoBoolean
-mono_icall_broadcast_setting_change (MonoError *error)
+ICALL_EXPORT void
+ves_icall_System_Environment_BroadcastSettingChange (MonoError *error)
 {
-	error_init (error);
 	SendMessageTimeout (HWND_BROADCAST, WM_SETTINGCHANGE, (WPARAM)NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 2000, 0);
-	return TRUE;
 }
 #endif
 

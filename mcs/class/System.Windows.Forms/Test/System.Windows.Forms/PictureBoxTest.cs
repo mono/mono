@@ -16,6 +16,8 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -53,18 +55,18 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.IsNull (pb.ImageLocation, "#A");
 
-			pb.ImageLocation = "M.gif";
+			pb.ImageLocation = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 			Application.DoEvents ();
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#B1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#B1");
 			Assert.AreSame (pb.InitialImage, pb.Image, "#B2");
 
-			using (Stream s = this.GetType ().Assembly.GetManifestResourceStream ("32x32.ico")) {
+			using (Stream s = TestResourceHelper.GetStreamOfResource ("Test/resources/32x32.ico")) {
 				pb.Image = Image.FromStream (s);
 			}
 			Application.DoEvents ();
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#C1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#C1");
 			Assert.IsNotNull (pb.Image, "#C2");
 			Assert.AreEqual (60, pb.Image.Height, "#C3");
 			Assert.AreEqual (150, pb.Image.Width, "#C4");
@@ -75,16 +77,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (pb.ImageLocation, "#D1");
 			Assert.IsNull (pb.Image, "#D2");
 
-			pb.ImageLocation = "M.gif";
+			pb.ImageLocation = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 			Application.DoEvents ();
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#E1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#E1");
 			Assert.IsNull (pb.Image, "#E2");
 
 			pb.Load ();
 			Application.DoEvents ();
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#F1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#F1");
 			Assert.IsNotNull (pb.Image, "#F2");
 			Assert.AreEqual (60, pb.Image.Height, "#F3");
 			Assert.AreEqual (150, pb.Image.Width, "#F4");
@@ -95,7 +97,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (pb.ImageLocation, "#G1");
 			Assert.IsNull (pb.Image, "#G2");
 
-			pb.ImageLocation = "M.gif";
+			pb.ImageLocation = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 			pb.Load ();
 			pb.ImageLocation = "XYZ.gif";
 			Application.DoEvents ();
@@ -111,7 +113,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, pb.ImageLocation, "#I1");
 			Assert.IsNull (pb.Image, "#I2");
 
-			using (Stream s = this.GetType ().Assembly.GetManifestResourceStream ("32x32.ico")) {
+			using (Stream s = TestResourceHelper.GetStreamOfResource ("Test/resources/32x32.ico")) {
 				pb.Image = Image.FromStream (s);
 			}
 			Application.DoEvents ();
@@ -121,10 +123,10 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (96, pb.Image.Height, "#J3");
 			Assert.AreEqual (96, pb.Image.Width, "#J4");
 
-			pb.Load ("M.gif");
+			pb.Load (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 			Application.DoEvents ();
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#K1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#K1");
 			Assert.IsNotNull (pb.Image, "#K2");
 			Assert.AreEqual (60, pb.Image.Height, "#K3");
 			Assert.AreEqual (150, pb.Image.Width, "#K4");
@@ -149,18 +151,18 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.IsNull (pb.ImageLocation, "#A");
 
-			pb.ImageLocation = "M.gif";
+			pb.ImageLocation = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#B1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#B1");
 			Assert.IsNotNull (pb.Image, "#B2");
 			Assert.AreEqual (60, pb.Image.Height, "#B3");
 			Assert.AreEqual (150, pb.Image.Width, "#B4");
 
-			using (Stream s = this.GetType ().Assembly.GetManifestResourceStream ("32x32.ico")) {
+			using (Stream s = TestResourceHelper.GetStreamOfResource ("Test/resources/32x32.ico")) {
 				pb.Image = Image.FromStream (s);
 			}
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#C1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#C1");
 			Assert.IsNotNull (pb.Image, "#C2");
 			Assert.AreEqual (96, pb.Image.Height, "#C3");
 			Assert.AreEqual (96, pb.Image.Width, "#C4");
@@ -172,16 +174,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (96, pb.Image.Height, "#D3");
 			Assert.AreEqual (96, pb.Image.Width, "#D4");
 
-			pb.ImageLocation = "M.gif";
+			pb.ImageLocation = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#E1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#E1");
 			Assert.IsNotNull (pb.Image, "#E2");
 			Assert.AreEqual (60, pb.Image.Height, "#E3");
 			Assert.AreEqual (150, pb.Image.Width, "#E4");
 
 			pb.Load ();
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#F1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#F1");
 			Assert.IsNotNull (pb.Image, "#F2");
 			Assert.AreEqual (60, pb.Image.Height, "#F3");
 			Assert.AreEqual (150, pb.Image.Width, "#F4");
@@ -191,7 +193,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (pb.ImageLocation, "#G1");
 			Assert.IsNull (pb.Image, "#G2");
 
-			using (Stream s = this.GetType ().Assembly.GetManifestResourceStream ("32x32.ico")) {
+			using (Stream s = TestResourceHelper.GetStreamOfResource ("Test/resources/32x32.ico")) {
 				pb.Image = Image.FromStream (s);
 			}
 
@@ -200,9 +202,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (96, pb.Image.Height, "#H3");
 			Assert.AreEqual (96, pb.Image.Width, "#H4");
 
-			pb.Load ("M.gif");
+			pb.Load (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#I1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#I1");
 			Assert.IsNotNull (pb.Image, "#I2");
 			Assert.AreEqual (60, pb.Image.Height, "#I3");
 			Assert.AreEqual (150, pb.Image.Width, "#I4");
@@ -212,9 +214,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, pb.ImageLocation, "#J1");
 			Assert.IsNull (pb.Image, "#J2");
 
-			pb.ImageLocation = "M.gif";
+			pb.ImageLocation = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 
-			Assert.AreEqual ("M.gif", pb.ImageLocation, "#K1");
+			Assert.AreEqual (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"), pb.ImageLocation, "#K1");
 			Assert.IsNotNull (pb.Image, "#K2");
 			Assert.AreEqual (60, pb.Image.Height, "#K3");
 			Assert.AreEqual (150, pb.Image.Width, "#K4");
@@ -242,7 +244,7 @@ namespace MonoTests.System.Windows.Forms
 			PictureBox myPicBox = new PictureBox ();
 			// I 
 			Assert.IsNull (myPicBox.Image, "#1");
-			Image myImage = Image.FromFile ("M.gif");
+			Image myImage = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 			myPicBox.Image = myImage;
 			Assert.AreSame (myImage, myPicBox.Image, "#2");
 			Assert.AreEqual (60, myPicBox.Image.Height, "#3");

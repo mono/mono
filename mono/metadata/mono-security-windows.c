@@ -183,7 +183,7 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 						mono_error_set_pending_exception (error);
 						return NULL;
 					}
-					mono_array_setref (array, i, str);
+					mono_array_setref_internal (array, i, str);
 					g_free (uniname);
 				}
 			}
@@ -200,7 +200,7 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_CloseToken (gpointer token, MonoError *error)
 {
 	return !!CloseHandle (token);
@@ -211,11 +211,11 @@ gpointer
 ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (gpointer token, MonoError *error)
 {
 	gpointer dupe = NULL;
-	return DuplicateToken (token, SecurityImpersonation, &dupe) ? dup : NULL;
+	return DuplicateToken (token, SecurityImpersonation, &dupe) ? dupe : NULL;
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group, MonoError *error)
 {
 	/* The convertion from an ID to a string is done in managed code for Windows */
@@ -223,7 +223,7 @@ ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer
 	return FALSE;
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gchar *group, MonoError *error)
 {
 	/* Windows version use a cache built using WindowsIdentity._GetRoles */

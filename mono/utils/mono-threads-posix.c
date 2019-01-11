@@ -34,7 +34,7 @@
 extern int tkill (pid_t tid, int signal);
 #endif
 
-#if defined(_POSIX_VERSION) && !defined (TARGET_WASM)
+#if defined(_POSIX_VERSION) && !defined (HOST_WASM)
 
 #include <pthread.h>
 
@@ -129,7 +129,7 @@ mono_threads_platform_exit (gsize exit_code)
 }
 
 int
-ves_icall_System_Threading_Thread_SystemMaxStackSize (MonoError *error)
+mono_thread_info_get_system_max_stack_size (void)
 {
 	struct rlimit lim;
 
@@ -209,6 +209,19 @@ gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 {
 	return pthread_create (tid, NULL, (void *(*)(void *)) func, arg) == 0;
+}
+
+size_t
+mono_native_thread_get_name (MonoNativeThreadId tid, char *name_out, size_t max_len)
+{
+#ifdef HAVE_PTHREAD_GETNAME_NP
+	int error = pthread_getname_np(tid, name_out, max_len);
+	if (error != 0)
+		return 0;
+	return strlen(name_out);
+#else
+	return 0;
+#endif
 }
 
 void

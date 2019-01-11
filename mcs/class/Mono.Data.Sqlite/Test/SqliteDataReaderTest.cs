@@ -37,12 +37,14 @@ using Mono.Data.Sqlite;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Mono.Data.Sqlite
 {
         [TestFixture]
         public class SqliteDataReaderTest
         {
-                readonly static string _uri = "./test.db";
+                readonly static string _uri = TestResourceHelper.GetFullPathOfResource("Test/test.db");
                 readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
                 SqliteConnection _conn = new SqliteConnection ();
 

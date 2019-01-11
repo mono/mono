@@ -30,7 +30,7 @@ load_profiler (MonoDl *module, const char *name, const char *desc)
 	char *err, *old_name = g_strdup_printf (OLD_INITIALIZER_NAME);
 	MonoProfilerInitializer func;
 
-	if (!(err = mono_dl_symbol (module, old_name, (gpointer) &func))) {
+	if (!(err = mono_dl_symbol (module, old_name, (gpointer*) &func))) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_PROFILER, "Found old-style startup symbol '%s' for the '%s' profiler; it has not been migrated to the new API.", old_name, name);
 		g_free (old_name);
 		return FALSE;
@@ -142,7 +142,8 @@ load_profiler_from_installation (const char *libname, const char *name, const ch
 void
 mono_profiler_load (const char *desc)
 {
-	char *col, *mname, *libname;
+	const char *col;
+	char *mname, *libname;
 
 	mname = libname = NULL;
 
@@ -319,7 +320,7 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 
 	coverage_lock ();
 
-	MonoProfilerCoverageInfo *info = g_hash_table_lookup (mono_profiler_state.coverage_hash, method);
+	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)g_hash_table_lookup (mono_profiler_state.coverage_hash, method);
 
 	coverage_unlock ();
 
@@ -354,14 +355,14 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 				srcfile = sinfo->source_file;
 			}
 
-			MonoProfilerCoverageData data = {
-				.method = method,
-				.il_offset = sp->il_offset,
-				.counter = 0,
-				.file_name = srcfile,
-				.line = sp->line,
-				.column = 0,
-			};
+			MonoProfilerCoverageData data;
+			memset (&data, 0, sizeof (data));
+			data.method = method;
+			data.il_offset = sp->il_offset;
+			data.counter = 0;
+			data.file_name = srcfile;
+			data.line = sp->line;
+			data.column = 0;
 
 			cb (handle->prof, &data);
 		}
@@ -379,13 +380,13 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 		if (cil_code && cil_code >= start && cil_code < end) {
 			guint32 offset = cil_code - start;
 
-			MonoProfilerCoverageData data = {
-				.method = method,
-				.il_offset = offset,
-				.counter = info->data [i].count,
-				.line = 1,
-				.column = 1,
-			};
+			MonoProfilerCoverageData data;
+			memset (&data, 0, sizeof (data));
+			data.method = method;
+			data.il_offset = offset;
+			data.counter = info->data [i].count;
+			data.line = 1;
+			data.column = 1;
 
 			if (minfo) {
 				MonoDebugSourceLocation *loc = mono_debug_method_lookup_location (minfo, offset);
@@ -414,7 +415,7 @@ mono_profiler_coverage_instrumentation_enabled (MonoMethod *method)
 	gboolean cover = FALSE;
 
 	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
-		MonoProfilerCoverageFilterCallback cb = handle->coverage_filter;
+		MonoProfilerCoverageFilterCallback cb = (MonoProfilerCoverageFilterCallback)handle->coverage_filter;
 
 		if (cb)
 			cover |= cb (handle->prof, method);
@@ -634,13 +635,6 @@ mono_profiler_set_call_instrumentation_filter_callback (MonoProfilerHandle handl
  * introspection was enabled, or \c FALSE if the function was called too late for
  * this to be possible.
  *
- * Please note: Mono's LLVM backend does not support this feature. This means
- * that methods with call context instrumentation will be handled by Mono's
- * JIT even in LLVM mode. There is also a special case when Mono is compiling
- * in LLVM-only mode: Since LLVM does not provide a way to implement call
- * contexts, a \c NULL context will always be passed to enter/leave events even
- * though this method returns \c TRUE.
- *
  * This function is \b not async safe.
  *
  * This function may \b only be called from a profiler's init function or prior
@@ -770,13 +764,15 @@ mono_profiler_call_context_free_buffer (void *buffer)
 	mono_profiler_state.context_free_buffer (buffer);
 }
 
+G_ENUM_FUNCTIONS (MonoProfilerCallInstrumentationFlags)
+
 MonoProfilerCallInstrumentationFlags
 mono_profiler_get_call_instrumentation_flags (MonoMethod *method)
 {
 	MonoProfilerCallInstrumentationFlags flags = MONO_PROFILER_CALL_INSTRUMENTATION_NONE;
 
 	for (MonoProfilerHandle handle = mono_profiler_state.profilers; handle; handle = handle->next) {
-		MonoProfilerCallInstrumentationFilterCallback cb = handle->call_instrumentation_filter;
+		MonoProfilerCallInstrumentationFilterCallback cb = (MonoProfilerCallInstrumentationFilterCallback)handle->call_instrumentation_filter;
 
 		if (cb)
 			flags |= cb (handle->prof, method);
@@ -846,7 +842,7 @@ mono_profiler_cleanup (void)
 	MonoProfilerHandle head = mono_profiler_state.profilers;
 
 	while (head) {
-		MonoProfilerCleanupCallback cb = head->cleanup_callback;
+		MonoProfilerCleanupCallback cb = (MonoProfilerCleanupCallback)head->cleanup_callback;
 
 		if (cb)
 			cb (head->prof);
@@ -934,7 +930,7 @@ update_callback (volatile gpointer *location, gpointer new_, volatile gint32 *co
 	{ \
 		if (!mono_profiler_state.startup_done) return;	\
 		for (MonoProfilerHandle h = mono_profiler_state.profilers; h; h = h->next) { \
-			MonoProfiler ## type ## Callback cb = h->name ## _cb; \
+			MonoProfiler ## type ## Callback cb = (MonoProfiler ## type ## Callback)h->name ## _cb; \
 			if (cb) \
 				cb args; \
 		} \

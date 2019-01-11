@@ -35,25 +35,16 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
 	public class MetafileTest {
 
-		public const string Bitmap = "bitmaps/non-inverted.bmp";
-		public const string WmfPlaceable = "bitmaps/telescope_01.wmf";
-		public const string Emf = "bitmaps/milkmateya01.emf";
-
-		// Get the input directory depending on the runtime
-		static public string getInFile (string file)
-		{
-			string sRslt = Path.GetFullPath ("../System.Drawing/" + file);
-
-			if (!File.Exists (sRslt))
-				sRslt = "Test/System.Drawing/" + file;
-
-			return sRslt;
-		}
+		public static string Bitmap = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/non-inverted.bmp");
+		public static string WmfPlaceable = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/telescope_01.wmf");
+		public static string Emf = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/milkmateya01.emf");
 
 		[Test]
 		public void Metafile_Stream_Null ()
@@ -76,14 +67,14 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Metafile_String_FileDoesNotExists ()
 		{
-			string filename = getInFile ("telescope_02.wmf");
+			string filename = "non_existing.wmf";
 			Assert.Throws<ExternalException> (() => new Metafile (filename));
 		}
 
 		[Test]
 		public void Metafile_String ()
 		{
-			string filename = getInFile (WmfPlaceable);
+			string filename = WmfPlaceable;
 			Metafile mf = new Metafile (filename);
 			Metafile clone = (Metafile) mf.Clone ();
 		}
@@ -91,7 +82,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void GetMetafileHeader_Bitmap ()
 		{
-			Assert.Throws<ExternalException> (() => new Metafile (getInFile (Bitmap)));
+			Assert.Throws<ExternalException> (() => new Metafile (Bitmap));
 		}
 
 		static public void Check_MetaHeader_WmfPlaceable (MetaHeader mh)
@@ -138,7 +129,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void GetMetafileHeader_WmfPlaceable ()
 		{
-			using (Metafile mf = new Metafile (getInFile (WmfPlaceable))) {
+			using (Metafile mf = new Metafile (WmfPlaceable)) {
 				MetafileHeader header1 = mf.GetMetafileHeader ();
 				Check_MetafileHeader_WmfPlaceable (header1);
 
@@ -150,7 +141,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void GetMetafileHeader_FromFile_WmfPlaceable ()
 		{
-			using (Metafile mf = new Metafile (getInFile (WmfPlaceable))) {
+			using (Metafile mf = new Metafile (WmfPlaceable)) {
 				MetafileHeader header1 = mf.GetMetafileHeader ();
 				Check_MetafileHeader_WmfPlaceable (header1);
 
@@ -165,7 +156,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void GetMetafileHeader_FromFileStream_WmfPlaceable ()
 		{
-			using (FileStream fs = File.OpenRead (getInFile (WmfPlaceable))) {
+			using (FileStream fs = File.OpenRead (WmfPlaceable)) {
 				using (Metafile mf = new Metafile (fs)) {
 					MetafileHeader header1 = mf.GetMetafileHeader ();
 					Check_MetafileHeader_WmfPlaceable (header1);
@@ -183,7 +174,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		public void GetMetafileHeader_FromMemoryStream_WmfPlaceable ()
 		{
 			MemoryStream ms;
-			string filename = getInFile (WmfPlaceable);
+			string filename = WmfPlaceable;
 			using (FileStream fs = File.OpenRead (filename)) {
 				byte[] data = new byte[fs.Length];
 				fs.Read (data, 0, data.Length);
@@ -243,7 +234,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void GetMetafileHeader_FromFile_Emf ()
 		{
-			using (Metafile mf = new Metafile (getInFile (Emf))) {
+			using (Metafile mf = new Metafile (Emf)) {
 				MetafileHeader header1 = mf.GetMetafileHeader ();
 				Check_MetafileHeader_Emf (header1);
 			}
@@ -252,7 +243,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void GetMetafileHeader_FromFileStream_Emf ()
 		{
-			using (FileStream fs = File.OpenRead (getInFile (Emf))) {
+			using (FileStream fs = File.OpenRead (Emf)) {
 				using (Metafile mf = new Metafile (fs)) {
 					MetafileHeader header1 = mf.GetMetafileHeader ();
 					Check_MetafileHeader_Emf (header1);
@@ -264,7 +255,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		public void GetMetafileHeader_FromMemoryStream_Emf ()
 		{
 			MemoryStream ms;
-			string filename = getInFile (Emf);
+			string filename = Emf;
 			using (FileStream fs = File.OpenRead (filename)) {
 				byte[] data = new byte[fs.Length];
 				fs.Read (data, 0, data.Length);
@@ -286,7 +277,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Static_GetMetafileHeader_Stream ()
 		{
-			string filename = getInFile (WmfPlaceable);
+			string filename = WmfPlaceable;
 			using (FileStream fs = File.OpenRead (filename)) {
 				MetafileHeader header = Metafile.GetMetafileHeader (fs);
 				Check_MetafileHeader_WmfPlaceable (header);
@@ -302,7 +293,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Static_GetMetafileHeader_Filename ()
 		{
-			string filename = getInFile (WmfPlaceable);
+			string filename = WmfPlaceable;
 			MetafileHeader header = Metafile.GetMetafileHeader (filename);
 			Check_MetafileHeader_WmfPlaceable (header);
 		}
@@ -332,7 +323,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Static_GetMetafileHeader_IntPtr ()
 		{
-			string filename = MetafileTest.getInFile (MetafileTest.WmfPlaceable);
+			string filename = MetafileTest.WmfPlaceable;
 			using (Metafile mf = new Metafile (filename)) {
 
 				IntPtr hemf = mf.GetHenhmetafile ();

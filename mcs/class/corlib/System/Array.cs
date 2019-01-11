@@ -65,6 +65,21 @@ namespace System
 			return true;
 		}
 
+		// adapted to the Mono array layout
+		[StructLayout(LayoutKind.Sequential)]
+		private class RawData
+		{
+			public IntPtr Bounds;
+			public IntPtr Count;
+			public byte Data;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal ref byte GetRawSzArrayData()
+		{
+			return ref Unsafe.As<RawData>(this).Data;
+		}
+
 		internal IEnumerator<T> InternalArray__IEnumerable_GetEnumerator<T> ()
 		{
 			if (Length == 0)

@@ -1,0 +1,8 @@
+/**
+* \file
+*/
+
+#ifndef _MONO_METADATA_LOADER_INTERNALS_H_
+#define _MONO_METADATA_LOADER_INTERNALS_H_
+
+#endif

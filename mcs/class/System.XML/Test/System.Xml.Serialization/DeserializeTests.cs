@@ -1685,5 +1685,29 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("a", d.Extra[0]);
 			Assert.AreEqual ("b", d.Extra[1]);
 		}
+
+		[Test] // PR #11194
+		public void TestDerrivedClassProperty ()
+		{
+			var data = "<layout width=\".25\" height =\".25\" x=\"0\" y=\"0\" id=\"portrait\" class=\"render\"><background color=\"white\"><div x=\".03\" y=\".05\" width=\".94\" height =\".9\" layout=\"proportional_rows\" paddingX=\".01\" paddingY=\".02\"><background color=\"black\"></background><background color=\"gray\" padding=\".1\"><label color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">Test UI</label></background><br brSize=\"1\" /><background class=\"back,Lab\" color=\"green\"><label class=\"Lab\" color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">GREEN</label></background><background color=\"red\"><label class=\"Lab\" color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">RED</label></background><background color=\"blue\"><label class=\"Lab\" color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">TLUE</label></background><background color=\"blue\"><label class=\"Lab\" color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">BLUE</label></background></div></background></layout>";
+
+			XmlAttributeOverrides overrides = PR11194.GenerateLayoutOverrides<PR11194ChildLo>();
+
+			var result = Deserialize(typeof(PR11194ChildLo), data, overrides) as PR11194ChildLo;
+
+			PR11194Parent2 child;
+			Assert.IsNotNull(result, "#11194_1");
+			Assert.AreEqual(1, result.children.Count, "#11194_2");
+			child = result.children[0] as PR11194Parent2;
+			Assert.IsNotNull(child, "#11194_3");
+			Assert.AreEqual(1, child.children.Count, "#11194_4");
+			child = child.children[0] as PR11194Parent2;
+			Assert.IsNotNull(child, "#11194_5");
+			Assert.AreEqual(7, child.children.Count, "#11194_6");
+			child = child.children[1] as PR11194Parent2;
+			Assert.IsNotNull(child, "#11194_7");
+			Assert.AreEqual(1, child.children.Count, "#11194_8");
+			Assert.AreEqual("PR11194ChildL", child.children[0].GetType().Name, "#11194_9");
+		}
 	}
 }

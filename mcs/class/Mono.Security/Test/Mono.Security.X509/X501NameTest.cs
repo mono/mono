@@ -213,8 +213,8 @@ namespace MonoTests.Mono.Security.X509 {
 				0x13, 0x1D, 0x43, 0x56, 0x52, 0x3A, 0x31, 0x33, 0x34, 0x37, 0x31, 0x39, 0x36, 0x37, 0x2D, 0x55, 0x49, 0x44, 0x3A, 0x31, 0x32, 0x31, 
 				0x32, 0x31, 0x32, 0x31, 0x32, 0x31, 0x32, 0x31, 0x32 };
 			ASN1 asn = new ASN1 (sn);
-			Assert.AreEqual ("C=DK, O=Hedeby's Møbelhandel // CVR:13471967, CN=Hedeby's Møbelhandel - Salgsafdelingen, E=vhm@use.test.dk, OID.2.5.4.5=CVR:13471967-UID:121212121212", X501.ToString (asn), "ToString-1");
-			Assert.AreEqual ("OID.2.5.4.5=CVR:13471967-UID:121212121212, E=vhm@use.test.dk, CN=Hedeby's Møbelhandel - Salgsafdelingen, O=Hedeby's Møbelhandel // CVR:13471967, C=DK", X501.ToString (asn, true, ", ", false), "ToString-2");
+			Assert.AreEqual ("C=DK, O=Hedeby's Møbelhandel // CVR:13471967, CN=Hedeby's Møbelhandel - Salgsafdelingen, E=vhm@use.test.dk, SERIALNUMBER=CVR:13471967-UID:121212121212", X501.ToString (asn), "ToString-1");
+			Assert.AreEqual ("SERIALNUMBER=CVR:13471967-UID:121212121212, E=vhm@use.test.dk, CN=Hedeby's Møbelhandel - Salgsafdelingen, O=Hedeby's Møbelhandel // CVR:13471967, C=DK", X501.ToString (asn, true, ", ", false), "ToString-2");
 		}
 
 		[Test]

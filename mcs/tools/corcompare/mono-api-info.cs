@@ -22,38 +22,38 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System.IO;
 
-namespace CorCompare
-{
-	public class Driver
+namespace Mono.ApiTools {
+
+#if !EXCLUDE_DRIVER
+	class Driver
 	{
 		public static int Main (string [] args)
 		{
 			bool showHelp = false;
-			AbiMode = false;
-			FollowForwarders = false;
 			string output = null;
-
-			var acoll = new AssemblyCollection ();
+			List<string> asms = null;
+			ApiInfoConfig config = new ApiInfoConfig ();
 
 			var options = new Mono.Options.OptionSet {
-				"usage: mono-api-info [OPTIONS+] ASSEMBLY+",
-				"",
-				"Expose IL structure of CLR assemblies as XML.",
-				"",
-				"Available Options:",
 				{ "abi",
 					"Generate ABI, not API; contains only classes with instance fields which are not [NonSerialized].",
-					v => AbiMode = v != null },
+					v => config.AbiMode = v != null },
 				{ "f|follow-forwarders",
 					"Follow type forwarders.",
-					v => FollowForwarders = v != null },
+					v => config.FollowForwarders = v != null },
+				{ "ignore-inherited-interfaces",
+					"Ignore interfaces on the base type.",
+					v => config.IgnoreInheritedInterfaces = v != null },
+				{ "ignore-resolution-errors",
+					"Ignore any assemblies that cannot be found.",
+					v => config.IgnoreResolutionErrors = v != null },
 				{ "d|L|lib|search-directory=",
 					"Check for assembly references in {DIRECTORY}.",
-					v => TypeHelper.Resolver.AddSearchDirectory (v) },
+					v => config.SearchDirectories.Add (v) },
 				{ "r=",
 					"Read and register the file {ASSEMBLY}, and add the directory containing ASSEMBLY to the search path.",
-					v => TypeHelper.Resolver.ResolveFile (v) },
-				{ "o=",
+					v => config.ResolveFiles.Add (v) },
+				{ "o|out|output=",
 					"The output file. If not specified the output will be written to stdout.",
 					v => output = v },
 				{ "h|?|help",
@@ -61,68 +61,210 @@ namespace CorCompare
 					v => showHelp = v != null },
 				{ "contract-api",
 					"Produces contract API with all members at each level of inheritance hierarchy",
-					v => FullAPISet = v != null },
+					v => config.FullApiSet = v != null },
 			};
 
-			var asms = options.Parse (args);
-
-			if (showHelp || asms.Count == 0) {
-				options.WriteOptionDescriptions (Console.Out);
-				Console.WriteLine ();
-				return showHelp? 0 :1;
+			try {
+				asms = options.Parse (args);
+			} catch (Mono.Options.OptionException e) {
+				Console.WriteLine ("Option error: {0}", e.Message);
+				asms = null;
 			}
 
-			string windir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-			string pf = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-			TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"assembly\GAC\MSDATASRC\7.0.3300.0__b03f5f7f11d50a3a"));
+			if (showHelp || asms == null || asms.Count == 0) {
+				Console.WriteLine ("usage: mono-api-info [OPTIONS+] ASSEMBLY+");
+				Console.WriteLine ();
+				Console.WriteLine ("Expose IL structure of CLR assemblies as XML.");
+				Console.WriteLine ();
+				Console.WriteLine ("Available Options:");
+				Console.WriteLine ();
+				options.WriteOptionDescriptions (Console.Out);
+				Console.WriteLine ();
+				return showHelp ? 0 : 1;
+			}
 
-			foreach (string arg in asms) {
-				acoll.Add (arg);
+			TextWriter outputStream = null;
+			try {
+				if (!string.IsNullOrEmpty (output))
+					outputStream = new StreamWriter (output);
 
-				if (arg.Contains ("v3.0")) {
-					TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
-				} else if (arg.Contains ("v3.5")) {
-					TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
-					TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v3.0\Windows Communication Foundation"));
-				} else if (arg.Contains ("v4.0")) {
-					if (arg.Contains ("Silverlight")) {
-						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (pf, @"Microsoft Silverlight\4.0.51204.0"));
+				ApiInfo.Generate (asms, null, outputStream ?? Console.Out, config);
+			} catch (Exception e) {
+				Console.Error.WriteLine (e);
+				return 1;
+			} finally {
+				outputStream?.Dispose ();
+			}
+			return 0;
+		}
+	}
+#endif
+
+	class State
+	{
+		public bool AbiMode { get; set; } = false;
+
+		public bool FollowForwarders { get; set; } = false;
+
+		public bool FullApiSet { get; set; } = false;
+
+		public bool IgnoreResolutionErrors { get; set; } = false;
+
+		public bool IgnoreInheritedInterfaces { get; set; } = false;
+
+		public List<string> SearchDirectories { get; } = new List<string> ();
+
+		public List<string> ResolveFiles { get; } = new List<string> ();
+
+		public List<Stream> ResolveStreams { get; } = new List<Stream> ();
+
+		public TypeHelper TypeHelper { get; private set; }
+
+		public void ResolveTypes ()
+		{
+			TypeHelper = new TypeHelper (IgnoreResolutionErrors, IgnoreInheritedInterfaces);
+
+			if (SearchDirectories != null) {
+				foreach (var v in SearchDirectories)
+					TypeHelper.Resolver.AddSearchDirectory (v);
+			}
+			if (ResolveFiles != null) {
+				foreach (var v in ResolveFiles)
+					TypeHelper.Resolver.ResolveFile (v);
+			}
+			if (ResolveStreams != null) {
+				foreach (var v in ResolveStreams)
+					TypeHelper.Resolver.ResolveStream (v);
+			}
+		}
+	}
+
+	public class ApiInfoConfig
+	{
+		public bool AbiMode { get; set; } = false;
+
+		public bool FollowForwarders { get; set; } = false;
+
+		public bool FullApiSet { get; set; } = false;
+
+		public bool IgnoreResolutionErrors { get; set; } = false;
+
+		public bool IgnoreInheritedInterfaces { get; set; } = false;
+
+		public List<string> SearchDirectories { get; set; } = new List<string> ();
+
+		public List<string> ResolveFiles { get; set; } = new List<string> ();
+
+		public List<Stream> ResolveStreams { get; set; } = new List<Stream> ();
+	}
+
+	public static class ApiInfo
+	{
+		public static void Generate (string assemblyPath, TextWriter outStream, ApiInfoConfig config = null)
+		{
+			if (assemblyPath == null)
+				throw new ArgumentNullException (nameof (assemblyPath));
+
+			Generate (new [] { assemblyPath }, null, outStream, config);
+		}
+
+		public static void Generate (Stream assemblyStream, TextWriter outStream, ApiInfoConfig config = null)
+		{
+			if (assemblyStream == null)
+				throw new ArgumentNullException (nameof (assemblyStream));
+
+			Generate (null, new [] { assemblyStream }, outStream, config);
+		}
+
+		public static void Generate (IEnumerable<string> assemblyPaths, TextWriter outStream, ApiInfoConfig config = null)
+		{
+			Generate (assemblyPaths, null, outStream, config);
+		}
+
+		public static void Generate (IEnumerable<Stream> assemblyStreams, TextWriter outStream, ApiInfoConfig config = null)
+		{
+			Generate (null, assemblyStreams, outStream, config);
+		}
+
+		public static void Generate (IEnumerable<string> assemblyPaths, IEnumerable<Stream> assemblyStreams, TextWriter outStream, ApiInfoConfig config = null)
+		{
+			if (outStream == null)
+				throw new ArgumentNullException (nameof (outStream));
+
+			if (config == null)
+				config = new ApiInfoConfig ();
+
+			var state = new State {
+				AbiMode = config.AbiMode,
+				FollowForwarders = config.FollowForwarders,
+				FullApiSet = config.FullApiSet,
+				IgnoreResolutionErrors = config.IgnoreResolutionErrors,
+				IgnoreInheritedInterfaces = config.IgnoreInheritedInterfaces,
+			};
+			state.SearchDirectories.AddRange (config.SearchDirectories);
+			state.ResolveFiles.AddRange (config.ResolveFiles);
+			state.ResolveStreams.AddRange (config.ResolveStreams);
+
+			Generate (assemblyPaths, assemblyStreams, outStream, state);
+		}
+
+		internal static void Generate (IEnumerable<string> assemblyFiles, IEnumerable<Stream> assemblyStreams, TextWriter outStream, State state = null)
+		{
+			if (outStream == null)
+				throw new ArgumentNullException (nameof (outStream));
+
+			if (state == null)
+				state = new State ();
+
+			state.ResolveTypes ();
+
+			string windir = Environment.GetFolderPath (Environment.SpecialFolder.Windows);
+			string pf = Environment.GetFolderPath (Environment.SpecialFolder.ProgramFiles);
+			state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"assembly\GAC\MSDATASRC\7.0.3300.0__b03f5f7f11d50a3a"));
+
+			var acoll = new AssemblyCollection (state);
+			if (assemblyFiles != null) {
+				foreach (string arg in assemblyFiles) {
+					acoll.Add (arg);
+
+					if (arg.Contains ("v3.0")) {
+						state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+					} else if (arg.Contains ("v3.5")) {
+						state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v2.0.50727"));
+						state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v3.0\Windows Communication Foundation"));
+					} else if (arg.Contains ("v4.0")) {
+						if (arg.Contains ("Silverlight")) {
+							state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (pf, @"Microsoft Silverlight\4.0.51204.0"));
+						} else {
+							state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
+							state.TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
+						}
 					} else {
-						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319"));
-						TypeHelper.Resolver.AddSearchDirectory (Path.Combine (windir, @"Microsoft.NET\Framework\v4.0.30319\WPF"));
+						state.TypeHelper.Resolver.AddSearchDirectory (Path.GetDirectoryName (arg));
 					}
-				} else {
-					TypeHelper.Resolver.AddSearchDirectory (Path.GetDirectoryName (arg));
+				}
+			}
+			if (assemblyStreams != null) {
+				foreach (var arg in assemblyStreams) {
+					acoll.Add (arg);
 				}
 			}
 
-			StreamWriter outputStream = null;
-			if (!string.IsNullOrEmpty (output))
-				outputStream = new StreamWriter (output);
-			try {
-				TextWriter outStream = outputStream ?? Console.Out;
-				var settings = new XmlWriterSettings ();
-				settings.Indent = true;
-				var textWriter = XmlWriter.Create (outStream, settings);
+			var settings = new XmlWriterSettings {
+				Indent = true,
+			};
+			using (var textWriter = XmlWriter.Create (outStream, settings)) {
 				var writer = new WellFormedXmlWriter (textWriter);
 				writer.WriteStartDocument ();
 				acoll.Writer = writer;
 				acoll.DoOutput ();
 				writer.WriteEndDocument ();
 				writer.Flush ();
-			} finally {
-				if (outputStream != null)
-					outputStream.Dispose ();
 			}
-			return 0;
 		}
-
-		internal static bool AbiMode { get; private set; }
-		internal static bool FollowForwarders { get; private set; }
-		internal static bool FullAPISet { get; set; }
 	}
 
-	public class Utils {
+	class Utils {
 		static char[] CharsToCleanup = new char[] { '<', '>', '/' };
 
 		public static string CleanupTypeName (TypeReference type)
@@ -160,19 +302,23 @@ namespace CorCompare
 	{
 		XmlWriter writer;
 		List<AssemblyDefinition> assemblies = new List<AssemblyDefinition> ();
+		State state;
 
-		public AssemblyCollection ()
+		public AssemblyCollection (State state)
 		{
+			this.state = state;
 		}
 
 		public bool Add (string name)
 		{
 			AssemblyDefinition ass = LoadAssembly (name);
-			if (ass == null) {
-				Console.Error.WriteLine ("Cannot load assembly file " + name);
-				return false;
-			}
+			assemblies.Add (ass);
+			return true;
+		}
 
+		public bool Add (Stream stream)
+		{
+			AssemblyDefinition ass = LoadAssembly (stream);
 			assemblies.Add (ass);
 			return true;
 		}
@@ -184,7 +330,7 @@ namespace CorCompare
 
 			writer.WriteStartElement ("assemblies");
 			foreach (AssemblyDefinition a in assemblies) {
-				AssemblyData data = new AssemblyData (writer, a);
+				AssemblyData data = new AssemblyData (writer, a, state);
 				data.DoOutput ();
 			}
 			writer.WriteEndElement ();
@@ -196,25 +342,27 @@ namespace CorCompare
 
 		AssemblyDefinition LoadAssembly (string assembly)
 		{
-			try {
-				if (File.Exists (assembly))
-					return TypeHelper.Resolver.ResolveFile (assembly);
+			if (File.Exists (assembly))
+				return state.TypeHelper.Resolver.ResolveFile (assembly);
 
-				return TypeHelper.Resolver.Resolve (AssemblyNameReference.Parse (assembly), new ReaderParameters ());
-			} catch (Exception e) {
-				Console.WriteLine (e);
-				return null;
-			}
+			return state.TypeHelper.Resolver.Resolve (AssemblyNameReference.Parse (assembly), new ReaderParameters ());
+		}
+
+		AssemblyDefinition LoadAssembly (Stream assembly)
+		{
+			return state.TypeHelper.Resolver.ResolveStream (assembly);
 		}
 	}
 
 	abstract class BaseData
 	{
 		protected XmlWriter writer;
+		protected State state;
 
-		protected BaseData (XmlWriter writer)
+		protected BaseData (XmlWriter writer, State state)
 		{
 			this.writer = writer;
+			this.state = state;
 		}
 
 		public abstract void DoOutput ();
@@ -229,8 +377,8 @@ namespace CorCompare
 	{
 		AssemblyDefinition ass;
 
-		public TypeForwardedToData (XmlWriter writer, AssemblyDefinition ass)
-			: base (writer)
+		public TypeForwardedToData (XmlWriter writer, AssemblyDefinition ass, State state)
+			: base (writer, state)
 		{
 			this.ass = ass;
 		}
@@ -254,9 +402,9 @@ namespace CorCompare
 			}
 		}
 
-		public static void OutputForwarders (XmlWriter writer, AssemblyDefinition ass)
+		public static void OutputForwarders (XmlWriter writer, AssemblyDefinition ass, State state)
 		{
-			TypeForwardedToData tftd = new TypeForwardedToData (writer, ass);
+			TypeForwardedToData tftd = new TypeForwardedToData (writer, ass, state);
 			tftd.DoOutput ();
 		}
 	}
@@ -265,8 +413,8 @@ namespace CorCompare
 	{
 		AssemblyDefinition ass;
 
-		public AssemblyData (XmlWriter writer, AssemblyDefinition ass)
-			: base (writer)
+		public AssemblyData (XmlWriter writer, AssemblyDefinition ass, State state)
+			: base (writer, state)
 		{
 			this.ass = ass;
 		}
@@ -281,14 +429,14 @@ namespace CorCompare
 			AddAttribute ("name", aname.Name);
 			AddAttribute ("version", aname.Version.ToString ());
 
-			AttributeData.OutputAttributes (writer, ass);
+			AttributeData.OutputAttributes (writer, state, ass);
 
 			var types = new List<TypeDefinition> ();
 			if (ass.MainModule.Types != null) {
 				types.AddRange (ass.MainModule.Types);
 			}
 
-			if (Driver.FollowForwarders && ass.MainModule.ExportedTypes != null) {
+			if (state.FollowForwarders && ass.MainModule.ExportedTypes != null) {
 				foreach (var t in ass.MainModule.ExportedTypes) {
 					var forwarded = t.Resolve ();
 					if (forwarded == null) {
@@ -313,7 +461,7 @@ namespace CorCompare
 				if (string.IsNullOrEmpty (t.Namespace))
 					continue;
 
-				if (!Driver.AbiMode && ((t.Attributes & TypeAttributes.VisibilityMask) != TypeAttributes.Public))
+				if (!state.AbiMode && ((t.Attributes & TypeAttributes.VisibilityMask) != TypeAttributes.Public))
 					continue;
 
 				if (t.DeclaringType != null)
@@ -332,7 +480,7 @@ namespace CorCompare
 					writer.WriteStartElement ("classes");
 				}
 
-				TypeData bd = new TypeData (writer, t);
+				TypeData bd = new TypeData (writer, t, state);
 				bd.DoOutput ();
 
 			}
@@ -352,8 +500,8 @@ namespace CorCompare
 	{
 		MemberReference [] members;
 
-		public MemberData (XmlWriter writer, MemberReference [] members)
-			: base (writer)
+		public MemberData (XmlWriter writer, MemberReference [] members, State state)
+			: base (writer, state)
 		{
 			this.members = members;
 		}
@@ -374,7 +522,7 @@ namespace CorCompare
 					AddAttribute ("attrib", GetMemberAttributes (member));
 				AddExtraAttributes (member);
 
-				AttributeData.OutputAttributes (writer, (ICustomAttributeProvider) member, GetAdditionalCustomAttributeProvider (member));
+				AttributeData.OutputAttributes (writer, state, (ICustomAttributeProvider) member, GetAdditionalCustomAttributeProvider (member));
 
 				AddExtraData (member);
 				writer.WriteEndElement (); // Tag
@@ -414,7 +562,7 @@ namespace CorCompare
 			get { return "NoTAG"; }
 		}
 
-		public static void OutputGenericParameters (XmlWriter writer, IGenericParameterProvider provider)
+		public static void OutputGenericParameters (XmlWriter writer, IGenericParameterProvider provider, State state)
 		{
 			if (provider.GenericParameters.Count == 0)
 				return;
@@ -428,7 +576,7 @@ namespace CorCompare
 				writer.WriteAttributeString ("name", gp.Name);
 				writer.WriteAttributeString ("attributes", ((int) gp.Attributes).ToString ());
 
-				AttributeData.OutputAttributes (writer, gp);
+				AttributeData.OutputAttributes (writer, state, gp);
 
 				var constraints = gp.Constraints;
 				if (constraints.Count == 0) {
@@ -457,8 +605,8 @@ namespace CorCompare
 	{
 		TypeDefinition type;
 
-		public TypeData (XmlWriter writer, TypeDefinition type)
-			: base (writer, null)
+		public TypeData (XmlWriter writer, TypeDefinition type, State state)
+			: base (writer, null, state)
 		{
 			this.type = type;
 		}
@@ -507,10 +655,10 @@ namespace CorCompare
 				AddAttribute ("enumtype", Utils.CleanupTypeName (value_type.FieldType));
 			}
 
-			AttributeData.OutputAttributes (writer, type);
+			AttributeData.OutputAttributes (writer, state, type);
 
-			var ifaces =  TypeHelper.GetInterfaces (type).
-				Where ((iface) => TypeHelper.IsPublic (iface)). // we're only interested in public interfaces
+			var ifaces =  state.TypeHelper.GetInterfaces (type).
+				Where ((iface) => state.TypeHelper.IsPublic (iface)). // we're only interested in public interfaces
 				OrderBy (s => s.FullName, StringComparer.Ordinal);
 
 			if (ifaces.Any ()) {
@@ -523,41 +671,41 @@ namespace CorCompare
 				writer.WriteEndElement (); // interfaces
 			}
 
-			MemberData.OutputGenericParameters (writer, type);
+			MemberData.OutputGenericParameters (writer, type, state);
 
 			ArrayList members = new ArrayList ();
 
 			FieldDefinition [] fields = GetFields (type);
 			if (fields.Length > 0) {
 				Array.Sort (fields, MemberReferenceComparer.Default);
-				FieldData fd = new FieldData (writer, fields);
+				FieldData fd = new FieldData (writer, fields, state);
 				members.Add (fd);
 			}
 
-			if (!Driver.AbiMode) {
+			if (!state.AbiMode) {
 
 				MethodDefinition [] ctors = GetConstructors (type);
 				if (ctors.Length > 0) {
 					Array.Sort (ctors, MethodDefinitionComparer.Default);
-					members.Add (new ConstructorData (writer, ctors));
+					members.Add (new ConstructorData (writer, ctors, state));
 				}
 
-				PropertyDefinition[] properties = GetProperties (type, Driver.FullAPISet);
+				PropertyDefinition[] properties = GetProperties (type, state.FullApiSet);
 				if (properties.Length > 0) {
 					Array.Sort (properties, PropertyDefinitionComparer.Default);
-					members.Add (new PropertyData (writer, properties));
+					members.Add (new PropertyData (writer, properties, state));
 				}
 
 				EventDefinition [] events = GetEvents (type);
 				if (events.Length > 0) {
 					Array.Sort (events, MemberReferenceComparer.Default);
-					members.Add (new EventData (writer, events));
+					members.Add (new EventData (writer, events, state));
 				}
 
-				MethodDefinition [] methods = GetMethods (type, Driver.FullAPISet);
+				MethodDefinition [] methods = GetMethods (type, state.FullApiSet);
 				if (methods.Length > 0) {
 					Array.Sort (methods, MethodDefinitionComparer.Default);
-					members.Add (new MethodData (writer, methods));
+					members.Add (new MethodData (writer, methods, state));
 				}
 			}
 
@@ -585,7 +733,7 @@ namespace CorCompare
 
 				writer.WriteStartElement ("classes");
 				foreach (TypeDefinition t in nestedArray) {
-					TypeData td = new TypeData (writer, t);
+					TypeData td = new TypeData (writer, t, state);
 					td.DoOutput ();
 				}
 				writer.WriteEndElement (); // classes
@@ -619,7 +767,7 @@ namespace CorCompare
 				|| maskedAccess == MethodAttributes.FamORAssem;
 		}
 
-		static string GetClassType (TypeDefinition t)
+		string GetClassType (TypeDefinition t)
 		{
 			if (t.IsEnum)
 				return "enum";
@@ -630,7 +778,7 @@ namespace CorCompare
 			if (t.IsInterface)
 				return "interface";
 
-			if (TypeHelper.IsDelegate(t))
+			if (state.TypeHelper.IsDelegate(t))
 				return "delegate";
 
 			if (t.IsPointer)
@@ -677,12 +825,12 @@ namespace CorCompare
 				if (field.IsSpecialName)
 					continue;
 
-				if (Driver.AbiMode && field.IsStatic)
+				if (state.AbiMode && field.IsStatic)
 					continue;
 
 				// we're only interested in public or protected members
 				FieldAttributes maskedVisibility = (field.Attributes & FieldAttributes.FieldAccessMask);
-				if (Driver.AbiMode && !field.IsNotSerialized) {
+				if (state.AbiMode && !field.IsNotSerialized) {
 					list.Add (field);
 				} else {
 					if (maskedVisibility == FieldAttributes.Public
@@ -697,7 +845,7 @@ namespace CorCompare
 		}
 
 
-		internal static PropertyDefinition [] GetProperties (TypeDefinition type, bool fullAPI) {
+		internal PropertyDefinition [] GetProperties (TypeDefinition type, bool fullAPI) {
 			var list = new List<PropertyDefinition> ();
 
 			var t = type;
@@ -730,7 +878,7 @@ namespace CorCompare
 				if (t.BaseType == null || t.BaseType.FullName == "System.Object")
 					t = null;
 				else
-					t = t.BaseType.Resolve ();
+					t = state.TypeHelper.GetBaseType (t);
 
 			} while (t != null);
 
@@ -777,7 +925,7 @@ namespace CorCompare
 				if (t.BaseType == null || t.BaseType.FullName == "System.Object")
 					t = null;
 				else
-					t = t.BaseType.Resolve ();
+					t = state.TypeHelper.GetBaseType (t);
 
 			} while (t != null);
 
@@ -847,8 +995,8 @@ namespace CorCompare
 
 	class FieldData : MemberData
 	{
-		public FieldData (XmlWriter writer, FieldDefinition [] members)
-			: base (writer, members)
+		public FieldData (XmlWriter writer, FieldDefinition [] members, State state)
+			: base (writer, members, state)
 		{
 		}
 
@@ -900,8 +1048,8 @@ namespace CorCompare
 
 	class PropertyData : MemberData
 	{
-		public PropertyData (XmlWriter writer, PropertyDefinition [] members)
-			: base (writer, members)
+		public PropertyData (XmlWriter writer, PropertyDefinition [] members, State state)
+			: base (writer, members, state)
 		{
 		}
 
@@ -962,7 +1110,7 @@ namespace CorCompare
 			if (methods == null)
 				return;
 			
-			MethodData data = new MethodData (writer, methods);
+			MethodData data = new MethodData (writer, methods, state);
 			//data.NoMemberAttributes = true;
 			data.DoOutput ();
 		}
@@ -984,8 +1132,8 @@ namespace CorCompare
 
 	class EventData : MemberData
 	{
-		public EventData (XmlWriter writer, EventDefinition [] members)
-			: base (writer, members)
+		public EventData (XmlWriter writer, EventDefinition [] members, State state)
+			: base (writer, members, state)
 		{
 		}
 
@@ -1022,8 +1170,8 @@ namespace CorCompare
 	{
 		bool noAtts;
 
-		public MethodData (XmlWriter writer, MethodDefinition [] members)
-			: base (writer, members)
+		public MethodData (XmlWriter writer, MethodDefinition [] members, State state)
+			: base (writer, members, state)
 		{
 		}
 
@@ -1065,7 +1213,7 @@ namespace CorCompare
 				AddAttribute ("sealed", "true");
 			if (mbase.IsStatic)
 				AddAttribute ("static", "true");
-			var baseMethod = TypeHelper.GetBaseMethodInTypeHierarchy (mbase);
+			var baseMethod = state.TypeHelper.GetBaseMethodInTypeHierarchy (mbase);
 			if (baseMethod != null && baseMethod != mbase) {
 				// This indicates whether this method is an override of another method.
 				// This information is not necessarily available in the api info for any
@@ -1091,13 +1239,13 @@ namespace CorCompare
 
 			MethodDefinition mbase = (MethodDefinition)memberDefenition;
 
-			ParameterData parms = new ParameterData (writer, mbase.Parameters) {
+			ParameterData parms = new ParameterData (writer, mbase.Parameters, state) {
 				HasExtensionParameter = mbase.CustomAttributes.Any (l => l.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute")
 			};
 
 			parms.DoOutput ();
 
-			MemberData.OutputGenericParameters (writer, mbase);
+			MemberData.OutputGenericParameters (writer, mbase, state);
 		}
 
 		public override bool NoMemberAttributes {
@@ -1116,8 +1264,8 @@ namespace CorCompare
 
 	class ConstructorData : MethodData
 	{
-		public ConstructorData (XmlWriter writer, MethodDefinition [] members)
-			: base (writer, members)
+		public ConstructorData (XmlWriter writer, MethodDefinition [] members, State state)
+			: base (writer, members, state)
 		{
 		}
 
@@ -1134,8 +1282,8 @@ namespace CorCompare
 	{
 		private IList<ParameterDefinition> parameters;
 
-		public ParameterData (XmlWriter writer, IList<ParameterDefinition> parameters)
-			: base (writer)
+		public ParameterData (XmlWriter writer, IList<ParameterDefinition> parameters, State state)
+			: base (writer, state)
 		{
 			this.parameters = parameters;
 		}
@@ -1173,7 +1321,7 @@ namespace CorCompare
 				if (direction != "in")
 					AddAttribute ("direction", direction);
 
-				AttributeData.OutputAttributes (writer, parameter);
+				AttributeData.OutputAttributes (writer, state, parameter);
 				writer.WriteEndElement (); // parameter
 			}
 			writer.WriteEndElement (); // parameters
@@ -1182,7 +1330,14 @@ namespace CorCompare
 
 	class AttributeData
 	{
-		public static void DoOutput (XmlWriter writer, IList<ICustomAttributeProvider> providers)
+		State state;
+
+		public AttributeData (State state)
+		{
+			this.state = state;
+		}
+
+		public void DoOutput (XmlWriter writer, IList<ICustomAttributeProvider> providers)
 		{
 			if (writer == null)
 				throw new InvalidOperationException ("Document not set");
@@ -1204,8 +1359,8 @@ namespace CorCompare
 
 
 				var ass = provider as AssemblyDefinition;
-				if (ass != null && !Driver.FollowForwarders)
-					TypeForwardedToData.OutputForwarders (writer, ass);
+				if (ass != null && !state.FollowForwarders)
+					TypeForwardedToData.OutputForwarders (writer, ass, state);
 
 				var attributes = provider.CustomAttributes.
 					Where ((att) => !SkipAttribute (att)).
@@ -1251,13 +1406,16 @@ namespace CorCompare
 			writer.WriteEndElement (); // attributes
 		}
 
-		static Dictionary<string, object> CreateAttributeMapping (CustomAttribute attribute)
+		Dictionary<string, object> CreateAttributeMapping (CustomAttribute attribute)
 		{
 			Dictionary<string, object> mapping = null;
 
+			if (!state.TypeHelper.TryResolve (attribute))
+				return mapping;
+
 			PopulateMapping (ref mapping, attribute);
 
-			var constructor = attribute.Constructor.Resolve ();
+			var constructor = state.TypeHelper.GetMethod (attribute.Constructor);
 			if (constructor == null || !constructor.HasParameters)
 				return mapping;
 
@@ -1520,17 +1678,18 @@ namespace CorCompare
 			return value;
 		}
 
-		static bool SkipAttribute (CustomAttribute attribute)
+		bool SkipAttribute (CustomAttribute attribute)
 		{
-			if (!TypeHelper.IsPublic (attribute))
+			if (!state.TypeHelper.IsPublic (attribute))
 				return true;
 			
 			return attribute.Constructor.DeclaringType.Name.EndsWith ("TODOAttribute", StringComparison.Ordinal);
 		}
 
-		public static void OutputAttributes (XmlWriter writer, params ICustomAttributeProvider[] providers)
+		public static void OutputAttributes (XmlWriter writer, State state, params ICustomAttributeProvider[] providers)
 		{
-			AttributeData.DoOutput (writer, providers);
+			var data = new AttributeData (state);
+			data.DoOutput (writer, providers);
 		}
 	}
 

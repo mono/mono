@@ -34,6 +34,8 @@ using System.ServiceModel.Configuration;
 using System.ServiceModel.Channels;
 using System.Configuration;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
@@ -41,7 +43,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 	{
 		[Test]
 		public void ReadConfiguration () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/client.endpoint").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/client.endpoint")).GetSectionGroup ("system.serviceModel");
 			AddressHeaderCollection col = config.Client.Endpoints [0].Headers.Headers;
 
 			Assert.AreEqual (2, col.Count, "count");

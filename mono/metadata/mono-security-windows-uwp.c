@@ -40,7 +40,7 @@ MonoArray*
 ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 {
 	// FIXME This is now supported by UWP.
-	ERROR_DECL_VALUE (error); // FIXMEcoop
+	ERROR_DECL (error); // FIXMEcoop
 	mono_security_win_not_supported ("GetTokenInformation", error);
 	mono_error_set_pending_exception (error); // FIXMEcoop
 	return NULL;
@@ -54,14 +54,14 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (
 	return NULL;
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken (gpointer token, MonoError *error)
 {
 	mono_security_win_not_supported ("ImpersonateLoggedOnUser", error);
 	return FALSE;
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (MonoError *error))
 {
 	mono_security_win_not_supported ("RevertToSelf", error);

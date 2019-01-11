@@ -16,6 +16,8 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -28,8 +30,8 @@ namespace MonoTests.System.Windows.Forms
 			Assembly a = typeof (ImageListStreamerTest).Assembly;
 
 			ImageList imgList = new ImageList ();
-			imgList.Images.Add (Image.FromStream (a.GetManifestResourceStream ("32x32.ico")));
-			imgList.Images.Add (Image.FromFile ("M.gif"));
+			imgList.Images.Add (Image.FromStream (TestResourceHelper.GetStreamOfResource ("Test/resources/32x32.ico")));
+			imgList.Images.Add (Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif")));
 
 			MemoryStream ms = new MemoryStream ();
 

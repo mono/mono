@@ -389,7 +389,7 @@ namespace System.Xml.Serialization
 			return (XmlTypeMapMemberAttribute)_attributeMembers [BuildKey (name,ns, -1)];
 		}
 
-		public XmlTypeMapElementInfo GetElement(string name, string ns, int minimalOrder)
+		public XmlTypeMapElementInfo GetElement (string name, string ns, int minimalOrder)
 		{
 			if (_elements == null)
 				return null;
@@ -404,22 +404,38 @@ namespace System.Xml.Serialization
 						selected = info;
 					}
 				}
+				else if (info.MappedType != null && info.MappedType.DerivedTypes.Count > 0) {
+					foreach (XmlTypeMapping derrivedInfo in info.MappedType.DerivedTypes) {
+						if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns) {
+							if (info.ExplicitOrder < minimalOrder)
+								continue;
+
+							if (selected == null || selected.ExplicitOrder > info.ExplicitOrder) {
+								selected = info;
+							}
+						}
+					}
+				}
 			}
 
 			return selected;
 		}
 
-		public XmlTypeMapElementInfo GetElement(string name, string ns)
+		public XmlTypeMapElementInfo GetElement (string name, string ns)
 		{
 			if (_elements == null) return null;
 
 			foreach (XmlTypeMapElementInfo info in _elements.Values)
 				if (info.ElementName == name && info.Namespace == ns)
 					return info;
-
+				else if (info.MappedType != null && info.MappedType.DerivedTypes.Count > 0) {
+					foreach (XmlTypeMapping derrivedInfo in info.MappedType.DerivedTypes)
+						if (derrivedInfo.ElementName == name && derrivedInfo.Namespace == ns)
+							return info;
+				}
 			return null;
 		}
-		
+
 		public XmlTypeMapElementInfo GetElement (int index)
 		{
 			if (_elements == null) return null;

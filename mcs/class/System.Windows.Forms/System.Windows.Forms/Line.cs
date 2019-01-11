@@ -472,6 +472,7 @@ namespace System.Windows.Forms
 			int wrap_pos;
 			int prev_height;
 			int prev_ascent;
+			float add_width;
 
 			pos = 0;
 			len = this.text.Length;
@@ -493,6 +494,7 @@ namespace System.Windows.Forms
 			wrapped = false;
 
 			wrap_pos = 0;
+			add_width = 0;
 
 			while (pos < len) {
 
@@ -517,14 +519,16 @@ namespace System.Windows.Forms
 				{
 					// MeasureText doesn't measure trailing spaces, so we do the best we can for those
 					// in the else branch.
+					// It doesn't measure /t characters either, we need to add it manually with add_width.
 					size = TextBoxTextRenderer.MeasureText (g, text.ToString (0, pos + 1), tag.Font);
-					newWidth = widths[0] + size.Width;
+					newWidth = widths[0] + size.Width + add_width;
 				}
 				else
 				{
 					size = tag.SizeOfPosition (g, pos);
 					w = size.Width;
 					newWidth = widths[pos] + w;
+					if (text[pos] == '\t') add_width += w;
 				}
 
 				if (Char.IsWhiteSpace (text[pos]))

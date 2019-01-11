@@ -181,7 +181,7 @@ namespace System.Net
 				() => {
 					Operation.Abort ();
 					innerStream.Dispose ();
-				}, cancellationToken);
+				}, () => Operation.Aborted, cancellationToken);
 		}
 
 		bool CheckAuthHeader (string headerName)
@@ -309,7 +309,7 @@ namespace System.Net
 						break;
 					ms.Write (buffer, 0, ret);
 				}
-				return ms.GetBuffer ();
+				return ms.ToArray ();
 			}
 		}
 

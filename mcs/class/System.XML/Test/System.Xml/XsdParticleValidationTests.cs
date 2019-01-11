@@ -13,6 +13,8 @@ using NUnit.Framework;
 
 using ValidationException = System.Xml.Schema.XmlSchemaValidationException;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 //	using XmlValidatingReader = XmlTextReader;
@@ -26,7 +28,7 @@ namespace MonoTests.System.Xml
 
 		private void PrepareReader1 (string xsdUrl, string xml)
 		{
-			schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/XsdValidation/" + xsdUrl), null);
+			schema = XmlSchema.Read (new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/XsdValidation/" + xsdUrl)), null);
 			xr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			xvr = new XmlValidatingReader (xr);
 			xvr.Schemas.Add (schema);

@@ -1260,6 +1260,7 @@ namespace MonoTests.System.Drawing {
 			}
 		}
 
+#if !MOBILE
 		private void Compare (KnownColor kc, GetSysColorIndex index)
 		{
 			// we get BGR than needs to be converted into ARGB
@@ -1307,6 +1308,7 @@ namespace MonoTests.System.Drawing {
 			Compare (KnownColor.MenuBar, GetSysColorIndex.COLOR_MENUBAR);
 			Compare (KnownColor.MenuHighlight, GetSysColorIndex.COLOR_MENUHIGHLIGHT);
 		}
+#endif
 	}
 }
 

@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using Mono.Options;
@@ -10,7 +12,7 @@ public class AppBuilder
 		new AppBuilder ().Run (args);
 	}
 
-	void GenMain (string builddir, List<string> assembly_names) {
+	void GenMain (string builddir, List<string> assembly_names, bool isinterp) {
 		var symbols = new List<string> ();
 		foreach (var img in assembly_names) {
 			symbols.Add (String.Format ("mono_aot_module_{0}_info", img.Replace ('.', '_').Replace ('-', '_')));
@@ -18,7 +20,31 @@ public class AppBuilder
 
 		var w = File.CreateText (Path.Combine (builddir, "main.m"));
 
-		w.WriteLine ($"extern void mono_aot_register_module (char *name);");
+		/* copy from <mono/mini/jit.h> */
+		w.WriteLine ("typedef enum {");
+		w.WriteLine ("	MONO_AOT_MODE_NONE,");
+		w.WriteLine ("	MONO_AOT_MODE_NORMAL,");
+		w.WriteLine ("	MONO_AOT_MODE_HYBRID,");
+		w.WriteLine ("	MONO_AOT_MODE_FULL,");
+		w.WriteLine ("	MONO_AOT_MODE_LLVMONLY,");
+		w.WriteLine ("	MONO_AOT_MODE_INTERP,");
+		w.WriteLine ("	MONO_AOT_MODE_INTERP_LLVMONLY");
+		w.WriteLine ("} MonoAotMode;");
+		w.WriteLine ();
+		w.WriteLine ("void mono_jit_set_aot_mode (MonoAotMode mode);");
+		w.WriteLine ();
+
+		w.WriteLine ("extern void mono_aot_register_module (char *name);");
+		w.WriteLine ();
+
+		if (isinterp) {
+			w.WriteLine ("extern void mono_ee_interp_init (const char *);");
+			w.WriteLine ("extern void mono_icall_table_init (void);");
+			w.WriteLine ("extern void mono_marshal_ilgen_init (void);");
+			w.WriteLine ("extern void mono_method_builder_ilgen_init (void);");
+			w.WriteLine ("extern void mono_sgen_mono_ilgen_init (void);");
+			w.WriteLine ();
+		}
 
 		foreach (var symbol in symbols) {
 			w.WriteLine ($"extern void *{symbol};");
@@ -31,6 +57,21 @@ public class AppBuilder
 			w.WriteLine ($"\tmono_aot_register_module ({symbol});");
 		}
 		w.WriteLine ("}");
+
+		w.WriteLine ();
+		w.WriteLine ("void mono_ios_setup_execution_mode (void)");
+		w.WriteLine ("{");
+		if (isinterp) {
+			w.WriteLine ("\tmono_icall_table_init ();");
+			w.WriteLine ("\tmono_marshal_ilgen_init ();");
+			w.WriteLine ("\tmono_method_builder_ilgen_init ();");
+			w.WriteLine ("\tmono_sgen_mono_ilgen_init ();");
+			w.WriteLine ("\tmono_ee_interp_init (0);");
+		}
+		w.WriteLine ("\tmono_jit_set_aot_mode ({0});", isinterp ? "MONO_AOT_MODE_INTERP" : "MONO_AOT_MODE_FULL");
+		w.WriteLine ("}");
+
+		w.WriteLine ();
 		w.Close ();
 	}
 
@@ -58,6 +99,8 @@ public class AppBuilder
 		bool isdev = false;
 		bool isrelease = false;
 		bool isllvm = false;
+		bool isinterponly = false;
+		bool isinterpmixed = false;
 		var assemblies = new List<string> ();
 		var p = new OptionSet () {
 				{ "target=", s => target = s },
@@ -73,6 +116,8 @@ public class AppBuilder
 				{ "signing-identity=", s => signing_identity = s },
 				{ "profile=", s => profile = s },
 				{ "llvm", s => isllvm = true },
+				{ "interp-only", s => isinterponly = true },
+				{ "interp-mixed", s => isinterpmixed = true },
 				{ "exe=", s => exe = s },
 				{ "r=", s => assemblies.Add (s) },
 			};
@@ -101,13 +146,24 @@ public class AppBuilder
 		if (isllvm)
 			isrelease = true;
 
+		bool isinterpany = isinterponly || isinterpmixed;
+
 		string aot_args = "";
 		string cross_runtime_args = "";
+
+		if (isinterponly) {
+			aot_args = "interp";
+		} else if (isinterpmixed) {
+			aot_args = "interp,full";
+		} else {
+			aot_args = "full";
+		}
+
 		if (!isrelease)
-			aot_args = "soft-debug";
+			aot_args += ",soft-debug";
 		if (isllvm) {
 			cross_runtime_args = "--llvm";
-			aot_args = ",llvm-path=$mono_sdkdir/ios-llvm64/bin,llvm-outfile=$llvm_outfile";
+			aot_args += ",llvm-path=$mono_sdkdir/llvm-llvm64/bin,llvm-outfile=$llvm_outfile";
 		}
 
 		Directory.CreateDirectory (builddir);
@@ -142,11 +198,11 @@ public class AppBuilder
 		ninja.WriteLine ($"signing_identity = {signing_identity}");
 		// Rules
 		ninja.WriteLine ("rule aot");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,full,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		// ninja remakes files it hadn't seen before even if the timestamp is newer, so have to add a test ourselves
 		ninja.WriteLine ("rule aot-cached");
-		ninja.WriteLine ($"  command = if ! test -f $outfile; then MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,full,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file; fi");
+		ninja.WriteLine ($"  command = if ! test -f $outfile; then MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file; fi");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		ninja.WriteLine ("rule assemble");
 		ninja.WriteLine ("  command = clang -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -c -o $out $in");
@@ -174,10 +230,11 @@ public class AppBuilder
 		ninja.WriteLine ("  command = clang -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -c -o $out $in");
 		ninja.WriteLine ("rule gen-exe");
 		ninja.WriteLine ("  command = mkdir $appdir");
-		ninja.WriteLine ($"  command = clang -ObjC -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -framework Foundation -framework UIKit -o $appdir/{bundle_executable} $in -liconv");
+		ninja.WriteLine ($"  command = clang -ObjC -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -framework Foundation -framework UIKit -o $appdir/{bundle_executable} $in -liconv -lz");
 	
 		var ofiles = "";
 		var assembly_names = new List<string> ();
+		var cultures = CultureInfo.GetCultures (CultureTypes.AllCultures).Where (x => !String.IsNullOrEmpty (x.IetfLanguageTag)).Select (x => x.IetfLanguageTag);
 		foreach (var assembly in assemblies) {
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
@@ -188,6 +245,21 @@ public class AppBuilder
 				File.Copy (assembly, Path.Combine (aotdir, filename), false);
 
 			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff $builddir/{filename}");
+
+			var assembly_dir = Path.GetDirectoryName (assembly);
+			var resource_filename = filename.Replace (".dll", ".resources.dll");
+			foreach (var culture in cultures) {
+				var resource_assembly = Path.Combine (assembly_dir, culture, resource_filename);
+				if (!File.Exists(resource_assembly)) continue;
+
+				Directory.CreateDirectory (Path.Combine (builddir, culture));
+				File.Copy (resource_assembly, Path.Combine (builddir, culture, resource_filename), true);
+				ninja.WriteLine ($"build $appdir/{culture}/{resource_filename}: cpifdiff $builddir/{culture}/{resource_filename}");
+			}
+
+			if (isinterpany && filename_noext != "mscorlib")
+				continue;
+
 			if (isdev) {
 				string destdir = null;
 				string srcfile = null;
@@ -230,7 +302,14 @@ public class AppBuilder
 		ninja.WriteLine ("build $appdir: mkdir");
 
 		if (isdev) {
-			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o $mono_sdkdir/ios-target64-release/lib/libmonosgen-2.0.a $monoios_dir/libmonoios.a");
+			string libs = "$mono_sdkdir/ios-target64-release/lib/libmonosgen-2.0.a";
+			if (isinterpany) {
+				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-ee-interp.a";
+				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-icall-table.a";
+				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-ilgen.a";
+			}
+			libs += " $mono_sdkdir/ios-target64-release/lib/libmono-native-unified.dylib";
+			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o " + libs + " $monoios_dir/libmonoios.a");
 			ninja.WriteLine ("build $builddir/main.o: compile-objc $builddir/main.m");
 		} else {
 			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp $monoios_dir/runtime");
@@ -252,6 +331,6 @@ public class AppBuilder
 
 		ninja.Close ();
 
-		GenMain (builddir, assembly_names);
+		GenMain (builddir, assembly_names, isinterpany);
 	}
 }

@@ -2,7 +2,7 @@
 // TIFF Codec class testing unit
 //
 // Authors:
-//	Jordi Mas i Hernàndez (jordi@ximian.com)
+//	Jordi Mas i Hernï¿½ndez (jordi@ximian.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2006, 2007 Novell, Inc (http://www.novell.com)
@@ -35,6 +35,8 @@ using System.Security.Permissions;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing.Imaging {
 
 	[TestFixture]
@@ -65,22 +67,11 @@ namespace MonoTests.System.Drawing.Imaging {
 			return s;
 		}
 
-		/* Get the input directory depending on the runtime*/
-		internal string getInFile (string file)
-		{
-			string sRslt = Path.GetFullPath ("../System.Drawing/" + file);
-
-			if (!File.Exists (sRslt))
-				sRslt = "Test/System.Drawing/" + file;
-
-			return sRslt;
-		}
-
 		/* Checks bitmap features on a know 32bbp bitmap */
 		[Test]
 		public void Bitmap32bitsFeatures ()
 		{
-			string sInFile = getInFile ("bitmaps/almogaver32bits.tif");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver32bits.tif");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				GraphicsUnit unit = GraphicsUnit.World;
 				RectangleF rect = bmp.GetBounds (ref unit);
@@ -102,7 +93,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap32bitsPixels ()
 		{
-			string sInFile = getInFile ("bitmaps/almogaver32bits.tif");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver32bits.tif");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 #if false
 				for (int x = 0; x < bmp.Width; x += 32) {
@@ -154,7 +145,7 @@ namespace MonoTests.System.Drawing.Imaging {
 		[Test]
 		public void Bitmap32bitsData ()
 		{
-			string sInFile = getInFile ("bitmaps/almogaver32bits.tif");
+			string sInFile = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/almogaver32bits.tif");
 			using (Bitmap bmp = new Bitmap (sInFile)) {
 				BitmapData data = bmp.LockBits (new Rectangle (0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 				try {

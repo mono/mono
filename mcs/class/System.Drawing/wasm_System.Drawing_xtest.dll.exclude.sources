@@ -1,0 +1,5 @@
+../../../external/corefx/src/System.Drawing.Common/tests/Helpers.cs
+../../../external/corefx/src/System.Drawing.Common/tests/RegionTests.cs
+../../../external/corefx/src/System.Drawing.Common/tests/StringFormatTests.cs
+../../../external/corefx/src/System.Drawing.Common/tests/Drawing2D/GraphicsPathTests.cs
+../../../external/corefx/src/System.Drawing.Common/tests/Drawing2D/GraphicsPathIteratorTests.cs

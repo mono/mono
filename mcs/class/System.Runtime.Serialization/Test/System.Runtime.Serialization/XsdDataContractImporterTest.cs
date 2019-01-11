@@ -50,6 +50,8 @@ using NUnit.Framework;
 
 using QName = System.Xml.XmlQualifiedName;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Runtime.Serialization
 {
 	[TestFixture]
@@ -61,7 +63,7 @@ namespace MonoTests.System.Runtime.Serialization
 		[SetUp]
 		public void Setup ()
 		{
-			XmlReader xr = XmlTextReader.Create ("Test/System.Runtime.Serialization/one.xml");
+			XmlReader xr = XmlTextReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/Resources/one.xml"));
 			metadata = MetadataSet.ReadFrom (xr);
 			NewXmlSchemaSet ();
 		}
@@ -374,8 +376,8 @@ namespace MonoTests.System.Runtime.Serialization
 			var ccu = new CodeCompileUnit ();
 			var xdi = new XsdDataContractImporter (ccu);
 			var xss = new XmlSchemaSet ();
-			xss.Add (null, "Test/Resources/Schemas/schema1.xsd");
-			xss.Add (null, "Test/Resources/Schemas/schema2.xsd");
+			xss.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/schema1.xsd"));
+			xss.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/schema2.xsd"));
 			xdi.Import (xss);
 			var sw = new StringWriter ();
 			new CSharpCodeProvider ().GenerateCodeFromCompileUnit (ccu, sw, null);
@@ -388,9 +390,9 @@ namespace MonoTests.System.Runtime.Serialization
 			var ccu = new CodeCompileUnit ();
 			var xdi = new XsdDataContractImporter (ccu);
 			var xss = new XmlSchemaSet ();
-			xss.Add (null, "Test/Resources/Schemas/schema1.xsd");
-			xss.Add (null, "Test/Resources/Schemas/schema2.xsd");
-			xss.Add (null, "Test/Resources/Schemas/schema3.xsd");
+			xss.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/schema1.xsd"));
+			xss.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/schema2.xsd"));
+			xss.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/schema3.xsd"));
 			xdi.Import (xss);
 			var sw = new StringWriter ();
 			bool t = false, te = false;
@@ -446,52 +448,52 @@ namespace MonoTests.System.Runtime.Serialization
 		[Test]
 		public void ImportTestX0 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns0.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns0.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX0_2 ()
 		{
-			var ccu = DoImport (true, "Test/Resources/Schemas/ns0.xsd");
+			var ccu = DoImport (true, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns0.xsd"));
 			Assert.IsTrue (GenerateCode (ccu).IndexOf ("class") < 0, "#1");
 		}
 
 		[Test]
 		public void ImportTestX1 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns1.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns1.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX1_2 ()
 		{
-			Assert.AreEqual (GenerateCode (DoImport ("Test/Resources/Schemas/ns1.xsd")), GenerateCode (DoImport (true, "Test/Resources/Schemas/ns1.xsd")), "#1");
+			Assert.AreEqual (GenerateCode (DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns1.xsd"))), GenerateCode (DoImport (true, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns1.xsd"))), "#1");
 		}
 
 		[Test]
 		public void ImportTestX2 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns2.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns2.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX2_2 ()
 		{
-			Assert.AreEqual (GenerateCode (DoImport ("Test/Resources/Schemas/ns2.xsd")), GenerateCode (DoImport (true, "Test/Resources/Schemas/ns2.xsd")), "#1");
+			Assert.AreEqual (GenerateCode (DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns2.xsd"))), GenerateCode (DoImport (true, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns2.xsd"))), "#1");
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX3 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns3.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns3.xsd"));
 		}
 
 		[Test]
 		[Category ("NotWorking")]
 		public void ImportTestX3_2 ()
 		{
-			var ccu = DoImport (true, "Test/Resources/Schemas/ns3.xsd");
+			var ccu = DoImport (true, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns3.xsd"));
 			var code = GenerateCode (ccu);
 			Assert.IsTrue (code.IndexOf ("class T2") > 0, "#1");
 			Assert.IsTrue (code.IndexOf ("IXmlSerializable") > 0, "#2");
@@ -504,208 +506,208 @@ namespace MonoTests.System.Runtime.Serialization
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX4 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns4.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns4.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX5 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns5.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns5.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX6 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns6.xsd",
-				  "Test/Resources/Schemas/ns0.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns6.xsd"),
+				  TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns0.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX7 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns7.xsd",
-				  "Test/Resources/Schemas/ns0.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns7.xsd"),
+				  TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns0.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX8 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns8.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns8.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX9 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns9.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns9.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX10 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns10.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns10.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX11 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns11.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns11.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX12 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns12.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns12.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX13 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns13.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns13.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX14 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns14.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns14.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX15 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns15.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns15.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX16 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns16.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns16.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX17 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns17.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns17.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX18 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns18.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns18.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX19 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns19.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns19.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX20 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns20.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns20.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX21 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns21.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns21.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX22 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns22.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns22.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX23 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns23.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns23.xsd"));
 		}
 
 		[ExpectedException (typeof (InvalidDataContractException))]
 		[Test]
 		public void ImportTestX24 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns24.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns24.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX25 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns25.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns25.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX26 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns26.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns26.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX27 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns27.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns27.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX28 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns28.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns28.xsd"));
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidDataContractException))]
 		public void ImportTestX29 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns29.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns29.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX30 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns30.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns30.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX31 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns31.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns31.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX32 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns32.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns32.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX33 ()
 		{
-			DoImport ("Test/Resources/Schemas/ns33.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns33.xsd"));
 		}
 
 		[Test]
 		public void ImportTestX34 ()
 		{
-			DoImport (true, "Test/Resources/Schemas/ns34.xsd", "Test/Resources/Schemas/ns34_2.xsd");
+			DoImport (true, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns34.xsd"), TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns34_2.xsd"));
 		}
 
 		[Test]
 		public void CanImportTestX34 ()
 		{
-			DoCanImport (false, "Test/Resources/Schemas/ns34.xsd", "Test/Resources/Schemas/ns34_2.xsd");
+			DoCanImport (false, TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns34.xsd"), TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/ns34_2.xsd"));
 		}
 
 		/* Helper methods */
@@ -780,7 +782,7 @@ namespace MonoTests.System.Runtime.Serialization
 		[Test]
 		public void ImportXsdBuiltInTypes ()
 		{
-			DoImport ("Test/Resources/Schemas/xml.xsd");
+			DoImport (TestResourceHelper.GetFullPathOfResource ("Test/Resources/Schemas/xml.xsd"));
 		}
 	}
 

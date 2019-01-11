@@ -34,6 +34,8 @@ using System.ServiceModel.Configuration;
 using System.ServiceModel.Channels;
 using System.Configuration;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
@@ -44,7 +46,7 @@ namespace MonoTests.System.ServiceModel.Configuration
 		[Category("NotWorking")]
 		[Ignore ("fails under .NET; I never bothered to fix the test")]
 		public void UserConfiguration () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/userBinding").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/userBinding")).GetSectionGroup ("system.serviceModel");
 
 			BindingsSection section = config.Bindings;
 

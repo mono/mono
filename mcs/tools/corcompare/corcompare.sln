@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "..\..\..\exte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-html", "mono-api-html\mono-api-html.csproj", "{D25986E2-7A41-4966-A26D-5614BAC7B8A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-diff", "mono-api-diff\mono-api-diff.csproj", "{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,30 @@ Global
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.winphone_Debug|Any CPU.Build.0 = winphone_Debug|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.winphone_Release|Any CPU.ActiveCfg = winphone_Release|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.winphone_Release|Any CPU.Build.0 = winphone_Release|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_2_0_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_2_0_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_2_0_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_2_0_Release|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_3_5_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_3_5_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_3_5_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_3_5_Release|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_4_0_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_4_0_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_4_0_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.net_4_0_Release|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.silverlight_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.silverlight_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.silverlight_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.silverlight_Release|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.winphone_Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.winphone_Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.winphone_Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{0424B3D8-DBDF-405B-A48C-DC27C6B97C90}.winphone_Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = mono-api-html\mono-api-html.csproj

@@ -18,6 +18,8 @@ using System.Xml;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Security.Cryptography.Xml
 {
 	[TestFixture]
@@ -26,7 +28,7 @@ namespace MonoTests.System.Security.Cryptography.Xml
 		[Test]
 		public void Sample1 ()
 		{
-			AssertDecryption1 ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml");
+			AssertDecryption1 (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml"));
 		}
 
 		void AssertDecryption1 (string filename)
@@ -35,7 +37,7 @@ namespace MonoTests.System.Security.Cryptography.Xml
 			doc.PreserveWhitespace = true;
 			doc.Load (filename);
 			EncryptedXml encxml = new EncryptedXml (doc);
-			RSACryptoServiceProvider rsa = new X509Certificate2 ("Test/System.Security.Cryptography.Xml/sample.pfx", "mono").PrivateKey as RSACryptoServiceProvider;
+			RSACryptoServiceProvider rsa = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Xml/sample.pfx"), "mono").PrivateKey as RSACryptoServiceProvider;
 			XmlNamespaceManager nm = new XmlNamespaceManager (doc.NameTable);
 			nm.AddNamespace ("s", "http://www.w3.org/2003/05/soap-envelope");
 			nm.AddNamespace ("o", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
@@ -68,7 +70,7 @@ namespace MonoTests.System.Security.Cryptography.Xml
 
 			XmlDocument doc = new XmlDocument ();
 			doc.PreserveWhitespace = true;
-			doc.Load ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample2.xml");
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample2.xml"));
 			EncryptedXml encxml = new EncryptedXml (doc);
 			EncryptedData edata = new EncryptedData ();
 			edata.LoadXml (doc.DocumentElement);
@@ -78,7 +80,7 @@ namespace MonoTests.System.Security.Cryptography.Xml
 		[Test]
 		public void Sample3 ()
 		{
-			AssertDecryption1 ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample3.xml");
+			AssertDecryption1 (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample3.xml"));
 		}
 
 		[Test]

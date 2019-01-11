@@ -34,14 +34,13 @@ using System.Web.Caching;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Web.Caching
 {
 	[TestFixture]
 	public partial class CacheItemPriorityQueueTest
 	{
-		const string DATA_DIR = "CacheItemPriorityQueueTestData";
-		static readonly string dataDir;
-		
 		sealed class TestCacheItem : CacheItem
 		{
 			public Guid Guid;
@@ -89,20 +88,12 @@ namespace MonoTests.System.Web.Caching
 			}
 		}
 
-		static CacheItemPriorityQueueTest ()
-		{
-			// Assumes this is compiled into mcs/class/lib/<profile>/test
-			string class_dir = Directory.GetParent (Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location)).Parent.Parent.FullName;
-			string system_web_dir = Path.Combine (class_dir, "System.Web", "Test", "System.Web.Caching");
-			dataDir = Path.Combine (system_web_dir, DATA_DIR);
-		}
-		
 		void RunTest (string testsFileName, string listFileName)
 		{
 			var queue = new CacheItemPriorityQueue ();
 			var cacheItems = new List <TestCacheItem> ();
-			string listPath = Path.Combine (dataDir, listFileName);
-			string testsPath = Path.Combine (dataDir, testsFileName);
+			string listPath = TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Caching/CacheItemPriorityQueueTestData/" + listFileName);
+			string testsPath = TestResourceHelper.GetFullPathOfResource ("Test/System.Web.Caching/CacheItemPriorityQueueTestData/" + testsFileName);
 			string line;
 			
 			using (var sr = new StreamReader (listPath, Encoding.UTF8)) {

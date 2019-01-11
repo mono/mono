@@ -15,6 +15,8 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -37,7 +39,7 @@ namespace MonoTests.System.Windows.Forms
 			// B
 			rTBox.BackColor = Color.White;
 			Assert.AreEqual (null, rTBox.BackgroundImage, "#B1");
-			string gif = "M.gif";
+			string gif = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 			rTBox.BackgroundImage = Image.FromFile (gif);
 			// comparing image objects fails on MS .Net so using Size property
 			Assert.AreEqual (Image.FromFile(gif, true).Size, rTBox.BackgroundImage.Size, "#B2");
@@ -103,7 +105,7 @@ namespace MonoTests.System.Windows.Forms
 		public void CanPasteTest ()
 		{
 			RichTextBox rTextBox = new RichTextBox ();
-			Bitmap myBitmap = new Bitmap ("M.gif");
+			Bitmap myBitmap = new Bitmap (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 			Clipboard.SetDataObject (myBitmap);
 			DataFormats.Format myFormat = DataFormats.GetFormat (DataFormats.Bitmap);
 			Assert.AreEqual (true, rTextBox.CanPaste (myFormat), "#Mtd1");

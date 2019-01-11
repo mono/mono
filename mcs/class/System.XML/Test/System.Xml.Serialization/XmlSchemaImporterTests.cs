@@ -46,6 +46,8 @@ using NUnit.Framework;
 
 using MonoTests.System.Xml.TestClasses;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml.Serialization
 {
 	[TestFixture]
@@ -1159,8 +1161,8 @@ namespace MonoTests.System.Xml.Serialization
 		public void ImportWildcardElementAsClass ()
 		{
 			var xss = new XmlSchemas ();
-			xss.Add (XmlSchema.Read (XmlReader.Create ("Test/XmlFiles/xsd/670945-1.xsd"), null));
-			xss.Add (XmlSchema.Read (XmlReader.Create ("Test/XmlFiles/xsd/670945-2.xsd"), null));
+			xss.Add (XmlSchema.Read (XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/670945-1.xsd")), null));
+			xss.Add (XmlSchema.Read (XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/670945-2.xsd")), null));
 			var imp = new XmlSchemaImporter (xss);
 			var xtm = imp.ImportSchemaType (new XmlQualifiedName ("SystemDateTime", "http://www.onvif.org/ver10/schema"));
 			var cns = new CodeNamespace ();

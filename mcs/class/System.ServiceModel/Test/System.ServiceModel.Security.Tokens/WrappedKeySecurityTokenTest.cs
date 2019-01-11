@@ -38,13 +38,15 @@ using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
 	public class WrappedKeySecurityTokenTest
 	{
 		static readonly X509Certificate2 cert =
-			new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 
 		WrappedKeySecurityToken GetReferent ()
 		{

@@ -14,6 +14,7 @@ using Microsoft.SqlServer.Server;
 using System.Reflection;
 using System.IO;
 using System.Globalization;
+using System.Security;
 
 namespace System.Data.SqlClient
 {
@@ -121,6 +122,12 @@ namespace System.Data.SqlClient
 			=> throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 
 		public override void ChangeDatabase(string database)
+			=> throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+
+		public static void ChangePassword(string connectionString, string newPassword)
+			=> throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
+
+		public static void ChangePassword(string connectionString, SqlCredential credential, SecureString newSecurePassword)
 			=> throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 
 		public static void ClearAllPools()

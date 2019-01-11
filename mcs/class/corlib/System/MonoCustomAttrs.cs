@@ -71,16 +71,15 @@ namespace System
 
 		internal static object[] GetPseudoCustomAttributes (ICustomAttributeProvider obj, Type attributeType) {
 			object[] pseudoAttrs = null;
-
 			/* FIXME: Add other types */
-			if (obj is MonoMethod)
-				pseudoAttrs = ((MonoMethod)obj).GetPseudoCustomAttributes ();
-			else if (obj is FieldInfo)
-				pseudoAttrs = ((FieldInfo)obj).GetPseudoCustomAttributes ();
-			else if (obj is ParameterInfo)
-				pseudoAttrs = ((ParameterInfo)obj).GetPseudoCustomAttributes ();
-			else if (obj is Type)
-				pseudoAttrs = GetPseudoCustomAttributes (((Type)obj));
+			if (obj is MonoMethod monoMethod)
+				pseudoAttrs = monoMethod.GetPseudoCustomAttributes ();
+			else if (obj is FieldInfo fieldInfo)
+				pseudoAttrs = fieldInfo.GetPseudoCustomAttributes ();
+			else if (obj is MonoParameterInfo monoParamInfo)
+				pseudoAttrs = monoParamInfo.GetPseudoCustomAttributes ();
+			else if (obj is Type t)
+				pseudoAttrs = GetPseudoCustomAttributes (t);
 
 			if ((attributeType != null) && (pseudoAttrs != null)) {
 				for (int i = 0; i < pseudoAttrs.Length; ++i)
@@ -293,6 +292,9 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		[PreserveDependency(".ctor(System.Reflection.ConstructorInfo,System.Reflection.Assembly,System.IntPtr,System.UInt32)", "System.Reflection.CustomAttributeData")]
+		[PreserveDependency(".ctor(System.Reflection.MemberInfo,System.Object)", "System.Reflection.CustomAttributeNamedArgument")]
+		[PreserveDependency(".ctor(System.Type,System.Object)", "System.Reflection.CustomAttributeTypedArgument")]
 		static extern CustomAttributeData [] GetCustomAttributesDataInternal (ICustomAttributeProvider obj);
 
 		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj, bool inherit = false)
@@ -461,14 +463,14 @@ namespace System
 			CustomAttributeData[] pseudoAttrsData = null;
 
 			/* FIXME: Add other types */
-			if (obj is MonoMethod)
-				pseudoAttrsData = ((MonoMethod)obj).GetPseudoCustomAttributesData ();
-			else if (obj is FieldInfo)
-				pseudoAttrsData = ((FieldInfo)obj).GetPseudoCustomAttributesData ();
-			else if (obj is ParameterInfo)
-				pseudoAttrsData = ((ParameterInfo)obj).GetPseudoCustomAttributesData ();
-			else if (obj is Type)
-				pseudoAttrsData = GetPseudoCustomAttributesData (((Type)obj));
+			if (obj is MonoMethod monoMethod)
+				pseudoAttrsData = monoMethod.GetPseudoCustomAttributesData ();
+			else if (obj is FieldInfo fieldInfo)
+				pseudoAttrsData = fieldInfo.GetPseudoCustomAttributesData ();
+			else if (obj is MonoParameterInfo monoParamInfo)
+				pseudoAttrsData = monoParamInfo.GetPseudoCustomAttributesData ();
+			else if (obj is Type t)
+				pseudoAttrsData = GetPseudoCustomAttributesData (t);
 
 			if ((attributeType != null) && (pseudoAttrsData != null)) {
 				for (int i = 0; i < pseudoAttrsData.Length; ++i) {
@@ -556,7 +558,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseMethod ();
+			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				ParameterInfo[] parameters = property.GetIndexParameters ();
 				if (parameters != null && parameters.Length > 0) {
@@ -583,7 +585,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseMethod ();
+			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				BindingFlags flags = method.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
 				flags |= method.IsStatic ? BindingFlags.Static : BindingFlags.Instance;
@@ -621,7 +623,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseMethod ();
+			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
 			if (baseMethod == method)
 				return null;
 

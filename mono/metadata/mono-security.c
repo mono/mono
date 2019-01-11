@@ -9,9 +9,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
 
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/appdomain.h>
@@ -21,9 +19,9 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/security.h>
 #include <mono/utils/strenc.h>
-
+#include "reflection-internals.h"
+#include "icall-decl.h"
 #ifndef HOST_WIN32
-#include <config.h>
 #ifdef HAVE_GRP_H
 #include <grp.h>
 #endif
@@ -34,6 +32,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include "icall-decl.h"
 
 /* Disclaimers */
 
@@ -347,7 +346,7 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 /* System.Security.Principal.WindowsImpersonationContext */
 
 #ifndef HOST_WIN32
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_CloseToken (gpointer token, MonoError *error)
 {
 	return TRUE;
@@ -363,7 +362,7 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (
 #endif /* !HOST_WIN32 */
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken (gpointer token, MonoError *error)
 {
 #ifdef HOST_WIN32
@@ -378,7 +377,7 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken 
 #endif
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (MonoError *error)
 {
 #ifdef HOST_WIN32
@@ -407,7 +406,7 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (Mo
 /* System.Security.Principal.WindowsPrincipal */
 
 #ifndef HOST_WIN32
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group, MonoError *error)
 {
 	gboolean result = FALSE;
@@ -449,7 +448,7 @@ ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer
 	return result;
 }
 
-gboolean
+MonoBoolean
 ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gchar *utf8_groupname, MonoError *error)
 {
 	gboolean result = FALSE;
@@ -597,45 +596,44 @@ ves_icall_System_Security_Policy_Evidence_IsAuthenticodePresent (MonoReflectionA
 /* System.Security.SecureString related internal calls */
 
 static MonoImage *system_security_assembly;
+static MonoMethod *mono_method_securestring_decrypt;
+static MonoMethod *mono_method_securestring_encrypt;
 
-void
-ves_icall_System_Security_SecureString_DecryptInternal (MonoArray *data, MonoObject *scope)
+static void
+mono_invoke_protected_memory_method (MonoArrayHandle data, MonoObjectHandle scope,
+	const char *method_name, MonoMethod **method, MonoError *error)
 {
-	ERROR_DECL (error);
-	mono_invoke_protected_memory_method (data, scope, FALSE, error);
-	mono_error_set_pending_exception (error);
-}
-void
-ves_icall_System_Security_SecureString_EncryptInternal (MonoArray* data, MonoObject *scope)
-{
-	ERROR_DECL (error);
-	mono_invoke_protected_memory_method (data, scope, TRUE, error);
-	mono_error_set_pending_exception (error);
-}
-
-void mono_invoke_protected_memory_method (MonoArray *data, MonoObject *scope, gboolean encrypt, MonoError *error)
-{
-	MonoClass *klass;
-	MonoMethod *method;
-	void *params [2];
-
-	error_init (error);
-	
-	if (system_security_assembly == NULL) {
-		system_security_assembly = mono_image_loaded ("System.Security");
-		if (!system_security_assembly) {
-			MonoAssembly *sa = mono_assembly_open_predicate ("System.Security.dll", MONO_ASMCTX_DEFAULT, NULL, NULL, NULL);
-			if (!sa)
-				g_assert_not_reached ();
-			system_security_assembly = mono_assembly_get_image_internal (sa);
+	if (!*method) {
+		if (system_security_assembly == NULL) {
+			system_security_assembly = mono_image_loaded ("System.Security");
+			if (!system_security_assembly) {
+				MonoAssemblyOpenRequest req;
+				mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+				MonoAssembly *sa = mono_assembly_request_open ("System.Security.dll", &req, NULL);
+				g_assert (sa);
+				system_security_assembly = mono_assembly_get_image_internal (sa);
+			}
 		}
+		MonoClass *klass = mono_class_load_from_name (system_security_assembly,
+									  "System.Security.Cryptography", "ProtectedMemory");
+		*method = mono_class_get_method_from_name_checked (klass, method_name, 2, 0, error);
+		mono_error_assert_ok (error);
+		g_assert (*method);
 	}
+	void *params [ ] = {
+		MONO_HANDLE_RAW (data),
+		MONO_HANDLE_RAW (scope) // MemoryProtectionScope.SameProcess
+	};
+	mono_runtime_invoke_handle_void (*method, NULL_HANDLE, params, error);
+}
 
-	klass = mono_class_load_from_name (system_security_assembly,
-								  "System.Security.Cryptography", "ProtectedMemory");
-	method = mono_class_get_method_from_name (klass, encrypt ? "Protect" : "Unprotect", 2);
-	params [0] = data;
-	params [1] = scope; /* MemoryProtectionScope.SameProcess */
-
-	mono_runtime_invoke_checked (method, NULL, params, error);
+void
+ves_icall_System_Security_SecureString_DecryptInternal (MonoArrayHandle data, MonoObjectHandle scope, MonoError *error)
+{
+	mono_invoke_protected_memory_method (data, scope, "Unprotect", &mono_method_securestring_decrypt, error);
+}
+void
+ves_icall_System_Security_SecureString_EncryptInternal (MonoArrayHandle data, MonoObjectHandle scope, MonoError *error)
+{
+	mono_invoke_protected_memory_method (data, scope, "Protect", &mono_method_securestring_encrypt, error);
 }

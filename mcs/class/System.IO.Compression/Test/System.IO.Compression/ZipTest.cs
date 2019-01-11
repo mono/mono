@@ -30,6 +30,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IO.Compression
 {
 	[TestFixture]
@@ -48,7 +50,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipGetEntryReadMode()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
@@ -66,7 +68,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipGetEntryCreateMode()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Create))
 			{
@@ -86,7 +88,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipGetEntryUpdateMode()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
@@ -104,7 +106,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipGetEntryOpen()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
@@ -122,7 +124,7 @@ namespace MonoTests.System.IO.Compression
 		{
 			var tmpFile = Path.GetTempFileName ();	
 			try {
-				File.Copy("archive.zip", tmpFile, overwrite: true);
+				File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 				using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 					ZipArchiveMode.Update))
 				{
@@ -149,7 +151,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipOpenCloseAndReopenEntry()
 		{
 			var tmpFile = Path.GetTempFileName ();	
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Update))
 			{
@@ -168,7 +170,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipGetEntryDeleteReadMode()
 		{
 			var tmpFile = Path.GetTempFileName ();	
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Update))
 			{
@@ -192,7 +194,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipDeleteEntryCheckEntries()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Update))
 			{
@@ -211,7 +213,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipGetEntryDeleteUpdateMode()
 		{
 			var tmpFile = Path.GetTempFileName ();	
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Update))
 			{
@@ -269,7 +271,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipEnumerateEntriesModifiedTime()
 		{
 			var tmpFile = Path.GetTempFileName ();	
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			var date = DateTimeOffset.Now;
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Update))
@@ -295,7 +297,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipEnumerateArchiveDefaultLastWriteTime()
 		{
 			var tmpFile = Path.GetTempFileName ();	
-			File.Copy("test.nupkg", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/test.nupkg"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
@@ -309,7 +311,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipGetArchiveEntryStreamLengthPosition(ZipArchiveMode mode)
 		{
 			var tmpFile = Path.GetTempFileName ();	
-			File.Copy("test.nupkg", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/test.nupkg"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite), mode))
 			{
 				var entry = archive.GetEntry("_rels/.rels");
@@ -349,7 +351,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipEnumerateEntriesReadMode()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
@@ -370,7 +372,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipWriteEntriesUpdateMode()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Update))
 			{
@@ -435,7 +437,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipWriteEntriesUpdateModeNonZeroPosition()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Update))
 			{
@@ -470,7 +472,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipEnumerateEntriesUpdateMode()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open, FileAccess.ReadWrite),
 				ZipArchiveMode.Read))
 			{
@@ -491,7 +493,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipEnumerateEntriesCreateMode()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("archive.zip", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/archive.zip"), tmpFile, overwrite: true);
 			using (var archive = new ZipArchive(File.Open(tmpFile, FileMode.Open),
 				ZipArchiveMode.Create))
 			{
@@ -538,7 +540,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipReadNonSeekableStream()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("test.nupkg", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/test.nupkg"), tmpFile, overwrite: true);
 			var stream = new MyFakeStream(tmpFile, FileMode.Open);
 			using (var archive = new ZipArchive (stream, ZipArchiveMode.Read))
 			{
@@ -550,7 +552,7 @@ namespace MonoTests.System.IO.Compression
 		public void ZipWriteNonSeekableStream()
 		{
 			var tmpFile = Path.GetTempFileName ();
-			File.Copy("test.nupkg", tmpFile, overwrite: true);
+			File.Copy (TestResourceHelper.GetFullPathOfResource ("Test/resources/test.nupkg"), tmpFile, overwrite: true);
 			var stream = new MyFakeStream(tmpFile, FileMode.Open );
 			using ( var archive = new ZipArchive( stream, ZipArchiveMode.Create ) ) {
 				var entry = archive.CreateEntry( "foo" );

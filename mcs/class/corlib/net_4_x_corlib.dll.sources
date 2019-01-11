@@ -1,4 +1,2 @@
 #include corlib.dll.sources
 
-../../../external/corefx/src/Common/src/CoreLib/System/HashCode.cs
-

@@ -50,6 +50,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void Ctor_Timeout ()
 		{
 			int called = 0;
@@ -62,6 +63,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void CancelAfter ()
 		{
 			int called = 0;
@@ -379,6 +381,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void RegisterWhileCancelling ()
 		{
 			var cts = new CancellationTokenSource ();

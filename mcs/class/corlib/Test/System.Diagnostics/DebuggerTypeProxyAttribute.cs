@@ -1,5 +1,5 @@
 //
-// DecoupledTask.cs
+// DebuggerTypeProxyAttribute.cs
 //
 // Authors:
 //    Marek Safar  <marek.safar@gmail.com>
