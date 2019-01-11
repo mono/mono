@@ -5601,7 +5601,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 			err = decode_vtype (t, domain, addr, buf, &buf, limit);
 			if (err != ERR_NONE)
 				return err;
-		} else  {
+		} else {
 			NOT_IMPLEMENTED;
 		}
 		break;
