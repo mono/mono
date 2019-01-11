@@ -1701,7 +1701,7 @@ mini_get_interp_lmf_wrapper (const char *name, gpointer target)
 		return res;
 
 	char *wrapper_name = g_strdup_printf ("__interp_lmf_%s", name);
-	mb = mono_mb_new (mono_defaults.object_class, "interp_lmf", MONO_WRAPPER_UNKNOWN);
+	mb = mono_mb_new (mono_defaults.object_class, wrapper_name, MONO_WRAPPER_UNKNOWN);
 
 	sig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
 	sig->ret = mono_get_void_type ();;
