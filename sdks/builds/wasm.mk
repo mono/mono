@@ -29,6 +29,8 @@ provision-wasm: .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION)
 WASM_RUNTIME_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no
 
+WASM_RUNTIME_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
+
 WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--cache-file=$(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION).config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-runtime-$(CONFIGURATION) \
@@ -50,7 +52,7 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--disable-crash-reporting \
 	--with-bitcode=yes \
 	$(if $(ENABLE_CXX),--enable-cxx) \
-	CFLAGS="-fexceptions"
+	CFLAGS="$(WASM_RUNTIME_CFLAGS)"
 
 .stamp-wasm-runtime-toolchain:
 	touch $@
