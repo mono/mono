@@ -8271,7 +8271,9 @@ mono_lookup_internal_call_full (MonoMethod *method, mono_bool *uses_handles)
 
 		if (res)
 			return res;
-
+#ifdef HOST_WIN32
+DebugBreak();
+#endif
 		g_warning ("cant resolve internal call to \"%s\" (tested without signature also)", mname);
 		g_print ("\nYour mono runtime and class libraries are out of sync.\n");
 		g_print ("The out of sync library is: %s\n", m_class_get_image (method->klass)->name);
