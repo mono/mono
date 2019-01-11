@@ -74502,6 +74502,16 @@
       </method>
     </type>
   </test>
+  <test name="test-tuple-11.cs">
+    <type name="Program">
+	  <method name="Int32 Main()" attrs="150">
+	    <size>70</size>
+	  </method>
+	  <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+	  </method>
+	</type>
+  </test>
   <test name="test-var-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
