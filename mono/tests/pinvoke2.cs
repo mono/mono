@@ -172,6 +172,13 @@ public unsafe class Tests {
 		}
 	}
 
+    [StructLayout(LayoutKind.Sequential)]
+    public struct BStrStruct
+    {
+        [MarshalAs(UnmanagedType.BStr)]
+        public string bstr;
+    }
+
 	[DllImport ("libnot-found", EntryPoint="not_found")]
 	public static extern int mono_library_not_found ();
 
@@ -1847,8 +1854,11 @@ public unsafe class Tests {
 		return 1;
 	}
 
-	[DllImport ("libtest", EntryPoint="mono_test_has_thiscall")]
-	public static extern int mono_test_has_thiscall ();
+	[DllImport ("libtest", EntryPoint="mono_test_has_thiscall_globals")]
+	public static extern int mono_test_has_thiscall_globals ();
+
+	[DllImport ("libtest", EntryPoint="mono_test_has_thiscall_pointers")]
+	public static extern int mono_test_has_thiscall_pointers ();
 
 	[DllImport ("libtest", EntryPoint = "_mono_test_native_thiscall1", CallingConvention=CallingConvention.ThisCall)]
 	public static extern int mono_test_native_thiscall (int a);
@@ -1870,7 +1880,7 @@ public unsafe class Tests {
 
 	public static int test_0_native_thiscall ()
 	{
-		if (mono_test_has_thiscall () == 0)
+		if (mono_test_has_thiscall_globals () == 0)
 			return 0;
 
 		if (mono_test_native_thiscall (1968329802) != 1968329802)
@@ -1985,7 +1995,7 @@ public unsafe class Tests {
 
 	public static int test_0_managed_thiscall ()
 	{
-		if (mono_test_has_thiscall () == 0)
+		if (mono_test_has_thiscall_pointers () == 0)
 			return 0;
 
 		if (mono_test_managed_thiscall (new ThisCallDelegate1 (thiscall_test_fn1), 517457506) != 263895844)
@@ -2091,5 +2101,17 @@ public unsafe class Tests {
 			return 2;
 		return 0;
 	}
+
+	[DllImport ("libtest", EntryPoint="mono_test_marshal_bstr")]
+	public static extern int mono_test_marshal_bstr ([In] ref BStrStruct p);
+
+	public static int test_0_bstr () {
+		var p = new BStrStruct { bstr = "Hello" };
+
+		mono_test_marshal_bstr (ref p);
+
+		return 0;
+	}
+
 }
 

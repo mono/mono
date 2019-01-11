@@ -37,6 +37,8 @@ using System.Data;
 using NUnit.Framework;
 using Microsoft.CSharp;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data
 {
 	[TestFixture]
@@ -91,7 +93,7 @@ namespace MonoTests.System.Data
 		public void RelationConnectsSameTable ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("Test/System.Data/schemas/bug77248.xsd");
+			ds.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Data/schemas/bug77248.xsd"));
 			CodeNamespace cns = new CodeNamespace ();
 			TypedDataSetGenerator.Generate (ds, cns, gen);
 			CodeCompileUnit ccu = new CodeCompileUnit ();

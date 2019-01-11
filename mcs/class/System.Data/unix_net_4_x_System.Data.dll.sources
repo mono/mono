@@ -1,0 +1,4 @@
+#include corefx.unix.sources
+#include net_4_x_System.Data.dll.sources
+
+../../../external/corefx/src/Common/src/Interop/Linux/Interop.Libraries.cs

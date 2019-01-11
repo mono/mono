@@ -309,7 +309,7 @@ namespace MonoTests.System.Threading
 
 		[Test]
 		[Category ("NotDotNet")] // it hangs.
-		[Category ("NotWorkingRuntimeInterpreter")] /* crashes on linux/arm64 */
+		[Category ("MultiThreaded")]
 		public void TestStart()
 		{
 		{
@@ -453,6 +453,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestUndivisibleByPageSizeMaxStackSize ()
 		{
 			const int undivisible_stacksize = 1048573;
@@ -834,6 +835,7 @@ namespace MonoTests.System.Threading
 #endif
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void Test_Interrupt ()
 		{
 			ManualResetEvent mre = new ManualResetEvent (false);

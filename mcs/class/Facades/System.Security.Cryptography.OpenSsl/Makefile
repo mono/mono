@@ -11,7 +11,7 @@ LIBRARY = System.Security.Cryptography.OpenSsl.dll
 
 KEYFILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /nowarn:1616,1699
-LIB_REFS = System.Core Facades/System.Security.Cryptography.Algorithms
+LIB_REFS = System.Core
 LIB_MCS_FLAGS = $(SIGN_FLAGS)
 
 NO_TEST = yes

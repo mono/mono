@@ -275,19 +275,19 @@ namespace Mono.Security.Cryptography {
 
 #if INSIDE_CORLIB
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern bool _CanSecure (string root);
+		unsafe internal static extern bool _CanSecure (char* root);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern bool _ProtectUser (string path);
+		unsafe internal static extern bool _ProtectUser (char* path);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern bool _ProtectMachine (string path);
+		unsafe internal static extern bool _ProtectMachine (char* path);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern bool _IsUserProtected (string path);
+		unsafe internal static extern bool _IsUserProtected (char* path);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern bool _IsMachineProtected (string path);
+		unsafe internal static extern bool _IsMachineProtected (char* path);
 #else
 		// Mono.Security.dll assembly can't use the internal 
 		// call (and still run with other runtimes)
@@ -295,34 +295,34 @@ namespace Mono.Security.Cryptography {
 		// Note: Class is only available in Mono.Security.dll as
 		// a management helper (e.g. build a GUI app)
 
-		internal static bool _CanSecure (string root) 
+		unsafe internal static bool _CanSecure (char* root)
 		{
 			return true;
 		}
 
-		internal static bool _ProtectUser (string path)
+		unsafe internal static bool _ProtectUser (char* path)
 		{
 			return true;
 		}
 
-		internal static bool _ProtectMachine (string path)
+		unsafe internal static bool _ProtectMachine (char* path)
 		{
 			return true;
 		}
 
-		internal static bool _IsUserProtected (string path)
+		unsafe internal static bool _IsUserProtected (char* path)
 		{
 			return true;
 		}
 
-		internal static bool _IsMachineProtected (string path)
+		unsafe internal static bool _IsMachineProtected (char* path)
 		{
 			return true;
 		}
 #endif
 		// private stuff
 
-		private static bool CanSecure (string path) 
+		unsafe private static bool CanSecure (string path)
 		{
 			// we assume POSIX filesystems can always be secured
 
@@ -333,44 +333,54 @@ namespace Mono.Security.Cryptography {
 				return true;
 
 			// while we ask the runtime for Windows OS
-			return _CanSecure (Path.GetPathRoot (path));
+			fixed (char* fpath = path) {
+				return _CanSecure (fpath);
+			}
 		}
 
-		private static bool ProtectUser (string path)
+		unsafe private static bool ProtectUser (string path)
 		{
 			// we cannot protect on some filsystem (like FAT)
 			if (CanSecure (path)) {
-				return _ProtectUser (path);
+				fixed (char* fpath = path) {
+					return _ProtectUser (fpath);
+				}
 			}
 			// but Mono still needs to run on them :(
 			return true;
 		}
 
-		private static bool ProtectMachine (string path)
+		unsafe private static bool ProtectMachine (string path)
 		{
 			// we cannot protect on some filsystem (like FAT)
 			if (CanSecure (path)) {
-				return _ProtectMachine (path);
+				fixed (char* fpath = path) {
+					return _ProtectMachine (fpath);
+				}
 			}
 			// but Mono still needs to run on them :(
 			return true;
 		}
 
-		private static bool IsUserProtected (string path)
+		unsafe private static bool IsUserProtected (string path)
 		{
 			// we cannot protect on some filsystem (like FAT)
 			if (CanSecure (path)) {
-				return _IsUserProtected (path);
+				fixed (char* fpath = path) {
+					return _IsUserProtected (fpath);
+				}
 			}
 			// but Mono still needs to run on them :(
 			return true;
 		}
 
-		private static bool IsMachineProtected (string path)
+		unsafe private static bool IsMachineProtected (string path)
 		{
 			// we cannot protect on some filsystem (like FAT)
 			if (CanSecure (path)) {
-				return _IsMachineProtected (path);
+				fixed (char* fpath = path) {
+					return _IsMachineProtected (fpath);
+				}
 			}
 			// but Mono still needs to run on them :(
 			return true;

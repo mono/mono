@@ -1,3 +1,4 @@
+../../test-helpers/TestResourceHelper.cs
 Microsoft.Build.BuildEngine/BuildChooseTest.cs
 Microsoft.Build.BuildEngine/BuildItemGroupCollectionTest.cs
 Microsoft.Build.BuildEngine/BuildItemGroupTest.cs

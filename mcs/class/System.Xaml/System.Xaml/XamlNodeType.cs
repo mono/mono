@@ -28,7 +28,7 @@ using System.Windows.Markup;
 
 namespace System.Xaml
 {
-	public enum XamlNodeType
+	public enum XamlNodeType : byte
 	{
 		None,
 		StartObject,

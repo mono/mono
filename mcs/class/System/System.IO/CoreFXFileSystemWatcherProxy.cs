@@ -105,16 +105,16 @@ namespace System.IO {
 			var result = new C ();
 
 			result.Changed += (object o, FileSystemEventArgs args) =>
-								{ ProxyDispatch (o, FileAction.Modified, args); };
+								Task.Run (() => ProxyDispatch (o, FileAction.Modified, args));
 			result.Created += (object o, FileSystemEventArgs args) =>
-								{ ProxyDispatch (o, FileAction.Added, args); };
+								Task.Run (() => ProxyDispatch (o, FileAction.Added, args));
 			result.Deleted += (object o, FileSystemEventArgs args) =>
-								{ ProxyDispatch (o, FileAction.Removed, args); };
+								Task.Run (() => ProxyDispatch (o, FileAction.Removed, args));
 			result.Renamed += (object o, RenamedEventArgs args) =>
-								{ ProxyDispatch (o, FileAction.RenamedNewName, args); };
+								Task.Run (() => ProxyDispatch (o, FileAction.RenamedNewName, args));
 
 			result.Error += (object o, ErrorEventArgs args) =>
-								{ ProxyDispatchError (handle, args); };
+								Task.Run (() => ProxyDispatchError (handle, args));
 
 			Operation (map_op: (in_map, out_map, event_map, _) => {
 				in_map.Add (handle, result);

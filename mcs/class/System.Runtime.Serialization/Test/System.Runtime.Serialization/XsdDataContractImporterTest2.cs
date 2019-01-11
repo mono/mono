@@ -57,8 +57,8 @@ namespace MonoTests.System.Runtime.Serialization
 		[SetUp]
 		public void Setup ()
 		{
-			collectionsMetadata = WsdlHelper.GetMetadataSet ("collections.wsdl");
-			customCollectionsMetadata = WsdlHelper.GetMetadataSet ("custom-collections.wsdl");
+			collectionsMetadata = WsdlHelper.GetMetadataSet ("Test/Resources/WSDL/collections.wsdl");
+			customCollectionsMetadata = WsdlHelper.GetMetadataSet ("Test/Resources/WSDL/custom-collections.wsdl");
 		}
 		
 		[Test]

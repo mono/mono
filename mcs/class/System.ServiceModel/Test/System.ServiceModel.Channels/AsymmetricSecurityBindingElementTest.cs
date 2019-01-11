@@ -51,8 +51,8 @@ namespace MonoTests.System.ServiceModel.Channels
 	[TestFixture]
 	public class AsymmetricSecurityBindingElementTest
 	{
-		static X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-		static X509Certificate2 cert2 = new X509Certificate2 ("Test/Resources/test.cer");
+		static X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
+		static X509Certificate2 cert2 = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 
 		// InitiatorTokenParameters should have asymmetric key.
 		[Test]
@@ -246,7 +246,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				binding, new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()));
 			ServiceCredentials cred = new ServiceCredentials ();
 			cred.ServiceCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			cred.ClientCertificate.Authentication.CertificateValidationMode =
 				X509CertificateValidationMode.None;
 			host.Description.Behaviors.Add (cred);

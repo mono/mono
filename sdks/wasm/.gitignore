@@ -1,0 +1,7 @@
+node_modules
+package-lock.json
+.stamp*
+*.wasm
+mono.js
+runtime*.js
+Mono.Cecil*

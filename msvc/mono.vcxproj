@@ -104,7 +104,6 @@
     <ProjectReference />
     <Link>
       <AdditionalDependencies>$(MONO_LIBMONO_LIB);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
@@ -132,7 +131,6 @@
     </ProjectReference>
     <Link>
       <AdditionalDependencies>$(MONO_LIBMONO_LIB);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <ShowProgress>
       </ShowProgress>
@@ -153,7 +151,6 @@
     </ProjectReference>
     <Link>
       <AdditionalDependencies>$(MONO_LIBMONO_LIB);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
@@ -177,9 +174,13 @@
     </ProjectReference>
     <Link>
       <AdditionalDependencies>$(MONO_LIBMONO_LIB);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Console</SubSystem>
     </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(MONO_COMPILE_AS_CPP)'=='true'">
+    <ClCompile>
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\mono\mini\main.c" />
@@ -193,6 +194,22 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="mono.external.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="_SetupMonoLLVMLinkItems" Condition="$(MONO_ENABLE_LLVM)=='true'">
+    <ItemGroup>
+      <Link>
+        <AdditionalLibraryDirectories>$(MONO_LLVM_LIB_DIR);%(Lib.AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+        <AdditionalDependencies>$(MONO_LLVM_LIBS);%(Lib.AdditionalDependencies)</AdditionalDependencies>
+      </Link>
+    </ItemGroup>
+  </Target>
+  <Target Name="_ConfigureExternalLinkDependency" DependsOnTargets="_ConfigureExternalMonoBuildEnvironment;_SetupMonoLLVMBuildProperties;_SetupMonoLLVMLinkItems" />
+  <PropertyGroup>
+    <ComputeLibInputsTargets>
+      $(ComputeLibInputsTargets);
+      _ConfigureExternalLinkDependency;
+    </ComputeLibInputsTargets>
+  </PropertyGroup>
 </Project>

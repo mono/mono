@@ -27,9 +27,14 @@
 using System;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class InterfaceComparer : MemberComparer {
+	class InterfaceComparer : MemberComparer {
+
+		public InterfaceComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override string GroupName {
 			get { return "interfaces"; }
@@ -41,7 +46,7 @@ namespace Xamarin.ApiDiff {
 
 		public override string GetDescription (XElement e)
 		{
-			return e.GetTypeName ("name");
+			return e.GetTypeName ("name", State);
 		}
 	}
 }

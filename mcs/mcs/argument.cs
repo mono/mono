@@ -38,6 +38,8 @@ namespace Mono.CSharp
 			// Conditional instance expression inserted as the first argument
 			ExtensionTypeConditionalAccess = 5 | ConditionalAccessFlag,
 
+			Readonly = 6,
+
 			ConditionalAccessFlag = 1 << 7
 		}
 

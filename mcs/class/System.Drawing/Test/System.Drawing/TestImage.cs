@@ -37,6 +37,8 @@ using System.Security.Permissions;
 using System.Xml.Serialization;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]
@@ -222,7 +224,7 @@ namespace MonoTests.System.Drawing{
 		[Test]
 		public void FromFile_Metafile_Wmf ()
 		{
-			string filename = TestBitmap.getInFile ("bitmaps/telescope_01.wmf");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/telescope_01.wmf");
 			using (Image img = Image.FromFile (filename)) {
 				Wmf (img);
 			}
@@ -231,7 +233,7 @@ namespace MonoTests.System.Drawing{
 		[Test]
 		public void FromStream_Metafile_Wmf ()
 		{
-			string filename = TestBitmap.getInFile ("bitmaps/telescope_01.wmf");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/telescope_01.wmf");
 			using (FileStream fs = File.OpenRead (filename)) {
 				using (Image img = Image.FromStream (fs)) {
 					Wmf (img);
@@ -243,7 +245,7 @@ namespace MonoTests.System.Drawing{
 		[Category ("NotWorking")] // https://bugzilla.novell.com/show_bug.cgi?id=338779
 		public void FromStream_Metafile_Wmf_NotOrigin ()
 		{
-			string filename = TestBitmap.getInFile ("bitmaps/telescope_01.wmf");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/telescope_01.wmf");
 			using (FileStream fs = File.OpenRead (filename)) {
 				fs.Position = fs.Length / 2;
 				Assert.Throws<ArgumentException> (() => Image.FromStream (fs));
@@ -263,7 +265,7 @@ namespace MonoTests.System.Drawing{
 		[Test]
 		public void FromFile_Metafile_Emf ()
 		{
-			string filename = TestBitmap.getInFile ("bitmaps/milkmateya01.emf");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/milkmateya01.emf");
 			using (Image img = Image.FromFile (filename)) {
 				Emf (img);
 			}
@@ -272,7 +274,7 @@ namespace MonoTests.System.Drawing{
 		[Test]
 		public void FromStream_Metafile_Emf ()
 		{
-			string filename = TestBitmap.getInFile ("bitmaps/milkmateya01.emf");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/milkmateya01.emf");
 			using (FileStream fs = File.OpenRead (filename)) {
 				using (Image img = Image.FromStream (fs)) {
 					Emf (img);
@@ -284,7 +286,7 @@ namespace MonoTests.System.Drawing{
 		[Category ("NotWorking")] // https://bugzilla.novell.com/show_bug.cgi?id=338779
 		public void FromStream_Metafile_Emf_NotOrigin ()
 		{
-			string filename = TestBitmap.getInFile ("bitmaps/milkmateya01.emf");
+			string filename = TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/milkmateya01.emf");
 			using (FileStream fs = File.OpenRead (filename)) {
 				fs.Position = fs.Length / 2;
 				Assert.Throws<ArgumentException> (() => Image.FromStream (fs));

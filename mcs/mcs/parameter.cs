@@ -221,12 +221,13 @@ namespace Mono.CSharp {
 			REF = 1 << 1,
 			OUT = 1 << 2,
 			This = 1 << 3,
-			CallerMemberName = 1 << 4,
-			CallerLineNumber = 1 << 5,
-			CallerFilePath = 1 << 6,
+			ReadOnly = 1 << 4,
+			CallerMemberName = 1 << 5,
+			CallerLineNumber = 1 << 6,
+			CallerFilePath = 1 << 7,
 
 			RefOutMask = REF | OUT,
-			ModifierMask = PARAMS | REF | OUT | This,
+			ModifierMask = PARAMS | REF | OUT | This | ReadOnly,
 			CallerMask = CallerMemberName | CallerLineNumber | CallerFilePath
 		}
 

@@ -716,7 +716,11 @@ namespace System.Threading
 
                 // If a cancellation has since come in, we will try to undo the registration and run the callback ourselves.
                 // (this avoids leaving the callback orphaned)
+#if MONO
+                bool deregisterOccurred = registration.Unregister();
+#else
                 bool deregisterOccurred = registration.TryDeregister();
+#endif
 
                 if (!deregisterOccurred)
                 {

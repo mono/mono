@@ -29,6 +29,7 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace Mono.Btls
 {
@@ -68,7 +69,7 @@ namespace Mono.Btls
 		extern static int mono_btls_pkcs12_add_cert (IntPtr chain, IntPtr x509);
 
 		[DllImport (BTLS_DYLIB)]
-		extern unsafe static int mono_btls_pkcs12_import (IntPtr chain, void* data, int len, IntPtr password);
+		extern unsafe static int mono_btls_pkcs12_import (IntPtr chain, void* data, int len, SafePasswordHandle password);
 
 		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_pkcs12_has_private_key (IntPtr pkcs12);
@@ -108,20 +109,12 @@ namespace Mono.Btls
 				x509.Handle.DangerousGetHandle ());
 		}
 
-		public unsafe void Import (byte[] buffer, string password)
+		public unsafe void Import (byte[] buffer, SafePasswordHandle password)
 		{
-			var passptr = IntPtr.Zero;
-			fixed (void* ptr = buffer)
-			try {
-				if (password != null)
-					passptr = Marshal.StringToHGlobalAnsi (password);
+			fixed (void* ptr = buffer) {
 				var ret = mono_btls_pkcs12_import (
-					Handle.DangerousGetHandle (), ptr,
-					buffer.Length, passptr);
+					Handle.DangerousGetHandle (), ptr, buffer.Length, password);
 				CheckError (ret);
-			} finally {
-				if (passptr != IntPtr.Zero)
-					Marshal.FreeHGlobal (passptr);
 			}
 		}
 

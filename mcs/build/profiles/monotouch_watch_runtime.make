@@ -6,6 +6,7 @@ PROFILE_MCS_FLAGS += \
 
 NO_THREAD_ABORT=1
 NO_THREAD_SUSPEND_RESUME=1
+NO_GSS=1
 # The binding generator (bwatch) still needs to execute processes,
 # so we need a System.dll that can do that.
 #NO_PROCESS_START=1

@@ -145,7 +145,7 @@ delete_bundled_libraries (void)
 	GSList *list;
 
 	for (list = bundle_library_paths; list != NULL; list = list->next){
-		unlink (list->data);
+		unlink ((const char*)list->data);
 	}
 	rmdir (bundled_dylibrary_directory);
 }
@@ -287,7 +287,8 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 	for (i = 0; i < items; i++){
 		char *kind;
 		int strsize = STREAM_INT (p);
-		uint64_t offset, item_size;
+		uint64_t offset;
+		uint32_t item_size;
 		kind = p+4;
 		p += 4 + strsize;
 		offset = STREAM_LONG(p);
@@ -295,10 +296,15 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		item_size = STREAM_INT (p);
 		p += 4;
 		
-		if (mapaddress == NULL){
-			mapaddress = mono_file_map (directory_location-offset, MONO_MMAP_READ | MONO_MMAP_PRIVATE, fd, offset, &maphandle);
-			if (mapaddress == NULL){
-				perror ("Error mapping file");
+		if (mapaddress == NULL) {
+			char *error_message = NULL;
+			mapaddress = (guchar*)mono_file_map_error (directory_location - offset, MONO_MMAP_READ | MONO_MMAP_PRIVATE,
+				fd, offset, &maphandle, program, &error_message);
+			if (mapaddress == NULL) {
+				if (error_message)
+					fprintf (stderr, "Error mapping file: %s\n", error_message);
+				else
+					perror ("Error mapping file");
 				exit (1);
 			}
 			baseline = offset;
@@ -321,7 +327,9 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		} else if (strncmp (kind, "options:", strlen ("options:")) == 0){
 			mono_parse_options_from (load_from_region (fd, offset, item_size), ref_argc, ref_argv);
 		} else if (strncmp (kind, "config_dir:", strlen ("config_dir:")) == 0){
-			mono_set_dirs (getenv ("MONO_PATH"), load_from_region (fd, offset, item_size));
+			char *mono_path_value = g_getenv ("MONO_PATH");
+			mono_set_dirs (mono_path_value, load_from_region (fd, offset, item_size));
+			g_free (mono_path_value);
 		} else if (strncmp (kind, "machineconfig:", strlen ("machineconfig:")) == 0) {
 			mono_register_machine_config (load_from_region (fd, offset, item_size));
 		} else if (strncmp (kind, "env:", strlen ("env:")) == 0){

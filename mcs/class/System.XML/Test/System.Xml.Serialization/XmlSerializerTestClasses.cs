@@ -12,6 +12,8 @@
 //
 
 using System;
+using System.Linq;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1203,6 +1205,159 @@ namespace MonoTests.System.Xml.TestClasses
 		public ClassWithDefaultTextNotNull () {
 			Value = DefaultValue;
 		}
-    }
+	}
+
+
+	#region PR_11194
+
+	#region PR_11194_GenerateOverrides
+	public static class PR11194
+	{
+		public static XmlAttributeOverrides GenerateLayoutOverrides<T>()
+		{
+			Type tType = typeof(T);
+
+			TypeInfo tTypeInfo = tType.GetTypeInfo();
+
+			IEnumerable<PropertyInfo> props = tType.GetRuntimeProperties();
+
+			XmlAttributeOverrides overrides = new XmlAttributeOverrides();
+
+			foreach (PropertyInfo prop in props) {
+				XmlDerrivedAttribute attr = prop.GetCustomAttribute<XmlDerrivedAttribute>();
+
+				if (attr == null) {
+					continue;
+				}
+
+				Type dType = prop.DeclaringType;
+
+				Type pType = prop.PropertyType;
+				TypeInfo pTypeInfo = pType.GetTypeInfo();
+
+				Type enumType = typeof(IEnumerable<>);
+
+				if (pTypeInfo.IsGenericType
+				    && pTypeInfo.ImplementedInterfaces.Any(t =>
+				    (t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == enumType))) {
+					pType = pType.GenericTypeArguments[0];
+				}
+
+				XmlAttributes overrideAttributes = GenerateOverrideAttributes(dType, pType, attr);
+
+				overrides.Add(dType, prop.Name, overrideAttributes);
+			}
+
+			return overrides;
+		}
+
+		private static XmlAttributes GenerateOverrideAttributes (Type declaringType, Type propertyType, XmlDerrivedAttribute attr)
+		{
+			XmlAttributes xAttrs = new XmlAttributes();
+
+			Assembly a = declaringType.GetTypeInfo().Assembly;
+			TypeInfo interfaceType = propertyType.GetTypeInfo();
+			IEnumerable<Type> types = a.ExportedTypes.Where(t => interfaceType.IsAssignableFrom(t.GetTypeInfo()) && !t.GetTypeInfo().IsAbstract);
+
+			foreach (Type t in types) {
+				string name = NameBySourceType(t, attr.SrcType);// t.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+				XmlElementAttribute xAttr = new XmlElementAttribute();
+				xAttr.ElementName = name;
+				xAttr.Type = t;
+				xAttrs.XmlElements.Add(xAttr);
+			}
+
+			return xAttrs;
+		}
+
+		private static string NameBySourceType (Type derrivedType, XmlDerrivedSourceType srcType)
+		{
+			string name = null;
+			switch (srcType)
+			{
+			case XmlDerrivedSourceType.ByXmlType:
+				name = derrivedType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+				break;
+			}
+			return name;
+		}
+	}
+	#endregion
+
+	#region helperAttribute
+	public enum XmlDerrivedSourceType
+	{
+		ByXmlType
+	}
+
+	public class XmlDerrivedAttribute : Attribute
+	{
+		public XmlDerrivedSourceType SrcType { get; set; }
+
+		public XmlDerrivedAttribute(XmlDerrivedSourceType srcType)
+		{
+			SrcType = srcType;
+		}
+	}
+	#endregion
+
+	public abstract class PR11194Parent
+	{
+		[XmlIgnore]
+		public PR11194Parent Parent { get; set; }
+	}
+
+	public abstract class PR11194Parent2 : PR11194Parent
+	{
+		[XmlAttribute]
+		public float width { get; set; }
+		[XmlAttribute]
+		public float height { get; set; }
+		[XmlAttribute]
+		public float x { get; set; }
+		[XmlAttribute]
+		public float y { get; set; }
+		[XmlAttribute]
+		public string id { get; set; }
+		[XmlElement]
+		[XmlDerrived(XmlDerrivedSourceType.ByXmlType)]
+		public List<PR11194Parent> children { get; set; }
+	}
+
+	[XmlType("background")]
+	public class PR11194ChildB : PR11194Parent2
+	{
+		[XmlAttribute]
+		public string image { get; set; }
+	}
+
+	[XmlType("br")]
+	public class PR11194ChildBr : PR11194Parent
+	{
+		[XmlAttribute("brSize")]
+		public int breaks { get; set; }
+	}
+
+	[XmlType("div")]
+	public class PR11194ChildD : PR11194ChildLo
+	{
+	}
+
+	[XmlType("label")]
+	public class PR11194ChildL : PR11194Parent2
+	{
+		[XmlAttribute]
+		public string font { get; set; }
+		[XmlAttribute]
+		public int fontSize { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
+
+	[XmlType("layout")]
+	public class PR11194ChildLo : PR11194Parent2
+	{
+	}
+	#endregion
 }
 

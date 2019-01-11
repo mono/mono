@@ -26,7 +26,6 @@ namespace MonoTests.System.Net.WebSockets
 		public void Setup ()
 		{
 			socket = new ClientWebSocket ();
-			Port = NetworkHelpers.FindFreePort ();
 		}
 
 		HttpListener _listener;
@@ -35,10 +34,7 @@ namespace MonoTests.System.Net.WebSockets
 				if (_listener != null)
 					return _listener;
 
-				var tmp = new HttpListener ();
-				tmp.Prefixes.Add ("http://localhost:" + Port + "/");
-				tmp.Start ();
-				return _listener = tmp;
+				return NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out Port, "/");
 			}
 		}
 

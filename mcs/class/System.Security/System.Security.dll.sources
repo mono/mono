@@ -1,15 +1,9 @@
 #include common_System.Security.dll.sources
 
 Mono.Security.Cryptography/ManagedProtection.cs
-Mono.Security.Cryptography/NativeDapiProtection.cs
 System.Security.Cryptography/MemoryProtectionScope.cs
 System.Security.Cryptography/ProtectedMemory.cs
 System.Security.Cryptography.Pkcs/KeyAgreeKeyChoice.cs
-System.Security.Cryptography.Pkcs/CmsSigner.cs
-System.Security.Cryptography.Pkcs/SignedCms.cs
-System.Security.Cryptography.Pkcs/SignerInfo.cs
-System.Security.Cryptography.Pkcs/SignerInfoCollection.cs
-System.Security.Cryptography.Pkcs/SignerInfoEnumerator.cs
 System.Security.Cryptography.X509Certificates/X509Certificate2UI.cs
 System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
 
@@ -74,7 +68,7 @@ System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/RSAPKCS1SignatureDescription.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/Signature.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SignedInfo.cs
-System.Security.Cryptography.Xml/SignedXml.cs
+../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SignedXml.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SignedXmlDebugLog.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/SymmetricKeyWrap.cs
 ../../../external/corefx/src/System.Security.Cryptography.Xml/src/System/Security/Cryptography/Xml/Transform.cs

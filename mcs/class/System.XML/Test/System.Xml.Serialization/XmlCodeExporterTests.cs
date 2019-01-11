@@ -27,6 +27,8 @@ using NUnit.Framework;
 
 using MonoTests.System.Xml.TestClasses;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.XmlSerialization
 {
 	[TestFixture]
@@ -931,7 +933,7 @@ namespace MonoTests.System.XmlSerialization
 		[Test]
 		public void DuplicateIdentifiers ()
 		{
-			XmlSchema xs = XmlSchema.Read (File.OpenText ("Test/XmlFiles/xsd/82078.xsd"), null);
+			XmlSchema xs = XmlSchema.Read (File.OpenText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/82078.xsd")), null);
 
 			XmlSchemas xss = new XmlSchemas ();
 			xss.Add (xs);

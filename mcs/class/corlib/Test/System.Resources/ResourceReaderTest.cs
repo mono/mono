@@ -16,6 +16,8 @@ using System.Resources;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Resources
 {
 	[TestFixture]
@@ -28,9 +30,8 @@ namespace MonoTests.System.Resources
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
-			string base_path = Path.Combine (Directory.GetCurrentDirectory (), Path.Combine ("Test", "resources"));
-			m_ResourceFile = Path.Combine (base_path, "MyResources.resources");
-			m_BadResourceFile = Path.Combine (base_path, "Empty.resources");
+			m_ResourceFile = TestResourceHelper.GetFullPathOfResource ("Test/resources/MyResources.resources");
+			m_BadResourceFile = TestResourceHelper.GetFullPathOfResource ("Test/resources/Empty.resources");
 		}
 
 		[SetUp]
@@ -231,7 +232,7 @@ namespace MonoTests.System.Resources
 		[Category ("MobileNotWorking")]
 		public void GetResourceDataNullName ()
 		{
-			ResourceReader r = new ResourceReader ("Test/resources/StreamTest.resources");
+			ResourceReader r = new ResourceReader (TestResourceHelper.GetFullPathOfResource ("Test/resources/StreamTest.resources"));
 			string type;
 			byte [] bytes;
 
@@ -257,7 +258,7 @@ namespace MonoTests.System.Resources
 			byte [] t2 = new byte [] {0x0A, 0x73, 0x6F, 0x6D, 0x65, 0x73, 0x74, 0x72, 0x69, 0x6E, 0x67};
 			byte [] t3 = new byte [] {0x0E, 0x00, 0x00, 0x00, 0x73, 0x68, 0x61, 0x72, 0x64, 0x65, 0x6E, 0x66, 0x72, 0x65, 0x75, 0x64, 0x65, 0x0A};
 
-			ResourceReader r = new ResourceReader ("Test/resources/StreamTest.resources");
+			ResourceReader r = new ResourceReader (TestResourceHelper.GetFullPathOfResource ("Test/resources/StreamTest.resources"));
 			Hashtable items = new Hashtable ();
 			foreach (DictionaryEntry de in r) {
 				string type;
@@ -307,7 +308,7 @@ namespace MonoTests.System.Resources
 				0x68, 0x74, 0x00, 0x00, 0x08, 0x08, 0x02, 0x00,
 				0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x10, 0x00,
 				0x00, 0x00, 0x0B};
-			ResourceReader r = new ResourceReader ("Test/resources/bug81759.resources");
+			ResourceReader r = new ResourceReader (TestResourceHelper.GetFullPathOfResource ("Test/resources/bug81759.resources"));
 			string type;
 			byte [] bytes;
 			r.GetResourceData ("imageList.ImageSize", out type, out bytes);

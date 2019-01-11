@@ -12,6 +12,8 @@ using System.Xml;
 using NUnit.Framework;
 using System.Reflection;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -28,7 +30,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void FileUri ()
 		{
-			Uri resolved = resolver.ResolveUri (null, "Test/XmlFiles/xsd/xml.xsd");
+			Uri resolved = resolver.ResolveUri (null, TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/xml.xsd"));
 			Assert.AreEqual ("file", resolved.Scheme);
 			Stream s = resolver.GetEntity (resolved, null, typeof (Stream)) as Stream;
 		}

@@ -14,6 +14,8 @@ using System.IO;
 using System.Text;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.I18N.MidEast
 {
 	[TestFixture]
@@ -96,7 +98,7 @@ namespace MonoTests.I18N.MidEast
 
 		public void HandleFallback_Encode_Generic(int cp)
 		{
-			AssertEncode ("Test/texts/encoder-handlefallback-generic-utf8.txt", "Test/texts/encoder-handlefallback-generic-output.txt", cp, "error_foobar");
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/encoder-handlefallback-generic-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/encoder-handlefallback-generic-output.txt"), cp, "error_foobar");
 		}
 		
 		[Test]
@@ -109,13 +111,13 @@ namespace MonoTests.I18N.MidEast
 		public void Ascii_Test_All()
 		{
 			foreach (int cp in cps)
-				AssertEncode("Test/texts/ascii-test.txt", "Test/texts/ascii-test.txt", cp);
+				AssertEncode(TestResourceHelper.GetFullPathOfResource ("Test/texts/ascii-test.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/ascii-test.txt"), cp);
 		}
 
 		[Test]
 		public void CP1254_Encode ()
 		{
-			AssertEncode ("Test/texts/turkish-utf8.txt", "Test/texts/turkish-1254.txt", 1254);
+			AssertEncode (TestResourceHelper.GetFullPathOfResource ("Test/texts/turkish-utf8.txt"), TestResourceHelper.GetFullPathOfResource ("Test/texts/turkish-1254.txt"), 1254);
 		}
 	}
 }

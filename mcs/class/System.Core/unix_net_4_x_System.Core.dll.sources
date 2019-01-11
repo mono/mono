@@ -1,0 +1,42 @@
+#include net_4_x_System.Core.dll.sources
+
+System.IO.Pipes/NamedPipeClientStream.Unix.cs
+System.IO.Pipes/NamedPipeServerStream.Unix.cs
+System.IO.Pipes/AnonymousPipeServerStream.Unix.cs
+../../../external/corefx/src/System.IO.Pipes/src/Microsoft/Win32/SafeHandles/SafePipeHandle.Unix.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/AnonymousPipeServerStream.Unix.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/NamedPipeClientStream.Unix.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/NamedPipeServerStream.Unix.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeStream.Unix.cs
+
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.Unix.cs
+
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeFileHandleHelper.Unix.cs
+../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/Interop/Unix/Interop.Errors.cs
+../../../external/corefx/src/Common/src/Interop/Unix/Interop.IOErrors.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Close.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Fcntl.Pipe.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Fcntl.SetCloseOnExec.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.FLock.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetDomainSocketSizes.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetHostName.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetPeerUserName.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.MkDir.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Open.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.OpenFlags.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Permissions.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Pipe.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Poll.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Read.Pipe.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Unlink.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Write.Pipe.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Stat.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Stat.Pipe.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetPeerID.cs
+
+# FIXME: the native side is not there yet.
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetEUid.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.SetEUid.cs
+# corefx/Interop.cs

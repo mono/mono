@@ -30,9 +30,9 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class ClassComparer : Comparer {
+	class ClassComparer : Comparer {
 
 		InterfaceComparer icomparer;
 		ConstructorComparer ccomparer;
@@ -42,14 +42,15 @@ namespace Xamarin.ApiDiff {
 		MethodComparer mcomparer;
 		ClassComparer kcomparer;
 
-		public ClassComparer ()
+		public ClassComparer (State state)
+			: base (state)
 		{
-			icomparer = new InterfaceComparer ();
-			ccomparer = new ConstructorComparer ();
-			fcomparer = new FieldComparer ();
-			pcomparer = new PropertyComparer ();
-			ecomparer = new EventComparer ();
-			mcomparer = new MethodComparer ();
+			icomparer = new InterfaceComparer (state);
+			ccomparer = new ConstructorComparer (state);
+			fcomparer = new FieldComparer (state);
+			pcomparer = new PropertyComparer (state);
+			ecomparer = new EventComparer (state);
+			mcomparer = new MethodComparer (state);
 		}
 
 		public override void SetContext (XElement current)
@@ -190,7 +191,7 @@ namespace Xamarin.ApiDiff {
 				Output.WriteLine ();
 				Indent ().WriteLine ("// inner types");
 				State.Parent = State.Type;
-				kcomparer = new NestedClassComparer ();
+				kcomparer = new NestedClassComparer (State);
 				foreach (var inner in t.Elements ("class"))
 					kcomparer.AddedInner (inner);
 				State.Type = State.Parent;
@@ -227,7 +228,7 @@ namespace Xamarin.ApiDiff {
 					!State.IgnoreRemoved.Any (re => re.IsMatch (rm)) &&
 					!(State.IgnoreNonbreaking && IsBaseChangeCompatible (sb, tb))) {
 				Formatter.BeginMemberModification (Output, "Modified base type");
-				var apichange = new ApiChange ($"{State.Namespace}.{State.Type}").AppendModified (sb, tb, true);
+				var apichange = new ApiChange ($"{State.Namespace}.{State.Type}", State).AppendModified (sb, tb, true);
 				Formatter.Diff (Output, apichange);
 				Formatter.EndMemberModification (Output);
 			}
@@ -242,7 +243,7 @@ namespace Xamarin.ApiDiff {
 			var si = source.Element ("classes");
 			if (si != null) {
 				var ti = target.Element ("classes");
-				kcomparer = new NestedClassComparer ();
+				kcomparer = new NestedClassComparer (State);
 				State.Parent = State.Type;
 				kcomparer.Compare (si.Elements ("class"), ti == null ? null : ti.Elements ("class"));
 				State.Type = State.Parent;
@@ -280,7 +281,12 @@ namespace Xamarin.ApiDiff {
 		}
 	}
 
-	public class NestedClassComparer : ClassComparer {
+	class NestedClassComparer : ClassComparer {
+
+		public NestedClassComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override void SetContext (XElement current)
 		{

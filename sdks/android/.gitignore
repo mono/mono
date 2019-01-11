@@ -1,1 +1,6 @@
-apk/
+/.gradle
+/.idea
+/app/assets/asm
+/app/src/main/jniLibs/
+/lldb-mono-0.1
+/local.properties

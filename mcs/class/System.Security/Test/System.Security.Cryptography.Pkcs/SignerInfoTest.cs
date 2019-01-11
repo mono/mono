@@ -110,14 +110,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 			SignerInfo si = GetSignerInfo (data);
 			// default properties
-			Assert.AreEqual (0, si.SignedAttributes.Count, "SignedAttributes");
+			Assert.AreEqual (5, si.SignedAttributes.Count, "SignedAttributes");
 			Assert.IsNotNull (si.Certificate, "Certificate");
 			Assert.AreEqual (0, si.CounterSignerInfos.Count, "CounterSignerInfos");
 			Assert.AreEqual ("sha256", si.DigestAlgorithm.FriendlyName, "DigestAlgorithm.FriendlyName");
 			Assert.AreEqual ("2.16.840.1.101.3.4.2.1", si.DigestAlgorithm.Value, "DigestAlgorithm.Value");
 			Assert.AreEqual (SubjectIdentifierType.SubjectKeyIdentifier, si.SignerIdentifier.Type, "SignerIdentifier.Type");
 			Assert.AreEqual ("F1CC7184EBDA537140C1A57416017810DF133020", (string)si.SignerIdentifier.Value, "SignerIdentifier.Value");
-			Assert.AreEqual (0, si.UnsignedAttributes.Count, "UnsignedAttributes");
+			Assert.AreEqual (1, si.UnsignedAttributes.Count, "UnsignedAttributes");
 			Assert.AreEqual (3, si.Version, "Version");
 		}
 	}

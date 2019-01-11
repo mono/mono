@@ -392,6 +392,11 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static SocketAddress RemoteEndPoint_internal (IntPtr socket, int family, out int error);
 
+		internal SafeHandle SafeHandle
+		{
+			get { return m_Handle; }
+		}
+
 #endregion
 
 #region Select
@@ -934,7 +939,7 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException("e");
 
 			if (e.in_progress != 0 && e.LastOperation == SocketAsyncOperation.Connect)
-				e.current_socket.Close();
+				e.current_socket?.Close ();
 		}
 
 		static AsyncCallback ConnectAsyncCallback = new AsyncCallback (ares => {
@@ -1044,6 +1049,10 @@ namespace System.Net.Sockets
 				}
 
 				sockares.EndPoint = remoteEP = sockares.socket.RemapIPEndPoint (ep);
+			}
+
+			if (!sockares.socket.CanTryAddressFamily(sockares.EndPoint.AddressFamily)) {
+				throw new ArgumentException(SR.net_invalidAddressList);
 			}
 
 			int error = 0;
@@ -1168,6 +1177,10 @@ namespace System.Net.Sockets
 			DnsEndPoint dep = e.RemoteEndPoint as DnsEndPoint;
 			if (dep != null) {
 				addresses = Dns.GetHostAddresses (dep.Host);
+
+				if (dep.AddressFamily == AddressFamily.Unspecified)
+					return true;
+
 				int last_valid = 0;
 				for (int i = 0; i < addresses.Length; ++i) {
 					if (addresses [i].AddressFamily != dep.AddressFamily)
@@ -1369,6 +1382,16 @@ namespace System.Net.Sockets
 
 			return ret;
 		}
+
+		public int Receive (Span<byte> buffer, SocketFlags socketFlags)
+		{
+			byte[] tempBuffer = new byte[buffer.Length];
+			int ret = Receive (tempBuffer, SocketFlags.None);
+			tempBuffer.CopyTo (buffer);
+			return ret;
+		}
+
+		public int Receive (Span<byte> buffer) => Receive (buffer, SocketFlags.None);
 
 		public bool ReceiveAsync (SocketAsyncEventArgs e)
 		{
@@ -1855,6 +1878,13 @@ namespace System.Net.Sockets
 
 			return ret;
 		}
+
+		public int Send (ReadOnlySpan<byte> buffer, SocketFlags socketFlags)
+		{
+			return Send (buffer.ToArray(), socketFlags);
+		}
+
+		public int Send (ReadOnlySpan<byte> buffer) => Send (buffer, SocketFlags.None);
 
 		public bool SendAsync (SocketAsyncEventArgs e)
 		{
@@ -2578,13 +2608,25 @@ namespace System.Net.Sockets
 
 		public void Shutdown (SocketShutdown how)
 		{
+			const int enotconn = 10057;
+
 			ThrowIfDisposedAndClosed ();
 
 			if (!is_connected)
-				throw new SocketException (10057); // Not connected
+				throw new SocketException (enotconn); // Not connected
 
 			int error;
 			Shutdown_internal (m_Handle, how, out error);
+
+			if (error == enotconn) {
+				// POSIX requires this error to be returned from shutdown in some cases,
+				//  even if the socket is actually connected.
+				// We have already checked is_connected so it isn't meaningful or useful for
+				//  us to throw if the OS says the socket was already closed when we tried to
+				//  shut it down.
+				// See https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=227259
+				return;
+			}
 
 			if (error != 0)
 				throw new SocketException (error);

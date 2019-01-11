@@ -41,7 +41,7 @@ Mono_Posix_Stdlib_SetLastError (int error_number)
  * we assume that the XPG version is present.
  */
 
-#ifdef _GNU_SOURCE
+#ifdef STRERROR_R_CHAR_P
 #define mph_min(x,y) ((x) <= (y) ? (x) : (y))
 
 /* If you pass an invalid errno value to glibc 2.3.2's strerror_r, you get
@@ -128,7 +128,7 @@ Mono_Posix_Syscall_strerror_r (int errnum, char *buf, mph_size_t n)
 	return 0;
 }
 
-#else /* !def _GNU_SOURCE */
+#else /* !def STRERROR_R_CHAR_P */
 
 gint32
 Mono_Posix_Syscall_strerror_r (int errnum, char *buf, mph_size_t n)
@@ -137,7 +137,7 @@ Mono_Posix_Syscall_strerror_r (int errnum, char *buf, mph_size_t n)
 	return strerror_r (errnum, buf, (size_t) n);
 }
 
-#endif /* def _GNU_SOURCE */
+#endif /* def STRERROR_R_CHAR_P */
 
 #endif /* def HAVE_STRERROR_R */
 

@@ -31,6 +31,8 @@ using System.Xml;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 	[TestFixture]
 	public class Properties {
@@ -72,7 +74,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		{
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-					<UsingTask TaskName='StringTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<UsingTask TaskName='StringTestTask' AssemblyFile='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @"' />
 					<PropertyGroup>
 						<A>A</A>
 						<B>B</B>

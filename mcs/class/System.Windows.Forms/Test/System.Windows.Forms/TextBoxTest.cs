@@ -15,6 +15,8 @@ using System.Text;
 using NUnit.Framework;
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -45,7 +47,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, textBox.AcceptsTab, "#1b");
 			Assert.AreEqual (true, textBox.AutoSize, "#2");
 			Assert.AreEqual (null, textBox.BackgroundImage, "#4a");
-			string gif = "M.gif";
+			string gif = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 			textBox.BackgroundImage = Image.FromFile (gif);
 			// comparing image objects fails on MS .Net so using Size property
 			Assert.AreEqual (Image.FromFile(gif, true).Size, textBox.BackgroundImage.Size, "#4b");

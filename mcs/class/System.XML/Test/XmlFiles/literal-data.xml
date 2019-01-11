@@ -248,9 +248,9 @@
     <anyType xsi:type="xsd:string">strings</anyType>
   </ttList>aa<xmltext>33</xmltext>bb<xmltext>776</xmltext><special>
     <data>
-      <two>2</two>
       <one>1</one>
       <three>3</three>
+      <two>2</two>
     </data>
   </special><dummyStringArray xmlns="mm">
     <ArrayOfString xsi:nil="true" />

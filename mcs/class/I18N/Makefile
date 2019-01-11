@@ -4,6 +4,7 @@ include ../../build/rules.make
 
 DISTFILES = \
 	Assembly/AssemblyInfo.cs \
+	EncodingTestBase.cs \
 	README 		\
 	README.mono 	\
 	mklist.sh	\

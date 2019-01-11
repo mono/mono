@@ -241,7 +241,9 @@ namespace System.IO {
         public virtual decimal ReadDecimal() {
             FillBuffer(16);
             try {
-                return Decimal.ToDecimal(m_buffer);
+                int[] ints = new int[4];
+                Buffer.BlockCopy(m_buffer, 0, ints, 0, 16);
+                return new decimal(ints);
             }
             catch (ArgumentException e) {
                 // ReadDecimal cannot leak out ArgumentException

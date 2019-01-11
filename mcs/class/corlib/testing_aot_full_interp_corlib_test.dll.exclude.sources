@@ -1,0 +1,3 @@
+#include mobile_tests.exclude.sources
+
+System.Reflection.Emit/AssemblyBuilderTest.cs

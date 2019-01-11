@@ -11,7 +11,7 @@ LIBRARY = System.Runtime.Serialization.Xml.dll
 
 KEYFILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /nowarn:1616,1699
-LIB_REFS = System System.Runtime.Serialization System.Xml Facades/System.Runtime.Serialization.Primitives
+LIB_REFS = System System.Runtime.Serialization System.Xml
 LIB_MCS_FLAGS = $(SIGN_FLAGS) 
 
 PLATFORM_DEBUG_FLAGS =

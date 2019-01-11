@@ -26,6 +26,7 @@ ROSLYN_FILES_FOR_MONO = \
 ROSLYN_FILES_TO_COPY_FOR_MSBUILD = \
 	$(ROSLYN_CSC_DIR)/Microsoft.Build.Tasks.CodeAnalysis.dll \
 	$(ROSLYN_CSC_DIR)/Microsoft.CSharp.Core.targets 	 \
+	$(ROSLYN_CSC_DIR)/Microsoft.Managed.Core.targets	 \
 	$(ROSLYN_CSC_DIR)/Microsoft.VisualBasic.Core.targets
 
 ROSLYN_DIM_FILES = $(topdir)/../external/roslyn-binaries/Prototypes/DefaultInterfaceImplementation/*
@@ -55,6 +56,10 @@ test-csi:
 	MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(ROSLYN_CSC_DIR)/csi.exe csi-test.csx > csi-test-output.txt
 	cat csi-test-output.txt && grep -q "hello world" csi-test-output.txt
 	rm csi-test-output.txt
+
+test-bundle:
+	mkdir -p $(TEST_BUNDLE_PATH)/tests/csi
+	cp -L $(ROSLYN_CSC_DIR)/* $(TEST_BUNDLE_PATH)/tests/csi/
 
 endif
 

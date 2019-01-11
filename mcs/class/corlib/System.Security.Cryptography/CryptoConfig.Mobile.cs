@@ -39,6 +39,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace System.Security.Cryptography {
 
@@ -57,10 +58,22 @@ namespace System.Security.Cryptography {
 			return CreateFromName (name, null);
 		}
 
+#if MONOTOUCH || XAMMAC
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.AesManaged", "System.Core")]
+#else
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.AesCryptoServiceProvider", "System.Core")]
+#endif
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509Chain", "System")]
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509KeyUsageExtension", "System")]
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension", "System")]
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension", "System")]
+		[PreserveDependencyAttribute (".ctor()", "System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension", "System")]
 		public static object CreateFromName (string name, params object[] args)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
+
+			Type algoClass = null;
 
 			// TODO: These ignore args
 			switch (name.ToLowerInvariant ()) {
@@ -190,48 +203,51 @@ namespace System.Security.Cryptography {
 			case "3des":
 				return new TripleDESCryptoServiceProvider ();
 
-			// These are not yet linker friendly
+			// Use Type.GetType to be linker friendly
+			// TODO: This does not work when the assembly is not referenced by the project
 			case "x509chain":
-				name = "System.Security.Cryptography.X509Certificates.X509Chain, System";
+				algoClass = Type.GetType ("System.Security.Cryptography.X509Certificates.X509Chain, System");
 				break;
 			case "2.5.29.15":
-				name = "System.Security.Cryptography.X509Certificates.X509KeyUsageExtension, System";
+				algoClass = Type.GetType ("System.Security.Cryptography.X509Certificates.X509KeyUsageExtension, System");
 				break;
 			case "2.5.29.19":
-				name = "System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension, System";
+				algoClass = Type.GetType ("System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension, System");
 				break;
 			case "2.5.29.14":
-				name = "System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension, System";
+				algoClass = Type.GetType ("System.Security.Cryptography.X509Certificates.X509SubjectKeyIdentifierExtension, System");
 				break;
 			case "2.5.29.37":
-				name = "System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension, System";
+				algoClass = Type.GetType ("System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension, System");
 				break;
 			case "aes":
 #if MONOTOUCH || XAMMAC
-				name = "System.Security.Cryptography.AesManaged, System.Core";
+				algoClass = Type.GetType ("System.Security.Cryptography.AesManaged, System.Core");
 #else
-				name = "System.Security.Cryptography.AesCryptoServiceProvider, System.Core";
+				algoClass = Type.GetType ("System.Security.Cryptography.AesCryptoServiceProvider, System.Core");
 #endif
 				break;
 			}
 
-			lock (lockObject) {
-				Type algoClass = null;
-				if (algorithms?.TryGetValue (name, out algoClass) == true) {
-					try {
-						return Activator.CreateInstance (algoClass, args);
-					} catch {
+			if (algoClass == null) {
+				lock (lockObject) {
+					if (algorithms?.TryGetValue (name, out algoClass) == true) {
+						try {
+							return Activator.CreateInstance (algoClass, args);
+						} catch {
+						}
 					}
 				}
+
+				algoClass = Type.GetType (name);
 			}
 
 			try {
 				// last resort, the request type might be available (if care is taken for the type not to be linked 
 				// away) and that can allow some 3rd party code to work (e.g. extra algorithms) and make a few more
 				// unit tests happy
-				return Activator.CreateInstance (Type.GetType (name), args);
-			}
-			catch {
+				return Activator.CreateInstance (algoClass, args);
+			} catch {
 				// method doesn't throw any exception
 				return null;
 			}

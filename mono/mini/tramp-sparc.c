@@ -39,7 +39,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	start = code = mono_domain_code_reserve (mono_domain_get (), 36);
 
 	/* This executes in the context of the caller, hence o0 */
-	sparc_add_imm (code, 0, sparc_o0, sizeof (MonoObject), sparc_o0);
+	sparc_add_imm (code, 0, sparc_o0, MONO_ABI_SIZEOF (MonoObject), sparc_o0);
 #ifdef SPARCV9
 	reg = sparc_g4;
 #else
@@ -68,7 +68,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *code, guint8 *addr)
 }
 
 void
-mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
 	g_assert_not_reached ();
 }
@@ -101,7 +101,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	regs_offset = MONO_SPARC_STACK_BIAS + 1000;
 
 	/* Save r1 needed by the IMT code */
-	sparc_sti_imm (code, sparc_g1, sparc_sp, regs_offset + (sparc_g1 * sizeof (gpointer)));
+	sparc_sti_imm (code, sparc_g1, sparc_sp, regs_offset + (sparc_g1 * sizeof (target_mgreg_t)));
 
 	/* 
 	 * sparc_g5 contains the return address, the trampoline argument is stored in the
@@ -130,7 +130,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/* Save fp */
 	/* Load previous fp from the saved register window */
 	sparc_flushw (code);
-	sparc_ldi_imm (code, sparc_fp, MONO_SPARC_STACK_BIAS + (sparc_i6 - 16) * sizeof (gpointer), sparc_o7);
+	sparc_ldi_imm (code, sparc_fp, MONO_SPARC_STACK_BIAS + (sparc_i6 - 16) * sizeof (target_mgreg_t), sparc_o7);
 	sparc_sti_imm (code, sparc_o7, sparc_fp, lmf_offset + G_STRUCT_OFFSET (MonoLMF, ebp));
 	/* Save method */
 	sparc_sti_imm (code, method_reg, sparc_fp, lmf_offset + G_STRUCT_OFFSET (MonoLMF, method));
@@ -145,11 +145,11 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		/* Load all registers of the caller into a table inside this frame */
 		/* first the out registers */
 		for (i = 0; i < 8; ++i)
-			sparc_sti_imm (code, sparc_i0 + i, sparc_sp, regs_offset + ((sparc_o0 + i) * sizeof (gpointer)));
+			sparc_sti_imm (code, sparc_i0 + i, sparc_sp, regs_offset + ((sparc_o0 + i) * sizeof (target_mgreg_t)));
 		/* then the in+local registers */
 		for (i = 0; i < 16; i ++) {
-			sparc_ldi_imm (code, sparc_fp, MONO_SPARC_STACK_BIAS + (i * sizeof (gpointer)), sparc_o7);
-			sparc_sti_imm (code, sparc_o7, sparc_sp, regs_offset + ((sparc_l0 + i) * sizeof (gpointer)));
+			sparc_ldi_imm (code, sparc_fp, MONO_SPARC_STACK_BIAS + (i * sizeof (target_mgreg_t)), sparc_o7);
+			sparc_sti_imm (code, sparc_o7, sparc_sp, regs_offset + ((sparc_l0 + i) * sizeof (target_mgreg_t)));
 		}
 	}
 

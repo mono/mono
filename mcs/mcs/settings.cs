@@ -32,10 +32,11 @@ namespace Mono.CSharp {
 		V_7 = 7,
 		V_7_1 = 71,
 		V_7_2 = 72,
+		V_7_3 = 73,
 		Experimental = 100,
 
 		Default = V_7,
-		Latest = V_7_2
+		Latest = V_7_3
 	}
 
 	public enum RuntimeVersion
@@ -1270,6 +1271,7 @@ namespace Mono.CSharp {
 			case "/highentropyva+":
 			case "/highentropyva-":
 			case "/link":
+			case "/sourcelink":
 			case "/moduleassemblyname":
 			case "/nowin32manifest":
 			case "/pdb":

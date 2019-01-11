@@ -243,7 +243,7 @@ namespace System
 			if (newError == null)
 				throw new ArgumentNullException ("newError");
 
-			stderr = newError;
+			stderr = TextWriter.Synchronized (newError);
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
@@ -252,7 +252,7 @@ namespace System
 			if (newIn == null)
 				throw new ArgumentNullException ("newIn");
 
-			stdin = newIn;
+			stdin = TextReader.Synchronized (newIn);
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
@@ -261,7 +261,7 @@ namespace System
 			if (newOut == null)
 				throw new ArgumentNullException ("newOut");
 
-			stdout = newOut;
+			stdout = TextWriter.Synchronized (newOut);
 		}
 
 		public static void Write (bool value)

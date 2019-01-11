@@ -346,6 +346,7 @@ namespace System.Reflection {
 			}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public virtual Stream GetManifestResourceStream (Type type, String name)
 		{
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
@@ -467,13 +468,12 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetEntryAssembly();
 
-		internal Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError)
+		internal Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError, ref StackCrawlMark stackMark)
 		{
 			if (culture == null)
 				throw new ArgumentNullException("culture");
 			Contract.EndContractBlock();
 
-			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			String name = GetSimpleName() + ".resources";
 			return InternalGetSatelliteAssembly(name, culture, version, true, ref stackMark);
 		}
@@ -496,7 +496,7 @@ namespace System.Reflection {
 			Assembly assembly;
 
 			try {
-				assembly = AppDomain.CurrentDomain.LoadSatellite (an, false);
+				assembly = AppDomain.CurrentDomain.LoadSatellite (an, false, ref stackMark);
 				if (assembly != null)
 					return (RuntimeAssembly)assembly;
 			} catch (FileNotFoundException) {
@@ -512,7 +512,7 @@ namespace System.Reflection {
 			string fullName = Path.Combine (location, Path.Combine (culture.Name, an.Name + ".dll"));
 
 			try {
-				return (RuntimeAssembly)LoadFrom (fullName);
+				return (RuntimeAssembly)LoadFrom (fullName, false, ref stackMark);
 			} catch {
 				if (!throwOnFileNotFound && !File.Exists (fullName))
 					return null;
@@ -529,20 +529,24 @@ namespace System.Reflection {
 #endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static Assembly LoadFrom (String assemblyFile, bool refonly);
+		private extern static Assembly LoadFrom (String assemblyFile, bool refOnly, ref StackCrawlMark stackMark);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static Assembly LoadFile_internal (String assemblyFile);
+		private extern static Assembly LoadFile_internal (String assemblyFile, ref StackCrawlMark stackMark);
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly LoadFrom (String assemblyFile)
 		{
-			return LoadFrom (assemblyFile, false);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return LoadFrom (assemblyFile, false, ref stackMark);
 		}
 
 		[Obsolete]
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
-			Assembly a = LoadFrom (assemblyFile, false);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			Assembly a = LoadFrom (assemblyFile, false, ref stackMark);
 #if !MOBILE
 			if ((a != null) && (securityEvidence != null)) {
 				// merge evidence (i.e. replace defaults with provided evidences)
@@ -566,19 +570,23 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly UnsafeLoadFrom (String assemblyFile)
 		{
-			return LoadFrom (assemblyFile);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return LoadFrom (assemblyFile, false, ref stackMark);
 		}
 
 		[Obsolete]
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly LoadFile (String path, Evidence securityEvidence)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
 			if (path == String.Empty)
 				throw new ArgumentException ("Path can't be empty", "path");
-			Assembly a = LoadFile_internal (path);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			Assembly a = LoadFile_internal (path, ref stackMark);
 			if (a != null && securityEvidence != null) {
 				throw new NotImplementedException ();
 			}
@@ -640,17 +648,21 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, null, null, true);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly ReflectionOnlyLoad (string assemblyString) 
 		{
-			return AppDomain.CurrentDomain.Load (assemblyString, null, true);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return AppDomain.CurrentDomain.Load (assemblyString, null, true, ref stackMark);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Assembly ReflectionOnlyLoadFrom (string assemblyFile) 
 		{
 			if (assemblyFile == null)
 				throw new ArgumentNullException ("assemblyFile");
-			
-			return LoadFrom (assemblyFile, true);
+
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return LoadFrom (assemblyFile, true, ref stackMark);
 		}
 
         [Obsolete("This method has been deprecated. Please use Assembly.Load() instead. http://go.microsoft.com/fwlink/?linkid=14202")]

@@ -280,7 +280,7 @@ namespace Mono.Net.Security
 
 		protected override AsyncOperationStatus Run (AsyncOperationStatus status)
 		{
-			return Parent.ProcessHandshake (status);
+			return Parent.ProcessHandshake (status, false);
 		}
 	}
 
@@ -390,5 +390,17 @@ namespace Mono.Net.Security
 		}
 	}
 
+	class AsyncRenegotiateRequest : AsyncProtocolRequest
+	{
+		public AsyncRenegotiateRequest (MobileAuthenticatedStream parent)
+			: base (parent, false)
+		{
+		}
+
+		protected override AsyncOperationStatus Run (AsyncOperationStatus status)
+		{
+			return Parent.ProcessHandshake (status, true);
+		}
+	}
 }
 #endif

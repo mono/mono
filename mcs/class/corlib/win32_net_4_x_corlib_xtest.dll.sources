@@ -1,0 +1,9 @@
+#include corlib_xtest.dll.sources
+
+# Microsoft.Win32.Registry
+../../../external/corefx/src/Microsoft.Win32.Registry/tests/RegistryTestsBase.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/tests/TestData.cs
+#../../../external/corefx/src/Microsoft.Win32.Registry/tests/Helpers.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/tests/Registry/Registry_Fields.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/tests/Registry/Registry_SetValue_str_str_obj_valuekind.cs
+../../../external/corefx/src/Microsoft.Win32.Registry/tests/RegistryKey/*.cs:RegistryKey_GetValue_str_obj_b.cs,RegistryKey_GetValue_CorruptData.cs,RegistryKey_GetValue_str.cs,RegistryKey_GetValue_str_obj.cs

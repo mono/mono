@@ -146,9 +146,30 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		internal const string LIBC = "libc";
+		// geteuid(2)
+		//    uid_t geteuid(void);
+		[DllImport (LIBC, SetLastError=true)]
+		static extern uint geteuid ();
+
+		static bool RunningAsRoot // FIXME?
+		{
+			get {
+#if WASM
+				return false;
+#else
+				//return RunningOnUnix && System.Security.WindowsIdentity.GetCurrentToken () == IntPtr.Zero;
+				return RunningOnUnix && geteuid () == 0;
+#endif
+			}
+		}
+
 		[Test]
 		public void Create_Path_ReadOnly ()
 		{
+			if (RunningAsRoot) // FIXME?
+				Assert.Ignore ("Setting readonly in Mono does not block root writes.");
+
 			string path = Path.Combine (tmpFolder, "foo");
 			File.Create (path).Close ();
 			File.SetAttributes (path, FileAttributes.ReadOnly);
@@ -169,6 +190,8 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Create_Path_Whitespace ()
 		{
+			// FIXME? This is valid on Unix and can work on Windows.
+			// This test and Mono have in mind an incorrect low common denominator.
 			try {
 				File.Create (" ");
 				Assert.Fail ("#1");
@@ -619,6 +642,9 @@ namespace MonoTests.System.IO
 		[Test]
 		public void GetAttributes_ReadOnly ()
 		{
+			if (RunningAsRoot) // FIXME?
+				Assert.Ignore ("Setting readonly in Mono does not block root writes.");
+
 			FileAttributes attrs;
 
 			string path = Path.Combine (tmpFolder, "GetAttributes.tmp");
@@ -1171,6 +1197,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void LastAccessTime ()
 		{
 			string path = tmpFolder + Path.DirectorySeparatorChar + "lastAccessTime";
@@ -2752,9 +2779,10 @@ namespace MonoTests.System.IO
 		public static extern int symlink (string oldpath, string newpath);
 
 		[Test]
-#if __TVOS__
+#if MONOTOUCH_TV
 		[Ignore ("See bug #59239")]
 #endif
+		[Category ("NotWasm")]
 		public void SymLinkLoop ()
 		{
 			if (!RunningOnUnix)

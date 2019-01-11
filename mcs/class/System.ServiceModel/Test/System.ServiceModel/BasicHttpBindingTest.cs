@@ -38,6 +38,8 @@ using System.ServiceModel.Configuration;
 using System.Configuration;
 using System.Text;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
@@ -316,7 +318,7 @@ namespace MonoTests.System.ServiceModel
 
 		private BasicHttpBinding CreateBindingFromConfig ()
 		{
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/basicHttpBinding").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/basicHttpBinding")).GetSectionGroup ("system.serviceModel");
 			BindingsSection section = (BindingsSection) config.Bindings;
 			BasicHttpBindingElement el = section.BasicHttpBinding.Bindings ["BasicHttpBinding2_Service"];
 

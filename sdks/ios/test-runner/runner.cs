@@ -5,6 +5,7 @@ using System.Text;
 using System.Net.Sockets;
 using NUnitLite.Runner;
 using NUnit.Framework.Internal;
+using Mono.Security.Interface;
 
     class TcpWriter : TextWriter
     {
@@ -50,6 +51,11 @@ public class TestRunner
 {
 	public static int Main(string[] args) {
 		TextUI runner;
+
+		// Make sure the TLS subsystem including the DependencyInjector is initialized.
+		// This would normally happen on system startup in
+		// `xamarin-macios/src/ObjcRuntime/Runtime.cs`.
+		MonoTlsProviderFactory.Initialize ();
 
 		// First argument is the connection string
 		if (args [0].StartsWith ("tcp:")) {

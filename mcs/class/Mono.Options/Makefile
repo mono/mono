@@ -59,6 +59,7 @@ Documentation/en/examples/Mono.Options.dll: $(the_lib)
 
 %.exe: %.cs Documentation/en/examples/Mono.Options.dll
 	$(CSCOMPILE) -debug:portable -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll \
+	-r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll \
 	-r:$(topdir)/class/lib/$(PROFILE)/Mono.Options.dll -out:$@ $<
 
 Documentation/en/examples/locale/es/LC_MESSAGES/localization.mo: Documentation/en/examples/localization-es.po
@@ -72,7 +73,8 @@ Documentation/en/examples/localization.exe: Documentation/en/examples/locale/es/
 	while read line 0<&3 ; do \
 		if test -n "$$line" ; then \
 			echo "$$ $$line" | sed 's#Documentation/en/examples/##' >> $@ ; \
-			sh -c "$$line" >> $@ 2>&1 ; \
+			cmd=`echo "$$line" | sed 's,mono ,MONO_PATH="$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)$(PLATFORM_PATH_SEPARATOR)" $(RUNTIME) ,g'` ; \
+			sh -c "$$cmd" >> $@ 2>&1 ; \
 		else \
 			echo "" >> $@ ; \
 		fi ; \

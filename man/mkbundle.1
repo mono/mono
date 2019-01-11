@@ -271,6 +271,36 @@ This flag is mutually exlusive with
 By default the mkbundle tool will download from a Mono server the
 target runtimes, you can specify a different server to provide
 cross-compiled runtimes.
+.TP
+.I "--mono-api-struct-path FILE"
+FILE points to a file with the definition of the \fIBundleMonoAPI\fP structure which contains the
+required pointers to various Mono API functions used throughout the generated code. This mechanism
+is meant to be used by third parties which embed the Mono runtime and dynamically load and initialize
+it as part of the application startup, in which case the Mono APIs will not be available for the shared
+library loader and the bundle will fail to work (one example of such an embedding third party is
+Xamarin.Android).
+
+After providing the definition FILE, the embedder must call the \fIvoid initialize_mono_api (const BundleMonoAPI *info)\fP
+function found in the generated code
+.B before
+calling \fIvoid mono_mkbundle_init ()\fP. The structure passed to \fIinitialize_mono_api\fP doesn't need
+to be dynamically allocated as its contents is copied to the local structure in the generated code and no
+pointer to the passed structure is retained or used after \fIinitialize_mono_api\fP returns.
+
+The list of pointers is not documented here. Instead, please look at the \fIbundle-mono-api.inc\fP file
+found in the mkbundle source directory in your Mono source tree (\fImcs/tools/mkbundle\fP) or in the Mono's
+GitHub repository, https://github.com/mono/mono/blob/master/mcs/tools/mkbundle/bundle-mono-api.inc
+
+Please note that your structure must match the one expected by your version of the Mono runtime.
+
+The file must also define the \fImkbundle_log_error\fP function with the following signature:
+
+.nf
+	static void mkbundle_log_error (const char *format, ...) {}
+.fi
+
+The function should implement logging API specific to the embedder.
+
 .SH OLD EMBEDDING
 .PP
 The old embedding system compiles a small C stub that embeds the

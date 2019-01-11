@@ -17,16 +17,17 @@ ifndef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:FEATURE_TYPECONVERTER,SUPPORTS_WINDOWS_COLORS
 endif
 
-TEST_LIB_REFS = System.Drawing System.Runtime.Serialization.Formatters.Soap System.Xml
+TEST_LIB_REFS = System.Drawing System.Xml
+
+ifneq ($(PROFILE),wasm)
+TEST_LIB_REFS += System.Runtime.Serialization.Formatters.Soap
+endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -define:TEST -resource:Test/resources/indexed.png,indexed.png \
 	-nowarn:0618 -nowarn:219 -nowarn:169
 
-XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
-
-include ../../build/library.make
-
-EXTRA_DISTFILES = Test/resources/indexed.png	\
+TEST_RESOURCE_FILES = \
+	Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/1bit.png	\
 	Test/System.Drawing/bitmaps/81674-2bpp.png	\
 	Test/System.Drawing/bitmaps/4bit.png	\
@@ -44,6 +45,7 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/nature24bits.jpg	\
 	Test/System.Drawing/bitmaps/nature-greyscale.jpg	\
 	Test/System.Drawing/bitmaps/smiley.ico	\
+	Test/System.Drawing/bitmaps/only256.ico	\
 	Test/System.Drawing/bitmaps/VisualPng1.ico	\
 	Test/System.Drawing/bitmaps/VisualPng.ico	\
 	Test/System.Drawing/bitmaps/16x16x16.ico	\
@@ -57,7 +59,16 @@ EXTRA_DISTFILES = Test/resources/indexed.png	\
 	Test/System.Drawing/bitmaps/415581.ico	\
 	Test/System.Drawing/bitmaps/non-inverted.bmp	\
 	Test/System.Drawing/bitmaps/milkmateya01.emf	\
-	Test/System.Drawing/bitmaps/telescope_01.wmf	\
+	Test/System.Drawing/bitmaps/telescope_01.wmf
+
+TEST_MCS_FLAGS += $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
+
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
+
+include ../../build/library.make
+
+EXTRA_DISTFILES =	\
+	$(TEST_RESOURCE_FILES)	\
 	Assembly/Application.ico	\
 	Assembly/Asterisk.ico		\
 	Assembly/Error.ico		\

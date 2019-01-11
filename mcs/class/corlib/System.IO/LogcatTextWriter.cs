@@ -6,6 +6,8 @@ using System.Text;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+using Mono;
+
 namespace System.IO {
 
 	class LogcatTextWriter : TextWriter {
@@ -74,8 +76,8 @@ namespace System.IO {
 					}
 				}
 
-				fixed (byte *b_message = Encoding.UTF8.GetBytes(message + '\0')) {
-					Log (b_message);
+				using (SafeStringMarshal str = new SafeStringMarshal(message)) {
+					Log ((byte*) str.Value);
 				}
 			}
 		}

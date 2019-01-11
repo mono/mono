@@ -1,0 +1,19 @@
+#include corefx.unix.sources
+#include net_4_x_System.dll.sources
+#include apple-certificates.sources
+#include appletls.sources
+
+Mono.AppleTls/MonoCertificatePal.OSX.cs
+Mono.AppleTls/SafeHandles.cs
+
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.EventStream.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.RunLoop.cs
+../../../external/corefx/src/Common/src/Interop/OSX/Interop.CoreFoundation.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Sync.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.RealPath.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.OSX.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeCreateHandle.OSX.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeEventStreamHandle.OSX.cs
+../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.OSX.cs
+Internal.Cryptography/OidLookup.Managed.cs

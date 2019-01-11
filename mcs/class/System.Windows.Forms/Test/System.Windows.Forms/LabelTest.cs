@@ -12,6 +12,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
    [TestFixture]
@@ -403,7 +405,7 @@ namespace MonoTests.System.Windows.Forms
 		     l.Visible = true;
 		     myform.Controls.Add (l);
 		     l.BackgroundImageChanged += new EventHandler (Label_EventHandler);
-		     l.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
+		     l.BackgroundImage = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/System.Windows.Forms/bitmaps/a.png"));
 		     Assert.AreEqual (true, eventhandled, "B4");
 		     eventhandled = false;
 		     myform.Dispose();
@@ -770,7 +772,7 @@ public class MyLabel : Label
 		     myform.Visible = true;
 		     MyLabel l = new MyLabel ();
 		     myform.Controls.Add (l);
-		     l.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
+		     l.BackgroundImage = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/System.Windows.Forms/bitmaps/a.png"));
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
 		     myform.Dispose();
@@ -1152,7 +1154,7 @@ public class MyLabel2 : Label
 		     myform.Visible = true;
 		     MyLabel2 l = new MyLabel2 ();
 		     myform.Controls.Add (l);
-		     l.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
+		     l.BackgroundImage = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/System.Windows.Forms/bitmaps/a.png"));
 
 		     Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
 		     myform.Dispose();

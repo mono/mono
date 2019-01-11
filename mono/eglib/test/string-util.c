@@ -4,8 +4,8 @@
 #include "test.h"
 
 /* This test is just to be used with valgrind */
-RESULT
-test_strfreev ()
+static RESULT
+test_strfreev (void)
 {
 	gchar **array = g_new (gchar *, 4);
 	array [0] = g_strdup ("one");
@@ -19,8 +19,8 @@ test_strfreev ()
 	return OK;
 }
 
-RESULT
-test_concat ()
+static RESULT
+test_concat (void)
 {
 	gchar *x = g_strconcat ("Hello", ", ", "world", NULL);
 	if (strcmp (x, "Hello, world") != 0)
@@ -29,8 +29,8 @@ test_concat ()
 	return OK;
 }
 
-RESULT
-test_split ()
+static RESULT
+test_split (void)
 {
 	const gchar *to_split = "Hello world, how are we doing today?";
 	gint i;
@@ -187,8 +187,8 @@ test_split ()
 	return OK;
 }
 
-RESULT
-test_split_set ()
+static RESULT
+test_split_set (void)
 {
 	gchar **v;
 	
@@ -303,16 +303,16 @@ test_split_set ()
 	return OK;
 }
 
-RESULT
-test_strreverse ()
+static RESULT
+test_strreverse (void)
 {
 	RESULT res = OK;
 	gchar *a = g_strdup ("onetwothree");
-	gchar *a_target = "eerhtowteno";
+	gchar *a_target = (char*)"eerhtowteno";
 	gchar *b = g_strdup ("onetwothre");
-	gchar *b_target = "erhtowteno";
+	gchar *b_target = (char*)"erhtowteno";
 	gchar *c = g_strdup ("");
-	gchar *c_target = "";
+	gchar *c_target = (char*)"";
 
 	g_strreverse (a);
 	if (strcmp (a, a_target)) {
@@ -339,8 +339,8 @@ cleanup:
 	return res;
 }
 
-RESULT
-test_strjoin ()
+static RESULT
+test_strjoin (void)
 {
 	char *s;
 	
@@ -372,8 +372,8 @@ test_strjoin ()
 	return OK;
 }
 
-RESULT
-test_strchug ()
+static RESULT
+test_strchug (void)
 {
 	char *str = g_strdup (" \t\n hola");
 
@@ -387,8 +387,8 @@ test_strchug ()
 	return OK;
 }
 
-RESULT
-test_strchomp ()
+static RESULT
+test_strchomp (void)
 {
 	char *str = g_strdup ("hola  \t");
 
@@ -402,8 +402,8 @@ test_strchomp ()
 	return OK;
 }
 
-RESULT
-test_strstrip ()
+static RESULT
+test_strstrip (void)
 {
 	char *str = g_strdup (" \t hola   ");
 
@@ -421,8 +421,8 @@ test_strstrip ()
 
 #define errit(so) do { s = g_filename_to_uri (so, NULL, NULL); if (s != NULL) return FAILED ("got %s, expected NULL", s); } while (0);
 
-RESULT
-test_filename_to_uri ()
+static RESULT
+test_filename_to_uri (void)
 {
 #ifdef G_OS_WIN32
 #else
@@ -453,17 +453,18 @@ test_filename_to_uri ()
 
 #define ferrit(so) do { s = g_filename_from_uri (so, NULL, NULL); if (s != NULL) return FAILED ("got %s, expected NULL", s); } while (0);
 
-RESULT
-test_filename_from_uri ()
+static RESULT
+test_filename_from_uri (void)
 {
-#ifdef G_OS_WIN32
-#else
+#ifndef G_OS_WIN32
 	char *s;
 
 	fileit ("file:///a", "/a");
 	fileit ("file:///%41", "/A");
 	fileit ("file:///home/miguel", "/home/miguel");
 	fileit ("file:///home/mig%20uel", "/home/mig uel");
+	fileit ("file:///home/c%2B%2B", "/home/c++");
+	fileit ("file:///home/c%2b%2b", "/home/c++");
 	ferrit ("/a");
 	ferrit ("a");
 	ferrit ("file://a");
@@ -476,8 +477,8 @@ test_filename_from_uri ()
 	return OK;
 }
 
-RESULT
-test_ascii_xdigit_value ()
+static RESULT
+test_ascii_xdigit_value (void)
 {
 	int i;
 	gchar j;
@@ -519,18 +520,28 @@ test_ascii_xdigit_value ()
 	return OK;
 }
 
-RESULT
-test_strdelimit ()
+#define	G_STR_DELIMITERS "_-|> <."
+
+static void
+g_strdelimits (char *a, const char *old, char new)
+{
+	old = old ? old : G_STR_DELIMITERS;
+	while (*old)
+		g_strdelimit (a, *old++, new);
+}
+
+static RESULT
+test_strdelimit (void)
 {
 	gchar *str;
 
 	str = g_strdup (G_STR_DELIMITERS);
-	str = g_strdelimit (str, NULL, 'a');
+	g_strdelimits (str, NULL, 'a');
 	if (0 != strcmp ("aaaaaaa", str))
 		return FAILED ("All delimiters: '%s'", str);
 	g_free (str);
 	str = g_strdup ("hola");
-	str = g_strdelimit (str, "ha", '+');
+	g_strdelimits (str, "ha", '+');
 	if (0 != strcmp ("+ol+", str))
 		return FAILED ("2 delimiters: '%s'", str);
 	g_free (str);
@@ -539,8 +550,8 @@ test_strdelimit ()
 
 #define NUMBERS "0123456789"
 
-RESULT
-test_strlcpy ()
+static RESULT
+test_strlcpy (void)
 {
 	const gchar *src = "onetwothree";
 	gchar *dest;
@@ -583,8 +594,8 @@ test_strlcpy ()
 	return OK;
 }
 
-RESULT
-test_strescape ()
+static RESULT
+test_strescape (void)
 {
 	gchar *str;
 
@@ -603,8 +614,8 @@ test_strescape ()
 	return OK;
 }
 
-RESULT
-test_ascii_strncasecmp ()
+static RESULT
+test_ascii_strncasecmp (void)
 {
 	int n;
 
@@ -626,8 +637,8 @@ test_ascii_strncasecmp ()
 	return OK;
 }
 
-RESULT
-test_ascii_strdown ()
+static RESULT
+test_ascii_strdown (void)
 {
 	const gchar *a = "~09+AaBcDeFzZ$0909EmPAbCdEEEEEZZZZAAA";
 	const gchar *b = "~09+aabcdefzz$0909empabcdeeeeezzzzaaa";
@@ -647,8 +658,8 @@ test_ascii_strdown ()
 	return OK;
 }
 
-RESULT
-test_strdupv ()
+static RESULT
+test_strdupv (void)
 {
 	gchar **one;
 	gchar **two;
@@ -694,5 +705,3 @@ static Test strutil_tests [] = {
 };
 
 DEFINE_TEST_GROUP_INIT(strutil_tests_init, strutil_tests)
-
-

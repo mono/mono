@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace System.Collections.Generic
 {
@@ -26,6 +27,7 @@ namespace System.Collections.Generic
         static volatile EqualityComparer<T> defaultComparer;
 
         public static EqualityComparer<T> Default {
+			[MethodImplAttribute (MethodImplOptions.AggressiveInlining)]
             get {
                 Contract.Ensures(Contract.Result<EqualityComparer<T>>() != null);
 
@@ -52,6 +54,10 @@ namespace System.Collections.Generic
                 return (EqualityComparer<T>)(object)(new ByteEqualityComparer());
             }
 
+			/////////////////////////////////////////////////
+			// KEEP THIS IN SYNC WITH THE DEVIRT CODE
+			// IN METHOD-TO-IR.C
+			/////////////////////////////////////////////////
 #if MOBILE
             // Breaks .net serialization compatibility
             if (t == typeof (string))

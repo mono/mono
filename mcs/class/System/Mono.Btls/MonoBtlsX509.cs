@@ -310,7 +310,7 @@ namespace Mono.Btls
 			return mono_btls_x509_get_version (Handle.DangerousGetHandle ());
 		}
 
-		public Oid GetSignatureAlgorithm ()
+		public string GetSignatureAlgorithm ()
 		{
 			int size = 256;
 			IntPtr data = Marshal.AllocHGlobal (size);
@@ -318,7 +318,7 @@ namespace Mono.Btls
 				var ret = mono_btls_x509_get_signature_algorithm (
 					Handle.DangerousGetHandle (), data, size);
 				CheckError (ret > 0);
-				return new Oid (Marshal.PtrToStringAnsi (data));
+				return Marshal.PtrToStringAnsi (data);
 			} finally {
 				Marshal.FreeHGlobal (data);
 			}

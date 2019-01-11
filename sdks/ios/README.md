@@ -68,3 +68,7 @@ seem to read the device logs, only the graphical Console app can.
 * Use a publish-subscribe pattern by uploading test results to some cloud service like
 Azure EventHub. This only requires client side internet access on the device and
 the test harness.
+
+## Notes
+
+Bernhard needed this patch to make it work on his machine: https://gist.github.com/lewurm/7711187deadb57bae97a4d4be4df563b

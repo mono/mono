@@ -65,6 +65,21 @@ namespace System
 			return true;
 		}
 
+		// adapted to the Mono array layout
+		[StructLayout(LayoutKind.Sequential)]
+		private class RawData
+		{
+			public IntPtr Bounds;
+			public IntPtr Count;
+			public byte Data;
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		internal ref byte GetRawSzArrayData()
+		{
+			return ref Unsafe.As<RawData>(this).Data;
+		}
+
 		internal IEnumerator<T> InternalArray__IEnumerable_GetEnumerator<T> ()
 		{
 			if (Length == 0)
@@ -571,26 +586,27 @@ namespace System
 				throw new ArgumentException ("length");
 
 			if (dest_pos > destinationArray.Length - length) {
-				string msg = "Destination array was not long enough. Check " +
-					"destIndex and length, and the array's lower bounds";
-				throw new ArgumentException (msg, string.Empty);
+				throw new ArgumentException ("Destination array was not long enough. Check destIndex and length, and the array's lower bounds", nameof (destinationArray));
 			}
 
 			Type src_type = sourceArray.GetType ().GetElementType ();
 			Type dst_type = destinationArray.GetType ().GetElementType ();
+			var dst_type_vt = dst_type.IsValueType;
 
 			if (!Object.ReferenceEquals (sourceArray, destinationArray) || source_pos > dest_pos) {
 				for (int i = 0; i < length; i++) {
 					Object srcval = sourceArray.GetValueImpl (source_pos + i);
 
+					if (srcval == null && dst_type_vt)
+						throw new InvalidCastException ();
+
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
 					} catch (ArgumentException) {
 						throw CreateArrayTypeMismatchException ();
-					} catch {
+					} catch (InvalidCastException) {
 						if (CanAssignArrayElement (src_type, dst_type))
 							throw;
-
 						throw CreateArrayTypeMismatchException ();
 					}
 				}
@@ -613,7 +629,7 @@ namespace System
 			}
 		}
 
-		static Exception CreateArrayTypeMismatchException ()
+		static ArrayTypeMismatchException CreateArrayTypeMismatchException ()
 		{
 			return new ArrayTypeMismatchException ();
 		}

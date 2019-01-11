@@ -26,11 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if FULL_AOT_RUNTIME
+#if !MONO_FEATURE_SRE
+
+using System.Globalization;
 
 namespace System.Reflection.Emit
 {
-	public abstract class DynamicMethod : MethodInfo, ICustomAttributeProvider
+	public sealed class DynamicMethod : MethodInfo
 	{
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes)
 		{
@@ -130,6 +132,19 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public override RuntimeMethodHandle MethodHandle { get { throw new PlatformNotSupportedException (); } }
+		public override Type ReflectedType { get { throw new PlatformNotSupportedException (); } }
+		public override ICustomAttributeProvider ReturnTypeCustomAttributes { get { throw new PlatformNotSupportedException (); } }
+
+		public override object[] GetCustomAttributes (bool inherit) { throw new PlatformNotSupportedException (); }
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
+		public override MethodImplAttributes GetMethodImplementationFlags () { throw new PlatformNotSupportedException (); }
+		public override MethodInfo GetBaseDefinition () { throw new PlatformNotSupportedException (); }
+
+		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) { throw new PlatformNotSupportedException (); }
+
+		public override bool IsDefined (Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
 	}
 }
 

@@ -364,7 +364,6 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void SelectManyOrderedTest ()
 		{
 			IEnumerable<int> initial = Enumerable.Range (1, 50);

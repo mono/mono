@@ -2,146 +2,295 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
+#include <mono/metadata/assembly.h>
+#include <mono/jit/jit.h>
+#include <mono/utils/mono-logger.h>
+#include <mono/utils/mono-dl-fallback.h>
 
-typedef enum {
-	/* Disables AOT mode */
-	MONO_AOT_MODE_NONE,
-	/* Enables normal AOT mode, equivalent to mono_jit_set_aot_only (false) */
-	MONO_AOT_MODE_NORMAL,
-	/* Enables hybrid AOT mode, JIT can still be used for wrappers */
-	MONO_AOT_MODE_HYBRID,
-	/* Enables full AOT mode, JIT is disabled and not allowed,
-	 * equivalent to mono_jit_set_aot_only (true) */
-	MONO_AOT_MODE_FULL,
-	/* Same as full, but use only llvm compiled code */
-	MONO_AOT_MODE_LLVMONLY,
-	/* Uses Interpreter, JIT is disabled and not allowed,
-	 * equivalent to "--full-aot --interpreter" */
-	MONO_AOT_MODE_INTERP,
-	/* Same as INTERP, but use only llvm compiled code */
-	MONO_AOT_MODE_INTERP_LLVMONLY,
-} MonoAotMode;
+// FIXME: Autogenerate this
 
-typedef enum {
-	MONO_TYPE_END        = 0x00,       /* End of List */
-	MONO_TYPE_VOID       = 0x01,
-	MONO_TYPE_BOOLEAN    = 0x02,
-	MONO_TYPE_CHAR       = 0x03,
-	MONO_TYPE_I1         = 0x04,
-	MONO_TYPE_U1         = 0x05,
-	MONO_TYPE_I2         = 0x06,
-	MONO_TYPE_U2         = 0x07,
-	MONO_TYPE_I4         = 0x08,
-	MONO_TYPE_U4         = 0x09,
-	MONO_TYPE_I8         = 0x0a,
-	MONO_TYPE_U8         = 0x0b,
-	MONO_TYPE_R4         = 0x0c,
-	MONO_TYPE_R8         = 0x0d,
-	MONO_TYPE_STRING     = 0x0e,
-	MONO_TYPE_PTR        = 0x0f,       /* arg: <type> token */
-	MONO_TYPE_BYREF      = 0x10,       /* arg: <type> token */
-	MONO_TYPE_VALUETYPE  = 0x11,       /* arg: <type> token */
-	MONO_TYPE_CLASS      = 0x12,       /* arg: <type> token */
-	MONO_TYPE_VAR	     = 0x13,	   /* number */
-	MONO_TYPE_ARRAY      = 0x14,       /* type, rank, boundsCount, bound1, loCount, lo1 */
-	MONO_TYPE_GENERICINST= 0x15,	   /* <type> <type-arg-count> <type-1> \x{2026} <type-n> */
-	MONO_TYPE_TYPEDBYREF = 0x16,
-	MONO_TYPE_I          = 0x18,
-	MONO_TYPE_U          = 0x19,
-	MONO_TYPE_FNPTR      = 0x1b,	      /* arg: full method signature */
-	MONO_TYPE_OBJECT     = 0x1c,
-	MONO_TYPE_SZARRAY    = 0x1d,       /* 0-based one-dim-array */
-	MONO_TYPE_MVAR	     = 0x1e,       /* number */
-	MONO_TYPE_CMOD_REQD  = 0x1f,       /* arg: typedef or typeref token */
-	MONO_TYPE_CMOD_OPT   = 0x20,       /* optional arg: typedef or typref token */
-	MONO_TYPE_INTERNAL   = 0x21,       /* CLR internal type */
+typedef struct {
+	const char *name;
+	void *func;
+} PinvokeImport;
 
-	MONO_TYPE_MODIFIER   = 0x40,       /* Or with the following types */
-	MONO_TYPE_SENTINEL   = 0x41,       /* Sentinel for varargs method signature */
-	MONO_TYPE_PINNED     = 0x45,       /* Local var that points to pinned object */
+void SystemNative_ConvertErrorPalToPlatform ();
+void SystemNative_ConvertErrorPlatformToPal ();
+void SystemNative_StrErrorR ();
+void SystemNative_MemSet ();
+void SystemNative_GetEGid ();
+void SystemNative_GetEUid ();
+void SystemNative_GetPwNamR ();
+void SystemNative_GetPwUidR ();
+void SystemNative_SetEUid ();
+void SystemNative_GetAbsoluteTime ();
+void SystemNative_GetTimebaseInfo ();
+void SystemNative_GetTimestamp ();
+void SystemNative_GetTimestampResolution ();
+void SystemNative_UTime ();
+void SystemNative_Access ();
+void SystemNative_ChDir ();
+void SystemNative_ChMod ();
+void SystemNative_Close ();
+void SystemNative_CloseDir ();
+void SystemNative_CopyFile ();
+void SystemNative_Dup ();
+void SystemNative_FChMod ();
+void SystemNative_FLock ();
+void SystemNative_FStat2 ();
+void SystemNative_FSync ();
+void SystemNative_FTruncate ();
+void SystemNative_FcntlCanGetSetPipeSz ();
+void SystemNative_FcntlGetPipeSz ();
+void SystemNative_FcntlSetCloseOnExec ();
+void SystemNative_FcntlSetIsNonBlocking ();
+void SystemNative_FcntlSetPipeSz ();
+void SystemNative_FnMatch ();
+void SystemNative_GetLine ();
+void SystemNative_GetPeerID ();
+void SystemNative_GetReadDirRBufferSize ();
+void SystemNative_INotifyAddWatch ();
+void SystemNative_INotifyInit ();
+void SystemNative_INotifyRemoveWatch ();
+void SystemNative_LSeek ();
+void SystemNative_LStat2 ();
+void SystemNative_Link ();
+void SystemNative_LockFileRegion ();
+void SystemNative_MAdvise ();
+void SystemNative_MLock ();
+void SystemNative_MMap ();
+void SystemNative_MProtect ();
+void SystemNative_MSync ();
+void SystemNative_MUnlock ();
+void SystemNative_MUnmap ();
+void SystemNative_MkDir ();
+void SystemNative_MksTemps ();
+void SystemNative_Open ();
+void SystemNative_OpenDir ();
+void SystemNative_Pipe ();
+void SystemNative_Poll ();
+void SystemNative_PosixFAdvise ();
+void SystemNative_Read ();
+void SystemNative_ReadDirR ();
+void SystemNative_ReadLink ();
+void SystemNative_RealPath ();
+void SystemNative_Rename ();
+void SystemNative_RmDir ();
+void SystemNative_ShmOpen ();
+void SystemNative_ShmUnlink ();
+void SystemNative_Stat2 ();
+void SystemNative_Sync ();
+void SystemNative_SysConf ();
+void SystemNative_Unlink ();
+void SystemNative_Write ();
+void SystemNative_Accept ();
+void SystemNative_Bind ();
+void SystemNative_CloseSocketEventPort ();
+void SystemNative_Connect ();
+void SystemNative_CreateSocketEventBuffer ();
+void SystemNative_CreateSocketEventPort ();
+void SystemNative_FreeHostEntry ();
+void SystemNative_FreeSocketEventBuffer ();
+void SystemNative_GetAddressFamily ();
+void SystemNative_GetAtOutOfBandMark ();
+void SystemNative_GetBytesAvailable ();
+void SystemNative_GetControlMessageBufferSize ();
+void SystemNative_GetDomainName ();
+void SystemNative_GetDomainSocketSizes ();
+void SystemNative_GetHostEntryForName ();
+void SystemNative_GetHostName ();
+void SystemNative_GetIPSocketAddressSizes ();
+void SystemNative_GetIPv4Address ();
+void SystemNative_GetIPv4MulticastOption ();
+void SystemNative_GetIPv6Address ();
+void SystemNative_GetIPv6MulticastOption ();
+void SystemNative_GetLingerOption ();
+void SystemNative_GetNameInfo ();
+void SystemNative_GetNextIPAddress ();
+void SystemNative_GetPeerName ();
+void SystemNative_GetPeerUserName ();
+void SystemNative_GetPort ();
+void SystemNative_GetSockName ();
+void SystemNative_GetSockOpt ();
+void SystemNative_GetSocketErrorOption ();
+void SystemNative_Listen ();
+void SystemNative_PlatformSupportsDualModeIPv4PacketInfo ();
+void SystemNative_ReceiveMessage ();
+void SystemNative_SendFile ();
+void SystemNative_SendMessage ();
+void SystemNative_SetAddressFamily ();
+void SystemNative_SetIPv4Address ();
+void SystemNative_SetIPv4MulticastOption ();
+void SystemNative_SetIPv6Address ();
+void SystemNative_SetIPv6MulticastOption ();
+void SystemNative_SetLingerOption ();
+void SystemNative_SetPort ();
+void SystemNative_SetReceiveTimeout ();
+void SystemNative_SetSendTimeout ();
+void SystemNative_SetSockOpt ();
+void SystemNative_Shutdown ();
+void SystemNative_Socket ();
+void SystemNative_TryChangeSocketEventRegistration ();
+void SystemNative_TryGetIPPacketInformation ();
+void SystemNative_WaitForSocketEvents ();
+void SystemNative_MapTcpState ();
+void SystemNative_GetNonCryptographicallySecureRandomBytes ();
 
-	MONO_TYPE_ENUM       = 0x55        /* an enumeration */
-} MonoTypeEnum;
-
-typedef enum {
-	MONO_IMAGE_OK,
-	MONO_IMAGE_ERROR_ERRNO,
-	MONO_IMAGE_MISSING_ASSEMBLYREF,
-	MONO_IMAGE_IMAGE_INVALID
-} MonoImageOpenStatus;
-
-typedef struct MonoType_ MonoType;
-typedef struct MonoDomain_ MonoDomain;
-typedef struct MonoAssembly_ MonoAssembly;
-typedef struct MonoMethod_ MonoMethod;
-typedef struct MonoException_ MonoException;
-typedef struct MonoString_ MonoString;
-typedef struct MonoClass_ MonoClass;
-typedef struct MonoImage_ MonoImage;
-typedef struct MonoObject_ MonoObject;
-typedef struct MonoArray_ MonoArray;
-typedef struct MonoThread_ MonoThread;
-typedef struct _MonoAssemblyName MonoAssemblyName;
-
+static PinvokeImport sysnative_imports [] = {
+	{"SystemNative_ConvertErrorPalToPlatform", SystemNative_ConvertErrorPalToPlatform},
+	{"SystemNative_ConvertErrorPlatformToPal", SystemNative_ConvertErrorPlatformToPal},
+	{"SystemNative_StrErrorR", SystemNative_StrErrorR},
+	{"SystemNative_MemSet", SystemNative_MemSet},
+	{"SystemNative_GetEGid", SystemNative_GetEGid},
+	{"SystemNative_GetEUid", SystemNative_GetEUid},
+	{"SystemNative_GetPwNamR", SystemNative_GetPwNamR},
+	{"SystemNative_GetPwUidR", SystemNative_GetPwUidR},
+	{"SystemNative_SetEUid", SystemNative_SetEUid},
+	{"SystemNative_GetAbsoluteTime", SystemNative_GetAbsoluteTime},
+	{"SystemNative_GetTimebaseInfo", SystemNative_GetTimebaseInfo},
+	{"SystemNative_GetTimestamp", SystemNative_GetTimestamp},
+	{"SystemNative_GetTimestampResolution", SystemNative_GetTimestampResolution},
+	{"SystemNative_UTime", SystemNative_UTime},
+	{"SystemNative_Access", SystemNative_Access},
+	{"SystemNative_ChDir", SystemNative_ChDir},
+	{"SystemNative_ChMod", SystemNative_ChMod},
+	{"SystemNative_Close", SystemNative_Close},
+	{"SystemNative_CloseDir", SystemNative_CloseDir},
+	{"SystemNative_CopyFile", SystemNative_CopyFile},
+	{"SystemNative_Dup", SystemNative_Dup},
+	{"SystemNative_FChMod", SystemNative_FChMod},
+	{"SystemNative_FLock", SystemNative_FLock},
+	{"SystemNative_FStat2", SystemNative_FStat2},
+	{"SystemNative_FSync", SystemNative_FSync},
+	{"SystemNative_FTruncate", SystemNative_FTruncate},
+	{"SystemNative_FcntlCanGetSetPipeSz", SystemNative_FcntlCanGetSetPipeSz},
+	{"SystemNative_FcntlGetPipeSz", SystemNative_FcntlGetPipeSz},
+	{"SystemNative_FcntlSetCloseOnExec", SystemNative_FcntlSetCloseOnExec},
+	{"SystemNative_FcntlSetIsNonBlocking", SystemNative_FcntlSetIsNonBlocking},
+	{"SystemNative_FcntlSetPipeSz", SystemNative_FcntlSetPipeSz},
+	{"SystemNative_FnMatch", SystemNative_FnMatch},
+	{"SystemNative_GetLine", SystemNative_GetLine},
+	{"SystemNative_GetPeerID", SystemNative_GetPeerID},
+	{"SystemNative_GetReadDirRBufferSize", SystemNative_GetReadDirRBufferSize},
+	{"SystemNative_INotifyAddWatch", SystemNative_INotifyAddWatch},
+	{"SystemNative_INotifyInit", SystemNative_INotifyInit},
+	{"SystemNative_INotifyRemoveWatch", SystemNative_INotifyRemoveWatch},
+	{"SystemNative_LSeek", SystemNative_LSeek},
+	{"SystemNative_LStat2", SystemNative_LStat2},
+	{"SystemNative_Link", SystemNative_Link},
+	{"SystemNative_LockFileRegion", SystemNative_LockFileRegion},
+	{"SystemNative_MAdvise", SystemNative_MAdvise},
+	{"SystemNative_MLock", SystemNative_MLock},
+	{"SystemNative_MMap", SystemNative_MMap},
+	{"SystemNative_MProtect", SystemNative_MProtect},
+	{"SystemNative_MSync", SystemNative_MSync},
+	{"SystemNative_MUnlock", SystemNative_MUnlock},
+	{"SystemNative_MUnmap", SystemNative_MUnmap},
+	{"SystemNative_MkDir", SystemNative_MkDir},
+	{"SystemNative_MksTemps", SystemNative_MksTemps},
+	{"SystemNative_Open", SystemNative_Open},
+	{"SystemNative_OpenDir", SystemNative_OpenDir},
+	{"SystemNative_Pipe", SystemNative_Pipe},
+	{"SystemNative_Poll", SystemNative_Poll},
+	{"SystemNative_PosixFAdvise", SystemNative_PosixFAdvise},
+	{"SystemNative_Read", SystemNative_Read},
+	{"SystemNative_ReadDirR", SystemNative_ReadDirR},
+	{"SystemNative_ReadLink", SystemNative_ReadLink},
+	{"SystemNative_RealPath", SystemNative_RealPath},
+	{"SystemNative_Rename", SystemNative_Rename},
+	{"SystemNative_RmDir", SystemNative_RmDir},
+	{"SystemNative_ShmOpen", SystemNative_ShmOpen},
+	{"SystemNative_ShmUnlink", SystemNative_ShmUnlink},
+	{"SystemNative_Stat2", SystemNative_Stat2},
+	{"SystemNative_Sync", SystemNative_Sync},
+	{"SystemNative_SysConf", SystemNative_SysConf},
+	{"SystemNative_Unlink", SystemNative_Unlink},
+	{"SystemNative_Write", SystemNative_Write},
+	{"SystemNative_Accept", SystemNative_Accept},
+	{"SystemNative_Bind", SystemNative_Bind},
+	{"SystemNative_CloseSocketEventPort", SystemNative_CloseSocketEventPort},
+	{"SystemNative_Connect", SystemNative_Connect},
+	{"SystemNative_CreateSocketEventBuffer", SystemNative_CreateSocketEventBuffer},
+	{"SystemNative_CreateSocketEventPort", SystemNative_CreateSocketEventPort},
+	{"SystemNative_FreeHostEntry", SystemNative_FreeHostEntry},
+	{"SystemNative_FreeSocketEventBuffer", SystemNative_FreeSocketEventBuffer},
+	{"SystemNative_GetAddressFamily", SystemNative_GetAddressFamily},
+	{"SystemNative_GetAtOutOfBandMark", SystemNative_GetAtOutOfBandMark},
+	{"SystemNative_GetBytesAvailable", SystemNative_GetBytesAvailable},
+	{"SystemNative_GetControlMessageBufferSize", SystemNative_GetControlMessageBufferSize},
+	{"SystemNative_GetDomainName", SystemNative_GetDomainName},
+	{"SystemNative_GetDomainSocketSizes", SystemNative_GetDomainSocketSizes},
+	{"SystemNative_GetHostEntryForName", SystemNative_GetHostEntryForName},
+	{"SystemNative_GetHostName", SystemNative_GetHostName},
+	{"SystemNative_GetIPSocketAddressSizes", SystemNative_GetIPSocketAddressSizes},
+	{"SystemNative_GetIPv4Address", SystemNative_GetIPv4Address},
+	{"SystemNative_GetIPv4MulticastOption", SystemNative_GetIPv4MulticastOption},
+	{"SystemNative_GetIPv6Address", SystemNative_GetIPv6Address},
+	{"SystemNative_GetIPv6MulticastOption", SystemNative_GetIPv6MulticastOption},
+	{"SystemNative_GetLingerOption", SystemNative_GetLingerOption},
+	{"SystemNative_GetNameInfo", SystemNative_GetNameInfo},
+	{"SystemNative_GetNextIPAddress", SystemNative_GetNextIPAddress},
+	{"SystemNative_GetPeerName", SystemNative_GetPeerName},
+	{"SystemNative_GetPeerUserName", SystemNative_GetPeerUserName},
+	{"SystemNative_GetPort", SystemNative_GetPort},
+	{"SystemNative_GetSockName", SystemNative_GetSockName},
+	{"SystemNative_GetSockOpt", SystemNative_GetSockOpt},
+	{"SystemNative_GetSocketErrorOption", SystemNative_GetSocketErrorOption},
+	{"SystemNative_Listen", SystemNative_Listen},
+	{"SystemNative_PlatformSupportsDualModeIPv4PacketInfo", SystemNative_PlatformSupportsDualModeIPv4PacketInfo},
+	{"SystemNative_ReceiveMessage", SystemNative_ReceiveMessage},
+	{"SystemNative_SendFile", SystemNative_SendFile},
+	{"SystemNative_SendMessage", SystemNative_SendMessage},
+	{"SystemNative_SetAddressFamily", SystemNative_SetAddressFamily},
+	{"SystemNative_SetIPv4Address", SystemNative_SetIPv4Address},
+	{"SystemNative_SetIPv4MulticastOption", SystemNative_SetIPv4MulticastOption},
+	{"SystemNative_SetIPv6Address", SystemNative_SetIPv6Address},
+	{"SystemNative_SetIPv6MulticastOption", SystemNative_SetIPv6MulticastOption},
+	{"SystemNative_SetLingerOption", SystemNative_SetLingerOption},
+	{"SystemNative_SetPort", SystemNative_SetPort},
+	{"SystemNative_SetReceiveTimeout", SystemNative_SetReceiveTimeout},
+	{"SystemNative_SetSendTimeout", SystemNative_SetSendTimeout},
+	{"SystemNative_SetSockOpt", SystemNative_SetSockOpt},
+	{"SystemNative_Shutdown", SystemNative_Shutdown},
+	{"SystemNative_Socket", SystemNative_Socket},
+	{"SystemNative_TryChangeSocketEventRegistration", SystemNative_TryChangeSocketEventRegistration},
+	{"SystemNative_TryGetIPPacketInformation", SystemNative_TryGetIPPacketInformation},
+	{"SystemNative_WaitForSocketEvents", SystemNative_WaitForSocketEvents},
+	{"SystemNative_MapTcpState", SystemNative_MapTcpState},
+	{"SystemNative_GetNonCryptographicallySecureRandomBytes", SystemNative_GetNonCryptographicallySecureRandomBytes},
+};
 
 //JS funcs
 extern MonoObject* mono_wasm_invoke_js_with_args (int js_handle, MonoString *method, MonoArray *args, int *is_exception);
+extern MonoObject* mono_wasm_get_object_property (int js_handle, MonoString *method, int *is_exception);
+extern MonoObject* mono_wasm_set_object_property (int js_handle, MonoString *method, MonoObject *value, int createIfNotExist, int hasOwnProperty, int *is_exception);
+extern MonoObject* mono_wasm_get_global_object (MonoString *globalName, int *is_exception);
+extern void* mono_wasm_release_handle (int js_handle, int *is_exception);
+extern void* mono_wasm_release_object (int js_handle, int *is_exception);
+extern MonoObject* mono_wasm_new_array (int *is_exception);
+extern MonoObject* mono_wasm_new_object (int js_handle, MonoArray *args, int *is_exception);
 
-void mono_jit_set_aot_mode (MonoAotMode mode);
-MonoDomain*  mono_jit_init_version (const char *root_domain_name, const char *runtime_version);
-MonoAssembly* mono_assembly_open (const char *filename, MonoImageOpenStatus *status);
-int mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
-void mono_set_assemblies_path (const char* path);
+
+// Blazor specific custom routines - see dotnet_support.js for backing code
+extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
+extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, MonoString *funcName, void* arg0, void* arg1, void* arg2);
+
+void mono_wasm_enable_debugging (void);
+
+void mono_ee_interp_init (const char *opts);
+void mono_marshal_ilgen_init (void);
+void mono_method_builder_ilgen_init (void);
+void mono_sgen_mono_ilgen_init (void);
+void mono_icall_table_init (void);
+void mono_aot_register_module (void **aot_info);
+char *monoeg_g_getenv(const char *variable);
 int monoeg_g_setenv(const char *variable, const char *value, int overwrite);
 void mono_free (void*);
-MonoString* mono_string_new (MonoDomain *domain, const char *text);
-MonoDomain* mono_domain_get (void);
-MonoClass* mono_class_from_name (MonoImage *image, const char* name_space, const char *name);
-MonoMethod* mono_class_get_method_from_name (MonoClass *klass, const char *name, int param_count);
-MonoType* mono_class_get_type (MonoClass *klass);
-MonoClass* mono_object_get_class (MonoObject *obj);
-int mono_type_get_type (MonoType *type);
-int mono_type_is_reference (MonoType *type);
 
-MonoString* mono_object_to_string (MonoObject *obj, MonoObject **exc);//FIXME Use MonoError variant
-char* mono_string_to_utf8 (MonoString *string_obj);
-MonoObject* mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc);
-void* mono_object_unbox (MonoObject *obj);
-
-MonoImage* mono_assembly_get_image (MonoAssembly *assembly);
-MonoAssembly* mono_assembly_load (MonoAssemblyName *aname, const char *basedir, MonoImageOpenStatus *status);
-
-MonoAssemblyName* mono_assembly_name_new (const char *name);
-void mono_assembly_name_free (MonoAssemblyName *aname);
-const char* mono_image_get_name (MonoImage *image);
-const char* mono_class_get_name (MonoClass *klass);
-MonoString* mono_string_new (MonoDomain *domain, const char *text);
-void mono_add_internal_call (const char *name, const void* method);
-MonoString * mono_string_from_utf16 (char *data);
-MonoString* mono_string_new (MonoDomain *domain, const char *text);
-void mono_wasm_enable_debugging (void);
-MonoArray* mono_array_new (MonoDomain *domain, MonoClass *eclass, int n);
-MonoClass* mono_get_object_class (void);
-int mono_class_is_delegate (MonoClass* klass);
-const char* mono_class_get_name (MonoClass *klass);
-const char* mono_class_get_namespace (MonoClass *klass);
-
-
-
-#define mono_array_get(array,type,index) ( *(type*)mono_array_addr ((array), type, (index)) ) 
-#define mono_array_addr(array,type,index) ((type*)(void*) mono_array_addr_with_size (array, sizeof (type), index))
-#define mono_array_setref(array,index,value)	\
-	do {	\
-		void **__p = (void **) mono_array_addr ((array), void*, (index));	\
-		mono_gc_wbarrier_set_arrayref ((array), __p, (MonoObject*)(value));	\
-		/* *__p = (value);*/	\
-	} while (0)
-
-
-char* mono_array_addr_with_size (MonoArray *array, int size, int idx);
-int mono_array_length (MonoArray *array);
-void mono_gc_wbarrier_set_arrayref  (MonoArray *arr, void* slot_ptr, MonoObject* value);
+int mono_regression_test_step (int verbose_level, char *image, char *method_name);
+void mono_trace_init (void);
 
 static char*
 m_strdup (const char *str)
@@ -164,7 +313,7 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 		return NULL;
 
 	char *native_val = mono_string_to_utf8 (str);
-	char *native_res = (char*)EM_ASM_INT ({
+	mono_unichar2 *native_res = (mono_unichar2*)EM_ASM_INT ({
 		var str = UTF8ToString ($0);
 		try {
 			var res = eval (str);
@@ -193,19 +342,143 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 	return res;
 }
 
+static void
+wasm_logger (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data)
+{
+	if (fatal) {
+		EM_ASM(
+			   var err = new Error();
+			   console.log ("Stacktrace: \n");
+			   console.log (err.stack);
+			   );
+
+		fprintf (stderr, "%s", message);
+
+		abort ();
+	} else {
+		fprintf (stdout, "%s\n", message);
+	}
+}
+
+#ifdef ENABLE_AOT
+#include "driver-gen.c"
+#endif
+
+typedef struct WasmAssembly_ WasmAssembly;
+
+struct WasmAssembly_ {
+	MonoBundledAssembly assembly;
+	WasmAssembly *next;
+};
+
+static WasmAssembly *assemblies;
+static int assembly_count;
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned int size)
+{
+	int len = strlen (name);
+	if (!strcasecmp (".pdb", &name [len - 4])) {
+		char *new_name = m_strdup (name);
+		//FIXME handle debugging assemblies with .exe extension
+		strcpy (&new_name [len - 3], "dll");
+		mono_register_symfile_for_assembly (new_name, data, size);
+		return;
+	}
+	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
+	entry->assembly.name = m_strdup (name);
+	entry->assembly.data = data;
+	entry->assembly.size = size;
+	entry->next = assemblies;
+	assemblies = entry;
+	++assembly_count;
+}
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_setenv (const char *name, const char *value)
+{
+	monoeg_g_setenv (strdup (name), strdup (value), 1);
+}
+
+static int sysnative_dl_handle;
+
+static void*
+wasm_dl_load (const char *name, int flags, char **err, void *user_data)
+{
+	// FIXME: Add a general approach, this just makes System.IO work
+	if (!strcmp (name, "System.Native"))
+		return &sysnative_dl_handle;
+	return NULL;
+}
+
+static void*
+wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
+{
+	if (handle == &sysnative_dl_handle) {
+		for (int i = 0; i < sizeof (sysnative_imports) / sizeof (sysnative_imports [0]); ++i)
+			if (!strcmp (sysnative_imports [i].name, name))
+				return sysnative_imports [i].func;
+	}
+	return NULL;
+}
+
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
-	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 1);
-	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 1);
+	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 0);
+	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 0);
+
+	mono_dl_fallback_register (wasm_dl_load, wasm_dl_symbol, NULL, NULL);
+
+#ifdef ENABLE_AOT
+	// Defined in driver-gen.c
+	register_aot_modules ();
+	mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY);
+#else
 	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
 	if (enable_debugging)
 		mono_wasm_enable_debugging ();
-	mono_set_assemblies_path (m_strdup (managed_path));
+#endif
+
+#ifndef ENABLE_AOT
+	mono_icall_table_init ();
+	mono_ee_interp_init ("");
+	mono_marshal_ilgen_init ();
+	mono_method_builder_ilgen_init ();
+	mono_sgen_mono_ilgen_init ();
+#endif
+
+	if (assembly_count) {
+		MonoBundledAssembly **bundle_array = (MonoBundledAssembly **)calloc (1, sizeof (MonoBundledAssembly*) * (assembly_count + 1));
+		WasmAssembly *cur = assemblies;
+		bundle_array [assembly_count] = NULL;
+		int i = 0;
+		while (cur) {
+			bundle_array [i] = &cur->assembly;
+			cur = cur->next;
+			++i;
+		}
+		mono_register_bundled_assemblies ((const MonoBundledAssembly**)bundle_array);
+	}
+
+	mono_trace_init ();
+	mono_trace_set_log_handler (wasm_logger, NULL);
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJSWithArgs", mono_wasm_invoke_js_with_args);
+	mono_add_internal_call ("WebAssembly.Runtime::GetObjectProperty", mono_wasm_get_object_property);
+	mono_add_internal_call ("WebAssembly.Runtime::SetObjectProperty", mono_wasm_set_object_property);
+	mono_add_internal_call ("WebAssembly.Runtime::GetGlobalObject", mono_wasm_get_global_object);
+	mono_add_internal_call ("WebAssembly.Runtime::ReleaseHandle", mono_wasm_release_handle);
+	mono_add_internal_call ("WebAssembly.Runtime::ReleaseObject", mono_wasm_release_object);
+	mono_add_internal_call ("WebAssembly.Runtime::NewArrayJS", mono_wasm_new_array);
+	mono_add_internal_call ("WebAssembly.Runtime::NewObjectJS", mono_wasm_new_object);
+
+	// Blazor specific custom routines - see dotnet_support.js for backing code		
+	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);
+	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSUnmarshalled", mono_wasm_invoke_js_unmarshalled);
+
 }
 
 EMSCRIPTEN_KEEPALIVE MonoAssembly*
@@ -254,6 +527,20 @@ mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[
 	return res;
 }
 
+EMSCRIPTEN_KEEPALIVE MonoMethod*
+mono_wasm_assembly_get_entry_point (MonoAssembly *assembly)
+{
+	MonoImage *image;
+	MonoMethod *method;
+
+	image = mono_assembly_get_image (assembly);
+	uint32_t entry = mono_image_get_entry_point (image);
+	if (!entry)
+		return NULL;
+
+	return mono_get_method (image, entry, NULL);
+}
+
 EMSCRIPTEN_KEEPALIVE char *
 mono_wasm_string_get_utf8 (MonoString *str)
 {
@@ -266,6 +553,15 @@ mono_wasm_string_from_js (const char *str)
 	return mono_string_new (root_domain, str);
 }
 
+static int
+class_is_task (MonoClass *klass)
+{
+	if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && 
+		(!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
+		return 1;
+
+	return 0;
+}
 
 #define MARSHAL_TYPE_INT 1
 #define MARSHAL_TYPE_FP 2
@@ -274,6 +570,18 @@ mono_wasm_string_from_js (const char *str)
 #define MARSHAL_TYPE_DELEGATE 5
 #define MARSHAL_TYPE_TASK 6
 #define MARSHAL_TYPE_OBJECT 7
+#define MARSHAL_TYPE_BOOL 8
+#define MARSHAL_TYPE_ENUM 9
+
+// typed array marshalling
+#define MARSHAL_ARRAY_BYTE 11
+#define MARSHAL_ARRAY_UBYTE 12
+#define MARSHAL_ARRAY_SHORT 13
+#define MARSHAL_ARRAY_USHORT 14
+#define MARSHAL_ARRAY_INT 15
+#define MARSHAL_ARRAY_UINT 16
+#define MARSHAL_ARRAY_FLOAT 17
+#define MARSHAL_ARRAY_DOUBLE 18
 
 EMSCRIPTEN_KEEPALIVE int
 mono_wasm_get_obj_type (MonoObject *obj)
@@ -285,7 +593,8 @@ mono_wasm_get_obj_type (MonoObject *obj)
 
 	switch (mono_type_get_type (type)) {
 	// case MONO_TYPE_CHAR: prob should be done not as a number?
-	// case MONO_TYPE_BOOL: prob should be done not as a number?
+	case MONO_TYPE_BOOLEAN:
+		return MARSHAL_TYPE_BOOL;
 	case MONO_TYPE_I1:
 	case MONO_TYPE_U1:
 	case MONO_TYPE_I2:
@@ -300,13 +609,41 @@ mono_wasm_get_obj_type (MonoObject *obj)
 		return MARSHAL_TYPE_FP;
 	case MONO_TYPE_STRING:
 		return MARSHAL_TYPE_STRING;
+	case MONO_TYPE_SZARRAY:  { // simple zero based one-dim-array
+		MonoClass *eklass = mono_class_get_element_class(klass);
+		MonoType *etype = mono_class_get_type (eklass);
+
+		switch (mono_type_get_type (etype)) {
+			case MONO_TYPE_U1:
+				return MARSHAL_ARRAY_UBYTE;
+			case MONO_TYPE_I1:
+				return MARSHAL_ARRAY_BYTE;
+			case MONO_TYPE_U2:
+				return MARSHAL_ARRAY_USHORT;			
+			case MONO_TYPE_I2:
+				return MARSHAL_ARRAY_SHORT;			
+			case MONO_TYPE_U4:
+				return MARSHAL_ARRAY_UINT;			
+			case MONO_TYPE_I4:
+				return MARSHAL_ARRAY_INT;			
+			case MONO_TYPE_R4:
+				return MARSHAL_ARRAY_FLOAT;
+			case MONO_TYPE_R8:
+				return MARSHAL_ARRAY_DOUBLE;
+			default:
+				return MARSHAL_TYPE_OBJECT;
+		}		
+	}
 	default:
+		if (mono_class_is_enum (klass))
+			return MARSHAL_TYPE_ENUM;
 		if (!mono_type_is_reference (type)) //vt
 			return MARSHAL_TYPE_VT;
 		if (mono_class_is_delegate (klass))
 			return MARSHAL_TYPE_DELEGATE;
-		if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && (!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
+		if (class_is_task(klass))
 			return MARSHAL_TYPE_TASK;
+
 		return MARSHAL_TYPE_OBJECT;
 	}
 }
@@ -322,6 +659,7 @@ mono_unbox_int (MonoObject *obj)
 	void *ptr = mono_object_unbox (obj);
 	switch (mono_type_get_type (type)) {
 	case MONO_TYPE_I1:
+	case MONO_TYPE_BOOLEAN:
 		return *(signed char*)ptr;
 	case MONO_TYPE_U1:
 		return *(unsigned char*)ptr;
@@ -383,4 +721,127 @@ EMSCRIPTEN_KEEPALIVE void
 mono_wasm_obj_array_set (MonoArray *array, int idx, MonoObject *obj)
 {
 	mono_array_setref (array, idx, obj);
+}
+
+EMSCRIPTEN_KEEPALIVE MonoArray*
+mono_wasm_string_array_new (int size)
+{
+	return mono_array_new (root_domain, mono_get_string_class (), size);
+}
+
+// Int8Array 		| int8_t	| byte or SByte (signed byte)
+// Uint8Array		| uint8_t	| byte or Byte (unsigned byte)
+// Uint8ClampedArray| uint8_t	| byte or Byte (unsigned byte)
+// Int16Array		| int16_t	| short (signed short)
+// Uint16Array		| uint16_t	| ushort (unsigned short)
+// Int32Array		| int32_t	| int (signed integer)
+// Uint32Array		| uint32_t	| uint (unsigned integer)
+// Float32Array		| float		| float
+// Float64Array		| double	| double
+
+EMSCRIPTEN_KEEPALIVE MonoArray*
+mono_wasm_typed_array_new (char *arr, int length, int size, int type)
+{
+	MonoClass *typeClass = mono_get_byte_class(); // default is Byte
+	switch (type) {
+	case MARSHAL_ARRAY_BYTE:
+		typeClass = mono_get_sbyte_class();
+		break;
+	case MARSHAL_ARRAY_SHORT:
+		typeClass = mono_get_int16_class();
+		break;
+	case MARSHAL_ARRAY_USHORT:
+		typeClass = mono_get_uint16_class();
+		break;
+	case MARSHAL_ARRAY_INT:
+		typeClass = mono_get_int32_class();
+		break;
+	case MARSHAL_ARRAY_UINT:
+		typeClass = mono_get_uint32_class();
+		break;
+	case MARSHAL_ARRAY_FLOAT:
+		typeClass = mono_get_single_class();
+		break;
+	case MARSHAL_ARRAY_DOUBLE:
+		typeClass = mono_get_double_class();
+		break;
+	}
+
+	MonoArray *buffer;
+
+	buffer = mono_array_new (root_domain, typeClass, length);
+	memcpy(mono_array_addr_with_size(buffer, sizeof(char), 0), arr, length * size);
+
+	return buffer;
+}
+
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_array_to_heap (MonoArray *src, char *dest)
+{
+	int element_size;
+	void *source_addr;
+	int arr_length;
+
+	element_size = mono_array_element_size ( mono_object_get_class((MonoObject*)src));
+	//DBG("mono_wasm_to_heap element size %i  / length %i\n",element_size, mono_array_length(src));
+
+	// get our src address
+	source_addr = mono_array_addr_with_size (src, element_size, 0);
+	// copy the array memory to heap via ptr dest
+	memcpy (dest, source_addr, mono_array_length(src) * element_size);
+}
+
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_exec_regression (int verbose_level, char *image)
+{
+	return mono_regression_test_step (verbose_level, image, NULL) ? 0 : 1;
+}
+
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_unbox_enum (MonoObject *obj)
+{
+	if (!obj)
+		return 0;
+	
+	MonoType *type = mono_class_get_type (mono_object_get_class(obj));
+
+	void *ptr = mono_object_unbox (obj);
+	switch (mono_type_get_type(mono_type_get_underlying_type (type))) {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+		return *(unsigned char*)ptr;
+	case MONO_TYPE_I2:
+		return *(short*)ptr;
+	case MONO_TYPE_U2:
+		return *(unsigned short*)ptr;
+	case MONO_TYPE_I4:
+		return *(int*)ptr;
+	case MONO_TYPE_U4:
+		return *(unsigned int*)ptr;
+	// WASM doesn't support returning longs to JS
+	// case MONO_TYPE_I8:
+	// case MONO_TYPE_U8:
+	default:
+		printf ("Invalid type %d to mono_unbox_enum\n", mono_type_get_type(mono_type_get_underlying_type (type)));
+		return 0;
+	}
+}
+
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_exit (int exit_code)
+{
+	exit (exit_code);
+}
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_set_main_args (int argc, char* argv[])
+{
+	mono_runtime_set_main_args (argc, argv);
+}
+
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_strdup (const char *s)
+{
+	return (int)strdup (s);
 }

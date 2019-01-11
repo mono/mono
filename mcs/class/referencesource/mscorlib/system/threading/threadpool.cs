@@ -78,6 +78,19 @@ namespace System.Threading
 
     internal static class ThreadPoolGlobals
     {
+#if MONO
+        public const uint tpQuantum = 30U;
+
+        public static int processorCount => Environment.ProcessorCount;
+
+        public static bool tpHosted => ThreadPool.IsThreadPoolHosted(); 
+
+        public static volatile bool vmTpInitialized;
+        public static bool enableWorkerTracking;
+
+        [SecurityCritical]
+        public static readonly ThreadPoolWorkQueue workQueue = new ThreadPoolWorkQueue();
+#else
         //Per-appDomain quantum (in ms) for which the thread keeps processing
         //requests in the current domain.
         public static uint tpQuantum = 30U;
@@ -96,6 +109,7 @@ namespace System.Threading
         static ThreadPoolGlobals()
         {
         }
+#endif
     }
 
     internal sealed class ThreadPoolWorkQueue
@@ -1216,8 +1230,10 @@ namespace System.Threading
 
     internal sealed class QueueUserWorkItemCallback : IThreadPoolWorkItem
     {
+#if !MONO
         [System.Security.SecuritySafeCritical]
         static QueueUserWorkItemCallback() {}
+#endif
 
         private WaitCallback callback;
         private ExecutionContext context;

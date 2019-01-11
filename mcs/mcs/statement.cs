@@ -928,8 +928,7 @@ namespace Mono.CSharp {
 		public override Reachability MarkReachable (Reachability rc)
 		{
 			base.MarkReachable (rc);
-			expr.MarkReachable (rc);
-			return rc;
+			return expr.MarkReachable (rc);
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -2419,6 +2418,7 @@ namespace Mono.CSharp {
 			IsLocked = 1 << 8,
 			SymbolFileHidden = 1 << 9,
 			ByRef = 1 << 10,
+			PointerByRef = 1 << 11,
 
 			ReadonlyMask = 1 << 20
 		}
@@ -2609,20 +2609,22 @@ namespace Mono.CSharp {
 
 			if (IsByRef) {
 				builder = ec.DeclareLocal (ReferenceContainer.MakeType (ec.Module, Type), IsFixed);
+			} else if ((flags & Flags.PointerByRef) != 0) {
+				builder = ec.DeclareLocal (ReferenceContainer.MakeType (ec.Module, ((PointerContainer) Type).Element), IsFixed);
 			} else {
 				//
 				// All fixed variabled are pinned, a slot has to be alocated
 				//
-				builder = ec.DeclareLocal(Type, IsFixed);
+				builder = ec.DeclareLocal (Type, IsFixed);
 			}
 
 			if ((flags & Flags.SymbolFileHidden) == 0)
 				ec.DefineLocalVariable (name, builder);
 		}
 
-		public static LocalVariable CreateCompilerGenerated (TypeSpec type, Block block, Location loc, bool writeToSymbolFile = false)
+		public static LocalVariable CreateCompilerGenerated (TypeSpec type, Block block, Location loc, bool writeToSymbolFile = false, Flags additionalFlags = 0)
 		{
-			LocalVariable li = new LocalVariable (block, GetCompilerGeneratedName (block), Flags.CompilerGenerated | Flags.Used, loc);
+			LocalVariable li = new LocalVariable (block, GetCompilerGeneratedName (block), Flags.CompilerGenerated | Flags.Used | additionalFlags, loc);
 			if (!writeToSymbolFile)
 				li.flags |= Flags.SymbolFileHidden;
 			
@@ -2723,6 +2725,11 @@ namespace Mono.CSharp {
 		public void SetIsUsed ()
 		{
 			flags |= Flags.Used;
+		}
+
+		public void SetIsPointerByRef ()
+		{
+			flags |= Flags.PointerByRef;
 		}
 
 		public void SetHasAddressTaken ()
@@ -6668,30 +6675,93 @@ namespace Mono.CSharp {
 					return new ExpressionEmitter (res, li);
 				}
 
-				bool already_fixed = true;
-
 				//
 				// Case 4: & object.
 				//
 				Unary u = res as Unary;
 				if (u != null) {
+					bool already_fixed = true;
+
 					if (u.Oper == Unary.Operator.AddressOf) {
 						IVariableReference vr = u.Expr as IVariableReference;
 						if (vr == null || !vr.IsFixed) {
 							already_fixed = false;
 						}
 					}
-				} else if (initializer is Cast) {
+
+					if (already_fixed) {
+						bc.Report.Error (213, loc, "You cannot use the fixed statement to take the address of an already fixed expression");
+						return null;
+					}
+
+					res = Convert.ImplicitConversionRequired (bc, res, li.Type, loc);
+					return new ExpressionEmitter (res, li);
+				}
+
+				if (initializer is Cast) {
 					bc.Report.Error (254, initializer.Location, "The right hand side of a fixed statement assignment may not be a cast expression");
 					return null;
 				}
 
-				if (already_fixed) {
-					bc.Report.Error (213, loc, "You cannot use the fixed statement to take the address of an already fixed expression");
+				//
+				// Case 5: by-ref GetPinnableReference method on the rhs expression
+				//
+				var method = GetPinnableReference (bc, res);
+				if (method == null) {
+					bc.Report.Error (8385, initializer.Location, "The given expression cannot be used in a fixed statement");
+					return null;
 				}
 
-				res = Convert.ImplicitConversionRequired (bc, res, li.Type, loc);
+				var compiler = bc.Module.Compiler;
+				if (compiler.Settings.Version < LanguageVersion.V_7_3) {
+					bc.Report.FeatureIsNotAvailable (compiler, initializer.Location, "extensible fixed statement");
+				}
+
+				method.InstanceExpression = res;
+				res = new Invocation.Predefined (method, null).ResolveLValue (bc, EmptyExpression.OutAccess);
+				if (res == null)
+					return null;
+
+				ReferenceContainer rType = (ReferenceContainer)method.BestCandidateReturnType;
+				PointerContainer lType = li.Type as PointerContainer;
+				if (rType.Element != lType?.Element) {
+					// CSC: Should be better error code
+					res.Error_ValueCannotBeConverted (bc, lType, false);
+					return null;
+				}
+
+				li.SetIsPointerByRef ();
 				return new ExpressionEmitter (res, li);
+			}
+
+			MethodGroupExpr GetPinnableReference (BlockContext bc, Expression expr)
+			{
+				TypeSpec type = expr.Type;
+				var mexpr = Expression.MemberLookup (bc, false, type,
+					"GetPinnableReference", 0, Expression.MemberLookupRestrictions.ExactArity, loc);
+
+				if (mexpr == null)
+					return null;
+
+				var mg = mexpr as MethodGroupExpr;
+				if (mg == null)
+					return null;
+
+				mg.InstanceExpression = expr;
+
+				// TODO: handle extension methods
+				Arguments args = new Arguments (0);
+				mg = mg.OverloadResolve (bc, ref args, null, OverloadResolver.Restrictions.None);
+
+				if (mg == null || mg.BestCandidate.IsStatic || !mg.BestCandidate.IsPublic || mg.BestCandidateReturnType.Kind != MemberKind.ByRef || !mg.BestCandidate.Parameters.IsEmpty) {
+					if (bc.Module.Compiler.Settings.Version > LanguageVersion.V_7_2) {
+						bc.Report.Warning (280, 2, expr.Location, "`{0}' has the wrong signature to be used in extensible fixed statement", mg.GetSignatureForError ());
+					}
+
+					return null;
+				}
+
+				return mg;
 			}
 		}
 

@@ -53,11 +53,14 @@ using Microsoft.Win32;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Diagnostics
 {
 	[TestFixture]
 	public class EventLogTest
 	{
+		private TempDirectory _temp;
 		private string _originalEventLogImpl;
 		private string _eventLogStore;
 
@@ -75,8 +78,8 @@ namespace MonoTests.System.Diagnostics
 				return;
 
 			// determine temp directory for eventlog store
-			_eventLogStore = Path.Combine (Path.GetTempPath (),
-				Guid.NewGuid ().ToString ());
+			_temp = new TempDirectory ();
+			_eventLogStore = _temp.Path;
 
 			// save original eventlog implementation type (if set)
 			_originalEventLogImpl = Environment.GetEnvironmentVariable (
@@ -98,8 +101,7 @@ namespace MonoTests.System.Diagnostics
 				_originalEventLogImpl);
 
 			// delete temp directory for eventlog store
-			if (Directory.Exists (_eventLogStore))
-				Directory.Delete (_eventLogStore, true);
+			_temp.Dispose ();
 		}
 
 		[Test]
@@ -1965,7 +1967,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
-						Assert.AreEqual ("", ex.ParamName, "#I5");
+						Assert.AreEqual ("destinationArray", ex.ParamName, "#I5");
 					}
 
 					entries = new EventLogEntry [1];
@@ -2391,7 +2393,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
-						Assert.AreEqual (string.Empty, ex.ParamName, "#I5");
+						Assert.AreEqual ("destinationArray", ex.ParamName, "#I5");
 					}
 
 					entries = new EventLogEntry [2];
@@ -2539,7 +2541,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
-						Assert.AreEqual ("", ex.ParamName, "#I5");
+						Assert.AreEqual ("destinationArray", ex.ParamName, "#I5");
 					}
 
 					entries = new EventLogEntry [2];
@@ -2699,7 +2701,7 @@ namespace MonoTests.System.Diagnostics
 						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#I2");
 						Assert.IsNotNull (ex.Message, "#I3");
 						Assert.IsNull (ex.InnerException, "#I4");
-						Assert.AreEqual ("", ex.ParamName, "#I5");
+						Assert.AreEqual ("destinationArray", ex.ParamName, "#I5");
 					}
 
 					entries = new EventLogEntry [2];

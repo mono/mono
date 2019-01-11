@@ -409,7 +409,7 @@ namespace MonoTests.System.Threading {
 					m.WaitOne ();
 				});
 				thread1.Start ();
-				thread1.Join (1000);
+				Assert.IsTrue (thread1.Join (Timeout.Infinite), "thread1.Join");
 				try {
 					m.WaitOne ();
 					Assert.Fail ("Expected AbandonedMutexException");
@@ -421,7 +421,7 @@ namespace MonoTests.System.Threading {
 					signalled = m.WaitOne (100);
 				});
 				thread2.Start ();
-				thread2.Join (1000);
+				Assert.IsTrue (thread2.Join (Timeout.Infinite), "thread2.Join");
 				Assert.IsFalse (signalled);
 
 				// Since this thread owns the Mutex releasing it shouldn't fail
@@ -489,7 +489,7 @@ namespace MonoTests.System.Threading {
 						m1.ReleaseMutex ();
 					});
 					thread1.Start ();
-					thread1.Join (1000);
+					Assert.IsTrue (thread1.Join (Timeout.Infinite), "thread1.Join");
 					thread2.Start ();
 					while (!mainProceed) {
 						Thread.Sleep (10);
@@ -502,7 +502,7 @@ namespace MonoTests.System.Threading {
 						Assert.AreEqual (m2, e.Mutex);
 					} finally {
 						thread2Proceed = true;
-						thread2.Join (1000);
+						Assert.IsTrue (thread2.Join (Timeout.Infinite), "thread2.Join");
 					}
 
 					// Current thread should own the second Mutex now
@@ -511,7 +511,7 @@ namespace MonoTests.System.Threading {
 						signalled = WaitHandle.WaitAny (new WaitHandle [] { m1, m2 }, 0);
 					});
 					thread3.Start ();
-					thread3.Join (1000);
+					Assert.IsTrue (thread3.Join (Timeout.Infinite), "thread3.Join");
 					Assert.AreEqual (0, signalled);
 
 					// Since this thread owns the second Mutex releasing it shouldn't fail
@@ -540,7 +540,7 @@ namespace MonoTests.System.Threading {
 						m1.WaitOne ();
 					});
 					thread.Start ();
-					thread.Join (1000);
+					Assert.IsTrue (thread.Join (Timeout.Infinite), "thread.Join");
 					WaitHandle.WaitAll (new WaitHandle [] { m1, m2 });
 				}
 			}
@@ -652,7 +652,35 @@ namespace MonoTests.System.Threading {
 				Assert.IsTrue (eventToSignal.WaitOne (), "#2");
 			}
 		}
+
+		// https://github.com/mono/mono/issues/9089
+		// Duplication is ok for WaitAny, exception for WaitAll.
+		// System.DuplicateWaitObjectException: Duplicate objects in argument.
+		[Test]
+		public static void DuplicateWaitAny ()
+		{
+			using (var a = new ManualResetEvent (true))
+			{
+				var b = new ManualResetEvent [ ] { a, a };
+				Assert.AreEqual (0, WaitHandle.WaitAny (b), "#1");
+			}
+		}
+
+		// https://github.com/mono/mono/issues/9089
+		// Duplication is ok for WaitAny, exception for WaitAll.
+		// System.DuplicateWaitObjectException: Duplicate objects in argument.
+		[Test]
+		public static void DuplicateWaitAll ()
+		{
+			using (var a = new ManualResetEvent (true))
+			{
+				var b = new ManualResetEvent [ ] { a, a };
+				try {
+					WaitHandle.WaitAll (b);
+					Assert.Fail ("Expected System.DuplicateWaitObjectException");
+				} catch (DuplicateWaitObjectException) {
+				}
+			}
+		}
 	}
 }
-
-

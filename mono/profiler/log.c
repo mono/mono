@@ -12,9 +12,12 @@
 
 #include <config.h>
 #include <mono/metadata/assembly.h>
+#include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/icall-internals.h>
 #include <mono/metadata/loader.h>
+#include <mono/metadata/loader-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/mono-gc.h>
@@ -184,34 +187,8 @@ typedef struct {
 
 // Do not use these TLS macros directly unless you know what you're doing.
 
-#ifdef HOST_WIN32
-
-#define PROF_TLS_SET(VAL) (TlsSetValue (profiler_tls, (VAL)))
-#define PROF_TLS_GET() ((MonoProfilerThread *) TlsGetValue (profiler_tls))
-#define PROF_TLS_INIT() (profiler_tls = TlsAlloc ())
-#define PROF_TLS_FREE() (TlsFree (profiler_tls))
-
-static DWORD profiler_tls;
-
-#elif HAVE_KW_THREAD
-
-#define PROF_TLS_SET(VAL) (profiler_tls = (VAL))
-#define PROF_TLS_GET() (profiler_tls)
-#define PROF_TLS_INIT()
-#define PROF_TLS_FREE()
-
-static __thread MonoProfilerThread *profiler_tls;
-
-#else
-
-#define PROF_TLS_SET(VAL) (pthread_setspecific (profiler_tls, (VAL)))
-#define PROF_TLS_GET() ((MonoProfilerThread *) pthread_getspecific (profiler_tls))
-#define PROF_TLS_INIT() (pthread_key_create (&profiler_tls, NULL))
-#define PROF_TLS_FREE() (pthread_key_delete (profiler_tls))
-
-static pthread_key_t profiler_tls;
-
-#endif
+#define PROF_TLS_SET(VAL) mono_thread_info_set_tools_data (VAL)
+#define PROF_TLS_GET mono_thread_info_get_tools_data
 
 static uintptr_t
 thread_id (void)
@@ -558,7 +535,7 @@ init_thread (gboolean add_to_lls)
 		clear_hazard_pointers (hp);
 	}
 
-	PROF_TLS_SET (thread);
+	g_assert (PROF_TLS_SET (thread));
 
 	return thread;
 }
@@ -1221,7 +1198,7 @@ gc_reference (MonoObject *obj, MonoClass *klass, uintptr_t size, uintptr_t num, 
 
 	emit_event (logbuffer, TYPE_HEAP_OBJECT | TYPE_HEAP);
 	emit_obj (logbuffer, obj);
-	emit_ptr (logbuffer, mono_object_get_vtable (obj));
+	emit_ptr (logbuffer, mono_object_get_vtable_internal (obj));
 	emit_value (logbuffer, size);
 	emit_byte (logbuffer, mono_gc_get_generation (obj));
 	emit_value (logbuffer, num);
@@ -1527,7 +1504,7 @@ gc_alloc (MonoProfiler *prof, MonoObject *obj)
 {
 	int do_bt = (!log_config.enter_leave && mono_atomic_load_i32 (&log_profiler.runtime_inited) && log_config.num_frames) ? TYPE_ALLOC_BT : 0;
 	FrameData data;
-	uintptr_t len = mono_object_get_size (obj);
+	uintptr_t len = mono_object_get_size_internal (obj);
 	/* account for object alignment in the heap */
 	len += 7;
 	len &= ~7;
@@ -1549,7 +1526,7 @@ gc_alloc (MonoProfiler *prof, MonoObject *obj)
 	);
 
 	emit_event (logbuffer, do_bt | TYPE_ALLOC);
-	emit_ptr (logbuffer, mono_object_get_vtable (obj));
+	emit_ptr (logbuffer, mono_object_get_vtable_internal (obj));
 	emit_obj (logbuffer, obj);
 	emit_value (logbuffer, len);
 
@@ -1704,8 +1681,8 @@ push_nesting (char *p, MonoClass *klass)
 		*p++ = '/';
 		*p = 0;
 	}
-	name = mono_class_get_name (klass);
-	nspace = mono_class_get_namespace (klass);
+	name = m_class_get_name (klass);
+	nspace = m_class_get_name_space (klass);
 	if (*nspace) {
 		strcpy (p, nspace);
 		p += strlen (nspace);
@@ -1785,9 +1762,9 @@ image_unloaded (MonoProfiler *prof, MonoImage *image)
 static void
 assembly_loaded (MonoProfiler *prof, MonoAssembly *assembly)
 {
-	char *name = mono_stringify_assembly_name (mono_assembly_get_name (assembly));
+	char *name = mono_stringify_assembly_name (mono_assembly_get_name_internal (assembly));
 	int nlen = strlen (name) + 1;
-	MonoImage *image = mono_assembly_get_image (assembly);
+	MonoImage *image = mono_assembly_get_image_internal (assembly);
 
 	ENTER_LOG (&assembly_loads_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
@@ -1812,9 +1789,9 @@ assembly_loaded (MonoProfiler *prof, MonoAssembly *assembly)
 static void
 assembly_unloaded (MonoProfiler *prof, MonoAssembly *assembly)
 {
-	char *name = mono_stringify_assembly_name (mono_assembly_get_name (assembly));
+	char *name = mono_stringify_assembly_name (mono_assembly_get_name_internal (assembly));
 	int nlen = strlen (name) + 1;
-	MonoImage *image = mono_assembly_get_image (assembly);
+	MonoImage *image = mono_assembly_get_image_internal (assembly);
 
 	ENTER_LOG (&assembly_unloads_ctr, logbuffer,
 		EVENT_SIZE /* event */ +
@@ -1842,7 +1819,7 @@ class_loaded (MonoProfiler *prof, MonoClass *klass)
 	char *name;
 
 	if (mono_atomic_load_i32 (&log_profiler.runtime_inited))
-		name = mono_type_get_name (mono_class_get_type (klass));
+		name = mono_type_get_name (m_class_get_byval_arg (klass));
 	else
 		name = type_name (klass);
 
@@ -1875,8 +1852,8 @@ class_loaded (MonoProfiler *prof, MonoClass *klass)
 static void
 vtable_loaded (MonoProfiler *prof, MonoVTable *vtable)
 {
-	MonoClass *klass = mono_vtable_class (vtable);
-	MonoDomain *domain = mono_vtable_domain (vtable);
+	MonoClass *klass = mono_vtable_class_internal (vtable);
+	MonoDomain *domain = mono_vtable_domain_internal (vtable);
 	uint32_t domain_id = domain ? mono_domain_get_id (domain) : 0;
 
 	ENTER_LOG (&vtable_loads_ctr, logbuffer,
@@ -3016,8 +2993,6 @@ log_shutdown (MonoProfiler *prof)
 
 	mono_coop_mutex_destroy (&log_profiler.api_mutex);
 
-	PROF_TLS_FREE ();
-
 	g_free (prof->args);
 }
 
@@ -3083,6 +3058,7 @@ new_filename (const char* filename)
 static MonoProfilerThread *
 profiler_thread_begin (const char *name, gboolean send)
 {
+	mono_thread_info_attach ();
 	MonoProfilerThread *thread = init_thread (FALSE);
 
 	mono_thread_attach (mono_get_root_domain ());
@@ -3992,7 +3968,7 @@ runtime_initialized (MonoProfiler *profiler)
 	mono_coop_mutex_init (&log_profiler.api_mutex);
 
 #define ADD_ICALL(NAME) \
-	mono_add_internal_call ("Mono.Profiler.Log.LogProfiler::" EGLIB_STRINGIFY (NAME), proflog_icall_ ## NAME);
+	mono_add_internal_call_internal ("Mono.Profiler.Log.LogProfiler::" EGLIB_STRINGIFY (NAME), proflog_icall_ ## NAME);
 
 	ADD_ICALL (GetMaxStackTraceFrames);
 	ADD_ICALL (GetStackTraceFrames);
@@ -4135,8 +4111,6 @@ mono_profiler_init_log (const char *desc)
 		goto done;
 
 	init_time ();
-
-	PROF_TLS_INIT ();
 
 	create_profiler (desc, log_config.output_filename, filters);
 

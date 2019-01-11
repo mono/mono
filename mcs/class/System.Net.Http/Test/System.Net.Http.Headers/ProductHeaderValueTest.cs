@@ -63,6 +63,7 @@ namespace MonoTests.System.Net.Http.Headers
 		public void Ctor ()
 		{
 			new ProductHeaderValue ("aa", null);
+			new ProductHeaderValue ("aa", "");
 		}
 
 		[Test]

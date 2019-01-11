@@ -44,8 +44,15 @@ namespace System.Threading
 {
  	internal static class NativeEventCalls
 	{
+		public unsafe static IntPtr CreateEvent_internal (bool manual, bool initial, string name, out int errorCode)
+		{
+			// FIXME check for embedded nuls in name
+			fixed (char *fixed_name = name)
+				return CreateEvent_icall (manual, initial, fixed_name, name?.Length ?? 0, out errorCode);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern IntPtr CreateEvent_internal (bool manual, bool initial, string name, out int errorCode);
+		private unsafe static extern IntPtr CreateEvent_icall (bool manual, bool initial, char *name, int name_length, out int errorCode);
 
 		public static bool SetEvent (SafeWaitHandle handle)
 		{
@@ -81,8 +88,15 @@ namespace System.Threading
 		public static extern void CloseEvent_internal (IntPtr handle);
 
 #if !MOBILE
+		public unsafe static IntPtr OpenEvent_internal (string name, EventWaitHandleRights rights, out int errorCode)
+		{
+			// FIXME check for embedded nuls in name
+			fixed (char *fixed_name = name)
+				return OpenEvent_icall (fixed_name, name?.Length ?? 0, rights, out errorCode);
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern IntPtr OpenEvent_internal (string name, EventWaitHandleRights rights, out int errorCode);
+		private unsafe static extern IntPtr OpenEvent_icall (char *name, int name_length, EventWaitHandleRights rights, out int errorCode);
 #endif
 	}
 }

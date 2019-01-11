@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
@@ -490,6 +490,10 @@ namespace System.Reflection.Emit
 		{
 			return new TypeBuilderInstantiation (type, typeArguments);
 		}
+
+		public override bool IsTypeDefinition => false;
+
+		public override bool IsConstructedGenericType => true;
 	}
 }
 #else

@@ -51,7 +51,7 @@ namespace System
 {
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
-	public unsafe struct IntPtr : ISerializable
+	public unsafe struct IntPtr : ISerializable, IEquatable<IntPtr>
 	{
 		private void *m_value;
 
@@ -231,6 +231,11 @@ namespace System
 		internal unsafe bool IsNull()
 		{
 			return m_value == null;
+		}
+
+		bool IEquatable<IntPtr>.Equals(IntPtr other)
+		{
+			return m_value == other.m_value;
 		}
 	}
 }

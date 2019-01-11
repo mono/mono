@@ -308,5 +308,19 @@ public const string XmlMaxStringContentLengthExceeded = @"XML max string content
 public const string XmlObjectAssignedToIncompatibleInterface = @"Object of type '{0}' is assigned to an incompatible interface '{1}'.";
 
 #endregion
+
+	// CoreFX
+	public const string PlatformNotSupported_SchemaImporter = "The implementation of the function requires System.Runtime.Serialization.SchemaImporter which is not supported on this platform.";
+	public const string PlatformNotSupported_IDataContractSurrogate = "The implementation of the function requires System.Runtime.Serialization.IDataContractSurrogate which is not supported on this platform.";
+
+	internal static string Format(string resourceFormats)
+	{
+		return resourceFormats;
 	}
+
+	internal static string Format(string resourceFormat, object p1)
+	{
+		return string.Format (CultureInfo.InvariantCulture, resourceFormat, p1);
+	}
+}
 }

@@ -391,7 +391,8 @@ namespace System.Runtime.InteropServices{
         }
         public TypeLibVarFlags Value { get {return _val;} } 
     }   
-
+#endif
+    
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
     public enum VarEnum
@@ -882,6 +883,7 @@ namespace System.Runtime.InteropServices{
 
     }
 
+
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false)]
     [System.Runtime.InteropServices.ComVisible(true)]
     public unsafe sealed class StructLayoutAttribute : Attribute
@@ -1066,8 +1068,7 @@ namespace System.Runtime.InteropServices{
         public Type SourceInterface { get {return _SourceInterface;} }       
         public Type EventProvider { get {return _EventProvider;} }
     }
-#endif
-#if FEATURE_COMINTEROP || MOBILE_LEGACY
+
     [AttributeUsage(AttributeTargets.Assembly, Inherited = false)] 
     [System.Runtime.InteropServices.ComVisible(true)]
     public sealed class TypeLibVersionAttribute : Attribute
@@ -1163,6 +1164,5 @@ namespace System.Runtime.InteropServices{
         public Type ClassType { get { return _classType; } }
         public String MethodName { get { return _methodName; } }
     }    
-#endif
 #endif
 }

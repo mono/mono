@@ -55,6 +55,7 @@ namespace System.Reflection {
 		{
 		}
 
+		// custom-attrs.c:create_custom_attr_data ()
 		internal CustomAttributeData (ConstructorInfo ctorInfo, Assembly assembly, IntPtr data, uint data_length)
 		{
 			this.ctorInfo = ctorInfo;
@@ -62,6 +63,18 @@ namespace System.Reflection {
 			this.lazyData.assembly = assembly;
 			this.lazyData.data = data;
 			this.lazyData.data_length = data_length;
+		}
+
+		internal CustomAttributeData (ConstructorInfo ctorInfo)
+			: this (ctorInfo, Array.Empty<CustomAttributeTypedArgument> (), Array.Empty<CustomAttributeNamedArgument> ())
+		{
+		}
+
+		internal CustomAttributeData (ConstructorInfo ctorInfo, IList<CustomAttributeTypedArgument> ctorArgs, IList<CustomAttributeNamedArgument> namedArgs)
+		{
+			this.ctorInfo = ctorInfo;
+			this.ctorArgs = ctorArgs;
+			this.namedArgs = namedArgs;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

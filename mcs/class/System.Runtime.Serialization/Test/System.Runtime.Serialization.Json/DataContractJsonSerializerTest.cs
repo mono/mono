@@ -1550,14 +1550,17 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		public void TestHashtableSerialization ()
 		{
 			var collection = new HashtableContainer ();
-			var expectedOutput = "{\"Items\":[{\"Key\":\"key1\",\"Value\":\"banana\"},{\"Key\":\"key2\",\"Value\":\"apple\"}]}";
-			
+			var expectedOutput_A = "{\"Items\":[{\"Key\":\"key1\",\"Value\":\"banana\"},{\"Key\":\"key2\",\"Value\":\"apple\"}]}";
+			var expectedOutput_B = "{\"Items\":[{\"Key\":\"key2\",\"Value\":\"apple\"},{\"Key\":\"key1\",\"Value\":\"banana\"}]}";
+
 			var serializer = new DataContractJsonSerializer (collection.GetType ());
 			var stream = new MemoryStream ();
 			serializer.WriteObject (stream, collection);
 
 			stream.Position = 0;
-			Assert.AreEqual (expectedOutput, new StreamReader (stream).ReadToEnd (), "#1");
+			var read = new StreamReader (stream).ReadToEnd ();
+
+			Assert.IsTrue (expectedOutput_A == read || expectedOutput_B == read, "#1");
 		}
 		
 		[Test]

@@ -1606,6 +1606,9 @@ namespace System.Drawing
 		{
 			if (brush == null)
 				throw new ArgumentNullException ("brush");
+			if (rect == null)
+				throw new ArgumentNullException ("rect");
+				
                         FillRectangle (brush, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
 
@@ -1710,6 +1713,10 @@ namespace System.Drawing
 			IntPtr graphics;
 
 			if (GDIPlus.UseCocoaDrawable) {
+				if (hwnd == IntPtr.Zero) {
+					throw new NotSupportedException ("Opening display graphics is not supported");
+				}
+
 				CocoaContext context = MacSupport.GetCGContextForNSView (hwnd);
 				GDIPlus.GdipCreateFromContext_macosx (context.ctx, context.width, context.height, out graphics);
 

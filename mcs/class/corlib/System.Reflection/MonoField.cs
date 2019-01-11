@@ -318,5 +318,25 @@ namespace System.Reflection {
 			get { return get_core_clr_security_level () == 1; }
 		}
 #endif
+
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoField> (other);
+
+		public override int MetadataToken {
+			get {
+				return get_metadata_token (this);
+			}
+		}
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern int get_metadata_token (MonoField monoField);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern Type[] GetTypeModifiers (bool optional);
+
+		public override Type[] GetOptionalCustomModifiers () => GetCustomModifiers (true);
+
+		public override Type[] GetRequiredCustomModifiers () => GetCustomModifiers (false);
+
+		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (optional) ?? Type.EmptyTypes;
 	}
 }

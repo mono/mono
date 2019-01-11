@@ -223,7 +223,12 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/CheckBoxList_Bug600415.aspx \
 	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx \
 	Test/mainsoft/NunitWebResources/BoundField_Bug646505.aspx.cs \
-	Test/mainsoft/NunitWebResources/HtmlTitleCodeRender_Bug662918.aspx
+	Test/mainsoft/NunitWebResources/HtmlTitleCodeRender_Bug662918.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxList_CustomValues.aspx
+
+TEST_RESOURCE_FILES_WITH_DIR = \
+	$(wildcard Test/System.Web.Caching/CacheItemPriorityQueueTestData/*.list) \
+	$(wildcard Test/System.Web.Caching/CacheItemPriorityQueueTestData/*.tests)
 
 RESOURCE_DEFS = \
 	TranslationResources,resources/TranslationResources.resx
@@ -256,6 +261,7 @@ LIB_MCS_FLAGS = \
 TEST_LIB_REFS = SystemWebTestShim
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 \
 	$(NUNIT_RESOURCE_FILES:%=/resource:%) \
+	$(foreach r, $(TEST_RESOURCE_FILES_WITH_DIR), -resource:$(r),$(r)) \
 	$(foreach file,$(NUNIT_APP_CODE_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_Code/\2 ;g')) \
 	$(foreach file,$(NUNIT_APP_GLOBALRESOURCES_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_GlobalResources/\2 ;g'))
 
@@ -264,6 +270,7 @@ EXTRA_DISTFILES = \
 	$(RESOURCE_FILES_2) \
 	$(RESOURCE_FILES_1) \
 	$(TEST_RESOURCE_FILES) \
+	$(TEST_RESOURCE_FILES_WITH_DIR) \
 	$(TEST_APP_CODE_FILES) \
 	$(TEST_APP_GLOBALRESOURCES_FILES) \
 	UplevelHelperDefinitions.xml \
@@ -272,10 +279,10 @@ EXTRA_DISTFILES = \
 	$(shell find Test/standalone-tests/ -name "*.cs" -type f -printf "'%p' " -o -name "*.cs.in" -type f -printf "'%p' ") \
 	$(shell find Test/standalone/ -path '*/.svn' -prune -o -type f -printf "'%p' ") \
 	$(shell find Test/tools/ -path '*/.svn' -prune -o -type f -printf "'%p' ") \
-	System.Web_standalone_test.dll.sources \
-	standalone-runner-support.dll.sources \
-	$(shell find Test/System.Web.Caching/CacheItemPriorityQueueTestData/ -name "Sequence*.*" -type f -printf "'%p' ") \
 	ASPState.sql
+
+# This breaks for strange reason
+# 	$(shell find Test/System.Web.Caching/CacheItemPriorityQueueTestData/ -name "Sequence*.*" -type f -printf "'%p' ") \
 
 BUILT_SOURCES = System.Web/UplevelHelper.cs 
 

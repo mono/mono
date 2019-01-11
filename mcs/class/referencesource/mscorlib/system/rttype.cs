@@ -1972,7 +1972,7 @@ namespace System
         #region Static Members
 
         #region Internal
-#if !MONO
+
         internal static RuntimeType GetType(String typeName, bool throwOnError, bool ignoreCase, bool reflectionOnly,
             ref StackCrawlMark stackMark)
         {
@@ -1989,6 +1989,7 @@ namespace System
                 typeName, throwOnError, ignoreCase, reflectionOnly, ref stackMark, false);
         }
 
+#if !MONO
         internal static MethodBase GetMethodBase(RuntimeModule scope, int typeMetadataToken)
         {
             return GetMethodBase(ModuleHandle.ResolveMethodHandleInternal(scope, typeMetadataToken));
@@ -2638,7 +2639,11 @@ namespace System
                             for(int i = 0; i < parameterInfos.Length; i ++)
                             {
                                 // a null argument type implies a null arg which is always a perfect match
+#if MONO                                
+                                if ((object)argumentTypes[i] != null && !argumentTypes[i].MatchesParameterTypeExactly(parameterInfos[i]))
+#else
                                 if ((object)argumentTypes[i] != null && !Object.ReferenceEquals(parameterInfos[i].ParameterType, argumentTypes[i]))
+#endif
                                     return false;
                             }
                         }
@@ -2822,7 +2827,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeMethodInfo[] cache = GetMethodsByName (name, bindingAttr, ignoreCase, this);
+            RuntimeMethodInfo[] cache = GetMethodsByName (name, bindingAttr, listType, this);
 #else
             RuntimeMethodInfo[] cache = Cache.GetMethodList(listType, name);
 #endif
@@ -2849,7 +2854,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            if (name != null && name != ConstructorInfo.ConstructorName && name != ConstructorInfo.TypeConstructorName)
+            if (!string.IsNullOrEmpty (name) && name != ConstructorInfo.ConstructorName && name != ConstructorInfo.TypeConstructorName)
                 return new ListBuilder<ConstructorInfo> (0);
             RuntimeConstructorInfo[] cache = GetConstructors_internal (bindingAttr, this);
 #else
@@ -2878,7 +2883,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimePropertyInfo[] cache = GetPropertiesByName (name, bindingAttr, ignoreCase, this);
+            RuntimePropertyInfo[] cache = GetPropertiesByName (name, bindingAttr, listType, this);
 #else
 #if FEATURE_LEGACYNETCF
             // Dev11 466969 quirk
@@ -2996,7 +3001,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeEventInfo[] cache = GetEvents_internal (name, bindingAttr, this);
+            RuntimeEventInfo[] cache = GetEvents_internal (name, bindingAttr, listType, this);
 #else
             RuntimeEventInfo[] cache = Cache.GetEventList(listType, name);
 #endif
@@ -3023,7 +3028,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeFieldInfo[] cache = GetFields_internal (name, bindingAttr, this);
+            RuntimeFieldInfo[] cache = GetFields_internal (name, bindingAttr, listType, this);
 #else
             RuntimeFieldInfo[] cache = Cache.GetFieldList(listType, name);
 #endif
@@ -3053,7 +3058,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, allowPrefixLookup, out prefixLookup, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeType[] cache = GetNestedTypes_internal (name, bindingAttr);
+            RuntimeType[] cache = GetNestedTypes_internal (name, bindingAttr, listType);
 #else
             RuntimeType[] cache = Cache.GetNestedTypeList(listType, name);
 #endif
@@ -3208,6 +3213,7 @@ namespace System
         #endregion
 
         #region Find XXXInfo
+#if !MONO        
         protected override MethodInfo GetMethodImpl(
             String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, 
             Type[] types, ParameterModifier[] modifiers) 
@@ -3245,7 +3251,7 @@ namespace System
 
             return binder.SelectMethod(bindingAttr, candidates.ToArray(), types, modifiers) as MethodInfo;                  
         }
-
+#endif
 
         protected override ConstructorInfo GetConstructorImpl(
             BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, 
@@ -3327,7 +3333,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeEventInfo[] cache = GetEvents_internal (name, bindingAttr, this);
+            RuntimeEventInfo[] cache = GetEvents_internal (name, bindingAttr, listType, this);
 #else
             RuntimeEventInfo[] cache = Cache.GetEventList(listType, name);
 #endif
@@ -3360,7 +3366,7 @@ namespace System
             RuntimeType.FilterHelper(bindingAttr, ref name, out ignoreCase, out listType);
 
 #if MONO
-            RuntimeFieldInfo[] cache = GetFields_internal (name, bindingAttr, this); 
+            RuntimeFieldInfo[] cache = GetFields_internal (name, bindingAttr, listType, this);
 #else
             RuntimeFieldInfo[] cache = Cache.GetFieldList(listType, name);
 #endif
@@ -3462,7 +3468,7 @@ namespace System
             SplitName(fullname, out name, out ns);            
             RuntimeType.FilterHelper(bindingAttr, ref name, out ignoreCase, out listType);
 #if MONO
-            RuntimeType[] cache = GetNestedTypes_internal (name, bindingAttr);
+            RuntimeType[] cache = GetNestedTypes_internal (name, bindingAttr, listType);
 #else
             RuntimeType[] cache = Cache.GetNestedTypeList(listType, name);
 #endif
@@ -3703,6 +3709,7 @@ namespace System
             return RuntimeTypeHandle.IsInstanceOfType(this, o);
         }
 
+#if !MONO
         [System.Runtime.InteropServices.ComVisible(true)]
         [Pure]
         public override bool IsSubclassOf(Type type) 
@@ -3732,6 +3739,7 @@ namespace System
 
             return false;
         }
+#endif
 
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
             if(typeInfo==null) return false;
@@ -4256,6 +4264,10 @@ namespace System
 
                 if (rtInstantiationElem == null)
                 {
+#if MONO                    
+                    if (instantiationElem.IsSignatureType)
+                        return MakeGenericSignatureType (this, instantiation);
+#endif
                     Type[] instantiationCopy = new Type[instantiation.Length];
                     for (int iCopy = 0; iCopy < instantiation.Length; iCopy++)
                         instantiationCopy[iCopy] = instantiation[iCopy];
