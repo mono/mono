@@ -78,7 +78,7 @@ namespace Mono.XBuild.CommandLine
 			if (HasAssemblyInfo (assemblyName))
 				loggerAssembly = Assembly.Load (assemblyName);
 			else if (File.Exists (assemblyName))
-				loggerAssembly = Assembly.LoadFile (assemblyName);
+				loggerAssembly = Assembly.LoadFrom (assemblyName);
 
 			if (loggerAssembly == null)
 				return null;
