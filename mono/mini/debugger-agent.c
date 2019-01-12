@@ -5543,8 +5543,11 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 
 				if (obj) {
 					if (!obj_is_of_type (obj, t)) {
-						DEBUG_PRINTF (1, "Expected type '%s', got '%s'\n", mono_type_full_name (t), m_class_get_name (obj->vtable->klass));
-						return ERR_INVALID_ARGUMENT;
+						DebuggerTlsData *tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+						if (!tls || !tls->invoke) { //if it's not executing a invoke method check the datatypes.
+							DEBUG_PRINTF (1, "Expected type '%s', got '%s'\n", mono_type_full_name (t), m_class_get_name (obj->vtable->klass));
+							return ERR_INVALID_ARGUMENT;
+						}
 					}
 				}
 				if (obj && obj->vtable->domain != domain)
