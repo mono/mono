@@ -32,7 +32,7 @@ netcore_SUBDIRS := build class
 
 include build/rules.make
 
-all-recursive $(STD_TARGETS:=-recursive): dir-check platform-check profile-check do-start-compiler-server
+all-recursive $(STD_TARGETS:=-recursive): dir-check platform-check profile-check
 
 .PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
