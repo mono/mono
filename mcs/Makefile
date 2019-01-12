@@ -32,7 +32,7 @@ netcore_SUBDIRS := build class
 
 include build/rules.make
 
-all-recursive $(STD_TARGETS:=-recursive): dir-check platform-check profile-check
+all-recursive $(STD_TARGETS:=-recursive): dir-check platform-check profile-check do-start-compiler-server
 
 .PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
@@ -40,6 +40,7 @@ all-local $(STD_TARGETS:=-local):
 
 dir-check:
 	@if [ "$(NO_DIR_CHECK)" = "" ]; then $(MAKE) -C ../runtime; fi
+
 
 # fun specialty targets
 

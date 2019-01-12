@@ -6378,6 +6378,7 @@ fi
     else
       echo "ENABLE_COMPILER_SERVER?=false" >> $srcdir/$mcsdir/build/config.make
 	fi
+	echo "COMPILER_SERVER_PIPENAME=monomake" >> $srcdir/$mcsdir/build/config.make
 
   fi
 

@@ -61,7 +61,7 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 #
 USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 
-.PHONY: profile-check do-profile-check
+.PHONY: profile-check do-profile-check do-start-compiler-server
 profile-check:
 	@:
 
@@ -128,3 +128,14 @@ $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1
+
+ifeq ($(ENABLE_COMPILER_SERVER),false)
+do-start-compiler-server:
+	echo Not starting compiler server
+else
+VBCS_LOCATION = $(dir $(CSC_LOCATION))/VBCSCompiler.exe
+
+do-start-compiler-server: do-profile-check
+	echo Starting compiler server
+	$(PROFILE_RUNTIME) --debug $(VBCS_LOCATION) --pipename:$(COMPILER_SERVER_PIPENAME)
+endif
