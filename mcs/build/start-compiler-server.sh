@@ -3,7 +3,7 @@ set -e
 
 if [ -x "$(command -v mono)" ] ; then
     if test -f $1; then
-        mono --debug $1 -pipename:$2 &
+        RoslynCommandLineLogFile=/tmp/vbcs-log.txt mono --debug $1 -pipename:$2 &
         serverpid=$!
         echo Compiler server started with PID $serverpid.
     else
