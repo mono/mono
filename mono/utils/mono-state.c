@@ -618,20 +618,9 @@ mono_native_state_add_version (MonoStateWriter *writer)
 	mono_state_writer_indent (writer);
 	mono_state_writer_object_key (writer, "interpreter");
 #ifndef DISABLE_INTERPRETER
-	mono_state_writer_printf(writer, "\"enabled\",\n");
+	mono_state_writer_printf(writer, "\"enabled\"\n");
 #else
-	mono_state_writer_printf(writer, "\"disabled\",\n");
-#endif
-
-	assert_has_space (writer);
-	mono_state_writer_indent (writer);
-	mono_state_writer_object_key (writer, "llvm_support");
-#ifdef MONO_ARCH_LLVM_SUPPORTED
-#ifdef ENABLE_LLVM
-	mono_state_writer_printf (writer, "\"%d\"\n", LLVM_API_VERSION);
-#else
-	mono_state_writer_printf (writer, "\"disabled\"\n");
-#endif
+	mono_state_writer_printf(writer, "\"disabled\"\n");
 #endif
 
 	assert_has_space (writer);
