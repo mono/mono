@@ -2035,9 +2035,6 @@ public class LineNumbers
 #pragma warning restore 0219
 		#line 55 "FOO"
 	}
-
-
-	
 }
 
 class UninitializedClass
@@ -2057,7 +2054,4 @@ class UninitializedClass
 		//Should step into this method
 		//Console.WriteLine ("Call called");
 	}
-	
 }
-
-
