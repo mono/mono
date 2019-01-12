@@ -6339,7 +6339,9 @@ fi
       echo "BCL_OPTIMIZE = 1" >> $srcdir/$mcsdir/build/config.make
     fi
 
-    echo "CSC_LOCATION = $CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
+    echo "STANDALONE_CSC_LOCATION=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
+    echo "SERVER_CSC_LOCATION=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
+    echo "VBCS_LOCATION=" >> $srcdir/$mcsdir/build/config.make
 
     if test $csc_compiler = mcs; then
       echo "MCS_MODE = 1" >> $srcdir/$mcsdir/build/config.make
@@ -6374,9 +6376,9 @@ fi
     echo "MONO_NATIVE_PLATFORM_TYPE=$MONO_NATIVE_PLATFORM_TYPE" >> $srcdir/$mcsdir/build/config.make
     echo "MONO_NATIVE_PLATFORM=$MONO_NATIVE_PLATFORM" >> $srcdir/$mcsdir/build/config.make
     if test x$enable_compiler_server = xyes; then
-      echo "ENABLE_COMPILER_SERVER?=true" >> $srcdir/$mcsdir/build/config.make
+      echo "ENABLE_COMPILER_SERVER?=1" >> $srcdir/$mcsdir/build/config.make
     else
-      echo "ENABLE_COMPILER_SERVER?=false" >> $srcdir/$mcsdir/build/config.make
+      echo "ENABLE_COMPILER_SERVER?=0" >> $srcdir/$mcsdir/build/config.make
 	fi
 	echo "COMPILER_SERVER_PIPENAME=monomake" >> $srcdir/$mcsdir/build/config.make
 

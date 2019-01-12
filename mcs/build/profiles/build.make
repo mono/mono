@@ -59,10 +59,10 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 # Copy from rules.make because I don't know how to unset MCS_FLAGS
 #
 
-ifeq ($(ENABLE_COMPILER_SERVER),false)
-COMPILER_SERVER_ARGS:=
-else
+ifeq ("$(ENABLE_COMPILER_SERVER)","1")
 COMPILER_SERVER_ARGS=/shared:$(COMPILER_SERVER_PIPENAME)
+else
+COMPILER_SERVER_ARGS:=
 endif
 
 USE_MCS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
@@ -135,13 +135,13 @@ $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs start-compiler-ser
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1
 
-ifeq ($(ENABLE_COMPILER_SERVER),false)
-start-compiler-server:
-	echo Not starting compiler server
-else
+ifeq ("$(ENABLE_COMPILER_SERVER)","1")
 VBCS_LOCATION?=$(dir $(CSC_LOCATION))/VBCSCompiler.exe
 
 start-compiler-server:
 	echo Attempting to start compiler server...
 	$(topdir)/build/start-compiler-server.sh $(VBCS_LOCATION) $(COMPILER_SERVER_PIPENAME)
+else
+start-compiler-server:
+	echo Not starting compiler server
 endif
