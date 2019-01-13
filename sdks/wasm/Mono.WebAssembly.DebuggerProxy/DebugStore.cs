@@ -6,6 +6,8 @@ using Mono.Cecil.Cil;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
+using Mono.Cecil.Pdb;
+using Newtonsoft.Json;
 
 namespace WsProxy {
 	internal class BreakPointRequest {
@@ -266,34 +268,63 @@ namespace WsProxy {
 		ModuleDefinition image;
 		readonly int id;
 		Dictionary<int, MethodInfo> methods = new Dictionary<int, MethodInfo> ();
-		readonly List<SourceFile> sources = new List<SourceFile> ();
+        private Dictionary<string, string> _sourceLinkMappings = new Dictionary<string, string>();
+        readonly List<SourceFile> sources = new List<SourceFile> ();
 
-		public AssemblyInfo (byte[] assembly, byte[] pdb)
-		{
-			lock (typeof (AssemblyInfo)) {
-				this.id = ++next_id;
-			}
+        public AssemblyInfo(byte[] assembly, byte[] pdb)
+        {
+            lock (typeof(AssemblyInfo))
+            {
+                this.id = ++next_id;
+            }
 
-			ReaderParameters rp = new ReaderParameters (/*ReadingMode.Immediate*/);
-			if (pdb != null) {
-				rp.ReadSymbols = true;
-				rp.SymbolReaderProvider = new PortablePdbReaderProvider ();
-				rp.SymbolStream = new MemoryStream (pdb);
-			}
+            try
+            {
+                ReaderParameters rp = new ReaderParameters(/*ReadingMode.Immediate*/);
+                if (pdb != null)
+                {
+                    rp.ReadSymbols = true;
+                    rp.SymbolReaderProvider = new PortablePdbReaderProvider();
+                    rp.SymbolStream = new MemoryStream(pdb);
+                }
 
-			rp.InMemory = true;
+                rp.ReadingMode = ReadingMode.Immediate;
+                rp.InMemory = true;
 
-			this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
+                this.image = ModuleDefinition.ReadModule(new MemoryStream(assembly), rp);
+            }
+            catch (BadImageFormatException ex)
+            {
+                Console.WriteLine("Failed to read assembly as portable PDB");
+            }
 
-			Populate ();
-		}
+            if (this.image == null)
+            {
+                ReaderParameters rp = new ReaderParameters(/*ReadingMode.Immediate*/);
+                if (pdb != null)
+                {
+                    rp.ReadSymbols = true;
+                    rp.SymbolReaderProvider = new NativePdbReaderProvider();
+                    rp.SymbolStream = new MemoryStream(pdb);
+                }
 
-		public AssemblyInfo ()
+                rp.ReadingMode = ReadingMode.Immediate;
+                rp.InMemory = true;
+
+                this.image = ModuleDefinition.ReadModule(new MemoryStream(assembly), rp);
+            }
+
+            Populate();
+        }
+
+        public AssemblyInfo ()
 		{
 		}
 
 		void Populate ()
 		{
+            ProcessSourceLink();
+
 			var d2s = new Dictionary<Document, SourceFile> ();
 
 			Func<Document, SourceFile> get_src = (doc) => {
@@ -301,7 +332,7 @@ namespace WsProxy {
 					return null;
 				if (d2s.ContainsKey (doc))
 					return d2s [doc];
-				var src = new SourceFile (this, sources.Count, doc);
+				var src = new SourceFile (this, sources.Count, doc, GetSourceLinkUrl(doc.Url));
 				sources.Add (src);
 				d2s [doc] = src;
 				return src;
@@ -310,25 +341,85 @@ namespace WsProxy {
 			foreach (var m in image.GetTypes ().SelectMany (t => t.Methods)) {
 				Document first_doc = null;
 				foreach (var sp in m.DebugInformation.SequencePoints) {
-					if (first_doc == null) {
+					if (first_doc == null && !sp.Document.Url.EndsWith(".g.cs")) {
 						first_doc = sp.Document;
-					} else if (first_doc != sp.Document) {
-						//FIXME this is needed for (c)ctors in corlib
-						throw new Exception ($"Cant handle multi-doc methods in {m}");
 					}
+                    //  else if (first_doc != sp.Document) {
+					//	//FIXME this is needed for (c)ctors in corlib
+					//	throw new Exception ($"Cant handle multi-doc methods in {m}");
+					//}
 				}
 
-				var src = get_src (first_doc);
-				var mi = new MethodInfo (this, m, src);
-				int mt = (int)m.MetadataToken.RID;
-				this.methods [mt] = mi;
-				if (src != null)
-					src.AddMethod (mi);
+                if (first_doc == null)
+                {
+                    // all generated files
+                    first_doc = m.DebugInformation.SequencePoints.FirstOrDefault()?.Document;
+                }
 
-			}
+                if (first_doc != null)
+                {
+                    var src = get_src(first_doc);
+                    var mi = new MethodInfo(this, m, src);
+                    int mt = (int)m.MetadataToken.RID;
+                    this.methods[mt] = mi;
+                    if (src != null)
+                        src.AddMethod(mi);
+                }
+            }
 		}
 
-		public IEnumerable<SourceFile> Sources {
+        private void ProcessSourceLink()
+        {
+            var sourceLinkDebugInfo = image.CustomDebugInformations.FirstOrDefault(i => i.Kind == CustomDebugInformationKind.SourceLink);
+
+            if (sourceLinkDebugInfo != null)
+            {
+                var sourceLinkContent = ((SourceLinkDebugInformation)sourceLinkDebugInfo).Content;
+
+                if (sourceLinkContent != null)
+                {
+                    var jObject = JObject.Parse(sourceLinkContent)["documents"];
+                    _sourceLinkMappings = JsonConvert.DeserializeObject<Dictionary<string, string>>(jObject.ToString());
+                }
+            }
+        }
+
+        private Uri GetSourceLinkUrl(string document)
+        {
+            if (_sourceLinkMappings.TryGetValue(document, out string url))
+            {
+                return new Uri(url);
+            }
+
+            foreach (var sourceLinkDocument in _sourceLinkMappings)
+            {
+                string key = sourceLinkDocument.Key;
+                if (Path.GetFileName(key) != "*")
+                {
+                    continue;
+                }
+
+                var keyTrim = key.TrimEnd('*');
+                var docUrlPart = document.Replace(keyTrim, "");
+
+                return new Uri(sourceLinkDocument.Value.TrimEnd('*') + docUrlPart);
+            }
+
+            return null;
+        }
+
+        public string GetRelativePath(string relativeTo, string path)
+        {
+            var uri = new Uri(relativeTo, UriKind.RelativeOrAbsolute);
+            var rel = Uri.UnescapeDataString(uri.MakeRelativeUri(new Uri(path, UriKind.RelativeOrAbsolute)).ToString()).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            if (rel.Contains(Path.DirectorySeparatorChar.ToString()) == false)
+            {
+                rel = $".{ Path.DirectorySeparatorChar }{ rel }";
+            }
+            return rel;
+        }
+
+        public IEnumerable<SourceFile> Sources {
 			get { return this.sources; }
 		}
 
@@ -342,21 +433,24 @@ namespace WsProxy {
 
 		public MethodInfo GetMethodByToken (int token)
 		{
-			return methods [token];
+			methods.TryGetValue(token, out var value);
+            return value;
 		}
 
 	}
 
 	internal class SourceFile {
 		HashSet<MethodInfo> methods;
-		AssemblyInfo assembly;
+        Uri sourceLinkUri;
+        AssemblyInfo assembly;
 		int id;
 		Document doc;
 
-		internal SourceFile (AssemblyInfo assembly, int id, Document doc)
+		internal SourceFile (AssemblyInfo assembly, int id, Document doc, Uri sourceLinkUri)
 		{
 			this.methods = new HashSet<MethodInfo> ();
-			this.assembly = assembly;
+            this.sourceLinkUri = sourceLinkUri;
+            this.assembly = assembly;
 			this.id = id;
 			this.doc = doc;
 		}
@@ -369,7 +463,7 @@ namespace WsProxy {
 		public string Url => $"dotnet://{assembly.Name}/{FileName}";
 		public string DocHashCode => "abcdee" + id;
 		public SourceId SourceId => new SourceId (assembly.Id, this.id);
-		public string LocalPath => doc.Url;
+		public Uri OriginalSourcePath => sourceLinkUri ?? new Uri(doc.Url);
 
 		public IEnumerable<MethodInfo> Methods => this.methods;
 	}
@@ -386,25 +480,33 @@ namespace WsProxy {
 			var asm_files = new List<string> ();
 			var pdb_files = new List<string> ();
 			foreach (var f in loaded_files) {
-				var file_name = f.ToLower ();
-				if (file_name.EndsWith (".pdb", StringComparison.Ordinal))
-					pdb_files.Add (file_name);
+				var file_name = f;
+                if (file_name.EndsWith (".pdb", StringComparison.OrdinalIgnoreCase))
+                    pdb_files.Add (file_name);
 				else
 					asm_files.Add (file_name);
 			}
 
-			//FIXME make this parallel
-			foreach (var p in asm_files) {
-				var pdb = pdb_files.FirstOrDefault (n => MatchPdb (p, n));
-				HttpClient h = new HttpClient ();
-				var assembly_bytes = h.GetByteArrayAsync (p).Result;
-				byte[] pdb_bytes = null;
-				if (pdb != null)
-					pdb_bytes = h.GetByteArrayAsync (pdb).Result;
+            //FIXME make this parallel
+            foreach (var p in asm_files)
+            {
+                try
+                {
+                    var pdb = pdb_files.FirstOrDefault(n => MatchPdb(p, n));
+                    HttpClient h = new HttpClient();
+                    var assembly_bytes = h.GetByteArrayAsync(p).Result;
+                    byte[] pdb_bytes = null;
+                    if (pdb != null)
+                        pdb_bytes = h.GetByteArrayAsync(pdb).Result;
 
-				this.assemblies.Add (new AssemblyInfo (assembly_bytes, pdb_bytes));
-			}
-		}
+                    this.assemblies.Add(new AssemblyInfo(assembly_bytes, pdb_bytes));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Failed to read {p} ({e.Message})");
+                }
+            }
+        }
 
 		public IEnumerable<SourceFile> AllSources ()
 		{
@@ -520,9 +622,7 @@ namespace WsProxy {
 			return null;
 		}
 
-		public string ToUrl (SourceLocation location)
-		{
-			return GetFileById (location.Id).Url;
-		}
-	}
+        public string ToUrl(SourceLocation location) 
+            => location != null ? GetFileById(location.Id).Url : "";
+    }
 }

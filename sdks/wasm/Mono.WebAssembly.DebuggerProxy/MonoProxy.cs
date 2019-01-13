@@ -8,6 +8,7 @@ using System.Threading;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Net;
 
 namespace WsProxy {
 
@@ -128,7 +129,7 @@ namespace WsProxy {
 			case "Debugger.getScriptSource": {
 					var script_id = args? ["scriptId"]?.Value<string> ();
 					if (script_id.StartsWith ("dotnet://", StringComparison.InvariantCultureIgnoreCase)) {
-						OnGetScriptSource (id, script_id, token);
+						await OnGetScriptSource (id, script_id, token);
 						return true;
 					}
 
@@ -640,7 +641,7 @@ namespace WsProxy {
 
 		}
 
-		void OnGetScriptSource (int msg_id, string script_id, CancellationToken token)
+		async Task OnGetScriptSource (int msg_id, string script_id, CancellationToken token)
 		{
 			var id = new SourceId (script_id);
 			var src_file = store.GetFileById (id);
@@ -648,15 +649,44 @@ namespace WsProxy {
 			var res = new StringWriter ();
 			res.WriteLine ($"//dotnet:{id}");
 
-			using (var f = new StreamReader (File.Open (src_file.LocalPath, FileMode.Open))) {
-				res.Write (f.ReadToEnd ());
-			}
+            try
+            {
+                if (src_file.OriginalSourcePath.IsFile)
+                {
+                    using (var f = new StreamReader(File.Open(src_file.OriginalSourcePath.LocalPath, FileMode.Open)))
+                    {
+                        res.Write(f.ReadToEnd());
+                    }
 
-			var o = JObject.FromObject (new {
-				scriptSource = res.ToString ()
-			});
+                    var o = JObject.FromObject(new
+                    {
+                        scriptSource = res.ToString()
+                    });
 
-			SendResponse (msg_id, Result.Ok (o), token);
-		}
+                    SendResponse(msg_id, Result.Ok(o), token);
+                }
+                else
+                {
+                    var doc = await new WebClient().DownloadStringTaskAsync(src_file.OriginalSourcePath);
+                    res.Write(doc);
+
+                    var o = JObject.FromObject(new
+                    {
+                        scriptSource = res.ToString()
+                    });
+
+                    SendResponse(msg_id, Result.Ok(o), token);
+                }
+            }
+            catch(Exception e)
+            {
+                var o = JObject.FromObject(new
+                {
+                    scriptSource = $"// Unable to find document {src_file.OriginalSourcePath}"
+                });
+
+                SendResponse(msg_id, Result.Ok(o), token);
+            }
+        }
 	}
 }
