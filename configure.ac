@@ -3301,6 +3301,7 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	elif test "x$cross_compiling" = "xyes"; then
 		AC_MSG_RESULT(cross compiling, assuming yes)
+		AC_DEFINE(HAVE_SHM_OPEN_THAT_WORKS_WELL_ENOUGH_WITH_MMAP, 1, [shm_open that works well enough with mmap])
 	else
 		AC_TRY_RUN([
 			#include <sys/mman.h>
