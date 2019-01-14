@@ -315,6 +315,7 @@ TESTS_CS_SRC=		\
 	merp-json-valid.cs		\
 	exception19.cs		\
 	exception20.cs		\
+	exception21.cs		\
 	typeload-unaligned.cs	\
 	struct.cs		\
 	valuetype-gettype.cs	\
@@ -1569,7 +1570,6 @@ PROFILE_DISABLED_TESTS += \
 	bug-80307.exe
 
 PROFILE_DISABLED_TESTS += \
-	bug-70561.exe \
 	transparentproxy.exe
 endif
 
