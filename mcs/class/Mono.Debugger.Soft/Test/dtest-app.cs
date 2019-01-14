@@ -85,6 +85,31 @@ public class Tests2 {
 	}
 }
 
+public struct TestEnumeratorInsideGenericStruct<TKey, TValue>
+{
+	private KeyValuePair<TKey, TValue> _bucket;
+	private Position _currentPosition;
+	internal TestEnumeratorInsideGenericStruct(KeyValuePair<TKey, TValue> bucket)
+	{
+		_bucket = bucket;
+		_currentPosition = Position.BeforeFirst;
+	}
+
+	public KeyValuePair<TKey, TValue> Current
+	{
+		get
+		{
+			if (_currentPosition == Position.BeforeFirst)
+				return _bucket;
+			return _bucket;
+		}
+	}
+	private enum Position
+	{
+		BeforeFirst
+	}
+}
+
 public struct AStruct : ITest2 {
 	public int i;
 	public string s;
@@ -385,6 +410,7 @@ public class Tests : TestsBase, ITest2
 			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
 		Bug59649 ();
+		inspect_enumerator_in_generic_struct();
 		return 3;
 	}
 
@@ -590,6 +616,12 @@ public class Tests : TestsBase, ITest2
   	}
   
 	
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void inspect_enumerator_in_generic_struct() {
+		TestEnumeratorInsideGenericStruct<String, String> generic_struct = new TestEnumeratorInsideGenericStruct<String, String>(new KeyValuePair<string, string>("0", "f1"));
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_with_two_args (int a1, int a2) {
 		return a1 + a2;
