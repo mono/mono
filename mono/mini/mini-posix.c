@@ -1186,15 +1186,15 @@ native_stack_with_gdb (pid_t crashed_pid, const char **argv, int commands, char*
 	argv [3] = commands_filename;
 	argv [4] = "-nx";
 
-	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "attach %ld\n", (long) crashed_pid);
-	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "info threads\n");
-	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "thread apply all bt\n");
+	g_async_safe_fprintf (commands, "attach %ld\n", (long) crashed_pid);
+	g_async_safe_fprintf (commands, "info threads\n");
+	g_async_safe_fprintf (commands, "thread apply all bt\n");
 	if (mini_get_debug_options ()->verbose_gdb) {
 		for (int i = 0; i < 32; ++i) {
-			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "info registers\n");
-			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "info frame\n");
-			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "info locals\n");
-			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "up\n");
+			g_async_safe_fprintf (commands, "info registers\n");
+			g_async_safe_fprintf (commands, "info frame\n");
+			g_async_safe_fprintf (commands, "info locals\n");
+			g_async_safe_fprintf (commands, "up\n");
 		}
 	}
 
@@ -1214,19 +1214,19 @@ native_stack_with_lldb (pid_t crashed_pid, const char **argv, int commands, char
 	argv [3] = commands_filename;
 	argv [4] = "--no-lldbinit";
 
-	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "process attach --pid %ld\n", (long) crashed_pid);
-	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "thread list\n");
-	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "thread backtrace all\n");
+	g_async_safe_fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
+	g_async_safe_fprintf (commands, "thread list\n");
+	g_async_safe_fprintf (commands, "thread backtrace all\n");
 	if (mini_get_debug_options ()->verbose_gdb) {
 		for (int i = 0; i < 32; ++i) {
-			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "reg read\n");
-			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "frame info\n");
-			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "frame variable\n");
-			MOSTLY_ASYNC_SAFE_FPRINTF (commands, "up\n");
+			g_async_safe_fprintf (commands, "reg read\n");
+			g_async_safe_fprintf (commands, "frame info\n");
+			g_async_safe_fprintf (commands, "frame variable\n");
+			g_async_safe_fprintf (commands, "up\n");
 		}
 	}
-	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "detach\n");
-	MOSTLY_ASYNC_SAFE_FPRINTF (commands, "quit\n");
+	g_async_safe_fprintf (commands, "detach\n");
+	g_async_safe_fprintf (commands, "quit\n");
 
 	return TRUE;
 }
