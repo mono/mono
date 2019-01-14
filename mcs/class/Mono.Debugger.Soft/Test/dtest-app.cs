@@ -603,32 +603,11 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-<<<<<<< HEAD
-=======
-	public static void ss_nested_with_three_args_wrapper () {
-		ss_nested_with_three_args(ss_nested_arg1 (), ss_nested_arg2 (), ss_nested_arg3 ());
-	}
-
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void ss_nested_twice_with_two_args_wrapper () {
-		ss_nested_with_two_args(ss_nested_arg1 (), ss_nested_with_two_args(ss_nested_arg2 (), ss_nested_arg3 ()));
-	}
-  
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
-	public static void elapsed_time () {
-		Thread.Sleep(200);
-		Thread.Sleep(00);
-		Thread.Sleep(100);
-		Thread.Sleep(300);
-	}
-	
-	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void inspect_enumerator_in_generic_struct() {
 		TestEnumeratorInsideGenericStruct<String, String> generic_struct = new TestEnumeratorInsideGenericStruct<String, String>(new KeyValuePair<string, string>("0", "f1"));
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
->>>>>>> 141bec26a55... [Debugger] Fix crash when there is a generic struct with a field that is an enumerator. (#12368)
 	public static int ss_nested_with_two_args (int a1, int a2) {
 		return a1 + a2;
 	}
