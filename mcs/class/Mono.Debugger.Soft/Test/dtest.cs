@@ -4462,6 +4462,25 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void InspectEnumeratorInGenericStruct() {
+		//files.myBucket.GetEnumerator().get_Current().Key watching this generates an exception in Debugger
+		Event e = run_until("inspect_enumerator_in_generic_struct");
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over();
+		StackFrame frame = e.Thread.GetFrames () [0];
+		var ginst = frame.Method.GetLocal ("generic_struct");
+		Value variable = frame.GetValue (ginst);
+		StructMirror thisObj = (StructMirror)variable;
+		TypeMirror thisType = thisObj.Type;
+		variable = thisObj.InvokeMethod(e.Thread, thisType.GetMethod("get_Current"), null);
+		thisObj = (StructMirror)variable;
+		thisType = thisObj.Type;
+		AssertValue ("f1", thisObj["value"]);
+	}
+
+	[Test]
 	// Uses a fixed port
 	[Category("NotWorking")]
 	public void Attach () {
