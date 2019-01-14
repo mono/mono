@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
+using System.Collections;
 #if !MOBILE
 using MonoTests.Helpers;
 #endif
@@ -83,6 +84,31 @@ public class Tests2 {
 	}
 
 	public void invoke () {
+	}
+}
+
+public struct TestEnumeratorInsideGenericStruct<TKey, TValue>
+{
+	private KeyValuePair<TKey, TValue> _bucket;
+	private Position _currentPosition;
+	internal TestEnumeratorInsideGenericStruct(KeyValuePair<TKey, TValue> bucket)
+	{
+		_bucket = bucket;
+		_currentPosition = Position.BeforeFirst;
+	}
+
+	public KeyValuePair<TKey, TValue> Current
+	{
+		get
+		{
+			if (_currentPosition == Position.BeforeFirst)
+				return _bucket;
+			return _bucket;
+		}
+	}
+	private enum Position
+	{
+		BeforeFirst
 	}
 }
 
@@ -462,6 +488,7 @@ public class Tests : TestsBase, ITest2
 		Bug59649 ();
 		elapsed_time();
 		field_with_unsafe_cast_value();
+		inspect_enumerator_in_generic_struct();
 		return 3;
 	}
 
@@ -673,9 +700,9 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_nested_twice_with_two_args_wrapper () {
 		ss_nested_with_two_args(ss_nested_arg1 (), ss_nested_with_two_args(ss_nested_arg2 (), ss_nested_arg3 ()));
-  }
+	}
   
-  [MethodImplAttribute (MethodImplOptions.NoInlining)]
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void elapsed_time () {
 		Thread.Sleep(200);
 		Thread.Sleep(00);
@@ -683,6 +710,11 @@ public class Tests : TestsBase, ITest2
 		Thread.Sleep(300);
 	}
 	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void inspect_enumerator_in_generic_struct() {
+		TestEnumeratorInsideGenericStruct<String, String> generic_struct = new TestEnumeratorInsideGenericStruct<String, String>(new KeyValuePair<string, string>("0", "f1"));
+	}
+
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_with_two_args (int a1, int a2) {
 		return a1 + a2;
