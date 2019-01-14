@@ -34,6 +34,12 @@ sgen_libs = \
 	$(monodir)/mono/utils/libmonoutils.la \
 	$(glib_libs)
 
+sgen_core_libs = \
+	$(monodir)/mono/metadata/libmonoruntimesgencore.la	\
+	$(monodir)/mono/sgen/libmonosgen.la	\
+	$(monodir)/mono/utils/libmonoutils.la \
+	$(glib_libs)
+
 if ENABLE_LLVM
 -include $(mono_build_root)/llvm/llvm_config.mk
 LLVM_CFLAGS=$(LLVM_CFLAGS_INTERNAL) $(LLVM_CFLAGS_EXTERNAL)
@@ -111,6 +117,11 @@ boehm_static_libraries = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_min
 boehm_binaries  = mono-boehm
 endif
 
+if ENABLE_CORE
+core_libraries = libcoreclr.la
+sgen_core_static_libraries = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_core_libs)
+endif
+
 if SUPPORT_SGEN
 mono_bin_suffix = sgen
 libmono_suffix = sgen
@@ -148,10 +159,10 @@ noinst_PROGRAMS = mono
 endif
 
 if DISABLE_EXECUTABLES
-shared_libraries = $(boehm_libraries) $(sgen_libraries)
+shared_libraries = $(boehm_libraries) $(sgen_libraries) $(core_libraries)
 else
 if SHARED_MONO
-shared_libraries = $(boehm_libraries) $(sgen_libraries)
+shared_libraries = $(boehm_libraries) $(sgen_libraries) $(core_libraries)
 endif
 endif
 
@@ -227,7 +238,7 @@ if STATIC_MONO
 # Link libmono into mono statically
 # This leads to higher performance, especially with TLS
 MONO_LIB=$(boehm_static_libraries)
-MONO_SGEN_LIB=$(sgen_static_libraries)
+MONO_SGEN_LIB=$(sgen_static_libraries) $(sgen_core_static_libraries)
 else 
 MONO_LIB=libmonoboehm-2.0.la
 MONO_SGEN_LIB=libmonosgen-2.0.la
@@ -766,6 +777,12 @@ libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS) @CXX_ADD_CFLAGS@
 
 libmonosgen_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
 libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags) 
+
+libcoreclr_la_SOURCES = main-core.c
+libcoreclr_la_CFLAGS = $(libmonosgen_2_0_la_CFLAGS) -D NETCORE
+
+libcoreclr_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_core_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
+libcoreclr_la_LDFLAGS = $(libmonosgen_2_0_la_LDFLAGS)
 
 libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit
 
