@@ -31,6 +31,10 @@
 #include <stdlib.h>
 #include <glib.h>
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 /* The current fatal levels, error is always fatal */
 static GLogLevelFlags fatal = G_LOG_LEVEL_ERROR;
 static GLogFunc default_log_func;
@@ -55,6 +59,44 @@ g_assert_abort (void)
 		internal_abort_func ();
 	else
 		abort ();
+}
+
+static int
+async_safe_vfprintf (int handle, gchar const *format, va_list args)
+{
+	char __buff [256];
+	__buff [0] = '\0';
+	g_vsnprintf (__buff, sizeof(__buff), format, args);
+	int ret = g_write (handle, __buff, (guint32) strlen (__buff));
+
+	return ret;
+}
+
+inline int
+g_async_safe_fprintf (int handle, gchar const *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	int ret = async_safe_vfprintf (handle, format, args);
+	va_end (args);
+	return ret;
+}
+
+static int
+async_safe_vprintf (gchar const *format, va_list args)
+{
+	return async_safe_vfprintf (1, format, args);
+}
+
+inline int
+g_async_safe_printf (gchar const *format, ...)
+{
+	va_list args;
+	va_start (args, format);
+	int ret = async_safe_vfprintf (1, format, args);
+	va_end (args);
+
+	return ret;
 }
 
 void
@@ -140,7 +182,8 @@ g_logv_nofree (const gchar *log_domain, GLogLevelFlags log_level, const gchar *f
 	char *msg;
 
 	if (internal_abort_func) {
-		msg = NULL;
+		async_safe_vprintf (format, args);
+		return NULL;
 	} else if (g_vasprintf (&msg, format, args) < 0) {
 		return NULL;
 	}
