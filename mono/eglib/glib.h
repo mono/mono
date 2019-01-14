@@ -382,6 +382,8 @@ gint         g_printf          (gchar const *format, ...) G_ATTR_FORMAT_PRINTF(1
 gint         g_fprintf         (FILE *file, gchar const *format, ...) G_ATTR_FORMAT_PRINTF(2, 3);
 gint         g_sprintf         (gchar *string, gchar const *format, ...) G_ATTR_FORMAT_PRINTF(2, 3);
 gint         g_snprintf        (gchar *string, gulong n, gchar const *format, ...) G_ATTR_FORMAT_PRINTF(3, 4);
+inline gint  g_async_safe_printf (gchar const *format, ...) G_ATTR_FORMAT_PRINTF(1, 2);
+inline gint  g_async_safe_fprintf (int handle, gchar const *format, ...) G_ATTR_FORMAT_PRINTF(2, 3);
 gint         g_vasprintf       (gchar **ret, const gchar *fmt, va_list ap);
 #define g_vprintf vprintf
 #define g_vfprintf vfprintf
