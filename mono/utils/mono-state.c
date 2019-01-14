@@ -48,12 +48,12 @@ extern GCStats mono_gc_stats;
 static void
 assert_not_reached_mem (const char *msg)
 {
-	MOSTLY_ASYNC_SAFE_PRINTF ("%s\n", msg);
+	g_async_safe_printf ("%s\n", msg);
 
 #if 0
 	pid_t crashed_pid = getpid ();
 	// Break here
-	MOSTLY_ASYNC_SAFE_PRINTF ("Attach to PID %d. Supervisor thread will signal us shortly.\n", crashed_pid);
+	g_async_safe_printf ("Attach to PID %d. Supervisor thread will signal us shortly.\n", crashed_pid);
 	while (TRUE) {
 		// Sleep for 1 second.
 		g_usleep (1000 * 1000);
@@ -210,10 +210,10 @@ mono_summarize_timeline_phase_log (MonoSummaryStage next)
 			break;
 
 		case MonoSummaryDone:
-			MOSTLY_ASYNC_SAFE_PRINTF ("Trying to log crash reporter timeline, already at done %d\n", log.level);
+			g_async_safe_printf ("Trying to log crash reporter timeline, already at done %d\n", log.level);
 			return;
 		default:
-			MOSTLY_ASYNC_SAFE_PRINTF ("Trying to log crash reporter timeline, illegal state %d\n", log.level);
+			g_async_safe_printf ("Trying to log crash reporter timeline, illegal state %d\n", log.level);
 			return;
 	}
 
@@ -289,7 +289,7 @@ mono_state_free_mem (MonoStateMem *mem)
 	if (mem->handle)
 		close (mem->handle);
 	else
-		MOSTLY_ASYNC_SAFE_PRINTF ("NULL handle mono-state mem on freeing\n");
+		g_async_safe_printf ("NULL handle mono-state mem on freeing\n");
 
 	char name [100];
 	mem_file_name (mem->tag, name, sizeof (name));

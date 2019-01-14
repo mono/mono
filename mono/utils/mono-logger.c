@@ -547,26 +547,26 @@ mono_dump_mem (gpointer d, int len)
 	guint8 *data = (guint8 *) d;
 
 	for (int off = 0; off < len; off += 0x10) {
-		MOSTLY_ASYNC_SAFE_PRINTF("%p  ", data + off);
+		g_async_safe_printf("%p  ", data + off);
 
 		for (int i = 0; i < 0x10; i++) {
 			if ((i + off) >= len) {
-				MOSTLY_ASYNC_SAFE_PRINTF("%s", "   ");
+				g_async_safe_printf("%s", "   ");
 			} else {
-				MOSTLY_ASYNC_SAFE_PRINTF("%02x ", data [off + i]);
+				g_async_safe_printf("%02x ", data [off + i]);
 			}
 		}
 
-		MOSTLY_ASYNC_SAFE_PRINTF(" ");
+		g_async_safe_printf(" ");
 
 		for (int i = 0; i < 0x10; i++) {
 			if ((i + off) >= len) {
-				MOSTLY_ASYNC_SAFE_PRINTF("%s", " ");
+				g_async_safe_printf("%s", " ");
 			} else {
-				MOSTLY_ASYNC_SAFE_PRINTF("%c", conv_ascii_char (data [off + i]));
+				g_async_safe_printf("%c", conv_ascii_char (data [off + i]));
 			}
 		}
 
-		MOSTLY_ASYNC_SAFE_PRINTF ("\n");
+		g_async_safe_printf ("\n");
 	}
 }
