@@ -1108,7 +1108,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 			g_async_safe_printf("\tExternal Debugger Dump:\n");
 			g_async_safe_printf ("=================================================================\n");
 			mono_gdb_render_native_backtraces (crashed_pid);
-			exit (1);
+			_exit (1);
 		}
 
 		waitpid (pid, &status, 0);
@@ -1118,7 +1118,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 #ifndef DISABLE_CRASH_REPORTING
 			mono_state_free_mem (&merp_mem);
 #endif
-			exit (-1);
+			_exit (-1);
 		}
 
 #ifndef DISABLE_CRASH_REPORTING
