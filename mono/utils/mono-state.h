@@ -21,19 +21,19 @@
 #define MONO_NATIVE_STATE_PROTOCOL_VERSION "0.0.2"
 
 typedef enum {
-	MonoSummaryNone = 0,
-	MonoSummarySetup = 1,
-	MonoSummarySuspendHandshake = 2,
-	MonoSummaryUnmanagedStacks = 3,
-	MonoSummaryManagedStacks = 4,
-	MonoSummaryStateWriter = 5,
-	MonoSummaryStateWriterDone = 6,
-	MonoSummaryMerpWriter = 7,
-	MonoSummaryMerpInvoke = 8,
-	MonoSummaryCleanup = 9,
-	MonoSummaryDone = 10,
+	MonoSummaryNone,
+	MonoSummarySetup,
+	MonoSummarySuspendHandshake,
+	MonoSummaryUnmanagedStacks,
+	MonoSummaryManagedStacks,
+	MonoSummaryStateWriter,
+	MonoSummaryStateWriterDone,
+	MonoSummaryMerpWriter,
+	MonoSummaryMerpInvoke,
+	MonoSummaryCleanup,
+	MonoSummaryDone,
 
-	MonoSummaryDoubleFault = 11, 
+	MonoSummaryDoubleFault
 } MonoSummaryStage;
 
 typedef struct {
