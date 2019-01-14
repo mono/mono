@@ -117,8 +117,9 @@ namespace Mono.WebAssembly.Build
 
 			sb.AppendFormat (" -c {0} -u {1}", coremode, usermode);
 
-			//the linker doesn't consider these core by default
-			sb.AppendFormat (" -p {0} netstandard -p {1} WebAssembly.Bindings -p {1} WebAssembly.Net.Http", coremode, usermode);
+			// use the -t option to keep facades.
+			// for example netstandard is a facade in wasm so it should be kept.
+			sb.Append (" -t");
 
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -136,20 +137,34 @@ namespace Mono.WebAssembly.Build
 			//we'll normally have to check most of the because the SDK references most framework asm by default
 			//so let's enumerate upfront
 			var frameworkAssemblies = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			var frameworkFacades = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 			foreach (var f in Directory.EnumerateFiles (FrameworkDir)) {
 				frameworkAssemblies.Add (Path.GetFileNameWithoutExtension (f));
 			}
 			foreach (var f in Directory.EnumerateFiles (Path.Combine (FrameworkDir, "Facades"))) {
-				frameworkAssemblies.Add (Path.GetFileNameWithoutExtension (f));
+				frameworkFacades.Add (Path.GetFileNameWithoutExtension (f));
 			}
 
 			//add references for non-framework assemblies
 			if (Assemblies != null) {
 				foreach (var asm in Assemblies) {
+
 					var p = asm.GetMetadata ("FullPath");
+					if (Path.GetFileNameWithoutExtension(p) == "mscorlib") {
+						sb.AppendFormat (" -r \"{0}\"", Path.Combine(FrameworkDir, Path.GetFileName(p)));
+						continue;
+					}
+					if (Path.GetFileNameWithoutExtension(p) == "netstandard") {
+						sb.AppendFormat (" -a \"{0}\"", Path.Combine (FrameworkDir, "Facades", Path.GetFileName (p)));
+						continue;
+					}
 					if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
 						continue;
 					}
+					if (frameworkFacades.Contains (Path.GetFileNameWithoutExtension (p))) {
+						continue;
+					}
+
 					sb.AppendFormat (" -r \"{0}\"", p);
 				}
 			}
