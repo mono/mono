@@ -795,7 +795,7 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 			mono_value_copy_array (dest, dest_idx, source_addr, length);
 		} else {
 			dest_addr = mono_array_addr_with_size_fast (dest, element_size, dest_idx);
-			mono_gc_memmove_atomic (dest_addr, source_addr, element_size * length);
+			mono_gc_memmove_atomic (dest_addr, source_addr, (size_t)element_size * length);
 		}
 	} else {
 		mono_array_memcpy_refs_fast (dest, dest_idx, source, source_idx, length);
