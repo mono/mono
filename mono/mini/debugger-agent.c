@@ -5600,7 +5600,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 		} else if ((t->type == MONO_TYPE_GENERICINST) && 
 					mono_metadata_generic_class_is_valuetype (t->data.generic_class) &&
 					m_class_is_enumtype (t->data.generic_class->container_class)){
-			err = decode_vtype (t, domain, addr, buf, &buf, limit);
+			err = decode_vtype (t, domain, addr, buf, &buf, limit, check_field_datatype);
 			if (err != ERR_NONE)
 				return err;
 		} else {
