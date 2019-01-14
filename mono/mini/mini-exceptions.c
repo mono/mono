@@ -3169,9 +3169,9 @@ print_stack_frame_signal_safe (StackFrameInfo *frame, MonoContext *ctx, gpointer
 
 	if (method) {
 		const char *name_space = m_class_get_name_space (method->klass);
-		MOSTLY_ASYNC_SAFE_PRINTF("\t  at %s%s%s:%s <0x%05x>\n", name_space, (name_space [0] != '\0' ? "." : ""), m_class_get_name (method->klass), method->name, frame->native_offset);
+		g_async_safe_printf("\t  at %s%s%s:%s <0x%05x>\n", name_space, (name_space [0] != '\0' ? "." : ""), m_class_get_name (method->klass), method->name, frame->native_offset);
 	} else {
-		MOSTLY_ASYNC_SAFE_PRINTF("\t  at <unknown> <0x%05x>\n", frame->native_offset);
+		g_async_safe_printf("\t  at <unknown> <0x%05x>\n", frame->native_offset);
 	}
 
 	return FALSE;
@@ -3214,7 +3214,7 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 		return;
 
 	if (mini_get_debug_options ()->suspend_on_native_crash) {
-		MOSTLY_ASYNC_SAFE_PRINTF ("Received %s, suspending...\n", signal);
+		g_async_safe_printf ("Received %s, suspending...\n", signal);
 		while (1) {
 			// Sleep for 1 second.
 			g_usleep (1000 * 1000);
@@ -3230,27 +3230,27 @@ mono_handle_native_crash (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_T
 	 * with ones which have a greater chance of working.
 	 */
 
-	MOSTLY_ASYNC_SAFE_PRINTF("\n=================================================================\n");
-	MOSTLY_ASYNC_SAFE_PRINTF("\tNative Crash Reporting\n");
-	MOSTLY_ASYNC_SAFE_PRINTF("=================================================================\n");
-	MOSTLY_ASYNC_SAFE_PRINTF("Got a %s while executing native code. This usually indicates\n", signal);
-	MOSTLY_ASYNC_SAFE_PRINTF("a fatal error in the mono runtime or one of the native libraries \n");
-	MOSTLY_ASYNC_SAFE_PRINTF("used by your application.\n");
-	MOSTLY_ASYNC_SAFE_PRINTF("=================================================================\n");
+	g_async_safe_printf("\n=================================================================\n");
+	g_async_safe_printf("\tNative Crash Reporting\n");
+	g_async_safe_printf("=================================================================\n");
+	g_async_safe_printf("Got a %s while executing native code. This usually indicates\n", signal);
+	g_async_safe_printf("a fatal error in the mono runtime or one of the native libraries \n");
+	g_async_safe_printf("used by your application.\n");
+	g_async_safe_printf("=================================================================\n");
 	mono_dump_native_crash_info (signal, ctx, info);
 
 	/* !jit_tls means the thread was not registered with the runtime */
 	// This must be below the native crash dump, because we can't safely
 	// do runtime state probing after we have walked the managed stack here.
 	if (jit_tls && mono_thread_internal_current () && ctx) {
-		MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
-		MOSTLY_ASYNC_SAFE_PRINTF ("\tManaged Stacktrace:\n");
-		MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+		g_async_safe_printf ("\n=================================================================\n");
+		g_async_safe_printf ("\tManaged Stacktrace:\n");
+		g_async_safe_printf ("=================================================================\n");
 
 		MonoContext mctx;
 		mono_sigctx_to_monoctx (ctx, &mctx);
 		mono_walk_stack_full (print_stack_frame_signal_safe, &mctx, mono_domain_get (), jit_tls, mono_get_lmf (), MONO_UNWIND_LOOKUP_IL_OFFSET, NULL, TRUE);
-		MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+		g_async_safe_printf ("=================================================================\n");
 	}
 
 #ifdef MONO_ARCH_USE_SIGACTION

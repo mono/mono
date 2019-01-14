@@ -890,18 +890,18 @@ dump_memory_around_ip (void *ctx)
 	if (!ctx)
 		return;
 
-	MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
-	MOSTLY_ASYNC_SAFE_PRINTF ("\tBasic Fault Adddress Reporting\n");
-	MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+	g_async_safe_printf ("\n=================================================================\n");
+	g_async_safe_printf ("\tBasic Fault Adddress Reporting\n");
+	g_async_safe_printf ("=================================================================\n");
 
 	MonoContext mctx;
 	mono_sigctx_to_monoctx (ctx, &mctx);
 	gpointer native_ip = MONO_CONTEXT_GET_IP (&mctx);
 	if (native_ip) {
-		MOSTLY_ASYNC_SAFE_PRINTF ("Memory around native instruction pointer (%p):", native_ip);
+		g_async_safe_printf ("Memory around native instruction pointer (%p):", native_ip);
 		mono_dump_mem (((guint8 *) native_ip) - 0x10, 0x40);
 	} else {
-		MOSTLY_ASYNC_SAFE_PRINTF ("instruction pointer is NULL, skip dumping");
+		g_async_safe_printf ("instruction pointer is NULL, skip dumping");
 	}
 #endif
 }
@@ -954,7 +954,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 	if (!double_faulted) {
 		g_assertion_disable_global (assert_printer_callback);
 	} else {
-		MOSTLY_ASYNC_SAFE_PRINTF ("\nAn error has occured in the native fault reporting. Some diagnostic information will be unavailable.\n");
+		g_async_safe_printf ("\nAn error has occured in the native fault reporting. Some diagnostic information will be unavailable.\n");
 
 #ifndef DISABLE_CRASH_REPORTING
 		// In case still enabled
@@ -967,20 +967,20 @@ dump_native_stacktrace (const char *signal, void *ctx)
 	void *array [256];
 	int size = backtrace (array, 256);
 
-	MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
-	MOSTLY_ASYNC_SAFE_PRINTF ("\tNative stacktrace:\n");
-	MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+	g_async_safe_printf ("\n=================================================================\n");
+	g_async_safe_printf ("\tNative stacktrace:\n");
+	g_async_safe_printf ("=================================================================\n");
 	if (size == 0)
-		MOSTLY_ASYNC_SAFE_PRINTF ("\t (No frames) \n\n");
+		g_async_safe_printf ("\t (No frames) \n\n");
 
 	for (int i = 0; i < size; ++i) {
 		gpointer ip = array [i];
 		Dl_info info;
 		gboolean success = dladdr ((void*) ip, &info);
 		if (!success) {
-			MOSTLY_ASYNC_SAFE_PRINTF ("\t%p - Unknown\n", ip);
+			g_async_safe_printf ("\t%p - Unknown\n", ip);
 		} else {
-			MOSTLY_ASYNC_SAFE_PRINTF ("\t%p - %s : %s\n", ip, info.dli_fname, info.dli_sname);
+			g_async_safe_printf ("\t%p - %s : %s\n", ip, info.dli_fname, info.dli_sname);
 		}
 	}
 
@@ -1019,9 +1019,9 @@ dump_native_stacktrace (const char *signal, void *ctx)
 				passed_ctx = &mctx;
 			}
 
-			MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
-			MOSTLY_ASYNC_SAFE_PRINTF ("\tTelemetry Dumper:\n");
-			MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+			g_async_safe_printf ("\n=================================================================\n");
+			g_async_safe_printf ("\tTelemetry Dumper:\n");
+			g_async_safe_printf ("=================================================================\n");
 
 			if (!leave) {
 				mono_summarize_timeline_start ();
@@ -1039,7 +1039,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 				// Wait for the other threads to clean up and exit their handlers
 				// We can't lock / wait indefinitely, in case one of these threads got stuck somehow
 				// while dumping. 
-				MOSTLY_ASYNC_SAFE_PRINTF ("\nWaiting for dumping threads to resume\n");
+				g_async_safe_printf ("\nWaiting for dumping threads to resume\n");
 				sleep (1);
 			}
 
@@ -1086,16 +1086,16 @@ dump_native_stacktrace (const char *signal, void *ctx)
 					gboolean merp_upload_success = mono_merp_invoke (crashed_pid, signal, output, &hashes);
 
 					if (!merp_upload_success) {
-						MOSTLY_ASYNC_SAFE_PRINTF("\nThe MERP upload step has failed.\n");
+						g_async_safe_printf("\nThe MERP upload step has failed.\n");
 					} else {
 						// Remove
-						MOSTLY_ASYNC_SAFE_PRINTF("\nThe MERP upload step has succeeded.\n");
+						g_async_safe_printf("\nThe MERP upload step has succeeded.\n");
 						mono_summarize_timeline_phase_log (MonoSummaryDone);
 					}
 
 					mono_summarize_toggle_assertions (FALSE);
 				} else {
-					MOSTLY_ASYNC_SAFE_PRINTF("\nMerp dump step not run, no dump created.\n");
+					g_async_safe_printf("\nMerp dump step not run, no dump created.\n");
 				}
 			}
 		}
@@ -1104,9 +1104,9 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		if (pid == 0) {
 			dup2 (STDERR_FILENO, STDOUT_FILENO);
 
-			MOSTLY_ASYNC_SAFE_PRINTF ("\n=================================================================\n");
-			MOSTLY_ASYNC_SAFE_PRINTF("\tExternal Debugger Dump:\n");
-			MOSTLY_ASYNC_SAFE_PRINTF ("=================================================================\n");
+			g_async_safe_printf ("\n=================================================================\n");
+			g_async_safe_printf("\tExternal Debugger Dump:\n");
+			g_async_safe_printf ("=================================================================\n");
 			mono_gdb_render_native_backtraces (crashed_pid);
 			exit (1);
 		}
@@ -1114,7 +1114,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 		waitpid (pid, &status, 0);
 
 		if (double_faulted) {
-			MOSTLY_ASYNC_SAFE_PRINTF("\nExiting early due to double fault.\n");
+			g_async_safe_printf("\nExiting early due to double fault.\n");
 #ifndef DISABLE_CRASH_REPORTING
 			mono_state_free_mem (&merp_mem);
 #endif
@@ -1143,7 +1143,7 @@ dump_native_stacktrace (const char *signal, void *ctx)
 	* set this on start-up as DUMPABLE has security implications. */
 	prctl (PR_SET_DUMPABLE, 1);
 
-	MOSTLY_ASYNC_SAFE_PRINTF("\nNo native Android stacktrace (see debuggerd output).\n");
+	g_async_safe_printf("\nNo native Android stacktrace (see debuggerd output).\n");
 #endif
 #endif
 }
@@ -1254,7 +1254,7 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 	// Create this file, overwriting if it already exists
 	int commands_handle = g_open (commands_filename, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
 	if (commands_handle == -1) {
-		MOSTLY_ASYNC_SAFE_PRINTF ("Could not make debugger temp file %s\n", commands_filename);
+		g_async_safe_printf ("Could not make debugger temp file %s\n", commands_filename);
 		return;
 	}
 
@@ -1271,7 +1271,7 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid)
 		goto exec;
 #endif
 
-	MOSTLY_ASYNC_SAFE_PRINTF ("mono_gdb_render_native_backtraces not supported on this platform, unable to find gdb or lldb\n");
+	g_async_safe_printf ("mono_gdb_render_native_backtraces not supported on this platform, unable to find gdb or lldb\n");
 
 	close (commands_handle);
 	unlink (commands_filename);
@@ -1283,7 +1283,7 @@ exec:
 
 	_exit (-1);
 #else
-	MOSTLY_ASYNC_SAFE_PRINTF ("mono_gdb_render_native_backtraces not supported on this platform\n");
+	g_async_safe_printf ("mono_gdb_render_native_backtraces not supported on this platform\n");
 #endif // HAVE_EXECV
 }
 
