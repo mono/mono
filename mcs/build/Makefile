@@ -31,7 +31,7 @@ PROFILES = \
 
 COMMON_SRCS = \
 	Consts.cs.in			\
-	common/sourcelink.json.in	\
+	sourcelink.json.in	\
 	Locale.cs			\
 	MonoTODOAttribute.cs \
 	basic-profile-check.cs		\
