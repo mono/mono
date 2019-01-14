@@ -249,6 +249,8 @@ gint         g_printf          (gchar const *format, ...);
 gint         g_fprintf         (FILE *file, gchar const *format, ...);
 gint         g_sprintf         (gchar *string, gchar const *format, ...);
 gint         g_snprintf        (gchar *string, gulong n, gchar const *format, ...);
+inline gint  g_async_safe_printf (gchar const *format, ...);
+inline gint  g_async_safe_fprintf (int handle, gchar const *format, ...);
 gint         g_vasprintf       (gchar **ret, const gchar *fmt, va_list ap);
 #define g_vprintf vprintf
 #define g_vfprintf vfprintf
