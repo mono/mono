@@ -209,7 +209,8 @@ namespace System
 					string tzName = null;
 					if (!TryGetNameFromPath (tzFilePath, out tzName))
 						tzName = "Local";
-					return FindSystemTimeZoneByFileName (tzName, tzFilePath);
+					if (File.Exists(tzFilePath))
+						return FindSystemTimeZoneByFileName (tzName, tzFilePath);
 				} catch (TimeZoneNotFoundException) {
 					continue;
 				}
