@@ -396,7 +396,7 @@ mono_check_corlib_version (void)
 {
 	const char* res;
 	MONO_ENTER_GC_UNSAFE;
-#if NETCORE_LOADER
+#if ENABLE_NETCORE
 	res = NULL;
 #else
 	res = mono_check_corlib_version_internal ();
