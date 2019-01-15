@@ -117,10 +117,6 @@ namespace Mono.WebAssembly.Build
 
 			sb.AppendFormat (" -c {0} -u {1}", coremode, usermode);
 
-			// use the -t option to keep facades.
-			// for example netstandard is a facade in wasm so it should be kept.
-			sb.Append (" -t");
-
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var s in skips) {
@@ -130,6 +126,7 @@ namespace Mono.WebAssembly.Build
 
 			sb.AppendFormat (" -out \"{0}\"", OutputDir);
 			sb.AppendFormat (" -d \"{0}\"", FrameworkDir);
+			sb.AppendFormat (" -d \"{0}\"", Path.Combine(FrameworkDir, "Facades"));
 			sb.AppendFormat (" -b {0} -v {0}", Debug);
 
 			sb.AppendFormat (" -a \"{0}\"", RootAssembly[0].GetMetadata("FullPath"));
@@ -137,12 +134,11 @@ namespace Mono.WebAssembly.Build
 			//we'll normally have to check most of the because the SDK references most framework asm by default
 			//so let's enumerate upfront
 			var frameworkAssemblies = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
-			var frameworkFacades = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 			foreach (var f in Directory.EnumerateFiles (FrameworkDir)) {
 				frameworkAssemblies.Add (Path.GetFileNameWithoutExtension (f));
 			}
 			foreach (var f in Directory.EnumerateFiles (Path.Combine (FrameworkDir, "Facades"))) {
-				frameworkFacades.Add (Path.GetFileNameWithoutExtension (f));
+				frameworkAssemblies.Add (Path.GetFileNameWithoutExtension (f));
 			}
 
 			//add references for non-framework assemblies
@@ -150,18 +146,7 @@ namespace Mono.WebAssembly.Build
 				foreach (var asm in Assemblies) {
 
 					var p = asm.GetMetadata ("FullPath");
-					if (Path.GetFileNameWithoutExtension(p) == "mscorlib") {
-						sb.AppendFormat (" -r \"{0}\"", Path.Combine(FrameworkDir, Path.GetFileName(p)));
-						continue;
-					}
-					if (Path.GetFileNameWithoutExtension(p) == "netstandard") {
-						sb.AppendFormat (" -a \"{0}\"", Path.Combine (FrameworkDir, "Facades", Path.GetFileName (p)));
-						continue;
-					}
 					if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
-						continue;
-					}
-					if (frameworkFacades.Contains (Path.GetFileNameWithoutExtension (p))) {
 						continue;
 					}
 

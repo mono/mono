@@ -268,13 +268,15 @@ clean:
 	$(RM) -r binding-tests.dll
 	$(RM) -r sdk/**/bin
 	$(RM) -r sdk/**/obj
+	$(RM) -r sdk/**/**/bin
+	$(RM) -r sdk/**/**/obj
 	$(RM) -r sdk/packages
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
+	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.pdb
-
 
 package: build build-dbg-proxy
 	rm -rf tmp
@@ -329,3 +331,7 @@ canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
 
 check-aot: do-aot-sample
+
+build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
+	msbuild /r sdk/Mono.WebAssembly.Sdk
+	msbuild /r sdk
