@@ -4645,14 +4645,15 @@ register_icalls (void)
 	register_icall (mono_aot_init_gshared_method_mrgctx, "mono_aot_init_gshared_method_mrgctx", "void ptr int ptr", TRUE);
 	register_icall (mono_aot_init_gshared_method_vtable, "mono_aot_init_gshared_method_vtable", "void ptr int ptr", TRUE);
 
-	register_icall_no_wrapper (mono_resolve_iface_call_gsharedvt, "mono_resolve_iface_call_gsharedvt", "ptr object int ptr ptr");
-	register_icall_no_wrapper (mono_resolve_vcall_gsharedvt, "mono_resolve_vcall_gsharedvt", "ptr object int ptr ptr");
-	register_icall_no_wrapper (mono_resolve_generic_virtual_call, "mono_resolve_generic_virtual_call", "ptr ptr int ptr");
-	register_icall_no_wrapper (mono_resolve_generic_virtual_iface_call, "mono_resolve_generic_virtual_iface_call", "ptr ptr int ptr");
+	register_icall_no_wrapper (mini_llvmonly_resolve_iface_call_gsharedvt, "mono_resolve_iface_call_gsharedvt", "ptr object int ptr ptr");
+	register_icall_no_wrapper (mini_llvmonly_resolve_vcall_gsharedvt, "mini_llvmonly_resolve_vcall_gsharedvt", "ptr object int ptr ptr");
+	register_icall_no_wrapper (mini_llvmonly_resolve_generic_virtual_call, "mini_llvmonly_resolve_generic_virtual_call", "ptr ptr int ptr");
+	register_icall_no_wrapper (mini_llvmonly_resolve_generic_virtual_iface_call, "mini_llvmonly_resolve_generic_virtual_iface_call", "ptr ptr int ptr");
 	/* This needs a wrapper so it can have a preserveall cconv */
-	register_icall (mono_init_vtable_slot, "mono_init_vtable_slot", "ptr ptr int", FALSE);
-	register_icall (mono_llvmonly_init_delegate, "mono_llvmonly_init_delegate", "void object", TRUE);
-	register_icall (mono_llvmonly_init_delegate_virtual, "mono_llvmonly_init_delegate_virtual", "void object object ptr", TRUE);
+	register_icall (mini_llvmonly_init_vtable_slot, "mini_llvmonly_init_vtable_slot", "ptr ptr int", FALSE);
+	register_icall (mini_llvmonly_init_delegate, "mini_llvmonly_init_delegate", "void object", TRUE);
+	register_icall (mini_llvmonly_init_delegate_virtual, "mini_llvmonly_init_delegate_virtual", "void object object ptr", TRUE);
+
 	register_icall (mono_get_assembly_object, "mono_get_assembly_object", "object ptr", TRUE);
 	register_icall (mono_get_method_object, "mono_get_method_object", "object ptr", TRUE);
 	register_icall (mono_throw_method_access, "mono_throw_method_access", "void ptr ptr", FALSE);

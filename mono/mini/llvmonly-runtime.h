@@ -19,12 +19,12 @@ MonoFtnDesc *mini_llvmonly_create_ftndesc (MonoDomain *domain, gpointer addr, gp
 gpointer mini_llvmonly_get_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count, gpointer fail_tramp);
 gpointer mini_llvmonly_get_vtable_trampoline (MonoVTable *vt, int slot_index, int index);
 
-G_EXTERN_C gpointer mono_init_vtable_slot (MonoVTable *vtable, int slot);
-G_EXTERN_C gpointer mono_resolve_vcall_gsharedvt (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, gpointer *out_arg);
-G_EXTERN_C gpointer mono_resolve_iface_call_gsharedvt (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, gpointer *out_arg);
-G_EXTERN_C MonoFtnDesc* mono_resolve_generic_virtual_call (MonoVTable *vt, int slot, MonoMethod *imt_method);
-G_EXTERN_C MonoFtnDesc* mono_resolve_generic_virtual_iface_call (MonoVTable *vt, int imt_slot, MonoMethod *imt_method);
-G_EXTERN_C void mono_llvmonly_init_delegate (MonoDelegate *del);
-G_EXTERN_C void mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, MonoMethod *method);
+G_EXTERN_C gpointer mini_llvmonly_init_vtable_slot (MonoVTable *vtable, int slot);
+G_EXTERN_C gpointer mini_llvmonly_resolve_vcall_gsharedvt (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, gpointer *out_arg);
+G_EXTERN_C gpointer mini_llvmonly_resolve_iface_call_gsharedvt (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, gpointer *out_arg);
+G_EXTERN_C MonoFtnDesc* mini_llvmonly_resolve_generic_virtual_call (MonoVTable *vt, int slot, MonoMethod *imt_method);
+G_EXTERN_C MonoFtnDesc* mini_llvmonly_resolve_generic_virtual_iface_call (MonoVTable *vt, int imt_slot, MonoMethod *imt_method);
+G_EXTERN_C void mini_llvmonly_init_delegate (MonoDelegate *del);
+G_EXTERN_C void mini_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, MonoMethod *method);
 
 #endif

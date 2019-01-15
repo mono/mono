@@ -7,7 +7,6 @@
 #include <config.h>
 #include "llvmonly-runtime.h"
 #include "aot-runtime.h"
-#include "jit-icalls.h"
 
 /*
  * mini_llvmonly_load_method:
@@ -221,7 +220,7 @@ typedef gpointer (*IMTTrampFunc) (gpointer *arg, MonoMethod *imt_method);
  * mini_llvmonly_initial_imt_tramp:
  *
  *  This function is called the first time a call is made through an IMT trampoline.
- * It should have the same signature as the mono_llvmonly_imt_tramp_... functions.
+ * It should have the same signature as the llvmonly_imt_tramp_... functions.
  */
 static gpointer
 mini_llvmonly_initial_imt_tramp (gpointer *arg, MonoMethod *imt_method)
@@ -248,11 +247,11 @@ mini_llvmonly_initial_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 
 /* This is called indirectly through an imt slot. */
 static gpointer
-mono_llvmonly_imt_tramp (gpointer *arg, MonoMethod *imt_method)
+llvmonly_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 {
 	int i = 0;
 
-	/* arg points to an array created in mono_llvmonly_get_imt_trampoline () */
+	/* arg points to an array created in mini_llvmonly_get_imt_trampoline () */
 	while (arg [i] && arg [i] != imt_method)
 		i += 2;
 	g_assert (arg [i]);
@@ -260,16 +259,16 @@ mono_llvmonly_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 	return arg [i + 1];
 }
 
-/* Optimized versions of mono_llvmonly_imt_trampoline () for different table sizes */
+/* Optimized versions of mini_llvmonly_imt_trampoline () for different table sizes */
 static gpointer
-mono_llvmonly_imt_tramp_1 (gpointer *arg, MonoMethod *imt_method)
+llvmonly_imt_tramp_1 (gpointer *arg, MonoMethod *imt_method)
 {
 	//g_assert (arg [0] == imt_method);
 	return arg [1];
 }
 
 static gpointer
-mono_llvmonly_imt_tramp_2 (gpointer *arg, MonoMethod *imt_method)
+llvmonly_imt_tramp_2 (gpointer *arg, MonoMethod *imt_method)
 {
 	//g_assert (arg [0] == imt_method || arg [2] == imt_method);
 	if (arg [0] == imt_method)
@@ -279,7 +278,7 @@ mono_llvmonly_imt_tramp_2 (gpointer *arg, MonoMethod *imt_method)
 }
 
 static gpointer
-mono_llvmonly_imt_tramp_3 (gpointer *arg, MonoMethod *imt_method)
+llvmonly_imt_tramp_3 (gpointer *arg, MonoMethod *imt_method)
 {
 	//g_assert (arg [0] == imt_method || arg [2] == imt_method || arg [4] == imt_method);
 	if (arg [0] == imt_method)
@@ -298,7 +297,7 @@ mono_llvmonly_imt_tramp_3 (gpointer *arg, MonoMethod *imt_method)
  * will handle it.
  */
 static gpointer
-mono_llvmonly_fallback_imt_tramp (gpointer *arg, MonoMethod *imt_method)
+llvmonly_fallback_imt_tramp (gpointer *arg, MonoMethod *imt_method)
 {
 	int i = 0;
 
@@ -344,7 +343,7 @@ mini_llvmonly_get_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIM
 		if (!item->is_equals || item->has_target_code)
 			continue;
 		vt_slot = item->value.vtable_slot;
-		mono_init_vtable_slot (vtable, vt_slot);
+		mini_llvmonly_init_vtable_slot (vtable, vt_slot);
 	}
 
 	/* Save the entries into an array */
@@ -374,20 +373,20 @@ mini_llvmonly_get_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIM
 	res = (void **)mono_domain_alloc (domain, 2 * sizeof (gpointer));
 	switch (real_count) {
 	case 1:
-		res [0] = (gpointer)mono_llvmonly_imt_tramp_1;
+		res [0] = (gpointer)llvmonly_imt_tramp_1;
 		break;
 	case 2:
-		res [0] = (gpointer)mono_llvmonly_imt_tramp_2;
+		res [0] = (gpointer)llvmonly_imt_tramp_2;
 		break;
 	case 3:
-		res [0] = (gpointer)mono_llvmonly_imt_tramp_3;
+		res [0] = (gpointer)llvmonly_imt_tramp_3;
 		break;
 	default:
-		res [0] = (gpointer)mono_llvmonly_imt_tramp;
+		res [0] = (gpointer)llvmonly_imt_tramp;
 		break;
 	}
 	if (virtual_generic || fail_tramp)
-		res [0] = (gpointer)mono_llvmonly_fallback_imt_tramp;
+		res [0] = (gpointer)llvmonly_fallback_imt_tramp;
 	res [1] = buf;
 
 	return res;
@@ -505,7 +504,7 @@ resolve_vcall (MonoVTable *vt, int slot, MonoMethod *imt_method, gpointer *out_a
 }
 
 gpointer
-mono_resolve_vcall_gsharedvt (MonoObject *this_obj, int slot, MonoMethod *imt_method, gpointer *out_arg)
+mini_llvmonly_resolve_vcall_gsharedvt (MonoObject *this_obj, int slot, MonoMethod *imt_method, gpointer *out_arg)
 {
 	g_assert (this_obj);
 
@@ -519,13 +518,13 @@ mono_resolve_vcall_gsharedvt (MonoObject *this_obj, int slot, MonoMethod *imt_me
 }
 
 /*
- * mono_resolve_generic_virtual_call:
+ * mini_llvmonly_resolve_generic_virtual_call:
  *
  *   Resolve a generic virtual call.
  * This function is called on a slowpath, so it doesn't need to be fast.
  */
 MonoFtnDesc*
-mono_resolve_generic_virtual_call (MonoVTable *vt, int slot, MonoMethod *generic_virtual)
+mini_llvmonly_resolve_generic_virtual_call (MonoVTable *vt, int slot, MonoMethod *generic_virtual)
 {
 	MonoMethod *m;
 	gboolean need_unbox_tramp = FALSE;
@@ -571,13 +570,13 @@ mono_resolve_generic_virtual_call (MonoVTable *vt, int slot, MonoMethod *generic
 }
 
 /*
- * mono_resolve_generic_virtual_iface_call:
+ * mini_llvmonly_resolve_generic_virtual_iface_call:
  *
  *   Resolve a generic virtual/variant iface call on interfaces.
  * This function is called on a slowpath, so it doesn't need to be fast.
  */
 MonoFtnDesc*
-mono_resolve_generic_virtual_iface_call (MonoVTable *vt, int imt_slot, MonoMethod *generic_virtual)
+mini_llvmonly_resolve_generic_virtual_iface_call (MonoVTable *vt, int imt_slot, MonoMethod *generic_virtual)
 {
 	ERROR_DECL (error);
 	MonoMethod *m, *variant_iface;
@@ -615,13 +614,13 @@ mono_resolve_generic_virtual_iface_call (MonoVTable *vt, int imt_slot, MonoMetho
 }
 
 /*
- * mono_init_vtable_slot:
+ * mini_llvmonly_init_vtable_slot:
  *
  *   Initialize slot SLOT of VTABLE.
  * Return the contents of the vtable slot.
  */
 gpointer
-mono_init_vtable_slot (MonoVTable *vtable, int slot)
+mini_llvmonly_init_vtable_slot (MonoVTable *vtable, int slot)
 {
 	ERROR_DECL (error);
 	gpointer arg = NULL;
@@ -642,13 +641,13 @@ mono_init_vtable_slot (MonoVTable *vtable, int slot)
 }
 
 /*
- * mono_llvmonly_init_delegate:
+ * mini_llvmonly_init_delegate:
  *
  *   Initialize a MonoDelegate object.
  * Similar to mono_delegate_ctor ().
  */
 void
-mono_llvmonly_init_delegate (MonoDelegate *del)
+mini_llvmonly_init_delegate (MonoDelegate *del)
 {
 	ERROR_DECL (error);
 	MonoFtnDesc *ftndesc = *(MonoFtnDesc**)del->method_code;
@@ -681,7 +680,7 @@ mono_llvmonly_init_delegate (MonoDelegate *del)
 }
 
 void
-mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, MonoMethod *method)
+mini_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, MonoMethod *method)
 {
 	ERROR_DECL (error);
 	gpointer addr, arg;
@@ -758,7 +757,7 @@ resolve_iface_call (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, 
 }
 
 gpointer
-mono_resolve_iface_call_gsharedvt (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, gpointer *out_arg)
+mini_llvmonly_resolve_iface_call_gsharedvt (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, gpointer *out_arg)
 {
 	ERROR_DECL (error);
 	gpointer res = resolve_iface_call (this_obj, imt_slot, imt_method, out_arg, TRUE, error);
