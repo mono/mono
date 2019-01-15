@@ -1516,6 +1516,14 @@ summarize_frame_internal (MonoMethod *method, gpointer ip, size_t native_offset,
 		dest->managed_data.native_offset = native_offset;
 		dest->managed_data.token = method->token;
 		dest->managed_data.il_offset = il_offset;
+
+		dest->managed_data.filename = image->module_name;
+
+		MonoDotNetHeader *header = &image->image_info->cli_header;
+		dest->managed_data.image_size = header->pe.pe_code_size;
+
+		dest->managed_data.time_date_stamp = image->time_date_stamp;
+
 	} else {
 		dest->managed_data.token = -1;
 	}
