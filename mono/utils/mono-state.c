@@ -475,6 +475,21 @@ mono_native_state_add_frame (MonoStateWriter *writer, MonoFrameSummary *frame)
 
 		assert_has_space (writer);
 		mono_state_writer_indent (writer);
+		mono_state_writer_object_key (writer, "filename");
+		mono_state_writer_printf(writer, "\"%s\",\n", frame->managed_data.filename);
+
+		assert_has_space (writer);
+		mono_state_writer_indent (writer);
+		mono_state_writer_object_key (writer, "sizeofimage");
+		mono_state_writer_printf(writer, "\"0x%x\",\n", frame->managed_data.image_size);
+
+		assert_has_space (writer);
+		mono_state_writer_indent (writer);
+		mono_state_writer_object_key (writer, "timestamp");
+		mono_state_writer_printf(writer, "\"0x%x\",\n", frame->managed_data.time_date_stamp);
+
+		assert_has_space (writer);
+		mono_state_writer_indent (writer);
 		mono_state_writer_object_key (writer, "il_offset");
 		mono_state_writer_printf(writer, "\"0x%05x\"\n", frame->managed_data.il_offset);
 

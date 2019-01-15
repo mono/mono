@@ -42,6 +42,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/image-internals.h>
+#include <mono/metadata/w32process-internals.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef HAVE_UNISTD_H
@@ -1057,6 +1058,20 @@ pe_image_load_cli_data (MonoImage *image)
 	return TRUE;
 }
 
+static void
+mono_image_load_time_date_stamp (MonoImage *image)
+{
+	image->time_date_stamp = 0;
+#ifndef HOST_WIN32
+	if (!image->name)
+		return;
+
+	gunichar2 *uni_name = g_utf8_to_utf16 (image->name, -1, NULL, NULL, NULL);
+	mono_w32process_time_date_stamp (uni_name, &image->time_date_stamp);
+	g_free (uni_name);
+#endif
+}
+
 void
 mono_image_load_names (MonoImage *image)
 {
@@ -1374,6 +1389,8 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 		goto invalid_image;
 
 	mono_image_load_names (image);
+
+	mono_image_load_time_date_stamp (image);
 
 	load_modules (image);
 
