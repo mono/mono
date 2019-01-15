@@ -193,6 +193,19 @@ public class GClass<T> {
 	}
 }
 
+public struct MySpan<T> {
+	internal class Pinnable<J> {
+		public J Data;
+	}
+	Pinnable<T> _pinnable;
+	public MySpan(T[] array) {
+		_pinnable = Unsafe.As<Pinnable<T>>(array);
+	}
+	public override string ToString() {
+		return "abc";
+	}
+}
+
 public struct GStruct<T> {
 	public T i;
 
@@ -474,6 +487,7 @@ public class Tests : TestsBase, ITest2
 		new Tests ().evaluate_method ();
 		Bug59649 ();
 		elapsed_time();
+		field_with_unsafe_cast_value();
 		inspect_enumerator_in_generic_struct();
 		return 3;
 	}
@@ -655,6 +669,15 @@ public class Tests : TestsBase, ITest2
 		catch
 		{
 		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void field_with_unsafe_cast_value() {
+		var arr = new char[3];
+		arr[0] = 'a';
+		arr[1] = 'b';
+		arr[2] = 'c';
+		MySpan<char> bytes = new MySpan<char>(arr);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
