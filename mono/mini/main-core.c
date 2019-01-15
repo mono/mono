@@ -30,6 +30,7 @@ int coreclr_initialize (const char* exePath, const char* appDomainFriendlyName,
 	int propertyCount, const char** propertyKeys, const char** propertyValues,
 	void** hostHandle, unsigned int* domainId)
 {
+	// TODO: TRUSTED_PLATFORM_ASSEMBLIES is the property key for managed assemblies mapping
 	return 0;
 }
 

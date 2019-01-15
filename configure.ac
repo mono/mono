@@ -761,7 +761,7 @@ AC_ARG_WITH(core,       [  --with-core=yes,no,only       controls whether to bui
 if test x$with_core = xyes; then
     AC_DEFINE(ENABLE_NETCORE,1,[Enables the support for .NET Core Features in the MonoVM])
 fi
-AM_CONDITIONAL(ENABLE_CORE, test x$with_core = xyes)
+AM_CONDITIONAL(ENABLE_NETCORE, test x$with_core = xyes)
 AM_CONDITIONAL(ONLY_CORE, test x$with_core = xonly)
 
 #

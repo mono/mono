@@ -82,8 +82,8 @@ if SUPPORT_BOEHM
 boehm_libraries = libmonoruntime.la
 endif
 
-if ENABLE_CORE
-sgen_core_libraries = libmonoruntimesgencore.la
+if ENABLE_NETCORE
+netcore_libraries = libmonoruntimecore.la
 endif
 
 if DISABLE_ICALL_TABLES
@@ -132,7 +132,7 @@ endif
 endif
 endif
 
-noinst_LTLIBRARIES = libmonoruntime-config.la libmonoruntime-support.la $(boehm_libraries) $(sgen_libraries) $(sgen_core_libraries)
+noinst_LTLIBRARIES = libmonoruntime-config.la libmonoruntime-support.la $(boehm_libraries) $(sgen_libraries) $(netcore_libraries)
 
 lib_LTLIBRARIES = $(icall_table_libraries) $(ilgen_libraries)
 
@@ -437,9 +437,9 @@ libmonoruntimesgen_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilge
 libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
 libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la libmonoruntime-support.la
 
-libmonoruntimesgencore_la_SOURCES = $(libmonoruntimesgen_la_SOURCES)
-libmonoruntimesgencore_la_CFLAGS = $(libmonoruntimesgen_la_CFLAGS) -D NETCORE
-libmonoruntimesgencore_la_LIBADD = $(libmonoruntimesgen_la_LIBADD)
+libmonoruntimecore_la_SOURCES = $(libmonoruntimesgen_la_SOURCES)
+libmonoruntimecore_la_CFLAGS = $(libmonoruntimesgen_la_CFLAGS) -D NETCORE_LOADER
+libmonoruntimecore_la_LIBADD = $(libmonoruntimesgen_la_LIBADD)
 
 libmonoruntimeincludedir = $(includedir)/mono-$(API_VER)/mono/metadata
 
