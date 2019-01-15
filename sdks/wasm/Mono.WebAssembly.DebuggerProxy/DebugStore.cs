@@ -463,9 +463,10 @@ namespace WsProxy {
 		public string Url => $"dotnet://{assembly.Name}/{FileName}";
 		public string DocHashCode => "abcdee" + id;
 		public SourceId SourceId => new SourceId (assembly.Id, this.id);
-		public Uri OriginalSourcePath => sourceLinkUri ?? new Uri(doc.Url);
+        public Uri OriginalSourcePath 
+            => sourceLinkUri ?? new Uri(doc.Url.StartsWith("/") ? "file://" : "" + doc.Url, UriKind.RelativeOrAbsolute);
 
-		public IEnumerable<MethodInfo> Methods => this.methods;
+        public IEnumerable<MethodInfo> Methods => this.methods;
 	}
 
 	internal class DebugStore {
