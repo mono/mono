@@ -480,7 +480,9 @@ typedef struct {
 		// symbolicated string on release builds
 		const char *name;
 #endif
-
+		const char *filename;
+		guint32 image_size;
+		guint32 time_date_stamp;
 	} managed_data;
 	struct {
 		intptr_t ip;

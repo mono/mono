@@ -45,11 +45,11 @@ typedef struct {
 
 typedef struct {
 	gpointer *mem;
-	size_t size;
+	gsize size;
 
 	// File Information
-	int handle;
-	long tag;
+	gint handle;
+	gint64 tag;
 } MonoStateMem;
 
 MONO_BEGIN_DECLS

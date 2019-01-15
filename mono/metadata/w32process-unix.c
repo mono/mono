@@ -3645,6 +3645,38 @@ big_up (gconstpointer datablock, guint32 size)
 #endif
 
 gboolean
+mono_w32process_time_date_stamp (gunichar2 *filename, guint32 *out)
+{
+	void *map_handle;
+	gint32 map_size;
+	gpointer file_map = map_pe_file (filename, &map_size, &map_handle);
+	if (!file_map)
+		return FALSE;
+
+	/* Figure this out when we support 64bit PE files */
+	if (1) {
+		IMAGE_DOS_HEADER *dos_header = (IMAGE_DOS_HEADER *)file_map;
+		if (dos_header->e_magic != IMAGE_DOS_SIGNATURE) {
+			unmap_pe_file (file_map, map_handle);
+			return FALSE;
+		}
+
+		IMAGE_NT_HEADERS32 *nt_headers = (IMAGE_NT_HEADERS32 *)((guint8 *)file_map + GUINT32_FROM_LE (dos_header->e_lfanew));
+		if (nt_headers->Signature != IMAGE_NT_SIGNATURE) {
+			unmap_pe_file (file_map, map_handle);
+			return FALSE;
+		}
+
+		*out = nt_headers->FileHeader.TimeDateStamp;
+	} else {
+		g_assert_not_reached ();
+	}
+
+	unmap_pe_file (file_map, map_handle);
+	return TRUE;
+}
+
+gboolean
 mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
 {
 	gpointer file_map;
