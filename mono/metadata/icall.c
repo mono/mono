@@ -6742,7 +6742,11 @@ ves_icall_System_Environment_get_UserName (MonoError *error)
 {
 	error_init (error);
 	/* using glib is more portable */
-	return mono_string_new_handle (mono_domain_get (), g_get_user_name (), error);
+	const gchar *user_name = g_get_user_name ();
+	if (user_name != NULL)
+		return mono_string_new_handle (mono_domain_get (), user_name, error);
+	else
+		return NULL_HANDLE_STRING;
 }
 
 #ifndef HOST_WIN32
@@ -7110,7 +7114,11 @@ ves_icall_System_IO_DriveInfo_GetDriveFormat (const gunichar2 *path, gint32 path
 MonoStringHandle
 ves_icall_System_Environment_InternalGetHome (MonoError *error)
 {
-	return mono_string_new_handle (mono_domain_get (), g_get_home_dir (), error);
+	const gchar *home_dir = g_get_home_dir ();
+	if (home_dir != NULL)
+		return mono_string_new_handle (mono_domain_get (), home_dir, error);
+	else
+		return NULL_HANDLE_STRING;
 }
 
 static const char * const encodings [] = {
@@ -8431,6 +8439,10 @@ mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mo
 	sigstart [siglen + 2] = 0;
 	g_free (tmpsig);
 
+	/* mono_marshal_get_native_wrapper () depends on this */
+	if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor"))
+		return (gpointer)ves_icall_System_String_ctor_RedirectToCreateString;
+
 	mono_icall_lock ();
 
 	res = g_hash_table_lookup (icall_hash, mname);
@@ -8465,18 +8477,13 @@ mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mo
 		return res;
 	}
 
-
 	if (!icall_table.lookup) {
 		mono_icall_unlock ();
 		g_free (classname);
 		/* Fail only when the result is actually used */
-		/* mono_marshal_get_native_wrapper () depends on this */
-		if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor"))
-			return (gpointer)ves_icall_System_String_ctor_RedirectToCreateString;
-		else
-			return (gpointer)no_icall_table;
+		return (gpointer)no_icall_table;
 	} else {
-		res = icall_table.lookup (classname, sigstart - mlen, sigstart, uses_handles);
+		res = icall_table.lookup (method, classname, sigstart - mlen, sigstart, uses_handles);
 		g_free (classname);
 
 		mono_icall_unlock ();

@@ -16,7 +16,7 @@
 #include <signal.h>
 #endif
 
-typedef void (* MonoW32ExceptionHandler) (int _dummy, EXCEPTION_POINTERS *info, void *context);
+typedef void MONO_SIG_HANDLER_SIGNATURE ((*MonoW32ExceptionHandler));
 
 void win32_seh_init(void);
 void win32_seh_cleanup(void);
@@ -235,6 +235,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_OP_TAILCALL_REG 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
+#define MONO_ARCH_LLVM_TARGET_LAYOUT "e-p:32:32-n32-S128"
 
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)

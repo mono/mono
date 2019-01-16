@@ -118,7 +118,7 @@ namespace Mono.WebAssembly.Build
 			sb.AppendFormat (" -c {0} -u {1}", coremode, usermode);
 
 			//the linker doesn't consider these core by default
-			sb.AppendFormat (" -p {0} netstandard -p {1} WebAssembly.Bindings -p {1} WebAssembly.Net.Http", coremode, usermode);
+			sb.AppendFormat (" -p {0} netstandard -p {0} WebAssembly.Bindings -p {0} WebAssembly.Net.Http", coremode);
 
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -129,6 +129,7 @@ namespace Mono.WebAssembly.Build
 
 			sb.AppendFormat (" -out \"{0}\"", OutputDir);
 			sb.AppendFormat (" -d \"{0}\"", FrameworkDir);
+			sb.AppendFormat (" -d \"{0}\"", Path.Combine(FrameworkDir, "Facades"));
 			sb.AppendFormat (" -b {0} -v {0}", Debug);
 
 			sb.AppendFormat (" -a \"{0}\"", RootAssembly[0].GetMetadata("FullPath"));
@@ -146,10 +147,12 @@ namespace Mono.WebAssembly.Build
 			//add references for non-framework assemblies
 			if (Assemblies != null) {
 				foreach (var asm in Assemblies) {
+
 					var p = asm.GetMetadata ("FullPath");
 					if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
 						continue;
 					}
+
 					sb.AppendFormat (" -r \"{0}\"", p);
 				}
 			}

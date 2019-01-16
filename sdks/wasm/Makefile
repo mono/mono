@@ -154,10 +154,11 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono --debug packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+bin/test-suite/mono.js: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
+	mono --debug packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
-	touch $@
+
+build-test-suite: bin/test-suite/mono.js
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/HttpTestSuite.cs 
@@ -173,6 +174,7 @@ aot-sample: packager.exe mini_tests.dll main.exe runtime.js bug.exe
 
 do-aot-sample: aot-sample
 	(cd bin/aot-sample && $(SM) runtime.js --run bug.exe)
+
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
@@ -216,8 +218,6 @@ run-aot-all: build-aot-all
 	for suite in System.Core; do make run-aot-$$suite || exit 1; done
 
 build-debug-sample: .stamp-build-debug-sample
-
-build-test-suite: .stamp-build-test-suite
 
 build-managed: build-debug-sample build-test-suite
 
@@ -268,13 +268,15 @@ clean:
 	$(RM) -r binding-tests.dll
 	$(RM) -r sdk/**/bin
 	$(RM) -r sdk/**/obj
+	$(RM) -r sdk/**/**/bin
+	$(RM) -r sdk/**/**/obj
 	$(RM) -r sdk/packages
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
+	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.pdb
-
 
 package: build build-dbg-proxy
 	rm -rf tmp
@@ -329,3 +331,7 @@ canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
 
 check-aot: do-aot-sample
+
+build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
+	msbuild /r sdk/Mono.WebAssembly.Sdk
+	msbuild /r sdk

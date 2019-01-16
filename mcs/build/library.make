@@ -72,6 +72,11 @@ endif
 endif
 endif
 
+# add sourcelink information if we're building a portable PDB
+ifneq (, $(findstring debug:portable, $(PROFILE_MCS_FLAGS)))
+LIB_MCS_FLAGS += -sourcelink:$(topdir)/build/common/sourcelink.json
+endif
+
 the_libdir = $(the_libdir_base)$(intermediate)
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE

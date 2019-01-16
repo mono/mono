@@ -6,6 +6,51 @@ using Mono.Cecil;
 using Mono.Options;
 using Mono.Cecil.Cil;
 
+//
+// Google V8 style options:
+// - bool: --foo/--no-foo
+//
+
+enum FlagType {
+	BoolFlag,
+}
+
+// 'Option' is already used by Mono.Options
+class Flag {
+	public Flag (string name, string desc, FlagType type) {
+		Name = name;
+		FlagType = type;
+		Description = desc;
+	}
+
+	public string Name {
+		get; set;
+	}
+
+	public FlagType FlagType {
+		get; set;
+	}
+
+	public string Description {
+		get; set;
+	}
+}
+
+class BoolFlag : Flag {
+	public BoolFlag (string name, string description, bool def_value, Action<bool> action) : base (name, description, FlagType.BoolFlag) {
+		Setter = action;
+		DefaultValue = def_value;
+	}
+
+	public Action<bool> Setter {
+		get; set;
+	}
+
+	public bool DefaultValue {
+		get; set;
+	}
+}
+
 class Driver {
 	static bool enable_debug, enable_linker;
 	static string app_prefix, framework_prefix, bcl_prefix, bcl_tools_prefix, bcl_facades_prefix, out_prefix;
@@ -44,13 +89,21 @@ class Driver {
 		None,
 	}
 
+	void AddFlag (OptionSet options, Flag flag) {
+		if (flag is BoolFlag) {
+			options.Add (flag.Name, s => (flag as BoolFlag).Setter (true));
+			options.Add ("no-" + flag.Name, s => (flag as BoolFlag).Setter (false));
+		}
+		option_list.Add (flag);
+	}
+
+	static List<Flag> option_list = new List<Flag> ();
+
 	static void Usage () {
 		Console.WriteLine ("Usage: packager.exe <options> <assemblies>");
 		Console.WriteLine ("Valid options:");
 		Console.WriteLine ("\t--help          Show this help message");
-		Console.WriteLine ("\t--debug         Enable Debugging (default false)");
 		Console.WriteLine ("\t--debugrt       Use the debug runtime (default release) - this has nothing to do with C# debugging");
-		Console.WriteLine ("\t--nobinding     Disable binding engine (default include engine)");
 		Console.WriteLine ("\t--aot           Enable AOT mode");
 		Console.WriteLine ("\t--aot-interp    Enable AOT+INTERP mode");
 		Console.WriteLine ("\t--prefix=x      Set the input assembly prefix to 'x' (default to the current directory)");
@@ -68,6 +121,17 @@ class Driver {
 		Console.WriteLine ("\t--aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
+		Console.WriteLine ();
+
+		Console.WriteLine ("Additional options (--option/--no-option):");
+		foreach (var flag in option_list) {
+			if (flag is BoolFlag) {
+				Console.WriteLine ("  --" + flag.Name + " (" + flag.Description + ")");
+				Console.WriteLine ("        type: bool  default: " + ((flag as BoolFlag).DefaultValue ? "true" : "false"));
+			}
+		}
+
+
 	}
 
 	static void Debug (string s) {
@@ -235,6 +299,13 @@ class Driver {
 		AotInterp = 3
 	}
 
+	class WasmOptions {
+		public bool Debug;
+		public bool DebugRuntime;
+		public bool AddBinding;
+		public bool Linker;
+	}
+
 	int Run (string[] args) {
 		var add_binding = true;
 		var root_assemblies = new List<string> ();
@@ -259,10 +330,15 @@ class Driver {
 		var copyType = CopyType.Default;
 		var ee_mode = ExecMode.Interp;
 
+		var opts = new WasmOptions () {
+				AddBinding = true,
+				Debug = false,
+				DebugRuntime = false,
+				Linker = false,
+			};
+
 		var p = new OptionSet () {
-				{ "debug", s => enable_debug = true },
-				{ "nobinding", s => add_binding = false },
-				{ "debugrt", s => use_release_runtime = false },
+				{ "nobinding", s => opts.AddBinding = false },
 				{ "out=", s => out_prefix = s },
 				{ "appdir=", s => out_prefix = s },
 				{ "builddir=", s => builddir = s },
@@ -282,6 +358,11 @@ class Driver {
 				{ "help", s => print_usage = true },
 					};
 
+		AddFlag (p, new BoolFlag ("debug", "enable c# debugging", opts.Debug, b => opts.Debug = b));
+		AddFlag (p, new BoolFlag ("debugrt", "enable debug runtime", opts.DebugRuntime, b => opts.DebugRuntime = b));
+		AddFlag (p, new BoolFlag ("linker", "enable the linker", opts.Linker, b => opts.Linker = b));
+		AddFlag (p, new BoolFlag ("binding", "enable the binding engine", opts.AddBinding, b => opts.AddBinding = b));
+
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
 			root_assemblies.Add (a);
@@ -297,6 +378,11 @@ class Driver {
 			Usage ();
 			return 1;
 		}
+
+		enable_debug = opts.Debug;
+		enable_linker = opts.Linker;
+		add_binding = opts.AddBinding;
+		use_release_runtime = !opts.DebugRuntime;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
