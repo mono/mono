@@ -5,6 +5,9 @@
 #ifndef __MONO_UTILS_MONO_THREADS_DEBUG_H__
 #define __MONO_UTILS_MONO_THREADS_DEBUG_H__
 
+#include <config.h>
+#include <glib.h>
+
 /* Logging - enable them below if you need specific logging for the category you need */
 #define MOSTLY_ASYNC_SAFE_FPRINTF(handle, ...) do { \
 	g_async_safe_fprintf (handle, __VA_ARGS__); \
