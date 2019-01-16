@@ -631,9 +631,46 @@ namespace CppSharp
             var androidNdkRoot = GetAndroidNdkPath ();
             const int androidNdkApiLevel = 21;
 
+            string arch = GetArchFromTriple(target.Triple);
             var toolchainPath = Path.Combine(androidNdkRoot, "platforms",
-                "android-" + androidNdkApiLevel, "arch-" + GetArchFromTriple(target.Triple),
+                "android-" + androidNdkApiLevel, "arch-" + arch,
                 "usr", "include");
+
+            if (!Directory.Exists (toolchainPath)) {
+                // Android NDK r17 and newer no longer have per-platform include directories, they instead use a
+                // unified set of headers
+                toolchainPath = Path.Combine (AndroidNdkPath, "sysroot", "usr", "include");
+
+                // The unified headers require that the target API level is defined as a macro - that's how they
+                // differentiate between native APIs available for the given API level
+                parserOptions.AddDefines ($"__ANDROID_API__={androidNdkApiLevel}");
+
+                // And they also need to point to the per-arch `asm` directory
+                string asmTriple;
+                switch (arch) {
+                        case "arm64":
+                                asmTriple = "aarch64-linux-android";
+                                break;
+
+                        case "arm":
+                                asmTriple = "arm-linux-androideabi";
+                                break;
+
+                        case "x86":
+                                asmTriple = "i686-linux-android";
+                                break;
+
+                        case "x86_64":
+                                asmTriple = "x86_64-linux-android";
+                                break;
+
+                        default:
+                                throw new Exception ($"Unsupported architecture {arch}");
+                }
+
+                parserOptions.AddSystemIncludeDirs (Path.Combine (toolchainPath, asmTriple));
+            }
+
             parserOptions.AddSystemIncludeDirs(toolchainPath);
 
             parserOptions.NoBuiltinIncludes = true;
