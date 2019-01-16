@@ -117,6 +117,9 @@ namespace Mono.WebAssembly.Build
 
 			sb.AppendFormat (" -c {0} -u {1}", coremode, usermode);
 
+			//the linker doesn't consider these core by default
+			sb.AppendFormat (" -p {0} netstandard -p {0} WebAssembly.Bindings -p {0} WebAssembly.Net.Http", coremode);
+
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var s in skips) {
