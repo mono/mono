@@ -232,9 +232,9 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\mini\interp-stubs.c">
       <Filter>Source Files$(MonoMiniFilterSubFolder)\common</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\mini\llvmonly-runtime.h">
+    <ClInclude Include="$(MonoSourceLocation)\mono\mini\llvmonly-runtime.h">
       <Filter>Source Files$(MonoMiniFilterSubFolder)\common</Filter>
-    </ClCompile>
+    </ClInclude>
     <ClCompile Include="$(MonoSourceLocation)\mono\mini\llvmonly-runtime.c">
       <Filter>Source Files$(MonoMiniFilterSubFolder)\common</Filter>
     </ClCompile>
