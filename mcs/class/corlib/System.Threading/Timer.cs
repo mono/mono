@@ -74,7 +74,7 @@ namespace System.Threading
 		long period_ms;
 		long next_run; // in ticks. Only 'Scheduler' can change it except for new timers without due time.
 		bool disposed;
-		bool is_dead;
+		bool is_dead, is_added;
 #endregion
 		public Timer (TimerCallback callback, object state, int dueTime, int period)
 		{
@@ -112,6 +112,8 @@ namespace System.Threading
 			
 			this.callback = callback;
 			this.state = state;
+			this.is_dead = false;
+			this.is_added = false;
 
 			Change (dueTime, period, true);
 		}
@@ -270,6 +272,7 @@ namespace System.Threading
 			}
 
 			void WakeupScheduler () {
+				Console.WriteLine("Waking timer scheduler");
 				changed.Set ();
 			}
 
@@ -299,12 +302,23 @@ namespace System.Threading
 				InitScheduler ();
 			}
 
+			private bool UpdateNextInLine (Timer timer) {
+				if (timer.is_dead)
+					return false;
+
+				if (
+					(nextInLine == null) || 
+					(timer.next_run < nextInLine.next_run) ||
+					(nextInLine.is_dead)
+				) {
+					nextInLine = timer;					
+					return true;
+				}
+				return nextInLine == timer;
+			}
+
 			public void Remove (Timer timer)
 			{
-				// We do not keep brand new items or those with no due time.
-				if (timer.next_run == 0 || timer.next_run == Int64.MaxValue)
-					return;
-
 				lock (this) {
 					// If this is the next item due (index = 0), the scheduler will wake up and find nothing.
 					// No need to Pulse ()
@@ -316,23 +330,31 @@ namespace System.Threading
 			{
 				bool wake = false;
 				lock (this) {
-					InternalRemove (timer);
-					if (new_next_run == Int64.MaxValue) {
-						timer.next_run = new_next_run;
-						return;
-					}
+					needReSort = true;
 
-					if (!timer.disposed) {
-						// We should only change next_run after removing and before adding
-						timer.next_run = new_next_run;
-						Add (timer);
-						// If this timer is next in line, wake up the scheduler
-						// FIXME: If the first timer in line gets removed we will wake
-						//  the scheduler even though it might not be necessary.
-						wake = (nextInLine == timer) || (nextInLine == null);
+					if (!timer.is_added) {
+						Add(timer);
+					} else {
+						if (new_next_run == Int64.MaxValue) {
+							timer.next_run = new_next_run;
+							InternalRemove (timer);
+							return;
+						}
+
+						if (!timer.disposed) {
+							// We should only change next_run after removing and before adding
+							timer.next_run = new_next_run;
+							if (nextInLine == timer) {
+								nextInLine = null;
+								wake = true;
+							} else {
+								if (UpdateNextInLine(timer))
+									wake = true;
+							}
+						}
 					}
 				}
-				if (wake)
+				if (wake || (nextInLine == null))
 					WakeupScheduler();
 			}
 
@@ -395,27 +417,29 @@ namespace System.Threading
 					}
 				}
 				*/
-				if ((nextInLine == null) || (nextInLine.next_run > timer.next_run))
-					nextInLine = timer;
+				Console.WriteLine("Add timer");
 				needReSort = true;
 				list.Add (timer);
+				if (UpdateNextInLine(timer) || (list.Count == 1))
+					WakeupScheduler();				
 				//PrintList ();
 			}
 
-			int InternalRemove (Timer timer)
+			void InternalRemove (Timer timer)
 			{
-				int idx = list.IndexOf(timer);
-				if (idx >= 0) {
+				Console.WriteLine("Remove timer");
+				bool wake = (nextInLine == timer) || (nextInLine == null);
+				timer.is_dead = true;
+				if (wake) {
+					nextInLine = null;
 					needReSort = true;
-					if (nextInLine == timer)
-						nextInLine = null;
-					list.RemoveAt (idx);
+					WakeupScheduler();
 				}
-				return idx;
 			}
 
 			static void TimerCB (object o)
 			{
+				Console.WriteLine("Run timer CB");
 				Timer timer = (Timer) o;
 				timer.callback (timer.state);
 			}
@@ -423,7 +447,6 @@ namespace System.Threading
 			int RunSchedulerLoop (List<Timer> new_time) {
 				int ms_wait = -1;
 				int i;
-				int count = list.Count;
 				long ticks = GetTimeMonotonic ();
 				var comparer = new TimerComparer();
 
@@ -432,16 +455,16 @@ namespace System.Threading
 					needReSort = false;
 				}
 
-				nextInLine = null;
-
-				for (i = 0; i < count; i++) {
+				for (i = 0; i < list.Count; i++) {
 					Timer timer = list[i];
+					if (timer.is_dead)
+						continue;
 
-					if (timer.next_run > ticks) {
+					if ((timer.next_run > ticks) && (timer.next_run < Int64.MaxValue)) {
 						timer.is_dead = false;
-						if ((nextInLine == null) || (nextInLine.next_run > timer.next_run))
-							nextInLine = timer;
-						break;
+						UpdateNextInLine(timer);
+						// break;
+						continue;
 					}
 
 					ThreadPool.UnsafeQueueUserWorkItem (TimerCB, timer);
@@ -451,26 +474,29 @@ namespace System.Threading
 					if (no_more) {
 						timer.next_run = Int64.MaxValue;
 						timer.is_dead = true;
+						if (nextInLine == timer)
+							nextInLine = null;
 					} else {
 						timer.next_run = GetTimeMonotonic () + TimeSpan.TicksPerMillisecond * timer.period_ms;
 						timer.is_dead = false;
-						if ((nextInLine == null) || (nextInLine.next_run > timer.next_run))
-							nextInLine = timer;
+						UpdateNextInLine(timer);
 					}
 				}
 
-				for (i = 0; i < count; i++) {
+				for (i = 0; i < list.Count; i++) {
 					Timer timer = list[i];
 					if (!timer.is_dead)
 						continue;
 					
 					needReSort = true;
-					list[i] = list[count - 1];
-					count--;
+					list[i] = list[list.Count - 1];
 					i--;
+					list.RemoveAt(list.Count - 1);
 
-					if (count == 0)
+					if (list.Count == 0) {
+						Console.WriteLine("Timer queue became empty");
 						break;
+					}
 				}
 
 				// FIXME: DEBUGGING CODE
@@ -479,8 +505,18 @@ namespace System.Threading
 					needReSort = false;
 				}
 
-				if ((list.Count > 0) && (nextInLine != list[0]))
-					throw new Exception("nextInLine != list[0]");
+				if (list.Count > 0) {
+					if (nextInLine != null) {
+						Console.WriteLine("{0} queued timer(s). Next timer at {1}.", list.Count, nextInLine.next_run);
+						if (nextInLine.is_dead)
+							throw new Exception("nextInLine is dead");
+					} else {
+						Console.WriteLine("{0} queued timer(s).", list.Count);
+					}
+
+					if (nextInLine != list[0])
+						throw new Exception("nextInLine != list[0]");
+				}
 
 				/*
 				// Reschedule timers with a new due time
