@@ -15,4 +15,12 @@
     <OutputPath>..\..\</OutputPath>
     <DocumentationFile>..\..\netstandard2.0\WebAssembly.Bindings.xml</DocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="LinkDescriptor\WebAssembly.Bindings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LinkDescriptor\WebAssembly.Bindings.xml">
+      <LogicalName>WebAssembly.Bindings.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

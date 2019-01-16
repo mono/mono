@@ -1,0 +1,7 @@
+<linker>
+  
+  <!--
+  Preserve the entire assembly
+  -->
+  <assembly fullname="WebAssembly.Bindings" preserve="all"/>
+</linker>
