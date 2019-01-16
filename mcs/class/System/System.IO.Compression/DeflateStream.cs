@@ -456,7 +456,6 @@ namespace System.IO.Compression
 			return self.UnmanagedWrite (buffer, length);
 		}
 
-		static int martinTest;
 
 		int UnmanagedWrite (IntPtr buffer, int length)
 		{
