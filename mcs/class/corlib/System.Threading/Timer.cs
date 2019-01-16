@@ -74,6 +74,7 @@ namespace System.Threading
 		long period_ms;
 		long next_run; // in ticks. Only 'Scheduler' can change it except for new timers without due time.
 		bool disposed;
+		bool is_dead;
 #endregion
 		public Timer (TimerCallback callback, object state, int dueTime, int period)
 		{
@@ -206,8 +207,8 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern long GetTimeMonotonic ();
 
-		sealed class TimerComparer : IComparer {
-			public int Compare (object x, object y)
+		struct TimerComparer : IComparer, IComparer<Timer> {
+			int IComparer.Compare (object x, object y)
 			{
 				Timer tx = (x as Timer);
 				if (tx == null)
@@ -215,16 +216,24 @@ namespace System.Threading
 				Timer ty = (y as Timer);
 				if (ty == null)
 					return 1;
+				return Compare(tx, ty);
+			}
+
+			public int Compare (Timer tx, Timer ty)
+			{
 				long result = tx.next_run - ty.next_run;
 				if (result == 0)
-					return x == y ? 0 : -1;
+					return tx == ty ? 0 : -1;
 				return result > 0 ? 1 : -1;
 			}
 		}
 
 		sealed class Scheduler {
 			static readonly Scheduler instance = new Scheduler ();
-			SortedList list;
+			
+			volatile bool needReSort = true;
+			List<Timer> list;
+			Timer nextInLine;
 
 #if WASM
 			List<Timer> cached_new_time;
@@ -286,7 +295,7 @@ namespace System.Threading
 
 			private Scheduler ()
 			{
-				list = new SortedList (new TimerComparer (), 1024);
+				list = new List<Timer> (1024);
 				InitScheduler ();
 			}
 
@@ -318,7 +327,9 @@ namespace System.Threading
 						timer.next_run = new_next_run;
 						Add (timer);
 						// If this timer is next in line, wake up the scheduler
-						wake = (list.GetByIndex (0) == timer);
+						// FIXME: If the first timer in line gets removed we will wake
+						//  the scheduler even though it might not be necessary.
+						wake = (nextInLine == timer) || (nextInLine == null);
 					}
 				}
 				if (wake)
@@ -335,7 +346,7 @@ namespace System.Threading
 
 				if (max < 20) {
 					while (min <= max) {
-						Timer t = (Timer) list.GetByIndex (min);
+						Timer t = list[min];
 						if (t.next_run == nr)
 							return min;
 						if (t.next_run > nr)
@@ -347,7 +358,7 @@ namespace System.Threading
 
 				while (min <= max) {
 					int half = min + ((max - min) >> 1);
-					Timer t = (Timer) list.GetByIndex (half);
+					Timer t = list[half];
 					if (nr == t.next_run)
 						return half;
 					if (nr > t.next_run)
@@ -362,6 +373,8 @@ namespace System.Threading
 			// This should be the only caller to list.Add!
 			void Add (Timer timer)
 			{
+				// FIXME
+				/*
 				// Make sure there are no collisions (10000 ticks == 1ms, so we should be safe here)
 				// Do not use list.IndexOfKey here. See bug #648130
 				int idx = FindByDueTime (timer.next_run);
@@ -381,15 +394,23 @@ namespace System.Threading
 							break;
 					}
 				}
-				list.Add (timer, timer);
+				*/
+				if ((nextInLine == null) || (nextInLine.next_run > timer.next_run))
+					nextInLine = timer;
+				needReSort = true;
+				list.Add (timer);
 				//PrintList ();
 			}
 
 			int InternalRemove (Timer timer)
 			{
-				int idx = list.IndexOfKey (timer);
-				if (idx >= 0)
+				int idx = list.IndexOf(timer);
+				if (idx >= 0) {
+					needReSort = true;
+					if (nextInLine == timer)
+						nextInLine = null;
 					list.RemoveAt (idx);
+				}
 				return idx;
 			}
 
@@ -404,27 +425,64 @@ namespace System.Threading
 				int i;
 				int count = list.Count;
 				long ticks = GetTimeMonotonic ();
+				var comparer = new TimerComparer();
+
+				if (needReSort) {
+					list.Sort(comparer);
+					needReSort = false;
+				}
+
+				nextInLine = null;
 
 				for (i = 0; i < count; i++) {
-					Timer timer = (Timer) list.GetByIndex (i);
-					if (timer.next_run > ticks)
-						break;
+					Timer timer = list[i];
 
-					list.RemoveAt (i);
-					count--;
-					i--;
+					if (timer.next_run > ticks) {
+						timer.is_dead = false;
+						if ((nextInLine == null) || (nextInLine.next_run > timer.next_run))
+							nextInLine = timer;
+						break;
+					}
+
 					ThreadPool.UnsafeQueueUserWorkItem (TimerCB, timer);
 					long period = timer.period_ms;
 					long due_time = timer.due_time_ms;
 					bool no_more = (period == -1 || ((period == 0 || period == Timeout.Infinite) && due_time != Timeout.Infinite));
 					if (no_more) {
 						timer.next_run = Int64.MaxValue;
+						timer.is_dead = true;
 					} else {
 						timer.next_run = GetTimeMonotonic () + TimeSpan.TicksPerMillisecond * timer.period_ms;
-						new_time.Add (timer);
+						timer.is_dead = false;
+						if ((nextInLine == null) || (nextInLine.next_run > timer.next_run))
+							nextInLine = timer;
 					}
 				}
 
+				for (i = 0; i < count; i++) {
+					Timer timer = list[i];
+					if (!timer.is_dead)
+						continue;
+					
+					needReSort = true;
+					list[i] = list[count - 1];
+					count--;
+					i--;
+
+					if (count == 0)
+						break;
+				}
+
+				// FIXME: DEBUGGING CODE
+				if (needReSort) {
+					list.Sort(comparer);
+					needReSort = false;
+				}
+
+				if ((list.Count > 0) && (nextInLine != list[0]))
+					throw new Exception("nextInLine != list[0]");
+
+				/*
 				// Reschedule timers with a new due time
 				count = new_time.Count;
 				for (i = 0; i < count; i++) {
@@ -440,9 +498,11 @@ namespace System.Threading
 				if (capacity > 1024 && count > 0 && (capacity / count) > 3)
 					list.Capacity = count * 2;
 
+				*/
+
 				long min_next_run = Int64.MaxValue;
-				if (list.Count > 0)
-					min_next_run = ((Timer) list.GetByIndex (0)).next_run;
+				if (nextInLine != null)
+					min_next_run = nextInLine.next_run;
 
 				//PrintList ();
 				ms_wait = -1;
@@ -457,14 +517,6 @@ namespace System.Threading
 					}
 				}
 				return ms_wait;
-			}
-
-			void ShrinkIfNeeded (List<Timer> list, int initial)
-			{
-				int capacity = list.Capacity;
-				int count = list.Count;
-				if (capacity > initial && count > 0 && (capacity / count) > 3)
-					list.Capacity = count * 2;
 			}
 
 			/*
