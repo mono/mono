@@ -24,6 +24,8 @@ ANDROID_SDK_VERSION_x86_64?=21
 # iOS
 
 XCODE_DIR?=/Applications/Xcode.app/Contents/Developer
+# Xcode version used to compile 32 bit cross compilers
+XCODE32_DIR?=/Applications/Xcode94.app/Contents/Developer
 
 #MACOS_VERSION?=10.13
 MACOS_VERSION_MIN?=10.9
@@ -36,5 +38,8 @@ TVOS_VERSION_MIN?=9.0
 
 #WATCHOS_VERSION?=4.1
 WATCHOS_VERSION_MIN?=2.0
+
+#WATCHOS5_VERSION?=5.1
+WATCHOS5_VERSION_MIN?=5.1
 
 # WebAssembly
