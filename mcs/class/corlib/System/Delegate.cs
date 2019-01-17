@@ -47,8 +47,6 @@ namespace System
 		public bool curried_first_arg;
 	}
 
-	[ClassInterface (ClassInterfaceType.AutoDual)]
-	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract class Delegate : ICloneable, ISerializable
@@ -352,7 +350,7 @@ namespace System
 
 			for (Type targetType = target; targetType != null; targetType = targetType.BaseType) {
 				MethodInfo mi = targetType.GetMethod (method, flags,
-					null, delargtypes, EmptyArray<ParameterModifier>.Value);
+					null, delargtypes, Array.Empty<ParameterModifier>());
 				if (mi != null && return_type_match (invoke.ReturnType, mi.ReturnType)) {
 					info = mi;
 					break;
@@ -547,7 +545,7 @@ namespace System
 				return a;
 
 			if (a.GetType () != b.GetType ())
-				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", a.GetType ().FullName, b.GetType ().FullName));
+				throw new ArgumentException (string.Format ("Incompatible Delegate Types. First is {0} second is {1}.", a.GetType ().FullName, b.GetType ().FullName));
 
 			return a.CombineImpl (b);
 		}
@@ -584,7 +582,7 @@ namespace System
 				return source;
 
 			if (source.GetType () != value.GetType ())
-				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types. First is {0} second is {1}.", source.GetType ().FullName, value.GetType ().FullName));
+				throw new ArgumentException (string.Format ("Incompatible Delegate Types. First is {0} second is {1}.", source.GetType ().FullName, value.GetType ().FullName));
 
 			return source.RemoveImpl (value);
 		}

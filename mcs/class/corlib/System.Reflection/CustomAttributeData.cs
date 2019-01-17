@@ -89,9 +89,9 @@ namespace System.Reflection {
 			ResolveArgumentsInternal (ctorInfo, lazyData.assembly, lazyData.data, lazyData.data_length, out ctor_args, out named_args);
 
 			this.ctorArgs = Array.AsReadOnly<CustomAttributeTypedArgument>
-				(ctor_args != null ? UnboxValues<CustomAttributeTypedArgument> (ctor_args) : EmptyArray<CustomAttributeTypedArgument>.Value);
+				(ctor_args != null ? UnboxValues<CustomAttributeTypedArgument> (ctor_args) : Array.Empty<CustomAttributeTypedArgument>());
 			this.namedArgs = Array.AsReadOnly<CustomAttributeNamedArgument> 
-				(named_args != null ? UnboxValues<CustomAttributeNamedArgument> (named_args) : EmptyArray<CustomAttributeNamedArgument>.Value);
+				(named_args != null ? UnboxValues<CustomAttributeNamedArgument> (named_args) : Array.Empty<CustomAttributeNamedArgument>());
 			
 			lazyData = null;
 		}

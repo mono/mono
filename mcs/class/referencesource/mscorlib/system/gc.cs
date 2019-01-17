@@ -18,7 +18,9 @@ namespace System {
     //This class only static members and doesn't require the serializable keyword.
 
     using System;
+#if !MONO
     using System.Security.Permissions;
+#endif
     using System.Reflection;
     using System.Security;
     using System.Threading;
@@ -229,7 +231,9 @@ namespace System {
 #else
         [System.Security.SecuritySafeCritical]  // auto-generated
 #endif
+#if !MONO
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         public static extern int GetGeneration(Object obj);
 
@@ -421,8 +425,10 @@ namespace System {
     
         // Indicates that the system should not call the Finalize() method on
         // an object that would normally require this call.
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         private static extern void _SuppressFinalize(Object o);
@@ -440,8 +446,10 @@ namespace System {
         // for which SuppressFinalize has already been called. The other situation 
         // where calling ReRegisterForFinalize is useful is inside a finalizer that 
         // needs to resurrect itself or an object that it references.
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void _ReRegisterForFinalize(Object o);
         

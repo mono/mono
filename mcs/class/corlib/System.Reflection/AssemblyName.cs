@@ -34,15 +34,15 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Cryptography;
-using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.IO;
 
 using Mono;
-using Mono.Security;
+#if !MOBILE && !NETCORE
 using Mono.Security.Cryptography;
+#endif
 
 namespace System.Reflection {
 
@@ -51,12 +51,14 @@ namespace System.Reflection {
 //	http://www.ietf.org/rfc/rfc2396.txt
 
 	[ComVisible (true)]
+#if !NETCORE
 	[ComDefaultInterfaceAttribute (typeof (_AssemblyName))]
-	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+#endif
+	[Serializable]	
 	[StructLayout (LayoutKind.Sequential)]
-#if MOBILE
-	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
+#if MOBILE || NETCORE
+	public sealed partial class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
 #else
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
 #endif
@@ -110,7 +112,6 @@ namespace System.Reflection {
 			}
 		}
 		
-		[MonoLimitation ("Not used, as the values are too limited;  Mono supports more")]
 		public ProcessorArchitecture ProcessorArchitecture {
 			get {
 				return processor_architecture;
@@ -149,7 +150,12 @@ namespace System.Reflection {
 			get {
 				if (codebase == null)
 					return null;
-				return Uri.EscapeString (codebase, false, true, true);
+
+#if NETCORE
+				throw new NotImplementedException ();
+#else
+				return Mono.Security.Uri.EscapeString (codebase, false, true, true);
+#endif
 			}
 		}
 
@@ -277,7 +283,7 @@ namespace System.Reflection {
 				switch (publicKey [0]) {
 				case 0x00: // public key inside a header
 					if (publicKey.Length > 12 && publicKey [12] == 0x06) {
-#if MOBILE
+#if MOBILE || NETCORE
 						return true;
 #else
 						try {
@@ -290,7 +296,7 @@ namespace System.Reflection {
 					}
 					break;
 				case 0x06: // public key
-#if MOBILE
+#if MOBILE || NETCORE
 					return true;
 #else
 					try {
@@ -363,7 +369,6 @@ namespace System.Reflection {
 			keyToken = publicKeyToken;
 		}
 
-		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -428,7 +433,7 @@ namespace System.Reflection {
 			return aname;
 		}
 
-#if !MOBILE
+#if !MOBILE && !NETCORE
 		void _AssemblyName.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
