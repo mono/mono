@@ -54,8 +54,10 @@ namespace System
 	[StructLayout (LayoutKind.Sequential)]
 	partial class RuntimeType
 	{
+#region keep in sync with object-internals.h
 		[NonSerialized]
 		MonoTypeInfo type_info;
+#endregion
 
 		internal Object GenericCache;
 

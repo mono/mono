@@ -129,6 +129,7 @@
       <Compile Include="System\NotImplemented.cs" />
       <Compile Include="System\RuntimeFieldHandle.cs" />
       <Compile Include="System\RuntimeMethodHandle.cs" />
+      <Compile Include="System\RuntimeType.cs" />
       <Compile Include="System\RuntimeTypeHandle.cs" />
       <Compile Include="System\Type.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />

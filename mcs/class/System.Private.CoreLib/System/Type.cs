@@ -6,6 +6,10 @@ namespace System
 {
 	partial class Type
 	{
+#region keep in sync with object-internals.h
+		internal RuntimeTypeHandle _impl;
+#endregion
+
 		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError) => throw new NotImplementedException ();
 		public static Type GetTypeFromProgID (string progID, string server, bool throwOnError) => throw new NotImplementedException ();
 
