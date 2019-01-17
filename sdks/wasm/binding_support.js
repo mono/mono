@@ -606,9 +606,16 @@ var BindingSupportLib = {
 					this.corlib = this.assembly_load ("mscorlib");
 				if (!this.delegate_class)
 					this.delegate_class = this.find_class (this.corlib, "System", "Delegate");
+				if (!this.delegate_class)
+				{
+					throw new Error("System.Delegate class can not be resolved.");
+				}
 				this.delegate_dynamic_invoke = this.find_method (this.delegate_class, "DynamicInvoke", -1);
 			}
 			var mono_args = this.js_array_to_mono_array (js_args);
+			if (!this.delegate_dynamic_invoke)
+				throw new Error("System.Delegate.DynamicInvoke method can not be resolved.");
+
 			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "m", [ mono_args ]);
 		},
 		
