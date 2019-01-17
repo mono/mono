@@ -35,6 +35,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/mono-proclib.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/object-internals.h>
@@ -1067,7 +1068,7 @@ mono_image_load_time_date_stamp (MonoImage *image)
 		return;
 
 	gunichar2 *uni_name = g_utf8_to_utf16 (image->name, -1, NULL, NULL, NULL);
-	mono_w32process_time_date_stamp (uni_name, &image->time_date_stamp);
+	mono_pe_file_time_date_stamp (uni_name, &image->time_date_stamp);
 	g_free (uni_name);
 #endif
 }
