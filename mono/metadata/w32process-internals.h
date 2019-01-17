@@ -55,9 +55,6 @@ gboolean
 mono_w32process_module_get_information (gpointer process, gpointer module, MODULEINFO *modinfo, guint32 size);
 
 gboolean
-mono_w32process_time_date_stamp (gunichar2 *filename, guint32 *out);
-
-gboolean
 mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data);
 
 gboolean
