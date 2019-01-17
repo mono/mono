@@ -136,7 +136,7 @@ $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1
 
 ifeq ("$(ENABLE_COMPILER_SERVER)","1")
-VBCS_LOCATION?=$(dir $(CSC_LOCATION))/VBCSCompiler.exe
+VBCS_LOCATION?=$(dir $(SERVER_CSC_LOCATION))/VBCSCompiler.exe
 
 start-compiler-server:
 	echo Attempting to start compiler server...
