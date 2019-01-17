@@ -145,6 +145,7 @@
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
       <Compile Include="System.Reflection\MethodBase.cs" />
+      <Compile Include="System.Reflection\MonoAssembly.cs" />
       <Compile Include="System.Reflection.Emit\Stubs.cs" />
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="System.Resources\ResourceManager.cs" />
