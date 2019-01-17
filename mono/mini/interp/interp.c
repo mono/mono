@@ -2175,6 +2175,7 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 		}
 	} else {
 		jit_call_cb (&cb_data);
+		interp_pop_lmf (&ext);
 	}
 
 	MonoType *rtype = rmethod->rtype;
