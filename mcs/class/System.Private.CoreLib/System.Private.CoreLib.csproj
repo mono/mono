@@ -236,6 +236,7 @@
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeTypedArgument.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
+      <Compile Include="..\corlib\corert\RuntimeAugments.cs" />
 
       <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\GCHandleType.cs" />
   </ItemGroup>
