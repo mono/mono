@@ -29,6 +29,7 @@ ios-target32s-*/
 ios-target64-*/
 ios-targettv-*/
 ios-targetwatch-*/
+ios-targetwatch64_32-*/
 ios-cross32-*/
 ios-cross64-*/
 ios-crosswatch-*/
