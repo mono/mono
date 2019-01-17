@@ -7,6 +7,7 @@
 
 #include <mono/arch/amd64/amd64-codegen.h>
 #include <mono/utils/mono-sigcontext.h>
+#include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-context.h>
 #include <glib.h>
 
@@ -32,7 +33,7 @@ struct sigcontext {
 };
 #endif
 
-typedef void (* MonoW32ExceptionHandler) (int _dummy, EXCEPTION_POINTERS *info, void *context);
+typedef void MONO_SIG_HANDLER_SIGNATURE ((*MonoW32ExceptionHandler));
 void win32_seh_init(void);
 void win32_seh_cleanup(void);
 void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler);
