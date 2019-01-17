@@ -585,11 +585,6 @@ mono_native_state_add_thread (MonoStateWriter *writer, MonoThreadSummary *thread
 
 	assert_has_space (writer);
 	mono_state_writer_indent (writer);
-	mono_state_writer_object_key (writer, "managed_thread_ptr");
-	mono_state_writer_printf(writer, "\"0x%" PRIx64 "\",\n", (guint64) thread->managed_thread_ptr);
-
-	assert_has_space (writer);
-	mono_state_writer_indent (writer);
 	mono_state_writer_object_key (writer, "native_thread_id");
 	mono_state_writer_printf(writer, "\"0x%" PRIx64 "\",\n", (guint64) thread->native_thread_id);
 
