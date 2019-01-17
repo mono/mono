@@ -25,8 +25,10 @@
 //
 
 using System;
-using System.Drawing;
 using System.ComponentModel;
+#if !FULL_AOT_RUNTIME
+using System.Drawing;
+#endif
 using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel {
@@ -60,18 +62,20 @@ namespace MonoTests.System.ComponentModel {
 			Assert.AreEqual (1, dvat.GetHashCode (), "GetHashCode");
 		}
 
-		[DefaultValue(typeof(Color), "Black")]
+#if !FULL_AOT_RUNTIME
+		[DefaultValue (typeof (Color), "Black")]
 		public Color Bar { get; set; }
 
 		// https://github.com/mono/mono/issues/12362
 		[Test]
 		public void Bug_12362 ()
 		{
-			var prop = typeof (DefaultValueAttributeTest).GetProperty("Bar");
+			var prop = typeof (DefaultValueAttributeTest).GetProperty ("Bar");
 			var attr = (DefaultValueAttribute)prop.GetCustomAttributes (true) [0];
 			var value = attr.Value;
 			Assert.IsNotNull (value);
 			Assert.AreEqual (typeof (Color), value.GetType ());
 		}
+#endif
 	}
 }
