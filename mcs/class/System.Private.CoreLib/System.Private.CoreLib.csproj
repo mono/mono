@@ -137,6 +137,7 @@
       <Compile Include="System.Diagnostics\Debugger.cs" />
       <Compile Include="System.Diagnostics\StackFrame.cs" />
       <Compile Include="System.Diagnostics\StackTrace.cs" />
+      <Compile Include="System.Diagnostics.Contracts\Contract.cs" />
       <Compile Include="System.Diagnostics.Tracing\EventSource.cs" />
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
