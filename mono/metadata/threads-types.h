@@ -514,7 +514,6 @@ typedef struct {
 
 	char name [MONO_MAX_THREAD_NAME_LEN];
 
-	intptr_t managed_thread_ptr;
 	intptr_t info_addr;
 	intptr_t native_thread_id;
 

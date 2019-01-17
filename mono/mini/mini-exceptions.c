@@ -1199,6 +1199,8 @@ mono_walk_stack_full (MonoJitStackWalk func, MonoContext *start_ctx, MonoDomain 
 	gboolean async = mono_thread_info_is_async_context ();
 	Unwinder unwinder;
 
+	memset (&frame, 0, sizeof (StackFrameInfo));
+
 #ifndef TARGET_WASM
 	if (mono_llvm_only) {
 		GSList *l, *ips;
@@ -1634,6 +1636,7 @@ mono_summarize_managed_stack (MonoThreadSummary *out)
 
 	if (data.error != NULL)
 		out->error_msg = data.error;
+	out->is_managed = (out->num_managed_frames != 0);
 }
 
 // Always runs on the dumped thread
@@ -1665,6 +1668,7 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 	out->lmf = mono_get_lmf ();
 
 	MonoThreadInfo *thread = mono_thread_info_current_unchecked ();
+	out->info_addr = (intptr_t) thread;
 	out->jit_tls = thread->jit_data;
 	out->domain = mono_domain_get ();
 

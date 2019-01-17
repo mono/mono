@@ -6124,10 +6124,6 @@ mono_threads_summarize_native_self (MonoThreadSummary *out, MonoContext *ctx)
 
 	mono_native_thread_get_name (current, out->name, MONO_MAX_SUMMARY_NAME_LEN);
 
-	// FIXME: Figure out how to store and look these up?
-	/*MonoDomain *domain = thread->obj.vtable->domain;*/
-	/*out->managed_thread_ptr = (intptr_t) get_current_thread_ptr_for_domain (domain, thread);*/
-	/*out->info_addr = (intptr_t) thread->thread_info;*/
 	return TRUE;
 }
 
