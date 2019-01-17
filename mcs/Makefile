@@ -41,7 +41,6 @@ all-local $(STD_TARGETS:=-local):
 dir-check:
 	@if [ "$(NO_DIR_CHECK)" = "" ]; then $(MAKE) -C ../runtime; fi
 
-
 # fun specialty targets
 
 PROFILES = net_4_x binary_reference_assemblies xbuild_12 xbuild_14
