@@ -111,6 +111,8 @@
       <Compile Include="Internal.Runtime.Augments\RuntimeThread.cs" />
       <Compile Include="Microsoft.Win32\UnsafeNativeMethods.cs" />
       <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
+      <Compile Include="System\AppDomain.cs" />
+      <Compile Include="System\AppDomainSetup.cs" />
       <Compile Include="System\AppContext.cs" />
       <Compile Include="System\Activator.cs" />
       <Compile Include="System\Array.cs" />
