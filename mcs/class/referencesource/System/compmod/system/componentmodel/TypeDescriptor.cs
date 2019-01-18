@@ -1557,6 +1557,14 @@ namespace System.ComponentModel
             return converter;
         }
 
+#if MONO // from https://github.com/dotnet/corefx/pull/31739
+        // This is called by System.ComponentModel.DefaultValueAttribute via reflection.
+        private static object ConvertFromInvariantString(Type type, string stringValue)
+        {
+            return GetConverter(type).ConvertFromInvariantString(stringValue);
+        }
+#endif
+
         /// <devdoc>
         ///     Gets the default event for the specified type of component.
         /// </devdoc>
