@@ -273,10 +273,9 @@ clean:
 	$(RM) -r sdk/packages
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.dll
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.pdb
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.pdb
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
 
 package: build build-dbg-proxy
 	rm -rf tmp
