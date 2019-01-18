@@ -2,11 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using AsyncStatus = Internal.Runtime.Augments.AsyncStatus;
-using CausalityRelation = Internal.Runtime.Augments.CausalityRelation;
-using CausalityTraceLevel = Internal.Runtime.Augments.CausalityTraceLevel;
-using CausalitySynchronousWork = Internal.Runtime.Augments.CausalitySynchronousWork;
-
 namespace System.Threading.Tasks
 {
     //
@@ -26,7 +21,7 @@ namespace System.Threading.Tasks
         {
         }
 
-        public static void TraceOperationCompletion(CausalityTraceLevel traceLevel, Task task, AsyncStatus status)
+        public static void TraceOperationCompletion(CausalityTraceLevel traceLevel, Task task, AsyncCausalityStatus status)
         {
         }
 

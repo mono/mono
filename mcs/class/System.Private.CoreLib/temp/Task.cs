@@ -18,11 +18,6 @@ using System.Runtime.ExceptionServices;
 
 //using Internal.Threading.Tasks.Tracing;
 
-using AsyncStatus = Internal.Runtime.Augments.AsyncStatus;
-using CausalityRelation = Internal.Runtime.Augments.CausalityRelation;
-using CausalitySource = Internal.Runtime.Augments.CausalitySource;
-using CausalitySynchronousWork = Internal.Runtime.Augments.CausalitySynchronousWork;
-using CausalityTraceLevel = Internal.Runtime.Augments.CausalityTraceLevel;
 using Thread = Internal.Runtime.Augments.RuntimeThread;
 
 // Disable the "reference to volatile field not treated as volatile" error.
@@ -2087,7 +2082,7 @@ namespace System.Threading.Tasks
             {
                 completionState = TASK_STATE_FAULTED;
                 if (DebuggerSupport.LoggingOn)
-                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncStatus.Error);
+                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncCausalityStatus.Error);
                 DebuggerSupport.RemoveFromActiveTasks(this);
             }
             else if (IsCancellationRequested && IsCancellationAcknowledged)
@@ -2101,14 +2096,14 @@ namespace System.Threading.Tasks
 
                 completionState = TASK_STATE_CANCELED;
                 if (DebuggerSupport.LoggingOn)
-                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncStatus.Canceled);
+                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncCausalityStatus.Canceled);
                 DebuggerSupport.RemoveFromActiveTasks(this);
             }
             else
             {
                 completionState = TASK_STATE_RAN_TO_COMPLETION;
                 if (DebuggerSupport.LoggingOn)
-                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncStatus.Completed);
+                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncCausalityStatus.Completed);
                 DebuggerSupport.RemoveFromActiveTasks(this);
             }
 
@@ -3117,7 +3112,7 @@ namespace System.Threading.Tasks
             }
 
             if (DebuggerSupport.LoggingOn)
-                DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncStatus.Canceled);
+                DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncCausalityStatus.Canceled);
             DebuggerSupport.RemoveFromActiveTasks(this);
 
             // Notify parents, fire continuations, other cleanup.
@@ -5333,7 +5328,7 @@ namespace System.Threading.Tasks
                 else
                 {
                     if (DebuggerSupport.LoggingOn)
-                        DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncStatus.Completed);
+                        DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncCausalityStatus.Completed);
                     DebuggerSupport.RemoveFromActiveTasks(this);
 
                     setSucceeded = TrySetResult(default);
@@ -5564,7 +5559,7 @@ namespace System.Threading.Tasks
                     else
                     {
                         if (DebuggerSupport.LoggingOn)
-                            DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncStatus.Completed);
+                            DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncCausalityStatus.Completed);
                         DebuggerSupport.RemoveFromActiveTasks(this);
 
                         TrySetResult(default);
@@ -5808,7 +5803,7 @@ namespace System.Threading.Tasks
                     else
                     {
                         if (DebuggerSupport.LoggingOn)
-                            DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncStatus.Completed);
+                            DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncCausalityStatus.Completed);
                         DebuggerSupport.RemoveFromActiveTasks(this);
 
                         TrySetResult(results);
@@ -6511,7 +6506,7 @@ namespace System.Threading.Tasks
                     var taskTResult = task as Task<TResult>;
 
                     if (DebuggerSupport.LoggingOn)
-                        DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncStatus.Completed);
+                        DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, this, AsyncCausalityStatus.Completed);
                     DebuggerSupport.RemoveFromActiveTasks(this);
 
                     result = TrySetResult(taskTResult != null ? taskTResult.Result : default);
