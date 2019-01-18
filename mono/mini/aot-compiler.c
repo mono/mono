@@ -4277,7 +4277,7 @@ add_wrappers (MonoAotCompile *acfg)
 		}
  	}
 
-	if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
+	if (mono_is_corlib_image (acfg->image->assembly->image)) {
 		int nallocators;
 
 		/* Runtime invoke wrappers */
@@ -7185,7 +7185,7 @@ emit_trampolines (MonoAotCompile *acfg)
 	g_assert (acfg->image->assembly);
 
 	/* Currently, we emit most trampolines into the mscorlib AOT image. */
-	if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
+	if (mono_is_corlib_image(acfg->image->assembly->image)) {
 #ifdef MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES
 		MonoTrampInfo *info;
 
@@ -12485,7 +12485,7 @@ static const char *preinited_jit_icalls[] = {
 	"mono_aot_init_gshared_method_mrgctx",
 	"mono_aot_init_gshared_method_vtable",
 	"mono_llvm_throw_corlib_exception",
-	"mono_init_vtable_slot",
+	"mini_llvmonly_init_vtable_slot",
 	"mono_helper_ldstr_mscorlib"
 };
 
