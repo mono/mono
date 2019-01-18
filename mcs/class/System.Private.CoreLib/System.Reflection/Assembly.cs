@@ -2,6 +2,23 @@ namespace System.Reflection
 {
 	partial class Assembly
 	{
+#region Must match object-internals.h
+#pragma warning disable 649
+		internal IntPtr _mono_assembly;
+#pragma warning restore 649
+
+		private ResolveEventHolder resolve_event_holder;
+		object _evidence, _minimum, _optional, _refuse, _granted, _denied;
+		private bool fromByteArray;
+		private string assemblyName;
+#endregion
+
+		internal class ResolveEventHolder {
+#pragma warning disable 67
+			public event ModuleResolveEventHandler ModuleResolve;
+#pragma warning restore
+		}
+
 		public static Assembly LoadFrom (string assemblyFile)
 		{
 			throw new NotImplementedException ();

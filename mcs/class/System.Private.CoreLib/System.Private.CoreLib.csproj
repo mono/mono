@@ -127,6 +127,7 @@
       <Compile Include="System\NotImplemented.cs" />
       <Compile Include="System\RuntimeFieldHandle.cs" />
       <Compile Include="System\RuntimeMethodHandle.cs" />
+      <Compile Include="System\RuntimeType.cs" />
       <Compile Include="System\RuntimeTypeHandle.cs" />
       <Compile Include="System\Type.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
@@ -140,11 +141,14 @@
       <Compile Include="System.Diagnostics.Tracing\EventSource.cs" />
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
+      <Compile Include="System.Mono\MonoDomain.cs" />
+      <Compile Include="System.Mono\MonoDomainSetup.cs" />
       <Compile Include="System.Reflection\Assembly.cs" />
       <Compile Include="System.Reflection\AssemblyName.cs" />
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
       <Compile Include="System.Reflection\MethodBase.cs" />
+      <Compile Include="System.Reflection\MonoAssembly.cs" />
       <Compile Include="System.Reflection.Emit\Stubs.cs" />
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="System.Resources\ResourceManager.cs" />
@@ -155,6 +159,7 @@
       <Compile Include="System.Runtime.InteropServices\InteropExtensions.cs" />
       <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
+      <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
       <Compile Include="System.Threading\EventWaitHandle.cs" />
       <Compile Include="System.Threading\Interlocked.cs" />
       <Compile Include="System.Threading\Mutex.cs" />
