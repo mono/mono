@@ -26,7 +26,7 @@
 
 using System;
 using System.ComponentModel;
-#if !FULL_AOT_RUNTIME
+#if !MOBILE
 using System.Drawing;
 #endif
 using NUnit.Framework;
@@ -62,7 +62,7 @@ namespace MonoTests.System.ComponentModel {
 			Assert.AreEqual (1, dvat.GetHashCode (), "GetHashCode");
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !MOBILE
 		[DefaultValue (typeof (Color), "Black")]
 		public Color Bar { get; set; }
 
