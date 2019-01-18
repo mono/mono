@@ -17,12 +17,6 @@ using System.Runtime.CompilerServices;
 
 using Internal.Runtime.Augments;
 
-using AsyncStatus = Internal.Runtime.Augments.AsyncStatus;
-using CausalityRelation = Internal.Runtime.Augments.CausalityRelation;
-using CausalitySource = Internal.Runtime.Augments.CausalitySource;
-using CausalityTraceLevel = Internal.Runtime.Augments.CausalityTraceLevel;
-using CausalitySynchronousWork = Internal.Runtime.Augments.CausalitySynchronousWork;
-
 namespace System.Threading.Tasks
 {
     // Task type used to implement: Task ContinueWith(Action<Task,...>)

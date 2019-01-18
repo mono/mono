@@ -12,12 +12,6 @@
 
 using System.Diagnostics;
 
-using AsyncStatus = Internal.Runtime.Augments.AsyncStatus;
-using CausalityRelation = Internal.Runtime.Augments.CausalityRelation;
-using CausalitySource = Internal.Runtime.Augments.CausalitySource;
-using CausalityTraceLevel = Internal.Runtime.Augments.CausalityTraceLevel;
-using CausalitySynchronousWork = Internal.Runtime.Augments.CausalitySynchronousWork;
-
 namespace System.Threading.Tasks
 {
     /// <summary>
@@ -553,7 +547,7 @@ namespace System.Threading.Tasks
                 else
                 {
                     if (DebuggerSupport.LoggingOn)
-                        DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncStatus.Completed);
+                        DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncCausalityStatus.Completed);
                     DebuggerSupport.RemoveFromActiveTasks(promise);
 
                     if (requiresSynchronization)
@@ -795,7 +789,7 @@ namespace System.Threading.Tasks
             catch
             {
                 if (DebuggerSupport.LoggingOn)
-                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncStatus.Error);
+                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncCausalityStatus.Error);
                 DebuggerSupport.RemoveFromActiveTasks(promise);
 
                 // Make sure we don't leave promise "dangling".
@@ -908,7 +902,7 @@ namespace System.Threading.Tasks
             catch
             {
                 if (DebuggerSupport.LoggingOn)
-                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncStatus.Error);
+                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncCausalityStatus.Error);
                 DebuggerSupport.RemoveFromActiveTasks(promise);
 
                 // Make sure we don't leave promise "dangling".
@@ -1029,7 +1023,7 @@ namespace System.Threading.Tasks
             catch
             {
                 if (DebuggerSupport.LoggingOn)
-                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncStatus.Error);
+                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncCausalityStatus.Error);
                 DebuggerSupport.RemoveFromActiveTasks(promise);
 
                 // Make sure we don't leave promise "dangling".
@@ -1158,7 +1152,7 @@ namespace System.Threading.Tasks
             catch
             {
                 if (DebuggerSupport.LoggingOn)
-                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncStatus.Error);
+                    DebuggerSupport.TraceOperationCompletion(CausalityTraceLevel.Required, promise, AsyncCausalityStatus.Error);
                 DebuggerSupport.RemoveFromActiveTasks(promise);
 
                 // Make sure we don't leave the promise "dangling".
