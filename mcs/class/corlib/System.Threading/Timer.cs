@@ -312,9 +312,6 @@ namespace System.Threading
 				if (timer.is_dead)
 					timer.is_dead = false;
 
-				if ((timer.is_added) && (timer.next_run == new_next_run))
-					return;
-
 				bool wake = false;
 				lock (this) {
 					needReSort = true;
