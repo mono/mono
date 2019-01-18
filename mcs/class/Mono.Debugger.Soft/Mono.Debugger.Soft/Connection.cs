@@ -2119,7 +2119,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal long Thread_GetElapsedTime (long id) {
-			if (connection.Version.AtLeast (2, 50)) {
+			if (connection.Version.AtLeast (2, 50))
 				return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_ELAPSED_TIME, new PacketWriter ().WriteId (id)).ReadLong ();
 			return -1;
 		}
