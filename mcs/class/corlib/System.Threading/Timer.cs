@@ -309,6 +309,9 @@ namespace System.Threading
 
 			public void Change (Timer timer, long new_next_run)
 			{
+				if (timer.is_dead)
+					timer.is_dead = false;
+
 				if ((timer.is_added) && (timer.next_run == new_next_run))
 					return;
 
