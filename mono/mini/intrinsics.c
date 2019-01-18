@@ -1286,6 +1286,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				}
 				*dest = result;
 				MONO_ADD_INS (cfg->cbb, ins);
+				NULLIFY_INS (args [0]);
 				return ins;
 			}
 		}
