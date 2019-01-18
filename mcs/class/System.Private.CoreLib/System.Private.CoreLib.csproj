@@ -111,8 +111,6 @@
       <Compile Include="Internal.Runtime.Augments\RuntimeThread.cs" />
       <Compile Include="Microsoft.Win32\UnsafeNativeMethods.cs" />
       <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
-      <Compile Include="System\AppDomain.cs" />
-      <Compile Include="System\AppDomainSetup.cs" />
       <Compile Include="System\AppContext.cs" />
       <Compile Include="System\Activator.cs" />
       <Compile Include="System\Array.cs" />
@@ -143,6 +141,8 @@
       <Compile Include="System.Diagnostics.Tracing\EventSource.cs" />
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
+      <Compile Include="System.Mono\MonoDomain.cs" />
+      <Compile Include="System.Mono\MonoDomainSetup.cs" />
       <Compile Include="System.Reflection\Assembly.cs" />
       <Compile Include="System.Reflection\AssemblyName.cs" />
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />

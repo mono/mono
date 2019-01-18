@@ -1,9 +1,9 @@
 using System.Runtime.InteropServices;
 
-namespace System
+namespace System.Mono
 {
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class AppDomainSetup
+	internal sealed class MonoDomainSetup
 	{
 		string application_base;
 		string application_name;
@@ -31,7 +31,7 @@ namespace System
 
 		byte [] serialized_non_primitives;
 
-		public AppDomainSetup ()
+		public MonoDomainSetup ()
 		{
 		}
 	}

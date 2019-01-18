@@ -1,10 +1,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace System {
+namespace System.Mono
+{
 
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed partial class AppDomain : MarshalByRefObject {
+	internal sealed partial class MonoDomain : MarshalByRefObject {
         #pragma warning disable 169
         #region Sync with object-internals.h
 		IntPtr _mono_app_domain;
