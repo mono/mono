@@ -59,6 +59,27 @@ enum {
         MONO_DL_MASK  = 3
 };
 
+typedef enum {
+	/* Disables AOT mode */
+	MONO_AOT_MODE_NONE,
+	/* Enables normal AOT mode, equivalent to mono_jit_set_aot_only (false) */
+	MONO_AOT_MODE_NORMAL,
+	/* Enables hybrid AOT mode, JIT can still be used for wrappers */
+	MONO_AOT_MODE_HYBRID,
+	/* Enables full AOT mode, JIT is disabled and not allowed,
+	 * equivalent to mono_jit_set_aot_only (true) */
+	MONO_AOT_MODE_FULL,
+	/* Same as full, but use only llvm compiled code */
+	MONO_AOT_MODE_LLVMONLY,
+	/* Uses Interpreter, JIT is disabled and not allowed,
+	 * equivalent to "--full-aot --interpreter" */
+	MONO_AOT_MODE_INTERP,
+	/* Same as INTERP, but use only llvm compiled code */
+	MONO_AOT_MODE_INTERP_LLVMONLY,
+	/* Sentinel value used internally by the runtime. We use a large number to avoid clashing with some internal values. */
+	MONO_AOT_MODE_LAST = 1000,
+} MonoAotMode;
+
 typedef struct MonoDomain_ MonoDomain;
 typedef struct MonoAssembly_ MonoAssembly;
 typedef struct MonoMethod_ MonoMethod;
@@ -102,6 +123,7 @@ typedef void (*mono_set_crash_chaining_fn) (int);
 typedef void (*mono_set_signal_chaining_fn) (int);
 typedef MonoThread *(*mono_thread_attach_fn) (MonoDomain *domain);
 typedef void (*mono_domain_set_config_fn) (MonoDomain *, const char *, const char *);
+typedef void (*mono_jit_set_aot_mode_fn) (MonoAotMode mode);
 typedef int (*mono_runtime_set_main_args_fn) (int argc, char* argv[]);
 typedef MonoMethod* (*mono_class_get_methods_fn) (MonoClass* klass, void **iter);
 typedef const char* (*mono_method_get_name_fn) (MonoMethod *method);
@@ -138,6 +160,7 @@ static mono_set_signal_chaining_fn mono_set_signal_chaining;
 static mono_dl_fallback_register_fn mono_dl_fallback_register;
 static mono_thread_attach_fn mono_thread_attach;
 static mono_domain_set_config_fn mono_domain_set_config;
+static mono_jit_set_aot_mode_fn mono_jit_set_aot_mode;
 static mono_runtime_set_main_args_fn mono_runtime_set_main_args;
 static mono_class_get_methods_fn mono_class_get_methods;
 static mono_method_get_name_fn mono_method_get_name;
@@ -397,6 +420,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_dl_fallback_register = dlsym (libmono, "mono_dl_fallback_register"); 
 	mono_thread_attach = dlsym (libmono, "mono_thread_attach"); 
 	mono_domain_set_config = dlsym (libmono, "mono_domain_set_config");
+	mono_jit_set_aot_mode = dlsym (libmono, "mono_jit_set_aot_mode");
 	mono_debug_init = dlsym (libmono, "mono_debug_init");
 	mono_array_new = dlsym (libmono, "mono_array_new");
 	mono_get_string_class = dlsym (libmono, "mono_get_string_class");
@@ -466,6 +490,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	// then lookup_data_table will fail.
 	root_domain = mono_jit_init_version ("TEST RUNNER", "mobile");
 	mono_domain_set_config (root_domain, assemblies_dir, file_dir);
+	mono_jit_set_aot_mode (MONO_AOT_MODE_NONE);
 
 	mono_thread_attach (root_domain);
 
