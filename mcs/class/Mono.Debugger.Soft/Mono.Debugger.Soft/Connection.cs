@@ -427,7 +427,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 49;
+		internal const int MINOR_VERSION = 50;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -2119,7 +2119,9 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal long Thread_GetElapsedTime (long id) {
-			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_ELAPSED_TIME, new PacketWriter ().WriteId (id)).ReadLong ();
+			if (connection.Version.AtLeast (2, 50)) {
+				return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_ELAPSED_TIME, new PacketWriter ().WriteId (id)).ReadLong ();
+			return -1;
 		}
 
 		internal void Thread_GetFrameInfo (long id, int start_frame, int length, Action<FrameInfo[]> resultCallaback) {
