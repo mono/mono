@@ -100,7 +100,7 @@ namespace WsProxy {
 
 		public SourceLocation (MethodInfo mi, SequencePoint sp)
 		{
-			this.id = mi.SourceId;
+            this.id = mi.getSourceId(sp.Document);
 			this.line = sp.StartLine;
 			this.column = sp.StartColumn - 1;
 			this.cliLoc = new CliLocation (mi, sp.Offset);
@@ -203,30 +203,37 @@ namespace WsProxy {
 	internal class MethodInfo {
 		AssemblyInfo assembly;
 		internal MethodDefinition methodDef;
-		SourceFile source;
+        List<SourceFile> sourceList;
 
-		public SourceId SourceId => source.SourceId;
-
-		public string Name => methodDef.Name;
+        public SourceId getSourceId(Document doc)
+        {
+            foreach (var src in sourceList)
+                if (src.doc == doc)
+                    return src.SourceId;
+            return null;
+        }
+        public string Name => methodDef.Name;
 
 		public SourceLocation StartLocation { get; private set; }
 		public SourceLocation EndLocation { get; private set; }
 		public AssemblyInfo Assembly => assembly;
 		public int Token => (int)methodDef.MetadataToken.RID;
 
-		public MethodInfo (AssemblyInfo assembly, MethodDefinition methodDef, SourceFile source)
-		{
-			this.assembly = assembly;
-			this.methodDef = methodDef;
-			this.source = source;
 
-			var sps = methodDef.DebugInformation.SequencePoints;
-			if (sps != null && sps.Count > 0) {
-				StartLocation = new SourceLocation (this, sps [0]);
-				EndLocation = new SourceLocation (this, sps [sps.Count - 1]);
-			}
+        public MethodInfo(AssemblyInfo assembly, MethodDefinition methodDef, List<SourceFile> sourceList)
+        {
+            this.assembly = assembly;
+            this.methodDef = methodDef;
+            this.sourceList = sourceList;
 
-		}
+            var sps = methodDef.DebugInformation.SequencePoints;
+            if (sps != null && sps.Count > 0)
+            {
+                StartLocation = new SourceLocation(this, sps[0]);
+                EndLocation = new SourceLocation(this, sps[sps.Count - 1]);
+            }
+
+        }
 
 		public SourceLocation GetLocationByIl (int pos)
 		{
@@ -309,23 +316,29 @@ namespace WsProxy {
 
 			foreach (var m in image.GetTypes ().SelectMany (t => t.Methods)) {
 				Document first_doc = null;
-				foreach (var sp in m.DebugInformation.SequencePoints) {
+                var sourceFiles = new List<SourceFile>();
+                foreach (var sp in m.DebugInformation.SequencePoints) {
 					if (first_doc == null) {
 						first_doc = sp.Document;
-					} else if (first_doc != sp.Document) {
-						//FIXME this is needed for (c)ctors in corlib
-						throw new Exception ($"Cant handle multi-doc methods in {m}");
+                    } else if (first_doc != sp.Document) {
+                        var src2 = get_src(sp.Document);
+                        if (!sourceFiles.Contains(src2) && src2 != null)
+                            sourceFiles.Add(src2);
+                        continue;
 					}
-				}
+
+                }
 
 				var src = get_src (first_doc);
-				var mi = new MethodInfo (this, m, src);
+                if (src != null)
+                    sourceFiles.Add(src);
+                var mi = new MethodInfo (this, m, sourceFiles);
 				int mt = (int)m.MetadataToken.RID;
 				this.methods [mt] = mi;
-				if (src != null)
-					src.AddMethod (mi);
-
-			}
+                foreach (var eachSrc in sourceFiles) {
+                    eachSrc.AddMethod(mi);
+                }
+            }
 		}
 
 		public IEnumerable<SourceFile> Sources {
@@ -351,7 +364,7 @@ namespace WsProxy {
 		HashSet<MethodInfo> methods;
 		AssemblyInfo assembly;
 		int id;
-		Document doc;
+		public Document doc;
 
 		internal SourceFile (AssemblyInfo assembly, int id, Document doc)
 		{
@@ -370,8 +383,7 @@ namespace WsProxy {
 		public string DocHashCode => "abcdee" + id;
 		public SourceId SourceId => new SourceId (assembly.Id, this.id);
 		public string LocalPath => doc.Url;
-
-		public IEnumerable<MethodInfo> Methods => this.methods;
+        public IEnumerable<MethodInfo> Methods => this.methods;
 	}
 
 	internal class DebugStore {
