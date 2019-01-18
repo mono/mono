@@ -118,7 +118,7 @@ watchos5_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/S
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes --with-monotouch-tv
 ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes --with-monotouch-watch
-ios-targetwatch64_32_CONFIGURE_FLAGS = --enable-cooperative-suspend --with-bitcode=yes --with-monotouch-watch
+ios-targetwatch64_32_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes --with-monotouch-watch
 
 ios-target32_SYSROOT = $(ios_sysroot)
 ios-target32s_SYSROOT = $(ios_sysroot)
