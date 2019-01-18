@@ -34,39 +34,18 @@ To experiment with the debugger, do the following steps:
 
 Beware that the debugger is in active development so bugs and missing features will be present.
 
-# AOT development
+# AOT support
 
-AOT experimentation is built targeting `package-wasm-cross`:
+AOT support is enabled by passing --aot to the packager.
 
+This depends on building the cross compiler which can be done using:
 ```
-mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
-mono$ make -C build
-````
+make -C sdks/wasm cross
+```
 
 If you don't have jsvu installed, run `make toolchain` from `sdks/wasm`. It requires a recent version of node installed in your system.
 
-Now you can experiment with the `aot-sample` and `link-sample` make targets to try the toolchain. The first invokes the AOT compiler and the second links the results.
-
-To update the runtimes used use the following make target in `sdks/build`
-
-`package-wasm-runtime` for the interpreter-based runtime
-`package-wasm-cross` for the aot compiler
-`package-wasm-bcl` for the wasm bcl code.
-
-
-To update the aot compiler:
-```
-make -C sdks/builds package-wasm-cross
-make -C sdks/wasm build-aot-all
-make -C sdks/wasm run-aot-all
-```
-
-To update the aot runtime:
-```
-make -C sdks/builds package-wasm-runtime
-make -C sdks/wasm build-aot-all
-make -C sdks/wasm run-aot-all
-```
+Run `make run-aot-sample` to run an aot-ed hello world sample.
 
 To build and run AOT test suites:
 ```

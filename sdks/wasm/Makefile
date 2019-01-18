@@ -321,7 +321,6 @@ package: build build-dbg-proxy
 	cp Mono.Cecil.dll tmp/
 	cp $(OPTIONS_CS) tmp/	
 	cp packager.exe tmp/
-	cp tuner.exe tmp/
 	cp runtime.js tmp/
 	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.dll tmp/
 	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.0/Mono.WebAssembly.DebuggerProxy.pdb tmp/
