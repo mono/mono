@@ -1,4 +1,4 @@
-thisdir = tools/linker
+thisdir = tools/wasm-tuner
 SUBDIRS =
 include ../../build/rules.make
 
