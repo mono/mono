@@ -13,6 +13,7 @@ SHELL:=/bin/bash
 #Use either 'release' or 'debug' dependending on what you need
 DRIVER_CONF=release
 
+CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)
 
 EMSCRIPTEN_SDKDIR=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
