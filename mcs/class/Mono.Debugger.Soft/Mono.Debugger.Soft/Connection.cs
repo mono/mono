@@ -2119,9 +2119,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal long Thread_GetElapsedTime (long id) {
-			if (Version.AtLeast (2, 50))
-				return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_ELAPSED_TIME, new PacketWriter ().WriteId (id)).ReadLong ();
-			return -1;
+			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_ELAPSED_TIME, new PacketWriter ().WriteId (id)).ReadLong ();
 		}
 
 		internal void Thread_GetFrameInfo (long id, int start_frame, int length, Action<FrameInfo[]> resultCallaback) {
