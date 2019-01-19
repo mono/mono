@@ -32,6 +32,11 @@ public class BitcodeMixedTests
 		return iface.virt<int> () == typeof(int) ? 0 : 1;
 	}
 
+	public static int test_0_entry_vcall_virtual_wrapper () {
+		InterpOnlyIFace iface = new InterpOnly ();
+		return iface.virt2 (new FooStruct (), new FooStruct ()) == typeof(FooStruct) ? 0 : 1;
+	}
+
 	public static int test_2_entry_delegate () {
 		Func<int, int> func = InterpOnly.entry_1;
 

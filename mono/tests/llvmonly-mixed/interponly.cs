@@ -6,11 +6,16 @@ using System.Runtime.CompilerServices;
 // This assembly is not AOT-ed, so all calls into it transition to the interpreter
 //
 
+public struct FooStruct {
+	int i1, i2, i3, i4, i5, i6;
+}
+
 public interface InterpOnlyIFace
 {
 	int get_Field2 ();
 
 	Type virt<T> ();
+	Type virt2 (FooStruct s, FooStruct s2);
 }
 
 public class InterpOnly : InterpOnlyIFace
@@ -31,6 +36,10 @@ public class InterpOnly : InterpOnlyIFace
 
 	public virtual Type virt<T> () {
 		return typeof(T);
+	}
+
+	public virtual Type virt2 (FooStruct s, FooStruct s2) {
+		return typeof(FooStruct);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -70,5 +79,9 @@ public struct InterpOnlyStruct : InterpOnlyIFace
 
 	public Type virt<T> () {
 		return typeof(T);
+	}
+
+	public Type virt2 (FooStruct s, FooStruct s2) {
+		return typeof(FooStruct);
 	}
 }
