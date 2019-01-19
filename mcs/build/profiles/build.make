@@ -140,7 +140,7 @@ VBCS_LOCATION?=$(dir $(SERVER_CSC_LOCATION))/VBCSCompiler.exe
 
 start-compiler-server:
 	echo Attempting to start compiler server...
-	$(topdir)/build/start-compiler-server.sh $(VBCS_LOCATION) $(COMPILER_SERVER_PIPENAME)
+	$(topdir)/build/start-compiler-server.sh $(PROFILE_RUNTIME) $(VBCS_LOCATION) $(topdir)/build/compiler-server.log $(COMPILER_SERVER_PIPENAME)
 else
 start-compiler-server:
 	echo Not starting compiler server
