@@ -48,6 +48,11 @@ public class InterpOnly : InterpOnlyIFace
 	public static int throw_from_interp () {
 		throw new ArgumentNullException ();
 	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static Func<int, int> create_del () {
+		return InterpOnly.entry_1;
+	}
 }
 
 public struct InterpOnlyStruct : InterpOnlyIFace

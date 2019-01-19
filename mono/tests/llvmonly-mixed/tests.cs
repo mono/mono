@@ -53,6 +53,18 @@ public class BitcodeMixedTests
 		return func ();
 	}
 
+	public static int test_2_entry_delegate_dynamic () {
+		var func = (Func<int, int>)Delegate.CreateDelegate (typeof (Func<int, int>), null, typeof (InterpOnly).GetMethod ("entry_1"), true);
+
+		return func (1);
+	}
+
+	public static int test_2_entry_delegate_created_in_interp () {
+		Func<int, int> func = InterpOnly.create_del ();
+
+		return func (1);
+	}
+
 	public static int test_2_invoke () {
 		var res = typeof (InterpOnly).GetMethod ("entry_1").Invoke (null, new object [] { 1 });
 		return (int)res;
