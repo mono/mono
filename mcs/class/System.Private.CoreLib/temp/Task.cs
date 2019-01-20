@@ -230,6 +230,11 @@ namespace System.Threading.Tasks
             return true;
         }
 
+        internal static void RemoveFromActiveTasks(Task task)
+        {
+            RemoveFromActiveTasks(task.Id);
+        }
+
         internal static void RemoveFromActiveTasks(int taskId)
         {
             lock (s_activeTasksLock)
