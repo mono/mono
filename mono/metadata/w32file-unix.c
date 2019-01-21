@@ -3537,6 +3537,7 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 	gchar *utf8_name;
 
 	struct stat buf, linkbuf;
+	struct stat *pbuf;
 	gint result;
 	
 	if (name == NULL) {
@@ -3578,26 +3579,33 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 	stat->attributes = _wapi_stat_to_file_attributes (utf8_name, &buf, &linkbuf);
 	stat->length = (stat->attributes & FILE_ATTRIBUTE_DIRECTORY) ? 0 : buf.st_size;
 
+	if (&linkbuf == NULL) {
+		pbuf = &buf;
+	}
+	else {
+		pbuf = &linkbuf;
+	}
+
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
-	if (buf.st_mtimespec.tv_sec < buf.st_ctimespec.tv_sec || (buf.st_mtimespec.tv_sec == buf.st_ctimespec.tv_sec && buf.st_mtimespec.tv_nsec < buf.st_ctimespec.tv_nsec))
-		stat->creation_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	if (pbuf->st_mtimespec.tv_sec < pbuf->st_ctimespec.tv_sec || (pbuf->st_mtimespec.tv_sec == pbuf->st_ctimespec.tv_sec && pbuf->st_mtimespec.tv_nsec < pbuf->st_ctimespec.tv_nsec))
+		stat->creation_time = pbuf->st_mtimespec.tv_sec * TICKS_PER_SECOND + (pbuf->st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctimespec.tv_sec * TICKS_PER_SECOND + (buf.st_ctimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+		stat->creation_time = pbuf->st_ctimespec.tv_sec * TICKS_PER_SECOND + (pbuf->st_ctimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atimespec.tv_sec * TICKS_PER_SECOND + (buf.st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_access_time = pbuf->st_atimespec.tv_sec * TICKS_PER_SECOND + (pbuf->st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_write_time = pbuf->st_mtimespec.tv_sec * TICKS_PER_SECOND + (pbuf->st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 #elif HAVE_STRUCT_STAT_ST_ATIM
-	if (buf.st_mtime < buf.st_ctime || (buf.st_mtime == buf.st_ctime && buf.st_mtim.tv_nsec < buf.st_ctim.tv_nsec))
-		stat->creation_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	if (pbuf->st_mtime < pbuf->st_ctime || (pbuf->st_mtime == pbuf->st_ctime && pbuf->st_mtim.tv_nsec < pbuf->st_ctim.tv_nsec))
+		stat->creation_time = pbuf->st_mtime * TICKS_PER_SECOND + (pbuf->st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctime * TICKS_PER_SECOND + (buf.st_ctim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+		stat->creation_time = pbuf->st_ctime * TICKS_PER_SECOND + (pbuf->st_ctim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atime * TICKS_PER_SECOND + (buf.st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_access_time = pbuf->st_atime * TICKS_PER_SECOND + (pbuf->st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_write_time = pbuf->st_mtime * TICKS_PER_SECOND + (pbuf->st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 #else
-	stat->creation_time = (((guint64) (buf.st_mtime < buf.st_ctime ? buf.st_mtime : buf.st_ctime)) * TICKS_PER_SECOND) + CONVERT_BASE;
-	stat->last_access_time = (((guint64) (buf.st_atime)) * TICKS_PER_SECOND) + CONVERT_BASE;
-	stat->last_write_time = (((guint64) (buf.st_mtime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->creation_time = (((guint64) (pbuf->st_mtime < pbuf->st_ctime ? pbuf->st_mtime : pbuf->st_ctime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_access_time = (((guint64) (pbuf->st_atime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_write_time = (((guint64) (pbuf->st_mtime)) * TICKS_PER_SECOND) + CONVERT_BASE;
 #endif
 
 	g_free (utf8_name);
