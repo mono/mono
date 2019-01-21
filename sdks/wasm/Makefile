@@ -283,7 +283,9 @@ package: build build-dbg-proxy
 	mkdir tmp
 	mkdir tmp/wasm-bcl
 	mkdir tmp/wasm-bcl/wasm
+	mkdir tmp/wasm-bcl/wasm_tools
 	cp -r $(TOP)/sdks/out/wasm-bcl/wasm/* tmp/wasm-bcl/wasm/
+	cp -r $(TOP)/sdks/out/wasm-bcl/wasm_tools/* tmp/wasm-bcl/wasm_tools/
 	rm -rf tmp/wasm-bcl/wasm/bare
 	rm -rf tmp/wasm-bcl/wasm/secxml
 	rm -rf tmp/wasm-bcl/wasm/tests
