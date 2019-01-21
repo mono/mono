@@ -272,7 +272,14 @@ namespace WsProxy {
 
 						var asm = store.GetAssemblyByName (assembly_name);
 						var method = asm.GetMethodByToken (method_token);
-						var location = method.GetLocationByIl (il_pos);
+
+                        if (method == null)
+                        {
+						    Info ($"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
+                            continue;
+                        }
+
+                        var location = method?.GetLocationByIl (il_pos);
 
 						// When hitting a breakpoint on the "IncrementCount" method in the standard
 						// Blazor project template, one of the stack frames is inside mscorlib.dll
