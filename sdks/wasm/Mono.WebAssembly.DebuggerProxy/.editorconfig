@@ -1,0 +1,28 @@
+root = true
+
+[*]
+end_of_line = crlf
+tab_width = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[{*.cs, *.tt}]
+indent_style = tab
+csharp_new_line_before_open_brace = false
+
+[{*.ts, *.json}]
+indent_style = tab
+
+[*.csproj]
+indent_style = tab
+tab_width = 2
+indent_size = 2
+
+[*.js]
+indent_style = tab
+
+[*.yml]
+indent_style = tab
+
+[*.md]
+indent_style = tab

@@ -46,7 +46,6 @@ namespace WsProxy {
 			};
 		}
 
-
         static (string Assembly, string DocumentPath) ParseDocumentUrl(string url)
         {
             if (Uri.TryCreate(url, UriKind.Absolute, out var docUri) && docUri.Scheme == "dotnet")
@@ -61,11 +60,10 @@ namespace WsProxy {
                 return (null, null);
             }
         }
-
     }
 
 
-    internal class VarInfo {
+	internal class VarInfo {
 		public VarInfo (VariableDebugInformation v)
 		{
 			this.Name = v.Name;
@@ -285,56 +283,49 @@ namespace WsProxy {
 		ModuleDefinition image;
 		readonly int id;
 		Dictionary<int, MethodInfo> methods = new Dictionary<int, MethodInfo> ();
-        private Dictionary<string, string> _sourceLinkMappings = new Dictionary<string, string>();
-        readonly List<SourceFile> sources = new List<SourceFile> ();
+		private Dictionary<string, string> _sourceLinkMappings = new Dictionary<string, string>();
+		readonly List<SourceFile> sources = new List<SourceFile>();
 
-        public AssemblyInfo(byte[] assembly, byte[] pdb)
-        {
-            lock (typeof(AssemblyInfo))
-            {
-                this.id = ++next_id;
-            }
+		public AssemblyInfo(byte[] assembly, byte[] pdb) {
+			lock (typeof(AssemblyInfo)) {
+				this.id = ++next_id;
+			}
 
-            try
-            {
-                ReaderParameters rp = new ReaderParameters(/*ReadingMode.Immediate*/);
-                if (pdb != null)
-                {
-                    rp.ReadSymbols = true;
-                    rp.SymbolReaderProvider = new PortablePdbReaderProvider();
-                    rp.SymbolStream = new MemoryStream(pdb);
-                }
+			try {
+				ReaderParameters rp = new ReaderParameters(/*ReadingMode.Immediate*/);
+				if (pdb != null) {
+					rp.ReadSymbols = true;
+					rp.SymbolReaderProvider = new PortablePdbReaderProvider();
+					rp.SymbolStream = new MemoryStream(pdb);
+				}
 
-                rp.ReadingMode = ReadingMode.Immediate;
-                rp.InMemory = true;
+				rp.ReadingMode = ReadingMode.Immediate;
+				rp.InMemory = true;
 
-                this.image = ModuleDefinition.ReadModule(new MemoryStream(assembly), rp);
-            }
-            catch (BadImageFormatException ex)
-            {
-                Console.WriteLine("Failed to read assembly as portable PDB");
-            }
+				this.image = ModuleDefinition.ReadModule(new MemoryStream(assembly), rp);
+			}
+			catch (BadImageFormatException ex) {
+				Console.WriteLine("Failed to read assembly as portable PDB");
+			}
 
-            if (this.image == null)
-            {
-                ReaderParameters rp = new ReaderParameters(/*ReadingMode.Immediate*/);
-                if (pdb != null)
-                {
-                    rp.ReadSymbols = true;
-                    rp.SymbolReaderProvider = new NativePdbReaderProvider();
-                    rp.SymbolStream = new MemoryStream(pdb);
-                }
+			if (this.image == null) {
+				ReaderParameters rp = new ReaderParameters(/*ReadingMode.Immediate*/);
+				if (pdb != null) {
+					rp.ReadSymbols = true;
+					rp.SymbolReaderProvider = new NativePdbReaderProvider();
+					rp.SymbolStream = new MemoryStream(pdb);
+				}
 
-                rp.ReadingMode = ReadingMode.Immediate;
-                rp.InMemory = true;
+				rp.ReadingMode = ReadingMode.Immediate;
+				rp.InMemory = true;
 
-                this.image = ModuleDefinition.ReadModule(new MemoryStream(assembly), rp);
-            }
+				this.image = ModuleDefinition.ReadModule(new MemoryStream(assembly), rp);
+			}
 
-            Populate();
-        }
+			Populate();
+		}
 
-        public AssemblyInfo ()
+		public AssemblyInfo ()
 		{
 		}
 
@@ -361,82 +352,71 @@ namespace WsProxy {
 					if (first_doc == null && !sp.Document.Url.EndsWith(".g.cs")) {
 						first_doc = sp.Document;
 					}
-                    //  else if (first_doc != sp.Document) {
+					//  else if (first_doc != sp.Document) {
 					//	//FIXME this is needed for (c)ctors in corlib
 					//	throw new Exception ($"Cant handle multi-doc methods in {m}");
 					//}
 				}
 
-                if (first_doc == null)
-                {
-                    // all generated files
-                    first_doc = m.DebugInformation.SequencePoints.FirstOrDefault()?.Document;
-                }
+				if (first_doc == null) {
+					// all generated files
+					first_doc = m.DebugInformation.SequencePoints.FirstOrDefault()?.Document;
+				}
 
-                if (first_doc != null)
-                {
-                    var src = get_src(first_doc);
-                    var mi = new MethodInfo(this, m, src);
-                    int mt = (int)m.MetadataToken.RID;
-                    this.methods[mt] = mi;
-                    if (src != null)
-                        src.AddMethod(mi);
-                }
-            }
+				if (first_doc != null) {
+					var src = get_src(first_doc);
+					var mi = new MethodInfo(this, m, src);
+					int mt = (int)m.MetadataToken.RID;
+					this.methods[mt] = mi;
+					if (src != null)
+						src.AddMethod(mi);
+				}
+			}
 		}
 
-        private void ProcessSourceLink()
-        {
-            var sourceLinkDebugInfo = image.CustomDebugInformations.FirstOrDefault(i => i.Kind == CustomDebugInformationKind.SourceLink);
+		private void ProcessSourceLink() {
+			var sourceLinkDebugInfo = image.CustomDebugInformations.FirstOrDefault(i => i.Kind == CustomDebugInformationKind.SourceLink);
 
-            if (sourceLinkDebugInfo != null)
-            {
-                var sourceLinkContent = ((SourceLinkDebugInformation)sourceLinkDebugInfo).Content;
+			if (sourceLinkDebugInfo != null) {
+				var sourceLinkContent = ((SourceLinkDebugInformation)sourceLinkDebugInfo).Content;
 
-                if (sourceLinkContent != null)
-                {
-                    var jObject = JObject.Parse(sourceLinkContent)["documents"];
-                    _sourceLinkMappings = JsonConvert.DeserializeObject<Dictionary<string, string>>(jObject.ToString());
-                }
-            }
-        }
+				if (sourceLinkContent != null) {
+					var jObject = JObject.Parse(sourceLinkContent)["documents"];
+					_sourceLinkMappings = JsonConvert.DeserializeObject<Dictionary<string, string>>(jObject.ToString());
+				}
+			}
+		}
 
-        private Uri GetSourceLinkUrl(string document)
-        {
-            if (_sourceLinkMappings.TryGetValue(document, out string url))
-            {
-                return new Uri(url);
-            }
+		private Uri GetSourceLinkUrl(string document) {
+			if (_sourceLinkMappings.TryGetValue(document, out string url)) {
+				return new Uri(url);
+			}
 
-            foreach (var sourceLinkDocument in _sourceLinkMappings)
-            {
-                string key = sourceLinkDocument.Key;
-                if (Path.GetFileName(key) != "*")
-                {
-                    continue;
-                }
+			foreach (var sourceLinkDocument in _sourceLinkMappings) {
+				string key = sourceLinkDocument.Key;
+				if (Path.GetFileName(key) != "*") {
+					continue;
+				}
 
-                var keyTrim = key.TrimEnd('*');
-                var docUrlPart = document.Replace(keyTrim, "");
+				var keyTrim = key.TrimEnd('*');
+				var docUrlPart = document.Replace(keyTrim, "");
 
-                return new Uri(sourceLinkDocument.Value.TrimEnd('*') + docUrlPart);
-            }
+				return new Uri(sourceLinkDocument.Value.TrimEnd('*') + docUrlPart);
+			}
 
-            return null;
-        }
+			return null;
+		}
 
-        public string GetRelativePath(string relativeTo, string path)
-        {
-            var uri = new Uri(relativeTo, UriKind.RelativeOrAbsolute);
-            var rel = Uri.UnescapeDataString(uri.MakeRelativeUri(new Uri(path, UriKind.RelativeOrAbsolute)).ToString()).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            if (rel.Contains(Path.DirectorySeparatorChar.ToString()) == false)
-            {
-                rel = $".{ Path.DirectorySeparatorChar }{ rel }";
-            }
-            return rel;
-        }
+		public string GetRelativePath(string relativeTo, string path) {
+			var uri = new Uri(relativeTo, UriKind.RelativeOrAbsolute);
+			var rel = Uri.UnescapeDataString(uri.MakeRelativeUri(new Uri(path, UriKind.RelativeOrAbsolute)).ToString()).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+			if (rel.Contains(Path.DirectorySeparatorChar.ToString()) == false) {
+				rel = $".{ Path.DirectorySeparatorChar }{ rel }";
+			}
+			return rel;
+		}
 
-        public IEnumerable<SourceFile> Sources {
+		public IEnumerable<SourceFile> Sources {
 			get { return this.sources; }
 		}
 
@@ -448,30 +428,29 @@ namespace WsProxy {
 			return sources.FirstOrDefault (s => s.SourceId.Document == document);
 		}
 
-		public MethodInfo GetMethodByToken (int token)
-		{
+		public MethodInfo GetMethodByToken(int token)
+			{
 			methods.TryGetValue(token, out var value);
-            return value;
+			return value;
 		}
-
 	}
 
 	internal class SourceFile {
 		HashSet<MethodInfo> methods;
-        Uri sourceLinkUri;
-        AssemblyInfo assembly;
+		Uri sourceLinkUri;
+		AssemblyInfo assembly;
 		int id;
 		Document doc;
 
 		internal SourceFile (AssemblyInfo assembly, int id, Document doc, Uri sourceLinkUri)
 		{
 			this.methods = new HashSet<MethodInfo> ();
-            this.sourceLinkUri = sourceLinkUri;
-            this.assembly = assembly;
+			this.sourceLinkUri = sourceLinkUri;
+			this.assembly = assembly;
 			this.id = id;
 			this.doc = doc;
-            this.FileName = doc.Url.Replace("\\", "/").Replace(":", "");
-        }
+			this.FileName = doc.Url.Replace("\\", "/").Replace(":", "");
+		}
 
 		internal void AddMethod (MethodInfo mi)
 		{
@@ -481,10 +460,10 @@ namespace WsProxy {
 		public string Url => $"dotnet://{assembly.Name}/{FileName}";
 		public string DocHashCode => "abcdee" + id;
 		public SourceId SourceId => new SourceId (assembly.Id, this.id);
-        public Uri OriginalSourcePath 
-            => sourceLinkUri ?? new Uri(doc.Url.StartsWith("/") ? "file://" : "" + doc.Url, UriKind.RelativeOrAbsolute);
+		public Uri OriginalSourcePath
+			=> sourceLinkUri ?? new Uri(doc.Url.StartsWith("/") ? "file://" : "" + doc.Url, UriKind.RelativeOrAbsolute);
 
-        public IEnumerable<MethodInfo> Methods => this.methods;
+		public IEnumerable<MethodInfo> Methods => this.methods;
 	}
 
 	internal class DebugStore {
@@ -500,32 +479,29 @@ namespace WsProxy {
 			var pdb_files = new List<string> ();
 			foreach (var f in loaded_files) {
 				var file_name = f;
-                if (file_name.EndsWith (".pdb", StringComparison.OrdinalIgnoreCase))
-                    pdb_files.Add (file_name);
+				if (file_name.EndsWith(".pdb", StringComparison.OrdinalIgnoreCase))
+					pdb_files.Add(file_name);
 				else
-					asm_files.Add (file_name);
+					asm_files.Add(file_name);
 			}
 
-            //FIXME make this parallel
-            foreach (var p in asm_files)
-            {
-                try
-                {
-                    var pdb = pdb_files.FirstOrDefault(n => MatchPdb(p, n));
-                    HttpClient h = new HttpClient();
-                    var assembly_bytes = h.GetByteArrayAsync(p).Result;
-                    byte[] pdb_bytes = null;
-                    if (pdb != null)
-                        pdb_bytes = h.GetByteArrayAsync(pdb).Result;
+			//FIXME make this parallel
+			foreach (var p in asm_files) {
+				try {
+					var pdb = pdb_files.FirstOrDefault(n => MatchPdb(p, n));
+					HttpClient h = new HttpClient();
+					var assembly_bytes = h.GetByteArrayAsync(p).Result;
+					byte[] pdb_bytes = null;
+					if (pdb != null)
+						pdb_bytes = h.GetByteArrayAsync(pdb).Result;
 
-                    this.assemblies.Add(new AssemblyInfo(assembly_bytes, pdb_bytes));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Failed to read {p} ({e.Message})");
-                }
-            }
-        }
+					this.assemblies.Add(new AssemblyInfo(assembly_bytes, pdb_bytes));
+				}
+				catch (Exception e) {
+					Console.WriteLine($"Failed to read {p} ({e.Message})");
+				}
+			}
+		}
 
 		public IEnumerable<SourceFile> AllSources ()
 		{
@@ -641,7 +617,7 @@ namespace WsProxy {
 			return null;
 		}
 
-        public string ToUrl(SourceLocation location) 
-            => location != null ? GetFileById(location.Id).Url : "";
+		public string ToUrl(SourceLocation location)
+			=> location != null ? GetFileById(location.Id).Url : "";
     }
 }

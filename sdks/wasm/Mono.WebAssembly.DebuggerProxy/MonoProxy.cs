@@ -273,13 +273,12 @@ namespace WsProxy {
 						var asm = store.GetAssemblyByName (assembly_name);
 						var method = asm.GetMethodByToken (method_token);
 
-                        if (method == null)
-                        {
-						    Info ($"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
-                            continue;
-                        }
+						if (method == null) {
+							Info($"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
+							continue;
+						}
 
-                        var location = method?.GetLocationByIl (il_pos);
+						var location = method?.GetLocationByIl (il_pos);
 
 						// When hitting a breakpoint on the "IncrementCount" method in the standard
 						// Blazor project template, one of the stack frames is inside mscorlib.dll
@@ -656,44 +655,36 @@ namespace WsProxy {
 			var res = new StringWriter ();
 			res.WriteLine ($"//dotnet:{id}");
 
-            try
-            {
-                if (src_file.OriginalSourcePath.IsFile)
-                {
-                    using (var f = new StreamReader(File.Open(src_file.OriginalSourcePath.LocalPath, FileMode.Open)))
-                    {
-                        res.Write(f.ReadToEnd());
-                    }
+			try {
+				if (src_file.OriginalSourcePath.IsFile) {
+					using (var f = new StreamReader(File.Open(src_file.OriginalSourcePath.LocalPath, FileMode.Open))) {
+						res.Write(f.ReadToEnd());
+					}
 
-                    var o = JObject.FromObject(new
-                    {
-                        scriptSource = res.ToString()
-                    });
+					var o = JObject.FromObject(new {
+						scriptSource = res.ToString()
+					});
 
-                    SendResponse(msg_id, Result.Ok(o), token);
-                }
-                else
-                {
-                    var doc = await new WebClient().DownloadStringTaskAsync(src_file.OriginalSourcePath);
-                    res.Write(doc);
+					SendResponse(msg_id, Result.Ok(o), token);
+				}
+				else {
+					var doc = await new WebClient().DownloadStringTaskAsync(src_file.OriginalSourcePath);
+					res.Write(doc);
 
-                    var o = JObject.FromObject(new
-                    {
-                        scriptSource = res.ToString()
-                    });
+					var o = JObject.FromObject(new {
+						scriptSource = res.ToString()
+					});
 
-                    SendResponse(msg_id, Result.Ok(o), token);
-                }
-            }
-            catch(Exception e)
-            {
-                var o = JObject.FromObject(new
-                {
-                    scriptSource = $"// Unable to find document {src_file.OriginalSourcePath}"
-                });
+					SendResponse(msg_id, Result.Ok(o), token);
+				}
+			}
+			catch (Exception e) {
+				var o = JObject.FromObject(new {
+					scriptSource = $"// Unable to find document {src_file.OriginalSourcePath}"
+				});
 
-                SendResponse(msg_id, Result.Ok(o), token);
-            }
-        }
+				SendResponse(msg_id, Result.Ok(o), token);
+			}
+		}
 	}
 }
