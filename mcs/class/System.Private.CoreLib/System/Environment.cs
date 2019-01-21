@@ -1,7 +1,14 @@
+using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
+using Mono;
 
 namespace System
 {
+    enum PlatformID
+    {
+    }
+
 	partial class Environment
 	{
 #region referencesource dependencies
@@ -28,9 +35,20 @@ namespace System
 		internal static int GetPageSize () => 0;
 #endregion
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static string internalGetEnvironmentVariable_native (IntPtr variable);
+
+		static string internalGetEnvironmentVariable (string variable) {
+			if (variable == null)
+				return null;
+			using (var h = RuntimeMarshal.MarshalString (variable)) {
+				return internalGetEnvironmentVariable_native (h.Value);
+			}
+		}
+
 		public static string GetEnvironmentVariable (string variable)
 		{
-			throw new NotImplementedException ();
+			return internalGetEnvironmentVariable (variable);
 		}
 
 		internal static string GetResourceStringLocal (string key)
@@ -77,5 +95,18 @@ namespace System
 		public static void FailFast (string message, Exception exception, string errorMessage)
 		{
 		}
+
+		static internal PlatformID Platform {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
+		}
+
+#if (MONOTOUCH || MONODROID || XAMMAC)
+		internal const bool IsRunningOnWindows = false;
+#else
+		internal static bool IsRunningOnWindows {
+			get { return ((int) Platform < 4); }
+		}
+#endif
 	}
 }

@@ -43,10 +43,12 @@ namespace System.Reflection
 
 	}
 
+#if !NETCORE
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+#endif
 	[StructLayout (LayoutKind.Sequential)]
 	class MonoParameterInfo : RuntimeParameterInfo {		
 		internal MarshalAsAttribute marshalAs;

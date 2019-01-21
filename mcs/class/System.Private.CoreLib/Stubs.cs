@@ -62,6 +62,8 @@ namespace System.Reflection
 	abstract class MonoMethod : MethodInfo
 	{
 		internal MethodInfo GetBaseMethod () => throw new NotImplementedException ();
+
+		internal Object InternalInvoke (Object obj, Object[] parameters, out Exception exc) => throw new NotImplementedException ();
 	}
 
 	abstract class RuntimeModule
