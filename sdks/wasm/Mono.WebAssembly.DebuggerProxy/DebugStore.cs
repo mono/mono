@@ -29,8 +29,8 @@ namespace WsProxy {
 			if (!url.StartsWith ("dotnet://", StringComparison.InvariantCulture))
 				return null;
 
-			var parts = url.Substring ("dotnet://".Length).Split ('/');
-			if (parts.Length != 2)
+			var parts = ParseDocumentUrl(url);
+			if (parts.Assembly == null)
 				return null;
 
 			var line = args? ["lineNumber"]?.Value<int> ();
@@ -39,16 +39,33 @@ namespace WsProxy {
 				return null;
 
 			return new BreakPointRequest () {
-				Assembly = parts [0],
-				File = parts [1],
+				Assembly = parts.Assembly,
+				File = parts.DocumentPath,
 				Line = line.Value,
 				Column = column.Value
 			};
 		}
-	}
 
 
-	internal class VarInfo {
+        static (string Assembly, string DocumentPath) ParseDocumentUrl(string url)
+        {
+            if (Uri.TryCreate(url, UriKind.Absolute, out var docUri) && docUri.Scheme == "dotnet")
+            {
+                return (
+                    docUri.Host,
+                    docUri.PathAndQuery.Substring(1)
+                );
+            }
+            else
+            {
+                return (null, null);
+            }
+        }
+
+    }
+
+
+    internal class VarInfo {
 		public VarInfo (VariableDebugInformation v)
 		{
 			this.Name = v.Name;
@@ -453,13 +470,14 @@ namespace WsProxy {
             this.assembly = assembly;
 			this.id = id;
 			this.doc = doc;
-		}
+            this.FileName = doc.Url.Replace("\\", "/").Replace(":", "");
+        }
 
 		internal void AddMethod (MethodInfo mi)
 		{
 			this.methods.Add (mi);
 		}
-		public string FileName => Path.GetFileName (doc.Url);
+		public string FileName { get; }
 		public string Url => $"dotnet://{assembly.Name}/{FileName}";
 		public string DocHashCode => "abcdee" + id;
 		public SourceId SourceId => new SourceId (assembly.Id, this.id);
@@ -609,8 +627,8 @@ namespace WsProxy {
 
 		public SourceLocation FindBestBreakpoint (BreakPointRequest req)
 		{
-			var asm = this.assemblies.FirstOrDefault (a => a.Name == req.Assembly);
-			var src = asm.Sources.FirstOrDefault (s => s.FileName == req.File);
+			var asm = this.assemblies.FirstOrDefault (a => a.Name.Equals(req.Assembly, StringComparison.OrdinalIgnoreCase));
+			var src = asm.Sources.FirstOrDefault (s => s.FileName.Equals(req.File, StringComparison.OrdinalIgnoreCase));
 
 			foreach (var m in src.Methods) {
 				foreach (var sp in m.methodDef.DebugInformation.SequencePoints) {
