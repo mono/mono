@@ -10,8 +10,4 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /y &quot;$(TargetDir)\*.*&quot; &quot;C:\Users\jerome.laban\source\repos\PartialDebugSupport\PartialDebugSupport.Wasm\obj\Debug\netstandard2.0\wasm-debugger\mono-wasm-01f6a0203b0\&quot;" />
-  </Target>
-
 </Project>

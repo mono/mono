@@ -274,7 +274,7 @@ namespace WsProxy {
 						var method = asm.GetMethodByToken (method_token);
 
 						if (method == null) {
-							Info($"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
+							Info ($"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
 							continue;
 						}
 
@@ -284,8 +284,7 @@ namespace WsProxy {
 						// Blazor project template, one of the stack frames is inside mscorlib.dll
 						// and we get location==null for it. It will trigger a NullReferenceException
 						// if we don't skip over that stack frame.
-						if (location == null)
-						{
+						if (location == null) {
 							continue;
 						}
 
@@ -657,33 +656,31 @@ namespace WsProxy {
 
 			try {
 				if (src_file.OriginalSourcePath.IsFile) {
-					using (var f = new StreamReader(File.Open(src_file.OriginalSourcePath.LocalPath, FileMode.Open))) {
-						res.Write(f.ReadToEnd());
+					using (var f = new StreamReader (File.Open (src_file.OriginalSourcePath.LocalPath, FileMode.Open))) {
+						res.Write (f.ReadToEnd ());
 					}
 
-					var o = JObject.FromObject(new {
-						scriptSource = res.ToString()
+					var o = JObject.FromObject (new {
+						scriptSource = res.ToString ()
 					});
 
-					SendResponse(msg_id, Result.Ok(o), token);
-				}
-				else {
-					var doc = await new WebClient().DownloadStringTaskAsync(src_file.OriginalSourcePath);
-					res.Write(doc);
+					SendResponse (msg_id, Result.Ok (o), token);
+				} else {
+					var doc = await new WebClient ().DownloadStringTaskAsync (src_file.OriginalSourcePath);
+					res.Write (doc);
 
-					var o = JObject.FromObject(new {
-						scriptSource = res.ToString()
+					var o = JObject.FromObject (new {
+						scriptSource = res.ToString ()
 					});
 
-					SendResponse(msg_id, Result.Ok(o), token);
+					SendResponse (msg_id, Result.Ok (o), token);
 				}
-			}
-			catch (Exception e) {
-				var o = JObject.FromObject(new {
+			} catch (Exception e) {
+				var o = JObject.FromObject (new {
 					scriptSource = $"// Unable to find document {src_file.OriginalSourcePath}"
 				});
 
-				SendResponse(msg_id, Result.Ok(o), token);
+				SendResponse (msg_id, Result.Ok (o), token);
 			}
 		}
 	}
