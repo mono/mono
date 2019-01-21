@@ -130,8 +130,6 @@ class Driver {
 				Console.WriteLine ("        type: bool  default: " + ((flag as BoolFlag).DefaultValue ? "true" : "false"));
 			}
 		}
-
-
 	}
 
 	static void Debug (string s) {
@@ -244,7 +242,7 @@ class Driver {
 		}
 	}
 
-	void GenDriver (string builddir, List<string> profilers, ExecMode ee_mode) {
+	void GenDriver (string builddir, List<string> profilers, ExecMode ee_mode, bool link_icalls) {
 		var symbols = new List<string> ();
 		foreach (var adata in assemblies) {
 			if (adata.aot)
@@ -279,6 +277,9 @@ class Driver {
 			break;
 		}
 
+		if (link_icalls)
+			w.WriteLine ("#define LINK_ICALLS 1");
+
 		w.Close ();
 	}
 
@@ -304,6 +305,7 @@ class Driver {
 		public bool DebugRuntime;
 		public bool AddBinding;
 		public bool Linker;
+		public bool LinkIcalls;
 	}
 
 	int Run (string[] args) {
@@ -323,6 +325,9 @@ class Driver {
 		var enable_dedup = true;
 		var print_usage = false;
 		var emit_ninja = false;
+		bool build_wasm = false;
+		bool enable_lto = false;
+		bool link_icalls = false;
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
@@ -362,6 +367,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("debugrt", "enable debug runtime", opts.DebugRuntime, b => opts.DebugRuntime = b));
 		AddFlag (p, new BoolFlag ("linker", "enable the linker", opts.Linker, b => opts.Linker = b));
 		AddFlag (p, new BoolFlag ("binding", "enable the binding engine", opts.AddBinding, b => opts.AddBinding = b));
+		AddFlag (p, new BoolFlag ("link-icalls", "link away unused icalls", opts.LinkIcalls, b => opts.LinkIcalls = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -387,14 +393,26 @@ class Driver {
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
 
-		if (enable_aot)
+		if (enable_aot || opts.Linker)
 			enable_linker = true;
+		if (opts.LinkIcalls)
+			link_icalls = true;
+		if (!enable_linker || !enable_aot)
+			enable_dedup = false;
+		if (enable_aot || link_icalls)
+			build_wasm = true;
+		if (!enable_aot && link_icalls)
+			enable_lto = true;
 
 		if (aot_assemblies != "") {
 			if (ee_mode != ExecMode.AotInterp) {
 				Console.Error.WriteLine ("The --aot-assemblies= argument requires --aot-interp.");
 				return 1;
 			}
+		}
+		if (link_icalls && !enable_linker) {
+			Console.Error.WriteLine ("The --link-icalls option requires the --linker option.");
+			return 1;
 		}
 
 		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
@@ -483,17 +501,13 @@ class Driver {
 			} else {
 				if (File.Exists(runtimeTemplate))
 					CopyFile (runtimeTemplate, runtime_js, CopyType.IfNewer, $"runtime template <{runtimeTemplate}> ");
-				else
-				{
+				else {
 					var runtime_gen = "\nvar Module = {\n\tonRuntimeInitialized: function () {\n\t\tMONO.mono_load_runtime_and_bcl (\n\t\tconfig.vfs_prefix,\n\t\tconfig.deploy_prefix,\n\t\tconfig.enable_debugging,\n\t\tconfig.file_list,\n\t\tfunction () {\n\t\t\tconfig.add_bindings ();\n\t\t\tApp.init ();\n\t\t}\n\t)\n\t},\n};";
 					File.Delete (runtime_js);
 					File.WriteAllText (runtime_js, runtime_gen);
 				}
 			}
 		}
-
-		if (!enable_linker || !enable_aot)
-			enable_dedup = false;
 
 		AssemblyData dedup_asm = null;
 
@@ -539,22 +553,25 @@ class Driver {
 		if (!emit_ninja)
 			return 0;
 
-		if (enable_aot) {
+		if (build_wasm) {
 			if (sdkdir == null) {
-				Console.WriteLine ("The --mono-sdkdir argument is required when using AOT.");
+				Console.WriteLine ("The --mono-sdkdir argument is required.");
 				return 1;
 			}
 			if (emscripten_sdkdir == null) {
-				Console.WriteLine ("The --emscripten-sdkdir argument is required when using AOT.");
+				Console.WriteLine ("The --emscripten-sdkdir argument is required.");
 				return 1;
 			}
-			GenDriver (builddir, profilers, ee_mode);
+			GenDriver (builddir, profilers, ee_mode, link_icalls);
 		}
 
 		string runtime_libs = "$mono_sdkdir/wasm-runtime-release/lib/libmonosgen-2.0.a";
-		if (ee_mode == ExecMode.AotInterp)
-			// FIXME: We need to link the icall table because the interpreter uses it to lookup icalls even if the aot-ed icall wrappers are available
-			runtime_libs += " $mono_sdkdir/wasm-runtime-release/lib/libmono-ee-interp.a $mono_sdkdir/wasm-runtime-release/lib/libmono-ilgen.a $mono_sdkdir/wasm-runtime-release/lib/libmono-icall-table.a";
+		if (ee_mode == ExecMode.AotInterp || link_icalls) {
+			runtime_libs += " $mono_sdkdir/wasm-runtime-release/lib/libmono-ee-interp.a $mono_sdkdir/wasm-runtime-release/lib/libmono-ilgen.a";
+			// We need to link the icall table because the interpreter uses it to lookup icalls even if the aot-ed icall wrappers are available
+			if (!link_icalls)
+				runtime_libs += " $mono_sdkdir/wasm-runtime-release/lib/libmono-icall-table.a";
+		}
 
 		string profiler_libs = "";
 		string profiler_aot_args = "";
@@ -568,6 +585,13 @@ class Driver {
 		runtime_dir = Path.GetFullPath (runtime_dir);
 		sdkdir = Path.GetFullPath (sdkdir);
 		out_prefix = Path.GetFullPath (out_prefix);
+
+		string driver_deps = "";
+		if (link_icalls)
+			driver_deps += "$builddir/icall-table.h";
+		string emcc_flags = "";
+		if (enable_lto)
+			emcc_flags += "--llvm-lto 1 ";
 
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
 
@@ -584,7 +608,7 @@ class Driver {
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
-		ninja.WriteLine ("emcc_flags = -Os -g -s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\"");
+		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\"");
 
 		// Rules
 		ninja.WriteLine ("rule aot");
@@ -610,20 +634,25 @@ class Driver {
 		ninja.WriteLine ("  description = [IL-LINK]");
 		ninja.WriteLine ("rule aot-dummy");
 		ninja.WriteLine ("  command = echo > aot-dummy.cs; csc /out:$out /target:library aot-dummy.cs");
+		ninja.WriteLine ("rule gen-runtime-icall-table");
+		ninja.WriteLine ("  command = $cross --print-icall-table > $out");
+		ninja.WriteLine ("rule gen-icall-table");
+		ninja.WriteLine ("  command = mono $tools_dir/wasm-tuner.exe --gen-icall-table $runtime_table $in > $out");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
 		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
-		if (enable_aot) {
+		if (build_wasm) {
 			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "driver.c"));
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
 			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
 
-			ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c");
-			ninja.WriteLine ("  flags = -DENABLE_AOT=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
+			var driver_cflags = enable_aot ? "-DENABLE_AOT=1" : "";
 
+			ninja.WriteLine ($"build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c {driver_deps}");
+			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
 			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
@@ -694,7 +723,18 @@ class Driver {
 			ninja.WriteLine ($"build {a.linkout_path}: aot-dummy");
 			ofiles += $" {a.bc_path}";
 		}
-		if (enable_aot) {
+		if (link_icalls) {
+			string icall_assemblies = "";
+			foreach (var a in assemblies) {
+				if (a.name == "mscorlib" || a.name == "System")
+					icall_assemblies += $"{a.linkout_path} ";
+			}
+			Console.WriteLine ("D: " + icall_assemblies);
+			ninja.WriteLine ("build $builddir/icall-table.json: gen-runtime-icall-table");
+			ninja.WriteLine ($"build $builddir/icall-table.h: gen-icall-table {icall_assemblies}");
+			ninja.WriteLine ($"  runtime_table=$builddir/icall-table.json");
+		}
+		if (build_wasm) {
 			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
 		}
 		if (enable_linker) {
