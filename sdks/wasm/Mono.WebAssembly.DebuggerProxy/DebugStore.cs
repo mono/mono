@@ -46,7 +46,7 @@ namespace WsProxy {
 			};
 		}
 
-		static (string Assembly, string DocumentPath) ParseDocumentUrl(string url)
+		static (string Assembly, string DocumentPath) ParseDocumentUrl (string url)
 		{
 			if (Uri.TryCreate (url, UriKind.Absolute, out var docUri) && docUri.Scheme == "dotnet") {
 				return (
@@ -283,7 +283,7 @@ namespace WsProxy {
 		Dictionary<string, string> sourceLinkMappings = new Dictionary<string, string>();
 		readonly List<SourceFile> sources = new List<SourceFile>();
 
-		public AssemblyInfo(byte[] assembly, byte[] pdb)
+		public AssemblyInfo (byte[] assembly, byte[] pdb)
 		{
 			lock (typeof (AssemblyInfo)) {
 				this.id = ++next_id;
@@ -371,7 +371,7 @@ namespace WsProxy {
 			}
 		}
 
-		private void ProcessSourceLink()
+		private void ProcessSourceLink ()
 		{
 			var sourceLinkDebugInfo = image.CustomDebugInformations.FirstOrDefault (i => i.Kind == CustomDebugInformationKind.SourceLink);
 
@@ -385,7 +385,7 @@ namespace WsProxy {
 			}
 		}
 
-		private Uri GetSourceLinkUrl(string document)
+		private Uri GetSourceLinkUrl (string document)
 		{
 			if (sourceLinkMappings.TryGetValue (document, out string url)) {
 				return new Uri (url);
@@ -406,7 +406,7 @@ namespace WsProxy {
 			return null;
 		}
 
-		private string GetRelativePath(string relativeTo, string path)
+		private string GetRelativePath (string relativeTo, string path)
 		{
 			var uri = new Uri (relativeTo, UriKind.RelativeOrAbsolute);
 			var rel = Uri.UnescapeDataString (uri.MakeRelativeUri (new Uri (path, UriKind.RelativeOrAbsolute)).ToString ()).Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
@@ -428,7 +428,7 @@ namespace WsProxy {
 			return sources.FirstOrDefault (s => s.SourceId.Document == document);
 		}
 
-		public MethodInfo GetMethodByToken(int token)
+		public MethodInfo GetMethodByToken (int token)
 		{
 			methods.TryGetValue (token, out var value);
 			return value;
@@ -469,9 +469,9 @@ namespace WsProxy {
 	internal class DebugStore {
 		List<AssemblyInfo> assemblies = new List<AssemblyInfo> ();
 
-		public DebugStore(string[] loaded_files)
+		public DebugStore (string [] loaded_files)
 		{
-			bool MatchPdb(string asm, string pdb)
+			bool MatchPdb (string asm, string pdb)
 			{
 				return Path.ChangeExtension (asm, "pdb") == pdb;
 			}
@@ -617,7 +617,7 @@ namespace WsProxy {
 			return null;
 		}
 
-		public string ToUrl(SourceLocation location)
+		public string ToUrl (SourceLocation location)
 			=> location != null ? GetFileById (location.Id).Url : "";
 	}
 }
