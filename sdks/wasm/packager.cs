@@ -76,6 +76,8 @@ class Driver {
 		public string linkin_path;
 		// Linker output path
 		public string linkout_path;
+		// Finaly output path after IL strip
+		public string final_path;
 		// Whenever to AOT this assembly
 		public bool aot;
 	}
@@ -306,6 +308,7 @@ class Driver {
 		public bool AddBinding;
 		public bool Linker;
 		public bool LinkIcalls;
+		public bool ILStrip;
 	}
 
 	int Run (string[] args) {
@@ -328,6 +331,7 @@ class Driver {
 		bool build_wasm = false;
 		bool enable_lto = false;
 		bool link_icalls = false;
+		var il_strip = false;
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
@@ -340,6 +344,7 @@ class Driver {
 				Debug = false,
 				DebugRuntime = false,
 				Linker = false,
+				ILStrip = true
 			};
 
 		var p = new OptionSet () {
@@ -368,6 +373,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("linker", "enable the linker", opts.Linker, b => opts.Linker = b));
 		AddFlag (p, new BoolFlag ("binding", "enable the binding engine", opts.AddBinding, b => opts.AddBinding = b));
 		AddFlag (p, new BoolFlag ("link-icalls", "link away unused icalls", opts.LinkIcalls, b => opts.LinkIcalls = b));
+		AddFlag (p, new BoolFlag ("il-strip", "strip IL code from assemblies in AOT mode", opts.ILStrip, b => opts.ILStrip = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -389,6 +395,7 @@ class Driver {
 		enable_linker = opts.Linker;
 		add_binding = opts.AddBinding;
 		use_release_runtime = !opts.DebugRuntime;
+		il_strip = opts.ILStrip;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
@@ -403,6 +410,9 @@ class Driver {
 			build_wasm = true;
 		if (!enable_aot && link_icalls)
 			enable_lto = true;
+		if (ee_mode != ExecMode.Aot)
+			// Can't strip out IL code in mixed mode, since the interpreter might execute some methods even if they have AOTed code available
+			il_strip = false;
 
 		if (aot_assemblies != "") {
 			if (ee_mode != ExecMode.AotInterp) {
@@ -638,6 +648,9 @@ class Driver {
 		ninja.WriteLine ("  command = $cross --print-icall-table > $out");
 		ninja.WriteLine ("rule gen-icall-table");
 		ninja.WriteLine ("  command = mono $tools_dir/wasm-tuner.exe --gen-icall-table $runtime_table $in > $out");
+		ninja.WriteLine ("rule ilstrip");
+		ninja.WriteLine ("  command = cp $in $out; mono-cil-strip $out");
+		ninja.WriteLine ("  description = [IL-STRIP]");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
@@ -688,7 +701,14 @@ class Driver {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
 			}
-			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {infile}");
+
+			a.final_path = infile;
+			if (il_strip) {
+				ninja.WriteLine ($"build $builddir/ilstrip-out/{filename} : ilstrip {infile}");
+				a.final_path = $"$builddir/ilstrip-out/{filename}";
+			}
+
+			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {a.final_path}");
 
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
@@ -751,6 +771,8 @@ class Driver {
 			ninja.WriteLine ($"build {linker_ofiles}: linker {linker_infiles}");
 			ninja.WriteLine ($"  linker_args={linker_args}");
 		}
+		if (il_strip)
+			ninja.WriteLine ("build $builddir/ilstrip-out: mkdir");
 
 		foreach(var asset in assets) {
 			var filename = Path.GetFileName (asset);
