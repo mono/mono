@@ -173,6 +173,9 @@ build-aot-sample: packager.exe hello.exe
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js hello.exe
 	ninja -v -C obj/aot-sample
 
+hello.exe:
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello.cs
+	
 run-aot-sample: build-aot-sample
 	(cd bin/aot-sample && $(SM) runtime.js --run hello.exe)
 
