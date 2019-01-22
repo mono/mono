@@ -826,15 +826,15 @@ public class CalendarTest {
 	}
 
 
-    [Test]
-    public void TestJapaneseCalendarDateParsing ()
-    {
-        CultureInfo ciJapanese = new CultureInfo ("ja-JP") { DateTimeFormat = { Calendar = new JapaneseCalendar () } };
+	[Test]
+	public void TestJapaneseCalendarDateParsing ()
+	{
+		CultureInfo ciJapanese = new CultureInfo ("ja-JP") { DateTimeFormat = { Calendar = new JapaneseCalendar () } };
 
-        DateTime dt = new DateTime (1970, 1, 1);
-        string eraName = dt.ToString ("gg", ciJapanese);
-        Assert.AreEqual (new DateTime (1995, 1, 1), DateTime.Parse (eraName + " 70/1/1 0:00:00", ciJapanese));
-    }
+		DateTime dt = new DateTime (1970, 1, 1);
+		string eraName = dt.ToString ("gg", ciJapanese);
+		Assert.AreEqual (new DateTime (1995, 1, 1), DateTime.Parse (eraName + " 70/1/1 0:00:00", ciJapanese));
+	}
 
 	// TODO: more tests :-)
 } // class CalendarTest
