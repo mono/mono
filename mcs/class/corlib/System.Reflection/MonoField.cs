@@ -43,7 +43,10 @@ using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 
-	abstract class RuntimeFieldInfo : FieldInfo, ISerializable
+	abstract class RuntimeFieldInfo : FieldInfo
+#if !NETCORE
+	, ISerializable
+#endif
 	{
 		internal BindingFlags BindingFlags {
 			get {
@@ -73,6 +76,7 @@ namespace System.Reflection {
 			return GetDeclaringTypeInternal ().GetRuntimeModule ();
 		}
 
+#if !NETCORE
         #region ISerializable Implementation
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -87,6 +91,7 @@ namespace System.Reflection {
                 MemberTypes.Field);
         }
         #endregion
+#endif
 	}
 
 	abstract class RtFieldInfo : RuntimeFieldInfo

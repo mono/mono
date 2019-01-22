@@ -154,6 +154,7 @@
       <Compile Include="System.Runtime.InteropServices\ComEventsHelper.cs" />
       <Compile Include="System.Runtime.InteropServices\CriticalHandle.cs" />
       <Compile Include="System.Runtime.InteropServices\InteropExtensions.cs" />
+      <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
       <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
       <Compile Include="System.Threading\EventWaitHandle.cs" />
@@ -172,8 +173,6 @@
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\build\common\SR.cs" />
-      <Compile Include="..\..\build\common\Locale.cs" />
-      <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
 
       <Compile Include="..\corlib\coreclr\Math.CoreCLR.cs" />
       <Compile Include="..\corlib\coreclr\SorterArray.cs" />
@@ -242,7 +241,6 @@
       <Compile Include="..\referencesource\mscorlib\system\gc.cs" />
       <Compile Include="..\referencesource\mscorlib\system\typeloadexception.cs" />
       <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
-      <Compile Include="..\referencesource\mscorlib\system\resid.cs" />
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\thread.cs" />

@@ -75,7 +75,10 @@ namespace System.Reflection {
 	internal delegate object GetterAdapter (object _this);
 	internal delegate R Getter<T,R> (T _this);
 
-	abstract class RuntimePropertyInfo : PropertyInfo, ISerializable
+	abstract class RuntimePropertyInfo : PropertyInfo
+#if !NETCORE
+	, ISerializable
+#endif
 	{
 		internal BindingFlags BindingFlags {
 			get {
@@ -133,6 +136,7 @@ namespace System.Reflection {
         }
         #endregion		
 
+#if !NETCORE
         #region ISerializable Implementation
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -155,6 +159,7 @@ namespace System.Reflection {
             return FormatNameAndSig(true);
         }
         #endregion
+#endif
 	}
 
 	[Serializable]

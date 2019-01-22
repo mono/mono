@@ -61,7 +61,10 @@ namespace System.Reflection {
 		}
 	}
 
-	abstract class RuntimeEventInfo : EventInfo, ISerializable
+	abstract class RuntimeEventInfo : EventInfo
+#if !NETCORE
+	, ISerializable
+#endif
 	{
         internal abstract BindingFlags GetBindingFlags ();
 
@@ -93,6 +96,7 @@ namespace System.Reflection {
 			return GetDeclaringTypeInternal ().GetRuntimeModule ();
 		}
 
+#if !NETCORE
         #region ISerializable
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -108,6 +112,7 @@ namespace System.Reflection {
                 MemberTypes.Event);
         }
         #endregion
+#endif
 	}
 
 	[Serializable]

@@ -147,7 +147,10 @@ namespace System.Reflection {
 		}
 	}
 	
-	abstract class RuntimeMethodInfo : MethodInfo, ISerializable
+	abstract class RuntimeMethodInfo : MethodInfo
+#if !NETCORE
+	, ISerializable
+#endif
 	{
 		internal BindingFlags BindingFlags {
 			get {
@@ -210,6 +213,7 @@ namespace System.Reflection {
 			return ((RuntimeType)DeclaringType).GetRuntimeModule();
 		}
 
+#if !NETCORE
         #region ISerializable Implementation
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -228,13 +232,10 @@ namespace System.Reflection {
 
         internal string SerializationToString()
         {
-#if NETCORE
-			throw new NotImplementedException ();
-#else
             return ReturnType.FormatTypeName(true) + " " + FormatNameAndSig(true);
-#endif
         }
         #endregion
+#endif
 
 		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle)
 		{

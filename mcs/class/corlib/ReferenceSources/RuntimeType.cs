@@ -172,12 +172,12 @@ namespace System
 				if (IsValueType)
 					return CreateInstanceInternal (this);
 
-				throw new MissingMethodException (Locale.GetText ("Default constructor not found for type " + FullName));
+				throw new MissingMethodException ("Default constructor not found for type " + FullName);
 			}
 
 			// TODO: .net does more checks in unmanaged land in RuntimeTypeHandle::CreateInstance
 			if (IsAbstract) {
-				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class '{0}'.", FullName));
+				throw new MissingMethodException ("Cannot create an abstract class '{0}'.", FullName);
 			}
 
 			return ctor.InternalInvoke (null, null, wrapExceptions);
@@ -550,14 +550,14 @@ namespace System
 
 			InterfaceMapping res;
 			if (!ifaceType.IsInterface)
-				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "ifaceType");
+				throw new ArgumentException ("Argument must be an interface.", "ifaceType");
 			if (IsInterface)
 				throw new ArgumentException ("'this' type cannot be an interface itself");
 			res.TargetType = this;
 			res.InterfaceType = ifaceType;
 			GetInterfaceMapData (this, ifaceType, out res.TargetMethods, out res.InterfaceMethods);
 			if (res.TargetMethods == null)
-				throw new ArgumentException (Locale.GetText ("Interface not found"), "ifaceType");
+				throw new ArgumentException ("Interface not found", "ifaceType");
 
 			return res;
 		}

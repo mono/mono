@@ -44,21 +44,4 @@ namespace System.Reflection
 	abstract class RuntimeModule : Module
 	{
 	}
-
-    internal class MemberInfoSerializationHolder {
-        public static void GetSerializationInfo(SerializationInfo info, String name, RuntimeType reflectedClass, String signature, MemberTypes type) {
-			throw new NotImplementedException ();
-		}
-
-        public static void GetSerializationInfo(
-            SerializationInfo info,
-            String name,
-            RuntimeType reflectedClass,
-            String signature,
-            String signature2,
-            MemberTypes type,
-            Type[] genericArguments) {
-			throw new NotImplementedException ();
-		}
-	}
 }

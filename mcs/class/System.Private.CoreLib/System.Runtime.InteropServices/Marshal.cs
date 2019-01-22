@@ -4,6 +4,7 @@ namespace System.Runtime.InteropServices
 {
 	public static partial class Marshal
 	{
+		/*
 		public static readonly int SystemDefaultCharSize;
 		public static readonly int SystemMaxDBCSCharSize;
 		public static int AddRef(System.IntPtr pUnk) { throw null; }
@@ -216,7 +217,6 @@ namespace System.Runtime.InteropServices
 		public static void ZeroFreeGlobalAllocUnicode(System.IntPtr s) { }
 		public static void ZeroFreeCoTaskMemUTF8(System.IntPtr s) { }
 
-
 		internal static void SetLastWin32Error (int error)
 		{
 		}
@@ -230,6 +230,7 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
+*/
 	}
 
 	partial class Marshal
