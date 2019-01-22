@@ -26,6 +26,17 @@ namespace System
             }
         }
 
+        // from https://github.com/dotnet/coreclr/pull/18209
+        private static int _enforceJapaneseEraYearRanges;
+        public static bool EnforceJapaneseEraYearRanges
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return GetCachedSwitchValue(AppContextDefaultValues.SwitchEnforceJapaneseEraYearRanges, ref _enforceJapaneseEraYearRanges);
+            }
+        }
+
         private static int _throwExceptionIfDisposedCancellationTokenSource;
         public static bool ThrowExceptionIfDisposedCancellationTokenSource
         {
