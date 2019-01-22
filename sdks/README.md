@@ -55,7 +55,7 @@ mono$ make -C sdks/builds archive-mac [upcoming]
 
 # WebAssembly
 
-Go to the `wasm` directory for building and testing WebAssembly.  For more information view the [WebAssembly readme](./wasm/readme.md)
+Go to the `wasm` directory for building and testing WebAssembly.  For more information view the [WebAssembly readme](./wasm/README.md)
 
 
 # Dependencies
