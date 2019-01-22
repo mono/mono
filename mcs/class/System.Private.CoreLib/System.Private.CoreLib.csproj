@@ -119,6 +119,7 @@
       <Compile Include="System\DateTime.cs" />
       <Compile Include="System\Environment.cs" />
       <Compile Include="System\Exception.cs" />
+      <Compile Include="System\GC.cs" />
       <Compile Include="System\Object.cs" />
       <Compile Include="System\Math.cs" />
       <Compile Include="System\MathF.cs" />

@@ -65,7 +65,7 @@ namespace System {
         NotApplicable = 4
     }
 
-    public static class GC 
+    public static partial class GC 
     {
 #if MONO
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
