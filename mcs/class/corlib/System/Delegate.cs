@@ -513,7 +513,7 @@ namespace System
 			} else {
 				if (method != IntPtr.Zero) {
 					if (!method_is_virtual)
-						method_info = (MethodInfo)MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
+						method_info = (MethodInfo)RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (method));
 					else
 						method_info = GetVirtualMethod_internal ();
 				}
