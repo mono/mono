@@ -38,7 +38,7 @@ See [Getting Started Guides](./docs/getting-started)
 
 ## WebAssembly
 
-First, ensure the `runtime`, `AOT` and `bcl` have been built and packaged in the `builds` directory:
+First, ensure the `runtime`, `AOT` and `bcl` have been built and packaged in the `sdks/out` directory:
 
 ```bash
 mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
