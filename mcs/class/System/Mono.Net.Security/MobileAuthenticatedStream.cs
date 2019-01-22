@@ -178,7 +178,11 @@ namespace Mono.Net.Security
 			};
 
 			var task = ProcessAuthentication (true, options, CancellationToken.None);
-			task.Wait ();
+			try {
+				task.Wait ();
+			} catch (Exception ex) {
+				throw HttpWebRequest.FlattenException (ex);
+			}
 		}
 
 		public IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
@@ -231,7 +235,11 @@ namespace Mono.Net.Security
 			};
 
 			var task = ProcessAuthentication (true, options, CancellationToken.None);
-			task.Wait ();
+			try {
+				task.Wait ();
+			} catch (Exception ex) {
+				throw HttpWebRequest.FlattenException (ex);
+			}
 		}
 
 		public IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
