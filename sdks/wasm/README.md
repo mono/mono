@@ -44,6 +44,13 @@ First, ensure the `runtime`, `AOT` and `bcl` have been built and packaged in the
 mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
 ```
 
+Build the test runner and test suites
+
+```bash
+mono$ make -C sdks/wasm build
+```
+
+
 Right now the following targets are available:
 
 - mono: Executes the previous `package-wasm-*` step above.
