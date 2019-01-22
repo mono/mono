@@ -231,12 +231,12 @@ $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources
 
 test_load_assembly = ${test_lib_dir}/TestLoadAssembly.dll
 
-$(test_load_assembly): ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs
+$(test_load_assembly): ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs | $(test_lib_dir)
 	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) -out:${test_lib_dir}/TestLoadAssembly.dll
 
 test_module = $(test_lib_dir)/System.Reflection.TestModule.dll
 
-$(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.dll
+$(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.dll | $(test_lib_dir)
 	cp $< $(test_lib_dir)
 
 XTEST_LIB_FLAGS += -r:$(test_module)
