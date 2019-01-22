@@ -123,8 +123,7 @@ class Driver {
 		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 		Console.WriteLine ("\t--aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.");
-		Console.WriteLine ("\t--link-mode=None|SdkOnly|Full        Set the link type used for AOT. (EXPERIMENTAL)");
-		Console.WriteLine ("\t\t              'None' no linking.");
+		Console.WriteLine ("\t--link-mode=SdkOnly|Full        Set the link type used for AOT. (EXPERIMENTAL)");
 		Console.WriteLine ("\t\t              'SdkOnly' only link the Core libraries.");
 		Console.WriteLine ("\t\t              'Full' link Core and User assemblies. (default)");
 
@@ -310,7 +309,6 @@ class Driver {
 
 	enum LinkMode
 	{
-		None,
 		SdkOnly,
 		Full		
 	}
@@ -352,7 +350,7 @@ class Driver {
 		var copyType = CopyType.Default;
 		var ee_mode = ExecMode.Interp;
 		var linkModeParm = "Full";
-		var linkMode = LinkMode.None;
+		var linkMode = LinkMode.Full;
 		string coremode, usermode;
 
 		var opts = new WasmOptions () {
@@ -798,8 +796,8 @@ class Driver {
 				usermode = "link";
 				break;
 			default:
-				coremode = "copyused";
-				usermode = "copy";
+				coremode = "link";
+				usermode = "link";
 				break;
 			}
 
