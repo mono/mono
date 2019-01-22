@@ -173,7 +173,7 @@ build-aot-sample: packager.exe hello.exe
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js hello.exe
 	ninja -v -C obj/aot-sample
 
-hello.exe:
+hello.exe: hello.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello.cs
 	
 run-aot-sample: build-aot-sample
@@ -195,6 +195,14 @@ check-aot-mini run-aot-mini: build-aot-mini
 
 get-sysnative-exports:
 	nm ../out/wasm-runtime-release/lib/libmono-native.a  | grep SystemNative | cut -d ' ' -f 3 | grep -v '^$$'
+
+build-aot-bindings-sample: packager.exe sample.dll
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-sample --builddir=obj/aot-bindings-sample --aot --template=runtime.js --link-mode=SdkOnly --asset=sample.html sample.dll
+	ninja -v -C obj/aot-bindings-sample
+
+build-aot-bindings-interp-sample: packager.exe sample.dll
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-interp-sample --builddir=obj/aot-bindings-interp-sample --aot --template=runtime.js --link-mode=SdkOnly --linker --link-icalls --asset=sample.html sample.dll
+	ninja -v -C obj/aot-bindings-interp-sample
 
 ##
 # Parameters:
