@@ -95,6 +95,7 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
 
+#if !NETCORE
 		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
                 {
 			if (fromNoninstanciated == null)
@@ -116,6 +117,7 @@ namespace System
 			flags |= fromNoninstanciated.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
 			return GetField (fromNoninstanciated.Name, flags);
 		}
+#endif
 
 		string GetDefaultMemberName ()
 		{
@@ -428,7 +430,11 @@ namespace System
 
 		public override StructLayoutAttribute StructLayoutAttribute {
 			get {
+#if NETCORE
+				throw new NotImplementedException ();
+#else
 				return StructLayoutAttribute.GetCustomAttribute (this);
+#endif
 			}
 		}
 
@@ -691,7 +697,11 @@ namespace System
 				var a = new RuntimeFieldInfo[n];
 				for (int i = 0; i < n; i++) {
 					var fh = new RuntimeFieldHandle (h[i]);
+#if NETCORE
+					throw new NotImplementedException ();
+#else
 					a[i] = (RuntimeFieldInfo) FieldInfo.GetFieldFromHandle (fh, refh);
+#endif
 				}
 				return a;
 			}
@@ -706,7 +716,11 @@ namespace System
 				var a = new RuntimeEventInfo[n];
 				for (int i = 0; i < n; i++) {
 					var eh = new Mono.RuntimeEventHandle (h[i]);
+#if NETCORE
+					throw new NotImplementedException ();
+#else
 					a[i] = (RuntimeEventInfo) EventInfo.GetEventFromHandle (eh, refh);
+#endif
 				}
 				return a;
 			}
@@ -721,8 +735,12 @@ namespace System
 		RuntimeType[] GetNestedTypes_internal (string displayName, BindingFlags bindingAttr, MemberListType listType)
 		{
 			string internalName = null;
+#if NETCORE
+			throw new NotImplementedException ();
+#else
 			if (displayName != null)
 				internalName = TypeIdentifiers.FromDisplay (displayName).InternalName;
+#endif
 			using (var namePtr = new Mono.SafeStringMarshal (internalName))
 			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (namePtr.Value, bindingAttr, listType))) {
 				int n = h.Length;
@@ -804,7 +822,9 @@ namespace System
 			}
 		}
 
+#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeType> (other);	
+#endif
 
 		public override bool IsSZArray {
 			get {
@@ -813,11 +833,13 @@ namespace System
 			}
 		}
 
+#if !NETCORE
 		internal override bool IsUserType {
 			get {
 				return false;
 			}
 		}
+#endif
 
 		[System.Runtime.InteropServices.ComVisible(true)]
 		[Pure]

@@ -1,19 +1,6 @@
 using System.Reflection;
 using System.Collections.Generic;
-
-namespace System
-{
-	static class MonoCustomAttrs
-	{
-		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit) => throw new NotImplementedException ();
-
-		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit) => throw new NotImplementedException ();
-
-		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj, Type attributeType, bool inherit) => throw new NotImplementedException ();
-
-		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj, bool inherit = false) => throw new NotImplementedException ();
-	}
-}
+using System.Runtime.Serialization;
 
 namespace System.Threading
 {
@@ -54,40 +41,24 @@ namespace System.Threading
 
 namespace System.Reflection
 {
-	abstract class MonoField : RuntimeFieldInfo
-	{
-		internal object UnsafeGetValue (object obj) => throw new NotImplementedException ();
-	}
-
-	abstract class MonoMethod : MethodInfo
-	{
-		internal MethodInfo GetBaseMethod () => throw new NotImplementedException ();
-
-		internal Object InternalInvoke (Object obj, Object[] parameters, out Exception exc) => throw new NotImplementedException ();
-	}
-
-	abstract class RuntimeModule
+	abstract class RuntimeModule : Module
 	{
 	}
 
-	abstract class RuntimeFieldInfo : FieldInfo
-	{
-		internal RuntimeType GetDeclaringTypeInternal () => throw new NotImplementedException ();
-	}
+    internal class MemberInfoSerializationHolder {
+        public static void GetSerializationInfo(SerializationInfo info, String name, RuntimeType reflectedClass, String signature, MemberTypes type) {
+			throw new NotImplementedException ();
+		}
 
-	public partial class CustomAttributeData
-	{
-		protected CustomAttributeData() { }
-		public virtual System.Type AttributeType { get { throw null; } }
-		public virtual System.Reflection.ConstructorInfo Constructor { get { throw null; } }
-		public virtual System.Collections.Generic.IList<System.Reflection.CustomAttributeTypedArgument> ConstructorArguments { get { throw null; } }
-		public virtual System.Collections.Generic.IList<System.Reflection.CustomAttributeNamedArgument> NamedArguments { get { throw null; } }
-		public override bool Equals(object obj) { throw null; }
-		public static System.Collections.Generic.IList<System.Reflection.CustomAttributeData> GetCustomAttributes(System.Reflection.Assembly target) { throw null; }
-		public static System.Collections.Generic.IList<System.Reflection.CustomAttributeData> GetCustomAttributes(System.Reflection.MemberInfo target) { throw null; }
-		public static System.Collections.Generic.IList<System.Reflection.CustomAttributeData> GetCustomAttributes(System.Reflection.Module target) { throw null; }
-		public static System.Collections.Generic.IList<System.Reflection.CustomAttributeData> GetCustomAttributes(System.Reflection.ParameterInfo target) { throw null; }
-		public override int GetHashCode() { throw null; }
-		public override string ToString() { throw null; }
+        public static void GetSerializationInfo(
+            SerializationInfo info,
+            String name,
+            RuntimeType reflectedClass,
+            String signature,
+            String signature2,
+            MemberTypes type,
+            Type[] genericArguments) {
+			throw new NotImplementedException ();
+		}
 	}
 }

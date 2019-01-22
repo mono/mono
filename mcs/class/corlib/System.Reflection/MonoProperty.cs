@@ -38,6 +38,7 @@ using System.Runtime.Serialization;
 using System.Security;
 using System.Text;
 using System.Diagnostics.Contracts;
+using Mono;
 
 namespace System.Reflection {
 	
@@ -112,6 +113,9 @@ namespace System.Reflection {
 
         private string FormatNameAndSig(bool serialization)
         {
+#if NETCORE
+			throw new NotImplementedException ();
+#else
             StringBuilder sbName = new StringBuilder(PropertyType.FormatTypeName(serialization));
 
             sbName.Append(" ");
@@ -125,6 +129,7 @@ namespace System.Reflection {
 			}
 
             return sbName.ToString();
+#endif
         }
         #endregion		
 
@@ -446,7 +451,9 @@ namespace System.Reflection {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
 
+#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoProperty> (other);
+#endif
 
 		public override int MetadataToken {
 			get {
@@ -460,7 +467,7 @@ namespace System.Reflection {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern PropertyInfo internal_from_handle_type (IntPtr event_handle, IntPtr type_handle);
 
-        internal static PropertyInfo GetPropertyFromHandle (Mono.RuntimePropertyHandle handle, RuntimeTypeHandle reflectedType)
+        internal static PropertyInfo GetPropertyFromHandle (RuntimePropertyHandle handle, RuntimeTypeHandle reflectedType)
         {
             if (handle.Value == IntPtr.Zero)
                 throw new ArgumentException ("The handle is invalid.");

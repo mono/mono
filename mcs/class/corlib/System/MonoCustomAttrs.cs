@@ -74,7 +74,7 @@ namespace System
 			/* FIXME: Add other types */
 			if (obj is MonoMethod monoMethod)
 				pseudoAttrs = monoMethod.GetPseudoCustomAttributes ();
-			else if (obj is FieldInfo fieldInfo)
+			else if (obj is MonoField fieldInfo)
 				pseudoAttrs = fieldInfo.GetPseudoCustomAttributes ();
 			else if (obj is MonoParameterInfo monoParamInfo)
 				pseudoAttrs = monoParamInfo.GetPseudoCustomAttributes ();
@@ -465,7 +465,7 @@ namespace System
 			/* FIXME: Add other types */
 			if (obj is MonoMethod monoMethod)
 				pseudoAttrsData = monoMethod.GetPseudoCustomAttributesData ();
-			else if (obj is FieldInfo fieldInfo)
+			else if (obj is MonoField fieldInfo)
 				pseudoAttrsData = fieldInfo.GetPseudoCustomAttributesData ();
 			else if (obj is MonoParameterInfo monoParamInfo)
 				pseudoAttrsData = monoParamInfo.GetPseudoCustomAttributesData ();

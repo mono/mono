@@ -126,10 +126,6 @@
       <Compile Include="System\MissingMemberException.cs" />
       <Compile Include="System\ModuleHandle.cs" />
       <Compile Include="System\NotImplemented.cs" />
-      <Compile Include="System\RuntimeFieldHandle.cs" />
-      <Compile Include="System\RuntimeMethodHandle.cs" />
-      <Compile Include="System\RuntimeType.cs" />
-      <Compile Include="System\RuntimeTypeHandle.cs" />
       <Compile Include="System\Type.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
       <Compile Include="System.Globalization\CultureData.cs" />
@@ -176,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\build\common\SR.cs" />
+      <Compile Include="..\..\build\common\Locale.cs" />
       <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
 
       <Compile Include="..\corlib\coreclr\Math.CoreCLR.cs" />
@@ -189,10 +186,13 @@
       <Compile Include="..\corlib\ReferenceSources\Buffer.cs" />
       <Compile Include="..\corlib\ReferenceSources\JitHelpers.cs" />
       <Compile Include="..\corlib\ReferenceSources\String.cs" />
+      <Compile Include="..\corlib\ReferenceSources\RuntimeType.cs" />
 
       <Compile Include="..\corlib\Mono\RuntimeStructs.cs" />
       <Compile Include="..\corlib\Mono\RuntimeMarshal.cs" />
+      <Compile Include="..\corlib\Mono\RuntimeHandles.cs" />
       <Compile Include="..\corlib\Mono\SafeStringMarshal.cs" />
+      <Compile Include="..\corlib\Mono\SafeGPtrArrayHandle.cs" />
 
       <Compile Include="..\corlib\System\Array.cs" />
       <Compile Include="..\corlib\System\ArgIterator.cs" />
@@ -200,8 +200,12 @@
       <Compile Include="..\corlib\System\DelegateSerializationHolder.cs" />
       <Compile Include="..\corlib\System\EmptyArray.cs" />
       <Compile Include="..\corlib\System\MathF.mono.cs" />
+      <Compile Include="..\corlib\System\MonoCustomAttrs.cs" />
       <Compile Include="..\corlib\System\MulticastDelegate.cs" />
       <Compile Include="..\corlib\System\RuntimeArgumentHandle.cs" />
+      <Compile Include="..\corlib\System\RuntimeFieldHandle.cs" />
+      <Compile Include="..\corlib\System\RuntimeTypeHandle.cs" />
+      <Compile Include="..\corlib\System\RuntimeMethodHandle.cs" />
       <Compile Include="..\corlib\System\ValueType.cs" />
       <Compile Include="..\corlib\System\WeakReference.cs" />
       <Compile Include="..\corlib\System\WeakReference_T.cs" />
@@ -222,6 +226,13 @@
       <Compile Include="..\corlib\System.Threading\Volatile.cs" />
       <Compile Include="..\corlib\System.Threading\WaitHandle.cs" />
 
+      <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
+      <Compile Include="..\corlib\System.Reflection\MonoMethod.cs" />
+      <Compile Include="..\corlib\System.Reflection\MonoParameterInfo.cs" />
+      <Compile Include="..\corlib\System.Reflection\MonoField.cs" />
+      <Compile Include="..\corlib\System.Reflection\MonoProperty.cs" />
+      <Compile Include="..\corlib\System.Reflection\MonoEvent.cs" />
+
       <Compile Include="..\corlib\System.Runtime.InteropServices\GCHandle.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +242,8 @@
       <Compile Include="..\referencesource\mscorlib\system\gc.cs" />
       <Compile Include="..\referencesource\mscorlib\system\typeloadexception.cs" />
       <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
+      <Compile Include="..\referencesource\mscorlib\system\resid.cs" />
+      <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\thread.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\threadpool.cs" />

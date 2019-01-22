@@ -1,6 +1,7 @@
+using System;
 using System.Runtime.InteropServices;
 
-namespace System.Mono
+namespace Mono
 {
 	[StructLayout (LayoutKind.Sequential)]
 	internal sealed class MonoDomainSetup

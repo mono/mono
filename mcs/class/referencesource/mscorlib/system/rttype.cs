@@ -19,7 +19,9 @@ using System.Runtime.ConstrainedExecution;
 using System.Globalization;
 using System.Threading;
 using System.Diagnostics;
+#if !NETCORE
 using System.Security.Permissions;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime;
@@ -3213,7 +3215,7 @@ namespace System
         #endregion
 
         #region Find XXXInfo
-#if !MONO        
+#if !MONO || NETCORE
         protected override MethodInfo GetMethodImpl(
             String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, 
             Type[] types, ParameterModifier[] modifiers) 
@@ -3235,10 +3237,14 @@ namespace System
                     for (int j = 1; j < candidates.Count; j++)
                     {
                         MethodInfo methodInfo = candidates[j];
+#if NETCORE
+						throw new NotImplementedException ();
+#else
                         if (!System.DefaultBinder.CompareMethodSigAndName(methodInfo, firstCandidate))
                         {
                             throw new AmbiguousMatchException(Environment.GetResourceString("Arg_AmbiguousMatchException"));
                         }
+#endif
                     }
 
                     // All the methods have the exact same name and sig so return the most derived one.
@@ -3609,11 +3615,14 @@ namespace System
             }
         }
 
+#if !NETCORE
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal sealed override RuntimeTypeHandle GetTypeHandleInternal()
         {
             return new RuntimeTypeHandle(this);
         }
+#endif
+
 #if !MONO
         [System.Security.SecuritySafeCritical]
         internal bool IsCollectible()
@@ -3985,11 +3994,13 @@ namespace System
 
 #endif // FEATURE_COMINTEROP
 
+#if !NETCORE
         [System.Security.SecuritySafeCritical]  // auto-generated
         internal override bool HasProxyAttributeImpl() 
         {
             return RuntimeTypeHandle.HasProxyAttribute(this);
         }
+#endif
 
         internal bool IsDelegate()
         {
@@ -4059,6 +4070,7 @@ namespace System
         #endregion
 
         #region Arrays
+#if !NETCORE
         internal override bool IsSzArray
         {
             get 
@@ -4066,6 +4078,7 @@ namespace System
                 return RuntimeTypeHandle.IsSzArray(this);
             }
         }
+#endif
 
         protected override bool IsArrayImpl() 
         {
@@ -4176,12 +4189,14 @@ namespace System
 
                 return (Array.BinarySearch(ulValues, ulValue) >= 0);
             }
+#if !NETCORE
             else if (CompatibilitySwitches.IsAppEarlierThanWindowsPhone8)
             {
                 // if at this point the value type is not an integer type, then its type doesn't match the enum type
                 // NetCF used to throw an argument exception in this case
                 throw new ArgumentException(Environment.GetResourceString("Arg_EnumUnderlyingTypeAndObjectMustBeSameType", valueType.ToString(), GetEnumUnderlyingType()));
             }
+#endif
             else
             {
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_UnknownEnumType"));
@@ -4272,7 +4287,11 @@ namespace System
                     for (int iCopy = 0; iCopy < instantiation.Length; iCopy++)
                         instantiationCopy[iCopy] = instantiation[iCopy];
                     instantiation = instantiationCopy;
+#if NETCORE
+					throw new NotImplementedException ();
+#else
                     return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
+#endif
                 }
 
                 instantiationRuntimeType[i] = rtInstantiationElem;
@@ -5085,7 +5104,11 @@ namespace System
                 throw new ArgumentNullException("info");
             Contract.EndContractBlock();
 
+#if NETCORE
+			throw new NotImplementedException ();
+#else
             UnitySerializationHolder.GetUnitySerializationInfo(info, this);
+#endif
         }
         #endregion
 
@@ -5151,6 +5174,7 @@ namespace System
         //  5. ConstructorInfo.ToString() outputs "Void" as the return type. Why Void?
         // Since it could be a breaking changes to fix these legacy behaviors, we only use the better and more unambiguous format
         // in serialization (MemberInfoSerializationHolder).
+#if !NETCORE
         internal override string FormatTypeName(bool serialization)
         {
             if (serialization)
@@ -5180,6 +5204,8 @@ namespace System
                 return typeName;
             }
         }
+#endif
+
 #if !MONO
 
         private string GetCachedName(TypeNameKind kind)
@@ -5395,7 +5421,11 @@ namespace System
                             } else {
 #endif
                             // fast path??
+#if NETCORE
+								throw new NotImplementedException ();
+#else
                             server = Activator.CreateInstance(this, nonPublic: true, wrapExceptions: wrapExceptions);
+#endif
 
 #if MONO && FEATURE_REMOTING
                             }

@@ -55,6 +55,9 @@ namespace System.Reflection
 
 		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p, CallingConventions callingConvention, bool serialization)
 		{
+#if NETCORE
+			throw new NotImplementedException ();
+#else
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					sb.Append (", ");
@@ -79,6 +82,7 @@ namespace System.Reflection
 					sb.Append (", ");
 				sb.Append ("...");
 			}
+#endif
 		}
 
 #if MONO_FEATURE_SRE
@@ -243,8 +247,13 @@ namespace System.Reflection
 			if (IsOptional)
 				attrs [count ++] = new OptionalAttribute ();
 
-			if (marshalAs != null)
+			if (marshalAs != null) {
+#if NETCORE
+				throw new NotImplementedException ();
+#else
 				attrs [count ++] = marshalAs.Copy ();
+#endif
+			}
 
 			return attrs;
 		}

@@ -231,7 +231,9 @@ namespace System.Reflection {
 			}
 		}
 
+#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoEvent> (other);
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern int get_metadata_token (MonoEvent monoEvent);

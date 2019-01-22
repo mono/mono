@@ -229,7 +229,15 @@ namespace System
 			throw new NotImplementedException (); /* TODO */
 		}
 
-
+		internal static object CreateInstanceForAnotherGenericParameter (Type genericType, RuntimeType genericArgument)
+		{
+			throw new Exception ();
+#if FALSE
+			var gt = (RuntimeType) MakeGenericType (genericType, new Type [] { genericArgument });
+			var ctor = gt.GetDefaultConstructor ();
+			return ctor.InternalInvoke (null, null, wrapExceptions: true);
+#endif
+		}
 	}
 
 
