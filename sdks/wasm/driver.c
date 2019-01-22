@@ -608,6 +608,14 @@ mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[
 		return res;
 	}
 
+	MonoMethodSignature *sig = mono_method_signature (method);
+	MonoType *type = mono_signature_get_return_type (sig);
+	// If the method return type is void return null
+	// This gets around a memory access crash when the result return a value when
+	// a void method is invoked.
+	if (mono_type_get_type (type) == MONO_TYPE_VOID)
+		return NULL;
+
 	return res;
 }
 
