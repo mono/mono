@@ -62,7 +62,6 @@ class Driver {
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
 	const string HTTP_ASM_NAME = "WebAssembly.Net.Http";	
 
-
 	class AssemblyData {
 		// Assembly name
 		public string name;
@@ -123,9 +122,9 @@ class Driver {
 		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 		Console.WriteLine ("\t--aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.");
-		Console.WriteLine ("\t--link-mode=SdkOnly|Full        Set the link type used for AOT. (EXPERIMENTAL)");
-		Console.WriteLine ("\t\t              'SdkOnly' only link the Core libraries.");
-		Console.WriteLine ("\t\t              'Full' link Core and User assemblies. (default)");
+		Console.WriteLine ("\t--link-mode=sdkonly|all        Set the link type used for AOT. (EXPERIMENTAL)");
+		Console.WriteLine ("\t\t              'sdkonly' only link the Core libraries.");
+		Console.WriteLine ("\t\t              'all' link Core and User assemblies. (default)");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 		Console.WriteLine ();
@@ -310,7 +309,7 @@ class Driver {
 	enum LinkMode
 	{
 		SdkOnly,
-		Full		
+		All		
 	}
 
 	class WasmOptions {
@@ -320,6 +319,7 @@ class Driver {
 		public bool Linker;
 		public bool LinkIcalls;
 		public bool ILStrip;
+		public bool Verbose;
 	}
 
 	int Run (string[] args) {
@@ -349,16 +349,18 @@ class Driver {
 		var copyTypeParm = "default";
 		var copyType = CopyType.Default;
 		var ee_mode = ExecMode.Interp;
-		var linkModeParm = "Full";
-		var linkMode = LinkMode.Full;
+		var linkModeParm = "all";
+		var linkMode = LinkMode.All;
 		string coremode, usermode;
+		var verbose = false;
 
 		var opts = new WasmOptions () {
 				AddBinding = true,
 				Debug = false,
 				DebugRuntime = false,
 				Linker = false,
-				ILStrip = true
+				ILStrip = true,
+				Verbose = false
 			};
 
 		var p = new OptionSet () {
@@ -389,6 +391,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("binding", "enable the binding engine", opts.AddBinding, b => opts.AddBinding = b));
 		AddFlag (p, new BoolFlag ("link-icalls", "link away unused icalls", opts.LinkIcalls, b => opts.LinkIcalls = b));
 		AddFlag (p, new BoolFlag ("il-strip", "strip IL code from assemblies in AOT mode", opts.ILStrip, b => opts.ILStrip = b));
+		AddFlag (p, new BoolFlag ("verbose", "set verbose option on link", opts.Verbose, b => opts.Verbose = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -417,6 +420,7 @@ class Driver {
 		add_binding = opts.AddBinding;
 		use_release_runtime = !opts.DebugRuntime;
 		il_strip = opts.ILStrip;
+		verbose = opts.Verbose;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
@@ -785,13 +789,12 @@ class Driver {
 			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
 		}
 		if (enable_linker) {
-
 			switch (linkMode) {
 			case LinkMode.SdkOnly:
 				coremode = "link";
 				usermode = "copy";
 				break;
-			case LinkMode.Full:
+			case LinkMode.All:
 				coremode = "link";
 				usermode = "link";
 				break;
@@ -811,8 +814,10 @@ class Driver {
 			foreach (var assembly in wasm_core_assemblies.Keys) {
 				linker_args += $"-p {coremode} {assembly} ";
 			}
-
-			linker_args += $"--verbose -d linker-in -d $bcl_dir -d $bcl_facades_dir -c {coremode} -u {usermode}";
+			if (verbose) {
+				linker_args += "--verbose ";
+			}
+			linker_args += $"-d linker-in -d $bcl_dir -d $bcl_facades_dir -c {coremode} -u {usermode}";
 			foreach (var assembly in wasm_core_assemblies.Keys) {
 				linker_args += $" -r {assembly}";
 			}
