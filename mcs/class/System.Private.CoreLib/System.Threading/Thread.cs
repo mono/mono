@@ -17,5 +17,9 @@ namespace System.Threading
 			set {
 			}
 		}
+
+		public void ResetThreadPoolThread ()
+		{
+		}
 	}
 }
