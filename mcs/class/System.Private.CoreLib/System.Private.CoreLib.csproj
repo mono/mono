@@ -183,7 +183,6 @@
       <Compile Include="..\corlib\corefx\DateTime.cs" />
       <Compile Include="..\corlib\corefx\SynchronizationContext.cs" />
       <Compile Include="..\corlib\corefx\RuntimeImports.cs" />
-      <Compile Include="..\corlib\corert\ThreadPool.cs" />
 
       <Compile Include="..\corlib\ReferenceSources\Array.cs" />
       <Compile Include="..\corlib\ReferenceSources\Buffer.cs" />
@@ -230,7 +229,6 @@
       <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\thread.cs" />
-      <Compile Include="..\referencesource\mscorlib\system\threading\threadpool.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\waithandle.cs" />
 
       <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\safehandle.cs" />
