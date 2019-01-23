@@ -657,7 +657,7 @@ namespace WsProxy {
 			try {
 				if (src_file.OriginalSourcePath.IsFile) {
 					using (var f = new StreamReader (File.Open (src_file.OriginalSourcePath.LocalPath, FileMode.Open))) {
-						res.Write (f.ReadToEnd ());
+						await res.WriteAsync (await f.ReadToEndAsync ());
 					}
 
 					var o = JObject.FromObject (new {
@@ -667,7 +667,7 @@ namespace WsProxy {
 					SendResponse (msg_id, Result.Ok (o), token);
 				} else {
 					var doc = await new WebClient ().DownloadStringTaskAsync (src_file.OriginalSourcePath);
-					res.Write (doc);
+					await res.WriteAsync (doc);
 
 					var o = JObject.FromObject (new {
 						scriptSource = res.ToString ()
@@ -677,7 +677,7 @@ namespace WsProxy {
 				}
 			} catch (Exception e) {
 				var o = JObject.FromObject (new {
-					scriptSource = $"// Unable to find document {src_file.OriginalSourcePath}"
+					scriptSource = $"// Unable to find document {src_file.OriginalSourcePath} ({e.Message})"
 				});
 
 				SendResponse (msg_id, Result.Ok (o), token);
