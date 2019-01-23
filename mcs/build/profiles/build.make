@@ -60,9 +60,9 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 #
 
 ifeq ("$(ENABLE_COMPILER_SERVER)","1")
-COMPILER_SERVER_ARGS=/shared:$(COMPILER_SERVER_PIPENAME)
+	COMPILER_SERVER_ARGS=/shared:$(COMPILER_SERVER_PIPENAME)
 else
-COMPILER_SERVER_ARGS:=
+	COMPILER_SERVER_ARGS:=
 endif
 
 USE_MCS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
@@ -82,6 +82,7 @@ clean-profile:
 
 post-profile-cleanup:
 	@rm -f $(monolite_flag)
+	$(MAKE) $(MAKE_Q) start-compiler-server
 
 PROFILE_EXE = $(depsdir)/basic-profile-check.exe
 PROFILE_OUT = $(PROFILE_EXE:.exe=.out)
@@ -129,7 +130,7 @@ do-profile-check-monolite: $(depsdir)/.stamp
 
 endif
 
-$(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs start-compiler-server
+$(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
 	$(BOOTSTRAP_MCS) /warn:0 /noconfig /langversion:latest /r:System.dll /r:mscorlib.dll /out:$@ $<
 
 $(PROFILE_OUT): $(PROFILE_EXE)
@@ -137,11 +138,15 @@ $(PROFILE_OUT): $(PROFILE_EXE)
 
 ifeq ("$(ENABLE_COMPILER_SERVER)","1")
 VBCS_LOCATION?=$(dir $(SERVER_CSC_LOCATION))/VBCSCompiler.exe
+VBCS_RUNTIME=$(if $(strip $(PROFILE_RUNTIME)),$(PROFILE_RUNTIME),`which mono`)
+
+export VBCS_RUNTIME
+export VBCS_LOCATION
 
 start-compiler-server:
-	echo Attempting to start compiler server at path $(realpath $(VBCS_LOCATION))...
-	$(topdir)/build/start-compiler-server.sh 'mono' '$(realpath $(VBCS_LOCATION))' '$(realpath $(topdir)/build/compiler-server.log)' '$(COMPILER_SERVER_PIPENAME)'
+	echo Attempting to start compiler server...
+	$(topdir)/build/start-compiler-server.sh '$(realpath $(topdir))' '$(realpath $(topdir)/build/compiler-server.log)' '$(COMPILER_SERVER_PIPENAME)'
 else
 start-compiler-server:
-	echo Not starting compiler server
+	
 endif
