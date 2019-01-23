@@ -3545,6 +3545,8 @@ get_shared_type (MonoType *t, MonoType *type)
 	ttype = type->type;
 	if (type->type == MONO_TYPE_VALUETYPE) {
 		ttype = mono_class_enum_basetype (type->data.klass)->type;
+	} else if (type->type == MONO_TYPE_GENERICINST && type->data.generic_class->container_class->enumtype) {
+		ttype = mono_class_enum_basetype (mono_generic_class_get_class (type->data.generic_class))->type;
 	} else if (MONO_TYPE_IS_REFERENCE (type)) {
 		ttype = MONO_TYPE_OBJECT;
 	} else if (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR) {
