@@ -2,21 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-//
-//
-//
-// EventSource for TPL.
-//
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Security;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.Tracing;
-
 using Internal.Runtime.CompilerServices;
 
 namespace System.Threading.Tasks
@@ -24,8 +11,11 @@ namespace System.Threading.Tasks
     /// <summary>Provides an event source for tracing TPL information.</summary>
     [EventSource(
         Name = "System.Threading.Tasks.TplEventSource",
-        Guid = "2e5dba47-a3d2-4d16-8ee0-6671ffdcd7b5",
-        LocalizationResources = "FxResources.System.Private.CoreLib.SR")]
+        Guid = "2e5dba47-a3d2-4d16-8ee0-6671ffdcd7b5"
+#if CORECLR
+        ,LocalizationResources = "FxResources.System.Private.CoreLib.SR"
+#endif
+        )]
     internal sealed class TplEtwProvider : EventSource
     {
         /// Used to determine if tasks should generate Activity IDs for themselves
@@ -33,23 +23,21 @@ namespace System.Threading.Tasks
         internal bool Debug;
         private bool DebugActivityId;
 
+        private const int DefaultAppDomainID = 1;
+
         /// <summary>
         /// Get callbacks when the ETW sends us commands`
         /// </summary>
         protected override void OnEventCommand(EventCommandEventArgs command)
         {
-#if !MONO
             // To get the AsyncCausality events, we need to inform the AsyncCausalityTracer
             if (command.Command == EventCommand.Enable)
                 AsyncCausalityTracer.EnableToETW(true);
             else if (command.Command == EventCommand.Disable)
                 AsyncCausalityTracer.EnableToETW(false);
-#endif
-            if (IsEnabled(EventLevel.Informational, Keywords.TasksFlowActivityIds)) {
-#if !MONO
+
+            if (IsEnabled(EventLevel.Informational, Keywords.TasksFlowActivityIds))
                 ActivityTracker.Instance.Enable();
-#endif
-            }
             else
                 TasksSetActivityIds = IsEnabled(EventLevel.Informational, Keywords.TasksSetActivityIds);
 
@@ -223,7 +211,7 @@ namespace System.Threading.Tasks
          Level = EventLevel.Informational, Keywords = Keywords.TaskTransfer | Keywords.Tasks)]
         public void TaskScheduled(
             int OriginatingTaskSchedulerID, int OriginatingTaskID,  // PFX_COMMON_EVENT_HEADER
-            int TaskID, int CreatingTaskID, int TaskCreationOptions, int appDomain)
+            int TaskID, int CreatingTaskID, int TaskCreationOptions, int appDomain = DefaultAppDomainID)
         {
             // IsEnabled() call is an inlined quick check that makes this very fast when provider is off 
             if (IsEnabled() && IsEnabled(EventLevel.Informational, Keywords.TaskTransfer | Keywords.Tasks))
@@ -475,13 +463,13 @@ namespace System.Threading.Tasks
                 }
             }
         }
-#if !MONO
+
         [Event(TRACEOPERATIONRELATION_ID, Version = 1,
          Level = EventLevel.Informational, Keywords = Keywords.AsyncCausalityRelation)]
         public void TraceOperationRelation(int TaskID, CausalityRelation Relation)
         {
             if (IsEnabled() && IsEnabled(EventLevel.Informational, Keywords.AsyncCausalityRelation))
-                WriteEvent(TRACEOPERATIONRELATION_ID, TaskID, (int)Relation);                // optmized overload for this exists
+                WriteEvent(TRACEOPERATIONRELATION_ID, TaskID, (int)Relation);                // optimized overload for this exists
         }
 
         [Event(TRACEOPERATIONSTOP_ID, Version = 1,
@@ -489,7 +477,7 @@ namespace System.Threading.Tasks
         public void TraceOperationEnd(int TaskID, AsyncCausalityStatus Status)
         {
             if (IsEnabled() && IsEnabled(EventLevel.Informational, Keywords.AsyncCausalityOperation))
-                WriteEvent(TRACEOPERATIONSTOP_ID, TaskID, (int)Status);                     // optmized overload for this exists
+                WriteEvent(TRACEOPERATIONSTOP_ID, TaskID, (int)Status);                     // optimized overload for this exists
         }
 
         [Event(TRACESYNCHRONOUSWORKSTART_ID, Version = 1,
@@ -497,7 +485,7 @@ namespace System.Threading.Tasks
         public void TraceSynchronousWorkBegin(int TaskID, CausalitySynchronousWork Work)
         {
             if (IsEnabled() && IsEnabled(EventLevel.Informational, Keywords.AsyncCausalitySynchronousWork))
-                WriteEvent(TRACESYNCHRONOUSWORKSTART_ID, TaskID, (int)Work);               // optmized overload for this exists
+                WriteEvent(TRACESYNCHRONOUSWORKSTART_ID, TaskID, (int)Work);               // optimized overload for this exists
         }
 
         [Event(TRACESYNCHRONOUSWORKSTOP_ID, Version = 1,
@@ -517,7 +505,7 @@ namespace System.Threading.Tasks
                 }
             }
         }
-#endif
+
         [NonEvent]
         public unsafe void RunningContinuation(int TaskID, object Object) { RunningContinuation(TaskID, (long)*((void**)Unsafe.AsPointer(ref Object))); }
         [Event(20, Keywords = Keywords.Debug)]
@@ -585,11 +573,10 @@ namespace System.Threading.Tasks
             // The thread pool generated a process wide unique GUID from a task GUID by
             // using the taskGuid, the appdomain ID, and 8 bytes of 'randomization' chosen by
             // using the last 8 bytes  as the provider GUID for this provider.  
-            // These were generated by CreateGuid, and are reasonably random (and thus unlikley to collide
+            // These were generated by CreateGuid, and are reasonably random (and thus unlikely to collide
             uint pid = EventSource.s_currentPid;
-            int appDomainID = System.Threading.Thread.GetDomainID();
             return new Guid(taskID,
-                            (short)appDomainID, (short)(appDomainID >> 16),
+                            (short)DefaultAppDomainID, (short)(DefaultAppDomainID >> 16),
                             (byte)pid, (byte)(pid >> 8), (byte)(pid >> 16), (byte)(pid >> 24),
                             0xff, 0xdc, 0xd7, 0xb5);
         }

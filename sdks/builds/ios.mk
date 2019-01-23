@@ -129,7 +129,7 @@ ios-targetwatch64_32_SYSROOT = $(watchos5_sysroot)
 ios-target32_CPPFLAGS = -DHOST_IOS
 ios-target32s_CPPFLAGS = -DHOST_IOS
 ios-target64_CPPFLAGS = -DHOST_IOS
-ios-targettv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+ios-targettv_CPPFLAGS = -DHOST_IOS -DHOST_TVOS
 ios-targetwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 ios-targetwatch64_32_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
@@ -255,7 +255,7 @@ ios-simwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend
 
 ios-sim32_CPPFLAGS = -DHOST_IOS
 ios-sim64_CPPFLAGS = -DHOST_IOS
-ios-simtv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+ios-simtv_CPPFLAGS = -DHOST_IOS -DHOST_TVOS
 ios-simwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
 ios-simtv_AC_VARS = \
