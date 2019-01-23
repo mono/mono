@@ -79,6 +79,10 @@ namespace Mono {
 	// See mini-generic-sharing.c
 	// We use these instead of the normal ValueTuple types to avoid linking in the
 	// c# methods belonging to those types
+	internal struct ValueTuple
+	{
+	}
+
     internal struct ValueTuple<T1>
     {
         public T1 Item1;
