@@ -808,8 +808,6 @@ class Driver {
 			}
 
 			// the linker does not consider these core by default
-			// add netstandard as a core library
-			linker_args += $"-p {coremode} netstandard ";
 			foreach (var assembly in wasm_core_assemblies.Keys) {
 				linker_args += $"-p {coremode} {assembly} ";
 			}
