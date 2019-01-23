@@ -319,7 +319,7 @@ class Driver {
 		public bool Linker;
 		public bool LinkIcalls;
 		public bool ILStrip;
-		public bool Verbose;
+		public bool LinkerVerbose;
 	}
 
 	int Run (string[] args) {
@@ -352,7 +352,7 @@ class Driver {
 		var linkModeParm = "all";
 		var linkMode = LinkMode.All;
 		string coremode, usermode;
-		var verbose = false;
+		var linker_verbose = false;
 
 		var opts = new WasmOptions () {
 				AddBinding = true,
@@ -360,7 +360,7 @@ class Driver {
 				DebugRuntime = false,
 				Linker = false,
 				ILStrip = true,
-				Verbose = false
+				LinkerVerbose = false
 			};
 
 		var p = new OptionSet () {
@@ -391,7 +391,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("binding", "enable the binding engine", opts.AddBinding, b => opts.AddBinding = b));
 		AddFlag (p, new BoolFlag ("link-icalls", "link away unused icalls", opts.LinkIcalls, b => opts.LinkIcalls = b));
 		AddFlag (p, new BoolFlag ("il-strip", "strip IL code from assemblies in AOT mode", opts.ILStrip, b => opts.ILStrip = b));
-		AddFlag (p, new BoolFlag ("verbose", "set verbose option on link", opts.Verbose, b => opts.Verbose = b));
+		AddFlag (p, new BoolFlag ("linker-verbose", "set verbose option on linker", opts.LinkerVerbose, b => opts.LinkerVerbose = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -420,7 +420,7 @@ class Driver {
 		add_binding = opts.AddBinding;
 		use_release_runtime = !opts.DebugRuntime;
 		il_strip = opts.ILStrip;
-		verbose = opts.Verbose;
+		linker_verbose = opts.LinkerVerbose;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
@@ -814,12 +814,12 @@ class Driver {
 			foreach (var assembly in wasm_core_assemblies.Keys) {
 				linker_args += $"-p {coremode} {assembly} ";
 			}
-			if (verbose) {
+			if (linker_verbose) {
 				linker_args += "--verbose ";
 			}
-			linker_args += $"-d linker-in -d $bcl_dir -d $bcl_facades_dir -c {coremode} -u {usermode}";
+			linker_args += $"-d linker-in -d $bcl_dir -d $bcl_facades_dir -c {coremode} -u {usermode} ";
 			foreach (var assembly in wasm_core_assemblies.Keys) {
-				linker_args += $" -r {assembly}";
+				linker_args += $"-r {assembly} ";
 			}
 
 			ninja.WriteLine ("build $builddir/linker-out: mkdir");
