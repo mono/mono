@@ -60,6 +60,7 @@ class Driver {
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
+	const string HTTP_ASM_NAME = "WebAssembly.Net.Http";	
 
 	class AssemblyData {
 		// Assembly name
@@ -121,6 +122,9 @@ class Driver {
 		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 		Console.WriteLine ("\t--aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.");
+		Console.WriteLine ("\t--link-mode=sdkonly|all        Set the link type used for AOT. (EXPERIMENTAL)");
+		Console.WriteLine ("\t\t              'sdkonly' only link the Core libraries.");
+		Console.WriteLine ("\t\t              'all' link Core and User assemblies. (default)");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 		Console.WriteLine ();
@@ -302,6 +306,12 @@ class Driver {
 		AotInterp = 3
 	}
 
+	enum LinkMode
+	{
+		SdkOnly,
+		All		
+	}
+
 	class WasmOptions {
 		public bool Debug;
 		public bool DebugRuntime;
@@ -309,6 +319,7 @@ class Driver {
 		public bool Linker;
 		public bool LinkIcalls;
 		public bool ILStrip;
+		public bool LinkerVerbose;
 	}
 
 	int Run (string[] args) {
@@ -338,13 +349,18 @@ class Driver {
 		var copyTypeParm = "default";
 		var copyType = CopyType.Default;
 		var ee_mode = ExecMode.Interp;
+		var linkModeParm = "all";
+		var linkMode = LinkMode.All;
+		string coremode, usermode;
+		var linker_verbose = false;
 
 		var opts = new WasmOptions () {
 				AddBinding = true,
 				Debug = false,
 				DebugRuntime = false,
 				Linker = false,
-				ILStrip = true
+				ILStrip = true,
+				LinkerVerbose = false
 			};
 
 		var p = new OptionSet () {
@@ -365,6 +381,7 @@ class Driver {
 				{ "profile=", s => profilers.Add (s) },
 				{ "copy=", s => copyTypeParm = s },
 				{ "aot-assemblies=", s => aot_assemblies = s },
+				{ "link-mode=", s => linkModeParm = s },
 				{ "help", s => print_usage = true },
 					};
 
@@ -374,6 +391,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("binding", "enable the binding engine", opts.AddBinding, b => opts.AddBinding = b));
 		AddFlag (p, new BoolFlag ("link-icalls", "link away unused icalls", opts.LinkIcalls, b => opts.LinkIcalls = b));
 		AddFlag (p, new BoolFlag ("il-strip", "strip IL code from assemblies in AOT mode", opts.ILStrip, b => opts.ILStrip = b));
+		AddFlag (p, new BoolFlag ("linker-verbose", "set verbose option on linker", opts.LinkerVerbose, b => opts.LinkerVerbose = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -391,11 +409,18 @@ class Driver {
 			return 1;
 		}
 
+		if (!Enum.TryParse(linkModeParm, true, out linkMode)) {
+			Console.WriteLine("Invalid link-mode value");
+			Usage ();
+			return 1;
+		}
+
 		enable_debug = opts.Debug;
 		enable_linker = opts.Linker;
 		add_binding = opts.AddBinding;
 		use_release_runtime = !opts.DebugRuntime;
 		il_strip = opts.ILStrip;
+		linker_verbose = opts.LinkerVerbose;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
@@ -453,7 +478,8 @@ class Driver {
 		if (add_binding) {
 			var bindings = ResolveFramework (BINDINGS_ASM_NAME + ".dll");
 			Import (bindings, AssemblyKind.Framework);
-			root_assemblies.Add (bindings);
+			var http = ResolveFramework (HTTP_ASM_NAME + ".dll");
+			Import (http, AssemblyKind.Framework);
 		}
 
 		if (enable_aot) {
@@ -498,8 +524,12 @@ class Driver {
 		if (vfs_prefix.EndsWith ("/"))
 			vfs_prefix = vfs_prefix.Substring (0, vfs_prefix.Length - 1);
 
-		var dontlink_assemblies = new Dictionary<string, bool> ();
-		dontlink_assemblies [BINDINGS_ASM_NAME] = true;
+		// the linker does not consider these core by default
+		var wasm_core_assemblies = new Dictionary<string, bool> ();
+		if (add_binding) {		
+			wasm_core_assemblies [BINDINGS_ASM_NAME] = true;
+			wasm_core_assemblies [HTTP_ASM_NAME] = true;
+		}
 
 		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, "runtime.js");
 		if (emit_ninja) {
@@ -614,6 +644,7 @@ class Driver {
 		ninja.WriteLine ($"wasm_runtime_dir = {runtime_dir}");
 		ninja.WriteLine ($"deploy_prefix = {deploy_prefix}");
 		ninja.WriteLine ($"bcl_dir = {bcl_prefix}");
+		ninja.WriteLine ($"bcl_facades_dir = {bcl_facades_prefix}");
 		ninja.WriteLine ($"tools_dir = {bcl_tools_prefix}");
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
@@ -758,15 +789,39 @@ class Driver {
 			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
 		}
 		if (enable_linker) {
+			switch (linkMode) {
+			case LinkMode.SdkOnly:
+				coremode = "link";
+				usermode = "copy";
+				break;
+			case LinkMode.All:
+				coremode = "link";
+				usermode = "link";
+				break;
+			default:
+				coremode = "link";
+				usermode = "link";
+				break;
+			}
+
 			string linker_args = "";
 			foreach (var assembly in root_assemblies) {
 				string filename = Path.GetFileName (assembly);
 				linker_args += $"-a linker-in/{filename} ";
 			}
-			foreach (var assembly in dontlink_assemblies.Keys) {
-				linker_args += $"-p copy {assembly} ";
+
+			// the linker does not consider these core by default
+			foreach (var assembly in wasm_core_assemblies.Keys) {
+				linker_args += $"-p {coremode} {assembly} ";
 			}
-			linker_args += " -d $bcl_dir -c link";
+			if (linker_verbose) {
+				linker_args += "--verbose ";
+			}
+			linker_args += $"-d linker-in -d $bcl_dir -d $bcl_facades_dir -c {coremode} -u {usermode} ";
+			foreach (var assembly in wasm_core_assemblies.Keys) {
+				linker_args += $"-r {assembly} ";
+			}
+
 			ninja.WriteLine ("build $builddir/linker-out: mkdir");
 			ninja.WriteLine ($"build {linker_ofiles}: linker {linker_infiles}");
 			ninja.WriteLine ($"  linker_args={linker_args}");

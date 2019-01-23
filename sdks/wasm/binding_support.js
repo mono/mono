@@ -593,8 +593,12 @@ var BindingSupportLib = {
 				throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 			}
 
-			if (args_marshal.length >= args.length && args_marshal [args.length] == 'm')
-				return res;
+			if (args_marshal !== null && typeof args_marshal !== "undefined") 
+			{
+				if (args_marshal.length >= args.length && args_marshal [args.length] == 'm')
+					return res;
+			}
+
 			return this.unbox_mono_obj (res);
 		},
 
@@ -616,7 +620,7 @@ var BindingSupportLib = {
 			if (!this.delegate_dynamic_invoke)
 				throw new Error("System.Delegate.DynamicInvoke method can not be resolved.");
 
-			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "m", [ mono_args ]);
+			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "mm", [ mono_args ]);
 		},
 		
 		resolve_method_fqn: function (fqn) {
