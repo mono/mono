@@ -109,6 +109,16 @@ then
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
+if [[ ${CI_TAGS} == *'ccache'* ]];
+then
+	# CCACHE_DIR should be set to a directory outside the chroot which holds the cache
+	CCACHE=`which ccache`
+	if [ "$CCACHE" ]; then
+		export CC="ccache gcc"
+		export CXX="ccache g++"
+	fi
+fi
+
 if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
 	${TESTCMD} --label=archive --timeout=120m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
 	if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
