@@ -180,6 +180,8 @@ class C
 			if (!silent)
 				Console.WriteLine ("Xml file {0}", text);
 			File.Delete (xmlFilePath);
+		} else {
+			Console.WriteLine ("Xml file missing");
 		}
 
 		if (paramsFileExists) {
@@ -187,6 +189,8 @@ class C
 			if (!silent)
 				Console.WriteLine ("Params file {0}", text);
 			File.Delete (paramsFilePath);
+		} else {
+			Console.WriteLine ("Params file missing");
 		}
 
 		if (crashFileExists) {
@@ -206,6 +210,8 @@ class C
 
 			File.Delete (crashFilePath);
 			// Assert it has the required merp fields
+		} else {
+			Console.WriteLine ("Crash file missing");
 		}
 
 		if (!xmlFileExists)
@@ -328,7 +334,7 @@ class C
 			}
 
 			if (failure_count > 0)
-				return;
+				throw new Exception ("Failed MERP basic correctness tests.");
 
 			Console.WriteLine ("\n\n##################");
 			Console.WriteLine ("Merp Stress Test:");
