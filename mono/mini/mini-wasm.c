@@ -529,7 +529,7 @@ mono_init_native_crash_info (void)
 }
 
 void
-mono_init_native_crash_info (void)
+mono_cleanup_native_crash_info (void)
 {
 	return;
 }
