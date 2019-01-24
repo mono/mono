@@ -562,7 +562,7 @@ create_internal_thread_object (void)
 
 	thread->apartment_state = ThreadApartmentState_Unknown;
 	thread->managed_id = get_next_managed_thread_id ();
-	if (mono_gc_is_moving ()) {
+	if (mono_gc_is_moving () && !HAVE_BOEHM_GC) {
 		thread->thread_pinning_ref = thread;
 		MONO_GC_REGISTER_ROOT_PINNING (thread->thread_pinning_ref, MONO_ROOT_SOURCE_THREADING, NULL, "Thread Pinning Reference");
 	}
@@ -884,7 +884,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 
 	mono_memory_barrier ();
 
-	if (mono_gc_is_moving ()) {
+	if (mono_gc_is_moving () && !HAVE_BOEHM_GC) {
 		MONO_GC_UNREGISTER_ROOT (thread->thread_pinning_ref);
 		thread->thread_pinning_ref = NULL;
 	}
