@@ -655,8 +655,8 @@ namespace WsProxy {
 			res.WriteLine ($"//dotnet:{id}");
 
 			try {
-				if (src_file.OriginalSourcePath.IsFile) {
-					using (var f = new StreamReader (File.Open (src_file.OriginalSourcePath.LocalPath, FileMode.Open))) {
+				if (src_file.SourceUri.IsFile && File.Exists(src_file.SourceUri.LocalPath)) {
+					using (var f = new StreamReader (File.Open (src_file.SourceUri.LocalPath, FileMode.Open))) {
 						await res.WriteAsync (await f.ReadToEndAsync ());
 					}
 
@@ -665,8 +665,8 @@ namespace WsProxy {
 					});
 
 					SendResponse (msg_id, Result.Ok (o), token);
-				} else {
-					var doc = await new WebClient ().DownloadStringTaskAsync (src_file.OriginalSourcePath);
+				} else if(src_file.SourceLinkUri != null) {
+					var doc = await new WebClient ().DownloadStringTaskAsync (src_file.SourceLinkUri);
 					await res.WriteAsync (doc);
 
 					var o = JObject.FromObject (new {
@@ -674,10 +674,18 @@ namespace WsProxy {
 					});
 
 					SendResponse (msg_id, Result.Ok (o), token);
+				} else {
+					var o = JObject.FromObject (new {
+						scriptSource = $"// Unable to find document {src_file.SourceUri}"
+					});
+
+					SendResponse (msg_id, Result.Ok (o), token);
 				}
 			} catch (Exception e) {
 				var o = JObject.FromObject (new {
-					scriptSource = $"// Unable to find document {src_file.OriginalSourcePath} ({e.Message})"
+					scriptSource = $"// Unable to read document ({e.Message})\n" +
+								$"Local path: {src_file?.SourceUri}\n" +
+								$"SourceLink path: {src_file?.SourceLinkUri}\n"
 				});
 
 				SendResponse (msg_id, Result.Ok (o), token);

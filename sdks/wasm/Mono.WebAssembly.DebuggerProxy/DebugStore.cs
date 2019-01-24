@@ -393,14 +393,17 @@ namespace WsProxy {
 
 			foreach (var sourceLinkDocument in sourceLinkMappings) {
 				string key = sourceLinkDocument.Key;
+
 				if (Path.GetFileName (key) != "*") {
 					continue;
 				}
 
 				var keyTrim = key.TrimEnd ('*');
-				var docUrlPart = document.Replace (keyTrim, "");
 
-				return new Uri (sourceLinkDocument.Value.TrimEnd ('*') + docUrlPart);
+				if (document.StartsWith(keyTrim, StringComparison.OrdinalIgnoreCase)) {
+					var docUrlPart = document.Replace (keyTrim, "");
+					return new Uri (sourceLinkDocument.Value.TrimEnd ('*') + docUrlPart);
+				}
 			}
 
 			return null;
@@ -437,7 +440,6 @@ namespace WsProxy {
 
 	internal class SourceFile {
 		HashSet<MethodInfo> methods;
-		Uri sourceLinkUri;
 		AssemblyInfo assembly;
 		int id;
 		Document doc;
@@ -445,23 +447,24 @@ namespace WsProxy {
 		internal SourceFile (AssemblyInfo assembly, int id, Document doc, Uri sourceLinkUri)
 		{
 			this.methods = new HashSet<MethodInfo> ();
-			this.sourceLinkUri = sourceLinkUri;
+			this.SourceLinkUri = sourceLinkUri;
 			this.assembly = assembly;
 			this.id = id;
 			this.doc = doc;
-			this.FileName = doc.Url.Replace ("\\", "/").Replace (":", "");
+			this.DebuggerFileName = doc.Url.Replace ("\\", "/").Replace (":", "");
+			this.SourceUri = new Uri ((Path.IsPathRooted (doc.Url) ? "file://" : "") + doc.Url, UriKind.RelativeOrAbsolute);
 		}
 
 		internal void AddMethod (MethodInfo mi)
 		{
 			this.methods.Add (mi);
 		}
-		public string FileName { get; }
-		public string Url => $"dotnet://{assembly.Name}/{FileName}";
+		public string DebuggerFileName { get; }
+		public string Url => $"dotnet://{assembly.Name}/{DebuggerFileName}";
 		public string DocHashCode => "abcdee" + id;
 		public SourceId SourceId => new SourceId (assembly.Id, this.id);
-		public Uri OriginalSourcePath
-			=> sourceLinkUri ?? new Uri(doc.Url.StartsWith("/") ? "file://" : "" + doc.Url, UriKind.RelativeOrAbsolute);
+		public Uri SourceLinkUri { get; }
+		public Uri SourceUri { get; }
 
 		public IEnumerable<MethodInfo> Methods => this.methods;
 	}
@@ -604,7 +607,7 @@ namespace WsProxy {
 		public SourceLocation FindBestBreakpoint (BreakPointRequest req)
 		{
 			var asm = this.assemblies.FirstOrDefault (a => a.Name.Equals (req.Assembly, StringComparison.OrdinalIgnoreCase));
-			var src = asm.Sources.FirstOrDefault (s => s.FileName.Equals (req.File, StringComparison.OrdinalIgnoreCase));
+			var src = asm.Sources.FirstOrDefault (s => s.DebuggerFileName.Equals (req.File, StringComparison.OrdinalIgnoreCase));
 
 			foreach (var m in src.Methods) {
 				foreach (var sp in m.methodDef.DebugInformation.SequencePoints) {
