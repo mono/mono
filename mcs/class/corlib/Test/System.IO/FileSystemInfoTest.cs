@@ -164,6 +164,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
+		[Category ("NotOnMac")]
 		public void CreationTimeNoFileOrDirectory ()
 		{
 			string path = TempFolder + DSC + "FSIT.CreationTimeNoFile.Test";
