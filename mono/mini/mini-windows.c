@@ -245,6 +245,12 @@ mono_runtime_cleanup_handlers (void)
 #endif
 }
 
+void
+mono_init_native_crash_info (void)
+{
+	return;
+}
+
 #if G_HAVE_API_SUPPORT (HAVE_CLASSIC_WINAPI_SUPPORT | HAVE_UWP_WINAPI_SUPPORT)
 /* mono_chain_signal:
  *
@@ -255,8 +261,8 @@ mono_runtime_cleanup_handlers (void)
 gboolean
 MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal)
 {
-	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
-	jit_tls->mono_win_chained_exception_needs_run = TRUE;
+	/* Set to FALSE to indicate that vectored exception handling should continue to look for handler */
+	MONO_SIG_HANDLER_GET_INFO ()->handled = FALSE;
 	return TRUE;
 }
 

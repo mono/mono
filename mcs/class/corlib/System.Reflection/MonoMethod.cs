@@ -42,7 +42,6 @@ using System.Security;
 using System.Threading;
 using System.Text;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 	
@@ -175,7 +174,6 @@ namespace System.Reflection {
         {
             if (info == null)
                 throw new ArgumentNullException("info");
-            Contract.EndContractBlock();
 
             MemberInfoSerializationHolder.GetSerializationInfo(
                 info,
@@ -192,6 +190,32 @@ namespace System.Reflection {
             return ReturnType.FormatTypeName(true) + " " + FormatNameAndSig(true);
         }
         #endregion
+
+		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle)
+		{
+			return GetMethodFromHandleInternalType_native (handle.Value, IntPtr.Zero, false);
+		}
+
+		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle, RuntimeTypeHandle reflectedType)
+		{
+			return GetMethodFromHandleInternalType_native (handle.Value, reflectedType.Value, false);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		[PreserveDependency(".ctor(System.Reflection.ExceptionHandlingClause[],System.Reflection.LocalVariableInfo[],System.Byte[],System.Boolean,System.Int32,System.Int32)", "System.Reflection.MethodBody")]
+		internal extern static MethodBody GetMethodBodyInternal (IntPtr handle);
+
+		internal static MethodBody GetMethodBody (IntPtr handle)
+		{
+			return GetMethodBodyInternal (handle);
+		}
+
+		internal static MethodBase GetMethodFromHandleInternalType (IntPtr method_handle, IntPtr type_handle) {
+			return GetMethodFromHandleInternalType_native (method_handle, type_handle, true);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static MethodBase GetMethodFromHandleInternalType_native (IntPtr method_handle, IntPtr type_handle, bool genericCheck);
 	}
 
 	/*
@@ -695,7 +719,6 @@ namespace System.Reflection {
         {
             if (info == null)
                 throw new ArgumentNullException("info");
-            Contract.EndContractBlock();
             MemberInfoSerializationHolder.GetSerializationInfo(
                 info,
                 Name,
@@ -879,7 +902,7 @@ namespace System.Reflection {
 		}
 
 		public override MethodBody GetMethodBody () {
-			return GetMethodBody (mhandle);
+			return RuntimeMethodInfo.GetMethodBody (mhandle);
 		}
 
 		public override string ToString () {

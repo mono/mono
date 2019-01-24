@@ -544,6 +544,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_loader_init ();
 	mono_reflection_init ();
 	mono_runtime_init_tls ();
+	mono_icall_init ();
 
 	domain = mono_domain_create ();
 	mono_root_domain = domain;
@@ -712,8 +713,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.internal_thread_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System.Threading", "InternalThread");
 
-	mono_defaults.appdomain_class = mono_class_load_from_name (
-                mono_defaults.corlib, "System", "AppDomain");
+	mono_defaults.appdomain_class = mono_class_get_appdomain_class ();
 
 #ifndef DISABLE_REMOTING
 	mono_defaults.transparent_proxy_class = mono_class_load_from_name (
@@ -730,8 +730,11 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 #endif
 
+        /* FIXME pretty sure this is wrong and netcore has messages... */
+#ifndef ENABLE_NETCORE
 	mono_defaults.mono_method_message_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System.Runtime.Remoting.Messaging", "MonoMethodMessage");
+#endif
 
 	mono_defaults.field_info_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Reflection", "FieldInfo");
@@ -1871,14 +1874,14 @@ get_runtime_by_version (const char *version)
 }
 
 static void
-get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRuntimeInfo** runtimes)
+get_runtimes_from_exe (const char *file, MonoImage **out_image, const MonoRuntimeInfo** runtimes)
 {
 	AppConfigInfo* app_config;
 	char *version;
 	const MonoRuntimeInfo* runtime = NULL;
 	MonoImage *image = NULL;
 	
-	app_config = app_config_parse (exe_file);
+	app_config = app_config_parse (file);
 	
 	if (app_config != NULL) {
 		/* Check supportedRuntime elements, if none is supported, fail.
@@ -1910,10 +1913,10 @@ get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRu
 	}
 	
 	/* Look for a runtime with the exact version */
-	image = mono_assembly_open_from_bundle (exe_file, NULL, FALSE);
+	image = mono_assembly_open_from_bundle (file, NULL, FALSE);
 
 	if (image == NULL)
-		image = mono_image_open (exe_file, NULL);
+		image = mono_image_open (file, NULL);
 
 	if (image == NULL) {
 		/* The image is wrong or the file was not found. In this case return
@@ -1925,7 +1928,7 @@ get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, const MonoRu
 		return;
 	}
 
-	*exe_image = image;
+	*out_image = image;
 
 	runtimes [0] = get_runtime_by_version (image->version);
 	runtimes [1] = NULL;

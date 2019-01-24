@@ -1675,7 +1675,7 @@ mono_jit_parse_options (int argc, char * argv[])
 {
 	int i;
 	char *trace_options = NULL;
-	int mini_verbose = 0;
+	int mini_verbose_level = 0;
 	guint32 opt;
 
 	/* 
@@ -1711,7 +1711,7 @@ mono_jit_parse_options (int argc, char * argv[])
 		} else if (strncmp (argv [i], "--trace=", 8) == 0) {
 			trace_options = &argv [i][8];
 		} else if (strcmp (argv [i], "--verbose") == 0 || strcmp (argv [i], "-v") == 0) {
-			mini_verbose++;
+			mini_verbose_level++;
 		} else if (strcmp (argv [i], "--breakonex") == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
@@ -1757,8 +1757,8 @@ mono_jit_parse_options (int argc, char * argv[])
 			exit (1);
 	}
 
-	if (mini_verbose)
-		mono_set_verbose_level (mini_verbose);
+	if (mini_verbose_level)
+		mono_set_verbose_level (mini_verbose_level);
 }
 
 static void
@@ -1923,6 +1923,27 @@ mono_regression_test_step (int verbose_level, const char *image, const char *met
 
 	return mono_exec_regression_internal (verbose_level, 1, images, FALSE) == 0;
 }
+
+#ifdef ENABLE_ICALL_SYMBOL_MAP
+/* Print the icall table as JSON */
+static void
+print_icall_table (void)
+{
+	// We emit some dummy values to make the code simpler
+
+	printf ("[\n{ \"klass\": \"\", \"icalls\": [");
+#define NOHANDLES(inner) inner
+#define HANDLES(id, name, func, ...)	printf ("\t,{ \"name\": \"%s\", \"func\": \"%s_raw\", \"handles\": true }\n", name, #func);
+#define HANDLES_REUSE_WRAPPER		HANDLES
+#define MONO_HANDLE_REGISTER_ICALL(...) /* nothing  */
+#define ICALL_TYPE(id,name,first) printf ("]},\n { \"klass\":\"%s\", \"icalls\": [{} ", name);
+#define ICALL(id,name,func) printf ("\t,{ \"name\": \"%s\", \"func\": \"%s\", \"handles\": false }\n", name, #func);
+#include <mono/metadata/icall-def.h>
+
+	printf ("]}\n]\n");
+}
+#endif
+
 /**
  * mono_main:
  * \param argc number of arguments in the argv array
@@ -1945,7 +1966,7 @@ mono_main (int argc, char* argv[])
 	int i, count = 1;
 	guint32 opt, action = DO_EXEC, recompilation_times = 1;
 	MonoGraphOptions mono_graph_options = (MonoGraphOptions)0;
-	int mini_verbose = 0;
+	int mini_verbose_level = 0;
 	char *trace_options = NULL;
 	char *aot_options = NULL;
 	char *forced_version = NULL;
@@ -2007,7 +2028,7 @@ mono_main (int argc, char* argv[])
 			mono_single_method_regression_opt = parse_optimizations (opt, full_opts, TRUE);
 			g_free (full_opts);
 		} else if (strcmp (argv [i], "--verbose") == 0 || strcmp (argv [i], "-v") == 0) {
-			mini_verbose++;
+			mini_verbose_level++;
 		} else if (strcmp (argv [i], "--version") == 0 || strcmp (argv [i], "-V") == 0) {
 			char *build = mono_get_runtime_build_info ();
 			char *gc_descr;
@@ -2140,7 +2161,7 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--full-aot-interp") == 0) {
 			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
 		} else if (strcmp (argv [i], "--llvmonly-interp") == 0) {
-			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
+			mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY_INTERP);
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
@@ -2305,6 +2326,14 @@ mono_main (int argc, char* argv[])
 			mono_enable_interp (NULL);
 		} else if (strncmp (argv [i], "--interp=", 9) == 0) {
 			mono_enable_interp (argv [i] + 9);
+		} else if (strcmp (argv [i], "--print-icall-table") == 0) {
+#ifdef ENABLE_ICALL_SYMBOL_MAP
+			print_icall_table ();
+			exit (0);
+#else
+			fprintf (stderr, "--print-icall-table requires a runtime configured with the --enable-icall-symbol-map option.\n");
+			exit (1);
+#endif
 		} else if (strncmp (argv [i], "--assembly-loader=", strlen("--assembly-loader=")) == 0) {
 			gchar *arg = argv [i] + strlen ("--assembly-loader=");
 			if (strcmp (arg, "strict") == 0)
@@ -2443,7 +2472,7 @@ mono_main (int argc, char* argv[])
 		mono_config_parse (config_file);
 	}
 
-	mono_set_defaults (mini_verbose, opt);
+	mono_set_defaults (mini_verbose_level, opt);
 	domain = mini_init (argv [i], forced_version);
 
 	mono_gc_set_stack_end (&domain);
@@ -2466,7 +2495,7 @@ mono_main (int argc, char* argv[])
 	switch (action) {
 	case DO_SINGLE_METHOD_REGRESSION:
 	case DO_REGRESSION:
-		 return mono_exec_regression_internal (mini_verbose, argc -i, argv + i, action == DO_SINGLE_METHOD_REGRESSION);
+		 return mono_exec_regression_internal (mini_verbose_level, argc -i, argv + i, action == DO_SINGLE_METHOD_REGRESSION);
 
 	case DO_BENCH:
 		if (argc - i != 1 || mname == NULL) {
@@ -2557,7 +2586,7 @@ mono_main (int argc, char* argv[])
 		i = mono_environment_exitcode_get ();
 		return i;
 	} else if (action == DO_COMPILE) {
-		compile_all_methods (assembly, mini_verbose, opt, recompilation_times);
+		compile_all_methods (assembly, mini_verbose_level, opt, recompilation_times);
 		mini_cleanup (domain);
 		return 0;
 	} else if (action == DO_DEBUGGER) {
@@ -2726,6 +2755,7 @@ void
 mono_jit_set_aot_only (gboolean val)
 {
 	mono_aot_only = val;
+	mono_ee_features.use_aot_trampolines = val;
 }
 
 static void
@@ -2767,6 +2797,12 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 		mono_ee_features.force_use_interpreter = TRUE;
 		break;
 
+	case MONO_AOT_MODE_LLVMONLY_INTERP:
+		mono_aot_only = TRUE;
+		mono_use_interpreter = TRUE;
+		mono_llvm_only = TRUE;
+		break;
+
 	case MONO_EE_MODE_INTERP:
 		mono_use_interpreter = TRUE;
 
@@ -2774,6 +2810,7 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 		break;
 
 	case MONO_AOT_MODE_NORMAL:
+	case MONO_AOT_MODE_NONE:
 		break;
 
 	default:
@@ -2788,11 +2825,13 @@ void
 mono_jit_set_aot_mode (MonoAotMode mode)
 {
 	/* we don't want to set mono_aot_mode twice */
-	g_assert (mono_aot_mode == MONO_AOT_MODE_NONE);
+	static gboolean inited;
+
+	g_assert (!inited);
 	mono_aot_mode = mode;
+	inited = TRUE;
 	
 	mono_runtime_set_execution_mode ((MonoEEMode)mode);
-
 }
 
 mono_bool

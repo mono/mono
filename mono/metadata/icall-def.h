@@ -664,8 +664,6 @@ HANDLES(FILEDI_2, "internal_from_handle_type", ves_icall_System_Reflection_Field
 
 ICALL_TYPE(MBASE, "System.Reflection.MethodBase", MBASE_1)
 HANDLES(MBASE_1, "GetCurrentMethod", ves_icall_GetCurrentMethod, MonoReflectionMethod, 0, ())
-HANDLES(MBASE_2, "GetMethodBodyInternal", ves_icall_System_Reflection_MethodBase_GetMethodBodyInternal, MonoReflectionMethodBody, 1, (MonoMethod_ptr))
-HANDLES(MBASE_4, "GetMethodFromHandleInternalType_native", ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType_native, MonoReflectionMethod, 3, (MonoMethod_ptr, MonoType_ptr, MonoBoolean))
 
 ICALL_TYPE(MODULE, "System.Reflection.Module", MODULE_1)
 HANDLES(MODULE_1, "Close", ves_icall_System_Reflection_Module_Close, void, 1, (MonoReflectionModule))
@@ -698,10 +696,8 @@ HANDLES(MEVIN_1, "get_event_info", ves_icall_MonoEventInfo_get_event_info, void,
 ICALL_TYPE(MFIELD, "System.Reflection.MonoField", MFIELD_1)
 HANDLES(MFIELD_1, "GetFieldOffset", ves_icall_MonoField_GetFieldOffset, gint32, 1, (MonoReflectionField))
 HANDLES(MFIELD_2, "GetParentType", ves_icall_MonoField_GetParentType, MonoReflectionType, 2, (MonoReflectionField, MonoBoolean))
-
 ICALL(MFIELD_5, "GetRawConstantValue", ves_icall_MonoField_GetRawConstantValue)
 HANDLES(MFIELD_9, "GetTypeModifiers", ves_icall_System_Reflection_FieldInfo_GetTypeModifiers, MonoArray, 2, (MonoReflectionField, MonoBoolean))
-
 ICALL(MFIELD_3, "GetValueInternal", ves_icall_MonoField_GetValueInternal)
 HANDLES(MFIELD_6, "ResolveType", ves_icall_MonoField_ResolveType, MonoReflectionType, 1, (MonoReflectionField))
 HANDLES(MFIELD_4, "SetValueInternal", ves_icall_MonoField_SetValueInternal, void, 3, (MonoReflectionField, MonoObject, MonoObject))
@@ -743,6 +739,10 @@ HANDLES(MPROPI_2, "get_property_info", ves_icall_MonoPropertyInfo_get_property_i
 
 ICALL_TYPE(RTFIELD, "System.Reflection.RtFieldInfo", RTFIELD_1)
 ICALL(RTFIELD_1, "UnsafeGetValue", ves_icall_MonoField_GetValueInternal)
+
+ICALL_TYPE(RMETHODINFO, "System.Reflection.RuntimeMethodInfo", RMETHODINFO_1)
+HANDLES(RMETHODINFO_1, "GetMethodBodyInternal", ves_icall_System_Reflection_RuntimeMethodInfo_GetMethodBodyInternal, MonoReflectionMethodBody, 1, (MonoMethod_ptr))
+HANDLES(RMETHODINFO_2, "GetMethodFromHandleInternalType_native", ves_icall_System_Reflection_RuntimeMethodInfo_GetMethodFromHandleInternalType_native, MonoReflectionMethod, 3, (MonoMethod_ptr, MonoType_ptr, MonoBoolean))
 
 ICALL_TYPE(RUNH, "System.Runtime.CompilerServices.RuntimeHelpers", RUNH_1)
 HANDLES(RUNH_1, "GetObjectValue", ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_GetObjectValue, MonoObject, 1, (MonoObject))
@@ -1017,25 +1017,21 @@ ICALL(MONIT_7, "Monitor_wait", ves_icall_System_Threading_Monitor_Monitor_wait)
 ICALL(MONIT_9, "try_enter_with_atomic_var", ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var)
 
 ICALL_TYPE(MUTEX, "System.Threading.Mutex", MUTEX_1)
-HANDLES(MUTEX_1, "CreateMutex_internal(bool,string,bool&)", ves_icall_System_Threading_Mutex_CreateMutex_internal, gpointer, 3, (MonoBoolean, MonoString, MonoBoolean_ref))
-HANDLES(MUTEX_2, "OpenMutex_internal(string,System.Security.AccessControl.MutexRights,System.IO.MonoIOError&)", ves_icall_System_Threading_Mutex_OpenMutex_internal, gpointer, 3, (MonoString, gint32, gint32_ref))
-NOHANDLES(ICALL(MUTEX_3, "ReleaseMutex_internal(intptr)", ves_icall_System_Threading_Mutex_ReleaseMutex_internal))
+HANDLES(MUTEX_1, "CreateMutex_icall", ves_icall_System_Threading_Mutex_CreateMutex_icall, gpointer, 4, (MonoBoolean, const_gunichar2_ptr, gint32, MonoBoolean_ref))
+HANDLES(MUTEX_2, "OpenMutex_icall", ves_icall_System_Threading_Mutex_OpenMutex_icall, gpointer, 4, (const_gunichar2_ptr, gint32, gint32, gint32_ref))
+NOHANDLES(ICALL(MUTEX_3, "ReleaseMutex_internal", ves_icall_System_Threading_Mutex_ReleaseMutex_internal))
 
 ICALL_TYPE(NATIVEC, "System.Threading.NativeEventCalls", NATIVEC_1)
 NOHANDLES(ICALL(NATIVEC_1, "CloseEvent_internal", ves_icall_System_Threading_Events_CloseEvent_internal))
-HANDLES(NATIVEC_2, "CreateEvent_internal(bool,bool,string,int&)", ves_icall_System_Threading_Events_CreateEvent_internal, gpointer, 4, (MonoBoolean, MonoBoolean, MonoString, gint32_ref))
-HANDLES(NATIVEC_3, "OpenEvent_internal(string,System.Security.AccessControl.EventWaitHandleRights,int&)", ves_icall_System_Threading_Events_OpenEvent_internal, gpointer, 3, (MonoString, gint32, gint32_ref))
-//FIXME HANDLES(NATIVEC_4, "ResetEvent_internal", ves_icall_System_Threading_Events_ResetEvent_internal, MonoBoolean, 1, (gpointer))
+HANDLES(NATIVEC_2, "CreateEvent_icall", ves_icall_System_Threading_Events_CreateEvent_icall, gpointer, 5, (MonoBoolean, MonoBoolean, const_gunichar2_ptr, gint32, gint32_ref))
+HANDLES(NATIVEC_3, "OpenEvent_icall", ves_icall_System_Threading_Events_OpenEvent_icall, gpointer, 4, (const_gunichar2_ptr, gint32, gint32, gint32_ref))
 NOHANDLES(ICALL(NATIVEC_4, "ResetEvent_internal",  ves_icall_System_Threading_Events_ResetEvent_internal))
-//HANDLES(NATIVEC_5, "SetEvent_internal", ves_icall_System_Threading_Events_SetEvent_internal, MonoBoolean, 1, (gpointer))
 NOHANDLES(ICALL(NATIVEC_5, "SetEvent_internal",    ves_icall_System_Threading_Events_SetEvent_internal))
 
 ICALL_TYPE(SEMA, "System.Threading.Semaphore", SEMA_1)
-ICALL(SEMA_1, "CreateSemaphore_internal(int,int,string,int&)", ves_icall_System_Threading_Semaphore_CreateSemaphore_internal)
-ICALL(SEMA_2, "OpenSemaphore_internal(string,System.Security.AccessControl.SemaphoreRights,int&)", ves_icall_System_Threading_Semaphore_OpenSemaphore_internal)
-
-// Assume output parameter is to stack.
-NOHANDLES(ICALL(SEMA_3, "ReleaseSemaphore_internal(intptr,int,int&)", ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal))
+HANDLES(SEMA_1, "CreateSemaphore_icall", ves_icall_System_Threading_Semaphore_CreateSemaphore_icall, gpointer, 5, (gint32, gint32, const_gunichar2_ptr, gint32, gint32_ptr))
+HANDLES(SEMA_2, "OpenSemaphore_icall", ves_icall_System_Threading_Semaphore_OpenSemaphore_icall, gpointer, 4, (const_gunichar2_ptr, gint32, gint32, gint32_ptr))
+HANDLES(SEMA_3, "ReleaseSemaphore_internal", ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal, MonoBoolean, 3, (gpointer, gint32, gint32_ref))
 
 ICALL_TYPE(THREAD, "System.Threading.Thread", THREAD_1)
 HANDLES(THREAD_1, "Abort_internal(System.Threading.InternalThread,object)", ves_icall_System_Threading_Thread_Abort, void, 2, (MonoInternalThread, MonoObject))

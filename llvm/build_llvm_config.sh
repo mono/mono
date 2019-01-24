@@ -139,10 +139,10 @@ fi
 
 if [[ $llvm_config_cflags = *"stdlib=libc++"* ]]; then
 	llvm_libc_c="-stdlib=libc++"
-	llvm_libc_link="-lc++"
+	# llvm_libc_link="-lc++"
 else
 	llvm_libc_c=""
-	llvm_libc_link="-lstdc++"
+	# llvm_libc_link="-lstdc++"
 fi
 
 if [[ $llvm_host_win32 = 1 ]]; then

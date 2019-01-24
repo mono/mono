@@ -37,12 +37,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../class/lib/monotouch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;ONLY_APPLETLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;ONLY_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
     <OutputPath>./../../class/lib/monotouch_runtime</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_runtime</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;ONLY_APPLETLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;ONLY_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <OutputPath>./../../class/lib/monotouch_watch</OutputPath>
@@ -87,12 +87,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;FEATURE_COMPILED;ONLY_APPLETLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;FEATURE_COMPILED;ONLY_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;CODEDOM;MONO_FEATURE_APPLETLS;FEATURE_COMPILED;ONLY_APPLETLS;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;CODEDOM;MONO_FEATURE_APPLETLS;FEATURE_COMPILED;ONLY_APPLETLS;ENABLE_GSS;CONFIGURATION_DEP</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
     <OutputPath>./../../class/lib/orbis</OutputPath>
@@ -2097,6 +2097,7 @@
         </When>
         <When Condition="'$(HostPlatform)' == 'unix'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
@@ -2107,7 +2108,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
@@ -3101,6 +3101,7 @@
         </When>
         <When Condition="'$(HostPlatform)' == 'linux'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
@@ -3111,7 +3112,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
@@ -3985,6 +3985,7 @@
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
@@ -3995,7 +3996,6 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />

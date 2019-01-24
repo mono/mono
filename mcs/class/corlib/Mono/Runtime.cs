@@ -204,14 +204,30 @@ namespace Mono {
 			}
 		}
 
+		enum CrashReportLogLevel : int {
+			MonoSummaryNone = 0,
+			MonoSummarySetup,
+			MonoSummarySuspendHandshake,
+			MonoSummaryUnmanagedStacks,
+			MonoSummaryManagedStacks,
+			MonoSummaryStateWriter,
+			MonoSummaryStateWriterDone,
+			MonoSummaryMerpWriter,
+			MonoSummaryMerpInvoke,
+			MonoSummaryCleanup,
+			MonoSummaryDone,
+
+			MonoSummaryDoubleFault
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern int CheckCrashReportLog_internal (IntPtr directory, bool clear);
 
-		static int CheckCrashReportLog (string directory_str, bool clear)
+		static CrashReportLogLevel CheckCrashReportLog (string directory_str, bool clear)
 		{
 			using (var directory_chars = RuntimeMarshal.MarshalString (directory_str))
 			{
-				return CheckCrashReportLog_internal (directory_chars.Value, clear);
+				return (CrashReportLogLevel) CheckCrashReportLog_internal (directory_chars.Value, clear);
 			}
 		}
 

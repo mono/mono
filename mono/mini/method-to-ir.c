@@ -82,6 +82,7 @@
 #include "aot-compiler.h"
 #include "mini-llvm.h"
 #include "mini-runtime.h"
+#include "llvmonly-runtime.h"
 
 #define BRANCH_COST 10
 #define CALL_COST 10
@@ -2866,6 +2867,7 @@ emit_seq_point (MonoCompile *cfg, MonoMethod *method, guint8* ip, gboolean intr_
 		if (nonempty_stack)
 			ins->flags |= MONO_INST_NONEMPTY_STACK;
 		MONO_ADD_INS (cfg->cbb, ins);
+		cfg->last_seq_point = ins;
 	}
 }
 
@@ -3536,9 +3538,9 @@ handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, Mono
 				target,
 				emit_get_rgctx_method (cfg, target_method_context_used, method, MONO_RGCTX_INFO_METHOD)
 			};
-			mono_emit_jit_icall (cfg, mono_llvmonly_init_delegate_virtual, args);
+			mono_emit_jit_icall (cfg, mini_llvmonly_init_delegate_virtual, args);
 		} else {
-			mono_emit_jit_icall (cfg, mono_llvmonly_init_delegate, &obj);
+			mono_emit_jit_icall (cfg, mini_llvmonly_init_delegate, &obj);
 		}
 
 		return obj;
@@ -5936,6 +5938,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoDebugMethodInfo *minfo;
 	MonoBitSet *seq_point_locs = NULL;
 	MonoBitSet *seq_point_set_locs = NULL;
+	gboolean emitted_funccall_seq_point = FALSE;
 
 	cfg->disable_inline = is_jit_optimizer_disabled (method);
 
@@ -6555,6 +6558,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			else
 				MONO_INST_NEW (cfg, ins, OP_NOP);
 			MONO_ADD_INS (cfg->cbb, ins);
+			emitted_funccall_seq_point = FALSE;
 			break;
 		case MONO_CEE_BREAK:
 			if (mini_should_insert_breakpoint (cfg->method)) {
@@ -7799,8 +7803,20 @@ calli_end:
 			}
 			ins_flag = 0;
 			constrained_class = NULL;
-			if (need_seq_point)
+			
+			if (need_seq_point) {
+				//check is is a nested call and remove the non_empty_stack of the last call, only for non native methods
+				if (!(method->flags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
+					if (emitted_funccall_seq_point) {
+						if (cfg->last_seq_point)
+							cfg->last_seq_point->flags |= MONO_INST_NESTED_CALL;
+					}
+					else
+						emitted_funccall_seq_point = TRUE;
+				}
 				emit_seq_point (cfg, method, next_ip, FALSE, TRUE);
+			}
+
 			break;
 		}
 		case MONO_CEE_RET:

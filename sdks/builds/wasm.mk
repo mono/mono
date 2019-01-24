@@ -8,7 +8,7 @@ $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
 
 .stamp-wasm-checkout-and-update-emsdk: | $(EMSCRIPTEN_SDK_DIR)
-	cd $(TOP)/sdks/builds/toolchains/emsdk && git pull
+	cd $(TOP)/sdks/builds/toolchains/emsdk && git reset --hard && git clean -xdff && git pull
 	touch $@
 
 #This is a weird rule to workaround the circularity of the next rule.
@@ -29,6 +29,8 @@ provision-wasm: .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION)
 WASM_RUNTIME_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no
 
+WASM_RUNTIME_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
+
 WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--cache-file=$(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION).config.cache \
 	--prefix=$(TOP)/sdks/out/wasm-runtime-$(CONFIGURATION) \
@@ -42,7 +44,7 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--disable-support-build \
 	--disable-visibility-hidden \
 	--enable-maintainer-mode	\
-	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages \
+	--enable-minimal=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb \
 	--host=wasm32 \
 	--enable-llvm-runtime \
 	--enable-icall-export \
@@ -50,14 +52,14 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--disable-crash-reporting \
 	--with-bitcode=yes \
 	$(if $(ENABLE_CXX),--enable-cxx) \
-	CFLAGS="-fexceptions"
+	CFLAGS="$(WASM_RUNTIME_CFLAGS)"
 
 .stamp-wasm-runtime-toolchain:
 	touch $@
 
 .stamp-wasm-runtime-$(CONFIGURATION)-configure: $(TOP)/configure | $(if $(IGNORE_PROVISION_WASM),,provision-wasm)
 	mkdir -p $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION)
-	cd $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION) && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && CFLAGS="-Os -g" emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $(WASM_RUNTIME_CONFIGURE_FLAGS)
+	cd $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION) && source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emconfigure $(TOP)/configure $(WASM_RUNTIME_AC_VARS) $(WASM_RUNTIME_CONFIGURE_FLAGS)
 	touch $@
 
 .PHONY: .stamp-wasm-runtime-configure
@@ -150,12 +152,12 @@ _wasm-$(1)_CFLAGS= \
 _wasm-$(1)_CXXFLAGS= \
 	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
 	-static \
-	-static-libgcc
+	-static-libgcc \
+	-static-libstdc++
 
 _wasm-$(1)_LDFLAGS= \
 	-static \
-	-static-libgcc \
-	-static-libstdc++
+	-static-libgcc
 
 _wasm-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \

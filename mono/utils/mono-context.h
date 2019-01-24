@@ -271,6 +271,8 @@ struct sigcontext {
 #undef MONO_SIGNAL_USE_UCONTEXT_T
 #endif
 
+MONO_DISABLE_WARNING(4324) // 'struct_name' : structure was padded due to __declspec(align())
+
 typedef struct {
 	host_mgreg_t gregs [AMD64_NREG];
 #if defined(MONO_HAVE_SIMD_REG)
@@ -279,6 +281,8 @@ typedef struct {
 	double fregs [AMD64_XMM_NREG];
 #endif
 } MonoContext;
+
+MONO_RESTORE_WARNING
 
 #define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->gregs [AMD64_RIP] = (host_mgreg_t)(gsize)(ip); } while (0);
 #define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->gregs [AMD64_RBP] = (host_mgreg_t)(gsize)(bp); } while (0);
@@ -472,7 +476,7 @@ typedef struct {
 #define MONO_CONTEXT_GET_BP(ctx) (gpointer)(gsize)((ctx)->regs [ARMREG_FP])
 #define MONO_CONTEXT_GET_SP(ctx) (gpointer)(gsize)((ctx)->regs [ARMREG_SP])
 
-#if defined (HOST_APPLETVOS)
+#if defined (HOST_TVOS)
 
 #define MONO_CONTEXT_GET_CURRENT(ctx) do { \
 	arm_unified_thread_state_t thread_state;	\
@@ -488,6 +492,13 @@ typedef struct {
 	g_assert (ret == 0);	\
 	mono_mach_arch_thread_states_to_mono_context ((thread_state_t) &thread_state, (thread_state_t) &thread_fpstate, &ctx); \
 	mach_port_deallocate (current_task (), self);	\
+} while (0);
+
+#elif defined(HOST_WATCHOS)
+
+#define MONO_CONTEXT_GET_CURRENT(ctx) do { \
+	gpointer _dummy; \
+	ctx.regs [ARMREG_SP] = (host_mgreg_t)(gsize)&_dummy; \
 } while (0);
 
 #else
@@ -866,7 +877,13 @@ typedef struct {
 
 #define MONO_ARCH_HAS_MONO_CONTEXT 1
 
+#include <sys/ucontext.h>
+
+#if __GLIBC_PREREQ(2, 27)
+typedef ucontext_t MonoContext;
+#else
 typedef struct ucontext MonoContext;
+#endif
 
 #define MONO_CONTEXT_SET_IP(ctx,ip) 					\
 	do {								\

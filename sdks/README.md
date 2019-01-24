@@ -53,32 +53,10 @@ mono$ make -C sdks/builds archive-wasm  NINJA=
 mono$ make -C sdks/builds archive-mac [upcoming]
 ```
 
-# Testing instructions
+# WebAssembly
 
-## WebAssembly
+Go to the `wasm` directory for building and testing WebAssembly.  For more information view the [WebAssembly readme](./wasm/README.md)
 
-First, ensure the `runtime`, `AOT` and `bcl` have been built and packaged in the `builds` directory:
-
-```bash
-mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
-```
-
-Go to the `wasm` directory for building and testing WebAssembly. Right now the following targets are available:
-
-- mono: Encompasses all the previous steps
-- build: Build the test runner and test suites
-- run-all-mini: Run mini test suite
-- run-all-corlib: Run corlib test suite
-- run-all-system: Run System test suite
-- run-all-system-core: Run System.Core test suite
-- run-all-binding: Run bindings test suite
-- run-browser-tests: Run tests that require a browser environment
-- build-aot-all: build all AOT samples and tests
-- run-aot-all: run all AOT samples and tests
-- clean: cleans the wasm directory
-
-For bcl or runtime changes, you must manually run the corresponding build/package steps in `builds`.
-For test suite changes, it's enough to just rerun the local target.
 
 # Dependencies
 

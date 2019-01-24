@@ -13,17 +13,21 @@ namespace System {
     using System.Globalization;
     using System.Diagnostics.Contracts;
     using System.Security;
+#if !MONO
     using System.Security.Permissions;
+#else
+    using RtFieldInfo = System.Reflection.MonoField;
+#endif
 
     [Serializable]
     [AttributeUsageAttribute(AttributeTargets.All, Inherited = true, AllowMultiple=false)] 
-#if !MOBILE
+#if !MOBILE && !NETCORE
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_Attribute))]
     [System.Runtime.InteropServices.ComVisible(true)]
 #endif
     public abstract partial class Attribute
-#if !MOBILE
+#if !MOBILE && !NETCORE
         : _Attribute
 #endif
     {
@@ -1048,7 +1052,7 @@ namespace System {
         public virtual bool IsDefaultAttribute() { return false; }
         #endregion
 
-#if !FEATURE_CORECLR && !MOBILE
+#if !FEATURE_CORECLR && !MOBILE && !NETCORE
         void _Attribute.GetTypeInfoCount(out uint pcTInfo)
         {
             throw new NotImplementedException();

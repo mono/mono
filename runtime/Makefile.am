@@ -84,7 +84,7 @@ if INSTALL_WASM
 build_profiles += wasm wasm_tools
 endif
 
-if INSTALL_NETCORE
+if ENABLE_NETCORE
 build_profiles += netcore
 endif
 

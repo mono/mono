@@ -253,7 +253,7 @@ namespace System.Reflection {
 			if (handle == IntPtr.Zero)
 				throw resolve_token_exception (metadataToken, error, "MethodBase");
 			else
-				return MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (handle));
+				return RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (handle));
 		}
 
 		public

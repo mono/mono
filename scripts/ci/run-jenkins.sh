@@ -222,11 +222,11 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             #The following tests are not passing yet, so enabling them would make us perma-red
             #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-all-corlib
             #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-all-system
-            # Chakra crashes with System.Core. See https://github.com/mono/mono/issues/8345
             ${TESTCMD} --label=ch-system-core --timeout=60m make -C sdks/wasm run-ch-system-core
             ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
             ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
             ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
+            ${TESTCMD} --label=v8-corlib --timeout=60m make -C sdks/wasm run-v8-corlib
             ${TESTCMD} --label=aot-mini --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
             ${TESTCMD} --label=build-aot-all --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m make -C sdks/wasm run-aot-${suite}; done

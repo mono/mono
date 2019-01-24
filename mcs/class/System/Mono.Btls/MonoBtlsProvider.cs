@@ -228,21 +228,33 @@ namespace Mono.Btls
 				status11 = unchecked((int)0x800B010B);
 				return;
 			}
-			var error = storeCtx.GetError();
-			if (error != Mono.Btls.MonoBtlsX509Error.OK &
-			    error != Mono.Btls.MonoBtlsX509Error.CRL_NOT_YET_VALID) {
-				chain.Impl.AddStatus(MapVerifyErrorToChainStatus(error));
-				status11 = unchecked((int)0x800B010B);
+			var error = storeCtx.GetError ();
+			switch (error) {
+			case Mono.Btls.MonoBtlsX509Error.OK:
+				errors = MonoSslPolicyErrors.None;
+				break;
+			case Mono.Btls.MonoBtlsX509Error.CRL_NOT_YET_VALID:
+				break;
+			case MonoBtlsX509Error.HOSTNAME_MISMATCH:
+				errors = MonoSslPolicyErrors.RemoteCertificateNameMismatch;
+				chain.Impl.AddStatus (X509ChainStatusFlags.UntrustedRoot);
+				status11 = unchecked ((int)0x800B010B);
+				break;
+
+			default:
+				chain.Impl.AddStatus (MapVerifyErrorToChainStatus (error));
+				status11 = unchecked ((int)0x800B010B);
+				break;
 			}
 		}
 
 		internal static X509ChainStatusFlags MapVerifyErrorToChainStatus (MonoBtlsX509Error code)
 		{
 			switch (code) {
-			case MonoBtlsX509Error.OK :
+			case MonoBtlsX509Error.OK:
 				return X509ChainStatusFlags.NoError;
 
-			case MonoBtlsX509Error.CERT_NOT_YET_VALID :
+			case MonoBtlsX509Error.CERT_NOT_YET_VALID:
 			case MonoBtlsX509Error.CERT_HAS_EXPIRED:
 			case MonoBtlsX509Error.ERROR_IN_CERT_NOT_BEFORE_FIELD:
 			case MonoBtlsX509Error.ERROR_IN_CERT_NOT_AFTER_FIELD:

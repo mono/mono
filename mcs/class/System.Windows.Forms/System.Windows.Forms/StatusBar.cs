@@ -220,15 +220,22 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void Dispose (bool disposing) {
-			if (!IsDisposed)
+			if (!IsDisposed && disposing)
 			{
-				if (disposing)
-				{
-					if (tooltip_timer != null)
-						tooltip_timer.Dispose();
+				if (tooltip_timer != null)
+					tooltip_timer.Dispose();
 
-					if (tooltip_window != null)
-						tooltip_window.Dispose();
+				if (tooltip_window != null)
+					tooltip_window.Dispose();
+
+				if (panels != null) {
+					var copiedPanels = new StatusBarPanel [panels.Count];
+					((ICollection) panels).CopyTo (copiedPanels, 0);
+					panels.Clear ();
+
+					foreach (StatusBarPanel panel in copiedPanels) {
+						panel.Dispose ();
+					}
 				}
 			}
 

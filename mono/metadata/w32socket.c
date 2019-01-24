@@ -43,6 +43,7 @@
 #include <unistd.h>
 #endif
 #include <errno.h>
+#include <mono/utils/mono-errno.h>
 
 #include <sys/types.h>
 
@@ -1182,7 +1183,7 @@ create_sockaddr_from_handle (MonoObjectHandle saddr_obj, socklen_t *sa_size, gin
 		 * two bytes hold the SocketAddress family
 		 */
 		if (len - 2 >= sizeof (sock_un->sun_path)) {
-			mono_error_set_exception_instance (error, mono_get_exception_index_out_of_range ());
+			mono_error_set_argument_out_of_range (error, "SocketAddress.Size");
 			mono_gchandle_free_internal (gchandle);
 			return NULL;
 		}
@@ -1284,7 +1285,7 @@ ves_icall_System_Net_Sockets_Socket_Poll_internal (gsize sock, gint mode,
 				timeout = 0;
 			}
 			
-			errno = err;
+			mono_set_errno (err);
 		}
 
 		if (ret == -1 && errno == EINTR) {
@@ -1296,7 +1297,7 @@ ves_icall_System_Net_Sockets_Socket_Poll_internal (gsize sock, gint mode,
 			/* Suspend requested? */
 			mono_thread_interruption_checkpoint_void ();
 
-			errno = EINTR;
+			mono_set_errno (EINTR);
 		}
 	} while (ret == -1 && errno == EINTR);
 
@@ -1661,7 +1662,7 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArrayHandleOut sockets,
 			timeout = rtimeout - sec * 1000;
 			if (timeout < 0)
 				timeout = 0;
-			errno = err;
+			mono_set_errno (err);
 		}
 
 		if (ret == -1 && errno == EINTR) {
@@ -1674,7 +1675,7 @@ ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArrayHandleOut sockets,
 			/* Suspend requested? */
 			mono_thread_interruption_checkpoint_void ();
 
-			errno = EINTR;
+			mono_set_errno (EINTR);
 		}
 	} while (ret == -1 && errno == EINTR);
 	
