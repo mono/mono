@@ -1,11 +1,5 @@
 namespace System.Threading
 {
-	[CLSCompliant(false)]
-	public unsafe delegate void IOCompletionCallback(uint errorCode, // Error code
-									   uint numBytes, // No. of bytes transferred 
-									   NativeOverlapped* pOVERLAP // ptr to OVERLAP structure
-									   );
-
 	partial class ThreadPool
 	{
 		static void EnsureInitialized ()
