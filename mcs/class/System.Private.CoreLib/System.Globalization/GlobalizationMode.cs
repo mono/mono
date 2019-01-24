@@ -4,8 +4,8 @@
 
 namespace System.Globalization
 {
-    internal static partial class GlobalizationMode
-    {
+	internal static partial class GlobalizationMode
+	{
 		internal static bool Invariant { get; } = GetGlobalizationInvariantMode ();
 
 		static bool GetGlobalizationInvariantMode () {
@@ -18,7 +18,7 @@ namespace System.Globalization
 					"Set the configuration flag System.Globalization.Invariant to true if you want to run with no globalization support.";
 				Environment.FailFast (message);
 			}
-            return false;
-        }
-    }
+			return false;
+		}
+	}
 }

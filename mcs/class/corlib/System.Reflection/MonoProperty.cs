@@ -117,7 +117,7 @@ namespace System.Reflection {
         private string FormatNameAndSig(bool serialization)
         {
 #if NETCORE
-			throw new NotImplementedException ();
+            throw new NotImplementedException ();
 #else
             StringBuilder sbName = new StringBuilder(PropertyType.FormatTypeName(serialization));
 

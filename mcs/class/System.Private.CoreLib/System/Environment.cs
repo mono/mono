@@ -5,9 +5,9 @@ using Mono;
 
 namespace System
 {
-    enum PlatformID
-    {
-    }
+	enum PlatformID
+	{
+	}
 
 	partial class Environment
 	{

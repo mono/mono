@@ -3238,7 +3238,7 @@ namespace System
                     {
                         MethodInfo methodInfo = candidates[j];
 #if NETCORE
-						throw new NotImplementedException ();
+                        throw new NotImplementedException ();
 #else
                         if (!System.DefaultBinder.CompareMethodSigAndName(methodInfo, firstCandidate))
                         {
@@ -4288,7 +4288,7 @@ namespace System
                         instantiationCopy[iCopy] = instantiation[iCopy];
                     instantiation = instantiationCopy;
 #if NETCORE
-					throw new NotImplementedException ();
+                    throw new NotImplementedException ();
 #else
                     return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
 #endif
@@ -5422,7 +5422,7 @@ namespace System
 #endif
                             // fast path??
 #if NETCORE
-								throw new NotImplementedException ();
+                                throw new NotImplementedException ();
 #else
                             server = Activator.CreateInstance(this, nonPublic: true, wrapExceptions: wrapExceptions);
 #endif
