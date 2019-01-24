@@ -664,6 +664,7 @@ class Driver {
 		ninja.WriteLine ("rule cpifdiff");
 		ninja.WriteLine ("  command = if cmp -s $in $out ; then : ; else cp $in $out ; fi");
 		ninja.WriteLine ("  restat = true");
+		ninja.WriteLine ("  description = [CPIFDIFF] $in -> $out");
 		ninja.WriteLine ("rule emcc");
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
@@ -671,7 +672,7 @@ class Driver {
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags -o $out --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/binding_support.js --js-library $tool_prefix/dotnet_support.js $in'");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out");
 		ninja.WriteLine ("rule linker");
-		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /out:$$f /target:library empty.cs; fi; done");
+		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /nologo /out:$$f /target:library empty.cs; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
 		ninja.WriteLine ("rule aot-dummy");
 		ninja.WriteLine ("  command = echo > aot-dummy.cs; csc /out:$out /target:library aot-dummy.cs");
@@ -780,7 +781,6 @@ class Driver {
 				if (a.name == "mscorlib" || a.name == "System")
 					icall_assemblies += $"{a.linkout_path} ";
 			}
-			Console.WriteLine ("D: " + icall_assemblies);
 			ninja.WriteLine ("build $builddir/icall-table.json: gen-runtime-icall-table");
 			ninja.WriteLine ($"build $builddir/icall-table.h: gen-icall-table {icall_assemblies}");
 			ninja.WriteLine ($"  runtime_table=$builddir/icall-table.json");
