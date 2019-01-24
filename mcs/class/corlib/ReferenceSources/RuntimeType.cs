@@ -54,8 +54,10 @@ namespace System
 	[StructLayout (LayoutKind.Sequential)]
 	partial class RuntimeType
 	{
+#region keep in sync with object-internals.h
 		[NonSerialized]
 		MonoTypeInfo type_info;
+#endregion
 
 		internal Object GenericCache;
 
@@ -485,7 +487,7 @@ namespace System
 				var a = new RuntimeMethodInfo [n];
 				for (int i = 0; i < n; i++) {
 					var mh = new RuntimeMethodHandle (h[i]);
-					a[i] = (RuntimeMethodInfo) MethodBase.GetMethodFromHandleNoGenericCheck (mh, refh);
+					a[i] = (RuntimeMethodInfo) RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (mh, refh);
 				}
 				return a;
 			}
@@ -505,7 +507,7 @@ namespace System
 				var a = new RuntimeConstructorInfo [n];
 				for (int i = 0; i < n; i++) {
 					var mh = new RuntimeMethodHandle (h[i]);
-					a[i] = (RuntimeConstructorInfo) MethodBase.GetMethodFromHandleNoGenericCheck (mh, refh);
+					a[i] = (RuntimeConstructorInfo) RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (mh, refh);
 				}
 				return a;
 			}

@@ -17,12 +17,6 @@ using System.Runtime.CompilerServices;
 
 using Internal.Runtime.Augments;
 
-using AsyncStatus = Internal.Runtime.Augments.AsyncStatus;
-using CausalityRelation = Internal.Runtime.Augments.CausalityRelation;
-using CausalitySource = Internal.Runtime.Augments.CausalitySource;
-using CausalityTraceLevel = Internal.Runtime.Augments.CausalityTraceLevel;
-using CausalitySynchronousWork = Internal.Runtime.Augments.CausalitySynchronousWork;
-
 namespace System.Threading.Tasks
 {
     // Task type used to implement: Task ContinueWith(Action<Task,...>)
@@ -475,7 +469,7 @@ namespace System.Threading.Tasks
                 // we don't in AwaitTaskContinuation.Run, since here it expands what's allowed as opposed
                 // to in AwaitTaskContinuation.Run where it restricts what's allowed.
                 bool inlineIfPossible = canInlineContinuationTask &&
-                    (TaskScheduler.InternalCurrent == m_scheduler || ThreadPool.IsThreadPoolThread);
+                    (TaskScheduler.InternalCurrent == m_scheduler || Thread.CurrentThread.IsThreadPoolThread);
 
                 // Create the continuation task task. If we're allowed to inline, try to do so.  
                 // The target scheduler may still deny us from executing on this thread, in which case this'll be queued.

@@ -2,14 +2,37 @@ namespace System.Threading
 {
 	partial class ThreadPool
 	{
-		internal static void UnsafeQueueUserWorkItemInternal (object callBack, bool preferLocal) => throw new NotImplementedException ();
+		static void EnsureInitialized ()
+		{
+		}
 
-		internal static bool TryPopCustomWorkItem (object workItem) => throw new NotImplementedException ();
+		internal static bool RequestWorkerThread ()
+		{
+			throw new NotImplementedException ();
+		}
 
-		public static bool QueueUserWorkItem<TState> (Action<TState> callBack, TState state, bool preferLocal) => throw new NotImplementedException ();
+		internal static bool KeepDispatching(int startTickCount)
+		{
+			throw new NotImplementedException ();
+		}
 
-		public static bool UnsafeQueueUserWorkItem<TState> (Action<TState> callBack, TState state, bool preferLocal) => throw new NotImplementedException ();
+		internal static void NotifyWorkItemProgress ()
+		{
+		}
 
-		public static bool UnsafeQueueUserWorkItem (IThreadPoolWorkItem callBack, bool preferLocal) => throw new NotImplementedException ();
+		static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callBack, object state,
+			 uint millisecondsTimeOutInterval, bool executeOnlyOnce, bool compressStack)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal static void ReportThreadStatus (bool isWorking)
+		{
+		}
+
+		internal static bool NotifyWorkItemComplete ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

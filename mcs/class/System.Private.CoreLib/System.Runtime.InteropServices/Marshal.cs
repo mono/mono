@@ -225,6 +225,11 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal static bool IsPinnable (object obj)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	partial class Marshal

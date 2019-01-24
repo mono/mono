@@ -167,7 +167,10 @@ check-coreclr:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr
 
 check-stress:
-	$(MAKE) test-stress-sgen
+	ok=; \
+	$(MAKE) test-stress-sgen || ok=false; \
+	$(MAKE) stresstest || ok=false; \
+	$$ok
 
 # for backwards compatibility on Wrench
 test-wrench: check-parallel
@@ -259,6 +262,7 @@ TESTS_STRESS_SRC=	\
 	gc-graystack-stress.cs		\
 	exit-stress.cs		\
 	process-stress.cs	\
+	spinlock-stress.cs 	\
 	assembly-load-stress.cs
 
 # Disabled until ?mcs is fixed
@@ -318,6 +322,7 @@ TESTS_CS_SRC=		\
 	exception18.cs		\
 	exception-invokes.cs		\
 	merp-json-valid.cs		\
+	merp-crash-test.cs		\
 	exception19.cs		\
 	exception20.cs		\
 	exception21.cs		\
@@ -1079,7 +1084,7 @@ if HOST_DARWIN
 # see https://github.com/mono/mono/issues/10845
 PLATFORM_DISABLED_TESTS += monitor-wait-abort.exe
 else
-PLATFORM_DISABLED_TESTS += merp-json-valid.exe
+PLATFORM_DISABLED_TESTS += merp-json-valid.exe merp-crash-test.exe
 endif
 
 if AMD64
@@ -1379,7 +1384,9 @@ PROFILE_DISABLED_TESTS += \
 	dynamic-method-resurrection.exe	\
 	assembly_append_ordering.exe \
 	assemblyresolve_event5.exe	\
-	dynamic-method-churn.exe
+	dynamic-method-churn.exe \
+	bug-666008.exe \
+	bug-685908.exe
 
 # Test which needs System.Web support
 PROFILE_DISABLED_TESTS += \
@@ -2064,6 +2071,9 @@ reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingRe
 	$(MCS) -r:$(CLASS)/System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
 
 merp-json-valid.exe: merp-json-valid.cs
+	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
+
+merp-crash-test.exe: merp-crash-test.cs
 	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs

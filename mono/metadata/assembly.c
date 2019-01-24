@@ -4106,7 +4106,6 @@ mono_assembly_load_from_gac (MonoAssemblyName *aname,  gchar *filename, MonoImag
 MonoAssembly*
 mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *status)
 {
-	char *corlib_file;
 	MonoAssemblyName *aname;
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
@@ -4116,6 +4115,13 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 		return corlib;
 	}
 
+#ifdef ENABLE_NETCORE
+	aname = mono_assembly_name_new (MONO_ASSEMBLY_CORLIB_NAME);
+	corlib = invoke_assembly_preload_hook (aname, NULL);
+	/* MonoCore preload hook should know how to find it */
+	/* FIXME: AOT compiler comes here without an installed hook. */
+	g_assert (corlib);
+#else
 	// A nonstandard preload hook may provide a special mscorlib assembly
 	aname = mono_assembly_name_new ("mscorlib.dll");
 	corlib = invoke_assembly_preload_hook (aname, assemblies_path);
@@ -4132,6 +4138,7 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 	}
 
 	/* Normal case: Load corlib from mono/<version> */
+	char *corlib_file;
 	corlib_file = g_build_filename ("mono", runtime->framework_version, "mscorlib.dll", NULL);
 	if (assemblies_path) { // Custom assemblies path
 		corlib = load_in_path (corlib_file, (const char**)assemblies_path, &req, status);
@@ -4146,6 +4153,7 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 return_corlib_and_facades:
 	if (corlib)  // FIXME: stop hardcoding 4.5 here
 		default_path [1] = g_strdup_printf ("%s/Facades", corlib->basedir);
+#endif /*!ENABLE_NETCORE*/
 		
 	return corlib;
 }
@@ -4295,9 +4303,10 @@ mono_assembly_load_full_gac_base_default (MonoAssemblyName *aname,
 	 * only requests, like a common reflection only assembly 
 	 */
 	gboolean name_is_corlib = strcmp (aname->name, MONO_ASSEMBLY_CORLIB_NAME) == 0;
-#ifndef NETCORE_LOADER
-	name_is_corlib |= strcmp (aname->name, "mscorlib.dll") == 0;
-#endif
+	/* Assembly.Load (new AssemblyName ("mscorlib.dll")) (respectively,
+	 * "System.Private.CoreLib.dll" for netcore) is treated the same as
+	 * "mscorlib" (resp "System.Private.CoreLib"). */
+	name_is_corlib = name_is_corlib || strcmp (aname->name, MONO_ASSEMBLY_CORLIB_NAME ".dll") == 0;
 	if (name_is_corlib) {
 		return mono_assembly_load_corlib (mono_get_runtime_info (), status);
 	}

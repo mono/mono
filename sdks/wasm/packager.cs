@@ -60,6 +60,7 @@ class Driver {
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
+	const string HTTP_ASM_NAME = "WebAssembly.Net.Http";	
 
 	class AssemblyData {
 		// Assembly name
@@ -76,6 +77,8 @@ class Driver {
 		public string linkin_path;
 		// Linker output path
 		public string linkout_path;
+		// Finaly output path after IL strip
+		public string final_path;
 		// Whenever to AOT this assembly
 		public bool aot;
 	}
@@ -119,6 +122,9 @@ class Driver {
 		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 		Console.WriteLine ("\t--aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.");
+		Console.WriteLine ("\t--link-mode=sdkonly|all        Set the link type used for AOT. (EXPERIMENTAL)");
+		Console.WriteLine ("\t\t              'sdkonly' only link the Core libraries.");
+		Console.WriteLine ("\t\t              'all' link Core and User assemblies. (default)");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 		Console.WriteLine ();
@@ -130,8 +136,6 @@ class Driver {
 				Console.WriteLine ("        type: bool  default: " + ((flag as BoolFlag).DefaultValue ? "true" : "false"));
 			}
 		}
-
-
 	}
 
 	static void Debug (string s) {
@@ -244,7 +248,7 @@ class Driver {
 		}
 	}
 
-	void GenDriver (string builddir, List<string> profilers, ExecMode ee_mode) {
+	void GenDriver (string builddir, List<string> profilers, ExecMode ee_mode, bool link_icalls) {
 		var symbols = new List<string> ();
 		foreach (var adata in assemblies) {
 			if (adata.aot)
@@ -279,6 +283,9 @@ class Driver {
 			break;
 		}
 
+		if (link_icalls)
+			w.WriteLine ("#define LINK_ICALLS 1");
+
 		w.Close ();
 	}
 
@@ -299,11 +306,20 @@ class Driver {
 		AotInterp = 3
 	}
 
+	enum LinkMode
+	{
+		SdkOnly,
+		All		
+	}
+
 	class WasmOptions {
 		public bool Debug;
 		public bool DebugRuntime;
 		public bool AddBinding;
 		public bool Linker;
+		public bool LinkIcalls;
+		public bool ILStrip;
+		public bool LinkerVerbose;
 	}
 
 	int Run (string[] args) {
@@ -323,18 +339,28 @@ class Driver {
 		var enable_dedup = true;
 		var print_usage = false;
 		var emit_ninja = false;
+		bool build_wasm = false;
+		bool enable_lto = false;
+		bool link_icalls = false;
+		var il_strip = false;
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
 		var copyTypeParm = "default";
 		var copyType = CopyType.Default;
 		var ee_mode = ExecMode.Interp;
+		var linkModeParm = "all";
+		var linkMode = LinkMode.All;
+		string coremode, usermode;
+		var linker_verbose = false;
 
 		var opts = new WasmOptions () {
 				AddBinding = true,
 				Debug = false,
 				DebugRuntime = false,
 				Linker = false,
+				ILStrip = true,
+				LinkerVerbose = false
 			};
 
 		var p = new OptionSet () {
@@ -355,6 +381,7 @@ class Driver {
 				{ "profile=", s => profilers.Add (s) },
 				{ "copy=", s => copyTypeParm = s },
 				{ "aot-assemblies=", s => aot_assemblies = s },
+				{ "link-mode=", s => linkModeParm = s },
 				{ "help", s => print_usage = true },
 					};
 
@@ -362,6 +389,9 @@ class Driver {
 		AddFlag (p, new BoolFlag ("debugrt", "enable debug runtime", opts.DebugRuntime, b => opts.DebugRuntime = b));
 		AddFlag (p, new BoolFlag ("linker", "enable the linker", opts.Linker, b => opts.Linker = b));
 		AddFlag (p, new BoolFlag ("binding", "enable the binding engine", opts.AddBinding, b => opts.AddBinding = b));
+		AddFlag (p, new BoolFlag ("link-icalls", "link away unused icalls", opts.LinkIcalls, b => opts.LinkIcalls = b));
+		AddFlag (p, new BoolFlag ("il-strip", "strip IL code from assemblies in AOT mode", opts.ILStrip, b => opts.ILStrip = b));
+		AddFlag (p, new BoolFlag ("linker-verbose", "set verbose option on linker", opts.LinkerVerbose, b => opts.LinkerVerbose = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -379,22 +409,45 @@ class Driver {
 			return 1;
 		}
 
+		if (!Enum.TryParse(linkModeParm, true, out linkMode)) {
+			Console.WriteLine("Invalid link-mode value");
+			Usage ();
+			return 1;
+		}
+
 		enable_debug = opts.Debug;
 		enable_linker = opts.Linker;
 		add_binding = opts.AddBinding;
 		use_release_runtime = !opts.DebugRuntime;
+		il_strip = opts.ILStrip;
+		linker_verbose = opts.LinkerVerbose;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
 
-		if (enable_aot)
+		if (enable_aot || opts.Linker)
 			enable_linker = true;
+		if (opts.LinkIcalls)
+			link_icalls = true;
+		if (!enable_linker || !enable_aot)
+			enable_dedup = false;
+		if (enable_aot || link_icalls)
+			build_wasm = true;
+		if (!enable_aot && link_icalls)
+			enable_lto = true;
+		if (ee_mode != ExecMode.Aot)
+			// Can't strip out IL code in mixed mode, since the interpreter might execute some methods even if they have AOTed code available
+			il_strip = false;
 
 		if (aot_assemblies != "") {
 			if (ee_mode != ExecMode.AotInterp) {
 				Console.Error.WriteLine ("The --aot-assemblies= argument requires --aot-interp.");
 				return 1;
 			}
+		}
+		if (link_icalls && !enable_linker) {
+			Console.Error.WriteLine ("The --link-icalls option requires the --linker option.");
+			return 1;
 		}
 
 		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
@@ -425,7 +478,8 @@ class Driver {
 		if (add_binding) {
 			var bindings = ResolveFramework (BINDINGS_ASM_NAME + ".dll");
 			Import (bindings, AssemblyKind.Framework);
-			root_assemblies.Add (bindings);
+			var http = ResolveFramework (HTTP_ASM_NAME + ".dll");
+			Import (http, AssemblyKind.Framework);
 		}
 
 		if (enable_aot) {
@@ -470,8 +524,12 @@ class Driver {
 		if (vfs_prefix.EndsWith ("/"))
 			vfs_prefix = vfs_prefix.Substring (0, vfs_prefix.Length - 1);
 
-		var dontlink_assemblies = new Dictionary<string, bool> ();
-		dontlink_assemblies [BINDINGS_ASM_NAME] = true;
+		// the linker does not consider these core by default
+		var wasm_core_assemblies = new Dictionary<string, bool> ();
+		if (add_binding) {		
+			wasm_core_assemblies [BINDINGS_ASM_NAME] = true;
+			wasm_core_assemblies [HTTP_ASM_NAME] = true;
+		}
 
 		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, "runtime.js");
 		if (emit_ninja) {
@@ -483,17 +541,13 @@ class Driver {
 			} else {
 				if (File.Exists(runtimeTemplate))
 					CopyFile (runtimeTemplate, runtime_js, CopyType.IfNewer, $"runtime template <{runtimeTemplate}> ");
-				else
-				{
+				else {
 					var runtime_gen = "\nvar Module = {\n\tonRuntimeInitialized: function () {\n\t\tMONO.mono_load_runtime_and_bcl (\n\t\tconfig.vfs_prefix,\n\t\tconfig.deploy_prefix,\n\t\tconfig.enable_debugging,\n\t\tconfig.file_list,\n\t\tfunction () {\n\t\t\tconfig.add_bindings ();\n\t\t\tApp.init ();\n\t\t}\n\t)\n\t},\n};";
 					File.Delete (runtime_js);
 					File.WriteAllText (runtime_js, runtime_gen);
 				}
 			}
 		}
-
-		if (!enable_linker || !enable_aot)
-			enable_dedup = false;
 
 		AssemblyData dedup_asm = null;
 
@@ -539,22 +593,25 @@ class Driver {
 		if (!emit_ninja)
 			return 0;
 
-		if (enable_aot) {
+		if (build_wasm) {
 			if (sdkdir == null) {
-				Console.WriteLine ("The --mono-sdkdir argument is required when using AOT.");
+				Console.WriteLine ("The --mono-sdkdir argument is required.");
 				return 1;
 			}
 			if (emscripten_sdkdir == null) {
-				Console.WriteLine ("The --emscripten-sdkdir argument is required when using AOT.");
+				Console.WriteLine ("The --emscripten-sdkdir argument is required.");
 				return 1;
 			}
-			GenDriver (builddir, profilers, ee_mode);
+			GenDriver (builddir, profilers, ee_mode, link_icalls);
 		}
 
 		string runtime_libs = "$mono_sdkdir/wasm-runtime-release/lib/libmonosgen-2.0.a";
-		if (ee_mode == ExecMode.AotInterp)
-			// FIXME: We need to link the icall table because the interpreter uses it to lookup icalls even if the aot-ed icall wrappers are available
-			runtime_libs += " $mono_sdkdir/wasm-runtime-release/lib/libmono-ee-interp.a $mono_sdkdir/wasm-runtime-release/lib/libmono-ilgen.a $mono_sdkdir/wasm-runtime-release/lib/libmono-icall-table.a";
+		if (ee_mode == ExecMode.AotInterp || link_icalls) {
+			runtime_libs += " $mono_sdkdir/wasm-runtime-release/lib/libmono-ee-interp.a $mono_sdkdir/wasm-runtime-release/lib/libmono-ilgen.a";
+			// We need to link the icall table because the interpreter uses it to lookup icalls even if the aot-ed icall wrappers are available
+			if (!link_icalls)
+				runtime_libs += " $mono_sdkdir/wasm-runtime-release/lib/libmono-icall-table.a";
+		}
 
 		string profiler_libs = "";
 		string profiler_aot_args = "";
@@ -569,6 +626,13 @@ class Driver {
 		sdkdir = Path.GetFullPath (sdkdir);
 		out_prefix = Path.GetFullPath (out_prefix);
 
+		string driver_deps = "";
+		if (link_icalls)
+			driver_deps += "$builddir/icall-table.h";
+		string emcc_flags = "";
+		if (enable_lto)
+			emcc_flags += "--llvm-lto 1 ";
+
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
 
 		// Defines
@@ -580,11 +644,12 @@ class Driver {
 		ninja.WriteLine ($"wasm_runtime_dir = {runtime_dir}");
 		ninja.WriteLine ($"deploy_prefix = {deploy_prefix}");
 		ninja.WriteLine ($"bcl_dir = {bcl_prefix}");
+		ninja.WriteLine ($"bcl_facades_dir = {bcl_facades_prefix}");
 		ninja.WriteLine ($"tools_dir = {bcl_tools_prefix}");
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
-		ninja.WriteLine ("emcc_flags = -Os -g -s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\"");
+		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\"");
 
 		// Rules
 		ninja.WriteLine ("rule aot");
@@ -610,20 +675,28 @@ class Driver {
 		ninja.WriteLine ("  description = [IL-LINK]");
 		ninja.WriteLine ("rule aot-dummy");
 		ninja.WriteLine ("  command = echo > aot-dummy.cs; csc /out:$out /target:library aot-dummy.cs");
+		ninja.WriteLine ("rule gen-runtime-icall-table");
+		ninja.WriteLine ("  command = $cross --print-icall-table > $out");
+		ninja.WriteLine ("rule gen-icall-table");
+		ninja.WriteLine ("  command = mono $tools_dir/wasm-tuner.exe --gen-icall-table $runtime_table $in > $out");
+		ninja.WriteLine ("rule ilstrip");
+		ninja.WriteLine ("  command = cp $in $out; mono-cil-strip $out");
+		ninja.WriteLine ("  description = [IL-STRIP]");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
 		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
-		if (enable_aot) {
+		if (build_wasm) {
 			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "driver.c"));
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
 			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
 
-			ninja.WriteLine ("build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c");
-			ninja.WriteLine ("  flags = -DENABLE_AOT=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
+			var driver_cflags = enable_aot ? "-DENABLE_AOT=1" : "";
 
+			ninja.WriteLine ($"build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c {driver_deps}");
+			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
 			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
@@ -659,7 +732,14 @@ class Driver {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
 			}
-			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {infile}");
+
+			a.final_path = infile;
+			if (il_strip) {
+				ninja.WriteLine ($"build $builddir/ilstrip-out/{filename} : ilstrip {infile}");
+				a.final_path = $"$builddir/ilstrip-out/{filename}";
+			}
+
+			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {a.final_path}");
 
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
@@ -694,23 +774,60 @@ class Driver {
 			ninja.WriteLine ($"build {a.linkout_path}: aot-dummy");
 			ofiles += $" {a.bc_path}";
 		}
-		if (enable_aot) {
+		if (link_icalls) {
+			string icall_assemblies = "";
+			foreach (var a in assemblies) {
+				if (a.name == "mscorlib" || a.name == "System")
+					icall_assemblies += $"{a.linkout_path} ";
+			}
+			Console.WriteLine ("D: " + icall_assemblies);
+			ninja.WriteLine ("build $builddir/icall-table.json: gen-runtime-icall-table");
+			ninja.WriteLine ($"build $builddir/icall-table.h: gen-icall-table {icall_assemblies}");
+			ninja.WriteLine ($"  runtime_table=$builddir/icall-table.json");
+		}
+		if (build_wasm) {
 			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
 		}
 		if (enable_linker) {
+			switch (linkMode) {
+			case LinkMode.SdkOnly:
+				coremode = "link";
+				usermode = "copy";
+				break;
+			case LinkMode.All:
+				coremode = "link";
+				usermode = "link";
+				break;
+			default:
+				coremode = "link";
+				usermode = "link";
+				break;
+			}
+
 			string linker_args = "";
 			foreach (var assembly in root_assemblies) {
 				string filename = Path.GetFileName (assembly);
 				linker_args += $"-a linker-in/{filename} ";
 			}
-			foreach (var assembly in dontlink_assemblies.Keys) {
-				linker_args += $"-p copy {assembly} ";
+
+			// the linker does not consider these core by default
+			foreach (var assembly in wasm_core_assemblies.Keys) {
+				linker_args += $"-p {coremode} {assembly} ";
 			}
-			linker_args += " -d $bcl_dir -c link";
+			if (linker_verbose) {
+				linker_args += "--verbose ";
+			}
+			linker_args += $"-d linker-in -d $bcl_dir -d $bcl_facades_dir -c {coremode} -u {usermode} ";
+			foreach (var assembly in wasm_core_assemblies.Keys) {
+				linker_args += $"-r {assembly} ";
+			}
+
 			ninja.WriteLine ("build $builddir/linker-out: mkdir");
 			ninja.WriteLine ($"build {linker_ofiles}: linker {linker_infiles}");
 			ninja.WriteLine ($"  linker_args={linker_args}");
 		}
+		if (il_strip)
+			ninja.WriteLine ("build $builddir/ilstrip-out: mkdir");
 
 		foreach(var asset in assets) {
 			var filename = Path.GetFileName (asset);

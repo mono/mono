@@ -302,17 +302,19 @@ namespace System.Net.Http
 		void HandleClosedEvent (object sender, CFStream.StreamEventArgs e)
 		{
 			var stream = (CFHTTPStream)sender;
+			// might not have been called (e.g. no data) but initialize critical data
+			HandleHasBytesAvailableEvent (sender, e);
 			CloseStream (stream);
 		}
 
 		void CloseStream (CFHTTPStream stream)
 		{
-			StreamBucket bucket;
-			if (streamBuckets.TryGetValue (stream.Handle, out bucket)) {
-				bucket.Close ();
-				streamBuckets.Remove (stream.Handle);
+			lock (streamBuckets) {
+				if (streamBuckets.TryGetValue (stream.Handle, out var bucket)) {
+					bucket.Close ();
+					streamBuckets.Remove (stream.Handle);
+				}
 			}
-
 			stream.Close ();
 		}
 
@@ -364,9 +366,12 @@ namespace System.Net.Http
 				}
 			}
 
-			bucket.Response.TrySetResult (response_msg);
+			// cancellation (CancellationTokenRegistration) can happen in parallel
+			if (!bucket.Response.Task.IsCanceled) {
+				bucket.Response.TrySetResult (response_msg);
 
-			bucket.ContentStream.ReadStreamData ();
+				bucket.ContentStream.ReadStreamData ();
+			}
 		}
 
 		void AddCookie (string value, Uri uri, string header)

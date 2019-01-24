@@ -3,11 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <assert.h>
 
 #include <mono/metadata/assembly.h>
-#include <mono/jit/jit.h>
+#include <mono/metadata/tokentype.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-dl-fallback.h>
+#include <mono/jit/jit.h>
 
 // FIXME: Autogenerate this
 
@@ -289,6 +291,18 @@ char *monoeg_g_getenv(const char *variable);
 int monoeg_g_setenv(const char *variable, const char *value, int overwrite);
 void mono_free (void*);
 
+/* Not part of public headers */
+#define MONO_ICALL_TABLE_CALLBACKS_VERSION 2
+
+typedef struct {
+	int version;
+	void* (*lookup) (MonoMethod *method, char *classname, char *methodname, char *sigstart, uint8_t *uses_handles);
+	const char* (*lookup_icall_symbol) (void* func);
+} MonoIcallTableCallbacks;
+
+void
+mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb);
+
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
 void mono_trace_init (void);
 
@@ -360,7 +374,7 @@ wasm_logger (const char *log_domain, const char *log_level, const char *message,
 	}
 }
 
-#ifdef ENABLE_AOT
+#ifdef DRIVER_GEN
 #include "driver-gen.c"
 #endif
 
@@ -424,8 +438,55 @@ wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 
 #if !defined(ENABLE_AOT) || defined(EE_MODE_LLVMONLY_INTERP)
 #define NEED_INTERP 1
+#ifndef LINK_ICALLS
 // FIXME: llvm+interp mode needs this to call icalls
-#define NEED_ICALL_TABLES 1
+#define NEED_NORMAL_ICALL_TABLES 1
+#endif
+#endif
+
+#ifdef LINK_ICALLS
+
+#include "icall-table.h"
+
+static int
+compare_int (const void *k1, const void *k2)
+{
+	return *(int*)k1 - *(int*)k2;
+}
+
+static void*
+icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char *sigstart, uint8_t *uses_handles)
+{
+	uint32_t token = mono_method_get_token (method);
+	assert (token);
+	assert ((token & MONO_TOKEN_METHOD_DEF) == MONO_TOKEN_METHOD_DEF);
+	uint32_t token_idx = token - MONO_TOKEN_METHOD_DEF;
+
+	*uses_handles = 0;
+
+	assert (sizeof (icall_indexes [0]) == 4);
+	void *p = bsearch (&token_idx, icall_indexes, sizeof (icall_indexes) / 4, 4, compare_int);
+	if (!p) {
+		return NULL;
+		printf ("wasm: Unable to lookup icall: %s\n", mono_method_get_name (method));
+		exit (1);
+	}
+
+	uint32_t idx = (int*)p - icall_indexes;
+	*uses_handles = icall_handles [idx];
+
+	//printf ("ICALL: %s %x %d %d\n", methodname, token, idx, (int)(icall_funcs [idx]));
+
+	return icall_funcs [idx];
+}
+
+static const char*
+icall_table_lookup_symbol (void *func)
+{
+	assert (0);
+	return NULL;
+}
+
 #endif
 
 EMSCRIPTEN_KEEPALIVE void
@@ -450,7 +511,18 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 		mono_wasm_enable_debugging ();
 #endif
 
-#ifdef NEED_ICALL_TABLES
+#ifdef LINK_ICALLS
+	/* Link in our own linked icall table */
+	MonoIcallTableCallbacks cb;
+	memset (&cb, 0, sizeof (MonoIcallTableCallbacks));
+	cb.version = MONO_ICALL_TABLE_CALLBACKS_VERSION;
+	cb.lookup = icall_table_lookup;
+	cb.lookup_icall_symbol = icall_table_lookup_symbol;
+
+	mono_install_icall_table_callbacks (&cb);
+#endif
+
+#ifdef NEED_NORMAL_ICALL_TABLES
 	mono_icall_table_init ();
 #endif
 #ifdef NEED_INTERP
@@ -535,6 +607,14 @@ mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[
 			res = (MonoObject*) mono_string_new (root_domain, "Exception Double Fault");
 		return res;
 	}
+
+	MonoMethodSignature *sig = mono_method_signature (method);
+	MonoType *type = mono_signature_get_return_type (sig);
+	// If the method return type is void return null
+	// This gets around a memory access crash when the result return a value when
+	// a void method is invoked.
+	if (mono_type_get_type (type) == MONO_TYPE_VOID)
+		return NULL;
 
 	return res;
 }

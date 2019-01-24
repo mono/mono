@@ -141,7 +141,86 @@ namespace System.Globalization {
             m_maxYear = m_EraInfo[0].maxEraYear;
             m_minYear = m_EraInfo[0].minEraYear;;
         }
-        
+
+#if MONO // see https://github.com/dotnet/coreclr/pull/18209
+        // EraInfo.yearOffset:  The offset to Gregorian year when the era starts. Gregorian Year = Era Year + yearOffset
+        //                      Era Year = Gregorian Year - yearOffset
+        // EraInfo.minEraYear:  Min year value in this era. Generally, this value is 1, but this may be affected by the DateTime.MinValue;
+        // EraInfo.maxEraYear:  Max year value in this era. (== the year length of the era + 1)
+        private int GetYearOffset(int year, int era, bool throwOnError)
+        {
+            if (year < 0)
+            {
+                if (throwOnError)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(year), SR.ArgumentOutOfRange_NeedNonNegNum);
+                }
+                return -1;
+            }
+
+            if (era == Calendar.CurrentEra)
+            {
+                era = m_Cal.CurrentEraValue;
+            }
+
+            for (int i = 0; i < m_EraInfo.Length; i++)
+            {
+                if (era == m_EraInfo[i].era)
+                {
+                    if (year >= m_EraInfo[i].minEraYear)
+                    {
+                        if (year <= m_EraInfo[i].maxEraYear)
+                        {
+                            return m_EraInfo[i].yearOffset;
+                        }
+                        else if (!AppContextSwitches.EnforceJapaneseEraYearRanges)
+                        {
+                            // If we got the year number exceeding the era max year number, this still possible be valid as the date can be created before
+                            // introducing new eras after the era we are checking. we'll loop on the eras after the era we have and ensure the year
+                            // can exist in one of these eras. otherwise, we'll throw.
+                            // Note, we always return the offset associated with the requested era.
+                            //
+                            // Here is some example:
+                            // if we are getting the era number 4 (Heisei) and getting the year number 32. if the era 4 has year range from 1 to 31
+                            // then year 32 exceeded the range of era 4 and we'll try to find out if the years difference (32 - 31 = 1) would lay in
+                            // the subsequent eras (e.g era 5 and up)
+
+                            int remainingYears = year - m_EraInfo[i].maxEraYear;
+
+                            for (int j = i - 1; j >= 0; j--)
+                            {
+                                if (remainingYears <= m_EraInfo[j].maxEraYear)
+                                {
+                                    return m_EraInfo[i].yearOffset;
+                                }
+                                remainingYears -= m_EraInfo[j].maxEraYear;
+                            }
+                        }
+                    }
+
+                    if (throwOnError)
+                    {
+                        throw new ArgumentOutOfRangeException(
+                                    nameof(year),
+                                    string.Format(
+                                        CultureInfo.CurrentCulture,
+                                        SR.ArgumentOutOfRange_Range,
+                                        m_EraInfo[i].minEraYear,
+                                        m_EraInfo[i].maxEraYear));
+                    }
+
+                    break; // no need to iterate more on eras.
+                }
+            }
+
+            if (throwOnError)
+            {
+                throw new ArgumentOutOfRangeException(nameof(era), SR.ArgumentOutOfRange_InvalidEraValue);
+            }
+            return -1;
+        }
+#endif
+
         /*=================================GetGregorianYear==========================
         **Action: Get the Gregorian year value for the specified year in an era.
         **Returns: The Gregorian year value.
@@ -153,6 +232,9 @@ namespace System.Globalization {
         ============================================================================*/
 
         internal int GetGregorianYear(int year, int era) {
+#if MONO
+            return GetYearOffset(year, era, throwOnError: true) + year;
+#else
             if (year < 0) {
                 throw new ArgumentOutOfRangeException("year",
                     Environment.GetResourceString("ArgumentOutOfRange_NeedNonNegNum")); 
@@ -178,9 +260,13 @@ namespace System.Globalization {
                 }
             }
             throw new ArgumentOutOfRangeException("era", Environment.GetResourceString("ArgumentOutOfRange_InvalidEraValue"));
+#endif
         }
-        
+
         internal bool IsValidYear(int year, int era) {
+#if MONO
+            return GetYearOffset(year, era, throwOnError: false) >= 0;
+#else
             if (year < 0) {
                 return false;
             }            
@@ -198,8 +284,8 @@ namespace System.Globalization {
                 }
             }
             return false;
-        }       
-        
+#endif
+        }
 
         // Returns a given date part of this DateTime. This method is used
         // to compute the year, day-of-year, month, or day part.

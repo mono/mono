@@ -107,7 +107,8 @@ gboolean mono_compile_aot = FALSE;
 gboolean mono_aot_only = FALSE;
 /* Same as mono_aot_only, but only LLVM compiled code is used, no trampolines */
 gboolean mono_llvm_only = FALSE;
-MonoAotMode mono_aot_mode = MONO_AOT_MODE_NONE;
+/* By default, don't require AOT but attempt to probe */
+MonoAotMode mono_aot_mode = MONO_AOT_MODE_NORMAL;
 MonoEEFeatures mono_ee_features;
 
 const char *mono_build_date;
@@ -3312,7 +3313,8 @@ MONO_SIG_HANDLER_FUNC_DEBUG (static, mono_sigsegv_signal_handler_debug)
 MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 #endif
 {
-	MonoJitInfo *ji;
+	MonoJitInfo *ji = NULL;
+	MonoDomain *domain = mono_domain_get ();
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	gpointer fault_addr = NULL;
 #ifdef HAVE_SIG_INFO
@@ -3353,7 +3355,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	}
 #endif
 
-	ji = mono_jit_info_table_find_internal (mono_domain_get (), mono_arch_ip_from_context (ctx), TRUE, TRUE);
+	if (domain)
+		ji = mono_jit_info_table_find_internal (domain, mono_arch_ip_from_context (ctx), TRUE, TRUE);
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 	if (mono_handle_soft_stack_ovf (jit_tls, ji, ctx, info, (guint8*)info->si_addr))
@@ -3371,7 +3374,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	}
 #endif
 
-	if (jit_tls->stack_size &&
+	if (jit_tls && jit_tls->stack_size &&
 		ABS ((guint8*)fault_addr - ((guint8*)jit_tls->end_of_stack - jit_tls->stack_size)) < 8192 * sizeof (gpointer)) {
 		/*
 		 * The hard-guard page has been hit: there is not much we can do anymore
@@ -3568,16 +3571,18 @@ mini_init_delegate (MonoDelegateHandle delegate, MonoError *error)
 {
 	MonoDelegate *del = MONO_HANDLE_RAW (delegate);
 
-	if (!del->method_ptr) {
-		g_assert (del->method);
-		del->method_ptr = create_delegate_method_ptr (del->method, error);
-		return_if_nok (error);
-	}
-
 	if (mono_use_interpreter)
 		mini_get_interp_callbacks ()->init_delegate (del);
-	if (mono_llvm_only)
-		del->extra_arg = mini_llvmonly_get_delegate_arg (del->method, del->method_ptr);
+	if (mono_llvm_only) {
+		g_assert (del->method);
+		/* del->method_ptr might already be set to no_llvmonly_interp_method_pointer if the delegate was created from the interpreter */
+		del->method_ptr = mini_llvmonly_load_method_delegate (del->method, FALSE, FALSE, &del->extra_arg, error);
+	} else {
+		if (!del->method_ptr) {
+			del->method_ptr = create_delegate_method_ptr (del->method, error);
+			return_if_nok (error);
+		}
+	}
 }
 
 char*
@@ -4103,6 +4108,15 @@ mono_interp_to_native_trampoline (gpointer addr, gpointer ccontext)
 	mini_get_interp_callbacks ()->to_native_trampoline (addr, ccontext);
 }
 
+static gboolean
+mini_is_interpreter_enabled ()
+{
+	return mono_use_interpreter;
+}
+
+static const char*
+mono_get_runtime_build_version (void);
+
 MonoDomain *
 mini_init (const char *filename, const char *runtime_version)
 {
@@ -4168,6 +4182,7 @@ mini_init (const char *filename, const char *runtime_version)
 	callbacks.create_ftnptr = mini_create_ftnptr;
 	callbacks.get_addr_from_ftnptr = mini_get_addr_from_ftnptr;
 	callbacks.get_runtime_build_info = mono_get_runtime_build_info;
+	callbacks.get_runtime_build_version = mono_get_runtime_build_version;
 	callbacks.set_cast_details = mono_set_cast_details;
 	callbacks.debug_log = mini_get_dbg_callbacks ()->debug_log;
 	callbacks.debug_log_is_enabled = mini_get_dbg_callbacks ()->debug_log_is_enabled;
@@ -4194,6 +4209,7 @@ mini_init (const char *filename, const char *runtime_version)
 	if (mono_use_interpreter)
 		callbacks.interp_get_remoting_invoke = mini_get_interp_callbacks ()->get_remoting_invoke;
 #endif
+	callbacks.is_interpreter_enabled = mini_is_interpreter_enabled;
 	callbacks.get_weak_field_indexes = mono_aot_get_weak_field_indexes;
 
 #ifndef DISABLE_CRASH_REPORTING
@@ -4282,6 +4298,8 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 
 	mono_thread_info_signals_init ();
+
+	mono_init_native_crash_info ();
 
 #ifndef MONO_CROSS_COMPILE
 	mono_runtime_install_handlers ();
@@ -4640,10 +4658,10 @@ register_icalls (void)
 
 	register_dyn_icall (mini_get_dbg_callbacks ()->user_break, "mono_debugger_agent_user_break", "void", FALSE);
 
-	register_icall (mono_aot_init_llvm_method, "mono_aot_init_llvm_method", "void ptr int", TRUE);
-	register_icall (mono_aot_init_gshared_method_this, "mono_aot_init_gshared_method_this", "void ptr int object", TRUE);
-	register_icall (mono_aot_init_gshared_method_mrgctx, "mono_aot_init_gshared_method_mrgctx", "void ptr int ptr", TRUE);
-	register_icall (mono_aot_init_gshared_method_vtable, "mono_aot_init_gshared_method_vtable", "void ptr int ptr", TRUE);
+	register_icall (mini_llvmonly_init_method, "mini_llvmonly_init_method", "void ptr int", TRUE);
+	register_icall (mini_llvmonly_init_gshared_method_this, "mini_llvmonly_init_gshared_method_this", "void ptr int object", TRUE);
+	register_icall (mini_llvmonly_init_gshared_method_mrgctx, "mini_llvmonly_init_gshared_method_mrgctx", "void ptr int ptr", TRUE);
+	register_icall (mini_llvmonly_init_gshared_method_vtable, "mini_llvmonly_init_gshared_method_vtable", "void ptr int ptr", TRUE);
 
 	register_icall_no_wrapper (mini_llvmonly_resolve_iface_call_gsharedvt, "mini_llvmonly_resolve_iface_call_gsharedvt", "ptr object int ptr ptr");
 	register_icall_no_wrapper (mini_llvmonly_resolve_vcall_gsharedvt, "mini_llvmonly_resolve_vcall_gsharedvt", "ptr object int ptr ptr");
@@ -4860,6 +4878,12 @@ void
 mono_set_verbose_level (guint32 level)
 {
 	mini_verbose = level;
+}
+
+static const char*
+mono_get_runtime_build_version (void)
+{
+	return FULL_VERSION;
 }
 
 /**

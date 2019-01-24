@@ -19,8 +19,8 @@ namespace System
 		{           
 		}
 
-		public static bool HasReferences (RuntimeType rt) => false;
+		internal static bool HasReferences (RuntimeType rt) => false;
 
-		public static bool IsInterface (RuntimeType rt) => false;
+		internal static bool IsInterface (RuntimeType rt) => false;
 	}
 }

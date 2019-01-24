@@ -3,11 +3,6 @@ using System.Collections.Generic;
 
 namespace System
 {
-	public abstract class RuntimeType : TypeInfo
-	{
-		internal Object GenericCache;
-	}
-
 	static class MonoCustomAttrs
 	{
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit) => throw new NotImplementedException ();
