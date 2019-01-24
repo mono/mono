@@ -444,6 +444,19 @@ namespace System.Globalization
 		// Date separator (derived from short date format)
 		internal String DateSeparator(int calendarId)
 		{
+#if MONO // see https://github.com/dotnet/coreclr/pull/19976
+			if (calendarId == (int)CalendarId.JAPAN && !AppContextSwitches.EnforceLegacyJapaneseDateParsing)
+			{
+				// The date separator is derived from the default short date pattern. So far this pattern is using
+				// '/' as date separator when using the Japanese calendar which make the formatting and parsing work fine.
+				// changing the default pattern is likely will happen in the near future which can easily break formatting
+				// and parsing.
+				// We are forcing here the date separator to '/' to ensure the parsing is not going to break when changing
+				// the default short date pattern. The application still can override this in the code by DateTimeFormatInfo.DateSeparartor.
+				return "/";
+			}
+#endif
+
 			return GetDateSeparator(ShortDates(calendarId)[0]);
 		}
 

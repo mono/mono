@@ -109,11 +109,6 @@ struct MonoJitTlsData {
 	gboolean orig_ex_ctx_set;
 
 	/* 
-	 * Stores if we need to run a chained exception in Windows.
-	 */
-	gboolean mono_win_chained_exception_needs_run;
-
-	/* 
 	 * The current exception in flight
 	 */
 	guint32 thrown_exc;
@@ -516,6 +511,9 @@ mono_gdb_render_native_backtraces (pid_t crashed_pid);
 
 void
 mono_cross_helpers_run (void);
+
+void
+mono_init_native_crash_info (void);
 
 void
 mono_dump_native_crash_info (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info);

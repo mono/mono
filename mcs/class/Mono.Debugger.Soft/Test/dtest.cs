@@ -2457,32 +2457,50 @@ public class DebuggerTests
 
 	[Test]
 	[Category("NotOnWindows")]
-	[Ignore("https://github.com/mono/mono/issues/11385")]
 	public void Crash () {
+		string [] existingCrashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
+
 		bool success = false;
-
-		try {
-			vm.Detach ();
-			Start (new string [] { dtest_app_path, "crash-vm" });
-			Event e = run_until ("crash");
-			while (!success) {
-				vm.Resume ();
-				e = GetNextEvent ();
-				var crash = e as CrashEvent;
-				if (crash == null)
-					continue;
-
-				success = true;
-				Assert.AreNotEqual (0, crash.Dump.Length);
-
-				break;
-			}
-		} finally {
+		for (int i = 0 ; i < 10; i++) {
 			try {
 				vm.Detach ();
+				Start (new string [] { dtest_app_path, "crash-vm" });
+				Event e = run_until ("crash");
+				while (!success) {
+					vm.Resume ();
+					e = GetNextEvent ();
+					var crash = e as CrashEvent;
+					if (crash == null)
+						continue;
+
+					success = true;
+					Assert.AreNotEqual (0, crash.Dump.Length);
+
+					break;
+				}
+			} catch (VMDisconnectedException vmDisconnect) { //expected behavior because of unreliability of the crash reporter.
+					success = false;
 			} finally {
-				vm = null;
+				try {
+					vm.Detach ();
+				} catch (VMDisconnectedException vmDisconnect) { //expected behavior because of unreliability of the crash reporter.
+					success = false;
+				} finally {
+					vm = null;
+				}
 			}
+			if (success) 
+				break;
+			//try again because of unreliability of the crash reporter.
+			TearDown();
+			SetUp();
+		}
+
+		// delete crash files created by this test
+		string [] crashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
+		foreach (string f in crashFileEntries) {
+			if (!existingCrashFileEntries.Contains (f))
+				File.Delete(f);
 		}
 
 		if (!success)
@@ -4585,6 +4603,25 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void InspectEnumeratorInGenericStruct() {
+		//files.myBucket.GetEnumerator().get_Current().Key watching this generates an exception in Debugger
+		Event e = run_until("inspect_enumerator_in_generic_struct");
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over();
+		StackFrame frame = e.Thread.GetFrames () [0];
+		var ginst = frame.Method.GetLocal ("generic_struct");
+		Value variable = frame.GetValue (ginst);
+		StructMirror thisObj = (StructMirror)variable;
+		TypeMirror thisType = thisObj.Type;
+		variable = thisObj.InvokeMethod(e.Thread, thisType.GetMethod("get_Current"), null);
+		thisObj = (StructMirror)variable;
+		thisType = thisObj.Type;
+		AssertValue ("f1", thisObj["value"]);
+	}
+
+	[Test]
 	public void CheckElapsedTime() {
 		Event e = run_until ("elapsed_time");
 
@@ -4769,6 +4806,27 @@ public class DebuggerTests
 		var mirror = (StructMirror)v;
 		AssertValue (1, mirror["i"]);
 		AssertValue (2.0, mirror["d"]);
+	}
+
+	[Test]
+	public void FieldWithUnsafeCastValue() {
+		Event e = run_until("field_with_unsafe_cast_value");
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over();
+		e = step_over();
+		e = step_over();
+		e = step_over();
+		e = step_over();
+		var frame = e.Thread.GetFrames () [0];
+		var ginst = frame.Method.GetLocal ("bytes");
+		Value variable = frame.GetValue (ginst);
+		StructMirror thisObj = (StructMirror)variable;
+		TypeMirror thisType = thisObj.Type;
+		variable = thisObj.InvokeMethod(e.Thread, thisType.GetMethod("ToString"), null);
+		AssertValue ("abc", variable);
+
 	}
 } // class DebuggerTests
 } // namespace

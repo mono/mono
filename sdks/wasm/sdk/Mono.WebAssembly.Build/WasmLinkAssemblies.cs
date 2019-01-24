@@ -62,7 +62,12 @@ namespace Mono.WebAssembly.Build
 		protected override string GenerateFullPathToTool ()
 		{
 			var dir = Path.GetDirectoryName (GetType ().Assembly.Location);
-			return Path.Combine (dir, "monolinker.exe");
+			// Check if coming from nuget or local
+			var toolsPath = Path.Combine (Path.GetDirectoryName( dir ), "tools", "monolinker.exe");
+			if (File.Exists(toolsPath))
+				return toolsPath;
+			else 
+				return Path.Combine (dir, "monolinker.exe");
 		}
 
 		protected override bool ValidateParameters ()
@@ -76,6 +81,13 @@ namespace Mono.WebAssembly.Build
 				Log.LogError ("FrameworkDir is required");
 				return false;
 			}
+
+			WasmLinkMode linkme;
+			if (!Enum.TryParse<WasmLinkMode>(LinkMode, out linkme)) {
+				Log.LogError ("LinkMode is invalid.");
+				return false;
+			}
+
 
 			return base.ValidateParameters ();
 		}
@@ -117,6 +129,7 @@ namespace Mono.WebAssembly.Build
 
 			sb.AppendFormat (" -out \"{0}\"", OutputDir);
 			sb.AppendFormat (" -d \"{0}\"", FrameworkDir);
+			sb.AppendFormat (" -d \"{0}\"", Path.Combine(FrameworkDir, "Facades"));
 			sb.AppendFormat (" -b {0} -v {0}", Debug);
 
 			sb.AppendFormat (" -a \"{0}\"", RootAssembly[0].GetMetadata("FullPath"));
@@ -134,10 +147,12 @@ namespace Mono.WebAssembly.Build
 			//add references for non-framework assemblies
 			if (Assemblies != null) {
 				foreach (var asm in Assemblies) {
+
 					var p = asm.GetMetadata ("FullPath");
 					if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
 						continue;
 					}
+
 					sb.AppendFormat (" -r \"{0}\"", p);
 				}
 			}

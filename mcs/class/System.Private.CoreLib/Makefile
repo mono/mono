@@ -2,11 +2,8 @@ thisdir = class/System.Private.CoreLib
 SUBDIRS =
 include ../../build/rules.make
 
-LIBRARY = System.Private.CoreLib.dll
-LIB_REFS =
-EXTRA_DIST_FILES =
+all-local:
+	dotnet build -p:TargetsUnix=true -p:TargetsOSX=true System.Private.CoreLib.csproj
 
-LIB_MCS_FLAGS =
-DEFAULT_REFERENCES = 
-
-include ../../build/library.make
+dist-local:
+	@:

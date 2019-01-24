@@ -66,6 +66,8 @@
 #include <mono/mini/mini.h>
 #include <mono/mini/mini-runtime.h>
 #include <mono/mini/aot-runtime.h>
+#include <mono/mini/llvm-runtime.h>
+#include <mono/mini/llvmonly-runtime.h>
 #include <mono/mini/jit-icalls.h>
 #include <mono/mini/debugger-agent.h>
 #include <mono/mini/ee.h>
@@ -319,11 +321,18 @@ lookup_imethod (MonoDomain *domain, MonoMethod *method)
 }
 
 static gpointer
-interp_get_remoting_invoke (gpointer addr, MonoError *error)
+interp_get_remoting_invoke (MonoMethod *method, gpointer addr, MonoError *error)
 {
 #ifndef DISABLE_REMOTING
-	InterpMethod *imethod = lookup_method_pointer (addr);
+	InterpMethod *imethod;
 
+	if (addr) {
+		imethod = lookup_method_pointer (addr);
+	} else {
+		g_assert (method);
+		imethod = mono_interp_get_imethod (mono_domain_get (), method, error);
+		return_val_if_nok (error, NULL);
+	}
 	g_assert (imethod);
 	g_assert (mono_use_interpreter);
 
@@ -377,9 +386,18 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 }
 
 #if defined (MONO_CROSS_COMPILE) || defined (HOST_WASM) || defined (_MSC_VER)
-#define INTERP_PUSH_LMF_WITH_CTX_BODY(ext, exit_addr) /* do nothing */
-#elif defined (MONO_ARCH_HAS_MONO_CONTEXT)
 #define INTERP_PUSH_LMF_WITH_CTX_BODY(ext, exit_addr) \
+	(ext).kind = MONO_LMFEXT_INTERP_EXIT;
+
+#elif defined(MONO_ARCH_HAS_NO_PROPER_MONOCTX)
+/* some platforms, e.g. appleTV, don't provide us a precise MonoContext
+ * (registers are not accurate), thus resuming to the label does not work. */
+#define INTERP_PUSH_LMF_WITH_CTX_BODY(ext, exit_addr) \
+	(ext).kind = MONO_LMFEXT_INTERP_EXIT;
+
+#elif defined(MONO_ARCH_HAS_MONO_CONTEXT)
+#define INTERP_PUSH_LMF_WITH_CTX_BODY(ext, exit_addr) \
+	(ext).kind = MONO_LMFEXT_INTERP_EXIT_WITH_CTX; \
 	MONO_CONTEXT_GET_CURRENT ((ext).ctx); \
 	MONO_CONTEXT_SET_IP (&(ext).ctx, (exit_addr)); \
 	mono_arch_do_ip_adjustment (&(ext).ctx);
@@ -398,7 +416,6 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
  */
 #define INTERP_PUSH_LMF_WITH_CTX(frame, ext, exit_addr) \
 	memset (&(ext), 0, sizeof (MonoLMFExt)); \
-	(ext).kind = MONO_LMFEXT_INTERP_EXIT_WITH_CTX; \
 	(ext).interp_exit_data = (frame); \
 	INTERP_PUSH_LMF_WITH_CTX_BODY ((ext), (exit_addr)); \
 	mono_push_lmf (&(ext));
@@ -486,6 +503,116 @@ get_virtual_method (InterpMethod *imethod, MonoObject *obj)
 	InterpMethod *virtual_imethod = mono_interp_get_imethod (domain, virtual_method, error);
 	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	return virtual_imethod;
+}
+
+typedef struct {
+	InterpMethod *imethod;
+	InterpMethod *target_imethod;
+} InterpVTableEntry;
+
+/* domain lock must be held */
+static GSList*
+append_imethod (MonoDomain *domain, GSList *list, InterpMethod *imethod, InterpMethod *target_imethod)
+{
+	GSList *ret;
+	InterpVTableEntry *entry;
+
+	entry = (InterpVTableEntry*) mono_mempool_alloc (domain->mp, sizeof (InterpVTableEntry));
+	entry->imethod = imethod;
+	entry->target_imethod = target_imethod;
+	ret = g_slist_append_mempool (domain->mp, list, entry);
+
+	return ret;
+}
+
+static InterpMethod*
+get_target_imethod (GSList *list, InterpMethod *imethod)
+{
+	while (list != NULL) {
+		InterpVTableEntry *entry = (InterpVTableEntry*) list->data;
+		if (entry->imethod == imethod)
+			return entry->target_imethod;
+		list = list->next;
+	}
+	return NULL;
+}
+
+static gpointer*
+get_method_table (MonoObject *obj, int offset)
+{
+	if (offset >= 0) {
+		return obj->vtable->interp_vtable;
+	} else {
+		return (gpointer*)obj->vtable;
+	}
+}
+
+static gpointer*
+alloc_method_table (MonoObject *obj, int offset)
+{
+	gpointer *table;
+
+	if (offset >= 0) {
+		table = mono_domain_alloc0 (obj->vtable->domain, m_class_get_vtable_size (obj->vtable->klass) * sizeof (gpointer));
+		obj->vtable->interp_vtable = table;
+	} else {
+		table = (gpointer*)obj->vtable;
+	}
+
+	return table;
+}
+
+static InterpMethod*
+get_virtual_method_fast (MonoObject *obj, InterpMethod *imethod, int offset)
+{
+	gpointer *table;
+
+#ifndef DISABLE_REMOTING
+	/* FIXME Remoting */
+	if (mono_object_is_transparent_proxy (obj))
+		return get_virtual_method (imethod, obj);
+#endif
+
+	table = get_method_table (obj, offset);
+
+	if (!table) {
+		/* Lazily allocate method table */
+		mono_domain_lock (obj->vtable->domain);
+		table = get_method_table (obj, offset);
+		if (!table)
+			table = alloc_method_table (obj, offset);
+		mono_domain_unlock (obj->vtable->domain);
+	}
+
+	if (!table [offset]) {
+		InterpMethod *target_imethod = get_virtual_method (imethod, obj);
+		/* Lazily initialize the method table slot */
+		mono_domain_lock (obj->vtable->domain);
+		if (!table [offset]) {
+			if (imethod->method->is_inflated || offset < 0)
+				table [offset] = append_imethod (obj->vtable->domain, NULL, imethod, target_imethod);
+			else
+				table [offset] = (gpointer) ((gsize)target_imethod | 0x1);
+		}
+		mono_domain_unlock (obj->vtable->domain);
+	}
+
+	if ((gsize)table [offset] & 0x1) {
+		/* Non generic virtual call. Only one method in slot */
+		return (InterpMethod*) ((gsize)table [offset] & ~0x1);
+	} else {
+		/* Virtual generic or interface call. Multiple methods in slot */
+		InterpMethod *target_imethod = get_target_imethod ((GSList*)table [offset], imethod);
+
+		if (!target_imethod) {
+			target_imethod = get_virtual_method (imethod, obj);
+			mono_domain_lock (obj->vtable->domain);
+			if (!get_target_imethod ((GSList*)table [offset], imethod))
+				table [offset] = append_imethod (obj->vtable->domain, (GSList*)table [offset], imethod, target_imethod);
+			mono_domain_unlock (obj->vtable->domain);
+		}
+		return target_imethod;
+	}
 }
 
 static void inline
@@ -804,15 +931,6 @@ fill_in_trace (MonoException *exception, InterpFrame *frame)
 
 #define THROW_EX(exception,ex_ip) THROW_EX_GENERAL ((exception), (ex_ip), FALSE)
 
-/*
- * Its possible for child_frame.ex to contain an unthrown exception, if the transform phase
- * produced one.
- */
-#define CHECK_CHILD_EX(child_frame, ip) do { \
-	if ((child_frame).ex) \
-		THROW_EX ((child_frame).ex, (ip)); \
-	} while (0)
-
 #define EXCEPTION_CHECKPOINT	\
 	do {										\
 		if (*mono_thread_interruption_request_flag () && !mono_threads_is_critical_method (rtm->method)) { \
@@ -949,8 +1067,6 @@ ves_array_element_address (InterpFrame *frame, MonoClass *required_type, MonoArr
 	gint32 esize = mono_array_element_size (ac);
 	return mono_array_addr_with_size_fast (ao, esize, pos);
 }
-
-static MonoPIFunc mono_interp_to_native_trampoline = NULL;
 
 #ifdef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 static MonoFuncV mono_native_to_interp_trampoline = NULL;
@@ -1210,42 +1326,65 @@ interp_frame_arg_set_storage (MonoInterpFrameHandle frame, MonoMethodSignature *
 	}
 }
 
+static MonoPIFunc
+get_interp_to_native_trampoline (void)
+{
+	static MonoPIFunc trampoline = NULL;
+
+	if (!trampoline) {
+		if (mono_ee_features.use_aot_trampolines) {
+			trampoline = (MonoPIFunc) mono_aot_get_trampoline ("interp_to_native_trampoline");
+		} else {
+			MonoTrampInfo *info;
+			trampoline = (MonoPIFunc) mono_arch_get_interp_to_native_trampoline (&info);
+			// TODO:
+			// mono_tramp_info_register (info, NULL);
+		}
+		mono_memory_barrier ();
+	}
+	return trampoline;
+}
+
+static void
+interp_to_native_trampoline (gpointer addr, gpointer ccontext)
+{
+	get_interp_to_native_trampoline () (addr, ccontext);
+}
+
 /* MONO_NO_OPTIMIATION is needed due to usage of INTERP_PUSH_LMF_WITH_CTX. */
 static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr, gboolean string_ctor, ThreadContext *context)
 {
 	MonoLMFExt ext;
+	gpointer args;
 
 	frame->ex = NULL;
 
 	g_assert (!frame->imethod);
-	if (!mono_interp_to_native_trampoline) {
-		if (mono_ee_features.use_aot_trampolines) {
-			mono_interp_to_native_trampoline = (MonoPIFunc)mono_aot_get_trampoline ("interp_to_native_trampoline");
-		} else {
-			MonoTrampInfo *info;
-			mono_interp_to_native_trampoline = (MonoPIFunc)mono_arch_get_interp_to_native_trampoline (&info);
-			// TODO:
-			// mono_tramp_info_register (info, NULL);
-		}
+
+	static MonoPIFunc entry_func = NULL;
+	if (!entry_func) {
+#ifdef MONO_ARCH_HAS_NO_PROPER_MONOCTX
+		ERROR_DECL (error);
+		entry_func = (MonoPIFunc) mono_jit_compile_method_jit_only (mini_get_interp_lmf_wrapper ("mono_interp_to_native_trampoline", (gpointer) mono_interp_to_native_trampoline), error);
+		mono_error_assert_ok (error);
+#else
+		entry_func = get_interp_to_native_trampoline ();
+#endif
+		mono_memory_barrier ();
 	}
+
 #ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
 	CallContext ccontext;
 	mono_arch_set_native_call_context_args (&ccontext, frame, sig);
+	args = &ccontext;
 #else
 	InterpMethodArguments *margs = build_args_from_sig (sig, frame);
-#endif
-
-#if DEBUG_INTERP
-	g_print ("ICALL: mono_interp_to_native_trampoline = %p, addr = %p\n", mono_interp_to_native_trampoline, addr);
+	args = margs;
 #endif
 
 	INTERP_PUSH_LMF_WITH_CTX (frame, ext, &&exit_pinvoke);
-#ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
-	mono_interp_to_native_trampoline (addr, &ccontext);
-#else
-	mono_interp_to_native_trampoline (addr, margs);
-#endif
+	entry_func ((gpointer) addr, args);
 	interp_pop_lmf (&ext);
 
 #ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
@@ -1701,7 +1840,7 @@ static void
 interp_entry (InterpEntryData *data)
 {
 	InterpFrame frame;
-	InterpMethod *rmethod = data->rmethod;
+	InterpMethod *rmethod;
 	ThreadContext *context;
 	stackval result;
 	stackval *args;
@@ -1710,6 +1849,13 @@ interp_entry (InterpEntryData *data)
 	MonoType *type;
 	gpointer orig_domain, attach_cookie;
 	int i;
+
+	if ((gsize)data->rmethod & 1) {
+		/* Unbox */
+		data->this_arg = mono_object_unbox_internal ((MonoObject*)data->this_arg);
+		data->rmethod = (InterpMethod*)(gpointer)((gsize)data->rmethod & ~1);
+	}
+	rmethod = data->rmethod;
 
 	if (rmethod->needs_thread_attach)
 		orig_domain = mono_threads_attach_coop (mono_domain_get (), &attach_cookie);
@@ -1924,6 +2070,92 @@ exit_icall:
 	return sp;
 }
 
+typedef struct {
+	int pindex;
+	gpointer jit_wrapper;
+	gpointer *args;
+	MonoFtnDesc *ftndesc;
+} JitCallCbData;
+
+static void
+jit_call_cb (gpointer arg)
+{
+	JitCallCbData *cb_data = (JitCallCbData*)arg;
+	gpointer jit_wrapper = cb_data->jit_wrapper;
+	int pindex = cb_data->pindex;
+	gpointer *args = cb_data->args;
+	MonoFtnDesc ftndesc = *cb_data->ftndesc;
+
+	switch (pindex) {
+	case 0: {
+		typedef void (*T)(gpointer);
+		T func = (T)jit_wrapper;
+
+		func (&ftndesc);
+		break;
+	}
+	case 1: {
+		typedef void (*T)(gpointer, gpointer);
+		T func = (T)jit_wrapper;
+
+		func (args [0], &ftndesc);
+		break;
+	}
+	case 2: {
+		typedef void (*T)(gpointer, gpointer, gpointer);
+		T func = (T)jit_wrapper;
+
+		func (args [0], args [1], &ftndesc);
+		break;
+	}
+	case 3: {
+		typedef void (*T)(gpointer, gpointer, gpointer, gpointer);
+		T func = (T)jit_wrapper;
+
+		func (args [0], args [1], args [2], &ftndesc);
+		break;
+	}
+	case 4: {
+		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer);
+		T func = (T)jit_wrapper;
+
+		func (args [0], args [1], args [2], args [3], &ftndesc);
+		break;
+	}
+	case 5: {
+		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
+		T func = (T)jit_wrapper;
+
+		func (args [0], args [1], args [2], args [3], args [4], &ftndesc);
+		break;
+	}
+	case 6: {
+		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
+		T func = (T)jit_wrapper;
+
+		func (args [0], args [1], args [2], args [3], args [4], args [5], &ftndesc);
+		break;
+	}
+	case 7: {
+		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
+		T func = (T)jit_wrapper;
+
+		func (args [0], args [1], args [2], args [3], args [4], args [5], args [6], &ftndesc);
+		break;
+	}
+	case 8: {
+		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
+		T func = (T)jit_wrapper;
+
+		func (args [0], args [1], args [2], args [3], args [4], args [5], args [6], args [7], &ftndesc);
+		break;
+	}
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+}
+
 static MONO_NEVER_INLINE stackval *
 do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpFrame *frame, InterpMethod *rmethod, MonoError *error)
 {
@@ -2033,76 +2265,28 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 
 	interp_push_lmf (&ext, frame);
 
-	switch (pindex) {
-	case 0: {
-		typedef void (*T)(gpointer);
-		T func = (T)rmethod->jit_wrapper;
+	JitCallCbData cb_data;
+	memset (&cb_data, 0, sizeof (cb_data));
+	cb_data.jit_wrapper = rmethod->jit_wrapper;
+	cb_data.pindex = pindex;
+	cb_data.args = args;
+	cb_data.ftndesc = &ftndesc;
 
-		func (&ftndesc);
-		break;
+	if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY_INTERP) {
+		/* Catch the exception thrown by the native code using a try-catch */
+		gboolean thrown = FALSE;
+		mono_llvm_cpp_catch_exception (jit_call_cb, &cb_data, &thrown);
+		interp_pop_lmf (&ext);
+		if (thrown) {
+			MonoObject *obj = mono_llvm_load_exception ();
+			g_assert (obj);
+			mono_error_set_exception_instance (error, (MonoException*)obj);
+			return sp;
+		}
+	} else {
+		jit_call_cb (&cb_data);
+		interp_pop_lmf (&ext);
 	}
-	case 1: {
-		typedef void (*T)(gpointer, gpointer);
-		T func = (T)rmethod->jit_wrapper;
-
-		func (args [0], &ftndesc);
-		break;
-	}
-	case 2: {
-		typedef void (*T)(gpointer, gpointer, gpointer);
-		T func = (T)rmethod->jit_wrapper;
-
-		func (args [0], args [1], &ftndesc);
-		break;
-	}
-	case 3: {
-		typedef void (*T)(gpointer, gpointer, gpointer, gpointer);
-		T func = (T)rmethod->jit_wrapper;
-
-		func (args [0], args [1], args [2], &ftndesc);
-		break;
-	}
-	case 4: {
-		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer);
-		T func = (T)rmethod->jit_wrapper;
-
-		func (args [0], args [1], args [2], args [3], &ftndesc);
-		break;
-	}
-	case 5: {
-		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
-		T func = (T)rmethod->jit_wrapper;
-
-		func (args [0], args [1], args [2], args [3], args [4], &ftndesc);
-		break;
-	}
-	case 6: {
-		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
-		T func = (T)rmethod->jit_wrapper;
-
-		func (args [0], args [1], args [2], args [3], args [4], args [5], &ftndesc);
-		break;
-	}
-	case 7: {
-		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
-		T func = (T)rmethod->jit_wrapper;
-
-		func (args [0], args [1], args [2], args [3], args [4], args [5], args [6], &ftndesc);
-		break;
-	}
-	case 8: {
-		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
-		T func = (T)rmethod->jit_wrapper;
-
-		func (args [0], args [1], args [2], args [3], args [4], args [5], args [6], args [7], &ftndesc);
-		break;
-	}
-	default:
-		g_assert_not_reached ();
-		break;
-	}
-
-	interp_pop_lmf (&ext);
 
 	MonoType *rtype = rmethod->rtype;
 	switch (rtype->type) {
@@ -2225,7 +2409,6 @@ copy_varargs_vtstack (MonoMethodSignature *csig, stackval *sp, unsigned char **v
 	*(char**)vt_sp = vt;
 }
 
-#ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 /*
  * These functions are the entry points into the interpreter from compiled code.
  * They are called by the interp_in wrappers. They have the following signature:
@@ -2381,7 +2564,7 @@ interp_entry_general (gpointer this_arg, gpointer res, gpointer *args, gpointer 
 	interp_entry (&data);
 }
 
-#else /* MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE */
+#ifdef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 
 // inline so we can alloc on stack
 #define alloc_storage_for_stackval(s, t, p) do {							\
@@ -2471,6 +2654,93 @@ interp_no_native_to_managed (void)
 }
 #endif
 
+static void
+no_llvmonly_interp_method_pointer (void)
+{
+	g_assert_not_reached ();
+}
+
+/*
+ * interp_create_method_pointer_llvmonly:
+ *
+ *   Return an ftndesc for entering the interpreter and executing METHOD.
+ */
+static MonoFtnDesc*
+interp_create_method_pointer_llvmonly (MonoMethod *method, gboolean unbox, MonoError *error)
+{
+	MonoDomain *domain = mono_domain_get ();
+	gpointer addr, entry_func, entry_wrapper;
+	MonoMethodSignature *sig;
+	MonoMethod *wrapper;
+	MonoJitDomainInfo *info;
+	InterpMethod *imethod;
+
+	imethod = mono_interp_get_imethod (domain, method, error);
+	return_val_if_nok (error, NULL);
+
+	if (unbox) {
+		if (imethod->llvmonly_unbox_entry)
+			return (MonoFtnDesc*)imethod->llvmonly_unbox_entry;
+	} else {
+		if (imethod->jit_entry)
+			return (MonoFtnDesc*)imethod->jit_entry;
+	}
+
+	sig = mono_method_signature_internal (method);
+
+	/*
+	 * The entry functions need access to the method to call, so we have
+	 * to use a ftndesc. The caller uses a normal signature, while the
+	 * entry functions use a gsharedvt_in signature, so wrap the entry function in
+	 * a gsharedvt_in_sig wrapper.
+	 */
+	wrapper = mini_get_gsharedvt_in_sig_wrapper (sig);
+
+	entry_wrapper = mono_jit_compile_method_jit_only (wrapper, error);
+	mono_error_assertf_ok (error, "couldn't compile wrapper \"%s\" for \"%s\"",
+			mono_method_get_name_full (wrapper, TRUE, TRUE, MONO_TYPE_NAME_FORMAT_IL),
+			mono_method_get_name_full (method,  TRUE, TRUE, MONO_TYPE_NAME_FORMAT_IL));
+
+	if (sig->param_count > MAX_INTERP_ENTRY_ARGS) {
+		g_assert_not_reached ();
+		//entry_func = (gpointer)interp_entry_general;
+	} else if (sig->hasthis) {
+		if (sig->ret->type == MONO_TYPE_VOID)
+			entry_func = entry_funcs_instance [sig->param_count];
+		else
+			entry_func = entry_funcs_instance_ret [sig->param_count];
+	} else {
+		if (sig->ret->type == MONO_TYPE_VOID)
+			entry_func = entry_funcs_static [sig->param_count];
+		else
+			entry_func = entry_funcs_static_ret [sig->param_count];
+	}
+	g_assert (entry_func);
+
+	/* Encode unbox in the lower bit of imethod */
+	gpointer entry_arg = imethod;
+	if (unbox)
+		entry_arg = (gpointer)(((gsize)entry_arg) | 1);
+	MonoFtnDesc *entry_ftndesc = mini_llvmonly_create_ftndesc (mono_domain_get (), entry_func, entry_arg);
+
+	addr = mini_llvmonly_create_ftndesc (mono_domain_get (), entry_wrapper, entry_ftndesc);
+
+	info = domain_jit_info (domain);
+	mono_domain_lock (domain);
+	if (!info->interp_method_pointer_hash)
+		info->interp_method_pointer_hash = g_hash_table_new (NULL, NULL);
+	g_hash_table_insert (info->interp_method_pointer_hash, addr, imethod);
+	mono_domain_unlock (domain);
+
+	mono_memory_barrier ();
+	if (unbox)
+		imethod->llvmonly_unbox_entry = addr;
+	else
+		imethod->jit_entry = addr;
+
+	return (MonoFtnDesc*)addr;
+}
+
 /*
  * interp_create_method_pointer:
  *
@@ -2481,6 +2751,8 @@ static gpointer
 interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *error)
 {
 #ifndef MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED
+	if (mono_llvm_only)
+		return (gpointer)no_llvmonly_interp_method_pointer;
 	return (gpointer)interp_no_native_to_managed;
 #else
 	gpointer addr, entry_func, entry_wrapper;
@@ -2488,21 +2760,29 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 	MonoJitDomainInfo *info;
 	InterpMethod *imethod = mono_interp_get_imethod (domain, method, error);
 
+	if (mono_llvm_only)
+		return (gpointer)no_llvmonly_interp_method_pointer;
+
 	if (compile) {
 		/* Return any errors from method compilation */
 		mono_interp_transform_method (imethod, get_context (), error);
 		return_val_if_nok (error, NULL);
 	}
 
+	if (imethod->jit_entry)
+		return imethod->jit_entry;
+
+	MonoMethodSignature *sig = mono_method_signature_internal (method);
+
+	if (mono_llvm_only)
+		/* The caller should call interp_create_method_pointer_llvmonly */
+		g_assert_not_reached ();
+
 	/* HACK: method_ptr of delegate should point to a runtime method*/
 	if (method->wrapper_type && (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD ||
 				(method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)))
 		return imethod;
 
-	if (imethod->jit_entry)
-		return imethod->jit_entry;
-
-	MonoMethodSignature *sig = mono_method_signature_internal (method);
 #ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 	MonoMethod *wrapper = mini_get_interp_in_wrapper (sig);
 
@@ -2539,8 +2819,14 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 	/* We need the lmf wrapper only when being called from mixed mode */
 	if (sig->pinvoke)
 		entry_func = (gpointer)interp_entry_from_trampoline;
-	else
-		entry_func = mono_jit_compile_method_jit_only (mini_get_interp_lmf_wrapper (), error);
+	else {
+		static gpointer cached_func = NULL;
+		if (!cached_func) {
+			cached_func = mono_jit_compile_method_jit_only (mini_get_interp_lmf_wrapper ("mono_interp_entry_from_trampoline", (gpointer) mono_interp_entry_from_trampoline), error);
+			mono_memory_barrier ();
+		}
+		entry_func = cached_func;
+	}
 #endif
 	/* This is the argument passed to the interp_in wrapper by the static rgctx trampoline */
 	MonoFtnDesc *ftndesc = g_new0 (MonoFtnDesc, 1);
@@ -2695,6 +2981,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		sp->data.p = clause_args->filter_exception;
 		sp++;
 	}
+
+	//g_print ("(%p) Call %s\n", mono_thread_internal_current (), mono_method_get_full_name (frame->imethod->method));
 
 	/*
 	 * using while (ip < end) may result in a 15% performance drop, 
@@ -2906,8 +3194,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			CHECK_RESUME_STATE (context);
 
-			CHECK_CHILD_EX (child_frame, ip - 2);
-
 			/* need to handle typedbyref ... */
 			if (csignature->ret->type != MONO_TYPE_VOID) {
 				*sp = *endsp;
@@ -2976,10 +3262,52 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			CHECK_RESUME_STATE (context);
 
-			CHECK_CHILD_EX (child_frame, ip - 2);
-
 			/* need to handle typedbyref ... */
 			if (csignature->ret->type != MONO_TYPE_VOID) {
+				*sp = *endsp;
+				sp++;
+			}
+			MINT_IN_BREAK;
+		}
+		MINT_IN_CASE(MINT_CALLVIRT_FAST)
+		MINT_IN_CASE(MINT_VCALLVIRT_FAST) {
+			MonoObject *this_arg;
+			MonoClass *this_class;
+			gboolean is_void = *ip == MINT_VCALLVIRT_FAST;
+			InterpMethod *imethod;
+			stackval *endsp = sp;
+			int slot;
+
+			// FIXME Have it handle also remoting calls and use a single opcode for virtual calls
+
+			frame->ip = ip;
+
+			imethod = (InterpMethod*)rtm->data_items [* (guint16 *)(ip + 1)];
+			slot = *(gint16*)(ip + 2);
+			ip += 3;
+			sp->data.p = vt_sp;
+			child_frame.retval = sp;
+
+			/* decrement by the actual number of args */
+			sp -= imethod->param_count + imethod->hasthis;
+			child_frame.stack_args = sp;
+
+			this_arg = (MonoObject*)sp->data.p;
+			this_class = this_arg->vtable->klass;
+
+			child_frame.imethod = get_virtual_method_fast (this_arg, imethod, slot);
+			if (m_class_is_valuetype (this_class) && m_class_is_valuetype (child_frame.imethod->method->klass)) {
+				/* unbox */
+				gpointer unboxed = mono_object_unbox_internal (this_arg);
+				sp [0].data.p = unboxed;
+			}
+
+			interp_exec_method (&child_frame, context);
+
+			CHECK_RESUME_STATE (context);
+
+			if (!is_void) {
+				/* need to handle typedbyref ... */
 				*sp = *endsp;
 				sp++;
 			}
@@ -3028,8 +3356,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			interp_exec_method (&child_frame, context);
 
 			CHECK_RESUME_STATE (context);
-
-			CHECK_CHILD_EX (child_frame, ip - 2);
 
 			if (!is_void) {
 				/* need to handle typedbyref ... */
@@ -4058,7 +4384,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			interp_exec_method (&child_frame, context);
 
 			CHECK_RESUME_STATE (context);
-			CHECK_CHILD_EX (child_frame, ip);
+
 			if (vt)
 				*sp = valuetype_this;
 			else
@@ -4136,7 +4462,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 			CHECK_RESUME_STATE (context);
 
-			CHECK_CHILD_EX (child_frame, ip - 2);
 			/*
 			 * a constructor returns void, but we need to return the object we created
 			 */
@@ -6187,7 +6512,9 @@ mono_ee_interp_init (const char *opts)
 #ifdef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 	c.entry_from_trampoline = interp_entry_from_trampoline;
 #endif
+	c.to_native_trampoline = interp_to_native_trampoline;
 	c.create_method_pointer = interp_create_method_pointer;
+	c.create_method_pointer_llvmonly = interp_create_method_pointer_llvmonly;
 	c.runtime_invoke = interp_runtime_invoke;
 	c.init_delegate = interp_init_delegate;
 	c.delegate_ctor = interp_delegate_ctor;

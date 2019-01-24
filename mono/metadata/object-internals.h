@@ -510,7 +510,7 @@ struct _MonoInternalThread {
 	gpointer unused3;
 	gunichar2  *name;
 	guint32	    name_len;
-	guint32	    state;
+	guint32	    state;      /* must be accessed while longlived->synch_cs is locked */
 	MonoException *abort_exc;
 	int abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
@@ -524,7 +524,10 @@ struct _MonoInternalThread {
 	gpointer appdomain_refs;
 	/* This is modified using atomic ops, so keep it a gint32 */
 	gint32 __interruption_requested;
-	MonoCoopMutex *synch_cs;
+	/* data that must live as long as this managed object is not finalized
+	 * or as long as the underlying thread is attached, whichever is
+	 * longer */
+	MonoLongLivedThreadData *longlived;
 	MonoBoolean threadpool_thread;
 	MonoBoolean thread_interrupt_requested;
 	int stack_size;
@@ -714,6 +717,9 @@ typedef struct {
 	guint32 intType;
 } MonoInterfaceTypeAttribute;
 
+/* Safely access System.Delegate from native code */
+TYPED_HANDLE_DECL (MonoDelegate);
+
 /* 
  * Callbacks supplied by the runtime and called by the modules in metadata/
  * This interface is easier to extend than adding a new function type +
@@ -723,13 +729,14 @@ typedef struct {
 	gpointer (*create_ftnptr) (MonoDomain *domain, gpointer addr);
 	gpointer (*get_addr_from_ftnptr) (gpointer descr);
 	char*    (*get_runtime_build_info) (void);
+	const char*    (*get_runtime_build_version) (void);
 	gpointer (*get_vtable_trampoline) (MonoVTable *vtable, int slot_index);
 	gpointer (*get_imt_trampoline) (MonoVTable *vtable, int imt_slot_index);
 	gboolean (*imt_entry_inited) (MonoVTable *vtable, int imt_slot_index);
 	void     (*set_cast_details) (MonoClass *from, MonoClass *to);
 	void     (*debug_log) (int level, MonoStringHandle category, MonoStringHandle message);
 	gboolean (*debug_log_is_enabled) (void);
-	void     (*init_delegate) (MonoDelegate *del);
+	void     (*init_delegate) (MonoDelegateHandle delegate, MonoError *error);
 	MonoObject* (*runtime_invoke) (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
 	void*    (*compile_method) (MonoMethod *method, MonoError *error);
 	gpointer (*create_jump_trampoline) (MonoDomain *domain, MonoMethod *method, gboolean add_sync_wrapper, MonoError *error);
@@ -738,9 +745,10 @@ typedef struct {
 	void     (*free_method) (MonoDomain *domain, MonoMethod *method);
 	gpointer (*create_remoting_trampoline) (MonoDomain *domain, MonoMethod *method, MonoRemotingTarget target, MonoError *error);
 	gpointer (*create_delegate_trampoline) (MonoDomain *domain, MonoClass *klass);
-	gpointer (*interp_get_remoting_invoke) (gpointer imethod, MonoError *error);
+	gpointer (*interp_get_remoting_invoke) (MonoMethod *method, gpointer imethod, MonoError *error);
 	GHashTable *(*get_weak_field_indexes) (MonoImage *image);
 	void     (*install_state_summarizer) (void);
+	gboolean (*is_interpreter_enabled) (void);
 } MonoRuntimeCallbacks;
 
 typedef gboolean (*MonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
@@ -924,9 +932,6 @@ struct _MonoDelegate {
 	MonoObject *data;
 	MonoBoolean method_is_virtual;
 };
-
-/* Safely access System.Delegate from native code */
-TYPED_HANDLE_DECL (MonoDelegate);
 
 typedef struct _MonoMulticastDelegate MonoMulticastDelegate;
 struct _MonoMulticastDelegate {

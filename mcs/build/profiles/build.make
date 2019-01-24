@@ -57,6 +57,7 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 
 #
 # Copy from rules.make because I don't know how to unset MCS_FLAGS
+# Don't use /shared here because the compiler server is incompatible with the build profile.
 #
 USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 

@@ -5244,7 +5244,7 @@ mono_method_get_equivalent_method (MonoMethod *method, MonoClass *klass)
 }
 
 MonoReflectionMethodHandle
-ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType_native (MonoMethod *method, MonoType *type, MonoBoolean generic_check, MonoError *error)
+ves_icall_System_Reflection_RuntimeMethodInfo_GetMethodFromHandleInternalType_native (MonoMethod *method, MonoType *type, MonoBoolean generic_check, MonoError *error)
 {
 	error_init (error);
 	MonoClass *klass;
@@ -5266,7 +5266,7 @@ ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType_native (M
 }
 
 MonoReflectionMethodBodyHandle
-ves_icall_System_Reflection_MethodBase_GetMethodBodyInternal (MonoMethod *method, MonoError *error)
+ves_icall_System_Reflection_RuntimeMethodInfo_GetMethodBodyInternal (MonoMethod *method, MonoError *error)
 {
 	error_init (error);
 	return mono_method_body_get_object_handle (mono_domain_get (), method, error);
@@ -6508,7 +6508,6 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionTypeHandle ref_
 {
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
 	MonoClass *delegate_class = mono_class_from_mono_type_internal (type);
-	gpointer func;
 	MonoMethod *method = MONO_HANDLE_GETVAL (info, method);
 	MonoMethodSignature *sig = mono_method_signature_internal (method);
 
@@ -6544,21 +6543,12 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionTypeHandle ref_
 	MonoObjectHandle delegate = mono_object_new_handle (MONO_HANDLE_DOMAIN (ref_type), delegate_class, error);
 	return_val_if_nok (error, NULL_HANDLE);
 
-	if (method_is_dynamic (method)) {
-		/* Creating a trampoline would leak memory */
-		func = mono_compile_method_checked (method, error);
+	if (!method_is_dynamic (method) && (!MONO_HANDLE_IS_NULL (target) && method->flags & METHOD_ATTRIBUTE_VIRTUAL && method->klass != mono_handle_class (target))) {
+		method = mono_object_handle_get_virtual_method (target, method, error);
 		return_val_if_nok (error, NULL_HANDLE);
-	} else {
-		if (!MONO_HANDLE_IS_NULL (target) && method->flags & METHOD_ATTRIBUTE_VIRTUAL && method->klass != mono_handle_class (target)) {
-			method = mono_object_handle_get_virtual_method (target, method, error);
-			return_val_if_nok (error, NULL_HANDLE);
-		}
-		gpointer trampoline = mono_runtime_create_jump_trampoline (mono_domain_get (), method, TRUE, error);
-		return_val_if_nok (error, NULL_HANDLE);
-		func = mono_create_ftnptr (mono_domain_get (), trampoline);
 	}
 
-	mono_delegate_ctor_with_method (delegate, target, func, method, error);
+	mono_delegate_ctor_with_method (delegate, target, NULL, method, error);
 	return_val_if_nok (error, NULL_HANDLE);
 	return delegate;
 }
@@ -6752,7 +6742,11 @@ ves_icall_System_Environment_get_UserName (MonoError *error)
 {
 	error_init (error);
 	/* using glib is more portable */
-	return mono_string_new_handle (mono_domain_get (), g_get_user_name (), error);
+	const gchar *user_name = g_get_user_name ();
+	if (user_name != NULL)
+		return mono_string_new_handle (mono_domain_get (), user_name, error);
+	else
+		return NULL_HANDLE_STRING;
 }
 
 #ifndef HOST_WIN32
@@ -7120,7 +7114,11 @@ ves_icall_System_IO_DriveInfo_GetDriveFormat (const gunichar2 *path, gint32 path
 MonoStringHandle
 ves_icall_System_Environment_InternalGetHome (MonoError *error)
 {
-	return mono_string_new_handle (mono_domain_get (), g_get_home_dir (), error);
+	const gchar *home_dir = g_get_home_dir ();
+	if (home_dir != NULL)
+		return mono_string_new_handle (mono_domain_get (), home_dir, error);
+	else
+		return NULL_HANDLE_STRING;
 }
 
 static const char * const encodings [] = {
@@ -7426,7 +7424,11 @@ ves_icall_System_Configuration_DefaultConfig_get_machine_config_path (MonoError 
 {
 	gchar *path;
 
-	path = g_build_path (G_DIR_SEPARATOR_S, mono_get_config_dir (), "mono", mono_get_runtime_info ()->framework_version, "machine.config", NULL);
+	const char *mono_cfg_dir = mono_get_config_dir ();
+	if (!mono_cfg_dir)
+		return mono_string_new_handle (mono_domain_get (), "", error);
+
+	path = g_build_path (G_DIR_SEPARATOR_S, mono_cfg_dir, "mono", mono_get_runtime_info ()->framework_version, "machine.config", NULL);
 
 	mono_icall_make_platform_path (path);
 
@@ -7521,7 +7523,11 @@ ves_icall_System_Configuration_InternalConfigurationHost_get_bundled_machine_con
 MonoStringHandle
 ves_icall_System_Web_Util_ICalls_get_machine_install_dir (MonoError *error)
 {
-	char *path = g_path_get_dirname (mono_get_config_dir ());
+	const char *mono_cfg_dir = mono_get_config_dir ();
+	if (!mono_cfg_dir)
+		return mono_string_new_handle (mono_domain_get (), "", error);
+
+	char *path = g_path_get_dirname (mono_cfg_dir);
 
 	mono_icall_make_platform_path (path);
 
@@ -8441,6 +8447,10 @@ mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mo
 	sigstart [siglen + 2] = 0;
 	g_free (tmpsig);
 
+	/* mono_marshal_get_native_wrapper () depends on this */
+	if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor"))
+		return (gpointer)ves_icall_System_String_ctor_RedirectToCreateString;
+
 	mono_icall_lock ();
 
 	res = g_hash_table_lookup (icall_hash, mname);
@@ -8475,18 +8485,13 @@ mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mo
 		return res;
 	}
 
-
 	if (!icall_table.lookup) {
 		mono_icall_unlock ();
 		g_free (classname);
 		/* Fail only when the result is actually used */
-		/* mono_marshal_get_native_wrapper () depends on this */
-		if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor"))
-			return (gpointer)ves_icall_System_String_ctor_RedirectToCreateString;
-		else
-			return (gpointer)no_icall_table;
+		return (gpointer)no_icall_table;
 	} else {
-		res = icall_table.lookup (classname, sigstart - mlen, sigstart, uses_handles);
+		res = icall_table.lookup (method, classname, sigstart - mlen, sigstart, uses_handles);
 		g_free (classname);
 
 		mono_icall_unlock ();

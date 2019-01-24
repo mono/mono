@@ -470,13 +470,13 @@ shift_op(TransformData *td, int mint_op)
 }
 
 static int 
-can_store (int stack_type, int var_type)
+can_store (int st_value, int vt_value)
 {
-	if (stack_type == STACK_TYPE_O || stack_type == STACK_TYPE_MP)
-		stack_type = STACK_TYPE_I;
-	if (var_type == STACK_TYPE_O || var_type == STACK_TYPE_MP)
-		var_type = STACK_TYPE_I;
-	return stack_type == var_type;
+	if (st_value == STACK_TYPE_O || st_value == STACK_TYPE_MP)
+		st_value = STACK_TYPE_I;
+	if (vt_value == STACK_TYPE_O || vt_value == STACK_TYPE_MP)
+		vt_value = STACK_TYPE_I;
+	return st_value == vt_value;
 }
 
 #define SET_SIMPLE_TYPE(s, ty) \
@@ -807,7 +807,7 @@ jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 	if (method->string_ctor)
 		return FALSE;
 
-	if (mono_aot_only && m_class_get_image (method->klass)->aot_module) {
+	if (mono_aot_only && m_class_get_image (method->klass)->aot_module && !(method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)) {
 		ERROR_DECL (error);
 		gpointer addr = mono_jit_compile_method_jit_only (method, error);
 		if (addr && mono_error_ok (error))
@@ -1795,11 +1795,15 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		ADD_CODE(td, get_data_item_index (td, (void *)mono_interp_get_imethod (domain, target_method, error)));
 		mono_error_assert_ok (error);
 	} else {
+#ifndef MONO_ARCH_HAS_NO_PROPER_MONOCTX
 		/* Try using fast icall path for simple signatures */
 		if (native && !method->dynamic)
 			op = interp_icall_op_for_sig (csignature);
+#endif
 		if (calli)
 			ADD_CODE(td, native ? ((op != -1) ? MINT_CALLI_NAT_FAST : MINT_CALLI_NAT) : MINT_CALLI);
+		else if (is_virtual && !mono_class_is_marshalbyref (target_method->klass))
+			ADD_CODE(td, is_void ? MINT_VCALLVIRT_FAST : MINT_CALLVIRT_FAST);
 		else if (is_virtual)
 			ADD_CODE(td, is_void ? MINT_VCALLVIRT : MINT_CALLVIRT);
 		else
@@ -1814,6 +1818,13 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			return_val_if_nok (error, FALSE);
 			if (csignature->call_convention == MONO_CALL_VARARG)
 				ADD_CODE(td, get_data_item_index (td, (void *)csignature));
+			else if (is_virtual && !mono_class_is_marshalbyref (target_method->klass)) {
+				/* FIXME Use fastpath also for MBRO. Asserts in mono_method_get_vtable_slot */
+				if (mono_class_is_interface (target_method->klass))
+					ADD_CODE(td, -2 * MONO_IMT_SIZE + mono_method_get_imt_slot (target_method));
+				else
+					ADD_CODE(td, mono_method_get_vtable_slot (target_method));
+			}
 		}
 	}
 	td->ip += 5;

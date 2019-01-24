@@ -243,13 +243,17 @@ namespace System
             return result;
         }
 
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern int InternalCompareTo(Object o1, Object o2);
 
+#if !MONO
         [System.Security.SecuritySafeCritical]
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern RuntimeType InternalGetUnderlyingType(RuntimeType enumType);
 
@@ -264,8 +268,10 @@ namespace System
         private static extern void GetEnumValuesAndNames(RuntimeTypeHandle enumType, ObjectHandleOnStack values, ObjectHandleOnStack names, bool getNames);
 #endif
 
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern Object InternalBoxEnum(RuntimeType enumType, long value);
         #endregion
@@ -554,13 +560,14 @@ namespace System
             // Delegate rest of error checking to the other functions
             TypeCode typeCode = Convert.GetTypeCode(value);
 
+#if !MONO
             // NetCF doesn't support char and boolean conversion
             if (CompatibilitySwitches.IsAppEarlierThanWindowsPhone8 &&
                 ((typeCode == TypeCode.Boolean) || (typeCode == TypeCode.Char)))
             {
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeEnumBaseTypeOrEnum"), "value");
             }
-
+#endif
 
             switch (typeCode)
             {
@@ -747,17 +754,19 @@ namespace System
 #endif
         }
 
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern bool InternalHasFlag(Enum flags);
 
-        [System.Security.SecuritySafeCritical]  // auto-generated
-        [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
 #if MONO
         private extern int get_hashcode ();
 #else
+        [System.Security.SecuritySafeCritical]  // auto-generated
+        [ResourceExposure(ResourceScope.None)]
         private extern CorElementType InternalGetCorElementType();
 #endif
         #endregion

@@ -1960,6 +1960,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	guint32 vtable_size, class_size;
 	gpointer iter;
 	gpointer *interface_offsets;
+	gboolean use_interpreter = callbacks.is_interpreter_enabled ();
 
 	mono_loader_lock (); /*FIXME mono_class_init_internal acquires it*/
 	mono_domain_lock (domain);
@@ -2029,6 +2030,9 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 	if (m_class_get_interface_offsets_count (klass)) {
 		imt_table_bytes = sizeof (gpointer) * (MONO_IMT_SIZE);
+		/* Interface table for the interpreter */
+		if (use_interpreter)
+			imt_table_bytes *= 2;
 		UnlockedIncrement (&mono_stats.imt_number_of_tables);
 		UnlockedAdd (&mono_stats.imt_tables_size, imt_table_bytes);
 	} else {
@@ -2042,6 +2046,9 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 	interface_offsets = alloc_vtable (domain, vtable_size, imt_table_bytes);
 	vt = (MonoVTable*) ((char*)interface_offsets + imt_table_bytes);
+	/* If on interp, skip the interp interface table */
+	if (use_interpreter)
+		interface_offsets = (gpointer*)((char*)interface_offsets + imt_table_bytes / 2);
 	g_assert (!((gsize)vt & 7));
 
 	vt->klass = klass;
@@ -2313,7 +2320,8 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	uint8_t *bitmap = NULL;
 	int bsize;
 	size_t imt_table_bytes;
-	
+	gboolean use_interpreter = callbacks.is_interpreter_enabled ();
+
 #ifdef COMPRESSED_INTERFACE_BITMAP
 	int bcsize;
 #endif
@@ -2363,6 +2371,8 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	}
 
 	imt_table_bytes = sizeof (gpointer) * MONO_IMT_SIZE;
+	if (use_interpreter)
+		imt_table_bytes *= 2;
 	UnlockedIncrement (&mono_stats.imt_number_of_tables);
 	UnlockedAdd (&mono_stats.imt_tables_size, imt_table_bytes);
 
@@ -2374,8 +2384,12 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 	pvt = (MonoVTable*) ((char*)interface_offsets + imt_table_bytes);
 	g_assert (!((gsize)pvt & 7));
 
+	if (use_interpreter)
+		interface_offsets = (gpointer*)((char*)interface_offsets + imt_table_bytes / 2);
+
 	memcpy (pvt, vt, MONO_SIZEOF_VTABLE + m_class_get_vtable_size (klass) * sizeof (gpointer));
 
+	pvt->interp_vtable = NULL;
 	pvt->klass = mono_defaults.transparent_proxy_class;
 
 	MONO_PROFILER_RAISE (vtable_loading, (pvt));
@@ -4898,9 +4912,13 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
 	 * a thread started in unmanaged world.
 	 * https://msdn.microsoft.com/en-us/library/system.appdomainunloadedexception(v=vs.110).aspx#Anchor_6
 	 */
-	if (klass == mono_defaults.threadabortexception_class ||
+	gboolean no_event = (klass == mono_defaults.threadabortexception_class);
+#ifndef ENABLE_NETCORE
+	no_event = no_event ||
 			(klass == mono_class_get_appdomain_unloaded_exception_class () &&
-			mono_thread_info_current ()->runtime_thread))
+			mono_thread_info_current ()->runtime_thread);
+#endif
+	if (no_event)
 		return;
 
 	field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "UnhandledException", NULL);
@@ -4953,13 +4971,13 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error)
  */
 void
 mono_runtime_exec_managed_code (MonoDomain *domain,
-				MonoMainThreadFunc main_func,
-				gpointer main_args)
+				MonoMainThreadFunc mfunc,
+				gpointer margs)
 {
 	// This function is external_only.
 
 	ERROR_DECL (error);
-	mono_thread_create_checked (domain, main_func, main_args, error);
+	mono_thread_create_checked (domain, mfunc, margs, error);
 	mono_error_assert_ok (error);
 
 	mono_thread_manage ();
@@ -8448,7 +8466,6 @@ mono_delegate_ctor_with_method (MonoObjectHandle this_obj, MonoObjectHandle targ
 	MonoDelegateHandle delegate = MONO_HANDLE_CAST (MonoDelegate, this_obj);
 
 	g_assert (!MONO_HANDLE_IS_NULL (this_obj));
-	g_assert (addr);
 
 	MonoClass *klass = mono_handle_class (this_obj);
 	g_assert (mono_class_has_parent (klass, mono_defaults.multicastdelegate_class));
@@ -8458,10 +8475,13 @@ mono_delegate_ctor_with_method (MonoObjectHandle this_obj, MonoObjectHandle targ
 
 	UnlockedIncrement (&mono_stats.delegate_creations);
 
+	if (addr)
+		MONO_HANDLE_SETVAL (delegate, method_ptr, gpointer, addr);
+
 #ifndef DISABLE_REMOTING
 	if (!MONO_HANDLE_IS_NULL (target) && mono_class_is_transparent_proxy (mono_handle_class (target))) {
 		if (callbacks.interp_get_remoting_invoke) {
-			MONO_HANDLE_SETVAL (delegate, interp_method, gpointer, callbacks.interp_get_remoting_invoke (addr, error));
+			MONO_HANDLE_SETVAL (delegate, interp_method, gpointer, callbacks.interp_get_remoting_invoke (method, addr, error));
 		} else {
 			g_assert (method);
 			method = mono_marshal_get_remoting_invoke (method, error);
@@ -8469,17 +8489,14 @@ mono_delegate_ctor_with_method (MonoObjectHandle this_obj, MonoObjectHandle targ
 			MONO_HANDLE_SETVAL (delegate, method_ptr, gpointer, mono_compile_method_checked (method, error));
 		}
 		return_val_if_nok (error, FALSE);
-		MONO_HANDLE_SET (delegate, target, target);
-	} else
-#endif
-	{
-		MONO_HANDLE_SETVAL (delegate, method_ptr, gpointer, addr);
-		MONO_HANDLE_SET (delegate, target, target);
 	}
+#endif
 
+	MONO_HANDLE_SET (delegate, target, target);
 	MONO_HANDLE_SETVAL (delegate, invoke_impl, gpointer, callbacks.create_delegate_trampoline (MONO_HANDLE_DOMAIN (delegate), mono_handle_class (delegate)));
-	if (callbacks.init_delegate)
-		callbacks.init_delegate (MONO_HANDLE_RAW (delegate)); /* FIXME: update init_delegate callback to take a MonoDelegateHandle */
+	g_assert (callbacks.init_delegate);
+	callbacks.init_delegate (delegate, error);
+	return_val_if_nok (error, FALSE);
 	return TRUE;
 }
 

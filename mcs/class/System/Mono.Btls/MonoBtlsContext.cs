@@ -199,6 +199,7 @@ namespace Mono.Btls
 				case MonoBtlsSslError.WantWrite:
 					return false;
 				default:
+					ctx.CheckLastError ();
 					throw GetException (status);
 				}
 			}

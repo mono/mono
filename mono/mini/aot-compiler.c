@@ -3452,6 +3452,16 @@ encode_signature (MonoAotCompile *acfg, MonoMethodSignature *sig, guint8 *buf, g
 	*endbuf = p;
 }
 
+static void
+encode_icall (gpointer func, guint8 *p, guint8 **end)
+{
+	MonoJitICallInfo *callinfo = mono_find_jit_icall_by_addr (func);
+	g_assert (callinfo);
+	strcpy ((char *) p, callinfo->name);
+	p += strlen (callinfo->name) + 1;
+	*end = p;
+}
+
 #define MAX_IMAGE_INDEX 250
 
 static void
@@ -3536,17 +3546,15 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 				encode_signature (acfg, info->d.gsharedvt.sig, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
 				encode_signature (acfg, info->d.gsharedvt.sig, p, &p);
+			else if (info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
+				encode_icall (info->d.icall.func, p, &p);
 			break;
 		}
 		case MONO_WRAPPER_MANAGED_TO_NATIVE: {
 			g_assert (info);
 			encode_value (info->subtype, p, &p);
 			if (info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
-				MonoJitICallInfo *callinfo = NULL;
-				callinfo = mono_find_jit_icall_by_addr (info->d.icall.func);
-				g_assert (callinfo);
-				strcpy ((char*)p, callinfo->name);
-				p += strlen (callinfo->name) + 1;
+				encode_icall (info->d.icall.func, p, &p);
 			} else if (info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT) {
 				encode_method_ref (acfg, info->d.managed_to_native.method, p, &p);
 			} else {
@@ -4269,7 +4277,7 @@ add_wrappers (MonoAotCompile *acfg)
 		}
  	}
 
-	if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
+	if (mono_is_corlib_image (acfg->image->assembly->image)) {
 		int nallocators;
 
 		/* Runtime invoke wrappers */
@@ -6407,13 +6415,14 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 	buf_size = (patches->len < 1000) ? 40960 : 40960 + (patches->len * 64);
 	p = buf = (guint8 *)g_malloc (buf_size);
 
-	if (mono_class_get_cctor (method->klass)) {
-		encode_value (1, p, &p);
+	guint8 flags = 0;
+	if (mono_class_get_cctor (method->klass))
+		flags |= MONO_AOT_METHOD_FLAG_HAS_CCTOR;
+	if (mini_jit_info_is_gsharedvt (cfg->jit_info) && mini_is_gsharedvt_variable_signature (mono_method_signature_internal (jinfo_get_method (cfg->jit_info))))
+		flags |= MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE;
+	encode_value (flags, p, &p);
+	if (flags & MONO_AOT_METHOD_FLAG_HAS_CCTOR)
 		encode_klass_ref (acfg, method->klass, p, &p);
-	} else {
-		/* Not needed when loading the method */
-		encode_value (0, p, &p);
-	}
 
 	g_assert (!(cfg->opt & MONO_OPT_SHARED));
 
@@ -7168,13 +7177,15 @@ emit_trampolines (MonoAotCompile *acfg)
 	int tramp_type;
 #endif
 
-	if ((!mono_aot_mode_is_full (&acfg->aot_opts) || acfg->aot_opts.llvm_only) && !mono_aot_mode_is_interp (&acfg->aot_opts))
+	if (!mono_aot_mode_is_full (&acfg->aot_opts) && !mono_aot_mode_is_interp (&acfg->aot_opts))
+		return;
+	if (acfg->aot_opts.llvm_only)
 		return;
 	
 	g_assert (acfg->image->assembly);
 
 	/* Currently, we emit most trampolines into the mscorlib AOT image. */
-	if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
+	if (mono_is_corlib_image(acfg->image->assembly->image)) {
 #ifdef MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES
 		MonoTrampInfo *info;
 
@@ -7292,6 +7303,7 @@ emit_trampolines (MonoAotCompile *acfg)
 		if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
 			mono_arch_get_interp_to_native_trampoline (&info);
 			emit_trampoline (acfg, info);
+
 #ifdef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 			mono_arch_get_native_to_interp_trampoline (&info);
 			emit_trampoline (acfg, info);
@@ -8001,12 +8013,48 @@ is_concrete_type (MonoType *t)
 	return TRUE;
 }
 
+static MonoMethodSignature*
+get_concrete_sig (MonoMethodSignature *sig)
+{
+	gboolean concrete = TRUE;
+
+	if (!sig->has_type_parameters)
+		return sig;
+
+	/* For signatures created during generic sharing, convert them to a concrete signature if possible */
+	MonoMethodSignature *copy = mono_metadata_signature_dup (sig);
+	int i;
+
+	//printf ("%s\n", mono_signature_full_name (sig));
+
+	if (sig->ret->byref)
+		copy->ret = m_class_get_this_arg (mono_defaults.int_class);
+	else
+		copy->ret = mini_get_underlying_type (sig->ret);
+	if (!is_concrete_type (copy->ret))
+		concrete = FALSE;
+	for (i = 0; i < sig->param_count; ++i) {
+		if (sig->params [i]->byref) {
+			MonoType *t = m_class_get_byval_arg (mono_class_from_mono_type_internal (sig->params [i]));
+			t = mini_get_underlying_type (t);
+			copy->params [i] = m_class_get_this_arg (mono_class_from_mono_type_internal (t));
+		} else {
+			copy->params [i] = mini_get_underlying_type (sig->params [i]);
+		}
+		if (!is_concrete_type (copy->params [i]))
+			concrete = FALSE;
+	}
+	copy->has_type_parameters = 0;
+	if (!concrete)
+		return NULL;
+	return copy;
+}
+
 /* LOCKING: Assumes the loader lock is held */
 static void
 add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean gsharedvt_in, gboolean gsharedvt_out, gboolean interp_in)
 {
 	MonoMethod *wrapper;
-	gboolean concrete = TRUE;
 	gboolean add_in = gsharedvt_in;
 	gboolean add_out = gsharedvt_out;
 
@@ -8026,36 +8074,9 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
 	if (add_out)
 		g_hash_table_insert (acfg->gsharedvt_out_signatures, sig, sig);
 
-	if (sig->has_type_parameters) {
-		/* For signatures created during generic sharing, convert them to a concrete signature if possible */
-		MonoMethodSignature *copy = mono_metadata_signature_dup (sig);
-		int i;
-
-		//printf ("%s\n", mono_signature_full_name (sig));
-
-		if (sig->ret->byref)
-			copy->ret = m_class_get_this_arg (mono_defaults.int_class);
-		else
-			copy->ret = mini_get_underlying_type (sig->ret);
-		if (!is_concrete_type (copy->ret))
-			concrete = FALSE;
-		for (i = 0; i < sig->param_count; ++i) {
-			if (sig->params [i]->byref) {
-				MonoType *t = m_class_get_byval_arg (mono_class_from_mono_type_internal (sig->params [i]));
-				t = mini_get_underlying_type (t);
-				copy->params [i] = m_class_get_this_arg (mono_class_from_mono_type_internal (t));
-			} else {
-				copy->params [i] = mini_get_underlying_type (sig->params [i]);
-			}
-			if (!is_concrete_type (copy->params [i]))
-				concrete = FALSE;
-		}
-		copy->has_type_parameters = 0;
-		if (!concrete)
-			return;
-		sig = copy;
-	}
-
+	sig = get_concrete_sig (sig);
+	if (!sig)
+		return;
 	//printf ("%s\n", mono_signature_full_name (sig));
 
 	if (gsharedvt_in) {
@@ -8066,6 +8087,7 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
 		wrapper = mini_get_gsharedvt_out_sig_wrapper (sig);
 		add_extra_method (acfg, wrapper);
 	}
+
 #ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 	if (interp_in) {
 		wrapper = mini_get_interp_in_wrapper (sig);
@@ -8370,6 +8392,12 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 			/* These only need in wrappers */
 			add_gsharedvt_wrappers (acfg, sig, TRUE, FALSE, FALSE);
 		}
+
+		for (l = cfg->interp_in_signatures; l; l = l->next) {
+			MonoMethodSignature *sig = mono_metadata_signature_dup ((MonoMethodSignature*)l->data);
+
+			add_gsharedvt_wrappers (acfg, sig, TRUE, FALSE, FALSE);
+		}
 	} else if (mono_aot_mode_is_full (&acfg->aot_opts) && mono_aot_mode_is_interp (&acfg->aot_opts)) {
 		/* The interpreter uses these wrappers to call aot-ed code */
 		if (!cfg->method->wrapper_type || cfg->method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE)
@@ -8509,6 +8537,15 @@ mono_aot_is_shared_got_offset (int offset)
 char*
 mono_aot_get_method_name (MonoCompile *cfg)
 {
+	MonoMethod *method = cfg->orig_method;
+
+	/* Use the mangled name if possible */
+	if (method->wrapper_type == MONO_WRAPPER_OTHER) {
+		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
+		if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
+			return mono_aot_get_mangled_method_name (method);
+	}
+
 	if (llvm_acfg->aot_opts.static_link)
 		/* Include the assembly name too to avoid duplicate symbol errors */
 		return g_strdup_printf ("%s_%s", llvm_acfg->assembly_name_sym, get_debug_sym (cfg->orig_method, "", llvm_acfg->method_label_hash));
@@ -8780,6 +8817,9 @@ append_mangled_wrapper_subtype (GString *s, WrapperSubtype subtype)
 	case WRAPPER_SUBTYPE_INTERP_IN:
 		label = "interp_in";
 		break;
+	case WRAPPER_SUBTYPE_INTERP_LMF:
+		label = "interp_lmf";
+		break;
 	case WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG:
 		label = "gsharedvt_in_sig";
 		break;
@@ -8866,9 +8906,12 @@ static gboolean
 append_mangled_wrapper (GString *s, MonoMethod *method) 
 {
 	gboolean success = TRUE;
+	gboolean append_sig = TRUE;
 	WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 	g_string_append_printf (s, "wrapper_");
-	g_string_append_printf (s, "%s_", m_class_get_image (method->klass)->assembly->aname.name);
+	/* Most wrappers are in mscorlib */
+	if (m_class_get_image (method->klass) != mono_get_corlib ())
+		g_string_append_printf (s, "%s_", m_class_get_image (method->klass)->assembly->aname.name);
 
 	if (method->wrapper_type != MONO_WRAPPER_OTHER)
 		append_mangled_wrapper_type (s, method->wrapper_type);
@@ -8919,10 +8962,14 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 			success = success && append_mangled_method (s, info->d.array_accessor.method);
 		else if (info->subtype == WRAPPER_SUBTYPE_INTERP_IN)
 			append_mangled_signature (s, info->d.interp_in.sig);
-		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG)
+		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG) {
 			append_mangled_signature (s, info->d.gsharedvt.sig);
-		else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG)
+			append_sig = FALSE;
+		} else if (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG) {
 			append_mangled_signature (s, info->d.gsharedvt.sig);
+			append_sig = FALSE;
+		} else if (info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
+			g_string_append_printf (s, "%s", method->name);
 		break;
 	}
 	case MONO_WRAPPER_MANAGED_TO_NATIVE: {
@@ -8999,7 +9046,9 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	default:
 		g_assert_not_reached ();
 	}
-	return success && append_mangled_signature (s, mono_method_signature_internal (method));
+	if (success && append_sig)
+		success = append_mangled_signature (s, mono_method_signature_internal (method));
+	return success;
 }
 
 static void
@@ -12447,12 +12496,12 @@ static void aot_dump (MonoAotCompile *acfg)
 }
 
 static const char *preinited_jit_icalls[] = {
-	"mono_aot_init_llvm_method",
-	"mono_aot_init_gshared_method_this",
-	"mono_aot_init_gshared_method_mrgctx",
-	"mono_aot_init_gshared_method_vtable",
+	"mini_llvmonly_init_method",
+	"mini_llvmonly_init_gshared_method_this",
+	"mini_llvmonly_init_gshared_method_mrgctx",
+	"mini_llvmonly_init_gshared_method_vtable",
 	"mono_llvm_throw_corlib_exception",
-	"mono_init_vtable_slot",
+	"mini_llvmonly_init_vtable_slot",
 	"mono_helper_ldstr_mscorlib"
 };
 
@@ -13128,17 +13177,20 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		llvm_acfg = acfg;
 		LLVMModuleFlags flags = LLVM_MODULE_FLAG_DWARF;
 		if (acfg->aot_opts.static_link)
-			flags |= LLVM_MODULE_FLAG_STATIC;
+			flags = (LLVMModuleFlags)(flags | LLVM_MODULE_FLAG_STATIC);
 		if (acfg->aot_opts.llvm_only)
-			flags |= LLVM_MODULE_FLAG_LLVM_ONLY;
+			flags = (LLVMModuleFlags)(flags | LLVM_MODULE_FLAG_LLVM_ONLY);
 		if (acfg->aot_opts.interp)
-			flags |= LLVM_MODULE_FLAG_INTERP;
+			flags = (LLVMModuleFlags)(flags | LLVM_MODULE_FLAG_INTERP);
 		mono_llvm_create_aot_module (acfg->image->assembly, acfg->global_prefix, acfg->nshared_got_entries, flags);
 	}
 #endif
 
 	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
-		MonoMethod *wrapper = mini_get_interp_lmf_wrapper ();
+		MonoMethod *wrapper = mini_get_interp_lmf_wrapper ("mono_interp_to_native_trampoline", (gpointer) mono_interp_to_native_trampoline);
+		add_method (acfg, wrapper);
+
+		wrapper = mini_get_interp_lmf_wrapper ("mono_interp_entry_from_trampoline", (gpointer) mono_interp_entry_from_trampoline);
 		add_method (acfg, wrapper);
 
 #ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE

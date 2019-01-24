@@ -79,7 +79,7 @@ typedef struct {
 typedef struct _InterpFrame InterpFrame;
 
 typedef void (*MonoFuncV) (void);
-typedef void (*MonoPIFunc) (MonoFuncV callme, void *margs);
+typedef void (*MonoPIFunc) (void *callme, void *margs);
 
 /* 
  * Structure representing a method transformed for the interpreter 
@@ -118,6 +118,7 @@ typedef struct _InterpMethod
 	gpointer jit_addr;
 	MonoMethodSignature *jit_sig;
 	gpointer jit_entry;
+	gpointer llvmonly_unbox_entry;
 	MonoType *rtype;
 	MonoType **param_types;
 	MonoJitInfo *jinfo;

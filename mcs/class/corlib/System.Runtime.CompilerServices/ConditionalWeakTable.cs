@@ -334,8 +334,10 @@ namespace System.Runtime.CompilerServices
 		// if you know for sure that either you won't run into dead locks or you need to live with the
 		// possiblity
 		//--------------------------------------------------------------------------------------------
+#if !MONO
 		[System.Security.SecuritySafeCritical]
 		[FriendAccessAllowed]
+#endif
 		internal TKey FindEquivalentKeyUnsafe(TKey key, out TValue value)
 		{
 			lock (_lock)
