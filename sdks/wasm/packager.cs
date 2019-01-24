@@ -349,8 +349,8 @@ class Driver {
 		var copyTypeParm = "default";
 		var copyType = CopyType.Default;
 		var ee_mode = ExecMode.Interp;
-		var linkModeParm = "all";
-		var linkMode = LinkMode.All;
+		var linkModeParm = "";
+		var linkMode = LinkMode.SdkOnly;
 		string coremode, usermode;
 		var linker_verbose = false;
 
@@ -409,10 +409,11 @@ class Driver {
 			return 1;
 		}
 
-		if (!Enum.TryParse(linkModeParm, true, out linkMode)) {
-			Console.WriteLine("Invalid link-mode value");
-			Usage ();
-			return 1;
+		if (linkModeParm != "") {
+			if (!Enum.TryParse(copyTypeParm, true, out copyType)) {
+				Console.Error.WriteLine ($"Invalid link-mode value '{linkModeParm}'");
+				Usage ();
+			}
 		}
 
 		enable_debug = opts.Debug;
@@ -478,6 +479,7 @@ class Driver {
 		if (add_binding) {
 			var bindings = ResolveFramework (BINDINGS_ASM_NAME + ".dll");
 			Import (bindings, AssemblyKind.Framework);
+			root_assemblies.Add (bindings);
 			var http = ResolveFramework (HTTP_ASM_NAME + ".dll");
 			Import (http, AssemblyKind.Framework);
 		}
@@ -809,18 +811,9 @@ class Driver {
 				string filename = Path.GetFileName (assembly);
 				linker_args += $"-a linker-in/{filename} ";
 			}
-
-			// the linker does not consider these core by default
-			foreach (var assembly in wasm_core_assemblies.Keys) {
-				linker_args += $"-p {coremode} {assembly} ";
-			}
-			if (linker_verbose) {
-				linker_args += "--verbose ";
-			}
-			linker_args += $"-d linker-in -d $bcl_dir -d $bcl_facades_dir -c {coremode} -u {usermode} ";
-			foreach (var assembly in wasm_core_assemblies.Keys) {
-				linker_args += $"-r {assembly} ";
-			}
+			foreach (var assembly in wasm_core_assemblies.Keys)
+				linker_args += $"-p copy {assembly} ";
+			linker_args += " -d $bcl_dir -c link";
 
 			ninja.WriteLine ("build $builddir/linker-out: mkdir");
 			ninja.WriteLine ($"build {linker_ofiles}: linker {linker_infiles}");
