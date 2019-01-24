@@ -37,7 +37,6 @@ namespace Mono {
 #endif
 	static class Runtime
 	{
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void mono_runtime_install_handlers ();
 
@@ -95,7 +94,7 @@ namespace Mono {
 		}
 
 
-#if !MOBILE 
+#if !MOBILE  && !NETCORE
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void DisableMicrosoftTelemetry ();
 

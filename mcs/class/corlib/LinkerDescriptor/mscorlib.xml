@@ -165,8 +165,6 @@
 		</type>
 		
 		<type fullname="System.Environment">
-			<!-- appdomain.c: mono_get_corlib_version -->
-			<field name="mono_corlib_version" />
 			<method name="get_StackTrace" />
 		</type>
 		
@@ -834,6 +832,11 @@
 		directly.
 		-->
 		<type fullname="Mono.Runtime" preserve="nothing" />
+
+		<type fullname="Mono.RuntimeStructs">
+			<!-- appdomain.c: mono_get_corlib_version -->
+			<field name="mono_corlib_version" />
+		</type>
 
 		<!-- marshal-ilgen.c (emit_native_icall_wrapper_ilgen) -->
 		<type fullname="Mono.RuntimeStructs/MonoError" />

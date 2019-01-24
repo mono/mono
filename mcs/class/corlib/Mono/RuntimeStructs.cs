@@ -19,6 +19,12 @@ namespace Mono {
 	// Managed representations of mono runtime types
 	//
 	internal static class RuntimeStructs {
+		/*
+		 * This is the version of the corlib-runtime interface.
+		 * It is defined in configure.ac.
+		 */
+		private const string mono_corlib_version = Consts.MonoCorlibVersion;
+
 		// class-internals.h MonoRemoteClass
 		[StructLayout(LayoutKind.Sequential)]
 		internal unsafe struct RemoteClass {
