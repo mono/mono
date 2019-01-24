@@ -1050,12 +1050,11 @@ PLATFORM_DISABLED_TESTS=\
 	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
-if HOST_DARWIN
-else
+# Only because this depends on an icall change that was
+# made in a later release. 
 PLATFORM_DISABLED_TESTS += \
 	merp-json-valid.exe \
 	merp-crash-test.exe
-endif
 
 
 if HOST_WIN32
