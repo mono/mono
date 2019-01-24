@@ -664,6 +664,7 @@ class Driver {
 		ninja.WriteLine ("rule cpifdiff");
 		ninja.WriteLine ("  command = if cmp -s $in $out ; then : ; else cp $in $out ; fi");
 		ninja.WriteLine ("  restat = true");
+		ninja.WriteLine ("  description = [CPIFDIFF] $in -> $out");
 		ninja.WriteLine ("rule emcc");
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
@@ -780,7 +781,6 @@ class Driver {
 				if (a.name == "mscorlib" || a.name == "System")
 					icall_assemblies += $"{a.linkout_path} ";
 			}
-			Console.WriteLine ("D: " + icall_assemblies);
 			ninja.WriteLine ("build $builddir/icall-table.json: gen-runtime-icall-table");
 			ninja.WriteLine ($"build $builddir/icall-table.h: gen-icall-table {icall_assemblies}");
 			ninja.WriteLine ($"  runtime_table=$builddir/icall-table.json");
