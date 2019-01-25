@@ -210,7 +210,6 @@
       <Compile Include="..\corlib\System\WeakReference_T.cs" />
 
       <Compile Include="..\corlib\System.Runtime.InteropServices\SafeHandle.cs" />
-      <Compile Include="..\corlib\System.Runtime.InteropServices\Marshal.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\ConditionalWeakTable.cs" />
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />

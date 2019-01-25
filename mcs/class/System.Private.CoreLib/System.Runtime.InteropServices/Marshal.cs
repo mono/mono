@@ -175,15 +175,11 @@ namespace System.Runtime.InteropServices
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern IntPtr GetFunctionPointerForDelegateInternal (Delegate d);
 
-
-// TODO: Name
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static void PrelinkInternal (MethodInfo m);
 
-// TODO: Name + argument
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern int SizeOfHelper (Type t, bool throwIfNotMarshalable);
-
 
 		static int GetSystemMaxDBCSCharSize ()
 		{
