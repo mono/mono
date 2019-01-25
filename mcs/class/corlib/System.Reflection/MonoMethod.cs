@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -44,6 +45,41 @@ using System.Text;
 using System.Diagnostics;
 
 namespace System.Reflection {
+
+#if NETCORE
+	[Flags()]
+	internal enum PInvokeAttributes
+	{
+		NoMangle          = 0x0001,
+
+		CharSetMask       = 0x0006,
+		CharSetNotSpec    = 0x0000,
+		CharSetAnsi       = 0x0002,
+		CharSetUnicode    = 0x0004,
+		CharSetAuto       = 0x0006,
+
+		BestFitUseAssem   = 0x0000,
+		BestFitEnabled    = 0x0010,
+		BestFitDisabled   = 0x0020,
+		BestFitMask       = 0x0030,
+
+		ThrowOnUnmappableCharUseAssem   = 0x0000,
+		ThrowOnUnmappableCharEnabled    = 0x1000,
+		ThrowOnUnmappableCharDisabled   = 0x2000,
+		ThrowOnUnmappableCharMask       = 0x3000,
+
+		SupportsLastError = 0x0040,
+
+		CallConvMask      = 0x0700,
+		CallConvWinapi    = 0x0100,
+		CallConvCdecl     = 0x0200,
+		CallConvStdcall   = 0x0300,
+		CallConvThiscall  = 0x0400,
+		CallConvFastcall  = 0x0500,
+
+		MaxValue          = 0xFFFF,
+	}
+#endif
 	
 	internal struct MonoMethodInfo 
 	{
@@ -110,7 +146,10 @@ namespace System.Reflection {
 		}
 	}
 	
-	abstract class RuntimeMethodInfo : MethodInfo, ISerializable
+	abstract class RuntimeMethodInfo : MethodInfo
+#if !NETCORE
+	, ISerializable
+#endif
 	{
 		internal BindingFlags BindingFlags {
 			get {
@@ -130,7 +169,11 @@ namespace System.Reflection {
 			}
 		}
 
+#if NETCORE
+        string FormatNameAndSig (bool serialization)
+#else
         internal override string FormatNameAndSig (bool serialization)
+#endif
         {
             // Serialization uses ToString to resolve MethodInfo overloads.
             StringBuilder sbName = new StringBuilder(Name);
@@ -169,6 +212,7 @@ namespace System.Reflection {
 			return ((RuntimeType)DeclaringType).GetRuntimeModule();
 		}
 
+#if !NETCORE
         #region ISerializable Implementation
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -190,6 +234,7 @@ namespace System.Reflection {
             return ReturnType.FormatTypeName(true) + " " + FormatNameAndSig(true);
         }
         #endregion
+#endif
 
 		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle)
 		{
@@ -467,7 +512,11 @@ namespace System.Reflection {
 			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
 				attrs [count ++] = new PreserveSigAttribute ();
 			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
+#if NETCORE
+				throw new NotImplementedException ();
+#else
 				attrs [count ++] = DllImportAttribute.GetCustomAttribute (this);
+#endif
 			}
 
 			return attrs;
@@ -602,12 +651,15 @@ namespace System.Reflection {
 					hasUserType = true;
 			}
 
-			if (hasUserType)
+			if (hasUserType) {
 #if FULL_AOT_RUNTIME
 				throw new NotSupportedException ("User types are not supported under full aot");
+#elif NETCORE
+				throw new NotImplementedException ();
 #else
 				return new MethodOnTypeBuilderInst (this, methodInstantiation);
 #endif
+			}
 
 			MethodInfo ret = MakeGenericMethod_impl (methodInstantiation);
 			if (ret == null)
@@ -655,7 +707,11 @@ namespace System.Reflection {
 		}
 
 		public override MethodBody GetMethodBody () {
+#if NETCORE
+			throw new NotImplementedException ();
+#else
 			return GetMethodBody (mhandle);
+#endif
 		}
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
@@ -685,7 +741,9 @@ namespace System.Reflection {
 			get { return get_core_clr_security_level () == 1; }
 		}
 
+#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoMethod> (other);
+#endif
 	}
 	
 
@@ -719,6 +777,9 @@ namespace System.Reflection {
         {
             if (info == null)
                 throw new ArgumentNullException("info");
+#if NETCORE
+            throw new NotImplementedException ();
+#else
             MemberInfoSerializationHolder.GetSerializationInfo(
                 info,
                 Name,
@@ -727,12 +788,17 @@ namespace System.Reflection {
                 SerializationToString(),
                 MemberTypes.Constructor,
                 null);
+#endif
         }
 
         internal string SerializationToString()
         {
+#if NETCORE
+            throw new NotImplementedException ();
+#else
             // We don't need the return type for constructors.
             return FormatNameAndSig(true);
+#endif
         }
 
 		internal void SerializationInvoke (Object target, SerializationInfo info, StreamingContext context)
@@ -906,7 +972,11 @@ namespace System.Reflection {
 		}
 
 		public override string ToString () {
+#if NETCORE
+			throw new NotImplementedException ();
+#else
 			return "Void " + FormatNameAndSig (false);
+#endif
 		}
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
@@ -923,7 +993,9 @@ namespace System.Reflection {
 		public extern int get_core_clr_security_level ();
 #endif
 
+#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoCMethod> (other);
+#endif
 
 		public override bool IsSecurityTransparent {
 			get { return get_core_clr_security_level () == 0; }
