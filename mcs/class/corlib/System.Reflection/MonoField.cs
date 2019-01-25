@@ -43,7 +43,10 @@ using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 
-	abstract class RuntimeFieldInfo : FieldInfo, ISerializable
+	abstract class RuntimeFieldInfo : FieldInfo
+#if !NETCORE
+	, ISerializable
+#endif
 	{
 		internal BindingFlags BindingFlags {
 			get {
@@ -73,6 +76,7 @@ namespace System.Reflection {
 			return GetDeclaringTypeInternal ().GetRuntimeModule ();
 		}
 
+#if !NETCORE
         #region ISerializable Implementation
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -87,6 +91,7 @@ namespace System.Reflection {
                 MemberTypes.Field);
         }
         #endregion
+#endif
 	}
 
 	abstract class RtFieldInfo : RuntimeFieldInfo
@@ -220,8 +225,10 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
+#if !NETCORE
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal override extern int GetFieldOffset ();
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern object GetValueInternal (object obj);
@@ -319,7 +326,9 @@ namespace System.Reflection {
 		}
 #endif
 
+#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoField> (other);
+#endif
 
 		public override int MetadataToken {
 			get {
@@ -338,5 +347,15 @@ namespace System.Reflection {
 		public override Type[] GetRequiredCustomModifiers () => GetCustomModifiers (false);
 
 		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (optional) ?? Type.EmptyTypes;
+
+#if NETCORE
+		internal object[] GetPseudoCustomAttributes () {
+			throw new NotImplementedException ();
+		}
+
+		internal CustomAttributeData[] GetPseudoCustomAttributesData () {
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
