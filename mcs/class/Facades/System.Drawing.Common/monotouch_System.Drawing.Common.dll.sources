@@ -1,0 +1,9 @@
+#include sysdrawing-coregraphics_shared_System.Drawing.Common.dll.sources
+
+../../../../external/sysdrawing-coregraphics/System.Drawing.Printing/PrinterSettings.ios.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing/KnownColors.ios.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing/Graphics.ios.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing.Printing/PageSettings.ios.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing/Extensions.ios.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing/SystemIcons.ios.cs
+../../../../external/sysdrawing-coregraphics/System.Drawing.Printing/StandardPrintController.ios.cs

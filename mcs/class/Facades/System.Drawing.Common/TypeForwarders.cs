@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 //
 
-#if false // we'll enable these at a later point
+#if MONO_HAS_SYSTEM_DRAWING
 
 [assembly:System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Drawing.Bitmap))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Drawing.BitmapSuffixInSameAssemblyAttribute))]
