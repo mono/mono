@@ -924,7 +924,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 		image_index = value >> 24;
 	}
 
-	if (image_index < MONO_AOT_METHODREF_MIN || image_index == MONO_AOT_METHODREF_METHODSPEC || image_index == MONO_AOT_METHODREF_GINST) {
+	if (image_index < MONO_AOT_METHODREF_MIN || image_index == MONO_AOT_METHODREF_METHODSPEC ||
+		image_index == MONO_AOT_METHODREF_GINST || image_index == MONO_AOT_METHODREF_BLOB_INDEX) {
 		if (target && target->wrapper_type) {
 			return FALSE;
 		}
@@ -1298,6 +1299,17 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 		ref->token = decode_value (p, &p);
 
 		image = load_image (module, image_index, error);
+		if (!image)
+			return FALSE;
+	} else if (image_index == MONO_AOT_METHODREF_BLOB_INDEX) {
+		guint32 offset = decode_value (p, &p);
+
+		guint8 *p2;
+
+		p2 = module->blob + offset;
+		if (!decode_method_ref_with_target (module, ref, target, p2, &p2, error))
+			return FALSE;
+		image = ref->image;
 		if (!image)
 			return FALSE;
 	} else if (image_index == MONO_AOT_METHODREF_GINST) {
@@ -3876,8 +3888,11 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 
 		entry = (MonoJumpInfoRgctxEntry *)mono_mempool_alloc0 (mp, sizeof (MonoJumpInfoRgctxEntry));
 		p2 = aot_module->blob + offset;
-		entry->method = decode_resolve_method_ref (aot_module, p2, &p2, error);
 		entry->in_mrgctx = ((val & 1) > 0) ? TRUE : FALSE;
+		if (entry->in_mrgctx)
+			entry->d.method = decode_resolve_method_ref (aot_module, p2, &p2, error);
+		else
+			entry->d.klass = decode_klass_ref (aot_module, p2, &p2, error);
 		entry->info_type = (MonoRgctxInfoType)((val >> 1) & 0xff);
 		entry->data = (MonoJumpInfo *)mono_mempool_alloc0 (mp, sizeof (MonoJumpInfo));
 		entry->data->type = (MonoJumpInfoType)((val >> 9) & 0xff);

@@ -4100,7 +4100,10 @@ mini_get_rgctx_entry_slot (MonoJumpInfoRgctxEntry *entry)
 		break;
 	}
 
-	return lookup_or_register_info (entry->method->klass, entry->method, entry->in_mrgctx, entry_data, entry->info_type, mono_method_get_context (entry->method));
+	if (entry->in_mrgctx)
+		return lookup_or_register_info (entry->d.method->klass, entry->d.method, entry->in_mrgctx, entry_data, entry->info_type, mono_method_get_context (entry->d.method));
+	else
+		return lookup_or_register_info (entry->d.klass, NULL, entry->in_mrgctx, entry_data, entry->info_type, mono_class_get_context (entry->d.klass));
 }
 
 static gboolean gsharedvt_supported;

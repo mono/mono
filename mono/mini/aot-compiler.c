@@ -3220,6 +3220,30 @@ encode_klass_ref_inner (MonoAotCompile *acfg, MonoClass *klass, guint8 *buf, gui
 	*endbuf = p;
 }
 
+static guint32
+get_shared_klass_ref (MonoAotCompile *acfg, MonoClass *klass)
+{
+	guint offset = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->klass_blob_hash, klass));
+	guint8 *buf2, *p;
+
+	if (!offset) {
+		buf2 = (guint8 *)g_malloc (1024);
+		p = buf2;
+
+		encode_klass_ref_inner (acfg, klass, p, &p);
+		g_assert (p - buf2 < 1024);
+
+		offset = add_to_blob (acfg, buf2, p - buf2);
+		g_free (buf2);
+
+		g_hash_table_insert (acfg->klass_blob_hash, klass, GUINT_TO_POINTER (offset + 1));
+	} else {
+		offset --;
+	}
+
+	return offset;
+}
+
 /*
  * encode_klass_ref:
  *
@@ -3247,23 +3271,8 @@ encode_klass_ref (MonoAotCompile *acfg, MonoClass *klass, guint8 *buf, guint8 **
 	}
 
 	if (shared) {
-		guint offset = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->klass_blob_hash, klass));
-		guint8 *buf2, *p;
-
-		if (!offset) {
-			buf2 = (guint8 *)g_malloc (1024);
-			p = buf2;
-
-			encode_klass_ref_inner (acfg, klass, p, &p);
-			g_assert (p - buf2 < 1024);
-
-			offset = add_to_blob (acfg, buf2, p - buf2);
-			g_free (buf2);
-
-			g_hash_table_insert (acfg->klass_blob_hash, klass, GUINT_TO_POINTER (offset + 1));
-		} else {
-			offset --;
-		}
+		guint8 *p;
+		guint32 offset = get_shared_klass_ref (acfg, klass);
 
 		p = buf;
 		encode_value (MONO_AOT_TYPEREF_BLOB_INDEX, p, &p);
@@ -3644,6 +3653,13 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 			encode_value ((MONO_AOT_METHODREF_METHODSPEC << 24), p, &p);
 			encode_value (image_index, p, &p);
 			encode_value (token, p, &p);
+		} else if (g_hash_table_lookup (acfg->method_blob_hash, method)) {
+			/* Already emitted as part of an rgctx fetch */
+			guint32 offset = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->method_blob_hash, method));
+			offset --;
+
+			encode_value ((MONO_AOT_METHODREF_BLOB_INDEX << 24), p, &p);
+			encode_value (offset, p, &p);
 		} else {
 			MonoMethod *declaring;
 			MonoGenericContext *context = mono_method_get_context (method);
@@ -3713,6 +3729,29 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 		}
 	}
 	*endbuf = p;
+}
+
+static guint32
+get_shared_method_ref (MonoAotCompile *acfg, MonoMethod *method)
+{
+	guint32 offset = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->method_blob_hash, method));
+	if (!offset) {
+		guint8 *buf2, *p2;
+
+		buf2 = (guint8 *)g_malloc (1024);
+		p2 = buf2;
+
+		encode_method_ref (acfg, method, p2, &p2);
+		g_assert (p2 - buf2 < 1024);
+
+		offset = add_to_blob (acfg, buf2, p2 - buf2);
+		g_free (buf2);
+
+		g_hash_table_insert (acfg->method_blob_hash, method, GUINT_TO_POINTER (offset + 1));
+	} else {
+		offset --;
+	}
+	return offset;
 }
 
 static gint
@@ -6280,26 +6319,17 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
 		MonoJumpInfoRgctxEntry *entry = patch_info->data.rgctx_entry;
 		guint32 offset;
-		guint8 *buf2, *p2;
 
 		/* 
-		 * entry->method has a lenghtly encoding and multiple rgctx_fetch entries
-		 * reference the same method, so encode the method only once.
+		 * entry->d.klass/method has a lenghtly encoding and multiple rgctx_fetch entries
+		 * reference the same klass/method, so encode it only once.
+		 * For patches which refer to got entries, this sharing is done by get_got_offset, but
+		 * these are not got entries.
 		 */
-		offset = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->method_blob_hash, entry->method));
-		if (!offset) {
-			buf2 = (guint8 *)g_malloc (1024);
-			p2 = buf2;
-
-			encode_method_ref (acfg, entry->method, p2, &p2);
-			g_assert (p2 - buf2 < 1024);
-
-			offset = add_to_blob (acfg, buf2, p2 - buf2);
-			g_free (buf2);
-
-			g_hash_table_insert (acfg->method_blob_hash, entry->method, GUINT_TO_POINTER (offset + 1));
+		if (entry->in_mrgctx) {
+			offset = get_shared_method_ref (acfg, entry->d.method);
 		} else {
-			offset --;
+			offset = get_shared_klass_ref (acfg, entry->d.klass);
 		}
 
 		encode_value (offset, p, &p);
@@ -7964,8 +7994,13 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
 		MonoJumpInfoRgctxEntry *entry = patch_info->data.rgctx_entry;
 
-		if (!can_encode_method (acfg, entry->method))
-			return FALSE;
+		if (entry->in_mrgctx) {
+			if (!can_encode_method (acfg, entry->d.method))
+				return FALSE;
+		} else {
+			if (!can_encode_class (acfg, entry->d.klass))
+				return FALSE;
+		}
 		if (!can_encode_patch (acfg, entry->data))
 			return FALSE;
 		break;

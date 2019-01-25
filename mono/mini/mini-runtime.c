@@ -1268,7 +1268,10 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
 		MonoJumpInfoRgctxEntry *e = ji->data.rgctx_entry;
 
-		return (ji->type << 8) | (gssize)e->method | (e->in_mrgctx) | e->info_type | mono_patch_info_hash (e->data);
+		if (e->in_mrgctx)
+			return (ji->type << 8) | (gssize)e->d.method | (e->in_mrgctx) | e->info_type | mono_patch_info_hash (e->data);
+		else
+			return (ji->type << 8) | (gssize)e->d.klass | (e->in_mrgctx) | e->info_type | mono_patch_info_hash (e->data);
 	}
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
 	case MONO_PATCH_INFO_MSCORLIB_GOT_ADDR:
@@ -1348,7 +1351,7 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 		MonoJumpInfoRgctxEntry *e1 = ji1->data.rgctx_entry;
 		MonoJumpInfoRgctxEntry *e2 = ji2->data.rgctx_entry;
 
-		return e1->method == e2->method && e1->in_mrgctx == e2->in_mrgctx && e1->info_type == e2->info_type && mono_patch_info_equal (e1->data, e2->data);
+		return e1->d.method == e2->d.method && e1->d.klass == e2->d.klass && e1->in_mrgctx == e2->in_mrgctx && e1->info_type == e2->info_type && mono_patch_info_equal (e1->data, e2->data);
 	}
 	case MONO_PATCH_INFO_GSHAREDVT_CALL: {
 		MonoJumpInfoGSharedVtCall *c1 = ji1->data.gsharedvt;
