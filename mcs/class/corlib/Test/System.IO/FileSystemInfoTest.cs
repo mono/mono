@@ -214,6 +214,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
+		[Category ("NotOnMac")]
 		public void DefaultLastAccessTime ()
 		{
 			string path = TempFolder + DSC + "FSIT.DefaultLastAccessTime.Test";
@@ -279,6 +280,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
+		[Category ("NotOnMac")]
 		public void DefaultLastWriteTime ()
 		{
 			string path = TempFolder + DSC + "FSIT.DefaultLastWriteTime.Test";
