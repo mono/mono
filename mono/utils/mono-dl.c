@@ -203,6 +203,28 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 	return module;
 }
 
+
+
+void*
+mono_dl_symbol_default (MonoDl *module, const char *name)
+{
+	void * sym;
+	{
+#if MONO_DL_NEED_USCORE
+		{
+			char *usname = g_malloc (strlen (name) + 2);
+			*usname = '_';
+			strcpy (usname + 1, name);
+			sym = mono_dl_lookup_symbol (module, usname);
+			g_free (usname);
+		}
+#else
+		sym = mono_dl_lookup_symbol (module, name);
+#endif
+	}
+	return sym;
+}
+
 /**
  * mono_dl_symbol:
  * \param module a MonoDl pointer
@@ -221,17 +243,7 @@ mono_dl_symbol (MonoDl *module, const char *name, void **symbol)
 	if (module->dl_fallback) {
 		sym = module->dl_fallback->symbol_func (module->handle, name, &err, module->dl_fallback->user_data);
 	} else {
-#if MONO_DL_NEED_USCORE
-		{
-			char *usname = g_malloc (strlen (name) + 2);
-			*usname = '_';
-			strcpy (usname + 1, name);
-			sym = mono_dl_lookup_symbol (module, usname);
-			g_free (usname);
-		}
-#else
-		sym = mono_dl_lookup_symbol (module, name);
-#endif
+		sym = mono_dl_symbol_default (module, name);
 	}
 
 	if (sym) {
