@@ -1204,7 +1204,7 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 	const char *new_scope;
 	char *error_msg;
 	char *full_name, *file_name, *found_name = NULL;
-	int i,j;
+	int i;
 	MonoDl *module = NULL;
 	gboolean cached = FALSE;
 	gpointer addr = NULL;
@@ -1310,6 +1310,7 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 				break;
 			}
 			continue;
+#ifndef ENABLE_NETCORE
 		case 3:
 			if (!is_absolute && mono_dl_get_system_dir ()) {
 				dir_name = (char*)mono_dl_get_system_dir ();
@@ -1318,6 +1319,7 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 			} else
 				continue;
 			break;
+#endif
 		default:
 #ifndef TARGET_WIN32
 			if (!g_ascii_strcasecmp ("user32.dll", new_scope) ||
@@ -1352,9 +1354,11 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 			}
 		}
 
+#ifndef ENABLE_NETCORE
 		if (!module && !is_absolute) {
 			void *iter;
 			char *mdirname;
+			int j;
 
 			for (j = 0; j < 3; ++j) {
 				iter = NULL;
@@ -1433,6 +1437,7 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 			}
 
 		}
+#endif /* ENABLE_NETCORE */
 
 		if (!module) {
 			void *iter = NULL;
