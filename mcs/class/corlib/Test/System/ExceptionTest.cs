@@ -525,9 +525,10 @@ namespace MonoTests.System
 		{
 			var monoType = Type.GetType ("Mono.Runtime", false);
 			var convert = monoType.GetMethod("CheckCrashReportLog", BindingFlags.NonPublic | BindingFlags.Static);
-			var result = (int) convert.Invoke(null, new object[] { "./", true });
-			var monoSummaryDone = 8;
-			Assert.AreEqual (monoSummaryDone, result, "#DLC1");
+			var result = convert.Invoke(null, new object[] { "./", true });
+			var enumType = monoType.Assembly.GetType("Mono.Runtime+CrashReportLogLevel");
+			var doneEnum = Enum.Parse(enumType, "MonoSummaryDone");
+			Assert.AreEqual (doneEnum, result, "#DLC1");
 		}
 
 		[Test]
