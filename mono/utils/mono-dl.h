@@ -49,5 +49,8 @@ char* mono_dl_current_error_string (void);
 int mono_dl_get_executable_path (char *buf, int buflen);
 const char* mono_dl_get_system_dir (void);
 
+MonoDlFallbackHandler *
+mono_dl_fallback_register_internal (MonoDlFallbackLoad load_func, MonoDlFallbackSymbol symbol_func, MonoDlFallbackClose close_func, void *user_data);
+
 #endif /* __MONO_UTILS_DL_H__ */
 
