@@ -562,7 +562,11 @@ create_internal_thread_object (void)
 
 	thread->apartment_state = ThreadApartmentState_Unknown;
 	thread->managed_id = get_next_managed_thread_id ();
-#if !defined(HAVE_BOEHM_GC)
+	/* 
+	 * Boehm incremental is not actually "moving", it does not need the thread_pinning_ref.
+	 * But having it causes problems when unregistering the root after domain reload.
+	 */
+#if !defined(HAVE_BOEHM_GC) 
 	if (mono_gc_is_moving ()) {
 		thread->thread_pinning_ref = thread;
 		MONO_GC_REGISTER_ROOT_PINNING (thread->thread_pinning_ref, MONO_ROOT_SOURCE_THREADING, NULL, "Thread Pinning Reference");
@@ -885,7 +889,11 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 		mono_thread_cleanup_fn (thread_get_tid (thread));
 
 	mono_memory_barrier ();
-
+	
+	/* 
+	 * Boehm incremental is not actually "moving", it does not need the thread_pinning_ref.
+	 * But having it causes problems when unregistering the root after domain reload.
+	 */
 #if !defined(HAVE_BOEHM_GC)
 	if (mono_gc_is_moving ()) {
 		MONO_GC_UNREGISTER_ROOT (thread->thread_pinning_ref);
