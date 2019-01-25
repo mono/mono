@@ -112,10 +112,15 @@ fi
 if [[ ${CI_TAGS} == *'ccache'* ]];
 then
 	# CCACHE_DIR should be set to a directory outside the chroot which holds the cache
-	CCACHE=`which ccache`
+	CCACHE=$(which ccache)
 	if [ "$CCACHE" ]; then
-		export CC="ccache gcc"
-		export CXX="ccache g++"
+		if [[ ${CI_TAGS} == *'osx-'* ]]; then
+			export CC="ccache clang"
+			export CXX="ccache clang++"
+		else
+			export CC="ccache gcc"
+			export CXX="ccache g++"
+		fi
 	fi
 fi
 
