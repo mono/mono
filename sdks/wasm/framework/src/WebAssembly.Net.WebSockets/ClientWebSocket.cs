@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+
 namespace WebAssembly.Net.WebSockets {
 
 	/// <summary>
@@ -544,7 +545,6 @@ namespace WebAssembly.Net.WebSockets {
 			private bool isReadOnly; // After ConnectAsync is called the options cannot be modified.
 			private readonly IList<string> requestedSubProtocols;
 			private TimeSpan keepAliveInterval;
-			//private ArraySegment<byte>? buffer;
 
 			internal ClientWebSocketOptions ()
 			{
