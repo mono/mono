@@ -155,11 +155,12 @@
       <Compile Include="System.Resources\ResourceManager.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeFeature.cs" />
-      <Compile Include="System.Runtime.InteropServices\ComEventsHelper.cs" />
       <Compile Include="System.Runtime.InteropServices\CriticalHandle.cs" />
       <Compile Include="System.Runtime.InteropServices\InteropExtensions.cs" />
       <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
+      <Compile Include="System.Runtime.InteropServices\NativeLibrary.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
+      <Compile Include="System.Runtime.Loader\AssemblyDependencyResolver.cs" />
       <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
       <Compile Include="System.Threading\EventWaitHandle.cs" />
       <Compile Include="System.Threading\Interlocked.cs" />
