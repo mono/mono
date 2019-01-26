@@ -6472,6 +6472,7 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 	GPtrArray *patches;
 	MonoJumpInfo *patch_info;
 	guint8 *p, *buf;
+	guint32 offset;
 
 	method = cfg->orig_method;
 
@@ -6488,19 +6489,9 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 	/* Encode method info */
 	/**********************/
 
-	buf_size = (patches->len < 1000) ? 40960 : 40960 + (patches->len * 64);
-	p = buf = (guint8 *)g_malloc (buf_size);
-
-	guint8 flags = 0;
-	if (mono_class_get_cctor (method->klass))
-		flags |= MONO_AOT_METHOD_FLAG_HAS_CCTOR;
-	if (mini_jit_info_is_gsharedvt (cfg->jit_info) && mini_is_gsharedvt_variable_signature (mono_method_signature_internal (jinfo_get_method (cfg->jit_info))))
-		flags |= MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE;
-	encode_value (flags, p, &p);
-	if (flags & MONO_AOT_METHOD_FLAG_HAS_CCTOR)
-		encode_klass_ref (acfg, method->klass, p, &p);
-
 	g_assert (!(cfg->opt & MONO_OPT_SHARED));
+
+	guint32 *got_offsets = g_new0 (guint32, patches->len);
 
 	n_patches = 0;
 	for (pindex = 0; pindex < patches->len; ++pindex) {
@@ -6534,15 +6525,37 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 			continue;
 		}
 
-		n_patches ++;
+		/* This shouldn't allocate a new offset */
+		offset = lookup_got_offset (acfg, cfg->compile_llvm, patch_info);
+		if (offset >= acfg->nshared_got_entries)
+			got_offsets [n_patches ++] = offset;
 	}
 
 	if (n_patches)
 		g_assert (cfg->has_got_slots);
 
-	encode_patch_list (acfg, patches, n_patches, cfg->compile_llvm, p, &p);
+	buf_size = (patches->len < 1000) ? 40960 : 40960 + (patches->len * 64);
+	p = buf = (guint8 *)g_malloc (buf_size);
+
+	guint8 flags = 0;
+	if (mono_class_get_cctor (method->klass))
+		flags |= MONO_AOT_METHOD_FLAG_HAS_CCTOR;
+	if (mini_jit_info_is_gsharedvt (cfg->jit_info) && mini_is_gsharedvt_variable_signature (mono_method_signature_internal (jinfo_get_method (cfg->jit_info))))
+		flags |= MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE;
+	if (n_patches)
+		flags |= MONO_AOT_METHOD_FLAG_HAS_PATCHES;
+	encode_value (flags, p, &p);
+	if (flags & MONO_AOT_METHOD_FLAG_HAS_CCTOR)
+		encode_klass_ref (acfg, method->klass, p, &p);
+
+	if (n_patches) {
+		encode_value (n_patches, p, &p);
+		for (int i = 0; i < n_patches; ++i)
+			encode_value (got_offsets [i], p, &p);
+	}
 
 	g_ptr_array_free (patches, TRUE);
+	g_free (got_offsets);
 
 	acfg->stats.method_info_size += p - buf;
 

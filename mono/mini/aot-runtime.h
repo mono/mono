@@ -11,7 +11,7 @@
 #include "mini.h"
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 155
+#define MONO_AOT_FILE_VERSION 156
 
 #define MONO_AOT_TRAMP_PAGE_SIZE 16384
 
@@ -80,6 +80,7 @@ typedef enum {
 	MONO_AOT_METHOD_FLAG_NONE = 0,
 	MONO_AOT_METHOD_FLAG_HAS_CCTOR = 1,
 	MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE = 2,
+	MONO_AOT_METHOD_FLAG_HAS_PATCHES = 4
 } MonoAotMethodFlags;
 
 typedef enum {
