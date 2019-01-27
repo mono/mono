@@ -671,70 +671,60 @@ namespace System.Windows.Forms
             // Get offset for different text alignments
             float align_offset_x = 0F;
             float align_offset_y = 0F;
-            if (TextAlign != ContentAlignment.TopLeft)
-            {
-                Region all_regions = new Region (new Rectangle());
+            
+            if (TextAlign != ContentAlignment.TopLeft) {
+                Region all_regions = new Region (new Rectangle ());
 
-                foreach (Region region in regions)
-                {
-                    all_regions.Union(region);
+                foreach (Region region in regions) {
+                    all_regions.Union (region);
                 }
 
-                Graphics dc = this.CreateGraphics();
+                Graphics graphics = CreateGraphics ();
 
-                if (TextAlign == ContentAlignment.TopCenter)
-                {
-                    float text_width  = all_regions.GetBounds(dc).Width;
+                if (TextAlign == ContentAlignment.TopCenter) {
+                    float text_width = all_regions.GetBounds(graphics).Width;
 
-                    align_offset_x = (ClientRectangle.Width  / 2 - text_width  / 2);
-
+                    align_offset_x = (ClientRectangle.Width / 2 - text_width  / 2);
                 }
-                if (TextAlign == ContentAlignment.TopRight)
-                {
-                    float text_width  = all_regions.GetBounds(dc).Width;
+                if (TextAlign == ContentAlignment.TopRight) {
+                    float text_width = all_regions.GetBounds(graphics).Width;
 
                     align_offset_x = (ClientRectangle.Width - text_width);
                 }
-                if (TextAlign == ContentAlignment.MiddleLeft)
-                {
-                    float text_height = all_regions.GetBounds(dc).Height;
+                if (TextAlign == ContentAlignment.MiddleLeft) {
+                    float text_height = all_regions.GetBounds(graphics).Height;
 
                     align_offset_y = (ClientRectangle.Height / 2 - text_height / 2);
                 }
-                if (TextAlign == ContentAlignment.MiddleCenter)
-                {
-                    float text_width  = all_regions.GetBounds(dc).Width;
-                    float text_height = all_regions.GetBounds(dc).Height;
+                if (TextAlign == ContentAlignment.MiddleCenter) {
+                    float text_width  = all_regions.GetBounds(graphics).Width;
+                    float text_height = all_regions.GetBounds(graphics).Height;
 
                     align_offset_x = (ClientRectangle.Width  / 2 - text_width  / 2);
                     align_offset_y = (ClientRectangle.Height / 2 - text_height / 2);
                 }
-                if (TextAlign == ContentAlignment.MiddleRight)
-                {
-                    float text_width  = all_regions.GetBounds(dc).Width;
-                    float text_height = all_regions.GetBounds(dc).Height;
+                if (TextAlign == ContentAlignment.MiddleRight) {
+                    float text_width  = all_regions.GetBounds(graphics).Width;
+                    float text_height = all_regions.GetBounds(graphics).Height;
 
                     align_offset_x = (ClientRectangle.Width      - text_width);
                     align_offset_y = (ClientRectangle.Height / 2 - text_height / 2);
                 }
-                if (TextAlign == ContentAlignment.BottomLeft)
-                {
-                    float text_height = all_regions.GetBounds(dc).Height;
+                if (TextAlign == ContentAlignment.BottomLeft) {
+                    float text_height = all_regions.GetBounds(graphics).Height;
 
                     align_offset_y = (ClientRectangle.Height - text_height);
                 }
-                if (TextAlign == ContentAlignment.BottomCenter)
-                {
-                    float text_width  = all_regions.GetBounds(dc).Width;
-                    float text_height = all_regions.GetBounds(dc).Height;
+                if (TextAlign == ContentAlignment.BottomCenter) {
+                    float text_width  = all_regions.GetBounds(graphics).Width;
+                    float text_height = all_regions.GetBounds(graphics).Height;
 
                     align_offset_x = (ClientRectangle.Width / 2 - text_width / 2);
                     align_offset_y = (ClientRectangle.Height    - text_height);
                 }
-                if (TextAlign == ContentAlignment.BottomRight)
-                {
-                    float text_width  = all_regions.GetBounds(dc).Width;
-                    float text_height = all_regions.GetBounds(dc).Height;
+                if (TextAlign == ContentAlignment.BottomRight) {
+                    float text_width  = all_regions.GetBounds(graphics).Width;
+                    float text_height = all_regions.GetBounds(graphics).Height;
 
                     align_offset_x = (ClientRectangle.Width  - text_width);
                     align_offset_y = (ClientRectangle.Height - text_height);
