@@ -116,37 +116,6 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		// TODO: Implement in shared
-		public static void ZeroFreeBSTR (IntPtr s)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public static void ZeroFreeCoTaskMemAnsi (IntPtr s)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public static void ZeroFreeCoTaskMemUnicode (IntPtr s)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public static void ZeroFreeCoTaskMemUTF8 (IntPtr s)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public static void ZeroFreeGlobalAllocAnsi (IntPtr s)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public static void ZeroFreeGlobalAllocUnicode (IntPtr s)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public static IntPtr StringToBSTR(string s) { throw null; }
 		public static IntPtr StringToCoTaskMemAnsi(string s) { throw null; }
 		public static IntPtr StringToCoTaskMemAuto(string s) { throw null; }
