@@ -168,6 +168,7 @@
       <Compile Include="System.Threading\Thread.cs" />
       <Compile Include="System.Threading\ThreadPool.cs" />
       <Compile Include="System.Threading\ThreadPoolBoundHandle.cs" />
+      <Compile Include="System.Threading\TimerQueue.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="temp\*.cs" />
@@ -220,7 +221,6 @@
       <Compile Include="..\corlib\System.Threading\NativeEventCalls.cs" />
       <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
       <Compile Include="..\corlib\System.Threading\Thread.cs" />
-      <Compile Include="..\corlib\System.Threading\TimerCallback.cs" />
       <Compile Include="..\corlib\System.Threading\Volatile.cs" />
       <Compile Include="..\corlib\System.Threading\WaitHandle.cs" />
 
