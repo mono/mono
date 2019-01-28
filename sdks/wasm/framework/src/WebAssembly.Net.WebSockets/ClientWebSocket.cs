@@ -613,6 +613,16 @@ namespace WebAssembly.Net.WebSockets {
 				set => throw new NotImplementedException ();
 			}
 
+			public void SetBuffer (int receiveBufferSize, int sendBufferSize)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public void SetBuffer (int receiveBufferSize, int sendBufferSize, ArraySegment<byte> buffer)
+			{
+				throw new NotImplementedException ();
+			}
+
 			#endregion WebSocket settings
 
 			#region Helpers
