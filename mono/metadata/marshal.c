@@ -2281,12 +2281,20 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 					mono_mb_emit_byte (mb, mono_type_to_stind (ftype));
 				}
 				break;
+			case MONO_TYPE_GENERICINST:
+				if (!mono_type_generic_inst_is_valuetype (ftype)) {
+					char *msg = g_strdup_printf ("Generic type %s cannot be marshaled as field in a struct.",
+						mono_type_full_name (ftype));
+					mono_mb_emit_exception_marshal_directive (mb, msg);
+					break;
+				}
+				/* fall through */
 			case MONO_TYPE_VALUETYPE: {
 				int src_var, dst_var;
 				MonoType *etype;
 				int len;
 
-				if (ftype->data.klass->enumtype) {
+				if (t == MONO_TYPE_VALUETYPE && ftype->data.klass->enumtype) {
 					ftype = mono_class_enum_basetype (ftype->data.klass);
 					goto handle_enum;
 				}
@@ -2304,7 +2312,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 				if (get_fixed_buffer_attr (info->fields [i].field, &etype, &len)) {
 					emit_fixed_buf_conv (mb, ftype, etype, len, to_object, &usize);
 				} else {
-					emit_struct_conv (mb, ftype->data.klass, to_object);
+					emit_struct_conv (mb, mono_class_from_mono_type (ftype), to_object);
 				}
 
 				/* restore the old src pointer */
