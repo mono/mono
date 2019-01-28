@@ -15,8 +15,6 @@
     <DocumentationFile>..\..\netstandard2.0\WebAssembly.Net.WebSockets.xml</DocumentationFile>
   </PropertyGroup>  
   <ItemGroup>
-    <Reference Include="WebAssembly.Bindings">
-      <HintPath>..\..\WebAssembly.Bindings.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\WebAssembly.Bindings\WebAssembly.Bindings.csproj" />
   </ItemGroup>
 </Project>
