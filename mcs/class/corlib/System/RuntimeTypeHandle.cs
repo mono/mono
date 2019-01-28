@@ -64,7 +64,7 @@ namespace System
 			RuntimeType mt = ((RuntimeType) info.GetValue ("TypeObj", typeof (RuntimeType)));
 			value = mt.TypeHandle.Value;
 			if (value == IntPtr.Zero)
-				throw new SerializationException (Locale.GetText ("Insufficient state."));
+				throw new SerializationException ("Insufficient state.");
 		}
 
 		public IntPtr Value {
@@ -197,7 +197,11 @@ namespace System
 
 		internal static bool IsContextful (RuntimeType type)
 		{
+#if NETCORE
+			return false;
+#else
 			return typeof (ContextBoundObject).IsAssignableFrom (type);
+#endif
 		}
 
 		internal static bool IsEquivalentTo (RuntimeType rtType1, RuntimeType rtType2)

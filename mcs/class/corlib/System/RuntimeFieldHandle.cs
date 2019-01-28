@@ -58,7 +58,7 @@ namespace System
 			MonoField mf = ((MonoField) info.GetValue ("FieldObj", typeof (MonoField)));
 			value = mf.FieldHandle.Value;
 			if (value == IntPtr.Zero)
-				throw new SerializationException (Locale.GetText ("Insufficient state."));
+				throw new SerializationException ("Insufficient state.");
 		}
 
 		public IntPtr Value {

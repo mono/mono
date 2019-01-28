@@ -48,7 +48,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=F65F48BE-A122-484D-8666-78FFEBD693FE
+MONO_CORLIB_VERSION=07423dee-1eb8-11e9-a2ee-43262508f9cf
 
 #
 # Put a quoted #define in config.h.
@@ -475,6 +475,11 @@ PLATFORM_AOT_SUFFIX=.dll
 fi
 
 AC_SUBST(PLATFORM_AOT_SUFFIX)
+
+if test -z "$HOST_WASM_TRUE"; then :
+AC_DEFINE(HAVE_UTIME)
+AC_DEFINE(HAVE_UTIMES)
+fi
 
 ## PLATFORM_AOT_SUFFIX not so simple for windows :-)
 
@@ -1492,7 +1497,7 @@ fi
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, 
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
-	 security, lldb, mdb, assert_messages, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers.],
+	 security, lldb, mdb, assert_messages, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -1692,6 +1697,11 @@ fi
 if test "x$mono_feature_disable_sgen_debug_helpers" = "xyes"; then
 	AC_DEFINE(DISABLE_SGEN_DEBUG_HELPERS, 1, [Disable debug helpers in SGEN.])
 	AC_MSG_NOTICE([Disabled debug helpers in SGEN.])
+fi
+
+if test "x$mono_feature_disable_sockets" = "xyes"; then
+	AC_DEFINE(DISABLE_SOCKETS, 1, [Disable sockets])
+	AC_MSG_NOTICE([Disabled sockets])
 fi
 
 AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
@@ -2021,6 +2031,20 @@ if test x$host_win32 = xno; then
 		AC_CHECK_FUNCS(getpwnam_r)
 		AC_CHECK_FUNCS(getpwuid_r)
 	fi
+
+	AC_CHECK_FUNCS(readlink)
+	AC_CHECK_FUNCS(chmod)
+	AC_CHECK_FUNCS(lstat)
+	AC_CHECK_FUNCS(getdtablesize)
+
+	AC_CHECK_FUNCS(ftruncate)
+	AC_CHECK_FUNCS(msync)
+
+	AC_CHECK_FUNCS(gethostname getpeername)
+	AC_CHECK_FUNCS(utime utimes)
+
+	AC_CHECK_FUNCS(openlog closelog)
+	AC_CHECK_FUNCS(atexit)
 
 	AC_FUNC_STRERROR_R()
 
@@ -6339,7 +6363,9 @@ fi
       echo "BCL_OPTIMIZE = 1" >> $srcdir/$mcsdir/build/config.make
     fi
 
-    echo "CSC_LOCATION = $CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
+    echo "STANDALONE_CSC_LOCATION=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
+    echo "SERVER_CSC_LOCATION?=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
+    echo "VBCS_LOCATION?=" >> $srcdir/$mcsdir/build/config.make
 
     if test $csc_compiler = mcs; then
       echo "MCS_MODE = 1" >> $srcdir/$mcsdir/build/config.make
@@ -6373,6 +6399,12 @@ fi
 
     echo "MONO_NATIVE_PLATFORM_TYPE=$MONO_NATIVE_PLATFORM_TYPE" >> $srcdir/$mcsdir/build/config.make
     echo "MONO_NATIVE_PLATFORM=$MONO_NATIVE_PLATFORM" >> $srcdir/$mcsdir/build/config.make
+    if test x$enable_compiler_server = xyes; then
+      echo "ENABLE_COMPILER_SERVER?=1" >> $srcdir/$mcsdir/build/config.make
+    else
+      echo "ENABLE_COMPILER_SERVER?=0" >> $srcdir/$mcsdir/build/config.make
+    fi
+    echo "COMPILER_SERVER_PIPENAME?=monomake" >> $srcdir/$mcsdir/build/config.make
 
   fi
 
