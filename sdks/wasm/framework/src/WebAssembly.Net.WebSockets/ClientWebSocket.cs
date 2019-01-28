@@ -234,7 +234,7 @@ namespace WebAssembly.Net.WebSockets {
 						innerWebSocketCloseStatusDescription = closeEvt.GetObjectProperty ("reason")?.ToString ();
 						tcsClose?.SetResult (true);
 						Debug.WriteLine ($"WasmWebSocket: OnClose State: {State}, CloseStatus: {CloseStatus}, CloseStatusDescription: {CloseStatusDescription}");
-						var mess = new ReceivePayload ( new byte[0], WebSocketMessageType.Close);
+						var mess = new ReceivePayload ( WebSocketHelpers.EmptyPayload, WebSocketMessageType.Close);
 						receiveMessageQueue.BufferPayload (mess);
 						closeEvt.Dispose ();
 					});

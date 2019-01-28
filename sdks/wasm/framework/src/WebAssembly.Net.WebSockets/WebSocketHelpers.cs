@@ -31,8 +31,7 @@ namespace WebAssembly.Net.WebSockets {
 					break;
 				}
 
-				if (!char.IsLetterOrDigit (ch) &&
-				    Separators.IndexOf (ch) >= 0) {
+				if (Separators.IndexOf (ch) >= 0) {
 					invalidChar = ch.ToString ();
 					break;
 				}
@@ -45,21 +44,13 @@ namespace WebAssembly.Net.WebSockets {
 			}
 		}
 
-		internal static void ValidateOptions (string subProtocol,
-		    int receiveBufferSize,
-		    int sendBufferSize,
-		    TimeSpan keepAliveInterval)
+		internal static void ValidateOptions (string subProtocol)
 		{
 			// We allow the subProtocol to be null. Validate if it is not null.
 			if (subProtocol != null) {
 				ValidateSubprotocol (subProtocol);
 			}
 
-			if (keepAliveInterval < Timeout.InfiniteTimeSpan) // -1
-			{
-				throw new ArgumentOutOfRangeException (nameof (keepAliveInterval), keepAliveInterval,
-				    $"Argument specified '{Timeout.InfiniteTimeSpan.ToString ()}' is too small.");
-			}
 		}
 
 	}
