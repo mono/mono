@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net.WebSockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -377,7 +378,7 @@ namespace WebAssembly.Net.WebSockets {
 				    nameof (messageType));
 			}
 
-			Debug.WriteLine ($"SendAsync {buffer.Count} bytes, {messageType}, endOfMessage: {endOfMessage}, bynaryType: {innerWebSocket.GetObjectProperty ("binaryType")}");
+			Debug.WriteLine ($"WasmWebSocket SendAsync: count {buffer.Count} bytes, {messageType}, endOfMessage: {endOfMessage}, bynaryType: {innerWebSocket.GetObjectProperty ("binaryType")}");
 
 			var tcsSend = new TaskCompletionSource<bool> ();
 			// Wrap the cancellationToken in a using so that it can be disposed of whether
@@ -544,13 +545,51 @@ namespace WebAssembly.Net.WebSockets {
 		public sealed class ClientWebSocketOptions {
 			private bool isReadOnly; // After ConnectAsync is called the options cannot be modified.
 			private readonly IList<string> requestedSubProtocols;
-			private TimeSpan keepAliveInterval;
 
 			internal ClientWebSocketOptions ()
 			{
 				requestedSubProtocols = new List<string> ();
-				keepAliveInterval = WebSocket.DefaultKeepAliveInterval;
 			}
+
+			#region HTTP Settings
+
+			// Note that some headers are restricted like Host.
+			public void SetRequestHeader (string headerName, string headerValue)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public bool UseDefaultCredentials {
+				get => throw new NotImplementedException ();
+				set => throw new NotImplementedException ();
+			}
+
+			public System.Net.ICredentials Credentials {
+				get => throw new NotImplementedException ();
+				set => throw new NotImplementedException ();
+			}
+
+			public System.Net.IWebProxy Proxy {
+				get => throw new NotImplementedException ();
+				set => throw new NotImplementedException ();
+			}
+
+			public X509CertificateCollection ClientCertificates {
+				get => throw new NotImplementedException ();
+				set => throw new NotImplementedException ();
+			}
+
+			public System.Net.Security.RemoteCertificateValidationCallback RemoteCertificateValidationCallback {
+				get => throw new NotImplementedException ();
+				set => throw new NotImplementedException ();
+			}
+
+			public System.Net.CookieContainer Cookies {
+				get => throw new NotImplementedException ();
+				set => throw new NotImplementedException ();
+			}
+
+			#endregion HTTP Settings
 
 			#region WebSocket Settings
 
@@ -570,17 +609,8 @@ namespace WebAssembly.Net.WebSockets {
 			internal IList<string> RequestedSubProtocols { get { return requestedSubProtocols; } }
 
 			public TimeSpan KeepAliveInterval {
-				get {
-					return keepAliveInterval;
-				}
-				set {
-					ThrowIfReadOnly ();
-					if (value < Timeout.InfiniteTimeSpan) {
-						throw new ArgumentOutOfRangeException (nameof (value), value,
-						    $"Argument specified '{Timeout.InfiniteTimeSpan.ToString ()}' is too small.");
-					}
-					keepAliveInterval = value;
-				}
+				get => throw new NotImplementedException ();
+				set => throw new NotImplementedException ();
 			}
 
 			#endregion WebSocket settings

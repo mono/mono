@@ -351,6 +351,12 @@ canary:
 
 check-aot: do-aot-sample
 
+clean-sdk:
+	$(RM) -r sdk/**/bin
+	$(RM) -r sdk/**/obj
+	$(RM) -r sdk/**/**/bin
+	$(RM) -r sdk/**/**/obj
+
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	msbuild /r sdk/Mono.WebAssembly.Sdk
 	msbuild /r sdk
