@@ -1,7 +1,8 @@
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace System.Mono
+namespace Mono
 {
 
 	[StructLayout (LayoutKind.Sequential)]

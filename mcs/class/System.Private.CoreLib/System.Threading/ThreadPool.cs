@@ -34,5 +34,14 @@ namespace System.Threading
 		{
 			throw new NotImplementedException ();
 		}
+
+		public static bool BindHandle (System.IntPtr osHandle) { throw null; }
+		public static bool BindHandle (System.Runtime.InteropServices.SafeHandle osHandle) { throw null; }
+		public static void GetAvailableThreads (out int workerThreads, out int completionPortThreads) { throw null; }
+		public static void GetMaxThreads (out int workerThreads, out int completionPortThreads) { throw null; }
+		public static void GetMinThreads (out int workerThreads, out int completionPortThreads) { throw null; }
+		public static bool SetMaxThreads(int workerThreads, int completionPortThreads) { throw null; }
+		public static bool SetMinThreads(int workerThreads, int completionPortThreads) { throw null; }
+		public static unsafe bool UnsafeQueueNativeOverlapped(System.Threading.NativeOverlapped* overlapped) { throw null; }
 	}
 }

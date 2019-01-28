@@ -9,5 +9,7 @@ namespace System.Threading
 		private void CreateEventCore (bool initialState, EventResetMode mode, string name, out bool createdNew) => throw new NotImplementedException ();
 
 		private static OpenExistingResult OpenExistingWorker(string name, out EventWaitHandle result) => throw new NotImplementedException ();
+
+		internal static bool Set (Microsoft.Win32.SafeHandles.SafeWaitHandle waitHandle) => throw new NotImplementedException ();
 	}
 }

@@ -2,20 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-//
-//
-//
-// Implementation of task continuations, TaskContinuation, and its descendants.
-//
-// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 using System.Security;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Runtime.CompilerServices;
 
-using Internal.Runtime.Augments;
+#if CORERT
+using Thread = Internal.Runtime.Augments.RuntimeThread;
+#endif
 
 namespace System.Threading.Tasks
 {
@@ -50,14 +44,13 @@ namespace System.Threading.Tasks
 
             // Invoke the delegate
             Debug.Assert(m_action != null);
-            var action = m_action as Action<Task>;
-            if (action != null)
+            if (m_action is Action<Task> action)
             {
                 action(antecedent);
                 return;
             }
-            var actionWithState = m_action as Action<Task, object>;
-            if (actionWithState != null)
+
+            if (m_action is Action<Task, object> actionWithState)
             {
                 actionWithState(antecedent, m_stateObject);
                 return;
@@ -97,14 +90,13 @@ namespace System.Threading.Tasks
 
             // Invoke the delegate
             Debug.Assert(m_action != null);
-            var func = m_action as Func<Task, TResult>;
-            if (func != null)
+            if (m_action is Func<Task, TResult> func)
             {
                 m_result = func(antecedent);
                 return;
             }
-            var funcWithState = m_action as Func<Task, object, TResult>;
-            if (funcWithState != null)
+
+            if (m_action is Func<Task, object, TResult> funcWithState)
             {
                 m_result = funcWithState(antecedent, m_stateObject);
                 return;
@@ -144,14 +136,13 @@ namespace System.Threading.Tasks
 
             // Invoke the delegate
             Debug.Assert(m_action != null);
-            var action = m_action as Action<Task<TAntecedentResult>>;
-            if (action != null)
+            if (m_action is Action<Task<TAntecedentResult>> action)
             {
                 action(antecedent);
                 return;
             }
-            var actionWithState = m_action as Action<Task<TAntecedentResult>, object>;
-            if (actionWithState != null)
+
+            if (m_action is Action<Task<TAntecedentResult>, object> actionWithState)
             {
                 actionWithState(antecedent, m_stateObject);
                 return;
@@ -191,14 +182,13 @@ namespace System.Threading.Tasks
 
             // Invoke the delegate
             Debug.Assert(m_action != null);
-            var func = m_action as Func<Task<TAntecedentResult>, TResult>;
-            if (func != null)
+            if (m_action is Func<Task<TAntecedentResult>, TResult> func)
             {
                 m_result = func(antecedent);
                 return;
             }
-            var funcWithState = m_action as Func<Task<TAntecedentResult>, object, TResult>;
-            if (funcWithState != null)
+
+            if (m_action is Func<Task<TAntecedentResult>, object, TResult> funcWithState)
             {
                 m_result = funcWithState(antecedent, m_stateObject);
                 return;
@@ -259,13 +249,9 @@ namespace System.Threading.Tasks
                 // Either TryRunInline() or QueueTask() threw an exception. Record the exception, marking the task as Faulted.
                 // However if it was a ThreadAbortException coming from TryRunInline we need to skip here, 
                 // because it would already have been handled in Task.Execute()
-                //if (!(e is ThreadAbortException && 
-                //      (task.m_stateFlags & Task.TASK_STATE_THREAD_WAS_ABORTED) != 0))    // this ensures TAEs from QueueTask will be wrapped in TSE
-                {
-                    TaskSchedulerException tse = new TaskSchedulerException(e);
-                    task.AddException(tse);
-                    task.Finish(false);
-                }
+                TaskSchedulerException tse = new TaskSchedulerException(e);
+                task.AddException(tse);
+                task.Finish(false);
                 // Don't re-throw.
             }
         }
@@ -300,10 +286,11 @@ namespace System.Threading.Tasks
             m_task = task;
             m_options = options;
             m_taskScheduler = scheduler;
+            if (AsyncCausalityTracer.LoggingOn)
+                AsyncCausalityTracer.TraceOperationCreation(m_task, "Task.ContinueWith: " + task.m_action.Method.Name);
 
-            if (DebuggerSupport.LoggingOn)
-                DebuggerSupport.TraceOperationCreation(CausalityTraceLevel.Required, m_task, "Task.ContinueWith: " + task.m_action, 0);
-            DebuggerSupport.AddToActiveTasks(m_task);
+            if (Task.s_asyncDebuggingEnabled)
+                Task.AddToActiveTasks(m_task);
         }
 
         /// <summary>Invokes the continuation for the target completion task.</summary>
@@ -328,10 +315,13 @@ namespace System.Threading.Tasks
             Task continuationTask = m_task;
             if (isRightKind)
             {
-                if (!continuationTask.IsCanceled && DebuggerSupport.LoggingOn)
+                //If the task was cancel before running (e.g a ContinueWhenAll with a cancelled caancelation token)
+                //we will still flow it to ScheduleAndStart() were it will check the status before running
+                //We check here to avoid faulty logs that contain a join event to an operation that was already set as completed.
+                if (!continuationTask.IsCanceled && AsyncCausalityTracer.LoggingOn)
                 {
                     // Log now that we are sure that this continuation is being ran
-                    DebuggerSupport.TraceOperationRelation(CausalityTraceLevel.Important, continuationTask, CausalityRelation.AssignDelegate);
+                    AsyncCausalityTracer.TraceOperationRelation(continuationTask, CausalityRelation.AssignDelegate);
                 }
                 continuationTask.m_taskScheduler = m_taskScheduler;
 
@@ -404,6 +394,12 @@ namespace System.Threading.Tasks
             // Otherwise, Post the action back to the SynchronizationContext.
             else
             {
+                TplEventSource log = TplEventSource.Log;
+                if (log.IsEnabled())
+                {
+                    m_continuationId = Task.NewId();
+                    log.AwaitTaskContinuationScheduled((task.ExecutingTaskScheduler ?? TaskScheduler.Default).Id, task.Id, m_continuationId);
+                }
                 RunCallback(GetPostActionCallback(), this, ref Task.t_currentTask);
             }
             // Any exceptions will be handled by RunCallback.
@@ -415,7 +411,27 @@ namespace System.Threading.Tasks
         {
             var c = (SynchronizationContextAwaitTaskContinuation)state;
 
-            c.m_syncContext.Post(s_postCallback, c.m_action); // s_postCallback is manually cached, as the compiler won't in a SecurityCritical method
+            TplEventSource log = TplEventSource.Log;
+            if (log.TasksSetActivityIds && c.m_continuationId != 0)
+            {
+                c.m_syncContext.Post(s_postCallback, GetActionLogDelegate(c.m_continuationId, c.m_action));
+            }
+            else
+            {
+                c.m_syncContext.Post(s_postCallback, c.m_action); // s_postCallback is manually cached, as the compiler won't in a SecurityCritical method
+            }
+        }
+
+        private static Action GetActionLogDelegate(int continuationId, Action action)
+        {
+            return () =>
+                {
+                    Guid savedActivityId;
+                    Guid activityId = TplEventSource.CreateGuidForTaskID(continuationId);
+                    System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(activityId, out savedActivityId);
+                    try { action(); }
+                    finally { System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(savedActivityId); }
+                };
         }
 
         /// <summary>Gets a cached delegate for the PostAction method.</summary>
@@ -475,8 +491,14 @@ namespace System.Threading.Tasks
                 // The target scheduler may still deny us from executing on this thread, in which case this'll be queued.
                 var task = CreateTask(state =>
                 {
-                    try { ((Action)state)(); }
-                    catch (Exception exc) { ThrowAsyncIfNecessary(exc); }
+                    try
+                    {
+                        ((Action)state)();
+                    }
+                    catch (Exception exception)
+                    {
+                        Task.ThrowAsync(exception, targetContext: null);
+                    }
                 }, m_action, m_scheduler);
 
                 if (inlineIfPossible)
@@ -500,6 +522,8 @@ namespace System.Threading.Tasks
         private readonly ExecutionContext m_capturedContext;
         /// <summary>The action to invoke.</summary>
         protected readonly Action m_action;
+
+        protected int m_continuationId;
 
         /// <summary>Initializes the continuation.</summary>
         /// <param name="action">The action to invoke. Must not be null.</param>
@@ -548,6 +572,13 @@ namespace System.Threading.Tasks
             }
             else
             {
+                TplEventSource log = TplEventSource.Log;
+                if (log.IsEnabled())
+                {
+                    m_continuationId = Task.NewId();
+                    log.AwaitTaskContinuationScheduled((task.ExecutingTaskScheduler ?? TaskScheduler.Default).Id, task.Id, m_continuationId);
+                }
+
                 // We couldn't inline, so now we need to schedule it
                 ThreadPool.UnsafeQueueUserWorkItemInternal(this, preferLocal: true);
             }
@@ -587,15 +618,22 @@ namespace System.Threading.Tasks
 
         void IThreadPoolWorkItem.Execute()
         {
+            var log = TplEventSource.Log;
             ExecutionContext context = m_capturedContext;
 
-            if (context == null)
+            if (!log.IsEnabled() && context == null)
             {
                 m_action();
                 return;
             }
 
-            // try
+            Guid savedActivityId = default;
+            if (log.TasksSetActivityIds && m_continuationId != 0)
+            {
+                Guid activityId = TplEventSource.CreateGuidForTaskID(m_continuationId);
+                System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(activityId, out savedActivityId);
+            }
+            try
             {
                 // We're not inside of a task, so t_currentTask doesn't need to be specially maintained.
                 // We're on a thread pool thread with no higher-level callers, so exceptions can just propagate.
@@ -615,9 +653,13 @@ namespace System.Threading.Tasks
 
                 // ThreadPoolWorkQueue.Dispatch handles notifications and reset context back to default
             }
-            // finally
-            // {
-            // }
+            finally
+            {
+                if (log.TasksSetActivityIds && m_continuationId != 0)
+                {
+                    System.Diagnostics.Tracing.EventSource.SetCurrentThreadActivityId(savedActivityId);
+                }
+            }
         }
 
         /// <summary>Cached delegate that invokes an Action passed as an object parameter.</summary>
@@ -655,9 +697,9 @@ namespace System.Threading.Tasks
                     ExecutionContext.RunInternal(context, callback, state);
                 }
             }
-            catch (Exception exc) // we explicitly do not request handling of dangerous exceptions like AVs
+            catch (Exception exception) // we explicitly do not request handling of dangerous exceptions like AVs
             {
-                ThrowAsyncIfNecessary(exc);
+                Task.ThrowAsync(exception, targetContext: null);
             }
             finally
             {
@@ -697,7 +739,7 @@ namespace System.Threading.Tasks
             }
             catch (Exception exception)
             {
-                ThrowAsyncIfNecessary(exception);
+                Task.ThrowAsync(exception, targetContext: null);
             }
             finally
             {
@@ -721,7 +763,23 @@ namespace System.Threading.Tasks
             // If we're not allowed to run here, schedule the action
             if (!allowInlining || !IsValidLocationForInlining)
             {
-                ThreadPool.UnsafeQueueUserWorkItemInternal(box, preferLocal: true);
+                // If logging is disabled, we can simply queue the box itself as a custom work
+                // item, and its work item execution will just invoke its MoveNext.  However, if
+                // logging is enabled, there is pre/post-work we need to do around logging to
+                // match what's done for other continuations, and that requires flowing additional
+                // information into the continuation, which we don't want to burden other cases of the
+                // box with... so, in that case we just delegate to the AwaitTaskContinuation-based
+                // path that already handles this, albeit at the expense of allocating the ATC
+                // object, and potentially forcing the box's delegate into existence, when logging
+                // is enabled.
+                if (TplEventSource.Log.IsEnabled())
+                {
+                    UnsafeScheduleAction(box.MoveNextAction, prevCurrentTask);
+                }
+                else
+                {
+                    ThreadPool.UnsafeQueueUserWorkItemInternal(box, preferLocal: true);
+                }
                 return;
             }
 
@@ -733,7 +791,7 @@ namespace System.Threading.Tasks
             }
             catch (Exception exception)
             {
-                ThrowAsyncIfNecessary(exception);
+                Task.ThrowAsync(exception, targetContext: null);
             }
             finally
             {
@@ -743,27 +801,19 @@ namespace System.Threading.Tasks
 
         /// <summary>Schedules the action to be executed.  No ExecutionContext work is performed used.</summary>
         /// <param name="action">The action to invoke or queue.</param>
+        /// <param name="task">The task scheduling the action.</param>
         internal static void UnsafeScheduleAction(Action action, Task task)
         {
-            ThreadPool.UnsafeQueueUserWorkItemInternal(
-                new AwaitTaskContinuation(action, flowExecutionContext: false),
-                preferLocal: true);
-        }
+            AwaitTaskContinuation atc = new AwaitTaskContinuation(action, flowExecutionContext: false);
 
-        /// <summary>Throws the exception asynchronously on the ThreadPool.</summary>
-        /// <param name="exc">The exception to throw.</param>
-        protected static void ThrowAsyncIfNecessary(Exception exc)
-        {
-            // Awaits should never experience an exception (other than an TAE or ADUE), 
-            // unless a malicious user is explicitly passing a throwing action into the TaskAwaiter. 
-            // We don't want to allow the exception to propagate on this stack, as it'll emerge in random places, 
-            // and we can't fail fast, as that would allow for elevation of privilege. Instead, since this 
-            // would have executed on the thread pool otherwise, let it propagate there.
-
-            //if (!(exc is ThreadAbortException || exc is AppDomainUnloadedException))
+            var log = TplEventSource.Log;
+            if (log.IsEnabled() && task != null)
             {
-//                RuntimeAugments.ReportUnhandledException(exc);
+                atc.m_continuationId = Task.NewId();
+                log.AwaitTaskContinuationScheduled((task.ExecutingTaskScheduler ?? TaskScheduler.Default).Id, task.Id, atc.m_continuationId);
             }
+
+            ThreadPool.UnsafeQueueUserWorkItemInternal(atc, preferLocal: true);
         }
 
         internal override Delegate[] GetDelegateContinuationsForDebugger()

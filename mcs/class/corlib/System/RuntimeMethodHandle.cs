@@ -56,7 +56,7 @@ namespace System
 			MonoMethod mm = ((MonoMethod) info.GetValue ("MethodObj", typeof (MonoMethod)));
 			value = mm.MethodHandle.Value;
 			if (value == IntPtr.Zero)
-				throw new SerializationException (Locale.GetText ("Insufficient state."));
+				throw new SerializationException ("Insufficient state.");
 		}
 
 		public IntPtr Value {
