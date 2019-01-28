@@ -556,37 +556,37 @@ namespace WebAssembly.Net.WebSockets {
 			// Note that some headers are restricted like Host.
 			public void SetRequestHeader (string headerName, string headerValue)
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 
 			public bool UseDefaultCredentials {
-				get => throw new NotImplementedException ();
-				set => throw new NotImplementedException ();
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
 			public System.Net.ICredentials Credentials {
-				get => throw new NotImplementedException ();
-				set => throw new NotImplementedException ();
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
 			public System.Net.IWebProxy Proxy {
-				get => throw new NotImplementedException ();
-				set => throw new NotImplementedException ();
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
 			public X509CertificateCollection ClientCertificates {
-				get => throw new NotImplementedException ();
-				set => throw new NotImplementedException ();
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
 			public System.Net.Security.RemoteCertificateValidationCallback RemoteCertificateValidationCallback {
-				get => throw new NotImplementedException ();
-				set => throw new NotImplementedException ();
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
 			public System.Net.CookieContainer Cookies {
-				get => throw new NotImplementedException ();
-				set => throw new NotImplementedException ();
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
 			#endregion HTTP Settings
@@ -609,8 +609,8 @@ namespace WebAssembly.Net.WebSockets {
 			internal IList<string> RequestedSubProtocols { get { return requestedSubProtocols; } }
 
 			public TimeSpan KeepAliveInterval {
-				get => throw new NotImplementedException ();
-				set => throw new NotImplementedException ();
+				get => throw new PlatformNotSupportedException ();
+				set => throw new PlatformNotSupportedException ();
 			}
 
 			public void SetBuffer (int receiveBufferSize, int sendBufferSize)
@@ -620,7 +620,7 @@ namespace WebAssembly.Net.WebSockets {
 
 			public void SetBuffer (int receiveBufferSize, int sendBufferSize, ArraySegment<byte> buffer)
 			{
-				throw new NotImplementedException ();
+				throw new PlatformNotSupportedException ();
 			}
 
 			#endregion WebSocket settings
