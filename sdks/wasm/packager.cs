@@ -60,7 +60,8 @@ class Driver {
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
-	const string HTTP_ASM_NAME = "WebAssembly.Net.Http";	
+	const string HTTP_ASM_NAME = "WebAssembly.Net.Http";
+	const string WEBSOCKETS_ASM_NAME = "WebAssembly.Net.WebSockets";
 
 	class AssemblyData {
 		// Assembly name
@@ -480,6 +481,8 @@ class Driver {
 			Import (bindings, AssemblyKind.Framework);
 			var http = ResolveFramework (HTTP_ASM_NAME + ".dll");
 			Import (http, AssemblyKind.Framework);
+			var websockets = ResolveFramework (WEBSOCKETS_ASM_NAME + ".dll");
+			Import (websockets, AssemblyKind.Framework);
 		}
 
 		if (enable_aot) {
@@ -529,6 +532,7 @@ class Driver {
 		if (add_binding) {		
 			wasm_core_assemblies [BINDINGS_ASM_NAME] = true;
 			wasm_core_assemblies [HTTP_ASM_NAME] = true;
+			wasm_core_assemblies [WEBSOCKETS_ASM_NAME] = true;
 		}
 
 		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, "runtime.js");
