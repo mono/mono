@@ -1268,7 +1268,6 @@
     <Compile Include="..\referencesource\mscorlib\system\threading\waithandle.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\waithandleExtensions.cs" />
     <Compile Include="..\referencesource\mscorlib\system\throwhelper.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
     <Compile Include="..\referencesource\mscorlib\system\typeloadexception.cs" />
     <Compile Include="..\referencesource\mscorlib\system\unityserializationholder.cs" />
@@ -2004,12 +2003,7 @@
     <Compile Include="System\TermInfoNumbers.cs" />
     <Compile Include="System\TermInfoReader.cs" />
     <Compile Include="System\TermInfoStrings.cs" />
-    <Compile Include="System\TimeZoneInfo.Android.cs" />
-    <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
-    <Compile Include="System\TimeZoneInfo.Serialization.cs" />
     <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
-    <Compile Include="System\TimeZoneInfo.WinRT.cs" />
-    <Compile Include="System\TimeZoneInfo.cs" />
     <Compile Include="System\TypeIdentifier.cs" />
     <Compile Include="System\TypeSpec.cs" />
     <Compile Include="System\UIntPtr.cs" />
@@ -2043,7 +2037,6 @@
     <Compile Include="corefx\SynchronizationContext.cs" />
     <Compile Include="corefx\TimeSpanParse.cs" />
     <Compile Include="corefx\TimeZone.cs" />
-    <Compile Include="corefx\TimeZoneInfo.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
     <Compile Include="corert\Decimal.DecCalc.cs" />
     <Compile Include="corert\Decimal.cs" />
@@ -2078,11 +2071,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2107,6 +2100,7 @@
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
+        <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
         <Compile Include="CommonCrypto\CommonCrypto.cs" />
         <Compile Include="CommonCrypto\CorlibExtras.cs" />
         <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2125,7 +2119,13 @@
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
+        <Compile Include="System\TimeZoneInfo.Android.cs" />
+        <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
+        <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WinRT.cs" />
+        <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
+        <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
       </ItemGroup>
@@ -2135,9 +2135,20 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.NTSTATUS.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.FreeLibrary.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.LoadLibraryEx.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.MAX_PATH.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.MUI.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.Registry.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\User32\Interop.LoadString.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Windows.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\Win32Marshal.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.StringSerializer.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.TransitionTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.Win32.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.BOOL.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.BOOLEAN.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.Errors.cs" />
@@ -2194,6 +2205,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.SetThreadErrorMode.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.WIN32_FILE_ATTRIBUTE_DATA.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.WIN32_FIND_DATA.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeLibraryHandle.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Win32.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Memory\FixedBufferExtensions.cs" />
         <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\Microsoft\Win32\Registry.cs" />
@@ -2248,11 +2260,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2288,6 +2300,7 @@
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
+        <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
         <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Registry.cs" />
         <Compile Include="Microsoft.Win32\RegistryKey.cs" />
@@ -2302,7 +2315,13 @@
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+        <Compile Include="System\TimeZoneInfo.Android.cs" />
+        <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
+        <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WinRT.cs" />
+        <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
+        <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
       </ItemGroup>
@@ -2311,11 +2330,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2351,6 +2370,7 @@
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
+        <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
         <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Registry.cs" />
         <Compile Include="Microsoft.Win32\RegistryKey.cs" />
@@ -2365,7 +2385,13 @@
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+        <Compile Include="System\TimeZoneInfo.Android.cs" />
+        <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
+        <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WinRT.cs" />
+        <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
+        <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
       </ItemGroup>
@@ -2374,11 +2400,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2414,6 +2440,7 @@
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
+        <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
         <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Registry.cs" />
         <Compile Include="Microsoft.Win32\RegistryKey.cs" />
@@ -2428,7 +2455,13 @@
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+        <Compile Include="System\TimeZoneInfo.Android.cs" />
+        <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
+        <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WinRT.cs" />
+        <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
+        <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
       </ItemGroup>
@@ -2441,9 +2474,20 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.GetRandomBytes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.NTSTATUS.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.FreeLibrary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.LoadLibraryEx.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.MAX_PATH.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.MUI.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.Registry.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\User32\Interop.LoadString.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\Win32Marshal.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.StringSerializer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.TransitionTime.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.Win32.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.BOOL.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.BOOLEAN.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.Errors.cs" />
@@ -2500,6 +2544,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.SetThreadErrorMode.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.WIN32_FILE_ATTRIBUTE_DATA.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.WIN32_FIND_DATA.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeLibraryHandle.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Win32.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\Memory\FixedBufferExtensions.cs" />
             <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\Microsoft\Win32\Registry.cs" />
@@ -2552,11 +2597,20 @@
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.ResultCode.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.TimeZoneInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.Utils.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.StringSerializer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.TransitionTime.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2615,11 +2669,20 @@
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.ResultCode.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.TimeZoneInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.Utils.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.StringSerializer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.TransitionTime.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2678,11 +2741,20 @@
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.ResultCode.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.TimeZoneInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Globalization.Native\Interop.Utils.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.StringSerializer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.TransitionTime.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2744,11 +2816,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2773,6 +2845,7 @@
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
+        <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
         <Compile Include="CommonCrypto\CommonCrypto.cs" />
         <Compile Include="CommonCrypto\CorlibExtras.cs" />
         <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2795,7 +2868,13 @@
         <Compile Include="System\Environment.iOS.cs" />
         <Compile Include="System\Guid.MonoTouch.cs" />
         <Compile Include="System\NotSupportedException.iOS.cs" />
+        <Compile Include="System\TimeZoneInfo.Android.cs" />
+        <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
+        <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WinRT.cs" />
+        <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
+        <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
       </ItemGroup>
@@ -2804,11 +2883,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2833,6 +2912,7 @@
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
+        <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
         <Compile Include="CommonCrypto\CommonCrypto.cs" />
         <Compile Include="CommonCrypto\CorlibExtras.cs" />
         <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2855,7 +2935,13 @@
         <Compile Include="System\Environment.iOS.cs" />
         <Compile Include="System\Guid.MonoTouch.cs" />
         <Compile Include="System\NotSupportedException.iOS.cs" />
+        <Compile Include="System\TimeZoneInfo.Android.cs" />
+        <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
+        <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WinRT.cs" />
+        <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
+        <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
       </ItemGroup>
@@ -2864,11 +2950,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2893,6 +2979,7 @@
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
+        <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
         <Compile Include="CommonCrypto\CommonCrypto.cs" />
         <Compile Include="CommonCrypto\CorlibExtras.cs" />
         <Compile Include="CommonCrypto\CryptorTransform.cs" />
@@ -2915,7 +3002,13 @@
         <Compile Include="System\Environment.iOS.cs" />
         <Compile Include="System\Guid.MonoTouch.cs" />
         <Compile Include="System\NotSupportedException.iOS.cs" />
+        <Compile Include="System\TimeZoneInfo.Android.cs" />
+        <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
+        <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WinRT.cs" />
+        <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
+        <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
       </ItemGroup>
@@ -2924,11 +3017,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetEGid.cs" />
@@ -2964,6 +3057,7 @@
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
+        <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
         <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Registry.cs" />
         <Compile Include="Microsoft.Win32\RegistryKey.cs" />
@@ -2978,7 +3072,13 @@
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+        <Compile Include="System\TimeZoneInfo.Android.cs" />
+        <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
+        <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WinRT.cs" />
+        <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
+        <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
       </ItemGroup>
