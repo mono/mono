@@ -13,6 +13,7 @@
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>False</NoStdLib>
+    <NoStdLib Condition=" '$(Platform)' == 'net_4_x' ">True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>gacutil</AssemblyName>
@@ -140,6 +141,7 @@
   <!-- @ALL_SOURCES@ -->
   <!-- @COMMON_PROJECT_REFERENCES@ -->
   <ItemGroup Condition=" '$(Platform)' == 'net_4_x' ">
+    <ProjectReference Include="../../class/corlib/corlib.csproj" />
     <ProjectReference Include="../../class/System/System.csproj" />
     <ProjectReference Include="../../class/Mono.Security/Mono.Security.csproj" />
     <ProjectReference Include="../../class/System.Security/System.Security.csproj" />
