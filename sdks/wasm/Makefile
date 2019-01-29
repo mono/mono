@@ -321,6 +321,8 @@ package: build build-dbg-proxy
 	cp framework/WebAssembly.Bindings.pdb tmp/framework
 	cp framework/WebAssembly.Net.Http.dll tmp/framework
 	cp framework/WebAssembly.Net.Http.pdb tmp/framework
+	cp framework/WebAssembly.Net.WebSockets.dll tmp/framework
+	cp framework/WebAssembly.Net.WebSockets.pdb tmp/framework
 	mkdir tmp/framework/src
 	cp -r framework/src tmp/framework
 	$(RM) -r tmp/framework/src/**/bin
