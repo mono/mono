@@ -1472,8 +1472,17 @@ ves_icall_mono_delegate_ctor (MonoObject *this_obj_raw, MonoObject *target_raw, 
 	MonoError error;
 	MONO_HANDLE_DCL (MonoObject, this_obj);
 	MONO_HANDLE_DCL (MonoObject, target);
+
+	if (!addr) {
+		error_init (&error);
+		mono_error_set_argument_null (&error, "method", "");
+		mono_error_set_pending_exception (&error);
+		goto leave;
+	}
 	mono_delegate_ctor (this_obj, target, addr, &error);
 	mono_error_set_pending_exception (&error);
+
+leave:
 	HANDLE_FUNCTION_RETURN ();
 }
 
