@@ -181,8 +181,6 @@ namespace WebAssembly.Net.WebSockets {
 			// For Abort/Dispose.  Calling Abort on the request at any point will close the connection.
 			cts.Token.Register (AbortRequest);
 
-			Debug.WriteLine ($"WasmWebSocket: Connecting to {uri}");
-
 			// Wrap the cancellationToken in a using so that it can be disposed of whether
 			// we successfully connected or failed trying.
 			// Otherwise any timeout/cancellation would apply to the full session.
@@ -199,21 +197,19 @@ namespace WebAssembly.Net.WebSockets {
 					innerWebSocket = Runtime.NewJSObject (wsFunctionPtr, uri.ToString (), subProtocols);
 
 					subProtocols?.Dispose ();
-					Debug.WriteLine ($"WasmWebSocket: after creating innerWebSocket {State}");
 
 					onError = new Action<JSObject> ((errorEvt) => {
-						Console.WriteLine ($"WasmWebSocket: OnError: ");
 
 						if (cancellationToken.CanBeCanceled &&
 						    (!tcsConnect.Task.IsCanceled && !tcsConnect.Task.IsCompleted && !tcsConnect.Task.IsFaulted))
 							tcsConnect.SetException (new WebSocketException (WebSocketError.NativeError));
+						errorEvt.Dispose ();
 					});
 
 					innerWebSocket.SetObjectProperty ("onerror", onError);
 
 					onOpen = new Action<JSObject> ((evt) => {
 						if (!cancellationToken.IsCancellationRequested) {
-							Debug.WriteLine ($"WasmWebSocket: OnOpen: {State}");
 							// Change internal state to 'connected' to enable the other methods
 							if (Interlocked.CompareExchange (ref state, connected, connecting) != connecting) {
 								// Aborted/Disposed during connect.
@@ -233,7 +229,6 @@ namespace WebAssembly.Net.WebSockets {
 						innerWebSocketCloseStatus = (WebSocketCloseStatus)closeEvt.GetObjectProperty ("code");
 						innerWebSocketCloseStatusDescription = closeEvt.GetObjectProperty ("reason")?.ToString ();
 						tcsClose?.SetResult (true);
-						Debug.WriteLine ($"WasmWebSocket: OnClose State: {State}, CloseStatus: {CloseStatus}, CloseStatusDescription: {CloseStatusDescription}");
 						var mess = new ReceivePayload ( WebSocketHelpers.EmptyPayload, WebSocketMessageType.Close);
 						receiveMessageQueue.BufferPayload (mess);
 						closeEvt.Dispose ();
@@ -246,7 +241,6 @@ namespace WebAssembly.Net.WebSockets {
 
 						// get the events "data"
 						var eventData = messageEvent.GetObjectProperty ("data");
-						Debug.WriteLine ($"WasmWebSocket onmessage bynaryType: {innerWebSocket.GetObjectProperty ("binaryType")}, DataType: {eventData?.GetType ()} ");
 
 						// If the messageEvent's data property is marshalled as a JSObject then we are dealing with 
 						// binary data
@@ -292,7 +286,6 @@ namespace WebAssembly.Net.WebSockets {
 					innerWebSocket.SetObjectProperty ("onmessage", onMessage);
 
 					await tcsConnect.Task;
-					Debug.WriteLine ($"WasmWebSocket: after await webSocketJS {State}");
 
 				} catch (Exception wse) {
 					ConnectExceptionCleanup ();
@@ -313,7 +306,6 @@ namespace WebAssembly.Net.WebSockets {
 
 		public override void Dispose ()
 		{
-			Debug.WriteLine ($"WasmWebSocket: Dispose: ");
 			int priorState = Interlocked.Exchange (ref state, disposed);
 			if (priorState == disposed) {
 				// No cleanup required.
@@ -350,9 +342,7 @@ namespace WebAssembly.Net.WebSockets {
 		// and called by Dispose or Abort so that any open websocket connection can be closed.
 		private void AbortRequest ()
 		{
-			Debug.WriteLine ($"WasmWebSocket: Abort request should close connection if one is open {State}");
 			if (State == WebSocketState.Open) {
-				Debug.WriteLine ($"WasmWebSocket: Closing open WebSocket");
 				var closeResult = CloseAsync (WebSocketCloseStatus.NormalClosure, "Connection was aborted", CancellationToken.None);
 			}
 
@@ -377,8 +367,6 @@ namespace WebAssembly.Net.WebSockets {
 				throw new ArgumentException ($"Invalid message type: '{messageType}' specified in method 'SendAsync'.  Valid types are 'Binary' and 'Text'",
 				    nameof (messageType));
 			}
-
-			Debug.WriteLine ($"WasmWebSocket SendAsync: count {buffer.Count} bytes, {messageType}, endOfMessage: {endOfMessage}, bynaryType: {innerWebSocket.GetObjectProperty ("binaryType")}");
 
 			var tcsSend = new TaskCompletionSource<bool> ();
 			// Wrap the cancellationToken in a using so that it can be disposed of whether
