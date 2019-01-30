@@ -1200,6 +1200,11 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 	return result;
 }
 
+static MonoDl*
+pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *import, char **found_name_out, char **error_msg_out);
+
+static gpointer
+pinvoke_probe_for_symbol (MonoDl *module, MonoMethodPInvoke *piinfo, const char *import, char **error_msg_out);
 
 gpointer
 mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, const char **exc_arg)
@@ -1215,8 +1220,7 @@ mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, c
 	const char *orig_scope;
 	const char *new_scope;
 	char *error_msg;
-	char *full_name, *file_name, *found_name = NULL;
-	int i,j;
+	char *found_name = NULL;
 	MonoDl *module = NULL;
 	gboolean cached = FALSE;
 	gpointer addr = NULL;
@@ -1278,6 +1282,63 @@ mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, c
 		if (found_name)
 			found_name = g_strdup (found_name);
 	}
+
+	if (!module)
+		module = pinvoke_probe_for_module (image, new_scope, import, &found_name, &error_msg);
+
+	if (!module) {
+		mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_DLLIMPORT,
+				"DllImport unable to load library '%s'.",
+				error_msg);
+		g_free (error_msg);
+
+		if (exc_class) {
+			*exc_class = "DllNotFoundException";
+			*exc_arg = new_scope;
+		}
+		return NULL;
+	}
+
+	if (!cached) {
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
+					"DllImport loaded library '%s'.", found_name);
+		mono_image_lock (image);
+		if (!g_hash_table_lookup (image->pinvoke_scopes, new_scope)) {
+			g_hash_table_insert (image->pinvoke_scopes, g_strdup (new_scope), module);
+			g_hash_table_insert (image->pinvoke_scope_filenames, g_strdup (new_scope), g_strdup (found_name));
+		}
+		mono_image_unlock (image);
+	}
+
+	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
+				"DllImport searching in: '%s' ('%s').", new_scope, found_name);
+	g_free (found_name);
+
+	addr = pinvoke_probe_for_symbol (module, piinfo, import, &error_msg);
+
+	if (!addr) {
+		g_free (error_msg);
+		if (exc_class) {
+			*exc_class = "EntryPointNotFoundException";
+			*exc_arg = import;
+		}
+		return NULL;
+	}
+	piinfo->addr = addr;
+	return addr;
+}
+
+static MonoDl*
+pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *import, char **found_name_out, char **error_msg_out)
+{
+	char *full_name, *file_name;
+	char *error_msg = NULL;
+	char *found_name = NULL;
+	int i;
+	MonoDl *module = NULL;
+
+	g_assert (found_name_out);
+	g_assert (error_msg_out);
 
 	if (!module) {
 		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
@@ -1371,6 +1432,7 @@ mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, c
 		}
 
 		if (!module && !is_absolute) {
+			int j;
 			void *iter;
 			char *mdirname;
 
@@ -1492,33 +1554,18 @@ mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, c
 			break;
 	}
 
-	if (!module) {
-		mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_DLLIMPORT,
-				"DllImport unable to load library '%s'.",
-				error_msg);
-		g_free (error_msg);
+	*found_name_out = found_name;
+	*error_msg_out = error_msg;
+	return module;
+}
 
-		if (exc_class) {
-			*exc_class = "DllNotFoundException";
-			*exc_arg = new_scope;
-		}
-		return NULL;
-	}
+static gpointer
+pinvoke_probe_for_symbol (MonoDl *module, MonoMethodPInvoke *piinfo, const char *import, char **error_msg_out)
+{
+	char *error_msg = NULL;
+	gpointer addr = NULL;
 
-	if (!cached) {
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
-					"DllImport loaded library '%s'.", found_name);
-		mono_image_lock (image);
-		if (!g_hash_table_lookup (image->pinvoke_scopes, new_scope)) {
-			g_hash_table_insert (image->pinvoke_scopes, g_strdup (new_scope), module);
-			g_hash_table_insert (image->pinvoke_scope_filenames, g_strdup (new_scope), g_strdup (found_name));
-		}
-		mono_image_unlock (image);
-	}
-
-	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
-				"DllImport searching in: '%s' ('%s').", new_scope, found_name);
-	g_free (found_name);
+	g_assert (error_msg_out);
 
 #ifdef TARGET_WIN32
 	if (import && import [0] == '#' && isdigit (import [1])) {
@@ -1585,6 +1632,7 @@ mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, c
 					}
 
 #ifdef TARGET_WIN32
+					MonoMethod *method = &piinfo->method;
 					if (mangle_param_count == 0)
 						param_count = mono_method_signature_internal (method)->param_count * sizeof (gpointer);
 					else
@@ -1628,15 +1676,7 @@ mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, c
 		}
 	}
 
-	if (!addr) {
-		g_free (error_msg);
-		if (exc_class) {
-			*exc_class = "EntryPointNotFoundException";
-			*exc_arg = import;
-		}
-		return NULL;
-	}
-	piinfo->addr = addr;
+	*error_msg_out = error_msg;
 	return addr;
 }
 
