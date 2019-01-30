@@ -12702,6 +12702,9 @@ mono_dedup_log_stats (MonoAotCompile *acfg)
 	GHashTableIter iter;
 	g_assert (acfg->dedup_stats);
 
+	if (!acfg->dedup_emit_mode)
+		return;
+
 	// If dedup_emit_mode, acfg is the dummy dedup module that consolidates
 	// deduped modules
 	g_hash_table_iter_init (&iter, acfg->method_to_cfg);
@@ -13393,6 +13396,9 @@ print_stats (MonoAotCompile *acfg)
 	aot_printf (acfg, "\tInstance:  %d\n", acfg->stats.method_categories [METHOD_CAT_INST]);
 	aot_printf (acfg, "\tGSharedvt: %d\n", acfg->stats.method_categories [METHOD_CAT_GSHAREDVT]);
 	aot_printf (acfg, "\tWrapper:   %d\n", acfg->stats.method_categories [METHOD_CAT_WRAPPER]);
+
+	if (acfg->aot_opts.dedup || acfg->dedup_emit_mode)
+		mono_dedup_log_stats (acfg);
 }
 
 static int
@@ -13504,8 +13510,6 @@ emit_aot_image (MonoAotCompile *acfg)
 
 	if (acfg->aot_opts.dedup)
 		mono_flush_method_cache (acfg);
-	if (acfg->aot_opts.dedup || acfg->dedup_emit_mode)
-		mono_dedup_log_stats (acfg);
 
 	emit_code (acfg);
 
