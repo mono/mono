@@ -33,6 +33,8 @@ System.Net/EndPointManager.cs
 ../../../external/corefx/src/System.Net.Requests/src/System/Net/FtpWebRequest.cs
 ../../../external/corefx/src/System.Net.Requests/src/System/Net/FtpWebResponse.cs
 
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SslConnectionInfo.OSX.cs
+
 System.Net/HttpConnection.cs
 System.Net/HttpListener.cs
 System.Net/HttpListener.Mono.cs
