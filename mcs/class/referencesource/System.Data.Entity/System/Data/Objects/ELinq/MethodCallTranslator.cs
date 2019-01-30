@@ -21,6 +21,9 @@ namespace System.Data.Objects.ELinq
     using System.Reflection;
     using CqtExpression = System.Data.Common.CommandTrees.DbExpression;
     using LinqExpression = System.Linq.Expressions.Expression;
+#if MONO
+    using System.Globalization;
+#endif
 
     internal sealed partial class ExpressionConverter
     {
@@ -978,6 +981,11 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("Contains", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("Contains", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(StringComparison) }, null);
+                    yield return typeof(String).GetMethod("Contains", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char) }, null);
+                    yield return typeof(String).GetMethod("Contains", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char), typeof(StringComparison) }, null);
+#endif
                 }
 
                 // Translation:
@@ -1008,6 +1016,17 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char) }, null);
+                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char), typeof(int) }, null);
+                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char), typeof(StringComparison) }, null);
+                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char), typeof(int), typeof(int) }, null);
+                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(int) }, null);
+                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(int), typeof(int) }, null);
+                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(StringComparison) }, null);
+                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(int), typeof(StringComparison) }, null);
+                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(int), typeof(int), typeof(StringComparison) }, null);
+#endif
                 }
 
                 // Translation:
@@ -1030,6 +1049,11 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("StartsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("StartsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(StringComparison) }, null);
+                    yield return typeof(String).GetMethod("StartsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(bool), typeof(CultureInfo) }, null);
+                    yield return typeof(String).GetMethod("StartsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char) }, null);
+#endif
                 }
 
                 // Translation:
@@ -1061,6 +1085,11 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("EndsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("EndsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(StringComparison) }, null);
+                    yield return typeof(String).GetMethod("EndsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string), typeof(bool), typeof(CultureInfo) }, null);
+                    yield return typeof(String).GetMethod("EndsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char) }, null);
+#endif
                 }
 
                 // Translation:
@@ -1289,6 +1318,14 @@ namespace System.Data.Objects.ELinq
                     yield return typeof(String).GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string), typeof(string) }, null);
                     yield return typeof(String).GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string), typeof(string), typeof(string) }, null);
                     yield return typeof(String).GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string), typeof(string), typeof(string), typeof(string) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(object) }, null);
+                    yield return typeof(String).GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(object), typeof(object) }, null);
+                    yield return typeof(String).GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(object), typeof(object), typeof(object) }, null);
+                    yield return typeof(String).GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(object[]) }, null);
+                    yield return typeof(String).GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(IEnumerable<string>) }, null);
+                    yield return typeof(String).GetMethod("Concat", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string[]) }, null);
+#endif
                 }
 
                 // Translation:
@@ -1363,6 +1400,10 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("Trim", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char[]) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("Trim", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
+                    yield return typeof(String).GetMethod("Trim", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char) }, null);
+#endif
                 }
             }
             private sealed class TrimStartTranslator : TrimBaseTranslator
@@ -1373,6 +1414,10 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("TrimStart", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char[]) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("TrimStart", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
+                    yield return typeof(String).GetMethod("TrimStart", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char) }, null);
+#endif
                 }
             }
             private sealed class TrimEndTranslator : TrimBaseTranslator
@@ -1383,6 +1428,10 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("TrimEnd", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char[]) }, null);
+#if MONO
+                    yield return typeof(String).GetMethod("TrimEnd", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
+                    yield return typeof(String).GetMethod("TrimEnd", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char) }, null);
+#endif
                 }
             }
             #endregion
