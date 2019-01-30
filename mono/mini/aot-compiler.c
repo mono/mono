@@ -9010,7 +9010,7 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	if (m_class_get_image (method->klass) != mono_get_corlib ())
 		g_string_append_printf (s, "%s_", m_class_get_image (method->klass)->assembly->aname.name);
 
-	if (method->wrapper_type != MONO_WRAPPER_OTHER)
+	if (method->wrapper_type != MONO_WRAPPER_OTHER && method->wrapper_type != MONO_WRAPPER_MANAGED_TO_NATIVE)
 		append_mangled_wrapper_type (s, method->wrapper_type);
 
 	switch (method->wrapper_type) {
@@ -9072,7 +9072,12 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 	case MONO_WRAPPER_MANAGED_TO_NATIVE: {
 		append_mangled_wrapper_subtype (s, info->subtype);
 		if (info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
-			g_string_append_printf (s, "%s", method->name);
+			const char *name = method->name;
+			const char *prefix = "__icall_wrapper_";
+			if (strstr (name, prefix))
+				name += strlen (prefix);
+			g_string_append_printf (s, "%s", name);
+			append_sig = FALSE;
 		} else if (info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT) {
 			success = success && append_mangled_method (s, info->d.managed_to_native.method);
 		} else {
