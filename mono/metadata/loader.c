@@ -32,6 +32,7 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/loader.h>
+#include <mono/metadata/loader-internals.h>
 #include <mono/metadata/class-init.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/debug-helpers.h>
@@ -1191,6 +1192,17 @@ is_absolute_path (const char *path)
  */
 gpointer
 mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char **exc_arg)
+{
+	gpointer result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_lookup_pinvoke_call_internal (method, exc_class, exc_arg);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+
+gpointer
+mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, const char **exc_arg)
 {
 	MonoImage *image = m_class_get_image (method->klass);
 	MonoMethodPInvoke *piinfo = (MonoMethodPInvoke *)method;
