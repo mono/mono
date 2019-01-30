@@ -12600,7 +12600,9 @@ static const char *preinited_jit_icalls[] = {
 	"mini_llvmonly_init_gshared_method_vtable",
 	"mono_llvm_throw_corlib_exception",
 	"mini_llvmonly_init_vtable_slot",
-	"mono_helper_ldstr_mscorlib"
+	"mono_helper_ldstr_mscorlib",
+	"mono_fill_method_rgctx",
+	"mono_fill_class_rgctx"
 };
 
 static void
@@ -12655,16 +12657,18 @@ add_preinit_got_slots (MonoAotCompile *acfg)
 	ji->type = MONO_PATCH_INFO_GC_SAFE_POINT_FLAG;
 	add_preinit_slot (acfg, ji);
 
-	for (i = 0; i < TLS_KEY_NUM; i++) {
-		ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
-		ji->type = MONO_PATCH_INFO_GET_TLS_TRAMP;
-		ji->data.index = i;
-		add_preinit_slot (acfg, ji);
+	if (!acfg->aot_opts.llvm_only) {
+		for (i = 0; i < TLS_KEY_NUM; i++) {
+			ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
+			ji->type = MONO_PATCH_INFO_GET_TLS_TRAMP;
+			ji->data.index = i;
+			add_preinit_slot (acfg, ji);
 
-		ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
-		ji->type = MONO_PATCH_INFO_SET_TLS_TRAMP;
-		ji->data.index = i;
-		add_preinit_slot (acfg, ji);
+			ji = (MonoJumpInfo *)mono_mempool_alloc0 (acfg->mempool, sizeof (MonoJumpInfo));
+			ji->type = MONO_PATCH_INFO_SET_TLS_TRAMP;
+			ji->data.index = i;
+			add_preinit_slot (acfg, ji);
+		}
 	}
 
 	/* Called by native-to-managed wrappers on possibly unattached threads */
