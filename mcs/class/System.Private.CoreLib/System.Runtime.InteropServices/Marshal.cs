@@ -116,16 +116,10 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		public static IntPtr StringToBSTR(string s) { throw null; }
-		public static IntPtr StringToCoTaskMemAnsi(string s) { throw null; }
-		public static IntPtr StringToCoTaskMemAuto(string s) { throw null; }
-		public static IntPtr StringToCoTaskMemUni(string s) { throw null; }
-		public static IntPtr StringToCoTaskMemUTF8(string s) { throw null; }
-		public static IntPtr StringToHGlobalAnsi(string s) { throw null; }
-		public static IntPtr StringToHGlobalAuto(string s) { throw null; }
-		public static IntPtr StringToHGlobalUni(string s) { throw null; }
-
-		//
+		public static IntPtr StringToBSTR (string s)
+		{
+			throw null;
+		}
 
 		#region PlatformNotSupported
 
