@@ -77,7 +77,7 @@ namespace System.Runtime.InteropServices
 		{
 			if (!(m is MonoMethod))
 			{
-				throw new ArgumentException(SR.Argument_MustBeRuntimeMethodInfo, nameof(m));
+				throw new ArgumentException (SR.Argument_MustBeRuntimeMethodInfo, nameof(m));
 			}
 
 			PrelinkInternal (m);
@@ -104,12 +104,6 @@ namespace System.Runtime.InteropServices
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern int SizeOfHelper (Type t, bool throwIfNotMarshalable);
-
-		static int GetSystemMaxDBCSCharSize ()
-		{
-			// TODO: Windows specific
-			return 2;
-		}
 
 		public static IntPtr GetExceptionPointers ()
 		{
