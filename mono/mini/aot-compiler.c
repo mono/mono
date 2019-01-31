@@ -9074,7 +9074,7 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 		if (info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
 			const char *name = method->name;
 			const char *prefix = "__icall_wrapper_";
-			if (strstr (name, prefix))
+			if (strstr (name, prefix) == name)
 				name += strlen (prefix);
 			g_string_append_printf (s, "%s", name);
 			append_sig = FALSE;
