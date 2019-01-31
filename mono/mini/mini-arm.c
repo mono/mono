@@ -5019,8 +5019,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			if (call->stack_usage) {
 				int i, prev_sp_offset = 0;
-				int saved_ip_offset = 0;
-
+				
 				/* Compute size of saved registers restored below */
 				if (iphone_abi)
 					prev_sp_offset = 2 * 4;
