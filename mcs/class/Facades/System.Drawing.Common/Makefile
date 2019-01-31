@@ -12,7 +12,7 @@ LIBRARY = System.Drawing.Common.dll
 KEYFILE = ../../Open.snk
 LIBRARY_SNK = $(KEYFILE)
 SIGN_FLAGS = /delaysign /nowarn:1616,1699
-LIB_REFS = 
+LIB_REFS = System
 LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
 
 ifdef false # we'll enable this at a later point
