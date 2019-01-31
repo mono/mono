@@ -117,7 +117,8 @@ testing_aot_hybrid_dirs_parallel := $(testing_aot_full_dirs_parallel)
 
 xammac_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
-	Mono.CompilerServices.SymbolWriter
+	Mono.CompilerServices.SymbolWriter	\
+	Mono.CSharp
 
 monodroid_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
