@@ -1,5 +1,5 @@
 //
-// System.Reflection/MonoModule.cs
+// System.Reflection/RuntimeModule.cs
 //
 // Author:
 //   Rodrigo Kumpera (rkumpera@novell.com)
@@ -38,17 +38,12 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
-	abstract class RuntimeModule : Module
-	{
-		
-	}
-
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	class MonoModule : RuntimeModule
+	class RuntimeModule : Module
 	{
 #pragma warning disable 649
 		#region Sync with object-internals.h

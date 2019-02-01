@@ -528,7 +528,7 @@ namespace System
 				var a = new RuntimePropertyInfo [n];
 				for (int i = 0; i < n; i++) {
 					var ph = new Mono.RuntimePropertyHandle (h[i]);
-					a[i] = (RuntimePropertyInfo) MonoProperty.GetPropertyFromHandle (ph, refh);
+					a[i] = (RuntimePropertyInfo) RuntimePropertyInfo.GetPropertyFromHandle (ph, refh);
 				}
 				return a;
 			}

@@ -1,4 +1,4 @@
-// System.Reflection.ParameterInfo
+// System.Reflection.RuntimeParameterInfo
 //
 // Authors:
 //   Sean MacIsaac (macisaac@ximian.com)
@@ -38,11 +38,6 @@ using System.Text;
 
 namespace System.Reflection
 {
-	abstract class RuntimeParameterInfo : ParameterInfo
-	{
-
-	}
-
 #if !NETCORE
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
@@ -50,7 +45,7 @@ namespace System.Reflection
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 #endif
 	[StructLayout (LayoutKind.Sequential)]
-	class MonoParameterInfo : RuntimeParameterInfo {		
+	class RuntimeParameterInfo : ParameterInfo {		
 		internal MarshalAsAttribute marshalAs;
 
 		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p, CallingConventions callingConvention, bool serialization)
@@ -86,7 +81,7 @@ namespace System.Reflection
 		}
 
 #if MONO_FEATURE_SRE
-		internal MonoParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
+		internal RuntimeParameterInfo (ParameterBuilder pb, Type type, MemberInfo member, int position) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			if (pb != null) {
@@ -102,12 +97,12 @@ namespace System.Reflection
 
 		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
 		{
-			return new MonoParameterInfo (pb, type, member, position);
+			return new RuntimeParameterInfo (pb, type, member, position);
 		}		
 #endif
 
 		/*FIXME this constructor looks very broken in the position parameter*/
-		internal MonoParameterInfo (ParameterInfo pinfo, Type type, MemberInfo member, int position) {
+		internal RuntimeParameterInfo (ParameterInfo pinfo, Type type, MemberInfo member, int position) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			if (pinfo != null) {
@@ -121,7 +116,7 @@ namespace System.Reflection
 			}
 		}
 
-		internal MonoParameterInfo (ParameterInfo pinfo, MemberInfo member) {
+		internal RuntimeParameterInfo (ParameterInfo pinfo, MemberInfo member) {
 			this.ClassImpl = pinfo.ParameterType;
 			this.MemberImpl = member;
 			this.NameImpl = pinfo.Name;
@@ -131,7 +126,7 @@ namespace System.Reflection
 		}
 
 		/* to build a ParameterInfo for the return type of a method */
-		internal MonoParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
+		internal RuntimeParameterInfo (Type type, MemberInfo member, MarshalAsAttribute marshalAs) {
 			this.ClassImpl = type;
 			this.MemberImpl = member;
 			this.NameImpl = null;
@@ -313,17 +308,17 @@ namespace System.Reflection
 
 		internal static ParameterInfo New (ParameterInfo pinfo, Type type, MemberInfo member, int position)
 		{
-			return new MonoParameterInfo (pinfo, type, member, position);
+			return new RuntimeParameterInfo (pinfo, type, member, position);
 		}
 
 		internal static ParameterInfo New (ParameterInfo pinfo, MemberInfo member)
 		{
-			return new MonoParameterInfo (pinfo, member);
+			return new RuntimeParameterInfo (pinfo, member);
 		}
 
 		internal static ParameterInfo New (Type type, MemberInfo member, MarshalAsAttribute marshalAs)
 		{
-			return new MonoParameterInfo (type, member, marshalAs);
+			return new RuntimeParameterInfo (type, member, marshalAs);
 		}
 
 		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (optional) ?? Type.EmptyTypes;

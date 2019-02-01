@@ -76,7 +76,7 @@ namespace System
 				pseudoAttrs = monoMethod.GetPseudoCustomAttributes ();
 			else if (obj is MonoField fieldInfo)
 				pseudoAttrs = fieldInfo.GetPseudoCustomAttributes ();
-			else if (obj is MonoParameterInfo monoParamInfo)
+			else if (obj is RuntimeParameterInfo monoParamInfo)
 				pseudoAttrs = monoParamInfo.GetPseudoCustomAttributes ();
 			else if (obj is Type t)
 				pseudoAttrs = GetPseudoCustomAttributes (t);
@@ -467,7 +467,7 @@ namespace System
 				pseudoAttrsData = monoMethod.GetPseudoCustomAttributesData ();
 			else if (obj is MonoField fieldInfo)
 				pseudoAttrsData = fieldInfo.GetPseudoCustomAttributesData ();
-			else if (obj is MonoParameterInfo monoParamInfo)
+			else if (obj is RuntimeParameterInfo monoParamInfo)
 				pseudoAttrsData = monoParamInfo.GetPseudoCustomAttributesData ();
 			else if (obj is Type t)
 				pseudoAttrsData = GetPseudoCustomAttributesData (t);
@@ -550,7 +550,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern bool IsDefinedInternal (ICustomAttributeProvider obj, Type AttributeType);
 
-		static PropertyInfo GetBasePropertyDefinition (MonoProperty property)
+		static PropertyInfo GetBasePropertyDefinition (RuntimePropertyInfo property)
 		{
 			MethodInfo method = property.GetGetMethod (true);
 			if (method == null || !method.IsVirtual)
@@ -575,7 +575,7 @@ namespace System
 
 		}
 
-		static EventInfo GetBaseEventDefinition (MonoEvent evt)
+		static EventInfo GetBaseEventDefinition (RuntimeEventInfo evt)
 		{
 			MethodInfo method = evt.GetAddMethod (true);
 			if (method == null || !method.IsVirtual)
@@ -595,8 +595,8 @@ namespace System
 			return null;
 		}
 
-		// Handles Type, MonoProperty and MonoMethod.
-		// The runtime has also cases for MonoEvent, MonoField, Assembly and ParameterInfo,
+		// Handles Type, RuntimePropertyInfo and MonoMethod.
+		// The runtime has also cases for RuntimeEventInfo, RuntimeFieldInfo, Assembly and ParameterInfo,
 		// but for those we return null here.
 		static ICustomAttributeProvider GetBase (ICustomAttributeProvider obj)
 		{
@@ -607,18 +607,18 @@ namespace System
 				return ((Type) obj).BaseType;
 
 			MethodInfo method = null;
-			if (obj is MonoProperty)
-				return GetBasePropertyDefinition ((MonoProperty) obj);
-			else if (obj is MonoEvent)
-				return GetBaseEventDefinition ((MonoEvent)obj);
+			if (obj is RuntimePropertyInfo)
+				return GetBasePropertyDefinition ((RuntimePropertyInfo) obj);
+			else if (obj is RuntimeEventInfo)
+				return GetBaseEventDefinition ((RuntimeEventInfo)obj);
 			else if (obj is MonoMethod)
 				method = (MethodInfo) obj;
 
 			/**
 			 * ParameterInfo -> null
 			 * Assembly -> null
-			 * MonoEvent -> null
-			 * MonoField -> null
+			 * RuntimeEventInfo -> null
+			 * RuntimeFieldInfo -> null
 			 */
 			if (method == null || !method.IsVirtual)
 				return null;

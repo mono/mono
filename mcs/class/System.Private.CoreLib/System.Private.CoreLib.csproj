@@ -227,10 +227,10 @@
 
       <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
       <Compile Include="..\corlib\System.Reflection\MonoMethod.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoParameterInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\MonoField.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoProperty.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoEvent.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimePropertyInfo.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimeEventInfo.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimeParameterInfo.cs" />
 
       <Compile Include="..\corlib\System.Runtime.InteropServices\GCHandle.cs" />
   </ItemGroup>
