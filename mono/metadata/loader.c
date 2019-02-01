@@ -1203,6 +1203,9 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 static MonoDl*
 pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *import, char **found_name_out, char **error_msg_out);
 
+static MonoDl*
+pinvoke_probe_for_module_relative_directories (MonoImage *image, const char *file_name, char **found_name_out);
+
 static gpointer
 pinvoke_probe_for_symbol (MonoDl *module, MonoMethodPInvoke *piinfo, const char *import, char **error_msg_out);
 
@@ -1432,6 +1435,63 @@ pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *im
 		}
 
 		if (!module && !is_absolute) {
+			module = pinvoke_probe_for_module_relative_directories (image, file_name, &found_name);
+		}
+
+		if (!module) {
+			void *iter = NULL;
+			char *file_or_base = is_absolute ? base_name : file_name;
+			while ((full_name = mono_dl_build_path (dir_name, file_or_base, &iter))) {
+				module = cached_module_load (full_name, MONO_DL_LAZY, &error_msg);
+				if (!module) {
+					mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
+							"DllImport error loading library '%s': '%s'.",
+								full_name, error_msg);
+					g_free (error_msg);
+				} else {
+					found_name = g_strdup (full_name);
+				}
+				g_free (full_name);
+				if (module)
+					break;
+			}
+		}
+
+		if (!module) {
+			module = cached_module_load (file_name, MONO_DL_LAZY, &error_msg);
+			if (!module) {
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
+						"DllImport error loading library '%s': '%s'.",
+							file_name, error_msg);
+			} else {
+				found_name = g_strdup (file_name);
+			}
+		}
+
+		g_free (file_name);
+		if (is_absolute) {
+			g_free (base_name);
+			g_free (dir_name);
+		}
+
+		if (module)
+			break;
+	}
+
+	*found_name_out = found_name;
+	*error_msg_out = error_msg;
+	return module;
+}
+
+static MonoDl*
+pinvoke_probe_for_module_relative_directories (MonoImage *image, const char *file_name, char **found_name_out)
+{
+	char *full_name;
+	char *found_name = NULL;
+	MonoDl* module = NULL;
+
+	g_assert (found_name_out);
+
 			int j;
 			void *iter;
 			char *mdirname;
@@ -1493,6 +1553,7 @@ pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *im
 					continue;
 
 				while ((full_name = mono_dl_build_path (mdirname, file_name, &iter))) {
+					char *error_msg;
 					module = cached_module_load (full_name, MONO_DL_LAZY, &error_msg);
 					if (!module) {
 						mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
@@ -1512,52 +1573,10 @@ pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *im
 					break;
 			}
 
-		}
-
-		if (!module) {
-			void *iter = NULL;
-			char *file_or_base = is_absolute ? base_name : file_name;
-			while ((full_name = mono_dl_build_path (dir_name, file_or_base, &iter))) {
-				module = cached_module_load (full_name, MONO_DL_LAZY, &error_msg);
-				if (!module) {
-					mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
-							"DllImport error loading library '%s': '%s'.",
-								full_name, error_msg);
-					g_free (error_msg);
-				} else {
-					found_name = g_strdup (full_name);
-				}
-				g_free (full_name);
-				if (module)
-					break;
-			}
-		}
-
-		if (!module) {
-			module = cached_module_load (file_name, MONO_DL_LAZY, &error_msg);
-			if (!module) {
-				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
-						"DllImport error loading library '%s': '%s'.",
-							file_name, error_msg);
-			} else {
-				found_name = g_strdup (file_name);
-			}
-		}
-
-		g_free (file_name);
-		if (is_absolute) {
-			g_free (base_name);
-			g_free (dir_name);
-		}
-
-		if (module)
-			break;
-	}
-
-	*found_name_out = found_name;
-	*error_msg_out = error_msg;
-	return module;
+		*found_name_out = found_name;
+		return module;
 }
+
 
 static gpointer
 pinvoke_probe_for_symbol (MonoDl *module, MonoMethodPInvoke *piinfo, const char *import, char **error_msg_out)
