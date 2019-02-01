@@ -16,7 +16,7 @@ LIB_REFS = System System.Xml System.Core
 
 NO_TEST = yes
 
-EXTRA_DISTFILES =
+EXTRA_DISTFILES = nunit.pub
 
 include ../../../build/library.make
 

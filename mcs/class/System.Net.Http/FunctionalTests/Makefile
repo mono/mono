@@ -18,3 +18,4 @@ TEST_RUNTIME := MONO_URI_DOTNETRELATIVEORABSOLUTE=true $(TEST_RUNTIME)
 clean-local:
 	-rm -f $(tests_CLEAN_FILES) $(CLEAN_FILES)
 
+dist-local: dist-default
