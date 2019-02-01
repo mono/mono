@@ -15,3 +15,4 @@ xtest_flags = $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS) /unsaf
 clean-local:
 	-rm -f $(tests_CLEAN_FILES) $(CLEAN_FILES)
 
+dist-local: dist-default
