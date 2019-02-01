@@ -21,6 +21,7 @@ namespace WsProxy {
 		public const string GET_LOADED_FILES = "MONO.mono_wasm_get_loaded_files()";
 		public const string CLEAR_ALL_BREAKPOINTS = "MONO.mono_wasm_clear_all_breakpoints()";
 		public const string GET_OBJECT_PROPERTIES = "MONO.mono_wasm_get_object_properties({0})";
+		public const string GET_ARRAY_VALUES = "MONO.mono_wasm_get_array_values({0})";
 	}
 
 	internal enum MonoErrorCodes {
@@ -201,9 +202,12 @@ namespace WsProxy {
 						await GetScopeProperties (id, int.Parse (objId.Substring ("dotnet:scope:".Length)), token);
 						return true;
 					}
-					if (objId.StartsWith("dotnet:object:", StringComparison.InvariantCulture))
+					if (objId.StartsWith("dotnet:", StringComparison.InvariantCulture))
 					{
-						await GetObjectProperties(id, int.Parse(objId.Substring("dotnet:object:".Length)), token);
+						if (objId.StartsWith("dotnet:object:", StringComparison.InvariantCulture))
+							await GetDetails(id, int.Parse(objId.Substring("dotnet:object:".Length)), token, MonoCommands.GET_OBJECT_PROPERTIES);
+						if (objId.StartsWith("dotnet:array:", StringComparison.InvariantCulture))
+							await GetDetails(id, int.Parse(objId.Substring("dotnet:array:".Length)), token, MonoCommands.GET_ARRAY_VALUES);
 						return true;
 					}
 					break;
@@ -398,11 +402,11 @@ namespace WsProxy {
 			await SendCommand ("Debugger.resume", new JObject (), token);
 		}
 
-		async Task GetObjectProperties(int msg_id, int object_id, CancellationToken token)
+		async Task GetDetails(int msg_id, int object_id, CancellationToken token, string command)
 		{
 			var o = JObject.FromObject(new
 			{
-				expression = string.Format(MonoCommands.GET_OBJECT_PROPERTIES, object_id),
+				expression = string.Format(command, object_id),
 				objectGroup = "mono_debugger",
 				includeCommandLineAPI = false,
 				silent = false,
