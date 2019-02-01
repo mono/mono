@@ -1186,4 +1186,6 @@ partial class SR
 	public const string IndexOutOfRange_ArrayWithOffset = "";
 	public const string Argument_NotIsomorphic = "";
 	public const string Argument_StructArrayTooLarge = "";
+	public const string PersistedFiles_NoHomeDirectory = "The home directory of the current user could not be determined.";
+	public const string AmbiguousImplementationException_NullMessage = "Ambiguous implementation found.";
 }

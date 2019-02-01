@@ -292,10 +292,9 @@ clean:
 	$(RM) -r sdk/packages
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.dll
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.pdb
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.pdb
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
 
 package: build build-dbg-proxy
 	rm -rf tmp
@@ -323,6 +322,8 @@ package: build build-dbg-proxy
 	cp framework/WebAssembly.Bindings.pdb tmp/framework
 	cp framework/WebAssembly.Net.Http.dll tmp/framework
 	cp framework/WebAssembly.Net.Http.pdb tmp/framework
+	cp framework/WebAssembly.Net.WebSockets.dll tmp/framework
+	cp framework/WebAssembly.Net.WebSockets.pdb tmp/framework
 	mkdir tmp/framework/src
 	cp -r framework/src tmp/framework
 	$(RM) -r tmp/framework/src/**/bin
@@ -352,6 +353,12 @@ canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
 
 check-aot: do-aot-sample
+
+clean-sdk:
+	$(RM) -r sdk/**/bin
+	$(RM) -r sdk/**/obj
+	$(RM) -r sdk/**/**/bin
+	$(RM) -r sdk/**/**/obj
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	msbuild /r sdk/Mono.WebAssembly.Sdk

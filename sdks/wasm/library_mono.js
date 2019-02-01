@@ -51,6 +51,20 @@ var MonoSupportLib = {
 			return res;
 		},
 
+		mono_wasm_get_object_properties: function(scope) {
+			if (!this.mono_wasm_get_object_properties_info)
+				this.mono_wasm_get_object_properties_info = Module.cwrap ("mono_wasm_get_object_properties", 'void', [ 'number' ]);
+
+			this.var_info = [];
+			console.log (">> mono_wasm_get_object_properties " + scope);
+			this.mono_wasm_get_object_properties_info (scope);
+
+			var res = this.var_info;
+			this.var_info = []
+
+			return res;
+		},
+
 		mono_wasm_start_single_stepping: function (kind) {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)
@@ -225,6 +239,12 @@ var MonoSupportLib = {
 		});
 	},
 
+	mono_wasm_add_properties_var: function(name) {
+		MONO.var_info.push({
+			name: Module.UTF8ToString (name),
+		});
+	},
+
 	mono_wasm_add_string_var: function(var_value) {
 		if (var_value == 0) {
 			MONO.var_info.push({
@@ -238,6 +258,27 @@ var MonoSupportLib = {
 				value: {
 					type: "string",
 					value: Module.UTF8ToString (var_value),
+				}
+			});
+		}
+	},
+	mono_wasm_add_obj_var: function(className, objectId) {
+		if (objectId == 0) {
+			MONO.var_info.push({
+				value: {
+					type: "object",
+					className: Module.UTF8ToString (className),
+					description: Module.UTF8ToString (className),
+					subtype: "null"
+				}
+			});
+		} else {
+			MONO.var_info.push({
+				value: {
+					type: "object",
+					className: Module.UTF8ToString (className),
+					description: Module.UTF8ToString (className),
+					objectId: "dotnet:object:"+ objectId,
 				}
 			});
 		}

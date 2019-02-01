@@ -20,6 +20,7 @@ namespace WsProxy {
 		public const string REMOVE_BREAK_POINT = "MONO.mono_wasm_remove_breakpoint({0})";
 		public const string GET_LOADED_FILES = "MONO.mono_wasm_get_loaded_files()";
 		public const string CLEAR_ALL_BREAKPOINTS = "MONO.mono_wasm_clear_all_breakpoints()";
+		public const string GET_OBJECT_PROPERTIES = "MONO.mono_wasm_get_object_properties({0})";
 	}
 
 	internal enum MonoErrorCodes {
@@ -200,7 +201,11 @@ namespace WsProxy {
 						await GetScopeProperties (id, int.Parse (objId.Substring ("dotnet:scope:".Length)), token);
 						return true;
 					}
-
+					if (objId.StartsWith("dotnet:object:", StringComparison.InvariantCulture))
+					{
+						await GetObjectProperties(id, int.Parse(objId.Substring("dotnet:object:".Length)), token);
+						return true;
+					}
 					break;
 				}
 			}
@@ -392,6 +397,57 @@ namespace WsProxy {
 
 			await SendCommand ("Debugger.resume", new JObject (), token);
 		}
+
+		async Task GetObjectProperties(int msg_id, int object_id, CancellationToken token)
+		{
+			var o = JObject.FromObject(new
+			{
+				expression = string.Format(MonoCommands.GET_OBJECT_PROPERTIES, object_id),
+				objectGroup = "mono_debugger",
+				includeCommandLineAPI = false,
+				silent = false,
+				returnByValue = true,
+			});
+
+			var res = await SendCommand("Runtime.evaluate", o, token);
+
+			//if we fail we just buble that to the IDE (and let it panic over it)
+			if (res.IsErr)
+			{
+				SendResponse(msg_id, res, token);
+				return;
+			}
+
+			var values = res.Value?["result"]?["value"]?.Values<JObject>().ToArray();
+
+			var var_list = new List<JObject>();
+
+			// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
+			// results in a "Memory access out of bounds", causing 'values' to be null,
+			// so skip returning variable values in that case.
+			for (int i = 0; i < values.Length; i+=2)
+			{
+				string fieldName = (string)values[i]["name"];
+				if (fieldName.Contains("k__BackingField")){
+				fieldName = fieldName.Replace("k__BackingField", "");
+				fieldName = fieldName.Replace("<", "");
+				fieldName = fieldName.Replace(">", "");
+			}
+			var_list.Add(JObject.FromObject(new
+			{
+				name = fieldName,
+				value = values[i+1]["value"]
+			}));
+
+			}
+			o = JObject.FromObject(new
+			{
+				result = var_list
+			});
+
+			SendResponse(msg_id, Result.Ok(o), token);
+		}
+
 
 		async Task GetScopeProperties (int msg_id, int scope_id, CancellationToken token)
 		{

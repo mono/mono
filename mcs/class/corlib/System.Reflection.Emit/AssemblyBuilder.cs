@@ -290,6 +290,7 @@ namespace System.Reflection.Emit
 		/* Keep this in sync with codegen.cs in mcs */
 		private const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
 
+		[PreserveDependency ("RuntimeResolve", "System.Reflection.Emit.ModuleBuilder")]
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access, bool corlib_internal)
 		{
 			/* This is obsolete now, as mcs doesn't use SRE any more */

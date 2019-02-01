@@ -62,6 +62,13 @@ static class Consts
 
 	public const string VsVersion = "0.0.0.0"; // Useless ?
 	public const string VsFileVersion = "11.0.0.0"; // TODO:
+#elif NETCORE
+	public const string FxVersion = "";
+	public const string FxFileVersion = "";
+	public const string EnvironmentVersion = FxFileVersion;
+
+	public const string VsVersion = "";
+	public const string VsFileVersion = "";
 #elif NET_4_0
 	#error Profile NET_4_0 is not supported.
 #elif NET_3_5

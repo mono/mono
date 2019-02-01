@@ -8,7 +8,7 @@
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathInternal.Unix.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.Stat.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Stat.Span.cs
-../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/Interop.Libraries.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/Interop.Errors.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/Interop.IOErrors.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Permissions.cs
