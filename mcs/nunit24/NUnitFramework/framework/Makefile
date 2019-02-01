@@ -6,12 +6,6 @@ LIBRARY = NUnit.Framework.dll
 LIBRARY_NAME = nunit.framework.dll
 
 KEYFILE = $(topdir)/nunit24/nunit.pub
-NO_SIGN_ASSEMBLY = 1
-
-ifdef MCS_MODE
-KEYFILE = $(topdir)/class/mono.snk
-NO_SIGN_ASSEMBLY =
-endif
 
 LIB_MCS_FLAGS = /d:StronglyNamedAssembly -warn:1 /publicsign
 LIB_REFS = System.Xml System
