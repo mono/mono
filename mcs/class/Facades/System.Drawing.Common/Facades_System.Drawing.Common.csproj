@@ -98,6 +98,7 @@
   <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
+    <ProjectReference Include="../../System/System.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
