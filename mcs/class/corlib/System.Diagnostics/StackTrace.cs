@@ -185,8 +185,10 @@ namespace System.Diagnostics {
 				return frames;
 
 			var accum = new List<StackFrame> ();
-			foreach (var t in captured_traces)
-				accum.AddRange(t.GetFrames ());
+			foreach (var t in captured_traces) {
+				for (int i = 0; i < t.FrameCount; i++)
+					accum.Add (t.GetFrame (i));
+			}
 
 			accum.AddRange (frames);
 			return accum.ToArray ();
