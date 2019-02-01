@@ -15,6 +15,7 @@
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/image.h>
 #include <mono/metadata/exception.h>
+#include <mono/metadata/image-internals.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/security.h>
@@ -620,7 +621,7 @@ void mono_invoke_protected_memory_method (MonoArray *data, MonoObject *scope, gb
 	error_init (error);
 	
 	if (system_security_assembly == NULL) {
-		system_security_assembly = mono_image_loaded ("System.Security");
+		system_security_assembly = mono_image_loaded_internal ("System.Security", FALSE);
 		if (!system_security_assembly) {
 			MonoAssembly *sa = mono_assembly_open_predicate ("System.Security.dll", MONO_ASMCTX_DEFAULT, NULL, NULL, NULL, NULL);
 			if (!sa)
