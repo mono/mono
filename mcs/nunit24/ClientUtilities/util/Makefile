@@ -4,13 +4,6 @@ include ../../../build/rules.make
 
 LIBRARY = nunit.util.dll
 KEYFILE = $(topdir)/nunit24/nunit.pub
-NO_SIGN_ASSEMBLY = 1
-
-ifdef MCS_MODE
-KEYFILE = $(topdir)/class/mono.snk
-NO_SIGN_ASSEMBLY =
-endif
-
 
 LOCAL_MCS_FLAGS= /resource:Transform.resources,NUnit.Util.Transform.resources /d:MONO /d:StronglyNamedAssembly /publicsign -warn:1
 LIB_REFS = nunit.core nunit.core.interfaces System System.Xml System.Runtime.Remoting
