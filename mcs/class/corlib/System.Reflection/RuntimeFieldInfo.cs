@@ -23,7 +23,7 @@
 //
 
 //
-// System.Reflection/MonoField.cs
+// System.Reflection/RuntimeFieldInfo.cs
 // The class used to represent Fields from the mono runtime.
 //
 // Author:
@@ -43,11 +43,27 @@ using System.Diagnostics.Contracts;
 
 namespace System.Reflection {
 
-	abstract class RuntimeFieldInfo : FieldInfo
+	abstract class RtFieldInfo : FieldInfo {
+		internal abstract object UnsafeGetValue (object obj);
+		internal abstract void UnsafeSetValue (Object obj, Object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
+        internal abstract void CheckConsistency(Object target);
+	}
+
+	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
+	class RuntimeFieldInfo : RtFieldInfo
 #if !NETCORE
 	, ISerializable
 #endif
 	{
+#pragma warning disable 649
+		internal IntPtr klass;
+		internal RuntimeFieldHandle fhandle;
+		string name;
+		Type type;
+		FieldAttributes attrs;
+#pragma warning restore 649
+
 		internal BindingFlags BindingFlags {
 			get {
 				return 0;
@@ -92,14 +108,11 @@ namespace System.Reflection {
         }
         #endregion
 #endif
-	}
 
-	abstract class RtFieldInfo : RuntimeFieldInfo
-	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern object UnsafeGetValue (object obj);
+		internal override extern object UnsafeGetValue (object obj);
 
-        internal void CheckConsistency(Object target)
+        internal override void CheckConsistency(Object target)
         {
             // only test instance fields
             if ((Attributes & FieldAttributes.Static) != FieldAttributes.Static)
@@ -127,7 +140,7 @@ namespace System.Reflection {
 
 		[DebuggerStepThroughAttribute]
 		[Diagnostics.DebuggerHidden]
-		internal void UnsafeSetValue (Object obj, Object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
+		internal override void UnsafeSetValue (Object obj, Object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
 		{
 			bool domainInitialized = false;
 			RuntimeFieldHandle.SetValue (this, obj, value, null, Attributes, null, ref domainInitialized);
@@ -162,16 +175,6 @@ namespace System.Reflection {
                 return RuntimeFieldHandle.GetValueDirect(this, (RuntimeType)FieldType, &obj, (RuntimeType)DeclaringType);
             }
         }
-	}
-
-	[Serializable]
-	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoField : RtFieldInfo {
-		internal IntPtr klass;
-		internal RuntimeFieldHandle fhandle;
-		string name;
-		Type type;
-		FieldAttributes attrs;
 		
 		public override FieldAttributes Attributes {
 			get {
@@ -280,9 +283,9 @@ namespace System.Reflection {
 			SetValueInternal (this, obj, val);
 		}
 		
-		internal MonoField Clone (string newName)
+		internal RuntimeFieldInfo Clone (string newName)
 		{
-			MonoField field = new MonoField ();
+			RuntimeFieldInfo field = new RuntimeFieldInfo ();
 			field.name = newName;
 			field.type = type;
 			field.attrs = attrs;
@@ -327,7 +330,7 @@ namespace System.Reflection {
 #endif
 
 #if !NETCORE
-		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoField> (other);
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeFieldInfo> (other);
 #endif
 
 		public override int MetadataToken {
@@ -337,7 +340,7 @@ namespace System.Reflection {
 		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern int get_metadata_token (MonoField monoField);
+		internal static extern int get_metadata_token (RuntimeFieldInfo monoField);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern Type[] GetTypeModifiers (bool optional);

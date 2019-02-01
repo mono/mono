@@ -1222,7 +1222,7 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObjectHandle obj,
 			token = methodref_token;
 		}
 		/*g_print ("got token 0x%08x for %s\n", token, m->method->name);*/
-	} else if (strcmp (klass->name, "MonoField") == 0) {
+	} else if (strcmp (klass->name, "RuntimeFieldInfo") == 0) {
 		MonoReflectionFieldHandle f = MONO_HANDLE_CAST (MonoReflectionField, obj);
 		MonoClassField *field = MONO_HANDLE_GETVAL (f, field);
 		if ((field->parent->image == &assembly->image) &&
@@ -2055,7 +2055,7 @@ mono_is_sre_ctor_on_tb_inst (MonoClass *klass)
 static gboolean
 is_sr_mono_field (MonoClass *klass)
 {
-	check_corlib_type_cached (klass, "System.Reflection", "MonoField");
+	check_corlib_type_cached (klass, "System.Reflection", "RuntimeFieldInfo");
 }
 
 gboolean
@@ -4262,7 +4262,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		}
 		*handle_class = mono_defaults.methodhandle_class;
 		g_assert (result);
-	} else if (strcmp (oklass->name, "MonoField") == 0) {
+	} else if (strcmp (oklass->name, "RuntimeFieldInfo") == 0) {
 		MonoClassField *field = ((MonoReflectionField*)obj)->field;
 
 		ensure_complete_type (field->parent, error);

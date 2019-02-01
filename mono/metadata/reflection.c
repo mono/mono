@@ -59,7 +59,7 @@ static GENERATE_GET_CLASS_WITH_CACHE (mono_assembly, "System.Reflection", "Runti
 static GENERATE_GET_CLASS_WITH_CACHE (mono_module, "System.Reflection", "RuntimeModule")
 static GENERATE_GET_CLASS_WITH_CACHE (mono_method, "System.Reflection", "MonoMethod");
 static GENERATE_GET_CLASS_WITH_CACHE (mono_cmethod, "System.Reflection", "MonoCMethod");
-static GENERATE_GET_CLASS_WITH_CACHE (mono_field, "System.Reflection", "MonoField");
+static GENERATE_GET_CLASS_WITH_CACHE (mono_field, "System.Reflection", "RuntimeFieldInfo");
 static GENERATE_GET_CLASS_WITH_CACHE (mono_event, "System.Reflection", "RuntimeEventInfo");
 static GENERATE_GET_CLASS_WITH_CACHE (mono_property, "System.Reflection", "RuntimePropertyInfo");
 static GENERATE_GET_CLASS_WITH_CACHE (mono_parameter_info, "System.Reflection", "RuntimeParameterInfo");
@@ -2380,7 +2380,7 @@ mono_reflection_get_token_checked (MonoObjectHandle obj, MonoError *error)
 		} else {
 			token = method->token;
 		}
-	} else if (strcmp (klass_name, "MonoField") == 0) {
+	} else if (strcmp (klass_name, "RuntimeFieldInfo") == 0) {
 		MonoReflectionFieldHandle f = MONO_HANDLE_CAST (MonoReflectionField, obj);
 
 		token = mono_class_get_field_token (MONO_HANDLE_GETVAL (f, field));

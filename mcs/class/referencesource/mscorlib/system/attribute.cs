@@ -15,8 +15,6 @@ namespace System {
     using System.Security;
 #if !MONO
     using System.Security.Permissions;
-#else
-    using RtFieldInfo = System.Reflection.MonoField;
 #endif
 
     [Serializable]

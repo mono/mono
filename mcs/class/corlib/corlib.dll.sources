@@ -256,7 +256,7 @@ System.Reflection/RuntimeModule.cs
 System.Reflection/RuntimeEventInfo.cs
 System.Reflection/RuntimePropertyInfo.cs
 System.Reflection/RuntimeParameterInfo.cs
-System.Reflection/MonoField.cs
+System.Reflection/RuntimeFieldInfo.cs
 System.Reflection/MonoMethod.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ParameterInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/PortableExecutableKinds.cs

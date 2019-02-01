@@ -1734,7 +1734,7 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 		case MONO_TABLE_FIELD:
 			if (!strcmp (iltoken_member_class_name, "FieldBuilder")) {
 				g_assert_not_reached ();
-			} else if (!strcmp (iltoken_member_class_name, "MonoField")) {
+			} else if (!strcmp (iltoken_member_class_name, "RuntimeFieldInfo")) {
 				MonoClassField *f = ((MonoReflectionField*)iltoken->member)->field;
 				idx = GPOINTER_TO_UINT (g_hash_table_lookup (assembly->field_to_table_idx, f));
 			} else {
@@ -1790,7 +1790,7 @@ fixup_method (MonoReflectionILGen *ilgen, gpointer value, MonoDynamicImage *asse
 			} else if (!strcmp (iltoken_member_class_name, "FieldBuilder")) {
 				g_assert_not_reached ();
 				continue;
-			} else if (!strcmp (iltoken_member_class_name, "MonoField")) {
+			} else if (!strcmp (iltoken_member_class_name, "RuntimeFieldInfo")) {
 				continue;
 			} else if (!strcmp (iltoken_member_class_name, "MethodBuilder") ||
 					!strcmp (iltoken_member_class_name, "ConstructorBuilder")) {

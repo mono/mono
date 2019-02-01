@@ -227,7 +227,7 @@
 
       <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
       <Compile Include="..\corlib\System.Reflection\MonoMethod.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoField.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimeFieldInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimePropertyInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeEventInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeParameterInfo.cs" />
