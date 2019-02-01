@@ -738,10 +738,13 @@
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemEnumerableFactory.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemEnumerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemName.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\File.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileInfo.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Iterator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\MatchCasing.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\MatchType.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\ReadLinesIterator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\SearchOption.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\SearchTarget.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.IsolatedStorage\src\System\IO\IsolatedStorage\INormalizeForIsolatedStorage.cs" />
@@ -1386,7 +1389,6 @@
     <Compile Include="System.IO.IsolatedStorage\IsolatedStorageSecurityOptions.cs" />
     <Compile Include="System.IO.IsolatedStorage\IsolatedStorageSecurityState.cs" />
     <Compile Include="System.IO\DriveInfo.cs" />
-    <Compile Include="System.IO\File.cs" />
     <Compile Include="System.IO\FileStream.cs" />
     <Compile Include="System.IO\FileStreamAsyncResult.cs" />
     <Compile Include="System.IO\HGlobalUnmanagedMemoryStream.cs" />
@@ -2032,6 +2034,7 @@
     <Compile Include="corefx\DefaultBinder.cs" />
     <Compile Include="corefx\Directory.cs" />
     <Compile Include="corefx\DirectoryInfo.cs" />
+    <Compile Include="corefx\File.cs" />
     <Compile Include="corefx\FileInfo.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\MethodInfo.cs" />
@@ -2076,6 +2079,7 @@
   <Choose>
     <When Condition="'$(Platform)' == 'xammac'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2095,6 +2099,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2132,6 +2137,7 @@
     </When>
     <When Condition="'$(Platform)' == 'winaot'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Windows.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.NTSTATUS.cs" />
@@ -2246,6 +2252,7 @@
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2265,6 +2272,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2309,6 +2317,7 @@
     </When>
     <When Condition="'$(Platform)' == 'unreal'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2328,6 +2337,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2372,6 +2382,7 @@
     </When>
     <When Condition="'$(Platform)' == 'orbis'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2391,6 +2402,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2438,6 +2450,7 @@
       <Choose>
         <When Condition="'$(HostPlatform)' == 'win32'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.GetRandomBytes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.NTSTATUS.cs" />
@@ -2550,6 +2563,7 @@
         </When>
         <When Condition="'$(HostPlatform)' == 'unix'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2569,6 +2583,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2613,6 +2628,7 @@
         </When>
         <When Condition="'$(HostPlatform)' == 'macos'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2632,6 +2648,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2676,6 +2693,7 @@
         </When>
         <When Condition="'$(HostPlatform)' == 'linux'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2695,6 +2713,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2742,6 +2761,7 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_watch'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2761,6 +2781,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2802,6 +2823,7 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2821,6 +2843,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2862,6 +2885,7 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2881,6 +2905,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
@@ -2922,6 +2947,7 @@
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Internal\IO\File.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
@@ -2941,6 +2967,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RmDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.Span.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTime.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.UTimes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Unlink.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Unix.cs" />
