@@ -3,9 +3,15 @@ SUBDIRS =
 include ../../../build/rules.make
 
 LIBRARY = nunit-console-runner.dll
-LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
+KEYFILE = $(topdir)/nunit24/nunit.pub
+NO_SIGN_ASSEMBLY = 1
 
-LOCAL_MCS_FLAGS= /d:MONO /d:StronglyNamedAssembly /publicsign /keyfile:../../nunit.snk
+ifdef MCS_MODE
+KEYFILE = $(topdir)/class/mono.snk
+NO_SIGN_ASSEMBLY =
+endif
+
+LOCAL_MCS_FLAGS= /d:MONO /d:StronglyNamedAssembly /publicsign
 LIB_REFS = nunit.core nunit.core.interfaces nunit.util System System.Xml
 NO_TEST = yo
 
