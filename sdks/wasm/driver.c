@@ -32,6 +32,7 @@ void SystemNative_GetTimebaseInfo ();
 void SystemNative_GetTimestamp ();
 void SystemNative_GetTimestampResolution ();
 void SystemNative_UTime ();
+void SystemNative_UTimes ();
 void SystemNative_Access ();
 void SystemNative_ChDir ();
 void SystemNative_ChMod ();
@@ -155,6 +156,7 @@ static PinvokeImport sysnative_imports [] = {
 	{"SystemNative_GetTimestamp", SystemNative_GetTimestamp},
 	{"SystemNative_GetTimestampResolution", SystemNative_GetTimestampResolution},
 	{"SystemNative_UTime", SystemNative_UTime},
+	{"SystemNative_UTimes", SystemNative_UTimes},
 	{"SystemNative_Access", SystemNative_Access},
 	{"SystemNative_ChDir", SystemNative_ChDir},
 	{"SystemNative_ChMod", SystemNative_ChMod},
