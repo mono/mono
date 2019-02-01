@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -99,17 +97,23 @@ namespace WebAssembly.Net.Http.HttpClient {
 				// Process headers
 				// Cors has it's own restrictions on headers.
 				// https://developer.mozilla.org/en-US/docs/Web/API/Headers
-				var requestHeaders = GetHeadersAsStringArray (request);
-
-				if (requestHeaders != null && requestHeaders.Length > 0) {
-					using (var headersObj = (JSObject)WebAssembly.Runtime.GetGlobalObject ("Headers"))
-					using (var jsHeaders = Runtime.NewJSObject (headersObj)) {
-						for (int i = 0; i < requestHeaders.Length; i++) {
-							//Console.WriteLine($"append: {requestHeaders[i][0]} / {requestHeaders[i][1]}");
-							jsHeaders.Invoke ("append", requestHeaders [i] [0], requestHeaders [i] [1]);
+				using (var headersObj = (JSObject)WebAssembly.Runtime.GetGlobalObject ("Headers"))
+				using (var jsHeaders = Runtime.NewJSObject (headersObj)) {
+					if (request.Headers != null) {
+						foreach (var header in request.Headers) {
+							foreach (var value in header.Value) {
+								jsHeaders.Invoke ("append", header.Key, value);
+							}
 						}
-						requestObject.SetObjectProperty ("headers", jsHeaders);
 					}
+					if (request.Content?.Headers != null) {
+						foreach (var header in request.Content.Headers) {
+							foreach (var value in header.Value) {
+								jsHeaders.Invoke ("append", header.Key, value);
+							}
+						}
+					}
+					requestObject.SetObjectProperty ("headers", jsHeaders);
 				}
 
 				JSObject abortController = null;
@@ -199,11 +203,6 @@ namespace WebAssembly.Net.Http.HttpClient {
 				tcs.SetException (exception);
 			}
 		}
-
-		private string [] [] GetHeadersAsStringArray (HttpRequestMessage request)
-		    => (from header in request.Headers.Concat (request.Content?.Headers ?? Enumerable.Empty<KeyValuePair<string, IEnumerable<string>>> ())
-			from headerValue in header.Value // There can be more than one value for each name
-		select new [] { header.Key, headerValue }).ToArray ();
 
 		class WasmFetchResponse : IDisposable {
 			private JSObject fetchResponse;
