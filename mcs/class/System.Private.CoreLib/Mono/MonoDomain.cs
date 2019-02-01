@@ -26,5 +26,7 @@ namespace Mono
 		}
 
 		public event UnhandledExceptionEventHandler UnhandledException;
+
+		public event EventHandler ProcessExit;
 	}
 }
