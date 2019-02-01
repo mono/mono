@@ -49,6 +49,7 @@
 [submodule "external/corert"]
 	path = external/corert
 	url = git://github.com/mono/corert.git
+	branch = mono-2018-08
 [submodule "external/xunit-binaries"]
 	path = external/xunit-binaries
 	url = git://github.com/mono/xunit-binaries.git
