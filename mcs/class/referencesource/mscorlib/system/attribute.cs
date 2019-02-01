@@ -70,7 +70,7 @@ namespace System {
                     custom_attributes.Add (param_attribute);
                 }
 
-                var base_method = ((MonoMethod)method).GetBaseMethod ();
+                var base_method = ((RuntimeMethodInfo)method).GetBaseMethod ();
                 if (base_method == method)
                     break;
 
@@ -105,7 +105,7 @@ namespace System {
             if (member.MemberType != MemberTypes.Method)
                 return false;
 
-            var method = ((MonoMethod)(MethodInfo) member).GetBaseMethod ();
+            var method = ((RuntimeMethodInfo)(MethodInfo) member).GetBaseMethod ();
 
             while (true) {
                 var parameters = method.GetParametersInternal ();
@@ -115,7 +115,7 @@ namespace System {
                 if (param.IsDefined (attributeType, false))
                     return true;
 
-                var base_method = ((MonoMethod)method).GetBaseMethod ();
+                var base_method = ((RuntimeMethodInfo)method).GetBaseMethod ();
                 if (base_method == method)
                     break;
 

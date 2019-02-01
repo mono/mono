@@ -1977,9 +1977,9 @@ namespace System.Runtime.InteropServices
 				gotExistingInstance = MarshalerInstanceCache.TryGetValue (key, out result);
 
 			if (!gotExistingInstance) {
-				MonoMethod getInstanceMethod;
+				RuntimeMethodInfo getInstanceMethod;
 				try {
-					getInstanceMethod = (MonoMethod)type.GetMethod (
+					getInstanceMethod = (RuntimeMethodInfo)type.GetMethod (
 						"GetInstance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.InvokeMethod,
 						null, new Type[] { typeof(string) }, null
 					);

@@ -72,7 +72,7 @@ namespace System
 		internal static object[] GetPseudoCustomAttributes (ICustomAttributeProvider obj, Type attributeType) {
 			object[] pseudoAttrs = null;
 			/* FIXME: Add other types */
-			if (obj is MonoMethod monoMethod)
+			if (obj is RuntimeMethodInfo monoMethod)
 				pseudoAttrs = monoMethod.GetPseudoCustomAttributes ();
 			else if (obj is RuntimeFieldInfo fieldInfo)
 				pseudoAttrs = fieldInfo.GetPseudoCustomAttributes ();
@@ -463,7 +463,7 @@ namespace System
 			CustomAttributeData[] pseudoAttrsData = null;
 
 			/* FIXME: Add other types */
-			if (obj is MonoMethod monoMethod)
+			if (obj is RuntimeMethodInfo monoMethod)
 				pseudoAttrsData = monoMethod.GetPseudoCustomAttributesData ();
 			else if (obj is RuntimeFieldInfo fieldInfo)
 				pseudoAttrsData = fieldInfo.GetPseudoCustomAttributesData ();
@@ -558,7 +558,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
+			MethodInfo baseMethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				ParameterInfo[] parameters = property.GetIndexParameters ();
 				if (parameters != null && parameters.Length > 0) {
@@ -585,7 +585,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
+			MethodInfo baseMethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				BindingFlags flags = method.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
 				flags |= method.IsStatic ? BindingFlags.Static : BindingFlags.Instance;
@@ -595,7 +595,7 @@ namespace System
 			return null;
 		}
 
-		// Handles Type, RuntimePropertyInfo and MonoMethod.
+		// Handles Type, RuntimePropertyInfo and RuntimeMethodInfo.
 		// The runtime has also cases for RuntimeEventInfo, RuntimeFieldInfo, Assembly and ParameterInfo,
 		// but for those we return null here.
 		static ICustomAttributeProvider GetBase (ICustomAttributeProvider obj)
@@ -611,7 +611,7 @@ namespace System
 				return GetBasePropertyDefinition ((RuntimePropertyInfo) obj);
 			else if (obj is RuntimeEventInfo)
 				return GetBaseEventDefinition ((RuntimeEventInfo)obj);
-			else if (obj is MonoMethod)
+			else if (obj is RuntimeMethodInfo)
 				method = (MethodInfo) obj;
 
 			/**
@@ -623,7 +623,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
+			MethodInfo baseMethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 			if (baseMethod == method)
 				return null;
 

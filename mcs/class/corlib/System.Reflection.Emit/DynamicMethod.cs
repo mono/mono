@@ -66,7 +66,7 @@ namespace System.Reflection.Emit {
 #pragma warning restore 169, 414, 649
 		
 		private Delegate deleg;
-		private MonoMethod method;
+		private RuntimeMethodInfo method;
 		private ParameterBuilder[] pinfo;
 		internal bool creating;
 		private DynamicILInfo il_info;
@@ -282,7 +282,7 @@ namespace System.Reflection.Emit {
 		public override object Invoke (object obj, object[] parameters) {
 			CreateDynMethod ();
 			if (method == null)
-				method = new MonoMethod (mhandle);
+				method = new RuntimeMethodInfo (mhandle);
 			return method.Invoke (obj, parameters);
 		}
 		*/
@@ -294,7 +294,7 @@ namespace System.Reflection.Emit {
 			try {
 				CreateDynMethod ();
 				if (method == null)
-					method = new MonoMethod (mhandle);
+					method = new RuntimeMethodInfo (mhandle);
 
 				return method.Invoke (obj, invokeAttr, binder, parameters, culture);
 			}

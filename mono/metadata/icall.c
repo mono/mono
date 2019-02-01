@@ -3107,7 +3107,7 @@ ves_icall_System_RuntimeType_IsWindowsRuntimeObjectType (MonoError *error)
 }
 
 void
-ves_icall_MonoMethod_GetPInvoke (MonoReflectionMethodHandle ref_method, int* flags, MonoStringHandleOut entry_point, MonoStringHandleOut dll_name, MonoError *error)
+ves_icall_RuntimeMethodInfo_GetPInvoke (MonoReflectionMethodHandle ref_method, int* flags, MonoStringHandleOut entry_point, MonoStringHandleOut dll_name, MonoError *error)
 {
 	MonoDomain *domain = mono_domain_get ();
 	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
@@ -3154,7 +3154,7 @@ ves_icall_MonoMethod_GetPInvoke (MonoReflectionMethodHandle ref_method, int* fla
 }
 
 MonoReflectionMethodHandle
-ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethodHandle ref_method, MonoError *error)
+ves_icall_RuntimeMethodInfo_GetGenericMethodDefinition (MonoReflectionMethodHandle ref_method, MonoError *error)
 {
 	error_init (error);
 	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
@@ -3200,14 +3200,14 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethodHandle ref_
 }
 
 MonoBoolean
-ves_icall_MonoMethod_get_IsGenericMethod (MonoReflectionMethodHandle ref_method, MonoError *erro)
+ves_icall_RuntimeMethodInfo_get_IsGenericMethod (MonoReflectionMethodHandle ref_method, MonoError *erro)
 {
 	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
 	return mono_method_signature_internal (method)->generic_param_count != 0;
 }
 
 MonoBoolean
-ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethodHandle ref_method, MonoError *Error)
+ves_icall_RuntimeMethodInfo_get_IsGenericMethodDefinition (MonoReflectionMethodHandle ref_method, MonoError *Error)
 {
 	MonoMethod *method = MONO_HANDLE_GETVAL (ref_method, method);
 	return method->is_generic;
@@ -3240,7 +3240,7 @@ leave:
 }
 
 MonoArrayHandle
-ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethodHandle ref_method, MonoError *error)
+ves_icall_RuntimeMethodInfo_GetGenericArguments (MonoReflectionMethodHandle ref_method, MonoError *error)
 {
 	error_init (error);
 	MonoDomain *domain = MONO_HANDLE_DOMAIN (ref_method);
@@ -5369,7 +5369,7 @@ ves_icall_RuntimeFieldInfo_get_core_clr_security_level (MonoReflectionFieldHandl
 }
 
 int
-ves_icall_MonoMethod_get_core_clr_security_level (MonoReflectionMethodHandle rfield, MonoError *error)
+ves_icall_RuntimeMethodInfo_get_core_clr_security_level (MonoReflectionMethodHandle rfield, MonoError *error)
 {
 	MonoMethod *method = MONO_HANDLE_GETVAL (rfield, method);
 	return mono_security_core_clr_method_level (method, TRUE);
@@ -7620,7 +7620,7 @@ ves_icall_System_Activator_CreateInstanceInternal (MonoReflectionTypeHandle ref_
 }
 
 MonoReflectionMethodHandle
-ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, MonoBoolean definition, MonoError *error)
+ves_icall_RuntimeMethodInfo_get_base_method (MonoReflectionMethodHandle m, MonoBoolean definition, MonoError *error)
 {
 	MonoMethod *method = MONO_HANDLE_GETVAL (m, method);
 
@@ -7643,7 +7643,7 @@ ves_icall_MonoMethod_get_base_method (MonoReflectionMethodHandle m, MonoBoolean 
 }
 
 MonoStringHandle
-ves_icall_MonoMethod_get_name (MonoReflectionMethodHandle m, MonoError *error)
+ves_icall_RuntimeMethodInfo_get_name (MonoReflectionMethodHandle m, MonoError *error)
 {
 	MonoMethod *method = MONO_HANDLE_GETVAL (m, method);
 

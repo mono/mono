@@ -57,8 +57,8 @@ static MonoType* mono_reflection_get_type_with_rootimage (MonoImage *rootimage, 
 /* Class lazy loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (mono_assembly, "System.Reflection", "RuntimeAssembly")
 static GENERATE_GET_CLASS_WITH_CACHE (mono_module, "System.Reflection", "RuntimeModule")
-static GENERATE_GET_CLASS_WITH_CACHE (mono_method, "System.Reflection", "MonoMethod");
-static GENERATE_GET_CLASS_WITH_CACHE (mono_cmethod, "System.Reflection", "MonoCMethod");
+static GENERATE_GET_CLASS_WITH_CACHE (mono_method, "System.Reflection", "RuntimeMethodInfo");
+static GENERATE_GET_CLASS_WITH_CACHE (mono_cmethod, "System.Reflection", "RuntimeConstructorInfo");
 static GENERATE_GET_CLASS_WITH_CACHE (mono_field, "System.Reflection", "RuntimeFieldInfo");
 static GENERATE_GET_CLASS_WITH_CACHE (mono_event, "System.Reflection", "RuntimeEventInfo");
 static GENERATE_GET_CLASS_WITH_CACHE (mono_property, "System.Reflection", "RuntimePropertyInfo");
@@ -2370,8 +2370,8 @@ mono_reflection_get_token_checked (MonoObjectHandle obj, MonoError *error)
 		}
 
 		token = m_class_get_type_token (mc);
-	} else if (strcmp (klass_name, "MonoCMethod") == 0 ||
-			   strcmp (klass_name, "MonoMethod") == 0) {
+	} else if (strcmp (klass_name, "RuntimeMethodInfo") == 0 ||
+			   strcmp (klass_name, "RuntimeConstructorInfo") == 0) {
 		MonoReflectionMethodHandle m = MONO_HANDLE_CAST (MonoReflectionMethod, obj);
 		MonoMethod *method = MONO_HANDLE_GETVAL (m, method);
 		if (method->is_inflated) {
@@ -2560,7 +2560,7 @@ reflection_bind_generic_method_parameters (MonoMethod *method, MonoArrayHandle t
 }
 
 MonoReflectionMethodHandle
-ves_icall_MonoMethod_MakeGenericMethod_impl (MonoReflectionMethodHandle rmethod, MonoArrayHandle types, MonoError *error)
+ves_icall_RuntimeMethodInfo_MakeGenericMethod_impl (MonoReflectionMethodHandle rmethod, MonoArrayHandle types, MonoError *error)
 {
 	error_init (error);
 	g_assert (0 != strcmp (m_class_get_name (mono_handle_class (rmethod)), "MethodBuilder"));

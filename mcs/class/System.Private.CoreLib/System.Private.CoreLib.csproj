@@ -226,7 +226,7 @@
       <Compile Include="..\corlib\System.Threading\WaitHandle.cs" />
 
       <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoMethod.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimeMethodInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeFieldInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimePropertyInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeEventInfo.cs" />
