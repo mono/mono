@@ -8,6 +8,14 @@ namespace System
 {
 	partial class Environment
 	{
+		/*
+		 * This is the version of the corlib-runtime interface.
+		 * It is defined in configure.ac.
+		 */
+#pragma warning disable 169
+		private const string mono_corlib_version = Consts.MonoCorlibVersion;
+#pragma warning restore 169
+
 		public static int CurrentManagedThreadId => Thread.CurrentThread.ManagedThreadId;
 
 		public extern static int ExitCode {
