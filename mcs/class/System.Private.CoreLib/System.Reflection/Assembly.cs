@@ -48,5 +48,7 @@ namespace System.Reflection
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal bool IsRuntimeImplemented () => throw new NotImplementedException ();
 	}
 }
