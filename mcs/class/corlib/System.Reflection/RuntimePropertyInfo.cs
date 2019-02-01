@@ -1,5 +1,5 @@
 //
-// MonoProperty.cs: The class used to represent Properties from the mono runtime.
+// RuntimePropertyInfo.cs: The class used to represent Properties from the mono runtime.
 //
 // Authors:
 //   Paolo Molaro (lupus@ximian.com)
@@ -49,16 +49,6 @@ namespace System.Reflection {
 		public MethodInfo get_method;
 		public MethodInfo set_method;
 		public PropertyAttributes attrs;
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern void get_property_info (MonoProperty prop, ref MonoPropertyInfo info,
-							       PInfo req_info);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern Type[] GetTypeModifiers (MonoProperty prop, bool optional);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object get_default_value (MonoProperty prop);
 	}
 
 	[Flags]
@@ -75,11 +65,31 @@ namespace System.Reflection {
 	internal delegate object GetterAdapter (object _this);
 	internal delegate R Getter<T,R> (T _this);
 
-	abstract class RuntimePropertyInfo : PropertyInfo
+	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
+	internal class RuntimePropertyInfo : PropertyInfo
 #if !NETCORE
 	, ISerializable
 #endif
 	{
+#pragma warning disable 649
+		internal IntPtr klass;
+		internal IntPtr prop;
+		MonoPropertyInfo info;
+		PInfo cached;
+		GetterAdapter cached_getter;
+#pragma warning restore 649
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void get_property_info (RuntimePropertyInfo prop, ref MonoPropertyInfo info,
+							       PInfo req_info);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern Type[] GetTypeModifiers (RuntimePropertyInfo prop, bool optional);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object get_default_value (RuntimePropertyInfo prop);
+
 		internal BindingFlags BindingFlags {
 			get {
 				return 0;
@@ -127,7 +137,7 @@ namespace System.Reflection {
 			var pi = GetIndexParameters ();
 			if (pi.Length > 0) {
 				sbName.Append (" [");
-				MonoParameterInfo.FormatParameters (sbName, pi, 0, serialization);
+				RuntimeParameterInfo.FormatParameters (sbName, pi, 0, serialization);
 				sbName.Append ("]");
 			}
 
@@ -160,24 +170,11 @@ namespace System.Reflection {
         }
         #endregion
 #endif
-	}
-
-	[Serializable]
-	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoProperty : RuntimePropertyInfo {
-#pragma warning disable 649
-		internal IntPtr klass;
-		internal IntPtr prop;
-		MonoPropertyInfo info;
-		PInfo cached;
-		GetterAdapter cached_getter;
-
-#pragma warning restore 649
 
 		void CachePropertyInfo (PInfo flags)
 		{
 			if ((cached & flags) != flags) {
-				MonoPropertyInfo.get_property_info (this, ref info, flags);
+				get_property_info (this, ref info, flags);
 				cached |= flags;
 			}
 		}
@@ -284,7 +281,7 @@ namespace System.Reflection {
 
 			var dest = new ParameterInfo [length];
 			for (int i = 0; i < length; ++i) {
-				dest [i] = MonoParameterInfo.New (src [i], this);
+				dest [i] = RuntimeParameterInfo.New (src [i], this);
 			}
 			return dest;	
 		}
@@ -302,11 +299,11 @@ namespace System.Reflection {
 		/*TODO verify for attribute based default values, just like ParameterInfo*/
 		public override object GetConstantValue ()
 		{
-			return MonoPropertyInfo.get_default_value (this);
+			return get_default_value (this);
 		}
 
 		public override object GetRawConstantValue() {
-			return MonoPropertyInfo.get_default_value (this);
+			return get_default_value (this);
 		}
 
 		// According to MSDN the inherit parameter is ignored here and
@@ -370,7 +367,7 @@ namespace System.Reflection {
 
 			getterType = getterDelegateType.MakeGenericType (typeVector);
 			getterDelegate = Delegate.CreateDelegate (getterType, method);
-			adapterFrame = typeof (MonoProperty).GetMethod (frameName, BindingFlags.Static | BindingFlags.NonPublic);
+			adapterFrame = typeof (RuntimePropertyInfo).GetMethod (frameName, BindingFlags.Static | BindingFlags.NonPublic);
 			adapterFrame = adapterFrame.MakeGenericMethod (typeVector);
 			return (GetterAdapter)Delegate.CreateDelegate (typeof (GetterAdapter), getterDelegate, adapterFrame, true);
 		}
@@ -450,14 +447,14 @@ namespace System.Reflection {
 
 		public override Type[] GetRequiredCustomModifiers () => GetCustomModifiers (false);
 
-		private Type[] GetCustomModifiers (bool optional) => MonoPropertyInfo.GetTypeModifiers (this, optional) ?? Type.EmptyTypes;
+		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (this, optional) ?? Type.EmptyTypes;
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
 
 #if !NETCORE
-		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoProperty> (other);
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimePropertyInfo> (other);
 #endif
 
 		public override int MetadataToken {
@@ -467,7 +464,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern int get_metadata_token (MonoProperty monoProperty);
+		internal static extern int get_metadata_token (RuntimePropertyInfo monoProperty);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern PropertyInfo internal_from_handle_type (IntPtr event_handle, IntPtr type_handle);

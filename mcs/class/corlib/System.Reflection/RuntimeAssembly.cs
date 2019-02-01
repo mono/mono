@@ -1,5 +1,5 @@
 //
-// System.Reflection/MonoAssembly.cs
+// System.Reflection/RuntimeAssembly.cs
 //
 // Author:
 //   Rodrigo Kumpera (rkumpera@novell.com)
@@ -46,7 +46,11 @@ using Mono;
 
 namespace System.Reflection {
 
-	abstract class RuntimeAssembly : Assembly
+	[ComVisible (true)]
+	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
+	[Serializable]
+	[ClassInterface(ClassInterfaceType.None)]
+	class RuntimeAssembly : Assembly
 	{
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
@@ -167,14 +171,7 @@ namespace System.Reflection {
 #endif
 			return AssemblyName.Create (this, true);
 		}
-	}
 
-	[ComVisible (true)]
-	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
-	[Serializable]
-	[ClassInterface(ClassInterfaceType.None)]
-	class MonoAssembly : RuntimeAssembly
-	{
 		public
 		override
 		Type GetType (string name, bool throwOnError, bool ignoreCase)

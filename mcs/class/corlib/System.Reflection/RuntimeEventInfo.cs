@@ -1,5 +1,5 @@
 //
-// System.Reflection/MonoEvent.cs
+// System.Reflection/RuntimeEventInfo.cs
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
@@ -49,24 +49,29 @@ namespace System.Reflection {
 		public MethodInfo raise_method;
 		public EventAttributes attrs;
 		public MethodInfo[] other_methods;
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern void get_event_info (MonoEvent ev, out MonoEventInfo info);
-
-		internal static MonoEventInfo GetEventInfo (MonoEvent ev)
-		{
-			MonoEventInfo mei;
-			MonoEventInfo.get_event_info (ev, out mei);
-			return mei;
-		}
 	}
 
-	abstract class RuntimeEventInfo : EventInfo
+	[Serializable]
+	[StructLayout (LayoutKind.Sequential)]
+	internal sealed class RuntimeEventInfo : EventInfo
 #if !NETCORE
 	, ISerializable
 #endif
 	{
-        internal abstract BindingFlags GetBindingFlags ();
+#pragma warning disable 169
+		IntPtr klass;
+		IntPtr handle;
+#pragma warning restore 169
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void get_event_info (RuntimeEventInfo ev, out MonoEventInfo info);
+
+		internal static MonoEventInfo GetEventInfo (RuntimeEventInfo ev)
+		{
+			MonoEventInfo mei;
+			get_event_info (ev, out mei);
+			return mei;
+		}
 
 		public override Module Module {
 			get {
@@ -113,20 +118,10 @@ namespace System.Reflection {
         }
         #endregion
 #endif
-	}
 
-	[Serializable]
-	[StructLayout (LayoutKind.Sequential)]
-	internal sealed class MonoEvent: RuntimeEventInfo
-	{
-#pragma warning disable 169
-		IntPtr klass;
-		IntPtr handle;
-#pragma warning restore 169
-
-		internal override BindingFlags GetBindingFlags ()
+		internal BindingFlags GetBindingFlags ()
 		{
-			MonoEventInfo info = MonoEventInfo.GetEventInfo (this);
+			MonoEventInfo info = GetEventInfo (this);
 
 			MethodInfo method = info.add_method;
 			if (method == null)
@@ -139,13 +134,13 @@ namespace System.Reflection {
 
         public override EventAttributes Attributes {
 			get {
-				return MonoEventInfo.GetEventInfo (this).attrs;
+				return GetEventInfo (this).attrs;
 			}
 		}
 
 		public override MethodInfo GetAddMethod (bool nonPublic)
 		{
-			MonoEventInfo info = MonoEventInfo.GetEventInfo (this);
+			MonoEventInfo info = GetEventInfo (this);
 			if (nonPublic || (info.add_method != null && info.add_method.IsPublic))
 				return info.add_method;
 			return null;
@@ -153,7 +148,7 @@ namespace System.Reflection {
 
 		public override MethodInfo GetRaiseMethod (bool nonPublic)
 		{
-			MonoEventInfo info = MonoEventInfo.GetEventInfo (this);
+			MonoEventInfo info = GetEventInfo (this);
 			if (nonPublic || (info.raise_method != null && info.raise_method.IsPublic))
 				return info.raise_method;
 			return null;
@@ -161,7 +156,7 @@ namespace System.Reflection {
 
 		public override MethodInfo GetRemoveMethod (bool nonPublic)
 		{
-			MonoEventInfo info = MonoEventInfo.GetEventInfo (this);
+			MonoEventInfo info = GetEventInfo (this);
 			if (nonPublic || (info.remove_method != null && info.remove_method.IsPublic))
 				return info.remove_method;
 			return null;
@@ -169,7 +164,7 @@ namespace System.Reflection {
 
 		public override MethodInfo[] GetOtherMethods (bool nonPublic)
 		{
-			MonoEventInfo info = MonoEventInfo.GetEventInfo (this);
+			MonoEventInfo info = GetEventInfo (this);
 			if (nonPublic)
 				return info.other_methods;
 			int num_public = 0;
@@ -190,19 +185,19 @@ namespace System.Reflection {
 
 		public override Type DeclaringType {
 			get {
-				return MonoEventInfo.GetEventInfo (this).declaring_type;
+				return GetEventInfo (this).declaring_type;
 			}
 		}
 
 		public override Type ReflectedType {
 			get {
-				return MonoEventInfo.GetEventInfo (this).reflected_type;
+				return GetEventInfo (this).reflected_type;
 			}
 		}
 
 		public override string Name {
 			get {
-				return MonoEventInfo.GetEventInfo (this).name;
+				return GetEventInfo (this).name;
 			}
 		}
 
@@ -237,10 +232,10 @@ namespace System.Reflection {
 		}
 
 #if !NETCORE
-		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoEvent> (other);
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeEventInfo> (other);
 #endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern int get_metadata_token (MonoEvent monoEvent);
+		internal static extern int get_metadata_token (RuntimeEventInfo monoEvent);
 	}
 }

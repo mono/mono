@@ -528,18 +528,18 @@
 		<type fullname="System.Reflection.MethodInfo" preserve="nothing" />
 
 		<type fullname="System.Reflection.Module" preserve="fields" />
-		<type fullname="System.Reflection.MonoAssembly">
+		<type fullname="System.Reflection.RuntimeAssembly">
 			<method name=".ctor" />
 		</type>
-		<type fullname="System.Reflection.MonoModule">
+		<type fullname="System.Reflection.RuntimeModule">
 			<method name=".ctor" />
 		</type>
 		<type fullname="System.Reflection.MonoCMethod" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in method_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
-		<type fullname="System.Reflection.MonoEvent" preserve="fields" />
-		<type fullname="System.Reflection.MonoEventInfo" preserve="fields" >
+		<type fullname="System.Reflection.MonoEventInfo" preserve="fields" />
+		<type fullname="System.Reflection.RuntimeEventInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in event_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
@@ -554,7 +554,7 @@
 		<type fullname="System.Reflection.MonoMethodInfo" preserve="fields" />
 		<type fullname="System.Reflection.MonoPropertyInfo" preserve="fields" />
 		
-		<type fullname="System.Reflection.MonoProperty" preserve="fields">
+		<type fullname="System.Reflection.RuntimePropertyInfo" preserve="fields">
 			<method name="GetterAdapterFrame" />
 			<method name="StaticGetterAdapterFrame" />
 			<!-- reflection.c mono_object_new_checked in add_parameter_object_to_array -->
@@ -562,7 +562,7 @@
 		</type>
 		<type fullname="System.Reflection.ParameterInfo" preserve="fields" />
 		<!-- reflection.c: ves_icall_get_parameter_info -->
-		<type fullname="System.Reflection.MonoParameterInfo" preserve="fields" >
+		<type fullname="System.Reflection.RuntimeParameterInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in event_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
