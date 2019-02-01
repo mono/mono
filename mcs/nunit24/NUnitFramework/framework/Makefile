@@ -4,9 +4,16 @@ include ../../../build/rules.make
 
 LIBRARY = NUnit.Framework.dll
 LIBRARY_NAME = nunit.framework.dll
-LIBRARY_SNK = $(topdir)/nunit24/nunit.snk
 
-LIB_MCS_FLAGS = /d:StronglyNamedAssembly -warn:1 /publicsign /keyfile:../../nunit.snk
+KEYFILE = $(topdir)/nunit24/nunit.pub
+NO_SIGN_ASSEMBLY = 1
+
+ifdef MCS_MODE
+KEYFILE = $(topdir)/class/mono.snk
+NO_SIGN_ASSEMBLY =
+endif
+
+LIB_MCS_FLAGS = /d:StronglyNamedAssembly -warn:1 /publicsign
 LIB_REFS = System.Xml System
 NO_TEST = yo
 

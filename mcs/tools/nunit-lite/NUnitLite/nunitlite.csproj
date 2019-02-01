@@ -16,6 +16,8 @@
     <NoConfig>True</NoConfig>
     <AssemblyName>nunitlite</AssemblyName>
     <TargetFrameworkVersion>v2.1</TargetFrameworkVersion>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>nunit.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
