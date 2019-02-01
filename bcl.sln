@@ -3482,8 +3482,10 @@ Global
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|unreal.ActiveCfg = Release|net_4_x
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|wasm.ActiveCfg = Debug|net_4_x
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|wasm.ActiveCfg = Release|net_4_x
-		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|winaot.ActiveCfg = Debug|net_4_x
-		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|winaot.ActiveCfg = Release|net_4_x
+		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|winaot.ActiveCfg = Debug|winaot
+		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|winaot.Build.0 = Debug|winaot
+		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|winaot.ActiveCfg = Release|winaot
+		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|winaot.Build.0 = Release|winaot
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|xammac.ActiveCfg = Debug|net_4_x
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|xammac.ActiveCfg = Release|net_4_x
 		{1B87A378-65E8-4899-9C9A-C940429D643C}.Debug|net_4_x.ActiveCfg = Debug|net_4_x
