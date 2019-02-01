@@ -112,7 +112,7 @@ namespace System.Runtime.InteropServices
 
 		public static IntPtr StringToBSTR (string s)
 		{
-			throw null;
+			throw new NotImplementedException ();
 		}
 
 		#region PlatformNotSupported
