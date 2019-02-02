@@ -5,7 +5,7 @@ include ../../../build/rules.make
 LIBRARY = nunit.core.dll
 KEYFILE = $(topdir)/nunit24/nunit.pub
 
-LOCAL_MCS_FLAGS = /d:StronglyNamedAssembly -warn:1 /publicsign
+LOCAL_MCS_FLAGS = /d:StronglyNamedAssembly -warn:1 /delaysign
 LIB_REFS = nunit.framework nunit.core.interfaces System
 NO_TEST = yo
 

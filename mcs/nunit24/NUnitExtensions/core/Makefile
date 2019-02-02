@@ -5,7 +5,7 @@ include ../../../build/rules.make
 LIBRARY = nunit.core.extensions.dll
 KEYFILE = $(topdir)/nunit24/nunit.pub
 
-LIB_MCS_FLAGS =  /d:StronglyNamedAssembly /publicsign
+LIB_MCS_FLAGS =  /d:StronglyNamedAssembly /delaysign
 LIB_REFS = nunit.core nunit.core.interfaces System.Xml System
 NO_TEST = yo
 

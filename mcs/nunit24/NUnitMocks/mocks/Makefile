@@ -5,7 +5,7 @@ include ../../../build/rules.make
 LIBRARY = nunit.mocks.dll
 KEYFILE = $(topdir)/nunit24/nunit.pub
 
-LOCAL_MCS_FLAGS= /d:StronglyNamedAssembly /publicsign
+LOCAL_MCS_FLAGS= /d:StronglyNamedAssembly /delaysign
 LIB_REFS = nunit.framework System
 NO_TEST = yo
 

@@ -17,6 +17,7 @@
     <AssemblyName>nunitlite</AssemblyName>
     <TargetFrameworkVersion>v2.1</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
+    <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>nunit.pub</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>

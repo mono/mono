@@ -7,7 +7,7 @@ LIBRARY_NAME = nunit.framework.dll
 
 KEYFILE = $(topdir)/nunit24/nunit.pub
 
-LIB_MCS_FLAGS = /d:StronglyNamedAssembly -warn:1 /publicsign
+LIB_MCS_FLAGS = /d:StronglyNamedAssembly -warn:1 /delaysign
 LIB_REFS = System.Xml System
 NO_TEST = yo
 
