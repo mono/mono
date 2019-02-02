@@ -204,6 +204,7 @@
       <Compile Include="..\corlib\System\MathF.mono.cs" />
       <Compile Include="..\corlib\System\MonoCustomAttrs.cs" />
       <Compile Include="..\corlib\System\MulticastDelegate.cs" />
+      <Compile Include="..\corlib\System\Nullable.cs" />
       <Compile Include="..\corlib\System\RuntimeArgumentHandle.cs" />
       <Compile Include="..\corlib\System\RuntimeFieldHandle.cs" />
       <Compile Include="..\corlib\System\RuntimeTypeHandle.cs" />
