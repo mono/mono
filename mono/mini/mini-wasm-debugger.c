@@ -331,7 +331,7 @@ mono_wasm_debugger_init (void)
 	mono_profiler_set_domain_loaded_callback (prof, appdomain_load);
 
 	obj_to_objref = g_hash_table_new (NULL, NULL);
-	objrefs = g_hash_table_new_full (NULL, NULL, NULL, free_objref);
+	objrefs = g_hash_table_new_full (NULL, NULL, NULL, mono_debugger_free_objref);
 }
 
 MONO_API void

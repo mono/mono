@@ -207,7 +207,7 @@ typedef struct {
 } ObjRef;
 
 
-void free_objref (gpointer value);
+void mono_debugger_free_objref (gpointer value);
 
 typedef int DbgEngineErrorCode;
 #define DE_ERR_NONE 0

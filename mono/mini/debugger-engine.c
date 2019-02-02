@@ -1555,7 +1555,7 @@ mono_de_cleanup (void)
 }
 
 void
-free_objref (gpointer value)
+mono_debugger_free_objref (gpointer value)
 {
 	ObjRef *o = (ObjRef *)value;
 
