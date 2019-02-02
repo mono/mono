@@ -4,9 +4,8 @@ using System.Runtime.InteropServices;
 
 namespace Mono
 {
-
 	[StructLayout (LayoutKind.Sequential)]
-	internal sealed partial class MonoDomain : MarshalByRefObject {
+	internal sealed partial class MonoDomain {
         #pragma warning disable 169
         #region Sync with object-internals.h
 		IntPtr _mono_app_domain;
