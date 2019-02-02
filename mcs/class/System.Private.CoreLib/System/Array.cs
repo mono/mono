@@ -5,5 +5,10 @@ namespace System
 		// Will require JIT tweaks to skip constants
 		internal const int MaxArrayLength = 0X7FEFFFFF;
 		internal const int MaxByteArrayLength = 0x7FFFFFC7;
+
+		internal ref byte GetRawArrayData ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
