@@ -534,7 +534,7 @@
 		<type fullname="System.Reflection.RuntimeModule">
 			<method name=".ctor" />
 		</type>
-		<type fullname="System.Reflection.MonoCMethod" preserve="fields" >
+		<type fullname="System.Reflection.RuntimeConstructorInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in method_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
@@ -543,11 +543,11 @@
 			<!-- reflection.c mono_object_new_checked in event_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
-		<type fullname="System.Reflection.MonoField" preserve="fields" >
+		<type fullname="System.Reflection.RuntimeFieldInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in field_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>
-		<type fullname="System.Reflection.MonoMethod" preserve="fields" >
+		<type fullname="System.Reflection.RuntimeMethodInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in method_object_construct -->
 			<method signature="System.Void .ctor()" />
 		</type>

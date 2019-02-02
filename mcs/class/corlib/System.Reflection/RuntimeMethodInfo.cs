@@ -1,5 +1,5 @@
 //
-// MonoMethod.cs: The class used to represent methods from the mono runtime.
+// RuntimeMethodInfo.cs: The class used to represent methods from the mono runtime.
 //
 // Authors:
 //   Paolo Molaro (lupus@ximian.com)
@@ -140,17 +140,29 @@ namespace System.Reflection {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern MarshalAsAttribute get_retval_marshal (IntPtr handle);
 
-		static internal ParameterInfo GetReturnParameterInfo (MonoMethod method)
+		static internal ParameterInfo GetReturnParameterInfo (RuntimeMethodInfo method)
 		{
 			return RuntimeParameterInfo.New (GetReturnType (method.mhandle), method, get_retval_marshal (method.mhandle));
 		}
 	}
-	
-	abstract class RuntimeMethodInfo : MethodInfo
+
+	/*
+	 * Note: most of this class needs to be duplicated for the contructor, since
+	 * the .NET reflection class hierarchy is so broken.
+	 */
+	[Serializable()]
+	[StructLayout (LayoutKind.Sequential)]
+	class RuntimeMethodInfo : MethodInfo
 #if !NETCORE
 	, ISerializable
 #endif
 	{
+#pragma warning disable 649
+		internal IntPtr mhandle;
+		string name;
+		Type reftype;
+#pragma warning restore 649
+
 		internal BindingFlags BindingFlags {
 			get {
 				return 0;
@@ -261,26 +273,11 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static MethodBase GetMethodFromHandleInternalType_native (IntPtr method_handle, IntPtr type_handle, bool genericCheck);
-	}
 
-	/*
-	 * Note: most of this class needs to be duplicated for the contructor, since
-	 * the .NET reflection class hierarchy is so broken.
-	 */
-	[Serializable()]
-	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoMethod : RuntimeMethodInfo
-	{
-#pragma warning disable 649
-		internal IntPtr mhandle;
-		string name;
-		Type reftype;
-#pragma warning restore 649
-
-		internal MonoMethod () {
+		internal RuntimeMethodInfo () {
 		}
 
-		internal MonoMethod (RuntimeMethodHandle mhandle) {
+		internal RuntimeMethodInfo (RuntimeMethodHandle mhandle) {
 			this.mhandle = mhandle.Value;
 		}
 		
@@ -288,10 +285,10 @@ namespace System.Reflection {
 		internal static extern string get_name (MethodBase method);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern MonoMethod get_base_method (MonoMethod method, bool definition);
+		internal static extern RuntimeMethodInfo get_base_method (RuntimeMethodInfo method, bool definition);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern int get_metadata_token (MonoMethod method);
+		internal static extern int get_metadata_token (RuntimeMethodInfo method);
 
 		public override MethodInfo GetBaseDefinition ()
 		{
@@ -742,13 +739,20 @@ namespace System.Reflection {
 		}
 
 #if !NETCORE
-		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoMethod> (other);
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeMethodInfo> (other);
 #endif
 	}
 	
-
-	abstract class RuntimeConstructorInfo : ConstructorInfo, ISerializable
+	[Serializable()]
+	[StructLayout (LayoutKind.Sequential)]
+	class RuntimeConstructorInfo : ConstructorInfo, ISerializable
 	{
+#pragma warning disable 649
+		internal IntPtr mhandle;
+		string name;
+		Type reftype;
+#pragma warning restore 649
+
 		public override Module Module {
 			get {
 				return GetRuntimeModule ();
@@ -806,17 +810,6 @@ namespace System.Reflection {
 			Invoke (target, new object[] { info, context });
 		}
        #endregion
-	}
-
-	[Serializable()]
-	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoCMethod : RuntimeConstructorInfo
-	{
-#pragma warning disable 649		
-		internal IntPtr mhandle;
-		string name;
-		Type reftype;
-#pragma warning restore 649		
 		
 		public override MethodImplAttributes GetMethodImplementationFlags ()
 		{
@@ -867,7 +860,7 @@ namespace System.Reflection {
 
 			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
 
-			MonoMethod.ConvertValues (binder, parameters, pinfo, culture, invokeAttr);
+			RuntimeMethodInfo.ConvertValues (binder, parameters, pinfo, culture, invokeAttr);
 
 			if (obj == null && DeclaringType.ContainsGenericParameters)
 				throw new MemberAccessException ("Cannot create an instance of " + DeclaringType + " because Type.ContainsGenericParameters is true.");
@@ -951,7 +944,7 @@ namespace System.Reflection {
 			get {
 				if (name != null)
 					return name;
-				return MonoMethod.get_name (this);
+				return RuntimeMethodInfo.get_name (this);
 			}
 		}
 
@@ -994,7 +987,7 @@ namespace System.Reflection {
 #endif
 
 #if !NETCORE
-		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<MonoCMethod> (other);
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeConstructorInfo> (other);
 #endif
 
 		public override bool IsSecurityTransparent {
@@ -1016,6 +1009,6 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern int get_metadata_token (MonoCMethod method);		
+		internal static extern int get_metadata_token (RuntimeConstructorInfo method);
 	}
 }
