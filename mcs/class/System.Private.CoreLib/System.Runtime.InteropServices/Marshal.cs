@@ -64,7 +64,7 @@ namespace System.Runtime.InteropServices
 
 		static void PrelinkCore (MethodInfo m)
 		{
-			if (!(m is MonoMethod))
+			if (!(m is RuntimeMethodInfo))
 			{
 				throw new ArgumentException (SR.Argument_MustBeRuntimeMethodInfo, nameof(m));
 			}
