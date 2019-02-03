@@ -126,6 +126,7 @@
       <Compile Include="System\MissingMemberException.cs" />
       <Compile Include="System\ModuleHandle.cs" />
       <Compile Include="System\NotImplemented.cs" />
+      <Compile Include="System\Nullable.cs" />
       <Compile Include="System\Type.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
       <Compile Include="System.Globalization\CultureData.cs" />
