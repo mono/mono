@@ -1,8 +1,5 @@
-using System;
-
 namespace System.Collections.Generic
 {
-	//[TypeDependencyAttribute("System.Collections.Generic.ObjectComparer`1")]
 	partial class Comparer<T>
 	{
         static volatile Comparer<T> defaultComparer;
