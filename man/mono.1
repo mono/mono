@@ -414,7 +414,7 @@ Currently the only option supported by this command line argument is
 .TP
 \fB--config filename\fR
 Load the specified configuration file instead of the default one(s).
-The default files are /etc/mono/config and ~/.mono/config or the file
+The default files are /etc/mono/config and ~/.config/mono/config or the file
 specified in the MONO_CONFIG environment variable, if set.  See the
 mono-config(5) man page for details on the format of this file.
 .TP
@@ -1539,7 +1539,7 @@ Provides a prefix the runtime uses to look for Global Assembly Caches.
 Directories are separated by the platform path separator (colons on
 unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
 install. Or to the directory provided in the gacutil /gacdir command. Example:
-.B /home/username/.mono:/usr/local/mono/
+.B /home/username/.config/mono:/usr/local/mono/
 .TP
 \fBMONO_IOMAP\fR
 Enables some filename rewriting support to assist badly-written
@@ -1998,30 +1998,30 @@ On Unix assemblies are loaded from the installation lib directory.  If you set
 Windows, the assemblies are loaded from the directory where mono and
 mint live.
 .TP
-.B ~/.mono/aot-cache
+.B ~/.config/mono/aot-cache
 .Sp
 The directory for the ahead-of-time compiler demand creation
 assemblies are located. 
 .TP
-.B /etc/mono/config, ~/.mono/config
+.B /etc/mono/config, ~/.config/mono/config
 .Sp
 Mono runtime configuration file.  See the mono-config(5) manual page
 for more information.
 .TP
-.B ~/.config/.mono/certs, /usr/share/.mono/certs
+.B ~/.config/mono/certs, /usr/share/mono/certs
 .Sp
 Contains Mono certificate stores for users / machine. See the certmgr(1) 
 manual page for more information on managing certificate stores and
 the mozroots(1) page for information on how to import the Mozilla root
 certificates into the Mono certificate store. 
 .TP
-.B ~/.mono/assemblies/ASSEMBLY/ASSEMBLY.config
+.B ~/.config/mono/assemblies/ASSEMBLY/ASSEMBLY.config
 .Sp
 Files in this directory allow a user to customize the configuration
 for a given system assembly, the format is the one described in the
 mono-config(5) page. 
 .TP
-.B ~/.config/.mono/keypairs, /usr/share/.mono/keypairs
+.B ~/.config/mono/keypairs, /usr/share/mono/keypairs
 .Sp
 Contains Mono cryptographic keypairs for users / machine. They can be 
 accessed by using a CspParameters object with DSACryptoServiceProvider

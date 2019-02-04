@@ -24,8 +24,8 @@ echo "--------------------------------------------------------------------------
 
 case "$(uname)" in
     "Linux")
-        mkdir -p ~/.config/.mono/
-        wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
+        mkdir -p ~/.config/mono/
+        wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/mono/
         ;;
 esac
 
@@ -85,7 +85,7 @@ if [ "$test_suite" = "--nunit" ]; then
             ;;
     esac
     cp -f "$r/$test_argument_1.nunitlite.config" "$r/net_4_x/nunit-lite-console.exe.config"
-    MONO_REGISTRY_PATH="$HOME/.mono/registry" MONO_TESTS_IN_PROGRESS="yes" $XVFBRUN "${MONO_EXECUTABLE}" --config "$r/_tmpinst/etc/mono/config" --debug "$r/net_4_x/nunit-lite-console.exe" "$r/$test_argument_1" -exclude=NotWorking,CAS,$ADDITIONAL_TEST_EXCLUDES -labels -format:xunit -result:"${xunit_results_path}"
+    MONO_REGISTRY_PATH="$HOME/.config/mono/registry" MONO_TESTS_IN_PROGRESS="yes" $XVFBRUN "${MONO_EXECUTABLE}" --config "$r/_tmpinst/etc/mono/config" --debug "$r/net_4_x/nunit-lite-console.exe" "$r/$test_argument_1" -exclude=NotWorking,CAS,$ADDITIONAL_TEST_EXCLUDES -labels -format:xunit -result:"${xunit_results_path}"
     exit $?
 fi
 

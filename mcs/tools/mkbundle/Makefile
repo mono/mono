@@ -25,8 +25,8 @@ test-simple: simple.exe
 	mono --debug $(the_lib) --sdk `dirname \`which mono\``/.. simple.exe -o foo && ./foo
 	-rm DEMO.zip
 	$(topdir)/../scripts/mono-package-runtime `dirname \`which mono\``/.. DEMO
-	mkdir -p ~/.mono/targets/DEMO
-	unzip -d ~/.mono/targets/DEMO DEMO.zip
+	mkdir -p ~/.config/mono/targets/DEMO
+	unzip -d ~/.config/mono/targets/DEMO DEMO.zip
 	mono --debug $(the_lib) --cross DEMO simple.exe -o foo | grep "Assembly.*mscorlib.dll"
 	./foo
 

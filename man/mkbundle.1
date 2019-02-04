@@ -53,7 +53,7 @@ flag.  For example, the following disables inlining, by passing the
 
 .PP
 The simple version allows for cross-compiling, this requires a Mono
-runtime to be installed in the ~/.mono/targets/TARGET/mono to be
+runtime to be installed in the ~/.config/mono/targets/TARGET/mono to be
 available.   You can use the "--local-targets" to list all available
 targets, and the "--cross" argument to specify the target, like this:
 .nf
@@ -106,7 +106,7 @@ MacOS:
 .fi
 .PP
 Downloaded targets are stored
-.B ~/.mono/targets
+.B ~/.config/mono/targets
 directory.
 .SH OPTIONS
 .TP 
@@ -123,7 +123,7 @@ When passed, DIR will be set for the MONO_CFG_DIR environment variable
 .I "--cross target"
 Use this to request mkbundle generate a cross-compiled binary.  It
 Creates a bundle for the specified target platform.  The target must
-be a directory in ~/.mono/targets/ that contains an SDK installation
+be a directory in ~/.config/mono/targets/ that contains an SDK installation
 as produced by the mono-package-runtime tool.  You can get a list of
 the precompiled versions of the runtime using --list-targets and you
 can fetch a specific target using the --fetch-target command line
@@ -461,7 +461,7 @@ set this variable to "console".
 This program will load referenced assemblies from the Mono assembly
 cache. 
 .PP
-Targets are loaded from ~/.mono/targets/TARGETNAME/mono
+Targets are loaded from ~/.config/mono/targets/TARGETNAME/mono
 .SH BUGS
 .SH MAILING LISTS
 Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.

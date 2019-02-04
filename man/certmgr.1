@@ -106,10 +106,10 @@ Display help about this tool.
 The only safe way to interact with certificate stores is to use the certmgr
 tool. The current releases of Mono keeps all the user certificate stores in 
 separates directories under
-.I ~/.config/.mono/certs/
+.I ~/.config/mono/certs/
 .TP
 For example the trusted root certificates for a user would be kept under
-.I ~/.config/.mono/certs/Trust/
+.I ~/.config/mono/certs/Trust/
 .TP
 Certificates files are kept in DER (binary) format (extension .cer).
 .TP
@@ -122,7 +122,7 @@ The filenames either start with
 The rest of the filename is the base64-encoded value (tbp or ski).
 .TP
 Private key data is stored under
-.I ~/.config/.mono/keypairs/
+.I ~/.config/mono/keypairs/
 
 .SH EXAMPLES
 .TP

@@ -701,7 +701,7 @@ mono_config_parse (const char *filename) {
 
 #if !defined(TARGET_WIN32)
 	home = g_get_home_dir ();
-	user_cfg = g_strconcat (home, G_DIR_SEPARATOR_S, ".mono/config", NULL);
+	user_cfg = g_strconcat (home, G_DIR_SEPARATOR_S, ".config/mono/config", NULL);
 	mono_config_parse_file (user_cfg);
 	g_free (user_cfg);
 #endif

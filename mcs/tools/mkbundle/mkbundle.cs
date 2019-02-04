@@ -573,7 +573,7 @@ class MakeBundle {
                 }
 	}
 
-	static string targets_dir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.Personal), ".mono", "targets");
+	static string targets_dir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "mono", "targets");
 	
 	static void CommandLocalTargets ()
 	{
