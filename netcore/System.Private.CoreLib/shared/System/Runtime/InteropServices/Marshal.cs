@@ -12,6 +12,12 @@ using Microsoft.Win32;
 
 using Internal.Runtime.CompilerServices;
 
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
+
 namespace System.Runtime.InteropServices
 {
     /// <summary>
@@ -157,7 +163,30 @@ namespace System.Runtime.InteropServices
             return SizeOfHelper(t, throwIfNotMarshalable: true);
         }
 
-        public static int SizeOf<T>() => SizeOf(typeof(T));        
+        public static int SizeOf<T>() => SizeOf(typeof(T));
+
+        /// <summary>
+        /// IMPORTANT NOTICE: This method does not do any verification on the array.
+        /// It must be used with EXTREME CAUTION since passing in invalid index or
+        /// an array that is not pinned can cause unexpected results.
+        /// </summary>
+        public static unsafe IntPtr UnsafeAddrOfPinnedArrayElement(Array arr, int index)
+        {
+            if (arr == null)
+                throw new ArgumentNullException(nameof(arr));
+
+            void* pRawData = Unsafe.AsPointer(ref arr.GetRawArrayData());
+            return (IntPtr)((byte*)pRawData + (uint)index * (nuint)arr.GetElementSize());
+        }
+
+        public static unsafe IntPtr UnsafeAddrOfPinnedArrayElement<T>(T[] arr, int index)
+        {
+            if (arr == null)
+                throw new ArgumentNullException(nameof(arr));
+
+            void* pRawData = Unsafe.AsPointer(ref arr.GetRawSzArrayData());
+            return (IntPtr)((byte*)pRawData + (uint)index * (nuint)Unsafe.SizeOf<T>());
+        }
 
         public static IntPtr OffsetOf<T>(string fieldName) => OffsetOf(typeof(T), fieldName);
 
@@ -649,6 +678,134 @@ namespace System.Runtime.InteropServices
             }
 
             return s.MarshalToString(globalAlloc: true, unicode: true); ;
+        }
+
+        public static unsafe IntPtr StringToHGlobalAnsi(string s)
+        {
+            if (s == null)
+            {
+                return IntPtr.Zero;
+            }
+
+            long lnb = (s.Length + 1) * (long)SystemMaxDBCSCharSize;
+            int nb = (int)lnb;
+
+            // Overflow checking
+            if (nb != lnb)
+            {
+                throw new ArgumentOutOfRangeException(nameof(s));
+            }
+
+            IntPtr hglobal = AllocHGlobal((IntPtr)nb);
+
+            StringToAnsiString(s, (byte*)hglobal, nb);
+            return hglobal;
+        }
+
+        public static unsafe IntPtr StringToHGlobalUni(string s)
+        {
+            if (s == null)
+            {
+                return IntPtr.Zero;
+            }
+
+            int nb = (s.Length + 1) * 2;
+
+            // Overflow checking
+            if (nb < s.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(s));
+            }
+
+            IntPtr hglobal = AllocHGlobal((IntPtr)nb);
+            
+            fixed (char* firstChar = s)
+            {
+                string.wstrcpy((char*)hglobal, firstChar, s.Length + 1);
+            }
+            return hglobal;
+        }
+
+        public static IntPtr StringToHGlobalAuto(string s)
+        {
+            // Ansi platforms are no longer supported
+            return StringToHGlobalUni(s);
+        }
+
+        public static unsafe IntPtr StringToCoTaskMemUni(string s)
+        {
+            if (s == null)
+            {
+                return IntPtr.Zero;
+            }
+
+            int nb = (s.Length + 1) * 2;
+
+            // Overflow checking
+            if (nb < s.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(s));
+            }
+
+            IntPtr hglobal = AllocCoTaskMem(nb);
+
+            fixed (char* firstChar = s)
+            {
+                string.wstrcpy((char*)hglobal, firstChar, s.Length + 1);
+            }
+            return hglobal;
+        }
+
+        public static unsafe IntPtr StringToCoTaskMemUTF8(string s)
+        {
+            if (s == null)
+            {
+                return IntPtr.Zero;
+            }
+
+            int nb = Encoding.UTF8.GetMaxByteCount(s.Length);
+
+            IntPtr pMem = AllocCoTaskMem(nb + 1);
+
+            int nbWritten;
+            byte* pbMem = (byte*)pMem;
+
+            fixed (char* firstChar = s)
+            {
+                nbWritten = Encoding.UTF8.GetBytes(firstChar, s.Length, pbMem, nb);
+            }
+
+            pbMem[nbWritten] = 0;
+
+            return pMem;
+        }
+
+        public static IntPtr StringToCoTaskMemAuto(string s)
+        {
+            // Ansi platforms are no longer supported
+            return StringToCoTaskMemUni(s);
+        }
+
+        public static unsafe IntPtr StringToCoTaskMemAnsi(string s)
+        {
+            if (s == null)
+            {
+                return IntPtr.Zero;
+            }
+
+            long lnb = (s.Length + 1) * (long)SystemMaxDBCSCharSize;
+            int nb = (int)lnb;
+
+            // Overflow checking
+            if (nb != lnb)
+            {
+                throw new ArgumentOutOfRangeException(nameof(s));
+            }
+
+            IntPtr hglobal = AllocCoTaskMem(nb);
+
+            StringToAnsiString(s, (byte*)hglobal, nb);
+            return hglobal;
         }
 
         /// <summary>

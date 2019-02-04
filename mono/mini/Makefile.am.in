@@ -1,5 +1,10 @@
 include $(top_srcdir)/mk/common.mk
 
+## Set the C++ linker based on configure settings, see comment in configure.ac
+## about why we need to do this.
+CXXLD=$(MONO_CXXLD)
+CCLD=$(MONO_CXXLD)
+
 count=100000
 mtest=for_loop
 monodir=$(top_builddir)
@@ -67,7 +72,7 @@ TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/
 INTERP_RUNTIME = $(MINI_RUNTIME) --interpreter
 RUNTIME_AOTCHECK = MONO_PATH="$(CLASS)$(PLATFORM_PATH_SEPARATOR)." $(RUNTIME_EXECUTABLE)
 
-MCS = CSC_SDK_PATH_DISABLED= $(TOOLS_RUNTIME) $(CSC) -langversion:7.2 -unsafe -nowarn:0162 -nologo -noconfig -r:$(CLASS)/mscorlib.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Core.dll
+MCS = CSC_SDK_PATH_DISABLED= $(TOOLS_RUNTIME) $(CSC) -langversion:7.2 -nostdlib -unsafe -nowarn:0162 -nologo -noconfig -r:$(CLASS)/mscorlib.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Core.dll
 ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 
 AM_CFLAGS = \
@@ -261,29 +266,6 @@ mono_sgen_LDADD = \
 mono_sgen_LDFLAGS = $(static_flags) $(monobinldflags) $(monobin_platform_ldflags) 
 
 
-if STATIC_MONO
-# Force the C++ linker if we linked mono against libmono.a and if we know that
-# libmono.a has C++ code in it.
-#
-# The conditional logic here has to match exactly what we do for deciding
-# whether to add libmini-cxx.la into libmini.la.  If we do, then force the use
-# of the C++ linker here.
-#
-# Have to use the nodist_EXTRA_..._SOURCES hack because if we set
-#  ..._LINK=$(CXXLINK) directly, it will not use the ..._LDFLAGS and other
-#  linker flags and so we would end up with linker errors because we wouldn't pick up
-#  monobin_platform_ldflags, for example.
-if ENABLE_LLVM
-nodist_EXTRA_mono_boehm_SOURCES = dummy.cpp
-nodist_EXTRA_mono_sgen_SOURCES = dummy.cpp
-else
-if ENABLE_LLVM_RUNTIME
-nodist_EXTRA_mono_boehm_SOURCES = dummy.cpp
-nodist_EXTRA_mono_sgen_SOURCES = dummy.cpp
-endif
-endif
-endif
-
 if BITCODE
 libmonoldflags += -no-undefined
 endif
@@ -314,12 +296,10 @@ if SUPPORT_BOEHM
 monow_LDADD = $(mono_boehm_LDADD)
 monow_LDFLAGS = $(mono_boehm_LDFLAGS) -mwindows
 monow_SOURCES = $(mono_boehm_SOURCES)
-nodist_EXTRA_monow_SOURCES = $(nodist_EXTRA_mono_boehm_SOURCES)
 else
 monow_LDADD = $(mono_sgen_LDADD)
 monow_LDFLAGS = $(mono_sgen_LDFLAGS) -mwindows
 monow_SOURCES = $(mono_sgen_SOURCES)
-nodist_EXTRA_monow_SOURCES = $(nodist_EXTRA_mono_sgen_SOURCES)
 endif
 endif
 
@@ -412,12 +392,10 @@ if ENABLE_LLVM
 if LOADED_LLVM
 llvm_sources = \
 	mini-llvm-loaded.c
-llvm_cxx_sources =
 else
 llvm_sources = \
 	mini-llvm.c		\
-	mini-llvm-loaded.c
-llvm_cxx_sources = \
+	mini-llvm-loaded.c \
 	mini-llvm-cpp.cpp \
 	llvm-jit.cpp
 endif
@@ -739,28 +717,8 @@ endif
 # This library is shared between mono and mono-sgen, since the code in mini/ doesn't contain
 # compile time dependencies on boehm/sgen.
 #
-libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(arch_sources) $(os_sources) $(netcore_sources)
+libmini_la_SOURCES = $(common_sources) $(llvm_sources) $(llvm_runtime_sources) $(arch_sources) $(os_sources) $(netcore_sources)
 libmini_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
-if ENABLE_LLVM
-libmini_la_LIBADD = libmini-cxx.la
-noinst_LTLIBRARIES += libmini-cxx.la
-else
-if ENABLE_LLVM_RUNTIME
-libmini_la_LIBADD = libmini-cxx.la
-noinst_LTLIBRARIES += libmini-cxx.la
-endif
-endif
-
-# Split out the C++ sources so that if they're not used, libmini will be linked
-# with the C linker.  The issue is that the automatic linker selection (See
-# https://www.gnu.org/software/automake/manual/html_node/How-the-Linker-is-Chosen.html)
-# looks at all the _SOURCES for a target, even those that are only
-# conditionally added, even if the condition is false.  So because we sometimes
-# build mini-llvm-cpp.cpp we always get the c++ linker.  But that's not what we
-# want.
-libmini_cxx_la_SOURCES = $(llvm_cxx_sources) $(llvm_runtime_sources)
-libmini_cxx_la_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
-
 
 libmonoboehm_2_0_la_SOURCES =
 libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS) @CXX_ADD_CFLAGS@
@@ -964,19 +922,19 @@ FULLAOT_LIBS = $(filter-out $(FULLAOT_LIBS_DISABLED),$(FULLAOT_LIBS_UNIVERSAL))
 
 FULLAOT_TMP_DIR=$(top_builddir)/mono/mini/fullaot-tmp
 
-FULLAOT_AOT_ARGS=$(if $(HYBRID),hybrid,full,interp)
+FULLAOT_AOT_ARGS=$(if $(HYBRID),hybrid,full,interp),$(MONO_FULLAOT_ADDITIONAL_ARGS)$(INVARIANT_AOT_OPTIONS)
 FULLAOT_ARGS=$(if $(HYBRID),--hybrid-aot,--full-aot)
 
 # This currently only works on amd64/arm
 fullaotcheck: $(mono) $(fullaot_regtests) $(fullaot_testing_deps)
 	rm -rf $(FULLAOT_TMP_DIR)
 	mkdir $(FULLAOT_TMP_DIR)
-	$(MAKE) fullaot-libs AOT_FLAGS="$(FULLAOT_AOT_ARGS),$(MONO_FULLAOT_ADDITIONAL_ARGS)$(INVARIANT_AOT_OPTIONS)" GSHAREDVT=$(GSHAREDVT)
-	cp $(regtests) $(fullaot_regtests) $(fullaot_testing_deps) $(FULLAOT_TMP_DIR)/
-	MONO_PATH=$(FULLAOT_TMP_DIR) $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) $(LLVM_AOT_RUNTIME_OPTS) $(GSHAREDVT_RUNTIME_OPTS) --aot="$(FULLAOT_AOT_ARGS),$(MONO_FULLAOT_ADDITIONAL_ARGS)$(INVARIANT_AOT_OPTIONS)" $(FULLAOT_TMP_DIR)/{$(fullaot_testing_deps_commas),*.exe} || exit 1
+	$(MAKE) fullaot-libs AOT_FLAGS="$(FULLAOT_AOT_ARGS)"
+	cp $(fullaot_regtests) $(fullaot_testing_deps) $(FULLAOT_TMP_DIR)/
+	MONO_PATH=$(FULLAOT_TMP_DIR) $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) $(LLVM_AOT_RUNTIME_OPTS) $(GSHAREDVT_RUNTIME_OPTS) --aot="$(FULLAOT_AOT_ARGS)" $(FULLAOT_TMP_DIR)/{$(fullaot_testing_deps_commas),*.exe} || exit 1
 	ln -s $(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),$$PWD/mono) $(FULLAOT_TMP_DIR)/
 	for i in $(fullaot_regtests); do echo $$i; MONO_PATH=$(FULLAOT_TMP_DIR) $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) $(FULLAOT_ARGS) $(FULLAOT_TMP_DIR)/$$i --exclude '!FULLAOT' $(ARCH_FULLAOT_EXCLUDE) || exit 1; done
-	if test x$(MIXED) == x1; then failed=0;i=0; while test $$i -lt 900; do i=`expr $$i + 1`; bash -c "echo -n '.'"; MONO_PATH=$(FULLAOT_TMP_DIR) MONO_DEBUG=aot-skip=$$i ./mono --full-aot-interp $(FULLAOT_TMP_DIR)/basic.exe > $(FULLAOT_TMP_DIR)/mixed.log || failed=1; if test $$failed -eq 1; then echo "Failed at $$i"; exit $$failed; fi; done; fi
+	if test x$(MIXED) == x1; then failed=0;i=0; while test $$i -lt 900; do i=`expr $$i + 1`; bash -c "echo -n '.'"; MONO_PATH=$(FULLAOT_TMP_DIR) MONO_DEBUG=aot-skip=$$i $(top_builddir)/runtime/mono-wrapper --full-aot-interp $(FULLAOT_TMP_DIR)/basic.exe > $(FULLAOT_TMP_DIR)/mixed.log || failed=1; if test $$failed -eq 1; then echo "Failed at $$i"; exit $$failed; fi; done; fi
 
 # This can run in parallel
 fullaot-libs: $(patsubst %,fullaot-tmp/%.dylib,$(FULLAOT_LIBS))
@@ -984,11 +942,11 @@ fullaot-libs: $(patsubst %,fullaot-tmp/%.dylib,$(FULLAOT_LIBS))
 fullaot-tmp/%.dylib: $(CLASS)/%
 	cp $(CLASS)/$* fullaot-tmp/
 	mkdir fullaot-tmp/$*-tmp
-	MONO_PATH="fullaot-tmp/$(PLATFORM_PATH_SEPARATOR)$(CLASS)" $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) $(if $(GSHAREDVT),-O=gsharedvt) --aot=$(AOT_FLAGS),temp-path=fullaot-tmp/$*-tmp fullaot-tmp/$*
+	MONO_PATH="fullaot-tmp/$(PLATFORM_PATH_SEPARATOR)$(CLASS)" $(top_builddir)/runtime/mono-wrapper $(MOBILE_RUNTIME_ARG) $(LLVM_AOT_RUNTIME_OPTS) $(GSHAREDVT_RUNTIME_OPTS) --aot=$(AOT_FLAGS),temp-path=fullaot-tmp/$*-tmp fullaot-tmp/$*
 	rm -rf fullaot-tmp/$*-tmp
 
 llvmfullaotcheck:
-	$(MAKE) fullaotcheck LLVM=1
+	$(MAKE) fullaotcheck LLVM=1 GSHAREDVT=1
 
 llvmonly_regtests = $(fullaot_regtests) gshared.exe
 

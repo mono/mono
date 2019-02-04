@@ -48,7 +48,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=07423dee-1eb8-11e9-a2ee-43262508f9cf
+MONO_CORLIB_VERSION=9032116E-BB4E-4ED5-9C71-9E5E0B0230CA
 
 #
 # Put a quoted #define in config.h.
@@ -1111,7 +1111,7 @@ AC_ARG_WITH(unreal,              [  --with-unreal=yes,no                If you w
 AC_ARG_WITH(wasm,                [  --with-wasm=yes,no                  If you want to build the WebAssembly (defaults to no)], [], [with_wasm=default])
 
 
-AC_ARG_WITH(runtime-preset, [  --with-runtime-preset=net_4_x,all,aot,aot_llvm,hybridaot,hybridaot_llvm,fullaot,fullaot_llvm,bitcode,unreal,fullaotinterp,fullaotinterp_llvm  Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
+AC_ARG_WITH(runtime-preset, [  --with-runtime-preset=net_4_x,all,aot,aot_llvm,hybridaot,hybridaot_llvm,fullaot,fullaot_llvm,winaot,winaot_llvm,bitcode,unreal,fullaotinterp,fullaotinterp_llvm  Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
 AC_ARG_WITH(spectre-mitigation,             [  --with-spectre-mitigation=yes,no   If you want to build the runtime with compiler flags that enable Spectre mitigation (defaults to no)], [], [with_spectre_mitigation=default])
 AC_ARG_WITH(spectre-indirect-branch-choice,   [  --with-spectre-indirect-branch-choice=keep,thunk,inline,extern   Convert indirect branches to the specified kind of thunk (defaults to inline)], [], [with_spectre_indirect_branch_choice=inline])
 AC_ARG_WITH(spectre-function-return-choice, [  --with-spectre-function-return-choice=keep,thunk,inline,extern   Convert function return instructions to the specified kind of thunk (defaults to inline)], [], [with_spectre_function_return_choice=inline])
@@ -1195,6 +1195,7 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_remoting='yes'
    mono_feature_disable_reflection_emit_save='yes'
    mono_feature_disable_appdomains='yes'
+   disable_mono_native=yes
 elif test x$with_runtime_preset = xnet_4_x; then
    with_profile4_x_default=yes
    TEST_PROFILE=net_4_x
@@ -1315,9 +1316,23 @@ elif test x$with_runtime_preset = xwinaot; then
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
 
-   AOT_BUILD_FLAGS="--runtime=mobile --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
-   AOT_MODE="llvmonly"
+   AOT_MODE="full"
+elif test x$with_runtime_preset = xwinaot_llvm; then
+   DISABLE_MCS_DOCS_default=yes
+   with_winaot_default=yes
+   TEST_PROFILE=winaot
+
+   mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --llvm --aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--runtime=mobile --full-aot"
+   AOT_MODE="full"
 elif test x$with_runtime_preset = xorbis; then
    DISABLE_MCS_DOCS_default=yes
    with_orbis_default=yes
@@ -5685,19 +5700,23 @@ if test "x$enable_msvc" = "xyes"; then
 		mono_msvc_build_lib_dir='$(mono_msvc_build_dir)'/Win32/lib/Release
 		mono_msvc_build_bin_dir='$(mono_msvc_build_dir)'/Win32/bin/Release
 		mono_runtime=msvc/build/sgen/Win32/bin/Release/mono-sgen.exe
+		mono_runtime_wrapper=$mono_runtime
 	else
 		mono_msvc_build_lib_dir='$(mono_msvc_build_dir)'/x64/lib/Release
 		mono_msvc_build_bin_dir='$(mono_msvc_build_dir)'/x64/bin/Release
 		mono_runtime=msvc/build/sgen/x64/bin/Release/mono-sgen.exe
+		mono_runtime_wrapper=msvc/build/sgen/x64/bin/Release/mono-sgen-msvc.sh
 	fi
 	AC_SUBST(mono_msvc_build_dir)
 	AC_SUBST(mono_msvc_build_lib_dir)
 	AC_SUBST(mono_msvc_build_bin_dir)
 else
 	mono_runtime=mono/mini/mono
+	mono_runtime_wrapper=$mono_runtime
 fi
 
 AC_SUBST(mono_runtime)
+AC_SUBST(mono_runtime_wrapper)
 
 CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/tools/csc.exe
 
@@ -5946,7 +5965,9 @@ fi
 #
 
 sed_version_pattern='[[0-9]]\{1,2\}\(\.[[0-9]]\{1,2\}\)'
-if test x$target_osx = xyes; then
+if test x$disable_mono_native = xyes; then
+	mono_native=no
+elif test x$target_osx = xyes; then
 	sed_remove_mac_version_pattern="s/-mmacosx-version-min=$sed_version_pattern//g"
 	grep_find_mac_version_pattern="-mmacosx-version-min=$sed_version_pattern"
 	mono_native_compat_version=`echo $CC | grep -o -e $grep_find_mac_version_pattern`
@@ -6167,6 +6188,41 @@ MONO_NATIVE_PLATFORM_TYPE_UNIFIED="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLAT
 AC_SUBST(MONO_NATIVE_PLATFORM_TYPE)
 AC_SUBST(MONO_NATIVE_PLATFORM_TYPE_COMPAT)
 AC_SUBST(MONO_NATIVE_PLATFORM_TYPE_UNIFIED)
+
+### C++ Linker selection
+#
+# We have to lie to autotools, sometimes.
+#
+# If we're building with llvm compiled into Mono, set MONO_CXXLD to CXX,
+# otherwise to CC.  We want C linking even if we're compiling with C++ enabled
+# because we do not want to link inthe C++ runtime library (-lstdc++ or -lc++),
+# except if we're linking with LLVM which relies on it.
+#
+# Explanation of the hack:
+#
+# According to
+# https://www.gnu.org/software/automake/manual/html_node/How-the-Linker-is-Chosen.html,
+# automake chooses the linker that it used to compile a target based on the
+# _SOURCES for that target.  If the target is comprised of only C code, it
+# chooses the C linker (on Linux and OSX this is just gcc or clang called with
+# linker arguments and a -o).  If the target _SOURCES include at least one C++ file, 
+# then automake chooses the C++ linker (usually g++ or clang++ called with linker arguments and -o).
+#
+# The problem for Mono is that we don't want the C++ runtime library (libstdc++
+# or libc++) linked in - even when Mono is written in C++, we take care not to
+# require the runtime library.  As a result, we don't want g++ or clang++ to do
+# the linking.  On the other hand if LLVM is enabled, then we _must_ use the
+# C++ linker - LLVM doesn't have the same restrictions.
+#
+# So the trick is we set MONO_CXXLD here to $CXX or $CC and in
+#  mono/mini/Makefile.am.in we have CCLD=$MONO_CXXLD and CXXLD=$MONO_CXXLD which bypasses
+#  automake's autodetection and lets us use the linker that we want.
+#
+if test "x$enable_llvm_runtime" = "xyes"; then
+	AC_SUBST(MONO_CXXLD, [$CXX])
+else
+	AC_SUBST(MONO_CXXLD, [$CC])
+fi
 
 # Update all submodules recursively to ensure everything is checked out
 (cd $srcdir && scripts/update_submodules.sh)

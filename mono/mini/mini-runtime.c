@@ -1103,33 +1103,38 @@ mono_ji_type_to_string (MonoJumpInfoType type)
 void
 mono_print_ji (const MonoJumpInfo *ji)
 {
+	const char *type = patch_info_str [ji->type];
 	switch (ji->type) {
-	case MONO_PATCH_INFO_RGCTX_FETCH: {
+	case MONO_PATCH_INFO_RGCTX_FETCH:
+	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
 		MonoJumpInfoRgctxEntry *entry = ji->data.rgctx_entry;
 
-		printf ("[RGCTX_FETCH ");
+		printf ("[%s ", type);
 		mono_print_ji (entry->data);
-		printf (" - %s]", mono_rgctx_info_type_to_str (entry->info_type));
+		printf (" -> %s]", mono_rgctx_info_type_to_str (entry->info_type));
 		break;
 	}
-	case MONO_PATCH_INFO_METHODCONST: {
-		char *s = mono_method_full_name (ji->data.method, TRUE);
-		printf ("[METHODCONST - %s]", s);
+	case MONO_PATCH_INFO_METHOD:
+	case MONO_PATCH_INFO_METHODCONST:
+	case MONO_PATCH_INFO_METHOD_FTNDESC: {
+		char *s = mono_method_get_full_name (ji->data.method);
+		printf ("[%s %s]", type, s);
 		g_free (s);
 		break;
 	}
 	case MONO_PATCH_INFO_JIT_ICALL: {
-		printf ("[JIT_ICALL - %s]", ji->data.name);
+		printf ("[JIT_ICALL %s]", ji->data.name);
 		break;
 	}
-	case MONO_PATCH_INFO_CLASS: {
+	case MONO_PATCH_INFO_CLASS:
+	case MONO_PATCH_INFO_VTABLE: {
 		char *name = mono_class_full_name (ji->data.klass);
-		printf ("[CLASS - %s]", name);
+		printf ("[%s %s]", type, name);
 		g_free (name);
 		break;
 	}
 	default:
-		printf ("[%s]", patch_info_str [ji->type]);
+		printf ("[%s]", type);
 		break;
 	}
 }
@@ -1268,7 +1273,10 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
 		MonoJumpInfoRgctxEntry *e = ji->data.rgctx_entry;
 
-		return (ji->type << 8) | (gssize)e->method | (e->in_mrgctx) | e->info_type | mono_patch_info_hash (e->data);
+		if (e->in_mrgctx)
+			return (ji->type << 8) | (gssize)e->d.method | (e->in_mrgctx) | e->info_type | mono_patch_info_hash (e->data);
+		else
+			return (ji->type << 8) | (gssize)e->d.klass | (e->in_mrgctx) | e->info_type | mono_patch_info_hash (e->data);
 	}
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
 	case MONO_PATCH_INFO_MSCORLIB_GOT_ADDR:
@@ -1348,7 +1356,7 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 		MonoJumpInfoRgctxEntry *e1 = ji1->data.rgctx_entry;
 		MonoJumpInfoRgctxEntry *e2 = ji2->data.rgctx_entry;
 
-		return e1->method == e2->method && e1->in_mrgctx == e2->in_mrgctx && e1->info_type == e2->info_type && mono_patch_info_equal (e1->data, e2->data);
+		return e1->d.method == e2->d.method && e1->d.klass == e2->d.klass && e1->in_mrgctx == e2->in_mrgctx && e1->info_type == e2->info_type && mono_patch_info_equal (e1->data, e2->data);
 	}
 	case MONO_PATCH_INFO_GSHAREDVT_CALL: {
 		MonoJumpInfoGSharedVtCall *c1 = ji1->data.gsharedvt;
@@ -1371,6 +1379,8 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 		return strcmp ((const char*)ji1->data.target, (const char*)ji2->data.target) == 0 ? 1 : 0;
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
 		return mono_metadata_signature_equal (ji1->data.sig, ji2->data.sig) ? 1 : 0;
+	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
+		return 1;
 	default:
 		if (ji1->data.target != ji2->data.target)
 			return 0;

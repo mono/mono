@@ -45,7 +45,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 #pragma warning disable 649
 		#region keep in sync with MonoMessage in object-internals.h
-		MonoMethod method;
+		RuntimeMethodInfo method;
 		object []  args;
 		string []  names;
 		byte [] arg_types; /* 1 == IN; 2 == OUT; 3 == INOUT; 4 == COPY OUT */
@@ -65,7 +65,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		Identity identity;
 
-		internal void InitMessage (MonoMethod method, object [] out_args)
+		internal void InitMessage (RuntimeMethodInfo method, object [] out_args)
 		{
 			this.method = method;
 			ParameterInfo[] paramInfo = method.GetParametersInternal ();
@@ -101,14 +101,14 @@ namespace System.Runtime.Remoting.Messaging {
 		public MonoMethodMessage (MethodBase method, object [] out_args)
 		{
 			if (method != null)
-				InitMessage ((MonoMethod)method, out_args);
+				InitMessage ((RuntimeMethodInfo)method, out_args);
 			else
 				args = null;
 		}
 
 		internal MonoMethodMessage (MethodInfo minfo, object [] in_args, object [] out_args)
 		{
-			InitMessage ((MonoMethod)minfo, out_args);
+			InitMessage ((RuntimeMethodInfo)minfo, out_args);
 
 			int len = in_args.Length;
 			for (int i = 0; i < len; i++) {

@@ -1611,6 +1611,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void CultureIndependentTests ()
 		{
 			// Here I aggregated some tests mainly because of test 

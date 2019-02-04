@@ -53,6 +53,7 @@
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FindFirstFileEx.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/FileSystem.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/FileSystemInfo.Windows.cs
+../../../external/corefx/src/Common/src/CoreLib/Internal/IO/File.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEnumerator.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEnumerator.Win32.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEntry.Windows.cs
