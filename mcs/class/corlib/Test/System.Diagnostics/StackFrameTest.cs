@@ -385,6 +385,7 @@ namespace MonoTests.System.Diagnostics
 
 		[Test]
 		// https://github.com/mono/mono/issues/12688
+		[Category("NotWasm")]
 		public void GetFrames_AsynsCalls ()
 		{
 			StartAsyncCalls ().Wait ();
