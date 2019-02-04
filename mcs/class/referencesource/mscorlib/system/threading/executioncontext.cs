@@ -1243,7 +1243,7 @@ namespace System.Threading
             {
                 // capture the sync context
                 if (0 == (options & CaptureOptions.IgnoreSyncCtx))
-                    syncCtxNew = (ecCurrent.SynchronizationContext == null) ? null : ecCurrent.SynchronizationContext.CreateCopy();
+                    syncCtxNew = ecCurrent.SynchronizationContext;
 
 #if FEATURE_REMOTING
                 // copy over the Logical Call Context
