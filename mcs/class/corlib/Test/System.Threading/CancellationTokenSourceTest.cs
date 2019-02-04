@@ -502,12 +502,16 @@ namespace MonoTests.System.Threading
 			var tcs = new TaskCompletionSource<bool> ();
 			ct.Token.Register (() => tcs.TrySetCanceled ());
 
+			bool taskIsCancelled = false;
 			Action awaitAction = async () => {
 					try { await tcs.Task; }
-					catch (OperationCanceledException) { }
+					catch (OperationCanceledException) { 
+						taskIsCancelled = true;
+					}
 				};
 			awaitAction ();
 			ct.Cancel (); // should not trigger SynchronizationContext.Post
+			Assert.IsTrue (taskIsCancelled);
 			SynchronizationContext.SetSynchronizationContext (mainContext);
 		}
 
