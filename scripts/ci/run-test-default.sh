@@ -109,6 +109,8 @@ ${TESTCMD} --label=System.Runtime.DurableInstancing --timeout=5m make -w -C mcs/
 ${TESTCMD} --label=System.ServiceModel.Discovery --timeout=5m make -w -C mcs/class/System.ServiceModel.Discovery run-test
 ${TESTCMD} --label=System.Xaml --timeout=5m make -w -C mcs/class/System.Xaml run-test
 ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.Http run-test
+${TESTCMD} --label=System.Net.Http-xunit --timeout=15m make -w -C mcs/class/System.Net.Http run-xunit-test
+${TESTCMD} --label=System.Net.Http.WebRequest --timeout=5m make -w -C mcs/class/System.Net.Http.WebRequest run-test
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
 ${TESTCMD} --label=System.Json-xunit --timeout=5m make -w -C mcs/class/System.Json run-xunit-test
 ${TESTCMD} --label=System.Threading.Tasks.Dataflow --timeout=5m make -w -C mcs/class/System.Threading.Tasks.Dataflow run-test

@@ -67,7 +67,8 @@ namespace Microsoft.CSharp
 
 			mcs.StartInfo.Arguments += BuildArgs (options, fileNames, _provOptions);
 
-			var mcsOutMutex = new Mutex ();
+			var stderr_completed = new ManualResetEvent (false);
+			var stdout_completed = new ManualResetEvent (false);
 /*		       
 			string monoPath = Environment.GetEnvironmentVariable ("MONO_PATH");
 			if (monoPath != null)
@@ -93,15 +94,19 @@ namespace Microsoft.CSharp
 
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
+			mcs.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			mcs.StartInfo.RedirectStandardOutput=true;
 			mcs.StartInfo.RedirectStandardError=true;
 			mcs.ErrorDataReceived += new DataReceivedEventHandler ((sender, args) => {
-				if (args.Data != null) {
-					mcsOutMutex.WaitOne ();
+				if (args.Data != null)
 					results.Output.Add (args.Data);
-					mcsOutMutex.ReleaseMutex ();
-				}
+				else
+					stderr_completed.Set ();
 			});
+			mcs.OutputDataReceived += new DataReceivedEventHandler ((sender, args) => {
+					if (args.Data == null)
+						stdout_completed.Set ();
+				});
 
 			// Use same text decoder as mcs and not user set values in Console
 			mcs.StartInfo.StandardOutputEncoding =
@@ -125,8 +130,8 @@ namespace Microsoft.CSharp
 				
 				results.NativeCompilerReturnValue = mcs.ExitCode;
 			} finally {
-				mcs.CancelErrorRead ();
-				mcs.CancelOutputRead ();
+				stderr_completed.WaitOne (TimeSpan.FromSeconds (30));
+				stdout_completed.WaitOne (TimeSpan.FromSeconds (30));
 				mcs.Close();
 			}
 

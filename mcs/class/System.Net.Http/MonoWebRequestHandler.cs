@@ -1,10 +1,11 @@
 //
-// HttpClientHandler.cs
+// MonoWebRequestHandler.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
+//      Martin Baulig  <mabaul@microsoft.com>
 //
-// Copyright (C) 2011 Xamarin Inc (http://www.xamarin.com)
+// Copyright (C) 2011-2018 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,16 +30,18 @@
 using System.Collections.Generic;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Specialized;
 using System.Net.Http.Headers;
+using System.Net.Cache;
 using System.Net.Security;
 using System.Linq;
 
 namespace System.Net.Http
 {
-	public class HttpClientHandler : HttpMessageHandler
+	class MonoWebRequestHandler : IMonoHttpClientHandler
 	{
 		static long groupCounter;
 
@@ -51,20 +54,37 @@ namespace System.Net.Http
 		bool preAuthenticate;
 		IWebProxy proxy;
 		bool useCookies;
-		bool useDefaultCredentials;
 		bool useProxy;
-		ClientCertificateOption certificate;
+		SslClientAuthenticationOptions sslOptions;
+		bool allowPipelining;
+		RequestCachePolicy cachePolicy;
+		AuthenticationLevel authenticationLevel;
+		TimeSpan continueTimeout;
+		TokenImpersonationLevel impersonationLevel;
+		int maxResponseHeadersLength;
+		int readWriteTimeout;
+		RemoteCertificateValidationCallback serverCertificateValidationCallback;
+		bool unsafeAuthenticatedConnectionSharing;
 		bool sentRequest;
 		string connectionGroupName;
 		bool disposed;
 
-		public HttpClientHandler ()
+		internal MonoWebRequestHandler ()
 		{
 			allowAutoRedirect = true;
 			maxAutomaticRedirections = 50;
 			maxRequestContentBufferSize = int.MaxValue;
 			useCookies = true;
 			useProxy = true;
+			allowPipelining = true;
+			authenticationLevel = AuthenticationLevel.MutualAuthRequested;
+			cachePolicy = System.Net.WebRequest.DefaultCachePolicy;
+			continueTimeout = TimeSpan.FromMilliseconds (350);
+			impersonationLevel = TokenImpersonationLevel.Delegation;
+			maxResponseHeadersLength = HttpWebRequest.DefaultMaximumResponseHeadersLength;
+			readWriteTimeout = 300000;
+			serverCertificateValidationCallback = null;
+			unsafeAuthenticatedConnectionSharing = false;
 			connectionGroupName = "HttpClientHandler" + Interlocked.Increment (ref groupCounter);
 		}
 
@@ -93,16 +113,6 @@ namespace System.Net.Http
 			set {
 				EnsureModifiability ();
 				automaticDecompression = value;
-			}
-		}
-
-		public ClientCertificateOption ClientCertificateOptions {
-			get {
-				return certificate;
-			}
-			set {
-				EnsureModifiability ();
-				certificate = value;
 			}
 		}
 
@@ -203,16 +213,6 @@ namespace System.Net.Http
 			}
 		}
 
-		public bool UseDefaultCredentials {
-			get {
-				return useDefaultCredentials;
-			}
-			set {
-				EnsureModifiability ();
-				useDefaultCredentials = value;
-			}
-		}
-
 		public bool UseProxy {
 			get {
 				return useProxy;
@@ -223,14 +223,103 @@ namespace System.Net.Http
 			}
 		}
 
-		protected override void Dispose (bool disposing)
+		public bool AllowPipelining {
+			get { return allowPipelining; }
+			set {
+				EnsureModifiability ();
+				allowPipelining = value;
+			}
+		}
+
+		public RequestCachePolicy CachePolicy {
+			get { return cachePolicy; }
+			set {
+				EnsureModifiability ();
+				cachePolicy = value;
+			}
+		}
+
+		public AuthenticationLevel AuthenticationLevel {
+			get { return authenticationLevel; }
+			set {
+				EnsureModifiability ();
+				authenticationLevel = value;
+			}
+		}
+
+		[MonoTODO]
+		public TimeSpan ContinueTimeout {
+			get { return continueTimeout; }
+			set {
+				EnsureModifiability ();
+				continueTimeout = value;
+			}
+		}
+
+		public TokenImpersonationLevel ImpersonationLevel {
+			get { return impersonationLevel; }
+			set {
+				EnsureModifiability ();
+				impersonationLevel = value;
+			}
+		}
+
+		public int MaxResponseHeadersLength {
+			get { return maxResponseHeadersLength; }
+			set {
+				EnsureModifiability ();
+				maxResponseHeadersLength = value;
+			}
+		}
+
+		public int ReadWriteTimeout {
+			get { return readWriteTimeout; }
+			set {
+				EnsureModifiability ();
+				readWriteTimeout = value;
+			}
+		}
+
+		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
+			get { return serverCertificateValidationCallback; }
+			set {
+				EnsureModifiability ();
+				serverCertificateValidationCallback = value;
+			}
+		}
+
+		public bool UnsafeAuthenticatedConnectionSharing {
+			get { return unsafeAuthenticatedConnectionSharing; }
+			set {
+				EnsureModifiability ();
+				unsafeAuthenticatedConnectionSharing = value;
+			}
+		}
+
+		public SslClientAuthenticationOptions SslOptions {
+			get => sslOptions ?? (sslOptions = new SslClientAuthenticationOptions ());
+			set {
+				EnsureModifiability ();
+				sslOptions = value;
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
 				Volatile.Write (ref disposed, true);
 				ServicePointManager.CloseConnectionGroup (connectionGroupName);
 			}
+		}
 
-			base.Dispose (disposing);
+		bool GetConnectionKeepAlive (HttpRequestHeaders headers)
+		{
+			return headers.Connection.Any (l => string.Equals (l, "Keep-Alive", StringComparison.OrdinalIgnoreCase));
 		}
 
 		internal virtual HttpWebRequest CreateWebRequest (HttpRequestMessage request)
@@ -239,12 +328,16 @@ namespace System.Net.Http
 			wr.ThrowOnError = false;
 			wr.AllowWriteStreamBuffering = false;
 
+			if (request.Version == HttpVersion.Version20)
+				wr.ProtocolVersion = HttpVersion.Version11;
+			else
+				wr.ProtocolVersion = request.Version;
+
 			wr.ConnectionGroupName = connectionGroupName;
 			wr.Method = request.Method.Method;
-			wr.ProtocolVersion = request.Version;
 
 			if (wr.ProtocolVersion == HttpVersion.Version10) {
-				wr.KeepAlive = request.Headers.ConnectionKeepAlive;
+				wr.KeepAlive = GetConnectionKeepAlive (request.Headers);
 			} else {
 				wr.KeepAlive = request.Headers.ConnectionClose != true;
 			}
@@ -264,11 +357,7 @@ namespace System.Net.Http
 				wr.CookieContainer = CookieContainer;
 			}
 
-			if (useDefaultCredentials) {
-				wr.UseDefaultCredentials = true;
-			} else {
-				wr.Credentials = credentials;
-			}
+			wr.Credentials = credentials;
 
 			if (useProxy) {
 				wr.Proxy = proxy;
@@ -298,13 +387,13 @@ namespace System.Net.Http
 					values = values.Where (l => l != "chunked");
 				}
 
-				var values_formated = HttpRequestHeaders.GetSingleHeaderString (header.Key, values);
+				var values_formated = HeaderUtils.GetSingleHeaderString (header.Key, values);
 				if (values_formated == null)
 					continue;
 
 				headers.AddInternal (header.Key, values_formated);
 			}
-			
+
 			return wr;
 		}
 
@@ -313,19 +402,23 @@ namespace System.Net.Http
 			var response = new HttpResponseMessage (wr.StatusCode);
 			response.RequestMessage = requestMessage;
 			response.ReasonPhrase = wr.StatusDescription;
+#if LEGACY_HTTPCLIENT
 			response.Content = new StreamContent (wr.GetResponseStream (), cancellationToken);
+#else
+			response.Content = new StreamContent (wr.GetResponseStream ());
+#endif
 
 			var headers = wr.Headers;
 			for (int i = 0; i < headers.Count; ++i) {
-				var key = headers.GetKey(i);
+				var key = headers.GetKey (i);
 				var value = headers.GetValues (i);
 
 				HttpHeaders item_headers;
-				if (HttpHeaders.GetKnownHeaderKind (key) == Headers.HttpHeaderKind.Content)
+				if (HeaderUtils.IsContentHeader (key))
 					item_headers = response.Content.Headers;
 				else
 					item_headers = response.Headers;
-					
+
 				item_headers.TryAddWithoutValidation (key, value);
 			}
 
@@ -348,7 +441,7 @@ namespace System.Net.Http
 			}
 		}
 
-		protected async internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
+		public async Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -413,23 +506,8 @@ namespace System.Net.Http
 				cancelled.SetCanceled ();
 				return await cancelled.Task;
 			}
-			
+
 			return CreateResponseMessage (wresponse, request, cancellationToken);
-		}
-
-		public bool CheckCertificateRevocationList {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public X509CertificateCollection ClientCertificates {
-			get {
-				throw new NotImplementedException ();
-			}
 		}
 
 		public ICredentials DefaultProxyCredentials {
@@ -450,35 +528,8 @@ namespace System.Net.Http
 			}
 		}
 
-		public int MaxResponseHeadersLength {
+		public IDictionary<string, object> Properties {
 			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public IDictionary<string,object> Properties {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public Func<HttpRequestMessage,X509Certificate2,X509Chain,SslPolicyErrors,bool> ServerCertificateCustomValidationCallback {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public SslProtocols SslProtocols {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
 				throw new NotImplementedException ();
 			}
 		}

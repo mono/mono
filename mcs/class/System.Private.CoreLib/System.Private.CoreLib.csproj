@@ -126,6 +126,7 @@
       <Compile Include="System\MissingMemberException.cs" />
       <Compile Include="System\ModuleHandle.cs" />
       <Compile Include="System\NotImplemented.cs" />
+      <Compile Include="System\Nullable.cs" />
       <Compile Include="System\Type.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
       <Compile Include="System.Globalization\CultureData.cs" />
@@ -148,7 +149,7 @@
       <Compile Include="System.Reflection\MonoAssembly.cs" />
       <Compile Include="System.Reflection.Emit\Stubs.cs" />
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
-      <Compile Include="System.Resources\ResourceManager.cs" />
+      <Compile Include="System.Resources\ManifestBasedResourceGroveler.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeFeature.cs" />
       <Compile Include="System.Runtime.InteropServices\CriticalHandle.cs" />
@@ -174,6 +175,7 @@
       <Compile Include="temp\*.cs" />
   </ItemGroup>
   <ItemGroup>
+      <Compile Include="..\..\build\common\Consts.cs" />
       <Compile Include="..\..\build\common\SR.cs" />
 
       <Compile Include="..\corlib\coreclr\Math.CoreCLR.cs" />
@@ -225,11 +227,11 @@
       <Compile Include="..\corlib\System.Threading\WaitHandle.cs" />
 
       <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoMethod.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoParameterInfo.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoField.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoProperty.cs" />
-      <Compile Include="..\corlib\System.Reflection\MonoEvent.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimeMethodInfo.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimeFieldInfo.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimePropertyInfo.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimeEventInfo.cs" />
+      <Compile Include="..\corlib\System.Reflection\RuntimeParameterInfo.cs" />
 
       <Compile Include="..\corlib\System.Runtime.InteropServices\GCHandle.cs" />
   </ItemGroup>

@@ -812,6 +812,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.cs
+../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.Unix.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/SecurityBufferType.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/SecurityBuffer.cs
 

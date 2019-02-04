@@ -9,7 +9,6 @@ corefx/Unix/Interop.Read.cs
 ../../../external/corefx/src/Common/src/System/Net/ContextFlagsAdapterPal.Unix.cs
 ../../../external/corefx/src/Common/src/System/Net/NTAuthentication.Common.cs
 
-../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.Unix.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/NegotiateStreamPal.Unix.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/SSPIHandleCache.cs
 

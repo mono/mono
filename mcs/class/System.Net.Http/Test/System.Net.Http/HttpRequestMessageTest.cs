@@ -61,9 +61,13 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (HttpMethod.Get, m.Method, "#3");
 			Assert.IsNotNull (m.Properties, "#4");
 			Assert.IsNull (m.RequestUri, "#5");
-			Assert.AreEqual (new Version (1, 1), m.Version, "#6");
-
-			Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 1.1, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#7");
+			if (HttpClientTestHelpers.UsingSocketsHandler) {
+				Assert.AreEqual (new Version (2, 0), m.Version, "#6");
+				Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 2.0, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#7");
+			} else {
+				Assert.AreEqual (new Version (1, 1), m.Version, "#6");
+				Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 1.1, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#7");
+			}
 		}
 
 		[Test]
@@ -91,7 +95,7 @@ namespace MonoTests.System.Net.Http
 		[Test]
 		public void Ctor_RelativeUri ()
 		{
-			var client = new HttpClient ();
+			var client = HttpClientTestHelpers.CreateHttpClient ();
 			client.BaseAddress = new Uri ("http://en.wikipedia.org/wiki/");
 			var uri = new Uri ("Computer", UriKind.Relative);
 			var req = new HttpRequestMessage (HttpMethod.Get, uri);
@@ -116,7 +120,7 @@ namespace MonoTests.System.Net.Http
 		[Test]
 		public void Ctor_RelativeUriString ()
 		{
-			var client = new HttpClient ();
+			var client = HttpClientTestHelpers.CreateHttpClient ();
 			client.BaseAddress = new Uri ("http://en.wikipedia.org/wiki/");
 			var req = new HttpRequestMessage (HttpMethod.Get, "Computer");
 			// HttpRequestMessage does not rewrite it here.
@@ -666,7 +670,10 @@ namespace MonoTests.System.Net.Http
 
 			// .NET encloses the "Age: vv" with two whitespaces.
 			var normalized = Regex.Replace (message.ToString (), @"\s", "");
-			Assert.AreEqual ("Method:GET,RequestUri:'<null>',Version:1.1,Content:<null>,Headers:{Age:vv}", normalized, "#3");
+			if (HttpClientTestHelpers.UsingSocketsHandler)
+				Assert.AreEqual ("Method:GET,RequestUri:'<null>',Version:2.0,Content:<null>,Headers:{Age:vv}", normalized, "#3");
+			else
+				Assert.AreEqual ("Method:GET,RequestUri:'<null>',Version:1.1,Content:<null>,Headers:{Age:vv}", normalized, "#3");
 		}
 
 		[Test]

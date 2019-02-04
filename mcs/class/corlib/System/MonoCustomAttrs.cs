@@ -72,11 +72,11 @@ namespace System
 		internal static object[] GetPseudoCustomAttributes (ICustomAttributeProvider obj, Type attributeType) {
 			object[] pseudoAttrs = null;
 			/* FIXME: Add other types */
-			if (obj is MonoMethod monoMethod)
+			if (obj is RuntimeMethodInfo monoMethod)
 				pseudoAttrs = monoMethod.GetPseudoCustomAttributes ();
-			else if (obj is MonoField fieldInfo)
+			else if (obj is RuntimeFieldInfo fieldInfo)
 				pseudoAttrs = fieldInfo.GetPseudoCustomAttributes ();
-			else if (obj is MonoParameterInfo monoParamInfo)
+			else if (obj is RuntimeParameterInfo monoParamInfo)
 				pseudoAttrs = monoParamInfo.GetPseudoCustomAttributes ();
 			else if (obj is Type t)
 				pseudoAttrs = GetPseudoCustomAttributes (t);
@@ -463,11 +463,11 @@ namespace System
 			CustomAttributeData[] pseudoAttrsData = null;
 
 			/* FIXME: Add other types */
-			if (obj is MonoMethod monoMethod)
+			if (obj is RuntimeMethodInfo monoMethod)
 				pseudoAttrsData = monoMethod.GetPseudoCustomAttributesData ();
-			else if (obj is MonoField fieldInfo)
+			else if (obj is RuntimeFieldInfo fieldInfo)
 				pseudoAttrsData = fieldInfo.GetPseudoCustomAttributesData ();
-			else if (obj is MonoParameterInfo monoParamInfo)
+			else if (obj is RuntimeParameterInfo monoParamInfo)
 				pseudoAttrsData = monoParamInfo.GetPseudoCustomAttributesData ();
 			else if (obj is Type t)
 				pseudoAttrsData = GetPseudoCustomAttributesData (t);
@@ -550,7 +550,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern bool IsDefinedInternal (ICustomAttributeProvider obj, Type AttributeType);
 
-		static PropertyInfo GetBasePropertyDefinition (MonoProperty property)
+		static PropertyInfo GetBasePropertyDefinition (RuntimePropertyInfo property)
 		{
 			MethodInfo method = property.GetGetMethod (true);
 			if (method == null || !method.IsVirtual)
@@ -558,7 +558,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
+			MethodInfo baseMethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				ParameterInfo[] parameters = property.GetIndexParameters ();
 				if (parameters != null && parameters.Length > 0) {
@@ -575,7 +575,7 @@ namespace System
 
 		}
 
-		static EventInfo GetBaseEventDefinition (MonoEvent evt)
+		static EventInfo GetBaseEventDefinition (RuntimeEventInfo evt)
 		{
 			MethodInfo method = evt.GetAddMethod (true);
 			if (method == null || !method.IsVirtual)
@@ -585,7 +585,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
+			MethodInfo baseMethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				BindingFlags flags = method.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
 				flags |= method.IsStatic ? BindingFlags.Static : BindingFlags.Instance;
@@ -595,8 +595,8 @@ namespace System
 			return null;
 		}
 
-		// Handles Type, MonoProperty and MonoMethod.
-		// The runtime has also cases for MonoEvent, MonoField, Assembly and ParameterInfo,
+		// Handles Type, RuntimePropertyInfo and RuntimeMethodInfo.
+		// The runtime has also cases for RuntimeEventInfo, RuntimeFieldInfo, Assembly and ParameterInfo,
 		// but for those we return null here.
 		static ICustomAttributeProvider GetBase (ICustomAttributeProvider obj)
 		{
@@ -607,23 +607,23 @@ namespace System
 				return ((Type) obj).BaseType;
 
 			MethodInfo method = null;
-			if (obj is MonoProperty)
-				return GetBasePropertyDefinition ((MonoProperty) obj);
-			else if (obj is MonoEvent)
-				return GetBaseEventDefinition ((MonoEvent)obj);
-			else if (obj is MonoMethod)
+			if (obj is RuntimePropertyInfo)
+				return GetBasePropertyDefinition ((RuntimePropertyInfo) obj);
+			else if (obj is RuntimeEventInfo)
+				return GetBaseEventDefinition ((RuntimeEventInfo)obj);
+			else if (obj is RuntimeMethodInfo)
 				method = (MethodInfo) obj;
 
 			/**
 			 * ParameterInfo -> null
 			 * Assembly -> null
-			 * MonoEvent -> null
-			 * MonoField -> null
+			 * RuntimeEventInfo -> null
+			 * RuntimeFieldInfo -> null
 			 */
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = ((MonoMethod)method).GetBaseMethod ();
+			MethodInfo baseMethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 			if (baseMethod == method)
 				return null;
 
