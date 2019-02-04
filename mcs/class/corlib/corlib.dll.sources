@@ -1526,8 +1526,8 @@ corefx/BinaryEnums.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ApartmentState.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/AsyncLocal.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/AutoResetEvent.cs
-../referencesource/mscorlib/system/threading/CancellationToken.cs
-../referencesource/mscorlib/system/threading/CancellationTokenSource.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/CancellationToken.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/CancellationTokenSource.cs
 ../../../external/corefx/src/System.Threading/src/System/Threading/CountdownEvent.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/EventResetMode.cs
 ../referencesource/mscorlib/system/threading/eventwaithandle.cs
