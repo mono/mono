@@ -1,49 +1,72 @@
-//
-// DependentTransaction.cs
-//
-// Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
-//
-// (C)2005 Novell Inc,
-//
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
-using System.Runtime.Serialization;
 
 namespace System.Transactions
 {
-	[MonoTODO ("Not supported yet")]
-	[Serializable]
-	public sealed class DependentTransaction : Transaction, ISerializable
-	{
-//		Transaction parent;
-//		DependentCloneOption option;
-		bool completed;
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2229", Justification = "Serialization not yet supported and will be done using DistributedTransaction")]
+    [Serializable]
+    public sealed class DependentTransaction : Transaction
+    {
+        private bool _blocking;
 
-		internal DependentTransaction (Transaction parent,
-			DependentCloneOption option)
-		{
-//			this.parent = parent;
-//			this.option = option;
-		}
+        // Create a transaction with the given settings
+        //
+        internal DependentTransaction(IsolationLevel isoLevel, InternalTransaction internalTransaction, bool blocking) :
+            base(isoLevel, internalTransaction)
+        {
+            _blocking = blocking;
+            lock (_internalTransaction)
+            {
+                if (blocking)
+                {
+                    _internalTransaction.State.CreateBlockingClone(_internalTransaction);
+                }
+                else
+                {
+                    _internalTransaction.State.CreateAbortingClone(_internalTransaction);
+                }
+            }
+        }
 
-		internal bool Completed {
-			get { return completed; }
-		}
+        public void Complete()
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+            }
 
-		[MonoTODO]
-		public void Complete ()
-		{
-			throw new NotImplementedException ();
-		}
+            lock (_internalTransaction)
+            {
+                if (Disposed)
+                {
+                    throw new ObjectDisposedException(nameof(DependentTransaction));
+                }
 
-		void ISerializable.GetObjectData (SerializationInfo info,
-			StreamingContext context)
-		{
-//			parent = (Transaction) info.GetValue ("parent", typeof (Transaction));
-//			option = (DependentCloneOption) info.GetValue (
-//				"option", typeof (DependentCloneOption));
-			completed = info.GetBoolean ("completed");
-		}
-	}
+                if (_complete)
+                {
+                    throw TransactionException.CreateTransactionCompletedException(DistributedTxId);
+                }
+
+                _complete = true;
+
+                if (_blocking)
+                {
+                    _internalTransaction.State.CompleteBlockingClone(_internalTransaction);
+                }
+                else
+                {
+                    _internalTransaction.State.CompleteAbortingClone(_internalTransaction);
+                }
+            }
+
+            if (etwLog.IsEnabled())
+            {
+                etwLog.TransactionDependentCloneComplete(this, "DependentTransaction");
+                etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+            }
+        }
+    }
 }
-

@@ -1,64 +1,125 @@
-//
-// SinglePhaseEnlistment.cs
-//
-// Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
-//	Ankit Jain	 <JAnkit@novell.com>
-//
-// (C)2005 Novell Inc,
-// (C)2006 Novell Inc,
-//
-
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 namespace System.Transactions
 {
-	public class SinglePhaseEnlistment : Enlistment
-	{
-//		bool committed;
-		Transaction tx;
-		object abortingEnlisted;
-		
-		/// <summary>
-		/// The empty ctor is used only for enlistments passed to resource managers when rolling back a transaction that
-		///  has already been aborted by another resource manager; no need to retrigger (another) rollback.
-		/// </summary>
-		internal SinglePhaseEnlistment () {}
+    public class SinglePhaseEnlistment : Enlistment
+    {
+        internal SinglePhaseEnlistment(InternalEnlistment enlistment) : base(enlistment)
+        {
+        }
 
-		internal SinglePhaseEnlistment (Transaction tx, object abortingEnlisted)
-		{
-			this.tx = tx;
-			this.abortingEnlisted = abortingEnlisted;
-		}
+        public void Aborted()
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+                etwLog.EnlistmentAborted(_internalEnlistment);
+            }
 
-		public void Aborted ()
-		{
-			Aborted (null);
-		}
+            lock (_internalEnlistment.SyncRoot)
+            {
+                _internalEnlistment.State.Aborted(_internalEnlistment, null);
+            }
 
-		public void Aborted (Exception e)
-		{
-			if (tx != null)
-				tx.Rollback (e, abortingEnlisted);
-		}
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+            }
+        }
 
-		[MonoTODO]
-		public void Committed ()
-		{
-			/* FIXME */
-//			committed = true;
-		}
+        public void Aborted(Exception e)
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+                etwLog.EnlistmentAborted(_internalEnlistment);
+            }
 
-		[MonoTODO ("Not implemented")]
-		public void InDoubt ()
-		{
-			throw new NotImplementedException ();
-		}
+            lock (_internalEnlistment.SyncRoot)
+            {
+                _internalEnlistment.State.Aborted(_internalEnlistment, e);
+            }
 
-		[MonoTODO ("Not implemented")]
-		public void InDoubt (Exception e)
-		{
-			throw new NotImplementedException ();
-		}
-	}
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+            }
+        }
+
+
+        public void Committed()
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+                etwLog.EnlistmentCommitted(_internalEnlistment);
+            }
+
+            lock (_internalEnlistment.SyncRoot)
+            {
+                _internalEnlistment.State.Committed(_internalEnlistment);
+            }
+
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+            }
+        }
+
+
+        public void InDoubt()
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+            }
+
+            lock (_internalEnlistment.SyncRoot)
+            {
+                if (etwLog.IsEnabled())
+                {
+                    etwLog.EnlistmentInDoubt(_internalEnlistment);
+                }
+
+                _internalEnlistment.State.InDoubt(_internalEnlistment, null);
+            }
+
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+            }
+        }
+
+
+        public void InDoubt(Exception e)
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+            }
+
+            lock (_internalEnlistment.SyncRoot)
+            {
+                if (etwLog.IsEnabled())
+                {
+                    etwLog.EnlistmentInDoubt(_internalEnlistment);
+                }
+
+                _internalEnlistment.State.InDoubt(_internalEnlistment, e);
+            }
+
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+            }
+        }
+    }
 }
 

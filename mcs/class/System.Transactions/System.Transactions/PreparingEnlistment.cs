@@ -1,86 +1,99 @@
-//
-// PreparingEnlistment.cs
-//
-// Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
-//	Ankit Jain	 <JAnkit@novell.com>
-//
-// (C)2005 Novell Inc,
-// (C)2006 Novell Inc,
-//
-
-
-using System.Threading;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 namespace System.Transactions
 {
-	public class PreparingEnlistment : Enlistment
-	{
-		bool prepared = false;
-		Transaction tx;
-		IEnlistmentNotification enlisted;
-		WaitHandle waitHandle;
-		Exception ex;
+    public class PreparingEnlistment : Enlistment
+    {
+        internal PreparingEnlistment(
+            InternalEnlistment enlistment
+            ) : base(enlistment)
+        {
+        }
 
-		internal PreparingEnlistment (Transaction tx, IEnlistmentNotification enlisted)
-		{
-			this.tx = tx;
-			this.enlisted = enlisted;
-			waitHandle = new ManualResetEvent (false);
-		}
+        public void Prepared()
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+                etwLog.EnlistmentPrepared(_internalEnlistment);
+            }
 
-		public void ForceRollback ()
-		{
-			ForceRollback (null);
-		}
+            lock (_internalEnlistment.SyncRoot)
+            {
+                _internalEnlistment.State.Prepared(_internalEnlistment);
+            }
 
-		internal override void InternalOnDone ()
-		{
-			this.Prepared();			
-		}
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+            }
+        }
 
-		[MonoTODO]
-		public void ForceRollback (Exception e)
-		{
-			tx.Rollback (e, enlisted);
-			/* See test RMFail2 */
-			((ManualResetEvent) waitHandle).Set ();
-		}
+        public void ForceRollback()
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+                etwLog.EnlistmentForceRollback(_internalEnlistment);
+            }
 
-		[MonoTODO]
-		public void Prepared ()
-		{
-			prepared = true;
-			/* See test RMFail2 */
-			((ManualResetEvent) waitHandle).Set ();
-		}
+            lock (_internalEnlistment.SyncRoot)
+            {
+                _internalEnlistment.State.ForceRollback(_internalEnlistment, null);
+            }
 
-		[MonoTODO]
-		public byte [] RecoveryInformation ()
-		{
-			throw new NotImplementedException ();
-		}
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+            }
+        }
 
-		internal bool IsPrepared {
-			get { return prepared; }
-		}
+        public void ForceRollback(Exception e)
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+                etwLog.EnlistmentForceRollback(_internalEnlistment);
+            }
+ 
+            lock (_internalEnlistment.SyncRoot)
+            {
+                _internalEnlistment.State.ForceRollback(_internalEnlistment, e);
+            }
 
-		internal WaitHandle WaitHandle {
-			get { return waitHandle; }
-		}
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+            }
+        }
 
-		internal IEnlistmentNotification EnlistmentNotification
-		{
-			get { return enlisted; }
-		}
+        public byte[] RecoveryInformation()
+        {
+            TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+            if (etwLog.IsEnabled())
+            {
+                etwLog.MethodEnter(TraceSourceType.TraceSourceLtm, this);
+            }
 
-		// Uncatched exceptions thrown during prepare will
-		// be saved here so they can be retrieved by TM.
-		internal Exception Exception
-		{
-			get { return ex; }
-			set { ex = value; }
-		}
-	}
+            try
+            {
+                lock (_internalEnlistment.SyncRoot)
+                {
+                    return _internalEnlistment.State.RecoveryInformation(_internalEnlistment);
+                }
+            }
+            finally
+            {
+                if (etwLog.IsEnabled())
+                {
+                    etwLog.MethodExit(TraceSourceType.TraceSourceLtm, this);
+                }
+            }
+        }
+    }
 }
-

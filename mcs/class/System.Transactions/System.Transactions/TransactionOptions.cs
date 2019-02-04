@@ -1,62 +1,36 @@
-//
-// TransactionOptions.cs
-//
-// Author:
-//	Atsushi Enomoto  <atsushi@ximian.com>
-//
-// (C)2005 Novell Inc,
-//
-
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 namespace System.Transactions
 {
-	public struct TransactionOptions
-	{
+    public struct TransactionOptions
+    {
+        private TimeSpan _timeout;
+        private IsolationLevel _isolationLevel;
 
-		IsolationLevel level;
-		TimeSpan timeout;
+        public TimeSpan Timeout
+        {
+            get { return _timeout; }
+            set { _timeout = value; }
+        }
 
-		internal TransactionOptions (IsolationLevel level, TimeSpan timeout)
-		{
-			this.level = level;
-			this.timeout = timeout;
-		}
+        public IsolationLevel IsolationLevel
+        {
+            get { return _isolationLevel; }
+            set { _isolationLevel = value; }
+        }
 
-		public IsolationLevel IsolationLevel {
-			get { return level; }
-			set { level = value; }
-		}
+        public override int GetHashCode() => base.GetHashCode();  // Don't have anything better to do.
 
-		public TimeSpan Timeout {
-			get { return timeout; }
-			set { timeout = value; }
-		}
+        public override bool Equals(object obj) => obj is TransactionOptions && Equals((TransactionOptions)obj);
 
-		public static bool operator == (TransactionOptions  x,
-			TransactionOptions y)
-		{
-			return x.level == y.level &&
-				x.timeout == y.timeout;
-		}
+        private bool Equals(TransactionOptions other) =>
+            _timeout == other._timeout &&
+            _isolationLevel == other._isolationLevel;
 
-		public static bool operator != (TransactionOptions x,
-			TransactionOptions y)
-		{
-			return x.level != y.level ||
-				x.timeout != y.timeout;
-		}
+        public static bool operator ==(TransactionOptions x, TransactionOptions y) => x.Equals(y);
 
-		public override bool Equals (object obj)
-		{
-			if (! (obj is TransactionOptions))
-				return false;
-			return this == (TransactionOptions) obj;
-		}
-
-		public override int GetHashCode ()
-		{
-			return (int) level ^ timeout.GetHashCode ();
-		}
-	}
+        public static bool operator !=(TransactionOptions x, TransactionOptions y) => !x.Equals(y);
+    }
 }
-
