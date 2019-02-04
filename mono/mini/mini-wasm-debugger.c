@@ -627,6 +627,7 @@ static gboolean decode_value(MonoType * type, gpointer addr)
 			g_free (str);
 			break;
 		}
+		case MONO_TYPE_GENERICINST:
 		case MONO_TYPE_SZARRAY:
 		case MONO_TYPE_ARRAY:
 		case MONO_TYPE_OBJECT:
@@ -665,6 +666,13 @@ static gboolean decode_value(MonoType * type, gpointer addr)
 static gboolean 
 describe_object_properties (guint64 objectId)
 {
+	MonoClassField *f;
+	MonoProperty *p;
+	MonoObject *exc;
+	MonoObject *res;
+	MonoMethodSignature *sig;
+	gpointer iter = NULL;
+	ERROR_DECL (error);
 	DEBUG_PRINTF (2, "describe_object_properties %d\n", objectId);
 	ObjRef *ref = (ObjRef *)g_hash_table_lookup (objrefs, GINT_TO_POINTER (objectId));
 	if (!ref) {
@@ -677,10 +685,9 @@ describe_object_properties (guint64 objectId)
 		DEBUG_PRINTF (2, "describe_object_properties !obj\n");
 		return FALSE;
 	}
-	gpointer iter = NULL;
-	MonoClassField *f;
+
 	while (obj && (f = mono_class_get_fields_internal (obj->vtable->klass, &iter))) {
-		DEBUG_PRINTF (2, "f->name - %s - %x\n", f->name, f->type->type);
+		DEBUG_PRINTF (2, "mono_class_get_fields_internal - %s - %x\n", f->name, f->type->type);
 		if (f->type->attrs & FIELD_ATTRIBUTE_STATIC)
 			continue;
 		if (mono_field_is_deleted (f))
@@ -690,11 +697,22 @@ describe_object_properties (guint64 objectId)
 		
 		decode_value(f->type, field_value);
 	}
-	/*MonoProperty *p;
+
 	iter = NULL;
 	while ((p = mono_class_get_properties (obj->vtable->klass, &iter))) {
+		DEBUG_PRINTF (2, "mono_class_get_properties - %s - %s\n", p->name, p->get->name);
 		mono_wasm_add_properties_var(p->name);
-	}*/
+		sig = mono_method_signature_internal (p->get);
+		res = mono_runtime_try_invoke (p->get, obj, NULL, &exc, error);
+		if (!mono_error_ok (error) && exc == NULL)
+			exc = (MonoObject*) mono_error_convert_to_exception (error);
+		if (exc)
+			decode_value (mono_get_object_type (), &exc);
+		else if (!m_class_is_valuetype (mono_object_class (res)))
+			decode_value(sig->ret, &res);
+		else
+			decode_value(sig->ret, mono_object_unbox_internal (res));
+	}
 	return TRUE;
 }
 
