@@ -788,6 +788,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)System\Threading\SendOrPostCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Threading\SpinLock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Threading\SpinWait.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)System\Threading\SynchronizationContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Threading\SynchronizationLockException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Threading\ThreadLocal.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)System\Threading\Tasks\AsyncCausalityTracerConstants.cs" />
@@ -1107,11 +1108,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.FLock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.FSync.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.FTruncate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetCpuUtilization.cs" Condition="'$(FeaturePortableThreadPool)' == 'true'" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetCwd.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetEUid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetHostName.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetPwUid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetSystemTimeAsTicks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetTimestamp.cs" Condition="'$(FeaturePortableThreadPool)' == 'true'" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetUnixName.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.GetUnixRelease.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interop\Unix\System.Native\Interop.LockFileRegion.cs" />

@@ -52,9 +52,16 @@ namespace System.Collections.Generic
 
 	partial class EnumEqualityComparer<T>
 	{
-		public override bool Equals (T x, T y)
-		{
-			throw new NotImplementedException ();
-		}
+        public override bool Equals(T x, T y) {
+            int x_final = System.Runtime.CompilerServices.JitHelpers.UnsafeEnumCast(x);
+            int y_final = System.Runtime.CompilerServices.JitHelpers.UnsafeEnumCast(y);
+            return x_final == y_final;
+        }
+		/*
+        public override int GetHashCode(T obj) {
+            int x_final = System.Runtime.CompilerServices.JitHelpers.UnsafeEnumCast(obj);
+            return x_final.GetHashCode();
+        }
+		*/
 	}
 }

@@ -2054,6 +2054,8 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	vt->klass = klass;
 	vt->rank = m_class_get_rank (klass);
 	vt->domain = domain;
+	if ((vt->rank > 0) || klass == mono_get_string_class ())
+		vt->flags |= MONO_VT_FLAG_ARRAY_OR_STRING;
 
 	MONO_PROFILER_RAISE (vtable_loading, (vt));
 
@@ -3925,16 +3927,17 @@ mono_property_set_value_handle (MonoProperty *prop, MonoObjectHandle obj, void *
 MonoObject*
 mono_property_get_value (MonoProperty *prop, void *obj, void **params, MonoObject **exc)
 {
-	MONO_REQ_GC_UNSAFE_MODE;
+	MonoObject *val;
+	MONO_ENTER_GC_UNSAFE;
 
 	ERROR_DECL (error);
-	MonoObject *val = do_runtime_invoke (prop->get, obj, params, exc, error);
+	val = do_runtime_invoke (prop->get, obj, params, exc, error);
 	if (exc && *exc == NULL && !mono_error_ok (error)) {
 		*exc = (MonoObject*) mono_error_convert_to_exception (error);
 	} else {
 		mono_error_cleanup (error); /* FIXME don't raise here */
 	}
-
+	MONO_EXIT_GC_UNSAFE;
 	return val;
 }
 
