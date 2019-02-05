@@ -352,9 +352,11 @@ namespace System.Reflection.Emit
 		}
 
 		public override string CodeBase {
-			get {
-				throw not_supported ();
-			}
+			get { throw not_supported (); }
+		}
+
+		public override string EscapedCodeBase {
+			get { return RuntimeAssembly.GetCodeBase (this, true); }
 		}
 		
 		public override MethodInfo EntryPoint {
@@ -372,7 +374,7 @@ namespace System.Reflection.Emit
 		/* This is to keep signature compatibility with MS.NET */
 		public override string ImageRuntimeVersion {
 			get {
-				return base.ImageRuntimeVersion;
+				return RuntimeAssembly.InternalImageRuntimeVersion (this);
 			}
 		}
 
@@ -1205,21 +1207,21 @@ namespace System.Reflection.Emit
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			return base.IsDefined (attributeType, inherit);
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
 		public override object[] GetCustomAttributes (bool inherit)
 		{
-			return base.GetCustomAttributes (inherit);
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return base.GetCustomAttributes (attributeType, inherit);
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
 		public override string FullName {
-			get { return base.FullName; }
+			get { return RuntimeAssembly.get_fullname (this); }
 		}
 	}
 }

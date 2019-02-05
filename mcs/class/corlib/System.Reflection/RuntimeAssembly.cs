@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -162,7 +163,6 @@ namespace System.Reflection {
 		// the security runtime requires access to the assemblyname (e.g. to get the strongname)
 		public override AssemblyName GetName (bool copiedName)
 		{
-
 #if !MOBILE
 			// CodeBase, which is restricted, will be copied into the AssemblyName object so...
 			if (SecurityManager.SecurityEnabled) {
@@ -269,7 +269,248 @@ namespace System.Reflection {
 				return get_global_assembly_cache ();
 			}
 		}
+
+		public override Type[] GetExportedTypes ()
+		{
+			return GetTypes (true);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static string get_code_base (Assembly a, bool escaped);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern string get_location ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static string get_fullname (Assembly a);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static string GetAotId ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static string InternalImageRuntimeVersion (Assembly a);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern bool get_global_assembly_cache ();
+
+		public override extern MethodInfo EntryPoint {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
+		}
+
+		[ComVisible (false)]
+		public override extern bool ReflectionOnly {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
+		}
+
+		// SECURITY: this should be the only caller to icall get_code_base
+		internal static string GetCodeBase (Assembly a, bool escaped)
+		{
+			string cb = get_code_base (a, escaped);
+#if !MOBILE
+			if (SecurityManager.SecurityEnabled) {
+				// we cannot divulge local file informations
+				if (String.Compare ("FILE://", 0, cb, 0, 7, true, CultureInfo.InvariantCulture) == 0) {
+					string file = cb.Substring (7);
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, file).Demand ();
+				}
+			}
+#endif
+			return cb;
+		}
+
+		public override string CodeBase {
+			get { return GetCodeBase (this, false); }
+		}
+
+		public override string EscapedCodeBase {
+			get { return GetCodeBase (this, true); }
+		}
+
+		public override string FullName {
+			get {
+				return get_fullname (this);
+			}
+		}
+
+		[ComVisible (false)]
+		public override string ImageRuntimeVersion {
+			get {
+				return InternalImageRuntimeVersion (this);
+			}
+		}
+
+		public override String Location {
+			get {
+				if (fromByteArray)
+					return String.Empty;
+
+				string loc = get_location ();
+#if !MOBILE
+				if ((loc != String.Empty) && SecurityManager.SecurityEnabled) {
+					// we cannot divulge local file informations
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, loc).Demand ();
+				}
+#endif
+				return loc;
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern bool GetManifestResourceInfoInternal (String name, ManifestResourceInfo info);
+
+		public override ManifestResourceInfo GetManifestResourceInfo (String resourceName)
+		{
+			if (resourceName == null)
+				throw new ArgumentNullException ("resourceName");
+			if (resourceName.Length == 0)
+				throw new ArgumentException ("String cannot have zero length.");
+			ManifestResourceInfo result = new ManifestResourceInfo (null, null, 0);
+			bool found = GetManifestResourceInfoInternal (resourceName, result);
+			if (found)
+				return result;
+			else
+				return null;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public override extern String[] GetManifestResourceNames ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
+
+		public override Stream GetManifestResourceStream (String name)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name.Length == 0)
+				throw new ArgumentException ("String cannot have zero length.",
+					"name");
+
+			ManifestResourceInfo info = GetManifestResourceInfo (name);
+			if (info == null) {
+				Assembly a = AppDomain.CurrentDomain.DoResourceResolve (name, this);
+				if (a != null && a != this)
+					return a.GetManifestResourceStream (name);
+				else
+					return null;
+			}
+
+			if (info.ReferencedAssembly != null)
+				return info.ReferencedAssembly.GetManifestResourceStream (name);
+			if ((info.FileName != null) && (info.ResourceLocation == 0)) {
+				if (fromByteArray)
+					throw new FileNotFoundException (info.FileName);
+
+				string location = Path.GetDirectoryName (Location);
+				string filename = Path.Combine (location, info.FileName);
+				return new FileStream (filename, FileMode.Open, FileAccess.Read);
+			}
+
+			int size;
+			Module module;
+			IntPtr data = GetManifestResourceInternal (name, out size, out module);
+			if (data == (IntPtr) 0)
+				return null;
+			else {
+				UnmanagedMemoryStream stream;
+				unsafe {
+					stream = new UnmanagedMemoryStreamForModule ((byte*) data, size, module);
+				}
+				return stream;
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		public override Stream GetManifestResourceStream (Type type, String name)
+		{
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetManifestResourceStream(type, name, false, ref stackMark);
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
+		}
+
+		public override object [] GetCustomAttributes (bool inherit)
+		{
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
+		}
+
+		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+		}
+
+		public override IList<CustomAttributeData> GetCustomAttributesData ()
+		{
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+
+		//
+		// We can't store the event directly in this class, since the
+		// compiler would silently insert the fields before _mono_assembly
+		//
+		public override event ModuleResolveEventHandler ModuleResolve {
+			[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+			add {
+				resolve_event_holder.ModuleResolve += value;
+			}
+			[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
+			remove {
+				resolve_event_holder.ModuleResolve -= value;
+			}
+		}
+
+		internal override Module GetManifestModule () {
+			return GetManifestModuleInternal ();
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern Module GetManifestModuleInternal ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal override extern Module[] GetModulesInternal ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern object GetFilesInternal (String name, bool getResourceModules);
+
+		public override FileStream [] GetFiles (bool getResourceModules)
+		{
+			string[] names = (string[]) GetFilesInternal (null, getResourceModules);
+			if (names == null)
+				return EmptyArray<FileStream>.Value;
+
+			string location = Location;
+
+			FileStream[] res;
+			if (location != String.Empty) {
+				res = new FileStream [names.Length + 1];
+				res [0] = new FileStream (location, FileMode.Open, FileAccess.Read);
+				for (int i = 0; i < names.Length; ++i)
+					res [i + 1] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			} else {
+				res = new FileStream [names.Length];
+				for (int i = 0; i < names.Length; ++i)
+					res [i] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			}
+			return res;
+		}
+
+		public override FileStream GetFile (String name)
+		{
+			if (name == null)
+				throw new ArgumentNullException (null, "Name cannot be null.");
+			if (name.Length == 0)
+				throw new ArgumentException ("Empty name is not valid");
+
+			string filename = (string)GetFilesInternal (name, true);
+			if (filename != null)
+				return new FileStream (filename, FileMode.Open, FileAccess.Read);
+			else
+				return null;
+		}
 	}
 }
-
-
