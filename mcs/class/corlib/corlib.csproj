@@ -907,6 +907,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\TaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\ConstrainedExecution\CriticalFinalizerObject.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\InteropServices\SafeBuffer.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\CancellationToken.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\ManualResetEventSlim.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\NativeOverlapped.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\SpinWait.cs" />
@@ -928,6 +929,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Runtime\CompilerServices\ReflectionBlockedAttribute.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\CancellationTokenRegistration.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\CancellationTokenSource.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\LockHolder.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.Dummy.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Tasks\DebuggerSupport.cs" />
@@ -1237,8 +1239,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\util\tokenizer.cs" />
     <Compile Include="..\referencesource\mscorlib\system\sharedstatics.cs" />
     <Compile Include="..\referencesource\mscorlib\system\text\encoding.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\CancellationToken.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\threading\CancellationTokenSource.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\SemaphoreSlim.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\SpinLock.cs" />
     <Compile Include="..\referencesource\mscorlib\system\threading\Tasks\AsyncCausalityTracer.cs" />
