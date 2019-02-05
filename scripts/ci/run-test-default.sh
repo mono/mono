@@ -133,6 +133,7 @@ ${TESTCMD} --label=Microsoft.Build.Framework-14 --timeout=60m make -w -C mcs/cla
 ${TESTCMD} --label=Microsoft.Build.Tasks-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Tasks run-test PROFILE=xbuild_14
 ${TESTCMD} --label=Microsoft.Build.Utilities-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Utilities run-test PROFILE=xbuild_14
 ${TESTCMD} --label=System.IO.Compression --timeout=5m make -w -C mcs/class/System.IO.Compression run-test
+${TESTCMD} --label=System.IO.Compression-xunit --timeout=5m make -w -C mcs/class/System.IO.Compression run-xunit-test
 if [[ ${CI_TAGS} == *'win-'* ]]; then ${TESTCMD} --label=symbolicate --skip; else ${TESTCMD} --label=symbolicate --timeout=60m make -w -C mcs/tools/mono-symbolicate check; fi
 ${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
 ${TESTCMD} --label=csi --timeout=10m make -w -C mcs/packages run-test
