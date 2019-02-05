@@ -491,6 +491,35 @@ namespace MonoTests.System.Threading
 				c1.Dispose ();
 			}
 		}
+
+		[Test] // https://github.com/mono/mono/issues/12421
+		public void EnsurePostIsNotCalled ()
+		{
+			SynchronizationContext mainContext = SynchronizationContext.Current;
+			var asc = new AssertSyncContext ();
+			SynchronizationContext.SetSynchronizationContext (asc);
+			var ct = new CancellationTokenSource ();
+			var tcs = new TaskCompletionSource<bool> ();
+			ct.Token.Register (() => tcs.TrySetCanceled ());
+
+			bool taskIsCancelled = false;
+			Action awaitAction = async () => {
+					try { await tcs.Task; }
+					catch (OperationCanceledException) { 
+						taskIsCancelled = true;
+					}
+				};
+			awaitAction ();
+			ct.Cancel (); // should not trigger SynchronizationContext.Post
+			Assert.IsTrue (taskIsCancelled);
+			SynchronizationContext.SetSynchronizationContext (mainContext);
+		}
+
+		class AssertSyncContext : SynchronizationContext
+		{
+			public override void Post (SendOrPostCallback d, object state) =>
+				throw new InvalidOperationException ("SynchronizationContext.Post was not expected.");
+		}
 	}
 }
 
