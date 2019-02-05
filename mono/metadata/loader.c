@@ -1187,6 +1187,75 @@ is_absolute_path (const char *path)
 	return g_path_is_absolute (path);
 }
 
+typedef enum {
+	LOOKUP_PINVOKE_ERR_OK = 0, /* No error */
+	LOOKUP_PINVOKE_ERR_NO_LIB, /* DllNotFoundException */
+	LOOKUP_PINVOKE_ERR_NO_SYM, /* EntryPointNotFoundException */
+} MonoLookupPInvokeErr;
+
+/* We should just use a MonoError, but mono_lookup_pinvoke_call has this legacy
+ * error reporting mechanism where it returns an exception class and a string
+ * message.  So instead we return an error code and message, and for internal
+ * callers convert it to a MonoError.
+ *
+ * Don't expose this type to the runtime.  It's just an implementation
+ * detail for backward compatability.
+ */
+typedef struct MonoLookupPInvokeStatus {
+	MonoLookupPInvokeErr err_code;
+	char *err_arg;
+} MonoLookupPInvokeStatus;
+
+static gpointer
+lookup_pinvoke_call_impl (MonoMethod *method, MonoLookupPInvokeStatus *status_out);
+
+static void
+pinvoke_probe_convert_status_for_api (MonoLookupPInvokeStatus *status, const char **exc_class, const char **exc_arg)
+{
+	if (!exc_class)
+		return;
+	switch (status->err_code) {
+	case LOOKUP_PINVOKE_ERR_OK:
+		*exc_class = NULL;
+		*exc_arg = NULL;
+		break;
+	case LOOKUP_PINVOKE_ERR_NO_LIB:
+		*exc_class = "DllNotFoundException";
+		*exc_arg = status->err_arg;
+		status->err_arg = NULL;
+		break;
+	case LOOKUP_PINVOKE_ERR_NO_SYM:
+		*exc_class = "EntryPointNotFoundException";
+		*exc_arg = status->err_arg;
+		status->err_arg = NULL;
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+}
+
+static void
+pinvoke_probe_convert_status_to_error (MonoLookupPInvokeStatus *status, MonoError *error)
+{
+	/* Note: this has to return a MONO_ERROR_GENERIC because mono_mb_emit_exception_for_error only knows how to decode generic errors. */
+	switch (status->err_code) {
+	case LOOKUP_PINVOKE_ERR_OK:
+		return;
+	case LOOKUP_PINVOKE_ERR_NO_LIB:
+		mono_error_set_generic_error (error, "System", "DllNotFoundException", "%s", status->err_arg);
+		g_free (status->err_arg);
+		status->err_arg = NULL;
+		break;
+	case LOOKUP_PINVOKE_ERR_NO_SYM:
+		mono_error_set_generic_error (error, "System", "EntryPointNotFoundException", "%s", status->err_arg);
+		g_free (status->err_arg);
+		status->err_arg = NULL;
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+}
+
 /**
  * mono_lookup_pinvoke_call:
  */
@@ -1195,7 +1264,10 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 {
 	gpointer result;
 	MONO_ENTER_GC_UNSAFE;
-	result = mono_lookup_pinvoke_call_internal (method, exc_class, exc_arg);
+	MonoLookupPInvokeStatus status;
+	memset (&status, 0, sizeof (status));
+	result = lookup_pinvoke_call_impl (method, &status);
+	pinvoke_probe_convert_status_for_api (&status, exc_class, exc_arg);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
 }
@@ -1210,7 +1282,19 @@ static gpointer
 pinvoke_probe_for_symbol (MonoDl *module, MonoMethodPInvoke *piinfo, const char *import, char **error_msg_out);
 
 gpointer
-mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, const char **exc_arg)
+mono_lookup_pinvoke_call_internal (MonoMethod *method, MonoError *error)
+{
+	gpointer result;
+	MonoLookupPInvokeStatus status;
+	memset (&status, 0, sizeof (status));
+	result = lookup_pinvoke_call_impl (method, &status);
+	if (status.err_code)
+		pinvoke_probe_convert_status_to_error (&status, error);
+	return result;
+}
+
+gpointer
+lookup_pinvoke_call_impl (MonoMethod *method, MonoLookupPInvokeStatus *status_out)
 {
 	MonoImage *image = m_class_get_image (method->klass);
 	MonoMethodPInvoke *piinfo = (MonoMethodPInvoke *)method;
@@ -1230,10 +1314,7 @@ mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, c
 
 	g_assert (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL);
 
-	if (exc_class) {
-		*exc_class = NULL;
-		*exc_arg = NULL;
-	}
+	g_assert (status_out);
 
 	if (piinfo->addr)
 		return piinfo->addr;
@@ -1295,10 +1376,8 @@ mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, c
 				error_msg);
 		g_free (error_msg);
 
-		if (exc_class) {
-			*exc_class = "DllNotFoundException";
-			*exc_arg = new_scope;
-		}
+		status_out->err_code = LOOKUP_PINVOKE_ERR_NO_LIB;
+		status_out->err_arg = g_strdup (new_scope);
 		return NULL;
 	}
 
@@ -1321,10 +1400,8 @@ mono_lookup_pinvoke_call_internal (MonoMethod *method, const char **exc_class, c
 
 	if (!addr) {
 		g_free (error_msg);
-		if (exc_class) {
-			*exc_class = "EntryPointNotFoundException";
-			*exc_arg = import;
-		}
+		status_out->err_code = LOOKUP_PINVOKE_ERR_NO_SYM;
+		status_out->err_arg = g_strdup (import);
 		return NULL;
 	}
 	piinfo->addr = addr;

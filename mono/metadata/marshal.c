@@ -345,13 +345,11 @@ mono_delegate_to_ftnptr_impl (MonoDelegateHandle delegate, MonoError *error)
 	}
 
 	if (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
-		const char *exc_class, *exc_arg;
 		gpointer ftnptr;
 
-		ftnptr = mono_lookup_pinvoke_call_internal (method, &exc_class, &exc_arg);
+		ftnptr = mono_lookup_pinvoke_call_internal (method, error);
 		if (!ftnptr) {
-			g_assert (exc_class);
-			mono_error_set_generic_error (error, "System", exc_class, "%s", exc_arg);
+			g_assert (!is_ok (error));
 			goto leave;
 		}
 		result = ftnptr;
@@ -3307,8 +3305,7 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	gboolean pinvoke = FALSE;
 	gpointer iter;
 	int i;
-	const char *exc_class = "MissingMethodException";
-	const char *exc_arg = NULL;
+	ERROR_DECL (emitted_error);
 	WrapperInfo *info;
 
 	g_assert (method != NULL);
@@ -3355,9 +3352,9 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	if (!piinfo->addr) {
 		if (pinvoke) {
 			if (method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE)
-				exc_arg = "Method contains unsupported native code";
+				mono_error_set_generic_error (emitted_error, "System", "MissingMethodException", "Method contains unsupported native code");
 			else if (!aot)
-				mono_lookup_pinvoke_call_internal (method, &exc_class, &exc_arg);
+				mono_lookup_pinvoke_call_internal (method, emitted_error);
 		} else {
 			if (!aot || (method->klass == mono_defaults.string_class))
 				piinfo->addr = mono_lookup_internal_call (method);
@@ -3415,7 +3412,12 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	 * registered in the runtime doing the AOT compilation.
 	 */
 	if (!piinfo->addr && !aot) {
-		get_marshal_cb ()->mb_emit_exception (mb, "System", exc_class, exc_arg);
+		/* if there's no code but the error isn't set, just use a fairly generic exception. */
+		if (is_ok (emitted_error))
+			mono_error_set_generic_error (emitted_error, "System", "MissingMethodException", "");
+		get_marshal_cb ()->mb_emit_exception_for_error (mb, emitted_error);
+		mono_error_cleanup (emitted_error);
+
 		info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
 		info->d.managed_to_native.method = method;
 
@@ -3427,6 +3429,8 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 
 		return res;
 	}
+
+	g_assert (is_ok (emitted_error));
 
 	/* internal calls: we simply push all arguments and call the method (no conversions) */
 	if (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME)) {
