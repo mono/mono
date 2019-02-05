@@ -17,15 +17,8 @@ using Mono;
 
 namespace System.Reflection {
 
-	abstract class RuntimeAssembly : Assembly
+	class RuntimeAssembly : Assembly
 	{
-
-	}
-
-
-	class MonoAssembly : RuntimeAssembly
-	{
-
 	}
 }
 
