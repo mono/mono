@@ -92,10 +92,22 @@ namespace System.Reflection.Emit
 
 		public bool InitLocals { get; set; }
 
+		public override RuntimeMethodHandle MethodHandle {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override MethodImplAttributes MethodImplementationFlags {
 			get {
 				throw new PlatformNotSupportedException ();
 			}				
+		}
+
+		public override Module Module {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
 		}
 
 		public override string Name {
@@ -103,6 +115,12 @@ namespace System.Reflection.Emit
 				throw new PlatformNotSupportedException ();
 			}
 		}				
+
+		public override Type ReflectedType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
 
 		public override ParameterInfo ReturnParameter {
 			get {
@@ -114,6 +132,32 @@ namespace System.Reflection.Emit
 			get {
 				throw new PlatformNotSupportedException ();
 			}
+		}
+
+		public override ICustomAttributeProvider ReturnTypeCustomAttributes {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override sealed Delegate CreateDelegate (Type delegateType)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public override sealed Delegate CreateDelegate (Type delegateType, object target)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string parameterName)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public DynamicILInfo GetDynamicILInfo ()
+		{
+			throw new PlatformNotSupportedException ();
 		}
 
 		public ILGenerator GetILGenerator ()

@@ -27,6 +27,9 @@
 //
 
 #if FULL_AOT_RUNTIME
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.Reflection.Emit
 {
@@ -64,13 +67,67 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override bool ContainsGenericParameters {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override MethodBase DeclaringMethod {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Type DeclaringType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override string FullName {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
 		}
 
+		public override GenericParameterAttributes GenericParameterAttributes {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override int GenericParameterPosition {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override Guid GUID {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool IsConstructedGenericType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool IsGenericParameter {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool IsGenericType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool IsGenericTypeDefinition {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -94,7 +151,41 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override Type ReflectedType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override RuntimeTypeHandle TypeHandle {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public TypeToken TypeToken {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Type UnderlyingSystemType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		public void AddInterfaceImplementation (Type interfaceType)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public Type CreateType ()
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -205,6 +296,21 @@ namespace System.Reflection.Emit
 		}
 
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, PackingSize packSize, int typeSize)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers, CallingConvention nativeCallConv, CharSet nativeCharSet)
 		{
 			throw new PlatformNotSupportedException ();
 		}

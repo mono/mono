@@ -27,6 +27,7 @@
 //
 
 #if FULL_AOT_RUNTIME
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
@@ -92,6 +93,16 @@ namespace System.Reflection.Emit
 		}
 
 		public static SignatureHelper GetPropertySigHelper (Module mod, Type returnType, Type[] parameterTypes)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static SignatureHelper GetMethodSigHelper (CallingConvention unmanagedCallingConvention, Type returnType)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static SignatureHelper GetMethodSigHelper (Module mod, CallingConvention unmanagedCallConv, Type returnType)
 		{
 			throw new PlatformNotSupportedException ();
 		}

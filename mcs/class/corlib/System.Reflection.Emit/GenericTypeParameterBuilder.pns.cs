@@ -50,13 +50,61 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override bool ContainsGenericParameters {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override MethodBase DeclaringMethod {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Type DeclaringType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override string FullName {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
 		}
 
+		public override GenericParameterAttributes GenericParameterAttributes {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override int GenericParameterPosition {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override Guid GUID {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool IsGenericParameter {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool IsGenericType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool IsGenericTypeDefinition {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -75,6 +123,24 @@ namespace System.Reflection.Emit
 		}
 
 		public override string Namespace {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Type ReflectedType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override RuntimeTypeHandle TypeHandle {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Type UnderlyingSystemType {
 			get {
 				throw new PlatformNotSupportedException ();
 			}

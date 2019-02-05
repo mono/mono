@@ -27,12 +27,58 @@
 //
 
 #if FULL_AOT_RUNTIME
+using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
+using System.IO;
+using System.Resources;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
 	public abstract class ModuleBuilder : Module
 	{
+		public override Assembly Assembly {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override string FullyQualifiedName {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override int MetadataToken {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Guid ModuleVersionId {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override string Name {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override string ScopeName {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public void CreateGlobalFunctions ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public ISymbolDocumentWriter DefineDocument (string url, Guid language, Guid languageVendor, Guid documentType)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -58,6 +104,31 @@ namespace System.Reflection.Emit
 		}
 
 		public FieldBuilder DefineInitializedData (string name, byte[] data, FieldAttributes attributes)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void DefineManifestResource (string name, Stream stream, ResourceAttributes attribute)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public IResourceWriter DefineResource (string name, string description)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public IResourceWriter DefineResource (string name, string description, ResourceAttributes attribute)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -102,7 +173,82 @@ namespace System.Reflection.Emit
 			throw new PlatformNotSupportedException ();
 		}
 
+		public void DefineUnmanagedResource (byte[] resource)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void DefineUnmanagedResource (string resourceFileName)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		public MethodInfo GetArrayMethod (Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodToken GetArrayMethodToken (Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodToken GetConstructorToken (ConstructorInfo con)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodToken GetConstructorToken (ConstructorInfo constructor, IEnumerable<Type> optionalParameterTypes)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public FieldToken GetFieldToken (FieldInfo field)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodToken GetMethodToken (MethodInfo method)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodToken GetMethodToken (MethodInfo method, IEnumerable<Type> optionalParameterTypes)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public SignatureToken GetSignatureToken (SignatureHelper sigHelper)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public SignatureToken GetSignatureToken (byte[] sigBytes, int sigLength)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public StringToken GetStringConstant (string str)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public ISymbolWriter GetSymWriter ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public TypeToken GetTypeToken (string name)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public TypeToken GetTypeToken (Type type)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public bool IsTransient ()
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -113,6 +259,16 @@ namespace System.Reflection.Emit
 		}
 
 		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetSymCustomAttribute (string name, byte[] data)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetUserEntryPoint (MethodInfo entryPoint)
 		{
 			throw new PlatformNotSupportedException ();
 		}

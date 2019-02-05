@@ -27,6 +27,7 @@
 //
 
 #if FULL_AOT_RUNTIME
+using System.Globalization;
 
 namespace System.Reflection.Emit
 {
@@ -44,7 +45,25 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override RuntimeFieldHandle FieldHandle {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override Type FieldType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override int MetadataToken {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Module Module {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -54,6 +73,32 @@ namespace System.Reflection.Emit
 			get {
 				throw new PlatformNotSupportedException ();
 			}
+		}
+
+		public override Type ReflectedType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override object[] GetCustomAttributes (bool inherit)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public FieldToken GetToken ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			throw new PlatformNotSupportedException ();
 		}
 
 		public override object GetValue (object obj)
@@ -80,6 +125,11 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}		
+
+		public override void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture)
+		{
+			throw new PlatformNotSupportedException ();
+		}
 	}
 }
 

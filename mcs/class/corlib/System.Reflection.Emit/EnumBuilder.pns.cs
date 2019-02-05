@@ -56,6 +56,12 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override System.Type DeclaringType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override string FullName {
 			get {
 				throw new PlatformNotSupportedException ();
@@ -67,6 +73,8 @@ namespace System.Reflection.Emit
 				throw new PlatformNotSupportedException ();
 			}
 		}
+		
+		public override bool IsConstructedGenericType { get; }
 
 		public override Module Module {
 			get {
@@ -86,6 +94,35 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override Type ReflectedType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override RuntimeTypeHandle TypeHandle {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public TypeToken TypeToken {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Type UnderlyingSystemType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public Type CreateType ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		public TypeInfo CreateTypeInfo ()
 		{
 			throw new PlatformNotSupportedException ();
@@ -96,7 +133,7 @@ namespace System.Reflection.Emit
 			throw new PlatformNotSupportedException ();
 		}
 
-		public override System.Type GetElementType ()
+		public override Type GetElementType ()
 		{
 			throw new PlatformNotSupportedException ();
 		}		

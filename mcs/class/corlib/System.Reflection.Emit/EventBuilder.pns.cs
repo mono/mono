@@ -37,6 +37,11 @@ namespace System.Reflection.Emit
 			throw new PlatformNotSupportedException ();
 		}
 
+		public EventToken GetEventToken ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		public void SetAddOnMethod (MethodBuilder mdBuilder)
 		{
 			throw new PlatformNotSupportedException ();

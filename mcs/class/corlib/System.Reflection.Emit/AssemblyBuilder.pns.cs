@@ -27,17 +27,98 @@
 //
 
 #if FULL_AOT_RUNTIME
+using System.Collections.Generic;
+using System.Resources;
 
 namespace System.Reflection.Emit
 {
 	public class AssemblyBuilder : Assembly
 	{
+		public override string CodeBase {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override MethodInfo EntryPoint {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override string FullName {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool GlobalAssemblyCache {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override string ImageRuntimeVersion {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool IsDynamic {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override string Location {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Module ManifestModule {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override bool ReflectionOnly {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public void AddResourceFile (string name, string fileName)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void AddResourceFile (string name, string fileName, ResourceAttributes attribute)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public ModuleBuilder DefineDynamicModule (string name, bool emitSymbolInfo)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public ModuleBuilder DefineDynamicModule (string name, string fileName)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public ModuleBuilder DefineDynamicModule (string name, string fileName, bool emitSymbolInfo)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+		
 		public static AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
 			throw new PlatformNotSupportedException ();
 		}
 
-		public static AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, System.Collections.Generic.IEnumerable<CustomAttributeBuilder> assemblyAttributes)
+		public static AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -47,7 +128,47 @@ namespace System.Reflection.Emit
 			throw new PlatformNotSupportedException ();
 		}
 
+		public IResourceWriter DefineResource (string name, string description, string fileName)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public IResourceWriter DefineResource (string name, string description, string fileName, ResourceAttributes attribute)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void DefineUnmanagedResource (byte[] resource)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void DefineUnmanagedResource (string resourceFileName)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void DefineVersionInfoResource ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void DefineVersionInfoResource (string product, string productVersion, string company, string copyright, string trademark)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 		public ModuleBuilder GetDynamicModule (string name)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void Save (string assemblyFileName)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void Save (string assemblyFileName, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -59,6 +180,16 @@ namespace System.Reflection.Emit
 
 
 		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetEntryPoint (MethodInfo entryMethod)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetEntryPoint (MethodInfo entryMethod, PEFileKinds fileKind)
 		{
 			throw new PlatformNotSupportedException ();
 		}

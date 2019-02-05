@@ -27,6 +27,9 @@
 //
 
 #if FULL_AOT_RUNTIME
+using System.Collections.Generic;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.Reflection.Emit
 {
@@ -40,7 +43,25 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override CallingConventions CallingConvention {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override Type DeclaringType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override RuntimeMethodHandle MethodHandle {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Module Module {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -50,6 +71,23 @@ namespace System.Reflection.Emit
 			get {
 				throw new PlatformNotSupportedException ();
 			}
+		}
+
+		public override Type ReflectedType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public string Signature {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
+		{
+			throw new PlatformNotSupportedException ();
 		}
 
 		public ParameterBuilder DefineParameter (int iSequence, ParameterAttributes attributes, string strParamName)
@@ -63,6 +101,16 @@ namespace System.Reflection.Emit
 		}
 
 		public ILGenerator GetILGenerator (int streamSize)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public Module GetModule ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public MethodToken GetToken ()
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -83,6 +131,16 @@ namespace System.Reflection.Emit
 		}
 
 		public void SetImplementationFlags (MethodImplAttributes attributes)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature, IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public void SetSymCustomAttribute (string name, byte[] data)
 		{
 			throw new PlatformNotSupportedException ();
 		}

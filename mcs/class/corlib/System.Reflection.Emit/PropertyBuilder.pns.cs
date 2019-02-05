@@ -56,6 +56,12 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override Module Module {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override string Name {
 			get {
 				throw new PlatformNotSupportedException ();
@@ -63,6 +69,18 @@ namespace System.Reflection.Emit
 		}
 		
 		public override Type PropertyType {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public PropertyToken PropertyToken {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override Type ReflectedType {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
