@@ -584,7 +584,7 @@ typedef struct {
 	int variable;
 } FrameDescData;
 
-static gboolean decode_value(MonoType * type, gpointer addr)
+static gboolean describe_value(MonoType * type, gpointer addr)
 {
 	ERROR_DECL (error);
 	switch (type->type) {
@@ -695,7 +695,7 @@ describe_object_properties (guint64 objectId)
 		mono_wasm_add_properties_var(f->name);
 		gpointer field_value = (guint8*)obj + f->offset;
 		
-		decode_value(f->type, field_value);
+		describe_value(f->type, field_value);
 	}
 
 	iter = NULL;
@@ -707,11 +707,11 @@ describe_object_properties (guint64 objectId)
 		if (!mono_error_ok (error) && exc == NULL)
 			exc = (MonoObject*) mono_error_convert_to_exception (error);
 		if (exc)
-			decode_value (mono_get_object_type (), &exc);
+			describe_value (mono_get_object_type (), &exc);
 		else if (!m_class_is_valuetype (mono_object_class (res)))
-			decode_value(sig->ret, &res);
+			describe_value(sig->ret, &res);
 		else
-			decode_value(sig->ret, mono_object_unbox_internal (res));
+			describe_value(sig->ret, mono_object_unbox_internal (res));
 	}
 	return TRUE;
 }
@@ -735,7 +735,7 @@ describe_array_values (guint64 objectId)
 	for (int i = 0; i < arr->max_length; i++) {
 		mono_wasm_add_array_item(i);
 		elem = (gpointer*)((char*)arr->vector + (i * esize));
-		decode_value(m_class_get_byval_arg (m_class_get_element_class (arr->obj.vtable->klass)), elem);
+		describe_value(m_class_get_byval_arg (m_class_get_element_class (arr->obj.vtable->klass)), elem);
 	}
 	return TRUE;
 }
@@ -780,7 +780,7 @@ describe_variable (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 
 	DEBUG_PRINTF (2, "adding val %p type [%p] %s\n", addr, type, mono_type_full_name (type));
 
-	decode_value(type, addr);
+	describe_value(type, addr);
 	if (header)
 		mono_metadata_free_mh (header);
 
