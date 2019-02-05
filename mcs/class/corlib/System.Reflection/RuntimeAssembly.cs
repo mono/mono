@@ -53,6 +53,38 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.None)]
 	class RuntimeAssembly : Assembly
 	{
+		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
+		{
+#pragma warning disable 414
+			Module module;
+#pragma warning restore
+
+			public unsafe UnmanagedMemoryStreamForModule (byte* pointer, long length, Module module)
+				: base (pointer, length)
+			{
+				this.module = module;
+			}
+
+			protected override void Dispose (bool disposing)
+			{
+				if (_isOpen) {
+					/* 
+					 * The returned pointer points inside metadata, so
+					 * we have to increase the refcount of the module, and decrease
+					 * it when the stream is finalized.
+					 */
+					module = null;
+				}
+
+				base.Dispose (disposing);
+			}
+		}
+
+		protected RuntimeAssembly ()
+		{
+			resolve_event_holder = new ResolveEventHolder ();
+		}
+
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -341,6 +373,10 @@ namespace System.Reflection {
 			}
 		}
 
+		internal override bool FromByteArray {
+			set { fromByteArray = value; }
+		}
+
 		public override String Location {
 			get {
 				if (fromByteArray)
@@ -512,5 +548,144 @@ namespace System.Reflection {
 			else
 				return null;
 		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public override bool Equals (object o)
+		{
+			if (((object) this) == o)
+				return true;
+
+			if (o == null)
+				return false;
+			
+			if (!(o is RuntimeAssembly))
+				return false;
+			var other = (RuntimeAssembly) o;
+			return other._mono_assembly == _mono_assembly;
+		}
+
+		public override string ToString ()
+		{
+			// note: ToString work without requiring CodeBase (so no checks are needed)
+
+			if (assemblyName != null)
+				return assemblyName;
+
+			assemblyName = FullName;
+			return assemblyName;
+		}
+
+		public override Evidence Evidence {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
+			get { return UnprotectedGetEvidence (); }
+		}
+
+		// note: the security runtime requires evidences but may be unable to do so...
+		internal override Evidence UnprotectedGetEvidence ()
+		{
+#if MOBILE
+			return null;
+#else
+			// if the host (runtime) hasn't provided it's own evidence...
+			if (_evidence == null) {
+				// ... we will provide our own
+				lock (this) {
+					_evidence = Evidence.GetDefaultHostEvidence (this);
+				}
+			}
+			return _evidence;
+#endif
+		}
+
+#if !MOBILE
+		// Code Access Security
+
+		internal void Resolve () 
+		{
+			lock (this) {
+				// FIXME: As we (currently) delay the resolution until the first CAS
+				// Demand it's too late to evaluate the Minimum permission set as a 
+				// condition to load the assembly into the AppDomain
+				LoadAssemblyPermissions ();
+				Evidence e = new Evidence (UnprotectedGetEvidence ()); // we need a copy to add PRE
+				e.AddHost (new PermissionRequestEvidence (_minimum, _optional, _refuse));
+				_granted = SecurityManager.ResolvePolicy (e,
+					_minimum, _optional, _refuse, out _denied);
+			}
+		}
+
+		internal override PermissionSet GrantedPermissionSet {
+			get {
+				if (_granted == null) {
+					if (SecurityManager.ResolvingPolicyLevel != null) {
+						if (SecurityManager.ResolvingPolicyLevel.IsFullTrustAssembly (this))
+							return DefaultPolicies.FullTrust;
+						else
+							return null; // we can't resolve during resolution
+					}
+					Resolve ();
+				}
+				return _granted;
+			}
+		}
+
+		internal override PermissionSet DeniedPermissionSet {
+			get {
+				// yes we look for granted, as denied may be null
+				if (_granted == null) {
+					if (SecurityManager.ResolvingPolicyLevel != null) {
+						if (SecurityManager.ResolvingPolicyLevel.IsFullTrustAssembly (this))
+							return null;
+						else
+							return DefaultPolicies.FullTrust; // deny unrestricted
+					}
+					Resolve ();
+				}
+				return _denied;
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern internal static bool LoadPermissions (Assembly a, 
+			ref IntPtr minimum, ref int minLength,
+			ref IntPtr optional, ref int optLength,
+			ref IntPtr refused, ref int refLength);
+
+		// Support for SecurityAction.RequestMinimum, RequestOptional and RequestRefuse
+		private void LoadAssemblyPermissions ()
+		{
+			IntPtr minimum = IntPtr.Zero, optional = IntPtr.Zero, refused = IntPtr.Zero;
+			int minLength = 0, optLength = 0, refLength = 0;
+			if (LoadPermissions (this, ref minimum, ref minLength, ref optional,
+				ref optLength, ref refused, ref refLength)) {
+
+				// Note: no need to cache these permission sets as they will only be created once
+				// at assembly resolution time.
+				if (minLength > 0) {
+					byte[] data = new byte [minLength];
+					Marshal.Copy (minimum, data, 0, minLength);
+					_minimum = SecurityManager.Decode (data);
+				}
+				if (optLength > 0) {
+					byte[] data = new byte [optLength];
+					Marshal.Copy (optional, data, 0, optLength);
+					_optional = SecurityManager.Decode (data);
+				}
+				if (refLength > 0) {
+					byte[] data = new byte [refLength];
+					Marshal.Copy (refused, data, 0, refLength);
+					_refuse = SecurityManager.Decode (data);
+				}
+			}
+		}
+		
+		public override PermissionSet PermissionSet {
+			get { return this.GrantedPermissionSet; }
+		}
+#endif
 	}
 }

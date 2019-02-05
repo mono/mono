@@ -64,33 +64,6 @@ namespace System.Reflection {
 #pragma warning restore
 		}
 
-		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
-		{
-#pragma warning disable 414
-			Module module;
-#pragma warning restore
-
-			public unsafe UnmanagedMemoryStreamForModule (byte* pointer, long length, Module module)
-				: base (pointer, length)
-			{
-				this.module = module;
-			}
-
-			protected override void Dispose (bool disposing)
-			{
-				if (_isOpen) {
-					/* 
-					 * The returned pointer points inside metadata, so
-					 * we have to increase the refcount of the module, and decrease
-					 * it when the stream is finalized.
-					 */
-					module = null;
-				}
-
-				base.Dispose (disposing);
-			}
-		}
-
 		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
 #pragma warning disable 649
 		internal IntPtr _mono_assembly;
@@ -98,23 +71,17 @@ namespace System.Reflection {
 
 		internal ResolveEventHolder resolve_event_holder;
 #if !MOBILE
-		private Evidence _evidence;
+		internal Evidence _evidence;
 		internal PermissionSet _minimum;	// for SecurityAction.RequestMinimum
 		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
 		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
-		private PermissionSet _granted;		// for the resolved assembly granted permissions
-		private PermissionSet _denied;		// for the resolved assembly denied permissions
+		internal PermissionSet _granted;		// for the resolved assembly granted permissions
+		internal PermissionSet _denied;		// for the resolved assembly denied permissions
 #else
 		object _evidence, _minimum, _optional, _refuse, _granted, _denied;
 #endif
-		protected bool fromByteArray;
-		private string assemblyName;
-
-		protected
-		Assembly ()
-		{
-			resolve_event_holder = new ResolveEventHolder ();
-		}
+		internal bool fromByteArray;
+		internal string assemblyName;
 
 		//
 		// We can't store the event directly in this class, since the
@@ -157,28 +124,26 @@ namespace System.Reflection {
 
 		public virtual Evidence Evidence {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
-			get { return UnprotectedGetEvidence (); }
-		}
-
-		// note: the security runtime requires evidences but may be unable to do so...
-		internal Evidence UnprotectedGetEvidence ()
-		{
-#if MOBILE
-			return null;
-#else
-			// if the host (runtime) hasn't provided it's own evidence...
-			if (_evidence == null) {
-				// ... we will provide our own
-				lock (this) {
-					_evidence = Evidence.GetDefaultHostEvidence (this);
-				}
+			get {
+				throw new NotImplementedException ();
 			}
-			return _evidence;
-#endif
 		}
 
-		internal bool FromByteArray {
-			set { fromByteArray = value; }
+		internal virtual Evidence UnprotectedGetEvidence ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal virtual IntPtr MonoAssembly {
+			get {
+				return _mono_assembly;
+			}
+		}
+
+		internal virtual bool FromByteArray {
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public virtual String Location {
@@ -329,13 +294,7 @@ namespace System.Reflection {
 
 		public override string ToString ()
 		{
-			// note: ToString work without requiring CodeBase (so no checks are needed)
-
-			if (assemblyName != null)
-				return assemblyName;
-
-			assemblyName = FullName;
-			return assemblyName;
+			return base.ToString ();
 		}
 
 		public static String CreateQualifiedName (String assemblyName, String typeName) 
@@ -724,100 +683,26 @@ namespace System.Reflection {
 
 		public override bool Equals (object o)
 		{
-			if (((object) this) == o)
-				return true;
-
-			if (o == null)
-				return false;
-			
-			Assembly other = (Assembly) o;
-			return other._mono_assembly == _mono_assembly;
+			return base.Equals (o);
 		}
 
 #if !MOBILE
-		// Code Access Security
-
-		internal void Resolve () 
-		{
-			lock (this) {
-				// FIXME: As we (currently) delay the resolution until the first CAS
-				// Demand it's too late to evaluate the Minimum permission set as a 
-				// condition to load the assembly into the AppDomain
-				LoadAssemblyPermissions ();
-				Evidence e = new Evidence (UnprotectedGetEvidence ()); // we need a copy to add PRE
-				e.AddHost (new PermissionRequestEvidence (_minimum, _optional, _refuse));
-				_granted = SecurityManager.ResolvePolicy (e,
-					_minimum, _optional, _refuse, out _denied);
-			}
-		}
-
-		internal PermissionSet GrantedPermissionSet {
+		internal virtual PermissionSet GrantedPermissionSet {
 			get {
-				if (_granted == null) {
-					if (SecurityManager.ResolvingPolicyLevel != null) {
-						if (SecurityManager.ResolvingPolicyLevel.IsFullTrustAssembly (this))
-							return DefaultPolicies.FullTrust;
-						else
-							return null; // we can't resolve during resolution
-					}
-					Resolve ();
-				}
-				return _granted;
+				throw new NotImplementedException ();
 			}
 		}
 
-		internal PermissionSet DeniedPermissionSet {
+		internal virtual PermissionSet DeniedPermissionSet {
 			get {
-				// yes we look for granted, as denied may be null
-				if (_granted == null) {
-					if (SecurityManager.ResolvingPolicyLevel != null) {
-						if (SecurityManager.ResolvingPolicyLevel.IsFullTrustAssembly (this))
-							return null;
-						else
-							return DefaultPolicies.FullTrust; // deny unrestricted
-					}
-					Resolve ();
-				}
-				return _denied;
-			}
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern internal static bool LoadPermissions (Assembly a, 
-			ref IntPtr minimum, ref int minLength,
-			ref IntPtr optional, ref int optLength,
-			ref IntPtr refused, ref int refLength);
-
-		// Support for SecurityAction.RequestMinimum, RequestOptional and RequestRefuse
-		private void LoadAssemblyPermissions ()
-		{
-			IntPtr minimum = IntPtr.Zero, optional = IntPtr.Zero, refused = IntPtr.Zero;
-			int minLength = 0, optLength = 0, refLength = 0;
-			if (LoadPermissions (this, ref minimum, ref minLength, ref optional,
-				ref optLength, ref refused, ref refLength)) {
-
-				// Note: no need to cache these permission sets as they will only be created once
-				// at assembly resolution time.
-				if (minLength > 0) {
-					byte[] data = new byte [minLength];
-					Marshal.Copy (minimum, data, 0, minLength);
-					_minimum = SecurityManager.Decode (data);
-				}
-				if (optLength > 0) {
-					byte[] data = new byte [optLength];
-					Marshal.Copy (optional, data, 0, optLength);
-					_optional = SecurityManager.Decode (data);
-				}
-				if (refLength > 0) {
-					byte[] data = new byte [refLength];
-					Marshal.Copy (refused, data, 0, refLength);
-					_refuse = SecurityManager.Decode (data);
-				}
+				throw new NotImplementedException ();
 			}
 		}
 		
 		public virtual PermissionSet PermissionSet {
-			get { return this.GrantedPermissionSet; }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 #endif
 

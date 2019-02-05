@@ -1205,6 +1205,15 @@ namespace System.Reflection.Emit
 			return base.GetHashCode ();
 		}
 
+		public override string ToString ()
+		{
+			if (assemblyName != null)
+				return assemblyName;
+
+			assemblyName = FullName;
+			return assemblyName;
+		}
+
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
@@ -1222,6 +1231,27 @@ namespace System.Reflection.Emit
 
 		public override string FullName {
 			get { return RuntimeAssembly.get_fullname (this); }
+		}
+
+		public override Evidence Evidence {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
+			get { return UnprotectedGetEvidence (); }
+		}
+
+		internal override Evidence UnprotectedGetEvidence ()
+		{
+#if MOBILE
+			return null;
+#else
+			// if the host (runtime) hasn't provided it's own evidence...
+			if (_evidence == null) {
+				// ... we will provide our own
+				lock (this) {
+					_evidence = Evidence.GetDefaultHostEvidence (this);
+				}
+			}
+			return _evidence;
+#endif
 		}
 	}
 }
