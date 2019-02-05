@@ -166,11 +166,11 @@
       <Compile Include="System.Threading\Overlapped.cs" />
       <Compile Include="System.Threading\PreAllocatedOverlapped.cs" />
       <Compile Include="System.Threading\Semaphore.cs" />
-      <Compile Include="System.Threading\SynchronizationContext.cs" />
       <Compile Include="System.Threading\Thread.cs" />
       <Compile Include="System.Threading\ThreadPool.cs" />
       <Compile Include="System.Threading\ThreadPoolBoundHandle.cs" />
       <Compile Include="System.Threading\TimerQueue.cs" />
+      <Compile Include="System.Threading\WaitHandle.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="temp\*.cs" />
@@ -182,7 +182,6 @@
       <Compile Include="..\corlib\coreclr\Math.CoreCLR.cs" />
       <Compile Include="..\corlib\coreclr\SorterArray.cs" />
       <Compile Include="..\corlib\corefx\DateTime.cs" />
-      <Compile Include="..\corlib\corefx\SynchronizationContext.cs" />
       <Compile Include="..\corlib\corefx\RuntimeImports.cs" />
 
       <Compile Include="..\corlib\ReferenceSources\Array.cs" />
