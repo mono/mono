@@ -6499,6 +6499,12 @@ mb_emit_exception_ilgen (MonoMethodBuilder *mb, const char *exc_nspace, const ch
 }
 
 static void
+mb_emit_exception_for_error_ilgen (MonoMethodBuilder *mb, const MonoError *error)
+{
+	mono_mb_emit_exception_for_error (mb, (MonoError*)error);
+}
+
+static void
 emit_vtfixup_ftnptr_ilgen (MonoMethodBuilder *mb, MonoMethod *method, int param_count, guint16 type)
 {
 	for (int i = 0; i < param_count; i++)
@@ -6572,6 +6578,7 @@ mono_marshal_ilgen_init (void)
 	cb.mb_skip_visibility = mb_skip_visibility_ilgen;
 	cb.mb_set_dynamic = mb_set_dynamic_ilgen;
 	cb.mb_emit_exception = mb_emit_exception_ilgen;
+	cb.mb_emit_exception_for_error = mb_emit_exception_for_error_ilgen;
 	cb.mb_emit_byte = mb_emit_byte_ilgen;
 	mono_install_marshal_callbacks (&cb);
 }

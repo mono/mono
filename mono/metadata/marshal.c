@@ -2128,6 +2128,11 @@ mb_emit_exception_noilgen (MonoMethodBuilder *mb, const char *exc_nspace, const 
 }
 
 static void
+mb_emit_exception_for_error_noilgen (MonoMethodBuilder *mb, const MonoError *error)
+{
+}
+
+static void
 emit_delegate_invoke_internal_noilgen (MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodSignature *invoke_sig, gboolean static_method_with_first_arg_bound, gboolean callvirt, gboolean closed_over_null, MonoMethod *method, MonoMethod *target_method, MonoClass *target_class, MonoGenericContext *ctx, MonoGenericContainer *container)
 {
 }
@@ -6236,6 +6241,7 @@ install_noilgen (void)
 	cb.mb_skip_visibility = mb_skip_visibility_noilgen;
 	cb.mb_set_dynamic = mb_set_dynamic_noilgen;
 	cb.mb_emit_exception = mb_emit_exception_noilgen;
+	cb.mb_emit_exception_for_error = mb_emit_exception_for_error_noilgen;
 	cb.mb_emit_byte = mb_emit_byte_noilgen;
 	mono_install_marshal_callbacks (&cb);
 }
