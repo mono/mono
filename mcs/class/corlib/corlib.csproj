@@ -2119,8 +2119,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono\MonoNativePlatform.cs" />
-        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2252,8 +2250,6 @@
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
-        <Compile Include="Mono\MonoNativePlatform.cs" />
-        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
@@ -2315,8 +2311,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono\MonoNativePlatform.cs" />
-        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2387,8 +2381,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono\MonoNativePlatform.cs" />
-        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2459,8 +2451,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono\MonoNativePlatform.cs" />
-        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2667,8 +2657,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono\MonoNativePlatform.cs" />
-            <Compile Include="Mono\MonoNativePlatformType.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2741,8 +2729,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono\MonoNativePlatform.cs" />
-            <Compile Include="Mono\MonoNativePlatformType.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2815,8 +2801,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono\MonoNativePlatform.cs" />
-            <Compile Include="Mono\MonoNativePlatformType.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2880,8 +2864,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono\MonoNativePlatform.cs" />
-        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2949,8 +2931,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono\MonoNativePlatform.cs" />
-        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -3018,8 +2998,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono\MonoNativePlatform.cs" />
-        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -3091,8 +3069,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono\MonoNativePlatform.cs" />
-        <Compile Include="Mono\MonoNativePlatformType.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
