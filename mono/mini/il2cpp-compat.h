@@ -194,6 +194,7 @@
 #define mono_get_runtime_build_info il2cpp_mono_get_runtime_build_info
 #define mono_marshal_method_from_wrapper il2cpp_mono_marshal_method_from_wrapper
 #define mini_get_debug_options il2cpp_mini_get_debug_options
+#define mini_get_interp_callbacks il2cpp_mini_get_interp_callbacks
 #define mono_jit_find_compiled_method_with_jit_info il2cpp_mono_jit_find_compiled_method_with_jit_info
 #define mono_get_lmf_addr il2cpp_mono_get_lmf_addr
 #define mono_set_lmf il2cpp_mono_set_lmf
@@ -273,6 +274,9 @@
 
 #define m_class_is_initialized il2cpp_m_class_is_initialized
 
+#define mono_debug_lookup_locals il2cpp_debug_lookup_locals
+#define mono_debug_free_locals il2cpp_debug_free_locals
+
 #undef mono_domain_assemblies_lock
 #define mono_domain_assemblies_lock
 #undef mono_domain_assemblies_unlock
@@ -335,6 +339,7 @@ gboolean il2cpp_mono_domain_set (MonoDomain *domain, gboolean force);
 void il2cpp_mono_domain_foreach(MonoDomainFunc func, gpointer user_data);
 MonoJitInfo* il2cpp_mono_jit_info_table_find(MonoDomain* domain, char* addr);
 MonoMethod* il2cpp_mono_jit_info_get_method(MonoJitInfo* ji);
+MonoDebugMethodJitInfo* il2cpp_mono_debug_find_method (MonoMethod *method, MonoDomain *domain);
 gint32 il2cpp_mono_debug_il_offset_from_address(MonoMethod* method, MonoDomain* domain, guint32 native_offset);
 void il2cpp_mono_set_is_debugger_attached(gboolean attached);
 char* il2cpp_mono_type_full_name(MonoType* type);
@@ -409,6 +414,7 @@ gint il2cpp_mono_w32socket_set_blocking(SOCKET sock, gboolean blocking);
 char* il2cpp_mono_get_runtime_build_info();
 MonoMethod* il2cpp_mono_marshal_method_from_wrapper(MonoMethod* wrapper);
 MonoDebugOptions* il2cpp_mini_get_debug_options();
+MonoInterpCallbacks* il2cpp_mini_get_interp_callbacks(void);
 gpointer il2cpp_mono_jit_find_compiled_method_with_jit_info(MonoDomain* domain, MonoMethod* method, MonoJitInfo** ji);
 MonoLMF** il2cpp_mono_get_lmf_addr();
 void il2cpp_mono_set_lmf(MonoLMF* lmf);
@@ -457,7 +463,6 @@ MonoClass* il2cpp_defaults_exception_class();
 MonoImage* il2cpp_defaults_corlib_image();
 bool il2cpp_method_is_string_ctor (const MonoMethod * method);
 MonoClass* il2cpp_defaults_void_class();
-void il2cpp_set_var(guint8* newValue, void *value, MonoType *localVariableTypeMono);
 MonoMethod* il2cpp_get_interface_method(MonoClass* klass, MonoClass* itf, int slot);
 gboolean il2cpp_field_is_deleted(MonoClassField *field);
 MonoClass* il2cpp_iterate_loaded_classes(void* *iter);
@@ -475,7 +480,7 @@ const MonoClass* il2cpp_get_class_from_index(int index);
 const MonoType* il2cpp_get_type_from_index(int index);
 const MonoType* il2cpp_get_type_from_method_context(MonoType* type, const MonoMethod* method);
 const MonoType* il2cpp_type_inflate(MonoType* type, const MonoGenericContext* context);
-void il2cpp_debugger_get_method_execution_context_and_header_Info(const MonoMethod* method, uint32_t* executionContextInfoCount, const Il2CppMethodExecutionContextInfo **executionContextInfo, const Il2CppMethodHeaderInfo **headerInfo, const Il2CppMethodScope **scopes);
+void il2cpp_debugger_get_method_execution_context_and_header_info(const MonoMethod* method, uint32_t* executionContextInfoCount, const Il2CppMethodExecutionContextInfo **executionContextInfo, const Il2CppMethodHeaderInfo **headerInfo, const Il2CppMethodScope **scopes);
 Il2CppThreadUnwindState* il2cpp_debugger_get_thread_context ();
 MonoGenericContext* il2cpp_mono_generic_class_get_context (MonoGenericClass *gclass);
 MonoType* il2cpp_mono_class_get_byref_type (MonoClass *klass);
@@ -485,6 +490,6 @@ const MonoAssembly* il2cpp_m_method_get_assembly(MonoMethod* method);
 const MonoAssembly* il2cpp_m_domain_get_corlib (MonoDomain *domain);
 mono_bool il2cpp_m_class_is_initialized (MonoClass* klass);
 Il2CppSequencePointSourceFile* il2cpp_debug_get_source_file(MonoImage* image, int index);
-const char* il2cpp_debug_get_local_name(MonoImage* image, int index);
-Il2CppMethodScope* il2cpp_debug_get_local_scope(MonoImage* image, int index);
+MonoDebugLocalsInfo* il2cpp_debug_lookup_locals (MonoMethod *method);
+void il2cpp_debug_free_locals (MonoDebugLocalsInfo *info);
 #endif // RUNTIME_IL2CPP
