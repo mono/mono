@@ -1,0 +1,79 @@
+﻿using System;
+
+namespace WebAssembly.Core {
+	public class Array : CoreObject {
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:WebAssembly.Core.Array"/> class.
+		/// </summary>
+		/// <param name="_params">Parameters.</param>
+		public Array (params object[] _params) : base (Runtime.New<Array> (_params))
+		{ }
+
+		/// <summary>
+		/// Push the specified elements.
+		/// </summary>
+		/// <returns>The push.</returns>
+		/// <param name="elements">Elements.</param>
+		public int Push (params object[] elements) => (int)Invoke ("push", elements);
+		/// <summary>
+		/// Pop this instance.
+		/// </summary>
+		/// <returns>The pop.</returns>
+		public int Pop () => (int)Invoke ("pop");
+		/// <summary>
+		/// Shift this instance.
+		/// </summary>
+		/// <returns>The shift.</returns>
+		public object Shift () => Invoke ("shift");
+		/// <summary>
+		/// Unshift this instancet.
+		/// </summary>
+		/// <returns>The length after shift.</returns>
+		/// <param name="elements">Elements.</param>
+		public int UnShift (params object [] elements) => (int)Invoke ("unshift", elements);
+		/// <summary>
+		/// Index of the search element.
+		/// </summary>
+		/// <returns>The of.</returns>
+		/// <param name="searchElement">Search element.</param>
+		/// <param name="fromIndex">From index.</param>
+		public int IndexOf (object searchElement, int fromIndex = 0) => (int)Invoke ("indexOf", searchElement, fromIndex);
+		/// <summary>
+		/// Lasts index of the search element.
+		/// </summary>
+		/// <returns>The index of.</returns>
+		/// <param name="searchElement">Search element.</param>
+		public int LastIndexOf (object searchElement) => (int)Invoke ("lastIndexOf", searchElement);
+		/// <summary>
+		/// Lasts index of the search element.
+		/// </summary>
+		/// <returns>The index of.</returns>
+		/// <param name="searchElement">Search element.</param>
+		/// <param name="endIndex">End index.</param>
+		public int LastIndexOf (object searchElement, int endIndex) => (int)Invoke ("lastIndexOf", searchElement, endIndex);
+
+		/// <summary>
+		/// Gets or sets the <see cref="T:WebAssembly.Core.Array"/> with the specified i.
+		/// </summary>
+		/// <param name="i">The index.</param>
+		public object this [int i] {
+			get {
+				var indexValue = Runtime.GetByIndex (JSHandle, i, out int exception);
+
+				if (exception != 0)
+					throw new JSException ((string)indexValue);
+				return indexValue;
+			}
+			set {
+				var res = Runtime.SetByIndex (JSHandle, i, value, out int exception);
+
+				if (exception != 0)
+					throw new JSException ((string)res);
+
+			}
+		}
+
+
+	}
+}
