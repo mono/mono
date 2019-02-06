@@ -31,7 +31,8 @@
 #define MonoProfiler Il2CppProfiler
 #define MonoAssembly Il2CppAssembly
 #define MonoAssembyName Il2CppAssemblyName
-#define MonoMethodHeader Il2CppMethodHeaderInfo
+#define MonoMethodHeader Il2CppMonoMethodHeader
+//#define MonoDebugLocalsInfo Il2CppDebugLocalsInfo
 #define MonoReflectionAssembly Il2CppReflectionAssembly
 #define MonoAppDomain Il2CppAppDomain
 #define MonoDomain Il2CppDomain
@@ -45,7 +46,8 @@
 #define MonoCustomAttrInfo #error Custom Attributes Not Supported
 #define MonoCustomAttrEntry #error Custom Attributes Not Supported
 #define CattrNamedArg #error Custom Attributes Not Supported
-#define MonoJitTlsData #error Jit TLS Data Unsupported
+typedef gpointer MonoJitTlsData;
+typedef gpointer MonoInterpStackIter;
 
 //still stubs everywhere
 typedef struct _Il2CppMonoMethodSignature Il2CppMonoMethodSignature;
@@ -55,8 +57,41 @@ typedef struct _Il2CppMonoTypeNameParse Il2CppMonoTypeNameParse;
 typedef struct _Il2CppMonoDebugOptions Il2CppMonoDebugOptions;
 typedef struct _Il2CppEmptyStruct Il2CppMonoLMF;
 
+
+typedef struct _MonoDebugLocalsInfo		MonoDebugLocalsInfo;
+
 typedef MonoStackFrameInfo StackFrameInfo;
 typedef gpointer MonoInterpFrameHandle;
+
+
+typedef struct _Il2CppInterpCallbacks MonoInterpCallbacks;
+
+struct _Il2CppInterpCallbacks {
+	gpointer (*create_method_pointer) (MonoMethod *method, MonoError *error);
+	MonoObject* (*runtime_invoke) (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
+	void (*init_delegate) (MonoDelegate *del);
+#ifndef DISABLE_REMOTING
+	gpointer (*get_remoting_invoke) (gpointer imethod, MonoError *error);
+#endif
+	gpointer (*create_trampoline) (MonoDomain *domain, MonoMethod *method, MonoError *error);
+	void (*walk_stack_with_ctx) (MonoInternalStackWalk func, MonoContext *ctx, MonoUnwindOptions options, void *user_data);
+	void (*set_resume_state) (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExceptionInfo *ei, MonoInterpFrameHandle interp_frame, gpointer handler_ip);
+	gboolean (*run_finally) (StackFrameInfo *frame, int clause_index, gpointer handler_ip);
+	gboolean (*run_filter) (StackFrameInfo *frame, MonoException *ex, int clause_index, gpointer handler_ip);
+	void (*frame_iter_init) (MonoInterpStackIter *iter, gpointer interp_exit_data);
+	gboolean (*frame_iter_next) (MonoInterpStackIter *iter, StackFrameInfo *frame);
+	MonoJitInfo* (*find_jit_info) (MonoDomain *domain, MonoMethod *method);
+	void (*set_breakpoint) (MonoJitInfo *jinfo, gpointer ip);
+	void (*clear_breakpoint) (MonoJitInfo *jinfo, gpointer ip);
+	MonoJitInfo* (*frame_get_jit_info) (MonoInterpFrameHandle frame);
+	gpointer (*frame_get_ip) (MonoInterpFrameHandle frame);
+	gpointer (*frame_get_arg) (MonoInterpFrameHandle frame, int pos);
+	gpointer (*frame_get_local) (MonoInterpFrameHandle frame, int pos);
+	gpointer (*frame_get_this) (MonoInterpFrameHandle frame);
+	MonoInterpFrameHandle (*frame_get_parent) (MonoInterpFrameHandle frame);
+	void (*start_single_stepping) (void);
+	void (*stop_single_stepping) (void);
+};
 
 typedef gboolean (*Il2CppMonoInternalStackWalk) (MonoStackFrameInfo *frame, MonoContext *ctx, gpointer data);
 
@@ -90,6 +125,13 @@ struct _Il2CppEmptyStruct
 {
     int dummy;
 };
+
+typedef struct Il2CppMonoMethodHeader
+{
+	uint32_t      code_size;
+	uint16_t      num_locals;
+	MonoType    **locals;
+} Il2CppMonoMethodHeader;
 
 TYPED_HANDLE_DECL (MonoObject);
 TYPED_HANDLE_DECL (MonoReflectionAssembly);

@@ -56,6 +56,9 @@ static MonoGHashTable *method_signatures;
 static il2cpp::os::Mutex s_il2cpp_mono_loader_lock(false);
 static uint64_t s_il2cpp_mono_loader_lock_tid = 0;
 
+
+MonoDebugLocalsInfo* il2cpp_debug_lookup_locals (MonoMethod *method);
+
 MonoMethod* il2cpp_mono_image_get_entry_point (MonoImage *image)
 {
 	return (MonoMethod*)il2cpp::vm::Image::GetEntryPoint((Il2CppImage*)image);
@@ -89,7 +92,8 @@ mono_bool il2cpp_mono_type_is_reference (MonoType *type)
 
 void il2cpp_mono_metadata_free_mh (MonoMethodHeader *mh)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
+	g_free(mh->locals);
+	g_free(mh);
 }
 
 Il2CppMonoMethodSignature* il2cpp_mono_method_signature (MonoMethod *m)
@@ -167,9 +171,40 @@ mono_bool il2cpp_mono_type_generic_inst_is_valuetype (MonoType *monoType)
 	return (typeDef->bitfield >> (kBitIsValueType - 1)) & 0x1;
 }
 
+MonoGenericContext* il2cpp_mono_method_get_context(MonoMethod* monoMethod);
+const MonoType* il2cpp_get_type_from_index(int index);
 MonoMethodHeader* il2cpp_mono_method_get_header_checked (MonoMethod *method, MonoError *error)
 {
-	return NULL;
+#if IL2CPP_MONO_DEBUGGER
+    if (error)
+        error_init (error);
+
+	int i = 0;
+	uint32_t executionContextInfoCount;
+	const Il2CppMethodExecutionContextInfo *executionContextInfo;
+	const Il2CppMethodHeaderInfo *headerInfo;
+	const Il2CppMethodScope *scopes;
+	MonoGenericContext* context = il2cpp_mono_method_get_context (method);
+
+	MonoMethodHeader* header = g_new0(MonoMethodHeader, 1);
+	il2cpp::utils::Debugger::GetMethodExecutionContextInfo(method, &executionContextInfoCount, &executionContextInfo, &headerInfo, &scopes);
+	/*
+	uint32_t      code_size;
+	uint16_t      num_locals;
+	MonoType    **locals;
+	*/
+	header->code_size = headerInfo->code_size;
+	header->num_locals = executionContextInfoCount;
+	header->locals = g_new0(MonoType*, executionContextInfoCount);
+	for (i = 0; i < executionContextInfoCount; i++)
+	{
+		header->locals[i] = (Il2CppType*)il2cpp::metadata::GenericMetadata::InflateIfNeeded (il2cpp_get_type_from_index (executionContextInfo[i].typeIndex), context, true);
+	}
+	return header;
+#else
+    MonoMethodHeader* header = g_new0(MonoMethodHeader, 1);
+    return NULL;
+#endif
 }
 
 gboolean il2cpp_mono_class_init (MonoClass *klass)
@@ -394,6 +429,18 @@ MonoMethod* il2cpp_mono_jit_info_get_method(MonoJitInfo* ji)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
 	return NULL;
+}
+
+MonoDebugMethodJitInfo* il2cpp_mono_debug_find_method (MonoMethod *method, MonoDomain *domain)
+{
+	//IL2CPP_ASSERT(0 && "This method is not yet implemented");
+    MonoDebugMethodJitInfo* jit = g_new0 (MonoDebugMethodJitInfo, 1);
+    MonoDebugLocalsInfo* locals_info = il2cpp_debug_lookup_locals (method);
+    jit->num_locals = locals_info->num_locals;
+
+    Il2CppMonoMethodSignature* sig = il2cpp_mono_method_signature (method);
+    jit->num_params = sig->param_count;
+    return jit;
 }
 
 gint32 il2cpp_mono_debug_il_offset_from_address(MonoMethod* method, MonoDomain* domain, guint32 native_offset)
@@ -858,8 +905,65 @@ MonoObject* il2cpp_mono_runtime_invoke_checked(MonoMethod* method, void* obj, vo
 	return NULL;
 }
 
+static MonoInterpCallbacks s_interp_callbacks;
+
+static gpointer
+il2cpp_frame_get_arg (MonoInterpFrameHandle frame, int pos)
+{
+    Il2CppSequencePointExecutionContext* context = (Il2CppSequencePointExecutionContext*)frame;
+    return context->params[pos];
+}
+
+static gpointer
+il2cpp_frame_get_local (MonoInterpFrameHandle frame, int pos)
+{
+    Il2CppSequencePointExecutionContext* context = (Il2CppSequencePointExecutionContext*)frame;
+    return context->locals[pos];
+}
+
+static gpointer
+il2cpp_frame_get_this (MonoInterpFrameHandle frame)
+{
+    Il2CppSequencePointExecutionContext* context = (Il2CppSequencePointExecutionContext*)frame;
+    return *context->thisArg;
+}
+
+static void
+il2cpp_interp_stub_init (void)
+{
+    MonoInterpCallbacks c = { 0 };
+    /*c.create_method_pointer = stub_create_method_pointer;
+    c.runtime_invoke = stub_runtime_invoke;
+    c.init_delegate = stub_init_delegate;
+#ifndef DISABLE_REMOTING
+    c.get_remoting_invoke = stub_get_remoting_invoke;
+#endif
+    c.create_trampoline = stub_create_trampoline;
+    c.walk_stack_with_ctx = stub_walk_stack_with_ctx;
+    c.set_resume_state = stub_set_resume_state;
+    c.run_finally = stub_run_finally;
+    c.run_filter = stub_run_filter;
+    c.frame_iter_init = stub_frame_iter_init;
+    c.frame_iter_next = stub_frame_iter_next;
+    c.find_jit_info = stub_find_jit_info;
+    c.set_breakpoint = stub_set_breakpoint;
+    c.clear_breakpoint = stub_clear_breakpoint;
+    c.frame_get_jit_info = stub_frame_get_jit_info;
+    c.frame_get_ip = stub_frame_get_ip;*/
+    c.frame_get_arg = il2cpp_frame_get_arg;
+    c.frame_get_local = il2cpp_frame_get_local;
+    c.frame_get_this = il2cpp_frame_get_this;
+/*    c.frame_get_parent = stub_frame_get_parent;
+    c.start_single_stepping = stub_start_single_stepping;
+    c.stop_single_stepping = stub_stop_single_stepping;
+    mini_install_interp_callbacks (&c);*/
+
+    memcpy (&s_interp_callbacks, &c, sizeof (MonoInterpCallbacks));
+}
+
 void il2cpp_mono_gc_base_init()
 {
+    il2cpp_interp_stub_init ();
 }
 
 static il2cpp::os::Mutex s_il2cpp_gc_root_lock(false);
@@ -982,6 +1086,11 @@ Il2CppMonoDebugOptions* il2cpp_mini_get_debug_options()
 	return NULL;
 }
 
+MonoInterpCallbacks* il2cpp_mini_get_interp_callbacks(void)
+{
+	return &s_interp_callbacks;
+}
+
 gpointer il2cpp_mono_jit_find_compiled_method_with_jit_info(MonoDomain* domain, MonoMethod* method, MonoJitInfo** ji)
 {
 	IL2CPP_ASSERT(0 && "This method is not yet implemented");
@@ -1098,8 +1207,7 @@ gboolean il2cpp_mono_error_ok (MonoError *error)
 
 MonoMethod* il2cpp_jinfo_get_method (MonoJitInfo *ji)
 {
-	IL2CPP_ASSERT(0 && "This method is not yet implemented");
-	return NULL;
+    return (MonoMethod*)ji->d.method;
 }
 
 gboolean il2cpp_mono_find_prev_seq_point_for_native_offset (MonoDomain *domain, MonoMethod *method, gint32 native_offset, MonoSeqPointInfo **info, SeqPoint* seq_point)
@@ -1358,15 +1466,6 @@ MonoClass* il2cpp_defaults_void_class()
 	return (MonoClass*)il2cpp_defaults.void_class;
 }
 
-void il2cpp_set_var(guint8* newValue, void *value, MonoType *localVariableTypeMono)
-{
-	il2cpp::metadata::SizeAndAlignment sa = il2cpp::metadata::FieldLayout::GetTypeSizeAndAlignment((const Il2CppType*)localVariableTypeMono);
-	if (((Il2CppType*)localVariableTypeMono)->byref)
-		memcpy(*(void**)value, newValue, sa.size);
-	else
-		memcpy(value, newValue, sa.size);
-}
-
 MonoMethod* il2cpp_get_interface_method(MonoClass* klass, MonoClass* itf, int slot)
 {
 	const VirtualInvokeData* data = il2cpp::vm::ClassInlines::GetInterfaceInvokeDataFromVTable((Il2CppClass*)klass, (Il2CppClass*)itf, slot);
@@ -1511,7 +1610,7 @@ const MonoType* il2cpp_type_inflate(MonoType* type, const MonoGenericContext* co
     return il2cpp::metadata::GenericMetadata::InflateIfNeeded(type, context, true);
 }
 
-void il2cpp_debugger_get_method_execution_context_and_header_Info(const MonoMethod* method, uint32_t* executionContextInfoCount, const Il2CppMethodExecutionContextInfo **executionContextInfo, const Il2CppMethodHeaderInfo **headerInfo, const Il2CppMethodScope **scopes)
+void il2cpp_debugger_get_method_execution_context_and_header_info(const MonoMethod* method, uint32_t* executionContextInfoCount, const Il2CppMethodExecutionContextInfo **executionContextInfo, const Il2CppMethodHeaderInfo **headerInfo, const Il2CppMethodScope **scopes)
 {
 #if IL2CPP_MONO_DEBUGGER
     il2cpp::utils::Debugger::GetMethodExecutionContextInfo(method, executionContextInfoCount, executionContextInfo, headerInfo, scopes);
@@ -1562,14 +1661,58 @@ Il2CppSequencePointSourceFile* il2cpp_debug_get_source_file(MonoImage* image, in
 	return ((Il2CppImage*)image)->codeGenModule->debuggerMetadata->sequencePointSourceFiles + index;
 }
 
-const char* il2cpp_debug_get_local_name(MonoImage* image, int index)
+MonoDebugLocalsInfo* il2cpp_debug_lookup_locals (MonoMethod *method)
 {
-	return ((Il2CppImage*)image)->codeGenModule->debuggerMetadata->methodExecutionContextInfoStrings[index];
+#if IL2CPP_MONO_DEBUGGER
+    uint32_t executionContextInfoCount;
+    const Il2CppMethodExecutionContextInfo * executionContextInfo;
+    const Il2CppMethodHeaderInfo *headerInfo;
+    const Il2CppMethodScope *scopes;
+    il2cpp::utils::Debugger::GetMethodExecutionContextInfo (method, &executionContextInfoCount, &executionContextInfo, &headerInfo, &scopes);
+
+    MonoDebugLocalsInfo* locals = g_new0 (MonoDebugLocalsInfo, 1);
+    locals->num_locals = executionContextInfoCount;
+
+    locals->locals = g_new0 (MonoDebugLocalVar, executionContextInfoCount);
+    for (int i = 0; i < locals->num_locals; ++i)
+    {
+        locals->locals[i].name = (char*)il2cpp::utils::Debugger::GetLocalName(method, executionContextInfo[i].nameIndex);
+        locals->locals[i].index = i;
+
+        /* hack we should point to blocks allocated below? */
+        locals->locals[i].block = g_new0 (MonoDebugCodeBlock, 1);
+        const Il2CppMethodScope* scope = il2cpp::utils::Debugger::GetLocalScope(method, executionContextInfo[i].scopeIndex);
+        locals->locals[i].block->start_offset = scope->startOffset;
+        locals->locals[i].block->end_offset = scope->endOffset;
+    };
+
+    locals->num_blocks = headerInfo->numScopes;
+    locals->code_blocks = g_new0 (MonoDebugCodeBlock, headerInfo->numScopes);
+
+    for (int i = 0; i < headerInfo->numScopes; ++i)
+    {
+        locals->code_blocks[i].start_offset = scopes[i].startOffset;
+        locals->code_blocks[i].end_offset = scopes[i].endOffset;
+    };
+
+    return locals;
+#else
+    MonoDebugLocalsInfo* locals = g_new0 (MonoDebugLocalsInfo, 1);
+    return locals;
+#endif
+	/*
+struct _MonoDebugLocalsInfo {
+	int num_locals;
+	MonoDebugLocalVar *locals;
+	int num_blocks;
+	MonoDebugCodeBlock *code_blocks;
+};*/
 }
 
-Il2CppMethodScope* il2cpp_debug_get_local_scope(MonoImage* image, int index)
+void
+il2cpp_debug_free_locals (MonoDebugLocalsInfo *info)
 {
-	return ((Il2CppImage*)image)->codeGenModule->debuggerMetadata->methodScopes + index;
+	g_free (info);
 }
 
 }
