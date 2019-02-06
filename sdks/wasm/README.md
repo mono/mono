@@ -23,9 +23,9 @@ emcc -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='cl
 
 ``` bash
 
-mono$ make -C sdks/builds provision-wasm
-mono$ make -C sdks/builds archive-wasm  NINJA=
-mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
+make -C sdks/builds provision-wasm
+make -C sdks/builds archive-wasm  NINJA=
+make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
 
 ```
 
@@ -41,13 +41,13 @@ See [Getting Started Guides](./docs/getting-started)
 First, ensure the `runtime`, `AOT` and `bcl` have been built and packaged in the `sdks/out` directory:
 
 ```bash
-mono$ make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
+make -C sdks/builds package-wasm-runtime package-wasm-cross package-wasm-bcl
 ```
 
 Build the test runner and test suites
 
 ```bash
-mono$ make -C sdks/wasm build
+make -C sdks/wasm build
 ```
 
 
