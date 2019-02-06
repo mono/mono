@@ -159,6 +159,16 @@
 ../../../external/corefx/src/System.Threading.Tasks/tests/TaskFactory/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/TaskScheduler/*.cs
 ../../../external/corefx/src/System.Threading.Tasks/tests/*.cs:UnwrapTests.cs,CancellationTokenTests.netcoreapp.cs
+../../../external/corefx/src/System.Threading.Tasks/tests/System.Runtime.CompilerServices/ConfiguredCancelableAsyncEnumerableTests.netcoreapp.cs
+
+
+# System.Threading.Tasks.Extensions
+../../../external/corefx/src/System.Threading.Tasks.Extensions/tests/ManualResetValueTaskSourceTests.cs
+../../../external/corefx/src/System.Threading.Tasks.Extensions/tests/ValueTaskTests.cs
+../../../external/corefx/src/Common/tests/System/Threading/Tasks/Sources/ManualResetValueTaskSource.cs
+../../../external/corefx/src/Common/tests/System/Threading/Tasks/Sources/ManualResetValueTaskSourceFactory.cs
+../../../external/corefx/src/System.Threading.Tasks.Extensions/tests/AsyncValueTaskMethodBuilderTests.cs
+
 
 # System.Threading.Tasks.Parallel
 ../../../external/corefx/src/System.Threading.Tasks.Parallel/tests/*.cs:XunitAssemblyAttributes.cs,EtwTests.cs
@@ -168,6 +178,10 @@
 
 # System.Threading.Thread
 ../../../external/corefx/src/System.Threading.Thread/tests/*.cs:CompressedStackTests.cs,ThreadTests.cs,ExceptionTests.cs,ThreadTests.netcoreapp.cs
+
+# System.Threading.ThreadPool
+../../../external/corefx/src/System.Threading.ThreadPool/tests/ThreadPoolTests.cs
+../../../external/corefx/src/System.Threading.ThreadPool/tests/ThreadPoolTests.netcoreapp.cs
 
 # System.Threading
 ../../../external/corefx/src/System.Threading/tests/*.cs:MutexTests.cs,SemaphoreTests.cs,InterlockedTests.netcoreapp.cs,EventWaitHandleTests.cs,XunitAssemblyAttributes.cs,ReaderWriterLockTests.cs,SynchronizationContextTests.cs,ExecutionContextTests.cs,HostExecutionContextManagerTests.cs,EtwTests.cs
