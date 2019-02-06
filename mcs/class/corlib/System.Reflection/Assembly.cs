@@ -64,25 +64,6 @@ namespace System.Reflection {
 #pragma warning restore
 		}
 
-		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
-#pragma warning disable 649
-		internal IntPtr _mono_assembly;
-#pragma warning restore 649
-
-		internal ResolveEventHolder resolve_event_holder;
-#if !MOBILE
-		internal Evidence _evidence;
-		internal PermissionSet _minimum;	// for SecurityAction.RequestMinimum
-		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
-		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
-		internal PermissionSet _granted;		// for the resolved assembly granted permissions
-		internal PermissionSet _denied;		// for the resolved assembly denied permissions
-#else
-		object _evidence, _minimum, _optional, _refuse, _granted, _denied;
-#endif
-		internal bool fromByteArray;
-		internal string assemblyName;
-
 		//
 		// We can't store the event directly in this class, since the
 		// compiler would silently insert the fields before _mono_assembly
@@ -136,7 +117,7 @@ namespace System.Reflection {
 
 		internal virtual IntPtr MonoAssembly {
 			get {
-				return _mono_assembly;
+				throw new NotImplementedException ();
 			}
 		}
 

@@ -239,6 +239,20 @@ namespace System.Reflection.Emit
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed partial class AssemblyBuilder : Assembly
 	{
+		//
+		// AssemblyBuilder inherits from Assembly, but the runtime thinks its layout inherits from RuntimeAssembly
+		//
+		#region Sync with RuntimeAssembly.cs and ReflectionAssembly in object-internals.h
+#pragma warning disable 649
+		internal IntPtr _mono_assembly;
+#pragma warning restore 649
+#if !MOBILE
+		internal Evidence _evidence;
+#else
+		object _evidence;
+#endif
+		#endregion
+
 #pragma warning disable 169, 414, 649
 		#region Sync with object-internals.h
 		private UIntPtr dynamic_assembly; /* GC-tracked */
@@ -268,7 +282,17 @@ namespace System.Reflection.Emit
 		byte[] pktoken;
 		#endregion
 #pragma warning restore 169, 414, 649
-		
+
+#if !MOBILE
+		internal PermissionSet _minimum;	// for SecurityAction.RequestMinimum
+		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
+		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
+		internal PermissionSet _granted;		// for the resolved assembly granted permissions
+		internal PermissionSet _denied;		// for the resolved assembly denied permissions
+#else
+		object _evidence, _minimum, _optional, _refuse, _granted, _denied;
+#endif
+		string assemblyName;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
@@ -1231,6 +1255,12 @@ namespace System.Reflection.Emit
 
 		public override string FullName {
 			get { return RuntimeAssembly.get_fullname (this); }
+		}
+
+		internal override IntPtr MonoAssembly {
+			get {
+				return _mono_assembly;
+			}
 		}
 
 		public override Evidence Evidence {

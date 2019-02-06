@@ -51,8 +51,33 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+	[StructLayout (LayoutKind.Sequential)]
 	class RuntimeAssembly : Assembly
 	{
+		#region Sync with AssemblyBuilder.cs and ReflectionAssembly in object-internals.h
+#pragma warning disable 649
+		internal IntPtr _mono_assembly;
+#pragma warning restore 649
+#if !MOBILE
+		internal Evidence _evidence;
+#else
+		object _evidence;
+#endif
+		#endregion
+
+		internal ResolveEventHolder resolve_event_holder;
+#if !MOBILE
+		internal PermissionSet _minimum;	// for SecurityAction.RequestMinimum
+		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
+		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
+		internal PermissionSet _granted;		// for the resolved assembly granted permissions
+		internal PermissionSet _denied;		// for the resolved assembly denied permissions
+#else
+		object _minimum, _optional, _refuse, _granted, _denied;
+#endif
+		internal bool fromByteArray;
+		internal string assemblyName;
+
 		internal class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
 		{
 #pragma warning disable 414
@@ -370,6 +395,12 @@ namespace System.Reflection {
 		public override string ImageRuntimeVersion {
 			get {
 				return InternalImageRuntimeVersion (this);
+			}
+		}
+
+		internal override IntPtr MonoAssembly {
+			get {
+				return _mono_assembly;
 			}
 		}
 
