@@ -3127,9 +3127,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			break;
 		case CEE_LDIND_I:
 			CHECK_STACK (td, 1);
-			ADD_CODE (td, MINT_CKNULL);
-			SIMPLE_OP (td, MINT_LDIND_I);
-			ADD_CODE (td, 0);
+			SIMPLE_OP (td, MINT_LDIND_REF_CHECK);
 			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_I);
 			BARRIER_IF_VOLATILE (td);
 			break;
@@ -3147,8 +3145,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			break;
 		case CEE_LDIND_REF:
 			CHECK_STACK (td, 1);
-			ADD_CODE (td, MINT_CKNULL);
-			SIMPLE_OP (td, MINT_LDIND_REF);
+			SIMPLE_OP (td, MINT_LDIND_REF_CHECK);
 			BARRIER_IF_VOLATILE (td);
 			SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_O);
 			break;
