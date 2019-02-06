@@ -83,9 +83,9 @@ To experiment with the debugger, do the following steps:
 
 - When calling `packager.exe` pass the `-debug` argument to it.
 - Start Chrome with remote debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222`)
-- Run the proxy: `dotnet dbg-proxy/ProxyDriver.dll`
+- Run the proxy: `dotnet run -p ProxyDriver/ProxyDriver.csproj`
 - Connect to the remote debugged Chrome and pick the page which is running the wasm code
-- Rewrite the request URL (just the `ws` argument) to use the proxy port instead of the browser port
+- Rewrite the request URL (just the `ws` argument) to use the proxy port (9300 by default for ProxyDriver) instead of the browser port
 - Refresh the debugged page and you should be set
 
 Beware that the debugger is in active development so bugs and missing features will be present.
