@@ -340,6 +340,7 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-dtrace=no \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
+	--enable-monotouch \
 	--disable-crash-reporting
 
 $$(eval $$(call CrossRuntimeTemplate,ios-$(1),$(2)-apple-darwin10,$(3)-darwin,$(4),$(5),$(6)))
