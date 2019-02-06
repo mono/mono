@@ -1348,6 +1348,8 @@ lookup_pinvoke_call_impl (MonoMethod *method, MonoLookupPInvokeStatus *status_ou
 	// FIXME: The dllmap remaps System.Native to mono-native
 	mono_dllmap_lookup (image, orig_scope, import, &new_scope, &import);
 #else
+	/* AK: FIXME: dllmap, above doesn't strdup the results, so these leak
+	 * since there's no free() */
 	new_scope = g_strdup (orig_scope);
 	import = g_strdup (import);
 #endif
@@ -1408,38 +1410,24 @@ lookup_pinvoke_call_impl (MonoMethod *method, MonoLookupPInvokeStatus *status_ou
 	return addr;
 }
 
-static MonoDl*
-pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *import, char **found_name_out, char **error_msg_out)
+/**
+ * pinvoke_probe_transform_path:
+ *
+ * Try transforming the library path given in \p new_scope in different ways
+ * depending on \p phase
+ *
+ * \returns \c TRUE if a transformation was applied and the transformed path
+ * components are written to the out arguments, or \c FALSE if a transformation
+ * did not apply.
+ */
+static gboolean
+pinvoke_probe_transform_path (const char *new_scope, int phase, char **file_name_out, char **base_name_out, char **dir_name_out, gboolean *is_absolute_out)
 {
-	char *full_name, *file_name;
-	char *error_msg = NULL;
-	char *found_name = NULL;
-	int i;
-	MonoDl *module = NULL;
-
-	g_assert (found_name_out);
-	g_assert (error_msg_out);
-
-	if (!module) {
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
-					"DllImport attempting to load: '%s'.", new_scope);
-
-		/* we allow a special name to dlopen from the running process namespace */
-		if (strcmp (new_scope, "__Internal") == 0){
-			if (internal_module == NULL)
-				internal_module = mono_dl_open (NULL, MONO_DL_LAZY, &error_msg);
-			module = internal_module;
-		}
-	}
-
-	/*
-	 * Try loading the module using a variety of names
-	 */
-	for (i = 0; i < 5; ++i) {
-		char *base_name = NULL, *dir_name = NULL;
-		gboolean is_absolute = is_absolute_path (new_scope);
-		
-		switch (i) {
+	char *file_name = NULL, *base_name = NULL, *dir_name = NULL;
+	gboolean changed = FALSE;
+	gboolean is_absolute = is_absolute_path (new_scope);
+	do {
+		switch (phase) {
 		case 0:
 			/* Try the original name */
 			file_name = g_strdup (new_scope);
@@ -1491,13 +1479,55 @@ pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *im
 			break;
 #endif
 		}
-		
+		changed = TRUE;
 		if (is_absolute) {
 			if (!dir_name)
 				dir_name = g_path_get_dirname (file_name);
 			if (!base_name)
 				base_name = g_path_get_basename (file_name);
 		}
+	} while (0);
+	*file_name_out = file_name;
+	*base_name_out = base_name;
+	*dir_name_out = dir_name;
+	*is_absolute_out = is_absolute;
+	return changed;
+}
+
+static MonoDl*
+pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *import, char **found_name_out, char **error_msg_out)
+{
+	char *full_name, *file_name;
+	char *error_msg = NULL;
+	char *found_name = NULL;
+	int i;
+	MonoDl *module = NULL;
+
+	g_assert (found_name_out);
+	g_assert (error_msg_out);
+
+	if (!module) {
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
+					"DllImport attempting to load: '%s'.", new_scope);
+
+		/* we allow a special name to dlopen from the running process namespace */
+		if (strcmp (new_scope, "__Internal") == 0){
+			if (internal_module == NULL)
+				internal_module = mono_dl_open (NULL, MONO_DL_LAZY, &error_msg);
+			module = internal_module;
+		}
+	}
+
+	/*
+	 * Try loading the module using a variety of names
+	 */
+	for (i = 0; i < 5; ++i) {
+		char *base_name = NULL, *dir_name = NULL;
+		gboolean is_absolute;
+
+		gboolean changed = pinvoke_probe_transform_path (new_scope, i, &file_name, &base_name, &dir_name, &is_absolute);
+		if (!changed)
+			continue;
 		
 		if (!module && is_absolute) {
 			module = cached_module_load (file_name, MONO_DL_LAZY, &error_msg);
