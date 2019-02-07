@@ -1,5 +1,8 @@
+using System.Runtime.InteropServices;
+
 namespace System.Reflection
 {
+	[StructLayout (LayoutKind.Sequential)]
 	partial class Assembly
 	{
 #region Must match object-internals.h
