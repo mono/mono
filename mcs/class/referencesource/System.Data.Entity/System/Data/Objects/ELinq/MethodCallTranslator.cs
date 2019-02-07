@@ -1379,7 +1379,6 @@ namespace System.Data.Objects.ELinq
                 {
                     yield return typeof(String).GetMethod("Trim", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char[]) }, null);
 #if MONO
-                    yield return typeof(String).GetMethod("Trim", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
                     yield return typeof(String).GetMethod("Trim", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char) }, null);
 #endif
                 }
