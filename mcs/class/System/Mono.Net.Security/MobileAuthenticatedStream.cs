@@ -115,14 +115,16 @@ namespace Mono.Net.Security
 
 		internal static Exception GetSSPIException (Exception e)
 		{
-			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException || e is AuthenticationException)
+			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException ||
+			    e is AuthenticationException || e is NotSupportedException)
 				return e;
 			return new AuthenticationException (SR.net_auth_SSPI, e);
 		}
 
 		internal static Exception GetIOException (Exception e, string message)
 		{
-			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException || e is AuthenticationException)
+			if (e is OperationCanceledException || e is IOException || e is ObjectDisposedException ||
+			    e is AuthenticationException || e is NotSupportedException)
 				return e;
 			return new IOException (message, e);
 		}
@@ -349,7 +351,7 @@ namespace Mono.Net.Security
 		async Task ProcessAuthentication (bool runSynchronously, MonoSslAuthenticationOptions options, CancellationToken cancellationToken)
 		{
 			if (options.ServerMode) {
-				if (options.ServerCertificate == null)
+				if (options.ServerCertificate == null && options.ServerCertSelectionDelegate == null)
 					throw new ArgumentException (nameof (options.ServerCertificate));
 			} else {
 				if (options.TargetHost == null)
@@ -826,10 +828,16 @@ namespace Mono.Net.Security
 				 * to take care of I/O and call it again.
 				*/
 				var newStatus = AsyncOperationStatus.Continue;
-				if (xobileTlsContext.ProcessHandshake ()) {
-					xobileTlsContext.FinishHandshake ();
-					operation = Operation.Authenticated;
-					newStatus = AsyncOperationStatus.Complete;
+				try {
+					if (xobileTlsContext.ProcessHandshake ()) {
+						xobileTlsContext.FinishHandshake ();
+						operation = Operation.Authenticated;
+						newStatus = AsyncOperationStatus.Complete;
+					}
+				} catch (Exception ex) {
+					SetException (GetSSPIException (ex));
+					Dispose ();
+					throw;
 				}
 
 				if (lastException != null)
@@ -920,7 +928,7 @@ namespace Mono.Net.Security
 			try {
 				lock (ioLock) {
 					Debug ("Dispose: {0}", xobileTlsContext != null);
-					lastException = ExceptionDispatchInfo.Capture (new ObjectDisposedException ("MobileAuthenticatedStream"));
+					SetException (new ObjectDisposedException ("MobileAuthenticatedStream"));
 					if (xobileTlsContext != null) {
 						xobileTlsContext.Dispose ();
 						xobileTlsContext = null;
