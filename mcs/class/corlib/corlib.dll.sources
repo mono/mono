@@ -97,6 +97,7 @@ System/Environment.cs
 System/EnvironmentVariableTarget.cs
 System/Guid.cs
 System/IConsoleDriver.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Index.cs
 System/IntPtr.cs
 System/KnownTerminals.cs
 System/MathF.mono.cs
@@ -114,6 +115,8 @@ System/NumberFormatter.cs
 System/Object.cs
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/OperatingSystem.cs
 System/PlatformID.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Range.cs
+../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlySpan.Fast.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ResolveEventArgs.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ResolveEventHandler.cs
 System/RuntimeArgumentHandle.cs
@@ -122,6 +125,7 @@ System/RuntimeMethodHandle.cs
 System/RuntimeTypeHandle.cs
 System/ModuleHandle.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/StringComparison.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Span.Fast.cs
 System/TermInfoBooleans.cs
 System/TermInfoDriver.cs
 System/TermInfoNumbers.cs
@@ -1894,7 +1898,8 @@ corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemName.cs
 ../../../external/corefx/src/Common/src/System/Text/ValueUtf8Converter.cs
 corefx/DirectoryInfo.cs
+corefx/File.cs
 corefx/FileInfo.cs
 corefx/Directory.cs
 corefx/MonoLinqHelper.cs
-corefx/File.cs
+corefx/ThrowHelper.cs
