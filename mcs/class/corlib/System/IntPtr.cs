@@ -51,9 +51,9 @@ namespace System
 {
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
-	public unsafe struct IntPtr : ISerializable, IEquatable<IntPtr>
+	public unsafe readonly struct IntPtr : ISerializable, IEquatable<IntPtr>
 	{
-		private void *m_value;
+		private readonly void* m_value;
 
 		public static readonly IntPtr Zero;
 

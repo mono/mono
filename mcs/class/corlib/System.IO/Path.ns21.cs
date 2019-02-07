@@ -11,11 +11,11 @@ namespace System.IO
 {
 	partial class Path
 	{
-		public static string GetExtension (ReadOnlySpan<char> path) => GetExtension (path.ToString ());
+		public static ReadOnlySpan<char> GetExtension (ReadOnlySpan<char> path) => GetExtension (path.ToString ()).AsSpan ();
 
-		public static string GetFileNameWithoutExtension (ReadOnlySpan<char> path) => GetFileNameWithoutExtension (path.ToString ());
+		public static ReadOnlySpan<char> GetFileNameWithoutExtension (ReadOnlySpan<char> path) => GetFileNameWithoutExtension (path.ToString ()).AsSpan ();
 
-		public static string GetPathRoot (ReadOnlySpan<char> path) => GetPathRoot (path.ToString ());
+		public static ReadOnlySpan<char> GetPathRoot (ReadOnlySpan<char> path) => GetPathRoot (path.ToString ()).AsSpan ();
 
 		public static bool HasExtension (ReadOnlySpan<char> path) => HasExtension (path.ToString ());
 
