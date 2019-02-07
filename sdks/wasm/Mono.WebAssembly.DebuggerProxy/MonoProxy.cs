@@ -712,10 +712,11 @@ namespace WsProxy {
 			var src_file = store.GetFileById (id);
 
 			var res = new StringWriter ();
-			res.WriteLine ($"//{src_file.SourceUri}");
+			res.WriteLine ($"//{id}");
 
 			try {
-				if (src_file.SourceUri.IsFile && File.Exists(src_file.SourceUri.LocalPath)) {
+				var uri = new Uri (src_file.Url);
+				if (uri.IsFile && File.Exists(uri.LocalPath)) {
 					using (var f = new StreamReader (File.Open (src_file.SourceUri.LocalPath, FileMode.Open))) {
 						await res.WriteAsync (await f.ReadToEndAsync ());
 					}

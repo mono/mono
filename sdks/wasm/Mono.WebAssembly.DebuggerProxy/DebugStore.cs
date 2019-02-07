@@ -31,12 +31,12 @@ namespace WsProxy {
 				var urlRegex = args?["urlRegex"].Value<string>();
 				var sourceFile = store.GetFileByUrlRegex (urlRegex);
 
-				url = sourceFile?.Url?.ToString();
+				url = sourceFile?.DotNetUrl;
 			}
 
 			if (url != null && !url.StartsWith ("dotnet://", StringComparison.InvariantCulture)) {
 				var sourceFile = store.GetFileByUrl (url);
-				url = sourceFile?.Url?.ToString ();
+				url = sourceFile?.DotNetUrl;
 			}
 
 			if (url == null)
@@ -287,7 +287,6 @@ namespace WsProxy {
 		}
 	}
 
-
 	internal class AssemblyInfo {
 		static int next_id;
 		ModuleDefinition image;
@@ -315,7 +314,7 @@ namespace WsProxy {
 
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
 			} catch (BadImageFormatException ex) {
-				Console.WriteLine ("Failed to read assembly as portable PDB");
+				Console.WriteLine ($"Failed to read assembly as portable PDB: {ex.Message}");
 			}
 
 			if (this.image == null) {
@@ -465,7 +464,14 @@ namespace WsProxy {
 			this.id = id;
 			this.doc = doc;
 			this.DebuggerFileName = doc.Url.Replace ("\\", "/").Replace (":", "");
+
 			this.SourceUri = new Uri ((Path.IsPathRooted (doc.Url) ? "file://" : "") + doc.Url, UriKind.RelativeOrAbsolute);
+						if (SourceUri.IsFile && File.Exists (SourceUri.LocalPath)) {
+								this.Url = this.SourceUri.ToString ();
+						} else {
+								this.Url = DotNetUrl;
+						}
+
 		}
 
 		internal void AddMethod (MethodInfo mi)
@@ -473,7 +479,9 @@ namespace WsProxy {
 			this.methods.Add (mi);
 		}
 		public string DebuggerFileName { get; }
-		public string Url => $"dotnet://{assembly.Name}/{DebuggerFileName}";
+		public string Url { get; }
+		public string AssemblyName => assembly.Name;
+		public string DotNetUrl => $"dotnet://{assembly.Name}/{DebuggerFileName}";
 		public string DocHashCode => "abcdee" + id;
 		public SourceId SourceId => new SourceId (assembly.Id, this.id);
 		public Uri SourceLinkUri { get; }
@@ -638,10 +646,10 @@ namespace WsProxy {
 		public SourceFile GetFileByUrlRegex (string urlRegex)
 		{
 			var regex = new Regex (urlRegex);
-			return AllSources ().FirstOrDefault (file => regex.IsMatch (file.SourceUri.ToString()) || regex.IsMatch (file.Url.ToString()));
+			return AllSources ().FirstOrDefault (file => regex.IsMatch (file.Url.ToString()));
 		}
 
 		public SourceFile GetFileByUrl (string url)
-			=> AllSources ().FirstOrDefault (file => file.SourceUri.ToString() == url || file.Url.ToString() == url);
+			=> AllSources ().FirstOrDefault (file => file.Url.ToString() == url);
 	}
 }
