@@ -218,6 +218,7 @@ System.IO/MonoIOError.cs
 System.IO/MonoFileType.cs
 System.IO/MonoIOStat.cs
 System.IO/Path.cs
+System.IO/Path.ns21.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/SearchOption.cs
 System.IO/SearchPattern.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/SeekOrigin.cs
@@ -1145,6 +1146,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/MemoryStream.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathTooLongException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PinnedBufferMemoryStream.cs
+corefx/Stream.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Stream.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/IO/Stream.CoreRT.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamReader.cs

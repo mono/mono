@@ -51,7 +51,7 @@ using System.Diagnostics;
 namespace System.IO {
 
 	[ComVisible (true)]
-	public static class Path {
+	public static partial class Path {
 
 		[Obsolete ("see GetInvalidPathChars and GetInvalidFileNameChars methods.")]
 		public static readonly char[] InvalidPathChars;
@@ -278,7 +278,6 @@ namespace System.IO {
 
 			return path;
 		}
-
 		public static string GetFileNameWithoutExtension (string path)
 		{
 			return ChangeExtension (GetFileName (path), null);
@@ -434,7 +433,6 @@ namespace System.IO {
 		internal static bool IsDirectorySeparator (char c) {
 			return c == DirectorySeparatorChar || c == AltDirectorySeparatorChar;
 		}
-
 		public static string GetPathRoot (string path)
 		{
 			if (path == null)

@@ -771,6 +771,7 @@ ReferenceSources/Win32Exception.cs
 
 ../referencesource/System/services/monitoring/system/diagnosticts/AsyncStreamReader.cs
 ../referencesource/System/services/monitoring/system/diagnosticts/Process.cs
+../../../external/corefx/src/Common/src/System/PasteArguments.cs
 ../referencesource/System/services/monitoring/system/diagnosticts/ProcessModuleCollection.cs
 ../referencesource/System/services/monitoring/system/diagnosticts/ProcessStartInfo.cs
 ../referencesource/System/services/monitoring/system/diagnosticts/processwaithandle.cs
