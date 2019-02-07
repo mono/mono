@@ -432,50 +432,6 @@ var BindingSupportLib = {
 			} 
 
 		},		
-		js_typedarray_to_array : function (mono_array) {
-
-
-			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
-			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
-			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
-			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
-			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
-			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
-			// and number of elements — that turns the data into an actual typed array.
-			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
-			if (!!(js_obj.buffer instanceof ArrayBuffer && js_obj.BYTES_PER_ELEMENT)) 
-			{
-				var arrayType = 0;	
-				if (js_obj instanceof Int8Array)
-					arrayType = 11;
-				if (js_obj instanceof Uint8Array)
-					arrayType = 12;
-				if (js_obj instanceof Uint8ClampedArray)
-					arrayType = 12;
-				if (js_obj instanceof Int16Array)
-					arrayType = 13;
-				if (js_obj instanceof Uint16Array)
-					arrayType = 14;
-				if (js_obj instanceof Int32Array)
-					arrayType = 15;
-				if (js_obj instanceof Uint32Array)
-					arrayType = 16;
-				if (js_obj instanceof Float32Array)
-					arrayType = 17;
-				if (js_obj instanceof Float64Array)
-					arrayType = 18;
-
-				var heapBytes = this.js_typedarray_to_heap(js_obj);
-				var bufferArray = this.mono_typed_array_new(heapBytes.byteOffset, js_obj.length, js_obj.BYTES_PER_ELEMENT, arrayType);
-				Module._free(heapBytes.byteOffset);
-				return bufferArray;
-			}
-			else {
-				throw new Error("Object '" + js_obj + "' is not a typed array");
-			} 
-
-
-		},
 		typedarray_copy_from : function (typed_array, pinned_array, length, bytes_per_element) {
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
