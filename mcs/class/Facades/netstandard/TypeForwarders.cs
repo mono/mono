@@ -2478,7 +2478,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Numerics.Vector2))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Numerics.Vector3))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Numerics.Vector4))]
-//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Reflection.DispatchProxy))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Reflection.DispatchProxy))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Reflection.Emit.AssemblyBuilder))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Reflection.Emit.AssemblyBuilderAccess))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Reflection.Emit.ConstructorBuilder))]

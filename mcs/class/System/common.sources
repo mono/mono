@@ -874,7 +874,6 @@ ReferenceSources/Win32Exception.cs
 
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemName.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
-../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemName.cs
 
 # Everything except compiled
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/Capture.cs
