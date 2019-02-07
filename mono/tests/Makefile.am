@@ -710,7 +710,8 @@ TESTS_CS_SRC=		\
 	generic-unmanaged-constraint.cs \
 	bug-10834.cs \
 	bug-10837.cs	\
-	bug-gh-9507.cs
+	bug-gh-9507.cs \
+	last-error.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
