@@ -1727,6 +1727,11 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		PUSH_VT (td, vararg_stack);
 	}
 
+	if (need_null_check) {
+		ADD_CODE (td, MINT_CKNULL_N);
+		ADD_CODE (td, csignature->param_count + 1);
+	}
+
 	g_assert (csignature->call_convention != MONO_CALL_FASTCALL);
 	if ((mono_interp_opt & INTERP_OPT_INLINE) && op == -1 && !is_virtual && target_method && interp_method_check_inlining (td, target_method)) {
 		MonoMethodHeader *mheader = interp_method_get_header (target_method, error);
@@ -1754,11 +1759,6 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 			vt_stack_used += size;
 		}
-	}
-
-	if (need_null_check) {
-		ADD_CODE (td, MINT_CKNULL_N);
-		ADD_CODE (td, csignature->param_count + 1);
 	}
 
 	/* need to handle typedbyref ... */
