@@ -293,6 +293,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 
 	[Test]
 	[Category ("MultiThreaded")]
+	[Category ("NotWorkingRuntimeInterpreter")] // Flaky due to false pinning
 	public void OldGenStress () {
 		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
 			Assert.Ignore ("Not working on Boehm.");

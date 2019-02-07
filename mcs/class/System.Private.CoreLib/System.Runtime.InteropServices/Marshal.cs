@@ -42,17 +42,6 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static IntPtr UnsafeAddrOfPinnedArrayElement (Array arr, int index);
-
-		public static IntPtr UnsafeAddrOfPinnedArrayElement<T> (T[] arr, int index)
-		{
-			if (arr == null)
-				throw new ArgumentNullException (nameof(arr));
-
-			return UnsafeAddrOfPinnedArrayElement ((Array)arr, index);
-		}
-
 		internal static IntPtr AllocBSTR (int length)
 		{
 			throw new NotImplementedException ();
@@ -75,9 +64,9 @@ namespace System.Runtime.InteropServices
 
 		static void PrelinkCore (MethodInfo m)
 		{
-			if (!(m is MonoMethod))
+			if (!(m is RuntimeMethodInfo))
 			{
-				throw new ArgumentException(SR.Argument_MustBeRuntimeMethodInfo, nameof(m));
+				throw new ArgumentException (SR.Argument_MustBeRuntimeMethodInfo, nameof(m));
 			}
 
 			PrelinkInternal (m);
@@ -105,12 +94,6 @@ namespace System.Runtime.InteropServices
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern int SizeOfHelper (Type t, bool throwIfNotMarshalable);
 
-		static int GetSystemMaxDBCSCharSize ()
-		{
-			// TODO: Windows specific
-			return 2;
-		}
-
 		public static IntPtr GetExceptionPointers ()
 		{
 			throw new NotImplementedException ();
@@ -118,7 +101,7 @@ namespace System.Runtime.InteropServices
 
 		public static IntPtr StringToBSTR (string s)
 		{
-			throw null;
+			throw new NotImplementedException ();
 		}
 
 		#region PlatformNotSupported

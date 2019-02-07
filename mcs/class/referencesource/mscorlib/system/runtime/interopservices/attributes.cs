@@ -800,7 +800,7 @@ namespace System.Runtime.InteropServices{
             PInvokeAttributes flags = 0;
 
 #if MONO
-            ((MonoMethod)method).GetPInvoke(out flags, out entryPoint, out dllName);
+            ((RuntimeMethodInfo)method).GetPInvoke(out flags, out entryPoint, out dllName);
 #else
             scope.GetPInvokeMap(token, out flags, out entryPoint, out dllName);
 #endif

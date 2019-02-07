@@ -3366,8 +3366,10 @@ Global
 		{817CE046-07E8-409D-84BF-A6EA4F2879DE}.Release|wasm.ActiveCfg = Release|net_4_x
 		{817CE046-07E8-409D-84BF-A6EA4F2879DE}.Debug|winaot.ActiveCfg = Debug|net_4_x
 		{817CE046-07E8-409D-84BF-A6EA4F2879DE}.Release|winaot.ActiveCfg = Release|net_4_x
-		{817CE046-07E8-409D-84BF-A6EA4F2879DE}.Debug|xammac.ActiveCfg = Debug|net_4_x
-		{817CE046-07E8-409D-84BF-A6EA4F2879DE}.Release|xammac.ActiveCfg = Release|net_4_x
+		{817CE046-07E8-409D-84BF-A6EA4F2879DE}.Debug|xammac.ActiveCfg = Debug|xammac
+		{817CE046-07E8-409D-84BF-A6EA4F2879DE}.Debug|xammac.Build.0 = Debug|xammac
+		{817CE046-07E8-409D-84BF-A6EA4F2879DE}.Release|xammac.ActiveCfg = Release|xammac
+		{817CE046-07E8-409D-84BF-A6EA4F2879DE}.Release|xammac.Build.0 = Release|xammac
 		{767CAD15-F8B5-4EAC-8B3D-4EF75F768015}.Debug|net_4_x.ActiveCfg = Debug|net_4_x
 		{767CAD15-F8B5-4EAC-8B3D-4EF75F768015}.Debug|net_4_x.Build.0 = Debug|net_4_x
 		{767CAD15-F8B5-4EAC-8B3D-4EF75F768015}.Release|net_4_x.ActiveCfg = Release|net_4_x
@@ -3480,8 +3482,10 @@ Global
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|unreal.ActiveCfg = Release|net_4_x
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|wasm.ActiveCfg = Debug|net_4_x
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|wasm.ActiveCfg = Release|net_4_x
-		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|winaot.ActiveCfg = Debug|net_4_x
-		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|winaot.ActiveCfg = Release|net_4_x
+		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|winaot.ActiveCfg = Debug|winaot
+		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|winaot.Build.0 = Debug|winaot
+		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|winaot.ActiveCfg = Release|winaot
+		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|winaot.Build.0 = Release|winaot
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Debug|xammac.ActiveCfg = Debug|net_4_x
 		{045A3571-9B4B-4318-BD72-22C6CCD094F1}.Release|xammac.ActiveCfg = Release|net_4_x
 		{1B87A378-65E8-4899-9C9A-C940429D643C}.Debug|net_4_x.ActiveCfg = Debug|net_4_x

@@ -262,7 +262,7 @@ namespace System.Reflection.Emit
 
 			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
 			for (int i = 0; i < parameters.Length; i++) {
-				retval [i] = MonoParameterInfo.New (pinfo?[i + 1], parameters [i], this, i + 1);
+				retval [i] = RuntimeParameterInfo.New (pinfo?[i + 1], parameters [i], this, i + 1);
 			}
 			return retval;
 		}

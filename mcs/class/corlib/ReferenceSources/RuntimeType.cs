@@ -48,7 +48,7 @@ namespace System
 		// ,+*&*[]\ in the identifier portions of the names
 		// have been escaped with a leading backslash (\)
 		public string full_name;
-		public MonoCMethod default_ctor;
+		public RuntimeConstructorInfo default_ctor;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
@@ -66,9 +66,9 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
-		internal MonoCMethod GetDefaultConstructor ()
+		internal RuntimeConstructorInfo GetDefaultConstructor ()
 		{
-			MonoCMethod ctor = null;
+			RuntimeConstructorInfo ctor = null;
 
 			if (type_info == null)
 				type_info = new MonoTypeInfo ();
@@ -80,7 +80,7 @@ namespace System
 
 				for (int i = 0; i < ctors.Length; ++i) {
 					if (ctors [i].GetParametersCount () == 0) {
-						type_info.default_ctor = ctor = (MonoCMethod) ctors [i];
+						type_info.default_ctor = ctor = (RuntimeConstructorInfo) ctors [i];
 						break;
 					}
 				}
@@ -528,7 +528,7 @@ namespace System
 				var a = new RuntimePropertyInfo [n];
 				for (int i = 0; i < n; i++) {
 					var ph = new Mono.RuntimePropertyHandle (h[i]);
-					a[i] = (RuntimePropertyInfo) MonoProperty.GetPropertyFromHandle (ph, refh);
+					a[i] = (RuntimePropertyInfo) RuntimePropertyInfo.GetPropertyFromHandle (ph, refh);
 				}
 				return a;
 			}

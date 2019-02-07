@@ -8,6 +8,7 @@ using System.Threading;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Net;
 
 namespace WsProxy {
 
@@ -21,6 +22,7 @@ namespace WsProxy {
 		public const string GET_LOADED_FILES = "MONO.mono_wasm_get_loaded_files()";
 		public const string CLEAR_ALL_BREAKPOINTS = "MONO.mono_wasm_clear_all_breakpoints()";
 		public const string GET_OBJECT_PROPERTIES = "MONO.mono_wasm_get_object_properties({0})";
+		public const string GET_ARRAY_VALUES = "MONO.mono_wasm_get_array_values({0})";
 	}
 
 	internal enum MonoErrorCodes {
@@ -129,7 +131,7 @@ namespace WsProxy {
 			case "Debugger.getScriptSource": {
 					var script_id = args? ["scriptId"]?.Value<string> ();
 					if (script_id.StartsWith ("dotnet://", StringComparison.InvariantCultureIgnoreCase)) {
-						OnGetScriptSource (id, script_id, token);
+						await OnGetScriptSource (id, script_id, token);
 						return true;
 					}
 
@@ -201,9 +203,12 @@ namespace WsProxy {
 						await GetScopeProperties (id, int.Parse (objId.Substring ("dotnet:scope:".Length)), token);
 						return true;
 					}
-					if (objId.StartsWith("dotnet:object:", StringComparison.InvariantCulture))
+					if (objId.StartsWith("dotnet:", StringComparison.InvariantCulture))
 					{
-						await GetObjectProperties(id, int.Parse(objId.Substring("dotnet:object:".Length)), token);
+						if (objId.StartsWith("dotnet:object:", StringComparison.InvariantCulture))
+							await GetDetails(id, int.Parse(objId.Substring("dotnet:object:".Length)), token, MonoCommands.GET_OBJECT_PROPERTIES);
+						if (objId.StartsWith("dotnet:array:", StringComparison.InvariantCulture))
+							await GetDetails(id, int.Parse(objId.Substring("dotnet:array:".Length)), token, MonoCommands.GET_ARRAY_VALUES);
 						return true;
 					}
 					break;
@@ -276,14 +281,19 @@ namespace WsProxy {
 
 						var asm = store.GetAssemblyByName (assembly_name);
 						var method = asm.GetMethodByToken (method_token);
-						var location = method.GetLocationByIl (il_pos);
+
+						if (method == null) {
+							Info ($"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
+							continue;
+						}
+
+						var location = method?.GetLocationByIl (il_pos);
 
 						// When hitting a breakpoint on the "IncrementCount" method in the standard
 						// Blazor project template, one of the stack frames is inside mscorlib.dll
 						// and we get location==null for it. It will trigger a NullReferenceException
 						// if we don't skip over that stack frame.
-						if (location == null)
-						{
+						if (location == null) {
 							continue;
 						}
 
@@ -398,11 +408,11 @@ namespace WsProxy {
 			await SendCommand ("Debugger.resume", new JObject (), token);
 		}
 
-		async Task GetObjectProperties(int msg_id, int object_id, CancellationToken token)
+		async Task GetDetails(int msg_id, int object_id, CancellationToken token, string command)
 		{
 			var o = JObject.FromObject(new
 			{
-				expression = string.Format(MonoCommands.GET_OBJECT_PROPERTIES, object_id),
+				expression = string.Format(command, object_id),
 				objectGroup = "mono_debugger",
 				includeCommandLineAPI = false,
 				silent = false,
@@ -696,7 +706,7 @@ namespace WsProxy {
 
 		}
 
-		void OnGetScriptSource (int msg_id, string script_id, CancellationToken token)
+		async Task OnGetScriptSource (int msg_id, string script_id, CancellationToken token)
 		{
 			var id = new SourceId (script_id);
 			var src_file = store.GetFileById (id);
@@ -704,15 +714,42 @@ namespace WsProxy {
 			var res = new StringWriter ();
 			res.WriteLine ($"//dotnet:{id}");
 
-			using (var f = new StreamReader (File.Open (src_file.LocalPath, FileMode.Open))) {
-				res.Write (f.ReadToEnd ());
+			try {
+				if (src_file.SourceUri.IsFile && File.Exists(src_file.SourceUri.LocalPath)) {
+					using (var f = new StreamReader (File.Open (src_file.SourceUri.LocalPath, FileMode.Open))) {
+						await res.WriteAsync (await f.ReadToEndAsync ());
+					}
+
+					var o = JObject.FromObject (new {
+						scriptSource = res.ToString ()
+					});
+
+					SendResponse (msg_id, Result.Ok (o), token);
+				} else if(src_file.SourceLinkUri != null) {
+					var doc = await new WebClient ().DownloadStringTaskAsync (src_file.SourceLinkUri);
+					await res.WriteAsync (doc);
+
+					var o = JObject.FromObject (new {
+						scriptSource = res.ToString ()
+					});
+
+					SendResponse (msg_id, Result.Ok (o), token);
+				} else {
+					var o = JObject.FromObject (new {
+						scriptSource = $"// Unable to find document {src_file.SourceUri}"
+					});
+
+					SendResponse (msg_id, Result.Ok (o), token);
+				}
+			} catch (Exception e) {
+				var o = JObject.FromObject (new {
+					scriptSource = $"// Unable to read document ({e.Message})\n" +
+								$"Local path: {src_file?.SourceUri}\n" +
+								$"SourceLink path: {src_file?.SourceLinkUri}\n"
+				});
+
+				SendResponse (msg_id, Result.Ok (o), token);
 			}
-
-			var o = JObject.FromObject (new {
-				scriptSource = res.ToString ()
-			});
-
-			SendResponse (msg_id, Result.Ok (o), token);
 		}
 	}
 }

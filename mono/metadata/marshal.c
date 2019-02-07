@@ -50,6 +50,7 @@
 #include "mono/metadata/custom-attrs-internals.h"
 #include "mono/metadata/abi-details.h"
 #include "mono/metadata/custom-attrs-internals.h"
+#include "mono/metadata/loader-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
@@ -347,7 +348,7 @@ mono_delegate_to_ftnptr_impl (MonoDelegateHandle delegate, MonoError *error)
 		const char *exc_class, *exc_arg;
 		gpointer ftnptr;
 
-		ftnptr = mono_lookup_pinvoke_call (method, &exc_class, &exc_arg);
+		ftnptr = mono_lookup_pinvoke_call_internal (method, &exc_class, &exc_arg);
 		if (!ftnptr) {
 			g_assert (exc_class);
 			mono_error_set_generic_error (error, "System", exc_class, "%s", exc_arg);
@@ -2184,6 +2185,13 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 		subtype = WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND;
 		g_assert (!callvirt);
 		invoke_sig = mono_method_signature_internal (target_method);
+		/*
+		 * The wrapper has a different lifetime from the method to be invoked.
+		 * If the method is dynamic we don't want to be using its signature
+		 * in the wrapper since it could get freed early.
+		 */
+		if (method_is_dynamic (target_method))
+			invoke_sig = mono_metadata_signature_dup_full (get_method_image (target_method), invoke_sig);
 	}
 
 	/*
@@ -2510,13 +2518,6 @@ wrapper_cache_signature_key_equal (MonoWrapperSignatureCacheKey *key1, MonoWrapp
 	if (key1->valuetype != key2->valuetype)
 		return FALSE;
 	return runtime_invoke_signature_equal (key1->signature, key2->signature);
-}
-
-static gboolean
-wrapper_cache_method_matches_data (gpointer key, gpointer value, gpointer user_data)
-{
-	MonoWrapperMethodCacheKey *mkey = (MonoWrapperMethodCacheKey *) key;
-	return mkey->method == (MonoMethod *) user_data;
 }
 
 /**
@@ -3351,7 +3352,7 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 			if (method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE)
 				exc_arg = "Method contains unsupported native code";
 			else if (!aot)
-				mono_lookup_pinvoke_call (method, &exc_class, &exc_arg);
+				mono_lookup_pinvoke_call_internal (method, &exc_class, &exc_arg);
 		} else {
 			if (!aot || (method->klass == mono_defaults.string_class))
 				piinfo->addr = mono_lookup_internal_call (method);
@@ -6107,6 +6108,23 @@ mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method)
 	return res;
 }
 
+static void
+clear_runtime_invoke_method_cache (GHashTable *table, MonoMethod *method)
+{
+	MonoWrapperMethodCacheKey hash_key = {method, FALSE, FALSE};
+	/*
+	 * Since we have a small set of possible keys, remove each one separately, thus
+	 * avoiding the traversal of the entire hash table, when using foreach_remove.
+	 */
+	g_hash_table_remove (table, &hash_key);
+	hash_key.need_direct_wrapper = TRUE;
+	g_hash_table_remove (table, &hash_key);
+	hash_key.virtual_ = TRUE;
+	g_hash_table_remove (table, &hash_key);
+	hash_key.need_direct_wrapper = FALSE;
+	g_hash_table_remove (table, &hash_key);
+}
+
 /*
  * mono_marshal_free_dynamic_wrappers:
  *
@@ -6127,7 +6145,7 @@ mono_marshal_free_dynamic_wrappers (MonoMethod *method)
 	 * they could be shared with other methods ?
 	 */
 	if (image->wrapper_caches.runtime_invoke_method_cache)
-		g_hash_table_foreach_remove (image->wrapper_caches.runtime_invoke_method_cache, wrapper_cache_method_matches_data, method);
+		clear_runtime_invoke_method_cache (image->wrapper_caches.runtime_invoke_method_cache, method);
 	if (image->wrapper_caches.delegate_abstract_invoke_cache)
 		g_hash_table_foreach_remove (image->wrapper_caches.delegate_abstract_invoke_cache, signature_pointer_pair_matches_pointer, method);
 	// FIXME: Need to clear the caches in other images as well

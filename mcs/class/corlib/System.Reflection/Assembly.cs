@@ -111,7 +111,7 @@ namespace System.Reflection {
 		private string assemblyName;
 
 		protected
-		Assembly () 
+		Assembly ()
 		{
 			resolve_event_holder = new ResolveEventHolder ();
 		}

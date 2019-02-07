@@ -51,13 +51,27 @@ var MonoSupportLib = {
 			return res;
 		},
 
-		mono_wasm_get_object_properties: function(scope) {
+		mono_wasm_get_object_properties: function(objId) {
 			if (!this.mono_wasm_get_object_properties_info)
 				this.mono_wasm_get_object_properties_info = Module.cwrap ("mono_wasm_get_object_properties", 'void', [ 'number' ]);
 
 			this.var_info = [];
-			console.log (">> mono_wasm_get_object_properties " + scope);
-			this.mono_wasm_get_object_properties_info (scope);
+			console.log (">> mono_wasm_get_object_properties " + objId);
+			this.mono_wasm_get_object_properties_info (objId);
+
+			var res = this.var_info;
+			this.var_info = []
+
+			return res;
+		},
+
+		mono_wasm_get_array_values: function(objId) {
+			if (!this.mono_wasm_get_array_values_info)
+				this.mono_wasm_get_array_values_info = Module.cwrap ("mono_wasm_get_array_values", 'void', [ 'number' ]);
+
+			this.var_info = [];
+			console.log (">> mono_wasm_get_array_values " + objId);
+			this.mono_wasm_get_array_values_info (objId);
 
 			var res = this.var_info;
 			this.var_info = []
@@ -244,7 +258,12 @@ var MonoSupportLib = {
 			name: Module.UTF8ToString (name),
 		});
 	},
-
+	mono_wasm_add_array_item: function(position) {
+		MONO.var_info.push({
+			name: "[" + position + "]",
+		});
+	},
+	
 	mono_wasm_add_string_var: function(var_value) {
 		if (var_value == 0) {
 			MONO.var_info.push({
@@ -279,6 +298,27 @@ var MonoSupportLib = {
 					className: Module.UTF8ToString (className),
 					description: Module.UTF8ToString (className),
 					objectId: "dotnet:object:"+ objectId,
+				}
+			});
+		}
+	},
+	mono_wasm_add_array_var: function(className, objectId) {
+		if (objectId == 0) {
+			MONO.var_info.push({
+				value: {
+					type: "array",
+					className: Module.UTF8ToString (className),
+					description: Module.UTF8ToString (className),
+					subtype: "null"
+				}
+			});
+		} else {
+			MONO.var_info.push({
+				value: {
+					type: "array",
+					className: Module.UTF8ToString (className),
+					description: Module.UTF8ToString (className),
+					objectId: "dotnet:array:"+ objectId,
 				}
 			});
 		}

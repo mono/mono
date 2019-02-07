@@ -324,9 +324,11 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_gc_init ();
 
 	/* contexts use GC handles, so they must be initialized after the GC */
+#ifndef ENABLE_NETCORE
 	mono_context_init_checked (domain, error);
 	goto_if_nok (error, exit);
 	mono_context_set_default_context (domain);
+#endif
 
 #ifndef DISABLE_SOCKETS
 	mono_network_init ();
@@ -397,11 +399,7 @@ mono_check_corlib_version (void)
 {
 	const char* res;
 	MONO_ENTER_GC_UNSAFE;
-#if ENABLE_NETCORE
-	res = NULL;
-#else
 	res = mono_check_corlib_version_internal ();
-#endif
 	MONO_EXIT_GC_UNSAFE;
 	return res;
 }
