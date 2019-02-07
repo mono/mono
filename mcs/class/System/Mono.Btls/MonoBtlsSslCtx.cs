@@ -90,15 +90,25 @@ namespace Mono.Btls
 		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_ssl_ctx_set_client_ca_list (IntPtr handle, int count, IntPtr sizes, IntPtr data);
 
+		[DllImport (BTLS_DYLIB)]
+		extern static void mono_btls_ssl_ctx_set_server_name_callback (IntPtr handle, IntPtr func);
+
+		[DllImport (BTLS_DYLIB)]
+		extern static IntPtr mono_btls_ssl_ctx_get_servername (IntPtr handle);
+
 		delegate int NativeVerifyFunc (IntPtr instance, int preverify_ok, IntPtr ctx);
 		delegate int NativeSelectFunc (IntPtr instance, int count, IntPtr sizes, IntPtr data);
+		delegate int NativeServerNameFunc (IntPtr instance);
 
 		NativeVerifyFunc verifyFunc;
 		NativeSelectFunc selectFunc;
+		NativeServerNameFunc serverNameFunc;
 		IntPtr verifyFuncPtr;
 		IntPtr selectFuncPtr;
+		IntPtr serverNameFuncPtr;
 		MonoBtlsVerifyCallback verifyCallback;
 		MonoBtlsSelectCallback selectCallback;
+		MonoBtlsServerNameCallback serverNameCallback;
 		MonoBtlsX509Store store;
 		GCHandle instance;
 		IntPtr instancePtr;
@@ -118,8 +128,10 @@ namespace Mono.Btls
 
 			verifyFunc = NativeVerifyCallback;
 			selectFunc = NativeSelectCallback;
+			serverNameFunc = NativeServerNameCallback;
 			verifyFuncPtr = Marshal.GetFunctionPointerForDelegate (verifyFunc);
 			selectFuncPtr = Marshal.GetFunctionPointerForDelegate (selectFunc);
+			serverNameFuncPtr = Marshal.GetFunctionPointerForDelegate (serverNameFunc);
 
 			store = new MonoBtlsX509Store (Handle);
 		}
@@ -298,6 +310,36 @@ namespace Mono.Btls
 				if (pointerData != IntPtr.Zero)
 					Marshal.FreeHGlobal (pointerData);
 			}
+		}
+
+		public void SetServerNameCallback (MonoBtlsServerNameCallback callback)
+		{
+			CheckThrow ();
+
+			serverNameCallback = callback;
+			mono_btls_ssl_ctx_set_server_name_callback (
+				Handle.DangerousGetHandle (), serverNameFuncPtr);
+		}
+
+		[Mono.Util.MonoPInvokeCallback (typeof (NativeServerNameFunc))]
+		static int NativeServerNameCallback (IntPtr instance)
+		{
+			var c = (MonoBtlsSslCtx)GCHandle.FromIntPtr (instance).Target;
+			try {
+				return c.serverNameCallback ();
+			} catch (Exception ex) {
+				c.SetException (ex);
+				return 0;
+			}
+		}
+
+		public string GetServerName ()
+		{
+			CheckThrow ();
+			var ptr = mono_btls_ssl_ctx_get_servername (Handle.DangerousGetHandle ());
+			if (ptr == IntPtr.Zero)
+				return null;
+			return Marshal.PtrToStringAnsi (ptr);
 		}
 
 		protected override void Close ()

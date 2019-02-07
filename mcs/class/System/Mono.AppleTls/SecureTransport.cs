@@ -73,7 +73,7 @@ namespace Mono.AppleTls {
 		BadConfiguration			= -9848,
 		UnexpectedRecord			= -9849,
 		SSLWeakPeerEphemeralDHKey               = -9850,
-		SSLClientHelloReceived                  = -9851 // non falta
+		ClientHelloReceived			= -9851 // non falta
 	}
 
 	// Security.framework/Headers/SecureTransport.h
@@ -91,7 +91,7 @@ namespace Mono.AppleTls {
 		
 		// Fallback = 6,
 
-		// BreakOnClientHello = 7,
+		BreakOnClientHello = 7,
 
 		AllowRenegotiation = 8,
 	}
