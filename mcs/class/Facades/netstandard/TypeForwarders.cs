@@ -2461,7 +2461,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemEntry))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemEnumerable<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemEnumerator<>))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemName))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemName))]
 //[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Http.ReadOnlyMemoryContent))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.ServerCertificateSelectionCallback))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.SslApplicationProtocol))]

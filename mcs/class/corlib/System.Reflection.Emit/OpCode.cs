@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection.Emit {
 
 	[ComVisible (true)]
-	public readonly struct OpCode {
+	public readonly struct OpCode : IEquatable<OpCode> {
 
 		internal readonly byte op1, op2;
 		readonly byte push, pop, size, type, args, flow;

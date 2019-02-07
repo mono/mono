@@ -35,7 +35,7 @@ namespace System.Reflection.Emit {
 	///  Represents the Token returned by the metadata to represent a Signature.
 	/// </summary>
 	[ComVisible (true)]
-	public readonly struct SignatureToken {
+	public readonly struct SignatureToken : IEquatable<SignatureToken> {
 
 		internal readonly int tokValue;
 

@@ -36,7 +36,7 @@ namespace System.Reflection.Emit {
 	/// </summary>
 	[ComVisible (true)]
 	[Serializable]
-	public readonly struct FieldToken {
+	public readonly struct FieldToken : IEquatable<FieldToken> {
 
 		internal readonly int tokValue;
 
