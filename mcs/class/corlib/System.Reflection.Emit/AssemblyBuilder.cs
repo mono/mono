@@ -290,7 +290,7 @@ namespace System.Reflection.Emit
 		internal PermissionSet _granted;		// for the resolved assembly granted permissions
 		internal PermissionSet _denied;		// for the resolved assembly denied permissions
 #else
-		object _evidence, _minimum, _optional, _refuse, _granted, _denied;
+		object _minimum, _optional, _refuse, _granted, _denied;
 #endif
 		string assemblyName;
 		internal Type corlib_object_type = typeof (System.Object);
