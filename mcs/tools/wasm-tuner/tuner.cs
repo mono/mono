@@ -20,6 +20,7 @@ class Icall : IComparable<Icall>
 
 	public string Name;
 	public string Func;
+	public string Assembly;
 	public bool Handles;
 	public int TokenIndex;
 
@@ -105,24 +106,33 @@ public class WasmTuner
 			}
 		}
 
-		// FIXME: Ordering
-		var sorted = icalls.ToArray ();
-		Array.Sort (sorted);
+		var assemblies = new Dictionary<string, string> ();
+		foreach (var icall in icalls)
+			assemblies [icall.Assembly] = icall.Assembly;
 
-		Console.WriteLine ("static int icall_indexes [] = {");
-		foreach (var icall in sorted)
-			Console.WriteLine (String.Format ("{0},", icall.TokenIndex));
-		Console.WriteLine ("};");
-		foreach (var icall in sorted)
-			Console.WriteLine (String.Format ("void {0} ();", icall.Func));
-		Console.WriteLine ("static void *icall_funcs [] = {");
-		foreach (var icall in sorted)
-			Console.WriteLine (String.Format ("{0},", icall.Func));
-		Console.WriteLine ("};");
-		Console.WriteLine ("static uint8_t icall_handles [] = {");
-		foreach (var icall in sorted)
-			Console.WriteLine (String.Format ("{0},", icall.Handles ? "1" : "0"));
-		Console.WriteLine ("};");
+		foreach (var assembly in assemblies.Keys) {
+			var sorted = icalls.Where (i => i.Assembly == assembly).ToArray ();
+			Array.Sort (sorted);
+
+			Console.WriteLine ($"#define ICALL_TABLE_{assembly} 1\n");
+
+			Console.WriteLine ($"static int {assembly}_icall_indexes [] = {{");
+			foreach (var icall in sorted)
+				Console.WriteLine (String.Format ("{0},", icall.TokenIndex));
+			Console.WriteLine ("};");
+			foreach (var icall in sorted)
+				Console.WriteLine (String.Format ("void {0} ();", icall.Func));
+			Console.WriteLine ($"static void *{assembly}_icall_funcs [] = {{");
+			foreach (var icall in sorted) {
+				Console.WriteLine (String.Format ("// token {0},", icall.TokenIndex));
+				Console.WriteLine (String.Format ("{0},", icall.Func));
+			}
+			Console.WriteLine ("};");
+			Console.WriteLine ($"static uint8_t {assembly}_icall_handles [] = {{");
+			foreach (var icall in sorted)
+				Console.WriteLine (String.Format ("{0},", icall.Handles ? "1" : "0"));
+			Console.WriteLine ("};");
+		}
 
 		return 0;
 	}
@@ -239,6 +249,7 @@ public class WasmTuner
 				continue;
 
 			icall.TokenIndex = (int)method.MetadataToken.RID;
+			icall.Assembly = method.DeclaringType.Module.Assembly.Name.Name;
 			icalls.Add (icall);
 		}
 	}
