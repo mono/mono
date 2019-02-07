@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using Mono.Cecil;
@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using Mono.Cecil.Pdb;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace WsProxy {
 	internal class BreakPointRequest {
@@ -20,13 +21,25 @@ namespace WsProxy {
 			return $"BreakPointRequest Assembly: {Assembly} File: {File} Line: {Line} Column: {Column}";
 		}
 
-		public static BreakPointRequest Parse (JObject args)
+		public static BreakPointRequest Parse (JObject args, DebugStore store)
 		{
 			if (args == null)
 				return null;
 
 			var url = args? ["url"]?.Value<string> ();
-			if (!url.StartsWith ("dotnet://", StringComparison.InvariantCulture))
+			if (url == null) {
+				var urlRegex = args?["urlRegex"].Value<string>();
+				var sourceFile = store.GetFileByUrlRegex (urlRegex);
+
+				url = sourceFile?.Url?.ToString();
+			}
+
+			if (url != null && !url.StartsWith ("dotnet://", StringComparison.InvariantCulture)) {
+				var sourceFile = store.GetFileByUrl (url);
+				url = sourceFile?.Url?.ToString ();
+			}
+
+			if (url == null)
 				return null;
 
 			var parts = ParseDocumentUrl (url);
@@ -512,7 +525,6 @@ namespace WsProxy {
 				foreach (var s in a.Sources)
 					yield return s;
 			}
-
 		}
 
 		public SourceFile GetFileById (SourceId id)
@@ -622,5 +634,14 @@ namespace WsProxy {
 
 		public string ToUrl (SourceLocation location)
 			=> location != null ? GetFileById (location.Id).Url : "";
+
+		public SourceFile GetFileByUrlRegex (string urlRegex)
+		{
+			var regex = new Regex (urlRegex);
+			return AllSources ().FirstOrDefault (file => regex.IsMatch (file.SourceUri.ToString()) || regex.IsMatch (file.Url.ToString()));
+		}
+
+		public SourceFile GetFileByUrl (string url)
+			=> AllSources ().FirstOrDefault (file => file.SourceUri.ToString() == url || file.Url.ToString() == url);
 	}
 }
