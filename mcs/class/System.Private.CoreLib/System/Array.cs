@@ -64,6 +64,113 @@ namespace System
 			ClearInternal (array, index, length);
 		}
 
+		public static void Copy (Array sourceArray, Array destinationArray, int length)
+		{
+			if (sourceArray == null)
+				throw new ArgumentNullException ("sourceArray");
+
+			if (destinationArray == null)
+				throw new ArgumentNullException ("destinationArray");
+
+			Copy (sourceArray, sourceArray.GetLowerBound (0), destinationArray,
+				destinationArray.GetLowerBound (0), length);
+		}
+
+		public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
+		{
+			if (sourceArray == null)
+				throw new ArgumentNullException ("sourceArray");
+
+			if (destinationArray == null)
+				throw new ArgumentNullException ("destinationArray");
+
+			if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", "Value has to be >= 0.");
+
+			if (sourceArray.Rank != destinationArray.Rank)
+				throw new RankException(SR.Rank_MultiDimNotSupported);
+
+			if (sourceIndex < 0)
+				throw new ArgumentOutOfRangeException ("sourceIndex", "Value has to be >= 0.");
+
+			if (destinationIndex < 0)
+				throw new ArgumentOutOfRangeException ("destinationIndex", "Value has to be >= 0.");
+
+			if (FastCopy (sourceArray, sourceIndex, destinationArray, destinationIndex, length))
+				return;
+
+			int source_pos = sourceIndex - sourceArray.GetLowerBound (0);
+			int dest_pos = destinationIndex - destinationArray.GetLowerBound (0);
+
+			if (dest_pos < 0)
+				throw new ArgumentOutOfRangeException ("destinationIndex", "Index was less than the array's lower bound in the first dimension.");
+
+			// re-ordered to avoid possible integer overflow
+			if (source_pos > sourceArray.Length - length)
+				throw new ArgumentException ("length");
+
+			if (dest_pos > destinationArray.Length - length) {
+				throw new ArgumentException ("Destination array was not long enough. Check destIndex and length, and the array's lower bounds", nameof (destinationArray));
+			}
+
+			Type src_type = sourceArray.GetType ().GetElementType ();
+			Type dst_type = destinationArray.GetType ().GetElementType ();
+			var dst_type_vt = dst_type.IsValueType;
+
+			if (!Object.ReferenceEquals (sourceArray, destinationArray) || source_pos > dest_pos) {
+				for (int i = 0; i < length; i++) {
+					Object srcval = sourceArray.GetValueImpl (source_pos + i);
+
+					if (srcval == null && dst_type_vt)
+						throw new InvalidCastException ();
+
+					try {
+						destinationArray.SetValueImpl (srcval, dest_pos + i);
+					} catch (ArgumentException) {
+						throw CreateArrayTypeMismatchException ();
+					} catch (InvalidCastException) {
+						if (CanAssignArrayElement (src_type, dst_type))
+							throw;
+						throw CreateArrayTypeMismatchException ();
+					}
+				}
+			} else {
+				for (int i = length - 1; i >= 0; i--) {
+					Object srcval = sourceArray.GetValueImpl (source_pos + i);
+
+					try {
+						destinationArray.SetValueImpl (srcval, dest_pos + i);
+					} catch (ArgumentException) {
+						throw CreateArrayTypeMismatchException ();
+					} catch {
+						if (CanAssignArrayElement (src_type, dst_type))
+							throw;
+
+						throw CreateArrayTypeMismatchException ();
+					}
+				}
+			}
+		}
+
+		static ArrayTypeMismatchException CreateArrayTypeMismatchException ()
+		{
+			return new ArrayTypeMismatchException ();
+		}
+
+		static bool CanAssignArrayElement (Type source, Type target)
+		{
+			if (source.IsValueType)
+				return source.IsAssignableFrom (target);
+
+			if (source.IsInterface)
+				return !target.IsValueType;
+
+			if (target.IsInterface)
+				return !source.IsValueType;
+
+			return source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
+		}
+
 		public static Array CreateInstance (Type elementType, int length)
 		{
 			int[] lengths = {length};
@@ -226,7 +333,15 @@ namespace System
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern object GetValueImpl (int pos);
+
+		// CAUTION! No bounds checking!
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern void SetGenericValueImpl<T> (int pos, ref T value);
+
+		// CAUTION! No bounds checking!
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern void SetValueImpl (object value, int pos);
 
 		/*
 		 * These methods are used to implement the implicit generic interfaces 
