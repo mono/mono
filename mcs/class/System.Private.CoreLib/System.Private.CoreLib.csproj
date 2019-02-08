@@ -133,6 +133,7 @@
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
       <Compile Include="System.Globalization\CultureData.cs" />
       <Compile Include="System.Globalization\CultureInfo.cs" />
+      <Compile Include="System.Collections.Generic\ArraySortHelper.cs" />
       <Compile Include="System.Collections.Generic\Comparer.cs" />
       <Compile Include="System.Collections.Generic\EqualityComparer.cs" />
       <Compile Include="System.Diagnostics\Debugger.cs" />
@@ -245,7 +246,6 @@
       <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\safehandle.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.CoreRT.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeTypedArgument.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
