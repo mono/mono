@@ -230,7 +230,7 @@ class Driver {
 		rp.InMemory = true;
 		var image = ModuleDefinition.ReadModule (ra, rp);
 		file_list.Add (ra);
-		Debug ($"Processing {ra} debug {add_pdb}");
+		//Debug ($"Processing {ra} debug {add_pdb}");
 
 		var data = new AssemblyData () { name = image.Assembly.Name.Name, src_path = ra };
 		assemblies.Add (data);
@@ -710,6 +710,7 @@ class Driver {
 		var ofiles = "";
 		string linker_infiles = "";
 		string linker_ofiles = "";
+		string dedup_infiles = "";
 		if (enable_linker) {
 			string path = Path.Combine (builddir, "linker-in");
 			if (!Directory.Exists (path))
@@ -757,6 +758,7 @@ class Driver {
 					ninja.WriteLine ($"  aot_args=dedup-skip");
 
 				ofiles += " " + ($"{a.bc_path}");
+				dedup_infiles += $" {a.linkout_path}";
 			}
 		}
 		if (enable_dedup) {
@@ -772,7 +774,7 @@ class Driver {
 			 */
 			ninja.WriteLine ($"build {a.bc_path}: aot-instances | {ofiles} {a.linkout_path}");
 			ninja.WriteLine ($"  dedup_image={a.filename}");
-			ninja.WriteLine ($"  src_files={linker_ofiles} {a.linkout_path}");
+			ninja.WriteLine ($"  src_files={dedup_infiles} {a.linkout_path}");
 			ninja.WriteLine ($"  outfile={a.bc_path}");
 			ninja.WriteLine ($"  mono_path={aot_in_path}");
 			ninja.WriteLine ($"build {a.app_path}: cpifdiff {a.linkout_path}");
