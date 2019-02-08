@@ -706,6 +706,7 @@ TESTS_CS_SRC=		\
 	bug-60843.cs	\
 	nested_type_visibility.cs	\
 	dynamic-method-churn.cs	\
+	dynamic-method-delegate.cs \
 	verbose.cs \
 	generic-unmanaged-constraint.cs \
 	bug-10834.cs \
@@ -1384,6 +1385,7 @@ PROFILE_DISABLED_TESTS += \
 	dynamic-method-resurrection.exe	\
 	assembly_append_ordering.exe \
 	assemblyresolve_event5.exe	\
+	dynamic-method-delegate.exe \
 	dynamic-method-churn.exe \
 	bug-666008.exe \
 	bug-685908.exe
@@ -1678,6 +1680,11 @@ CI_PR_DISABLED_TESTS += process-stress-2.exe
 
 # https://github.com/mono/mono/issues/11417
 CI_PR_DISABLED_TESTS += process-stress-3.exe
+
+if HOST_WIN32
+# https://github.com/mono/mono/issues/12839
+CI_PR_DISABLED_TESTS += block_guard_restore_aligment_on_exit.exe
+endif
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \

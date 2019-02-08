@@ -87,6 +87,7 @@
 #include <mono/metadata/w32semaphore.h>
 #include <mono/metadata/w32event.h>
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/loader-internals.h>
 #include <mono/utils/monobitset.h>
 #include <mono/utils/mono-time.h>
 #include <mono/utils/mono-proclib.h>
@@ -7361,31 +7362,51 @@ G_EXTERN_C gint32   WriteZStream (gpointer stream, gpointer buffer, gint32 lengt
 gpointer
 ves_icall_System_IO_Compression_DeflateStreamNative_CreateZStream (gint32 compress, MonoBoolean gzip, gpointer feeder, gpointer data)
 {
+#ifdef MONO_CROSS_COMPILE
+	return NULL;
+#else
 	return CreateZStream (compress, gzip, feeder, data);
+#endif
 }
 
 gint32
 ves_icall_System_IO_Compression_DeflateStreamNative_CloseZStream (gpointer stream)
 {
+#ifdef MONO_CROSS_COMPILE
+	return 0;
+#else
 	return CloseZStream (stream);
+#endif
 }
 
 gint32
 ves_icall_System_IO_Compression_DeflateStreamNative_Flush (gpointer stream)
 {
+#ifdef MONO_CROSS_COMPILE
+	return 0;
+#else
 	return Flush (stream);
+#endif
 }
 
 gint32
 ves_icall_System_IO_Compression_DeflateStreamNative_ReadZStream (gpointer stream, gpointer buffer, gint32 length)
 {
+#ifdef MONO_CROSS_COMPILE
+	return 0;
+#else
 	return ReadZStream (stream, buffer, length);
+#endif
 }
 
 gint32
 ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer stream, gpointer buffer, gint32 length)
 {
+#ifdef MONO_CROSS_COMPILE
+	return 0;
+#else
 	return WriteZStream (stream, buffer, length);
+#endif
 }
 
 #endif
@@ -7793,7 +7814,7 @@ prelink_method (MonoMethod *method, MonoError *error)
 	error_init (error);
 	if (!(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
 		return;
-	mono_lookup_pinvoke_call (method, &exc_class, &exc_arg);
+	mono_lookup_pinvoke_call_internal (method, &exc_class, &exc_arg);
 	if (exc_class) {
 		mono_error_set_generic_error (error, "System", exc_class, "%s", exc_arg);
 		return;

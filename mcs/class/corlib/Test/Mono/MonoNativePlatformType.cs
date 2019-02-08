@@ -27,7 +27,7 @@ using System;
 
 namespace Mono
 {
-	// Keep in sync with mono/native/mono-native-platform-type.h
+	// Keep in sync with mono/native/mono-native-platform.h
 	[Flags]
 	enum MonoNativePlatformType
 	{

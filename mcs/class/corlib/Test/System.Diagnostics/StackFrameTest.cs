@@ -385,6 +385,7 @@ namespace MonoTests.System.Diagnostics
 
 		[Test]
 		[Category("NotWasm")]
+		[Category("MobileNotWorking")]
 		// https://github.com/mono/mono/issues/12688
 		public async Task GetFrames_AsyncCalls ()
 		{
