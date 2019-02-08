@@ -230,7 +230,7 @@ public class AppBuilder
 		ninja.WriteLine ("  command = clang -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -c -o $out $in");
 		ninja.WriteLine ("rule gen-exe");
 		ninja.WriteLine ("  command = mkdir $appdir");
-		ninja.WriteLine ($"  command = clang -ObjC -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -framework Foundation -framework UIKit -o $appdir/{bundle_executable} $in -liconv -lz");
+		ninja.WriteLine ($"  command = clang -ObjC -isysroot $sysroot -miphoneos-version-min=10.1 -arch arm64 -framework Foundation -framework UIKit -framework GSS -o $appdir/{bundle_executable} $in -liconv -lz $forcelibs");
 	
 		var ofiles = "";
 		var assembly_names = new List<string> ();
@@ -308,8 +308,8 @@ public class AppBuilder
 				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-icall-table.a";
 				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-ilgen.a";
 			}
-			libs += " $mono_sdkdir/ios-target64-release/lib/libmono-native-unified.dylib";
 			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o " + libs + " $monoios_dir/libmonoios.a");
+			ninja.WriteLine ("    forcelibs = -force_load $mono_sdkdir/ios-target64-release/lib/libmono-native-unified.a");
 			ninja.WriteLine ("build $builddir/main.o: compile-objc $builddir/main.m");
 		} else {
 			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp $monoios_dir/runtime");
