@@ -7,6 +7,19 @@
 
 #ifndef RUNTIME_IL2CPP
 #include "mini.h"
+#define VM_DOMAIN_GET_AGENT_INFO(domain) domain_jit_info (domain)->agent_info
+#define VM_DOMAIN_SET_AGENT_INFO(domain, value) domain_jit_info (domain)->agent_info = value
+#define VM_METHOD_IS_STRING_CTOR(method) method->string_ctor
+#define VM_INFLATED_METHOD_GET_DECLARING(imethod) (imethod)->declaring
+#define VM_INFLATED_METHOD_GET_CLASS_INST(imethod) (imethod)->context.class_inst
+#define VM_OBJECT_GET_DOMAIN(object) ((MonoObject *)object)->vtable->domain
+#define VM_OBJECT_GET_TYPE(object) ((MonoReflectionType *)object->vtable->type)->type
+#define VM_GENERIC_CLASS_GET_CONTAINER_CLASS(gklass) (gklass)->container_class
+#define VM_DEFAULTS_OBJECT_CLASS mono_defaults.object_class
+#define VM_DEFAULTS_EXCEPTION_CLASS mono_defaults.exception_class
+#define VM_DEFAULTS_CORLIB_IMAGE mono_defaults.corlib
+#define VM_DEFAULTS_VOID_CLASS mono_defaults.void_class
+#define VM_IMAGE_GET_MODULE_NAME(image) (image)->module_name
 #endif
 
 #ifdef RUNTIME_IL2CPP
