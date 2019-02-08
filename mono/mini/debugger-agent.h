@@ -9,7 +9,9 @@
 #include "mini.h"
 #endif
 
+#ifdef RUNTIME_IL2CPP
 #include "il2cpp-compat.h"
+#endif
 #include <mono/utils/mono-stack-unwinding.h>
 
 MONO_API void
