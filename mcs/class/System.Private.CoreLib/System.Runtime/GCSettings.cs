@@ -4,12 +4,22 @@ namespace System.Runtime
 	{
 		public static bool IsServerGC => throw new NotImplementedException ();
 
-		static GCLatencyMode GetGCLatencyMode() => throw new NotImplementedException ();
+		static GCLatencyMode GetGCLatencyMode() => GCLatencyMode.Batch;
 
-		static SetLatencyModeStatus SetGCLatencyMode(GCLatencyMode newLatencyMode) => throw new NotImplementedException ();
+		static SetLatencyModeStatus SetGCLatencyMode(GCLatencyMode newLatencyMode)
+		{
+			if (newLatencyMode != GCLatencyMode.Batch)
+				throw new PlatformNotSupportedException ();
 
-		static GCLargeObjectHeapCompactionMode GetLOHCompactionMode() => throw new NotImplementedException ();
+			return SetLatencyModeStatus.Succeeded;
+		}
 
-		static void SetLOHCompactionMode (GCLargeObjectHeapCompactionMode newLOHCompactionMode) => throw new NotImplementedException ();
+		static GCLargeObjectHeapCompactionMode GetLOHCompactionMode() => GCLargeObjectHeapCompactionMode.Default;
+
+		static void SetLOHCompactionMode (GCLargeObjectHeapCompactionMode newLOHCompactionMode)
+		{
+			if (newLOHCompactionMode != GCLargeObjectHeapCompactionMode.Default)
+				throw new PlatformNotSupportedException ();
+		}
 	}
 }
