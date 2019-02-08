@@ -150,6 +150,7 @@
       <Compile Include="System.Reflection.Emit\Stubs.cs" />
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="System.Resources\ManifestBasedResourceGroveler.cs" />
+      <Compile Include="System.Runtime\GCSettings.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeFeature.cs" />
       <Compile Include="System.Runtime.InteropServices\CriticalHandle.cs" />
