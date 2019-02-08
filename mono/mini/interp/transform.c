@@ -5290,9 +5290,6 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 
 	return_if_nok (error);
 
-	// FIXME: Add a different callback ?
-	MONO_PROFILER_RAISE (jit_done, (method, imethod->jinfo));
-
 	/* Copy changes back */
 	imethod = real_imethod;
 	mono_os_mutex_lock (&calc_section);
@@ -5311,5 +5308,8 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 	if (!g_hash_table_lookup (domain_jit_info (domain)->seq_points, imethod->method))
 		g_hash_table_insert (domain_jit_info (domain)->seq_points, imethod->method, imethod->jinfo->seq_points);
 	mono_domain_unlock (domain);
+
+	// FIXME: Add a different callback ?
+	MONO_PROFILER_RAISE (jit_done, (method, imethod->jinfo));
 }
 
