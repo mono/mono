@@ -1426,67 +1426,62 @@ pinvoke_probe_transform_path (const char *new_scope, int phase, char **file_name
 	char *file_name = NULL, *base_name = NULL, *dir_name = NULL;
 	gboolean changed = FALSE;
 	gboolean is_absolute = is_absolute_path (new_scope);
-	do {
-		switch (phase) {
-		case 0:
-			/* Try the original name */
-			file_name = g_strdup (new_scope);
-			break;
-		case 1:
-			/* Try trimming the .dll extension */
-			if (strstr (new_scope, ".dll") == (new_scope + strlen (new_scope) - 4)) {
-				file_name = g_strdup (new_scope);
-				file_name [strlen (new_scope) - 4] = '\0';
-			}
-			else
-				continue;
-			break;
-		case 2:
-			if (is_absolute) {
-				dir_name = g_path_get_dirname (new_scope);
-				base_name = g_path_get_basename (new_scope);
-				if (strstr (base_name, "lib") != base_name) {
-					char *tmp = g_strdup_printf ("lib%s", base_name);       
-					g_free (base_name);
-					base_name = tmp;
-					file_name = g_strdup_printf ("%s%s%s", dir_name, G_DIR_SEPARATOR_S, base_name);
-					break;
-				}
-			} else if (strstr (new_scope, "lib") != new_scope) {
-				file_name = g_strdup_printf ("lib%s", new_scope);
-				break;
-			}
-			continue;
-		case 3:
-			if (!is_absolute && mono_dl_get_system_dir ()) {
-				dir_name = (char*)mono_dl_get_system_dir ();
-				file_name = g_path_get_basename (new_scope);
-				base_name = NULL;
-			} else
-				continue;
-			break;
-		default:
-#ifndef TARGET_WIN32
-			if (!g_ascii_strcasecmp ("user32.dll", new_scope) ||
-			    !g_ascii_strcasecmp ("kernel32.dll", new_scope) ||
-			    !g_ascii_strcasecmp ("user32", new_scope) ||
-			    !g_ascii_strcasecmp ("kernel", new_scope)) {
-				file_name = g_strdup ("libMonoSupportW.so");
-			} else
-#endif
-				    continue;
-#ifndef TARGET_WIN32
-			break;
-#endif
-		}
+	switch (phase) {
+	case 0:
+		/* Try the original name */
+		file_name = g_strdup (new_scope);
 		changed = TRUE;
-		if (is_absolute) {
-			if (!dir_name)
-				dir_name = g_path_get_dirname (file_name);
-			if (!base_name)
-				base_name = g_path_get_basename (file_name);
+		break;
+	case 1:
+		/* Try trimming the .dll extension */
+		if (strstr (new_scope, ".dll") == (new_scope + strlen (new_scope) - 4)) {
+			file_name = g_strdup (new_scope);
+			file_name [strlen (new_scope) - 4] = '\0';
+			changed = TRUE;
 		}
-	} while (0);
+		break;
+	case 2:
+		if (is_absolute) {
+			dir_name = g_path_get_dirname (new_scope);
+			base_name = g_path_get_basename (new_scope);
+			if (strstr (base_name, "lib") != base_name) {
+				char *tmp = g_strdup_printf ("lib%s", base_name);       
+				g_free (base_name);
+				base_name = tmp;
+				file_name = g_strdup_printf ("%s%s%s", dir_name, G_DIR_SEPARATOR_S, base_name);
+				changed = TRUE;
+			}
+		} else if (strstr (new_scope, "lib") != new_scope) {
+			file_name = g_strdup_printf ("lib%s", new_scope);
+			changed = TRUE;
+		}
+		break;
+	case 3:
+		if (!is_absolute && mono_dl_get_system_dir ()) {
+			dir_name = (char*)mono_dl_get_system_dir ();
+			file_name = g_path_get_basename (new_scope);
+			base_name = NULL;
+			changed = TRUE;
+		}
+		break;
+	default:
+#ifndef TARGET_WIN32
+		if (!g_ascii_strcasecmp ("user32.dll", new_scope) ||
+		    !g_ascii_strcasecmp ("kernel32.dll", new_scope) ||
+		    !g_ascii_strcasecmp ("user32", new_scope) ||
+		    !g_ascii_strcasecmp ("kernel", new_scope)) {
+			file_name = g_strdup ("libMonoSupportW.so");
+			changed = TRUE;
+		}
+#endif
+		break;
+	}
+	if (changed && is_absolute) {
+		if (!dir_name)
+			dir_name = g_path_get_dirname (file_name);
+		if (!base_name)
+			base_name = g_path_get_basename (file_name);
+	}
 	*file_name_out = file_name;
 	*base_name_out = base_name;
 	*dir_name_out = dir_name;
