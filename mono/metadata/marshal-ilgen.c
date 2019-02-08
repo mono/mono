@@ -100,6 +100,28 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object);
 static void
 emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object, int offset_of_first_child_field, MonoMarshalNative string_encoding);
 
+/**
+ * mono_mb_strdup:
+ * \param mb the MethodBuilder
+ * \param s a string
+ *
+ * Creates a copy of the string \p s that can be referenced from the IL of \c mb.
+ *
+ * \returns a pointer to the new string which is owned by the method builder
+ */
+char*
+mono_mb_strdup (MonoMethodBuilder *mb, const char *s)
+{
+	char *res;
+	if (!mb->dynamic)
+		res = mono_image_strdup (get_method_image (mb->method), s);
+	else
+		res = g_strdup (s);
+	return res;
+}
+
+
+
 /*
  * mono_mb_emit_exception_marshal_directive:
  *
@@ -108,14 +130,8 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 static void
 mono_mb_emit_exception_marshal_directive (MonoMethodBuilder *mb, char *msg)
 {
-	char *s;
-
-	if (!mb->dynamic) {
-		s = mono_image_strdup (get_method_image (mb->method), msg);
-		g_free (msg);
-	} else {
-		s = g_strdup (msg);
-	}
+	char *s = mono_mb_strdup (mb, msg);
+	g_free (msg);
 	mono_mb_emit_exception_full (mb, "System.Runtime.InteropServices", "MarshalDirectiveException", s);
 }
 
