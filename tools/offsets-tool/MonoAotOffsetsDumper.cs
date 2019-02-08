@@ -73,9 +73,10 @@ namespace CppSharp
         {
             get
             {
-                return Targets.Where ((t) => t.Platform == TargetPlatform.iOS ||
+                return Targets.Where ((t) =>
+                    t.Platform == TargetPlatform.iOS ||
                     t.Platform == TargetPlatform.WatchOS ||
-                                      t.Platform == TargetPlatform.OSX);
+                    t.Platform == TargetPlatform.OSX);
             }
         }
 
@@ -163,6 +164,13 @@ namespace CppSharp
                 Defines = { "TARGET_ARM", "ARM_FPU_VFP", "HAVE_ARMV5" }
             });
 
+            Targets.Add(new Target {
+                Platform = TargetPlatform.WatchOS,
+                Triple = "armv7k-apple-darwin_ilp32", /* fake triple, aarch64-apple-darwin_ilp32 isn't recognized correctly */
+                Build = "targetwatch64_32",
+                Defines = { "TARGET_ARM64", "MONO_ARCH_ILP32", "MONO_CPPSHARP_HACK" }
+            });
+
             foreach (var target in DarwinTargets) {
                 target.Defines.AddRange (new string[] { "HOST_DARWIN",
                     "TARGET_IOS", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX",
@@ -232,7 +240,7 @@ namespace CppSharp
 
             foreach (var target in Targets)
              {
-                if (Abis.Any() && !Abis.Any (target.Triple.Contains))
+                if (Abis.Any() && !Abis.Contains (target.Triple))
                     continue;
                 
                 Console.WriteLine();
