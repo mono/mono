@@ -9,6 +9,7 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
+using System.Runtime.InteropServices;
 using NUnit.Framework;
 
 namespace MonoTests.System.Reflection.Emit
@@ -845,6 +846,59 @@ namespace MonoTests.System.Reflection.Emit
 			assemblyBuilder1.Save ("Repro55681-2a.dll");
 		}
 		
+		[DllImport("SomeLib")]
+		private static extern void MethodForNullStringMarshalAsFields([MarshalAs(UnmanagedType.LPWStr)] string param);
+
+		[Test]
+		public void NullStringMarshalAsFields () {
+			// Regression test for https://github.com/mono/mono/issues/12747
+			//
+			// MarshalAsAttribute goes through
+			// CustomAttributeBuilder.get_umarshal which tries to
+			// build an UnmanagedMarshal value by decoding the CAB's data.
+			//
+			// The data decoding needs to handle null string (encoded as 0xFF) properly.
+			var aName = new AssemblyName("Repro12747");
+			var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(aName, AssemblyBuilderAccess.RunAndSave, tempDir);
+			var module = assembly.DefineDynamicModule(aName.Name, aName.Name + ".dll");
+
+			var prototypeMethodName = nameof(MethodForNullStringMarshalAsFields);
+			var someMethod = this.GetType().GetMethod(prototypeMethodName, BindingFlags.Static | BindingFlags.NonPublic);
+
+			var typeBuilder = module.DefineType("NewType" + module.ToString(), TypeAttributes.Class | TypeAttributes.Public);
+			var methodBuilder = typeBuilder.DefineMethod("NewMethod", MethodAttributes.Public | MethodAttributes.HideBySig, typeof(void), new[] { typeof(string) });
+			var il = methodBuilder.GetILGenerator();
+			il.Emit(OpCodes.Ret);
+
+			var param = someMethod.GetParameters()[0];
+			var paramBuilder = methodBuilder.DefineParameter(1, param.Attributes, null);
+			MarshalAsAttribute attr = param.GetCustomAttribute<MarshalAsAttribute>();
+			var attrCtor = typeof(MarshalAsAttribute).GetConstructor(new[] { typeof(UnmanagedType) });
+			object[] attrCtorArgs = { attr.Value };
+
+			// copy over the fields from the real MarshalAsAttribute on the parameter of "MethodForNullStringMarshalAsFields",
+			// including the ones that were initialized to null
+			var srcFields = typeof(MarshalAsAttribute).GetFields(BindingFlags.Public | BindingFlags.Instance);
+			var fieldArguments = new FieldInfo[srcFields.Length];
+			var fieldArgumentValues = new object[srcFields.Length];
+			for(int i = 0; i < srcFields.Length; i++)
+			{
+				var field =  srcFields[i];
+				fieldArguments[i] = field;
+				fieldArgumentValues[i] = field.GetValue(attr);
+			}
+
+			var attrBuilder = new CustomAttributeBuilder(attrCtor, attrCtorArgs, Array.Empty<PropertyInfo>(), Array.Empty<object>(),
+								     fieldArguments, fieldArgumentValues);
+			// this encodes the CustomAttributeBuilder as a data
+			// blob and then tries to decode it using
+			// CustomAttributeBuilder.get_umarshal
+			paramBuilder.SetCustomAttribute(attrBuilder);
+
+			var finalType = typeBuilder.CreateType();
+			
+		}
+
 	}
 }
 

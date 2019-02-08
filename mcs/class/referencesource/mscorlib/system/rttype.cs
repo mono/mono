@@ -4128,7 +4128,11 @@ namespace System
             ulong[] values = Enum.InternalGetValues(this);
 
             // Create a generic Array
+#if MONO
+            Array ret = Array.CreateInstance(this, values.Length);
+#else            
             Array ret = Array.UnsafeCreateInstance(this, values.Length);
+#endif
 
             for (int i = 0; i < values.Length; i++)
             {

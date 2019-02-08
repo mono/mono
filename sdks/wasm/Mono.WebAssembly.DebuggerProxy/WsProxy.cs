@@ -276,7 +276,7 @@ namespace WsProxy {
 
 					try {
 						while (!x.IsCancellationRequested) {
-							var task = await Task.WhenAny (pending_ops);
+							var task = await Task.WhenAny (pending_ops.ToArray ());
 							//Console.WriteLine ("pump {0} {1}", task, pending_ops.IndexOf (task));
 							if (task == pending_ops [0]) {
 								var msg = ((Task<string>)task).Result;
