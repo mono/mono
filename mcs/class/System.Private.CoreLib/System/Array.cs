@@ -64,6 +64,11 @@ namespace System
 			ClearInternal (array, index, length);
 		}
 
+		public static void ConstrainedCopy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
+		{
+			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
+		}
+
 		public static void Copy (Array sourceArray, Array destinationArray, int length)
 		{
 			if (sourceArray == null)
@@ -251,6 +256,43 @@ namespace System
 			return CreateInstanceImpl (elementType, lengths, lowerBounds);
 		}
 
+		public object GetValue (int index)
+		{
+			if (Rank != 1)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_Need1DArray);
+
+			var lb  = GetLowerBound (0);
+			if (index < lb || index > GetUpperBound (0))
+				throw new IndexOutOfRangeException ("Index has to be between upper and lower bound of the array.");
+
+			if (GetType ().GetElementType ().IsPointer)
+				throw new NotSupportedException (SR.NotSupported_Type);
+
+			return GetValueImpl (index - lb);
+		}
+
+		public object GetValue (int index1, int index2)
+		{
+			if (Rank != 2)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_Need2DArray);
+
+			int[] ind = {index1, index2};
+			return GetValue (ind);
+		}
+
+		public object GetValue (int index1, int index2, int index3)
+		{
+			if (Rank != 3)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_Need3DArray);
+
+			int[] ind = {index1, index2, index3};
+			return GetValue (ind);
+		}
+
+		public void Initialize ()
+		{
+		}
+
 		static int IndexOfImpl<T>(T[] array, T value, int startIndex, int count)
 		{
 			throw new NotImplementedException ();
@@ -259,6 +301,39 @@ namespace System
 		static int LastIndexOfImpl<T>(T[] array, T value, int startIndex, int count)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public void SetValue (object value, int index)
+		{
+			if (Rank != 1)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_Need1DArray);
+
+			var lb  = GetLowerBound (0);
+			if (index < lb || index > GetUpperBound (0))
+				throw new IndexOutOfRangeException ("Index has to be >= lower bound and <= upper bound of the array.");
+
+			if (GetType ().GetElementType ().IsPointer)
+				throw new NotSupportedException (SR.NotSupported_Type);
+
+			SetValueImpl (value, index - lb);
+		}
+
+		public void SetValue (object value, int index1, int index2)
+		{
+			if (Rank != 2)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_Need2DArray);
+
+			int[] ind = {index1, index2};
+			SetValue (value, ind);
+		}
+
+		public void SetValue (object value, int index1, int index2, int index3)
+		{
+			if (Rank != 3)
+				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_Need3DArray);
+
+			int[] ind = {index1, index2, index3};
+			SetValue (value, ind);
 		}
 
 		static void SortImpl (Array keys, Array items, int index, int length, IComparer comparer)
@@ -361,7 +436,7 @@ namespace System
 
 		internal IEnumerator<T> InternalArray__IEnumerable_GetEnumerator<T> ()
 		{
-			throw new NotImplementedException ();
+			return Length == 0 ? SZGenericArrayEnumerator<T>.Empty : new SZGenericArrayEnumerator<T> (Unsafe.As<T[]> (this));
 		}
 
 		internal void InternalArray__ICollection_Clear ()
