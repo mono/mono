@@ -121,7 +121,7 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
@@ -184,7 +184,7 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
@@ -246,7 +246,7 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
@@ -309,7 +309,7 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
@@ -371,7 +371,7 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
@@ -436,7 +436,7 @@
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-            <Compile Include="HeaderUtils.Legacy.cs" />
+            <Compile Include="PlatformHelper.Legacy.cs" />
             <Compile Include="HttpClientHandler.Legacy.cs" />
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
@@ -599,7 +599,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StreamToStreamCopy.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StringContent.cs" />
             <Compile Include="..\corlib\System.Diagnostics\Debug.cs" />
-            <Compile Include="HeaderUtils.SocketsHandler.cs" />
+            <Compile Include="PlatformHelper.SocketsHandler.cs" />
             <Compile Include="HttpClientHandler.SocketsHandler.cs" />
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
@@ -714,7 +714,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StreamToStreamCopy.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StringContent.cs" />
             <Compile Include="..\corlib\System.Diagnostics\Debug.cs" />
-            <Compile Include="HeaderUtils.SocketsHandler.cs" />
+            <Compile Include="PlatformHelper.SocketsHandler.cs" />
             <Compile Include="HttpClientHandler.SocketsHandler.cs" />
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
@@ -829,7 +829,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StreamToStreamCopy.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StringContent.cs" />
             <Compile Include="..\corlib\System.Diagnostics\Debug.cs" />
-            <Compile Include="HeaderUtils.SocketsHandler.cs" />
+            <Compile Include="PlatformHelper.SocketsHandler.cs" />
             <Compile Include="HttpClientHandler.SocketsHandler.cs" />
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
@@ -844,7 +844,7 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_watch'">
       <ItemGroup>
-        <Compile Include="HeaderUtils.Legacy.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -903,7 +903,7 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
@@ -965,7 +965,7 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
@@ -1027,7 +1027,7 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
