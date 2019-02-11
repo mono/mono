@@ -67,5 +67,27 @@ namespace WebAssembly.Core {
 
 		}
 
+
+		/// <summary>
+		/// Defines an implicit conversion of an array to a <see cref="T:WebAssembly.Core.Uint32Array"/>./>
+		/// </summary>
+		/// <returns>The implicit.</returns>
+		/// <param name="typedarray">Typedarray.</param>
+		public static implicit operator uint [] (Uint32Array typedarray)
+		{
+			return typedarray.ToArray ();
+		}
+
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Uint32Array"/> to an array./>
+		/// </summary>
+		/// <returns>The implicit.</returns>
+		/// <param name="managedArray">Managed array.</param>
+		public static implicit operator Uint32Array (uint [] managedArray)
+		{
+			return From (managedArray);
+		}
+
+
 	}
 }

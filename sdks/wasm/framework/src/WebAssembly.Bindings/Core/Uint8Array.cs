@@ -3,6 +3,10 @@ using System.Runtime.InteropServices;
 
 namespace WebAssembly.Core {
 	public class Uint8Array : TypedArray<Uint8Array, byte> {
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:WebAssembly.Core.Uint8Array"/> class.
+		/// </summary>
 		public Uint8Array ()
 		{ }
 
@@ -79,5 +83,24 @@ namespace WebAssembly.Core {
 
 		}
 
+		/// <summary>
+		/// Defines an implicit conversion of an array to a <see cref="T:WebAssembly.Core.Uint8Array"/>./>
+		/// </summary>
+		/// <returns>The implicit.</returns>
+		/// <param name="typedarray">Typedarray.</param>
+		public static implicit operator byte [] (Uint8Array typedarray)
+		{
+			return typedarray.ToArray();
+		}
+
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Uint8Array"/> to an array./>
+		/// </summary>
+		/// <returns>The implicit.</returns>
+		/// <param name="managedArray">Managed array.</param>
+		public static implicit operator Uint8Array (byte[] managedArray)
+		{
+			return From (managedArray);
+		}
 	}
 }
