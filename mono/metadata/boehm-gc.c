@@ -45,6 +45,8 @@
 #if HAVE_BOEHM_GC
 
 #define GC_dirty(x)
+#include <private/gc_pmark.h>
+#include <gc_vector.h>
 
 #if defined(HOST_DARWIN) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
 void *pthread_get_stackaddr_np(pthread_t);
@@ -112,6 +114,45 @@ static void on_gc_notification (GC_EventType event);
 // GC_word here to precisely match Boehm. Not size_t, not gsize.
 static void on_gc_heap_resize (GC_word new_size);
 
+#define ELEMENT_CHUNK_SIZE 256
+#define VECTOR_PROC_INDEX 6
+static mse * GC_gcj_vector_proc (word * addr, mse * mark_stack_ptr,
+	mse * mark_stack_limit, word env)
+{
+	MonoArray* a = NULL;
+	if (env)
+	{
+		g_assert (env == 1);
+
+		a = (MonoArray*)GC_base (addr);
+	} else {
+		g_assert (addr == GC_base (addr));
+
+		a = (MonoArray*)addr;
+	}
+
+	if (!a->max_length)
+		return mark_stack_ptr;
+
+	mono_array_size_t length = a->max_length;
+	MonoClass* array_type = a->obj.vtable->klass;
+	MonoClass *element_type = array_type->element_class;
+	GC_descr element_desc = element_type->gc_descr;
+
+	g_assert ((element_desc & GC_DS_TAGS) == GC_DS_BITMAP);
+	g_assert (element_type->valuetype);
+
+	int words_per_element = array_type->sizes.element_size / BYTES_PER_WORD;
+	word *actual_start = (word *)a->vector;
+
+	/* start at first element or resume from last iteration */
+	word *start = env ? addr : actual_start;
+	/* end at last element or max chunk size */
+	word *actual_end = actual_start + length * words_per_element;
+
+	return GC_gcj_vector_mark_proc (mark_stack_ptr, element_desc, start, actual_end, words_per_element);
+}
+
 void
 mono_gc_base_init (void)
 {
@@ -163,6 +204,7 @@ mono_gc_base_init (void)
 	GC_set_finalizer_notifier(mono_gc_finalize_notify);
 
 	GC_init_gcj_malloc (5, NULL);
+	GC_init_gcj_vector (VECTOR_PROC_INDEX, GC_gcj_vector_proc);
 	GC_allow_register_threads ();
 
 	params_opts = mono_gc_params_get();
@@ -734,7 +776,9 @@ mono_gc_make_descr_for_object (gsize *bitmap, int numbits, size_t obj_size)
 void*
 mono_gc_make_descr_for_array (int vector, gsize *elem_bitmap, int numbits, size_t elem_size)
 {
-	/* libgc has no usable support for arrays... */
+	/* libgc has no usable support for arrays...
+	 * but Unity added support with newer bdwgc 
+	 * we don't need descriptor though, as arrays have custom mark proc */
 	return GC_NO_DESCRIPTOR;
 }
 
@@ -833,8 +877,11 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 		obj->obj.synchronisation = NULL;
 
 		memset (mono_object_get_data ((MonoObject*)obj), 0, size - MONO_ABI_SIZEOF (MonoObject));
-	} else if (vtable->gc_descr != GC_NO_DESCRIPTOR) {
-		obj = (MonoArray *)GC_GCJ_MALLOC (size, vtable);
+	} else if (vtable->klass->element_class->valuetype && 
+		vtable->klass->element_class->gc_descr != GC_NO_DESCRIPTOR &&
+		vtable->domain == mono_get_root_domain () /* &&
+		max_length > 50 */) {
+		obj = (MonoArray *)GC_gcj_vector_malloc (size, vtable);
 		if (G_UNLIKELY (!obj))
 			return NULL;
 	} else {
