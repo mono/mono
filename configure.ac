@@ -48,7 +48,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=9032116E-BB4E-4ED5-9C71-9E5E0B0230CA
+MONO_CORLIB_VERSION=C79A0703-DD79-437D-BE29-99A84058CAC5
 
 #
 # Put a quoted #define in config.h.
@@ -4236,7 +4236,7 @@ case "$host" in
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
 		;;
 	aarch64-*darwin*ilp32)
-		TARGET=ARM64;
+		TARGET=ARM6432
 		arch_target=arm64
 		AC_DEFINE(MONO_ARCH_ILP32, 1, [64 bit mode with 4 byte longs and pointers])
 		sizeof_register=8
@@ -4352,8 +4352,10 @@ if test "x$host" != "x$target"; then
 		CPPFLAGS="$CPPFLAGS"
 		target_win32=no
 		;;
-   aarch64*-linux-*)
-		TARGET=ARM64;
+	aarch64*darwin*_ilp32)
+		TARGET=ARM6432;
+		AC_DEFINE(MONO_ARCH_ILP32, 1, [64 bit mode with 4 byte longs and pointers])
+		AC_DEFINE(TARGET_WATCHOS, 1, [...])
 		;;
 	aarch64-*)
 		TARGET=ARM64
@@ -4406,7 +4408,7 @@ ARM)
 	arch_target=arm
 	ACCESS_UNALIGNED="no"
 	;;
-ARM64)
+ARM64|ARM6432)
 	AC_DEFINE(TARGET_ARM64, 1, [...])
 	arch_target=arm64
 	;;
@@ -4549,7 +4551,7 @@ fi
 dnl Use GCC atomic ops if they work on the target.
 if test x$GCC = "xyes"; then
 	case $TARGET in
-	X86 | AMD64 | ARM | ARM64 | POWERPC | POWERPC64 | MIPS | S390X | SPARC | SPARC64 | RISCV32 | RISCV64)
+	X86 | AMD64 | ARM | ARM64 | ARM6432 | POWERPC | POWERPC64 | MIPS | S390X | SPARC | SPARC64 | RISCV32 | RISCV64)
 		AC_DEFINE(USE_GCC_ATOMIC_OPS, 1, [...])
 		;;
 	esac
@@ -4562,7 +4564,7 @@ if test "x$target_mach" = "xyes"; then
 	  CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_WATCHOS"
 	  CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_WATCHOS"
 	  BTLS_SUPPORTED=no
-   elif test "x$TARGET" = "xARM" -o "x$TARGET" = "xARM64"; then
+   elif test "x$TARGET" = "xARM" -o "x$TARGET" = "xARM64" -o "x$TARGET" = "xARM6432"; then
    	  AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
 	  CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
 	  CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_IOS"
@@ -5644,7 +5646,7 @@ AM_CONDITIONAL(MIPS, test x$TARGET = xMIPS)
 AM_CONDITIONAL(POWERPC, test x$TARGET = xPOWERPC)
 AM_CONDITIONAL(POWERPC64, test x$TARGET = xPOWERPC64)
 AM_CONDITIONAL(ARM, test x$TARGET = xARM)
-AM_CONDITIONAL(ARM64, test x$TARGET = xARM64)
+AM_CONDITIONAL(ARM64, test x$TARGET = xARM64 -o x$TARGET = xARM6432)
 AM_CONDITIONAL(S390X, test x$TARGET = xS390X)
 AM_CONDITIONAL([RISCV], [test x$TARGET = xRISCV32 -o x$TARGET = xRISCV64])
 AM_CONDITIONAL([RISCV32], [test x$TARGET = xRISCV32])
@@ -5958,7 +5960,7 @@ fi
 #
 # For testing purpuses, there is a function called `mono_native_get_platform_type ()`
 # (see mono/native/mono-native-platform.c), which returns a `MonoNativePlatformType` enum value.
-# There is also `Mono.MonoNativePlatform.GetPlatformType ()` (see mcs/class/System/Mono/MonoNativePlatform.cs).
+# There is also `Mono.MonoNativePlatform.GetPlatformType ()` (see mcs/class/corlib/Test/Mono/MonoNativePlatform.cs).
 #
 # This can be called by automated tests both to ensure that the library has been correctly installed and also
 # to verify that it's the correct version of it.
@@ -6140,6 +6142,22 @@ elif case $host_os in aix*|os400*) true;; *) false;; esac; then
 	AC_MSG_RESULT(aix)
 
 	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_AIX"
+elif case $host_os in freebsd*) true;; *) false;; esac; then
+	mono_native_text="FreeBSD"
+	MONO_NATIVE_CC=$CC
+	MONO_NATIVE_CXX=$CXX
+	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
+	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
+	MONO_NATIVE_CFLAGS=$CFLAGS
+	MONO_NATIVE_LDFLAGS=$LDFLAGS
+
+	mono_native=yes
+	mono_native_compat=no
+	MONO_NATIVE_PLATFORM=freebsd
+	AC_MSG_CHECKING([Mono.Native support])
+	AC_MSG_RESULT(freebsd)
+
+	MONO_NATIVE_PLATFORM_TYPE="MONO_NATIVE_PLATFORM_TYPE_FREEBSD"
 elif test x$platform_android = xyes; then
 	mono_native_text="Android"
 	MONO_NATIVE_CC=$CC
@@ -6194,6 +6212,7 @@ AM_CONDITIONAL(MONO_NATIVE_PLATFORM_IOS, test x$MONO_NATIVE_PLATFORM = xios)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_LINUX, test x$MONO_NATIVE_PLATFORM = xlinux)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_AIX, test x$MONO_NATIVE_PLATFORM = xaix)
 AM_CONDITIONAL(MONO_NATIVE_PLATFORM_ANDROID, test x$MONO_NATIVE_PLATFORM = xandroid)
+AM_CONDITIONAL(MONO_NATIVE_PLATFORM_FREEBSD, test x$MONO_NATIVE_PLATFORM = xfreebsd)
 
 MONO_NATIVE_PLATFORM_TYPE_COMPAT="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_COMPAT"
 MONO_NATIVE_PLATFORM_TYPE_UNIFIED="$MONO_NATIVE_PLATFORM_TYPE | MONO_NATIVE_PLATFORM_TYPE_UNIFIED"

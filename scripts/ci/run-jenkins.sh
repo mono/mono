@@ -225,6 +225,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 	   fi
 
 	   export aot_test_suites="System.Core"
+	   export mixed_test_suites="System.Core"
 
 	   ${TESTCMD} --label=provision --timeout=20m --fatal make --output-sync=recurse --trace -C sdks/builds provision-wasm
 	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm NINJA=
@@ -246,6 +247,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=aot-mini --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
             ${TESTCMD} --label=build-aot-all --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m make -C sdks/wasm run-aot-${suite}; done
+            for suite in ${mixed_test_suites}; do ${TESTCMD} --label=run-aot-mixed-${suite} --timeout=10m make -C sdks/wasm run-aot-mixed-${suite}; done
             #${TESTCMD} --label=check-aot --timeout=60m make -C sdks/wasm check-aot
             ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
         fi

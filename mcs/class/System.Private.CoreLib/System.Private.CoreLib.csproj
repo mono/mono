@@ -118,7 +118,6 @@
       <Compile Include="System\Array.cs" />
       <Compile Include="System\Attribute.cs" />
       <Compile Include="System\DefaultBinder.cs" />
-      <Compile Include="System\DateTime.cs" />
       <Compile Include="System\Environment.cs" />
       <Compile Include="System\Exception.cs" />
       <Compile Include="System\GC.cs" />
@@ -134,6 +133,7 @@
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
       <Compile Include="System.Globalization\CultureData.cs" />
       <Compile Include="System.Globalization\CultureInfo.cs" />
+      <Compile Include="System.Collections.Generic\ArraySortHelper.cs" />
       <Compile Include="System.Collections.Generic\Comparer.cs" />
       <Compile Include="System.Collections.Generic\EqualityComparer.cs" />
       <Compile Include="System.Diagnostics\Debugger.cs" />
@@ -151,6 +151,7 @@
       <Compile Include="System.Reflection.Emit\Stubs.cs" />
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="System.Resources\ManifestBasedResourceGroveler.cs" />
+      <Compile Include="System.Runtime\GCSettings.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeFeature.cs" />
       <Compile Include="System.Runtime.InteropServices\CriticalHandle.cs" />
@@ -180,11 +181,8 @@
       <Compile Include="..\..\build\common\SR.cs" />
 
       <Compile Include="..\corlib\coreclr\Math.CoreCLR.cs" />
-      <Compile Include="..\corlib\coreclr\SorterArray.cs" />
-      <Compile Include="..\corlib\corefx\DateTime.cs" />
       <Compile Include="..\corlib\corefx\RuntimeImports.cs" />
 
-      <Compile Include="..\corlib\ReferenceSources\Array.cs" />
       <Compile Include="..\corlib\ReferenceSources\Buffer.cs" />
       <Compile Include="..\corlib\ReferenceSources\JitHelpers.cs" />
       <Compile Include="..\corlib\ReferenceSources\RuntimeType.cs" />
@@ -195,7 +193,6 @@
       <Compile Include="..\corlib\Mono\SafeStringMarshal.cs" />
       <Compile Include="..\corlib\Mono\SafeGPtrArrayHandle.cs" />
 
-      <Compile Include="..\corlib\System\Array.cs" />
       <Compile Include="..\corlib\System\ArgIterator.cs" />
       <Compile Include="..\corlib\System\Delegate.cs" />
       <Compile Include="..\corlib\System\DelegateSerializationHolder.cs" />
@@ -203,9 +200,6 @@
       <Compile Include="..\corlib\System\MathF.mono.cs" />
       <Compile Include="..\corlib\System\MonoCustomAttrs.cs" />
       <Compile Include="..\corlib\System\MulticastDelegate.cs" />
-<!--
-      <Compile Include="..\corlib\System\Nullable.cs" />
--->
       <Compile Include="..\corlib\System\RuntimeArgumentHandle.cs" />
       <Compile Include="..\corlib\System\RuntimeFieldHandle.cs" />
       <Compile Include="..\corlib\System\RuntimeTypeHandle.cs" />
@@ -252,8 +246,6 @@
       <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\safehandle.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Array.cs" />
-      <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Collections\Generic\ArraySortHelper.CoreRT.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeTypedArgument.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />

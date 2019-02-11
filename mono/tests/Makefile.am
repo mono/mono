@@ -228,7 +228,12 @@ ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 TEST_RUNNER = ./test-runner.exe
 
 if HOST_WIN32
-TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(top_builddir)/runtime/mono-wrapper)"
+if ENABLE_MSVC
+	DEFAULT_WIN32_RUNTIME=$(shell cygpath -w -a $(top_builddir)/@mono_runtime@ | sed 's/\\/\\\\/g')
+else
+	DEFAULT_WIN32_RUNTIME=$(top_builddir)/runtime/mono-wrapper)
+endif
+TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(DEFAULT_WIN32_RUNTIME))"
 else
 TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),$(top_builddir)/runtime/mono-wrapper)"
 endif
@@ -711,7 +716,9 @@ TESTS_CS_SRC=		\
 	generic-unmanaged-constraint.cs \
 	bug-10834.cs \
 	bug-10837.cs	\
-	bug-gh-9507.cs
+	bug-gh-9507.cs	\
+	async-generic-enum.cs \
+	last-error.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1680,6 +1687,11 @@ CI_PR_DISABLED_TESTS += process-stress-2.exe
 
 # https://github.com/mono/mono/issues/11417
 CI_PR_DISABLED_TESTS += process-stress-3.exe
+
+if HOST_WIN32
+# https://github.com/mono/mono/issues/12839
+CI_PR_DISABLED_TESTS += block_guard_restore_aligment_on_exit.exe
+endif
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \

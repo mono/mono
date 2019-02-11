@@ -176,7 +176,7 @@ build-aot-sample: packager.exe hello.exe
 
 hello.exe: hello.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello.cs
-	
+
 run-aot-sample: build-aot-sample
 	(cd bin/aot-sample && $(SM) runtime.js --run hello.exe)
 
@@ -210,10 +210,11 @@ build-aot-bindings-interp-sample: packager.exe sample.dll
 # $(1) - make target suffix
 # $(2) - test assembly filename
 # $(3) - main.exe argument
+# $(4) - extra args to packager
 define AotTestTemplate
 
 build-aot-$(1): packager.exe runtime-tests.js main.exe $$(WASM_FRAMEWORK)/.stamp-framework $$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/nunitlite.dll $$(WASM_BCL_DIR)/tests/$(2)
-	mono packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2) --linker --link-icalls
+	mono packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2) --linker --link-icalls $(4)
 	ninja -v -C obj/aot-$(1)
 
 clean-aot-$(1):
@@ -227,6 +228,9 @@ endef
 $(eval $(call AotTestTemplate,corlib,wasm_corlib_test.dll,corlib))
 $(eval $(call AotTestTemplate,System.Core,wasm_System.Core_test.dll,system-core))
 $(eval $(call AotTestTemplate,System,wasm_System_test.dll,system))
+
+$(eval $(call AotTestTemplate,mixed-corlib,wasm_corlib_test.dll,corlib,--aot-interp --aot-assemblies=mscorlib))
+$(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,system-core,--aot-interp --aot-assemblies=mscorlib))
 
 AOT_TEST_SUITES=corlib System.Core
 

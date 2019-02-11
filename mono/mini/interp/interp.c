@@ -496,6 +496,10 @@ get_virtual_method (InterpMethod *imethod, MonoObject *obj)
 		mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	}
 
+	if (virtual_method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
+		virtual_method = mono_marshal_get_native_wrapper (virtual_method, TRUE, FALSE);
+	}
+
 	if (virtual_method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) {
 		virtual_method = mono_marshal_get_synchronized_wrapper (virtual_method);
 	}
@@ -1059,7 +1063,7 @@ ves_array_element_address (InterpFrame *frame, MonoClass *required_type, MonoArr
 	if (frame->ex)
 		return NULL;
 
-	if (needs_typecheck && !mono_class_is_assignable_from_internal (m_class_get_element_class (mono_object_class ((MonoObject *) ao)), m_class_get_element_class (required_type))) {
+	if (needs_typecheck && !mono_class_is_assignable_from_internal (m_class_get_element_class (mono_object_class ((MonoObject *) ao)), required_type)) {
 		frame->ex = mono_get_exception_array_type_mismatch ();
 		FILL_IN_TRACE (frame->ex, frame);
 		return NULL;
@@ -3846,6 +3850,13 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			++ip;
 			sp[-1].data.p = *(gpointer*)sp[-1].data.p;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_LDIND_REF_CHECK) {
+			if (!sp [-1].data.p)
+				THROW_EX (mono_get_exception_null_reference (), ip);
+			++ip;
+			sp [-1].data.p = *(gpointer*)sp [-1].data.p;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_STIND_REF) 
 			++ip;
 			sp -= 2;
@@ -4590,12 +4601,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				THROW_EX (mono_get_exception_null_reference (), ip);
 			sp[-1].data.p = (char *)o + * (guint16 *)(ip + 1);
 			ip += 2;
-			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_CKNULL)
-			o = sp [-1].data.o;
-			if (!o)
-				THROW_EX (mono_get_exception_null_reference (), ip);
-			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CKNULL_N) {
 			/* Same as CKNULL, but further down the stack */

@@ -144,6 +144,9 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
+#if NETCORE
+		virtual
+#endif
 		public Type AttributeType {
 			get { return ctorInfo.DeclaringType; }
 		}

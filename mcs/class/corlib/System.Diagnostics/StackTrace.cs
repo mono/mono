@@ -202,7 +202,7 @@ namespace System.Diagnostics {
 		static string GetAotId ()
 		{
 			if (!isAotidSet) {
-				aotid = Assembly.GetAotId ();
+				aotid = RuntimeAssembly.GetAotId ();
 				if (aotid != null)
 					aotid = new Guid (aotid).ToString ("N");
 				isAotidSet = true;
