@@ -5764,7 +5764,20 @@ ves_icall_Mono_Runtime_DisableMicrosoftTelemetry (MonoError *error)
 #endif
 }
 
-ICALL_EXPORT void
+void
+ves_icall_Mono_Runtime_AnnotateMicrosoftTelemetry (const char *key, const char *value, MonoError *error)
+{
+#if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
+	if (!mono_merp_enabled ())
+		g_error ("Cannot add attributes to telemetry without enabling subsystem");
+	mono_merp_add_annotation (key, value);
+#else
+	// Icall has platform check in managed too.
+	g_assert_not_reached ();
+#endif
+}
+
+void
 ves_icall_Mono_Runtime_EnableMicrosoftTelemetry (const char *appBundleID, const char *appSignature, const char *appVersion, const char *merpGUIPath, const char *eventType, const char *appPath, const char *configDir, MonoError *error)
 {
 #if defined(TARGET_OSX) && !defined(DISABLE_CRASH_REPORTING)
@@ -7884,6 +7897,18 @@ ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeH
 ICALL_EXPORT int
 ves_icall_Interop_Sys_DoubleToString(double value, char *format, char *buffer, int bufferLength)
 {
+#if defined(TARGET_ARM)
+	/* workaround for faulty vcmp.f64 implementation on some 32bit ARM CPUs */
+	guint64 bits = *(guint64 *) &value;
+	if (bits == 0x1) { /* 4.9406564584124654E-324 */
+		g_assert (!strcmp (format, "%.40e"));
+		return snprintf (buffer, bufferLength, "%s", "4.9406564584124654417656879286822137236506e-324");
+	} else if (bits == 0x4) { /* 2E-323 */
+		g_assert (!strcmp (format, "%.40e"));
+		return snprintf (buffer, bufferLength, "%s", "1.9762625833649861767062751714728854894602e-323");
+	}
+#endif
+
 	return snprintf(buffer, bufferLength, format, value);
 }
 

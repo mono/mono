@@ -307,6 +307,8 @@ TESTS_CS_SRC=		\
 	exception16.cs		\
 	exception17.cs		\
 	exception18.cs		\
+	merp-json-valid.cs		\
+	merp-crash-test.cs		\
 	exception19.cs		\
 	exception20.cs		\
 	typeload-unaligned.cs	\
@@ -1048,11 +1050,11 @@ PLATFORM_DISABLED_TESTS=\
 	tailcall-member-function-in-valuetype.exe \
 	tailcall-rgctxb.exe
 
-if HOST_DARWIN
-else
+# Only because this depends on an icall change that was
+# made in a later release. 
 PLATFORM_DISABLED_TESTS += \
-	merp-json-valid.exe
-endif
+	merp-json-valid.exe \
+	merp-crash-test.exe
 
 
 if HOST_WIN32
@@ -1897,6 +1899,9 @@ reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingRe
 	$(MCS) -r:$(CLASS)/System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
 
 merp-json-valid.exe: merp-json-valid.cs
+	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
+
+merp-crash-test.exe: merp-crash-test.cs
 	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs

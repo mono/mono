@@ -1,8 +1,9 @@
+def isPrivate = (env.JENKINS_URL ==~ /.*jenkins\.internalx\.com.*/ ? true : false)
 def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
 def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
 def isReleaseJob = (!isPr && monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
-def jobName = (isPr ? "build-package-osx-mono-pullrequest" : "build-package-osx-mono")
-def windowsJobName = (isPr ? "build-package-win-mono-pullrequest" : "build-package-win-mono/${monoBranch}")
+def jobName = (isPr ? "build-package-osx-mono-pullrequest" : isPrivate ? "build-package-osx-mono-private" : "build-package-osx-mono")
+def windowsJobName = (isPr ? "build-package-win-mono-pullrequest" : isPrivate ? "build-package-win-mono-private/${monoBranch}" : "build-package-win-mono/${monoBranch}")
 def isWindowsPrBuild = (isPr && env.ghprbCommentBody.contains("@monojenkins build pkg and msi"))
 def packageFileName = null
 def commitHash = null
@@ -48,13 +49,13 @@ node ("mono-package") {
                     packageFileName = findFiles (glob: "MonoFramework-MDK-*.pkg")[0].name
                 }
                 stage('Upload .pkg to Azure') {
-                    azureUpload(storageCredentialId: "fbd29020e8166fbede5518e038544343",
+                    azureUpload(storageCredentialId: (isPrivate ? "bc6a99d18d7d9ca3f6bf6b19e364d564" : "fbd29020e8166fbede5518e038544343"),
                                 storageType: "blobstorage",
                                 containerName: "${jobName}",
                                 virtualPath: "${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/",
                                 filesPath: "${packageFileName}",
-                                allowAnonymousAccess: true,
-                                pubAccessible: true,
+                                allowAnonymousAccess: (isPrivate ? false : true),
+                                pubAccessible: (isPrivate ? false : true),
                                 doNotWaitForPreviousBuild: true,
                                 uploadArtifactsOnlyIfSuccessful: true)
                 }
@@ -72,7 +73,8 @@ node ("mono-package") {
                     echo "Not a release job, skipping signing."
                 }
 
-                def packageUrl = "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}"
+                def storageAccount = (isPrivate ? "bosstoragemirror.blob.core.windows.net" : "xamjenkinsartifact.azureedge.net")
+                def packageUrl = "https://${storageAccount}/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}"
                 currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"${packageUrl}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
 
                 if (isReleaseJob) { utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'artifacts.json', "${packageUrl}/artifacts.json", 'SUCCESS', '') }
@@ -84,6 +86,11 @@ node ("mono-package") {
             }
         }
     }
+}
+
+if (isPrivate) {
+    // skip Windows build on private jobs for now
+    return
 }
 
 if (!isPr || isWindowsPrBuild) {
