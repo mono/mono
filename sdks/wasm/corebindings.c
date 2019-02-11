@@ -46,7 +46,7 @@ void core_initialize_internals ()
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayToArray", mono_wasm_typed_array_to_array);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyTo", mono_wasm_typed_array_copy_to);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayFromArray", mono_wasm_typed_array_from_array);
-	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyTo", mono_wasm_typed_array_copy_to);
+	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyFrom", mono_wasm_typed_array_copy_from);
 
 	// Blazor specific custom routines - see dotnet_support.js for backing code		
 	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);

@@ -397,6 +397,8 @@ var BindingSupportLib = {
 
 
 		},
+		// Copy the existing typed array to the heap pointed to by the pinned array address
+		// 	 typed array memory -> copy to heap -> address of managed pinned array
 		typedarray_copy_to : function (typed_array, pinned_array, length, bytes_per_element) {
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
@@ -423,7 +425,9 @@ var BindingSupportLib = {
 				if (num_of_bytes > view_bytes)
 					num_of_bytes = view_bytes;
 
+				// Create an array pointed to by the pinned array address
 				var heapBytes = new Uint8Array(Module.HEAPU8.buffer, pinned_array, num_of_bytes);
+				// Copy the bytes of the typed array to the heap.
 				heapBytes.set(new Uint8Array(typed_array.buffer, typed_array.byteOffset, num_of_bytes));
 				return num_of_bytes;
 			}
@@ -431,7 +435,9 @@ var BindingSupportLib = {
 				throw new Error("Object '" + typed_array + "' is not a typed array");
 			} 
 
-		},		
+		},	
+		// Copy the pinned array address from pinned_array allocated on the heap to the typed array.
+		// 	 adress of managed pinned array -> copy from heap -> typed array memory
 		typedarray_copy_from : function (typed_array, pinned_array, length, bytes_per_element) {
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
@@ -458,8 +464,10 @@ var BindingSupportLib = {
 				if (num_of_bytes > view_bytes)
 					num_of_bytes = view_bytes;
 
-				var heapBytes = new Uint8Array(Module.HEAPU8.buffer, pinned_array, num_of_bytes);
-				heapBytes.set(new Uint8Array(typed_array.buffer, typed_array.byteOffset, num_of_bytes));
+				// Create a new view for mapping
+				var typedarrayBytes = new Uint8Array(typed_array.buffer, 0, num_of_bytes);
+				// Set view bytes to value from HEAPU8
+				typedarrayBytes.set(Module.HEAPU8.subarray(pinned_array, pinned_array + num_of_bytes));
 				return num_of_bytes;
 			}
 			else {
