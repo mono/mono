@@ -153,6 +153,7 @@
   <!-- @BUILT_SOURCES@ -->
   <!--Common files-->
   <ItemGroup>
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Threading\Tasks\TaskExtensions.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ArrayBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\EnumerableHelpers.Linq.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\EnumerableHelpers.cs" />
@@ -512,7 +513,6 @@
     <Compile Include="..\referencesource\System.Core\System\TimeZoneInfo.cs" />
     <Compile Include="..\referencesource\System.Core\System\TimeZoneNotFoundException.cs" />
     <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\ReaderWriterLockSlim.cs" />
-    <Compile Include="..\referencesource\System.Core\System\threading\Tasks\TaskExtensions.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="Microsoft.Win32.SafeHandles\SafeMemoryMappedFileHandle.cs" />
     <Compile Include="Microsoft.Win32.SafeHandles\SafeMemoryMappedViewHandle.cs" />

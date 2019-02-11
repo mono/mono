@@ -530,7 +530,7 @@ namespace System.Reflection {
 		{
 			AssemblyName aname = new AssemblyName ();
 			unsafe {
-				MonoAssemblyName *native = GetNativeName (assembly._mono_assembly);
+				MonoAssemblyName *native = GetNativeName (assembly.MonoAssembly);
 				aname.FillName (native, fillCodebase ? assembly.CodeBase : null, true, true, true, false);
 			}
 			return aname;
