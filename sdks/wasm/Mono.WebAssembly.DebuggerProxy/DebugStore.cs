@@ -302,7 +302,7 @@ namespace WsProxy {
 
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
 			} catch (BadImageFormatException ex) {
-				Console.WriteLine ("Failed to read assembly as portable PDB");
+				Console.WriteLine ($"Failed to read assembly as portable PDB: {ex.Message}");
 			}
 
 			if (this.image == null) {
@@ -606,8 +606,11 @@ namespace WsProxy {
 
 		public SourceLocation FindBestBreakpoint (BreakPointRequest req)
 		{
-			var asm = this.assemblies.FirstOrDefault (a => a.Name.Equals (req.Assembly, StringComparison.OrdinalIgnoreCase));
-			var src = asm.Sources.FirstOrDefault (s => s.DebuggerFileName.Equals (req.File, StringComparison.OrdinalIgnoreCase));
+			var asm = assemblies.FirstOrDefault (a => a.Name.Equals (req.Assembly, StringComparison.OrdinalIgnoreCase));
+			var src = asm?.Sources?.FirstOrDefault (s => s.DebuggerFileName.Equals (req.File, StringComparison.OrdinalIgnoreCase));
+
+			if (src == null)
+				return null;
 
 			foreach (var m in src.Methods) {
 				foreach (var sp in m.methodDef.DebugInformation.SequencePoints) {
