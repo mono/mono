@@ -219,7 +219,6 @@
       <Compile Include="..\corlib\System.Threading\NativeEventCalls.cs" />
       <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
       <Compile Include="..\corlib\System.Threading\Thread.cs" />
-      <Compile Include="..\corlib\System.Threading\Volatile.cs" />
       <Compile Include="..\corlib\System.Threading\WaitHandle.cs" />
 
       <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
