@@ -712,7 +712,7 @@ namespace WsProxy {
 			var src_file = store.GetFileById (id);
 
 			var res = new StringWriter ();
-			res.WriteLine ($"//{id}");
+			//res.WriteLine ($"//{id}");
 
 			try {
 				var uri = new Uri (src_file.Url);

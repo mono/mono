@@ -128,7 +128,7 @@ namespace WsProxy {
 		public SourceLocation (MethodInfo mi, SequencePoint sp)
 		{
 			this.id = mi.SourceId;
-			this.line = sp.StartLine;
+			this.line = sp.StartLine - 1;
 			this.column = sp.StartColumn - 1;
 			this.cliLoc = new CliLocation (mi, sp.Offset);
 		}
@@ -466,11 +466,11 @@ namespace WsProxy {
 			this.DebuggerFileName = doc.Url.Replace ("\\", "/").Replace (":", "");
 
 			this.SourceUri = new Uri ((Path.IsPathRooted (doc.Url) ? "file://" : "") + doc.Url, UriKind.RelativeOrAbsolute);
-						if (SourceUri.IsFile && File.Exists (SourceUri.LocalPath)) {
-								this.Url = this.SourceUri.ToString ();
-						} else {
-								this.Url = DotNetUrl;
-						}
+			if (SourceUri.IsFile && File.Exists (SourceUri.LocalPath)) {
+				this.Url = this.SourceUri.ToString ();
+			} else {
+				this.Url = DotNetUrl;
+			}
 
 		}
 
@@ -545,27 +545,24 @@ namespace WsProxy {
 			return assemblies.FirstOrDefault (a => a.Name.Equals (name, StringComparison.InvariantCultureIgnoreCase));
 		}
 
-		/*
-		Matching logic here is hilarious and it goes like this:
-		We inject one line at the top of all sources to make it easy to identify them [1].
+		/*	
 		V8 uses zero based indexing for both line and column.
 		PPDBs uses one based indexing for both line and column.
-		Which means that:
-		- for lines, values are already adjusted (v8 numbers come +1 due to the injected line)
-		- for columns, we need to +1 the v8 numbers
-		[1] It's so we can deal with the Runtime.compileScript ide cmd
 		*/
 		static bool Match (SequencePoint sp, SourceLocation start, SourceLocation end)
 		{
-			if (start.Line > sp.StartLine)
+			var spStart = (Line: sp.StartLine - 1, Column: sp.StartColumn - 1);
+			var spEnd = (Line: sp.EndLine - 1, Column: sp.EndColumn - 1);
+
+			if (start.Line > spStart.Line)
 				return false;
-			if ((start.Column + 1) > sp.StartColumn && start.Line == sp.StartLine)
+			if (start.Column > spStart.Column && start.Line == sp.StartLine)
 				return false;
 
-			if (end.Line < sp.EndLine)
+			if (end.Line < spEnd.Line)
 				return false;
 
-			if ((end.Column + 1) < sp.EndColumn && end.Line == sp.EndLine)
+			if (end.Column < spEnd.Column && end.Line == spEnd.Line)
 				return false;
 
 			return true;
@@ -597,28 +594,24 @@ namespace WsProxy {
 		}
 
 		/*
-		Matching logic here is hilarious and it goes like this:
-		We inject one line at the top of all sources to make it easy to identify them [1].
 		V8 uses zero based indexing for both line and column.
 		PPDBs uses one based indexing for both line and column.
-		Which means that:
-		- for lines, values are already adjusted (v8 numbers come + 1 due to the injected line)
-		- for columns, we need to +1 the v8 numbers
-		[1] It's so we can deal with the Runtime.compileScript ide cmd
 		*/
 		static bool Match (SequencePoint sp, int line, int column)
-		{
-			if (sp.StartLine > line || sp.EndLine < line)
+		{ 
+			var bp = (line: line + 1, column: column + 1);
+
+			if (sp.StartLine > bp.line || sp.EndLine < bp.line)
 				return false;
 
 			//Chrome sends a zero column even if getPossibleBreakpoints say something else
 			if (column == 0)
 				return true;
 
-			if (sp.StartColumn > (column + 1) && sp.StartLine == line)
+			if (sp.StartColumn > bp.column && sp.StartLine == bp.line)
 				return false;
 
-			if (sp.EndColumn < (column + 1) && sp.EndLine == line)
+			if (sp.EndColumn < bp.column && sp.EndLine == bp.line)
 				return false;
 
 			return true;
