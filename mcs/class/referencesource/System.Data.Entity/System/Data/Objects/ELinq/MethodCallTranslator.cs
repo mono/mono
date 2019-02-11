@@ -1339,7 +1339,11 @@ namespace System.Data.Objects.ELinq
                 // Supported only if the argument is an empty array.
                 internal override CqtExpression Translate(ExpressionConverter parent, MethodCallExpression call)
                 {
+#if MONO
+                    if (call.Arguments.Count > 0 && !IsEmptyArray(call.Arguments[0]))
+#else
                     if (!IsEmptyArray(call.Arguments[0]))
+#endif
                     {
                         throw EntityUtil.NotSupported(System.Data.Entity.Strings.ELinq_UnsupportedTrimStartTrimEndCase(call.Method));
                     }
@@ -1378,9 +1382,6 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("Trim", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char[]) }, null);
-#if MONO
-                    yield return typeof(String).GetMethod("Trim", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char) }, null);
-#endif
                 }
             }
             private sealed class TrimStartTranslator : TrimBaseTranslator
@@ -1393,7 +1394,6 @@ namespace System.Data.Objects.ELinq
                     yield return typeof(String).GetMethod("TrimStart", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char[]) }, null);
 #if MONO
                     yield return typeof(String).GetMethod("TrimStart", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
-                    yield return typeof(String).GetMethod("TrimStart", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char) }, null);
 #endif
                 }
             }
@@ -1407,7 +1407,6 @@ namespace System.Data.Objects.ELinq
                     yield return typeof(String).GetMethod("TrimEnd", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char[]) }, null);
 #if MONO
                     yield return typeof(String).GetMethod("TrimEnd", BindingFlags.Public | BindingFlags.Instance, null, Type.EmptyTypes, null);
-                    yield return typeof(String).GetMethod("TrimEnd", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(Char) }, null);
 #endif
                 }
             }
