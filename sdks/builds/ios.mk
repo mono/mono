@@ -340,15 +340,16 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-monotouch \
 	--disable-crash-reporting
 
-$$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3)-darwin,$(4),$(5),$(6)))
+$$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3),$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call iOSCrossTemplate,cross32,i386,arm,target32,llvm36-llvm32,arm-apple-darwin10,$(XCODE32_DIR)))
-$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,target64,llvm-llvm64,aarch64-apple-darwin10,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,cross32,i386,arm-darwin,target32,llvm36-llvm32,arm-apple-darwin10,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64-darwin,target64,llvm-llvm64,aarch64-apple-darwin10,$(XCODE_DIR)))
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,targetwatch,llvm36-llvm32,armv7k-apple-darwin,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown-darwin,targetwatch,llvm36-llvm32,armv7k-apple-darwin,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,targetwatch64_32,llvm-llvm64,armv7k-apple-darwin_ilp32,$(XCODE_DIR)))
 # 64->arm32 cross compiler
-$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE_DIR)))
 
 $(eval $(call BclTemplate,ios,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime monotouch_tools,monotouch monotouch_tv monotouch_watch))

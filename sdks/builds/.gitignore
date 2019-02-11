@@ -33,6 +33,7 @@ ios-targetwatch64_32-*/
 ios-cross32-*/
 ios-cross64-*/
 ios-crosswatch-*/
+ios-crosswatch64_32-*/
 ios-sim32-*/
 ios-sim64-*/
 ios-simtv-*/
