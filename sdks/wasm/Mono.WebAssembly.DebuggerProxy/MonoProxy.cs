@@ -267,9 +267,9 @@ namespace WsProxy {
 			var src = bp == null ? null : store.GetFileById (bp.Location.Id);
 
 			var callFrames = new List<JObject> ();
-			foreach (var f in orig_callframes) {
-				var function_name = f ["functionName"]?.Value<string> ();
-				var url = f ["url"]?.Value<string> ();
+			foreach (var frame in orig_callframes) {
+				var function_name = frame ["functionName"]?.Value<string> ();
+				var url = frame ["url"]?.Value<string> ();
 				if ("mono_wasm_fire_bp" == function_name || "_mono_wasm_fire_bp" == function_name) {
 					var frames = new List<Frame> ();
 					int frame_id = 0;
@@ -303,7 +303,7 @@ namespace WsProxy {
 
 						callFrames.Add (JObject.FromObject (new {
 							functionName = method.Name,
-
+							callFrameId = $"dotnet:scope:{frame_id}",
 							functionLocation = method.StartLocation.ToJObject (),
 
 							location = location.ToJObject (),
@@ -315,25 +315,24 @@ namespace WsProxy {
 									type = "local",
 									@object = new {
 										@type = "object",
-							 			className = "Object",
+										className = "Object",
 										description = "Object",
-										objectId = $"dotnet:scope:{frame_id}"
+										objectId = $"dotnet:scope:{frame_id}",
 									},
 									name = method.Name,
 									startLocation = method.StartLocation.ToJObject (),
 									endLocation = method.EndLocation.ToJObject (),
-								}
-							},
-
-							@this = new {
-							}
+								}},
+								@this = new { }
 						}));
 
 						++frame_id;
 						this.current_callstack = frames;
+
 					}
-				} else if (!url.StartsWith ("wasm://wasm/", StringComparison.InvariantCulture)) {
-					callFrames.Add (f);
+				} else if (!function_name.StartsWith ("wasm-function", StringComparison.InvariantCulture)
+					|| url.StartsWith ("wasm://wasm/", StringComparison.InvariantCulture))) {
+					callFrames.Add (frame);
 				}
 			}
 
