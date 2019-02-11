@@ -196,7 +196,7 @@ namespace CppSharp
             } else if (abi == "wasm32-unknown-unknown") {
                 Targets.Add(new Target {
                         Platform = TargetPlatform.WASM,
-                        Triple = "wasm32-wasm32-unknown-unknown",
+                        Triple = "wasm32-unknown-unknown",
                         Build = "",
                         Defines = { "TARGET_WASM" },
                 });
