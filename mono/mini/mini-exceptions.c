@@ -1601,17 +1601,34 @@ mono_summarize_exception (MonoException *exc, MonoThreadSummary *out)
 {
 	memset (out, 0, sizeof (MonoThreadSummary));
 
-	MonoSummarizeUserData data;
-	memset (&data, 0, sizeof (MonoSummarizeUserData));
-	data.max_frames = MONO_MAX_SUMMARY_FRAMES;
-	data.num_frames = 0;
-	data.frames = out->managed_frames;
-	data.hashes = &out->hashes;
+	MonoException *inner_exc = exc;
+	int exc_index = 0;
 
-	mono_exception_walk_trace (exc, summarize_frame_managed_walk, &data);
-	out->num_managed_frames = data.num_frames;
+	for (exc_index = 0; exc_index < MONO_MAX_SUMMARY_EXCEPTIONS; exc_index++) {
+		if (inner_exc == NULL)
+			break;
 
-	out->managed_exc_type = exc->object.vtable->klass;
+		// Set up state to walk this MonoException's stack
+		MonoSummarizeUserData data;
+		memset (&data, 0, sizeof (MonoSummarizeUserData));
+		data.max_frames = MONO_MAX_SUMMARY_FRAMES;
+		data.num_frames = 0;
+		data.frames = out->exceptions [exc_index].managed_frames;
+
+		// Accumulate all hashes from all exceptions in traveral order
+		data.hashes = &out->hashes;
+
+		mono_exception_walk_trace (inner_exc, summarize_frame_managed_walk, &data);
+
+		// Save per-MonoException info
+		out->exceptions [exc_index].managed_exc_type = inner_exc->object.vtable->klass;
+		out->exceptions [exc_index].num_managed_frames = data.num_frames;
+
+		// Continue to traverse nesting of exceptions
+		inner_exc = (MonoException *) inner_exc->inner_ex;
+	}
+
+	out->num_exceptions = exc_index;
 }
 
 
