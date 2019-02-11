@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace System.Net.Sockets
 {
@@ -246,5 +247,8 @@ namespace System.Net.Sockets
                 remoteEP,
                 state: socket);
         }
+
+        public static ValueTask<int> SendAsync(this Socket socket, ReadOnlyMemory<byte> buffer, SocketFlags socketFlags, CancellationToken cancellationToken = default) =>
+            socket.SendAsync(buffer, socketFlags, cancellationToken);
     }
 }
