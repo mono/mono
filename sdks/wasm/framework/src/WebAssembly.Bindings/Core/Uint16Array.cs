@@ -68,6 +68,37 @@ namespace WebAssembly.Core {
 
 		}
 
+		/// <summary>
+		/// Copies from an array to a <see cref="T:WebAssembly.Core.Uint16Array"/>/>.
+		/// </summary>
+		/// <returns>The from.</returns>
+		/// <param name="source">Source.</param>
+		/// <param name="offset">Offset.</param>
+		/// <param name="count">Count.</param>
+		public unsafe int CopyFrom (ushort [] source, int offset, int count)
+		{
+			// target array has to be instantiated.
+			ValidateSource (source, offset, count);
+
+			// The following fixed statement pins the location of the target object in memory
+			// so that they will not be moved by garbage collection.
+			fixed (ushort* pTarget = &source [offset]) {
+
+				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, count, sizeof (ushort), out int exception);
+				if (exception != 0)
+					throw new JSException ((string)res);
+				return (int)res / sizeof (ushort);
+			}
+
+		}
+
+		/// <summary>
+		/// Copies from <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Uint16Array"/>/>.
+		/// </summary>
+		/// <returns>The number of bytes copied.</returns>
+		/// <param name="source">Source.</param>
+		public int CopyFrom (ArraySegment<ushort> source) => CopyFrom (source.Array, source.Offset, source.Count);
+
 
 		/// <summary>
 		/// Defines an implicit conversion of an array to a <see cref="T:WebAssembly.Core.Uint16Array"/>./>

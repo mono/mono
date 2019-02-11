@@ -84,23 +84,54 @@ namespace WebAssembly.Core {
 		}
 
 		/// <summary>
+		/// Copies from an array to a <see cref="T:WebAssembly.Core.Uint8Array"/>/>.
+		/// </summary>
+		/// <returns>The from.</returns>
+		/// <param name="source">Source.</param>
+		/// <param name="offset">Offset.</param>
+		/// <param name="count">Count.</param>
+		public unsafe int CopyFrom (byte [] source, int offset, int count)
+		{
+			// target array has to be instantiated.
+			ValidateSource (source, offset, count);
+
+			// The following fixed statement pins the location of the target object in memory
+			// so that they will not be moved by garbage collection.
+			fixed (byte* pTarget = &source[offset]) {
+
+				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, count, sizeof (byte), out int exception);
+				if (exception != 0)
+					throw new JSException ((string)res);
+				return (int)res / sizeof (byte);
+			}
+
+		}
+
+		/// <summary>
+		/// Copies from <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Uint8Array"/>/>.
+		/// </summary>
+		/// <returns>The number of bytes copied.</returns>
+		/// <param name="source">Source.</param>
+		public int CopyFrom (ArraySegment<byte> source) => CopyFrom (source.Array, source.Offset, source.Count);
+
+		/// <summary>
 		/// Defines an implicit conversion of an array to a <see cref="T:WebAssembly.Core.Uint8Array"/>./>
 		/// </summary>
 		/// <returns>The implicit.</returns>
 		/// <param name="typedarray">Typedarray.</param>
-		public static implicit operator byte [] (Uint8Array typedarray)
-		{
-			return typedarray.ToArray();
-		}
+		public static implicit operator byte [] (Uint8Array typedarray) => typedarray.ToArray();
 
 		/// <summary>
 		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Uint8Array"/> to an array./>
 		/// </summary>
 		/// <returns>The implicit.</returns>
 		/// <param name="managedArray">Managed array.</param>
-		public static implicit operator Uint8Array (byte[] managedArray)
-		{
-			return From (managedArray);
-		}
+		public static implicit operator Uint8Array (byte[] managedArray) => From(managedArray);
+
+		/// <summary>
+		/// Defines an implicit conversion of a <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Uint8Array"/>/>
+		/// </summary>
+		//public static implicit operator Uint8Array(ArraySegment<byte> segment) => CopyFrom(segment.Array, segment.Offset, segment.Count);
+
 	}
 }
