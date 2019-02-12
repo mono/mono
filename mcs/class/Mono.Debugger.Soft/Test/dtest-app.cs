@@ -495,9 +495,8 @@ public class Tests : TestsBase, ITest2
 
 	private class TestClass {
 		private string oneLineProperty = "";
-		public string OneLineProperty
-		{
-			get { return oneLineProperty; }/*3722cad3-7da1-4c86-a398-bb2cf6cc65a9*/
+		public string OneLineProperty {
+			get { return oneLineProperty; }
 			set { oneLineProperty = value; }
 		}
 	}
