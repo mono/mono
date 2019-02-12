@@ -156,6 +156,7 @@
       <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeFeature.cs" />
       <Compile Include="System.Runtime.InteropServices\CriticalHandle.cs" />
+      <Compile Include="System.Runtime.InteropServices\GCHandle.cs" />
       <Compile Include="System.Runtime.InteropServices\InteropExtensions.cs" />
       <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
       <Compile Include="System.Runtime.InteropServices\NativeLibrary.cs" />
@@ -227,8 +228,6 @@
       <Compile Include="..\corlib\System.Reflection\RuntimePropertyInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeEventInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeParameterInfo.cs" />
-
-      <Compile Include="..\corlib\System.Runtime.InteropServices\GCHandle.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\referencesource\mscorlib\system\buffer.cs" />
@@ -249,8 +248,6 @@
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeTypedArgument.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
       <Compile Include="..\corlib\corert\RuntimeAugments.cs" />
-
-      <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\GCHandleType.cs" />
   </ItemGroup>
 
   <!-- Mono extensions -->
