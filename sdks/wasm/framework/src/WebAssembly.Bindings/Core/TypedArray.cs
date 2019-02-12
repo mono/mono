@@ -71,9 +71,65 @@ namespace WebAssembly.Core {
 			return (T)res;
 		}
 
-		private unsafe int CopyFrom (void* pTarget, int offset, int count)
+		private unsafe int CopyTo (void* ptrTarget, int offset, int count)
 		{
-			var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, offset, offset + count, Marshal.SizeOf<U>(), out int exception);
+			var res = Runtime.TypedArrayCopyTo (JSHandle, (int)ptrTarget, offset, offset + count, Marshal.SizeOf<U> (), out int exception);
+			if (exception != 0)
+				throw new JSException ((string)res);
+			return (int)res / Marshal.SizeOf<U> ();
+
+		}
+
+		/// <summary>
+		/// Copies from a <see cref="T:WebAssembly.Core.TypedArray`2"/> to <see langword="async"/> memory address.
+		/// </summary>
+		/// <returns>The to.</returns>
+		/// <param name="target">Target.</param>
+		/// <param name="count">Count.</param>
+		public unsafe int CopyTo (IntPtr target, int count) => CopyTo (target.ToPointer (), 0, count);
+
+		/// <summary>
+		/// Copies from a <see cref="T:WebAssembly.Core.TypedArray`2"/> to an array
+		/// </summary>
+		/// <returns>The from.</returns>
+		/// <param name="target">Source.</param>
+		public int CopyTo (U [] target) => CopyTo (target, 0, target.Length);
+
+		/// <summary>
+		/// Copies from a <see cref="T:WebAssembly.Core.TypedArray`2"/> to an array
+		/// </summary>
+		/// <returns>The from.</returns>
+		/// <param name="target">Target.</param>
+		/// <param name="offset">Offset.</param>
+		/// <param name="count">Count.</param>
+		public unsafe int CopyTo (U [] target, int offset, int count)
+		{
+			// target array has to be instantiated.
+			ValidateSource (target, offset, count);
+
+			// The following pins the location of the source object in memory
+			// so that they will not be moved by garbage collection.
+			GCHandle sourceHandle = GCHandle.Alloc (target, GCHandleType.Pinned);
+
+			try {
+				var ptr = sourceHandle.AddrOfPinnedObject ();
+				return CopyTo (ptr.ToPointer (), offset, count);
+
+			} finally {
+				sourceHandle.Free ();
+			}
+		}
+
+		/// <summary>
+		/// Copies from a <see cref="T:WebAssembly.Core.TypedArray`2"/> to an <see cref="ArraySegment{T}"/>
+		/// </summary>
+		/// <returns>The to.</returns>
+		/// <param name="target">Target.</param>
+		public int CopyTo (ArraySegment<U> target) => CopyTo (target.Array, target.Offset, target.Count);
+
+		private unsafe int CopyFrom (void* ptrSource, int offset, int count)
+		{
+			var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)ptrSource, offset, offset + count, Marshal.SizeOf<U>(), out int exception);
 			if (exception != 0)
 				throw new JSException ((string)res);
 			return (int)res / Marshal.SizeOf<U> ();

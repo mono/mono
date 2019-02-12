@@ -47,22 +47,6 @@ namespace WebAssembly.Core {
 			}
 		}
 
-		public unsafe int CopyTo (byte [] target)
-		{
-			// target array has to be instantiated.
-			ValidateTarget (target);
-
-			// The following fixed statement pins the location of the target object in memory
-	    		// so that they will not be moved by garbage collection.
-			fixed (byte* pTarget = target) {
-				var res = Runtime.TypedArrayCopyTo (JSHandle, (int)pTarget, target.Length, sizeof (byte), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)((int)res / sizeof (byte));
-			}
-
-		}
-
 		/// <summary>
 		/// From the specified segment.
 		/// </summary>

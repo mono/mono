@@ -21,7 +21,7 @@ extern MonoObject* mono_wasm_new (MonoString *core_name, MonoArray *args, int *i
 extern int mono_wasm_bind_core_object (int js_handle, int gc_handle, int *is_exception);
 extern int mono_wasm_bind_host_object (int js_handle, int gc_handle, int *is_exception);
 extern MonoObject* mono_wasm_typed_array_to_array (int js_handle, int *is_exception);
-extern MonoObject* mono_wasm_typed_array_copy_to (int js_handle, int ptr, int length, int bytes_per_element, int *is_exception);
+extern MonoObject* mono_wasm_typed_array_copy_to (int js_handle, int ptr, int begin, int end, int bytes_per_element, int *is_exception);
 extern MonoObject* mono_wasm_typed_array_from_array (MonoObject* mono_array, int *is_exception);
 extern MonoObject* mono_wasm_typed_array_copy_from (int js_handle, int ptr, int begin, int end, int bytes_per_element, int *is_exception);
 

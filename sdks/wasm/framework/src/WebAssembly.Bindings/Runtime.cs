@@ -41,7 +41,7 @@ namespace WebAssembly {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object TypedArrayToArray (int js_obj_handle, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object TypedArrayCopyTo (int js_obj_handle, int array_ptr, int length, int bytes_per_element, out int exceptional_result);
+		internal static extern object TypedArrayCopyTo (int js_obj_handle, int array_ptr, int begin, int end, int bytes_per_element, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object TypedArrayFromArray (object array, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

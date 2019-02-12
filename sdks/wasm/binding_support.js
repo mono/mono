@@ -399,7 +399,7 @@ var BindingSupportLib = {
 		},
 		// Copy the existing typed array to the heap pointed to by the pinned array address
 		// 	 typed array memory -> copy to heap -> address of managed pinned array
-		typedarray_copy_to : function (typed_array, pinned_array, length, bytes_per_element) {
+		typedarray_copy_to : function (typed_array, pinned_array, begin, end, bytes_per_element) {
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
 			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
@@ -418,17 +418,35 @@ var BindingSupportLib = {
 					throw new Error("Inconsistent element sizes: TypedArray.BYTES_PER_ELEMENT '" + typed_array.BYTES_PER_ELEMENT + "' sizeof managed element: '" + bytes_per_element + "'");
 
 				// how much space we have to work with
-				var num_of_bytes = length * bytes_per_element;
+				var num_of_bytes = (end - begin) * bytes_per_element;
 				// how much typed buffer space are we talking about
 				var view_bytes = typed_array.length * typed_array.BYTES_PER_ELEMENT;
 				// only use what is needed.
 				if (num_of_bytes > view_bytes)
 					num_of_bytes = view_bytes;
 
+				// offset index into the view
+				var offset = begin * bytes_per_element;
+				//// Set view bytes to value from HEAPU8
+				//typedarrayBytes.set(Module.HEAPU8.subarray(pinned_array + offset, pinned_array + offset + num_of_bytes));
+
 				// Create an array pointed to by the pinned array address
-				var heapBytes = new Uint8Array(Module.HEAPU8.buffer, pinned_array, num_of_bytes);
+				var heapBytes = new Uint8Array(Module.HEAPU8.buffer, pinned_array + offset, num_of_bytes);
 				// Copy the bytes of the typed array to the heap.
 				heapBytes.set(new Uint8Array(typed_array.buffer, typed_array.byteOffset, num_of_bytes));
+
+				// how much space we have to work with
+				// var num_of_bytes = length * bytes_per_element;
+				// // how much typed buffer space are we talking about
+				// var view_bytes = typed_array.length * typed_array.BYTES_PER_ELEMENT;
+				// // only use what is needed.
+				// if (num_of_bytes > view_bytes)
+				// 	num_of_bytes = view_bytes;
+
+				// // Create an array pointed to by the pinned array address
+				// var heapBytes = new Uint8Array(Module.HEAPU8.buffer, pinned_array, num_of_bytes);
+				// // Copy the bytes of the typed array to the heap.
+				// heapBytes.set(new Uint8Array(typed_array.buffer, typed_array.byteOffset, num_of_bytes));
 				return num_of_bytes;
 			}
 			else {
@@ -1160,7 +1178,7 @@ var BindingSupportLib = {
 
 		return BINDING.js_typedarray_to_array(requireObject);
 	},
-	mono_wasm_typed_array_copy_to: function(js_handle, pinned_array, length, bytes_per_element, is_exception) {
+	mono_wasm_typed_array_copy_to: function(js_handle, pinned_array, begin, end, bytes_per_element, is_exception) {
 		BINDING.bindings_lazy_init ();
 
 		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
@@ -1169,7 +1187,7 @@ var BindingSupportLib = {
 			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
 		}
 
-		var res = BINDING.typedarray_copy_to(requireObject, pinned_array, length, bytes_per_element);
+		var res = BINDING.typedarray_copy_to(requireObject, pinned_array, begin, end, bytes_per_element);
 		return BINDING.js_to_mono_obj (res)
 	},
 	mono_wasm_typed_array_from_array: function(mono_array, is_exception) {

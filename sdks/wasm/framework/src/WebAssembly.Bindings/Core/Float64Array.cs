@@ -39,20 +39,6 @@ namespace WebAssembly.Core {
 			}
 		}
 
-		public unsafe int CopyTo (double [] target)
-		{
-			// target array has to be instantiated.
-			ValidateTarget (target);
-
-			fixed (double* pTarget = target) {
-				var res = Runtime.TypedArrayCopyTo (JSHandle, (int)pTarget, target.Length, sizeof (double), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)((int)res / sizeof (double));
-			}
-
-		}
-
 		/// <summary>
 		/// From the specified segment.
 		/// </summary>
