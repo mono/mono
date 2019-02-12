@@ -10,6 +10,9 @@
 // System.Drawing.Primitives/ref:
 namespace System.Drawing
 {
+
+#if !MONODROID
+
     public readonly partial struct Color : System.IEquatable<System.Drawing.Color>
     {
         private readonly object _dummy;
@@ -565,6 +568,9 @@ namespace System.Drawing
         public System.Drawing.Size ToSize() { throw new PlatformNotSupportedException(); }
         public override string ToString() { throw new PlatformNotSupportedException(); }
     }
+
+#endif // !MONODROID
+
 }
 
 // System.Drawing.Common/ref:
@@ -1690,6 +1696,9 @@ namespace System.Drawing
         public static System.Drawing.Brush WindowText { get { throw new PlatformNotSupportedException(); } }
         public static System.Drawing.Brush FromSystemColor(System.Drawing.Color c) { throw new PlatformNotSupportedException(); }
     }
+
+#if !MONODROID
+
     public static partial class SystemColors
     {
         public static System.Drawing.Color ActiveBorder { get { throw new PlatformNotSupportedException(); } }
@@ -1726,6 +1735,9 @@ namespace System.Drawing
         public static System.Drawing.Color WindowFrame { get { throw new PlatformNotSupportedException(); } }
         public static System.Drawing.Color WindowText { get { throw new PlatformNotSupportedException(); } }
     }
+
+#endif // !MONODROID
+
     public static partial class SystemFonts
     {
         public static System.Drawing.Font CaptionFont { get { throw new PlatformNotSupportedException(); } }
