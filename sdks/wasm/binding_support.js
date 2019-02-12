@@ -427,26 +427,12 @@ var BindingSupportLib = {
 
 				// offset index into the view
 				var offset = begin * bytes_per_element;
-				//// Set view bytes to value from HEAPU8
-				//typedarrayBytes.set(Module.HEAPU8.subarray(pinned_array + offset, pinned_array + offset + num_of_bytes));
 
-				// Create an array pointed to by the pinned array address
+				// Create a view over the heap pointed to by the pinned array address
 				var heapBytes = new Uint8Array(Module.HEAPU8.buffer, pinned_array + offset, num_of_bytes);
 				// Copy the bytes of the typed array to the heap.
 				heapBytes.set(new Uint8Array(typed_array.buffer, typed_array.byteOffset, num_of_bytes));
 
-				// how much space we have to work with
-				// var num_of_bytes = length * bytes_per_element;
-				// // how much typed buffer space are we talking about
-				// var view_bytes = typed_array.length * typed_array.BYTES_PER_ELEMENT;
-				// // only use what is needed.
-				// if (num_of_bytes > view_bytes)
-				// 	num_of_bytes = view_bytes;
-
-				// // Create an array pointed to by the pinned array address
-				// var heapBytes = new Uint8Array(Module.HEAPU8.buffer, pinned_array, num_of_bytes);
-				// // Copy the bytes of the typed array to the heap.
-				// heapBytes.set(new Uint8Array(typed_array.buffer, typed_array.byteOffset, num_of_bytes));
 				return num_of_bytes;
 			}
 			else {
