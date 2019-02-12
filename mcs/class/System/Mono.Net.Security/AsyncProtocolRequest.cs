@@ -70,7 +70,10 @@ namespace Mono.Net.Security
 		{
 			Offset = Size = 0;
 			TotalBytes = 0;
-			Buffer = new byte[InitialSize];
+			if (Buffer.Length <= InitialSize)
+			    Array.Clear (Buffer, 0, Buffer.Length);
+			else
+			    Buffer = new byte[InitialSize];
 			Complete = false;
 		}
 
