@@ -152,6 +152,7 @@
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="System.Resources\ManifestBasedResourceGroveler.cs" />
       <Compile Include="System.Runtime\GCSettings.cs" />
+      <Compile Include="System.Runtime.CompilerServices\DependentHandle.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeFeature.cs" />
       <Compile Include="System.Runtime.InteropServices\CriticalHandle.cs" />
@@ -210,7 +211,6 @@
 
       <Compile Include="..\corlib\System.Runtime.InteropServices\SafeHandle.cs" />
 
-      <Compile Include="..\corlib\System.Runtime.CompilerServices\ConditionalWeakTable.cs" />
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
       <Compile Include="..\corlib\System.Runtime.CompilerServices\RuntimeHelpers.cs" />
 
