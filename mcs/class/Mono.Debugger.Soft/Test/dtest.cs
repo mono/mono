@@ -4829,8 +4829,7 @@ public class DebuggerTests
 
 	}
 	[Test]
-	public void IfPropertyStepping ()
-	{
+	public void IfPropertyStepping () {
 		Event e = run_until ("if_property_stepping");
 		var req = create_step (e);
 		req.Enable ();
