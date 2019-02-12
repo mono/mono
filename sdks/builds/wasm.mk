@@ -83,6 +83,12 @@ clean-wasm-runtime:
 
 $(eval $(call TargetTemplate,wasm,runtime))
 
+.PHONY: configure-wasm
+configure-wasm: configure-wasm-runtime
+
+.PHONY: build-wasm
+build-wasm: build-wasm-runtime
+
 .PHONY: archive-wasm
 archive-wasm: package-wasm-runtime
 
