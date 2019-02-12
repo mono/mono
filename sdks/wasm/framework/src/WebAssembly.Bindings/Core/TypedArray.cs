@@ -3,30 +3,21 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace WebAssembly.Core {
+	///
 	public abstract class TypedArray<T, U> : CoreObject, ITypedArray, ITypedArray<T, U> { 
 		protected TypedArray () : base (Runtime.New<T> ())
-		{
-			Console.WriteLine ($"typedarray: {typeof(T).Name}");
-		}
+		{ }
 		protected TypedArray (int length) : base (Runtime.New<T> (length))
-		{
-			Console.WriteLine ($"typedarray: {typeof (T).Name} / {length}");
-		}
+		{ }
 
 		protected TypedArray (ArrayBuffer buffer) : base (Runtime.New<T> (buffer))
-		{
-			Console.WriteLine ($"typedarray: {typeof (T).Name} / {buffer}");
-		}
+		{ }
 
 		protected TypedArray (ArrayBuffer buffer, int byteOffset) : base (Runtime.New<T> (buffer, byteOffset))
-		{
-			Console.WriteLine ($"typedarray: {typeof (T).Name} / {buffer} -> {byteOffset}");
-		}
+		{ }
 
 		protected TypedArray (ArrayBuffer buffer, int byteOffset, int length) : base (Runtime.New<T> (buffer, byteOffset, length))
-		{
-			Console.WriteLine ($"typedarray: {typeof (T).Name} / {buffer} -> {byteOffset} - {length}");
-		}
+		{ }
 
 		internal TypedArray (IntPtr js_handle) : base (js_handle)
 		{ }
@@ -80,12 +71,81 @@ namespace WebAssembly.Core {
 			return (T)res;
 		}
 
+		private unsafe int CopyFrom (void* pTarget, int offset, int count)
+		{
+			var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, offset, offset + count, Marshal.SizeOf<U>(), out int exception);
+			if (exception != 0)
+				throw new JSException ((string)res);
+			return (int)res / Marshal.SizeOf<U> ();
+
+		}
+
+		/// <summary>
+		/// Copies from a memory address to a <see cref="T:WebAssembly.Core.TypedArray`2"/>.
+		/// </summary>
+		/// <returns>The from.</returns>
+		/// <param name="source">Source.</param>
+		/// <param name="count">Count.</param>
+		public unsafe int CopyFrom (IntPtr source, int count) => CopyFrom (source.ToPointer(), 0, count);
+
+		/// <summary>
+		/// Copies from an array to a <see cref="T:WebAssembly.Core.TypedArray`2"/>
+		/// </summary>
+		/// <returns>The from.</returns>
+		/// <param name="source">Source.</param>
+		public int CopyFrom (U [] source) => CopyFrom (source, 0, source.Length);
+
+		/// <summary>
+		/// Copies from an array to a <see cref="T:WebAssembly.Core.TypedArray`2"/>.
+		/// </summary>
+		/// <returns>The from.</returns>
+		/// <param name="source">Source.</param>
+		/// <param name="offset">Offset.</param>
+		/// <param name="count">Count.</param>
+		public unsafe int CopyFrom (U [] source, int offset, int count)
+		{
+			// target array has to be instantiated.
+			ValidateSource (source, offset, count);
+
+			// The following pins the location of the source object in memory
+			// so that they will not be moved by garbage collection.
+			GCHandle sourceHandle = GCHandle.Alloc (source, GCHandleType.Pinned);
+
+			try {
+				var ptr = sourceHandle.AddrOfPinnedObject ();
+				return CopyFrom (ptr.ToPointer(), offset, count);
+
+			} finally {
+				sourceHandle.Free ();
+			}
+		}
+
+		/// <summary>
+		/// Copies from <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.TypedArray`2"/>.
+		/// </summary>
+		/// <returns>The number of bytes copied.</returns>
+		/// <param name="source">Source.</param>
+		public int CopyFrom (ArraySegment<U> source) => CopyFrom (source.Array, source.Offset, source.Count);
 
 		protected void ValidateTarget(U[] target)
 		{
 			// target array has to be instantiated.
 			if (target == null || target.Length == 0) {
 				throw new System.ArgumentException ($"Invalid argument: {nameof (target)} can not be null and must have a length");
+			}
+
+		}
+
+		protected void ValidateTarget (U [] target, int offset, int count)
+		{
+			ValidateTarget (target);
+			// offset can not be past the end of the array
+			if (offset > target.Length) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} can not be greater than length of '{nameof(target)}'");
+			}
+			// offset plus count can not pass the end of the array.
+			if (offset + count > target.Length) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} plus {nameof(count)} can not be greater than length of '{nameof (target)}'");
 			}
 
 		}
@@ -99,6 +159,19 @@ namespace WebAssembly.Core {
 
 		}
 
+		protected void ValidateSource (U [] source, int offset, int count)
+		{
+			ValidateSource (source);
+			// offset can not be past the end of the array
+			if (offset > source.Length) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} can not be greater than length of '{nameof (source)}'");
+			}
+			// offset plus count can not pass the end of the array.
+			if (offset + count > source.Length) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} plus {nameof (count)} can not be greater than length of '{nameof (source)}'");
+			}
+
+		}
 
 		protected static void ValidateFromSource (U [] source)
 		{
@@ -109,6 +182,24 @@ namespace WebAssembly.Core {
 
 		}
 
+
+		protected static void ValidateFromSource (U [] source, int offset, int count)
+		{
+			// target array has to be instantiated.
+			if (source == null || source.Length == 0) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null and must have a length");
+			}
+
+			// offset can not be past the end of the array
+			if (offset > source.Length) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} can not be greater than length of '{nameof (source)}'");
+			}
+			// offset plus count can not pass the end of the array.
+			if (offset + count > source.Length) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} plus {nameof (count)} can not be greater than length of '{nameof (source)}'");
+			}
+
+		}
 
 	}
 }

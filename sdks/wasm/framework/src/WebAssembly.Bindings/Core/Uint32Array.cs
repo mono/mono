@@ -1,6 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	public class Uint32Array : TypedArray<Uint32Array, uint> {
+	public sealed class Uint32Array : TypedArray<Uint32Array, uint> {
 		public Uint32Array () { }
 
 		public Uint32Array (int length) : base (length) { }
@@ -53,50 +53,24 @@ namespace WebAssembly.Core {
 
 		}
 
-		public unsafe int CopyFrom (uint [] target)
-		{
-			// target array has to be instantiated.
-			ValidateTarget (target);
-
-			fixed (uint* pTarget = target) {
-				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, target.Length, sizeof (uint), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)res / sizeof (uint);
-			}
-
-		}
-
 		/// <summary>
-		/// Copies from an array to a <see cref="T:WebAssembly.Core.Uint32Array"/>/>.
+		/// From the specified segment.
 		/// </summary>
 		/// <returns>The from.</returns>
-		/// <param name="source">Source.</param>
-		/// <param name="offset">Offset.</param>
-		/// <param name="count">Count.</param>
-		public unsafe int CopyFrom (uint [] source, int offset, int count)
+		/// <param name="segment">Segment.</param>
+		public static Uint32Array From (ArraySegment<uint> segment)
 		{
-			// target array has to be instantiated.
-			ValidateSource (source, offset, count);
-
-			// The following fixed statement pins the location of the target object in memory
-			// so that they will not be moved by garbage collection.
-			fixed (uint* pTarget = &source [offset]) {
-
-				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, count, sizeof (uint), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)res / sizeof (uint);
-			}
-
+			var ta = new Uint32Array (segment.Count);
+			ta.CopyFrom (segment);
+			return ta;
 		}
 
 		/// <summary>
-		/// Copies from <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Uint32Array"/>/>.
+		/// Defines an implicit conversion of a <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Uint32Array"/>/>
 		/// </summary>
-		/// <returns>The number of bytes copied.</returns>
-		/// <param name="source">Source.</param>
-		public int CopyFrom (ArraySegment<uint> source) => CopyFrom (source.Array, source.Offset, source.Count);
+		/// <returns>The implicit.</returns>
+		/// <param name="segment">ArraySegment</param>
+		public static implicit operator Uint32Array (ArraySegment<uint> segment) => From (segment);
 
 
 		/// <summary>

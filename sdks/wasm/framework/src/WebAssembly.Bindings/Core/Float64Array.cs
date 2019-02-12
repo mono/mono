@@ -1,6 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	public class Float64Array : TypedArray<Float64Array, double> {
+	public sealed class Float64Array : TypedArray<Float64Array, double> {
 		public Float64Array () { }
 
 		public Float64Array (int length) : base (length) { }
@@ -24,9 +24,9 @@ namespace WebAssembly.Core {
 					throw new JSException ((string)indexValue);
 
 				if (indexValue != null)
-					// The value returned from the index will be an int32 so use Convert to
+					// The value returned from the index can be an int32 so use Convert to
 					// return a byte value.  
-					return (double)indexValue;
+					return Convert.ToDouble(indexValue);
 				else
 					return null;
 			}
@@ -53,50 +53,25 @@ namespace WebAssembly.Core {
 
 		}
 
-		public unsafe int CopyFrom (double [] target)
-		{
-			// target array has to be instantiated.
-			ValidateTarget (target);
-
-			fixed (double* pTarget = target) {
-				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, target.Length, sizeof (double), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)res / sizeof (double);
-			}
-
-		}
-
 		/// <summary>
-		/// Copies from an array to a <see cref="T:WebAssembly.Core.Float64Array"/>/>.
+		/// From the specified segment.
 		/// </summary>
 		/// <returns>The from.</returns>
-		/// <param name="source">Source.</param>
-		/// <param name="offset">Offset.</param>
-		/// <param name="count">Count.</param>
-		public unsafe int CopyFrom (double [] source, int offset, int count)
+		/// <param name="segment">Segment.</param>
+		public static Float64Array From (ArraySegment<double> segment)
 		{
-			// target array has to be instantiated.
-			ValidateSource (source, offset, count);
-
-			// The following fixed statement pins the location of the target object in memory
-			// so that they will not be moved by garbage collection.
-			fixed (double* pTarget = &source [offset]) {
-
-				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, count, sizeof (double), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)res / sizeof (double);
-			}
-
+			var ta = new Float64Array (segment.Count);
+			ta.CopyFrom (segment);
+			return ta;
 		}
 
 		/// <summary>
-		/// Copies from <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Float64Array"/>/>.
+		/// Defines an implicit conversion of a <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Float64Array"/>/>
 		/// </summary>
-		/// <returns>The number of bytes copied.</returns>
-		/// <param name="source">Source.</param>
-		public int CopyFrom (ArraySegment<double> source) => CopyFrom (source.Array, source.Offset, source.Count);
+		/// <returns>The implicit.</returns>
+		/// <param name="segment">ArraySegment</param>
+		public static implicit operator Float64Array (ArraySegment<double> segment) => From (segment);
+
 
 		/// <summary>
 		/// Defines an implicit conversion of an array to a <see cref="T:WebAssembly.Core.Float64Array"/>./>

@@ -1,6 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	public class Int16Array : TypedArray<Int16Array, short> {
+	public sealed class Int16Array : TypedArray<Int16Array, short> {
 		public Int16Array () { }
 
 		public Int16Array (int length) : base (length) { }
@@ -54,50 +54,25 @@ namespace WebAssembly.Core {
 
 		}
 
-		public unsafe int CopyFrom (short [] target)
-		{
-			// target array has to be instantiated.
-			ValidateTarget (target);
-
-			fixed (short* pTarget = target) {
-				var res = Runtime.TypedArrayCopyTo (JSHandle, (int)pTarget, target.Length, sizeof (short), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)res / sizeof (short);
-			}
-
-		}
-
 		/// <summary>
-		/// Copies from an array to a <see cref="T:WebAssembly.Core.Int16Array"/>/>.
+		/// From the specified segment.
 		/// </summary>
 		/// <returns>The from.</returns>
-		/// <param name="source">Source.</param>
-		/// <param name="offset">Offset.</param>
-		/// <param name="count">Count.</param>
-		public unsafe int CopyFrom (short [] source, int offset, int count)
+		/// <param name="segment">Segment.</param>
+		public static Int16Array From (ArraySegment<short> segment)
 		{
-			// target array has to be instantiated.
-			ValidateSource (source, offset, count);
-
-			// The following fixed statement pins the location of the target object in memory
-			// so that they will not be moved by garbage collection.
-			fixed (short* pTarget = &source [offset]) {
-
-				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, count, sizeof (short), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)res / sizeof (short);
-			}
-
+			var ta = new Int16Array (segment.Count);
+			ta.CopyFrom (segment);
+			return ta;
 		}
 
 		/// <summary>
-		/// Copies from <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Int16Array"/>/>.
+		/// Defines an implicit conversion of a <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Int16Array"/>/>
 		/// </summary>
-		/// <returns>The number of bytes copied.</returns>
-		/// <param name="source">Source.</param>
-		public int CopyFrom (ArraySegment<short> source) => CopyFrom (source.Array, source.Offset, source.Count);
+		/// <returns>The implicit.</returns>
+		/// <param name="segment">ArraySegment</param>
+		public static implicit operator Int16Array (ArraySegment<short> segment) => From (segment);
+
 
 		/// <summary>
 		/// Defines an implicit conversion of an array to a <see cref="T:WebAssembly.Core.Int16Array"/>./>

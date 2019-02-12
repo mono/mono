@@ -1,6 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Core {
-	public class Int8Array : TypedArray<Int8Array, sbyte> {
+	public sealed class Int8Array : TypedArray<Int8Array, sbyte> {
 		public Int8Array ()
 		{ }
 
@@ -61,52 +61,25 @@ namespace WebAssembly.Core {
 
 		}
 
-		public unsafe int CopyFrom (sbyte [] source)
-		{
-			// target array has to be instantiated.
-			ValidateSource (source);
-
-			// The following fixed statement pins the location of the target object in memory
-			// so that they will not be moved by garbage collection.
-			fixed (sbyte* pTarget = source) {
-				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, source.Length, sizeof (sbyte), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)((int)res / sizeof (sbyte));
-			}
-
-		}
-
 		/// <summary>
-		/// Copies from an array to a <see cref="T:WebAssembly.Core.Int8Array"/>/>.
+		/// From the specified segment.
 		/// </summary>
 		/// <returns>The from.</returns>
-		/// <param name="source">Source.</param>
-		/// <param name="offset">Offset.</param>
-		/// <param name="count">Count.</param>
-		public unsafe int CopyFrom (sbyte [] source, int offset, int count)
+		/// <param name="segment">Segment.</param>
+		public static Int8Array From (ArraySegment<sbyte> segment)
 		{
-			// target array has to be instantiated.
-			ValidateSource (source, offset, count);
-
-			// The following fixed statement pins the location of the target object in memory
-			// so that they will not be moved by garbage collection.
-			fixed (sbyte* pTarget = &source [offset]) {
-
-				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)pTarget, count, sizeof (sbyte), out int exception);
-				if (exception != 0)
-					throw new JSException ((string)res);
-				return (int)res / sizeof (sbyte);
-			}
-
+			var ta = new Int8Array (segment.Count);
+			ta.CopyFrom (segment);
+			return ta;
 		}
 
 		/// <summary>
-		/// Copies from <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Int8Array"/>/>.
+		/// Defines an implicit conversion of a <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Int8Array"/>/>
 		/// </summary>
-		/// <returns>The number of bytes copied.</returns>
-		/// <param name="source">Source.</param>
-		public int CopyFrom (ArraySegment<sbyte> source) => CopyFrom (source.Array, source.Offset, source.Count);
+		/// <returns>The implicit.</returns>
+		/// <param name="segment">ArraySegment</param>
+		public static implicit operator Int8Array (ArraySegment<sbyte> segment) => From (segment);
+
 
 		/// <summary>
 		/// Defines an implicit conversion of an array to a <see cref="T:WebAssembly.Core.Int8Array"/>./>

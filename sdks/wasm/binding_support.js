@@ -438,7 +438,7 @@ var BindingSupportLib = {
 		},	
 		// Copy the pinned array address from pinned_array allocated on the heap to the typed array.
 		// 	 adress of managed pinned array -> copy from heap -> typed array memory
-		typedarray_copy_from : function (typed_array, pinned_array, length, bytes_per_element) {
+		typedarray_copy_from : function (typed_array, pinned_array, begin, end, bytes_per_element) {
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
 			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
@@ -457,7 +457,7 @@ var BindingSupportLib = {
 					throw new Error("Inconsistent element sizes: TypedArray.BYTES_PER_ELEMENT '" + typed_array.BYTES_PER_ELEMENT + "' sizeof managed element: '" + bytes_per_element + "'");
 
 				// how much space we have to work with
-				var num_of_bytes = length * bytes_per_element;
+				var num_of_bytes = (end - begin) * bytes_per_element;
 				// how much typed buffer space are we talking about
 				var view_bytes = typed_array.length * typed_array.BYTES_PER_ELEMENT;
 				// only use what is needed.
@@ -466,8 +466,10 @@ var BindingSupportLib = {
 
 				// Create a new view for mapping
 				var typedarrayBytes = new Uint8Array(typed_array.buffer, 0, num_of_bytes);
+				// offset index into the view
+				var offset = begin * bytes_per_element;
 				// Set view bytes to value from HEAPU8
-				typedarrayBytes.set(Module.HEAPU8.subarray(pinned_array, pinned_array + num_of_bytes));
+				typedarrayBytes.set(Module.HEAPU8.subarray(pinned_array + offset, pinned_array + offset + num_of_bytes));
 				return num_of_bytes;
 			}
 			else {
@@ -1176,7 +1178,7 @@ var BindingSupportLib = {
 		
 		return BINDING.js_to_mono_obj (res);
 	},
-	mono_wasm_typed_array_copy_from: function(js_handle, pinned_array, length, bytes_per_element, is_exception) {
+	mono_wasm_typed_array_copy_from: function(js_handle, pinned_array, begin, end, bytes_per_element, is_exception) {
 		BINDING.bindings_lazy_init ();
 
 		var requireObject = BINDING.mono_wasm_require_handle (js_handle);
@@ -1185,7 +1187,7 @@ var BindingSupportLib = {
 			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
 		}
 
-		var res = BINDING.typedarray_copy_from(requireObject, pinned_array, length, bytes_per_element);
+		var res = BINDING.typedarray_copy_from(requireObject, pinned_array, begin, end, bytes_per_element);
 		return BINDING.js_to_mono_obj (res)
 	},
 
