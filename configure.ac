@@ -1219,7 +1219,8 @@ elif test x$with_runtime_preset = xbitcode; then
    with_testing_aot_full_default=yes
    with_bitcode_default=yes
    enable_cooperative_suspend_default=yes
-   TEST_PROFILE=testing_aot_full
+   # FIXME: use TEST_PROFILE=testing_aot_full
+   TEST_PROFILE=testing_aot_bitcode
    enable_llvm_default=yes
 
    mono_feature_disable_com='yes'
@@ -1228,7 +1229,8 @@ elif test x$with_runtime_preset = xbitcode; then
    mono_feature_disable_reflection_emit='yes'
    mono_feature_disable_appdomains='yes'
 
-   AOT_BUILD_FLAGS="--runtime=mobile --aot=llvmonly,$INVARIANT_AOT_OPTIONS"
+   # We need at least clang++-6.0 to read the LLVM IR produced by the runtime
+   AOT_BUILD_FLAGS="--runtime=mobile --aot=llvmonly,clangxx=clang++-6.0,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --llvmonly"
    AOT_MODE="llvmonly"
 elif test x$with_runtime_preset = xfullaot; then
