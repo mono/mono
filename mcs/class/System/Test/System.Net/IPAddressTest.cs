@@ -329,7 +329,7 @@ public class IPAddressTest
 				Assert.Fail ("#1:" + i + " (" + ipAddress + ")");
 			} catch (FormatException ex) {
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#2:" + i);
-				Assert.IsNull (ex.InnerException, "#3:" + i);
+				Assert.IsNotNull (ex.InnerException, "#3:" + i);
 				Assert.IsNotNull (ex.Message, "#4:" + i);
 			}
 		}
@@ -667,19 +667,6 @@ public class IPAddressTest
 		}
 
 	}
-
-	[Test]
-	[Category ("NotDotNet")]
-	public void UnixInterfaceNameAsZoneIndex ()
-	{
-		var ip = IPAddress.Parse ("fe80::bae8:56ff:fe47:af7e%en0");
-
-		// Should be en0 but it's of long type!
-		Assert.AreEqual (0, ip.ScopeId);
-		
-		Assert.AreEqual ("fe80::bae8:56ff:fe47:af7e", ip.ToString ());
-	}
-
 }
 }
 
