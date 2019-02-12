@@ -981,9 +981,6 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("Contains", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
-#if MONO
-                    yield return typeof(String).GetMethod("Contains", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char) }, null);
-#endif
                 }
 
                 // Translation:
@@ -1014,9 +1011,6 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
-#if MONO
-                    yield return typeof(String).GetMethod("IndexOf", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char) }, null);
-#endif
                 }
 
                 // Translation:
@@ -1039,9 +1033,6 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("StartsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
-#if MONO
-                    yield return typeof(String).GetMethod("StartsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char) }, null);
-#endif
                 }
 
                 // Translation:
@@ -1073,9 +1064,6 @@ namespace System.Data.Objects.ELinq
                 private static IEnumerable<MethodInfo> GetMethods()
                 {
                     yield return typeof(String).GetMethod("EndsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
-#if MONO
-                    yield return typeof(String).GetMethod("EndsWith", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(char) }, null);
-#endif
                 }
 
                 // Translation:
