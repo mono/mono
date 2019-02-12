@@ -2118,11 +2118,9 @@ collect_pred_seq_points (TransformData *td, InterpBasicBlock *bb, SeqPoint *seqp
 static void
 save_seq_points (TransformData *td, MonoJitInfo *jinfo)
 {
-	InterpMethod *rtm = td->rtm;
 	GByteArray *array;
 	int i, seq_info_size;
 	MonoSeqPointInfo *info;
-	MonoDomain *domain = mono_domain_get ();
 	GSList **next = NULL;
 	GList *bblist;
 
