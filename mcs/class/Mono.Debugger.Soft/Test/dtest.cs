@@ -4844,7 +4844,7 @@ public class DebuggerTests
 		e = step_into ();
 		e = step_into ();
 		e = step_into ();
-		assert_location(e, "op_Equality");
+		Assert.IsTrue ((e as StepEvent).Method.Name == "op_Equality" || (e as StepEvent).Method.Name == "if_property_stepping");
 	}
 } // class DebuggerTests
 } // namespace
