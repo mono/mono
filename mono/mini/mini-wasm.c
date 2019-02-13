@@ -522,6 +522,18 @@ mono_runtime_cleanup_handlers (void)
 {
 }
 
+void
+mono_init_native_crash_info (void)
+{
+	return;
+}
+
+void
+mono_cleanup_native_crash_info (void)
+{
+	return;
+}
+
 gboolean
 mono_thread_state_init_from_handle (MonoThreadUnwindState *tctx, MonoThreadInfo *info, void *sigctx)
 {

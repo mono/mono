@@ -100,6 +100,28 @@ emit_struct_conv (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object);
 static void
 emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object, int offset_of_first_child_field, MonoMarshalNative string_encoding);
 
+/**
+ * mono_mb_strdup:
+ * \param mb the MethodBuilder
+ * \param s a string
+ *
+ * Creates a copy of the string \p s that can be referenced from the IL of \c mb.
+ *
+ * \returns a pointer to the new string which is owned by the method builder
+ */
+char*
+mono_mb_strdup (MonoMethodBuilder *mb, const char *s)
+{
+	char *res;
+	if (!mb->dynamic)
+		res = mono_image_strdup (get_method_image (mb->method), s);
+	else
+		res = g_strdup (s);
+	return res;
+}
+
+
+
 /*
  * mono_mb_emit_exception_marshal_directive:
  *
@@ -108,14 +130,8 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 static void
 mono_mb_emit_exception_marshal_directive (MonoMethodBuilder *mb, char *msg)
 {
-	char *s;
-
-	if (!mb->dynamic) {
-		s = mono_image_strdup (get_method_image (mb->method), msg);
-		g_free (msg);
-	} else {
-		s = g_strdup (msg);
-	}
+	char *s = mono_mb_strdup (mb, msg);
+	g_free (msg);
 	mono_mb_emit_exception_full (mb, "System.Runtime.InteropServices", "MarshalDirectiveException", s);
 }
 
@@ -1028,12 +1044,20 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 					mono_mb_emit_byte (mb, mono_type_to_stind (ftype));
 				}
 				break;
+			case MONO_TYPE_GENERICINST:
+				if (!mono_type_generic_inst_is_valuetype (ftype)) {
+					char *msg = g_strdup_printf ("Generic type %s cannot be marshaled as field in a struct.",
+						mono_type_full_name (ftype));
+					mono_mb_emit_exception_marshal_directive (mb, msg);
+					break;
+				}
+				/* fall through */
 			case MONO_TYPE_VALUETYPE: {
 				int src_var, dst_var;
 				MonoType *etype;
 				int len;
 
-				if (m_class_is_enumtype (ftype->data.klass)) {
+				if (t == MONO_TYPE_VALUETYPE && m_class_is_enumtype (ftype->data.klass)) {
 					ftype = mono_class_enum_basetype_internal (ftype->data.klass);
 					goto handle_enum;
 				}
@@ -1059,7 +1083,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 				if (get_fixed_buffer_attr (info->fields [i].field, &etype, &len)) {
 					emit_fixed_buf_conv (mb, ftype, etype, len, to_object, &usize);
 				} else {
-					emit_struct_conv (mb, ftype->data.klass, to_object);
+					emit_struct_conv (mb, mono_class_from_mono_type_internal (ftype), to_object);
 				}
 
 				/* restore the old src pointer */
@@ -6513,6 +6537,12 @@ mb_emit_exception_ilgen (MonoMethodBuilder *mb, const char *exc_nspace, const ch
 }
 
 static void
+mb_emit_exception_for_error_ilgen (MonoMethodBuilder *mb, const MonoError *error)
+{
+	mono_mb_emit_exception_for_error (mb, (MonoError*)error);
+}
+
+static void
 emit_vtfixup_ftnptr_ilgen (MonoMethodBuilder *mb, MonoMethod *method, int param_count, guint16 type)
 {
 	for (int i = 0; i < param_count; i++)
@@ -6586,6 +6616,7 @@ mono_marshal_ilgen_init (void)
 	cb.mb_skip_visibility = mb_skip_visibility_ilgen;
 	cb.mb_set_dynamic = mb_set_dynamic_ilgen;
 	cb.mb_emit_exception = mb_emit_exception_ilgen;
+	cb.mb_emit_exception_for_error = mb_emit_exception_for_error_ilgen;
 	cb.mb_emit_byte = mb_emit_byte_ilgen;
 	mono_install_marshal_callbacks (&cb);
 }

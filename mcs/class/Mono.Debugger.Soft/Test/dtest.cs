@@ -4603,6 +4603,25 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void InspectEnumeratorInGenericStruct() {
+		//files.myBucket.GetEnumerator().get_Current().Key watching this generates an exception in Debugger
+		Event e = run_until("inspect_enumerator_in_generic_struct");
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over();
+		StackFrame frame = e.Thread.GetFrames () [0];
+		var ginst = frame.Method.GetLocal ("generic_struct");
+		Value variable = frame.GetValue (ginst);
+		StructMirror thisObj = (StructMirror)variable;
+		TypeMirror thisType = thisObj.Type;
+		variable = thisObj.InvokeMethod(e.Thread, thisType.GetMethod("get_Current"), null);
+		thisObj = (StructMirror)variable;
+		thisType = thisObj.Type;
+		AssertValue ("f1", thisObj["value"]);
+	}
+
+	[Test]
 	public void CheckElapsedTime() {
 		Event e = run_until ("elapsed_time");
 
@@ -4787,6 +4806,45 @@ public class DebuggerTests
 		var mirror = (StructMirror)v;
 		AssertValue (1, mirror["i"]);
 		AssertValue (2.0, mirror["d"]);
+	}
+
+	[Test]
+	public void FieldWithUnsafeCastValue() {
+		Event e = run_until("field_with_unsafe_cast_value");
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over();
+		e = step_over();
+		e = step_over();
+		e = step_over();
+		e = step_over();
+		var frame = e.Thread.GetFrames () [0];
+		var ginst = frame.Method.GetLocal ("bytes");
+		Value variable = frame.GetValue (ginst);
+		StructMirror thisObj = (StructMirror)variable;
+		TypeMirror thisType = thisObj.Type;
+		variable = thisObj.InvokeMethod(e.Thread, thisType.GetMethod("ToString"), null);
+		AssertValue ("abc", variable);
+
+	}
+	[Test]
+	public void IfPropertyStepping () {
+		Event e = run_until ("if_property_stepping");
+		var req = create_step (e);
+		req.Enable ();
+		e = step_once ();
+		e = step_over ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		Assert.IsTrue ((e as StepEvent).Method.Name == "op_Equality" || (e as StepEvent).Method.Name == "if_property_stepping");
 	}
 } // class DebuggerTests
 } // namespace

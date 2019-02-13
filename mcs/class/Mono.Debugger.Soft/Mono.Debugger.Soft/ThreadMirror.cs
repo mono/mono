@@ -31,6 +31,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		public long ElapsedTime () {
+			vm.CheckProtocolVersion (2, 50);
 			long elapsedTime = GetElapsedTime ();
 			return elapsedTime;
 		}

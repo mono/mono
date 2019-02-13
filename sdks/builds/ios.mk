@@ -10,7 +10,7 @@
 # Where <target> is: target32, target32s, target64, sim32, sim64, cross32, cross64
 #
 
-PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
+ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ##
 # Device builds
@@ -34,8 +34,8 @@ PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 #
 define iOSDeviceTemplate
 
-_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
-_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_c_bigendian=no \
@@ -117,7 +117,7 @@ watchos5_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/S
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes --with-monotouch-tv
 ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes --with-monotouch-watch
-ios-targetwatch64_32_CONFIGURE_FLAGS = --enable-cooperative-suspend --with-bitcode=yes --with-monotouch-watch
+ios-targetwatch64_32_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes --with-monotouch-watch
 
 ios-target32_SYSROOT = $(ios_sysroot)
 ios-target32s_SYSROOT = $(ios_sysroot)
@@ -129,7 +129,7 @@ ios-targetwatch64_32_SYSROOT = $(watchos5_sysroot)
 ios-target32_CPPFLAGS = -DHOST_IOS
 ios-target32s_CPPFLAGS = -DHOST_IOS
 ios-target64_CPPFLAGS = -DHOST_IOS
-ios-targettv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+ios-targettv_CPPFLAGS = -DHOST_IOS -DHOST_TVOS
 ios-targetwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 ios-targetwatch64_32_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
@@ -186,8 +186,8 @@ $(eval $(call iOSDeviceTemplate,targetwatch64_32,aarch64-apple-darwin10_ilp32,ar
 #
 define iOSSimulatorTemplate
 
-_ios-$(1)_CC=$$(CCACHE) $$(PLATFORM_BIN)/clang
-_ios-$(1)_CXX=$$(CCACHE) $$(PLATFORM_BIN)/clang++
+_ios-$(1)_CC=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang
+_ios-$(1)_CXX=$$(CCACHE) $$(ios_PLATFORM_BIN)/clang++
 
 _ios-$(1)_AC_VARS= \
 	ac_cv_func_clock_nanosleep=no \
@@ -233,8 +233,6 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--disable-hybrid-suspend \
 	--disable-crash-reporting
 
-# _ios-$(1)_CONFIGURE_FLAGS += --enable-extension-module=xamarin
-
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
@@ -255,7 +253,7 @@ ios-simwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend
 
 ios-sim32_CPPFLAGS = -DHOST_IOS
 ios-sim64_CPPFLAGS = -DHOST_IOS
-ios-simtv_CPPFLAGS = -DHOST_APPLETVOS -DTARGET_APPLETVOS
+ios-simtv_CPPFLAGS = -DHOST_IOS -DHOST_TVOS
 ios-simwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
 ios-simtv_AC_VARS = \
@@ -337,17 +335,19 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-dtrace=no \
 	--enable-icall-symbol-map \
 	--enable-minimal=com,remoting \
+	--enable-monotouch \
 	--disable-crash-reporting
 
-$$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3)-darwin,$(4),$(5),$(6)))
+$$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3),$(4),$(5),$(6)))
 
 endef
 
-$(eval $(call iOSCrossTemplate,cross32,i386,arm,target32,llvm36-llvm32,arm-apple-darwin10,$(XCODE32_DIR)))
-$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64,target64,llvm-llvm64,aarch64-apple-darwin10,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,cross32,i386,arm-darwin,target32,llvm36-llvm32,arm-apple-darwin10,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64-darwin,target64,llvm-llvm64,aarch64-apple-darwin10,$(XCODE_DIR)))
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
-$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown,targetwatch,llvm36-llvm32,armv7k-apple-darwin,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,crosswatch,i386,armv7k-unknown-darwin,targetwatch,llvm36-llvm32,armv7k-apple-darwin,$(XCODE32_DIR)))
+$(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,targetwatch64_32,llvm-llvm64,armv7k-apple-darwin_ilp32,$(XCODE_DIR)))
 # 64->arm32 cross compiler
-$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE_DIR)))
+$(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE_DIR)))
 
 $(eval $(call BclTemplate,ios,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime monotouch_tools,monotouch monotouch_tv monotouch_watch))

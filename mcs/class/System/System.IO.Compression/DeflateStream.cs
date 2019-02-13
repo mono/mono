@@ -349,6 +349,7 @@ namespace System.IO.Compression
 		GCHandle data;
 		bool disposed;
 		byte [] io_buffer;
+		Exception last_error;
 
 		private DeflateStreamNative ()
 		{
@@ -430,7 +431,15 @@ namespace System.IO.Compression
 				io_buffer = new byte [BufferSize];
 
 			int count = Math.Min (length, io_buffer.Length);
-			int n = base_stream.Read (io_buffer, 0, count);
+			int n;
+
+			try {
+				n = base_stream.Read (io_buffer, 0, count);
+			} catch (Exception ex) {
+				last_error = ex;
+				return -12;
+			}
+
 			if (n > 0)
 				Marshal.Copy (io_buffer, 0, buffer, n);
 
@@ -447,6 +456,7 @@ namespace System.IO.Compression
 			return self.UnmanagedWrite (buffer, length);
 		}
 
+
 		int UnmanagedWrite (IntPtr buffer, int length)
 		{
 			int total = 0;
@@ -456,7 +466,12 @@ namespace System.IO.Compression
 
 				int count = Math.Min (length, io_buffer.Length);
 				Marshal.Copy (buffer, io_buffer, 0, count);
-				base_stream.Write (io_buffer, 0, count);
+				try {
+					base_stream.Write (io_buffer, 0, count);
+				} catch (Exception ex) {
+					last_error = ex;
+					return -12;
+				}
 				unsafe {
 					buffer = new IntPtr ((byte *) buffer.ToPointer () + count);
 				}
@@ -466,10 +481,14 @@ namespace System.IO.Compression
 			return total;
 		}
 
-		static void CheckResult (int result, string where)
+		void CheckResult (int result, string where)
 		{
 			if (result >= 0)
 				return;
+
+			var throw_me = Interlocked.Exchange (ref last_error, null);
+			if (throw_me != null)
+				throw throw_me;
 
 			string error;
 			switch (result) {
@@ -625,7 +644,11 @@ namespace System.IO.Compression
 
 			override protected bool ReleaseHandle()
 			{
-				DeflateStreamNative.CloseZStream(handle);
+				try {
+					DeflateStreamNative.CloseZStream(handle);
+				} catch {
+					;
+				}
 				return true;
 			}
 		}

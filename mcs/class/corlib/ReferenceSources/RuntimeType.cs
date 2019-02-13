@@ -48,14 +48,16 @@ namespace System
 		// ,+*&*[]\ in the identifier portions of the names
 		// have been escaped with a leading backslash (\)
 		public string full_name;
-		public MonoCMethod default_ctor;
+		public RuntimeConstructorInfo default_ctor;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
 	partial class RuntimeType
 	{
+#region keep in sync with object-internals.h
 		[NonSerialized]
 		MonoTypeInfo type_info;
+#endregion
 
 		internal Object GenericCache;
 
@@ -64,9 +66,9 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
-		internal MonoCMethod GetDefaultConstructor ()
+		internal RuntimeConstructorInfo GetDefaultConstructor ()
 		{
-			MonoCMethod ctor = null;
+			RuntimeConstructorInfo ctor = null;
 
 			if (type_info == null)
 				type_info = new MonoTypeInfo ();
@@ -78,7 +80,7 @@ namespace System
 
 				for (int i = 0; i < ctors.Length; ++i) {
 					if (ctors [i].GetParametersCount () == 0) {
-						type_info.default_ctor = ctor = (MonoCMethod) ctors [i];
+						type_info.default_ctor = ctor = (RuntimeConstructorInfo) ctors [i];
 						break;
 					}
 				}
@@ -93,6 +95,7 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
 
+#if !NETCORE
 		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
                 {
 			if (fromNoninstanciated == null)
@@ -114,6 +117,7 @@ namespace System
 			flags |= fromNoninstanciated.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
 			return GetField (fromNoninstanciated.Name, flags);
 		}
+#endif
 
 		string GetDefaultMemberName ()
 		{
@@ -168,12 +172,12 @@ namespace System
 				if (IsValueType)
 					return CreateInstanceInternal (this);
 
-				throw new MissingMethodException (Locale.GetText ("Default constructor not found for type " + FullName));
+				throw new MissingMethodException ("Default constructor not found for type " + FullName);
 			}
 
 			// TODO: .net does more checks in unmanaged land in RuntimeTypeHandle::CreateInstance
 			if (IsAbstract) {
-				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class '{0}'.", FullName));
+				throw new MissingMethodException ("Cannot create an abstract class '{0}'.", FullName);
 			}
 
 			return ctor.InternalInvoke (null, null, wrapExceptions);
@@ -426,7 +430,11 @@ namespace System
 
 		public override StructLayoutAttribute StructLayoutAttribute {
 			get {
+#if NETCORE
+				throw new NotImplementedException ();
+#else
 				return StructLayoutAttribute.GetCustomAttribute (this);
+#endif
 			}
 		}
 
@@ -485,7 +493,7 @@ namespace System
 				var a = new RuntimeMethodInfo [n];
 				for (int i = 0; i < n; i++) {
 					var mh = new RuntimeMethodHandle (h[i]);
-					a[i] = (RuntimeMethodInfo) MethodBase.GetMethodFromHandleNoGenericCheck (mh, refh);
+					a[i] = (RuntimeMethodInfo) RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (mh, refh);
 				}
 				return a;
 			}
@@ -505,7 +513,7 @@ namespace System
 				var a = new RuntimeConstructorInfo [n];
 				for (int i = 0; i < n; i++) {
 					var mh = new RuntimeMethodHandle (h[i]);
-					a[i] = (RuntimeConstructorInfo) MethodBase.GetMethodFromHandleNoGenericCheck (mh, refh);
+					a[i] = (RuntimeConstructorInfo) RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (mh, refh);
 				}
 				return a;
 			}
@@ -520,7 +528,7 @@ namespace System
 				var a = new RuntimePropertyInfo [n];
 				for (int i = 0; i < n; i++) {
 					var ph = new Mono.RuntimePropertyHandle (h[i]);
-					a[i] = (RuntimePropertyInfo) MonoProperty.GetPropertyFromHandle (ph, refh);
+					a[i] = (RuntimePropertyInfo) RuntimePropertyInfo.GetPropertyFromHandle (ph, refh);
 				}
 				return a;
 			}
@@ -542,14 +550,14 @@ namespace System
 
 			InterfaceMapping res;
 			if (!ifaceType.IsInterface)
-				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "ifaceType");
+				throw new ArgumentException ("Argument must be an interface.", "ifaceType");
 			if (IsInterface)
 				throw new ArgumentException ("'this' type cannot be an interface itself");
 			res.TargetType = this;
 			res.InterfaceType = ifaceType;
 			GetInterfaceMapData (this, ifaceType, out res.TargetMethods, out res.InterfaceMethods);
 			if (res.TargetMethods == null)
-				throw new ArgumentException (Locale.GetText ("Interface not found"), "ifaceType");
+				throw new ArgumentException ("Interface not found", "ifaceType");
 
 			return res;
 		}
@@ -689,7 +697,11 @@ namespace System
 				var a = new RuntimeFieldInfo[n];
 				for (int i = 0; i < n; i++) {
 					var fh = new RuntimeFieldHandle (h[i]);
+#if NETCORE
+					throw new NotImplementedException ();
+#else
 					a[i] = (RuntimeFieldInfo) FieldInfo.GetFieldFromHandle (fh, refh);
+#endif
 				}
 				return a;
 			}
@@ -704,7 +716,11 @@ namespace System
 				var a = new RuntimeEventInfo[n];
 				for (int i = 0; i < n; i++) {
 					var eh = new Mono.RuntimeEventHandle (h[i]);
+#if NETCORE
+					throw new NotImplementedException ();
+#else
 					a[i] = (RuntimeEventInfo) EventInfo.GetEventFromHandle (eh, refh);
+#endif
 				}
 				return a;
 			}
@@ -719,8 +735,12 @@ namespace System
 		RuntimeType[] GetNestedTypes_internal (string displayName, BindingFlags bindingAttr, MemberListType listType)
 		{
 			string internalName = null;
+#if NETCORE
+			throw new NotImplementedException ();
+#else
 			if (displayName != null)
 				internalName = TypeIdentifiers.FromDisplay (displayName).InternalName;
+#endif
 			using (var namePtr = new Mono.SafeStringMarshal (internalName))
 			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (namePtr.Value, bindingAttr, listType))) {
 				int n = h.Length;
@@ -802,7 +822,9 @@ namespace System
 			}
 		}
 
+#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeType> (other);	
+#endif
 
 		public override bool IsSZArray {
 			get {
@@ -811,11 +833,13 @@ namespace System
 			}
 		}
 
+#if !NETCORE
 		internal override bool IsUserType {
 			get {
 				return false;
 			}
 		}
+#endif
 
 		[System.Runtime.InteropServices.ComVisible(true)]
 		[Pure]

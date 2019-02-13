@@ -56,7 +56,7 @@ LPTOP_LEVEL_EXCEPTION_FILTER mono_old_win_toplevel_exception_filter;
 void *mono_win_vectored_exception_handle;
 
 #define W32_SEH_HANDLE_EX(_ex) \
-	if (_ex##_handler) _ex##_handler(0, ep, ctx)
+	if (_ex##_handler) _ex##_handler(er->ExceptionCode, &info, ctx)
 
 static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 {
@@ -135,12 +135,12 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	LONG res;
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	MonoDomain* domain = mono_domain_get ();
+	MonoWindowsSigHandlerInfo info = { TRUE, ep };
 
 	/* If the thread is not managed by the runtime return early */
 	if (!jit_tls)
 		return EXCEPTION_CONTINUE_SEARCH;
 
-	jit_tls->mono_win_chained_exception_needs_run = FALSE;
 	res = EXCEPTION_CONTINUE_EXECUTION;
 
 	er = ep->ExceptionRecord;
@@ -157,7 +157,7 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 				ctx->Rip = (guint64)restore_stack;
 			}
 		} else {
-			jit_tls->mono_win_chained_exception_needs_run = TRUE;
+			info.handled = FALSE;
 		}
 		break;
 	case EXCEPTION_ACCESS_VIOLATION:
@@ -175,11 +175,11 @@ static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		W32_SEH_HANDLE_EX(fpe);
 		break;
 	default:
-		jit_tls->mono_win_chained_exception_needs_run = TRUE;
+		info.handled = FALSE;
 		break;
 	}
 
-	if (jit_tls->mono_win_chained_exception_needs_run) {
+	if (!info.handled) {
 		/* Don't copy context back if we chained exception
 		* as the handler may have modfied the EXCEPTION_POINTERS
 		* directly. We don't pass sigcontext to chained handlers.
@@ -651,10 +651,13 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		for (i = 0; i < AMD64_NREG; ++i)
 			regs [i] = new_ctx->gregs [i];
 
-		mono_unwind_frame (unwind_info, unwind_info_len, (guint8 *)ji->code_start,
+		gboolean success = mono_unwind_frame (unwind_info, unwind_info_len, (guint8 *)ji->code_start,
 						   (guint8*)ji->code_start + ji->code_size,
 						   (guint8 *)ip, epilog ? &epilog : NULL, regs, MONO_MAX_IREGS + 1,
 						   save_locations, MONO_MAX_IREGS, &cfa);
+
+		if (!success)
+			return FALSE;
 
 		for (i = 0; i < AMD64_NREG; ++i)
 			new_ctx->gregs [i] = regs [i];

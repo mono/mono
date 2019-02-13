@@ -23,7 +23,9 @@
 #endif
 #include <sys/types.h>
 #include <stdio.h>
+#ifdef HAVE_UTIME_H
 #include <utime.h>
+#endif
 #ifdef __linux__
 #include <sys/ioctl.h>
 #include <linux/fs.h>
@@ -54,6 +56,7 @@
 #include "utils/strenc.h"
 #include "utils/refcount.h"
 #include "icall-decl.h"
+#include "utils/mono-errno.h"
 
 #define NANOSECONDS_PER_MICROSECOND 1000LL
 #define TICKS_PER_MICROSECOND 10L
@@ -294,7 +297,7 @@ _wapi_open (const gchar *pathname, gint flags, mode_t mode)
 			located_filename = mono_portability_find_file (pathname, TRUE);
 
 			if (located_filename == NULL) {
-				errno = saved_errno;
+				mono_set_errno (saved_errno);
 				return -1;
 			}
 
@@ -321,7 +324,7 @@ _wapi_access (const gchar *pathname, gint mode)
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -340,20 +343,28 @@ _wapi_chmod (const gchar *pathname, mode_t mode)
 	gint ret;
 
 	MONO_ENTER_GC_SAFE;
+#if defined(HAVE_CHMOD)
 	ret = chmod (pathname, mode);
+#else
+	ret = -1;
+#endif
 	MONO_EXIT_GC_SAFE;
 	if (ret == -1 && (errno == ENOENT || errno == ENOTDIR) && IS_PORTABILITY_SET) {
 		gint saved_errno = errno;
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
+#if defined(HAVE_CHMOD)
 		MONO_ENTER_GC_SAFE;
 		ret = chmod (located_filename, mode);
 		MONO_EXIT_GC_SAFE;
+#else
+		ret = -1;
+#endif
 		g_free (located_filename);
 	}
 
@@ -364,8 +375,9 @@ _wapi_chmod (const gchar *pathname, mode_t mode)
 static gint
 _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 {
-	gint ret;
+	gint ret = -1;
 
+#ifdef HAVE_UTIME
 	MONO_ENTER_GC_SAFE;
 	ret = utime (filename, buf);
 	MONO_EXIT_GC_SAFE;
@@ -374,7 +386,7 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 		gchar *located_filename = mono_portability_find_file (filename, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -383,6 +395,7 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 		MONO_EXIT_GC_SAFE;
 		g_free (located_filename);
 	}
+#endif
 
 	return ret;
 }
@@ -391,8 +404,9 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 static gint
 _wapi_utimes (const gchar *filename, const struct timeval times[2])
 {
-	gint ret;
+	gint ret = -1;
 
+#ifdef HAVE_UTIMES
 	MONO_ENTER_GC_SAFE;
 	ret = utimes (filename, times);
 	MONO_EXIT_GC_SAFE;
@@ -401,7 +415,7 @@ _wapi_utimes (const gchar *filename, const struct timeval times[2])
 		gchar *located_filename = mono_portability_find_file (filename, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -410,6 +424,7 @@ _wapi_utimes (const gchar *filename, const struct timeval times[2])
 		MONO_EXIT_GC_SAFE;
 		g_free (located_filename);
 	}
+#endif
 
 	return ret;
 }
@@ -428,7 +443,7 @@ _wapi_unlink (const gchar *pathname)
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -464,7 +479,7 @@ _wapi_rename (const gchar *oldpath, const gchar *newpath)
 				g_free (located_oldpath);
 				g_free (located_newpath);
 
-				errno = saved_errno;
+				mono_set_errno (saved_errno);
 				return -1;
 			}
 
@@ -492,7 +507,7 @@ _wapi_stat (const gchar *path, struct stat *buf)
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -510,6 +525,7 @@ _wapi_lstat (const gchar *path, struct stat *buf)
 {
 	gint ret;
 
+#ifdef HAVE_LSTAT
 	MONO_ENTER_GC_SAFE;
 	ret = lstat (path, buf);
 	MONO_EXIT_GC_SAFE;
@@ -518,13 +534,16 @@ _wapi_lstat (const gchar *path, struct stat *buf)
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
 		ret = lstat (located_filename, buf);
 		g_free (located_filename);
 	}
+#else
+	ret = -1;
+#endif
 
 	return ret;
 }
@@ -562,7 +581,7 @@ _wapi_rmdir (const gchar *pathname)
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -588,7 +607,7 @@ _wapi_chdir (const gchar *path)
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -776,7 +795,7 @@ _wapi_io_scandir (const gchar *dirname, const gchar *pattern, gchar ***namelist)
 			errnum = EACCES;
 		}
 
-		errno = errnum;
+		mono_set_errno (errnum);
 		return -1;
 	}
 
@@ -2136,7 +2155,7 @@ gboolean mono_w32file_delete(const gunichar2 *name)
 		if (errno == EROFS) {
 			MonoIOStat stat;
 			if (mono_w32file_get_attributes_ex (name, &stat)) //The file exists, so must be due the RO file system
-				errno = EROFS;
+				mono_set_errno (EROFS);
 		}
 		_wapi_set_last_path_error_from_errno (NULL, filename);
 	} else {
@@ -3579,25 +3598,25 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 	stat->length = (stat->attributes & FILE_ATTRIBUTE_DIRECTORY) ? 0 : buf.st_size;
 
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
-	if (buf.st_mtimespec.tv_sec < buf.st_ctimespec.tv_sec || (buf.st_mtimespec.tv_sec == buf.st_ctimespec.tv_sec && buf.st_mtimespec.tv_nsec < buf.st_ctimespec.tv_nsec))
-		stat->creation_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	if (linkbuf.st_mtimespec.tv_sec < linkbuf.st_ctimespec.tv_sec || (linkbuf.st_mtimespec.tv_sec == linkbuf.st_ctimespec.tv_sec && linkbuf.st_mtimespec.tv_nsec < linkbuf.st_ctimespec.tv_nsec))
+		stat->creation_time = linkbuf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctimespec.tv_sec * TICKS_PER_SECOND + (buf.st_ctimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+		stat->creation_time = linkbuf.st_ctimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_ctimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atimespec.tv_sec * TICKS_PER_SECOND + (buf.st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_access_time = linkbuf.st_atimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_write_time = linkbuf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 #elif HAVE_STRUCT_STAT_ST_ATIM
-	if (buf.st_mtime < buf.st_ctime || (buf.st_mtime == buf.st_ctime && buf.st_mtim.tv_nsec < buf.st_ctim.tv_nsec))
-		stat->creation_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	if (linkbuf.st_mtime < linkbuf.st_ctime || (linkbuf.st_mtime == linkbuf.st_ctime && linkbuf.st_mtim.tv_nsec < linkbuf.st_ctim.tv_nsec))
+		stat->creation_time = linkbuf.st_mtime * TICKS_PER_SECOND + (linkbuf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctime * TICKS_PER_SECOND + (buf.st_ctim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+		stat->creation_time = linkbuf.st_ctime * TICKS_PER_SECOND + (linkbuf.st_ctim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atime * TICKS_PER_SECOND + (buf.st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_access_time = linkbuf.st_atime * TICKS_PER_SECOND + (linkbuf.st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_write_time = linkbuf.st_mtime * TICKS_PER_SECOND + (linkbuf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 #else
-	stat->creation_time = (((guint64) (buf.st_mtime < buf.st_ctime ? buf.st_mtime : buf.st_ctime)) * TICKS_PER_SECOND) + CONVERT_BASE;
-	stat->last_access_time = (((guint64) (buf.st_atime)) * TICKS_PER_SECOND) + CONVERT_BASE;
-	stat->last_write_time = (((guint64) (buf.st_mtime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->creation_time = (((guint64) (linkbuf.st_mtime < linkbuf.st_ctime ? linkbuf.st_mtime : linkbuf.st_ctime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_access_time = (((guint64) (linkbuf.st_atime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_write_time = (((guint64) (linkbuf.st_mtime)) * TICKS_PER_SECOND) + CONVERT_BASE;
 #endif
 
 	g_free (utf8_name);
@@ -3668,9 +3687,13 @@ mono_w32file_set_attributes (const gunichar2 *name, guint32 attrs)
 		if ((buf.st_mode & S_IROTH) != 0)
 			exec_mask |= S_IXOTH;
 
+#if defined(HAVE_CHMOD)
 		MONO_ENTER_GC_SAFE;
 		result = chmod (utf8_name, buf.st_mode | exec_mask);
 		MONO_EXIT_GC_SAFE;
+#else
+		result = -1;
+#endif
 	}
 	/* Don't bother to reset executable (might need to change this
 	 * policy)

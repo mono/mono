@@ -50,7 +50,9 @@
 using System;
 using System.Reflection;
 using System.Threading;
+#if !MONO
 using System.Security.Permissions;
+#endif
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Runtime.ConstrainedExecution;
@@ -142,7 +144,7 @@ namespace System.Runtime.InteropServices
 // methods have a link demand to ensure untrusted code cannot directly edit
 // or alter a handle.
 [System.Security.SecurityCritical]  // auto-generated_required
-#if !FEATURE_CORECLR
+#if !FEATURE_CORECLR && !MONO
 [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode=true)]
 #endif
 public abstract class CriticalHandle : CriticalFinalizerObject, IDisposable

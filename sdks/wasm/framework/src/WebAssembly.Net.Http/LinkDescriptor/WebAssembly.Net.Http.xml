@@ -1,0 +1,7 @@
+<linker>
+  
+  <!--
+  Preserve the entire assembly
+  -->
+  <assembly fullname="WebAssembly.Net.Http" preserve="all"/>
+</linker>

@@ -31,8 +31,6 @@ Mono/CertificateImportFlags.cs
 Mono/DependencyInjector.cs
 Mono/ISystemCertificateProvider.cs
 Mono/ISystemDependencyProvider.cs
-Mono/MonoNativePlatform.cs
-Mono/MonoNativePlatformType.cs
 Mono/Runtime.cs
 Mono/RuntimeHandles.cs
 Mono/RuntimeMarshal.cs
@@ -201,12 +199,14 @@ System.Globalization/RegionInfo.cs
 System.Globalization/RegionInfo.MonoTouch.cs
 System.IO/DriveInfo.cs
 ../../../external/corefx/src/System.IO.FileSystem.DriveInfo/src/System/IO/DriveType.cs
-System.IO/File.cs
+../../../external/corefx/src/System.IO.FileSystem/src/System/IO/File.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileAccess.cs
 ../../../external/corefx/src/System.Runtime/src/System/IO/FileAttributes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileMode.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileOptions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/FileShare.cs
+../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Iterator.cs
+../../../external/corefx/src/System.IO.FileSystem/src/System/IO/ReadLinesIterator.cs
 System.IO/FileStream.cs
 System.IO/FileStreamAsyncResult.cs
 System.IO/HGlobalUnmanagedMemoryStream.cs
@@ -249,13 +249,13 @@ System.Reflection/MethodBody.cs
 System.Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ModuleResolveEventHandler.cs
-System.Reflection/MonoAssembly.cs
-System.Reflection/MonoEvent.cs
-System.Reflection/MonoField.cs
-System.Reflection/MonoMethod.cs
-System.Reflection/MonoModule.cs
-System.Reflection/MonoParameterInfo.cs
-System.Reflection/MonoProperty.cs
+System.Reflection/RuntimeAssembly.cs
+System.Reflection/RuntimeModule.cs
+System.Reflection/RuntimeEventInfo.cs
+System.Reflection/RuntimePropertyInfo.cs
+System.Reflection/RuntimeParameterInfo.cs
+System.Reflection/RuntimeFieldInfo.cs
+System.Reflection/RuntimeMethodInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ParameterInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/PortableExecutableKinds.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/PropertyInfo.cs
@@ -952,6 +952,7 @@ corert/Decimal.DecCalc.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Guid.cs
 ../referencesource/mscorlib/system/iappdomain.cs
 ../referencesource/mscorlib/system/iappdomainsetup.cs
+../../../external/corefx/src/Common/src/CoreLib/System/IAsyncDisposable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IAsyncResult.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ICloneable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IComparable.cs
@@ -1041,6 +1042,9 @@ coreclr/Math.CoreCLR.cs
 ../referencesource/mscorlib/system/unityserializationholder.cs
 ../referencesource/mscorlib/system/unsafecharbuffer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Version.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/IAsyncEnumerable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Collections/Generic/IAsyncEnumerator.cs
 
 ../referencesource/mscorlib/system/AppContext/AppContext.cs
 ../referencesource/mscorlib/system/AppContext/AppContextSwitches.cs
@@ -1542,8 +1546,8 @@ corefx/BinaryEnums.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ApartmentState.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/AsyncLocal.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/AutoResetEvent.cs
-../referencesource/mscorlib/system/threading/CancellationToken.cs
-../referencesource/mscorlib/system/threading/CancellationTokenSource.cs
+../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/CancellationToken.cs
+../../../external/corert/src/System.Private.CoreLib/src/System/Threading/CancellationTokenSource.cs
 ../../../external/corefx/src/System.Threading/src/System/Threading/CountdownEvent.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/EventResetMode.cs
 ../referencesource/mscorlib/system/threading/eventwaithandle.cs
@@ -1551,6 +1555,8 @@ corefx/BinaryEnums.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/LazyInitializer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/LockRecursionException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ManualResetEvent.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/Sources/ManualResetValueTaskSourceCore.cs
+
 ../referencesource/mscorlib/system/threading/monitor.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/ParameterizedThreadStart.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Threading/SemaphoreFullException.cs
@@ -1741,8 +1747,12 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Numerics/Vector.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Numerics/Vector_Operations.cs
 
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncIteratorMethodBuilder.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncIteratorStateMachineAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncMethodBuilderAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/AsyncValueTaskMethodBuilder.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/ConfiguredAsyncDisposable.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/ConfiguredCancelableAsyncEnumerable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/ConfiguredValueTaskAwaitable.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IntrinsicAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IsReadOnlyAttribute.cs
@@ -1882,3 +1892,4 @@ corefx/DirectoryInfo.cs
 corefx/FileInfo.cs
 corefx/Directory.cs
 corefx/MonoLinqHelper.cs
+corefx/File.cs

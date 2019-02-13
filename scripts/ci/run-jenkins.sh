@@ -67,6 +67,7 @@ if [[ ${CI_TAGS} == *'disable-mcs-build'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CON
 
 if   [[ ${CI_TAGS} == *'fullaot_llvm'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=fullaot_llvm ";
 elif [[ ${CI_TAGS} == *'hybridaot_llvm'* ]];     then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=hybridaot_llvm";
+elif [[ ${CI_TAGS} == *'winaot_llvm'* ]];        then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=winaot_llvm";
 elif [[ ${CI_TAGS} == *'aot_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=aot_llvm ";
 elif [[ ${CI_TAGS} == *'jit_llvm'* ]];           then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes"; export MONO_ENV_OPTIONS="$MONO_ENV_OPTIONS --llvm";
 elif [[ ${CI_TAGS} == *'fullaotinterp_llvm'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm=yes --with-runtime-preset=fullaotinterp_llvm";
@@ -109,6 +110,21 @@ then
 	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
 fi
 
+if [[ ${CI_TAGS} == *'ccache'* ]];
+then
+	# CCACHE_DIR should be set to a directory outside the chroot which holds the cache
+	CCACHE=$(which ccache)
+	if [ "$CCACHE" ]; then
+		if [[ ${CI_TAGS} == *'osx-'* ]]; then
+			export CC="ccache clang"
+			export CXX="ccache clang++"
+		else
+			export CC="ccache gcc"
+			export CXX="ccache g++"
+		fi
+	fi
+fi
+
 if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
 	${TESTCMD} --label=archive --timeout=120m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
 	if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
@@ -123,15 +139,21 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
 	   export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
 	   export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
 
-	   echo "DISABLE_ANDROID=1" > sdks/Make.config
-	   echo "DISABLE_WASM=1" >> sdks/Make.config
-	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
-	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
-		   echo "ENABLE_CXX=1" >> sdks/Make.config
-	   fi
+        echo "DISABLE_ANDROID=1" > sdks/Make.config
+        echo "DISABLE_WASM=1" >> sdks/Make.config
+        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        if [[ ${CI_TAGS} == *'cxx'* ]]; then
+            echo "ENABLE_CXX=1" >> sdks/Make.config
+        fi
+        if [[ ${CI_TAGS} == *'debug'* ]]; then
+            echo "CONFIGURATION=debug" >> sdks/Make.config
+        fi
+
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
-	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios NINJA=
+	   ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-ios NINJA=
+	   ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-ios     NINJA=
+	   ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
@@ -158,22 +180,25 @@ fi
 if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
         echo "DISABLE_IOS=1" > sdks/Make.config
+        echo "DISABLE_MAC=1" >> sdks/Make.config
         echo "DISABLE_WASM=1" >> sdks/Make.config
         echo "DISABLE_DESKTOP=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
+        if [[ ${CI_TAGS} == *'debug'* ]]; then
+            echo "CONFIGURATION=debug" >> sdks/Make.config
+        fi
 
         # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
         # but doesn't get stuck when called via the shell, so let's just call it here now.
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
         ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
-        if [[ ${CI_TAGS} != *'debug'* ]]; then
-            ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
-        else
-            ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1 CONFIGURATION=debug
-        fi
+
+        ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-android     NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android   NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=mini --timeout=60m make -C sdks/android check-mini
@@ -201,17 +226,25 @@ fi
 
 if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
-	   echo "DISABLE_ANDROID=1" > sdks/Make.config
-	   echo "DISABLE_IOS=1" >> sdks/Make.config
-	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
-	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
-	       echo "ENABLE_CXX=1" >> sdks/Make.config
-	   fi
+        echo "DISABLE_ANDROID=1" > sdks/Make.config
+        echo "DISABLE_IOS=1" >> sdks/Make.config
+        echo "DISABLE_MAC=1" >> sdks/Make.config
+        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        if [[ ${CI_TAGS} == *'cxx'* ]]; then
+            echo "ENABLE_CXX=1" >> sdks/Make.config
+        fi
+        if [[ ${CI_TAGS} == *'debug'* ]]; then
+            echo "CONFIGURATION=debug" >> sdks/Make.config
+        fi
 
 	   export aot_test_suites="System.Core"
+	   export mixed_test_suites="System.Core"
 
 	   ${TESTCMD} --label=provision --timeout=20m --fatal make --output-sync=recurse --trace -C sdks/builds provision-wasm
-	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm NINJA=
+
+	   ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-wasm NINJA=
+	   ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
+	   ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/wasm build
@@ -230,6 +263,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=aot-mini --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
             ${TESTCMD} --label=build-aot-all --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m make -C sdks/wasm run-aot-${suite}; done
+            for suite in ${mixed_test_suites}; do ${TESTCMD} --label=run-aot-mixed-${suite} --timeout=10m make -C sdks/wasm run-aot-mixed-${suite}; done
             #${TESTCMD} --label=check-aot --timeout=60m make -C sdks/wasm check-aot
             ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
         fi
@@ -245,19 +279,24 @@ fi
 if [[ ${CI_TAGS} == *'win-i386'* ]];
     then
 	# only build boehm on w32 (only windows platform supporting boehm).
-    ${TESTCMD} --label=make-msvc --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release ${MSBUILD_CXX} /p:MONO_TARGET_GC=boehm msvc/mono.sln
+    ${TESTCMD} --label=make-msvc --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=boehm ${MSBUILD_CXX}"
 fi
 if [[ ${CI_TAGS} == *'win-'* ]];
     then
-    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal /cygdrive/c/Program\ Files\ \(x86\)/MSBuild/14.0/Bin/MSBuild.exe /p:PlatformToolset=v140 /p:Platform=${PLATFORM} /p:Configuration=Release ${MSBUILD_CXX} /p:MONO_TARGET_GC=sgen msvc/mono.sln
+    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen ${MSBUILD_CXX}"
 fi
 
 if [[ ${CI_TAGS} == *'winaot'* ]];
     then
-    # The AOT compiler on Windows requires Visual Studio's clang.exe and link.exe in $PATH
-    # and we must make sure Visual Studio's link.exe comes before Cygwin's link.exe
-    VC_ROOT="/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 14.0/VC"
-    export PATH="$VC_ROOT/ClangC2/bin/amd64:$VC_ROOT/bin/amd64":$PATH
+
+    if [[ ${PLATFORM} == x64 ]];
+        then
+        # The AOT compiler on Windows requires Visual Studio's clang.exe and link.exe.
+        # Depending on codegen (JIT/LLVM) it might also need platform specific libraries.
+        # Use a wrapper script that will make sure to setup full VS MSVC environment if
+        # needed when running mono-sgen.exe as AOT compiler.
+        export MONO_EXECUTABLE_WRAPPER="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen-msvc.sh"
+    fi
 fi
 
 if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi

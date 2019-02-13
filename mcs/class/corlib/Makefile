@@ -84,7 +84,9 @@ RESOURCE_FILES = \
 
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ENCODINGNLS,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
 
-ifndef NO_SRE
+ifdef NO_SRE
+PROFILE_TEST_HARNESS_EXCLUDES := $(PROFILE_TEST_HARNESS_EXCLUDES)SRE,
+else
 LIB_MCS_FLAGS += -d:MONO_FEATURE_SRE
 endif
 
@@ -231,12 +233,12 @@ $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources
 
 test_load_assembly = ${test_lib_dir}/TestLoadAssembly.dll
 
-$(test_load_assembly): ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs
+$(test_load_assembly): ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs | $(test_lib_dir)
 	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) -out:${test_lib_dir}/TestLoadAssembly.dll
 
 test_module = $(test_lib_dir)/System.Reflection.TestModule.dll
 
-$(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.dll
+$(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.dll | $(test_lib_dir)
 	cp $< $(test_lib_dir)
 
 XTEST_LIB_FLAGS += -r:$(test_module)

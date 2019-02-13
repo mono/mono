@@ -78,7 +78,7 @@ corefx/SR.missing.cs
 
 ../referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 
-../referencesource/System.Core/System/threading/Tasks/TaskExtensions.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskExtensions.cs
 
 System.Runtime.InteropServices/ComAwareEventInfo.cs
 

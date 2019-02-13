@@ -12,7 +12,9 @@ using System;
 using System.Security;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+#if !MONO
 using System.Security.Permissions;
+#endif
 using System.Diagnostics.Contracts;
 using System.Runtime;
 
@@ -37,8 +39,9 @@ namespace System.Threading
     /// </para>
     /// </remarks>
     [ComVisible(false)]
+#if !MONO
     [HostProtection(Synchronization = true, ExternalThreading = true)]
-
+#endif
     public class CancellationTokenSource : IDisposable
     {
         //static sources that can be used as the backing source for 'fixed' CancellationTokens that never change state.

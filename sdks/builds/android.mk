@@ -271,7 +271,6 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
 	--disable-mcs-build \
 	--disable-nls \
-	--enable-extension-module \
 	--enable-maintainer-mode \
 	--with-tls=pthread
 
@@ -329,7 +328,6 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
 	--disable-mcs-build \
 	--disable-nls \
-	--enable-extension-module \
 	--enable-maintainer-mode \
 	--with-tls=pthread
 

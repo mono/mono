@@ -13,6 +13,7 @@ SHELL:=/bin/bash
 #Use either 'release' or 'debug' dependending on what you need
 DRIVER_CONF=release
 
+CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)
 
 EMSCRIPTEN_SDKDIR=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
@@ -147,6 +148,9 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
+tuner.exe: tuner.cs Mono.Cecil.dll System.Json.dll
+	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll /r:System.Json.dll tuner.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
+
 .stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
 	mono packager.exe -debug -out=debug_sample sample.dll
 	cp debug.html debug_sample
@@ -154,10 +158,11 @@ packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-.stamp-build-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono --debug packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES)
+bin/test-suite/mono.js: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
+	mono --debug packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
-	touch $@
+
+build-test-suite: bin/test-suite/mono.js
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/HttpTestSuite.cs 
@@ -165,14 +170,22 @@ $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
-
-# For development
-aot-sample: packager.exe mini_tests.dll main.exe runtime.js bug.exe
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js bug.exe
+build-aot-sample: packager.exe hello.exe
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js hello.exe
 	ninja -v -C obj/aot-sample
 
-do-aot-sample: aot-sample
-	(cd bin/aot-sample && $(SM) runtime.js --run bug.exe)
+hello.exe: hello.cs
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello.cs
+
+run-aot-sample: build-aot-sample
+	(cd bin/aot-sample && $(SM) runtime.js --run hello.exe)
+
+build-interp-sample: packager.exe hello.exe
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe --linker --link-icalls
+	ninja -v -C obj/interp-sample
+
+run-interp-sample: build-interp-sample
+	(cd bin/interp-sample && $(SM) runtime.js --run hello.exe)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
@@ -184,28 +197,40 @@ check-aot-mini run-aot-mini: build-aot-mini
 get-sysnative-exports:
 	nm ../out/wasm-runtime-release/lib/libmono-native.a  | grep SystemNative | cut -d ' ' -f 3 | grep -v '^$$'
 
+build-aot-bindings-sample: packager.exe sample.dll
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-sample --builddir=obj/aot-bindings-sample --aot --template=runtime.js --link-mode=SdkOnly --asset=sample.html sample.dll
+	ninja -v -C obj/aot-bindings-sample
+
+build-aot-bindings-interp-sample: packager.exe sample.dll
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-interp-sample --builddir=obj/aot-bindings-interp-sample --aot --template=runtime.js --link-mode=SdkOnly --linker --link-icalls --asset=sample.html sample.dll
+	ninja -v -C obj/aot-bindings-interp-sample
+
 ##
 # Parameters:
 # $(1) - make target suffix
 # $(2) - test assembly filename
 # $(3) - main.exe argument
+# $(4) - extra args to packager
 define AotTestTemplate
 
 build-aot-$(1): packager.exe runtime-tests.js main.exe $$(WASM_FRAMEWORK)/.stamp-framework $$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/nunitlite.dll $$(WASM_BCL_DIR)/tests/$(2)
-	mono packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe $$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2)
+	mono packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2) --linker --link-icalls $(4)
 	ninja -v -C obj/aot-$(1)
 
 clean-aot-$(1):
 	$(RM) -r obj/aot-$(1) bin/aot-$(1)
 
 check-aot-$(1) run-aot-$(1): build-aot-$(1)
-	(cd bin/aot-$(1) && $$(SM) runtime.js --exclude StackWalks,StaticAotNotWorking,StaticLinkedAotNotWorking $(3))
+	(cd bin/aot-$(1) && $$(SM) runtime.js --exclude StackWalks,StaticAotNotWorking,StaticLinkedAotNotWorking,SRE $(3))
 
 endef
 
 $(eval $(call AotTestTemplate,corlib,wasm_corlib_test.dll,corlib))
 $(eval $(call AotTestTemplate,System.Core,wasm_System.Core_test.dll,system-core))
 $(eval $(call AotTestTemplate,System,wasm_System_test.dll,system))
+
+$(eval $(call AotTestTemplate,mixed-corlib,wasm_corlib_test.dll,corlib,--aot-interp --aot-assemblies=mscorlib))
+$(eval $(call AotTestTemplate,mixed-System.Core,wasm_System.Core_test.dll,system-core,--aot-interp --aot-assemblies=mscorlib))
 
 AOT_TEST_SUITES=corlib System.Core
 
@@ -216,8 +241,6 @@ run-aot-all: build-aot-all
 	for suite in System.Core; do make run-aot-$$suite || exit 1; done
 
 build-debug-sample: .stamp-build-debug-sample
-
-build-test-suite: .stamp-build-test-suite
 
 build-managed: build-debug-sample build-test-suite
 
@@ -268,20 +291,23 @@ clean:
 	$(RM) -r binding-tests.dll
 	$(RM) -r sdk/**/bin
 	$(RM) -r sdk/**/obj
+	$(RM) -r sdk/**/**/bin
+	$(RM) -r sdk/**/**/obj
 	$(RM) -r sdk/packages
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.dll
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Bindings.pdb
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll
-	$(RM) $(WASM_FRAMEWORK)/WebAssembly.Net.Http.pdb
-
+	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
 
 package: build build-dbg-proxy
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/wasm-bcl
 	mkdir tmp/wasm-bcl/wasm
+	mkdir tmp/wasm-bcl/wasm_tools
 	cp -r $(TOP)/sdks/out/wasm-bcl/wasm/* tmp/wasm-bcl/wasm/
+	cp -r $(TOP)/sdks/out/wasm-bcl/wasm_tools/* tmp/wasm-bcl/wasm_tools/
 	rm -rf tmp/wasm-bcl/wasm/bare
 	rm -rf tmp/wasm-bcl/wasm/secxml
 	rm -rf tmp/wasm-bcl/wasm/tests
@@ -300,6 +326,8 @@ package: build build-dbg-proxy
 	cp framework/WebAssembly.Bindings.pdb tmp/framework
 	cp framework/WebAssembly.Net.Http.dll tmp/framework
 	cp framework/WebAssembly.Net.Http.pdb tmp/framework
+	cp framework/WebAssembly.Net.WebSockets.dll tmp/framework
+	cp framework/WebAssembly.Net.WebSockets.pdb tmp/framework
 	mkdir tmp/framework/src
 	cp -r framework/src tmp/framework
 	$(RM) -r tmp/framework/src/**/bin
@@ -329,3 +357,13 @@ canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
 
 check-aot: do-aot-sample
+
+clean-sdk:
+	$(RM) -r sdk/**/bin
+	$(RM) -r sdk/**/obj
+	$(RM) -r sdk/**/**/bin
+	$(RM) -r sdk/**/**/obj
+
+build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
+	msbuild /r sdk/Mono.WebAssembly.Sdk
+	msbuild /r sdk

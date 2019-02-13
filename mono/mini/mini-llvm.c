@@ -1710,9 +1710,21 @@ static LLVMValueRef
 get_callee_llvmonly (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType type, gconstpointer data)
 {
 	LLVMValueRef callee;
-	char *callee_name;
+	char *callee_name = NULL;
 
-	callee_name = mono_aot_get_direct_call_symbol (type, data);
+	if (ctx->module->static_link && ctx->module->assembly->image != mono_get_corlib () && type == MONO_PATCH_INFO_JIT_ICALL) {
+		MonoJitICallInfo *info = mono_find_jit_icall_by_name ((const char*)data);
+		g_assert (info);
+
+		if (info->func != info->wrapper) {
+			type = MONO_PATCH_INFO_METHOD;
+			data = mono_icall_get_wrapper_method (info);
+			callee_name = mono_aot_get_mangled_method_name ((MonoMethod*)data);
+		}
+	}
+
+	if (!callee_name)
+		callee_name = mono_aot_get_direct_call_symbol (type, data);
 	if (callee_name) {
 		/* Directly callable */
 		// FIXME: Locking
@@ -2232,19 +2244,29 @@ emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *ex
 	LLVMPositionBuilderAtEnd (builder, ex_bb);
 
 	if (ctx->cfg->llvm_only) {
-		static LLVMTypeRef sig;
-
-		if (!sig)
-			sig = LLVMFunctionType1 (LLVMVoidType (), LLVMInt32Type (), FALSE);
-		callee = get_callee (ctx, sig, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_llvm_throw_corlib_exception");
-
 		LLVMBuildBr (builder, ex2_bb);
 
 		ctx->builder = builder = create_builder (ctx);
 		LLVMPositionBuilderAtEnd (ctx->builder, ex2_bb);
 
-		args [0] = LLVMConstInt (LLVMInt32Type (), m_class_get_type_token (exc_class) - MONO_TOKEN_TYPE_DEF, FALSE);
-		emit_call (ctx, bb, &builder, callee, args, 1);
+		if (!strcmp (exc_type, "NullReferenceException")) {
+			static LLVMTypeRef sig;
+
+			if (!sig)
+				sig = LLVMFunctionType0 (LLVMVoidType (), FALSE);
+			callee = get_callee (ctx, sig, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mini_llvmonly_throw_nullref_exception");
+			emit_call (ctx, bb, &builder, callee, NULL, 0);
+		} else {
+			static LLVMTypeRef sig;
+
+			if (!sig)
+				sig = LLVMFunctionType1 (LLVMVoidType (), LLVMInt32Type (), FALSE);
+			callee = get_callee (ctx, sig, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_llvm_throw_corlib_exception");
+
+			args [0] = LLVMConstInt (LLVMInt32Type (), m_class_get_type_token (exc_class) - MONO_TOKEN_TYPE_DEF, FALSE);
+			emit_call (ctx, bb, &builder, callee, args, 1);
+		}
+
 		LLVMBuildUnreachable (builder);
 
 		ctx->builder = builder = create_builder (ctx);
@@ -2917,10 +2939,10 @@ emit_init_icall_wrapper (MonoLLVMModule *module, const char *name, const char *i
 static void
 emit_init_icall_wrappers (MonoLLVMModule *module)
 {
-	module->init_method = emit_init_icall_wrapper (module, "init_method", "mono_aot_init_llvm_method", 0);
-	module->init_method_gshared_mrgctx = emit_init_icall_wrapper (module, "init_method_gshared_mrgctx", "mono_aot_init_gshared_method_mrgctx", 1);
-	module->init_method_gshared_this = emit_init_icall_wrapper (module, "init_method_gshared_this", "mono_aot_init_gshared_method_this", 2);
-	module->init_method_gshared_vtable = emit_init_icall_wrapper (module, "init_method_gshared_vtable", "mono_aot_init_gshared_method_vtable", 3);
+	module->init_method = emit_init_icall_wrapper (module, "init_method", "mini_llvmonly_init_method", 0);
+	module->init_method_gshared_mrgctx = emit_init_icall_wrapper (module, "init_method_gshared_mrgctx", "mini_llvmonly_init_gshared_method_mrgctx", 1);
+	module->init_method_gshared_this = emit_init_icall_wrapper (module, "init_method_gshared_this", "mini_llvmonly_init_gshared_method_this", 2);
+	module->init_method_gshared_vtable = emit_init_icall_wrapper (module, "init_method_gshared_vtable", "mini_llvmonly_init_gshared_method_vtable", 3);
 }
 
 static void
@@ -7224,6 +7246,14 @@ free_ctx (EmitContext *ctx)
 	g_free (ctx);
 }
 
+static gboolean
+is_externally_callable (EmitContext *ctx, MonoMethod *method)
+{
+	if (ctx->module->llvm_only && ctx->module->static_link && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)
+		return TRUE;
+	return FALSE;
+}
+
 /*
  * mono_llvm_emit_method:
  *
@@ -7278,8 +7308,9 @@ mono_llvm_emit_method (MonoCompile *cfg)
  	if (cfg->compile_aot) {
 		ctx->module = &aot_module;
 
-		method_name = NULL;
-		if (!method_name)
+		if (is_externally_callable (ctx, cfg->method))
+			method_name = mono_aot_get_mangled_method_name (cfg->method);
+		else
 			method_name = mono_aot_get_method_name (cfg);
 		cfg->llvm_method_name = g_strdup (method_name);
 	} else {
@@ -7402,11 +7433,15 @@ emit_method_inner (EmitContext *ctx)
 	mono_llvm_add_func_attr (method, LLVM_ATTR_UW_TABLE);
 
 	if (cfg->compile_aot) {
-		LLVMSetLinkage (method, LLVMInternalLinkage);
-		//all methods have internal visibility when doing llvm_only
-		if (!cfg->llvm_only && ctx->module->external_symbols) {
+		if (is_externally_callable (ctx, cfg->method)) {
 			LLVMSetLinkage (method, LLVMExternalLinkage);
-			LLVMSetVisibility (method, LLVMHiddenVisibility);
+		} else {
+			LLVMSetLinkage (method, LLVMInternalLinkage);
+			//all methods have internal visibility when doing llvm_only
+			if (!cfg->llvm_only && ctx->module->external_symbols) {
+				LLVMSetLinkage (method, LLVMExternalLinkage);
+				LLVMSetVisibility (method, LLVMHiddenVisibility);
+			}
 		}
 	} else {
 #if LLVM_API_VERSION > 100
@@ -9116,8 +9151,8 @@ mono_llvm_fixup_aot_module (void)
 #if LLVM_API_VERSION >= 600
 					if (cfg->got_access_count == 0) {
 						LLVMValueRef br = (LLVMValueRef)cfg->llvmonly_init_cond;
-
-						LLVMSetSuccessor (br, 0, LLVMGetSuccessor (br, 1));
+						if (br)
+							LLVMSetSuccessor (br, 0, LLVMGetSuccessor (br, 1));
 					}
 #endif
 				}

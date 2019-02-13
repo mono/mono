@@ -104,7 +104,8 @@ testing_aot_hybrid_dirs_parallel := $(testing_aot_full_dirs_parallel)
 
 xammac_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
-	Mono.CompilerServices.SymbolWriter
+	Mono.CompilerServices.SymbolWriter	\
+	Mono.CSharp
 
 monodroid_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
@@ -154,7 +155,8 @@ monotouch_tv_runtime_dirs := \
 
 winaot_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
-	System.Drawing
+	System.Drawing \
+	Mono.Simd
 
 unreal_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
@@ -482,7 +484,7 @@ build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.C
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
 	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
-	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll \
+	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll Facades/netstandard.dll \
 	Mono.Cecil.dll
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)

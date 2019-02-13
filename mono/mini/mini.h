@@ -1184,7 +1184,7 @@ typedef enum {
 #define MONO_REGION_TRY       0
 #define MONO_REGION_FINALLY  16
 #define MONO_REGION_CATCH    32
-#define MONO_REGION_FAULT    64         /* Currently unused */
+#define MONO_REGION_FAULT    64
 #define MONO_REGION_FILTER  128
 
 #define MONO_BBLOCK_IS_IN_REGION(bblock, regtype) (((bblock)->region & (0xf << 4)) == (regtype))
@@ -1506,6 +1506,7 @@ typedef struct {
 	int *gsharedvt_vreg_to_idx;
 
 	GSList *signatures;
+	GSList *interp_in_signatures;
 
 	/* GC Maps */
    
@@ -1686,6 +1687,8 @@ enum {
 #define OP_PCONV_TO_OVF_I1 OP_LCONV_TO_OVF_I1
 #define OP_PBEQ OP_LBEQ
 #define OP_PCEQ OP_LCEQ
+#define OP_PCLT OP_LCLT
+#define OP_PCGT OP_LCGT
 #define OP_PBNE_UN OP_LBNE_UN
 #define OP_PBGE_UN OP_LBGE_UN
 #define OP_PBLT_UN OP_LBLT_UN
@@ -1712,6 +1715,8 @@ enum {
 #define OP_PCONV_TO_OVF_I1 OP_ICONV_TO_OVF_I1
 #define OP_PBEQ OP_IBEQ
 #define OP_PCEQ OP_ICEQ
+#define OP_PCLT OP_ICLT
+#define OP_PCGT OP_ICGT
 #define OP_PBNE_UN OP_IBNE_UN
 #define OP_PBGE_UN OP_IBGE_UN
 #define OP_PBLT_UN OP_IBLT_UN
@@ -2152,12 +2157,10 @@ gpointer          mini_get_nullified_class_init_trampoline (void);
 gpointer          mini_get_single_step_trampoline (void);
 gpointer          mini_get_breakpoint_trampoline (void);
 gpointer          mini_add_method_trampoline (MonoMethod *m, gpointer compiled_method, gboolean add_static_rgctx_tramp, gboolean add_unbox_tramp);
-gpointer          mini_add_method_wrappers_llvmonly (MonoMethod *m, gpointer compiled_method, gboolean caller_gsharedvt, gboolean add_unbox_tramp, gpointer *out_arg);
 gboolean          mini_jit_info_is_gsharedvt (MonoJitInfo *ji);
 gpointer*         mini_resolve_imt_method (MonoVTable *vt, gpointer *vtable_slot, MonoMethod *imt_method, MonoMethod **impl_method, gpointer *out_aot_addr,
 					   gboolean *out_need_rgctx_tramp, MonoMethod **variant_iface,
 					   MonoError *error);
-MonoFtnDesc      *mini_create_llvmonly_ftndesc (MonoDomain *domain, gpointer addr, gpointer arg);
 
 void*             mono_global_codeman_reserve (int size);
 
@@ -2266,7 +2269,6 @@ void              mono_allocate_gsharedvt_vars (MonoCompile *cfg);
 void              mono_if_conversion (MonoCompile *cfg);
 
 /* Delegates */
-gpointer          mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr);
 char*             mono_get_delegate_virtual_invoke_impl_name (gboolean load_imt_reg, int offset);
 gpointer          mono_get_delegate_virtual_invoke_impl  (MonoMethodSignature *sig, MonoMethod *method);
 
@@ -2598,10 +2600,6 @@ mono_method_needs_static_rgctx_invoke (MonoMethod *method, gboolean allow_type_v
 
 int
 mono_class_rgctx_get_array_size (int n, gboolean mrgctx);
-
-guint32
-mono_method_lookup_or_register_info (MonoMethod *method, gboolean in_mrgctx, gpointer data,
-	MonoRgctxInfoType info_type, MonoGenericContext *generic_context);
 
 MonoGenericContext
 mono_method_construct_object_context (MonoMethod *method);

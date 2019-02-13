@@ -622,7 +622,11 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	/* reserve space to store vector pointer in arrays */
 	if (mono_is_corlib_image (image) && !strcmp (nspace, "System") && !strcmp (name, "Array")) {
 		klass->instance_size += 2 * TARGET_SIZEOF_VOID_P;
+#ifndef ENABLE_NETCORE
 		g_assert (mono_class_get_field_count (klass) == 0);
+#else
+		/* TODO: check that array has 0 non-const fields */
+#endif
 	}
 
 	if (klass->enumtype) {
@@ -2854,7 +2858,7 @@ print_vtable_layout_result (MonoClass *klass, MonoMethod **vtable, int cur_slot)
 		cm = vtable [i];
 		if (cm) {
 			printf ("  slot assigned: %03d, slot index: %03d %s\n", i, cm->slot,
-				mono_method_full_name (cm, TRUE));
+				mono_method_get_full_name (cm));
 		} else {
 			printf ("  slot assigned: %03d, <null>\n", i);
 		}
@@ -4088,10 +4092,10 @@ initialize_object_slots (MonoClass *klass)
 				finalize_slot = i;
 		}
 
-		g_assert (ghc_slot > 0);
+		g_assert (ghc_slot >= 0);
 		default_ghc = klass->vtable [ghc_slot];
 
-		g_assert (finalize_slot > 0);
+		g_assert (finalize_slot >= 0);
 		default_finalize = klass->vtable [finalize_slot];
 	}
 }

@@ -1,6 +1,6 @@
 include $(top_srcdir)/mk/common.mk
 
-SUBDIRS = gc-descriptors . testing_gac assembly-load-reference
+SUBDIRS = gc-descriptors . testing_gac assembly-load-reference llvmonly-mixed
 
 check-local:
 	ok=:; \
@@ -167,7 +167,10 @@ check-coreclr:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr
 
 check-stress:
-	$(MAKE) test-stress-sgen
+	ok=; \
+	$(MAKE) test-stress-sgen || ok=false; \
+	$(MAKE) stresstest || ok=false; \
+	$$ok
 
 # for backwards compatibility on Wrench
 test-wrench: check-parallel
@@ -207,10 +210,6 @@ if AOT_FULL_INTERP_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
 endif
 
-if AOT_FULL_INTERP_LLVM_TESTS
-PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
-endif
-
 MCS_NO_UNSAFE = $(TOOLS_RUNTIME) $(CSC) -debug:portable \
 	-noconfig -nologo \
 	-nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 \
@@ -225,7 +224,12 @@ ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 TEST_RUNNER = ./test-runner.exe
 
 if HOST_WIN32
-TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(top_builddir)/runtime/mono-wrapper)"
+if ENABLE_MSVC
+	DEFAULT_WIN32_RUNTIME=$(shell cygpath -w -a $(top_builddir)/@mono_runtime@ | sed 's/\\/\\\\/g')
+else
+	DEFAULT_WIN32_RUNTIME=$(top_builddir)/runtime/mono-wrapper)
+endif
+TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(DEFAULT_WIN32_RUNTIME))"
 else
 TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),$(top_builddir)/runtime/mono-wrapper)"
 endif
@@ -259,6 +263,7 @@ TESTS_STRESS_SRC=	\
 	gc-graystack-stress.cs		\
 	exit-stress.cs		\
 	process-stress.cs	\
+	spinlock-stress.cs 	\
 	assembly-load-stress.cs
 
 # Disabled until ?mcs is fixed
@@ -318,6 +323,7 @@ TESTS_CS_SRC=		\
 	exception18.cs		\
 	exception-invokes.cs		\
 	merp-json-valid.cs		\
+	merp-crash-test.cs		\
 	exception19.cs		\
 	exception20.cs		\
 	exception21.cs		\
@@ -701,11 +707,14 @@ TESTS_CS_SRC=		\
 	bug-60843.cs	\
 	nested_type_visibility.cs	\
 	dynamic-method-churn.cs	\
+	dynamic-method-delegate.cs \
 	verbose.cs \
 	generic-unmanaged-constraint.cs \
 	bug-10834.cs \
 	bug-10837.cs	\
-	bug-gh-9507.cs
+	bug-gh-9507.cs	\
+	async-generic-enum.cs \
+	last-error.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1079,7 +1088,7 @@ if HOST_DARWIN
 # see https://github.com/mono/mono/issues/10845
 PLATFORM_DISABLED_TESTS += monitor-wait-abort.exe
 else
-PLATFORM_DISABLED_TESTS += merp-json-valid.exe
+PLATFORM_DISABLED_TESTS += merp-json-valid.exe merp-crash-test.exe
 endif
 
 if AMD64
@@ -1379,7 +1388,10 @@ PROFILE_DISABLED_TESTS += \
 	dynamic-method-resurrection.exe	\
 	assembly_append_ordering.exe \
 	assemblyresolve_event5.exe	\
-	dynamic-method-churn.exe
+	dynamic-method-delegate.exe \
+	dynamic-method-churn.exe \
+	bug-666008.exe \
+	bug-685908.exe
 
 # Test which needs System.Web support
 PROFILE_DISABLED_TESTS += \
@@ -1579,66 +1591,6 @@ PROFILE_DISABLED_TESTS += \
 	transparentproxy.exe
 endif
 
-if AOT_FULL_INTERP_LLVM_TESTS
-# AppDomain tests
-PROFILE_DISABLED_TESTS += \
-	appdomain1.exe \
-	appdomain2.exe \
-	appdomain-async-invoke.exe \
-	appdomain.exe \
-	appdomain-exit.exe \
-	appdomain-loader.exe \
-	appdomain-marshalbyref-assemblyload.exe \
-	appdomain-serialize-exception.exe \
-	appdomain-thread-abort.exe \
-	appdomain-threadpool-unload.exe \
-	appdomain-unload-asmload.exe \
-	appdomain-unload-callback.exe \
-	appdomain-unload-doesnot-raise-pending-events.exe \
-	appdomain-unload.exe \
-	assemblyresolve_event6.exe \
-	bug-335131.2.exe \
-	bug-415577.exe \
-	cross-domain.exe \
-	dataslot.exe \
-	delegate9.exe \
-	domain-stress.exe \
-	generic-marshalbyref.2.exe \
-	generic-unloading.2.exe \
-	generic-xdomain.2.exe \
-	hostname.exe \
-	marshal-valuetypes.exe \
-	monitor.exe \
-	pinvoke3.exe \
-	remoting4.exe \
-	stackframes-async.2.exe \
-	suspend-stress-test.exe \
-	thread6.exe \
-	threadpool-exceptions7.exe \
-	unhandled-exception-7.exe \
-	unhandled-exception-test-case.2.exe \
-	unload-appdomain-on-shutdown.exe \
-	xdomain-threads.exe
-
-# Tests which load assemblies which are not in the profile
-PROFILE_DISABLED_TESTS += \
-	assembly-load-remap.exe
-
-# Tests which needs named Mutex support
-PROFILE_DISABLED_TESTS += \
-	namedmutex-destroy-race.exe
-
-# Test which needs System.Web support
-PROFILE_DISABLED_TESTS += \
-	bug-80307.exe
-
-PROFILE_DISABLED_TESTS += \
-	bug-70561.exe \
-	transparentproxy.exe \
-	finalizer-exception.exe
-
-endif
-
 AOT_DISABLED_TESTS= \
 	constraints-load.exe \
 	calli_sig_check.exe
@@ -1671,6 +1623,11 @@ CI_PR_DISABLED_TESTS += process-stress-2.exe
 
 # https://github.com/mono/mono/issues/11417
 CI_PR_DISABLED_TESTS += process-stress-3.exe
+
+if HOST_WIN32
+# https://github.com/mono/mono/issues/12839
+CI_PR_DISABLED_TESTS += block_guard_restore_aligment_on_exit.exe
+endif
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
@@ -2028,9 +1985,7 @@ tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe: \
 if !FULL_AOT_TESTS
 if !HYBRID_AOT_TESTS
 if !AOT_FULL_INTERP_TESTS
-if !AOT_FULL_INTERP_LLVM_TESTS
 TEST_DRIVER_HARD_KILL_FEATURE=-r:$(CLASS)/Mono.Posix.dll
-endif
 endif
 endif
 endif
@@ -2064,6 +2019,9 @@ reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingRe
 	$(MCS) -r:$(CLASS)/System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
 
 merp-json-valid.exe: merp-json-valid.cs
+	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
+
+merp-crash-test.exe: merp-crash-test.cs
 	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
