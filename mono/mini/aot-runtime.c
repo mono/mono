@@ -667,7 +667,8 @@ decode_type (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *err
 
 		int count = decode_value (p, &p);
 
-		t = (MonoType*)g_malloc0 (mono_sizeof_type_with_mods (count));
+		/* TODO: possibility that encode_type will encode aggregate mods */
+		t = (MonoType*)g_malloc0 (mono_sizeof_type_with_mods (count, FALSE));
 		t->has_cmods = TRUE;
 
 		MonoCustomModContainer *cm = mono_type_get_cmods (t);

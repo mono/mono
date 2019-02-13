@@ -232,8 +232,12 @@ mono_type_get_desc (GString *res, MonoType *type, gboolean include_namespace)
 	default:
 		break;
 	}
-	if (type->has_cmods)
-		mono_custom_modifiers_get_desc (res, mono_type_get_cmods (type), include_namespace);
+	if (type->has_cmods) {
+		if (!mono_type_is_aggregate_mods (type))
+			mono_custom_modifiers_get_desc (res, mono_type_get_cmods (type), include_namespace);
+		else
+			g_string_append (res, "<<aggregate???>>");
+	}
 	if (type->byref)
 		g_string_append_c (res, '&');
 }
