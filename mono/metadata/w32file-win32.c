@@ -95,11 +95,12 @@ mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *
 
 	gboolean interrupted;
 	guint32 last_error;
-	gboolean res;
+	gboolean res = FALSE;
 
-	MonoThreadInfo *info = mono_thread_info_current ();
+	mono_thread_info_install_interrupt (cancel_w32_io, handle, &interrupted);
+	if (interrupted)
+		return res;
 
-	mono_win32_enter_blocking_io_call (info, (HANDLE)handle);
 	MONO_ENTER_GC_SAFE;
 	res = ReadFile ((HANDLE)handle, buffer, numbytes, (PDWORD)bytesread, NULL);
 	/* need to save and restore since clients expect error code set for
@@ -107,7 +108,7 @@ mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *
 	last_error = mono_w32error_get_last ();
 
 	MONO_EXIT_GC_SAFE;
-	mono_win32_leave_blocking_io_call (info, (HANDLE)handle);
+	mono_thread_info_uninstall_interrupt (&interrupted);
 	mono_w32error_set_last (last_error);
 
 
@@ -119,18 +120,19 @@ mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, gui
 {
 	gboolean interrupted;
 	guint32 last_error;
-	gboolean res;
+	gboolean res = FALSE;
 	
-	MonoThreadInfo *info = mono_thread_info_current ();
+	mono_thread_info_install_interrupt (cancel_w32_io, handle, &interrupted);
+	if (interrupted)
+		return res;
 
-	mono_win32_enter_blocking_io_call (info, (HANDLE)handle);
 	MONO_ENTER_GC_SAFE;
 	res = WriteFile ((HANDLE)handle, buffer, numbytes, (PDWORD)byteswritten, NULL);
 	/* need to save and restore since clients expect error code set for
 	* failed IO calls and mono_thread_info_uninstall_interrupt overwrites value */
 	last_error = mono_w32error_get_last ();
 	MONO_EXIT_GC_SAFE;
-	mono_win32_leave_blocking_io_call (info, (HANDLE)handle);
+	mono_thread_info_uninstall_interrupt (&interrupted);
 	mono_w32error_set_last (last_error);
 
 	return res;
