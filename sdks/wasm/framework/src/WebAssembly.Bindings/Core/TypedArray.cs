@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace WebAssembly.Core {
 	///
-	public abstract class TypedArray<T, U> : CoreObject, ITypedArray, ITypedArray<T, U> { 
+	public abstract class TypedArray<T, U> : CoreObject, ITypedArray, ITypedArray<T, U> where U : struct {
 		protected TypedArray () : base (Runtime.New<T> ())
 		{ }
 		protected TypedArray (int length) : base (Runtime.New<T> (length))
