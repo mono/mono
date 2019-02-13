@@ -1003,7 +1003,8 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 		}
 	}
 
-	MonoReflectionMarshalAsAttributeHandle mobj = MONO_HANDLE_NEW (MonoReflectionMarshalAsAttribute, NULL);
+	MonoReflectionMarshalAsAttributeHandle mobj;
+	mobj = MONO_HANDLE_NEW (MonoReflectionMarshalAsAttribute, NULL);
 	if (mspec) {
 		mobj = mono_reflection_marshal_as_attribute_from_marshal_spec (domain, method->klass, mspec, error);
 		goto_if_nok (error, leave);
