@@ -185,6 +185,7 @@ using Internal.Runtime.Augments;
 
 #if ES_BUILD_STANDALONE
 using EventDescriptor = Microsoft.Diagnostics.Tracing.EventDescriptor;
+using BitOps = Microsoft.Diagnostics.Tracing.Internal.BitOps;
 #else
 using System.Threading.Tasks;
 #endif
@@ -455,7 +456,7 @@ namespace System.Diagnostics.Tracing
         {
             get
             {
-                int threadID = Win32Native.GetCurrentThreadId();
+                int threadID = Interop.Kernel32.GetCurrentThreadId();
 
                 // Managed thread IDs are more aggressively re-used than native thread IDs,
                 // so we'll use the latter...
@@ -2727,7 +2728,7 @@ namespace System.Diagnostics.Tracing
                 // for non-BCL EventSource we must assert SecurityPermission
                 new SecurityPermission(PermissionState.Unrestricted).Assert();
 #endif
-                s_currentPid = Win32Native.GetCurrentProcessId();
+                s_currentPid = Interop.Kernel32.GetCurrentProcessId();
             }
         }
 
