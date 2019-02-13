@@ -227,13 +227,13 @@ namespace System.Reflection {
 		public
 		override
 		FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			return ResolveField (this, metadataToken, genericTypeArguments, genericMethodArguments);
+			return ResolveField (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
-		internal static FieldInfo ResolveField (Module module, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+		internal static FieldInfo ResolveField (Module module, IntPtr monoModule, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveFieldToken (module.MonoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			IntPtr handle = ResolveFieldToken (monoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (handle == IntPtr.Zero)
 				throw resolve_token_exception (module.Name, metadataToken, error, "Field");
 			else
@@ -243,13 +243,13 @@ namespace System.Reflection {
 		public
 		override
 		MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			return ResolveMember (this, metadataToken, genericTypeArguments, genericMethodArguments);
+			return ResolveMember (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
-		internal static MemberInfo ResolveMember (Module module, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+		internal static MemberInfo ResolveMember (Module module, IntPtr monoModule, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			MemberInfo m = ResolveMemberToken (module.MonoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			MemberInfo m = ResolveMemberToken (monoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (m == null)
 				throw resolve_token_exception (module.Name, metadataToken, error, "MemberInfo");
 			else
@@ -259,13 +259,13 @@ namespace System.Reflection {
 		public
 		override
 		MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			return ResolveMethod (this, metadataToken, genericTypeArguments, genericMethodArguments);
+			return ResolveMethod (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
-		internal static MethodBase ResolveMethod (Module module, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+		internal static MethodBase ResolveMethod (Module module, IntPtr monoModule, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveMethodToken (module.MonoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			IntPtr handle = ResolveMethodToken (monoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (handle == IntPtr.Zero)
 				throw resolve_token_exception (module.Name, metadataToken, error, "MethodBase");
 			else
@@ -275,13 +275,13 @@ namespace System.Reflection {
 		public
 		override
 		string ResolveString (int metadataToken) {
-			return ResolveString (this, metadataToken);
+			return ResolveString (this, _impl, metadataToken);
 		}
 
-		internal static string ResolveString (Module module, int metadataToken) {
+		internal static string ResolveString (Module module, IntPtr monoModule, int metadataToken) {
 			ResolveTokenError error;
 
-			string s = ResolveStringToken (module.MonoModule, metadataToken, out error);
+			string s = ResolveStringToken (monoModule, metadataToken, out error);
 			if (s == null)
 				throw resolve_token_exception (module.Name, metadataToken, error, "string");
 			else
@@ -291,13 +291,13 @@ namespace System.Reflection {
 		public
 		override
 		Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			return ResolveType (this, metadataToken, genericTypeArguments, genericMethodArguments);
+			return ResolveType (this, _impl,  metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
-		internal static Type ResolveType (Module module, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+		internal static Type ResolveType (Module module, IntPtr monoModule, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveTypeToken (module.MonoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			IntPtr handle = ResolveTypeToken (monoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (handle == IntPtr.Zero)
 				throw resolve_token_exception (module.Name, metadataToken, error, "Type");
 			else
@@ -307,13 +307,13 @@ namespace System.Reflection {
 		public
 		override
 		byte[] ResolveSignature (int metadataToken) {
-			return ResolveSignature (this, metadataToken);
+			return ResolveSignature (this, _impl, metadataToken);
 		}
 
-		internal static byte[] ResolveSignature (Module module, int metadataToken) {
+		internal static byte[] ResolveSignature (Module module, IntPtr monoModule, int metadataToken) {
 			ResolveTokenError error;
 
-		    byte[] res = ResolveSignature (module.MonoModule, metadataToken, out error);
+		    byte[] res = ResolveSignature (monoModule, metadataToken, out error);
 			if (res == null)
 				throw resolve_token_exception (module.Name, metadataToken, error, "signature");
 			else
@@ -359,7 +359,7 @@ namespace System.Reflection {
 			return (RuntimeAssembly)assembly;
 		}
 
-		internal override IntPtr MonoModule {
+		internal IntPtr MonoModule {
 			get {
 				return _impl;
 			}
@@ -435,4 +435,10 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
 	}
+
+	internal enum ResolveTokenError {
+		OutOfRange,
+		BadTable,
+		Other
+	}	
 }

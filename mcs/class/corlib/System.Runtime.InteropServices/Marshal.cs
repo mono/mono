@@ -513,7 +513,10 @@ namespace System.Runtime.InteropServices
 			if (m == null)
 				throw new ArgumentNullException ("m");
 
-			return RuntimeModule.GetHINSTANCE (m.MonoModule);
+			if (m is RuntimeModule rm)
+				return RuntimeModule.GetHINSTANCE (rm.MonoModule);
+
+			return (IntPtr)(-1);
 		}
 #endif // !FULL_AOT_RUNTIME
 
