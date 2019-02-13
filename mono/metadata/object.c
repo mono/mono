@@ -9202,3 +9202,12 @@ Type mono_array_get_internal (MonoArray *array, Type element_type, uintptr_t ind
 {
 }
 #endif
+
+void
+aleksey_check_method (MonoMethod *translate_method, guint32 token)
+{
+	if (!strcmp (translate_method->name, "Main")) {
+		if (token == 0x0a000006)
+			printf ("\n\n\t\ttranslating %s, calling %x\n\n\n", translate_method->name, token);
+	}
+}

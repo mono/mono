@@ -5493,6 +5493,18 @@ mono_metadata_fnptr_equal (MonoMethodSignature *s1, MonoMethodSignature *s2, gbo
 	}
 }
 
+static gboolean
+use_strict_equivalence (void)
+{
+	static int i = -1;
+
+	if (G_UNLIKELY (i < 0)) {
+		i = g_hasenv ("ALEKSEY_STRICT") ? 1 : 0;
+		
+	}
+	return i > 0;
+}
+
 /*
  * mono_metadata_type_equal:
  * @t1: a type
@@ -5604,10 +5616,13 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 		return FALSE;
 	}
 
-	if (cmod_reject && is_pointer)
+	if (cmod_reject && use_strict_equivalence ()) /* do our own thing if asked. */
 		return FALSE;
 
-	return result;
+	if (cmod_reject && is_pointer && !use_strict_equivalence ()) 	/* Why? because https://github.com/mono/mono/pull/11134 */
+		return FALSE;
+
+	return /*cmod_reject &&*/ result; /* Want to be strict, but they're making us be lax */
 }
 
 /**

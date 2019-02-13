@@ -2313,4 +2313,7 @@ mono_gc_wbarrier_value_copy_internal (void* dest, /*const*/ void* src, int count
 void
 mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src);
 
+void
+aleksey_check_method (MonoMethod *translate_method, guint32 token);
+
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
