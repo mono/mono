@@ -25,10 +25,6 @@ extern MonoObject* mono_wasm_typed_array_copy_to (int js_handle, int ptr, int be
 extern MonoObject* mono_wasm_typed_array_from_array (MonoObject* mono_array, int *is_exception);
 extern MonoObject* mono_wasm_typed_array_copy_from (int js_handle, int ptr, int begin, int end, int bytes_per_element, int *is_exception);
 
-// Blazor specific custom routines - see dotnet_support.js for backing code
-extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
-extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, MonoString *funcName, void* arg0, void* arg1, void* arg2);
-
 void core_initialize_internals ()
 {
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJSWithArgs", mono_wasm_invoke_js_with_args);
@@ -47,10 +43,6 @@ void core_initialize_internals ()
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyTo", mono_wasm_typed_array_copy_to);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayFromArray", mono_wasm_typed_array_from_array);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyFrom", mono_wasm_typed_array_copy_from);
-
-	// Blazor specific custom routines - see dotnet_support.js for backing code		
-	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);
-	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSUnmarshalled", mono_wasm_invoke_js_unmarshalled);
 
 }
 

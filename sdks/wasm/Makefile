@@ -191,7 +191,7 @@ run-interp-sample: build-interp-sample
 	(cd bin/interp-sample && $(SM) runtime.js --run hello.exe)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
+	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --builddir=obj/aot-mini --nobinding --aot --template=runtime-tests.js mini_tests.dll
 	ninja -v -C obj/aot-mini
 
 check-aot-mini run-aot-mini: build-aot-mini

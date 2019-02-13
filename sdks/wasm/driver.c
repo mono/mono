@@ -270,6 +270,10 @@ static PinvokeImport sysnative_imports [] = {
 void core_initialize_internals ();
 #endif
 
+// Blazor specific custom routines - see dotnet_support.js for backing code
+extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
+extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, MonoString *funcName, void* arg0, void* arg1, void* arg2);
+
 void mono_wasm_enable_debugging (void);
 
 void mono_ee_interp_init (const char *opts);
@@ -508,6 +512,11 @@ icall_table_lookup_symbol (void *func)
 void mono_inialize_internals ()
 {
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
+
+	// Blazor specific custom routines - see dotnet_support.js for backing code		
+	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);
+	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSUnmarshalled", mono_wasm_invoke_js_unmarshalled);
+
 #ifdef CORE_BINDINGS	
 	core_initialize_internals();
 #endif
