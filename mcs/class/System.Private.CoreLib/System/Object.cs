@@ -13,5 +13,7 @@ namespace System
 		// TODO: Move to RuntimeHelpers
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int InternalGetHashCode (object o);
+
+		internal ref byte GetRawData () => throw new NotImplementedException ();
 	}
 }

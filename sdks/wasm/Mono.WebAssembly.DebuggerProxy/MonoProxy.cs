@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -157,7 +157,7 @@ namespace WsProxy {
 
 			case "Debugger.setBreakpointByUrl": {
 					Info ($"BP req {args}");
-					var bp_req = BreakPointRequest.Parse (args);
+					var bp_req = BreakPointRequest.Parse (args, store);
 					if (bp_req != null) {
 						await SetBreakPoint (id, bp_req, token);
 						return true;
@@ -267,9 +267,9 @@ namespace WsProxy {
 			var src = bp == null ? null : store.GetFileById (bp.Location.Id);
 
 			var callFrames = new List<JObject> ();
-			foreach (var f in orig_callframes) {
-				var function_name = f ["functionName"]?.Value<string> ();
-				var url = f ["url"]?.Value<string> ();
+			foreach (var frame in orig_callframes) {
+				var function_name = frame ["functionName"]?.Value<string> ();
+				var url = frame ["url"]?.Value<string> ();
 				if ("mono_wasm_fire_bp" == function_name || "_mono_wasm_fire_bp" == function_name) {
 					var frames = new List<Frame> ();
 					int frame_id = 0;
@@ -303,7 +303,7 @@ namespace WsProxy {
 
 						callFrames.Add (JObject.FromObject (new {
 							functionName = method.Name,
-
+							callFrameId = $"dotnet:scope:{frame_id}",
 							functionLocation = method.StartLocation.ToJObject (),
 
 							location = location.ToJObject (),
@@ -315,25 +315,24 @@ namespace WsProxy {
 									type = "local",
 									@object = new {
 										@type = "object",
-							 			className = "Object",
+										className = "Object",
 										description = "Object",
-										objectId = $"dotnet:scope:{frame_id}"
+										objectId = $"dotnet:scope:{frame_id}",
 									},
 									name = method.Name,
 									startLocation = method.StartLocation.ToJObject (),
 									endLocation = method.EndLocation.ToJObject (),
-								}
-							},
-
-							@this = new {
-							}
+								}},
+								@this = new { }
 						}));
 
 						++frame_id;
 						this.current_callstack = frames;
+
 					}
-				} else if (!url.StartsWith ("wasm://wasm/", StringComparison.InvariantCulture)) {
-					callFrames.Add (f);
+				} else if (!(function_name.StartsWith ("wasm-function", StringComparison.InvariantCulture)
+					|| url.StartsWith ("wasm://wasm/", StringComparison.InvariantCulture))) {
+					callFrames.Add (frame);
 				}
 			}
 
@@ -491,6 +490,10 @@ namespace WsProxy {
 			// results in a "Memory access out of bounds", causing 'values' to be null,
 			// so skip returning variable values in that case.
 			for (int i = 0; values != null && i < vars.Length; ++i) {
+				var value = values [i] ["value"];
+				if (((string)value ["description"]) == null)
+					value ["description"] = value ["value"]?.ToString();
+
 				var_list.Add (JObject.FromObject (new {
 					name = vars [i].Name,
 					value = values [i] ["value"]
@@ -712,10 +715,11 @@ namespace WsProxy {
 			var src_file = store.GetFileById (id);
 
 			var res = new StringWriter ();
-			res.WriteLine ($"//dotnet:{id}");
+			//res.WriteLine ($"//{id}");
 
 			try {
-				if (src_file.SourceUri.IsFile && File.Exists(src_file.SourceUri.LocalPath)) {
+				var uri = new Uri (src_file.Url);
+				if (uri.IsFile && File.Exists(uri.LocalPath)) {
 					using (var f = new StreamReader (File.Open (src_file.SourceUri.LocalPath, FileMode.Open))) {
 						await res.WriteAsync (await f.ReadToEndAsync ());
 					}

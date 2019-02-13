@@ -31,15 +31,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+#if !NETCORE
 using System.Security.Cryptography.X509Certificates;
 using System.Security;
 using System.Security.Permissions;
+#endif
 using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
 	[ComVisible (true)]
+#if !NETCORE
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
+#endif
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
@@ -100,7 +105,7 @@ namespace System.Reflection {
 		public override
 		string FullyQualifiedName {
 			get {
-#if !MOBILE
+#if !MOBILE && !NETCORE
 				if (SecurityManager.SecurityEnabled) {
 					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fqname).Demand ();
 				}
@@ -148,7 +153,7 @@ namespace System.Reflection {
 			if (IsResource ())
 				return null;
 
-			Type globalType = GetGlobalType ();
+			Type globalType = GetGlobalType (_impl);
 			return (globalType != null) ? globalType.GetField (name, bindingAttr) : null;
 		}
 
@@ -158,14 +163,17 @@ namespace System.Reflection {
 			if (IsResource ())
 				return new FieldInfo [0];
 
-			Type globalType = GetGlobalType ();
+			Type globalType = GetGlobalType (_impl);
 			return (globalType != null) ? globalType.GetFields (bindingFlags) : new FieldInfo [0];
 		}
 
 		public override
 		int MetadataToken {
-			get { return get_MetadataToken (this); }
+			get {
+				return get_MetadataToken (this);
+			}
 		}
+
 		protected
 		override
 		MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
@@ -173,7 +181,7 @@ namespace System.Reflection {
 			if (IsResource ())
 				return null;
 
-			Type globalType = GetGlobalType ();
+			Type globalType = GetGlobalType (_impl);
 			if (globalType == null)
 				return null;
 			if (types == null)
@@ -187,15 +195,17 @@ namespace System.Reflection {
 			if (IsResource ())
 				return new MethodInfo [0];
 
-			Type globalType = GetGlobalType ();
+			Type globalType = GetGlobalType (_impl);
 			return (globalType != null) ? globalType.GetMethods (bindingFlags) : new MethodInfo [0];
 		}
 
+#if !NETCORE
 		internal override ModuleHandle GetModuleHandleImpl() => new ModuleHandle (_impl);
+#endif
 
 		public override
 		void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine) {
-			ModuleHandle.GetPEKind (out peKind, out machine);
+			RuntimeModule.GetPEKind (_impl, out peKind, out machine);
 		}
 
 		public override
@@ -217,11 +227,15 @@ namespace System.Reflection {
 		public
 		override
 		FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			return ResolveField (this, metadataToken, genericTypeArguments, genericMethodArguments);
+		}
+
+		internal static FieldInfo ResolveField (Module module, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveFieldToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			IntPtr handle = ResolveFieldToken (module.MonoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (handle == IntPtr.Zero)
-				throw resolve_token_exception (metadataToken, error, "Field");
+				throw resolve_token_exception (module.Name, metadataToken, error, "Field");
 			else
 				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
 		}
@@ -229,12 +243,15 @@ namespace System.Reflection {
 		public
 		override
 		MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			return ResolveMember (this, metadataToken, genericTypeArguments, genericMethodArguments);
+		}
 
+		internal static MemberInfo ResolveMember (Module module, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			MemberInfo m = ResolveMemberToken (module.MonoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (m == null)
-				throw resolve_token_exception (metadataToken, error, "MemberInfo");
+				throw resolve_token_exception (module.Name, metadataToken, error, "MemberInfo");
 			else
 				return m;
 		}
@@ -242,11 +259,15 @@ namespace System.Reflection {
 		public
 		override
 		MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			return ResolveMethod (this, metadataToken, genericTypeArguments, genericMethodArguments);
+		}
+
+		internal static MethodBase ResolveMethod (Module module, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveMethodToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			IntPtr handle = ResolveMethodToken (module.MonoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (handle == IntPtr.Zero)
-				throw resolve_token_exception (metadataToken, error, "MethodBase");
+				throw resolve_token_exception (module.Name, metadataToken, error, "MethodBase");
 			else
 				return RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (handle));
 		}
@@ -254,11 +275,15 @@ namespace System.Reflection {
 		public
 		override
 		string ResolveString (int metadataToken) {
+			return ResolveString (this, metadataToken);
+		}
+
+		internal static string ResolveString (Module module, int metadataToken) {
 			ResolveTokenError error;
 
-			string s = ResolveStringToken (_impl, metadataToken, out error);
+			string s = ResolveStringToken (module.MonoModule, metadataToken, out error);
 			if (s == null)
-				throw resolve_token_exception (metadataToken, error, "string");
+				throw resolve_token_exception (module.Name, metadataToken, error, "string");
 			else
 				return s;
 		}
@@ -266,11 +291,15 @@ namespace System.Reflection {
 		public
 		override
 		Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			return ResolveType (this, metadataToken, genericTypeArguments, genericMethodArguments);
+		}
+
+		internal static Type ResolveType (Module module, int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
-			IntPtr handle = ResolveTypeToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			IntPtr handle = ResolveTypeToken (module.MonoModule, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
 			if (handle == IntPtr.Zero)
-				throw resolve_token_exception (metadataToken, error, "Type");
+				throw resolve_token_exception (module.Name, metadataToken, error, "Type");
 			else
 				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
 		}
@@ -278,15 +307,20 @@ namespace System.Reflection {
 		public
 		override
 		byte[] ResolveSignature (int metadataToken) {
+			return ResolveSignature (this, metadataToken);
+		}
+
+		internal static byte[] ResolveSignature (Module module, int metadataToken) {
 			ResolveTokenError error;
 
-		    byte[] res = ResolveSignature (_impl, metadataToken, out error);
+		    byte[] res = ResolveSignature (module.MonoModule, metadataToken, out error);
 			if (res == null)
-				throw resolve_token_exception (metadataToken, error, "signature");
+				throw resolve_token_exception (module.Name, metadataToken, error, "signature");
 			else
 				return res;
 		}
 
+#if !NETCORE
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -294,9 +328,9 @@ namespace System.Reflection {
 
 			UnitySerializationHolder.GetUnitySerializationInfo (info, UnitySerializationHolder.ModuleUnity, this.ScopeName, this.GetRuntimeAssembly ());
 		}
+#endif
 
-#if !MOBILE
-
+#if !MOBILE && !NETCORE
 		public
 		override
 		X509Certificate GetSignerCertificate ()
@@ -313,7 +347,7 @@ namespace System.Reflection {
 		public override
 		Type[] GetTypes() 
 		{
-			return InternalGetTypes ();
+			return InternalGetTypes (_impl);
 		}
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
@@ -325,8 +359,80 @@ namespace System.Reflection {
 			return (RuntimeAssembly)assembly;
 		}
 
-		internal override IntPtr GetImpl () {
-			return _impl;
+		internal override IntPtr MonoModule {
+			get {
+				return _impl;
+			}
 		}
+
+#if NETCORE
+		internal Guid GetModuleVersionId ()
+#else
+		internal override Guid GetModuleVersionId ()
+#endif
+		{
+			return new Guid (GetGuidInternal (_impl));
+		}
+
+		internal static Exception resolve_token_exception (string name, int metadataToken, ResolveTokenError error, string tokenType) {
+			if (error == ResolveTokenError.OutOfRange)
+				return new ArgumentOutOfRangeException ("metadataToken", String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, name));
+			else
+				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, name), "metadataToken");
+		}
+
+		internal static IntPtr[] ptrs_from_types (Type[] types) {
+			if (types == null)
+				return null;
+			else {
+				IntPtr[] res = new IntPtr [types.Length];
+				for (int i = 0; i < types.Length; ++i) {
+					if (types [i] == null)
+						throw new ArgumentException ();
+					res [i] = types [i].TypeHandle.Value;
+				}
+				return res;
+			}
+		}
+
+		// This calls ves_icall_reflection_get_token, so needs a Module argument
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern int get_MetadataToken (Module module);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern int GetMDStreamVersion (IntPtr module);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern Type[] InternalGetTypes (IntPtr module);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern IntPtr GetHINSTANCE (IntPtr module);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern string GetGuidInternal (IntPtr module);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern Type GetGlobalType (IntPtr module);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern IntPtr ResolveTypeToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern IntPtr ResolveMethodToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern IntPtr ResolveFieldToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern string ResolveStringToken (IntPtr module, int token, out ResolveTokenError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern MemberInfo ResolveMemberToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern byte[] ResolveSignature (IntPtr module, int metadataToken, out ResolveTokenError error);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
 	}
 }

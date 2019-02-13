@@ -18,7 +18,7 @@ ${TESTCMD} --label=runtime-unit-tests --timeout=5m make -w -C mono/unit-tests -k
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=llvmonly-mixed --timeout=10m make -w -C mono/tests/llvmonly-mixed -j ${CI_CPU_COUNT} check; fi
 if [[ ${CI_TAGS} == *'osx-'* ]]; then ${TESTCMD} --label=corlib-btls --timeout=5m bash -c "export MONO_TLS_PROVIDER=btls && make -w -C mcs/class/corlib TEST_HARNESS_FLAGS=-include:X509Certificates run-test"; fi
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
-${TESTCMD} --label=corlib-xunit --timeout=30m make -w -C mcs/class/corlib run-xunit-test
+${TESTCMD} --label=corlib-xunit --timeout=60m make -w -C mcs/class/corlib run-xunit-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
 ${TESTCMD} --label=profiler --timeout=30m make -w -C mono/profiler -k check
 ${TESTCMD} --label=compiler --timeout=30m make -w -C mcs/tests run-test

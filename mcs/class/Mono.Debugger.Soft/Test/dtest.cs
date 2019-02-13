@@ -4828,5 +4828,23 @@ public class DebuggerTests
 		AssertValue ("abc", variable);
 
 	}
+	[Test]
+	public void IfPropertyStepping () {
+		Event e = run_until ("if_property_stepping");
+		var req = create_step (e);
+		req.Enable ();
+		e = step_once ();
+		e = step_over ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		Assert.IsTrue ((e as StepEvent).Method.Name == "op_Equality" || (e as StepEvent).Method.Name == "if_property_stepping");
+	}
 } // class DebuggerTests
 } // namespace

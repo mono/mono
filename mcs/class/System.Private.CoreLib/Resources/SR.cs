@@ -1184,7 +1184,7 @@ partial class SR
 	public const string Arg_EnumNotCloneable = "The supplied object does not implement ICloneable.";
 	public const string InvalidOp_InvalidNewEnumVariant = "The returned enumerator does not implement IEnumVARIANT.";
 	public const string IndexOutOfRange_ArrayWithOffset = "";
-	public const string Argument_NotIsomorphic = "";
+	public const string ArgumentException_NotIsomorphic = "";
 	public const string Argument_StructArrayTooLarge = "";
 	public const string PersistedFiles_NoHomeDirectory = "The home directory of the current user could not be determined.";
 	public const string AmbiguousImplementationException_NullMessage = "Ambiguous implementation found.";
