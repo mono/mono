@@ -700,8 +700,9 @@ var BindingSupportLib = {
 			var mono_args = this.js_array_to_mono_array (js_args);
 			if (!this.delegate_dynamic_invoke)
 				throw new Error("System.Delegate.DynamicInvoke method can not be resolved.");
-
-			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "m", [ mono_args ]);
+			// Note: the single 'm' passed here is causing problems with AOT.  Changed to "mm" again.  
+			// This may need more analysis if causes problems again.
+			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "mm", [ mono_args ]);
 		},
 		
 		resolve_method_fqn: function (fqn) {
