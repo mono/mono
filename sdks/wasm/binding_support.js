@@ -676,7 +676,7 @@ var BindingSupportLib = {
 
 			if (args_marshal !== null && typeof args_marshal !== "undefined") 
 			{
-				if (args_marshal.length >= args.length && args_marshal [args.length] == 'm')
+				if (args_marshal.length >= args.length && args_marshal [args.length] === "m")
 					return res;
 			}
 
