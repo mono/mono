@@ -565,6 +565,8 @@
 		<type fullname="System.Reflection.RuntimeParameterInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in event_object_construct -->
 			<method signature="System.Void .ctor()" />
+			<!-- reflection.c add_parameter_object_to_array -->
+			<method signature="System.Void .ctor(System.String,System.Type,int,int,System.Object,System.Reflection.MemberInfo,System.Runtime.InteropServices)" />
 		</type>
 
 		<!-- object.c: mono_field_get_value_object and mono_runtime_invoke_array -->

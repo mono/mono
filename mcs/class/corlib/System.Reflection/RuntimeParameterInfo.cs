@@ -44,9 +44,19 @@ namespace System.Reflection
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 #endif
-	[StructLayout (LayoutKind.Sequential)]
 	class RuntimeParameterInfo : ParameterInfo {		
 		internal MarshalAsAttribute marshalAs;
+
+		// Called by the runtime
+		internal RuntimeParameterInfo (string name, Type type, int position, int attrs, object defaultValue, MemberInfo member, MarshalAsAttribute marshalAs) {
+			NameImpl = name;
+			ClassImpl = type;
+			PositionImpl = position;
+			AttrsImpl = (ParameterAttributes)attrs;
+			DefaultValueImpl = defaultValue;
+			MemberImpl = member;
+			this.marshalAs = marshalAs;
+		}
 
 		internal static void FormatParameters (StringBuilder sb, ParameterInfo[] p, CallingConventions callingConvention, bool serialization)
 		{
@@ -304,7 +314,7 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Type[] GetTypeModifiers (bool optional);		
+		internal static extern Type[] GetTypeModifiers (Type type, MemberInfo member, int position, bool optional);
 
 		internal static ParameterInfo New (ParameterInfo pinfo, Type type, MemberInfo member, int position)
 		{
@@ -321,6 +331,6 @@ namespace System.Reflection
 			return new RuntimeParameterInfo (type, member, marshalAs);
 		}
 
-		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (optional) ?? Type.EmptyTypes;
+		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (ParameterType, Member, Position, optional) ?? Type.EmptyTypes;
 	}
 }
