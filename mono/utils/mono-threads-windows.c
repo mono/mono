@@ -113,7 +113,10 @@ suspend_abort_syscall (PVOID thread_info, HANDLE native_thread_handle, DWORD tid
 	// all outputstanding sync IO for target thread. If its not blocked on a sync IO request, below
 	// call will just fail and nothing will be canceled. If thread is waiting on overlapped IO,
 	// the queued APC will take care of cancel specific outstanding IO requests.
-	CancelSynchronousIo (native_thread_handle);
+
+	// UNITY: Only call CancelSynchronousIo if needed. Can cause hangs if arbitrarily called
+	if (((MonoThreadInfo*)thread_info)->win32_apc_info_io_handle != INVALID_HANDLE_VALUE)
+		CancelSynchronousIo (native_thread_handle);
 #endif
 }
 
