@@ -141,7 +141,6 @@
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
       <Compile Include="System.Reflection\Assembly.cs" />
-      <Compile Include="System.Reflection\Module.cs" />
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
       <Compile Include="System.Reflection\MethodBase.cs" />
@@ -208,8 +207,6 @@
       <Compile Include="..\corlib\System\WeakReference.cs" />
       <Compile Include="..\corlib\System\WeakReference_T.cs" />
 
-      <Compile Include="..\corlib\System.Runtime.InteropServices\SafeHandle.cs" />
-
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
       <Compile Include="..\corlib\System.Runtime.CompilerServices\RuntimeHelpers.cs" />
 
@@ -240,8 +237,6 @@
       <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\thread.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\waithandle.cs" />
-
-      <Compile Include="..\referencesource\mscorlib\system\runtime\interopservices\safehandle.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
