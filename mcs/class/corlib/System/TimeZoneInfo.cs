@@ -90,34 +90,6 @@ namespace System
 		*/
 		private List<KeyValuePair<DateTime, TimeType>> transitions;
 
-		[StructLayout(LayoutKind.Sequential)]
-		private struct _SYSTEMTIME {
-			short wYear;
-			short wMonth;
-			short wDayOfWeek;
-			short wDay;
-			short wHour;
-			short wMinute;
-			short wSecond;
-			short wMilliseconds;
-		}
-
-		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-		private struct _TIME_ZONE_INFORMATION {
-			internal int Bias;
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
-			internal string StandardName;
-			internal _SYSTEMTIME StandardDate;
-			internal int StandardBias;
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=32)]
-			internal string DaylightName;
-			internal _SYSTEMTIME DaylightDate;
-			internal int DaylightBias;
-		}
-
-		[DllImport ("kernel32.dll", CallingConvention=CallingConvention.StdCall)]
-		private extern static uint GetTimeZoneInformation(out _TIME_ZONE_INFORMATION tzi);
-
 		private static bool readlinkNotFound;
 
 		[DllImport ("libc")]
@@ -182,17 +154,12 @@ namespace System
 		{
 #if WIN_PLATFORM
 			if (IsWindows && LocalZoneKey != null) {
-				/* Wine Mono hack: Wine doesn't set TimeZoneKeyName, so use
-				GetTimeZoneInformation to get the name. This may not quite be
-				correct because StandardName isn't the same as TimeZoneKeyName,
-				but it is for all builtin Wine timezones at least.
-
 				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
+				if (name == null)
+					name = (string)LocalZoneKey.GetValue ("StandardName"); // windows xp
 				name = TrimSpecial (name);
-				if (name != null) */
-				_TIME_ZONE_INFORMATION tzi;
-				if (GetTimeZoneInformation(out tzi) <= 2)
-					return TimeZoneInfo.FindSystemTimeZoneById (tzi.StandardName);
+				if (name != null)
+					return TimeZoneInfo.FindSystemTimeZoneById (name);
 			} else if (IsWindows) {
 				return GetLocalTimeZoneInfoWinRTFallback ();
 			}
