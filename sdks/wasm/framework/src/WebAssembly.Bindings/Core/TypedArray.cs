@@ -45,6 +45,40 @@ namespace WebAssembly.Core {
 		public T SubArray (int begin) => (T)Invoke ("subarray", begin);
 		public T SubArray (int begin, int end) => (T)Invoke ("subarray", begin, end);
 
+		// Define the indexer to allow client code to use [] notation.
+		public U? this [int i] {
+			get {
+				var jsValue = Runtime.GetByIndex (JSHandle, i, out int exception);
+
+				if (exception != 0)
+					throw new JSException ((string)jsValue);
+
+				// The value returned from the index.
+				return UnBoxValue (jsValue);
+			}
+			set {
+				var res = Runtime.SetByIndex (JSHandle, i, value, out int exception);
+
+				if (exception != 0)
+					throw new JSException ((string)res);
+
+			}
+		}
+
+		private U? UnBoxValue(object jsValue)
+		{
+			if (jsValue != null) {
+				var type = jsValue.GetType ();
+				if (type.IsPrimitive) {
+					return (U)Convert.ChangeType (jsValue, type);
+				} else {
+					throw new InvalidCastException ($"Unable to cast object of type {type} to type {typeof (U)}.");
+				}
+
+			} 
+			else
+				return null;
+		}
 
 		public U [] ToArray ()
 		{

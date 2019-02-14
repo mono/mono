@@ -23,7 +23,7 @@ namespace WebAssembly.Core {
 		void Set (ITypedArray typedArray, int offset);
 	}
 
-	public interface ITypedArray<T, U> {
+	public interface ITypedArray<T, U> where U : struct {
 
 		T Slice ();
 		T Slice (int begin);

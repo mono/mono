@@ -20,31 +20,6 @@ namespace WebAssembly.Core {
 		internal Int8Array (IntPtr js_handle) : base (js_handle)
 		{ }
 
-
-		// Define the indexer to allow client code to use [] notation.
-		public sbyte? this [int i] {
-			get {
-				var indexValue = Runtime.GetByIndex (JSHandle, i, out int exception);
-
-				if (exception != 0)
-					throw new JSException ((string)indexValue);
-
-				if (indexValue != null)
-					// The value returned from the index will be an int32 so use Convert to
-					// return a byte value.  
-					return Convert.ToSByte (indexValue);
-				else
-					return null;
-			}
-			set {
-				var res = Runtime.SetByIndex (JSHandle, i, value, out int exception);
-
-				if (exception != 0)
-					throw new JSException ((string)res);
-
-			}
-		}
-
 		/// <summary>
 		/// From the specified segment.
 		/// </summary>
