@@ -173,9 +173,6 @@
       <Compile Include="System.Threading\WaitHandle.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="temp\*.cs" />
-  </ItemGroup>
-  <ItemGroup>
       <Compile Include="..\..\build\common\Consts.cs" />
       <Compile Include="..\..\build\common\SR.cs" />
 
