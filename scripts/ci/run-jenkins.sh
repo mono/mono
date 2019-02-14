@@ -122,15 +122,21 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
 	   export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
 	   export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
 
-	   echo "DISABLE_ANDROID=1" > sdks/Make.config
-	   echo "DISABLE_WASM=1" >> sdks/Make.config
-	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
-	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
-		   echo "ENABLE_CXX=1" >> sdks/Make.config
-	   fi
+        echo "DISABLE_ANDROID=1" > sdks/Make.config
+        echo "DISABLE_WASM=1" >> sdks/Make.config
+        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        if [[ ${CI_TAGS} == *'cxx'* ]]; then
+            echo "ENABLE_CXX=1" >> sdks/Make.config
+        fi
+        if [[ ${CI_TAGS} == *'debug'* ]]; then
+            echo "CONFIGURATION=debug" >> sdks/Make.config
+        fi
+
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
-	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios NINJA=
+	   ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-ios NINJA=
+	   ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-ios     NINJA=
+	   ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
@@ -157,22 +163,25 @@ fi
 if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
         echo "DISABLE_IOS=1" > sdks/Make.config
+        echo "DISABLE_MAC=1" >> sdks/Make.config
         echo "DISABLE_WASM=1" >> sdks/Make.config
         echo "DISABLE_DESKTOP=1" >> sdks/Make.config
         echo "DISABLE_CCACHE=1" >> sdks/Make.config
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
             echo "ENABLE_CXX=1" >> sdks/Make.config
         fi
+        if [[ ${CI_TAGS} == *'debug'* ]]; then
+            echo "CONFIGURATION=debug" >> sdks/Make.config
+        fi
 
         # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
         # but doesn't get stuck when called via the shell, so let's just call it here now.
         ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
         ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
-        if [[ ${CI_TAGS} != *'debug'* ]]; then
-            ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
-        else
-            ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1 CONFIGURATION=debug
-        fi
+
+        ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-android     NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android   NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=mini --timeout=60m make -C sdks/android check-mini
@@ -200,17 +209,24 @@ fi
 
 if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
    then
-	   echo "DISABLE_ANDROID=1" > sdks/Make.config
-	   echo "DISABLE_IOS=1" >> sdks/Make.config
-	   echo "DISABLE_DESKTOP=1" >> sdks/Make.config
-	   if [[ ${CI_TAGS} == *'cxx'* ]]; then
-	       echo "ENABLE_CXX=1" >> sdks/Make.config
-	   fi
+        echo "DISABLE_ANDROID=1" > sdks/Make.config
+        echo "DISABLE_IOS=1" >> sdks/Make.config
+        echo "DISABLE_MAC=1" >> sdks/Make.config
+        echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+        if [[ ${CI_TAGS} == *'cxx'* ]]; then
+            echo "ENABLE_CXX=1" >> sdks/Make.config
+        fi
+        if [[ ${CI_TAGS} == *'debug'* ]]; then
+            echo "CONFIGURATION=debug" >> sdks/Make.config
+        fi
 
 	   export aot_test_suites="System.Core"
 
 	   ${TESTCMD} --label=provision --timeout=20m --fatal make --output-sync=recurse --trace -C sdks/builds provision-wasm
-	   ${TESTCMD} --label=archive --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm NINJA=
+
+	   ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-wasm NINJA=
+	   ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
+	   ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/wasm build
