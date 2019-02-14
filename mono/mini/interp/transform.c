@@ -571,20 +571,33 @@ can_store (int st_value, int vt_value)
 
 #endif
 
+static MonoType*
+get_arg_type_exact (TransformData *td, int n, int *mt)
+{
+	MonoType *type;
+	gboolean hasthis = mono_method_signature_internal (td->method)->hasthis;
+
+	if (hasthis && n == 0)
+		type = m_class_get_byval_arg (td->method->klass);
+	else
+		type = mono_method_signature_internal (td->method)->params [n - !!hasthis];
+
+	if (mt)
+		*mt = mint_type (type);
+
+	return type;
+}
+
 static void 
 load_arg(TransformData *td, int n)
 {
 	int mt;
 	MonoClass *klass = NULL;
 	MonoType *type;
-
 	gboolean hasthis = mono_method_signature_internal (td->method)->hasthis;
-	if (hasthis && n == 0)
-		type = m_class_get_byval_arg (td->method->klass);
-	else
-		type = mono_method_signature_internal (td->method)->params [hasthis ? n - 1 : n];
 
-	mt = mint_type (type);
+	type = get_arg_type_exact (td, n, &mt);
+
 	if (mt == MINT_TYPE_VT) {
 		gint32 size;
 		klass = mono_class_from_mono_type_internal (type);
@@ -627,13 +640,8 @@ store_arg(TransformData *td, int n)
 	CHECK_STACK (td, 1);
 	MonoType *type;
 
-	gboolean hasthis = mono_method_signature_internal (td->method)->hasthis;
-	if (hasthis && n == 0)
-		type = m_class_get_byval_arg (td->method->klass);
-	else
-		type = mono_method_signature_internal (td->method)->params [n - !!hasthis];
+	type = get_arg_type_exact (td, n, &mt);
 
-	mt = mint_type (type);
 	if (mt == MINT_TYPE_VT) {
 		gint32 size;
 		MonoClass *klass = mono_class_from_mono_type_internal (type);
