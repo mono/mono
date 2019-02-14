@@ -94,6 +94,12 @@ clean-$(1)-$(2):
 
 $$(eval $$(call TargetTemplate,$(1),$(2)))
 
+.PHONY: configure-$(1)
+configure-$(1): configure-$(1)-$(2)
+
+.PHONY: build-$(1)
+build-$(1): build-$(1)-$(2)
+
 .PHONY: archive-$(1)
 archive-$(1): package-$(1)-$(2)
 
