@@ -92,6 +92,12 @@ endif
 
 ifeq ($(PROFILE),wasm)
 LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
+
+BINARY_TEST_CASES_ROOT:=../../../external/illinker-test-assets/wasm/
+
+BINARY_TEST_CASES = \
+        $(BINARY_TEST_CASES_ROOT)Newtonsoft/bin/Release/netstandard2.0/dist/_framework/_bin/Newtonsoft.dll \
+        $(BINARY_TEST_CASES_ROOT)HelloWorld/bin/Release/netstandard2.0/dist/_framework/_bin/HelloWorld.dll
 endif
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
