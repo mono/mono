@@ -1,6 +1,11 @@
 #!/bin/bash -e
 
+if test -n "${MONO_LLVMONLY}";
+then
+${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k testllvmonlyinterp V=1
+else
 ${TESTCMD} --label=runtime --timeout=160m make -w -C mono/tests -k testfullaotinterp V=1
+fi
 
 ${TESTCMD} --label=corlib --timeout=30m make -w -C mcs/class/corlib run-test
 ${TESTCMD} --label=verify --timeout=15m make -w -C runtime mcs-compileall
