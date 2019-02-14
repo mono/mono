@@ -1,0 +1,14 @@
+name: build_osx_runtime
+
+agent:
+  type: Unity::VM::osx
+  image: buildfarm/mac:latest
+  flavor: m1.mac
+
+commands:
+  - .yamato/build_osx_runtime.sh
+
+artifacts: 
+  osx-i386.zip:
+    paths:
+      - incomingbuilds/osx-i386/**
