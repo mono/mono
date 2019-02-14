@@ -28,6 +28,7 @@ endif
 ifeq ($(PROFILE),monodroid)
 # XA implements System.Drawing API inside Mono.Android
 API_BIN_REFS := Mono.Android
+LIB_REFS += Facades/System.Drawing.Common
 else
 
 # profiles which build a System.Drawing.dll in the repo
