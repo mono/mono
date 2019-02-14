@@ -31,7 +31,8 @@ System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceControll
 System.Net.Ping System.Resources.Reader System.Resources.Writer System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp \
 System.Runtime.InteropServices.RuntimeInformation System.Xml.XPath.XDocument System.Threading.Overlapped System.Security.SecureString \
 System.Diagnostics.StackTrace System.Data.Common System.Globalization.Extensions System.Runtime.Serialization.Xml System.ServiceModel.Primitives \
-System.Security.Cryptography.X509Certificates System.Runtime.Serialization.Primitives System.Security.Cryptography.Algorithms netstandard System.Drawing.Primitives
+System.Security.Cryptography.X509Certificates System.Runtime.Serialization.Primitives System.Security.Cryptography.Algorithms netstandard System.Drawing.Primitives \
+System.Drawing.Common
 
 # common_SUBDIRS dependencies
 common_DEPS_SUBDIRS :=
@@ -39,7 +40,7 @@ common_DEPS_SUBDIRS :=
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS)
 monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
-monodroid_SUBDIRS = $(common_DEPS_SUBDIRS)
+monodroid_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 monodroid_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS)
@@ -83,6 +84,6 @@ testing_aot_full_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 mobile_only_SUBDIRS = System.Security.Cryptography.Pkcs System.Security.Cryptography.OpenSsl System.Threading.Tasks.Extensions \
 System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy System.Memory \
-System.Drawing.Common System.Buffers
+System.Buffers
 
 PROFILE_PARALLEL_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
