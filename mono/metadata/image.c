@@ -1770,13 +1770,9 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 		// Image not loaded, load it now
 		fname_utf16 = g_utf8_to_utf16 (absfname, -1, NULL, NULL, NULL);
 		module_handle = MonoLoadImage (fname_utf16);
-		if (status && module_handle == NULL) {
+		if (status && module_handle == NULL)
 			last_error = mono_w32error_get_last ();
-			if (last_error == ERROR_BAD_EXE_FORMAT) {
-				g_free(fname_utf16);
-				goto fallback;
-			}
-		}
+
 		/* mono_image_open_from_module_handle is called by _CorDllMain. */
 		image = (MonoImage*)g_hash_table_lookup (loaded_images, absfname);
 		if (image)
@@ -1821,9 +1817,6 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 	 * the same image, we discard all but the first copy.
 	 */
 	mono_images_lock ();
-
-fallback:
-
 	image = (MonoImage *)g_hash_table_lookup (loaded_images, absfname);
 	g_free (absfname);
 
