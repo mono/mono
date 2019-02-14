@@ -13,7 +13,6 @@ System.Security.Cryptography/TripleDESCng.cs
 System.Security.Cryptography.X509Certificates/ECDsaCertificateExtensions.cs
 System.Security.Cryptography.X509Certificates/DSACertificateExtensions.cs
 System.Security.Cryptography.X509Certificates/RSACertificateExtensions.cs
-corefx/X509Stubs.cs
 Microsoft.Win32.SafeHandles/SafeNCryptHandle.cs
 Microsoft.Win32.SafeHandles/SafeNCryptKeyHandle.cs
 Microsoft.Win32.SafeHandles/SafeNCryptProviderHandle.cs

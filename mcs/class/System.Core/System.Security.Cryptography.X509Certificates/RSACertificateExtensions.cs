@@ -50,7 +50,7 @@ namespace System.Security.Cryptography.X509Certificates
 		
 		public static X509Certificate2 CopyWithPrivateKey(this X509Certificate2 certificate, RSA privateKey) 
 		{ 
-			throw null; 
+			throw new PlatformNotSupportedException(); 
 		}
 	}
 }
