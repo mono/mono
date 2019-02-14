@@ -98,10 +98,6 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/HashSetEqualityComparer.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/ICollectionDebugView.cs
 
-
-../../../external/corefx/src/System.Reflection.DispatchProxy/src/System/Reflection/DispatchProxyGenerator.cs
-../../../external/corefx/src/System.Reflection.DispatchProxy/src/System/Reflection/DispatchProxy.cs
-
 ../../../external/corefx/src/System.Linq/src/System/Linq/*.cs
 
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Dynamic/*.cs
