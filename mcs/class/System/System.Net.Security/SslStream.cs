@@ -721,5 +721,6 @@ namespace System.Net.Security
 			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 		}
 #endif
+		public SslApplicationProtocol NegotiatedApplicationProtocol => throw new PlatformNotSupportedException();
 	}
 }

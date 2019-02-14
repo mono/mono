@@ -216,6 +216,7 @@ System.IO/MonoIOError.cs
 System.IO/MonoFileType.cs
 System.IO/MonoIOStat.cs
 System.IO/Path.cs
+System.IO/Path.ns21.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/SearchOption.cs
 System.IO/SearchPattern.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/SeekOrigin.cs
@@ -1143,6 +1144,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/MemoryStream.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathTooLongException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PinnedBufferMemoryStream.cs
+corefx/Stream.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Stream.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/IO/Stream.CoreRT.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/StreamReader.cs
@@ -1392,7 +1394,9 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/cryptography/base64transforms.cs
 ../referencesource/mscorlib/system/security/cryptography/crypto.cs
 ../referencesource/mscorlib/system/security/cryptography/cryptoapitransform.cs
-../referencesource/mscorlib/system/security/cryptography/cryptostream.cs
+../../../external/corefx/src/System.Security.Cryptography.Primitives/src/System/Security/Cryptography/CryptoStreamMode.cs
+../../../external/corefx/src/System.Security.Cryptography.Primitives/src/System/Security/Cryptography/CryptoStream.cs
+../../../external/corefx/src/Common/src/System/Threading/Tasks/ForceAsyncAwaiter.cs
 ../referencesource/mscorlib/system/security/cryptography/derivebytes.cs
 ../referencesource/mscorlib/system/security/cryptography/des.cs
 ../referencesource/mscorlib/system/security/cryptography/descryptoserviceprovider.cs
@@ -1401,7 +1405,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/cryptography/dsasignatureformatter.cs
 ../../../external/corefx/src/System.Security.Cryptography.Primitives/src/System/Security/Cryptography/HashAlgorithm.cs
 ../../../external/corefx/src/System.Security.Cryptography.Primitives/src/System/Security/Cryptography/CryptographicOperations.cs
-../referencesource/mscorlib/system/security/cryptography/HashAlgorithmName.cs
+../../../external/corefx/src/System.Security.Cryptography.Primitives/src/System/Security/Cryptography/HashAlgorithmName.cs
 ../referencesource/mscorlib/system/security/cryptography/hmac.cs
 ../referencesource/mscorlib/system/security/cryptography/hmacmd5.cs
 ../referencesource/mscorlib/system/security/cryptography/hmacripemd160.cs
@@ -1419,7 +1423,8 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/security/cryptography/randomnumbergenerator.cs
 ../referencesource/mscorlib/system/security/cryptography/rc2.cs
 ../referencesource/mscorlib/system/security/cryptography/rc2cryptoserviceprovider.cs
-../referencesource/mscorlib/system/security/cryptography/rfc2898derivebytes.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/Internal/Cryptography/Helpers.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/Rfc2898DeriveBytes.cs
 ../referencesource/mscorlib/system/security/cryptography/rijndael.cs
 ../referencesource/mscorlib/system/security/cryptography/rijndaelmanaged.cs
 ../referencesource/mscorlib/system/security/cryptography/rijndaelmanagedtransform.cs

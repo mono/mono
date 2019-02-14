@@ -511,6 +511,20 @@ namespace System.IO {
             return chars;
         }
 
+#if MONO
+        public virtual int Read(Span<char> buffer)
+        {
+            char[] bufferBytes = buffer.ToArray();
+            return Read(bufferBytes, 0, bufferBytes.Length);
+        }
+
+        public virtual int Read(Span<byte> buffer)
+        {
+            byte[] bufferBytes = buffer.ToArray();
+            return Read(bufferBytes, 0, bufferBytes.Length);
+        }
+#endif
+
         public virtual int Read(byte[] buffer, int index, int count) {
             if (buffer==null)
                 throw new ArgumentNullException("buffer", Environment.GetResourceString("ArgumentNull_Buffer"));

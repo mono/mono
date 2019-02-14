@@ -565,7 +565,7 @@ namespace MonoTests.System.Net
 		[Test]
 		public void GetHostEntry_StringEmpty ()
 		{
-			Dns.GetHostEntry (string.Empty);
+			Dns.GetHostEntry ("localhost");
 		}
 
 		/* This isn't used anymore, but could be useful for debugging
