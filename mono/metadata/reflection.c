@@ -1014,7 +1014,8 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 	args [0] = MONO_HANDLE_RAW (name_str);
 	args [1] = MONO_HANDLE_RAW (rt);
 	args [2] = &idx;
-	int attrs = sig_param->attrs;
+	int attrs;
+	attrs = sig_param->attrs;
 	args [3] = &attrs;
 	args [4] = MONO_HANDLE_RAW (def_value);
 	args [5] = MONO_HANDLE_RAW (member);
