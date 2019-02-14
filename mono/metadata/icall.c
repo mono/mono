@@ -8518,10 +8518,6 @@ mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mo
 		if (res)
 			return res;
 
-#ifdef HOST_WIN32
-DebugBreak();
-#endif
-
 		if (warn_on_missing) {
 			g_warning ("cant resolve internal call to \"%s\" (tested without signature also)", mname);
 			g_print ("\nYour mono runtime and class libraries are out of sync.\n");
