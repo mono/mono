@@ -604,6 +604,7 @@
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
             <Compile Include="MonoWebRequestHandler.cs" />
+            <Compile Include="StreamContent.Mono.cs" />
             <Compile Include="corefx\NetEventSource.Http.cs" />
             <Compile Include="corefx\SocketsHttpHandler.Mono.cs" />
           </ItemGroup>
@@ -718,6 +719,7 @@
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
             <Compile Include="MonoWebRequestHandler.cs" />
+            <Compile Include="StreamContent.Mono.cs" />
             <Compile Include="corefx\NetEventSource.Http.cs" />
             <Compile Include="corefx\SocketsHttpHandler.Mono.cs" />
           </ItemGroup>
@@ -832,6 +834,7 @@
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
             <Compile Include="MonoWebRequestHandler.cs" />
+            <Compile Include="StreamContent.Mono.cs" />
             <Compile Include="corefx\NetEventSource.Http.cs" />
             <Compile Include="corefx\SocketsHttpHandler.Mono.cs" />
           </ItemGroup>
