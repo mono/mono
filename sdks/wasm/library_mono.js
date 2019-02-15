@@ -358,7 +358,33 @@ var MonoSupportLib = {
 	mono_wasm_fire_bp: function () {
 		console.log ("mono_wasm_fire_bp");
 		debugger;
-	}
+	},
+
+	// Win32S = 0,
+	// Win32Windows = 1,
+	// Win32NT = 2,
+	// WinCE = 3,
+	// Unix = 4,
+	// // Since NET 3.5 SP1 or silverlight
+	// Xbox = 5,
+	// MacOSX = 6,
+	mono_wasm_os_platform_id: function () {
+		if (ENVIRONMENT_IS_WEB) {
+			var platformenv = window.navigator.platform.toUpperCase();
+			if (platformenv.indexOf("MAC")>=0
+					|| platformenv.indexOf("IPHONE") >= 0
+					|| platformenv.indexOf("IPOD") >= 0
+					|| platformenv.indexOf("IPAD") >= 0)
+				return 6; // Mac-ish
+			else if (platformenv.indexOf("WIN")>=0)
+				return 1; // Windows
+
+			return 4; // Unix
+		} else {
+			return 4; // Unix
+		}
+	},
+
 };
 
 autoAddDeps(MonoSupportLib, '$MONO')

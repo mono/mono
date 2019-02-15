@@ -230,8 +230,10 @@ namespace System {
 				if (os == null) {
 					Version v = CreateVersionFromString (GetOSVersionString ());
 					PlatformID p = Platform;
+#if (!WASM)
 					if (p == PlatformID.MacOSX)
 						p = PlatformID.Unix;
+#endif
 					os = new OperatingSystem (p, v);
 				}
 				return os;

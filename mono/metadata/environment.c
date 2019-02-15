@@ -65,6 +65,8 @@ ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 				 verinfo.wServicePackMajor << 16);
 		return mono_string_new_handle (mono_domain_get (), version, error);
 	}
+#elif defined(HOST_WASM)
+	return mono_string_new_handle (mono_domain_get (), "0.0.0.0", error);	
 #elif defined(HAVE_SYS_UTSNAME_H) && defined(_AIX)
 	/*
 	 * AIX puts the major version number in .version and minor in .release; so make a

@@ -6786,6 +6786,17 @@ ves_icall_System_Environment_get_MachineName (MonoError *error)
 	return mono_icall_get_machine_name (error);
 }
 
+#ifdef HOST_WASM
+
+#include <emscripten.h>
+
+//JS functions imported that we use
+extern int mono_wasm_os_platform_id (void);
+G_END_DECLS
+
+#endif // HOST_WASM
+
+
 #ifndef HOST_WIN32
 static inline int
 mono_icall_get_platform (void)
@@ -6800,6 +6811,8 @@ mono_icall_get_platform (void)
 	// Windows, but in this case, it would be OSX. 
 	//
 	return 6;
+#elif HOST_WASM
+	return mono_wasm_os_platform_id ();
 #else
 	/* Unix */
 	return 4;
