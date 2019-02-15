@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using Internal.Cryptography;
 using Internal.Cryptography.Pal;
 using Microsoft.Win32.SafeHandles;
+using Mono;
 
 #if MONO_SECURITY_ALIAS
 using MX = MonoSecurity::Mono.Security.X509;
@@ -234,6 +235,11 @@ namespace System.Security.Cryptography.X509Certificates
 
 		byte[] ExportPkcs12 (string password)
 		{
+			return ExportPkcs12 (RawData, IntermediateCertificates, password, (RSA)PrivateKey);
+		}
+
+		static byte[] ExportPkcs12 (byte[] rawData, X509CertificateImplCollection intermediateCertificates, string password, RSA privateKey)
+		{
 			var pfx = new MX.PKCS12 ();
 			try {
 				var attrs = new Hashtable ();
@@ -242,18 +248,25 @@ namespace System.Security.Cryptography.X509Certificates
 				attrs.Add (MX.PKCS9.localKeyId, localKeyId);
 				if (password != null)
 					pfx.Password = password;
-				pfx.AddCertificate (new MX.X509Certificate (RawData), attrs);
-				if (IntermediateCertificates != null) {
-					for (int i = 0; i < IntermediateCertificates.Count; i++)
-						pfx.AddCertificate (new MX.X509Certificate (IntermediateCertificates[i].RawData));
+				pfx.AddCertificate (new MX.X509Certificate (rawData), attrs);
+				if (intermediateCertificates != null) {
+					for (int i = 0; i < intermediateCertificates.Count; i++)
+						pfx.AddCertificate (new MX.X509Certificate (intermediateCertificates[i].RawData));
 				}
-				var privateKey = PrivateKey;
 				if (privateKey != null)
 					pfx.AddPkcs8ShroudedKeyBag (privateKey, attrs);
 				return pfx.GetBytes ();
 			} finally {
 				pfx.Password = null;
 			}
+		}
+
+		public override X509Certificate2Impl CopyWithPrivateKey (RSA privateKey)
+		{
+			var password = Guid.NewGuid ().ToString ();
+			var data = ExportPkcs12 (RawData, IntermediateCertificates, password, privateKey);
+			using (var pwhandle = new SafePasswordHandle (password))
+				return X509Pal.Instance.Import (data, pwhandle, X509KeyStorageFlags.DefaultKeySet);
 		}
 	}
 }
