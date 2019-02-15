@@ -57,7 +57,7 @@ System.Diagnostics.Tracing System.Net.Primitives netstandard
 xammac_SUBDIRS = $(monotouch_SUBDIRS)
 xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
-xammac_net_4_5_SUBDIRS = $(net_4_x_SUBDIRS)
+xammac_net_4_5_SUBDIRS = $(net_4_x_SUBDIRS) System.Drawing.Primitives
 xammac_net_4_5_PARALLEL_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
 
 monotouch_watch_SUBDIRS = $(monotouch_SUBDIRS)
