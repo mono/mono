@@ -2941,9 +2941,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	0 };
 #endif
 
-
 	frame->ex = NULL;
-	frame->ip = NULL;
 	debug_enter (frame, &tracing);
 
 	imethod = frame->imethod;
@@ -2954,6 +2952,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		g_free (mn);
 #endif
 
+		frame->ip = NULL;
 		do_transform_method (frame, context);
 		if (frame->ex)
 			THROW_EX (frame->ex, NULL);
