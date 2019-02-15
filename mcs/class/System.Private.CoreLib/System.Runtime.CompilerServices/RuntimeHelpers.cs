@@ -11,5 +11,18 @@ namespace System.Runtime.CompilerServices
 		{
 			throw new NotImplementedException ();
 		}
+
+		public static T[] GetSubArray<T> (T[] array, Range range)
+		{
+			Type elementType = array.GetType().GetElementType();
+			Span<T> source = array.AsSpan(range);
+
+			if (elementType.IsValueType)
+				return source.ToArray();
+
+			T[] newArray = (T[])Array.CreateInstance(elementType, source.Length);
+			source.CopyTo(newArray);
+			return newArray;
+		}
 	}
 }
