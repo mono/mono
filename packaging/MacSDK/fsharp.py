@@ -13,7 +13,8 @@ class FsharpPackage(GitHubTarballPackage):
                              'patches/fsharp-path-overloads.patch',
                              'patches/fsharp-debug-pinvoke-fix.patch',
                              'patches/fsharp-IsPathRooted-type-inference.patch',
-                             'patches/fsharp-GetFileNameWithoutExtension-type-inference.patch'])
+                             'patches/fsharp-GetFileNameWithoutExtension-type-inference.patch',
+                             'patches/fsharp-msbuild-16-0.patch'])
 
     def prep(self):
         Package.prep(self)
