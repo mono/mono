@@ -47,6 +47,7 @@ extern GCStats mono_gc_stats;
 #include <execinfo.h>
 #endif
 
+#if defined(ENABLE_CHECKED_BUILD_CRASH_REPORTING) && defined (ENABLE_OVERRIDABLE_ALLOCATORS)
 // Fixme: put behind preprocessor symbol?
 static void
 assert_not_reached_mem (const char *msg)
@@ -100,7 +101,6 @@ assert_not_reached_fn_ptr_calloc (gsize n, gsize x)
 void
 mono_summarize_toggle_assertions (gboolean enable)
 {
-#if defined(ENABLE_CHECKED_BUILD_CRASH_REPORTING) && defined (ENABLE_OVERRIDABLE_ALLOCATORS)
 	static GMemVTable g_mem_vtable_backup;
 	static gboolean saved;
 
@@ -116,8 +116,13 @@ mono_summarize_toggle_assertions (gboolean enable)
 	}
 
 	mono_memory_barrier ();
-#endif
 }
+#else
+void
+mono_summarize_toggle_assertions (gboolean enable)
+{
+}
+#endif /* defined(ENABLE_CHECKED_BUILD_CRASH_REPORTING) && defined (ENABLE_OVERRIDABLE_ALLOCATORS) */
 
 typedef struct {
 	const char *directory;
@@ -687,6 +692,7 @@ mono_native_state_add_thread (MonoStateWriter *writer, MonoThreadSummary *thread
 static void
 mono_native_state_add_ee_info  (MonoStateWriter *writer)
 {
+#ifndef MONO_PRIVATE_CRASHES
 	// FIXME: setup callbacks to enable
 	/*const char *aot_mode;*/
 	/*MonoAotMode mono_aot_mode = mono_jit_get_aot_mode ();*/
@@ -738,6 +744,7 @@ mono_native_state_add_ee_info  (MonoStateWriter *writer)
 	writer->indent--;
 	mono_state_writer_indent (writer);
 	mono_state_writer_printf(writer, "},\n");
+#endif
 }
 
 // Taken from driver.c
@@ -932,9 +939,7 @@ mono_native_state_add_prologue (MonoStateWriter *writer)
 
 	mono_native_state_add_version (writer);
 
-#ifndef MONO_PRIVATE_CRASHES
 	mono_native_state_add_ee_info (writer);
-#endif
 
 	mono_native_state_add_memory (writer);
 
