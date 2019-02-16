@@ -225,7 +225,6 @@
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\referencesource\mscorlib\system\buffer.cs" />
-      <Compile Include="..\referencesource\mscorlib\system\exception.cs" />
       <Compile Include="..\referencesource\mscorlib\system\enum.cs" />
       <Compile Include="..\referencesource\mscorlib\system\gc.cs" />
       <Compile Include="..\referencesource\mscorlib\system\typeloadexception.cs" />

@@ -151,7 +151,6 @@ namespace System {
             }
         }
         
-        
         public virtual String Message {
                get {  
                 if (_message == null) {
@@ -958,11 +957,6 @@ namespace System {
 
         // @MANAGED: HResult is used from within the EE!  Rename with care - check VM directory
         internal int _HResult;     // HResult
-
-#if NETCORE
-		// Needs to be here not in netcore's partial class so it comes after the fields known to the runtime
-		protected event EventHandler<SafeSerializationEventArgs> SerializeObjectState;
-#endif
 
         public int HResult
         {
