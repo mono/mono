@@ -966,7 +966,16 @@ namespace System.Reflection {
 
 		public override string ToString () {
 #if NETCORE
-			throw new NotImplementedException ();
+			StringBuilder sbName = new StringBuilder(Name);
+			sbName.Append ("Void ");
+
+			TypeNameFormatFlags format = TypeNameFormatFlags.FormatBasic;
+
+			sbName.Append("(");
+			RuntimeParameterInfo.FormatParameters (sbName, GetParametersNoCopy (), CallingConvention, false);
+			sbName.Append(")");
+
+			return sbName.ToString();
 #else
 			return "Void " + FormatNameAndSig (false);
 #endif

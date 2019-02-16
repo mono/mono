@@ -35,8 +35,15 @@ namespace System.Reflection
 		public static T GetCustomAttribute<T>(this System.Reflection.ParameterInfo element) where T : System.Attribute { throw null; }
 		public static T GetCustomAttribute<T>(this System.Reflection.ParameterInfo element, bool inherit) where T : System.Attribute { throw null; }
 		public static bool IsDefined(this System.Reflection.Assembly element, System.Type attributeType) { throw null; }
-		public static bool IsDefined(this System.Reflection.MemberInfo element, System.Type attributeType) { throw null; }
-		public static bool IsDefined(this System.Reflection.MemberInfo element, System.Type attributeType, bool inherit) { throw null; }
+
+		public static bool IsDefined(this System.Reflection.MemberInfo element, System.Type attributeType) {
+			return MonoCustomAttrs.IsDefined (element, attributeType, false);
+		}
+
+		public static bool IsDefined(this System.Reflection.MemberInfo element, System.Type attributeType, bool inherit) {
+			return MonoCustomAttrs.IsDefined (element, attributeType, inherit);
+		}
+
 		public static bool IsDefined(this System.Reflection.Module element, System.Type attributeType) { throw null; }
 		public static bool IsDefined(this System.Reflection.ParameterInfo element, System.Type attributeType) { throw null; }
 		public static bool IsDefined(this System.Reflection.ParameterInfo element, System.Type attributeType, bool inherit) { throw null; }
