@@ -5178,7 +5178,6 @@ namespace System
         //  5. ConstructorInfo.ToString() outputs "Void" as the return type. Why Void?
         // Since it could be a breaking changes to fix these legacy behaviors, we only use the better and more unambiguous format
         // in serialization (MemberInfoSerializationHolder).
-#if !NETCORE
         internal override string FormatTypeName(bool serialization)
         {
             if (serialization)
@@ -5208,7 +5207,6 @@ namespace System
                 return typeName;
             }
         }
-#endif
 
 #if !MONO
 
