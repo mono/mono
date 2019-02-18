@@ -50,7 +50,7 @@ namespace Mono.AppleTls
 		SafeSecIdentityHandle serverIdentity;
 		SafeSecIdentityHandle clientIdentity;
 
-		X509Certificate remoteCertificate;
+		X509Certificate2 remoteCertificate;
 		X509Certificate localClientCertificate;
 		MonoTlsConnectionInfo connectionInfo;
 		bool isAuthenticated;
@@ -247,7 +247,7 @@ namespace Mono.AppleTls
 
 			bool ok;
 			SecTrust trust = null;
-			X509CertificateCollection certificates = null;
+			X509Certificate2Collection certificates = null;
 
 			try {
 				trust = GetPeerTrust (!IsServer);
@@ -261,11 +261,11 @@ namespace Mono.AppleTls
 					if (trust.Count > 1)
 						Debug ("WARNING: Got multiple certificates in SecTrust!");
 
-					certificates = new X509CertificateCollection ();
+					certificates = new X509Certificate2Collection ();
 					for (int i = 0; i < trust.Count; i++)
 						certificates.Add (trust.GetCertificate (i));
 
-					remoteCertificate = new X509Certificate (certificates [0]);
+					remoteCertificate = new X509Certificate2 (certificates [0]);
 					Debug ("Got peer trust: {0}", remoteCertificate);
 				}
 
@@ -395,7 +395,7 @@ namespace Mono.AppleTls
 			get { return localClientCertificate; }
 		}
 
-		public override X509Certificate RemoteCertificate {
+		public override X509Certificate2 RemoteCertificate {
 			get { return remoteCertificate; }
 		}
 

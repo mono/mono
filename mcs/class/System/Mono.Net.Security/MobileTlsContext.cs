@@ -156,7 +156,7 @@ namespace Mono.Net.Security
 			get;
 		}
 
-		public abstract X509Certificate RemoteCertificate {
+		public abstract X509Certificate2 RemoteCertificate {
 			get;
 		}
 
@@ -174,13 +174,13 @@ namespace Mono.Net.Security
 
 		public abstract bool PendingRenegotiation ();
 
-		protected bool ValidateCertificate (X509Certificate leaf, X509Chain chain)
+		protected bool ValidateCertificate (X509Certificate2 leaf, X509Chain chain)
 		{
 			var result = certificateValidator.ValidateCertificate (TargetHost, IsServer, leaf, chain);
 			return result != null && result.Trusted && !result.UserDenied;
 		}
 
-		protected bool ValidateCertificate (X509CertificateCollection certificates)
+		protected bool ValidateCertificate (X509Certificate2Collection certificates)
 		{
 			var result = certificateValidator.ValidateCertificate (TargetHost, IsServer, certificates);
 			return result != null && result.Trusted && !result.UserDenied;
