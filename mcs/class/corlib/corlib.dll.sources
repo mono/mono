@@ -1685,12 +1685,14 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Gen2GcCallback.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/HashCode.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/HResults.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Index.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MathF.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Marvin.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Memory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemoryDebugView.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemoryExtensions.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/MemoryExtensions.Fast.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Range.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlyMemory.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlySpan.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ReadOnlySpan.Fast.cs
@@ -1894,7 +1896,8 @@ corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemName.cs
 ../../../external/corefx/src/Common/src/System/Text/ValueUtf8Converter.cs
 corefx/DirectoryInfo.cs
+corefx/File.cs
 corefx/FileInfo.cs
 corefx/Directory.cs
 corefx/MonoLinqHelper.cs
-corefx/File.cs
+corefx/ThrowHelper.cs

@@ -287,6 +287,7 @@
 ../../../external/corefx/src/System.Runtime/tests/System/GuidTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/HandleTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/HashCodeTests.netcoreapp.cs
+../../../external/corefx/src/System.Runtime/tests/System/IndexTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Int16Tests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Int16Tests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Int32Tests.cs
@@ -307,6 +308,7 @@
 ../../../external/corefx/src/System.Runtime/tests/System/NullReferenceExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ObjectTests.cs
 #../../../external/corefx/src/System.Runtime/tests/System/PseudoCustomAttributeTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/RangeTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/SByteTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/SByteTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/SingleTests.cs
