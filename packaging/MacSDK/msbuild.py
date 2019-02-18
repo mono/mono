@@ -6,8 +6,8 @@ class MSBuild (GitHubPackage):
 			revision = '8b3a694c2c419582108588a7bd1133630a1b8077')
 
 	def build (self):
-		self.sh ('./build.sh -hostType mono -configuration Release -skipTests')
-		self.sh ('zip msbuild-bin-logs.zip artifacts/Release-MONO/log/*')
+		self.sh ('./eng/cibuild_bootstrapped_msbuild.sh --host_type mono --configuration Release --skip_tests')
+		self.sh ('find artifacts -wholename \'*/log/*\' -type f -exec zip msbuild-bin-logs.zip {} \+')
 
 	def install (self):
 		# use the bootstrap msbuild as the system might not have one available!
