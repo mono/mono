@@ -158,6 +158,7 @@ mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **re
 	const char *failed_function = NULL;
 
 	// The size of the mapping is the maximum file offset to map.
+	// It is not, as you might expect, the maximum view size to be mapped from it.
 	// See https://docs.microsoft.com/en-us/windows/desktop/Memory/creating-a-file-mapping-object.
 	const guint64 mapping_length = offset + length;
 
