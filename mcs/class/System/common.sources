@@ -191,6 +191,8 @@ System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierExtension.
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509VerificationFlags.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/SubjectAlternativeNameBuilder.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/GeneralNameEncoder.cs
+corefx/X509SignatureGenerator.cs
+corefx/CertificateRequest.cs
 
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
