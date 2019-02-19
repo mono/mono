@@ -11,7 +11,8 @@ namespace System.Threading
     {
         public ValueTask DisposeAsync()
         {
-            throw null; // WIP
+            Dispose();
+            return new ValueTask(Task.FromResult<object>(null));
         }
     }
 }

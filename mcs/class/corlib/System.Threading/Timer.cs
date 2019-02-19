@@ -451,6 +451,12 @@ namespace System.Threading
 				Console.WriteLine ("END----");
 			}
 			*/
+
+			public ValueTask DisposeAsync ()
+			{
+				Dispose ();
+				return new ValueTask (Task.FromResult<object> (null));
+			}
 		}
 	}
 }
