@@ -88,7 +88,13 @@ namespace System
 			return internal_from_handle (handle.Value);
 		}
 
-		internal string FormatTypeName () => throw new NotImplementedException ();
+		internal string FormatTypeName () {
+			return FormatTypeName (false);
+		}
+
+		internal virtual string FormatTypeName (bool serialization) {
+			throw new NotImplementedException ();
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern Type internal_from_handle (IntPtr handle);

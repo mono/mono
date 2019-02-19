@@ -151,7 +151,6 @@ namespace System {
             }
         }
         
-        
         public virtual String Message {
                get {  
                 if (_message == null) {

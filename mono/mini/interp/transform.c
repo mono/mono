@@ -1176,7 +1176,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "ByReference`1")) {
 		*op = MINT_INTRINS_BYREFERENCE_GET_VALUE;
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && (!strcmp (klass_name, "Span`1") || !strcmp (klass_name, "ReadOnlySpan`1"))) {
-		if (!strcmp (tm, "get_Item")) {
+		if (!strcmp (tm, "get_Item") && csignature->params [0]->type != MONO_TYPE_VALUETYPE) {
 			MonoGenericClass *gclass = mono_class_get_generic_class (target_method->klass);
 			MonoClass *param_class = mono_class_from_mono_type_internal (gclass->context.class_inst->type_argv [0]);
 
@@ -2118,11 +2118,9 @@ collect_pred_seq_points (TransformData *td, InterpBasicBlock *bb, SeqPoint *seqp
 static void
 save_seq_points (TransformData *td, MonoJitInfo *jinfo)
 {
-	InterpMethod *rtm = td->rtm;
 	GByteArray *array;
 	int i, seq_info_size;
 	MonoSeqPointInfo *info;
-	MonoDomain *domain = mono_domain_get ();
 	GSList **next = NULL;
 	GList *bblist;
 
@@ -2390,6 +2388,26 @@ init_bb_start (TransformData *td, MonoMethodHeader *header)
 		}
 	}
 }
+
+#ifdef NO_UNALIGNED_ACCESS
+static int
+get_unaligned_opcode (int opcode)
+{
+	switch (opcode) {
+		case MINT_LDFLD_I8:
+			return MINT_LDFLD_I8_UNALIGNED;
+		case MINT_LDFLD_R8:
+			return MINT_LDFLD_R8_UNALIGNED;
+		case MINT_STFLD_I8:
+			return MINT_STFLD_I8_UNALIGNED;
+		case MINT_STFLD_R8:
+			return MINT_STFLD_R8_UNALIGNED;
+		default:
+			g_assert_not_reached ();
+	}
+	return -1;
+}
+#endif
 
 static gboolean
 generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, MonoGenericContext *generic_context, MonoError *error)
@@ -3909,7 +3927,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					ADD_CODE (td, mt == MINT_TYPE_VT ? MINT_LDSFLD_VT : MINT_LDSFLD);
 					ADD_CODE (td, get_data_item_index (td, field));
 				} else {
-					ADD_CODE (td, MINT_LDFLD_I1 + mt - MINT_TYPE_I1);
+					int opcode = MINT_LDFLD_I1 + mt - MINT_TYPE_I1;
+#ifdef NO_UNALIGNED_ACCESS
+					if ((mt == MINT_TYPE_I8 || mt == MINT_TYPE_R8) && field->offset % SIZEOF_VOID_P != 0)
+						opcode = get_unaligned_opcode (opcode);
+#endif
+					ADD_CODE (td, opcode);
 					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset);
 					if (mt == MINT_TYPE_VT)
 						ADD_CODE (td, get_data_item_index (td, field));
@@ -3976,7 +3999,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					mono_class_vtable_checked (domain, fld_klass, error);
 					goto_if_nok (error, exit);
 				} else {
-					ADD_CODE (td, MINT_STFLD_I1 + mt - MINT_TYPE_I1);
+					int opcode = MINT_STFLD_I1 + mt - MINT_TYPE_I1;
+#ifdef NO_UNALIGNED_ACCESS
+					if ((mt == MINT_TYPE_I8 || mt == MINT_TYPE_R8) && field->offset % SIZEOF_VOID_P != 0)
+						opcode = get_unaligned_opcode (opcode);
+#endif
+					ADD_CODE (td, opcode);
 					ADD_CODE (td, m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset);
 					if (mt == MINT_TYPE_VT) {
 						ADD_CODE (td, get_data_item_index (td, field));

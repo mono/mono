@@ -378,6 +378,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IObserver.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IProgress.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ISpanFormattable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Index.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IndexOutOfRangeException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\InsufficientExecutionStackException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Int16.cs" />
@@ -422,6 +423,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\PlatformNotSupportedException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Progress.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Random.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Range.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\RankException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlySpan.Fast.cs" />
@@ -2051,6 +2053,7 @@
     <Compile Include="corefx\SR.missing.cs" />
     <Compile Include="corefx\Stream.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
+    <Compile Include="corefx\ThrowHelper.cs" />
     <Compile Include="corefx\TimeSpanParse.cs" />
     <Compile Include="corefx\TimeZone.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
