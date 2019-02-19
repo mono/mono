@@ -203,7 +203,7 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
         ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android   NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=mini --timeout=60m $gnumake -C sdks/android check-mini
+            ${TESTCMD} --label=mini --timeout=60m $gnumake -C sdks/android check-Mono.Runtime.Tests
             ${TESTCMD} --label=corlib --timeout=60m $gnumake -C sdks/android check-corlib
             ${TESTCMD} --label=System --timeout=60m $gnumake -C sdks/android check-System
             ${TESTCMD} --label=System.Core --timeout=60m $gnumake -C sdks/android check-System.Core
@@ -219,7 +219,7 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
             ${TESTCMD} --label=System.Xml --timeout=60m $gnumake -C sdks/android check-System.Xml
             ${TESTCMD} --label=System.Xml.Linq --timeout=60m $gnumake -C sdks/android check-System.Xml.Linq
             ${TESTCMD} --label=Mono.CSharp --timeout=60m $gnumake -C sdks/android check-Mono.CSharp
-            ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m $gnumake -C sdks/android check-Mono.Data.Sqlite
+            # ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m $gnumake -C sdks/android check-Mono.Data.Sqlite
             ${TESTCMD} --label=Mono.Data.Tds --timeout=60m $gnumake -C sdks/android check-Mono.Data.Tds
             ${TESTCMD} --label=Mono.Security --timeout=60m $gnumake -C sdks/android check-Mono.Security
         fi

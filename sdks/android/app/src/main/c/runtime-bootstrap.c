@@ -348,26 +348,29 @@ create_and_set (const char *home, const char *relativePath, const char *envvar)
 	free (dir);
 }
 
-void
-Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring j_files_dir, jstring j_cache_dir, jstring j_data_dir, jstring j_assembly_dir)
+jint
+Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring j_files_dir, jstring j_cache_dir,
+	jstring j_data_dir, jstring j_assembly_dir, jstring j_assembly_name)
 {
 	MonoDomain *root_domain;
 	MonoMethod *run_tests_method;
 	void **params;
 	char **argv, *main_assembly_name;
-	char buff[1024], file_dir[2048], cache_dir[2048], data_dir[2048], assemblies_dir[2048];
+	char buff[1024], file_dir[2048], cache_dir[2048], data_dir[2048], assembly_dir[2048], assembly_name[2048];
 	int argc;
 
 	_log ("IN Java_org_mono_android_AndroidRunner_runTests \n");
 	strncpy_str (env, file_dir, j_files_dir, sizeof(file_dir));
 	strncpy_str (env, cache_dir, j_cache_dir, sizeof(cache_dir));
 	strncpy_str (env, data_dir, j_data_dir, sizeof(data_dir));
-	strncpy_str (env, assemblies_dir, j_assembly_dir, sizeof(assemblies_dir));
+	strncpy_str (env, assembly_dir, j_assembly_dir, sizeof(assembly_dir));
+	strncpy_str (env, assembly_name, j_assembly_name, sizeof(assembly_name));
 
 	_log ("-- file dir %s", file_dir);
 	_log ("-- cache dir %s", cache_dir);
 	_log ("-- data dir %s", data_dir);
-	_log ("-- assembly dir %s", assemblies_dir);
+	_log ("-- assembly dir %s", assembly_dir);
+	_log ("-- assembly name %s", assembly_name);
 	prctl (PR_SET_DUMPABLE, 1);
 
 	snprintf (buff, sizeof(buff), "%s/libmonosgen-2.0.so", data_dir);
@@ -427,7 +430,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_trace_init ();
 	mono_trace_set_log_handler (_runtime_log, NULL);
 
-	mono_set_assemblies_path (assemblies_dir);
+	mono_set_assemblies_path (assembly_dir);
 	mono_set_crash_chaining (1);
 	mono_set_signal_chaining (1);
 	mono_dl_fallback_register (my_dlopen, my_dlsym, NULL, NULL);
@@ -465,38 +468,40 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	// Note: sets up domains. If the debugger is configured after this line is run, 
 	// then lookup_data_table will fail.
 	root_domain = mono_jit_init_version ("TEST RUNNER", "mobile");
-	mono_domain_set_config (root_domain, assemblies_dir, file_dir);
+	mono_domain_set_config (root_domain, assembly_dir, file_dir);
 
 	mono_thread_attach (root_domain);
 
 #ifdef MONO_BCL_TESTS
-	main_assembly_name = "main.exe";
+	main_assembly_name = "nunitlite.dll";
 
 	argc = 1;
 	argv = calloc (sizeof (char*), argc);
 	argv[0] = main_assembly_name;
 	mono_runtime_set_main_args (argc, argv);
 
-	sprintf (buff, "%s/%s", assemblies_dir, main_assembly_name);
+	sprintf (buff, "%s/%s", assembly_dir, main_assembly_name);
 	main_assembly = mono_assembly_open (buff, NULL);
 	if (!main_assembly) {
 		_log ("Unknown \"%s\" assembly", main_assembly_name);
 		_exit (1);
 	}
 
-	MonoClass *driver_class = mono_class_from_name (mono_assembly_get_image (main_assembly), "", "Driver");
+	MonoClass *driver_class = mono_class_from_name (mono_assembly_get_image (main_assembly), "Xamarin", "AndroidTestAssemblyRunner/Driver");
 	if (!driver_class) {
-		_log ("Unknown \"Driver\" class");
+		_log ("Unknown \"Xamarin.AndroidTestAssemblyRunner/Driver\" class");
 		_exit (1);
 	}
 
-	run_tests_method = mono_class_get_method_from_name (driver_class, "RunTests", 0);
+	run_tests_method = mono_class_get_method_from_name (driver_class, "RunTests", 1);
 	if (!run_tests_method) {
 		_log ("Unknown \"RunTests\" method");
 		_exit (1);
 	}
 
-	mono_runtime_invoke (run_tests_method, NULL, NULL, NULL);
+	void *args[1];
+	args[0] = mono_string_new (root_domain, assembly_name);
+	mono_runtime_invoke (run_tests_method, NULL, args, NULL);
 #elif MONO_DEBUGGER_TESTS
 	// FIXME: take arbitrary exe
 	main_assembly_name = "dtest-app.exe";
@@ -506,7 +511,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	argv[0] = main_assembly_name;
 	mono_runtime_set_main_args (argc, argv);
 
-	sprintf (buff, "%s/%s", assemblies_dir, main_assembly_name);
+	sprintf (buff, "%s/%s", assembly_dir, main_assembly_name);
 	main_assembly = mono_assembly_open (buff, NULL);
 	if (!main_assembly) {
 		_log ("Unknown \"%s\" assembly", main_assembly_name);
@@ -529,9 +534,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	// Therefore, we just pass Main no args
 	void *args [1];
 	args [0] = mono_array_new (root_domain, mono_get_string_class (), 0);
-
 	mono_runtime_invoke (run_tests_method, NULL, args, NULL);
-	mono_runtime_quit ();
 #else
 #error No managed assembly provided to run
 #endif
@@ -569,7 +572,7 @@ my_dlopen (const char *name, int flags, char **err, void *user_data)
 
 	void *res = dlopen (name, convert_dl_flags (flags));
 
-	//TODO handle loading AOT modules from assemblies_dir
+	//TODO handle loading AOT modules from assembly_dir
 
 	return res;
 }

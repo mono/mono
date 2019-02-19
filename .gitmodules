@@ -22,7 +22,7 @@
 	url = git://github.com/mono/reference-assemblies.git
 [submodule "external/nunit-lite"]
 	path = external/nunit-lite
-	url = git://github.com/mono/NUnitLite.git
+	url = git://github.com/luhenry/NUnitLite.git
 [submodule "external/nuget-buildtasks"]
 	path = external/nuget-buildtasks
 	url = git://github.com/mono/NuGet.BuildTasks
