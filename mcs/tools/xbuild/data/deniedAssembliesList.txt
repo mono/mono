@@ -53,3 +53,5 @@ System.Threading.Overlapped.dll,82D565AC-E41C-4E29-9939-C031C88EDBDD,4,1,0,0
 System.Text.Encoding.CodePages.dll,C142254F-DEB5-46A7-AE43-6F10320D1D1F,4,0,1,0
 System.Text.Encoding.CodePages.dll,FD178CD4-EF4F-44D5-9C3F-812B1E25126B,4,0,2,0
 System.Text.Encoding.CodePages.dll,F5CCCBEC-E1AD-4DBB-9B44-9B42C86B94B8,4,1,0,0
+System.Text.Encoding.CodePages.dll,67D3A14A-8F55-4C9F-9699-EDD0876369DA,4,1,1,0
+System.Text.Encoding.CodePages.dll,D2B4F262-31A4-4E80-9CFB-26A2249A735E,4,1,1,0
