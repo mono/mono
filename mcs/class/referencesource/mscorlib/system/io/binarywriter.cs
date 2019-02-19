@@ -20,6 +20,7 @@ using System.Runtime;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 
 namespace System.IO {
     // This abstract base class represents a writer that can write
@@ -135,6 +136,45 @@ namespace System.IO {
         {
             return OutStream.Seek(offset, origin);
         }
+
+#if MONO
+        public virtual void Write(ReadOnlySpan<byte> buffer)
+        {
+            Write(buffer.ToArray());
+        }
+
+        public virtual void Write(ReadOnlySpan<char> buffer)
+        {
+            Write(buffer.ToArray());
+        }
+
+        public virtual ValueTask DisposeAsync()
+        {
+            try
+            {
+                if (GetType() == typeof(BinaryWriter))
+                {
+                    if (_leaveOpen)
+                    {
+                        return new ValueTask(OutStream.FlushAsync());
+                    }
+
+                    OutStream.Close();
+                }
+                else
+                {
+                    // Since this is a derived BinaryWriter, delegate to whatever logic
+                    // the derived implementation already has in Dispose.
+                    Dispose();
+                }
+                return default;
+            }
+            catch (Exception exc)
+            {
+                return new ValueTask(Task.FromException(exc));
+            }
+        }
+#endif
         
         // Writes a boolean to this stream. A single byte is written to the stream
         // with the value 0 representing false or the value 1 representing true.

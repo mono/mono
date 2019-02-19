@@ -15,6 +15,9 @@ namespace System
 		public static readonly bool ThrowExceptionIfDisposedCancellationTokenSource = false;
 		public static readonly bool SetActorAsReferenceWhenCopyingClaimsIdentity = false;
 		public static readonly bool NoAsyncCurrentCulture = false;
+		public static readonly bool EnforceJapaneseEraYearRanges = false;
+		public static readonly bool FormatJapaneseFirstYearAsANumber = false;
+		public static readonly bool EnforceLegacyJapaneseDateParsing = false;
 #else
         private static int _noAsyncCurrentCulture;
         public static bool NoAsyncCurrentCulture
@@ -25,6 +28,36 @@ namespace System
                 return GetCachedSwitchValue(AppContextDefaultValues.SwitchNoAsyncCurrentCulture, ref _noAsyncCurrentCulture);
             }
         }
+
+        // from https://github.com/dotnet/coreclr/pull/18209
+        private static int _enforceJapaneseEraYearRanges;
+        public static bool EnforceJapaneseEraYearRanges
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return GetCachedSwitchValue(AppContextDefaultValues.SwitchEnforceJapaneseEraYearRanges, ref _enforceJapaneseEraYearRanges);
+            }
+        }
+
+        private static int _formatJapaneseFirstYearAsANumber;
+        public static bool FormatJapaneseFirstYearAsANumber
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return GetCachedSwitchValue(AppContextDefaultValues.SwitchFormatJapaneseFirstYearAsANumber, ref _formatJapaneseFirstYearAsANumber);
+            }
+        }
+        private static int _enforceLegacyJapaneseDateParsing;
+        public static bool EnforceLegacyJapaneseDateParsing
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return GetCachedSwitchValue(AppContextDefaultValues.SwitchEnforceLegacyJapaneseDateParsing, ref _enforceLegacyJapaneseDateParsing);
+            }
+        }        
 
         private static int _throwExceptionIfDisposedCancellationTokenSource;
         public static bool ThrowExceptionIfDisposedCancellationTokenSource

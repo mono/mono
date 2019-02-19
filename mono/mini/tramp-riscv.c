@@ -15,7 +15,7 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
 }
 
 void
-mono_arch_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guint8 *addr)
 {
 	NOT_IMPLEMENTED;
 }
@@ -28,7 +28,7 @@ mono_arch_get_call_target (guint8 *code)
 }
 
 guint32
-mono_arch_get_plt_info_offset (guint8 *plt_entry, mgreg_t *regs, guint8 *code)
+mono_arch_get_plt_info_offset (guint8 *plt_entry, host_mgreg_t *regs, guint8 *code)
 {
 	NOT_IMPLEMENTED;
 	return 0;
@@ -147,7 +147,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	int index = MONO_RGCTX_SLOT_INDEX (slot);
 
 	if (is_mrgctx)
-		index += MONO_SIZEOF_METHOD_RUNTIME_GENERIC_CONTEXT / sizeof (gpointer);
+		index += MONO_SIZEOF_METHOD_RUNTIME_GENERIC_CONTEXT / sizeof (target_mgreg_t);
 
 	int depth;
 
@@ -191,7 +191,7 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 	 * Load the trampoline address and branch to it. a0 holds the actual
 	 * (M)RGCTX or VTable.
 	 */
-	code = mono_riscv_emit_load (code, RISCV_T0, MONO_ARCH_RGCTX_REG, sizeof (gpointer));
+	code = mono_riscv_emit_load (code, RISCV_T0, MONO_ARCH_RGCTX_REG, sizeof (target_mgreg_t));
 	riscv_jalr (code, RISCV_ZERO, RISCV_T0, 0);
 
 	mono_arch_flush_icache (buf, code - buf);

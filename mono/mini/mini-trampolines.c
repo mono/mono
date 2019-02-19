@@ -350,7 +350,7 @@ mini_add_method_trampoline (MonoMethod *m, gpointer compiled_method, gboolean ad
 			callee_array_helper = TRUE;
 			m = info->d.generic_array_helper.method;
 		}
-	} else if (m->wrapper_type == MONO_WRAPPER_UNKNOWN) {
+	} else if (m->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (m);
 
 		/* Same for synchronized inner wrappers */
@@ -407,126 +407,6 @@ mini_add_method_trampoline (MonoMethod *m, gpointer compiled_method, gboolean ad
 
 	if (add_static_rgctx_tramp)
 		addr = mono_create_static_rgctx_trampoline (m, addr);
-
-	return addr;
-}
-
-/*
- * mini_create_llvmonly_ftndesc:
- *
- *   Create a function descriptor of the form <addr, arg>, which
- * represents a callee ADDR with ARG as the last argument.
- * This is used for:
- * - generic sharing (ARG is the rgctx)
- * - gsharedvt signature wrappers (ARG is a function descriptor)
- */
-MonoFtnDesc*
-mini_create_llvmonly_ftndesc (MonoDomain *domain, gpointer addr, gpointer arg)
-{
-	MonoFtnDesc *ftndesc = (MonoFtnDesc*)mono_domain_alloc0 (mono_domain_get (), 2 * sizeof (gpointer));
-	ftndesc->addr = addr;
-	ftndesc->arg = arg;
-
-	return ftndesc;
-}
-
-/**
- * mini_add_method_wrappers_llvmonly:
- *
- *   Add unbox/gsharedvt wrappers around COMPILED_METHOD if needed. Return the wrapper address or COMPILED_METHOD
- * if no wrapper is needed. Set OUT_ARG to the rgctx/extra argument needed to be passed to the returned method.
- */
-gpointer
-mini_add_method_wrappers_llvmonly (MonoMethod *m, gpointer compiled_method, gboolean caller_gsharedvt, gboolean add_unbox_tramp, gpointer *out_arg)
-{
-	gpointer addr;
-	gboolean callee_gsharedvt;
-	MonoMethod *jmethod = NULL;
-	MonoJitInfo *ji;
-
-	// FIXME: This loads information from AOT (perf problem)
-	ji = mini_jit_info_table_find (mono_domain_get (), (char *)mono_get_addr_from_ftnptr (compiled_method), NULL);
-	callee_gsharedvt = mini_jit_info_is_gsharedvt (ji);
-
-	if (m->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED) {
-		WrapperInfo *info = mono_marshal_get_wrapper_info (m);
-
-		/*
-		 * generic array helpers.
-		 * Have to replace the wrappers with the original generic instances.
-		 */
-		if (info && info->subtype == WRAPPER_SUBTYPE_GENERIC_ARRAY_HELPER) {
-			m = info->d.generic_array_helper.method;
-		}
-	} else if (m->wrapper_type == MONO_WRAPPER_UNKNOWN) {
-		WrapperInfo *info = mono_marshal_get_wrapper_info (m);
-
-		/* Same for synchronized inner wrappers */
-		if (info && info->subtype == WRAPPER_SUBTYPE_SYNCHRONIZED_INNER) {
-			m = info->d.synchronized_inner.method;
-		}
-	}
-
-	if (callee_gsharedvt)
-		g_assert (m->is_inflated);
-
-	addr = compiled_method;
-
-	if (add_unbox_tramp) {
-		/* 
-		 * The unbox trampolines call the method directly, so need to add
-		 * an rgctx tramp before them.
-		 */
-		if (mono_aot_only) {
-			addr = mono_aot_get_unbox_trampoline (m, addr);
-		} else {
-			unbox_trampolines ++;
-			addr = mono_arch_get_unbox_trampoline (m, addr);
-		}
-	}
-
-	g_assert (mono_llvm_only);
-	g_assert (out_arg);
-
-	if (ji && !ji->is_trampoline)
-		jmethod = jinfo_get_method (ji);
-
-	if (callee_gsharedvt)
-		callee_gsharedvt = mini_is_gsharedvt_variable_signature (mono_method_signature_internal (jmethod));
-
-	if (!caller_gsharedvt && callee_gsharedvt) {
-		MonoMethodSignature *sig, *gsig;
-		gpointer wrapper_addr;
-
-		/* Here m is a generic instance, while ji->method is the gsharedvt method implementing it */
-
-		/* Call from normal/gshared code to gsharedvt code with variable signature */
-		sig = mono_method_signature_internal (m);
-		gsig = mono_method_signature_internal (jmethod);
-
-		wrapper_addr = mini_get_gsharedvt_wrapper (TRUE, addr, sig, gsig, -1, FALSE);
-
-		/*
-		 * This is a gsharedvt in wrapper, it gets passed a ftndesc for the gsharedvt method as an argument.
-		 */
-		*out_arg = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, mini_method_get_rgctx (m));
-		addr = wrapper_addr;
-		//printf ("IN: %s\n", mono_method_full_name (m, TRUE));
-	}
-
-	if (!(*out_arg) && mono_method_needs_static_rgctx_invoke (m, FALSE))
-		*out_arg = mini_method_get_rgctx (m);
-
-	if (caller_gsharedvt && !callee_gsharedvt) {
-		/*
-		 * The callee uses the gsharedvt calling convention, have to add an out wrapper.
-		 */
-		gpointer out_wrapper = mini_get_gsharedvt_wrapper (FALSE, NULL, mono_method_signature_internal (m), NULL, -1, FALSE);
-		MonoFtnDesc *out_wrapper_arg = mini_create_llvmonly_ftndesc (mono_domain_get (), addr, *out_arg);
-
-		addr = out_wrapper;
-		*out_arg = out_wrapper_arg;
-	}
 
 	return addr;
 }
@@ -1050,9 +930,9 @@ mono_aot_trampoline (host_mgreg_t *regs, guint8 *code, guint8 *token_info,
 
 	UnlockedIncrement (&trampoline_calls);
 
-	image = (MonoImage *)*(gpointer*)(gpointer)token_info;
+	image = (MonoImage *)*(gpointer*)token_info;
 	token_info += sizeof (gpointer);
-	token = *(guint32*)(gpointer)token_info;
+	token = *(guint32*)token_info;
 
 	addr = mono_aot_get_method_from_token (mono_domain_get (), image, token, error);
 	if (!is_ok (error))
@@ -1159,7 +1039,7 @@ mono_delegate_trampoline (host_mgreg_t *regs, guint8 *code, gpointer *arg, guint
 	MonoMethod *invoke = tramp_info->invoke;
 	guint8 *impl_this = (guint8 *)tramp_info->impl_this;
 	guint8 *impl_nothis = (guint8 *)tramp_info->impl_nothis;
-	ERROR_DECL_VALUE (err);
+	ERROR_DECL (err);
 	MonoMethodSignature *sig;
 	gpointer addr, compiled_method;
 	gboolean is_remote = FALSE;
@@ -1183,14 +1063,14 @@ mono_delegate_trampoline (host_mgreg_t *regs, guint8 *code, gpointer *arg, guint
 #ifndef DISABLE_REMOTING
 		if (delegate->target && mono_object_is_transparent_proxy (delegate->target)) {
 			is_remote = TRUE;
-			error_init (&err);
+			error_init (err);
 #ifndef DISABLE_COM
 			if (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class != mono_class_get_com_object_class () &&
 			   !mono_class_is_com_object (((MonoTransparentProxy *)delegate->target)->remote_class->proxy_class))
 #endif
-				method = mono_marshal_get_remoting_invoke (method, &err);
-			if (!is_ok (&err)) {
-				mono_error_set_pending_exception (&err);
+				method = mono_marshal_get_remoting_invoke (method, err);
+			if (!is_ok (err)) {
+				mono_error_set_pending_exception (err);
 				return NULL;
 			}
 		}
@@ -1198,10 +1078,10 @@ mono_delegate_trampoline (host_mgreg_t *regs, guint8 *code, gpointer *arg, guint
 		if (!is_remote) {
 			sig = tramp_info->sig;
 			if (!(sig && method == tramp_info->method)) {
-				error_init (&err);
-				sig = mono_method_signature_checked (method, &err);
+				error_init (err);
+				sig = mono_method_signature_checked (method, err);
 				if (!sig) {
-					mono_error_set_pending_exception (&err);
+					mono_error_set_pending_exception (err);
 					return NULL;
 				}
 			}
@@ -1232,10 +1112,10 @@ mono_delegate_trampoline (host_mgreg_t *regs, guint8 *code, gpointer *arg, guint
 	if (method) {
 		sig = tramp_info->sig;
 		if (!(sig && method == tramp_info->method)) {
-			error_init (&err);
-			sig = mono_method_signature_checked (method, &err);
+			error_init (err);
+			sig = mono_method_signature_checked (method, err);
 			if (!sig) {
-				mono_error_set_pending_exception (&err);
+				mono_error_set_pending_exception (err);
 				return NULL;
 			}
 		}
@@ -1454,7 +1334,7 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 
 	error_init (error);
 
-	if (mono_use_interpreter) {
+	if (mono_use_interpreter && !mono_aot_only) {
 		gpointer ret = mini_get_interp_callbacks ()->create_method_pointer (method, FALSE, error);
 		if (!mono_error_ok (error))
 			return NULL;
@@ -1566,9 +1446,9 @@ mono_create_jit_trampoline_from_token (MonoImage *image, guint32 token)
 
 	buf = start = (guint8 *)mono_domain_alloc0 (domain, 2 * sizeof (gpointer));
 
-	*(gpointer*)(gpointer)buf = image;
+	*(gpointer*)buf = image;
 	buf += sizeof (gpointer);
-	*(guint32*)(gpointer)buf = token;
+	*(guint32*)buf = token;
 
 	tramp = mono_create_specific_trampoline (start, MONO_TRAMPOLINE_AOT, domain, NULL);
 

@@ -36,9 +36,9 @@ namespace System.Reflection.Emit {
 	/// </summary>
 	[ComVisible (true)]
 	[Serializable]
-	public struct MethodToken {
+	public readonly struct MethodToken : IEquatable<MethodToken> {
 
-		internal int tokValue;
+		internal readonly int tokValue;
 
 		public static readonly MethodToken Empty = new MethodToken ();
 

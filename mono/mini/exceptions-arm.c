@@ -74,7 +74,7 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 
 	/* move pc to PC */
 	ARM_LDR_IMM (code, ARMREG_IP, ctx_reg, MONO_STRUCT_OFFSET (MonoContext, pc));
-	ARM_STR_IMM (code, ARMREG_IP, ctx_reg, MONO_STRUCT_OFFSET (MonoContext, regs) + (ARMREG_PC * sizeof (mgreg_t)));
+	ARM_STR_IMM (code, ARMREG_IP, ctx_reg, MONO_STRUCT_OFFSET (MonoContext, regs) + (ARMREG_PC * sizeof (target_mgreg_t)));
 
 	/* restore everything */
 	ARM_ADD_REG_IMM8 (code, ARMREG_IP, ctx_reg, MONO_STRUCT_OFFSET(MonoContext, regs));
@@ -122,7 +122,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	/* restore all the regs from ctx (in r0), but not sp, the stack pointer */
 	ctx_reg = ARMREG_R0;
 	ARM_LDR_IMM (code, ARMREG_IP, ctx_reg, MONO_STRUCT_OFFSET (MonoContext, pc));
-	ARM_ADD_REG_IMM8 (code, ARMREG_LR, ctx_reg, MONO_STRUCT_OFFSET(MonoContext, regs) + (MONO_ARM_FIRST_SAVED_REG * sizeof (mgreg_t)));
+	ARM_ADD_REG_IMM8 (code, ARMREG_LR, ctx_reg, MONO_STRUCT_OFFSET(MonoContext, regs) + (MONO_ARM_FIRST_SAVED_REG * sizeof (target_mgreg_t)));
 	ARM_LDM (code, ARMREG_LR, MONO_ARM_REGSAVE_MASK);
 	/* call handler at eip (r1) and set the first arg with the exception (r2) */
 	ARM_MOV_REG_REG (code, ARMREG_R0, ARMREG_R2);
@@ -236,9 +236,9 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 	ARM_MOV_REG_REG (code, ARMREG_IP, ARMREG_SP);
 	ARM_PUSH (code, MONO_ARM_REGSAVE_MASK);
 
-	cfa_offset = MONO_ARM_NUM_SAVED_REGS * sizeof (mgreg_t);
+	cfa_offset = MONO_ARM_NUM_SAVED_REGS * sizeof (target_mgreg_t);
 	mono_add_unwind_op_def_cfa (unwind_ops, code, start, ARMREG_SP, cfa_offset);
-	mono_add_unwind_op_offset (unwind_ops, code, start, ARMREG_LR, - sizeof (mgreg_t));
+	mono_add_unwind_op_offset (unwind_ops, code, start, ARMREG_LR, -(ptrdiff_t)sizeof (target_mgreg_t));
 
 	/* Save fp regs */
 	if (!mono_arch_is_soft_float ()) {
@@ -281,7 +281,7 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 		ARM_MOV_REG_REG (code, ARMREG_R1, ARMREG_LR); /* caller ip */
 	}
 	/* int regs */
-	ARM_ADD_REG_IMM8 (code, ARMREG_R3, ARMREG_SP, (cfa_offset - (MONO_ARM_NUM_SAVED_REGS * sizeof (mgreg_t))));
+	ARM_ADD_REG_IMM8 (code, ARMREG_R3, ARMREG_SP, (cfa_offset - (MONO_ARM_NUM_SAVED_REGS * sizeof (target_mgreg_t))));
 	if (resume_unwind || corlib) {
 		/* fp regs */
 		ARM_ADD_REG_IMM8 (code, ARMREG_LR, ARMREG_SP, 8);
@@ -484,10 +484,13 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			regs [MONO_MAX_IREGS + i] = *(guint64*)&(new_ctx->fregs [8 + i]);
 #endif
 
-		mono_unwind_frame (unwind_info, unwind_info_len, (guint8*)ji->code_start,
+		gboolean success = mono_unwind_frame (unwind_info, unwind_info_len, (guint8*)ji->code_start,
 						   (guint8*)ji->code_start + ji->code_size,
 						   (guint8*)ip, NULL, regs, MONO_MAX_IREGS + 8,
 						   save_locations, MONO_MAX_IREGS, &cfa);
+
+		if (!success)
+			return FALSE;
 
 		for (i = 0; i < 16; ++i)
 			new_ctx->regs [i] = regs [i];

@@ -48,7 +48,18 @@ typedef __m128d MonoContextSimdReg;
 #endif
 #elif defined(TARGET_ARM64)
 #define MONO_HAVE_SIMD_REG
+#if defined(MONO_ARCH_ILP32) && defined(MONO_CPPSHARP_HACK)
+/* We lie to the MonoAotOffsetsDumper tool and claim we targeting armv7k. This
+ * is because aarch64_ilp32 isn't available (yet). Unfortunately __uint128_t
+ * isn't defined for this target by the compiler, so we define a struct with
+ * the same size here in order to get the right offset */
+typedef struct
+{
+	guint8 v[16];
+} MonoContextSimdReg;
+#else
 typedef __uint128_t MonoContextSimdReg;
+#endif
 #endif
 
 /*
@@ -271,6 +282,8 @@ struct sigcontext {
 #undef MONO_SIGNAL_USE_UCONTEXT_T
 #endif
 
+MONO_DISABLE_WARNING(4324) // 'struct_name' : structure was padded due to __declspec(align())
+
 typedef struct {
 	host_mgreg_t gregs [AMD64_NREG];
 #if defined(MONO_HAVE_SIMD_REG)
@@ -279,6 +292,8 @@ typedef struct {
 	double fregs [AMD64_XMM_NREG];
 #endif
 } MonoContext;
+
+MONO_RESTORE_WARNING
 
 #define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->gregs [AMD64_RIP] = (host_mgreg_t)(gsize)(ip); } while (0);
 #define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->gregs [AMD64_RBP] = (host_mgreg_t)(gsize)(bp); } while (0);
@@ -472,7 +487,7 @@ typedef struct {
 #define MONO_CONTEXT_GET_BP(ctx) (gpointer)(gsize)((ctx)->regs [ARMREG_FP])
 #define MONO_CONTEXT_GET_SP(ctx) (gpointer)(gsize)((ctx)->regs [ARMREG_SP])
 
-#if defined (HOST_APPLETVOS)
+#if defined (HOST_TVOS)
 
 #define MONO_CONTEXT_GET_CURRENT(ctx) do { \
 	arm_unified_thread_state_t thread_state;	\
@@ -488,6 +503,13 @@ typedef struct {
 	g_assert (ret == 0);	\
 	mono_mach_arch_thread_states_to_mono_context ((thread_state_t) &thread_state, (thread_state_t) &thread_fpstate, &ctx); \
 	mach_port_deallocate (current_task (), self);	\
+} while (0);
+
+#elif defined(HOST_WATCHOS)
+
+#define MONO_CONTEXT_GET_CURRENT(ctx) do { \
+	gpointer _dummy; \
+	ctx.regs [ARMREG_SP] = (host_mgreg_t)(gsize)&_dummy; \
 } while (0);
 
 #else
@@ -866,7 +888,13 @@ typedef struct {
 
 #define MONO_ARCH_HAS_MONO_CONTEXT 1
 
+#include <sys/ucontext.h>
+
+#if __GLIBC_PREREQ(2, 27)
+typedef ucontext_t MonoContext;
+#else
 typedef struct ucontext MonoContext;
+#endif
 
 #define MONO_CONTEXT_SET_IP(ctx,ip) 					\
 	do {								\
@@ -897,13 +925,13 @@ typedef struct ucontext MonoContext;
 #include <mono/arch/riscv/riscv-codegen.h>
 
 typedef struct {
-	mgreg_t gregs [RISCV_N_GREGS]; // [0] contains pc since x0 is hard-wired to zero anyway.
+	host_mgreg_t gregs [RISCV_N_GREGS]; // [0] contains pc since x0 is hard-wired to zero anyway.
 	double fregs [RISCV_N_FREGS * 2 + 2]; // [32] contains fcsr (32 bits), the rest is for quad-precision values (currently unused).
 } MonoContext;
 
-#define MONO_CONTEXT_SET_IP(ctx, ip) do { (ctx)->gregs [RISCV_ZERO] = (mgreg_t) (ip); } while (0)
-#define MONO_CONTEXT_SET_BP(ctx, bp) do { (ctx)->gregs [RISCV_FP] = (mgreg_t) (bp); } while (0)
-#define MONO_CONTEXT_SET_SP(ctx, sp) do { (ctx)->gregs [RISCV_SP] = (mgreg_t) (sp); } while (0)
+#define MONO_CONTEXT_SET_IP(ctx, ip) do { (ctx)->gregs [RISCV_ZERO] = (host_mgreg_t) (ip); } while (0)
+#define MONO_CONTEXT_SET_BP(ctx, bp) do { (ctx)->gregs [RISCV_FP] = (host_mgreg_t) (bp); } while (0)
+#define MONO_CONTEXT_SET_SP(ctx, sp) do { (ctx)->gregs [RISCV_SP] = (host_mgreg_t) (sp); } while (0)
 
 #define MONO_CONTEXT_GET_IP(ctx) ((gpointer) ((ctx)->gregs [RISCV_ZERO]))
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer) ((ctx)->gregs [RISCV_FP]))

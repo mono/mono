@@ -39,6 +39,7 @@ using System.Collections;
 namespace MonoTests.System.Linq {
 
 	[TestFixture]
+	[Category("SRE")]
 	public class EnumerableAsQueryableTest {
 
 		int [] _array;
@@ -239,7 +240,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorkingRuntimeInterpreter")]
 		public void SelectMany ()
 		{
 			int [] arr1 = _array.SelectMany<int, int> ((n) => new int [] { n, n, n }).ToArray ();

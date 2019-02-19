@@ -44,6 +44,9 @@ namespace System.Globalization {
         // is derived from DateTime class.
         //
         internal const int MaxYear = 9999;
+#if MONO
+        internal const int MinYear = 1; // needed for ISOWeek
+#endif
 
         internal GregorianCalendarTypes m_type;
 

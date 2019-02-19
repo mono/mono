@@ -186,3 +186,5 @@ EXTRA_DIST += configure.host
 	if $(CPP) $< >$@ ; then :; else rm -f $@; fi
 
 test:
+
+test-bundle:

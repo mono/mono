@@ -34,14 +34,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Diagnostics.Contracts;
 
 namespace System.Globalization
 {
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	public class CultureInfo : ICloneable, IFormatProvider
+	public partial class CultureInfo : ICloneable, IFormatProvider
 	{
 		static volatile CultureInfo invariant_culture_info = new CultureInfo (InvariantCultureId, false, true);
 		static object shared_table_lock = new object ();
@@ -311,7 +310,9 @@ namespace System.Globalization
 			}
 		}
 
+#if !NETCORE
 		[MonoLimitation ("Optional calendars are not supported only default calendar is returned")]
+#endif
 		public virtual Calendar[] OptionalCalendars {
 			get {
 				return new[] { Calendar };
@@ -780,7 +781,9 @@ namespace System.Globalization
 			}
 		}
 
+#if !NETCORE
 		[MonoTODO ("Currently it ignores the altName parameter")]
+#endif
 		public static CultureInfo GetCultureInfo (string name, string altName) {
 			if (name == null)
 				throw new ArgumentNullException ("null");
@@ -1134,7 +1137,6 @@ namespace System.Globalization
                                 obj.GetType(),
                                 container.GetType()));
             }
-            Contract.EndContractBlock();
         }
 
         // For resource lookup, we consider a culture the invariant culture by name equality.
@@ -1167,8 +1169,6 @@ namespace System.Globalization
         }
 
         internal static bool VerifyCultureName(CultureInfo culture, bool throwException) {
-            Contract.Assert(culture!=null, "[CultureInfo.VerifyCultureName]culture!=null");
-
             //If we have an instance of one of our CultureInfos, the user can't have changed the
             //name and we know that all names are valid in files.
             if (!culture.m_isInherited) {

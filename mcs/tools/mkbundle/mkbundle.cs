@@ -486,6 +486,13 @@ class MakeBundle {
 		if (fetch_target != null){
 			var directory = Path.Combine (targets_dir, fetch_target);
 			var zip_download = Path.Combine (directory, "sdk.zip");
+
+			if(Directory.Exists(directory)){
+				if(!quiet)
+					Console.WriteLine ($"Deleting existing directory: {directory}");
+				Directory.Delete(directory, true);
+			}
+
 			Directory.CreateDirectory (directory);
 			var wc = new WebClient ();
 			var uri = new Uri ($"{target_server}{fetch_target}");

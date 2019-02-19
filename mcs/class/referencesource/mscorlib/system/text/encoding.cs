@@ -18,6 +18,8 @@ namespace System.Text
     using System.Text;
     using System.Diagnostics.CodeAnalysis;
     using System.Diagnostics.Contracts;
+    using System.Diagnostics;
+    using System.Runtime.InteropServices;
 #if FEATURE_CODEPAGES_FILE            
     using Win32Native = Microsoft.Win32.Win32Native;
 #endif
@@ -1698,6 +1700,67 @@ namespace System.Text
             // If we didn't throw, we are in convert and have to remember our flushing
             decoder.ClearMustFlush();
         }
+
+#if MONO
+        public virtual unsafe int GetCharCount(ReadOnlySpan<byte> bytes)
+        {
+            fixed (byte* bytesPtr = &MemoryMarshal.GetNonNullPinnableReference(bytes))
+            {
+                return GetCharCount(bytesPtr, bytes.Length);
+            }
+        }
+
+        public virtual unsafe int GetByteCount(ReadOnlySpan<char> chars)
+        {
+            fixed (char* charsPtr = &MemoryMarshal.GetNonNullPinnableReference(chars))
+            {
+                return GetByteCount(charsPtr, chars.Length);
+            }
+        }
+
+        public virtual unsafe int GetBytes(ReadOnlySpan<char> chars, Span<byte> bytes)
+        {
+            fixed (char* charsPtr = &MemoryMarshal.GetNonNullPinnableReference(chars))
+            fixed (byte* bytesPtr = &MemoryMarshal.GetNonNullPinnableReference(bytes))
+            {
+                return GetBytes(charsPtr, chars.Length, bytesPtr, bytes.Length);
+            }
+        }
+
+        public byte[] GetBytes(string s, int index, int count)
+        {
+            if (s == null)
+                throw new ArgumentNullException(nameof(s),
+                    SR.ArgumentNull_String);
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index),
+                      SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count),
+                      SR.ArgumentOutOfRange_NeedNonNegNum);
+            if (index > s.Length - count)
+                throw new ArgumentOutOfRangeException(nameof(index),
+                      SR.ArgumentOutOfRange_IndexCount);
+
+            unsafe
+            {
+                fixed (char* pChar = s)
+                {
+                    int byteCount = GetByteCount(pChar + index, count);
+                    if (byteCount == 0)
+                        return Array.Empty<byte>();
+
+                    byte[] bytes = new byte[byteCount];
+                    fixed (byte* pBytes = &bytes[0])
+                    {
+                        int bytesReceived = GetBytes(pChar + index, count, pBytes, byteCount);
+                        Debug.Assert(byteCount == bytesReceived);
+                    }
+                    return bytes;
+                }
+            }
+        }
+#endif
 
         [Serializable]
         internal class DefaultEncoder : Encoder, ISerializable, IObjectReference

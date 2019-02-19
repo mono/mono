@@ -80,7 +80,7 @@ namespace System.ServiceModel.Channels
 			// FIXME: create proper quotas
 			return Message.CreateMessage (
 				XmlDictionaryReader.CreateMtomReader (
-					stream, encoding, quotas),
+					stream, new Encoding[1] { encoding }, contentType, quotas),
 				maxSizeOfHeaders,
 				MessageVersion);
 		}

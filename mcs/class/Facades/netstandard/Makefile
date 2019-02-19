@@ -31,6 +31,11 @@ endif
 
 endif
 
+ifeq ($(PROFILE),net_4_x)
+# TODO: remove once mobile profile supports NS 2.1
+LIB_MCS_FLAGS := -d:NS21
+endif
+
 ifeq ($(PROFILE),monodroid)
 # XA implements System.Drawing API inside Mono.Android
 API_BIN_REFS := Mono.Android
@@ -53,7 +58,7 @@ API_BIN_REFS := Xamarin.Mac OpenTK
 endif
 
 # profiles which build a System.Drawing.dll in the repo
-REPO_DRAWING_DEP := $(filter build net_4_x orbis winaot unreal wasm, $(PROFILE))
+REPO_DRAWING_DEP := $(filter build net_4_x orbis winaot unreal testing_aot_full wasm, $(PROFILE))
 
 ifdef REPO_DRAWING_DEP
 LIB_REFS += System.Drawing

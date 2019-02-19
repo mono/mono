@@ -558,7 +558,7 @@ partial class SR
 	public const string SQL_OperationCancelled = "Operation cancelled by user.";
 	public const string SQL_SevereError = "A severe error occurred on the current command.  The results, if any, should be discarded.";
 	public const string SQL_SSPIGenerateError = "Failed to generate SSPI context.";
-	public const string SQL_KerberosTicketMissingError = "Cannot access Kerberos ticket. Ensure Kerberos has been initialized with 'kinit'.";
+	public const string SQL_KerberosTicketMissingError = "Cannot authenticate using Kerberos. Ensure Kerberos has been initialized on the client with 'kinit' and a Service Principal Name has been registered for the SQL Server to allow Kerberos authentication.";
 	public const string SQL_SqlServerBrowserNotAccessible = "Cannot connect to SQL Server Browser. Ensure SQL Server Browser has been started.";
 	public const string SQL_InvalidSSPIPacketSize = "Invalid SSPI packet size.";
 	public const string SQL_SSPIInitializeError = "Cannot initialize SSPI package.";
@@ -786,7 +786,7 @@ partial class SR
 	public const string MDF_TooManyRestrictions = "More restrictions were provided than the requested schema ('{0}') supports.";
 	public const string MDF_DataTableDoesNotExist = "The collection '{0}' is missing from the metadata XML.";
 	public const string MDF_UndefinedCollection = "The requested collection ({0}) is not defined.";
-	public const string MDF_UnsupportedVersion = "The requested collection ({0}) is not supported by this version of the provider.";
+	public const string MDF_UnsupportedVersion = " requested collection ({0}) is not supported by this version of the provider.";
 	public const string MDF_MissingRestrictionColumn = "One or more of the required columns of the restrictions collection is missing.";
 	public const string MDF_MissingRestrictionRow = "A restriction exists for which there is no matching row in the restrictions collection.";
 	public const string MDF_IncorrectNumberOfDataSourceInformationRows = "The DataSourceInformation table must contain exactly one row.";
@@ -801,6 +801,13 @@ partial class SR
 	public const string SQL_ChangePasswordConflictsWithSSPI = "ChangePassword can only be used with SQL authentication, not with integrated security.";
 	public const string SQL_ChangePasswordRequiresYukon = "ChangePassword requires SQL Server 9.0 or later.";
 	public const string SQL_ChangePasswordUseOfUnallowedKey = "The keyword '{0}' must not be specified in the connectionString argument to ChangePassword.";
+	public const string SQL_ParsingErrorWithState = "Internal connection fatal error. Error state: {0}.";
+	public const string SQL_ParsingErrorValue = "Internal connection fatal error. Error state: {0}, Value: {1}.";
+	public const string ADP_InvalidMixedUsageOfAccessTokenAndIntegratedSecurity = "Cannot set the AccessToken property if the 'Integrated Security' connection string keyword has been set to 'true' or 'SSPI'.";
+	public const string ADP_InvalidMixedUsageOfAccessTokenAndUserIDPassword = "Cannot set the AccessToken property if 'UserID', 'UID', 'Password', or 'PWD' has been specified in connection string.";
+	public const string ADP_InvalidMixedUsageOfCredentialAndAccessToken = "Cannot set the Credential property if the AccessToken property is already set.";
+	public const string SQL_ParsingErrorFeatureId = "Internal connection fatal error. Error state: {0}, Feature Id: {1}.";
+	public const string SQL_ParsingErrorAuthLibraryType = "Internal connection fatal error. Error state: {0}, Authentication Library Type: {1}.";
 	public const string ADP_CollectionIsParent = "The {0} with is already contained by this {1}.";
 	public const string ADP_InvalidDataDirectory = "The DataDirectory substitute is not a string.";
 	public const string ADP_QuotePrefixNotSet = "{0} requires an open connection when the quote prefix has not been set.";

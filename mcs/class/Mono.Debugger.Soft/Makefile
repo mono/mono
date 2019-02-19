@@ -5,7 +5,7 @@ LIBRARY = Mono.Debugger.Soft.dll
 LIBRARY_SNK = ../mono.snk
 
 LIB_REFS = System Mono.Cecil System.Core
-LIB_MCS_FLAGS = /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS /publicsign
+LIB_MCS_FLAGS = /unsafe -D:MONO_DATACONVERTER_STATIC_METHODS -D:ENABLE_CECIL /publicsign
 KEYFILE = $(LIBRARY_SNK)
 
 TEST_LIB_REFS = Mono.Cecil System System.Core
@@ -34,7 +34,7 @@ $(test_output_dir)/dtest-excfilter.exe: Test/dtest-excfilter.il | $(test_output_
 	$(ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
 
 $(test_output_dir)/dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES) | $(test_output_dir)
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Runtime.CompilerServices.Unsafe.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
 
 TEST_HELPERS_SOURCES = \
 	../test-helpers/NetworkHelpers.cs \

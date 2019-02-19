@@ -13,7 +13,7 @@ RESX_RESOURCE_STRING = \
 LIB_MCS_FLAGS = -nowarn:219,414,618,649,1717 -unsafe -d:ASYNC
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += -d:AGCLR -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT,MONO_HYBRID_SYSTEM_XML -d:DISABLE_CAS_USE
+LIB_MCS_FLAGS += -d:DISABLE_XSLT_COMPILER -d:DISABLE_XSLT_SCRIPT,MONO_HYBRID_SYSTEM_XML
 endif
 
 TEST_LIB_REFS = System.Data System.Core
@@ -24,7 +24,9 @@ ifneq ($(PROFILE),monodroid)
 ifneq ($(PROFILE),monotouch)
 ifneq ($(PROFILE),monotouch_tv)
 ifneq ($(PROFILE),monotouch_watch)
+ifneq ($(PROFILE),xammac_net_4_5)
 XTEST_LIB_REFS += System.Drawing
+endif
 endif
 endif
 endif

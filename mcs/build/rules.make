@@ -30,8 +30,16 @@ ifndef BUILD_TOOLS_PROFILE
 BUILD_TOOLS_PROFILE = build
 endif
 
-USE_MCS_FLAGS = /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
-USE_MBAS_FLAGS = /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
+ifeq ("$(ENABLE_COMPILER_SERVER)","1")
+COMPILER_SERVER_ARGS=/shared:$(COMPILER_SERVER_PIPENAME)
+CSC_LOCATION=$(SERVER_CSC_LOCATION)
+else
+COMPILER_SERVER_ARGS:=
+CSC_LOCATION=$(STANDALONE_CSC_LOCATION)
+endif
+
+USE_MCS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
+USE_MBAS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
 USE_CFLAGS = $(LOCAL_CFLAGS) $(CFLAGS) $(CPPFLAGS)
 CSCOMPILE = $(Q_MCS) $(MCS) $(USE_MCS_FLAGS)
 CSC_RUNTIME_FLAGS = --aot-path=$(abspath $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)) --gc-params=nursery-size=64m
@@ -175,6 +183,9 @@ ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
 ifdef ALWAYS_AOT_BCL
 AOT_PROFILE_ASSEMBLIES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/*)))))
 AOT_PROFILE_ASSEMBLIES_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_ASSEMBLIES))
+
+AOT_PROFILE_FACADES := $(sort $(patsubst .//%,%,$(filter-out %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll %.exe,$(wildcard $(topdir)/class/lib/$(PROFILE)/Facades/*)))))
+AOT_PROFILE_FACADES_OUT := $(patsubst %,%$(PLATFORM_AOT_SUFFIX),$(AOT_PROFILE_FACADES))
 endif
 
 ifdef ALWAYS_AOT_TESTS
@@ -185,7 +196,7 @@ endif
 # This can run in parallel
 .PHONY: aot-all-profile
 ifdef AOT_BUILD_FLAGS
-aot-all-profile: $(AOT_PROFILE_ASSEMBLIES_OUT) $(AOT_PROFILE_TESTS_OUT)
+aot-all-profile: $(AOT_PROFILE_ASSEMBLIES_OUT) $(AOT_PROFILE_TESTS_OUT) $(AOT_PROFILE_FACADES_OUT)
 else
 aot-all-profile:
 	echo AOT_BUILD_FLAGS not set, skipping AOT.
@@ -193,12 +204,12 @@ endif
 
 %.dll$(PLATFORM_AOT_SUFFIX): %.dll
 	@ mkdir -p $<_bitcode_tmp
-	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp $<
 	@ rm -rf $<_bitcode_tmp
 
 %.exe$(PLATFORM_AOT_SUFFIX): %.exe
 	@ mkdir -p $<_bitcode_tmp
-	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp --verbose $< > $@.aot-log
+	$(Q_AOT) MONO_PATH="$(topdir)/class/lib/$(PROFILE)" $(RUNTIME) $(RUNTIME_FLAGS) $(AOT_BUILD_FLAGS),temp-path=$<_bitcode_tmp $<
 	@ rm -rf $<_bitcode_tmp
 
 endif #ifneq ("$(wildcard $(topdir)/class/lib/$(PROFILE))","")
@@ -336,7 +347,7 @@ dist-default:
 ## Documentation stuff
 
 Q_MDOC =$(if $(V),,@echo "MDOC    [$(PROFILE_DIRECTORY)] $(notdir $(@))";)
-MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe
+MDOC   =$(Q_MDOC) MONO_PATH="$(topdir)/class/lib/$(PROFILE_DIRECTORY)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(PROFILE_DIRECTORY)/mdoc.exe
 
 Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE_DIRECTORY)] $(notdir $(@))";)
-MDOC_UP  =$(Q_MDOC_UP) MONO_PATH="$(topdir)/class/lib/$(DEFAULT_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(DEFAULT_PROFILE)/mdoc.exe update --delete -o Documentation/en
+MDOC_UP  =$(Q_MDOC_UP) MONO_PATH="$(topdir)/class/lib/$(PROFILE_DIRECTORY)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(topdir)/class/lib/$(PROFILE_DIRECTORY)/mdoc.exe update --delete -o Documentation/en

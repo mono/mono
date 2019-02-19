@@ -112,10 +112,10 @@ sgen_client_stop_world (int generation, gboolean serial_collection)
 
 	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, generation, serial_collection));
 
+	update_current_thread_stack (&generation);
+
 	/* We start to scan after locks are taking, this ensures we won't be interrupted. */
 	sgen_process_togglerefs ();
-
-	update_current_thread_stack (&generation);
 
 	sgen_global_stop_count++;
 	SGEN_LOG (3, "stopping world n %d from %p %p", sgen_global_stop_count, mono_thread_info_current (), (gpointer) (gsize) mono_native_thread_id_get ());
@@ -332,7 +332,7 @@ sgen_unified_suspend_stop_world (void)
 			if (!(suspend_count == 1))
 				g_error ("[%p] suspend_count = %d, but should be 1", mono_thread_info_get_tid (info), suspend_count);
 
-			info->client_info.skip = !mono_thread_info_begin_resume (info);
+			info->client_info.skip = !mono_thread_info_begin_pulse_resume_and_request_suspension (info);
 			if (!info->client_info.skip)
 				restart_counter += 1;
 

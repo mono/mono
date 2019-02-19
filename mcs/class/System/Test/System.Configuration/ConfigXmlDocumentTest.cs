@@ -34,24 +34,25 @@ using System.Configuration;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Configuration {
 	[TestFixture]
 	public class ConfigXmlDocumentTest {
+		private TempDirectory _tempFolder;
 		private string tempFolder;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			tempFolder = Path.Combine (Path.GetTempPath (), this.GetType ().FullName);
-			if (!Directory.Exists (tempFolder))
-				Directory.CreateDirectory (tempFolder);
+			_tempFolder = new TempDirectory ();
+			tempFolder = _tempFolder.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (tempFolder))
-				Directory.Delete (tempFolder, true);
+			_tempFolder.Dispose ();
 		}
 
 		[Test]

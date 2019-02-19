@@ -72,6 +72,11 @@ endif
 endif
 endif
 
+# add sourcelink information if we're building a portable PDB
+ifneq (, $(findstring debug:portable, $(PROFILE_MCS_FLAGS)))
+LIB_MCS_FLAGS += -sourcelink:$(topdir)/build/common/sourcelink.json
+endif
+
 the_libdir = $(the_libdir_base)$(intermediate)
 
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
@@ -286,6 +291,7 @@ endif
 # If the directory contains the per profile include file, generate list file.
 # TODO: depend on all *.sources (except tests) for now and figure out how to list only needed files later
 PROFILE_sources = $(filter-out %test.dll.exclude.sources %test.dll.sources, $(wildcard *.sources))
+PROFILE_excludes = $(filter-out %test.dll.exclude.sources %test.dll.sources, $(wildcard *.exclude.sources))
 
 sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(LIBRARY_SUBDIR)_$(LIBRARY).sources
 $(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(depsdir)/.stamp
@@ -346,7 +352,7 @@ library_CLEAN_FILES += $(PROFILE)_$(LIBRARY_NAME)_aot.log
 
 ifdef PLATFORM_AOT_SUFFIX
 $(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
-	$(Q_AOT) MONO_PATH='$(the_libdir_base)' > $(PROFILE)_$(LIBRARY_NAME)_aot.log 2>&1 $(RUNTIME) $(AOT_BUILD_FLAGS) --debug $(the_lib)
+	$(Q_AOT) MONO_PATH='$(the_libdir_base)' $(RUNTIME) $(AOT_BUILD_FLAGS) --debug $(the_lib)
 
 all-local-aot: $(the_lib)$(PLATFORM_AOT_SUFFIX)
 endif

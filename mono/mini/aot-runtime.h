@@ -11,7 +11,7 @@
 #include "mini.h"
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 149
+#define MONO_AOT_FILE_VERSION 156
 
 #define MONO_AOT_TRAMP_PAGE_SIZE 16384
 
@@ -29,6 +29,8 @@ enum {
 	MONO_AOT_METHODREF_GINST = 253,
 	/* Methods resolve using a METHODSPEC token */
 	MONO_AOT_METHODREF_METHODSPEC = 254,
+	/* Blob index of the method encoding */
+	MONO_AOT_METHODREF_BLOB_INDEX = 255
 };
 
 /* Constants used to encode different types of types in AOT */
@@ -75,6 +77,13 @@ typedef enum {
 } MonoAotFileFlags;
 
 typedef enum {
+	MONO_AOT_METHOD_FLAG_NONE = 0,
+	MONO_AOT_METHOD_FLAG_HAS_CCTOR = 1,
+	MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE = 2,
+	MONO_AOT_METHOD_FLAG_HAS_PATCHES = 4
+} MonoAotMethodFlags;
+
+typedef enum {
 	MONO_AOT_TABLE_BLOB,
 	MONO_AOT_TABLE_IMAGE_TABLE,
 	MONO_AOT_TABLE_CLASS_NAME,
@@ -113,6 +122,8 @@ typedef struct MonoAotFileInfo
 	gpointer jit_code_start;
 	gpointer jit_code_end;
 	gpointer method_addresses;
+	gpointer llvm_unbox_tramp_indexes;
+	gpointer llvm_unbox_trampolines;
 
 	/*
 	 * Data tables.
@@ -195,6 +206,10 @@ typedef struct MonoAotFileInfo
 	guint32 nshared_got_entries;
 	/* The size of the data file, if MONO_AOT_FILE_FLAG_SEPARATE_DATA is set */
 	guint32 datafile_size;
+	/* Number of entries in llvm_unbox_tramp_indexes */
+	guint32 llvm_unbox_tramp_num;
+	/* Size of entries in llvm_unbox_tramp_indexes (2/4) */
+	guint32 llvm_unbox_tramp_elemsize;
 
 	/* Arrays */
 	/* Offsets for tables inside the data file if MONO_AOT_FILE_FLAG_SEPARATE_DATA is set */
@@ -258,11 +273,10 @@ mono_aot_register_jit_icall (const char *name, T addr)
 #endif // __cplusplus
 
 guint32  mono_aot_find_method_index         (MonoMethod *method);
-G_EXTERN_C void mono_aot_init_llvm_method          (gpointer aot_module, guint32 method_index);
-G_EXTERN_C void mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
-G_EXTERN_C void mono_aot_init_gshared_method_mrgctx  (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx);
-G_EXTERN_C void mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 method_index, MonoVTable *vtable);
+gboolean mono_aot_init_llvmonly_method      (gpointer amodule, guint32 method_index, MonoClass *init_class,
+											 MonoGenericContext *context, gboolean lookup_context, MonoError *error);
 GHashTable *mono_aot_get_weak_field_indexes (MonoImage *image);
+MonoAotMethodFlags mono_aot_get_method_flags (guint8 *code);
 
 /* This is an exported function */
 MONO_API void     mono_aot_register_module           (gpointer *aot_info);

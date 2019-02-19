@@ -51,7 +51,8 @@ System.Linq.Expressions System.Dynamic.Runtime System.Linq System.Threading.Task
 System.Diagnostics.Tools System.Reflection.Primitives System.Runtime.Extensions System.Runtime.InteropServices System.Text.Encoding.Extensions \
 System.Runtime.Numerics System.Xml.XDocument System.Reflection.Extensions System.IO.FileSystem.Primitives System.IO.FileSystem \
 System.Diagnostics.FileVersionInfo System.Security.Cryptography.Primitives System.Security.Cryptography.Algorithms System.ValueTuple \
-System.Text.Encoding.CodePages System.Text.RegularExpressions System.Diagnostics.Contracts netstandard
+System.Text.Encoding.CodePages System.Text.RegularExpressions System.Diagnostics.Contracts \
+System.Diagnostics.Tracing System.Net.Primitives netstandard
 
 xammac_SUBDIRS = $(monotouch_SUBDIRS)
 xammac_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
@@ -76,6 +77,9 @@ unreal_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 wasm_SUBDIRS = $(common_DEPS_SUBDIRS)
 wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+
+testing_aot_full_SUBDIRS = $(common_DEPS_SUBDIRS)
+testing_aot_full_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 mobile_only_SUBDIRS = System.Security.Cryptography.Pkcs System.Security.Cryptography.OpenSsl System.Threading.Tasks.Extensions \
 System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy System.Memory \

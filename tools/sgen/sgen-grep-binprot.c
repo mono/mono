@@ -180,7 +180,9 @@ is_always_match (int type)
 
 #include <mono/sgen/sgen-protocol-def.h>
 
-	default: assert (0);
+	default:
+		assert (0);
+		return FALSE;
 	}
 }
 
@@ -502,7 +504,9 @@ match_index (mword ptr, int type, void *data)
 
 #include <mono/sgen/sgen-protocol-def.h>
 
-	default: assert (0);
+	default:
+		assert (0);
+		return 0;
 	}
 }
 
@@ -565,7 +569,9 @@ is_vtable_match (mword ptr, int type, void *data)
 
 #include <mono/sgen/sgen-protocol-def.h>
 
-	default: assert (0);
+	default:
+		assert (0);
+		return FALSE;
 	}
 }
 

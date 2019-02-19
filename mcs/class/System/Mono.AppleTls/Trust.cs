@@ -115,7 +115,7 @@ namespace Mono.AppleTls {
 		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static IntPtr /* SecCertificateRef */ SecTrustGetCertificateAtIndex (IntPtr /* SecTrustRef */ trust, IntPtr /* CFIndex */ ix);
 
-		internal X509Certificate GetCertificate (int index)
+		internal X509Certificate2 GetCertificate (int index)
 		{
 			if (handle == IntPtr.Zero)
 				throw new ObjectDisposedException ("SecTrust");
@@ -124,7 +124,7 @@ namespace Mono.AppleTls {
 
 			var ptr = SecTrustGetCertificateAtIndex (handle, (IntPtr)index);
 			var impl = new X509CertificateImplApple (ptr, false);
-			return new X509Certificate (impl);
+			return new X509Certificate2 (impl);
 		}
 
 		[DllImport (AppleTlsContext.SecurityLibrary)]

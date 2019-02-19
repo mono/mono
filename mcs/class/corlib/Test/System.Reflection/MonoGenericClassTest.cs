@@ -261,7 +261,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			ic = ib.MakeGenericType(typeof (char)); // this is a MonoGenericMethod
 			var mintf = TypeBuilder.GetMethod(ic, winfo);
-			// the next line causes mono_class_init() to
+			// the next line causes mono_class_init_internal () to
 			// be called on JJJ<char> when we try to setup
 			// the vtable for SSS
 			tb.DefineMethodOverride(mb, mintf);

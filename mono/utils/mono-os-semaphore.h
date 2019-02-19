@@ -36,15 +36,9 @@
 
 #define MONO_HAS_SEMAPHORES 1
 
-#ifndef NSEC_PER_SEC
-#define NSEC_PER_SEC (1000 * 1000 * 1000)
-#endif
+#define MONO_NSEC_PER_SEC (1000 * 1000 * 1000)
 
-#ifndef MONO_INFINITE_WAIT
 #define MONO_INFINITE_WAIT ((guint32) 0xFFFFFFFF)
-#endif
-
-G_BEGIN_DECLS
 
 typedef enum {
 	MONO_SEM_FLAGS_NONE      = 0,
@@ -110,8 +104,8 @@ mono_os_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, MonoSemFlags flags)
 
 	ts.tv_sec = timeout_ms / 1000;
 	ts.tv_nsec = (timeout_ms % 1000) * 1000000;
-	while (ts.tv_nsec >= NSEC_PER_SEC) {
-		ts.tv_nsec -= NSEC_PER_SEC;
+	while (ts.tv_nsec >= MONO_NSEC_PER_SEC) {
+		ts.tv_nsec -= MONO_NSEC_PER_SEC;
 		ts.tv_sec++;
 	}
 
@@ -139,7 +133,7 @@ retry:
 				ts.tv_nsec = 0;
 			} else {
 				ts.tv_sec--;
-				ts.tv_nsec += NSEC_PER_SEC;
+				ts.tv_nsec += MONO_NSEC_PER_SEC;
 			}
 		}
 		if (ts.tv_sec < 0) {
@@ -247,8 +241,8 @@ mono_os_sem_timedwait (MonoSemType *sem, guint32 timeout_ms, MonoSemFlags flags)
 
 	ts.tv_sec = timeout_ms / 1000 + t.tv_sec;
 	ts.tv_nsec = (timeout_ms % 1000) * 1000000 + t.tv_usec * 1000;
-	while (ts.tv_nsec >= NSEC_PER_SEC) {
-		ts.tv_nsec -= NSEC_PER_SEC;
+	while (ts.tv_nsec >= MONO_NSEC_PER_SEC) {
+		ts.tv_nsec -= MONO_NSEC_PER_SEC;
 		ts.tv_sec++;
 	}
 
@@ -353,7 +347,5 @@ mono_os_sem_post (MonoSemType *sem)
 }
 
 #endif
-
-G_END_DECLS
 
 #endif /* _MONO_SEMAPHORE_H_ */

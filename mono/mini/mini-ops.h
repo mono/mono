@@ -38,7 +38,7 @@ MINI_OP(OP_SETFRET,	"setfret", FREG, FREG, NONE)
 MINI_OP(OP_SETLRET,	"setlret", NONE, IREG, IREG)
 MINI_OP(OP_LOCALLOC, "localloc", IREG, IREG, NONE)
 MINI_OP(OP_LOCALLOC_IMM, "localloc_imm", IREG, NONE, NONE)
-MINI_OP(OP_CHECK_THIS,	"checkthis", NONE, IREG, NONE)
+MINI_OP(OP_CHECK_THIS,	"check_this", NONE, IREG, NONE)
 MINI_OP(OP_SEQ_POINT, "seq_point", NONE, NONE, NONE)
 MINI_OP(OP_IL_SEQ_POINT, "il_seq_point", NONE, NONE, NONE)
 MINI_OP(OP_IMPLICIT_EXCEPTION, "implicit_exception", NONE, NONE, NONE)
@@ -105,7 +105,7 @@ MINI_OP(OP_RETHROW,	"rethrow", NONE, IREG, NONE)
  * - mono_ArgIterator_Setup receives this value and uses it to find the signature and
  *   the arguments.
  */
-MINI_OP(OP_ARGLIST,	"oparglist", NONE, IREG, NONE)
+MINI_OP(OP_ARGLIST,	"arglist", NONE, IREG, NONE)
 
 /* MONO_IS_STORE_MEMBASE depends on the order here */
 MINI_OP(OP_STORE_MEMBASE_REG,"store_membase_reg", IREG, IREG, NONE)
@@ -221,9 +221,9 @@ MINI_OP(OP_BREAK,      "break", NONE, NONE, NONE)
 
 MINI_OP(OP_CEQ,   "ceq", IREG, NONE, NONE)
 MINI_OP(OP_CGT,   "cgt", IREG, NONE, NONE)
-MINI_OP(OP_CGT_UN,"cgt.un", IREG, NONE, NONE)
+MINI_OP(OP_CGT_UN,"cgt_un", IREG, NONE, NONE)
 MINI_OP(OP_CLT,   "clt", IREG, NONE, NONE)
-MINI_OP(OP_CLT_UN,"clt.un", IREG, NONE, NONE)
+MINI_OP(OP_CLT_UN,"clt_un", IREG, NONE, NONE)
 
 /* exceptions: must be in the same order as the matching CEE_ branch opcodes */
 MINI_OP(OP_COND_EXC_EQ, "cond_exc_eq", NONE, NONE, NONE)
@@ -641,7 +641,7 @@ MINI_OP(OP_FGETHIGH32, "float_gethigh32", IREG, FREG, NONE)
 MINI_OP(OP_JUMP_TABLE, "jump_table", IREG, NONE, NONE)
 
 /* aot compiler */
-MINI_OP(OP_AOTCONST, "aot_const", IREG, NONE, NONE)
+MINI_OP(OP_AOTCONST, "aotconst", IREG, NONE, NONE)
 MINI_OP(OP_PATCH_INFO, "patch_info", NONE, NONE, NONE)
 MINI_OP(OP_GOT_ENTRY, "got_entry", IREG, IREG, NONE)
 
@@ -715,6 +715,18 @@ MINI_OP(OP_SINF,     "sinf", FREG, FREG, NONE)
 MINI_OP(OP_COSF,     "cosf", FREG, FREG, NONE)
 MINI_OP(OP_ABSF,     "absf", FREG, FREG, NONE)
 MINI_OP(OP_SQRTF,    "sqrtf", FREG, FREG, NONE)
+
+/* Operations that can be computed at constants at JIT time  */
+MINI_OP(OP_ACOS,     "acos", FREG, FREG, NONE)
+MINI_OP(OP_SINH,     "sinh", FREG, FREG, NONE)
+MINI_OP(OP_ACOSH,    "acosh", FREG, FREG, NONE)
+MINI_OP(OP_ASIN,     "asin", FREG, FREG, NONE)
+MINI_OP(OP_ASINH,    "asinh", FREG, FREG, NONE)
+MINI_OP(OP_ATANH,    "atanh2", FREG, FREG, NONE)
+MINI_OP(OP_CBRT,     "cbrt", FREG, FREG, NONE)
+MINI_OP(OP_COSH,     "cosh", FREG, FREG, NONE)
+MINI_OP(OP_TANH,     "tanh", FREG, FREG, NONE)
+
 /* to optimize strings */
 MINI_OP(OP_STRLEN, "strlen", IREG, IREG, NONE)
 MINI_OP(OP_NEWARR, "newarr", IREG, IREG, NONE)
@@ -725,7 +737,7 @@ MINI_OP(OP_BOUNDS_CHECK, "bounds_check", NONE, IREG, IREG)
 MINI_OP(OP_ISINST, "isinst", IREG, IREG, NONE)
 MINI_OP(OP_CASTCLASS, "castclass", IREG, IREG, NONE)
 /* get adress of element in a 2D array */
-MINI_OP(OP_LDELEMA2D, "getldelema2", NONE, NONE, NONE)
+MINI_OP(OP_LDELEMA2D, "ldelema2d", NONE, NONE, NONE)
 /* inlined small memcpy with constant length */
 MINI_OP(OP_MEMCPY, "memcpy", NONE, NONE, NONE)
 /* inlined small memset with constant length */
@@ -773,9 +785,9 @@ MINI_OP(OP_RSQRTPS, "rsqrtps", XREG, XREG, NONE)
 MINI_OP(OP_SQRTPS, "sqrtps", XREG, XREG, NONE)
 MINI_OP(OP_RCPPS, "rcpps", XREG, XREG, NONE)
 
-MINI_OP(OP_PSHUFLEW_HIGH, "pshufflew_high", XREG, XREG, NONE)
-MINI_OP(OP_PSHUFLEW_LOW, "pshufflew_low", XREG, XREG, NONE)
-MINI_OP(OP_PSHUFLED, "pshuffled", XREG, XREG, NONE)
+MINI_OP(OP_PSHUFLEW_HIGH, "pshuflew_high", XREG, XREG, NONE)
+MINI_OP(OP_PSHUFLEW_LOW, "pshuflew_low", XREG, XREG, NONE)
+MINI_OP(OP_PSHUFLED, "pshufled", XREG, XREG, NONE)
 MINI_OP(OP_SHUFPS, "shufps", XREG, XREG, XREG)
 MINI_OP(OP_SHUFPD, "shufpd", XREG, XREG, XREG)
 
@@ -842,7 +854,7 @@ MINI_OP(OP_PCMPGTW, "pcmpgtw", XREG, XREG, XREG)
 MINI_OP(OP_PCMPGTD, "pcmpgtd", XREG, XREG, XREG)
 MINI_OP(OP_PCMPGTQ, "pcmpgtq", XREG, XREG, XREG)
 
-MINI_OP(OP_PSUM_ABS_DIFF, "psumabsdiff", XREG, XREG, XREG)
+MINI_OP(OP_PSUM_ABS_DIFF, "psum_abs_diff", XREG, XREG, XREG)
 
 MINI_OP(OP_UNPACK_LOWB, "unpack_lowb", XREG, XREG, XREG)
 MINI_OP(OP_UNPACK_LOWW, "unpack_loww", XREG, XREG, XREG)
@@ -881,8 +893,8 @@ MINI_OP(OP_PMULD, "pmuld", XREG, XREG, XREG)
 /* Multiplies two 32 bit numbers into a 64 bit one */
 MINI_OP(OP_PMULQ, "pmulq", XREG, XREG, XREG)
 
-MINI_OP(OP_PMULW_HIGH_UN, "pmul_high_un", XREG, XREG, XREG)
-MINI_OP(OP_PMULW_HIGH, "pmul_high", XREG, XREG, XREG)
+MINI_OP(OP_PMULW_HIGH_UN, "pmulw_high_un", XREG, XREG, XREG)
+MINI_OP(OP_PMULW_HIGH, "pmulw_high", XREG, XREG, XREG)
 
 /*SSE2 Shift ops must have the _reg version right after as code depends on this ordering.*/ 
 MINI_OP(OP_PSHRW, "pshrw", XREG, XREG, NONE)
@@ -1193,7 +1205,7 @@ MINI_OP(OP_AMD64_SAVE_SP_TO_LMF,         "amd64_save_sp_to_lmf", NONE, NONE, NON
 #if  defined(TARGET_POWERPC)
 MINI_OP(OP_PPC_SUBFIC,             "ppc_subfic", IREG, IREG, NONE)
 MINI_OP(OP_PPC_SUBFZE,             "ppc_subfze", IREG, IREG, NONE)
-MINI_OP(OP_CHECK_FINITE,           "ppc_check_finite", NONE, IREG, NONE)
+MINI_OP(OP_PPC_CHECK_FINITE,           "ppc_check_finite", NONE, IREG, NONE)
 #endif
 
 #if defined(TARGET_ARM) || defined(TARGET_ARM64)

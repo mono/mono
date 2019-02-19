@@ -11,7 +11,7 @@ namespace MonoTests.System
 		public class CreateAdjustmentRuleException
 		{
 			[Test]
-			[ExpectedException (typeof (ArgumentException))]
+			[Category ("MobileNotWorking")]
 			public void DateTimeKindNotUnspecified ()
 			{
 				DateTime dateStart = new DateTime (2007,01,01, 0,0,0,DateTimeKind.Utc);

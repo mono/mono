@@ -28,7 +28,8 @@ endif
 
 RESX_EXTRA_ARGUMENTS = \
 	--in=ReferenceSources/SR.cs \
-	--in=ReferenceSources/SR2.cs
+	--in=ReferenceSources/SR2.cs \
+	--in=corefx/SR.missing.cs
 
 RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Collections/src/Resources/Strings.resx \
@@ -49,6 +50,7 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.Runtime.Numerics/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Primitives/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.ProtectedData/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.Xml/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Resources/Strings.resx \
@@ -57,7 +59,8 @@ RESX_RESOURCE_STRING = \
 	../../../external/corefx/src/System.ObjectModel/src/Resources/Strings.resx \
 	../../../external/corert/src/System.Private.CoreLib/src/Resources/Strings.resx \
 	../../../external/corefx/src/System.Private.Uri/src/Resources/Strings.resx	\
-	../../../external/corefx/src/Microsoft.Win32.Registry/src/Resources/Strings.resx
+	../../../external/corefx/src/Microsoft.Win32.Registry/src/Resources/Strings.resx \
+	../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/Resources/Strings.resx
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
@@ -82,7 +85,9 @@ RESOURCE_FILES = \
 
 REFERENCE_SOURCES_FLAGS = -d:FEATURE_PAL,GENERICS_WORK,FEATURE_LIST_PREDICATES,FEATURE_SERIALIZATION,FEATURE_ENCODINGNLS,FEATURE_ASCII,FEATURE_LATIN1,FEATURE_UTF7,FEATURE_UTF32,MONO_HYBRID_ENCODING_SUPPORT,FEATURE_ASYNC_IO,NEW_EXPERIMENTAL_ASYNC_IO,FEATURE_UTF32,FEATURE_EXCEPTIONDISPATCHINFO,FEATURE_CORRUPTING_EXCEPTIONS,FEATURE_EXCEPTION_NOTIFICATIONS,FEATURE_STRONGNAME_MIGRATION,FEATURE_USE_LCID,FEATURE_FUSION,FEATURE_CRYPTO,FEATURE_X509_SECURESTRINGS,FEATURE_SYNCHRONIZATIONCONTEXT,FEATURE_SYNCHRONIZATIONCONTEXT_WAIT,HAS_CORLIB_CONTRACTS
 
-ifndef NO_SRE
+ifdef NO_SRE
+PROFILE_TEST_HARNESS_EXCLUDES := $(PROFILE_TEST_HARNESS_EXCLUDES)SRE,
+else
 LIB_MCS_FLAGS += -d:MONO_FEATURE_SRE
 endif
 
@@ -217,41 +222,60 @@ satellite_assembly2 = $(test_lib_dir)/nn-NO/$(patsubst %.dll,%.resources.dll,$(t
 
 $(test_lib_output): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) $(test_lib_dir)
 
+mscorlib_for_profile = $(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+
 $(satellite_assembly1): Test/resources/culture-es-ES.cs Test/resources/Resources.es-ES.resources
 	@mkdir -p $(dir $@)
-	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
+	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) Test/resources/culture-es-ES.cs -resource:Test/resources/Resources.es-ES.resources -out:$@
 
 $(satellite_assembly2): Test/resources/culture-nn-NO.cs Test/resources/Resources.nn-NO.resources
 	@mkdir -p $(dir $@)
-	$(CSCOMPILE) -target:library -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
+	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) Test/resources/culture-nn-NO.cs -resource:Test/resources/Resources.nn-NO.resources -out:$@
 
-vtsdir = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
+test_load_assembly = ${test_lib_dir}/TestLoadAssembly.dll
+
+$(test_load_assembly): ../../../external/corefx/src/System.Runtime/tests/TestLoadAssembly/TestLoadAssembly.cs | $(test_lib_dir)
+	$(CSCOMPILE) -target:library -r:$(mscorlib_for_profile) -out:${test_lib_dir}/TestLoadAssembly.dll
+
+test_module = $(test_lib_dir)/System.Reflection.TestModule.dll
+
+$(test_module): ../../../external/corefx/src/System.Runtime/tests/TestModule/System.Reflection.TestModule.dll | $(test_lib_dir)
+	cp $< $(test_lib_dir)
+
+XTEST_LIB_FLAGS += -r:$(test_module)
+
+$(xtest_lib_output): $(test_load_assembly) $(test_module) $(test_lib_dir)
+
+vtsdir_src = Test/System.Runtime.Serialization.Formatters.Binary/VersionTolerantSerialization
+vtsdir = $(test_lib_dir)/vts
 vtslibs = \
-	$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/2.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/3.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/4.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/5.0/Address.dll \
-	$(vtsdir)/$(PROFILE)_TestLib/6.0/Address.dll
+	$(vtsdir)/1.0/Address.dll \
+	$(vtsdir)/2.0/Address.dll \
+	$(vtsdir)/3.0/Address.dll \
+	$(vtsdir)/4.0/Address.dll \
+	$(vtsdir)/5.0/Address.dll \
+	$(vtsdir)/6.0/Address.dll
 
-test-vts: $(vtslibs) $(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
+test-vts: $(vtslibs) $(test_lib_dir)/BinarySerializationOverVersionsTest.dll
 
-$(vtsdir)/$(PROFILE)_TestLib/%/Address.dll: $(vtsdir)/VersionTolerantSerializationTestLib/%/Address.cs
+$(vtsdir)/%/Address.dll: $(vtsdir_src)/VersionTolerantSerializationTestLib/%/Address.cs
 	@mkdir -p $(dir $@)
-	$(CSCOMPILE) -target:library -warn:0 -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -out:$@ $^
+	$(CSCOMPILE) -target:library -warn:0 -r:$(mscorlib_for_profile) -out:$@ $^
 
-$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/BinarySerializationOverVersions.cs $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(test_nunit_dep)
+$(test_lib_dir)/BinarySerializationOverVersionsTest.dll: $(vtsdir_src)/BinarySerializationOverVersionsTest.cs $(vtsdir)/1.0/Address.dll $(test_nunit_dep)
+	@mkdir -p $(dir $@)
 	$(CSCOMPILE) $(test_nunit_ref) -warn:0 \
-		-r:$(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll \
-		-r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll \
+		-r:$(vtsdir)/1.0/Address.dll \
+		-r:$(mscorlib_for_profile) \
 		-r:$(topdir)/class/lib/$(PROFILE)/System.dll \
-		$(vtsdir)/BinarySerializationOverVersions.cs -out:$@
-	@cp $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(vtsdir)/$(PROFILE)_TestLib
+		-target:library \
+		$(vtsdir_src)/BinarySerializationOverVersionsTest.cs -out:$@
+	cp -f $(topdir)/tools/nunit-lite/nunit-lite-console/nunit-lite-console.exe.config.tmpl $(test_lib_dir)/BinarySerializationOverVersionsTest.dll.nunitlite.config
 
 run-test-vts: test-vts
 	@echo Running vts tests...
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(NOSHADOW_FLAG) \
-		$(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe
+		$(test_lib_dir)/BinarySerializationOverVersionsTest.dll
 
 ifdef NO_TEST
 NO_VTS_TEST = yes
@@ -266,13 +290,13 @@ run-test:
 endif
 
 EXTRA_DISTFILES += \
-	$(vtsdir)/VersionTolerantSerializationTestLib/1.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/2.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/3.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/4.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/5.0/Address.cs \
-	$(vtsdir)/VersionTolerantSerializationTestLib/6.0/Address.cs \
-	$(vtsdir)/BinarySerializationOverVersions.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/1.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/2.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/3.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/4.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/5.0/Address.cs \
+	$(vtsdir_src)/VersionTolerantSerializationTestLib/6.0/Address.cs \
+	$(vtsdir_src)/BinarySerializationOverVersionsTest.cs \
 	System.Runtime.CompilerServices/Unsafe.il \
 	il/il.make \
 	il/Makefile
@@ -289,7 +313,7 @@ tzi.exe:System/AndroidPlatform.cs $(wildcard System/TimeZone*.cs) ../../build/co
 	trap "rm -f $(TMP_FILE1) $(TMP_FILE2)" EXIT INT QUIT TERM && \
 	sed 's/Environment\.GetResourceString/string.Format/g' ../referencesource/mscorlib/system/timezoneinfo.cs > $(TMP_FILE1) && \
 	sed 's/StringBuilder\.DefaultCapacity/100/g' ../referencesource/mscorlib/system/text/stringbuildercache.cs > $(TMP_FILE2) && \
-	$(MCS) /debug+ /out:$@ -unsafe -nowarn:612,618 -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) "/d:SELF_TEST;NET_1_1;NET_2_0;MOBILE;NET_3_5;NET_4_0;NET_4_5;MONO;DISABLE_CAS_USE;MOBILE;MOBILE_DYNAMIC;MONODROID;ANDROID" $^ $(TMP_FILE1) $(TMP_FILE2)
+	$(MCS) /debug+ /out:$@ -unsafe -nowarn:612,618 -d:INSIDE_CORLIB,MONO_CULTURE_DATA -d:LIBC $(REFERENCE_SOURCES_FLAGS) "/d:SELF_TEST;NET_1_1;NET_2_0;MOBILE;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;MONODROID;ANDROID" $^ $(TMP_FILE1) $(TMP_FILE2)
 
 android-pull-tzdb:
 	mkdir -p android/tzdb/usr/share/zoneinfo

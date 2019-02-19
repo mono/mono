@@ -9,7 +9,7 @@
     <NoWarn>1699</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
-    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">macos</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>False</NoStdLib>
@@ -18,7 +18,7 @@
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
     Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
     is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
@@ -53,6 +53,7 @@
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\BaseStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\BlacklistStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\CleanStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\CodeRewriterStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\IStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\LoadI18nAssemblies.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\LoadReferencesStep.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\PreserveCalendarsStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\PreserveDependencyLookupStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\RegenerateGuidStep.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker.Steps\RemoveFeaturesStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\RemoveSecurityStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\ResolveFromAssemblyStep.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker.Steps\ResolveFromXApiStep.cs" />
@@ -73,19 +75,25 @@
     <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyInfo.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyResolver.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\AssemblyUtilities.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\BCL.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\ConsoleLogger.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\DirectoryAssemblyResolver.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\Driver.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\I18nAssemblies.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\ILogger.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\IXApiVisitor.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\KnownMembers.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\LinkContext.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\LoadException.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\MarkException.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\MarkingHelpers.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\MethodAction.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\MethodBodyScanner.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\MethodDefinitionExtensions.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\MethodReferenceExtensions.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\Pipeline.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\Tracer.cs" />
+    <Compile Include="..\..\..\external\linker\linker\Linker\TypeDefinitionExtensions.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\TypeNameParser.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\TypePreserve.cs" />
     <Compile Include="..\..\..\external\linker\linker\Linker\TypeReferenceExtensions.cs" />

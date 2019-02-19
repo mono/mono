@@ -32,7 +32,6 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
 
@@ -54,10 +53,10 @@ namespace System
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			MonoMethod mm = ((MonoMethod) info.GetValue ("MethodObj", typeof (MonoMethod)));
+			RuntimeMethodInfo mm = ((RuntimeMethodInfo) info.GetValue ("MethodObj", typeof (RuntimeMethodInfo)));
 			value = mm.MethodHandle.Value;
 			if (value == IntPtr.Zero)
-				throw new SerializationException (Locale.GetText ("Insufficient state."));
+				throw new SerializationException ("Insufficient state.");
 		}
 
 		public IntPtr Value {
@@ -75,13 +74,12 @@ namespace System
 			if (value == IntPtr.Zero)
 				throw new SerializationException ("Object fields may not be properly initialized");
 
-			info.AddValue ("MethodObj", (MonoMethod) MethodBase.GetMethodFromHandle (this), typeof (MonoMethod));
+			info.AddValue ("MethodObj", (RuntimeMethodInfo) MethodBase.GetMethodFromHandle (this), typeof (RuntimeMethodInfo));
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern IntPtr GetFunctionPointer (IntPtr m);
 
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public IntPtr GetFunctionPointer ()
 		{
 			return GetFunctionPointer (value);

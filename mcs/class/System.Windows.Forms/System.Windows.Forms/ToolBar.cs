@@ -503,7 +503,15 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing)
+			{
 				ImageList = null;
+
+				if (tipdown_timer != null)
+					tipdown_timer.Dispose();
+
+				if (tip_window != null)
+					tip_window.Dispose();
+			}
 
 			base.Dispose (disposing);
 		}

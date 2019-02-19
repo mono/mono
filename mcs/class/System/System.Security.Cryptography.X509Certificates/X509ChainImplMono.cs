@@ -521,12 +521,13 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			X509ChainElement element = elements [n];
 			X509Certificate2 certificate = element.Certificate;
+			var monoCertificate = X509Helper2.GetMonoCertificate (certificate);
 
 			// pre-step: DSA certificates may inherit the parameters of their CA
-			if ((n != elements.Count - 1) && (certificate.MonoCertificate.KeyAlgorithm == "1.2.840.10040.4.1")) {
-				if (certificate.MonoCertificate.KeyAlgorithmParameters == null) {
-					X509Certificate2 parent = elements [n+1].Certificate;
-					certificate.MonoCertificate.KeyAlgorithmParameters = parent.MonoCertificate.KeyAlgorithmParameters;
+			if ((n != elements.Count - 1) && (monoCertificate.KeyAlgorithm == "1.2.840.10040.4.1")) {
+				if (monoCertificate.KeyAlgorithmParameters == null) {
+					var parent = X509Helper2.GetMonoCertificate (elements [n+1].Certificate);
+					monoCertificate.KeyAlgorithmParameters = parent.KeyAlgorithmParameters;
 				}
 			}
 
@@ -703,7 +704,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (pubkey == null)
 				return false;
 			// Sadly X509Certificate2 doesn't expose the signature nor the tbs (to be signed) structure
-			var mx = signed.MonoCertificate;
+			var mx = X509Helper2.GetMonoCertificate (signed);
 			return (mx.VerifySignature (pubkey));
 		}
 
@@ -716,7 +717,8 @@ namespace System.Security.Cryptography.X509Certificates {
 		// System.dll v2 doesn't have a class to deal with the AuthorityKeyIdentifier extension
 		static string GetAuthorityKeyIdentifier (X509Certificate2 certificate)
 		{
-			return GetAuthorityKeyIdentifier (certificate.MonoCertificate.Extensions ["2.5.29.35"]);
+			var monoCertificate = X509Helper2.GetMonoCertificate (certificate);
+			return GetAuthorityKeyIdentifier (monoCertificate.Extensions ["2.5.29.35"]);
 		}
 
 		// but anyway System.dll v2 doesn't expose CRL in any way so...
@@ -853,7 +855,8 @@ namespace System.Security.Cryptography.X509Certificates {
 					return X509ChainStatusFlags.RevocationStatusUnknown;
 				}
 
-				MX.X509Crl.X509CrlEntry entry = crl.GetCrlEntry (certificate.MonoCertificate);
+				var monoCertificate = X509Helper2.GetMonoCertificate (certificate);
+				MX.X509Crl.X509CrlEntry entry = crl.GetCrlEntry (monoCertificate);
 				if (entry != null) {
 					// We have an entry for this CRL that includes an unknown CRITICAL extension
 					// See [X.509 7.3] NOTE 4

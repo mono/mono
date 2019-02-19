@@ -77,6 +77,11 @@ namespace System.Globalization
 			this.lcid = lcid;
 			this.source = source;
 			this.options = opt;
+			var source_length = source.Length;
+			var k = new byte [source_length];
+			for (int i = 0; i < source_length; ++i)
+				k [i] = (byte)source [i];
+			this.key = k;
 		}
 
 		internal SortKey (int lcid, string source, byte [] buffer, CompareOptions opt,

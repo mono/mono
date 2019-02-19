@@ -31,10 +31,10 @@ using System.Runtime.InteropServices;
 namespace System.Reflection.Emit {
 
 	[ComVisible (true)]
-	public struct OpCode {
+	public readonly struct OpCode : IEquatable<OpCode> {
 
-		internal byte op1, op2;
-		byte push, pop, size, type, args, flow;
+		internal readonly byte op1, op2;
+		readonly byte push, pop, size, type, args, flow;
 
 		//
 		// The order is:

@@ -119,15 +119,13 @@ namespace Mono.Btls
 				return (X509Certificate2Impl)impl.Clone ();
 
 			var data = certificate.GetRawCertData ();
-			return new X509CertificateImplBtls (data, MonoBtlsX509Format.DER, false);
+			return new X509CertificateImplBtls (data, MonoBtlsX509Format.DER);
 		}
 
 		internal X509Certificate2Impl GetNativeCertificate (
 			byte[] data, SafePasswordHandle password, X509KeyStorageFlags flags)
 		{
-			var impl = new X509CertificateImplBtls (false);
-			impl.Import (data, password, flags);
-			return impl;
+			return new X509CertificateImplBtls (data, password, flags);
 		}
 
 		internal static MonoBtlsX509VerifyParam GetVerifyParam (MonoTlsSettings settings, string targetHost, bool serverMode)
@@ -230,21 +228,33 @@ namespace Mono.Btls
 				status11 = unchecked((int)0x800B010B);
 				return;
 			}
-			var error = storeCtx.GetError();
-			if (error != Mono.Btls.MonoBtlsX509Error.OK &
-			    error != Mono.Btls.MonoBtlsX509Error.CRL_NOT_YET_VALID) {
-				chain.Impl.AddStatus(MapVerifyErrorToChainStatus(error));
-				status11 = unchecked((int)0x800B010B);
+			var error = storeCtx.GetError ();
+			switch (error) {
+			case Mono.Btls.MonoBtlsX509Error.OK:
+				errors = MonoSslPolicyErrors.None;
+				break;
+			case Mono.Btls.MonoBtlsX509Error.CRL_NOT_YET_VALID:
+				break;
+			case MonoBtlsX509Error.HOSTNAME_MISMATCH:
+				errors = MonoSslPolicyErrors.RemoteCertificateNameMismatch;
+				chain.Impl.AddStatus (X509ChainStatusFlags.UntrustedRoot);
+				status11 = unchecked ((int)0x800B010B);
+				break;
+
+			default:
+				chain.Impl.AddStatus (MapVerifyErrorToChainStatus (error));
+				status11 = unchecked ((int)0x800B010B);
+				break;
 			}
 		}
 
 		internal static X509ChainStatusFlags MapVerifyErrorToChainStatus (MonoBtlsX509Error code)
 		{
 			switch (code) {
-			case MonoBtlsX509Error.OK :
+			case MonoBtlsX509Error.OK:
 				return X509ChainStatusFlags.NoError;
 
-			case MonoBtlsX509Error.CERT_NOT_YET_VALID :
+			case MonoBtlsX509Error.CERT_NOT_YET_VALID:
 			case MonoBtlsX509Error.CERT_HAS_EXPIRED:
 			case MonoBtlsX509Error.ERROR_IN_CERT_NOT_BEFORE_FIELD:
 			case MonoBtlsX509Error.ERROR_IN_CERT_NOT_AFTER_FIELD:
@@ -420,33 +430,24 @@ namespace Mono.Btls
 #endif
 		}
 
-		public static X509Certificate CreateCertificate (byte[] data, MonoBtlsX509Format format, bool disallowFallback = false)
+		public static X509Certificate2 CreateCertificate (byte[] data, MonoBtlsX509Format format)
 		{
-			using (var impl = new X509CertificateImplBtls (data, format, disallowFallback)) {
-				return new X509Certificate (impl);
-			}
-		}
-
-		public static X509Certificate2 CreateCertificate2 (byte[] data, MonoBtlsX509Format format, bool disallowFallback = false)
-		{
-			using (var impl = new X509CertificateImplBtls (data, format, disallowFallback)) {
+			using (var impl = new X509CertificateImplBtls (data, format)) {
 				return new X509Certificate2 (impl);
 			}
 		}
 
-		public static X509Certificate2 CreateCertificate2 (byte[] data, string password, bool disallowFallback = false)
+		public static X509Certificate2 CreateCertificate (byte[] data, string password, bool disallowFallback = false)
 		{
-			using (var impl = new X509CertificateImplBtls (disallowFallback))
-			using (var handle = new SafePasswordHandle (password)) {
-				impl.Import (data, handle, X509KeyStorageFlags.DefaultKeySet);
+			using (var handle = new SafePasswordHandle (password))
+			using (var impl = new X509CertificateImplBtls (data, handle, X509KeyStorageFlags.DefaultKeySet))
 				return new X509Certificate2 (impl);
-			}
 		}
 
-		public static X509Certificate CreateCertificate (MonoBtlsX509 x509)
+		public static X509Certificate2 CreateCertificate (MonoBtlsX509 x509)
 		{
-			using (var impl = new X509CertificateImplBtls (x509, true))
-				return new X509Certificate (impl);
+			using (var impl = new X509CertificateImplBtls (x509))
+				return new X509Certificate2 (impl);
 		}
 
 		public static X509Chain CreateChain ()

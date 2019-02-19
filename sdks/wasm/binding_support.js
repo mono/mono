@@ -170,6 +170,8 @@ var BindingSupportLib = {
 				});
 
 				this.call_method (this.setup_js_cont, null, "mo", [ mono_obj, cont_obj ]);
+				obj.__mono_js_cont__ = cont_obj.__mono_gchandle__;
+				cont_obj.__mono_js_task__ = obj.__mono_gchandle__;
 				return promise;
 			}
 
@@ -426,12 +428,12 @@ var BindingSupportLib = {
 
 		wasm_unbind_js_obj: function (js_obj_id)
 		{
-			return this.call_method (this.unbind_js_obj, null, "i", [js_obj_id]);
+			this.call_method (this.unbind_js_obj, null, "i", [js_obj_id]);
 		},		
 
 		wasm_unbind_js_obj_and_free: function (js_obj_id)
 		{
-			return this.call_method (this.unbind_js_obj_and_free, null, "i", [js_obj_id]);
+			this.call_method (this.unbind_js_obj_and_free, null, "i", [js_obj_id]);
 		},		
 
 		wasm_get_js_id: function (mono_obj)
@@ -591,8 +593,12 @@ var BindingSupportLib = {
 				throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 			}
 
-			if (args_marshal.length >= args.length && args_marshal [args.length] == 'm')
-				return res;
+			if (args_marshal !== null && typeof args_marshal !== "undefined") 
+			{
+				if (args_marshal.length >= args.length && args_marshal [args.length] == 'm')
+					return res;
+			}
+
 			return this.unbox_mono_obj (res);
 		},
 
@@ -604,10 +610,17 @@ var BindingSupportLib = {
 					this.corlib = this.assembly_load ("mscorlib");
 				if (!this.delegate_class)
 					this.delegate_class = this.find_class (this.corlib, "System", "Delegate");
+				if (!this.delegate_class)
+				{
+					throw new Error("System.Delegate class can not be resolved.");
+				}
 				this.delegate_dynamic_invoke = this.find_method (this.delegate_class, "DynamicInvoke", -1);
 			}
 			var mono_args = this.js_array_to_mono_array (js_args);
-			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "m", [ mono_args ]);
+			if (!this.delegate_dynamic_invoke)
+				throw new Error("System.Delegate.DynamicInvoke method can not be resolved.");
+
+			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "mm", [ mono_args ]);
 		},
 		
 		resolve_method_fqn: function (fqn) {
@@ -690,11 +703,18 @@ var BindingSupportLib = {
 		mono_wasm_unregister_obj: function(js_id) {
 			var obj = this.mono_wasm_object_registry[js_id - 1];
 			if (typeof obj  !== "undefined" && obj !== null) {
+				// if this is the global object then do not
+				// unregister it.
+				if (typeof ___mono_wasm_global___ !== "undefined" && ___mono_wasm_global___ === obj)
+					return obj;
+
 				var gc_handle = obj.__mono_gchandle__;
 				if (typeof gc_handle  !== "undefined") {
 					this.wasm_unbind_js_obj_and_free(js_id);
-					delete obj.__mono_gchandle__;
-					delete obj.__mono_jshandle__;
+
+					obj.__mono_gchandle__ = undefined;
+					obj.__mono_jshandle__ = undefined;
+
 					this.mono_wasm_object_registry[js_id - 1] = undefined;
 					this.mono_wasm_free_list.push(js_id - 1);
 				}
@@ -703,6 +723,26 @@ var BindingSupportLib = {
 		},
 		mono_wasm_free_handle: function(handle) {
 			this.mono_wasm_unregister_obj(handle);
+		},
+		mono_wasm_free_raw_object: function(js_id) {
+			var obj = this.mono_wasm_object_registry[js_id - 1];
+			if (typeof obj  !== "undefined" && obj !== null) {
+				// if this is the global object then do not
+				// unregister it.
+				if (typeof ___mono_wasm_global___ !== "undefined" && ___mono_wasm_global___ === obj)
+					return obj;
+
+				var gc_handle = obj.__mono_gchandle__;
+				if (typeof gc_handle  !== "undefined") {
+
+					obj.__mono_gchandle__ = undefined;
+					obj.__mono_jshandle__ = undefined;
+
+					this.mono_wasm_object_registry[js_id - 1] = undefined;
+					this.mono_wasm_free_list.push(js_id - 1);
+				}
+			}
+			return obj;
 		},
 		mono_wasm_get_global: function() {
 			function testGlobal(obj) {
@@ -749,6 +789,8 @@ var BindingSupportLib = {
 		var res;
 		try {
 			var m = obj [js_name];
+			if (typeof m === "undefined")
+				throw new Error("Method: '" + js_name + "' not found for: '" + Object.prototype.toString.call(obj) + "'");
 			var res = m.apply (obj, js_args);
 			return BINDING.js_to_mono_obj (res);
 		} catch (e) {
@@ -855,6 +897,62 @@ var BindingSupportLib = {
 
 		return BINDING.js_to_mono_obj (globalObj);
 	},
+	mono_wasm_release_handle: function(js_handle, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		BINDING.mono_wasm_free_handle(js_handle);
+	},	
+	mono_wasm_release_object: function(js_handle, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		BINDING.mono_wasm_free_raw_object(js_handle);
+	},	
+	mono_wasm_new_array: function(is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		return BINDING.js_to_mono_obj ([]);
+	},	
+	mono_wasm_new_object: function(object_handle, args, is_exception) {
+		BINDING.bindings_lazy_init ();
+
+		if (!object_handle) {
+			return BINDING.js_to_mono_obj ({});
+		}
+		else {
+
+			var requireObject = BINDING.mono_wasm_require_handle (object_handle);
+			if (!requireObject) {
+				setValue (is_exception, 1, "i32");
+				return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
+			}
+
+			var js_args = BINDING.mono_array_to_js_array(args);
+			
+			try {
+				
+				// This is all experimental !!!!!!
+				var allocator = function(constructor, js_args) {
+					// Not sure if we should be checking for anything here
+					var argsList = new Array();
+					argsList[0] = constructor;
+					if (js_args)
+						argsList = argsList.concat(js_args);
+					var obj = new (constructor.bind.apply(constructor, argsList ));
+					return obj;
+				};
+		
+				var res = allocator(requireObject, js_args);
+				return BINDING.extract_mono_obj (res);
+			} catch (e) {
+				var res = e.toString ();
+				setValue (is_exception, 1, "i32");
+				if (res === null || res === undefined)
+					res = "Error allocating object.";
+				return BINDING.js_string_to_mono_string (res);
+			}	
+		}
+
+	},	
 
 };
 

@@ -43,6 +43,7 @@ namespace MonoTests.System.Net
 		[Test]
 		[Category("Async")]
 		[Category("AndroidNotWorking")] // Attempts to access the test dll which won't work on Android
+		[Category("BitcodeNotSupported")]
 		public void DownloadData ()
 		{
 			WebClient wc;
