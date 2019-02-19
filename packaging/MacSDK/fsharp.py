@@ -12,7 +12,8 @@ class FsharpPackage(GitHubTarballPackage):
                              'patches/fsharp-string-switchName.patch',
                              'patches/fsharp-path-overloads.patch',
                              'patches/fsharp-debug-pinvoke-fix.patch',
-                             'patches/fsharp-IsPathRooted-type-inference.patch'])
+                             'patches/fsharp-IsPathRooted-type-inference.patch',
+                             'patches/fsharp-GetFileNameWithoutExtension-type-inference.patch'])
 
     def prep(self):
         Package.prep(self)
