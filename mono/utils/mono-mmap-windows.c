@@ -143,6 +143,16 @@ mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **re
 	HANDLE mapping = NULL;
 	int const prot = mono_mmap_win_prot_from_flags (flags);
 	/* translate the flags */
+	/*if (flags & MONO_MMAP_PRIVATE)
+		mflags |= MAP_PRIVATE;
+	if (flags & MONO_MMAP_SHARED)
+		mflags |= MAP_SHARED;
+	if (flags & MONO_MMAP_ANON)
+		mflags |= MAP_ANONYMOUS;
+	if (flags & MONO_MMAP_FIXED)
+		mflags |= MAP_FIXED;
+	if (flags & MONO_MMAP_32BIT)
+		mflags |= MAP_32BIT;*/
 	int const mflags = (flags & MONO_MMAP_WRITE) ? FILE_MAP_COPY : FILE_MAP_READ;
 	HANDLE const file = (HANDLE)_get_osfhandle (fd);
 	const char *failed_function = NULL;
