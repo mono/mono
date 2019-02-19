@@ -142,6 +142,7 @@ mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **re
 	void *ptr = NULL;
 	HANDLE mapping = NULL;
 	int const prot = mono_mmap_win_prot_from_flags (flags);
+	/* translate the flags */
 	int const mflags = (flags & MONO_MMAP_WRITE) ? FILE_MAP_COPY : FILE_MAP_READ;
 	HANDLE const file = (HANDLE)_get_osfhandle (fd);
 	const char *failed_function = NULL;
