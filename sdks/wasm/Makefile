@@ -238,7 +238,7 @@ build-aot-all: build
 	$(MAKE) $(patsubst %,build-aot-%,$(AOT_TEST_SUITES))
 
 run-aot-all: build-aot-all
-	for suite in System.Core; do make run-aot-$$suite || exit 1; done
+	for suite in System.Core; do $(MAKE) run-aot-$$suite || exit 1; done
 
 build-debug-sample: .stamp-build-debug-sample
 
@@ -268,10 +268,10 @@ run-sm-%: toolchain build-test-suite
 
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
-	make -C . run-ch-$*
-	make -C . run-v8-$*
-	make -C . run-sm-$*
-	make -C . run-jsc-$*
+	$(MAKE) -C . run-ch-$*
+	$(MAKE) -C . run-v8-$*
+	$(MAKE) -C . run-sm-$*
+	$(MAKE) -C . run-jsc-$*
 
 run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 	(cd $(BROWSER_TEST) && npm test)
