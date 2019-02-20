@@ -25,7 +25,8 @@ echo "--------------------------------------------------------------------------
 case "$(uname)" in
     "Linux")
         mkdir -p ~/.config/.mono/
-        wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
+        wget -O- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
+        ls -laR ~/.config/.mono
         ;;
 esac
 
