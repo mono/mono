@@ -54,7 +54,18 @@ namespace MonoTests.System.IO
 		[Test]
 		public void ConstructorThrowsOnNonExistingDrive ()
 		{
-			Assert.Throws<ArgumentException> (() => new DriveInfo ("/monodriveinfotest"));
+			Assert.Throws<ArgumentException> (() => new DriveInfo ("monodriveinfotest"));
+		}
+
+		[Test]
+		public void ConstructorGetsValidDriveFromNonDriveString ()
+		{
+			var tempPath = Path.GetTempPath ();
+			var drive = new DriveInfo (tempPath);
+			ValidateDriveInfo (drive);
+
+			drive = new DriveInfo (tempPath.ToUpper());
+			ValidateDriveInfo (drive);
 		}
 
 		[Test]
