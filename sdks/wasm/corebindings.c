@@ -36,8 +36,8 @@ void core_initialize_internals ()
 	mono_add_internal_call ("WebAssembly.Runtime::ReleaseHandle", mono_wasm_release_handle);
 	mono_add_internal_call ("WebAssembly.Runtime::ReleaseObject", mono_wasm_release_object);
 	mono_add_internal_call ("WebAssembly.Runtime::NewObjectJS", mono_wasm_new_object);
-    mono_add_internal_call ("WebAssembly.Runtime::BindCoreObject", mono_wasm_bind_core_object);
-    mono_add_internal_call ("WebAssembly.Runtime::BindHostObject", mono_wasm_bind_host_object);
+	mono_add_internal_call ("WebAssembly.Runtime::BindCoreObject", mono_wasm_bind_core_object);
+	mono_add_internal_call ("WebAssembly.Runtime::BindHostObject", mono_wasm_bind_host_object);
 	mono_add_internal_call ("WebAssembly.Runtime::New", mono_wasm_new);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayToArray", mono_wasm_typed_array_to_array);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyTo", mono_wasm_typed_array_copy_to);
