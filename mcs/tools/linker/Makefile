@@ -39,7 +39,7 @@ TEST_CASES += \
 	mscorlib/test-reflection.cs
 endif
 
-TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
+TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -nostdlib -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
 
 MARSHALING_TEST_NATIVE = mscorlib/test-marshaling-native.so
 
