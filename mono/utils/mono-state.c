@@ -97,10 +97,12 @@ assert_not_reached_fn_ptr_calloc (gsize n, gsize x)
 	assert_not_reached_mem ("Attempted to call calloc during merp dump");
 	return NULL;
 }
+#endif /* defined(ENABLE_CHECKED_BUILD_CRASH_REPORTING) && defined (ENABLE_OVERRIDABLE_ALLOCATORS) */
 
 void
 mono_summarize_toggle_assertions (gboolean enable)
 {
+#if defined(ENABLE_CHECKED_BUILD_CRASH_REPORTING) && defined (ENABLE_OVERRIDABLE_ALLOCATORS)
 	static GMemVTable g_mem_vtable_backup;
 	static gboolean saved;
 
@@ -116,13 +118,8 @@ mono_summarize_toggle_assertions (gboolean enable)
 	}
 
 	mono_memory_barrier ();
+#endif
 }
-#else
-void
-mono_summarize_toggle_assertions (gboolean enable)
-{
-}
-#endif /* defined(ENABLE_CHECKED_BUILD_CRASH_REPORTING) && defined (ENABLE_OVERRIDABLE_ALLOCATORS) */
 
 typedef struct {
 	const char *directory;
