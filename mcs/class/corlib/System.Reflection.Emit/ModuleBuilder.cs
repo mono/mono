@@ -1094,11 +1094,11 @@ namespace System.Reflection.Emit {
 		}
 
 		public override FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			return RuntimeModule.ResolveField (this, metadataToken, genericTypeArguments, genericMethodArguments);
+			return RuntimeModule.ResolveField (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
 		public override MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			return RuntimeModule.ResolveMember (this, metadataToken, genericTypeArguments, genericMethodArguments);
+			return RuntimeModule.ResolveMember (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
 		internal MemberInfo ResolveOrGetRegisteredToken (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments)
@@ -1116,19 +1116,19 @@ namespace System.Reflection.Emit {
 		}
 
 		public override MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			return RuntimeModule.ResolveMethod (this, metadataToken, genericTypeArguments, genericMethodArguments);
+			return RuntimeModule.ResolveMethod (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
 		public override string ResolveString (int metadataToken) {
-			return RuntimeModule.ResolveString (this, metadataToken);
+			return RuntimeModule.ResolveString (this, _impl, metadataToken);
 		}
 
 		public override byte[] ResolveSignature (int metadataToken) {
-			return RuntimeModule.ResolveSignature (this, metadataToken);
+			return RuntimeModule.ResolveSignature (this, _impl, metadataToken);
 		}
 
 		public override Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			return RuntimeModule.ResolveType (this, metadataToken, genericTypeArguments, genericMethodArguments);
+			return RuntimeModule.ResolveType (this, _impl, metadataToken, genericTypeArguments, genericMethodArguments);
 		}
 
 		public override bool Equals (object obj)
@@ -1197,12 +1197,6 @@ namespace System.Reflection.Emit {
 		public override int MetadataToken {
 			get {
 				return RuntimeModule.get_MetadataToken (this);
-			}
-		}
-
-		internal override IntPtr MonoModule {
-			get {
-				return _impl;
 			}
 		}
 	}

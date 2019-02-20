@@ -16,10 +16,12 @@
 ../../../external/linker/linker/Linker/MarkException.cs
 ../../../external/linker/linker/Linker/MarkingHelpers.cs
 ../../../external/linker/linker/Linker/MethodAction.cs
+../../../external/linker/linker/Linker/MethodBodyScanner.cs
 ../../../external/linker/linker/Linker/MethodDefinitionExtensions.cs
 ../../../external/linker/linker/Linker/MethodReferenceExtensions.cs
 ../../../external/linker/linker/Linker/Pipeline.cs
 ../../../external/linker/linker/Linker/Tracer.cs
+../../../external/linker/linker/Linker/TypeDefinitionExtensions.cs
 ../../../external/linker/linker/Linker/TypeNameParser.cs
 ../../../external/linker/linker/Linker/TypePreserve.cs
 ../../../external/linker/linker/Linker/TypeReferenceExtensions.cs

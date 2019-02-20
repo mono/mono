@@ -31,6 +31,7 @@
 
 using Microsoft.Win32;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -47,6 +48,19 @@ namespace System.Diagnostics
 		internal bool HaveEnvVars {
 			get { return (environmentVariables != null); }
 		}
+
+		Collection<string> _argumentList;
+
+		public Collection<string> ArgumentList {
+			get {
+				if (_argumentList == null) {
+					_argumentList = new Collection<string>();
+				}
+				return _argumentList;
+			}
+		}
+
+		public Encoding StandardInputEncoding { get; set; }
 
 		static readonly string [] empty = new string [0];
 

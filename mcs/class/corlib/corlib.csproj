@@ -378,6 +378,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IObserver.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IProgress.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ISpanFormattable.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Index.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IndexOutOfRangeException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\InsufficientExecutionStackException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Int16.cs" />
@@ -422,6 +423,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\PlatformNotSupportedException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Progress.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Random.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Range.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\RankException.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlyMemory.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\ReadOnlySpan.Fast.cs" />
@@ -696,6 +698,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Text\ValueUtf8Converter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\BeginEndAwaitableAdapter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\ForceAsyncAwaiter.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Threading\Tasks\RendezvousAwaitable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\Microsoft\Win32\RegistryHive.cs" />
     <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\Microsoft\Win32\RegistryKeyPermissionCheck.cs" />
@@ -882,10 +885,15 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.AccessControl\src\System\Security\AccessControl\PrivilegeNotHeldException.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Claims\src\System\Security\Claims\ClaimTypes.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Claims\src\System\Security\Claims\GenericIdentity.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\Internal\Cryptography\Helpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\Rfc2898DeriveBytes.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Csp\src\System\Security\Cryptography\ICspAsymmetricAlgorithm.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Csp\src\System\Security\Cryptography\KeyNumber.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\CryptoStream.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\CryptoStreamMode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\CryptographicOperations.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\HashAlgorithm.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\HashAlgorithmName.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\ErrorCode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Helpers.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.cs" />
@@ -1201,7 +1209,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\claims\ClaimsIdentity.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\claims\ClaimsPrincipal.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\claims\RoleClaimProvider.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\security\cryptography\HashAlgorithmName.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\RSAEncryptionPadding.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\RSAEncryptionPaddingMode.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\RSASignaturePadding.cs" />
@@ -1215,7 +1222,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\base64transforms.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\crypto.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\cryptoapitransform.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\security\cryptography\cryptostream.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\derivebytes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\des.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\dsa.cs" />
@@ -1237,7 +1243,6 @@
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\pkcs1maskgenerationmethod.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\randomnumbergenerator.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\rc2.cs" />
-    <Compile Include="..\referencesource\mscorlib\system\security\cryptography\rfc2898derivebytes.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\rijndael.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\rijndaelmanagedtransform.cs" />
     <Compile Include="..\referencesource\mscorlib\system\security\cryptography\ripemd160.cs" />
@@ -1405,6 +1410,7 @@
     <Compile Include="System.IO\MonoIOError.cs" />
     <Compile Include="System.IO\MonoIOStat.cs" />
     <Compile Include="System.IO\Path.cs" />
+    <Compile Include="System.IO\Path.ns21.cs" />
     <Compile Include="System.IO\SearchPattern.cs" />
     <Compile Include="System.IO\UnexceptionalStreamReader.cs" />
     <Compile Include="System.IO\UnexceptionalStreamWriter.cs" />
@@ -2045,7 +2051,9 @@
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />
+    <Compile Include="corefx\Stream.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
+    <Compile Include="corefx\ThrowHelper.cs" />
     <Compile Include="corefx\TimeSpanParse.cs" />
     <Compile Include="corefx\TimeZone.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />

@@ -36,9 +36,9 @@ namespace System.Reflection.Emit {
 	/// </summary>
 	[ComVisible (true)]
 	[Serializable]
-	public struct ParameterToken {
+	public readonly struct ParameterToken : IEquatable<ParameterToken> {
 
-		internal int tokValue;
+		internal readonly int tokValue;
 
 		public static readonly ParameterToken Empty = new ParameterToken ();
 

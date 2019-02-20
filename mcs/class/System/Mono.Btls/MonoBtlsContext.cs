@@ -49,7 +49,7 @@ namespace Mono.Btls
 {
 	class MonoBtlsContext : MNS.MobileTlsContext, IMonoBtlsBioMono
 	{
-		X509Certificate remoteCertificate;
+		X509Certificate2 remoteCertificate;
 		X509Certificate clientCertificate;
 		X509CertificateImplBtls nativeServerCertificate;
 		X509CertificateImplBtls nativeClientCertificate;
@@ -463,7 +463,7 @@ namespace Mono.Btls
 		internal override X509Certificate LocalClientCertificate {
 			get { return clientCertificate; }
 		}
-		public override X509Certificate RemoteCertificate {
+		public override X509Certificate2 RemoteCertificate {
 			get { return remoteCertificate; }
 		}
 		public override TlsProtocols NegotiatedProtocol {

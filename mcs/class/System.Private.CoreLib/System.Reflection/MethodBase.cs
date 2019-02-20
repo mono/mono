@@ -9,7 +9,7 @@ namespace System.Reflection
 
 		internal virtual ParameterInfo[] GetParametersNoCopy ()
 		{
-			throw new NotImplementedException ();
+			return GetParametersInternal ();
 		}
 
 		internal virtual ParameterInfo[] GetParametersInternal ()

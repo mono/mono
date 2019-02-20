@@ -1148,7 +1148,7 @@ namespace System.Runtime.InteropServices{
         }
     }
 
-    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method, Inherited=false)]
     [System.Runtime.InteropServices.ComVisible(false)]
     public sealed class ManagedToNativeComInteropStubAttribute : Attribute
     {

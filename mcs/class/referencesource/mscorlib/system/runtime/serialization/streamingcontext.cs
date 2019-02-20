@@ -18,9 +18,9 @@ namespace System.Runtime.Serialization {
     using System;
     [Serializable]
 [System.Runtime.InteropServices.ComVisible(true)]
-    public struct StreamingContext {
-        internal Object m_additionalContext;
-        internal StreamingContextStates m_state;
+    public readonly struct StreamingContext {
+        internal readonly Object m_additionalContext;
+        internal readonly StreamingContextStates m_state;
     
         public StreamingContext(StreamingContextStates state) 
             : this (state, null) {

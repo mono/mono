@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection
@@ -5,23 +6,6 @@ namespace System.Reflection
 	[StructLayout (LayoutKind.Sequential)]
 	partial class Assembly
 	{
-#region Must match object-internals.h
-#pragma warning disable 649
-		internal IntPtr _mono_assembly;
-#pragma warning restore 649
-
-		private ResolveEventHolder resolve_event_holder;
-		object _evidence, _minimum, _optional, _refuse, _granted, _denied;
-		private bool fromByteArray;
-		private string assemblyName;
-#endregion
-
-		internal class ResolveEventHolder {
-#pragma warning disable 67
-			public event ModuleResolveEventHandler ModuleResolve;
-#pragma warning restore
-		}
-
 		public static Assembly LoadFrom (string assemblyFile)
 		{
 			throw new NotImplementedException ();
@@ -53,5 +37,17 @@ namespace System.Reflection
 		}
 
 		internal bool IsRuntimeImplemented () => throw new NotImplementedException ();
+
+		internal virtual IntPtr MonoAssembly {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern Type InternalGetType (Module module, String name, Boolean throwOnError, Boolean ignoreCase);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern unsafe static void InternalGetAssemblyName (string assemblyFile, out Mono.MonoAssemblyName aname, out string codebase);
 	}
 }

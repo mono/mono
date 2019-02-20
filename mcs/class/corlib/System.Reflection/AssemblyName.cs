@@ -502,8 +502,13 @@ namespace System.Reflection {
 
 			this.codebase = codeBase;
 
+#if NETCORE
+			if (native->culture != IntPtr.Zero)
+				this.cultureinfo = CultureInfo.GetCultureInfo (RuntimeMarshal.PtrToUtf8String (native->culture));
+#else
 			if (native->culture != IntPtr.Zero)
 				this.cultureinfo = CultureInfo.CreateCulture ( RuntimeMarshal.PtrToUtf8String (native->culture), assemblyRef);
+#endif
 
 			if (native->public_key != IntPtr.Zero) {
 				this.publicKey = RuntimeMarshal.DecodeBlobArray (native->public_key);
@@ -535,5 +540,11 @@ namespace System.Reflection {
 			}
 			return aname;
 		}
+
+#if NETCORE
+		internal static string EscapeCodeBase (string codebase) {
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

@@ -24,7 +24,9 @@ ifneq ($(PROFILE),monodroid)
 ifneq ($(PROFILE),monotouch)
 ifneq ($(PROFILE),monotouch_tv)
 ifneq ($(PROFILE),monotouch_watch)
+ifneq ($(PROFILE),xammac_net_4_5)
 XTEST_LIB_REFS += System.Drawing
+endif
 endif
 endif
 endif

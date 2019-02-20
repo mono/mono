@@ -5,6 +5,7 @@ HttpClientHandler.cs
 HttpClientHandler.SocketsHandler.cs
 IMonoHttpClientHandler.cs
 MonoWebRequestHandler.cs
+StreamContent.Mono.cs
 
 ../corlib/System.Diagnostics/Debug.cs
 

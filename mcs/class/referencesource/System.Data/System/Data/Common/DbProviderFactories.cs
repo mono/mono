@@ -35,9 +35,11 @@ namespace System.Data.Common {
         private static DataTable _providerTable;
         private static object _lockobj = new object();
 
-        static public DbProviderFactory GetFactory(string providerInvariantName) {
-            ADP.CheckArgumentLength(providerInvariantName, "providerInvariantName");
+        static public DbProviderFactory GetFactory(string providerInvariantName) => GetFactory(providerInvariantName, true);
 
+        static public DbProviderFactory GetFactory(string providerInvariantName, bool throwOnError) {
+            if (throwOnError)
+                ADP.CheckArgumentLength(providerInvariantName, "providerInvariantName");
             // NOTES: Include the Framework Providers and any other Providers listed in the config file.
             DataTable providerTable = GetProviderTable();
             if (null != providerTable) {
@@ -54,7 +56,10 @@ namespace System.Data.Common {
                     return DbProviderFactories.GetFactory(providerRow);
                 }
             }
-            throw ADP.ConfigProviderNotFound();
+
+            if (throwOnError)
+                throw ADP.ConfigProviderNotFound();
+            return null;
         }
 
         static public DbProviderFactory GetFactory(DataRow providerRow) {
@@ -258,6 +263,12 @@ namespace System.Data.Common {
         }
 
 #if MONO
+        public static bool TryGetFactory(string providerInvariantName, out DbProviderFactory factory)
+        {
+            factory = GetFactory(providerInvariantName, throwOnError: false);
+            return factory != null;
+        }
+
         public static IEnumerable<string> GetProviderInvariantNames()
         {
             return _registeredFactories.Keys.ToList();

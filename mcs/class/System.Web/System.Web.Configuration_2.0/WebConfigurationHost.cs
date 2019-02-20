@@ -272,7 +272,8 @@ namespace System.Web.Configuration
 		{
 			string path = NormalizeVirtualPath (virtualPath);
 			
-			foreach (VirtualDirectoryMapping mapping in map.VirtualDirectories) {
+			for (int j = 0; j < map.VirtualDirectories.Count; j++) {
+				VirtualDirectoryMapping mapping = map.VirtualDirectories.Get(j);
 				if (path.StartsWith (mapping.VirtualDirectory)) {
 					int i = mapping.VirtualDirectory.Length;
 					if (path.Length == i) {

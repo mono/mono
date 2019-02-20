@@ -430,31 +430,24 @@ namespace Mono.Btls
 #endif
 		}
 
-		public static X509Certificate CreateCertificate (byte[] data, MonoBtlsX509Format format)
-		{
-			using (var impl = new X509CertificateImplBtls (data, format)) {
-				return new X509Certificate (impl);
-			}
-		}
-
-		public static X509Certificate2 CreateCertificate2 (byte[] data, MonoBtlsX509Format format)
+		public static X509Certificate2 CreateCertificate (byte[] data, MonoBtlsX509Format format)
 		{
 			using (var impl = new X509CertificateImplBtls (data, format)) {
 				return new X509Certificate2 (impl);
 			}
 		}
 
-		public static X509Certificate2 CreateCertificate2 (byte[] data, string password, bool disallowFallback = false)
+		public static X509Certificate2 CreateCertificate (byte[] data, string password, bool disallowFallback = false)
 		{
 			using (var handle = new SafePasswordHandle (password))
 			using (var impl = new X509CertificateImplBtls (data, handle, X509KeyStorageFlags.DefaultKeySet))
 				return new X509Certificate2 (impl);
 		}
 
-		public static X509Certificate CreateCertificate (MonoBtlsX509 x509)
+		public static X509Certificate2 CreateCertificate (MonoBtlsX509 x509)
 		{
 			using (var impl = new X509CertificateImplBtls (x509))
-				return new X509Certificate (impl);
+				return new X509Certificate2 (impl);
 		}
 
 		public static X509Chain CreateChain ()

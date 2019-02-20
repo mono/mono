@@ -1184,10 +1184,11 @@ partial class SR
 	public const string Arg_EnumNotCloneable = "The supplied object does not implement ICloneable.";
 	public const string InvalidOp_InvalidNewEnumVariant = "The returned enumerator does not implement IEnumVARIANT.";
 	public const string IndexOutOfRange_ArrayWithOffset = "";
-	public const string Argument_NotIsomorphic = "";
+	public const string ArgumentException_NotIsomorphic = "";
 	public const string Argument_StructArrayTooLarge = "";
 	public const string PersistedFiles_NoHomeDirectory = "The home directory of the current user could not be determined.";
 	public const string AmbiguousImplementationException_NullMessage = "Ambiguous implementation found.";
 	public const string Arg_InvalidSatelliteContract_Asm_Ver = "Satellite contract version attribute on the assembly '{0}' specifies an invalid version: {1}.";
 	public const string InvalidOperation_SetLatencyModeNoGC = "The NoGCRegion mode is in progress.End it and then set a different mode.";
+	public const string ObjectDisposed_SafeHandleClosed = "";
 }

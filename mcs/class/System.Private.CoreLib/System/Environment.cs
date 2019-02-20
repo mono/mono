@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Globalization;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Mono;
@@ -103,7 +104,12 @@ namespace System
 
 		internal static String GetStackTrace (Exception e, bool needFileInfo)
 		{
-			throw new NotImplementedException ();
+			StackTrace st;
+			if (e == null)
+				st = new StackTrace (needFileInfo);
+			else
+				st = new StackTrace (e, needFileInfo);
+			return st.ToString (StackTrace.TraceFormat.Normal);
 		}
 
 		internal static int GetPageSize () => 0;
