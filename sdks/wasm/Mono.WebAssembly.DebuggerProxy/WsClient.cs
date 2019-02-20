@@ -51,7 +51,7 @@ namespace WsProxy {
 		async Task<string> ReadOne (CancellationToken token)
 		{
 			byte [] buff = new byte [4000];
-var mem = new MemoryStream ();
+			var mem = new MemoryStream ();
 			while (true) {
 				var result = await this.socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
 				if (result.MessageType == WebSocketMessageType.Close) {

@@ -52,7 +52,7 @@ namespace WsProxy {
 					description = "node.js instance",
 					devtoolsFrontendUrl = "chrome-devtools://devtools/bundled/inspector.html?experiments=true&v8only=true&ws=localhost:9300/91d87807-8a81-4f49-878c-a5604103b0a4",
 					faviconUrl = "https://nodejs.org/static/favicon.ico",
-id = "91d87807-8a81-4f49-878c-a5604103b0a4",
+					id = "91d87807-8a81-4f49-878c-a5604103b0a4",
 					title = "foo.js",
 					type = "node",
 					webSocketDebuggerUrl = "ws://localhost:9300/91d87807-8a81-4f49-878c-a5604103b0a4"
