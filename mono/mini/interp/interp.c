@@ -2947,9 +2947,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	debug_enter (frame, &tracing);
 
 	rtm = frame->imethod;
-	if (!frame->imethod->transformed) {
+	if (!rtm->transformed) {
 #if DEBUG_INTERP
-		char *mn = mono_method_full_name (frame->imethod->method, TRUE);
+		char *mn = mono_method_full_name (rtm->method, TRUE);
 		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
 		g_free (mn);
 #endif
@@ -3128,8 +3128,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			InterpMethod *new_method = (InterpMethod*)rtm->data_items [* (guint16 *)(ip + 1)];
 			gboolean realloc_frame = new_method->alloca_size > rtm->alloca_size;
 
-			if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL)
-				MONO_PROFILER_RAISE (method_tail_call, (frame->imethod->method, new_method->method));
+			if (rtm->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL)
+				MONO_PROFILER_RAISE (method_tail_call, (rtm->method, new_method->method));
 
 			if (!new_method->transformed) {
 				ERROR_DECL (error);
@@ -3244,7 +3244,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			if (csignature->hasthis)
 				--sp;
 			child_frame.stack_args = sp;
-			if (frame->imethod->method->dynamic && csignature->pinvoke) {
+			if (rtm->method->dynamic && csignature->pinvoke) {
 				MonoMarshalSpec **mspecs;
 				MonoMethodPInvoke piinfo;
 				MonoMethod *m;
@@ -3253,7 +3253,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				mspecs = g_new0 (MonoMarshalSpec*, csignature->param_count + 1);
 				memset (&piinfo, 0, sizeof (piinfo));
 
-				m = mono_marshal_get_native_func_wrapper (m_class_get_image (frame->imethod->method->klass), csignature, &piinfo, mspecs, code);
+				m = mono_marshal_get_native_func_wrapper (m_class_get_image (rtm->method->klass), csignature, &piinfo, mspecs, code);
 
 				for (int i = csignature->param_count; i >= 0; i--)
 					if (mspecs [i])
@@ -3421,7 +3421,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VOID)
 			if (sp > frame->stack)
-				g_warning ("ret.void: more values on stack: %d %s", sp-frame->stack, mono_method_full_name (frame->imethod->method, TRUE));
+				g_warning ("ret.void: more values on stack: %d %s", sp-frame->stack, mono_method_full_name (rtm->method, TRUE));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VT)
 			i32 = READ32(ip + 1);
@@ -4329,7 +4329,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MonoString *s = NULL;
 			guint32 strtoken = (guint32)(gsize)rtm->data_items [* (guint16 *)(ip + 1)];
 
-			MonoMethod *method = frame->imethod->method;
+			MonoMethod *method = rtm->method;
 			if (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD) {
 				s = (MonoString*)mono_method_get_wrapper_data (method, strtoken);
 			} else if (method->wrapper_type != MONO_WRAPPER_NONE) {
@@ -5595,7 +5595,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			}
 			frame->ip = ip;
 
-			if (frame->imethod->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
+			if (rtm->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) {
 				stackval tmp_sp;
 
 				child_frame.parent = frame;
@@ -5660,8 +5660,8 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		MINT_IN_CASE(MINT_MONO_RETOBJ)
 			++ip;
 			sp--;
-			stackval_from_data (mono_method_signature_internal (frame->imethod->method)->ret, frame->retval, sp->data.p,
-			     mono_method_signature_internal (frame->imethod->method)->pinvoke);
+			stackval_from_data (mono_method_signature_internal (rtm->method)->ret, frame->retval, sp->data.p,
+			     mono_method_signature_internal (rtm->method)->pinvoke);
 			if (sp > frame->stack)
 				g_warning ("retobj: more values on stack: %d", sp-frame->stack);
 			goto exit_frame;
@@ -5944,13 +5944,13 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			if (MONO_PROFILER_ENABLED (method_enter)) {
 				MonoProfilerCallContext *prof_ctx = NULL;
 
-				if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_ENTER_CONTEXT) {
+				if (rtm->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_ENTER_CONTEXT) {
 					prof_ctx = g_new0 (MonoProfilerCallContext, 1);
 					prof_ctx->interp_frame = frame;
-					prof_ctx->method = frame->imethod->method;
+					prof_ctx->method = rtm->method;
 				}
 
-				MONO_PROFILER_RAISE (method_enter, (frame->imethod->method, prof_ctx));
+				MONO_PROFILER_RAISE (method_enter, (rtm->method, prof_ctx));
 
 				g_free (prof_ctx);
 			}
@@ -6039,7 +6039,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			int len = sp [-1].data.i;
 			sp [-1].data.p = alloca (len);
 
-			if (frame->imethod->init_locals)
+			if (rtm->init_locals)
 				memset (sp [-1].data.p, 0, len);
 			++ip;
 			MINT_IN_BREAK;
@@ -6156,7 +6156,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		guint32 ip_offset;
 		MonoExceptionClause *clause;
 		GSList *old_list = finally_ips;
-		MonoMethod *method = frame->imethod->method;
+		MonoMethod *method = rtm->method;
 		
 #if DEBUG_INTERP
 		if (tracing)
@@ -6204,15 +6204,15 @@ exit_frame:
 		memcpy (clause_args->base_frame->args, frame->args, rtm->alloca_size);
 
 	if (!frame->ex && MONO_PROFILER_ENABLED (method_leave) &&
-	    frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
+	    rtm->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE) {
 		MonoProfilerCallContext *prof_ctx = NULL;
 
-		if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE_CONTEXT) {
+		if (rtm->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE_CONTEXT) {
 			prof_ctx = g_new0 (MonoProfilerCallContext, 1);
 			prof_ctx->interp_frame = frame;
-			prof_ctx->method = frame->imethod->method;
+			prof_ctx->method = rtm->method;
 
-			MonoType *rtype = mono_method_signature_internal (frame->imethod->method)->ret;
+			MonoType *rtype = mono_method_signature_internal (rtm->method)->ret;
 
 			switch (rtype->type) {
 			case MONO_TYPE_VOID:
@@ -6226,11 +6226,11 @@ exit_frame:
 			}
 		}
 
-		MONO_PROFILER_RAISE (method_leave, (frame->imethod->method, prof_ctx));
+		MONO_PROFILER_RAISE (method_leave, (rtm->method, prof_ctx));
 
 		g_free (prof_ctx);
-	} else if (frame->ex && frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE)
-		MONO_PROFILER_RAISE (method_exception_leave, (frame->imethod->method, &frame->ex->object));
+	} else if (frame->ex && rtm->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE)
+		MONO_PROFILER_RAISE (method_exception_leave, (rtm->method, &frame->ex->object));
 
 	DEBUG_LEAVE ();
 }
