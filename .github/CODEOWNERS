@@ -76,33 +76,33 @@
 /mcs/tools/resx2sr @baulig
 /mcs/tools/upload-to-sentry @alexanderkyte @akoeplinger
 
-/mono/arch @vargaz @lewurm
+/mono/arch @vargaz @lewurm @luhenry
 
 /mono/btls @baulig @luhenry @marek-safar
-/mono/dis @lambdageek @vargaz
+/mono/dis @lambdageek @vargaz @luhenry
 /mono/eglib @vargaz @luhenry
 
 /mono/benchmark @alexanderkyte @luhenry
 
-/mono/metadata @vargaz @lambdageek
+/mono/metadata @vargaz @lambdageek @luhenry
 /mono/metadata/*verify* @lambdageek @luhenry
 /mono/metadata/*profiler* @alexrp @luhenry
 /mono/metadata/handle* @luhenry @lambdageek
-/mono/metadata/monitor* @brzvlad @vargaz
-/mono/metadata/sgen* @brzvlad @vargaz
+/mono/metadata/monitor* @brzvlad @vargaz @luhenry
+/mono/metadata/sgen* @brzvlad @vargaz @luhenry
 /mono/metadata/thread* @luhenry @lateralusX
 /mono/metadata/w32* @luhenry @lateralusX
-/mono/metadata/*-win* @lateralusX @luhenry @luhenry
+/mono/metadata/*-win* @lateralusX @luhenry
 
-/mono/mini @vargaz @lewurm
+/mono/mini @vargaz @lewurm @luhenry
 /mono/mini/*cfgdump* @lewurm @luhenry
 /mono/mini/*exceptions* @lewurm @luhenry
-/mono/mini/*ppc* @lewurm @vargaz
-/mono/mini/*riscv* @alexrp @lewurm
-/mono/mini/*type-check* @lewurm @lambdageek
-/mono/mini/interp/* @lewurm @BrzVlad
+/mono/mini/*ppc* @lewurm @vargaz @luhenry
+/mono/mini/*riscv* @alexrp @lewurm @luhenry
+/mono/mini/*type-check* @lewurm @lambdageek @luhenry
+/mono/mini/interp/* @lewurm @BrzVlad @luhenry
 /mono/mini/*profiler* @alexrp @luhenry
-/mono/mini/debugger-agent.c @vargaz @thaystg @DavidKarlas
+/mono/mini/debugger-agent.c @vargaz @thaystg @DavidKarlas @luhenry
 
 /mono/native @baulig @luhenry @marek-safar
 
@@ -110,7 +110,7 @@
 
 /mono/sgen @BrzVlad @luhenry
 
-/mono/utils @vargaz @lewurm 
+/mono/utils @vargaz @lewurm @luhenry
 /mono/utils/atomic* @lewurm @luhenry
 /mono/utils/mono-hwcap* @lewurm @luhenry
 /mono/utils/mono-mem* @lewurm @luhenry
@@ -121,7 +121,7 @@
 /msvc/*profiler* @alexrp @luhenry
 /msvc/scripts @akoeplinger @kg
 
-/netcore @marek-safar @akoeplinger @egorbo
+/netcore @marek-safar @akoeplinger @egorbo @luhenry
 
 /packaging @alexischr @akoeplinger @luhenry @directhex
 /packaging/MacSDK/msbuild.py @radical @akoeplinger
@@ -133,15 +133,15 @@
 /samples/size @alexrp @luhenry
 
 /scripts @akoeplinger @luhenry
-/scripts/ci @akoeplinger @alexischr
+/scripts/ci @akoeplinger @alexischr @luhenry
 
 /sdks @marek-safar @luhenry @vargaz
 /sdks/builds/android* @luhenry @jonpryor
 /sdks/builds/mxe* @luhenry @jonpryor
-/sdks/builds/ios* @vargaz @rolfbjarne
-/sdks/builds/wasm* @vargaz @kjpou1 @lewing
-/sdks/wasm @vargaz @kjpou1 @kg @lewing
-/sdks/ios @vargaz @rolfbjarne
+/sdks/builds/ios* @vargaz @rolfbjarne @luhenry
+/sdks/builds/wasm* @vargaz @kjpou1 @lewing @luhenry
+/sdks/wasm @vargaz @kjpou1 @kg @lewing @luhenry
+/sdks/ios @vargaz @rolfbjarne @luhenry
 /sdks/android @luhenry @jonpryor
 
 /support @luhenry @vargaz
@@ -152,4 +152,4 @@
 /tools/nuget-hash-extractor @marek-safar @radical
 /tools/offsets-tool @lewurm @rolfbjarne
 /tools/pedump @lambdageek @lewurm
-/tools/sgen @brzvlad @vargaz
+/tools/sgen @brzvlad @vargaz @luhenry
