@@ -3833,6 +3833,17 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			ip += 2;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_LDIND_I8) {
+			guint16 offset = * (guint16 *)(ip + 1);
+#ifdef NO_UNALIGNED_ACCESS
+			if ((gsize)sp [-1 - offset].data.p % SIZEOF_VOID_P)
+				memcpy (&sp [-1 - offset].data.l, sp [-1 - offset].data.p, sizeof (gint64));
+			else
+#endif
+			sp[-1 - offset].data.l = *(gint64*)sp[-1 - offset].data.p;
+			ip += 2;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_LDIND_R4_CHECK)
 			if (!sp[-1].data.p)
 				THROW_EX (mono_get_exception_null_reference (), ip);
