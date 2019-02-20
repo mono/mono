@@ -2671,11 +2671,13 @@ EXTRA_DIST += gen-runtime-invoke.cs
 
 runtime-invoke.gen.cs: gen-runtime-invoke.exe
 	$(Q) $(RUNTIME) gen-runtime-invoke.exe > runtime-invoke.gen.cs
+	echo "********* runtime-invoke.gen.cs: "; cat runtime-invoke.gen.cs
 
 EXTRA_DIST += make-imt-test.cs
 
 imt_big_iface_test.cs: make-imt-test.exe
 	$(Q) $(RUNTIME) make-imt-test.exe > imt_big_iface_test.cs
+	echo "********* imt_big_iface_test.cs: "; cat imt_big_iface_test.cs
 
 EXTRA_DIST += test-inline-call-stack-library.cs test-inline-call-stack.cs
 
