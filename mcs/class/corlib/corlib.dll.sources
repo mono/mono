@@ -1590,6 +1590,7 @@ corefx/BinaryEnums.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/TimeoutHelper.cs
 
 ../referencesource/mscorlib/system/threading/Tasks/AsyncCausalityTracer.cs
+corert/CancellationTokenRegistration.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/CancellationTokenRegistration.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Tasks/TaskExceptionHolder.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Threading/Tasks/ConcurrentExclusiveSchedulerPair.cs
