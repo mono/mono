@@ -55,10 +55,10 @@ test-runner.exe: test-runner/runner.cs
 	csc /out:$@ -r:$(BCL_DIR)/nunitlite.dll -r:$(BCL_DIR)/Mono.Security.dll test-runner/runner.cs
 
 runtime/runtime:
-	make -C runtime
+	$(MAKE) -C runtime
 
 runtime/libmonoios.a:
-	make -C runtime
+	$(MAKE) -C runtime
 
 # Build % from assemblies %_ASSEMBLIES
 # The end result is in bin/ios-sim/test-%.app
@@ -134,26 +134,26 @@ clean:
 	$(RM) -rf bin obj *.exe *.log aot-cache
 
 run-ios-sim-all:
-	for suite in $(TEST_SUITES); do make build-ios-sim-$$suite || exit 1; make run-ios-sim-$$suite || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) build-ios-sim-$$suite || exit 1; $(MAKE) run-ios-sim-$$suite || exit 1; done
 
 build-ios-dev-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do make clean-ios-dev-$$suite; make build-ios-dev-$$suite ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-llvm-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite LLVM=1 ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite LLVM=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-interp-only-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite INTERP_ONLY=1 ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite INTERP_ONLY=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 build-ios-dev-interp-mixed-all:
 	rm -rf aot-cache
-	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; make clean-ios-dev-$$suite; make build-ios-dev-$$suite INTERP_MIXED=1 ENABLE_AOT_CACHE=1 || exit 1; done
+	for suite in $(TEST_SUITES); do echo "*** $$suite ***"; $(MAKE) clean-ios-dev-$$suite; $(MAKE) build-ios-dev-$$suite INTERP_MIXED=1 ENABLE_AOT_CACHE=1 || exit 1; done
 
 run-ios-dev-all:
-	for suite in $(TEST_SUITES); do make run-ios-dev-$$suite || exit 1; done
+	for suite in $(TEST_SUITES); do $(MAKE) run-ios-dev-$$suite || exit 1; done
 
 # Developer targets, ignore
 # 'launch' doesn't propagate the error code
