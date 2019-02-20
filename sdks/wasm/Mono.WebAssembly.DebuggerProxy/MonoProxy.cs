@@ -25,7 +25,7 @@ namespace WsProxy {
 		public const string GET_ARRAY_VALUES = "MONO.mono_wasm_get_array_values({0})";
 	}
 
-	internal enum MonoErrorCodes {
+	public enum MonoErrorCodes {
 		BpNotFound = 100000,
 	}
 
@@ -223,6 +223,7 @@ namespace WsProxy {
 			Info ("RUNTIME READY, PARTY TIME");
 			await RuntimeReady (token);
 			await SendCommand ("Debugger.resume", new JObject (), token);
+			SendEvent ("Mono.runtimeReady", new JObject (), token);			
 		}
 
 		async Task OnBreakPointHit (JObject args, CancellationToken token)
@@ -554,7 +555,8 @@ namespace WsProxy {
 					url = s.Url,
 					executionContextId = this.ctx_id,
 					hash = s.DocHashCode,
-					executionContextAuxData = this.aux_ctx_data
+					executionContextAuxData = this.aux_ctx_data,
+					dotNetUrl = s.DotNetUrl
 				});
 				//Debug ($"\tsending {s.Url}");
 				SendEvent ("Debugger.scriptParsed", ok, token);
