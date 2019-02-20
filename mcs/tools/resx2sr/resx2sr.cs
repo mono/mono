@@ -26,6 +26,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+/*
+ * When making any changes to this tool, please be aware that these are not
+ * automatically tested by a Jenkins job, so you need to do that manually.
+ *
+ * You need to do the following:
+ *
+ * 1.) Build the tool with the `build` profile
+ *     $ make PROFILE=build -C mcs/tools/resx2sr
+ *
+ * 2.) Update the SR in corlib:
+ *     $ make -C mcs/class/corlib update-corefx-sr
+ *
+ * 3.) Look at the output by doing a `git diff` and also building the code.
+ *
+ * 4.) Search for 'RESX_RESOURCE_STRING' and `RESX_EXTRA_ARGUMENTS` in all BCL Makefiles:
+ *     $ git grep RESX_RESOURCE_STRING mcs/class
+ *     $ git grep 'RESX_EXTRA_ARGUMENTS' mcs/class
+ *
+ * 5.) As a minimum, repeat steps 2.) and 3.) for each directory containing `RESX_EXTRA_ARGUMENTS`.
+ *     (at the moment, this is only corlib, but please check with `git grep` to make sure).
+ *
+ * 6.) To test the tool in `--existing` mode, check out `System.Web.Services`, you can do something
+ *     like this:
+ *
+ *         RESX_EXTRA_ARGUMENTS = --in=corefx/SR.template.cs --name=System.Web.Services.Res --existing
+ *         RESX_RESOURCE_STRING = ../referencesource/System.Web.Services/System.Web.Services.txt
+ *
+ * If you have any questions about the process, please ask me and I'll be glad to help.
+ *
+ * December 7th, 2018
+ * Martin Baulig (mabaul@microsoft.com)
+ *
+ */
+
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -41,6 +75,7 @@ public class Program
 		public bool ShowHelp { get; set; }
 		public string OutputFile { get; set; }
 		public bool ExistingOnly { get; set; }
+		public bool WarnConstantMismatch { get; set; }
 	}
 
 	internal static List<string> InputFiles;
@@ -66,6 +101,8 @@ public class Program
 				v => options.ShowHelp = v != null },
 			{ "e|existing", "Only update existing values, do not add keys",
 				v => options.ExistingOnly = true
+			}, { "warn-mismatch", "Warn about constant mismatches",
+				v => options.WarnConstantMismatch = true
 			}
 		};
 
@@ -133,19 +170,32 @@ public class Program
 
 			foreach (var entry in txtStrings) {
 
-				if (options.ExistingOnly && !ExistingKeys.ContainsKey (entry.Item1)) {
-					continue;
-				}
-
 				var value = ToCSharpString (entry.Item2);
 				string found;
 				if (dict.TryGetValue (entry.Item1, out found)) {
-					if (found == value)
+					if (found == value || !options.WarnConstantMismatch)
 						continue;
 
-					str.WriteLine ($"\t// Constant value mismatch");
+					// The same entry was found with different values in multiple input files.
+					Console.Error.WriteLine ($"Constant value mismatch for {entry.Item1}:\n\tOld: {found}\n\tNew: {value}");
+					continue;
+				}
+
+				// Always add to list of seen keys.
+				dict.Add (entry.Item1, value);
+
+				// The following conditional could be simplified to one line, but I belive
+				// it is easier to understand what it does by writing it verbosely like this.
+				if (options.ExistingOnly) {
+					// We read in all entries, then update the strings of the existing ones,
+					// so skip the non-existing ones.
+					if (!ExistingKeys.ContainsKey (entry.Item1))
+						continue;
 				} else {
-					dict.Add (entry.Item1, value);
+					// In this mode of operation, we pass some existing files via `--in=`,
+					// so we skip the existing ones.
+					if (ExistingKeys.ContainsKey (entry.Item1))
+						continue;
 				}
 
 				str.Write ($"\tpublic const string {entry.Item1} = \"{value}\";");
@@ -156,9 +206,12 @@ public class Program
 				str.WriteLine ();
 			}
 
-			foreach (var v in ExistingKeys.Keys) {
-				if (!dict.ContainsKey (v)) {
-					str.Write ($"\tpublic const string {v} = \"{v}\";");
+			if (options.ExistingOnly) {
+				// Add any keys that we missed from the input files.
+				foreach (var v in ExistingKeys.Keys) {
+					if (!dict.ContainsKey (v)) {
+						str.WriteLine ($"\tinternal const string {v} = \"{v}\";");
+					}
 				}
 			}
 

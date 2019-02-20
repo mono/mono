@@ -1,1 +1,10 @@
-corefx/Interop.GetRandomBytes.Mono.cs
+#include unix_build_corlib.dll.exclude.sources
+
+../referencesource/mscorlib/system/timezoneinfo.cs
+corefx/TimeZoneInfo.cs
+System/TimeZoneInfo.cs
+System/TimeZoneInfo.Android.cs
+System/TimeZoneInfo.MonoTouch.cs
+System/TimeZoneInfo.Serialization.cs
+System/TimeZoneInfo.WinRT.cs
+

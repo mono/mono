@@ -22,6 +22,13 @@ echo "--------------------------------------------------------------------------
 "${MONO_EXECUTABLE}" --version
 echo "---------------------------------------------------------------------------------------"
 
+case "$(uname)" in
+    "Linux")
+        mkdir -p ~/.config/.mono/
+        wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
+        ;;
+esac
+
 if [ "$test_suite" = "--xunit" ]; then
     cd net_4_x || exit 1
     export MONO_PATH="$r/net_4_x/tests:$MONO_PATH"
@@ -31,6 +38,9 @@ if [ "$test_suite" = "--xunit" ]; then
             # necessary for the runtime to find libmono-profiler-log
             export LD_LIBRARY_PATH="$r:$LD_LIBRARY_PATH"
             export DYLD_LIBRARY_PATH="$r:$LD_LIBRARY_PATH"
+            ;;
+        *"System.Net.Http"*)
+            export MONO_URI_DOTNETRELATIVEORABSOLUTE=true
             ;;
     esac
     case "$(uname)" in
@@ -283,6 +293,6 @@ if [ "$test_suite" = "--runtime" ]; then
     cd tests/runtime || exit 1
 
     # TODO: only ported runtest-managed for now
-    "${MONO_EXECUTABLE}" --config "$r/_tmpinst/etc/mono/config" --debug test-runner.exe --verbose --xunit "${xunit_results_path}" --config tests-config --runtime "${MONO_EXECUTABLE}" --mono-path "$r/net_4_x" -j a --testsuite-name "runtime" --timeout 300 --disabled "$DISABLED_TESTS" $(cat runtime-test-list.txt)
+    "${MONO_EXECUTABLE}" --config "$r/_tmpinst/etc/mono/config" --debug test-runner.exe --verbose --xunit "${xunit_results_path}" --config tests-config --runtime "${MONO_EXECUTABLE}" --mono-path "$r/net_4_x" -j a --testsuite-name "runtime" --timeout 300 --disabled "$DISABLED_TESTS" --input-file runtime-test-list.txt
     exit $?
 fi

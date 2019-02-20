@@ -713,6 +713,9 @@ public class MsbuildGenerator {
 
 		case "/features":
 			return true;
+
+		case "/sourcelink":
+			return true;
 		}
 
 		Console.Error.WriteLine ($"// Failing with : {arg}");
@@ -832,7 +835,7 @@ public class MsbuildGenerator {
 		var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
 		SourcesParser.TraceLevel = 0;
-		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
+		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder, null);
 	}
 
 	private ParseResult ReadSources (string sourcesFileName) {

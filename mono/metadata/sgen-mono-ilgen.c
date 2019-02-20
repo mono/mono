@@ -33,6 +33,7 @@
 #include "utils/mono-threads-coop.h"
 #include "utils/mono-threads.h"
 #include "metadata/w32handle.h"
+#include "icall-decl.h"
 
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
 	a = i,
@@ -165,7 +166,7 @@ emit_nursery_check_ilgen (MonoMethodBuilder *mb, gboolean is_concurrent)
 	mono_mb_emit_byte (mb, CEE_RET);
 #else
 	mono_mb_emit_ldarg (mb, 0);
-	mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_nostore);
+	mono_mb_emit_icall (mb, mono_gc_wbarrier_generic_nostore_internal);
 	mono_mb_emit_byte (mb, CEE_RET);
 #endif
 }

@@ -16,6 +16,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Net 
 {
 	[TestFixture]
@@ -32,23 +34,14 @@ namespace MonoTests.System.Net
 		[SetUp]
 		public void SetUp ()
 		{
-			_tempDirectory = Path.Combine (Path.GetTempPath (), "MonoTests.System.Net.FileWebRequestTest");
-			_tempFile = Path.Combine (_tempDirectory, "FtpWebRequestTest.tmp");
-			if (!Directory.Exists (_tempDirectory)) {
-				Directory.CreateDirectory (_tempDirectory);
-			} else {
-				// ensure no files are left over from previous runs
-				string [] files = Directory.GetFiles (_tempDirectory, "*");
-				foreach (string file in files)
-					File.Delete (file);
-			}
+			_tempDirectory = new TempDirectory ();
+			_tempFile = Path.Combine (_tempDirectory.Path, "FtpWebRequestTest.tmp");
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (_tempDirectory))
-				Directory.Delete (_tempDirectory, true);
+			_tempDirectory.Dispose ();
 		}
 
 		[Test]

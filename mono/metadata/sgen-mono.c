@@ -104,7 +104,7 @@ mono_gc_wbarrier_value_copy_internal (gpointer dest, gpointer src, int count, Mo
 	HEAVY_STAT (++stat_wbarrier_value_copy);
 	g_assert (m_class_is_valuetype (klass));
 
-	SGEN_LOG (8, "Adding value remset at %p, count %d, descr %p for class %s (%p)", dest, count, (gpointer)m_class_get_gc_descr (klass), m_class_get_name (klass), klass);
+	SGEN_LOG (8, "Adding value remset at %p, count %d, descr %p for class %s (%p)", dest, count, (gpointer)(uintptr_t)m_class_get_gc_descr (klass), m_class_get_name (klass), klass);
 
 	if (sgen_ptr_in_nursery (dest) || ptr_on_stack (dest) || !sgen_gc_descr_has_references ((mword)m_class_get_gc_descr (klass))) {
 		size_t element_size = mono_class_value_size (klass, NULL);
@@ -686,8 +686,10 @@ sgen_client_mark_ephemerons (ScanCopyContext ctx)
 
 				copy_func (&cur->key, queue);
 				if (value) {
-					if (!sgen_is_object_alive_for_current_gen (value))
+					if (!sgen_is_object_alive_for_current_gen (value)) {
 						nothing_marked = FALSE;
+						sgen_binary_protocol_ephemeron_ref (current, key, value);
+					}
 					copy_func (&cur->value, queue);
 				}
 			}
@@ -1000,18 +1002,9 @@ create_allocator (int atype, ManagedAllocatorVariant variant)
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
 	MonoMethodSignature *csig;
-	static gboolean registered = FALSE;
 	const char *name = NULL;
 	WrapperInfo *info;
 	int num_params, i;
-
-	if (!registered) {
-		mono_register_jit_icall (mono_gc_alloc_obj, "mono_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
-		mono_register_jit_icall (mono_gc_alloc_vector, "mono_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
-		mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
-		mono_register_jit_icall (mono_profiler_raise_gc_allocation, "mono_profiler_raise_gc_allocation", mono_create_icall_signature ("void object"), FALSE);
-		registered = TRUE;
-	}
 
 	if (atype == ATYPE_SMALL) {
 		name = slowpath ? "SlowAllocSmall" : (profiler ? "ProfilerAllocSmall" : "AllocSmall");
@@ -1738,7 +1731,7 @@ report_registered_roots_by_type (int root_type)
 	RootRecord *root;
 	report.count = 0;
 	SGEN_HASH_TABLE_FOREACH (&sgen_roots_hash [root_type], void **, start_root, RootRecord *, root) {
-		SGEN_LOG (6, "Profiler root scan %p-%p (desc: %p)", start_root, root->end_root, (void*)root->root_desc);
+		SGEN_LOG (6, "Profiler root scan %p-%p (desc: %p)", start_root, root->end_root, (void*)(intptr_t)root->root_desc);
 		if (root_type == ROOT_TYPE_PINNED)
 			report_pinning_roots (&report, start_root, (void**)root->end_root);
 		else
@@ -2805,6 +2798,15 @@ sgen_client_init (void)
 	mono_tls_init_gc_keys ();
 
 	mono_thread_info_attach ();
+}
+
+void
+mono_gc_init_icalls (void)
+{
+	mono_register_jit_icall (mono_gc_alloc_obj, "mono_gc_alloc_obj", mono_create_icall_signature ("object ptr int"), FALSE);
+	mono_register_jit_icall (mono_gc_alloc_vector, "mono_gc_alloc_vector", mono_create_icall_signature ("object ptr int int"), FALSE);
+	mono_register_jit_icall (mono_gc_alloc_string, "mono_gc_alloc_string", mono_create_icall_signature ("object ptr int int32"), FALSE);
+	mono_register_jit_icall (mono_profiler_raise_gc_allocation, "mono_profiler_raise_gc_allocation", mono_create_icall_signature ("void object"), FALSE);
 }
 
 gboolean

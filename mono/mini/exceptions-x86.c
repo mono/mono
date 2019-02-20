@@ -55,7 +55,7 @@ extern int (*gUnhandledExceptionHandler)(EXCEPTION_POINTERS*);
 #endif
 
 #define W32_SEH_HANDLE_EX(_ex) \
-	if (_ex##_handler) _ex##_handler(0, ep, ctx)
+	if (_ex##_handler) _ex##_handler(er->ExceptionCode, &info, ctx)
 
 LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 {
@@ -198,12 +198,12 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	CONTEXT* ctx;
 	LONG res;
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
+	MonoWindowsSigHandlerInfo info = { TRUE, ep };
 
 	/* If the thread is not managed by the runtime return early */
 	if (!jit_tls)
 		return EXCEPTION_CONTINUE_SEARCH;
 
-	jit_tls->mono_win_chained_exception_needs_run = FALSE;
 	res = EXCEPTION_CONTINUE_EXECUTION;
 
 	er = ep->ExceptionRecord;
@@ -228,11 +228,11 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		W32_SEH_HANDLE_EX(fpe);
 		break;
 	default:
-		jit_tls->mono_win_chained_exception_needs_run = TRUE;
+		info.handled = FALSE;
 		break;
 	}
 
-	if (jit_tls->mono_win_chained_exception_needs_run) {
+	if (!info.handled) {
 		/* Don't copy context back if we chained exception
 		* as the handler may have modfied the EXCEPTION_POINTERS
 		* directly. We don't pass sigcontext to chained handlers.
@@ -833,10 +833,13 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		regs [X86_EDI] = new_ctx->edi;
 		regs [X86_NREG] = new_ctx->eip;
 
-		mono_unwind_frame ((guint8*)unwind_info, unwind_info_len, (guint8*)ji->code_start,
+		gboolean success = mono_unwind_frame ((guint8*)unwind_info, unwind_info_len, (guint8*)ji->code_start,
 						   (guint8*)ji->code_start + ji->code_size,
 						   (guint8*)ip, NULL, regs, MONO_MAX_IREGS + 1,
 						   save_locations, MONO_MAX_IREGS, &cfa);
+
+		if (!success)
+			return FALSE;
 
 		new_ctx->eax = regs [X86_EAX];
 		new_ctx->ebx = regs [X86_EBX];
@@ -858,7 +861,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	} else if (*lmf) {
 		g_assert ((((gsize)(*lmf)->previous_lmf) & 2) == 0);
 
-		if ((ji = mini_jit_info_table_find (domain, (gpointer)(*lmf)->eip, NULL))) {
+		if ((ji = mini_jit_info_table_find (domain, (gpointer)(uintptr_t)(*lmf)->eip, NULL))) {
 			frame->ji = ji;
 		} else {
 			if (!(*lmf)->method)
@@ -1103,7 +1106,7 @@ altstack_handle_and_restore (MonoContext *ctx, gpointer obj, gboolean stack_ovf)
 void
 mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *siginfo, gpointer fault_addr, gboolean stack_ovf)
 {
-#if defined(MONO_ARCH_USE_SIGACTION) && !defined(MONO_CROSS_COMPILE)
+#if defined (MONO_ARCH_USE_SIGACTION) && !defined (MONO_CROSS_COMPILE)
 	MonoException *exc = NULL;
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), (gpointer)UCONTEXT_REG_EIP (ctx), NULL);

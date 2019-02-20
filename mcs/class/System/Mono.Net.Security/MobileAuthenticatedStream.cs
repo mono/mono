@@ -178,7 +178,11 @@ namespace Mono.Net.Security
 			};
 
 			var task = ProcessAuthentication (true, options, CancellationToken.None);
-			task.Wait ();
+			try {
+				task.Wait ();
+			} catch (Exception ex) {
+				throw HttpWebRequest.FlattenException (ex);
+			}
 		}
 
 		public IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
@@ -231,7 +235,11 @@ namespace Mono.Net.Security
 			};
 
 			var task = ProcessAuthentication (true, options, CancellationToken.None);
-			task.Wait ();
+			try {
+				task.Wait ();
+			} catch (Exception ex) {
+				throw HttpWebRequest.FlattenException (ex);
+			}
 		}
 
 		public IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
@@ -1094,29 +1102,64 @@ namespace Mono.Net.Security
 			}
 		}
 
-#region Need to Implement
 		public int CipherStrength {
 			get {
-				throw new NotImplementedException ();
+				CheckThrow (true);
+				var info = GetConnectionInfo ();
+				if (info == null)
+					return 0;
+				switch (info.CipherAlgorithmType) {
+				case MSI.CipherAlgorithmType.None:
+				case MSI.CipherAlgorithmType.Aes128:
+				case MSI.CipherAlgorithmType.AesGcm128:
+					return 128;
+				case MSI.CipherAlgorithmType.Aes256:
+				case MSI.CipherAlgorithmType.AesGcm256:
+					return 256;
+				default:
+					throw new ArgumentOutOfRangeException (nameof (info.CipherAlgorithmType));
+				}
 			}
 		}
+
 		public int HashStrength {
 			get {
-				throw new NotImplementedException ();
+				CheckThrow (true);
+				var info = GetConnectionInfo ();
+				if (info == null)
+					return 0;
+				switch (info.HashAlgorithmType) {
+				case MSI.HashAlgorithmType.Md5:
+				case MSI.HashAlgorithmType.Md5Sha1:
+					return 128;
+				case MSI.HashAlgorithmType.Sha1:
+					return 160;
+				case MSI.HashAlgorithmType.Sha224:
+					return 224;
+				case MSI.HashAlgorithmType.Sha256:
+					return 256;
+				case MSI.HashAlgorithmType.Sha384:
+					return 384;
+				case MSI.HashAlgorithmType.Sha512:
+					return 512;
+				default:
+					throw new ArgumentOutOfRangeException (nameof (info.HashAlgorithmType));
+				}
 			}
 		}
+
 		public int KeyExchangeStrength {
 			get {
-				throw new NotImplementedException ();
+				// FIXME: CoreFX returns 0 on non-Windows platforms.
+				return 0;
 			}
 		}
+
 		public bool CheckCertRevocationStatus {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-
-#endregion
 	}
 }
 #endif

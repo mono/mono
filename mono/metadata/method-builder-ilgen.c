@@ -17,6 +17,7 @@
 #include "mono/metadata/domain-internals.h"
 #include <string.h>
 #include <errno.h>
+#include "class-init.h"
 
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
 	a = i,
@@ -556,7 +557,7 @@ mono_mb_emit_exception_full (MonoMethodBuilder *mb, const char *exc_nspace, cons
 	MonoMethod *ctor = NULL;
 
 	MonoClass *mme = mono_class_load_from_name (mono_defaults.corlib, exc_nspace, exc_name);
-	mono_class_init (mme);
+	mono_class_init_internal (mme);
 	ctor = mono_class_get_method_from_name_checked (mme, ".ctor", 0, 0, error);
 	mono_error_assert_ok (error);
 	g_assert (ctor);
@@ -590,7 +591,9 @@ mono_mb_emit_exception_for_error (MonoMethodBuilder *mb, MonoError *error)
 	 * the behaviour should conform with mono_error_prepare_exception().
 	 */
 	g_assert (mono_error_get_error_code (error) == MONO_ERROR_GENERIC && "Unsupported error code.");
-	mono_mb_emit_exception_full (mb, "System", mono_error_get_exception_name (error), mono_error_get_message (error));
+	/* Have to copy the message because it will be referenced from JITed code while the MonoError may be freed. */
+	char *msg = mono_mb_strdup (mb, mono_error_get_message (error));
+	mono_mb_emit_exception_full (mb, "System", mono_error_get_exception_name (error), msg);
 }
 
 /**

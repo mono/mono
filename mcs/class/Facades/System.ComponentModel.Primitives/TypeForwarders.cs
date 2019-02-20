@@ -33,6 +33,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.IComponent))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.IContainer))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.ISite))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.ISupportInitialize))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.ImmutableObjectAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.InitializationEventAttribute))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.LocalizableAttribute))]

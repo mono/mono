@@ -48,6 +48,18 @@ TEST_RESOURCE_FILES = $(wildcard Test/System.Web.Services.Description/*.wsdl)
 
 TEST_MCS_FLAGS += $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
 
+#
+# This is only used to test the tool in `--existing` mode, see my comment
+# at top top of tools/resx2sr/resx2sr.cs
+#
+
+RESX_EXTRA_ARGUMENTS = \
+	--in=corefx/SR.template.cs --name=System.Web.Services.Res --existing
+
+RESX_RESOURCE_STRING = \
+	../referencesource/System.Web.Services/System.Web.Services.txt
+
+
 EXTRA_DISTFILES = \
 	System.Web.Services.Description/web-reference.xsd	\
 	System.Web.Services.Description/wsdl-1.1.xsd		\

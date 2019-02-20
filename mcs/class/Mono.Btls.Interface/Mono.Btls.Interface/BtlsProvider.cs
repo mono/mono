@@ -50,17 +50,17 @@ namespace Mono.Btls.Interface
 
 		public static X509Certificate CreateCertificate (byte[] data, BtlsX509Format format, bool disallowFallback = false)
 		{
-			return MonoBtlsProvider.CreateCertificate (data, (MonoBtlsX509Format)format, disallowFallback);
+			return MonoBtlsProvider.CreateCertificate (data, (MonoBtlsX509Format)format);
 		}
 
 		public static X509Certificate2 CreateCertificate2 (byte[] data, BtlsX509Format format, bool disallowFallback = false)
 		{
-			return MonoBtlsProvider.CreateCertificate2 (data, (MonoBtlsX509Format)format, disallowFallback);
+			return MonoBtlsProvider.CreateCertificate (data, (MonoBtlsX509Format)format);
 		}
 
 		public static X509Certificate2 CreateCertificate2 (byte[] data, string password, bool disallowFallback = false)
 		{
-			return MonoBtlsProvider.CreateCertificate2 (data, password, disallowFallback);
+			return MonoBtlsProvider.CreateCertificate (data, password);
 		}
 
 		public static BtlsX509Chain CreateNativeChain ()

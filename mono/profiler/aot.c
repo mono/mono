@@ -57,12 +57,12 @@ prof_shutdown (MonoProfiler *prof);
 static void
 usage (void)
 {
-	mono_profiler_printf ("AOT profiler.\n");
+	mono_profiler_printf ("AOT profiler.");
 	mono_profiler_printf ("Usage: mono --profile=aot[:OPTION1[,OPTION2...]] program.exe\n");
-	mono_profiler_printf ("Options:\n");
-	mono_profiler_printf ("\thelp                 show this usage info\n");
-	mono_profiler_printf ("\toutput=FILENAME      write the data to file FILENAME\n");
-	mono_profiler_printf ("\tverbose              print diagnostic info\n");
+	mono_profiler_printf ("Options:");
+	mono_profiler_printf ("\thelp                 show this usage info");
+	mono_profiler_printf ("\toutput=FILENAME      write the data to file FILENAME");
+	mono_profiler_printf ("\tverbose              print diagnostic info");
 
 	exit (0);
 }
@@ -242,6 +242,12 @@ add_image (MonoProfiler *prof, MonoImage *image)
 	if (id)
 		return id - 1;
 
+	// Dynamic images don't have a GUID set.  Moreover, we won't
+	// have a chance to AOT them.  (But perhaps they should be
+	// included in the profile, or logged, for diagnostic purposes?)
+	if (!image->guid)
+		return -1;
+
 	id = prof->id ++;
 	emit_record (prof, AOTPROF_RECORD_IMAGE, id);
 	emit_string (prof, image->assembly->aname.name);
@@ -331,6 +337,8 @@ add_class (MonoProfiler *prof, MonoClass *klass)
 		return id - 1;
 
 	image_id = add_image (prof, mono_class_get_image (klass));
+	if (image_id == -1)
+		return -1;
 
 	if (mono_class_is_ginst (klass)) {
 		MonoGenericContext *ctx = mono_class_get_context (klass);
@@ -387,7 +395,7 @@ add_method (MonoProfiler *prof, MonoMethod *m)
 	g_free (s);
 
 	if (prof->verbose)
-		mono_profiler_printf ("%s %d\n", mono_method_full_name (m, 1), id);
+		mono_profiler_printf ("%s %d", mono_method_full_name (m, 1), id);
 }
 
 /* called at the end of the program */

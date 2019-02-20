@@ -35,13 +35,12 @@ mono_icall_get_windows_folder_path (int folder, MonoError *error)
 MonoArray *
 mono_icall_get_logical_drives (void)
 {
-	ERROR_DECL_VALUE (mono_error);
-	error_init (&mono_error);
+	ERROR_DECL (error);
 
 	g_unsupported_api ("GetLogicalDriveStrings");
 
-	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "GetLogicalDriveStrings");
-	mono_error_set_pending_exception (&mono_error);
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "GetLogicalDriveStrings");
+	mono_error_set_pending_exception (error);
 
 	SetLastError (ERROR_NOT_SUPPORTED);
 
@@ -61,33 +60,16 @@ ves_icall_System_Environment_BroadcastSettingChange (MonoError *error)
 }
 #endif
 
-#if !HAVE_API_SUPPORT_WIN32_GET_DRIVE_TYPE
-guint32
-mono_icall_drive_info_get_drive_type (MonoString *root_path_name)
-{
-	ERROR_DECL_VALUE (mono_error);
-	error_init (&mono_error);
-
-	g_unsupported_api ("GetDriveType");
-
-	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "GetDriveType");
-	mono_error_set_pending_exception (&mono_error);
-
-	return DRIVE_UNKNOWN;
-}
-#endif
-
 #if !HAVE_API_SUPPORT_WIN32_WAIT_FOR_INPUT_IDLE
 gint32
 mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds)
 {
-	ERROR_DECL_VALUE (mono_error);
-	error_init (&mono_error);
+	ERROR_DECL (error);
 
 	g_unsupported_api ("WaitForInputIdle");
 
-	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "WaitForInputIdle");
-	mono_error_set_pending_exception (&mono_error);
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "WaitForInputIdle");
+	mono_error_set_pending_exception (error);
 
 	return WAIT_TIMEOUT;
 }

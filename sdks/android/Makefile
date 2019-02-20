@@ -9,9 +9,6 @@ SDK_DIR = $(ANDROID_TOOLCHAIN_DIR)/sdk
 NDK_DIR = $(ANDROID_TOOLCHAIN_DIR)/ndk
 
 ADB       = $(SDK_DIR)/platform-tools/adb
-ANDROID   = $(SDK_DIR)/tools/android
-ANT       = ant
-NDK_BUILD = $(NDK_DIR)/ndk-build
 
 PACKAGE   = org.mono.android.AndroidTestRunner
 RUNNER    = org.mono.android.AndroidRunner
@@ -104,11 +101,12 @@ local.properties:
 app/assets/asm:
 	mkdir -p $@
 
-## Package the monosgen-2.0 and MonoPosixHelper libraries
+## Package the monosgen-2.0, MonoPosixHelper and mono-native libraries
 
 MONO_LIBS= \
 	libmonosgen-2.0.so \
-	libMonoPosixHelper.so
+	libMonoPosixHelper.so \
+	libmono-native.so
 
 ##
 # Parameters:

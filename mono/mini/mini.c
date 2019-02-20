@@ -932,69 +932,6 @@ mono_create_jump_table (MonoCompile *cfg, MonoInst *label, MonoBasicBlock **bbs,
 	cfg->patch_info = ji;
 }
 
-static MonoMethodSignature *
-mono_get_array_new_va_signature (int arity)
-{
-	static GHashTable *sighash;
-	MonoMethodSignature *res;
-	int i;
-
-	mono_jit_lock ();
-	if (!sighash) {
-		sighash = g_hash_table_new (NULL, NULL);
-	}
-	else if ((res = (MonoMethodSignature *)g_hash_table_lookup (sighash, GINT_TO_POINTER (arity)))) {
-		mono_jit_unlock ();
-		return res;
-	}
-
-	res = mono_metadata_signature_alloc (mono_defaults.corlib, arity + 1);
-
-	res->pinvoke = 1;
-	if (ARCH_VARARG_ICALLS)
-		/* Only set this only some archs since not all backends can handle varargs+pinvoke */
-		res->call_convention = MONO_CALL_VARARG;
-
-#ifdef TARGET_WIN32
-	res->call_convention = MONO_CALL_C;
-#endif
-
-	MonoType *int_type = mono_get_int_type ();
-	res->params [0] = int_type;
-	for (i = 0; i < arity; i++)
-		res->params [i + 1] = int_type;
-
-	res->ret = mono_get_object_type ();
-
-	g_hash_table_insert (sighash, GINT_TO_POINTER (arity), res);
-	mono_jit_unlock ();
-
-	return res;
-}
-
-MonoJitICallInfo *
-mono_get_array_new_va_icall (int rank)
-{
-	MonoMethodSignature *esig;
-	char icall_name [256];
-	char *name;
-	MonoJitICallInfo *info;
-
-	/* Need to register the icall so it gets an icall wrapper */
-	sprintf (icall_name, "ves_array_new_va_%d", rank);
-
-	mono_jit_lock ();
-	info = mono_find_jit_icall_by_name (icall_name);
-	if (info == NULL) {
-		esig = mono_get_array_new_va_signature (rank);
-		name = g_strdup (icall_name);
-		info = mono_register_jit_icall (mono_array_new_va, name, esig, FALSE);
-	}
-	mono_jit_unlock ();
-
-	return info;
-}
-
 gboolean
 mini_assembly_can_skip_verification (MonoDomain *domain, MonoMethod *method)
 {
@@ -1148,6 +1085,7 @@ mono_allocate_stack_slots2 (MonoCompile *cfg, gboolean backward, guint32 *stack_
 	StackSlotInfo *scalar_stack_slots, *vtype_stack_slots, *slot_info;
 	MonoType *t;
 	int nvtypes;
+	int vtype_stack_slots_size = 256;
 	gboolean reuse_slot;
 
 	LSCAN_DEBUG (printf ("Allocate Stack Slots 2 for %s:\n", mono_method_full_name (cfg->method, TRUE)));
@@ -1226,14 +1164,22 @@ mono_allocate_stack_slots2 (MonoCompile *cfg, gboolean backward, guint32 *stack_
 			/* Fall through */
 		case MONO_TYPE_VALUETYPE:
 			if (!vtype_stack_slots)
-				vtype_stack_slots = (StackSlotInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (StackSlotInfo) * 256);
+				vtype_stack_slots = (StackSlotInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (StackSlotInfo) * vtype_stack_slots_size);
 			for (i = 0; i < nvtypes; ++i)
 				if (t->data.klass == vtype_stack_slots [i].vtype)
 					break;
 			if (i < nvtypes)
 				slot_info = &vtype_stack_slots [i];
 			else {
-				g_assert (nvtypes < 256);
+				if (nvtypes == vtype_stack_slots_size) {
+					int new_slots_size = vtype_stack_slots_size * 2;
+					StackSlotInfo* new_slots = (StackSlotInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (StackSlotInfo) * new_slots_size);
+
+					memcpy (new_slots, vtype_stack_slots, sizeof (StackSlotInfo) * vtype_stack_slots_size);
+
+					vtype_stack_slots = new_slots;
+					vtype_stack_slots_size = new_slots_size;
+				}
 				vtype_stack_slots [nvtypes].vtype = t->data.klass;
 				slot_info = &vtype_stack_slots [nvtypes];
 				nvtypes ++;
@@ -1384,8 +1330,8 @@ mono_allocate_stack_slots2 (MonoCompile *cfg, gboolean backward, guint32 *stack_
 		LSCAN_DEBUG (printf ("R%d %s -> 0x%x\n", inst->dreg, mono_type_full_name (t), slot));
 
 		if (inst->flags & MONO_INST_LMF) {
-			size = sizeof (MonoLMF);
-			align = sizeof (mgreg_t);
+			size = MONO_ABI_SIZEOF (MonoLMF);
+			align = sizeof (target_mgreg_t);
 			reuse_slot = FALSE;
 		}
 
@@ -1394,12 +1340,12 @@ mono_allocate_stack_slots2 (MonoCompile *cfg, gboolean backward, guint32 *stack_
 
 		if (slot == 0xffffff) {
 			/*
-			 * Allways allocate valuetypes to sizeof (gpointer) to allow more
+			 * Allways allocate valuetypes to sizeof (target_mgreg_t) to allow more
 			 * efficient copying (and to work around the fact that OP_MEMCPY
 			 * and OP_MEMSET ignores alignment).
 			 */
 			if (MONO_TYPE_ISSTRUCT (t)) {
-				align = MAX (align, sizeof (gpointer));
+				align = MAX (align, sizeof (target_mgreg_t));
 				align = MAX (align, mono_class_min_align (mono_class_from_mono_type_internal (t)));
 			}
 
@@ -1459,6 +1405,7 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 	StackSlotInfo *scalar_stack_slots, *vtype_stack_slots, *slot_info;
 	MonoType *t;
 	int nvtypes;
+	int vtype_stack_slots_size = 256;
 	gboolean reuse_slot;
 
 	if ((cfg->num_varinfo > 0) && MONO_VARINFO (cfg, 0)->interval)
@@ -1484,7 +1431,7 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 
 	vars = mono_varlist_sort (cfg, vars, 0);
 	offset = 0;
-	*stack_align = sizeof(mgreg_t);
+	*stack_align = sizeof (target_mgreg_t);
 	for (l = vars; l; l = l->next) {
 		vmv = (MonoMethodVar *)l->data;
 		inst = cfg->varinfo [vmv->idx];
@@ -1524,14 +1471,22 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 			/* Fall through */
 		case MONO_TYPE_VALUETYPE:
 			if (!vtype_stack_slots)
-				vtype_stack_slots = (StackSlotInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (StackSlotInfo) * 256);
+				vtype_stack_slots = (StackSlotInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (StackSlotInfo) * vtype_stack_slots_size);
 			for (i = 0; i < nvtypes; ++i)
 				if (t->data.klass == vtype_stack_slots [i].vtype)
 					break;
 			if (i < nvtypes)
 				slot_info = &vtype_stack_slots [i];
 			else {
-				g_assert (nvtypes < 256);
+				if (nvtypes == vtype_stack_slots_size) {
+					int new_slots_size = vtype_stack_slots_size * 2;
+					StackSlotInfo* new_slots = (StackSlotInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (StackSlotInfo) * new_slots_size);
+
+					memcpy (new_slots, vtype_stack_slots, sizeof (StackSlotInfo) * vtype_stack_slots_size);
+
+					vtype_stack_slots = new_slots;
+					vtype_stack_slots_size = new_slots_size;
+				}
 				vtype_stack_slots [nvtypes].vtype = t->data.klass;
 				slot_info = &vtype_stack_slots [nvtypes];
 				nvtypes ++;
@@ -1628,8 +1583,8 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 			 * This variable represents a MonoLMF structure, which has no corresponding
 			 * CLR type, so hard-code its size/alignment.
 			 */
-			size = sizeof (MonoLMF);
-			align = sizeof (mgreg_t);
+			size = MONO_ABI_SIZEOF (MonoLMF);
+			align = sizeof (target_mgreg_t);
 			reuse_slot = FALSE;
 		}
 
@@ -1638,12 +1593,12 @@ mono_allocate_stack_slots (MonoCompile *cfg, gboolean backward, guint32 *stack_s
 
 		if (slot == 0xffffff) {
 			/*
-			 * Allways allocate valuetypes to sizeof (gpointer) to allow more
+			 * Allways allocate valuetypes to sizeof (target_mgreg_t) to allow more
 			 * efficient copying (and to work around the fact that OP_MEMCPY
 			 * and OP_MEMSET ignores alignment).
 			 */
 			if (MONO_TYPE_ISSTRUCT (t)) {
-				align = MAX (align, sizeof (gpointer));
+				align = MAX (align, sizeof (target_mgreg_t));
 				align = MAX (align, mono_class_min_align (mono_class_from_mono_type_internal (t)));
 				/* 
 				 * Align the size too so the code generated for passing vtypes in
@@ -2124,16 +2079,8 @@ mono_postprocess_patches (MonoCompile *cfg)
 			 * absolute address.
 			 */
 			if (info) {
-				//printf ("TEST %s %p\n", info->name, patch_info->data.target);
-				/* for these array methods we currently register the same function pointer
-				 * since it's a vararg function. But this means that mono_find_jit_icall_by_addr ()
-				 * will return the incorrect one depending on the order they are registered.
-				 * See tests/test-arr.cs
-				 */
-				if (strstr (info->name, "ves_array_new_va_") == NULL && strstr (info->name, "ves_array_element_address_") == NULL) {
-					patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
-					patch_info->data.name = info->name;
-				}
+				patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
+				patch_info->data.name = info->name;
 			}
 
 			if (patch_info->type == MONO_PATCH_INFO_ABS) {
@@ -2851,7 +2798,7 @@ insert_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 	if (cfg->verbose_level > 1)
 		printf ("ADDING SAFE POINT TO BB %d\n", bblock->block_num);
 
-	g_assert (mono_threads_are_safepoints_enabled ());
+	g_assert (mini_safepoints_enabled ());
 	NEW_AOTCONST (cfg, poll_addr, MONO_PATCH_INFO_GC_SAFE_POINT_FLAG, (gpointer)&mono_polling_required);
 
 	MONO_INST_NEW (cfg, ins, OP_GC_SAFE_POINT);
@@ -2897,7 +2844,7 @@ insert_safepoints (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
 
-	g_assert (mono_threads_are_safepoints_enabled ());
+	g_assert (mini_safepoints_enabled ());
 
 	if (COMPILE_LLVM (cfg)) {
 		if (!cfg->llvm_only && cfg->compile_aot) {
@@ -2910,11 +2857,9 @@ insert_safepoints (MonoCompile *cfg)
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
-		/* These wrappers are called from the wrapper for the polling function, leading to potential stack overflow */
-		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER &&
-				(info->d.icall.func == mono_threads_state_poll ||
-				 info->d.icall.func == mono_thread_interruption_checkpoint ||
-				 info->d.icall.func == mono_threads_exit_gc_safe_region_unbalanced)) {
+		gpointer poll_func = (gpointer)&mono_threads_state_poll;
+
+		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER && info->d.icall.func == poll_func) {
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for the polling function icall\n");
 			return;
@@ -3095,7 +3040,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 {
 	MonoMethodHeader *header;
 	MonoMethodSignature *sig;
-	ERROR_DECL_VALUE (err);
 	MonoCompile *cfg;
 	int i;
 	gboolean try_generic_shared, try_llvm = FALSE;
@@ -3192,6 +3136,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->gen_seq_points = !mini_debug_options.no_seq_points_compact_data || mini_debug_options.gen_sdb_seq_points;
 	cfg->gen_sdb_seq_points = mini_debug_options.gen_sdb_seq_points;
 	cfg->llvm_only = (flags & JIT_FLAG_LLVM_ONLY) != 0;
+	cfg->interp = (flags & JIT_FLAG_INTERP) != 0;
 	cfg->backend = current_backend;
 
 #ifdef HOST_ANDROID
@@ -3207,7 +3152,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		cfg->gen_sdb_seq_points = FALSE;
 	}
 	/* coop requires loop detection to happen */
-	if (mono_threads_are_safepoints_enabled ())
+	if (mini_safepoints_enabled ())
 		cfg->opt |= MONO_OPT_LOOP;
 	if (cfg->backend->explicit_null_checks) {
 		/* some platforms have null pages, so we can't SIGSEGV */
@@ -3279,12 +3224,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	}
 	cfg->method_to_register = method_to_register;
 
-	error_init (&err);
-	sig = mono_method_signature_checked (cfg->method, &err);	
+	ERROR_DECL (err);
+	sig = mono_method_signature_checked (cfg->method, err);	
 	if (!sig) {
 		cfg->exception_type = MONO_EXCEPTION_TYPE_LOAD;
-		cfg->exception_message = g_strdup (mono_error_get_message (&err));
-		mono_error_cleanup (&err);
+		cfg->exception_message = g_strdup (mono_error_get_message (err));
+		mono_error_cleanup (err);
 		if (MONO_METHOD_COMPILE_END_ENABLED ())
 			MONO_PROBE_METHOD_COMPILE_END (method, FALSE);
 		return cfg;
@@ -3384,7 +3329,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (method->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (method);
 
-		/* These wrappers are using linkonce linkage, so they can't access GOT slots */
 		if ((info && (info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG || info->subtype == WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG))) {
 			cfg->disable_gc_safe_points = TRUE;
 			/* This is safe, these wrappers only store to the stack */
@@ -4272,6 +4216,12 @@ void mono_llvm_emit_aot_data (const char *symbol, guint8 *data, int data_len)
 
 void
 mono_llvm_cpp_throw_exception (void)
+{
+	g_assert_not_reached ();
+}
+
+void
+mono_llvm_cpp_catch_exception (MonoLLVMInvokeCallback cb, gpointer arg, gboolean *out_thrown)
 {
 	g_assert_not_reached ();
 }

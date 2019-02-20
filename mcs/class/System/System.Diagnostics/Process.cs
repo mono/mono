@@ -42,6 +42,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Security;
 using System.Threading;
 using Microsoft.Win32;
@@ -124,6 +125,15 @@ namespace System.Diagnostics
 		public string MainWindowTitle {
 			get {
 				return("null");
+			}
+		}
+
+		private static void AppendArguments (StringBuilder stringBuilder, Collection<string> argumentList)
+		{
+			if (argumentList.Count > 0) {
+				foreach (string argument in argumentList) {
+					PasteArguments.AppendArgument (stringBuilder, argument);
+				}
 			}
 		}
 
@@ -782,9 +792,9 @@ namespace System.Diagnostics
 				MonoIO.Close (stdin_read, out error);
 
 #if MOBILE
-				var stdinEncoding = Encoding.Default;
+				var stdinEncoding = startInfo.StandardInputEncoding ?? Encoding.Default;
 #else
-				var stdinEncoding = Console.InputEncoding;
+				var stdinEncoding = startInfo.StandardInputEncoding ?? Console.InputEncoding;
 #endif
 				standardInput = new StreamWriter (new FileStream (stdin_write, FileAccess.Write, true, 8192), stdinEncoding) {
 					AutoFlush = true

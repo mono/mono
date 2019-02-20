@@ -31,8 +31,9 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+#if !DISABLE_REMOTING
 using System.Runtime.Remoting.Contexts;
-using System.Security.Permissions;
+#endif
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.ConstrainedExecution;
@@ -41,7 +42,6 @@ namespace System.Threading
 {
 	[StructLayout (LayoutKind.Sequential)]
 	public abstract partial class WaitHandle
-		: MarshalByRefObject, IDisposable
 	{
 		protected static readonly IntPtr InvalidHandle = (IntPtr) (-1);
 

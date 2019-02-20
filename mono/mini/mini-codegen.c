@@ -125,10 +125,10 @@ static const regmask_t regbank_callee_regs [] = {
 };
 
 static const int regbank_spill_var_size[] = {
-	sizeof (mgreg_t),
+	sizeof (target_mgreg_t),
 	sizeof (double),
-	sizeof (mgreg_t),
-	sizeof (mgreg_t),
+	sizeof (target_mgreg_t),
+	sizeof (target_mgreg_t),
 	16 /*FIXME make this a constant. Maybe MONO_ARCH_SIMD_VECTOR_SIZE? */
 };
 
@@ -330,14 +330,14 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, int bank)
 	 */
 	info = &cfg->spill_info [bank][spillvar];
 	if (info->offset == -1) {
-		cfg->stack_offset += sizeof (mgreg_t) - 1;
-		cfg->stack_offset &= ~(sizeof (mgreg_t) - 1);
+		cfg->stack_offset += sizeof (target_mgreg_t) - 1;
+		cfg->stack_offset &= ~(sizeof (target_mgreg_t) - 1);
 
 		g_assert (bank < MONO_NUM_REGBANKS);
 		if (G_UNLIKELY (bank))
 			size = regbank_spill_var_size [bank];
 		else
-			size = sizeof (mgreg_t);
+			size = sizeof (target_mgreg_t);
 
 		if (cfg->flags & MONO_CFG_HAS_SPILLUP) {
 			cfg->stack_offset += size - 1;
@@ -615,7 +615,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		}
 
 		if (call->method) {
-			char *full_name = mono_method_full_name (call->method, TRUE);
+			char *full_name = mono_method_get_full_name (call->method);
 			g_string_append_printf (sbuf, " [%s]", full_name);
 			g_free (full_name);
 		} else if (call->fptr_is_patch) {
@@ -724,7 +724,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 	case OP_COND_EXC_INO:
 	case OP_COND_EXC_IC:
 	case OP_COND_EXC_INC:
-		g_string_append_printf (sbuf, " %s", ins->inst_p1);
+		g_string_append_printf (sbuf, " %s", (const char*)ins->inst_p1);
 		break;
 	default:
 		break;
@@ -746,7 +746,7 @@ print_regtrack (RegTrack *t, int num)
 		if (!t [i].born_in)
 			continue;
 		if (i >= MONO_MAX_IREGS) {
-			g_snprintf (buf, sizeof(buf), "R%d", i);
+			g_snprintf (buf, sizeof (buf), "R%d", i);
 			r = buf;
 		} else
 			r = mono_arch_regname (i);

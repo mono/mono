@@ -37,12 +37,15 @@ using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 
+using MonoTests.Helpers;
+
 namespace MonoCasTests.System.CodeDom.Compiler {
 
 	[TestFixture]
 	[Category ("CAS")]
 	public class TempFileCollectionCas {
 
+		private TempDirectory _temp;
 		private string temp;
 		private string[] array;
 
@@ -50,7 +53,8 @@ namespace MonoCasTests.System.CodeDom.Compiler {
 		public void FixtureSetUp ()
 		{
 			// at full trust
-			temp = Path.GetTempPath ();
+			_temp = new TempDirectory ();
+			temp = _temp.Path;
 			array = new string[1];
 		}
 

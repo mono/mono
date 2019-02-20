@@ -1,1 +1,2 @@
 ../../../external/corefx/src/System.Linq.Expressions/tests/Dynamic/InvokeMemberBindingTests.cs
+../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.UnixDomainSockets.cs

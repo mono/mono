@@ -1,2 +1,2 @@
-#include System.Net.Http.dll.sources
+#include legacy.sources
 System.Net.Http/HttpClient.wasm.cs

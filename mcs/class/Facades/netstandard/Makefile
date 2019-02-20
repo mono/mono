@@ -31,6 +31,11 @@ endif
 
 endif
 
+ifeq ($(PROFILE),net_4_x)
+# TODO: remove once mobile profile supports NS 2.1
+LIB_MCS_FLAGS := -d:NS21
+endif
+
 ifeq ($(PROFILE),monodroid)
 # XA implements System.Drawing API inside Mono.Android
 API_BIN_REFS := Mono.Android

@@ -268,14 +268,18 @@ struct _MonoImage {
 	/* Whenever this image is considered as platform code for the CoreCLR security model */
 	guint8 core_clr_platform_code : 1;
 
-	/* The path to the file for this image. */
+	/* The path to the file for this image or an arbitrary name for images loaded from data. */
 	char *name;
+
+	/* The path to the file for this image or NULL */
+	char *filename;
 
 	/* The assembly name reported in the file for this image (expected to be NULL for a netmodule) */
 	const char *assembly_name;
 
 	/* The module name reported in the file for this image (could be NULL for a malformed file) */
 	const char *module_name;
+	guint32 time_date_stamp;
 
 	char *version;
 	gint16 md_version_major, md_version_minor;
@@ -624,6 +628,7 @@ typedef struct {
 	gboolean     has_locals;
 } MonoMethodHeaderSummary;
 
+// FIXME? offsetof (MonoMethodHeader, locals)?
 #define MONO_SIZEOF_METHOD_HEADER (sizeof (struct _MonoMethodHeader) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)
 
 struct _MonoMethodSignature {

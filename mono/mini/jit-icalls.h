@@ -53,7 +53,8 @@ G_EXTERN_C guint64 mono_lshr_un (guint64 a, gint32 shamt);
 
 G_EXTERN_C gint64 mono_lshr (gint64 a, gint32 shamt);
 
-G_EXTERN_C MonoArray *mono_array_new_va (MonoMethod *cm, ...);
+// For param_count > 4.
+G_EXTERN_C MonoArray *mono_array_new_n_icall (MonoMethod *cm, gint32 param_count, intptr_t *params);
 
 G_EXTERN_C MonoArray *mono_array_new_1 (MonoMethod *cm, guint32 length);
 
@@ -70,12 +71,14 @@ G_EXTERN_C gpointer mono_ldtoken_wrapper (MonoImage *image, int token, MonoGener
 G_EXTERN_C gpointer mono_ldtoken_wrapper_generic_shared (MonoImage *image, int token, MonoMethod *method);
 
 G_EXTERN_C guint64 mono_fconv_u8 (double v);
+G_EXTERN_C guint64 mono_fconv_u8_2 (double v);
 
 G_EXTERN_C guint64 mono_rconv_u8 (float v);
 
 G_EXTERN_C gint64 mono_fconv_i8 (double v);
 
 G_EXTERN_C guint32 mono_fconv_u4 (double v);
+G_EXTERN_C guint32 mono_fconv_u4_2 (double v);
 
 G_EXTERN_C gint64 mono_fconv_ovf_i8 (double v);
 
@@ -205,20 +208,6 @@ G_EXTERN_C void mono_gsharedvt_value_copy (gpointer dest, gpointer src, MonoClas
 G_EXTERN_C gpointer mono_fill_class_rgctx (MonoVTable *vtable, int index);
 
 G_EXTERN_C gpointer mono_fill_method_rgctx (MonoMethodRuntimeGenericContext *mrgctx, int index);
-
-G_EXTERN_C gpointer mono_resolve_iface_call_gsharedvt (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, gpointer *out_arg);
-
-G_EXTERN_C gpointer mono_resolve_vcall_gsharedvt (MonoObject *this_obj, int imt_slot, MonoMethod *imt_method, gpointer *out_arg);
-
-G_EXTERN_C MonoFtnDesc* mono_resolve_generic_virtual_call (MonoVTable *vt, int slot, MonoMethod *imt_method);
-
-G_EXTERN_C MonoFtnDesc* mono_resolve_generic_virtual_iface_call (MonoVTable *vt, int imt_slot, MonoMethod *imt_method);
-
-G_EXTERN_C gpointer mono_init_vtable_slot (MonoVTable *vtable, int slot);
-
-G_EXTERN_C void mono_llvmonly_init_delegate (MonoDelegate *del);
-
-G_EXTERN_C void mono_llvmonly_init_delegate_virtual (MonoDelegate *del, MonoObject *target, MonoMethod *method);
 
 G_EXTERN_C MonoObject* mono_get_assembly_object (MonoImage *image);
 

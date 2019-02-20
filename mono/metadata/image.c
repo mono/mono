@@ -31,10 +31,12 @@
 #include <mono/metadata/exception-internals.h>
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/utils/mono-errno.h>
 #include <mono/utils/mono-path.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/mono-proclib.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/object-internals.h>
@@ -42,6 +44,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/image-internals.h>
+#include <mono/metadata/w32process-internals.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef HAVE_UNISTD_H
@@ -1057,6 +1060,20 @@ pe_image_load_cli_data (MonoImage *image)
 	return TRUE;
 }
 
+static void
+mono_image_load_time_date_stamp (MonoImage *image)
+{
+	image->time_date_stamp = 0;
+#ifndef HOST_WIN32
+	if (!image->filename)
+		return;
+
+	gunichar2 *uni_name = g_utf8_to_utf16 (image->filename, -1, NULL, NULL, NULL);
+	mono_pe_file_time_date_stamp (uni_name, &image->time_date_stamp);
+	g_free (uni_name);
+#endif
+}
+
 void
 mono_image_load_names (MonoImage *image)
 {
@@ -1375,6 +1392,8 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 
 	mono_image_load_names (image);
 
+	mono_image_load_time_date_stamp (image);
+
 	load_modules (image);
 
 done:
@@ -1438,6 +1457,7 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
 	image->name = mono_path_resolve_symlinks (fname);
+	image->filename = g_strdup (image->name);
 	image->ref_only = refonly;
 	image->metadata_only = metadata_only;
 	image->load_from_context = load_from_context;
@@ -1462,6 +1482,26 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 MonoImage *
 mono_image_loaded_full (const char *name, gboolean refonly)
 {
+	MonoImage *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_image_loaded_internal (name, refonly);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+/**
+ * mono_image_loaded_internal:
+ * \param name path or assembly name of the image to load
+ * \param refonly Check with respect to reflection-only loads?
+ *
+ * This routine verifies that the given image is loaded.
+ * It checks either reflection-only loads only, or normal loads only, as specified by parameter.
+ *
+ * \returns the loaded \c MonoImage, or NULL on failure.
+ */
+MonoImage *
+mono_image_loaded_internal (const char *name, gboolean refonly)
+{
 	MonoImage *res;
 
 	mono_images_lock ();
@@ -1482,7 +1522,11 @@ mono_image_loaded_full (const char *name, gboolean refonly)
 MonoImage *
 mono_image_loaded (const char *name)
 {
-	return mono_image_loaded_full (name, FALSE);
+	MonoImage *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_image_loaded_internal (name, FALSE);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 typedef struct {
@@ -1746,9 +1790,9 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 					*status = MONO_IMAGE_IMAGE_INVALID;
 				else {
 					if (last_error == ERROR_FILE_NOT_FOUND || last_error == ERROR_PATH_NOT_FOUND)
-						errno = ENOENT;
+						mono_set_errno (ENOENT);
 					else
-						errno = 0;
+						mono_set_errno (0);
 				}
 			}
 			return NULL;
@@ -2121,9 +2165,12 @@ mono_image_close_except_pools (MonoImage *image)
 	}
 
 	if (debug_assembly_unload) {
-		image->name = g_strdup_printf ("%s - UNLOADED", image->name);
+		char *old_name = image->name;
+		image->name = g_strdup_printf ("%s - UNLOADED", old_name);
+		g_free (old_name);
 	} else {
 		g_free (image->name);
+		g_free (image->filename);
 		g_free (image->guid);
 		g_free (image->version);
 	}

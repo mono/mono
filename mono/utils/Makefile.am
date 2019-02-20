@@ -91,6 +91,7 @@ monoutils_sources = \
 	mono-filemap.c		\
 	mono-mmap.c  		\
 	mono-mmap-windows.c  		\
+	mono-mmap-wasm.c  		\
 	mono-mmap.h  		\
 	mono-mmap-internals.h	\
 	mono-mmap-windows-internals.h	\
@@ -327,7 +328,7 @@ libmonoutilsinclude_HEADERS = 	\
 	mono-dl-fallback.h	\
 	mono-counters.h
 
-EXTRA_DIST = mono-embed.h mono-embed.c ../../support/libm/complex.c mono-experiments.def
+EXTRA_DIST = mono-errno.h mono-embed.h mono-embed.c ../../support/libm/complex.c mono-experiments.def
 
 DIST_SUBDIRS = jemalloc
 

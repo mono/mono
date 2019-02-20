@@ -80,7 +80,8 @@ public class DebuggerTests
 
 	Diag.ProcessStartInfo CreateStartInfo (string[] args) {
 		var pi = new Diag.ProcessStartInfo ();
-
+		pi.RedirectStandardOutput = true;
+		pi.RedirectStandardError = true;
 		if (runtime != null) {
 			pi.FileName = runtime;
 		} else {
@@ -2456,32 +2457,50 @@ public class DebuggerTests
 
 	[Test]
 	[Category("NotOnWindows")]
-	[Ignore("https://github.com/mono/mono/issues/11385")]
 	public void Crash () {
+		string [] existingCrashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
+
 		bool success = false;
-
-		try {
-			vm.Detach ();
-			Start (new string [] { dtest_app_path, "crash-vm" });
-			Event e = run_until ("crash");
-			while (!success) {
-				vm.Resume ();
-				e = GetNextEvent ();
-				var crash = e as CrashEvent;
-				if (crash == null)
-					continue;
-
-				success = true;
-				Assert.AreNotEqual (0, crash.Dump.Length);
-
-				break;
-			}
-		} finally {
+		for (int i = 0 ; i < 10; i++) {
 			try {
 				vm.Detach ();
+				Start (new string [] { dtest_app_path, "crash-vm" });
+				Event e = run_until ("crash");
+				while (!success) {
+					vm.Resume ();
+					e = GetNextEvent ();
+					var crash = e as CrashEvent;
+					if (crash == null)
+						continue;
+
+					success = true;
+					Assert.AreNotEqual (0, crash.Dump.Length);
+
+					break;
+				}
+			} catch (VMDisconnectedException vmDisconnect) { //expected behavior because of unreliability of the crash reporter.
+					success = false;
 			} finally {
-				vm = null;
+				try {
+					vm.Detach ();
+				} catch (VMDisconnectedException vmDisconnect) { //expected behavior because of unreliability of the crash reporter.
+					success = false;
+				} finally {
+					vm = null;
+				}
 			}
+			if (success) 
+				break;
+			//try again because of unreliability of the crash reporter.
+			TearDown();
+			SetUp();
+		}
+
+		// delete crash files created by this test
+		string [] crashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
+		foreach (string f in crashFileEntries) {
+			if (!existingCrashFileEntries.Contains (f))
+				File.Delete(f);
 		}
 
 		if (!success)
@@ -4457,11 +4476,11 @@ public class DebuggerTests
 		e = run_until ("threadpool_bp");
 		var req = create_step (e);
 		e = step_out (); // leave threadpool_bp
+		
 		e = step_out (); // leave threadpool_io
 	}
 
 	[Test]
-	[Category("NotWorking")] // flaky, see https://github.com/mono/mono/issues/6997
 	public void StepOutAsync () {
 		vm.Detach ();
 		Start (new string [] { dtest_app_path, "step-out-void-async" });
@@ -4475,13 +4494,89 @@ public class DebuggerTests
 		vm.Resume ();
 		var e3 = GetNextEvent ();
 		//after step-out from async void, execution should continue
-		//and runtime should exit
-		Assert.IsTrue (e3 is VMDeathEvent, e3.GetType().FullName);
+		//and runtime should Step
+		Assert.IsTrue (e3 is StepEvent, e3.GetType().FullName);
 		vm = null;
 	}
 
 	[Test]
-	[Category("NotWorking")]
+	public void StepOverOnExitFromArgsAfterStepInMethodParameter2() {
+		Event e = run_until ("ss_nested_with_three_args_wrapper");
+
+		var req = create_step(e);
+		req.Enable();
+
+		e = step_once();
+		assert_location(e, "ss_nested_with_three_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_with_three_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_with_three_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg3");
+	}
+
+	
+	[Test]
+	public void StepOverOnExitFromArgsAfterStepInMethodParameter3() {
+		Event e = run_until ("ss_nested_twice_with_two_args_wrapper");
+
+		var req = create_step(e);
+		req.Enable();
+
+		e = step_once();
+		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg1");
+
+		e = step_over();
+		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_arg2");
+
+		e = step_over();
+		assert_location(e, "ss_nested_twice_with_two_args_wrapper");
+
+		e = step_into();
+		assert_location(e, "ss_nested_arg3");
+	}
+
+	[Test]
 	public void ShouldCorrectlyStepOverOnExitFromArgsAfterStepInMethodParameter() {
 		Event e = run_until ("ss_nested_with_two_args_wrapper");
 
@@ -4505,6 +4600,42 @@ public class DebuggerTests
 
 		e = step_into();
 		assert_location(e, "ss_nested_arg");
+	}
+
+	[Test]
+	public void InspectEnumeratorInGenericStruct() {
+		//files.myBucket.GetEnumerator().get_Current().Key watching this generates an exception in Debugger
+		Event e = run_until("inspect_enumerator_in_generic_struct");
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over();
+		StackFrame frame = e.Thread.GetFrames () [0];
+		var ginst = frame.Method.GetLocal ("generic_struct");
+		Value variable = frame.GetValue (ginst);
+		StructMirror thisObj = (StructMirror)variable;
+		TypeMirror thisType = thisObj.Type;
+		variable = thisObj.InvokeMethod(e.Thread, thisType.GetMethod("get_Current"), null);
+		thisObj = (StructMirror)variable;
+		thisType = thisObj.Type;
+		AssertValue ("f1", thisObj["value"]);
+	}
+
+	[Test]
+	public void CheckElapsedTime() {
+		Event e = run_until ("elapsed_time");
+
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over(); //Thread.Sleep(200)
+		Assert.IsTrue (e.Thread. ElapsedTime() >= 200);
+		e = step_over(); //Thread.Sleep(00);
+		Assert.IsTrue (e.Thread.ElapsedTime() < 200);
+		e = step_over(); //Thread.Sleep(100);
+		Assert.IsTrue (e.Thread.ElapsedTime() >= 100 && e.Thread. ElapsedTime() < 300);
+		e = step_over(); //Thread.Sleep(300);
+		Assert.IsTrue (e.Thread. ElapsedTime() >= 300);
 	}
 
 	[Test]
@@ -4675,6 +4806,45 @@ public class DebuggerTests
 		var mirror = (StructMirror)v;
 		AssertValue (1, mirror["i"]);
 		AssertValue (2.0, mirror["d"]);
+	}
+
+	[Test]
+	public void FieldWithUnsafeCastValue() {
+		Event e = run_until("field_with_unsafe_cast_value");
+		var req = create_step(e);
+		req.Enable();
+		e = step_once();
+		e = step_over();
+		e = step_over();
+		e = step_over();
+		e = step_over();
+		e = step_over();
+		var frame = e.Thread.GetFrames () [0];
+		var ginst = frame.Method.GetLocal ("bytes");
+		Value variable = frame.GetValue (ginst);
+		StructMirror thisObj = (StructMirror)variable;
+		TypeMirror thisType = thisObj.Type;
+		variable = thisObj.InvokeMethod(e.Thread, thisType.GetMethod("ToString"), null);
+		AssertValue ("abc", variable);
+
+	}
+	[Test]
+	public void IfPropertyStepping () {
+		Event e = run_until ("if_property_stepping");
+		var req = create_step (e);
+		req.Enable ();
+		e = step_once ();
+		e = step_over ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		e = step_into ();
+		Assert.IsTrue ((e as StepEvent).Method.Name == "op_Equality" || (e as StepEvent).Method.Name == "if_property_stepping");
 	}
 } // class DebuggerTests
 } // namespace

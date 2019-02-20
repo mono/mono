@@ -49,7 +49,7 @@ namespace Mono.Btls
 {
 	class MonoBtlsContext : MNS.MobileTlsContext, IMonoBtlsBioMono
 	{
-		X509Certificate remoteCertificate;
+		X509Certificate2 remoteCertificate;
 		X509Certificate clientCertificate;
 		X509CertificateImplBtls nativeServerCertificate;
 		X509CertificateImplBtls nativeClientCertificate;
@@ -79,10 +79,7 @@ namespace Mono.Btls
 			var password = Guid.NewGuid ().ToString ();
 			using (var handle = new SafePasswordHandle (password)) {
 				var buffer = certificate.Export (X509ContentType.Pfx, password);
-
-				impl = new X509CertificateImplBtls ();
-				impl.Import (buffer, handle, X509KeyStorageFlags.DefaultKeySet);
-				return impl;
+				return new X509CertificateImplBtls (buffer, handle, X509KeyStorageFlags.DefaultKeySet);
 			}
 		}
 
@@ -202,6 +199,7 @@ namespace Mono.Btls
 				case MonoBtlsSslError.WantWrite:
 					return false;
 				default:
+					ctx.CheckLastError ();
 					throw GetException (status);
 				}
 			}
@@ -465,7 +463,7 @@ namespace Mono.Btls
 		internal override X509Certificate LocalClientCertificate {
 			get { return clientCertificate; }
 		}
-		public override X509Certificate RemoteCertificate {
+		public override X509Certificate2 RemoteCertificate {
 			get { return remoteCertificate; }
 		}
 		public override TlsProtocols NegotiatedProtocol {

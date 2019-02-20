@@ -79,7 +79,7 @@ typedef struct {
 typedef struct _InterpFrame InterpFrame;
 
 typedef void (*MonoFuncV) (void);
-typedef void (*MonoPIFunc) (MonoFuncV callme, void *margs);
+typedef void (*MonoPIFunc) (void *callme, void *margs);
 
 /* 
  * Structure representing a method transformed for the interpreter 
@@ -95,7 +95,6 @@ typedef struct _InterpMethod
 	struct _InterpMethod *next_jit_code_hash;
 	guint32 locals_size;
 	guint32 total_locals_size;
-	guint32 args_size;
 	guint32 stack_size;
 	guint32 vt_stack_size;
 	guint32 alloca_size;
@@ -109,7 +108,6 @@ typedef struct _InterpMethod
 	MonoExceptionClause *clauses;
 	void **data_items;
 	int transformed;
-	guint32 *arg_offsets;
 	guint32 *local_offsets;
 	guint32 *exvar_offsets;
 	unsigned int param_count;
@@ -118,6 +116,7 @@ typedef struct _InterpMethod
 	gpointer jit_addr;
 	MonoMethodSignature *jit_sig;
 	gpointer jit_entry;
+	gpointer llvmonly_unbox_entry;
 	MonoType *rtype;
 	MonoType **param_types;
 	MonoJitInfo *jinfo;
@@ -139,18 +138,15 @@ struct _InterpFrame {
 	unsigned char  invoke_trap;
 	const unsigned short  *ip;
 	MonoException     *ex;
-	MonoExceptionClause *ex_handler;
-	MonoDomain *domain;
 };
 
 typedef struct {
-	InterpFrame *current_frame;
 	/* Resume state for resuming execution in mixed mode */
 	gboolean       has_resume_state;
 	/* Frame to resume execution at */
 	InterpFrame *handler_frame;
 	/* IP to resume execution at */
-	gpointer handler_ip;
+	guint16 *handler_ip;
 	/* Clause that we are resuming to */
 	MonoJitExceptionInfo *handler_ei;
 } ThreadContext;
@@ -167,6 +163,9 @@ mono_interp_transform_init (void);
 
 InterpMethod *
 mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *error);
+
+void
+mono_interp_print_code (InterpMethod *imethod);
 
 static inline int
 mint_type(MonoType *type_)

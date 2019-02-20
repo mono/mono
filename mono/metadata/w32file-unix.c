@@ -23,7 +23,9 @@
 #endif
 #include <sys/types.h>
 #include <stdio.h>
+#ifdef HAVE_UTIME_H
 #include <utime.h>
+#endif
 #ifdef __linux__
 #include <sys/ioctl.h>
 #include <linux/fs.h>
@@ -43,7 +45,6 @@
 
 #include "w32file.h"
 #include "w32file-internals.h"
-
 #include "w32file-unix-glob.h"
 #include "w32error.h"
 #include "fdhandle.h"
@@ -54,6 +55,8 @@
 #include "utils/mono-threads-api.h"
 #include "utils/strenc.h"
 #include "utils/refcount.h"
+#include "icall-decl.h"
+#include "utils/mono-errno.h"
 
 #define NANOSECONDS_PER_MICROSECOND 1000LL
 #define TICKS_PER_MICROSECOND 10L
@@ -66,7 +69,7 @@
 // Constants to convert Unix times to the API expected by .NET and Windows
 #define CONVERT_BASE  116444736000000000ULL
 
-#define INVALID_HANDLE_VALUE (GINT_TO_POINTER (-1))
+#define INVALID_HANDLE_VALUE ((gpointer)-1)
 
 typedef struct {
 	guint64 device;
@@ -111,7 +114,7 @@ static MonoCoopMutex finds_mutex;
 
 #if HOST_DARWIN
 typedef int (*clonefile_fn) (const char *from, const char *to, int flags);
-static void *libc_handle;
+static MonoDl *libc_handle;
 static clonefile_fn clonefile_ptr;
 #endif
 
@@ -294,7 +297,7 @@ _wapi_open (const gchar *pathname, gint flags, mode_t mode)
 			located_filename = mono_portability_find_file (pathname, TRUE);
 
 			if (located_filename == NULL) {
-				errno = saved_errno;
+				mono_set_errno (saved_errno);
 				return -1;
 			}
 
@@ -321,7 +324,7 @@ _wapi_access (const gchar *pathname, gint mode)
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -340,20 +343,28 @@ _wapi_chmod (const gchar *pathname, mode_t mode)
 	gint ret;
 
 	MONO_ENTER_GC_SAFE;
+#if defined(HAVE_CHMOD)
 	ret = chmod (pathname, mode);
+#else
+	ret = -1;
+#endif
 	MONO_EXIT_GC_SAFE;
 	if (ret == -1 && (errno == ENOENT || errno == ENOTDIR) && IS_PORTABILITY_SET) {
 		gint saved_errno = errno;
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
+#if defined(HAVE_CHMOD)
 		MONO_ENTER_GC_SAFE;
 		ret = chmod (located_filename, mode);
 		MONO_EXIT_GC_SAFE;
+#else
+		ret = -1;
+#endif
 		g_free (located_filename);
 	}
 
@@ -364,8 +375,9 @@ _wapi_chmod (const gchar *pathname, mode_t mode)
 static gint
 _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 {
-	gint ret;
+	gint ret = -1;
 
+#ifdef HAVE_UTIME
 	MONO_ENTER_GC_SAFE;
 	ret = utime (filename, buf);
 	MONO_EXIT_GC_SAFE;
@@ -374,7 +386,7 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 		gchar *located_filename = mono_portability_find_file (filename, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -383,6 +395,7 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 		MONO_EXIT_GC_SAFE;
 		g_free (located_filename);
 	}
+#endif
 
 	return ret;
 }
@@ -391,8 +404,9 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 static gint
 _wapi_utimes (const gchar *filename, const struct timeval times[2])
 {
-	gint ret;
+	gint ret = -1;
 
+#ifdef HAVE_UTIMES
 	MONO_ENTER_GC_SAFE;
 	ret = utimes (filename, times);
 	MONO_EXIT_GC_SAFE;
@@ -401,7 +415,7 @@ _wapi_utimes (const gchar *filename, const struct timeval times[2])
 		gchar *located_filename = mono_portability_find_file (filename, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -410,6 +424,7 @@ _wapi_utimes (const gchar *filename, const struct timeval times[2])
 		MONO_EXIT_GC_SAFE;
 		g_free (located_filename);
 	}
+#endif
 
 	return ret;
 }
@@ -428,7 +443,7 @@ _wapi_unlink (const gchar *pathname)
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -464,7 +479,7 @@ _wapi_rename (const gchar *oldpath, const gchar *newpath)
 				g_free (located_oldpath);
 				g_free (located_newpath);
 
-				errno = saved_errno;
+				mono_set_errno (saved_errno);
 				return -1;
 			}
 
@@ -492,7 +507,7 @@ _wapi_stat (const gchar *path, struct stat *buf)
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -510,6 +525,7 @@ _wapi_lstat (const gchar *path, struct stat *buf)
 {
 	gint ret;
 
+#ifdef HAVE_LSTAT
 	MONO_ENTER_GC_SAFE;
 	ret = lstat (path, buf);
 	MONO_EXIT_GC_SAFE;
@@ -518,13 +534,16 @@ _wapi_lstat (const gchar *path, struct stat *buf)
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
 		ret = lstat (located_filename, buf);
 		g_free (located_filename);
 	}
+#else
+	ret = -1;
+#endif
 
 	return ret;
 }
@@ -562,7 +581,7 @@ _wapi_rmdir (const gchar *pathname)
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -588,7 +607,7 @@ _wapi_chdir (const gchar *path)
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -776,7 +795,7 @@ _wapi_io_scandir (const gchar *dirname, const gchar *pattern, gchar ***namelist)
 			errnum = EACCES;
 		}
 
-		errno = errnum;
+		mono_set_errno (errnum);
 		return -1;
 	}
 
@@ -2136,7 +2155,7 @@ gboolean mono_w32file_delete(const gunichar2 *name)
 		if (errno == EROFS) {
 			MonoIOStat stat;
 			if (mono_w32file_get_attributes_ex (name, &stat)) //The file exists, so must be due the RO file system
-				errno = EROFS;
+				mono_set_errno (EROFS);
 		}
 		_wapi_set_last_path_error_from_errno (NULL, filename);
 	} else {
@@ -3579,25 +3598,25 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 	stat->length = (stat->attributes & FILE_ATTRIBUTE_DIRECTORY) ? 0 : buf.st_size;
 
 #if HAVE_STRUCT_STAT_ST_ATIMESPEC
-	if (buf.st_mtimespec.tv_sec < buf.st_ctimespec.tv_sec || (buf.st_mtimespec.tv_sec == buf.st_ctimespec.tv_sec && buf.st_mtimespec.tv_nsec < buf.st_ctimespec.tv_nsec))
-		stat->creation_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	if (linkbuf.st_mtimespec.tv_sec < linkbuf.st_ctimespec.tv_sec || (linkbuf.st_mtimespec.tv_sec == linkbuf.st_ctimespec.tv_sec && linkbuf.st_mtimespec.tv_nsec < linkbuf.st_ctimespec.tv_nsec))
+		stat->creation_time = linkbuf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctimespec.tv_sec * TICKS_PER_SECOND + (buf.st_ctimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+		stat->creation_time = linkbuf.st_ctimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_ctimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atimespec.tv_sec * TICKS_PER_SECOND + (buf.st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (buf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_access_time = linkbuf.st_atimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_write_time = linkbuf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 #elif HAVE_STRUCT_STAT_ST_ATIM
-	if (buf.st_mtime < buf.st_ctime || (buf.st_mtime == buf.st_ctime && buf.st_mtim.tv_nsec < buf.st_ctim.tv_nsec))
-		stat->creation_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	if (linkbuf.st_mtime < linkbuf.st_ctime || (linkbuf.st_mtime == linkbuf.st_ctime && linkbuf.st_mtim.tv_nsec < linkbuf.st_ctim.tv_nsec))
+		stat->creation_time = linkbuf.st_mtime * TICKS_PER_SECOND + (linkbuf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 	else
-		stat->creation_time = buf.st_ctime * TICKS_PER_SECOND + (buf.st_ctim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+		stat->creation_time = linkbuf.st_ctime * TICKS_PER_SECOND + (linkbuf.st_ctim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 
-	stat->last_access_time = buf.st_atime * TICKS_PER_SECOND + (buf.st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
-	stat->last_write_time = buf.st_mtime * TICKS_PER_SECOND + (buf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_access_time = linkbuf.st_atime * TICKS_PER_SECOND + (linkbuf.st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_write_time = linkbuf.st_mtime * TICKS_PER_SECOND + (linkbuf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
 #else
-	stat->creation_time = (((guint64) (buf.st_mtime < buf.st_ctime ? buf.st_mtime : buf.st_ctime)) * TICKS_PER_SECOND) + CONVERT_BASE;
-	stat->last_access_time = (((guint64) (buf.st_atime)) * TICKS_PER_SECOND) + CONVERT_BASE;
-	stat->last_write_time = (((guint64) (buf.st_mtime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->creation_time = (((guint64) (linkbuf.st_mtime < linkbuf.st_ctime ? linkbuf.st_mtime : linkbuf.st_ctime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_access_time = (((guint64) (linkbuf.st_atime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_write_time = (((guint64) (linkbuf.st_mtime)) * TICKS_PER_SECOND) + CONVERT_BASE;
 #endif
 
 	g_free (utf8_name);
@@ -3668,9 +3687,13 @@ mono_w32file_set_attributes (const gunichar2 *name, guint32 attrs)
 		if ((buf.st_mode & S_IROTH) != 0)
 			exec_mask |= S_IXOTH;
 
+#if defined(HAVE_CHMOD)
 		MONO_ENTER_GC_SAFE;
 		result = chmod (utf8_name, buf.st_mode | exec_mask);
 		MONO_EXIT_GC_SAFE;
+#else
+		result = -1;
+#endif
 	}
 	/* Don't bother to reset executable (might need to change this
 	 * policy)
@@ -4315,10 +4338,15 @@ GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf)
 }
 #endif
 
-#if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
+#ifndef PLATFORM_NO_DRIVEINFO
 gboolean
 mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
 {
+	g_assert (free_bytes_avail);
+	g_assert (total_number_of_bytes);
+	g_assert (total_number_of_free_bytes);
+
+#if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
 #ifdef HAVE_STATVFS
 	struct statvfs fsstat;
 #elif defined(HAVE_STATFS)
@@ -4375,51 +4403,23 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	}
 
 	/* total number of free bytes for non-root */
-	if (free_bytes_avail != NULL) {
-		if (isreadonly) {
-			*free_bytes_avail = 0;
-		}
-		else {
-			*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
-		}
-	}
+	if (isreadonly)
+		*free_bytes_avail = 0;
+	else
+		*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
 
 	/* total number of bytes available for non-root */
-	if (total_number_of_bytes != NULL) {
-		*total_number_of_bytes = block_size * (guint64)fsstat.f_blocks;
-	}
+	*total_number_of_bytes = block_size * (guint64)fsstat.f_blocks;
 
 	/* total number of bytes available for root */
-	if (total_number_of_free_bytes != NULL) {
-		if (isreadonly) {
-			*total_number_of_free_bytes = 0;
-		}
-		else {
-			*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
-		}
-	}
-	
-	return(TRUE);
-}
-#else
-gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
-{
-	if (free_bytes_avail != NULL) {
-		*free_bytes_avail = (guint64) -1;
-	}
-
-	if (total_number_of_bytes != NULL) {
-		*total_number_of_bytes = (guint64) -1;
-	}
-
-	if (total_number_of_free_bytes != NULL) {
-		*total_number_of_free_bytes = (guint64) -1;
-	}
-
-	return(TRUE);
-}
+	if (isreadonly)
+		*total_number_of_free_bytes = 0;
+	else
+		*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
 #endif
+	return(TRUE);
+}
+#endif // PLATFORM_NO_DRIVEINFO
 
 /*
  * General Unix support
@@ -4708,8 +4708,10 @@ GetDriveTypeFromPath (const gchar *utf8_root_path_name)
 #endif
 
 guint32
-mono_w32file_get_drive_type(const gunichar2 *root_path_name)
+ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, gint32 root_path_name_length, MonoError *error)
 {
+	// FIXME Check for embedded nuls here or in managed.
+
 	gchar *utf8_root_path_name;
 	guint32 drive_type;
 
@@ -4889,14 +4891,11 @@ UnlockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 le
 #ifdef HAVE_LARGE_FILE_SUPPORT
 	offset = ((gint64)offset_high << 32) | offset_low;
 	length = ((gint64)length_high << 32) | length_low;
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #else
 	offset = offset_low;
 	length = length_low;
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %p, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #endif
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 
 	ret = _wapi_unlock_file_region (((MonoFDHandle*) filehandle)->fd, offset, length);
 
@@ -4922,9 +4921,9 @@ mono_w32file_init (void)
 	mono_coop_mutex_init (&finds_mutex);
 
 #if HOST_DARWIN
-	libc_handle = dlopen ("/usr/lib/libc.dylib", 0);
+	libc_handle = mono_dl_open ("/usr/lib/libc.dylib", 0, NULL);
 	g_assert (libc_handle);
-	clonefile_ptr = (clonefile_fn)dlsym (libc_handle, "clonefile");
+	g_free (mono_dl_symbol (libc_handle, "clonefile", (void**)&clonefile_ptr));
 #endif
 
 	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
@@ -4943,7 +4942,7 @@ mono_w32file_cleanup (void)
 	mono_coop_mutex_destroy (&finds_mutex);
 
 #if HOST_DARWIN
-	dlclose (libc_handle);
+	mono_dl_close (libc_handle);
 #endif
 }
 

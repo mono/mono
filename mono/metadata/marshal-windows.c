@@ -13,6 +13,7 @@
 #include <windows.h>
 #include <objbase.h>
 #include "mono/metadata/marshal-windows-internals.h"
+#include "icall-decl.h"
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 void*
@@ -79,7 +80,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 }
 
 gpointer
-mono_string_to_utf8str_handle (MonoStringHandle s, MonoError *error)
+mono_string_to_utf8str_impl (MonoStringHandle s, MonoError *error)
 {
 	char *as, *tmp;
 	glong len;
@@ -111,18 +112,6 @@ mono_string_to_utf8str_handle (MonoStringHandle s, MonoError *error)
 		g_free (tmp);
 		return as;
 	}
-}
-
-/* This is a JIT icall, it sets the pending exception and returns NULL on error. */
-gpointer
-mono_string_to_utf8str (MonoString *s_raw)
-{
-	HANDLE_FUNCTION_ENTER ();
-	ERROR_DECL (error);
-	MONO_HANDLE_DCL (MonoString, s);
-	gpointer result = mono_string_to_utf8str_handle (s, error);
-	mono_error_set_pending_exception (error);
-	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
 #endif /* HOST_WIN32 */

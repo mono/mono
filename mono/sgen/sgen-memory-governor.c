@@ -137,9 +137,11 @@ get_heap_size (void)
 }
 
 gboolean
-sgen_need_major_collection (mword space_needed)
+sgen_need_major_collection (mword space_needed, gboolean *forced)
 {
 	size_t heap_size;
+
+	*forced = FALSE;
 
 	if (sgen_get_concurrent_collection_in_progress ()) {
 		heap_size = get_heap_size ();
@@ -169,6 +171,7 @@ sgen_need_major_collection (mword space_needed)
 
 	heap_size = get_heap_size ();
 
+	*forced = heap_size > soft_heap_limit;
 	return heap_size > major_collection_trigger_size;
 }
 
@@ -301,41 +304,41 @@ sgen_output_log_entry (SgenLogEntry *entry, gint64 stw_time, int generation)
 
 	switch (entry->type) {
 		case SGEN_LOG_NURSERY:
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR%s: (%s) time %.2fms, %s promoted %zdK major size: %zdK in use: %zdK los size: %zdK in use: %zdK",
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MINOR%s: (%s) time %.2fms, %s promoted %luK major size: %luK in use: %luK los size: %luK in use: %luK",
 				entry->is_overflow ? "_OVERFLOW" : "",
 				entry->reason ? entry->reason : "",
 				entry->time / 10000.0f,
 				(generation == GENERATION_NURSERY) ? full_timing_buff : "",
-				entry->promoted_size / 1024,
-				entry->major_size / 1024,
-				entry->major_size_in_use / 1024,
-				entry->los_size / 1024,
-				entry->los_size_in_use / 1024);
+				(unsigned long)entry->promoted_size / 1024,
+				(unsigned long)entry->major_size / 1024,
+				(unsigned long)entry->major_size_in_use / 1024,
+				(unsigned long)entry->los_size / 1024,
+				(unsigned long)entry->los_size_in_use / 1024);
 			break;
 		case SGEN_LOG_MAJOR_SERIAL:
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR%s: (%s) time %.2fms, %s los size: %zdK in use: %zdK",
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR%s: (%s) time %.2fms, %s los size: %luK in use: %luK",
 				entry->is_overflow ? "_OVERFLOW" : "",
 				entry->reason ? entry->reason : "",
 				(int)entry->time / 10000.0f,
 				full_timing_buff,
-				entry->los_size / 1024,
-				entry->los_size_in_use / 1024);
+				(unsigned long)entry->los_size / 1024,
+				(unsigned long)entry->los_size_in_use / 1024);
 			break;
 		case SGEN_LOG_MAJOR_CONC_START:
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR_CONCURRENT_START: (%s)", entry->reason ? entry->reason : "");
 			break;
 		case SGEN_LOG_MAJOR_CONC_FINISH:
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR_CONCURRENT_FINISH: (%s) time %.2fms, %s los size: %zdK in use: %zdK",
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR_CONCURRENT_FINISH: (%s) time %.2fms, %s los size: %luK in use: %luK",
 				entry->reason ? entry->reason : "",
 				entry->time / 10000.0f,
 				full_timing_buff,
-				entry->los_size / 1024,
-				entry->los_size_in_use / 1024);
+				(unsigned long)entry->los_size / 1024,
+				(unsigned long)entry->los_size_in_use / 1024);
 			break;
 		case SGEN_LOG_MAJOR_SWEEP_FINISH:
-			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR_SWEEP: major size: %zdK in use: %zdK",
-				entry->major_size / 1024,
-				entry->major_size_in_use / 1024);
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_GC, "GC_MAJOR_SWEEP: major size: %luK in use: %luK",
+				(unsigned long)entry->major_size / 1024,
+				(unsigned long)entry->major_size_in_use / 1024);
 			break;
 		default:
 			SGEN_ASSERT (0, FALSE, "Invalid log entry type");

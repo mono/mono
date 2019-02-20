@@ -1,6 +1,6 @@
 include $(top_srcdir)/mk/common.mk
 
-SUBDIRS = gc-descriptors . testing_gac assembly-load-reference
+SUBDIRS = gc-descriptors . testing_gac assembly-load-reference llvmonly-mixed
 
 check-local:
 	ok=:; \
@@ -34,13 +34,13 @@ ARRAY_COOP_CS=\
 BUILT_SOURCES += $(ARRAY_COOP_CS)
 
 array-coop-bigvt.cs: array-coop-bigvt.sh array-coop-1.cs array-coop-2.cs
-	 . $(srcdir)/array-coop-bigvt.sh $(srcdir) > $@
+	 $(srcdir)/array-coop-bigvt.sh $(srcdir) > $@
 
 array-coop-smallvt.cs: array-coop-smallvt.sh array-coop-1.cs array-coop-2.cs
-	 . $(srcdir)/array-coop-smallvt.sh $(srcdir) > $@
+	 $(srcdir)/array-coop-smallvt.sh $(srcdir) > $@
 
 array-coop-int.cs: array-coop-int.sh array-coop-1.cs array-coop-2.cs
-	 . $(srcdir)/array-coop-int.sh $(srcdir) > $@
+	 $(srcdir)/array-coop-int.sh $(srcdir) > $@
 
 # These are not actually tests, but they are source files part of another test.
 TAILCALL_DISABLED_TESTS_COMPILE = \
@@ -167,7 +167,10 @@ check-coreclr:
 	$(MAKE) -C $(mono_build_root)/acceptance-tests check-coreclr
 
 check-stress:
-	$(MAKE) test-stress-sgen
+	ok=; \
+	$(MAKE) test-stress-sgen || ok=false; \
+	$(MAKE) stresstest || ok=false; \
+	$$ok
 
 # for backwards compatibility on Wrench
 test-wrench: check-parallel
@@ -203,7 +206,7 @@ if HYBRID_AOT_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY 
 endif
 
-if AOT_FULL_INTERP_TESTS
+if FULL_AOT_INTERP_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
 endif
 
@@ -221,7 +224,12 @@ ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 TEST_RUNNER = ./test-runner.exe
 
 if HOST_WIN32
-TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(top_builddir)/runtime/mono-wrapper)"
+if ENABLE_MSVC
+	DEFAULT_WIN32_RUNTIME=$(shell cygpath -w -a $(top_builddir)/@mono_runtime@ | sed 's/\\/\\\\/g')
+else
+	DEFAULT_WIN32_RUNTIME=$(top_builddir)/runtime/mono-wrapper)
+endif
+TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(DEFAULT_WIN32_RUNTIME))"
 else
 TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),$(top_builddir)/runtime/mono-wrapper)"
 endif
@@ -255,6 +263,7 @@ TESTS_STRESS_SRC=	\
 	gc-graystack-stress.cs		\
 	exit-stress.cs		\
 	process-stress.cs	\
+	spinlock-stress.cs 	\
 	assembly-load-stress.cs
 
 # Disabled until ?mcs is fixed
@@ -264,6 +273,7 @@ TESTS_CS_SRC=		\
 	create-instance.cs	\
 	bug-2907.cs		\
 	$(ARRAY_COOP_CS)	\
+	array-12193.cs		\
 	array-init.cs		\
 	arraylist.cs		\
 	assembly-load-remap.cs	\
@@ -312,8 +322,11 @@ TESTS_CS_SRC=		\
 	exception17.cs		\
 	exception18.cs		\
 	exception-invokes.cs		\
+	merp-json-valid.cs		\
+	merp-crash-test.cs		\
 	exception19.cs		\
 	exception20.cs		\
+	exception21.cs		\
 	typeload-unaligned.cs	\
 	struct.cs		\
 	valuetype-gettype.cs	\
@@ -605,6 +618,7 @@ TESTS_CS_SRC=		\
 	priority.cs	\
 	abort-cctor.cs	\
 	abort-try-holes.cs \
+	abort-tests.cs \
 	thread-native-exit.cs \
 	reference-loader.cs \
 	thread-suspend-suspended.cs \
@@ -693,11 +707,14 @@ TESTS_CS_SRC=		\
 	bug-60843.cs	\
 	nested_type_visibility.cs	\
 	dynamic-method-churn.cs	\
+	dynamic-method-delegate.cs \
 	verbose.cs \
 	generic-unmanaged-constraint.cs \
 	bug-10834.cs \
 	bug-10837.cs	\
-	bug-gh-9507.cs
+	bug-gh-9507.cs	\
+	async-generic-enum.cs \
+	last-error.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1064,10 +1081,14 @@ PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw
 PLATFORM_DISABLED_TESTS += verbose.exe
 endif
 
+
+
 if HOST_DARWIN
 
 # see https://github.com/mono/mono/issues/10845
 PLATFORM_DISABLED_TESTS += monitor-wait-abort.exe
+else
+PLATFORM_DISABLED_TESTS += merp-json-valid.exe merp-crash-test.exe
 endif
 
 if AMD64
@@ -1367,7 +1388,10 @@ PROFILE_DISABLED_TESTS += \
 	dynamic-method-resurrection.exe	\
 	assembly_append_ordering.exe \
 	assemblyresolve_event5.exe	\
-	dynamic-method-churn.exe
+	dynamic-method-delegate.exe \
+	dynamic-method-churn.exe \
+	bug-666008.exe \
+	bug-685908.exe
 
 # Test which needs System.Web support
 PROFILE_DISABLED_TESTS += \
@@ -1509,7 +1533,7 @@ PROFILE_DISABLED_TESTS += \
 	namedmutex-destroy-race.exe
 endif
 
-if AOT_FULL_INTERP_TESTS
+if FULL_AOT_INTERP_TESTS
 
 # AppDomain tests
 PROFILE_DISABLED_TESTS += \
@@ -1564,7 +1588,6 @@ PROFILE_DISABLED_TESTS += \
 	bug-80307.exe
 
 PROFILE_DISABLED_TESTS += \
-	bug-70561.exe \
 	transparentproxy.exe
 endif
 
@@ -1600,6 +1623,11 @@ CI_PR_DISABLED_TESTS += process-stress-2.exe
 
 # https://github.com/mono/mono/issues/11417
 CI_PR_DISABLED_TESTS += process-stress-3.exe
+
+if HOST_WIN32
+# https://github.com/mono/mono/issues/12839
+CI_PR_DISABLED_TESTS += block_guard_restore_aligment_on_exit.exe
+endif
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
 LLVM_DISABLED_TESTS = \
@@ -1956,7 +1984,7 @@ tailcall/coreclr/JIT/opt/Tailcall/TailcallVerifyWithPrefix.exe: \
 
 if !FULL_AOT_TESTS
 if !HYBRID_AOT_TESTS
-if !AOT_FULL_INTERP_TESTS
+if !FULL_AOT_INTERP_TESTS
 TEST_DRIVER_HARD_KILL_FEATURE=-r:$(CLASS)/Mono.Posix.dll
 endif
 endif
@@ -1989,6 +2017,12 @@ test-runner.exe: test-runner.cs $(TEST_DRIVER_DEPEND)
 
 reference-loader.exe: reference-loader.cs TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_DEPEND)
 	$(MCS) -r:$(CLASS)/System.dll -r:TestDriver.dll -r:TestingReferenceAssembly.dll -r:TestingReferenceReferenceAssembly.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $(srcdir)/reference-loader.cs
+
+merp-json-valid.exe: merp-json-valid.cs
+	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
+
+merp-crash-test.exe: merp-crash-test.cs
+	$(MCS) -r:$(CLASS)/System.Web.Extensions.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -out:$@ $<
 
 TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
 	$(MCS) -target:library -out:$@ $<
@@ -2116,6 +2150,9 @@ testinterp: test-runner.exe compile-tests
 
 testfullaotinterp: test-runner.exe compile-tests
 	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--full-aot-interp" --testsuite-name "runtime-aot-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_REGULAR)
+
+testllvmonlyinterp: test-runner.exe compile-tests
+	$(TOOLS_RUNTIME) --debug $(TEST_RUNNER) -j a --runtime-args "--llvmonly-interp" --testsuite-name "runtime-aot-interp" --timeout 300 --disabled "$(INTERP_DISABLED_TESTS)" $(TESTS_REGULAR)
 
 testjitspeed: $(JITTEST_PROG) compile-tests
 	for i in $(TESTS_BENCH); do	\

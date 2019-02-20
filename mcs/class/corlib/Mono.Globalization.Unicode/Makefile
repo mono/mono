@@ -34,7 +34,7 @@ norm-test : $(NORM_TEST_TABLE) $(NORM_TEST).cs
 	$(RUNTIME) $(NORM_TEST).exe
 
 distclean :
-	make clean
+	$(MAKE) clean
 	rm $(UCA_TABLE) $(NORM_TABLE) $(CB_CLASS_TABLE) $(CP932_TABLE) $(DERIV_CORE_PROP_TABLE) $(SCRIPTS_TABLE) $(NORM_TEST_TABLE)
 
 clean : clean-collation clean-normalization clean-mscompat clean-normtest

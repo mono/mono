@@ -63,7 +63,7 @@ build()
 	report "Unpacking Mono for Mac"
 	xar/src/xar -x -f mono.xar
 	zcat mono.pkg/Payload | bsdcpio -i
-	mv Library/Frameworks/Mono.framework/Versions/5.* mono-mac
+	mv Library/Frameworks/Mono.framework/Versions/[5,6].* mono-mac
 	popd
 }
 

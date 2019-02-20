@@ -1850,7 +1850,7 @@ namespace MonoTests.System.Net.Sockets
 						    ProtocolType.Tcp);
 
 			// Need at least two addresses.
-			var ips = Dns.GetHostAddresses (string.Empty);
+			var ips = Dns.GetHostAddresses ("localhost");
 			if (ips.Length < 1)
 				Assert.Ignore ("This test needs at least two IP addresses.");
 
@@ -2352,7 +2352,7 @@ namespace MonoTests.System.Net.Sockets
 						    ProtocolType.Tcp);
 
 			// Need at least two addresses.
-			var ips = Dns.GetHostAddresses (string.Empty);
+			var ips = Dns.GetHostAddresses ("localhost");
 			if (ips.Length < 1)
 				Assert.Ignore ("This test needs at least two IP addresses.");
 
