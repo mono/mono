@@ -509,7 +509,7 @@ icall_table_lookup_symbol (void *func)
 
 #endif
 
-void mono_inialize_internals ()
+void mono_initialize_internals ()
 {
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
 
@@ -583,7 +583,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_trace_set_log_handler (wasm_logger, NULL);
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 
-	mono_inialize_internals();
+	mono_initialize_internals();
 }
 
 EMSCRIPTEN_KEEPALIVE MonoAssembly*
