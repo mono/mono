@@ -173,7 +173,7 @@ $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.
 	touch $@
 
 .stamp-build-debugger-test-app: $(DRIVER_CONF)/.stamp-build packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
-	mono packager.exe --copy=always -debugrt -debug --template=runtime.js --out=bin/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
+	mono packager.exe --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 
