@@ -2961,8 +2961,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 
 	if (!clause_args) {
 		frame->args = g_newa (char, imethod->alloca_size);
-		memset (frame->args, 0, imethod->alloca_size);
-
 		ip = imethod->code;
 	} else {
 		ip = clause_args->start_with_ip;
