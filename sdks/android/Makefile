@@ -60,9 +60,10 @@ accept-android-license:
 
 ## Check targets
 
-BCL_LIBS=$(patsubst %,%.dll,$(filter-out Mono.Runtime.Tests,$(subst corlib,mscorlib,$(CHECKS))))
-BCL_PDBS=$(patsubst %,%.pdb,$(filter-out Mono.Runtime.Tests,$(subst corlib,mscorlib,$(CHECKS))))
-BCL_REFERENCES=$(patsubst %,-r:$(TOP)/sdks/out/android-bcl/monodroid/%,$(BCL_LIBS))
+BCL_LIBS= \
+	$(patsubst %,%.dll,$(filter-out Mono.Runtime.Tests,$(subst corlib,mscorlib,$(CHECKS)))) \
+	System.IdentityModel.dll \
+	System.ServiceModel.Internals.dll
 
 NUNIT_LIBS= \
 	nunitlite.dll
@@ -104,11 +105,13 @@ $(eval $(call RuntimeTemplate,x86_64))
 ## Package Mono.Android.dll
 
 app/assets/asm/Mono.Android.dll: managed/fake-monodroid.cs | app/assets/asm
-	csc /nostdlib /noconfig /langversion:latest /t:library /out:$@ $(BCL_REFERENCES) $<
+	csc /nostdlib /noconfig /langversion:latest /t:library /out:$@ $(patsubst %,-r:$(TOP)/sdks/out/android-bcl/monodroid/%.dll,mscorlib System System.Core) $<
 
 package: app/assets/asm/Mono.Android.dll
 
 ## Package the BCL assemblies
+
+BCL_PDBS=$(patsubst %.dll,%.pdb,$(BCL_LIBS))
 
 $(patsubst %,app/assets/asm/%,$(BCL_LIBS)) $(patsubst %,app/assets/asm/%,$(BCL_PDBS)) $(patsubst %,app/assets/asm/%,$(NUNIT_LIBS)): app/assets/asm/%: $(TOP)/sdks/out/android-bcl/monodroid/% | app/assets/asm
 	cp $< $@
@@ -172,4 +175,4 @@ build-BCL: package local.properties
 
 .PHONY: check-%
 check-%: build-BCL $(if $(MONO_WAIT_LLDB),lldb-mono-0.1/xa-lldb)
-	PATH="$$PATH:$(dir $(ADB))" mono $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe -labels -android:$(PACKAGE)/$(RUNNER) -result:TestResult-$*.xml -format:nunit2 $(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_$*_test.dll
+	PATH="$$PATH:$(dir $(ADB))" mono $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe -labels -exclude:NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking -android:$(PACKAGE)/$(RUNNER) -result:TestResult-$*.xml -format:nunit2 $(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_$*_test.dll
