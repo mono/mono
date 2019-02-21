@@ -1009,7 +1009,8 @@ TESTS_IL_SRC=			\
 	ldfldvt.il \
 	newobj-abstract.il \
 	invalid-isbyreflike.il \
-	gh-13056_mono_local_cprop_av.il
+	gh-13056_mono_local_cprop_av.il \
+	gh-13057_mono_local_emulate_ops_av.il
 
 # This test crashes the runtime, even with recent fixes.
 #	incorrect-ldvirtftn-read-behind-for-dup.il
