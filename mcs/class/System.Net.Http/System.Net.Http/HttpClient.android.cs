@@ -4,12 +4,7 @@ using System.Reflection;
 namespace System.Net.Http {
 	public partial class HttpClient {
 
-		public HttpClient ()
-			: this (GetDefaultHandler (), true)
-		{
-		}
-
-		static HttpMessageHandler GetDefaultHandler ()
+		static HttpMessageHandler CreateDefaultHandler ()
 		{
 			Type type = Type.GetType("Android.Runtime.AndroidEnvironment, Mono.Android");
 			if (type == null)
