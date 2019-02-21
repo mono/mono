@@ -688,9 +688,27 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 			return NULL;			
 		}
 
+		gboolean append_cmods;
+		append_cmods = FALSE;
+		if (type->has_cmods && inst->type_argv[num]->has_cmods) {
+			char *tname;
+			char *vname;
+			tname = mono_type_full_name (type);
+			vname = mono_type_full_name (inst->type_argv[num]);
+			printf ("\n\n\tsubstitution for '%s' with '%s' yields...\n", tname, vname);
+			g_free (tname);
+			g_free (vname);
+			append_cmods = TRUE;
+		}
+
 		nt = mono_metadata_type_dup_with_cmods (image, inst->type_argv [num], type);
 		nt->byref = type->byref;
 		nt->attrs = type->attrs;
+		if (append_cmods) {
+			char *ntname = mono_type_full_name (nt);
+			printf ("\tyields '%s'\n\n\n", ntname);
+			g_free (ntname);
+		}
 		return nt;
 	}
 	case MONO_TYPE_SZARRAY: {
