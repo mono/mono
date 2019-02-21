@@ -139,6 +139,7 @@
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
+    <ProjectReference Include="../System.Drawing.Common/Facades_System.Drawing.Common.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monodroid' ">
     <Reference Include="./../../../../external/binary-reference-assemblies/build/monodroid/Mono.Android.dll">
@@ -147,6 +148,7 @@
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
+    <ProjectReference Include="../System.Drawing.Common/Facades_System.Drawing.Common.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
     <Reference Include="$(EXTERNAL_FACADE_DRAWING_REFERENCE)">

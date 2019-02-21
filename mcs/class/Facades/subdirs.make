@@ -36,7 +36,7 @@ System.Security.Cryptography.X509Certificates System.Runtime.Serialization.Primi
 # common_SUBDIRS dependencies
 common_DEPS_SUBDIRS :=
 
-netstandard_drawing_SUBDIRS = System.Drawing.Primitives netstandard
+netstandard_drawing_SUBDIRS = System.Drawing.Common System.Drawing.Primitives netstandard
 
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS) $(mobile_only_DEPS_SUBDIRS)
 monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
@@ -54,7 +54,7 @@ endif
 testing_aot_full_SUBDIRS = $(monotouch_SUBDIRS)
 testing_aot_full_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
-net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) $(netstandard_drawing_SUBDIRS)
+net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Primitives netstandard
 net_4_x_PARALLEL_SUBDIRS = $(common_SUBDIRS) System.Net.Http.Rtc
 
 basic_PARALLEL_SUBDIRS = System.Runtime System.Reflection System.Collections System.Resources.ResourceManager System.Globalization \
@@ -93,6 +93,6 @@ wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 mobile_only_SUBDIRS = System.Security.Cryptography.Pkcs System.Security.Cryptography.OpenSsl System.Threading.Tasks.Extensions \
 System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy System.Memory \
-System.Drawing.Common System.Buffers
+System.Buffers
 
 PROFILE_PARALLEL_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
