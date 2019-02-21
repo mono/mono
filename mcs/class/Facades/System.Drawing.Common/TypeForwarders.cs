@@ -5,6 +5,8 @@
 // Changes to this file must follow the http://aka.ms/api-review process.
 // ------------------------------------------------------------------------------
 
+#if MONODROID
+
 // MONO: these files were copied from CoreFX (System.Drawing.Primitives/ref and System.Drawing.Common/ref)
 
 // System.Drawing.Primitives/ref:
@@ -3565,3 +3567,5 @@ namespace System.Drawing.Text
         SystemDefault = 0,
     }
 }
+
+#endif
