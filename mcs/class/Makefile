@@ -156,7 +156,8 @@ monotouch_tv_runtime_dirs := \
 winaot_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	System.Drawing \
-	Mono.Simd
+	Mono.Simd \
+	Mono.CSharp
 
 unreal_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
