@@ -38,7 +38,7 @@ ios_sources = \
 	pal-icalls.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_mount.c \
+	pal_mount_tmp.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_mount.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networking.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networking.h \
@@ -58,7 +58,7 @@ android_sources = \
 	pal-icalls.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_mount.c \
+	pal_mount_tmp.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_mount.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.h \
@@ -71,7 +71,7 @@ unix_sources = \
 	pal-icalls.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
-	../../external/corefx/src/Native/Unix/System.Native/pal_mount.c \
+	pal_mount_tmp.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_mount.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networking.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networking.h \
