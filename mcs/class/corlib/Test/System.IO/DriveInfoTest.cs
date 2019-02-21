@@ -54,7 +54,22 @@ namespace MonoTests.System.IO
 		[Test]
 		public void ConstructorThrowsOnNonExistingDrive ()
 		{
-			Assert.Throws<ArgumentException> (() => new DriveInfo ("/monodriveinfotest"));
+			Assert.Throws<ArgumentException> (() => new DriveInfo ("monodriveinfotest"));
+		}
+
+		[Test]
+		[Category ("NotWasm")] // it doesn't know about 'memfs' drive format
+		public void ConstructorGetsValidDriveFromNonDriveString ()
+		{
+			if (Environment.OSVersion.Platform != PlatformID.Win32NT && Environment.OSVersion.Platform != PlatformID.MacOSX)
+				Assert.Ignore ("Some Linux-hosted CI builders don't have '/' mounted, just testing Windows and MacOS for now.");			
+			
+			var tempPath = Path.GetTempPath ();
+			var drive = new DriveInfo (tempPath);
+			ValidateDriveInfo (drive);
+
+			drive = new DriveInfo (tempPath.ToUpper());
+			ValidateDriveInfo (drive);
 		}
 
 		[Test]
