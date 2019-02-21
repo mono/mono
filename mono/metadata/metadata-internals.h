@@ -37,12 +37,71 @@ struct _MonoType {
 };
 
 typedef struct {
+	unsigned int required : 1;
+	unsigned int token : 31;
+	MonoImage *image;
+} MonoSingleCustomMod;
+
+/* Aggregate custom modifiers can happen if a generic VAR or MVAR is inflated,
+ * and both the VAR and the type that will be used to inflated it have custom
+ * modifiers, but they come from different images.  (e.g. inflating 'class G<T>
+ * {void Test (T modopt(IsConst) t);}' with 'int32 modopt(IsLong)' where G is
+ * in image1 and the int32 is in image2.)
+ *
+ * FIXME: types with aggregate custom modifiers really ought to be allocated in
+ * the mempool of a MonoImageSet to ensure that don't have danging image
+ * pointers.
+ */
+typedef struct {
+	uint8_t count;
+	MonoSingleCustomMod modifiers[1]; /* Actual length is count */
+} MonoAggregateModContainer;
+
+typedef struct {
 	MonoType unmodified;
-	MonoCustomModContainer cmods;
+	gboolean is_aggregate;
+	union {
+		MonoCustomModContainer cmods;
+		MonoAggregateModContainer amods;
+	} mods;
 } MonoTypeWithModifiers;
+
+gboolean
+mono_type_is_aggregate_mods (const MonoType *t);
+
+static inline void
+mono_type_with_mods_init (MonoType *dest, uint8_t num_mods, gboolean is_aggregate)
+{
+	if (num_mods == 0) {
+		dest->has_cmods = 0;
+		return;
+	}
+	dest->has_cmods = 1;
+	MonoTypeWithModifiers *dest_full = (MonoTypeWithModifiers *)dest;
+	dest_full->is_aggregate = !!is_aggregate;
+	if (is_aggregate)
+		dest_full->mods.amods.count = num_mods;
+	else
+		dest_full->mods.cmods.count = num_mods;
+}
 
 MonoCustomModContainer *
 mono_type_get_cmods (const MonoType *t);
+
+MonoAggregateModContainer *
+mono_type_get_amods (const MonoType *t);
+
+static inline uint8_t
+mono_type_custom_modifier_count (const MonoType *t)
+{
+	if (!t->has_cmods)
+		return 0;
+	MonoTypeWithModifiers *full = (MonoTypeWithModifiers *)t;
+	if (full->is_aggregate)
+		return full->mods.amods.count;
+	else
+		return full->mods.cmods.count;
+}
 
 // Note: sizeof (MonoType) is dangerous. It can copy the num_mods
 // field without copying the variably sized array. This leads to
@@ -54,7 +113,7 @@ mono_type_get_cmods (const MonoType *t);
 #define MONO_SIZEOF_TYPE sizeof (MonoType)
 
 size_t 
-mono_sizeof_type_with_mods (uint8_t num_mods);
+mono_sizeof_type_with_mods (uint8_t num_mods, gboolean aggregate);
 
 size_t 
 mono_sizeof_type (const MonoType *ty);

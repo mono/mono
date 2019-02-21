@@ -3377,6 +3377,7 @@ encode_type (MonoAotCompile *acfg, MonoType *t, guint8 *buf, guint8 **endbuf)
 	guint8 *p = buf;
 
 	if (t->has_cmods) {
+		/* TODO: encode mono_type_get_amods, too. */
 		MonoCustomModContainer *cm = mono_type_get_cmods (t);
 
 		*p = MONO_TYPE_CMOD_REQD;

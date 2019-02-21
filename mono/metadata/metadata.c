@@ -1837,7 +1837,7 @@ mono_metadata_parse_type_internal (MonoImage *m, MonoGenericContainer *container
 			return NULL;
 		}
 
-		size_t size = mono_sizeof_type_with_mods (count);
+		size_t size = mono_sizeof_type_with_mods (count, FALSE);
 		type = transient ? (MonoType *)g_malloc0 (size) : (MonoType *)mono_image_alloc0 (m, size);
 		type->has_cmods = TRUE;
 
@@ -5738,19 +5738,34 @@ do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const Mo
 	 * general, but I don't know what to do if that's the case - we only
 	 * store tokens for each cmod, and tokens don't mean anything without
 	 * an image, and we only have space for one image. */
+	/* FIXME: if the images are different, we need an image set... */
 	uint8_t total_cmods = o_cmods->count + extra_cmods->count;
-	size_t sizeof_dup = mono_sizeof_type_with_mods (total_cmods);
-	MonoType *r = image ? (MonoType *)mono_image_alloc0 (image, sizeof_dup) : (MonoType *)g_malloc (sizeof_dup);
+	gboolean aggregate = FALSE;
+	size_t sizeof_dup = mono_sizeof_type_with_mods (total_cmods, aggregate);
+	MonoType *r = image ? (MonoType *)mono_image_alloc0 (image, sizeof_dup) : (MonoType *)g_malloc0 (sizeof_dup);
 
-	/* copy the original type o, including its modifiers */
-	memcpy (r, o, mono_sizeof_type (o));
+	mono_type_with_mods_init (r, total_cmods, aggregate);
+
+	/* copy the original type o, not including its modifiers */
+	memcpy (r, o, mono_sizeof_type_with_mods (0, FALSE));
 	deep_type_dup_fixup (image, r, o);
 
-	/* append the modifiers from cmods_source */
+	/* The modifier order matters to Roslyn, they expect the extra cmods to come first:
+	 *
+	 * Suppose we substitute 'int32 modopt(IsLong)' for 'T' in 'void Test
+	 * (T modopt(IsConst) t)'.  Roslyn expects the result to be 'void Test
+	 * (int32 modopt(IsConst) modopt(IsLong) t)'.
+	 *
+	 * (Here 'o' is 'int32 modopt(IsLong)' and cmods_source is 'T modopt(IsConst)')
+	 */
+	/* append the modifiers from cmods_source and o */
 	MonoCustomModContainer *r_container = mono_type_get_cmods (r);
-	uint8_t dest_offset = o_cmods->count;
+	uint8_t dest_offset = 0;
+	r_container->image = extra_cmods->image;
+
 	memcpy (&r_container->modifiers [dest_offset], &extra_cmods->modifiers [0], extra_cmods->count * sizeof (MonoCustomMod));
-	r_container->count = total_cmods;
+	dest_offset += extra_cmods->count;
+	memcpy (&r_container->modifiers [dest_offset], &o_cmods->modifiers [0], o_cmods->count * sizeof (MonoCustomMod));
 
 	return r;
 }
@@ -5761,23 +5776,31 @@ do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const Mo
 MonoType *
 mono_metadata_type_dup_with_cmods (MonoImage *image, const MonoType *o, const MonoType *cmods_source)
 {
-	MonoType *r = NULL;
-	size_t sizeof_o = mono_sizeof_type (cmods_source);
-
-
 	if (o->has_cmods && o != cmods_source && cmods_source->has_cmods) {
 		return do_metadata_type_dup_append_cmods (image, o, cmods_source);
 	}
 
-	r = image ? (MonoType *)mono_image_alloc0 (image, sizeof_o) : (MonoType *)g_malloc (sizeof_o);
+	MonoType *r = NULL;
+
+	/* if we get here, either o and cmods_source alias, or else exactly one of them has cmods. */
+
+	uint8_t num_mods = MAX (mono_type_custom_modifier_count (o), mono_type_custom_modifier_count (cmods_source));
+	gboolean aggregate = mono_type_is_aggregate_mods (o) || mono_type_is_aggregate_mods (cmods_source);
+	g_assert (!aggregate);
+	size_t sizeof_r = mono_sizeof_type_with_mods (num_mods, aggregate);
+
+	r = image ? (MonoType *)mono_image_alloc0 (image, sizeof_r) : (MonoType *)g_malloc0 (sizeof_r);
 
 	if (cmods_source->has_cmods) {
+		/* FIXME: if it's aggregate what do we assert here? */
 		g_assert (!image || image == mono_type_get_cmods (cmods_source)->image);
-		memcpy (r, cmods_source, sizeof_o);
+		memcpy (r, cmods_source, mono_sizeof_type (cmods_source));
 	}
 
-	memcpy (r, o, sizeof (MonoType));
-	r->has_cmods = cmods_source->has_cmods;
+	memcpy (r, o, mono_sizeof_type (o));
+
+	/* reset custom mod count and aggregateness to be correct. */
+	mono_type_with_mods_init (r, num_mods, aggregate);
 
 	deep_type_dup_fixup (image, r, o);
 	return r;
@@ -7341,6 +7364,17 @@ mono_loader_get_strict_strong_names (void)
 }
 
 
+gboolean
+mono_type_is_aggregate_mods (const MonoType *t)
+{
+	if (!t->has_cmods)
+		return FALSE;
+
+	MonoTypeWithModifiers *full = (MonoTypeWithModifiers *)t;
+
+	return full->is_aggregate;
+}
+
 MonoCustomModContainer *
 mono_type_get_cmods (const MonoType *t)
 {
@@ -7349,29 +7383,52 @@ mono_type_get_cmods (const MonoType *t)
 
 	MonoTypeWithModifiers *full = (MonoTypeWithModifiers *)t;
 
-	return &full->cmods;
+	g_assert (!full->is_aggregate);
+	return &full->mods.cmods;
+}
+
+MonoAggregateModContainer *
+mono_type_get_amods (const MonoType *t)
+{
+	if (!t->has_cmods)
+		return NULL;
+
+	MonoTypeWithModifiers *full = (MonoTypeWithModifiers *)t;
+
+	g_assert (full->is_aggregate);
+	return &full->mods.amods;
 }
 
 size_t 
-mono_sizeof_type_with_mods (uint8_t num_mods)
+mono_sizeof_type_with_mods (uint8_t num_mods, gboolean is_aggregate)
 {
-	size_t accum = 0;
-	accum += sizeof (MonoType);
 	if (num_mods == 0)
-		return accum;
+		return sizeof (MonoType);
+	size_t accum = 0;
+	accum += offsetof (MonoTypeWithModifiers, mods);
 
-	accum += offsetof (struct _MonoCustomModContainer, modifiers);
-	accum += sizeof (MonoCustomMod) * num_mods;
+	if (!is_aggregate) {
+		accum += offsetof (struct _MonoCustomModContainer, modifiers);
+		accum += sizeof (MonoCustomMod) * num_mods;
+	} else {
+		accum += offsetof (MonoAggregateModContainer, modifiers);
+		accum += sizeof (MonoSingleCustomMod) * num_mods;
+	}
 	return accum;
 }
 
 size_t 
 mono_sizeof_type (const MonoType *ty)
 {
-	MonoCustomModContainer *cmods = mono_type_get_cmods (ty);
-	if (cmods)
-		return mono_sizeof_type_with_mods (cmods->count);
-	else
+	if (ty->has_cmods) {
+		if (!mono_type_is_aggregate_mods (ty)) {
+			MonoCustomModContainer *cmods = mono_type_get_cmods (ty);
+			return mono_sizeof_type_with_mods (cmods->count, FALSE);
+		} else {
+			MonoAggregateModContainer *amods = mono_type_get_amods (ty);
+			return mono_sizeof_type_with_mods (amods->count, TRUE);
+		}
+	} else
 		return sizeof (MonoType);
 }
 
