@@ -66,9 +66,9 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                     // build the Archive
                     timeout (time: 300, unit: 'MINUTES') {
-                        lock ("${product}-${env.NODE_NAME}") {
+                        lock ("${product}-${configuration}-${env.NODE_NAME}") {
                             if (platform == "Darwin") {
-                                def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz"
+                                def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz mingw-w64 make"
                                 sh "brew install ${brewpackages} || brew upgrade ${brewpackages}"
 
                                 sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"

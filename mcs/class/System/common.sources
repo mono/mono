@@ -191,6 +191,8 @@ System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierExtension.
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/X509VerificationFlags.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/SubjectAlternativeNameBuilder.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/System/Security/Cryptography/X509Certificates/GeneralNameEncoder.cs
+corefx/X509SignatureGenerator.cs
+corefx/CertificateRequest.cs
 
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
@@ -622,12 +624,8 @@ ReferenceSources/Win32Exception.cs
 ../referencesource/System/net/System/Net/ICredentialsByHost.cs
 ../referencesource/System/net/System/Net/Internal.cs
 ../../../external/corefx/src/Common/src/System/Net/IPAddressParserStatics.cs
-#../../../external/corefx/src/System.Net.Primitives/src/System/Net/IPAddressParser.cs
-#../../../external/corefx/src/Common/src/System/Net/IPv6AddressHelper.Common.cs
-# remove tmp dir once https://github.com/mono/mono/pull/12841 is merged
-corefx/tmp/IPAddressParser.cs
-corefx/tmp/IPv6AddressHelper.Common.cs
-
+../../../external/corefx/src/System.Net.Primitives/src/System/Net/IPAddressParser.cs
+../../../external/corefx/src/Common/src/System/Net/IPv6AddressHelper.Common.cs
 ../../../external/corefx/src/Common/src/System/Net/IPv4AddressHelper.Common.cs
 ../../../external/corefx/src/System.Net.Primitives/src/System/Net/IPAddress.cs
 ../../../external/corefx/src/System.Private.Uri/src/System/IPv4AddressHelper.cs
