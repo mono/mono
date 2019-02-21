@@ -1008,7 +1008,8 @@ TESTS_IL_SRC=			\
 	tailcall-valuetype-parameter.il \
 	ldfldvt.il \
 	newobj-abstract.il \
-	invalid-isbyreflike.il
+	invalid-isbyreflike.il \
+	gh-13056_mono_local_cprop_av.il
 
 # This test crashes the runtime, even with recent fixes.
 #	incorrect-ldvirtftn-read-behind-for-dup.il
