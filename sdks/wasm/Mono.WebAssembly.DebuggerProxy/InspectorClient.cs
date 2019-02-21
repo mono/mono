@@ -25,7 +25,7 @@ namespace WsProxy {
 
 			if (res ["id"] == null)
 				return onEvent (res ["method"].Value<string> (), res ["params"] as JObject, token);
-var id = res ["id"].Value<int> ();
+			var id = res ["id"].Value<int> ();
 			var idx = pending_cmds.FindIndex (e => e.Item1 == id);
 			var item = pending_cmds [idx];
 			pending_cmds.RemoveAt (idx);
