@@ -2872,6 +2872,19 @@ insert_safepoints (MonoCompile *cfg)
 		return;
 	}
 
+	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
+		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
+
+		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER &&
+			(info->d.icall.func == mono_thread_interruption_checkpoint ||
+			info->d.icall.func == mono_threads_exit_gc_safe_region_unbalanced)) {
+			/* These wrappers are called from the wrapper for the polling function, leading to potential stack overflow */
+			if (cfg->verbose_level > 1)
+				printf ("SKIPPING SAFEPOINTS for wrapper %s\n", cfg->method->name);
+			return;
+		}
+	}
+
 	if (cfg->method->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 
