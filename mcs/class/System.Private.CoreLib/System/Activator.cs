@@ -14,6 +14,15 @@ namespace System
 		public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(string assemblyFile, string typeName) { throw null; }
 		public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(string assemblyFile, string typeName, bool ignoreCase, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, object[] args, System.Globalization.CultureInfo culture, object[] activationAttributes) { throw null; }
 		public static System.Runtime.Remoting.ObjectHandle CreateInstanceFrom(string assemblyFile, string typeName, object[] activationAttributes) { throw null; }
-		public static T CreateInstance<T>() { throw null; }
+
+		public static T CreateInstance<T> ()
+		{
+			var rt = (RuntimeType)typeof(T);
+
+			if (rt.HasElementType)
+				throw new MissingMethodException (SR.Format(SR.Arg_NoDefCTor, rt));
+
+			return (T)rt.CreateInstanceSlow (publicOnly: true, skipCheckThis: true, fillCache: true, wrapExceptions: true);
+		}
 	}
 }

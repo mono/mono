@@ -5684,8 +5684,12 @@ namespace System
                     return instance;
                 }
             }
-#endif
+
             return CreateInstanceSlow(publicOnly, wrapExceptions, skipCheckThis, fillCache, ref stackMark);
+#else
+            return CreateInstanceSlow(publicOnly, wrapExceptions, skipCheckThis, fillCache);
+#endif
+
         }
 #if !MONO
         internal void InvalidateCachedNestedType()
