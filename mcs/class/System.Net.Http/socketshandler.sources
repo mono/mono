@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 
 PlatformHelper.SocketsHandler.cs
+HttpClient.DefaultHandler.cs
 HttpClientHandler.cs
 HttpClientHandler.SocketsHandler.cs
 IMonoHttpClientHandler.cs
