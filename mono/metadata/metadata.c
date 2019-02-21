@@ -5616,13 +5616,26 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 		return FALSE;
 	}
 
-	if (cmod_reject && use_strict_equivalence ()) /* do our own thing if asked. */
-		return FALSE;
+	if (use_strict_equivalence ()) {
+		if (cmod_reject && is_pointer)
+			return FALSE;
+
+		if (result && cmod_reject) {
+			char *t1_str = mono_type_full_name (t1);
+			char *t2_str = mono_type_full_name (t2);
+			// printf ("\n\n\tstrict comparison of '%s' and '%s' is false, but lax is TRUE (using %s comparison)\n\n\n", t1_str, t2_str, lax_cmods ? "lax" : "strict");
+			g_free (t1_str);
+			g_free (t2_str);
+		}
+		return result && !cmod_reject;
+	} else {
+
 
 	if (cmod_reject && is_pointer && !use_strict_equivalence ()) 	/* Why? because https://github.com/mono/mono/pull/11134 */
 		return FALSE;
 
 	return /*cmod_reject &&*/ result; /* Want to be strict, but they're making us be lax */
+	}
 }
 
 /**
