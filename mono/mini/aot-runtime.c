@@ -4126,8 +4126,11 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 			}
 			return NULL;
 		}
+
 		if (method_index < amodule->info.nmethods)
 			code = (guint8 *)amodule->methods [method_index];
+		else
+			return NULL;
 	}
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
