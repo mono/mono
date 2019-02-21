@@ -13,7 +13,6 @@
 // Check if we should use getmntinfo or /proc/mounts
 #if HAVE_MNTINFO
 #include <sys/mount.h>
-#include <mntent.h>
 #else
 #include <sys/statfs.h>
 #include <mntent.h>
