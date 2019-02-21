@@ -113,7 +113,6 @@ namespace WebAssembly.Core {
 			ValidateFromSource (span);
 
 			int type = (int)Type.GetTypeCode (typeof(U));
-			Console.WriteLine ($"Typeof {typeof (U)} typecode {type}");
 
 			var bytes = MemoryMarshal.AsBytes (span);
 			fixed (byte* ptr = bytes) {
