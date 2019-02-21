@@ -21,18 +21,6 @@ namespace WebAssembly.Core {
 		{ }
 
 		/// <summary>
-		/// From the specified segment.
-		/// </summary>
-		/// <returns>The from.</returns>
-		/// <param name="segment">Segment.</param>
-		public static Int8Array From (ArraySegment<sbyte> segment)
-		{
-			var ta = new Int8Array (segment.Count);
-			ta.CopyFrom (segment);
-			return ta;
-		}
-
-		/// <summary>
 		/// Defines an implicit conversion of a <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Int8Array"/>/>
 		/// </summary>
 		/// <returns>The implicit.</returns>
@@ -45,10 +33,7 @@ namespace WebAssembly.Core {
 		/// </summary>
 		/// <returns>The implicit.</returns>
 		/// <param name="typedarray">Typedarray.</param>
-		public static implicit operator sbyte [] (Int8Array typedarray)
-		{
-			return typedarray.ToArray ();
-		}
+		public static implicit operator sbyte [] (Int8Array typedarray) => typedarray.ToArray ();
 
 		/// <summary>
 		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Int8Array"/> to an array./>

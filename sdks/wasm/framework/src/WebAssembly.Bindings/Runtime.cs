@@ -43,7 +43,7 @@ namespace WebAssembly {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object TypedArrayCopyTo (int js_obj_handle, int array_ptr, int begin, int end, int bytes_per_element, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object TypedArrayFromArray (object array, out int exceptional_result);
+		internal static extern object TypedArrayFrom (int array_ptr, int begin, int end, int bytes_per_element, int type, out int exceptional_result);
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object TypedArrayCopyFrom (int js_obj_handle, int array_ptr, int begin, int end, int bytes_per_element, out int exceptional_result);
 
@@ -77,7 +77,7 @@ namespace WebAssembly {
 			js_clr_mapping.Add ("[object Int32Array]", typeof (Core.Int32Array));
 			js_clr_mapping.Add ("[object Uint32Array]", typeof (Core.Uint32Array));
 			js_clr_mapping.Add ("[object Float32Array]", typeof (Core.Float32Array));
-			js_clr_mapping.Add ("[object Float642Array]", typeof (Core.Float64Array));
+			js_clr_mapping.Add ("[object Float64Array]", typeof (Core.Float64Array));
 		}
 
 		/// <summary>

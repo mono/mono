@@ -41,7 +41,6 @@ var BindingSupportLib = {
 
 			// receives a byteoffset into allocated Heap with a size.
 			this.mono_typed_array_new = Module.cwrap ('mono_wasm_typed_array_new', 'number', ['number','number','number','number']);
-			this.mono_array_to_heap = Module.cwrap ('mono_wasm_array_to_heap', 'void', ['number','number']);
 
 			var binding_fqn_asm = this.BINDING_ASM.substring(this.BINDING_ASM.indexOf ("[") + 1, this.BINDING_ASM.indexOf ("]")).trim();
 			var binding_fqn_class = this.BINDING_ASM.substring (this.BINDING_ASM.indexOf ("]") + 1).trim();
@@ -240,87 +239,6 @@ var BindingSupportLib = {
 			heapBytes.set(new Uint8Array(typedArray.buffer, typedArray.byteOffset, numBytes));
 			return heapBytes;
 		},
-		mono_array_to_js_typedarray: function(type, mono_array){
-
-			// length of our array
-			var szLength = this.mono_array_length(mono_array);
-				
-			// The element size that will need to be allocated
-			var bytes_per_element = 0;
-
-			switch (type)
-			{
-				case 11: 
-					bytes_per_element = Int8Array.BYTES_PER_ELEMENT; 
-					break;
-				case 12: 
-					bytes_per_element = Uint8Array.BYTES_PER_ELEMENT; 
-					break;
-				case 13: 
-					bytes_per_element = Int16Array.BYTES_PER_ELEMENT; 
-					break;
-				case 14: 
-					bytes_per_element = Uint16Array.BYTES_PER_ELEMENT; 
-					break;
-				case 15: 
-					bytes_per_element = Int32Array.BYTES_PER_ELEMENT; 
-					break;
-				case 16: 
-					bytes_per_element = Uint32Array.BYTES_PER_ELEMENT; 
-					break;
-				case 17: 
-					bytes_per_element = Float32Array.BYTES_PER_ELEMENT; 
-					break;
-				case 18:
-					bytes_per_element = Float64Array.BYTES_PER_ELEMENT;
-					break;
-			}
-			
-			// Allocate bytes needed for the array of bytes
-			var bufferSize = szLength * bytes_per_element;
-			var bufferPtr = Module._malloc(bufferSize);
-
-			// blit the mono array to the heap
-			this.mono_array_to_heap(mono_array, bufferPtr);
-
-			// result to be returned
-			var res = null;
-
-			// We now need to create a new typed array based off the heap view
-			switch (type)
-			{
-				case 11: 
-					res = Module.HEAP8.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 12: 
-					res = Module.HEAPU8.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 13: 
-					res = Module.HEAP16.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 14: 
-					res = Module.HEAPU16.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 15: 
-					res = Module.HEAP32.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 16: 
-					res = Module.HEAPU32.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 17: 
-					res = Module.HEAPF32.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-				case 18:
-					res = Module.HEAPF64.slice(bufferPtr / bytes_per_element, bufferPtr / bytes_per_element + szLength);
-					break;
-			}
-
-			// free the allocated memory
-			Module._free(bufferPtr);
-			// return new typed array
-			return res;
-			
-		},
 		js_to_mono_obj: function (js_obj) {
 	  		this.bindings_lazy_init ();
 
@@ -354,7 +272,7 @@ var BindingSupportLib = {
 
 			return this.extract_mono_obj (js_obj);
 		},
-		js_typedarray_to_array : function (js_obj) {
+		js_typed_array_to_array : function (js_obj) {
 
 			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
 			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
@@ -480,6 +398,44 @@ var BindingSupportLib = {
 				throw new Error("Object '" + typed_array + "' is not a typed array");
 			} 
 
+		},	
+		// Creates a new typed array from pinned array address from pinned_array allocated on the heap to the typed array.
+		// 	 adress of managed pinned array -> copy from heap -> typed array memory
+		typed_array_from : function (pinned_array, begin, end, bytes_per_element, type) {
+
+			// typed array
+			var newTypedArray = 0;
+
+			switch (type)
+			{
+				case 5: 
+					newTypedArray = new Int8Array(end - begin);
+					break;
+				case 6: 
+					newTypedArray = new Uint8Array(end - begin);
+					break;
+				case 7: 
+					newTypedArray = new Int16Array(end - begin);
+					break;
+				case 8: 
+					newTypedArray = new UInt16Array(end - begin);
+					break;
+				case 9: 
+					newTypedArray = new Int32Array(end - begin);
+					break;
+				case 10: 
+					newTypedArray = new Uint32Array(end - begin);
+					break;
+				case 13: 
+					newTypedArray = new Float32Array(end - begin);
+					break;
+				case 14:
+					newTypedArray = new Float64Array(end - begin);
+					break;
+			}
+
+			this.typedarray_copy_from(newTypedArray, pinned_array, begin, end, bytes_per_element);
+			return newTypedArray;
 		},		
 		js_to_mono_enum: function (method, parmIdx, js_obj) {
 			this.bindings_lazy_init ();
@@ -700,9 +656,9 @@ var BindingSupportLib = {
 			var mono_args = this.js_array_to_mono_array (js_args);
 			if (!this.delegate_dynamic_invoke)
 				throw new Error("System.Delegate.DynamicInvoke method can not be resolved.");
-			// Note: the single 'm' passed here is causing problems with AOT.  Changed to "mm" again.  
+			// Note: the single 'm' passed here is causing problems with AOT.  Changed to "mo" again.  
 			// This may need more analysis if causes problems again.
-			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "mm", [ mono_args ]);
+			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "mo", [ mono_args ]);
 		},
 		
 		resolve_method_fqn: function (fqn) {
@@ -1163,7 +1119,7 @@ var BindingSupportLib = {
 			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
 		}
 
-		return BINDING.js_typedarray_to_array(requireObject);
+		return BINDING.js_typed_array_to_array(requireObject);
 	},
 	mono_wasm_typed_array_copy_to: function(js_handle, pinned_array, begin, end, bytes_per_element, is_exception) {
 		BINDING.bindings_lazy_init ();
@@ -1177,11 +1133,10 @@ var BindingSupportLib = {
 		var res = BINDING.typedarray_copy_to(requireObject, pinned_array, begin, end, bytes_per_element);
 		return BINDING.js_to_mono_obj (res)
 	},
-	mono_wasm_typed_array_from_array: function(mono_array, is_exception) {
+	mono_wasm_typed_array_from: function(pinned_array, begin, end, bytes_per_element, type, is_exception) {
 		BINDING.bindings_lazy_init ();
-		var res = BINDING.unbox_mono_obj(mono_array);
-		
-		return BINDING.js_to_mono_obj (res);
+		var res = BINDING.typed_array_from(pinned_array, begin, end, bytes_per_element, type);
+		return BINDING.js_to_mono_obj (res)
 	},
 	mono_wasm_typed_array_copy_from: function(js_handle, pinned_array, begin, end, bytes_per_element, is_exception) {
 		BINDING.bindings_lazy_init ();

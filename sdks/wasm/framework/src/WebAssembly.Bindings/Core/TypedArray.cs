@@ -70,7 +70,7 @@ namespace WebAssembly.Core {
 			if (jsValue != null) {
 				var type = jsValue.GetType ();
 				if (type.IsPrimitive) {
-					return (U)Convert.ChangeType (jsValue, type);
+					return (U)Convert.ChangeType (jsValue, typeof(U));
 				} else {
 					throw new InvalidCastException ($"Unable to cast object of type {type} to type {typeof (U)}.");
 				}
@@ -80,6 +80,19 @@ namespace WebAssembly.Core {
 				return null;
 		}
 
+		/// <summary>
+		/// To a span.
+		/// </summary>
+		/// <returns>The span.</returns>
+		public Span<U> ToSpan ()
+		{
+			return ToArray();
+		}
+
+		/// <summary>
+		/// To the array.
+		/// </summary>
+		/// <returns>The array.</returns>
 		public U [] ToArray ()
 		{
 			var res = Runtime.TypedArrayToArray (JSHandle, out int exception);
@@ -89,77 +102,44 @@ namespace WebAssembly.Core {
 			return (U [])res;
 		}
 
-		public static T From (U [] source)
+		/// <summary>
+		/// From the specified Span.
+		/// </summary>
+		/// <returns>The from.</returns>
+		/// <param name="span">Span.</param>
+		public unsafe static T From (Span<U> span)
 		{
-			// target array has to be instantiated.
-			ValidateFromSource (source);
+			// source has to be instantiated.
+			ValidateFromSource (span);
 
-			// The following pins the location of the source object in memory
-			// so that they will not be moved by garbage collection.
-			GCHandle sourceHandle = GCHandle.Alloc (source, GCHandleType.Pinned);
+			int type = (int)Type.GetTypeCode (typeof(U));
+			Console.WriteLine ($"Typeof {typeof (U)} typecode {type}");
 
-			var res = Runtime.TypedArrayFromArray (source, out int exception);
-
-			sourceHandle.Free ();
-
-			return (T)res;
-		}
-
-		private unsafe int CopyTo (void* ptrTarget, int offset, int count)
-		{
-			var res = Runtime.TypedArrayCopyTo (JSHandle, (int)ptrTarget, offset, offset + count, Marshal.SizeOf<U> (), out int exception);
-			if (exception != 0)
-				throw new JSException ((string)res);
-			return (int)res / Marshal.SizeOf<U> ();
+			var bytes = MemoryMarshal.AsBytes (span);
+			fixed (byte* ptr = bytes) {
+				var res = Runtime.TypedArrayFrom ((int)ptr, 0, span.Length, Marshal.SizeOf<U> (), type, out int exception);
+				if (exception != 0)
+					throw new JSException ((string)res);
+				return (T)res;
+			}
 
 		}
 
 		/// <summary>
-		/// Copies from a <see cref="T:WebAssembly.Core.TypedArray`2"/> to <see langword="async"/> memory address.
+		/// Copies to.
 		/// </summary>
 		/// <returns>The to.</returns>
-		/// <param name="target">Target.</param>
-		/// <param name="count">Count.</param>
-		public unsafe int CopyTo (IntPtr target, int count) => CopyTo (target.ToPointer (), 0, count);
-
-		/// <summary>
-		/// Copies from a <see cref="T:WebAssembly.Core.TypedArray`2"/> to an array
-		/// </summary>
-		/// <returns>The from.</returns>
-		/// <param name="target">Source.</param>
-		public int CopyTo (U [] target) => CopyTo (target, 0, target.Length);
-
-		/// <summary>
-		/// Copies from a <see cref="T:WebAssembly.Core.TypedArray`2"/> to an array
-		/// </summary>
-		/// <returns>The from.</returns>
-		/// <param name="target">Target.</param>
-		/// <param name="offset">Offset.</param>
-		/// <param name="count">Count.</param>
-		public unsafe int CopyTo (U [] target, int offset, int count)
+		/// <param name="span">Span.</param>
+		public unsafe int CopyTo (Span<U> span)
 		{
-			// target array has to be instantiated.
-			ValidateSource (target, offset, count);
-
-			// The following pins the location of the source object in memory
-			// so that they will not be moved by garbage collection.
-			GCHandle sourceHandle = GCHandle.Alloc (target, GCHandleType.Pinned);
-
-			try {
-				var ptr = sourceHandle.AddrOfPinnedObject ();
-				return CopyTo (ptr.ToPointer (), offset, count);
-
-			} finally {
-				sourceHandle.Free ();
+			var bytes = MemoryMarshal.AsBytes (span);
+			fixed (byte* ptr = bytes) {
+				var res = Runtime.TypedArrayCopyTo (JSHandle, (int)ptr, 0, span.Length, Marshal.SizeOf<U> (), out int exception);
+				if (exception != 0)
+					throw new JSException ((string)res);
+				return (int)res / Marshal.SizeOf<U> ();
 			}
 		}
-
-		/// <summary>
-		/// Copies from a <see cref="T:WebAssembly.Core.TypedArray`2"/> to an <see cref="ArraySegment{T}"/>
-		/// </summary>
-		/// <returns>The to.</returns>
-		/// <param name="target">Target.</param>
-		public int CopyTo (ArraySegment<U> target) => CopyTo (target.Array, target.Offset, target.Count);
 
 		private unsafe int CopyFrom (void* ptrSource, int offset, int count)
 		{
@@ -171,53 +151,23 @@ namespace WebAssembly.Core {
 		}
 
 		/// <summary>
-		/// Copies from a memory address to a <see cref="T:WebAssembly.Core.TypedArray`2"/>.
+		/// Copies from.
 		/// </summary>
 		/// <returns>The from.</returns>
-		/// <param name="source">Source.</param>
-		/// <param name="count">Count.</param>
-		public unsafe int CopyFrom (IntPtr source, int count) => CopyFrom (source.ToPointer(), 0, count);
-
-		/// <summary>
-		/// Copies from an array to a <see cref="T:WebAssembly.Core.TypedArray`2"/>
-		/// </summary>
-		/// <returns>The from.</returns>
-		/// <param name="source">Source.</param>
-		public int CopyFrom (U [] source) => CopyFrom (source, 0, source.Length);
-
-		/// <summary>
-		/// Copies from an array to a <see cref="T:WebAssembly.Core.TypedArray`2"/>.
-		/// </summary>
-		/// <returns>The from.</returns>
-		/// <param name="source">Source.</param>
-		/// <param name="offset">Offset.</param>
-		/// <param name="count">Count.</param>
-		public unsafe int CopyFrom (U [] source, int offset, int count)
+		/// <param name="span">Span.</param>
+		public unsafe int CopyFrom (Span<U> span)
 		{
-			// target array has to be instantiated.
-			ValidateSource (source, offset, count);
-
-			// The following pins the location of the source object in memory
-			// so that they will not be moved by garbage collection.
-			GCHandle sourceHandle = GCHandle.Alloc (source, GCHandleType.Pinned);
-
-			try {
-				var ptr = sourceHandle.AddrOfPinnedObject ();
-				return CopyFrom (ptr.ToPointer(), offset, count);
-
-			} finally {
-				sourceHandle.Free ();
+			ValidateSource (span);
+			var bytes = MemoryMarshal.AsBytes (span);
+			fixed (byte* ptr = bytes) {
+				var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)ptr, 0, span.Length, Marshal.SizeOf<U> (), out int exception);
+				if (exception != 0)
+					throw new JSException ((string)res);
+				return (int)res / Marshal.SizeOf<U> ();
 			}
 		}
 
-		/// <summary>
-		/// Copies from <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.TypedArray`2"/>.
-		/// </summary>
-		/// <returns>The number of bytes copied.</returns>
-		/// <param name="source">Source.</param>
-		public int CopyFrom (ArraySegment<U> source) => CopyFrom (source.Array, source.Offset, source.Count);
-
-		protected void ValidateTarget(U[] target)
+		protected void ValidateTarget(Span<U> target)
 		{
 			// target array has to be instantiated.
 			if (target == null || target.Length == 0) {
@@ -226,44 +176,16 @@ namespace WebAssembly.Core {
 
 		}
 
-		protected void ValidateTarget (U [] target, int offset, int count)
+		protected void ValidateSource (Span<U> source)
 		{
-			ValidateTarget (target);
-			// offset can not be past the end of the array
-			if (offset > target.Length) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} can not be greater than length of '{nameof(target)}'");
-			}
-			// offset plus count can not pass the end of the array.
-			if (offset + count > target.Length) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} plus {nameof(count)} can not be greater than length of '{nameof (target)}'");
-			}
-
-		}
-
-		protected void ValidateSource (U [] source)
-		{
-			// target array has to be instantiated.
+			// target has to be instantiated.
 			if (source == null || source.Length == 0) {
 				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null and must have a length");
 			}
 
 		}
 
-		protected void ValidateSource (U [] source, int offset, int count)
-		{
-			ValidateSource (source);
-			// offset can not be past the end of the array
-			if (offset > source.Length) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} can not be greater than length of '{nameof (source)}'");
-			}
-			// offset plus count can not pass the end of the array.
-			if (offset + count > source.Length) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (offset)} plus {nameof (count)} can not be greater than length of '{nameof (source)}'");
-			}
-
-		}
-
-		protected static void ValidateFromSource (U [] source)
+		protected static void ValidateFromSource (Span<U> source)
 		{
 			// target array has to be instantiated.
 			if (source == null || source.Length == 0) {

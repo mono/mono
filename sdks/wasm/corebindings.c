@@ -22,7 +22,7 @@ extern int mono_wasm_bind_core_object (int js_handle, int gc_handle, int *is_exc
 extern int mono_wasm_bind_host_object (int js_handle, int gc_handle, int *is_exception);
 extern MonoObject* mono_wasm_typed_array_to_array (int js_handle, int *is_exception);
 extern MonoObject* mono_wasm_typed_array_copy_to (int js_handle, int ptr, int begin, int end, int bytes_per_element, int *is_exception);
-extern MonoObject* mono_wasm_typed_array_from_array (MonoObject* mono_array, int *is_exception);
+extern MonoObject* mono_wasm_typed_array_from (int ptr, int begin, int end, int bytes_per_element, int type, int *is_exception);
 extern MonoObject* mono_wasm_typed_array_copy_from (int js_handle, int ptr, int begin, int end, int bytes_per_element, int *is_exception);
 
 void core_initialize_internals ()
@@ -41,7 +41,7 @@ void core_initialize_internals ()
 	mono_add_internal_call ("WebAssembly.Runtime::New", mono_wasm_new);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayToArray", mono_wasm_typed_array_to_array);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyTo", mono_wasm_typed_array_copy_to);
-	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayFromArray", mono_wasm_typed_array_from_array);
+	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayFrom", mono_wasm_typed_array_from);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyFrom", mono_wasm_typed_array_copy_from);
 
 }
@@ -99,23 +99,6 @@ mono_wasm_typed_array_new (char *arr, int length, int size, int type)
 	memcpy(mono_array_addr_with_size(buffer, sizeof(char), 0), arr, length * size);
 
 	return buffer;
-}
-
-
-EMSCRIPTEN_KEEPALIVE void
-mono_wasm_array_to_heap (MonoArray *src, char *dest)
-{
-	int element_size;
-	void *source_addr;
-	int arr_length;
-
-	element_size = mono_array_element_size ( mono_object_get_class((MonoObject*)src));
-	//DBG("mono_wasm_to_heap element size %i  / length %i\n",element_size, mono_array_length(src));
-
-	// get our src address
-	source_addr = mono_array_addr_with_size (src, element_size, 0);
-	// copy the array memory to heap via ptr dest
-	memcpy (dest, source_addr, mono_array_length(src) * element_size);
 }
 
 EMSCRIPTEN_KEEPALIVE int
