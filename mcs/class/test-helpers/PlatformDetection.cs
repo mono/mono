@@ -47,6 +47,6 @@ namespace System
 		public static bool IsAlpine => false;
 		public static bool IsNetCore => false;
 
-		public static int WindowsVersion => -1;
-    }
+		public static bool IsMono => true;
+	}
 }
