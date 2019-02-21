@@ -13327,6 +13327,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		/* required for mixed mode */
 		if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
 			add_gc_wrappers (acfg);
+
+			g_hash_table_foreach (mono_get_jit_icall_info (), add_jit_icall_wrapper, acfg);
 		}
 	}
 
