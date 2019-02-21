@@ -56,14 +56,16 @@ namespace System.IO {
 
 			DriveInfo [] drives = GetDrives ();
 			Array.Sort (drives, (DriveInfo di1, DriveInfo di2) => String.Compare (di2.path, di1.path, true));
+			var sb = new StringBuilder($"driveName: {driveName}; available drives: ");
 			foreach (DriveInfo d in drives){
+				sb.Append($"{d.path}, ");
 				if (driveName.StartsWith (d.path, StringComparison.OrdinalIgnoreCase)){
 					this.path = d.path;
 					this.drive_format = d.drive_format;
 					return;
 				}
 			}
-			throw new ArgumentException ("The drive name does not exist", "driveName");
+			throw new ArgumentException ($"The drive name does not exist; {sb.ToString()}", "driveName");
 		}
 		
 		static void GetDiskFreeSpace (string path, out ulong availableFreeSpace, out ulong totalSize, out ulong totalFreeSpace)
