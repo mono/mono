@@ -15,6 +15,9 @@ Start_Orphan:
 End_Orphan:
 
    conv.ovf.i4
+   ldc.i4 42
+   sub
+   /* should be return code 0 */
   ret
  }
 }
