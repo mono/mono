@@ -5721,6 +5721,40 @@ mono_metadata_type_dup (MonoImage *image, const MonoType *o)
 	return mono_metadata_type_dup_with_cmods (image, o, o);
 }
 
+static void
+deep_type_dup_fixup (MonoImage *image, MonoType *r, const MonoType *o);
+
+/* makes a dup of 'o' but also appends the custom modifiers from 'cmods_source' */
+static MonoType *
+do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const MonoType *cmods_source)
+{
+	g_assert (o != cmods_source);
+	g_assert (o->has_cmods);
+	g_assert (cmods_source->has_cmods);
+	MonoCustomModContainer *o_cmods = mono_type_get_cmods (o);
+	MonoCustomModContainer *extra_cmods = mono_type_get_cmods (cmods_source);
+	g_assert (o_cmods->image == extra_cmods->image);
+	/* FIXME: o_cmods and extra_cmods could be from different images, in
+	 * general, but I don't know what to do if that's the case - we only
+	 * store tokens for each cmod, and tokens don't mean anything without
+	 * an image, and we only have space for one image. */
+	uint8_t total_cmods = o_cmods->count + extra_cmods->count;
+	size_t sizeof_dup = mono_sizeof_type_with_mods (total_cmods);
+	MonoType *r = image ? (MonoType *)mono_image_alloc0 (image, sizeof_dup) : (MonoType *)g_malloc (sizeof_dup);
+
+	/* copy the original type o, including its modifiers */
+	memcpy (r, o, mono_sizeof_type (o));
+	deep_type_dup_fixup (image, r, o);
+
+	/* append the modifiers from cmods_source */
+	MonoCustomModContainer *r_container = mono_type_get_cmods (r);
+	uint8_t dest_offset = o_cmods->count;
+	memcpy (&r_container->modifiers [dest_offset], &extra_cmods->modifiers [0], extra_cmods->count * sizeof (MonoCustomMod));
+	r_container->count = total_cmods;
+
+	return r;
+}
+
 /**
  * Works the same way as mono_metadata_type_dup but pick cmods from @cmods_source
  */
@@ -5729,6 +5763,11 @@ mono_metadata_type_dup_with_cmods (MonoImage *image, const MonoType *o, const Mo
 {
 	MonoType *r = NULL;
 	size_t sizeof_o = mono_sizeof_type (cmods_source);
+
+
+	if (o->has_cmods && o != cmods_source && cmods_source->has_cmods) {
+		return do_metadata_type_dup_append_cmods (image, o, cmods_source);
+	}
 
 	r = image ? (MonoType *)mono_image_alloc0 (image, sizeof_o) : (MonoType *)g_malloc (sizeof_o);
 
@@ -5740,6 +5779,13 @@ mono_metadata_type_dup_with_cmods (MonoImage *image, const MonoType *o, const Mo
 	memcpy (r, o, sizeof (MonoType));
 	r->has_cmods = cmods_source->has_cmods;
 
+	deep_type_dup_fixup (image, r, o);
+	return r;
+}
+
+static void
+deep_type_dup_fixup (MonoImage *image, MonoType *r, const MonoType *o)
+{
 	if (o->type == MONO_TYPE_PTR) {
 		r->data.type = mono_metadata_type_dup (image, o->data.type);
 	} else if (o->type == MONO_TYPE_ARRAY) {
@@ -5748,7 +5794,6 @@ mono_metadata_type_dup_with_cmods (MonoImage *image, const MonoType *o, const Mo
 		/*FIXME the dup'ed signature is leaked mono_metadata_free_type*/
 		r->data.method = mono_metadata_signature_deep_dup (image, o->data.method);
 	}
-	return r;
 }
 
 /**

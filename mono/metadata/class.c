@@ -702,8 +702,8 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		}
 
 		nt = mono_metadata_type_dup_with_cmods (image, inst->type_argv [num], type);
-		nt->byref = type->byref;
-		nt->attrs = type->attrs;
+		nt->byref = type->byref || inst->type_argv[num]->byref;
+		nt->attrs = type->attrs; /* FIXME: are there any relevant attrs in inst->type_argv[num]->attrs ? */
 		if (append_cmods) {
 			char *ntname = mono_type_full_name (nt);
 			printf ("\tyields '%s'\n\n\n", ntname);
