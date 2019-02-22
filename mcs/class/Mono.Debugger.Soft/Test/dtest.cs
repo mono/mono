@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using Mono.Cecil.Cil;
@@ -4602,6 +4603,21 @@ public class DebuggerTests
 		assert_location(e, "ss_nested_arg");
 	}
 
+	static int GetFreePort () {
+		var s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+		s.Bind (new IPEndPoint (IPAddress.Loopback, 0));
+		var port = ((IPEndPoint)s.LocalEndPoint).Port;
+		s.Close ();
+		return port;
+	}
+
+	static VirtualMachine ConnectToPort (int port) {
+		var ep = new IPEndPoint (IPAddress.Loopback, port);
+		// Wait for the app to reach the Sleep () in attach ().
+		Thread.Sleep (1000);
+		return VirtualMachineManager.Connect (ep);
+	}
+
 	[Test]
 	public void InspectEnumeratorInGenericStruct() {
 		//files.myBucket.GetEnumerator().get_Current().Key watching this generates an exception in Debugger
@@ -4639,19 +4655,16 @@ public class DebuggerTests
 	}
 
 	[Test]
-	// Uses a fixed port
-	[Category("NotWorking")]
 	public void Attach () {
 		vm.Exit (0);
 
 		// Launch the app using server=y,suspend=n
-		var pi = CreateStartInfo (new string[] { "--debugger-agent=transport=dt_socket,address=127.0.0.1:10000,server=y,suspend=n", dtest_app_path, "attach" });
+		var port = GetFreePort ();
+		var pi = CreateStartInfo (new string[] { $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=n", dtest_app_path, "attach" });
+		pi.UseShellExecute = false;
 		var process = Diag.Process.Start (pi);
 
-		// Wait for the app to reach the Sleep () in attach ().
-		Thread.Sleep (1000);
-		var ep = new IPEndPoint (IPAddress.Loopback, 10000);
-		vm = VirtualMachineManager.Connect (ep);
+		vm = ConnectToPort (port);
 
 		var load_req = vm.CreateAssemblyLoadRequest ();
 		load_req.Enable ();
