@@ -5527,36 +5527,67 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 	if (t1->has_cmods != t2->has_cmods)
 		cmod_reject = TRUE;
 	else if (t1->has_cmods && t2->has_cmods) {
-		MonoCustomModContainer *cm1 = mono_type_get_cmods (t1);
-		MonoCustomModContainer *cm2 = mono_type_get_cmods (t2);
+		gboolean t1_aggregate = mono_type_is_aggregate_mods (t1);
+		gboolean t2_aggregate = mono_type_is_aggregate_mods (t2);
 
-		g_assert (cm1);
-		g_assert (cm2);
+		MonoCustomModContainer *cm1 = t1_aggregate ? NULL : mono_type_get_cmods (t1);
+		MonoCustomModContainer *cm2 = t2_aggregate ? NULL : mono_type_get_cmods (t2);
+		MonoAggregateModContainer *am1 = t1_aggregate ? mono_type_get_amods (t1) : NULL;
+		MonoAggregateModContainer *am2 = t2_aggregate ? mono_type_get_amods (t2) : NULL;
 
+		g_assert (cm1 || am1);
+		g_assert (cm2 || am2);
+
+		int count = t1_aggregate ? am1->count : cm1->count;
 		// ECMA 335, 7.1.1:
 		// The CLI itself shall treat required and optional modifiers in the same manner.
 		// Two signatures that differ only by the addition of a custom modifier 
 		// (required or optional) shall not be considered to match.
-		if (cm1->count != cm2->count) {
+		if (count != (t2_aggregate ? am2->count : cm2->count)) {
 			cmod_reject = TRUE;
-		} else for (int i=0; i < cm1->count; i++) {
-			if (cm1->modifiers[i].required != cm2->modifiers[i].required) {
-				cmod_reject = TRUE;
-				break;
-			}
+		} else
+			for (int i=0; i < count; i++) {
+				gboolean cm1_required, cm2_required;
+				uint32_t cm1_token, cm2_token;
+				MonoImage *cm1_image, *cm2_image;
 
-			// FIXME: propagate error to caller
-			ERROR_DECL (error);
-			MonoClass *c1 = mono_class_get_checked (cm1->image, cm1->modifiers [i].token, error);
-			mono_error_assert_ok (error);
-			MonoClass *c2 = mono_class_get_checked (cm2->image, cm2->modifiers [i].token, error);
-			mono_error_assert_ok (error);
+				if (t1_aggregate) {
+					cm1_required = am1->modifiers [i].required;
+					cm1_token = am1->modifiers [i].token;
+					cm1_image = am1->modifiers [i].image;
+				} else {
+					cm1_required = cm1->modifiers [i].required;
+					cm1_token = cm1->modifiers [i].token;
+					cm1_image = cm1->image;
+				}
 
-			if (c1 != c2) {
-				cmod_reject = TRUE;
-				break;
+				if (t2_aggregate) {
+					cm2_required = am2->modifiers [i].required;
+					cm2_token = am2->modifiers [i].token;
+					cm2_image = am2->modifiers [i].image;
+				} else {
+					cm2_required = cm2->modifiers [i].required;
+					cm2_token = cm2->modifiers [i].token;
+					cm2_image = cm2->image;
+				}
+
+				if (cm1_required != cm2_required) {
+					cmod_reject = TRUE;
+					break;
+				}
+
+				// FIXME: propagate error to caller
+				ERROR_DECL (error);
+				MonoClass *c1 = mono_class_get_checked (cm1_image, cm1_token, error);
+				mono_error_assert_ok (error);
+				MonoClass *c2 = mono_class_get_checked (cm2_image, cm2_token, error);
+				mono_error_assert_ok (error);
+
+				if (c1 != c2) {
+					cmod_reject = TRUE;
+					break;
+				}
 			}
-		}
 	}
 
 	gboolean result = FALSE;
