@@ -262,6 +262,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=sm-system-core --timeout=60m $gnumake -C sdks/wasm run-sm-system-core
             ${TESTCMD} --label=jsc-system-core --timeout=60m $gnumake -C sdks/wasm run-jsc-system-core
             ${TESTCMD} --label=debugger --timeout=60m $gnumake -C sdks/wasm test-debugger
+            ${TESTCMD} --label=browser --timeout=60m $gnumake -C sdks/wasm run-browser-tests
             ${TESTCMD} --label=v8-corlib --timeout=60m $gnumake -C sdks/wasm run-v8-corlib
             ${TESTCMD} --label=aot-mini --timeout=60m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
             ${TESTCMD} --label=build-aot-all --timeout=60m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
