@@ -2857,9 +2857,11 @@ insert_safepoints (MonoCompile *cfg)
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
-		gpointer poll_func = (gpointer)&mono_threads_state_poll;
-
-		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER && info->d.icall.func == poll_func) {
+		/* These wrappers are called from the wrapper for the polling function, leading to potential stack overflow */
+		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER &&
+				(info->d.icall.func == mono_threads_state_poll ||
+				 info->d.icall.func == mono_thread_interruption_checkpoint ||
+				 info->d.icall.func == mono_threads_exit_gc_safe_region_unbalanced)) {
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for the polling function icall\n");
 			return;
@@ -2870,19 +2872,6 @@ insert_safepoints (MonoCompile *cfg)
 		if (cfg->verbose_level > 1)
 			printf ("SKIPPING SAFEPOINTS for native-to-managed wrappers.\n");
 		return;
-	}
-
-	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
-		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
-
-		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER &&
-			(info->d.icall.func == mono_thread_interruption_checkpoint ||
-			info->d.icall.func == mono_threads_exit_gc_safe_region_unbalanced)) {
-			/* These wrappers are called from the wrapper for the polling function, leading to potential stack overflow */
-			if (cfg->verbose_level > 1)
-				printf ("SKIPPING SAFEPOINTS for wrapper %s\n", cfg->method->name);
-			return;
-		}
 	}
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_OTHER) {
