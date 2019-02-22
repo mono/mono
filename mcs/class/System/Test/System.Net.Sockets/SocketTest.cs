@@ -266,7 +266,7 @@ namespace MonoTests.System.Net.Sockets
 				Socket.Select (list, empty, empty, 1000);
 				Assert.AreEqual (0, empty.Count, "#01");
 				Assert.AreEqual (1, list.Count, "#02");
-				Socket.Select (empty, list, empty, 100);
+				Socket.Select (empty, list, empty, 1000);
 				Assert.AreEqual (0, empty.Count, "#03");
 				Assert.AreEqual (1, list.Count, "#04");
 				Socket.Select (list, empty, empty, -1);
