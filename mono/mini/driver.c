@@ -2361,9 +2361,14 @@ mono_main (int argc, char* argv[])
 			response_options = response_content;
 
 			// Check for UTF8 BOM in file and remove if found.
-			if (response_content_len > 3 && response_content [0] == '\xef' && response_content [1] == '\xbb' && response_content [2] == '\xbf') {
+			if (response_content_len >= 3 && response_content [0] == '\xef' && response_content [1] == '\xbb' && response_content [2] == '\xbf') {
 				response_content_len -= 3;
 				response_options += 3;
+			}
+
+			if (response_content_len == 0) {
+				fprintf (stderr, "The specified response file is empty\n");
+				exit (1);
 			}
 
 			mono_parse_response_options (response_options, &argc, &argv, FALSE);
@@ -3041,6 +3046,28 @@ mono_win32_parse_options (const char *options, int *ref_argc, char **ref_argv []
 	GPtrArray *array = g_ptr_array_new ();
 	optionsw = g_utf8_to_utf16 (options, -1, NULL, NULL, NULL);
 	if (optionsw) {
+		gunichar2 *p;
+		gboolean in_quotes = FALSE;
+		gunichar2 quote_char = L'\0';
+		for (p = optionsw; *p; p++){
+			switch (*p){
+			case L'\n':
+				if (!in_quotes)
+					*p = L' ';
+				break;
+			case L'\'':
+			case L'"':
+				if (in_quotes) {
+					if (quote_char == *p)
+						in_quotes = FALSE;
+				} else {
+					in_quotes = TRUE;
+					quote_char = *p;
+				}
+				break;
+			}
+		}
+
 		argv = CommandLineToArgvW (optionsw, &argc);
 		if (argv) {
 			for (int i = 0; i < argc; i++)
