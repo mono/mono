@@ -263,7 +263,7 @@ namespace MonoTests.System.Net.Sockets
 				ArrayList list = new ArrayList ();
 				ArrayList empty = new ArrayList ();
 				list.Add (acc);
-				Socket.Select (list, empty, empty, 100);
+				Socket.Select (list, empty, empty, 1000);
 				Assert.AreEqual (0, empty.Count, "#01");
 				Assert.AreEqual (1, list.Count, "#02");
 				Socket.Select (empty, list, empty, 100);
