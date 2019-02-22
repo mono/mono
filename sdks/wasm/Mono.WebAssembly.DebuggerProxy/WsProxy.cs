@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace WsProxy {
 
-	internal struct Result {
+	public struct Result {
 		public JObject Value { get; private set; }
 		public JObject Error { get; private set; }
 
