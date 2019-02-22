@@ -17,6 +17,7 @@ helix_set_env_vars
 helix_send_build_start_event "build/source/$MONO_HELIX_TYPE/"
 
 make_timeout=300m
+gnumake=$(which gmake || which gnumake || which make)
 
 if [[ ${CI_TAGS} == *'clang-sanitizer'* ]]; then
 	export CC="clang"
@@ -93,7 +94,7 @@ if [ -x "/usr/bin/dpkg-architecture" ];
 	EXTRA_CONF_FLAGS="$EXTRA_CONF_FLAGS --host=`/usr/bin/dpkg-architecture -qDEB_HOST_GNU_TYPE`"
 	#force build arch = dpkg arch, sometimes misdetected
 	mkdir -p ~/.config/.mono/
-	wget -qO- https://download.mono-project.com/test/new-certs.tgz| tar zx -C ~/.config/.mono/
+	wget -O- https://download.mono-project.com/test/new-certs.tgz | tar zx -C ~/.config/.mono/
 fi
 
 if [[ ${CI_TAGS} == *'cxx'* ]]; then
@@ -127,9 +128,9 @@ then
 fi
 
 if [[ ${CI_TAGS} == *'sdks-llvm'* ]]; then
-	${TESTCMD} --label=archive --timeout=120m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
+	${TESTCMD} --label=archive --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm-llvm{,win}{32,64} NINJA=
 	if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
-		${TESTCMD} --label=archive-llvm36 --timeout=60m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm36-llvm32 NINJA=
+		${TESTCMD} --label=archive-llvm36 --timeout=60m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-llvm36-llvm32 NINJA=
 	fi
 	exit 0
 fi
@@ -152,27 +153,27 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
 
 	   export device_test_suites="Mono.Runtime.Tests System.Core"
 
-	   ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-ios NINJA=
-	   ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-ios     NINJA=
-	   ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios   NINJA=
+	   ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-ios NINJA=
+	   ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-ios     NINJA=
+	   ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-ios   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=run-sim --timeout=20m make -C sdks/ios run-ios-sim-all
-            ${TESTCMD} --label=build-ios-dev --timeout=60m make -C sdks/ios build-ios-dev-all
+            ${TESTCMD} --label=run-sim --timeout=20m $gnumake -C sdks/ios run-ios-sim-all
+            ${TESTCMD} --label=build-ios-dev --timeout=60m $gnumake -C sdks/ios build-ios-dev-all
             if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
             fi
-            ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m make -C sdks/ios build-ios-dev-llvm-all
+            ${TESTCMD} --label=build-ios-dev-llvm --timeout=60m $gnumake -C sdks/ios build-ios-dev-llvm-all
             if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-llvm-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
             fi
-            ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m make -C sdks/ios build-ios-dev-interp-only-all
+            ${TESTCMD} --label=build-ios-dev-interp-only --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-only-all
             if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-only-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
             fi
-            ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m make -C sdks/ios build-ios-dev-interp-mixed-all
+            ${TESTCMD} --label=build-ios-dev-interp-mixed --timeout=60m $gnumake -C sdks/ios build-ios-dev-interp-mixed-all
             if [[ ${CI_TAGS} == *'run-device-tests'* ]]; then
-                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m make -C sdks/ios run-ios-dev-${suite}; done
+                for suite in ${device_test_suites}; do ${TESTCMD} --label=run-ios-dev-interp-mixed-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-dev-${suite}; done
             fi
         fi
 	   exit 0
@@ -194,33 +195,33 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
 
         # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
         # but doesn't get stuck when called via the shell, so let's just call it here now.
-        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
-        ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
+        ${TESTCMD} --label=provision-android --timeout=120m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/builds provision-android && $gnumake -C sdks/android accept-android-license
+        ${TESTCMD} --label=provision-mxe --timeout=240m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
 
-        ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
-        ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-android     NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
-        ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android   NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-android     NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+        ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android   NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=mini --timeout=60m make -C sdks/android check-mini
-            ${TESTCMD} --label=corlib --timeout=60m make -C sdks/android check-corlib
-            ${TESTCMD} --label=System --timeout=60m make -C sdks/android check-System
-            ${TESTCMD} --label=System.Core --timeout=60m make -C sdks/android check-System.Core
-            ${TESTCMD} --label=System.Data --timeout=60m make -C sdks/android check-System.Data
-            ${TESTCMD} --label=System.IO.Compression.FileSystem --timeout=60m make -C sdks/android check-System.IO.Compression.FileSystem
-            ${TESTCMD} --label=System.IO.Compression --timeout=60m make -C sdks/android check-System.IO.Compression
-            ${TESTCMD} --label=System.Json --timeout=60m make -C sdks/android check-System.Json
-            ${TESTCMD} --label=System.Net.Http --timeout=60m make -C sdks/android check-System.Net.Http
-            ${TESTCMD} --label=System.Numerics --timeout=60m make -C sdks/android check-System.Numerics
-            ${TESTCMD} --label=System.Runtime.Serialization --timeout=60m make -C sdks/android check-System.Runtime.Serialization
-            ${TESTCMD} --label=System.ServiceModel.Web --timeout=60m make -C sdks/android check-System.ServiceModel.Web
-            ${TESTCMD} --label=System.Transactions --timeout=60m make -C sdks/android check-System.Transactions
-            ${TESTCMD} --label=System.Xml --timeout=60m make -C sdks/android check-System.Xml
-            ${TESTCMD} --label=System.Xml.Linq --timeout=60m make -C sdks/android check-System.Xml.Linq
-            ${TESTCMD} --label=Mono.CSharp --timeout=60m make -C sdks/android check-Mono.CSharp
-            ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m make -C sdks/android check-Mono.Data.Sqlite
-            ${TESTCMD} --label=Mono.Data.Tds --timeout=60m make -C sdks/android check-Mono.Data.Tds
-            ${TESTCMD} --label=Mono.Security --timeout=60m make -C sdks/android check-Mono.Security
+            ${TESTCMD} --label=mini --timeout=60m $gnumake -C sdks/android check-mini
+            ${TESTCMD} --label=corlib --timeout=60m $gnumake -C sdks/android check-corlib
+            ${TESTCMD} --label=System --timeout=60m $gnumake -C sdks/android check-System
+            ${TESTCMD} --label=System.Core --timeout=60m $gnumake -C sdks/android check-System.Core
+            ${TESTCMD} --label=System.Data --timeout=60m $gnumake -C sdks/android check-System.Data
+            ${TESTCMD} --label=System.IO.Compression.FileSystem --timeout=60m $gnumake -C sdks/android check-System.IO.Compression.FileSystem
+            ${TESTCMD} --label=System.IO.Compression --timeout=60m $gnumake -C sdks/android check-System.IO.Compression
+            ${TESTCMD} --label=System.Json --timeout=60m $gnumake -C sdks/android check-System.Json
+            ${TESTCMD} --label=System.Net.Http --timeout=60m $gnumake -C sdks/android check-System.Net.Http
+            ${TESTCMD} --label=System.Numerics --timeout=60m $gnumake -C sdks/android check-System.Numerics
+            ${TESTCMD} --label=System.Runtime.Serialization --timeout=60m $gnumake -C sdks/android check-System.Runtime.Serialization
+            ${TESTCMD} --label=System.ServiceModel.Web --timeout=60m $gnumake -C sdks/android check-System.ServiceModel.Web
+            ${TESTCMD} --label=System.Transactions --timeout=60m $gnumake -C sdks/android check-System.Transactions
+            ${TESTCMD} --label=System.Xml --timeout=60m $gnumake -C sdks/android check-System.Xml
+            ${TESTCMD} --label=System.Xml.Linq --timeout=60m $gnumake -C sdks/android check-System.Xml.Linq
+            ${TESTCMD} --label=Mono.CSharp --timeout=60m $gnumake -C sdks/android check-Mono.CSharp
+            ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m $gnumake -C sdks/android check-Mono.Data.Sqlite
+            ${TESTCMD} --label=Mono.Data.Tds --timeout=60m $gnumake -C sdks/android check-Mono.Data.Tds
+            ${TESTCMD} --label=Mono.Security --timeout=60m $gnumake -C sdks/android check-Mono.Security
         fi
         exit 0
 fi
@@ -241,32 +242,33 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 	   export aot_test_suites="System.Core"
 	   export mixed_test_suites="System.Core"
 
-	   ${TESTCMD} --label=provision --timeout=20m --fatal make --output-sync=recurse --trace -C sdks/builds provision-wasm
+	   ${TESTCMD} --label=provision --timeout=20m --fatal $gnumake --output-sync=recurse --trace -C sdks/builds provision-wasm
 
-	   ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-wasm NINJA=
-	   ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
-	   ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
+	   ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-wasm NINJA=
+	   ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
+	   ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=wasm-build --timeout=60m --fatal make -j ${CI_CPU_COUNT} -C sdks/wasm build
-            ${TESTCMD} --label=ch-mini-test --timeout=60m make -C sdks/wasm run-ch-mini
-            ${TESTCMD} --label=v8-mini-test --timeout=60m make -C sdks/wasm run-v8-mini
-            ${TESTCMD} --label=sm-mini-test --timeout=60m make -C sdks/wasm run-sm-mini
-            ${TESTCMD} --label=jsc-mini-test --timeout=60m make -C sdks/wasm run-jsc-mini
+            ${TESTCMD} --label=wasm-build --timeout=60m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
+            ${TESTCMD} --label=ch-mini-test --timeout=60m $gnumake -C sdks/wasm run-ch-mini
+            ${TESTCMD} --label=v8-mini-test --timeout=60m $gnumake -C sdks/wasm run-v8-mini
+            ${TESTCMD} --label=sm-mini-test --timeout=60m $gnumake -C sdks/wasm run-sm-mini
+            ${TESTCMD} --label=jsc-mini-test --timeout=60m $gnumake -C sdks/wasm run-jsc-mini
             #The following tests are not passing yet, so enabling them would make us perma-red
-            #${TESTCMD} --label=mini-corlib --timeout=60m make -C sdks/wasm run-all-corlib
-            #${TESTCMD} --label=mini-system --timeout=60m make -C sdks/wasm run-all-system
-            ${TESTCMD} --label=ch-system-core --timeout=60m make -C sdks/wasm run-ch-system-core
-            ${TESTCMD} --label=v8-system-core --timeout=60m make -C sdks/wasm run-v8-system-core
-            ${TESTCMD} --label=sm-system-core --timeout=60m make -C sdks/wasm run-sm-system-core
-            ${TESTCMD} --label=jsc-system-core --timeout=60m make -C sdks/wasm run-jsc-system-core
-            ${TESTCMD} --label=v8-corlib --timeout=60m make -C sdks/wasm run-v8-corlib
-            ${TESTCMD} --label=aot-mini --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
-            ${TESTCMD} --label=build-aot-all --timeout=60m make -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
-            for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m make -C sdks/wasm run-aot-${suite}; done
-            for suite in ${mixed_test_suites}; do ${TESTCMD} --label=run-aot-mixed-${suite} --timeout=10m make -C sdks/wasm run-aot-mixed-${suite}; done
-            #${TESTCMD} --label=check-aot --timeout=60m make -C sdks/wasm check-aot
-            ${TESTCMD} --label=package --timeout=60m make -C sdks/wasm package
+            #${TESTCMD} --label=mini-corlib --timeout=60m $gnu$gnumake -C sdks/wasm run-all-corlib
+            #${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-system
+            ${TESTCMD} --label=ch-system-core --timeout=60m $gnumake -C sdks/wasm run-ch-system-core
+            ${TESTCMD} --label=v8-system-core --timeout=60m $gnumake -C sdks/wasm run-v8-system-core
+            ${TESTCMD} --label=sm-system-core --timeout=60m $gnumake -C sdks/wasm run-sm-system-core
+            ${TESTCMD} --label=jsc-system-core --timeout=60m $gnumake -C sdks/wasm run-jsc-system-core
+            ${TESTCMD} --label=debugger --timeout=60m $gnumake -C sdks/wasm test-debugger
+            ${TESTCMD} --label=v8-corlib --timeout=60m $gnumake -C sdks/wasm run-v8-corlib
+            ${TESTCMD} --label=aot-mini --timeout=60m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
+            ${TESTCMD} --label=build-aot-all --timeout=60m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
+            for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-${suite}; done
+            for suite in ${mixed_test_suites}; do ${TESTCMD} --label=run-aot-mixed-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-mixed-${suite}; done
+            #${TESTCMD} --label=check-aot --timeout=60m $gnumake -C sdks/wasm check-aot
+            ${TESTCMD} --label=package --timeout=60m $gnumake -C sdks/wasm package
         fi
 	   exit 0
 fi

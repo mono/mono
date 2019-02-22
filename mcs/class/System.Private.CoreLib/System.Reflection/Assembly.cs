@@ -1,42 +1,54 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Reflection
 {
 	[StructLayout (LayoutKind.Sequential)]
 	partial class Assembly
 	{
-		public static Assembly LoadFrom (string assemblyFile)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static Assembly Load (string assemblyString)
 		{
-			throw new NotImplementedException ();
+			if (assemblyString == null)
+				throw new ArgumentNullException (nameof (assemblyString));
+
+			var name = new AssemblyName (assemblyString);
+			// TODO: trigger assemblyFromResolveEvent
+
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return Load (name, ref stackMark, IntPtr.Zero);
 		}
 
-		public static Assembly GetCallingAssembly () { throw null; }
-
-		public static Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static Assembly Load (AssemblyName assemblyRef)
 		{
-			throw new NotImplementedException ();
+			if (assemblyRef == null)
+				throw new ArgumentNullException (nameof (assemblyRef));
+
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return Load (assemblyRef, ref stackMark, IntPtr.Zero);
 		}
 
-		public static Assembly GetEntryAssembly ()
+		internal static Assembly Load (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder)
 		{
-			throw new NotImplementedException ();
+			// TODO: pass AssemblyName
+			return InternalLoad (assemblyRef.FullName, ref stackMark, ptrLoadContextBinder);
 		}
 
-		public static Assembly GetExecutingAssembly () { throw null; }
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern Assembly InternalLoad (string assemblyName, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder);
 
-		public static Assembly Load (AssemblyName assemblyRef) { throw null; }
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern Assembly GetExecutingAssembly ();
 
-		public static Assembly LoadFile (string path) { throw null; }
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern Assembly GetCallingAssembly ();
 
-		public static Assembly LoadFrom (string assemblyFile, byte[] hashValue, System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm) { throw null; }
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern Assembly GetEntryAssembly ();
 
-		public static Assembly Load (string unused)
-		{
-			throw new NotImplementedException ();
-		}
-
-		internal bool IsRuntimeImplemented () => throw new NotImplementedException ();
+		internal bool IsRuntimeImplemented () => this is RuntimeAssembly;
 
 		internal virtual IntPtr MonoAssembly {
 			get {
@@ -45,9 +57,27 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Type InternalGetType (Module module, String name, Boolean throwOnError, Boolean ignoreCase);
+		internal extern Type InternalGetType (Module module, string name, bool throwOnError, bool ignoreCase);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern unsafe static void InternalGetAssemblyName (string assemblyFile, out Mono.MonoAssemblyName aname, out string codebase);
+		internal extern static void InternalGetAssemblyName (string assemblyFile, out Mono.MonoAssemblyName aname, out string codebase);
+
+		#region to be removed
+
+		public static Assembly LoadFrom (string assemblyFile)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static Assembly LoadFile (string path) { throw null; }
+
+		public static Assembly LoadFrom (string assemblyFile, byte[] hashValue, System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm) { throw null; }
+		
+		#endregion
 	}
 }

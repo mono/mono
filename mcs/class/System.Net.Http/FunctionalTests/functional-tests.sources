@@ -1,5 +1,5 @@
-../corefx/Configuration.Certificates.cs
-../corefx/Configuration.Http.cs
+../../test-helpers/Configuration.Certificates.cs
+../../test-helpers/Configuration.Http.cs
 ../corefx/Interop.VersionInfo.cs
 ../corefx/PlatformDetection.cs
 

@@ -2057,6 +2057,7 @@
     <Compile Include="corefx\TimeSpanParse.cs" />
     <Compile Include="corefx\TimeZone.cs" />
     <Compile Include="corert\AddrofIntrinsics.cs" />
+    <Compile Include="corert\CancellationTokenRegistration.cs" />
     <Compile Include="corert\Decimal.DecCalc.cs" />
     <Compile Include="corert\Decimal.cs" />
     <Compile Include="corert\DependencyReductionRootAttribute.cs" />

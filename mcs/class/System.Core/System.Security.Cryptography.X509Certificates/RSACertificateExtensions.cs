@@ -47,5 +47,10 @@ namespace System.Security.Cryptography.X509Certificates
 				throw new ArgumentNullException("certificate");
 			return certificate.PublicKey.Key as RSA;
 		}
+		
+		public static X509Certificate2 CopyWithPrivateKey(this X509Certificate2 certificate, RSA privateKey) 
+		{ 
+			throw new PlatformNotSupportedException(); 
+		}
 	}
 }

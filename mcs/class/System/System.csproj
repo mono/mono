@@ -139,6 +139,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpStatusDescription.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\IPAddressParserStatics.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\IPv4AddressHelper.Common.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\IPv6AddressHelper.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Logging\NetEventSource.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\DomainLiteralReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\DotAtomReader.cs" />
@@ -444,6 +445,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\HttpStatusCode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\HttpVersion.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPAddress.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPAddressParser.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPEndPoint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.ServicePoint\src\System\Net\SecurityProtocolType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebClient\src\System\Net\WebClient.cs" />
@@ -1010,11 +1012,11 @@
     <Compile Include="System\Platform.cs" />
     <Compile Include="System\SRDescriptionAttribute.cs" />
     <Compile Include="System\UriTypeConverter.cs" />
+    <Compile Include="corefx\CertificateRequest.cs" />
     <Compile Include="corefx\NameValueCollection.cs" />
     <Compile Include="corefx\StringDictionary.cs" />
+    <Compile Include="corefx\X509SignatureGenerator.cs" />
     <Compile Include="corefx\ZLibNative.cs" />
-    <Compile Include="corefx\tmp\IPAddressParser.cs" />
-    <Compile Include="corefx\tmp\IPv6AddressHelper.Common.cs" />
   </ItemGroup>
   <!--End of common files-->
   <!--Per-profile files-->

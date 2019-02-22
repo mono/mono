@@ -142,7 +142,7 @@ namespace System
 			return m_serializationCtor;
 		}
 
-		internal Object CreateInstanceSlow(bool publicOnly, bool wrapExceptions, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+		internal Object CreateInstanceSlow(bool publicOnly, bool wrapExceptions, bool skipCheckThis, bool fillCache)
 		{
 			//bool bNeedSecurityCheck = true;
 			//bool bCanBeCached = false;

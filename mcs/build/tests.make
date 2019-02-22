@@ -210,7 +210,7 @@ MKBUNDLE_EXE = $(topdir)/class/lib/$(PROFILE)/mkbundle.exe
 TEST_ASSEMBLIES:=$(sort $(patsubst .//%,%,$(filter-out %.exe.static %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll,$(wildcard $(topdir)/class/lib/$(PROFILE)/tests/*)))))
 
 $(MKBUNDLE_EXE): $(topdir)/tools/mkbundle/mkbundle.cs
-	make -C $(topdir)/tools/mkbundle
+	$(MAKE) -C $(topdir)/tools/mkbundle
 
 mkbundle-all-tests:
 	$(Q_AOT) $(MAKE) -C $(topdir)/class do-test

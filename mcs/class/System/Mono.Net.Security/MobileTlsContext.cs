@@ -146,6 +146,7 @@ namespace Mono.Net.Security
 
 		internal X509Certificate LocalServerCertificate {
 			get;
+			private set;
 		}
 
 		internal abstract bool IsRemoteCertificateAvailable {
@@ -184,6 +185,33 @@ namespace Mono.Net.Security
 		{
 			var result = certificateValidator.ValidateCertificate (TargetHost, IsServer, certificates);
 			return result != null && result.Trusted && !result.UserDenied;
+		}
+
+		protected X509Certificate SelectServerCertificate (string serverIdentity)
+		{
+			// There are three options for selecting the server certificate. When
+			// selecting which to use, we prioritize the new ServerCertSelectionDelegate
+			// API. If the new API isn't used we call LocalCertSelectionCallback (for compat
+			// with .NET Framework), and if neither is set we fall back to using ServerCertificate.
+
+			if (Options.ServerCertSelectionDelegate != null) {
+				LocalServerCertificate = Options.ServerCertSelectionDelegate (serverIdentity);
+
+				if (LocalServerCertificate == null)
+					throw new AuthenticationException (SR.net_ssl_io_no_server_cert);
+			} else if (Settings.ClientCertificateSelectionCallback != null) {
+				var tempCollection = new X509CertificateCollection ();
+				tempCollection.Add (Options.ServerCertificate);
+				// We pass string.Empty here to maintain strict compatability with .NET Framework.
+				LocalServerCertificate = Settings.ClientCertificateSelectionCallback (string.Empty, tempCollection, null, Array.Empty<string>());
+			} else {
+				LocalServerCertificate = Options.ServerCertificate;
+			}
+
+			if (LocalServerCertificate == null)
+				throw new NotSupportedException (SR.net_ssl_io_no_server_cert);
+
+			return LocalServerCertificate;
 		}
 
 		protected X509Certificate SelectClientCertificate (string[] acceptableIssuers)
