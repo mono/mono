@@ -1338,19 +1338,20 @@ namespace System {
 			}
 		}
 
-		internal Assembly DoTypeResolve (Object name_or_tb)
+#if MONO_FEATURE_SRE
+		internal Assembly DoTypeBuilderResolve (TypeBuilder tb)
 		{
 			if (TypeResolve == null)
 				return null;
 
-			string name;
-
-#if MONO_FEATURE_SRE
-			if (name_or_tb is TypeBuilder)
-				name = ((TypeBuilder) name_or_tb).FullName;
-			else
+			return DoTypeResolve (tb.FullName);
+		}
 #endif
-				name = (string) name_or_tb;
+
+		internal Assembly DoTypeResolve (string name)
+		{
+			if (TypeResolve == null)
+				return null;
 
 			/* Prevent infinite recursion */
 			var ht = type_resolve_in_progress;
