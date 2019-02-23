@@ -5728,6 +5728,25 @@ mono_metadata_type_dup (MonoImage *image, const MonoType *o)
 static void
 deep_type_dup_fixup (MonoImage *image, MonoType *r, const MonoType *o);
 
+static uint8_t
+custom_modifier_copy (MonoAggregateModContainer *dest, uint8_t dest_offset, const MonoType *source)
+{
+	if (mono_type_is_aggregate_mods (source)) {
+		MonoAggregateModContainer *src_cmods = mono_type_get_amods (source);
+		memcpy (&dest->modifiers [dest_offset], &src_cmods->modifiers[0], src_cmods->count * sizeof (MonoSingleCustomMod));
+		dest_offset += src_cmods->count;
+	} else {
+		MonoCustomModContainer *src_cmods = mono_type_get_cmods (source);
+		for (int i = 0; i < src_cmods->count; i++) {
+			MonoSingleCustomMod *cmod = &dest->modifiers [dest_offset++];
+			cmod->image = src_cmods->image;
+			cmod->required = src_cmods->modifiers [i].required;
+			cmod->token = src_cmods->modifiers [i].token;
+		}
+	}
+	return dest_offset;
+}
+
 /* makes a dup of 'o' but also appends the custom modifiers from 'cmods_source' */
 static MonoType *
 do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const MonoType *cmods_source)
@@ -5773,14 +5792,8 @@ do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const Mo
 	} else {
 		/* The aggregate case: either o_cmods or extra_cmods has aggregate cmods, or they're both simple but from different images. */
 		uint8_t total_cmods = 0;
-		if (mono_type_is_aggregate_mods (o))
-			total_cmods += mono_type_get_amods (o)->count;
-		else
-			total_cmods += mono_type_get_cmods (o)->count;
-		if (mono_type_is_aggregate_mods (cmods_source))
-			total_cmods += mono_type_get_amods (cmods_source)->count;
-		else
-			total_cmods += mono_type_get_cmods (cmods_source)->count;
+		total_cmods += mono_type_custom_modifier_count (cmods_source);
+		total_cmods += mono_type_custom_modifier_count (o);
 		    
 		gboolean aggregate = TRUE;
 		size_t sizeof_dup = mono_sizeof_type_with_mods (total_cmods, aggregate);
@@ -5798,33 +5811,9 @@ do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const Mo
 		MonoAggregateModContainer *r_container = mono_type_get_amods (r);
 		uint8_t dest_offset = 0;
 
-		if (mono_type_is_aggregate_mods (cmods_source)) {
-			MonoAggregateModContainer *extra_cmods = mono_type_get_amods (cmods_source);
-			memcpy (&r_container->modifiers [dest_offset], &extra_cmods->modifiers[0], extra_cmods->count * sizeof (MonoSingleCustomMod));
-			dest_offset += extra_cmods->count;
-		} else {
-			MonoCustomModContainer *extra_cmods = mono_type_get_cmods (cmods_source);
-			for (int i = 0; i < extra_cmods->count; i++) {
-				MonoSingleCustomMod *cmod = &r_container->modifiers [dest_offset++];
-				cmod->image = extra_cmods->image;
-				cmod->required = extra_cmods->modifiers [i].required;
-				cmod->token = extra_cmods->modifiers [i].token;
-			}
-		}
-
-		if (mono_type_is_aggregate_mods (o)) {
-			MonoAggregateModContainer *o_cmods = mono_type_get_amods (o);
-			memcpy (&r_container->modifiers [dest_offset], &o_cmods->modifiers [0], o_cmods->count * sizeof (MonoSingleCustomMod));
-			dest_offset += o_cmods->count;
-		} else {
-			MonoCustomModContainer *o_cmods = mono_type_get_cmods (o);
-			for (int i = 0; i < o_cmods->count; i++) {
-				MonoSingleCustomMod *cmod = &r_container->modifiers [dest_offset++];
-				cmod->image = o_cmods->image;
-				cmod->required = o_cmods->modifiers [i].required;
-				cmod->token = o_cmods->modifiers [i].token;
-			}
-		}
+		dest_offset = custom_modifier_copy (r_container, dest_offset, cmods_source);
+		dest_offset = custom_modifier_copy (r_container, dest_offset, o);
+		g_assert (dest_offset == total_cmods);
 
 		return r;
 	}
