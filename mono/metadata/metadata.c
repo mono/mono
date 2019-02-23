@@ -5527,49 +5527,21 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 	if (t1->has_cmods != t2->has_cmods)
 		cmod_reject = TRUE;
 	else if (t1->has_cmods && t2->has_cmods) {
-		gboolean t1_aggregate = mono_type_is_aggregate_mods (t1);
-		gboolean t2_aggregate = mono_type_is_aggregate_mods (t2);
-
-		MonoCustomModContainer *cm1 = t1_aggregate ? NULL : mono_type_get_cmods (t1);
-		MonoCustomModContainer *cm2 = t2_aggregate ? NULL : mono_type_get_cmods (t2);
-		MonoAggregateModContainer *am1 = t1_aggregate ? mono_type_get_amods (t1) : NULL;
-		MonoAggregateModContainer *am2 = t2_aggregate ? mono_type_get_amods (t2) : NULL;
-
-		g_assert (cm1 || am1);
-		g_assert (cm2 || am2);
-
-		int count = t1_aggregate ? am1->count : cm1->count;
 		// ECMA 335, 7.1.1:
 		// The CLI itself shall treat required and optional modifiers in the same manner.
 		// Two signatures that differ only by the addition of a custom modifier 
 		// (required or optional) shall not be considered to match.
-		if (count != (t2_aggregate ? am2->count : cm2->count)) {
+		int count = mono_type_custom_modifier_count (t1);
+		if (count != mono_type_custom_modifier_count (t2)) {
 			cmod_reject = TRUE;
-		} else
+		} else {			
 			for (int i=0; i < count; i++) {
 				gboolean cm1_required, cm2_required;
 				uint32_t cm1_token, cm2_token;
 				MonoImage *cm1_image, *cm2_image;
 
-				if (t1_aggregate) {
-					cm1_required = am1->modifiers [i].required;
-					cm1_token = am1->modifiers [i].token;
-					cm1_image = am1->modifiers [i].image;
-				} else {
-					cm1_required = cm1->modifiers [i].required;
-					cm1_token = cm1->modifiers [i].token;
-					cm1_image = cm1->image;
-				}
-
-				if (t2_aggregate) {
-					cm2_required = am2->modifiers [i].required;
-					cm2_token = am2->modifiers [i].token;
-					cm2_image = am2->modifiers [i].image;
-				} else {
-					cm2_required = cm2->modifiers [i].required;
-					cm2_token = cm2->modifiers [i].token;
-					cm2_image = cm2->image;
-				}
+				cm1_token = mono_type_get_custom_modifier (t1, i, &cm1_required, &cm1_image);
+				cm2_token = mono_type_get_custom_modifier (t2, i, &cm2_required, &cm2_image);
 
 				if (cm1_required != cm2_required) {
 					cmod_reject = TRUE;
@@ -5588,6 +5560,7 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 					break;
 				}
 			}
+		}
 	}
 
 	gboolean result = FALSE;
