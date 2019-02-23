@@ -103,6 +103,31 @@ mono_type_custom_modifier_count (const MonoType *t)
 		return full->mods.cmods.count;
 }
 
+static inline uint32_t
+mono_type_get_custom_modifier (const MonoType *ty, uint8_t idx, gboolean *required, MonoImage **image)
+{
+	g_assert (ty->has_cmods);
+	if (mono_type_is_aggregate_mods (ty)) {
+		MonoAggregateModContainer *amods = mono_type_get_amods (ty);
+		g_assert (idx < amods->count);
+		MonoSingleCustomMod *cmod = &amods->modifiers [idx];
+		if (required)
+			*required = !!cmod->required;
+		if (image)
+			*image = cmod->image;
+		return cmod->token;
+	} else {
+		MonoCustomModContainer *cmods = mono_type_get_cmods (ty);
+		g_assert (idx < cmods->count);
+		MonoCustomMod *cmod = &cmods->modifiers [idx];
+		if (required)
+			*required = !!cmod->required;
+		if (image)
+			*image = cmods->image;
+		return cmod->token;
+	}
+}
+
 // Note: sizeof (MonoType) is dangerous. It can copy the num_mods
 // field without copying the variably sized array. This leads to
 // memory unsafety on the stack and/or heap, when we try to traverse
