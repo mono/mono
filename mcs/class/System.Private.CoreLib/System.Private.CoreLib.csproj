@@ -206,10 +206,8 @@
       <Compile Include="..\corlib\System.Diagnostics\Debugger.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
-      <Compile Include="..\corlib\System.Runtime.CompilerServices\RuntimeHelpers.cs" />
 
       <Compile Include="..\corlib\System.Threading\Monitor.cs" />
-      <Compile Include="..\corlib\System.Threading\NativeEventCalls.cs" />
       <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
       <Compile Include="..\corlib\System.Threading\Thread.cs" />
       <Compile Include="..\corlib\System.Threading\WaitHandle.cs" />
