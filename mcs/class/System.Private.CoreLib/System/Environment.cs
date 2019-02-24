@@ -31,6 +31,11 @@ namespace System
 			get;
 		}
 
+		public static string StackTrace {
+			[MethodImpl (MethodImplOptions.NoInlining)] // Prevent inlining from affecting where the stacktrace starts
+			get => new StackTrace (true).ToString (System.Diagnostics.StackTrace.TraceFormat.Normal);
+		}
+
 		public extern static int TickCount {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
@@ -109,7 +114,7 @@ namespace System
 				st = new StackTrace (needFileInfo);
 			else
 				st = new StackTrace (e, needFileInfo);
-			return st.ToString (StackTrace.TraceFormat.Normal);
+			return st.ToString (System.Diagnostics.StackTrace.TraceFormat.Normal);
 		}
 
 		internal static int GetPageSize () => 0;
