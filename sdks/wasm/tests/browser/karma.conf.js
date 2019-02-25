@@ -31,7 +31,13 @@ module.exports = function(config) {
         //load karma-jasmine-dom and karma-jasmine
         frameworks: ['jasmine-dom','jasmine','mocha', 'chai'],
         //load karma-chrome-launcher
-        browsers: ['ChromeHeadless'],
+        browsers: ['ChromeHeadless', 'NoSandBoxHeadless'],
+        customLaunchers: {
+            NoSandBoxHeadless: {
+                base: 'ChromeHeadless',
+                flags: ['--no-sandbox']
+            }
+        },
         logLevel: config.LOG_INFO,
         client: {
             //If false, Karma will not remove iframes upon the completion of running the tests
