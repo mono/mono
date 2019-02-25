@@ -159,6 +159,7 @@
       <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyDependencyResolver.cs" />
       <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
+      <Compile Include="System.Security\DynamicSecurityMethodAttribute.cs" />
       <Compile Include="System.Threading\EventWaitHandle.cs" />
       <Compile Include="System.Threading\Interlocked.cs" />
       <Compile Include="System.Threading\Mutex.cs" />
