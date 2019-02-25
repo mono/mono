@@ -49,7 +49,6 @@ module.exports = function(config) {
                     //the 'index' tag will be used to get the access to the Document object of 'index.html'
                     {src:'./publish/http-spec.html', tag:'httpspec'}
                 ],
-                auto: true,
                 timeout: 10000,
                 abort: 60000,
                 width: "730px",
