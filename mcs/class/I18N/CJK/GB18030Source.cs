@@ -187,8 +187,10 @@ namespace I18N.CJK
 					startIgnore = m.GEnd + 1;
 				}
 			}
-//			return ToUcsRaw ((int) (linear - gbxBase));
-			throw new SystemException (String.Format ("GB18030 INTERNAL ERROR (should not happen): GBX {0:x02} {1:x02} {2:x02} {3:x02}", b1, b2, b3, b4));
+
+			// All 4 bytes look valid but we didn't find any appropriate range.
+			// So just return negative result for it.
+			return -4;
 		}
 
 		public static long FromUCSSurrogate (int cp)
