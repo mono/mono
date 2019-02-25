@@ -116,16 +116,14 @@ mono_custom_modifiers_get_desc (GString *res, const MonoType *type, gboolean inc
 	ERROR_DECL (error);
 	int count = mono_type_custom_modifier_count (type);
 	for (int i = 0; i < count; ++i) {
-		MonoImage *image;
 		gboolean required;
-		uint32_t token = mono_type_get_custom_modifier (type, i, &required, &image);
+		MonoType *cmod_type = mono_type_get_custom_modifier (type, i, &required, error);
+		mono_error_assert_ok (error);
 		if (required)
 			g_string_append (res, " modreq(");
 		else
 			g_string_append (res, " modopt(");
-		MonoClass *cmod_class = mono_class_get_checked (image, token, error);
-		mono_error_assert_ok (error);
-		mono_type_get_desc (res, &cmod_class->_byval_arg, include_namespace);
+		mono_type_get_desc (res, cmod_type, include_namespace);
 		g_string_append (res, ")");
 	}
 }

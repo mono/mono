@@ -38,8 +38,7 @@ struct _MonoType {
 
 typedef struct {
 	unsigned int required : 1;
-	unsigned int token : 31;
-	MonoImage *image;
+	MonoType *type;
 } MonoSingleCustomMod;
 
 /* Aggregate custom modifiers can happen if a generic VAR or MVAR is inflated,
@@ -47,6 +46,11 @@ typedef struct {
  * modifiers, but they come from different images.  (e.g. inflating 'class G<T>
  * {void Test (T modopt(IsConst) t);}' with 'int32 modopt(IsLong)' where G is
  * in image1 and the int32 is in image2.)
+ *
+ * Moreover, we can't just store an image and a type token per modifier, because
+ * Roslyn and C++/CLI sometimes create modifiers that mention generic parameters that must be inflated, like:
+ *     void .CL1`1.Test(!0 modopt(System.Nullable`1<!0>))
+ * So we have to store a resolved MonoType*.
  *
  * FIXME: types with aggregate custom modifiers really ought to be allocated in
  * the mempool of a MonoImageSet to ensure that don't have danging image
@@ -103,30 +107,8 @@ mono_type_custom_modifier_count (const MonoType *t)
 		return full->mods.cmods.count;
 }
 
-static inline uint32_t
-mono_type_get_custom_modifier (const MonoType *ty, uint8_t idx, gboolean *required, MonoImage **image)
-{
-	g_assert (ty->has_cmods);
-	if (mono_type_is_aggregate_mods (ty)) {
-		MonoAggregateModContainer *amods = mono_type_get_amods (ty);
-		g_assert (idx < amods->count);
-		MonoSingleCustomMod *cmod = &amods->modifiers [idx];
-		if (required)
-			*required = !!cmod->required;
-		if (image)
-			*image = cmod->image;
-		return cmod->token;
-	} else {
-		MonoCustomModContainer *cmods = mono_type_get_cmods (ty);
-		g_assert (idx < cmods->count);
-		MonoCustomMod *cmod = &cmods->modifiers [idx];
-		if (required)
-			*required = !!cmod->required;
-		if (image)
-			*image = cmods->image;
-		return cmod->token;
-	}
-}
+MonoType *
+mono_type_get_custom_modifier (const MonoType *ty, uint8_t idx, gboolean *required, MonoError *error);
 
 // Note: sizeof (MonoType) is dangerous. It can copy the num_mods
 // field without copying the variably sized array. This leads to

@@ -633,17 +633,39 @@ can_inflate_gparam_with (MonoGenericParam *gparam, MonoType *type)
 }
 
 static MonoType*
+inflate_generic_custom_modifiers (MonoImage *image, const MonoType *type, MonoGenericContext *context, MonoError *error);
+
+static MonoType*
 inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *context, MonoError *error)
 {
+	gboolean changed = FALSE;
 	error_init (error);
+
+	/* C++/CLI (and some Roslyn tests) constructs method signatures like:
+	 *     void .CL1`1.Test(!0 modopt(System.Nullable`1<!0>))
+	 * where !0 has a custom modifier which itself mentions the type variable.
+	 * So we need to potentially inflate the modifiers.
+	 */
+	if (type->has_cmods) {
+		MonoType *new_type = inflate_generic_custom_modifiers (image, type, context, error);
+		return_val_if_nok (error, NULL);
+		if (new_type != NULL) {
+			type = new_type;
+			changed = TRUE;
+		}
+	}
 
 	switch (type->type) {
 	case MONO_TYPE_MVAR: {
 		MonoType *nt;
 		int num = mono_type_get_generic_param_num (type);
 		MonoGenericInst *inst = context->method_inst;
-		if (!inst)
-			return NULL;
+		if (!inst) {
+			if (!changed)
+				return NULL;
+			else
+				return type;
+		}
 		MonoGenericParam *gparam = type->data.generic_param;
 		if (num >= inst->type_argc) {
 			const char *pname = mono_generic_param_name (gparam);
@@ -672,8 +694,12 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		MonoType *nt;
 		int num = mono_type_get_generic_param_num (type);
 		MonoGenericInst *inst = context->class_inst;
-		if (!inst)
-			return NULL;
+		if (!inst) {
+			if (!changed)
+				return NULL;
+			else
+				return type;
+		}
 		MonoGenericParam *gparam = type->data.generic_param;
 		if (num >= inst->type_argc) {
 			const char *pname = mono_generic_param_name (gparam);
@@ -714,8 +740,10 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 	case MONO_TYPE_SZARRAY: {
 		MonoClass *eclass = type->data.klass;
 		MonoType *nt, *inflated = inflate_generic_type (NULL, m_class_get_byval_arg (eclass), context, error);
-		if (!inflated || !mono_error_ok (error))
+		if ((!inflated && !changed) || !mono_error_ok (error))
 			return NULL;
+		if (!inflated)
+			return type;
 		nt = mono_metadata_type_dup (image, type);
 		nt->data.klass = mono_class_from_mono_type_internal (inflated);
 		mono_metadata_free_type (inflated);
@@ -724,8 +752,10 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 	case MONO_TYPE_ARRAY: {
 		MonoClass *eclass = type->data.array->eklass;
 		MonoType *nt, *inflated = inflate_generic_type (NULL, m_class_get_byval_arg (eclass), context, error);
-		if (!inflated || !mono_error_ok (error))
+		if ((!inflated && !changed) || !mono_error_ok (error))
 			return NULL;
+		if (!inflated)
+			return type;
 		nt = mono_metadata_type_dup (image, type);
 		nt->data.array->eklass = mono_class_from_mono_type_internal (inflated);
 		mono_metadata_free_type (inflated);
@@ -735,8 +765,12 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		MonoGenericClass *gclass = type->data.generic_class;
 		MonoGenericInst *inst;
 		MonoType *nt;
-		if (!gclass->context.class_inst->is_open)
-			return NULL;
+		if (!gclass->context.class_inst->is_open) {
+			if (!changed)
+				return NULL;
+			else
+				return type;
+		}
 
 		inst = mono_metadata_inflate_generic_inst (gclass->context.class_inst, context, error);
 		return_val_if_nok (error, NULL);
@@ -744,8 +778,12 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		if (inst != gclass->context.class_inst)
 			gclass = mono_metadata_lookup_generic_class (gclass->container_class, inst, gclass->is_dynamic);
 
-		if (gclass == type->data.generic_class)
-			return NULL;
+		if (gclass == type->data.generic_class) {
+			if (!changed)
+				return NULL;
+			else
+				return type;
+		}
 
 		nt = mono_metadata_type_dup (image, type);
 		nt->data.generic_class = gclass;
@@ -759,15 +797,23 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 		MonoGenericClass *gclass = NULL;
 		MonoType *nt;
 
-		if (!container)
-			return NULL;
+		if (!container) {
+			if (!changed)
+				return NULL;
+			else
+				return type;
+		}
 
 		/* We can't use context->class_inst directly, since it can have more elements */
 		inst = mono_metadata_inflate_generic_inst (container->context.class_inst, context, error);
 		return_val_if_nok (error, NULL);
 
-		if (inst == container->context.class_inst)
-			return NULL;
+		if (inst == container->context.class_inst) {
+			if (!changed)
+				return NULL;
+			else
+				return type;
+		}
 
 		gclass = mono_metadata_lookup_generic_class (klass, inst, image_is_dynamic (m_class_get_image (klass)));
 
@@ -778,16 +824,53 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 	}
 	case MONO_TYPE_PTR: {
 		MonoType *nt, *inflated = inflate_generic_type (image, type->data.type, context, error);
-		if (!inflated || !mono_error_ok (error))
+		if ((!inflated && !changed) || !mono_error_ok (error))
 			return NULL;
+		if (!inflated && changed)
+			return type;
 		nt = mono_metadata_type_dup (image, type);
 		nt->data.type = inflated;
 		return nt;
 	}
 	default:
-		return NULL;
+		if (!changed)
+			return NULL;
+		else
+			return type;
 	}
 	return NULL;
+}
+
+static MonoType*
+inflate_generic_custom_modifiers (MonoImage *image, const MonoType *type, MonoGenericContext *context, MonoError *error)
+{
+	g_assert (type->has_cmods);
+	int count = mono_type_custom_modifier_count (type);
+	gboolean changed = FALSE;
+	MonoType *new_type = g_alloca (mono_sizeof_type_with_mods (count, TRUE));
+	memcpy (new_type, type, MONO_SIZEOF_TYPE);
+	mono_type_with_mods_init (new_type, count, TRUE);
+	MonoAggregateModContainer *new_mods = mono_type_get_amods (new_type);
+
+	for (int i = 0; i < count; ++i) {
+		gboolean required;
+		MonoType *cmod_old = mono_type_get_custom_modifier (type, i, &required, error);
+		return_val_if_nok (error, NULL);
+		MonoType *cmod_new = inflate_generic_type (NULL, cmod_old, context, error); /* FIXME leaks */
+		return_val_if_nok (error, NULL);
+		if (cmod_new)
+			changed = TRUE;
+		new_mods->modifiers [i].required = required;
+		new_mods->modifiers [i].type = cmod_new ? cmod_new : cmod_old;
+	}
+	if (changed) {
+		char *full_name = mono_type_full_name ((MonoType*)type);
+		printf ("\n\n\tcustom modifier on '%s' affected by subsititution\n\n\n", full_name);
+		g_free (full_name);
+	}
+	if (!changed)
+		return NULL;
+	return mono_metadata_type_dup (image, new_type);
 }
 
 MonoGenericContext *
