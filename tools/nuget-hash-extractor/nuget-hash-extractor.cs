@@ -127,7 +127,7 @@ class Driver {
 		} else {
 			dump_asm = true;
 		}
-		foreach (var f in Directory.GetFiles (args [0], "*.nupkg")) {
+		foreach (var f in Directory.GetFiles (args [0], "*.nupkg").OrderBy (nupkg => Path.GetFileName (nupkg))) {
 			DumpNuget (f);
 		}
 
