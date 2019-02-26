@@ -11,7 +11,7 @@ LIBRARY = netstandard.dll
 
 KEYFILE = ../../Open.snk
 LIBRARY_SNK = $(KEYFILE)
-SIGN_FLAGS = /delaysign /nowarn:1616,1699 /nowarn:618
+SIGN_FLAGS = /delaysign /nowarn:1616,1699,618 
 LIB_REFS = System System.Xml System.Xml.Linq System.Core System.Numerics System.Net.Http \
 System.IO.Compression System.ComponentModel.Composition System.IO.Compression.FileSystem
 

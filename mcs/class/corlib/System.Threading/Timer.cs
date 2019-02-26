@@ -65,7 +65,7 @@ namespace System.Threading
 
 	[ComVisible (true)]
 	public sealed class Timer
-		: MarshalByRefObject, IDisposable
+		: MarshalByRefObject, IDisposable, IAsyncDisposable
 	{
 		static Scheduler scheduler => Scheduler.Instance;
 #region Timer instance fields

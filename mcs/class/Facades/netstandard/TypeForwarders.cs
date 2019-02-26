@@ -2414,7 +2414,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.AsyncIteratorStateMachineAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.ConfiguredAsyncDisposable))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable<>))]
-//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.SwitchExpressionException))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.SwitchExpressionException))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.ManualResetValueTaskSourceCore<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.HashCode))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.MathF))]
@@ -2443,14 +2443,16 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Text.Utf8Parser))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Collections.Generic.CollectionExtensions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Collections.Generic.KeyValuePair))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.Common.DbProviderFactories))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.Tracing.EventSourceCreatedEventArgs))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.ColorConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.KnownColor))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.Common.DbProviderFactories))]
+#if !MOBILE
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.ColorConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.PointConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.RectangleConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.SizeConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.SizeFConverter))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Globalization.ISOWeek))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.EnumerationOptions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.MatchCasing))]
@@ -2537,6 +2539,9 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.SequencePosition))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.CryptographicOperations))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.ECDiffieHellman))]
+#if !MOBILE
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Serialization.SchemaImporter))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.CertificateRequest))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.DSACertificateExtensions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.SubjectAlternativeNameBuilder))]
@@ -2547,5 +2552,4 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.IValueTaskSource<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.ValueTaskSourceOnCompletedFlags))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.ValueTaskSourceStatus))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Serialization.SchemaImporter))]
 #endif
