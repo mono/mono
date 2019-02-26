@@ -459,6 +459,12 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	 */
 	type = m_class_get_byval_arg (klass)->byref == type->byref ? m_class_get_byval_arg (klass) : m_class_get_this_arg (klass);
 
+	// We don't want to return types with custom modifiers to the managed
+	// world since they're hard to distinguish from plain types using the
+	// reflection APIs, but they are not ReferenceEqual to the unadorned
+	// types.
+	g_assert (!type->has_cmods);
+
 	/* void is very common */
 	if (type->type == MONO_TYPE_VOID && domain->typeof_void)
 		return (MonoReflectionType*)domain->typeof_void;
