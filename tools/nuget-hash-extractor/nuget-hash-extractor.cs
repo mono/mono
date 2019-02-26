@@ -102,7 +102,8 @@ class Driver {
 			// Sory by assembly name and version
 			var query = ignoredAsmTable.Values
 						.GroupBy (data => data.AssemblyName)
-						.Select (group => new { AssemblyName = group.Key, NuGets = group.OrderBy (data => data.AssemblyVersion) });
+						.OrderBy (group => group.Key)
+						.Select (group => new { AssemblyName = group.Key, NuGets = group.OrderBy (data => data.AssemblyVersion).ThenBy (data => data.ModuleVersionId) });
 
 			foreach (var g in query) {
 				foreach (var data in g.NuGets) {
