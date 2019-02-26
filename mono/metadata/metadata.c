@@ -5496,12 +5496,8 @@ mono_metadata_fnptr_equal (MonoMethodSignature *s1, MonoMethodSignature *s2, gbo
 static gboolean
 use_strict_equivalence (void)
 {
-	static int i = -1;
+	static int i = 1;
 
-	if (G_UNLIKELY (i < 0)) {
-		i = g_hasenv ("ALEKSEY_STRICT") ? 1 : 0;
-		
-	}
 	return i > 0;
 }
 
