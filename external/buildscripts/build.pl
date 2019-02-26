@@ -369,11 +369,11 @@ if ($build)
 		print ">>> Building autoconf, texinfo, automake, and libtool if needed...\n";
 		my $autoconfVersion = "2.69";
 		my $texinfoVersion = "4.8";
-		my $automakeVersion = "1.15";
+		my $automakeVersion = "1.16.1";
 		my $libtoolVersion = "2.4.6";
 		my $autoconfDir = "$externalBuildDeps/autoconf-2-69/autoconf-$autoconfVersion";
 		my $texinfoDir = "$externalBuildDeps/texinfo-4-8/texinfo-$texinfoVersion";
-		my $automakeDir = "$externalBuildDeps/automake-1-15/automake-$automakeVersion";
+		my $automakeDir = "$externalBuildDeps/automake-1-16-1/automake-$automakeVersion";
 		my $libtoolDir = "$externalBuildDeps/libtool-2-4-6/libtool-$libtoolVersion";
 		my $builtToolsDir = "$externalBuildDeps/built-tools";
 		
@@ -426,7 +426,7 @@ if ($build)
 		elsif (!(-d "$automakeDir"))
 		{
 			print(">>> Extracting automake\n");
-			chdir("$externalBuildDeps/automake-1-15") eq 1 or die ("failed to chdir to external directory\n");
+			chdir("$externalBuildDeps/automake-1-16-1") eq 1 or die ("failed to chdir to external directory\n");
 			system("tar xzf automake-$automakeVersion.tar.gz") eq 0  or die ("failed to extract automake\n");
 		}
 		if (-d "$automakeDir")
