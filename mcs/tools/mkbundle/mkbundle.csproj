@@ -31,7 +31,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
     <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
-    <DefineConstants>STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>STATIC;NO_SYMBOL_WRITER;NO_AUTHENTICODE;NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
