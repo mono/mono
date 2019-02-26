@@ -43,18 +43,4 @@ namespace Microsoft.Win32
 			internal const int EVENT_CONTROL_CODE_CAPTURE_STATE = 2;
 		}
 	}
-
-	// TODO: Should already exist somewhere else
-	static class Win32Native
-	{
-		internal static int GetCurrentThreadId ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		internal static uint GetCurrentProcessId ()
-		{
-			throw new NotImplementedException ();
-		}
-	}
 }
