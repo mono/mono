@@ -2406,6 +2406,16 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Xsl.XsltSettings))]
 
 #if NS21
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Range))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Index))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Collections.Generic.IAsyncEnumerable<>))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Collections.Generic.IAsyncEnumerator<>))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.AsyncIteratorMethodBuilder))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.AsyncIteratorStateMachineAttribute))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.ConfiguredAsyncDisposable))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable<>))]
+//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.SwitchExpressionException))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.ManualResetValueTaskSourceCore<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.HashCode))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.MathF))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Memory<>))]
