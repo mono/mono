@@ -913,6 +913,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category("AndroidSdksNotWorking")]
 		public void Move ()
 		{
 			string bar = tmpFolder + Path.DirectorySeparatorChar + "bar";
@@ -2503,6 +2504,7 @@ namespace MonoTests.System.IO
 
 		[Test]
 		[Category("NotWasm")]
+		[Category("AndroidSdksNotWorking")]
 		public void ReplaceTest ()
 		{
 			string tmp = Path.Combine (tmpFolder, "ReplaceTest");

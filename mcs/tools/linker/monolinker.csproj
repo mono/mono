@@ -31,7 +31,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'wasm_tools' ">
     <OutputPath>./../../class/lib/wasm_tools</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm_tools</IntermediateOutputPath>
-    <DefineConstants>NET_4_6;MONO</DefineConstants>
+    <DefineConstants>NET_4_6;MONO;WASM_TOOLS</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
