@@ -77,24 +77,6 @@ namespace Mono.Security.Cryptography {
 			return null;
 		}
 
-#if INSIDE_CORLIB
-		static internal bool TryImportCapiPrivateKeyBlob (byte[] blob, int offset)
-		{
-			try {
-				var rsap = GetParametersFromCapiPrivateKeyBlob (blob, offset);
-				// Since we are only checking whether this throws an exception and
-				// not actually returning the `RSA` object, we can use `RSAManaged`
-				// here because that's what the `RSACryptoServiceProvider` implementation
-				// does internally.
-				var rsa = new RSAManaged ();
-				rsa.ImportParameters (rsap);
-				return true;
-			} catch (CryptographicException) {
-				return false;
-			}
-		}
-#endif
-
 		// convert the key from PRIVATEKEYBLOB to RSA
 		// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/security/Security/private_key_blobs.asp
 		// e.g. SNK files, PVK files
@@ -104,38 +86,6 @@ namespace Mono.Security.Cryptography {
 		}
 
 		static public RSA FromCapiPrivateKeyBlob (byte[] blob, int offset) 
-		{
-			RSAParameters rsap = GetParametersFromCapiPrivateKeyBlob (blob, offset);
-
-#if INSIDE_CORLIB && MOBILE
-			RSA rsa = RSA.Create ();
-			rsa.ImportParameters (rsap);
-#else
-			RSA rsa = null;
-			try {
-				rsa = RSA.Create ();
-				rsa.ImportParameters (rsap);
-			}
-			catch (CryptographicException ce) {
-				// this may cause problem when this code is run under
-				// the SYSTEM identity on Windows (e.g. ASP.NET). See
-				// http://bugzilla.ximian.com/show_bug.cgi?id=77559
-				try {
-					CspParameters csp = new CspParameters ();
-					csp.Flags = CspProviderFlags.UseMachineKeyStore;
-					rsa = new RSACryptoServiceProvider (csp);
-					rsa.ImportParameters (rsap);
-				}
-				catch {
-					// rethrow original, not the later, exception if this fails
-					throw ce;
-				}
-			}
-#endif
-			return rsa;
-		}
-
-		static RSAParameters GetParametersFromCapiPrivateKeyBlob (byte[] blob, int offset)
 		{
 			if (blob == null)
 				throw new ArgumentNullException ("blob");
@@ -211,10 +161,37 @@ namespace Mono.Security.Cryptography {
 					Buffer.BlockCopy (blob, pos, rsap.D, 0, byteLen);
 					Array.Reverse (rsap.D);
 				}
-				return rsap;
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				throw new CryptographicException ("Invalid blob.", e);
 			}
+
+#if INSIDE_CORLIB && MOBILE
+			RSA rsa = RSA.Create ();
+			rsa.ImportParameters (rsap);
+#else
+			RSA rsa = null;
+			try {
+				rsa = RSA.Create ();
+				rsa.ImportParameters (rsap);
+			}
+			catch (CryptographicException ce) {
+				// this may cause problem when this code is run under
+				// the SYSTEM identity on Windows (e.g. ASP.NET). See
+				// http://bugzilla.ximian.com/show_bug.cgi?id=77559
+				try {
+					CspParameters csp = new CspParameters ();
+					csp.Flags = CspProviderFlags.UseMachineKeyStore;
+					rsa = new RSACryptoServiceProvider (csp);
+					rsa.ImportParameters (rsap);
+				}
+				catch {
+					// rethrow original, not the later, exception if this fails
+					throw ce;
+				}
+			}
+#endif
+			return rsa;
 		}
 
 		static public DSA FromCapiPrivateKeyBlobDSA (byte[] blob)
