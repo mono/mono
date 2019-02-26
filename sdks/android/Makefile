@@ -175,4 +175,4 @@ build-BCL: package local.properties
 
 .PHONY: check-%
 check-%: build-BCL $(if $(MONO_WAIT_LLDB),lldb-mono-0.1/xa-lldb)
-	PATH="$$PATH:$(dir $(ADB))" mono $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe -labels -exclude:NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking -android:$(PACKAGE)/$(RUNNER) -result:TestResult-$*.xml -format:nunit2 $(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_$*_test.dll
+	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe -labels -exclude:NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,AndroidSdksNotWorking -android:$(PACKAGE)/$(RUNNER) -result:TestResult-$*.xml -format:nunit2 $(TOP)/sdks/out/android-bcl/monodroid/tests/monodroid_$*_test.dll
