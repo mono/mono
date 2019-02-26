@@ -2139,6 +2139,7 @@
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
+        <Compile Include="System\Guid.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
@@ -2163,6 +2164,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.Registry.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\User32\Interop.LoadString.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Windows.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\Win32Marshal.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
@@ -2284,6 +2286,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
@@ -2354,6 +2357,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
@@ -2424,6 +2428,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
@@ -2501,6 +2506,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.Registry.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\User32\Interop.LoadString.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Windows.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\Win32Marshal.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
@@ -2626,6 +2632,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.StringSerializer.cs" />
@@ -2698,6 +2705,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.StringSerializer.cs" />
@@ -2770,6 +2778,7 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadLink.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.StringSerializer.cs" />
@@ -3042,6 +3051,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
