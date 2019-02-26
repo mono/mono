@@ -214,7 +214,9 @@ namespace I18N.CJK
 					startIgnore = m.UEnd + 1;
 				}
 			}
-			throw new SystemException (String.Format ("GB18030 INTERNAL ERROR (should not happen): UCS {0:x06}", cp));
+
+			// Consider it as invalid character
+			return -1;
 		}
 
 		static long FromGBXRaw (
