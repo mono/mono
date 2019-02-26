@@ -4754,8 +4754,6 @@ mini_get_method_allow_open (MonoMethod *m, guint32 token, MonoClass *klass, Mono
 			method = mono_class_inflate_generic_method_checked (method, context, error);
 		}
 	} else {
-		aleksey_check_method (m, token);
-
 		method = mono_get_method_checked (m_class_get_image (m->klass), token, klass, context, error);
 	}
 
