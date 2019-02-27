@@ -10,7 +10,7 @@
 using NUnit.Framework;
 using System;
 using System.Threading;
-using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Threading
 {
@@ -46,13 +46,7 @@ namespace MonoTests.System.Threading
 		// The exchange tests are broken on AIX and cause a runtime lockup.
 		void AssertNotAix()
 		{
-			// Because we have no NotWorking category for AIX, use
-			// reflection to access the internal System.Platform
-			// as recommended. (XXX: RuntimeInformation instead?)
-			var platform = Assembly.Load("System")
-				?.GetType("System.Platform");
-			if ((bool)platform?.GetMethod("get_IsAix")?.Invoke(platform, null) == true
-				|| (bool)platform?.GetMethod("get_IsIBMi")?.Invoke(platform, null) == true)
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("AIX")))
 			{
 				Assert.Ignore ("Skipping on AIX/i");
 			}

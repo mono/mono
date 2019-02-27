@@ -15,7 +15,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
-using System.Reflection;
 
 using NUnit.Framework;
 
@@ -1036,13 +1035,7 @@ namespace MonoTests.System.Diagnostics
 		[NUnit.Framework.Category ("MobileNotWorking")]
 		public void StandardInputWrite ()
 		{
-			// Because we have no NotWorking category for AIX, use
-			// reflection to access the internal System.Platform
-			// as recommended. (XXX: RuntimeInformation instead?)
-			var platform = Assembly.Load("System")
-				?.GetType("System.Platform");
-			if ((bool)platform?.GetMethod("get_IsAix")?.Invoke(platform, null) == true
-				|| (bool)platform?.GetMethod("get_IsIBMi")?.Invoke(platform, null) == true)
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Create("AIX")))
 			{
 				// This test is broken on AIX because the fork child seems to become comatose.
 				Assert.Ignore ("Skipping on AIX/i");
