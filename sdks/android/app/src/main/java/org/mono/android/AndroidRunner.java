@@ -99,12 +99,11 @@ public class AndroidRunner extends Instrumentation
 		}
 
 		if (testsuite.startsWith("debugger:")) {
-			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite.substring(9), true, waitForLLDB);
-		// TODO
-		// } else if (testsuite.startsWith("profiler:")) {
-		// 	runDebuggerTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite.substring(9));
+			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite.substring(9), true, false, waitForLLDB);
+		} else if (testsuite.startsWith("profiler:")) {
+			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite.substring(9), false, true, waitForLLDB);
 		} else {
-			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite, false, waitForLLDB);
+			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite, false, false, waitForLLDB);
 		}
 
 		runOnMainSync (new Runnable () {
@@ -149,7 +148,7 @@ public class AndroidRunner extends Instrumentation
 		out.close ();
 	}
 
-	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir, String assemblyName, boolean isDebugger, boolean waitForLLDB);
+	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir, String assemblyName, boolean isDebugger, boolean isProfiler, boolean waitForLLDB);
 
 	static void WriteLineToInstrumentation (String line)
 	{

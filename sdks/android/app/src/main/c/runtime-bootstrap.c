@@ -328,7 +328,7 @@ create_and_set (const char *home, const char *relativePath, const char *envvar)
 
 void
 Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring j_files_dir, jstring j_cache_dir,
-	jstring j_native_library_dir, jstring j_assembly_dir, jstring j_assembly_name, jboolean is_debugger, jboolean wait_for_lldb)
+	jstring j_native_library_dir, jstring j_assembly_dir, jstring j_assembly_name, jboolean is_debugger, jboolean is_profiler, jboolean wait_for_lldb)
 {
 	MonoDomain *root_domain;
 	MonoMethod *run_tests_method;
@@ -352,7 +352,8 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	_log ("-- native library dir %s", native_library_dir);
 	_log ("-- assembly dir %s", assembly_dir);
 	_log ("-- assembly name %s", assembly_name);
-	_log ("-- is_debugger %d", is_debugger);
+	_log ("-- is debugger %d", is_debugger);
+	_log ("-- is profiler %d", is_profiler);
 	prctl (PR_SET_DUMPABLE, 1);
 
 	snprintf (buff, sizeof(buff), "%s/libmonosgen-2.0.so", native_library_dir);
@@ -491,8 +492,10 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 
 		// Properly disconnect the debugger
 		mono_runtime_quit ();
-	// TODO: profiler
-	// } else if (is_profiler) {
+	} else if (is_profiler) {
+		// TODO: profiler
+		_log ("Unsupported profiler");
+		_exit (1);
 	} else {
 		char *argv[] = { "nunitlite.dll" };
 		mono_runtime_set_main_args (1, argv);

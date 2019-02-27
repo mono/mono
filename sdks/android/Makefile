@@ -150,7 +150,7 @@ app/assets/x86_64/lldb-server: lldb-mono-0.1/android/x86_64/lldb-server | app/as
 
 .stamp-package: app/assets/x86_64/lldb-server
 
-## Run Mono.Debugger.Soft and BCL tests
+## Run Mono.Debugger.Soft, Mono.Profiler.Log and BCL tests
 
 .stamp-package:
 	touch $@
@@ -169,6 +169,18 @@ check-Mono.Debugger.Soft: .stamp-install
 		-format:nunit2 \
 		$(if $(TESTNAME),-test:$(TESTNAME)) \
 		$(TOP)/sdks/out/android-bcl/monodroid_tools/tests/monodroid_tools_Mono.Debugger.Soft_test.dll
+
+# TODO: profiler
+# .PHONY: check-Mono.Profiler.Log
+# check-Mono.Profiler.Log: .stamp-install
+# 	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe \
+# 		-labels \
+# 		-exclude:NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,AndroidSdksNotWorking \
+# 		-remote:android:$(PACKAGE)/$(RUNNER) \
+# 		-result:TestResult-Mono.Profiler.Log.xml \
+# 		-format:nunit2 \
+# 		$(if $(TESTNAME),-test:$(TESTNAME)) \
+# 		$(TOP)/sdks/out/android-bcl/monodroid_tools/tests/monodroid_tools_Mono.Profiler.Log_test.dll
 
 .PHONY: check-%
 check-%: .stamp-install
