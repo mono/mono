@@ -171,6 +171,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Numerics;
 using System.Reflection;
 using System.Resources;
 using System.Security;
@@ -433,6 +434,39 @@ namespace System.Diagnostics.Tracing
 
             eventSource.SendCommand(null, EventProviderType.ETW, 0, 0, command, true, EventLevel.LogAlways, EventKeywords.None, commandArguments);
         }
+
+#if !ES_BUILD_STANDALONE
+        /// <summary>
+        /// This property allows EventSource code to appropriately handle as "different" 
+        /// activities started on different threads that have not had an activity created on them.
+        /// </summary>
+        internal static Guid InternalCurrentThreadActivityId
+        {
+            get
+            {
+                Guid retval = CurrentThreadActivityId;
+                if (retval == Guid.Empty)
+                {
+                    retval = FallbackActivityId;
+                }
+                return retval;
+            }
+        }
+
+        internal static Guid FallbackActivityId
+        {
+            get
+            {
+                int threadID = Interop.Kernel32.GetCurrentThreadId();
+
+                // Managed thread IDs are more aggressively re-used than native thread IDs,
+                // so we'll use the latter...
+                return new Guid(unchecked((uint)threadID),
+                                unchecked((ushort)s_currentPid), unchecked((ushort)(s_currentPid >> 16)),
+                                0x94, 0x1b, 0x87, 0xd5, 0xa6, 0x5c, 0x36, 0x64);
+            }
+        }
+#endif // !ES_BUILD_STANDALONE
 
         // Error APIs.  (We don't throw by default, but you can probe for status)
         /// <summary>
@@ -1547,7 +1581,7 @@ namespace System.Diagnostics.Tracing
             {
                 for (int i = 16; i != 80; i++)
                 {
-                    this.w[i] = BitOps.RotateLeft((this.w[i - 3] ^ this.w[i - 8] ^ this.w[i - 14] ^ this.w[i - 16]), 1);
+                    this.w[i] = BitOperations.RotateLeft((this.w[i - 3] ^ this.w[i - 8] ^ this.w[i - 14] ^ this.w[i - 16]), 1);
                 }
 
                 unchecked
@@ -1562,28 +1596,28 @@ namespace System.Diagnostics.Tracing
                     {
                         const uint k = 0x5A827999;
                         uint f = (b & c) | ((~b) & d);
-                        uint temp = BitOps.RotateLeft(a, 5) + f + e + k + this.w[i]; e = d; d = c; c = BitOps.RotateLeft(b, 30); b = a; a = temp;
+                        uint temp = BitOperations.RotateLeft(a, 5) + f + e + k + this.w[i]; e = d; d = c; c = BitOperations.RotateLeft(b, 30); b = a; a = temp;
                     }
 
                     for (int i = 20; i != 40; i++)
                     {
                         uint f = b ^ c ^ d;
                         const uint k = 0x6ED9EBA1;
-                        uint temp = BitOps.RotateLeft(a, 5) + f + e + k + this.w[i]; e = d; d = c; c = BitOps.RotateLeft(b, 30); b = a; a = temp;
+                        uint temp = BitOperations.RotateLeft(a, 5) + f + e + k + this.w[i]; e = d; d = c; c = BitOperations.RotateLeft(b, 30); b = a; a = temp;
                     }
 
                     for (int i = 40; i != 60; i++)
                     {
                         uint f = (b & c) | (b & d) | (c & d);
                         const uint k = 0x8F1BBCDC;
-                        uint temp = BitOps.RotateLeft(a, 5) + f + e + k + this.w[i]; e = d; d = c; c = BitOps.RotateLeft(b, 30); b = a; a = temp;
+                        uint temp = BitOperations.RotateLeft(a, 5) + f + e + k + this.w[i]; e = d; d = c; c = BitOperations.RotateLeft(b, 30); b = a; a = temp;
                     }
 
                     for (int i = 60; i != 80; i++)
                     {
                         uint f = b ^ c ^ d;
                         const uint k = 0xCA62C1D6;
-                        uint temp = BitOps.RotateLeft(a, 5) + f + e + k + this.w[i]; e = d; d = c; c = BitOps.RotateLeft(b, 30); b = a; a = temp;
+                        uint temp = BitOperations.RotateLeft(a, 5) + f + e + k + this.w[i]; e = d; d = c; c = BitOperations.RotateLeft(b, 30); b = a; a = temp;
                     }
 
                     this.w[80] += a;
