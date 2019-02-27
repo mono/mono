@@ -72,6 +72,9 @@ static gboolean mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass 
 GENERATE_GET_CLASS_WITH_CACHE (valuetype, "System", "ValueType")
 GENERATE_TRY_GET_CLASS_WITH_CACHE (handleref, "System.Runtime.InteropServices", "HandleRef")
 
+// define to print types whenever custom modifiers are appended during inflation
+#undef DEBUG_INFLATE_CMODS
+
 static
 MonoImage *
 mono_method_get_image (MonoMethod *method)
@@ -714,6 +717,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 			return NULL;			
 		}
 
+#ifdef DEBUG_INFLATE_CMODS
 		gboolean append_cmods;
 		append_cmods = FALSE;
 		if (type->has_cmods && inst->type_argv[num]->has_cmods) {
@@ -726,15 +730,18 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 			g_free (vname);
 			append_cmods = TRUE;
 		}
+#endif
 
 		nt = mono_metadata_type_dup_with_cmods (image, inst->type_argv [num], type);
 		nt->byref = type->byref || inst->type_argv[num]->byref;
-		nt->attrs = type->attrs; /* FIXME: are there any relevant attrs in inst->type_argv[num]->attrs ? */
+		nt->attrs = type->attrs;
+#ifdef DEBUG_INFLATE_CMODS
 		if (append_cmods) {
 			char *ntname = mono_type_full_name (nt);
 			printf ("\tyields '%s'\n\n\n", ntname);
 			g_free (ntname);
 		}
+#endif
 		return nt;
 	}
 	case MONO_TYPE_SZARRAY: {
@@ -863,11 +870,13 @@ inflate_generic_custom_modifiers (MonoImage *image, const MonoType *type, MonoGe
 		new_mods->modifiers [i].required = required;
 		new_mods->modifiers [i].type = cmod_new ? cmod_new : cmod_old;
 	}
+#ifdef DEBUG_INFLATE_CMODS
 	if (changed) {
 		char *full_name = mono_type_full_name ((MonoType*)type);
 		printf ("\n\n\tcustom modifier on '%s' affected by subsititution\n\n\n", full_name);
 		g_free (full_name);
 	}
+#endif
 	if (!changed)
 		return NULL;
 	return mono_metadata_type_dup (image, new_type);
