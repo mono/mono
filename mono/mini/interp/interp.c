@@ -4543,6 +4543,32 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 			break;
 		}
+		MINT_IN_CASE(MINT_CASTCLASS_INTERFACE)
+		MINT_IN_CASE(MINT_ISINST_INTERFACE) {
+			gboolean isinst_instr = *ip == MINT_ISINST_INTERFACE;
+			c = (MonoClass*)imethod->data_items [*(guint16 *)(ip + 1)];
+			if ((o = sp [-1].data.o)) {
+				gboolean isinst;
+				if (MONO_VTABLE_IMPLEMENTS_INTERFACE (o->vtable, m_class_get_interface_id (c))) {
+					isinst = TRUE;
+				} else if (m_class_is_array_special_interface (c) || mono_object_is_transparent_proxy (o)) {
+					/* slow path */
+					isinst = mono_object_isinst_checked (o, c, error) != NULL;
+					mono_error_cleanup (error); /* FIXME: don't swallow the error */
+				} else {
+					isinst = FALSE;
+				}
+
+				if (!isinst) {
+					if (isinst_instr)
+						sp [-1].data.p = NULL;
+					else
+						THROW_EX (mono_get_exception_invalid_cast (), ip);
+				}
+			}
+			ip += 2;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_CASTCLASS)
 		MINT_IN_CASE(MINT_ISINST) {
 			gboolean isinst_instr = *ip == MINT_ISINST;

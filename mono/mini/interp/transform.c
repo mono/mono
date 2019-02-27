@@ -2347,6 +2347,26 @@ get_unaligned_opcode (int opcode)
 }
 #endif
 
+static void
+interp_handle_isinst (TransformData *td, MonoClass *klass, gboolean isinst_instr)
+{
+	/* Follow the logic from jit's handle_isinst */
+	if (!mono_class_has_variant_generic_params (klass)) {
+		if (mono_class_is_interface (klass)) {
+			ADD_CODE(td, isinst_instr ? MINT_ISINST_INTERFACE : MINT_CASTCLASS_INTERFACE);
+			ADD_CODE(td, get_data_item_index (td, klass));
+		} else {
+			ADD_CODE(td, isinst_instr ? MINT_ISINST : MINT_CASTCLASS);
+			ADD_CODE(td, get_data_item_index (td, klass));
+		}
+	} else {
+		ADD_CODE(td, isinst_instr ? MINT_ISINST : MINT_CASTCLASS);
+		ADD_CODE(td, get_data_item_index (td, klass));
+	}
+	td->ip += 5;
+}
+
+
 static gboolean
 generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, MonoGenericContext *generic_context, MonoError *error)
 {
@@ -3669,11 +3689,9 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			token = read32 (td->ip + 1);
 			klass = mini_get_class (method, token, generic_context);
 			CHECK_TYPELOAD (klass);
-			ADD_CODE(td, isinst_instr ? MINT_ISINST : MINT_CASTCLASS);
-			ADD_CODE(td, get_data_item_index (td, klass));
+			interp_handle_isinst (td, klass, isinst_instr);
 			if (!isinst_instr)
 				td->sp [-1].klass = klass;
-			td->ip += 5;
 			break;
 		}
 		case CEE_CONV_R_UN:
@@ -3738,10 +3756,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 			if (mini_type_is_reference (m_class_get_byval_arg (klass))) {
 				int mt = mint_type (m_class_get_byval_arg (klass));
-				ADD_CODE (td, MINT_CASTCLASS);
-				ADD_CODE (td, get_data_item_index (td, klass));
+				interp_handle_isinst (td, klass, FALSE);
 				SET_TYPE (td->sp - 1, stack_type [mt], klass);
-				td->ip += 5;
 			} else if (mono_class_is_nullable (klass)) {
 				MonoMethod *target_method;
 				if (m_class_is_enumtype (mono_class_get_nullable_param (klass)))
