@@ -5487,6 +5487,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 	InterpMethod tmp_imethod;
 	InterpMethod *real_imethod;
 
+	g_assert (!imethod->transformed);
 	error_init (error);
 
 	if (mono_class_is_open_constructed_type (m_class_get_byval_arg (method->klass))) {

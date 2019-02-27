@@ -2767,14 +2767,14 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 	if (mono_llvm_only)
 		return (gpointer)no_llvmonly_interp_method_pointer;
 
-	if (compile) {
+	if (imethod->jit_entry)
+		return imethod->jit_entry;
+
+	if (compile && !imethod->transformed) {
 		/* Return any errors from method compilation */
 		mono_interp_transform_method (imethod, get_context (), error);
 		return_val_if_nok (error, NULL);
 	}
-
-	if (imethod->jit_entry)
-		return imethod->jit_entry;
 
 	MonoMethodSignature *sig = mono_method_signature_internal (method);
 
