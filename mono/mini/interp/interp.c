@@ -4544,25 +4544,22 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			break;
 		}
 		MINT_IN_CASE(MINT_CASTCLASS)
+		MINT_IN_CASE(MINT_ISINST) {
+			gboolean isinst_instr = *ip == MINT_ISINST;
 			c = (MonoClass*)imethod->data_items [*(guint16 *)(ip + 1)];
 			if ((o = sp [-1].data.o)) {
 				MonoObject *isinst_obj = mono_object_isinst_checked (o, c, error);
 				mono_error_cleanup (error); /* FIXME: don't swallow the error */
-				if (!isinst_obj)
-					THROW_EX (mono_get_exception_invalid_cast (), ip);
+				if (!isinst_obj) {
+					if (isinst_instr)
+						sp [-1].data.p = NULL;
+					else
+						THROW_EX (mono_get_exception_invalid_cast (), ip);
+				}
 			}
 			ip += 2;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_ISINST)
-			c = (MonoClass*)imethod->data_items [*(guint16 *)(ip + 1)];
-			if ((o = sp [-1].data.o)) {
-				MonoObject *isinst_obj = mono_object_isinst_checked (o, c, error);
-				mono_error_cleanup (error); /* FIXME: don't swallow the error */
-				if (!isinst_obj)
-					sp [-1].data.p = NULL;
-			}
-			ip += 2;
-			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_CONV_R_UN_I4)
 			sp [-1].data.f = (double)(guint32)sp [-1].data.i;
 			++ip;

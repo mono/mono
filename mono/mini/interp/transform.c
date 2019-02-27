@@ -3663,24 +3663,19 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			break;
 		}
 		case CEE_CASTCLASS:
+		case CEE_ISINST: {
+			gboolean isinst_instr = *td->ip == CEE_ISINST;
 			CHECK_STACK (td, 1);
 			token = read32 (td->ip + 1);
 			klass = mini_get_class (method, token, generic_context);
 			CHECK_TYPELOAD (klass);
-			ADD_CODE(td, MINT_CASTCLASS);
+			ADD_CODE(td, isinst_instr ? MINT_ISINST : MINT_CASTCLASS);
 			ADD_CODE(td, get_data_item_index (td, klass));
-			td->sp [-1].klass = klass;
+			if (!isinst_instr)
+				td->sp [-1].klass = klass;
 			td->ip += 5;
 			break;
-		case CEE_ISINST:
-			CHECK_STACK (td, 1);
-			token = read32 (td->ip + 1);
-			klass = mini_get_class (method, token, generic_context);
-			CHECK_TYPELOAD (klass);
-			ADD_CODE(td, MINT_ISINST);
-			ADD_CODE(td, get_data_item_index (td, klass));
-			td->ip += 5;
-			break;
+		}
 		case CEE_CONV_R_UN:
 			switch (td->sp [-1].type) {
 			case STACK_TYPE_R8:
