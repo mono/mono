@@ -141,6 +141,7 @@
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
       <Compile Include="System.Reflection\Assembly.cs" />
+      <Compile Include="System.Reflection\CorElementType.cs" />
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
       <Compile Include="System.Reflection\MethodBase.cs" />
