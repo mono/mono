@@ -50,7 +50,11 @@ namespace System.Runtime.CompilerServices
         {
             get
             {
-                if (UnmatchedValue is null) 
+#if __MonoCS__
+                if (UnmatchedValue == null)
+#else
+                if (UnmatchedValue is null)
+#endif
                 {
                     return base.Message;
                 }
