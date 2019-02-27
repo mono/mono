@@ -28,7 +28,7 @@ public class AndroidRunner extends Instrumentation
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		testsuite = savedInstanceState.getString ("testsuite");
+		testsuite = savedInstanceState.getString ("TestSuite");
 
 		super.onCreate (savedInstanceState);
 
@@ -46,8 +46,8 @@ public class AndroidRunner extends Instrumentation
 
 		String filesDir    = context.getFilesDir ().getAbsolutePath ();
 		String cacheDir    = context.getCacheDir ().getAbsolutePath ();
-		String dataDir     = context.getApplicationInfo ().nativeLibraryDir;
-		String assemblyDir = filesDir + "/" + "assemblies";
+		String nativeLibraryDir = context.getApplicationInfo ().nativeLibraryDir;
+		String assemblyDir = filesDir + "/assemblies";
 
 		//XXX copy stuff
 		Log.w ("MONO", "DOING THE COPYING!2");
@@ -61,7 +61,44 @@ public class AndroidRunner extends Instrumentation
 		new File (filesDir + "/mono/2.1").mkdir ();
 		copyAssetDir (am, "mconfig", filesDir + "/mono/2.1");
 
-		runTests (filesDir, cacheDir, dataDir, assemblyDir, assemblyDir + "/" + testsuite);
+		if (waitForLLDB) {
+			Log.w ("MONO", "Launching lldb-server " + Build.CPU_ABI);
+
+			String lldbServerFile = lldbDir + "/lldb-server";
+
+			new File(lldbServerFile).setExecutable (true);
+
+			// launch LLDB server in background
+			ProcessBuilder pb = new ProcessBuilder (
+				lldbServerFile,
+				"platform",
+				"--server",
+				"--listen", "127.0.0.1:6101",
+				"--log-channels", "lldb process:gdb-remote packets");
+
+			try {
+				final Process p = pb.start ();
+			} catch (IOException ioe) {
+				Log.e ("MONO", "Error when launching lldb-server", ioe);
+
+				runOnMainSync (new Runnable () {
+					public void run() {
+						finish (1, null);
+					}
+				});
+
+				return;
+			}
+		}
+
+		if (testsuite.startsWith("debugger:")) {
+			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite.substring(9), true);
+		// TODO
+		// } else if (testsuite.startsWith("profiler:")) {
+		// 	runDebuggerTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite.substring(9));
+		} else {
+			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite, false);
+		}
 
 		runOnMainSync (new Runnable () {
 			public void run() {
@@ -105,7 +142,7 @@ public class AndroidRunner extends Instrumentation
 		out.close ();
 	}
 
-	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir, String assemblyName);
+	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir, String assemblyName, boolean isDebugger);
 
 	static void WriteLineToInstrumentation (String line)
 	{

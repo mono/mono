@@ -222,6 +222,7 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
             # ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m $gnumake -C sdks/android check-Mono.Data.Sqlite
             ${TESTCMD} --label=Mono.Data.Tds --timeout=60m $gnumake -C sdks/android check-Mono.Data.Tds
             ${TESTCMD} --label=Mono.Security --timeout=60m $gnumake -C sdks/android check-Mono.Security
+            ${TESTCMD} --label=Mono.Debugger.Soft --timeout=60m $gnumake -C sdks/android check-Mono.Debugger.Soft
         fi
         exit 0
 fi
