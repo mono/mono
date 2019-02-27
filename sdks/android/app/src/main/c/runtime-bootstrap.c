@@ -296,11 +296,7 @@ m_create_directory (const char *pathname, int mode)
         return ret;
 }
 
-#ifdef MONO_WAIT_LLDB
 static volatile int wait_for_lldb = 1;
-#else
-static volatile int wait_for_lldb = 0;
-#endif
 
 void
 monodroid_clear_lldb_wait (void)
@@ -312,7 +308,7 @@ static void
 wait_for_unmanaged_debugger ()
 {
 	while (wait_for_lldb) {
-		_log ("Waiting for lldb to attach...");
+		_log ("Waiting for lldb to attach, run \"make -C sdks/android attach-lldb\" in another terminal");
 		sleep (5);
 	}
 }
@@ -332,7 +328,7 @@ create_and_set (const char *home, const char *relativePath, const char *envvar)
 
 void
 Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring j_files_dir, jstring j_cache_dir,
-	jstring j_native_library_dir, jstring j_assembly_dir, jstring j_assembly_name, jboolean is_debugger)
+	jstring j_native_library_dir, jstring j_assembly_dir, jstring j_assembly_name, jboolean is_debugger, jboolean wait_for_lldb)
 {
 	MonoDomain *root_domain;
 	MonoMethod *run_tests_method;
@@ -340,6 +336,9 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	char **argv;
 	char buff[1024], file_dir[2048], cache_dir[2048], native_library_dir[2048], assembly_dir[2048], assembly_name[2048];
 	int argc;
+
+	if (wait_for_lldb)
+		wait_for_unmanaged_debugger ();
 
 	_log ("IN %s\n", __func__);
 	strncpy_str (env, file_dir, j_files_dir, sizeof(file_dir));
@@ -432,7 +431,8 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_dllmap_insert (NULL, "System.Native", NULL, buff, NULL);
 	mono_dllmap_insert (NULL, "System.Net.Security.Native", NULL, buff, NULL);
 
-	wait_for_unmanaged_debugger ();
+	if (wait_for_lldb)
+		mini_parse_debug_option ("lldb");
 
 	if (is_debugger) {
 		// Using adb reverse

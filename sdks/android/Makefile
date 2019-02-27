@@ -66,7 +66,7 @@ local.properties:
 
 ## Directories
 
-app/assets/asm app/src/main/jniLibs/armeabi-v7a app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86 app/src/main/jniLibs/x86_64:
+app/assets/asm app/src/main/jniLibs/armeabi-v7a app/src/main/jniLibs/arm64-v8a app/src/main/jniLibs/x86 app/src/main/jniLibs/x86_64 app/assets/armeabi-v7a app/assets/arm64-v8a app/assets/x86 app/assets/x86_64:
 	mkdir -p $@
 
 ## Package the monosgen-2.0, MonoPosixHelper and mono-native libraries
@@ -112,19 +112,55 @@ $(patsubst %,app/assets/asm/%,$(BCL)): app/assets/asm/%: $(TOP)/sdks/out/android
 
 .stamp-package: $(patsubst %,app/assets/asm/%,$(BCL))
 
+## Package LLDB
+
+lldb-mono-0.1:
+	wget --no-verbose -O - 'https://github.com/mono/lldb-binaries/releases/download/v0.1/lldb-mono-0.1.tar.gz' | tar xvf -
+
+#FIXME: armeabi-v7a in place of armeabi
+lldb-mono-0.1/android/armeabi/lldb-server: | lldb-mono-0.1
+
+app/assets/armeabi-v7a/lldb-server: lldb-mono-0.1/android/armeabi/lldb-server | app/assets/armeabi-v7a
+	cp $< $@
+	chmod 777 $@
+
+.stamp-package: app/assets/armeabi-v7a/lldb-server
+
+lldb-mono-0.1/android/arm64-v8a/lldb-server: | lldb-mono-0.1
+
+app/assets/arm64-v8a/lldb-server: lldb-mono-0.1/android/arm64-v8a/lldb-server | app/assets/arm64-v8a
+	cp $< $@
+	chmod 777 $@
+
+.stamp-package: app/assets/arm64-v8a/lldb-server
+
+lldb-mono-0.1/android/x86/lldb-server: | lldb-mono-0.1
+
+app/assets/x86/lldb-server: lldb-mono-0.1/android/x86/lldb-server | app/assets/x86
+	cp $< $@
+	chmod 777 $@
+
+.stamp-package: app/assets/x86/lldb-server
+
+lldb-mono-0.1/android/x86_64/lldb-server: | lldb-mono-0.1
+
+app/assets/x86_64/lldb-server: lldb-mono-0.1/android/x86_64/lldb-server | app/assets/x86_64
+	cp $< $@
+	chmod 777 $@
+
+.stamp-package: app/assets/x86_64/lldb-server
+
 ## Run Mono.Debugger.Soft and BCL tests
 
 .stamp-package:
 	touch $@
 
-.stamp-install$(if $(MONO_WAIT_LLDB),-waitforlldb): .stamp-package local.properties app/src/main/c/runtime-bootstrap.c app/src/main/java/org/mono/android/AndroidRunner.java
-	# Remove the *other* stamp file
-	rm -f .stamp-install$(if $(MONO_WAIT_LLDB),,-waitforlldb)
-	./gradlew uninstallAll assembleDebug installDebug $(if $(MONO_WAIT_LLDB),-Pmono.waitforlldb)
+.stamp-install: .stamp-package local.properties app/src/main/c/runtime-bootstrap.c app/src/main/java/org/mono/android/AndroidRunner.java
+	./gradlew uninstallAll assembleDebug installDebug
 	touch $@
 
 .PHONY: check-Mono.Debugger.Soft
-check-Mono.Debugger.Soft: .stamp-install$(if $(MONO_WAIT_LLDB),-waitforlldb)
+check-Mono.Debugger.Soft: .stamp-install
 	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe \
 		-labels \
 		-exclude:NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,LargeFileSupport,AndroidSdksNotWorking \
@@ -135,7 +171,7 @@ check-Mono.Debugger.Soft: .stamp-install$(if $(MONO_WAIT_LLDB),-waitforlldb)
 		$(TOP)/sdks/out/android-bcl/monodroid_tools/tests/monodroid_tools_Mono.Debugger.Soft_test.dll
 
 .PHONY: check-%
-check-%: .stamp-install$(if $(MONO_WAIT_LLDB),-waitforlldb)
+check-%: .stamp-install
 	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe \
 		-labels \
 		-exclude:NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,LargeFileSupport,AndroidSdksNotWorking \

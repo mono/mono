@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 
 import android.os.Bundle;
+import android.os.Build;
 
 import android.util.Log;
 
@@ -24,11 +25,13 @@ public class AndroidRunner extends Instrumentation
 	static AndroidRunner inst;
 
 	String testsuite;
+	boolean waitForLLDB;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		testsuite = savedInstanceState.getString ("TestSuite");
+		waitForLLDB = savedInstanceState.getString ("WaitForLLDB").equals ("True");
 
 		super.onCreate (savedInstanceState);
 
@@ -48,6 +51,7 @@ public class AndroidRunner extends Instrumentation
 		String cacheDir    = context.getCacheDir ().getAbsolutePath ();
 		String nativeLibraryDir = context.getApplicationInfo ().nativeLibraryDir;
 		String assemblyDir = filesDir + "/assemblies";
+		String lldbDir = filesDir + "/lldb";
 
 		//XXX copy stuff
 		Log.w ("MONO", "DOING THE COPYING!2");
@@ -56,6 +60,9 @@ public class AndroidRunner extends Instrumentation
 
 		new File (assemblyDir).mkdir ();
 		copyAssetDir (am, "asm", assemblyDir);
+
+		new File (lldbDir).mkdir ();
+		copyAssetDir (am, Build.CPU_ABI, lldbDir);
 
 		new File (filesDir + "/mono").mkdir ();
 		new File (filesDir + "/mono/2.1").mkdir ();
@@ -92,12 +99,12 @@ public class AndroidRunner extends Instrumentation
 		}
 
 		if (testsuite.startsWith("debugger:")) {
-			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite.substring(9), true);
+			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite.substring(9), true, waitForLLDB);
 		// TODO
 		// } else if (testsuite.startsWith("profiler:")) {
 		// 	runDebuggerTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite.substring(9));
 		} else {
-			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite, false);
+			runTests (filesDir, cacheDir, nativeLibraryDir, assemblyDir, "tests/" + testsuite, false, waitForLLDB);
 		}
 
 		runOnMainSync (new Runnable () {
@@ -142,7 +149,7 @@ public class AndroidRunner extends Instrumentation
 		out.close ();
 	}
 
-	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir, String assemblyName, boolean isDebugger);
+	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir, String assemblyName, boolean isDebugger, boolean waitForLLDB);
 
 	static void WriteLineToInstrumentation (String line)
 	{
