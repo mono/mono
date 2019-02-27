@@ -7841,6 +7841,14 @@ ves_icall_System_Runtime_InteropServices_RuntimeInformation_get_RuntimeArchitect
 	return mono_string_new_handle (mono_domain_get (), mono_config_get_cpu (), error);
 }
 
+/* This could be ifdef'ed out on Windows and WASM */
+MonoStringHandle
+ves_icall_System_Runtime_InteropServices_RuntimeInformation_get_OSName (MonoError *error)
+{
+	error_init (error);
+	return mono_string_new_handle (mono_domain_get (), mono_config_get_os (), error);
+}
+
 int
 ves_icall_Interop_Sys_DoubleToString(double value, char *format, char *buffer, int bufferLength)
 {

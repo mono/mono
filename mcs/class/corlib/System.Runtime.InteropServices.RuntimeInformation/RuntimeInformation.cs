@@ -43,11 +43,20 @@ namespace System.Runtime.InteropServices
 			get;
 		}
 
+		static extern string OSName
+		{
+			[MethodImpl (MethodImplOptions.InternalCall)]
+			get;
+		}
+
 		public static string FrameworkDescription {
 			get {
 				return "Mono " + Mono.Runtime.GetDisplayName ();
 			}
 		}
+
+		static OSPlatform _osPlatform;
+		static bool _osPlatformSet; // OSPlatform is non-nullable and we can't see if its internal string is null
 
 		public static bool IsOSPlatform (OSPlatform osPlatform)
 		{
@@ -60,7 +69,15 @@ namespace System.Runtime.InteropServices
 			case PlatformID.MacOSX:
 				return osPlatform == OSPlatform.OSX;
 			case PlatformID.Unix:
-				return osPlatform == OSPlatform.Linux;
+				// This definition is the only use, do cache load here
+				if (!_osPlatformSet) {
+					_osPlatform = OSPlatform.Create (OSName.ToUpperInvariant());
+					_osPlatformSet = true;
+				}
+				// Unix could mean anything from Linux to AIX;
+				// use the DllMap OS name for OSPlatform.
+				// This doesn't recognize subgroups of a platform (i.e: Android, PASE, tvOS)
+				return osPlatform == _osPlatform;
 			default:
 				return false;
 			}
