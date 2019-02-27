@@ -2355,6 +2355,9 @@ interp_handle_isinst (TransformData *td, MonoClass *klass, gboolean isinst_instr
 		if (mono_class_is_interface (klass)) {
 			ADD_CODE(td, isinst_instr ? MINT_ISINST_INTERFACE : MINT_CASTCLASS_INTERFACE);
 			ADD_CODE(td, get_data_item_index (td, klass));
+		} else if (!mono_class_is_marshalbyref (klass) && m_class_get_rank (klass) == 0 && !mono_class_is_nullable (klass)) {
+			ADD_CODE(td, isinst_instr ? MINT_ISINST_COMMON : MINT_CASTCLASS_COMMON);
+			ADD_CODE(td, get_data_item_index (td, klass));
 		} else {
 			ADD_CODE(td, isinst_instr ? MINT_ISINST : MINT_CASTCLASS);
 			ADD_CODE(td, get_data_item_index (td, klass));

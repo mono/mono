@@ -4569,6 +4569,23 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			ip += 2;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_CASTCLASS_COMMON)
+		MINT_IN_CASE(MINT_ISINST_COMMON) {
+			gboolean isinst_instr = *ip == MINT_ISINST_COMMON;
+			c = (MonoClass*)imethod->data_items [*(guint16 *)(ip + 1)];
+			if ((o = sp [-1].data.o)) {
+				gboolean isinst = mono_class_has_parent_fast (o->vtable->klass, c);
+
+				if (!isinst) {
+					if (isinst_instr)
+						sp [-1].data.p = NULL;
+					else
+						THROW_EX (mono_get_exception_invalid_cast (), ip);
+				}
+			}
+			ip += 2;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_CASTCLASS)
 		MINT_IN_CASE(MINT_ISINST) {
 			gboolean isinst_instr = *ip == MINT_ISINST;
