@@ -5494,11 +5494,33 @@ mono_metadata_fnptr_equal (MonoMethodSignature *s1, MonoMethodSignature *s2, gbo
 }
 
 static gboolean
-use_strict_equivalence (void)
+mono_metadata_custom_modifiers_equal (MonoType *t1, MonoType *t2, gboolean signature_only)
 {
-	static int i = 1;
+	// ECMA 335, 7.1.1:
+	// The CLI itself shall treat required and optional modifiers in the same manner.
+	// Two signatures that differ only by the addition of a custom modifier
+	// (required or optional) shall not be considered to match.
+	int count = mono_type_custom_modifier_count (t1);
+	if (count != mono_type_custom_modifier_count (t2))
+		return FALSE;
 
-	return i > 0;
+	for (int i=0; i < count; i++) {
+		// FIXME: propagate error to caller
+		ERROR_DECL (error);
+		gboolean cm1_required, cm2_required;
+
+		MonoType *cm1_type = mono_type_get_custom_modifier (t1, i, &cm1_required, error);
+		mono_error_assert_ok (error);
+		MonoType *cm2_type = mono_type_get_custom_modifier (t2, i, &cm2_required, error);
+		mono_error_assert_ok (error);
+
+		if (cm1_required != cm2_required)
+			return FALSE;
+
+		if (!do_mono_metadata_type_equal (cm1_type, cm2_type, signature_only))
+			return FALSE;
+	}
+	return TRUE;
 }
 
 /*
@@ -5518,40 +5540,10 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 
 	gboolean cmod_reject = FALSE;
 
-	gboolean is_pointer = (t1->type == MONO_TYPE_PTR);
-
 	if (t1->has_cmods != t2->has_cmods)
 		cmod_reject = TRUE;
 	else if (t1->has_cmods && t2->has_cmods) {
-		// ECMA 335, 7.1.1:
-		// The CLI itself shall treat required and optional modifiers in the same manner.
-		// Two signatures that differ only by the addition of a custom modifier 
-		// (required or optional) shall not be considered to match.
-		int count = mono_type_custom_modifier_count (t1);
-		if (count != mono_type_custom_modifier_count (t2)) {
-			cmod_reject = TRUE;
-		} else {			
-			for (int i=0; i < count; i++) {
-				// FIXME: propagate error to caller
-				ERROR_DECL (error);
-				gboolean cm1_required, cm2_required;
-
-				MonoType *cm1_type = mono_type_get_custom_modifier (t1, i, &cm1_required, error);
-				mono_error_assert_ok (error);
-				MonoType *cm2_type = mono_type_get_custom_modifier (t2, i, &cm2_required, error);
-				mono_error_assert_ok (error);
-
-				if (cm1_required != cm2_required) {
-					cmod_reject = TRUE;
-					break;
-				}
-
-				if (!do_mono_metadata_type_equal (cm1_type, cm2_type, signature_only)) {
-					cmod_reject = TRUE;
-					break;
-				}
-			}
-		}
+		cmod_reject = !mono_metadata_custom_modifiers_equal (t1, t2, signature_only);
 	}
 
 	gboolean result = FALSE;
@@ -5611,26 +5603,7 @@ do_mono_metadata_type_equal (MonoType *t1, MonoType *t2, gboolean signature_only
 		return FALSE;
 	}
 
-	if (use_strict_equivalence ()) {
-		if (cmod_reject && is_pointer)
-			return FALSE;
-
-		if (result && cmod_reject) {
-			char *t1_str = mono_type_full_name (t1);
-			char *t2_str = mono_type_full_name (t2);
-			// printf ("\n\n\tstrict comparison of '%s' and '%s' is false, but lax is TRUE (using %s comparison)\n\n\n", t1_str, t2_str, lax_cmods ? "lax" : "strict");
-			g_free (t1_str);
-			g_free (t2_str);
-		}
-		return result && !cmod_reject;
-	} else {
-
-
-	if (cmod_reject && is_pointer && !use_strict_equivalence ()) 	/* Why? because https://github.com/mono/mono/pull/11134 */
-		return FALSE;
-
-	return /*cmod_reject &&*/ result; /* Want to be strict, but they're making us be lax */
-	}
+	return result && !cmod_reject;
 }
 
 /**
