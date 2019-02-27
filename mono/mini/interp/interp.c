@@ -1426,9 +1426,7 @@ interp_init_delegate (MonoDelegate *del)
 		del->interp_method = mono_interp_get_imethod (del->object.vtable->domain, del->method, error);
 	} else {
 		/* Created from JITted code */
-		g_assert (del->method_ptr);
-		del->interp_method = lookup_method_pointer (del->method_ptr);
-		g_assert (del->interp_method);
+		g_assert_not_reached ();
 	}
 
 	method = ((InterpMethod*)del->interp_method)->method;
@@ -2782,9 +2780,7 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 		/* The caller should call interp_create_method_pointer_llvmonly */
 		g_assert_not_reached ();
 
-	/* HACK: method_ptr of delegate should point to a runtime method*/
-	if (method->wrapper_type && (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD ||
-				(method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)))
+	if (method->wrapper_type && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)
 		return imethod;
 
 #ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
