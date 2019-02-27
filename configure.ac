@@ -6307,6 +6307,7 @@ mono/tests/assembly-load-reference/Makefile
 mono/tests/tests-config
 mono/tests/gc-descriptors/Makefile
 mono/tests/testing_gac/Makefile
+mono/tests/fullaot-mixed/Makefile
 mono/tests/llvmonly-mixed/Makefile
 mono/unit-tests/Makefile
 mono/benchmark/Makefile
