@@ -1759,6 +1759,9 @@ mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass);
 void
 mono_nullable_init_from_handle (guint8 *buf, MonoObjectHandle value, MonoClass *klass);
 
+void
+mono_nullable_init_unboxed (guint8 *buf, gpointer value, MonoClass *klass);
+
 MonoObject *
 mono_value_box_checked (MonoDomain *domain, MonoClass *klass, void* val, MonoError *error);
 
