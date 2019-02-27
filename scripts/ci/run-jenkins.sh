@@ -203,7 +203,7 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
         ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android   NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=mini --timeout=60m $gnumake -C sdks/android check-mini
+            ${TESTCMD} --label=mini --timeout=60m $gnumake -C sdks/android check-Mono.Runtime.Tests
             ${TESTCMD} --label=corlib --timeout=60m $gnumake -C sdks/android check-corlib
             ${TESTCMD} --label=System --timeout=60m $gnumake -C sdks/android check-System
             ${TESTCMD} --label=System.Core --timeout=60m $gnumake -C sdks/android check-System.Core
@@ -219,7 +219,7 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
             ${TESTCMD} --label=System.Xml --timeout=60m $gnumake -C sdks/android check-System.Xml
             ${TESTCMD} --label=System.Xml.Linq --timeout=60m $gnumake -C sdks/android check-System.Xml.Linq
             ${TESTCMD} --label=Mono.CSharp --timeout=60m $gnumake -C sdks/android check-Mono.CSharp
-            ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m $gnumake -C sdks/android check-Mono.Data.Sqlite
+            # ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m $gnumake -C sdks/android check-Mono.Data.Sqlite
             ${TESTCMD} --label=Mono.Data.Tds --timeout=60m $gnumake -C sdks/android check-Mono.Data.Tds
             ${TESTCMD} --label=Mono.Security --timeout=60m $gnumake -C sdks/android check-Mono.Security
         fi
@@ -250,14 +250,14 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=60m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
-            ${TESTCMD} --label=ch-mini-test --timeout=60m $gnumake -C sdks/wasm run-ch-mini
+            #${TESTCMD} --label=ch-mini-test --timeout=60m $gnumake -C sdks/wasm run-ch-mini
             ${TESTCMD} --label=v8-mini-test --timeout=60m $gnumake -C sdks/wasm run-v8-mini
             ${TESTCMD} --label=sm-mini-test --timeout=60m $gnumake -C sdks/wasm run-sm-mini
             ${TESTCMD} --label=jsc-mini-test --timeout=60m $gnumake -C sdks/wasm run-jsc-mini
             #The following tests are not passing yet, so enabling them would make us perma-red
             #${TESTCMD} --label=mini-corlib --timeout=60m $gnu$gnumake -C sdks/wasm run-all-corlib
             #${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-system
-            ${TESTCMD} --label=ch-system-core --timeout=60m $gnumake -C sdks/wasm run-ch-system-core
+            #${TESTCMD} --label=ch-system-core --timeout=60m $gnumake -C sdks/wasm run-ch-system-core
             ${TESTCMD} --label=v8-system-core --timeout=60m $gnumake -C sdks/wasm run-v8-system-core
             ${TESTCMD} --label=sm-system-core --timeout=60m $gnumake -C sdks/wasm run-sm-system-core
             ${TESTCMD} --label=jsc-system-core --timeout=60m $gnumake -C sdks/wasm run-jsc-system-core

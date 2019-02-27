@@ -68,6 +68,7 @@ namespace MonoTests.System.Data.SqlTypes
 
 		// Test constructor
 		[Test]
+		[Category("AndroidSdksNotWorking")]
 		public void Create()
 		{
 			// SqlString (String)
@@ -342,6 +343,7 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
+		[Category("AndroidSdksNotWorking")]
 		public void UnicodeBytes()
 		{
 			Assert.AreEqual ((byte)105, Test1.GetNonUnicodeBytes () [1], "#N01");

@@ -49,13 +49,12 @@ namespace System.Threading
 
 		internal static bool Set (SafeWaitHandle waitHandle) => throw new NotImplementedException ();
 
-
 		SafeWaitHandle ValidateHandle (out bool success)
 		{
 			// The field value is modifiable via the public <see cref="WaitHandle.SafeWaitHandle"/> property, save it locally
 			// to ensure that one instance is used in all places in this method
-			SafeWaitHandle waitHandle = this.safeWaitHandle;
-			if (waitHandle == null)
+			SafeWaitHandle waitHandle = SafeWaitHandle;
+			if (waitHandle.IsInvalid)
 			{
 				throw new InvalidOperationException ();
 			}
