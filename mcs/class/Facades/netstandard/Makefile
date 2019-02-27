@@ -39,10 +39,12 @@ endif
 ifeq ($(PROFILE),monodroid)
 # XA implements System.Drawing API inside Mono.Android
 API_BIN_REFS := Mono.Android
+LIB_MCS_FLAGS := -d:NS21
 endif
 
 ifeq ($(PROFILE),monotouch)
 API_BIN_REFS := Xamarin.iOS OpenTK-1.0
+LIB_MCS_FLAGS := -d:NS21
 endif
 
 ifeq ($(PROFILE),monotouch_tv)
