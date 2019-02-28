@@ -46,7 +46,5 @@ namespace System
 		public static bool IsInAppContainer => false;
 		public static bool IsAlpine => false;
 		public static bool IsNetCore => false;
-
-		public static bool IsMono => true;
 	}
 }
