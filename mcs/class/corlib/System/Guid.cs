@@ -38,44 +38,13 @@ namespace System
 {
 	partial struct Guid
 	{
-		private static object _rngAccess = new object ();
-		private static RandomNumberGenerator _rng;
-		private static RandomNumberGenerator _fastRng;
-
-		public static Guid NewGuid ()
-		{
-			byte[] b = new byte [16];
-			// thread-safe access to the prng
-			lock (_rngAccess) {
-				if (_rng == null)
-					_rng = RandomNumberGenerator.Create ();
-				_rng.GetBytes (b);
-			}
-
-			Guid res = new Guid (b);
-			// Mask in Variant 1-0 in Bit[7..6]
-			res._d = (byte) ((res._d & 0x3fu) | 0x80u);
-			// Mask in Version 4 (random based Guid) in Bits[15..13]
-			res._c = (short) ((res._c & 0x0fffu) | 0x4000u);
-
-			return res;
-		}
-
 		// used in ModuleBuilder so mcs doesn't need to invoke 
 		// CryptoConfig for simple assemblies.
-		internal static byte[] FastNewGuidArray ()
+		internal static unsafe byte[] FastNewGuidArray ()
 		{
 			byte[] guid = new byte [16];
-
-			// thread-safe access to the prng
-			lock (_rngAccess) {
-				// if known, use preferred RNG
-				if (_rng != null)
-					_fastRng = _rng;
-				// else use hardcoded default RNG (bypassing CryptoConfig)
-				if (_fastRng == null)
-					_fastRng = new RNGCryptoServiceProvider ();
-				_fastRng.GetBytes (guid);
+			fixed (byte *ptr = guid) {
+				Interop.GetRandomBytes(ptr, 16);
 			}
 
 			// Mask in Variant 1-0 in Bit[7..6]

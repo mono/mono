@@ -428,12 +428,60 @@ namespace Mono.Security.Cryptography {
 			return blob;
 		}
 
+#if INSIDE_CORLIB
+		static internal bool TryImportCapiPublicKeyBlob (byte[] blob, int offset)
+		{
+			try {
+				var rsap = GetParametersFromCapiPublicKeyBlob (blob, offset);
+				// Since we are only checking whether this throws an exception and
+				// not actually returning the `RSA` object, we can use `RSAManaged`
+				// here because that's what the `RSACryptoServiceProvider` implementation
+				// does internally.
+				var rsa = new RSAManaged ();
+				rsa.ImportParameters (rsap);
+				return true;
+			} catch (CryptographicException) {
+				return false;
+			}
+		}
+#endif
+
 		static public RSA FromCapiPublicKeyBlob (byte[] blob) 
 		{
 			return FromCapiPublicKeyBlob (blob, 0);
 		}
 
 		static public RSA FromCapiPublicKeyBlob (byte[] blob, int offset) 
+		{
+			var rsap = GetParametersFromCapiPublicKeyBlob (blob, offset);
+
+			try {
+#if INSIDE_CORLIB && MOBILE
+				RSA rsa = RSA.Create ();
+				rsa.ImportParameters (rsap);
+#else
+				RSA rsa = null;
+				try {
+					rsa = RSA.Create ();
+					rsa.ImportParameters (rsap);
+				}
+				catch (CryptographicException) {
+					// this may cause problem when this code is run under
+					// the SYSTEM identity on Windows (e.g. ASP.NET). See
+					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
+					CspParameters csp = new CspParameters ();
+					csp.Flags = CspProviderFlags.UseMachineKeyStore;
+					rsa = new RSACryptoServiceProvider (csp);
+					rsa.ImportParameters (rsap);
+				}
+#endif
+				return rsa;
+			} catch (Exception e) {
+				throw new CryptographicException ("Invalid blob.", e);
+			}
+		}
+
+		static RSAParameters GetParametersFromCapiPublicKeyBlob (byte[] blob, int offset)
 		{
 			if (blob == null)
 				throw new ArgumentNullException ("blob");
@@ -467,28 +515,8 @@ namespace Mono.Security.Cryptography {
 				rsap.Modulus = new byte [byteLen];
 				Buffer.BlockCopy (blob, pos, rsap.Modulus, 0, byteLen);
 				Array.Reverse (rsap.Modulus);
-#if INSIDE_CORLIB && MOBILE
-				RSA rsa = RSA.Create ();
-				rsa.ImportParameters (rsap);
-#else
-				RSA rsa = null;
-				try {
-					rsa = RSA.Create ();
-					rsa.ImportParameters (rsap);
-				}
-				catch (CryptographicException) {
-					// this may cause problem when this code is run under
-					// the SYSTEM identity on Windows (e.g. ASP.NET). See
-					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
-					CspParameters csp = new CspParameters ();
-					csp.Flags = CspProviderFlags.UseMachineKeyStore;
-					rsa = new RSACryptoServiceProvider (csp);
-					rsa.ImportParameters (rsap);
-				}
-#endif
-				return rsa;
-			}
-			catch (Exception e) {
+				return rsap;
+			} catch (Exception e) {
 				throw new CryptographicException ("Invalid blob.", e);
 			}
 		}
