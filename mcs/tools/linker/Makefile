@@ -22,7 +22,8 @@ TEST_CASES := \
 	mscorlib/test-string-03.cs \
 	mscorlib/test-task-01.cs \
 	System/test-security.cs \
-	System.Core/test-plinq-01.cs
+	System.Core/test-plinq-01.cs \
+	System.Core/test-queryable-01.cs
 
 # Disabled tests
 #	mscorlib/test-marshaling.cs
