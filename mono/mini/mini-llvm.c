@@ -66,6 +66,7 @@ typedef struct {
 	GHashTable *plt_entries_ji;
 	GHashTable *method_to_lmethod;
 	GHashTable *direct_callables;
+	GHashTable *module_nonnull;
 	char **bb_names;
 	int bb_names_len;
 	GPtrArray *used;
@@ -1229,43 +1230,53 @@ convert_full (EmitContext *ctx, LLVMValueRef v, LLVMTypeRef dtype, gboolean is_u
 		else if (dtype == LLVMInt16Type () && (stype == LLVMInt8Type ()))
 			ext = TRUE;
 
+		LLVMValueRef result = NULL;
+
 		if (ext)
-			return is_unsigned ? LLVMBuildZExt (ctx->builder, v, dtype, "") : LLVMBuildSExt (ctx->builder, v, dtype, "");
+			result = is_unsigned ? LLVMBuildZExt (ctx->builder, v, dtype, "") : LLVMBuildSExt (ctx->builder, v, dtype, "");
 
 		if (dtype == LLVMDoubleType () && stype == LLVMFloatType ())
-			return LLVMBuildFPExt (ctx->builder, v, dtype, "");
+			result = LLVMBuildFPExt (ctx->builder, v, dtype, "");
 
 		/* Trunc */
 		if (stype == LLVMInt64Type () && (dtype == LLVMInt32Type () || dtype == LLVMInt16Type () || dtype == LLVMInt8Type ()))
-			return LLVMBuildTrunc (ctx->builder, v, dtype, "");
+			result = LLVMBuildTrunc (ctx->builder, v, dtype, "");
 		if (stype == LLVMInt32Type () && (dtype == LLVMInt16Type () || dtype == LLVMInt8Type ()))
-			return LLVMBuildTrunc (ctx->builder, v, dtype, "");
+			result = LLVMBuildTrunc (ctx->builder, v, dtype, "");
 		if (stype == LLVMInt16Type () && dtype == LLVMInt8Type ())
-			return LLVMBuildTrunc (ctx->builder, v, dtype, "");
+			result = LLVMBuildTrunc (ctx->builder, v, dtype, "");
 		if (stype == LLVMDoubleType () && dtype == LLVMFloatType ())
-			return LLVMBuildFPTrunc (ctx->builder, v, dtype, "");
+			result = LLVMBuildFPTrunc (ctx->builder, v, dtype, "");
 
 		if (LLVMGetTypeKind (stype) == LLVMPointerTypeKind && LLVMGetTypeKind (dtype) == LLVMPointerTypeKind)
-			return LLVMBuildBitCast (ctx->builder, v, dtype, "");
+			result = LLVMBuildBitCast (ctx->builder, v, dtype, "");
 		if (LLVMGetTypeKind (dtype) == LLVMPointerTypeKind)
-			return LLVMBuildIntToPtr (ctx->builder, v, dtype, "");
+			result = LLVMBuildIntToPtr (ctx->builder, v, dtype, "");
 		if (LLVMGetTypeKind (stype) == LLVMPointerTypeKind)
-			return LLVMBuildPtrToInt (ctx->builder, v, dtype, "");
+			result = LLVMBuildPtrToInt (ctx->builder, v, dtype, "");
 
 		if (mono_arch_is_soft_float ()) {
 			if (stype == LLVMInt32Type () && dtype == LLVMFloatType ())
-				return LLVMBuildBitCast (ctx->builder, v, dtype, "");
+				result = LLVMBuildBitCast (ctx->builder, v, dtype, "");
 			if (stype == LLVMInt32Type () && dtype == LLVMDoubleType ())
-				return LLVMBuildBitCast (ctx->builder, LLVMBuildZExt (ctx->builder, v, LLVMInt64Type (), ""), dtype, "");
+				result = LLVMBuildBitCast (ctx->builder, LLVMBuildZExt (ctx->builder, v, LLVMInt64Type (), ""), dtype, "");
 		}
 
 		if (LLVMGetTypeKind (stype) == LLVMVectorTypeKind && LLVMGetTypeKind (dtype) == LLVMVectorTypeKind)
-			return LLVMBuildBitCast (ctx->builder, v, dtype, "");
+			result = LLVMBuildBitCast (ctx->builder, v, dtype, "");
 
-		LLVMDumpValue (v);
-		LLVMDumpValue (LLVMConstNull (dtype));
-		g_assert_not_reached ();
-		return NULL;
+		if (result == NULL) {
+			LLVMDumpValue (v);
+			LLVMDumpValue (LLVMConstNull (dtype));
+			g_assert_not_reached ();
+		}
+
+
+		gboolean nonnull = g_hash_table_lookup (ctx->module->module_nonnull, v) != NULL;
+		if (nonnull)
+			g_hash_table_insert (ctx->module->module_nonnull, result, result);
+
+		return result;
 	} else {
 		return v;
 	}
@@ -2055,7 +2066,7 @@ set_metadata_flag (LLVMValueRef v, const char *flag_name)
 }
 
 static void
-set_nonnull_load_flag (LLVMValueRef v)
+set_nonnull_load_flag (EmitContext *ctx, LLVMValueRef v)
 {
 	LLVMValueRef md_arg;
 	int md_kind;
@@ -2065,6 +2076,8 @@ set_nonnull_load_flag (LLVMValueRef v)
 	md_kind = LLVMGetMDKindID (flag_name, strlen (flag_name));
 	md_arg = LLVMMDString ("<index>", strlen ("<index>"));
 	LLVMSetMetadata (v, md_kind, LLVMMDNode (&md_arg, 1));
+
+	g_hash_table_insert (ctx->module->module_nonnull, v, v);
 }
 
 static void
@@ -5893,7 +5906,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				/* Can't use this in llvmonly mode since the got slots are initialized by the methods themselves */
 				set_invariant_load_flag (values [ins->dreg]);
 
-				set_nonnull_load_flag (values [ins->dreg]);
+				set_nonnull_load_flag (ctx, values [ins->dreg]);
 			}
 			break;
 		}
@@ -8988,6 +9001,7 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	module->plt_entries = g_hash_table_new (g_str_hash, g_str_equal);
 	module->plt_entries_ji = g_hash_table_new (NULL, NULL);
 	module->direct_callables = g_hash_table_new (g_str_hash, g_str_equal);
+	module->module_nonnull = g_hash_table_new (NULL, NULL);
 	module->method_to_lmethod = g_hash_table_new (NULL, NULL);
 	module->idx_to_lmethod = g_hash_table_new (NULL, NULL);
 	module->idx_to_unbox_tramp = g_hash_table_new (NULL, NULL);
