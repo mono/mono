@@ -416,7 +416,9 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	mono_trace_init ();
 	mono_trace_set_log_handler (_runtime_log, NULL);
 
-	mono_set_assemblies_path (assembly_dir);
+	sprintf (buff, "%s:%s/tests", assembly_dir, assembly_dir);
+	mono_set_assemblies_path (buff);
+
 	mono_set_crash_chaining (1);
 	mono_set_signal_chaining (1);
 	mono_dl_fallback_register (my_dlopen, my_dlsym, NULL, NULL);
