@@ -8,6 +8,7 @@ namespace System.Threading
 	{
 		string name;
 		InternalThread internalThread;
+		internal ExecutionContext _executionContext;
 
 		[ThreadStatic]
 		static Thread current_thread;
@@ -16,7 +17,7 @@ namespace System.Threading
 		{
 		}
 
-		public ExecutionContext ExecutionContext { get; set; }
+		public ExecutionContext ExecutionContext => ExecutionContext.Capture ();
 
 		public static Thread CurrentThread {
 			get {
@@ -96,7 +97,7 @@ namespace System.Threading
 			}
 		}
 
-		public SynchronizationContext SynchronizationContext { get; set; }
+		internal SynchronizationContext SynchronizationContext { get; set; }
 
 		public ThreadState ThreadState {
 			get {
