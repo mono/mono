@@ -1454,7 +1454,7 @@ interp_init_delegate (MonoDelegate *del, MonoError *error)
 
 	if (!((InterpMethod *) del->interp_method)->transformed) {
 		/* Return any errors from method compilation */
-		mono_interp_transform_method (del->interp_method, get_context (), error);
+		mono_interp_transform_method ((InterpMethod *) del->interp_method, get_context (), error);
 		return_if_nok (error);
 	}
 }
