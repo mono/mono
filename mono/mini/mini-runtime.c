@@ -3574,8 +3574,11 @@ mini_init_delegate (MonoDelegateHandle delegate, MonoError *error)
 {
 	MonoDelegate *del = MONO_HANDLE_RAW (delegate);
 
-	if (mono_use_interpreter)
-		mini_get_interp_callbacks ()->init_delegate (del);
+	if (mono_use_interpreter) {
+		mini_get_interp_callbacks ()->init_delegate (del, error);
+		return_if_nok (error);
+	}
+
 	if (mono_llvm_only) {
 		g_assert (del->method);
 		/* del->method_ptr might already be set to no_llvmonly_interp_method_pointer if the delegate was created from the interpreter */

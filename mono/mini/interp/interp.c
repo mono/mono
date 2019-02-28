@@ -1413,10 +1413,9 @@ exit_pinvoke:
  *   Initialize del->interp_method.
  */
 static void
-interp_init_delegate (MonoDelegate *del)
+interp_init_delegate (MonoDelegate *del, MonoError *error)
 {
 	MonoMethod *method;
-	ERROR_DECL (error);
 
 	if (del->interp_method) {
 		/* Delegate created by a call to ves_icall_mono_delegate_ctor_interp () */
@@ -1451,6 +1450,12 @@ interp_init_delegate (MonoDelegate *del)
 			del->interp_method = mono_interp_get_imethod (del->object.vtable->domain, mono_marshal_get_delegate_invoke (method, NULL), error);
 			mono_error_assert_ok (error);
 		}
+	}
+
+	if (!((InterpMethod *) del->interp_method)->transformed) {
+		/* Return any errors from method compilation */
+		mono_interp_transform_method (del->interp_method, get_context (), error);
+		return_if_nok (error);
 	}
 }
 
