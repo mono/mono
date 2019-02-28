@@ -31,14 +31,13 @@ System.Security.Cryptography.ProtectedData System.ServiceProcess.ServiceControll
 System.Net.Ping System.Resources.Reader System.Resources.Writer System.Runtime.Serialization.Formatters System.Security.Cryptography.Csp \
 System.Runtime.InteropServices.RuntimeInformation System.Xml.XPath.XDocument System.Threading.Overlapped System.Security.SecureString \
 System.Diagnostics.StackTrace System.Data.Common System.Globalization.Extensions System.Runtime.Serialization.Xml System.ServiceModel.Primitives \
-System.Security.Cryptography.X509Certificates System.Runtime.Serialization.Primitives System.Security.Cryptography.Algorithms netstandard System.Drawing.Primitives \
-System.Drawing.Common
+System.Security.Cryptography.X509Certificates System.Runtime.Serialization.Primitives System.Security.Cryptography.Algorithms netstandard System.Drawing.Primitives
 
 # common_SUBDIRS dependencies
 common_DEPS_SUBDIRS :=
 
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS)
-monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 monodroid_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 monodroid_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
@@ -68,19 +67,19 @@ monotouch_tv_SUBDIRS = $(monotouch_SUBDIRS)
 monotouch_tv_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 winaot_SUBDIRS = $(common_DEPS_SUBDIRS)
-winaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+winaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 orbis_SUBDIRS = $(common_DEPS_SUBDIRS)
-orbis_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+orbis_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 unreal_SUBDIRS = $(common_DEPS_SUBDIRS)
-unreal_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+unreal_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 wasm_SUBDIRS = $(common_DEPS_SUBDIRS)
-wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 testing_aot_full_SUBDIRS = $(common_DEPS_SUBDIRS)
-testing_aot_full_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+testing_aot_full_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 mobile_only_SUBDIRS = System.Security.Cryptography.Pkcs System.Security.Cryptography.OpenSsl System.Threading.Tasks.Extensions \
 System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy System.Memory \
