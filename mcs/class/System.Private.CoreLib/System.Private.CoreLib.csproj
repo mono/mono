@@ -106,7 +106,6 @@
       <Compile Include="Resources\SR.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="Internal.Runtime.Augments\RuntimeThread.cs" />
       <Compile Include="Interop\Kernel32.cs" />
       <Compile Include="Microsoft.Win32\UnsafeNativeMethods.cs" />
       <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
@@ -168,6 +167,7 @@
       <Compile Include="System.Threading\Overlapped.cs" />
       <Compile Include="System.Threading\PreAllocatedOverlapped.cs" />
       <Compile Include="System.Threading\Semaphore.cs" />
+      <Compile Include="System.Threading\StackCrawlMark.cs" />
       <Compile Include="System.Threading\Thread.cs" />
       <Compile Include="System.Threading\ThreadPool.cs" />
       <Compile Include="System.Threading\ThreadPoolBoundHandle.cs" />
@@ -212,7 +212,6 @@
 
       <Compile Include="..\corlib\System.Threading\Monitor.cs" />
       <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
-      <Compile Include="..\corlib\System.Threading\Thread.cs" />
 
       <Compile Include="..\corlib\System.Reflection\AssemblyName.cs" />
       <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
@@ -231,7 +230,6 @@
       <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />
-      <Compile Include="..\referencesource\mscorlib\system\threading\thread.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
