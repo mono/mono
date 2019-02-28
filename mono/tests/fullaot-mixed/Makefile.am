@@ -43,7 +43,9 @@ $(AOTDIR)/%.exe: %.exe
 	mkdir -p $(AOTDIR)
 	cp $< $@
 
+if !X86
 if !DISABLE_INTERPRETER
 check: $(AOT_IMAGES) $(TEST_IMAGES)
 	MONO_PATH=$(AOTDIR):$(CLASS) $(MONO_EXE) --aot-path=$(AOTDIR) --full-aot-interp $(AOTDIR)/lambda.exe
+endif
 endif
