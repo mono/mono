@@ -1452,7 +1452,7 @@ interp_init_delegate (MonoDelegate *del, MonoError *error)
 		}
 	}
 
-	if (!((InterpMethod *) del->interp_method)->transformed) {
+	if (!((InterpMethod *) del->interp_method)->transformed && method_is_dynamic (method)) {
 		/* Return any errors from method compilation */
 		mono_interp_transform_method ((InterpMethod *) del->interp_method, get_context (), error);
 		return_if_nok (error);
