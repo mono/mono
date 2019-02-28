@@ -730,8 +730,14 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 	if (src_vtable->rank != dest_vtable->rank)
 		return FALSE;
 
-	if (MONO_HANDLE_GETVAL (source, bounds) || MONO_HANDLE_GETVAL (dest, bounds))
-		return FALSE;
+	MonoArrayBounds *source_bounds = MONO_HANDLE_GETVAL (source, bounds);
+	MonoArrayBounds *dest_bounds = MONO_HANDLE_GETVAL (dest, bounds);
+
+	for (int i = 0; i < src_vtable->rank; i++) {
+		if ((source_bounds && source_bounds [i].lower_bound > 0) ||
+			(dest_bounds && dest_bounds [i].lower_bound > 0))
+			return FALSE;
+	}
 
 	/* there's no integer overflow since mono_array_length_internal returns an unsigned integer */
 	if ((dest_idx + length > mono_array_handle_length (dest)) ||
@@ -2692,18 +2698,15 @@ ves_icall_RuntimeTypeHandle_GetBaseType (MonoReflectionTypeHandle ref_type, Mono
 	return mono_type_get_object_handle (domain, m_class_get_byval_arg (m_class_get_parent (klass)), error);
 }
 
-MonoBoolean
-ves_icall_RuntimeTypeHandle_IsPointer (MonoReflectionTypeHandle ref_type, MonoError *error)
+guint32
+ves_icall_RuntimeTypeHandle_GetCorElementType (MonoReflectionTypeHandle ref_type, MonoError *error)
 {
 	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
-	return type->type == MONO_TYPE_PTR;
-}
 
-MonoBoolean
-ves_icall_RuntimeTypeHandle_IsPrimitive (MonoReflectionTypeHandle ref_type, MonoError *error)
-{
-	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
-	return (!type->byref && (((type->type >= MONO_TYPE_BOOLEAN) && (type->type <= MONO_TYPE_R8)) || (type->type == MONO_TYPE_I) || (type->type == MONO_TYPE_U)));
+	if (type->byref)
+		return MONO_TYPE_BYREF;
+	else
+		return (guint32)type->type;
 }
 
 MonoBoolean
@@ -2715,13 +2718,6 @@ ves_icall_RuntimeTypeHandle_HasReferences (MonoReflectionTypeHandle ref_type, Mo
 	klass = mono_class_from_mono_type_internal (type);
 	mono_class_init_internal (klass);
 	return m_class_has_references (klass);
-}
-
-MonoBoolean
-ves_icall_RuntimeTypeHandle_IsByRef (MonoReflectionTypeHandle ref_type, MonoError *error)
-{
-	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
-	return type->byref;
 }
 
 MonoBoolean
@@ -5691,6 +5687,14 @@ ves_icall_System_Reflection_Assembly_GetTypes (MonoReflectionAssemblyHandle asse
 	return res;
 }
 
+#if ENABLE_NETCORE
+MonoArrayHandle
+ves_icall_System_Reflection_RuntimeAssembly_GetExportedTypes (MonoReflectionAssemblyHandle assembly_handle, MonoError *error)
+{
+	return ves_icall_System_Reflection_Assembly_GetTypes (assembly_handle, TRUE, error);
+}
+#endif
+
 void
 ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct, MonoError *error)
 {
@@ -6404,17 +6408,6 @@ ves_icall_System_Reflection_RuntimeModule_ResolveSignature (MonoImage *image, gu
 	gpointer array_base = MONO_ARRAY_HANDLE_PIN (res, guint8, 0, &h);
 	memcpy (array_base, ptr, len);
 	mono_gchandle_free_internal (h);
-	return res;
-}
-
-MonoBoolean
-ves_icall_RuntimeTypeHandle_IsArray (MonoReflectionTypeHandle ref_type, MonoError *error)
-{
-	error_init (error);
-	MonoType *type = MONO_HANDLE_GETVAL (ref_type, type);
-
-	MonoBoolean res = !type->byref && (type->type == MONO_TYPE_ARRAY || type->type == MONO_TYPE_SZARRAY);
-
 	return res;
 }
 
@@ -7835,10 +7828,20 @@ ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeH
  * which use them in different ways for filling in an enum
  */
 MonoStringHandle
-ves_icall_System_Runtime_InteropServices_RuntimeInformation_get_RuntimeArchitecture (MonoError *error)
+ves_icall_System_Runtime_InteropServices_RuntimeInformation_GetRuntimeArchitecture (MonoError *error)
 {
 	error_init (error);
 	return mono_string_new_handle (mono_domain_get (), mono_config_get_cpu (), error);
+}
+
+/*
+ * used by System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform
+ */
+MonoStringHandle
+ves_icall_System_Runtime_InteropServices_RuntimeInformation_GetOSName (MonoError *error)
+{
+	error_init (error);
+	return mono_string_new_handle (mono_domain_get (), mono_config_get_os (), error);
 }
 
 int

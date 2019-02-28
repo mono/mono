@@ -4134,6 +4134,11 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 	}
 
 	if (!code) {
+		if (method_index < amodule->info.nmethods)
+			code = (guint8 *)amodule->methods [method_index];
+		else
+			return NULL;
+
 		/* JITted method */
 		if (amodule->methods [method_index] == GINT_TO_POINTER (-1)) {
 			if (mono_trace_is_traced (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT)) {
@@ -4152,8 +4157,6 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 			}
 			return NULL;
 		}
-		if (method_index < amodule->info.nmethods)
-			code = (guint8 *)amodule->methods [method_index];
 	}
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
@@ -5883,6 +5886,20 @@ i16_idx_comparer (const void *key, const void *member)
 	return idx1 - idx2;
 }
 
+static gboolean
+aot_is_slim_amodule (MonoAotModule *amodule)
+{
+	if (!amodule)
+		return FALSE;
+
+	/* "slim" only applies to mscorlib.dll */
+	if (strcmp (amodule->aot_name, "mscorlib"))
+		return FALSE;
+
+	guint32 f = amodule->info.flags;
+	return (f & MONO_AOT_FILE_FLAG_INTERP) && !(f & MONO_AOT_FILE_FLAG_FULL_AOT);
+}
+
 gpointer
 mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 {
@@ -5910,7 +5927,7 @@ mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 	} else
 		amodule = m_class_get_image (method->klass)->aot_module;
 
-	if (amodule == NULL || method_index == 0xffffff) {
+	if (amodule == NULL || method_index == 0xffffff || aot_is_slim_amodule (amodule)) {
 		/* couldn't find unbox trampoline specifically generated for that
 		 * method. this should only happen when an unbox trampoline is needed
 		 * for `fullAOT code -> native-to-interp -> interp` transition if

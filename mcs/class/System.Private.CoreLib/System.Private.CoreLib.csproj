@@ -107,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
       <Compile Include="Internal.Runtime.Augments\RuntimeThread.cs" />
+      <Compile Include="Interop\Kernel32.cs" />
       <Compile Include="Microsoft.Win32\UnsafeNativeMethods.cs" />
       <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
       <Compile Include="Mono\MonoDomain.cs" />
@@ -140,6 +141,7 @@
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
       <Compile Include="System.Reflection\Assembly.cs" />
+      <Compile Include="System.Reflection\CorElementType.cs" />
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
       <Compile Include="System.Reflection\MethodBase.cs" />
@@ -159,6 +161,7 @@
       <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyDependencyResolver.cs" />
       <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
+      <Compile Include="System.Security\DynamicSecurityMethodAttribute.cs" />
       <Compile Include="System.Threading\EventWaitHandle.cs" />
       <Compile Include="System.Threading\Interlocked.cs" />
       <Compile Include="System.Threading\Mutex.cs" />
@@ -206,13 +209,10 @@
       <Compile Include="..\corlib\System.Diagnostics\Debugger.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
-      <Compile Include="..\corlib\System.Runtime.CompilerServices\RuntimeHelpers.cs" />
 
       <Compile Include="..\corlib\System.Threading\Monitor.cs" />
-      <Compile Include="..\corlib\System.Threading\NativeEventCalls.cs" />
       <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
       <Compile Include="..\corlib\System.Threading\Thread.cs" />
-      <Compile Include="..\corlib\System.Threading\WaitHandle.cs" />
 
       <Compile Include="..\corlib\System.Reflection\AssemblyName.cs" />
       <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
@@ -232,7 +232,6 @@
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\thread.cs" />
-      <Compile Include="..\referencesource\mscorlib\system\threading\waithandle.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />

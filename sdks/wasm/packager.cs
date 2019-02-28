@@ -56,6 +56,7 @@ class Driver {
 	static string app_prefix, framework_prefix, bcl_prefix, bcl_tools_prefix, bcl_facades_prefix, out_prefix;
 	static HashSet<string> asm_map = new HashSet<string> ();
 	static List<string>  file_list = new List<string> ();
+	static HashSet<string> assemblies_with_dbg_info = new HashSet<string> ();
 	static List<string> root_search_paths = new List<string>();
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
@@ -235,8 +236,10 @@ class Driver {
 		var data = new AssemblyData () { name = image.Assembly.Name.Name, src_path = ra };
 		assemblies.Add (data);
 
-		if (add_pdb && kind == AssemblyKind.User)
+		if (add_pdb && kind == AssemblyKind.User) {
 			file_list.Add (Path.ChangeExtension (ra, "pdb"));
+			assemblies_with_dbg_info.Add (Path.ChangeExtension (ra, "pdb"));
+		}
 
 		foreach (var ar in image.AssemblyReferences) {
 			// Resolve using root search paths first
@@ -653,7 +656,7 @@ class Driver {
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
-		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\"");
+		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\" -s \"DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\'setThrew\']\"");
 
 		// Rules
 		ninja.WriteLine ("rule aot");
@@ -723,10 +726,12 @@ class Driver {
 				continue;
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
-
+			string filename_pdb = Path.ChangeExtension (filename, "pdb");
 			var source_file_path = Path.GetFullPath (assembly);
+			var source_file_path_pdb = Path.ChangeExtension (source_file_path, "pdb");
 			string infile = "";
-
+			string infile_pdb = "";
+			bool emit_pdb = assemblies_with_dbg_info.Contains (source_file_path_pdb);
 			if (enable_linker) {
 				a.linkin_path = $"$builddir/linker-in/{filename}";
 				a.linkout_path = $"$builddir/linker-out/{filename}";
@@ -737,6 +742,10 @@ class Driver {
 			} else {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
+				if (emit_pdb){
+					ninja.WriteLine ($"build $builddir/{filename_pdb}: cpifdiff {source_file_path_pdb}");
+					infile_pdb = $"$builddir/{filename_pdb}";
+				}
 			}
 
 			a.final_path = infile;
@@ -746,7 +755,8 @@ class Driver {
 			}
 
 			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {a.final_path}");
-
+			if (emit_pdb)
+				ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename_pdb}: cpifdiff {infile_pdb}");
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
 

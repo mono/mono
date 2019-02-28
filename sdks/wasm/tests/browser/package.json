@@ -4,7 +4,7 @@
   "description": "",
   "main": "karma.conf.js",
   "scripts": {
-    "test": "karma start --single-run --browsers ChromeHeadless karma.conf.js",
+    "test": "karma start --single-run --browsers NoSandBoxHeadless karma.conf.js",
     "test:keep-alive": "karma start --browsers ChromeHeadless karma.conf.js"
   },
   "author": "",
