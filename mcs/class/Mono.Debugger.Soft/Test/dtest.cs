@@ -3531,7 +3531,6 @@ public class DebuggerTests
 	}
 
 	[Test]
-	[Category ("AndroidSdksNotWorking")]
 	public void ExceptionFilter2 () {
 		vm.Detach ();
 

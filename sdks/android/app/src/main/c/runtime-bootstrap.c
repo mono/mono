@@ -438,18 +438,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 		mini_parse_debug_option ("lldb");
 
 	if (is_debugger) {
-		// Using adb reverse
-		char *host = "127.0.0.1";
-		int sdb_port = 6100;
-
-		char *debug_arg = m_strdup_printf ("--debugger-agent=transport=dt_socket,loglevel=10,address=%s:%d,embedding=1", host, sdb_port);
-
-		char *debug_options [2];
-		debug_options[0] = debug_arg;
-		debug_options[1] = "--soft-breakpoints";
-
-		_log ("Trying to initialize the debugger with options: %s", debug_arg);
-
+		char *debug_options[] = { "--debugger-agent=transport=dt_socket,loglevel=10,address=127.0.0.1:6100,embedding=1", "--soft-breakpoints" };
 		mono_jit_parse_options (1, debug_options);
 	} else if (is_profiler) {
 		// TODO: profiler
