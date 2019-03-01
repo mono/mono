@@ -45,7 +45,9 @@ $(AOTDIR)/%.exe: %.exe
 
 if !X86
 if !DISABLE_INTERPRETER
+if !ENABLE_COOP_SUSPEND
 check: $(AOT_IMAGES) $(TEST_IMAGES)
 	MONO_PATH=$(AOTDIR):$(CLASS) $(MONO_EXE) --aot-path=$(AOTDIR) --full-aot-interp $(AOTDIR)/lambda.exe
+endif
 endif
 endif
