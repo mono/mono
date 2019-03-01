@@ -13,7 +13,7 @@ namespace System.Runtime.InteropServices
     // reliably guarantee handle release in the face of thread aborts.
 
     /// <summary>Represents a wrapper class for operating system handles.</summary>
-    public abstract class SafeHandle : CriticalFinalizerObject, IDisposable
+    public abstract partial class SafeHandle : CriticalFinalizerObject, IDisposable
     {
         // IMPORTANT:
         // - Do not add or rearrange fields as the EE depends on this layout,
@@ -243,7 +243,12 @@ namespace System.Runtime.InteropServices
             // method on the SafeHandle subclass.
             if (performRelease)
             {
+                // Save last error from P/Invoke in case the implementation of ReleaseHandle
+                // trashes it (important because this ReleaseHandle could occur implicitly
+                // as part of unmarshaling another P/Invoke).
+                int lastError = Marshal.GetLastWin32Error();
                 ReleaseHandle();
+                Marshal.SetLastWin32Error(lastError);
             }
         }
     }

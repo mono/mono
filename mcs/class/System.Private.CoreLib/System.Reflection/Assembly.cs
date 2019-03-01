@@ -1,32 +1,43 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Reflection
 {
 	[StructLayout (LayoutKind.Sequential)]
 	partial class Assembly
 	{
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public static Assembly Load (string assemblyString)
 		{
 			if (assemblyString == null)
 				throw new ArgumentNullException (nameof (assemblyString));
 
 			var name = new AssemblyName (assemblyString);
-			return Load (name, IntPtr.Zero);
+			// TODO: trigger assemblyFromResolveEvent
+
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return Load (name, ref stackMark, IntPtr.Zero);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public static Assembly Load (AssemblyName assemblyRef)
 		{
 			if (assemblyRef == null)
 				throw new ArgumentNullException (nameof (assemblyRef));
 
-			return Load (assemblyRef, IntPtr.Zero);
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return Load (assemblyRef, ref stackMark, IntPtr.Zero);
 		}
 
-		internal static Assembly Load (AssemblyName assemblyRef, IntPtr ptrLoadContextBinder)
+		internal static Assembly Load (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder)
 		{
-			throw new NotImplementedException ();
+			// TODO: pass AssemblyName
+			return InternalLoad (assemblyRef.FullName, ref stackMark, ptrLoadContextBinder);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern Assembly InternalLoad (string assemblyName, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetExecutingAssembly ();

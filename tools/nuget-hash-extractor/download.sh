@@ -30,6 +30,7 @@ curl -L https://www.nuget.org/api/v2/package/System.IO.Compression/4.1.0 -o nuge
 curl -L https://www.nuget.org/api/v2/package/System.IO.Compression/4.0.0 -o nugets/system.io.compression.4.0.0.nupkg
 
 #System.Net.Http
+curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.4 -o nugets/system.net.http.4.3.4.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.3 -o nugets/system.net.http.4.3.3.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.2 -o nugets/system.net.http.4.3.2.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.3.1 -o nugets/system.net.http.4.3.1.nupkg
@@ -39,6 +40,8 @@ curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.1.0 -o nugets/sys
 curl -L https://www.nuget.org/api/v2/package/System.Net.Http/4.0.0 -o nugets/system.net.http.4.0.0.nupkg
 
 #System.Text.Encoding.CodePages
+curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.5.1 -o nugets/system.text.encoding.codepages.4.5.1.nupkg
+curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.5.0 -o nugets/system.text.encoding.codepages.4.5.0.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.4.0 -o nugets/system.text.encoding.codepages.4.4.0.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.3.0 -o nugets/system.text.encoding.codepages.4.3.0.nupkg
 curl -L https://www.nuget.org/api/v2/package/System.Text.Encoding.CodePages/4.0.1 -o nugets/system.text.encoding.codepages.4.0.1.nupkg

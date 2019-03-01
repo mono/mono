@@ -23,9 +23,13 @@ public class AndroidRunner extends Instrumentation
 {
 	static AndroidRunner inst;
 
+	String testsuite;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		testsuite = savedInstanceState.getString ("testsuite");
+
 		super.onCreate (savedInstanceState);
 
 		start ();
@@ -57,7 +61,7 @@ public class AndroidRunner extends Instrumentation
 		new File (filesDir + "/mono/2.1").mkdir ();
 		copyAssetDir (am, "mconfig", filesDir + "/mono/2.1");
 
-		runTests (filesDir, cacheDir, dataDir, assemblyDir);
+		runTests (filesDir, cacheDir, dataDir, assemblyDir, assemblyDir + "/" + testsuite);
 
 		runOnMainSync (new Runnable () {
 			public void run() {
@@ -101,7 +105,7 @@ public class AndroidRunner extends Instrumentation
 		out.close ();
 	}
 
-	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir);
+	native void runTests (String filesDir, String cacheDir, String dataDir, String assemblyDir, String assemblyName);
 
 	static void WriteLineToInstrumentation (String line)
 	{

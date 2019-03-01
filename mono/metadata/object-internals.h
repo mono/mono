@@ -1759,6 +1759,9 @@ mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass);
 void
 mono_nullable_init_from_handle (guint8 *buf, MonoObjectHandle value, MonoClass *klass);
 
+void
+mono_nullable_init_unboxed (guint8 *buf, gpointer value, MonoClass *klass);
+
 MonoObject *
 mono_value_box_checked (MonoDomain *domain, MonoClass *klass, void* val, MonoError *error);
 
@@ -2012,6 +2015,9 @@ mono_object_handle_isinst (MonoObjectHandle obj, MonoClass *klass, MonoError *er
 MonoObjectHandle
 mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoError *error);
 
+gboolean
+mono_object_handle_isinst_mbyref_raw (MonoObjectHandle obj, MonoClass *klass, MonoError *error);
+
 MonoStringHandle
 mono_string_new_size_handle (MonoDomain *domain, gint32 len, MonoError *error);
 
@@ -2240,6 +2246,8 @@ mono_field_static_set_value_internal (MonoVTable *vt, MonoClassField *field, voi
 
 void
 mono_field_get_value_internal (MonoObject *obj, MonoClassField *field, void *value);
+
+MonoMethod* mono_get_context_capture_method (void);
 
 /* GC handles support
  *

@@ -4,7 +4,7 @@ namespace System
 	{
 		public static bool IsOSX => true;
 		public static bool IsDebian => false;
-		public static int WindowsVersion => -1;
+		internal static bool IsSsl2AndSsl3Supported => false;
 
 		/*
 		 * Use of these properties should be strictly limited to the `System.Net.Http` tests.

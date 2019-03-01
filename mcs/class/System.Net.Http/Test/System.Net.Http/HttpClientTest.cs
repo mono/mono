@@ -178,6 +178,16 @@ namespace MonoTests.System.Net.Http
 		const int WaitTimeout = 5000;
 
 		[Test]
+		public void Ctor ()
+		{
+			var client = new HttpClient ();
+			Assert.IsNull (client.BaseAddress, "#1");
+			Assert.IsNotNull (client.DefaultRequestHeaders, "#2");	// TODO: full check
+			Assert.AreEqual (int.MaxValue, client.MaxResponseContentBufferSize, "#3");
+			Assert.AreEqual (TimeSpan.FromSeconds (100), client.Timeout, "#4");
+		}
+
+		[Test]
 		public void Ctor_Default ()
 		{
 			var client = HttpClientTestHelpers.CreateHttpClient ();
@@ -275,7 +285,7 @@ namespace MonoTests.System.Net.Http
 				httpClient.PostAsync (restRequest.RequestUri, restRequest.Content).Wait (WaitTimeout);
 				Assert.Fail ("#1");
 			} catch (AggregateException e) {
-				Assert.That (e.InnerException, Is.InstanceOf<TaskCanceledException> (), "#2");
+				Assert.That (e.InnerException, Is.InstanceOf<TaskCanceledException> (), $"#2: {e}");
 			}
 		}
 
@@ -900,7 +910,7 @@ namespace MonoTests.System.Net.Http
 					client.SendAsync (request, HttpCompletionOption.ResponseContentRead).Wait (WaitTimeout);
 					Assert.Fail ("#2");
 				} catch (AggregateException e) {
-					Assert.IsTrue (e.InnerException is HttpRequestException, "#3");
+					Assert.That (e.InnerException, Is.InstanceOf<HttpRequestException> (), $"#3: {e}");
 				}
 
 			} finally {
@@ -1347,7 +1357,7 @@ namespace MonoTests.System.Net.Http
 					client.GetByteArrayAsync ($"http://localhost:{port}/GetByteArray_ServerError/").Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
-					Assert.IsTrue (e.InnerException is HttpRequestException , "#2");
+					Assert.That (e.InnerException, Is.InstanceOf<HttpRequestException> (), $"#2: {e}");
 				}
 			} finally {
 				listener.Close ();
@@ -1378,7 +1388,7 @@ namespace MonoTests.System.Net.Http
 					client.GetStringAsync ($"http://localhost:{port}/DisallowAutoRedirect/").Wait (WaitTimeout);
 					Assert.Fail ("#1");
 				} catch (AggregateException e) {
-					Assert.IsTrue (e.InnerException is HttpRequestException, "#2");
+					Assert.That (e.InnerException, Is.InstanceOf<HttpRequestException> (), $"#2: {e}");
 				}
 			} finally {
 				listener.Abort ();

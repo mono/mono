@@ -8,7 +8,7 @@ namespace System
 {
     [Serializable]
     [StructLayout (LayoutKind.Sequential)]
-	public class Exception
+	public class Exception : ISerializable
 	{
 		# region Keep in sync with MonoException in object-internals.h
         string _className;

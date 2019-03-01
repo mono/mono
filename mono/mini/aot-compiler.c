@@ -4290,6 +4290,28 @@ create_gsharedvt_inst (MonoAotCompile *acfg, MonoMethod *method, MonoGenericCont
 }
 
 static void
+add_gc_wrappers (MonoAotCompile *acfg)
+{
+	MonoMethod *m;
+	/* Managed Allocators */
+	int nallocators = mono_gc_get_managed_allocator_types ();
+	for (int i = 0; i < nallocators; ++i) {
+		if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_REGULAR)))
+			add_method (acfg, m);
+		if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_SLOW_PATH)))
+			add_method (acfg, m);
+		if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_PROFILER)))
+			add_method (acfg, m);
+	}
+
+	/* write barriers */
+	if (mono_gc_is_moving ()) {
+		add_method (acfg, mono_gc_get_specific_write_barrier (FALSE));
+		add_method (acfg, mono_gc_get_specific_write_barrier (TRUE));
+	}
+}
+
+static void
 add_wrappers (MonoAotCompile *acfg)
 {
 	MonoMethod *method, *m;
@@ -4363,8 +4385,6 @@ add_wrappers (MonoAotCompile *acfg)
  	}
 
 	if (mono_is_corlib_image (acfg->image->assembly->image)) {
-		int nallocators;
-
 		/* Runtime invoke wrappers */
 
 		MonoType *void_type = mono_get_void_type ();
@@ -4450,22 +4470,7 @@ add_wrappers (MonoAotCompile *acfg)
 		/* stelemref */
 		add_method (acfg, mono_marshal_get_stelemref ());
 
-		/* Managed Allocators */
-		nallocators = mono_gc_get_managed_allocator_types ();
-		for (i = 0; i < nallocators; ++i) {
-			if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_REGULAR)))
-				add_method (acfg, m);
-			if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_SLOW_PATH)))
-				add_method (acfg, m);
-			if ((m = mono_gc_get_managed_allocator_by_type (i, MANAGED_ALLOCATOR_PROFILER)))
-				add_method (acfg, m);
-		}
-
-		/* write barriers */
-		if (mono_gc_is_moving ()) {
-			add_method (acfg, mono_gc_get_specific_write_barrier (FALSE));
-			add_method (acfg, mono_gc_get_specific_write_barrier (TRUE));
-		}
+		add_gc_wrappers (acfg);
 
 		/* Stelemref wrappers */
 		{
@@ -7389,7 +7394,7 @@ emit_trampolines (MonoAotCompile *acfg)
 			}
 		}
 
-		if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
+		if (mono_aot_mode_is_interp (&acfg->aot_opts) && mono_is_corlib_image (acfg->image->assembly->image)) {
 			mono_arch_get_interp_to_native_trampoline (&info);
 			emit_trampoline (acfg, info);
 
@@ -12129,7 +12134,7 @@ resolve_class (ClassProfileData *cdata)
  * Resolve the profile data to the corresponding loaded classes/methods etc. if possible.
  */
 static void
-resolve_profile_data (MonoAotCompile *acfg, ProfileData *data)
+resolve_profile_data (MonoAotCompile *acfg, ProfileData *data, MonoAssembly* current)
 {
 	GHashTableIter iter;
 	gpointer key, value;
@@ -12143,6 +12148,11 @@ resolve_profile_data (MonoAotCompile *acfg, ProfileData *data)
 	g_hash_table_iter_init (&iter, data->images);
 	while (g_hash_table_iter_next (&iter, &key, &value)) {
 		ImageProfileData *idata = (ImageProfileData*)value;
+
+		if (!strcmp (current->aname.name, idata->name)) {
+			idata->image = current->image;
+			break;
+		}
 
 		for (i = 0; i < assemblies->len; ++i) {
 			MonoAssembly *ass = (MonoAssembly*)g_ptr_array_index (assemblies, i);
@@ -13100,9 +13110,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (acfg->opts & MONO_OPT_GSHAREDVT)
 		mono_set_generic_sharing_vt_supported (TRUE);
 
-	if (acfg->dedup_collect_only)
-		aot_printf (acfg, "Dedup collect: %s\n", image->name);
-	else
+	if (!acfg->dedup_collect_only)
 		aot_printf (acfg, "Mono Ahead of Time compiler - compiling assembly %s\n", image->name);
 
 	if (!acfg->aot_opts.deterministic)
@@ -13276,7 +13284,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		GList *l;
 
 		for (l = acfg->profile_data; l; l = l->next)
-			resolve_profile_data (acfg, (ProfileData*)l->data);
+			resolve_profile_data (acfg, (ProfileData*)l->data, ass);
 		for (l = acfg->profile_data; l; l = l->next)
 			add_profile_instances (acfg, (ProfileData*)l->data);
 	}
@@ -13302,7 +13310,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	}
 #endif
 
-	if (mono_aot_mode_is_interp (&acfg->aot_opts)) {
+	if (mono_aot_mode_is_interp (&acfg->aot_opts) && mono_is_corlib_image (acfg->image->assembly->image)) {
 		MonoMethod *wrapper = mini_get_interp_lmf_wrapper ("mono_interp_to_native_trampoline", (gpointer) mono_interp_to_native_trampoline);
 		add_method (acfg, wrapper);
 
@@ -13318,6 +13326,13 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 			add_method (acfg, wrapper);
 		}
 #endif
+
+		/* required for mixed mode */
+		if (strcmp (acfg->image->assembly->aname.name, "mscorlib") == 0) {
+			add_gc_wrappers (acfg);
+
+			g_hash_table_foreach (mono_get_jit_icall_info (), add_jit_icall_wrapper, acfg);
+		}
 	}
 
 	TV_GETTIME (atv);
