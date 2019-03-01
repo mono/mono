@@ -1,0 +1,17 @@
+#include System.Drawing.Common.dll.sources
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Color.cs
+../../../../external/corefx/src/Common/src/System/Drawing/KnownColor.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Point.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/PointF.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Rectangle.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/RectangleF.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/Size.cs
+../../../../external/corefx/src/System.Drawing.Primitives/src/System/Drawing/SizeF.cs
+../../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
+../../../../external/corefx/src/Common/src/System/Drawing/KnownColorTable.cs
+../../../../external/corefx/src/Common/src/System/Drawing/ColorTable.cs
+../../../../external/corefx/src/Common/src/System/Drawing/ColorUtil.netcoreapp21.cs
+../../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/SystemColors.cs
+../../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/ColorConverter.cs
+../../../build/common/SR.cs
+SR.cs
