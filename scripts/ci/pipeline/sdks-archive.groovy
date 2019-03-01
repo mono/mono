@@ -45,6 +45,8 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
     ws ("workspace/${jobName}/${monoBranch}/${product}/${configuration}") {
         timestamps {
             stage('Checkout') {
+                echo "Running on ${env.NODE_NAME}"
+
                 // clone and checkout repo
                 checkout scm
 
