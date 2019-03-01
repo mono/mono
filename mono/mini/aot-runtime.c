@@ -671,13 +671,18 @@ decode_type (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *err
 		t = (MonoType*)g_malloc0 (mono_sizeof_type_with_mods (count, TRUE));
 		mono_type_with_mods_init (t, count, TRUE);
 
-		MonoAggregateModContainer *cm = mono_type_get_amods (t);
+		MonoAggregateModContainer *cm = g_alloca (mono_sizeof_aggregate_modifiers (count));
+		cm->count = count;
 		for (int i = 0; i < count; ++i) {
 			MonoSingleCustomMod *cmod = &cm->modifiers [i];
 			cmod->required = decode_value (p, &p);
 			cmod->type = decode_type (module, p, &p, error);
 			goto_if_nok (error, fail);
 		}
+
+		mono_type_set_amods (t, mono_metadata_get_canonical_aggregate_modifiers (cm));
+		for (int i = 0; i < count; ++i)
+			mono_metadata_free_type (cm->modifiers [i].type);
 	} else {
 		t = (MonoType *) g_malloc0 (MONO_SIZEOF_TYPE);
 	}
