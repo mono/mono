@@ -43,7 +43,7 @@ static int32_t GetMountInfo(MountPointFound onFound)
 }
 
 #else
-
+#if HAVE_SETMNTENT
     int result = -1;
     FILE* fp = setmntent("/proc/mounts", MNTOPT_RO);
     if (fp != NULL)
@@ -64,6 +64,9 @@ static int32_t GetMountInfo(MountPointFound onFound)
     }
 
     return result;
+#else
+    return 0;
+#endif
 }
 
 #endif
