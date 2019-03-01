@@ -8,8 +8,8 @@
         void  .cctor() cil managed
 {
 	// If this method executes, we've succeeded
-        ldc.i32 0;
-        call void [mscorlib]System.Environment.Exit(Int32)
+        ldc.i4 0
+        call void [mscorlib]System.Environment::Exit(int32)
 	ret
 }
 
@@ -22,8 +22,8 @@
 		  .entrypoint
 		  // This should never run due to the module constructor
 		  // exiting
-		  ldc.i32 1;
-		  call void [mscorlib]System.Environment.Exit(Int32)
+		  ldc.i4 1
+		  call void [mscorlib]System.Environment::Exit(int32)
 		  ret
 		}
 	}
