@@ -248,6 +248,12 @@ mono_llvm_set_call_preserveall_cc (LLVMValueRef func)
 }
 
 void
+mono_llvm_set_call_nonnull_arg (LLVMValueRef calli, int argNo)
+{
+	unwrap<CallInst>(calli)->addParamAttr (argNo, Attribute::NonNull);
+}
+
+void
 mono_llvm_set_call_notailcall (LLVMValueRef func)
 {
 #if LLVM_API_VERSION > 100

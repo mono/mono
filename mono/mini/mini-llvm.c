@@ -1232,45 +1232,40 @@ convert_full (EmitContext *ctx, LLVMValueRef v, LLVMTypeRef dtype, gboolean is_u
 
 		LLVMValueRef result = NULL;
 
-		if (ext)
+		if (ext) {
 			result = is_unsigned ? LLVMBuildZExt (ctx->builder, v, dtype, "") : LLVMBuildSExt (ctx->builder, v, dtype, "");
-
-		if (dtype == LLVMDoubleType () && stype == LLVMFloatType ())
+		} else if (dtype == LLVMDoubleType () && stype == LLVMFloatType ()) {
 			result = LLVMBuildFPExt (ctx->builder, v, dtype, "");
-
-		/* Trunc */
-		if (stype == LLVMInt64Type () && (dtype == LLVMInt32Type () || dtype == LLVMInt16Type () || dtype == LLVMInt8Type ()))
+		} else if (stype == LLVMInt64Type () && (dtype == LLVMInt32Type () || dtype == LLVMInt16Type () || dtype == LLVMInt8Type ())) {
+			/* Trunc */
 			result = LLVMBuildTrunc (ctx->builder, v, dtype, "");
-		if (stype == LLVMInt32Type () && (dtype == LLVMInt16Type () || dtype == LLVMInt8Type ()))
+		} else if (stype == LLVMInt32Type () && (dtype == LLVMInt16Type () || dtype == LLVMInt8Type ())) {
 			result = LLVMBuildTrunc (ctx->builder, v, dtype, "");
-		if (stype == LLVMInt16Type () && dtype == LLVMInt8Type ())
+		} else if (stype == LLVMInt16Type () && dtype == LLVMInt8Type ()) {
 			result = LLVMBuildTrunc (ctx->builder, v, dtype, "");
-		if (stype == LLVMDoubleType () && dtype == LLVMFloatType ())
+		} else if (stype == LLVMDoubleType () && dtype == LLVMFloatType ()) {
 			result = LLVMBuildFPTrunc (ctx->builder, v, dtype, "");
-
-		if (LLVMGetTypeKind (stype) == LLVMPointerTypeKind && LLVMGetTypeKind (dtype) == LLVMPointerTypeKind)
+		} else if (LLVMGetTypeKind (stype) == LLVMPointerTypeKind && LLVMGetTypeKind (dtype) == LLVMPointerTypeKind) {
 			result = LLVMBuildBitCast (ctx->builder, v, dtype, "");
-		if (LLVMGetTypeKind (dtype) == LLVMPointerTypeKind)
+		} else if (LLVMGetTypeKind (dtype) == LLVMPointerTypeKind) {
 			result = LLVMBuildIntToPtr (ctx->builder, v, dtype, "");
-		if (LLVMGetTypeKind (stype) == LLVMPointerTypeKind)
+		} else if (LLVMGetTypeKind (stype) == LLVMPointerTypeKind) {
 			result = LLVMBuildPtrToInt (ctx->builder, v, dtype, "");
-
-		if (mono_arch_is_soft_float ()) {
-			if (stype == LLVMInt32Type () && dtype == LLVMFloatType ())
+		} else if (mono_arch_is_soft_float ()) {
+			if (stype == LLVMInt32Type () && dtype == LLVMFloatType ()) {
 				result = LLVMBuildBitCast (ctx->builder, v, dtype, "");
-			if (stype == LLVMInt32Type () && dtype == LLVMDoubleType ())
+			} else if (stype == LLVMInt32Type () && dtype == LLVMDoubleType ()) {
 				result = LLVMBuildBitCast (ctx->builder, LLVMBuildZExt (ctx->builder, v, LLVMInt64Type (), ""), dtype, "");
-		}
-
-		if (LLVMGetTypeKind (stype) == LLVMVectorTypeKind && LLVMGetTypeKind (dtype) == LLVMVectorTypeKind)
+			}
+		} else if (LLVMGetTypeKind (stype) == LLVMVectorTypeKind && LLVMGetTypeKind (dtype) == LLVMVectorTypeKind) {
 			result = LLVMBuildBitCast (ctx->builder, v, dtype, "");
-
+		}
+		
 		if (result == NULL) {
 			LLVMDumpValue (v);
 			LLVMDumpValue (LLVMConstNull (dtype));
 			g_assert_not_reached ();
 		}
-
 
 		gboolean nonnull = g_hash_table_lookup (ctx->module->module_nonnull, v) != NULL;
 		if (nonnull)
@@ -4095,6 +4090,14 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	 */
 	lcall = emit_call (ctx, bb, &builder, callee, args, LLVMCountParamTypes (llvm_sig));
 
+	for (int i = 0; i < nargs; i++) {
+		LLVMValueRef ref = args [i];
+		gboolean nonnull = g_hash_table_lookup (ctx->module->module_nonnull, ref) != NULL;
+
+		if (nonnull)
+			mono_llvm_set_call_nonnull_arg (lcall, i);
+	}
+
 	if (ins->opcode != OP_TAILCALL && ins->opcode != OP_TAILCALL_MEMBASE && LLVMGetInstructionOpcode (lcall) == LLVMCall)
 		mono_llvm_set_call_notailcall (lcall);
 
@@ -5906,7 +5909,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				/* Can't use this in llvmonly mode since the got slots are initialized by the methods themselves */
 				set_invariant_load_flag (values [ins->dreg]);
 
-				set_nonnull_load_flag (ctx, values [ins->dreg]);
+				if (ji->type == MONO_PATCH_INFO_LDSTR)
+					set_nonnull_load_flag (ctx, values [ins->dreg]);
 			}
 			break;
 		}
