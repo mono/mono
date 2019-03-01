@@ -37,9 +37,9 @@ System.Security.Cryptography.X509Certificates System.Runtime.Serialization.Primi
 common_DEPS_SUBDIRS :=
 
 monotouch_SUBDIRS = $(common_DEPS_SUBDIRS)
-monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+monotouch_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
-monodroid_SUBDIRS = $(common_DEPS_SUBDIRS)
+monodroid_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 monodroid_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 net_4_x_SUBDIRS = $(common_DEPS_SUBDIRS)
@@ -67,22 +67,22 @@ monotouch_tv_SUBDIRS = $(monotouch_SUBDIRS)
 monotouch_tv_PARALLEL_SUBDIRS = $(monotouch_PARALLEL_SUBDIRS)
 
 winaot_SUBDIRS = $(common_DEPS_SUBDIRS)
-winaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+winaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 orbis_SUBDIRS = $(common_DEPS_SUBDIRS)
-orbis_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+orbis_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 unreal_SUBDIRS = $(common_DEPS_SUBDIRS)
-unreal_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+unreal_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 wasm_SUBDIRS = $(common_DEPS_SUBDIRS)
-wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 testing_aot_full_SUBDIRS = $(common_DEPS_SUBDIRS)
-testing_aot_full_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+testing_aot_full_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS) System.Drawing.Common
 
 mobile_only_SUBDIRS = System.Security.Cryptography.Pkcs System.Security.Cryptography.OpenSsl System.Threading.Tasks.Extensions \
 System.Security.Cryptography.Cng System.Runtime.Loader System.Xml.XPath.XmlDocument System.Reflection.DispatchProxy System.Memory \
-System.Drawing.Common System.Buffers
+System.Buffers
 
 PROFILE_PARALLEL_SUBDIRS = $(net_4_x_PARALLEL_SUBDIRS)
