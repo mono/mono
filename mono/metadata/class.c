@@ -849,24 +849,38 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 static MonoType*
 inflate_generic_custom_modifiers (MonoImage *image, const MonoType *type, MonoGenericContext *context, MonoError *error)
 {
+	MonoType *result = NULL;
 	g_assert (type->has_cmods);
 	int count = mono_type_custom_modifier_count (type);
 	gboolean changed = FALSE;
-	MonoType *new_type = g_alloca (mono_sizeof_type_with_mods (count, TRUE));
-	memcpy (new_type, type, MONO_SIZEOF_TYPE);
-	mono_type_with_mods_init (new_type, count, TRUE);
-	MonoAggregateModContainer *new_mods = mono_type_get_amods (new_type);
+
+	size_t aggregate_size = mono_sizeof_aggregate_modifiers (count);
+	MonoAggregateModContainer *candidate_mods = g_alloca (aggregate_size);
+	memset (candidate_mods, 0, aggregate_size);
+	candidate_mods->count = count;
 
 	for (int i = 0; i < count; ++i) {
 		gboolean required;
 		MonoType *cmod_old = mono_type_get_custom_modifier (type, i, &required, error);
-		return_val_if_nok (error, NULL);
-		MonoType *cmod_new = inflate_generic_type (NULL, cmod_old, context, error); /* FIXME leaks */
-		return_val_if_nok (error, NULL);
+		goto_if_nok (error, leave);
+		MonoType *cmod_new = inflate_generic_type (NULL, cmod_old, context, error);
+		goto_if_nok (error, leave);
 		if (cmod_new)
 			changed = TRUE;
-		new_mods->modifiers [i].required = required;
-		new_mods->modifiers [i].type = cmod_new ? cmod_new : cmod_old;
+		candidate_mods->modifiers [i].required = required;
+		candidate_mods->modifiers [i].type = cmod_new;
+	}
+
+	if (changed) {
+		/* if we're going to make a new type, fill in any modifiers that weren't affected by inflation with copies of the original values. */
+		for (int i = 0; i < count; ++i) {
+			if (candidate_mods->modifiers [i].type == NULL) {
+				candidate_mods->modifiers [i].type = mono_metadata_type_dup (NULL, mono_type_get_custom_modifier (type, i, NULL, error));
+					
+				/* it didn't error in the first loop, so should be ok now, too */
+				mono_error_assert_ok (error);
+			}
+		}
 	}
 #ifdef DEBUG_INFLATE_CMODS
 	if (changed) {
@@ -875,9 +889,23 @@ inflate_generic_custom_modifiers (MonoImage *image, const MonoType *type, MonoGe
 		g_free (full_name);
 	}
 #endif
-	if (!changed)
-		return NULL;
-	return mono_metadata_type_dup (image, new_type);
+	if (changed) {
+		MonoType *new_type = g_alloca (mono_sizeof_type_with_mods (count, TRUE));
+		/* first init just the non-modifier portion of new_type before populating the
+		 * new modifiers */
+		memcpy (new_type, type, MONO_SIZEOF_TYPE);
+		mono_type_with_mods_init (new_type, count, TRUE);
+		mono_type_set_amods (new_type, mono_metadata_get_canonical_aggregate_modifiers (candidate_mods));
+		result =  mono_metadata_type_dup (image, new_type);
+	}
+
+leave:
+	for (int i = 0; i < count; ++i) {
+		if (candidate_mods->modifiers [i].type)
+			mono_metadata_free_type (candidate_mods->modifiers [i].type);
+	}
+
+	return result;
 }
 
 MonoGenericContext *
