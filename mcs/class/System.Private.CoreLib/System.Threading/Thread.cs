@@ -243,7 +243,7 @@ namespace System.Threading
 		}
 
 		// Called from the runtime
-		public void StartCallback () {
+		internal void StartCallback () {
 			if (m_start is ThreadStart) {
 				var del = (ThreadStart)m_start;
 				m_start = null;
