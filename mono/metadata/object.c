@@ -8416,8 +8416,10 @@ mono_delegate_ctor_with_method (MonoObjectHandle this_obj, MonoObjectHandle targ
 	}
 
 	MONO_HANDLE_SETVAL (delegate, invoke_impl, gpointer, callbacks.create_delegate_trampoline (MONO_HANDLE_DOMAIN (delegate), mono_handle_class (delegate)));
-	if (callbacks.init_delegate)
-		callbacks.init_delegate (MONO_HANDLE_RAW (delegate)); /* FIXME: update init_delegate callback to take a MonoDelegateHandle */
+	if (callbacks.init_delegate) {
+		callbacks.init_delegate (MONO_HANDLE_RAW (delegate), error); /* FIXME: update init_delegate callback to take a MonoDelegateHandle */
+		return_val_if_nok (error, FALSE);
+	}
 	return TRUE;
 }
 

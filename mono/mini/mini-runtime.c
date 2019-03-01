@@ -3697,11 +3697,12 @@ mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr)
 }
 
 void
-mini_init_delegate (MonoDelegate *del)
+mini_init_delegate (MonoDelegate *del, MonoError *error)
 {
-	if (mono_use_interpreter)
-		mini_get_interp_callbacks ()->init_delegate (del);
-	else if (mono_llvm_only)
+	if (mono_use_interpreter) {
+		mini_get_interp_callbacks ()->init_delegate (del, error);
+		return_if_nok (error);
+	} else if (mono_llvm_only)
 		del->extra_arg = mini_get_delegate_arg (del->method, del->method_ptr);
 }
 

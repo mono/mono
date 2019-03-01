@@ -2242,7 +2242,7 @@ void              mono_if_conversion (MonoCompile *cfg);
 
 /* Delegates */
 gpointer          mini_get_delegate_arg (MonoMethod *method, gpointer method_ptr);
-void              mini_init_delegate (MonoDelegate *del);
+void              mini_init_delegate (MonoDelegate *del, MonoError *error);
 char*             mono_get_delegate_virtual_invoke_impl_name (gboolean load_imt_reg, int offset);
 gpointer          mono_get_delegate_virtual_invoke_impl  (MonoMethodSignature *sig, MonoMethod *method);
 

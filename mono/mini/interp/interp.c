@@ -1292,10 +1292,9 @@ exit_pinvoke:
  *   Initialize del->interp_method.
  */
 static void
-interp_init_delegate (MonoDelegate *del)
+interp_init_delegate (MonoDelegate *del, MonoError *error)
 {
 	MonoMethod *method;
-	ERROR_DECL (error);
 
 	if (del->interp_method) {
 		/* Delegate created by a call to ves_icall_mono_delegate_ctor_interp () */
@@ -1305,9 +1304,7 @@ interp_init_delegate (MonoDelegate *del)
 		del->interp_method = mono_interp_get_imethod (del->object.vtable->domain, del->method, error);
 	} else {
 		/* Created from JITted code */
-		g_assert (del->method_ptr);
-		del->interp_method = lookup_method_pointer (del->method_ptr);
-		g_assert (del->interp_method);
+		g_assert_not_reached ();
 	}
 
 	method = ((InterpMethod*)del->interp_method)->method;
@@ -1332,6 +1329,12 @@ interp_init_delegate (MonoDelegate *del)
 			del->interp_method = mono_interp_get_imethod (del->object.vtable->domain, mono_marshal_get_delegate_invoke (method, NULL), error);
 			mono_error_assert_ok (error);
 		}
+	}
+
+	if (!((InterpMethod *) del->interp_method)->transformed && method_is_dynamic (method)) {
+		/* Return any errors from method compilation */
+		mono_interp_transform_method ((InterpMethod *) del->interp_method, get_context (), error);
+		return_if_nok (error);
 	}
 }
 
@@ -2517,19 +2520,17 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 	MonoJitDomainInfo *info;
 	InterpMethod *imethod = mono_interp_get_imethod (domain, method, error);
 
-	if (compile) {
+	if (imethod->jit_entry)
+		return imethod->jit_entry;
+
+	if (compile && !imethod->transformed) {
 		/* Return any errors from method compilation */
 		mono_interp_transform_method (imethod, get_context (), error);
 		return_val_if_nok (error, NULL);
 	}
 
-	/* HACK: method_ptr of delegate should point to a runtime method*/
-	if (method->wrapper_type && (method->wrapper_type == MONO_WRAPPER_DYNAMIC_METHOD ||
-				(method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)))
+	if (method->wrapper_type && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)
 		return imethod;
-
-	if (imethod->jit_entry)
-		return imethod->jit_entry;
 
 	MonoMethodSignature *sig = mono_method_signature (method);
 #ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
