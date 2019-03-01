@@ -1011,7 +1011,7 @@ namespace System.Runtime.CompilerServices
             // Capture references to Thread Contexts
             Thread currentThread0 = Thread.CurrentThread;
             Thread currentThread = currentThread0;
-            ExecutionContext previousExecutionCtx0 = currentThread0.ExecutionContext;
+            ExecutionContext previousExecutionCtx0 = currentThread0._executionContext;
 
             // Store current ExecutionContext and SynchronizationContext as "previousXxx".
             // This allows us to restore them and undo any Context changes made in stateMachine.MoveNext
@@ -1036,7 +1036,7 @@ namespace System.Runtime.CompilerServices
                 }
 
                 ExecutionContext previousExecutionCtx1 = previousExecutionCtx;
-                ExecutionContext currentExecutionCtx1 = currentThread1.ExecutionContext;
+                ExecutionContext currentExecutionCtx1 = currentThread1._executionContext;
                 if (previousExecutionCtx1 != currentExecutionCtx1)
                 {
                     ExecutionContext.RestoreChangedContextToThread(currentThread1, previousExecutionCtx1, currentExecutionCtx1);
@@ -1100,10 +1100,10 @@ namespace System.Runtime.CompilerServices
         /// (like the action after that (which is also a ContinuationWrapper and thus form a linked list).  
         ///  We also store that task if the action is associate with at task.  
         /// </summary>
-        private sealed class ContinuationWrapper
+        private sealed class ContinuationWrapper // SOS DumpAsync command depends on this name
         {
             private readonly Action<Action, Task> _invokeAction; // This wrapper is an action that wraps another action, this is that Action.  
-            internal readonly Action _continuation;              // This is continuation which will happen after m_invokeAction  (and is probably a ContinuationWrapper)
+            internal readonly Action _continuation;              // This is continuation which will happen after m_invokeAction  (and is probably a ContinuationWrapper). SOS DumpAsync command depends on this name.
             internal readonly Task _innerTask;                   // If the continuation is logically going to invoke a task, this is that task (may be null)
 
             internal ContinuationWrapper(Action continuation, Action<Action, Task> invokeAction, Task innerTask)

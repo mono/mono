@@ -45,6 +45,8 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
     ws ("workspace/${jobName}/${monoBranch}/${product}/${configuration}") {
         timestamps {
             stage('Checkout') {
+                echo "Running on ${env.NODE_NAME}"
+
                 // clone and checkout repo
                 checkout scm
 
@@ -66,7 +68,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                     // build the Archive
                     timeout (time: 300, unit: 'MINUTES') {
-                        lock ("${product}-${configuration}-${env.NODE_NAME}") {
+                        lock ("${product}-${env.NODE_NAME}") {
                             if (platform == "Darwin") {
                                 def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz mingw-w64 make"
                                 sh "brew install ${brewpackages} || brew upgrade ${brewpackages}"

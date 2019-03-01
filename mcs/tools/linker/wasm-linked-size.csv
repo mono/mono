@@ -1,5 +1,5 @@
 App,mscorlib.dll,System.dll,System.Core.dll,System.Xml.dll,I18N.CJK.dll,I18N.MidEast.dll,I18N.Other.dll,I18N.Rare.dll,I18N.West.dll,I18N.dll,Microsoft.CSharp.dll,System.ComponentModel.Composition.dll,System.ComponentModel.DataAnnotations.dll,System.Data.Services.Client.dll,System.Data.dll,System.Drawing.dll,System.IO.Compression.FileSystem.dll,System.IO.Compression.dll,System.IdentityModel.dll,System.Json.dll,System.Net.Http.WinHttpHandler.dll,System.Net.Http.dll,System.Net.dll,System.Numerics.Vectors.dll,System.Numerics.dll,System.Reflection.Context.dll,System.Runtime.CompilerServices.Unsafe.dll,System.Runtime.Serialization.dll,System.Security.dll,System.ServiceModel.Internals.dll,System.ServiceModel.Web.dll,System.ServiceModel.dll,System.Transactions.dll,System.Web.Services.dll,System.Windows.dll,System.Xml.Linq.dll,System.Xml.Serialization.dll
-HelloWorld/bin/Release/netstandard2.0/dist/_framework/_bin/HelloWorld.dll,1904640,584704,306688,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,11776,0,0,25600,0,0,0,0,0,0,0,0,0,0,0,0
+HelloWorld/bin/Release/netstandard2.0/dist/_framework/_bin/HelloWorld.dll,1904128,584704,306688,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,11776,0,0,25600,0,0,0,0,0,0,0,0,0,0,0,0
 Newtonsoft/bin/Release/netstandard2.0/dist/_framework/_bin/Newtonsoft.dll,1904640,584704,306688,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,11776,0,0,25600,0,0,0,0,0,0,0,0,0,0,0,0
 System.Core/test-plinq-01.exe,990208,12288,60928,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 System.Net.Http/test-handler-01.exe,1556480,582144,26624,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9728,0,0,25600,0,0,0,0,0,0,0,0,0,0,0,0
@@ -7,7 +7,7 @@ System/test-security.exe,1421824,68608,26624,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-array.exe,929280,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-calendar-01.exe,929280,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-calendar-02.exe,929280,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-mscorlib/test-crypto-01.exe,1265664,11264,24064,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+mscorlib/test-crypto-01.exe,1265152,11264,24064,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-exception-01.exe,929280,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-locale-01.exe,933376,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 mscorlib/test-methodimpl-01.exe,929280,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
