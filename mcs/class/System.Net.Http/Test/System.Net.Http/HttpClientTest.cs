@@ -178,6 +178,16 @@ namespace MonoTests.System.Net.Http
 		const int WaitTimeout = 5000;
 
 		[Test]
+		public void Ctor ()
+		{
+			var client = new HttpClient ();
+			Assert.IsNull (client.BaseAddress, "#1");
+			Assert.IsNotNull (client.DefaultRequestHeaders, "#2");	// TODO: full check
+			Assert.AreEqual (int.MaxValue, client.MaxResponseContentBufferSize, "#3");
+			Assert.AreEqual (TimeSpan.FromSeconds (100), client.Timeout, "#4");
+		}
+
+		[Test]
 		public void Ctor_Default ()
 		{
 			var client = HttpClientTestHelpers.CreateHttpClient ();

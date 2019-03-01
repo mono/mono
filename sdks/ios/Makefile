@@ -77,8 +77,8 @@ TEST_ASSEMBLIES = $(BCL_DIR)/mscorlib.dll \
 	test-runner.exe
 
 build-ios-sim-%: appbuilder.exe test-runner.exe runtime/runtime $($*_ASSEMBLIES)
-	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-sim/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-sim/test-$*.app --sysroot $(SYSROOT) --signing-identity - --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
-	mkdir -p $(PWD)/bin/ios-sim/test-$*.app
+	mono appbuilder.exe --target ios-sim64 --mono-sdkdir $(abspath ../out) --appdir $(abspath bin/ios-sim/test-$*.app) --runtimedir $(abspath runtime) --builddir $(abspath obj/ios-sim/test-$*.app) --sysroot $(SYSROOT) --signing-identity - --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mkdir -p bin/ios-sim/test-$*.app
 	ninja -C obj/ios-sim/test-$*.app -v
 
 ifdef LLVM
@@ -104,13 +104,13 @@ endif
 # targets.
 #
 ifdef ENABLE_AOT_CACHE
-APPBUILDER_ARGS += --aot-cachedir $(PWD)/aot-cache
+APPBUILDER_ARGS += --aot-cachedir $(abspath aot-cache)
 endif
 
 build-ios-dev-%: appbuilder.exe test-runner.exe runtime/libmonoios.a $($*_ASSEMBLIES)
-	mkdir -p $(PWD)/aot-cache
-	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(PWD)/../out --appdir $(PWD)/bin/ios-dev/test-$*.app --runtimedir $(PWD)/runtime --builddir obj/ios-dev/test-$*.app --sysroot $(SYSROOT) --signing-identity "$(IOS_SIGNING_IDENTITY)" --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
-	mkdir -p $(PWD)/bin/ios-dev/test-$*.app
+	mkdir -p aot-cache
+	mono appbuilder.exe $(APPBUILDER_ARGS) --target ios-dev64 --mono-sdkdir $(abspath ../out) --appdir $(abspath bin/ios-dev/test-$*.app) --runtimedir $(abspath runtime) --builddir $(abspath obj/ios-dev/test-$*.app) --sysroot $(SYSROOT) --signing-identity "$(IOS_SIGNING_IDENTITY)" --bundle-executable test-$* --bundle-identifier com.xamarin.mono.ios.test-$* --bundle-name test-$* --exe test-runner.exe $(patsubst %,-r %,$(TEST_ASSEMBLIES) $($*_ASSEMBLIES))
+	mkdir -p bin/ios-dev/test-$*.app
 	ninja -C obj/ios-dev/test-$*.app -v
 
 # Clean %
