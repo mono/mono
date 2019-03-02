@@ -53,7 +53,7 @@ namespace System.Runtime.Remoting
 		static string processGuid = null;
 		static bool defaultConfigRead = false;
 		static bool defaultDelayedConfigRead = false;
-		static CustomErrorsModes _errorMode;
+		static CustomErrorsModes _errorMode = CustomErrorsModes.RemoteOnly;
 
 		static Hashtable wellKnownClientEntries = new Hashtable();
 		static Hashtable activatedClientEntries = new Hashtable();
