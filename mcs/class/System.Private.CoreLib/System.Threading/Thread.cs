@@ -76,13 +76,12 @@ namespace System.Threading
 
 		Thread ()
 		{
-			// TODO: Should be moved to InitializeCurrentThread
 			InitInternal (this);
 		}
 
 		~Thread ()
 		{
-			Thread_free_internal ();
+			FreeInternal ();
 		}
 
 		internal static ulong CurrentOSThreadId {
@@ -173,9 +172,6 @@ namespace System.Threading
 		{
 			if (millisecondsTimeout < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException (nameof (millisecondsTimeout), millisecondsTimeout, SR.ArgumentOutOfRange_NeedNonNegOrNegative1);
-
-			ValidateThreadState ();
-
 			return JoinInternal (this, millisecondsTimeout);
 		}
 
@@ -268,7 +264,7 @@ namespace System.Threading
 		extern static Thread InitializeCurrentThread ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern void Thread_free_internal();
+		extern void FreeInternal ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static ThreadState GetState (Thread thread);
