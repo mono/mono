@@ -7,6 +7,28 @@ namespace System.Reflection
 	[StructLayout (LayoutKind.Sequential)]
 	partial class Assembly
 	{
+		internal bool IsRuntimeImplemented () => this is RuntimeAssembly;
+
+		internal virtual IntPtr MonoAssembly {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern Assembly GetExecutingAssembly ();
+
+		internal static RuntimeAssembly GetExecutingAssembly (ref StackCrawlMark stackMark)
+		{
+			return (RuntimeAssembly) GetExecutingAssembly ();
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern Assembly GetCallingAssembly ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern Assembly GetEntryAssembly ();
+
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public static Assembly Load (string assemblyString)
 		{
@@ -38,23 +60,6 @@ namespace System.Reflection
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern Assembly InternalLoad (string assemblyName, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern Assembly GetExecutingAssembly ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern Assembly GetCallingAssembly ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern Assembly GetEntryAssembly ();
-
-		internal bool IsRuntimeImplemented () => this is RuntimeAssembly;
-
-		internal virtual IntPtr MonoAssembly {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Type InternalGetType (Module module, string name, bool throwOnError, bool ignoreCase);
