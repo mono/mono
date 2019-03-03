@@ -112,7 +112,6 @@
       <Compile Include="Mono\MonoDomain.cs" />
       <Compile Include="Mono\MonoDomainSetup.cs" />
       <Compile Include="System\AppContext.cs" />
-      <Compile Include="System\Activator.cs" />
       <Compile Include="System\Array.cs" />
       <Compile Include="System\Attribute.cs" />
       <Compile Include="System\DefaultBinder.cs" />

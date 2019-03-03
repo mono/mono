@@ -67,32 +67,22 @@ namespace System.Threading
 		#endregion
 #pragma warning restore 169, 414, 649
 
-		string m_name;
+		string _name;
 		Delegate m_start;
 		object m_start_arg;
 		int m_stacksize;
 		internal ExecutionContext _executionContext;
-
-		[ThreadStatic]
-		static Thread current_thread;
+		internal SynchronizationContext _synchronizationContext;
 
 		Thread ()
 		{
-      priority =  (int)ThreadPriority.Normal;
+			// TODO: Should be moved to InitializeCurrentThread
 			InitInternal (this);
 		}
 
-		public ExecutionContext ExecutionContext => ExecutionContext.Capture ();
-
-		public static Thread CurrentThread {
-			get {
-				Thread current = current_thread;
-				if (current != null)
-					return current;
-
-				// This will set the current_thread tls variable
-				return GetCurrentThread ();
-			}
+		~Thread ()
+		{
+			Thread_free_internal ();
 		}
 
 		internal static ulong CurrentOSThreadId {
@@ -124,27 +114,13 @@ namespace System.Threading
 		}
 
 		public bool IsThreadPoolThread {
-      get {
-        ValidateThreadState ();
-        return threadpool_thread;
-      }
-    }
-
-		public int ManagedThreadId => managed_id;
-
-		public string Name {
-			get => m_name;
-			set {
-				lock (this) {
-					if (m_name != null)
-						throw new InvalidOperationException (SR.InvalidOperation_WriteOnce);
-
-					m_name = value;
-				}
-				// This sets the native thread name etc.
-				SetName (this, value);
+			get {
+				ValidateThreadState ();
+				return threadpool_thread;
 			}
 		}
+
+		public int ManagedThreadId => managed_id;
 
 		internal static int OptimalMaxSpinWaitsPerSpinIteration {
 			get {
@@ -154,26 +130,26 @@ namespace System.Threading
 
 		public ThreadPriority Priority {
 			get {
-        ValidateThreadState ();
-        return (ThreadPriority)priority;
-      }
+				ValidateThreadState ();
+				return (ThreadPriority) priority;
+			 }
 			set {
-        // TODO: arguments check
-        SetPriority (this, (int)value);
-      }
+				// TODO: arguments check
+				SetPriority (this, (int) value);
+			}
 		}
 
 		internal SynchronizationContext SynchronizationContext { get; set; }
 
 		public ThreadState ThreadState => GetState (this);
 
-		void Create (ThreadStart start) => SetStartHelper ((Delegate)start, 0); // 0 will setup Thread with default stackSize
+		void Create (ThreadStart start) => SetStartHelper ((Delegate) start, 0); // 0 will setup Thread with default stackSize
 
-		void Create (ThreadStart start, int maxStackSize) => SetStartHelper ((Delegate)start, maxStackSize);
+		void Create (ThreadStart start, int maxStackSize) => SetStartHelper ((Delegate) start, maxStackSize);
 
-		void Create (ParameterizedThreadStart start) => SetStartHelper ((Delegate)start, 0);
+		void Create (ParameterizedThreadStart start) => SetStartHelper ((Delegate) start, 0);
 
-		void Create (ParameterizedThreadStart start, int maxStackSize) => SetStartHelper ((Delegate)start, maxStackSize);
+		void Create (ParameterizedThreadStart start, int maxStackSize) => SetStartHelper ((Delegate) start, maxStackSize);
 
 		public ApartmentState GetApartmentState () => ApartmentState.MTA;
 
@@ -184,7 +160,8 @@ namespace System.Threading
 
 		public static int GetCurrentProcessorId ()
 		{
-			throw new NotImplementedException ();
+			// TODO: Implement correctly
+			return Environment.CurrentManagedThreadId;
 		}
 
 		public void Interrupt ()
@@ -197,7 +174,7 @@ namespace System.Threading
 			if (millisecondsTimeout < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException (nameof (millisecondsTimeout), millisecondsTimeout, SR.ArgumentOutOfRange_NeedNonNegOrNegative1);
 
-      ValidateThreadState ();
+			ValidateThreadState ();
 
 			return JoinInternal (this, millisecondsTimeout);
 		}
@@ -230,9 +207,7 @@ namespace System.Threading
 		{
 			if (millisecondsTimeout < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException (nameof (millisecondsTimeout), millisecondsTimeout, SR.ArgumentOutOfRange_NeedNonNegOrNegative1);
-      
-      ValidateThreadState ();
-      
+
 			SleepInternal (millisecondsTimeout);
 		}
 
@@ -243,27 +218,32 @@ namespace System.Threading
 
 		public void Start (object parameter)
 		{
-      if (m_start is ThreadStart)
-        throw new InvalidOperationException (SR.InvalidOperation_ThreadWrongThreadStart);
-      
+			if (m_start is ThreadStart)
+				throw new InvalidOperationException (SR.InvalidOperation_ThreadWrongThreadStart);
+
 			m_start_arg = parameter;
 			StartInternal (this);
 		}
 
 		// Called from the runtime
 		internal void StartCallback ()
-    {
-			if (m_start is ThreadStart) {
-				var del = (ThreadStart)m_start;
+		{
+			if (m_start is ThreadStart del) {
 				m_start = null;
 				del ();
 			} else {
-				var del = (ParameterizedThreadStart)m_start;
+				var pdel = (ParameterizedThreadStart) m_start;
 				var arg = m_start_arg;
 				m_start = null;
 				m_start_arg = null;
-				del (arg);
+				pdel (arg);
 			}
+		}
+
+		partial void ThreadNameChanged (string value)
+		{
+			// TODO: Should only raise the events
+			SetName (this, value);
 		}
 
 		public static bool Yield ()
@@ -273,8 +253,8 @@ namespace System.Threading
 
 		public bool TrySetApartmentStateUnchecked (ApartmentState state) => false;
 
-		static ThreadState ValidateThreadState ()
-    {
+		ThreadState ValidateThreadState ()
+		{
 			var state = GetState (this);
 			if ((state & ThreadState.Stopped) != 0)
 				throw new ThreadStateException ("Thread is dead; state can not be accessed.");
@@ -285,7 +265,7 @@ namespace System.Threading
 		extern static void InitInternal (Thread thread);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static Thread GetCurrentThread ();
+		extern static Thread InitializeCurrentThread ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern void Thread_free_internal();
