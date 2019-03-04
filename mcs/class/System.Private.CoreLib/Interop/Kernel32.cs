@@ -9,11 +9,5 @@ partial class Interop
 		{
 			throw new NotImplementedException ();
 		}
-
-		// TODO: can be removed
-		internal static int GetCurrentThreadId ()
-		{
-			throw new NotImplementedException ();
-		}
 	}
 }

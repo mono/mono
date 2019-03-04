@@ -5067,7 +5067,7 @@ namespace System
             return obj == (object)this;
         }
 
-#if !MONO
+#if !MONO || NETCORE
         public override int GetHashCode() 
         {
             return RuntimeHelpers.GetHashCode(this);
