@@ -987,7 +987,8 @@ TESTS_IL_SRC=			\
 	tailcall-return-valuetype.il \
 	tailcall-valuetype-parameter.il \
 	ldfldvt.il \
-	newobj-abstract.il
+	newobj-abstract.il \
+	module-cctor-entrypoint.il
 
 # This test crashes the runtime, even with recent fixes.
 #	incorrect-ldvirtftn-read-behind-for-dup.il
