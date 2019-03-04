@@ -2464,7 +2464,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemEnumerable<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemEnumerator<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemName))]
-//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Http.ReadOnlyMemoryContent))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Http.ReadOnlyMemoryContent))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.ServerCertificateSelectionCallback))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.SslApplicationProtocol))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.SslClientAuthenticationOptions))]
@@ -2539,9 +2539,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.SequencePosition))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.CryptographicOperations))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.ECDiffieHellman))]
-#if !MOBILE
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Serialization.SchemaImporter))]
-#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.CertificateRequest))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.DSACertificateExtensions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.SubjectAlternativeNameBuilder))]

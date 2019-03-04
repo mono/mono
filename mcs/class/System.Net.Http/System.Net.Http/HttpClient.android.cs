@@ -1,5 +1,7 @@
 using System;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace System.Net.Http {
 	public partial class HttpClient {
@@ -34,5 +36,11 @@ namespace System.Net.Http {
 			Console.WriteLine (message + ". Defaulting to System.Net.Http.HttpClientHandler");
 			return new HttpClientHandler ();
 		}
+
+		// NS2.1 methods, added here while CoreFX HttpClient PR is not merged
+		public Task<HttpResponseMessage> PatchAsync(string requestUri, HttpContent content) => throw new PlatformNotSupportedException();
+		public Task<HttpResponseMessage> PatchAsync(string requestUri, HttpContent content, CancellationToken cancellationToken) => throw new PlatformNotSupportedException();
+		public Task<HttpResponseMessage> PatchAsync(Uri requestUri, HttpContent content) => throw new PlatformNotSupportedException();
+		public Task<HttpResponseMessage> PatchAsync(Uri requestUri, HttpContent content, CancellationToken cancellationToken) => throw new PlatformNotSupportedException();
 	}
 }
