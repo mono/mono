@@ -7,14 +7,11 @@ namespace System.Net.Http
     public partial class HttpClient
     {
 
+#pragma warning disable 649
         private static Func<HttpMessageHandler> GetHttpMessageHandler;
+#pragma warning restore 649
 
-        public HttpClient()
-            : this(GetDefaultHandler(), true)
-        {
-        }
-
-        static HttpMessageHandler GetDefaultHandler()
+        internal static HttpMessageHandler CreateDefaultHandler()
         {
 
             if (GetHttpMessageHandler == null)
