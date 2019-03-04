@@ -22,8 +22,6 @@ namespace Xamarin
 
 		const int PORT = 6100;
 
-		private string app;
-
 		private TcpListener listener;
 
 		private Process adb;
@@ -32,7 +30,7 @@ namespace Xamarin
 
 		public AndroidTestAssemblyRunner (string app)
 		{
-			this.app = app;
+			AndroidRemoteRunner.App = app;
 		}
 
 		public ITest LoadedTest
@@ -45,29 +43,7 @@ namespace Xamarin
 			listener = new TcpListener (IPAddress.Parse (ADDRESS), PORT);
 			listener.Start ();
 
-			{
-				ProcessStartInfo psi = new ProcessStartInfo ("adb", $"reverse tcp:{PORT} tcp:{PORT}");
-
-				Console.WriteLine ($"Execute \"{psi.FileName} {psi.Arguments}\"");
-				using (Process p = Process.Start (psi)) {
-					p.WaitForExit();
-				}
-			}
-
-			{
-				ProcessStartInfo psi = new ProcessStartInfo ("adb", $"shell am instrument -w -e testsuite \"{Path.GetFileName (assemblyName)}\" \"{app}\"") {
-					RedirectStandardOutput = true,
-					RedirectStandardError = true,
-					UseShellExecute = false,
-				};
-
-				Console.WriteLine ($"Execute \"{psi.FileName} {psi.Arguments}\"");
-				adb = Process.Start (psi);
-				adb.OutputDataReceived += (s, e) => { if (e.Data != null) Console.Out.Write (e.Data + "\n"); };
-				adb.ErrorDataReceived += (s, e) => { if (e.Data != null) Console.Error.Write (e.Data + "\n"); };
-				adb.BeginOutputReadLine ();
-				adb.BeginErrorReadLine ();
-			}
+			adb = AndroidRemoteRunner.Run (Path.GetFileName (assemblyName), port: PORT);
 
 			stream = listener.AcceptTcpClient().GetStream ();
 
@@ -81,27 +57,30 @@ namespace Xamarin
 
 		public ITestResult Run(ITestListener listener, ITestFilter filter)
 		{
-			IFormatter formatter = new BinaryFormatter();
+			try {
+				IFormatter formatter = new BinaryFormatter();
 
-			formatter.Serialize (stream, filter);
+				formatter.Serialize (stream, filter);
 
-			while (true)
-			{
-				object message = formatter.Deserialize (stream);
-				if (message is TestStartedMessage tsmessage) {
-					listener.TestStarted (tsmessage.Test);
-				} else if (message is TestFinishedMessage tfmessage) {
-					listener.TestFinished (tfmessage.TestResult);
-				} else if (message is ExceptionMessage emessage) {
-					throw emessage.Exception;
-				} else if (message is ResultMessage rmessage) {
-					return rmessage.TestResult;
-				} else {
-					throw new Exception ($"unknown message {message}");
+				while (true)
+				{
+					object message = formatter.Deserialize (stream);
+					if (message is TestStartedMessage tsmessage) {
+						listener.TestStarted (tsmessage.Test);
+					} else if (message is TestFinishedMessage tfmessage) {
+						listener.TestFinished (tfmessage.TestResult);
+					} else if (message is ExceptionMessage emessage) {
+						throw emessage.Exception;
+					} else if (message is ResultMessage rmessage) {
+						return rmessage.TestResult;
+					} else {
+						adb.Kill ();
+						throw new Exception ($"unknown message {message}");
+					}
 				}
+			} finally {
+				adb.WaitForExit ();
 			}
-
-			adb.WaitForExit ();
 		}
 
 		class Driver : ITestListener
@@ -172,6 +151,41 @@ namespace Xamarin
 			public void TestOutput(TestOutput testOutput)
 			{
 			}
+		}
+	}
+
+	public static class AndroidRemoteRunner
+	{
+		internal static string App;
+
+		public static Process Run (string testSuite, int port = 6100)
+		{
+			if (App == null)
+				throw new InvalidOperationException ($"{nameof(App)} needs to be set before calling this method");
+
+			ProcessStartInfo psi1 = new ProcessStartInfo ("adb", $"reverse tcp:{port} tcp:{port}");
+
+			Console.WriteLine ($"Execute \"{psi1.FileName} {psi1.Arguments}\"");
+			using (Process p = Process.Start (psi1)) {
+				p.WaitForExit();
+			}
+
+			bool waitForLLDB = Environment.GetEnvironmentVariable("MONO_WAIT_LLDB") != null;
+
+			ProcessStartInfo psi2 = new ProcessStartInfo ("adb", $"shell am instrument -w -e TestSuite \"{testSuite}\" -e WaitForLLDB \"{waitForLLDB}\" \"{App}\"") {
+				RedirectStandardOutput = true,
+				RedirectStandardError = true,
+				UseShellExecute = false,
+			};
+
+			Console.WriteLine ($"Execute \"{psi2.FileName} {psi2.Arguments}\"");
+			Process adb = Process.Start (psi2);
+			adb.OutputDataReceived += (s, e) => { if (e.Data != null) Console.Out.Write (e.Data + "\n"); };
+			adb.ErrorDataReceived += (s, e) => { if (e.Data != null) Console.Error.Write (e.Data + "\n"); };
+			adb.BeginOutputReadLine ();
+			adb.BeginErrorReadLine ();
+
+			return adb;
 		}
 	}
 }

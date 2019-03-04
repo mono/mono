@@ -951,6 +951,7 @@ corert/Decimal.DecCalc.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/FormattableString.cs
 ../referencesource/mscorlib/system/gc.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Guid.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Guid.Unix.cs
 ../referencesource/mscorlib/system/iappdomain.cs
 ../referencesource/mscorlib/system/iappdomainsetup.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IAsyncDisposable.cs

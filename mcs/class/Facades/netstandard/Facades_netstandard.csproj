@@ -166,6 +166,7 @@
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="../../System.Web.Services/System.Web.Services.csproj" />
+    <ProjectReference Include="../System.Drawing.Common/Facades_System.Drawing.Common.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'monotouch' ">
     <Reference Include="./../../../../external/binary-reference-assemblies/build/monotouch/Xamarin.iOS.dll">

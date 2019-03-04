@@ -400,6 +400,18 @@ case "$host" in
 		use_sigposix=yes
 		with_sigaltstack=no
 		;;
+	*-*-fuchsia*)
+		AC_DEFINE(DISABLE_PORTABILITY,1,[Disable the io-portability layer])
+		AC_DEFINE(HOST_FUCHSIA,1,[Targeting the Fuchsia platform])
+		fuchsia=true
+		with_tls=pthread
+		with_sigaltstack=yes
+		with_static_mono=no
+		support_boehm=no
+		with_gc=sgen
+		mono_cv_uscore=yes
+		mono_cv_clang=no
+		;;
 	*-*-aix*|*-*-os400*)
 		dnl Set up a 64-bit build
 		CPPFLAGS="$CPPFLAGS -maix64 -DGC_AIX_THREADS -D_ALL_SOURCE -D_THREAD_SAFE -D_LARGE_FILES -D_REENTRANT"
@@ -4394,6 +4406,11 @@ if test "x$host" != "x$target"; then
 		target_mach=no
 		with_tls=pthread
 		;;
+	x86_64-google-fuchsia)
+		TARGET=AMD64
+		target_win32=nop
+		AC_DEFINE(HOST_FUCHSIA,1,[Targeting the Fuchsia platform])
+		;;
 	*)
 		AC_MSG_ERROR([Cross compiling is not supported for target $target])
 	esac
@@ -6148,7 +6165,15 @@ elif case $host_os in aix*|os400*) true;; *) false;; esac; then
 	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
 	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
 	MONO_NATIVE_CFLAGS=$CFLAGS
-	MONO_NATIVE_LDFLAGS=$LDFLAGS
+	dnl flock in AIX exists in libbsd (not the same as freedesktop.org
+	dnl libbsd) which Mono.Native needs.
+	dnl Because of the way that the library is built by default, unresolved
+	dnl references are kept and resolved at runtime. Often, the dependency
+	dnl chain means libbsd is loaded anyways, but not necessarily. It's
+	dnl better to explicitly link it, even though it has it shadows libc's
+	dnl ioctl with its own. (As for the other unresolved imports, those
+	dnl should be provided by the Mono runtime loaded.)
+	MONO_NATIVE_LDFLAGS="$LDFLAGS -lbsd"
 
 	mono_native=yes
 	mono_native_compat=no

@@ -1610,7 +1610,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				 */
 				if ((td->sp - csignature->param_count - 1)->type == STACK_TYPE_MP) {
 					/* managed pointer on the stack, we need to deref that puppy */
-					ADD_CODE (td, MINT_LDIND_I);
+					/* Always load the entire stackval, to handle also the case where the enum has long storage */
+					ADD_CODE (td, MINT_LDIND_I8);
 					ADD_CODE (td, csignature->param_count);
 				}
 				if (mint_type (m_class_get_byval_arg (constrained_class)) == MINT_TYPE_VT) {
@@ -2346,6 +2347,29 @@ get_unaligned_opcode (int opcode)
 	return -1;
 }
 #endif
+
+static void
+interp_handle_isinst (TransformData *td, MonoClass *klass, gboolean isinst_instr)
+{
+	/* Follow the logic from jit's handle_isinst */
+	if (!mono_class_has_variant_generic_params (klass)) {
+		if (mono_class_is_interface (klass)) {
+			ADD_CODE(td, isinst_instr ? MINT_ISINST_INTERFACE : MINT_CASTCLASS_INTERFACE);
+			ADD_CODE(td, get_data_item_index (td, klass));
+		} else if (!mono_class_is_marshalbyref (klass) && m_class_get_rank (klass) == 0 && !mono_class_is_nullable (klass)) {
+			ADD_CODE(td, isinst_instr ? MINT_ISINST_COMMON : MINT_CASTCLASS_COMMON);
+			ADD_CODE(td, get_data_item_index (td, klass));
+		} else {
+			ADD_CODE(td, isinst_instr ? MINT_ISINST : MINT_CASTCLASS);
+			ADD_CODE(td, get_data_item_index (td, klass));
+		}
+	} else {
+		ADD_CODE(td, isinst_instr ? MINT_ISINST : MINT_CASTCLASS);
+		ADD_CODE(td, get_data_item_index (td, klass));
+	}
+	td->ip += 5;
+}
+
 
 static gboolean
 generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, MonoGenericContext *generic_context, MonoError *error)
@@ -3663,24 +3687,17 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			break;
 		}
 		case CEE_CASTCLASS:
+		case CEE_ISINST: {
+			gboolean isinst_instr = *td->ip == CEE_ISINST;
 			CHECK_STACK (td, 1);
 			token = read32 (td->ip + 1);
 			klass = mini_get_class (method, token, generic_context);
 			CHECK_TYPELOAD (klass);
-			ADD_CODE(td, MINT_CASTCLASS);
-			ADD_CODE(td, get_data_item_index (td, klass));
-			td->sp [-1].klass = klass;
-			td->ip += 5;
+			interp_handle_isinst (td, klass, isinst_instr);
+			if (!isinst_instr)
+				td->sp [-1].klass = klass;
 			break;
-		case CEE_ISINST:
-			CHECK_STACK (td, 1);
-			token = read32 (td->ip + 1);
-			klass = mini_get_class (method, token, generic_context);
-			CHECK_TYPELOAD (klass);
-			ADD_CODE(td, MINT_ISINST);
-			ADD_CODE(td, get_data_item_index (td, klass));
-			td->ip += 5;
-			break;
+		}
 		case CEE_CONV_R_UN:
 			switch (td->sp [-1].type) {
 			case STACK_TYPE_R8:
@@ -3743,10 +3760,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 			if (mini_type_is_reference (m_class_get_byval_arg (klass))) {
 				int mt = mint_type (m_class_get_byval_arg (klass));
-				ADD_CODE (td, MINT_CASTCLASS);
-				ADD_CODE (td, get_data_item_index (td, klass));
+				interp_handle_isinst (td, klass, FALSE);
 				SET_TYPE (td->sp - 1, stack_type [mt], klass);
-				td->ip += 5;
 			} else if (mono_class_is_nullable (klass)) {
 				MonoMethod *target_method;
 				if (m_class_is_enumtype (mono_class_get_nullable_param (klass)))
