@@ -243,7 +243,7 @@ namespace MonoTests.System
 		[Test] // https://github.com/mono/mono/issues/13030
 		public void GetLogicalDrivesNotEmpty ()
 		{
-			Assert.AreNotEqual (0, Directory.GetLogicalDrives ().Length);
+			CollectionAssert.IsNotEmpty (Directory.GetLogicalDrives ());
 		}
 	}
 }
