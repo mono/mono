@@ -1723,6 +1723,11 @@ public class DirectoryTest
 		Directory.SetCurrentDirectory (" ");
 	}
 
+	[Test]
+	public void GetLogicalDrivesNotEmpty ()
+	{
+		Assert.AreNotEqual (0, Directory.GetLogicalDrives ().Length);
+	}
 
 	[Test]
 	[Category("AndroidSdksNotWorking")]
