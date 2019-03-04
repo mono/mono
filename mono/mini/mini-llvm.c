@@ -2949,7 +2949,7 @@ static void
 emit_gc_safepoint_poll (MonoLLVMModule *module)
 {
 	LLVMModuleRef lmodule = module->lmodule;
-	LLVMValueRef func, indexes [2], got_entry_addr, callee, val, cmp;
+	LLVMValueRef func, indexes [2], got_entry_addr, flag_addr, val_ptr, callee, val, cmp;
 	LLVMBasicBlockRef entry_bb, poll_bb, exit_bb;
 	LLVMBuilderRef builder;
 	LLVMTypeRef sig;
@@ -2979,7 +2979,9 @@ emit_gc_safepoint_poll (MonoLLVMModule *module)
 	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
 	indexes [1] = LLVMConstInt (LLVMInt32Type (), got_offset, FALSE);
 	got_entry_addr = LLVMBuildGEP (builder, module->got_var, indexes, 2, "");
-	val = LLVMBuildPtrToInt (builder, LLVMBuildLoad (builder, got_entry_addr, ""), IntPtrType (), "");
+	flag_addr = LLVMBuildLoad (builder, got_entry_addr, "");
+	val_ptr = LLVMBuildLoad (builder, flag_addr, "");
+	val = LLVMBuildPtrToInt (builder, val_ptr, IntPtrType (), "");
 	cmp = LLVMBuildICmp (builder, LLVMIntEQ, val, LLVMConstNull (LLVMTypeOf (val)), "");
 	LLVMBuildCondBr (builder, cmp, exit_bb, poll_bb);
 
