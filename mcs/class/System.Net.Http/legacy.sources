@@ -3,7 +3,7 @@ HttpClientHandler.cs
 HttpClientHandler.Legacy.cs
 IMonoHttpClientHandler.cs
 MonoWebRequestHandler.cs
-HeaderUtils.Legacy.cs
+PlatformHelper.Legacy.cs
 System.Net.Http/ByteArrayContent.cs
 System.Net.Http/ClientCertificateOption.cs
 System.Net.Http/DelegatingHandler.cs
