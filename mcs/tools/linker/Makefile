@@ -84,6 +84,9 @@ ifeq ($(PROFILE),monotouch)
 # Should be in sync with runtime sdk flags
 LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
 
+# System.Net.Http needs Xamarin.iOS.dll
+LINKER_PROFILE_OPTIONS += -d ../../../external/binary-reference-assemblies/build/monotouch
+
 BINARY_TEST_CASES_ROOT:=../../../external/illinker-test-assets/monotouch/
 
 BINARY_TEST_CASES = \
@@ -146,7 +149,7 @@ bcl-size-current: compile-tests
 		mkdir $(LINKER_OUTPUT); \
 		app_name=$${app#$(BINARY_TEST_CASES_ROOT)}; \
 		app_name=$${app_name#Tests/}; \
-		echo Checking linked BCL size for $$app_name; \
+		echo Checking linked BCL size in $(PROFILE) profile for $$app_name; \
 		$(LINKER_DEFAULT) -a $$app; \
 		sizes=""; \
 		for asm in $(BCL_ASSEMBLIES); do \
