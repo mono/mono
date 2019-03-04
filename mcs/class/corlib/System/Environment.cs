@@ -986,7 +986,7 @@ namespace System {
 		internal extern static string internalGetGacPath ();
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string [] GetLogicalDrivesInternal ();
+		internal extern static string [] GetLogicalDrivesInternal ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetEnvironmentVariableNames ();
