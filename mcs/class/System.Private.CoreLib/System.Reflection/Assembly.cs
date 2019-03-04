@@ -1,3 +1,4 @@
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -55,7 +56,10 @@ namespace System.Reflection
 		internal static Assembly Load (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder)
 		{
 			// TODO: pass AssemblyName
-			return InternalLoad (assemblyRef.FullName, ref stackMark, ptrLoadContextBinder);
+			var assembly = InternalLoad (assemblyRef.FullName, ref stackMark, ptrLoadContextBinder);
+			if (assembly == null)
+				throw new FileNotFoundException (null, assemblyRef.Name);
+			return assembly;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
