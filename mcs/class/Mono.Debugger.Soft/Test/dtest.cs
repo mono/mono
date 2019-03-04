@@ -27,6 +27,9 @@ public class DebuggerTests
 	MethodMirror entry_point;
 	StepEventRequest step_req;
 	bool forceExit;
+#if MONODROID_TOOLS
+	Diag.Process adb;
+#endif
 
 	void AssertThrows<ExType> (Action del) where ExType : Exception {
 		bool thrown = false;
@@ -40,23 +43,13 @@ public class DebuggerTests
 	}
 
 	// No other way to pass arguments to the tests ?
-#if MONODROID_TEST
-	public static bool listening = true;
-#else
 	public static bool listening = Environment.GetEnvironmentVariable ("DBG_SUSPEND") != null;
-#endif
 	public static string runtime = Environment.GetEnvironmentVariable ("DBG_RUNTIME");
 	public static string runtime_args = Environment.GetEnvironmentVariable ("DBG_RUNTIME_ARGS");
 	public static string agent_args = Environment.GetEnvironmentVariable ("DBG_AGENT_ARGS");
-#if MONODROID_TEST
-	// AssemblyInfo.Location doesn't work on Android, we expect test .exe's to be in the working dir
-	public static string this_assembly_path = "";
-#else
-	// expect test .exe's to be next to this assembly
-	public static string this_assembly_path = Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location);
-#endif
 
-	public static string dtest_app_path = Path.Combine (this_assembly_path, "dtest-app.exe");
+	public static string dtest_app_path = "dtest-app.exe";
+	public static string dtest_excfilter_path = "dtest-excfilter.exe";
 
 	// Not currently used, but can be useful when debugging individual tests.
 	void StackTraceDump (Event e)
@@ -75,11 +68,8 @@ public class DebuggerTests
 		return es [0];
 	}
 
-	void Start (params string[] args) {
-		Start (false, args);
-	}
-
-	Diag.ProcessStartInfo CreateStartInfo (string[] args) {
+#if !MONODROID_TOOLS
+	Diag.ProcessStartInfo CreateStartInfo (string app, string method = null, string runtimeParameters = null) {
 		var pi = new Diag.ProcessStartInfo ();
 		pi.RedirectStandardOutput = true;
 		pi.RedirectStandardError = true;
@@ -95,22 +85,25 @@ public class DebuggerTests
 		}
 		if (string.IsNullOrEmpty (pi.FileName))
 			throw new ArgumentException ("Couldn't find mono runtime.");
-		pi.Arguments = String.Join (" ", args);
-		if (runtime_args != null)
-			pi.Arguments = runtime_args + " " + pi.Arguments;
+
+		// expect test .exe's to be next to this assembly
+		pi.Arguments = string.Join (" ", new string[] { runtime_args ?? "", runtimeParameters ?? "", Path.Combine (Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location), app), method ?? "" });
 		return pi;
 	}
+#endif
 
-	void Start (bool forceExit, params string[] args) {
+	void Start (string app, string method = null, bool forceExit = false) {
 		this.forceExit = forceExit;
 
+#if MONODROID_TOOLS
+		adb = Xamarin.AndroidRemoteRunner.Run ("debugger:" + app);
+#else
 		if (!listening) {
-			var pi = CreateStartInfo (args);
+			var pi = CreateStartInfo (app, method);
 			vm = VirtualMachineManager.Launch (pi, new LaunchOptions { AgentArgs = agent_args });
-		} else {
-#if MONODROID_TEST
-			System.Diagnostics.Process.Start("/usr/bin/make", "-C ../android dirty-run-debugger-test");
+		} else
 #endif
+		{
 			var ep = new IPEndPoint (IPAddress.Any, 6100);
 			Console.WriteLine ("Listening on " + ep + "...");
 			vm = VirtualMachineManager.Listen (ep);
@@ -127,15 +120,15 @@ public class DebuggerTests
 		entry_point = null;
 		step_req = null;
 
-		Event e;
+		Event ev;
 
 		/* Find out the entry point */
 		while (true) {
-			e = GetNextEvent ();
+			ev = GetNextEvent ();
 
-			if (e is AssemblyLoadEvent) {
-				AssemblyLoadEvent ae = (AssemblyLoadEvent)e;
-				entry_point = ae.Assembly.EntryPoint;
+			if (ev is AssemblyLoadEvent) {
+				AssemblyLoadEvent aev = (AssemblyLoadEvent)ev;
+				entry_point = aev.Assembly.EntryPoint;
 				if (entry_point != null)
 					break;
 			}
@@ -145,9 +138,9 @@ public class DebuggerTests
 
 		load_req.Disable ();
 
-		if (args.Length == 2) {
+		if (method != null) {
 			var this_type = entry_point.DeclaringType;
-			var str = vm.RootDomain.CreateString (args [1]);
+			var str = vm.RootDomain.CreateString (method);
 			var slot = this_type.GetField ("arg");
 
 			if (slot == null)
@@ -157,8 +150,6 @@ public class DebuggerTests
 				throw new Exception ("Bug in createstring");
 
 			this_type.SetValue (slot, str);
-		} else if (args.Length > 2) {
-			throw new Exception (String.Format ("Fixme {0}", args [2]));
 		}
 	}
 
@@ -373,7 +364,10 @@ public class DebuggerTests
 	[SetUp]
 	public void SetUp () {
 		ThreadMirror.NativeTransitions = false;
-		Start (new string [] { dtest_app_path });
+#if MONODROID_TOOLS
+		adb = null;
+#endif
+		Start (dtest_app_path);
 	}
 
 	[TearDown]
@@ -397,6 +391,14 @@ public class DebuggerTests
 			vm.Resume ();
 		}
 		vm = null;
+
+#if MONODROID_TOOLS
+		try {
+			adb?.WaitForExit ();
+		} catch (Exception e) {
+			Console.WriteLine (e);
+		}
+#endif
 	}
 
 	[Test]
@@ -505,7 +507,7 @@ public class DebuggerTests
 	public void IsDynamicAssembly () {
 		vm.Detach ();
 
-		Start (new string[] { dtest_app_path, "ref-emit-test"});
+		Start (dtest_app_path, "ref-emit-test");
 
 		run_until ("ref_emit_call");
 		var assemblyMirrors = entry_point.DeclaringType.Assembly.Domain.GetAssemblies ();
@@ -683,7 +685,7 @@ public class DebuggerTests
 	public void ClassLocalReflection () {
 		vm.Detach ();
 
-		Start (new string [] { dtest_app_path, "local-reflect" });
+		Start (dtest_app_path, "local-reflect");
 
 		MethodMirror m = entry_point.DeclaringType.Assembly.GetType ("LocalReflectClass").GetMethod ("RunMe");
 
@@ -2458,6 +2460,7 @@ public class DebuggerTests
 
 	[Test]
 	[Category("NotOnWindows")]
+	[Category ("AndroidSdksNotWorking")]
 	public void Crash () {
 		string [] existingCrashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
 
@@ -2465,7 +2468,7 @@ public class DebuggerTests
 		for (int i = 0 ; i < 10; i++) {
 			try {
 				vm.Detach ();
-				Start (new string [] { dtest_app_path, "crash-vm" });
+				Start (dtest_app_path, "crash-vm");
 				Event e = run_until ("crash");
 				while (!success) {
 					vm.Resume ();
@@ -2638,7 +2641,7 @@ public class DebuggerTests
 	public void Suspend () {
 		vm.Detach ();
 
-		Start (new string [] { dtest_app_path, "suspend-test" });
+		Start (dtest_app_path, "suspend-test");
 
 		Event e = run_until ("suspend");
 
@@ -3117,7 +3120,7 @@ public class DebuggerTests
 	public void InvokeSingleThreaded () {
 		vm.Detach ();
 
-		Start (new string [] { dtest_app_path, "invoke-single-threaded" });
+		Start (dtest_app_path, "invoke-single-threaded");
 
 		Event e = run_until ("invoke_single_threaded_2");
 
@@ -3198,7 +3201,7 @@ public class DebuggerTests
 	public void InvokeAbort () {
 		vm.Detach ();
 
-		Start (new string [] { dtest_app_path, "invoke-abort" });
+		Start (dtest_app_path, "invoke-abort");
 
 		Event e = run_until ("invoke_abort");
 
@@ -3221,8 +3224,8 @@ public class DebuggerTests
 		vm.GetThreads ();
 	}
 
-#if !MONODROID_TEST
 	[Test]
+	[Category("AndroidSdksNotWorking")]
 	public void Threads () {
 		Event e = run_until ("threads");
 
@@ -3248,7 +3251,6 @@ public class DebuggerTests
 		// https://github.com/mono/mono/issues/11416
 		// Assert.AreEqual (ThreadState.Stopped, e.Thread.ThreadState);
 	}
-#endif
 
 	[Test]
 	public void Frame_SetValue () {
@@ -3532,7 +3534,7 @@ public class DebuggerTests
 	public void ExceptionFilter2 () {
 		vm.Detach ();
 
-		Start (new string [] { Path.Combine (this_assembly_path, "dtest-excfilter.exe") });
+		Start (dtest_excfilter_path);
 
 		MethodMirror filter_method = entry_point.DeclaringType.GetMethod ("Filter");
 		Assert.IsNotNull (filter_method);
@@ -3629,10 +3631,11 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("AndroidSdksNotWorking")]
 	public void MemberInOtherDomain () {
 		vm.Detach ();
 
-		Start (new string [] { dtest_app_path, "domain-test" });
+		Start (dtest_app_path, "domain-test");
 
 		vm.EnableEvents (EventType.AppDomainCreate, EventType.AppDomainUnload, EventType.AssemblyUnload);
 
@@ -3645,10 +3648,11 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("AndroidSdksNotWorking")]
 	public void Domains () {
 		vm.Detach ();
 
-		Start (new string [] { dtest_app_path, "domain-test" });
+		Start (dtest_app_path, "domain-test");
 
 		vm.EnableEvents (EventType.AppDomainCreate, EventType.AppDomainUnload, EventType.AssemblyUnload);
 
@@ -3771,7 +3775,7 @@ public class DebuggerTests
 	public void RefEmit () {
 		vm.Detach ();
 
-		Start (new string [] { dtest_app_path, "ref-emit-test" });
+		Start (dtest_app_path, "ref-emit-test");
 
 		Event e = run_until ("ref_emit_call");
 
@@ -3807,7 +3811,7 @@ public class DebuggerTests
 		// Check that stack traces can be produced for threads in native code
 		vm.Detach ();
 
-		Start (new string [] { dtest_app_path, "frames-in-native" });
+		Start (dtest_app_path, "frames-in-native");
 
 		var e = run_until ("frames_in_native");
 
@@ -3998,6 +4002,7 @@ public class DebuggerTests
 
 	[Test]
 	[Category ("only88")]
+	[Category ("AndroidSdksNotWorking")]
 	public void TypeLoadSourceFileFilter () {
 		Event e = run_until ("type_load");
 
@@ -4019,6 +4024,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("AndroidSdksNotWorking")]
 	public void TypeLoadTypeNameFilter () {
 		Event e = run_until ("type_load");
 
@@ -4181,7 +4187,7 @@ public class DebuggerTests
 	public void UnhandledException () {
 		vm.Exit (0);
 
-		Start (new string [] { dtest_app_path, "unhandled-exception" });
+		Start (dtest_app_path, "unhandled-exception");
 
 		var req = vm.CreateExceptionRequest (null, false, true);
 		req.Enable ();
@@ -4200,7 +4206,7 @@ public class DebuggerTests
 	public void UnhandledException_2 () {
 		vm.Exit (0);
 
-		Start (new string [] { dtest_app_path, "unhandled-exception-endinvoke" });
+		Start (dtest_app_path, "unhandled-exception-endinvoke");
 
 		var req = vm.CreateExceptionRequest (null, false, true);
 		req.Enable ();
@@ -4224,7 +4230,7 @@ public class DebuggerTests
 		vm.Detach ();
 
 		// Exceptions caught in non-user code are treated as unhandled
-		Start (new string [] { dtest_app_path, "unhandled-exception-user" });
+		Start (dtest_app_path, "unhandled-exception-user");
 
 		var req = vm.CreateExceptionRequest (null, false, true);
 		req.AssemblyFilter = new List<AssemblyMirror> () { entry_point.DeclaringType.Assembly };
@@ -4263,6 +4269,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("AndroidSdksNotWorking")]
 	public void MakeGenericMethod () {
 		Event e = run_until ("bp1");
 
@@ -4295,7 +4302,7 @@ public class DebuggerTests
 	[Test]
 	public void InspectThreadSuspenedOnWaitOne () {
 		TearDown ();
-		Start (true, dtest_app_path, "wait-one" );
+		Start (dtest_app_path, "wait-one", forceExit: true);
 
 		ThreadMirror.NativeTransitions = true;
 
@@ -4465,6 +4472,7 @@ public class DebuggerTests
 	}
 
 	[Test]
+	[Category ("AndroidSdksNotWorking")]
 	public void ThreadpoolIOsinglestep () {
 		TearDown ();
 		Start (dtest_app_path, "threadpool-io");
@@ -4484,7 +4492,7 @@ public class DebuggerTests
 	[Test]
 	public void StepOutAsync () {
 		vm.Detach ();
-		Start (new string [] { dtest_app_path, "step-out-void-async" });
+		Start (dtest_app_path, "step-out-void-async");
 		var e = run_until ("step_out_void_async_2");
 		create_step (e);
 		var e2 = step_out ();
@@ -4654,6 +4662,7 @@ public class DebuggerTests
 		Assert.IsTrue (e.Thread. ElapsedTime() >= 300);
 	}
 
+#if !MONODROID_TOOLS
 	[Test]
 	[Category("NotWorking")] // fails or hangs
 	public void Attach () {
@@ -4661,7 +4670,7 @@ public class DebuggerTests
 
 		// Launch the app using server=y,suspend=n
 		var port = GetFreePort ();
-		var pi = CreateStartInfo (new string[] { $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=n", dtest_app_path, "attach" });
+		var pi = CreateStartInfo (dtest_app_path, "attach", $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=n");
 		pi.UseShellExecute = false;
 		var process = Diag.Process.Start (pi);
 
@@ -4713,6 +4722,7 @@ public class DebuggerTests
 		vm.Exit (0);
 		vm = null;
 	}
+#endif
 
 	[Test]
 	[Category("NotWorking")]
@@ -4861,6 +4871,8 @@ public class DebuggerTests
 		Assert.IsTrue ((e as StepEvent).Method.Name == "op_Equality" || (e as StepEvent).Method.Name == "if_property_stepping");
 	}
 
+#if !MONODROID_TOOLS
+
 	void HandleEvents () {
 		string failMessage = null;
 		var alreadyStopped = false;
@@ -4943,7 +4955,7 @@ public class DebuggerTests
 		var port = GetFreePort ();
 
 		// Launch the app using server=y,suspend=y
-		var pi = CreateStartInfo (new string[] { $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=y", dtest_app_path, "attach" });
+		var pi = CreateStartInfo (dtest_app_path, "attach", $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=y");
 		pi.UseShellExecute = false;
 		var process = Diag.Process.Start (pi);
 
@@ -4957,11 +4969,12 @@ public class DebuggerTests
 		var port = GetFreePort ();
 
 		// Launch the app using server=y,suspend=n
-		var pi = CreateStartInfo (new string[] { $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=n", dtest_app_path, "attach" });
+		var pi = CreateStartInfo (dtest_app_path, "attach", $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=n");
 		pi.UseShellExecute = false;
 		var process = Diag.Process.Start (pi);
 
 		ShouldNotSendUnexpectedTypeLoadEventsAndInvalidSuspendPolicyAfterAttach (port);
 	}
+#endif
 } // class DebuggerTests
 } // namespace

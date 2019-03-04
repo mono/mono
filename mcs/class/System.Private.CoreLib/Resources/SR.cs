@@ -1215,4 +1215,6 @@ partial class SR
 	public const string InvalidOp_InvalidNewEnumVariant = "The returned enumerator does not implement IEnumVARIANT.";
 	public const string Argument_StructArrayTooLarge = "Array size exceeds addressing limitations.";
 	public const string IndexOutOfRange_ArrayWithOffset = "ArrayWithOffset: offset exceeds array size.";
+	public const string Serialization_DangerousDeserialization = "An action was attempted during deserialization that could lead to a security vulnerability. The action has been aborted.";
+	public const string Serialization_DangerousDeserialization_Switch = "An action was attempted during deserialization that could lead to a security vulnerability. The action has been aborted. To allow the action, set the '{0}' AppContext switch to true.";
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Security;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Reflection
 {
@@ -23,12 +24,6 @@ namespace System.Reflection
 				: base (pointer, length)
 			{
 				this.module = module;
-			}
-
-			protected override void Dispose (bool disposing)
-			{
-				module = null;
-				base.Dispose (disposing);
 			}
 		}
 
@@ -90,6 +85,12 @@ namespace System.Reflection
 
 		// TODO:
 		public override bool IsCollectible => false;
+
+
+		internal static AssemblyName CreateAssemblyName (string assemblyString, out RuntimeAssembly assemblyFromResolveEvent)
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public override extern String[] GetManifestResourceNames ();
@@ -268,6 +269,11 @@ namespace System.Reflection
 		}
 
 		public override FileStream[] GetFiles (bool getResourceModules)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder = default)
 		{
 			throw new NotImplementedException ();
 		}

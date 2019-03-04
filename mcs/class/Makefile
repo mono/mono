@@ -113,13 +113,15 @@ monodroid_dirs_parallel := \
 	Mono.Btls.Interface	\
 	Mono.Posix \
 	Mono.CSharp \
+	Mono.Debugger.Soft \
 	Mono.Runtime.Tests
 
 monodroid_tools_dirs_parallel := \
 	Mono.Cecil	\
 	Mono.CompilerServices.SymbolWriter \
 	ICSharpCode.SharpZipLib	\
-	monodoc
+	monodoc \
+	Mono.Debugger.Soft
 
 monotouch_tools_dirs_parallel := \
 	Mono.Cecil \
