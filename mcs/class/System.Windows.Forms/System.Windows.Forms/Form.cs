@@ -157,8 +157,9 @@ namespace System.Windows.Forms {
 		// Convenience method for fire BOTH OnClosed and OnFormClosed events
 		private void FireClosedEvents (CloseReason reason)
 		{
-			this.OnClosed (EventArgs.Empty);
-			this.OnFormClosed (new FormClosedEventArgs (reason));
+			FormClosedEventArgs fc = new FormClosedEventArgs(reason);
+			this.OnClosed (fc);
+			this.OnFormClosed (fc);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
