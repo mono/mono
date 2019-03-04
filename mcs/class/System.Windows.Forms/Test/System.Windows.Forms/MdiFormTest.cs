@@ -260,6 +260,7 @@ namespace MonoTests.System.Windows.Forms
 
 				void ChildForm_Closed (object sender, EventArgs e)
 				{
+					Assert.IsNotNull ((FormClosedEventArgs)e, "FormClosedEventArgs");
 					Assert.IsNotNull (MdiParent, "ChildForm_Closed");
 				}
 			
