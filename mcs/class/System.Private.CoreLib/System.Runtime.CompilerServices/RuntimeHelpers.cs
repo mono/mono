@@ -108,6 +108,7 @@ namespace System.Runtime.CompilerServices
 			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
 		}
 
+		[Intrinsic]
 		internal static unsafe bool ObjectHasComponentSize (object obj)
 		{
 			throw new NotImplementedException ();
