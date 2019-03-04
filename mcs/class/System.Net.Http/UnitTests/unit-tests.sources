@@ -4,6 +4,7 @@
 ../../../build/common/SR.cs
 
 ../HttpClient.DefaultHandler.cs
+../HttpRequestMessage.Mono.cs
 
 # Common Sources
 
