@@ -1723,7 +1723,7 @@ public class DirectoryTest
 		Directory.SetCurrentDirectory (" ");
 	}
 
-	[Test]
+	[Test] // https://github.com/mono/mono/issues/13030
 	public void GetLogicalDrivesNotEmpty ()
 	{
 		Assert.AreNotEqual (0, Directory.GetLogicalDrives ().Length);
