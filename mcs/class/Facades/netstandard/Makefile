@@ -32,34 +32,30 @@ endif
 endif
 
 ifeq ($(PROFILE),net_4_x)
-LIB_MCS_FLAGS := -d:NS21 -d:SYSTEM_DRAWING
+LIB_MCS_FLAGS := -d:SYSTEM_DRAWING
 endif
 
 ifeq ($(PROFILE),monodroid)
 # XA implements System.Drawing API inside Mono.Android
 API_BIN_REFS := Mono.Android
 LIB_REFS += Facades/System.Drawing.Common
-LIB_MCS_FLAGS := -d:NS21 -d:SYSTEM_DRAWING
+LIB_MCS_FLAGS := -d:SYSTEM_DRAWING
 endif
 
 ifeq ($(PROFILE),monotouch)
 API_BIN_REFS := Xamarin.iOS OpenTK-1.0
-LIB_MCS_FLAGS := -d:NS21
 endif
 
 ifeq ($(PROFILE),monotouch_tv)
 API_BIN_REFS := Xamarin.TVOS OpenTK-1.0
-LIB_MCS_FLAGS := -d:NS21
 endif
 
 ifeq ($(PROFILE),monotouch_watch)
 API_BIN_REFS := Xamarin.WatchOS
-LIB_MCS_FLAGS := -d:NS21
 endif
 
 ifeq ($(PROFILE),xammac)
 API_BIN_REFS := Xamarin.Mac OpenTK
-LIB_MCS_FLAGS := -d:NS21
 endif
 
 # profiles which build a System.Drawing.dll in the repo

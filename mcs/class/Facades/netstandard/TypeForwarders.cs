@@ -2405,7 +2405,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Xsl.XslTransform))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Xsl.XsltSettings))]
 
-#if NS21
+#if !BOOTSTRAP_BASIC // NS2.1:
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Range))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Index))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Collections.Generic.IAsyncEnumerable<>))]
@@ -2469,9 +2469,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.SslApplicationProtocol))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.SslClientAuthenticationOptions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.SslServerAuthenticationOptions))]
-#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Sockets.UnixDomainSocketEndPoint))]
-#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.WebSockets.ValueWebSocketReceiveResult))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Numerics.Matrix3x2))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Numerics.Matrix4x4))]
