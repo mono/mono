@@ -34,7 +34,7 @@ using System.Collections.Generic;
 
 namespace System.Reflection.Emit
 {
-	public abstract class ConstructorBuilder : ConstructorInfo
+	public class ConstructorBuilder : ConstructorInfo
 	{
 		public bool InitLocals { get; set; }
 
@@ -97,6 +97,15 @@ namespace System.Reflection.Emit
 		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature,
 			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups) => 
 				throw new PlatformNotSupportedException ();
+
+		public override System.Reflection.MethodImplAttributes GetMethodImplementationFlags() { throw new PlatformNotSupportedException (); }
+		public override System.RuntimeMethodHandle MethodHandle { get { throw new PlatformNotSupportedException (); } }
+		public override object Invoke(System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); }
+		public override bool IsDefined(System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
+		public override object[] GetCustomAttributes(bool inherit) { throw new PlatformNotSupportedException (); }
+		public override object[] GetCustomAttributes(System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
+		public override System.Type ReflectedType { get { throw new PlatformNotSupportedException (); } }
+		public override object Invoke(object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); }
 	}
 }
 
