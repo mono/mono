@@ -2959,7 +2959,7 @@ emit_gc_safepoint_poll (MonoLLVMModule *module)
 	sig = LLVMFunctionType0 (LLVMVoidType (), FALSE);
 	func = mono_llvm_get_or_insert_gc_safepoint_poll (lmodule);
 	mono_llvm_add_func_attr (func, LLVM_ATTR_NO_UNWIND);
-	LLVMSetLinkage (func, LLVMPrivateLinkage);
+	LLVMSetLinkage (func, LLVMWeakODRLinkage);
 	// set_preserveall_cc (func);
 
 	entry_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.entry");
