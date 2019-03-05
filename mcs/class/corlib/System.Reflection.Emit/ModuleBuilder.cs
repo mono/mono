@@ -177,7 +177,19 @@ namespace System.Reflection.Emit {
 			Console.Error.WriteLine ("WARNING: {0}", message);
 		}
 
-		public override string FullyQualifiedName {get { return fqname;}}
+		public override string FullyQualifiedName {
+			get { 
+				string fullyQualifiedName = fqname;
+				if (fullyQualifiedName == null)
+					return null;
+				if (assemblyb.AssemblyDir != null) {
+					fullyQualifiedName = Path.Combine (assemblyb.AssemblyDir, fullyQualifiedName);
+					fullyQualifiedName = Path.GetFullPath (fullyQualifiedName);
+				}
+
+				return fullyQualifiedName;
+			}
+		}
 
 		public bool IsTransient () {
 			return transient;

@@ -917,7 +917,7 @@ namespace System.Reflection.Emit
 			ModuleBuilder mainModule = null;
 			if (modules != null) {
 				foreach (ModuleBuilder module in modules)
-					if (module.FullyQualifiedName == assemblyFileName)
+					if (module.FileName == assemblyFileName)
 						mainModule = module;
 			}
 			if (mainModule == null)
