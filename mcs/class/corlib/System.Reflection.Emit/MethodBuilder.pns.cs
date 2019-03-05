@@ -28,6 +28,9 @@
 
 #if !MONO_FEATURE_SRE
 
+using System;
+using System.Collections.Generic;
+
 namespace System.Reflection.Emit
 {
 	public abstract class MethodBuilder : MethodInfo
@@ -106,6 +109,17 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public void CreateMethodBody (byte[] il, int count) => throw new PlatformNotSupportedException ();
+
+		public Module GetModule () => throw new PlatformNotSupportedException ();
+
+		public MethodToken GetToken() => throw new PlatformNotSupportedException ();
+
+		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature,
+			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups) => throw new PlatformNotSupportedException ();
+
+		public string Signature => throw new PlatformNotSupportedException ();
 	}
 }
 

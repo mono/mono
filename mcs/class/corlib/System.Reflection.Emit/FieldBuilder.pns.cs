@@ -79,7 +79,9 @@ namespace System.Reflection.Emit
 		public void SetOffset (int iOffset)
 		{
 			throw new PlatformNotSupportedException ();
-		}		
+		}
+
+		public FieldToken GetToken() => throw new PlatformNotSupportedException ();
 	}
 }
 

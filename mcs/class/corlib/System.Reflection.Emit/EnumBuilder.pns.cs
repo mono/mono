@@ -111,6 +111,9 @@ namespace System.Reflection.Emit
 			throw new PlatformNotSupportedException ();
 		}
 		
+		public Type CreateType () => throw new PlatformNotSupportedException ();
+		
+		public TypeToken TypeToken => throw new PlatformNotSupportedException ();
 	}
 }
 

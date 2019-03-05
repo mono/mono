@@ -28,6 +28,8 @@
 
 #if !MONO_FEATURE_SRE
 
+using System.Runtime.InteropServices;
+
 namespace System.Reflection.Emit
 {
 	public abstract class TypeBuilder : TypeInfo
@@ -278,6 +280,33 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public Type CreateType () => throw new PlatformNotSupportedException ();
+
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, 
+			MethodAttributes attributes, CallingConventions callingConvention, 
+			Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, 
+			CharSet nativeCharSet) => throw new PlatformNotSupportedException ();
+
+		public MethodBuilder DefinePInvokeMethod (
+						string name, 
+						string dllName, 
+						string entryName, MethodAttributes attributes, 
+						CallingConventions callingConvention, 
+						Type returnType, 
+						Type[] returnTypeRequiredCustomModifiers, 
+						Type[] returnTypeOptionalCustomModifiers, 
+						Type[] parameterTypes, 
+						Type[][] parameterTypeRequiredCustomModifiers, 
+						Type[][] parameterTypeOptionalCustomModifiers, 
+						CallingConvention nativeCallConv, 
+						CharSet nativeCharSet) => throw new PlatformNotSupportedException ();
+
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, MethodAttributes attributes, 
+			CallingConventions callingConvention, Type returnType, Type[] parameterTypes, 
+			CallingConvention nativeCallConv, CharSet nativeCharSet) => throw new PlatformNotSupportedException ();
+
+		public TypeToken TypeToken => throw new PlatformNotSupportedException ();
 	}
 }
 

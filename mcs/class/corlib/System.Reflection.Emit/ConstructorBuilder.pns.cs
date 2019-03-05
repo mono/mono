@@ -26,6 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
 #if !MONO_FEATURE_SRE
 
 namespace System.Reflection.Emit
@@ -86,6 +90,13 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public string Signature => throw new PlatformNotSupportedException ();
+		public Module GetModule () => throw new PlatformNotSupportedException ();
+		public MethodToken GetToken () => throw new PlatformNotSupportedException ();
+		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature,
+			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups) => 
+				throw new PlatformNotSupportedException ();
 	}
 }
 

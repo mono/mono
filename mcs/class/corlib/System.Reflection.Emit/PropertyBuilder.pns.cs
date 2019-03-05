@@ -102,6 +102,8 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public PropertyToken PropertyToken => throw new PlatformNotSupportedException ();
 	}
 }
 

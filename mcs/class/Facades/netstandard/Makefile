@@ -32,19 +32,19 @@ endif
 endif
 
 ifeq ($(PROFILE),net_4_x)
-# TODO: remove once mobile profile supports NS 2.1
-LIB_MCS_FLAGS := -d:NS21
+LIB_MCS_FLAGS := -d:NS21 -d:SYSTEM_DRAWING
 endif
 
 ifeq ($(PROFILE),monodroid)
 # XA implements System.Drawing API inside Mono.Android
 API_BIN_REFS := Mono.Android
 LIB_REFS += Facades/System.Drawing.Common
-LIB_MCS_FLAGS := -d:NS21
+LIB_MCS_FLAGS := -d:NS21 -d:SYSTEM_DRAWING
 endif
 
 ifeq ($(PROFILE),monotouch)
 API_BIN_REFS := Xamarin.iOS OpenTK-1.0
+LIB_REFS += Facades/System.Drawing.Primitives
 LIB_MCS_FLAGS := -d:NS21
 endif
 

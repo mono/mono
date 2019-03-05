@@ -518,6 +518,14 @@ namespace System.Runtime.InteropServices
 
 			return (IntPtr)(-1);
 		}
+#else
+		public static IntPtr GetHINSTANCE (Module m) => throw new PlatformNotSupportedException();
+		public static IntPtr GetIDispatchForObject (object o) => throw new PlatformNotSupportedException();
+		public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t) => throw new PlatformNotSupportedException();
+		public static bool SetComObjectData (object obj, object key, object data) => throw new PlatformNotSupportedException();
+		public static object GetComObjectData (object obj, object key) => throw new PlatformNotSupportedException();
+		public static string GenerateProgIdForType (Type type) => throw new PlatformNotSupportedException();
+		public static Guid GenerateGuidForType (Type type) => throw new PlatformNotSupportedException();
 #endif // !FULL_AOT_RUNTIME
 
 		public static int GetExceptionCode ()
