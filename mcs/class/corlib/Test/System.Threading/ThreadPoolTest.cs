@@ -177,12 +177,17 @@ namespace MonoTests.System.Threading
 		[Test]
 		public void GetAvailableThreads ()
 		{
+			int cpuCount = Environment.ProcessorCount;
+
+			if (cpuCount > 16)
+				Assert.Inconclusive ("This test doesn't work well with a high number of processor cores.");
+
 			ManualResetEvent mre = new ManualResetEvent (false);
 			var sw = Stopwatch.StartNew ();
 			int i, workerThreads, completionPortThreads;
 
 			try {
-				Assert.IsTrue (ThreadPool.SetMaxThreads (Environment.ProcessorCount, Environment.ProcessorCount));
+				Assert.IsTrue (ThreadPool.SetMaxThreads (cpuCount, cpuCount));
 
 				while (true) {
 					ThreadPool.GetAvailableThreads (out workerThreads, out completionPortThreads);
