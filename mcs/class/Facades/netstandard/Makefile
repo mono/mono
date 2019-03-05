@@ -44,20 +44,22 @@ endif
 
 ifeq ($(PROFILE),monotouch)
 API_BIN_REFS := Xamarin.iOS OpenTK-1.0
-LIB_REFS += Facades/System.Drawing.Primitives
 LIB_MCS_FLAGS := -d:NS21
 endif
 
 ifeq ($(PROFILE),monotouch_tv)
 API_BIN_REFS := Xamarin.TVOS OpenTK-1.0
+LIB_MCS_FLAGS := -d:NS21
 endif
 
 ifeq ($(PROFILE),monotouch_watch)
 API_BIN_REFS := Xamarin.WatchOS
+LIB_MCS_FLAGS := -d:NS21
 endif
 
 ifeq ($(PROFILE),xammac)
 API_BIN_REFS := Xamarin.Mac OpenTK
+LIB_MCS_FLAGS := -d:NS21
 endif
 
 # profiles which build a System.Drawing.dll in the repo
