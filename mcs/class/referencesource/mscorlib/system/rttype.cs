@@ -5067,7 +5067,7 @@ namespace System
             return obj == (object)this;
         }
 
-#if !MONO
+#if !MONO || NETCORE
         public override int GetHashCode() 
         {
             return RuntimeHelpers.GetHashCode(this);
@@ -5274,7 +5274,12 @@ namespace System
         
         [System.Security.SecurityCritical]  // auto-generated
         internal Object CreateInstanceImpl(
-            BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes, ref StackCrawlMark stackMark)
+            BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture
+#if !NETCORE
+            ,Object[] activationAttributes,
+            ref StackCrawlMark stackMark
+#endif
+            )
         {            
             CreateInstanceCheckThis();
             
@@ -5311,7 +5316,11 @@ namespace System
                     if (argCnt == 0 && (bindingAttr & BindingFlags.Public) != 0 && (bindingAttr & BindingFlags.Instance) != 0
                         && (IsGenericCOMObjectImpl() || IsValueType)) 
                     {
-                        server = CreateInstanceDefaultCtor(publicOnly, false, true, wrapExceptions, ref stackMark);
+                        server = CreateInstanceDefaultCtor(publicOnly, false, true, wrapExceptions
+#if !NETCORE
+                            , ref stackMark
+#endif
+                            );
                     }
                     else 
                     {
@@ -5586,7 +5595,11 @@ namespace System
 
         // the slow path of CreateInstanceDefaultCtor
         [System.Security.SecuritySafeCritical]  // auto-generated
-        internal Object CreateInstanceSlow(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+        internal Object CreateInstanceSlow(bool publicOnly, bool skipCheckThis, bool fillCache
+#if !NETCORE
+            , ref StackCrawlMark stackMark
+#endif
+            )
         {
             RuntimeMethodHandleInternal runtime_ctor = default(RuntimeMethodHandleInternal);
             bool bNeedSecurityCheck = true;
@@ -5639,7 +5652,11 @@ namespace System
         [System.Security.SecuritySafeCritical]  // auto-generated
         [DebuggerStepThroughAttribute]
         [Diagnostics.DebuggerHidden]
-        internal Object CreateInstanceDefaultCtor(bool publicOnly, bool skipCheckThis, bool fillCache, bool wrapExceptions, ref StackCrawlMark stackMark)
+        internal Object CreateInstanceDefaultCtor(bool publicOnly, bool skipCheckThis, bool fillCache, bool wrapExceptions
+#if !NETCORE
+            , ref StackCrawlMark stackMark
+#endif
+            )
         {
             if (GetType() == typeof(ReflectionOnlyType))
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_NotAllowedInReflectionOnly"));

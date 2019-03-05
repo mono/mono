@@ -1,2 +1,5 @@
 #include legacy.sources
 System.Net.Http/HttpClientHandler.platformnotsupported.cs
+HttpClientEx.cs
+NSUrlSessionHandler.cs
+RuntimeOptions.cs

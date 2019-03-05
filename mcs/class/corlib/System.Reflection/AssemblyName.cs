@@ -286,12 +286,7 @@ namespace System.Reflection {
 #if MOBILE || NETCORE
 						return true;
 #else
-						try {
-							CryptoConvert.FromCapiPublicKeyBlob (
-								publicKey, 12);
-							return true;
-						} catch (CryptographicException) {
-						}
+						return CryptoConvert.TryImportCapiPublicKeyBlob (publicKey, 12);
 #endif
 					}
 					break;
@@ -299,12 +294,7 @@ namespace System.Reflection {
 #if MOBILE || NETCORE
 					return true;
 #else
-					try {
-						CryptoConvert.FromCapiPublicKeyBlob (publicKey);
-						return true;
-					} catch (CryptographicException) {
-					}
-					break;					
+					return CryptoConvert.TryImportCapiPublicKeyBlob (publicKey, 0);
 #endif
 				case 0x07: // private key
 					break;

@@ -1,6 +1,8 @@
 /.gradle
 /.idea
-/app/assets/asm
+/.stamp-package
+/.stamp-install
+/app/assets
 /app/src/main/jniLibs/
 /lldb-mono-0.1
 /local.properties

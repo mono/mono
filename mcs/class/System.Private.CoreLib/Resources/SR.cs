@@ -20,6 +20,10 @@ partial class SR
 	public const string AggregateException_DeserializationFailure = "The serialization stream contains no inner exceptions.";
 	public const string AggregateException_InnerException = "(Inner Exception #{0}) "; // {entry.Item3}
 	public const string AppDomain_AppBaseNotSet = "The ApplicationBase must be set before retrieving this property.";
+	public const string AppDomain_Name = "Name:";
+	public const string AppDomain_NoContextPolicies = "There are no context policies.";
+	public const string AppDomain_Policy_PrincipalTwice = "Default principal object cannot be set twice.";
+	public const string AmbiguousImplementationException_NullMessage = "Ambiguous implementation found.";
 	public const string Arg_AccessException = "Cannot access member.";
 	public const string Arg_AccessViolationException = "Attempted to read or write protected memory. This is often an indication that other memory is corrupt.";
 	public const string Arg_AmbiguousMatchException = "Ambiguous match found.";
@@ -39,6 +43,7 @@ partial class SR
 	public const string Arg_CannotBeNaN = "TimeSpan does not accept floating point Not-a-Number values.";
 	public const string Arg_CannotHaveNegativeValue = "String cannot contain a minus sign if the base is not 10.";
 	public const string Arg_CannotMixComparisonInfrastructure = "The usage of IKeyComparer and IHashCodeProvider/IComparer interfaces cannot be mixed; use one or the other.";
+	public const string Arg_CannotUnloadAppDomainException = "Attempt to unload the AppDomain failed.";
 	public const string Arg_CATypeResolutionFailed = "Failed to resolve type from string \"{0}\" which was embedded in custom attribute blob.";
 	public const string Arg_COMAccess = "Must specify property Set or Get or method call for a COM Object.";
 	public const string Arg_COMException = "Error HRESULT E_FAIL has been returned from a call to a COM component.";
@@ -99,6 +104,7 @@ partial class SR
 	public const string Arg_InvalidHexStyle = "With the AllowHexSpecifier bit set in the enum bit field, the only other valid bits that can be combined into the enum value must be a subset of those in HexNumber.";
 	public const string Arg_InvalidNeutralResourcesLanguage_Asm_Culture = "The NeutralResourcesLanguageAttribute on the assembly \"{0}\" specifies an invalid culture name: \"{1}\".";
 	public const string Arg_InvalidNeutralResourcesLanguage_FallbackLoc = "The NeutralResourcesLanguageAttribute specifies an invalid or unrecognized ultimate resource fallback location: \"{0}\".";
+	public const string Arg_InvalidSatelliteContract_Asm_Ver = "Satellite contract version attribute on the assembly '{0}' specifies an invalid version: {1}.";
 	public const string Arg_InvalidOleVariantTypeException = "Specified OLE variant was invalid.";
 	public const string Arg_InvalidOperationException = "Operation is not valid due to the current state of the object.";
 	public const string Arg_InvalidSearchPattern = "Search pattern '{0}' cannot contain \"..\" to move up directories and can be contained only internally in file/directory names, as in \"a..b\".";
@@ -129,6 +135,7 @@ partial class SR
 	public const string Arg_MustBeDecimal = "Object must be of type Decimal.";
 	public const string Arg_MustBeDelegate = "Type must derive from Delegate.";
 	public const string Arg_MustBeDouble = "Object must be of type Double.";
+	public const string Arg_MustBeDriveLetterOrRootDir = "Drive name must be a root directory (i.e. 'C:\\') or a drive letter ('C').";
 	public const string Arg_MustBeEnum = "Type provided must be an Enum.";
 	public const string Arg_MustBeEnumBaseTypeOrEnum = "The value passed in must be an enum base or an underlying type for an enum, such as an Int32.";
 	public const string Arg_MustBeGuid = "Object must be of type GUID.";
@@ -144,6 +151,7 @@ partial class SR
 	public const string Arg_MustBeString = "Object must be of type String.";
 	public const string Arg_MustBeTimeSpan = "Object must be of type TimeSpan.";
 	public const string Arg_MustBeType = "Type must be a type provided by the runtime.";
+	public const string Arg_MustBeTrue = "Argument must be true.";
 	public const string Arg_MustBeUInt16 = "Object must be of type UInt16.";
 	public const string Arg_MustBeUInt32 = "Object must be of type UInt32.";
 	public const string Arg_MustBeUInt64 = "Object must be of type UInt64.";
@@ -237,6 +245,7 @@ partial class SR
 	public const string Argument_ArgumentZero = "Argument cannot be zero.";
 	public const string Argument_ArrayGetInterfaceMap = "Interface maps for generic interfaces on arrays cannot be retrieved.";
 	public const string Argument_ArraysInvalid = "Array or pointer types are not valid.";
+	public const string Argument_AttributeNamesMustBeUnique = "Attribute names must be unique.";
 	public const string Argument_BadAttributeOnInterfaceMethod = "Interface method must be abstract and virtual.";
 	public const string Argument_BadConstantValue = "Bad default value.";
 	public const string Argument_BadConstructor = "Cannot have private or static constructor.";
@@ -341,6 +350,10 @@ partial class SR
 	public const string Argument_InvalidDateTimeKind = "Invalid DateTimeKind value.";
 	public const string Argument_InvalidDateTimeStyles = "An undefined DateTimeStyles value is being used.";
 	public const string Argument_InvalidDigitSubstitution = "The DigitSubstitution property must be of a valid member of the DigitShapes enumeration. Valid entries include Context, NativeNational or None.";
+	public const string Argument_InvalidElementName = "Invalid element name '{0}'.";
+	public const string Argument_InvalidElementTag = "Invalid element tag '{0}'.";
+	public const string Argument_InvalidElementText = "Invalid element text '{0}'.";
+	public const string Argument_InvalidElementValue = "Invalid element value '{0}'.";
 	public const string Argument_InvalidEnum = "The Enum type should contain one and only one instance field.";
 	public const string Argument_InvalidEnumValue = "The value '{0}' is not valid for this usage of the type {1}.";
 	public const string Argument_InvalidFieldDeclaringType = "The specified field must be declared on the generic type definition of the specified type.";
@@ -484,6 +497,7 @@ partial class SR
 	public const string ArgumentException_BadMethodImplBody = "MethodOverride's body must be from this type.";
 	public const string ArgumentException_BufferNotFromPool = "The buffer is not associated with this pool and may not be returned to it.";
 	public const string ArgumentException_OtherNotArrayOfCorrectLength = "Object is not a array with the same number of elements as the array to compare it to.";
+	public const string ArgumentException_NotIsomorphic = "Object contains non-primitive or non-blittable data.";
 	public const string ArgumentException_TupleIncorrectType = "Argument must be of type {0}.";
 	public const string ArgumentException_TupleLastArgumentNotATuple = "The last element of an eight element tuple must be a Tuple.";
 	public const string ArgumentException_ValueTupleIncorrectType = "Argument must be of type {0}.";
@@ -495,6 +509,7 @@ partial class SR
 	public const string ArgumentNull_AssemblyName = "AssemblyName cannot be null.";
 	public const string ArgumentNull_AssemblyNameName = "AssemblyName.Name cannot be null or an empty string.";
 	public const string ArgumentNull_Buffer = "Buffer cannot be null.";
+	public const string ArgumentNull_Child = "Cannot have a null child.";
 	public const string ArgumentNull_Collection = "Collection cannot be null.";
 	public const string ArgumentNull_Dictionary = "Dictionary cannot be null.";
 	public const string ArgumentNull_FileName = "File name cannot be null.";
@@ -774,6 +789,7 @@ partial class SR
 	public const string InvalidOperation_BadTypeAttributesNotAbstract = "Type must be declared abstract if any of its methods are abstract.";
 	public const string InvalidOperation_CalledTwice = "The method cannot be called twice on the same instance.";
 	public const string InvalidOperation_CannotImportGlobalFromDifferentModule = "Unable to import a global method or field from a different module.";
+	public const string InvalidOperation_CannotRegisterSecondResolver = "A resolver is already set for the assembly.";
 	public const string InvalidOperation_CannotRemoveLastFromEmptyCollection = "Cannot remove the last element from an empty collection.";
 	public const string InvalidOperation_CannotRestoreUnsupressedFlow = "Cannot restore context flow when it is not suppressed.";
 	public const string InvalidOperation_CannotSupressFlowMultipleTimes = "Context flow is already suppressed.";
@@ -784,6 +800,7 @@ partial class SR
 	public const string InvalidOperation_CollectionBackingDictionaryTooLarge = "The collection backing this Dictionary contains too many elements.";
 	public const string InvalidOperation_CollectionBackingListTooLarge = "The collection backing this List contains too many elements.";
 	public const string InvalidOperation_CollectionCorrupted = "A prior operation on this collection was interrupted by an exception. Collection's state is no longer trusted.";
+	public const string InvalidOperation_ComputerName = "Computer name could not be obtained.";
 	public const string InvalidOperation_ConcurrentOperationsNotSupported = "Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct.";
 	public const string InvalidOperation_ConstructorNotAllowedOnInterface = "Interface cannot have constructors.";
 	public const string InvalidOperation_DateTimeParsing = "Internal Error in DateTime and Calendar operations.";
@@ -832,6 +849,7 @@ partial class SR
 	public const string InvalidOperation_ResourceNotString_Name = "Resource '{0}' was not a String - call GetObject instead.";
 	public const string InvalidOperation_ResourceNotString_Type = "Resource was of type '{0}' instead of String - call GetObject instead.";
 	public const string InvalidOperation_SetData_OnlyOnce = "SetData can only be used to set the value of a given name once.";
+	public const string InvalidOperation_SetLatencyModeNoGC = "The NoGCRegion mode is in progress.End it and then set a different mode.";
 	public const string InvalidOperation_ShouldNotHaveMethodBody = "Method body should not exist.";
 	public const string InvalidOperation_ThreadWrongThreadStart = "The thread was created with a ThreadStart delegate that does not accept a parameter.";
 	public const string InvalidOperation_TimeoutsNotSupported = "Timeouts are not supported on this stream.";
@@ -839,6 +857,7 @@ partial class SR
 	public const string InvalidOperation_TypeCannotBeBoxed = "The given type cannot be boxed.";
 	public const string InvalidOperation_TypeHasBeenCreated = "Unable to change after type has been created.";
 	public const string InvalidOperation_TypeNotCreated = "Type has not been created.";
+	public const string InvalidOperation_UnderlyingArrayListChanged = "This range in the underlying list is invalid. A possible cause is that elements were removed.";
 	public const string InvalidOperation_UnknownEnumType = "Unknown enum type.";
 	public const string InvalidOperation_WriteOnce = "This property has already been set and cannot be modified.";
 	public const string InvalidOperation_WrongAsyncResultOrEndCalledMultiple = "Either the IAsyncResult object did not come from the corresponding async method on this type, or the End method was called multiple times with the same IAsyncResult.";
@@ -955,6 +974,7 @@ partial class SR
 	public const string NotSupported_OpenType = "Cannot create arrays of open type.";
 	public const string NotSupported_OutputStreamUsingTypeBuilder = "Output streams do not support TypeBuilders.";
 	public const string NotSupported_PIAInAppxProcess = "A Primary Interop Assembly is not supported in AppX.";
+	public const string NotSupported_RangeCollection = "The specified operation is not supported on Ranges.";
 	public const string NotSupported_Reading = "Accessor does not support reading.";
 	public const string NotSupported_ReadOnlyCollection = "Collection is read-only.";
 	public const string NotSupported_ResourceObjectSerialization = "Cannot read resources that depend on serialization.";
@@ -988,6 +1008,7 @@ partial class SR
 	public const string ObjectDisposed_ResourceSet = "Cannot access a closed resource set.";
 	public const string ObjectDisposed_StreamClosed = "Cannot access a closed Stream.";
 	public const string ObjectDisposed_ViewAccessorClosed = "Cannot access a closed accessor.";
+	public const string ObjectDisposed_SafeHandleClosed = "Safe handle has been closed.";
 	public const string OperationCanceled = "The operation was canceled.";
 	public const string OutOfMemory_GCHandleMDA = "The GCHandle MDA has run out of available cookies.";
 	public const string Overflow_Byte = "Value was either too large or too small for an unsigned byte.";
@@ -1019,6 +1040,12 @@ partial class SR
 	public const string PlatformNotSupported_OverlappedIO = "This API is specific to the way in which Windows handles asynchronous I/O, and is not supported on this platform.";
 	public const string PlatformNotSupported_ITypeInfo = "Marshalling a System.Type to an unmanaged ITypeInfo or marshalling an ITypeInfo to a System.Type is not supported on this platform.";
 	public const string PlatformNotSupported_IExpando = "Marshalling an IDispatchEx to an IReflect or IExpando is not supported on this platform.";
+	public const string PlatformNotSupported_AppDomains = "Secondary AppDomains are not supported on this platform.";
+	public const string PlatformNotSupported_CAS = "Code Access Security is not supported on this platform.";
+	public const string PlatformNotSupported_AppDomain_ResMon = "AppDomain resource monitoring is not supported on this platform.";
+	public const string PlatformNotSupported_Principal = "Windows Principal functionality is not supported on this platform.";
+	public const string PlatformNotSupported_ThreadAbort = "Thread abort is not supported on this platform.";
+	public const string PlatformNotSupported_ThreadSuspend = "Thread suspend is not supported on this platform.";
 	public const string Policy_CannotLoadSemiTrustAssembliesDuringInit = "All assemblies loaded as part of AppDomain initialization must be fully trusted.";
 	public const string PostconditionFailed = "Postcondition failed.";
 	public const string PostconditionFailed_Cnd = "Postcondition failed: {0}";
@@ -1026,6 +1053,7 @@ partial class SR
 	public const string PostconditionOnExceptionFailed_Cnd = "Postcondition failed after throwing an exception: {0}";
 	public const string PreconditionFailed = "Precondition failed.";
 	public const string PreconditionFailed_Cnd = "Precondition failed: {0}";
+	public const string PersistedFiles_NoHomeDirectory = "The home directory of the current user could not be determined.";
 	public const string Rank_MultiDimNotSupported = "Only single dimension arrays are supported here.";
 	public const string Rank_MustMatch = "The specified arrays must have the same number of dimensions.";
 	public const string ReflectionTypeLoad_LoadFailed = "Unable to load one or more of the requested types.";
@@ -1119,6 +1147,9 @@ partial class SR
 	public const string TaskSchedulerException_ctor_DefaultMessage = "An exception was thrown by a TaskScheduler.";
 	public const string TaskT_DebuggerNoResult = "{Not yet computed}";
 	public const string TaskT_TransitionToFinal_AlreadyCompleted = "An attempt was made to transition a task to a final state when it had already completed.";
+	public const string Thread_ApartmentState_ChangeFailed = "Failed to set the specified COM apartment state.";
+	public const string Thread_GetSetCompressedStack_NotSupported = "Use CompressedStack.(Capture/Run) instead.";
+	public const string Thread_Operation_RequiresCurrentThread = "This operation must be performed on the same thread as that represented by the Thread instance.";
 	public const string Threading_AbandonedMutexException = "The wait completed due to an abandoned mutex.";
 	public const string Threading_WaitHandleCannotBeOpenedException = "No handle of the given name exists.";
 	public const string Threading_WaitHandleCannotBeOpenedException_InvalidHandle = "A WaitHandle with system-wide name '{0}' cannot be created. A WaitHandle of a different type might have the same name.";
@@ -1155,9 +1186,6 @@ partial class SR
 	public const string LockRecursionException_UpgradeAfterReadNotAllowed = "Upgradeable lock may not be acquired with read lock held.";
 	public const string LockRecursionException_UpgradeAfterWriteNotAllowed = "Upgradeable lock may not be acquired with write lock held in this mode. Acquiring Upgradeable lock gives the ability to read along with an option to upgrade to a writer.";
 	public const string SynchronizationLockException_MisMatchedWrite = "The write lock is being released without being held.";
-	public const string ConcurrentStack_PushPopRange_CountOutOfRange = "The count argument must be greater than or equal to zero.";
-	public const string ConcurrentStack_PushPopRange_InvalidCount = "The sum of the startIndex and count arguments must be less than or equal to the collection's Count.";
-	public const string ConcurrentStack_PushPopRange_StartOutOfRange = "The startIndex argument must be greater than or equal to zero.";
 	public const string NotSupported_SignatureType = "This method is not supported on signature types.";
 	public const string MemoryDisposed = "Memory<T> has been disposed.";
 	public const string Memory_OutstandingReferences = "Release all references before disposing this instance.";
@@ -1181,14 +1209,12 @@ partial class SR
 	public const string Argument_CannotParsePrecision = "Characters following the format symbol must be a number of {0} or less.";
 	public const string Argument_GWithPrecisionNotSupported = "The 'G' format combined with a precision is not supported.";
 	public const string Argument_PrecisionTooLarge = "Precision cannot be larger than {0}.";
+	public const string AssemblyDependencyResolver_FailedToLoadHostpolicy = "Cannot load hostpolicy library. AssemblyDependencyResolver is currently only supported if the runtime is hosted through hostpolicy library.";
+	public const string AssemblyDependencyResolver_FailedToResolveDependencies = "Dependency resolution failed for component {0} with error code {1}. Detailed error: {2}";
 	public const string Arg_EnumNotCloneable = "The supplied object does not implement ICloneable.";
 	public const string InvalidOp_InvalidNewEnumVariant = "The returned enumerator does not implement IEnumVARIANT.";
-	public const string IndexOutOfRange_ArrayWithOffset = "";
-	public const string ArgumentException_NotIsomorphic = "";
-	public const string Argument_StructArrayTooLarge = "";
-	public const string PersistedFiles_NoHomeDirectory = "The home directory of the current user could not be determined.";
-	public const string AmbiguousImplementationException_NullMessage = "Ambiguous implementation found.";
-	public const string Arg_InvalidSatelliteContract_Asm_Ver = "Satellite contract version attribute on the assembly '{0}' specifies an invalid version: {1}.";
-	public const string InvalidOperation_SetLatencyModeNoGC = "The NoGCRegion mode is in progress.End it and then set a different mode.";
-	public const string ObjectDisposed_SafeHandleClosed = "";
+	public const string Argument_StructArrayTooLarge = "Array size exceeds addressing limitations.";
+	public const string IndexOutOfRange_ArrayWithOffset = "ArrayWithOffset: offset exceeds array size.";
+	public const string Serialization_DangerousDeserialization = "An action was attempted during deserialization that could lead to a security vulnerability. The action has been aborted.";
+	public const string Serialization_DangerousDeserialization_Switch = "An action was attempted during deserialization that could lead to a security vulnerability. The action has been aborted. To allow the action, set the '{0}' AppContext switch to true.";
 }

@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -43,7 +44,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Constructor ()
 		{
-			if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+			if (!RuntimeInformation.IsOSPlatform (OSPlatform.Windows))
 				Assert.Ignore ("The Jenkins builders don't have '/' mounted, just testing Windows for now.");
 
 			var drive = new DriveInfo ("C:\\");
@@ -61,8 +62,8 @@ namespace MonoTests.System.IO
 		[Category ("NotWasm")] // it doesn't know about 'memfs' drive format
 		public void ConstructorGetsValidDriveFromNonDriveString ()
 		{
-			if (Environment.OSVersion.Platform != PlatformID.Win32NT && Environment.OSVersion.Platform != PlatformID.MacOSX)
-				Assert.Ignore ("Some Linux-hosted CI builders don't have '/' mounted, just testing Windows and MacOS for now.");			
+			if (!RuntimeInformation.IsOSPlatform (OSPlatform.Windows) && !RuntimeInformation.IsOSPlatform (OSPlatform.OSX))
+				Assert.Ignore ("Some Linux-hosted CI builders don't have '/' mounted, just testing Windows and MacOS for now.");
 			
 			var tempPath = Path.GetTempPath ();
 			var drive = new DriveInfo (tempPath);

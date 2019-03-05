@@ -195,10 +195,10 @@ namespace MonoTests.System.Threading
 					if (workerThreads == 0)
 						break;
 
-					Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
-
-					if (sw.Elapsed.TotalSeconds >= 10)
+					if (sw.Elapsed.TotalSeconds >= 30) {
+						Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
 						Assert.Fail ("did not reach 0 available threads");
+					}
 
 					ThreadPool.QueueUserWorkItem (GetAvailableThreads_Callback, mre);
 					Thread.Sleep (1);
