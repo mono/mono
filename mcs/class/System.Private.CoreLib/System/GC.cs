@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace System
 {
 	partial class GC
