@@ -208,6 +208,7 @@ typedef struct MonoAotOptions {
 	gboolean try_llvm;
 	gboolean llvm;
 	gboolean llvm_only;
+	gboolean llvm_plt_init;
 	int nthreads;
 	int ntrampolines;
 	int nrgctx_trampolines;
@@ -5634,13 +5635,24 @@ is_direct_callable (MonoAotCompile *acfg, MonoMethod *method, MonoJumpInfo *patc
 			if (direct_callable && (acfg->aot_opts.dedup || acfg->aot_opts.dedup_include) && mono_aot_can_dedup (patch_info->data.method))
 				direct_callable = FALSE;
 
-			if (direct_callable && !(!callee_cfg->has_got_slots && mono_class_is_before_field_init (callee_cfg->method->klass)))
+			if (direct_callable && (!acfg->llvm || acfg->aot_opts.llvm_plt_init) && !(!callee_cfg->has_got_slots && mono_class_is_before_field_init (callee_cfg->method->klass)))
 				direct_callable = FALSE;
-			if ((callee_cfg->method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) && (!method || method->wrapper_type != MONO_WRAPPER_SYNCHRONIZED))
+
+			if (direct_callable && !strcmp (callee_cfg->method->name, ".cctor"))
+				direct_callable = FALSE;
+
+			//
+			// FIXME: Support inflated methods, it asserts in mono_aot_init_gshared_method_this () because the method is not in
+			// amodule->extra_methods.
+			//
+			if (direct_callable && callee_cfg->method->is_inflated)
+				direct_callable = FALSE;
+
+			if (direct_callable && (callee_cfg->method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) && (!method || method->wrapper_type != MONO_WRAPPER_SYNCHRONIZED))
 				// FIXME: Maybe call the wrapper directly ?
 				direct_callable = FALSE;
 
-			if (acfg->aot_opts.soft_debug || acfg->aot_opts.no_direct_calls) {
+			if (direct_callable && (acfg->aot_opts.soft_debug || acfg->aot_opts.no_direct_calls)) {
 				/* Disable this so all calls go through load_method (), see the
 				 * mini_get_debug_options ()->load_aot_jit_info_eagerly = TRUE; line in
 				 * mono_debugger_agent_init ().
@@ -5648,10 +5660,10 @@ is_direct_callable (MonoAotCompile *acfg, MonoMethod *method, MonoJumpInfo *patc
 				direct_callable = FALSE;
 			}
 
-			if (callee_cfg->method->wrapper_type == MONO_WRAPPER_ALLOC)
+			if (direct_callable && (callee_cfg->method->wrapper_type == MONO_WRAPPER_ALLOC))
 				/* sgen does some initialization when the allocator method is created */
 				direct_callable = FALSE;
-			if (callee_cfg->method->wrapper_type == MONO_WRAPPER_WRITE_BARRIER)
+			if (direct_callable && (callee_cfg->method->wrapper_type == MONO_WRAPPER_WRITE_BARRIER))
 				/* we don't know at compile time whether sgen is concurrent or not */
 				direct_callable = FALSE;
 
@@ -7874,6 +7886,10 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->mode = MONO_AOT_MODE_FULL;
 			opts->llvm = TRUE;
 			opts->llvm_only = TRUE;
+		} else if (str_begins_with (arg, "llvm-plt")) {
+			opts->mode = MONO_AOT_MODE_FULL;
+			opts->llvm = TRUE;
+			opts->llvm_plt_init = TRUE;
 		} else if (str_begins_with (arg, "data-outfile=")) {
 			opts->data_outfile = g_strdup (arg + strlen ("data-outfile="));
 		} else if (str_begins_with (arg, "profile=")) {

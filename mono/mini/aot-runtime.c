@@ -4724,13 +4724,11 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method, MonoError *error)
 		method = mono_method_get_declaring_generic_method (method);
 		method_index = mono_metadata_token_index (method->token) - 1;
 
-		if (mono_llvm_only) {
-			/* Needed by mono_aot_init_gshared_method_this () */
-			/* orig_method is a random instance but it is enough to make init_method () work */
-			amodule_lock (amodule);
-			g_hash_table_insert (amodule->extra_methods, GUINT_TO_POINTER (method_index), orig_method);
-			amodule_unlock (amodule);
-		}
+		/* Needed by mono_aot_init_gshared_method_this () */
+		/* orig_method is a random instance but it is enough to make init_method () work */
+		amodule_lock (amodule);
+		g_hash_table_insert (amodule->extra_methods, GUINT_TO_POINTER (method_index), orig_method);
+		amodule_unlock (amodule);
 	}
 
 	if (method_index == 0xffffff && (method->is_inflated || !method->token)) {
