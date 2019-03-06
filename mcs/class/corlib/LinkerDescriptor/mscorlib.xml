@@ -100,10 +100,14 @@
 		</type>
 		
 		<!-- domain.c: mono_defaults.boolean_class -->
-		<type fullname="System.Boolean" preserve="fields" />
+		<type fullname="System.Boolean">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.byte_class -->
-		<type fullname="System.Byte" preserve="fields" />
+		<type fullname="System.Byte">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- exception.c" mono_get_exception_cannot_unload_appdomain (called by appdomain.c) -->
 		<type fullname="System.CannotUnloadAppDomainException">
@@ -112,7 +116,9 @@
 		</type>
 		
 		<!-- domain.c: mono_defaults.char_class -->
-		<type fullname="System.Char" preserve="fields" />
+		<type fullname="System.Char">
+		  <field name="m_value"/>
+		</type>
 
 		<!-- marshal.c: emit_marshal_vtype -->
 		<type fullname="System.DateTime" preserve="fields" />
@@ -153,7 +159,9 @@
 		</type>
 		
 		<!-- domain.c: mono_defaults.double_class -->
-		<type fullname="System.Double" preserve="fields" />
+		<type fullname="System.Double">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.enum_class -->
 		<type fullname="System.Enum" preserve="fields" />
@@ -203,16 +211,24 @@
 		</type>
 		
 		<!-- domain.c: mono_defaults.int16_class -->
-		<type fullname="System.Int16" preserve="fields" />
+		<type fullname="System.Int16">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.int32_class -->
-		<type fullname="System.Int32" preserve="fields" />
+		<type fullname="System.Int32">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.int64_class -->
-		<type fullname="System.Int64" preserve="fields" />
+		<type fullname="System.Int64">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.int_class -->
-		<type fullname="System.IntPtr" preserve="fields" />
+		<type fullname="System.IntPtr">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- exception.c (mono_get_exception_invalid_cast) -->
 		<type fullname="System.InvalidCastException">
@@ -344,11 +360,16 @@
 		
 		<!-- domain.c: mono_defaults.typehandle_class -->
 		<type fullname="System.RuntimeTypeHandle" preserve="fields" />
+
 		<!-- domain.c: mono_defaults.sbyte_class -->
-		<type fullname="System.SByte" preserve="fields" />
+		<type fullname="System.SByte">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.single_class -->
-		<type fullname="System.Single" preserve="fields" />
+		<type fullname="System.Single">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- appdomain.c (create_domain_objects) domain->stack_overflow_ex -->
 		<type fullname="System.StackOverflowException">
@@ -414,16 +435,24 @@
 		<type fullname="System.TypedReference" preserve="fields" />
 		
 		<!-- domain.c: mono_defaults.uint16_class -->
-		<type fullname="System.UInt16" preserve="fields" />
+		<type fullname="System.UInt16">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.uint32_class -->
-		<type fullname="System.UInt32" preserve="fields" />
+		<type fullname="System.UInt32">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.uint64_class -->
-		<type fullname="System.UInt64" preserve="fields" />
+		<type fullname="System.UInt64">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- domain.c: mono_defaults.uint_class -->
-		<type fullname="System.UIntPtr" preserve="fields" />
+		<type fullname="System.UIntPtr">
+		  <field name="m_value"/>
+		</type>
 		
 		<!-- object.c: create_unhandled_exception_eventargs (assert) -->
 		<type fullname="System.UnhandledExceptionEventArgs">
