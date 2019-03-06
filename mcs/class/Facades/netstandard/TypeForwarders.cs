@@ -2405,7 +2405,17 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Xsl.XslTransform))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Xsl.XsltSettings))]
 
-#if NS21
+#if !BOOTSTRAP_BASIC // NS2.1:
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Range))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Index))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Collections.Generic.IAsyncEnumerable<>))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Collections.Generic.IAsyncEnumerator<>))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.AsyncIteratorMethodBuilder))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.AsyncIteratorStateMachineAttribute))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.ConfiguredAsyncDisposable))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.ConfiguredCancelableAsyncEnumerable<>))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.SwitchExpressionException))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.ManualResetValueTaskSourceCore<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.HashCode))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.MathF))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Memory<>))]
@@ -2433,14 +2443,16 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Buffers.Text.Utf8Parser))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Collections.Generic.CollectionExtensions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Collections.Generic.KeyValuePair))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.Common.DbProviderFactories))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.Tracing.EventSourceCreatedEventArgs))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.ColorConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.KnownColor))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.Common.DbProviderFactories))]
+#if SYSTEM_DRAWING
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.ColorConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.PointConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.RectangleConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.SizeConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.SizeFConverter))]
+#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Globalization.ISOWeek))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.EnumerationOptions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.MatchCasing))]
@@ -2452,14 +2464,12 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemEnumerable<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemEnumerator<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.Enumeration.FileSystemName))]
-//[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Http.ReadOnlyMemoryContent))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Http.ReadOnlyMemoryContent))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.ServerCertificateSelectionCallback))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.SslApplicationProtocol))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.SslClientAuthenticationOptions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Security.SslServerAuthenticationOptions))]
-#if !BOOTSTRAP_BASIC
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.Sockets.UnixDomainSocketEndPoint))]
-#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Net.WebSockets.ValueWebSocketReceiveResult))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Numerics.Matrix3x2))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Numerics.Matrix4x4))]
@@ -2527,6 +2537,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.SequencePosition))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.CryptographicOperations))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.ECDiffieHellman))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Serialization.SchemaImporter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.CertificateRequest))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.DSACertificateExtensions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.SubjectAlternativeNameBuilder))]
@@ -2537,5 +2548,4 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.IValueTaskSource<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.ValueTaskSourceOnCompletedFlags))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.ValueTaskSourceStatus))]
-[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Serialization.SchemaImporter))]
 #endif

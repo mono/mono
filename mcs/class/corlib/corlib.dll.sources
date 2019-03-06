@@ -1154,6 +1154,7 @@ corefx/Stream.cs
 ../referencesource/mscorlib/system/io/stringwriter.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/TextReader.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/TextWriter.cs
+corefx/TextWriter.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryStream.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryAccessor.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/UnmanagedMemoryStreamWrapper.cs
@@ -1801,7 +1802,7 @@ corert/RuntimeAugments.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/TypeForwardedFromAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/TypeForwardedToAttribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/UnsafeValueTypeAttribute.cs
-
+corefx/SwitchExpressionException.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/MemoryMarshal.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Runtime/InteropServices/MemoryMarshal.Fast.cs

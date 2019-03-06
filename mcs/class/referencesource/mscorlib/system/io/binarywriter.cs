@@ -29,7 +29,7 @@ namespace System.IO {
     //
     [Serializable]
 [System.Runtime.InteropServices.ComVisible(true)]
-    public class BinaryWriter : IDisposable
+    public class BinaryWriter : IDisposable, IAsyncDisposable
     {
         public static readonly BinaryWriter Null = new BinaryWriter();
         

@@ -38,11 +38,7 @@ namespace System.Threading
     using System.Diagnostics.CodeAnalysis;
 
 [System.Runtime.InteropServices.ComVisible(true)]
-#if FEATURE_REMOTING || NETCORE
     public abstract partial class WaitHandle : MarshalByRefObject, IDisposable {
-#else // FEATURE_REMOTING
-    public abstract partial class WaitHandle : IDisposable {
-#endif // FEATURE_REMOTING
         public const int WaitTimeout = 0x102;                    
 
         private const int MAX_WAITHANDLES = 64;

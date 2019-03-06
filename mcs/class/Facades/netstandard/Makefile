@@ -11,7 +11,7 @@ LIBRARY = netstandard.dll
 
 KEYFILE = ../../Open.snk
 LIBRARY_SNK = $(KEYFILE)
-SIGN_FLAGS = /delaysign /nowarn:1616,1699 /nowarn:618
+SIGN_FLAGS = /delaysign /nowarn:1616,1699,618 
 LIB_REFS = System System.Xml System.Xml.Linq System.Core System.Numerics System.Net.Http \
 System.IO.Compression System.ComponentModel.Composition System.IO.Compression.FileSystem
 
@@ -32,14 +32,14 @@ endif
 endif
 
 ifeq ($(PROFILE),net_4_x)
-# TODO: remove once mobile profile supports NS 2.1
-LIB_MCS_FLAGS := -d:NS21
+LIB_MCS_FLAGS := -d:SYSTEM_DRAWING
 endif
 
 ifeq ($(PROFILE),monodroid)
 # XA implements System.Drawing API inside Mono.Android
 API_BIN_REFS := Mono.Android
 LIB_REFS += Facades/System.Drawing.Common
+LIB_MCS_FLAGS := -d:SYSTEM_DRAWING
 endif
 
 ifeq ($(PROFILE),monotouch)

@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace System.IO
 {
-    partial class Stream
+    partial class Stream : IAsyncDisposable
     {
         public virtual ValueTask DisposeAsync()
         {
