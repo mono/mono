@@ -1,22 +1,20 @@
 namespace System.Runtime.CompilerServices
 {
-	internal struct Ephemeron
+	struct Ephemeron
 	{
-		internal object key;
-		internal object value;
+		public object key;
+		public object value;
 	}
 
 	//
 	// Instead of dependent handles, mono uses arrays of Ephemeron objects.
 	//
-	readonly struct DependentHandle
+	struct DependentHandle
 	{
 		Ephemeron[] data;
 
 		public DependentHandle (object primary, object secondary)
 		{
-			handle = IntPtr.Zero;
-
 			data = new Ephemeron [1];
 			data [0].key = primary;
 			data [0].value = secondary;
@@ -28,7 +26,8 @@ namespace System.Runtime.CompilerServices
 		// Getting the secondary object is more expensive than getting the first so
 		// we provide a separate primary-only accessor for those times we only want the
 		// primary.
-		public object GetPrimary () {
+		public object GetPrimary ()
+		{
 			if (!IsAllocated)
 				throw new NotSupportedException ();
 			if (data [0].key == GC.EPHEMERON_TOMBSTONE)
@@ -36,7 +35,8 @@ namespace System.Runtime.CompilerServices
 			return data [0].key;
 		}
 
-		public object GetPrimaryAndSecondary (out object secondary) {
+		public object GetPrimaryAndSecondary (out object secondary)
+		{
 			if (!IsAllocated)
 				throw new NotSupportedException ();
 			if (data [0].key == GC.EPHEMERON_TOMBSTONE) {
@@ -47,19 +47,22 @@ namespace System.Runtime.CompilerServices
 			return data [0].key;
 		}
 
-		public void SetPrimary (object primary) {
+		public void SetPrimary (object primary)
+		{
 			if (!IsAllocated)
 				throw new NotSupportedException ();
 			data [0].key = primary;
 		}
 
-		public void SetSecondary (object secondary) {
+		public void SetSecondary (object secondary)
+		{
 			if (!IsAllocated)
 				throw new NotSupportedException ();
 			data [0].value = secondary;
 		}
 
-		public void Free () {
+		public void Free ()
+		{
 			data = null;
 		}
 	}
