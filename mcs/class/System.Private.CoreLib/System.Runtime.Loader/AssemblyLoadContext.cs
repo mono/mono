@@ -29,7 +29,7 @@ namespace System.Runtime.Loader
 			return InternalLoadFile (assemblyPath, ref stackMark);
 		}
 
-		Assembly InternalLoadFromStream (byte[] arrAssembly, byte[] arrSymbols)
+		internal Assembly InternalLoad (byte[] arrAssembly, byte[] arrSymbols)
 		{
 			throw new NotImplementedException ();
 		}
