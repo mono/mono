@@ -171,7 +171,6 @@
       <Compile Include="System.Threading\Thread.cs" />
       <Compile Include="System.Threading\ThreadPool.cs" />
       <Compile Include="System.Threading\ThreadPoolBoundHandle.cs" />
-      <Compile Include="System.Threading\TimerQueue.cs" />
       <Compile Include="System.Threading\WaitHandle.cs" />
   </ItemGroup>
   <ItemGroup>

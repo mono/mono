@@ -70,23 +70,5 @@ namespace System.Reflection
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void InternalGetAssemblyName (string assemblyFile, out Mono.MonoAssemblyName aname, out string codebase);
-
-		#region to be removed
-
-		public static Assembly LoadFrom (string assemblyFile)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public static Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public static Assembly LoadFile (string path) { throw null; }
-
-		public static Assembly LoadFrom (string assemblyFile, byte[] hashValue, System.Configuration.Assemblies.AssemblyHashAlgorithm hashAlgorithm) { throw null; }
-		
-		#endregion
 	}
 }
