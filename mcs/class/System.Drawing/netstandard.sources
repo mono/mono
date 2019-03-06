@@ -14,3 +14,9 @@ System.Drawing/KnownColors.cs
 corefx/SR.cs
 System.Drawing/SR.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/SystemColors.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/ColorConverter.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/PointConverter.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/RectangleConverter.cs
+../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/SizeConverter
+../../../external/corefx/src/System.ComponentModel.TypeConverter/src/System/Drawing/SizeFConverter.cs
+

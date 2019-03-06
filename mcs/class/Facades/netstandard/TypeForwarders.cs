@@ -2446,7 +2446,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.Tracing.EventSourceCreatedEventArgs))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.KnownColor))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.Common.DbProviderFactories))]
-#if SYSTEM_DRAWING
+#if !NO_SYSTEM_DRAWING
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.ColorConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.PointConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.RectangleConverter))]
