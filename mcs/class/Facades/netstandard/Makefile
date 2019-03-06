@@ -41,11 +41,11 @@ ifeq ($(PROFILE),monotouch)
 API_BIN_REFS := Xamarin.iOS OpenTK-1.0
 endif
 
-ifeq ($(PROFILE),monotouch_watch)
+ifeq ($(PROFILE),monotouch_tv)
 API_BIN_REFS := Xamarin.TVOS OpenTK-1.0
 endif
 
-ifeq ($(PROFILE),monotouch_tv)
+ifeq ($(PROFILE),monotouch_watch)
 API_BIN_REFS := Xamarin.WatchOS
 endif
 
