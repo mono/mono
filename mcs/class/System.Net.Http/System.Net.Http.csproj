@@ -178,6 +178,7 @@
         <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
         <Compile Include="System.Net.Http\StreamContent.cs" />
         <Compile Include="System.Net.Http\StringContent.cs" />
+        <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'winaot'">
@@ -240,6 +241,7 @@
         <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
         <Compile Include="System.Net.Http\StreamContent.cs" />
         <Compile Include="System.Net.Http\StringContent.cs" />
+        <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
@@ -303,6 +305,7 @@
         <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
         <Compile Include="System.Net.Http\StreamContent.cs" />
         <Compile Include="System.Net.Http\StringContent.cs" />
+        <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'unreal'">
@@ -365,6 +368,7 @@
         <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
         <Compile Include="System.Net.Http\StreamContent.cs" />
         <Compile Include="System.Net.Http\StringContent.cs" />
+        <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'orbis'">
@@ -427,6 +431,7 @@
         <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
         <Compile Include="System.Net.Http\StreamContent.cs" />
         <Compile Include="System.Net.Http\StringContent.cs" />
+        <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'net_4_x'">
@@ -492,6 +497,7 @@
             <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
             <Compile Include="System.Net.Http\StreamContent.cs" />
             <Compile Include="System.Net.Http\StringContent.cs" />
+            <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
           </ItemGroup>
         </When>
         <When Condition="'$(HostPlatform)' == 'unix'">
@@ -900,6 +906,7 @@
         <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
         <Compile Include="System.Net.Http\StreamContent.cs" />
         <Compile Include="System.Net.Http\StringContent.cs" />
+        <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
@@ -967,6 +974,7 @@
         <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
         <Compile Include="System.Net.Http\StreamContent.cs" />
         <Compile Include="System.Net.Http\StringContent.cs" />
+        <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
@@ -1034,6 +1042,7 @@
         <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
         <Compile Include="System.Net.Http\StreamContent.cs" />
         <Compile Include="System.Net.Http\StringContent.cs" />
+        <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
@@ -1097,6 +1106,7 @@
         <Compile Include="System.Net.Http\MultipartFormDataContent.cs" />
         <Compile Include="System.Net.Http\StreamContent.cs" />
         <Compile Include="System.Net.Http\StringContent.cs" />
+        <Compile Include="corefx\ReadOnlyMemoryContent.cs" />
       </ItemGroup>
     </When>
   </Choose>
