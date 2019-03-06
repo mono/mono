@@ -1,5 +1,5 @@
 // 
-// Copyright (c) 2015 Xamarin Inc. (http://www.xamarin.com)
+// Copyright (c) 2019 Microsoft
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,4 @@
 // THE SOFTWARE.
 // 
 
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.AssemblyExtensions))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.BindingFlags))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.EventInfoExtensions))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.MemberInfoExtensions))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.MethodInfoExtensions))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.ModuleExtensions))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.PropertyInfoExtensions))]
-[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.TypeExtensions))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Reflection.DispatchProxy))]
