@@ -32,11 +32,6 @@ TEST_MCS_FLAGS =
 
 LIBRARY_WARN_AS_ERROR = yes
 
-ifndef SOCKETSHTTPHANDLER
-TEST_MCS_FLAGS += -d:LEGACY_HTTPCLIENT
-LIB_MCS_FLAGS += -d:LEGACY_HTTPCLIENT
-endif
-
 SUBDIRS = FunctionalTests UnitTests
 
 include ../../build/library.make

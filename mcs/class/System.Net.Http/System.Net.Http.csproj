@@ -34,47 +34,47 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid' ">
     <OutputPath>./../../class/lib/monodroid</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;MONODROID;ANDROID;XAMARIN_MODERN;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;MONODROID;ANDROID;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../class/lib/monotouch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;XAMCORE_2_0;XAMARIN_MODERN;SYSTEM_NET_HTTP;UNIFIED;__UNIFIED__;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;XAMCORE_2_0;XAMARIN_MODERN;SYSTEM_NET_HTTP;UNIFIED;__UNIFIED__</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <OutputPath>./../../class/lib/monotouch_watch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_watch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;XAMCORE_2_0;XAMARIN_MODERN;SYSTEM_NET_HTTP;UNIFIED;__UNIFIED__;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;XAMCORE_2_0;XAMARIN_MODERN;SYSTEM_NET_HTTP;UNIFIED;__UNIFIED__</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <OutputPath>./../../class/lib/monotouch_tv</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;XAMCORE_2_0;XAMARIN_MODERN;SYSTEM_NET_HTTP;UNIFIED;__UNIFIED__;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;XAMCORE_2_0;XAMARIN_MODERN;SYSTEM_NET_HTTP;UNIFIED;__UNIFIED__</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full_interp</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_INTERP;DISABLE_COM;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_INTERP;DISABLE_COM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;WIN_PLATFORM;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
@@ -84,17 +84,17 @@
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
     <OutputPath>./../../class/lib/orbis</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-orbis</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;ORBIS;DISABLE_REMOTING;DISABLE_COM;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;ORBIS;DISABLE_REMOTING;DISABLE_COM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'unreal' ">
     <OutputPath>./../../class/lib/unreal</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-unreal</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;MOBILE;MOBILE_DYNAMIC;NET_3_5;NET_4_0;NET_4_5;MONO</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
     <OutputPath>./../../class/lib/wasm</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_REMOTING;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;LEGACY_HTTPCLIENT</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_REMOTING;DISABLE_COM;FEATURE_NO_BSD_SOCKETS</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -121,11 +121,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -185,11 +185,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -248,11 +248,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -312,11 +312,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -375,11 +375,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -441,11 +441,11 @@
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-            <Compile Include="HeaderUtils.Legacy.cs" />
             <Compile Include="HttpClientHandler.Legacy.cs" />
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
             <Compile Include="MonoWebRequestHandler.cs" />
+            <Compile Include="PlatformHelper.Legacy.cs" />
             <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
             <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
             <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -605,12 +605,12 @@
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StreamToStreamCopy.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StringContent.cs" />
             <Compile Include="..\corlib\System.Diagnostics\Debug.cs" />
-            <Compile Include="HeaderUtils.SocketsHandler.cs" />
+            <Compile Include="HttpClient.DefaultHandler.cs" />
             <Compile Include="HttpClientHandler.SocketsHandler.cs" />
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
             <Compile Include="MonoWebRequestHandler.cs" />
-            <Compile Include="StreamContent.Mono.cs" />
+            <Compile Include="PlatformHelper.SocketsHandler.cs" />
             <Compile Include="corefx\NetEventSource.Http.cs" />
             <Compile Include="corefx\SocketsHttpHandler.Mono.cs" />
           </ItemGroup>
@@ -720,12 +720,12 @@
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StreamToStreamCopy.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StringContent.cs" />
             <Compile Include="..\corlib\System.Diagnostics\Debug.cs" />
-            <Compile Include="HeaderUtils.SocketsHandler.cs" />
+            <Compile Include="HttpClient.DefaultHandler.cs" />
             <Compile Include="HttpClientHandler.SocketsHandler.cs" />
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
             <Compile Include="MonoWebRequestHandler.cs" />
-            <Compile Include="StreamContent.Mono.cs" />
+            <Compile Include="PlatformHelper.SocketsHandler.cs" />
             <Compile Include="corefx\NetEventSource.Http.cs" />
             <Compile Include="corefx\SocketsHttpHandler.Mono.cs" />
           </ItemGroup>
@@ -835,12 +835,12 @@
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StreamToStreamCopy.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\StringContent.cs" />
             <Compile Include="..\corlib\System.Diagnostics\Debug.cs" />
-            <Compile Include="HeaderUtils.SocketsHandler.cs" />
+            <Compile Include="HttpClient.DefaultHandler.cs" />
             <Compile Include="HttpClientHandler.SocketsHandler.cs" />
             <Compile Include="HttpClientHandler.cs" />
             <Compile Include="IMonoHttpClientHandler.cs" />
             <Compile Include="MonoWebRequestHandler.cs" />
-            <Compile Include="StreamContent.Mono.cs" />
+            <Compile Include="PlatformHelper.SocketsHandler.cs" />
             <Compile Include="corefx\NetEventSource.Http.cs" />
             <Compile Include="corefx\SocketsHttpHandler.Mono.cs" />
           </ItemGroup>
@@ -850,9 +850,9 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_watch'">
       <ItemGroup>
-        <Compile Include="HeaderUtils.Legacy.cs" />
         <Compile Include="HttpClientEx.cs" />
         <Compile Include="NSUrlSessionHandler.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="RuntimeOptions.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
@@ -915,13 +915,13 @@
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
         <Compile Include="CFContentStream.cs" />
         <Compile Include="CFNetworkHandler.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
         <Compile Include="HttpClientEx.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
         <Compile Include="NSUrlSessionHandler.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="RuntimeOptions.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
@@ -983,13 +983,13 @@
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
         <Compile Include="CFContentStream.cs" />
         <Compile Include="CFNetworkHandler.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
         <Compile Include="HttpClientEx.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
         <Compile Include="NSUrlSessionHandler.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="RuntimeOptions.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
@@ -1049,11 +1049,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="HeaderUtils.Legacy.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
+        <Compile Include="PlatformHelper.Legacy.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />

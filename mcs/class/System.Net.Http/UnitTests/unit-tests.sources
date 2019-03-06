@@ -3,6 +3,8 @@
 ../../corlib/ReferenceSources/SR.cs
 ../../../build/common/SR.cs
 
+../HttpClient.DefaultHandler.cs
+
 # Common Sources
 
 ../../../../external/corefx/src/Common/src/System/NotImplemented.cs
