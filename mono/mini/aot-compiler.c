@@ -228,7 +228,7 @@ typedef struct MonoAotOptions {
 	char *instances_logfile_path;
 	char *logfile;
 	char *llvm_opts;
-	char *llvm_llc_opts;
+	char *llc_opts;
 	char *llvm_llc;
 	gboolean dump_json;
 	gboolean profile_only;
@@ -1082,8 +1082,8 @@ arch_emit_unwind_info_sections (MonoAotCompile *acfg, const char *function_start
 static void
 arch_init (MonoAotCompile *acfg)
 {
-	gboolean has_custom_args = !!acfg->aot_opts.llvm_llc_opts;
-	char *custom_args = acfg->aot_opts.llvm_llc_opts;
+	gboolean has_custom_args = !!acfg->aot_opts.llc_opts;
+	char *custom_args = acfg->aot_opts.llc_opts;
 	acfg->llc_args = g_string_new ("");
 	acfg->as_args = g_string_new ("");
 	acfg->llvm_owriter_supported = TRUE;
@@ -7884,8 +7884,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
 		} else if (str_begins_with (arg, "llvmllc=")){
 			opts->llvm_llc = g_strdup (arg + strlen ("llvmllc="));
-		} else if (str_begins_with (arg, "llvmllcopts=")) {
-			opts->llvm_llc_opts = g_strdup (arg + strlen ("llvmllcopts="));
+		} else if (str_begins_with (arg, "llcopts=")) {
+			opts->llc_opts = g_strdup (arg + strlen ("llcopts="));
 		} else if (!strcmp (arg, "deterministic")) {
 			opts->deterministic = TRUE;
 		} else if (!strcmp (arg, "no-opt")) {
