@@ -126,6 +126,7 @@ class Driver {
 		Console.WriteLine ("\t\t              'ifnewer' copies or overwrites the file if modified or size is different.");
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 		Console.WriteLine ("\t--aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.");
+		Console.WriteLine ("\t--skip-aot-assemblies=x List of assemblies to skip AOT in AOT+INTERP mode.");
 		Console.WriteLine ("\t--link-mode=sdkonly|all        Set the link type used for AOT. (EXPERIMENTAL)");
 		Console.WriteLine ("\t\t              'sdkonly' only link the Core libraries.");
 		Console.WriteLine ("\t\t              'all' link Core and User assemblies. (default)");
@@ -336,6 +337,7 @@ class Driver {
 		string sdkdir = null;
 		string emscripten_sdkdir = null;
 		var aot_assemblies = "";
+		var skip_aot_assemblies = "";
 		out_prefix = Environment.CurrentDirectory;
 		app_prefix = Environment.CurrentDirectory;
 		var deploy_prefix = "managed";
@@ -387,6 +389,7 @@ class Driver {
 				{ "profile=", s => profilers.Add (s) },
 				{ "copy=", s => copyTypeParm = s },
 				{ "aot-assemblies=", s => aot_assemblies = s },
+				{ "skip-aot-assemblies=", s => skip_aot_assemblies = s },
 				{ "link-mode=", s => linkModeParm = s },
 				{ "help", s => print_usage = true },
 					};
@@ -451,6 +454,12 @@ class Driver {
 				return 1;
 			}
 		}
+		if (skip_aot_assemblies != "") {
+			if (ee_mode != ExecMode.AotInterp) {
+				Console.Error.WriteLine ("The --skip-aot-assemblies= argument requires --aot-interp.");
+				return 1;
+			}
+		}
 		if (link_icalls && !enable_linker) {
 			Console.Error.WriteLine ("The --link-icalls option requires the --linker option.");
 			return 1;
@@ -491,7 +500,7 @@ class Driver {
 		}
 
 		if (enable_aot) {
-			var to_aot = new Dictionary<string, bool> ();
+			var to_aot = new Dictionary<string, bool> (StringComparer.OrdinalIgnoreCase);
 			to_aot ["mscorlib"] = true;
 			if (aot_assemblies != "") {
 				foreach (var s in aot_assemblies.Split (','))
@@ -503,9 +512,20 @@ class Driver {
 					to_aot.Remove (ass.name);
 				}
 			}
+
 			if (to_aot.Count > 0) {
-				Console.Error.WriteLine ("Unknown assembly name '" + to_aot.Keys.ToArray ()[0] + "' in --aot-assemblies option.");
-				return 1;
+				Console.WriteLine ("Skipping AOT for unknown assembly names '" + string.Join(",", to_aot.Keys) + "' in --aot-assemblies option.");
+			}
+
+			if(skip_aot_assemblies != "") {
+				var skipList = skip_aot_assemblies.Split(',');
+
+				foreach(var asm in assemblies) {
+					if (skipList.Any(s => asm.name.Equals(s, StringComparison.OrdinalIgnoreCase))) {
+						Console.WriteLine ($"Disabling AOT for {asm.name}");
+						asm.aot = false;
+					}
+				}
 			}
 		}
 
@@ -749,6 +769,7 @@ class Driver {
 		var ofiles = "";
 		string linker_infiles = "";
 		string linker_ofiles = "";
+		string linker_ofiles_dedup = "";
 		string dedup_infiles = "";
 		if (enable_linker) {
 			string path = Path.Combine (builddir, "linker-in");
@@ -773,6 +794,9 @@ class Driver {
 				a.linkout_path = $"$builddir/linker-out/{filename}";
 				linker_infiles += $"{a.linkin_path} ";
 				linker_ofiles += $" {a.linkout_path}";
+                if (a.aot) {
+                    linker_ofiles_dedup += $" {a.linkout_path}";
+                }
 				infile = $"{a.linkout_path}";
 				ninja.WriteLine ($"build {a.linkin_path}: cpifdiff {source_file_path}");
 			} else {
@@ -820,7 +844,7 @@ class Driver {
 			 */
 			ninja.WriteLine ($"build {a.bc_path}: aot-instances | {ofiles} {a.linkout_path}");
 			ninja.WriteLine ($"  dedup_image={a.filename}");
-			ninja.WriteLine ($"  src_files={dedup_infiles} {a.linkout_path}");
+			ninja.WriteLine ($"  src_files={linker_ofiles_dedup} {a.linkout_path}");
 			ninja.WriteLine ($"  outfile={a.bc_path}");
 			ninja.WriteLine ($"  mono_path={aot_in_path}");
 			ninja.WriteLine ($"build {a.app_path}: cpifdiff {a.linkout_path}");
