@@ -2052,7 +2052,9 @@
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />
     <Compile Include="corefx\Stream.cs" />
+    <Compile Include="corefx\SwitchExpressionException.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
+    <Compile Include="corefx\TextWriter.cs" />
     <Compile Include="corefx\ThrowHelper.cs" />
     <Compile Include="corefx\TimeSpanParse.cs" />
     <Compile Include="corefx\TimeZone.cs" />
