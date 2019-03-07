@@ -94,7 +94,10 @@ namespace WebAssembly.Net.Http.HttpClient {
 					if (request.Content is StringContent) {
 						requestObject.SetObjectProperty ("body", await request.Content.ReadAsStringAsync ());
 					} else {
-						requestObject.SetObjectProperty ("body", await request.Content.ReadAsByteArrayAsync ());
+						using (var uint8Buffer = Uint8Array.From(await request.Content.ReadAsByteArrayAsync ()))
+						{
+							requestObject.SetObjectProperty ("body", uint8Buffer);
+						}
 					}
 				}
 
