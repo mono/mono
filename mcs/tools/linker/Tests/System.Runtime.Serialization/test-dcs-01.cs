@@ -11,8 +11,6 @@ public class DataContractSerializerTest {
 			var serializer = new System.Runtime.Serialization.DataContractSerializer(typeof(List<string>));
 			serializer.WriteObject(stream, source);
 			stream.Flush();
-
-			Console.WriteLine (stream.ToArray().ToString());
 		}
 	}
 }

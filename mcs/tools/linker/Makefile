@@ -67,6 +67,9 @@ System/test-%.cs:
 System.Core/test-%.cs:
 	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Core.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
 
+System.Runtime.Serialization/test-%.cs:
+	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Runtime.Serialization.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Xml.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
+
 System.Net.Http/test-%.cs:
 	$(TESTS_COMPILER)  -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.dll -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Net.Http.dll Tests/$@ /out:Tests/$(@:.cs=.exe)
 
@@ -115,7 +118,7 @@ TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-a
 
 .NOTPARALLEL:
 
-System.Net.Http/test-%.exe System.Core/test-%.exe System/test-%.exe mscorlib/test-%.exe:
+System.Net.Http/test-%.exe System.Runtime.Serialization/test-%.exe System.Core/test-%.exe System/test-%.exe mscorlib/test-%.exe:
 	@rm -rf $(LINKER_OUTPUT)
 	@mkdir $(LINKER_OUTPUT)
 	@echo Testing $@
