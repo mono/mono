@@ -18,7 +18,8 @@ LIB_REFS = System.Configuration System.Core System.Data System.Xml System System
 SQLMETAL_RESOURCES = \
 	$(dbmetal_src)/Language/EnglishWords.txt \
 	$(dbmetal_src)/Language/FrenchWords.txt  \
-	$(dbmetal_src)/Language/GermanWords.txt
+	$(dbmetal_src)/Language/GermanWords.txt \
+	$(dbmetal_src)/../DbLinq.snk
 
 EXTRA_DISTFILES = \
 	$(SQLMETAL_RESOURCES)
