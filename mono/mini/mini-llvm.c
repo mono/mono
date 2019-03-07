@@ -94,7 +94,7 @@ typedef struct {
 	gboolean has_jitted_code;
 	gboolean static_link;
 	gboolean llvm_only;
-	gboolean llvm_plt_init;
+	gboolean llvm_disable_self_init;
 	gboolean interp;
 	GHashTable *idx_to_lmethod;
 	GHashTable *idx_to_unbox_tramp;
@@ -163,7 +163,6 @@ typedef struct {
 	gboolean *is_dead;
 	gboolean *unreachable;
 	gboolean llvm_only;
-	gboolean llvm_plt_init;
 	gboolean has_got_access;
 	gboolean emit_dummy_arg;
 	int this_arg_pindex, rgctx_arg_pindex;
@@ -3421,7 +3420,7 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 	}
 
 	/* Initialize the method if needed */
-	if (cfg->compile_aot && !ctx->module->llvm_plt_init) {
+	if (cfg->compile_aot && !ctx->module->llvm_disable_self_init) {
 		/* Emit a location for the initialization code */
 		ctx->init_bb = gen_bb (ctx, "INIT_BB");
 		ctx->inited_bb = gen_bb (ctx, "INITED_BB");
@@ -7866,7 +7865,7 @@ emit_method_inner (EmitContext *ctx)
 	}
 
 	/* Initialize the method if needed */
-	if (cfg->compile_aot && !ctx->llvm_plt_init) {
+	if (cfg->compile_aot && !ctx->module->llvm_disable_self_init) {
 		// FIXME: Add more shared got entries
 		ctx->builder = create_builder (ctx);
 		LLVMPositionBuilderAtEnd (ctx->builder, ctx->init_bb);
@@ -7892,7 +7891,7 @@ emit_method_inner (EmitContext *ctx)
 			LLVMBuildBr (ctx->builder, ctx->inited_bb);
 	}
 
-	if (!ctx->llvm_plt_init) {
+	if (!ctx->module->llvm_disable_self_init) {
 		g_ptr_array_add (ctx->module->cfgs, cfg);
 
 		/*
@@ -9014,7 +9013,7 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	gboolean static_link = (flags & LLVM_MODULE_FLAG_STATIC) ? 1 : 0;
 	gboolean llvm_only = (flags & LLVM_MODULE_FLAG_LLVM_ONLY) ? 1 : 0;
 	gboolean interp = (flags & LLVM_MODULE_FLAG_INTERP) ? 1 : 0;
-	gboolean llvm_plt_init = (flags & LLVM_MODULE_FLAG_LLVM_PLT_INIT) ? 1 : 0;
+	gboolean llvm_disable_self_init = mini_get_debug_options ()->llvm_disable_self_init;
 
 	/* Delete previous module */
 	g_hash_table_destroy (module->plt_entries);
@@ -9034,7 +9033,7 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	module->emit_dwarf = emit_dwarf;
 	module->static_link = static_link;
 	module->llvm_only = llvm_only;
-	module->llvm_plt_init = llvm_plt_init || llvm_only; // llvm_only implies llvm_plt_init
+	module->llvm_disable_self_init = llvm_disable_self_init && !llvm_only; // llvm_only implies !llvm_disable_self_init
 	module->interp = interp;
 	/* The first few entries are reserved */
 	module->max_got_offset = initial_got_size;
@@ -9128,14 +9127,14 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	}
 
 	/* Add initialization array */
-	if (!llvm_plt_init) {
+	if (!llvm_disable_self_init) {
 		LLVMTypeRef inited_type = LLVMArrayType (LLVMInt8Type (), 0);
 
 		module->inited_var = LLVMAddGlobal (aot_module.lmodule, inited_type, "mono_inited_tmp");
 		LLVMSetInitializer (module->inited_var, LLVMConstNull (inited_type));
 	}
 
-	if (!llvm_plt_init)
+	if (!llvm_disable_self_init)
 		emit_init_icall_wrappers (module);
 
 	emit_gc_safepoint_poll (module);
@@ -9177,7 +9176,7 @@ mono_llvm_fixup_aot_module (void)
 	MonoLLVMModule *module = &aot_module;
 	MonoMethod *method;
 
-	if (module->llvm_plt_init)
+	if (module->llvm_disable_self_init)
 		return;
 
 	/*
@@ -9569,7 +9568,7 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 	/*
 	 * Same for the init_var
 	 */
-	if (!module->llvm_plt_init) {
+	if (!module->llvm_disable_self_init) {
 		inited_type = LLVMArrayType (LLVMInt8Type (), module->max_inited_idx + 1);
 		real_inited = LLVMAddGlobal (module->lmodule, inited_type, "mono_inited");
 		LLVMSetInitializer (real_inited, LLVMConstNull (inited_type));

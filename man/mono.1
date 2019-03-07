@@ -1793,6 +1793,9 @@ passed to unmanaged code, and no references kept in managed code,
 which will garbage collect the code.  With this option it is possible
 to track down the source of the problems. 
 .TP
+\fBllvm-disable-self-init\fR
+Disable self-initing LLVM code, rely on PLT machinery (like fullAOT without LLVM).
+.TP
 \fBno-gdb-backtrace\fR
 This option will disable the GDB backtrace emitted by the runtime
 after a SIGSEGV or SIGABRT in unmanaged code.

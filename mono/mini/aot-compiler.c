@@ -208,7 +208,7 @@ typedef struct MonoAotOptions {
 	gboolean try_llvm;
 	gboolean llvm;
 	gboolean llvm_only;
-	gboolean llvm_plt_init;
+	gboolean llvm_disable_self_init;
 	int nthreads;
 	int ntrampolines;
 	int nrgctx_trampolines;
@@ -5635,7 +5635,7 @@ is_direct_callable (MonoAotCompile *acfg, MonoMethod *method, MonoJumpInfo *patc
 			if (direct_callable && (acfg->aot_opts.dedup || acfg->aot_opts.dedup_include) && mono_aot_can_dedup (patch_info->data.method))
 				direct_callable = FALSE;
 
-			if (direct_callable && (!acfg->llvm || acfg->aot_opts.llvm_plt_init) && !(!callee_cfg->has_got_slots && mono_class_is_before_field_init (callee_cfg->method->klass)))
+			if (direct_callable && (!acfg->llvm || acfg->aot_opts.llvm_disable_self_init) && !(!callee_cfg->has_got_slots && mono_class_is_before_field_init (callee_cfg->method->klass)))
 				direct_callable = FALSE;
 
 			if (direct_callable && !strcmp (callee_cfg->method->name, ".cctor"))
@@ -7886,10 +7886,6 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->mode = MONO_AOT_MODE_FULL;
 			opts->llvm = TRUE;
 			opts->llvm_only = TRUE;
-		} else if (str_begins_with (arg, "llvm-plt")) {
-			opts->mode = MONO_AOT_MODE_FULL;
-			opts->llvm = TRUE;
-			opts->llvm_plt_init = TRUE;
 		} else if (str_begins_with (arg, "data-outfile=")) {
 			opts->data_outfile = g_strdup (arg + strlen ("data-outfile="));
 		} else if (str_begins_with (arg, "profile=")) {

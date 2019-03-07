@@ -3701,6 +3701,8 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.gdb = TRUE;
 	else if (!strcmp (option, "lldb"))
 		mini_debug_options.lldb = TRUE;
+	else if (!strcmp (option, "llvm-disable-self-init"))
+		mini_debug_options.llvm_disable_self_init = TRUE;
 	else if (!strcmp (option, "explicit-null-checks"))
 		mini_debug_options.explicit_null_checks = TRUE;
 	else if (!strcmp (option, "gen-seq-points"))

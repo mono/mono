@@ -14,8 +14,7 @@ typedef enum {
 	LLVM_MODULE_FLAG_STATIC = (1 << 0),
 	LLVM_MODULE_FLAG_LLVM_ONLY = (1 << 1),
 	LLVM_MODULE_FLAG_DWARF = (1 << 2),
-	LLVM_MODULE_FLAG_INTERP = (1 << 3),
-	LLVM_MODULE_FLAG_LLVM_PLT_INIT = (1 << 4)
+	LLVM_MODULE_FLAG_INTERP = (1 << 3)
 } LLVMModuleFlags;
 
 /* KEEP THIS IN SYNCH WITH mini-llvm-loaded.c */

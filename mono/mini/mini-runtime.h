@@ -174,6 +174,7 @@ typedef struct MonoDebugOptions {
 	gboolean dyn_runtime_invoke;
 	gboolean gdb;
 	gboolean lldb;
+	gboolean llvm_disable_self_init;
 	gboolean use_fallback_tls;
 	/*
 	 * Whenever data such as next sequence points and flags is required.
