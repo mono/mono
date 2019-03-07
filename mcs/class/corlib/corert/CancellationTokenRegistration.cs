@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Threading
 {
-    partial struct CancellationTokenRegistration
+    partial struct CancellationTokenRegistration : IAsyncDisposable
     {
         public ValueTask DisposeAsync()
         {

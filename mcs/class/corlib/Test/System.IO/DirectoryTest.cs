@@ -1723,8 +1723,14 @@ public class DirectoryTest
 		Directory.SetCurrentDirectory (" ");
 	}
 
+	[Test] // https://github.com/mono/mono/issues/13030
+	public void GetLogicalDrivesNotEmpty ()
+	{
+		CollectionAssert.IsNotEmpty (Directory.GetLogicalDrives ());
+	}
 
 	[Test]
+	[Category("AndroidSdksNotWorking")]
 	public void GetNoFiles () // Bug 58875. This throwed an exception on windows.
 	{
 		DirectoryInfo dir = new DirectoryInfo (".");

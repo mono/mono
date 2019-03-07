@@ -61,6 +61,8 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public EventToken GetEventToken () => throw new PlatformNotSupportedException ();
 	}
 }
 

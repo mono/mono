@@ -93,14 +93,14 @@
   <!-- @BUILT_SOURCES@ -->
   <!--Common files-->
   <ItemGroup>
-    <Compile Include="..\..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="System.Reflection\DispatchProxy.cs" />
+    <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
   <!--End of common files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />
+    <ProjectReference Include="../../System.Core/System.Core.csproj" />
     <ProjectReference Include="../../corlib/corlib.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">

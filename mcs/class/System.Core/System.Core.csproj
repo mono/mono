@@ -471,6 +471,9 @@
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Utilities.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Where.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Linq\src\System\Linq\Zip.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxy.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxyGenerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\ECCurve.ECCurveType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\ECCurve.NamedCurves.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Algorithms\src\System\Security\Cryptography\ECCurve.cs" />
@@ -503,6 +506,7 @@
     <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\CngProperty.cs" />
     <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\CngProvider.cs" />
     <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\CngUIPolicy.cs" />
+    <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
     <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellmanPublicKey.cs" />
     <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDsa.cs" />
     <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDsaCng.cs" />
@@ -549,6 +553,8 @@
   <Choose>
     <When Condition="'$(Platform)' == 'xammac'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
@@ -578,6 +584,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
@@ -587,6 +594,8 @@
     </When>
     <When Condition="'$(Platform)' == 'winaot'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AddInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AndInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ArrayOperations.cs" />
@@ -632,8 +641,8 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\SubInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\TypeOperations.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Utilities.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
         <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
-        <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
@@ -650,6 +659,8 @@
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
@@ -679,8 +690,8 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
         <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
-        <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
@@ -697,6 +708,8 @@
     </When>
     <When Condition="'$(Platform)' == 'unreal'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
@@ -726,8 +739,8 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
         <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
-        <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
@@ -744,6 +757,8 @@
     </When>
     <When Condition="'$(Platform)' == 'orbis'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AddInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AndInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ArrayOperations.cs" />
@@ -789,8 +804,8 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\SubInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\TypeOperations.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Utilities.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
         <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
-        <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
@@ -881,11 +896,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Windows.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxy.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxyGenerator.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
-            <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Windows.cs" />
             <Compile Include="System.IO.Pipes\NamedPipeClientStream.Windows.cs" />
@@ -961,11 +972,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxy.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxyGenerator.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
-            <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
             <Compile Include="System.IO.Pipes\NamedPipeClientStream.Unix.cs" />
@@ -1041,11 +1048,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxy.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxyGenerator.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
-            <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
             <Compile Include="System.IO.Pipes\NamedPipeClientStream.Unix.cs" />
@@ -1121,11 +1124,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxy.cs" />
-            <Compile Include="..\..\..\external\corefx\src\System.Reflection.DispatchProxy\src\System\Reflection\DispatchProxyGenerator.cs" />
             <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
-            <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\ECDiffieHellman.cs" />
             <Compile Include="..\referencesource\System.Core\System\threading\ReaderWriterLockSlim\LockRecursionException.cs" />
             <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.Unix.cs" />
             <Compile Include="System.IO.Pipes\NamedPipeClientStream.Unix.cs" />
@@ -1144,6 +1143,8 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_watch'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AddInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AndInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ArrayOperations.cs" />
@@ -1189,6 +1190,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\SubInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\TypeOperations.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Utilities.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
@@ -1198,6 +1200,8 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AddInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AndInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ArrayOperations.cs" />
@@ -1243,6 +1247,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\SubInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\TypeOperations.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Utilities.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
@@ -1252,6 +1257,8 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AddInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AndInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ArrayOperations.cs" />
@@ -1297,6 +1304,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\SubInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\TypeOperations.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Utilities.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
@@ -1306,6 +1314,8 @@
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\ReferenceEqualityComparer.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Dynamic\Utils\Helpers.cs" />
@@ -1335,6 +1345,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\StackSpiller.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Compiler\VariableBinder.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Runtime\CompilerServices\RuntimeOps.ExpressionQuoter.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
         <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />

@@ -15,6 +15,8 @@ node ("mono-package") {
     ws ("workspace/${jobName}/${monoBranch}") {
         timestamps {
             stage('Checkout') {
+                echo "Running on ${env.NODE_NAME}"
+
                 // clone and checkout repo
                 checkout scm
 
@@ -69,8 +71,8 @@ node ("mono-package") {
                     echo "Not a release job, skipping signing."
                 }
 
-                def storageAccount = (isPrivate ? "bosstoragemirror.blob.core.windows.net" : "xamjenkinsartifact.azureedge.net")
-                def packageUrl = "https://${storageAccount}/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}"
+                def downloadHost = (isPrivate ? "dl.internalx.com" : "xamjenkinsartifact.azureedge.net")
+                def packageUrl = "https://${downloadHost}/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}"
                 currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"${packageUrl}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
 
                 if (isReleaseJob) { utils.reportGitHubStatus (isPr ? env.ghprbActualCommit : commitHash, 'artifacts.json', "${packageUrl}/artifacts.json", 'SUCCESS', '') }

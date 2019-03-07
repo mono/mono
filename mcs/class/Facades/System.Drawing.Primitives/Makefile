@@ -17,6 +17,7 @@ LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
 ifeq ($(PROFILE),monodroid)
 # XA implements System.Drawing API inside Mono.Android
 API_BIN_REFS := Mono.Android
+LIB_REFS += Facades/System.Drawing.Common
 endif
 
 ifeq ($(PROFILE),monotouch)

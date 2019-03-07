@@ -10,6 +10,9 @@
 // System.Drawing.Primitives/ref:
 namespace System.Drawing
 {
+
+#if !MONODROID
+
     public readonly partial struct Color : System.IEquatable<System.Drawing.Color>
     {
         private readonly object _dummy;
@@ -565,6 +568,59 @@ namespace System.Drawing
         public System.Drawing.Size ToSize() { throw new PlatformNotSupportedException(); }
         public override string ToString() { throw new PlatformNotSupportedException(); }
     }
+#else // MONODROID
+    // Added for NS2.1 support
+    public partial class SizeFConverter : System.ComponentModel.TypeConverter
+    {
+        public SizeFConverter() => throw new PlatformNotSupportedException();
+        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) => throw new PlatformNotSupportedException();
+        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) => throw new PlatformNotSupportedException();
+        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) => throw new PlatformNotSupportedException();
+        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) => throw new PlatformNotSupportedException();
+        public override object CreateInstance(System.ComponentModel.ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) => throw new PlatformNotSupportedException();
+        public override bool GetCreateInstanceSupported(System.ComponentModel.ITypeDescriptorContext context) => throw new PlatformNotSupportedException();
+        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) => throw new PlatformNotSupportedException();
+        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) => throw new PlatformNotSupportedException();
+    }
+    public partial class RectangleConverter : System.ComponentModel.TypeConverter
+    {
+        public RectangleConverter() => throw new PlatformNotSupportedException();
+        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) => throw new PlatformNotSupportedException();
+        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) => throw new PlatformNotSupportedException();
+        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) => throw new PlatformNotSupportedException();
+        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) => throw new PlatformNotSupportedException();
+        public override object CreateInstance(System.ComponentModel.ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) => throw new PlatformNotSupportedException();
+        public override bool GetCreateInstanceSupported(System.ComponentModel.ITypeDescriptorContext context) => throw new PlatformNotSupportedException();
+        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) => throw new PlatformNotSupportedException();
+        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) => throw new PlatformNotSupportedException();
+    }
+
+    public partial class SizeConverter : System.ComponentModel.TypeConverter
+    {
+        public SizeConverter() => throw new PlatformNotSupportedException();
+        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) => throw new PlatformNotSupportedException();
+        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) => throw new PlatformNotSupportedException();
+        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) => throw new PlatformNotSupportedException();
+        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) => throw new PlatformNotSupportedException();
+        public override object CreateInstance(System.ComponentModel.ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) => throw new PlatformNotSupportedException();
+        public override bool GetCreateInstanceSupported(System.ComponentModel.ITypeDescriptorContext context) => throw new PlatformNotSupportedException();
+        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) => throw new PlatformNotSupportedException();
+        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) => throw new PlatformNotSupportedException();
+    }
+    public partial class PointConverter : System.ComponentModel.TypeConverter
+    {
+        public PointConverter() => throw new PlatformNotSupportedException();
+        public override bool CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) => throw new PlatformNotSupportedException();
+        public override bool CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) => throw new PlatformNotSupportedException();
+        public override object ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) => throw new PlatformNotSupportedException();
+        public override object ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) => throw new PlatformNotSupportedException();
+        public override object CreateInstance(System.ComponentModel.ITypeDescriptorContext context, System.Collections.IDictionary propertyValues) => throw new PlatformNotSupportedException();
+        public override bool GetCreateInstanceSupported(System.ComponentModel.ITypeDescriptorContext context) => throw new PlatformNotSupportedException();
+        public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object value, System.Attribute[] attributes) => throw new PlatformNotSupportedException();
+        public override bool GetPropertiesSupported(System.ComponentModel.ITypeDescriptorContext context) => throw new PlatformNotSupportedException();
+    }
+#endif // !MONODROID
+
 }
 
 // System.Drawing.Common/ref:
@@ -1690,6 +1746,9 @@ namespace System.Drawing
         public static System.Drawing.Brush WindowText { get { throw new PlatformNotSupportedException(); } }
         public static System.Drawing.Brush FromSystemColor(System.Drawing.Color c) { throw new PlatformNotSupportedException(); }
     }
+
+#if !MONODROID
+
     public static partial class SystemColors
     {
         public static System.Drawing.Color ActiveBorder { get { throw new PlatformNotSupportedException(); } }
@@ -1726,6 +1785,9 @@ namespace System.Drawing
         public static System.Drawing.Color WindowFrame { get { throw new PlatformNotSupportedException(); } }
         public static System.Drawing.Color WindowText { get { throw new PlatformNotSupportedException(); } }
     }
+
+#endif // !MONODROID
+
     public static partial class SystemFonts
     {
         public static System.Drawing.Font CaptionFont { get { throw new PlatformNotSupportedException(); } }

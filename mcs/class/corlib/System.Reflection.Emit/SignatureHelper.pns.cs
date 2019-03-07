@@ -28,6 +28,8 @@
 
 #if !MONO_FEATURE_SRE
 
+using System.Runtime.InteropServices;
+
 namespace System.Reflection.Emit
 {
 	public class SignatureHelper
@@ -110,6 +112,12 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public static SignatureHelper GetMethodSigHelper (Module mod, CallingConvention unmanagedCallConv, Type returnType) => 
+			throw new PlatformNotSupportedException ();
+
+		public static SignatureHelper GetMethodSigHelper (CallingConvention unmanagedCallingConvention, Type returnType) =>
+			throw new PlatformNotSupportedException ();
 	}
 }
 

@@ -1092,6 +1092,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1212,6 +1213,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\Win32UnixFactoryPal.cs" />
         <Compile Include="System.Net.Security\SslStream.cs" />
@@ -1307,6 +1309,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1431,6 +1434,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1551,6 +1555,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -3658,6 +3663,7 @@
         <Compile Include="Mono.AppleTls\SafeHandles.cs" />
         <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
         <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -3685,6 +3691,9 @@
         <Compile Include="System.Net.NetworkInformation\UnixNetworkInterfaceFactory.cs" />
         <Compile Include="System.Net.NetworkInformation\UnixTcpStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\UnixUdpStatistics.cs" />
+        <Compile Include="System.Net.Security\SslApplicationProtocol.pns.cs" />
+        <Compile Include="System.Net.Security\SslClientAuthenticationOptions.pns.cs" />
+        <Compile Include="System.Net.Security\SslServerAuthenticationOptions.pns.cs" />
         <Compile Include="System.Net.Security\SslStream.platformnotsupported.cs" />
         <Compile Include="System.Net.Sockets\TcpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.Sockets\TcpListener.platformnotsupported.cs" />
@@ -3783,6 +3792,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -3924,6 +3934,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -4058,6 +4069,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />

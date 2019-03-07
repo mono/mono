@@ -180,7 +180,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			}
 			catch (CryptographicException ce) {
 				// not everyone can write to the machine store
-				if (!(ce.InnerException is UnauthorizedAccessException))
+				if (!(ce.InnerException is UnauthorizedAccessException) && !(ce.InnerException is IOException ioe && ioe.HResult == 30 /* Read-only file system */))
 					throw;
 				Assert.Ignore ("Access denied to key containers files.");
 			}
@@ -208,7 +208,7 @@ namespace MonoTests.Mono.Security.Cryptography {
 			}
 			catch (CryptographicException ce) {
 				// not everyone can write to the machine store
-				if (!(ce.InnerException is UnauthorizedAccessException))
+				if (!(ce.InnerException is UnauthorizedAccessException) && !(ce.InnerException is IOException ioe && ioe.HResult == 30 /* Read-only file system */))
 					throw;
 				Assert.Ignore ("Access denied to key containers files.");
 			}

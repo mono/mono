@@ -145,6 +145,9 @@ namespace System.Reflection.Emit
 		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) { throw new PlatformNotSupportedException (); }
 
 		public override bool IsDefined (Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
+
+		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string parameterName) => throw new PlatformNotSupportedException ();
+		public DynamicILInfo GetDynamicILInfo () => throw new PlatformNotSupportedException ();
 	}
 }
 

@@ -20,7 +20,7 @@ def print_frames(thread, num_frames, current_thread):
                 ipoffset = frame.EvaluateExpression('ip').GetValueAsUnsigned()
                 insn = ''
                 if ipoffset != 0:
-                    ipoffset -= frame.EvaluateExpression('rtm->code').GetValueAsUnsigned()
+                    ipoffset -= frame.EvaluateExpression('imethod->code').GetValueAsUnsigned()
                     insn = "\"" + frame.EvaluateExpression('mono_interp_opname [*ip]').summary[1:-1] + "\""
                 var = '%s::%s @ %d %s || %s' % (klassname, methodname, ipoffset, insn, frame)
             except Exception as e:

@@ -93,9 +93,6 @@ namespace Mono.Btls
 		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_ssl_ctx_set_server_name_callback (IntPtr handle, IntPtr func);
 
-		[DllImport (BTLS_DYLIB)]
-		extern static IntPtr mono_btls_ssl_ctx_get_servername (IntPtr handle);
-
 		delegate int NativeVerifyFunc (IntPtr instance, int preverify_ok, IntPtr ctx);
 		delegate int NativeSelectFunc (IntPtr instance, int count, IntPtr sizes, IntPtr data);
 		delegate int NativeServerNameFunc (IntPtr instance);
@@ -331,15 +328,6 @@ namespace Mono.Btls
 				c.SetException (ex);
 				return 0;
 			}
-		}
-
-		public string GetServerName ()
-		{
-			CheckThrow ();
-			var ptr = mono_btls_ssl_ctx_get_servername (Handle.DangerousGetHandle ());
-			if (ptr == IntPtr.Zero)
-				return null;
-			return Marshal.PtrToStringAnsi (ptr);
 		}
 
 		protected override void Close ()

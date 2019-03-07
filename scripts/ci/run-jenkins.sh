@@ -203,25 +203,26 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
         ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-android   NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=mini --timeout=60m $gnumake -C sdks/android check-mini
-            ${TESTCMD} --label=corlib --timeout=60m $gnumake -C sdks/android check-corlib
-            ${TESTCMD} --label=System --timeout=60m $gnumake -C sdks/android check-System
-            ${TESTCMD} --label=System.Core --timeout=60m $gnumake -C sdks/android check-System.Core
-            ${TESTCMD} --label=System.Data --timeout=60m $gnumake -C sdks/android check-System.Data
-            ${TESTCMD} --label=System.IO.Compression.FileSystem --timeout=60m $gnumake -C sdks/android check-System.IO.Compression.FileSystem
-            ${TESTCMD} --label=System.IO.Compression --timeout=60m $gnumake -C sdks/android check-System.IO.Compression
-            ${TESTCMD} --label=System.Json --timeout=60m $gnumake -C sdks/android check-System.Json
-            ${TESTCMD} --label=System.Net.Http --timeout=60m $gnumake -C sdks/android check-System.Net.Http
-            ${TESTCMD} --label=System.Numerics --timeout=60m $gnumake -C sdks/android check-System.Numerics
-            ${TESTCMD} --label=System.Runtime.Serialization --timeout=60m $gnumake -C sdks/android check-System.Runtime.Serialization
-            ${TESTCMD} --label=System.ServiceModel.Web --timeout=60m $gnumake -C sdks/android check-System.ServiceModel.Web
-            ${TESTCMD} --label=System.Transactions --timeout=60m $gnumake -C sdks/android check-System.Transactions
-            ${TESTCMD} --label=System.Xml --timeout=60m $gnumake -C sdks/android check-System.Xml
-            ${TESTCMD} --label=System.Xml.Linq --timeout=60m $gnumake -C sdks/android check-System.Xml.Linq
-            ${TESTCMD} --label=Mono.CSharp --timeout=60m $gnumake -C sdks/android check-Mono.CSharp
-            ${TESTCMD} --label=Mono.Data.Sqlite --timeout=60m $gnumake -C sdks/android check-Mono.Data.Sqlite
-            ${TESTCMD} --label=Mono.Data.Tds --timeout=60m $gnumake -C sdks/android check-Mono.Data.Tds
-            ${TESTCMD} --label=Mono.Security --timeout=60m $gnumake -C sdks/android check-Mono.Security
+            ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/android check-Mono.Runtime.Tests
+            ${TESTCMD} --label=corlib --timeout=20m $gnumake -C sdks/android check-corlib
+            ${TESTCMD} --label=System --timeout=20m $gnumake -C sdks/android check-System
+            ${TESTCMD} --label=System.Core --timeout=20m $gnumake -C sdks/android check-System.Core
+            ${TESTCMD} --label=System.Data --timeout=20m $gnumake -C sdks/android check-System.Data
+            ${TESTCMD} --label=System.IO.Compression.FileSystem --timeout=20m $gnumake -C sdks/android check-System.IO.Compression.FileSystem
+            ${TESTCMD} --label=System.IO.Compression --timeout=20m $gnumake -C sdks/android check-System.IO.Compression
+            ${TESTCMD} --label=System.Json --timeout=20m $gnumake -C sdks/android check-System.Json
+            ${TESTCMD} --label=System.Net.Http --timeout=20m $gnumake -C sdks/android check-System.Net.Http
+            ${TESTCMD} --label=System.Numerics --timeout=20m $gnumake -C sdks/android check-System.Numerics
+            ${TESTCMD} --label=System.Runtime.Serialization --timeout=20m $gnumake -C sdks/android check-System.Runtime.Serialization
+            ${TESTCMD} --label=System.ServiceModel.Web --timeout=20m $gnumake -C sdks/android check-System.ServiceModel.Web
+            ${TESTCMD} --label=System.Transactions --timeout=20m $gnumake -C sdks/android check-System.Transactions
+            ${TESTCMD} --label=System.Xml --timeout=20m $gnumake -C sdks/android check-System.Xml
+            ${TESTCMD} --label=System.Xml.Linq --timeout=20m $gnumake -C sdks/android check-System.Xml.Linq
+            ${TESTCMD} --label=Mono.CSharp --timeout=20m $gnumake -C sdks/android check-Mono.CSharp
+            # ${TESTCMD} --label=Mono.Data.Sqlite --timeout=20m $gnumake -C sdks/android check-Mono.Data.Sqlite
+            ${TESTCMD} --label=Mono.Data.Tds --timeout=20m $gnumake -C sdks/android check-Mono.Data.Tds
+            ${TESTCMD} --label=Mono.Security --timeout=20m $gnumake -C sdks/android check-Mono.Security
+            ${TESTCMD} --label=Mono.Debugger.Soft --timeout=20m $gnumake -C sdks/android check-Mono.Debugger.Soft
         fi
         exit 0
 fi
@@ -249,26 +250,27 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 	   ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=wasm-build --timeout=60m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
-            ${TESTCMD} --label=ch-mini-test --timeout=60m $gnumake -C sdks/wasm run-ch-mini
-            ${TESTCMD} --label=v8-mini-test --timeout=60m $gnumake -C sdks/wasm run-v8-mini
-            ${TESTCMD} --label=sm-mini-test --timeout=60m $gnumake -C sdks/wasm run-sm-mini
-            ${TESTCMD} --label=jsc-mini-test --timeout=60m $gnumake -C sdks/wasm run-jsc-mini
+            ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
+            #${TESTCMD} --label=ch-mini-test --timeout=20m $gnumake -C sdks/wasm run-ch-mini
+            ${TESTCMD} --label=v8-mini-test --timeout=20m $gnumake -C sdks/wasm run-v8-mini
+            ${TESTCMD} --label=sm-mini-test --timeout=20m $gnumake -C sdks/wasm run-sm-mini
+            ${TESTCMD} --label=jsc-mini-test --timeout=20m $gnumake -C sdks/wasm run-jsc-mini
             #The following tests are not passing yet, so enabling them would make us perma-red
-            #${TESTCMD} --label=mini-corlib --timeout=60m $gnu$gnumake -C sdks/wasm run-all-corlib
-            #${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-system
-            ${TESTCMD} --label=ch-system-core --timeout=60m $gnumake -C sdks/wasm run-ch-system-core
-            ${TESTCMD} --label=v8-system-core --timeout=60m $gnumake -C sdks/wasm run-v8-system-core
-            ${TESTCMD} --label=sm-system-core --timeout=60m $gnumake -C sdks/wasm run-sm-system-core
-            ${TESTCMD} --label=jsc-system-core --timeout=60m $gnumake -C sdks/wasm run-jsc-system-core
-            ${TESTCMD} --label=debugger --timeout=60m $gnumake -C sdks/wasm test-debugger
-            ${TESTCMD} --label=v8-corlib --timeout=60m $gnumake -C sdks/wasm run-v8-corlib
-            ${TESTCMD} --label=aot-mini --timeout=60m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
-            ${TESTCMD} --label=build-aot-all --timeout=60m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
+            #${TESTCMD} --label=mini-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-all-corlib
+            #${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-system
+            #${TESTCMD} --label=ch-system-core --timeout=20m $gnumake -C sdks/wasm run-ch-system-core
+            ${TESTCMD} --label=v8-system-core --timeout=20m $gnumake -C sdks/wasm run-v8-system-core
+            ${TESTCMD} --label=sm-system-core --timeout=20m $gnumake -C sdks/wasm run-sm-system-core
+            ${TESTCMD} --label=jsc-system-core --timeout=20m $gnumake -C sdks/wasm run-jsc-system-core
+            ${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm test-debugger
+            ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
+            ${TESTCMD} --label=v8-corlib --timeout=20m $gnumake -C sdks/wasm run-v8-corlib
+            ${TESTCMD} --label=aot-mini --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
+            ${TESTCMD} --label=build-aot-all --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-${suite}; done
             for suite in ${mixed_test_suites}; do ${TESTCMD} --label=run-aot-mixed-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-mixed-${suite}; done
-            #${TESTCMD} --label=check-aot --timeout=60m $gnumake -C sdks/wasm check-aot
-            ${TESTCMD} --label=package --timeout=60m $gnumake -C sdks/wasm package
+            #${TESTCMD} --label=check-aot --timeout=20m $gnumake -C sdks/wasm check-aot
+            ${TESTCMD} --label=package --timeout=20m $gnumake -C sdks/wasm package
         fi
 	   exit 0
 fi

@@ -63,6 +63,7 @@ namespace System.Reflection.Emit
 			throw new PlatformNotSupportedException ();
 		}
 
+		public void SetEntryPoint (MethodInfo entryMethod) => throw new PlatformNotSupportedException ();
 	}
 }
 

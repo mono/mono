@@ -41,3 +41,6 @@ System.Net.WebSockets/HttpListenerWebSocketContext.platformnotsupported.cs
 ../Mono.Security/Mono.Security.X509.Extensions/BasicConstraintsExtension.cs
 ../Mono.Security/Mono.Security.X509.Extensions/KeyUsageExtension.cs
 ../Mono.Security/Mono.Security.X509.Extensions/SubjectKeyIdentifierExtension.cs
+System.Net.Security/SslApplicationProtocol.pns.cs
+System.Net.Security/SslClientAuthenticationOptions.pns.cs
+System.Net.Security/SslServerAuthenticationOptions.pns.cs

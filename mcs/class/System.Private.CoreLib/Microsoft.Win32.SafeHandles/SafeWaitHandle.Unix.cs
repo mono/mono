@@ -1,4 +1,6 @@
+using System;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace Microsoft.Win32.SafeHandles
 {
@@ -6,8 +8,11 @@ namespace Microsoft.Win32.SafeHandles
 	{
 		protected override bool ReleaseHandle ()
 		{
-			NativeEventCalls.CloseEvent_internal (handle);
+			CloseEventInternal (handle);
 			return true;
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void CloseEventInternal (IntPtr handle);
 	}
 }

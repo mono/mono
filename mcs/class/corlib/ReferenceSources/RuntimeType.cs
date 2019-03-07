@@ -797,6 +797,7 @@ namespace System
 		}
 #endif
 
+#if !NETCORE
 		public override int GetHashCode()
 		{
 			Type t = UnderlyingSystemType;
@@ -804,6 +805,7 @@ namespace System
 				return t.GetHashCode ();
 			return (int)_impl.Value;
 		}
+#endif
 
 		public override string FullName {
 			get {

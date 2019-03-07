@@ -96,6 +96,57 @@
     <Compile Include="TypeForwarders.cs" />
   </ItemGroup>
   <!--End of common files-->
+  <!--Per-profile files-->
+  <Choose>
+    <When Condition="'$(Platform)' == 'xammac'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'winaot'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'wasm'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'unreal'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'orbis'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'net_4_x'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_watch'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch_tv'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monotouch'">
+      <ItemGroup />
+    </When>
+    <When Condition="'$(Platform)' == 'monodroid'">
+      <ItemGroup>
+        <Compile Include="..\..\..\..\external\corefx\src\Common\src\System\Drawing\ColorTable.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\Common\src\System\Drawing\ColorUtil.netcoreapp21.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\Common\src\System\Drawing\KnownColor.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\Common\src\System\Drawing\KnownColorTable.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ColorConverter.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\SystemColors.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Drawing.Primitives\src\System\Drawing\Color.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Drawing.Primitives\src\System\Drawing\Point.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Drawing.Primitives\src\System\Drawing\PointF.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Drawing.Primitives\src\System\Drawing\Rectangle.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Drawing.Primitives\src\System\Drawing\RectangleF.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Drawing.Primitives\src\System\Drawing\Size.cs" />
+        <Compile Include="..\..\..\..\external\corefx\src\System.Drawing.Primitives\src\System\Drawing\SizeF.cs" />
+        <Compile Include="..\..\..\build\common\SR.cs" />
+        <Compile Include="SR.cs" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
   <ItemGroup>
     <ProjectReference Include="../../System/System.csproj" />
