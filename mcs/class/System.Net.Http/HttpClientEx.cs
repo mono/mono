@@ -20,14 +20,9 @@ namespace System.Net.Http {
 
 	public partial class HttpClient {
 
-		public HttpClient ()
-			: this (GetDefaultHandler (), true)
-		{
-		}
-
 		// note: the linker will re-write this to only reference the selected handler
 		// but we want this to work "as expected" even if the application is not being linked
-		static HttpMessageHandler GetDefaultHandler ()
+		static HttpMessageHandler CreateDefaultHandler ()
 		{
 #if MONOTOUCH_WATCH
 			// There's only one valid handler type for watchOS

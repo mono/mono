@@ -592,7 +592,8 @@ namespace Foundation {
 		{
 			Action disposed;
 
-			public NSUrlSessionDataTaskStreamContent (NSUrlSessionDataTaskStream source, Action onDisposed, CancellationToken token) : base (source, token)
+			[Obsolete ("FIXME: Please talk to Martin about this; see https://github.com/mono/mono/issues/12996.")]
+			public NSUrlSessionDataTaskStreamContent (NSUrlSessionDataTaskStream source, Action onDisposed, CancellationToken token) : base (source)
 			{
 				disposed = onDisposed;
 			}

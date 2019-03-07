@@ -6,14 +6,9 @@ using System.Reflection;
 namespace System.Net.Http {
 	public partial class HttpClient {
 
-		public HttpClient ()
-			: this (GetDefaultHandler (), true)
-		{
-		}
-
 		// note: the linker will re-write ObjCRuntime.RuntimeOptions.GetHttpMessageHandler to return the correct type
 		// unlike, XI where this method itself gets rewritten during linking
-		static HttpMessageHandler GetDefaultHandler ()
+		static HttpMessageHandler CreateDefaultHandler ()
 		{
 			Type type = Type.GetType("ObjCRuntime.RuntimeOptions, Xamarin.Mac");
 			var method = type.GetMethod ("GetHttpMessageHandler", BindingFlags.Static | BindingFlags.NonPublic);
