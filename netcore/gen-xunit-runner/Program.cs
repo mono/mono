@@ -54,9 +54,9 @@ class Program
 				var disc_type = disc_assembly.GetType (discoverer_args [0]);
 				var disc_obj = (ITraitDiscoverer)Activator.CreateInstance (disc_type);
 				foreach (var trait in disc_obj.GetTraits (attr)) {
-					var l = new List<string> ();
-					l.Add (trait.Value);
-					tc.Traits [trait.Key] = l;
+					if (!tc.Traits.ContainsKey (trait.Key))
+						tc.Traits [trait.Key] = new List<string> ();
+					tc.Traits [trait.Key].Add (trait.Value);
 				}
 			}
 		}
@@ -112,22 +112,18 @@ class Program
 			var t = m.ReflectedType;
 			if (t.IsGenericType)
 				continue;
+
+			/*
+			foreach (var trait in tc.Traits) {
+				foreach (var s in trait.Value)
+					Console.WriteLine (m.Name + " " + trait.Key + " " + s);
+			}
+			*/
+
 			if (!filters.Filter (tc)) {
 				//Console.WriteLine ("FILTERED: " + m);
 				continue;
 			}
-
-			/*
-			bool skip = false;
-			if (tc.Traits.ContainsKey ("category")) {
-				foreach (var cat in tc.Traits ["category"]) {
-					if (cat == "nonnetcoreapptests" || cat == "nonosxtests" || cat == "failing" || cat == "Outerloop")
-						skip = true;
-				}
-			}
-			if (skip)
-				continue;
-			*/
 
 			string typename = GetTypeName (t);
 			w.WriteLine ($"Console.WriteLine (\"{typename}:{m.Name}...\");");
