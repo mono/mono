@@ -1851,7 +1851,9 @@ mono_metadata_parse_type_internal (MonoImage *m, MonoGenericContainer *container
 
 	/* Iterate again, but now parse pinned, byref and custom modifiers */
 	found = TRUE;
-	count = 0;
+	/* cmods are encoded in reverse order from how we normally see them.
+	 * "int32 modopt (Foo) modopt (Bar)" is encoded as "cmod_opt [typedef_or_ref "Bar"] cmod_opt [typedef_or_ref "Foo"] I4"
+	 */
 	while (found) {
 		switch (*ptr) {
 		case MONO_TYPE_PINNED:
@@ -1864,14 +1866,16 @@ mono_metadata_parse_type_internal (MonoImage *m, MonoGenericContainer *container
 			break;
 		case MONO_TYPE_CMOD_REQD:
 		case MONO_TYPE_CMOD_OPT:
-			mono_metadata_parse_custom_mod (m, &(cmods->modifiers [count]), ptr, &ptr);
-			count ++;
+			mono_metadata_parse_custom_mod (m, &(cmods->modifiers [--count]), ptr, &ptr);
 			break;
 		default:
 			found = FALSE;
 		}
 	}
 	
+	// either there were no cmods, or else we iterated through all of cmods backwards to populate it.
+	g_assert (count == 0);
+
 	type->attrs = opt_attrs;
 	type->byref = byref;
 	type->pinned = pinned ? 1 : 0;
@@ -5890,8 +5894,12 @@ do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const Mo
 		/* The modifier order matters to Roslyn, they expect the extra cmods to come first:
 		 *
 		 * Suppose we substitute 'int32 modopt(IsLong)' for 'T' in 'void Test
-		 * (T modopt(IsConst) t)'.  Roslyn expects the result to be 'void Test
-		 * (int32 modopt(IsConst) modopt(IsLong) t)'.
+		 * (T modopt(IsConst))'.  Roslyn expects the result to be 'void Test
+		 * (int32 modopt(IsLong) modopt(IsConst))'.
+		 *
+		 * but! cmods are encoded in IL in reverse order, so 'int32 modopt(IsConst) modopt(IsLong)' is
+		 * encoded as `cmod_opt [typeref IsLong] cmod_opt [typeref IsConst] I4`
+		 * so in our array, extra_cmods (IsLong) come first, followed by o_cmods (IsConst)
 		 *
 		 * (Here 'o' is 'int32 modopt(IsLong)' and cmods_source is 'T modopt(IsConst)')
 		 */
@@ -5900,16 +5908,18 @@ do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const Mo
 		uint8_t dest_offset = 0;
 		r_container->image = extra_cmods->image;
 
+		memcpy (&r_container->modifiers [dest_offset], &o_cmods->modifiers [0], o_cmods->count * sizeof (MonoCustomMod));
+		dest_offset += o_cmods->count;
 		memcpy (&r_container->modifiers [dest_offset], &extra_cmods->modifiers [0], extra_cmods->count * sizeof (MonoCustomMod));
 		dest_offset += extra_cmods->count;
-		memcpy (&r_container->modifiers [dest_offset], &o_cmods->modifiers [0], o_cmods->count * sizeof (MonoCustomMod));
+		g_assert (dest_offset == total_cmods);
 
 		return r;
 	} else {
 		/* The aggregate case: either o_cmods or extra_cmods has aggregate cmods, or they're both simple but from different images. */
 		uint8_t total_cmods = 0;
-		total_cmods += mono_type_custom_modifier_count (cmods_source);
 		total_cmods += mono_type_custom_modifier_count (o);
+		total_cmods += mono_type_custom_modifier_count (cmods_source);
 		    
 		gboolean aggregate = TRUE;
 		size_t sizeof_dup = mono_sizeof_type_with_mods (total_cmods, aggregate);
@@ -5929,8 +5939,8 @@ do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const Mo
 		memset (r_container_candidate, 0, r_container_size);
 		uint8_t dest_offset = 0;
 
-		dest_offset = custom_modifier_copy (r_container_candidate, dest_offset, cmods_source);
 		dest_offset = custom_modifier_copy (r_container_candidate, dest_offset, o);
+		dest_offset = custom_modifier_copy (r_container_candidate, dest_offset, cmods_source);
 		g_assert (dest_offset == total_cmods);
 		r_container_candidate->count = total_cmods;
 
