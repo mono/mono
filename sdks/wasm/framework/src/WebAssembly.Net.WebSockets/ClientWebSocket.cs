@@ -372,14 +372,14 @@ namespace WebAssembly.Net.WebSockets {
 			// Otherwise any timeout/cancellation would apply to the full session.
 			using (cancellationToken.Register (() => tcsSend.TrySetCanceled ())) {
 
-				var bytesToSend = new byte [buffer.Count];
-				Buffer.BlockCopy (buffer.Array, buffer.Offset, bytesToSend, 0, buffer.Count);
-
 				if (messageType == WebSocketMessageType.Binary) {
 
 					try {
-						innerWebSocket.Invoke ("send", bytesToSend);
-						tcsSend.SetResult (true);
+						using (var uint8Buffer = Uint8Array.From(buffer))
+						{
+							innerWebSocket.Invoke ("send", uint8Buffer);
+							tcsSend.SetResult (true);
+						}
 					} catch (Exception excb) {
 						throw new WebSocketException (WebSocketError.NativeError, excb);
 					}
@@ -389,6 +389,8 @@ namespace WebAssembly.Net.WebSockets {
 				if (messageType == WebSocketMessageType.Text) {
 
 					try {
+						var bytesToSend = new byte [buffer.Count];
+						Buffer.BlockCopy (buffer.Array, buffer.Offset, bytesToSend, 0, buffer.Count);
 
 						var strBuffer = Encoding.UTF8.GetString (bytesToSend, 0, bytesToSend.Length);
 						innerWebSocket.Invoke ("send", strBuffer);

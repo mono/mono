@@ -204,8 +204,7 @@ var BindingSupportLib = {
 			case 17: 
 			case 18:
 			{
-				var res =  this.mono_array_to_js_typedarray(type, mono_obj); 
-				return res;
+				throw new Error ("Marshalling of primitive arrays are not supported.  Use the corresponding TypedArray instead.");
 			}			
 	
 			default:
