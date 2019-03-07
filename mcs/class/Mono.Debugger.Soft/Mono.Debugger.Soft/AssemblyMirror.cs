@@ -21,6 +21,7 @@ namespace Mono.Debugger.Soft
 		byte[] metadata_blob;
 		bool? isDynamic;
 		byte[] pdb_blob;
+		bool? has_debug_info;
 		Dictionary<string, long> typeCacheIgnoreCase = new Dictionary<string, long> (StringComparer.InvariantCultureIgnoreCase);
 		Dictionary<string, long> typeCache = new Dictionary<string, long> ();
 		Dictionary<uint, long> tokenTypeCache = new Dictionary<uint, long> ();
@@ -222,5 +223,17 @@ namespace Mono.Debugger.Soft
 			}
 			return vm.GetMethod (methodId);
 		}
-    }
+
+		public bool HasDebugInfo {
+			get {
+				if (has_debug_info.HasValue)
+					return has_debug_info.Value;
+
+				vm.CheckProtocolVersion (2, 51);
+
+				has_debug_info = vm.conn.Assembly_HasDebugInfo (id);
+				return has_debug_info.Value;
+			}
+		}
+	}
 }
