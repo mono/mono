@@ -1856,7 +1856,7 @@ ThrowOverflow:
 #else
                     // 32-bit RyuJIT doesn't convert 64-bit division by constant into multiplication by reciprocal. Do half-width divisions instead.
                     Debug.Assert(power <= ushort.MaxValue);
-                    const int low16 = BitConverter.IsLittleEndian ? 0 : 2, high16 = BitConverter.IsLittleEndian ? 2 : 0;
+                    int low16 = BitConverter.IsLittleEndian ? 0 : 2, high16 = BitConverter.IsLittleEndian ? 2 : 0;
                     // byte* is used here because Roslyn doesn't do constant propagation for pointer arithmetic
                     uint num = *(ushort*)((byte*)result + i * 4 + high16) + (remainder << 16);
                     uint div = num / power;
