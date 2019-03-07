@@ -7510,6 +7510,15 @@ emit_method_inner (EmitContext *ctx)
 
 	mono_llvm_add_func_attr (method, LLVM_ATTR_UW_TABLE);
 
+	if (!cfg->llvm_only) {
+		// FIXME/Refine: 
+		//  I was seeing a lot of weird behavior in the corlib tests that suggested a few edge cases to consider when enabling LLVM inlining.
+		//  I think that enabling inlining for the majority of methods is a good idea.
+		//  In the past, we weren’t inlining any methods because we were obfuscating all of the call sites. This preserves that behavior.
+		//  Also not sure how letting LLVM do inlining impacts things like non-C++ EH. There are a number of correctness hurdles there.
+		mono_llvm_add_func_attr (method, LLVM_ATTR_NO_INLINE);
+	}
+
 	if (cfg->compile_aot) {
 		if (is_externally_callable (ctx, cfg->method)) {
 			LLVMSetLinkage (method, LLVMExternalLinkage);
