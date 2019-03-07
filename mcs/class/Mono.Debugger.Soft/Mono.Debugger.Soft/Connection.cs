@@ -1618,8 +1618,8 @@ namespace Mono.Debugger.Soft
 			/* Wait for the reply packet */
 			while (true) {
 				lock (reply_packets_monitor) {
-					if (reply_packets.ContainsKey (packetId)) {
-						byte[] reply = reply_packets [packetId];
+					byte[] reply;
+					if (reply_packets.TryGetValue (packetId, out reply)) {
 						reply_packets.Remove (packetId);
 						PacketReader r = new PacketReader (this, reply);
 
