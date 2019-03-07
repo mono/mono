@@ -2461,6 +2461,7 @@ if test x$host_win32 = xno; then
 			#error "__thread does not currently work with clang on Mac OS X"
 			#endif
 			
+			#include <unistd.h>
 			#include <pthread.h>
 			__thread int i;
 			static int res1, res2;
@@ -2749,6 +2750,9 @@ if test x$host_win32 = xno; then
 		#include <stdio.h>
 		#include <sys/types.h>
 		#include <sys/socket.h>
+		#ifdef HAVE_NET_IF_H
+		#include <net/if.h>
+		#endif
 		#include <ifaddrs.h>
 	], [
 		getifaddrs(NULL);
@@ -3137,6 +3141,9 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
+	ORIG_CFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -Werror-implicit-function-declaration"
+
 	AC_MSG_CHECKING(for sendfile with 6 arguments)
 	AC_TRY_LINK([
 		#include <stdlib.h>
@@ -3151,6 +3158,8 @@ if test x$host_win32 = xno; then
 	], [
 		AC_MSG_RESULT(no)
 	])
+
+	CFLAGS="$ORIG_CFLAGS"
 
 	AC_CHECK_FUNC(fcopyfile,     [AC_DEFINE(HAVE_FCOPYFILE, 1, [fcopyfile])])
 	AC_CHECK_FUNC(epoll_create1, [AC_DEFINE(HAVE_EPOLL, 1, [epoll_create1])])
@@ -3364,7 +3373,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_HEADERS([linux/rtnetlink.h])
 
 	AC_CHECK_FUNC(getpeereid,    [AC_DEFINE(HAVE_GETPEEREID, 1, [getpeereid])])
-	AC_CHECK_FUNC(getdomainname, [AC_DEFINE(HAVE_GETDOMAINNAME, 1, [getdomainname])])
+	#AC_CHECK_FUNC(getdomainname, [AC_DEFINE(HAVE_GETDOMAINNAME, 1, [getdomainname])]) # already done above
 	AC_CHECK_FUNC(uname,         [AC_DEFINE(HAVE_UNAME, 1, [uname])])
 
 	ORIG_CFLAGS="$CFLAGS"
