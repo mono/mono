@@ -7878,10 +7878,13 @@ emit_method_inner (EmitContext *ctx)
 		 * in load_method ().
 		 */
 		gboolean needs_init = ctx->cfg->got_access_count > 0;
-		if (!needs_init && mono_class_get_cctor (cfg->method->klass)) {
+		MonoMethod *cctor = NULL;
+		if (!needs_init && (cctor = mono_class_get_cctor (cfg->method->klass))) {
 			/* Needs init to run the cctor */
 			if (cfg->method->flags & METHOD_ATTRIBUTE_STATIC)
 				needs_init = TRUE;
+			if (cctor == cfg->method)
+				needs_init = FALSE;
 		}
 		if (cfg->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)
 			needs_init = FALSE;
