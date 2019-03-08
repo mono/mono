@@ -1,11 +1,12 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Threading
 {
 	partial class WaitHandle
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal unsafe static extern int Wait_internal(IntPtr* handles, int numHandles, bool waitAll, int ms);
+		unsafe static extern int Wait_internal(IntPtr* handles, int numHandles, bool waitAll, int ms);
 
 		static int WaitOneCore (IntPtr waitHandle, int millisecondsTimeout)
 		{
@@ -20,12 +21,9 @@ namespace System.Threading
 		internal static int WaitMultipleIgnoringSyncContext (Span<IntPtr> waitHandles, bool waitAll, int millisecondsTimeout)
 		{
 			unsafe {
-				IntPtr* handles = stackalloc IntPtr[waitHandles.Length];
-
-				for (int i = 0; i < waitHandles.Length; ++i)
-					handles[i] = waitHandles[i];
-
-				return Wait_internal (handles, waitHandles.Length, waitAll, millisecondsTimeout);
+				fixed (IntPtr* handles = &MemoryMarshal.GetReference (waitHandles)) {
+					return Wait_internal (handles, waitHandles.Length, waitAll, millisecondsTimeout);
+				}
 			}
 		}
 	}

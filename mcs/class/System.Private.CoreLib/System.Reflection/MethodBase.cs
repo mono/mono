@@ -7,15 +7,15 @@ namespace System.Reflection
 		public static MethodBase GetMethodFromHandle (RuntimeMethodHandle handle)
 		{
 			if (handle.IsNullHandle ())
-				throw new ArgumentException (Environment.GetResourceString("Argument_InvalidHandle"));
+				throw new ArgumentException (SR.Argument_InvalidHandle);
 
 			MethodBase m = RuntimeMethodInfo.GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
 			if (m == null)
-				throw new ArgumentException ("The handle is invalid.");
+				throw new ArgumentException (SR.Argument_InvalidHandle);
 
 			Type declaringType = m.DeclaringType;
 			if (declaringType != null && declaringType.IsGenericType)
-				throw new ArgumentException (String.Format (Environment.GetResourceString ("Argument_MethodDeclaringTypeGeneric"),
+				throw new ArgumentException (String.Format (SR.Argument_MethodDeclaringTypeGeneric,
 															m, declaringType.GetGenericTypeDefinition ()));
 
 			return m;
@@ -24,10 +24,10 @@ namespace System.Reflection
 		public static MethodBase GetMethodFromHandle (RuntimeMethodHandle handle, RuntimeTypeHandle declaringType)
 		{
 			if (handle.IsNullHandle ())
-				throw new ArgumentException (Environment.GetResourceString("Argument_InvalidHandle"));
+				throw new ArgumentException (SR.Argument_InvalidHandle);
 			MethodBase m = RuntimeMethodInfo.GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
 			if (m == null)
-				throw new ArgumentException ("The handle is invalid.");
+				throw new ArgumentException (SR.Argument_InvalidHandle);
 			return m;
 		}
 

@@ -17,10 +17,6 @@ namespace System.Reflection {
 		internal int handler_length;
 		#endregion
 
-		protected RuntimeExceptionHandlingClause ()
-		{
-		}
-
 		public override ExceptionHandlingClauseOptions Flags => flags;
         public override int TryOffset => try_offset;
         public override int TryLength => try_length;

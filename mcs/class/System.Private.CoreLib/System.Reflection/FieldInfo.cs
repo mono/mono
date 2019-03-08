@@ -10,15 +10,15 @@ namespace System.Reflection
 
 		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle)
 		{
-			if (handle.Value == IntPtr.Zero)
-				throw new ArgumentException ("The handle is invalid.");
+			if (handle.IsNullHandle ())
+				throw new ArgumentException (SR.Argument_InvalidHandle);
 			return internal_from_handle_type (handle.Value, IntPtr.Zero);
 		}
 
 		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle, RuntimeTypeHandle declaringType)
 		{
-			if (handle.Value == IntPtr.Zero)
-				throw new ArgumentException ("The handle is invalid.");
+			if (handle.IsNullHandle ())
+				throw new ArgumentException (SR.Argument_InvalidHandle);
 			FieldInfo fi = internal_from_handle_type (handle.Value, declaringType.Value);
 			if (fi == null)
 				throw new ArgumentException ("The field handle and the type handle are incompatible.");
@@ -27,7 +27,7 @@ namespace System.Reflection
 
 		internal virtual int GetFieldOffset ()
 		{
-			throw new SystemException ("This method should not be called");
+			throw NotImplemented.ByDesign;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
