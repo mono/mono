@@ -106,7 +106,6 @@
       <Compile Include="Resources\SR.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="Interop\Kernel32.cs" />
       <Compile Include="Microsoft.Win32\UnsafeNativeMethods.cs" />
       <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
       <Compile Include="Mono\MonoDomain.cs" />
