@@ -126,9 +126,6 @@ namespace System.Reflection {
 
         private string FormatNameAndSig(bool serialization)
         {
-#if NETCORE
-            throw new NotImplementedException ();
-#else
             StringBuilder sbName = new StringBuilder(PropertyType.FormatTypeName(serialization));
 
             sbName.Append(" ");
@@ -142,7 +139,6 @@ namespace System.Reflection {
 			}
 
             return sbName.ToString();
-#endif
         }
         #endregion		
 

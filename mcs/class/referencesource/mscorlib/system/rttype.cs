@@ -3214,6 +3214,15 @@ namespace System
 #endif
         #endregion
 
+#if NETCORE
+        protected override MethodInfo GetMethodImpl(string name, int genericParameterCount, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
+		{
+			if (genericParameterCount != 0)
+				throw new NotImplementedException ();
+			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
+		}
+#endif
+
         #region Find XXXInfo
 #if !MONO || NETCORE
         protected override MethodInfo GetMethodImpl(
@@ -3238,7 +3247,8 @@ namespace System
                     {
                         MethodInfo methodInfo = candidates[j];
 #if NETCORE
-                        throw new NotImplementedException ();
+                        if (!System.DefaultBinder.CompareMethodSig (methodInfo, firstCandidate))
+                            throw new AmbiguousMatchException(Environment.GetResourceString("Arg_AmbiguousMatchException"));
 #else
                         if (!System.DefaultBinder.CompareMethodSigAndName(methodInfo, firstCandidate))
                         {
@@ -5432,12 +5442,7 @@ namespace System
                             } else {
 #endif
                             // fast path??
-#if NETCORE
-                                throw new NotImplementedException ();
-#else
                             server = Activator.CreateInstance(this, nonPublic: true, wrapExceptions: wrapExceptions);
-#endif
-
 #if MONO && FEATURE_REMOTING
                             }
 #endif

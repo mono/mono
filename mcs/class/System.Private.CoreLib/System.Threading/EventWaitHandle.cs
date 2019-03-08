@@ -35,9 +35,9 @@ namespace System.Threading
 				throw new PlatformNotSupportedException (SR.PlatformNotSupported_NamedSynchronizationPrimitives);
 
 			SafeWaitHandle handle = new SafeWaitHandle (CreateEventInternal (mode == EventResetMode.ManualReset, initialState, null, 0, out int errorCode), ownsHandle: true);
-
 			if (errorCode != 0)
 				throw new NotImplementedException ("errorCode");
+			SafeWaitHandle = handle;
 
 			createdNew = true;
 		}

@@ -1906,7 +1906,6 @@ ves_icall_System_Reflection_EventInfo_internal_from_handle_type (MonoEvent *hand
 	return mono_event_get_object_handle (mono_domain_get (), klass, handle, error);
 }
 
-
 MonoReflectionPropertyHandle
 ves_icall_System_Reflection_RuntimePropertyInfo_internal_from_handle_type (MonoProperty *handle, MonoType *type, MonoError *error)
 {
