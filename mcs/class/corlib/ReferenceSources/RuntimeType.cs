@@ -228,7 +228,7 @@ namespace System
 					return res;
 			} else if (IsPointer) {
 				var vtype = value.GetType ();
-				if (vtype == typeof (IntPtr) || vtype == typeof (UIntPtr) || vtype == typeof (Pointer))
+				if (vtype == typeof (IntPtr) || vtype == typeof (UIntPtr))
 					return value;
 			}
 
