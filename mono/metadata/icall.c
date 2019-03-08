@@ -1062,6 +1062,20 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStac
 	return TRUE;
 }
 
+#ifdef ENABLE_NETCORE
+MonoObjectHandle
+ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_GetUninitializedObjectInternal (MonoType *handle, MonoError *error)
+{
+	MonoClass *klass;
+
+	g_assert (handle);
+
+	klass = mono_class_from_mono_type_internal (handle);
+
+	return mono_object_new_handle (mono_domain_get (), klass, error);
+}
+#endif
+
 MonoObjectHandle
 ves_icall_System_Object_MemberwiseClone (MonoObjectHandle this_obj, MonoError *error)
 {

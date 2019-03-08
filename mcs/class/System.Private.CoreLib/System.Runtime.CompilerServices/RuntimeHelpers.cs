@@ -116,7 +116,11 @@ namespace System.Runtime.CompilerServices
 
 		public static object GetUninitializedObject (Type type)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException (nameof (type));
+			if (!(type is RuntimeType))
+				throw new NotImplementedException ();
+			return GetUninitializedObjectInternal (new RuntimeTypeHandle (type as RuntimeType).Value);
 		}
 
 		public static T[] GetSubArray<T> (T[] array, Range range)
@@ -131,6 +135,9 @@ namespace System.Runtime.CompilerServices
 			source.CopyTo(newArray);
 			return newArray;
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern object GetUninitializedObjectInternal (IntPtr type);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void InitializeArray (Array array, IntPtr fldHandle);
