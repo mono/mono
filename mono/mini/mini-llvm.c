@@ -7885,6 +7885,11 @@ emit_method_inner (EmitContext *ctx)
 				needs_init = TRUE;
 			if (cctor == cfg->method)
 				needs_init = FALSE;
+
+			// If we are a constructor, we need to init so the static
+			// constructor gets called.
+			if (!strcmp (cfg->method->name, ".ctor"))
+				needs_init = TRUE;
 		}
 		if (cfg->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)
 			needs_init = FALSE;
