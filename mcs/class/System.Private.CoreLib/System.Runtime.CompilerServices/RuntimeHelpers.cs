@@ -96,8 +96,15 @@ namespace System.Runtime.CompilerServices
 
 		static object GetUninitializedObjectInternal (Type type)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException (nameof (type));
+			if (!(type is RuntimeType))
+				throw new NotImplementedException ();
+			return GetUninitializedObjectInternal (new RuntimeTypeHandle (type as RuntimeType).Value);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern object GetUninitializedObjectInternal (IntPtr type);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void InitializeArray (Array array, IntPtr fldHandle);

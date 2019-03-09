@@ -67,6 +67,11 @@ namespace System
 			}
 		}
 
+		internal bool IsNullHandle ()
+		{
+			return value == IntPtr.Zero;
+		}
+
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -124,4 +129,5 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static unsafe extern internal void SetValueDirect (RuntimeFieldInfo field, RuntimeType fieldType, void* pTypedRef, Object value, RuntimeType contextType);
 	}
+
 }

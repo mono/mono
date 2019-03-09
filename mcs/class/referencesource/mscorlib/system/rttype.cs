@@ -2822,7 +2822,7 @@ namespace System
         #region Get XXXInfo Candidates
         private ListBuilder<MethodInfo> GetMethodCandidates(
             String name, BindingFlags bindingAttr, CallingConventions callConv,
-            Type[] types, bool allowPrefixLookup)
+            Type[] types, int genericParamCount, bool allowPrefixLookup)
         {
             bool prefixLookup, ignoreCase;
             MemberListType listType;
@@ -2834,9 +2834,20 @@ namespace System
             RuntimeMethodInfo[] cache = Cache.GetMethodList(listType, name);
 #endif
             ListBuilder<MethodInfo> candidates = new ListBuilder<MethodInfo>(cache.Length);
+
             for (int i = 0; i < cache.Length; i++)
             {
                 RuntimeMethodInfo methodInfo = cache[i];
+				if (genericParamCount != -1) {
+					bool is_generic = methodInfo.IsGenericMethod;
+					if (genericParamCount == 0 && is_generic)
+						continue;
+					else if (genericParamCount > 0 && !is_generic)
+						continue;
+					var args = methodInfo.GetGenericArguments ();
+					if (args.Length != genericParamCount)
+						continue;
+				}
                 if (FilterApplyMethodInfo(methodInfo, bindingAttr, callConv, types) &&
                     (!prefixLookup || RuntimeType.FilterApplyPrefixLookup(methodInfo, name, ignoreCase)))
                 {
@@ -3082,7 +3093,7 @@ namespace System
         #region Get All XXXInfos
         public override MethodInfo[] GetMethods(BindingFlags bindingAttr)
         {
-            return GetMethodCandidates(null, bindingAttr, CallingConventions.Any, null, false).ToArray();
+            return GetMethodCandidates(null, bindingAttr, CallingConventions.Any, null, -1, false).ToArray();
         }
 
 [System.Runtime.InteropServices.ComVisible(true)]
@@ -3124,7 +3135,7 @@ namespace System
 
         public override MemberInfo[] GetMembers(BindingFlags bindingAttr)
         {
-            ListBuilder<MethodInfo> methods = GetMethodCandidates(null, bindingAttr, CallingConventions.Any, null, false);
+            ListBuilder<MethodInfo> methods = GetMethodCandidates(null, bindingAttr, CallingConventions.Any, null, -1, false);
             ListBuilder<ConstructorInfo> constructors = GetConstructorCandidates(null, bindingAttr, CallingConventions.Any, null, false);
             ListBuilder<PropertyInfo> properties = GetPropertyCandidates(null, bindingAttr, null, false);
             ListBuilder<EventInfo> events = GetEventCandidates(null, bindingAttr, false);
@@ -3214,13 +3225,17 @@ namespace System
 #endif
         #endregion
 
-        #region Find XXXInfo
-#if !MONO || NETCORE
-        protected override MethodInfo GetMethodImpl(
-            String name, BindingFlags bindingAttr, Binder binder, CallingConventions callConv, 
+#if NETCORE
+        protected override MethodInfo GetMethodImpl(string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
+		{
+			return GetMethodImpl (name, -1, bindingAttr, binder, callConvention, types, modifiers);
+		}
+
+        protected override MethodInfo GetMethodImpl(String name, int genericParamCount,
+            BindingFlags bindingAttr, Binder binder, CallingConventions callConv, 
             Type[] types, ParameterModifier[] modifiers) 
         {       
-            ListBuilder<MethodInfo> candidates = GetMethodCandidates(name, bindingAttr, callConv, types, false);
+            ListBuilder<MethodInfo> candidates = GetMethodCandidates(name, bindingAttr, callConv, types, genericParamCount, false);
             if (candidates.Count == 0) 
                 return null;
 
@@ -3237,14 +3252,8 @@ namespace System
                     for (int j = 1; j < candidates.Count; j++)
                     {
                         MethodInfo methodInfo = candidates[j];
-#if NETCORE
-                        throw new NotImplementedException ();
-#else
-                        if (!System.DefaultBinder.CompareMethodSigAndName(methodInfo, firstCandidate))
-                        {
+                        if (!System.DefaultBinder.CompareMethodSig (methodInfo, firstCandidate))
                             throw new AmbiguousMatchException(Environment.GetResourceString("Arg_AmbiguousMatchException"));
-                        }
-#endif
                     }
 
                     // All the methods have the exact same name and sig so return the most derived one.
@@ -3512,7 +3521,7 @@ namespace System
             // Methods
             if ((type & MemberTypes.Method) != 0)
             {
-                methods = GetMethodCandidates(name, bindingAttr, CallingConventions.Any, null, true);
+                methods = GetMethodCandidates(name, bindingAttr, CallingConventions.Any, null, -1, true);
                 if (type == MemberTypes.Method)
                     return methods.ToArray();
                 totalCount += methods.Count;
@@ -5057,8 +5066,6 @@ namespace System
         }        
         #endregion
 
-        #endregion
-
         #region Object Overrides
         [Pure]
         public override bool Equals(object obj)
@@ -5432,12 +5439,7 @@ namespace System
                             } else {
 #endif
                             // fast path??
-#if NETCORE
-                                throw new NotImplementedException ();
-#else
                             server = Activator.CreateInstance(this, nonPublic: true, wrapExceptions: wrapExceptions);
-#endif
-
 #if MONO && FEATURE_REMOTING
                             }
 #endif

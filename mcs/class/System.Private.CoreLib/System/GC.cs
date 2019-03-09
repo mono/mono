@@ -6,7 +6,8 @@ namespace System
 	{
 		internal static ulong GetSegmentSize ()
 		{
-			throw new NotImplementedException ();
+			// coreclr default
+			return 1024 * 1024 * 16;
 		}
 	}
 }

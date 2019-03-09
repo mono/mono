@@ -510,7 +510,6 @@ namespace System.Reflection {
 				attrs [count ++] = new PreserveSigAttribute ();
 			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
 #if NETCORE
-				throw new NotImplementedException ();
 #else
 				attrs [count ++] = DllImportAttribute.GetCustomAttribute (this);
 #endif
@@ -704,11 +703,7 @@ namespace System.Reflection {
 		}
 
 		public override MethodBody GetMethodBody () {
-#if NETCORE
-			throw new NotImplementedException ();
-#else
 			return GetMethodBody (mhandle);
-#endif
 		}
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {

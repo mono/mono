@@ -57,9 +57,16 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static string internalGetEnvironmentVariable_native (IntPtr variable);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static string [] GetEnvironmentVariableNames ();
+
 		public static IDictionary GetEnvironmentVariables ()
 		{
-			throw new NotImplementedException ();
+			Hashtable vars = new Hashtable ();
+			foreach (string name in GetEnvironmentVariableNames ()) {
+				vars [name] = GetEnvironmentVariableCore (name);
+			}
+			return vars;
 		}
 
 		static unsafe void SetEnvironmentVariableCore (string variable, string value)
