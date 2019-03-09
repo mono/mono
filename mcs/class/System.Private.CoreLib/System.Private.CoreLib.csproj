@@ -113,6 +113,7 @@
       <Compile Include="System\AppContext.cs" />
       <Compile Include="System\Array.cs" />
       <Compile Include="System\Attribute.cs" />
+      <Compile Include="System\Buffer.cs" />
       <Compile Include="System\DefaultBinder.cs" />
       <Compile Include="System\Environment.cs" />
       <Compile Include="System\Exception.cs" />
@@ -150,6 +151,7 @@
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="System.Resources\ManifestBasedResourceGroveler.cs" />
       <Compile Include="System.Runtime\GCSettings.cs" />
+      <Compile Include="System.Runtime\RuntimeImports.cs" />
       <Compile Include="System.Runtime.CompilerServices\DependentHandle.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeFeature.cs" />
@@ -179,9 +181,7 @@
       <Compile Include="..\..\build\common\SR.cs" />
 
       <Compile Include="..\corlib\coreclr\Math.CoreCLR.cs" />
-      <Compile Include="..\corlib\corefx\RuntimeImports.cs" />
 
-      <Compile Include="..\corlib\ReferenceSources\Buffer.cs" />
       <Compile Include="..\corlib\ReferenceSources\JitHelpers.cs" />
       <Compile Include="..\corlib\ReferenceSources\RuntimeType.cs" />
 
@@ -224,7 +224,6 @@
       <Compile Include="..\corlib\System.Reflection\RuntimeModule.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="..\referencesource\mscorlib\system\buffer.cs" />
       <Compile Include="..\referencesource\mscorlib\system\enum.cs" />
       <Compile Include="..\referencesource\mscorlib\system\gc.cs" />
       <Compile Include="..\referencesource\mscorlib\system\typeloadexception.cs" />
