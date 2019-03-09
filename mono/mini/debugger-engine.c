@@ -213,6 +213,9 @@ insert_breakpoint (MonoSeqPointInfo *seq_points, MonoDomain *domain, MonoJitInfo
 			mini_get_interp_callbacks ()->set_breakpoint (ji, inst->ip);
 		} else {
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
+			if (ji->dbg_ignore)
+				return;
+			
 			mono_arch_set_breakpoint (ji, inst->ip);
 #else
 			NOT_IMPLEMENTED;
