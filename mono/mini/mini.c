@@ -2809,6 +2809,8 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 		jinfo->unwind_info = cfg->used_int_regs;
 	}
 
+	jinfo->dbg_ignore = !cfg->gen_sdb_seq_points;
+
 	return jinfo;
 }
 
