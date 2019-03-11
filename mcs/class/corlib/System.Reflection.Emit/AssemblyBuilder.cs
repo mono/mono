@@ -237,6 +237,7 @@ namespace System.Reflection.Emit
 #endif
 
 	[StructLayout (LayoutKind.Sequential)]
+	[MonoLinkerFeature (MonoLinkerFeatures.ReflectionEmit)]
 	public sealed partial class AssemblyBuilder : Assembly
 	{
 		//

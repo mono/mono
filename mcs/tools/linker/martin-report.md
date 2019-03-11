@@ -69,3 +69,29 @@ NS: System.Reflection.Emit 3230
 -rw-r--r--  1 mabaul  wheel   924160 Mar 11 17:47 mscorlib.dll
 ```
 
+## Reflection Emit Gate
+
+Desktop (unlinked):
+
+```
+-rw-r--r--  1 mabaul  wheel  4606464 Mar 11 17:56 mscorlib.dll
+```
+
+Desktop (linked);
+
+```
+-rw-r--r--  1 mabaul  wheel  1307648 Mar 11 17:56 mscorlib.dll
+```
+
+Web Assembly (unlinked):
+
+```
+-rw-r--r--  1 mabaul  wheel  4427776 Mar 11 17:56 mscorlib.dll
+```
+
+Web Assembly (linked):
+
+```
+-rw-r--r--  1 mabaul  wheel   907776 Mar 11 17:58 mscorlib.dll
+```
+

@@ -653,7 +653,7 @@ namespace System.Reflection {
 #elif NETCORE
 				throw new NotImplementedException ();
 #else
-				return new MethodOnTypeBuilderInst (this, methodInstantiation);
+				return Mono.ReflectionEmitGate.CreateMethodOnTypeBuilderInst (this, methodInstantiation);
 #endif
 			}
 

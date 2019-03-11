@@ -74,7 +74,7 @@ namespace System {
                 throw new ArgumentNullException("type");
             Contract.EndContractBlock();
 #if !FULL_AOT_RUNTIME
-            if (type is System.Reflection.Emit.TypeBuilder)
+            if (Mono.ReflectionEmitGate.IsTypeBuilder(type))
                 throw new NotSupportedException(Environment.GetResourceString("NotSupported_CreateInstanceWithTypeBuilder"));
 #endif
             // If they didn't specify a lookup, then we will provide the default lookup.

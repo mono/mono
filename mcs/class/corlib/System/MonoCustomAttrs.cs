@@ -53,12 +53,12 @@ namespace System
 		static bool IsUserCattrProvider (object obj)
 		{
 			Type type = obj as Type;
-#if !FULL_AOT_RUNTIME
-			if ((type is RuntimeType) || (type is TypeBuilder))
-#else
 			if (type is RuntimeType)
-#endif
 				return false;
+#if !FULL_AOT_RUNTIME
+			if (Mono.ReflectionEmitGate.IsTypeBuilder (obj))
+				return false;
+#endif
 			if ((obj is Type))
 				return true;
 			if (corlib == null)

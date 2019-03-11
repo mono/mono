@@ -1339,6 +1339,7 @@ namespace System {
 		}
 
 #if MONO_FEATURE_SRE
+		[MonoLinkerConditional (MonoLinkerFeatures.ReflectionEmit, MonoLinkerConditionalAction.Remove)]
 		internal Assembly DoTypeBuilderResolve (TypeBuilder tb)
 		{
 			if (TypeResolve == null)

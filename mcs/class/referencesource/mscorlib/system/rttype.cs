@@ -3782,7 +3782,7 @@ namespace System
             }
 #if !FULL_AOT_RUNTIME
             // Special case for TypeBuilder to be backward-compatible.
-            if (c is System.Reflection.Emit.TypeBuilder)
+            if (Mono.ReflectionEmitGate.IsTypeBuilder(c))
             {
                 // If c is a subclass of this class, then c can be cast to this type.
                 if (c.IsSubclassOf(this))
@@ -4300,10 +4300,10 @@ namespace System
                     for (int iCopy = 0; iCopy < instantiation.Length; iCopy++)
                         instantiationCopy[iCopy] = instantiation[iCopy];
                     instantiation = instantiationCopy;
-#if NETCORE
+#if NETCORE || FULL_AOT_RUNTIME
                     throw new NotImplementedException ();
 #else
-                    return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
+                    return Mono.ReflectionEmitGate.MakeGenericType(this, instantiation);
 #endif
                 }
 

@@ -78,6 +78,7 @@ namespace System.Reflection.Emit
 #endif
 
 	[StructLayout (LayoutKind.Sequential)]
+	[MonoLinkerFeature (MonoLinkerFeatures.ReflectionEmit)]
 	public sealed partial class TypeBuilder : TypeInfo
 	{
 #pragma warning disable 169		
