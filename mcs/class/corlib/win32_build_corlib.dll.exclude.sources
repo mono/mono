@@ -1,1 +1,4 @@
 #include System.IO.platformnotsupported.sources
+
+corefx/Mono.SafePasswordHandle.Unix.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Unix.cs

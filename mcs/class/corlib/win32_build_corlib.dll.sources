@@ -59,3 +59,6 @@
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEntry.Windows.cs
 ../../../external/corefx/src/Common/src/System/IO/DriveInfoInternal.Win32.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/DisableMediaInsertionPrompt.cs
+
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Windows.cs
+corefx/Mono.SafePasswordHandle.Windows.cs
