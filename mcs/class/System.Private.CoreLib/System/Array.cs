@@ -295,7 +295,7 @@ namespace System
 
 		static int IndexOfImpl<T>(T[] array, T value, int startIndex, int count)
 		{
-			throw new NotImplementedException ();
+			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, count);
 		}
 
 		static int LastIndexOfImpl<T>(T[] array, T value, int startIndex, int count)
