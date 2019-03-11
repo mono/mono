@@ -3,7 +3,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace WebAssembly.Core {
-	///
+	/// <summary>
+	/// Represents a JavaScript TypedArray.
+	/// </summary>
 	public abstract class TypedArray<T, U> : CoreObject, ITypedArray, ITypedArray<T, U> where U : struct {
 		protected TypedArray () : base (Runtime.New<T> ())
 		{ }
@@ -38,14 +40,17 @@ namespace WebAssembly.Core {
 		public void Set (ITypedArray typedArray, int offset) => Invoke ("set", typedArray, offset);
 
 		public T Slice () => (T)Invoke ("slice");
-		public T Slice(int begin) => (T)Invoke ("slice", begin);
+		public T Slice (int begin) => (T)Invoke ("slice", begin);
 		public T Slice (int begin, int end) => (T)Invoke ("slice", begin, end);
 
 		public T SubArray () => (T)Invoke ("subarray");
 		public T SubArray (int begin) => (T)Invoke ("subarray", begin);
 		public T SubArray (int begin, int end) => (T)Invoke ("subarray", begin, end);
 
-		// Define the indexer to allow client code to use [] notation.
+		/// <summary>
+		/// Gets or sets the <see cref="T:WebAssembly.Core.TypedArray`2"/> with the specified i.
+		/// </summary>
+		/// <param name="i">The index.</param>
 		public U? this [int i] {
 			get {
 				var jsValue = Runtime.GetByIndex (JSHandle, i, out int exception);
@@ -65,34 +70,23 @@ namespace WebAssembly.Core {
 			}
 		}
 
-		private U? UnBoxValue(object jsValue)
+		private U? UnBoxValue (object jsValue)
 		{
 			if (jsValue != null) {
 				var type = jsValue.GetType ();
 				if (type.IsPrimitive) {
-					return (U)Convert.ChangeType (jsValue, typeof(U));
+					return (U)Convert.ChangeType (jsValue, typeof (U));
 				} else {
 					throw new InvalidCastException ($"Unable to cast object of type {type} to type {typeof (U)}.");
 				}
 
-			} 
-			else
+			} else
 				return null;
 		}
 
 		/// <summary>
-		/// To a span.
+		/// Copies the contents from the <see cref="T:WebAssembly.Core.TypedArray`2"/> memory into a new array.
 		/// </summary>
-		/// <returns>The span.</returns>
-		public Span<U> ToSpan ()
-		{
-			return ToArray();
-		}
-
-		/// <summary>
-		/// To the array.
-		/// </summary>
-		/// <returns>The array.</returns>
 		public U [] ToArray ()
 		{
 			var res = Runtime.TypedArrayToArray (JSHandle, out int exception);
@@ -103,16 +97,16 @@ namespace WebAssembly.Core {
 		}
 
 		/// <summary>
-		/// From the specified Span.
+		/// Creates a new <see cref="T:WebAssembly.Core.TypedArray`2"/> from the ReadOnlySpan.
 		/// </summary>
-		/// <returns>The from.</returns>
-		/// <param name="span">Span.</param>
-		public unsafe static T From (Span<U> span)
+		/// <returns>The new TypedArray/</returns>
+		/// <param name="span">ReadOnlySpan.</param>
+		public unsafe static T From (ReadOnlySpan<U> span)
 		{
 			// source has to be instantiated.
 			ValidateFromSource (span);
 
-			int type = (int)Type.GetTypeCode (typeof(U));
+			int type = (int)Type.GetTypeCode (typeof (U));
 
 			var bytes = MemoryMarshal.AsBytes (span);
 			fixed (byte* ptr = bytes) {
@@ -125,9 +119,9 @@ namespace WebAssembly.Core {
 		}
 
 		/// <summary>
-		/// Copies to.
+		/// Copies the underlying <see cref="T:WebAssembly.Core.TypedArray`2"/> data to a Span.
 		/// </summary>
-		/// <returns>The to.</returns>
+		/// <returns>Total copied.</returns>
 		/// <param name="span">Span.</param>
 		public unsafe int CopyTo (Span<U> span)
 		{
@@ -142,7 +136,7 @@ namespace WebAssembly.Core {
 
 		private unsafe int CopyFrom (void* ptrSource, int offset, int count)
 		{
-			var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)ptrSource, offset, offset + count, Marshal.SizeOf<U>(), out int exception);
+			var res = Runtime.TypedArrayCopyFrom (JSHandle, (int)ptrSource, offset, offset + count, Marshal.SizeOf<U> (), out int exception);
 			if (exception != 0)
 				throw new JSException ((string)res);
 			return (int)res / Marshal.SizeOf<U> ();
@@ -150,11 +144,11 @@ namespace WebAssembly.Core {
 		}
 
 		/// <summary>
-		/// Copies from.
+		/// Copies from a <see cref="T:Span{T}"/> to the <see cref="T:WebAssembly.Core.TypedArray`2"/> memory.
 		/// </summary>
-		/// <returns>The from.</returns>
-		/// <param name="span">Span.</param>
-		public unsafe int CopyFrom (Span<U> span)
+		/// <returns>Total copied</returns>
+		/// <param name="span">ReadOnlySpan.</param>
+		public unsafe int CopyFrom (ReadOnlySpan<U> span)
 		{
 			ValidateSource (span);
 			var bytes = MemoryMarshal.AsBytes (span);
@@ -166,7 +160,7 @@ namespace WebAssembly.Core {
 			}
 		}
 
-		protected void ValidateTarget(Span<U> target)
+		protected void ValidateTarget (Span<U> target)
 		{
 			// target array has to be instantiated.
 			if (target == null || target.Length == 0) {
@@ -175,7 +169,7 @@ namespace WebAssembly.Core {
 
 		}
 
-		protected void ValidateSource (Span<U> source)
+		protected void ValidateSource (ReadOnlySpan<U> source)
 		{
 			// target has to be instantiated.
 			if (source == null || source.Length == 0) {
@@ -184,7 +178,7 @@ namespace WebAssembly.Core {
 
 		}
 
-		protected static void ValidateFromSource (Span<U> source)
+		protected static void ValidateFromSource (ReadOnlySpan<U> source)
 		{
 			// target array has to be instantiated.
 			if (source == null || source.Length == 0) {

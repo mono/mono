@@ -14,5 +14,14 @@ namespace WebAssembly.Core {
 
 		internal Float64Array (IntPtr js_handle) : base (js_handle) { }
 
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Float64Array"/> class to a <see cref="Span<double>"/>
+		/// </summary>
+		public static implicit operator Span<double>(Float64Array typedarray) => typedarray.ToArray ();
+
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="Span<double>"/> to a <see cref="T:WebAssembly.Core.Float64Array"/> class.
+		/// </summary>
+		public static implicit operator Float64Array (Span<double> span) => From (span);
 	}
 }

@@ -21,30 +21,13 @@ namespace WebAssembly.Core {
 		{ }
 
 		/// <summary>
-		/// Defines an implicit conversion of a <see cref="ArraySegment{T}"/> to a <see cref="T:WebAssembly.Core.Int8Array"/>/>
+		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Int8Array"/> class to a <see cref="Span<sbyte>"/>
 		/// </summary>
-		/// <returns>The implicit.</returns>
-		/// <param name="segment">ArraySegment</param>
-		public static implicit operator Int8Array (ArraySegment<sbyte> segment) => From (segment);
-
+		public static implicit operator Span<sbyte>(Int8Array typedarray) => typedarray.ToArray ();
 
 		/// <summary>
-		/// Defines an implicit conversion of an array to a <see cref="T:WebAssembly.Core.Int8Array"/>./>
+		/// Defines an implicit conversion of <see cref="Span<sbyte>"/> to a <see cref="T:WebAssembly.Core.Int8Array"/> class.
 		/// </summary>
-		/// <returns>The implicit.</returns>
-		/// <param name="typedarray">Typedarray.</param>
-		public static implicit operator sbyte [] (Int8Array typedarray) => typedarray.ToArray ();
-
-		/// <summary>
-		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Int8Array"/> to an array./>
-		/// </summary>
-		/// <returns>The implicit.</returns>
-		/// <param name="managedArray">Managed array.</param>
-		public static implicit operator Int8Array (sbyte [] managedArray)
-		{
-			return From (managedArray);
-		}
-
-
+		public static implicit operator Int8Array (Span<sbyte> span) => From (span);
 	}
 }

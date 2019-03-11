@@ -22,5 +22,14 @@ namespace WebAssembly.Core {
 		internal Uint8ClampedArray (IntPtr js_handle) : base (js_handle)
 		{ }
 
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Uint8ClampedArray"/> class to a <see cref="Span<byte>"/>
+		/// </summary>
+		public static implicit operator Span<byte>(Uint8ClampedArray typedarray) => typedarray.ToArray ();
+
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="Span<byte>"/> to a <see cref="T:WebAssembly.Core.Uint8ClampedArray"/> class.
+		/// </summary>
+		public static implicit operator Uint8ClampedArray (Span<byte> span) => From (span);
 	}
 }

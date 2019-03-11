@@ -15,5 +15,14 @@ namespace WebAssembly.Core {
 
 		internal Int32Array (IntPtr js_handle) : base (js_handle) { }
 
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Int32Array"/> class to a <see cref="Span<int>"/>
+		/// </summary>
+		public static implicit operator Span<int>(Int32Array typedarray) => typedarray.ToArray ();
+
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="Span<int>"/> to a <see cref="T:WebAssembly.Core.Int32Array"/> class.
+		/// </summary>
+		public static implicit operator Int32Array (Span<int> span) => From (span);
 	}
 }

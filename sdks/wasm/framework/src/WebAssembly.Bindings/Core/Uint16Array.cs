@@ -15,5 +15,14 @@ namespace WebAssembly.Core {
 		internal Uint16Array (IntPtr js_handle) : base (js_handle)
 		{ }
 
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="T:WebAssembly.Core.Uint16Array"/> class to a <see cref="Span<ushort>"/>
+		/// </summary>
+		public static implicit operator Span<ushort>(Uint16Array typedarray) => typedarray.ToArray ();
+
+		/// <summary>
+		/// Defines an implicit conversion of <see cref="Span<ushort>"/> to a <see cref="T:WebAssembly.Core.Uint16Array"/> class.
+		/// </summary>
+		public static implicit operator Uint16Array (Span<ushort> span) => From (span);
 	}
 }
