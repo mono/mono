@@ -410,4 +410,32 @@ TYPE: System.Numerics.Vector`1 15127
 
 ```
 
+## Web Assembly - Summary
+
+Before:
+
+```
+-rw-r--r--  1 mabaul  wheel   924160 Mar 11 17:47 mscorlib.dll
+```
+
+Reflection Emit Gate:
+
+```
+-rw-r--r--  1 mabaul  wheel   907776 Mar 11 17:58 mscorlib.dll
+```
+
+Remoting Gate:
+
+```
+-rw-r--r--  1 mabaul  wheel   898560 Mar 11 18:07 mscorlib.dll
+```
+
+
+## Simple Collator (experimental)
+
+Web Assembly (linked):
+
+```
+-rw-r--r--  1 mabaul  wheel   844288 Mar 11 18:27 mscorlib.dll
+```
 
