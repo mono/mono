@@ -17,6 +17,9 @@ TEST_CASES := \
 	mscorlib/test-reflection-02.cs \
 	mscorlib/test-reflection-03.cs \
 	mscorlib/test-reflection-04.cs \
+	mscorlib/test-reflection-emit-01.cs \
+	mscorlib/test-reflection-emit-02.cs \
+	mscorlib/test-reflection-emit-03.cs \
 	mscorlib/test-string-01.cs \
 	mscorlib/test-string-02.cs \
 	mscorlib/test-string-03.cs \
@@ -143,6 +146,21 @@ mscorlib/test-marshaling.exe: $(MARSHALING_TEST_NATIVE)
 	cp Tests/$(MARSHALING_TEST_NATIVE) $(LINKER_OUTPUT)
 	(cd $(LINKER_OUTPUT); MONO_PATH=. $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot ./$(@F))
 	@rm -rf $(LINKER_OUTPUT)
+
+Tests/mscorlib/martin-test.exe: Tests/mscorlib/martin-test.cs
+	$(TESTS_COMPILER) $< /out:$(@:.cs=.exe)
+
+martin-test: Tests/mscorlib/martin-test.exe
+	@rm -rf $(LINKER_OUTPUT)
+	@mkdir $(LINKER_OUTPUT)
+	@echo MARTIN TEST
+	$(LINKER_DEFAULT) --verbose --dump-dependencies --exclude-feature remoting --exclude-feature com --exclude-feature sre -a Tests/mscorlib/martin-test.exe
+	gzip -d $(LINKER_OUTPUT)/linker-dependencies.xml.gz
+	monodis $(LINKER_OUTPUT)/mscorlib.dll > $(LINKER_OUTPUT)/mscorlib.il
+	monodis --typedef $(LINKER_OUTPUT)/mscorlib.dll | sed -e 's,^[0-9]*: ,,g' -e 's,(.*,,g' > $(LINKER_OUTPUT)/mscorlib.txt
+	ls -lR $(LINKER_OUTPUT)
+	#(cd $(LINKER_OUTPUT); MONO_PATH=. $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot ./martin-test.exe)
+	#@rm -rf $(LINKER_OUTPUT)
 
 BCL_ASSEMBLIES_CORE=mscorlib.dll System.dll System.Core.dll System.Xml.dll
 BCL_ASSEMBLIES=$(BCL_ASSEMBLIES_CORE) $(sort $(filter-out $(BCL_ASSEMBLIES_CORE), $(notdir $(wildcard $(PROFILE_PATH)/System.*.dll $(PROFILE_PATH)/Microsoft.*.dll $(PROFILE_PATH)/I18*.dll )) ))

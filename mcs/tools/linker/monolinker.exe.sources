@@ -1,3 +1,4 @@
+SizeCheckStep.cs
 ../../../external/linker/linker/Linker/Annotations.cs
 ../../../external/linker/linker/Linker/AssemblyAction.cs
 ../../../external/linker/linker/Linker/AssemblyInfo.cs
@@ -12,6 +13,8 @@
 ../../../external/linker/linker/Linker/IXApiVisitor.cs
 ../../../external/linker/linker/Linker/KnownMembers.cs
 ../../../external/linker/linker/Linker/LinkContext.cs
+../../../external/linker/linker/Linker/LinkerConditionalAction.cs
+../../../external/linker/linker/Linker/LinkerFeature.cs
 ../../../external/linker/linker/Linker/LoadException.cs
 ../../../external/linker/linker/Linker/MarkException.cs
 ../../../external/linker/linker/Linker/MarkingHelpers.cs
