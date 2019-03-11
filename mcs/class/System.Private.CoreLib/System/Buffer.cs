@@ -52,7 +52,7 @@ namespace System
 
 		static bool IsPrimitiveTypeArray (Array array)
 		{
-			throw new NotImplementedException ();
+			return array.GetType ().GetElementType ().IsPrimitive;
 		}
 
 		internal static unsafe void Memcpy (byte* dest, byte* src, int len) => Memmove (dest, src, (nuint) len);
