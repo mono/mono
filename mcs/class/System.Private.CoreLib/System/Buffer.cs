@@ -52,6 +52,7 @@ namespace System
 
 		static bool IsPrimitiveTypeArray (Array array)
 		{
+			// TODO: optimize			
 			return array.GetType ().GetElementType ().IsPrimitive;
 		}
 
