@@ -228,6 +228,7 @@ typedef struct MonoAotOptions {
 	char *instances_logfile_path;
 	char *logfile;
 	char *llvm_opts;
+	char *llc_opts;
 	char *llvm_llc;
 	gboolean dump_json;
 	gboolean profile_only;
@@ -1081,6 +1082,8 @@ arch_emit_unwind_info_sections (MonoAotCompile *acfg, const char *function_start
 static void
 arch_init (MonoAotCompile *acfg)
 {
+	gboolean has_custom_args = !!acfg->aot_opts.llc_opts;
+	char *custom_args = acfg->aot_opts.llc_opts;
 	acfg->llc_args = g_string_new ("");
 	acfg->as_args = g_string_new ("");
 	acfg->llvm_owriter_supported = TRUE;
@@ -1095,11 +1098,11 @@ arch_init (MonoAotCompile *acfg)
 	acfg->user_symbol_prefix = "";
 
 #if defined(TARGET_X86)
-	g_string_append (acfg->llc_args, " -march=x86 -mattr=sse4.1");
+	g_string_append_printf (acfg->llc_args, " -march=x86 %s", has_custom_args ? custom_args : "-mcpu=generic");
 #endif
 
 #if defined(TARGET_AMD64)
-	g_string_append (acfg->llc_args, " -march=x86-64 -mattr=sse4.1");
+	g_string_append_printf (acfg->llc_args, " -march=x86-64 %s", has_custom_args ? custom_args : "-mcpu=generic");
 	/* NOP */
 	acfg->align_pad_value = 0x90;
 #endif
@@ -1128,6 +1131,9 @@ arch_init (MonoAotCompile *acfg)
 
 	if (acfg->aot_opts.mtriple)
 		mono_arch_set_target (acfg->aot_opts.mtriple);
+
+	if (has_custom_args)
+		g_string_append_printf (acfg->llc_args, " %s", custom_args);
 #endif
 
 #ifdef TARGET_ARM64
@@ -1135,6 +1141,9 @@ arch_init (MonoAotCompile *acfg)
 	acfg->inst_directive = ".inst";
 	if (acfg->aot_opts.mtriple)
 		mono_arch_set_target (acfg->aot_opts.mtriple);
+
+	if (has_custom_args)
+		g_string_append_printf (acfg->llc_args, " %s", custom_args);
 #endif
 
 #ifdef TARGET_MACH
@@ -1162,6 +1171,8 @@ arch_init (MonoAotCompile *acfg)
 	g_string_append (acfg->as_args, " -mabi=lp64");
 #endif
 
+	if (has_custom_args)
+		g_string_append_printf (acfg->llc_args, " %s", custom_args);
 #else
 
 	g_string_append (acfg->as_args, " -march=rv32i ");
@@ -7873,6 +7884,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
 		} else if (str_begins_with (arg, "llvmllc=")){
 			opts->llvm_llc = g_strdup (arg + strlen ("llvmllc="));
+		} else if (str_begins_with (arg, "llcopts=")) {
+			opts->llc_opts = g_strdup (arg + strlen ("llcopts="));
 		} else if (!strcmp (arg, "deterministic")) {
 			opts->deterministic = TRUE;
 		} else if (!strcmp (arg, "no-opt")) {
@@ -8210,7 +8223,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	gboolean skip;
 	int index, depth;
 	MonoMethod *wrapped;
-	GTimer *jit_timer;
+	gint64 jit_time_start;
 	JitFlags flags;
 
 	if (acfg->aot_opts.metadata_only)
@@ -8277,9 +8290,9 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	if (acfg->aot_opts.interp)
 		flags = (JitFlags)(flags | JIT_FLAG_INTERP);
 
-	jit_timer = mono_time_track_start ();
+	jit_time_start = mono_time_track_start ();
 	cfg = mini_method_compile (method, acfg->opts, mono_get_root_domain (), flags, 0, index);
-	mono_time_track_end (&mono_jit_stats.jit_time, jit_timer);
+	mono_time_track_end (&mono_jit_stats.jit_time, jit_time_start);
 
 	if (cfg->exception_type == MONO_EXCEPTION_GENERIC_SHARING_FAILED) {
 		if (acfg->aot_opts.print_skipped_methods)
@@ -9455,9 +9468,9 @@ emit_llvm_file (MonoAotCompile *acfg)
 		opts = g_strdup ("");
 	} else {
 #if LLVM_API_VERSION > 100
-		opts = g_strdup ("-O2 -disable-tail-calls");
+		opts = g_strdup ("-O2 -disable-tail-calls -place-safepoints -spp-all-backedges");
 #else
-		opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify");
+		opts = g_strdup ("-targetlibinfo -no-aa -basicaa -notti -instcombine -simplifycfg -inline-cost -inline -sroa -domtree -early-cse -lazy-value-info -correlated-propagation -simplifycfg -instcombine -simplifycfg -reassociate -domtree -loops -loop-simplify -lcssa -loop-rotate -licm -lcssa -loop-unswitch -instcombine -scalar-evolution -loop-simplify -lcssa -indvars -loop-idiom -loop-deletion -loop-unroll -memdep -gvn -memdep -memcpyopt -sccp -instcombine -lazy-value-info -correlated-propagation -domtree -memdep -adce -simplifycfg -instcombine -strip-dead-prototypes -domtree -verify -place-safepoints -spp-all-backedges");
 #endif
 		if (acfg->aot_opts.llvm_opts) {
 			opts = g_strdup_printf ("%s %s", opts, acfg->aot_opts.llvm_opts);
@@ -12615,6 +12628,7 @@ static const char *preinited_jit_icalls[] = {
 	"mini_llvmonly_init_gshared_method_vtable",
 	"mini_llvmonly_throw_nullref_exception",
 	"mono_llvm_throw_corlib_exception",
+	"mono_threads_state_poll",
 	"mini_llvmonly_init_vtable_slot",
 	"mono_helper_ldstr_mscorlib",
 	"mono_fill_method_rgctx",

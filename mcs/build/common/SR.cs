@@ -41,6 +41,11 @@ static partial class SR
 		return string.Format (CultureInfo.InvariantCulture, resourceFormat, p1, p2);
 	}
 
+	internal static string Format(CultureInfo ci, string resourceFormat, object p1, object p2)
+	{
+		return string.Format (ci, resourceFormat, p1, p2);
+	}
+
 	internal static string Format(string resourceFormat, object p1, object p2, object p3)
 	{
 		return string.Format (CultureInfo.InvariantCulture, resourceFormat, p1, p2, p3);

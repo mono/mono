@@ -102,11 +102,8 @@
   <!-- @BUILT_SOURCES@ -->
   <!--Common files-->
   <ItemGroup>
-    <Compile Include="..\..\..\..\external\corefx\src\System.Reflection.TypeExtensions\src\System\Reflection\Requires.cs" />
-    <Compile Include="..\..\..\..\external\corefx\src\System.Reflection.TypeExtensions\src\System\Reflection\TypeExtensions.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="TypeForwarders.cs" />
-    <Compile Include="corefx\SR.cs" />
   </ItemGroup>
   <!--End of common files-->
   <!-- @ALL_SOURCES@ -->

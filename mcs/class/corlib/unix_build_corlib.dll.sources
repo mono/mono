@@ -23,7 +23,6 @@
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.UTime.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.UTimes.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.RmDir.cs
-../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.MountPoints.cs
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeDirectoryHandle.Unix.cs
 
 corefx/DriveInfoInternal.Unix.cs

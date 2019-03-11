@@ -1,12 +1,5 @@
 //
-// DispatchProxy.cs
-//
-// Author:
-//   Alexander Köplinger (alexander.koeplinger@xamarin.com)
-//
-// (C) 2016 Xamarin, Inc.
-//
-
+// AssemblyInfo.cs
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,23 +21,31 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Reflection
-{
-	public abstract class DispatchProxy
-	{
-		[MonoTODO]
-		protected DispatchProxy()
-		{
-			throw new NotImplementedException ();
-		}
+using System;
+using System.Reflection;
+using System.Resources;
+using System.Security;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-		[MonoTODO]
-		public static T Create<T, TProxy> () where TProxy : DispatchProxy
-		{
-			throw new NotImplementedException ();
-		}
+[assembly: AssemblyTitle ("System.Data.Linq.dll")]
+[assembly: AssemblyDescription ("System.Data.Linq.dll")]
+[assembly: AssemblyDefaultAlias ("System.Data.Linq.dll")]
 
-		[MonoTODO]
-		protected abstract object Invoke (MethodInfo targetMethod, object[] args);
-	}
-}
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+
+[assembly: NeutralResourcesLanguage ("en-US")]
+[assembly: CLSCompliant (true)]
+[assembly: AssemblyDelaySign (true)]
+
+[assembly: ComVisible (false)]
+[assembly: AllowPartiallyTrustedCallers]
+
+[assembly: SecurityCritical]

@@ -387,7 +387,7 @@ namespace System.Net.Http
 					values = values.Where (l => l != "chunked");
 				}
 
-				var values_formated = HeaderUtils.GetSingleHeaderString (header.Key, values);
+				var values_formated = PlatformHelper.GetSingleHeaderString (header.Key, values);
 				if (values_formated == null)
 					continue;
 
@@ -402,11 +402,7 @@ namespace System.Net.Http
 			var response = new HttpResponseMessage (wr.StatusCode);
 			response.RequestMessage = requestMessage;
 			response.ReasonPhrase = wr.StatusDescription;
-#if LEGACY_HTTPCLIENT
-			response.Content = new StreamContent (wr.GetResponseStream (), cancellationToken);
-#else
-			response.Content = new StreamContent (wr.GetResponseStream ());
-#endif
+			response.Content = PlatformHelper.CreateStreamContent (wr.GetResponseStream (), cancellationToken);
 
 			var headers = wr.Headers;
 			for (int i = 0; i < headers.Count; ++i) {
@@ -414,7 +410,7 @@ namespace System.Net.Http
 				var value = headers.GetValues (i);
 
 				HttpHeaders item_headers;
-				if (HeaderUtils.IsContentHeader (key))
+				if (PlatformHelper.IsContentHeader (key))
 					item_headers = response.Content.Headers;
 				else
 					item_headers = response.Headers;

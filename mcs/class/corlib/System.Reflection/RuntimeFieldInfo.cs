@@ -228,10 +228,8 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-#if !NETCORE
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal override extern int GetFieldOffset ();
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern object GetValueInternal (object obj);
@@ -350,15 +348,5 @@ namespace System.Reflection {
 		public override Type[] GetRequiredCustomModifiers () => GetCustomModifiers (false);
 
 		private Type[] GetCustomModifiers (bool optional) => GetTypeModifiers (optional) ?? Type.EmptyTypes;
-
-#if NETCORE
-		internal object[] GetPseudoCustomAttributes () {
-			throw new NotImplementedException ();
-		}
-
-		internal CustomAttributeData[] GetPseudoCustomAttributesData () {
-			throw new NotImplementedException ();
-		}
-#endif
 	}
 }

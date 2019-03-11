@@ -1878,6 +1878,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -2347,6 +2348,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -2855,6 +2857,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -3351,6 +3354,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />

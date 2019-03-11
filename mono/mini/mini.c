@@ -61,6 +61,7 @@
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/unlocked.h>
+#include <mono/utils/mono-time.h>
 
 #include "mini.h"
 #include "seq-points.h"
@@ -91,7 +92,7 @@ gboolean mono_using_xdebug;
 
 /* Counters */
 static guint32 discarded_code;
-static double discarded_jit_time;
+static gint64 discarded_jit_time;
 static guint32 jinfo_try_holes_size;
 
 #define mono_jit_lock() mono_os_mutex_lock (&jit_mutex)
@@ -2788,7 +2789,7 @@ mono_insert_nop_in_empty_bb (MonoCompile *cfg)
 	}
 }
 static void
-mono_create_gc_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
+insert_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 {
 	MonoInst *poll_addr, *ins;
 
@@ -2804,7 +2805,7 @@ mono_create_gc_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 	MONO_INST_NEW (cfg, ins, OP_GC_SAFE_POINT);
 	ins->sreg1 = poll_addr->dreg;
 
-	 if (bblock->flags & BB_EXCEPTION_HANDLER) {
+	if (bblock->flags & BB_EXCEPTION_HANDLER) {
 		MonoInst *eh_op = bblock->code;
 
 		if (eh_op && eh_op->opcode != OP_START_HANDLER && eh_op->opcode != OP_GET_EX_OBJ) {
@@ -2840,18 +2841,28 @@ Those are:
 
 */
 static void
-mono_insert_safepoints (MonoCompile *cfg)
+insert_safepoints (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
 
-	if (!mini_safepoints_enabled ())
-		return;
+	g_assert (mini_safepoints_enabled ());
+
+	if (COMPILE_LLVM (cfg)) {
+		if (!cfg->llvm_only && cfg->compile_aot) {
+			/* We rely on LLVM's safepoints insertion capabilities. */
+			if (cfg->verbose_level > 1)
+				printf ("SKIPPING SAFEPOINTS for code compiled with LLVM\n");
+			return;
+		}
+	}
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
-		gpointer poll_func = (gpointer)&mono_threads_state_poll;
-
-		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER && info->d.icall.func == poll_func) {
+		/* These wrappers are called from the wrapper for the polling function, leading to potential stack overflow */
+		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER &&
+				(info->d.icall.func == mono_threads_state_poll ||
+				 info->d.icall.func == mono_thread_interruption_checkpoint ||
+				 info->d.icall.func == mono_threads_exit_gc_safe_region_unbalanced)) {
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for the polling function icall\n");
 			return;
@@ -2862,19 +2873,6 @@ mono_insert_safepoints (MonoCompile *cfg)
 		if (cfg->verbose_level > 1)
 			printf ("SKIPPING SAFEPOINTS for native-to-managed wrappers.\n");
 		return;
-	}
-
-	if (cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
-		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
-
-		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER &&
-			(info->d.icall.func == mono_thread_interruption_checkpoint ||
-			info->d.icall.func == mono_threads_exit_gc_safe_region_unbalanced)) {
-			/* These wrappers are called from the wrapper for the polling function, leading to potential stack overflow */
-			if (cfg->verbose_level > 1)
-				printf ("SKIPPING SAFEPOINTS for wrapper %s\n", cfg->method->name);
-			return;
-		}
 	}
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_OTHER) {
@@ -2900,14 +2898,14 @@ mono_insert_safepoints (MonoCompile *cfg)
 	gboolean requires_safepoint = cfg->has_calls;
 
 	for (bb = cfg->bb_entry->next_bb; bb; bb = bb->next_bb) {
-		if (bb->loop_body_start || bb->flags & BB_EXCEPTION_HANDLER) {
+		if (bb->loop_body_start || (bb->flags & BB_EXCEPTION_HANDLER)) {
 			requires_safepoint = TRUE;
-			mono_create_gc_safepoint (cfg, bb);
+			insert_safepoint (cfg, bb);
 		}
 	}
 
 	if (requires_safepoint)
-		mono_create_gc_safepoint (cfg, cfg->bb_entry);
+		insert_safepoint (cfg, cfg->bb_entry);
 
 	if (cfg->verbose_level > 2)
 		mono_print_code (cfg, "AFTER SAFEPOINTS");
@@ -3581,8 +3579,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 		MONO_TIME_TRACK (mono_jit_stats.jit_compute_natural_loops, mono_compute_natural_loops (cfg));
 	}
 
-	MONO_TIME_TRACK (mono_jit_stats.jit_insert_safepoints, mono_insert_safepoints (cfg));
-	mono_cfg_dump_ir (cfg, "insert_safepoints");
+	if (mono_threads_are_safepoints_enabled ()) {
+		MONO_TIME_TRACK (mono_jit_stats.jit_insert_safepoints, insert_safepoints (cfg));
+		mono_cfg_dump_ir (cfg, "insert_safepoints");
+	}
 
 	/* after method_to_ir */
 	if (parts == 1) {
@@ -3962,9 +3962,9 @@ mono_cfg_set_exception_invalid_program (MonoCompile *cfg, char *msg)
 
 #endif /* DISABLE_JIT */
 
-GTimer *mono_time_track_start ()
+gint64 mono_time_track_start ()
 {
-	return g_timer_new ();
+	return mono_100ns_ticks ();
 }
 
 /*
@@ -3972,11 +3972,9 @@ GTimer *mono_time_track_start ()
  *
  *   Uses UnlockedAddDouble () to update \param time.
  */
-void mono_time_track_end (gdouble *time, GTimer *timer)
+void mono_time_track_end (gint64 *time, gint64 start)
 {
-	g_timer_stop (timer);
-	UnlockedAddDouble (time, g_timer_elapsed (timer, NULL));
-	g_timer_destroy (timer);
+	UnlockedAdd64 (time, mono_100ns_ticks () - start);
 }
 
 /*
@@ -4012,16 +4010,16 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	MonoJitInfo *jinfo, *info;
 	MonoVTable *vtable;
 	MonoException *ex = NULL;
-	GTimer *jit_timer;
+	gint64 start;
 	MonoMethod *prof_method, *shared;
 
 	error_init (error);
 
-	jit_timer = mono_time_track_start ();
+	start = mono_time_track_start ();
 	cfg = mini_method_compile (method, opt, target_domain, JIT_FLAG_RUN_CCTORS, 0, -1);
-	gdouble jit_time = 0.0;
-	mono_time_track_end (&jit_time, jit_timer);
-	UnlockedAddDouble (&mono_jit_stats.jit_time, jit_time);
+	gint64 jit_time = 0.0;
+	mono_time_track_end (&jit_time, start);
+	UnlockedAdd64 (&mono_jit_stats.jit_time, jit_time);
 
 	prof_method = cfg->method;
 
@@ -4182,7 +4180,7 @@ void
 mini_jit_init (void)
 {
 	mono_counters_register ("Discarded method code", MONO_COUNTER_JIT | MONO_COUNTER_INT, &discarded_code);
-	mono_counters_register ("Time spent JITting discarded code", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &discarded_jit_time);
+	mono_counters_register ("Time spent JITting discarded code", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &discarded_jit_time);
 	mono_counters_register ("Try holes memory size", MONO_COUNTER_JIT | MONO_COUNTER_INT, &jinfo_try_holes_size);
 
 	mono_os_mutex_init_recursive (&jit_mutex);

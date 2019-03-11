@@ -1,11 +1,7 @@
 namespace System.Runtime.CompilerServices
 {
-	public static class RuntimeHelpers
+	partial class RuntimeHelpers
 	{
-		public delegate void TryCode (Object userData);
-
-		public delegate void CleanupCode (Object userData, bool exceptionThrown);
-
 		public static void InitializeArray (Array array, RuntimeFieldHandle fldHandle)
 		{
 			if (array == null || fldHandle.Value == IntPtr.Zero)
@@ -66,23 +62,7 @@ namespace System.Runtime.CompilerServices
 		{
 		}
 
-		public static void PrepareConstrainedRegions ()
-		{
-		}
-
-		public static void PrepareConstrainedRegionsNoOP ()
-		{
-		}
-
-		public static void ProbeForSufficientStack()
-		{
-		}
-
 		public static void PrepareDelegate (Delegate d)
-		{
-		}
-
-		public static void PrepareContractedDelegate(Delegate d)
 		{
 		}
 
@@ -114,23 +94,17 @@ namespace System.Runtime.CompilerServices
 			throw new NotImplementedException ();
 		}
 
-		public static object GetUninitializedObject (Type type)
+		static object GetUninitializedObjectInternal (Type type)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException (nameof (type));
+			if (!(type is RuntimeType))
+				throw new NotImplementedException ();
+			return GetUninitializedObjectInternal (new RuntimeTypeHandle (type as RuntimeType).Value);
 		}
 
-		public static T[] GetSubArray<T> (T[] array, Range range)
-		{
-			Type elementType = array.GetType().GetElementType();
-			Span<T> source = array.AsSpan(range);
-
-			if (elementType.IsValueType)
-				return source.ToArray();
-
-			T[] newArray = (T[])Array.CreateInstance(elementType, source.Length);
-			source.CopyTo(newArray);
-			return newArray;
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern object GetUninitializedObjectInternal (IntPtr type);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void InitializeArray (Array array, IntPtr fldHandle);
