@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+corefx/SR.cs
 
 # System.Security.Cryptography
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/CryptographicAttributeObject.cs

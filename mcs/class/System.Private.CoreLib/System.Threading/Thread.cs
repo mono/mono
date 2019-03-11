@@ -123,7 +123,8 @@ namespace System.Threading
 
 		internal static int OptimalMaxSpinWaitsPerSpinIteration {
 			get {
-				throw new NotImplementedException ();
+				// Default from coreclr (src/utilcode/yieldprocessornormalized.cpp)
+				return 7;
 			}
 		}
 

@@ -1,2 +1,3 @@
-#include legacy.sources
+#include socketshandler.sources
+HttpClientHandler.wasm.cs
 System.Net.Http/HttpClient.wasm.cs

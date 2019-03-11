@@ -206,6 +206,7 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.ProtectedData\src\System\Security\Cryptography\DataProtectionScope.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Security.Cryptography.Pkcs\EnvelopedCms.cs" />
+    <Compile Include="corefx\SR.cs" />
   </ItemGroup>
   <!--End of common files-->
   <!--Per-profile files-->
@@ -302,6 +303,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXPathTransform.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXsltTransform.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
+        <Compile Include="ReferenceSources\DataProtector.cs" />
         <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
         <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
         <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
@@ -397,6 +399,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXsltTransform.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
         <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
+        <Compile Include="ReferenceSources\DataProtector.cs" />
         <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
         <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
         <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
@@ -504,6 +507,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXPathTransform.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXsltTransform.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
+            <Compile Include="ReferenceSources\DataProtector.cs" />
             <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
             <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
             <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
@@ -594,6 +598,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXsltTransform.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
             <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
+            <Compile Include="ReferenceSources\DataProtector.cs" />
             <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
             <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
             <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
@@ -685,6 +690,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXsltTransform.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
             <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
+            <Compile Include="ReferenceSources\DataProtector.cs" />
             <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
             <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
             <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />
@@ -776,6 +782,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlDsigXsltTransform.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Xml\src\System\Security\Cryptography\Xml\XmlLicenseTransform.cs" />
             <Compile Include="Mono.Security.Cryptography\ManagedProtection.cs" />
+            <Compile Include="ReferenceSources\DataProtector.cs" />
             <Compile Include="System.Security.Cryptography.Pkcs\KeyAgreeKeyChoice.cs" />
             <Compile Include="System.Security.Cryptography.X509Certificates\X509Certificate2UI.cs" />
             <Compile Include="System.Security.Cryptography.X509Certificates\X509SelectionFlag.cs" />

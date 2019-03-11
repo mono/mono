@@ -697,11 +697,7 @@ namespace System
 				var a = new RuntimeFieldInfo[n];
 				for (int i = 0; i < n; i++) {
 					var fh = new RuntimeFieldHandle (h[i]);
-#if NETCORE
-					throw new NotImplementedException ();
-#else
 					a[i] = (RuntimeFieldInfo) FieldInfo.GetFieldFromHandle (fh, refh);
-#endif
 				}
 				return a;
 			}
@@ -717,7 +713,7 @@ namespace System
 				for (int i = 0; i < n; i++) {
 					var eh = new Mono.RuntimeEventHandle (h[i]);
 #if NETCORE
-					throw new NotImplementedException ();
+					a[i] = (RuntimeEventInfo) RuntimeEventInfo.GetEventFromHandle (eh, refh);
 #else
 					a[i] = (RuntimeEventInfo) EventInfo.GetEventFromHandle (eh, refh);
 #endif
@@ -736,7 +732,8 @@ namespace System
 		{
 			string internalName = null;
 #if NETCORE
-			throw new NotImplementedException ();
+			if (displayName != null)
+				internalName = displayName;
 #else
 			if (displayName != null)
 				internalName = TypeIdentifiers.FromDisplay (displayName).InternalName;

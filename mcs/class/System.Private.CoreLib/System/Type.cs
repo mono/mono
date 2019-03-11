@@ -15,13 +15,13 @@ namespace System
 
 		internal string FullNameOrDefault {
 			get {
-				throw new NotImplementedException ();
+				return FullName;
 			}
 		}
 
 		internal string NameOrDefault {
 			get {
-				throw new NotImplementedException ();
+				return Name;
 			}
 		}
 

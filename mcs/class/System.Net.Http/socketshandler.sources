@@ -4,6 +4,7 @@ PlatformHelper.SocketsHandler.cs
 HttpClient.DefaultHandler.cs
 HttpClientHandler.cs
 HttpClientHandler.SocketsHandler.cs
+HttpRequestMessage.Mono.cs
 IMonoHttpClientHandler.cs
 MonoWebRequestHandler.cs
 
