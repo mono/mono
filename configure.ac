@@ -3142,7 +3142,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNC(ftruncate64,       [AC_DEFINE(HAVE_FTRUNCATE64, 1, [ftruncate64])])
 	AC_CHECK_FUNC(posix_fadvise64,   [AC_DEFINE(HAVE_POSIX_FADVISE64, 1, [posix_fadvise64])])
 
-	if test "x$platform_ios" != "xyes"; then
+	if test "x$mono_native_platform_ios" = "xno"; then
 		# On iOS, `stat64()` is deprecated and there is no `struct stat64` and `stat()`
 		# is either 32-bit or 64-bit based on the device / simulator that you're running on.
 		AC_CHECK_FUNC(stat64,            [AC_DEFINE(HAVE_STAT64, 1, [stat64])])
