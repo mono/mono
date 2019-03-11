@@ -122,6 +122,7 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <signal.h>
+#include "mono/utils/mono-static-mutex.h"
 
 #if defined(GC_DARWIN_THREADS)
 # include "private/darwin_semaphore.h"
@@ -1602,6 +1603,15 @@ WRAP_FUNC(pthread_create)(pthread_t *new_thread,
 #ifdef GENERIC_COMPARE_AND_SWAP
   pthread_mutex_t GC_compare_and_swap_lock = PTHREAD_MUTEX_INITIALIZER;
 
+#if HAS_PTHREAD_PRIO_INHERIT
+  __attribute__((constructor))
+  __attribute__((unused))
+  static void init_libgc_pthread_mutex(void)
+  {
+      mono_os_static_mutex_init(&GC_compare_and_swap_lock);
+  }
+#endif
+
   GC_bool GC_compare_and_exchange(volatile GC_word *addr,
   			          GC_word old, GC_word new_val)
   {
@@ -1821,6 +1831,15 @@ void GC_lock()
         {0, 0, 0, PTHREAD_MUTEX_ERRORCHECK_NP, {0, 0}};
 #else
   static pthread_mutex_t mark_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+#if HAS_PTHREAD_PRIO_INHERIT
+  __attribute__((constructor))
+  __attribute__((unused))
+  static void init_mark_mutex(void)
+  {
+      mono_os_static_mutex_init(&mark_mutex);
+  }
+#endif
 #endif
 
 static pthread_cond_t builder_cv = PTHREAD_COND_INITIALIZER;

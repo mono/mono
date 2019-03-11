@@ -30,6 +30,7 @@
 #include <stdlib.h>
 #include <glib.h>
 #include <pthread.h>
+#include "../mono/utils/mono-static-mutex.h"
 
 #ifdef HAVE_PWD_H
 #include <pwd.h>
@@ -201,3 +202,13 @@ g_get_tmp_dir (void)
 	return tmp_dir;
 }
 
+#if HAS_PTHREAD_PRIO_INHERIT
+__attribute__((constructor))
+__attribute__((unused))
+static void init_gmisc_mutex(void)
+{
+	mono_os_static_mutex_init(&env_lock);
+	mono_os_static_mutex_init(&pw_lock);
+	mono_os_static_mutex_init(&tmp_lock);
+}
+#endif

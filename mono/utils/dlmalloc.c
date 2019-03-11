@@ -1415,6 +1415,7 @@ static int win32munmap(void* ptr, size_t size) {
 
 #ifndef WIN32
 /* By default use posix locks */
+#include "mono/utils/mono-static-mutex.h"
 #include <pthread.h>
 #define MLOCK_T pthread_mutex_t
 #define INITIAL_LOCK(l)      pthread_mutex_init(l, NULL)
@@ -1426,6 +1427,18 @@ static MLOCK_T morecore_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif /* HAVE_MORECORE */
 
 static MLOCK_T magic_init_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+#if HAS_PTHREAD_PRIO_INHERIT
+__attribute__((constructor))
+__attribute__((unused))
+static void init_dlmalloc_mutex(void)
+{
+#if HAVE_MORECORE
+	mono_os_static_mutex_init(&morecore_mutex);
+#endif /* HAVE_MORECORE */
+	mono_os_static_mutex_init(&magic_init_mutex);
+}
+#endif
 
 #else /* WIN32 */
 /*
