@@ -771,7 +771,19 @@ namespace System
 			get;
 		}
 
-#if MOBILE
+#if NETCORE
+		public override bool IsSecurityTransparent {
+			get { return false; }
+		}
+
+		public override bool IsSecurityCritical {
+			get { return true; }
+		}
+
+		public override bool IsSecuritySafeCritical {
+			get { return false; }
+		}
+#elif MOBILE
 		static int get_core_clr_security_level ()
 		{
 			return 1;

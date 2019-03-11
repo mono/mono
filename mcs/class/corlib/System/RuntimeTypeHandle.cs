@@ -344,5 +344,19 @@ namespace System
 				throw new TypeLoadException ("Error loading '" + typeName + "'");
 			return t;
 		}
+
+		internal static IntPtr[] CopyRuntimeTypeHandles (RuntimeTypeHandle[] inHandles, out int length)
+		{
+			if (inHandles == null || inHandles.Length == 0) {
+				length = 0;
+				return null;
+			}
+
+			IntPtr[] outHandles = new IntPtr [inHandles.Length];
+			for (int i = 0; i < inHandles.Length; i++)
+				outHandles [i] = inHandles [i].Value;
+			length = outHandles.Length;
+			return outHandles;
+		}
 	}
 }
