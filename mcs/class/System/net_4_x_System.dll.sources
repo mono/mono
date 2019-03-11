@@ -200,6 +200,8 @@ System.Net.Mail/SmtpPermissionAttribute.cs
 
 System.Runtime.InteropServices/StandardOleMarshalObject.cs
 
+ReferenceSources/DynamicRoleClaimProvider.cs
+
 System.Security.Permissions/PermissionHelper.cs
 System.Security.Permissions/ResourcePermissionBase.cs
 System.Security.Permissions/ResourcePermissionBaseEntry.cs

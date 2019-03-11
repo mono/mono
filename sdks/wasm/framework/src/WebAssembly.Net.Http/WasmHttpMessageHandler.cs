@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -114,6 +112,23 @@ namespace WebAssembly.Net.Http.HttpClient {
 						}
 						requestObject.SetObjectProperty ("headers", jsHeaders);
 					}
+				using (var headersObj = (JSObject)WebAssembly.Runtime.GetGlobalObject ("Headers"))
+				using (var jsHeaders = Runtime.NewJSObject (headersObj)) {
+					if (request.Headers != null) {
+						foreach (var header in request.Headers) {
+							foreach (var value in header.Value) {
+								jsHeaders.Invoke ("append", header.Key, value);
+							}
+						}
+					}
+					if (request.Content?.Headers != null) {
+						foreach (var header in request.Content.Headers) {
+							foreach (var value in header.Value) {
+								jsHeaders.Invoke ("append", header.Key, value);
+							}
+						}
+					}
+					requestObject.SetObjectProperty ("headers", jsHeaders);
 				}
 
 				JSObject abortController = null;
@@ -203,11 +218,6 @@ namespace WebAssembly.Net.Http.HttpClient {
 				tcs.SetException (exception);
 			}
 		}
-
-		private string [] [] GetHeadersAsStringArray (HttpRequestMessage request)
-		    => (from header in request.Headers.Concat (request.Content?.Headers ?? Enumerable.Empty<KeyValuePair<string, IEnumerable<string>>> ())
-			from headerValue in header.Value // There can be more than one value for each name
-		select new [] { header.Key, headerValue }).ToArray ();
 
 		class WasmFetchResponse : IDisposable {
 			private JSObject fetchResponse;

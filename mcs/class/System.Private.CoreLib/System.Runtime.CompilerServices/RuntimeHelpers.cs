@@ -68,10 +68,25 @@ namespace System.Runtime.CompilerServices
 
 		public static void PrepareMethod (RuntimeMethodHandle method)
 		{
+			if (method.IsNullHandle ())
+				throw new ArgumentException (SR.Argument_InvalidHandle);
+			unsafe {
+				PrepareMethod (method.Value, null, 0);
+			}
 		}
 
 		public static void PrepareMethod (RuntimeMethodHandle method, RuntimeTypeHandle[] instantiation)
 		{
+			if (method.IsNullHandle ())
+				throw new ArgumentException (SR.Argument_InvalidHandle);
+			unsafe {
+				int length;
+				IntPtr[] instantiations = RuntimeTypeHandle.CopyRuntimeTypeHandles (instantiation, out length);
+				fixed (IntPtr* pinst = instantiations) {
+					PrepareMethod (method.Value, pinst, length);
+					GC.KeepAlive (instantiation);
+				}
+			}
 		}
 
 		public static void RunModuleConstructor (ModuleHandle module)
@@ -102,6 +117,9 @@ namespace System.Runtime.CompilerServices
 				throw new NotImplementedException ();
 			return GetUninitializedObjectInternal (new RuntimeTypeHandle (type as RuntimeType).Value);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern unsafe void PrepareMethod (IntPtr method, IntPtr* instantiations, int ninst);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern object GetUninitializedObjectInternal (IntPtr type);

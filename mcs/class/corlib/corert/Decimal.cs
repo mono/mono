@@ -1170,11 +1170,9 @@ namespace System
 
         internal int Scale => (byte)(flags >> ScaleShift);
 
-#if BIGENDIAN
-        private ulong Low64 => ((ulong)Mid << 32) | Low;
-#else
-        private ulong Low64 => (ulong)ulomidLE;
-#endif
+        // Mono note: Mono doesn't use the BIGENDIAN define, as both endians consume the same bootstrap tarball.
+        // As such, runtime checks should be used. Both Mono and CoreCLR will inline endianness checks as an intrinsic.
+        private ulong Low64 => BitConverter.IsLittleEndian ? (ulong)ulomidLE : ((ulong)Mid << 32) | Low;
 
         private static ref DecCalc AsMutable(ref decimal d) => ref Unsafe.As<decimal, DecCalc>(ref d);
 
@@ -1233,13 +1231,19 @@ namespace System
 
             private ulong Low64
             {
-#if BIGENDIAN
-                get { return ((ulong)umid << 32) | ulo; }
-                set { umid = (uint)(value >> 32); ulo = (uint)value; }
-#else
-                get => ulomidLE;
-                set => ulomidLE = value;
-#endif
+                get { return BitConverter.IsLittleEndian ? ulomidLE : (((ulong)umid << 32) | ulo); }
+                set
+                {
+                    if (BitConverter.IsLittleEndian)
+                    {
+                        ulomidLE = value;
+                    }
+                    else
+                    {
+                        umid = (uint)(value >> 32);
+                        ulo = (uint)value;
+                    }
+                }
             }
 
             private const uint SignMask = 0x80000000;
@@ -1852,11 +1856,7 @@ ThrowOverflow:
 #else
                     // 32-bit RyuJIT doesn't convert 64-bit division by constant into multiplication by reciprocal. Do half-width divisions instead.
                     Debug.Assert(power <= ushort.MaxValue);
-#if BIGENDIAN
-                    const int low16 = 2, high16 = 0;
-#else
-                    const int low16 = 0, high16 = 2;
-#endif
+                    int low16 = BitConverter.IsLittleEndian ? 0 : 2, high16 = BitConverter.IsLittleEndian ? 2 : 0;
                     // byte* is used here because Roslyn doesn't do constant propagation for pointer arithmetic
                     uint num = *(ushort*)((byte*)result + i * 4 + high16) + (remainder << 16);
                     uint div = num / power;
@@ -3735,13 +3735,19 @@ done:
 
                 public ulong Low64
                 {
-#if BIGENDIAN
-                    get => ((ulong)U1 << 32) | U0;
-                    set { U1 = (uint)(value >> 32); U0 = (uint)value; }
-#else
-                    get => ulo64LE;
-                    set => ulo64LE = value;
-#endif
+                    get => BitConverter.IsLittleEndian ? ulo64LE : (((ulong)U1 << 32) | U0);
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            ulo64LE = value;
+                        }
+                        else
+                        {
+                            U1 = (uint)(value >> 32);
+                            U0 = (uint)value;
+                        }
+                    }
                 }
 
                 /// <summary>
@@ -3749,13 +3755,19 @@ done:
                 /// </summary>
                 public ulong High64
                 {
-#if BIGENDIAN
-                    get => ((ulong)U2 << 32) | U1;
-                    set { U2 = (uint)(value >> 32); U1 = (uint)value; }
-#else
-                    get => uhigh64LE;
-                    set => uhigh64LE = value;
-#endif
+                    get => BitConverter.IsLittleEndian ? uhigh64LE : (((ulong)U2 << 32) | U1);
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            uhigh64LE = value;
+                        }
+                        else
+                        {
+                            U2 = (uint)(value >> 32);
+                            U1 = (uint)value;
+                        }
+                    }
                 }
             }
 
@@ -3778,24 +3790,36 @@ done:
 
                 public ulong Low64
                 {
-#if BIGENDIAN
-                    get => ((ulong)U1 << 32) | U0;
-                    set { U1 = (uint)(value >> 32); U0 = (uint)value; }
-#else
-                    get => ulo64LE;
-                    set => ulo64LE = value;
-#endif
+                    get => BitConverter.IsLittleEndian ? ulo64LE : (((ulong)U1 << 32) | U0);
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            ulo64LE = value;
+                        }
+                        else
+                        {
+                            U1 = (uint)(value >> 32);
+                            U0 = (uint)value;
+                        }
+                    }
                 }
 
                 public ulong High64
                 {
-#if BIGENDIAN
-                    get => ((ulong)U3 << 32) | U2;
-                    set { U3 = (uint)(value >> 32); U2 = (uint)value; }
-#else
-                    get => uhigh64LE;
-                    set => uhigh64LE = value;
-#endif
+                    get => BitConverter.IsLittleEndian ? uhigh64LE : (((ulong)U3 << 32) | U2);
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            uhigh64LE = value;
+                        }
+                        else
+                        {
+                            U3 = (uint)(value >> 32);
+                            U2 = (uint)value;
+                        }
+                    }
                 }
             }
 
@@ -3824,35 +3848,53 @@ done:
 
                 public ulong Low64
                 {
-#if BIGENDIAN
-                    get => ((ulong)U1 << 32) | U0;
-                    set { U1 = (uint)(value >> 32); U0 = (uint)value; }
-#else
-                    get => ulo64LE;
-                    set => ulo64LE = value;
-#endif
+                    get => BitConverter.IsLittleEndian ? ulo64LE : (((ulong)U1 << 32) | U0);
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            ulo64LE = value;
+                        }
+                        else
+                        {
+                            U1 = (uint)(value >> 32);
+                            U0 = (uint)value;
+                        }
+                    }
                 }
 
                 public ulong Mid64
                 {
-#if BIGENDIAN
-                    get => ((ulong)U3 << 32) | U2;
-                    set { U3 = (uint)(value >> 32); U2 = (uint)value; }
-#else
-                    get => umid64LE;
-                    set => umid64LE = value;
-#endif
+                    get => BitConverter.IsLittleEndian ? umid64LE : (((ulong)U3 << 32) | U2);
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            umid64LE = value;
+                        }
+                        else
+                        {
+                            U3 = (uint)(value >> 32);
+                            U2 = (uint)value;
+                        }
+                    }
                 }
 
                 public ulong High64
                 {
-#if BIGENDIAN
-                    get => ((ulong)U5 << 32) | U4;
-                    set { U5 = (uint)(value >> 32); U4 = (uint)value; }
-#else
-                    get => uhigh64LE;
-                    set => uhigh64LE = value;
-#endif
+                    get => BitConverter.IsLittleEndian ? uhigh64LE : (((ulong)U5 << 32) | U4);
+                    set
+                    {
+                        if (BitConverter.IsLittleEndian)
+                        {
+                            uhigh64LE = value;
+                        }
+                        else
+                        {
+                            U5 = (uint)(value >> 32);
+                            U4 = (uint)value;
+                        }
+                    }
                 }
 
                 public int Length => 6;
