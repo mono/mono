@@ -102,18 +102,7 @@ namespace WebAssembly.Net.Http.HttpClient {
 				// Process headers
 				// Cors has it's own restrictions on headers.
 				// https://developer.mozilla.org/en-US/docs/Web/API/Headers
-				var requestHeaders = GetHeadersAsStringArray (request);
-
-				if (requestHeaders != null && requestHeaders.Length > 0) {
-					using (var jsHeaders = new HostObject ("Headers")) {
-						for (int i = 0; i < requestHeaders.Length; i++) {
-							//Console.WriteLine($"append: {requestHeaders[i][0]} / {requestHeaders[i][1]}");
-							jsHeaders.Invoke ("append", requestHeaders [i] [0], requestHeaders [i] [1]);
-						}
-						requestObject.SetObjectProperty ("headers", jsHeaders);
-					}
-				using (var headersObj = (JSObject)WebAssembly.Runtime.GetGlobalObject ("Headers"))
-				using (var jsHeaders = Runtime.NewJSObject (headersObj)) {
+				using (var jsHeaders = new HostObject ("Headers")) {
 					if (request.Headers != null) {
 						foreach (var header in request.Headers) {
 							foreach (var value in header.Value) {
