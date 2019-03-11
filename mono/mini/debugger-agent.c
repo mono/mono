@@ -8597,7 +8597,7 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 		g_assert (tls);
 
-		compute_frame_info (thread, tls, TRUE);
+		compute_frame_info (thread, tls, TRUE); //the last parameter is TRUE to force that the frame info that will be send is synchronised with the debugged thread
 
 		buffer_add_int (buf, tls->frame_count);
 		for (i = 0; i < tls->frame_count; ++i) {
