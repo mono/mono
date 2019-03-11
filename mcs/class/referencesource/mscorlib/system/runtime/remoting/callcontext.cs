@@ -11,6 +11,7 @@ namespace System.Runtime.Remoting.Messaging{
     using System.Runtime.Remoting;
     using System.Security.Principal;
     using System.Collections;
+    using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using System.Security.Permissions;    
     // This class exposes the API for the users of call context. All methods
@@ -30,6 +31,7 @@ namespace System.Runtime.Remoting.Messaging{
     [System.Security.SecurityCritical]  // auto-generated_required
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
+    [MonoLinkerConditional(MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
     public sealed class CallContext
     {
         private CallContext()
@@ -189,6 +191,7 @@ namespace System.Runtime.Remoting.Messaging{
     {
     }
 
+    [MonoLinkerConditional(MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Remove)]
     internal class IllogicalCallContext
     {
         private Hashtable m_Datastore;
@@ -281,6 +284,7 @@ namespace System.Runtime.Remoting.Messaging{
     [System.Security.SecurityCritical]  // auto-generated_required
     [Serializable]
     [System.Runtime.InteropServices.ComVisible(true)]
+    [MonoLinkerConditional(MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Remove)]
     public sealed class LogicalCallContext : ISerializable, ICloneable
     {
         // Private static data

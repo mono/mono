@@ -39,6 +39,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Contexts; 
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.CompilerServices;
 using System.Reflection;
 
 namespace System.Runtime.Remoting.Channels 
@@ -288,6 +289,7 @@ namespace System.Runtime.Remoting.Channels
 
 	internal class CADSerializer 
 	{
+		[MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
 		internal static IMessage DeserializeMessage(MemoryStream mem, IMethodCallMessage msg)
 		{
 #if FEATURE_REMOTING
@@ -305,6 +307,7 @@ namespace System.Runtime.Remoting.Channels
 #endif
 		}
 		
+		[MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
 		internal static MemoryStream SerializeMessage(IMessage msg)
 		{
 			MemoryStream mem = new MemoryStream ();
@@ -325,6 +328,7 @@ namespace System.Runtime.Remoting.Channels
 		// It is also the preferred way to deserialize CADMessage
 		// objects because their payload must be stored as byte arrays to avoid
 		// cross-domain references to MemoryStream objects
+		[MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
 		internal static object DeserializeObjectSafe(byte[] mem)
 		{
 			byte [] outstream = new byte [mem.Length];
@@ -334,6 +338,7 @@ namespace System.Runtime.Remoting.Channels
 			return returnVal;
 		}
 
+		[MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
 		internal static MemoryStream SerializeObject(object obj)
 		{
 			MemoryStream mem = new MemoryStream ();
@@ -347,6 +352,7 @@ namespace System.Runtime.Remoting.Channels
 			return mem;
 		}
 
+		[MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
 		internal static object DeserializeObject(MemoryStream mem)
 		{
 			BinaryFormatter serializer = new BinaryFormatter();                

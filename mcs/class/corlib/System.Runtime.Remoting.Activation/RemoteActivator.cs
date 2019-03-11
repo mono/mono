@@ -30,6 +30,7 @@
 //
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Messaging;
 
@@ -37,6 +38,8 @@ namespace System.Runtime.Remoting.Activation
 {
 	internal class RemoteActivator: MarshalByRefObject, IActivator
 	{
+		[Obsolete ("CHECK CALLSITES", true)]
+		[MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
 		public IConstructionReturnMessage Activate (IConstructionCallMessage msg)
 		{
 			if (!RemotingConfiguration.IsActivationAllowed (msg.ActivationType))

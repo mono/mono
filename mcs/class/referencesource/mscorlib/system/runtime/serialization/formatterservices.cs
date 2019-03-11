@@ -260,9 +260,9 @@ namespace System.Runtime.Serialization {
                 throw new SerializationException(Environment.GetResourceString("Serialization_InvalidType", type.ToString()));
             }
 #if FEATURE_REMOTING            
-            if (Object.ReferenceEquals(type, typeof(System.Runtime.Remoting.Messaging.ConstructionCall)) || 
-                Object.ReferenceEquals(type, typeof(System.Runtime.Remoting.Messaging.LogicalCallContext)) ||
-                Object.ReferenceEquals(type, typeof(System.Runtime.Remoting.Contexts.SynchronizationAttribute)))
+            if (Mono.RemotingGate.TypeIsConstructionCall (type) ||
+                Mono.RemotingGate.TypeIsLogicalCallContext (type) ||
+                Mono.RemotingGate.TypeIsSynchronizationAttribute (type))
                  return nativeGetUninitializedObject((RuntimeType)type);                                    
 #endif
 

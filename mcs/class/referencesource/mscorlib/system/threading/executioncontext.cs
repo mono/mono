@@ -36,6 +36,7 @@ namespace System.Threading
     using System.Runtime.ConstrainedExecution;
     using System.Diagnostics.Contracts;
     using System.Diagnostics.CodeAnalysis;
+    using Mono;
 
 #if FEATURE_CORECLR
     [System.Security.SecurityCritical] // auto-generated
@@ -627,15 +628,17 @@ namespace System.Threading
 #endif
 
 #if FEATURE_REMOTING
-            public LogicalCallContext.Reader LogicalCallContext 
+            internal LogicalCallContext.Reader LogicalCallContext
             {
                 [SecurityCritical]
+                [MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
                 get { return new LogicalCallContext.Reader(IsNull ? null : m_ec.LogicalCallContext); } 
             }
 
-            public IllogicalCallContext.Reader IllogicalCallContext 
+            internal IllogicalCallContext.Reader IllogicalCallContext
             {
                 [SecurityCritical]
+                [MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
                 get { return new IllogicalCallContext.Reader(IsNull ? null : m_ec.IllogicalCallContext); } 
             }
 #endif
@@ -773,6 +776,7 @@ namespace System.Threading
         internal LogicalCallContext LogicalCallContext
         {
             [System.Security.SecurityCritical]  // auto-generated
+            [MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
             get
             {
                 if (_logicalCallContext == null)
@@ -782,6 +786,7 @@ namespace System.Threading
                 return _logicalCallContext;
             }
             [System.Security.SecurityCritical]  // auto-generated
+            [MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
             set
             {
                 Contract.Assert(this != s_dummyDefaultEC);
@@ -791,6 +796,7 @@ namespace System.Threading
 
         internal IllogicalCallContext IllogicalCallContext
         {
+            [MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
             get
             {
                 if (_illogicalCallContext == null)
@@ -799,6 +805,7 @@ namespace System.Threading
                 }
                 return _illogicalCallContext;
             }
+            [MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
             set
             {
                 Contract.Assert(this != s_dummyDefaultEC);
@@ -1167,7 +1174,7 @@ namespace System.Threading
 
 #if FEATURE_REMOTING
             if (this._logicalCallContext != null)
-                ec.LogicalCallContext = (LogicalCallContext)this.LogicalCallContext.Clone();
+                ec.LogicalCallContext = RemotingGate.CloneCallContext(this.LogicalCallContext);
 
             Contract.Assert(this._illogicalCallContext == null);
 #endif // #if FEATURE_REMOTING
@@ -1204,10 +1211,10 @@ namespace System.Threading
 
 #if FEATURE_REMOTING
             if (this._logicalCallContext != null)
-                ec.LogicalCallContext = (LogicalCallContext)this.LogicalCallContext.Clone();
+                ec.LogicalCallContext = RemotingGate.CloneCallContext(this.LogicalCallContext);
 
             if (this._illogicalCallContext != null)
-                ec.IllogicalCallContext = (IllogicalCallContext)this.IllogicalCallContext.CreateCopy();
+                ec.IllogicalCallContext = RemotingGate.CreateCopyIllogicalCallContext(this.IllogicalCallContext);
 #endif // #if FEATURE_REMOTING
 
             ec._localValues = this._localValues;
@@ -1324,8 +1331,7 @@ namespace System.Threading
 
 #if FEATURE_REMOTING
                 // copy over the Logical Call Context
-                if (ecCurrent.LogicalCallContext.HasInfo)
-                    logCtxNew = ecCurrent.LogicalCallContext.Clone();
+                logCtxNew = RemotingGate.CopyCallContext(ecCurrent.DangerousGetRawExecutionContext()._logicalCallContext);
 #endif // #if FEATURE_REMOTING
             }
 
@@ -1350,7 +1356,7 @@ namespace System.Threading
 #endif // FEATURE_CAS_POLICY
                 syncCtxNew == null &&
 #if FEATURE_REMOTING
-                (logCtxNew == null || !logCtxNew.HasInfo) &&
+                (logCtxNew == null || !RemotingGate.CallContextHasInfo(logCtxNew)) &&
 #endif // #if FEATURE_REMOTING
                 localValues == null &&
                 localChangeNotifications == null
@@ -1402,6 +1408,7 @@ namespace System.Threading
         }
 
         [System.Security.SecurityCritical]  // auto-generated
+        [MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
         private ExecutionContext(SerializationInfo info, StreamingContext context) 
         {
             SerializationInfoEnumerator e = info.GetEnumerator();
@@ -1431,9 +1438,9 @@ namespace System.Threading
                 return false;
 #endif //#if FEATURE_IMPERSONATION || FEATURE_COMPRESSEDSTACK
 #if FEATURE_REMOTING
-            if (_logicalCallContext != null && _logicalCallContext.HasInfo)
+            if (_logicalCallContext != null && RemotingGate.CallContextHasInfo(_logicalCallContext))
                 return false;
-            if (_illogicalCallContext != null && _illogicalCallContext.HasUserData)
+            if (_illogicalCallContext != null && RemotingGate.IllogicalCallContextHasUserData(_illogicalCallContext))
                 return false;
 #endif //#if FEATURE_REMOTING
             return true;

@@ -48,6 +48,7 @@ using System.Runtime.Remoting.Services;
 using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Serialization.Formatters;
+using Mono;
 
 namespace System.Runtime.Remoting
 {
@@ -58,9 +59,6 @@ namespace System.Runtime.Remoting
 		// Holds the identities of the objects, using uri as index
 		static Hashtable uri_hash = new Hashtable ();		
 
-		static BinaryFormatter _serializationFormatter;
-		static BinaryFormatter _deserializationFormatter;
-		
 		static string app_id;
 		static readonly object app_id_lock = new object ();
 		
@@ -69,22 +67,9 @@ namespace System.Runtime.Remoting
 		static readonly MethodInfo FieldSetterMethod;
 		static readonly MethodInfo FieldGetterMethod;
 		
-		// Holds information in xdomain calls. Names are short to minimize serialized size.
-		[Serializable]
-		class CACD {
-			public object d;	/* call data */
-			public object c;	/* call context */
-		}
-		
+		[MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Return)]
 		static RemotingServices ()
 		{
-			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector ();
-			StreamingContext context = new StreamingContext (StreamingContextStates.Remoting, null);
-			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
-			_deserializationFormatter = new BinaryFormatter (null, context);
-			_serializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Full;
-			_deserializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Full;
-			
 			RegisterInternalChannels ();
 			CreateWellKnownServerIdentity (typeof(RemoteActivator), "RemoteActivationService.rem", WellKnownObjectMode.Singleton);
 			
@@ -770,20 +755,7 @@ namespace System.Runtime.Remoting
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeCallData (object obj)
 		{
-			var ctx = Thread.CurrentThread.GetExecutionContextReader().LogicalCallContext;
-			if (!ctx.IsNull) {
-				CACD cad = new CACD ();
-				cad.d = obj;
-				cad.c = ctx.Clone ();
-				obj = cad;
-			}
-			
-			if (obj == null) return null;
-			MemoryStream ms = new MemoryStream ();
-			lock (_serializationFormatter) {
-				_serializationFormatter.Serialize (ms, obj);
-			}
-			return ms.ToArray ();
+			return RemotingGate.SerializeCallData (obj);
 		}
 
 		// This method is called by the runtime
@@ -791,39 +763,15 @@ namespace System.Runtime.Remoting
 		internal static object DeserializeCallData (byte[] array)
 		{
 			if (array == null) return null;
-			
-			MemoryStream ms = new MemoryStream (array);
-			object obj;
-			lock (_deserializationFormatter) {
-				obj = _deserializationFormatter.Deserialize (ms);
-			}
-			
-			if (obj is CACD) {
-				CACD cad = (CACD) obj;
-				obj = cad.d;
 
-				var lcc = (LogicalCallContext) cad.c;
-				if (lcc.HasInfo)
-					Thread.CurrentThread.GetMutableExecutionContext().LogicalCallContext.Merge (lcc);
-			}
-			return obj;
+			return RemotingGate.DeserializeCallData (array);
 		}
 		
 		// This method is called by the runtime
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeExceptionData (Exception ex)
 		{
-			byte[] result = null;
-			try {
-				/* empty - we're only interested in the protected block */
-			} finally {
-				MemoryStream ms = new MemoryStream ();
-				lock (_serializationFormatter) {
-					_serializationFormatter.Serialize (ms, ex);
-				}
-				result = ms.ToArray ();
-			}
-			return result;
+			return RemotingGate.SerializeExceptionData (ex);
 		}
 		
 		internal static object GetDomainProxy(AppDomain domain) 

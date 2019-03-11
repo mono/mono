@@ -329,6 +329,8 @@ namespace System {
 			return CreateInstance(assemblyName, typeName);
 		}
 
+		[Obsolete ("CHECK CALLSITES", true)]
+		[MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
 		internal ObjectHandle InternalCreateInstanceWithNoSecurity (string assemblyName, 
                                                                     string typeName,
                                                                     bool ignoreCase,
@@ -372,6 +374,8 @@ namespace System {
 			return Activator.CreateInstance (assemblyName, typeName);
 		}
 
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
 		public ObjectHandle CreateInstance (string assemblyName, string typeName, object[] activationAttributes)
 		{
 			if (assemblyName == null)
@@ -380,7 +384,9 @@ namespace System {
 			return Activator.CreateInstance (assemblyName, typeName, activationAttributes);
 		}
 
-		[Obsolete ("Use an overload that does not take an Evidence parameter")]
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
+//		[Obsolete ("Use an overload that does not take an Evidence parameter")]
 		public ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr,
 		                                    Binder binder, object[] args, CultureInfo culture, object[] activationAttributes,
 		                                    Evidence securityAttributes)
@@ -398,13 +404,17 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
 		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, object [] activationAttributes)
 		{
 			ObjectHandle oh = CreateInstance (assemblyName, typeName, activationAttributes);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-		[Obsolete ("Use an overload that does not take an Evidence parameter")]
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
+//		[Obsolete ("Use an overload that does not take an Evidence parameter")]
 		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
 		                                       BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 		                                       object[] activationAttributes, Evidence securityAttributes)
@@ -414,6 +424,8 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
 		public ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr,
 		                                    Binder binder, object[] args, CultureInfo culture, object[] activationAttributes)
 		{
@@ -423,6 +435,9 @@ namespace System {
 			return Activator.CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
 				culture, activationAttributes, null);
 		}
+
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
 		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
 		                                       BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 		                                       object[] activationAttributes)
@@ -432,6 +447,8 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
 		public ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
 		                                        BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
 		                                        object[] activationAttributes)
@@ -443,6 +460,8 @@ namespace System {
 			                                     culture, activationAttributes, null);
 		}
 
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
 		public object CreateInstanceFromAndUnwrap (string assemblyFile, string typeName, bool ignoreCase,
 		                                           BindingFlags bindingAttr, Binder binder, object[] args,
 		                                           CultureInfo culture, object[] activationAttributes)
@@ -461,6 +480,8 @@ namespace System {
 			return Activator.CreateInstanceFrom (assemblyFile, typeName);
 		}
 
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
 		public ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, object[] activationAttributes)
 		{
 			if (assemblyFile == null)
@@ -487,6 +508,8 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
+		[Obsolete ("CHECK CALLSITES!", true)]
+		[MonoLinkerFeature (MonoLinkerFeatures.Remoting)]
 		public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName, object [] activationAttributes)
 		{
 			ObjectHandle oh = CreateInstanceFrom (assemblyName, typeName, activationAttributes);

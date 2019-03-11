@@ -42,6 +42,7 @@ using System.Runtime.Remoting.Channels;
 
 namespace System.Runtime.Remoting.Activation
 {
+	[MonoLinkerConditional(MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Throw)]
 	internal class ActivationServices
 	{
 		static IActivator _constructionActivator;

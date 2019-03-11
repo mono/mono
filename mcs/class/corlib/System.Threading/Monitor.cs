@@ -31,9 +31,6 @@
 //
 
 using System.Runtime.CompilerServices;
-#if !DISABLE_REMOTING
-using System.Runtime.Remoting.Contexts;
-#endif
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
@@ -79,14 +76,14 @@ namespace System.Threading
 			try {
 #if !DISABLE_REMOTING
 				if (exitContext)
-					SynchronizationAttribute.ExitContext ();
+					Mono.RemotingGate.ExitContext ();
 #endif
 
 				return Monitor_wait (obj, millisecondsTimeout);
 			} finally {
 #if !DISABLE_REMOTING
 				if (exitContext)
-					SynchronizationAttribute.EnterContext ();
+					Mono.RemotingGate.EnterContext ();
 #endif
 			}
 		}

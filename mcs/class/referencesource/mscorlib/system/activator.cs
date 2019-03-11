@@ -58,17 +58,31 @@ namespace System {
                                             Object[] args,
                                             CultureInfo culture) 
         {
-            return CreateInstance(type, bindingAttr, binder, args, culture, null);
+            return CreateInstanceImpl(type, bindingAttr, binder, args, culture, null);
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         static public Object CreateInstance(Type type,
                                             BindingFlags bindingAttr,
                                             Binder binder,
                                             Object[] args,
                                             CultureInfo culture,
                                             Object[] activationAttributes)
+        {
+            return CreateInstanceImpl(type, bindingAttr, binder, args, culture, activationAttributes);
+        }
+
+        [System.Security.SecuritySafeCritical]  // auto-generated
+        [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+        static Object CreateInstanceImpl(Type type,
+                                         BindingFlags bindingAttr,
+                                         Binder binder,
+                                         Object[] args,
+                                         CultureInfo culture,
+                                         Object[] activationAttributes)
         {
             if ((object)type == null)
                 throw new ArgumentNullException("type");
@@ -109,24 +123,26 @@ namespace System {
 
         static public Object CreateInstance(Type type, params Object[] args)
         {
-            return CreateInstance(type,
-                                  Activator.ConstructorDefault,
-                                  null,
-                                  args,
-                                  null,
-                                  null);
+            return CreateInstanceImpl(type,
+                                      Activator.ConstructorDefault,
+                                      null,
+                                      args,
+                                      null,
+                                      null);
         }
 
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         static public Object CreateInstance(Type type,
                                             Object[] args,
                                             Object[] activationAttributes)
         {
-             return CreateInstance(type,
-                                   Activator.ConstructorDefault,
-                                   null,
-                                   args,
-                                   null,
-                                   activationAttributes);
+             return CreateInstanceImpl(type,
+                                       Activator.ConstructorDefault,
+                                       null,
+                                       args,
+                                       null,
+                                       activationAttributes);
         }
         
         static public Object CreateInstance(Type type)
@@ -149,20 +165,22 @@ namespace System {
               assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
 #endif
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            return CreateInstance(assemblyName,
-                                  typeName, 
-                                  false,
-                                  Activator.ConstructorDefault,
-                                  null,
-                                  null,
-                                  null,
-                                  null,
-                                  null,
-                                  ref stackMark);
+            return CreateInstanceImpl(assemblyName,
+                                     typeName, 
+                                     false,
+                                     Activator.ConstructorDefault,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     ref stackMark);
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable                                                  
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         static public ObjectHandle CreateInstance(String assemblyName,
                                                   String typeName,
                                                   Object[] activationAttributes)
@@ -173,16 +191,16 @@ namespace System {
               assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
 #endif
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            return CreateInstance(assemblyName,
-                                  typeName, 
-                                  false,
-                                  Activator.ConstructorDefault,
-                                  null,
-                                  null,
-                                  null,
-                                  activationAttributes,
-                                  null,
-                                  ref stackMark);
+            return CreateInstanceImpl(assemblyName,
+                                      typeName, 
+                                      false,
+                                      Activator.ConstructorDefault,
+                                      null,
+                                      null,
+                                      null,
+                                      activationAttributes,
+                                      null,
+                                      ref stackMark);
         }
 
         public static object CreateInstance(Type type, bool nonPublic)
@@ -242,11 +260,21 @@ namespace System {
                                                       String typeName)
                                          
         {
-            return CreateInstanceFrom(assemblyFile, typeName, null);
+            return CreateInstanceFromInternal(assemblyFile,
+                                              typeName, 
+                                              false,
+                                              Activator.ConstructorDefault,
+                                              null,
+                                              null,
+                                              null,
+                                              null,
+                                              null);
         }
 
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         static public ObjectHandle CreateInstanceFrom(String assemblyFile,
                                                       String typeName,
                                                       Object[] activationAttributes)
@@ -264,7 +292,9 @@ namespace System {
                                   
         [System.Security.SecuritySafeCritical]  // auto-generated
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
-        [Obsolete("Methods which use evidence to sandbox are obsolete and will be removed in a future release of the .NET Framework. Please use an overload of CreateInstance which does not take an Evidence parameter. See http://go.microsoft.com/fwlink/?LinkID=155570 for more information.")]
+//        [Obsolete("Methods which use evidence to sandbox are obsolete and will be removed in a future release of the .NET Framework. Please use an overload of CreateInstance which does not take an Evidence parameter. See http://go.microsoft.com/fwlink/?LinkID=155570 for more information.")]
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         static public ObjectHandle CreateInstance(String assemblyName, 
                                                   String typeName, 
                                                   bool ignoreCase,
@@ -294,6 +324,8 @@ namespace System {
 
         [SecuritySafeCritical]
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         public static ObjectHandle CreateInstance(string assemblyName,
                                                   string typeName,
                                                   bool ignoreCase,
@@ -308,19 +340,21 @@ namespace System {
               assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
 #endif
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            return CreateInstance(assemblyName,
-                                  typeName,
-                                  ignoreCase,
-                                  bindingAttr,
-                                  binder,
-                                  args,
-                                  culture,
-                                  activationAttributes,
-                                  null,
-                                  ref stackMark);
+            return CreateInstanceImpl(assemblyName,
+                                      typeName,
+                                      ignoreCase,
+                                      bindingAttr,
+                                      binder,
+                                      args,
+                                      culture,
+                                      activationAttributes,
+                                      null,
+                                      ref stackMark);
         }
 
         [System.Security.SecurityCritical]  // auto-generated
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         static internal ObjectHandle CreateInstance(String assemblyString, 
                                                     String typeName, 
                                                     bool ignoreCase,
@@ -331,6 +365,30 @@ namespace System {
                                                     Object[] activationAttributes,
                                                     Evidence securityInfo,
                                                     ref StackCrawlMark stackMark)
+        {
+            return CreateInstanceImpl(assemblyString,
+                                      typeName,
+                                      ignoreCase,
+                                      bindingAttr,
+                                      binder,
+                                      args,
+                                      culture,
+                                      activationAttributes,
+                                      securityInfo,
+                                      ref stackMark);
+        }
+
+        [System.Security.SecurityCritical]  // auto-generated
+        static ObjectHandle CreateInstanceImpl(String assemblyString, 
+                                               String typeName, 
+                                               bool ignoreCase,
+                                               BindingFlags bindingAttr, 
+                                               Binder binder,
+                                               Object[] args,
+                                               CultureInfo culture,
+                                               Object[] activationAttributes,
+                                               Evidence securityInfo,
+                                               ref StackCrawlMark stackMark)
         {
 #if FEATURE_CAS_POLICY
             if (securityInfo != null && !AppDomain.CurrentDomain.IsLegacyCasPolicyEnabled)
@@ -367,12 +425,12 @@ namespace System {
                 type = assembly.GetType(typeName, true /*throwOnError*/, ignoreCase);
             }
             
-            Object o = Activator.CreateInstance(type,
-                                                bindingAttr,
-                                                binder,
-                                                args,
-                                                culture,
-                                                activationAttributes);
+            Object o = CreateInstanceImpl(type,
+                                          bindingAttr,
+                                          binder,
+                                          args,
+                                          culture,
+                                          activationAttributes);
 
             Log(o != null, "CreateInstance:: ", "Created Instance of class " + typeName, "Failed to create instance of class " + typeName);
             if(o == null)
@@ -385,7 +443,9 @@ namespace System {
 
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        [Obsolete("Methods which use evidence to sandbox are obsolete and will be removed in a future release of the .NET Framework. Please use an overload of CreateInstanceFrom which does not take an Evidence parameter. See http://go.microsoft.com/fwlink/?LinkID=155570 for more information.")]
+//        [Obsolete("Methods which use evidence to sandbox are obsolete and will be removed in a future release of the .NET Framework. Please use an overload of CreateInstanceFrom which does not take an Evidence parameter. See http://go.microsoft.com/fwlink/?LinkID=155570 for more information.")]
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         static public ObjectHandle CreateInstanceFrom(String assemblyFile,
                                                       String typeName, 
                                                       bool ignoreCase,
@@ -417,6 +477,8 @@ namespace System {
 
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         public static ObjectHandle CreateInstanceFrom(string assemblyFile,
                                                       string typeName,
                                                       bool ignoreCase,
@@ -458,12 +520,12 @@ namespace System {
 #pragma warning restore 618
             Type t = assembly.GetType(typeName, true, ignoreCase);
             
-            Object o = Activator.CreateInstance(t,
-                                                bindingAttr,
-                                                binder,
-                                                args,
-                                                culture,
-                                                activationAttributes);
+            Object o = CreateInstanceImpl(t,
+                                          bindingAttr,
+                                          binder,
+                                          args,
+                                          culture,
+                                          activationAttributes);
 
             Log(o != null, "CreateInstanceFrom:: ", "Created Instance of class " + typeName, "Failed to create instance of class " + typeName);
             if(o == null)
@@ -490,7 +552,9 @@ namespace System {
         }
 
         [System.Security.SecurityCritical]  // auto-generated_required
-        [Obsolete("Methods which use evidence to sandbox are obsolete and will be removed in a future release of the .NET Framework. Please use an overload of CreateInstance which does not take an Evidence parameter. See http://go.microsoft.com/fwlink/?LinkID=155570 for more information.")]
+//        [Obsolete("Methods which use evidence to sandbox are obsolete and will be removed in a future release of the .NET Framework. Please use an overload of CreateInstance which does not take an Evidence parameter. See http://go.microsoft.com/fwlink/?LinkID=155570 for more information.")]
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         public static ObjectHandle CreateInstance (AppDomain domain,
                                                    string assemblyName,
                                                    string typeName,
@@ -516,6 +580,8 @@ namespace System {
         }
 
         [SecurityCritical]
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         public static ObjectHandle CreateInstance(AppDomain domain,
                                                   string assemblyName,
                                                   string typeName,
@@ -561,7 +627,9 @@ namespace System {
         [System.Security.SecurityCritical]  // auto-generated_required
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
-        [Obsolete("Methods which use Evidence to sandbox are obsolete and will be removed in a future release of the .NET Framework. Please use an overload of CreateInstanceFrom which does not take an Evidence parameter. See http://go.microsoft.com/fwlink/?LinkID=155570 for more information.")]
+//        [Obsolete("Methods which use Evidence to sandbox are obsolete and will be removed in a future release of the .NET Framework. Please use an overload of CreateInstanceFrom which does not take an Evidence parameter. See http://go.microsoft.com/fwlink/?LinkID=155570 for more information.")]
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         public static ObjectHandle CreateInstanceFrom (AppDomain domain,
                                                        string assemblyFile,
                                                        string typeName,
@@ -589,6 +657,8 @@ namespace System {
         [SecurityCritical]
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+        [Obsolete ("CHECK CALLSITES", true)]
+        [MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
         public static ObjectHandle CreateInstanceFrom(AppDomain domain,
                                                       string assemblyFile,
                                                       string typeName,
@@ -682,12 +752,12 @@ namespace System {
             if(assembly == null) return null;
 
   
-            Object o = Activator.CreateInstance(t,
-                                                Activator.ConstructorDefault,
-                                                null,
-                                                null,
-                                                null,
-                                                null);
+            Object o = CreateInstanceImpl(t,
+                                          Activator.ConstructorDefault,
+                                          null,
+                                          null,
+                                          null,
+                                          null);
 
             Log(o != null, "CreateInstance:: ", "Created Instance of class " + typeName, "Failed to create instance of class " + typeName);
             if(o == null)

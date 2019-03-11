@@ -28,6 +28,7 @@
 //
 
 using System.Threading;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Activation;
 
@@ -36,6 +37,8 @@ namespace System.Runtime.Remoting.Contexts
 	[AttributeUsage(AttributeTargets.Class)]
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
+	[MonoLinkerConditional (MonoLinkerFeatures.Remoting, MonoLinkerConditionalAction.Remove)]
+	[Obsolete ("CHECK CALL SITES!", false)]
 	public class SynchronizationAttribute: ContextAttribute, IContributeClientContextSink, IContributeServerContextSink
 	{
 		public const int NOT_SUPPORTED = 1;
@@ -188,6 +191,7 @@ namespace System.Runtime.Remoting.Contexts
 		}
 	}
 	
+	[Obsolete ("CHECK CALL SITES!", true)]
 	internal class SynchronizedClientContextSink: IMessageSink
 	{
 		IMessageSink _next;
@@ -231,6 +235,7 @@ namespace System.Runtime.Remoting.Contexts
 		}
 	}
 	
+	[Obsolete ("CHECK CALL SITES!", true)]
 	internal class SynchronizedServerContextSink: IMessageSink
 	{
 		IMessageSink _next;
@@ -268,6 +273,7 @@ namespace System.Runtime.Remoting.Contexts
 		}
 	}
 	
+	[Obsolete ("CHECK CALL SITES!", true)]
 	internal class SynchronizedContextReplySink: IMessageSink
 	{
 		IMessageSink _next;

@@ -150,6 +150,7 @@ namespace System.Security.Policy
 				_persist = false;
 
 			_xtranfo = null;
+#if MARTIN_FIXME
 			SecurityElement xtra = element.SearchForChildByTag ("ExtraInfo");
 			if (xtra != null) {
 				s = xtra.Attribute ("Data");
@@ -161,6 +162,7 @@ namespace System.Security.Policy
 					}
 				}
 			}
+#endif
 		}
 
 		public SecurityElement ToXml () 
@@ -184,6 +186,7 @@ namespace System.Security.Policy
 			defaultGrant.AddChild (DefaultGrantSet.ToXml ());
 			se.AddChild (defaultGrant);
 
+#if MARTIN_FIXME
 			if (_xtranfo != null) {
 				byte[] data = null;
 				using (MemoryStream ms = new MemoryStream ()) {
@@ -195,6 +198,7 @@ namespace System.Security.Policy
 				xtra.AddAttribute ("Data", CryptoConvert.ToHex (data));
 				se.AddChild (xtra);
 			}
+#endif
 
 			return se;
 		}

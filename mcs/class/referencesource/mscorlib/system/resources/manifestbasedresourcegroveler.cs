@@ -377,7 +377,6 @@ namespace System.Resources {
                                                                                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance,
                                                                                 null,
                                                                                 resourceSetArgs,
-                                                                                null,
                                                                                 null);
                         return rs;
                     }

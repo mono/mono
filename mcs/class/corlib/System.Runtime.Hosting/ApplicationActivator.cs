@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Security;
@@ -42,11 +43,15 @@ namespace System.Runtime.Hosting {
 		{
 		}
 
+		[Obsolete ("CHECK CALLSITES", true)]
+		[MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
 		public virtual ObjectHandle CreateInstance (ActivationContext activationContext)
 		{
 			return CreateInstance (activationContext, null);
 		}
 
+		[Obsolete ("CHECK CALLSITES", true)]
+		[MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
 		public virtual ObjectHandle CreateInstance (ActivationContext activationContext, string[] activationCustomData)
 		{
 			if (activationContext == null)
@@ -62,6 +67,8 @@ namespace System.Runtime.Hosting {
 			return CreateInstanceHelper (setup);
 		}
 
+		[Obsolete ("CHECK CALLSITES", true)]
+		[MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
 		protected static ObjectHandle CreateInstanceHelper (AppDomainSetup adSetup)
 		{
 			if (adSetup == null)

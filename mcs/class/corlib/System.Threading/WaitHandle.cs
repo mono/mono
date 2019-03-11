@@ -31,9 +31,6 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-#if !DISABLE_REMOTING
-using System.Runtime.Remoting.Contexts;
-#endif
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.ConstrainedExecution;
@@ -63,7 +60,7 @@ namespace System.Threading
 
 #if !DISABLE_REMOTING
 				if (exitContext)
-					SynchronizationAttribute.ExitContext ();
+					Mono.RemotingGate.ExitContext ();
 #endif
 
 #if !MONODROID
@@ -96,7 +93,7 @@ namespace System.Threading
 
 #if !DISABLE_REMOTING
 				if (exitContext)
-					SynchronizationAttribute.EnterContext ();
+					Mono.RemotingGate.EnterContext ();
 #endif
 			}
 
@@ -113,7 +110,7 @@ namespace System.Threading
 			try {
 #if !DISABLE_REMOTING
 				if (exitContext)
-					SynchronizationAttribute.ExitContext ();
+					Mono.RemotingGate.ExitContext ();
 #endif
 
 				for (int i = 0; i < waitHandles.Length; ++i) {
@@ -153,7 +150,7 @@ namespace System.Threading
 
 #if !DISABLE_REMOTING
 				if (exitContext)
-					SynchronizationAttribute.EnterContext ();
+					Mono.RemotingGate.EnterContext ();
 #endif
 			}
 		}

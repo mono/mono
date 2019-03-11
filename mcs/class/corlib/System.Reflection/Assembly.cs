@@ -557,6 +557,8 @@ namespace System.Reflection {
 			}
 		}
 
+		[Obsolete ("CHECK CALLSITES", true)]
+		[MonoLinkerFeature(MonoLinkerFeatures.Remoting)]
 		public
 		virtual
 		Object CreateInstance (String typeName, Boolean ignoreCase,
