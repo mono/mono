@@ -87,6 +87,9 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Drawing\KnownColor.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Drawing\KnownColorTable.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Numerics\Hashing\HashHelpers.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeFConverter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ColorConverter.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\PointConverter.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\SystemColors.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Primitives\src\System\Drawing\Color.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Drawing.Primitives\src\System\Drawing\Point.cs" />
@@ -114,13 +117,11 @@
     <When Condition="'$(Platform)' == 'xammac'">
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeConverter.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeFConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\AssemblyRef.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Brush.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ClientUtils.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ColorConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\CategoryNameCollection.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IPropertyValueUIService.cs" />
@@ -213,7 +214,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\PointConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.Serializable.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.cs" />
@@ -323,21 +323,25 @@
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'winaot'">
-      <ItemGroup />
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\RectangleConverter.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\SizeConverter.cs" />
+      </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
-      <ItemGroup />
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\RectangleConverter.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\SizeConverter.cs" />
+      </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'unreal'">
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeConverter.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeFConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\AssemblyRef.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Brush.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ClientUtils.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ColorConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\CategoryNameCollection.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IPropertyValueUIService.cs" />
@@ -430,7 +434,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\PointConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.Serializable.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.cs" />
@@ -540,18 +543,19 @@
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'orbis'">
-      <ItemGroup />
+      <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\RectangleConverter.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\SizeConverter.cs" />
+      </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'net_4_x'">
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeConverter.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeFConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\AssemblyRef.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Brush.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ClientUtils.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ColorConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\CategoryNameCollection.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IPropertyValueUIService.cs" />
@@ -644,7 +648,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\PointConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.Serializable.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.cs" />
@@ -756,13 +759,11 @@
     <When Condition="'$(Platform)' == 'monotouch_watch'">
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeConverter.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeFConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\AssemblyRef.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Brush.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ClientUtils.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ColorConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\CategoryNameCollection.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IPropertyValueUIService.cs" />
@@ -855,7 +856,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\PointConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.Serializable.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.cs" />
@@ -967,13 +967,11 @@
     <When Condition="'$(Platform)' == 'monotouch_tv'">
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeConverter.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeFConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\AssemblyRef.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Brush.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ClientUtils.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ColorConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\CategoryNameCollection.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IPropertyValueUIService.cs" />
@@ -1066,7 +1064,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\PointConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.Serializable.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.cs" />
@@ -1178,13 +1175,11 @@
     <When Condition="'$(Platform)' == 'monotouch'">
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeConverter.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeFConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\AssemblyRef.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Brush.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ClientUtils.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ColorConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\CategoryNameCollection.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IPropertyValueUIService.cs" />
@@ -1277,7 +1272,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\PointConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.Serializable.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.cs" />
@@ -1389,13 +1383,11 @@
     <When Condition="'$(Platform)' == 'monodroid'">
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeConverter.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.ComponentModel.TypeConverter\src\System\Drawing\SizeFConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\AssemblyRef.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSameAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\BitmapSuffixInSatelliteAssemblyAttribute.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Brush.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ClientUtils.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\ColorConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\DashCap.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\CategoryNameCollection.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Design\IPropertyValueUIService.cs" />
@@ -1488,7 +1480,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECT.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Internal\GPRECTF.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\NativeMethods.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\PointConverter.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\Duplex.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.Serializable.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Drawing.Common\src\System\Drawing\Printing\InvalidPrinterException.cs" />
