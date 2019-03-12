@@ -254,6 +254,46 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       );
       
+    }, DEFAULT_TIMEOUT);  
+
+    it('WebSocketConnect: should return Closed because of invalid protocol.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:ConnectWebSocket", ["ws://localhost:8889", ""]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Closed', "result doesn't match expected result Closed.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT); 
+       
+    it('WebSocketConnect: should return Open.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:ConnectWebSocket", ["ws://localhost:8889", "echo-protocol"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Open', "result doesn't match expected result Open.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
     }, DEFAULT_TIMEOUT);    
 
   });
