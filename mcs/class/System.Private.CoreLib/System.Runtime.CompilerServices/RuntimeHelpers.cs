@@ -80,8 +80,7 @@ namespace System.Runtime.CompilerServices
 			if (method.IsNullHandle ())
 				throw new ArgumentException (SR.Argument_InvalidHandle);
 			unsafe {
-				int length;
-				IntPtr[] instantiations = RuntimeTypeHandle.CopyRuntimeTypeHandles (instantiation, out length);
+				IntPtr[] instantiations = RuntimeTypeHandle.CopyRuntimeTypeHandles (instantiation, out int length);
 				fixed (IntPtr* pinst = instantiations) {
 					PrepareMethod (method.Value, pinst, length);
 					GC.KeepAlive (instantiation);
