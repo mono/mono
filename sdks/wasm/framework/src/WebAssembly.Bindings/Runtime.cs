@@ -159,14 +159,12 @@ namespace WebAssembly {
 
 		static int UnBindJSObject (int js_id)
 		{
-			if (bound_objects.ContainsKey (js_id)) {
-				var obj = bound_objects [js_id];
+			if (bound_objects.TryGetValue (js_id, out var obj)) {
 				bound_objects.Remove (js_id);
 				return (int)(IntPtr)obj.Handle;
 			}
 
 			return 0;
-
 		}
 
 		static void UnBindJSObjectAndFree (int js_id)
