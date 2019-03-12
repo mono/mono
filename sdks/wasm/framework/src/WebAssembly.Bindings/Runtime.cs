@@ -79,9 +79,7 @@ namespace WebAssembly {
 		static int BindJSObject (int js_id)
 		{
 			JSObject obj;
-			if (bound_objects.ContainsKey (js_id))
-				obj = bound_objects [js_id];
-			else
+			if (!bound_objects.TryGetValue (js_id, out obj))
 				bound_objects [js_id] = obj = new JSObject (js_id);
 
 			return (int)(IntPtr)obj.Handle;
@@ -89,14 +87,12 @@ namespace WebAssembly {
 
 		static int UnBindJSObject (int js_id)
 		{
-			if (bound_objects.ContainsKey (js_id)) {
-				var obj = bound_objects [js_id];
+			if (bound_objects.TryGetValue (js_id, out var obj)) {
 				bound_objects.Remove (js_id);
 				return (int)(IntPtr)obj.Handle;
 			}
 
 			return 0;
-
 		}
 
 		static void UnBindJSObjectAndFree (int js_id)
@@ -181,13 +177,9 @@ namespace WebAssembly {
 
 		static int BindExistingObject (object raw_obj, int js_id)
 		{
+			JSObject obj = raw_obj as JSObject;
 
-			JSObject obj;
-			if (raw_obj is JSObject)
-				obj = (JSObject)raw_obj;
-			else if (raw_to_js.ContainsKey (raw_obj))
-				obj = raw_to_js [raw_obj];
-			else
+			if (obj == null && !raw_to_js.TryGetValue (raw_obj, out obj))
 				raw_to_js [raw_obj] = obj = new JSObject (js_id, raw_obj);
 
 			return (int)(IntPtr)obj.Handle;
@@ -195,15 +187,12 @@ namespace WebAssembly {
 
 		static int GetJSObjectId (object raw_obj)
 		{
-			JSObject obj = null;
-			if (raw_obj is JSObject)
-				obj = (JSObject)raw_obj;
-			else if (raw_to_js.ContainsKey (raw_obj))
-				obj = raw_to_js [raw_obj];
+			JSObject obj = raw_obj as JSObject;
 
-			var js_handle = obj != null ? obj.JSHandle : -1;
+			if (obj == null && !raw_to_js.TryGetValue (raw_obj, out obj))
+				return -1;
 
-			return js_handle;
+			return obj != null ? obj.JSHandle : -1;
 		}
 
 		static object GetMonoObject (int gc_handle)
