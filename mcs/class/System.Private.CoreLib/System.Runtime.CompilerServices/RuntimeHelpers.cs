@@ -110,11 +110,7 @@ namespace System.Runtime.CompilerServices
 
 		static object GetUninitializedObjectInternal (Type type)
 		{
-			if (type == null)
-				throw new ArgumentNullException (nameof (type));
-			if (!(type is RuntimeType))
-				throw new NotImplementedException ();
-			return GetUninitializedObjectInternal (new RuntimeTypeHandle (type as RuntimeType).Value);
+			return GetUninitializedObjectInternal (new RuntimeTypeHandle ((RuntimeType)type).Value);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

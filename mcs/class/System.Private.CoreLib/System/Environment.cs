@@ -123,8 +123,6 @@ namespace System
 				st = new StackTrace (e, needFileInfo);
 			return st.ToString (System.Diagnostics.StackTrace.TraceFormat.Normal);
 		}
-
-		internal static int GetPageSize () => 0;
 	}
 #endregion
 }
