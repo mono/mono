@@ -1,6 +1,6 @@
 # WebAssembly packager.exe
 
-`Packager.exe` is an interim utility for publishing Mono WebAssembly projects while additional tooling is being developed. 
+`packager.exe` is an interim utility for publishing Mono WebAssembly projects while additional tooling is being developed. 
 
 The command line arguments for Packager.exe can be displayed by using the help command line option.
 
