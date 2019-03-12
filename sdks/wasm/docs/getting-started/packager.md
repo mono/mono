@@ -129,44 +129,43 @@ Steps of execution are:
    ```
    emcc -Oz -g -s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s "EXPORTED_FUNCTIONS=['___cxa_is_pointer_type', '___cxa_can_catch']" -DENABLE_AOT=1 -DDRIVER_GEN=1 -Imono/sdks/out/wasm-runtime-release/include/mono-2.0 -c -o driver.o driver.c
    ```
-   6. Generate driver-gen.c.in which handles registering aot modules.
-   6. Run monolinker.exe on the assemblies
-      - Can be controlled by the command line option.
-      ```
-
+1. Generate driver-gen.c.in which handles registering aot modules.
+1. Run monolinker.exe on the assemblies
+   - Can be controlled by the command line option.
+   ```
       --link-mode=sdkonly|all        Set the link type used for AOT. (EXPERIMENTAL)
                               'sdkonly' only link the Core libraries.
                               'all' link Core and User assemblies. (default)
 
-      ```
-    6. Mono Ahead of Time (AOT) compiler is then executed over each assembly output by linker.
+   ```
+1. Mono Ahead of Time (AOT) compiler is then executed over each assembly output by linker.
 
-       - Example:
-       ``` bash
-       MONO_PATH=./linker-out mono/sdks/out/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen --debug  --aot=dedup-skip,llvmonly,interp,asmonly,no-opt,static,direct-icalls,llvm-outfile=./System.Numerics.dll.bc ./linker-out/System.Numerics.dll
-       ```
-        This pass generates LLVM bitcode for each AOT’d assembly in a .dll.bc which will later be fed into emcc as part of the last compilation  step
+   - Example:
+   ``` bash
+   MONO_PATH=./linker-out mono/sdks/out/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen --debug  --aot=dedup-skip,llvmonly,interp,asmonly,no-opt,static,direct-icalls,llvm-outfile=./System.Numerics.dll.bc ./linker-out/System.Numerics.dll
+   ```
+   This pass generates LLVM bitcode for each AOT’d assembly in a .dll.bc which will later be fed into emcc as part of the last compilation  step
     
-    6. Mono CIL Stripper is executed over each assembly
+1. Mono CIL Stripper is executed over each assembly
 
-       ``` bash
-       Assembly ilstrip-out/System.Xml.dll stripped
-       [27/46] cp linker-out/System.Numerics.dll ilstrip-out/System.Numerics.dll; mono-cil-strip ilstrip-out/System.Numerics.dll
-       Mono CIL Stripper
-       ```
-    6. The WebAssembly modules mono.js, mono.wasm etc are then generated.
-       ``` bash
-       emcc -Oz -g -s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s "EXPORTED_FUNCTIONS=['___cxa_is_pointer_type', '___cxa_can_catch']" -o bin/aot-mini/mono.js --js-library sdks/wasm/library_mono.js --js-library sdks/wasm/binding_support.js --js-library sdks/wasm/dotnet_support.js driver.o mini_tests.dll.bc mscorlib.dll.bc System.dll.bc Mono.Security.dll.bc System.Xml.dll.bc System.Numerics.dll.bc System.Core.dll.bc nunitlite.dll.bc aot-dummy.dll.bc sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a sdks/out/wasm-runtime-release/lib/libmono-native.a' 
-       ```
-    ### Example 1:
-    ``` bash
-    mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
-    ```
+   ``` bash
+   Assembly ilstrip-out/System.Xml.dll stripped
+   [27/46] cp linker-out/System.Numerics.dll ilstrip-out/System.Numerics.dll; mono-cil-strip ilstrip-out/System.Numerics.dll
+   Mono CIL Stripper
+   ```
+1. The WebAssembly modules mono.js, mono.wasm etc are then generated.
+   ``` bash
+   emcc -Oz -g -s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s "EXPORTED_FUNCTIONS=['___cxa_is_pointer_type', '___cxa_can_catch']" -o bin/aot-mini/mono.js --js-library sdks/wasm/library_mono.js --js-library sdks/wasm/binding_support.js --js-library sdks/wasm/dotnet_support.js driver.o mini_tests.dll.bc mscorlib.dll.bc System.dll.bc Mono.Security.dll.bc System.Xml.dll.bc System.Numerics.dll.bc System.Core.dll.bc nunitlite.dll.bc aot-dummy.dll.bc sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a sdks/out/wasm-runtime-release/lib/libmono-native.a' 
+   ```
+### Example 1:
+``` bash
+mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
+```
 
-    ### Example 2:
-    ``` bash
-    mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-sample --builddir=obj/aot-bindings-sample --aot --template=runtime.js --link-mode=SdkOnly --asset=sample.html sample.dll
-    ```
+### Example 2:
+``` bash
+mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-sample --builddir=obj/aot-bindings-sample --aot --template=runtime.js --link-mode=SdkOnly --asset=sample.html sample.dll
+```
 
 ## AOT Mixed Mode usage: (Experimental)
 
