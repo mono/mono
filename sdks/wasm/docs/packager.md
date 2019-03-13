@@ -5,7 +5,7 @@
 The command line arguments for Packager.exe can be displayed by using the help command line option.
 
 ``` bash
-packager.exe —help
+packager.exe -help
 ```
 
 The command produces the following output:
