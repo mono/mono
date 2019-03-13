@@ -116,7 +116,7 @@ Access to emscripten sdk which is controlled by:
 Access to mono sdk which is controlled by:
 
 ```
--mono-sdkdir=
+--mono-sdkdir=
 ```
 
 Steps of execution are:
