@@ -25,7 +25,7 @@ PCL5_FX_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETPortable/v5.0
 VS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/VisualStudio
 PORTABLE_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
 NUGET_BUILDTASKS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/NuGet
-MSBUILD_EXTENSIONS_15_DIR=$(mono_libdir)/mono/xbuild/15.0
+MSBUILD_EXTENSIONS_CURRENT_DIR=$(mono_libdir)/mono/xbuild/Current
 
 ifeq (14.0, $(XBUILD_VERSION))
 install-extras: install-versioned-files install-global-files
@@ -97,7 +97,7 @@ install-pcl-targets:
 	done
 
 install-web-targets:
-	for VERSION in v9.0 v10.0 v11.0 v12.0 v14.0 v15.0; do \
+	for VERSION in v9.0 v10.0 v11.0 v12.0 v14.0 v15.0 v16.0; do \
 		$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/$$VERSION/WebApplications; \
 		$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/$$VERSION/WebApplications; \
 	done
@@ -106,12 +106,12 @@ NUGET_BUILDTASKS_REPO_DIR=$(topdir)/../external/nuget-buildtasks
 
 install-nuget-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
-	$(MKINSTALLDIRS) $(DESTDIR)$(MSBUILD_EXTENSIONS_15_DIR)/Imports/Microsoft.Common.props/ImportBefore
-	$(MKINSTALLDIRS) $(DESTDIR)$(MSBUILD_EXTENSIONS_15_DIR)/Microsoft.Common.targets/ImportAfter
+	$(MKINSTALLDIRS) $(DESTDIR)$(MSBUILD_EXTENSIONS_CURRENT_DIR)/Imports/Microsoft.Common.props/ImportBefore
+	$(MKINSTALLDIRS) $(DESTDIR)$(MSBUILD_EXTENSIONS_CURRENT_DIR)/Microsoft.Common.targets/ImportAfter
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.targets $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.props $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
-	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props $(DESTDIR)$(MSBUILD_EXTENSIONS_15_DIR)/Imports/Microsoft.Common.props/ImportBefore
-	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets $(DESTDIR)$(MSBUILD_EXTENSIONS_15_DIR)/Microsoft.Common.targets/ImportAfter
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props $(DESTDIR)$(MSBUILD_EXTENSIONS_CURRENT_DIR)/Imports/Microsoft.Common.props/ImportBefore
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets $(DESTDIR)$(MSBUILD_EXTENSIONS_CURRENT_DIR)/Microsoft.Common.targets/ImportAfter
 
 install-nuget-imports:
 ifeq (14.0, $(XBUILD_VERSION))

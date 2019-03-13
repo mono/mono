@@ -36,7 +36,7 @@ DISTFILES = $(ROSLYN_FILES_FOR_MONO) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) csi-tes
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
 
 TARGET_DIR = $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)
-MSBUILD_ROSLYN_DIR = $(DESTDIR)$(mono_libdir)/mono/msbuild/15.0/bin/Roslyn
+MSBUILD_ROSLYN_DIR = $(DESTDIR)$(mono_libdir)/mono/msbuild/Current/bin/Roslyn
 
 install-local: install-prototypes
 	$(MKINSTALLDIRS) $(TARGET_DIR)
