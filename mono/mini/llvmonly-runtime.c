@@ -778,9 +778,14 @@ init_llvmonly_method (MonoAotModule *amodule, guint32 method_index, MonoClass *i
 	res = mono_aot_init_llvmonly_method (amodule, method_index, init_class, context, lookup_context, error);
 	if (!res || !is_ok (error)) {
 		MonoException *ex = mono_error_convert_to_exception (error);
-		/* Its okay to raise in llvmonly mode */
-		if (ex)
-			mono_llvm_throw_exception ((MonoObject*)ex);
+		if (ex) {
+			/* Its okay to raise in llvmonly mode */
+			if (mono_llvm_only) {
+				mono_llvm_throw_exception ((MonoObject*)ex);
+			} else {
+				mono_set_pending_exception (ex);
+			}
+		}
 	}
 }
 

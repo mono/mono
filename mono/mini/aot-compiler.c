@@ -3613,6 +3613,8 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 				encode_signature (acfg, info->d.gsharedvt.sig, p, &p);
 			else if (info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
 				encode_icall (info->d.icall.func, p, &p);
+			else if (info->subtype == WRAPPER_SUBTYPE_AOT_INIT)
+				encode_value (info->d.aot_init.subtype, p, &p);
 			break;
 		}
 		case MONO_WRAPPER_MANAGED_TO_NATIVE: {
@@ -4159,6 +4161,14 @@ add_jit_icall_wrapper (gpointer key, gpointer value, gpointer user_data)
 	g_free (name);
 
 	add_method (acfg, wrapper);
+}
+
+static void
+add_lazy_init_wrappers (MonoAotCompile *acfg)
+{
+	const int num_init_wrappers = 4;
+	for (int i=0; i < num_init_wrappers; i++)
+		add_method (acfg, mono_marshal_get_aot_init_wrapper (i));
 }
 
 static MonoMethod*
@@ -8955,6 +8965,9 @@ append_mangled_wrapper_subtype (GString *s, WrapperSubtype subtype)
 	case WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG:
 		label = "gsharedvt_out_sig";
 		break;
+	case WRAPPER_SUBTYPE_AOT_INIT:
+		label = "aot_init";
+		break;
 	default:
 		g_assert_not_reached ();
 	}
@@ -9099,6 +9112,11 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 			append_sig = FALSE;
 		} else if (info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
 			g_string_append_printf (s, "%s", method->name);
+		else if (info->subtype == WRAPPER_SUBTYPE_AOT_INIT) {
+			g_string_append_printf (s, "%s_", m_class_get_image (method->klass)->assembly->aname.name);
+			g_string_append_printf (s, "%d_", info->d.aot_init.subtype);
+			append_sig = FALSE;
+		}
 		break;
 	}
 	case MONO_WRAPPER_MANAGED_TO_NATIVE: {
@@ -13335,6 +13353,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		if (acfg->aot_opts.interp)
 			flags = (LLVMModuleFlags)(flags | LLVM_MODULE_FLAG_INTERP);
 		mono_llvm_create_aot_module (acfg->image->assembly, acfg->global_prefix, acfg->nshared_got_entries, flags);
+
+		add_lazy_init_wrappers (acfg);
 	}
 #endif
 
@@ -13519,12 +13539,20 @@ emit_aot_image (MonoAotCompile *acfg)
 			MonoCompile *cfg = acfg->cfgs [i];
 			int method_index = get_method_index (acfg, cfg->orig_method);
 
-			if (COMPILE_LLVM (cfg))
+			if (cfg->asm_symbol) {
+				// Set by method emitter in backend
+				if (acfg->llvm_label_prefix) {
+					char *old_symbol = cfg->asm_symbol;
+					cfg->asm_symbol = g_strdup_printf ("%s%s", acfg->llvm_label_prefix, cfg->asm_symbol);
+					g_free (old_symbol);
+				}
+			} else if (COMPILE_LLVM (cfg)) {
 				cfg->asm_symbol = g_strdup_printf ("%s%s", acfg->llvm_label_prefix, cfg->llvm_method_name);
-			else if (acfg->global_symbols || acfg->llvm)
+			} else if (acfg->global_symbols || acfg->llvm) {
 				cfg->asm_symbol = get_debug_sym (cfg->orig_method, "", acfg->method_label_hash);
-			else
+			} else {
 				cfg->asm_symbol = g_strdup_printf ("%s%sm_%x", acfg->temp_prefix, acfg->llvm_label_prefix, method_index);
+			}
 			cfg->asm_debug_symbol = cfg->asm_symbol;
 		}
 	}

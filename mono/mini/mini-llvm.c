@@ -2886,9 +2886,19 @@ emit_init_icall_wrapper (MonoLLVMModule *module, const char *name, const char *i
 	default:
 		g_assert_not_reached ();
 	}
+
 	LLVMSetLinkage (func, LLVMInternalLinkage);
+
 	mono_llvm_add_func_attr (func, LLVM_ATTR_NO_INLINE);
-	set_preserveall_cc (func);
+
+	// FIXME? Using this with mono debug info causes unwind.c to explode when
+	// parsing some of these registers saved by this call. Can't unwind through it.
+	// Not an issue with llvmonly because it doesn't use that DWARF
+	if (module->llvm_only)
+		set_preserveall_cc (func);
+	else
+		LLVMSetFunctionCallConv (func, LLVMMono1CallConv);
+
 	entry_bb = LLVMAppendBasicBlock (func, "ENTRY");
 	builder = LLVMCreateBuilder ();
 	LLVMPositionBuilderAtEnd (builder, entry_bb);
@@ -3155,7 +3165,15 @@ emit_init_method (EmitContext *ctx)
 	 * This enables llvm to keep arguments in their original registers/
 	 * scratch registers, since the call will not clobber them.
 	 */
-	set_call_preserveall_cc (call);
+
+	// FIXME? Using this with mono debug info causes unwind.c to explode when
+	// parsing some of these registers saved by this call. Can't unwind through it.
+	// Not an issue with llvmonly because it doesn't use that DWARF
+
+	if (ctx->llvm_only)
+		set_call_preserveall_cc (call);
+	else
+		LLVMSetInstructionCallConv (call, LLVMMono1CallConv);
 
 	LLVMBuildBr (builder, inited_bb);
 	ctx->bblocks [cfg->bb_entry->block_num].end_bblock = inited_bb;
@@ -7482,6 +7500,44 @@ emit_method_inner (EmitContext *ctx)
 	}
 #endif
 
+	if (cfg->method->wrapper_type == MONO_WRAPPER_OTHER) {
+		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
+		const gchar *name = NULL;
+		if (info->subtype == WRAPPER_SUBTYPE_AOT_INIT) {
+			switch (info->d.aot_init.subtype) {
+				case 0:
+					method = ctx->module->init_method;
+					name = "init_method";
+					break;
+				case 1:
+					method = ctx->module->init_method_gshared_mrgctx;
+					name = "init_method_gshared_mrgctx";
+					break;
+				case 2:
+					method = ctx->module->init_method_gshared_this;
+					name = "init_method_gshared_this";
+					break;
+				case 3:
+					method = ctx->module->init_method_gshared_vtable;
+					name = "init_method_gshared_vtable";
+					break;
+				default:
+					g_assert_not_reached ();
+			}
+			ctx->lmethod = method;
+			ctx->method_name = g_strdup (name);
+			ctx->cfg->asm_symbol = g_strdup (name);
+			ctx->module->max_method_idx = MAX (ctx->module->max_method_idx, cfg->method_index);
+
+			if (!cfg->llvm_only && ctx->module->external_symbols) {
+				LLVMSetLinkage (method, LLVMExternalLinkage);
+				LLVMSetVisibility (method, LLVMHiddenVisibility);
+			}
+
+			goto after_codegen;
+		}
+	}
+
 	sig = mono_method_signature_internal (cfg->method);
 	ctx->sig = sig;
 
@@ -7899,6 +7955,7 @@ emit_method_inner (EmitContext *ctx)
 			LLVMBuildBr (ctx->builder, ctx->inited_bb);
 	}
 
+after_codegen:
 	if (!ctx->module->llvm_disable_self_init) {
 		g_ptr_array_add (ctx->module->cfgs, cfg);
 
@@ -9142,12 +9199,14 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 		LLVMSetInitializer (module->inited_var, LLVMConstNull (inited_type));
 	}
 
-	if (!llvm_disable_self_init)
-		emit_init_icall_wrappers (module);
 
 	emit_gc_safepoint_poll (module);
 
 	emit_llvm_code_start (module);
+
+	// Needs idx_to_lmethod
+	if (!llvm_disable_self_init)
+		emit_init_icall_wrappers (module);
 
 	/* Add a dummy personality function */
 	if (!use_debug_personality) {
@@ -9403,7 +9462,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	/* llc defines this directly */
 	if (!module->llvm_only) {
 		fields [tindex ++] = LLVMAddGlobal (lmodule, eltype, module->eh_frame_symbol);
-		fields [tindex ++] = LLVMConstNull (eltype);
+		fields [tindex ++] = module->get_method;
 		fields [tindex ++] = LLVMConstNull (eltype);
 	} else {
 		fields [tindex ++] = LLVMConstNull (eltype);
