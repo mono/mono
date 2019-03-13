@@ -733,9 +733,7 @@ namespace System.Reflection {
 			get { return get_core_clr_security_level () == 1; }
 		}
 
-#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeMethodInfo> (other);
-#endif
 	}
 	
 	[Serializable()]
@@ -990,9 +988,7 @@ namespace System.Reflection {
 		public extern int get_core_clr_security_level ();
 #endif
 
-#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeConstructorInfo> (other);
-#endif
 
 		public override bool IsSecurityTransparent {
 			get { return get_core_clr_security_level () == 0; }

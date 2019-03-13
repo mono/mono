@@ -143,6 +143,7 @@
       <Compile Include="System.Reflection\CorElementType.cs" />
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
+      <Compile Include="System.Reflection\MemberInfo.cs" />
       <Compile Include="System.Reflection\MethodBase.cs" />
       <Compile Include="System.Reflection\RuntimeAssembly.cs" />
       <Compile Include="System.Reflection\RuntimeMethodBody.cs" />
@@ -180,6 +181,7 @@
   <ItemGroup>
       <Compile Include="..\..\build\common\Consts.cs" />
       <Compile Include="..\..\build\common\SR.cs" />
+      <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
 
       <Compile Include="..\corlib\coreclr\Math.CoreCLR.cs" />
 
