@@ -8048,7 +8048,7 @@ type_array_from_modifiers (MonoImage *image, MonoType *type, int optional, MonoE
 	res = mono_array_new_handle (domain, mono_defaults.systemtype_class, count, error);
 	goto_if_nok (error, fail);
 	count = 0;
-	for (i = cmod_count - 1; i >= 0; --i) {
+	for (i = 0; i < cmod_count; ++i) {
 		gboolean required;
 		MonoType *cmod_type = mono_type_get_custom_modifier (type, i, &required, error);
 		goto_if_nok (error, fail);
