@@ -1,0 +1,17 @@
+diff --git a/mono/config.make b/mono/config.make
+index 00bd4a0..136c644 100644
+--- a/mono/config.make
++++ b/mono/config.make
+@@ -144,6 +144,12 @@ NO_DIST = .gitignore lib/debug lib/proto lib/release
+ #
+ install-sdk-lib:
+ 	@echo "Installing $(ASSEMBLY)"
++	@echo "Dest dir"
++	@ls -la $(DESTDIR)
++	@chmod +w $(DESTDIR)
++	@ls -la $(DESTDIR)
++	@echo "Mono dir"
+ 	@mkdir -p $(DESTDIR)$(monodir)/fsharp
++	@ls -la $(DESTDIR)$(monodir)
+ 	@if test "x$(DELAY_SIGN)" = "x1"; then \
+ 	    echo "Signing $(outdir)$(ASSEMBLY) with Mono key"; \
