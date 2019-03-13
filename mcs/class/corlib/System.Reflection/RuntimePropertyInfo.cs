@@ -449,9 +449,7 @@ namespace System.Reflection {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
 
-#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimePropertyInfo> (other);
-#endif
 
 		public override int MetadataToken {
 			get {

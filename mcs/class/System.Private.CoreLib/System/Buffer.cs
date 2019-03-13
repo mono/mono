@@ -20,11 +20,15 @@ namespace System
 				throw new ArgumentNullException (nameof (dst));
 
 			if (srcOffset < 0)
-				throw new ArgumentOutOfRangeException (SR.ArgumentOutOfRange_MustBeNonNegInt32, nameof (srcOffset));
+				throw new ArgumentOutOfRangeException (nameof (srcOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			if (dstOffset < 0)
-				throw new ArgumentOutOfRangeException (SR.ArgumentOutOfRange_MustBeNonNegInt32, nameof (dstOffset));
+				throw new ArgumentOutOfRangeException (nameof (dstOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			if (count < 0)
-				throw new ArgumentOutOfRangeException (SR.ArgumentOutOfRange_MustBeNonNegInt32, nameof (count));
+				throw new ArgumentOutOfRangeException (nameof (count), SR.ArgumentOutOfRange_MustBeNonNegInt32);
+			if (!(src is byte[]))
+				throw new ArgumentException (SR.Arg_MustBePrimArray, "src");
+			if (!(dst is byte[]))
+				throw new ArgumentException (SR.Arg_MustBePrimArray, "dest");
 
 			var uCount = (nuint) count;
 			var uSrcOffset = (nuint) srcOffset;
@@ -34,9 +38,9 @@ namespace System
 			var uDstLen = (nuint) dst.Length;
 
 			if (uSrcLen < uSrcOffset + uCount)
-				throw new ArgumentException (SR.Argument_InvalidOffLen);
+				throw new ArgumentException (SR.Argument_InvalidOffLen, "");
 			if (uDstLen < uDstOffset + uCount)
-				throw new ArgumentException (SR.Argument_InvalidOffLen);
+				throw new ArgumentException (SR.Argument_InvalidOffLen, "");
 
 			if (uCount != 0) {
 				unsafe {
