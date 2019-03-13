@@ -48,7 +48,7 @@ namespace System.Collections.Generic
 			return new ObjectEqualityComparer<T>();
 		}
 
-		[MonoTODO ("Add specialized versions")]
+		// MONOTODO: Add specialized versions
 		internal virtual int IndexOf (T[] array, T value, int startIndex, int count)
 		{
 			int endIndex = startIndex + count;
