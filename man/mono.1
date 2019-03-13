@@ -640,6 +640,10 @@ running a 1.1 program on a 2.0 version:
 Configures the virtual machine to be better suited for server
 operations (currently, allows a heavier threadpool initialization).
 .TP
+\fB--use-map-jit\fR
+Instructs Mono to generate code using MAP_JIT on MacOS.  Necessary for
+bundled applications.
+.TP
 \fB--verify-all\fR 
 Verifies mscorlib and assemblies in the global
 assembly cache for valid IL, and all user code for IL
