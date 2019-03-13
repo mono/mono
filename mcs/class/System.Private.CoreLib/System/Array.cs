@@ -85,22 +85,22 @@ namespace System
 		public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
 			if (sourceArray == null)
-				throw new ArgumentNullException ("sourceArray");
+				throw new ArgumentNullException (nameof (sourceArray));
 
 			if (destinationArray == null)
-				throw new ArgumentNullException ("destinationArray");
+				throw new ArgumentNullException (nameof (destinationArray));
 
 			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", "Value has to be >= 0.");
+				throw new ArgumentOutOfRangeException (nameof (length), "Value has to be >= 0.");
 
 			if (sourceArray.Rank != destinationArray.Rank)
 				throw new RankException(SR.Rank_MultiDimNotSupported);
 
 			if (sourceIndex < 0)
-				throw new ArgumentOutOfRangeException ("sourceIndex", "Value has to be >= 0.");
+				throw new ArgumentOutOfRangeException (nameof (sourceIndex), "Value has to be >= 0.");
 
 			if (destinationIndex < 0)
-				throw new ArgumentOutOfRangeException ("destinationIndex", "Value has to be >= 0.");
+				throw new ArgumentOutOfRangeException (nameof (destinationIndex), "Value has to be >= 0.");
 
 			if (FastCopy (sourceArray, sourceIndex, destinationArray, destinationIndex, length))
 				return;
@@ -109,11 +109,11 @@ namespace System
 			int dest_pos = destinationIndex - destinationArray.GetLowerBound (0);
 
 			if (dest_pos < 0)
-				throw new ArgumentOutOfRangeException ("destinationIndex", "Index was less than the array's lower bound in the first dimension.");
+				throw new ArgumentOutOfRangeException (nameof (destinationIndex), "Index was less than the array's lower bound in the first dimension.");
 
 			// re-ordered to avoid possible integer overflow
 			if (source_pos > sourceArray.Length - length)
-				throw new ArgumentException (SR.Arg_LongerThanSrcArray, "sourceArray");
+				throw new ArgumentException (SR.Arg_LongerThanSrcArray, nameof (sourceArray));
 
 			if (dest_pos > destinationArray.Length - length) {
 				throw new ArgumentException ("Destination array was not long enough. Check destIndex and length, and the array's lower bounds", nameof (destinationArray));

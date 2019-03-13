@@ -12,12 +12,12 @@ namespace System
 {
 	partial class Buffer
 	{
-		public static void BlockCopy (Array src, int srcOffset, Array dst, int dstOffset, int count)
+		public static void BlockCopy (Array src, int srcOffset, Array dest, int dstOffset, int count)
 		{
 			if (src == null)
 				throw new ArgumentNullException (nameof (src));
-			if (dst == null)
-				throw new ArgumentNullException (nameof (dst));
+			if (dest == null)
+				throw new ArgumentNullException (nameof (dest));
 
 			if (srcOffset < 0)
 				throw new ArgumentOutOfRangeException (nameof (srcOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
@@ -26,16 +26,16 @@ namespace System
 			if (count < 0)
 				throw new ArgumentOutOfRangeException (nameof (count), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			if (!(src is byte[]))
-				throw new ArgumentException (SR.Arg_MustBePrimArray, "src");
-			if (!(dst is byte[]))
-				throw new ArgumentException (SR.Arg_MustBePrimArray, "dest");
+				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (src));
+			if (!(dest is byte[]))
+				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (dest));
 
 			var uCount = (nuint) count;
 			var uSrcOffset = (nuint) srcOffset;
 			var uDstOffset = (nuint) dstOffset;
 
 			var uSrcLen = (nuint) src.Length;
-			var uDstLen = (nuint) dst.Length;
+			var uDstLen = (nuint) dest.Length;
 
 			if (uSrcLen < uSrcOffset + uCount)
 				throw new ArgumentException (SR.Argument_InvalidOffLen, "");
@@ -44,7 +44,7 @@ namespace System
 
 			if (uCount != 0) {
 				unsafe {
-					fixed (byte* pSrc = &src.GetRawArrayData (), pDst = &dst.GetRawArrayData ()) {
+					fixed (byte* pSrc = &src.GetRawArrayData (), pDst = &dest.GetRawArrayData ()) {
 						Memmove (pDst + uDstOffset, pSrc + uSrcOffset, uCount);
 					}
 				}

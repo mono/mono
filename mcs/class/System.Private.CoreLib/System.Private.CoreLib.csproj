@@ -181,7 +181,6 @@
   <ItemGroup>
       <Compile Include="..\..\build\common\Consts.cs" />
       <Compile Include="..\..\build\common\SR.cs" />
-      <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
 
       <Compile Include="..\corlib\coreclr\Math.CoreCLR.cs" />
 
