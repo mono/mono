@@ -6337,7 +6337,6 @@ data/mono-2.pc
 data/monosgen-2.pc
 data/mono.pc
 data/mono-cairo.pc
-data/mono-nunit.pc
 data/mono-options.pc
 data/mono-lineeditor.pc
 data/monodoc.pc
