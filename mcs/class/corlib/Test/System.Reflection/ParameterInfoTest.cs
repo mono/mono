@@ -562,6 +562,15 @@ namespace MonoTests.System.Reflection
 			var optionalCustomModifiers = parameter.GetOptionalCustomModifiers ();
 			Assert.AreEqual (new[] { typeof (C), typeof (C), typeof (D), typeof (C) }, optionalCustomModifiers);
 		}
-#endif		
+#endif
+
+		[Test]
+		public void ReturnParameter_IsDefined_False ()
+		{
+			Type type = typeof (object);
+			MethodInfo method = type.GetMethod ("ToString");
+			ParameterInfo paramInfo = method.ReturnParameter;
+			Assert.IsFalse (paramInfo.IsDefined (typeof (Attribute)));
+		}
 	}
 }

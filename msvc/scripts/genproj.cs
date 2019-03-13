@@ -56,7 +56,7 @@ public class KnownProjectInfo {
 }
 
 public class SlnGenerator {
-	public static readonly string NewLine = "\r\n"; //Environment.NewLine; // "\n"; 
+	public static readonly string NewLine = Environment.NewLine;
 	public SlnGenerator (string slnVersion)
 	{
 		Console.Error.WriteLine("// Requested sln version is {0}", slnVersion);
@@ -713,6 +713,9 @@ public class MsbuildGenerator {
 
 		case "/features":
 			return true;
+
+		case "/sourcelink":
+			return true;
 		}
 
 		Console.Error.WriteLine ($"// Failing with : {arg}");
@@ -832,7 +835,7 @@ public class MsbuildGenerator {
 		var profilesFolder = Path.GetFullPath ("../../mcs/build/profiles");
 
 		SourcesParser.TraceLevel = 0;
-		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder);
+		return _SourcesParser = new SourcesParser (platformsFolder, profilesFolder, null);
 	}
 
 	private ParseResult ReadSources (string sourcesFileName) {
@@ -1215,10 +1218,9 @@ public class MsbuildGenerator {
 						Console.Error.WriteLine ($"{library}: Could not find a matching project reference for {Path.GetFileName (reference)}");
 						Console.Error.WriteLine ("  --> Adding reference with hintpath instead");
 					}
-					var externalDrawing = (reference == Environment.GetEnvironmentVariable ("EXTERNAL_FACADE_DRAWING_REFERENCE"));
-					refs.Append ("    <Reference Include=\"" + (externalDrawing ? "$(EXTERNAL_FACADE_DRAWING_REFERENCE)" : reference) + "\">" + NewLine);
+					refs.Append ("    <Reference Include=\"" + reference + "\">" + NewLine);
 					refs.Append ("      <SpecificVersion>False</SpecificVersion>" + NewLine);
-					refs.Append ("      <HintPath>" + (externalDrawing ? "$(EXTERNAL_FACADE_DRAWING_REFERENCE)" : reference) + "</HintPath>" + NewLine);
+					refs.Append ("      <HintPath>" + reference + "</HintPath>" + NewLine);
 					refs.Append ("      <Private>False</Private>" + NewLine);
 					refs.Append ("    </Reference>" + NewLine);
 				}

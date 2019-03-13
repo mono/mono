@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
 using System.Collections.Concurrent;
+using System.Collections;
 #if !MOBILE
 using MonoTests.Helpers;
 #endif
@@ -83,6 +84,31 @@ public class Tests2 {
 	}
 
 	public void invoke () {
+	}
+}
+
+public struct TestEnumeratorInsideGenericStruct<TKey, TValue>
+{
+	private KeyValuePair<TKey, TValue> _bucket;
+	private Position _currentPosition;
+	internal TestEnumeratorInsideGenericStruct(KeyValuePair<TKey, TValue> bucket)
+	{
+		_bucket = bucket;
+		_currentPosition = Position.BeforeFirst;
+	}
+
+	public KeyValuePair<TKey, TValue> Current
+	{
+		get
+		{
+			if (_currentPosition == Position.BeforeFirst)
+				return _bucket;
+			return _bucket;
+		}
+	}
+	private enum Position
+	{
+		BeforeFirst
 	}
 }
 
@@ -164,6 +190,19 @@ public class GClass<T> {
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public void bp<T2> () {
+	}
+}
+
+public struct MySpan<T> {
+	internal class Pinnable<J> {
+		public J Data;
+	}
+	Pinnable<T> _pinnable;
+	public MySpan(T[] array) {
+		_pinnable = Unsafe.As<Pinnable<T>>(array);
+	}
+	public override string ToString() {
+		return "abc";
 	}
 }
 
@@ -447,9 +486,28 @@ public class Tests : TestsBase, ITest2
 			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
 		Bug59649 ();
+		elapsed_time();
+		field_with_unsafe_cast_value();
+		inspect_enumerator_in_generic_struct();
+		if_property_stepping();
 		return 3;
 	}
 
+	private class TestClass {
+		private string oneLineProperty = "";
+		public string OneLineProperty {
+			get { return oneLineProperty; }
+			set { oneLineProperty = value; }
+		}
+	}
+
+	public static void if_property_stepping() {
+		var test = new TestClass();
+		if (test.OneLineProperty == "someInvalidValue6049e709-7271-41a1-bc0a-f1f1b80d4125")
+			return;
+		Console.Write("");
+	}
+	
 	public static void local_reflect () {
 		//Breakpoint line below, and reflect someField via ObjectMirror;
 		LocalReflectClass.RunMe ();
@@ -528,6 +586,8 @@ public class Tests : TestsBase, ITest2
 		ss_fp_clobber ();
 		ss_no_frames ();
 		ss_await ();
+		ss_nested_with_three_args_wrapper();
+		ss_nested_twice_with_two_args_wrapper();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -628,6 +688,15 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void field_with_unsafe_cast_value() {
+		var arr = new char[3];
+		arr[0] = 'a';
+		arr[1] = 'b';
+		arr[2] = 'c';
+		MySpan<char> bytes = new MySpan<char>(arr);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void ss_nested () {
 		ss_nested_1 (ss_nested_2 ());
 		ss_nested_1 (ss_nested_2 ());
@@ -640,12 +709,55 @@ public class Tests : TestsBase, ITest2
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_with_three_args_wrapper () {
+		ss_nested_with_three_args(ss_nested_arg1 (), ss_nested_arg2 (), ss_nested_arg3 ());
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_nested_twice_with_two_args_wrapper () {
+		ss_nested_with_two_args(ss_nested_arg1 (), ss_nested_with_two_args(ss_nested_arg2 (), ss_nested_arg3 ()));
+	}
+  
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void elapsed_time () {
+		Thread.Sleep(200);
+		Thread.Sleep(00);
+		Thread.Sleep(100);
+		Thread.Sleep(300);
+	}
+	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void inspect_enumerator_in_generic_struct() {
+		TestEnumeratorInsideGenericStruct<String, String> generic_struct = new TestEnumeratorInsideGenericStruct<String, String>(new KeyValuePair<string, string>("0", "f1"));
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_with_two_args (int a1, int a2) {
 		return a1 + a2;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_with_three_args (int a1, int a2, int a3) {
+		return a1 + a2 + a3;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static int ss_nested_arg () {
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg1 () {
+		return 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg2 () {
+		return 0;
+	}
+	
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int ss_nested_arg3 () {
 		return 0;
 	}
 

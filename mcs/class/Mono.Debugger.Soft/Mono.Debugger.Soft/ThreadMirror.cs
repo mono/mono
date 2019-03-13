@@ -30,9 +30,19 @@ namespace Mono.Debugger.Soft
 			return frames;
 		}
 
+		public long ElapsedTime () {
+			vm.CheckProtocolVersion (2, 50);
+			long elapsedTime = GetElapsedTime ();
+			return elapsedTime;
+		}
+
 		internal void InvalidateFrames () {
 			cacheInvalid = true;
 			threadStateInvalid = true;
+		}
+
+		internal long GetElapsedTime () {
+			return vm.conn.Thread_GetElapsedTime (id);
 		}
 
 		internal void FetchFrames (bool mustFetch = false) {

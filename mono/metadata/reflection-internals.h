@@ -25,10 +25,6 @@ mono_domain_try_type_resolve_name (MonoDomain *domain, MonoStringHandle name, Mo
 MonoReflectionAssemblyHandle
 mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionTypeBuilderHandle typebuilder, MonoError *error);
 
-ICALL_EXPORT
-MonoReflectionTypeHandle
-ves_icall_TypeBuilder_create_runtime_class (MonoReflectionTypeBuilderHandle tb, MonoError *error);
-
 MonoReflectionTypeBuilderHandle
 mono_class_get_ref_info (MonoClass *klass);
 
@@ -139,5 +135,8 @@ mono_runtime_get_caller_no_system_or_reflection (void);
 
 MonoAssembly*
 mono_runtime_get_caller_from_stack_mark (MonoStackCrawlMark *stack_mark);
+
+void
+mono_reflection_get_param_info_member_and_pos (MonoReflectionParameterHandle p, MonoObjectHandle member_impl, int *out_position);
 
 #endif /* __MONO_METADATA_REFLECTION_INTERNALS_H__ */

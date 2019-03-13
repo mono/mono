@@ -1,6 +1,6 @@
 thisdir = class
 
-NO_FACADES_PROFILE := $(filter monodroid_tools monotouch_tools wasm_tools testing_aot_hybrid binary_reference_assemblies xbuild_12 xbuild_14, $(PROFILE))
+NO_FACADES_PROFILE := $(filter monodroid_tools monotouch_tools wasm_tools binary_reference_assemblies xbuild_12 xbuild_14 netcore, $(PROFILE))
 
 ifndef NO_FACADES_PROFILE
 FACADES_FOLDER := Facades
@@ -95,8 +95,7 @@ mobile_common_dirs_parallel := \
 testing_aot_full_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	Mono.Simd \
-	Mono.CSharp \
-	System.Drawing
+	Mono.CSharp
 
 testing_aot_full_interp_dirs_parallel := $(testing_aot_full_dirs_parallel)
 
@@ -104,20 +103,24 @@ testing_aot_hybrid_dirs_parallel := $(testing_aot_full_dirs_parallel)
 
 xammac_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
-	Mono.CompilerServices.SymbolWriter
+	Mono.CompilerServices.SymbolWriter	\
+	Mono.CSharp
 
 monodroid_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	Mono.CompilerServices.SymbolWriter	\
 	Mono.Btls.Interface	\
 	Mono.Posix \
-	Mono.CSharp
+	Mono.CSharp \
+	Mono.Debugger.Soft \
+	Mono.Runtime.Tests
 
 monodroid_tools_dirs_parallel := \
 	Mono.Cecil	\
 	Mono.CompilerServices.SymbolWriter \
 	ICSharpCode.SharpZipLib	\
-	monodoc
+	monodoc \
+	Mono.Debugger.Soft
 
 monotouch_tools_dirs_parallel := \
 	Mono.Cecil \
@@ -154,22 +157,19 @@ monotouch_tv_runtime_dirs := \
 
 winaot_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
-	System.Drawing
+	Mono.Simd
 
 unreal_dirs_parallel := \
-	$(mobile_common_dirs_parallel)	\
-	System.Drawing
+	$(mobile_common_dirs_parallel)
 
 wasm_dirs_parallel := \
-	$(mobile_common_dirs_parallel)	\
-	System.Drawing
+	$(mobile_common_dirs_parallel)
 
 wasm_tools_dirs_parallel := \
 	Mono.Cecil
 
 orbis_dirs_parallel := \
-	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))	\
-	System.Drawing
+	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))
 
 xammac_4_5_dirs_parallel := \
 	Mono.Security \
@@ -421,12 +421,15 @@ wasm_PARALLEL_SUBDIRS := $(wasm_dirs_parallel)
 wasm_tools_SUBDIRS :=
 wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 
+netcore_SUBDIRS := System.Private.CoreLib
+netcore_PARALLEL_SUBDIRS :=
+
 include ../build/rules.make
 
 DIST_SUBDIRS = $(testing_aot_full_dirs_parallel) $(testing_aot_hybrid_dirs_parallel) $(monotouch_dirs_parallel) $(monotouch_tools_dirs_parallel) \
 $(monodroid_dirs_parallel) $(monodroid_tools_dirs_parallel) $(xammac_dirs_parallel) $(net_4_x_dirs) $(net_4_x_parallel_dirs) \
 $(xammac_4_5_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(wasm_tools_dirs_parallel) $(xbuild_14_SUBDIRS) \
-$(testing_aot_full_interp_dirs_parallel) dlr aot-compiler reference-assemblies Facades
+$(testing_aot_full_interp_dirs_parallel) $(netcore_SUBDIRS) dlr aot-compiler reference-assemblies Facades
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
@@ -479,7 +482,7 @@ build_files := mscorlib.dll System.dll System.Xml.dll Mono.Security.dll System.C
 	Facades/System.IO.dll Facades/System.Runtime.InteropServices.dll Facades/System.Xml.ReaderWriter.dll Facades/System.Linq.Expressions.dll \
 	Facades/System.Runtime.Numerics.dll Facades/System.Xml.XDocument.dll Facades/System.IO.FileSystem.Primitives.dll Facades/System.IO.FileSystem.dll \
 	Facades/System.Diagnostics.FileVersionInfo.dll Facades/System.Security.Cryptography.Primitives.dll Facades/System.Security.Cryptography.Algorithms.dll \
-	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll \
+	Facades/System.ValueTuple.dll Facades/System.Text.Encoding.CodePages.dll Facades/netstandard.dll \
 	Mono.Cecil.dll
 
 monolite_files = $(build_files:%=lib/$(monolite_dir)/%)

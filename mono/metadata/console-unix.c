@@ -35,6 +35,7 @@
 #include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-proclib.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/mono-errno.h>
 
 /* On solaris, curses.h must come before both termios.h and term.h */
 #ifdef HAVE_CURSES_H
@@ -57,6 +58,7 @@
 
 #include <mono/metadata/console-io.h>
 #include <mono/metadata/exception.h>
+#include "icall-decl.h"
 
 static gboolean setup_finished;
 static gboolean atexit_called;
@@ -186,7 +188,7 @@ terminal_get_dimensions (void)
 	
 	if (ioctl (STDIN_FILENO, TIOCGWINSZ, &ws) == 0){
 		ret = (ws.ws_col << 16) | ws.ws_row;
-		errno = save_errno;
+		mono_set_errno (save_errno);
 		return ret;
 	} 
 	return -1;
@@ -263,7 +265,7 @@ MONO_SIG_HANDLER_FUNC (static, sigint_handler)
 	save_errno = errno;
 	need_cancel = TRUE;
 	mono_gc_finalize_notify ();
-	errno = save_errno;
+	mono_set_errno (save_errno);
 	in_sigint = FALSE;
 }
 

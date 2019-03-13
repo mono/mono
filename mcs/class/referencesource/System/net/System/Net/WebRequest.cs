@@ -1047,13 +1047,6 @@ namespace System.Net {
         }
 #endif  // !FEATURE_PAL
 
-        /// <summary>
-        ///    <para>Provides an abstract way of having Async code callback into the request (saves a delegate)</para>
-        /// </summary>
-        internal virtual void RequestCallback(object obj) {
-            throw ExceptionHelper.MethodNotImplementedException;
-        }
-
         //
         // Default Web Proxy implementation.
         //

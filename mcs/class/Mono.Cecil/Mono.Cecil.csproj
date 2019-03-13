@@ -9,7 +9,7 @@
     <NoWarn>1699</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
-    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">macos</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
@@ -20,7 +20,7 @@
     <AssemblyOriginatorKeyFile>../mono.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
     Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
     is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
@@ -33,12 +33,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
     <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
-    <DefineConstants>NET_4_6;MONO;WIN_PLATFORM;NET_4_0</DefineConstants>
+    <DefineConstants>NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM;NET_4_0</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'wasm_tools' ">
     <OutputPath>./../../class/lib/wasm_tools</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm_tools</IntermediateOutputPath>
-    <DefineConstants>NET_4_6;MONO;NET_4_0</DefineConstants>
+    <DefineConstants>NET_4_6;MONO;WASM_TOOLS;NET_4_0</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -185,6 +185,7 @@
     <Compile Include="..\..\..\external\cecil\Mono.Security.Cryptography\CryptoService.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Disposable.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Empty.cs" />
+    <Compile Include="..\..\..\external\cecil\Mono\MergeSort.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Type.cs" />
     <Compile Include="..\..\..\external\cecil\ProjectInfo.cs" />
     <Compile Include="Consts.cs" />

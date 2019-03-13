@@ -77,6 +77,7 @@
 #include <direct.h>
 #endif
 #include "object-internals.h"
+#include "icall-decl.h"
 
 typedef struct
 {
@@ -90,6 +91,12 @@ static gunichar2 process_guid [36];
 static gboolean process_guid_set = FALSE;
 
 static gboolean no_exec = FALSE;
+
+#ifdef ENABLE_NETCORE
+static int n_appctx_props;
+static char **appctx_keys;
+static char **appctx_values;
+#endif
 
 static const char *
 mono_check_corlib_version_internal (void);
@@ -130,7 +137,8 @@ static MonoLoadFunc load_function = NULL;
 /* Lazy class loading functions */
 static GENERATE_GET_CLASS_WITH_CACHE (assembly, "System.Reflection", "Assembly");
 
-static GENERATE_GET_CLASS_WITH_CACHE (appdomain, "System", "AppDomain");
+GENERATE_GET_CLASS_WITH_CACHE (appdomain, MONO_APPDOMAIN_CLASS_NAME_SPACE, MONO_APPDOMAIN_CLASS_NAME);
+GENERATE_GET_CLASS_WITH_CACHE (appdomain_setup, MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE, MONO_APPDOMAIN_SETUP_CLASS_NAME);
 
 static MonoDomain *
 mono_domain_from_appdomain_handle (MonoAppDomainHandle appdomain);
@@ -203,12 +211,12 @@ create_domain_objects (MonoDomain *domain)
 	mono_error_assert_ok (error);
 	string_empty_fld = mono_class_get_field_from_name_full (mono_defaults.string_class, "Empty", NULL);
 	g_assert (string_empty_fld);
-	MonoString *empty_str = mono_string_new_checked (domain, "", error);
+	MonoStringHandle empty_str = mono_string_new_handle (domain, "", error);
 	mono_error_assert_ok (error);
 	empty_str = mono_string_intern_checked (empty_str, error);
 	mono_error_assert_ok (error);
-	mono_field_static_set_value_internal (string_vt, string_empty_fld, empty_str);
-	domain->empty_string = empty_str;
+	mono_field_static_set_value_internal (string_vt, string_empty_fld, MONO_HANDLE_RAW (empty_str));
+	domain->empty_string = MONO_HANDLE_RAW (empty_str);
 
 	/*
 	 * Create an instance early since we can't do it when there is no memory.
@@ -283,6 +291,7 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_gc_base_init ();
 	mono_monitor_init ();
 	mono_marshal_init ();
+	mono_gc_init_icalls ();
 
 	mono_install_assembly_preload_hook (mono_domain_assembly_preload, GUINT_TO_POINTER (FALSE));
 	mono_install_assembly_refonly_preload_hook (mono_domain_assembly_preload, GUINT_TO_POINTER (TRUE));
@@ -296,11 +305,11 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_thread_init (start_cb, attach_cb);
 
 	if (!mono_runtime_get_no_exec ()) {
-		MonoClass *klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
+		MonoClass *klass = mono_class_get_appdomain_setup_class ();
 		setup = MONO_HANDLE_CAST (MonoAppDomainSetup, mono_object_new_pinned_handle (domain, klass, error));
 		goto_if_nok (error, exit);
 
-		klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomain");
+		klass = mono_class_get_appdomain_class ();
 
 		ad = MONO_HANDLE_CAST (MonoAppDomain, mono_object_new_pinned_handle (domain, klass, error));
 		goto_if_nok (error, exit);
@@ -321,9 +330,15 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 	mono_gc_init ();
 
 	/* contexts use GC handles, so they must be initialized after the GC */
+#ifndef ENABLE_NETCORE
 	mono_context_init_checked (domain, error);
 	goto_if_nok (error, exit);
 	mono_context_set_default_context (domain);
+#endif
+
+#ifdef ENABLE_NETCORE
+	mono_runtime_install_appctx_properties ();
+#endif
 
 #ifndef DISABLE_SOCKETS
 	mono_network_init ();
@@ -555,7 +570,7 @@ mono_domain_create_appdomain_checked (char *friendly_name, char *configuration_f
 	error_init (error);
 	MonoDomain *result = NULL;
 
-	MonoClass *klass = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
+	MonoClass *klass = mono_class_get_appdomain_setup_class ();
 	MonoAppDomainSetupHandle setup = MONO_HANDLE_CAST (MonoAppDomainSetup, mono_object_new_handle (mono_domain_get (), klass, error));
 	goto_if_nok (error, leave);
 	MonoStringHandle config_file;
@@ -627,7 +642,7 @@ copy_app_domain_setup (MonoDomain *domain, MonoAppDomainSetupHandle setup, MonoE
 	error_init (error);
 
 	caller_domain = mono_domain_get ();
-	ads_class = mono_class_load_from_name (mono_defaults.corlib, "System", "AppDomainSetup");
+	ads_class = mono_class_get_appdomain_setup_class ();
 
 	MonoAppDomainSetupHandle copy = MONO_HANDLE_CAST (MonoAppDomainSetup, mono_object_new_handle(domain, ads_class, error));
 	goto_if_nok (error, leave);
@@ -761,6 +776,9 @@ leave:
 gboolean
 mono_domain_has_type_resolve (MonoDomain *domain)
 {
+#ifdef ENABLE_NETCORE
+	return FALSE;
+#else
 	static MonoClassField *field = NULL;
 	MonoObject *o;
 
@@ -775,6 +793,7 @@ mono_domain_has_type_resolve (MonoDomain *domain)
 
 	mono_field_get_value_internal ((MonoObject*)(domain->domain), field, &o);
 	return o != NULL;
+#endif
 }
 
 /**
@@ -2310,6 +2329,47 @@ mono_domain_assembly_search (MonoAssemblyName *aname,
 	return NULL;
 }
 
+#if ENABLE_NETCORE
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_InternalLoad (MonoStringHandle name_handle, MonoStackCrawlMark *stack_mark, gpointer load_Context, MonoError *error)
+{
+	error_init (error);
+	MonoDomain *domain = mono_domain_get ();
+	MonoAssembly *ass = NULL;
+	MonoAssemblyName aname;
+	MonoAssemblyByNameRequest req;
+	MonoAssemblyContextKind asmctx;
+	MonoImageOpenStatus status = MONO_IMAGE_OK;
+	gboolean parsed;
+	char *name;
+
+	asmctx = MONO_ASMCTX_DEFAULT;
+	mono_assembly_request_prepare (&req.request, sizeof (req), asmctx);
+	req.basedir = NULL;
+	req.no_postload_search = TRUE;
+
+	name = mono_string_handle_to_utf8 (name_handle, error);
+	goto_if_nok (error, fail);
+	parsed = mono_assembly_name_parse (name, &aname);
+	g_free (name);
+	if (!parsed)
+		goto fail;
+
+	ass = mono_assembly_request_byname (&aname, &req, &status);
+	if (!ass)
+		goto fail;
+
+	MonoReflectionAssemblyHandle refass;
+	refass = mono_assembly_get_object_handle (domain, ass, error);
+	goto_if_nok (error, fail);
+	return refass;
+
+fail:
+	return MONO_HANDLE_CAST (MonoReflectionAssembly, NULL_HANDLE);
+}
+
+#endif
+
 MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_LoadFrom (MonoStringHandle fname, MonoBoolean refOnly, MonoStackCrawlMark *stack_mark, MonoError *error)
 {
@@ -3067,3 +3127,54 @@ exit:
 	unload_data_unref (thread_data);
 	HANDLE_FUNCTION_RETURN ();
 }
+
+#ifdef ENABLE_NETCORE
+
+/* Remember properties so they can be be installed in AppContext during runtime init */
+void
+mono_runtime_register_appctx_properties (int nprops, const char **keys,  const char **values)
+{
+	n_appctx_props = nprops;
+	appctx_keys = g_new0 (char*, nprops);
+	appctx_values = g_new0 (char*, nprops);
+
+	for (int i = 0; i < nprops; ++i) {
+		appctx_keys [i] = g_strdup (keys [i]);
+		appctx_values [i] = g_strdup (values [i]);
+	}
+}
+
+static GENERATE_GET_CLASS_WITH_CACHE (appctx, "System", "AppContext")
+
+/* Install properties into AppContext */
+void
+mono_runtime_install_appctx_properties (void)
+{
+	ERROR_DECL (error);
+	gpointer args [3];
+
+	MonoMethod *setup = mono_class_get_method_from_name_checked (mono_class_get_appctx_class (), "Setup", 3, 0, error);
+	g_assert (setup);
+
+	// FIXME: TRUSTED_PLATFORM_ASSEMBLIES is very large
+
+	/* internal static unsafe void Setup(char** pNames, char** pValues, int count) */
+	args [0] = appctx_keys;
+	args [1] = appctx_values;
+	args [2] = &n_appctx_props;
+
+	mono_runtime_invoke_checked (setup, NULL, args, error);
+	mono_error_assert_ok (error);
+
+	/* No longer needed */
+	for (int i = 0; i < n_appctx_props; ++i) {
+		g_free (appctx_keys [i]);
+		g_free (appctx_values [i]);
+	}
+	g_free (appctx_keys);
+	g_free (appctx_values);
+	appctx_keys = NULL;
+	appctx_values = NULL;
+}
+
+#endif

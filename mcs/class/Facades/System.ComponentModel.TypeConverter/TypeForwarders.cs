@@ -76,6 +76,8 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.UInt16Converter))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.UInt32Converter))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.UInt64Converter))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.ComponentModel.Container))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.UriTypeConverter))]
+
 
 

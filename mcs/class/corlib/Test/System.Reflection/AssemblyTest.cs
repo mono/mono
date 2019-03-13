@@ -318,6 +318,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
 		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
+		[Category ("NotWasm")]
 		public void GetFiles_False ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -332,6 +333,7 @@ namespace MonoTests.System.Reflection
 		[Test]
 		[Category ("AndroidNotWorking")] // Assemblies in Xamarin.Android cannot be accessed as FileStream
 		[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
+		[Category ("NotWasm")]
 		public void GetFiles_True ()
 		{
 			Assembly corlib = typeof (int).Assembly;
@@ -1134,7 +1136,7 @@ namespace MonoTests.System.Reflection
 			Module module = assembly.ManifestModule;
 			Assert.IsNotNull (module, "#1");
 
-			Assert.AreEqual ("MonoModule", module.GetType ().Name, "#2");
+			Assert.AreEqual ("RuntimeModule", module.GetType ().Name, "#2");
 
 #if !MONOTOUCH && !FULL_AOT_RUNTIME
 			Assert.AreEqual ("mscorlib.dll", module.Name, "#3");

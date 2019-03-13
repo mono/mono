@@ -14,6 +14,8 @@ node ("w64") {
     ws ("workspace/${jobName}/${monoBranch}") {
         timestamps {
             stage('Checkout') {
+                echo "Running on ${env.NODE_NAME}"
+
                 // clone and checkout repo
                 checkout scm
 

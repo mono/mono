@@ -1112,6 +1112,7 @@ public class AssemblyNameTest {
 	[Test]
 	[Category ("AndroidNotWorking")] // Accessing assemblies by asm.Location is not supported
 	[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
+	[Category ("NotWasm")]
 	public void GetAssemblyName_CodeBase ()
 	{
 		Assembly execAssembly = Assembly.GetExecutingAssembly ();

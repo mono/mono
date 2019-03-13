@@ -622,6 +622,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
+		[Category("AndroidSdksNotWorking")]
 		public void MoveTo ()
 		{
 			string path1 = TempFolder + DSC + "FIT.MoveTo.Source.Test";
@@ -651,6 +652,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test] //Covers #18361
+		[Category("AndroidSdksNotWorking")]
 		public void MoveTo_SameName ()
 		{
 			string name = "FIT.MoveTo.SameName.Test";
@@ -680,6 +682,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void MoveTo_DestFileName_AlreadyExists ()
 		{
 			string sourceFile = TempFolder + DSC + "FIT.MoveTo.Source.Test";
@@ -879,6 +882,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test] //Covers #38796
+		[Category("AndroidSdksNotWorking")]
 		public void ToStringAfterMoveTo ()
 		{
 			string name1 = "FIT.ToStringAfterMoveTo.Test";

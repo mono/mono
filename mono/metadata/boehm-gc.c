@@ -40,7 +40,7 @@
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/unlocked.h>
-
+#include <mono/metadata/icall-decl.h>
 
 #if HAVE_BOEHM_GC
 
@@ -268,6 +268,11 @@ void
 mono_gc_base_cleanup (void)
 {
 	GC_finalizer_notifier = NULL;
+}
+
+void
+mono_gc_init_icalls (void)
+{
 }
 
 /**

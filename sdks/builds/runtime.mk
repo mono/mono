@@ -14,6 +14,7 @@
 #  _$(1)-$(2)_CXXCPP
 #  _$(1)-$(2)_DLLTOOL
 #  _$(1)-$(2)_LD
+#  _$(1)-$(2)_CMAKE
 #  _$(1)-$(2)_OBJDUMP
 #  _$(1)-$(2)_RANLIB
 #  _$(1)-$(2)_STRIP
@@ -47,6 +48,7 @@ _runtime_$(1)-$(2)_CONFIGURE_ENVIRONMENT = \
 	$(if $$(_$(1)-$(2)_LD),LD="$$(_$(1)-$(2)_LD)") \
 	$(if $$(_$(1)-$(2)_OBJDUMP),OBJDUMP="$$(_$(1)-$(2)_OBJDUMP)") \
 	$(if $$(_$(1)-$(2)_RANLIB),RANLIB="$$(_$(1)-$(2)_RANLIB)") \
+	$(if $$(_$(1)-$(2)_CMAKE),CMAKE="$$(_$(1)-$(2)_CMAKE)") \
 	$(if $$(_$(1)-$(2)_STRIP),STRIP="$$(_$(1)-$(2)_STRIP)") \
 	CFLAGS="$$(_runtime_$(1)-$(2)_CFLAGS)" \
 	CXXFLAGS="$$(_runtime_$(1)-$(2)_CXXFLAGS)" \
@@ -91,6 +93,12 @@ clean-$(1)-$(2):
 	rm -rf .stamp-$(1)-$(2)-toolchain .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/toolchains/$(1)-$(2) $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION) $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION).config.cache $$(TOP)/sdks/out/$(1)-$(2)-$$(CONFIGURATION)
 
 $$(eval $$(call TargetTemplate,$(1),$(2)))
+
+.PHONY: configure-$(1)
+configure-$(1): configure-$(1)-$(2)
+
+.PHONY: build-$(1)
+build-$(1): build-$(1)-$(2)
 
 .PHONY: archive-$(1)
 archive-$(1): package-$(1)-$(2)

@@ -690,7 +690,12 @@ namespace Microsoft.Win32 {
 
 		public void DirtyTimeout (object state)
 		{
-			Flush ();
+			try {
+				Flush ();
+			} catch {
+				// This was identified as a crasher under some scenarios
+				// Internal MS issue: https://devdiv.visualstudio.com/DevDiv/_workitems/edit/787119
+			}
 		}
 
 		public void Flush ()

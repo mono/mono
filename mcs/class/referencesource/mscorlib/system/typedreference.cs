@@ -12,7 +12,9 @@ namespace System {
     using System.Runtime.CompilerServices;
     using CultureInfo = System.Globalization.CultureInfo;
     using FieldInfo = System.Reflection.FieldInfo;
+#if !MONO
     using System.Security.Permissions;
+#endif
     using System.Runtime.Versioning;
     using System.Diagnostics.Contracts;
 
@@ -42,7 +44,7 @@ namespace System {
                 throw new ArgumentNullException("flds");
             Contract.EndContractBlock();
             if (flds.Length == 0)
-                throw new ArgumentException(Environment.GetResourceString("Arg_ArrayZeroError"));
+                throw new ArgumentException(Environment.GetResourceString("Arg_ArrayZeroError"), nameof (flds));
 
             IntPtr[] fields = new IntPtr[flds.Length];
             // For proper handling of Nullable<T> don't change GetType() to something like 'IsAssignableFrom'
@@ -54,8 +56,13 @@ namespace System {
                 if (field == null)
                     throw new ArgumentException(Environment.GetResourceString("Argument_MustBeRuntimeFieldInfo"));
 
+#if NETCORE
+                if (field.IsStatic)
+                    throw new ArgumentException(Environment.GetResourceString("Argument_TypedReferenceInvalidField"));
+#else
                 if (field.IsInitOnly || field.IsStatic)
                     throw new ArgumentException(Environment.GetResourceString("Argument_TypedReferenceInvalidField"));
+#endif
                 
                 if (targetType != field.GetDeclaringTypeInternal() && !targetType.IsSubclassOf(field.GetDeclaringTypeInternal()))
                     throw new MissingMemberException(Environment.GetResourceString("MissingMemberTypeRef"));
@@ -71,9 +78,6 @@ namespace System {
                 targetType = fieldType;
             }
 
-#if MONO
-            return MakeTypedReferenceInternal (target, flds);
-#else
             TypedReference result = new TypedReference ();
 
             // reference to TypedReference is banned, so have to pass result as pointer
@@ -82,18 +86,16 @@ namespace System {
                 InternalMakeTypedReference(&result, target, fields, targetType);
             }
             return result;
-#endif
         }
 
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-#if MONO
-        extern static TypedReference MakeTypedReferenceInternal (object target, FieldInfo[] fields);
-#else
         // reference to TypedReference is banned, so have to pass result as pointer
         private unsafe static extern void InternalMakeTypedReference(void* result, Object target, IntPtr[] flds, RuntimeType lastFieldType);
-#endif
+
         public override int GetHashCode()
         {
             if (Type == IntPtr.Zero)
@@ -113,8 +115,10 @@ namespace System {
             return InternalToObject(&value);
         }
 
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
+#endif
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal unsafe extern static Object InternalToObject(void * value);
 
@@ -122,7 +126,7 @@ namespace System {
         { 
             get
             {
-                return Value.IsNull() && Type.IsNull(); 
+                return Value == IntPtr.Zero && Type == IntPtr.Zero;
             }
         }
 

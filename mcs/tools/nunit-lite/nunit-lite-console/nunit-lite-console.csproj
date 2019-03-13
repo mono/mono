@@ -9,7 +9,7 @@
     <NoWarn>1699</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
-    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">macos</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>False</NoStdLib>
@@ -18,7 +18,7 @@
     <TargetFrameworkVersion>v2.1</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
     Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
     is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
@@ -27,6 +27,11 @@
     <OutputPath>./../../../class/lib/monodroid</OutputPath>
     <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-monodroid</IntermediateOutputPath>
     <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;MONODROID;ANDROID</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <OutputPath>./../../../class/lib/monodroid_tools</OutputPath>
+    <IntermediateOutputPath>./../../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
+    <DefineConstants>NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../../class/lib/monotouch</OutputPath>

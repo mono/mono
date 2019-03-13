@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.Bindings.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.Bindings.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="LinkDescriptor\WebAssembly.Bindings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LinkDescriptor\WebAssembly.Bindings.xml">
+      <LogicalName>WebAssembly.Bindings.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

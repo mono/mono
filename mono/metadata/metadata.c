@@ -557,21 +557,21 @@ inverse of this mapping.
 #define rtsize(meta,s,b) (((s) < (1 << (b)) ? 2 : 4))
 
 static inline int
-idx_size (MonoImage *meta, int tableidx)
+idx_size (MonoImage *meta, int idx)
 {
-	if (meta->referenced_tables && (meta->referenced_tables & ((guint64)1 << tableidx)))
-		return meta->referenced_table_rows [tableidx] < 65536 ? 2 : 4;
+	if (meta->referenced_tables && (meta->referenced_tables & ((guint64)1 << idx)))
+		return meta->referenced_table_rows [idx] < 65536 ? 2 : 4;
 	else
-		return meta->tables [tableidx].rows < 65536 ? 2 : 4;
+		return meta->tables [idx].rows < 65536 ? 2 : 4;
 }
 
 static inline int
-get_nrows (MonoImage *meta, int tableidx)
+get_nrows (MonoImage *meta, int idx)
 {
-	if (meta->referenced_tables && (meta->referenced_tables & ((guint64)1 << tableidx)))
-		return meta->referenced_table_rows [tableidx];
+	if (meta->referenced_tables && (meta->referenced_tables & ((guint64)1 << idx)))
+		return meta->referenced_table_rows [idx];
 	else
-		return meta->tables [tableidx].rows;
+		return meta->tables [idx].rows;
 }
 
 /* Reference: Partition II - 23.2.6 */
@@ -2504,12 +2504,6 @@ static inline void
 image_sets_unlock (void)
 {
 	mono_os_mutex_unlock (&image_sets_mutex);
-}
-
-static int
-compare_pointers (const void *a, const void *b)
-{
-	return (size_t)a - (size_t)b;
 }
 
 //1103, 1327, 1597

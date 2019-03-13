@@ -806,10 +806,7 @@ namespace MonoTests.System.Xaml
 
 			var l = t.GetAllMembers ().ToArray ();
 
-			if (underlyingType == typeof (decimal))
-				Assert.AreEqual (6, l.Length, "#31"); //decimal has 6 internal properties (see Decimal.DecCalc.cs)
-			else
-				Assert.AreEqual (0, l.Length, "#31");
+			Assert.AreEqual (0, l.Length, "#31");
 		}
 
 		void TestXamlTypeExtension (XamlType t, string name, Type underlyingType, Type extReturnType, bool noTypeConverter)

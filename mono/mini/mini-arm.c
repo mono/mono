@@ -2327,9 +2327,13 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 	case RegTypeIRegPair:
 		break;
 	case RegTypeStructByAddr:
-		/* Vtype returned using a hidden argument */
-		linfo->ret.storage = LLVMArgVtypeRetAddr;
-		linfo->vret_arg_index = cinfo->vret_arg_index;
+		if (sig->pinvoke) {
+			linfo->ret.storage = LLVMArgVtypeByRef;
+		} else {
+			/* Vtype returned using a hidden argument */
+			linfo->ret.storage = LLVMArgVtypeRetAddr;
+			linfo->vret_arg_index = cinfo->vret_arg_index;
+		}
 		break;
 #if TARGET_WATCHOS
 	case RegTypeStructByVal:
@@ -2363,17 +2367,22 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 		case RegTypeFP:
 			lainfo->storage = LLVMArgNormal;
 			break;
-		case RegTypeStructByVal:
+		case RegTypeStructByVal: {
 			lainfo->storage = LLVMArgAsIArgs;
-			if (eabi_supported && ainfo->align == 8) {
-				/* LLVM models this by passing an int64 array */
-				lainfo->nslots = ALIGN_TO (ainfo->struct_size, 8) / 8;
-				lainfo->esize = 8;
-			} else {
-				lainfo->nslots = ainfo->struct_size / sizeof (target_mgreg_t);
-				lainfo->esize = 4;
-			}
+			int slotsize;
+#ifdef TARGET_WATCHOS
+			/* slotsize=4 would work for armv7k, however arm64_32 allows
+			 * passing structs with sizes up to 8 bytes in a single register.
+			 * On armv7k slotsize=8 boils down to the same generated native
+			 * code by LLVM, so it's okay. */
+			slotsize = 8;
+#else
+			slotsize = eabi_supported && ainfo->align == 8 ? 8 : 4;
+#endif
+			lainfo->nslots = ALIGN_TO (ainfo->struct_size, slotsize) / slotsize;
+			lainfo->esize = slotsize;
 			break;
+		}
 		case RegTypeStructByAddr:
 		case RegTypeStructByAddrOnStack:
 			lainfo->storage = LLVMArgVtypeByRef;
@@ -5008,42 +5017,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			code = realloc_code (cfg, max_len);
 
-			// For reg and membase, get destination in IP.
-
-			if (tailcall_reg) {
-				g_assert (ins->sreg1 > -1);
-				if (ins->sreg1 != ARMREG_IP)
-					ARM_MOV_REG_REG (code, ARMREG_IP, ins->sreg1);
-			} else if (tailcall_membase) {
-				g_assert (ins->sreg1 > -1);
-				if (!arm_is_imm12 (ins->inst_offset)) {
-					g_assert (ins->sreg1 != ARMREG_IP); // temp in emit_big_add
-					code = emit_big_add (code, ARMREG_IP, ins->sreg1, ins->inst_offset);
-					ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, 0);
-				} else {
-					ARM_LDR_IMM (code, ARMREG_IP, ins->sreg1, ins->inst_offset);
-				}
-			}
-
 			/*
 			 * The stack looks like the following:
 			 * <caller argument area>
 			 * <saved regs etc>
 			 * <rest of frame>
 			 * <callee argument area>
-			 * <optionally saved IP> (about to be)
 			 * Need to copy the arguments from the callee argument area to
 			 * the caller argument area, and pop the frame.
 			 */
 			if (call->stack_usage) {
 				int i, prev_sp_offset = 0;
-				int saved_ip_offset = 0;
-
-				if (tailcall_membase || tailcall_reg) {
-					ARM_PUSH (code, 1 << ARMREG_IP);
-					saved_ip_offset = 4;
-				}
-
+				
 				/* Compute size of saved registers restored below */
 				if (iphone_abi)
 					prev_sp_offset = 2 * 4;
@@ -5060,12 +5045,27 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				// FIXME a fixed size memcpy is desirable here,
 				// at least for larger values of stack_usage.
 				for (i = 0; i < call->stack_usage; i += sizeof (target_mgreg_t)) {
-					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, i + saved_ip_offset);
-					ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, i + saved_ip_offset);
+					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, i);
+					ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, i);
 				}
 
-				if (saved_ip_offset)
-					ARM_POP (code, 1 << ARMREG_IP);
+			}
+
+			// For reg and membase, get destination in IP.
+
+			if (tailcall_reg) {
+				g_assert (ins->sreg1 > -1);
+				if (ins->sreg1 != ARMREG_IP)
+					ARM_MOV_REG_REG (code, ARMREG_IP, ins->sreg1);
+			} else if (tailcall_membase) {
+				g_assert (ins->sreg1 > -1);
+				if (!arm_is_imm12 (ins->inst_offset)) {
+					g_assert (ins->sreg1 != ARMREG_IP); // temp in emit_big_add
+					code = emit_big_add (code, ARMREG_IP, ins->sreg1, ins->inst_offset);
+					ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, 0);
+				} else {
+					ARM_LDR_IMM (code, ARMREG_IP, ins->sreg1, ins->inst_offset);
+				}
 			}
 
 			/*
@@ -6003,8 +6003,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		case OP_GC_SAFE_POINT: {
 			guint8 *buf [1];
-
-			g_assert (mono_threads_are_safepoints_enabled ());
 
 			ARM_LDR_IMM (code, ARMREG_IP, ins->sreg1, 0);
 			ARM_CMP_REG_IMM (code, ARMREG_IP, 0, 0);

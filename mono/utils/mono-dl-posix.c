@@ -47,7 +47,11 @@ mono_dl_get_so_suffixes (void)
 int
 mono_dl_get_executable_path (char *buf, int buflen)
 {
+#if defined(HAVE_READLINK)
 	return readlink ("/proc/self/exe", buf, buflen - 1);
+#else
+	return -1;
+#endif
 }
 
 const char*
@@ -64,6 +68,8 @@ mono_dl_open_file (const char *file, int flags)
 #ifdef HOST_ANDROID
 	/* Bionic doesn't support NULL filenames */
 	if (!file)
+		return NULL;
+	if (!g_file_test (file, G_FILE_TEST_EXISTS))
 		return NULL;
 #endif
 #if defined(_AIX)

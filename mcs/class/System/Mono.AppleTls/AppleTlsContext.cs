@@ -50,7 +50,7 @@ namespace Mono.AppleTls
 		SafeSecIdentityHandle serverIdentity;
 		SafeSecIdentityHandle clientIdentity;
 
-		X509Certificate remoteCertificate;
+		X509Certificate2 remoteCertificate;
 		X509Certificate localClientCertificate;
 		MonoTlsConnectionInfo connectionInfo;
 		bool isAuthenticated;
@@ -71,11 +71,6 @@ namespace Mono.AppleTls
 			handle = GCHandle.Alloc (this, GCHandleType.Weak);
 			readFunc = NativeReadCallback;
 			writeFunc = NativeWriteCallback;
-
-			if (IsServer) {
-				if (LocalServerCertificate == null)
-					throw new ArgumentNullException (nameof (LocalServerCertificate));
-			}
 		}
 
 		public IntPtr Handle {
@@ -167,8 +162,20 @@ namespace Mono.AppleTls
 			SetSessionOption (SslSessionOption.BreakOnServerAuth, true);
 
 			if (IsServer) {
-				SafeSecCertificateHandle[] intermediateCerts;
-				serverIdentity = AppleCertificateHelper.GetIdentity (LocalServerCertificate, out intermediateCerts);
+				// If we have any of the server certificate selection callbacks, the we need to break on
+				// the ClientHello to pass the requested server name to the callback.
+				if (Options.ServerCertSelectionDelegate != null || Settings.ClientCertificateSelectionCallback != null)
+					SetSessionOption (SslSessionOption.BreakOnClientHello, true);
+				else if (LocalServerCertificate != null)
+					SetServerIdentity (LocalServerCertificate);
+				else
+					throw new SSA.AuthenticationException (SR.net_ssl_io_no_server_cert);
+			}
+		}
+
+		void SetServerIdentity (X509Certificate certificate)
+		{
+			using (var serverIdentity = AppleCertificateHelper.GetIdentity (certificate, out var intermediateCerts)) {
 				if (serverIdentity.IsInvalid)
 					throw new SSA.AuthenticationException ("Unable to get server certificate from keychain.");
 
@@ -199,15 +206,21 @@ namespace Mono.AppleTls
 				var status = SSLHandshake (Handle);
 				Debug ("Handshake: {0} - {0:x}", status);
 
-				CheckStatusAndThrow (status, SslStatus.WouldBlock, SslStatus.PeerAuthCompleted, SslStatus.PeerClientCertRequested);
+				CheckStatusAndThrow (status, SslStatus.WouldBlock, SslStatus.PeerAuthCompleted, SslStatus.PeerClientCertRequested, SslStatus.ClientHelloReceived);
 
-				if (status == SslStatus.PeerAuthCompleted) {
+				switch (status) {
+				case SslStatus.PeerAuthCompleted:
 					EvaluateTrust ();
-				} else if (status == SslStatus.PeerClientCertRequested) {
+					break;
+				case SslStatus.PeerClientCertRequested:
 					ClientCertificateRequested ();
-				} else if (status == SslStatus.WouldBlock) {
+					break;
+				case SslStatus.ClientHelloReceived:
+					ClientHelloReceived ();
+					break;
+				case SslStatus.WouldBlock:
 					return false;
-				} else if (status == SslStatus.Success) {
+				case SslStatus.Success:
 					Debug ("Handshake complete!");
 					handshakeFinished = true;
 					renegotiating = false;
@@ -229,6 +242,13 @@ namespace Mono.AppleTls
 			SetCertificate (clientIdentity, new SafeSecCertificateHandle [0]);
 		}
 
+		void ClientHelloReceived ()
+		{
+			var peerName = GetRequestedPeerName ();
+			Debug ($"Handshake - received ClientHello ({peerName})");
+			SetServerIdentity (SelectServerCertificate (peerName));
+		}
+
 		void EvaluateTrust ()
 		{
 			InitializeSession ();
@@ -247,7 +267,7 @@ namespace Mono.AppleTls
 
 			bool ok;
 			SecTrust trust = null;
-			X509CertificateCollection certificates = null;
+			X509Certificate2Collection certificates = null;
 
 			try {
 				trust = GetPeerTrust (!IsServer);
@@ -261,18 +281,18 @@ namespace Mono.AppleTls
 					if (trust.Count > 1)
 						Debug ("WARNING: Got multiple certificates in SecTrust!");
 
-					certificates = new X509CertificateCollection ();
+					certificates = new X509Certificate2Collection ();
 					for (int i = 0; i < trust.Count; i++)
 						certificates.Add (trust.GetCertificate (i));
 
-					remoteCertificate = new X509Certificate (certificates [0]);
+					remoteCertificate = new X509Certificate2 (certificates [0]);
 					Debug ("Got peer trust: {0}", remoteCertificate);
 				}
 
 				ok = ValidateCertificate (certificates);
 			} catch (Exception ex) {
 				Debug ("Certificate validation failed: {0}", ex);
-				throw new TlsException (AlertDescription.CertificateUnknown, "Certificate validation threw exception.");
+				throw;
 			} finally {
 				if (trust != null)
 					trust.Dispose ();
@@ -395,7 +415,7 @@ namespace Mono.AppleTls
 			get { return localClientCertificate; }
 		}
 
-		public override X509Certificate RemoteCertificate {
+		public override X509Certificate2 RemoteCertificate {
 			get { return remoteCertificate; }
 		}
 
@@ -656,6 +676,32 @@ namespace Mono.AppleTls
 				}
 				CheckStatusAndThrow (result);
 			}
+		}
+
+		[DllImport (SecurityLibrary)]
+		extern static /* OSStatus */ SslStatus SSLCopyRequestedPeerNameLength (/* SSLContextRef */ IntPtr context, /* size_t * */ out IntPtr peerNameLen);
+
+		[DllImport (SecurityLibrary)]
+		extern static /* OSStatus */ SslStatus SSLCopyRequestedPeerName (/* SSLContextRef */ IntPtr context, /* char * */ byte[] peerName, /* size_t * */ ref IntPtr peerNameLen);
+
+		public string GetRequestedPeerName ()
+		{
+			IntPtr length;
+			var result = SSLCopyRequestedPeerNameLength (Handle, out length);
+			CheckStatusAndThrow (result);
+			if (result != SslStatus.Success || (int)length == 0)
+				return String.Empty;
+			var bytes = new byte [(int)length];
+			result = SSLCopyRequestedPeerName (Handle, bytes, ref length);
+			CheckStatusAndThrow (result);
+
+			int requestedPeerNameLength = (int)length;
+
+			if (result != SslStatus.Success)
+				return string.Empty;
+			if (requestedPeerNameLength > 0 && bytes [requestedPeerNameLength-1] == 0)
+				requestedPeerNameLength = requestedPeerNameLength - 1;
+			return Encoding.UTF8.GetString (bytes, 0, requestedPeerNameLength);
 		}
 
 		[DllImport (SecurityLibrary)]

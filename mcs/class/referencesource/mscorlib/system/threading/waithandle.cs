@@ -27,7 +27,9 @@ namespace System.Threading
     using System.Threading;
     using System.Runtime.Remoting;
     using System;
+#if !MONO
     using System.Security.Permissions;
+#endif
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
@@ -36,11 +38,7 @@ namespace System.Threading
     using System.Diagnostics.CodeAnalysis;
 
 [System.Runtime.InteropServices.ComVisible(true)]
-#if FEATURE_REMOTING
     public abstract partial class WaitHandle : MarshalByRefObject, IDisposable {
-#else // FEATURE_REMOTING
-    public abstract partial class WaitHandle : IDisposable {
-#endif // FEATURE_REMOTING
         public const int WaitTimeout = 0x102;                    
 
         private const int MAX_WAITHANDLES = 64;
@@ -93,16 +91,20 @@ namespace System.Threading
         public virtual IntPtr Handle 
         {
             [System.Security.SecuritySafeCritical]  // auto-generated
+#if !MONO
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
+#endif
             get { return safeWaitHandle == null ? InvalidHandle : safeWaitHandle.DangerousGetHandle();}
         
             [System.Security.SecurityCritical]  // auto-generated_required
+#if !MONO
 #if !FEATURE_CORECLR
             [SecurityPermissionAttribute(SecurityAction.InheritanceDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 #endif
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
+#endif
             set
             {
                 if (value == InvalidHandle)
@@ -132,11 +134,13 @@ namespace System.Threading
         public SafeWaitHandle SafeWaitHandle 
         {
             [System.Security.SecurityCritical]  // auto-generated_required
+#if !MONO
 #if !FEATURE_CORECLR
             [SecurityPermissionAttribute(SecurityAction.InheritanceDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 #endif
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
+#endif
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
             get
             {
@@ -148,11 +152,13 @@ namespace System.Threading
             }
         
             [System.Security.SecurityCritical]  // auto-generated_required
+#if !MONO
 #if !FEATURE_CORECLR
             [SecurityPermissionAttribute(SecurityAction.InheritanceDemand, Flags=SecurityPermissionFlag.UnmanagedCode)]
 #endif
             [ResourceExposure(ResourceScope.Machine)]
             [ResourceConsumption(ResourceScope.Machine)]
+#endif
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
             set
             {
@@ -188,8 +194,10 @@ namespace System.Threading
         // security check.).  While security has fixed that problem, we still
         // don't need to do a linktime check here.
         [System.Security.SecurityCritical]  // auto-generated
+#if !MONO
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         internal void SetHandleInternal(SafeWaitHandle handle)
         {
             safeWaitHandle = handle;

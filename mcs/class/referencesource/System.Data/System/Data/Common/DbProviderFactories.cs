@@ -10,11 +10,15 @@ namespace System.Data.Common {
 
     using System;
     using System.Collections;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Configuration;
     using System.Data;
     using System.Diagnostics;
     using System.Globalization;
     using System.Xml;
+    using System.Linq;
+    using System.Reflection;
 
     public static class DbProviderFactories {
 
@@ -23,15 +27,19 @@ namespace System.Data.Common {
         private const string InvariantName = "InvariantName";
         private const string Name = "Name";
         private const string Description = "Description";
+        private const string InstanceFieldName = "Instance";
 
 
+        private static ConcurrentDictionary<string, ProviderRegistration> _registeredFactories = new ConcurrentDictionary<string, ProviderRegistration>();
         private static ConnectionState _initState; // closed, connecting, open
         private static DataTable _providerTable;
         private static object _lockobj = new object();
 
-        static public DbProviderFactory GetFactory(string providerInvariantName) {
-            ADP.CheckArgumentLength(providerInvariantName, "providerInvariantName");
+        static public DbProviderFactory GetFactory(string providerInvariantName) => GetFactory(providerInvariantName, true);
 
+        static public DbProviderFactory GetFactory(string providerInvariantName, bool throwOnError) {
+            if (throwOnError)
+                ADP.CheckArgumentLength(providerInvariantName, "providerInvariantName");
             // NOTES: Include the Framework Providers and any other Providers listed in the config file.
             DataTable providerTable = GetProviderTable();
             if (null != providerTable) {
@@ -48,7 +56,10 @@ namespace System.Data.Common {
                     return DbProviderFactories.GetFactory(providerRow);
                 }
             }
-            throw ADP.ConfigProviderNotFound();
+
+            if (throwOnError)
+                throw ADP.ConfigProviderNotFound();
+            return null;
         }
 
         static public DbProviderFactory GetFactory(DataRow providerRow) {
@@ -250,5 +261,86 @@ namespace System.Data.Common {
                 }
             }
         }
+
+#if MONO
+        public static bool TryGetFactory(string providerInvariantName, out DbProviderFactory factory)
+        {
+            factory = GetFactory(providerInvariantName, throwOnError: false);
+            return factory != null;
+        }
+
+        public static IEnumerable<string> GetProviderInvariantNames()
+        {
+            return _registeredFactories.Keys.ToList();
+        }
+
+        public static void RegisterFactory(string providerInvariantName, string factoryTypeAssemblyQualifiedName)
+        {
+            ADP.CheckArgumentLength(providerInvariantName, nameof(providerInvariantName));
+            ADP.CheckArgumentLength(factoryTypeAssemblyQualifiedName, nameof(factoryTypeAssemblyQualifiedName));
+            
+            // this method performs a deferred registration: the type name specified is checked when the factory is requested for the first time. 
+            _registeredFactories[providerInvariantName] = new ProviderRegistration(factoryTypeAssemblyQualifiedName, null);
+        }
+
+        private static DbProviderFactory GetFactoryInstance(Type providerFactoryClass)
+        {
+            ADP.CheckArgumentNull(providerFactoryClass, nameof(providerFactoryClass));
+            if (!providerFactoryClass.IsSubclassOf(typeof(DbProviderFactory)))
+            {
+                throw ADP.Argument(SR.Format(SR.ADP_DbProviderFactories_NotAFactoryType, providerFactoryClass.FullName));
+            }
+
+            FieldInfo providerInstance = providerFactoryClass.GetField(InstanceFieldName, BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Static);
+            if (null == providerInstance)
+            {
+                throw ADP.InvalidOperation(SR.ADP_DbProviderFactories_NoInstance);
+            }
+            if (!providerInstance.FieldType.IsSubclassOf(typeof(DbProviderFactory)))
+            {
+                throw ADP.InvalidOperation(SR.ADP_DbProviderFactories_NoInstance);
+            }
+            object factory = providerInstance.GetValue(null);
+            if (null == factory)
+            {
+                throw ADP.InvalidOperation(SR.ADP_DbProviderFactories_NoInstance);
+            }
+            return (DbProviderFactory)factory;
+        }
+
+        public static void RegisterFactory(string providerInvariantName, Type providerFactoryClass)
+        {
+            RegisterFactory(providerInvariantName, GetFactoryInstance(providerFactoryClass));
+        }
+
+        public static void RegisterFactory(string providerInvariantName, DbProviderFactory factory)
+        {
+            ADP.CheckArgumentLength(providerInvariantName, nameof(providerInvariantName));
+            ADP.CheckArgumentNull(factory, nameof(factory));
+
+            _registeredFactories[providerInvariantName] = new ProviderRegistration(factory.GetType().AssemblyQualifiedName, factory);
+        }
+        
+        public static bool UnregisterFactory(string providerInvariantName)
+        {
+            return !string.IsNullOrWhiteSpace(providerInvariantName) && _registeredFactories.TryRemove(providerInvariantName, out _);
+        }
+
+        private struct ProviderRegistration
+        {
+            internal ProviderRegistration(string factoryTypeAssemblyQualifiedName, DbProviderFactory factoryInstance)
+            {
+                this.FactoryTypeAssemblyQualifiedName = factoryTypeAssemblyQualifiedName;
+                this.FactoryInstance = factoryInstance;
+            }
+
+            internal string FactoryTypeAssemblyQualifiedName { get; }
+            /// <summary>
+            /// The cached instance of the type in <see cref="FactoryTypeAssemblyQualifiedName"/>. If null, this registation is seen as a deferred registration
+            /// and <see cref="FactoryTypeAssemblyQualifiedName"/> is checked the first time when this registration is requested through GetFactory().
+            /// </summary>
+            internal DbProviderFactory FactoryInstance { get; }
+        }
+#endif
     }
 }

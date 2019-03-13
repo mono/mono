@@ -9,7 +9,7 @@
     <NoWarn>1699,436</NoWarn>
     <LangVersion>latest</LangVersion>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Windows_NT'">win32</HostPlatform>
-    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">darwin</HostPlatform>
+    <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix' and $([System.IO.File]::Exists('/usr/lib/libc.dylib'))">macos</HostPlatform>
     <HostPlatform Condition=" '$(HostPlatform)' == '' and '$(OS)' == 'Unix'">linux</HostPlatform>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <NoStdLib>True</NoStdLib>
@@ -19,7 +19,7 @@
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
+    <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
     Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
     is a problem to compile the Mono mscorlib.dll -->
     <AddAdditionalExplicitAssemblyReferences>false</AddAdditionalExplicitAssemblyReferences>
@@ -37,12 +37,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../class/lib/monotouch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;ONLY_APPLETLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;ONLY_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_runtime' ">
     <OutputPath>./../../class/lib/monotouch_runtime</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_runtime</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;ONLY_APPLETLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;ONLY_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <OutputPath>./../../class/lib/monotouch_watch</OutputPath>
@@ -87,12 +87,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;FEATURE_COMPILED;ONLY_APPLETLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_APPLETLS;FEATURE_COMPILED;ONLY_APPLETLS;ENABLE_GSS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;CODEDOM;MONO_FEATURE_APPLETLS;FEATURE_COMPILED;ONLY_APPLETLS;CONFIGURATION_DEP</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;CODEDOM;MONO_FEATURE_APPLETLS;FEATURE_COMPILED;ONLY_APPLETLS;ENABLE_GSS;CONFIGURATION_DEP</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
     <OutputPath>./../../class/lib/orbis</OutputPath>
@@ -137,6 +137,9 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugSafeHandle.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ExceptionCheck.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpStatusDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\IPAddressParserStatics.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\IPv4AddressHelper.Common.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\IPv6AddressHelper.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Logging\NetEventSource.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\DomainLiteralReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\DotAtomReader.cs" />
@@ -158,6 +161,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\WebSockets\ManagedWebSocket.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\WebSockets\WebSocketValidate.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\PasteArguments.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\DerEncoder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\DerSequenceReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\StringExtensions.cs" />
@@ -407,7 +411,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\WaitForChangedResult.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemName.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\Base64Stream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\BufferBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\CloseableStream.cs" />
@@ -441,6 +444,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\TrackingValidationObjectDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\HttpStatusCode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\HttpVersion.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPAddress.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPAddressParser.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPEndPoint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.ServicePoint\src\System\Net\SecurityProtocolType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebClient\src\System\Net\WebClient.cs" />
@@ -470,6 +475,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\ComponentModel\PropertyChangedEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\ComponentModel\PropertyChangingEventArgs.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\ComponentModel\PropertyChangingEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Private.Uri\src\System\IPv4AddressHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Private.Uri\src\System\IPv6AddressHelper.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Private.Uri\src\System\UriBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\CodeDom\Compiler\IndentedTextWriter.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\StringNormalizationExtensions.cs" />
@@ -484,9 +491,11 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidGroup.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Oids.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Pal.OSX\CertificateData.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\GeneralNameEncoder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreLocation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreName.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\SubjectAlternativeNameBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X500DistinguishedNameFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ChainStatusFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509FindType.cs" />
@@ -625,7 +634,6 @@
     <Compile Include="..\referencesource\System\net\System\Net\ICertificatePolicy.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\ICredentials.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\ICredentialsByHost.cs" />
-    <Compile Include="..\referencesource\System\net\System\Net\IPAddress.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\IPHostEntry.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\IWebProxyFinder.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\IWebRequestCreate.cs" />
@@ -750,8 +758,6 @@
     <Compile Include="..\referencesource\System\net\System\UriParserTemplates.cs" />
     <Compile Include="..\referencesource\System\net\System\UriScheme.cs" />
     <Compile Include="..\referencesource\System\net\System\_DomainName.cs" />
-    <Compile Include="..\referencesource\System\net\System\_IPv4Address.cs" />
-    <Compile Include="..\referencesource\System\net\System\_IPv6Address.cs" />
     <Compile Include="..\referencesource\System\net\System\_UncName.cs" />
     <Compile Include="..\referencesource\System\net\System\_UriSyntax.cs" />
     <Compile Include="..\referencesource\System\security\system\security\Authentication\ExtendedProtection\ServiceNameCollection.cs" />
@@ -1006,8 +1012,10 @@
     <Compile Include="System\Platform.cs" />
     <Compile Include="System\SRDescriptionAttribute.cs" />
     <Compile Include="System\UriTypeConverter.cs" />
+    <Compile Include="corefx\CertificateRequest.cs" />
     <Compile Include="corefx\NameValueCollection.cs" />
     <Compile Include="corefx\StringDictionary.cs" />
+    <Compile Include="corefx\X509SignatureGenerator.cs" />
     <Compile Include="corefx\ZLibNative.cs" />
   </ItemGroup>
   <!--End of common files-->
@@ -1084,6 +1092,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1204,6 +1213,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\Win32UnixFactoryPal.cs" />
         <Compile Include="System.Net.Security\SslStream.cs" />
@@ -1299,6 +1309,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1423,6 +1434,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1543,6 +1555,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1865,6 +1878,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -2096,6 +2110,7 @@
         </When>
         <When Condition="'$(HostPlatform)' == 'unix'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
@@ -2106,7 +2121,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
@@ -2334,6 +2348,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -2842,6 +2857,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -3100,6 +3116,7 @@
         </When>
         <When Condition="'$(HostPlatform)' == 'linux'">
           <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
@@ -3110,7 +3127,6 @@
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
             <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
@@ -3338,6 +3354,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -3650,6 +3667,7 @@
         <Compile Include="Mono.AppleTls\SafeHandles.cs" />
         <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
         <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -3677,6 +3695,9 @@
         <Compile Include="System.Net.NetworkInformation\UnixNetworkInterfaceFactory.cs" />
         <Compile Include="System.Net.NetworkInformation\UnixTcpStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\UnixUdpStatistics.cs" />
+        <Compile Include="System.Net.Security\SslApplicationProtocol.pns.cs" />
+        <Compile Include="System.Net.Security\SslClientAuthenticationOptions.pns.cs" />
+        <Compile Include="System.Net.Security\SslServerAuthenticationOptions.pns.cs" />
         <Compile Include="System.Net.Security\SslStream.platformnotsupported.cs" />
         <Compile Include="System.Net.Sockets\TcpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.Sockets\TcpListener.platformnotsupported.cs" />
@@ -3775,6 +3796,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -3916,6 +3938,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -3984,6 +4007,7 @@
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
       <ItemGroup>
+        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
@@ -3994,7 +4018,6 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
@@ -4050,6 +4073,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />

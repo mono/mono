@@ -10,17 +10,14 @@ KEYFILE = $(LIBRARY_SNK)
 
 TEST_LIB_REFS = Mono.Cecil System System.Core
 
-VALID_TEST_PROFILE := $(filter net_4_x, $(PROFILE))
-
-ifdef VALID_TEST_PROFILE
-
+ifneq ($(filter monodroid monotouch monotouch_tv monotouch_watch wasm net_4_x,$(PROFILE)),)
 test-local: build-dtest
+endif
 
-else
-
+ifneq ($(filter monodroid monotouch monotouch_tv monotouch_watch wasm,$(PROFILE)),)
+NO_INSTALL=1
+NO_BUILD=1
 NO_TEST=1
-check:
-
 endif
 
 test_output_dir=$(topdir)/class/lib/$(PROFILE)/tests
@@ -34,7 +31,7 @@ $(test_output_dir)/dtest-excfilter.exe: Test/dtest-excfilter.il | $(test_output_
 	$(ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
 
 $(test_output_dir)/dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES) | $(test_output_dir)
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Runtime.CompilerServices.Unsafe.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
 
 TEST_HELPERS_SOURCES = \
 	../test-helpers/NetworkHelpers.cs \

@@ -31,10 +31,12 @@
 #include <mono/metadata/exception-internals.h>
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/utils/mono-errno.h>
 #include <mono/utils/mono-path.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/mono-proclib.h>
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/object-internals.h>
@@ -42,6 +44,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/image-internals.h>
+#include <mono/metadata/w32process-internals.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef HAVE_UNISTD_H
@@ -1057,6 +1060,20 @@ pe_image_load_cli_data (MonoImage *image)
 	return TRUE;
 }
 
+static void
+mono_image_load_time_date_stamp (MonoImage *image)
+{
+	image->time_date_stamp = 0;
+#ifndef HOST_WIN32
+	if (!image->filename)
+		return;
+
+	gunichar2 *uni_name = g_utf8_to_utf16 (image->filename, -1, NULL, NULL, NULL);
+	mono_pe_file_time_date_stamp (uni_name, &image->time_date_stamp);
+	g_free (uni_name);
+#endif
+}
+
 void
 mono_image_load_names (MonoImage *image)
 {
@@ -1166,6 +1183,8 @@ static const IgnoredAssembly ignored_assemblies [] = {
 	IGNORED_ASSEMBLY (0x284ECF63, SYS_THREADING_OVERLAPPED, "E933407E-C846-4413-82C5-09F4BCFA67F1", "2.1.0-preview1-62414-02 net461"),
 	IGNORED_ASSEMBLY (0x358C9723, SYS_GLOBALIZATION_EXT, "5FCD54F0-4B97-4259-875D-30E481F02EA2", "4.0.1 net46"),
 	IGNORED_ASSEMBLY (0x39C3575D, SYS_GLOBALIZATION_EXT, "3B30D67C-B16B-47BC-B949-9500B5AAAAFB", "2.1.0-preview1-62414-02 net471"),
+	IGNORED_ASSEMBLY (0x3E21E75A, SYS_TEXT_ENC_CODEPAGES, "67D3A14A-8F55-4C9F-9699-EDD0876369DA", "4.5.0 net461"),
+	IGNORED_ASSEMBLY (0x420963C4, SYS_NET_HTTP, "084B071E-1637-4B3F-B7CD-6CEF28A6E4AE", "4.3.4 net46"),
 	IGNORED_ASSEMBLY (0x450A096A, SYS_GLOBALIZATION_EXT, "E9FCFF5B-4DE1-4BDC-9CE8-08C640FC78CC", "4.3.0 net46"),
 	IGNORED_ASSEMBLY (0x46A4A1C5, SYS_RT_INTEROP_RUNTIME_INFO, "F13660F8-9D0D-419F-BA4E-315693DD26EA", "4.0.0 net45"),
 	IGNORED_ASSEMBLY (0x472FA630, SYS_NET_HTTP, "09D4A140-061C-4884-9B63-22067E841931", "4.3.2 net46"),
@@ -1192,6 +1211,7 @@ static const IgnoredAssembly ignored_assemblies [] = {
 	IGNORED_ASSEMBLY (0xA3BFE786, SYS_RT_INTEROP_RUNTIME_INFO, "33D296D9-EE6D-404E-BF9F-432A429FF5DA", "15.5.0-preview-20171027-2 net462"),
 	IGNORED_ASSEMBLY (0xA99E866F, SYS_NET_HTTP, "41ACE450-8F44-455A-97AC-0679E5462071", "2.1.100-preview-62617-01 net471"),
 	IGNORED_ASSEMBLY (0xAA21986B, SYS_THREADING_OVERLAPPED, "9F5D4F09-787A-458A-BA08-553AA71470F1", "4.0.0 net46"),
+	IGNORED_ASSEMBLY (0xAF2093B8, SYS_TEXT_ENC_CODEPAGES, "D2B4F262-31A4-4E80-9CFB-26A2249A735E", "4.5.1 net461"),
 	IGNORED_ASSEMBLY (0xC69BED92, SYS_IO_COMPRESSION, "33AD8174-7781-46FA-A110-33821CCBE810", "15.5.0-preview-20171027-2 net461"),
 	IGNORED_ASSEMBLY (0xC8D00759, SYS_IO_COMPRESSION, "1332CE2F-1517-4BD7-93FD-7D4BCFBAED66", "2.0.0-preview3-20170622-1 net461"),
 	IGNORED_ASSEMBLY (0xCA951D5B, SYS_RT_INTEROP_RUNTIME_INFO, "1F37581E-4589-4C71-A465-05C6B9AE966E", "2.1.0-preview1-62414-02 net461"),
@@ -1235,6 +1255,7 @@ static const IgnoredAssemblyVersion ignored_assembly_versions [] = {
 	IGNORED_ASM_VER (SYS_NET_HTTP, 4, 1, 1, 0),
 	IGNORED_ASM_VER (SYS_NET_HTTP, 4, 1, 1, 1),
 	IGNORED_ASM_VER (SYS_NET_HTTP, 4, 1, 1, 2),
+	IGNORED_ASM_VER (SYS_NET_HTTP, 4, 1, 1, 3),
 	IGNORED_ASM_VER (SYS_NET_HTTP, 4, 2, 0, 0),
 	IGNORED_ASM_VER (SYS_RT_INTEROP_RUNTIME_INFO, 4, 0, 0, 0),
 	IGNORED_ASM_VER (SYS_RT_INTEROP_RUNTIME_INFO, 4, 0, 1, 0),
@@ -1242,6 +1263,7 @@ static const IgnoredAssemblyVersion ignored_assembly_versions [] = {
 	IGNORED_ASM_VER (SYS_TEXT_ENC_CODEPAGES, 4, 0, 1, 0),
 	IGNORED_ASM_VER (SYS_TEXT_ENC_CODEPAGES, 4, 0, 2, 0),
 	IGNORED_ASM_VER (SYS_TEXT_ENC_CODEPAGES, 4, 1, 0, 0),
+	IGNORED_ASM_VER (SYS_TEXT_ENC_CODEPAGES, 4, 1, 1, 0),
 	IGNORED_ASM_VER (SYS_THREADING_OVERLAPPED, 4, 0, 0, 0),
 	IGNORED_ASM_VER (SYS_THREADING_OVERLAPPED, 4, 0, 1, 0),
 	IGNORED_ASM_VER (SYS_THREADING_OVERLAPPED, 4, 0, 2, 0),
@@ -1375,6 +1397,8 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 
 	mono_image_load_names (image);
 
+	mono_image_load_time_date_stamp (image);
+
 	load_modules (image);
 
 done:
@@ -1438,6 +1462,7 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
 	image->image_info = iinfo;
 	image->name = mono_path_resolve_symlinks (fname);
+	image->filename = g_strdup (image->name);
 	image->ref_only = refonly;
 	image->metadata_only = metadata_only;
 	image->load_from_context = load_from_context;
@@ -1462,6 +1487,26 @@ do_mono_image_open (const char *fname, MonoImageOpenStatus *status,
 MonoImage *
 mono_image_loaded_full (const char *name, gboolean refonly)
 {
+	MonoImage *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_image_loaded_internal (name, refonly);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
+}
+
+/**
+ * mono_image_loaded_internal:
+ * \param name path or assembly name of the image to load
+ * \param refonly Check with respect to reflection-only loads?
+ *
+ * This routine verifies that the given image is loaded.
+ * It checks either reflection-only loads only, or normal loads only, as specified by parameter.
+ *
+ * \returns the loaded \c MonoImage, or NULL on failure.
+ */
+MonoImage *
+mono_image_loaded_internal (const char *name, gboolean refonly)
+{
 	MonoImage *res;
 
 	mono_images_lock ();
@@ -1482,7 +1527,11 @@ mono_image_loaded_full (const char *name, gboolean refonly)
 MonoImage *
 mono_image_loaded (const char *name)
 {
-	return mono_image_loaded_full (name, FALSE);
+	MonoImage *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_image_loaded_internal (name, FALSE);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 typedef struct {
@@ -1746,9 +1795,9 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 					*status = MONO_IMAGE_IMAGE_INVALID;
 				else {
 					if (last_error == ERROR_FILE_NOT_FOUND || last_error == ERROR_PATH_NOT_FOUND)
-						errno = ENOENT;
+						mono_set_errno (ENOENT);
 					else
-						errno = 0;
+						mono_set_errno (0);
 				}
 			}
 			return NULL;
@@ -2121,9 +2170,12 @@ mono_image_close_except_pools (MonoImage *image)
 	}
 
 	if (debug_assembly_unload) {
-		image->name = g_strdup_printf ("%s - UNLOADED", image->name);
+		char *old_name = image->name;
+		image->name = g_strdup_printf ("%s - UNLOADED", old_name);
+		g_free (old_name);
 	} else {
 		g_free (image->name);
+		g_free (image->filename);
 		g_free (image->guid);
 		g_free (image->version);
 	}

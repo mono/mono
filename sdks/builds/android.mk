@@ -2,7 +2,10 @@
 ANDROID_URI?=https://dl.google.com/android/repository/
 ANT_URI?=https://archive.apache.org/dist/ant/binaries/
 
+ANDROID_CMAKE_VERSION?="3.6.4111459"
+ANDROID_SDK_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/sdk
 ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
+ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/ndk/source.properties | cut -d '=' -f 2 | tr -d ' ' | cut -d '.' -f 1` -ge 18; then echo yes; else echo no; fi)
 
 ##
 # Parameters:
@@ -56,12 +59,13 @@ _android-$(1)_AR=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-ar
 _android-$(1)_AS=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-as
 _android-$(1)_CC=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-clang
 _android-$(1)_CXX=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-clang++
-_android-$(1)_CPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-cpp
-_android-$(1)_CXXCPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-cpp
+_android-$(1)_CPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-$$(if $(wildcard $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-cpp),cpp,clang -E)
+_android-$(1)_CXXCPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-$$(if $(wildcard $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-cpp),cpp,clang++ -E)
 _android-$(1)_DLLTOOL=
 _android-$(1)_LD=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-ld
 _android-$(1)_OBJDUMP="$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-objdump"
 _android-$(1)_RANLIB=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-ranlib
+_android-$(1)_CMAKE=$$(ANDROID_SDK_PREFIX)/cmake/$(ANDROID_CMAKE_VERSION)/bin/cmake
 _android-$(1)_STRIP=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-strip
 
 _android-$(1)_AC_VARS= \
@@ -72,17 +76,18 @@ _android-$(1)_AC_VARS= \
 
 _android-$(1)_CFLAGS= \
 	-fstack-protector \
-	-DMONODROID=1
+	-DMONODROID=1 $$(if $$(filter $$(ANDROID_NEW_NDK),yes),-D__ANDROID_API__=$$(ANDROID_SDK_VERSION_$(1)))
 
 _android-$(1)_CXXFLAGS= \
 	-fstack-protector \
-	-DMONODROID=1
+	-DMONODROID=1 $$(if $$(filter $$(ANDROID_NEW_NDK),yes),-D__ANDROID_API__=$$(ANDROID_SDK_VERSION_$(1)))
+
 
 _android-$(1)_CPPFLAGS= \
-	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/usr/include
+	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/sysroot/usr/include
 
 _android-$(1)_CXXCPPFLAGS= \
-	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/usr/include
+	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/sysroot/usr/include
 
 _android-$(1)_LDFLAGS= \
 	-z now -z relro -z noexecstack \
@@ -101,6 +106,9 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--enable-minimal=ssa,portability,attach,verifier,full_messages,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,security,shared_handles,interpreter \
 	--enable-monodroid \
 	--with-btls-android-ndk=$$(ANDROID_TOOLCHAIN_DIR)/ndk \
+	--with-btls-android-api=$$(ANDROID_SDK_VERSION_$(1)) \
+	$$(if $$(filter $$(ANDROID_NEW_NDK),yes),--with-btls-android-ndk-asm-workaround) \
+	--with-btls-android-cmake-toolchain=$$(ANDROID_TOOLCHAIN_DIR)/ndk/build/cmake/android.toolchain.cmake \
 	--with-sigaltstack=yes \
 	--with-tls=pthread \
 	--without-ikvm-native \
@@ -263,7 +271,6 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
 	--disable-mcs-build \
 	--disable-nls \
-	--enable-extension-module \
 	--enable-maintainer-mode \
 	--with-tls=pthread
 
@@ -321,7 +328,6 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
 	--disable-mcs-build \
 	--disable-nls \
-	--enable-extension-module \
 	--enable-maintainer-mode \
 	--with-tls=pthread
 
@@ -336,4 +342,4 @@ $(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,arm64-v
 $(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,x86,llvm-llvmwin32,i686-none-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 
-$(eval $(call BclTemplate,android,monodroid monodroid_tools,monodroid))
+$(eval $(call BclTemplate,android,monodroid monodroid_tools,monodroid monodroid_tools))

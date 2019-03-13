@@ -427,7 +427,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 49;
+		internal const int MINOR_VERSION = 50;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -516,7 +516,8 @@ namespace Mono.Debugger.Soft
 			GET_ID = 5,
 			/* Ditto */
 			GET_TID = 6,
-			SET_IP = 7
+			SET_IP = 7,
+			GET_ELAPSED_TIME = 8
 		}
 
 		enum CmdEventRequest {
@@ -1617,8 +1618,8 @@ namespace Mono.Debugger.Soft
 			/* Wait for the reply packet */
 			while (true) {
 				lock (reply_packets_monitor) {
-					if (reply_packets.ContainsKey (packetId)) {
-						byte[] reply = reply_packets [packetId];
+					byte[] reply;
+					if (reply_packets.TryGetValue (packetId, out reply)) {
 						reply_packets.Remove (packetId);
 						PacketReader r = new PacketReader (this, reply);
 
@@ -1665,7 +1666,15 @@ namespace Mono.Debugger.Soft
 					CattrNamedArgInfo arg = new CattrNamedArgInfo ();
 					int arg_type = r.ReadByte ();
 					arg.is_property = arg_type == 0x54;
-					arg.id = r.ReadId ();
+
+					// 2.12 is the only version we can guarantee the server will send a field id
+					// It was added in https://github.com/mono/mono/commit/db0b932cd6c3c93976479ae3f6b5b2a885f681de
+					// In between 2.11 and 2.12
+					if (arg.is_property)
+						arg.id = r.ReadId ();
+					else if (Version.AtLeast (2, 12))
+						arg.id = r.ReadId ();
+
 					arg.value = r.ReadValue ();
 					info.named_args [j] = arg;
 				}
@@ -2107,6 +2116,10 @@ namespace Mono.Debugger.Soft
 
 		internal string Thread_GetName (long id) {
 			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_NAME, new PacketWriter ().WriteId (id)).ReadString ();
+		}
+
+		internal long Thread_GetElapsedTime (long id) {
+			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_ELAPSED_TIME, new PacketWriter ().WriteId (id)).ReadLong ();
 		}
 
 		internal void Thread_GetFrameInfo (long id, int start_frame, int length, Action<FrameInfo[]> resultCallaback) {

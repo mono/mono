@@ -255,6 +255,7 @@ struct _DebuggerTlsData {
 
 	// The state that the debugger expects the thread to be in
 	MonoDebuggerThreadState thread_state;
+	MonoStopwatch step_time;
 };
 
 typedef struct {
@@ -273,7 +274,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 49
+#define MINOR_VERSION 50
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -371,7 +372,8 @@ typedef enum {
 	CMD_THREAD_GET_INFO = 4,
 	CMD_THREAD_GET_ID = 5,
 	CMD_THREAD_GET_TID = 6,
-	CMD_THREAD_SET_IP = 7
+	CMD_THREAD_SET_IP = 7,
+	CMD_THREAD_ELAPSED_TIME = 8
 } CmdThread;
 
 typedef enum {
@@ -1894,22 +1896,6 @@ buffer_reply_packet (int id, int error, Buffer *data)
 	nreply_packets ++;
 }
 
-/*
- * OBJECT IDS
- */
-
-/*
- * Represents an object accessible by the debugger client.
- */
-typedef struct {
-	/* Unique id used in the wire protocol to refer to objects */
-	int id;
-	/*
-	 * A weakref gc handle pointing to the object. The gc handle is used to 
-	 * detect if the object was garbage collected.
-	 */
-	guint32 handle;
-} ObjRef;
 
 /* Maps objid -> ObjRef */
 /* Protected by the loader lock */
@@ -1919,20 +1905,12 @@ static GHashTable *obj_to_objref;
 /* Protected by the dbg lock */
 static MonoGHashTable *suspended_objs;
 
-static void
-free_objref (gpointer value)
-{
-	ObjRef *o = (ObjRef *)value;
 
-	mono_gchandle_free_internal (o->handle);
-
-	g_free (o);
-}
 
 static void
 objrefs_init (void)
 {
-	objrefs = g_hash_table_new_full (NULL, NULL, NULL, free_objref);
+	objrefs = g_hash_table_new_full (NULL, NULL, NULL, mono_debugger_free_objref);
 	obj_to_objref = g_hash_table_new (NULL, NULL);
 	suspended_objs = mono_g_hash_table_new_type ((GHashFunc)mono_object_hash_internal, NULL, MONO_HASH_KEY_GC, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Suspended Object Table");
 }
@@ -2972,45 +2950,53 @@ suspend_current (void)
  	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	g_assert (tls);
 
-	mono_coop_mutex_lock (&suspend_mutex);
+	gboolean do_resume = FALSE;
+	while (!do_resume) {
+		mono_coop_mutex_lock (&suspend_mutex);
 
-	tls->suspending = FALSE;
-	tls->really_suspended = TRUE;
+		tls->suspending = FALSE;
+		tls->really_suspended = TRUE;
 
-	if (!tls->suspended) {
-		tls->suspended = TRUE;
-		mono_coop_sem_post (&suspend_sem);
-	}
+		if (!tls->suspended) {
+			tls->suspended = TRUE;
+			mono_coop_sem_post (&suspend_sem);
+		}
 
-	mono_debugger_log_suspend (tls);
-	DEBUG_PRINTF (1, "[%p] Suspended.\n", (gpointer) (gsize) mono_native_thread_id_get ());
+		mono_debugger_log_suspend (tls);
+		DEBUG_PRINTF (1, "[%p] Suspended.\n", (gpointer) (gsize) mono_native_thread_id_get ());
 
-	while (suspend_count - tls->resume_count > 0) {
-		mono_coop_cond_wait (&suspend_cond, &suspend_mutex);
-	}
+		while (suspend_count - tls->resume_count > 0) {
+			mono_coop_cond_wait (&suspend_cond, &suspend_mutex);
+		}
 
-	tls->suspended = FALSE;
-	tls->really_suspended = FALSE;
+		tls->suspended = FALSE;
+		tls->really_suspended = FALSE;
 
-	threads_suspend_count --;
+		threads_suspend_count --;
 
-	mono_coop_mutex_unlock (&suspend_mutex);
+		mono_coop_mutex_unlock (&suspend_mutex);
 
-	mono_debugger_log_resume (tls);
-	DEBUG_PRINTF (1, "[%p] Resumed.\n", (gpointer) (gsize) mono_native_thread_id_get ());
+		mono_debugger_log_resume (tls);
+		DEBUG_PRINTF (1, "[%p] Resumed.\n", (gpointer) (gsize) mono_native_thread_id_get ());
 
-	if (tls->pending_invoke) {
-		/* Save the original context */
-		tls->pending_invoke->has_ctx = TRUE;
-		tls->pending_invoke->ctx = tls->context.ctx;
+		if (tls->pending_invoke) {
+			/* Save the original context */
+			tls->pending_invoke->has_ctx = TRUE;
+			tls->pending_invoke->ctx = tls->context.ctx;
 
-		invoke_method ();
+			invoke_method ();
+
+			/* Have to suspend again */
+		} else {
+			do_resume = TRUE;
+		}
 	}
 
 	/* The frame info becomes invalid after a resume */
 	tls->context.valid = FALSE;
 	tls->async_state.valid = FALSE;
 	invalidate_frames (tls);
+	mono_stopwatch_start (&tls->step_time);
 }
 
 static void
@@ -3237,7 +3223,7 @@ compute_frame_info_from (MonoInternalThread *thread, DebuggerTlsData *tls, MonoT
 }
 
 static void
-compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
+compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls, gboolean force_update)
 {
 	ComputeFramesUserData user_data;
 	GSList *tmp;
@@ -3246,7 +3232,7 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 	MonoUnwindOptions opts = (MonoUnwindOptions)(MONO_UNWIND_DEFAULT | MONO_UNWIND_REG_LOCATIONS);
 
 	// FIXME: Locking on tls
-	if (tls->frames && tls->frames_up_to_date)
+	if (tls->frames && tls->frames_up_to_date && !force_update)
 		return;
 
 	DEBUG_PRINTF (1, "Frames for %p(tid=%lx):\n", thread, (glong)thread->tid);
@@ -3757,6 +3743,10 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 			break;
 		case EVENT_KIND_BREAKPOINT:
 		case EVENT_KIND_STEP: {
+			DebuggerTlsData *tls;
+			tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+			g_assert (tls);
+			mono_stopwatch_stop (&tls->step_time);
 			MonoMethod *method = (MonoMethod *)arg;
 
 			buffer_add_methodid (&buf, domain, method);
@@ -3786,8 +3776,13 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 			keepalive_obj = ei->exc;
 			break;
 		}
-		case EVENT_KIND_USER_BREAK:
+		case EVENT_KIND_USER_BREAK: {
+			DebuggerTlsData *tls;
+			tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
+			g_assert (tls);
+			mono_stopwatch_stop (&tls->step_time);
 			break;
+		}
 		case EVENT_KIND_USER_LOG: {
 			EventInfo *ei = (EventInfo *)arg;
 			buffer_add_int (&buf, ei->level);
@@ -3969,6 +3964,7 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	/* 
 	 * suspend_vm () could have missed this thread, so wait for a resume.
 	 */
+	
 	suspend_current ();
 }
 
@@ -4238,7 +4234,7 @@ ss_calculate_framecount (void *the_tls, MonoContext *ctx, gboolean force_use_ctx
 
 	if (force_use_ctx || !tls->context.valid)
 		mono_thread_state_init_from_monoctx (&tls->context, ctx);
-	compute_frame_info (tls->thread, tls);
+	compute_frame_info (tls->thread, tls, FALSE);
 	if (frames)
 		*frames = (DbgEngineStackFrame**)tls->frames;
 	if (nframes)
@@ -4798,7 +4794,7 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
 			if (frames && nframes)
 				frame = frames [0];
 		} else {
-			compute_frame_info (ss_req->thread, tls);
+			compute_frame_info (ss_req->thread, tls, FALSE);
 
 			if (tls->frame_count)
 				frame = tls->frames [0];
@@ -5370,10 +5366,10 @@ obj_is_of_type (MonoObject *obj, MonoType *t)
 }
 
 static ErrorCode
-decode_value (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void_buf, guint8 **endbuf, guint8 *limit);
+decode_value (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void_buf, guint8 **endbuf, guint8 *limit, gboolean check_field_datatype);
 
 static ErrorCode
-decode_vtype (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void_buf, guint8 **endbuf, guint8 *limit)
+decode_vtype (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void_buf, guint8 **endbuf, guint8 *limit, gboolean check_field_datatype)
 {
 	guint8 *addr = (guint8*)void_addr;
 	guint8 *buf = (guint8*)void_buf;
@@ -5408,7 +5404,7 @@ decode_vtype (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void
 			continue;
 		if (mono_field_is_deleted (f))
 			continue;
-		err = decode_value (f->type, domain, mono_vtype_get_field_addr (addr, f), buf, &buf, limit);
+		err = decode_value (f->type, domain, mono_vtype_get_field_addr (addr, f), buf, &buf, limit, check_field_datatype);
 		if (err != ERR_NONE)
 			return err;
 		nfields --;
@@ -5421,7 +5417,7 @@ decode_vtype (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void
 }
 
 static ErrorCode
-decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit)
+decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8 **endbuf, guint8 *limit, gboolean check_field_datatype)
 {
 	ErrorCode err;
 
@@ -5511,7 +5507,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 			}
 			memcpy (addr, mono_object_unbox_internal (obj), mono_class_value_size (obj->vtable->klass, NULL));
 		} else {
-			err = decode_vtype (t, domain, addr, buf, &buf, limit);
+			err = decode_vtype (t, domain, addr, buf, &buf, limit, check_field_datatype);
 			if (err != ERR_NONE)
 				return err;
 		}
@@ -5530,8 +5526,10 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 
 				if (obj) {
 					if (!obj_is_of_type (obj, t)) {
-						DEBUG_PRINTF (1, "Expected type '%s', got '%s'\n", mono_type_full_name (t), m_class_get_name (obj->vtable->klass));
-						return ERR_INVALID_ARGUMENT;
+						if (check_field_datatype) { //if it's not executing a invoke method check the datatypes.
+							DEBUG_PRINTF (1, "Expected type '%s', got '%s'\n", mono_type_full_name (t), m_class_get_name (obj->vtable->klass));
+							return ERR_INVALID_ARGUMENT;
+						}
 					}
 				}
 				if (obj && obj->vtable->domain != domain)
@@ -5568,7 +5566,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 				g_assert (vtype_buf);
 
 				buf = buf2;
-				err = decode_vtype (NULL, domain, vtype_buf, buf, &buf, limit);
+				err = decode_vtype (NULL, domain, vtype_buf, buf, &buf, limit, check_field_datatype);
 				if (err != ERR_NONE) {
 					g_free (vtype_buf);
 					return err;
@@ -5582,6 +5580,12 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 				g_free (name);
 				return ERR_INVALID_ARGUMENT;
 			}
+		} else if ((t->type == MONO_TYPE_GENERICINST) && 
+					mono_metadata_generic_class_is_valuetype (t->data.generic_class) &&
+					m_class_is_enumtype (t->data.generic_class->container_class)){
+			err = decode_vtype (t, domain, addr, buf, &buf, limit, check_field_datatype);
+			if (err != ERR_NONE)
+				return err;
 		} else {
 			NOT_IMPLEMENTED;
 		}
@@ -5594,7 +5598,7 @@ decode_value_internal (MonoType *t, int type, MonoDomain *domain, guint8 *addr, 
 }
 
 static ErrorCode
-decode_value (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void_buf, guint8 **endbuf, guint8 *limit)
+decode_value (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void_buf, guint8 **endbuf, guint8 *limit, gboolean check_field_datatype)
 {
 	guint8 *addr = (guint8*)void_addr;
 	guint8 *buf = (guint8*)void_buf;
@@ -5610,7 +5614,7 @@ decode_value (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void
 		/*
 		 * First try decoding it as a Nullable`1
 		 */
-		err = decode_value_internal (t, type, domain, addr, buf, endbuf, limit);
+		err = decode_value_internal (t, type, domain, addr, buf, endbuf, limit, check_field_datatype);
 		if (err == ERR_NONE)
 			return err;
 
@@ -5619,7 +5623,7 @@ decode_value (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void
 		 */
 		if (targ->type == type) {
 			nullable_buf = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (targ)));
-			err = decode_value_internal (targ, type, domain, nullable_buf, buf, endbuf, limit);
+			err = decode_value_internal (targ, type, domain, nullable_buf, buf, endbuf, limit, check_field_datatype);
 			if (err != ERR_NONE) {
 				g_free (nullable_buf);
 				return err;
@@ -5640,7 +5644,7 @@ decode_value (MonoType *t, MonoDomain *domain, gpointer void_addr, gpointer void
 		}
 	}
 
-	return decode_value_internal (t, type, domain, addr, buf, endbuf, limit);
+	return decode_value_internal (t, type, domain, addr, buf, endbuf, limit, check_field_datatype);
 }
 
 static void
@@ -6026,7 +6030,6 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 
 		mono_runtime_try_invoke (invoke->method, NULL, invoke->args, &exc, error);
 		mono_error_assert_ok (error);
-
 		g_assert_not_reached ();
 	}
 
@@ -6060,12 +6063,12 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 				memset (this_buf, 0, mono_class_instance_size (m->klass));
 				p = tmp_p;
 			} else {
-				err = decode_value (m_class_get_byval_arg (m->klass), domain, this_buf, p, &p, end);
+				err = decode_value (m_class_get_byval_arg (m->klass), domain, this_buf, p, &p, end, FALSE);
 				if (err != ERR_NONE)
 					return err;
 			}
 	} else {
-		err = decode_value (m_class_get_byval_arg (m->klass), domain, this_buf, p, &p, end);
+		err = decode_value (m_class_get_byval_arg (m->klass), domain, this_buf, p, &p, end, FALSE);
 		if (err != ERR_NONE)
 			return err;
 	}
@@ -6129,7 +6132,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 	args = (gpointer *)g_alloca (nargs * sizeof (gpointer));
 	for (i = 0; i < nargs; ++i) {
 		if (MONO_TYPE_IS_REFERENCE (sig->params [i])) {
-			err = decode_value (sig->params [i], domain, (guint8*)&args [i], p, &p, end);
+			err = decode_value (sig->params [i], domain, (guint8*)&args [i], p, &p, end, TRUE);
 			if (err != ERR_NONE)
 				break;
 			if (args [i] && ((MonoObject*)args [i])->vtable->domain != domain)
@@ -6143,7 +6146,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke, guint8 
 		} else {
 			MonoClass *arg_class = mono_class_from_mono_type_internal (sig->params [i]);
 			arg_buf [i] = (guint8 *)g_alloca (mono_class_instance_size (arg_class));
-			err = decode_value (sig->params [i], domain, arg_buf [i], p, &p, end);
+			err = decode_value (sig->params [i], domain, arg_buf [i], p, &p, end, TRUE);
 			if (err != ERR_NONE)
 				break;
 			if (mono_class_is_nullable (arg_class)) {
@@ -6368,8 +6371,6 @@ invoke_method (void)
 
 	g_free (invoke->p);
 	g_free (invoke);
-
-	suspend_current ();
 }
 
 static gboolean
@@ -7209,7 +7210,7 @@ domain_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		o = mono_object_new_checked (domain, klass, error);
 		mono_error_assert_ok (error);
 
-		err = decode_value (m_class_get_byval_arg (klass), domain, (guint8 *)mono_object_unbox_internal (o), p, &p, end);
+		err = decode_value (m_class_get_byval_arg (klass), domain, (guint8 *)mono_object_unbox_internal (o), p, &p, end, TRUE);
 		if (err != ERR_NONE)
 			return err;
 
@@ -7889,7 +7890,7 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 			if (!is_ok (error))
 				return ERR_INVALID_FIELDID;
 			val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
-			err = decode_value (f->type, domain, val, p, &p, end);
+			err = decode_value (f->type, domain, val, p, &p, end, TRUE);
 			if (err != ERR_NONE) {
 				g_free (val);
 				return err;
@@ -8601,7 +8602,7 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 		g_assert (tls);
 
-		compute_frame_info (thread, tls);
+		compute_frame_info (thread, tls, TRUE); //the last parameter is TRUE to force that the frame info that will be send is synchronised with the debugged thread
 
 		buffer_add_int (buf, tls->frame_count);
 		for (i = 0; i < tls->frame_count; ++i) {
@@ -8655,7 +8656,7 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 		g_assert (tls);
 
-		compute_frame_info (thread, tls);
+		compute_frame_info (thread, tls, FALSE);
 		if (tls->frame_count == 0 || tls->frames [0]->actual_method != method)
 			return ERR_INVALID_ARGUMENT;
 
@@ -8676,6 +8677,15 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		} else {
 			MONO_CONTEXT_SET_IP (&tls->restore_state.ctx, (guint8*)tls->frames [0]->de.ji->code_start + sp.native_offset);
 		}
+		break;
+	}
+	case CMD_THREAD_ELAPSED_TIME: {
+		DebuggerTlsData *tls;
+		mono_loader_lock ();
+		tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread);
+		mono_loader_unlock ();
+		g_assert (tls);
+		buffer_add_long (buf, (long)mono_stopwatch_elapsed_ms (&tls->step_time));
 		break;
 	}
 	default:
@@ -8721,6 +8731,9 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	if (i == tls->frame_count)
 		return ERR_INVALID_FRAMEID;
 
+	/* The thread is still running native code, can't get frame variables info */
+	if (!tls->really_suspended && !tls->async_state.valid) 
+		return ERR_NOT_SUSPENDED;
 	frame_idx = i;
 	frame = tls->frames [frame_idx];
 
@@ -8878,7 +8891,7 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				val_buf = (guint8 *)g_alloca (sizeof (MonoObject*));
 			else
 				val_buf = (guint8 *)g_alloca (mono_class_instance_size (mono_class_from_mono_type_internal (t)));
-			err = decode_value (t, frame->de.domain, val_buf, p, &p, end);
+			err = decode_value (t, frame->de.domain, val_buf, p, &p, end, TRUE);
 			if (err != ERR_NONE)
 				return err;
 
@@ -8912,7 +8925,7 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		g_assert (MONO_TYPE_ISSTRUCT (t));
 
 		val_buf = (guint8 *)g_alloca (mono_class_instance_size (mono_class_from_mono_type_internal (t)));
-		err = decode_value (t, frame->de.domain, val_buf, p, &p, end);
+		err = decode_value (t, frame->de.domain, val_buf, p, &p, end, TRUE);
 		if (err != ERR_NONE)
 			return err;
 
@@ -8988,7 +9001,7 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		for (i = index; i < index + len; ++i) {
 			elem = (gpointer*)((char*)arr->vector + (i * esize));
 
-			decode_value (m_class_get_byval_arg (m_class_get_element_class (arr->obj.vtable->klass)), arr->obj.vtable->domain, (guint8 *)elem, p, &p, end);
+			decode_value (m_class_get_byval_arg (m_class_get_element_class (arr->obj.vtable->klass)), arr->obj.vtable->domain, (guint8 *)elem, p, &p, end, TRUE);
 		}
 		break;
 	default:
@@ -9223,7 +9236,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				}
 
 				val = (guint8 *)g_malloc (mono_class_instance_size (mono_class_from_mono_type_internal (f->type)));
-				err = decode_value (f->type, obj->vtable->domain, val, p, &p, end);
+				err = decode_value (f->type, obj->vtable->domain, val, p, &p, end, TRUE);
 				if (err != ERR_NONE) {
 					g_free (val);
 					return err;
@@ -9231,7 +9244,7 @@ object_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				mono_field_static_set_value_internal (vtable, f, val);
 				g_free (val);
 			} else {
-				err = decode_value (f->type, obj->vtable->domain, (guint8*)obj + f->offset, p, &p, end);
+				err = decode_value (f->type, obj->vtable->domain, (guint8*)obj + f->offset, p, &p, end, TRUE);
 				if (err != ERR_NONE)
 					return err;
 			}

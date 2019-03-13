@@ -22,7 +22,7 @@ all-local: configure-llvm build-llvm install-llvm llvm_config.mk
 clean-local: clean-llvm clean-llvm-config
 
 $(mono_build_root)/llvm/llvm_config.mk: install-llvm
-	$(top_srcdir)/llvm/build_llvm_config.sh "$(top_srcdir)/llvm/usr/bin/$(llvm_config)" "$(LLVM_CODEGEN_LIBS)" "$(llvm_extra_libs)" > $@
+	$(top_srcdir)/llvm/build_llvm_config.sh "$(top_srcdir)/llvm/usr/bin/$(llvm_config)" "$(LLVM_CODEGEN_LIBS)" "$(llvm_extra_libs)" | tee $@
 
 else
 all-local: llvm_config.mk
@@ -30,7 +30,7 @@ all-local: llvm_config.mk
 clean-local: clean-llvm-config
 
 $(mono_build_root)/llvm/llvm_config.mk: $(top_srcdir)/llvm/Makefile.am
-	$(top_srcdir)/llvm/build_llvm_config.sh "$(EXTERNAL_LLVM_CONFIG)" "$(LLVM_CODEGEN_LIBS)" "$(llvm_extra_libs)" > $@
+	$(top_srcdir)/llvm/build_llvm_config.sh "$(EXTERNAL_LLVM_CONFIG)" "$(LLVM_CODEGEN_LIBS)" "$(llvm_extra_libs)" | tee $@
 endif
 
 llvm_config.mk: $(mono_build_root)/llvm/llvm_config.mk

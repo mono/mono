@@ -1,4 +1,7 @@
 #include mobile_tests.exclude.sources
+Mono/NativePlatformTest.cs
+Mono/MonoNativePlatform.cs
+Mono/MonoNativePlatformType.cs
 System.Reflection.Emit/AssemblyBuilderAccessTest.cs
 System.Reflection.Emit/AssemblyBuilderTest.cs
 System.Reflection.Emit/ConstructorBuilderTest.cs

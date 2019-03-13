@@ -35,7 +35,11 @@ namespace System.Reflection {
 
 	[Serializable]
 	public abstract partial class EventInfo : MemberInfo {
+
+// Field needed by runtime, just disable warning.
+#pragma warning disable CS0169
 		AddEventAdapter cached_add_event;
+#pragma warning restore CS0169
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]

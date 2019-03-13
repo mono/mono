@@ -175,6 +175,45 @@ namespace System.Runtime.CompilerServices
 			data = tmp;
 		}
 
+		// the whole method is just a copy of `public void Add (TKey key, TValue value)`
+		// the only difference it doesn't throw exceptions if the given key exists
+		// both methods will be merged once a wierd issue (broken acceptence test dev10_535767.cs) is resolved
+		public void AddOrUpdate (TKey key, TValue value)
+		{
+			if (key == default (TKey))
+				throw new ArgumentNullException ("Null key", "key");
+
+			lock (_lock) {
+				if (size >= data.Length * LOAD_FACTOR)
+					Rehash ();
+
+				int len = data.Length;
+				int idx,initial_idx;
+				int free_slot = -1;
+
+				idx = initial_idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
+				do {
+					object k = data [idx].key;
+
+					if (k == null) {
+						if (free_slot == -1)
+							free_slot = idx;
+						break;
+					} else if (k == GC.EPHEMERON_TOMBSTONE && free_slot == -1) { //Add requires us to check for dupes :(
+						free_slot = idx;
+					} else if (k == key) {
+						free_slot = idx; 
+					}
+
+					if (++idx == len) //Wrap around
+						idx = 0;
+				} while (idx != initial_idx);
+
+				data [free_slot].key = key;
+				data [free_slot].value = value;
+				++size;
+			}
+		}
 
 		public void Add (TKey key, TValue value)
 		{
@@ -199,7 +238,7 @@ namespace System.Runtime.CompilerServices
 						break;
 					} else if (k == GC.EPHEMERON_TOMBSTONE && free_slot == -1) { //Add requires us to check for dupes :(
 						free_slot = idx;
-					} else if (k == key) { 
+					} else if (k == key) {
 						throw new ArgumentException ("Key already in the list", "key");
 					}
 
@@ -295,8 +334,10 @@ namespace System.Runtime.CompilerServices
 		// if you know for sure that either you won't run into dead locks or you need to live with the
 		// possiblity
 		//--------------------------------------------------------------------------------------------
+#if !MONO
 		[System.Security.SecuritySafeCritical]
 		[FriendAccessAllowed]
+#endif
 		internal TKey FindEquivalentKeyUnsafe(TKey key, out TValue value)
 		{
 			lock (_lock)
@@ -320,7 +361,7 @@ namespace System.Runtime.CompilerServices
 		// Clear all the key/value pairs
 		//--------------------------------------------------------------------------------------------
 		[System.Security.SecuritySafeCritical]
-		internal void Clear()
+		public void Clear()
 		{
 			lock (_lock)
 			{

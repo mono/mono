@@ -1339,6 +1339,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 	return args_size;
 }
 
+#ifndef DISABLE_JIT
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig, gboolean virtual_)
 {
@@ -1364,6 +1365,7 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 
 	return res;
 }
+#endif /* DISABLE_JIT */
 
 /*
  * Initialize the cpu to execute managed code.
@@ -3012,6 +3014,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 	amd64_movsd_reg_membase (code, (dreg), AMD64_RSP, -8); \
 } while (0);
 
+#ifndef DISABLE_JIT
 static guint8*
 emit_call_body (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gconstpointer data)
 {
@@ -3082,9 +3085,8 @@ emit_call_body (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gco
 							near_call = TRUE;
 					}
 					else {
-						/* See the comment in mono_codegen () */
-						if ((info->name [0] != 'v') || (strstr (info->name, "ves_array_new_va_") == NULL && strstr (info->name, "ves_array_element_address_") == NULL))
-							near_call = TRUE;
+						/* ?See the comment in mono_codegen ()? */
+						near_call = TRUE;
 					}
 				}
 				else if ((((guint64)data) >> 32) == 0) {
@@ -3173,7 +3175,6 @@ store_membase_imm_to_store_membase_reg (int opcode)
 	return -1;
 }
 
-#ifndef DISABLE_JIT
 
 #define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB) || ((opcode) == OP_ISBB_IMM)))
 
@@ -3832,6 +3833,7 @@ emit_setup_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset, int cfa_offse
 
 #ifdef TARGET_WIN32
 
+#define TEB_LAST_ERROR_SLOT 0x30
 #define TEB_LAST_ERROR_OFFSET 0x068
 
 static guint8*
@@ -3839,7 +3841,8 @@ emit_get_last_error (guint8* code, int dreg)
 {
 	/* Threads last error value is located in TEB_LAST_ERROR_OFFSET. */
 	x86_prefix (code, X86_GS_PREFIX);
-	amd64_mov_reg_membase (code, dreg, TEB_LAST_ERROR_OFFSET, 0, sizeof (guint32));
+	amd64_mov_reg_mem (code, dreg, TEB_LAST_ERROR_SLOT, sizeof (gpointer));
+	amd64_mov_reg_membase (code, dreg, dreg, TEB_LAST_ERROR_OFFSET, sizeof (guint32));
 
 	return code;
 }
@@ -5153,7 +5156,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, AMD64_RSP, sizeof(gpointer));
 
 			if ((MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FINALLY) ||
-				 MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FILTER)) &&
+				 MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FILTER) ||
+				 MONO_BBLOCK_IS_IN_REGION (bb, MONO_REGION_FAULT)) &&
 				cfg->param_area) {
 				amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, ALIGN_TO (cfg->param_area, MONO_ARCH_FRAME_ALIGNMENT));
 			}
@@ -6759,8 +6763,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_GC_SAFE_POINT: {
 			guint8 *br [1];
 
-			g_assert (mono_threads_are_safepoints_enabled ());
-
 			amd64_test_membase_imm_size (code, ins->sreg1, 0, 1, 4);
 			br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, "mono_threads_state_poll", FALSE);
@@ -6778,7 +6780,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			bb->spill_slot_defs = g_slist_prepend_mempool (cfg->mempool, bb->spill_slot_defs, ins);
 			break;
 		case OP_GET_LAST_ERROR:
-			emit_get_last_error(code, ins->dreg);
+			code = emit_get_last_error(code, ins->dreg);
 			break;
 		case OP_FILL_PROF_CALL_CTX:
 			for (int i = 0; i < AMD64_NREG; i++)

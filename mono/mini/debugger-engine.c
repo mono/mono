@@ -931,7 +931,7 @@ mono_de_ss_update (SingleStepReq *req, MonoJitInfo *ji, SeqPoint *sp, void *tls,
 		return FALSE;
 	}
 
-	if (req->depth == STEP_DEPTH_OVER && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK)) {
+	if (req->depth == STEP_DEPTH_OVER && (sp->flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) && !(sp->flags & MONO_SEQ_POINT_FLAG_NESTED_CALL)) {
 		/*
 		 * These seq points are inserted by the JIT after calls, step over needs to skip them.
 		 */
@@ -1227,7 +1227,7 @@ is_last_non_empty (SeqPoint* sp, MonoSeqPointInfo *info)
 	SeqPoint* next = g_new (SeqPoint, sp->next_len);
 	mono_seq_point_init_next (info, *sp, next);
 	for (int i = 0; i < sp->next_len; i++) {
-		if (next [i].flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK) {
+		if (next [i].flags & MONO_SEQ_POINT_FLAG_NONEMPTY_STACK && !(next [i].flags & MONO_SEQ_POINT_FLAG_NESTED_CALL)) {
 			if (!is_last_non_empty (&next [i], info)) {
 				g_free (next);
 				return FALSE;
@@ -1554,4 +1554,13 @@ mono_de_cleanup (void)
 	domains_cleanup ();
 }
 
+void
+mono_debugger_free_objref (gpointer value)
+{
+	ObjRef *o = (ObjRef *)value;
+
+	mono_gchandle_free_internal (o->handle);
+
+	g_free (o);
+}
 #endif

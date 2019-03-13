@@ -947,7 +947,7 @@ namespace System {
 				InternalPushDomainRef (domain);
 				pushed = true;
 				InternalSetDomain (domain);
-				object o = ((MonoMethod) method).InternalInvoke (obj, args, out exc);
+				object o = ((RuntimeMethodInfo) method).InternalInvoke (obj, args, out exc);
 				if (exc != null)
 					throw exc;
 				return o;
@@ -969,7 +969,7 @@ namespace System {
 				InternalPushDomainRefByID (domain_id);
 				pushed = true;
 				InternalSetDomainByID (domain_id);
-				object o = ((MonoMethod) method).InternalInvoke (obj, args, out exc);
+				object o = ((RuntimeMethodInfo) method).InternalInvoke (obj, args, out exc);
 				if (exc != null)
 					throw exc;
 				return o;

@@ -239,5 +239,11 @@ namespace MonoTests.System
 			Assert.AreEqual (-1, Environment.MachineName.IndexOf("."));
 		}
 #endif
+
+		[Test] // https://github.com/mono/mono/issues/13030
+		public void GetLogicalDrivesNotEmpty ()
+		{
+			CollectionAssert.IsNotEmpty (Environment.GetLogicalDrives ());
+		}
 	}
 }

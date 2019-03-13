@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace System.Net.Sockets
 {
@@ -245,6 +246,24 @@ namespace System.Net.Sockets
                 socketFlags,
                 remoteEP,
                 state: socket);
+        }
+
+        public static ValueTask<int> SendAsync(this Socket socket, ReadOnlyMemory<byte> buffer, SocketFlags socketFlags, CancellationToken cancellationToken = default) =>
+            socket.SendAsync(buffer, socketFlags, cancellationToken);
+
+        public static ValueTask<int> ReceiveAsync(this Socket socket, Memory<byte> memory, SocketFlags socketFlags, CancellationToken cancellationToken = default)
+        {
+            var tcs = new TaskCompletionSource<int>(socket);
+            socket.BeginReceive(memory.ToArray(), 0, memory.Length, socketFlags, iar =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var tcsInner = (TaskCompletionSource<int>)iar.AsyncState;
+                var socketInner = (Socket)tcsInner.Task.AsyncState;
+                try { tcsInner.TrySetResult(socketInner.EndReceive(iar)); }
+                catch (Exception exc) { tcsInner.TrySetException(exc); }
+            }, tcs);
+            cancellationToken.ThrowIfCancellationRequested();
+            return new ValueTask<int>(tcs.Task);
         }
     }
 }

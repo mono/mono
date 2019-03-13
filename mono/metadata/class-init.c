@@ -622,7 +622,11 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	/* reserve space to store vector pointer in arrays */
 	if (mono_is_corlib_image (image) && !strcmp (nspace, "System") && !strcmp (name, "Array")) {
 		klass->instance_size += 2 * TARGET_SIZEOF_VOID_P;
+#ifndef ENABLE_NETCORE
 		g_assert (mono_class_get_field_count (klass) == 0);
+#else
+		/* TODO: check that array has 0 non-const fields */
+#endif
 	}
 
 	if (klass->enumtype) {
@@ -2233,18 +2237,21 @@ check_interface_method_override (MonoClass *klass, MonoMethod *im, MonoMethod *c
 
 #if (TRACE_INTERFACE_VTABLE_CODE|DEBUG_INTERFACE_VTABLE_CODE)
 static void
-foreach_override (gpointer key, gpointer value, gpointer user_data) {
+foreach_override (gpointer key, gpointer value, gpointer user_data)
+{
 	MonoMethod *method = key;
 	MonoMethod *override = value;
-	MonoClass *method_class = mono_method_get_class (method);
-	MonoClass *override_class = mono_method_get_class (override);
-	
-	printf ("  Method '%s.%s:%s' has override '%s.%s:%s'\n",
-			m_class_get_name_space (method_class), m_class_get_name (method_class), mono_method_get_name (method),
-			m_class_get_name_space (override_class), m_class_get_name (override_class), mono_method_get_name (override));
+
+	char *method_name = mono_method_get_full_name (method);
+	char *override_name = mono_method_get_full_name (override);
+	printf ("  Method '%s' has override '%s'\n", method_name, override_name);
+	g_free (method_name);
+	g_free (override_name);
 }
+
 static void
-print_overrides (GHashTable *override_map, const char *message) {
+print_overrides (GHashTable *override_map, const char *message)
+{
 	if (override_map) {
 		printf ("Override map \"%s\" START:\n", message);
 		g_hash_table_foreach (override_map, foreach_override, NULL);
@@ -2253,8 +2260,10 @@ print_overrides (GHashTable *override_map, const char *message) {
 		printf ("Override map \"%s\" EMPTY.\n", message);
 	}
 }
+
 static void
-print_vtable_full (MonoClass *klass, MonoMethod** vtable, int size, int first_non_interface_slot, const char *message, gboolean print_interfaces) {
+print_vtable_full (MonoClass *klass, MonoMethod** vtable, int size, int first_non_interface_slot, const char *message, gboolean print_interfaces)
+{
 	char *full_name = mono_type_full_name (m_class_get_byval_arg (klass));
 	int i;
 	int parent_size;
@@ -2854,7 +2863,7 @@ print_vtable_layout_result (MonoClass *klass, MonoMethod **vtable, int cur_slot)
 		cm = vtable [i];
 		if (cm) {
 			printf ("  slot assigned: %03d, slot index: %03d %s\n", i, cm->slot,
-				mono_method_full_name (cm, TRUE));
+				mono_method_get_full_name (cm));
 		} else {
 			printf ("  slot assigned: %03d, <null>\n", i);
 		}
@@ -3062,6 +3071,10 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 		for (int i = 0; i < iface_onum; i++) {
 			MonoMethod *decl = iface_overrides [i*2];
 			MonoMethod *override = iface_overrides [i*2 + 1];
+			if (decl->is_inflated) {
+				override = mono_class_inflate_generic_method_checked (override, mono_method_get_context (decl), error);
+				mono_error_assert_ok (error);
+			}
 			if (!apply_override (klass, ic, vtable, decl, override, &override_map, &override_class_map, &conflict_map))
 				goto fail;
 		}
@@ -4082,10 +4095,10 @@ initialize_object_slots (MonoClass *klass)
 				finalize_slot = i;
 		}
 
-		g_assert (ghc_slot > 0);
+		g_assert (ghc_slot >= 0);
 		default_ghc = klass->vtable [ghc_slot];
 
-		g_assert (finalize_slot > 0);
+		g_assert (finalize_slot >= 0);
 		default_finalize = klass->vtable [finalize_slot];
 	}
 }
@@ -4380,7 +4393,9 @@ mono_class_init_internal (MonoClass *klass)
 		if (mono_class_set_type_load_failure_causedby_class (klass, gklass, "Generic Type Definition failed to init"))
 			goto leave;
 
+		mono_loader_lock ();
 		mono_class_setup_interface_id_internal (klass);
+		mono_loader_unlock ();
 	}
 
 	if (klass->parent && !klass->parent->inited)

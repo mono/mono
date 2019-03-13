@@ -133,6 +133,7 @@ static const gint16 opt_names [] = {
 #define EXCLUDED_FROM_ALL (MONO_OPT_SHARED | MONO_OPT_PRECOMP | MONO_OPT_UNSAFE | MONO_OPT_GSHAREDVT)
 
 static char *mono_parse_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend);
+static char *mono_parse_response_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend);
 
 static guint32
 parse_optimizations (guint32 opt, const char* p, gboolean cpu_opts)
@@ -1265,6 +1266,20 @@ mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, ch
 	MONO_REQ_GC_UNSAFE_MODE;
 	ERROR_DECL (error);
 	MonoImage *image = mono_assembly_get_image_internal (assembly);
+
+    // We need to ensure that any module cctor for this image
+    // is run *before* we invoke the entry point
+    // For more information, see https://blogs.msdn.microsoft.com/junfeng/2005/11/19/module-initializer-a-k-a-module-constructor/
+    //
+    // This is required in order for tools like Costura
+    // (https://github.com/Fody/Costura) to work properly, as they inject
+    // a module initializer which sets up event handlers (e.g. AssemblyResolve)
+    // that allow the main method to run properly
+    if (!mono_runtime_run_module_cctor(image, domain, error)) {
+        g_print ("Failed to run module constructor due to %s\n", mono_error_get_message (error));
+        return 1;
+    }
+
 	MonoMethod *method;
 	guint32 entry = mono_image_get_entry_point (image);
 
@@ -1530,10 +1545,6 @@ mini_usage (void)
 		"    --runtime=VERSION      Use the VERSION runtime, instead of autodetecting\n"
 		"    --optimize=OPT         Turns on or off a specific optimization\n"
 		"                           Use --list-opt to get a list of optimizations\n"
-#ifndef DISABLE_SECURITY
-		"    --security[=mode]      Turns on the unsupported security manager (off by default)\n"
-		"                           mode is one of cas, core-clr, verifiable or validil\n"
-#endif
 		"    --attach=OPTIONS       Pass OPTIONS to the attach agent in the runtime.\n"
 		"                           Currently the only supported option is 'disable'.\n"
 		"    --llvm, --nollvm       Controls whenever the runtime uses LLVM to compile code.\n"
@@ -1651,7 +1662,7 @@ mono_get_version_info (void)
 #endif
 #endif
 
-	g_string_append_printf (output, "\tSuspend:       %s\n", mono_threads_suspend_policy_name ());
+	g_string_append_printf (output, "\tSuspend:       %s\n", mono_threads_suspend_policy_name (mono_threads_suspend_policy ()));
 
 	return g_string_free (output, FALSE);
 }
@@ -1675,7 +1686,7 @@ mono_jit_parse_options (int argc, char * argv[])
 {
 	int i;
 	char *trace_options = NULL;
-	int mini_verbose = 0;
+	int mini_verbose_level = 0;
 	guint32 opt;
 
 	/* 
@@ -1711,7 +1722,7 @@ mono_jit_parse_options (int argc, char * argv[])
 		} else if (strncmp (argv [i], "--trace=", 8) == 0) {
 			trace_options = &argv [i][8];
 		} else if (strcmp (argv [i], "--verbose") == 0 || strcmp (argv [i], "-v") == 0) {
-			mini_verbose++;
+			mini_verbose_level++;
 		} else if (strcmp (argv [i], "--breakonex") == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
@@ -1757,8 +1768,8 @@ mono_jit_parse_options (int argc, char * argv[])
 			exit (1);
 	}
 
-	if (mini_verbose)
-		mono_set_verbose_level (mini_verbose);
+	if (mini_verbose_level)
+		mono_set_verbose_level (mini_verbose_level);
 }
 
 static void
@@ -1923,6 +1934,27 @@ mono_regression_test_step (int verbose_level, const char *image, const char *met
 
 	return mono_exec_regression_internal (verbose_level, 1, images, FALSE) == 0;
 }
+
+#ifdef ENABLE_ICALL_SYMBOL_MAP
+/* Print the icall table as JSON */
+static void
+print_icall_table (void)
+{
+	// We emit some dummy values to make the code simpler
+
+	printf ("[\n{ \"klass\": \"\", \"icalls\": [");
+#define NOHANDLES(inner) inner
+#define HANDLES(id, name, func, ...)	printf ("\t,{ \"name\": \"%s\", \"func\": \"%s_raw\", \"handles\": true }\n", name, #func);
+#define HANDLES_REUSE_WRAPPER		HANDLES
+#define MONO_HANDLE_REGISTER_ICALL(...) /* nothing  */
+#define ICALL_TYPE(id,name,first) printf ("]},\n { \"klass\":\"%s\", \"icalls\": [{} ", name);
+#define ICALL(id,name,func) printf ("\t,{ \"name\": \"%s\", \"func\": \"%s\", \"handles\": false }\n", name, #func);
+#include <mono/metadata/icall-def.h>
+
+	printf ("]}\n]\n");
+}
+#endif
+
 /**
  * mono_main:
  * \param argc number of arguments in the argv array
@@ -1945,7 +1977,7 @@ mono_main (int argc, char* argv[])
 	int i, count = 1;
 	guint32 opt, action = DO_EXEC, recompilation_times = 1;
 	MonoGraphOptions mono_graph_options = (MonoGraphOptions)0;
-	int mini_verbose = 0;
+	int mini_verbose_level = 0;
 	char *trace_options = NULL;
 	char *aot_options = NULL;
 	char *forced_version = NULL;
@@ -2007,7 +2039,7 @@ mono_main (int argc, char* argv[])
 			mono_single_method_regression_opt = parse_optimizations (opt, full_opts, TRUE);
 			g_free (full_opts);
 		} else if (strcmp (argv [i], "--verbose") == 0 || strcmp (argv [i], "-v") == 0) {
-			mini_verbose++;
+			mini_verbose_level++;
 		} else if (strcmp (argv [i], "--version") == 0 || strcmp (argv [i], "-V") == 0) {
 			char *build = mono_get_runtime_build_info ();
 			char *gc_descr;
@@ -2140,7 +2172,7 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--full-aot-interp") == 0) {
 			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
 		} else if (strcmp (argv [i], "--llvmonly-interp") == 0) {
-			mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
+			mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY_INTERP);
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
@@ -2305,6 +2337,14 @@ mono_main (int argc, char* argv[])
 			mono_enable_interp (NULL);
 		} else if (strncmp (argv [i], "--interp=", 9) == 0) {
 			mono_enable_interp (argv [i] + 9);
+		} else if (strcmp (argv [i], "--print-icall-table") == 0) {
+#ifdef ENABLE_ICALL_SYMBOL_MAP
+			print_icall_table ();
+			exit (0);
+#else
+			fprintf (stderr, "--print-icall-table requires a runtime configured with the --enable-icall-symbol-map option.\n");
+			exit (1);
+#endif
 		} else if (strncmp (argv [i], "--assembly-loader=", strlen("--assembly-loader=")) == 0) {
 			gchar *arg = argv [i] + strlen ("--assembly-loader=");
 			if (strcmp (arg, "strict") == 0)
@@ -2323,15 +2363,30 @@ mono_main (int argc, char* argv[])
 			mono_runtime_install_custom_handlers_usage ();
 			return 0;
 		} else if (strncmp (argv [i], "--response=", 11) == 0){
-			gchar *text;
-			gsize len;
-			
-			if (!g_file_get_contents (&argv[i][11], &text, &len, NULL)){
+			gchar *response_content;
+			gchar *response_options;
+			gsize response_content_len;
+
+			if (!g_file_get_contents (&argv[i][11], &response_content, &response_content_len, NULL)){
 				fprintf (stderr, "The specified response file can not be read\n");
 				exit (1);
 			}
-			mono_parse_options (text, &argc, &argv, FALSE);
-			g_free (text);
+
+			response_options = response_content;
+
+			// Check for UTF8 BOM in file and remove if found.
+			if (response_content_len >= 3 && response_content [0] == '\xef' && response_content [1] == '\xbb' && response_content [2] == '\xbf') {
+				response_content_len -= 3;
+				response_options += 3;
+			}
+
+			if (response_content_len == 0) {
+				fprintf (stderr, "The specified response file is empty\n");
+				exit (1);
+			}
+
+			mono_parse_response_options (response_options, &argc, &argv, FALSE);
+			g_free (response_content);
 		} else if (argv [i][0] == '-' && argv [i][1] == '-' && mini_parse_debug_option (argv [i] + 2)) {
 		} else {
 			fprintf (stderr, "Unknown command line option: '%s'\n", argv [i]);
@@ -2388,7 +2443,7 @@ mono_main (int argc, char* argv[])
 		   fprintf (stderr, "This mono runtime is compiled for cross-compiling. Only the --aot option is supported.\n");
 		   exit (1);
        }
-#if TARGET_SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64))
+#if TARGET_SIZEOF_VOID_P == 4 && (defined(TARGET_ARM64) || defined(TARGET_AMD64)) && !defined(MONO_ARCH_ILP32)
        fprintf (stderr, "Can't cross-compile on 32-bit platforms to 64-bit architecture.\n");
        exit (1);
 #endif
@@ -2420,7 +2475,7 @@ mono_main (int argc, char* argv[])
 	}
 
 #ifdef DISABLE_JIT
-	if (!mono_aot_only) {
+	if (!mono_aot_only && !mono_use_interpreter) {
 		fprintf (stderr, "This runtime has been configured with --enable-minimal=jit, so the --full-aot command line option is required.\n");
 		exit (1);
 	}
@@ -2443,7 +2498,7 @@ mono_main (int argc, char* argv[])
 		mono_config_parse (config_file);
 	}
 
-	mono_set_defaults (mini_verbose, opt);
+	mono_set_defaults (mini_verbose_level, opt);
 	domain = mini_init (argv [i], forced_version);
 
 	mono_gc_set_stack_end (&domain);
@@ -2466,7 +2521,7 @@ mono_main (int argc, char* argv[])
 	switch (action) {
 	case DO_SINGLE_METHOD_REGRESSION:
 	case DO_REGRESSION:
-		 return mono_exec_regression_internal (mini_verbose, argc -i, argv + i, action == DO_SINGLE_METHOD_REGRESSION);
+		 return mono_exec_regression_internal (mini_verbose_level, argc -i, argv + i, action == DO_SINGLE_METHOD_REGRESSION);
 
 	case DO_BENCH:
 		if (argc - i != 1 || mname == NULL) {
@@ -2557,7 +2612,7 @@ mono_main (int argc, char* argv[])
 		i = mono_environment_exitcode_get ();
 		return i;
 	} else if (action == DO_COMPILE) {
-		compile_all_methods (assembly, mini_verbose, opt, recompilation_times);
+		compile_all_methods (assembly, mini_verbose_level, opt, recompilation_times);
 		mini_cleanup (domain);
 		return 0;
 	} else if (action == DO_DEBUGGER) {
@@ -2726,6 +2781,7 @@ void
 mono_jit_set_aot_only (gboolean val)
 {
 	mono_aot_only = val;
+	mono_ee_features.use_aot_trampolines = val;
 }
 
 static void
@@ -2767,6 +2823,12 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 		mono_ee_features.force_use_interpreter = TRUE;
 		break;
 
+	case MONO_AOT_MODE_LLVMONLY_INTERP:
+		mono_aot_only = TRUE;
+		mono_use_interpreter = TRUE;
+		mono_llvm_only = TRUE;
+		break;
+
 	case MONO_EE_MODE_INTERP:
 		mono_use_interpreter = TRUE;
 
@@ -2774,6 +2836,7 @@ mono_runtime_set_execution_mode (MonoEEMode mode)
 		break;
 
 	case MONO_AOT_MODE_NORMAL:
+	case MONO_AOT_MODE_NONE:
 		break;
 
 	default:
@@ -2788,11 +2851,13 @@ void
 mono_jit_set_aot_mode (MonoAotMode mode)
 {
 	/* we don't want to set mono_aot_mode twice */
-	g_assert (mono_aot_mode == MONO_AOT_MODE_NONE);
+	static gboolean inited;
+
+	g_assert (!inited);
 	mono_aot_mode = mode;
+	inited = TRUE;
 	
 	mono_runtime_set_execution_mode ((MonoEEMode)mode);
-
 }
 
 mono_bool
@@ -2885,21 +2950,52 @@ mono_parse_options_from (const char *options, int *ref_argc, char **ref_argv [])
 	return mono_parse_options (options, ref_argc, ref_argv, TRUE);
 }
 
-static char *
-mono_parse_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
+static void
+merge_parsed_options (GPtrArray *parsed_options, int *ref_argc, char **ref_argv [], gboolean prepend)
 {
 	int argc = *ref_argc;
 	char **argv = *ref_argv;
+
+	if (parsed_options->len > 0){
+		int new_argc = parsed_options->len + argc;
+		char **new_argv = g_new (char *, new_argc + 1);
+		guint i;
+		guint j;
+
+		new_argv [0] = argv [0];
+
+		i = 1;
+		if (prepend){
+			/* First the environment variable settings, to allow the command line options to override */
+			for (i = 0; i < parsed_options->len; i++)
+				new_argv [i+1] = (char *)g_ptr_array_index (parsed_options, i);
+			i++;
+		}
+		for (j = 1; j < argc; j++)
+			new_argv [i++] = argv [j];
+		if (!prepend){
+			for (j = 0; j < parsed_options->len; j++)
+				new_argv [i++] = (char *)g_ptr_array_index (parsed_options, j);
+		}
+		new_argv [i] = NULL;
+
+		*ref_argc = new_argc;
+		*ref_argv = new_argv;
+	}
+}
+
+static char *
+mono_parse_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
+{
 	GPtrArray *array = g_ptr_array_new ();
 	GString *buffer = g_string_new ("");
 	const char *p;
-	unsigned i;
 	gboolean in_quotes = FALSE;
 	char quote_char = '\0';
 
 	if (options == NULL)
 		return NULL;
-	
+
 	for (p = options; *p; p++){
 		switch (*p){
 		case ' ': case '\t': case '\n':
@@ -2937,39 +3033,84 @@ mono_parse_options (const char *options, int *ref_argc, char **ref_argv [], gboo
 	}
 	if (in_quotes) 
 		return g_strdup_printf ("Unmatched quotes in value: [%s]\n", options);
-		
+
 	if (buffer->len != 0)
 		g_ptr_array_add (array, g_strdup (buffer->str));
 	g_string_free (buffer, TRUE);
 
-	if (array->len > 0){
-		int new_argc = array->len + argc;
-		char **new_argv = g_new (char *, new_argc + 1);
-		int j;
-
-		new_argv [0] = argv [0];
-
-		i = 1;
-		if (prepend){
-			/* First the environment variable settings, to allow the command line options to override */
-			for (i = 0; i < array->len; i++)
-				new_argv [i+1] = (char *)g_ptr_array_index (array, i);
-			i++;
-		}
-		for (j = 1; j < argc; j++)
-			new_argv [i++] = argv [j];
-		if (!prepend){
-			for (j = 0; j < array->len; j++)
-				new_argv [i++] = (char *)g_ptr_array_index (array, j);
-		}
-		new_argv [i] = NULL;
-
-		*ref_argc = new_argc;
-		*ref_argv = new_argv;
-	}
+	merge_parsed_options (array, ref_argc, ref_argv, prepend);
 	g_ptr_array_free (array, TRUE);
+
 	return NULL;
 }
+
+#if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#include <shellapi.h>
+
+static char *
+mono_win32_parse_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
+{
+	int argc;
+	gunichar2 **argv;
+	gunichar2 *optionsw;
+
+	if (!options)
+		return NULL;
+
+	GPtrArray *array = g_ptr_array_new ();
+	optionsw = g_utf8_to_utf16 (options, -1, NULL, NULL, NULL);
+	if (optionsw) {
+		gunichar2 *p;
+		gboolean in_quotes = FALSE;
+		gunichar2 quote_char = L'\0';
+		for (p = optionsw; *p; p++){
+			switch (*p){
+			case L'\n':
+				if (!in_quotes)
+					*p = L' ';
+				break;
+			case L'\'':
+			case L'"':
+				if (in_quotes) {
+					if (quote_char == *p)
+						in_quotes = FALSE;
+				} else {
+					in_quotes = TRUE;
+					quote_char = *p;
+				}
+				break;
+			}
+		}
+
+		argv = CommandLineToArgvW (optionsw, &argc);
+		if (argv) {
+			for (int i = 0; i < argc; i++)
+				g_ptr_array_add (array, g_utf16_to_utf8 (argv[i], -1, NULL, NULL, NULL));
+
+			LocalFree (argv);
+		}
+
+		g_free (optionsw);
+	}
+
+	merge_parsed_options (array, ref_argc, ref_argv, prepend);
+	g_ptr_array_free (array, TRUE);
+
+	return NULL;
+}
+
+static inline char *
+mono_parse_response_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
+{
+	return mono_win32_parse_options (options, ref_argc, ref_argv, prepend);
+}
+#else
+static inline char *
+mono_parse_response_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
+{
+	return mono_parse_options (options, ref_argc, ref_argv, prepend);
+}
+#endif
 
 /**
  * mono_parse_env_options:

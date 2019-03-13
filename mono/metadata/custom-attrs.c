@@ -26,7 +26,6 @@
 #include "mono/metadata/verify-internals.h"
 #include "mono/utils/checked-build.h"
 
-
 #define CHECK_ADD4_OVERFLOW_UN(a, b) ((guint32)(0xFFFFFFFFU) - (guint32)(b) < (guint32)(a))
 #define CHECK_ADD8_OVERFLOW_UN(a, b) ((guint64)(0xFFFFFFFFFFFFFFFFUL) - (guint64)(b) < (guint64)(a))
 
@@ -242,10 +241,12 @@ load_cattr_type (MonoImage *image, MonoType *t, gboolean header, const char *p, 
 	if (header) {
 		if (!bcheck_blob (p, 0, boundp, error))
 			return NULL;
+MONO_DISABLE_WARNING(4310) // cast truncates constant value
 		if (*p == (char)0xFF) {
 			*end = p + 1;
 			return NULL;
 		}
+MONO_RESTORE_WARNING
 	}
 
 	if (!decode_blob_value_checked (p, boundp, slen, &p, error))
@@ -381,10 +382,12 @@ handle_enum:
 	case MONO_TYPE_STRING:
 		if (!bcheck_blob (p, 0, boundp, error))
 			return NULL;
+MONO_DISABLE_WARNING (4310) // cast truncates constant value
 		if (*p == (char)0xFF) {
 			*end = p + 1;
 			return NULL;
 		}
+MONO_RESTORE_WARNING
 		if (!decode_blob_value_checked (p, boundp, &slen, &p, error))
 			return NULL;
 		if (slen > 0 && !bcheck_blob (p, slen - 1, boundp, error))
@@ -1368,7 +1371,7 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 		MonoObject *typedarg, *namedarg, *minfo;
 
 		if (arginfo [i].prop) {
-			minfo = (MonoObject*)mono_property_get_object_checked (domain, NULL, arginfo [i].prop, error);
+			minfo = (MonoObject*)mono_property_get_object_checked (domain, arginfo [i].prop->parent, arginfo [i].prop, error);
 			if (!minfo)
 				goto leave;
 		} else {
@@ -2066,40 +2069,44 @@ mono_reflection_get_custom_attrs_info_checked (MonoObjectHandle obj, MonoError *
 		/*We cannot mono_class_init_internal the class from which we'll load the custom attributes since this must work with broken types.*/
 		cinfo = mono_custom_attrs_from_class_checked (klass, error);
 		goto_if_nok (error, leave);
-	} else if (strcmp ("Assembly", klass_name) == 0 || strcmp ("MonoAssembly", klass_name) == 0) {
+	} else if (strcmp ("Assembly", klass_name) == 0 || strcmp ("RuntimeAssembly", klass_name) == 0) {
 		MonoReflectionAssemblyHandle rassembly = MONO_HANDLE_CAST (MonoReflectionAssembly, obj);
 		cinfo = mono_custom_attrs_from_assembly_checked (MONO_HANDLE_GETVAL (rassembly, assembly), FALSE, error);
 		goto_if_nok (error, leave);
-	} else if (strcmp ("MonoModule", klass_name) == 0) {
+	} else if (strcmp ("RuntimeModule", klass_name) == 0) {
 		MonoReflectionModuleHandle module = MONO_HANDLE_CAST (MonoReflectionModule, obj);
 		cinfo = mono_custom_attrs_from_module (MONO_HANDLE_GETVAL (module, image), error);
 		goto_if_nok (error, leave);
-	} else if (strcmp ("MonoProperty", klass_name) == 0) {
+	} else if (strcmp ("RuntimePropertyInfo", klass_name) == 0) {
 		MonoReflectionPropertyHandle rprop = MONO_HANDLE_CAST (MonoReflectionProperty, obj);
 		MonoProperty *property = MONO_HANDLE_GETVAL (rprop, property);
 		cinfo = mono_custom_attrs_from_property_checked (property->parent, property, error);
 		goto_if_nok (error, leave);
-	} else if (strcmp ("MonoEvent", klass_name) == 0) {
+	} else if (strcmp ("RuntimeEventInfo", klass_name) == 0) {
 		MonoReflectionMonoEventHandle revent = MONO_HANDLE_CAST (MonoReflectionMonoEvent, obj);
 		MonoEvent *event = MONO_HANDLE_GETVAL (revent, event);
 		cinfo = mono_custom_attrs_from_event_checked (event->parent, event, error);
 		goto_if_nok (error, leave);
-	} else if (strcmp ("MonoField", klass_name) == 0) {
+	} else if (strcmp ("RuntimeFieldInfo", klass_name) == 0) {
 		MonoReflectionFieldHandle rfield = MONO_HANDLE_CAST (MonoReflectionField, obj);
 		MonoClassField *field = MONO_HANDLE_GETVAL (rfield, field);
 		cinfo = mono_custom_attrs_from_field_checked (field->parent, field, error);
 		goto_if_nok (error, leave);
-	} else if ((strcmp ("MonoMethod", klass_name) == 0) || (strcmp ("MonoCMethod", klass_name) == 0)) {
+	} else if ((strcmp ("RuntimeMethodInfo", klass_name) == 0) || (strcmp ("RuntimeConstructorInfo", klass_name) == 0)) {
 		MonoReflectionMethodHandle rmethod = MONO_HANDLE_CAST (MonoReflectionMethod, obj);
 		cinfo = mono_custom_attrs_from_method_checked (MONO_HANDLE_GETVAL (rmethod, method), error);
 		goto_if_nok (error, leave);
-	} else if (strcmp ("ParameterInfo", klass_name) == 0 || strcmp ("MonoParameterInfo", klass_name) == 0) {
+	} else if (strcmp ("ParameterInfo", klass_name) == 0 || strcmp ("RuntimeParameterInfo", klass_name) == 0) {
 		MonoReflectionParameterHandle param = MONO_HANDLE_CAST (MonoReflectionParameter, obj);
-		MonoObjectHandle member_impl = MONO_HANDLE_NEW_GET (MonoObject, param, MemberImpl);
+
+		MonoObjectHandle member_impl = MONO_HANDLE_NEW (MonoObject, NULL);
+		int position;
+		mono_reflection_get_param_info_member_and_pos (param, member_impl, &position);
+
 		MonoClass *member_class = mono_handle_class (member_impl);
 		if (mono_class_is_reflection_method_or_constructor (member_class)) {
 			MonoReflectionMethodHandle rmethod = MONO_HANDLE_CAST (MonoReflectionMethod, member_impl);
-			cinfo = mono_custom_attrs_from_param_checked (MONO_HANDLE_GETVAL (rmethod, method), MONO_HANDLE_GETVAL (param, PositionImpl) + 1, error);
+			cinfo = mono_custom_attrs_from_param_checked (MONO_HANDLE_GETVAL (rmethod, method), position + 1, error);
 			goto_if_nok (error, leave);
 		} else if (mono_is_sr_mono_property (member_class)) {
 			MonoReflectionPropertyHandle prop = MONO_HANDLE_CAST (MonoReflectionProperty, member_impl);
@@ -2109,7 +2116,7 @@ mono_reflection_get_custom_attrs_info_checked (MonoObjectHandle obj, MonoError *
 				method = property->set;
 			g_assert (method);
 
-			cinfo = mono_custom_attrs_from_param_checked (method, MONO_HANDLE_GETVAL (param, PositionImpl) + 1, error);
+			cinfo = mono_custom_attrs_from_param_checked (method, position + 1, error);
 			goto_if_nok (error, leave);
 		} 
 #ifndef DISABLE_REFLECTION_EMIT

@@ -12,6 +12,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include "mono/metadata/mono-security-windows-internals.h"
+#include <mono/metadata/handle.h>
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #include <aclapi.h>
@@ -94,7 +95,7 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (MonoError *
 }
 
 gint32
-mono_security_win_get_token_name (gpointer token, gunichar2 ** uniname)
+mono_security_win_get_token_name (gpointer token, gunichar2 ** uniname, MonoError *error)
 {
 	gint32 size = 0;
 
@@ -120,7 +121,9 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetTokenName (gpointer token
 
 	error_init (error);
 
-	size = mono_security_win_get_token_name (token, &uniname);
+	size = mono_security_win_get_token_name (token, &uniname, error);
+	if (size == 0 && !is_ok (error))
+		return NULL_HANDLE_STRING;
 
 	if (size > 0) {
 		result = mono_string_new_utf16_handle (mono_domain_get (), uniname, size, error);
