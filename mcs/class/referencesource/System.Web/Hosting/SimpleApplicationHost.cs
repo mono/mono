@@ -10,6 +10,7 @@ namespace System.Web.Hosting {
     using System.Configuration;
     using System.Diagnostics;
     using System.Globalization;
+    using System.IO;
     using System.Runtime.InteropServices;  
     using System.Security.Permissions;
     using System.Web;
@@ -27,16 +28,18 @@ namespace System.Web.Hosting {
         internal SimpleApplicationHost(VirtualPath virtualPath, string physicalPath) {
 
             if (String.IsNullOrEmpty(physicalPath))
-                throw ExceptionUtil.ParameterNullOrEmpty("physicalPath");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("physicalPath");
 
             // Throw if the physical path is not canonical, to prevent potential
             // security issues (VSWhidbey 418125)
-            if (FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
-                throw ExceptionUtil.ParameterInvalid(physicalPath);
+            if (System.Web.Util.FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
+                throw System.Web.Util.ExceptionUtil.ParameterInvalid(physicalPath);
             }
 
             _appVirtualPath = virtualPath;
-            _appPhysicalPath = StringUtil.StringEndsWith(physicalPath, "\\") ? physicalPath : physicalPath + "\\";
+
+            //if unix - forward slash, else windows
+            _appPhysicalPath = System.Web.Util.StringUtil.StringEndsWith(physicalPath, Path.DirectorySeparatorChar) ? physicalPath : physicalPath + Path.DirectorySeparatorChar;
         }
 
         public override Object InitializeLifetimeService() {

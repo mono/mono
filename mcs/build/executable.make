@@ -103,7 +103,28 @@ run-test-local:
 run-test-ondotnet-local:
 	@:
 
-DISTFILES = $(sourcefile) $(base_prog_config) $(EXTRA_DISTFILES)
+#
+# RESOURCES_DEFS is a list of ID,FILE pairs separated by spaces
+# for each of those, generate a rule that produces ID.resource from
+# FILE using the resgen tool, adds the generated file to CLENA_FILES and
+# passes the resource to the compiler
+#
+ccomma = ,
+define RESOURCE_template
+$(1).resources: $(2)
+	$$(RESGEN) "$$<" "$$@"
+
+GEN_RESOURCE_DEPS += $(1).resources
+GEN_RESOURCE_FLAGS += -resource:$(1).resources
+CLEAN_FILES += $(1).resources
+DIST_LISTED_RESOURCES += $(2)
+endef
+
+ifdef RESOURCE_DEFS
+$(foreach pair,$(RESOURCE_DEFS), $(eval $(call RESOURCE_template,$(word 1, $(subst $(ccomma), ,$(pair))), $(word 2, $(subst $(ccomma), ,$(pair))))))
+endif
+
+DISTFILES = $(sourcefile) $(base_prog_config) $(EXTRA_DISTFILES) $(DIST_LISTED_RESOURCES)
 
 ifdef HAS_NUNIT_TEST
 ASSEMBLY      = $(PROGRAM)
@@ -138,8 +159,8 @@ $(topdir)/class/lib/$(PROFILE)/.stamp: | $(topdir)/class/lib/$(PROFILE)-$(HOST_P
 	$(if $(filter $(HOST_PLATFORM),$(BUILD_PLATFORM)),$(if $(filter $(BUILD_PLATFORM),win32),CYGWIN=winsymlinks:nativestrict) ln -s $(abspath $(topdir)/class/lib/$(PROFILE)-$(BUILD_PLATFORM)) $(abspath $(topdir)/class/lib/$(PROFILE)))
 endif
 
-$(build_lib): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(build_libdir:=/.stamp)
-	$(PROGRAM_COMPILE) $(MCS_REFERENCES) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
+$(build_lib): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(build_libdir:=/.stamp) $(GEN_RESOURCE_DEPS)
+	$(PROGRAM_COMPILE) $(MCS_REFERENCES) $(GEN_RESOURCE_FLAGS) -target:exe -out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 ifdef PROGRAM_SNK
 	$(Q) $(SN) -R $@ $(PROGRAM_SNK)
 endif

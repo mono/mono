@@ -18,6 +18,7 @@ namespace System.Web.UI {
 
     using System;
     using System.Security.Permissions;
+    
 
 // 
 
@@ -70,7 +71,7 @@ namespace System.Web.UI {
                 }
                 else {
                     throw new ArgumentException(
-                                               SR.GetString(SR.Cannot_convert_from_to, fromType.ToString(), toType.ToString()));
+                                               System.Web.SR.GetString(System.Web.SR.Cannot_convert_from_to, fromType.ToString(), toType.ToString()));
                 }
             }
             else if (typeof(string).IsAssignableFrom(toType)) {
@@ -121,12 +122,12 @@ namespace System.Web.UI {
                 }
                 else {
                     throw new ArgumentException(
-                                               SR.GetString(SR.Cannot_convert_from_to, fromType.ToString(), toType.ToString()));
+                                               System.Web.SR.GetString(System.Web.SR.Cannot_convert_from_to, fromType.ToString(), toType.ToString()));
                 }
             }
             else {
                 throw new ArgumentException(
-                                           SR.GetString(SR.Cannot_convert_from_to, fromType.ToString(), toType.ToString()));
+                                           System.Web.SR.GetString(System.Web.SR.Cannot_convert_from_to, fromType.ToString(), toType.ToString()));
             }
         }
 /*

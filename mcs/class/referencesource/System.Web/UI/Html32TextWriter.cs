@@ -309,12 +309,12 @@ namespace System.Web.UI {
                             _renderFontTag = true;
                         break;
                     case HtmlTextWriterStyle.FontWeight:
-                        if (StringUtil.EqualsIgnoreCase(value, "bold") && SupportsBold) {
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(value, "bold") && SupportsBold) {
                             AppendOtherTag("b");
                         }
                         break;
                     case HtmlTextWriterStyle.FontStyle:
-                        if (!StringUtil.EqualsIgnoreCase(value, "normal") && SupportsItalic) {
+                        if (!System.Web.Util.StringUtil.EqualsIgnoreCase(value, "normal") && SupportsItalic) {
                             AppendOtherTag("i");
                         }
                         break;
@@ -343,12 +343,12 @@ namespace System.Web.UI {
                         font.size = ConvertToHtmlFontSize(value);
                         break;
                     case HtmlTextWriterStyle.FontWeight:
-                        if (StringUtil.EqualsIgnoreCase(value, "bold")) {
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(value, "bold")) {
                             font.bold = true;
                         }
                         break;
                     case HtmlTextWriterStyle.FontStyle:
-                        if (!StringUtil.EqualsIgnoreCase(value, "normal")) {
+                        if (!System.Web.Util.StringUtil.EqualsIgnoreCase(value, "normal")) {
                             font.italic = true;
                         }
                         break;
@@ -425,14 +425,14 @@ namespace System.Web.UI {
                             case HtmlTextWriterTag.Th :
                             case HtmlTextWriterTag.Body :
                                 // strip url(...) from value
-                                if (StringUtil.StringStartsWith(value, "url("))
+                                if (System.Web.Util.StringUtil.StringStartsWith(value, "url("))
                                     value = value.Substring(4,value.Length-5);
                                 AddAttribute(HtmlTextWriterAttribute.Background,value);
                                 break;
                                 // div->table substitution.
                             case HtmlTextWriterTag.Div:
                                 if (ShouldPerformDivTableSubstitution) {
-                                    if (StringUtil.StringStartsWith(value, "url("))
+                                    if (System.Web.Util.StringUtil.StringStartsWith(value, "url("))
                                         value = value.Substring(4,value.Length-5);
                                     AddAttribute(HtmlTextWriterAttribute.Background,value);
                                 }
@@ -467,7 +467,7 @@ namespace System.Web.UI {
                             break;
                         default:
                             AddAttribute(HtmlTextWriterAttribute.Type, "disc");
-                            Debug.Assert(false, "Invalid BulletStyle for HTML32.");
+                            System.Web.Util.Debug.Assert(false, "Invalid BulletStyle for HTML32.");
                             break;
                     }
                     break;

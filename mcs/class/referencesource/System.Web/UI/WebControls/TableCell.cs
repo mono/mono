@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         TypeConverterAttribute(typeof(StringArrayConverter)),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.TableCell_AssociatedHeaderCellID)
+        WebSysDescription(System.Web.SR.TableCell_AssociatedHeaderCellID)
         ]
         public virtual string[] AssociatedHeaderCellID {
             get {
@@ -97,7 +97,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(0),
-        WebSysDescription(SR.TableCell_ColumnSpan)
+        WebSysDescription(System.Web.SR.TableCell_ColumnSpan)
         ]
         public virtual int ColumnSpan {
             get {
@@ -120,7 +120,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(HorizontalAlign.NotSet),
-        WebSysDescription(SR.TableItem_HorizontalAlign)
+        WebSysDescription(System.Web.SR.TableItem_HorizontalAlign)
         ]
         public virtual HorizontalAlign HorizontalAlign {
             get {
@@ -147,7 +147,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(0),
-        WebSysDescription(SR.TableCell_RowSpan)
+        WebSysDescription(System.Web.SR.TableCell_RowSpan)
         ]
         public virtual int RowSpan {
             get {
@@ -172,7 +172,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         PersistenceMode(PersistenceMode.InnerDefaultProperty),
-        WebSysDescription(SR.TableCell_Text)
+        WebSysDescription(System.Web.SR.TableCell_Text)
         ]
         public virtual string Text {
             get {
@@ -194,7 +194,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(VerticalAlign.NotSet),
-        WebSysDescription(SR.TableItem_VerticalAlign)
+        WebSysDescription(System.Web.SR.TableItem_VerticalAlign)
         ]
         public virtual VerticalAlign VerticalAlign {
             get {
@@ -218,7 +218,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(true),
-        WebSysDescription(SR.TableCell_Wrap)
+        WebSysDescription(System.Web.SR.TableCell_Wrap)
         ]
         public virtual bool Wrap {
             get {
@@ -257,7 +257,7 @@ namespace System.Web.UI.WebControls {
                 foreach (string id in arr) {
                     TableHeaderCell headerCell = namingContainer.FindControl(id) as TableHeaderCell;
                     if (headerCell == null) {
-                        throw new HttpException(SR.GetString(SR.TableCell_AssociatedHeaderCellNotFound, id));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.TableCell_AssociatedHeaderCellNotFound, id));
                     }
                     if (first) {
                         first = false;

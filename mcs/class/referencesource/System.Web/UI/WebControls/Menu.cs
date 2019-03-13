@@ -200,7 +200,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.Menu_Bindings)
+        WebSysDescription(System.Web.SR.Menu_Bindings)
         ]
         public MenuItemBindingCollection DataBindings {
             get {
@@ -217,7 +217,7 @@ namespace System.Web.UI.WebControls {
 
         [WebCategory("Behavior")]
         [DefaultValue(500)]
-        [WebSysDescription(SR.Menu_DisappearAfter)]
+        [WebSysDescription(System.Web.SR.Menu_DisappearAfter)]
         [Themeable(false)]
         public int DisappearAfter {
             get {
@@ -241,7 +241,7 @@ namespace System.Web.UI.WebControls {
         [Themeable(true)]
         [UrlProperty()]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_DynamicBottomSeparatorImageUrl)]
+        [WebSysDescription(System.Web.SR.Menu_DynamicBottomSeparatorImageUrl)]
         public string DynamicBottomSeparatorImageUrl {
             get {
                 object s = ViewState["DynamicBottomSeparatorImageUrl"];
@@ -259,7 +259,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(true),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Menu_DynamicDisplayPopOutImage)
+        WebSysDescription(System.Web.SR.Menu_DynamicDisplayPopOutImage)
         ]
         public bool DynamicEnableDefaultPopOutImage {
             get {
@@ -278,7 +278,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(0),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Menu_DynamicHorizontalOffset)
+        WebSysDescription(System.Web.SR.Menu_DynamicHorizontalOffset)
         ]
         public int DynamicHorizontalOffset {
             get {
@@ -300,7 +300,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Menu_DynamicHoverStyle)
+        WebSysDescription(System.Web.SR.Menu_DynamicHoverStyle)
         ]
         public Style DynamicHoverStyle {
             get {
@@ -316,7 +316,7 @@ namespace System.Web.UI.WebControls {
 
         [DefaultValue("")]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_DynamicItemFormatString)]
+        [WebSysDescription(System.Web.SR.Menu_DynamicItemFormatString)]
         public string DynamicItemFormatString {
             get {
                 object s = ViewState["DynamicItemFormatString"];
@@ -337,7 +337,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Menu_DynamicMenuItemStyle)
+        WebSysDescription(System.Web.SR.Menu_DynamicMenuItemStyle)
         ]
         public MenuItemStyle DynamicMenuItemStyle {
             get {
@@ -358,7 +358,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Menu_DynamicMenuStyle)
+        WebSysDescription(System.Web.SR.Menu_DynamicMenuStyle)
         ]
         public SubMenuStyle DynamicMenuStyle {
             get {
@@ -377,7 +377,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_DynamicPopoutImageUrl)]
+        [WebSysDescription(System.Web.SR.Menu_DynamicPopoutImageUrl)]
         public string DynamicPopOutImageUrl {
             get {
                 object s = ViewState["DynamicPopOutImageUrl"];
@@ -392,14 +392,14 @@ namespace System.Web.UI.WebControls {
         }
 
 
-        [WebSysDefaultValue(SR.MenuAdapter_Expand)]
+        [WebSysDefaultValue(System.Web.SR.MenuAdapter_Expand)]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_DynamicPopoutImageText)]
+        [WebSysDescription(System.Web.SR.Menu_DynamicPopoutImageText)]
         public string DynamicPopOutImageTextFormatString {
             get {
                 object s = ViewState["DynamicPopOutImageTextFormatString"];
                 if (s == null) {
-                    return SR.GetString(SR.MenuAdapter_Expand);
+                    return System.Web.SR.GetString(System.Web.SR.MenuAdapter_Expand);
                 }
                 return (string)s;
             }
@@ -415,7 +415,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Menu_DynamicSelectedStyle)
+        WebSysDescription(System.Web.SR.Menu_DynamicSelectedStyle)
         ]
         public MenuItemStyle DynamicSelectedStyle {
             get {
@@ -434,7 +434,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(MenuItemTemplateContainer)),
-        WebSysDescription(SR.Menu_DynamicTemplate)
+        WebSysDescription(System.Web.SR.Menu_DynamicTemplate)
         ]
         public ITemplate DynamicItemTemplate {
             get {
@@ -450,7 +450,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_DynamicTopSeparatorImageUrl)]
+        [WebSysDescription(System.Web.SR.Menu_DynamicTopSeparatorImageUrl)]
         public string DynamicTopSeparatorImageUrl {
             get {
                 object s = ViewState["DynamicTopSeparatorImageUrl"];
@@ -468,7 +468,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(0),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Menu_DynamicVerticalOffset)
+        WebSysDescription(System.Web.SR.Menu_DynamicVerticalOffset)
         ]
         public int DynamicVerticalOffset {
             get {
@@ -497,7 +497,7 @@ namespace System.Web.UI.WebControls {
 
         [DefaultValue(true)]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_IncludeStyleBlock)]
+        [WebSysDescription(System.Web.SR.Menu_IncludeStyleBlock)]
         public bool IncludeStyleBlock { get; set; }
 
         internal bool IsNotIE {
@@ -515,7 +515,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.WebControls.MenuItemCollectionEditor," + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         PersistenceMode(PersistenceMode.InnerProperty),
         MergableProperty(false),
-        WebSysDescription(SR.Menu_Items)
+        WebSysDescription(System.Web.SR.Menu_Items)
         ]
         public MenuItemCollection Items {
             get {
@@ -529,7 +529,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue(false)]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_ItemWrap)]
+        [WebSysDescription(System.Web.SR.Menu_ItemWrap)]
         public bool ItemWrap {
             get {
                 object o = ViewState["ItemWrap"];
@@ -552,7 +552,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor," + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Menu_LevelMenuItemStyles),
+        WebSysDescription(System.Web.SR.Menu_LevelMenuItemStyles),
         ]
         public MenuItemStyleCollection LevelMenuItemStyles {
             get {
@@ -576,7 +576,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor," + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Menu_LevelSelectedStyles),
+        WebSysDescription(System.Web.SR.Menu_LevelSelectedStyles),
         ]
         public MenuItemStyleCollection LevelSelectedStyles {
             get {
@@ -597,7 +597,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.WebControls.SubMenuStyleCollectionEditor," + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Menu_LevelSubMenuStyles),
+        WebSysDescription(System.Web.SR.Menu_LevelSubMenuStyles),
         ]
         public SubMenuStyleCollection LevelSubMenuStyles {
             get {
@@ -629,7 +629,7 @@ namespace System.Web.UI.WebControls {
         [WebCategory("Behavior")]
         [DefaultValue(3)]
         [Themeable(true)]
-        [WebSysDescription(SR.Menu_MaximumDynamicDisplayLevels)]
+        [WebSysDescription(System.Web.SR.Menu_MaximumDynamicDisplayLevels)]
         public int MaximumDynamicDisplayLevels {
             get {
                 object o = ViewState["MaximumDynamicDisplayLevels"];
@@ -640,7 +640,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value < 0) {
-                    throw new ArgumentOutOfRangeException("MaximumDynamicDisplayLevels", SR.GetString(SR.Menu_MaximumDynamicDisplayLevelsInvalid));
+                    throw new ArgumentOutOfRangeException("MaximumDynamicDisplayLevels", System.Web.SR.GetString(System.Web.SR.Menu_MaximumDynamicDisplayLevelsInvalid));
                 }
                 // Note: we're not testing against the old value here because
                 // the setter is not the only thing that can change the underlying
@@ -659,7 +659,7 @@ namespace System.Web.UI.WebControls {
 
         [WebCategory("Layout")]
         [DefaultValue(Orientation.Vertical)]
-        [WebSysDescription(SR.Menu_Orientation)]
+        [WebSysDescription(System.Web.SR.Menu_Orientation)]
         public Orientation Orientation {
             get {
                 object o = ViewState["Orientation"];
@@ -686,7 +686,7 @@ namespace System.Web.UI.WebControls {
         }
 
         [DefaultValue('/')]
-        [WebSysDescription(SR.Menu_PathSeparator)]
+        [WebSysDescription(System.Web.SR.Menu_PathSeparator)]
         public char PathSeparator {
             get {
                 object o = ViewState["PathSeparator"];
@@ -737,7 +737,7 @@ namespace System.Web.UI.WebControls {
                             }
                             break;
                         default:
-                            Debug.Fail("Unknown MenuRenderingMode.");
+                            System.Web.Util.Debug.Fail("Unknown MenuRenderingMode.");
                             break;
                     }
                 }
@@ -748,7 +748,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(MenuRenderingMode.Default),
-        WebSysDescription(SR.Menu_RenderingMode)
+        WebSysDescription(System.Web.SR.Menu_RenderingMode)
         ]
         public MenuRenderingMode RenderingMode {
             get {
@@ -759,7 +759,7 @@ namespace System.Web.UI.WebControls {
                     throw new ArgumentOutOfRangeException("value");
                 }
                 if (_renderer != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.Menu_CannotChangeRenderingMode));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_CannotChangeRenderingMode));
                 }
                 _renderingMode = value;
             }
@@ -790,7 +790,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_ScrollDownImageUrl)]
+        [WebSysDescription(System.Web.SR.Menu_ScrollDownImageUrl)]
         public string ScrollDownImageUrl {
             get {
                 object s = ViewState["ScrollDownImageUrl"];
@@ -815,15 +815,15 @@ namespace System.Web.UI.WebControls {
         }
 
 
-        [WebSysDefaultValue(SR.Menu_ScrollDown)]
+        [WebSysDefaultValue(System.Web.SR.Menu_ScrollDown)]
         [Localizable(true)]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_ScrollDownText)]
+        [WebSysDescription(System.Web.SR.Menu_ScrollDownText)]
         public string ScrollDownText {
             get {
                 object s = ViewState["ScrollDownText"];
                 if (s == null) {
-                    return SR.GetString(SR.Menu_ScrollDown);
+                    return System.Web.SR.GetString(System.Web.SR.Menu_ScrollDown);
                 }
                 return (string)s;
             }
@@ -837,7 +837,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_ScrollUpImageUrl)]
+        [WebSysDescription(System.Web.SR.Menu_ScrollUpImageUrl)]
         public string ScrollUpImageUrl {
             get {
                 object s = ViewState["ScrollUpImageUrl"];
@@ -862,15 +862,15 @@ namespace System.Web.UI.WebControls {
         }
 
 
-        [WebSysDefaultValue(SR.Menu_ScrollUp)]
+        [WebSysDefaultValue(System.Web.SR.Menu_ScrollUp)]
         [Localizable(true)]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_ScrollUpText)]
+        [WebSysDescription(System.Web.SR.Menu_ScrollUpText)]
         public string ScrollUpText {
             get {
                 object s = ViewState["ScrollUpText"];
                 if (s == null) {
-                    return SR.GetString(SR.Menu_ScrollUp);
+                    return System.Web.SR.GetString(System.Web.SR.Menu_ScrollUp);
                 }
                 return (string)s;
             }
@@ -908,15 +908,15 @@ namespace System.Web.UI.WebControls {
         }
 
 
-        [WebSysDefaultValue(SR.Menu_SkipLinkTextDefault)]
+        [WebSysDefaultValue(System.Web.SR.Menu_SkipLinkTextDefault)]
         [Localizable(true)]
         [WebCategory("Accessibility")]
-        [WebSysDescription(SR.WebControl_SkipLinkText)]
+        [WebSysDescription(System.Web.SR.WebControl_SkipLinkText)]
         public string SkipLinkText {
             get {
                 object s = ViewState["SkipLinkText"];
                 if (s == null) {
-                    return SR.GetString(SR.Menu_SkipLinkTextDefault);
+                    return System.Web.SR.GetString(System.Web.SR.Menu_SkipLinkTextDefault);
                 }
                 return (string)s;
             }
@@ -930,7 +930,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_StaticBottomSeparatorImageUrl)]
+        [WebSysDescription(System.Web.SR.Menu_StaticBottomSeparatorImageUrl)]
         public string StaticBottomSeparatorImageUrl {
             get {
                 object s = ViewState["StaticBottomSeparatorImageUrl"];
@@ -948,7 +948,7 @@ namespace System.Web.UI.WebControls {
         [WebCategory("Behavior")]
         [DefaultValue(1)]
         [Themeable(true)]
-        [WebSysDescription(SR.Menu_StaticDisplayLevels)]
+        [WebSysDescription(System.Web.SR.Menu_StaticDisplayLevels)]
         public int StaticDisplayLevels {
             get {
                 object o = ViewState["StaticDisplayLevels"];
@@ -979,7 +979,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(true),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Menu_StaticDisplayPopOutImage)
+        WebSysDescription(System.Web.SR.Menu_StaticDisplayPopOutImage)
         ]
         public bool StaticEnableDefaultPopOutImage {
             get {
@@ -1001,7 +1001,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Menu_StaticHoverStyle)
+        WebSysDescription(System.Web.SR.Menu_StaticHoverStyle)
         ]
         public Style StaticHoverStyle {
             get {
@@ -1017,7 +1017,7 @@ namespace System.Web.UI.WebControls {
 
         [DefaultValue("")]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_StaticItemFormatString)]
+        [WebSysDescription(System.Web.SR.Menu_StaticItemFormatString)]
         public string StaticItemFormatString {
             get {
                 object s = ViewState["StaticItemFormatString"];
@@ -1038,7 +1038,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Menu_StaticMenuItemStyle)
+        WebSysDescription(System.Web.SR.Menu_StaticMenuItemStyle)
         ]
         public MenuItemStyle StaticMenuItemStyle {
             get {
@@ -1059,7 +1059,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Menu_StaticMenuStyle)
+        WebSysDescription(System.Web.SR.Menu_StaticMenuStyle)
         ]
         public SubMenuStyle StaticMenuStyle {
             get {
@@ -1078,7 +1078,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_StaticPopoutImageUrl)]
+        [WebSysDescription(System.Web.SR.Menu_StaticPopoutImageUrl)]
         public string StaticPopOutImageUrl {
             get {
                 object s = ViewState["StaticPopOutImageUrl"];
@@ -1093,14 +1093,14 @@ namespace System.Web.UI.WebControls {
         }
 
 
-        [WebSysDefaultValue(SR.MenuAdapter_Expand)]
+        [WebSysDefaultValue(System.Web.SR.MenuAdapter_Expand)]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_StaticPopoutImageText)]
+        [WebSysDescription(System.Web.SR.Menu_StaticPopoutImageText)]
         public string StaticPopOutImageTextFormatString {
             get {
                 object s = ViewState["StaticPopOutImageTextFormatString"];
                 if (s == null) {
-                    return SR.GetString(SR.MenuAdapter_Expand);
+                    return System.Web.SR.GetString(System.Web.SR.MenuAdapter_Expand);
                 }
                 return (string)s;
             }
@@ -1116,7 +1116,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Menu_StaticSelectedStyle)
+        WebSysDescription(System.Web.SR.Menu_StaticSelectedStyle)
         ]
         public MenuItemStyle StaticSelectedStyle {
             get {
@@ -1134,7 +1134,7 @@ namespace System.Web.UI.WebControls {
         [WebCategory("Appearance")]
         [DefaultValue(typeof(Unit), "")]
         [Themeable(true)]
-        [WebSysDescription(SR.Menu_StaticSubMenuIndent)]
+        [WebSysDescription(System.Web.SR.Menu_StaticSubMenuIndent)]
         public Unit StaticSubMenuIndent {
             get {
                 object o = ViewState["StaticSubMenuIndent"];
@@ -1156,7 +1156,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(MenuItemTemplateContainer)),
-        WebSysDescription(SR.Menu_StaticTemplate)
+        WebSysDescription(System.Web.SR.Menu_StaticTemplate)
         ]
         public ITemplate StaticItemTemplate {
             get {
@@ -1172,7 +1172,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.Menu_StaticTopSeparatorImageUrl)]
+        [WebSysDescription(System.Web.SR.Menu_StaticTopSeparatorImageUrl)]
         public string StaticTopSeparatorImageUrl {
             get {
                 object s = ViewState["StaticTopSeparatorImageUrl"];
@@ -1191,7 +1191,7 @@ namespace System.Web.UI.WebControls {
         ///     Gets and sets the target window that the MenuItems will browse to if selected
         /// </devdoc>
         [DefaultValue("")]
-        [WebSysDescription(SR.MenuItem_Target)]
+        [WebSysDescription(System.Web.SR.MenuItem_Target)]
         public string Target {
             get {
                 object s = ViewState["Target"];
@@ -1218,7 +1218,7 @@ namespace System.Web.UI.WebControls {
         ///     Triggered when an item has been clicked.
         /// </devdoc>
         [WebCategory("Behavior")]
-        [WebSysDescription(SR.Menu_MenuItemClick)]
+        [WebSysDescription(System.Web.SR.Menu_MenuItemClick)]
         public event MenuEventHandler MenuItemClick {
             add {
                 Events.AddHandler(_menuItemClickedEvent, value);
@@ -1233,7 +1233,7 @@ namespace System.Web.UI.WebControls {
         ///     Triggered when a MenuItem has been databound.
         /// </devdoc>
         [WebCategory("Behavior")]
-        [WebSysDescription(SR.Menu_MenuItemDataBound)]
+        [WebSysDescription(System.Web.SR.Menu_MenuItemDataBound)]
         public event MenuEventHandler MenuItemDataBound {
             add {
                 Events.AddHandler(_menuItemDataBoundEvent, value);
@@ -1295,7 +1295,7 @@ namespace System.Web.UI.WebControls {
         }
 
         private static T CacheGetItem<T>(List<T> cacheList, int index) where T : class {
-            Debug.Assert(cacheList != null);
+            System.Web.Util.Debug.Assert(cacheList != null);
             if (index < cacheList.Count) return cacheList[index];
             return null;
         }
@@ -1393,7 +1393,7 @@ namespace System.Web.UI.WebControls {
             }
 
             if (view == null) {
-                throw new InvalidOperationException(SR.GetString(SR.Menu_DataSourceReturnedNullView, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_DataSourceReturnedNullView, ID));
             }
             IHierarchicalEnumerable enumerable = view.Select();
             item.ChildItems.Clear();
@@ -1473,7 +1473,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, textField, "TextField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, textField, "TextField"));
                         }
                     }
 
@@ -1492,7 +1492,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, valueField, "ValueField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, valueField, "ValueField"));
                         }
                     }
 
@@ -1511,7 +1511,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, targetField, "TargetField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, targetField, "TargetField"));
                         }
                     }
 
@@ -1530,7 +1530,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, imageUrlField, "ImageUrlField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, imageUrlField, "ImageUrlField"));
                         }
                     }
 
@@ -1549,7 +1549,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, navigateUrlField, "NavigateUrlField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, navigateUrlField, "NavigateUrlField"));
                         }
                     }
 
@@ -1568,7 +1568,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, popOutImageUrlField, "PopOutImageUrlField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, popOutImageUrlField, "PopOutImageUrlField"));
                         }
                     }
 
@@ -1587,7 +1587,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, separatorImageUrlField, "SeparatorImageUrlField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, separatorImageUrlField, "SeparatorImageUrlField"));
                         }
                     }
 
@@ -1606,7 +1606,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, toolTipField, "ToolTipField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, toolTipField, "ToolTipField"));
                         }
                     }
 
@@ -1631,7 +1631,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, enabledField, "EnabledField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, enabledField, "EnabledField"));
                         }
                     }
 
@@ -1656,7 +1656,7 @@ namespace System.Web.UI.WebControls {
                             }
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDataBinding, selectableField, "SelectableField"));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDataBinding, selectableField, "SelectableField"));
                         }
                     }
 
@@ -1836,7 +1836,7 @@ namespace System.Web.UI.WebControls {
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         protected override IDictionary GetDesignModeState() {
             IDictionary dictionary = base.GetDesignModeState();
-            Debug.Assert(dictionary != null && DesignMode);
+            System.Web.Util.Debug.Assert(dictionary != null && DesignMode);
 
             CreateChildControls();
             foreach (Control c in Controls) {
@@ -1866,7 +1866,7 @@ namespace System.Web.UI.WebControls {
                     dynamicSubMenu.SetDepth(0);
                     dynamicSubMenu.SetOwner(this);
                     // Create a single dynamic submenu, with one submenu
-                    string dummyText = SR.GetString(SR.Menu_DesignTimeDummyItemText);
+                    string dummyText = System.Web.SR.GetString(System.Web.SR.Menu_DesignTimeDummyItemText);
                     for (int i = 0; i < 5; i++) {
                         MenuItem newItem = new MenuItem(dummyText);
                         if (DynamicItemTemplate != null) {
@@ -1923,7 +1923,7 @@ namespace System.Web.UI.WebControls {
                 return new HtmlTextWriter(stringWriter);
             }
             else {
-                Debug.Assert(_designTimeTextWriterType.IsSubclassOf(typeof(HtmlTextWriter)));
+                System.Web.Util.Debug.Assert(_designTimeTextWriterType.IsSubclassOf(typeof(HtmlTextWriter)));
                 ConstructorInfo constructor = _designTimeTextWriterType.GetConstructor(new Type[] { typeof(TextWriter) });
                 if (constructor == null) {
                     return new HtmlTextWriter(stringWriter);
@@ -2163,7 +2163,7 @@ namespace System.Web.UI.WebControls {
 
         protected override bool OnBubbleEvent(object source, EventArgs e) {
             MenuEventArgs me = e as MenuEventArgs;
-            if (me != null && StringUtil.EqualsIgnoreCase(me.CommandName, MenuItemClickCommandName)) {
+            if (me != null && System.Web.Util.StringUtil.EqualsIgnoreCase(me.CommandName, MenuItemClickCommandName)) {
 
                 // Do not take any postback into account if the menu is disabled.
                 if (!IsEnabled) return true;
@@ -2472,15 +2472,15 @@ namespace System.Web.UI.WebControls {
         }
 
         internal void SetSelectedItem(MenuItem node) {
-            Debug.Assert(node == null || node.Owner == this);
+            System.Web.Util.Debug.Assert(node == null || node.Owner == this);
 
             if (_selectedItem != node) {
                 if (node != null) {
                     if (node.Depth >= MaximumDepth) {
-                        throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDepth));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDepth));
                     }
                     if (!(node.IsEnabledNoOwner && node.Selectable)) {
-                        throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidSelection));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidSelection));
                     }
                 }
 
@@ -2588,7 +2588,7 @@ namespace System.Web.UI.WebControls {
             for (int i = 0; i < nodePath.Length; i++) {
                 if (nodePath[i] == TreeView.InternalPathSeparator) {
                     if (++matches >= MaximumDepth) {
-                        throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDepth));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDepth));
                     }
                 }
             }

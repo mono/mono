@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls {
 
 
         public override void AppendSubBuilder(ControlBuilder subBuilder) {
-            throw new HttpException(SR.GetString(SR.Control_does_not_allow_children,
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Control_does_not_allow_children,
                 ControlType.ToString()));
         }
     }
@@ -56,7 +56,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(LiteralMode.Transform),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Literal_Mode)
+        WebSysDescription(System.Web.SR.Literal_Mode)
         ]
         public LiteralMode Mode {
             get {
@@ -81,7 +81,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Literal_Text),
+        WebSysDescription(System.Web.SR.Literal_Text),
         ]
         public string Text {
             get {
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls {
                 Text = ((LiteralControl)obj).Text;
             }
             else {
-                throw new HttpException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "Literal", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "Literal", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
             }
         }
 
@@ -122,7 +122,7 @@ namespace System.Web.UI.WebControls {
         EditorBrowsable(EditorBrowsableState.Never),
         ]
         public override void Focus() {
-            throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
         }
 
 

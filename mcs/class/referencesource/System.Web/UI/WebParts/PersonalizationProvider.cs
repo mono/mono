@@ -61,13 +61,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
             Page page = webPartManager.Page;
             if (page == null) {
-                throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "Page"),
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "Page"),
                                             "webPartManager");
             }
 
             HttpRequest request = page.RequestInternal;
             if (request == null) {
-                throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "Page.Request"),
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "Page.Request"),
                                             "webPartManager");
             }
 
@@ -129,13 +129,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
             Page page = webPartManager.Page;
             if (page == null) {
-                throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "Page"),
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "Page"),
                                             "webPartManager");
             }
 
             HttpRequest request = page.RequestInternal;
             if (request == null) {
-                throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "Page.Request"),
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "Page.Request"),
                                             "webPartManager");
             }
 
@@ -186,13 +186,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
             Page page = webPartManager.Page;
             if (page == null) {
-                throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "Page"),
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "Page"),
                                             "webPartManager");
             }
 
             HttpRequest request = page.RequestInternal;
             if (request == null) {
-                throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "Page.Request"),
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "Page.Request"),
                                             "webPartManager");
             }
 
@@ -283,7 +283,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             BlobPersonalizationState blobState = state as BlobPersonalizationState;
             if (blobState == null) {
-                throw new ArgumentException(SR.GetString(SR.PersonalizationProvider_WrongType), "state");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PersonalizationProvider_WrongType), "state");
             }
 
             WebPartManager webPartManager = blobState.WebPartManager;

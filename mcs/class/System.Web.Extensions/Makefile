@@ -28,6 +28,11 @@ RESOURCE_FILES_DIST= \
 	Resources/MicrosoftAjaxExtension.js \
 	Resources/MicrosoftAjaxWebFormsExtension.js
 
+RESOURCE_DEFS = \
+	System.Web.Resources.AtlasWeb,Resources/System.Web.Resources.AtlasWeb.resx \
+	System.Web.Resources.ScriptLibrary.Res.debug,Resources/System.Web.Resources.ScriptLibrary.Res.debug.resx \
+	System.Web.Resources.ScriptLibrary.Res,Resources/System.Web.Resources.ScriptLibrary.Res.resx
+
 NUNIT_RESOURCE_FILES= \
 	Test/resources/Web.mono.config \
 	Test/resources/profile.config.4.x \
@@ -49,12 +54,13 @@ ifdef TESTNAME
 RUN_STANDALONE += --test=$(TESTNAME)
 endif
 
-LIB_REFS = System System.Core System.Drawing System.Data System.Data.Linq System.Xml System.Web System.Web.Services System.Configuration System.EnterpriseServices System.ServiceModel
+LIB_REFS = System System.Core System.Drawing System.Data System.Data.Linq System.Runtime.Serialization System.ServiceModel.Activation System.Xml System.Web System.Web.Services System.Configuration System.EnterpriseServices System.ServiceModel
 KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-define:NET_3_5	-nowarn:436		\
 	-define:SYSTEM_WEB_EXTENSIONS	\
+	-define:WEB_EXTENSIONS_CODE		\
 	$(OTHER_LIB_MCS_FLAGS) 		\
 	$(RESOURCE_FILES:%=/resource:%)
 
@@ -62,7 +68,7 @@ ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_REFS += System.Web.ApplicationServices
 endif
 
-TEST_LIB_REFS = SystemWebTestShim
+TEST_LIB_REFS = SystemWebTestShim System.Web
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 $(NUNIT_RESOURCE_FILES:%=/resource:%) -define:SYSTEM_WEB_EXTENSIONS
 
 EXTRA_DISTFILES = $(RESOURCE_FILES_DIST) $(NUNIT_RESOURCE_FILES) \

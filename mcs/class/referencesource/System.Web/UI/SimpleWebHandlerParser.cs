@@ -35,6 +35,7 @@ using System.Globalization;
 using System.Security.Permissions;
 
 
+
 /// <internalonly/>
 /// <devdoc>
 ///    <para>[To be supplied.]</para>
@@ -94,10 +95,10 @@ public abstract class SimpleWebHandlerParser  : IAssemblyDependencyParser {
     protected SimpleWebHandlerParser(HttpContext context, string virtualPath, string physicalPath) {
 
         // These obsolete parameters should never be set
-        Debug.Assert(context == null);
-        Debug.Assert(physicalPath == null);
+        System.Web.Util.Debug.Assert(context == null);
+        System.Web.Util.Debug.Assert(physicalPath == null);
 
-        Debug.Assert(virtualPath != null);
+        System.Web.Util.Debug.Assert(virtualPath != null);
 
         _virtualPath = VirtualPath.Create(virtualPath);
     }
@@ -243,7 +244,7 @@ public abstract class SimpleWebHandlerParser  : IAssemblyDependencyParser {
 
         if (!_fFoundMainDirective && !IgnoreParseErrors) {
             throw new HttpException(
-                SR.GetString(SR.Missing_directive, DefaultDirectiveName));
+                System.Web.SR.GetString(System.Web.SR.Missing_directive, DefaultDirectiveName));
         }
 
         // skip the directive
@@ -288,7 +289,7 @@ public abstract class SimpleWebHandlerParser  : IAssemblyDependencyParser {
                     if (IgnoreParseErrors) continue;
 
                     throw new HttpException(
-                        SR.GetString(SR.Duplicate_attr_in_tag, attribName));
+                        System.Web.SR.GetString(System.Web.SR.Duplicate_attr_in_tag, attribName));
                 }
             }
         }
@@ -306,11 +307,6 @@ public abstract class SimpleWebHandlerParser  : IAssemblyDependencyParser {
         bool fDebug = false;
         if (Util.GetAndRemoveBooleanAttribute(directive, "debug", ref fDebug))
             compilParams.IncludeDebugInformation = fDebug;
-
-        if (compilParams.IncludeDebugInformation &&
-            !HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-            throw new HttpException(SR.GetString(SR.Insufficient_trust_for_attribute, "debug"));
-        }
 
         int warningLevel=0;
         if (Util.GetAndRemoveNonNegativeIntegerAttribute(directive, "warninglevel", ref warningLevel)) {
@@ -342,7 +338,7 @@ public abstract class SimpleWebHandlerParser  : IAssemblyDependencyParser {
             // Make sure the main directive was not already specified
             if (_fFoundMainDirective && !IgnoreParseErrors) {
                 throw new HttpException(
-                    SR.GetString(SR.Only_one_directive_allowed, DefaultDirectiveName));
+                    System.Web.SR.GetString(System.Web.SR.Only_one_directive_allowed, DefaultDirectiveName));
             }
 
             _fFoundMainDirective = true;
@@ -369,7 +365,7 @@ public abstract class SimpleWebHandlerParser  : IAssemblyDependencyParser {
             if (_compilerType.CompilerParameters != null)
                 ProcessCompilationParams(directive, _compilerType.CompilerParameters);
         }
-        else if (StringUtil.EqualsIgnoreCase(directiveName, "assembly")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "assembly")) {
             // Assembly directive
 
             // Remove the attributes as we get them from the dictionary
@@ -378,7 +374,7 @@ public abstract class SimpleWebHandlerParser  : IAssemblyDependencyParser {
 
             if (assemblyName != null && src != null && !IgnoreParseErrors) {
                 throw new HttpException(
-                    SR.GetString(SR.Attributes_mutually_exclusive, "Name", "Src"));
+                    System.Web.SR.GetString(System.Web.SR.Attributes_mutually_exclusive, "Name", "Src"));
             }
 
             if (assemblyName != null) {
@@ -389,12 +385,12 @@ public abstract class SimpleWebHandlerParser  : IAssemblyDependencyParser {
                 ImportSourceFile(src);
             }
             else if (!IgnoreParseErrors) {
-                throw new HttpException(SR.GetString(SR.Missing_attr, "name"));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Missing_attr, "name"));
             }
         }
         else if (!IgnoreParseErrors) {
             throw new HttpException(
-                SR.GetString(SR.Unknown_directive, directiveName));
+                System.Web.SR.GetString(System.Web.SR.Unknown_directive, directiveName));
         }
 
         // If there are some attributes left, fail
@@ -485,7 +481,7 @@ public abstract class SimpleWebHandlerParser  : IAssemblyDependencyParser {
             return t;
 
         throw new HttpParseException(
-            SR.GetString(SR.Could_not_create_type, typeName),
+            System.Web.SR.GetString(System.Web.SR.Could_not_create_type, typeName),
             null, _virtualPath, _sourceString, _lineNumber);
     }
 

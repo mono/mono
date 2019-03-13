@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -305,7 +305,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			Bindable(true),
 			DefaultValue(typeof(LabelAlignmentStyles), "Top, Bottom, Right, Left, TopLeft, TopRight, BottomLeft, BottomRight"),
 			SRDescription("DescriptionAttributeMovingDirection"),
+#if !FEATURE_PAL
             Editor(Editors.FlagsEnumUITypeEditor.Editor, Editors.FlagsEnumUITypeEditor.Base),
+#endif
 			]
 			virtual public LabelAlignmentStyles MovingDirection
 			{
@@ -430,7 +432,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(typeof(Color), "Black"),
             SRDescription("DescriptionAttributeCalloutLineColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 			]
 			virtual public Color CalloutLineColor
 			{
@@ -479,7 +483,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(typeof(Color), "Transparent"),
             SRDescription("DescriptionAttributeCalloutBackColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 			]
 			virtual public Color CalloutBackColor
 			{

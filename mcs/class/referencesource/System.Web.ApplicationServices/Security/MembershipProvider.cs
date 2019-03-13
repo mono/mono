@@ -5,7 +5,6 @@
 //------------------------------------------------------------------------------
 
 namespace System.Web.Security {
-    using  System.Web;
     using  System.Security.Principal;
     using  System.Collections.Specialized;
     using  System.Security.Permissions;

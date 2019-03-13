@@ -61,7 +61,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginStatus_LoginImageUrl),
+        WebSysDescription(System.Web.SR.LoginStatus_LoginImageUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -82,13 +82,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.LoginStatus_DefaultLoginText),
-        WebSysDescription(SR.LoginStatus_LoginText)
+        WebSysDefaultValue(System.Web.SR.LoginStatus_DefaultLoginText),
+        WebSysDescription(System.Web.SR.LoginStatus_LoginText)
         ]
         public virtual string LoginText {
             get {
                 object obj = ViewState["LoginText"];
-                return (obj == null) ? SR.GetString(SR.LoginStatus_DefaultLoginText) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.LoginStatus_DefaultLoginText) : (string) obj;
             }
             set {
                 ViewState["LoginText"] = value;
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(LogoutAction.Refresh),
         Themeable(false),
-        WebSysDescription(SR.LoginStatus_LogoutAction)
+        WebSysDescription(System.Web.SR.LoginStatus_LogoutAction)
         ]
         public virtual LogoutAction LogoutAction {
             get {
@@ -125,7 +125,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginStatus_LogoutImageUrl),
+        WebSysDescription(System.Web.SR.LoginStatus_LogoutImageUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginStatus_LogoutPageUrl),
+        WebSysDescription(System.Web.SR.LoginStatus_LogoutPageUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         Themeable(false),
         UrlProperty()
@@ -168,13 +168,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.LoginStatus_DefaultLogoutText),
-        WebSysDescription(SR.LoginStatus_LogoutText)
+        WebSysDefaultValue(System.Web.SR.LoginStatus_DefaultLogoutText),
+        WebSysDescription(System.Web.SR.LoginStatus_LogoutText)
         ]
         public virtual string LogoutText {
             get {
                 object obj = ViewState["LogoutText"];
-                return (obj == null) ? SR.GetString(SR.LoginStatus_DefaultLogoutText) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.LoginStatus_DefaultLogoutText) : (string) obj;
             }
             set {
                 ViewState["LogoutText"] = value;
@@ -203,7 +203,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.LoginStatus_LoggedOut)
+        WebSysDescription(System.Web.SR.LoginStatus_LoggedOut)
         ]
         public event EventHandler LoggedOut {
             add {
@@ -220,7 +220,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.LoginStatus_LoggingOut)
+        WebSysDescription(System.Web.SR.LoginStatus_LoggingOut)
         ]
         public event LoginCancelEventHandler LoggingOut {
             add {

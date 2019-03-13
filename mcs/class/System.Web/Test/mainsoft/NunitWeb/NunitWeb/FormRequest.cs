@@ -31,6 +31,12 @@ namespace MonoTests.SystemWeb.Framework
 			ExtractFormAndHiddenControls (response, formId);
 		}
 
+		public FormRequest(String url, Response response, String formId) :
+			base(url) {
+			_controls = new BaseControlCollection ();
+			ExtractFormAndHiddenControls (response, formId);		
+		}
+
 		private BaseControlCollection _controls;
 		/// <summary>
 		/// Get or set the collection of controls, posted back to the server.

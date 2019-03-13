@@ -100,7 +100,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public void CopyTestResources ()
 		{
 			WebTest.CopyResource (GetType (), "LoginViewTest1.aspx", "LoginViewTest1.aspx");
-			WebTest.CopyResource (GetType (), "WebLogin.config", "Web.config");
+			WebTest.CopyResource (GetType (), "WebLogin.config", "web.config");
 		}
 
 		[Test]

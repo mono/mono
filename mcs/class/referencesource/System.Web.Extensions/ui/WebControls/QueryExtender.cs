@@ -13,7 +13,9 @@
     [NonVisualControl()]
     [DefaultProperty("TargetControlID")]
     [ToolboxBitmap(typeof(QueryExtender), "QueryExtender.bmp")]
+#if !MONO
     [Designer("System.Web.UI.Design.QueryExtenderDesigner, " + AssemblyRef.SystemWebExtensionsDesign)]
+#endif
     [ParseChildren(true, "Expressions")]
     [PersistChildren(false)]
     public class QueryExtender : Control {

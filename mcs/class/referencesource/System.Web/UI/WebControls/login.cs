@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(1),
-        WebSysDescription(SR.Login_BorderPadding),
+        WebSysDescription(System.Web.SR.Login_BorderPadding),
         SuppressMessage("Microsoft.Security", "CA2119:SealMethodsThatSatisfyPrivateInterfaces",
             Justification = "Interface denotes existence of property, not used for security.")
         ]
@@ -83,7 +83,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value < -1) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.Login_InvalidBorderPadding));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.Login_InvalidBorderPadding));
                 }
                 ViewState["BorderPadding"] = value;
             }
@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Login_CheckBoxStyle)
+        WebSysDescription(System.Web.SR.Login_CheckBoxStyle)
         ]
         public TableItemStyle CheckBoxStyle {
             get {
@@ -121,7 +121,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.ChangePassword_CreateUserText)
+        WebSysDescription(System.Web.SR.ChangePassword_CreateUserText)
         ]
         public virtual string CreateUserText {
             get {
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.Login_CreateUserUrl),
+        WebSysDescription(System.Web.SR.Login_CreateUserUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -169,7 +169,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.Login_DestinationPageUrl),
+        WebSysDescription(System.Web.SR.Login_DestinationPageUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         Themeable(false),
         UrlProperty()
@@ -192,7 +192,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(true),
         Themeable(false),
-        WebSysDescription(SR.Login_DisplayRememberMe)
+        WebSysDescription(System.Web.SR.Login_DisplayRememberMe)
         ]
         public virtual bool DisplayRememberMe {
             get {
@@ -212,7 +212,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.ChangePassword_HelpPageText)
+        WebSysDescription(System.Web.SR.ChangePassword_HelpPageText)
         ]
         public virtual string HelpPageText {
             get {
@@ -231,7 +231,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginControls_HelpPageUrl),
+        WebSysDescription(System.Web.SR.LoginControls_HelpPageUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -252,7 +252,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.Login_CreateUserIconUrl),
+        WebSysDescription(System.Web.SR.Login_CreateUserIconUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -273,7 +273,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.Login_HelpPageIconUrl),
+        WebSysDescription(System.Web.SR.Login_HelpPageIconUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -297,7 +297,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_HyperLinkStyle)
+        WebSysDescription(System.Web.SR.WebControl_HyperLinkStyle)
         ]
         public TableItemStyle HyperLinkStyle {
             get {
@@ -319,7 +319,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.WebControl_InstructionText)
+        WebSysDescription(System.Web.SR.WebControl_InstructionText)
         ]
         public virtual string InstructionText {
             get {
@@ -341,7 +341,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_InstructionTextStyle)
+        WebSysDescription(System.Web.SR.WebControl_InstructionTextStyle)
         ]
         public TableItemStyle InstructionTextStyle {
             get {
@@ -365,7 +365,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginControls_LabelStyle)
+        WebSysDescription(System.Web.SR.LoginControls_LabelStyle)
         ]
         public TableItemStyle LabelStyle {
             get {
@@ -407,7 +407,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(LoginFailureAction.Refresh),
         Themeable(false),
-        WebSysDescription(SR.Login_FailureAction)
+        WebSysDescription(System.Web.SR.Login_FailureAction)
         ]
         public virtual LoginFailureAction FailureAction {
             get {
@@ -429,13 +429,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Login_DefaultFailureText),
-        WebSysDescription(SR.Login_FailureText)
+        WebSysDefaultValue(System.Web.SR.Login_DefaultFailureText),
+        WebSysDescription(System.Web.SR.Login_FailureText)
         ]
         public virtual string FailureText {
             get {
                 object obj = ViewState["FailureText"];
-                return (obj == null) ? SR.GetString(SR.Login_DefaultFailureText) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.Login_DefaultFailureText) : (string) obj;
             }
             set {
                 ViewState["FailureText"] = value;
@@ -452,7 +452,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_FailureTextStyle)
+        WebSysDescription(System.Web.SR.WebControl_FailureTextStyle)
         ]
         public TableItemStyle FailureTextStyle {
             get {
@@ -473,7 +473,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Login_LoginButtonImageUrl),
+        WebSysDescription(System.Web.SR.Login_LoginButtonImageUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -497,7 +497,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Login_LoginButtonStyle)
+        WebSysDescription(System.Web.SR.Login_LoginButtonStyle)
         ]
         public Style LoginButtonStyle {
             get {
@@ -518,13 +518,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Login_DefaultLoginButtonText),
-        WebSysDescription(SR.Login_LoginButtonText)
+        WebSysDefaultValue(System.Web.SR.Login_DefaultLoginButtonText),
+        WebSysDescription(System.Web.SR.Login_LoginButtonText)
         ]
         public virtual string LoginButtonText {
             get {
                 object obj = ViewState["LoginButtonText"];
-                return (obj == null) ? SR.GetString(SR.Login_DefaultLoginButtonText) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.Login_DefaultLoginButtonText) : (string) obj;
             }
             set {
                 ViewState["LoginButtonText"] = value;
@@ -538,7 +538,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Button),
-        WebSysDescription(SR.Login_LoginButtonType)
+        WebSysDescription(System.Web.SR.Login_LoginButtonType)
         ]
         public virtual ButtonType LoginButtonType {
             get {
@@ -560,7 +560,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(Orientation.Vertical),
         WebCategory("Layout"),
-        WebSysDescription(SR.Login_Orientation)
+        WebSysDescription(System.Web.SR.Login_Orientation)
         ]
         public virtual Orientation Orientation {
             get {
@@ -584,7 +584,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Data"),
         DefaultValue(""),
         Themeable(false),
-        WebSysDescription(SR.MembershipProvider_Name)
+        WebSysDescription(System.Web.SR.MembershipProvider_Name)
         ]
         public virtual string MembershipProvider {
             get {
@@ -629,13 +629,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.LoginControls_DefaultPasswordLabelText),
-        WebSysDescription(SR.LoginControls_PasswordLabelText)
+        WebSysDefaultValue(System.Web.SR.LoginControls_DefaultPasswordLabelText),
+        WebSysDescription(System.Web.SR.LoginControls_PasswordLabelText)
         ]
         public virtual string PasswordLabelText {
             get {
                 object obj = ViewState["PasswordLabelText"];
-                return (obj == null) ? SR.GetString(SR.LoginControls_DefaultPasswordLabelText) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.LoginControls_DefaultPasswordLabelText) : (string) obj;
             }
             set {
                 ViewState["PasswordLabelText"] = value;
@@ -650,7 +650,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.ChangePassword_PasswordRecoveryText)
+        WebSysDescription(System.Web.SR.ChangePassword_PasswordRecoveryText)
         ]
         public virtual string PasswordRecoveryText {
             get {
@@ -669,7 +669,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.Login_PasswordRecoveryUrl),
+        WebSysDescription(System.Web.SR.Login_PasswordRecoveryUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -690,7 +690,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.Login_PasswordRecoveryIconUrl),
+        WebSysDescription(System.Web.SR.Login_PasswordRecoveryIconUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -712,13 +712,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.Login_DefaultPasswordRequiredErrorMessage),
-        WebSysDescription(SR.Login_PasswordRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.Login_DefaultPasswordRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.Login_PasswordRequiredErrorMessage)
         ]
         public virtual string PasswordRequiredErrorMessage {
             get {
                 object obj = ViewState["PasswordRequiredErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.Login_DefaultPasswordRequiredErrorMessage) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.Login_DefaultPasswordRequiredErrorMessage) : (string) obj;
             }
             set {
                 ViewState["PasswordRequiredErrorMessage"] = value;
@@ -733,7 +733,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(false),
         Themeable(false),
-        WebSysDescription(SR.Login_RememberMeSet)
+        WebSysDescription(System.Web.SR.Login_RememberMeSet)
         ]
         public virtual bool RememberMeSet {
             get {
@@ -752,13 +752,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Login_DefaultRememberMeText),
-        WebSysDescription(SR.Login_RememberMeText)
+        WebSysDefaultValue(System.Web.SR.Login_DefaultRememberMeText),
+        WebSysDescription(System.Web.SR.Login_RememberMeText)
         ]
         public virtual string RememberMeText {
             get {
                 object obj = ViewState["RememberMeText"];
-                return (obj == null) ? SR.GetString(SR.Login_DefaultRememberMeText) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.Login_DefaultRememberMeText) : (string) obj;
             }
             set {
                 ViewState["RememberMeText"] = value;
@@ -768,7 +768,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(true),
-        WebSysDescription(SR.LoginControls_RenderOuterTable),
+        WebSysDescription(System.Web.SR.LoginControls_RenderOuterTable),
         SuppressMessage("Microsoft.Security", "CA2119:SealMethodsThatSatisfyPrivateInterfaces",
             Justification = "Interface denotes existence of property, not used for security.")
         ]
@@ -812,7 +812,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginControls_TextBoxStyle)
+        WebSysDescription(System.Web.SR.LoginControls_TextBoxStyle)
         ]
         public Style TextBoxStyle {
             get {
@@ -833,7 +833,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(LoginTextLayout.TextOnLeft),
-        WebSysDescription(SR.LoginControls_TextLayout)
+        WebSysDescription(System.Web.SR.LoginControls_TextLayout)
         ]
         public virtual LoginTextLayout TextLayout {
             get {
@@ -856,13 +856,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Login_DefaultTitleText),
-        WebSysDescription(SR.LoginControls_TitleText)
+        WebSysDefaultValue(System.Web.SR.Login_DefaultTitleText),
+        WebSysDescription(System.Web.SR.LoginControls_TitleText)
         ]
         public virtual string TitleText {
             get {
                 object obj = ViewState["TitleText"];
-                return (obj == null) ? SR.GetString(SR.Login_DefaultTitleText) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.Login_DefaultTitleText) : (string) obj;
             }
             set {
                 ViewState["TitleText"] = value;
@@ -879,7 +879,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginControls_TitleTextStyle)
+        WebSysDescription(System.Web.SR.LoginControls_TitleTextStyle)
         ]
         public TableItemStyle TitleTextStyle {
             get {
@@ -900,7 +900,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.UserName_InitialValue)
+        WebSysDescription(System.Web.SR.UserName_InitialValue)
         ]
         public virtual string UserName {
             get {
@@ -931,13 +931,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Login_DefaultUserNameLabelText),
-        WebSysDescription(SR.LoginControls_UserNameLabelText)
+        WebSysDefaultValue(System.Web.SR.Login_DefaultUserNameLabelText),
+        WebSysDescription(System.Web.SR.LoginControls_UserNameLabelText)
         ]
         public virtual string UserNameLabelText {
             get {
                 object obj = ViewState["UserNameLabelText"];
-                return (obj == null) ? SR.GetString(SR.Login_DefaultUserNameLabelText) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.Login_DefaultUserNameLabelText) : (string) obj;
             }
             set {
                 ViewState["UserNameLabelText"] = value;
@@ -951,13 +951,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.Login_DefaultUserNameRequiredErrorMessage),
-        WebSysDescription(SR.ChangePassword_UserNameRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.Login_DefaultUserNameRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.ChangePassword_UserNameRequiredErrorMessage)
         ]
         public virtual string UserNameRequiredErrorMessage {
             get {
                 object obj = ViewState["UserNameRequiredErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.Login_DefaultUserNameRequiredErrorMessage) : (string) obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.Login_DefaultUserNameRequiredErrorMessage) : (string) obj;
             }
             set {
                 ViewState["UserNameRequiredErrorMessage"] = value;
@@ -970,7 +970,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Login_ValidatorTextStyle)
+        WebSysDescription(System.Web.SR.Login_ValidatorTextStyle)
         ]
         public Style ValidatorTextStyle {
             get {
@@ -992,7 +992,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(true),
         Themeable(false),
-        WebSysDescription(SR.Login_VisibleWhenLoggedIn)
+        WebSysDescription(System.Web.SR.Login_VisibleWhenLoggedIn)
         ]
         public virtual bool VisibleWhenLoggedIn {
             get {
@@ -1010,7 +1010,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Login_LoggedIn)
+        WebSysDescription(System.Web.SR.Login_LoggedIn)
         ]
         public event EventHandler LoggedIn {
             add {
@@ -1027,7 +1027,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Login_Authenticate)
+        WebSysDescription(System.Web.SR.Login_Authenticate)
         ]
         public event AuthenticateEventHandler Authenticate {
             add {
@@ -1044,7 +1044,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Login_LoggingIn)
+        WebSysDescription(System.Web.SR.Login_LoggingIn)
         ]
         public event LoginCancelEventHandler LoggingIn {
             add {
@@ -1061,7 +1061,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Login_LoginError)
+        WebSysDescription(System.Web.SR.Login_LoginError)
         ]
         public event EventHandler LoginError {
             add {
@@ -1211,7 +1211,7 @@ namespace System.Web.UI.WebControls {
             else {
                 object[] myState = (object[]) savedState;
                 if (myState.Length != _viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[0]);
@@ -1792,7 +1792,7 @@ namespace System.Web.UI.WebControls {
                 userNameRequired.ValidationGroup = validationGroup;
                 userNameRequired.ControlToValidate = userNameTextBox.ID;
                 userNameRequired.Display = _requiredFieldValidatorDisplay;
-                userNameRequired.Text = SR.GetString(SR.LoginControls_DefaultRequiredFieldValidatorText);
+                userNameRequired.Text = System.Web.SR.GetString(System.Web.SR.LoginControls_DefaultRequiredFieldValidatorText);
                 userNameRequired.Enabled = enableValidation;
                 userNameRequired.Visible = enableValidation;
                 loginContainer.UserNameRequired = userNameRequired;
@@ -1811,7 +1811,7 @@ namespace System.Web.UI.WebControls {
                 passwordRequired.ValidationGroup = validationGroup;
                 passwordRequired.ControlToValidate = passwordTextBox.ID;
                 passwordRequired.Display = _requiredFieldValidatorDisplay;
-                passwordRequired.Text = SR.GetString(SR.LoginControls_DefaultRequiredFieldValidatorText);
+                passwordRequired.Text = System.Web.SR.GetString(System.Web.SR.LoginControls_DefaultRequiredFieldValidatorText);
                 passwordRequired.Enabled = enableValidation;
                 passwordRequired.Visible = enableValidation;
                 loginContainer.PasswordRequired = passwordRequired;
@@ -2473,7 +2473,7 @@ namespace System.Web.UI.WebControls {
                         return _passwordTextBox;
                     }
                     else {
-                        return FindRequiredControl<IEditableTextControl>(_passwordID, SR.Login_NoPasswordTextBox);
+                        return FindRequiredControl<IEditableTextControl>(_passwordID, System.Web.SR.Login_NoPasswordTextBox);
                     }
                 }
                 set {
@@ -2541,7 +2541,7 @@ namespace System.Web.UI.WebControls {
                         return _userNameTextBox;
                     }
                     else {
-                        return FindRequiredControl<IEditableTextControl>(_userNameID, SR.Login_NoUserNameTextBox);
+                        return FindRequiredControl<IEditableTextControl>(_userNameID, System.Web.SR.Login_NoUserNameTextBox);
                     }
                 }
                 set {

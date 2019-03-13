@@ -21,6 +21,7 @@ namespace System.Web.UI.HtmlControls {
     using System.Web.UI;
     using AttributeCollection = System.Web.UI.AttributeCollection;
     using System.Security.Permissions;
+    
 
 /*
  * An abstract base class representing an intrinsic Html tag that
@@ -263,7 +264,7 @@ namespace System.Web.UI.HtmlControls {
                 url = ResolveClientUrl(url);
             } 
             catch (Exception e) {
-                throw new HttpException(SR.GetString(SR.Property_Had_Malformed_Url, attribName, e.Message));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Property_Had_Malformed_Url, attribName, e.Message));
             }
 
             writer.WriteAttribute(attribName, url);

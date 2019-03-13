@@ -80,7 +80,7 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator {
         // Note: it is important to add all local variables at the top level for CodeDom Subset compliance.
         topLevelStatements.Insert(0, dependencies);
 
-        Debug.Assert(Parser.SourceDependencies != null);
+        System.Web.Util.Debug.Assert(Parser.SourceDependencies != null);
 
         StringSet virtualDependencies = new StringSet();
         virtualDependencies.AddCollection(Parser.SourceDependencies);
@@ -101,7 +101,7 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator {
                 new CodeArrayIndexerExpression(
                     new CodeVariableReferenceExpression(dependenciesLocalName),
                     new CodeExpression[] {new CodePrimitiveExpression(i++)});
-            string src = UrlPath.MakeVirtualPathAppRelative(virtualDependency);
+            string src = System.Web.Util.UrlPath.MakeVirtualPathAppRelative(virtualDependency);
             addFileDep.Right = new CodePrimitiveExpression(src);
             trueStatements.Add(addFileDep);
         }
@@ -580,7 +580,7 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator {
             methodInfo = Parser.BaseType.GetMethod("ProcessRequest",
                 BindingFlags.Public | BindingFlags.Instance,
                 null, new Type[] { typeof(HttpContext) }, null);
-            Debug.Assert(methodInfo != null);
+            System.Web.Util.Debug.Assert(methodInfo != null);
         }
 
         _sourceDataClass.BaseTypes.Add(new CodeTypeReference(typeof(IHttpHandler)));

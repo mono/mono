@@ -8,6 +8,7 @@ namespace System.Web.Handlers {
     using System;
     using System.Threading.Tasks;
     using System.Web.Hosting;
+    
 
     internal class TransferRequestHandler : IHttpAsyncHandler {
         public IAsyncResult BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
@@ -23,7 +24,7 @@ namespace System.Web.Handlers {
         private Task ProcessRequestAsync(HttpContext context) {
             IIS7WorkerRequest wr = context.WorkerRequest as IIS7WorkerRequest;
             if (wr == null) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
             // Dev10 848405: use original unencoded URL (i.e., pass null for url so W3_REQUEST::SetUrl is not called)
             // Dev11 32511: Extensionless URL Handler should not pass parent IHttpUser to child requests
@@ -52,7 +53,7 @@ namespace System.Web.Handlers {
 
         public void ProcessRequest(HttpContext context)
         {
-            string errorMessage = SR.GetString(SR.HttpTaskAsyncHandler_CannotExecuteSynchronously, GetType());
+            string errorMessage = System.Web.SR.GetString(System.Web.SR.HttpTaskAsyncHandler_CannotExecuteSynchronously, GetType());
             throw new NotSupportedException(errorMessage);
         }
 

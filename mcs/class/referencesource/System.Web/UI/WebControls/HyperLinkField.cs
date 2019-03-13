@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         Editor("System.Web.UI.Design.WebControls.DataFieldEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         TypeConverterAttribute(typeof(StringArrayConverter)),
-        WebSysDescription(SR.HyperLinkField_DataNavigateUrlFields)
+        WebSysDescription(System.Web.SR.HyperLinkField_DataNavigateUrlFields)
         ]
         public virtual string[] DataNavigateUrlFields {
             get {
@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescription(SR.HyperLinkField_DataNavigateUrlFormatString)
+        WebSysDescription(System.Web.SR.HyperLinkField_DataNavigateUrlFormatString)
         ]
         public virtual string DataNavigateUrlFormatString {
             get {
@@ -97,7 +97,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Data"),
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
-        WebSysDescription(SR.HyperLinkField_DataTextField)
+        WebSysDescription(System.Web.SR.HyperLinkField_DataTextField)
         ]
         public virtual string DataTextField {
             get {
@@ -122,7 +122,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescription(SR.HyperLinkField_DataTextFormatString)
+        WebSysDescription(System.Web.SR.HyperLinkField_DataTextFormatString)
         ]
         public virtual string DataTextFormatString {
             get {
@@ -148,7 +148,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.HyperLinkField_NavigateUrl)
+        WebSysDescription(System.Web.SR.HyperLinkField_NavigateUrl)
         ]
         public virtual string NavigateUrl {
             get {
@@ -174,7 +174,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(""),
         TypeConverter(typeof(TargetConverter)),
-        WebSysDescription(SR.HyperLink_Target)
+        WebSysDescription(System.Web.SR.HyperLink_Target)
         ]
         public virtual string Target {
             get {
@@ -199,7 +199,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.HyperLinkField_Text)
+        WebSysDescription(System.Web.SR.HyperLinkField_Text)
         ]
         public virtual string Text {
             get {
@@ -312,7 +312,7 @@ namespace System.Web.UI.WebControls {
         /// <devdoc>
         /// </devdoc>
         private void OnDataBindField(object sender, EventArgs e) {
-            Debug.Assert((DataTextField.Length != 0) || (DataNavigateUrlFields.Length != 0),
+            System.Web.Util.Debug.Assert((DataTextField.Length != 0) || (DataNavigateUrlFields.Length != 0),
                          "Shouldn't be DataBinding without a DataTextField and DataNavigateUrlField");
 
             HyperLink boundControl = (HyperLink)sender;
@@ -321,14 +321,14 @@ namespace System.Web.UI.WebControls {
 
 
             if (controlContainer == null) {
-                throw new HttpException(SR.GetString(SR.DataControlField_NoContainer));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControlField_NoContainer));
             }
 
             // Get the DataItem from the container
             dataItem = DataBinder.GetDataItem(controlContainer);
 
             if (dataItem == null && !DesignMode) {
-                throw new HttpException(SR.GetString(SR.DataItem_Not_Found));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataItem_Not_Found));
             }
 
             if ((textFieldDesc == null) && (urlFieldDescs == null)) {
@@ -340,7 +340,7 @@ namespace System.Web.UI.WebControls {
                 if (fieldName.Length != 0) {
                     textFieldDesc = props.Find(fieldName, true);
                     if ((textFieldDesc == null) && !DesignMode) {
-                        throw new HttpException(SR.GetString(SR.Field_Not_Found, fieldName));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Field_Not_Found, fieldName));
                     }
                 }
 
@@ -353,7 +353,7 @@ namespace System.Web.UI.WebControls {
                     if (fieldName.Length != 0) {
                         urlFieldDescs[i] = props.Find(fieldName, true);
                         if ((urlFieldDescs[i] == null) && !DesignMode) {
-                            throw new HttpException(SR.GetString(SR.Field_Not_Found, fieldName));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Field_Not_Found, fieldName));
                         }
                     }
                 }
@@ -365,7 +365,7 @@ namespace System.Web.UI.WebControls {
                 dataTextValue = FormatDataTextValue(data);
             }
             if (DesignMode && (DataTextField.Length != 0) && dataTextValue.Length == 0) {
-                dataTextValue = SR.GetString(SR.Sample_Databound_Text);
+                dataTextValue = System.Web.SR.GetString(System.Web.SR.Sample_Databound_Text);
             }
 
             if (dataTextValue.Length > 0) {

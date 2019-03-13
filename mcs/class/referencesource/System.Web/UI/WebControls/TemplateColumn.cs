@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateColumn_EditItemTemplate),
+            WebSysDescription(System.Web.SR.TemplateColumn_EditItemTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(DataGridItem))
         ]
@@ -64,7 +64,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateColumn_FooterTemplate),
+            WebSysDescription(System.Web.SR.TemplateColumn_FooterTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(DataGridItem))
         ]
@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateColumn_HeaderTemplate),
+            WebSysDescription(System.Web.SR.TemplateColumn_HeaderTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(DataGridItem))
         ]
@@ -107,7 +107,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateColumn_ItemTemplate),
+            WebSysDescription(System.Web.SR.TemplateColumn_ItemTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(DataGridItem))
         ]

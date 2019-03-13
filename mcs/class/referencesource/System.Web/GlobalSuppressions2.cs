@@ -358,7 +358,7 @@ using System.Diagnostics.CodeAnalysis;
 [module: SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Scope = "member", Target = "System.Web.Profile.ProfileBase.#SetInternal(System.String,System.Object)", Justification = "Has been reviewed.")]
 [module: SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Scope = "member", Target = "System.Web.Profile.ProfileBase.#SaveWithAssert()", Justification = "Has been reviewed.")]
 [module: SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Scope = "member", Target = "System.Web.Util.VersionInfo.#GetFileVersion(System.String)", Justification = "Has been reviewed.")]
-[module: SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Scope = "member", Target = "System.Web.Util.FileUtil.#FileExists(System.String)", Justification = "Has been reviewed.")]
+[module: SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Scope = "member", Target = "System.Web.Util.System.Web.Util.FileUtil.#FileExists(System.String)", Justification = "Has been reviewed.")]
 [module: SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Scope = "member", Target = "System.Web.Util.Debug.#TraceBreak(System.String,System.String,System.Exception,System.Boolean)", Justification = "Has been reviewed.")]
 [module: SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Scope = "member", Target = "System.Web.UI.WebControls.Substitution.#GetDelegate(System.Type,System.String)", Justification = "Has been reviewed.")]
 [module: SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Scope = "member", Target = "System.Web.UI.Util.#VirtualFileExistsWithAssert(System.Web.VirtualPath)", Justification = "Has been reviewed.")]

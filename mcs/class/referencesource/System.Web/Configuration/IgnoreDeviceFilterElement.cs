@@ -19,6 +19,7 @@ namespace System.Web.Configuration {
     using System.Web.Compilation;
     using System.Web.Configuration;
     using System.Xml;
+    
 
     public sealed class IgnoreDeviceFilterElement : ConfigurationElement {
         private static readonly ConfigurationElementProperty s_elemProperty = new ConfigurationElementProperty(new CallbackValidator(typeof(IgnoreDeviceFilterElement), ValidateElement));
@@ -48,7 +49,7 @@ namespace System.Web.Configuration {
         }
 
         [SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase", Justification = "Can't modify the base class.")]
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -63,18 +64,18 @@ namespace System.Web.Configuration {
         }
 
         [SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase", Justification = "Can't modify the base class.")]
-        protected override ConfigurationElementProperty ElementProperty {
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
         }
 
         static private void ValidateElement(object value) {
-            Debug.Assert((value != null) && (value is IgnoreDeviceFilterElement));
+            System.Web.Util.Debug.Assert((value != null) && (value is IgnoreDeviceFilterElement));
             IgnoreDeviceFilterElement elem = (IgnoreDeviceFilterElement)value;
             if (System.Web.UI.Util.ContainsWhiteSpace(elem.Name)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Space_attribute, "name"));
+                    System.Web.SR.GetString(System.Web.SR.Space_attribute, "name"));
             }
         }
     }

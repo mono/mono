@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Behavior"),
-        WebSysDescription(SR.RadioButton_GroupName),
+        WebSysDescription(System.Web.SR.RadioButton_GroupName),
         Themeable(false),
         ]
         public virtual string GroupName {

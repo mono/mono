@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.View_Activate)
+        WebSysDescription(System.Web.SR.View_Activate)
         ]
         public event EventHandler Activate {
             add {
@@ -76,7 +76,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.View_Deactivate)
+        WebSysDescription(System.Web.SR.View_Deactivate)
         ]
         public event EventHandler Deactivate {
             add {
@@ -98,7 +98,7 @@ namespace System.Web.UI.WebControls {
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_Visible)
+        WebSysDescription(System.Web.SR.Control_Visible)
         ]
         public override bool Visible {
             get {
@@ -111,7 +111,7 @@ namespace System.Web.UI.WebControls {
                 if (DesignMode) {
                     return;
                 }
-                throw new InvalidOperationException(SR.GetString(SR.View_CannotSetVisible));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.View_CannotSetVisible));
             }
         }
 

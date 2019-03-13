@@ -55,7 +55,7 @@ using System.Xml;
 using System.Web.Routing;
 using System.Web.ModelBinding;
 using System.Web.Security.Cryptography;
-
+using SimpleBitVector32 = System.Web.Util.SimpleBitVector32;
 
 
 /// <devdoc>
@@ -84,7 +84,7 @@ public class FileLevelPageControlBuilder: RootBuilder {
                 _firstLiteralText = text;
 
                 if (_containsContentPage) {
-                    throw new HttpException(SR.GetString(SR.Only_Content_supported_on_content_page));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Only_Content_supported_on_content_page));
                 }
             }
         }
@@ -105,13 +105,13 @@ public class FileLevelPageControlBuilder: RootBuilder {
             }
 
             if (_firstLiteralText != null) {
-                throw new HttpParseException(SR.GetString(SR.Only_Content_supported_on_content_page),
+                throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Only_Content_supported_on_content_page),
                     null, Parser.CurrentVirtualPath, _firstLiteralText, _firstLiteralLineNumber);
             }
 
             if (_firstControlBuilder != null) {
                 Parser._lineNumber = _firstControlBuilder.Line;
-                throw new HttpException(SR.GetString(SR.Only_Content_supported_on_content_page));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Only_Content_supported_on_content_page));
             }
 
             TemplatePropertyEntry entry = new TemplatePropertyEntry();
@@ -124,7 +124,7 @@ public class FileLevelPageControlBuilder: RootBuilder {
         else {
             if (_firstControlBuilder == null) {
                 if (_containsContentPage) {
-                    throw new HttpException(SR.GetString(SR.Only_Content_supported_on_content_page));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Only_Content_supported_on_content_page));
                 }
 
                 _firstControlBuilder = subBuilder;
@@ -183,9 +183,9 @@ public class FileLevelPageControlBuilder: RootBuilder {
 /// </devdoc>
 [
 DefaultEvent("Load"),
-Designer("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
+//Designer("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
 DesignerCategory("ASPXCodeBehind"),
-DesignerSerializer("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + AssemblyRef.MicrosoftVisualStudioWeb,  "System.ComponentModel.Design.Serialization.TypeCodeDomSerializer, " + AssemblyRef.SystemDesign),
+//DesignerSerializer("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + AssemblyRef.MicrosoftVisualStudioWeb,  "System.ComponentModel.Design.Serialization.TypeCodeDomSerializer, " + AssemblyRef.SystemDesign),
 ToolboxItem(false)
 ]
 public class Page: TemplateControl, IHttpHandler {
@@ -522,7 +522,7 @@ public class Page: TemplateControl, IHttpHandler {
     public virtual bool TryUpdateModel<TModel>(TModel model) where TModel : class {
 
         if (ActiveValueProvider == null) {
-            throw new InvalidOperationException(SR.GetString(SR.Page_InvalidUpdateModelAttempt, "TryUpdateModel"));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_InvalidUpdateModelAttempt, "TryUpdateModel"));
         }
 
         return TryUpdateModel<TModel>(model, ActiveValueProvider);
@@ -567,7 +567,7 @@ public class Page: TemplateControl, IHttpHandler {
     public virtual void UpdateModel<TModel>(TModel model) where TModel : class {
 
         if (ActiveValueProvider == null) {
-            throw new InvalidOperationException(SR.GetString(SR.Page_InvalidUpdateModelAttempt, "UpdateModel"));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_InvalidUpdateModelAttempt, "UpdateModel"));
         }
 
         UpdateModel<TModel>(model, ActiveValueProvider);
@@ -579,14 +579,14 @@ public class Page: TemplateControl, IHttpHandler {
     /// </summary>
     public virtual void UpdateModel<TModel>(TModel model, IValueProvider valueProvider) where TModel : class {
         if (!TryUpdateModel(model, valueProvider)) {
-            throw new InvalidOperationException(SR.GetString(SR.Page_UpdateModel_UpdateUnsuccessful, typeof(TModel).FullName));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_UpdateModel_UpdateUnsuccessful, typeof(TModel).FullName));
         }
     }
 
     [
     DefaultValue(UnobtrusiveValidationMode.None),
     WebCategory("Behavior"),
-    WebSysDescription(SR.Page_UnobtrusiveValidationMode)
+    WebSysDescription(System.Web.SR.Page_UnobtrusiveValidationMode)
     ]
     public UnobtrusiveValidationMode UnobtrusiveValidationMode {
         get {
@@ -683,7 +683,7 @@ public class Page: TemplateControl, IHttpHandler {
     /// </devdoc>
     [
     DefaultValue(""),
-    WebSysDescription(SR.Page_ClientTarget),
+    WebSysDescription(System.Web.SR.Page_ClientTarget),
     Browsable(false),
     EditorBrowsable(EditorBrowsableState.Advanced),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
@@ -742,7 +742,7 @@ public class Page: TemplateControl, IHttpHandler {
     /// </devdoc>
     [
     DefaultValue(""),
-    WebSysDescription(SR.Page_ErrorPage),
+    WebSysDescription(System.Web.SR.Page_ErrorPage),
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
@@ -892,8 +892,7 @@ public class Page: TemplateControl, IHttpHandler {
     ///    The control that has was last focused (empty if there was no such control)
     /// </devdoc>
     // We
-    internal string LastFocusedControl {
-        [AspNetHostingPermission(SecurityAction.Assert, Level = AspNetHostingPermissionLevel.Low)]
+    internal string LastFocusedControl {        
         get {
             if (RequestInternal != null) {
                 // SECURITY: Change this to just check form + query string
@@ -932,7 +931,7 @@ public class Page: TemplateControl, IHttpHandler {
     [
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-    WebSysDescription(SR.MasterPage_MasterPage)
+    WebSysDescription(System.Web.SR.MasterPage_MasterPage)
     ]
     public MasterPage Master {
         get {
@@ -951,7 +950,7 @@ public class Page: TemplateControl, IHttpHandler {
     [
     DefaultValue(""),
     WebCategory("Behavior"),
-    WebSysDescription(SR.MasterPage_MasterPageFile)
+    WebSysDescription(System.Web.SR.MasterPage_MasterPageFile)
     ]
     public virtual string MasterPageFile {
         get {
@@ -959,7 +958,7 @@ public class Page: TemplateControl, IHttpHandler {
         }
         set {
             if (_preInitWorkComplete) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertySetBeforePageEvent, "MasterPageFile", "Page_PreInit"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertySetBeforePageEvent, "MasterPageFile", "Page_PreInit"));
             }
 
             if (value != VirtualPath.GetVirtualPathString(_masterPageFile)) {
@@ -984,11 +983,11 @@ public class Page: TemplateControl, IHttpHandler {
         }
         set {
             if (this.ControlState > ControlState.FrameworkInitialized) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertySetAfterFrameworkInitialize, "MaxPageStateFieldLength"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertySetAfterFrameworkInitialize, "MaxPageStateFieldLength"));
             }
 
             if (value == 0 || value < -1) {
-                throw new ArgumentException(SR.GetString(SR.Page_Illegal_MaxPageStateFieldLength), "MaxPageStateFieldLength");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Page_Illegal_MaxPageStateFieldLength), "MaxPageStateFieldLength");
             }
             _maxPageStateFieldLength = value;
         }
@@ -1058,7 +1057,7 @@ public class Page: TemplateControl, IHttpHandler {
                         // Build up the entire persisted state from all the viewstate fields
                         int numViewStateFields = Convert.ToInt32(fieldCountStr, CultureInfo.InvariantCulture);
                         if (numViewStateFields < 0) {
-                            throw new HttpException(SR.GetString(SR.ViewState_InvalidViewState));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                         }
 
                         // The view state is split into __VIEWSTATE, __VIEWSTATE1, __VIEWSTATE2, ... fields
@@ -1069,7 +1068,7 @@ public class Page: TemplateControl, IHttpHandler {
                             if (i > 0) key += i.ToString(CultureInfo.InvariantCulture);
                             string viewStateChunk = RequestValueCollection[key];
                             if (viewStateChunk == null) {
-                                throw new HttpException(SR.GetString(SR.ViewState_MissingViewStateField, key));
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ViewState_MissingViewStateField, key));
                             }
 
                             state.Append(viewStateChunk);
@@ -1124,7 +1123,7 @@ public class Page: TemplateControl, IHttpHandler {
     public HttpRequest Request {
         get {
             if (_request == null)
-                throw new HttpException(SR.GetString(SR.Request_not_available));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Request_not_available));
 
             return _request;
         }
@@ -1147,7 +1146,7 @@ public class Page: TemplateControl, IHttpHandler {
     public HttpResponse Response {
         get {
             if (_response == null)
-                throw new HttpException(SR.GetString(SR.Response_not_available));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Response_not_available));
 
             return _response;
         }
@@ -1190,7 +1189,7 @@ public class Page: TemplateControl, IHttpHandler {
     public Cache Cache {
         get {
             if (_cache == null)
-                throw new HttpException(SR.GetString(SR.Cache_not_available));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cache_not_available));
 
             return _cache;
         }
@@ -1219,7 +1218,7 @@ public class Page: TemplateControl, IHttpHandler {
             }
 
             if (_session == null) {
-                throw new HttpException(SR.GetString(SR.Session_not_enabled));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Session_not_enabled));
             }
 
             return _session;
@@ -1234,7 +1233,7 @@ public class Page: TemplateControl, IHttpHandler {
     public string Title {
         get {
             if ((Page.Header == null) && (this.ControlState >= ControlState.ChildrenInitialized)) {
-                throw new InvalidOperationException(SR.GetString(SR.Page_Title_Requires_Head));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_Title_Requires_Head));
             }
 
             if (_titleToBeSet != null) {
@@ -1246,7 +1245,7 @@ public class Page: TemplateControl, IHttpHandler {
         set {
             if (Page.Header == null) {
                 if (this.ControlState >= ControlState.ChildrenInitialized) {
-                    throw new InvalidOperationException(SR.GetString(SR.Page_Title_Requires_Head));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_Title_Requires_Head));
                 }
                 else {
                     _titleToBeSet = value;
@@ -1266,7 +1265,7 @@ public class Page: TemplateControl, IHttpHandler {
     public string MetaDescription {
         get {
             if ((Page.Header == null) && (this.ControlState >= ControlState.ChildrenInitialized)) {
-                throw new InvalidOperationException(SR.GetString(SR.Page_Description_Requires_Head));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_Description_Requires_Head));
             }
 
             if (_descriptionToBeSet != null) {
@@ -1278,7 +1277,7 @@ public class Page: TemplateControl, IHttpHandler {
         set {
             if (Page.Header == null) {
                 if (this.ControlState >= ControlState.ChildrenInitialized) {
-                    throw new InvalidOperationException(SR.GetString(SR.Page_Description_Requires_Head));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_Description_Requires_Head));
                 }
                 else {
                     _descriptionToBeSet = value;
@@ -1298,7 +1297,7 @@ public class Page: TemplateControl, IHttpHandler {
     public string MetaKeywords {
         get {
             if ((Page.Header == null) && (this.ControlState >= ControlState.ChildrenInitialized)) {
-                throw new InvalidOperationException(SR.GetString(SR.Page_Keywords_Requires_Head));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_Keywords_Requires_Head));
             }
 
             if (_keywordsToBeSet != null) {
@@ -1310,7 +1309,7 @@ public class Page: TemplateControl, IHttpHandler {
         set {
             if (Page.Header == null) {
                 if (this.ControlState >= ControlState.ChildrenInitialized) {
-                    throw new InvalidOperationException(SR.GetString(SR.Page_Keywords_Requires_Head));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_Keywords_Requires_Head));
                 }
                 else {
                     _keywordsToBeSet = value;
@@ -1327,7 +1326,7 @@ public class Page: TemplateControl, IHttpHandler {
     /// </devdoc>
     internal bool ContainsTheme {
         get {
-            Debug.Assert(_preInitWorkComplete || DesignMode, "ContainsTheme should not be accessed before Page's PreInit.");
+            System.Web.Util.Debug.Assert(_preInitWorkComplete || DesignMode, "ContainsTheme should not be accessed before Page's PreInit.");
             return _theme != null;
         }
     }
@@ -1343,11 +1342,11 @@ public class Page: TemplateControl, IHttpHandler {
         }
         set {
             if (_preInitWorkComplete) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertySetBeforePageEvent, "Theme", "Page_PreInit"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertySetBeforePageEvent, "Theme", "Page_PreInit"));
             }
 
-            if (!String.IsNullOrEmpty(value) && !FileUtil.IsValidDirectoryName(value)) {
-                throw new ArgumentException(SR.GetString(SR.Page_theme_invalid_name, value), "Theme");
+            if (!String.IsNullOrEmpty(value) && !System.Web.Util.FileUtil.IsValidDirectoryName(value)) {
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Page_theme_invalid_name, value), "Theme");
             }
 
             _themeName = value;
@@ -1392,7 +1391,7 @@ public class Page: TemplateControl, IHttpHandler {
         }
         set {
             if (_pageFlags[styleSheetInitialized]) {
-                throw new InvalidOperationException(SR.GetString(SR.SetStyleSheetThemeCannotBeSet));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SetStyleSheetThemeCannotBeSet));
             }
             _styleSheetName = value;
         }
@@ -1485,7 +1484,7 @@ public class Page: TemplateControl, IHttpHandler {
                 return (HtmlTextWriter)HttpRuntime.CreateNonPublicInstance(writerType, new object[] { tw });
             }
             catch {
-                throw new HttpException(SR.GetString(SR.Invalid_HtmlTextWriter, writerType.FullName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_HtmlTextWriter, writerType.FullName));
             }
         }
     }
@@ -1494,7 +1493,7 @@ public class Page: TemplateControl, IHttpHandler {
     /// Overridden to check the Page's own ID against the one being searched.
     /// </devdoc>
     public override Control FindControl(String id) {
-        if (StringUtil.EqualsIgnoreCase(id, PageID)) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(id, PageID)) {
             return this;
         }
         return base.FindControl(id, 0);
@@ -1535,8 +1534,8 @@ public class Page: TemplateControl, IHttpHandler {
         // Use the page's directory and class name as part of the key (ASURT 64044)
         // We need to make sure that the hash is case insensitive, since the file system
         // is, and strange view state errors could otherwise happen (ASURT 128657)
-        int pageHashCode = StringUtil.GetNonRandomizedHashCode(TemplateSourceDirectory, ignoreCase:true);
-        pageHashCode += StringUtil.GetNonRandomizedHashCode(GetType().Name, ignoreCase:true);
+        int pageHashCode = System.Web.Util.StringUtil.GetNonRandomizedHashCode(TemplateSourceDirectory, ignoreCase:true);
+        pageHashCode += System.Web.Util.StringUtil.GetNonRandomizedHashCode(GetType().Name, ignoreCase:true);
 
         return (uint)pageHashCode;
     }
@@ -1579,7 +1578,7 @@ public class Page: TemplateControl, IHttpHandler {
 
         string traceString = null;
         if (Context.TraceIsEnabled) {
-            Trace.Warn(SR.GetString(SR.Unhandled_Err_Error), null, e);
+            Trace.Warn(System.Web.SR.GetString(System.Web.SR.Unhandled_Err_Error), null, e);
             if (Trace.PageOutput) {
                 StringWriter sw = new StringWriter();
                 HtmlTextWriter htw = new HtmlTextWriter(sw);
@@ -1701,7 +1700,7 @@ public class Page: TemplateControl, IHttpHandler {
         }
         set {
             if (this.ControlState > ControlState.FrameworkInitialized) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertySetAfterFrameworkInitialize, "EnableEventValidation"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertySetAfterFrameworkInitialize, "EnableEventValidation"));
             }
 
             _enableEventValidation = value;
@@ -1732,7 +1731,7 @@ public class Page: TemplateControl, IHttpHandler {
         }
         set {
             if (this.ControlState > ControlState.FrameworkInitialized) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertySetAfterFrameworkInitialize, "ViewStateEncryptionMode"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertySetAfterFrameworkInitialize, "ViewStateEncryptionMode"));
             }
 
             if (value < ViewStateEncryptionMode.Auto || value > ViewStateEncryptionMode.Never) {
@@ -1756,7 +1755,7 @@ public class Page: TemplateControl, IHttpHandler {
         set {
             // Make sure it's not called too late
             if (ControlState >= ControlState.Initialized) {
-                throw new HttpException(SR.GetString(SR.Too_late_for_ViewStateUserKey));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Too_late_for_ViewStateUserKey));
             }
 
             _viewStateUserKey = value;
@@ -1858,7 +1857,7 @@ public class Page: TemplateControl, IHttpHandler {
         }
 
         if (clearData == null)
-            throw new HttpException(SR.GetString(SR.ViewState_InvalidViewState));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
         return Encoding.UTF8.GetString(clearData);
     }
 
@@ -1997,7 +1996,7 @@ public class Page: TemplateControl, IHttpHandler {
     /// This is also used by the AssemblyResourceLoader to prevent tampering of URLs.
     /// </devdoc>
     internal static string EncryptString(string s, Purpose purpose) {
-        Debug.Assert(s != null);
+        System.Web.Util.Debug.Assert(s != null);
 
         // DevDiv Bugs 137864: IVType.Hash is necessary for WebResource / ScriptResource URLs
         // so that client and server caching will continue to work. MS AJAX also caches these
@@ -2485,7 +2484,7 @@ window.onload = WebForm_RestoreScrollPosition;
     internal void OnFormRender() {
         // Make sure there is only one form tag (ASURT 18891, 18894)
         if (_fOnFormRenderCalled) {
-            throw new HttpException(SR.GetString(SR.Multiple_forms_not_allowed));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Multiple_forms_not_allowed));
         }
 
         _fOnFormRenderCalled = true;
@@ -2520,11 +2519,11 @@ window.onload = WebForm_RestoreScrollPosition;
         }
 
         if (Form == null) {
-            throw new InvalidOperationException(SR.GetString(SR.Form_Required_For_Focus));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Form_Required_For_Focus));
         }
 
         if (Form.ControlState == ControlState.PreRendered) {
-            throw new InvalidOperationException(SR.GetString(SR.Page_MustCallBeforeAndDuringPreRender, "SetFocus"));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_MustCallBeforeAndDuringPreRender, "SetFocus"));
         }
 
         _focusedControl = control;
@@ -2543,11 +2542,11 @@ window.onload = WebForm_RestoreScrollPosition;
         }
 
         if (Form == null) {
-            throw new InvalidOperationException(SR.GetString(SR.Form_Required_For_Focus));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Form_Required_For_Focus));
         }
 
         if (Form.ControlState == ControlState.PreRendered) {
-            throw new InvalidOperationException(SR.GetString(SR.Page_MustCallBeforeAndDuringPreRender, "SetFocus"));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_MustCallBeforeAndDuringPreRender, "SetFocus"));
         }
 
         _focusedControlID = clientID.Trim();
@@ -2640,7 +2639,7 @@ window.onload = WebForm_RestoreScrollPosition;
                 _styleSheet.Initialize(this, true);
             }
             else {
-                throw new HttpException(SR.GetString(SR.Page_theme_not_found, styleSheetName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Page_theme_not_found, styleSheetName));
             }
         }
 
@@ -2658,7 +2657,7 @@ window.onload = WebForm_RestoreScrollPosition;
                 _theme.Initialize(this, false);
             }
             else {
-                throw new HttpException(SR.GetString(SR.Page_theme_not_found, themeName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Page_theme_not_found, themeName));
             }
         }
     }
@@ -2673,7 +2672,7 @@ window.onload = WebForm_RestoreScrollPosition;
             _contentTemplateCollection.Add(templateName, template);
         }
         catch (ArgumentException) {
-            throw new HttpException(SR.GetString(SR.MasterPage_Multiple_content, templateName));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.MasterPage_Multiple_content, templateName));
         }
     }
 
@@ -2893,11 +2892,11 @@ window.onload = WebForm_RestoreScrollPosition;
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public void RegisterRequiresControlState(Control control) {
         if (control == null) {
-            throw new ArgumentException(SR.GetString(SR.Page_ControlState_ControlCannotBeNull));
+            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Page_ControlState_ControlCannotBeNull));
         }
 
         if (control.ControlState == ControlState.PreRendered) {
-            throw new InvalidOperationException(SR.GetString(SR.Page_MustCallBeforeAndDuringPreRender, "RegisterRequiresControlState"));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_MustCallBeforeAndDuringPreRender, "RegisterRequiresControlState"));
         }
 
         if (_registeredControlsRequiringControlState == null) {
@@ -2937,7 +2936,7 @@ window.onload = WebForm_RestoreScrollPosition;
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public void UnregisterRequiresControlState(Control control) {
         if (control == null) {
-            throw new ArgumentException(SR.GetString(SR.Page_ControlState_ControlCannotBeNull));
+            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Page_ControlState_ControlCannotBeNull));
         }
 
         if (_registeredControlsRequiringControlState == null) {
@@ -2991,7 +2990,7 @@ window.onload = WebForm_RestoreScrollPosition;
         if (!(control is IPostBackDataHandler)) {
             IPostBackDataHandler dataHandler = control.AdapterInternal as IPostBackDataHandler;
             if (dataHandler == null)
-                throw new HttpException(SR.GetString(SR.Ctrl_not_data_handler));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Ctrl_not_data_handler));
         }
 
         if (_registeredControlsThatRequirePostBack == null)
@@ -3013,7 +3012,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
     // Pop a BasePartialCachingControl from the stack of registered caching controls
     internal void PopCachingControl() {
-        Debug.Assert(_partialCachingControlStack != null);
+        System.Web.Util.Debug.Assert(_partialCachingControlStack != null);
         _partialCachingControlStack.Pop();
     }
 
@@ -3104,7 +3103,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
                     // Give a helpful error if the control is not a IPostBackDataHandler (ASURT 128532)
                     if (consumer == null) {
-                        throw new HttpException(SR.GetString(SR.Postback_ctrl_not_found, controlID));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Postback_ctrl_not_found, controlID));
                     }
 
                     NameValueCollection postCollection = c.CalculateEffectiveValidateRequest() ? _requestValueCollection : _unvalidatedRequestValueCollection;
@@ -3208,7 +3207,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
                     // Give a helpful error if the control is not a IPostBackDataHandler (ASURT 128532)
                     if (consumer == null) {
-                        throw new HttpException(SR.GetString(SR.Postback_ctrl_not_found, controlID));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Postback_ctrl_not_found, controlID));
                     }
 
                     NameValueCollection postCollection = c.CalculateEffectiveValidateRequest() ? _requestValueCollection : _unvalidatedRequestValueCollection;
@@ -3384,7 +3383,7 @@ window.onload = WebForm_RestoreScrollPosition;
     public bool IsValid {
         get {
             if (!_validated)
-                throw new HttpException(SR.GetString(SR.IsValid_Cant_Be_Called));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.IsValid_Cant_Be_Called));
 
             if (_validators != null) {
                 ValidatorCollection vc = Validators;
@@ -3433,7 +3432,7 @@ window.onload = WebForm_RestoreScrollPosition;
                 if (_previousPagePath != null) {
 
                     if (!Util.IsUserAllowedToPath(Context, _previousPagePath)) {
-                        throw new InvalidOperationException(SR.GetString(SR.Previous_Page_Not_Authorized));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Previous_Page_Not_Authorized));
                     }
 
                     ITypedWebObjectFactory result =
@@ -3556,7 +3555,7 @@ window.onload = WebForm_RestoreScrollPosition;
             profile = (OutputCacheProfile) outputCacheSettings.OutputCacheProfiles[cacheSettings.CacheProfile];
 
             if (profile == null) {
-                throw new HttpException(SR.GetString(SR.CacheProfile_Not_Found, cacheSettings.CacheProfile));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.CacheProfile_Not_Found, cacheSettings.CacheProfile));
             }
 
             // If the profile disables it, then bail out
@@ -3595,11 +3594,11 @@ window.onload = WebForm_RestoreScrollPosition;
                 varyByControl = null;
             }
 
-            if (StringUtil.EqualsIgnoreCase(varyByParam, "none")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(varyByParam, "none")) {
                 varyByParam = null;
             }
 
-            if (StringUtil.EqualsIgnoreCase(varyByControl, "none")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(varyByControl, "none")) {
                 varyByControl = null;
             }
         }
@@ -3649,14 +3648,14 @@ window.onload = WebForm_RestoreScrollPosition;
             // Check and see if duration is specified in the profile or in the directives
             if ((profile == null || profile.Duration == -1) &&
                 (cacheSettings.IsParameterSet(OutputCacheParameter.Duration) == false)) {
-                throw new HttpException(SR.GetString(SR.Missing_output_cache_attr, "duration"));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Missing_output_cache_attr, "duration"));
             }
 
             // Check and see if varyByParam is specified in the profile or in the directives
             if ((profile == null || ((profile.VaryByParam == null) && (profile.VaryByControl == null))) &&
                 (cacheSettings.IsParameterSet(OutputCacheParameter.VaryByParam) == false &&
                 cacheSettings.IsParameterSet(OutputCacheParameter.VaryByControl) == false)) {
-                throw new HttpException(SR.GetString(SR.Missing_output_cache_attr, "varyByParam"));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Missing_output_cache_attr, "varyByParam"));
             }
         }
 
@@ -3693,7 +3692,7 @@ window.onload = WebForm_RestoreScrollPosition;
                 break;
 
             default:
-                throw new ArgumentOutOfRangeException("cacheSettings", SR.GetString(SR.Invalid_cache_settings_location));
+                throw new ArgumentOutOfRangeException("cacheSettings", System.Web.SR.GetString(System.Web.SR.Invalid_cache_settings_location));
         }
 
         cache.SetCacheability(cacheability);
@@ -3789,7 +3788,7 @@ window.onload = WebForm_RestoreScrollPosition;
     /// <internalonly/>
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected object GetWrappedFileDependencies(string[] virtualFileDependencies) {
-        Debug.Assert(virtualFileDependencies != null);
+        System.Web.Util.Debug.Assert(virtualFileDependencies != null);
         return virtualFileDependencies;
     }
 
@@ -3846,13 +3845,13 @@ window.onload = WebForm_RestoreScrollPosition;
         set {
             CultureInfo newCulture = null;
 
-            if(StringUtil.EqualsIgnoreCase(value, HttpApplication.AutoCulture)) {
+            if(System.Web.Util.StringUtil.EqualsIgnoreCase(value, HttpApplication.AutoCulture)) {
                 CultureInfo browserCulture = CultureFromUserLanguages(true);
                 if(browserCulture != null) {
                     newCulture = browserCulture;
                 }
             }
-            else if(StringUtil.StringStartsWithIgnoreCase(value, HttpApplication.AutoCulture)) {
+            else if(System.Web.Util.StringUtil.StringStartsWithIgnoreCase(value, HttpApplication.AutoCulture)) {
                 CultureInfo browserCulture = CultureFromUserLanguages(true);
                 if(browserCulture != null) {
                     newCulture = browserCulture;
@@ -3916,13 +3915,13 @@ window.onload = WebForm_RestoreScrollPosition;
         set {
             CultureInfo newUICulture = null;
 
-            if(StringUtil.EqualsIgnoreCase(value, HttpApplication.AutoCulture)) {
+            if(System.Web.Util.StringUtil.EqualsIgnoreCase(value, HttpApplication.AutoCulture)) {
                 CultureInfo browserCulture = CultureFromUserLanguages(false);
                 if(browserCulture != null) {
                     newUICulture = browserCulture;
                 }
             }
-            else if(StringUtil.StringStartsWithIgnoreCase(value, HttpApplication.AutoCulture)) {
+            else if(System.Web.Util.StringUtil.StringStartsWithIgnoreCase(value, HttpApplication.AutoCulture)) {
                 CultureInfo browserCulture = CultureFromUserLanguages(false);
                 if(browserCulture != null) {
                     newUICulture = browserCulture;
@@ -3957,7 +3956,7 @@ window.onload = WebForm_RestoreScrollPosition;
     public TimeSpan AsyncTimeout {
         set {
             if (value < TimeSpan.Zero) {
-                throw new ArgumentException(SR.GetString(SR.Page_Illegal_AsyncTimeout), "AsyncTimeout");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Page_Illegal_AsyncTimeout), "AsyncTimeout");
             }
 
             _asyncTimeout = value;
@@ -4299,7 +4298,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
     public void RegisterRequiresViewStateEncryption() {
         if (ControlState >= ControlState.PreRendered) {
-            throw new InvalidOperationException(SR.GetString(SR.Too_late_for_RegisterRequiresViewStateEncryption));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Too_late_for_RegisterRequiresViewStateEncryption));
         }
 
         _viewStateEncryptionRequested = true;
@@ -4630,8 +4629,8 @@ window.onload = WebForm_RestoreScrollPosition;
 #if !FEATURE_PAL // FEATURE_PAL does not enable COM
                 if (IsInAspCompatMode)
                     AspCompatApplicationStep.OnPageStartSessionObjects();
-#else // !FEATURE_PAL
-				throw new NotImplementedException ("ROTORTODO");
+//#else // !FEATURE_PAL
+//				throw new NotImplementedException ("ROTORTODO");
 #endif // !FEATURE_PAL
 
                 // Is it a GET, POST or initial request?
@@ -4661,12 +4660,12 @@ window.onload = WebForm_RestoreScrollPosition;
                 // Special-case Web Part Export so it executes in the same security context as the page itself (VSWhidbey 426574)
                 if (DetermineIsExportingWebPart()) {
                     if (!RuntimeConfig.GetAppConfig().WebParts.EnableExport) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartExportHandler_DisabledExportHandler));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartExportHandler_DisabledExportHandler));
                     }
 
                     exportedWebPartID = Request.QueryString["webPart"];
                     if (String.IsNullOrEmpty(exportedWebPartID)) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartExportHandler_InvalidArgument));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartExportHandler_InvalidArgument));
                     }
 
                     if (String.Equals(Request.QueryString["scope"], "shared", StringComparison.OrdinalIgnoreCase)) {
@@ -4718,7 +4717,7 @@ window.onload = WebForm_RestoreScrollPosition;
                                     previousPagePath != Request.CurrentExecutionFilePathObject) {
                                     _pageFlags[isCrossPagePostRequest] = true;
                                     _previousPagePath = previousPagePath;
-                                    Debug.Assert(_previousPagePath != null);
+                                    System.Web.Util.Debug.Assert(_previousPagePath != null);
                                 }
                             }
                         }
@@ -4957,12 +4956,12 @@ window.onload = WebForm_RestoreScrollPosition;
                 // Special-case Web Part Export so it executes in the same security context as the page itself (VSWhidbey 426574)
                 if (DetermineIsExportingWebPart()) {
                     if (!RuntimeConfig.GetAppConfig().WebParts.EnableExport) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartExportHandler_DisabledExportHandler));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartExportHandler_DisabledExportHandler));
                     }
 
                     exportedWebPartID = Request.QueryString["webPart"];
                     if (String.IsNullOrEmpty(exportedWebPartID)) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartExportHandler_InvalidArgument));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartExportHandler_InvalidArgument));
                     }
 
                     if (String.Equals(Request.QueryString["scope"], "shared", StringComparison.OrdinalIgnoreCase)) {
@@ -5014,7 +5013,7 @@ window.onload = WebForm_RestoreScrollPosition;
                                     previousPagePath != Request.CurrentExecutionFilePathObject) {
                                     _pageFlags[isCrossPagePostRequest] = true;
                                     _previousPagePath = previousPagePath;
-                                    Debug.Assert(_previousPagePath != null);
+                                    System.Web.Util.Debug.Assert(_previousPagePath != null);
                                 }
                             }
                         }
@@ -5274,7 +5273,7 @@ window.onload = WebForm_RestoreScrollPosition;
             Response.ContentType = "application/mswebpart";
             string title = webPartToExport.DisplayTitle;
             if (String.IsNullOrEmpty(title)) {
-                title = SR.GetString(SR.Part_Untitled);
+                title = System.Web.SR.GetString(System.Web.SR.Part_Untitled);
             }
             NonWordRegex nonWordRegex = new NonWordRegex();
             Response.AddHeader("content-disposition", "attachment; filename=" +
@@ -5316,14 +5315,14 @@ window.onload = WebForm_RestoreScrollPosition;
                 _callbackControl.RaiseCallbackEvent(param);
             }
             else {
-                throw new InvalidOperationException(SR.GetString(SR.Page_CallBackTargetInvalid, callbackControlID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_CallBackTargetInvalid, callbackControlID));
             }
         }
         catch (Exception e) {
             Response.Clear();
             Response.Write('e');
             if (Context.IsCustomErrorEnabled) {
-                Response.Write(SR.GetString(SR.Page_CallBackError));
+                Response.Write(System.Web.SR.GetString(System.Web.SR.Page_CallBackError));
             }
             else {
                 bool needsCallbackLoadScript = !String.IsNullOrEmpty(_requestValueCollection[callbackLoadScriptID]);
@@ -5351,14 +5350,14 @@ window.onload = WebForm_RestoreScrollPosition;
                 }
             }
             else {
-                throw new InvalidOperationException(SR.GetString(SR.Page_CallBackTargetInvalid, callbackControlID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_CallBackTargetInvalid, callbackControlID));
             }
         }
         catch (Exception e) {
             Response.Clear();
             Response.Write('e');
             if (Context.IsCustomErrorEnabled) {
-                Response.Write(SR.GetString(SR.Page_CallBackError));
+                Response.Write(System.Web.SR.GetString(System.Web.SR.Page_CallBackError));
             }
             else {
                 bool needsCallbackLoadScript = !String.IsNullOrEmpty(_requestValueCollection[callbackLoadScriptID]);
@@ -5377,7 +5376,7 @@ window.onload = WebForm_RestoreScrollPosition;
             if (needsCallbackLoadScript) {
                 index = _requestValueCollection[callbackIndexID];
                 if (String.IsNullOrEmpty(index)) {
-                    throw new HttpException(SR.GetString(SR.Page_CallBackInvalid));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Page_CallBackInvalid));
                 }
                 // We validate the user string because we're injecting it into the response script.
                 // We don't need the integer, so we don't call Parse, we just need to check only expected
@@ -5385,7 +5384,7 @@ window.onload = WebForm_RestoreScrollPosition;
                 for (int i = 0; i < index.Length; i++) {
                     char c = index[i];
                     if (c < '0' || c > '9') {
-                        throw new HttpException(SR.GetString(SR.Page_CallBackInvalid));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Page_CallBackInvalid));
                     }
                 }
                 Response.Write("<script>parent.__pendingCallbacks[");
@@ -5417,7 +5416,7 @@ window.onload = WebForm_RestoreScrollPosition;
             Response.Clear();
             Response.Write('e');
             if (Context.IsCustomErrorEnabled) {
-                Response.Write(SR.GetString(SR.Page_CallBackError));
+                Response.Write(System.Web.SR.GetString(System.Web.SR.Page_CallBackError));
             }
             else {
                 Response.Write(needsCallbackLoadScript ?
@@ -5610,7 +5609,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
         if (!String.IsNullOrEmpty(_titleToBeSet)) {
             if (_header == null) {
-                throw new InvalidOperationException(SR.GetString(SR.Page_Title_Requires_Head));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_Title_Requires_Head));
             }
             else {
                 Title = _titleToBeSet;
@@ -5620,7 +5619,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
         if (!String.IsNullOrEmpty(_descriptionToBeSet)) {
             if (_header == null) {
-                throw new InvalidOperationException(SR.GetString(SR.Page_Description_Requires_Head));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_Description_Requires_Head));
             }
             else {
                 MetaDescription = _descriptionToBeSet;
@@ -5630,7 +5629,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
         if (!String.IsNullOrEmpty(_keywordsToBeSet)) {
             if (_header == null) {
-                throw new InvalidOperationException(SR.GetString(SR.Page_Description_Requires_Head));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_Description_Requires_Head));
             }
             else {
                 MetaKeywords = _keywordsToBeSet;
@@ -5704,7 +5703,7 @@ window.onload = WebForm_RestoreScrollPosition;
             }
 
             if (!_legacyAsyncTaskManager.FailedToStartTasks && _legacyAsyncTaskManager.AnyTasksRemain) {
-                throw new HttpException(SR.GetString(SR.Registered_async_tasks_remain));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Registered_async_tasks_remain));
             }
         }
     }
@@ -5727,7 +5726,7 @@ window.onload = WebForm_RestoreScrollPosition;
         else {
             // synchronous pages don't support async tasks
             if (!(this is IHttpAsyncHandler)) {
-                throw new InvalidOperationException(SR.GetString(SR.Async_required));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_required));
             }
 
             if (_asyncTaskManager == null) {
@@ -5843,7 +5842,7 @@ window.onload = WebForm_RestoreScrollPosition;
                         IAsyncResult ar = ((BeginEventHandler)_beginHandlers[_currentHandler])(_page, EventArgs.Empty, _completionCallback, _stateObjects[_currentHandler]);
 
                         if (ar == null) {
-                            throw new InvalidOperationException(SR.GetString(SR.Async_null_asyncresult));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_null_asyncresult));
                         }
 
                         if (ar.CompletedSynchronously) {
@@ -5882,7 +5881,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
                 // check if any async operations started
 #if DBG
-                Debug.Trace("Async", "Page has PendingOperationsCount of " + _syncContext.PendingOperationsCount);
+                System.Web.Util.Debug.Trace("Async", "Page has PendingOperationsCount of " + _syncContext.PendingOperationsCount);
 #endif
 
                 if (_syncContext.PendingCompletion(_callHandlersThreadpoolCallback)) {
@@ -5967,7 +5966,7 @@ window.onload = WebForm_RestoreScrollPosition;
         }
 
         private void CallHandlersFromThreadpoolThread(Object data) {
-            Debug.Trace("Async", "Page -- CallHandlersFromThreadpoolThread");
+            System.Web.Util.Debug.Trace("Async", "Page -- CallHandlersFromThreadpoolThread");
             CallHandlers(false);
         }
 
@@ -6032,7 +6031,7 @@ window.onload = WebForm_RestoreScrollPosition;
                     finally {
                         // Homogenize any exceptions due to request timeout into a TimeoutException.
                         if (cancellationToken.IsCancellationRequested) {
-                            throw new TimeoutException(SR.GetString(SR.Async_task_timed_out));
+                            throw new TimeoutException(System.Web.SR.GetString(System.Web.SR.Async_task_timed_out));
                         }
                     }
                 }
@@ -6083,7 +6082,7 @@ window.onload = WebForm_RestoreScrollPosition;
             }
 
             // can't throw yet, have to wait for pending async operations to finish
-            Debug.Trace("Async", "Exception with async pending - saving the error");
+            System.Web.Util.Debug.Trace("Async", "Exception with async pending - saving the error");
             _legacyAsyncInfo.SetError(e);
         }
 
@@ -6123,7 +6122,7 @@ window.onload = WebForm_RestoreScrollPosition;
         if (_legacyAsyncInfo == null)
             return;
 
-        Debug.Assert(_legacyAsyncInfo.AsyncResult == result);
+        System.Web.Util.Debug.Assert(_legacyAsyncInfo.AsyncResult == result);
 
         // End() observes and throws any captured exceptions
         _legacyAsyncInfo.AsyncResult.End();
@@ -6155,12 +6154,12 @@ window.onload = WebForm_RestoreScrollPosition;
             }
             else {
                 // synchronous pages don't support add async handler
-                throw new InvalidOperationException(SR.GetString(SR.Async_required));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_required));
             }
         }
 
         if (_legacyAsyncInfo.AsyncPointReached) {
-            throw new InvalidOperationException(SR.GetString(SR.Async_addhandler_too_late));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_addhandler_too_late));
         }
 
         _legacyAsyncInfo.AddHandler(beginHandler, endHandler, state);
@@ -6246,7 +6245,7 @@ window.onload = WebForm_RestoreScrollPosition;
         }
 
         if (!_inOnFormRender && !IsCallback) {
-            throw new HttpException(SR.GetString(SR.ControlRenderedOutsideServerForm, control.ClientID, control.GetType().Name));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.ControlRenderedOutsideServerForm, control.ClientID, control.GetType().Name));
         }
     }
 
@@ -6278,7 +6277,7 @@ window.onload = WebForm_RestoreScrollPosition;
                     _relativeFilePath = s;
                 }
                 else {
-                    _relativeFilePath = Server.UrlDecode(UrlPath.MakeRelative(filePath, s));
+                    _relativeFilePath = Server.UrlDecode(System.Web.Util.UrlPath.MakeRelative(filePath, s));
                 }
             }
             return _relativeFilePath;
@@ -6330,8 +6329,8 @@ window.onload = WebForm_RestoreScrollPosition;
     /// Exits a databinding context by removing the current data item from the databinding context stack.
     /// </devdoc>
     internal void PopDataBindingContext() {
-        Debug.Assert(_dataBindingContext != null);
-        Debug.Assert(_dataBindingContext.Count > 0);
+        System.Web.Util.Debug.Assert(_dataBindingContext != null);
+        System.Web.Util.Debug.Assert(_dataBindingContext.Count > 0);
         _dataBindingContext.Pop();
     }
 
@@ -6341,7 +6340,7 @@ window.onload = WebForm_RestoreScrollPosition;
     /// </devdoc>
     public object GetDataItem() {
         if ((_dataBindingContext == null) || (_dataBindingContext.Count == 0)) {
-            throw new InvalidOperationException(SR.GetString(SR.Page_MissingDataBindingContext));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_MissingDataBindingContext));
         }
         return _dataBindingContext.Peek();
     }

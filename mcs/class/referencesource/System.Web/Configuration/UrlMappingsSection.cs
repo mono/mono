@@ -42,7 +42,7 @@ namespace System.Web.Configuration {
             _properties.Add(_propEnabled);
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -69,7 +69,7 @@ namespace System.Web.Configuration {
             string result = null;
 
             // Convert the 'path' param to be a relative path
-            string relative = UrlPath.MakeVirtualPathAppRelative(path);
+            string relative = System.Web.Util.UrlPath.MakeVirtualPathAppRelative(path);
 
             // Look it up in our map
             UrlMapping elem = UrlMappings[relative];

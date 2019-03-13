@@ -38,7 +38,7 @@ namespace System.Web {
             get {
                 if (!replaced) {
                     replaced = true;
-                    DisplayNameValue = SR.GetString(base.DisplayName);                
+                    DisplayNameValue = System.Web.SR.GetString(base.DisplayName);                
                 }
                 return base.DisplayName;
             }

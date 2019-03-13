@@ -21,6 +21,7 @@ using Debug=System.Web.Util.Debug;
 using System.Text.RegularExpressions;
 
 
+
 internal abstract class DependencyParser : BaseParser {
 
     private VirtualPath _virtualPath;
@@ -65,7 +66,7 @@ internal abstract class DependencyParser : BaseParser {
 
     protected void AddDependency(VirtualPath virtualPath) {
         virtualPath = ResolveVirtualPath(virtualPath);
-        Debug.Trace("Template", "Parsed dependency: " + _virtualPath + " depends on " + virtualPath);
+        System.Web.Util.Debug.Trace("Template", "Parsed dependency: " + _virtualPath + " depends on " + virtualPath);
 
         if (_virtualPathDependencies == null)
             _virtualPathDependencies = new CaseInsensitiveStringSet();
@@ -91,7 +92,7 @@ internal abstract class DependencyParser : BaseParser {
         // Check for circular references of include files
         if (_circularReferenceChecker.Contains(fileToReferenceCheck)) {
             throw new HttpException(
-                SR.GetString(SR.Circular_include));
+                System.Web.SR.GetString(System.Web.SR.Circular_include));
         }
 
         // Add the current file to the circular references checker.
@@ -190,9 +191,9 @@ internal abstract class DependencyParser : BaseParser {
         VirtualPath newVirtualPath;
         string newPhysicalPath = null;
 
-        if (StringUtil.EqualsIgnoreCase(pathType, "file")) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(pathType, "file")) {
             
-            if (UrlPath.IsAbsolutePhysicalPath(filename)) {
+            if (System.Web.Util.UrlPath.IsAbsolutePhysicalPath(filename)) {
                 // If it's an absolute physical path, use it as is
                 newPhysicalPath = filename;
 
@@ -205,7 +206,7 @@ internal abstract class DependencyParser : BaseParser {
                 newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
             }
         }
-        else if (StringUtil.EqualsIgnoreCase(pathType, "virtual")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(pathType, "virtual")) {
             newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
         }
         else {
@@ -233,10 +234,10 @@ internal abstract class DependencyParser : BaseParser {
         // Get all the directives into a bag
         // Check for the main directive (e.g. "page" for an aspx)
         if (directiveName == null ||
-            StringUtil.EqualsIgnoreCase(directiveName, DefaultDirectiveName) ) {
+            System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, DefaultDirectiveName) ) {
             ProcessMainDirective(directive);
         }
-        else if (StringUtil.EqualsIgnoreCase(directiveName, "register")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "register")) {
 
             VirtualPath src = Util.GetAndRemoveVirtualPathAttribute(directive, "src");
 
@@ -244,7 +245,7 @@ internal abstract class DependencyParser : BaseParser {
                 AddDependency(src);
             }
         }
-        else if (StringUtil.EqualsIgnoreCase(directiveName, "reference")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "reference")) {
 
             VirtualPath virtualPath = Util.GetAndRemoveVirtualPathAttribute(directive, "virtualpath");
             if (virtualPath != null)
@@ -258,7 +259,7 @@ internal abstract class DependencyParser : BaseParser {
             if (control != null)
                 AddDependency(control);
         }
-        else if (StringUtil.EqualsIgnoreCase(directiveName, "assembly")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "assembly")) {
 
             VirtualPath src = Util.GetAndRemoveVirtualPathAttribute(directive, "src");
             if (src != null)
@@ -361,8 +362,8 @@ internal class PageDependencyParser : TemplateControlDependencyParser {
     internal override void ProcessDirective(string directiveName, IDictionary directive) {
         base.ProcessDirective(directiveName, directive);
 
-        if (StringUtil.EqualsIgnoreCase(directiveName, "previousPageType") || 
-            StringUtil.EqualsIgnoreCase(directiveName, "masterType")) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "previousPageType") || 
+            System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "masterType")) {
 
             VirtualPath virtualPath = Util.GetAndRemoveVirtualPathAttribute(directive, "virtualPath");
             if (virtualPath != null)
@@ -385,7 +386,7 @@ internal class MasterPageDependencyParser : UserControlDependencyParser {
     internal override void ProcessDirective(string directiveName, IDictionary directive) {
         base.ProcessDirective(directiveName, directive);
 
-        if (StringUtil.EqualsIgnoreCase(directiveName, "masterType")) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "masterType")) {
             VirtualPath virtualPath = Util.GetAndRemoveVirtualPathAttribute(directive, "virtualPath");
             if (virtualPath != null)
                 AddDependency(virtualPath);

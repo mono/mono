@@ -31,8 +31,8 @@ namespace System.Web.Security.Cryptography {
         // key is actually two keys (like encryption + validation)
         // concatenated together. Inputs are specified as bit lengths.
         public CryptographicKey ExtractBits(int offset, int count) {
-            Debug.Assert(offset % 8 == 0, "Offset must be divisible by 8.");
-            Debug.Assert(count % 8 == 0, "Count must be divisible by 8.");
+            System.Web.Util.Debug.Assert(offset % 8 == 0, "Offset must be divisible by 8.");
+            System.Web.Util.Debug.Assert(count % 8 == 0, "Count must be divisible by 8.");
 
             int offsetBytes = offset / 8;
             int countBytes = count / 8;

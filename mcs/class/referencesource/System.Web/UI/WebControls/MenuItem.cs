@@ -222,7 +222,7 @@ namespace System.Web.UI.WebControls {
 
         [Browsable(true)]
         [DefaultValue(true)]
-        [WebSysDescription(SR.MenuItem_Enabled)]
+        [WebSysDescription(System.Web.SR.MenuItem_Enabled)]
         public bool Enabled {
             get {
                 object o = ViewState["Enabled"];
@@ -264,7 +264,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
-        [WebSysDescription(SR.MenuItem_ImageUrl)]
+        [WebSysDescription(System.Web.SR.MenuItem_ImageUrl)]
         public string ImageUrl {
             get {
                 object s = ViewState["ImageUrl"];
@@ -350,7 +350,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
-        [WebSysDescription(SR.MenuItem_NavigateUrl)]
+        [WebSysDescription(System.Web.SR.MenuItem_NavigateUrl)]
         public string NavigateUrl {
             get {
                 object s = ViewState["NavigateUrl"];
@@ -398,7 +398,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
-        [WebSysDescription(SR.MenuItem_PopOutImageUrl)]
+        [WebSysDescription(System.Web.SR.MenuItem_PopOutImageUrl)]
         public string PopOutImageUrl {
             get {
                 object s = ViewState["PopOutImageUrl"];
@@ -414,7 +414,7 @@ namespace System.Web.UI.WebControls {
 
         [Browsable(true)]
         [DefaultValue(true)]
-        [WebSysDescription(SR.MenuItem_Selectable)]
+        [WebSysDescription(System.Web.SR.MenuItem_Selectable)]
         public bool Selectable {
             get {
                 object o = ViewState["Selectable"];
@@ -431,7 +431,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [Browsable(true)]
         [DefaultValue(false)]
-        [WebSysDescription(SR.MenuItem_Selected)]
+        [WebSysDescription(System.Web.SR.MenuItem_Selected)]
         public bool Selected {
             get {
                 object o = ViewState["Selected"];
@@ -453,7 +453,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
-        [WebSysDescription(SR.MenuItem_SeparatorImageUrl)]
+        [WebSysDescription(System.Web.SR.MenuItem_SeparatorImageUrl)]
         public string SeparatorImageUrl {
             get {
                 object s = ViewState["SeparatorImageUrl"];
@@ -472,7 +472,7 @@ namespace System.Web.UI.WebControls {
         ///     Gets and sets the target window that the MenuItem will browse to if selected
         /// </devdoc>
         [DefaultValue("")]
-        [WebSysDescription(SR.MenuItem_Target)]
+        [WebSysDescription(System.Web.SR.MenuItem_Target)]
         public string Target {
             get {
                 object s = ViewState["Target"];
@@ -492,7 +492,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue("")]
         [Localizable(true)]
-        [WebSysDescription(SR.MenuItem_Text)]
+        [WebSysDescription(System.Web.SR.MenuItem_Text)]
         public string Text {
             get {
                 object s = ViewState["Text"];
@@ -515,7 +515,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue("")]
         [Localizable(true)]
-        [WebSysDescription(SR.MenuItem_ToolTip)]
+        [WebSysDescription(System.Web.SR.MenuItem_ToolTip)]
         public string ToolTip {
             get {
                 object s = ViewState["ToolTip"];
@@ -535,7 +535,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue("")]
         [Localizable(true)]
-        [WebSysDescription(SR.MenuItem_Value)]
+        [WebSysDescription(System.Web.SR.MenuItem_Value)]
         public string Value {
             get {
                 object s = ViewState["Value"];

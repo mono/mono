@@ -34,6 +34,10 @@ namespace StandAloneRunnerSupport
 {
 	public sealed class TestRunItem
 	{
+		public bool CopyAssemblies {
+			get; set;
+		}
+
 		public TestCallback Callback {
 			get; set;
 		}
@@ -95,6 +99,14 @@ namespace StandAloneRunnerSupport
 			Url = url;
 			Callback = callback;
 			UrlDescription = urlDescription;
+		}
+
+		public TestRunItem (string url, string urlDescription, TestCallback callback, bool copyAssemblies)
+		{
+			Url = url;
+			Callback = callback;
+			UrlDescription = urlDescription;
+			CopyAssemblies = copyAssemblies;
 		}
 	}
 }

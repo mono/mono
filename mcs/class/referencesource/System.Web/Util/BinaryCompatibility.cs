@@ -22,7 +22,7 @@ namespace System.Web.Util {
         static BinaryCompatibility() {
             Current = new BinaryCompatibility(AppDomain.CurrentDomain.GetData(TargetFrameworkKey) as FrameworkName);
 
-            TelemetryLogger.LogTargetFramework(Current.TargetFramework);
+            //TelemetryLogger.LogTargetFramework(Current.TargetFramework);
         }
 
         public BinaryCompatibility(FrameworkName frameworkName) {

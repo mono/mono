@@ -99,7 +99,7 @@ struct ReadWriteSpinLock {
             return;
 
         _Spin(true, threadId);
-        Debug.Trace("Spinlock", "AcquireReaderLock: _bits=" + _bits.ToString("x8", CultureInfo.InvariantCulture)
+        System.Web.Util.Debug.Trace("Spinlock", "AcquireReaderLock: _bits=" + _bits.ToString("x8", CultureInfo.InvariantCulture)
                     + " _id= " + _id.ToString("x8", CultureInfo.InvariantCulture));
     }
 
@@ -114,7 +114,7 @@ struct ReadWriteSpinLock {
 
         _Spin(false, threadId);
 
-        Debug.Trace("Spinlock", "AcquireWriterLock: _bits=" + _bits.ToString("x8", CultureInfo.InvariantCulture)
+        System.Web.Util.Debug.Trace("Spinlock", "AcquireWriterLock: _bits=" + _bits.ToString("x8", CultureInfo.InvariantCulture)
                     + " _id= " + _id.ToString("x8", CultureInfo.InvariantCulture));
     }
 
@@ -122,13 +122,13 @@ struct ReadWriteSpinLock {
     internal /*public*/ void ReleaseReaderLock() {
 #if DBG 
         int id = _id;
-        Debug.Assert(id == 0 || id == Thread.CurrentThread.GetHashCode(), "id == 0 || id == Thread.CurrentThread.GetHashCode()");
+        System.Web.Util.Debug.Assert(id == 0 || id == Thread.CurrentThread.GetHashCode(), "id == 0 || id == Thread.CurrentThread.GetHashCode()");
 #endif
 
         int n = Interlocked.Decrement(ref _bits);
 
-        Debug.Assert(n >= 0, "n >= 0");
-        Debug.Trace("Spinlock", "ReleaseReaderLock: _bits=" + _bits.ToString("x8", CultureInfo.InvariantCulture)
+        System.Web.Util.Debug.Assert(n >= 0, "n >= 0");
+        System.Web.Util.Debug.Trace("Spinlock", "ReleaseReaderLock: _bits=" + _bits.ToString("x8", CultureInfo.InvariantCulture)
                     + " _id= " + _id.ToString("x8", CultureInfo.InvariantCulture));
     }
 
@@ -137,7 +137,7 @@ struct ReadWriteSpinLock {
         int readLockCount = ReadLockCount(oldBits);
         int oldWriteLockCount = WriteLockCount(oldBits);
         int newWriteLockCount = oldWriteLockCount + delta;
-        Debug.Assert(newWriteLockCount >= 0, "newWriteLockCount >= 0");
+        System.Web.Util.Debug.Assert(newWriteLockCount >= 0, "newWriteLockCount >= 0");
         int newBits;
         int test;
     
@@ -146,8 +146,8 @@ struct ReadWriteSpinLock {
             // Since we own the lock, the only change that can be 
             // made by another thread to _bits is to add the writer-waiting bit.
             //
-            Debug.Assert(WriteLockCount(oldBits) == oldWriteLockCount, "WriteLockCount(oldBits) == oldWriteLockCount");
-            Debug.Assert(ReadLockCount(oldBits) == readLockCount, "ReadLockCount(oldBits) == readLockCount");
+            System.Web.Util.Debug.Assert(WriteLockCount(oldBits) == oldWriteLockCount, "WriteLockCount(oldBits) == oldWriteLockCount");
+            System.Web.Util.Debug.Assert(ReadLockCount(oldBits) == readLockCount, "ReadLockCount(oldBits) == readLockCount");
             newBits = CreateNewBits(WriterWaiting(oldBits), newWriteLockCount, readLockCount);
             test = Interlocked.CompareExchange(ref _bits, newBits, oldBits);
             if (test == oldBits) {
@@ -161,12 +161,12 @@ struct ReadWriteSpinLock {
     internal /*public*/ void ReleaseWriterLock() {
 #if DBG
         int id = _id;
-        Debug.Assert(id == Thread.CurrentThread.GetHashCode(), "id == Thread.CurrentThread.GetHashCode()");
+        System.Web.Util.Debug.Assert(id == Thread.CurrentThread.GetHashCode(), "id == Thread.CurrentThread.GetHashCode()");
 #endif
     
         int oldBits = _bits;
         int writeLockCount = WriteLockCount(oldBits);
-        Debug.Assert(writeLockCount > 0, "writeLockCount > 0");
+        System.Web.Util.Debug.Assert(writeLockCount > 0, "writeLockCount > 0");
         if (writeLockCount == 1) {
             // Reset the id before releasing count so that
             // AcquireRead works correctly.
@@ -174,7 +174,7 @@ struct ReadWriteSpinLock {
         }
     
         AlterWriteCountHoldingWriterLock(oldBits, -1);
-        Debug.Trace("Spinlock", "ReleaseWriterLock: _bits=" + _bits.ToString("x8", CultureInfo.InvariantCulture) 
+        System.Web.Util.Debug.Trace("Spinlock", "ReleaseWriterLock: _bits=" + _bits.ToString("x8", CultureInfo.InvariantCulture) 
                     + " _id= " + _id.ToString("x8", CultureInfo.InvariantCulture));
     }
 
@@ -196,7 +196,7 @@ struct ReadWriteSpinLock {
             test = Interlocked.CompareExchange(ref _bits, newBits, oldBits);
             if (test == oldBits) {
                 id = _id;
-                Debug.Assert(id == 0);
+                System.Web.Util.Debug.Assert(id == 0);
                 _id = threadId;
 
                 return true;

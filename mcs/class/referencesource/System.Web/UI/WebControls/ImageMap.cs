@@ -47,7 +47,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.ImageMap_HotSpots),
+        WebSysDescription(System.Web.SR.ImageMap_HotSpots),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerDefaultProperty)
@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(HotSpotMode.NotSet),
-        WebSysDescription(SR.HotSpot_HotSpotMode),
+        WebSysDescription(System.Web.SR.HotSpot_HotSpotMode),
         ]
         public virtual HotSpotMode HotSpotMode {
             get {
@@ -93,7 +93,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.HotSpot_Target),
+        WebSysDescription(System.Web.SR.HotSpot_Target),
         ]
         public virtual string Target {
             get {
@@ -110,7 +110,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         Category("Action"),
-        WebSysDescription(SR.ImageMap_Click)
+        WebSysDescription(System.Web.SR.ImageMap_Click)
         ]
         public event ImageMapEventHandler Click {
             add {
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
             if (savedState != null) {
                 myState = (object[])savedState;
                 if (myState.Length != 2) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 baseState = myState[0];

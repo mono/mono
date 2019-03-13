@@ -25,6 +25,7 @@ namespace System.Web {
     using System.Web.Hosting;
     using System.Web.Management;
     using System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -387,8 +388,7 @@ namespace System.Web {
         /// <devdoc>
         ///    <para> The CompilerResults object describing the compile error.</para>
         /// </devdoc>
-        public CompilerResults Results {
-            [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.High)]
+        public CompilerResults Results {            
             get { 
                 return _results;
             } 
@@ -403,8 +403,7 @@ namespace System.Web {
         /// <devdoc>
         ///    <para> The source code that was compiled.</para>
         /// </devdoc>
-        public string SourceCode {
-            [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.High)]
+        public string SourceCode {            
             get { 
                 return _sourceCode; 
             }
@@ -431,7 +430,7 @@ namespace System.Web {
 
                     // If we found an error that's not in the generated code, use it
                     if (HttpRuntime.CodegenDirInternal != null && error.FileName != null &&
-                        !StringUtil.StringStartsWith(error.FileName, HttpRuntime.CodegenDirInternal)) {
+                        !System.Web.Util.StringUtil.StringStartsWith(error.FileName, HttpRuntime.CodegenDirInternal)) {
                         e = error;
                         break;
                     }
@@ -582,7 +581,7 @@ namespace System.Web {
         public HttpRequestValidationException(string message) : base(message) {
 
             SetFormatter(new UnhandledErrorFormatter(
-                this, SR.GetString(SR.Dangerous_input_detected_descr), null));
+                this, System.Web.SR.GetString(System.Web.SR.Dangerous_input_detected_descr), null));
         }
 
 

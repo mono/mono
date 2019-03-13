@@ -13,22 +13,22 @@ namespace System.Web.Configuration
     using System;
     using System.Security;
     using System.Security.Permissions;
+    
 
     public static class ProvidersHelper {
         ///////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////
-        [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
+        ///////////////////////////////////////////////////////////////////////////////        
         public static ProviderBase InstantiateProvider(ProviderSettings providerSettings, Type providerType)
         {
             ProviderBase provider = null;
             try {
                 string pnType = (providerSettings.Type == null) ? null : providerSettings.Type.Trim();
                 if (string.IsNullOrEmpty(pnType))
-                    throw new ArgumentException(SR.GetString(SR.Provider_no_type_name));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_no_type_name));
                 Type t = ConfigUtil.GetType(pnType, "type", providerSettings, true, true);
 
                 if (!providerType.IsAssignableFrom(t))
-                    throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, providerType.ToString()));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_type, providerType.ToString()));
                 provider = (ProviderBase)HttpRuntime.CreatePublicInstance(t);
 
                 // Because providers modify the parameters collection (i.e. delete stuff), pass in a clone of the collection
@@ -45,19 +45,18 @@ namespace System.Web.Configuration
 
             return provider;
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
+        
         internal static ProviderBase InstantiateProvider(NameValueCollection providerSettings, Type providerType) {
             ProviderBase provider = null;
             try {
                 string pnName = GetAndRemoveStringValue(providerSettings, "name");
                 string pnType = GetAndRemoveStringValue(providerSettings, "type");
                 if (string.IsNullOrEmpty(pnType))
-                    throw new ArgumentException(SR.GetString(SR.Provider_no_type_name));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_no_type_name));
                 Type t = ConfigUtil.GetType(pnType, "type", null, null, true, true);
 
                 if (!providerType.IsAssignableFrom(t))
-                    throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, providerType.ToString()));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_type, providerType.ToString()));
                 provider = (ProviderBase)HttpRuntime.CreatePublicInstance(t);
 
                 // Because providers modify the parameters collection (i.e. delete stuff), pass in a clone of the collection
@@ -74,8 +73,7 @@ namespace System.Web.Configuration
 
             return provider;
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
+        
         public static void InstantiateProviders(ProviderSettingsCollection configProviders, ProviderCollection providers, Type providerType)
         {
             foreach (ProviderSettings ps in configProviders) {

@@ -356,7 +356,7 @@ namespace System.Web.Util {
         }
 
         private static unsafe int IndexOfHtmlAttributeEncodingChars(string s, int startPos) {
-            Debug.Assert(0 <= startPos && startPos <= s.Length, "0 <= startPos && startPos <= s.Length");
+            System.Web.Util.Debug.Assert(0 <= startPos && startPos <= s.Length, "0 <= startPos && startPos <= s.Length");
             int cch = s.Length - startPos;
             fixed (char* str = s) {
                 for (char* pch = &str[startPos]; cch > 0; pch++, cch--) {
@@ -899,7 +899,7 @@ namespace System.Web.Util {
                         break;
 
                     case '=':
-                        Debug.Assert(false);
+                        System.Web.Util.Debug.Assert(false);
                         base64Chars[iter] = c;
                         break;
 

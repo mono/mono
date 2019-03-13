@@ -20,6 +20,7 @@ namespace System.Web.Hosting {
     using System.Web.Util;
     using System.Web.Configuration;
     using System.Web.Caching;
+    
 
 //
 // recyclable buffers for IntPtr[] and int[]
@@ -697,7 +698,7 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
         }
 
         if (r == 0)
-            throw new HttpException(SR.GetString(SR.Cannot_retrieve_request_data));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_retrieve_request_data));
 
         // convert to characters and split the buffer into strings
 
@@ -813,7 +814,7 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
             length = fileSize - offset;
 
         if (offset < 0 || length > fileSize - offset)
-            throw new HttpException(SR.GetString(SR.Invalid_range));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_range));
 
         if (length > 0) {
             if (offset > 0)
@@ -1007,7 +1008,7 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
 
         ReadRequestBasics();
 
-        if (_appPathTranslated != null && _appPathTranslated.Length > 2 && !StringUtil.StringEndsWith(_appPathTranslated, '\\'))
+        if (_appPathTranslated != null && _appPathTranslated.Length > 2 && !System.Web.Util.StringUtil.StringEndsWith(_appPathTranslated, '\\'))
             _appPathTranslated += "\\";  // IIS 6.0 doesn't add the trailing '\'
 
         // Increment incoming request length
@@ -1022,7 +1023,7 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
         String[] basicStrings = ReadBasics(contentInfo);
 
         if (basicStrings == null || basicStrings.Length != 6)
-            throw new HttpException(SR.GetString(SR.Cannot_retrieve_request_data));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_retrieve_request_data));
 
         // Remember content info
 
@@ -1095,7 +1096,7 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
         int r = GetQueryStringCore(0, buf, size);
 
         if (r != 1)
-            throw new HttpException(SR.GetString(SR.Cannot_get_query_string));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_get_query_string));
 
         return buf.ToString();
     }
@@ -1107,7 +1108,7 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
         byte[] buf = new byte[_queryStringLength];
         int r = GetQueryStringRawBytesCore(buf, _queryStringLength);
         if (r != 1)
-            throw new HttpException(SR.GetString(SR.Cannot_get_query_string_bytes));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_get_query_string_bytes));
 
         return buf;
     }
@@ -1195,7 +1196,7 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
                 int r = GetPreloadedPostedContentCore(_preloadedContent, 0, _contentAvailLength);
 
                 if (r < 0)
-                    throw new HttpException(SR.GetString(SR.Cannot_read_posted_data));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_read_posted_data));
             }
 
             _preloadedContentRead = true;
@@ -1224,14 +1225,14 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
         int r = GetAdditionalPostedContentCore(buffer, offset, size);
 
         if (r < 0) {
-            throw new HttpException(SR.GetString(SR.Cannot_read_posted_data));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_read_posted_data));
         }
 
         return r;
     }
 
     public override long GetBytesRead() {
-        throw new HttpException(SR.GetString(SR.Not_supported));
+        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Not_supported));
     }
 
     public override String GetKnownRequestHeader(int index)  {
@@ -1264,7 +1265,7 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
         int n = _unknownRequestHeaders.Length;
 
         for (int i = 0; i < n; i++) {
-            if (StringUtil.EqualsIgnoreCase(name, _unknownRequestHeaders[i][0]))
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, _unknownRequestHeaders[i][0]))
                 return _unknownRequestHeaders[i][1];
         }
 
@@ -1291,7 +1292,7 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
 
     public override void SendKnownResponseHeader(int index, String value) {
         if (_headersSent)
-            throw new HttpException(SR.GetString(SR.Cannot_append_header_after_headers_sent));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_append_header_after_headers_sent));
 
         if (index == HttpWorkerRequest.HeaderSetCookie) {
             DisableKernelCache();
@@ -1310,9 +1311,9 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
 
     public override void SendUnknownResponseHeader(String name, String value) {
         if (_headersSent)
-            throw new HttpException(SR.GetString(SR.Cannot_append_header_after_headers_sent));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_append_header_after_headers_sent));
 
-        if (StringUtil.EqualsIgnoreCase(name, "Set-Cookie")) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "Set-Cookie")) {
             DisableKernelCache();
         }
 
@@ -1373,17 +1374,17 @@ internal abstract class ISAPIWorkerRequest : HttpWorkerRequest {
     internal virtual MemoryBytes PackageFile(String filename, long offset64, long length64, bool isImpersonating) {
         // The offset and length must be less than Int32.MaxValue for in-proc. 
         // This should be true, since HttpFileResponseElement.ctor throws ArgumentOutOfRangeException for in-proc
-        Debug.Assert(offset64 < Int32.MaxValue);
-        Debug.Assert(length64 < Int32.MaxValue);
+        System.Web.Util.Debug.Assert(offset64 < Int32.MaxValue);
+        System.Web.Util.Debug.Assert(length64 < Int32.MaxValue);
         int offset = Convert.ToInt32(offset64);
         int length = Convert.ToInt32(length64);
 
         FileStream f = null;
         MemoryBytes bytes = null;
         try {
-            Debug.Assert(offset < length);
+            System.Web.Util.Debug.Assert(offset < length);
             f = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-            Debug.Assert((f.Length - offset) == length);
+            System.Web.Util.Debug.Assert((f.Length - offset) == length);
             int size = (int) (f.Length - offset);
             byte[] fileBytes = new byte[size];
             int bytesRead = f.Read(fileBytes, offset, size);
@@ -1781,7 +1782,7 @@ internal class ISAPIWorkerRequestInProc : ISAPIWorkerRequest {
 
         if (_ecb == IntPtr.Zero)
             return;
-
+#if (!MONO || !FEATURE_PAL)
         UnsafeNativeMethods.EcbFlushCore(
                         _ecb,
                         status,
@@ -1796,6 +1797,7 @@ internal class ISAPIWorkerRequestInProc : ISAPIWorkerRequest {
                         0,
                         0,
                         null);
+#endif
     }
 
     internal override int CloseConnectionCore() {
@@ -1862,7 +1864,7 @@ internal class ISAPIWorkerRequestInProc : ISAPIWorkerRequest {
             return;
 
         // _additionalServerVars should only be initialized once
-        Debug.Assert(_additionalServerVars == null);
+        System.Web.Util.Debug.Assert(_additionalServerVars == null);
         if (_additionalServerVars != null)
             return;
 
@@ -2102,7 +2104,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
         // CACHE_URL is the original URI, unaffected by any rewriting or routing
         // that may have occurred on the server
         string rawUrl = GetRawUrlHelper(GetUnicodeServerVariable(CACHE_URL));
-        Debug.Trace("ClientUrl", "*** GetRawUrl --> " + rawUrl + " ***");
+        System.Web.Util.Debug.Trace("ClientUrl", "*** GetRawUrl --> " + rawUrl + " ***");
         return rawUrl;
     }
 
@@ -2153,7 +2155,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
         if (_ecb == IntPtr.Zero)
             return;
         // _basicServerVars should only be initialized once
-        Debug.Assert(_basicServerVars == null);
+        System.Web.Util.Debug.Assert(_basicServerVars == null);
         if (_basicServerVars != null)
             return;
 
@@ -2199,7 +2201,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
             return;
 
         // _additionalServerVars should only be initialized once
-        Debug.Assert(_additionalServerVars == null);
+        System.Web.Util.Debug.Assert(_additionalServerVars == null);
         if (_additionalServerVars != null)
             return;
 
@@ -2233,7 +2235,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
 
     // ISAPIWorkerRequestInProcForIIS6
     protected override string GetServerVariableCore(string name) {
-        if (StringUtil.StringStartsWith(name, "HTTP_"))
+        if (System.Web.Util.StringUtil.StringStartsWith(name, "HTTP_"))
             // fall back for headers (IIS6 doesn't support them as UNICODE_XXX)
             return base.GetServerVariableCore(name);
         else
@@ -2381,9 +2383,10 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
         }
 
         // finalStatus is either 0 to force for a flush, 1 to indicate HSE_STATUS_SUCCESS, or 2 to indicate HSE_STATUS_SUCCESS_AND_KEEP_CONN
-        Debug.Assert(0 <= finalStatus && finalStatus <= 2);
+        System.Web.Util.Debug.Assert(0 <= finalStatus && finalStatus <= 2);
         int flags = _trySkipIisCustomErrors ? finalStatus|TRY_SKIP_IIS_CUSTOM_ERRORS : finalStatus;
 
+#if (!MONO || !FEATURE_PAL)
         int rc = UnsafeNativeMethods.EcbFlushCore(
                         _ecb,
                         status,
@@ -2398,6 +2401,9 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
                         _cacheInKernelMode ? 1 : 0,
                         async ? 1 : 0,
                         _asyncFlushCompletionCallback);
+#else
+        int rc = 0;
+#endif
 
         if (!_requiresAsyncFlushCallback && rc == 0 && async) {
 
@@ -2409,12 +2415,13 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
         else if (rc != 0 && async) {
             // on async failure default to sync path
             async = false;
-            
+#if (!MONO || !FEATURE_PAL)
             if (!inAsyncFlush) {
                 // call DoneWithSession
                 UnsafeNativeMethods.EcbFlushCore(_ecb, null, null, 0, 0, 0, null, null, 1, _asyncFinalStatus, 0, 0, null);
             }
-            
+#endif
+
             if (_asyncFlushCompletionCallback != null) {
                 // unroot
                 _rootedThis.Free();
@@ -2427,7 +2434,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
                 _asyncResultBase = null;
                 // treat every error as if the client disconnected
                 IncrementRequestsDisconnected();
-                throw new HttpException(SR.GetString(SR.ClientDisconnected), rc);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ClientDisconnected), rc);
             }
         }
         else if (rc != 0 && !async && doneWithSession == 0 && !_serverSupportFunctionError) {
@@ -2436,15 +2443,15 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
             //only throw once
             _serverSupportFunctionError = true;
 
-            string message = SR.Server_Support_Function_Error;
+            string message = System.Web.SR.Server_Support_Function_Error;
 
             //give different error if connection was closed
             if (rc == HResults.WSAECONNABORTED || rc == HResults.WSAECONNRESET) {
-                message = SR.Server_Support_Function_Error_Disconnect;
+                message = System.Web.SR.Server_Support_Function_Error_Disconnect;
                 IncrementRequestsDisconnected();
             }
 
-            throw new HttpException(SR.GetString(message, rc.ToString("X8", CultureInfo.InvariantCulture)), rc);
+            throw new HttpException(System.Web.SR.GetString(message, rc.ToString("X8", CultureInfo.InvariantCulture)), rc);
         }
     }
 
@@ -2455,6 +2462,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
             // unroot
             _rootedThis.Free();            
 
+#if (!MONO || !FEATURE_PAL)
             if (flushAsyncResult == null) {
                 // call DoneWithSession
                 UnsafeNativeMethods.EcbFlushCore(ecb, null, null, 0, 0, 0, null, null, 1, _asyncFinalStatus, 0, 0, null);
@@ -2462,6 +2470,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
             else {
                 flushAsyncResult.HResult = error;
             }
+#endif
 
             // unlock pinned memory (at the latest of this completion and exit from the FlushCore on stack)
             UnlockCachedResponseBytesOnceAfterIoComplete();
@@ -2532,7 +2541,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
         
         // we only allow one async operation at a time
         if (Interlocked.CompareExchange(ref _asyncResultBase, ar, null) != null)
-            throw new InvalidOperationException(SR.GetString(SR.Async_operation_pending));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_operation_pending));
 
         // initiate async operation here
         if (_asyncCompletionCallback == null) {
@@ -2562,7 +2571,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
         if (ar.HResult < 0) {
             // treat every error as if the client disconnected
             IncrementRequestsDisconnected();
-            throw new HttpException(SR.GetString(SR.ClientDisconnected), ar.HResult);
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.ClientDisconnected), ar.HResult);
         }
     }
 
@@ -2601,7 +2610,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
         if (count < 0)
             throw new ArgumentOutOfRangeException("count");
         if (buffer.Length - offset < count)
-            throw new ArgumentException(SR.GetString(SR.InvalidOffsetOrCount, "offset", "count"));
+            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidOffsetOrCount, "offset", "count"));
         if (_ecb == IntPtr.Zero)
             throw new InvalidOperationException();
 
@@ -2614,7 +2623,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
 
         // we only allow one async operation at a time
         if (Interlocked.CompareExchange(ref _asyncResultBase, ar, null) != null)
-            throw new InvalidOperationException(SR.GetString(SR.Async_operation_pending));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_operation_pending));
         
         // initiate async operation here
         if (_asyncCompletionCallback == null) {
@@ -2638,7 +2647,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
             _asyncResultBase = null;
             // treat every error as if the client disconnected
             IncrementRequestsDisconnected();
-            throw new HttpException(SR.GetString(SR.ClientDisconnected), hresult);
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.ClientDisconnected), hresult);
         }
         else {
             return ar;
@@ -2659,7 +2668,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
         if (ar.HResult < 0) {
             // treat every error as if the client disconnected
             IncrementRequestsDisconnected();
-            throw new HttpException(SR.GetString(SR.ClientDisconnected), ar.HResult);
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.ClientDisconnected), ar.HResult);
         }
         else {
             return ar.BytesRead;
@@ -2696,17 +2705,17 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
             _asyncResultOfExecuteUrl != null || // another ExecuteUrl in progress
             (sendHeaders && HeadersSent()))     // asked to send headers, but already sent them
         {
-            throw new InvalidOperationException(SR.GetString(SR.Cannot_execute_url_in_this_context));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cannot_execute_url_in_this_context));
         }
 
         if (entity != null && entity.Length > 0) {
             int ret = UnsafeNativeMethods.EcbGetExecUrlEntityInfo(entity.Length, entity, out _entity);
             if (ret != 1) {
-                throw new HttpException(SR.GetString(SR.Failed_to_execute_url));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Failed_to_execute_url));
             }
         }
 
-        Debug.Trace("ExecuteUrl", "ISAPIWorkerRequestInProcForIIS6.BeginExecuteUrl: url=\"" + url + "\".");
+        System.Web.Util.Debug.Trace("ExecuteUrl", "ISAPIWorkerRequestInProcForIIS6.BeginExecuteUrl: url=\"" + url + "\".");
 
 
         HttpAsyncResult ar = new HttpAsyncResult(cb, state);
@@ -2718,12 +2727,16 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
         int rc;
         try {
             ar.MarkCallToBeginMethodStarted();
+#if (!MONO || !FEATURE_PAL)
             rc = UnsafeNativeMethods.EcbExecuteUrlUnicode(_ecb,
                                         url, method, childHeaders,
                                         sendHeaders,
                                         addUserIndo, token, name, authType,
                                         _entity,
                                         _executeUrlCompletionCallback);
+#else
+            rc = 0;
+#endif
         }
         finally {
             ar.MarkCallToBeginMethodCompleted();
@@ -2736,9 +2749,9 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
             _rootedThis.Free();
             _asyncResultOfExecuteUrl = null;
 
-            Debug.Trace("ExecuteUrl", "ISAPIWorkerRequestInProcForIIS6.BeginExecuteUrl: failed!");
+            System.Web.Util.Debug.Trace("ExecuteUrl", "ISAPIWorkerRequestInProcForIIS6.BeginExecuteUrl: failed!");
 
-            throw new HttpException(SR.GetString(SR.Failed_to_execute_url));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Failed_to_execute_url));
         }
 
         if (sendHeaders) {
@@ -2751,7 +2764,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
 
     internal override void EndExecuteUrl(IAsyncResult result) {
 
-        Debug.Trace("ExecuteUrl", "ISAPIWorkerRequestInProcForIIS6.EndExecuteUrl");
+        System.Web.Util.Debug.Trace("ExecuteUrl", "ISAPIWorkerRequestInProcForIIS6.EndExecuteUrl");
 
         HttpAsyncResult asyncResult = result as HttpAsyncResult;
         if (asyncResult != null) {
@@ -2766,7 +2779,7 @@ internal class ISAPIWorkerRequestInProcForIIS6 : ISAPIWorkerRequestInProc {
 
         _rootedThis.Free();
 
-        Debug.Trace("ExecuteUrl", "ISAPIWorkerRequestInProcForIIS6.OnExecuteUrlCompletion");
+        System.Web.Util.Debug.Trace("ExecuteUrl", "ISAPIWorkerRequestInProcForIIS6.OnExecuteUrlCompletion");
 
         // signal async caller to resume work
         HttpAsyncResult asyncResult = _asyncResultOfExecuteUrl;
@@ -2843,7 +2856,7 @@ internal class ISAPIWorkerRequestOutOfProc : ISAPIWorkerRequest {
         }
 
         if (r == 0)
-            throw new HttpException(SR.GetString(SR.Cannot_retrieve_request_data));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_retrieve_request_data));
 
         // stub out first server var is it could contain non-UTF8 data
         // convert to characters and split the buffer into strings using default request encoding
@@ -2916,8 +2929,8 @@ internal class ISAPIWorkerRequestOutOfProc : ISAPIWorkerRequest {
     internal override MemoryBytes PackageFile(string filename, long offset64, long length64, bool isImpersonating) {
         // The offset and length must be less than Int32.MaxValue for IIS5. 
         // This should be true, since HttpFileResponseElement.ctor throws ArgumentOutOfRangeException for IIS5.
-        Debug.Assert(offset64 < Int32.MaxValue);
-        Debug.Assert(length64 < Int32.MaxValue);
+        System.Web.Util.Debug.Assert(offset64 < Int32.MaxValue);
+        System.Web.Util.Debug.Assert(length64 < Int32.MaxValue);
         int offset = Convert.ToInt32(offset64);
         int length = Convert.ToInt32(length64);
 

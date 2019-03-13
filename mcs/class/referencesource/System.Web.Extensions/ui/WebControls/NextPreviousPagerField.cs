@@ -85,10 +85,12 @@ namespace System.Web.UI.WebControls {
         [
         Category("Appearance"),
         DefaultValue(""),
-        Editor(typeof(System.Web.UI.Design.ImageUrlEditor), typeof(UITypeEditor)),
+#if !MONO
+        //Editor(typeof(System.Web.UI.Design.ImageUrlEditor), typeof(UITypeEditor)),
+        //SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
+        //                Justification="Required by ASP.NET parser."),
+#endif
         ResourceDescription("NextPreviousPagerField_FirstPageImageUrl"),
-        SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
-                        Justification="Required by ASP.NET parser."),
         UrlProperty()
         ]
         public string FirstPageImageUrl {
@@ -132,10 +134,13 @@ namespace System.Web.UI.WebControls {
         [
         Category("Appearance"),
         DefaultValue(""),
-        Editor(typeof(System.Web.UI.Design.ImageUrlEditor), typeof(UITypeEditor)),
+#if !MONO
+        //Editor(typeof(System.Web.UI.Design.ImageUrlEditor), typeof(UITypeEditor)),
+        //SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
+        //                Justification = "Required by ASP.NET parser."),
+#endif
         ResourceDescription("NextPreviousPagerField_LastPageImageUrl"),
-        SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
-                        Justification = "Required by ASP.NET parser."),
+        
         UrlProperty()
         ]
         public string LastPageImageUrl {
@@ -179,10 +184,12 @@ namespace System.Web.UI.WebControls {
         [
         Category("Appearance"),
         DefaultValue(""),
-        Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
+#if !MONO
+        //Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
+        //SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
+        //                Justification = "Required by ASP.NET parser."),
+#endif
         ResourceDescription("NextPreviousPagerField_NextPageImageUrl"),
-        SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
-                        Justification = "Required by ASP.NET parser."),
         UrlProperty()
         ]
         public string NextPageImageUrl {
@@ -226,10 +233,12 @@ namespace System.Web.UI.WebControls {
         [
         Category("Appearance"),
         DefaultValue(""),
-        Editor(typeof(System.Web.UI.Design.ImageUrlEditor), typeof(UITypeEditor)),
+#if !MONO
+        //Editor(typeof(System.Web.UI.Design.ImageUrlEditor), typeof(UITypeEditor)),
+        //SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
+        //                Justification = "Required by ASP.NET parser."),
+#endif
         ResourceDescription("NextPreviousPagerField_PreviousPageImageUrl"),
-        SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
-                        Justification = "Required by ASP.NET parser."),
         UrlProperty()
         ]
         public string PreviousPageImageUrl {

@@ -18,6 +18,7 @@ namespace System.Web {
     using System.Web.Configuration;
     using System.Web.UI;
     using System.Web.Hosting;
+    
 
     public static class SiteMap {
 
@@ -74,7 +75,7 @@ namespace System.Web {
 
                 if (rootNode == null) {
                     String name = ((ProviderBase)rootProvider).Name;
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapProvider_Invalid_RootNode, name));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapProvider_Invalid_RootNode, name));
                 }
 
                 return rootNode;
@@ -95,9 +96,7 @@ namespace System.Web {
         private static void Initialize() {
             if (_providers != null)
                 return;
-
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
-
+            
             lock (_lockObject) {
                 if (_providers != null)
                     return;
@@ -110,7 +109,7 @@ namespace System.Web {
                 }
 
                 if (!config.Enabled)
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMap_feature_disabled, SiteMap.SectionName));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMap_feature_disabled, SiteMap.SectionName));
 
                 // Make sure the default provider exists.
                 config.ValidateDefaultProvider();
@@ -129,7 +128,7 @@ namespace System.Web {
                 throw new ArgumentNullException("provider");
 
             if (!(provider is SiteMapProvider))
-                throw new ArgumentException(SR.GetString(SR.Provider_must_implement_the_interface, provider.GetType().Name, typeof(SiteMapProvider).Name), "provider");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_the_interface, provider.GetType().Name, typeof(SiteMapProvider).Name), "provider");
 
             Add((SiteMapProvider)provider);
         }
@@ -151,7 +150,7 @@ namespace System.Web {
 
             foreach (SiteMapProvider provider in providerArray) {
                 if (this[provider.Name] != null)
-                    throw new ArgumentException(SR.GetString(SR.SiteMapProvider_Multiple_Providers_With_Identical_Name, provider.Name));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.SiteMapProvider_Multiple_Providers_With_Identical_Name, provider.Name));
 
                 Add(provider);
             }

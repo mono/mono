@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -834,8 +834,10 @@ namespace System.Web.UI.DataVisualization.Charting
 		EditorBrowsable(EditorBrowsableState.Never),
 		SRDescription("DescriptionAttributeAxisScaleSegmentCollection_AxisScaleSegmentCollection"),
 		SerializationVisibilityAttribute(SerializationVisibility.Hidden),
-		DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), 
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
+#if !FEATURE_PAL 
         Editor(Editors.ChartCollectionEditor.Editor, Editors.ChartCollectionEditor.Base)
+#endif
 		]
         internal AxisScaleSegmentCollection ScaleSegments
 		{
@@ -1960,7 +1962,7 @@ namespace System.Web.UI.DataVisualization.Charting
 			}
 			else
 			{
-				// This code checks if all series in the chart area have “integer type” 
+				// This code checks if all series in the chart area have ï¿½integer typeï¿½ 
                 // for specified axes, which means int, uint, long and ulong and rounds interval.
 #if SUBAXES
 				if( ChartArea.SeriesIntegerType( this.axisType, ((Axis)this).SubAxisName ) )

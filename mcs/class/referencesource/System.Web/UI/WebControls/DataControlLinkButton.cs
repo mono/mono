@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (_container != null) {
-                    throw new NotSupportedException(SR.GetString(SR.CannotSetValidationOnDataControlButtons));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CannotSetValidationOnDataControlButtons));
                 }
                 base.CausesValidation = value;
             }
@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls {
                 for (int i = 0; i < 3; i++) {
                     control = control.Parent;
 
-                    Debug.Assert(((i == 0) && (control is TableCell)) ||
+                    System.Web.Util.Debug.Assert(((i == 0) && (control is TableCell)) ||
                                  ((i == 1) && (control is TableRow)) ||
                                  ((i == 2) && (control is Table)));
                     hyperLinkForeColor = ((WebControl)control).ForeColor;

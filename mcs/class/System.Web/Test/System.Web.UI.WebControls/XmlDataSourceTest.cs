@@ -257,6 +257,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void GetXmlDocument ()
 		{
 			DSPoker p = new DSPoker ();
+			p.ID = "getXmlDoc_Test";
 			p.Data = data;
 			XmlDocument doc = p.GetXmlDocument ();
 			HtmlDiff.AssertAreEqual (data, doc.InnerXml, "GetXmlDocument");

@@ -20,6 +20,7 @@ namespace System.Web.SessionState {
     using System.Web;
     using System.Web.Util;
     using System.Globalization;
+    
 
     class StateHttpWorkerRequest : HttpWorkerRequest {
 
@@ -83,7 +84,7 @@ namespace System.Web.SessionState {
                     break;
 
                 default:
-                    Debug.Assert(false, "Shouldn't get here!");
+                    System.Web.Util.Debug.Assert(false, "Shouldn't get here!");
                     break;
             }
 
@@ -99,7 +100,7 @@ namespace System.Web.SessionState {
             _lockCookieExists = lockCookieExists != 0;
             _contentLength = contentLength;
             if (contentLength != 0) {
-                Debug.Assert(_contentLength == IntPtr.Size);
+                System.Web.Util.Debug.Assert(_contentLength == IntPtr.Size);
                 // Need to convert 'content', which is a ptr to native StateItem,
                 // into a byte array because that's what GetPreloadedEntityBody
                 // must return, and GetPreloadedEntityBody is what the pipeline uses
@@ -226,7 +227,7 @@ namespace System.Web.SessionState {
 
         public override long GetBytesRead() {
             /* State web doesn't support partial reads */
-            throw new NotSupportedException(SR.GetString(SR.Not_supported));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Not_supported));
         }
 
         public override string GetKnownRequestHeader(int index) {
@@ -308,7 +309,7 @@ namespace System.Web.SessionState {
                     ret[0][1] = StateHeaders.EXCLUSIVE_VALUE_ACQUIRE;
                 }
                 else {
-                    Debug.Assert(_exclusive == UnsafeNativeMethods.StateProtocolExclusive.RELEASE, "_exclusive == UnsafeNativeMethods.StateProtocolExclusive.RELEASE");
+                    System.Web.Util.Debug.Assert(_exclusive == UnsafeNativeMethods.StateProtocolExclusive.RELEASE, "_exclusive == UnsafeNativeMethods.StateProtocolExclusive.RELEASE");
                     ret[0][1] = StateHeaders.EXCLUSIVE_VALUE_RELEASE;
                 }
 
@@ -343,13 +344,13 @@ namespace System.Web.SessionState {
         }
 
         public override void SendStatus(int statusCode, string statusDescription) {
-            Debug.Assert(!_sent);
+            System.Web.Util.Debug.Assert(!_sent);
             _statusCode = statusCode;
             _status.Append((statusCode).ToString(CultureInfo.InvariantCulture) + " " + statusDescription + "\r\n");
         }
 
         public override void SendKnownResponseHeader(int index, string value) {
-            Debug.Assert(!_sent);
+            System.Web.Util.Debug.Assert(!_sent);
             _headers.Append(GetKnownResponseHeaderName(index));
             _headers.Append(": ");
             _headers.Append(value);
@@ -357,7 +358,7 @@ namespace System.Web.SessionState {
         }
 
         public override void SendUnknownResponseHeader(string name, string value) {
-            Debug.Assert(!_sent);
+            System.Web.Util.Debug.Assert(!_sent);
             _headers.Append(name);
             _headers.Append(": ");
             _headers.Append(value);
@@ -365,7 +366,7 @@ namespace System.Web.SessionState {
         }
 
         public override void SendCalculatedContentLength(int contentLength) {
-            Debug.Assert(!_sent);
+            System.Web.Util.Debug.Assert(!_sent);
             /*
              * Do nothing - we append the content-length in STWNDSendResponse.
              */
@@ -402,10 +403,10 @@ namespace System.Web.SessionState {
              * to the state item in unmanaged memory.
              */
             if (_statusCode == 200) {
-                Debug.Assert(_unmanagedState == IntPtr.Zero, "_unmanagedState == 0");
-                Debug.Assert(length == IntPtr.Size, "length == IntPtr.Size");
-                Debug.Assert(_methodIndex == UnsafeNativeMethods.StateProtocolVerb.GET, "verb == GET");
-                Debug.Assert(_exclusive != UnsafeNativeMethods.StateProtocolExclusive.RELEASE,
+                System.Web.Util.Debug.Assert(_unmanagedState == IntPtr.Zero, "_unmanagedState == 0");
+                System.Web.Util.Debug.Assert(length == IntPtr.Size, "length == IntPtr.Size");
+                System.Web.Util.Debug.Assert(_methodIndex == UnsafeNativeMethods.StateProtocolVerb.GET, "verb == GET");
+                System.Web.Util.Debug.Assert(_exclusive != UnsafeNativeMethods.StateProtocolExclusive.RELEASE,
                              "correct exclusive method");
 
                 if (IntPtr.Size == 4) {
@@ -427,7 +428,7 @@ namespace System.Web.SessionState {
                          ((long)data[7] << 56));
                 }
 
-                Debug.Assert(_unmanagedState != IntPtr.Zero, "_unmanagedState != 0");
+                System.Web.Util.Debug.Assert(_unmanagedState != IntPtr.Zero, "_unmanagedState != 0");
             }
 
             SendResponse();
@@ -435,12 +436,12 @@ namespace System.Web.SessionState {
 
         public override void SendResponseFromFile(string filename, long offset, long length) {
             /* Not needed by state application */
-            throw new NotSupportedException(SR.GetString(SR.Not_supported));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Not_supported));
         }
 
         public override void SendResponseFromFile(IntPtr handle, long offset, long length) {
             /* Not needed by state application */
-            throw new NotSupportedException(SR.GetString(SR.Not_supported));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Not_supported));
         }
 
         public override void FlushResponse(bool finalFlush) {

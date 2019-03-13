@@ -33,7 +33,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private void CheckReadOnly() {
             if (_readOnly) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartTransformerCollection_ReadOnly));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartTransformerCollection_ReadOnly));
             }
         }
 
@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls.WebParts {
             CheckReadOnly();
 
             if (List.Count > 0) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartTransformerCollection_NotEmpty));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartTransformerCollection_NotEmpty));
             }
 
             base.OnInsert(index, value);
@@ -81,10 +81,10 @@ namespace System.Web.UI.WebControls.WebParts {
         protected override void OnValidate(object value) {
             base.OnValidate(value);
             if (value == null) {
-                throw new ArgumentNullException("value", SR.GetString(SR.Collection_CantAddNull));
+                throw new ArgumentNullException("value", System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull));
             }
             if (!(value is WebPartTransformer)) {
-                throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "WebPartTransformer"), "value");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "WebPartTransformer"), "value");
             }
         }
 

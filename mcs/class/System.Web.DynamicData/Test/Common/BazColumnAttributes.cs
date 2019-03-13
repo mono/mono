@@ -7,7 +7,7 @@ using System.Text;
 
 namespace MonoTests.Common
 {
-	class BazColumnAttributes
+	public class BazColumnAttributes
 	{
 		public string ColumnNoAttributes { get; set; }
 

@@ -16,6 +16,7 @@ namespace System.Web.UI {
     using System.Collections;
     using System.Reflection;
     using System.Web.Util;
+    
 
     [AttributeUsage(AttributeTargets.Property)]
     internal sealed class IgnoreUnknownContentAttribute : Attribute {
@@ -49,7 +50,7 @@ namespace System.Web.UI {
             PropertyInfo propInfo = TargetFrameworkUtil.GetProperty(parentBuilder.ControlType, 
                 tagName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase);
             SetControlType(propInfo.PropertyType);
-            Debug.Assert(ControlType != null, "ControlType != null");
+            System.Web.Util.Debug.Assert(ControlType != null, "ControlType != null");
 
             BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance;
 
@@ -99,7 +100,7 @@ namespace System.Web.UI {
                         controlTypeName = TagName;
                     }
 
-                    throw new HttpException(SR.GetString(SR.Invalid_collection_item_type, new String[] { controlTypeName,
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_collection_item_type, new String[] { controlTypeName,
                                                                         _itemType.FullName,
                                                                         tagName,
                                                                         childType.FullName}));
@@ -121,7 +122,7 @@ namespace System.Web.UI {
 
             // Don't allow non-whitespace literal content
             if (!Util.IsWhiteSpaceString(s)) {
-                throw new HttpException(SR.GetString(SR.Literal_content_not_allowed, ControlType.FullName, s.Trim()));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Literal_content_not_allowed, ControlType.FullName, s.Trim()));
             }
         }
     }

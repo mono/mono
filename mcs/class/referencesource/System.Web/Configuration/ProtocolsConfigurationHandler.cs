@@ -44,7 +44,7 @@ namespace System.Web.Configuration {
 
         public object Create(Object parent, Object configContextObj, XmlNode section) {
             // can be called from client config ( default app domain)
-            Debug.Assert(parent == null, "<protocols> config is only allowed in machine.config");
+            System.Web.Util.Debug.Assert(parent == null, "<protocols> config is only allowed in machine.config");
             return new ProtocolsConfiguration(section);
         }
     }

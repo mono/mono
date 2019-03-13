@@ -70,7 +70,7 @@ namespace System.Web {
             if (context == null)
                 return;
 
-            string messagestring = SR.GetString(SR.WebPageTraceListener_Event) + " " + id + ": " + message;
+            string messagestring = System.Web.SR.GetString(System.Web.SR.WebPageTraceListener_Event) + " " + id + ": " + message;
             if (severity <= TraceEventType.Warning)
                 context.Trace.WarnInternal(source, messagestring, false);
             else

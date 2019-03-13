@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls.WebParts {
                             // Don't throw an exception in the designer, since we want only the offending
                             // control to render as an error block, not the whole CatalogZone.
                             if (((literal == null) || (literal.Text.Trim().Length != 0)) && !DesignMode) {
-                                throw new InvalidOperationException(SR.GetString(SR.CatalogZone_OnlyCatalogParts, ID));
+                                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CatalogZone_OnlyCatalogParts, ID));
                             }
                         }
                     }

@@ -11,6 +11,7 @@ namespace System.Web.Security {
     using System.Security.Permissions;
     using System.Threading;
     using System.Web;
+    
 
 
     /// <devdoc>
@@ -42,7 +43,7 @@ namespace System.Web.Security {
             add {
                 // WOS 1709222: DefaultAuthentication_Authenticate is not supported in integrated mode.
                 if (HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Method_Not_Supported_By_Iis_Integrated_Mode, "DefaultAuthentication.Authenticate"));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Method_Not_Supported_By_Iis_Integrated_Mode, "DefaultAuthentication.Authenticate"));
                 }
                 _eventHandler += value;
             }
@@ -167,24 +168,24 @@ namespace System.Web.Security {
         }
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.Assess_Denied_Title);}
+            get { return System.Web.SR.GetString(System.Web.SR.Assess_Denied_Title);}
         }
 
         protected override string Description {
             get {
-                return SR.GetString(SR.Assess_Denied_Description1);
+                return System.Web.SR.GetString(System.Web.SR.Assess_Denied_Description1);
                 //"An error occurred while accessing the resources required to serve this request. &nbsp; This typically happens when you provide the wrong user-name and/or password.";
             }
         }
 
         protected override string MiscSectionTitle {            
-            get { return SR.GetString(SR.Assess_Denied_MiscTitle1);} 
+            get { return System.Web.SR.GetString(System.Web.SR.Assess_Denied_MiscTitle1);} 
             //"Error message 401.1";}
         }
 
         protected override string MiscSectionContent {
             get {
-                string miscContent = SR.GetString(SR.Assess_Denied_MiscContent1);
+                string miscContent = System.Web.SR.GetString(System.Web.SR.Assess_Denied_MiscContent1);
                 AdaptiveMiscContent.Add(miscContent);
                 return miscContent;
                 //return "Logon credentials provided were not recognized. Make sure you are providing the correct user-name and password. Otherwise, ask the web server's administrator for help.";

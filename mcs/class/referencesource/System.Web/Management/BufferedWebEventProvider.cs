@@ -28,7 +28,7 @@ namespace System.Web.Management {
         {
             // create buffer according to the buffer mode settings specified, like we do in sql/mail providers
             // wire up the delegate to the ProcessEventFlush method
-            Debug.Trace("BufferedWebEventProvider", "Initializing: name=" + name);
+            System.Web.Util.Debug.Trace("BufferedWebEventProvider", "Initializing: name=" + name);
 
             ProviderUtil.GetAndRemoveBooleanAttribute(config, "buffer", name, ref _buffer);
 
@@ -57,7 +57,7 @@ namespace System.Web.Management {
         { 
             if (_buffer) {
                 // register the event with the buffer instead of writing it out 
-                Debug.Trace("BufferedWebEventProvider", "Saving event to buffer: event=" + eventRaised.GetType().Name);
+                System.Web.Util.Debug.Trace("BufferedWebEventProvider", "Saving event to buffer: event=" + eventRaised.GetType().Name);
                 _webEventBuffer.AddEvent(eventRaised);
             }
             else {

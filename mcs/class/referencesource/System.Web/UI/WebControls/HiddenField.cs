@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls {
                 return false;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name));
             }
         }
 
@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls {
                 return String.Empty;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name));
             }
         }
 
@@ -61,7 +61,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.HiddenField_Value)
+        WebSysDescription(System.Web.SR.HiddenField_Value)
         ]
         public virtual string Value {
             get {
@@ -79,7 +79,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.HiddenField_OnValueChanged)
+        WebSysDescription(System.Web.SR.HiddenField_OnValueChanged)
         ]
         public event EventHandler ValueChanged {
             add {
@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls {
         EditorBrowsable(EditorBrowsableState.Never),
         ]
         public override void Focus() {
-            throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
         }
 
 

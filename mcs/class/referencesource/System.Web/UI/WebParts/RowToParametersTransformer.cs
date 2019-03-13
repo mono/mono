@@ -91,12 +91,12 @@ namespace System.Web.UI.WebControls.WebParts {
             int providerFieldNamesLength = (_providerFieldNames != null) ? _providerFieldNames.Length : 0;
 
             if (consumerFieldNamesLength != providerFieldNamesLength) {
-                throw new InvalidOperationException(SR.GetString(SR.RowToParametersTransformer_DifferentFieldNamesLength));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.RowToParametersTransformer_DifferentFieldNamesLength));
             }
         }
 
         private void GetRowData(object rowData) {
-            Debug.Assert(_callback != null);
+            System.Web.Util.Debug.Assert(_callback != null);
 
             // Only return null if rowData is null.  Else, return an empty dictionary. (VSWhidbey 381264)
             IDictionary parametersData = null;
@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 int fieldNamesLength = fieldNames.Length;
 
                 if (fieldNamesLength % 2 != 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.RowToParametersTransformer_DifferentFieldNamesLength));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.RowToParametersTransformer_DifferentFieldNamesLength));
                 }
 
                 int length = fieldNamesLength / 2;
@@ -214,7 +214,7 @@ namespace System.Web.UI.WebControls.WebParts {
             private const string consumerFieldNameID = "ConsumerFieldName";
 
             public RowToParametersConfigurationWizard(RowToParametersTransformer owner) {
-                Debug.Assert(owner != null);
+                System.Web.Util.Debug.Assert(owner != null);
                 _owner = owner;
             }
 
@@ -232,7 +232,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             protected override void CreateWizardSteps() {
                 // The WizardSteps should be empty when this is called
-                Debug.Assert(WizardSteps.Count == 0);
+                System.Web.Util.Debug.Assert(WizardSteps.Count == 0);
 
                 int oldProviderNamesLength = (OldProviderNames != null) ? OldProviderNames.Length : 0;
                 if (oldProviderNamesLength > 0) {
@@ -251,7 +251,7 @@ namespace System.Web.UI.WebControls.WebParts {
                         WizardStep s = new WizardStep();
 
                         s.Controls.Add(new LiteralControl(
-                            SR.GetString(SR.RowToParametersTransformer_ProviderFieldName) + " "));
+                            System.Web.SR.GetString(System.Web.SR.RowToParametersTransformer_ProviderFieldName) + " "));
                         Label label = new Label();
 
                         // HtmlEncode the string, since it comes from the provider schema and it may contain
@@ -299,13 +299,13 @@ namespace System.Web.UI.WebControls.WebParts {
                         }
                         else {
                             consumerFieldName.Items.Add(new ListItem(
-                                SR.GetString(SR.RowToParametersTransformer_NoConsumerSchema)));
+                                System.Web.SR.GetString(System.Web.SR.RowToParametersTransformer_NoConsumerSchema)));
                             consumerFieldName.Enabled = false;
                         }
                         _consumerFieldNames[i] = consumerFieldName;
 
                         Label consumerFieldNameLabel = new Label();
-                        consumerFieldNameLabel.Text = SR.GetString(SR.RowToParametersTransformer_ConsumerFieldName);
+                        consumerFieldNameLabel.Text = System.Web.SR.GetString(System.Web.SR.RowToParametersTransformer_ConsumerFieldName);
                         consumerFieldNameLabel.AssociatedControlID = consumerFieldName.ID;
 
                         s.Controls.Add(consumerFieldNameLabel);
@@ -317,12 +317,12 @@ namespace System.Web.UI.WebControls.WebParts {
                 }
                 else {
                     WizardStep s = new WizardStep();
-                    s.Controls.Add(new LiteralControl(SR.GetString(SR.RowToParametersTransformer_NoProviderSchema)));
+                    s.Controls.Add(new LiteralControl(System.Web.SR.GetString(System.Web.SR.RowToParametersTransformer_NoProviderSchema)));
                     WizardSteps.Add(s);
                 }
 
                 // We should always have at least 1 WizardStep when we return
-                Debug.Assert(WizardSteps.Count > 0);
+                System.Web.Util.Debug.Assert(WizardSteps.Count > 0);
             }
 
             protected override void OnFinishButtonClick(WizardNavigationEventArgs e) {
@@ -331,8 +331,8 @@ namespace System.Web.UI.WebControls.WebParts {
 
                 int oldProviderNamesLength = (OldProviderNames != null) ? OldProviderNames.Length : 0;
                 if (oldProviderNamesLength > 0) {
-                    Debug.Assert(_consumerFieldNames != null);
-                    Debug.Assert(oldProviderNamesLength == 2 * _consumerFieldNames.Length);
+                    System.Web.Util.Debug.Assert(_consumerFieldNames != null);
+                    System.Web.Util.Debug.Assert(oldProviderNamesLength == 2 * _consumerFieldNames.Length);
                     for (int i=0; i < _consumerFieldNames.Length; i++) {
                         DropDownList consumerFieldName = _consumerFieldNames[i];
                         if (consumerFieldName.Enabled) {

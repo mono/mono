@@ -33,12 +33,12 @@ namespace System.Web.UI.WebControls.WebParts {
             if (genericWebPart != null) {
                 Control childControl = genericWebPart.ChildControl;
                 if (childControl == null) {
-                    throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "ChildControl"), "webPart");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "ChildControl"), "webPart");
                 }
 
                 _originalID = childControl.ID;
                 if (String.IsNullOrEmpty(_originalID)) {
-                    throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNullOrEmptyString, "ChildControl.ID"), "webPart");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNullOrEmptyString, "ChildControl.ID"), "webPart");
                 }
 
                 Type originalType;
@@ -53,14 +53,14 @@ namespace System.Web.UI.WebControls.WebParts {
                 _originalTypeName = WebPartUtil.SerializeType(originalType);
                 _genericWebPartID = genericWebPart.ID;
                 if (String.IsNullOrEmpty(_genericWebPartID)) {
-                    throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNullOrEmptyString, "ID"), "webPart");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNullOrEmptyString, "ID"), "webPart");
                 }
                 ID = _genericWebPartID;
             }
             else {
                 _originalID = webPart.ID;
                 if (String.IsNullOrEmpty(_originalID)) {
-                    throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNullOrEmptyString, "ID"), "webPart");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNullOrEmptyString, "ID"), "webPart");
                 }
                 _originalTypeName = WebPartUtil.SerializeType(webPart.GetType());
                 ID = _originalID;
@@ -69,15 +69,15 @@ namespace System.Web.UI.WebControls.WebParts {
 
         protected ProxyWebPart(string originalID, string originalTypeName, string originalPath, string genericWebPartID) {
             if (String.IsNullOrEmpty(originalID)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("originalID");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("originalID");
             }
             if (String.IsNullOrEmpty(originalTypeName)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("originalTypeName");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("originalTypeName");
             }
 
             // If you specify a path, this must be a GenericWebPart so genericWebPartID should not be null
             if (!String.IsNullOrEmpty(originalPath) && String.IsNullOrEmpty(genericWebPartID)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("genericWebPartID");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("genericWebPartID");
             }
 
             _originalID = originalID;

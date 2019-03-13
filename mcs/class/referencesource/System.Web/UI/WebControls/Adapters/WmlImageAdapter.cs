@@ -28,7 +28,7 @@ namespace System.Web.UI.WebControls.Adapters {
                 String localSource;
 
                 string symbolProtocol = "symbol:"; 
-                if (StringUtil.StringStartsWith(source, symbolProtocol)) {
+                if (System.Web.Util.StringUtil.StringStartsWith(source, symbolProtocol)) {
                     localSource = source.Substring(symbolProtocol.Length);
                     source = String.Empty;
                 }

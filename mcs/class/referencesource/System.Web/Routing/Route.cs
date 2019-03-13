@@ -4,6 +4,7 @@
     using System.Text.RegularExpressions;
     using System.Web;
     using System.Runtime.CompilerServices;
+    
 
     [TypeForwardedFrom("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
     public class Route : RouteBase {
@@ -159,7 +160,7 @@
             if (constraintsRule == null) {
                 throw new InvalidOperationException(String.Format(
                     CultureInfo.CurrentUICulture,
-                    SR.GetString(SR.Route_ValidationMustBeStringOrCustomConstraint),
+                    System.Web.SR.GetString(System.Web.SR.Route_ValidationMustBeStringOrCustomConstraint),
                     parameterName,
                     Url));
             }

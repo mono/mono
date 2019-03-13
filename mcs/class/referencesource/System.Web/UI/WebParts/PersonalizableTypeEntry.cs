@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     // accessor, throw an exception.
                     ParameterInfo[] paramList = pi.GetIndexParameters();
                     if ((paramList != null && paramList.Length > 0) || pi.GetGetMethod() == null || pi.GetSetMethod() == null) {
-                        throw new HttpException(SR.GetString(SR.PersonalizableTypeEntry_InvalidProperty, name, _type.FullName));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.PersonalizableTypeEntry_InvalidProperty, name, _type.FullName));
                     }
 
                     // Add the property to the dictionary

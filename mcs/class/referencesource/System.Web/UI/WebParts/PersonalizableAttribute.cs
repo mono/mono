@@ -88,7 +88,7 @@ namespace System.Web.UI.WebControls.WebParts {
         /// Initializes an instance of PersonalizableAttribute with the specified values.
         /// </devdoc>
         private PersonalizableAttribute(bool isPersonalizable, PersonalizationScope scope, bool isSensitive) {
-            Debug.Assert((isPersonalizable == true || isSensitive == false), "Only Personalizable properties can be sensitive");
+            System.Web.Util.Debug.Assert((isPersonalizable == true || isSensitive == false), "Only Personalizable properties can be sensitive");
             _isPersonalizable = isPersonalizable;
             _isSensitive = isSensitive;
             if (_isPersonalizable) {
@@ -151,7 +151,7 @@ namespace System.Web.UI.WebControls.WebParts {
         /// PropertyInfos for the specified type.
         /// </devdoc>
         public static ICollection GetPersonalizableProperties(Type type) {
-            Debug.Assert(type != null);
+            System.Web.Util.Debug.Assert(type != null);
 
             PersonalizableTypeEntry typeEntry = (PersonalizableTypeEntry)PersonalizableTypeTable[type];
             if (typeEntry == null) {
@@ -167,7 +167,7 @@ namespace System.Web.UI.WebControls.WebParts {
         /// PropertyInfos for the specified type.
         /// </devdoc>
         internal static IDictionary GetPersonalizablePropertyEntries(Type type) {
-            Debug.Assert(type != null);
+            System.Web.Util.Debug.Assert(type != null);
 
             PersonalizableTypeEntry typeEntry = (PersonalizableTypeEntry)PersonalizableTypeTable[type];
 

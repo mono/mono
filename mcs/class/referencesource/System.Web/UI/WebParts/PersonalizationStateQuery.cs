@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public DateTime UserInactiveSinceDate {
             get {
                 object o = this["UserInactiveSinceDate"];
-                Debug.Assert(o != null, "Should always have a default value!");
+                System.Web.Util.Debug.Assert(o != null, "Should always have a default value!");
                 return (DateTime) o;
             }
             set {
@@ -68,20 +68,20 @@ namespace System.Web.UI.WebControls.WebParts {
 
         public object this[string queryKey] {
             get {
-                queryKey = StringUtil.CheckAndTrimString(queryKey, "queryKey");
+                queryKey = System.Web.Util.StringUtil.CheckAndTrimString(queryKey, "queryKey");
                 return _data[queryKey];
             }
             set {
-                queryKey = StringUtil.CheckAndTrimString(queryKey, "queryKey");
+                queryKey = System.Web.Util.StringUtil.CheckAndTrimString(queryKey, "queryKey");
 
                 // VSWhidbey 436311: We need to check the value types for known properties
                 if (_knownPropertyTypeMappings.ContainsKey(queryKey)) {
                     Type valueType = _knownPropertyTypeMappings[queryKey];
-                    Debug.Assert(valueType != null);
+                    System.Web.Util.Debug.Assert(valueType != null);
                     if ((value == null && valueType.IsValueType) ||
                          (value != null && !valueType.IsAssignableFrom(value.GetType()))) {
                         throw new ArgumentException(
-                            SR.GetString(SR.PersonalizationStateQuery_IncorrectValueType,
+                            System.Web.SR.GetString(System.Web.SR.PersonalizationStateQuery_IncorrectValueType,
                                          queryKey, valueType.FullName));
                     }
                 }

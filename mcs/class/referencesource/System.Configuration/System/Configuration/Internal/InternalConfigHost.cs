@@ -114,6 +114,8 @@ namespace System.Configuration.Internal {
             DateTime utcCreationTime = DateTime.MinValue;
             DateTime utcLastWriteTime = DateTime.MinValue;
 
+#if (!MONO) || (MONO && !FEATURE_PAL)
+
             UnsafeNativeMethods.WIN32_FILE_ATTRIBUTE_DATA data;
             if (    UnsafeNativeMethods.GetFileAttributesEx(streamName, UnsafeNativeMethods.GetFileExInfoStandard, out data) &&
                     (data.fileAttributes & (int) FileAttributes.Directory) == 0) {
@@ -122,6 +124,16 @@ namespace System.Configuration.Internal {
                 utcCreationTime   = DateTime.FromFileTimeUtc(((long)data.ftCreationTimeHigh) << 32 | (long)data.ftCreationTimeLow);
                 utcLastWriteTime  = DateTime.FromFileTimeUtc(((long)data.ftLastWriteTimeHigh) << 32 | (long)data.ftLastWriteTimeLow);
             }
+#else 
+
+            exists = File.Exists(streamName);
+
+            if (exists) {
+                utcCreationTime = File.GetCreationTimeUtc(streamName);
+                utcLastWriteTime = File.GetLastWriteTimeUtc(streamName);
+                fileSize = new FileInfo(streamName).Length;
+            }
+#endif
 
             return new FileVersion(exists, fileSize, utcCreationTime, utcLastWriteTime);
         }
@@ -291,7 +303,13 @@ namespace System.Configuration.Internal {
                 // WriteFileContext will call TempFileCollection.Dispose, which will remove a .tmp file it created.
                 string dir = Path.GetDirectoryName(streamName);
                 string[] filePaths = new string[] {streamName, writeFileContext.TempNewFilename, dir};
+    
+#if (!MONO) || (MONO && !FEATURE_PAL)
                 FileIOPermission fileIOPerm = new FileIOPermission(FileIOPermissionAccess.AllAccess, AccessControlActions.View | AccessControlActions.Change, filePaths);
+#else
+                FileIOPermission fileIOPerm = new FileIOPermission(FileIOPermissionAccess.AllAccess, filePaths);
+#endif
+
                 fileIOPerm.Assert();
                 revertAssert = true;
             }

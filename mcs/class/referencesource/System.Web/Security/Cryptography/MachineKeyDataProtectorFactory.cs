@@ -8,6 +8,7 @@ namespace System.Web.Security.Cryptography {
     using System;
     using System.Security.Cryptography;
     using System.Web.Configuration;
+    
 
     // Can create DataProtector instances from a given <machineKey> element
 
@@ -60,7 +61,7 @@ namespace System.Web.Security.Cryptography {
             // If we reached this point, there was a failure:
             // the factory returned null, threw, or did something else unexpected.
             throw ConfigUtil.MakeConfigurationErrorsException(
-                message: SR.GetString(SR.MachineKeyDataProtectorFactory_FactoryCreationFailed),
+                message: System.Web.SR.GetString(System.Web.SR.MachineKeyDataProtectorFactory_FactoryCreationFailed),
                 innerException: factoryCreationException, // can be null
                 configProperty: _machineKeySection.ElementInformation.Properties["dataProtectorType"]);
         }

@@ -74,7 +74,7 @@ namespace System.Web.UI.Adapters {
         /// <para>[To be supplied.]</para>
         /// </devdoc>
         public virtual NameValueCollection DeterminePostBackMode() {
-            Debug.Assert(Control != null);
+            System.Web.Util.Debug.Assert(Control != null);
             if(Control != null) {
                 return Control.Page.DeterminePostBackMode();
             }

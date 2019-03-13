@@ -17,6 +17,7 @@ namespace System.Web.Configuration {
     using System.Web.SessionState;
     using System.Diagnostics;
     using System.Security.Permissions;
+    
 
     /*         <!-- sessionState Attributes:
                 mode="[Off|InProc|StateServer|SQLServer|Custom]"
@@ -232,7 +233,7 @@ namespace System.Web.Configuration {
         public SessionStateSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -463,7 +464,7 @@ namespace System.Web.Configuration {
                     }
 
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_enum_attribute, "cookieless", names),
+                        System.Web.SR.GetString(System.Web.SR.Invalid_enum_attribute, "cookieless", names),
                         ElementInformation.Properties["cookieless"].Source,
                         ElementInformation.Properties["cookieless"].LineNumber);
                 }
@@ -476,7 +477,7 @@ namespace System.Web.Configuration {
             ConvertToCookieMode((string)base[_propCookieless]);
         }
 
-        protected override ConfigurationElementProperty ElementProperty {
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -486,7 +487,7 @@ namespace System.Web.Configuration {
             if (value == null) {
                 throw new ArgumentNullException("sessionState");
             }
-            Debug.Assert(value is SessionStateSection);
+            System.Web.Util.Debug.Assert(value is SessionStateSection);
 
             SessionStateSection elem = (SessionStateSection)value;
 
@@ -494,7 +495,7 @@ namespace System.Web.Configuration {
                 (elem.Mode == SessionStateMode.InProc ||
                 elem.Mode == SessionStateMode.StateServer)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_cache_based_session_timeout),
+                    System.Web.SR.GetString(System.Web.SR.Invalid_cache_based_session_timeout),
                     elem.ElementInformation.Properties["timeout"].Source,
                     elem.ElementInformation.Properties["timeout"].LineNumber);
             }

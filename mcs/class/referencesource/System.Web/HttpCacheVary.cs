@@ -53,7 +53,7 @@ namespace System.Web {
             else {           
                 _isModified = true;
                 if (headers[0].Equals("*")) {
-                    Debug.Assert(headers.Length == 1, "headers.Length == 1");
+                    System.Web.Util.Debug.Assert(headers.Length == 1, "headers.Length == 1");
 
                     _varyStar = true;
                     _headers = null;
@@ -134,7 +134,7 @@ namespace System.Web {
                         }
                     }
 
-                    Debug.Assert(j == c, "j == c");
+                    System.Web.Util.Debug.Assert(j == c, "j == c");
                 }
             }
 

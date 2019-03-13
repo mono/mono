@@ -147,7 +147,7 @@ namespace System.Data.Linq {
             foreach (TrackedObject insertedItem in insertedItems) {
                 object lookup = this.services.InsertLookupCachedObject(insertedItem.Type, insertedItem.Current);
                 if (lookup != insertedItem.Current) {
-                    throw new DuplicateKeyException(insertedItem.Current, Strings.DatabaseGeneratedAlreadyExistingKey);
+                    throw new DuplicateKeyException(insertedItem.Current, SR.DatabaseGeneratedAlreadyExistingKey);
                 }
                 insertedItem.InitializeDeferredLoaders();
             }
@@ -354,9 +354,9 @@ namespace System.Data.Linq {
         /// Create an ChangeConflictException with the best message
         /// </summary>       
         static private ChangeConflictException CreateChangeConflictException(int totalUpdatesAttempted, int failedUpdates) {
-            string msg = Strings.RowNotFoundOrChanged;
+            string msg = SR.RowNotFoundOrChanged;
             if (totalUpdatesAttempted > 1) {
-                msg = Strings.UpdatesFailedMessage(failedUpdates, totalUpdatesAttempted);
+                msg = SR.Format(SR.UpdatesFailedMessage, failedUpdates, totalUpdatesAttempted);
             }
             return new ChangeConflictException(msg);
         }
@@ -425,7 +425,7 @@ namespace System.Data.Linq {
                                 this.services.InsertLookupCachedObject(tracked.Type, item);
                             }
                             else if (!cachedTracked.IsDead) {
-                                throw new DuplicateKeyException(item, Strings.CantAddAlreadyExistingKey);
+                                throw new DuplicateKeyException(item, SR.CantAddAlreadyExistingKey);
                             }
                         }
                     }

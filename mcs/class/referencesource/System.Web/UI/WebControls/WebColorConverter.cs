@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls {
                 }
 
                 // special case. HTML requires LightGrey, but System.Drawing.KnownColor has LightGray
-                if (StringUtil.EqualsIgnoreCase(colorText, "LightGrey")) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(colorText, "LightGrey")) {
                     return Color.LightGray;
                 }
 

@@ -248,13 +248,23 @@ xammac_4_5_dirs_parallel := \
 	System.Runtime.CompilerServices.Unsafe
 
 # Could be just mscorlib but we have unhandled dependency from RabbitMQ.Client.Apigen.exe
+#System.Web depends on build, so it needs to be mixed in
+xbuild_2_0_dirs := \
+	Microsoft.Build.Framework	\
+	Microsoft.Build.Utilities	\
+	Microsoft.Build.Engine		\
+	Mono.XBuild.Tasks		\
+	Microsoft.Build.Tasks
+
+xbuild_4_0_dirs := \
+	$(xbuild_2_0_dirs)	\
+	Microsoft.Build
+
 net_4_x_dirs := \
 	corlib \
 	Mono.Security \
 	System	\
-	System.XML
-
-net_4_x_parallel_dirs = \
+	System.XML			\
 	System.Security			\
 	Mono.Posix			\
 	System.Core			\
@@ -272,12 +282,16 @@ net_4_x_parallel_dirs = \
 	Mono.WebBrowser			\
 	System.Runtime.Serialization.Formatters.Soap \
 	System.Windows.Forms		\
+	$(xbuild_4_0_dirs)		\
 	Mono.Data.Sqlite		\
-	System.Web.ApplicationServices	\
 	Novell.Directory.Ldap		\
 	System.DirectoryServices	\
+	System.DirectoryServices.Protocols 	\
+	System.Runtime.Caching \
 	System.Design			\
+	System.Web.RegularExpressions \
 	System.Web.Services		\
+	System.Web.ApplicationServices	\
 	System.Web			\
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
@@ -295,22 +309,25 @@ net_4_x_parallel_dirs = \
 	System.Runtime.Serialization	\
 	System.Xml.Linq			\
 	System.Data.Linq		\
+	System.Data.Entity		\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
 	System.Runtime.DurableInstancing \
 	System.IdentityModel		\
 	System.IdentityModel.Selectors	\
 	System.ServiceModel		\
-	System.Web.Extensions		\
-	System.Web.Extensions.Design	\
-	System.Web.DynamicData		\
+	Mono.CSharp			\
 	System.Net			\
 	System.Xaml \
 	WindowsBase \
 	System.ServiceModel.Activation \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
-	System.Runtime.Caching \
+	System.Web.Extensions		\
+	System.Web.Extensions.Design	\
+	System.Web.Entity			\
+	System.Web.DynamicData		\
+	System.Web.DataVisualization \
 	Microsoft.Web.Infrastructure \
 	System.ServiceModel.Web \
 	System.Net.Http	\
@@ -326,6 +343,11 @@ net_4_x_parallel_dirs = \
 	System.Web.Http.WebHost \
 	CustomMarshalers		\
 	IBM.Data.DB2			\
+	System.Web.Mobile
+
+# These are the subdirs which depends on libs in net_4_x_dirs
+# or have proper dependencies between each other
+net_4_x_parallel_dirs := \
 	PEAPI				\
 	I18N				\
 	Cscompmgd			\
@@ -362,7 +384,6 @@ net_4_x_parallel_dirs = \
 	System.Reactive.Debugger \
 	System.Data.Services.Client	\
 	System.Data.Services \
-	System.Data.Entity \
 	System.Data.DataSetExtensions	\
 	System.Json		\
 	System.Json.Microsoft \
@@ -370,14 +391,11 @@ net_4_x_parallel_dirs = \
 	System.ComponentModel.Composition.4.5 \
 	System.Windows \
 	System.Xml.Serialization \
-	System.DirectoryServices.Protocols	\
 	RabbitMQ.Client			\
 	Microsoft.VisualC		\
 	WebMatrix.Data \
 	monodoc	\
 	System.Deployment \
-	System.Web.Mobile \
-	System.Web.RegularExpressions \
 	System.Workflow.Activities \
 	System.Workflow.ComponentModel \
 	System.Workflow.Runtime \
@@ -388,14 +406,6 @@ net_4_x_parallel_dirs = \
 	legacy/Mono.Cecil \
 	SystemWebTestShim \
 	$(xbuild_4_0_dirs)
-
-xbuild_4_0_dirs := \
-	Microsoft.Build.Framework	\
-	Microsoft.Build.Utilities	\
-	Microsoft.Build.Engine		\
-	Mono.XBuild.Tasks		\
-	Microsoft.Build.Tasks	\
-	Microsoft.Build
 
 monodroid_SUBDIRS := $(mobile_common_dirs)
 monodroid_PARALLEL_SUBDIRS := $(monodroid_dirs_parallel)

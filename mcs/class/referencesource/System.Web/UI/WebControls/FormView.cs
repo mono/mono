@@ -100,7 +100,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_UpdateMethod)
+        WebSysDescription(System.Web.SR.DataBoundControl_UpdateMethod)
         ]
         public new virtual string UpdateMethod {
             get {
@@ -118,7 +118,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_DeleteMethod)
+        WebSysDescription(System.Web.SR.DataBoundControl_DeleteMethod)
         ]
         public new virtual string DeleteMethod {
             get {
@@ -136,7 +136,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_InsertMethod)
+        WebSysDescription(System.Web.SR.DataBoundControl_InsertMethod)
         ]
         public new virtual string InsertMethod {
             get {
@@ -153,7 +153,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Paging"),
         DefaultValue(false),
-        WebSysDescription(SR.FormView_AllowPaging)
+        WebSysDescription(System.Web.SR.FormView_AllowPaging)
         ]
         public virtual bool AllowPaging {
             get {
@@ -182,7 +182,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.WebControl_BackImageUrl)
+        WebSysDescription(System.Web.SR.WebControl_BackImageUrl)
         ]
         public virtual string BackImageUrl {
             get {
@@ -225,7 +225,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         DefaultValue(""),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.DataControls_Caption)
+        WebSysDescription(System.Web.SR.DataControls_Caption)
         ]
         public virtual string Caption {
             get {
@@ -241,7 +241,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(TableCaptionAlign.NotSet),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.WebControl_CaptionAlign)
+        WebSysDescription(System.Web.SR.WebControl_CaptionAlign)
         ]
         public virtual TableCaptionAlign CaptionAlign {
             get {
@@ -265,7 +265,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(-1),
-        WebSysDescription(SR.FormView_CellPadding)
+        WebSysDescription(System.Web.SR.FormView_CellPadding)
         ]
         public virtual int CellPadding {
             get {
@@ -287,7 +287,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(0),
-        WebSysDescription(SR.FormView_CellSpacing)
+        WebSysDescription(System.Web.SR.FormView_CellSpacing)
         ]
         public virtual int CellSpacing {
             get {
@@ -355,7 +355,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.WebControls.DataFieldEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         TypeConverterAttribute(typeof(StringArrayConverter)),
         WebCategory("Data"),
-        WebSysDescription(SR.DataControls_DataKeyNames)
+        WebSysDescription(System.Web.SR.DataControls_DataKeyNames)
         ]
         public virtual string[] DataKeyNames {
             get {
@@ -398,7 +398,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.FormView_DataKey)
+        WebSysDescription(System.Web.SR.FormView_DataKey)
         ]
         public virtual DataKey DataKey {
             get {
@@ -413,7 +413,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(FormViewMode.ReadOnly),
-        WebSysDescription(SR.View_DefaultMode)
+        WebSysDescription(System.Web.SR.View_DefaultMode)
         ]
         public virtual FormViewMode DefaultMode {
             get {
@@ -437,7 +437,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(FormView), BindingDirection.TwoWay),
-        WebSysDescription(SR.FormView_EditItemTemplate)
+        WebSysDescription(System.Web.SR.FormView_EditItemTemplate)
         ]
         public virtual ITemplate EditItemTemplate {
             get {
@@ -458,7 +458,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.View_EditRowStyle)
+        WebSysDescription(System.Web.SR.View_EditRowStyle)
         ]
         public TableItemStyle EditRowStyle {
             get {
@@ -481,7 +481,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.View_EmptyDataRowStyle)
+        WebSysDescription(System.Web.SR.View_EmptyDataRowStyle)
         ]
         public TableItemStyle EmptyDataRowStyle {
             get {
@@ -503,7 +503,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(FormView)),
-        WebSysDescription(SR.View_EmptyDataTemplate)
+        WebSysDescription(System.Web.SR.View_EmptyDataTemplate)
         ]
         public virtual ITemplate EmptyDataTemplate {
             get {
@@ -522,7 +522,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.View_EmptyDataText),
+        WebSysDescription(System.Web.SR.View_EmptyDataText),
         ]
         public virtual String EmptyDataText {
             get {
@@ -540,7 +540,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.DataBoundControl_EnableModelValidation)
+        WebSysDescription(System.Web.SR.DataBoundControl_EnableModelValidation)
         ]
         public virtual bool EnableModelValidation {
             get {
@@ -558,7 +558,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(true),
-        WebSysDescription(SR.FormView_RenderOuterTable),
+        WebSysDescription(System.Web.SR.FormView_RenderOuterTable),
         SuppressMessage("Microsoft.Security", "CA2119:SealMethodsThatSatisfyPrivateInterfaces",
             Justification = "Interface denotes existence of property, not used for security.")
         ]
@@ -609,7 +609,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.FormView_FooterStyle)
+        WebSysDescription(System.Web.SR.FormView_FooterStyle)
         ]
         public TableItemStyle FooterStyle {
             get {
@@ -631,7 +631,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(FormView)),
-        WebSysDescription(SR.FormView_FooterTemplate)
+        WebSysDescription(System.Web.SR.FormView_FooterTemplate)
         ]
         public virtual ITemplate FooterTemplate {
             get {
@@ -650,7 +650,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.View_FooterText),
+        WebSysDescription(System.Web.SR.View_FooterText),
         ]
         public virtual String FooterText {
             get {
@@ -672,7 +672,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(GridLines.None),
-        WebSysDescription(SR.DataControls_GridLines)
+        WebSysDescription(System.Web.SR.DataControls_GridLines)
         ]
         public virtual GridLines GridLines {
             get {
@@ -710,7 +710,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_HeaderStyle)
+        WebSysDescription(System.Web.SR.WebControl_HeaderStyle)
         ]
         public TableItemStyle HeaderStyle {
             get {
@@ -732,7 +732,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(FormView)),
-        WebSysDescription(SR.WebControl_HeaderTemplate)
+        WebSysDescription(System.Web.SR.WebControl_HeaderTemplate)
         ]
         public virtual ITemplate HeaderTemplate {
             get {
@@ -751,7 +751,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.View_HeaderText),
+        WebSysDescription(System.Web.SR.View_HeaderText),
         ]
         public virtual String HeaderText {
             get {
@@ -774,7 +774,7 @@ namespace System.Web.UI.WebControls {
         [
         Category("Layout"),
         DefaultValue(HorizontalAlign.NotSet),
-        WebSysDescription(SR.WebControl_HorizontalAlign)
+        WebSysDescription(System.Web.SR.WebControl_HorizontalAlign)
         ]
         public virtual HorizontalAlign HorizontalAlign {
             get {
@@ -797,7 +797,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(FormView), BindingDirection.TwoWay),
-        WebSysDescription(SR.FormView_InsertItemTemplate)
+        WebSysDescription(System.Web.SR.FormView_InsertItemTemplate)
         ]
         public virtual ITemplate InsertItemTemplate {
             get {
@@ -818,7 +818,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.View_InsertRowStyle)
+        WebSysDescription(System.Web.SR.View_InsertRowStyle)
         ]
         public TableItemStyle InsertRowStyle {
             get {
@@ -840,7 +840,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(FormView), BindingDirection.TwoWay),
-        WebSysDescription(SR.View_InsertRowStyle)
+        WebSysDescription(System.Web.SR.View_InsertRowStyle)
         ]
         public virtual ITemplate ItemTemplate {
             get {
@@ -924,7 +924,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         DefaultValue(0),
         WebCategory("Data"),
-        WebSysDescription(SR.FormView_PageIndex)
+        WebSysDescription(System.Web.SR.FormView_PageIndex)
         ]
         public virtual int PageIndex {
             get {
@@ -957,7 +957,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.GridView_PagerSettings)
+        WebSysDescription(System.Web.SR.GridView_PagerSettings)
         ]
         public virtual PagerSettings PagerSettings {
             get {
@@ -983,7 +983,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_PagerStyle)
+        WebSysDescription(System.Web.SR.WebControl_PagerStyle)
         ]
         public TableItemStyle PagerStyle {
             get {
@@ -1005,7 +1005,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(FormView)),
-        WebSysDescription(SR.View_PagerTemplate)
+        WebSysDescription(System.Web.SR.View_PagerTemplate)
         ]
         public virtual ITemplate PagerTemplate {
             get {
@@ -1025,7 +1025,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.FormView_Rows)
+        WebSysDescription(System.Web.SR.FormView_Rows)
         ]
         public virtual FormViewRow Row {
             get {
@@ -1046,7 +1046,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.View_RowStyle)
+        WebSysDescription(System.Web.SR.View_RowStyle)
         ]
         public TableItemStyle RowStyle {
             get {
@@ -1096,7 +1096,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.FormView_OnPageIndexChanged)
+        WebSysDescription(System.Web.SR.FormView_OnPageIndexChanged)
         ]
         public event EventHandler PageIndexChanged {
             add {
@@ -1113,7 +1113,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.FormView_OnPageIndexChanging)
+        WebSysDescription(System.Web.SR.FormView_OnPageIndexChanging)
         ]
         public event FormViewPageEventHandler PageIndexChanging {
             add {
@@ -1130,7 +1130,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.FormView_OnItemCommand)
+        WebSysDescription(System.Web.SR.FormView_OnItemCommand)
         ]
         public event FormViewCommandEventHandler ItemCommand {
             add {
@@ -1147,7 +1147,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.FormView_OnItemCreated)
+        WebSysDescription(System.Web.SR.FormView_OnItemCreated)
         ]
         public event EventHandler ItemCreated {
             add {
@@ -1164,7 +1164,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataControls_OnItemDeleted)
+        WebSysDescription(System.Web.SR.DataControls_OnItemDeleted)
         ]
         public event FormViewDeletedEventHandler ItemDeleted {
             add {
@@ -1181,7 +1181,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataControls_OnItemDeleting)
+        WebSysDescription(System.Web.SR.DataControls_OnItemDeleting)
         ]
         public event FormViewDeleteEventHandler ItemDeleting {
             add {
@@ -1198,7 +1198,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataControls_OnItemInserted)
+        WebSysDescription(System.Web.SR.DataControls_OnItemInserted)
         ]
         public event FormViewInsertedEventHandler ItemInserted {
             add {
@@ -1215,7 +1215,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataControls_OnItemInserting)
+        WebSysDescription(System.Web.SR.DataControls_OnItemInserting)
         ]
         public event FormViewInsertEventHandler ItemInserting {
             add {
@@ -1232,7 +1232,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataControls_OnItemUpdated)
+        WebSysDescription(System.Web.SR.DataControls_OnItemUpdated)
         ]
         public event FormViewUpdatedEventHandler ItemUpdated {
             add {
@@ -1249,7 +1249,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataControls_OnItemUpdating)
+        WebSysDescription(System.Web.SR.DataControls_OnItemUpdating)
         ]
         public event FormViewUpdateEventHandler ItemUpdating {
             add {
@@ -1266,7 +1266,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.FormView_OnModeChanged)
+        WebSysDescription(System.Web.SR.FormView_OnModeChanged)
         ]
         public event EventHandler ModeChanged {
             add {
@@ -1283,7 +1283,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.FormView_OnModeChanging)
+        WebSysDescription(System.Web.SR.FormView_OnModeChanging)
         ]
         public event FormViewModeEventHandler ModeChanging {
             add {
@@ -1323,7 +1323,7 @@ namespace System.Web.UI.WebControls {
                 DataSourceSelectArguments arguments = SelectArguments;
 
                 if (view == null) {
-                    throw new HttpException(SR.GetString(SR.DataBoundControl_NullView, ID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBoundControl_NullView, ID));
                 }
 
                 if (mode != FormViewMode.Insert) {
@@ -1343,7 +1343,7 @@ namespace System.Web.UI.WebControls {
                         } else {
                             ICollection dataSourceCollection = dataSource as ICollection;
                             if (dataSourceCollection == null) {
-                                throw new HttpException(SR.GetString(SR.DataBoundControl_NeedICollectionOrTotalRowCount, GetType().Name));
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBoundControl_NeedICollectionOrTotalRowCount, GetType().Name));
                             }
 
                             pagedDataSource = CreateServerPagedDataSource(checked(PageIndex + dataSourceCollection.Count));
@@ -1368,7 +1368,7 @@ namespace System.Web.UI.WebControls {
 
                 ICollection collection = dataSource as ICollection;
                 if (collection == null) {
-                    throw new HttpException(SR.GetString(SR.DataControls_DataSourceMustBeCollectionWhenNotDataBinding));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControls_DataSourceMustBeCollectionWhenNotDataBinding));
                 }
                 itemCount = collection.Count;
             } else {
@@ -1377,7 +1377,7 @@ namespace System.Web.UI.WebControls {
                     if (mode != FormViewMode.Insert) {
                         ICollection collection = dataSource as ICollection;
                         if ((collection == null) && (pagedDataSource.IsPagingEnabled && !pagedDataSource.IsServerPagingEnabled)) {
-                            throw new HttpException(SR.GetString(SR.FormView_DataSourceMustBeCollection, ID));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.FormView_DataSourceMustBeCollection, ID));
                         }
 
                         if (pagedDataSource.IsPagingEnabled) {
@@ -1876,7 +1876,7 @@ namespace System.Web.UI.WebControls {
 
         protected virtual void ExtractRowValues(IOrderedDictionary fieldValues, bool includeKeys) {
             if (fieldValues == null) {
-                Debug.Assert(false, "FormView::ExtractRowValues- must hand in a valid reference to an IDictionary.");
+                System.Web.Util.Debug.Assert(false, "FormView::ExtractRowValues- must hand in a valid reference to an IDictionary.");
                 return;
             }
 
@@ -1939,7 +1939,7 @@ namespace System.Web.UI.WebControls {
             if (isBoundToDataSourceControl) {
                 view = GetData();
                 if (view == null) {
-                    throw new HttpException(SR.GetString(SR.View_DataSourceReturnedNullView, ID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.View_DataSourceReturnedNullView, ID));
                 }
             }
 
@@ -2034,33 +2034,33 @@ namespace System.Web.UI.WebControls {
                 string command = dce.CommandName;
                 int newItemIndex = PageIndex;
 
-                if (StringUtil.EqualsIgnoreCase(command, DataControlCommands.PageCommandName)) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataControlCommands.PageCommandName)) {
                     string itemIndexArg = (string)dce.CommandArgument;
 
-                    if (StringUtil.EqualsIgnoreCase(itemIndexArg, DataControlCommands.NextPageCommandArgument)) {
+                    if (System.Web.Util.StringUtil.EqualsIgnoreCase(itemIndexArg, DataControlCommands.NextPageCommandArgument)) {
                         newItemIndex++;
-                    } else if (StringUtil.EqualsIgnoreCase(itemIndexArg, DataControlCommands.PreviousPageCommandArgument)) {
+                    } else if (System.Web.Util.StringUtil.EqualsIgnoreCase(itemIndexArg, DataControlCommands.PreviousPageCommandArgument)) {
                         newItemIndex--;
-                    } else if (StringUtil.EqualsIgnoreCase(itemIndexArg, DataControlCommands.FirstPageCommandArgument)) {
+                    } else if (System.Web.Util.StringUtil.EqualsIgnoreCase(itemIndexArg, DataControlCommands.FirstPageCommandArgument)) {
                         newItemIndex = 0;
-                    } else if (StringUtil.EqualsIgnoreCase(itemIndexArg, DataControlCommands.LastPageCommandArgument)) {
+                    } else if (System.Web.Util.StringUtil.EqualsIgnoreCase(itemIndexArg, DataControlCommands.LastPageCommandArgument)) {
                         newItemIndex = PageCount - 1;
                     } else {
                         // argument is page number, and page index is 1 less than that
                         newItemIndex = Convert.ToInt32(itemIndexArg, CultureInfo.InvariantCulture) - 1;
                     }
                     HandlePage(newItemIndex);
-                } else if (StringUtil.EqualsIgnoreCase(command, DataControlCommands.EditCommandName)) {
+                } else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataControlCommands.EditCommandName)) {
                     HandleEdit();
-                } else if (StringUtil.EqualsIgnoreCase(command, DataControlCommands.UpdateCommandName)) {
+                } else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataControlCommands.UpdateCommandName)) {
                     HandleUpdate((string)dce.CommandArgument, causesValidation);
-                } else if (StringUtil.EqualsIgnoreCase(command, DataControlCommands.CancelCommandName)) {
+                } else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataControlCommands.CancelCommandName)) {
                     HandleCancel();
-                } else if (StringUtil.EqualsIgnoreCase(command, DataControlCommands.DeleteCommandName)) {
+                } else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataControlCommands.DeleteCommandName)) {
                     HandleDelete((string)dce.CommandArgument);
-                } else if (StringUtil.EqualsIgnoreCase(command, DataControlCommands.InsertCommandName)) {
+                } else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataControlCommands.InsertCommandName)) {
                     HandleInsert((string)dce.CommandArgument, causesValidation);
-                } else if (StringUtil.EqualsIgnoreCase(command, DataControlCommands.NewCommandName)) {
+                } else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataControlCommands.NewCommandName)) {
                     HandleNew();
                 } else {
                     // unhandled event should be bubbled up here. (DevDiv Bugs 161011)
@@ -2077,7 +2077,7 @@ namespace System.Web.UI.WebControls {
             if (IsDataBindingAutomatic) {
                 view = GetData();
                 if (view == null) {
-                    throw new HttpException(SR.GetString(SR.View_DataSourceReturnedNullView, ID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.View_DataSourceReturnedNullView, ID));
                 }
             }
             else {
@@ -2125,7 +2125,7 @@ namespace System.Web.UI.WebControls {
             }
 
             if (Mode != FormViewMode.Insert) {
-                throw new HttpException(SR.GetString(SR.DetailsViewFormView_ControlMustBeInInsertMode, "FormView", ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DetailsViewFormView_ControlMustBeInInsertMode, "FormView", ID));
             }
 
             DataSourceView view = null;
@@ -2134,7 +2134,7 @@ namespace System.Web.UI.WebControls {
             if (isBoundToDataSourceControl) {
                 view = GetData();
                 if (view == null) {
-                    throw new HttpException(SR.GetString(SR.View_DataSourceReturnedNullView, ID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.View_DataSourceReturnedNullView, ID));
                 }
             }
 
@@ -2244,7 +2244,7 @@ namespace System.Web.UI.WebControls {
             }
 
             if (Mode != FormViewMode.Edit) {
-                throw new HttpException(SR.GetString(SR.DetailsViewFormView_ControlMustBeInEditMode, "FormView", ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DetailsViewFormView_ControlMustBeInEditMode, "FormView", ID));
             }
 
             if (PageIndex < 0) {
@@ -2257,7 +2257,7 @@ namespace System.Web.UI.WebControls {
             if (isBoundToDataSourceControl) {
                 view = GetData();
                 if (view == null) {
-                    throw new HttpException(SR.GetString(SR.View_DataSourceReturnedNullView, ID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.View_DataSourceReturnedNullView, ID));
                 }
             }
 
@@ -2589,7 +2589,7 @@ namespace System.Web.UI.WebControls {
                 handler(this, e);
             } else {
                 if (isBoundToDataSourceControl == false && e.Cancel == false) {
-                    throw new HttpException(SR.GetString(SR.FormView_UnhandledEvent, ID, "PageIndexChanging"));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.FormView_UnhandledEvent, ID, "PageIndexChanging"));
                 }
             }
         }
@@ -2656,7 +2656,7 @@ namespace System.Web.UI.WebControls {
                 handler(this, e);
             } else {
                 if (isBoundToDataSourceControl == false && e.Cancel == false) {
-                    throw new HttpException(SR.GetString(SR.FormView_UnhandledEvent, ID, "ItemDeleting"));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.FormView_UnhandledEvent, ID, "ItemDeleting"));
                 }
             }
         }
@@ -2682,7 +2682,7 @@ namespace System.Web.UI.WebControls {
                 handler(this, e);
             } else {
                 if (isBoundToDataSourceControl == false && e.Cancel == false) {
-                    throw new HttpException(SR.GetString(SR.FormView_UnhandledEvent, ID, "ItemInserting"));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.FormView_UnhandledEvent, ID, "ItemInserting"));
                 }
             }
         }
@@ -2708,7 +2708,7 @@ namespace System.Web.UI.WebControls {
                 handler(this, e);
             } else {
                 if (isBoundToDataSourceControl == false && e.Cancel == false) {
-                    throw new HttpException(SR.GetString(SR.FormView_UnhandledEvent, ID, "ItemUpdating"));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.FormView_UnhandledEvent, ID, "ItemUpdating"));
                 }
             }
         }
@@ -2734,7 +2734,7 @@ namespace System.Web.UI.WebControls {
                 handler(this, e);
             } else {
                 if (isBoundToDataSourceControl == false && e.Cancel == false) {
-                    throw new HttpException(SR.GetString(SR.FormView_UnhandledEvent, ID, "ModeChanging"));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.FormView_UnhandledEvent, ID, "ModeChanging"));
                 }
             }
         }
@@ -2768,7 +2768,7 @@ namespace System.Web.UI.WebControls {
                 return;
             }
 
-            Debug.Assert(Controls[0] is Table);
+            System.Web.Util.Debug.Assert(Controls[0] is Table);
 
             Table childTable = (Table)Controls[0];
 
@@ -2862,7 +2862,7 @@ namespace System.Web.UI.WebControls {
             } else {
                 string propertyName = ModifiedOuterTableStylePropertyName();
                 if (!string.IsNullOrEmpty(propertyName)) {
-                    throw new InvalidOperationException(SR.GetString(SR.IRenderOuterTableControl_CannotSetStyleWhenDisableRenderOuterTable,
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.IRenderOuterTableControl_CannotSetStyleWhenDisableRenderOuterTable,
                         propertyName, GetType().Name, ID));
                 }
 
@@ -2982,7 +2982,7 @@ namespace System.Web.UI.WebControls {
         private void SelectCallback(IEnumerable data) {
             // The data source should have thrown.  If we're here, it didn't.  We'll throw for it
             // with a generic message.
-            throw new HttpException(SR.GetString(SR.DataBoundControl_DataSourceDoesntSupportPaging));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBoundControl_DataSourceDoesntSupportPaging));
         }
 
         /// <devdoc>
@@ -3016,7 +3016,7 @@ namespace System.Web.UI.WebControls {
         }
 
         internal override void UpdateModelDataSourceProperties(ModelDataSource modelDataSource) {
-            Debug.Assert(modelDataSource != null, "A non-null ModelDataSource should be passed in");
+            System.Web.Util.Debug.Assert(modelDataSource != null, "A non-null ModelDataSource should be passed in");
             string dataKeyName = DataKeyNamesInternal.Length > 0 ? DataKeyNamesInternal[0] : "";
             modelDataSource.UpdateProperties(ItemType, SelectMethod, UpdateMethod, InsertMethod, DeleteMethod, dataKeyName);
         }
@@ -3028,7 +3028,7 @@ namespace System.Web.UI.WebControls {
             }
 
             if (buttonControl.CausesValidation) {
-                throw new InvalidOperationException(SR.GetString(SR.CannotUseParentPostBackWhenValidating, this.GetType().Name, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CannotUseParentPostBackWhenValidating, this.GetType().Name, ID));
             }
 
             PostBackOptions options = new PostBackOptions(this, buttonControl.CommandName + "$" + buttonControl.CommandArgument);
@@ -3078,7 +3078,7 @@ namespace System.Web.UI.WebControls {
                     case FormViewMode.ReadOnly:
                         return DataBoundControlMode.ReadOnly;
                     default:
-                        Debug.Fail("shouldn't get here!");
+                        System.Web.Util.Debug.Fail("shouldn't get here!");
                         return DataBoundControlMode.ReadOnly;
                 }
             }

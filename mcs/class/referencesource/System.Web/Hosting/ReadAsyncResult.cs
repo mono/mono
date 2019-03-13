@@ -45,7 +45,7 @@ namespace System.Web.Hosting {
         private unsafe void CopyBytes(IntPtr pbAsyncReceiveBuffer, int bytesRead) {
             byte * src = ((byte *)pbAsyncReceiveBuffer);
             fixed (byte * dst = _buffer) {
-                StringUtil.memcpyimpl(src, dst + _offset, bytesRead);
+                System.Web.Util.StringUtil.memcpyimpl(src, dst + _offset, bytesRead);
             }
         }
 

@@ -17,6 +17,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.Xml;
     using Pair = System.Web.UI.Pair;
+    
 
     //
     // ConfigureCapabilities is used to configure the CapabilitiesEvaluator object
@@ -131,7 +132,7 @@ namespace System.Web.Configuration {
             }
             else {
                 throw new ConfigurationErrorsException(
-                                                SR.GetString(SR.Unknown_tag_in_caps_config, element.Name), 
+                                                System.Web.SR.GetString(System.Web.SR.Unknown_tag_in_caps_config, element.Name), 
                                                 element);
             }
 
@@ -142,7 +143,7 @@ namespace System.Web.Configuration {
 
             if (matchpat == null) {
                 if (testpat != null)
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Cannot_specify_test_without_match), element);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Cannot_specify_test_without_match), element);
                 regex = null;
                 pat = null;
             }
@@ -188,7 +189,7 @@ namespace System.Web.Configuration {
                                 }
                                 else {
                                     throw new ConfigurationErrorsException(
-                                                    SR.GetString(SR.Result_must_be_at_the_top_browser_section), 
+                                                    System.Web.SR.GetString(System.Web.SR.Result_must_be_at_the_top_browser_section), 
                                                     child);
                                 }
                                 break;
@@ -196,7 +197,7 @@ namespace System.Web.Configuration {
                             case "file": 
                                 if (parseState.IsExternalFile) {
                                     throw new ConfigurationErrorsException(
-                                                    SR.GetString(SR.File_element_only_valid_in_config),
+                                                    System.Web.SR.GetString(System.Web.SR.File_element_only_valid_in_config),
                                                     child);
                                 }
                                 ProcessFile(parseState.FileList, child);
@@ -285,34 +286,18 @@ namespace System.Web.Configuration {
 
             HttpConfigurationContext httpConfigurationContext = (HttpConfigurationContext) configurationContext;
             string configurationDirectory = null;
-            bool useAssert = false;
-
+            
             //
             // Only assert to read cap files when parsing machine.config 
             // (allow device updates to work in restricted trust levels).
             //
             // Machine.config can be securely identified by the context being 
             // an HttpConfigurationContext with null path.
-            //
-            try {
-                if (httpConfigurationContext.VirtualPath == null) {
-                    useAssert = true;
-                    // we need to assert here to get the file path from ConfigurationException
-                    FileIOPermission fiop = new FileIOPermission(PermissionState.None);
-                    fiop.AllFiles = FileIOPermissionAccess.PathDiscovery;
-                    fiop.Assert();
-                }
-                
-                Pair pair0 = (Pair)parseState.FileList[0];
-                XmlNode srcAttribute = (XmlNode)pair0.Second;
-                configurationDirectory = Path.GetDirectoryName(ConfigurationErrorsException.GetFilename(srcAttribute));
-            }
-            finally {
-                if (useAssert) {
-                    CodeAccessPermission.RevertAssert();
-                }
-            }
-
+            //                            
+            Pair pair0 = (Pair)parseState.FileList[0];
+            XmlNode srcAttribute = (XmlNode)pair0.Second;
+            configurationDirectory = Path.GetDirectoryName(ConfigurationErrorsException.GetFilename(srcAttribute));
+            
             //
             // 2) iterate through list of referenced files, builing rule lists for each
             //
@@ -320,47 +305,33 @@ namespace System.Web.Configuration {
                 string srcFilename = (string)pair.First;
                 string fullFilename = Path.Combine(configurationDirectory, srcFilename);
 
-                XmlNode section;
+                XmlNode section;                                                  
+                Exception fcmException = null;
+                    
                 try {
-                    if (useAssert) {
-                        InternalSecurityPermissions.FileReadAccess(fullFilename).Assert();
-                    }
-                    
-                    Exception fcmException = null;
-                    
-                    try {
-                        HttpConfigurationSystem.AddFileDependency(fullFilename);
-                    }
-                    catch (Exception e) {
-                        fcmException = e;
-                    }
-
-                    ConfigXmlDocument configDoc = new ConfigXmlDocument();
-                    
-                    try {
-                        configDoc.Load(fullFilename);
-                        section = configDoc.DocumentElement;
-                    }
-                    catch (Exception e) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Error_loading_XML_file, fullFilename, e.Message), 
-                                        e, (XmlNode)pair.Second);
-                    }
-
-                    if (fcmException != null) {
-                        throw fcmException;
-                    }
+                    HttpConfigurationSystem.AddFileDependency(fullFilename);
                 }
-                finally {
-                    if (useAssert) {
-                        // Cannot apply next FileReadAccess PermissionSet unless 
-                        // current set is explicitly reverted.  Also minimizes
-                        // granted permissions.
-                        CodeAccessPermission.RevertAssert();
-                    }
+                catch (Exception e) {
+                    fcmException = e;
                 }
+
+                ConfigXmlDocument configDoc = new ConfigXmlDocument();
                 
+                try {
+                    configDoc.Load(fullFilename);
+                    section = configDoc.DocumentElement;
+                }
+                catch (Exception e) {
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Error_loading_XML_file, fullFilename, e.Message), 
+                                    e, (XmlNode)pair.Second);
+                }
+
+                if (fcmException != null) {
+                    throw fcmException;
+                }
+                                
                 if (section.Name != parseState.SectionName) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Capability_file_root_element, parseState.SectionName), 
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Capability_file_root_element, parseState.SectionName), 
                                     section);
                 }
                     
@@ -421,7 +392,7 @@ namespace System.Web.Configuration {
                     match = errRegex.Match(text, textpos);
 
                     throw new ConfigurationErrorsException(
-                                    SR.GetString(SR.Problem_reading_caps_config, match.ToString()), 
+                                    System.Web.SR.GetString(System.Web.SR.Problem_reading_caps_config, match.ToString()), 
                                     ConfigurationErrorsException.GetFilename(node),
                                     lineNumber);
                 }

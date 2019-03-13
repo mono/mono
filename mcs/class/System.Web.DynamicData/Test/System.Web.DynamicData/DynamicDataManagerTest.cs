@@ -67,8 +67,36 @@ namespace MonoTests.System.Web.DynamicData
 		}
 	}
 
-	class MyDataBoundControl : DataBoundControl
-	{ }
+	class MyDataBoundControl : MyBaseDataBoundControl 
+	{}
+
+	class MyDataBoundControl2 : MyBaseDataBoundControl, IDataBoundControl
+	{ 
+		public string DataSourceID { 
+            get; 
+            set; 
+        }
+ 
+        public IDataSource DataSourceObject { 
+            get; 
+        }
+ 
+        public object DataSource { 
+            get;
+            set;
+        }
+ 
+        public string[] DataKeyNames { 
+            get; 
+            set; 
+        }        
+ 
+        public string DataMember { 
+            get; 
+            set; 
+        }
+
+	}
 
 	class MyDynamicDataManager : DynamicDataManager
 	{
@@ -124,11 +152,13 @@ namespace MonoTests.System.Web.DynamicData
 			ddm.RegisterControl(control);
 		}
 
+// NOTE: The DMgr is a bit different in that it expects an IDataBoundControl interface
+
 		[Test]
 		public void RegisterControl_ControlIsDataBoundControl()
 		{
 			var ddm = new DynamicDataManager();
-			var control = new MyDataBoundControl();
+			var control = new MyDataBoundControl2();
 			ddm.RegisterControl(control);
 		}
 
@@ -136,50 +166,19 @@ namespace MonoTests.System.Web.DynamicData
 		public void RegisterControl_ControlIsDataBoundControl2()
 		{
 			var ddm = new DynamicDataManager();
-			var control = new MyDataBoundControl();
+			var control = new MyDataBoundControl2();
 			ddm.RegisterControl(control, false);
 			ddm.RegisterControl(control, true);
 		}
 
 #region Supported controls
 		// Checks for which controls are supported
-		[Test]
-		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_AdRotator_Test ()
-		{
-			var ddm = new DynamicDataManager ();
-			var control = Activator.CreateInstance (typeof (AdRotator)) as Control;
-			ddm.RegisterControl (control);
-		}
-
-		[Test]
-		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_BulletedList_Test ()
-		{
-			var ddm = new DynamicDataManager ();
-			var control = Activator.CreateInstance (typeof (BulletedList)) as Control;
-			ddm.RegisterControl (control);
-		}
-
-		[Test]
-		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_CheckBoxList_Test ()
-		{
-			var ddm = new DynamicDataManager ();
-			var control = Activator.CreateInstance (typeof (CheckBoxList)) as Control;
-			ddm.RegisterControl (control);
-		}
-
+	
 		[Test]
 		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_DetailsView_Test ()
 		{
 			var ddm = new DynamicDataManager ();
 			var control = Activator.CreateInstance (typeof (DetailsView)) as Control;
-			ddm.RegisterControl (control);
-		}
-
-		[Test]
-		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_DropDownList_Test ()
-		{
-			var ddm = new DynamicDataManager ();
-			var control = Activator.CreateInstance (typeof (DropDownList)) as Control;
 			ddm.RegisterControl (control);
 		}
 
@@ -196,22 +195,6 @@ namespace MonoTests.System.Web.DynamicData
 		{
 			var ddm = new DynamicDataManager ();
 			var control = Activator.CreateInstance (typeof (GridView)) as Control;
-			ddm.RegisterControl (control);
-		}
-
-		[Test]
-		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_ListBox_Test ()
-		{
-			var ddm = new DynamicDataManager ();
-			var control = Activator.CreateInstance (typeof (ListBox)) as Control;
-			ddm.RegisterControl (control);
-		}
-
-		[Test]
-		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_RadioButtonList_Test ()
-		{
-			var ddm = new DynamicDataManager ();
-			var control = Activator.CreateInstance (typeof (RadioButtonList)) as Control;
 			ddm.RegisterControl (control);
 		}
 
@@ -237,6 +220,63 @@ namespace MonoTests.System.Web.DynamicData
 #endregion
 		
 #region Unsupported controls
+
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_AdRotator_Test ()
+		{
+			var ddm = new DynamicDataManager ();
+			var control = Activator.CreateInstance (typeof (AdRotator)) as Control;
+			ddm.RegisterControl (control);
+		}
+
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_BulletedList_Test ()
+		{
+			var ddm = new DynamicDataManager ();
+			var control = Activator.CreateInstance (typeof (BulletedList)) as Control;
+			ddm.RegisterControl (control);
+		}
+
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_CheckBoxList_Test ()
+		{
+			var ddm = new DynamicDataManager ();
+			var control = Activator.CreateInstance (typeof (CheckBoxList)) as Control;
+			ddm.RegisterControl (control);
+		}
+
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_DropDownList_Test ()
+		{
+			var ddm = new DynamicDataManager ();
+			var control = Activator.CreateInstance (typeof (DropDownList)) as Control;
+			ddm.RegisterControl (control);
+		}
+
+
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_ListBox_Test ()
+		{
+			var ddm = new DynamicDataManager ();
+			var control = Activator.CreateInstance (typeof (ListBox)) as Control;
+			ddm.RegisterControl (control);
+		}
+
+		[Test]
+		[ExpectedException (typeof (Exception))]
+		public void DynamicManagerRegisterControl_System_Web_UI_WebControls_RadioButtonList_Test ()
+		{
+			var ddm = new DynamicDataManager ();
+			var control = Activator.CreateInstance (typeof (RadioButtonList)) as Control;
+			ddm.RegisterControl (control);
+		}
+
+
 		[Test]
 		[ExpectedException (typeof (Exception))]
 		public void DynamicManagerRegisterControl_System_Web_UI_Control_Test ()

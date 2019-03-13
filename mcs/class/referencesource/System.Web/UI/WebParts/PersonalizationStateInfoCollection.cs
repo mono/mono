@@ -74,11 +74,11 @@ namespace System.Web.UI.WebControls.WebParts {
             // VSWhidbey 376063: avoid key duplicate, we check here first before we add.
             if (_indices.ContainsKey(key)) {
                 if (userData != null) {
-                    throw new ArgumentException(SR.GetString(SR.PersonalizationStateInfoCollection_CouldNotAddUserStateInfo,
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PersonalizationStateInfoCollection_CouldNotAddUserStateInfo,
                             key.Path, key.Username));
                 }
                 else {
-                    throw new ArgumentException(SR.GetString(SR.PersonalizationStateInfoCollection_CouldNotAddSharedStateInfo,
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PersonalizationStateInfoCollection_CouldNotAddSharedStateInfo,
                             key.Path));
                 }
             }
@@ -123,7 +123,7 @@ namespace System.Web.UI.WebControls.WebParts {
             if (!_indices.TryGetValue(key, out ipos)) {
                 return;
             }
-            Debug.Assert(ipos >= 0 && ipos < _values.Count);
+            System.Web.Util.Debug.Assert(ipos >= 0 && ipos < _values.Count);
 
             _indices.Remove(key);
             try {
@@ -171,7 +171,7 @@ namespace System.Web.UI.WebControls.WebParts {
             public string Username;
 
             internal Key(string path, string username) {
-                Debug.Assert(path != null);
+                System.Web.Util.Debug.Assert(path != null);
                 Path = path;
                 Username = username;
             }
@@ -190,7 +190,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     return 0;
                 }
 
-                Debug.Assert(key.Path != null);
+                System.Web.Util.Debug.Assert(key.Path != null);
                 int pathHashCode = key.Path.ToLowerInvariant().GetHashCode();
                 int usernameHashCode = 0;
                 if (key.Username != null) {

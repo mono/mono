@@ -14,6 +14,7 @@ namespace System.Web.Compilation {
     using System.Web.UI;
     using System.Web.Routing;
     using System.Collections.Generic;
+    
 
     [ExpressionPrefix("Routes")]
     [ExpressionEditor("System.Web.UI.Design.RouteUrlExpressionEditor, " + AssemblyRef.SystemDesign)]
@@ -85,7 +86,7 @@ namespace System.Web.Compilation {
                 return control.GetRouteUrl(routeName, routeParams);
             }
             else {
-                throw new InvalidOperationException(SR.GetString(SR.RouteUrlExpression_InvalidExpression));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.RouteUrlExpression_InvalidExpression));
             }
         }
     }

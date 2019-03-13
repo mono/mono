@@ -35,7 +35,7 @@ namespace System.Web.Configuration {
             _properties.Add(_propAutoImportVBNamespace);
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

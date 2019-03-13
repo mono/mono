@@ -45,14 +45,6 @@ using System.ServiceModel.Description;
 
 namespace System.Web.Script.Services
 {
-	internal sealed class JsonResult
-	{
-		public readonly object d;
-		public JsonResult (object result) {
-			d = result;
-		}
-	}
-
 	internal abstract class LogicalTypeInfo
 	{
 		public static LogicalTypeInfo CreateTypeInfo (Type t, string filePath)
@@ -60,7 +52,7 @@ namespace System.Web.Script.Services
 			if (t.GetCustomAttributes (typeof (ServiceContractAttribute), false).Length > 0)
 				return new WcfLogicalTypeInfo (t, filePath);
 			else
-				return new AsmxLogicalTypeInfo (t, filePath);
+				throw new NotSupportedException ("The type " + t.Name + " is not supported");
 		}
 
 		internal abstract class LogicalMethodInfo
@@ -185,11 +177,10 @@ Type.registerNamespace('{0}');",
 		protected LogicalTypeInfo (Type t, string filePath)
 		{
 			_type = t;
-			bool isPage = _type.IsSubclassOf (typeof (System.Web.UI.Page));
+			bool isPage = false;
 
 			var logicalMethods = GetLogicalMethods (isPage);
-			//_logicalMethods = (LogicalMethodInfo []) list.ToArray (typeof (LogicalMethodInfo));
-
+			
 			_methodMap = new Hashtable (logicalMethods.Count);
 			for (int i = 0; i < logicalMethods.Count; i++)
 				_methodMap.Add (logicalMethods [i].MethodName, logicalMethods [i]);
@@ -267,7 +258,7 @@ if (typeof({0}) === 'undefined') {{", className);
 {0}.registerEnum('{0}', {2});",
 				className,
 				// This method is also used for WCF, but for enum this should work ...
-				AsmxLogicalTypeInfo.JSSerializer.Serialize(GetEnumPrototypeDictionary (scriptType)),
+				SerializationHelper.JSSerializer.Serialize(GetEnumPrototypeDictionary (scriptType)),
 				Attribute.GetCustomAttribute (scriptType, typeof (FlagsAttribute)) != null ? "true" : "false");
 				
 			}
@@ -342,234 +333,6 @@ if (typeof({0}) === 'undefined') {{", className);
 
 		public LogicalMethodInfo this [string method] {
 			get { return (LogicalMethodInfo) _methodMap [method]; }
-		}
-	}
-
-	internal sealed class AsmxLogicalTypeInfo : LogicalTypeInfo
-	{
-		#region LogicalMethodInfo
-
-		public sealed class AsmxLogicalMethodInfo : LogicalTypeInfo.LogicalMethodInfo
-		{
-			readonly LogicalTypeInfo _typeInfo;
-
-			readonly WebMethodAttribute _wma;
-
-			readonly ScriptMethodAttribute _sma;
-
-			readonly XmlSerializer _xmlSer;
-
-			public AsmxLogicalMethodInfo (LogicalTypeInfo typeInfo, MethodInfo method)
-				: base (typeInfo, method)
-			{
-				_typeInfo = typeInfo;
-
-				_wma = (WebMethodAttribute) Attribute.GetCustomAttribute (method, typeof (WebMethodAttribute));
-
-				_sma = (ScriptMethodAttribute) Attribute.GetCustomAttribute (method, typeof (ScriptMethodAttribute));
-				if (_sma == null)
-					_sma = ScriptMethodAttribute.Default;
-
-				if (ScriptMethod.ResponseFormat == ResponseFormat.Xml
-					&& MethodInfo.ReturnType != typeof (void)) {
-					Type retType = MethodInfo.ReturnType;
-					if (Type.GetTypeCode (retType) != TypeCode.String || ScriptMethod.XmlSerializeString)
-						_xmlSer = new XmlSerializer (retType);
-				}
-			}
-
-			IDictionary<string,object> BuildInvokeParameters (HttpRequest request)
-			{
-				return "GET".Equals (request.RequestType, StringComparison.OrdinalIgnoreCase) ?
-					GetNameValueCollectionDictionary (request.QueryString) :
-					(IDictionary<string, object>) JavaScriptSerializer.DefaultSerializer.DeserializeObjectInternal (new StreamReader (request.InputStream, request.ContentEncoding));
-			}
-
-			IDictionary <string, object> GetNameValueCollectionDictionary (NameValueCollection nvc)
-			{
-				var ret = new Dictionary <string, object> ();
-
-				for (int i = nvc.Count - 1; i >= 0; i--)
-					ret.Add (nvc.GetKey (i), nvc.Get (i));
-
-				return ret;
-			}
-
-			public override void Invoke (HttpRequest request, HttpResponse response) {
-				var writer = response.Output;
-				IDictionary<string, object> @params = BuildInvokeParameters (request);
-
-				object [] pp = null;
-				if (HasParameters) {
-					Type ptype;
-					int i;
-					object value;
-					pp = new object [_params.Length];
-
-					foreach (KeyValuePair<string, object> pair in @params) {
-						if (!_paramMap.TryGetValue (pair.Key, out i))
-							continue;
-
-						value = pair.Value;
-						ptype = _params [i].ParameterType;
-						if (ptype == typeof (System.Object))
-							pp [i] = value;
-						else
-							pp [i] = AsmxLogicalTypeInfo.JSSerializer.ConvertToType (value, ptype);
-					}
-				}
-
-				object target = MethodInfo.IsStatic ? null : Activator.CreateInstance (_typeInfo._type);
-				object result = MethodInfo.Invoke (target, pp);
-				if (_xmlSer != null) {
-					XmlTextWriter xwriter = new XmlTextWriter (writer);
-					xwriter.Formatting = Formatting.None;
-					_xmlSer.Serialize (xwriter, result);
-				}
-				else
-				{
-					result = new JsonResult (result);
-					AsmxLogicalTypeInfo.JSSerializer.Serialize (result, writer);
-				}
-			}
-
-			public override string MethodName { get { return String.IsNullOrEmpty (WebMethod.MessageName) ? MethodInfo.Name : WebMethod.MessageName; } }
-
-			public ScriptMethodAttribute ScriptMethod { get { return _sma; } }
-			public WebMethodAttribute WebMethod { get { return _wma; } }
-			public override bool UseHttpGet { get { return ScriptMethod.UseHttpGet; } }
-			public override bool EnableSession { get { return WebMethod.EnableSession; } }
-			public override ResponseFormat ResponseFormat { get { return ScriptMethod.ResponseFormat; } }
-		}
-
-		#endregion
-
-		//readonly LogicalMethodInfo [] _logicalMethods;
-		internal static readonly JavaScriptSerializer JSSerializer = new JavaScriptSerializer (null, true);
-
-		protected override List<LogicalMethodInfo> GetLogicalMethods (bool isPage)
-		{
-			BindingFlags bindingAttr = isPage ? (BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.Public) : (BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-			MethodInfo [] all_type_methods = _type.GetMethods (bindingAttr);
-			List<LogicalMethodInfo> logicalMethods = new List<LogicalMethodInfo> (all_type_methods.Length);
-			foreach (MethodInfo mi in all_type_methods) {
-				if (mi.IsPublic && 
-					mi.GetCustomAttributes (typeof (WebMethodAttribute), false).Length > 0)
-					logicalMethods.Add (new AsmxLogicalMethodInfo (this, mi));
-				else {
-					foreach (Type ifaceType in _type.GetInterfaces ()) {
-						if (ifaceType.GetCustomAttributes (typeof (WebServiceBindingAttribute), false).Length > 0) {
-							MethodInfo found = FindInInterface (ifaceType, mi);
-							if (found != null) {
-								if (found.GetCustomAttributes (typeof (WebMethodAttribute), false).Length > 0)
-									logicalMethods.Add (new AsmxLogicalMethodInfo (this, found));
-
-								break;
-							}
-						}
-					}
-				}
-			}
-			return logicalMethods;
-		}
-
-		internal AsmxLogicalTypeInfo (Type t, string filePath) 
-			: base (t, filePath)
-		{
-		}
-
-		IEnumerable<GenerateScriptTypeAttribute> GetGenerateScriptTypeAttributes () {
-			Hashtable generatedTypes = new Hashtable ();
-
-			foreach (MemberInfo mi in GetGenerateScriptTypes ()) {
-				GenerateScriptTypeAttribute [] gstas = (GenerateScriptTypeAttribute []) mi.GetCustomAttributes (typeof (GenerateScriptTypeAttribute), true);
-				if (gstas == null || gstas.Length == 0)
-					continue;
-
-				for (int i = 0; i < gstas.Length; i++) {
-					if (!generatedTypes.Contains (gstas [i].Type)) {
-						if (ShouldGenerateScript (gstas [i].Type, true)) {
-							generatedTypes [gstas [i].Type] = gstas [i].Type;
-							yield return gstas [i];
-						}
-					}
-				}
-			}
-
-			foreach (LogicalMethodInfo lmi in _methodMap.Values) {
-				foreach (Type t in lmi.GetParameterTypes ()) {
-					Type param = GetTypeToGenerate (t);
-					if (!generatedTypes.Contains (param)) {
-						if (ShouldGenerateScript (param, false)) {
-							generatedTypes [param] = param;
-							yield return new GenerateScriptTypeAttribute (param);
-						}
-					}
-				}
-			}
-		}
-
-		static Type GetTypeToGenerate (Type type) {
-			if (type.IsArray)
-				return type.GetElementType ();
-			if (type.IsGenericType) {
-				while (type.IsGenericType && type.GetGenericArguments ().Length == 1)
-					type = type.GetGenericArguments () [0];
-				return type;
-			}
-			return type;
-		}
-
-		static MethodInfo FindInInterface (Type ifaceType, MethodInfo method) {
-			int nameStartIndex = 0;
-			if (method.IsPrivate) {
-				nameStartIndex = method.Name.LastIndexOf ('.');
-				if (nameStartIndex < 0)
-					nameStartIndex = 0;
-				else {
-					if (String.CompareOrdinal (
-						ifaceType.FullName.Replace ('+', '.'), 0, method.Name, 0, nameStartIndex) != 0)
-						return null;
-
-					nameStartIndex++;
-				}
-			}
-			foreach (MethodInfo mi in ifaceType.GetMembers ()) {
-				if (method.ReturnType == mi.ReturnType &&
-					String.CompareOrdinal (method.Name, nameStartIndex, mi.Name, 0, mi.Name.Length) == 0) {
-					ParameterInfo [] rpi = method.GetParameters ();
-					ParameterInfo [] lpi = mi.GetParameters ();
-					if (rpi.Length == lpi.Length) {
-						bool match = true;
-						for (int i = 0; i < rpi.Length; i++) {
-							if (rpi [i].ParameterType != lpi [i].ParameterType) {
-								match = false;
-								break;
-							}
-						}
-
-						if (match)
-							return mi;
-					}
-				}
-			}
-
-			return null;
-		}
-
-		protected override void GenerateTypeRegistrationScript (StringBuilder proxy, List<string> registeredNamespaces)
-		{
-			bool gtc = false;
-
-			foreach (GenerateScriptTypeAttribute gsta in GetGenerateScriptTypeAttributes ()) {
-				if (!gtc && !gsta.Type.IsEnum) {
-					proxy.Append (
-@"
-var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
-					gtc = true;
-				}
-				GenerateTypeRegistrationScript (proxy, gsta.Type, gsta.ScriptTypeId, registeredNamespaces);
-			}
 		}
 	}
 
@@ -672,5 +435,10 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 				throw new NotSupportedException ();
 			}
 		}
+	}
+
+	internal sealed class SerializationHelper 
+	{		
+		internal static readonly JavaScriptSerializer JSSerializer = new MonoJavaScriptSerializer (null, true);
 	}
 }

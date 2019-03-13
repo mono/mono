@@ -27,8 +27,10 @@ namespace System.Web.UI {
 
         [
         SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID"),
-        TypeConverter("System.Web.UI.Design.PostBackTriggerControlIDConverter, " +
-            AssemblyRef.SystemWebExtensionsDesign)
+#if !MONO
+        //TypeConverter("System.Web.UI.Design.PostBackTriggerControlIDConverter, " +
+        //    AssemblyRef.SystemWebExtensionsDesign)
+#endif
         ]
         public new string ControlID {
             get {

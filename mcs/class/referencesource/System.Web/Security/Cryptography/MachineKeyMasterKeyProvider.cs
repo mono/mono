@@ -9,6 +9,7 @@ namespace System.Web.Security.Cryptography {
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Web.Configuration;
+    
 
     // Gets this application's master keys from the <machineKey> element,
     // optionally going against the auto-gen keys if AutoGenerate has been specified.
@@ -114,7 +115,7 @@ namespace System.Web.Security.Cryptography {
 
                         default:
                             throw ConfigUtil.MakeConfigurationErrorsException(
-                                message: SR.GetString(errorResourceString),
+                                message: System.Web.SR.GetString(errorResourceString),
                                 configProperty: _machineKeySection.ElementInformation.Properties[configAttributeName]);
                     }
                 }
@@ -123,7 +124,7 @@ namespace System.Web.Security.Cryptography {
             if (!autoGenerate) {
                 // at the absolute minimum, we must be configured to autogenerate
                 throw ConfigUtil.MakeConfigurationErrorsException(
-                    message: SR.GetString(errorResourceString),
+                    message: System.Web.SR.GetString(errorResourceString),
                     configProperty: _machineKeySection.ElementInformation.Properties[configAttributeName]);
             }
 
@@ -153,7 +154,7 @@ namespace System.Web.Security.Cryptography {
                     configAttributeValue: _machineKeySection.DecryptionKey,
                     autogenKeyOffset: AUTOGEN_ENCRYPTION_OFFSET,
                     autogenKeyCount: AUTOGEN_ENCRYPTION_KEYLENGTH,
-                    errorResourceString: SR.Invalid_decryption_key);
+                    errorResourceString: System.Web.SR.Invalid_decryption_key);
             }
             return _encryptionKey;
         }
@@ -165,7 +166,7 @@ namespace System.Web.Security.Cryptography {
                     configAttributeValue: _machineKeySection.ValidationKey,
                     autogenKeyOffset: AUTOGEN_VALIDATION_OFFSET,
                     autogenKeyCount: AUTOGEN_VALIDATION_KEYLENGTH,
-                    errorResourceString: SR.Invalid_validation_key);
+                    errorResourceString: System.Web.SR.Invalid_validation_key);
             }
             return _validationKey;
         }

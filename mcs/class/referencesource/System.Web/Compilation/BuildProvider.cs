@@ -191,14 +191,14 @@ public abstract class BuildProvider {
 
     public static void RegisterBuildProvider(string extension, Type providerType) {
         if (String.IsNullOrEmpty(extension)) {
-            throw ExceptionUtil.ParameterNullOrEmpty("extension");
+            throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("extension");
         }
         if (providerType == null) {
             throw new ArgumentNullException("providerType");
         }
         if (!typeof(BuildProvider).IsAssignableFrom(providerType)) {
             // 
-            throw ExceptionUtil.ParameterInvalid("providerType");
+            throw System.Web.Util.ExceptionUtil.ParameterInvalid("providerType");
         }
         BuildManager.ThrowIfPreAppStartNotRunning();
 
@@ -208,7 +208,7 @@ public abstract class BuildProvider {
     }
 
     internal static BuildProviderInfo GetBuildProviderInfo(System.Web.Configuration.CompilationSection config, string extension) {
-        Debug.Assert(extension != null);
+        System.Web.Util.Debug.Assert(extension != null);
         var entry = config.BuildProviders[extension];
         if (entry != null) {
             return entry.BuildProviderInfo;
@@ -378,7 +378,7 @@ public abstract class BuildProvider {
         int resultFlags = (int) GetResultFlags(results);
         if (resultFlags != 0) {
             // Make sure only the lower bits are set
-            Debug.Assert((resultFlags & 0xFFFF0000) == 0);
+            System.Web.Util.Debug.Assert((resultFlags & 0xFFFF0000) == 0);
             resultFlags &= 0x0000FFFF;
 
             result.Flags |= resultFlags;
@@ -496,7 +496,7 @@ public abstract class BuildProvider {
         private readonly Type _type;
 
         public CompilationBuildProviderInfo(Type type) {
-            Debug.Assert(type != null);
+            System.Web.Util.Debug.Assert(type != null);
             _type = type;
         }
 
@@ -531,7 +531,7 @@ internal abstract class BuildProviderInfo {
                 typeof(BuildProviderAppliesToAttribute), /*inherit*/ true);
 
             if ((attrs != null) && (attrs.Length > 0)) {
-                Debug.Assert(attrs[0] is BuildProviderAppliesToAttribute);
+                System.Web.Util.Debug.Assert(attrs[0] is BuildProviderAppliesToAttribute);
                 _appliesTo = ((BuildProviderAppliesToAttribute)attrs[0]).AppliesTo;
             }
             else {

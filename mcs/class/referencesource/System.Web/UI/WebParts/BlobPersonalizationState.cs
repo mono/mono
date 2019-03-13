@@ -103,8 +103,8 @@ namespace System.Web.UI.WebControls.WebParts {
         /// </devdoc>
         private void ApplyPersonalization(Control control, string personalizationID, bool isWebPartManager,
                                           PersonalizationScope extractScope, GenericWebPart genericWebPart) {
-            Debug.Assert(control != null);
-            Debug.Assert(!String.IsNullOrEmpty(personalizationID));
+            System.Web.Util.Debug.Assert(control != null);
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(personalizationID));
 
             if (_personalizedControls == null) {
                 _personalizedControls = new HybridDictionary(/* caseInsensitive */ false);
@@ -112,7 +112,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 // We shouldn't be applying personalization to the same control more than once
                 if (_personalizedControls.Contains(personalizationID)) {
-                    throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_CantApply, personalizationID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_CantApply, personalizationID));
                 }
             }
 
@@ -120,7 +120,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 PersonalizableAttribute.GetPersonalizablePropertyEntries(control.GetType());
 
             if (SharedState == null) {
-                throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_NotLoaded));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_NotLoaded));
             }
 
             PersonalizationInfo sharedInfo = (PersonalizationInfo)SharedState[personalizationID];
@@ -159,7 +159,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     hasDataWebPart = genericWebPart;
                 }
                 else {
-                    Debug.Assert(control is WebPart);
+                    System.Web.Util.Debug.Assert(control is WebPart);
                     hasDataWebPart = (WebPart)control;
                 }
             }
@@ -171,7 +171,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
                 if (PersonalizationScope == PersonalizationScope.User) {
                     if (UserState == null) {
-                        throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_NotLoaded));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_NotLoaded));
                     }
 
                     userInfo = (PersonalizationInfo)UserState[personalizationID];
@@ -420,7 +420,7 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         private string CreatePersonalizationID(string ID, string genericWebPartID) {
-            Debug.Assert(!String.IsNullOrEmpty(ID));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(ID));
             if (!String.IsNullOrEmpty(genericWebPartID)) {
                 return ID + Control.ID_SEPARATOR + genericWebPartID;
             }
@@ -561,7 +561,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 // the data conforms to our known version
                 if ((deserializationException != null) ||
                     (version != (int)PersonalizationVersions.WhidbeyBeta2 && version != (int)PersonalizationVersions.WhidbeyRTM)) {
-                    throw new ArgumentException(SR.GetString(SR.BlobPersonalizationState_DeserializeError),
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_DeserializeError),
                                                 "data", deserializationException);
                 }
             }
@@ -578,15 +578,15 @@ namespace System.Web.UI.WebControls.WebParts {
         /// </devdoc>
         private void ExtractPersonalization(Control control, string personalizationID, bool isWebPartManager,
                                             PersonalizationScope scope, bool isStatic, GenericWebPart genericWebPart) {
-            Debug.Assert(control != null);
-            Debug.Assert(!String.IsNullOrEmpty(personalizationID));
+            System.Web.Util.Debug.Assert(control != null);
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(personalizationID));
 
             if (_extractedState == null) {
                 _extractedState = new HybridDictionary(/* caseInsensitive */ false);
             }
 
             if (_personalizedControls == null) {
-                throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_NotApplied));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_NotApplied));
             }
 
             ControlInfo ci = (ControlInfo)_personalizedControls[personalizationID];
@@ -594,7 +594,7 @@ namespace System.Web.UI.WebControls.WebParts {
             // However, it  will be null if the Control's ID has changed since we loaded personalization data.
             // This is not supported, but we should throw a helpful exception. (VSWhidbey 372354)
             if (ci == null) {
-                throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_CantExtract, personalizationID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_CantExtract, personalizationID));
             }
 
             ITrackingPersonalizable trackingPersonalizable = control as ITrackingPersonalizable;
@@ -741,7 +741,7 @@ namespace System.Web.UI.WebControls.WebParts {
                         hasDataWebPart = genericWebPart;
                     }
                     else {
-                        Debug.Assert(control is WebPart);
+                        System.Web.Util.Debug.Assert(control is WebPart);
                         hasDataWebPart = (WebPart)control;
                     }
                 }
@@ -800,7 +800,7 @@ namespace System.Web.UI.WebControls.WebParts {
         // personalized value has a type other than string.
         public override string GetAuthorizationFilter(string webPartID) {
             if (String.IsNullOrEmpty(webPartID)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("webPartID");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("webPartID");
             }
 
             return GetPersonalizedValue(webPartID, "AuthorizationFilter") as string;
@@ -825,7 +825,7 @@ namespace System.Web.UI.WebControls.WebParts {
                                                              IDictionary defaultPropertyState,
                                                              IDictionary initialPropertyState,
                                                              PersonalizationScope scope) {
-            Debug.Assert(control != null);
+            System.Web.Util.Debug.Assert(control != null);
 
             if (personalizableProperties.Count == 0) {
                 return null;
@@ -842,7 +842,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 }
 
                 PropertyInfo pi = property.PropertyInfo;
-                Debug.Assert(pi != null);
+                System.Web.Util.Debug.Assert(pi != null);
 
                 // 
                 string name = (string)entry.Key;
@@ -872,11 +872,11 @@ namespace System.Web.UI.WebControls.WebParts {
         // Returns the value of a personalized property on a control
         // Returns null if there is no personalized value for the property
         private object GetPersonalizedValue(string personalizationID, string propertyName) {
-            Debug.Assert(!String.IsNullOrEmpty(personalizationID));
-            Debug.Assert(!String.IsNullOrEmpty(propertyName));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(personalizationID));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(propertyName));
 
             if (SharedState == null) {
-                throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_NotLoaded));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_NotLoaded));
             }
 
             PersonalizationInfo sharedInfo = (PersonalizationInfo)SharedState[personalizationID];
@@ -889,7 +889,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
             else {
                 if (UserState == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_NotLoaded));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_NotLoaded));
                 }
 
                 PersonalizationInfo userInfo = (PersonalizationInfo)UserState[personalizationID];
@@ -962,7 +962,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private void RoundTripWebPartPersonalization(string ID, string genericWebPartID) {
             if (String.IsNullOrEmpty(ID)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("ID");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("ID");
             }
 
             // Round-trip personalization for control/WebPart
@@ -977,13 +977,13 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         private void RoundTripWebPartPersonalization(string personalizationID) {
-            Debug.Assert(personalizationID != null);
+            System.Web.Util.Debug.Assert(personalizationID != null);
             // Can't check that personalizationID is valid, since there may be no data
             // for even a valid ID.
 
             if (PersonalizationScope == PersonalizationScope.Shared) {
                 if (SharedState == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_NotLoaded));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_NotLoaded));
                 }
                 if (SharedState.Contains(personalizationID)) {
                     _extractedState[personalizationID] = (PersonalizationInfo)SharedState[personalizationID];
@@ -991,7 +991,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
             else {
                 if (UserState == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_NotLoaded));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_NotLoaded));
                 }
                 if (UserState.Contains(personalizationID)) {
                     _extractedState[personalizationID] = (PersonalizationInfo)UserState[personalizationID];
@@ -1107,11 +1107,11 @@ namespace System.Web.UI.WebControls.WebParts {
         /// </devdoc>
         private void SetControlDirty(Control control, string personalizationID, bool isWebPartManager,
                                      bool forceSetDirty) {
-            Debug.Assert(control != null);
-            Debug.Assert(!String.IsNullOrEmpty(personalizationID));
+            System.Web.Util.Debug.Assert(control != null);
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(personalizationID));
 
             if (_personalizedControls == null) {
-                throw new InvalidOperationException(SR.GetString(SR.BlobPersonalizationState_NotApplied));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.BlobPersonalizationState_NotApplied));
             }
 
             ControlInfo info = (ControlInfo)_personalizedControls[personalizationID];
@@ -1162,7 +1162,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     (scope == PersonalizationScope.Shared || property.Scope == PersonalizationScope.User)) {
 
                     PropertyInfo pi = property.PropertyInfo;
-                    Debug.Assert(pi != null);
+                    System.Web.Util.Debug.Assert(pi != null);
 
                     // If SetProperty() throws an exception, the property will be added to the unusedProperties collection
                     try {

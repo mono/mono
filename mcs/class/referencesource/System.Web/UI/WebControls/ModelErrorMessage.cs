@@ -24,7 +24,7 @@ namespace System.Web.UI.WebControls {
         [
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.ModelErrorMessage_ModelStateKey),
+        WebSysDescription(System.Web.SR.ModelErrorMessage_ModelStateKey),
         DefaultValue("")
         ]
         public string ModelStateKey {
@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         IDReferenceProperty,
         WebCategory("Behavior"),
-        WebSysDescription(SR.ModelErrorMessage_AssociatedControlID),
+        WebSysDescription(System.Web.SR.ModelErrorMessage_AssociatedControlID),
         Themeable(false)
         ]
         public override string AssociatedControlID {
@@ -57,7 +57,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(false),
-        WebSysDescription(SR.ModelErrorMessage_SetFocusOnError)
+        WebSysDescription(System.Web.SR.ModelErrorMessage_SetFocusOnError)
         ]
         public bool SetFocusOnError {
             get {

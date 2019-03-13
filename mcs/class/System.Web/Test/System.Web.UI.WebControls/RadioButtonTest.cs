@@ -280,7 +280,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 				return base.LoadPostData (postDataKey, postCollection);
 			}
 
-			protected internal override void OnLoad (EventArgs e)
+			protected override void OnLoad (EventArgs e)
 			{
 				if (WebTest.CurrentTest.UserData == null) {
 					ArrayList list = new ArrayList ();

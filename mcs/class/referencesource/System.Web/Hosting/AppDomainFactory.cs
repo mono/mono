@@ -108,14 +108,15 @@ namespace System.Web.Hosting {
     [ComImport, Guid("02998279-7175-4d59-aa5a-fb8e44d4ca9d"), System.Runtime.InteropServices.InterfaceTypeAttribute(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAppManagerAppDomainFactory {
 #if !FEATURE_PAL // FEATURE_PAL does not enable COM
+        [SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)]
+        Object Create([In, MarshalAs(UnmanagedType.BStr)] String appId,
+                      [In, MarshalAs(UnmanagedType.BStr)] String appPath);
+
         [return: MarshalAs(UnmanagedType.Interface)]
 #else // !FEATURE_PAL
         [SecurityPermission(SecurityAction.LinkDemand, Unrestricted=true)]
         Object Create(String appId, String appPath);
 #endif // !FEATURE_PAL
-        [SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)]
-        Object Create([In, MarshalAs(UnmanagedType.BStr)] String appId, 
-                      [In, MarshalAs(UnmanagedType.BStr)] String appPath);
 
         [SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)]
         void Stop();
@@ -158,7 +159,7 @@ namespace System.Web.Hosting {
                     appPath = file.FullName;
                 }
 
-                if (!StringUtil.StringEndsWith(appPath, '\\')) {
+                if (!System.Web.Util.StringUtil.StringEndsWith(appPath, '\\')) {
                     appPath = appPath + "\\";
                 }
 
@@ -179,7 +180,7 @@ namespace System.Web.Hosting {
 #endif // FEATURE_PAL 
             }
             catch (Exception e) {
-                Debug.Trace("internal", "AppDomainFactory::Create failed with " + e.GetType().FullName + ": " + e.Message + "\r\n" + e.StackTrace);
+                System.Web.Util.Debug.Trace("internal", "AppDomainFactory::Create failed with " + e.GetType().FullName + ": " + e.Message + "\r\n" + e.StackTrace);
                 throw;
             }
         }

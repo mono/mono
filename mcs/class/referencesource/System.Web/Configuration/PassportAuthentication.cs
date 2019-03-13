@@ -88,6 +88,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     [Obsolete("This type is obsolete. The Passport authentication product is no longer supported and has been superseded by Live ID.")]
     public sealed class PassportAuthentication : ConfigurationElement {
@@ -106,7 +107,7 @@ namespace System.Web.Configuration {
         public PassportAuthentication() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -122,7 +123,7 @@ namespace System.Web.Configuration {
                 base[_propRedirectUrl] = value;
             }
         }
-        protected override ConfigurationElementProperty ElementProperty {
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -131,13 +132,13 @@ namespace System.Web.Configuration {
             if (value == null) {
                 throw new ArgumentNullException("passport");
             }
-            Debug.Assert(value is PassportAuthentication);
+            System.Web.Util.Debug.Assert(value is PassportAuthentication);
 
             PassportAuthentication elem = (PassportAuthentication)value;
 
-            if (StringUtil.StringStartsWith(elem.RedirectUrl, "\\\\") || 
+            if (System.Web.Util.StringUtil.StringStartsWith(elem.RedirectUrl, "\\\\") || 
                 (elem.RedirectUrl.Length > 1 && elem.RedirectUrl[1] == ':')) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Auth_bad_url));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Auth_bad_url));
             }
         }
     } // class PassportAuthentication

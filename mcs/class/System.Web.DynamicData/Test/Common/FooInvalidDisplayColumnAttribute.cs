@@ -6,7 +6,7 @@ namespace MonoTests.Common
 {
 	// Parameters: display column, sort column, whether sort is descending
 	[DisplayColumn ("NoSuchColumn", "NoSuchColumn", false)]
-	class FooInvalidDisplayColumnAttribute
+	public class FooInvalidDisplayColumnAttribute
 	{
 		public string Column1 { get; set; }
 		public int Column2 { get; set; }

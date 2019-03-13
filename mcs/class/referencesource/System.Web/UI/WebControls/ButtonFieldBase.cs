@@ -9,6 +9,7 @@ namespace System.Web.UI.WebControls {
     using System;
     using System.Collections;    
     using System.ComponentModel;
+    
 
 
     /// <devdoc>
@@ -23,7 +24,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Link),
-        WebSysDescription(SR.ButtonFieldBase_ButtonType)
+        WebSysDescription(System.Web.SR.ButtonFieldBase_ButtonType)
         ]
         public virtual ButtonType ButtonType {
             get {
@@ -48,7 +49,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.ButtonFieldBase_CausesValidation)
+        WebSysDescription(System.Web.SR.ButtonFieldBase_CausesValidation)
         ]
         public virtual bool CausesValidation {
             get {
@@ -71,7 +72,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.DataControlField_ShowHeader)
+        WebSysDescription(System.Web.SR.DataControlField_ShowHeader)
         ]
         public override bool ShowHeader {
             get {
@@ -94,7 +95,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.ButtonFieldBase_ValidationGroup)
+        WebSysDescription(System.Web.SR.ButtonFieldBase_ValidationGroup)
         ]
         public virtual string ValidationGroup {
             get {

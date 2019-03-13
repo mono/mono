@@ -32,12 +32,16 @@ namespace System.Web.UI {
     using System.Web.Script.Serialization;
     using System.Web.Script.Services;
     using System.Web.Security.Cryptography;
+#if !MONO
     using System.Web.UI.Design;
+#endif
     using System.Web.Util;
 
     [
     DefaultProperty("Scripts"),
+#if !MONO
     Designer("System.Web.UI.Design.ScriptManagerDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+#endif
     NonVisualControl(),
     ParseChildren(true),
     PersistChildren(false),
@@ -368,7 +372,7 @@ namespace System.Web.UI {
         [
         ResourceDescription("ScriptManager_EmptyPageUrl"),
         Category("Appearance"),
-        Editor(typeof(UrlEditor), typeof(UITypeEditor)),
+        //Editor(typeof(UrlEditor), typeof(UITypeEditor)),
         DefaultValue(""),
         UrlProperty,
         SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Consistent with other asp.net url properties.")
@@ -723,8 +727,8 @@ namespace System.Web.UI {
         [
         ResourceDescription("ScriptManager_Scripts"),
         Category("Behavior"),
-        Editor("System.Web.UI.Design.CollectionEditorBase, " +
-            AssemblyRef.SystemWebExtensionsDesign, typeof(UITypeEditor)),
+        //Editor("System.Web.UI.Design.CollectionEditorBase, " +
+        //    AssemblyRef.SystemWebExtensionsDesign, typeof(UITypeEditor)),
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         MergableProperty(false),
@@ -756,8 +760,10 @@ namespace System.Web.UI {
         [
         ResourceDescription("ScriptManager_Services"),
         Category("Behavior"),
+#if !MONO
         Editor("System.Web.UI.Design.ServiceReferenceCollectionEditor, " +
             AssemblyRef.SystemWebExtensionsDesign, typeof(UITypeEditor)),
+#endif
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         MergableProperty(false),

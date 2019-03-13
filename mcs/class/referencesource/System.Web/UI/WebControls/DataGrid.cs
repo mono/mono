@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Paging"),
         DefaultValue(false),
-        WebSysDescription(SR.DataGrid_AllowCustomPaging)
+        WebSysDescription(System.Web.SR.DataGrid_AllowCustomPaging)
         ]
         public virtual bool AllowCustomPaging {
             get {
@@ -149,7 +149,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Paging"),
         DefaultValue(false),
-        WebSysDescription(SR.DataGrid_AllowPaging)
+        WebSysDescription(System.Web.SR.DataGrid_AllowPaging)
         ]
         public virtual bool AllowPaging {
             get {
@@ -170,7 +170,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.DataGrid_AllowSorting)
+        WebSysDescription(System.Web.SR.DataGrid_AllowSorting)
         ]
         public virtual bool AllowSorting {
             get {
@@ -195,7 +195,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.DataGrid_AlternatingItemStyle)
+        WebSysDescription(System.Web.SR.DataGrid_AlternatingItemStyle)
         ]
         public virtual TableItemStyle AlternatingItemStyle {
             get {
@@ -216,7 +216,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.DataControls_AutoGenerateColumns)
+        WebSysDescription(System.Web.SR.DataControls_AutoGenerateColumns)
         ]
         public virtual bool AutoGenerateColumns {
             get {
@@ -240,7 +240,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.WebControl_BackImageUrl)
+        WebSysDescription(System.Web.SR.WebControl_BackImageUrl)
         ]
         public virtual string BackImageUrl {
             get {
@@ -261,7 +261,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.DataGrid_CurrentPageIndex)
+        WebSysDescription(System.Web.SR.DataGrid_CurrentPageIndex)
         ]
         public int CurrentPageIndex {
             get {
@@ -289,7 +289,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Default"),
-        WebSysDescription(SR.DataControls_Columns)
+        WebSysDescription(System.Web.SR.DataControls_Columns)
         ]
         public virtual DataGridColumnCollection Columns {
             get {
@@ -309,7 +309,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Default"),
         DefaultValue(-1),
-        WebSysDescription(SR.DataGrid_EditItemIndex)
+        WebSysDescription(System.Web.SR.DataGrid_EditItemIndex)
         ]
         public virtual int EditItemIndex {
             get {
@@ -335,7 +335,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.DataGrid_EditItemStyle)
+        WebSysDescription(System.Web.SR.DataGrid_EditItemStyle)
         ]
         public virtual TableItemStyle EditItemStyle {
             get {
@@ -358,7 +358,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.DataControls_FooterStyle),
+        WebSysDescription(System.Web.SR.DataControls_FooterStyle),
         ]
         public virtual TableItemStyle FooterStyle {
             get {
@@ -381,7 +381,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.DataControls_HeaderStyle)
+        WebSysDescription(System.Web.SR.DataControls_HeaderStyle)
         ]
         public virtual TableItemStyle HeaderStyle {
             get {
@@ -403,7 +403,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.DataGrid_Items)
+        WebSysDescription(System.Web.SR.DataGrid_Items)
         ]
         public virtual DataGridItemCollection Items {
             get {
@@ -429,7 +429,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.DataGrid_ItemStyle),
+        WebSysDescription(System.Web.SR.DataGrid_ItemStyle),
         ]
         public virtual TableItemStyle ItemStyle {
             get {
@@ -449,7 +449,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.DataGrid_PageCount)
+        WebSysDescription(System.Web.SR.DataGrid_PageCount)
         ]
         public int PageCount {
             get {
@@ -474,7 +474,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.DataGrid_PagerStyle)
+        WebSysDescription(System.Web.SR.DataGrid_PagerStyle)
         ]
         public virtual DataGridPagerStyle PagerStyle {
             get {
@@ -494,7 +494,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Paging"),
         DefaultValue(10),
-        WebSysDescription(SR.DataGrid_PageSize),
+        WebSysDescription(System.Web.SR.DataGrid_PageSize),
         ]
         public virtual int PageSize {
             get {
@@ -518,7 +518,7 @@ namespace System.Web.UI.WebControls {
         [
         Bindable(true),
         DefaultValue(-1),
-        WebSysDescription(SR.WebControl_SelectedIndex)
+        WebSysDescription(System.Web.SR.WebControl_SelectedIndex)
         ]
         public virtual int SelectedIndex {
             get {
@@ -563,7 +563,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.DataGrid_SelectedItem)
+        WebSysDescription(System.Web.SR.DataGrid_SelectedItem)
         ]
         public virtual DataGridItem SelectedItem {
             get {
@@ -586,7 +586,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.DataGrid_SelectedItemStyle)
+        WebSysDescription(System.Web.SR.DataGrid_SelectedItemStyle)
         ]
         public virtual TableItemStyle SelectedItemStyle {
             get {
@@ -607,7 +607,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(false),
-        WebSysDescription(SR.DataControls_ShowFooter)
+        WebSysDescription(System.Web.SR.DataControls_ShowFooter)
         ]
         public virtual bool ShowFooter {
             get {
@@ -629,7 +629,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(true),
-        WebSysDescription(SR.DataControls_ShowHeader)
+        WebSysDescription(System.Web.SR.DataControls_ShowHeader)
         ]
         public virtual bool ShowHeader {
             get {
@@ -656,7 +656,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.DataGrid_VisibleItemCount)
+        WebSysDescription(System.Web.SR.DataGrid_VisibleItemCount)
         ]
         public virtual int VirtualItemCount {
             get {
@@ -683,7 +683,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataGrid_OnCancelCommand)
+        WebSysDescription(System.Web.SR.DataGrid_OnCancelCommand)
         ]
         public event DataGridCommandEventHandler CancelCommand {
             add {
@@ -702,7 +702,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataGrid_OnDeleteCommand)
+        WebSysDescription(System.Web.SR.DataGrid_OnDeleteCommand)
         ]
         public event DataGridCommandEventHandler DeleteCommand {
             add {
@@ -722,7 +722,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataGrid_OnEditCommand)
+        WebSysDescription(System.Web.SR.DataGrid_OnEditCommand)
         ]
         public event DataGridCommandEventHandler EditCommand {
             add {
@@ -742,7 +742,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataGrid_OnItemCommand)
+        WebSysDescription(System.Web.SR.DataGrid_OnItemCommand)
         ]
         public event DataGridCommandEventHandler ItemCommand {
             add {
@@ -760,7 +760,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.DataControls_OnItemCreated)
+        WebSysDescription(System.Web.SR.DataControls_OnItemCreated)
         ]
         public event DataGridItemEventHandler ItemCreated {
             add {
@@ -777,7 +777,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.DataControls_OnItemDataBound)
+        WebSysDescription(System.Web.SR.DataControls_OnItemDataBound)
         ]
         public event DataGridItemEventHandler ItemDataBound {
             add {
@@ -794,7 +794,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataGrid_OnPageIndexChanged)
+        WebSysDescription(System.Web.SR.DataGrid_OnPageIndexChanged)
         ]
         public event DataGridPageChangedEventHandler PageIndexChanged {
             add {
@@ -813,7 +813,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataGrid_OnSortCommand)
+        WebSysDescription(System.Web.SR.DataGrid_OnSortCommand)
         ]
         public event DataGridSortCommandEventHandler SortCommand {
             add {
@@ -832,7 +832,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataGrid_OnUpdateCommand)
+        WebSysDescription(System.Web.SR.DataGrid_OnUpdateCommand)
         ]
         public event DataGridCommandEventHandler UpdateCommand {
             add {
@@ -880,7 +880,7 @@ namespace System.Web.UI.WebControls {
                 object sampleItem = null;
 
                 IEnumerable realDataSource = dataSource.DataSource;
-                Debug.Assert(realDataSource != null, "Must have a real data source when calling CreateAutoGeneratedColumns");
+                System.Web.Util.Debug.Assert(realDataSource != null, "Must have a real data source when calling CreateAutoGeneratedColumns");
 
                 Type dataSourceType = realDataSource.GetType();
 
@@ -962,7 +962,7 @@ namespace System.Web.UI.WebControls {
             if ((generatedColumns.Count == 0) && throwException) {
                 // this handles the case where we got back something that either had no
                 // properties, or all properties were not bindable.
-                throw new HttpException(SR.GetString(SR.DataGrid_NoAutoGenColumns, ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataGrid_NoAutoGenColumns, ID));
             }
 
             return generatedColumns;
@@ -1063,13 +1063,13 @@ namespace System.Web.UI.WebControls {
 
                     if ((collection == null) &&
                         pagedDataSource.IsPagingEnabled && !pagedDataSource.IsCustomPagingEnabled) {
-                        throw new HttpException(SR.GetString(SR.DataGrid_Missing_VirtualItemCount, ID));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataGrid_Missing_VirtualItemCount, ID));
                     }
 
                     pagedDataSource.DataSource = realDataSource;
                     if (pagedDataSource.IsPagingEnabled) {
                         if ((pagedDataSource.CurrentPageIndex < 0) || (pagedDataSource.CurrentPageIndex >= pagedDataSource.PageCount)) {
-                            throw new HttpException(SR.GetString(SR.Invalid_CurrentPageIndex));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_CurrentPageIndex));
                         }
                     }
                     columnsArray = CreateColumnSet(pagedDataSource, useDataSource);
@@ -1491,19 +1491,19 @@ namespace System.Web.UI.WebControls {
 
                 string command = dce.CommandName;
 
-                if (StringUtil.EqualsIgnoreCase(command, DataGrid.SelectCommandName)) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataGrid.SelectCommandName)) {
                     SelectedIndex = dce.Item.ItemIndex;
                     OnSelectedIndexChanged(EventArgs.Empty);
                 }
-                else if (StringUtil.EqualsIgnoreCase(command, DataGrid.PageCommandName)) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataGrid.PageCommandName)) {
                     string pageNumberArg = (string)dce.CommandArgument;
 
                     int newPage = CurrentPageIndex;
 
-                    if (StringUtil.EqualsIgnoreCase(pageNumberArg, DataGrid.NextPageCommandArgument)) {
+                    if (System.Web.Util.StringUtil.EqualsIgnoreCase(pageNumberArg, DataGrid.NextPageCommandArgument)) {
                         newPage++;
                     }
-                    else if (StringUtil.EqualsIgnoreCase(pageNumberArg, DataGrid.PrevPageCommandArgument)) {
+                    else if (System.Web.Util.StringUtil.EqualsIgnoreCase(pageNumberArg, DataGrid.PrevPageCommandArgument)) {
                         newPage--;
                     }
                     else {
@@ -1514,20 +1514,20 @@ namespace System.Web.UI.WebControls {
                     DataGridPageChangedEventArgs args = new DataGridPageChangedEventArgs(source, newPage);
                     OnPageIndexChanged(args);
                 }
-                else if (StringUtil.EqualsIgnoreCase(command, DataGrid.SortCommandName)) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataGrid.SortCommandName)) {
                     DataGridSortCommandEventArgs args = new DataGridSortCommandEventArgs(source, dce);
                     OnSortCommand(args);
                 }
-                else if (StringUtil.EqualsIgnoreCase(command, DataGrid.EditCommandName)) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataGrid.EditCommandName)) {
                     OnEditCommand(dce);
                 }
-                else if (StringUtil.EqualsIgnoreCase(command, DataGrid.UpdateCommandName)) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataGrid.UpdateCommandName)) {
                     OnUpdateCommand(dce);
                 }
-                else if (StringUtil.EqualsIgnoreCase(command, DataGrid.CancelCommandName)) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataGrid.CancelCommandName)) {
                     OnCancelCommand(dce);
                 }
-                else if (StringUtil.EqualsIgnoreCase(command, DataGrid.DeleteCommandName)) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, DataGrid.DeleteCommandName)) {
                     OnDeleteCommand(dce);
                 }
             }

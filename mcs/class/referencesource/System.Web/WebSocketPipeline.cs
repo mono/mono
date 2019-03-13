@@ -48,7 +48,9 @@ namespace System.Web {
 
             // Once all pending IOs are complete, we can progress the IIS state machine and finish the request.
             // Execute synchronously since it's very short-running (posts to the native ThreadPool).
+#if (!MONO || !FEATURE_PAL)
             abortTask.ContinueWith(_ => UnsafeIISMethods.MgdPostCompletion(_root.WorkerRequest.RequestContext, RequestNotificationStatus.Continue), TaskContinuationOptions.ExecuteSynchronously);
+#endif
         }
 
         private ExceptionDispatchInfo DoFlush() {

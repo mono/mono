@@ -30,7 +30,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.EmbeddedMailObject_Name),
+        WebSysDescription(System.Web.SR.EmbeddedMailObject_Name),
         NotifyParentProperty(true)
         ]
         public string Name {
@@ -45,7 +45,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.EmbeddedMailObject_Path),
+        WebSysDescription(System.Web.SR.EmbeddedMailObject_Path),
         Editor("System.Web.UI.Design.MailFileEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         NotifyParentProperty(true),
         UrlProperty(),

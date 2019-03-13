@@ -28,12 +28,12 @@ namespace System.Web.UI.WebControls.WebParts {
         private string _webPartsListUserControlPath;
 
         [
-        WebSysDefaultValue(SR.DeclarativeCatalogPart_PartTitle),
+        WebSysDefaultValue(System.Web.SR.DeclarativeCatalogPart_PartTitle),
         ]
         public override string Title {
             get {
                 string s = (string)ViewState["Title"];
-                return (s != null) ? s : SR.GetString(SR.DeclarativeCatalogPart_PartTitle);
+                return (s != null) ? s : System.Web.SR.GetString(System.Web.SR.DeclarativeCatalogPart_PartTitle);
             }
             set {
                 ViewState["Title"] = value;
@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Themeable(false),
         UrlProperty(),
         WebCategory("Behavior"),
-        WebSysDescription(SR.DeclarativeCatlaogPart_WebPartsListUserControlPath),
+        WebSysDescription(System.Web.SR.DeclarativeCatlaogPart_WebPartsListUserControlPath),
         ]
         public string WebPartsListUserControlPath {
             get {
@@ -113,7 +113,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             WebPartDescriptionCollection webPartDescriptions = GetAvailableWebPartDescriptions();
             if (!webPartDescriptions.Contains(description)) {
-                throw new ArgumentException(SR.GetString(SR.CatalogPart_UnknownDescription), "description");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.CatalogPart_UnknownDescription), "description");
             }
 
             return description.WebPart;
@@ -227,7 +227,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [Browsable(false), DefaultValue(false), EditorBrowsable(EditorBrowsableState.Never), Themeable(false)]
         public override bool EnableTheming {
             get { return false; }
-            set { throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name)); }
+            set { throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name)); }
         }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never), Themeable(false)]
@@ -268,7 +268,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [Browsable(false), DefaultValue(""), EditorBrowsable(EditorBrowsableState.Never), Themeable(false)]
         public override string SkinID {
             get { return String.Empty; }
-            set { throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name)); }
+            set { throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name)); }
         }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never), Themeable(false)]

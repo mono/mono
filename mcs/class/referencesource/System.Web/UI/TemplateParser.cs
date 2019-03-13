@@ -40,6 +40,7 @@ using System.Web.Configuration;
 using System.Web.Instrumentation;
 
 
+
 /// <internalonly/>
 /// <devdoc>
 ///    <para>[To be supplied.]</para>
@@ -188,7 +189,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         }
         set {
             if (value == CompilationMode.Never && flags[requiresCompilation]) {
-                ProcessError(SR.GetString(SR.Compilmode_not_allowed));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Compilmode_not_allowed));
             }
 
             _compilationMode = value;
@@ -297,7 +298,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         // If it's a no-compile page, fail since there is code on it.
         // Likewise if the PageParserFilter returns IsCodeAllowed == false
         if (!IsCodeAllowed) {
-            ProcessError(SR.GetString(SR.Code_not_allowed));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Code_not_allowed));
         }
 
         // Remember the fact that this page MUST be compiled
@@ -309,7 +310,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // If compilation is not alowed, fail
         if (!IsCodeAllowed) {
-            ProcessError(SR.GetString(SR.Attrib_not_allowed, attribName));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Attrib_not_allowed, attribName));
         }
 
         // Remember the fact that this page MUST be compiled
@@ -321,7 +322,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // If compilation is not alowed, fail
         if (!IsCodeAllowed) {
-            ProcessError(SR.GetString(SR.Directive_not_allowed, directiveName));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Directive_not_allowed, directiveName));
         }
 
         // Remember the fact that this page MUST be compiled
@@ -333,7 +334,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // If compilation is not alowed, fail
         if (!IsCodeAllowed) {
-            ProcessError(SR.GetString(SR.Event_not_allowed, directiveName));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Event_not_allowed, directiveName));
         }
 
         // Remember the fact that this page MUST be compiled
@@ -344,18 +345,18 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
     private ITypeResolutionService _typeResolutionService;
     internal IDesignerHost DesignerHost {
         get {
-            Debug.Assert(FInDesigner, "DesignerHost should be accessed only when FInDesigner == true");
+            System.Web.Util.Debug.Assert(FInDesigner, "DesignerHost should be accessed only when FInDesigner == true");
             return _designerHost;
         }
         set {
-            Debug.Assert(FInDesigner, "DesignerHost should be accessed only when FInDesigner == true");
+            System.Web.Util.Debug.Assert(FInDesigner, "DesignerHost should be accessed only when FInDesigner == true");
             _designerHost = value;
 
             _typeResolutionService = null;
             if (_designerHost != null) {
                 _typeResolutionService = (ITypeResolutionService)_designerHost.GetService(typeof(ITypeResolutionService));
                 if (_typeResolutionService == null) {
-                    throw new ArgumentException(SR.GetString(SR.TypeResService_Needed));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.TypeResService_Needed));
                 }
             }
         }
@@ -523,7 +524,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         Parse();
 
-        Debug.Assert(RootBuilder != null);
+        System.Web.Util.Debug.Assert(RootBuilder != null);
         return RootBuilder;
     }
 
@@ -628,7 +629,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         object[] attrs = BaseType.GetCustomAttributes(
             typeof(FileLevelControlBuilderAttribute), /*inherit*/ true);
         if ((attrs != null) && (attrs.Length > 0)) {
-            Debug.Assert(attrs[0] is FileLevelControlBuilderAttribute);
+            System.Web.Util.Debug.Assert(attrs[0] is FileLevelControlBuilderAttribute);
             cba = (FileLevelControlBuilderAttribute)attrs[0];
         }
 
@@ -730,7 +731,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // Check for circular references of include files
         if (_circularReferenceChecker.Contains(fileToReferenceCheck)) {
-            ProcessError(SR.GetString(SR.Circular_include));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Circular_include));
 
             return;
         }
@@ -1083,7 +1084,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             {
                 string code = match.Groups["code"].Value.Trim();
                 if (code.StartsWith("$", StringComparison.Ordinal)) {
-                    ProcessError(SR.GetString(SR.ExpressionBuilder_LiteralExpressionsNotAllowed, match.ToString(), code));
+                    ProcessError(System.Web.SR.GetString(System.Web.SR.ExpressionBuilder_LiteralExpressionsNotAllowed, match.ToString(), code));
                 }
                 else {
                     ProcessCodeBlock(match, CodeBlockType.Code, text);
@@ -1149,7 +1150,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             // the correct error message (ASURT 13698).
             _lineNumber = _scriptStartLineNumber;
 
-            ProcessError(SR.GetString(SR.Unexpected_eof_looking_for_tag, "script"));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Unexpected_eof_looking_for_tag, "script"));
             return;
         }
 
@@ -1181,13 +1182,13 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
                 string attribValue = (string) entry.Value;
 
                 // Remove the codefile and CodeFileBaseClass attributes
-                if (StringUtil.EqualsIgnoreCase(attribName, "codefile")) continue;
-                if (StringUtil.EqualsIgnoreCase(attribName, CodeFileBaseClassAttributeName)) continue;
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(attribName, "codefile")) continue;
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(attribName, CodeFileBaseClassAttributeName)) continue;
 
                 // Write out a special token for the inherits attribute.  It will later be replaced by
                 // the full type later in the precompilation.  We can't do it here because we don't know
                 // the assembly name yet (VSWhidbey 467936)
-                if (StringUtil.EqualsIgnoreCase(attribName, "inherits")) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(attribName, "inherits")) {
                     attribValue = BuildManager.UpdatableInheritReplacementToken;
                 }
 
@@ -1221,7 +1222,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         if (_pageParserFilter != null) {
             if (!_pageParserFilter.AllowBaseType(BaseType)) {
                 throw new HttpException(
-                    SR.GetString(SR.Base_type_not_allowed, BaseType.FullName));
+                    System.Web.SR.GetString(System.Web.SR.Base_type_not_allowed, BaseType.FullName));
             }
         }
 
@@ -1230,7 +1231,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         if (BuilderStack.Count > 1) {
             BuilderStackEntry entry = (BuilderStackEntry) _builderStack.Peek();
 
-            string message = SR.GetString(SR.Unexpected_eof_looking_for_tag, entry._tagName);
+            string message = System.Web.SR.GetString(System.Web.SR.Unexpected_eof_looking_for_tag, entry._tagName);
             ProcessException(new HttpParseException(message, null, entry.VirtualPath, entry._inputText, entry.Line));
 
             return;
@@ -1255,11 +1256,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         // Override certain settings if they were specified on the page
         if (flags[hasDebugAttribute])
             compilParams.IncludeDebugInformation = flags[debug];
-
-        // Debugging requires medium trust level
-        if (compilParams.IncludeDebugInformation)
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Medium, SR.Debugging_not_supported_in_low_trust);
-
+        
         // If warningLevel was specified in the page, use it
         if (_warningLevel >= 0) {
             compilParams.WarningLevel = _warningLevel;
@@ -1280,7 +1277,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
      * Process all the text in the literal StringBuilder, and reset it
      */
     private void ProcessLiteral() {
-        // Debug.Trace("Template", "Literal text: \"" + _literalBuilder.ToString() + "\"");
+        // System.Web.Util.Debug.Trace("Template", "Literal text: \"" + _literalBuilder.ToString() + "\"");
 
         // Get the current literal string
         string literal = GetLiteral();
@@ -1302,7 +1299,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
                 // Move the line number back to the first non-whitespace
                 _lineNumber -= Util.LineCount(literal, iFirstNonWhiteSpace, literal.Length);
 
-                ProcessError(SR.GetString(SR.Invalid_app_file_content));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_app_file_content));
             }
         }
         else {
@@ -1395,7 +1392,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         // Check for invalid scopes
         if (scope != ObjectTagScope.Page) {
             throw new HttpException(
-                SR.GetString(SR.App_session_only_valid_in_global_asax));
+                System.Web.SR.GetString(System.Web.SR.App_session_only_valid_in_global_asax));
         }
     }
 
@@ -1432,7 +1429,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
                 objectBuilder.LateBound);
         }
         else {
-            Debug.Assert(false, "Unexpected scope!");
+            System.Web.Util.Debug.Assert(false, "Unexpected scope!");
         }
     }
 
@@ -1466,7 +1463,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         bool fSelfClosed = match.Groups["empty"].Success;
 
         // Is it a server side script tag?
-        if (StringUtil.EqualsIgnoreCase(tagName, "script") && flags[isServerTag]) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(tagName, "script") && flags[isServerTag]) {
             ProcessScriptTag(match, inputText, attribs, fSelfClosed);
             return true;
         }
@@ -1510,7 +1507,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         // know that we need to ignore the corresponding closing tag (ASURT 50795)
         if (subBuilder == null && _builderStack.Count > 1 && !fSelfClosed) {
             BuilderStackEntry stackEntry = (BuilderStackEntry) _builderStack.Peek();
-            if (StringUtil.EqualsIgnoreCase(tagName, stackEntry._tagName))
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(tagName, stackEntry._tagName))
                 stackEntry._repeatCount++;
         }
 
@@ -1521,7 +1518,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
                 return false;
 
             // If it was marked as runat=server, fail
-            ProcessError(SR.GetString(SR.Unknown_server_tag, tagName));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Unknown_server_tag, tagName));
             return true;
         }
 
@@ -1529,17 +1526,17 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // If we have a control type filter, make sure the child control is allowed
         if (_pageParserFilter != null) {
-            Debug.Assert(childType != null);
+            System.Web.Util.Debug.Assert(childType != null);
 
             if (!_pageParserFilter.AllowControlInternal(childType, subBuilder)) {
-                ProcessError(SR.GetString(SR.Control_type_not_allowed, childType.FullName));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Control_type_not_allowed, childType.FullName));
                 return true;
             }
         }
 
         // Make sure it doesn't have duplicated attributes
         if (duplicateAttribute != null) {
-            ProcessError(SR.GetString(SR.Duplicate_attr_in_tag, duplicateAttribute));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Duplicate_attr_in_tag, duplicateAttribute));
         }
 
         // Get the id from the builder.  Note that it may be null even if _id was not initially null,
@@ -1549,12 +1546,12 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         // If it has an id, enforce validity and uniqueness
         if (_id != null) {
             if (!System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(_id)) {
-                ProcessError(SR.GetString(SR.Invalid_identifier, _id));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_identifier, _id));
                 return true;
             }
 
             if (_idList.Contains(_id)) {
-                ProcessError(SR.GetString(SR.Id_already_used, _id));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Id_already_used, _id));
                 return true;
             }
 
@@ -1673,13 +1670,13 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         // Use it to calculate the column where the code starts,
         // which improves the debugging experience (VSWhidbey 87172)
         int column = startOfCode-newlineIndex;
-        Debug.Assert(column > 0);
+        System.Web.Util.Debug.Assert(column > 0);
 
         _currentScript = new ScriptBlockData(_lineNumber, column, CurrentVirtualPathString);
 
         // No 'src' attribute.  Make sure tag is not self closed.
         if (fSelfClosed) {
-            ProcessError(SR.GetString(SR.Script_tag_without_src_must_have_content));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Script_tag_without_src_must_have_content));
         }
 
         flags[inScriptTag] = true;
@@ -1696,7 +1693,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         // If we are in the middle of a server side SCRIPT tag
         if (flags[inScriptTag]) {
             // Ignore anything that's not a </script>
-            if (!StringUtil.EqualsIgnoreCase(tagName, "script"))
+            if (!System.Web.Util.StringUtil.EqualsIgnoreCase(tagName, "script"))
                 return false;
 
             ProcessServerScript();
@@ -1746,7 +1743,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
             // Make sure the main directive was not already specified
             if (flags[mainDirectiveSpecified]) {
-                ProcessError(SR.GetString(SR.Only_one_directive_allowed, DefaultDirectiveName));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Only_one_directive_allowed, DefaultDirectiveName));
 
                 return;
             }
@@ -1770,7 +1767,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             flags[mainDirectiveSpecified] = true;
             flags[mainDirectiveHandled] = true;
         }
-        else if (StringUtil.EqualsIgnoreCase(directiveName, "assembly")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "assembly")) {
             // Assembly directive
 
             // Even though this only makes sense for compiled pages, Sharepoint needs us to
@@ -1784,7 +1781,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             Util.CheckUnknownDirectiveAttributes(directiveName, directive);
 
             if (assemblyName != null && src != null) {
-                ProcessError(SR.GetString(SR.Attributes_mutually_exclusive, "Name", "Src"));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Attributes_mutually_exclusive, "Name", "Src"));
             }
 
             if (assemblyName != null) {
@@ -1795,16 +1792,16 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
                 ImportSourceFile(src);
             }
             else {
-                ProcessError(SR.GetString(SR.Missing_attr, "name"));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Missing_attr, "name"));
             }
         }
-        else if (StringUtil.EqualsIgnoreCase(directiveName, "import")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "import")) {
 
             // Import directive
 
             ProcessImportDirective(directiveName, directive);
         }
-        else if (StringUtil.EqualsIgnoreCase(directiveName, "implements")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "implements")) {
             // 'implements' directive
 
             // We must compile the page if it asks to implement an interface
@@ -1820,7 +1817,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
             // Make sure that it's an interface
             if (!interfaceType.IsInterface) {
-                ProcessError(SR.GetString(SR.Invalid_type_to_implement, interfaceName));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_type_to_implement, interfaceName));
 
                 return;
             }
@@ -1832,7 +1829,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             _implementedInterfaces.Add(interfaceType);
         }
         else if (!FInDesigner) {
-            ProcessError(SR.GetString(SR.Unknown_directive, directiveName));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Unknown_directive, directiveName));
         }
     }
 
@@ -1901,11 +1898,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             break;
 
         case "debug":
-            flags[debug] = Util.GetBooleanAttribute(name, value);
-            if (flags[debug] && !HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-                throw new HttpException(SR.GetString(SR.Insufficient_trust_for_attribute, "debug"));
-            }
-
+            flags[debug] = Util.GetBooleanAttribute(name, value);            
             flags[hasDebugAttribute] = true;
             break;
 
@@ -1992,21 +1985,21 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
     // Throw an exception if there is a device filter or resource expression
     internal void ValidateBuiltInAttribute(string deviceName, string name, string value) {
-        Debug.Assert(deviceName != null);
+        System.Web.Util.Debug.Assert(deviceName != null);
 
         if (IsExpressionBuilderValue(value)) {
-            ProcessError(SR.GetString(SR.Illegal_Resource_Builder, name));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Illegal_Resource_Builder, name));
         }
 
         if (deviceName.Length > 0) {
-            ProcessError(SR.GetString(SR.Illegal_Device, name));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Illegal_Device, name));
         }
     }
 
     internal virtual void ProcessUnknownMainDirectiveAttribute(string filter, string attribName, string value) {
         // By default, it is not legal to have unknown attributes.  But derived parser
         // classes can change this behavior
-        ProcessError(SR.GetString(SR.Attr_not_supported_in_directive,
+        ProcessError(System.Web.SR.GetString(System.Web.SR.Attr_not_supported_in_directive,
                 attribName, DefaultDirectiveName));
     }
 
@@ -2030,7 +2023,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // If so, there must also be a CodeFile attribute
         if (codeFileBaseTypeName != null && _codeFileVirtualPath == null) {
-            throw new HttpException(SR.GetString(SR.CodeFileBaseClass_Without_Codefile));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.CodeFileBaseClass_Without_Codefile));
         }
 
         // Was a base type specified in the directive
@@ -2045,7 +2038,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         }
         else {
             if (_codeFileVirtualPath != null) {
-                throw new HttpException(SR.GetString(SR.Codefile_without_inherits));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Codefile_without_inherits));
             }
         }
     }
@@ -2102,15 +2095,15 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // Make sure we successfully got the Type of the base class
         if (baseType == null) {
-            Debug.Assert(assembly != null, "assembly != null");
-            ProcessError(SR.GetString(SR.Non_existent_base_type, baseTypeName, src));
+            System.Web.Util.Debug.Assert(assembly != null, "assembly != null");
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Non_existent_base_type, baseTypeName, src));
 
             return;
         }
 
         // Make sure the base type extends the DefaultBaseType (Page or UserControl)
         if (!DefaultBaseType.IsAssignableFrom(baseType)) {
-            ProcessError(SR.GetString(SR.Invalid_type_to_inherit_from, baseTypeName,
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_type_to_inherit_from, baseTypeName,
                     _baseType.FullName));
 
             return;
@@ -2121,14 +2114,14 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
             if (!_pageParserFilter.AllowBaseType(baseType)) {
                 throw new HttpException(
-                    SR.GetString(SR.Base_type_not_allowed, baseType.FullName));
+                    System.Web.SR.GetString(System.Web.SR.Base_type_not_allowed, baseType.FullName));
             }
         }
 
         _baseType = baseType;
 
         // Now that we have the base type, we can create the RootBuilder
-        Debug.Assert(_rootBuilder == null);
+        System.Web.Util.Debug.Assert(_rootBuilder == null);
         EnsureRootBuilderCreated();
 
         // Make sure we link with the assembly of the base type (ASURT 101778)
@@ -2147,7 +2140,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         string ns = Util.GetAndRemoveNonEmptyNoSpaceAttribute(directive, "namespace");
 
         if (ns == null)
-            ProcessError(SR.GetString(SR.Missing_attr, "namespace"));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Missing_attr, "namespace"));
         else
             AddImportEntry(ns);
 
@@ -2173,7 +2166,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         // Make sure we don't get conflicting languages
         if (_compilerType != null &&
             _compilerType.CodeDomProviderType != compilerType.CodeDomProviderType) {
-            ProcessError(SR.GetString(SR.Mixed_lang_not_supported, language));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Mixed_lang_not_supported, language));
 
             return;
         }
@@ -2186,7 +2179,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
      */
     private void ProcessCodeFile(VirtualPath codeFileVirtualPath) {
 
-        Debug.Assert(_codeFileVirtualPath == null);
+        System.Web.Util.Debug.Assert(_codeFileVirtualPath == null);
 
         _codeFileVirtualPath = ResolveVirtualPath(codeFileVirtualPath);
 
@@ -2197,7 +2190,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         // Make sure we don't get conflicting languages
         if (_compilerType != null &&
             _compilerType.CodeDomProviderType != compilerType.CodeDomProviderType) {
-            ProcessError(SR.GetString(SR.Inconsistent_CodeFile_Language));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Inconsistent_CodeFile_Language));
 
             return;
         }
@@ -2230,7 +2223,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // If we have a page parser filter, make sure the reference is allowed
         if (_pageParserFilter != null && !_pageParserFilter.AllowVirtualReference(CompConfig, virtualPath)) {
-            ProcessError(SR.GetString(SR.Reference_not_allowed, virtualPath));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Reference_not_allowed, virtualPath));
         }
 
         // Add the source file to the list of files we depend on
@@ -2241,7 +2234,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         BuildResultCompiledAssembly result = BuildManager.GetVPathBuildResult(
             virtualPath) as BuildResultCompiledAssembly;
         if (result == null) {
-            ProcessError(SR.GetString(SR.Not_a_src_file, virtualPath));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Not_a_src_file, virtualPath));
         }
 
         Assembly a = result.ResultAssembly;
@@ -2262,7 +2255,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // If it started with <%, it's probably not closed (ASURT 13661)
         if (text.Length > textPos+1 && text[textPos+1] == '%') {
-            ProcessError(SR.GetString(SR.Malformed_server_block));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Malformed_server_block));
 
             return;
         }
@@ -2300,14 +2293,14 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         if ((object)tag2 != (object)tag) {
             // If it can be parsed as a tag after we removed the <% %> constructs, fail
             if (TagRegex.Match(tag2).Success) {
-                ProcessError(SR.GetString(SR.Server_tags_cant_contain_percent_constructs));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Server_tags_cant_contain_percent_constructs));
 
                 return;
             }
         }
 
         // Give a more generic error (fixed 18969, 30312)
-        ProcessError(SR.GetString(SR.Malformed_server_tag));
+        ProcessError(System.Web.SR.GetString(System.Web.SR.Malformed_server_tag));
     }
 
     /*
@@ -2362,7 +2355,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             }
             catch {
                 throw new HttpException(
-                    SR.GetString(SR.Assembly_not_compiled, assemblyName));
+                    System.Web.SR.GetString(System.Web.SR.Assembly_not_compiled, assemblyName));
             }
         }
 
@@ -2383,7 +2376,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         if (throwOnError) {
             throw new HttpException(
-                SR.GetString(SR.Invalid_type, typeName));
+                System.Web.SR.GetString(System.Web.SR.Invalid_type, typeName));
         }
 
         return null;
@@ -2402,7 +2395,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
     private void ProcessServerInclude(Match match) {
         if (flags[inScriptTag]) {
             throw new HttpException(
-                SR.GetString(SR.Include_not_allowed_in_server_script_tag));
+                System.Web.SR.GetString(System.Web.SR.Include_not_allowed_in_server_script_tag));
         }
 
         ProcessLiteral();
@@ -2412,7 +2405,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         //System.Web.Util.Debug.Trace("Template", "#Include " + pathType + "=" + filename);
 
         if (filename.Length == 0) {
-            ProcessError(SR.GetString(SR.Empty_file_name));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Empty_file_name));
 
             return;
         }
@@ -2420,9 +2413,9 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         VirtualPath newVirtualPath = CurrentVirtualPath;
         string newPhysicalPath = null;
 
-        if (StringUtil.EqualsIgnoreCase(pathType, "file")) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(pathType, "file")) {
 
-            if (UrlPath.IsAbsolutePhysicalPath(filename)) {
+            if (System.Web.Util.UrlPath.IsAbsolutePhysicalPath(filename)) {
                 // If it's an absolute physical path, use it as is
                 newPhysicalPath = filename;
             }
@@ -2453,13 +2446,13 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
                 }
             }
         }
-        else if (StringUtil.EqualsIgnoreCase(pathType, "virtual")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(pathType, "virtual")) {
             newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
             HttpRuntime.CheckVirtualFilePermission(newVirtualPath.VirtualPathString);
             AddSourceDependency(newVirtualPath);
         }
         else {
-            ProcessError(SR.GetString(SR.Only_file_virtual_supported_on_server_include));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Only_file_virtual_supported_on_server_include));
 
             return;
         }
@@ -2471,7 +2464,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
 
         // If there is a filter, check whether it allows this include file
         if (_pageParserFilter != null && !_pageParserFilter.AllowServerSideInclude(newVirtualPath.VirtualPathString)) {
-            ProcessError(SR.GetString(SR.Include_not_allowed, newVirtualPath));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Include_not_allowed, newVirtualPath));
         }
 
         // Parse the included file recursively
@@ -2546,7 +2539,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             // Do not treat as error in CBM. This is necessary so we still generate
             // code blocks for empty expressions. (VSWhidbey 406212)
             if (!IgnoreParseErrors && Util.IsWhiteSpaceString(code)) {
-                ProcessError(SR.GetString(SR.Empty_expression));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Empty_expression));
 
                 return;
             }
@@ -2562,7 +2555,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             // Use it to calculate the column where the code starts,
             // which improves the debugging experience (VSWhidbey 87172)
             column = codeGroup.Index-newlineIndex;
-            Debug.Assert(column > 0);
+            System.Web.Util.Debug.Assert(column > 0);
         }
 
         ControlBuilder builder = ((BuilderStackEntry) BuilderStack.Peek())._builder;
@@ -2600,7 +2593,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             case CodeBlockType.DataBinding:
                 return CodeConstructType.DataBindingSnippet;
             default:
-                Debug.Assert(false);
+                System.Web.Util.Debug.Assert(false);
                 return CodeConstructType.CodeSnippet;
         }
     }
@@ -2704,23 +2697,23 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
             // If this is a server ID, remember it
             // 
 
-            if (StringUtil.EqualsIgnoreCase(realAttributeName, "id")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(realAttributeName, "id")) {
                 _id = attribValue;
             }
-            else if (StringUtil.EqualsIgnoreCase(realAttributeName, "runat")) {
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(realAttributeName, "runat")) {
                 // Make sure no device filter or resource expression was specified (VSWhidbey 85325)
                 ValidateBuiltInAttribute(filter, realAttributeName, attribValue);
 
                 // Only runat=server is valid
-                if (!StringUtil.EqualsIgnoreCase(attribValue, "server")) {
-                    ProcessError(SR.GetString(SR.Runat_can_only_be_server));
+                if (!System.Web.Util.StringUtil.EqualsIgnoreCase(attribValue, "server")) {
+                    ProcessError(System.Web.SR.GetString(System.Web.SR.Runat_can_only_be_server));
                 }
 
                 // Set a flag if we see runat=server
                 flags[isServerTag] = true;
                 attribName = null;       // Don't put it in attribute bag
             }
-            else if (FInDesigner && StringUtil.EqualsIgnoreCase(realAttributeName, "ignoreParentFrozen")) {
+            else if (FInDesigner && System.Web.Util.StringUtil.EqualsIgnoreCase(realAttributeName, "ignoreParentFrozen")) {
                 // VSWhidbey 537398: "ignoreParentFrozen" is a special expando used in Venus. Ideally
                 // Venus would hide the expando altogether but that's not practical in Whidbey.
                 attribName = null;
@@ -2743,7 +2736,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
                 try {
                     // Don't allow filters in directive other than the main one
                     if (fDirective && directiveName.Length > 0 && filter.Length > 0) {
-                        ProcessError(SR.GetString(SR.Device_unsupported_in_directive, directiveName));
+                        ProcessError(System.Web.SR.GetString(System.Web.SR.Device_unsupported_in_directive, directiveName));
 
                         continue;
                     }
@@ -2771,7 +2764,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         }
 
         if (duplicateAttribute != null && fDirective) {
-            ProcessError(SR.GetString(SR.Duplicate_attr_in_directive, duplicateAttribute));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Duplicate_attr_in_directive, duplicateAttribute));
         }
 
         return directiveName;
@@ -2788,7 +2781,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser {
         ControlBuilder builder = stackEntry._builder;
 
         // If the tag doesn't match, return false
-        if (stackEntry._tagName == null || !StringUtil.EqualsIgnoreCase(stackEntry._tagName, tagName)) {
+        if (stackEntry._tagName == null || !System.Web.Util.StringUtil.EqualsIgnoreCase(stackEntry._tagName, tagName)) {
             return false;
         }
 

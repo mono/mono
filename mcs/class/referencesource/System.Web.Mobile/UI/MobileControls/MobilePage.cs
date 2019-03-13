@@ -35,7 +35,9 @@ namespace System.Web.UI.MobileControls
      */
     /// <include file='doc\MobilePage.uex' path='docs/doc[@for="MobilePage"]/*' />
     [
+#if !MONO 
         Designer("Microsoft.VisualStudio.Web.WebForms.MobileWebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
+#endif
         ToolboxItem(false)
     ]
     [AspNetHostingPermission(SecurityAction.LinkDemand, Level=AspNetHostingPermissionLevel.Minimal)]
@@ -1485,7 +1487,12 @@ namespace System.Web.UI.MobileControls
                     }
                     else
                     {
+#if (MONO || FEATURE_PAL)
+                        string macKeyModifier = Encoding.Default.GetString(GetMacKeyModifier());
+                        _stateFormatter = new LosFormatter(true, macKeyModifier);
+#else
                         _stateFormatter = new LosFormatter(true, GetMacKeyModifier());
+#endif
                     }
                 }
                 return _stateFormatter;

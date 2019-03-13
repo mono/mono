@@ -14,7 +14,6 @@ namespace System.Web.ClientServices.Providers
     using System.Data.Common;
     using System.Data.OleDb;
     using System.IO;
-    using System.Windows.Forms;
     using System.Data.SqlClient;
     using System.Xml.Serialization;
     using System.Diagnostics.CodeAnalysis;
@@ -101,9 +100,6 @@ namespace System.Web.ClientServices.Providers
 
         private static string[] ReadStringArray(XmlReader reader)
         {
-            //string count = reader.GetAttribute("count");
-            //if (string.IsNullOrEmpty(count))
-            //    return new string[0];
             StringCollection sc = new StringCollection();
             while (reader.IsStartElement())
             {
@@ -119,7 +115,6 @@ namespace System.Web.ClientServices.Providers
 
         private static void WriteStringArray(XmlWriter writer, string [] arrToWrite)
         {
-            //writer.WriteAttributeString("count", arrToWrite.Length.ToString());
             if (arrToWrite.Length == 0)
                 writer.WriteValue(string.Empty);
             for (int iter = 0; iter < arrToWrite.Length; iter++) {
@@ -210,7 +205,7 @@ namespace System.Web.ClientServices.Providers
             ClientData cd = null;
             string fileName = null;
             if (useIsolatedStorage) {
-                fileName = _IsolatedDir + "\\" + SqlHelper.GetPartialDBFileName(username, ".clientdata");
+                fileName = _IsolatedDir + Path.DirectorySeparatorChar + SqlHelper.GetPartialDBFileName(username, ".clientdata");
                 try {
                     using(IsolatedStorageFile f = IsolatedStorageFile.GetUserStoreForAssembly()) {
                         using(IsolatedStorageFileStream fs = new IsolatedStorageFileStream(fileName, FileMode.Open, f)) {

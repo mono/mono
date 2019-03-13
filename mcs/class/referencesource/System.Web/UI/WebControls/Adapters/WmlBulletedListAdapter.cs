@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls.Adapters {
                     writer.WriteBreak();
                     break;
                 default:
-                    Debug.Assert(false, "Invalid BulletedListDisplayMode");
+                    System.Web.Util.Debug.Assert(false, "Invalid BulletedListDisplayMode");
                     break;
             }
         }

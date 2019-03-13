@@ -21,7 +21,7 @@ internal class ClientBuildManagerTypeDescriptionProviderBridge : MarshalByRefObj
     }
 
     private Type GetReflectionType(Type type) {
-        Debug.Assert(_targetFrameworkProvider != null, "_targetFrameworkProvider should not be null");
+        System.Web.Util.Debug.Assert(_targetFrameworkProvider != null, "_targetFrameworkProvider should not be null");
         if (type == null) {
             return null;
         }

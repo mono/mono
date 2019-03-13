@@ -23,6 +23,7 @@ namespace System.Web.UI {
     using System.Runtime.Serialization;
     using System.Collections.Generic;
     using System.Web.Security.Cryptography;
+    
 
     // The various types of client API's that can be registered
     internal enum ClientAPIRegisterType {
@@ -150,7 +151,7 @@ namespace System.Web.UI {
 
             if ((_owner.ControlState < ControlState.PreRendered) && (!_owner.IsCallback)) {
                 throw new InvalidOperationException(
-                    SR.GetString(SR.ClientScriptManager_RegisterForEventValidation_Too_Early));
+                    System.Web.SR.GetString(System.Web.SR.ClientScriptManager_RegisterForEventValidation_Too_Early));
             }
 
             // Step 2: Add this tuple to the list
@@ -176,7 +177,7 @@ namespace System.Web.UI {
             if (_scriptResourceMapping != null) {
                 if (_scriptResourceMapping.GetDefinition("jquery", typeof(Page).Assembly) == null &&
                     _scriptResourceMapping.GetDefinition("jquery") == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.ClientScriptManager_JqueryNotRegistered));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ClientScriptManager_JqueryNotRegistered));
                 }
             }
         }
@@ -231,7 +232,7 @@ namespace System.Web.UI {
             }
 
             if (String.IsNullOrEmpty(uniqueId)) {
-                throw new ArgumentException(SR.GetString(SR.Parameter_NullOrEmpty, "uniqueId"), "uniqueId");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_NullOrEmpty, "uniqueId"), "uniqueId");
             }
 
             EnsureEventValidationFieldLoaded();
@@ -239,7 +240,7 @@ namespace System.Web.UI {
             // Go against the _eventValidationProvider field instead of the EventValidationProvider
             // property to avoid the lazy instantiation code if not necessary.
             if (_eventValidationProvider == null || !_eventValidationProvider.IsValid(uniqueId, argument)) {
-                throw new ArgumentException(SR.GetString(SR.ClientScriptManager_InvalidPostBackArgument));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ClientScriptManager_InvalidPostBackArgument));
             }
         }
 
@@ -276,7 +277,7 @@ namespace System.Web.UI {
                 throw new ArgumentNullException("control");
             }
             if (!(control is ICallbackEventHandler)) {
-                throw new InvalidOperationException(SR.GetString(SR.Page_CallBackTargetInvalid, control.UniqueID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_CallBackTargetInvalid, control.UniqueID));
             }
             return GetCallbackEventReference("'" + control.UniqueID + "'", argument, clientCallback, context, clientErrorCallback, useAsync);
         }
@@ -826,7 +827,7 @@ WebForm_InitCallback();"), true);
                 throw new ArgumentNullException("type");
             }
             if (String.IsNullOrEmpty(url)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("url");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("url");
             }
 
             // VSWhidbey 499036: encode the url
@@ -915,7 +916,7 @@ WebForm_InitCallback();"), true);
 
         internal void RegisterOnSubmitStatementInternal(ScriptKey key, string script) {
             if (String.IsNullOrEmpty(script)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("script");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("script");
             }
             if (_registeredOnSubmitStatements == null)
                 _registeredOnSubmitStatements = new ListDictionary();
@@ -958,7 +959,7 @@ WebForm_InitCallback();"), true);
                     RegisterScriptBlock(key, script, ref _registeredClientStartupScripts, ref _clientStartupScripts, true);
                     break;
                 default:
-                    Debug.Assert(false);
+                    System.Web.Util.Debug.Assert(false);
                     break;
             }
 
@@ -1080,7 +1081,7 @@ WebForm_InitCallback();"), true);
                 writer.WriteLine("\");");
 
                 ListDictionary expandoAttributes = (ListDictionary)controlEntry.Value;
-                Debug.Assert(expandoAttributes != null && expandoAttributes.Count > 0);
+                System.Web.Util.Debug.Assert(expandoAttributes != null && expandoAttributes.Count > 0);
                 foreach (DictionaryEntry expandoAttribute in expandoAttributes) {
                     writer.Write(controlId);
                     writer.Write(".");
@@ -1291,7 +1292,7 @@ return true;
                     return true; // empty collection is not an error condition
                 }
 
-                Debug.Assert(_outboundEvents == null);
+                System.Web.Util.Debug.Assert(_outboundEvents == null);
 
                 string viewStateString = _clientScriptManager._owner.RequestViewStateString;
                 if (!validatedIncomingEvents.Contains(null, viewStateString)) {
@@ -1321,10 +1322,10 @@ return true;
 
             private static int ComputeHashKey(String uniqueId, String argument) {
                 if (String.IsNullOrEmpty(argument)) {
-                    return StringUtil.GetStringHashCode(uniqueId);
+                    return System.Web.Util.StringUtil.GetStringHashCode(uniqueId);
                 }
 
-                return StringUtil.GetStringHashCode(uniqueId) ^ StringUtil.GetStringHashCode(argument);
+                return System.Web.Util.StringUtil.GetStringHashCode(uniqueId) ^ System.Web.Util.StringUtil.GetStringHashCode(argument);
             }
 
             public object GetEventValidationStoreObject() {
@@ -1373,12 +1374,12 @@ return true;
                     else {
                         _validEventReferences = new ArrayList();
                         _validEventReferences.Add(
-                            StringUtil.GetStringHashCode(stateString));
+                            System.Web.Util.StringUtil.GetStringHashCode(stateString));
                     }
                 }
 
 #if DEBUGEVENTVALIDATION
-            Debug.Assert(!_validEventReferences.Contains(key));
+            System.Web.Util.Debug.Assert(!_validEventReferences.Contains(key));
 #endif //DEBUGEVENTVALIDATION
 
                 _validEventReferences.Add(key);
@@ -1390,12 +1391,12 @@ return true;
                     return true; // empty collection is not an error condition
                 }
 
-                Debug.Assert(_clientPostBackValidatedEventTable == null);
+                System.Web.Util.Debug.Assert(_clientPostBackValidatedEventTable == null);
                 int viewStateHashCode = (int)validatedClientEvents[0];
 
                 string viewStateString = _clientScriptManager._owner.RequestViewStateString;
 
-                if (viewStateHashCode != StringUtil.GetStringHashCode(viewStateString)) {
+                if (viewStateHashCode != System.Web.Util.StringUtil.GetStringHashCode(viewStateString)) {
                     return false; // hash mismatch is an error condition
                 }
 
@@ -1432,7 +1433,7 @@ return true;
         }
 
         internal ScriptKey(Type type, string key, bool isInclude, bool isResource) {
-            Debug.Assert(type != null);
+            System.Web.Util.Debug.Assert(type != null);
             _type = type;
 
             // To treat nulls the same as empty strings, make them empty string.

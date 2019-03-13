@@ -20,6 +20,7 @@ namespace System.Web.Security {
     using  System.Web.Util;
     using  System.Collections.Specialized;
     using System.Web.Compilation;
+    
 
 
     /// <devdoc>
@@ -33,7 +34,7 @@ namespace System.Web.Security {
             get {
                 EnsureEnabled();
                 if (s_Provider == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.Def_role_provider_not_found));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Def_role_provider_not_found));
                 }
                 return s_Provider;
             }
@@ -64,10 +65,7 @@ namespace System.Web.Security {
 
         static public bool Enabled
         {
-            get {
-                if (HostingEnvironment.IsHosted && !HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Low))
-                    return false;
-
+            get {                
                 if (!s_Initialized && !s_EnabledSet) {
                     RoleManagerSection config = RuntimeConfig.GetAppConfig().RoleManager;
                     s_Enabled = config.Enabled;
@@ -105,7 +103,7 @@ namespace System.Web.Security {
                 if (username.Length < 1)
                     return false;
                 IPrincipal user = GetCurrentUser();
-                if (user != null && user is RolePrincipal && ((RolePrincipal)user).ProviderName == Provider.Name && StringUtil.EqualsIgnoreCase(username, user.Identity.Name))
+                if (user != null && user is RolePrincipal && ((RolePrincipal)user).ProviderName == Provider.Name && System.Web.Util.StringUtil.EqualsIgnoreCase(username, user.Identity.Name))
                     isUserInRole = user.IsInRole(roleName);
                 else
                     isUserInRole = Provider.IsUserInRole(username, roleName);
@@ -113,7 +111,7 @@ namespace System.Web.Security {
             } finally {
                 if (HostingEnvironment.IsHosted && EtwTrace.IsTraceEnabled(EtwTraceLevel.Information, EtwTraceFlags.AppSvc) && HttpContext.Current != null) {
                     if (EtwTrace.IsTraceEnabled(EtwTraceLevel.Verbose, EtwTraceFlags.AppSvc)) {
-                        string status = SR.Resources.GetString(isUserInRole ? SR.Etw_Success : SR.Etw_Failure, CultureInfo.InstalledUICulture);
+                        string status = System.Web.SR.Resources.GetString(isUserInRole ? System.Web.SR.Etw_Success : System.Web.SR.Etw_Failure, CultureInfo.InstalledUICulture);
                         EtwTrace.Trace(EtwTraceType.ETW_TYPE_ROLE_IS_USER_IN_ROLE, HttpContext.Current.WorkerRequest, isRolePrincipal ? "RolePrincipal" : Provider.GetType().FullName, username, roleName, status);
                     }
 
@@ -142,7 +140,7 @@ namespace System.Web.Security {
                     return roles;
                 }
                 IPrincipal user = GetCurrentUser();
-                if (user != null && user is RolePrincipal && ((RolePrincipal)user).ProviderName == Provider.Name && StringUtil.EqualsIgnoreCase(username, user.Identity.Name)) {
+                if (user != null && user is RolePrincipal && ((RolePrincipal)user).ProviderName == Provider.Name && System.Web.Util.StringUtil.EqualsIgnoreCase(username, user.Identity.Name)) {
                     roles = ((RolePrincipal)user).GetRoles();
                     isRolePrincipal = true;
                 } else {
@@ -225,7 +223,7 @@ namespace System.Web.Security {
             try
             {
                 RolePrincipal user = GetCurrentUser() as RolePrincipal;
-                if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached && StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
+                if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached && System.Web.Util.StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
                     user.SetDirty();
             }
             catch { }
@@ -248,7 +246,7 @@ namespace System.Web.Security {
             try
             {
                 RolePrincipal user = GetCurrentUser() as RolePrincipal;
-                if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached && StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
+                if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached && System.Web.Util.StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
                     user.SetDirty();
             }
             catch { }
@@ -273,7 +271,7 @@ namespace System.Web.Security {
                 RolePrincipal user = GetCurrentUser() as RolePrincipal;
                 if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached)
                     foreach(string username in usernames)
-                        if (StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
                         {
                             user.SetDirty();
                             break;
@@ -306,7 +304,7 @@ namespace System.Web.Security {
                 RolePrincipal user = GetCurrentUser() as RolePrincipal;
                 if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached)
                     foreach (string username in usernames)
-                        if (StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
                         {
                             user.SetDirty();
                             break;
@@ -324,7 +322,7 @@ namespace System.Web.Security {
             try
             {
                 RolePrincipal user = GetCurrentUser() as RolePrincipal;
-                if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached && StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
+                if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached && System.Web.Util.StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
                     user.SetDirty();
             }
             catch { }
@@ -347,7 +345,7 @@ namespace System.Web.Security {
             try
             {
                 RolePrincipal user = GetCurrentUser() as RolePrincipal;
-                if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached && StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
+                if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached && System.Web.Util.StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
                     user.SetDirty();
             }
             catch { }
@@ -372,7 +370,7 @@ namespace System.Web.Security {
                 RolePrincipal user = GetCurrentUser() as RolePrincipal;
                 if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached)
                     foreach (string username in usernames)
-                        if (StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
                         {
                             user.SetDirty();
                             break;
@@ -405,7 +403,7 @@ namespace System.Web.Security {
                 RolePrincipal user = GetCurrentUser() as RolePrincipal;
                 if (user != null && user.ProviderName == Provider.Name && user.IsRoleListCached)
                     foreach (string username in usernames)
-                        if (StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(user.Identity.Name, username))
                         {
                             user.SetDirty();
                             break;
@@ -462,7 +460,7 @@ namespace System.Web.Security {
         {
             Initialize();
             if (!s_Enabled)
-                throw new ProviderException(SR.GetString(SR.Roles_feature_not_enabled));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Roles_feature_not_enabled));
         }
 
         static private void Initialize()
@@ -487,12 +485,9 @@ namespace System.Web.Security {
                 }
 
                 try
-                {
-                    if (HostingEnvironment.IsHosted)
-                        HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
-
+                {                    
                     RoleManagerSection settings = RuntimeConfig.GetAppConfig().RoleManager;
-                        //s_InitializeException = new ProviderException(SR.GetString(SR.Roles_feature_not_enabled));
+                        //s_InitializeException = new ProviderException(System.Web.SR.GetString(System.Web.SR.Roles_feature_not_enabled));
                     if (!s_EnabledSet) {
                         s_Enabled = settings.Enabled;
                     }
@@ -509,7 +504,7 @@ namespace System.Web.Security {
                     if (s_Enabled) { // Instantiate providers only if feature is enabled
                         if (s_MaxCachedResults < 0)
                         {
-                            throw new ProviderException(SR.GetString(SR.Value_must_be_non_negative_integer, "maxCachedResults"));
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Value_must_be_non_negative_integer, "maxCachedResults"));
                         }
                         InitializeSettings(settings);
                         InitializeDefaultProvider(settings);
@@ -535,7 +530,7 @@ namespace System.Web.Security {
                     foreach (ProviderSettings ps in settings.Providers) {
                         Type t = Type.GetType(ps.Type, true, true);
                         if (!typeof(RoleProvider).IsAssignableFrom(t))
-                            throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, typeof(RoleProvider).ToString()));
+                            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_type, typeof(RoleProvider).ToString()));
                         RoleProvider provider = (RoleProvider)Activator.CreateInstance(t);
                         NameValueCollection pars = ps.Parameters;
                         NameValueCollection cloneParams = new NameValueCollection(pars.Count, StringComparer.Ordinal);
@@ -551,11 +546,11 @@ namespace System.Web.Security {
         private static void InitializeDefaultProvider(RoleManagerSection settings) {
             bool canInitializeDefaultProvider = (!HostingEnvironment.IsHosted || BuildManager.PreStartInitStage == PreStartInitStage.AfterPreStartInit);
             if (!s_InitializedDefaultProvider && canInitializeDefaultProvider) {
-                Debug.Assert(s_Providers != null);
+                System.Web.Util.Debug.Assert(s_Providers != null);
                 s_Providers.SetReadOnly();
 
                 if (settings.DefaultProvider == null) {
-                    s_InitializeException = new ProviderException(SR.GetString(SR.Def_role_provider_not_specified));
+                    s_InitializeException = new ProviderException(System.Web.SR.GetString(System.Web.SR.Def_role_provider_not_specified));
                 }
                 else {
                     try {
@@ -565,7 +560,7 @@ namespace System.Web.Security {
                 }
 
                 if (s_Provider == null) {
-                    s_InitializeException = new ConfigurationErrorsException(SR.GetString(SR.Def_role_provider_not_found), settings.ElementInformation.Properties["defaultProvider"].Source, settings.ElementInformation.Properties["defaultProvider"].LineNumber);
+                    s_InitializeException = new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Def_role_provider_not_found), settings.ElementInformation.Properties["defaultProvider"].Source, settings.ElementInformation.Properties["defaultProvider"].LineNumber);
                 }
 
                 s_InitializedDefaultProvider = true;
@@ -627,7 +622,7 @@ namespace System.Web.Security {
 
             if( !( provider is RoleProvider ) )
             {
-                throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, typeof(RoleProvider).ToString()), "provider");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_type, typeof(RoleProvider).ToString()), "provider");
             }
 
             base.Add(provider);

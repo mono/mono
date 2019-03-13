@@ -51,7 +51,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Accessibility"),
         DefaultValue(""),
-        WebSysDescription(SR.DataControlField_AccessibleHeaderText)
+        WebSysDescription(System.Web.SR.DataControlField_AccessibleHeaderText)
         ]
         public virtual string AccessibleHeaderText {
             get {
@@ -75,7 +75,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.DataControlField_ControlStyle),
+        WebSysDescription(System.Web.SR.DataControlField_ControlStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty)
         ]
@@ -145,7 +145,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.DataControlField_FooterStyle),
+        WebSysDescription(System.Web.SR.DataControlField_FooterStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty)
         ]
@@ -177,7 +177,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.DataControlField_FooterText)
+        WebSysDescription(System.Web.SR.DataControlField_FooterText)
         ]
         public virtual string FooterText {
             get {
@@ -205,7 +205,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.DataControlField_HeaderImageUrl)
+        WebSysDescription(System.Web.SR.DataControlField_HeaderImageUrl)
         ]
         public virtual string HeaderImageUrl {
             get {
@@ -229,7 +229,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.DataControlField_HeaderStyle),
+        WebSysDescription(System.Web.SR.DataControlField_HeaderStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty)
         ]
@@ -261,7 +261,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.DataControlField_HeaderText)
+        WebSysDescription(System.Web.SR.DataControlField_HeaderText)
         ]
         public virtual string HeaderText {
             get {
@@ -284,7 +284,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Behavior"),
             DefaultValue(true),
-            WebSysDescription(SR.DataControlField_InsertVisible)
+            WebSysDescription(System.Web.SR.DataControlField_InsertVisible)
         ]
         public virtual bool InsertVisible {
             get {
@@ -309,7 +309,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.DataControlField_ItemStyle),
+        WebSysDescription(System.Web.SR.DataControlField_ItemStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty)
         ]
@@ -336,7 +336,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.DataControlField_ShowHeader)
+        WebSysDescription(System.Web.SR.DataControlField_ShowHeader)
         ]
         public virtual bool ShowHeader {
             get {
@@ -363,7 +363,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
-        WebSysDescription(SR.DataControlField_SortExpression)
+        WebSysDescription(System.Web.SR.DataControlField_SortExpression)
         ]
         public virtual string SortExpression {
             get {
@@ -397,7 +397,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.DataControlField_Visible)
+        WebSysDescription(System.Web.SR.DataControlField_Visible)
         ]
         public bool Visible {
             get {
@@ -666,7 +666,7 @@ namespace System.Web.UI.WebControls {
         ///  Otherwise, override and throw a useful error message about why the field can't support callbacks.</para>
         /// </devdoc>
         public virtual void ValidateSupportsCallback() {
-            throw new NotSupportedException(SR.GetString(SR.DataControlField_CallbacksNotSupported, Control.ID));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.DataControlField_CallbacksNotSupported, Control.ID));
         }
 
 

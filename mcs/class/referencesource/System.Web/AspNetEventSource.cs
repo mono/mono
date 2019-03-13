@@ -128,7 +128,7 @@ namespace System.Web {
                 // We have knowledge that pFullUrl is null-terminated so we can optimize away
                 // the copy we'd otherwise have to perform. Still need to adjust the length
                 // to account for the null terminator, though.
-                Debug.Assert(pCookedUrl->pFullUrl != null);
+                System.Web.Util.Debug.Assert(pCookedUrl->pFullUrl != null);
                 pEventData[1].DataPointer = (IntPtr)pCookedUrl->pFullUrl;
                 pEventData[1].Size = checked(pCookedUrl->FullUrlLength + sizeof(char));
 
@@ -177,7 +177,7 @@ namespace System.Web {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe static void FillInEventData(EventData* pEventData, string str, char* pStr) {
 #if DBG
-            fixed (char* pStr2 = str) { Debug.Assert(pStr == pStr2); }
+            fixed (char* pStr2 = str) { System.Web.Util.Debug.Assert(pStr == pStr2); }
 #endif
 
             if (pStr != null) {
@@ -192,7 +192,7 @@ namespace System.Web {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe static void FillInEventData(EventData* pEventData, Guid* pGuid) {
-            Debug.Assert(pGuid != null);
+            System.Web.Util.Debug.Assert(pGuid != null);
             pEventData->DataPointer = (IntPtr)pGuid;
             pEventData->Size = sizeof(Guid);
         }

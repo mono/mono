@@ -35,8 +35,8 @@ internal class PreservationFileReader {
     internal BuildResult ReadBuildResultFromFile(VirtualPath virtualPath, string preservationFile, long hashCode, bool ensureIsUpToDate) {
 
         // Ignore if the preservation file doesn't exist
-        if (!FileUtil.FileExists(preservationFile)) {
-            Debug.Trace("PreservationFileReader", "Can't find preservation file " + Path.GetFileName(preservationFile));
+        if (!System.Web.Util.FileUtil.FileExists(preservationFile)) {
+            System.Web.Util.Debug.Trace("PreservationFileReader", "Can't find preservation file " + Path.GetFileName(preservationFile));
             return null;
         }
 
@@ -70,7 +70,7 @@ internal class PreservationFileReader {
 
         // Get the root element, and make sure it's what we expect
         _root = doc.DocumentElement;
-        Debug.Assert(_root != null && _root.Name == "preserve", "_root != null && _root.Name == \"preserve\"");
+        System.Web.Util.Debug.Assert(_root != null && _root.Name == "preserve", "_root != null && _root.Name == \"preserve\"");
         if (_root == null || _root.Name != "preserve")
             return null;
 
@@ -91,7 +91,7 @@ internal class PreservationFileReader {
         if (!_precompilationMode) {
             // Read the saved hash from the preservation file
             string hashString = GetAttribute("hash");
-            Debug.Assert(hashString != null, "hashString != null");
+            System.Web.Util.Debug.Assert(hashString != null, "hashString != null");
             if (hashString == null)
                 return null;
 
@@ -118,7 +118,7 @@ internal class PreservationFileReader {
             // Check if the build result is up to date
             bool outOfDate = false;
             if (!result.IsUpToDate(virtualPath, ensureIsUpToDate)) {
-                Debug.Trace("PreservationFileReader", Path.GetFileName(preservationFile) +
+                System.Web.Util.Debug.Trace("PreservationFileReader", Path.GetFileName(preservationFile) +
                     " is out of date (IsUpToDate==false)");
 
                 outOfDate = true;
@@ -134,7 +134,7 @@ internal class PreservationFileReader {
                 // If the hash doesn't match, the preserved data is out of date
                 if (currentHash == 0 || currentHash != savedHash) {
                     outOfDate = true;
-                    Debug.Trace("PreservationFileReader", Path.GetFileName(preservationFile) +
+                    System.Web.Util.Debug.Trace("PreservationFileReader", Path.GetFileName(preservationFile) +
                         " is out of date (ComputeHashCode)");
                 }
             }
@@ -180,17 +180,17 @@ internal class PreservationFileReader {
                 continue;
 
             // verify no unrecognized attributes
-            Debug.Assert(dependenciesNode.Attributes.Count == 0); 
+            System.Web.Util.Debug.Assert(dependenciesNode.Attributes.Count == 0); 
 
             switch (dependenciesNode.Name) {
             case PreservationFileWriter.fileDependenciesTagName:
-                Debug.Assert(_sourceDependencies == null);
+                System.Web.Util.Debug.Assert(_sourceDependencies == null);
                 _sourceDependencies = ReadDependencies(dependenciesNode,
                     PreservationFileWriter.fileDependencyTagName);
                 break;
 
             default:
-                Debug.Assert(false, dependenciesNode.Name);
+                System.Web.Util.Debug.Assert(false, dependenciesNode.Name);
                 break;
             }
         }
@@ -206,16 +206,16 @@ internal class PreservationFileReader {
             if (dependencyNode.NodeType != XmlNodeType.Element)
                 continue;
 
-            Debug.Assert(dependencyNode.Name.Equals(tagName));
+            System.Web.Util.Debug.Assert(dependencyNode.Name.Equals(tagName));
             if (!dependencyNode.Name.Equals(tagName))
                 break;
 
             string fileName = HandlerBase.RemoveAttribute(dependencyNode, "name");
 
-            Debug.Assert(fileName != null, "fileName != null");
+            System.Web.Util.Debug.Assert(fileName != null, "fileName != null");
 
             // verify no unrecognized attributes
-            Debug.Assert(dependencyNode.Attributes.Count == 0); 
+            System.Web.Util.Debug.Assert(dependencyNode.Attributes.Count == 0); 
 
             if (fileName == null)
                 return null;

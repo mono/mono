@@ -26,6 +26,7 @@ namespace System.Web {
     using System.Web.Security.Cryptography;
     using System.Web.Util;
     using Debug = System.Web.Util.Debug;
+    
 
     //
     // Public constants for cache-control
@@ -310,7 +311,7 @@ namespace System.Web {
             // note that ValidationCallbackInfo.data is assumed to be null
             String[] callbackInfos = new String[_validationCallbackInfo.Length * 2];
             for (int i = 0; i < _validationCallbackInfo.Length; i++) {
-                Debug.Assert(_validationCallbackInfo[i].data == null, "_validationCallbackInfo[i].data == null");
+                System.Web.Util.Debug.Assert(_validationCallbackInfo[i].data == null, "_validationCallbackInfo[i].data == null");
 
                 HttpCacheValidateHandler handler = _validationCallbackInfo[i].handler;
                 string targetTypeName = System.Web.UI.Util.GetAssemblyQualifiedTypeName(handler.Method.ReflectedType);
@@ -337,7 +338,7 @@ namespace System.Web {
                     target = BuildManager.GetType(targetTypeName, true /*throwOnFail*/, false /*ignoreCase*/);
                 }
                 if (target == null) {
-                    throw new SerializationException(SR.GetString(SR.Type_cannot_be_resolved, targetTypeName));
+                    throw new SerializationException(System.Web.SR.GetString(System.Web.SR.Type_cannot_be_resolved, targetTypeName));
                 }
                 HttpCacheValidateHandler handler = (HttpCacheValidateHandler) Delegate.CreateDelegate(typeof(HttpCacheValidateHandler), target, methodName);
                 callbackInfos[i / 2] = new ValidationCallbackInfo(handler, null);
@@ -735,7 +736,7 @@ namespace System.Web {
                 }
                 string id = dep.GetUniqueID();
                 if (id == null) {
-                    throw new HttpException(SR.GetString(SR.No_UniqueId_Cache_Dependency));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.No_UniqueId_Cache_Dependency));
                 }
                 DateTime utcFileLastModifiedMax = UpdateLastModifiedTimeFromDependency(dep);
                 StringBuilder sb = new StringBuilder(256);
@@ -818,7 +819,7 @@ namespace System.Web {
             AppendValueToHeader(sb, s_cacheabilityTokens[(int) cacheability]);
 
             if (cacheability == HttpCacheability.Public && _privateFields != null) {
-                Debug.Assert(_privateFields.Size > 0);
+                System.Web.Util.Debug.Assert(_privateFields.Size > 0);
 
                 AppendValueToHeader(sb, "private=\"");
                 sb.Append(_privateFields.GetKey(0));
@@ -833,7 +834,7 @@ namespace System.Web {
                     cacheability != HttpCacheability.ServerAndNoCache && 
                     _noCacheFields != null) {
 
-                Debug.Assert(_noCacheFields.Size > 0);
+                System.Web.Util.Debug.Assert(_noCacheFields.Size > 0);
 
                 AppendValueToHeader(sb, "no-cache=\"");
                 sb.Append(_noCacheFields.GetKey(0));
@@ -1180,7 +1181,7 @@ namespace System.Web {
         internal DateTime UtcGetAbsoluteExpiration() {
             DateTime absoluteExpiration = Cache.NoAbsoluteExpiration;
 
-            Debug.Assert(_utcTimestampCreated != DateTime.MinValue, "_utcTimestampCreated != DateTime.MinValue");
+            System.Web.Util.Debug.Assert(_utcTimestampCreated != DateTime.MinValue, "_utcTimestampCreated != DateTime.MinValue");
             if (_slidingExpiration != 1) {
                 if (_isMaxAgeSet) {
                     absoluteExpiration = _utcTimestampCreated + _maxAge;
@@ -1238,7 +1239,7 @@ namespace System.Web {
             }
 
             if (_varyByCustom != null) {
-                throw new InvalidOperationException(SR.GetString(SR.VaryByCustom_already_set));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.VaryByCustom_already_set));
             }
 
             Dirtied();
@@ -1406,7 +1407,7 @@ namespace System.Web {
 
                 default:
                     throw new ArgumentException(
-                            SR.GetString(SR.Cacheability_for_field_must_be_private_or_nocache),
+                            System.Web.SR.GetString(System.Web.SR.Cacheability_for_field_must_be_private_or_nocache),
                             "cacheability");
             }
 
@@ -1637,11 +1638,11 @@ namespace System.Web {
             }
 
             if (_etag != null) {
-                throw new InvalidOperationException(SR.GetString(SR.Etag_already_set));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Etag_already_set));
             }
 
             if (_generateEtagFromFiles) {
-                throw new InvalidOperationException(SR.GetString(SR.Cant_both_set_and_generate_Etag));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cant_both_set_and_generate_Etag));
             }
 
             Dirtied();
@@ -1732,7 +1733,7 @@ namespace System.Web {
         /// </devdoc>
         public void SetETagFromFileDependencies() {
             if (_etag != null) {
-                throw new InvalidOperationException(SR.GetString(SR.Cant_both_set_and_generate_Etag));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cant_both_set_and_generate_Etag));
             }
 
             Dirtied();

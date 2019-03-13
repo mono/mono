@@ -39,7 +39,7 @@ namespace System.Web.Configuration {
             _properties.Add(_propHistorySize);
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

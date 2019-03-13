@@ -29,6 +29,7 @@ namespace System.Web {
     using System.Web.SessionState;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     /*
      * Application Factory only has and public static methods to get / recycle
@@ -90,7 +91,7 @@ namespace System.Web {
 
         internal static void ThrowIfApplicationOnStartCalled() {
             if (_theApplicationFactory._appOnStartCalled) {
-                throw new InvalidOperationException(SR.GetString(SR.MethodCannotBeCalledAfterAppStart));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.MethodCannotBeCalledAfterAppStart));
             }
         }
 
@@ -225,23 +226,22 @@ namespace System.Web {
         }
 
         private void GetAppStateByParsingGlobalAsax() {
-            using (new ApplicationImpersonationContext()) {
-                // It may not exist if the app is precompiled
-                if (FileUtil.FileExists(_appFilename)) {
-                    ApplicationFileParser parser;
+            
+            // It may not exist if the app is precompiled
+            if (System.Web.Util.FileUtil.FileExists(_appFilename)) {
+                ApplicationFileParser parser;
 
-                    parser = new ApplicationFileParser();
-                    AssemblySet referencedAssemblies = System.Web.UI.Util.GetReferencedAssemblies(
-                        _theApplicationType.Assembly);
-                    referencedAssemblies.Add(typeof(string).Assembly);
-                    VirtualPath virtualPath = HttpRuntime.AppDomainAppVirtualPathObject.SimpleCombine(
-                        applicationFileName);
-                    parser.Parse(referencedAssemblies, virtualPath);
+                parser = new ApplicationFileParser();
+                AssemblySet referencedAssemblies = System.Web.UI.Util.GetReferencedAssemblies(
+                    _theApplicationType.Assembly);
+                referencedAssemblies.Add(typeof(string).Assembly);
+                VirtualPath virtualPath = HttpRuntime.AppDomainAppVirtualPathObject.SimpleCombine(
+                    applicationFileName);
+                parser.Parse(referencedAssemblies, virtualPath);
 
-                    // Create app state
-                    _state = new HttpApplicationState(parser.ApplicationObjects, parser.SessionObjects);
-                }
-            }
+                // Create app state
+                _state = new HttpApplicationState(parser.ApplicationObjects, parser.SessionObjects);
+            } 
         }
 
         private bool ReflectOnMethodInfoIfItLooksLikeEventHandler(MethodInfo m) {
@@ -277,18 +277,18 @@ namespace System.Web {
                 return false;
 
             // special pseudo-events
-            if (StringUtil.EqualsIgnoreCase(name, "Application_OnStart") ||
-                StringUtil.EqualsIgnoreCase(name, "Application_Start")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "Application_OnStart") ||
+                System.Web.Util.StringUtil.EqualsIgnoreCase(name, "Application_Start")) {
                 _onStartMethod = m;
                 _onStartParamCount = parameters.Length;
             }
-            else if (StringUtil.EqualsIgnoreCase(name, "Application_OnEnd") ||
-                     StringUtil.EqualsIgnoreCase(name, "Application_End")) {
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "Application_OnEnd") ||
+                     System.Web.Util.StringUtil.EqualsIgnoreCase(name, "Application_End")) {
                 _onEndMethod = m;
                 _onEndParamCount = parameters.Length;
             }
-            else if (StringUtil.EqualsIgnoreCase(name, "Session_OnEnd") ||
-                     StringUtil.EqualsIgnoreCase(name, "Session_End")) {
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "Session_OnEnd") ||
+                     System.Web.Util.StringUtil.EqualsIgnoreCase(name, "Session_End")) {
                 _sessionOnEndMethod = m;
                 _sessionOnEndParamCount = parameters.Length;
             }
@@ -300,7 +300,7 @@ namespace System.Web {
             ArrayList handlers = new ArrayList();
             MethodInfo[] methods;
 
-            Debug.Trace("PipelineRuntime", "ReflectOnApplicationType");
+            System.Web.Util.Debug.Trace("PipelineRuntime", "ReflectOnApplicationType");
 
             // get this class methods
             methods = _theApplicationType.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
@@ -340,7 +340,7 @@ namespace System.Web {
 
         private void OnAppFileChange(Object sender, FileChangeEvent e) {
             // shutdown the app domain if app file changed
-            Debug.Trace("AppDomainFactory", "Shutting down appdomain because of application file change");
+            System.Web.Util.Debug.Trace("AppDomainFactory", "Shutting down appdomain because of application file change");
             string message = FileChangesMonitor.GenerateErrorMessage(e.Action, e.FileName);
             if (message == null) {
                 message = "Change in GLOBAL.ASAX";
@@ -369,10 +369,7 @@ namespace System.Web {
             if (app == null) {
                 // If ran out of instances, create a new one
                 app = (HttpApplication)HttpRuntime.CreateNonPublicInstance(_theApplicationType);
-
-                using (new ApplicationImpersonationContext()) {
-                    app.InitInternal(context, _state, _eventHandlerMethods);
-                }
+                app.InitInternal(context, _state, _eventHandlerMethods);
             }
 
             if (AppSettings.UseTaskFriendlySynchronizationContext) {
@@ -453,10 +450,7 @@ namespace System.Web {
                 using (new DisposableHttpContextWrapper(context)) {
                     // If ran out of instances, create a new one
                     app = (HttpApplication)HttpRuntime.CreateNonPublicInstance(_theApplicationType);
-
-                    using (new ApplicationImpersonationContext()) {
-                        app.InitSpecial(_state, _eventHandlerMethods, appContext, context);
-                    }
+                    app.InitSpecial(_state, _eventHandlerMethods, appContext, context); 
                 }
             }
 

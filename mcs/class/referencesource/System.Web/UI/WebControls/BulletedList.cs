@@ -16,6 +16,7 @@ namespace System.Web.UI.WebControls {
     using System.Web.UI.WebControls;
     using System.Drawing.Design;
     using System.Web.Util;
+    
 
 
 
@@ -55,7 +56,7 @@ namespace System.Web.UI.WebControls {
                 return base.AutoPostBack;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.Property_Set_Not_Supported, "AutoPostBack", this.GetType().ToString()));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Property_Set_Not_Supported, "AutoPostBack", this.GetType().ToString()));
             }
         }
 
@@ -67,7 +68,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(BulletStyle.NotSet),
-        WebSysDescription(SR.BulletedList_BulletStyle)
+        WebSysDescription(System.Web.SR.BulletedList_BulletStyle)
         ]
         public virtual BulletStyle BulletStyle {
             get {
@@ -92,7 +93,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.BulletedList_BulletImageUrl)
+        WebSysDescription(System.Web.SR.BulletedList_BulletImageUrl)
         ]
         public virtual string BulletImageUrl {
             get {
@@ -121,7 +122,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(BulletedListDisplayMode.Text),
-        WebSysDescription(SR.BulletedList_BulletedListDisplayMode) //
+        WebSysDescription(System.Web.SR.BulletedList_BulletedListDisplayMode) //
         ]
         public virtual BulletedListDisplayMode DisplayMode {
             get {
@@ -144,7 +145,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(1),
-        WebSysDescription(SR.BulletedList_FirstBulletNumber)
+        WebSysDescription(System.Web.SR.BulletedList_FirstBulletNumber)
         ]
         public virtual int FirstBulletNumber {
             get {
@@ -163,7 +164,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue(false)]
         [Themeable(true)]
         [WebCategory("Behavior")]
-        [WebSysDescription(SR.ListControl_RenderWhenDataEmpty)]
+        [WebSysDescription(System.Web.SR.ListControl_RenderWhenDataEmpty)]
         public virtual bool RenderWhenDataEmpty {
             get {
                 object o = ViewState["RenderWhenDataEmpty"];
@@ -188,7 +189,7 @@ namespace System.Web.UI.WebControls {
                 return base.SelectedIndex;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.BulletedList_SelectionNotSupported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.BulletedList_SelectionNotSupported));
             }
         }
 
@@ -215,7 +216,7 @@ namespace System.Web.UI.WebControls {
                 return base.SelectedValue;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.BulletedList_SelectionNotSupported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.BulletedList_SelectionNotSupported));
             }
         }
 
@@ -253,7 +254,7 @@ namespace System.Web.UI.WebControls {
                         // NotSet is specified as an unordered list.
                         return HtmlTextWriterTag.Ul;
                     default:
-                        Debug.Assert(false, "Invalid BulletStyle");
+                        System.Web.Util.Debug.Assert(false, "Invalid BulletStyle");
                         return HtmlTextWriterTag.Ol;
                 }
             }
@@ -267,7 +268,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.BulletedList_Target),
+        WebSysDescription(System.Web.SR.BulletedList_Target),
         TypeConverter(typeof(TargetConverter))
         ]
         public virtual string Target {
@@ -288,7 +289,7 @@ namespace System.Web.UI.WebControls {
                 return base.Text;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.BulletedList_TextNotSupported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.BulletedList_TextNotSupported));
             }
         }
 
@@ -298,7 +299,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.BulletedList_OnClick)
+        WebSysDescription(System.Web.SR.BulletedList_OnClick)
         ]
         public event BulletedListEventHandler Click {
             add {
@@ -353,7 +354,7 @@ namespace System.Web.UI.WebControls {
                     writer.AddStyleAttribute(HtmlTextWriterStyle.ListStyleImage, "url(" + HttpUtility.UrlPathEncode(url) + ")");
                     break;
                 default:
-                    Debug.Assert(false, "Invalid BulletStyle");
+                    System.Web.Util.Debug.Assert(false, "Invalid BulletStyle");
                     break;
             }
             int firstBulletNumber = FirstBulletNumber;
@@ -430,7 +431,7 @@ namespace System.Web.UI.WebControls {
                     break;
 
                 default:
-                    Debug.Assert(false, "Invalid BulletedListDisplayMode");
+                    System.Web.Util.Debug.Assert(false, "Invalid BulletedListDisplayMode");
                     break;
             }
 

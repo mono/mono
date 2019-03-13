@@ -48,14 +48,14 @@ namespace System.Web.Util {
 
 #if DBG
         internal virtual void DebugValidate() {
-            Debug.CheckValid(this._next != this || this._prev == this, "Invalid link");
+            System.Web.Util.Debug.CheckValid(this._next != this || this._prev == this, "Invalid link");
         }
 
         internal virtual string DebugDescription(string indent) {
             string desc;
 
             desc = indent + "_next=" + _next + ", _prev=" + _prev + "\nItem=";
-            desc += Debug.GetDescription(Item, indent + "    ");
+            desc += System.Web.Util.Debug.GetDescription(Item, indent + "    ");
 
             return desc;
         }

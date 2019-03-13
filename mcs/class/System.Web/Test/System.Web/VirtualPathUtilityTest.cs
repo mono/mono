@@ -566,18 +566,17 @@ namespace MonoTests.System.Web {
 		public void MakeRelative5 ()
 		{
 			Assert.AreEqual ("", VPU.MakeRelative ("", ""));
-			Assert.AreEqual ("", VPU.MakeRelative ("/something", ""));
+			Assert.AreEqual ("./", VPU.MakeRelative ("/something", ""));
 		}
 
         [Test]
-        [Category ("NotWorking")]
         public void MakeRelative6()
         {
 			Assert.AreEqual ("./", VPU.MakeRelative ("/", "/"));
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("/directory1", "/directory1"));
 			Assert.AreEqual ("directory2", VPU.MakeRelative ("/directory1", "/directory2"));
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("/", "/directory1"));
-			Assert.AreEqual ("", VPU.MakeRelative ("/directory1", "/"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("/directory1", "/"));
 			Assert.AreEqual ("./", VPU.MakeRelative ("/directory1/", "/directory1/"));
 			Assert.AreEqual ("directory1/file1.aspx", VPU.MakeRelative ("/directory1", "/directory1/file1.aspx"));
 			Assert.AreEqual ("file1.aspx", VPU.MakeRelative ("/directory1/file1.aspx", "/directory1/file1.aspx"));
@@ -586,17 +585,15 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MakeRelative6_a ()
 		{
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("/directory1/../", "/directory1"));
-			Assert.AreEqual ("", VPU.MakeRelative ("/directory1", "/directory1/../"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("/directory1", "/directory1/../"));
 			Assert.AreEqual ("./", VPU.MakeRelative ("/", "/directory1/../"));
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("/directory1", "/directory2/../directory1"));
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[Category ("NunitWeb")]
 		public void MakeRelative7 ()
 		{
@@ -608,18 +605,18 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("./", VPU.MakeRelative ("~", "~"), "~, ~");
 			Assert.AreEqual ("./", VPU.MakeRelative ("~/", "~/"));
 			Assert.AreEqual ("./", VPU.MakeRelative ("~//", "~//"));
-			Assert.AreEqual ("./", VPU.MakeRelative ("~", "~//"), "~, ~//");
+			Assert.AreEqual ("/", VPU.MakeRelative ("~", "~//"), "~, ~//");
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/directory1", "~/directory1"));
 			Assert.AreEqual ("directory2", VPU.MakeRelative ("~/directory1", "~/directory2"));
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/", "~/directory1"));
-			Assert.AreEqual ("", VPU.MakeRelative ("~/directory1", "~/"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("~/directory1", "~/"));
 			Assert.AreEqual ("./", VPU.MakeRelative ("~/directory1/", "~/directory1/"));
 			Assert.AreEqual ("directory1/file1.aspx", VPU.MakeRelative ("~/directory1", "~/directory1/file1.aspx"));
 			Assert.AreEqual ("file1.aspx", VPU.MakeRelative ("~/directory1/", "~/directory1/file1.aspx"));
 			Assert.AreEqual ("../directory2/file2.aspx", VPU.MakeRelative ("~/directory1/file1.aspx", "~/directory2/file2.aspx"));
 
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/directory1/../", "~/directory1"));
-			Assert.AreEqual ("", VPU.MakeRelative ("~/directory1", "~/directory1/../"));
+			Assert.AreEqual ("./", VPU.MakeRelative ("~/directory1", "~/directory1/../"));
 			Assert.AreEqual ("./", VPU.MakeRelative ("~/", "~/directory1/../"));
 			Assert.AreEqual ("directory1", VPU.MakeRelative ("~/directory1", "~/directory2/../directory1"));
 

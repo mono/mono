@@ -16,6 +16,7 @@ namespace System.Web.UI {
     using System.Web.Compilation;
     using System.Web.Util;
     using System.Web.UI;
+    
 
     internal class PageThemeParser : BaseTemplateParser {
 
@@ -86,22 +87,22 @@ namespace System.Web.UI {
         internal override void ProcessDirective(string directiveName, IDictionary directive) {
             if (directiveName == null ||
                 directiveName.Length == 0 ||
-                StringUtil.EqualsIgnoreCase(directiveName, DefaultDirectiveName)) {
+                System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, DefaultDirectiveName)) {
 
                 // Make sure the main directive was not already specified
                 if (_mainDirectiveProcessed) {
-                    ProcessError(SR.GetString(SR.Only_one_directive_allowed, DefaultDirectiveName));
+                    ProcessError(System.Web.SR.GetString(System.Web.SR.Only_one_directive_allowed, DefaultDirectiveName));
                     return;
                 }
 
                 ProcessMainDirective(directive);
                 _mainDirectiveProcessed = true;
             }
-            else if (StringUtil.EqualsIgnoreCase(directiveName, "register")) {
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "register")) {
                 base.ProcessDirective(directiveName, directive);
             }
             else {
-                ProcessError(SR.GetString(SR.Unknown_directive, directiveName));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Unknown_directive, directiveName));
                 return;
             }
         }
@@ -116,7 +117,7 @@ namespace System.Web.UI {
             case "classname":
             case "compilationmode":
             case "inherits":
-                ProcessError(SR.GetString(SR.Attr_not_supported_in_directive,
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Attr_not_supported_in_directive,
                         name, DefaultDirectiveName));
                 return false;
 

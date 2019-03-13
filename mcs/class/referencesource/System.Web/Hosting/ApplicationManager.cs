@@ -31,6 +31,7 @@ namespace System.Web.Hosting {
     using System.Web.Compilation;
     using System.Web.Configuration;
     using System.Web.Util;
+    
 
     public enum HostSecurityPolicyResults {
         DefaultPolicy = 0,
@@ -281,7 +282,7 @@ namespace System.Web.Hosting {
 
             // check that type is as IRegisteredObject
             if (!typeof(IRegisteredObject).IsAssignableFrom(type))
-                throw new ArgumentException(SR.GetString(SR.Not_IRegisteredObject, type.FullName), "type");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Not_IRegisteredObject, type.FullName), "type");
 
             // get hosting environment
             HostingEnvironment env = GetAppDomainWithHostingEnvironment(appId, appHost, hostingParameters);
@@ -346,7 +347,7 @@ namespace System.Web.Hosting {
                 appHost = isapiAppHost;
                 appId = isapiAppHost.AppId;
                 virtualPath = VirtualPath.Create(appHost.GetVirtualPath());
-                physicalPath = FileUtil.FixUpPhysicalDirectory(appHost.GetPhysicalPath());
+                physicalPath = System.Web.Util.FileUtil.FixUpPhysicalDirectory(appHost.GetPhysicalPath());
             }
             else {
 #endif // !FEATURE_PAL
@@ -357,7 +358,10 @@ namespace System.Web.Hosting {
                 appId = CreateSimpleAppID(virtualPath, physicalPath, null);
 
                 appHost = new SimpleApplicationHost(virtualPath, physicalPath);
+
+#if !FEATURE_PAL
             }
+#endif
 
             string precompTargetPhysicalDir = hostingParameters.PrecompilationTargetPhysicalDirectory;
             if (precompTargetPhysicalDir != null) {
@@ -827,7 +831,7 @@ namespace System.Web.Hosting {
                                 VirtualPath virtualPath,
                                 String physicalPath) {
 
-            Debug.Trace("AppManager", "CreateObjectInNewWorkerAppDomain, type=" + type.FullName);
+            System.Web.Util.Debug.Trace("AppManager", "CreateObjectInNewWorkerAppDomain, type=" + type.FullName);
 
             IApplicationHost appHost = new SimpleApplicationHost(virtualPath, physicalPath);
 
@@ -835,9 +839,17 @@ namespace System.Web.Hosting {
             hostingParameters.HostingFlags = HostingEnvironmentFlags.HideFromAppManager;
 
             HostingEnvironment env = CreateAppDomainWithHostingEnvironmentAndReportErrors(appId, appHost, hostingParameters);
+            
+            // To get this working... jack in all of the assemblies in this appdomain into 
+            // the hosting env's appdomain
+            
             // When marshaling Type, the AppDomain must have FileIoPermission to the assembly, which is not
             // always the case, so we marshal the assembly qualified name instead
             return env.CreateInstance(type.AssemblyQualifiedName);
+        }
+
+        internal long GetUpdatedTotalCacheSize(long size) {
+            return 0;
         }
 
         //
@@ -875,7 +887,7 @@ namespace System.Web.Hosting {
                 return CreateAppDomainWithHostingEnvironment(appId, appHost, hostingParameters);
             }
             catch (Exception e) {
-                Misc.ReportUnhandledException(e, new string[] {SR.GetString(SR.Failed_to_initialize_AppDomain), appId});
+                Misc.ReportUnhandledException(e, new string[] {System.Web.SR.GetString(System.Web.SR.Failed_to_initialize_AppDomain), appId});
                 throw;
             }
         }
@@ -888,15 +900,15 @@ namespace System.Web.Hosting {
                                                 HostingEnvironmentParameters hostingParameters) {
 
             String physicalPath = appHost.GetPhysicalPath();
-            if (!StringUtil.StringEndsWith(physicalPath, Path.DirectorySeparatorChar))
+            if (!System.Web.Util.StringUtil.StringEndsWith(physicalPath, Path.DirectorySeparatorChar))
                 physicalPath = physicalPath + Path.DirectorySeparatorChar;
 
             String domainId = ConstructAppDomainId(appId);
-            String appName = (StringUtil.GetStringHashCode(String.Concat(appId.ToLower(CultureInfo.InvariantCulture),
+            String appName = (System.Web.Util.StringUtil.GetStringHashCode(String.Concat(appId.ToLower(CultureInfo.InvariantCulture),
                 physicalPath.ToLower(CultureInfo.InvariantCulture)))).ToString("x", CultureInfo.InvariantCulture);
             VirtualPath virtualPath = VirtualPath.Create(appHost.GetVirtualPath());
 
-            Debug.Trace("AppManager", "CreateAppDomainWithHostingEnvironment, path=" + physicalPath + "; appId=" + appId + "; domainId=" + domainId);
+            System.Web.Util.Debug.Trace("AppManager", "CreateAppDomainWithHostingEnvironment, path=" + physicalPath + "; appId=" + appId + "; domainId=" + domainId);
 
             IDictionary bindings = new Hashtable(20);
             AppDomainSetup setup = new AppDomainSetup();
@@ -944,10 +956,12 @@ namespace System.Web.Hosting {
 
                 AppDomain.CurrentDomain.SetData(_configBuildersIgnoreLoadFailuresSwitch, true);
 
+#if (!MONO || !FEATURE_PAL)
                 uncTokenConfig = appHost.GetConfigToken();
                 if (uncTokenConfig != IntPtr.Zero) {
                     ictxConfig = new ImpersonationContext(uncTokenConfig);
                 }
+#endif
 
                 try {
                     // Did the custom loader fail to load?
@@ -959,9 +973,15 @@ namespace System.Web.Hosting {
                     // We support randomized string hash code, but not for the default AppDomain
                     // Don't allow string hash randomization for the defaul AppDomain (i.e. <runtime/UseRandomizedStringHashAlgorithm enabled="1">)
                     // Application should use AppSettings instead to opt-in.
-                    if (EnvironmentInfo.IsStringHashCodeRandomizationDetected) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Require_stable_string_hash_codes));
-                    }
+                    
+                    // SP ----> NEED TO SEE IF THIS MATTERS
+                    //  
+                    // By default, this is true and it skips the entire config loading process.
+                    // I can't figure out a way to default the environment differently.    
+                    //
+                    //if (EnvironmentInfo.IsStringHashCodeRandomizationDetected) {
+                    //    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Require_stable_string_hash_codes));
+                    //}
 
                     bool skipAdditionalConfigChecks = false;
                     if (inClientBuildManager && hostingParameters.IISExpressVersion != null) {
@@ -985,7 +1005,7 @@ namespace System.Web.Hosting {
 
                     HttpRuntimeSection httpRuntimeSection = (HttpRuntimeSection)appConfig.GetSection("system.web/httpRuntime");
                     if (httpRuntimeSection == null) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Config_section_not_present, "httpRuntime"));
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_section_not_present, "httpRuntime"));
                     }
 
                     // DevDiv #403846 - Change certain config defaults if <httpRuntime targetFramework="4.5" /> exists in config.
@@ -1075,12 +1095,12 @@ namespace System.Web.Hosting {
                         if (cacheConfig != null && cacheConfig.DefaultProvider != null && !String.IsNullOrWhiteSpace(cacheConfig.DefaultProvider)) {
                             ProviderSettingsCollection cacheProviders = cacheConfig.Providers;
                             if (cacheProviders == null || cacheProviders.Count < 1) {
-                                throw new ProviderException(SR.GetString(SR.Def_provider_not_found));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Def_provider_not_found));
                             }
 
                             ProviderSettings cacheProviderSettings = cacheProviders[cacheConfig.DefaultProvider];
                             if (cacheProviderSettings == null) {
-                                throw new ProviderException(SR.GetString(SR.Def_provider_not_found));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Def_provider_not_found));
                             } else {
                                 NameValueCollection settings = cacheProviderSettings.Parameters;
                                 settings["name"] = cacheProviderSettings.Name;
@@ -1112,7 +1132,7 @@ namespace System.Web.Hosting {
 
                         TrustSection trustSection = (TrustSection)appConfig.GetSection("system.web/trust");
                         if (trustSection == null || String.IsNullOrEmpty(trustSection.Level)) {
-                            throw new ConfigurationErrorsException(SR.GetString(SR.Config_section_not_present, "trust"));
+                            throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_section_not_present, "trust"));
                         }
 
                         switches.UseLegacyCas = trustSection.LegacyCasModel;
@@ -1134,7 +1154,7 @@ namespace System.Web.Hosting {
                                     policyLevel = GetPartialTrustPolicyLevel(trustSection, securityPolicySection, compilationSection, physicalPath, virtualPath, isDevEnvironment);
                                     permissionSet = policyLevel.GetNamedPermissionSet(trustSection.PermissionSetName);
                                     if (permissionSet == null) {
-                                        throw new ConfigurationErrorsException(SR.GetString(SR.Permission_set_not_found, trustSection.PermissionSetName));
+                                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Permission_set_not_found, trustSection.PermissionSetName));
                                     }
 
                                     // read full trust assemblies and populate the strong name list
@@ -1221,11 +1241,12 @@ setup,
                         appDomain.SetData(entry.Key, entry.Value);
                 }
                 catch (Exception e) {
-                    Debug.Trace("AppManager", "AppDomain.CreateDomain failed", e);
+                    System.Web.Util.Debug.Trace("AppManager", "AppDomain.CreateDomain failed", e);
                     appDomainCreationException = e;
                 }
             }
             finally {
+#if (!MONO || !FEATURE_PAL)
                 if (ictxConfig != null) {
                     ictxConfig.Undo();
                     ictxConfig = null;
@@ -1234,10 +1255,11 @@ setup,
                     UnsafeNativeMethods.CloseHandle(uncTokenConfig);
                     uncTokenConfig = IntPtr.Zero;
                 }
+#endif
             }
 
             if (appDomain == null) {
-                throw new SystemException(SR.GetString(SR.Cannot_create_AppDomain), appDomainCreationException);
+                throw new SystemException(System.Web.SR.GetString(System.Web.SR.Cannot_create_AppDomain), appDomainCreationException);
             }
 
             // Create hosting environment in the new app domain
@@ -1259,6 +1281,7 @@ setup,
             int maxRetries = 10;
             int numRetries = 0;
 
+#if (!MONO || !FEATURE_PAL)
             while (numRetries < maxRetries) {
                 try {
                     uncToken = appHost.GetConfigToken();
@@ -1270,7 +1293,7 @@ setup,
                     System.Threading.Thread.Sleep(250);
                 }
             }
-
+#endif
 
             if (uncToken != IntPtr.Zero) {
                 try {
@@ -1291,7 +1314,7 @@ setup,
                     h = Activator.CreateInstance(appDomain, module, typeName);
                 }
                 catch (Exception e) {
-                    Debug.Trace("AppManager", "appDomain.CreateInstance failed; identity=" + System.Security.Principal.WindowsIdentity.GetCurrent().Name, e);
+                    System.Web.Util.Debug.Trace("AppManager", "appDomain.CreateInstance failed; identity=" + System.Security.Principal.WindowsIdentity.GetCurrent().Name, e);
                     throw;
                 }
 #else
@@ -1311,7 +1334,7 @@ setup,
             HostingEnvironment env = (h != null) ? h.Unwrap() as HostingEnvironment : null;
 
             if (env == null)
-                throw new SystemException(SR.GetString(SR.Cannot_create_HostEnv));
+                throw new SystemException(System.Web.SR.GetString(System.Web.SR.Cannot_create_HostEnv));
 
             // initialize the hosting environment
             IConfigMapPathFactory configMapPathFactory = appHost.GetConfigMapPathFactory();
@@ -1379,14 +1402,14 @@ setup,
                 TrustSection trustSection, SecurityPolicySection securityPolicySection,
                 CompilationSection compilationSection, string physicalPath, VirtualPath virtualPath, bool isDevEnvironment) {
             if (securityPolicySection == null || securityPolicySection.TrustLevels[trustSection.Level] == null) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Unable_to_get_policy_file, trustSection.Level), String.Empty, 0);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Unable_to_get_policy_file, trustSection.Level), String.Empty, 0);
             }
             String configFile = (String)securityPolicySection.TrustLevels[trustSection.Level].PolicyFileExpanded;
-            if (configFile == null || !FileUtil.FileExists(configFile)) {
-                throw new HttpException(SR.GetString(SR.Unable_to_get_policy_file, trustSection.Level));
+            if (configFile == null || !System.Web.Util.FileUtil.FileExists(configFile)) {
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unable_to_get_policy_file, trustSection.Level));
             }
             PolicyLevel policyLevel = null;
-            String appDir = FileUtil.RemoveTrailingDirectoryBackSlash(physicalPath);
+            String appDir = System.Web.Util.FileUtil.RemoveTrailingDirectoryBackSlash(physicalPath);
             String appDirUrl = HttpRuntime.MakeFileUrl(appDir);
 
             // setup $CodeGen$ replacement
@@ -1417,7 +1440,7 @@ setup,
                 }
                 if (tempDirectory == null) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_temp_directory, tempDirAttribName),
+                        System.Web.SR.GetString(System.Web.SR.Invalid_temp_directory, tempDirAttribName),
                         configFileName, configLineNumber);
                 }
                 // Create the config-specified directory if needed
@@ -1426,7 +1449,7 @@ setup,
                 }
                 catch (Exception e) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_temp_directory, tempDirAttribName),
+                        System.Web.SR.GetString(System.Web.SR.Invalid_temp_directory, tempDirAttribName),
                         e,
                         configFileName, configLineNumber);
                 }
@@ -1440,17 +1463,17 @@ setup,
                 // Don't do this if we're in a service (!UserInteractive), as TEMP
                 // could point to unwanted places.
                 if (!Environment.UserInteractive) {
-                    throw new HttpException(SR.GetString(SR.No_codegen_access,
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.No_codegen_access,
                         System.Web.UI.Util.GetCurrentAccountName(), tempDirectory));
                 }
                 tempDirectory = Path.GetTempPath();
-                Debug.Assert(System.Web.UI.Util.HasWriteAccessToDirectory(tempDirectory));
+                System.Web.Util.Debug.Assert(System.Web.UI.Util.HasWriteAccessToDirectory(tempDirectory));
                 tempDirectory = Path.Combine(tempDirectory, HttpRuntime.codegenDirName);
             }
             String simpleAppName = System.Web.Hosting.AppManagerAppDomainFactory.ConstructSimpleAppName(
                 VirtualPath.GetVirtualPathStringNoTrailingSlash(virtualPath), isDevEnvironment);
             String binDir = Path.Combine(tempDirectory, simpleAppName);
-            binDir = FileUtil.RemoveTrailingDirectoryBackSlash(binDir);
+            binDir = System.Web.Util.FileUtil.RemoveTrailingDirectoryBackSlash(binDir);
             String binDirUrl = HttpRuntime.MakeFileUrl(binDir);
 
             String originUrl = trustSection.OriginUrl;
@@ -1476,7 +1499,7 @@ setup,
 #pragma warning disable 618 // ASP is reading their grant set out of legacy policy level files
             policyLevel = SecurityManager.LoadPolicyLevelFromString(strFileData, PolicyLevelType.AppDomain);
             if (policyLevel == null) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Unable_to_get_policy_file, trustSection.Level));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Unable_to_get_policy_file, trustSection.Level));
             }
             // Found GAC Token
             if (gacLocation != null) {
@@ -1489,7 +1512,7 @@ setup,
                         foundGacCondition = true;
                         // if we found the GAC token and also have the GacMembershipCondition
                         // the policy file needs to be upgraded to just include the GacMembershipCondition
-                        Debug.Assert(!foundGacCondition);
+                        System.Web.Util.Debug.Assert(!foundGacCondition);
                         break;
                     }
                 }
@@ -1608,13 +1631,13 @@ setup,
 
                 private static HostExecutionContextManager CreateHostExecutionContextManager() {
                     object hostExecutionContextManager = new THostExecutionContextManager();
-                    Debug.Assert(hostExecutionContextManager is HostExecutionContextManager || hostExecutionContextManager.GetType() == typeof(object), "THostExecutionContextManager was an unexpected type!");
+                    System.Web.Util.Debug.Assert(hostExecutionContextManager is HostExecutionContextManager || hostExecutionContextManager.GetType() == typeof(object), "THostExecutionContextManager was an unexpected type!");
                     return hostExecutionContextManager as HostExecutionContextManager;
                 }
 
                 private static HostSecurityManager CreateHostSecurityManager() {
                     object hostSecurityManager = new THostSecurityManager();
-                    Debug.Assert(hostSecurityManager is HostSecurityManager || hostSecurityManager.GetType() == typeof(object), "THostSecurityManager was an unexpected type!");
+                    System.Web.Util.Debug.Assert(hostSecurityManager is HostSecurityManager || hostSecurityManager.GetType() == typeof(object), "THostSecurityManager was an unexpected type!");
                     return hostSecurityManager as HostSecurityManager;
                 }
             }
@@ -1689,14 +1712,15 @@ setup,
 
         private static Evidence GetDefaultDomainIdentity() {
             Evidence evidence = AppDomain.CurrentDomain.Evidence; // CurrentDomain.Evidence returns a clone so we can modify it if we need
-            bool hasZone = evidence.GetHostEvidence<Zone>() != null;
-            bool hasUrl = evidence.GetHostEvidence<Url>() != null;
+            //bool hasZone = evidence.GetHostEvidence<Zone>() != null;
+            //bool hasUrl = evidence.HostEvidenceList != null;
 
-            if (!hasZone)
-                evidence.AddHostEvidence(new Zone(SecurityZone.MyComputer));
+            //if (!hasZone)
+            //    evidence.AddHostEvidence(new Zone(SecurityZone.MyComputer));
 
-            if (!hasUrl)
-                evidence.AddHostEvidence(new Url("ms-internal-microsoft-asp-net-webhost-20"));
+            //if (!hasUrl)
+            //    evidence.AddHost("ms-internal-microsoft-asp-net-webhost-20");
+                //evidence.AddHostEvidence(new Url("ms-internal-microsoft-asp-net-webhost-20"));
 
             return evidence;
         }

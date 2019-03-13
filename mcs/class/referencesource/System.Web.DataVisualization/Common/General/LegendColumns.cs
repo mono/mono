@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -300,7 +300,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			SRCategory("CategoryAttributeSeriesItems"),
 			DefaultValue(KeywordName.LegendText),
 			SRDescription("DescriptionAttributeLegendCellColumn_Text"),
+#if !FEATURE_PAL
             Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
 			]
 			public virtual string Text
 			{
@@ -323,7 +325,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(typeof(Color), ""),
             SRDescription("DescriptionAttributeForeColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 			]
 			public virtual Color ForeColor
 			{
@@ -346,7 +350,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(typeof(Color), ""),
             SRDescription("DescriptionAttributeBackColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 			]
 			public virtual Color BackColor
 			{
@@ -490,7 +496,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			SRCategory("CategoryAttributeSeriesItems"),
             SRDescription("DescriptionAttributeToolTip"),
 			DefaultValue(""),
+#if !FEATURE_PAL
             Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
 			]
 			public virtual string ToolTip
 			{
@@ -520,7 +528,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			SRCategory("CategoryAttributeSeriesItems"),
 			SRDescription("DescriptionAttributeUrl"),
 			DefaultValue(""),
+#if !FEATURE_PAL
             Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
 			]
 			public virtual string Url
 			{
@@ -540,7 +550,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			[
 			SRCategory("CategoryAttributeSeriesItems"),
 			SRDescription("DescriptionAttributeMapAreaAttributes"),
+#if !FEATURE_PAL			
             Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
 			DefaultValue(""),
 			]
 			public virtual string MapAreaAttributes
@@ -606,7 +618,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(typeof(Color), "Black"),
 			SRDescription("DescriptionAttributeLegendCellColumn_HeaderColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 			]
 			public virtual Color HeaderForeColor
 			{
@@ -629,7 +643,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(typeof(Color), ""),
             SRDescription("DescriptionAttributeHeaderBackColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 			]
 			public virtual Color HeaderBackColor
 			{
@@ -1066,7 +1082,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(typeof(Color), ""),
             SRDescription("DescriptionAttributeForeColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 			]
 			public virtual Color ForeColor
 			{
@@ -1089,7 +1107,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(typeof(Color), ""),
             SRDescription("DescriptionAttributeBackColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 			]
 			public virtual Color BackColor
 			{
@@ -1132,7 +1152,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			SRCategory("CategoryAttributeAppearance"),
 			DefaultValue(""),
 			SRDescription("DescriptionAttributeLegendCell_Image"),
+#if !FEATURE_PAL
             Editor(Editors.ImageValueEditor.Editor, Editors.ImageValueEditor.Base),
+#endif
 			]
 			public virtual string Image
 			{
@@ -1155,7 +1177,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(typeof(Color), ""),
             SRDescription("DescriptionAttributeImageTransparentColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 			]
 			public virtual Color ImageTransparentColor
 			{
@@ -1358,7 +1382,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			SRCategory("CategoryAttributeMapArea"),
 			SRDescription("DescriptionAttributeUrl"),
 			DefaultValue(""),
+#if !FEATURE_PAL
             Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base)
+#endif
 			]
 			public virtual string Url
 			{

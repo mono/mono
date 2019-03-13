@@ -31,7 +31,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.RequiredFieldValidator_InitialValue)
+        WebSysDescription(System.Web.SR.RequiredFieldValidator_InitialValue)
         ]                                         
         public string InitialValue {
             get { 
@@ -68,7 +68,7 @@ namespace System.Web.UI.WebControls {
             // Get the control value, return true if it is not found
             string controlValue = GetControlValidationValue(ControlToValidate);
             if (controlValue == null) {
-                Debug.Fail("Should have been caught by PropertiesValid check");
+                System.Web.Util.Debug.Fail("Should have been caught by PropertiesValid check");
                 return true;
             }
 

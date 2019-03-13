@@ -915,7 +915,6 @@ namespace MonoTests.System.Web.UI.WebControls
 				evaluateCount = 0;
 			}
 
-			internal
 			protected override object Evaluate (HttpContext context, Control control) 
 			{
 				evaluateCount++;

@@ -209,6 +209,7 @@ namespace System.Web {
 
         internal static void TraceEnableCheck(EtwTraceConfigType configType, IntPtr p)
         {
+#if (!MONO || !FEATURE_PAL)
             // Don't activate if webengine.dll isn't loaded
             if (!HttpRuntime.IsEngineLoaded)
                 return;
@@ -230,6 +231,7 @@ namespace System.Web {
                 default:
                     break;
             }
+#endif
         }
 
         internal static void Trace(EtwTraceType traceType, HttpWorkerRequest workerRequest)
@@ -258,7 +260,7 @@ namespace System.Web {
 
             if (workerRequest == null)
                 return;
-            
+#if (!MONO || !FEATURE_PAL)
             if (s_WrType == EtwWorkerRequestType.IIS7Integrated) {
                 UnsafeNativeMethods.TraceRaiseEventMgdHandler((int) traceType, ((IIS7WorkerRequest)workerRequest).RequestContext, data1, data2, data3, data4);
             }
@@ -268,14 +270,17 @@ namespace System.Web {
             else if (s_WrType == EtwWorkerRequestType.OutOfProc) {
                 UnsafeNativeMethods.PMTraceRaiseEvent((int) traceType, ((ISAPIWorkerRequest)workerRequest).Ecb, data1, data2, data3, data4);
             }
+#endif
         }
 
         internal static void Trace(EtwTraceType traceType, IntPtr ecb, string data1, string data2, bool inProc)
         {
+#if (!MONO || !FEATURE_PAL)
             if (inProc)
                 UnsafeNativeMethods.TraceRaiseEventWithEcb((int) traceType, ecb, data1, data2, null, null);
             else 
                 UnsafeNativeMethods.PMTraceRaiseEvent((int) traceType, ecb, data1, data2, null, null);
+#endif
         }
 
     };

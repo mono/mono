@@ -194,7 +194,7 @@ namespace System.Web.Configuration {
         public RoleManagerSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

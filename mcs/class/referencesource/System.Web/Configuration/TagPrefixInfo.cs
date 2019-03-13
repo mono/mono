@@ -18,6 +18,7 @@ namespace System.Web.Configuration {
     using System.Threading;
     using System.Web.Configuration;
     using System.Security.Permissions;
+    
 
     public sealed class TagPrefixInfo : ConfigurationElement {
         private static readonly ConfigurationElementProperty s_elemProperty =
@@ -89,11 +90,11 @@ namespace System.Web.Configuration {
 
         public override bool Equals(object prefix) {
             TagPrefixInfo ns = prefix as TagPrefixInfo;
-            return StringUtil.Equals(TagPrefix, ns.TagPrefix) &&
-                    StringUtil.Equals(TagName, ns.TagName) &&
-                    StringUtil.Equals(Namespace, ns.Namespace) &&
-                    StringUtil.Equals(Assembly, ns.Assembly) &&
-                    StringUtil.Equals(Source, ns.Source);
+            return System.Web.Util.StringUtil.Equals(TagPrefix, ns.TagPrefix) &&
+                    System.Web.Util.StringUtil.Equals(TagName, ns.TagName) &&
+                    System.Web.Util.StringUtil.Equals(Namespace, ns.Namespace) &&
+                    System.Web.Util.StringUtil.Equals(Assembly, ns.Assembly) &&
+                    System.Web.Util.StringUtil.Equals(Source, ns.Source);
         }
         public override int GetHashCode() {
             return TagPrefix.GetHashCode() ^ TagName.GetHashCode() ^
@@ -101,7 +102,7 @@ namespace System.Web.Configuration {
                    Source.GetHashCode();
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -163,7 +164,7 @@ namespace System.Web.Configuration {
 
             }
         }
-        protected override ConfigurationElementProperty ElementProperty {
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -177,7 +178,7 @@ namespace System.Web.Configuration {
 
             if (System.Web.UI.Util.ContainsWhiteSpace(elem.TagPrefix)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Space_attribute, "tagPrefix"));
+                    System.Web.SR.GetString(System.Web.SR.Space_attribute, "tagPrefix"));
             }
 
             bool invalid = false;
@@ -202,7 +203,7 @@ namespace System.Web.Configuration {
 
             if (invalid) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_tagprefix_entry));
+                    System.Web.SR.GetString(System.Web.SR.Invalid_tagprefix_entry));
             }
         }
     }

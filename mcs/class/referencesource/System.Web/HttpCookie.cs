@@ -380,7 +380,7 @@ namespace System.Web {
 
                 //
                 // Expires
-                if (StringUtil.EqualsIgnoreCase(attributeName, "Expires")) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "Expires")) {
                     DateTime dt;
                     if (DateTime.TryParse(attributeValue, out dt)) {
                         cookie.Expires = dt;
@@ -388,22 +388,22 @@ namespace System.Web {
                 }
                 //
                 // Domain
-                else if (attributeValue != null && StringUtil.EqualsIgnoreCase(attributeName, "Domain")) {
+                else if (attributeValue != null && System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "Domain")) {
                     cookie.Domain = attributeValue;
                 }
                 //
                 // Path
-                else if (attributeValue != null && StringUtil.EqualsIgnoreCase(attributeName, "Path")) {
+                else if (attributeValue != null && System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "Path")) {
                     cookie.Path = attributeValue;
                 }
                 //
                 // Secure
-                else if (StringUtil.EqualsIgnoreCase(attributeName, "Secure")) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "Secure")) {
                     cookie.Secure = true;
                 }
                 //
                 // HttpOnly
-                else if (StringUtil.EqualsIgnoreCase(attributeName, "HttpOnly")) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "HttpOnly")) {
                     cookie.HttpOnly = true;
                 }
             }

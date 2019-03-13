@@ -45,7 +45,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateField_AlternatingItemTemplate),
+            WebSysDescription(System.Web.SR.TemplateField_AlternatingItemTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(IDataItemContainer), BindingDirection.TwoWay)
         ]
@@ -64,7 +64,7 @@ namespace System.Web.UI.WebControls {
         /// </summary>
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_ValidateRequestMode),
+        WebSysDescription(System.Web.SR.Control_ValidateRequestMode),
         DefaultValue(ValidateRequestMode.Inherit)
         ]
         public new ValidateRequestMode ValidateRequestMode {
@@ -83,7 +83,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Behavior"),
             DefaultValue(true),
-            WebSysDescription(SR.ImageField_ConvertEmptyStringToNull)
+            WebSysDescription(System.Web.SR.ImageField_ConvertEmptyStringToNull)
         ]
         public virtual bool ConvertEmptyStringToNull {
             get {
@@ -105,7 +105,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateField_EditItemTemplate),
+            WebSysDescription(System.Web.SR.TemplateField_EditItemTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(IDataItemContainer), BindingDirection.TwoWay)
         ]
@@ -126,7 +126,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateField_FooterTemplate),
+            WebSysDescription(System.Web.SR.TemplateField_FooterTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(IDataItemContainer))
         ]
@@ -148,7 +148,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateField_HeaderTemplate),
+            WebSysDescription(System.Web.SR.TemplateField_HeaderTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(IDataItemContainer))
         ]
@@ -169,7 +169,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateField_InsertItemTemplate),
+            WebSysDescription(System.Web.SR.TemplateField_InsertItemTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(IDataItemContainer), BindingDirection.TwoWay)
         ]
@@ -190,7 +190,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DefaultValue(null),
-            WebSysDescription(SR.TemplateField_ItemTemplate),
+            WebSysDescription(System.Web.SR.TemplateField_ItemTemplate),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(IDataItemContainer), BindingDirection.TwoWay)
         ]
@@ -324,7 +324,7 @@ namespace System.Web.UI.WebControls {
         ///  Otherwise, override and throw a useful error message about why the field can't support callbacks.</para>
         /// </devdoc>
         public override void ValidateSupportsCallback() {
-            throw new NotSupportedException(SR.GetString(SR.TemplateField_CallbacksNotSupported, Control.ID));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.TemplateField_CallbacksNotSupported, Control.ID));
         }
     }
 }

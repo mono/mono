@@ -40,7 +40,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Image_AlternateText)
+        WebSysDescription(System.Web.SR.Image_AlternateText)
         ]
         public virtual string AlternateText {
             get {
@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.Image_DescriptionUrl)
+        WebSysDescription(System.Web.SR.Image_DescriptionUrl)
         ]
         public virtual string DescriptionUrl {
             get {
@@ -106,7 +106,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.Image_GenerateEmptyAlternateText)
+        WebSysDescription(System.Web.SR.Image_GenerateEmptyAlternateText)
         ]
         public virtual bool GenerateEmptyAlternateText {
             get {
@@ -126,7 +126,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(ImageAlign.NotSet),
-        WebSysDescription(SR.Image_ImageAlign)
+        WebSysDescription(System.Web.SR.Image_ImageAlign)
         ]
         public virtual ImageAlign ImageAlign {
             get {
@@ -152,7 +152,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.Image_ImageUrl)
+        WebSysDescription(System.Web.SR.Image_ImageUrl)
         ]
         public virtual string ImageUrl {
             get {

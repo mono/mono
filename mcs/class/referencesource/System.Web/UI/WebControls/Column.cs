@@ -11,6 +11,7 @@ namespace System.Web.UI.WebControls {
     using System.ComponentModel;
     using System.Web;
     using System.Web.UI;
+    
 
     /// <devdoc>
     ///    Creates a column and is the base class for all <see cref='System.Web.UI.WebControls.DataGrid'/> column types.
@@ -56,7 +57,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.DataGridColumn_FooterStyle),
+        WebSysDescription(System.Web.SR.DataGridColumn_FooterStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty)
         ]
@@ -88,7 +89,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.DataGridColumn_FooterText)
+        WebSysDescription(System.Web.SR.DataGridColumn_FooterText)
         ]
         public virtual string FooterText {
             get {
@@ -113,7 +114,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         UrlProperty(),
-        WebSysDescription(SR.DataGridColumn_HeaderImageUrl)
+        WebSysDescription(System.Web.SR.DataGridColumn_HeaderImageUrl)
         ]
         public virtual string HeaderImageUrl {
             get {
@@ -135,7 +136,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.DataGridColumn_HeaderStyle),
+        WebSysDescription(System.Web.SR.DataGridColumn_HeaderStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty)
         ]
@@ -167,7 +168,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.DataGridColumn_HeaderText)
+        WebSysDescription(System.Web.SR.DataGridColumn_HeaderText)
         ]
         public virtual string HeaderText {
             get {
@@ -189,7 +190,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.DataGridColumn_ItemStyle),
+        WebSysDescription(System.Web.SR.DataGridColumn_ItemStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty)
         ]
@@ -230,7 +231,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.DataGridColumn_SortExpression)
+        WebSysDescription(System.Web.SR.DataGridColumn_SortExpression)
         ]
         public virtual string SortExpression {
             get {
@@ -262,7 +263,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.DataGridColumn_Visible)
+        WebSysDescription(System.Web.SR.DataGridColumn_Visible)
         ]
         public bool Visible {
             get {

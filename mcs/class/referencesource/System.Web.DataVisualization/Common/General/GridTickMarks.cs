@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -238,7 +238,7 @@ using System.Drawing.Drawing2D;
 				return;
 			}
 		
-			// If Maximum, minimum and interval don’t have 
+			// If Maximum, minimum and interval donï¿½t have 
 			// proper value do not draw tick marks.
             if (Axis.ViewMaximum <= Axis.ViewMinimum)
 			{
@@ -1327,7 +1327,7 @@ using System.Drawing.Drawing2D;
 			if( ( _axis.ViewMaximum - _axis.ViewMinimum ) / ChartHelper.GetIntervalSize( current, this.GetInterval(), this.GetIntervalType(), axisSeries, 0, DateTimeIntervalType.Number, true ) > ChartHelper.MaxNumOfGridlines )
 				return;
 
-			// If Maximum, minimum and interval don’t have 
+			// If Maximum, minimum and interval donï¿½t have 
 			// proper value do not draw grid lines.
 			if( _axis.ViewMaximum <= _axis.ViewMinimum )
 				return;
@@ -1915,7 +1915,9 @@ using System.Drawing.Drawing2D;
 		DefaultValue(typeof(Color), "Black"),
         SRDescription("DescriptionAttributeLineColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL		
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif

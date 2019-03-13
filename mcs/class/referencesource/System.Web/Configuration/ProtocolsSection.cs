@@ -19,6 +19,7 @@ namespace System.Web.Configuration
     using System.Web.Hosting;
     using System.Web.Util;
     using System.Security.Permissions;
+    
 
     public sealed class ProtocolsSection : ConfigurationSection
     {
@@ -39,7 +40,7 @@ namespace System.Web.Configuration
         {
         }
 
-        protected override ConfigurationPropertyCollection Properties 
+        protected internal override ConfigurationPropertyCollection Properties
         {
             get
             {
@@ -70,7 +71,7 @@ namespace System.Web.Configuration
         {
         }
 
-        protected override ConfigurationPropertyCollection Properties 
+        protected internal override ConfigurationPropertyCollection Properties
         {
             get
             {
@@ -141,7 +142,7 @@ namespace System.Web.Configuration
 
             if ( string.IsNullOrEmpty( name ) )
             {
-                throw new ArgumentException( SR.GetString(SR.Config_collection_add_element_without_key) );
+                throw new ArgumentException( System.Web.SR.GetString(System.Web.SR.Config_collection_add_element_without_key) );
             }
 
             return name;
@@ -188,7 +189,7 @@ namespace System.Web.Configuration
         {
             if ( string.IsNullOrEmpty( name ) )
             {
-                throw ExceptionUtil.ParameterNullOrEmpty("name");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("name");
             }
 
             base[ _propName ] = name;
@@ -198,7 +199,7 @@ namespace System.Web.Configuration
         {
         }
 
-        protected override ConfigurationPropertyCollection Properties 
+        protected internal override ConfigurationPropertyCollection Properties 
         {
             get
             {

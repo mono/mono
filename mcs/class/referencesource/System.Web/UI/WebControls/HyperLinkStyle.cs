@@ -74,7 +74,7 @@ namespace System.Web.UI.WebControls {
         }
 
         protected override sealed void FillStyleAttributes(CssStyleCollection attributes, IUrlResolutionService urlResolver) {
-            Debug.Assert(_owner != null);
+            System.Web.Util.Debug.Assert(_owner != null);
 
             StateBag viewState = ViewState;
 

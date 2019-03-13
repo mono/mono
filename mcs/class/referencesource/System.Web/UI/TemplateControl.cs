@@ -34,6 +34,7 @@ namespace System.Web.UI {
     using System.Web.Util;
     using System.Xml;
     using Debug = System.Web.Util.Debug;
+    
 
 /*
  * Base class for Pages and UserControls
@@ -121,7 +122,7 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
     ///    <para>Occurs when a user initiates a transaction.</para>
     /// </devdoc>
     [
-    WebSysDescription(SR.Page_OnCommitTransaction)
+    WebSysDescription(System.Web.SR.Page_OnCommitTransaction)
     ]
     public event EventHandler CommitTransaction {
         add {
@@ -165,7 +166,7 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
     ///    <para>Occurs when a user aborts a transaction.</para>
     /// </devdoc>
     [
-    WebSysDescription(SR.Page_OnAbortTransaction)
+    WebSysDescription(System.Web.SR.Page_OnAbortTransaction)
     ]
     public event EventHandler AbortTransaction {
         add {
@@ -194,7 +195,7 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
     ///    <para>Occurs when an uncaught exception is thrown.</para>
     /// </devdoc>
     [
-    WebSysDescription(SR.Page_ErrorDescription)
+    WebSysDescription(System.Web.SR.Page_ErrorDescription)
     ]
     public event EventHandler Error {
         add {
@@ -437,7 +438,7 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
             string key = entry.Key;
             SyncEventMethodInfo info = entry.Value;
 
-            Debug.Assert(_eventObjects[key] != null);
+            System.Web.Util.Debug.Assert(_eventObjects[key] != null);
 
             bool eventExists = false;
             MethodInfo methodInfo = info.MethodInfo;
@@ -646,7 +647,7 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
     private Control LoadControl(IWebObjectFactory objectFactory, VirtualPath virtualPath, Type t, object[] parameters) {
 
         // Make sure we get an object factory or a type, but not both
-        Debug.Assert((objectFactory == null) != (t == null));
+        System.Web.Util.Debug.Assert((objectFactory == null) != (t == null));
 
         BuildResultCompiledType compiledUCResult = null;
         BuildResultNoCompileUserControl noCompileUCResult = null;
@@ -656,14 +657,14 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
             compiledUCResult = objectFactory as BuildResultCompiledType;
             if (compiledUCResult != null) {
                 t = compiledUCResult.ResultType;
-                Debug.Assert(t != null);
+                System.Web.Util.Debug.Assert(t != null);
 
                 // Make sure it's a user control (VSWhidbey 428718)
                 Util.CheckAssignableType(typeof(UserControl), t);
             }
             else {
                 noCompileUCResult = (BuildResultNoCompileUserControl)objectFactory;
-                Debug.Assert(noCompileUCResult != null);
+                System.Web.Util.Debug.Assert(noCompileUCResult != null);
             }
         }
         else {
@@ -696,7 +697,7 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
             // If it's a user control, do some extra initialization
             UserControl uc = c as UserControl;
             if (uc != null) {
-                Debug.Assert(virtualPath != null);
+                System.Web.Util.Debug.Assert(virtualPath != null);
                 if (virtualPath != null)
                     uc.TemplateControlVirtualPath = virtualPath;
                 uc.InitializeAsUserControl(Page);
@@ -800,7 +801,7 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
     /// </devdoc>
     private void CheckPageExists() {
         if (Page == null) {
-            throw new InvalidOperationException(SR.GetString(SR.TemplateControl_DataBindingRequiresPage));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.TemplateControl_DataBindingRequiresPage));
         }
     }
 

@@ -7,7 +7,7 @@ using System.Text;
 namespace MonoTests.Common
 {
 	[ScaffoldTable(false)]
-	class FooNoScaffold
+	public class FooNoScaffold
 	{
 		public string Column1 { get; set; }
 	}

@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls.WebParts {
         protected internal override void RenderContents(HtmlTextWriter writer) {
             string errorMessage = ErrorMessage;
             if (!String.IsNullOrEmpty(errorMessage)) {
-                writer.WriteEncodedText(SR.GetString(SR.ErrorWebPart_ErrorText, errorMessage));
+                writer.WriteEncodedText(System.Web.SR.GetString(System.Web.SR.ErrorWebPart_ErrorText, errorMessage));
             }
         }
 

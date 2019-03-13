@@ -20,6 +20,7 @@ namespace System.Web {
     using System.Web.Configuration;
     using System.Web.Management;
     using System.Web.Util;
+    
 
     internal class HttpBufferlessInputStream : Stream {
         private long                     _position;
@@ -140,7 +141,7 @@ namespace System.Web {
                     if (count < 0)
                         throw new ArgumentOutOfRangeException("count");
                     if (buffer.Length - offset < count)
-                        throw new ArgumentException(SR.GetString(SR.InvalidOffsetOrCount, "offset", "count"));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidOffsetOrCount, "offset", "count"));
                     _preloadedBytesRead = GetPreloadedContent(buffer, ref offset, ref count);
                 }
                 if (_remainingBytes == 0) {
@@ -237,7 +238,7 @@ namespace System.Web {
                         if (_persistEntityBody) {
                             SetRawContentOnce();
                         }
-                        throw new HttpException(SR.GetString(SR.HttpBufferlessInputStream_ClientDisconnected));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.HttpBufferlessInputStream_ClientDisconnected));
                     }
                     break;
                 }
@@ -313,7 +314,7 @@ namespace System.Web {
                 if ( !(_context.WorkerRequest is IIS7WorkerRequest) ) {
                     _context.Response.CloseConnectionAfterError();
                 }
-                throw new HttpException(SR.GetString(SR.Max_request_length_exceeded), null, WebEventCodes.RuntimeErrorPostTooLarge);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Max_request_length_exceeded), null, WebEventCodes.RuntimeErrorPostTooLarge);
             }
         }
 

@@ -28,6 +28,7 @@ namespace System.Web.Compilation {
     using System.Web.Profile;
     using System.Configuration;
     using System.Web.Hosting;
+    
 
     internal class ProfileBuildProvider: BuildProvider {
 
@@ -69,11 +70,11 @@ namespace System.Web.Compilation {
                 // have been precompiled.  If not, then Profile might have been turned
                 // on *after* precompiling the app, which is not allowed (VSWhidbey 114884).
                 if (isPrecompiledApp) {
-                    throw new HttpException(SR.GetString(SR.Profile_not_precomped));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Profile_not_precomped));
                 }
 
                 // We should always find the type
-                Debug.Assert(false);
+                System.Web.Util.Debug.Assert(false);
             }
 
             return t;
@@ -134,7 +135,7 @@ namespace System.Web.Compilation {
                 } else {
                     string grpName = property.Name.Substring(0, pos);
                     if (!assemblyBuilder.CodeDomProvider.IsValidIdentifier(grpName))
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Profile_bad_group, grpName), property.FileName, property.LineNumber);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Profile_bad_group, grpName), property.FileName, property.LineNumber);
                     if (groups[grpName] == null) {
                         groups.Add(grpName, property.Name);
                     } else {
@@ -177,7 +178,7 @@ namespace System.Web.Compilation {
             if (pos > 0)
                 name = name.Substring(pos+1);
             if (!assemblyBuilder.CodeDomProvider.IsValidIdentifier(name))
-                throw new ConfigurationErrorsException(SR.GetString(SR.Profile_bad_name), property.FileName, property.LineNumber);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Profile_bad_name), property.FileName, property.LineNumber);
             // e.g.: public string Color {
             //                       get { return (string) GetProperty("Color"); }
             //                       set { SetProperty("Color", value); } }

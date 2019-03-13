@@ -50,6 +50,9 @@ namespace System.Web.Configuration {
         internal static bool UseMetabase {
             [RegistryPermissionAttribute(SecurityAction.Assert, Read = "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\InetStp")]
             get {
+#if MONO
+                return false;
+#endif
                 if (IISExpressVersion != null) {
                     return false;
                 }

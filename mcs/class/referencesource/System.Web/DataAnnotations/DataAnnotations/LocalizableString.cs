@@ -6,6 +6,7 @@
 using System.Globalization;
 using System.Reflection;
 
+
 namespace System.ComponentModel.DataAnnotations {
     /// <summary>
     /// A helper class for providing a localizable string property.  
@@ -132,7 +133,7 @@ namespace System.ComponentModel.DataAnnotations {
                     if (badlyConfigured) {
                         string exceptionMessage = String.Format(CultureInfo.CurrentCulture, 
 #if SYSTEM_WEB
-                            SR.GetString(SR.LocalizableString_LocalizationFailed),
+                            System.Web.SR.GetString(System.Web.SR.LocalizableString_LocalizationFailed),
 #else
                             DataAnnotationsResources.LocalizableString_LocalizationFailed, 
 #endif

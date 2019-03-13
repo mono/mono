@@ -410,13 +410,10 @@ namespace MonoTests.System.Web.DynamicData
 			delegates.PreRenderComplete = ValidationException_1_OnPreRenderComplete;
 			test.Invoker = new PageInvoker (delegates);
 			var fr = new FormRequest (test.Response, "form1");
-#if TARGET_DOTNET
+
 			fr.Controls.Add ("ListView4$ctrl0$editMe");
 			fr.Controls["ListView4$ctrl0$editMe"].Value = "Edit";
-#else
-			fr.Controls.Add ("ListView4$ctl01$editMe");
-			fr.Controls["ListView4$ctl01$editMe"].Value = "Edit";
-#endif
+
 			test.Request = fr;
 			p = test.Run ();
 

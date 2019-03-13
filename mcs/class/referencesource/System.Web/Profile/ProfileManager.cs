@@ -24,6 +24,7 @@ namespace System.Web.Profile
     using  System.Reflection;
     using  System.CodeDom;
     using System.Web.Hosting;
+    
 
     public static class ProfileManager
     {
@@ -61,7 +62,7 @@ namespace System.Web.Profile
             if ( profiles.Count < 1 )
             {
                 throw new ArgumentException(
-                    SR.GetString(SR.Parameter_collection_empty,
+                    System.Web.SR.GetString(System.Web.SR.Parameter_collection_empty,
                         "profiles" ),
                     "profiles" );
             }
@@ -187,12 +188,12 @@ namespace System.Web.Profile
         {
             if ( pageIndex < 0 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageIndex_bad), "pageIndex");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_bad), "pageIndex");
             }
 
             if ( pageSize < 1 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageSize_bad), "pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageSize_bad), "pageSize");
             }
 
             SecUtility.CheckParameter( ref usernameToMatch,
@@ -236,12 +237,12 @@ namespace System.Web.Profile
         {
             if ( pageIndex < 0 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageIndex_bad), "pageIndex");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_bad), "pageIndex");
             }
 
             if ( pageSize < 1 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageSize_bad), "pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageSize_bad), "pageSize");
             }
 
             SecUtility.CheckParameter( ref usernameToMatch,
@@ -288,8 +289,7 @@ namespace System.Web.Profile
         //////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////
         public static bool AutomaticSaveEnabled {
-            get {
-                HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
+            get {                
                 // WOS #1544130: Don't initialize providers when getting this property, because it is called in ProfileModule.Init
                 InitializeEnabled(false);
                 return s_AutomaticSaveEnabled;
@@ -298,11 +298,10 @@ namespace System.Web.Profile
         //////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////
         public static ProfileProvider Provider {
-            get {
-                HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
+            get {                
                 Initialize(true);
                 if (s_Provider == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.Profile_default_provider_not_found));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Profile_default_provider_not_found));
                 }
                 return s_Provider;
             }
@@ -311,8 +310,7 @@ namespace System.Web.Profile
         //////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////
         public static ProfileProviderCollection Providers {
-            get {
-                HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
+            get {                
                 Initialize(true);
                 return s_Providers;
             }
@@ -330,7 +328,7 @@ namespace System.Web.Profile
                         try {
                             ProfileSection config = MTConfigUtil.GetProfileAppConfig();
                             if (!s_InitializedEnabled) {
-                                s_Enabled = config.Enabled && HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Low);
+                                s_Enabled = config.Enabled;
                                 s_AutomaticSaveEnabled = s_Enabled && config.AutomaticSaveEnabled;
                                 s_InitializedEnabled = true;
                             }
@@ -354,7 +352,7 @@ namespace System.Web.Profile
             if (s_InitException != null)
                 throw s_InitException;
             if (throwIfNotEnabled && !s_Enabled)
-                throw new ProviderException(SR.GetString(SR.Profile_not_enabled));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Profile_not_enabled));
         }
 
         //////////////////////////////////////////////////////////////////////
@@ -375,11 +373,11 @@ namespace System.Web.Profile
                 s_Providers.SetReadOnly();
 
                 if (config.DefaultProvider == null)
-                    throw new ProviderException(SR.GetString(SR.Profile_default_provider_not_specified));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Profile_default_provider_not_specified));
 
                 s_Provider = (ProfileProvider)s_Providers[config.DefaultProvider];
                 if (s_Provider == null)
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Profile_default_provider_not_found), config.ElementInformation.Properties["providers"].Source, config.ElementInformation.Properties["providers"].LineNumber);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Profile_default_provider_not_found), config.ElementInformation.Properties["providers"].Source, config.ElementInformation.Properties["providers"].LineNumber);
 
                 s_InitializeDefaultProvider = true;
             }

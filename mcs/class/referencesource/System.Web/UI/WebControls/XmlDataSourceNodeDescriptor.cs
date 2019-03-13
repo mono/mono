@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls {
         /// Creates a new instance of XmlDataSourceView.
         /// </devdoc>
         public XmlDataSourceNodeDescriptor(XmlNode node) {
-            Debug.Assert(node != null, "Did not expect null node");
+            System.Web.Util.Debug.Assert(node != null, "Did not expect null node");
             _node = node;
         }
 

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -337,7 +337,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), "Black"),
         SRDescription("DescriptionAttributeLineColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		public Color LineColor
 		{

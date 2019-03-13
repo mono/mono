@@ -10,6 +10,7 @@ namespace System.Configuration {
     using System.Security.Cryptography.Xml;
     using System.Xml;
 
+#if (!MONO) || (MONO && !FEATURE_PAL)
     // 
     // Extends EncryptedXml to use FIPS-certified symmetric algorithm
     // 
@@ -72,4 +73,23 @@ namespace System.Configuration {
             return false;
         }
     }
+#else
+    // 
+    // Extends EncryptedXml to use FIPS-certified symmetric algorithm
+    // 
+    class FipsAwareEncryptedXml : EncryptedXml {
+
+        public FipsAwareEncryptedXml(XmlDocument doc)
+            : base(doc) {
+        }
+
+        // Override EncryptedXml.GetDecryptionKey to avoid calling into CryptoConfig.CreateFromName
+        // When detect AES, we need to return AesCryptoServiceProvider (FIPS certified) instead of AesManaged (FIPS obsolated)
+        public override SymmetricAlgorithm GetDecryptionKey(EncryptedData encryptedData, string symmetricAlgorithmUri) {
+            
+            // Fallback to the base implementation
+            return base.GetDecryptionKey(encryptedData, symmetricAlgorithmUri);
+        }
+    }
+#endif
 }

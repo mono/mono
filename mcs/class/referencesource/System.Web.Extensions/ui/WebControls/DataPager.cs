@@ -24,7 +24,9 @@ namespace System.Web.UI.WebControls {
     PersistChildren(false),
     Themeable(true),
     SupportsEventValidation,
+#if !MONO
     Designer("System.Web.UI.Design.WebControls.DataPagerDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+#endif
     ToolboxBitmap(typeof(DataPager), "DataPager.bmp")
     ]
     public class DataPager : Control, IAttributeAccessor, INamingContainer, ICompositeControlDesignerAccessor {
@@ -77,7 +79,9 @@ namespace System.Web.UI.WebControls {
 
         [
         DefaultValue(null),
+#if !MONO
         Editor("System.Web.UI.Design.WebControls.DataPagerFieldTypeEditor, " + AssemblyRef.SystemWebExtensionsDesign, typeof(UITypeEditor)),
+#endif
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         Category("Default"),

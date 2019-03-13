@@ -20,6 +20,7 @@ namespace System.Web.Security {
     using System.Web.Configuration;
     using System.Web.Caching;
     using System.Web.Util;
+    
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
@@ -41,8 +42,7 @@ namespace System.Web.Security {
 
 
         public event RoleManagerEventHandler GetRoles {
-            add {
-                HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
+            add {                
                 _eventHandler += value;
             }
             remove {
@@ -95,7 +95,7 @@ namespace System.Web.Security {
                     return;
             }
             
-            Debug.Assert(null != context.User, "null != context.User");
+            System.Web.Util.Debug.Assert(null != context.User, "null != context.User");
             
             if (Roles.CacheRolesInCookie)
             {

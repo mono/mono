@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MonoTests.Common
 {
-	class BazNoStringsNoPrimary
+	public class BazNoStringsNoPrimary
 	{
 		// DO NOT change the order of properties - tests depend on it
 		public int Column1 { get; set; }

@@ -9,6 +9,7 @@ namespace System.Web.UI {
     using System.Collections;
     using System.Collections.Specialized;
     using System.Globalization;
+    
 
 
     /// <devdoc>
@@ -112,18 +113,18 @@ namespace System.Web.UI {
         object IDictionary.this[object key] {
             get {
                 if (!(key is string)) {
-                    throw new ArgumentException(SR.GetString(SR.FilteredAttributeDictionary_ArgumentMustBeString), "key");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.FilteredAttributeDictionary_ArgumentMustBeString), "key");
                 }
 
                 return this[key.ToString()];
             }
             set {
                 if (!(key is string)) {
-                    throw new ArgumentException(SR.GetString(SR.FilteredAttributeDictionary_ArgumentMustBeString), "key");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.FilteredAttributeDictionary_ArgumentMustBeString), "key");
                 }
 
                 if (!(value is string)) {
-                    throw new ArgumentException(SR.GetString(SR.FilteredAttributeDictionary_ArgumentMustBeString), "value");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.FilteredAttributeDictionary_ArgumentMustBeString), "value");
                 }
 
                 this[key.ToString()] = value.ToString();
@@ -154,11 +155,11 @@ namespace System.Web.UI {
             }
 
             if (!(key is string)) {
-                throw new ArgumentException(SR.GetString(SR.FilteredAttributeDictionary_ArgumentMustBeString), "key");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.FilteredAttributeDictionary_ArgumentMustBeString), "key");
             }
 
             if (!(value is string)) {
-                throw new ArgumentException(SR.GetString(SR.FilteredAttributeDictionary_ArgumentMustBeString), "value");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.FilteredAttributeDictionary_ArgumentMustBeString), "value");
             }
 
             if (value == null) {
@@ -172,7 +173,7 @@ namespace System.Web.UI {
         /// <internalonly/>
         bool IDictionary.Contains(object key) {
             if (!(key is string)) {
-                throw new ArgumentException(SR.GetString(SR.FilteredAttributeDictionary_ArgumentMustBeString), "key");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.FilteredAttributeDictionary_ArgumentMustBeString), "key");
             }
 
             return Contains(key.ToString());

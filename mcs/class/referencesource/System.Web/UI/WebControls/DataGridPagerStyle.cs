@@ -91,7 +91,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(PagerMode.NextPrev),
         NotifyParentProperty(true),
-        WebSysDescription(SR.DataGridPagerStyle_Mode)
+        WebSysDescription(System.Web.SR.DataGridPagerStyle_Mode)
         ]
         public PagerMode Mode {
             get {
@@ -120,7 +120,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue("&gt;"),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerSettings_NextPageText)
+        WebSysDescription(System.Web.SR.PagerSettings_NextPageText)
         ]
         public string NextPageText {
             get {
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(10),
         NotifyParentProperty(true),
-        WebSysDescription(SR.DataGridPagerStyle_PageButtonCount)
+        WebSysDescription(System.Web.SR.DataGridPagerStyle_PageButtonCount)
         ]
         public int PageButtonCount {
             get {
@@ -175,7 +175,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Layout"),
         DefaultValue(PagerPosition.Bottom),
         NotifyParentProperty(true),
-        WebSysDescription(SR.DataGridPagerStyle_Position)
+        WebSysDescription(System.Web.SR.DataGridPagerStyle_Position)
         ]
         public PagerPosition Position {
             get {
@@ -204,7 +204,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue("&lt;"),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerSettings_PreviousPageText)
+        WebSysDescription(System.Web.SR.PagerSettings_PreviousPageText)
         ]
         public string PrevPageText {
             get {
@@ -229,7 +229,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(true),
         NotifyParentProperty(true),
-        WebSysDescription(SR.DataGridPagerStyle_Visible)
+        WebSysDescription(System.Web.SR.DataGridPagerStyle_Visible)
         ]
         public bool Visible {
             get {

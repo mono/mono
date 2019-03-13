@@ -9,7 +9,6 @@ namespace System.Web.ClientServices.Providers
     using System.Data;
     using System.Data.OleDb;
     using System.IO;
-    using System.Windows.Forms;
     using System.Web;
     using System.Web.Resources;
     using System.Web.Security;

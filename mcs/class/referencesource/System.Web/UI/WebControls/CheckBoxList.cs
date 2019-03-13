@@ -14,6 +14,7 @@ namespace System.Web.UI.WebControls {
     using System.Web;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     /// <devdoc>
     /// <para>Creates a group of <see cref='System.Web.UI.WebControls.CheckBox'/> controls.</para>
@@ -55,7 +56,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(-1),
-        WebSysDescription(SR.CheckBoxList_CellPadding)
+        WebSysDescription(System.Web.SR.CheckBoxList_CellPadding)
         ]
         public virtual int CellPadding {
             get {
@@ -79,7 +80,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(-1),
-        WebSysDescription(SR.CheckBoxList_CellSpacing)
+        WebSysDescription(System.Web.SR.CheckBoxList_CellSpacing)
         ]
         public virtual int CellSpacing {
             get {
@@ -107,7 +108,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue(false)]
         [Themeable(true)]
         [WebCategory("Behavior")]
-        [WebSysDescription(SR.ListControl_RenderWhenDataEmpty)]
+        [WebSysDescription(System.Web.SR.ListControl_RenderWhenDataEmpty)]
         public virtual bool RenderWhenDataEmpty {
             get {
                 object o = ViewState["RenderWhenDataEmpty"];
@@ -125,7 +126,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(0),
-        WebSysDescription(SR.CheckBoxList_RepeatColumns)
+        WebSysDescription(System.Web.SR.CheckBoxList_RepeatColumns)
         ]
         public virtual int RepeatColumns {
             get {
@@ -148,7 +149,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(RepeatDirection.Vertical),
-        WebSysDescription(SR.Item_RepeatDirection)
+        WebSysDescription(System.Web.SR.Item_RepeatDirection)
         ]
         public virtual RepeatDirection RepeatDirection {
             get {
@@ -171,7 +172,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(RepeatLayout.Table),
-        WebSysDescription(SR.WebControl_RepeatLayout)
+        WebSysDescription(System.Web.SR.WebControl_RepeatLayout)
         ]
         public virtual RepeatLayout RepeatLayout {
             get {
@@ -192,7 +193,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(TextAlign.Right),
-        WebSysDescription(SR.WebControl_TextAlign)
+        WebSysDescription(System.Web.SR.WebControl_TextAlign)
         ]
         public virtual TextAlign TextAlign {
             get {
@@ -262,7 +263,7 @@ namespace System.Web.UI.WebControls {
         protected internal override void Render(HtmlTextWriter writer) {
             // Rendering an empty table is not valid xhtml or html 4, so throw
             if (RepeatLayout == RepeatLayout.Table && RenderWhenDataEmpty) {
-                throw new InvalidOperationException(SR.GetString(SR.ListControl_RenderWhenDataEmptyNotSupportedWithTableLayout, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ListControl_RenderWhenDataEmptyNotSupportedWithTableLayout, ID));
             }
 
             // Don't render anything if the control is empty (unless the developer opts in by setting RenderWhenDataEmpty). 

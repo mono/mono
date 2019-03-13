@@ -22,6 +22,7 @@ using System.Globalization;
 using System.Web.Caching;
 
 
+
 /*
  * Parser for declarative controls
  */
@@ -98,7 +99,7 @@ internal class UserControlParser : TemplateControlParser {
     }
 
     internal override string UnknownOutputCacheAttributeError {
-        get { return SR.Attr_not_supported_in_ucdirective; }
+        get { return System.Web.SR.Attr_not_supported_in_ucdirective; }
     }
 }
 

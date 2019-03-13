@@ -245,9 +245,9 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         private void RegisterStyle(Style style) {
-            Debug.Assert(_page.SupportsStyleSheets);
+            System.Web.Util.Debug.Assert(_page.SupportsStyleSheets);
             // The style should not have already been registered
-            Debug.Assert(style.RegisteredCssClass.Length == 0);
+            System.Web.Util.Debug.Assert(style.RegisteredCssClass.Length == 0);
 
             if (!style.IsEmpty) {
                 string name = Zone.ClientID + "_" + _cssStyleIndex++.ToString(NumberFormatInfo.InvariantInfo);
@@ -607,7 +607,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     }
                     else {
                         // If Zone.RenderClientScript, then WebPartManager must not be null
-                        Debug.Assert(WebPartManager != null);
+                        System.Web.Util.Debug.Assert(WebPartManager != null);
                         Zone.Menu.Render(writer, verbs, webPart.WholePartID + "Verbs", webPart, WebPartManager);
                     }
                 }

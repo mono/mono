@@ -24,6 +24,7 @@ namespace System.Web.UI {
     using System.Runtime.Serialization.Formatters;
     using System.Security;
     using System.Security.Permissions;
+    using System.Threading;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Web.Compilation;
@@ -36,6 +37,7 @@ namespace System.Web.UI {
     using System.Web.Util;
     using Microsoft.Win32;
     using Debug = System.Web.Util.Debug;
+    
 
 internal static class Util {
     private static string[] s_invalidCultureNames = new string[] { "aspx", "ascx", "master" };
@@ -163,7 +165,7 @@ internal static class Util {
 
     internal static Encoding GetEncodingFromConfigPath(VirtualPath configPath) {
 
-        Debug.Assert(configPath != null, "configPath != null");
+        System.Web.Util.Debug.Assert(configPath != null, "configPath != null");
 
         // Check if a file encoding is specified in the config
         Encoding fileEncoding = null;
@@ -200,9 +202,9 @@ internal static class Util {
             // access problem, or it could be that it's actually a directory.
 
             // It's a directory: give a specific error.
-            if (FileUtil.DirectoryExists(filename)) {
+            if (System.Web.Util.FileUtil.DirectoryExists(filename)) {
                 throw new HttpException(
-                    SR.GetString(SR.Unexpected_Directory, HttpRuntime.GetSafePath(filename)));
+                    System.Web.SR.GetString(System.Web.SR.Unexpected_Directory, HttpRuntime.GetSafePath(filename)));
             }
 
             // It's a real access problem, so just rethrow it
@@ -216,7 +218,7 @@ internal static class Util {
      * Attempt to delete a file, but don't throw if it can't be done
      */
     internal static void DeleteFileNoException(string path) {
-        Debug.Assert(File.Exists(path), path);
+        System.Web.Util.Debug.Assert(File.Exists(path), path);
         try {
             File.Delete(path);
         }
@@ -280,7 +282,7 @@ internal static class Util {
         }
 
         // Shoud always be valid now
-        Debug.Assert(IsValidFileName(fileName));
+        System.Web.Util.Debug.Assert(IsValidFileName(fileName));
 
         return fileName;
     }
@@ -297,7 +299,7 @@ internal static class Util {
         // Get the path to a dummy file in that directory
         string dummyFile = Path.Combine(dir, "~AspAccessCheck_" +
             HostingEnvironment.AppDomainUniqueInteger.ToString(
-                "x", CultureInfo.InvariantCulture) + SafeNativeMethods.GetCurrentThreadId() + ".tmp");
+                "x", CultureInfo.InvariantCulture) + Thread.CurrentThread.ManagedThreadId + ".tmp");
         FileStream fs = null;
 
         bool success = false;
@@ -462,7 +464,7 @@ internal static class Util {
         if (!virtualPath.FileExists()) {
             throw new HttpException(
                 HttpStatus.NotFound,
-                SR.GetString(SR.FileName_does_not_exist,
+                System.Web.SR.GetString(System.Web.SR.FileName_does_not_exist,
                     virtualPath.VirtualPathString));
         }
     }
@@ -479,12 +481,12 @@ internal static class Util {
 
     internal static void CheckThemeAttribute(string themeName) {
         if (themeName.Length > 0) {
-            if (!FileUtil.IsValidDirectoryName(themeName)) {
-                throw new HttpException(SR.GetString(SR.Page_theme_invalid_name, themeName));
+            if (!System.Web.Util.FileUtil.IsValidDirectoryName(themeName)) {
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Page_theme_invalid_name, themeName));
             }
 
             if (!ThemeExists(themeName)) {
-                throw new HttpException(SR.GetString(SR.Page_theme_not_found, themeName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Page_theme_not_found, themeName));
             }
         }
     }
@@ -518,14 +520,14 @@ internal static class Util {
     internal static void CheckAssignableType(Type baseType, Type type) {
         if (!baseType.IsAssignableFrom(type)) {
             throw new HttpException(
-                SR.GetString(SR.Type_doesnt_inherit_from_type,
+                System.Web.SR.GetString(System.Web.SR.Type_doesnt_inherit_from_type,
                     type.FullName, baseType.FullName));
         }
     }
 
     internal /*public*/ static int LineCount(string text, int offset, int newoffset) {
 
-        Debug.Assert(offset <= newoffset);
+        System.Web.Util.Debug.Assert(offset <= newoffset);
 
         int linecount = 0;
 
@@ -652,7 +654,7 @@ internal static class Util {
 
         if (val == null) {
             if (required)
-                throw new HttpException(SR.GetString(SR.Missing_attr, key));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Missing_attr, key));
 
             return null;
         }
@@ -667,7 +669,7 @@ internal static class Util {
 
         if (value.Length == 0) {
             throw new HttpException(
-                SR.GetString(SR.Empty_attribute, name));
+                System.Web.SR.GetString(System.Web.SR.Empty_attribute, name));
         }
 
         return value;
@@ -677,7 +679,7 @@ internal static class Util {
     internal static string GetNoSpaceAttribute(string name, string value) {
         if (Util.ContainsWhiteSpace(value)) {
             throw new HttpException(
-                SR.GetString(SR.Space_attribute, name));
+                System.Web.SR.GetString(System.Web.SR.Space_attribute, name));
         }
 
         return value;
@@ -714,7 +716,7 @@ internal static class Util {
         }
         // Don't treat xmlns as filters, this needs to be treated differently.
         // VSWhidbey 495125
-        else if (StringUtil.StringStartsWithIgnoreCase(input, XmlnsAttribute)) {
+        else if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(input, XmlnsAttribute)) {
             propName = input;
         }
         else {
@@ -723,7 +725,7 @@ internal static class Util {
 
             if (tmp.Length > 2) {
                 throw new HttpException(
-                    SR.GetString(SR.Too_many_filters, input));
+                    System.Web.SR.GetString(System.Web.SR.Too_many_filters, input));
             }
 
             if (MTConfigUtil.GetPagesConfig().IgnoreDeviceFilters[tmp[0]] != null) {
@@ -799,7 +801,7 @@ internal static class Util {
 
         if (!System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(value)) {
             throw new HttpException(
-                SR.GetString(SR.Invalid_attribute_value, value, name));
+                System.Web.SR.GetString(System.Web.SR.Invalid_attribute_value, value, name));
         }
 
         return value;
@@ -818,7 +820,7 @@ internal static class Util {
         foreach (string part in parts) {
             if (!System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(part)) {
                 throw new HttpException(
-                    SR.GetString(SR.Invalid_attribute_value, value, name));
+                    System.Web.SR.GetString(System.Web.SR.Invalid_attribute_value, value, name));
             }
         }
 
@@ -832,7 +834,7 @@ internal static class Util {
 
     internal static void CheckUnknownDirectiveAttributes(string directiveName, IDictionary directive) {
 
-        CheckUnknownDirectiveAttributes(directiveName, directive, SR.Attr_not_supported_in_directive);
+        CheckUnknownDirectiveAttributes(directiveName, directive, System.Web.SR.Attr_not_supported_in_directive);
     }
 
     internal static void CheckUnknownDirectiveAttributes(string directiveName, IDictionary directive,
@@ -841,7 +843,7 @@ internal static class Util {
         // If there are some attributes left, fail
         if (directive.Count > 0) {
             throw new HttpException(
-                SR.GetString(resourceKey,
+                System.Web.SR.GetString(resourceKey,
                     Util.FirstDictionaryKey(directive), directiveName));
         }
     }
@@ -872,7 +874,7 @@ internal static class Util {
         }
         catch {
             throw new HttpException(
-                SR.GetString(SR.Invalid_boolean_attribute, name));
+                System.Web.SR.GetString(System.Web.SR.Invalid_boolean_attribute, name));
         }
     }
 
@@ -906,13 +908,13 @@ internal static class Util {
         }
         catch {
             throw new HttpException(
-                SR.GetString(SR.Invalid_nonnegative_integer_attribute, name));
+                System.Web.SR.GetString(System.Web.SR.Invalid_nonnegative_integer_attribute, name));
         }
 
         // Make sure it's not negative
         if (ret < 0) {
             throw new HttpException(
-                SR.GetString(SR.Invalid_nonnegative_integer_attribute, name));
+                System.Web.SR.GetString(System.Web.SR.Invalid_nonnegative_integer_attribute, name));
         }
 
         return ret;
@@ -930,13 +932,13 @@ internal static class Util {
         }
         catch {
             throw new HttpException(
-                SR.GetString(SR.Invalid_positive_integer_attribute, key));
+                System.Web.SR.GetString(System.Web.SR.Invalid_positive_integer_attribute, key));
         }
 
         // Make sure it's positive
         if (val <= 0) {
             throw new HttpException(
-                SR.GetString(SR.Invalid_positive_integer_attribute, key));
+                System.Web.SR.GetString(System.Web.SR.Invalid_positive_integer_attribute, key));
         }
 
         return true;
@@ -963,7 +965,7 @@ internal static class Util {
             // Don't allow numbers to be specified (ASURT 71851)
             // Also, don't allow several values (e.g. "red,blue")
             if (Char.IsDigit(value[0]) || value[0] == '-' || ((!allowMultiple) && (value.IndexOf(',') >= 0)))
-                throw new FormatException(SR.GetString(SR.EnumAttributeInvalidString, value, name, enumType.FullName));
+                throw new FormatException(System.Web.SR.GetString(System.Web.SR.EnumAttributeInvalidString, value, name, enumType.FullName));
 
             val = Enum.Parse(enumType, value, true /*ignoreCase*/);
         }
@@ -976,7 +978,7 @@ internal static class Util {
                     names += ", " + n;
             }
             throw new HttpException(
-                SR.GetString(SR.Invalid_enum_attribute, name, names));
+                System.Web.SR.GetString(System.Web.SR.Invalid_enum_attribute, name, names));
         }
 
         return val;
@@ -1018,7 +1020,7 @@ internal static class Util {
      * Checks for null.
      */
     internal static bool IsTrueString(string s) {
-        return s != null && (StringUtil.EqualsIgnoreCase(s, "true"));
+        return s != null && (System.Web.Util.StringUtil.EqualsIgnoreCase(s, "true"));
     }
 
     /*
@@ -1026,7 +1028,7 @@ internal static class Util {
      * Checks for null.
      */
     internal static bool IsFalseString(string s) {
-        return s != null && (StringUtil.EqualsIgnoreCase(s, "false"));
+        return s != null && (System.Web.Util.StringUtil.EqualsIgnoreCase(s, "false"));
     }
 
     internal static string GetStringFromBool(bool flag) {
@@ -1080,10 +1082,10 @@ internal static class Util {
         string[] chunks = filename.Split('.');
 
         int chunkCount = chunks.Length - chunksToIgnore;
-        Debug.Assert(chunkCount >= 1);
+        System.Web.Util.Debug.Assert(chunkCount >= 1);
 
         if (IsWhiteSpaceString(chunks[chunkCount-1])) {
-            throw new HttpException(SR.GetString(SR.Unsupported_filename, filename));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unsupported_filename, filename));
         }
 
         typeName = MakeValidTypeNameFromString(chunks[chunkCount-1]);
@@ -1092,7 +1094,7 @@ internal static class Util {
         for (int i=0; i<chunkCount-1; i++) {
 
             if (IsWhiteSpaceString(chunks[i])) {
-                throw new HttpException(SR.GetString(SR.Unsupported_filename, filename));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unsupported_filename, filename));
             }
 
             chunks[i] = MakeValidTypeNameFromString(chunks[i]);
@@ -1132,7 +1134,7 @@ internal static class Util {
 
         // Ensure current cultureName is not one of well known invalid culture names
         foreach (string name in s_invalidCultureNames) {
-            if (StringUtil.EqualsIgnoreCase(name, s)) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, s)) {
                 return false;
             }
         }
@@ -1306,7 +1308,7 @@ internal static class Util {
             }
         }
 
-        Debug.Assert(!String.IsNullOrEmpty(assemblyPath));
+        System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(assemblyPath));
 
         // Unless it's already in the list, add it
         if (!toList.Contains(assemblyPath)) {
@@ -1357,7 +1359,7 @@ internal static class Util {
      */
     internal static string GetAssemblyNameFromFileName(string fileName) {
         // Strip the .dll extension if any
-        if (StringUtil.EqualsIgnoreCase(Path.GetExtension(fileName), ".dll"))
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(Path.GetExtension(fileName), ".dll"))
             return fileName.Substring(0, fileName.Length-4);
 
         return fileName;
@@ -1383,7 +1385,7 @@ internal static class Util {
 
             // If we had already found a different one, it's an ambiguous type reference
             if (type != null && t != type) {
-                throw new HttpException(SR.GetString(SR.Ambiguous_type, typeName,
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Ambiguous_type, typeName,
                     GetAssemblySafePathFromType(type), GetAssemblySafePathFromType(t)));
             }
 
@@ -1550,7 +1552,7 @@ internal static class Util {
         ArrayList list = new ArrayList();
 
         for (int i=0; i<cultures.Length; i++) {
-            if (StringUtil.StringStartsWith(cultures[i].Name, shortName))
+            if (System.Web.Util.StringUtil.StringStartsWith(cultures[i].Name, shortName))
                 list.Add(cultures[i]);
         }
 
@@ -1642,7 +1644,7 @@ internal static class Util {
     }
 
     internal static string MergeScript(string firstScript, string secondScript) {
-        Debug.Assert(!String.IsNullOrEmpty(secondScript));
+        System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(secondScript));
 
         if (!String.IsNullOrEmpty(firstScript)) {
             // 
@@ -1689,38 +1691,38 @@ internal static class Util {
     internal static void DumpDictionary(string tag, IDictionary d) {
         if (d == null) return;
 
-        Debug.Trace(tag, "Dumping IDictionary with " + d.Count + " entries:");
+        System.Web.Util.Debug.Trace(tag, "Dumping IDictionary with " + d.Count + " entries:");
 
         for (IDictionaryEnumerator en = (IDictionaryEnumerator)d.GetEnumerator(); en.MoveNext();) {
             if (en.Value == null)
-                Debug.Trace(tag, "Key='" + en.Key.ToString() + "' value=null");
+                System.Web.Util.Debug.Trace(tag, "Key='" + en.Key.ToString() + "' value=null");
             else
-                Debug.Trace(tag, "Key='" + en.Key.ToString() + "' value='" + en.Value.ToString() + "'");
+                System.Web.Util.Debug.Trace(tag, "Key='" + en.Key.ToString() + "' value='" + en.Value.ToString() + "'");
         }
     }
 
     internal static void DumpArrayList(string tag, ArrayList al) {
         if (al == null) return;
 
-        Debug.Trace(tag, "Dumping ArrayList with " + al.Count + " entries:");
+        System.Web.Util.Debug.Trace(tag, "Dumping ArrayList with " + al.Count + " entries:");
 
         foreach (object o in al) {
             if (o == null)
-                Debug.Trace(tag, "value=null");
+                System.Web.Util.Debug.Trace(tag, "value=null");
             else
-                Debug.Trace(tag, "value='" + o.ToString() + "'");
+                System.Web.Util.Debug.Trace(tag, "value='" + o.ToString() + "'");
         }
     }
 
     internal static void DumpString(string tag, string s) {
-        Debug.Trace(tag, "Dumping string  '" + s + "':");
+        System.Web.Util.Debug.Trace(tag, "Dumping string  '" + s + "':");
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.Length; ++i) {
             sb.Append(((int)s[i]).ToString("x", CultureInfo.InvariantCulture));
             sb.Append(" ");
         }
-        Debug.Trace(tag, sb.ToString());
+        System.Web.Util.Debug.Trace(tag, sb.ToString());
     }
 
 #endif // DBG

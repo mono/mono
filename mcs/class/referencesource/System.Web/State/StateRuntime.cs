@@ -22,7 +22,7 @@ namespace System.Web.SessionState {
     using System.Web.Caching;
     using System.Web.Configuration;
     using System.Web.Util;
-
+    
 
     /// <internalonly/>
     /// <devdoc>
@@ -250,7 +250,7 @@ namespace System.Web.SessionState {
             if (!HttpRuntime.IsFullTrust) {
                 // DevDiv #89021: This type passes user-supplied data to unmanaged code, so we need
                 // to ensure that it can only be used from within a FullTrust environment.
-                throw new InvalidOperationException(SR.GetString(SR.StateApplication_FullTrustOnly));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.StateApplication_FullTrustOnly));
             }
 
             _removedHandler = new CacheItemRemovedCallback(this.OnCacheItemRemoved);
@@ -718,7 +718,7 @@ namespace System.Web.SessionState {
                 don't update the counters.
              */
             if ((content._extraFlags & (int)SessionStateItemFlags.IgnoreCacheItemRemoved) != 0) {
-                Debug.Trace("OnCacheItemRemoved", "OnCacheItemRemoved ignored (item removed, but counters not updated)");
+                System.Web.Util.Debug.Trace("OnCacheItemRemoved", "OnCacheItemRemoved ignored (item removed, but counters not updated)");
                 return;
             }
 

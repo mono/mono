@@ -28,14 +28,14 @@ namespace System.Web.UI.WebControls.WebParts {
             }
 
             if (providerConnectionPoint.ControlType != webPart.GetType()) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_InvalidConnectionPoint), "providerConnectionPoint");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_InvalidConnectionPoint), "providerConnectionPoint");
             }
 
             _webPart = webPart;
             _providerConnectionPoint = providerConnectionPoint;
 
             if (++Count > 1) {
-                webPart.SetConnectErrorMessage(SR.GetString(SR.WebPartTracker_CircularConnection, _providerConnectionPoint.DisplayName));
+                webPart.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartTracker_CircularConnection, _providerConnectionPoint.DisplayName));
             }
         }
 
@@ -58,7 +58,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         void IDisposable.Dispose() {
             if (!_disposed) {
-                Debug.Assert(Count >= 1);
+                System.Web.Util.Debug.Assert(Count >= 1);
                 Count--;
                 _disposed = true;
             }

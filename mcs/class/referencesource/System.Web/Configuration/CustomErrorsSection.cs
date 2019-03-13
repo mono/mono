@@ -81,7 +81,7 @@ namespace System.Web.Configuration {
         public CustomErrorsSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -160,7 +160,7 @@ namespace System.Web.Configuration {
             return r;
         }
 
-        protected override void Reset(ConfigurationElement parentElement) {
+        protected internal override void Reset(ConfigurationElement parentElement) {
             base.Reset(parentElement);
             CustomErrorsSection parent = parentElement as CustomErrorsSection;
             if (parent != null) {
@@ -168,7 +168,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override void DeserializeSection(XmlReader reader) {
+        protected internal override void DeserializeSection(XmlReader reader) {
             WebContext context;
 
             base.DeserializeSection(reader);
@@ -177,18 +177,18 @@ namespace System.Web.Configuration {
             context = EvaluationContext.HostingContext as WebContext;
 
             if (context != null) {
-                basepath = UrlPath.AppendSlashToPathIfNeeded(context.Path);
+                basepath = System.Web.Util.UrlPath.AppendSlashToPathIfNeeded(context.Path);
             }
         }
         //
         // helper to create absolute redirect
         //
         internal static String GetAbsoluteRedirect(String path, String basePath) {
-            if (path != null && UrlPath.IsRelativeUrl(path)) {
+            if (path != null && System.Web.Util.UrlPath.IsRelativeUrl(path)) {
                 if (String.IsNullOrEmpty(basePath))
                     basePath = "/";
 
-                path = UrlPath.Combine(basePath, path);
+                path = System.Web.Util.UrlPath.Combine(basePath, path);
             }
 
             return path;

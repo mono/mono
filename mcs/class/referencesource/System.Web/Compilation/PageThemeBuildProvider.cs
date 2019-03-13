@@ -85,7 +85,7 @@ internal class GlobalPageThemeBuildProvider : PageThemeBuildProvider {
             // from cache when app theme is added.
             CaseInsensitiveStringSet sourceDependencies = new CaseInsensitiveStringSet();
             sourceDependencies.AddCollection(parentDependencies);
-            string appThemesVdir = UrlPath.SimpleCombine(HttpRuntime.AppDomainAppVirtualPathString, HttpRuntime.ThemesDirectoryName);
+            string appThemesVdir = System.Web.Util.UrlPath.SimpleCombine(HttpRuntime.AppDomainAppVirtualPathString, HttpRuntime.ThemesDirectoryName);
             string appThemeVdir = appThemesVdir + '/' + themeName;
             if (HostingEnvironment.VirtualPathProvider.DirectoryExists(appThemeVdir)) {
                 sourceDependencies.Add(appThemeVdir);

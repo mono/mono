@@ -12,6 +12,7 @@ namespace System.Web.UI.HtmlControls {
     using System.Web;
     using System.Web.UI;
     using System.Security.Permissions;
+    
 
 
     /// <devdoc>
@@ -152,10 +153,10 @@ namespace System.Web.UI.HtmlControls {
         /// </devdoc>
         public override string InnerHtml {
             get {
-                throw new NotSupportedException(SR.GetString(SR.InnerHtml_not_supported, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.InnerHtml_not_supported, this.GetType().Name));
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.InnerHtml_not_supported, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.InnerHtml_not_supported, this.GetType().Name));
             }
         }
 
@@ -165,10 +166,10 @@ namespace System.Web.UI.HtmlControls {
         /// </devdoc>
         public override string InnerText {
             get {
-                throw new NotSupportedException(SR.GetString(SR.InnerText_not_supported, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.InnerText_not_supported, this.GetType().Name));
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.InnerText_not_supported, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.InnerText_not_supported, this.GetType().Name));
             }
         }
 
@@ -242,7 +243,7 @@ namespace System.Web.UI.HtmlControls {
                 if (child is HtmlTableCell)
                     base.Add(child);
                 else
-                    throw new ArgumentException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "HtmlTableRow", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "HtmlTableRow", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
             }
             
 
@@ -254,7 +255,7 @@ namespace System.Web.UI.HtmlControls {
                 if (child is HtmlTableCell)
                     base.AddAt(index, child);
                 else
-                    throw new ArgumentException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "HtmlTableRow", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "HtmlTableRow", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
             }
         }
     }

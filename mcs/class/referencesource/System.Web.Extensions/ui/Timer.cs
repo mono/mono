@@ -19,7 +19,9 @@ namespace System.Web.UI {
     [
     DefaultEvent("Tick"),
     DefaultProperty("Interval"),
+#if !MONO
     Designer("System.Web.UI.Design.TimerDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+#endif
     NonVisualControl,
     ToolboxBitmap(typeof(EmbeddedResourceFinder), "System.Web.Resources.Timer.bmp"),
     SupportsEventValidation

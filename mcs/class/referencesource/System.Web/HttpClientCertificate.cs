@@ -236,20 +236,20 @@ namespace System.Web {
                     return HttpUtility.FormatHttpDateTime(ValidUntil);
             }
 
-            if (StringUtil.StringStartsWith(field, "issuer"))
+            if (System.Web.Util.StringUtil.StringStartsWith(field, "issuer"))
                 return ExtractString(Issuer, field.Substring(6));
 
-            if (StringUtil.StringStartsWith(field, "subject")) {
+            if (System.Web.Util.StringUtil.StringStartsWith(field, "subject")) {
                 if (field.Equals("subjectemail"))
                     return ExtractString(Subject, "e");
                 else
                     return ExtractString(Subject, field.Substring(7));
             }
 
-            if (StringUtil.StringStartsWith(field, "serversubject"))
+            if (System.Web.Util.StringUtil.StringStartsWith(field, "serversubject"))
                 return ExtractString(ServerSubject, field.Substring(13));
 
-            if (StringUtil.StringStartsWith(field, "serverissuer"))
+            if (System.Web.Util.StringUtil.StringStartsWith(field, "serverissuer"))
                 return ExtractString(ServerIssuer, field.Substring(12));
 
             return String.Empty;

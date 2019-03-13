@@ -63,12 +63,12 @@ namespace System.Web.Hosting {
 
         internal void MarkCallToBeginMethodStarted() {
             Thread originalThread = Interlocked.CompareExchange(ref _threadWhichStartedOperation, Thread.CurrentThread, null);
-            Debug.Assert(originalThread == null, "Another thread already called MarkCallToBeginMethodStarted.");
+            System.Web.Util.Debug.Assert(originalThread == null, "Another thread already called MarkCallToBeginMethodStarted.");
         }
 
         internal void MarkCallToBeginMethodCompleted() {
             Thread originalThread = Interlocked.Exchange(ref _threadWhichStartedOperation, null);
-            Debug.Assert(originalThread == Thread.CurrentThread, "This thread did not call MarkCallToBeginMethodStarted.");
+            System.Web.Util.Debug.Assert(originalThread == Thread.CurrentThread, "This thread did not call MarkCallToBeginMethodStarted.");
         }
 
         internal void ReleaseWaitHandleWhenSignaled() {
@@ -81,7 +81,7 @@ namespace System.Web.Hosting {
         }
 
         internal void SetError(Exception error) {
-            Debug.Assert(error != null);
+            System.Web.Util.Debug.Assert(error != null);
             _error = ExceptionDispatchInfo.Capture(error);
         }
 

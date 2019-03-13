@@ -31,6 +31,7 @@ namespace System.Web.Compilation {
     using System.Web.Util;
     using System.Xml;
     using System.Xml.Schema;
+    
 
 /*
  * This class is used to handle a single compilation using a CodeDom compiler.
@@ -111,7 +112,7 @@ public class AssemblyBuilder {
         get {
             if (_outputAssemblyName == null) {
                 // If we don't have the assembly name, we should never have a culture
-                Debug.Assert(CultureName == null);
+                System.Web.Util.Debug.Assert(CultureName == null);
 
                 // If the assembly name was not specified, use a generated one based on the TempFileCollection.
                 // But prefix it with a fixed token, to make it easier to recognize the assembly (DevDiv 36625)
@@ -283,20 +284,16 @@ public class AssemblyBuilder {
         Util.AddAssembliesToStringCollection(_additionalReferencedAssemblies, compileUnit.ReferencedAssemblies);
 
         String filename;
+        TextWriter writer = CreateCodeFile(buildProvider, out filename);
 
-        // Revert impersonation when generating source code in the codegen dir (VSWhidbey 176576)
-        using (new ProcessImpersonationContext()) {
-            TextWriter writer = CreateCodeFile(buildProvider, out filename);
-
-            try {
-                _codeProvider.GenerateCodeFromCompileUnit(compileUnit, writer, null /*CodeGeneratorOptions*/);
-            }
-            finally {
-                writer.Flush();
-                writer.Close();
-            }
+        try {
+            _codeProvider.GenerateCodeFromCompileUnit(compileUnit, writer, null /*CodeGeneratorOptions*/);
         }
-
+        finally {
+            writer.Flush();
+            writer.Close();
+        }
+        
         if (filename != null) {
             _totalFileLength += GetFileLengthWithAssert(filename);
         }
@@ -358,7 +355,7 @@ public class AssemblyBuilder {
     private void CreateTempResourceDirectoryIfNecessary() {
         // Create the temp resource directory if needed
         string resourceDir = BuildManager.CodegenResourceDir;
-        if (!FileUtil.DirectoryExists(resourceDir)) {
+        if (!System.Web.Util.FileUtil.DirectoryExists(resourceDir)) {
             Directory.CreateDirectory(resourceDir);
         }
     }
@@ -886,14 +883,14 @@ public class AssemblyBuilder {
         IDictionary<string, string> providerOptions, CompilerParameters compilParams) {
 
         if (providerOptions == null || compilParams == null) return;
-        Debug.Assert(providerOptionName != null, "providerOptionName should not be null");
-        Debug.Assert(trueCompilerOption != null, "trueCompilerOption should not be null");
-        Debug.Assert(falseCompilerOption != null, "falseCompilerOption should not be null");
+        System.Web.Util.Debug.Assert(providerOptionName != null, "providerOptionName should not be null");
+        System.Web.Util.Debug.Assert(trueCompilerOption != null, "trueCompilerOption should not be null");
+        System.Web.Util.Debug.Assert(falseCompilerOption != null, "falseCompilerOption should not be null");
 
         string providerOptionValue = null;
         if (!providerOptions.TryGetValue(providerOptionName, out providerOptionValue)) return;
         if (string.IsNullOrEmpty(providerOptionValue))
-            throw new System.Configuration.ConfigurationErrorsException(SR.GetString(SR.Property_NullOrEmpty, CompilationUtil.CodeDomProviderOptionPath + providerOptionName));
+            throw new System.Configuration.ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Property_NullOrEmpty, CompilationUtil.CodeDomProviderOptionPath + providerOptionName));
 
         bool value;
 
@@ -906,7 +903,7 @@ public class AssemblyBuilder {
         }
         else {
             // If the value is not boolean, throw an exception
-            throw new System.Configuration.ConfigurationErrorsException(SR.GetString(SR.Value_must_be_boolean, CompilationUtil.CodeDomProviderOptionPath + providerOptionName));
+            throw new System.Configuration.ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Value_must_be_boolean, CompilationUtil.CodeDomProviderOptionPath + providerOptionName));
         }
     }
 
@@ -969,10 +966,7 @@ public class AssemblyBuilder {
 
         try {
             try {
-                // Revert impersonation when compiling source code in the codegen dir (VSWhidbey 176576)
-                using (new ProcessImpersonationContext()) {
-                    results = _codeProvider.CompileAssemblyFromFile(compilParams, files);
-                }
+                results = _codeProvider.CompileAssemblyFromFile(compilParams, files);
             }
             finally {
                 if (EtwTrace.IsTraceEnabled(EtwTraceLevel.Verbose, EtwTraceFlags.Infrastructure) && context != null) {
@@ -987,14 +981,14 @@ public class AssemblyBuilder {
                         }
                     }
                     else {
-                        fileNames = String.Format(CultureInfo.InstalledUICulture, SR.Resources.GetString(SR.Etw_Batch_Compilation, CultureInfo.InstalledUICulture), new object[1] {_buildProviders.Count});
+                        fileNames = String.Format(CultureInfo.InstalledUICulture, System.Web.SR.Resources.GetString(System.Web.SR.Etw_Batch_Compilation, CultureInfo.InstalledUICulture), new object[1] {_buildProviders.Count});
                     }
 
                     string status;
                     if (results != null && (results.NativeCompilerReturnValue != 0 || results.Errors.HasErrors))
-                        status = SR.Resources.GetString(SR.Etw_Failure, CultureInfo.InstalledUICulture);
+                        status = System.Web.SR.Resources.GetString(System.Web.SR.Etw_Failure, CultureInfo.InstalledUICulture);
                     else
-                        status = SR.Resources.GetString(SR.Etw_Success, CultureInfo.InstalledUICulture);
+                        status = System.Web.SR.Resources.GetString(System.Web.SR.Etw_Success, CultureInfo.InstalledUICulture);
 
                     EtwTrace.Trace(EtwTraceType.ETW_TYPE_COMPILE_LEAVE, context.WorkerRequest, fileNames, status);
                 }
@@ -1061,7 +1055,7 @@ public class AssemblyBuilder {
         foreach (CompilerError error in results.Errors) {
             if (error.IsWarning) continue;
 
-            if (StringUtil.EqualsIgnoreCase(error.ErrorNumber, "CS0016")){
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(error.ErrorNumber, "CS0016")){
 
                 // Also invalidate the base assembly if this is a localized resource assembly 
                 if (CultureName != null) {
@@ -1141,7 +1135,7 @@ public class AssemblyBuilder {
             }
 
             // Change the error message to make the situation clear to the user
-            badBaseClassError.ErrorText = SR.GetString(SR.Bad_Base_Class_In_Code_File);
+            badBaseClassError.ErrorText = System.Web.SR.GetString(System.Web.SR.Bad_Base_Class_In_Code_File);
             badBaseClassError.ErrorNumber = "ASPNET";
 
             // Insert the error at the begining of the collection, since we display the first error.
@@ -1215,7 +1209,7 @@ public class AssemblyBuilder {
 
             // If we got a virtual path, use it to locate the correct BuildProvider
             if (virtualPath != null) {
-                if (StringUtil.EqualsIgnoreCase(virtualPath, buildProvider.VirtualPath)) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(virtualPath, buildProvider.VirtualPath)) {
                     return buildProvider;
                 }
 
@@ -1226,7 +1220,7 @@ public class AssemblyBuilder {
 
             string physicalPath = HostingEnvironment.MapPathInternal(buildProvider.VirtualPath);
 
-            if (StringUtil.EqualsIgnoreCase(linePragma, physicalPath)) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(linePragma, physicalPath)) {
                 return buildProvider;
             }
         }
@@ -1257,10 +1251,10 @@ internal class CbmCodeGeneratorBuildProviderHost: AssemblyBuilder {
             foreach (FileData fileData in FileEnumerator.Create(generatedFilesDir)) {
 
                 // It should only contain files
-                Debug.Assert(!fileData.IsDirectory);
+                System.Web.Util.Debug.Assert(!fileData.IsDirectory);
                 if (fileData.IsDirectory) continue;
 
-                Debug.Trace("CbmCodeGeneratorBuildProviderHost", "Deleting " + fileData.FullName);
+                System.Web.Util.Debug.Trace("CbmCodeGeneratorBuildProviderHost", "Deleting " + fileData.FullName);
                 File.Delete(fileData.FullName);
             }
             
@@ -1280,14 +1274,14 @@ internal class CbmCodeGeneratorBuildProviderHost: AssemblyBuilder {
             buildProvider.VirtualPathObject);
 
         generatedCodeFile = Path.Combine(_generatedFilesDir, generatedCodeFile);
-        generatedCodeFile = FileUtil.TruncatePathIfNeeded(generatedCodeFile, 10 /*length of extension */);
+        generatedCodeFile = System.Web.Util.FileUtil.TruncatePathIfNeeded(generatedCodeFile, 10 /*length of extension */);
 
         generatedCodeFile = generatedCodeFile + "." + _codeProvider.FileExtension;
         filename = generatedCodeFile;
 
         BuildManager.GenerateFileTable[buildProvider.VirtualPathObject.VirtualPathStringNoTrailingSlash] = generatedCodeFile;
 
-        Debug.Trace("CbmCodeGeneratorBuildProviderHost", "Generating " + generatedCodeFile);
+        System.Web.Util.Debug.Trace("CbmCodeGeneratorBuildProviderHost", "Generating " + generatedCodeFile);
 
         Stream temp = new FileStream(generatedCodeFile, FileMode.Create, FileAccess.Write, FileShare.Read);
         return new StreamWriter(temp, Encoding.UTF8);

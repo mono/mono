@@ -49,16 +49,16 @@ namespace System.Web.Compilation
     ///   while it compiles a website with a .svcmap file in it.
     ///   As an example, you could debug aspnet_compiler.exe with this command-line to debug
     ///   one of the suites:
-    ///   
+    ///
     ///     /v MiddleService -p {path}\ddsuites\src\vs\vb\IndigoTools\BuildProvider\WCFBuildProvider1\WebSite\MiddleService -c c:\temp\output
-    ///     
+    ///
     ///   Important: it will only call the build provider if the sources in the website have changed or if you delete
     ///   the deleted output folder's contents.
-    ///   
+    ///
     /// Data services (Astoria): in order to support Astoria "data services" we added code
     /// to scan for "datasvcmap" files in addition to the existing "svcmap" files. For data services
     /// we call into the Astoria code-gen library to do the work instead of the regular indigo path.
-    ///     
+    ///
     /// </summary>
     [
     SuppressMessage("Microsoft.Naming", "CA1705:LongAcronymsShouldBePascalCased",
@@ -80,8 +80,8 @@ namespace System.Web.Compilation
         private const int FRAMEWORK_VERSION_35 = 0x30005;
 
         /// <summary>
-        /// Search through the folder represented by base.VirtualPath for .svcmap and .datasvcmap files.  
-        /// If any .svcmap/.datasvcmap files are found, then generate proxy code for them into the 
+        /// Search through the folder represented by base.VirtualPath for .svcmap and .datasvcmap files.
+        /// If any .svcmap/.datasvcmap files are found, then generate proxy code for them into the
         /// specified assemblyBuilder.
         /// </summary>
         /// <param name="assemblyBuilder">Where to generate the proxy code</param>
@@ -116,7 +116,7 @@ namespace System.Web.Compilation
                     // In .NET FX 3.5, the ADO.NET Data Service build provider was included as part of the
                     // WCF build provider. In .NET FX 4.0, it is a separate build provider. However, under certain
                     // circumstances (i.e. design time/Visual Studio), we may call the 4.0 version of the build provider 
-                    // when we actually want the web site to target .NET FX 3.5, and in that case, we have to emulate the 
+                    // when we actually want the web site to target .NET FX 3.5, and in that case, we have to emulate the
                     // old behavior. 
                     if (BuildManager.TargetFramework.Version.Major < 4)
                     {

@@ -15,6 +15,7 @@ namespace System.Web.Configuration {
     using System.Text;
     using System.Diagnostics;
     using System.Security.Permissions;
+    
 
     // class SqlCacheDependencySection
 
@@ -73,12 +74,13 @@ namespace System.Web.Configuration {
         internal SqlCacheDependencyDatabase() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
         }
-        protected override ConfigurationElementProperty ElementProperty {
+        
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -87,13 +89,13 @@ namespace System.Web.Configuration {
             if (value == null) {
                 throw new ArgumentNullException("sqlCacheDependencyDatabase");
             }
-            Debug.Assert(value is SqlCacheDependencyDatabase);
+            System.Web.Util.Debug.Assert(value is SqlCacheDependencyDatabase);
 
             SqlCacheDependencyDatabase elem = (SqlCacheDependencyDatabase)value;
 
             if (elem.PollTime != 0 && elem.PollTime < 500) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_sql_cache_dep_polltime),
+                    System.Web.SR.GetString(System.Web.SR.Invalid_sql_cache_dep_polltime),
                     elem.ElementInformation.Properties["pollTime"].Source, 
                     elem.ElementInformation.Properties["pollTime"].LineNumber);
             }

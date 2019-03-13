@@ -88,6 +88,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     public sealed class FormsAuthenticationConfiguration : ConfigurationElement {
         private static readonly ConfigurationElementProperty s_elemProperty = 
@@ -204,7 +205,7 @@ namespace System.Web.Configuration {
         public FormsAuthenticationConfiguration() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -364,7 +365,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override ConfigurationElementProperty ElementProperty {
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -376,16 +377,16 @@ namespace System.Web.Configuration {
 
             FormsAuthenticationConfiguration elem = (FormsAuthenticationConfiguration)value;
 
-            if (StringUtil.StringStartsWith(elem.LoginUrl, "\\\\") || 
+            if (System.Web.Util.StringUtil.StringStartsWith(elem.LoginUrl, "\\\\") || 
                 (elem.LoginUrl.Length > 1 && elem.LoginUrl[1] == ':')) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Auth_bad_url), 
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Auth_bad_url), 
                     elem.ElementInformation.Properties["loginUrl"].Source, 
                     elem.ElementInformation.Properties["loginUrl"].LineNumber);
             }
 
-            if (StringUtil.StringStartsWith(elem.DefaultUrl, "\\\\") || 
+            if (System.Web.Util.StringUtil.StringStartsWith(elem.DefaultUrl, "\\\\") || 
                 (elem.DefaultUrl.Length > 1 && elem.DefaultUrl[1] == ':')) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Auth_bad_url), 
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Auth_bad_url), 
                     elem.ElementInformation.Properties["defaultUrl"].Source, 
                     elem.ElementInformation.Properties["defaultUrl"].LineNumber);
             }

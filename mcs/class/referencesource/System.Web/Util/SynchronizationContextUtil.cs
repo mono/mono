@@ -24,24 +24,24 @@ namespace System.Web.Util {
             string resolutionMessage;
             if (HttpRuntime.TargetFramework < VersionUtil.Framework45 && requiredMode == SynchronizationContextMode.Normal) {
                 // upgrade to 4.5 mode
-                resolutionMessage = SR.SynchronizationContextUtil_UpgradeToTargetFramework45Instructions;
+                resolutionMessage = System.Web.SR.SynchronizationContextUtil_UpgradeToTargetFramework45Instructions;
             }
             else if (HttpRuntime.TargetFramework >= VersionUtil.Framework45 && requiredMode == SynchronizationContextMode.Legacy) {
                 // already in 4.5 mode, add the back-compat switch
-                resolutionMessage = SR.SynchronizationContextUtil_AddDowngradeAppSettingsSwitch;
+                resolutionMessage = System.Web.SR.SynchronizationContextUtil_AddDowngradeAppSettingsSwitch;
             }
             else {
                 // remove the <appSettings> switch
-                resolutionMessage = SR.SynchronizationContextUtil_RemoveAppSettingsSwitch;
+                resolutionMessage = System.Web.SR.SynchronizationContextUtil_RemoveAppSettingsSwitch;
             }
 
-            return SR.GetString(specificErrorMessage)
-                + " " + SR.GetString(resolutionMessage)
-                + "\r\n" + SR.GetString(SR.SynchronizationContextUtil_ForMoreInformation);
+            return System.Web.SR.GetString(specificErrorMessage)
+                + " " + System.Web.SR.GetString(resolutionMessage)
+                + "\r\n" + System.Web.SR.GetString(System.Web.SR.SynchronizationContextUtil_ForMoreInformation);
         }
 
         public static void ValidateMode(SynchronizationContextMode currentMode, SynchronizationContextMode requiredMode, string specificErrorMessage) {
-            Debug.Assert(specificErrorMessage != null);
+            System.Web.Util.Debug.Assert(specificErrorMessage != null);
             if (currentMode != requiredMode) {
                 string errorMessage = FormatErrorMessage(specificErrorMessage, requiredMode);
                 throw new InvalidOperationException(errorMessage);
@@ -52,21 +52,21 @@ namespace System.Web.Util {
             ValidateMode(
                 currentMode: CurrentMode,
                 requiredMode: SynchronizationContextMode.Legacy,
-                specificErrorMessage: SR.SynchronizationContextUtil_AspCompatModeNotCompatible);
+                specificErrorMessage: System.Web.SR.SynchronizationContextUtil_AspCompatModeNotCompatible);
         }
 
         public static void ValidateModeForPageAsyncVoidMethods() {
             ValidateMode(
                 currentMode: CurrentMode,
                 requiredMode: SynchronizationContextMode.Normal,
-                specificErrorMessage: SR.SynchronizationContextUtil_PageAsyncVoidMethodsNotCompatible);
+                specificErrorMessage: System.Web.SR.SynchronizationContextUtil_PageAsyncVoidMethodsNotCompatible);
         }
 
         public static void ValidateModeForWebSockets() {
             ValidateMode(
                 currentMode: CurrentMode,
                 requiredMode: SynchronizationContextMode.Normal,
-                specificErrorMessage: SR.SynchronizationContextUtil_WebSocketsNotCompatible);
+                specificErrorMessage: System.Web.SR.SynchronizationContextUtil_WebSocketsNotCompatible);
         }
 
     }

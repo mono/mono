@@ -13,6 +13,7 @@ namespace System.Web.UI.WebControls {
     using System.Web.UI;
     using System.Web.Util;
     using AttributeCollection = System.Web.UI.AttributeCollection;
+    
 
 
     /// <devdoc>
@@ -51,7 +52,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.CheckBox_AutoPostBack),
+        WebSysDescription(System.Web.SR.CheckBox_AutoPostBack),
         Themeable(false),
         ]
         public virtual bool AutoPostBack {
@@ -68,7 +69,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.AutoPostBackControl_CausesValidation),
+        WebSysDescription(System.Web.SR.AutoPostBackControl_CausesValidation),
         Themeable(false),
         ]
         public virtual bool CausesValidation {
@@ -90,7 +91,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true, BindingDirection.TwoWay),
         DefaultValue(false),
         Themeable(false),
-        WebSysDescription(SR.CheckBox_Checked),
+        WebSysDescription(System.Web.SR.CheckBox_Checked),
         ]
         public virtual bool Checked {
             get {
@@ -109,7 +110,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.CheckBox_InputAttributes)
+        WebSysDescription(System.Web.SR.CheckBox_InputAttributes)
         ]
         public AttributeCollection InputAttributes {
             get {
@@ -134,7 +135,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.CheckBox_LabelAttributes)
+        WebSysDescription(System.Web.SR.CheckBox_LabelAttributes)
         ]
         public AttributeCollection LabelAttributes {
             get {
@@ -201,7 +202,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.CheckBox_Text)
+        WebSysDescription(System.Web.SR.CheckBox_Text)
         ]
         public virtual string Text {
             get {
@@ -220,7 +221,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(TextAlign.Right),
-        WebSysDescription(SR.WebControl_TextAlign)
+        WebSysDescription(System.Web.SR.WebControl_TextAlign)
         ]
         public virtual TextAlign TextAlign {
             get {
@@ -240,7 +241,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.PostBackControl_ValidationGroup),
+        WebSysDescription(System.Web.SR.PostBackControl_ValidationGroup),
         ]
         public virtual string ValidationGroup {
             get {
@@ -258,7 +259,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Control_OnServerCheckChanged)
+        WebSysDescription(System.Web.SR.Control_OnServerCheckChanged)
         ]
         public event EventHandler CheckedChanged {
             add {

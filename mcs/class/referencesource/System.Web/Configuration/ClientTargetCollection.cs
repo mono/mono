@@ -30,7 +30,7 @@ namespace System.Web.Configuration {
             : base(StringComparer.OrdinalIgnoreCase) {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -38,7 +38,7 @@ namespace System.Web.Configuration {
 
         public String[] AllKeys {
             get {
-                return StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
+                return System.Web.Util.StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
             }
         }
 

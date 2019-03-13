@@ -17,6 +17,7 @@ namespace System.Web.Management {
     using System.Runtime.Remoting.Messaging;
     using System.Security.Permissions;
     using System.Threading;
+    
 
     public sealed class TemplatedMailWebEventProvider  : MailWebEventProvider, IInternalWebEventProvider   {
         int     _nonBufferNotificationSequence = 0;
@@ -60,30 +61,30 @@ namespace System.Web.Management {
 
         public override void Initialize(string name, NameValueCollection config)
         {
-            Debug.Trace("TemplatedMailWebEventProvider", "Initializing: name=" + name);
+            System.Web.Util.Debug.Trace("TemplatedMailWebEventProvider", "Initializing: name=" + name);
 
             ProviderUtil.GetAndRemoveStringAttribute(config, "template", name, ref _templateUrl);
 
             if (_templateUrl == null) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Provider_missing_attribute, "template", name));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Provider_missing_attribute, "template", name));
             }
 
             _templateUrl = _templateUrl.Trim();
 
             if (_templateUrl.Length == 0) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_provider_attribute, "template", name, _templateUrl));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_provider_attribute, "template", name, _templateUrl));
             }
             
-            if (!UrlPath.IsRelativeUrl(_templateUrl)) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_mail_template_provider_attribute, 
+            if (!System.Web.Util.UrlPath.IsRelativeUrl(_templateUrl)) {
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_mail_template_provider_attribute, 
                                 "template", name, _templateUrl));
             }
 
-            _templateUrl = UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, _templateUrl);
+            _templateUrl = System.Web.Util.UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, _templateUrl);
             
             // VSWhidbey 440081: Guard against templates outside the AppDomain path
             if (!HttpRuntime.IsPathWithinAppRoot(_templateUrl)) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_mail_template_provider_attribute,
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_mail_template_provider_attribute,
                                 "template", name, _templateUrl));
             }
 
@@ -132,7 +133,7 @@ namespace System.Web.Management {
                 fatalError = gen.ErrorFormatterCalled;
 
                 if (fatalError) {
-                    msg.Subject = HttpUtility.HtmlEncode(SR.GetString(SR.WebEvent_event_email_subject_template_error, 
+                    msg.Subject = HttpUtility.HtmlEncode(System.Web.SR.GetString(System.Web.SR.WebEvent_event_email_subject_template_error, 
                                                 notificationSequence.ToString(CultureInfo.InstalledUICulture),
                                                 messageSequence.ToString(CultureInfo.InstalledUICulture),
                                                 SubjectPrefix));
@@ -341,7 +342,7 @@ namespace System.Web.Management {
     
         protected override string ErrorTitle {
             get {
-                return SR.GetString(SR.MailWebEventProvider_template_compile_error, 
+                return System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_template_compile_error, 
                                     _eventsRemaining.ToString(CultureInfo.InstalledUICulture));
             }
         }
@@ -352,7 +353,7 @@ namespace System.Web.Management {
                     return base.Description;
                 }
                 else {
-                    return SR.GetString(SR.MailWebEventProvider_template_error_no_details);
+                    return System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_template_error_no_details);
                 }
             }
         }
@@ -397,11 +398,11 @@ namespace System.Web.Management {
         protected override string ErrorTitle {
             get {
                 if (HttpException.GetHttpCodeForException(Exception) == 404) {
-                    return SR.GetString(SR.MailWebEventProvider_template_file_not_found_error, 
+                    return System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_template_file_not_found_error, 
                                     _eventsRemaining.ToString(CultureInfo.InstalledUICulture));
                 }
                 else {
-                    return SR.GetString(SR.MailWebEventProvider_template_runtime_error, 
+                    return System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_template_runtime_error, 
                                     _eventsRemaining.ToString(CultureInfo.InstalledUICulture));
                 }
             }
@@ -421,7 +422,7 @@ namespace System.Web.Management {
                     return base.Description;
                 }
                 else {
-                    return SR.GetString(SR.MailWebEventProvider_template_error_no_details);
+                    return System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_template_error_no_details);
                 }
             }
         }

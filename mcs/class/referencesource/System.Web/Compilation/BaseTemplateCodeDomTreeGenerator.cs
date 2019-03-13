@@ -23,6 +23,7 @@ namespace System.Web.Compilation {
     using System.Web.UI;
     using System.Web.Util;
     using Debug = System.Web.Util.Debug;
+    
 
     internal abstract class BaseTemplateCodeDomTreeGenerator : BaseCodeDomTreeGenerator {
 
@@ -154,7 +155,7 @@ namespace System.Web.Compilation {
         protected CodeMemberMethod BuildBuildMethod(ControlBuilder builder, bool fTemplate,
             bool fInTemplate, bool topLevelControlInTemplate, PropertyEntry pse, bool fControlSkin) {
 
-            Debug.Assert(builder.ServiceProvider == null);
+            System.Web.Util.Debug.Assert(builder.ServiceProvider == null);
 
             ServiceContainer container = new ServiceContainer();
             container.AddService(typeof(IFilterResolutionService), HttpCapabilitiesBase.EmptyHttpCapabilitiesBase);
@@ -193,7 +194,7 @@ namespace System.Web.Compilation {
                     fStandardControl = true;
                 }
 
-                Debug.Assert(builder.ControlType != null);
+                System.Web.Util.Debug.Assert(builder.ControlType != null);
                 if (builder.ControlType != null) {
                     if (fControlSkin) {
                         // ReturnType needs to be of type Control in a skin file to match
@@ -437,7 +438,7 @@ namespace System.Web.Compilation {
                 string templateName = ((System.Web.UI.WebControls.ContentPlaceHolderBuilder)builder).Name;
                 autoTemplateName = MasterPageControlBuilder.AutoTemplatePrefix + templateName;
 
-                Debug.Assert(autoTemplateName != null && autoTemplateName.Length > 0, "Template Name is empty.");
+                System.Web.Util.Debug.Assert(autoTemplateName != null && autoTemplateName.Length > 0, "Template Name is empty.");
 
                 // Generate a private field and public property for the ITemplate
                 string fieldName = "__"+ autoTemplateName;
@@ -450,7 +451,7 @@ namespace System.Web.Compilation {
                     }
                     else {
                         // This should not occur as all base classes are namingcontainers.
-                        Debug.Assert(false, "baseClassType is not an INamingContainer");
+                        System.Web.Util.Debug.Assert(false, "baseClassType is not an INamingContainer");
                         containerType = typeof(System.Web.UI.Control);
                     }
                 }
@@ -589,7 +590,7 @@ namespace System.Web.Compilation {
 
                     // Only deal with the strings here, which have even index
                     if (i % 2 == 1) {
-                        Debug.Assert(child is CodeBlockBuilder, "child is CodeBlockBuilder");
+                        System.Web.Util.Debug.Assert(child is CodeBlockBuilder, "child is CodeBlockBuilder");
                         continue;
                     }
 
@@ -613,7 +614,7 @@ namespace System.Web.Compilation {
                         ControlBuilder ctrlBuilder = (ControlBuilder) child;
 
                         if (fControlSkin) {
-                            throw new HttpParseException(SR.GetString(SR.ControlSkin_cannot_contain_controls),
+                            throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.ControlSkin_cannot_contain_controls),
                                 null,
                                 builder.VirtualPath, null, builder.Line);
                         }
@@ -752,7 +753,7 @@ namespace System.Web.Compilation {
 
                         // __ctrl.{{_name}}
                         // In case of a string property, there should only be one property name (unlike complex properties)
-                        Debug.Assert(pseSub.Name.IndexOf('.') < 0, "pseSub._name.IndexOf('.') < 0");
+                        System.Web.Util.Debug.Assert(pseSub.Name.IndexOf('.') < 0, "pseSub._name.IndexOf('.') < 0");
                         leftExpr = new CodePropertyReferenceExpression(ctrlRefExpr, pseSub.Name);
 
                         // We need to call BuildStringPropertyExpression so any additional processing can be done
@@ -866,7 +867,7 @@ namespace System.Web.Compilation {
                     HandleDeviceFilterConditional(ref previous, entry, statements, ref currentStmts, out nextStmts);
 
                     ExpressionBuilder eb = entry.ExpressionBuilder;
-                    Debug.Assert(eb != null, "Did not expect null expression builder");
+                    System.Web.Util.Debug.Assert(eb != null, "Did not expect null expression builder");
                     eb.BuildExpression(entry, builder, ctrlRefExpr, methodStatements, currentStmts, null, ref hasTempObject);
                 }
 
@@ -1172,7 +1173,7 @@ namespace System.Web.Compilation {
                             hideExistingMember = true;
                         }
                         else {
-                            throw new HttpParseException(SR.GetString(SR.Base_class_field_with_type_different_from_type_of_control,
+                            throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Base_class_field_with_type_different_from_type_of_control,
                                 builder.ID, memberType.FullName, builder.ControlType.FullName), null,
                                 builder.VirtualPath, null, builder.Line);
                         }
@@ -1285,12 +1286,12 @@ namespace System.Web.Compilation {
 
                     // Only deal with the databinding expressions here, which have odd index
                     if (i % 2 == 0) {
-                        Debug.Assert(child is string, "child is string");
+                        System.Web.Util.Debug.Assert(child is string, "child is string");
                         continue;
                     }
 
                     CodeBlockBuilder codeBlock = (CodeBlockBuilder) child;
-                    Debug.Assert(codeBlock.BlockType == CodeBlockType.DataBinding);
+                    System.Web.Util.Debug.Assert(codeBlock.BlockType == CodeBlockType.DataBinding);
 
                     // In designer mode, generate a much simpler assignment to make
                     // the code simpler (since it doesn't actually need to run).
@@ -1408,8 +1409,8 @@ namespace System.Web.Compilation {
                     }
 
                     if (entry.TwoWayBound) {
-                        Debug.Assert(!entry.ReadOnlyProperty, "We should not attempt to build a data binding handler if the two way entry is read only.");
-                        Debug.Assert(!entry.UseSetAttribute, "Two-way binding is not supported on expandos - this should have been prevented in ControlBuilder");
+                        System.Web.Util.Debug.Assert(!entry.ReadOnlyProperty, "We should not attempt to build a data binding handler if the two way entry is read only.");
+                        System.Web.Util.Debug.Assert(!entry.UseSetAttribute, "Two-way binding is not supported on expandos - this should have been prevented in ControlBuilder");
                         DataBindingExpressionBuilder.BuildEvalExpression(entry.FieldName, entry.FormatString,
                                                                          entry.Name, entry.Type, builder, topStatements, currentStmts, linePragma, entry.IsEncoded, ref hasTempObject);
                     }
@@ -1520,7 +1521,7 @@ namespace System.Web.Compilation {
                         }
                         else {
                             // It's a <% ... %> block
-                            Debug.Assert(codeBlockBuilder.BlockType == CodeBlockType.Code);
+                            System.Web.Util.Debug.Assert(codeBlockBuilder.BlockType == CodeBlockType.Code);
 
                             // Pad the code block so its generated offset matches the aspx
                             string code = codeBlockBuilder.Content;
@@ -1684,7 +1685,7 @@ namespace System.Web.Compilation {
                 value = (string)((SimplePropertyEntry)pse).Value;
             }
             else {
-                Debug.Assert(pse is ComplexPropertyEntry);
+                System.Web.Util.Debug.Assert(pse is ComplexPropertyEntry);
                 ComplexPropertyEntry cpe = (ComplexPropertyEntry)pse;
                 value = (string)((StringPropertyBuilder)cpe.Builder).BuildObject();
             }
@@ -1744,7 +1745,7 @@ namespace System.Web.Compilation {
             ref CodeStatementCollection currentStmts,
             out CodeStatementCollection nextStmts) {
 
-            bool sameAsPrevious = (previous != null) && StringUtil.EqualsIgnoreCase(previous.Name, current.Name);
+            bool sameAsPrevious = (previous != null) && System.Web.Util.StringUtil.EqualsIgnoreCase(previous.Name, current.Name);
 
             if (current.Filter.Length != 0) {
                 if (!sameAsPrevious) {
@@ -1782,11 +1783,17 @@ namespace System.Web.Compilation {
 
         protected virtual bool UseResourceLiteralString(string s) {
 
+            // Not exactly clear if the intent is to make Win32 resources cross platform.
+            // Until it's better known, don't allow.
+        #if FEATURE_PAL
+            return false;
+        #else 
             // If the string is long enough, and the compiler supports it, use a UTF8 resource
             // string for performance
             return PageParser.EnableLongStringsAsResources &&
                 s.Length >= minLongLiteralStringLength &&
                 _codeDomProvider.Supports(GeneratorSupport.Win32Resources);
+        #endif
         }
     }
 }

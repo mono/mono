@@ -236,7 +236,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsTrue (attrs.IndexOf ("value=\"id\"") >= 0);
 			rb.Value = "hola<&";
 			attrs = rb.RenderAttributes ();
-			Assert.IsTrue (attrs.IndexOf ("value=\"hola&lt;&amp;\"") >= 0);
+			Assert.IsTrue (attrs.IndexOf ("value=\"hola<&\"") >= 0);
 		}
 
 		[Test]

@@ -1,4 +1,4 @@
-﻿// 
+﻿﻿// 
 // ValidationUtility.cs
 //  
 // Author:
@@ -41,6 +41,7 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 		[SecuritySafeCritical]
 		public static void EnableDynamicValidation (HttpContext context)
 		{
+			/*
 			HttpRequest req = context != null ? context.Request : null;
 			if (req == null)
 				return;
@@ -56,26 +57,39 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 			req.ValidateInput ();
 			req.SetFormCollection (new LazyWebROCollection (RequestValidationSource.Form, req.FormUnvalidated), true);
 			req.SetQueryStringCollection (new LazyWebROCollection (RequestValidationSource.QueryString, req.QueryStringUnvalidated), true);
+			*/
 		}
 
 		[SecuritySafeCritical]
 		public static bool? IsValidationEnabled (HttpContext context)
 		{
+			return false;
+
+/*
 			HttpRequest req = context != null ? context.Request : null;
 			if (req == null)
 				return true;
 
 			return req.InputValidationEnabled;
+*/
 		}
 
 		[SecuritySafeCritical]
 		public static void GetUnvalidatedCollections (HttpContext context, out Func <NameValueCollection> formGetter, out Func <NameValueCollection> queryStringGetter)
 		{
+			formGetter = () => {
+				return GetUnvalidatedCollection(context, 1);
+			};
+
+			queryStringGetter = () => {
+				return GetUnvalidatedCollection(context, 1);
+			};
+/*
 			if (context == null)
 				throw new ArgumentNullException ("context");
 			formGetter = null;
 			queryStringGetter = null;
-			
+
 			formGetter = () => {
 				HttpRequest req = context != null ? context.Request : null;
 				if (req == null)
@@ -89,6 +103,7 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 					return null;
 				return GetUnvalidatedCollection (context, 1) ?? req.QueryStringUnvalidated;
 			};
+*/
 		}
 
 		private static NameValueCollection GetUnvalidatedCollection (HttpContext context, int offset)

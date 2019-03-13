@@ -16,6 +16,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.Xml;
     using System.Globalization;
+    
 
     //
     //
@@ -123,25 +124,25 @@ namespace System.Web.Configuration {
             HandlerBase.GetAndRemoveNonEmptyStringAttribute(node, "refID", ref refID);
 
             if((refID != null) && (_id != null)) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Browser_mutually_exclusive_attributes, "id", "refID"), node);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_mutually_exclusive_attributes, "id", "refID"), node);
             }
 
             if (_id != null) {
                 if (!System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(_id)) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Browser_InvalidID, "id", _id), node);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_InvalidID, "id", _id), node);
                 }
             }
             else {
                 if (refID == null) {
                     if (this is GatewayDefinition) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Browser_attributes_required, "gateway", "refID", "id"), node);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_attributes_required, "gateway", "refID", "id"), node);
                     }
 
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Browser_attributes_required, "browser", "refID", "id"), node);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_attributes_required, "browser", "refID", "id"), node);
                 }
                 else {
                     if (!System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(refID)) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Browser_InvalidID, "refID", refID), node);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_InvalidID, "refID", refID), node);
                     }
                 }
 
@@ -159,7 +160,7 @@ namespace System.Web.Configuration {
                 String parentID = null;
                 HandlerBase.GetAndRemoveNonEmptyStringAttribute(node, "parentID", ref parentID);
                 if ((parentID != null) && (parentID.Length != 0)) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Browser_mutually_exclusive_attributes, "parentID", "refID"), node);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_mutually_exclusive_attributes, "parentID", "refID"), node);
                 }
             }
 
@@ -175,14 +176,14 @@ namespace System.Web.Configuration {
                     HandlerBase.GetAndRemoveNonEmptyStringAttribute(node, "parentID", ref _parentID);
                     if (_parentID != null)
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Browser_parentID_applied_to_default), node);
+                            System.Web.SR.GetString(System.Web.SR.Browser_parentID_applied_to_default), node);
                 }
             }
 
             _parentName = MakeValidTypeNameFromString(_parentID);
 
             if(_id.IndexOf(" ", StringComparison.Ordinal) != -1) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Space_attribute, "id " + _id), node);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Space_attribute, "id " + _id), node);
             }
 
             foreach(XmlNode child in node.ChildNodes) {
@@ -194,7 +195,7 @@ namespace System.Web.Configuration {
                     case "identification":
                         // refID nodes do not allow <identification>
                         if (_isRefID) {
-                            throw new ConfigurationErrorsException(SR.GetString(SR.Browser_refid_prohibits_identification), node);
+                            throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_refid_prohibits_identification), node);
                         }
 
                         this.ProcessIdentificationNode(child, BrowserCapsElementType.Identification);
@@ -216,7 +217,7 @@ namespace System.Web.Configuration {
                         break;
 
                     default:
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Browser_invalid_element, child.Name), node);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_invalid_element, child.Name), node);
                 }
             }
         }
@@ -352,13 +353,13 @@ namespace System.Web.Configuration {
             string check = null;
             HandlerBase.GetAndRemoveStringAttribute(node, "nonMatch", ref check);
             if(check != null) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Browser_mutually_exclusive_attributes, "match", "nonMatch"), node);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_mutually_exclusive_attributes, "match", "nonMatch"), node);
             }
         }
 
         private void HandleMissingMatchAndNonMatchError(XmlNode node) {
             throw new ConfigurationErrorsException(
-                SR.GetString(SR.Missing_required_attributes, "match", "nonMatch", node.Name),
+                System.Web.SR.GetString(System.Web.SR.Missing_required_attributes, "match", "nonMatch", node.Name),
                 node);
         }
 
@@ -451,12 +452,12 @@ namespace System.Web.Configuration {
                         }
                         break;
                     default:
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Config_invalid_element, child.ToString()), child);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_invalid_element, child.ToString()), child);
                 }
             }
 
             if (emptyIdentification) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Browser_empty_identification), node);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_empty_identification), node);
             }
 
             return;
@@ -488,7 +489,7 @@ namespace System.Web.Configuration {
                     _captureCapabilityChecks.Add(new CheckPair(header, match));
                     break;
                 default:
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_invalid_element, child.ToString()), child);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_invalid_element, child.ToString()), child);
                 }
             }
             return;
@@ -508,7 +509,7 @@ namespace System.Web.Configuration {
                     continue;
                 }
                 if (child.Name != "capability") {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_base_unrecognized_element), child);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_base_unrecognized_element), child);
                 }
                 string capabilityName = null;
                 string capabilityValue = null;
@@ -532,7 +533,7 @@ namespace System.Web.Configuration {
                     continue;
                 }
                 if(child.Name != "adapter") {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_base_unrecognized_element), child);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_base_unrecognized_element), child);
                 }
                 XmlAttributeCollection nodeAttributes = child.Attributes;
                 string controlString = null;
@@ -561,20 +562,20 @@ namespace System.Web.Configuration {
 
             if (!baseType.IsAssignableFrom(type)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Type_doesnt_inherit_from_type, typeName, 
+                    System.Web.SR.GetString(System.Web.SR.Type_doesnt_inherit_from_type, typeName, 
                         baseType.FullName), child);
             }
 
             if (!HttpRuntime.IsTypeAllowedInConfig(type)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Type_from_untrusted_assembly, typeName), child);
+                    System.Web.SR.GetString(System.Web.SR.Type_from_untrusted_assembly, typeName), child);
             }
 
             return type;
         }
 
         internal void MergeWithDefinition(BrowserDefinition definition) {
-            Debug.Assert(definition.IsRefID);
+            System.Web.Util.Debug.Assert(definition.IsRefID);
 
             // Copy the capabilities
             foreach (String key in definition.Capabilities.Keys) {

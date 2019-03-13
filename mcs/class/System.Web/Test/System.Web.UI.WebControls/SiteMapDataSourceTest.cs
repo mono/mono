@@ -238,7 +238,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				return temp;
 			}
 		}
-		protected internal override SiteMapNode GetRootNodeCore ()
+		protected override SiteMapNode GetRootNodeCore ()
 		{
 			return RootNode;
 		}

@@ -13,6 +13,7 @@ namespace System.Web.Routing {
     using System.Security;
     using System.Security.Permissions;
     using System.Security.Principal;
+    
 
     public class PageRouteHandler : IRouteHandler {
         public PageRouteHandler(string virtualPath)
@@ -21,7 +22,7 @@ namespace System.Web.Routing {
 
         public PageRouteHandler(string virtualPath, bool checkPhysicalUrlAccess) {
             if (string.IsNullOrEmpty(virtualPath) || !virtualPath.StartsWith("~/", StringComparison.OrdinalIgnoreCase)) {
-                throw new ArgumentException(SR.GetString(SR.PageRouteHandler_InvalidVirtualPath), "virtualPath");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageRouteHandler_InvalidVirtualPath), "virtualPath");
             }
 
             this.VirtualPath = virtualPath;

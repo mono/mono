@@ -268,7 +268,7 @@ namespace System.Web.UI.WebControls {
             base.OnValidate(o);
 
             if (!(o is Parameter))
-                throw new ArgumentException(SR.GetString(SR.ParameterCollection_NotParameter), "o");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ParameterCollection_NotParameter), "o");
         }
 
         /// <devdoc>

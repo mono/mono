@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Security.Permissions;
 
+
 namespace System.Web {
 
     [HostProtection(Synchronization=true)]
@@ -24,7 +25,7 @@ namespace System.Web {
             HttpContext context = HttpContext.Current;
             if (context != null) {
                 if (!HttpRuntime.UseIntegratedPipeline && !(context.WorkerRequest is ISAPIWorkerRequestInProcForIIS7)) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_7));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_7));
                 }
             }
         }

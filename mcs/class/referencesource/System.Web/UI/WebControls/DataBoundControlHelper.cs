@@ -28,8 +28,8 @@ namespace System.Web.UI.WebControls {
         /// Important : Note that the search is never done on the 'control' itself by this method.
         /// </devdoc>
         public static Control FindControl(Control control, string controlID) {
-            Debug.Assert(control != null, "control should not be null");
-            Debug.Assert(!String.IsNullOrEmpty(controlID), "controlID should not be empty");
+            System.Web.Util.Debug.Assert(control != null, "control should not be null");
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(controlID), "controlID should not be empty");
             Control currentContainer = control;
             Control foundControl = null;
 
@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls {
             while (foundControl == null && currentContainer != control.Page) {
                 currentContainer = currentContainer.NamingContainer;
                 if (currentContainer == null) {
-                    throw new HttpException(SR.GetString(SR.DataBoundControlHelper_NoNamingContainer, control.GetType().Name, control.ID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBoundControlHelper_NoNamingContainer, control.GetType().Name, control.ID));
                 }
                 foundControl = currentContainer.FindControl(controlID);
             }
@@ -127,14 +127,14 @@ namespace System.Web.UI.WebControls {
             }
 
             if (s_enableDynamicDataMethod == null) {
-                Type dataControlExtensionsType = Assembly.Load(AssemblyRef.SystemWebDynamicData).GetType("System.Web.UI.DataControlExtensions");
+                Type dataControlExtensionsType = Assembly.Load("System.Web.DynamicData, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35").GetType("System.Web.UI.DataControlExtensions");
                 s_enableDynamicDataMethod = dataControlExtensionsType.GetMethod("EnableDynamicData",
                                                                               BindingFlags.Public | BindingFlags.Static,
                                                                               binder: null,
                                                                               types: new Type[] { typeof(INamingContainer), typeof(Type) },
                                                                               modifiers: null);
             }
-            Debug.Assert(s_enableDynamicDataMethod != null);
+            System.Web.Util.Debug.Assert(s_enableDynamicDataMethod != null);
 
             Type entityType = BuildManager.GetType(entityTypeName, throwOnError: false);
             if (entityType != null) {

@@ -24,7 +24,7 @@ namespace System.Web.Util {
         }
 
         public static char IntToHex(int n) {
-            Debug.Assert(n < 0x10);
+            System.Web.Util.Debug.Assert(n < 0x10);
 
             if (n <= 9)
                 return (char)(n + (int)'0');

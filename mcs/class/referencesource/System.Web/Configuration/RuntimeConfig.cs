@@ -14,6 +14,7 @@ using System.Web.Util;
 using System.Web.Hosting;
 using System.Web.Configuration;
 
+
 namespace System.Web.Configuration {
 
     //
@@ -640,7 +641,7 @@ namespace System.Web.Configuration {
 
             // verify the object is of the expected type
             if (result != null && result.GetType() != type) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Config_unable_to_get_section, sectionName));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_unable_to_get_section, sectionName));
             }
 
             // store into results cache
@@ -677,13 +678,13 @@ namespace System.Web.Configuration {
                 // but various error handling subclasses of RuntimeConfig may need it.
                 // Throw an error if null is not permitted.
                 if (!_permitNull) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_unable_to_get_section, sectionName));
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_unable_to_get_section, sectionName));
                 }
             }
             else {
                 // verify the object is of the expected type
                 if (result.GetType() != type) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_unable_to_get_section, sectionName));
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_unable_to_get_section, sectionName));
                 }
             }
 

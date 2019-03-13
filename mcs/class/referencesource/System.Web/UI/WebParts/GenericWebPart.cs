@@ -40,13 +40,13 @@ namespace System.Web.UI.WebControls.WebParts {
                 throw new ArgumentNullException("control");
             }
             if (control is WebPart) {
-                throw new ArgumentException(SR.GetString(SR.GenericWebPart_CannotWrapWebPart), "control");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.GenericWebPart_CannotWrapWebPart), "control");
             }
             if (control is BasePartialCachingControl) {
-                throw new ArgumentException(SR.GetString(SR.GenericWebPart_CannotWrapOutputCachedControl), "control");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.GenericWebPart_CannotWrapOutputCachedControl), "control");
             }
             if (String.IsNullOrEmpty(control.ID)) {
-                throw new ArgumentException(SR.GetString(SR.GenericWebPart_NoID, control.GetType().FullName));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.GenericWebPart_NoID, control.GetType().FullName));
             }
 
             ID = IDPrefix + control.ID;
@@ -76,7 +76,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         public Control ChildControl {
             get {
-                Debug.Assert(_childControl != null, "ChildControl cannot be null.");
+                System.Web.Util.Debug.Assert(_childControl != null, "ChildControl cannot be null.");
                 return _childControl;
             }
         }
@@ -326,7 +326,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private sealed class GenericWebPartControlCollection : ControlCollection {
             public GenericWebPartControlCollection(GenericWebPart owner) : base(owner) {
-                SetCollectionReadOnly(SR.GenericWebPart_CannotModify);
+                SetCollectionReadOnly(System.Web.SR.GenericWebPart_CannotModify);
             }
 
             /// <devdoc>

@@ -330,7 +330,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void TemplateControl_LoadControlException()
 		{
 			PokerTemplateControl t = new PokerTemplateControl ();
-			t.LoadControl (null);
+			t.LoadControl ((string)null);
 		}
 
 

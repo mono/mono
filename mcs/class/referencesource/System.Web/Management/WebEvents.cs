@@ -25,6 +25,7 @@ namespace System.Web.Management {
     using System.Web.Security;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     using Debug = System.Web.Util.Debug;
 
@@ -96,6 +97,7 @@ namespace System.Web.Management {
         int _exceptionLogged;
 
         internal void LogException(Exception e) {
+#if !FEATURE_PAL
             // In order to not overflow the eventlog, we only log one exception per provider instance.
             if (Interlocked.CompareExchange( ref _exceptionLogged, 1, 0) == 0) {
                 // Log all errors in eventlog
@@ -104,6 +106,7 @@ namespace System.Web.Management {
                                         Name,
                                         e.ToString());
             }
+#endif
         }
     }
 
@@ -165,12 +168,12 @@ namespace System.Web.Management {
         void Init(string message, Object eventSource, int eventCode, int eventDetailCode) {
             if (eventCode < 0) {
                 throw new ArgumentOutOfRangeException("eventCode",
-                    SR.GetString(SR.Invalid_eventCode_error));
+                    System.Web.SR.GetString(System.Web.SR.Invalid_eventCode_error));
             }
 
             if (eventDetailCode < 0) {
                 throw new ArgumentOutOfRangeException("eventDetailCode",
-                    SR.GetString(SR.Invalid_eventDetailCode_error));
+                    System.Web.SR.GetString(System.Web.SR.Invalid_eventDetailCode_error));
             }
 
             _code = eventCode;
@@ -238,18 +241,18 @@ namespace System.Web.Management {
         }
 
         virtual internal void FormatToString(WebEventFormatter formatter, bool includeAppInfo) {
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_code, EventCode.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_message, Message));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_time, EventTime.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_time_Utc, EventTimeUtc.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_id, EventID.ToString("N", CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_sequence, EventSequence.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_occurrence, EventOccurrence.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_detail_code, EventDetailCode.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_code, EventCode.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_message, Message));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_time, EventTime.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_time_Utc, EventTimeUtc.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_id, EventID.ToString("N", CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_sequence, EventSequence.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_occurrence, EventOccurrence.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_detail_code, EventDetailCode.ToString(CultureInfo.InstalledUICulture)));
 
             if (includeAppInfo) {
                 formatter.AppendLine(String.Empty);
-                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_application_information));
+                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_application_information));
                 formatter.IndentationLevel += 1;
                 ApplicationInformation.FormatToString(formatter);
                 formatter.IndentationLevel -= 1;
@@ -268,7 +271,7 @@ namespace System.Web.Management {
 
             if (!IsSystemEvent && includeCustomEventDetails) {
                 formatter.AppendLine(String.Empty);
-                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_custom_event_details));
+                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_custom_event_details));
                 formatter.IndentationLevel += 1;
                 FormatCustomEventDetails(formatter);
                 formatter.IndentationLevel -= 1;
@@ -400,7 +403,7 @@ namespace System.Web.Management {
         }
 
         static internal void RaiseRuntimeError(Exception e, object source) {
-            Debug.Trace("WebEventRaiseError", "Error Event is raised; type=" + e.GetType().Name);
+            System.Web.Util.Debug.Trace("WebEventRaiseError", "Error Event is raised; type=" + e.GetType().Name);
 
             if (!HealthMonitoringManager.Enabled) {
                 return;
@@ -467,23 +470,21 @@ namespace System.Web.Management {
                 _occurrenceNumber = Interlocked.Increment(ref ceco._occurrence);
             }
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
+        
         virtual public void Raise() {
             Raise(this);
         }
 
-        // Internally raised events don't go thru this method.  They go directly to RaiseSystemEvent --> RaiseInternal
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
+        // Internally raised events don't go thru this method.  They go directly to RaiseSystemEvent --> RaiseInternal        
         static public void Raise(WebBaseEvent eventRaised) {
             if (eventRaised.EventCode < WebEventCodes.WebExtendedBase) {
-                throw new HttpException(SR.GetString(SR.System_eventCode_not_allowed,
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.System_eventCode_not_allowed,
                         eventRaised.EventCode.ToString(CultureInfo.CurrentCulture),
                         WebEventCodes.WebExtendedBase.ToString(CultureInfo.CurrentCulture)));
             }
 
             if (!HealthMonitoringManager.Enabled) {
-                Debug.Trace(
+                System.Web.Util.Debug.Trace(
                     "WebEventRaiseDetails", "Can't fire event because we are disabled or we can't configure HealthMonManager");
                 return;
             }
@@ -498,13 +499,13 @@ namespace System.Web.Management {
             ProcessImpersonationContext ictx = null;
             HttpContext context = HttpContext.Current;
 
-            Debug.Trace(
+            System.Web.Util.Debug.Trace(
                 "WebEventRaiseDetails", "Event is raised; event class = " + eventRaised.GetType().Name);
 
             // Use CallContext to make sure we detect an infinite loop where a provider calls Raise().
             o = CallContext.GetData(WEBEVENT_RAISE_IN_PROGRESS);
             if (o != null && (bool)o) {
-                Debug.Trace(
+                System.Web.Util.Debug.Trace(
                     "WebEventRaiseDetails", "An event is raised while we're raising an event.  Ignore it.");
                 return;
             }
@@ -516,7 +517,7 @@ namespace System.Web.Management {
             if (firingRuleInfos == null) {
                 HealthMonitoringManager manager = HealthMonitoringManager.Manager();
 
-                Debug.Assert(manager != null, "manager != null");
+                System.Web.Util.Debug.Assert(manager != null, "manager != null");
 
                 firingRuleInfos = manager._sectionHelper.FindFiringRuleInfos(eventRaised.GetType(), eventRaised.EventCode);
             }
@@ -543,7 +544,7 @@ namespace System.Web.Management {
 
                         // Check if we should fire the event based on its throttling settings
                         if (!record.CheckAndUpdate(eventRaised)) {
-                            Debug.Trace("WebEventRaiseDetails",
+                            System.Web.Util.Debug.Trace("WebEventRaiseDetails",
                                     "Throttling settings not met; not fired");
                             continue;
                         }
@@ -568,7 +569,7 @@ namespace System.Web.Management {
                                 }
 
                                 if (matchingProviderArray[firingRuleInfo._indexOfFirstRuleInfoWithSameProvider]) {
-                                    Debug.Trace("WebEventRaiseDetails",
+                                    System.Web.Util.Debug.Trace("WebEventRaiseDetails",
                                             "Rule with a matching provider already fired.");
                                     continue;
                                 }
@@ -595,7 +596,7 @@ namespace System.Web.Management {
                                     inProgressSet = true;
                                 }
 
-                                Debug.Trace("WebEventRaiseDetails", "Calling ProcessEvent under " + HttpApplication.GetCurrentWindowsIdentityWithAssert().Name);
+                                System.Web.Util.Debug.Trace("WebEventRaiseDetails", "Calling ProcessEvent under " + HttpApplication.GetCurrentWindowsIdentityWithAssert().Name);
                                 ruleInfo._referencedProvider.ProcessEvent(eventRaised);
                             }
                             catch (Exception e) {
@@ -662,11 +663,11 @@ namespace System.Web.Management {
             SystemEventType     systemEventType;
             int                 index0, index1;
 
-            Debug.Trace(
+            System.Web.Util.Debug.Trace(
                 "WebEventRaiseDetails", "RaiseSystemEventInternal called; eventCode=" + eventCode + "; eventDetailCode=" + eventDetailCode);
 
             if (!HealthMonitoringManager.Enabled) {
-                Debug.Trace(
+                System.Web.Util.Debug.Trace(
                     "WebEventRaiseDetails", "Can't fire event because we are disabled or we can't configure HealthMonManager");
                 return;
             }
@@ -675,7 +676,7 @@ namespace System.Web.Management {
 
             GetSystemEventTypeInfo(eventCode, index0, index1, out typeInfo, out systemEventType);
             if (typeInfo == null) {
-                Debug.Assert(false, "Unexpected system event code = " + eventCode);
+                System.Web.Util.Debug.Assert(false, "Unexpected system event code = " + eventCode);
                 return;
             }
 
@@ -824,7 +825,7 @@ namespace System.Web.Management {
                 eventCode <= WebEventCodes.MiscCodeBaseLast) {
                 switch(eventCode) {
                     case WebEventCodes.WebEventProviderInformation:
-                        Debug.Assert(false, "WebEventProviderInformation shouldn't be used to Raise an event");
+                        System.Web.Util.Debug.Assert(false, "WebEventProviderInformation shouldn't be used to Raise an event");
                         return SystemEventType.Unknown;
                 }
             }
@@ -883,7 +884,7 @@ namespace System.Web.Management {
                     return createDummy ? new WebViewStateFailureAuditEvent() : new WebViewStateFailureAuditEvent(message, source, eventCode, eventDetailCode, (System.Web.UI.ViewStateException)exception);
 
                 default:
-                    Debug.Assert(false, "Unexpected event type = " + systemEventType);
+                    System.Web.Util.Debug.Assert(false, "Unexpected event type = " + systemEventType);
                     return null;
             }
         }
@@ -897,7 +898,7 @@ namespace System.Web.Management {
             // times during shutdown, after the cache has been disposed.  To improve 
             // shutdown performance, skip the cache when it is disposed.
             if (HealthMonitoringManager.IsCacheDisposed) {
-                return SR.Resources.GetString(key, CultureInfo.InstalledUICulture);
+                return System.Web.SR.Resources.GetString(key, CultureInfo.InstalledUICulture);
             }
 
             CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
@@ -910,7 +911,7 @@ namespace System.Web.Management {
                 return s;
             }
 
-            s = SR.Resources.GetString(key, CultureInfo.InstalledUICulture);
+            s = System.Web.SR.Resources.GetString(key, CultureInfo.InstalledUICulture);
             if (s != null) {
                 cacheInternal.Insert(cacheKey, s, null);
             }
@@ -1021,7 +1022,7 @@ namespace System.Web.Management {
             }
 
             WebBaseEvent.RaiseSystemEvent(
-                SR.GetString(SR.Webevent_msg_Property_Deserialization,
+                System.Web.SR.GetString(System.Web.SR.Webevent_msg_Property_Deserialization,
                             property.Name, property.SerializeAs.ToString(), property.PropertyType.AssemblyQualifiedName ),
                 source,
                 WebEventCodes.WebErrorPropertyDeserializationError,
@@ -1118,7 +1119,7 @@ namespace System.Web.Management {
             base.FormatToString(formatter, includeAppInfo);
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_process_information));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_process_information));
 
             formatter.IndentationLevel += 1;
             ProcessInformation.FormatToString(formatter);
@@ -1150,7 +1151,7 @@ namespace System.Web.Management {
             base.FormatToString(formatter, includeAppInfo);
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_process_statistics));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_process_statistics));
 
             formatter.IndentationLevel += 1;
             s_procStats.FormatToString(formatter);
@@ -1290,7 +1291,7 @@ namespace System.Web.Management {
             base.FormatToString(formatter, includeAppInfo);
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_request_information));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_request_information));
 
             formatter.IndentationLevel += 1;
             RequestInformation.FormatToString(formatter);
@@ -1348,15 +1349,15 @@ namespace System.Web.Management {
                 formatter.AppendLine(String.Empty);
 
                 if (level == 0) {
-                    formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_exception_information));
+                    formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_exception_information));
                 }
                 else {
-                    formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_inner_exception_information, level.ToString(CultureInfo.InstalledUICulture)));
+                    formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_inner_exception_information, level.ToString(CultureInfo.InstalledUICulture)));
                 }
 
                 formatter.IndentationLevel += 1;
-                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_exception_type, ex.GetType().ToString()));
-                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_exception_message, ex.Message));
+                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_exception_type, ex.GetType().ToString()));
+                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_exception_message, ex.Message));
                 formatter.IndentationLevel -= 1;
             }
         }
@@ -1436,14 +1437,14 @@ namespace System.Web.Management {
             base.FormatToString(formatter, includeAppInfo);
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_request_information));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_request_information));
 
             formatter.IndentationLevel += 1;
             RequestInformation.FormatToString(formatter);
             formatter.IndentationLevel -= 1;
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_thread_information));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_thread_information));
 
             formatter.IndentationLevel += 1;
             ThreadInformation.FormatToString(formatter);
@@ -1535,14 +1536,14 @@ namespace System.Web.Management {
             base.FormatToString(formatter, includeAppInfo);
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_request_information));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_request_information));
 
             formatter.IndentationLevel += 1;
             RequestInformation.FormatToString(formatter);
             formatter.IndentationLevel -= 1;
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_thread_information));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_thread_information));
 
             formatter.IndentationLevel += 1;
             ThreadInformation.FormatToString(formatter);
@@ -1624,7 +1625,7 @@ namespace System.Web.Management {
             base.FormatToString(formatter, includeAppInfo);
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_request_information));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_request_information));
 
             formatter.IndentationLevel += 1;
             RequestInformation.FormatToString(formatter);
@@ -1696,7 +1697,7 @@ namespace System.Web.Management {
             base.FormatToString(formatter, includeAppInfo);
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_name_to_authenticate, _nameToAuthenticate));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_name_to_authenticate, _nameToAuthenticate));
 
         }
     }
@@ -1741,9 +1742,9 @@ namespace System.Web.Management {
             base.FormatToString(formatter, includeAppInfo);
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_ViewStateException_information));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_ViewStateException_information));
             formatter.IndentationLevel += 1;
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_exception_message, _viewStateException.Message));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_exception_message, _viewStateException.Message));
 
             formatter.IndentationLevel -= 1;
         }
@@ -1813,7 +1814,7 @@ namespace System.Web.Management {
             base.FormatToString(formatter, includeAppInfo);
 
             formatter.AppendLine(String.Empty);
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_name_to_authenticate, _nameToAuthenticate));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_name_to_authenticate, _nameToAuthenticate));
         }
     }
 
@@ -1833,6 +1834,7 @@ namespace System.Web.Management {
             // Can't use Process.ProcessName because it requires the running
             // account to be part of the Performance Monitor Users group.
             StringBuilder buf = new StringBuilder(256);
+#if !FEATURE_PAL
             if (UnsafeNativeMethods.GetModuleFileName(IntPtr.Zero, buf, 256) == 0) {
                 _processName = String.Empty;
             }
@@ -1847,6 +1849,10 @@ namespace System.Web.Management {
             }
 
             _processId = SafeNativeMethods.GetCurrentProcessId() ;
+#else
+            _processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+            _processId = System.Diagnostics.Process.GetCurrentProcess().Id;
+#endif
             _accountName = HttpRuntime.WpUserId;
         }
 
@@ -1857,9 +1863,9 @@ namespace System.Web.Management {
         public string AccountName { get { return (_accountName != null ? _accountName : String.Empty); } }
 
         public void FormatToString(WebEventFormatter formatter) {
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_process_id, ProcessID.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_process_name, ProcessName));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_account_name, AccountName));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_process_id, ProcessID.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_process_name, ProcessName));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_account_name, AccountName));
         }
     }
 
@@ -1884,7 +1890,7 @@ namespace System.Web.Management {
             catch {
                 _appPath = null;
             }
-#if FEATURE_PAL // FEATURE_PAL does not fully implement Environment.MachineName
+#if (!MONO && FEATURE_PAL) // FEATURE_PAL does not fully implement Environment.MachineName
             _machineName = "dummymachinename";
 #else // FEATURE_PAL
             _machineName = GetMachineNameWithAssert();
@@ -1902,11 +1908,11 @@ namespace System.Web.Management {
         public string MachineName { get { return _machineName; } }
 
         public void FormatToString(WebEventFormatter formatter) {
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_application_domain, ApplicationDomain));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_trust_level, TrustLevel));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_application_virtual_path, ApplicationVirtualPath));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_application_path, ApplicationPath));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_machine_name, MachineName));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_application_domain, ApplicationDomain));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_trust_level, TrustLevel));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_application_virtual_path, ApplicationVirtualPath));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_application_path, ApplicationPath));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_machine_name, MachineName));
         }
 
         [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
@@ -2008,19 +2014,19 @@ namespace System.Web.Management {
                 authType = id.AuthenticationType;
             }
 
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_request_url, RequestUrl));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_request_path, RequestPath));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_user_host_address, UserHostAddress));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_user, user));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_request_url, RequestUrl));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_request_path, RequestPath));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_user_host_address, UserHostAddress));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_user, user));
 
             if (authed) {
-                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_is_authenticated));
+                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_is_authenticated));
             }
             else {
-                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_is_not_authenticated));
+                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_is_not_authenticated));
             }
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_authentication_type, authType));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_thread_account_name, ThreadAccountName));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_authentication_type, authType));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_thread_account_name, ThreadAccountName));
 
         }
     }
@@ -2054,7 +2060,7 @@ namespace System.Web.Management {
 
         static WebProcessStatistics() {
             try {
-#if !FEATURE_PAL // FEATURE_PAL does not support this.  Make into a noop.
+#if (MONO || !FEATURE_PAL) // FEATURE_PAL does not support this.  Make into a noop.
                 s_startTime = Process.GetCurrentProcess().StartTime;
 #endif // !FEATURE_PAL
             }
@@ -2077,7 +2083,7 @@ namespace System.Web.Management {
 
                 if (!s_getCurrentProcFailed) {
                     Process process = Process.GetCurrentProcess();
-#if !FEATURE_PAL // FEATURE_PAL does not support these Process properties
+#if (MONO || !FEATURE_PAL) // FEATURE_PAL does not support these Process properties
 
                     s_threadCount = process.Threads.Count;
                     s_workingSet = (long)process.WorkingSet64;
@@ -2120,16 +2126,16 @@ namespace System.Web.Management {
 
 
         virtual public void FormatToString(WebEventFormatter formatter) {
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_process_start_time, ProcessStartTime.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_thread_count, ThreadCount.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_working_set, WorkingSet.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_peak_working_set, PeakWorkingSet.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_managed_heap_size, ManagedHeapSize.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_process_start_time, ProcessStartTime.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_thread_count, ThreadCount.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_working_set, WorkingSet.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_peak_working_set, PeakWorkingSet.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_managed_heap_size, ManagedHeapSize.ToString(CultureInfo.InstalledUICulture)));
 
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_application_domain_count, AppDomainCount.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_requests_executing, RequestsExecuting.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_request_queued, RequestsQueued.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_request_rejected, RequestsRejected.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_application_domain_count, AppDomainCount.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_requests_executing, RequestsExecuting.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_request_queued, RequestsQueued.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_request_rejected, RequestsRejected.ToString(CultureInfo.InstalledUICulture)));
         }
     }
 
@@ -2165,17 +2171,17 @@ namespace System.Web.Management {
 
 
         public void FormatToString(WebEventFormatter formatter) {
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_thread_id, ThreadID.ToString(CultureInfo.InstalledUICulture)));
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_thread_account_name, ThreadAccountName));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_thread_id, ThreadID.ToString(CultureInfo.InstalledUICulture)));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_thread_account_name, ThreadAccountName));
 
             if (IsImpersonating) {
-                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_is_impersonating));
+                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_is_impersonating));
             }
             else {
-                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_is_not_impersonating));
+                formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_is_not_impersonating));
             }
 
-            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_event_stack_trace, StackTrace));
+            formatter.AppendLine(WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_event_stack_trace, StackTrace));
         }
     }
 
@@ -2199,7 +2205,7 @@ namespace System.Web.Management {
 
         internal RuleFiringRecord(HealthMonitoringSectionHelper.RuleInfo ruleInfo) {
 
-            Debug.Assert(ruleInfo != null, "ruleInfo != null");
+            System.Web.Util.Debug.Assert(ruleInfo != null, "ruleInfo != null");
 
             _ruleInfo = ruleInfo;
 
@@ -2243,7 +2249,7 @@ namespace System.Web.Management {
 
             if (manager == null) {
                 // Won't fire because we cannot configure healthmonitor
-                Debug.Trace("RuleFiringRecord", "Can't configure healthmonitor");
+                System.Web.Util.Debug.Trace("RuleFiringRecord", "Can't configure healthmonitor");
                 return false;
             }
 
@@ -2260,13 +2266,13 @@ namespace System.Web.Management {
                     eventRaised.PreProcessEventInit();
 
                     if (!icustom.CanFire(eventRaised, this)) {
-                        Debug.Trace("RuleFiringRecord", "Custom evaluator returns false.");
+                        System.Web.Util.Debug.Trace("RuleFiringRecord", "Custom evaluator returns false.");
                         return false;
                     }
 #if (!DBG)
                 }
                 catch {
-                    Debug.Trace("RuleFiringRecord", "Hit an exception when calling Custom evaluator");
+                    System.Web.Util.Debug.Trace("RuleFiringRecord", "Hit an exception when calling Custom evaluator");
                     // Return if we hit an error
                     return false;
                 }
@@ -2274,14 +2280,14 @@ namespace System.Web.Management {
             }
 
             if (timesRaised < _ruleInfo._minInstances) {
-                Debug.Trace("RuleFiringRecord",
+                System.Web.Util.Debug.Trace("RuleFiringRecord",
                         "MinInterval not met; timesRaised=" + timesRaised +
                         "; _minInstances=" + _ruleInfo._minInstances);
                 return false;
             }
 
             if (timesRaised > _ruleInfo._maxLimit) {
-                Debug.Trace("RuleFiringRecord",
+                System.Web.Util.Debug.Trace("RuleFiringRecord",
                         "MaxLimit exceeded; timesRaised=" + timesRaised +
                         "; _maxLimit=" + _ruleInfo._maxLimit);
                 return false;
@@ -2295,7 +2301,7 @@ namespace System.Web.Management {
             }
 
             if ((now - _lastFired) <= _ruleInfo._minInterval) {
-                Debug.Trace("RuleFiringRecord",
+                System.Web.Util.Debug.Trace("RuleFiringRecord",
                         "MinInterval not met; now=" + now +
                         "; _lastFired=" + _lastFired +
                         "; _ruleInfo._minInterval=" + _ruleInfo._minInterval);
@@ -2306,7 +2312,7 @@ namespace System.Web.Management {
             // same test simultaneously.
             lock (this) {
                 if ((now - _lastFired) <= _ruleInfo._minInterval) {
-                    Debug.Trace("RuleFiringRecord",
+                    System.Web.Util.Debug.Trace("RuleFiringRecord",
                             "MinInterval not met; now=" + now +
                             "; _lastFired=" + _lastFired +
                             "; _ruleInfo._tsMinInterval=" + _ruleInfo._minInterval);
@@ -2335,7 +2341,7 @@ namespace System.Web.Management {
         internal static HealthMonitoringManager Manager() {
 
             if (s_initing) {
-                Debug.Assert(!s_inited);
+                System.Web.Util.Debug.Assert(!s_inited);
                 // If this is true, that means we are calling WebEventBase.Raise while
                 // we are initializing.  That means Init() has caused a config exception.
                 return null;
@@ -2351,7 +2357,7 @@ namespace System.Web.Management {
                 }
 
                 try {
-                    Debug.Assert(s_manager == null);
+                    System.Web.Util.Debug.Assert(s_manager == null);
                     s_initing = true;
                     s_manager = new HealthMonitoringManager();;
                 }
@@ -2386,13 +2392,13 @@ namespace System.Web.Management {
         internal static void StartHealthMonitoringHeartbeat() {
             HealthMonitoringManager manager = Manager();
             if (manager == null) {
-                Debug.Trace(
+                System.Web.Util.Debug.Trace(
                     "HealthMonitoringManager", "Can't fire heartbeat because we cannot configure HealthMon");
                 return;
             }
 
             if (!manager._enabled) {
-                Debug.Trace(
+                System.Web.Util.Debug.Trace(
                     "WebEventRaiseDetails", "Can't fire heartbeat because we are disabled");
                 return;
             }
@@ -2428,7 +2434,7 @@ namespace System.Web.Management {
         }
 
         internal void HeartbeatCallback(object state) {
-            Debug.Assert(HealthMonitoringManager.Enabled);
+            System.Web.Util.Debug.Assert(HealthMonitoringManager.Enabled);
             WebBaseEvent.RaiseSystemEvent(null, WebEventCodes.ApplicationHeartbeat);
         }
 
@@ -2440,7 +2446,7 @@ namespace System.Web.Management {
             }
 
 #if DBG
-            if (!Debug.IsTagPresent("Timer") || Debug.IsTagEnabled("Timer"))
+            if (!System.Web.Util.Debug.IsTagPresent("Timer") || System.Web.Util.Debug.IsTagEnabled("Timer"))
 #endif
             {
                 s_heartbeatTimer = new Timer(new TimerCallback(this.HeartbeatCallback), null,
@@ -2513,7 +2519,7 @@ namespace System.Web.Management {
             }
 
             if (!providers.ContainsKey(providerName)) {
-                throw new ArgumentException(SR.GetString(SR.Health_mon_provider_not_found, providerName));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Health_mon_provider_not_found, providerName));
             }
 
             using (new ApplicationImpersonationContext()) {
@@ -2533,7 +2539,7 @@ namespace System.Web.Management {
                 foreach(DictionaryEntry de in providers) {
                     WebEventProvider    provider = (WebEventProvider)de.Value;
 
-                    Debug.Trace("WebEventManager", "Flushing provider " + provider.Name);
+                    System.Web.Util.Debug.Trace("WebEventManager", "Flushing provider " + provider.Name);
                     provider.Flush();
                 }
             }
@@ -2549,7 +2555,7 @@ namespace System.Web.Management {
             foreach(DictionaryEntry de in providers) {
                 WebEventProvider    provider = (WebEventProvider)de.Value;
 
-                Debug.Trace("WebEventManager", "Shutting down provider " + provider.Name);
+                System.Web.Util.Debug.Trace("WebEventManager", "Shutting down provider " + provider.Name);
                 provider.Shutdown();
             }
         }

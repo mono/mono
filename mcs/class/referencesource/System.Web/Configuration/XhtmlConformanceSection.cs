@@ -41,7 +41,7 @@ namespace System.Web.Configuration {
             _properties.Add(_propMode);
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

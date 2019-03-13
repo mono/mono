@@ -26,6 +26,7 @@ namespace System.Web {
     using System.Web.Hosting;
     using System.Web.Configuration;
     using System.Security.Permissions;
+    
 
     public interface IPartitionResolver {
         void Initialize();
@@ -60,7 +61,7 @@ namespace System.Web {
 
                     if (partitionString == null) {
                         throw new HttpException(
-                                SR.GetString(SR.Bad_partition_resolver_connection_string, partitionResolver.GetType().FullName));
+                                System.Web.SR.GetString(System.Web.SR.Bad_partition_resolver_connection_string, partitionResolver.GetType().FullName));
                     }
                 }
                 catch (Exception e) {
@@ -72,7 +73,7 @@ namespace System.Web {
                     _lock.AcquireReaderLock(-1);
                     partitionInfo = (IPartitionInfo)_partitions[partitionString];
                     if (partitionInfo != null) {
-                        Debug.Trace("PartitionManager", "id=" + id + "; partitionString=" + partitionString);
+                        System.Web.Util.Debug.Trace("PartitionManager", "id=" + id + "; partitionString=" + partitionString);
                         return partitionInfo;
                     }
 
@@ -91,11 +92,11 @@ namespace System.Web {
                     if (partitionInfo == null) {
                         partitionInfo = _createCallback(partitionString);
 
-                        Debug.Trace("PartitionManager", "Add a new partition; id=" + id + "; partitionString=" + partitionString);
+                        System.Web.Util.Debug.Trace("PartitionManager", "Add a new partition; id=" + id + "; partitionString=" + partitionString);
                         _partitions.Add(partitionString, partitionInfo);
                     }
 
-                    Debug.Trace("PartitionManager", "id=" + id + "; partitionString=" + partitionString);
+                    System.Web.Util.Debug.Trace("PartitionManager", "id=" + id + "; partitionString=" + partitionString);
                     return partitionInfo;
                 }
                 finally {

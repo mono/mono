@@ -49,9 +49,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
         }
 
-        private static void Initialize() {
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
-
+        private static void Initialize() {            
             if (_initialized) {
                 return;
             }
@@ -64,7 +62,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 WebPartsSection webPartsSection = RuntimeConfig.GetAppConfig().WebParts;
                 WebPartsPersonalization personalization = webPartsSection.Personalization;
 
-                Debug.Assert(_providers == null);
+                System.Web.Util.Debug.Assert(_providers == null);
                 _providers = new PersonalizationProviderCollection();
 
                 ProvidersHelper.InstantiateProviders(personalization.Providers, _providers, typeof(PersonalizationProvider));
@@ -72,7 +70,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 _provider = _providers[personalization.DefaultProvider];
                 if (_provider == null) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Config_provider_must_exist, personalization.DefaultProvider),
+                        System.Web.SR.GetString(System.Web.SR.Config_provider_must_exist, personalization.DefaultProvider),
                         personalization.ElementInformation.Properties["defaultProvider"].Source,
                         personalization.ElementInformation.Properties["defaultProvider"].LineNumber);
                 }
@@ -115,12 +113,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         public static bool ResetSharedState(string path) {
-            path = StringUtil.CheckAndTrimString(path, "path");
+            path = System.Web.Util.StringUtil.CheckAndTrimString(path, "path");
             string [] paths = new string[] {path};
             int count = ResetStatePrivate(PersonalizationScope.Shared, paths, null);
-            Debug.Assert(count >= 0);
+            System.Web.Util.Debug.Assert(count >= 0);
             if (count > 1) {
-                throw new HttpException(SR.GetString(SR.PersonalizationAdmin_UnexpectedResetSharedStateReturnValue, count.ToString(CultureInfo.CurrentCulture)));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.PersonalizationAdmin_UnexpectedResetSharedStateReturnValue, count.ToString(CultureInfo.CurrentCulture)));
             }
             return (count == 1);
         }
@@ -131,7 +129,7 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         public static int ResetUserState(string path) {
-            path = StringUtil.CheckAndTrimString(path, "path");
+            path = System.Web.Util.StringUtil.CheckAndTrimString(path, "path");
             string [] paths = new string [] {path};
             return ResetStatePrivate(PersonalizationScope.User, paths, null);
         }
@@ -142,20 +140,20 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         public static bool ResetUserState(string path, string username) {
-            path = StringUtil.CheckAndTrimString(path, "path");
+            path = System.Web.Util.StringUtil.CheckAndTrimString(path, "path");
             username = PersonalizationProviderHelper.CheckAndTrimStringWithoutCommas(username, "username");
             string [] paths = new string [] {path};
             string [] usernames = new string[] {username};
             int count = ResetStatePrivate(PersonalizationScope.User, paths, usernames);
-            Debug.Assert(count >= 0);
+            System.Web.Util.Debug.Assert(count >= 0);
             if (count > 1) {
-                throw new HttpException(SR.GetString(SR.PersonalizationAdmin_UnexpectedResetUserStateReturnValue, count.ToString(CultureInfo.CurrentCulture)));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.PersonalizationAdmin_UnexpectedResetUserStateReturnValue, count.ToString(CultureInfo.CurrentCulture)));
             }
             return (count == 1);
         }
 
         public static int ResetUserState(string path, string[] usernames) {
-            path = StringUtil.CheckAndTrimString(path, "path");
+            path = System.Web.Util.StringUtil.CheckAndTrimString(path, "path");
             usernames = PersonalizationProviderHelper.CheckAndTrimNonEmptyStringEntries(usernames, "usernames", true, true, -1);
             string [] paths = new string [] {path};
             return ResetStatePrivate(PersonalizationScope.User, paths, usernames);
@@ -175,7 +173,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         public static int ResetInactiveUserState(string path,
                                                  DateTime userInactiveSinceDate) {
-            path = StringUtil.CheckAndTrimString(path, "path");
+            path = System.Web.Util.StringUtil.CheckAndTrimString(path, "path");
             return ResetInactiveUserStatePrivate(path, userInactiveSinceDate);
         }
 
@@ -193,7 +191,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         public static int GetCountOfState(PersonalizationScope scope, string pathToMatch) {
             PersonalizationProviderHelper.CheckPersonalizationScope(scope);
-            pathToMatch = StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
+            pathToMatch = System.Web.Util.StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
             PersonalizationStateQuery stateQuery = new PersonalizationStateQuery();
             stateQuery.PathToMatch = pathToMatch;
             return GetCountOfStatePrivate(scope, stateQuery);
@@ -209,7 +207,7 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         public static int GetCountOfUserState(string usernameToMatch) {
-            usernameToMatch = StringUtil.CheckAndTrimString(usernameToMatch, "usernameToMatch", false);
+            usernameToMatch = System.Web.Util.StringUtil.CheckAndTrimString(usernameToMatch, "usernameToMatch", false);
             PersonalizationStateQuery stateQuery = new PersonalizationStateQuery();
             stateQuery.UsernameToMatch = usernameToMatch;
             return GetCountOfStatePrivate(PersonalizationScope.User, stateQuery);
@@ -221,7 +219,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         public static int GetCountOfInactiveUserState(string pathToMatch,
                                                       DateTime userInactiveSinceDate) {
-            pathToMatch = StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
+            pathToMatch = System.Web.Util.StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
             PersonalizationStateQuery stateQuery = new PersonalizationStateQuery();
             stateQuery.PathToMatch = pathToMatch;
             stateQuery.UserInactiveSinceDate = userInactiveSinceDate;
@@ -274,7 +272,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public static PersonalizationStateInfoCollection FindSharedState(string pathToMatch,
                                                                          int pageIndex, int pageSize,
                                                                          out int totalRecords) {
-            pathToMatch = StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
+            pathToMatch = System.Web.Util.StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
             PersonalizationProviderHelper.CheckPageIndexAndSize(pageIndex, pageSize);
             PersonalizationStateQuery stateQuery = new PersonalizationStateQuery();
             stateQuery.PathToMatch= pathToMatch;
@@ -292,8 +290,8 @@ namespace System.Web.UI.WebControls.WebParts {
                                                                        string usernameToMatch,
                                                                        int pageIndex, int pageSize,
                                                                        out int totalRecords) {
-            pathToMatch = StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
-            usernameToMatch = StringUtil.CheckAndTrimString(usernameToMatch, "usernameToMatch", false);
+            pathToMatch = System.Web.Util.StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
+            usernameToMatch = System.Web.Util.StringUtil.CheckAndTrimString(usernameToMatch, "usernameToMatch", false);
             PersonalizationProviderHelper.CheckPageIndexAndSize(pageIndex, pageSize);
             PersonalizationStateQuery stateQuery = new PersonalizationStateQuery();
             stateQuery.PathToMatch= pathToMatch;
@@ -315,8 +313,8 @@ namespace System.Web.UI.WebControls.WebParts {
                                                                                DateTime userInactiveSinceDate,
                                                                                int pageIndex, int pageSize,
                                                                                out int totalRecords) {
-            pathToMatch = StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
-            usernameToMatch = StringUtil.CheckAndTrimString(usernameToMatch, "usernameToMatch", false);
+            pathToMatch = System.Web.Util.StringUtil.CheckAndTrimString(pathToMatch, "pathToMatch", false);
+            usernameToMatch = System.Web.Util.StringUtil.CheckAndTrimString(usernameToMatch, "usernameToMatch", false);
             PersonalizationProviderHelper.CheckPageIndexAndSize(pageIndex, pageSize);
             PersonalizationStateQuery stateQuery = new PersonalizationStateQuery();
             stateQuery.PathToMatch= pathToMatch;

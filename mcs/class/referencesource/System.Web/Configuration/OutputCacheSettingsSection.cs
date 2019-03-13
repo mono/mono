@@ -67,7 +67,7 @@ namespace System.Web.Configuration {
         public OutputCacheSettingsSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

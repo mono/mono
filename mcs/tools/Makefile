@@ -3,6 +3,7 @@ thisdir = tools
 net_4_5_dirs := \
 	al		\
 	aprofutil	\
+	aspnet-compiler	\
 	linker		\
 	culevel		\
 	genxs		\

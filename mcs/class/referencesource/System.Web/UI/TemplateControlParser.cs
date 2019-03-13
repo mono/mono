@@ -73,7 +73,7 @@ public abstract class TemplateControlParser : BaseTemplateParser {
 
     internal override void ProcessDirective(string directiveName, IDictionary directive) {
 
-        if (StringUtil.EqualsIgnoreCase(directiveName, "outputcache")) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "outputcache")) {
 
             // Ignore the OutputCache directive in design mode (VSWhidbey 470314)
             if (FInDesigner)
@@ -86,14 +86,14 @@ public abstract class TemplateControlParser : BaseTemplateParser {
             // Make sure the outputcache directive was not already specified
             if (_outputCacheDirective != null) {
                 throw new HttpException(
-                    SR.GetString(SR.Only_one_directive_allowed, directiveName));
+                    System.Web.SR.GetString(System.Web.SR.Only_one_directive_allowed, directiveName));
             }
 
             ProcessOutputCacheDirective(directiveName, directive);
 
             _outputCacheDirective = directive;
         }
-        else if (StringUtil.EqualsIgnoreCase(directiveName, "reference")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "reference")) {
 
             // Ignore the OutputCache directive in design mode (VSWhidbey 517783)
             if (FInDesigner) {
@@ -118,7 +118,7 @@ public abstract class TemplateControlParser : BaseTemplateParser {
             VirtualPath tmp = Util.GetAndRemoveVirtualPathAttribute(directive, "page");
             if (tmp != null) {
                 if (virtualPath != null) {
-                    ProcessError(SR.GetString(SR.Invalid_reference_directive));
+                    ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_reference_directive));
                     return;
                 }
                 virtualPath = tmp;
@@ -128,7 +128,7 @@ public abstract class TemplateControlParser : BaseTemplateParser {
             tmp = Util.GetAndRemoveVirtualPathAttribute(directive, "control");
             if (tmp != null) {
                 if (virtualPath != null) {
-                    ProcessError(SR.GetString(SR.Invalid_reference_directive));
+                    ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_reference_directive));
                     return;
                 }
                 virtualPath = tmp;
@@ -137,24 +137,24 @@ public abstract class TemplateControlParser : BaseTemplateParser {
 
             // If we didn't get a virtual path, fail
             if (virtualPath == null) {
-                ProcessError(SR.GetString(SR.Invalid_reference_directive));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_reference_directive));
                 return;
             }
 
             Type t = GetReferencedType(virtualPath);
 
             if (t == null) {
-                ProcessError(SR.GetString(SR.Invalid_reference_directive_attrib, virtualPath));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_reference_directive_attrib, virtualPath));
             }
 
             // If the 'page' attribute was used, make sure it's indeed a Page
             if (enforcePage && !typeof(Page).IsAssignableFrom(t)) {
-                ProcessError(SR.GetString(SR.Invalid_reference_directive_attrib, virtualPath));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_reference_directive_attrib, virtualPath));
             }
 
             // If the 'control' attribute was used, make sure it's indeed a UserControl
             if (enforceControl && !typeof(UserControl).IsAssignableFrom(t)) {
-                ProcessError(SR.GetString(SR.Invalid_reference_directive_attrib, virtualPath));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_reference_directive_attrib, virtualPath));
             }
 
             // If there are some attributes left, fail
@@ -251,7 +251,7 @@ public abstract class TemplateControlParser : BaseTemplateParser {
             RootBuilder.PreprocessAttribute(filter, attribName, value, true /*mainDirectiveMode*/);
         }
         catch (Exception e) {
-            ProcessError(SR.GetString(SR.Attrib_parse_error, attribName, e.Message));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Attrib_parse_error, attribName, e.Message));
         }
     }
 
@@ -277,7 +277,7 @@ public abstract class TemplateControlParser : BaseTemplateParser {
 
         // If neither or both are specified, fail
         if ((typeName == null) == (virtualPath == null)) {
-            throw new HttpException(SR.GetString(SR.Invalid_typeNameOrVirtualPath_directive, directiveName));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_typeNameOrVirtualPath_directive, directiveName));
         }
 
         if (typeName != null) {
@@ -334,7 +334,7 @@ public abstract class TemplateControlParser : BaseTemplateParser {
         }
 
         if (!fHasDuration && (outputCacheProfile == null || outputCacheProfile.Length == 0) && FDurationRequiredOnOutputCache)
-            throw new HttpException(SR.GetString(SR.Missing_attr, "duration"));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Missing_attr, "duration"));
 
         varyByCustom = Util.GetAndRemoveNonEmptyAttribute(directive, "varybycustom");
         if (varyByCustom != null) {
@@ -356,13 +356,13 @@ public abstract class TemplateControlParser : BaseTemplateParser {
             varyByControls == null && 
             (outputCacheProfile == null || outputCacheProfile.Length == 0) && 
             FVaryByParamsRequiredOnOutputCache)
-            throw new HttpException(SR.GetString(SR.Missing_varybyparam_attr));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Missing_varybyparam_attr));
 
         // If it's "none", set it to null
-        if (StringUtil.EqualsIgnoreCase(varyByParams, "none"))
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(varyByParams, "none"))
             OutputCacheParameters.VaryByParam = null;
 
-        if (StringUtil.EqualsIgnoreCase(varyByControls, "none"))
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(varyByControls, "none"))
             OutputCacheParameters.VaryByControl = null;
 
         // If there are some attributes left, fail

@@ -70,8 +70,8 @@ namespace System.Configuration {
 
 #if !CONFIGPATHUTILITY_SYSTEMWEB
         static internal string Combine(string parentConfigPath, string childConfigPath) {
-            Debug.Assert(String.IsNullOrEmpty(parentConfigPath) || IsValid(parentConfigPath), "String.IsNullOrEmpty(parentConfigPath) || IsValid(parentConfigPath)");
-            Debug.Assert(String.IsNullOrEmpty(childConfigPath) || IsValid(childConfigPath), "String.IsNullOrEmpty(childConfigPath) || IsValid(childConfigPath)");
+            System.Web.Util.Debug.Assert(String.IsNullOrEmpty(parentConfigPath) || IsValid(parentConfigPath), "String.IsNullOrEmpty(parentConfigPath) || IsValid(parentConfigPath)");
+            System.Web.Util.Debug.Assert(String.IsNullOrEmpty(childConfigPath) || IsValid(childConfigPath), "String.IsNullOrEmpty(childConfigPath) || IsValid(childConfigPath)");
 
             if (String.IsNullOrEmpty(parentConfigPath)) {
                 return childConfigPath;
@@ -85,7 +85,7 @@ namespace System.Configuration {
         }
 
         static internal string[] GetParts(string configPath) {
-            Debug.Assert(IsValid(configPath), "IsValid(configPath)");
+            System.Web.Util.Debug.Assert(IsValid(configPath), "IsValid(configPath)");
 
             string[] parts = configPath.Split(SeparatorChar);
             return parts;
@@ -96,7 +96,7 @@ namespace System.Configuration {
         //   GetName("MACHINE/WEBROOT/Default Web Site/app") == "app"
         //
         static internal string GetName(string configPath) {
-            Debug.Assert(String.IsNullOrEmpty(configPath) || IsValid(configPath), "String.IsNullOrEmpty(configPath) || IsValid(configPath)");
+            System.Web.Util.Debug.Assert(String.IsNullOrEmpty(configPath) || IsValid(configPath), "String.IsNullOrEmpty(configPath) || IsValid(configPath)");
 
             if (String.IsNullOrEmpty(configPath)) {
                 return configPath;
@@ -107,7 +107,7 @@ namespace System.Configuration {
                 return configPath;
             }
 
-            Debug.Assert(index != configPath.Length - 1);
+            System.Web.Util.Debug.Assert(index != configPath.Length - 1);
             return configPath.Substring(index + 1);
         }
 #endif
@@ -115,7 +115,7 @@ namespace System.Configuration {
 // Avoid unused code warning in System.Configuration by including functions in assembly-specific #defines
 #if CONFIGPATHUTILITY_SYSTEMWEB
         static internal string GetParent(string configPath) {
-            Debug.Assert(String.IsNullOrEmpty(configPath) || IsValid(configPath), "String.IsNullOrEmpty(configPath) || IsValid(configPath)");
+            System.Web.Util.Debug.Assert(String.IsNullOrEmpty(configPath) || IsValid(configPath), "String.IsNullOrEmpty(configPath) || IsValid(configPath)");
 
             if (String.IsNullOrEmpty(configPath)) {
                 return null;

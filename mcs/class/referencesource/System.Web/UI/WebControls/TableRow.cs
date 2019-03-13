@@ -45,7 +45,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         MergableProperty(false),
-        WebSysDescription(SR.TableRow_Cells),
+        WebSysDescription(System.Web.SR.TableRow_Cells),
         PersistenceMode(PersistenceMode.InnerDefaultProperty)
         ]
         public virtual TableCellCollection Cells {
@@ -63,7 +63,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(HorizontalAlign.NotSet),
-        WebSysDescription(SR.TableItem_HorizontalAlign)
+        WebSysDescription(System.Web.SR.TableItem_HorizontalAlign)
         ]
         public virtual HorizontalAlign HorizontalAlign {
             get {
@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Accessibility"),
         DefaultValue(TableRowSection.TableBody),
-        WebSysDescription(SR.TableRow_TableSection)
+        WebSysDescription(System.Web.SR.TableRow_TableSection)
         ]
         public virtual TableRowSection TableSection {
             get {
@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(VerticalAlign.NotSet),
-        WebSysDescription(SR.TableItem_VerticalAlign)
+        WebSysDescription(System.Web.SR.TableItem_VerticalAlign)
         ]
         public virtual VerticalAlign VerticalAlign {
             get {
@@ -166,7 +166,7 @@ namespace System.Web.UI.WebControls {
                 if (child is TableCell)
                     base.Add(child);
                 else
-                    throw new ArgumentException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "TableRow", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "TableRow", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
             }
 
 
@@ -178,7 +178,7 @@ namespace System.Web.UI.WebControls {
                 if (child is TableCell)
                     base.AddAt(index, child);
                 else
-                    throw new ArgumentException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "TableRow", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "TableRow", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
             }
         } // class CellControlCollection
 

@@ -199,7 +199,7 @@ namespace System.Web.UI {
                 view.RaiseUnsupportedCapabilityError(DataSourceCapabilities.RetrieveTotalRowCount);
             }
 
-            Debug.Assert(unsupportedCapabilities == 0, "unknown capability not supported");
+            System.Web.Util.Debug.Assert(unsupportedCapabilities == 0, "unknown capability not supported");
         }
     }
 }

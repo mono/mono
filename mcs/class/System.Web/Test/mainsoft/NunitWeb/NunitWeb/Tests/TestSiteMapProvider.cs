@@ -11,7 +11,7 @@ namespace Tests {
 			get { return BuildSiteMap(); }
 		}
 
-		protected internal override SiteMapNode GetRootNodeCore() {
+		protected override SiteMapNode GetRootNodeCore() {
 			return BuildSiteMap();
 		}
 

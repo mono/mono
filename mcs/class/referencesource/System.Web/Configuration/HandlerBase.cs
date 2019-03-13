@@ -22,6 +22,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.Xml;
     using System.Web.Compilation;
+    
 
     static internal class HandlerBase {
 
@@ -36,7 +37,7 @@ namespace System.Web.Configuration {
             // If the attribute is required and was not present, throw
             if (fRequired && a == null) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Missing_required_attribute, attrib, node.Name),
+                    System.Web.SR.GetString(System.Web.SR.Missing_required_attribute, attrib, node.Name),
                     node);
             }
 
@@ -72,7 +73,7 @@ namespace System.Web.Configuration {
             XmlNode a = GetAndRemoveStringAttributeInternal(node, attrib, fRequired, ref val);
             if (a != null && val.Length == 0) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Empty_attribute, attrib),
+                    System.Web.SR.GetString(System.Web.SR.Empty_attribute, attrib),
                     a);
             }
 
@@ -91,7 +92,7 @@ namespace System.Web.Configuration {
                 }
                 else {
                     throw new ConfigurationErrorsException(
-                                    SR.GetString(SR.Invalid_boolean_attribute, a.Name),
+                                    System.Web.SR.GetString(System.Web.SR.Invalid_boolean_attribute, a.Name),
                                     a);
                 }
             }
@@ -108,7 +109,7 @@ namespace System.Web.Configuration {
             if (a != null) {
                 if (a.Value.Trim() != a.Value) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_integer_attribute, a.Name),
+                        System.Web.SR.GetString(System.Web.SR.Invalid_integer_attribute, a.Name),
                         a);
                 }
 
@@ -117,7 +118,7 @@ namespace System.Web.Configuration {
                 }
                 catch (Exception e) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_integer_attribute, a.Name),
+                        System.Web.SR.GetString(System.Web.SR.Invalid_integer_attribute, a.Name),
                         e, a);
                 }
             }
@@ -130,7 +131,7 @@ namespace System.Web.Configuration {
 
             if (a != null && val <= 0) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_positive_integer_attribute, attrib),
+                    System.Web.SR.GetString(System.Web.SR.Invalid_positive_integer_attribute, attrib),
                     a);
             }
 
@@ -161,7 +162,7 @@ namespace System.Web.Configuration {
             XmlAttribute attr = node.Attributes[attrib];
             if (attr != null) {
                 throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Config_base_unrecognized_attribute, attrib),
+                                System.Web.SR.GetString(System.Web.SR.Config_base_unrecognized_attribute, attrib),
                                 attr);
             }
         }
@@ -169,7 +170,7 @@ namespace System.Web.Configuration {
         internal static void CheckForUnrecognizedAttributes(XmlNode node) {
             if (node.Attributes.Count != 0) {
                 throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Config_base_unrecognized_attribute, node.Attributes[0].Name),
+                                System.Web.SR.GetString(System.Web.SR.Config_base_unrecognized_attribute, node.Attributes[0].Name),
                                 node.Attributes[0]);
             }
         }
@@ -201,13 +202,13 @@ namespace System.Web.Configuration {
 
             if (attribute == null) {
                 throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Config_base_required_attribute_missing, name),
+                                System.Web.SR.GetString(System.Web.SR.Config_base_required_attribute_missing, name),
                                 node);                
             }
 
             if (attribute.Value.Length == 0 && !allowEmpty) {
                 throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Config_base_required_attribute_empty, name),
+                                System.Web.SR.GetString(System.Web.SR.Config_base_required_attribute_empty, name),
                                 node);                
             }
 
@@ -225,7 +226,7 @@ namespace System.Web.Configuration {
             foreach (XmlNode childNode in node.ChildNodes) {
                 if (childNode.NodeType != XmlNodeType.Comment) {
                     throw new ConfigurationErrorsException(
-                                    SR.GetString(SR.Config_base_no_child_nodes),
+                                    System.Web.SR.GetString(System.Web.SR.Config_base_no_child_nodes),
                                     childNode);
                 }
             }
@@ -233,7 +234,7 @@ namespace System.Web.Configuration {
 
         internal static void ThrowUnrecognizedElement(XmlNode node) {
             throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Config_base_unrecognized_element),
+                            System.Web.SR.GetString(System.Web.SR.Config_base_unrecognized_element),
                             node);
         }
 
@@ -241,7 +242,7 @@ namespace System.Web.Configuration {
         internal static void CheckAssignableType(XmlNode node, Type baseType, Type type) {
             if (!baseType.IsAssignableFrom(type)) {
                 throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Type_doesnt_inherit_from_type, type.FullName, baseType.FullName),
+                                System.Web.SR.GetString(System.Web.SR.Type_doesnt_inherit_from_type, type.FullName, baseType.FullName),
                                 node);                
             }
         }
@@ -249,7 +250,7 @@ namespace System.Web.Configuration {
         internal static void CheckAssignableType(string filename, int lineNumber, Type baseType, Type type) {
             if (!baseType.IsAssignableFrom(type)) {
                 throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Type_doesnt_inherit_from_type, type.FullName, baseType.FullName),
+                                System.Web.SR.GetString(System.Web.SR.Type_doesnt_inherit_from_type, type.FullName, baseType.FullName),
                                 filename, lineNumber);                
             }
         }
@@ -266,7 +267,7 @@ namespace System.Web.Configuration {
                 return true;
             }
 
-            if (!StringUtil.StringStartsWithIgnoreCase(value, "registry:")) {
+            if (!System.Web.Util.StringUtil.StringStartsWithIgnoreCase(value, "registry:")) {
                 // Not a registry value.  It's not an error.
                 return true;
             }
@@ -281,7 +282,7 @@ namespace System.Web.Configuration {
             else {
                 if (throwIfError) {
                     throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Invalid_registry_config));
+                            System.Web.SR.GetString(System.Web.SR.Invalid_registry_config));
                 }
                 else {
                     return false;

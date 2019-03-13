@@ -4,6 +4,7 @@
     using System.Globalization;
     using System.Web;
     using System.Runtime.CompilerServices;
+    
 
     [TypeForwardedFrom("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
     public abstract class UrlRoutingHandler : IHttpHandler {
@@ -37,12 +38,12 @@
         protected virtual void ProcessRequest(HttpContextBase httpContext) {
             RouteData routeData = RouteCollection.GetRouteData(httpContext);
             if (routeData == null) {
-                throw new HttpException(404, SR.GetString(SR.UrlRoutingHandler_NoRouteMatches));
+                throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.UrlRoutingHandler_NoRouteMatches));
             }
 
             IRouteHandler routeHandler = routeData.RouteHandler;
             if (routeHandler == null) {
-                throw new InvalidOperationException(SR.GetString(SR.UrlRoutingModule_NoRouteHandler));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.UrlRoutingModule_NoRouteHandler));
             }
 
             RequestContext requestContext = new RequestContext(httpContext, routeData);
@@ -51,7 +52,7 @@
                 throw new InvalidOperationException(
                     String.Format(
                         CultureInfo.CurrentUICulture,
-                        SR.GetString(SR.UrlRoutingModule_NoHttpHandler),
+                        System.Web.SR.GetString(System.Web.SR.UrlRoutingModule_NoHttpHandler),
                         routeHandler.GetType()));
             }
 

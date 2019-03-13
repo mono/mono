@@ -20,6 +20,7 @@ using System.Web.Hosting;
 using System.Web.Util;
 using System.Web.UI;
 
+
 // The different types of directory that we treat as 'Code' (with minor differences)
 internal enum CodeDirectoryType {
     MainCode,       // The main /code directory
@@ -56,7 +57,7 @@ internal class CodeDirectoryCompiler {
 
             // The directory should never exist in a precompiled app
             if (Directory.Exists(physicalDir)) {
-                throw new HttpException(SR.GetString(SR.Bar_dir_in_precompiled_app, virtualDir));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Bar_dir_in_precompiled_app, virtualDir));
             }
         }
 
@@ -74,14 +75,14 @@ internal class CodeDirectoryCompiler {
 
             // It should always be a BuildResultCompiledAssembly, though if there is
             // a VirtualPathProvider doing very bad things, it may not (VSWhidbey 341701)
-            Debug.Assert(result is BuildResultCompiledAssembly);
+            System.Web.Util.Debug.Assert(result is BuildResultCompiledAssembly);
             if (result is BuildResultCompiledAssembly) {
 
                 // If it's the main code assembly, keep track of it so we can later call
                 // the AppInitialize method
                 if (result is BuildResultMainCodeAssembly) {
-                    Debug.Assert(dirType == CodeDirectoryType.MainCode);
-                    Debug.Assert(_mainCodeBuildResult == null);
+                    System.Web.Util.Debug.Assert(dirType == CodeDirectoryType.MainCode);
+                    System.Web.Util.Debug.Assert(_mainCodeBuildResult == null);
                     _mainCodeBuildResult = (BuildResultMainCodeAssembly) result;
                 }
 
@@ -114,8 +115,8 @@ internal class CodeDirectoryCompiler {
 
         // Check whether the virtual dir is mapped to a different application,
         // which we don't support (VSWhidbey 218603).  But don't do this for LocalResource (VSWhidbey 237935)
-        if (dirType != CodeDirectoryType.LocalResources && !StringUtil.StringStartsWithIgnoreCase(physicalDir, HttpRuntime.AppDomainAppPathInternal)) {
-            throw new HttpException(SR.GetString(SR.Virtual_codedir, virtualDir.VirtualPathString));
+        if (dirType != CodeDirectoryType.LocalResources && !System.Web.Util.StringUtil.StringStartsWithIgnoreCase(physicalDir, HttpRuntime.AppDomainAppPathInternal)) {
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Virtual_codedir, virtualDir.VirtualPathString));
         }
 
         // If the directory doesn't exist, we may be done
@@ -146,7 +147,7 @@ internal class CodeDirectoryCompiler {
         if (resultAssembly != null) {
             // If resultAssembly is not null, we are in the case where we just need to build
             // the localized resx file in a resources dir (local or global)
-            Debug.Assert(supportLocalization);
+            System.Web.Util.Debug.Assert(supportLocalization);
             outputAssemblyName = resultAssembly.GetName().Name;
             cdc._onlyBuildLocalizedResources = true;
         }
@@ -170,8 +171,8 @@ internal class CodeDirectoryCompiler {
 
         // Did we just compile something?
         if (results != null) {
-            Debug.Assert(result == null);
-            Debug.Assert(resultAssembly == null);
+            System.Web.Util.Debug.Assert(result == null);
+            System.Web.Util.Debug.Assert(resultAssembly == null);
 
             // If there is already a loaded module with the same path, try to wait for it to be unloaded.
             // Otherwise, we would end up loading this old assembly instead of the new one (VSWhidbey 554697)
@@ -181,14 +182,14 @@ internal class CodeDirectoryCompiler {
                 if (hModule == IntPtr.Zero)
                     break;
 
-                Debug.Trace("CodeDirectoryCompiler", results.PathToAssembly + " is already loaded. Waiting a bit");
+                System.Web.Util.Debug.Trace("CodeDirectoryCompiler", results.PathToAssembly + " is already loaded. Waiting a bit");
 
                 System.Threading.Thread.Sleep(250);
 
                 // Stop trying if the timeout was reached
                 if (DateTime.UtcNow > waitLimit) {
-                    Debug.Trace("CodeDirectoryCompiler", "Timeout waiting for old assembly to unload: " + results.PathToAssembly);
-                    throw new HttpException(SR.GetString(SR.Assembly_already_loaded, results.PathToAssembly));
+                    System.Web.Util.Debug.Trace("CodeDirectoryCompiler", "Timeout waiting for old assembly to unload: " + results.PathToAssembly);
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Assembly_already_loaded, results.PathToAssembly));
                 }
             }
 

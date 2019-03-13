@@ -6,7 +6,7 @@ using System.Web.DynamicData;
 
 namespace MonoTests.Common
 {
-	class FieldFormattingOptions : IFieldFormattingOptions
+	public class FieldFormattingOptions : IFieldFormattingOptions
 	{
 		Dictionary<string, object> propertyValues = new Dictionary<string, object> ();
 

@@ -34,7 +34,7 @@ namespace System.Web.Configuration {
 
         public void ReleaseHandler(IHttpHandler handler) {
             if (_handler != null) {
-                Debug.Assert(handler == _handler);
+                System.Web.Util.Debug.Assert(handler == _handler);
 
                 if (!_handler.IsReusable) {
                     _handler = null;

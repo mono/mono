@@ -434,10 +434,10 @@ namespace System.Web.UI {
             char[] quotes = new char[] { '\'', '"'};
             char? surroundingQuote = null;
 
-            if (StringUtil.StringStartsWith(url, "url(")) {
+            if (System.Web.Util.StringUtil.StringStartsWith(url, "url(")) {
                 int urlIndex = 4;
                 int urlLength = url.Length - 4;
-                if (StringUtil.StringEndsWith(url, ')')) {
+                if (System.Web.Util.StringUtil.StringEndsWith(url, ')')) {
                     urlLength--;
                 }
 
@@ -449,7 +449,7 @@ namespace System.Web.UI {
             // optional for specifying the url values. 
             // And we do not want to pass them to UrlPathEncode if they are present.
             foreach (char quote in quotes) {
-                if (StringUtil.StringStartsWith(urlValue, quote) && StringUtil.StringEndsWith(urlValue, quote)) {
+                if (System.Web.Util.StringUtil.StringStartsWith(urlValue, quote) && System.Web.Util.StringUtil.StringEndsWith(urlValue, quote)) {
                     urlValue = urlValue.Trim(quote);
                     surroundingQuote = quote;
                     break;

@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls {
         Browsable(true),
         DefaultValue(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.FileUpload_AllowMultiple)
+        WebSysDescription(System.Web.SR.FileUpload_AllowMultiple)
         ]
         public virtual bool AllowMultiple {
             get {
@@ -69,11 +69,11 @@ namespace System.Web.UI.WebControls {
                     Byte[] completeImage = null;
                     
                     if (fileStreamLength > Int32.MaxValue) {
-                        throw new HttpException(SR.GetString(SR.FileUpload_StreamTooLong));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.FileUpload_StreamTooLong));
                     }
 
                     if (!fileStream.CanSeek) {
-                        throw new HttpException(SR.GetString(SR.FileUpload_StreamNotSeekable));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.FileUpload_StreamNotSeekable));
                     }
 
                     int currentStreamPosition = (int)fileStream.Position;
@@ -89,7 +89,7 @@ namespace System.Web.UI.WebControls {
                         fileStream.Seek(currentStreamPosition, SeekOrigin.Begin);
                     }
                     if (completeImage.Length != fileStreamIntLength) {
-                        throw new HttpException(SR.GetString(SR.FileUpload_StreamLengthNotReached));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.FileUpload_StreamLengthNotReached));
                     }
                     return completeImage;
                 }
@@ -209,7 +209,7 @@ namespace System.Web.UI.WebControls {
                     IList<HttpPostedFile> result = _emptyFileCollection;
                     if (Page != null && Page.IsPostBack) {
                         result = Context.Request.Files.GetMultiple(UniqueID);
-                        Debug.Assert(result != null);
+                        System.Web.Util.Debug.Assert(result != null);
                     }
                     _postedFiles = result;
                 }

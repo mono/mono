@@ -12,6 +12,8 @@ using System.IO;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Threading;
+using System.Net.Configuration;
+using System.Configuration;
 
 using MonoTests.Helpers;
 
@@ -45,7 +47,20 @@ namespace MonoTests.System.Net.Mail
 #endif
 		public void Credentials_Default ()
 		{
+#if CONFIGURATION_DEP
+			// With corefx system.configuration, default values will be respected, so 
+			// Credentials will not be null
+			SmtpSection cfg = (SmtpSection) ConfigurationManager.GetSection ("system.net/mailSettings/smtp");
+			Assert.IsNotNull(cfg, "#1");
+
+			Assert.IsNotNull(smtp.Credentials, "#2");
+			Assert.AreEqual(smtp.Host, cfg.Network.Host, "#3");
+			Assert.IsTrue(smtp.Port == 25 || smtp.Port == cfg.Network.Port, "#4");
+			Assert.AreEqual(smtp.Port, cfg.Network.Port, "#5");
+			Assert.AreEqual(smtp.EnableSsl, cfg.Network.EnableSsl, "#6");	
+#else
 			Assert.IsNull (smtp.Credentials);
+#endif
 		}
 
 		[Test]

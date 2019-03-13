@@ -21,6 +21,7 @@ namespace System.Web.Security {
     using  System.Web.Hosting;
     using  System.Threading;
     using  System.Web.Util;
+    
 
     public class WindowsTokenRoleProvider : RoleProvider {
 
@@ -35,7 +36,7 @@ namespace System.Web.Security {
 
                 if ( _AppName.Length > 256 )
                 {
-                    throw new ProviderException( SR.GetString(SR.Provider_application_name_too_long)  );
+                    throw new ProviderException( System.Web.SR.GetString(System.Web.SR.Provider_application_name_too_long)  );
                 }
             }
         }
@@ -45,7 +46,7 @@ namespace System.Web.Security {
                 name = "WindowsTokenProvider";
             if (string.IsNullOrEmpty(config["description"])) {
                 config.Remove("description");
-                config.Add("description", SR.GetString(SR.RoleWindowsTokenProvider_description));
+                config.Add("description", System.Web.SR.GetString(System.Web.SR.RoleWindowsTokenProvider_description));
             }
             base.Initialize(name, config);
 
@@ -57,7 +58,7 @@ namespace System.Web.Security {
 
             if( _AppName.Length > 256 )
             {
-                throw new ProviderException(SR.GetString(SR.Provider_application_name_too_long));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_application_name_too_long));
             }
 
             config.Remove("applicationName");
@@ -65,7 +66,7 @@ namespace System.Web.Security {
             {
                 string attribUnrecognized = config.GetKey(0);
                 if (!String.IsNullOrEmpty(attribUnrecognized))
-                    throw new ProviderException(SR.GetString(SR.Provider_unrecognized_attribute, attribUnrecognized));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unrecognized_attribute, attribUnrecognized));
             }
         }
 
@@ -98,11 +99,10 @@ namespace System.Web.Security {
                 case 0:
                     return false;
             }
-            throw new ProviderException(SR.GetString(SR.API_failed_due_to_error, error.ToString()));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.API_failed_due_to_error, error.ToString()));
         }
 
-        public override string [] GetRolesForUser(string username){
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.API_not_supported_at_this_level);
+        public override string [] GetRolesForUser(string username){            
             if (username == null)
                 throw new ArgumentNullException("username");
             username = username.Trim();
@@ -119,7 +119,7 @@ namespace System.Web.Security {
                 status = UnsafeNativeMethods.GetGroupsForUser(token, allRoles, -status, error, 1024);
             }
             if (status <= 0)
-                throw new ProviderException(SR.GetString(SR.API_failed_due_to_error, error.ToString()));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.API_failed_due_to_error, error.ToString()));
             string [] roles = allRoles.ToString().Split('\t');
             return AddLocalGroupsWithoutDomainNames(roles);
         }
@@ -139,32 +139,32 @@ namespace System.Web.Security {
 
         public override void CreateRole(string roleName)
         {
-            throw new ProviderException(SR.GetString(SR.Windows_Token_API_not_supported));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Windows_Token_API_not_supported));
         }
 
         public override bool DeleteRole(string roleName, bool throwOnPopulatedRole){
-            throw new ProviderException(SR.GetString(SR.Windows_Token_API_not_supported));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Windows_Token_API_not_supported));
         }
 
 
         public override bool RoleExists(string roleName){
-            throw new ProviderException(SR.GetString(SR.Windows_Token_API_not_supported));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Windows_Token_API_not_supported));
         }
 
         public override void  AddUsersToRoles(string [] usernames, string [] roleNames) {
-            throw new ProviderException(SR.GetString(SR.Windows_Token_API_not_supported));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Windows_Token_API_not_supported));
         }
 
         public override void RemoveUsersFromRoles(string [] usernames, string [] roleNames) {
-            throw new ProviderException(SR.GetString(SR.Windows_Token_API_not_supported));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Windows_Token_API_not_supported));
         }
 
         public override string [] GetUsersInRole(string roleName){
-            throw new ProviderException(SR.GetString(SR.Windows_Token_API_not_supported));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Windows_Token_API_not_supported));
         }
 
         public override string [] GetAllRoles(){
-            throw new ProviderException(SR.GetString(SR.Windows_Token_API_not_supported));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Windows_Token_API_not_supported));
         }
 
         //////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ namespace System.Web.Security {
         //////////////////////////////////////////////////////////////////////
         public override string[] FindUsersInRole(string roleName, string usernameToMatch)
         {
-            throw new ProviderException(SR.GetString(SR.Windows_Token_API_not_supported));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Windows_Token_API_not_supported));
         }
 
         [PermissionSet(SecurityAction.Assert, Unrestricted=true)]
@@ -192,18 +192,18 @@ namespace System.Web.Security {
             if (HostingEnvironment.IsHosted) {
                 HttpContext context = HttpContext.Current;
                 if (context == null || context.User == null)
-                    throw new ProviderException(SR.GetString(SR.API_supported_for_current_user_only));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.API_supported_for_current_user_only));
                 if (!(context.User.Identity is WindowsIdentity))
-                    throw new ProviderException(SR.GetString(SR.API_supported_for_current_user_only));
-                if (!StringUtil.EqualsIgnoreCase(userName, context.User.Identity.Name))
-                    throw new ProviderException(SR.GetString(SR.API_supported_for_current_user_only));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.API_supported_for_current_user_only));
+                if (!System.Web.Util.StringUtil.EqualsIgnoreCase(userName, context.User.Identity.Name))
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.API_supported_for_current_user_only));
                 return (WindowsIdentity)context.User.Identity;
             } else {
                 IPrincipal user = Thread.CurrentPrincipal;
                 if (user == null || user.Identity == null || !(user.Identity is WindowsIdentity))
-                    throw new ProviderException(SR.GetString(SR.API_supported_for_current_user_only));
-                if (!StringUtil.EqualsIgnoreCase(userName, user.Identity.Name))
-                    throw new ProviderException(SR.GetString(SR.API_supported_for_current_user_only));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.API_supported_for_current_user_only));
+                if (!System.Web.Util.StringUtil.EqualsIgnoreCase(userName, user.Identity.Name))
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.API_supported_for_current_user_only));
                 return (WindowsIdentity)user.Identity;
             }
         }

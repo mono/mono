@@ -280,10 +280,10 @@ namespace System.Web.UI.WebControls {
             bool canDoPaging = isReturningQueryable || pagingParamsFound;
             if (!canDoPaging) {
                 if (isAsyncSelect) {
-                    throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidAsyncPagingParameters));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_InvalidAsyncPagingParameters));
                 }
                 else {
-                    throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidPagingParameters));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_InvalidPagingParameters));
                 }
             }
 
@@ -304,7 +304,7 @@ namespace System.Web.UI.WebControls {
             }
 
             if (!isReturningQueryable && !sortExpressionFound) {
-                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidSortingParameters));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_InvalidSortingParameters));
             }
 
             return !sortExpressionFound;
@@ -318,7 +318,7 @@ namespace System.Web.UI.WebControls {
 
         private void ValidateAsyncModelBindingRequirements() {
             if (!(_owner.DataControl.Page.IsAsync && SynchronizationContextUtil.CurrentMode != SynchronizationContextMode.Legacy)) {
-                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage));
             }
         }
 
@@ -349,7 +349,7 @@ namespace System.Web.UI.WebControls {
         protected virtual object GetSelectMethodResult(DataSourceSelectArguments arguments) {
             
             if (SelectMethod.Length == 0) {
-                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_SelectNotSupported));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_SelectNotSupported));
             }
 
             DataSourceSelectResultProcessingOptions options = null;
@@ -399,7 +399,7 @@ namespace System.Web.UI.WebControls {
 
             if (isAsyncSelect && isReturningQueryable) {
                 // async select method does not support returning IQueryable<>.
-                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidAsyncSelectReturnType, modelType));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_InvalidAsyncSelectReturnType, modelType));
             }
 
             bool autoPage = false;
@@ -409,11 +409,11 @@ namespace System.Web.UI.WebControls {
                 autoPage = IsAutoPagingRequired(method.MethodInfo, isReturningQueryable, isAsyncSelect);
 
                 if (isAsyncSelect) {
-                    Debug.Assert(!autoPage, "auto-paging should not be true when using async select method");
+                    System.Web.Util.Debug.Assert(!autoPage, "auto-paging should not be true when using async select method");
 
                     // custom paging is not supported if the return type is not SelectResult
                     if (typeof(SelectResult) != selectMethodReturnType) {
-                        throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_MustUseSelectResultAsReturnType));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_MustUseSelectResultAsReturnType));
                     }
                 }
             }
@@ -437,7 +437,7 @@ namespace System.Web.UI.WebControls {
                 }
             }
 
-            throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidAsyncSelectReturnType, ModelType));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_InvalidAsyncSelectReturnType, ModelType));
         }
 
         /// <summary>
@@ -548,10 +548,10 @@ namespace System.Web.UI.WebControls {
                 else {
                     //Sorry only the above return types are allowed!!!
                     if (isAsyncSelect) {
-                        throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidAsyncSelectReturnType, modelType));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_InvalidAsyncSelectReturnType, modelType));
                     }
                     else {
-                        throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_InvalidSelectReturnType, modelType));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_InvalidSelectReturnType, modelType));
                     }
                 }
             }
@@ -573,7 +573,7 @@ namespace System.Web.UI.WebControls {
             string cancellationTokenParameterName;
             if (isAsyncMethod && IsCancellationRequired(method.MethodInfo, out cancellationTokenParameterName)) {
                 if (null == cancellationToken) {
-                    throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_CancellationTokenIsNotSupported));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_CancellationTokenIsNotSupported));
                 }
 
                 method.Parameters[cancellationTokenParameterName] = cancellationToken;
@@ -601,7 +601,7 @@ namespace System.Web.UI.WebControls {
 
         private ModelDataSourceMethod EvaluateDeleteMethodParameters(IDictionary keys, IDictionary oldValues, ModelDataSourceMethod method) {
             if (!CanDelete) {
-                throw new NotSupportedException(SR.GetString(SR.ModelDataSourceView_DeleteNotSupported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_DeleteNotSupported));
             }
 
             IDictionary caseInsensitiveOldValues = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
@@ -635,7 +635,7 @@ namespace System.Web.UI.WebControls {
 
         private ModelDataSourceMethod EvaluateInsertMethodParameters(IDictionary values, ModelDataSourceMethod method) {
             if (!CanInsert) {
-                throw new NotSupportedException(SR.GetString(SR.ModelDataSourceView_InsertNotSupported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_InsertNotSupported));
             }
 
             IDictionary caseInsensitiveNewValues = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
@@ -668,7 +668,7 @@ namespace System.Web.UI.WebControls {
 
         private ModelDataSourceMethod EvaluateUpdateMethodParameters(IDictionary keys, IDictionary values, IDictionary oldValues, ModelDataSourceMethod method) {
             if (!CanUpdate) {
-                throw new NotSupportedException(SR.GetString(SR.ModelDataSourceView_UpdateNotSupported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_UpdateNotSupported));
             }
 
             IDictionary caseInsensitiveNewValues = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
@@ -721,7 +721,7 @@ namespace System.Web.UI.WebControls {
 
             var syncContext = _owner.DataControl.Page.Context.SyncContext as AspNetSynchronizationContext;
             if (null == syncContext) {
-                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage));
             }
 
             // The first edition of the async model binding feature was implemented by registering async binding 
@@ -770,7 +770,7 @@ namespace System.Web.UI.WebControls {
 
                 callback(finalResult);
                 if (cancellationToken.IsCancellationRequested) {
-                    throw new TimeoutException(SR.GetString(SR.Async_task_timed_out));
+                    throw new TimeoutException(System.Web.SR.GetString(System.Web.SR.Async_task_timed_out));
                 }
             };
 
@@ -867,13 +867,13 @@ namespace System.Web.UI.WebControls {
                 }
 
                 if (cancellationToken.IsCancellationRequested) {
-                    throw new TimeoutException(SR.GetString(SR.Async_task_timed_out));
+                    throw new TimeoutException(System.Web.SR.GetString(System.Web.SR.Async_task_timed_out));
                 }
             };
 
             var syncContext = _owner.DataControl.Page.Context.SyncContext as AspNetSynchronizationContext;
             if (null == syncContext) {
-                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage));
             }
 
             syncContext.PostAsync(func, null);
@@ -888,7 +888,7 @@ namespace System.Web.UI.WebControls {
         protected override int ExecuteInsert(IDictionary values) {
             object result = GetInsertMethodResult(values);
 
-            Debug.Assert(_owner.DataControl.Page != null);
+            System.Web.Util.Debug.Assert(_owner.DataControl.Page != null);
             //We do not want to databind when ModelState is invaild so that user entered values are not cleared.
             if (_owner.DataControl.Page.ModelState.IsValid) {
                 OnDataSourceViewChanged(EventArgs.Empty);
@@ -905,7 +905,7 @@ namespace System.Web.UI.WebControls {
         protected override int ExecuteUpdate(IDictionary keys, IDictionary values, IDictionary oldValues) {
             object result = GetUpdateMethodResult(keys, values, oldValues);
 
-            Debug.Assert(_owner.DataControl.Page != null);
+            System.Web.Util.Debug.Assert(_owner.DataControl.Page != null);
             //We do not want to databind when ModelState is invaild so that user entered values are not cleared.
             if (_owner.DataControl.Page.ModelState.IsValid) {
                 OnDataSourceViewChanged(EventArgs.Empty);
@@ -960,8 +960,8 @@ namespace System.Web.UI.WebControls {
         /// to those and mark the data-bound control for data binding if necessary.</param>
         protected virtual void EvaluateMethodParameters(DataSourceOperation dataSourceOperation, ModelDataSourceMethod modelDataSourceMethod, IDictionary controlValues, bool isPageLoadComplete) {
 
-            Debug.Assert(_owner.DataControl.Page != null);
-            Debug.Assert(_owner.DataControl.TemplateControl != null);
+            System.Web.Util.Debug.Assert(_owner.DataControl.Page != null);
+            System.Web.Util.Debug.Assert(_owner.DataControl.TemplateControl != null);
 
             MethodInfo actionMethod = modelDataSourceMethod.MethodInfo;
             
@@ -1036,7 +1036,7 @@ namespace System.Web.UI.WebControls {
                     }
                     else {
                         if (isPageLoadComplete) {
-                            Debug.Assert(dataSourceOperation == DataSourceOperation.Select, "Only Select Operation should have been done immediately after page load");
+                            System.Web.Util.Debug.Assert(dataSourceOperation == DataSourceOperation.Select, "Only Select Operation should have been done immediately after page load");
                             //When this method is called as part of Page's LoadComplete event handler we do not have values in defaultValueProvider 
                             //(i.e., values from DataBoundControl), so we need not evaluate the parameters values.
                             continue;
@@ -1074,7 +1074,7 @@ namespace System.Web.UI.WebControls {
 
             if (controlValues != null) {
                 foreach (DictionaryEntry entry in controlValues) {
-                    Debug.Assert(entry.Key is string, "Some key value is not string");
+                    System.Web.Util.Debug.Assert(entry.Key is string, "Some key value is not string");
                     genericDictionary.Add((string)entry.Key, entry.Value);
                 }
             }
@@ -1087,7 +1087,7 @@ namespace System.Web.UI.WebControls {
             object[] valueProviderAttributes = parameterInfo.GetCustomAttributes(typeof(IValueProviderSource), false);
 
             if (valueProviderAttributes.Count() > 1) {
-                throw new NotSupportedException(SR.GetString(SR.ModelDataSourceView_MultipleValueProvidersNotSupported, parameterInfo.Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_MultipleValueProvidersNotSupported, parameterInfo.Name));
             }
             
             if (valueProviderAttributes.Count() > 0) {
@@ -1124,7 +1124,7 @@ namespace System.Web.UI.WebControls {
 
             if (e.DataMethodsType != null) {
                 if (e.DataMethodsObject != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_MultipleModelMethodSources, methodName));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_MultipleModelMethodSources, methodName));
                 }
                 flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy;
                 instance = null;
@@ -1147,7 +1147,7 @@ namespace System.Web.UI.WebControls {
             MethodInfo[] actionMethods = Array.FindAll(allMethods, methodInfo => methodInfo.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase));
 
             if (actionMethods.Length != 1) {
-                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_DataMethodNotFound, methodName, type));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_DataMethodNotFound, methodName, type));
             }
 
             ValidateMethodIsCallable(actionMethods[0]);
@@ -1158,14 +1158,14 @@ namespace System.Web.UI.WebControls {
         private void ValidateMethodIsCallable(MethodInfo methodInfo) {
             // we can't call methods with open generic type parameters
             if (methodInfo.ContainsGenericParameters) {
-                throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_CannotCallOpenGenericMethods, methodInfo, methodInfo.ReflectedType.FullName));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_CannotCallOpenGenericMethods, methodInfo, methodInfo.ReflectedType.FullName));
             }
 
             // we can't call methods with ref parameters
             ParameterInfo[] parameterInfos = methodInfo.GetParameters();
             foreach (ParameterInfo parameterInfo in parameterInfos) {
                 if (parameterInfo.ParameterType.IsByRef && !parameterInfo.Name.Equals(TotalRowCountParameterName, StringComparison.OrdinalIgnoreCase)) {
-                    throw new InvalidOperationException(SR.GetString(SR.ModelDataSourceView_CannotCallMethodsWithOutOrRefParameters,
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_CannotCallMethodsWithOutOrRefParameters,
                         methodInfo, methodInfo.ReflectedType.FullName, parameterInfo));
                 }
             }
@@ -1248,14 +1248,14 @@ namespace System.Web.UI.WebControls {
         private void ValidateParameterValue(ParameterInfo parameterInfo, object value, MethodInfo methodInfo) {
             if (value == null && !TypeHelpers.TypeAllowsNullValue(parameterInfo.ParameterType)) {
                 // tried to pass a null value for a non-nullable parameter type
-                string message = String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.ModelDataSourceView_ParameterCannotBeNull),
+                string message = String.Format(CultureInfo.CurrentCulture, System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_ParameterCannotBeNull),
                     parameterInfo.Name, parameterInfo.ParameterType, methodInfo, methodInfo.DeclaringType);
                 throw new InvalidOperationException(message);
             }
 
             if (value != null && !parameterInfo.ParameterType.IsInstanceOfType(value)) {
                 // value was supplied but is not of the proper type
-                string message = String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.ModelDataSourceView_ParameterValueHasWrongType),
+                string message = String.Format(CultureInfo.CurrentCulture, System.Web.SR.GetString(System.Web.SR.ModelDataSourceView_ParameterValueHasWrongType),
                     parameterInfo.Name, methodInfo, methodInfo.DeclaringType, value.GetType(), parameterInfo.ParameterType);
                 throw new InvalidOperationException(message);
             }
@@ -1265,7 +1265,7 @@ namespace System.Web.UI.WebControls {
         /// Merges new values in the source dictionary with old values in the destination dictionary.
         /// </summary>
         private static void MergeDictionaries(IDictionary source, IDictionary destination) {
-            Debug.Assert(destination != null);
+            System.Web.Util.Debug.Assert(destination != null);
 
             if (source != null) {
                 foreach (DictionaryEntry de in source) {

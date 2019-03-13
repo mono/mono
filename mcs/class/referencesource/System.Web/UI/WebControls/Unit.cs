@@ -119,7 +119,7 @@ namespace System.Web.UI.WebControls {
                     lastDigit = i;
                 }
                 if (lastDigit == -1) {
-                    throw new FormatException(SR.GetString(SR.UnitParseNoDigits, value));
+                    throw new FormatException(System.Web.SR.GetString(System.Web.SR.UnitParseNoDigits, value));
                 }
                 if (lastDigit < len - 1) {
                     type = (UnitType)GetTypeFromString(trimLcase.Substring(lastDigit+1).Trim());
@@ -139,7 +139,7 @@ namespace System.Web.UI.WebControls {
                     }
                 }
                 catch {
-                    throw new FormatException(SR.GetString(SR.UnitParseNumericPart, value, numericPart, type.ToString("G")));
+                    throw new FormatException(System.Web.SR.GetString(System.Web.SR.UnitParseNumericPart, value, numericPart, type.ToString("G")));
                 }
                 if ((this.value < MinValue) || (this.value > MaxValue)) {
                     throw new ArgumentOutOfRangeException("value");

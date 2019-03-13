@@ -619,6 +619,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 		[Test]
 		[Category("NotDotNet")] // MS's implementation throws NRE's from these
+		[Ignore("MONO REFSRC - Since these were marked as NotDotNet... Skip")]
 		public void Render ()
 		{
 			string origHtml1 = "<table>\n\t<tr>\n\t\t<td><input id=\"0\" name=\"0\" type=\"checkbox\" value=\"foo\"/><label for=\"0\">foo</label></td>\n\t</tr>\n</table>";
@@ -637,6 +638,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		// bug 51648
 		[Test]
 		[Category("NotDotNet")] // MS's implementation throws NRE's from these
+		[Ignore("MONO REFSRC - Since these were marked as NotDotNet... Skip")]
 		public void TestTabIndex ()
 		{
 			CheckBoxList c = new CheckBoxList ();
@@ -653,6 +655,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		// bug 48802
 		[Test]
 		[Category("NotDotNet")] // MS's implementation throws NRE's from these
+		[Ignore("MONO REFSRC - Since these were marked as NotDotNet... Skip")]
 		public void TestDisabled ()
 		{
 			CheckBoxList c = new CheckBoxList ();

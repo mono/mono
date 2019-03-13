@@ -33,6 +33,7 @@ namespace System.Web.SessionState {
     using System.Web.Management;
     using System.Web.Hosting;
     using System.Web.Configuration;
+    
 
     /*
      * Provides session state via SQL Server
@@ -122,7 +123,7 @@ namespace System.Web.SessionState {
 
             if (!s_usePartition) {
                 // For single partition, the connection info won't change from request to request
-                Debug.Assert(_partitionResolver == null);
+                System.Web.Util.Debug.Assert(_partitionResolver == null);
                 _partitionInfo = s_singlePartitionInfo;
             }
         }
@@ -161,7 +162,7 @@ namespace System.Web.SessionState {
         }
 
         void OnAppDomainUnload(Object unusedObject, EventArgs unusedEventArgs) {
-            Debug.Trace("SqlSessionStateStore", "OnAppDomainUnload called");
+            System.Web.Util.Debug.Trace("SqlSessionStateStore", "OnAppDomainUnload called");
 
             Thread.GetDomain().DomainUnload -= s_onAppDomainUnload;
 
@@ -192,7 +193,7 @@ namespace System.Web.SessionState {
             catch (Exception e) {
                 if (s_usePartition) {
                     HttpException outerException = new HttpException(
-                           SR.GetString(SR.Error_parsing_sql_partition_resolver_string, s_configPartitionResolverType, e.Message), e);
+                           System.Web.SR.GetString(System.Web.SR.Error_parsing_sql_partition_resolver_string, s_configPartitionResolverType, e.Message), e);
 
                     outerException.SetFormatter(new UseLastUnhandledErrorFormatter(outerException));
 
@@ -200,7 +201,7 @@ namespace System.Web.SessionState {
                 }
                 else {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Error_parsing_session_sqlConnectionString, e.Message), e,
+                        System.Web.SR.GetString(System.Web.SR.Error_parsing_session_sqlConnectionString, e.Message), e,
                         s_configSqlConnectionFileName, s_configSqlConnectionLineNumber);
                 }
             }
@@ -219,12 +220,12 @@ namespace System.Web.SessionState {
                 if (!s_configAllowCustomSqlDatabase) {
                     if (s_usePartition) {
                         throw new HttpException(
-                                SR.GetString(SR.No_database_allowed_in_sql_partition_resolver_string,
+                                System.Web.SR.GetString(System.Web.SR.No_database_allowed_in_sql_partition_resolver_string,
                                             s_configPartitionResolverType, dummyConnection.DataSource, database));
                     }
                     else {
                         throw new ConfigurationErrorsException(
-                                SR.GetString(SR.No_database_allowed_in_sqlConnectionString),
+                                System.Web.SR.GetString(System.Web.SR.No_database_allowed_in_sqlConnectionString),
                                 s_configSqlConnectionFileName, s_configSqlConnectionLineNumber);
                     }
                 }
@@ -251,7 +252,7 @@ namespace System.Web.SessionState {
         }
 
         public override void InitializeRequest(HttpContext context) {
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Assert(context != null, "context != null");
 
             _rqContext = context;
             _rqOrigStreamLen = 0;
@@ -263,20 +264,20 @@ namespace System.Web.SessionState {
         }
 
         public override void EndRequest(HttpContext context) {
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Assert(context != null, "context != null");
             _rqContext = null;
         }
 
         public bool KnowForSureNotUsingIntegratedSecurity {
             get {
                 if (_partitionInfo == null) {
-                    Debug.Assert(s_usePartition, "_partitionInfo can be null only if we're using paritioning and we haven't called GetConnection yet.");
+                    System.Web.Util.Debug.Assert(s_usePartition, "_partitionInfo can be null only if we're using paritioning and we haven't called GetConnection yet.");
                     // If we're using partitioning, we need the session id to figure out the connection
                     // string.  Without it, we can't know for sure.
                     return false;
                 }
                 else {
-                    Debug.Assert(_partitionInfo != null);
+                    System.Web.Util.Debug.Assert(_partitionInfo != null);
                     return !_partitionInfo.UseIntegratedSecurity;
                 }
             }
@@ -303,27 +304,27 @@ namespace System.Web.SessionState {
             bool    ret;
 
             if (KnowForSureNotUsingIntegratedSecurity) {
-                Debug.Trace("SessionStatePooling", "CanUsePooling: not using integrated security");
+                System.Web.Util.Debug.Trace("SessionStatePooling", "CanUsePooling: not using integrated security");
                 ret = true;
             }
             else if (_rqContext == null) {
                 // One way this can happen is we hit an error on page compilation,
                 // and SessionStateModule.OnEndRequest is called
-                Debug.Trace("SessionStatePooling", "CanUsePooling: no context");
+                System.Web.Util.Debug.Trace("SessionStatePooling", "CanUsePooling: no context");
                 ret = false;
             }
             else if (!_rqContext.IsClientImpersonationConfigured) {
-                Debug.Trace("SessionStatePooling", "CanUsePooling: mode is None or Application");
+                System.Web.Util.Debug.Trace("SessionStatePooling", "CanUsePooling: mode is None or Application");
                 ret = true;
             }
             else if (HttpRuntime.IsOnUNCShareInternal) {
-                Debug.Trace("SessionStatePooling", "CanUsePooling: mode is UNC");
+                System.Web.Util.Debug.Trace("SessionStatePooling", "CanUsePooling: mode is UNC");
                 ret = false;
             }
             else {
                 string logon = _rqContext.WorkerRequest.GetServerVariable("LOGON_USER");
 
-                Debug.Trace("SessionStatePooling", "LOGON_USER = '" + logon + "'; identity = '" + _rqContext.User.Identity.Name + "'; IsUNC = " + HttpRuntime.IsOnUNCShareInternal);
+                System.Web.Util.Debug.Trace("SessionStatePooling", "LOGON_USER = '" + logon + "'; identity = '" + _rqContext.User.Identity.Name + "'; IsUNC = " + HttpRuntime.IsOnUNCShareInternal);
 
                 if (String.IsNullOrEmpty(logon)) {
                     ret = true;
@@ -333,7 +334,7 @@ namespace System.Web.SessionState {
                 }
             }
 
-            Debug.Trace("SessionStatePooling", "CanUsePooling returns " + ret);
+            System.Web.Util.Debug.Trace("SessionStatePooling", "CanUsePooling returns " + ret);
             return ret;
         }
 
@@ -341,15 +342,15 @@ namespace System.Web.SessionState {
             SqlStateConnection conn = null;
 
             if (_partitionInfo == null) {
-                Debug.Assert(s_partitionManager != null);
-                Debug.Assert(_partitionResolver != null);
+                System.Web.Util.Debug.Assert(s_partitionManager != null);
+                System.Web.Util.Debug.Assert(_partitionResolver != null);
 
                 _partitionInfo = (SqlPartitionInfo)s_partitionManager.GetPartition(_partitionResolver, id);
             }
 
-            Debug.Trace("SessionStatePooling", "Calling GetConnection under " + WindowsIdentity.GetCurrent().Name);
+            System.Web.Util.Debug.Trace("SessionStatePooling", "Calling GetConnection under " + WindowsIdentity.GetCurrent().Name);
 #if DBG
-            Debug.Assert(_module._rqChangeImpersonationRefCount != 0,
+            System.Web.Util.Debug.Assert(_module._rqChangeImpersonationRefCount != 0,
                 "SessionStateModule.ChangeImpersonation should have been called before making any call to SQL");
 #endif
 
@@ -391,13 +392,13 @@ namespace System.Web.SessionState {
         internal static void ThrowSqlConnectionException(SqlConnection conn, Exception e) {
             if (s_usePartition) {
                 throw new HttpException(
-                    SR.GetString(SR.Cant_connect_sql_session_database_partition_resolver,
+                    System.Web.SR.GetString(System.Web.SR.Cant_connect_sql_session_database_partition_resolver,
                                 s_configPartitionResolverType, conn.DataSource, conn.Database),
                                 e);
             }
             else {
                 throw new HttpException(
-                    SR.GetString(SR.Cant_connect_sql_session_database),
+                    System.Web.SR.GetString(System.Web.SR.Cant_connect_sql_session_database),
                     e);
             }
         }
@@ -416,8 +417,8 @@ namespace System.Web.SessionState {
             SqlCommand          cmd = null;
             bool                usePooling = true;
 
-            Debug.Assert(id.Length <= SessionIDManager.SESSION_ID_LENGTH_LIMIT, "id.Length <= SessionIDManager.SESSION_ID_LENGTH_LIMIT");
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Assert(id.Length <= SessionIDManager.SESSION_ID_LENGTH_LIMIT, "id.Length <= SessionIDManager.SESSION_ID_LENGTH_LIMIT");
+            System.Web.Util.Debug.Assert(context != null, "context != null");
 
             // Set default return values
             locked = false;
@@ -430,8 +431,8 @@ namespace System.Web.SessionState {
 
             conn = GetConnection(id, ref usePooling);
 
-            Debug.Assert(_partitionInfo != null, "_partitionInfo != null");
-            Debug.Assert(_partitionInfo.SupportFlags != SupportFlags.Uninitialized, "_partitionInfo.SupportFlags != SupportFlags.Uninitialized");
+            System.Web.Util.Debug.Assert(_partitionInfo != null, "_partitionInfo != null");
+            System.Web.Util.Debug.Assert(_partitionInfo.SupportFlags != SupportFlags.Uninitialized, "_partitionInfo.SupportFlags != SupportFlags.Uninitialized");
 
             //
             // In general, if we're talking to a SQL 2000 or above, we use LockAge; otherwise we use LockDate.
@@ -497,7 +498,7 @@ namespace System.Web.SessionState {
                     if (reader != null) {
                         try {
                             if (reader.Read()) {
-                                Debug.Trace("SqlSessionStateStore", "Sql Get returned long item");
+                                System.Web.Util.Debug.Trace("SqlSessionStateStore", "Sql Get returned long item");
                                 buf = (byte[]) reader[0];
                             }
                         } catch(Exception e) {
@@ -508,20 +509,20 @@ namespace System.Web.SessionState {
 
                 /* Check if value was returned */
                 if (Convert.IsDBNull(cmd.Parameters[2].Value)) {
-                    Debug.Trace("SqlSessionStateStore", "Sql Get returned null");
+                    System.Web.Util.Debug.Trace("SqlSessionStateStore", "Sql Get returned null");
                     return null;
                 }
 
                 /* Check if item is locked */
-                Debug.Assert(!Convert.IsDBNull(cmd.Parameters[3].Value), "!Convert.IsDBNull(cmd.Parameters[3].Value)");
-                Debug.Assert(!Convert.IsDBNull(cmd.Parameters[4].Value), "!Convert.IsDBNull(cmd.Parameters[4].Value)");
+                System.Web.Util.Debug.Assert(!Convert.IsDBNull(cmd.Parameters[3].Value), "!Convert.IsDBNull(cmd.Parameters[3].Value)");
+                System.Web.Util.Debug.Assert(!Convert.IsDBNull(cmd.Parameters[4].Value), "!Convert.IsDBNull(cmd.Parameters[4].Value)");
 
                 locked = (bool) cmd.Parameters[2].Value;
                 lockId = (int) cmd.Parameters[4].Value;
 
                 if (locked) {
-                    Debug.Trace("SqlSessionStateStore", "Sql Get returned item that was locked");
-                    Debug.Assert(((int)cmd.Parameters[5].Value & (int)SessionStateActions.InitializeItem) == 0,
+                    System.Web.Util.Debug.Trace("SqlSessionStateStore", "Sql Get returned item that was locked");
+                    System.Web.Util.Debug.Assert(((int)cmd.Parameters[5].Value & (int)SessionStateActions.InitializeItem) == 0,
                         "(cmd.Parameters[5].Value & SessionStateActions.InitializeItem) == 0; uninit item shouldn't be locked");
 
                     if (useGetLockAge) {
@@ -533,10 +534,10 @@ namespace System.Web.SessionState {
                         lockAge = DateTime.Now - lockDate;
                     }
 
-                    Debug.Trace("SqlSessionStateStore", "LockAge = " + lockAge);
+                    System.Web.Util.Debug.Trace("SqlSessionStateStore", "LockAge = " + lockAge);
 
                     if (lockAge > new TimeSpan(0, 0, Sec.ONE_YEAR)) {
-                        Debug.Trace("SqlSessionStateStore", "Lock age is more than 1 year!!!");
+                        System.Web.Util.Debug.Trace("SqlSessionStateStore", "Lock age is more than 1 year!!!");
                         lockAge = TimeSpan.Zero;
                     }
                     return null;
@@ -546,10 +547,10 @@ namespace System.Web.SessionState {
 
                 if (buf == null) {
                     /* Get short item */
-                    Debug.Assert(!Convert.IsDBNull(cmd.Parameters[1].Value), "!Convert.IsDBNull(cmd.Parameters[1].Value)");
-                    Debug.Trace("SqlSessionStateStore", "Sql Get returned short item");
+                    System.Web.Util.Debug.Assert(!Convert.IsDBNull(cmd.Parameters[1].Value), "!Convert.IsDBNull(cmd.Parameters[1].Value)");
+                    System.Web.Util.Debug.Trace("SqlSessionStateStore", "Sql Get returned short item");
                     buf = (byte[]) cmd.Parameters[1].Value;
-                    Debug.Assert(buf != null, "buf != null");
+                    System.Web.Util.Debug.Assert(buf != null, "buf != null");
                 }
 
                 // Done with the connection.
@@ -572,7 +573,7 @@ namespace System.Web.SessionState {
                                                         out TimeSpan lockAge,
                                                         out object lockId,
                                                         out SessionStateActions actionFlags) {
-            Debug.Trace("SqlSessionStateStore", "Calling Sql Get, id=" + id);
+            System.Web.Util.Debug.Trace("SqlSessionStateStore", "Calling Sql Get, id=" + id);
 
             SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
             return DoGet(context, id, false, out locked, out lockAge, out lockId, out actionFlags);
@@ -584,7 +585,7 @@ namespace System.Web.SessionState {
                                                 out TimeSpan lockAge,
                                                 out object lockId,
                                                 out SessionStateActions actionFlags) {
-            Debug.Trace("SqlSessionStateStore", "Calling Sql GetExclusive, id=" + id);
+            System.Web.Util.Debug.Trace("SqlSessionStateStore", "Calling Sql GetExclusive, id=" + id);
 
             SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
             return DoGet(context, id, true, out locked, out lockAge, out lockId, out actionFlags);
@@ -594,9 +595,9 @@ namespace System.Web.SessionState {
         public override void ReleaseItemExclusive(HttpContext context,
                                 String id,
                                 object lockId) {
-            Debug.Trace("SqlSessionStateStore", "Calling Sql ReleaseExclusive, id=" + id);
-            Debug.Assert(lockId != null, "lockId != null");
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Trace("SqlSessionStateStore", "Calling Sql ReleaseExclusive, id=" + id);
+            System.Web.Util.Debug.Assert(lockId != null, "lockId != null");
+            System.Web.Util.Debug.Assert(context != null, "context != null");
 
             bool                usePooling = true;
             SqlStateConnection  conn = null;
@@ -629,13 +630,13 @@ namespace System.Web.SessionState {
             SqlStateConnection  conn = null;
             int                 lockCookie;
 
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Assert(context != null, "context != null");
 
             try {
-                Debug.Trace("SqlSessionStateStore", "Calling Sql Set, id=" + id);
+                System.Web.Util.Debug.Trace("SqlSessionStateStore", "Calling Sql Set, id=" + id);
 
-                Debug.Assert(item.Items != null, "item.Items != null");
-                Debug.Assert(item.StaticObjects != null, "item.StaticObjects != null");
+                System.Web.Util.Debug.Assert(item.Items != null, "item.Items != null");
+                System.Web.Util.Debug.Assert(item.StaticObjects != null, "item.StaticObjects != null");
 
                 SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
 
@@ -661,7 +662,7 @@ namespace System.Web.SessionState {
                 conn = GetConnection(id, ref usePooling);
 
                 if (!newItem) {
-                    Debug.Assert(_rqOrigStreamLen > 0, "_rqOrigStreamLen > 0");
+                    System.Web.Util.Debug.Assert(_rqOrigStreamLen > 0, "_rqOrigStreamLen > 0");
                     if (length <= ITEM_SHORT_LENGTH) {
                         if (_rqOrigStreamLen <= ITEM_SHORT_LENGTH) {
                             cmd = conn.TempUpdateShort;
@@ -707,9 +708,9 @@ namespace System.Web.SessionState {
                                         String id,
                                         object lockId,
                                         SessionStateStoreData item) {
-            Debug.Trace("SqlSessionStateStore", "Calling Sql Remove, id=" + id);
-            Debug.Assert(lockId != null, "lockId != null");
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Trace("SqlSessionStateStore", "Calling Sql Remove, id=" + id);
+            System.Web.Util.Debug.Assert(lockId != null, "lockId != null");
+            System.Web.Util.Debug.Assert(context != null, "context != null");
 
             bool                usePooling = true;
             SqlStateConnection  conn = null;
@@ -730,8 +731,8 @@ namespace System.Web.SessionState {
         }
 
         public override void ResetItemTimeout(HttpContext context, String id) {
-            Debug.Trace("SqlSessionStateStore", "Calling Sql ResetTimeout, id=" + id);
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Trace("SqlSessionStateStore", "Calling Sql ResetTimeout, id=" + id);
+            System.Web.Util.Debug.Assert(context != null, "context != null");
 
             bool                usePooling = true;
             SqlStateConnection  conn = null;
@@ -751,13 +752,13 @@ namespace System.Web.SessionState {
 
         public override SessionStateStoreData CreateNewStoreData(HttpContext context, int timeout)
         {
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Assert(context != null, "context != null");
             return SessionStateUtility.CreateLegitStoreData(context, null, null, timeout);
         }
 
         public override void CreateUninitializedItem(HttpContext context, String id, int timeout) {
-            Debug.Trace("SqlSessionStateStore", "Calling Sql InsertUninitializedItem, id=" + id);
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Trace("SqlSessionStateStore", "Calling Sql InsertUninitializedItem, id=" + id);
+            System.Web.Util.Debug.Assert(context != null, "context != null");
 
             bool                    usePooling = true;
             SqlStateConnection      conn = null;
@@ -792,7 +793,7 @@ namespace System.Web.SessionState {
                 ex.Number == SQL_ERROR_PRIMARY_KEY_VIOLATION &&
                 ignoreInsertPKException) {
 
-                Debug.Trace("SessionStateClientSet",
+                System.Web.Util.Debug.Trace("SessionStateClientSet",
                     "Insert failed because of primary key violation; just leave gracefully; id=" + id);
 
                 // It's possible that two threads (from the same session) are creating the session
@@ -847,7 +848,7 @@ namespace System.Web.SessionState {
                 // If no one called ClearPool (s_isClearPoolInProgress = 0), then
                 // make s_isClearPoolInProgress 1 and call clear pool
                 if (0 == Interlocked.CompareExchange(ref s_isClearPoolInProgress, 1, 0)) {
-                    Debug.Trace("SqlSessionStateStore", "CanRetry: Call ClearPool to destroy the corrupted connections in the pool");
+                    System.Web.Util.Debug.Trace("SqlSessionStateStore", "CanRetry: Call ClearPool to destroy the corrupted connections in the pool");
                     SqlConnection.ClearPool(conn);
                 }
 
@@ -958,7 +959,7 @@ namespace System.Web.SessionState {
                     : base(rpool) {
                 _useIntegratedSecurity = useIntegratedSecurity;
                 _sqlConnectionString = sqlConnectionString;
-                Debug.Trace("PartitionInfo", "Created a new info, sqlConnectionString=" + sqlConnectionString);
+                System.Web.Util.Debug.Trace("PartitionInfo", "Created a new info, sqlConnectionString=" + sqlConnectionString);
             }
 
             internal bool UseIntegratedSecurity {
@@ -991,7 +992,7 @@ namespace System.Web.SessionState {
             }
 
             void GetServerSupportOptions(SqlConnection sqlConnection) {
-                Debug.Assert(SupportFlags == SupportFlags.Uninitialized);
+                System.Web.Util.Debug.Assert(SupportFlags == SupportFlags.Uninitialized);
 
                 SqlCommand      cmd;
                 SqlDataReader   reader = null;
@@ -1015,12 +1016,12 @@ namespace System.Web.SessionState {
 
                     if (s_usePartition) {
                         throw new HttpException(
-                                SR.GetString(SR.Need_v2_SQL_Server_partition_resolver,
+                                System.Web.SR.GetString(System.Web.SR.Need_v2_SQL_Server_partition_resolver,
                                             s_configPartitionResolverType, sqlConnection.DataSource, sqlConnection.Database));
                     }
                     else {
                         throw new HttpException(
-                            SR.GetString(SR.Need_v2_SQL_Server));
+                            System.Web.SR.GetString(System.Web.SR.Need_v2_SQL_Server));
                     }
                 }
 
@@ -1038,7 +1039,7 @@ namespace System.Web.SessionState {
                         flags |= SupportFlags.GetLockAge;
                     }
 
-                    Debug.Trace("PartitionInfo", "SupportFlags initialized to " + flags);
+                    System.Web.Util.Debug.Trace("PartitionInfo", "SupportFlags initialized to " + flags);
 
                     SupportFlags = flags;
                 }
@@ -1079,7 +1080,7 @@ namespace System.Web.SessionState {
                     p.Value = Convert.DBNull;
 
                     cmdTempGetAppId.ExecuteNonQuery();
-                    Debug.Assert(!Convert.IsDBNull(p), "!Convert.IsDBNull(p)");
+                    System.Web.Util.Debug.Assert(!Convert.IsDBNull(p), "!Convert.IsDBNull(p)");
                     int appId = (int) p.Value;
                     _appSuffix = (appId).ToString(APP_SUFFIX_FORMAT, CultureInfo.InvariantCulture);
 
@@ -1181,7 +1182,7 @@ namespace System.Web.SessionState {
             SqlPartitionInfo    _partitionInfo;
 
             internal SqlStateConnection(SqlPartitionInfo sqlPartitionInfo, TimeSpan retryInterval) {
-                Debug.Trace("SessionStateConnectionIdentity", "Connecting under " + WindowsIdentity.GetCurrent().Name);
+                System.Web.Util.Debug.Trace("SessionStateConnectionIdentity", "Connecting under " + WindowsIdentity.GetCurrent().Name);
 
                 _partitionInfo = sqlPartitionInfo;
                 _sqlConnection = new SqlConnection(sqlPartitionInfo.SqlConnectionString);
@@ -1215,7 +1216,7 @@ namespace System.Web.SessionState {
                             }
 
                             HttpException outerException = new HttpException(
-                                    SR.GetString(SR.Login_failed_sql_session_database, user ), e);
+                                    System.Web.SR.GetString(System.Web.SR.Login_failed_sql_session_database, user ), e);
 
                             outerException.SetFormatter(new UseLastUnhandledErrorFormatter(outerException));
                             ClearConnectionAndThrow(outerException);
@@ -1234,7 +1235,7 @@ namespace System.Web.SessionState {
 
                 try {
                     _partitionInfo.InitSqlInfo(_sqlConnection);
-                    Debug.Assert(sqlPartitionInfo.SupportFlags != SupportFlags.Uninitialized);
+                    System.Web.Util.Debug.Assert(sqlPartitionInfo.SupportFlags != SupportFlags.Uninitialized);
 
                     PerfCounters.IncrementCounter(AppPerfCounter.SESSION_SQL_SERVER_CONNECTIONS);
                 }
@@ -1517,7 +1518,7 @@ namespace System.Web.SessionState {
             }
 
             public void Dispose() {
-                Debug.Trace("ResourcePool", "Disposing SqlStateConnection");
+                System.Web.Util.Debug.Trace("ResourcePool", "Disposing SqlStateConnection");
                 if (_sqlConnection != null) {
                     _sqlConnection.Close();
                     _sqlConnection = null;

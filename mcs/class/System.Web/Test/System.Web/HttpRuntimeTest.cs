@@ -27,20 +27,22 @@
 //
 using System;
 using System.Web;
+/* 
 using NUnit.Framework;
 using MonoTests.SystemWeb.Framework;
 using System.Web.UI;
 using System.Threading;
 
+
 namespace MonoTests.System.Web
 {
+
 	[TestFixture]
 	public class HttpRuntimeTest
 	{
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Ignore ("Pending fix for bug 351878")]
 		public void UnloadAppDomain () 
 		{
 				WebTest t = new WebTest (PageInvoker.CreateOnLoad (UnloadAppDomain_OnLoad));
@@ -54,7 +56,7 @@ namespace MonoTests.System.Web
 
 		[Test]
 		[Category ("NunitWeb")]
-		[Ignore ("Pending fix for bug 351878")]
+		[Explicit]
 		public void UnloadAppDomain100Times () 
 		{
 			for (int i = 0; i < 100; i++)
@@ -63,3 +65,4 @@ namespace MonoTests.System.Web
 
 	}
 }
+*/

@@ -58,7 +58,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(-1),
         WebCategory("Behavior"),
-        WebSysDescription(SR.MultiView_ActiveView)
+        WebSysDescription(System.Web.SR.MultiView_ActiveView)
         ]
         public virtual int ActiveViewIndex {
             get {
@@ -70,7 +70,7 @@ namespace System.Web.UI.WebControls {
             set {
                 if (value < -1) {
                     throw new ArgumentOutOfRangeException("value",
-                        SR.GetString(SR.MultiView_ActiveViewIndex_less_than_minus_one, value));
+                        System.Web.SR.GetString(System.Web.SR.MultiView_ActiveViewIndex_less_than_minus_one, value));
                 }
                 if (Views.Count == 0 && ControlState < ControlState.FrameworkInitialized /* Whidbey 113333 */) {
                     _cachedActiveViewIndex = value;
@@ -78,7 +78,7 @@ namespace System.Web.UI.WebControls {
                 }
                 if (value >= Views.Count) {
                     throw new ArgumentOutOfRangeException("value",
-                        SR.GetString(SR.MultiView_ActiveViewIndex_equal_or_greater_than_count, value, Views.Count));
+                        System.Web.SR.GetString(System.Web.SR.MultiView_ActiveViewIndex_equal_or_greater_than_count, value, Views.Count));
                 }
 
                 // VSWhidbey 472054: If the cached index is not -1, that means we
@@ -130,7 +130,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         Browsable(false),
-        WebSysDescription(SR.MultiView_Views),
+        WebSysDescription(System.Web.SR.MultiView_Views),
         PersistenceMode(PersistenceMode.InnerDefaultProperty)
         ]
         public virtual ViewCollection Views {
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.MultiView_ActiveViewChanged)
+        WebSysDescription(System.Web.SR.MultiView_ActiveViewChanged)
         ]
         public event EventHandler ActiveViewChanged {
             add {
@@ -167,7 +167,7 @@ namespace System.Web.UI.WebControls {
                 Controls.Add((Control)obj);
             }
             else if (!(obj is LiteralControl))
-                throw new HttpException(SR.GetString(SR.MultiView_cannot_have_children_of_type, obj.GetType().Name));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.MultiView_cannot_have_children_of_type, obj.GetType().Name));
         }
 
 
@@ -185,7 +185,7 @@ namespace System.Web.UI.WebControls {
         public View GetActiveView() {
             int activeViewIndex = ActiveViewIndex;
             if (activeViewIndex >= Views.Count) {
-                throw new Exception(SR.GetString(SR.MultiView_ActiveViewIndex_out_of_range));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.MultiView_ActiveViewIndex_out_of_range));
             }
             if (activeViewIndex < 0) {
                 return null;
@@ -283,7 +283,7 @@ namespace System.Web.UI.WebControls {
                         return true;
                     }
                     else {
-                        throw new HttpException(SR.GetString(SR.MultiView_invalid_view_id, ID,
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.MultiView_invalid_view_id, ID,
                             (string)ce.CommandArgument, SwitchViewByIDCommandName));
                     }
                 }
@@ -293,7 +293,7 @@ namespace System.Web.UI.WebControls {
                         index = Int32.Parse((string)ce.CommandArgument, CultureInfo.InvariantCulture);
                     }
                     catch (FormatException) {
-                        throw new FormatException(SR.GetString(SR.MultiView_invalid_view_index_format,
+                        throw new FormatException(System.Web.SR.GetString(System.Web.SR.MultiView_invalid_view_index_format,
                             (string)ce.CommandArgument, SwitchViewByIndexCommandName));
                     }
                     ActiveViewIndex = index;
@@ -356,7 +356,7 @@ namespace System.Web.UI.WebControls {
         public void SetActiveView(View view) {
             int index = Views.IndexOf (view);
             if (index < 0) {
-                throw new HttpException(SR.GetString(SR.MultiView_view_not_found, (view == null ? "null" : view.ID), this.ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.MultiView_view_not_found, (view == null ? "null" : view.ID), this.ID));
             }
             ActiveViewIndex = index;
         }
@@ -368,7 +368,7 @@ namespace System.Web.UI.WebControls {
 
         public override void AppendSubBuilder(ControlBuilder subBuilder) {
             if (subBuilder is CodeBlockBuilder) {
-                throw new Exception(SR.GetString(SR.Multiview_rendering_block_not_allowed));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Multiview_rendering_block_not_allowed));
             }
             base.AppendSubBuilder(subBuilder);
         }
@@ -387,7 +387,7 @@ namespace System.Web.UI.WebControls {
         /// <devdoc> [To be supplied.] </devdoc>
         public override void Add(Control v) {
             if (!(v is View)) {
-                throw new ArgumentException(SR.GetString(SR.ViewCollection_must_contain_view));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewCollection_must_contain_view));
             }
             base.Add(v);
         }
@@ -396,7 +396,7 @@ namespace System.Web.UI.WebControls {
         /// <devdoc> [To be supplied.] </devdoc>
         public override void AddAt(int index, Control v) {
             if (!(v is View)) {
-                throw new ArgumentException(SR.GetString(SR.ViewCollection_must_contain_view));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewCollection_must_contain_view));
             }
             base.AddAt(index, v);
         }

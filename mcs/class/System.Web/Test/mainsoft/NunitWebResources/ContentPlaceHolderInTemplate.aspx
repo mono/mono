@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/ContentPlaceHolderInTemplate.master" AutoEventWireup="true" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="ContentPlaceHolderInTemplate.master" AutoEventWireup="true" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
     Head content

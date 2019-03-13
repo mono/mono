@@ -7,7 +7,6 @@
 namespace System.Web.Security {
     using System;
     using System.Runtime.Serialization;
-    using System.Web;
     using System.Runtime.CompilerServices;
     using System.Security.Permissions;    
 

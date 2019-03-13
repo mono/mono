@@ -28,7 +28,7 @@ internal class DataBoundLiteralControlBuilder : ControlBuilder {
 
     internal void AddLiteralString(string s) {
 
-        Debug.Assert(!InDesigner, "!InDesigner");
+        System.Web.Util.Debug.Assert(!InDesigner, "!InDesigner");
 
         // Make sure strings and databinding expressions alternate
         object lastBuilder = GetLastBuilder();
@@ -40,7 +40,7 @@ internal class DataBoundLiteralControlBuilder : ControlBuilder {
 
     internal void AddDataBindingExpression(CodeBlockBuilder codeBlockBuilder) {
 
-        Debug.Assert(!InDesigner, "!InDesigner");
+        System.Web.Util.Debug.Assert(!InDesigner, "!InDesigner");
 
         // Make sure strings and databinding expressions alternate
         object lastBuilder = GetLastBuilder();

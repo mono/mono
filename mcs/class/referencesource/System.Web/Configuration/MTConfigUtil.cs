@@ -7,6 +7,7 @@ using System.Web.Configuration;
 using System.Web.Hosting;
 using Microsoft.Build.Utilities;
 
+
 // Helper class to use 2.0 root config as necessary. Each helper method will
 // go through RuntimeConfig (the original code path), except in the
 // case of building and targeting 2.0/3.5.
@@ -188,7 +189,7 @@ internal class MTConfigUtil {
             return config.GetSection("system.web/profile") as S;
         }
 
-        throw new InvalidOperationException(SR.GetString(SR.Config_section_not_supported, typeof(S).FullName));
+        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Config_section_not_supported, typeof(S).FullName));
     }
 
     static private string MachineConfigPath {
@@ -196,7 +197,7 @@ internal class MTConfigUtil {
             if (s_machineConfigPath == null) {
                 s_machineConfigPath = ToolLocationHelper.GetPathToDotNetFrameworkFile(@"config\machine.config", TargetDotNetFrameworkVersion.Version20);
                 if (string.IsNullOrEmpty(s_machineConfigPath)) {
-                    string message = SR.GetString(SR.Downlevel_requires_35);
+                    string message = System.Web.SR.GetString(System.Web.SR.Downlevel_requires_35);
                     throw new InvalidOperationException(message);
                 }
             }

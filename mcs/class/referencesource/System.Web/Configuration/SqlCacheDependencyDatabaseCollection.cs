@@ -33,7 +33,7 @@ namespace System.Web.Configuration {
         // public properties
         public String[] AllKeys {
             get {
-                return StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
+                return System.Web.Util.StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
             }
         }
         

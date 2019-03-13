@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Parameter"),
-        WebSysDescription(SR.ProfileParameter_PropertyName),
+        WebSysDescription(System.Web.SR.ProfileParameter_PropertyName),
         ]
         public string PropertyName {
             get {

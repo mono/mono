@@ -19,9 +19,9 @@ namespace System.Web.UI.WebControls {
     internal static class FilteredDataSetHelper {
 
         public static DataView CreateFilteredDataView(DataTable table, string sortExpression, string filterExpression, IDictionary filterParameters) {
-            Debug.Assert(table != null, "Did not expect null table");
-            Debug.Assert(sortExpression != null, "Did not expect null sort expression");
-            Debug.Assert(filterExpression != null, "Did not expect null filter expression");
+            System.Web.Util.Debug.Assert(table != null, "Did not expect null table");
+            System.Web.Util.Debug.Assert(sortExpression != null, "Did not expect null sort expression");
+            System.Web.Util.Debug.Assert(filterExpression != null, "Did not expect null filter expression");
 
             DataView dv = new DataView(table);
             // Set sort expression
@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls {
             // Set filter expression
             if (!String.IsNullOrEmpty(filterExpression)) {
                 bool hasNulls = false;
-                Debug.Assert(filterParameters != null, "Did not expect null filter parameters when a filter expression was set");
+                System.Web.Util.Debug.Assert(filterParameters != null, "Did not expect null filter parameters when a filter expression was set");
                 object[] values = new object[filterParameters.Count];
                 int index = 0;
                 foreach (DictionaryEntry de in filterParameters) {
@@ -57,7 +57,7 @@ namespace System.Web.UI.WebControls {
             DataSet dataSet = dataObject as DataSet;
             if (dataSet != null) {
                 if (dataSet.Tables.Count == 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.FilteredDataSetHelper_DataSetHasNoTables, owner.ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.FilteredDataSetHelper_DataSetHasNoTables, owner.ID));
                 }
                 return dataSet.Tables[0];
             }

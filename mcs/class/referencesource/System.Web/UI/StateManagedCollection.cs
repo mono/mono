@@ -16,6 +16,7 @@ namespace System.Web.UI {
     using System.Web.UI;
     using System.Web.UI.WebControls;
     using System.Web.Util;
+    
 
     /// <devdoc>
     /// Manages state for an arbitrary collection of items that implement IStateManager.
@@ -80,7 +81,7 @@ namespace System.Web.UI {
         /// by GetKnownTypes().
         /// </devdoc>
         protected virtual object CreateKnownType(int index) {
-            throw new InvalidOperationException(SR.GetString(SR.StateManagedCollection_NoKnownTypes));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.StateManagedCollection_NoKnownTypes));
         }
 
 
@@ -116,7 +117,7 @@ namespace System.Web.UI {
         /// If the index is -1 then the object is appended to the end of the collection.
         /// </devdoc>
         private void InsertInternal(int index, object o) {
-            Debug.Assert(index >= -1 && index <= Count, "Expected index to be at least -1 and less than or equal to Count.");
+            System.Web.Util.Debug.Assert(index >= -1 && index <= Count, "Expected index to be at least -1 and less than or equal to Count.");
             if (o == null) {
                 throw new ArgumentNullException("o");
             }
@@ -151,8 +152,8 @@ namespace System.Web.UI {
         /// Loads all items from view state.
         /// </devdoc>
         private void LoadAllItemsFromViewState(object savedState) {
-            Debug.Assert(savedState != null);
-            Debug.Assert(savedState is Pair);
+            System.Web.Util.Debug.Assert(savedState != null);
+            System.Web.Util.Debug.Assert(savedState is Pair);
 
             Pair p1 = (Pair)savedState;
 
@@ -196,7 +197,7 @@ namespace System.Web.UI {
                 }
             }
             else {
-                Debug.Assert(p1.First is object[]);
+                System.Web.Util.Debug.Assert(p1.First is object[]);
 
                 // save all mode; all objects are instances of known types
                 object[] states = (object[])p1.First;
@@ -224,8 +225,8 @@ namespace System.Web.UI {
         /// Loads only changed items from view state.
         /// </devdoc>
         private void LoadChangedItemsFromViewState(object savedState) {
-            Debug.Assert(savedState != null);
-            Debug.Assert(savedState is Triplet);
+            System.Web.Util.Debug.Assert(savedState != null);
+            System.Web.Util.Debug.Assert(savedState is Triplet);
 
             Triplet t = (Triplet)savedState;
 
@@ -357,7 +358,7 @@ namespace System.Web.UI {
         /// Saves all items in the collection to view state.
         /// </devdoc>
         private object SaveAllItemsToViewState() {
-            Debug.Assert(_saveAll);
+            System.Web.Util.Debug.Assert(_saveAll);
 
             bool hasState = false;
 
@@ -440,7 +441,7 @@ namespace System.Web.UI {
         /// Saves changed items to view state.
         /// </devdoc>
         private object SaveChangedItemsToViewState() {
-            Debug.Assert(_saveAll == false);
+            System.Web.Util.Debug.Assert(_saveAll == false);
 
             bool hasState = false;
 
@@ -591,7 +592,7 @@ namespace System.Web.UI {
             }
             set {
                 if (index < 0 || index >= Count) {
-                    throw new ArgumentOutOfRangeException("index", SR.GetString(SR.StateManagedCollection_InvalidIndex));
+                    throw new ArgumentOutOfRangeException("index", System.Web.SR.GetString(System.Web.SR.StateManagedCollection_InvalidIndex));
                 }
                 ((IList)this).RemoveAt(index);
                 ((IList)this).Insert(index, value);
@@ -645,7 +646,7 @@ namespace System.Web.UI {
                 throw new ArgumentNullException("value");
             }
             if (index < 0 || index > Count) {
-                throw new ArgumentOutOfRangeException("index", SR.GetString(SR.StateManagedCollection_InvalidIndex));
+                throw new ArgumentOutOfRangeException("index", System.Web.SR.GetString(System.Web.SR.StateManagedCollection_InvalidIndex));
             }
 
             OnValidate(value);

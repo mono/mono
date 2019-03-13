@@ -19,6 +19,7 @@ namespace System.Web.Configuration {
     using System.Web.Security;
     using System.Web.Util;
     using System.Xml;
+    
 
     internal class ProtocolsConfiguration {
 
@@ -53,7 +54,7 @@ namespace System.Web.Configuration {
                     /* TEMPORARY allow duplicates for easy Indigo machine.config update
                     if (_protocolEntries[id] != null) {
                         throw new ConfigurationErrorsException(
-                                        SR.GetString(SR.Dup_protocol_id, id), 
+                                        System.Web.SR.GetString(System.Web.SR.Dup_protocol_id, id), 
                                         child);
                     }
                     */
@@ -84,7 +85,7 @@ namespace System.Web.Configuration {
             if (node.NodeType != XmlNodeType.Element)
             {
                 throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Config_base_elements_only),
+                                System.Web.SR.GetString(System.Web.SR.Config_base_elements_only),
                                 node);
             }
 

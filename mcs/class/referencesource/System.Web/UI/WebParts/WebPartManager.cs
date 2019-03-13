@@ -235,13 +235,13 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Behavior"),
-        WebSysDefaultValue(SR.WebPartManager_DefaultCloseProviderWarning),
-        WebSysDescription(SR.WebPartManager_CloseProviderWarning)
+        WebSysDefaultValue(System.Web.SR.WebPartManager_DefaultCloseProviderWarning),
+        WebSysDescription(System.Web.SR.WebPartManager_CloseProviderWarning)
         ]
         public virtual string CloseProviderWarning {
             get {
                 object o = ViewState["CloseProviderWarning"];
-                return (o != null) ? (string)o : SR.GetString(SR.WebPartManager_DefaultCloseProviderWarning);
+                return (o != null) ? (string)o : System.Web.SR.GetString(System.Web.SR.WebPartManager_DefaultCloseProviderWarning);
             }
             set {
                 ViewState["CloseProviderWarning"] = value;
@@ -269,7 +269,7 @@ if (zoneElement != null) {{
                         }
                     }
                 }
-                connections.SetReadOnly(SR.WebPartManager_ConnectionsReadOnly);
+                connections.SetReadOnly(System.Web.SR.WebPartManager_ConnectionsReadOnly);
                 return connections;
             }
         }
@@ -287,13 +287,13 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Behavior"),
-        WebSysDefaultValue(SR.WebPartManager_DefaultDeleteWarning),
-        WebSysDescription(SR.WebPartManager_DeleteWarning)
+        WebSysDefaultValue(System.Web.SR.WebPartManager_DefaultDeleteWarning),
+        WebSysDescription(System.Web.SR.WebPartManager_DeleteWarning)
         ]
         public virtual string DeleteWarning {
             get {
                 object o = ViewState["DeleteWarning"];
-                return (o != null) ? (string)o : SR.GetString(SR.WebPartManager_DefaultDeleteWarning);
+                return (o != null) ? (string)o : System.Web.SR.GetString(System.Web.SR.WebPartManager_DefaultDeleteWarning);
             }
             set {
                 ViewState["DeleteWarning"] = value;
@@ -318,11 +318,11 @@ if (zoneElement != null) {{
                 }
 
                 if (SupportedDisplayModes.Contains(value) == false) {
-                    throw new ArgumentException(SR.GetString(SR.WebPartManager_InvalidDisplayMode), "value");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_InvalidDisplayMode), "value");
                 }
 
                 if (!value.IsEnabled(this)) {
-                    throw new ArgumentException(SR.GetString(SR.WebPartManager_DisabledDisplayMode), "value");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_DisabledDisplayMode), "value");
                 }
 
                 WebPartDisplayModeCancelEventArgs dmce = new WebPartDisplayModeCancelEventArgs(value);
@@ -374,7 +374,7 @@ if (zoneElement != null) {{
             get {
                 if (_displayModes == null) {
                     _displayModes = CreateDisplayModes();
-                    _displayModes.SetReadOnly(SR.WebPartManager_DisplayModesReadOnly);
+                    _displayModes.SetReadOnly(System.Web.SR.WebPartManager_DisplayModesReadOnly);
                 }
 
                 return _displayModes;
@@ -393,7 +393,7 @@ if (zoneElement != null) {{
         [
         DefaultValue(true),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebPartManager_EnableClientScript)
+        WebSysDescription(System.Web.SR.WebPartManager_EnableClientScript)
         ]
         public virtual bool EnableClientScript {
             get {
@@ -416,19 +416,19 @@ if (zoneElement != null) {{
                 return true;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.WebPartManager_CantSetEnableTheming));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.WebPartManager_CantSetEnableTheming));
             }
         }
 
         [
         WebCategory("Behavior"),
-        WebSysDefaultValue(SR.WebPartChrome_ConfirmExportSensitive),
-        WebSysDescription(SR.WebPartManager_ExportSensitiveDataWarning)
+        WebSysDefaultValue(System.Web.SR.WebPartChrome_ConfirmExportSensitive),
+        WebSysDescription(System.Web.SR.WebPartManager_ExportSensitiveDataWarning)
         ]
         public virtual string ExportSensitiveDataWarning {
             get {
                 object o = ViewState["ExportSensitiveDataWarning"];
-                return (o != null) ? (string)o : SR.GetString(SR.WebPartChrome_ConfirmExportSensitive);
+                return (o != null) ? (string)o : System.Web.SR.GetString(System.Web.SR.WebPartChrome_ConfirmExportSensitive);
             }
             set {
                 ViewState["ExportSensitiveDataWarning"] = value;
@@ -460,11 +460,8 @@ if (zoneElement != null) {{
         // Used for during Import for type deserialization.
         protected virtual PermissionSet MediumPermissionSet {
             get {
-                if (_mediumPermissionSet == null) {
-                    _mediumPermissionSet = new PermissionSet(PermissionState.None);
-                    _mediumPermissionSet.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
-                    _mediumPermissionSet.AddPermission(new AspNetHostingPermission(AspNetHostingPermissionLevel.Medium));
-                }
+                if (_mediumPermissionSet == null) 
+                    _mediumPermissionSet = new PermissionSet(PermissionState.Unrestricted);                
                 return _mediumPermissionSet;
             }
         }
@@ -474,9 +471,7 @@ if (zoneElement != null) {{
         protected virtual PermissionSet MinimalPermissionSet {
             get {
                 if (_minimalPermissionSet == null) {
-                    _minimalPermissionSet = new PermissionSet(PermissionState.None);
-                    _minimalPermissionSet.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
-                    _minimalPermissionSet.AddPermission(new AspNetHostingPermission(AspNetHostingPermissionLevel.Minimal));
+                    _minimalPermissionSet = new PermissionSet(PermissionState.Unrestricted);
                 }
                 return _minimalPermissionSet;
             }
@@ -490,7 +485,7 @@ if (zoneElement != null) {{
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebPartManager_Personalization)
+        WebSysDescription(System.Web.SR.WebPartManager_Personalization)
         ]
         public WebPartPersonalization Personalization {
             get {
@@ -528,7 +523,7 @@ if (zoneElement != null) {{
                 return String.Empty;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name));
             }
         }
 
@@ -538,7 +533,7 @@ if (zoneElement != null) {{
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebPartManager_StaticConnections),
+        WebSysDescription(System.Web.SR.WebPartManager_StaticConnections),
         ]
         public WebPartConnectionCollection StaticConnections {
             get {
@@ -564,7 +559,7 @@ if (zoneElement != null) {{
                         }
                     }
 
-                    _supportedDisplayModes.SetReadOnly(SR.WebPartManager_DisplayModesReadOnly);
+                    _supportedDisplayModes.SetReadOnly(System.Web.SR.WebPartManager_DisplayModesReadOnly);
                 }
                 return _supportedDisplayModes;
             }
@@ -594,7 +589,7 @@ if (zoneElement != null) {{
                 return true;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.ControlNonVisual, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ControlNonVisual, this.GetType().Name));
             }
         }
 
@@ -630,7 +625,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_AuthorizeWebPart)
+        WebSysDescription(System.Web.SR.WebPartManager_AuthorizeWebPart)
         ]
         public event WebPartAuthorizationEventHandler AuthorizeWebPart {
             add {
@@ -643,7 +638,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_ConnectionsActivated)
+        WebSysDescription(System.Web.SR.WebPartManager_ConnectionsActivated)
         ]
         public event EventHandler ConnectionsActivated {
             add {
@@ -656,7 +651,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_ConnectionsActivating)
+        WebSysDescription(System.Web.SR.WebPartManager_ConnectionsActivating)
         ]
         public event EventHandler ConnectionsActivating {
             add {
@@ -669,7 +664,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_DisplayModeChanged)
+        WebSysDescription(System.Web.SR.WebPartManager_DisplayModeChanged)
         ]
         public event WebPartDisplayModeEventHandler DisplayModeChanged {
             add {
@@ -682,7 +677,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_DisplayModeChanging)
+        WebSysDescription(System.Web.SR.WebPartManager_DisplayModeChanging)
         ]
         public event WebPartDisplayModeCancelEventHandler DisplayModeChanging {
             add {
@@ -695,7 +690,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_SelectedWebPartChanged)
+        WebSysDescription(System.Web.SR.WebPartManager_SelectedWebPartChanged)
         ]
         public event WebPartEventHandler SelectedWebPartChanged {
             add {
@@ -708,7 +703,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_SelectedWebPartChanging)
+        WebSysDescription(System.Web.SR.WebPartManager_SelectedWebPartChanging)
         ]
         public event WebPartCancelEventHandler SelectedWebPartChanging {
             add {
@@ -721,7 +716,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartAdded)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartAdded)
         ]
         public event WebPartEventHandler WebPartAdded {
             add {
@@ -734,7 +729,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartAdding)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartAdding)
         ]
         public event WebPartAddingEventHandler WebPartAdding {
             add {
@@ -747,7 +742,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartClosed)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartClosed)
         ]
         public event WebPartEventHandler WebPartClosed {
             add {
@@ -760,7 +755,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartClosing)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartClosing)
         ]
         public event WebPartCancelEventHandler WebPartClosing {
             add {
@@ -773,7 +768,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartDeleted)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartDeleted)
         ]
         public event WebPartEventHandler WebPartDeleted {
             add {
@@ -786,7 +781,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartDeleting)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartDeleting)
         ]
         public event WebPartCancelEventHandler WebPartDeleting {
             add {
@@ -799,7 +794,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartMoved)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartMoved)
         ]
         public event WebPartEventHandler WebPartMoved {
             add {
@@ -812,7 +807,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartMoving)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartMoving)
         ]
         public event WebPartMovingEventHandler WebPartMoving {
             add {
@@ -825,7 +820,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartsConnected)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartsConnected)
         ]
         public event WebPartConnectionsEventHandler WebPartsConnected {
             add {
@@ -838,7 +833,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartsConnecting)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartsConnecting)
         ]
         public event WebPartConnectionsCancelEventHandler WebPartsConnecting {
             add {
@@ -851,7 +846,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartsDisconnected)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartsDisconnected)
         ]
         public event WebPartConnectionsEventHandler WebPartsDisconnected {
             add {
@@ -864,7 +859,7 @@ if (zoneElement != null) {{
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartManager_WebPartsDisconnecting)
+        WebSysDescription(System.Web.SR.WebPartManager_WebPartsDisconnecting)
         ]
         public event WebPartConnectionsCancelEventHandler WebPartsDisconnecting {
             add {
@@ -895,10 +890,10 @@ if (zoneElement != null) {{
         }
 
         private WebPart AddDynamicWebPartToZone(WebPart webPart, WebPartZoneBase zone, int zoneIndex) {
-            Debug.Assert(Personalization.IsModifiable);
+            System.Web.Util.Debug.Assert(Personalization.IsModifiable);
 
             // Zone should not be set on a dynamic web part being added to the page for the first time
-            Debug.Assert(webPart.Zone == null);
+            System.Web.Util.Debug.Assert(webPart.Zone == null);
 
             // Only add WebPart if IsAuthorized(webPart) == true
             if (!IsAuthorized(webPart)) {
@@ -937,13 +932,13 @@ if (zoneElement != null) {{
                 throw new ArgumentNullException("zone");
             }
             if (_webPartZones.Contains(zone) == false) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_MustRegister), "zone");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_MustRegister), "zone");
             }
             if (zoneIndex < 0) {
                 throw new ArgumentOutOfRangeException("zoneIndex");
             }
             if (webPart.Zone != null && !webPart.IsClosed) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_AlreadyInZone), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_AlreadyInZone), "webPart");
             }
 
             WebPartAddingEventArgs e = new WebPartAddingEventArgs(webPart, zone, zoneIndex);
@@ -994,7 +989,7 @@ if (zoneElement != null) {{
         /// sequentially.
         /// </devdoc>
         private void AddWebPartToZone(WebPart webPart, WebPartZoneBase zone, int zoneIndex) {
-            Debug.Assert(webPart.Zone == null || webPart.IsClosed);
+            System.Web.Util.Debug.Assert(webPart.Zone == null || webPart.IsClosed);
 
             // All the parts for the zone
             IList allParts = GetAllWebPartsForZone(zone);
@@ -1007,7 +1002,7 @@ if (zoneElement != null) {{
             int allPartsDestinationIndex;
             if (zoneIndex < renderedParts.Count) {
                 WebPart successor = renderedParts[zoneIndex];
-                Debug.Assert(allParts.Contains(successor));
+                System.Web.Util.Debug.Assert(allParts.Contains(successor));
                 allPartsDestinationIndex = allParts.IndexOf(successor);
             }
             else {
@@ -1042,19 +1037,19 @@ if (zoneElement != null) {{
             }
 
             if (webPart.IsClosed) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_CantBeginConnectingClosed), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_CantBeginConnectingClosed), "webPart");
             }
 
             if (!Controls.Contains(webPart)) {
-                throw new ArgumentException(SR.GetString(SR.UnknownWebPart), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.UnknownWebPart), "webPart");
             }
 
             if (DisplayMode != ConnectDisplayMode) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartManager_MustBeInConnect));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_MustBeInConnect));
             }
 
             if (webPart == SelectedWebPart) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_AlreadyInConnect), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_AlreadyInConnect), "webPart");
             }
 
             WebPartCancelEventArgs ce = new WebPartCancelEventArgs(webPart);
@@ -1086,19 +1081,19 @@ if (zoneElement != null) {{
             }
 
             if (webPart.IsClosed) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_CantBeginEditingClosed), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_CantBeginEditingClosed), "webPart");
             }
 
             if (!Controls.Contains(webPart)) {
-                throw new ArgumentException(SR.GetString(SR.UnknownWebPart), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.UnknownWebPart), "webPart");
             }
 
             if (DisplayMode != EditDisplayMode) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartManager_MustBeInEdit));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_MustBeInEdit));
             }
 
             if (webPart == SelectedWebPart) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_AlreadyInEdit), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_AlreadyInEdit), "webPart");
             }
 
             WebPartCancelEventArgs ce = new WebPartCancelEventArgs(webPart);
@@ -1138,7 +1133,7 @@ if (zoneElement != null) {{
                         string zoneTitle = (part2.Zone == null) ? "null" : part2.Zone.DisplayTitle;
                         builder.Append(part2.DisplayTitle + "\t" + zoneTitle + "\t" + part2.ZoneIndex);
                     }
-                    Debug.Assert(false, builder.ToString());
+                    System.Web.Util.Debug.Assert(false, builder.ToString());
                     return;
                 }
                 index++;
@@ -1211,14 +1206,14 @@ if (zoneElement != null) {{
                 throw new ArgumentNullException("provider");
             }
             if (!Controls.Contains(provider)) {
-                throw new ArgumentException(SR.GetString(SR.UnknownWebPart), "provider");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.UnknownWebPart), "provider");
             }
 
             if (consumer == null) {
                 throw new ArgumentNullException("consumer");
             }
             if (!Controls.Contains(consumer)) {
-                throw new ArgumentException(SR.GetString(SR.UnknownWebPart), "consumer");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.UnknownWebPart), "consumer");
             }
 
             if (providerConnectionPoint == null) {
@@ -1232,15 +1227,15 @@ if (zoneElement != null) {{
             Control consumerControl = consumer.ToControl();
 
             if (providerConnectionPoint.ControlType != providerControl.GetType()) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_InvalidConnectionPoint), "providerConnectionPoint");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_InvalidConnectionPoint), "providerConnectionPoint");
             }
             if (consumerConnectionPoint.ControlType != consumerControl.GetType()) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_InvalidConnectionPoint), "consumerConnectionPoint");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_InvalidConnectionPoint), "consumerConnectionPoint");
             }
 
             if (provider == consumer) {
                 if (throwOnError) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartManager_CantConnectToSelf));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_CantConnectToSelf));
                 }
                 else {
                     return false;
@@ -1249,7 +1244,7 @@ if (zoneElement != null) {{
 
             if (provider.IsClosed) {
                 if (throwOnError) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartManager_CantConnectClosed, provider.ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_CantConnectClosed, provider.ID));
                 }
                 else {
                     return false;
@@ -1258,7 +1253,7 @@ if (zoneElement != null) {{
 
             if (consumer.IsClosed) {
                 if (throwOnError) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartManager_CantConnectClosed, consumer.ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_CantConnectClosed, consumer.ID));
                 }
                 else {
                     return false;
@@ -1267,7 +1262,7 @@ if (zoneElement != null) {{
 
             if (!providerConnectionPoint.GetEnabled(providerControl)) {
                 if (throwOnError) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_DisabledConnectionPoint, providerConnectionPoint.ID, provider.ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_DisabledConnectionPoint, providerConnectionPoint.ID, provider.ID));
                 }
                 else {
                     return false;
@@ -1276,7 +1271,7 @@ if (zoneElement != null) {{
 
             if (!consumerConnectionPoint.GetEnabled(consumerControl)) {
                 if (throwOnError) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_DisabledConnectionPoint, consumerConnectionPoint.ID, consumer.ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_DisabledConnectionPoint, consumerConnectionPoint.ID, consumer.ID));
                 }
                 else {
                     return false;
@@ -1288,7 +1283,7 @@ if (zoneElement != null) {{
                 foreach (WebPartConnection c in Connections) {
                     if (c.Provider == provider && c.ProviderConnectionPoint == providerConnectionPoint) {
                         if (throwOnError) {
-                            throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_Duplicate, providerConnectionPoint.ID, provider.ID));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_Duplicate, providerConnectionPoint.ID, provider.ID));
                         }
                         else {
                             return false;
@@ -1301,7 +1296,7 @@ if (zoneElement != null) {{
                 foreach (WebPartConnection c in Connections) {
                     if (c.Consumer == consumer && c.ConsumerConnectionPoint == consumerConnectionPoint) {
                         if (throwOnError) {
-                            throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_Duplicate, consumerConnectionPoint.ID, consumer.ID));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_Duplicate, consumerConnectionPoint.ID, consumer.ID));
                         }
                         else {
                             return false;
@@ -1313,7 +1308,7 @@ if (zoneElement != null) {{
             if (transformer == null) {
                 if (providerConnectionPoint.InterfaceType != consumerConnectionPoint.InterfaceType) {
                     if (throwOnError) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_NoCommonInterface,
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_NoCommonInterface,
                             new string[] {providerConnectionPoint.DisplayName, provider.ID,
                                 consumerConnectionPoint.DisplayName, consumer.ID}));
                     }
@@ -1325,7 +1320,7 @@ if (zoneElement != null) {{
                 ConnectionInterfaceCollection secondaryInterfaces = providerConnectionPoint.GetSecondaryInterfaces(providerControl);
                 if (!consumerConnectionPoint.SupportsConnection(consumerControl, secondaryInterfaces)) {
                     if (throwOnError) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_IncompatibleSecondaryInterfaces, new string[] {
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_IncompatibleSecondaryInterfaces, new string[] {
                                 consumerConnectionPoint.DisplayName, consumer.ID,
                                 providerConnectionPoint.DisplayName, provider.ID}));
                     }
@@ -1338,7 +1333,7 @@ if (zoneElement != null) {{
                 Type transformerType = transformer.GetType();
 
                 if (!AvailableTransformers.Contains(transformerType)) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_TransformerNotAvailable, transformerType.FullName));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_TransformerNotAvailable, transformerType.FullName));
                 }
 
                 // Check matching interfaces on connection points and transformer attribute.
@@ -1351,7 +1346,7 @@ if (zoneElement != null) {{
                 Type transformerProviderType = WebPartTransformerAttribute.GetProviderType(transformerType);
                 if (providerConnectionPoint.InterfaceType != transformerConsumerType) {
                     if (throwOnError) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_IncompatibleProviderTransformer,
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_IncompatibleProviderTransformer,
                             providerConnectionPoint.DisplayName, provider.ID, transformerType.FullName));
                     }
                     else {
@@ -1360,7 +1355,7 @@ if (zoneElement != null) {{
                 }
                 if (transformerProviderType != consumerConnectionPoint.InterfaceType) {
                     if (throwOnError) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_IncompatibleConsumerTransformer,
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_IncompatibleConsumerTransformer,
                             transformerType.FullName, consumerConnectionPoint.DisplayName, consumer.ID));
                     }
                     else {
@@ -1371,7 +1366,7 @@ if (zoneElement != null) {{
                 // A transformer never provides any secondary interfaces
                 if (!consumerConnectionPoint.SupportsConnection(consumerControl, ConnectionInterfaceCollection.Empty)) {
                     if (throwOnError) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_ConsumerRequiresSecondaryInterfaces,
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_ConsumerRequiresSecondaryInterfaces,
                             consumerConnectionPoint.DisplayName, consumer.ID));
                     }
                     else {
@@ -1395,24 +1390,24 @@ if (zoneElement != null) {{
                 throw new ArgumentNullException("webPart");
             }
             if (!Controls.Contains(webPart)) {
-                throw new ArgumentException(SR.GetString(SR.UnknownWebPart), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.UnknownWebPart), "webPart");
             }
 
             if (!delete && webPart.IsClosed) {
                 // Throw an exception instead of just returning.  If the shared user and per user close
                 // a WebPart at the same time, then the WebPartZoneBase should not call CloseWebPart
                 // if the WebPart is now closed.
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_AlreadyClosed), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_AlreadyClosed), "webPart");
             }
 
             if (delete) {
                 if (webPart.IsStatic) {
                     // Can't delete static parts
-                    throw new ArgumentException(SR.GetString(SR.WebPartManager_CantDeleteStatic), "webPart");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_CantDeleteStatic), "webPart");
                 }
                 else if (webPart.IsShared && (Personalization.Scope == PersonalizationScope.User)) {
                     // Can't delete shared part in user scope
-                    throw new ArgumentException(SR.GetString(SR.WebPartManager_CantDeleteSharedInUserScope), "webPart");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_CantDeleteSharedInUserScope), "webPart");
                 }
             }
 
@@ -1562,13 +1557,13 @@ if (zoneElement != null) {{
                     }
 
                     if (connection.ConflictsWithConsumer(otherConnection)) {
-                        connection.Consumer.SetConnectErrorMessage(SR.GetString(SR.WebPartConnection_Duplicate, connection.ConsumerConnectionPoint.DisplayName,
+                        connection.Consumer.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartConnection_Duplicate, connection.ConsumerConnectionPoint.DisplayName,
                                 connection.Consumer.DisplayTitle));
                         hasConflict = true;
                     }
 
                     if (connection.ConflictsWithProvider(otherConnection)) {
-                        connection.Consumer.SetConnectErrorMessage(SR.GetString(SR.WebPartConnection_Duplicate, connection.ProviderConnectionPoint.DisplayName,
+                        connection.Consumer.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartConnection_Duplicate, connection.ProviderConnectionPoint.DisplayName,
                                 connection.Provider.DisplayTitle));
                         hasConflict = true;
                     }
@@ -1581,12 +1576,12 @@ if (zoneElement != null) {{
 
             // Don't allow the user to modify the StaticConnections collection after its connections have
             // been activated.  Use property instead of field to force creation of collection.
-            StaticConnections.SetReadOnly(SR.WebPartManager_StaticConnectionsReadOnly);
+            StaticConnections.SetReadOnly(System.Web.SR.WebPartManager_StaticConnectionsReadOnly);
 
             // The user can't directly change the DynamicConnections property since it is internal.
             // Make it read-only in case we have a bug and try to change it after activation.
             // We check the read-only status of this collection in ConnectWebParts() and DisconnectWebParts().
-            DynamicConnections.SetReadOnly(SR.WebPartManager_DynamicConnectionsReadOnly);
+            DynamicConnections.SetReadOnly(System.Web.SR.WebPartManager_DynamicConnectionsReadOnly);
 
             return (WebPartConnection[])finalConnectionsToActivate.ToArray(typeof(WebPartConnection));
         }
@@ -1598,12 +1593,12 @@ if (zoneElement != null) {{
             string connectionID = connection.ID;
 
             if (String.IsNullOrEmpty(connectionID)) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_NoID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_NoID));
             }
 
             if (connectionIDs.Contains(connectionID)) {
                 throw new InvalidOperationException(
-                    SR.GetString(SR.WebPartManager_DuplicateConnectionID, connectionID));
+                    System.Web.SR.GetString(System.Web.SR.WebPartManager_DuplicateConnectionID, connectionID));
             }
             connectionIDs.Add(connectionID, null);
 
@@ -1615,7 +1610,7 @@ if (zoneElement != null) {{
             if (providerWebPart == null) {
                 if (connection.IsStatic) {
                     // throw an exception, to alert the developer that his static connection is invalid
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_NoProvider, connection.ProviderID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_NoProvider, connection.ProviderID));
                 }
                 else {
                     // Silently delete the connection, since this is a valid runtime scenario.
@@ -1629,7 +1624,7 @@ if (zoneElement != null) {{
             if (consumerWebPart == null) {
                 if (connection.IsStatic) {
                     // throw an exception, to alert the developer that his static connection is invalid
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_NoConsumer, connection.ConsumerID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_NoConsumer, connection.ConsumerID));
                 }
                 else {
                     // Silently delete the connection, since this is a valid runtime scenario.
@@ -1649,12 +1644,12 @@ if (zoneElement != null) {{
 
             // Cannot connect a WebPart to itself
             if (providerControl == consumerControl) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartManager_CantConnectToSelf));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_CantConnectToSelf));
             }
 
             ProviderConnectionPoint providerConnectionPoint = connection.ProviderConnectionPoint;
             if (providerConnectionPoint == null) {
-                consumerWebPart.SetConnectErrorMessage(SR.GetString(SR.WebPartConnection_NoProviderConnectionPoint, connection.ProviderConnectionPointID,
+                consumerWebPart.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartConnection_NoProviderConnectionPoint, connection.ProviderConnectionPointID,
                     providerWebPart.DisplayTitle));
                 return;
             }
@@ -1663,7 +1658,7 @@ if (zoneElement != null) {{
 
             ConsumerConnectionPoint consumerConnectionPoint = connection.ConsumerConnectionPoint;
             if (consumerConnectionPoint == null) {
-                consumerWebPart.SetConnectErrorMessage(SR.GetString(SR.WebPartConnection_NoConsumerConnectionPoint, connection.ConsumerConnectionPointID,
+                consumerWebPart.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartConnection_NoConsumerConnectionPoint, connection.ConsumerConnectionPointID,
                     consumerWebPart.DisplayTitle));
                 return;
             }
@@ -1685,7 +1680,7 @@ if (zoneElement != null) {{
                                    transformer, /*throwOnError*/ true);
 
             if (DynamicConnections.IsReadOnly) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartManager_ConnectTooLate));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_ConnectTooLate));
             }
 
             WebPartConnectionsCancelEventArgs ce = new WebPartConnectionsCancelEventArgs(
@@ -1775,7 +1770,7 @@ if (zoneElement != null) {{
                 // Create consumer connection points
                 object[] consumerAttributes = method.GetCustomAttributes(typeof(ConnectionConsumerAttribute), true);
                 // ConnectionConsumerAttribute.AllowMultiple is false
-                Debug.Assert(consumerAttributes.Length == 0 || consumerAttributes.Length == 1);
+                System.Web.Util.Debug.Assert(consumerAttributes.Length == 0 || consumerAttributes.Length == 1);
                 if (consumerAttributes.Length == 1) {
                     // Consumer signature: method is public, return type is void, takes one parameter
                     ParameterInfo[] parameters = method.GetParameters();
@@ -1803,14 +1798,14 @@ if (zoneElement != null) {{
                         consumerConnectionPoints.Add(connectionPoint);
                     }
                     else {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartManager_InvalidConsumerSignature, method.Name, type.FullName));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_InvalidConsumerSignature, method.Name, type.FullName));
                     }
                 }
 
                 // Create provider connection points
                 object[] providerAttributes = method.GetCustomAttributes(typeof(ConnectionProviderAttribute), true);
                 // ConnectionProviderAttribute.AllowMultiple is false
-                Debug.Assert(providerAttributes.Length == 0 || providerAttributes.Length == 1);
+                System.Web.Util.Debug.Assert(providerAttributes.Length == 0 || providerAttributes.Length == 1);
                 if (providerAttributes.Length == 1) {
                     // Provider signature: method is public, return type is an object, and takes no parameters
                     Type returnType = method.ReturnType;
@@ -1833,7 +1828,7 @@ if (zoneElement != null) {{
                         providerConnectionPoints.Add(connectionPoint);
                     }
                     else {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartManager_InvalidProviderSignature, method.Name, type.FullName));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_InvalidProviderSignature, method.Name, type.FullName));
                     }
                 }
             }
@@ -1866,11 +1861,11 @@ if (zoneElement != null) {{
             string displayTitle = title;
 
             if (webPart.Hidden) {
-                displayTitle = SR.GetString(SR.WebPart_HiddenFormatString, displayTitle);
+                displayTitle = System.Web.SR.GetString(System.Web.SR.WebPart_HiddenFormatString, displayTitle);
             }
 
             if (webPart is ErrorWebPart) {
-                displayTitle = SR.GetString(SR.WebPart_ErrorFormatString, displayTitle);
+                displayTitle = System.Web.SR.GetString(System.Web.SR.WebPart_ErrorFormatString, displayTitle);
             }
 
             if (count != 0) {
@@ -1892,7 +1887,7 @@ if (zoneElement != null) {{
             foreach (WebPart part in Controls) {
                 string title = part.Title;
                 if (String.IsNullOrEmpty(title)) {
-                    title = SR.GetString(SR.Part_Untitled);
+                    title = System.Web.SR.GetString(System.Web.SR.Part_Untitled);
                 }
 
                 if (part is UnauthorizedWebPart) {
@@ -1922,7 +1917,7 @@ if (zoneElement != null) {{
         }
 
         protected virtual string CreateDynamicConnectionID() {
-            Debug.Assert(Personalization.IsModifiable);
+            System.Web.Util.Debug.Assert(Personalization.IsModifiable);
             // 
             int guidHash = Math.Abs(Guid.NewGuid().GetHashCode());
             return DynamicConnectionIDPrefix + guidHash.ToString(CultureInfo.InvariantCulture);
@@ -1933,7 +1928,7 @@ if (zoneElement != null) {{
                 throw new ArgumentNullException("webPartType");
             }
 
-            Debug.Assert(Personalization.IsModifiable);
+            System.Web.Util.Debug.Assert(Personalization.IsModifiable);
 
             // 
 
@@ -2014,7 +2009,7 @@ if (zoneElement != null) {{
                 throw new ArgumentNullException("connection");
             }
 
-            Debug.Assert(!(StaticConnections.Contains(connection) && DynamicConnections.Contains(connection)));
+            System.Web.Util.Debug.Assert(!(StaticConnections.Contains(connection) && DynamicConnections.Contains(connection)));
 
             WebPart provider = connection.Provider;
             ProviderConnectionPoint providerConnectionPoint = connection.ProviderConnectionPoint;
@@ -2033,10 +2028,10 @@ if (zoneElement != null) {{
 
             if (StaticConnections.Contains(connection)) {
                 if (StaticConnections.IsReadOnly) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartManager_DisconnectTooLate));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_DisconnectTooLate));
                 }
                 if (Internals.ConnectionDeleted(connection)) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartManager_AlreadyDisconnected));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_AlreadyDisconnected));
                 }
                 Internals.DeleteConnection(connection);
                 _hasDataChanged = true;
@@ -2044,17 +2039,17 @@ if (zoneElement != null) {{
             }
             else if (DynamicConnections.Contains(connection)) {
                 if (DynamicConnections.IsReadOnly) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartManager_DisconnectTooLate));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_DisconnectTooLate));
                 }
 
                 if (ShouldRemoveConnection(connection)) {
                     // Unshared dynamic connection should never be disabled
-                    Debug.Assert(!Internals.ConnectionDeleted(connection));
+                    System.Web.Util.Debug.Assert(!Internals.ConnectionDeleted(connection));
                     DynamicConnections.Remove(connection);
                 }
                 else {
                     if (Internals.ConnectionDeleted(connection)) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartManager_AlreadyDisconnected));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_AlreadyDisconnected));
                     }
                     Internals.DeleteConnection(connection);
                 }
@@ -2062,7 +2057,7 @@ if (zoneElement != null) {{
                 OnWebPartsDisconnected(eventArgs);
             }
             else {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_UnknownConnection), "connection");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_UnknownConnection), "connection");
             }
         }
 
@@ -2072,7 +2067,7 @@ if (zoneElement != null) {{
             WebPart selectedWebPart = SelectedWebPart;
 
             if (selectedWebPart == null) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartManager_NoSelectedWebPartConnect));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_NoSelectedWebPartConnect));
             }
 
             WebPartCancelEventArgs ce = new WebPartCancelEventArgs(selectedWebPart);
@@ -2097,7 +2092,7 @@ if (zoneElement != null) {{
             WebPart selectedWebPart = SelectedWebPart;
 
             if (selectedWebPart == null) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartManager_NoSelectedWebPartEdit));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_NoSelectedWebPartEdit));
             }
 
             WebPartCancelEventArgs ce = new WebPartCancelEventArgs(selectedWebPart);
@@ -2123,14 +2118,14 @@ if (zoneElement != null) {{
                 throw new ArgumentNullException("webPart");
             }
             if (!Controls.Contains(webPart)) {
-                throw new ArgumentException(SR.GetString(SR.UnknownWebPart), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.UnknownWebPart), "webPart");
             }
 
             if (writer == null) {
                 throw new ArgumentNullException("writer");
             }
             if (webPart.ExportMode == WebPartExportMode.None) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_PartNotExportable), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_PartNotExportable), "webPart");
             }
             bool excludeSensitive = (webPart.ExportMode == WebPartExportMode.NonSensitiveData &&
                 !(Personalization.Scope == PersonalizationScope.Shared));
@@ -2229,7 +2224,7 @@ if (zoneElement != null) {{
                                     bool isIPersonalizable,
                                     bool excludeSensitive) {
             // We only honor excludeSensitive if isIpersonalizable is true.
-            Debug.Assert((!excludeSensitive) || isIPersonalizable);
+            System.Web.Util.Debug.Assert((!excludeSensitive) || isIPersonalizable);
 
             // Work on each property in the persomalization data
             foreach(DictionaryEntry entry in propBag) {
@@ -2275,7 +2270,7 @@ if (zoneElement != null) {{
         EditorBrowsable(EditorBrowsableState.Never),
         ]
         public override void Focus() {
-            throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
         }
 
         /// <devdoc>
@@ -2289,7 +2284,7 @@ if (zoneElement != null) {{
                 foreach (WebPart part in Controls) {
                     if (!part.IsClosed) {
                         string zoneID = Internals.GetZoneID(part);
-                        Debug.Assert(!String.IsNullOrEmpty(zoneID));
+                        System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(zoneID));
                         if (!String.IsNullOrEmpty(zoneID)) {
                             SortedList partsForZone = (SortedList)_partsForZone[zoneID];
                             if (partsForZone == null) {
@@ -2375,7 +2370,7 @@ if (zoneElement != null) {{
                 throw new ArgumentNullException("webPart");
             }
             if (!Controls.Contains(webPart)) {
-                throw new ArgumentException(SR.GetString(SR.UnknownWebPart), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.UnknownWebPart), "webPart");
             }
 
             if (!_allowCreateDisplayTitles) {
@@ -2387,7 +2382,7 @@ if (zoneElement != null) {{
             }
 
             string displayTitle = (string)_displayTitles[webPart];
-            Debug.Assert(!String.IsNullOrEmpty(displayTitle));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(displayTitle));
             return displayTitle;
         }
 
@@ -2576,7 +2571,7 @@ if (zoneElement != null) {{
                 throw new ArgumentNullException("zone");
             }
             if (_webPartZones.Contains(zone) == false) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_MustRegister), "zone");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_MustRegister), "zone");
             }
 
             IList allWebPartsForZone = GetAllWebPartsForZone(zone);
@@ -2700,13 +2695,7 @@ if (zoneElement != null) {{
             if (reader == null) {
                 throw new ArgumentNullException("reader");
             }
-
-            bool permitOnly = false;
-
-            if (UsePermitOnly) {
-                MinimalPermissionSet.PermitOnly();
-                permitOnly = true;
-            }
+            
             string importErrorMessage = string.Empty;
             // Extra try-catch block to prevent elevation of privilege attack via exception filter
             try {
@@ -2718,11 +2707,11 @@ if (zoneElement != null) {{
                     // Check the version on the webPart element
                     string version = reader.GetAttribute(ExportPartNamespaceAttribute);
                     if (String.IsNullOrEmpty(version)) {
-                        errorMessage = SR.GetString(SR.WebPart_ImportErrorNoVersion);
+                        errorMessage = System.Web.SR.GetString(System.Web.SR.WebPart_ImportErrorNoVersion);
                         return null;
                     }
                     if (!String.Equals(version, ExportPartNamespaceValue, StringComparison.OrdinalIgnoreCase)) {
-                        errorMessage = SR.GetString(SR.WebPart_ImportErrorInvalidVersion);
+                        errorMessage = System.Web.SR.GetString(System.Web.SR.WebPart_ImportErrorInvalidVersion);
                         return null;
                     }
                     ImportReadTo(reader, ExportMetaDataElement);
@@ -2745,34 +2734,19 @@ if (zoneElement != null) {{
                         // If we are in shared scope, we are importing a shared WebPart
                         bool isShared = (Personalization.Scope == PersonalizationScope.Shared);
 
-                        if (!String.IsNullOrEmpty(partTypeName)) {
-
-                            if (UsePermitOnly) {
-                                CodeAccessPermission.RevertPermitOnly();
-                                permitOnly = false;
-                                MediumPermissionSet.PermitOnly();
-                                permitOnly = true;
-                            }
-
+                        if (!String.IsNullOrEmpty(partTypeName)) {                            
                             partType = WebPartUtil.DeserializeType(partTypeName, true);
-
-                            if (UsePermitOnly) {
-                                CodeAccessPermission.RevertPermitOnly();
-                                permitOnly = false;
-                                MinimalPermissionSet.PermitOnly();
-                                permitOnly = true;
-                            }
-
+                            
                             // First check if the type is authorized
                             if (!IsAuthorized(partType, null, null, isShared)) {
-                                errorMessage = SR.GetString(SR.WebPartManager_ForbiddenType);
+                                errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_ForbiddenType);
                                 return null;
                             }
                             // If the type is not a webpart, create a generic Web Part
                             if (!partType.IsSubclassOf(typeof(WebPart))) {
                                 if (!partType.IsSubclassOf(typeof(Control))) {
                                     // We only allow for Controls (VSWhidbey 428511)
-                                    errorMessage = SR.GetString(SR.WebPartManager_TypeMustDeriveFromControl);
+                                    errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_TypeMustDeriveFromControl);
                                     return null;
                                 }
                                 // Create an instance of the object
@@ -2790,20 +2764,13 @@ if (zoneElement != null) {{
 
                             // Check if the path is authorized
                             if (!IsAuthorized(typeof(UserControl), userControlTypeName, null, isShared)) {
-                                errorMessage = SR.GetString(SR.WebPartManager_ForbiddenType);
+                                errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_ForbiddenType);
                                 return null;
                             }
-
-                            if (UsePermitOnly) {
-                                CodeAccessPermission.RevertPermitOnly();
-                                permitOnly = false;
-                            }
+                            
                             childControl = Page.LoadControl(userControlTypeName);
                             partType = childControl.GetType();
-                            if (UsePermitOnly) {
-                                MinimalPermissionSet.PermitOnly();
-                                permitOnly = true;
-                            }
+                            
                             childControl.ID = CreateDynamicWebPartID(partType);
                             part = CreateWebPart(childControl);
                         }
@@ -2813,14 +2780,14 @@ if (zoneElement != null) {{
                             errorMessage = importErrorMessage;
                         }
                         else {
-                            errorMessage = SR.GetString(SR.WebPartManager_ErrorLoadingWebPartType);
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_ErrorLoadingWebPartType);
                         }
                         return null;
                     }
 
                     // Set default error message for all subsequent errors
                     if (String.IsNullOrEmpty(importErrorMessage)) {
-                        importErrorMessage = SR.GetString(SR.WebPart_DefaultImportErrorMessage);
+                        importErrorMessage = System.Web.SR.GetString(System.Web.SR.WebPart_DefaultImportErrorMessage);
                     }
                     // Get to the data
                     ImportSkipTo(reader, ExportDataElement);
@@ -2829,16 +2796,8 @@ if (zoneElement != null) {{
                     if (!reader.IsEmptyElement) {
                         reader.ReadStartElement(ExportPropertiesElement);
                         // Special-case IPersonalizable controls
-                        // ImportFromReader will set the right permission set when appropriate, reverting before we call
-                        if (UsePermitOnly) {
-                            CodeAccessPermission.RevertPermitOnly();
-                            permitOnly = false;
-                        }
-                        ImportIPersonalizable(reader, (childControl != null ? childControl : part));
-                        if (UsePermitOnly) {
-                            MinimalPermissionSet.PermitOnly();
-                            permitOnly = true;
-                        }
+                        // ImportFromReader will set the right permission set when appropriate, reverting before we call                        
+                        ImportIPersonalizable(reader, (childControl != null ? childControl : part));                        
                     }
                     // Set property values from XML description
                     IDictionary personalizableProperties;
@@ -2857,30 +2816,14 @@ if (zoneElement != null) {{
                                 }
                             }                            
                             
-                            // ImportFromReader will set the right permission set when appropriate, reverting before we call
-                            if (UsePermitOnly) {
-                                CodeAccessPermission.RevertPermitOnly();
-                                permitOnly = false;
-                            }
-                            ImportFromReader(personalizableProperties, childControl, reader);
-                            if (UsePermitOnly) {
-                                MinimalPermissionSet.PermitOnly();
-                                permitOnly = true;
-                            }
+                            // ImportFromReader will set the right permission set when appropriate, reverting before we call                            
+                            ImportFromReader(personalizableProperties, childControl, reader);                            
                         }
                         // And then for the generic WebPart
                         ImportSkipTo(reader, ExportGenericPartPropertiesElement);
                         reader.ReadStartElement(ExportGenericPartPropertiesElement);
-                        // ImportFromReader will set the right permission set when appropriate, reverting before we call
-                        if (UsePermitOnly) {
-                            CodeAccessPermission.RevertPermitOnly();
-                            permitOnly = false;
-                        }
-                        ImportIPersonalizable(reader, part);
-                        if (UsePermitOnly) {
-                            MinimalPermissionSet.PermitOnly();
-                            permitOnly = true;
-                        }
+                        // ImportFromReader will set the right permission set when appropriate, reverting before we call                        
+                        ImportIPersonalizable(reader, part);                        
                         personalizableProperties = PersonalizableAttribute.GetPersonalizablePropertyEntries(part.GetType());
                     }
                     else {
@@ -2896,41 +2839,27 @@ if (zoneElement != null) {{
                         }
                     }
 
-                    // ImportFromReader will set the right permission set when appropriate, reverting before we call
-                    if (UsePermitOnly) {
-                        CodeAccessPermission.RevertPermitOnly();
-                        permitOnly = false;
-                    }
-                    ImportFromReader(personalizableProperties, part, reader);
-                    if (UsePermitOnly) {
-                        MinimalPermissionSet.PermitOnly();
-                        permitOnly = true;
-                    }
+                    // ImportFromReader will set the right permission set when appropriate, reverting before we call                    
+                    ImportFromReader(personalizableProperties, part, reader);                    
                     errorMessage = null;
                     // Return imported part
                     return part;
                 }
                 catch (XmlException) {
-                    errorMessage = SR.GetString(SR.WebPartManager_ImportInvalidFormat);
+                    errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_ImportInvalidFormat);
                     return null;
                 }
                 catch (Exception e) {
                     if ((Context != null) && (Context.IsCustomErrorEnabled)) {
                         errorMessage = (importErrorMessage.Length != 0) ?
                             importErrorMessage :
-                            SR.GetString(SR.WebPart_DefaultImportErrorMessage);
+                            System.Web.SR.GetString(System.Web.SR.WebPart_DefaultImportErrorMessage);
                     }
                     else {
                         errorMessage = e.Message;
                     }
                     return null;
-                }
-                finally {
-                    if (permitOnly) {
-                        // revert if you're not just exiting the stack frame anyway
-                        CodeAccessPermission.RevertPermitOnly();
-                    }
-                }
+                }                
             }
             catch {
                 throw;
@@ -2963,206 +2892,162 @@ if (zoneElement != null) {{
                                       Control target,
                                       XmlReader reader) {
 
-            Debug.Assert(target != null);
+            System.Web.Util.Debug.Assert(target != null);
 
             ImportReadTo(reader, ExportPropertyElement);
+            
+            try {                
+                IDictionary properties;
+                if (personalizableProperties != null) {
+                    properties = new HybridDictionary();
+                }
+                else {
+                    properties = new PersonalizationDictionary();
+                }
+                // Set properties from the xml document
+                while (reader.Name == ExportPropertyElement) {
+                    // Get the name of the property
+                    string propertyName = reader.GetAttribute(ExportPropertyNameAttribute);
+                    string typeName = reader.GetAttribute(ExportPropertyTypeAttribute);
+                    string scope = reader.GetAttribute(ExportPropertyScopeAttribute);
+                    bool isNull = String.Equals(
+                        reader.GetAttribute(ExportPropertyNullAttribute),
+                        "true",
+                        StringComparison.OrdinalIgnoreCase);
 
-            bool permitOnly = false;
+                    // Do not import Zone information or AuthorizationFilter or custom data
+                    if (propertyName == AuthorizationFilterName ||
+                            propertyName == ZoneIDName ||
+                            propertyName == ZoneIndexName) {
 
-            if (UsePermitOnly) {
-                MinimalPermissionSet.PermitOnly();
-                permitOnly = true;
-            }
-
-            try {
-                try {
-                    IDictionary properties;
-                    if (personalizableProperties != null) {
-                        properties = new HybridDictionary();
+                        reader.ReadElementString();
+                        if (!reader.Read()) {
+                            throw new XmlException();
+                        }
                     }
                     else {
-                        properties = new PersonalizationDictionary();
-                    }
-                    // Set properties from the xml document
-                    while (reader.Name == ExportPropertyElement) {
-                        // Get the name of the property
-                        string propertyName = reader.GetAttribute(ExportPropertyNameAttribute);
-                        string typeName = reader.GetAttribute(ExportPropertyTypeAttribute);
-                        string scope = reader.GetAttribute(ExportPropertyScopeAttribute);
-                        bool isNull = String.Equals(
-                            reader.GetAttribute(ExportPropertyNullAttribute),
-                            "true",
-                            StringComparison.OrdinalIgnoreCase);
-
-                        // Do not import Zone information or AuthorizationFilter or custom data
-                        if (propertyName == AuthorizationFilterName ||
-                             propertyName == ZoneIDName ||
-                             propertyName == ZoneIndexName) {
-
-                            reader.ReadElementString();
-                            if (!reader.Read()) {
-                                throw new XmlException();
+                        string valString = reader.ReadElementString();
+                        object val = null;
+                        bool valueComputed = false;
+                        PropertyInfo pi = null;
+                        if (personalizableProperties != null) {
+                            // Get the relevant personalizable property on the target (no need to check the property is personalizable)
+                            PersonalizablePropertyEntry entry = (PersonalizablePropertyEntry)(personalizableProperties[propertyName]);
+                            if (entry != null) {
+                                pi = entry.PropertyInfo;
+                                System.Web.Util.Debug.Assert(pi != null);
+                                // If the property is a url, validate protocol (VSWhidbey 290418)
+                                UrlPropertyAttribute urlAttr = Attribute.GetCustomAttribute(pi, typeof(UrlPropertyAttribute), true) as UrlPropertyAttribute;
+                                if (urlAttr != null && CrossSiteScriptingValidation.IsDangerousUrl(valString)) {
+                                    throw new InvalidDataException(System.Web.SR.GetString(System.Web.SR.WebPart_BadUrl, valString));
+                                }
                             }
                         }
-                        else {
-                            string valString = reader.ReadElementString();
-                            object val = null;
-                            bool valueComputed = false;
-                            PropertyInfo pi = null;
-                            if (personalizableProperties != null) {
-                                // Get the relevant personalizable property on the target (no need to check the property is personalizable)
-                                PersonalizablePropertyEntry entry = (PersonalizablePropertyEntry)(personalizableProperties[propertyName]);
-                                if (entry != null) {
-                                    pi = entry.PropertyInfo;
-                                    Debug.Assert(pi != null);
-                                    // If the property is a url, validate protocol (VSWhidbey 290418)
-                                    UrlPropertyAttribute urlAttr = Attribute.GetCustomAttribute(pi, typeof(UrlPropertyAttribute), true) as UrlPropertyAttribute;
-                                    if (urlAttr != null && CrossSiteScriptingValidation.IsDangerousUrl(valString)) {
-                                        throw new InvalidDataException(SR.GetString(SR.WebPart_BadUrl, valString));
-                                    }
-                                }
-                            }
 
-                            Type type = null;
-                            if (!String.IsNullOrEmpty(typeName)) {
-                                if (UsePermitOnly) {
-                                    // Need medium trust to call BuildManager.GetType()
-                                    CodeAccessPermission.RevertPermitOnly();
-                                    permitOnly = false;
-                                    MediumPermissionSet.PermitOnly();
-                                    permitOnly = true;
-                                }
-                                type = GetExportType(typeName);
+                        Type type = null;
+                        if (!String.IsNullOrEmpty(typeName)) {                                
+                            type = GetExportType(typeName);                                
+                        }
 
-                                if (UsePermitOnly) {
-                                    CodeAccessPermission.RevertPermitOnly();
-                                    permitOnly = false;
-                                    MinimalPermissionSet.PermitOnly();
-                                    permitOnly = true;
-                                }
-                            }
-
-                            if ((pi != null) && ((pi.PropertyType == type) || (type == null))) {
-                                // Look at the target property
-                                // See if the property itself has a type converter associated with it
-                                TypeConverterAttribute attr = Attribute.GetCustomAttribute(pi, typeof(TypeConverterAttribute), true) as TypeConverterAttribute;
-                                if (attr != null) {
-                                    if (UsePermitOnly) {
-                                        // Need medium trust to call BuildManager.GetType()
-                                        CodeAccessPermission.RevertPermitOnly();
-                                        permitOnly = false;
-                                        MediumPermissionSet.PermitOnly();
-                                        permitOnly = true;
-                                    }
-
-                                    Type converterType = WebPartUtil.DeserializeType(attr.ConverterTypeName, false);
-
-                                    if (UsePermitOnly) {
-                                        CodeAccessPermission.RevertPermitOnly();
-                                        permitOnly = false;
-                                        MinimalPermissionSet.PermitOnly();
-                                        permitOnly = true;
-                                    }
-
-                                    // SECURITY: Check that the type is a subclass of TypeConverter before instantiating.
-                                    if (converterType != null && converterType.IsSubclassOf(typeof(TypeConverter))) {
-                                        TypeConverter converter = (TypeConverter)(Internals.CreateObjectFromType(converterType));
-                                        if (Util.CanConvertToFrom(converter, typeof(string))) {
-                                            if (!isNull) {
-                                                val = converter.ConvertFromInvariantString(valString);
-                                            }
-                                            valueComputed = true;
-                                        }
-                                    }
-                                }
-                                // Then, look at the converters on the property type
-                                if (!valueComputed) {
-                                    // Use the type converter associated with the type itself
-                                    TypeConverter converter = TypeDescriptor.GetConverter(pi.PropertyType);
+                        if ((pi != null) && ((pi.PropertyType == type) || (type == null))) {
+                            // Look at the target property
+                            // See if the property itself has a type converter associated with it
+                            TypeConverterAttribute attr = Attribute.GetCustomAttribute(pi, typeof(TypeConverterAttribute), true) as TypeConverterAttribute;
+                            if (attr != null) {                                
+                                Type converterType = WebPartUtil.DeserializeType(attr.ConverterTypeName, false);
+                                
+                                // SECURITY: Check that the type is a subclass of TypeConverter before instantiating.
+                                if (converterType != null && converterType.IsSubclassOf(typeof(TypeConverter))) {
+                                    TypeConverter converter = (TypeConverter)(Internals.CreateObjectFromType(converterType));
                                     if (Util.CanConvertToFrom(converter, typeof(string))) {
                                         if (!isNull) {
                                             val = converter.ConvertFromInvariantString(valString);
                                         }
                                         valueComputed = true;
-                                        // Not importing anything else for security reasons
                                     }
                                 }
                             }
-                            // finally, use the XML-specified type
-                            if (!valueComputed && (type != null)) {
-                                // Look at the XML-declared type
-                                if (type == typeof(string)) {
+                            // Then, look at the converters on the property type
+                            if (!valueComputed) {
+                                // Use the type converter associated with the type itself
+                                TypeConverter converter = TypeDescriptor.GetConverter(pi.PropertyType);
+                                if (Util.CanConvertToFrom(converter, typeof(string))) {
                                     if (!isNull) {
-                                        val = valString;
+                                        val = converter.ConvertFromInvariantString(valString);
+                                    }
+                                    valueComputed = true;
+                                    // Not importing anything else for security reasons
+                                }
+                            }
+                        }
+                        // finally, use the XML-specified type
+                        if (!valueComputed && (type != null)) {
+                            // Look at the XML-declared type
+                            if (type == typeof(string)) {
+                                if (!isNull) {
+                                    val = valString;
+                                }
+                                valueComputed = true;
+                            }
+                            else {
+                                TypeConverter typeConverter = TypeDescriptor.GetConverter(type);
+                                if (Util.CanConvertToFrom(typeConverter, typeof(string))) {
+                                    if (!isNull) {
+                                        val = typeConverter.ConvertFromInvariantString(valString);
                                     }
                                     valueComputed = true;
                                 }
-                                else {
-                                    TypeConverter typeConverter = TypeDescriptor.GetConverter(type);
-                                    if (Util.CanConvertToFrom(typeConverter, typeof(string))) {
-                                        if (!isNull) {
-                                            val = typeConverter.ConvertFromInvariantString(valString);
-                                        }
-                                        valueComputed = true;
-                                    }
-                                }
                             }
+                        }
 
-                            // Always want to import a null IPersonalizable value, since we will never have a type
-                            // converter for the value.  However, we should not import a null Personalizable value
-                            // unless the PropertyInfo had a type converter, since the property may be a value type
-                            // that cannot accept null as a value. (VSWhidbey 537895)
-                            if (isNull && personalizableProperties == null) {
-                                valueComputed = true;
-                            }
+                        // Always want to import a null IPersonalizable value, since we will never have a type
+                        // converter for the value.  However, we should not import a null Personalizable value
+                        // unless the PropertyInfo had a type converter, since the property may be a value type
+                        // that cannot accept null as a value. (VSWhidbey 537895)
+                        if (isNull && personalizableProperties == null) {
+                            valueComputed = true;
+                        }
 
-                            // Now we should have a value (val)
-                            if (valueComputed) {
-                                if (personalizableProperties != null) {
-                                    properties.Add(propertyName, val);
-                                }
-                                else {
-                                    // Determine scope:
-                                    PersonalizationScope personalizationScope =
-                                        String.Equals(scope, PersonalizationScope.Shared.ToString(), StringComparison.OrdinalIgnoreCase) ?
-                                        PersonalizationScope.Shared : PersonalizationScope.User;
-                                    properties.Add(propertyName, new PersonalizationEntry(val, personalizationScope));
-                                }
+                        // Now we should have a value (val)
+                        if (valueComputed) {
+                            if (personalizableProperties != null) {
+                                properties.Add(propertyName, val);
                             }
                             else {
-                                throw new HttpException(SR.GetString(SR.WebPartManager_ImportInvalidData, propertyName));
+                                // Determine scope:
+                                PersonalizationScope personalizationScope =
+                                    String.Equals(scope, PersonalizationScope.Shared.ToString(), StringComparison.OrdinalIgnoreCase) ?
+                                    PersonalizationScope.Shared : PersonalizationScope.User;
+                                properties.Add(propertyName, new PersonalizationEntry(val, personalizationScope));
                             }
                         }
-                        while (reader.Name != ExportPropertyElement) {
-                            if (reader.EOF ||
-                                (reader.Name == ExportGenericPartPropertiesElement) ||
-                                (reader.Name == ExportPropertiesElement) ||
-                                ((reader.Name == ExportIPersonalizableElement) && (reader.NodeType == XmlNodeType.EndElement))) {
-                                goto EndOfData;
-                            }
-                            reader.Skip();
+                        else {
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.WebPartManager_ImportInvalidData, propertyName));
                         }
                     }
-                    EndOfData:
-                    if (personalizableProperties != null) {
-                        IDictionary unused = BlobPersonalizationState.SetPersonalizedProperties(target, properties);
-                        if ((unused != null) && (unused.Count > 0)) {
-                            IVersioningPersonalizable versioningTarget = target as IVersioningPersonalizable;
-                            if (versioningTarget != null) {
-                                versioningTarget.Load(unused);
-                            }
+                    while (reader.Name != ExportPropertyElement) {
+                        if (reader.EOF ||
+                            (reader.Name == ExportGenericPartPropertiesElement) ||
+                            (reader.Name == ExportPropertiesElement) ||
+                            ((reader.Name == ExportIPersonalizableElement) && (reader.NodeType == XmlNodeType.EndElement))) {
+                            goto EndOfData;
                         }
-                    }
-                    else {
-                        Debug.Assert(target is IPersonalizable);
-                        ((IPersonalizable)target).Load((PersonalizationDictionary)properties);
+                        reader.Skip();
                     }
                 }
-                finally {
-                    if (permitOnly) {
-                        // revert if you're not just exiting the stack frame anyway
-                        CodeAccessPermission.RevertPermitOnly();
+                EndOfData:
+                if (personalizableProperties != null) {
+                    IDictionary unused = BlobPersonalizationState.SetPersonalizedProperties(target, properties);
+                    if ((unused != null) && (unused.Count > 0)) {
+                        IVersioningPersonalizable versioningTarget = target as IVersioningPersonalizable;
+                        if (versioningTarget != null) {
+                            versioningTarget.Load(unused);
+                        }
                     }
+                }
+                else {
+                    System.Web.Util.Debug.Assert(target is IPersonalizable);
+                    ((IPersonalizable)target).Load((PersonalizationDictionary)properties);
                 }
             }
             catch {
@@ -3177,12 +3062,12 @@ if (zoneElement != null) {{
 
             if (type == typeof(UserControl)) {
                 if (String.IsNullOrEmpty(path)) {
-                    throw new ArgumentException(SR.GetString(SR.WebPartManager_PathCannotBeEmpty));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_PathCannotBeEmpty));
                 }
             }
             else {
                 if (!String.IsNullOrEmpty(path)) {
-                    throw new ArgumentException(SR.GetString(SR.WebPartManager_PathMustBeEmpty, path));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_PathMustBeEmpty, path));
                 }
             }
 
@@ -3255,7 +3140,7 @@ if (zoneElement != null) {{
             else {
                 object[] myState = (object[])savedState;
                 if (myState.Length != controlStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_ControlState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_ControlState));
                 }
 
                 base.LoadControlState(myState[baseIndex]);
@@ -3305,7 +3190,7 @@ if (zoneElement != null) {{
             if (entry != null) {
                 object[] dynamicConnectionState = (object[])entry.Value;
                 if (dynamicConnectionState != null) {
-                    Debug.Assert(dynamicConnectionState.Length % 7 == 0);
+                    System.Web.Util.Debug.Assert(dynamicConnectionState.Length % 7 == 0);
                     for (int i = 0; i < dynamicConnectionState.Length; i += 7) {
                         string ID = (string)dynamicConnectionState[i];
                         string consumerID = (string)dynamicConnectionState[i + 1];
@@ -3333,7 +3218,7 @@ if (zoneElement != null) {{
                                 Internals.SetTransformer(connection, transformer);
                             }
                             else {
-                                throw new InvalidOperationException(SR.GetString(SR.WebPartTransformerAttribute_NotTransformer, type.Name));
+                                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartTransformerAttribute_NotTransformer, type.Name));
                             }
                         }
 
@@ -3349,10 +3234,10 @@ if (zoneElement != null) {{
             if (type == null) {
                 string errorMessage;
                 if (Context != null && Context.IsCustomErrorEnabled) {
-                    errorMessage = SR.GetString(SR.WebPartManager_ErrorLoadingWebPartType);
+                    errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_ErrorLoadingWebPartType);
                 }
                 else {
-                    errorMessage = SR.GetString(SR.Invalid_type, typeName);
+                    errorMessage = System.Web.SR.GetString(System.Web.SR.Invalid_type, typeName);
                 }
                 dynamicWebPart = CreateErrorWebPart(id, typeName, path, genericWebPartID, errorMessage);
             }
@@ -3368,10 +3253,10 @@ if (zoneElement != null) {{
                         // (VSWhidbey 381646)
                         string errorMessage;
                         if (Context != null && Context.IsCustomErrorEnabled) {
-                            errorMessage = SR.GetString(SR.WebPartManager_CantCreateInstance);
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_CantCreateInstance);
                         }
                         else {
-                            errorMessage = SR.GetString(SR.WebPartManager_CantCreateInstanceWithType, typeName);
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_CantCreateInstanceWithType, typeName);
                         }
                         dynamicWebPart = CreateErrorWebPart(id, typeName, path, genericWebPartID, errorMessage);
                     }
@@ -3386,7 +3271,7 @@ if (zoneElement != null) {{
                     Control childControl = null;
                     try {
                         if (!String.IsNullOrEmpty(path)) {
-                            Debug.Assert(type == typeof(UserControl));
+                            System.Web.Util.Debug.Assert(type == typeof(UserControl));
                             childControl = Page.LoadControl(path);
                         }
                         else {
@@ -3401,22 +3286,22 @@ if (zoneElement != null) {{
                         string errorMessage;
                         if (childControl == null && String.IsNullOrEmpty(path)) {
                             if (Context != null && Context.IsCustomErrorEnabled) {
-                                errorMessage = SR.GetString(SR.WebPartManager_CantCreateInstance);
+                                errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_CantCreateInstance);
                             }
                             else {
-                                errorMessage = SR.GetString(SR.WebPartManager_CantCreateInstanceWithType, typeName);
+                                errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_CantCreateInstanceWithType, typeName);
                             }
                         }
                         else if (childControl == null) {
                             if (Context != null && Context.IsCustomErrorEnabled) {
-                                errorMessage = SR.GetString(SR.WebPartManager_InvalidPath);
+                                errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_InvalidPath);
                             }
                             else {
-                                errorMessage = SR.GetString(SR.WebPartManager_InvalidPathWithPath, path);
+                                errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_InvalidPathWithPath, path);
                             }
                         }
                         else {
-                            errorMessage = SR.GetString(SR.WebPartManager_CantCreateGeneric);
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_CantCreateGeneric);
                         }
                         dynamicWebPart = CreateErrorWebPart(id, typeName, path, genericWebPartID, errorMessage);
                     }
@@ -3430,15 +3315,15 @@ if (zoneElement != null) {{
                 // the type (VSWhidbey 428511).
                 string errorMessage;
                 if (Context != null && Context.IsCustomErrorEnabled) {
-                    errorMessage = SR.GetString(SR.WebPartManager_TypeMustDeriveFromControl);
+                    errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_TypeMustDeriveFromControl);
                 }
                 else {
-                    errorMessage = SR.GetString(SR.WebPartManager_TypeMustDeriveFromControlWithType, typeName);
+                    errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_TypeMustDeriveFromControlWithType, typeName);
                 }
                 dynamicWebPart = CreateErrorWebPart(id, typeName, path, genericWebPartID, errorMessage);
             }
 
-            Debug.Assert(dynamicWebPart != null);
+            System.Web.Util.Debug.Assert(dynamicWebPart != null);
             Internals.SetIsStatic(dynamicWebPart, false);
             Internals.SetIsShared(dynamicWebPart, isShared);
             Internals.AddWebPart(dynamicWebPart);
@@ -3448,7 +3333,7 @@ if (zoneElement != null) {{
             if (entry != null) {
                 object[] dynamicWebPartState = (object[])entry.Value;
                 if (dynamicWebPartState != null) {
-                    Debug.Assert(dynamicWebPartState.Length % 4 == 0);
+                    System.Web.Util.Debug.Assert(dynamicWebPartState.Length % 4 == 0);
                     bool isShared = (entry.Scope == PersonalizationScope.Shared);
 
                     // 
@@ -3489,11 +3374,11 @@ if (zoneElement != null) {{
 
                         if (connectionToDelete != null) {
                             // Only shared connections can be deleted
-                            Debug.Assert(connectionToDelete.IsShared);
+                            System.Web.Util.Debug.Assert(connectionToDelete.IsShared);
 
                             // In shared scope, only static connections should be deleted
                             // In user scope, static and dynamic connections can be deleted
-                            Debug.Assert(connectionToDelete.IsStatic || entry.Scope == PersonalizationScope.User);
+                            System.Web.Util.Debug.Assert(connectionToDelete.IsStatic || entry.Scope == PersonalizationScope.User);
 
                             Internals.DeleteConnection(connectionToDelete);
                         }
@@ -3515,7 +3400,7 @@ if (zoneElement != null) {{
             if (entry != null) {
                 object[] webPartState = (object[])entry.Value;
                 if (webPartState != null) {
-                    Debug.Assert(webPartState.Length % 4 == 0);
+                    System.Web.Util.Debug.Assert(webPartState.Length % 4 == 0);
                     for (int i=0; i < webPartState.Length; i += 4) {
                         string id = (string)webPartState[i];
                         string zoneID = (string)webPartState[i + 1];
@@ -3549,19 +3434,19 @@ if (zoneElement != null) {{
                 throw new ArgumentNullException("webPart");
             }
             if (!Controls.Contains(webPart)) {
-                throw new ArgumentException(SR.GetString(SR.UnknownWebPart), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.UnknownWebPart), "webPart");
             }
             if (zone == null) {
                 throw new ArgumentNullException("zone");
             }
             if (_webPartZones.Contains(zone) == false) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_MustRegister), "zone");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_MustRegister), "zone");
             }
             if (zoneIndex < 0) {
                 throw new ArgumentOutOfRangeException("zoneIndex");
             }
             if (webPart.Zone == null || webPart.IsClosed) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_MustBeInZone), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_MustBeInZone), "webPart");
             }
 
             // Return immediately if moving part to its current location
@@ -3633,8 +3518,8 @@ if (zoneElement != null) {{
                     WebPartManager existingInstance = (WebPartManager)page.Items[typeof(WebPartManager)];
 
                     if (existingInstance != null) {
-                        Debug.Assert(existingInstance != this);
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartManager_OnlyOneInstance));
+                        System.Web.Util.Debug.Assert(existingInstance != this);
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_OnlyOneInstance));
                     }
 
                     page.Items[typeof(WebPartManager)] = this;
@@ -3657,7 +3542,7 @@ if (zoneElement != null) {{
             if (!DesignMode) {
                 Page page = Page;
 
-                Debug.Assert(page != null);
+                System.Web.Util.Debug.Assert(page != null);
                 if (page != null) {
                     page.Items.Remove(typeof(WebPartManager));
                 }
@@ -3904,25 +3789,25 @@ if (zoneElement != null) {{
         }
 
         internal void RegisterZone(WebZone zone) {
-            Debug.Assert(zone != null);
+            System.Web.Util.Debug.Assert(zone != null);
 
             if (_pageInitComplete) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartManager_RegisterTooLate));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_RegisterTooLate));
             }
 
             string zoneID = zone.ID;
             if (String.IsNullOrEmpty(zoneID)) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_NoZoneID), "zone");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_NoZoneID), "zone");
             }
             if (_zoneIDs.Contains(zoneID)) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_DuplicateZoneID, zoneID));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_DuplicateZoneID, zoneID));
             }
             _zoneIDs.Add(zoneID, zone);
 
             WebPartZoneBase webPartZone = zone as WebPartZoneBase;
             if (webPartZone != null) {
                 if (_webPartZones.Contains(webPartZone)) {
-                    throw new ArgumentException(SR.GetString(SR.WebPartManager_AlreadyRegistered), "zone");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_AlreadyRegistered), "zone");
                 }
 
                 _webPartZones.Add(webPartZone);
@@ -3931,7 +3816,7 @@ if (zoneElement != null) {{
                 ((WebPartManagerControlCollection)Controls).AddWebPartsFromZone(webPartZone, initialWebParts);
             }
             else {
-                Debug.Assert(zone is ToolZone);
+                System.Web.Util.Debug.Assert(zone is ToolZone);
                 ToolZone toolZone = (ToolZone)zone;
 
                 WebPartDisplayModeCollection allDisplayModes = DisplayModes;
@@ -3968,7 +3853,7 @@ if (zoneElement != null) {{
         /// Removes a web part from its zone, and renumbers all the remaining parts sequentially.
         /// </devdoc>
         private void RemoveWebPartFromZone(WebPart webPart) {
-            Debug.Assert(!webPart.IsClosed);
+            System.Web.Util.Debug.Assert(!webPart.IsClosed);
 
             WebPartZoneBase zone = webPart.Zone;
             Internals.SetIsClosed(webPart, true);
@@ -4134,10 +4019,10 @@ if (zoneElement != null) {{
                 for (int i=0; i < deletedConnectionsCount; i++) {
                     WebPartConnection deletedConnection = (WebPartConnection)deletedConnections[i];
                     // Only shared connections can be deleted
-                    Debug.Assert(deletedConnection.IsShared);
+                    System.Web.Util.Debug.Assert(deletedConnection.IsShared);
                     // In shared scope, only static connections should be deleted
                     // In user scope, static and dynamic connections can be deleted
-                    Debug.Assert(deletedConnection.IsStatic || scope == PersonalizationScope.User);
+                    System.Web.Util.Debug.Assert(deletedConnection.IsStatic || scope == PersonalizationScope.User);
                     deletedConnectionsState[i] = deletedConnection.ID;
                 }
                 if (scope == PersonalizationScope.Shared) {
@@ -4169,7 +4054,7 @@ if (zoneElement != null) {{
 
                     // We should never be saving a deleted dynamic connection.  If the User has deleted a
                     // a shared connection, the connection will be saved in the Shared data, not here.
-                    Debug.Assert(!Internals.ConnectionDeleted(connection));
+                    System.Web.Util.Debug.Assert(!Internals.ConnectionDeleted(connection));
 
                     dynamicConnectionState[7*i] = connection.ID;
                     dynamicConnectionState[7*i + 1] = connection.ConsumerID;
@@ -4201,7 +4086,7 @@ if (zoneElement != null) {{
         // Returns true if the WebPart should currently be rendered in the Zone.  Determines
         // which WebParts are returned by GetWebPartsForZone.
         private bool ShouldRenderWebPartInZone(WebPart part, WebPartZoneBase zone) {
-            Debug.Assert(part.Zone == zone);
+            System.Web.Util.Debug.Assert(part.Zone == zone);
 
             // Never render UnauthorizedWebParts
             if (part is UnauthorizedWebPart) {
@@ -4287,7 +4172,7 @@ if (zoneElement != null) {{
         /// collection when deleted.
         /// </devdoc>
         private bool ShouldRemoveConnection(WebPartConnection connection) {
-            Debug.Assert(Personalization.IsModifiable);
+            System.Web.Util.Debug.Assert(Personalization.IsModifiable);
 
             if (connection.IsShared && (Personalization.Scope == PersonalizationScope.User)) {
                 // Can't remove shared connection in user mode
@@ -4318,7 +4203,7 @@ if (zoneElement != null) {{
             Type loadedType = WebPartUtil.DeserializeType(typeName, /* throwOnError */ false);
             if (loadedType != type) {
                 throw new InvalidOperationException(
-                    SR.GetString(SR.WebPartManager_CantAddControlType, typeName));
+                    System.Web.SR.GetString(System.Web.SR.WebPartManager_CantAddControlType, typeName));
             }
         }
 
@@ -4347,7 +4232,7 @@ if (zoneElement != null) {{
 
             public WebPartManagerControlCollection(WebPartManager owner) : base(owner) {
                 _manager = owner;
-                SetCollectionReadOnly(SR.WebPartManager_CannotModify);
+                SetCollectionReadOnly(System.Web.SR.WebPartManager_CannotModify);
             }
 
             internal void AddWebPart(WebPart webPart) {
@@ -4369,10 +4254,10 @@ if (zoneElement != null) {{
             private void AddWebPartHelper(WebPart webPart) {
                 string partID = webPart.ID;
                 if (String.IsNullOrEmpty(partID)) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartManager_NoWebPartID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_NoWebPartID));
                 }
                 if (_manager._partAndChildControlIDs.Contains(partID)) {
-                   throw new InvalidOperationException(SR.GetString(SR.WebPartManager_DuplicateWebPartID, partID));
+                   throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_DuplicateWebPartID, partID));
                 }
 
                 // Add to dictionary to prevent duplicate IDs, even if this part is not authorized.  Don't want page
@@ -4385,11 +4270,11 @@ if (zoneElement != null) {{
                     string childControlID = genericWebPart.ChildControl.ID;
 
                     if (String.IsNullOrEmpty(childControlID)) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartManager_NoChildControlID));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_NoChildControlID));
                     }
 
                     if (_manager._partAndChildControlIDs.Contains(childControlID)) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartManager_DuplicateWebPartID, childControlID));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManager_DuplicateWebPartID, childControlID));
                     }
 
                     _manager._partAndChildControlIDs.Add(childControlID, null);
@@ -4515,7 +4400,7 @@ if (zoneElement != null) {{
             private CultureInfo _uiCulture;
 
             public ConnectionPointKey(Type type, CultureInfo culture, CultureInfo uiCulture) {
-                 Debug.Assert(type != null && culture != null && uiCulture != null);
+                 System.Web.Util.Debug.Assert(type != null && culture != null && uiCulture != null);
 
                  _type = type;
                  _culture = culture;

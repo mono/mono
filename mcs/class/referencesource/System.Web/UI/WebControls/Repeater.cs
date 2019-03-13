@@ -104,7 +104,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_OnCreatingModelDataSource)
+        WebSysDescription(System.Web.SR.DataBoundControl_OnCreatingModelDataSource)
         ]
         public event CreatingModelDataSourceEventHandler CreatingModelDataSource {
             add {
@@ -122,7 +122,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_ItemType)
+        WebSysDescription(System.Web.SR.DataBoundControl_ItemType)
         ]
         public virtual string ItemType {
             get {
@@ -143,7 +143,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_SelectMethod)
+        WebSysDescription(System.Web.SR.DataBoundControl_SelectMethod)
         ]
         public virtual string SelectMethod {
             get {
@@ -163,7 +163,7 @@ namespace System.Web.UI.WebControls {
         /// </summary>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_CallingDataMethods)
+        WebSysDescription(System.Web.SR.DataBoundControl_CallingDataMethods)
         ]
         public event CallingDataMethodsEventHandler CallingDataMethods {
             add {
@@ -186,7 +186,7 @@ namespace System.Web.UI.WebControls {
             DefaultValue(null),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(RepeaterItem)),
-            WebSysDescription(SR.Repeater_AlternatingItemTemplate)
+            WebSysDescription(System.Web.SR.Repeater_AlternatingItemTemplate)
         ]
         public virtual ITemplate AlternatingItemTemplate {
             get {
@@ -212,7 +212,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.Repeater_DataMember)
+        WebSysDescription(System.Web.SR.Repeater_DataMember)
         ]
         public virtual string DataMember {
             get {
@@ -237,7 +237,7 @@ namespace System.Web.UI.WebControls {
             WebCategory("Data"),
             DefaultValue(null),
             DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-            WebSysDescription(SR.BaseDataBoundControl_DataSource)
+            WebSysDescription(System.Web.SR.BaseDataBoundControl_DataSource)
         ]
         public virtual object DataSource {
             get {
@@ -249,7 +249,7 @@ namespace System.Web.UI.WebControls {
                     OnDataPropertyChanged();
                 }
                 else {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_DataSource_Type, ID));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_DataSource_Type, ID));
                 }
             }
         }
@@ -265,7 +265,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         IDReferenceProperty(typeof(DataSourceControl)),
         WebCategory("Data"),
-        WebSysDescription(SR.BaseDataBoundControl_DataSourceID)
+        WebSysDescription(System.Web.SR.BaseDataBoundControl_DataSourceID)
         ]
         public virtual string DataSourceID {
             get {
@@ -306,7 +306,7 @@ namespace System.Web.UI.WebControls {
             DefaultValue(null),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(RepeaterItem)),
-            WebSysDescription(SR.Repeater_FooterTemplate)
+            WebSysDescription(System.Web.SR.Repeater_FooterTemplate)
         ]
         public virtual ITemplate FooterTemplate {
             get {
@@ -326,7 +326,7 @@ namespace System.Web.UI.WebControls {
             DefaultValue(null),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(RepeaterItem)),
-            WebSysDescription(SR.WebControl_HeaderTemplate)
+            WebSysDescription(System.Web.SR.WebControl_HeaderTemplate)
         ]
         public virtual ITemplate HeaderTemplate {
             get {
@@ -364,7 +364,7 @@ namespace System.Web.UI.WebControls {
         [
             Browsable(false),
             DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-            WebSysDescription(SR.Repeater_Items)
+            WebSysDescription(System.Web.SR.Repeater_Items)
         ]
         public virtual RepeaterItemCollection Items {
             get {
@@ -387,7 +387,7 @@ namespace System.Web.UI.WebControls {
             DefaultValue(null),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(RepeaterItem)),
-            WebSysDescription(SR.Repeater_ItemTemplate)
+            WebSysDescription(System.Web.SR.Repeater_ItemTemplate)
         ]
         public virtual ITemplate ItemTemplate {
             get {
@@ -427,7 +427,7 @@ namespace System.Web.UI.WebControls {
             DefaultValue(null),
             PersistenceMode(PersistenceMode.InnerProperty),
             TemplateContainer(typeof(RepeaterItem)),
-            WebSysDescription(SR.Repeater_SeparatorTemplate)
+            WebSysDescription(System.Web.SR.Repeater_SeparatorTemplate)
         ]
         public virtual ITemplate SeparatorTemplate {
             get {
@@ -445,7 +445,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
        [
         WebCategory("Action"),
-        WebSysDescription(SR.Repeater_OnItemCommand)
+        WebSysDescription(System.Web.SR.Repeater_OnItemCommand)
         ]
         public event RepeaterCommandEventHandler ItemCommand {
             add {
@@ -463,7 +463,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.DataControls_OnItemCreated)
+        WebSysDescription(System.Web.SR.DataControls_OnItemCreated)
         ]
         public event RepeaterItemEventHandler ItemCreated {
             add {
@@ -480,7 +480,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.DataControls_OnItemDataBound)
+        WebSysDescription(System.Web.SR.DataControls_OnItemDataBound)
         ]
         public event RepeaterItemEventHandler ItemDataBound {
             add {
@@ -515,7 +515,7 @@ namespace System.Web.UI.WebControls {
             IDataSource ds = null;
             if (!DesignMode && IsUsingModelBinders) {
                 if (DataSourceID.Length != 0 || DataSource != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.DataControl_ItemType_MultipleDataSources, ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_ItemType_MultipleDataSources, ID));
                 }
                 //Let the developer choose a custom ModelDataSource.
                 CreatingModelDataSourceEventArgs e = new CreatingModelDataSourceEventArgs();
@@ -542,11 +542,11 @@ namespace System.Web.UI.WebControls {
                     // Try to find a DataSource control with the ID specified in DataSourceID
                     Control control = DataBoundControlHelper.FindControl(this, dataSourceID);
                     if (control == null) {
-                        throw new HttpException(SR.GetString(SR.DataControl_DataSourceDoesntExist, ID, dataSourceID));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControl_DataSourceDoesntExist, ID, dataSourceID));
                     }
                     ds = control as IDataSource;
                     if (ds == null) {
-                        throw new HttpException(SR.GetString(SR.DataControl_DataSourceIDMustBeDataControl, ID, dataSourceID));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControl_DataSourceIDMustBeDataControl, ID, dataSourceID));
                     }
                 }
             }
@@ -558,14 +558,14 @@ namespace System.Web.UI.WebControls {
             else {
                 // Ensure that both DataSourceID as well as DataSource are not set at the same time
                 if (DataSource != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.DataControl_MultipleDataSources, ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_MultipleDataSources, ID));
                 }
             }
 
             // IDataSource was found, extract the appropriate view and return it
             DataSourceView newView = ds.GetView(DataMember);
             if (newView == null) {
-                throw new InvalidOperationException(SR.GetString(SR.DataControl_ViewNotFound, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_ViewNotFound, ID));
             }
 
             _currentViewIsFromDataSourceID = IsDataBindingAutomatic;
@@ -762,7 +762,7 @@ namespace System.Web.UI.WebControls {
         protected virtual IEnumerable GetData() {
             DataSourceView view = ConnectToDataSourceView();
 
-            Debug.Assert(_currentViewValid);
+            System.Web.Util.Debug.Assert(_currentViewValid);
 
             if (view != null) {
                 // DevDiv 1070535: enable async model binding for Repeater
@@ -859,7 +859,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected virtual void OnDataPropertyChanged() {
             if (_throwOnDataPropertyChange) {
-                throw new HttpException(SR.GetString(SR.DataBoundControl_InvalidDataPropertyChange, ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBoundControl_InvalidDataPropertyChange, ID));
             }
             
             if (_inited) {

@@ -4,6 +4,7 @@ namespace System.Web.Handlers {
     using System.Web;
     using System.Collections;
     using System.Collections.Specialized;
+    
 
     internal class TraceHandlerErrorFormatter : ErrorFormatter {
         bool _isRemote;
@@ -13,15 +14,15 @@ namespace System.Web.Handlers {
         }
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.Trace_Error_Title);}
+            get { return System.Web.SR.GetString(System.Web.SR.Trace_Error_Title);}
         }
 
         protected override string Description {
             get { 
                 if(_isRemote)
-                    return SR.GetString(SR.Trace_Error_LocalOnly_Description);
+                    return System.Web.SR.GetString(System.Web.SR.Trace_Error_LocalOnly_Description);
                 else
-                    return HttpUtility.HtmlEncode(SR.GetString(SR.Trace_Error_Enabled_Description));
+                    return HttpUtility.HtmlEncode(System.Web.SR.GetString(System.Web.SR.Trace_Error_Enabled_Description));
             }
         }
 
@@ -35,7 +36,7 @@ namespace System.Web.Handlers {
 
         protected override string ColoredSquareTitle {
             get {
-                string detailsTitle = SR.GetString(SR.Generic_Err_Details_Title);
+                string detailsTitle = System.Web.SR.GetString(System.Web.SR.Generic_Err_Details_Title);
                 AdaptiveMiscContent.Add(detailsTitle);
                 return detailsTitle;
             }
@@ -45,9 +46,9 @@ namespace System.Web.Handlers {
             get {
                 string description;
                 if(_isRemote)
-                    description = HttpUtility.HtmlEncode(SR.GetString(SR.Trace_Error_LocalOnly_Details_Desc));
+                    description = HttpUtility.HtmlEncode(System.Web.SR.GetString(System.Web.SR.Trace_Error_LocalOnly_Details_Desc));
                 else
-                    description = HttpUtility.HtmlEncode(SR.GetString(SR.Trace_Error_Enabled_Details_Desc));
+                    description = HttpUtility.HtmlEncode(System.Web.SR.GetString(System.Web.SR.Trace_Error_Enabled_Details_Desc));
 
                 AdaptiveMiscContent.Add(description);
                 return description;
@@ -58,9 +59,9 @@ namespace System.Web.Handlers {
             get {
                 string content;
                 if(_isRemote)
-                    content = HttpUtility.HtmlEncode(SR.GetString(SR.Trace_Error_LocalOnly_Details_Sample));
+                    content = HttpUtility.HtmlEncode(System.Web.SR.GetString(System.Web.SR.Trace_Error_LocalOnly_Details_Sample));
                 else
-                    content = HttpUtility.HtmlEncode(SR.GetString(SR.Trace_Error_Enabled_Details_Sample));
+                    content = HttpUtility.HtmlEncode(System.Web.SR.GetString(System.Web.SR.Trace_Error_Enabled_Details_Sample));
 
                 return WrapWithLeftToRightTextFormatIfNeeded(content);
             }

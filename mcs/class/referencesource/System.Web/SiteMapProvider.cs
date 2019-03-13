@@ -17,6 +17,7 @@ namespace System.Web {
     using System.Web.UI;
     using System.Web.Util;
     using System.Security.Permissions;
+    
 
     public abstract class SiteMapProvider : ProviderBase {
 
@@ -88,7 +89,7 @@ namespace System.Web {
                             providers.Add(candidate, null);
                             while (candidate.ParentProvider != null) {
                                 if (providers.Contains(candidate.ParentProvider))
-                                    throw new ProviderException(SR.GetString(SR.SiteMapProvider_Circular_Provider));
+                                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.SiteMapProvider_Circular_Provider));
 
                                 candidate = candidate.ParentProvider;
                                 providers.Add(candidate, null);
@@ -262,7 +263,7 @@ namespace System.Web {
         }
 
         private SiteMapNode GetParentNodesInternal(SiteMapNode node, int walkupLevels) {
-            Debug.Assert(node != null);
+            System.Web.Util.Debug.Assert(node != null);
             if (walkupLevels <= 0) {
                 return node;
             }

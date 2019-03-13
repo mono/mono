@@ -158,6 +158,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		[Category("NunitWeb")]
 		[ExpectedException(typeof(HttpException))]
+		[Ignore("MONO REFSRC - Test does not throw exception in refsrc.")]
 		public void  EnsureDataBound ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnInit (EnsureDataBound_Init));

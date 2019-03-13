@@ -22,7 +22,9 @@ namespace System.Web.UI {
 
     [
     DefaultProperty("Scripts"),
+#if !MONO
     Designer("System.Web.UI.Design.ScriptManagerProxyDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+#endif
     NonVisualControl(),
     ParseChildren(true),
     PersistChildren(false),
@@ -159,8 +161,10 @@ namespace System.Web.UI {
         ResourceDescription("ScriptManager_Scripts"),
         Category("Behavior"),
         DefaultValue(null),
+#if !MONO
         Editor("System.Web.UI.Design.CollectionEditorBase, " +
             AssemblyRef.SystemWebExtensionsDesign, typeof(UITypeEditor)),
+#endif
         PersistenceMode(PersistenceMode.InnerProperty),
         MergableProperty(false),
         ]
@@ -177,8 +181,10 @@ namespace System.Web.UI {
         ResourceDescription("ScriptManager_Services"),
         Category("Behavior"),
         DefaultValue(null),
+#if !MONO
         Editor("System.Web.UI.Design.ServiceReferenceCollectionEditor, " +
             AssemblyRef.SystemWebExtensionsDesign, typeof(UITypeEditor)),
+#endif
         PersistenceMode(PersistenceMode.InnerProperty),
         MergableProperty(false),
         ]

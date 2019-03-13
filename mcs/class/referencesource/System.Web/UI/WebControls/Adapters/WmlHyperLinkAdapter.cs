@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls.Adapters {
 
             // If cookieless mode is on, we need to apply the app path modifier for if the request is authenticated
             HttpContext context = HttpContext.Current;
-            Debug.Assert(context != null);
+            System.Web.Util.Debug.Assert(context != null);
             bool cookieless = CookielessHelperClass.UseCookieless(context, false, FormsAuthentication.CookieMode);
             if (cookieless && context.Request != null && context.Request.IsAuthenticated && context.Response != null) {
                 targetUrl = context.Response.ApplyAppPathModifier(targetUrl);

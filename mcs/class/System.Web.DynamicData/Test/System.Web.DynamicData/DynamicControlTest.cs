@@ -72,6 +72,9 @@ namespace MonoTests.System.Web.DynamicData
 			// This is ran before every test
 			FieldTemplatePathTables.CleanUp_FullTypeNameTemplates ();
 			FieldTemplatePathTables.CleanUp_ShortTypeNameTemplates ();
+
+			FieldTemplatePathTables.SetUp_FullTypeNameTemplates(this);
+			FieldTemplatePathTables.SetUp_ShortTypeNameTemplates(this);
 		}
 
 		[TestFixtureSetUp]
@@ -254,7 +257,7 @@ namespace MonoTests.System.Web.DynamicData
 			string html = @"<span class=""activeCssClass"">
 
 <span class=""field"">Active</span>:";
-			Assert.IsTrue (p.IndexOf (html.Replace ("\r\n", "\n")) != -1, "#Y1");
+			Assert.IsTrue (p.IndexOf (HtmlDiff.FixupEnvironmentNewLine (html)) != -1, "#Y1");
 		}
 
 		static void CssClass_OnLoad (Page p)
@@ -501,13 +504,9 @@ namespace MonoTests.System.Web.DynamicData
 			delegates.PreRenderComplete = FieldTemplate_OnPreRenderComplete_1;
 			test.Invoker = new PageInvoker (delegates);
 			var fr = new FormRequest (test.Response, "form1");
-#if TARGET_DOTNET
 			fr.Controls.Add ("ListView4$ctrl0$editMe");
 			fr.Controls["ListView4$ctrl0$editMe"].Value = "Edit";
-#else
-			fr.Controls.Add ("ListView4$ctl01$editMe");
-			fr.Controls["ListView4$ctl01$editMe"].Value = "Edit";
-#endif
+
 			test.Request = fr;
 			p = test.Run ();
 
@@ -556,7 +555,6 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreNotEqual (HttpStatusCode.NotFound, test.Response.StatusCode, "#X1-1{0}Returned HTML:{0}{1}", Environment.NewLine, p);
 			Assert.AreNotEqual (HttpStatusCode.InternalServerError, test.Response.StatusCode, "#X1-2{0}Returned HTML:{0}{1}", Environment.NewLine, p);
 			Assert.IsFalse (String.IsNullOrEmpty (p), "#X1-3");
-
 		}
 
 		static void FieldTemplate_OnLoad_2 (Page p)
@@ -610,7 +608,8 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNotNull (lc, "#A1");
 
 			int counter = 1;
-			foreach (var entry in FieldTemplatePathTables.FieldTemplateNonDefaultShortColumns) {
+			// for whatever reason, this is expected non default columns
+			foreach (var entry in FieldTemplatePathTables.FieldTemplateNonDefaultColumns) {
 				string columnName = entry.ColumnName;
 				var dc = lc.FindChild<PokerDynamicControl> (columnName);
 				Assert.IsNotNull (dc, String.Format ("#B{0}-1 ({1})", counter, columnName));

@@ -32,7 +32,7 @@ namespace System.Data.Linq.SqlClient {
 					HashSet<SqlAlias> c = SqlGatherConsumedAliases.Gather(join.Right);
 					// Look at each consumed alias and see if they are mentioned in produced.
                     if (p.Overlaps(c)) {
-						Annotations.Add(join, new SqlServerCompatibilityAnnotation(Strings.SourceExpressionAnnotation(join.SourceExpression), SqlProvider.ProviderMode.Sql2000));
+						Annotations.Add(join, new SqlServerCompatibilityAnnotation(SR.Format(SR.SourceExpressionAnnotation, join.SourceExpression), SqlProvider.ProviderMode.Sql2000));
 						// Can't reduce because this consumed alias is produced on the left.
 						return base.VisitJoin(join);
 					}

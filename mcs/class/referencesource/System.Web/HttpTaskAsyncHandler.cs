@@ -14,6 +14,7 @@ namespace System.Web {
     using System;
     using System.ComponentModel;
     using System.Threading.Tasks;
+    
 
     public abstract class HttpTaskAsyncHandler : IHttpAsyncHandler {
 
@@ -27,7 +28,7 @@ namespace System.Web {
         [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual void ProcessRequest(HttpContext context) {
             // Default implementation is that this isn't synchronously callable - can be overridden by developer.
-            string errorMessage = SR.GetString(SR.HttpTaskAsyncHandler_CannotExecuteSynchronously, GetType());
+            string errorMessage = System.Web.SR.GetString(System.Web.SR.HttpTaskAsyncHandler_CannotExecuteSynchronously, GetType());
             throw new NotSupportedException(errorMessage);
         }
 

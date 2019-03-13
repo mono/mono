@@ -96,9 +96,9 @@ namespace System.Web.Hosting {
 
         void Adjust() {
             // not thread-safe, only invoke from timer callback
-            Debug.Assert(_inPBytesMonitorThread == 1);
+            System.Web.Util.Debug.Assert(_inPBytesMonitorThread == 1);
 
-            Debug.Assert(SAMPLE_COUNT == 2);
+            System.Web.Util.Debug.Assert(SAMPLE_COUNT == 2);
             // current sample
             long s2 = _samples[_idx];
             // previous sample
@@ -151,7 +151,7 @@ namespace System.Web.Hosting {
 
         void AdjustMaxDeltaAndPressureMarks(long delta) {
             // not thread-safe...only invoke from ctor or timer callback
-            Debug.Assert(_inPBytesMonitorThread == 1 || _timer == null);
+            System.Web.Util.Debug.Assert(_inPBytesMonitorThread == 1 || _timer == null);
 
             // The value of _maxDelta is the largest rate of change we've seen, 
             // but it is reduced if the rate is now consistently less than what
@@ -197,7 +197,7 @@ namespace System.Web.Hosting {
 #endif
 
 #if DBG
-                Debug.Trace("CacheMemory", "AdjustMaxDeltaAndPressureMarks "
+                System.Web.Util.Debug.Trace("CacheMemory", "AdjustMaxDeltaAndPressureMarks "
                             + "delta=" + delta
                             + ", _maxDelta=" + _maxDelta
                             + ", _highPressureMark=" + _highPressureMark
@@ -211,7 +211,7 @@ namespace System.Web.Hosting {
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", Justification="Need to call GC.Collect.")]
         private void CollectInfrequently(long privateBytes) {
             // not thread-safe, only invoke from timer callback
-            Debug.Assert(_inPBytesMonitorThread == 1);
+            System.Web.Util.Debug.Assert(_inPBytesMonitorThread == 1);
 
             // The Server GC on x86 can traverse ~200mb per CPU per second, and the maximum heap size
             // is about 3400mb, so the worst case scenario on x86 would take about 8 seconds to collect
@@ -240,7 +240,7 @@ namespace System.Web.Hosting {
                 long trimmedOrExpired = 0;
                 if (percent > 0) {
                     Stopwatch sw1 = Stopwatch.StartNew();
-                    trimmedOrExpired = _appManager.TrimCaches(percent);
+                    //trimmedOrExpired = _appManager.TrimCaches(percent);
                     sw1.Stop();
                     _trimDurationTicks = sw1.Elapsed.Ticks;
                 }
@@ -271,7 +271,7 @@ namespace System.Web.Hosting {
                     _inducedGCMinInterval = Math.Max(_inducedGCMinInterval, 60 * TimeSpan.TicksPerSecond);
                 }
 #if DBG
-                Debug.Trace("CacheMemory", "GC.COLLECT STATS "
+                System.Web.Util.Debug.Trace("CacheMemory", "GC.COLLECT STATS "
                             + "TrimCaches(" + percent + ")"
                             + ", trimDurationSeconds=" + (_trimDurationTicks/TimeSpan.TicksPerSecond)
                             + ", trimmedOrExpired=" + trimmedOrExpired
@@ -354,7 +354,7 @@ namespace System.Web.Hosting {
                 }
 
 #if DBG
-                Debug.Trace("CacheMemory", "\r\n\r\n***BEG** PBytesMonitorThread " + DateTime.Now.ToString("T", CultureInfo.InvariantCulture));
+                System.Web.Util.Debug.Trace("CacheMemory", "\r\n\r\n***BEG** PBytesMonitorThread " + DateTime.Now.ToString("T", CultureInfo.InvariantCulture));
 #endif
                 // get another sample
                 long privateBytes = NextSample();
@@ -368,7 +368,7 @@ namespace System.Web.Hosting {
                 }
 
 #if DBG
-                Debug.Trace("CacheMemory", "**END** PBytesMonitorThread " 
+                System.Web.Util.Debug.Trace("CacheMemory", "**END** PBytesMonitorThread " 
                             + "privateBytes=" + privateBytes
                             + ", _highPressureMark=" + _highPressureMark);
 #endif
@@ -381,14 +381,16 @@ namespace System.Web.Hosting {
 
         private long NextSample() {
             // not thread-safe, only invoke from timer callback
-            Debug.Assert(_inPBytesMonitorThread == 1);
+            System.Web.Util.Debug.Assert(_inPBytesMonitorThread == 1);
 
             // NtQuerySystemInformation is a very expensive call. A new function 
             // exists on XP Pro and later versions of the OS and it performs much 
             // better. The name of that function is GetProcessMemoryInfo. For hosting
             // scenarios where a larger number of w3wp.exe instances are running, we 
             // want to use the new API (VSWhidbey 417366).
-            long privateBytes;
+            long privateBytes = 0;
+
+#if (!MONO || !FEATURE_PAL)
             if (_useGetProcessMemoryInfo) {
                 long privatePageCount;
                 UnsafeNativeMethods.GetPrivateBytesIIS6(out privatePageCount, true /*nocache*/);
@@ -403,7 +405,7 @@ namespace System.Web.Hosting {
             }
         
             // increment the index (it's either 1 or 0)
-            Debug.Assert(SAMPLE_COUNT == 2);
+            System.Web.Util.Debug.Assert(SAMPLE_COUNT == 2);
             _idx = _idx ^ 1;
             // remember the sample time
             _sampleTimes[_idx] = DateTime.UtcNow;
@@ -412,6 +414,7 @@ namespace System.Web.Hosting {
 
 #if PERF
             SafeNativeMethods.OutputDebugString(String.Format("CacheManager.NextSample:  privateBytes={0:N}, _highPresureMark={1:N}\n", privateBytes, _highPressureMark));
+#endif
 #endif
 
             return privateBytes;

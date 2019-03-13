@@ -18,6 +18,7 @@ namespace System.Web.UI.WebControls {
     using System.Text;
     using System.Web.Configuration;
     using System.Configuration;
+    
 
     /// <devdoc>
     /// Defines an email message.  Smaller object model than System.Net.Mail.MailMessage.  Creates a MailMessage
@@ -41,7 +42,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.MailDefinition_BodyFileName),
+        WebSysDescription(System.Web.SR.MailDefinition_BodyFileName),
         Editor("System.Web.UI.Design.WebControls.MailDefinitionBodyFileNameEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty("*.*"),
         NotifyParentProperty(true)
@@ -62,7 +63,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.MailDefinition_CC),
+        WebSysDescription(System.Web.SR.MailDefinition_CC),
         NotifyParentProperty(true)
         ]
         public string CC {
@@ -82,7 +83,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.MailDefinition_From),
+        WebSysDescription(System.Web.SR.MailDefinition_From),
         NotifyParentProperty(true)
         ]
         public string From {
@@ -104,7 +105,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Behavior"),
-        WebSysDescription(SR.MailDefinition_EmbeddedObjects),
+        WebSysDescription(System.Web.SR.MailDefinition_EmbeddedObjects),
         ]
         public EmbeddedMailObjectsCollection EmbeddedObjects {
             get {
@@ -118,7 +119,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.MailDefinition_IsBodyHtml),
+        WebSysDescription(System.Web.SR.MailDefinition_IsBodyHtml),
         NotifyParentProperty(true)
         ]
         public bool IsBodyHtml {
@@ -134,7 +135,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(MailPriority.Normal),
-        WebSysDescription(SR.MailDefinition_Priority),
+        WebSysDescription(System.Web.SR.MailDefinition_Priority),
         NotifyParentProperty(true)
         ]
         public MailPriority Priority {
@@ -157,7 +158,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.MailDefinition_Subject),
+        WebSysDescription(System.Web.SR.MailDefinition_Subject),
         NotifyParentProperty(true)
         ]
         public string Subject {
@@ -209,9 +210,9 @@ namespace System.Web.UI.WebControls {
             string bodyFileName = BodyFileName;
             if (!String.IsNullOrEmpty(bodyFileName)) {
                 string path = bodyFileName;
-                if (!UrlPath.IsAbsolutePhysicalPath(path)) {
+                if (!System.Web.Util.UrlPath.IsAbsolutePhysicalPath(path)) {
                     // Relative so we need to add the template source directory to the path
-                    path = UrlPath.Combine(owner.AppRelativeTemplateSourceDirectory, path);
+                    path = System.Web.Util.UrlPath.Combine(owner.AppRelativeTemplateSourceDirectory, path);
                 }
 
                 TextReader reader = new StreamReader(owner.OpenFile(path));
@@ -238,7 +239,7 @@ namespace System.Web.UI.WebControls {
             if (String.IsNullOrEmpty(from)) {
                 System.Net.Configuration.SmtpSection smtpSection = RuntimeConfig.GetConfig().Smtp;
                 if (smtpSection == null || smtpSection.Network == null || String.IsNullOrEmpty(smtpSection.From)) {
-                    throw new HttpException(SR.GetString(SR.MailDefinition_NoFromAddressSpecified));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.MailDefinition_NoFromAddressSpecified));
                 }
                 else {
                     from = smtpSection.From;
@@ -263,7 +264,7 @@ namespace System.Web.UI.WebControls {
                         string toString = replacements[key] as string;
 
                         if ((fromString == null) || (toString == null)) {
-                            throw new ArgumentException(SR.GetString(SR.MailDefinition_InvalidReplacements));
+                            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.MailDefinition_InvalidReplacements));
                         }
                         // DevDiv 151177
                         // According to http://msdn2.microsoft.com/en-us/library/ewy2t5e0.aspx, some special 
@@ -284,9 +285,9 @@ namespace System.Web.UI.WebControls {
                     foreach (EmbeddedMailObject part in EmbeddedObjects) {
                         string path = part.Path;
                         if (String.IsNullOrEmpty(path)) {
-                            throw ExceptionUtil.PropertyNullOrEmpty("EmbeddedMailObject.Path");
+                            throw System.Web.Util.ExceptionUtil.PropertyNullOrEmpty("EmbeddedMailObject.Path");
                         }
-                        if (!UrlPath.IsAbsolutePhysicalPath(path)) {
+                        if (!System.Web.Util.UrlPath.IsAbsolutePhysicalPath(path)) {
                             VirtualPath virtualPath = VirtualPath.Combine(owner.TemplateControlVirtualDirectory,
                                 VirtualPath.Create(path));
                             path = virtualPath.AppRelativeVirtualPathString;
@@ -307,7 +308,7 @@ namespace System.Web.UI.WebControls {
                                 throw;
                             }
                             lr.ContentId = part.Name;
-                            lr.ContentType.Name = UrlPath.GetFileName(path);
+                            lr.ContentType.Name = System.Web.Util.UrlPath.GetFileName(path);
                             view.LinkedResources.Add(lr);
                         }
                         catch {

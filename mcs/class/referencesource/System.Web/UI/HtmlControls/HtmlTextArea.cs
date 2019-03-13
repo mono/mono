@@ -19,6 +19,7 @@ namespace System.Web.UI.HtmlControls {
     using System.Web.UI;
     using System.Globalization;
     using System.Security.Permissions;
+    
 
 
     /// <devdoc>
@@ -154,7 +155,7 @@ namespace System.Web.UI.HtmlControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.HtmlTextArea_OnServerChange)
+        WebSysDescription(System.Web.SR.HtmlTextArea_OnServerChange)
         ]
         public event EventHandler ServerChange {
             add {
@@ -174,7 +175,7 @@ namespace System.Web.UI.HtmlControls {
             if (obj is LiteralControl || obj is DataBoundLiteralControl)
                 base.AddParsedSubObject(obj);
             else
-                throw new HttpException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "HtmlTextArea", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "HtmlTextArea", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
         }
 
 

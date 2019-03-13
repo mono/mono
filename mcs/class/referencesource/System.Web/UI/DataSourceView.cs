@@ -9,6 +9,7 @@ namespace System.Web.UI {
     using System.Collections;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     public abstract class DataSourceView {
 
@@ -274,15 +275,15 @@ namespace System.Web.UI {
 
         protected internal virtual void RaiseUnsupportedCapabilityError(DataSourceCapabilities capability) {
             if (!CanPage && ((capability & DataSourceCapabilities.Page) != 0)) {
-                throw new NotSupportedException(SR.GetString(SR.DataSourceView_NoPaging));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.DataSourceView_NoPaging));
             }
         
             if (!CanSort && ((capability & DataSourceCapabilities.Sort) != 0)) {
-                throw new NotSupportedException(SR.GetString(SR.DataSourceView_NoSorting));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.DataSourceView_NoSorting));
             }
         
             if (!CanRetrieveTotalRowCount && ((capability & DataSourceCapabilities.RetrieveTotalRowCount) != 0)) {
-                throw new NotSupportedException(SR.GetString(SR.DataSourceView_NoRowCount));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.DataSourceView_NoRowCount));
             }
         }
 

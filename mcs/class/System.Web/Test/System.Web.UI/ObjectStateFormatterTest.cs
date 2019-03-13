@@ -85,6 +85,7 @@ namespace MonoTests.System.Web.UI
 		}
 
 		[Test (Description="Bug #565547")]
+		[Ignore("MONO REFSRC - App.Test.ECCN does not exist in this project")]
 		public void StateFormatter_CollectionFormatter ()
 		{
 			WebTest t = new WebTest ("StateFormatter_CollectionConverter.aspx");

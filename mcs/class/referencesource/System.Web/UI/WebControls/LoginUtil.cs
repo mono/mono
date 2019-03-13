@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls {
             else {
                 provider = Membership.Providers[providerName];
                 if (provider == null) {
-                    throw new HttpException(SR.GetString(SR.WebControl_CantFindProvider));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.WebControl_CantFindProvider));
                 }
             }
             return provider;
@@ -305,7 +305,7 @@ namespace System.Web.UI.WebControls {
             }
 
             public sealed override void Focus() {
-                throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
             }
 
             private Control FindControl<RequiredType>(string id, bool required, string errorResourceKey) {
@@ -316,7 +316,7 @@ namespace System.Web.UI.WebControls {
                 else {
                     // Do not throw exception at design-time (VSWhidbey 429452)
                     if (required && !Owner.DesignMode) {
-                        throw new HttpException(SR.GetString(errorResourceKey, Owner.ID, id));
+                        throw new HttpException(System.Web.SR.GetString(errorResourceKey, Owner.ID, id));
                     }
                     else {
                         return null;
@@ -350,7 +350,7 @@ namespace System.Web.UI.WebControls {
                 if (!RenderOuterTable) {
                     string propertyName = ModifiedOuterTableStylePropertyName();
                     if (!string.IsNullOrEmpty(propertyName)) {
-                        throw new InvalidOperationException(SR.GetString(SR.IRenderOuterTableControl_CannotSetStyleWhenDisableRenderOuterTable,
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.IRenderOuterTableControl_CannotSetStyleWhenDisableRenderOuterTable,
                                                             propertyName, _owner.GetType().Name, _owner.ID));
                     }
                 }
@@ -443,7 +443,7 @@ namespace System.Web.UI.WebControls {
             protected void VerifyControlNotPresent<RequiredType>(string id, string errorResourceKey) {
                 Control control = FindOptionalControl<RequiredType>(id);
                 if (control != null && !Owner.DesignMode) {
-                    throw new HttpException(SR.GetString(errorResourceKey, Owner.ID, id));
+                    throw new HttpException(System.Web.SR.GetString(errorResourceKey, Owner.ID, id));
                 }
             }
         }

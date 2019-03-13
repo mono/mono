@@ -356,7 +356,7 @@ namespace System.Web.WebSockets {
 
         // Releases resources associated with this object; similar to calling Abort
         public override void Dispose() {
-            throw new NotSupportedException(SR.GetString(SR.AspNetWebSocket_DisposeNotSupported));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.AspNetWebSocket_DisposeNotSupported));
         }
 
         internal void DisposeInternal() {
@@ -400,7 +400,7 @@ namespace System.Web.WebSockets {
                     if (result.MessageType == WebSocketMessageType.Close) {
                         // received a CLOSE frame
                         _receiveState = ChannelState.Closed;
-                        Debug.Assert(result.CloseStatus.HasValue, "The CloseStatus property should be non-null when a CLOSE frame is received.");
+                        System.Web.Util.Debug.Assert(result.CloseStatus.HasValue, "The CloseStatus property should be non-null when a CLOSE frame is received.");
                         _closeStatus = result.CloseStatus.Value;
                         _closeStatusDescription = result.CloseStatusDescription;
 
@@ -497,14 +497,14 @@ namespace System.Web.WebSockets {
                 // If the status code is 1005 (Empty), the statusDescription string MUST be null.
                 // This behavior is required by WSPC and matches WCF.
                 if (statusDescription != null) {
-                    throw new ArgumentException(SR.GetString(SR.AspNetWebSocket_CloseStatusEmptyButCloseDescriptionNonNull), "statusDescription");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.AspNetWebSocket_CloseStatusEmptyButCloseDescriptionNonNull), "statusDescription");
                 }
             }
             else if (statusDescription != null) {
                 // Need to make sure the provided status description fits within a single WebSocket control frame.
                 int byteCount = Encoding.UTF8.GetByteCount(statusDescription);
                 if (byteCount > _maxCloseMessageByteCount) {
-                    throw new ArgumentException(SR.GetString(SR.AspNetWebSocket_CloseDescriptionTooLong, _maxCloseMessageByteCount), "statusDescription");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.AspNetWebSocket_CloseDescriptionTooLong, _maxCloseMessageByteCount), "statusDescription");
                 }
             }
             else {
@@ -520,7 +520,7 @@ namespace System.Web.WebSockets {
                     return; // these are OK
 
                 default:
-                    throw new ArgumentException(SR.GetString(SR.AspNetWebSocket_SendMessageTypeInvalid), "messageType");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.AspNetWebSocket_SendMessageTypeInvalid), "messageType");
             }
         }
 
@@ -539,22 +539,22 @@ namespace System.Web.WebSockets {
         private void ThrowIfSendUnavailable(bool allowClosed = false) {
             switch (_sendState) {
                 case ChannelState.Busy:
-                    throw new InvalidOperationException(SR.GetString(SR.AspNetWebSocket_SendInProgress));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AspNetWebSocket_SendInProgress));
 
                 case ChannelState.Closed:
                     if (allowClosed) { break; }
-                    throw new InvalidOperationException(SR.GetString(SR.AspNetWebSocket_CloseAlreadySent));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AspNetWebSocket_CloseAlreadySent));
             }
         }
 
         private void ThrowIfReceiveUnavailable(bool allowClosed = false) {
             switch (_receiveState) {
                 case ChannelState.Busy:
-                    throw new InvalidOperationException(SR.GetString(SR.AspNetWebSocket_ReceiveInProgress));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AspNetWebSocket_ReceiveInProgress));
 
                 case ChannelState.Closed:
                     if (allowClosed) { break; }
-                    throw new InvalidOperationException(SR.GetString(SR.AspNetWebSocket_CloseAlreadyReceived));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AspNetWebSocket_CloseAlreadyReceived));
             }
         }
 

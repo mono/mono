@@ -10,6 +10,7 @@ namespace System.Web.UI {
     using System.Threading.Tasks;
     using System.Web;
     using System.Web.Util;
+    
 
     // Public class to serve as an interface between ASP.NET's synchronization systems and the user code to be executed asynchronously
 
@@ -36,7 +37,7 @@ namespace System.Web.UI {
 
             // Only the legacy PageAsyncTaskManager supports timing out APM methods or executing them in parallel
             if (timeoutHandler != null || executeInParallel) {
-                SynchronizationContextUtil.ValidateMode(currentMode, requiredMode: SynchronizationContextMode.Legacy, specificErrorMessage: SR.SynchronizationContextUtil_PageAsyncTaskTimeoutHandlerParallelNotCompatible);
+                SynchronizationContextUtil.ValidateMode(currentMode, requiredMode: SynchronizationContextMode.Legacy, specificErrorMessage: System.Web.SR.SynchronizationContextUtil_PageAsyncTaskTimeoutHandlerParallelNotCompatible);
             }
 
             BeginHandler = beginHandler;
@@ -62,7 +63,7 @@ namespace System.Web.UI {
             }
 
             // The legacy PageAsyncTaskManager doesn't support TAP methods
-            SynchronizationContextUtil.ValidateMode(currentMode, requiredMode: SynchronizationContextMode.Normal, specificErrorMessage: SR.SynchronizationContextUtil_TaskReturningPageAsyncMethodsNotCompatible);
+            SynchronizationContextUtil.ValidateMode(currentMode, requiredMode: SynchronizationContextMode.Normal, specificErrorMessage: System.Web.SR.SynchronizationContextUtil_TaskReturningPageAsyncMethodsNotCompatible);
 
             TaskHandler = handler;
         }

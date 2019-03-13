@@ -282,7 +282,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.PerformDataBinding (data);
 		}
 
-		protected internal override void PrepareControlHierarchy ()
+		protected override void PrepareControlHierarchy ()
 		{
 			base.PrepareControlHierarchy ();
 			controlHierarchy = true;
@@ -864,6 +864,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void GridView_DeleteItem ()
 		{
 			PokerGridView g = new PokerGridView ();
+			g.EnableModelValidation = false;
 			ArrayList myds = new ArrayList ();
 			myds.Add ("Norway");
 			myds.Add ("Sweden");

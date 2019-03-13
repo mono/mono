@@ -35,7 +35,7 @@ namespace System.Web.UI {
                     _allFiltersDictionary = new ListDictionary(StringComparer.OrdinalIgnoreCase);
                     foreach (FilteredAttributeDictionary fac in _filterTable.Values) {
                         foreach (DictionaryEntry entry in fac) {
-                            Debug.Assert(entry.Key != null);
+                            System.Web.Util.Debug.Assert(entry.Key != null);
                             _allFiltersDictionary[Util.CreateFilteredName(fac.Filter, entry.Key.ToString())] = entry.Value;
                         }
                     }
@@ -51,7 +51,7 @@ namespace System.Web.UI {
         /// </devdoc>
         public void AddFilteredAttribute(string filter, string name, string value) {
             if (String.IsNullOrEmpty(name)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("name");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("name");
             }
 
             if (value == null) {
@@ -82,7 +82,7 @@ namespace System.Web.UI {
         /// <param name="line">The line number where the attribute value expression is present.</param>
         /// <param name="column">The column value where the attribute value expression begins. Note that this is actually after the attribute name itself.</param>
         public void AddAttributeValuePositionInformation(string name, int line, int column) {
-            Debug.Assert(!String.IsNullOrEmpty(name));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(name));
             Pair pair = new Pair(line, column);
             AttributeValuePositionsDictionary[name] = pair;
         }
@@ -111,7 +111,7 @@ namespace System.Web.UI {
                 foreach (string key in _allFiltersDictionary.Keys) {
                     string attrName;
                     string currentFilter = Util.ParsePropertyDeviceFilter(key, out attrName);
-                    if (StringUtil.EqualsIgnoreCase(currentFilter, filter)) {
+                    if (System.Web.Util.StringUtil.EqualsIgnoreCase(currentFilter, filter)) {
                         removeList.Add(key);
                     }
                 }
@@ -138,7 +138,7 @@ namespace System.Web.UI {
         /// </devdoc>
         public void RemoveFilteredAttribute(string filter, string name) {
             if (String.IsNullOrEmpty(name)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("name");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("name");
             }
 
             if (filter == null) {
@@ -161,7 +161,7 @@ namespace System.Web.UI {
         /// </devdoc>
         public void ReplaceFilteredAttribute(string filter, string name, string value) {
             if (String.IsNullOrEmpty(name)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("name");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("name");
             }
 
             if (filter == null) {

@@ -96,9 +96,14 @@ namespace System.Web.Script.Services {
         }
 
         private static IDictionary<string, object> GetRawParamsFromPostRequest(HttpContext context, JavaScriptSerializer serializer) {
+            string bodyString = "";
+            
             // Read the entire body as a string
-            TextReader reader = new StreamReader(context.Request.InputStream);
-            string bodyString = reader.ReadToEnd();
+            try {
+                TextReader reader = new StreamReader(context.Request.InputStream);
+                bodyString = reader.ReadToEnd();
+            }
+            catch(System.IO.IOException) {}
 
             // If there is no body, treat it as an empty object
             if (String.IsNullOrEmpty(bodyString)) {

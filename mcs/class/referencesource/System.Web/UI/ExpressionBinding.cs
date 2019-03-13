@@ -108,7 +108,7 @@ namespace System.Web.UI {
             if ((obj != null) && (obj is ExpressionBinding)) {
                 ExpressionBinding binding = (ExpressionBinding)obj;
 
-                return StringUtil.EqualsIgnoreCase(_propertyName, binding.PropertyName);
+                return System.Web.Util.StringUtil.EqualsIgnoreCase(_propertyName, binding.PropertyName);
             }
             return false;
         }

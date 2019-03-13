@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls.WebParts {
             get {
                 string displayTitle = Title;
                 if (String.IsNullOrEmpty(displayTitle)) {
-                    displayTitle = SR.GetString(SR.Part_Untitled);
+                    displayTitle = System.Web.SR.GetString(System.Web.SR.Part_Untitled);
                 }
                 return displayTitle;
             }
@@ -68,7 +68,7 @@ namespace System.Web.UI.WebControls.WebParts {
             base.OnPreRender(e);
 
             if (Zone == null) {
-                throw new InvalidOperationException(SR.GetString(SR.CatalogPart_MustBeInZone, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CatalogPart_MustBeInZone, ID));
             }
         }
 

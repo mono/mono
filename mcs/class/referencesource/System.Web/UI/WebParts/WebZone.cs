@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
         WebCategory("Appearance"),
-        WebSysDescription(SR.WebControl_BackImageUrl)
+        WebSysDescription(System.Web.SR.WebControl_BackImageUrl)
         ]
         public virtual string BackImageUrl {
             get {
@@ -77,7 +77,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Localizable(true),
         WebSysDefaultValue(""),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Zone_EmptyZoneText),
+        WebSysDescription(System.Web.SR.Zone_EmptyZoneText),
         ]
         public virtual string EmptyZoneText {
             get {
@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Zone_EmptyZoneTextStyle),
+        WebSysDescription(System.Web.SR.Zone_EmptyZoneTextStyle),
         ]
         public Style EmptyZoneTextStyle {
             get {
@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Zone_ErrorStyle),
+        WebSysDescription(System.Web.SR.Zone_ErrorStyle),
         ]
         public Style ErrorStyle {
             get {
@@ -140,7 +140,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Zone_FooterStyle)
+        WebSysDescription(System.Web.SR.Zone_FooterStyle)
         ]
         public TitleStyle FooterStyle {
             get {
@@ -175,7 +175,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Localizable(true),
         WebSysDefaultValue(""),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Zone_HeaderText)
+        WebSysDescription(System.Web.SR.Zone_HeaderText)
         ]
         public virtual string HeaderText {
             get {
@@ -196,7 +196,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Zone_HeaderStyle)
+        WebSysDescription(System.Web.SR.Zone_HeaderStyle)
         ]
         public TitleStyle HeaderStyle {
             get {
@@ -217,7 +217,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(typeof(Unit), "5px"),
         WebCategory("WebPart"),
-        WebSysDescription(SR.Zone_PartChromePadding)
+        WebSysDescription(System.Web.SR.Zone_PartChromePadding)
         ]
         public Unit PartChromePadding {
             get {
@@ -241,7 +241,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("WebPart"),
-        WebSysDescription(SR.Zone_PartChromeStyle)
+        WebSysDescription(System.Web.SR.Zone_PartChromeStyle)
         ]
         public Style PartChromeStyle {
             get {
@@ -262,7 +262,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(PartChromeType.Default),
         WebCategory("WebPart"),
-        WebSysDescription(SR.Zone_PartChromeType)
+        WebSysDescription(System.Web.SR.Zone_PartChromeType)
         ]
         public virtual PartChromeType PartChromeType {
             get {
@@ -286,7 +286,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("WebPart"),
-        WebSysDescription(SR.Zone_PartStyle)
+        WebSysDescription(System.Web.SR.Zone_PartStyle)
         ]
         public TableStyle PartStyle {
             get {
@@ -310,7 +310,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("WebPart"),
-        WebSysDescription(SR.Zone_PartTitleStyle)
+        WebSysDescription(System.Web.SR.Zone_PartTitleStyle)
         ]
         public TitleStyle PartTitleStyle {
             get {
@@ -335,7 +335,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(2),
         WebCategory("Layout"),
-        WebSysDescription(SR.Zone_Padding),
+        WebSysDescription(System.Web.SR.Zone_Padding),
         ]
         public virtual int Padding {
             get {
@@ -430,7 +430,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(ButtonType.Button),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Zone_VerbButtonType),
+        WebSysDescription(System.Web.SR.Zone_VerbButtonType),
         ]
         public virtual ButtonType VerbButtonType {
             get {
@@ -451,7 +451,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Zone_VerbStyle),
+        WebSysDescription(System.Web.SR.Zone_VerbStyle),
         ]
         public Style VerbStyle {
             get {
@@ -486,7 +486,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 }
             }
 
-            Debug.Assert(chromeType != PartChromeType.Default);
+            System.Web.Util.Debug.Assert(chromeType != PartChromeType.Default);
             return chromeType;
         }
 
@@ -497,7 +497,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 object[] myState = (object[]) savedState;
                 if (myState.Length != viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[baseIndex]);
@@ -532,16 +532,16 @@ namespace System.Web.UI.WebControls.WebParts {
             base.OnInit(e);
 
             Page page = Page;
-            Debug.Assert(page != null);
+            System.Web.Util.Debug.Assert(page != null);
             if (page != null) {
                 if (page.ControlState >= ControlState.Initialized && !DesignMode) {
-                    throw new InvalidOperationException(SR.GetString(SR.Zone_AddedTooLate));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Zone_AddedTooLate));
                 }
 
                 if (!DesignMode) {
                     _webPartManager = WebPartManager.GetCurrentWebPartManager(page);
                     if (_webPartManager == null) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartManagerRequired));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManagerRequired));
                     }
 
                     _webPartManager.RegisterZone(this);
@@ -553,9 +553,9 @@ namespace System.Web.UI.WebControls.WebParts {
             base.OnPreRender(e);
 
             Control parent = Parent;
-            Debug.Assert(parent != null);
+            System.Web.Util.Debug.Assert(parent != null);
             if (parent != null && (parent is WebZone || parent is Part)) {
-                throw new InvalidOperationException(SR.GetString(SR.Zone_InvalidParent));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Zone_InvalidParent));
             }
         }
 

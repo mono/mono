@@ -192,7 +192,7 @@ namespace System.Web.WebSockets {
             ushort reasonLength;
             int hr = _context.GetCloseStatus(out statusCode, out reasonPtr, out reasonLength);
 
-            if (hr == HResults.E_NOT_SET) {
+            if (hr == System.Web.Util.HResults.E_NOT_SET) {
                 // This HRESULT is special-cased to mean that a status code has not been provided.
                 statusCode = 0;
                 reasonPtr = IntPtr.Zero;

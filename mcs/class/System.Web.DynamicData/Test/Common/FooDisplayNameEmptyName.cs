@@ -7,7 +7,7 @@ using System.Text;
 namespace MonoTests.Common
 {
 	[DisplayName ("")]
-	class FooDisplayNameEmptyName
+	public class FooDisplayNameEmptyName
 	{
 		public string Column1 { get; set; }
 		public int Column2 { get; set; }

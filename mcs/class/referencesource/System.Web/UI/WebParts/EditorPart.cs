@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls.WebParts {
             get {
                 string displayTitle = Title;
                 if (String.IsNullOrEmpty(displayTitle)) {
-                    displayTitle = SR.GetString(SR.Part_Untitled);
+                    displayTitle = System.Web.SR.GetString(System.Web.SR.Part_Untitled);
                 }
                 return displayTitle;
             }
@@ -110,10 +110,10 @@ namespace System.Web.UI.WebControls.WebParts {
         // If custom errors are enabled, we do not want to render the exception message to the browser. (VSWhidbey 381646)
         internal string CreateErrorMessage(string exceptionMessage) {
             if (Context != null && Context.IsCustomErrorEnabled) {
-                return SR.GetString(SR.EditorPart_ErrorSettingProperty);
+                return System.Web.SR.GetString(System.Web.SR.EditorPart_ErrorSettingProperty);
             }
             else {
-                return SR.GetString(SR.EditorPart_ErrorSettingPropertyWithExceptionMessage, exceptionMessage);
+                return System.Web.SR.GetString(System.Web.SR.EditorPart_ErrorSettingPropertyWithExceptionMessage, exceptionMessage);
             }
         }
 
@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls.WebParts {
             base.OnPreRender(e);
 
             if (Zone == null) {
-                throw new InvalidOperationException(SR.GetString(SR.EditorPart_MustBeInZone, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.EditorPart_MustBeInZone, ID));
             }
 
             // Need to set Visible=false so postback is handled correctly for child controls
@@ -151,9 +151,9 @@ namespace System.Web.UI.WebControls.WebParts {
 
         internal void RenderPropertyEditors(HtmlTextWriter writer, string[] propertyDisplayNames, string[] propertyDescriptions,
                                             WebControl[] propertyEditors, string[] errorMessages) {
-            Debug.Assert(propertyDisplayNames.Length == propertyEditors.Length);
-            Debug.Assert(propertyDisplayNames.Length == errorMessages.Length);
-            Debug.Assert(propertyDescriptions == null || (propertyDescriptions.Length == propertyDisplayNames.Length));
+            System.Web.Util.Debug.Assert(propertyDisplayNames.Length == propertyEditors.Length);
+            System.Web.Util.Debug.Assert(propertyDisplayNames.Length == errorMessages.Length);
+            System.Web.Util.Debug.Assert(propertyDescriptions == null || (propertyDescriptions.Length == propertyDisplayNames.Length));
 
             if (propertyDisplayNames.Length == 0) {
                 return;

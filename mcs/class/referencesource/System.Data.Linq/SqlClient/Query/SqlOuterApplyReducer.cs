@@ -142,7 +142,7 @@ namespace System.Data.Linq.SqlClient {
             }
 
             private void AnnotateSqlIncompatibility(SqlNode node, params SqlProvider.ProviderMode[] providers) {
-                this.annotations.Add(node, new SqlServerCompatibilityAnnotation(Strings.SourceExpressionAnnotation(node.SourceExpression), providers));
+                this.annotations.Add(node, new SqlServerCompatibilityAnnotation(SR.Format(SR.SourceExpressionAnnotation, node.SourceExpression), providers));
             }
 
             [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification="Unknown reason.")]

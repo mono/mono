@@ -73,7 +73,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			base.OnDataSourceViewChanged (e);
 		}
 
-		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
+		protected override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
 			throw new Exception ("The method or operation is not implemented.");
 		}

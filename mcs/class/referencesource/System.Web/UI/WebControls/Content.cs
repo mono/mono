@@ -15,6 +15,7 @@ namespace System.Web.UI.WebControls {
     using System.Security.Permissions;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     // ContentBuilder is a builder for content control but acts like a template builder.
     // Designertime it will create the <asp:Content> as a control, but a template
@@ -86,9 +87,9 @@ namespace System.Web.UI.WebControls {
                 string filter = filteredAttributes.Filter;
                 foreach (DictionaryEntry entry in filteredAttributes) {
                     string key = (string)entry.Key;
-                    if (StringUtil.EqualsIgnoreCase(key, _contentPlaceHolderIDPropName)) {
+                    if (System.Web.Util.StringUtil.EqualsIgnoreCase(key, _contentPlaceHolderIDPropName)) {
                         if (_contentPlaceHolder != null) {
-                            throw new HttpException(SR.GetString(SR.Content_only_one_contentPlaceHolderID_allowed));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Content_only_one_contentPlaceHolderID_allowed));
                         }
 
                         _contentPlaceHolder = entry.Value.ToString();
@@ -103,7 +104,7 @@ namespace System.Web.UI.WebControls {
 
             if (!parser.FInDesigner) {
                 if (_contentPlaceHolder == null)
-                    throw new HttpException(SR.GetString(SR.Control_Missing_Attribute, _contentPlaceHolderIDPropName, type.Name));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Control_Missing_Attribute, _contentPlaceHolderIDPropName, type.Name));
 
                 attribs.Clear();
                 // Add the preserevd attributes back to the control
@@ -117,7 +118,7 @@ namespace System.Web.UI.WebControls {
 
         internal override void SetParentBuilder(ControlBuilder parentBuilder) {
             if (!InDesigner && !(parentBuilder is FileLevelPageControlBuilder)) {
-                throw new HttpException(SR.GetString(SR.Content_allowed_in_top_level_only));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Content_allowed_in_top_level_only));
             }
 
             base.SetParentBuilder(parentBuilder);
@@ -148,7 +149,7 @@ namespace System.Web.UI.WebControls {
         IDReferenceProperty(typeof(ContentPlaceHolder)),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Content_ContentPlaceHolderID),
+        WebSysDescription(System.Web.SR.Content_ContentPlaceHolderID),
         ]
         public string ContentPlaceHolderID {
             get {
@@ -159,7 +160,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (!DesignMode)
-                    throw new NotSupportedException(SR.GetString(SR.Property_Set_Not_Supported, "ContentPlaceHolderID", this.GetType().ToString()));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Property_Set_Not_Supported, "ContentPlaceHolderID", this.GetType().ToString()));
 
                 _contentPlaceHolderID = value;
             }

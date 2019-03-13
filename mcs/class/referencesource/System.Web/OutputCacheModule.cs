@@ -55,9 +55,9 @@ namespace System.Web.Caching {
 
             return _varyByAllParams == cv._varyByAllParams
                 && _varyByCustom == cv._varyByCustom
-                && StringUtil.StringArrayEquals(_contentEncodings, cv._contentEncodings)
-                && StringUtil.StringArrayEquals(_headers, cv._headers)
-                && StringUtil.StringArrayEquals(_params, cv._params);
+                && System.Web.Util.StringUtil.StringArrayEquals(_contentEncodings, cv._contentEncodings)
+                && System.Web.Util.StringUtil.StringArrayEquals(_headers, cv._headers)
+                && System.Web.Util.StringUtil.StringArrayEquals(_params, cv._params);
         }
 
         public override int GetHashCode() {
@@ -65,7 +65,7 @@ namespace System.Web.Caching {
             hashCodeCombiner.AddObject(_varyByAllParams);
             
             // Cast _varyByCustom to an object, since the HashCodeCombiner.AddObject(string)
-            // overload uses StringUtil.GetStringHashCode().  We want to use String.GetHashCode()
+            // overload uses System.Web.Util.StringUtil.GetStringHashCode().  We want to use String.GetHashCode()
             // in this method, since we do not require a stable hash code across architectures.
             hashCodeCombiner.AddObject((object)_varyByCustom);
             
@@ -172,7 +172,7 @@ namespace System.Web.Caching {
                             break;
 
                         case 1:
-                            Debug.Assert(cachedVary._params == null || !cachedVary._varyByAllParams, "cachedVary._params == null || !cachedVary._varyByAllParams");
+                            System.Web.Util.Debug.Assert(cachedVary._params == null || !cachedVary._varyByAllParams, "cachedVary._params == null || !cachedVary._varyByAllParams");
 
                             sb.Append("Q");
                             a = cachedVary._params;
@@ -185,7 +185,7 @@ namespace System.Web.Caching {
 
                         case 2:
                         default:
-                            Debug.Assert(cachedVary._params == null || !cachedVary._varyByAllParams, "cachedVary._params == null || !cachedVary._varyByAllParams");
+                            System.Web.Util.Debug.Assert(cachedVary._params == null || !cachedVary._varyByAllParams, "cachedVary._params == null || !cachedVary._varyByAllParams");
 
                             sb.Append("F");
                             if (verb == HttpVerb.POST) {
@@ -199,7 +199,7 @@ namespace System.Web.Caching {
                             break;
                     }
 
-                    Debug.Assert(a == null || !getAllParams, "a == null || !getAllParams");
+                    System.Web.Util.Debug.Assert(a == null || !getAllParams, "a == null || !getAllParams");
 
                     /* handle all params case (VaryByParams[*] = true) */
                     if (getAllParams && col.Count > 0) {
@@ -352,7 +352,7 @@ namespace System.Web.Caching {
                     return 0;
                 }
                 for (int i = startIndex; i < contentEncodings.Length; i++) {
-                    if (StringUtil.EqualsIgnoreCase(contentEncodings[i], acceptEncodingWithoutWeight)) {
+                    if (System.Web.Util.StringUtil.EqualsIgnoreCase(contentEncodings[i], acceptEncodingWithoutWeight)) {
                         return i; // found
                     }
                 }
@@ -518,12 +518,12 @@ namespace System.Web.Caching {
         /// event, which searches the output cache for an item to satisfy the HTTP request. </para>
         /// </devdoc>
         internal void OnEnter(Object source, EventArgs eventArgs) {
-            Debug.Trace("OutputCacheModuleEnter", "Beginning OutputCacheModule::Enter");
+            System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Beginning OutputCacheModule::Enter");
             _key = null;
             _recordedCacheMiss = false;
 
             if (!OutputCache.InUse) {
-                Debug.Trace("OutputCacheModuleEnter", "Miss, no entries in output Cache" + 
+                System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Miss, no entries in output Cache" + 
                             "\nReturning from OutputCacheModule::Enter");
                 return;
             }
@@ -575,7 +575,7 @@ namespace System.Web.Caching {
                     break;
 
                 default:
-                    Debug.Trace("OutputCacheModuleEnter", "Miss, Http method not GET, POST, or HEAD" +
+                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Miss, Http method not GET, POST, or HEAD" +
                                 "\nReturning from OutputCacheModule::Enter");
     
                     return;
@@ -585,14 +585,14 @@ namespace System.Web.Caching {
              * Create a lookup key. Remember the key for use inside Leave()
              */
             _key = key = CreateOutputCachedItemKey(context, null);
-            Debug.Assert(_key != null, "_key != null");
+            System.Web.Util.Debug.Assert(_key != null, "_key != null");
 
             /*
              *  Lookup the cache vary for this key.
              */
             item = OutputCache.Get(key);
             if (item == null) {
-                Debug.Trace("OutputCacheModuleEnter", "Miss, item not found.\n\tkey=" + key +
+                System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Miss, item not found.\n\tkey=" + key +
                             "\nReturning from OutputCacheModule::Enter");
                 return;
             }
@@ -616,7 +616,7 @@ namespace System.Web.Caching {
                 
                 key = CreateOutputCachedItemKey(context, cachedVary);
                 if (key == null) {
-                    Debug.Trace("OutputCacheModuleEnter", "Miss, key could not be created for vary-by item." + 
+                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Miss, key could not be created for vary-by item." + 
                                 "\nReturning from OutputCacheModule::Enter");
                     
                     return;
@@ -629,7 +629,7 @@ namespace System.Web.Caching {
                 }
                 else {
 #if DBG
-                    Debug.Assert(key[key.Length-1] == 'E', "key[key.Length-1] == 'E'");
+                    System.Web.Util.Debug.Assert(key[key.Length-1] == 'E', "key[key.Length-1] == 'E'");
 #endif
                     item = null;
                     bool identityIsAcceptable = true;
@@ -643,7 +643,7 @@ namespace System.Web.Caching {
                             int index = GetAcceptableEncoding(contentEncodings, startIndex, acceptEncoding);
                             if (index > -1) {
 #if DBG                               
-                                Debug.Trace("OutputCacheModuleEnter", "VaryByContentEncoding key=" + key + contentEncodings[index]);
+                                System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "VaryByContentEncoding key=" + key + contentEncodings[index]);
 #endif
                                 identityIsAcceptable = false; // the client Accept-Encoding header contains an encoding that's in the VaryByContentEncoding list
                                 item = OutputCache.Get(key + contentEncodings[index]);
@@ -664,22 +664,22 @@ namespace System.Web.Caching {
                     // the identity should not be used if the client Accept-Encoding contains an entry in the VaryByContentEncoding list or "identity" is not acceptable
                     if (item == null && identityIsAcceptable) {
 #if DBG                               
-                        Debug.Trace("OutputCacheModuleEnter", "VaryByContentEncoding key=" + key);
+                        System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "VaryByContentEncoding key=" + key);
 #endif
                         item = OutputCache.Get(key);   
                     }
                 }
 
-                Debug.Assert(item == null || item is CachedRawResponse, "item == null || item is CachedRawResponse");
+                System.Web.Util.Debug.Assert(item == null || item is CachedRawResponse, "item == null || item is CachedRawResponse");
                 if (item == null || ((CachedRawResponse)item)._cachedVaryId != cachedVary.CachedVaryId) {
 #if DBG
                     if (item == null) {
-                        Debug.Trace("OutputCacheModuleEnter", "Miss, cVary found, cRawResponse not found.\n\t\tkey=" + key +
+                        System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Miss, cVary found, cRawResponse not found.\n\t\tkey=" + key +
                                     "\nReturning from OutputCacheModule::Enter");
                     }
                     else {
                         string msg = "Miss, _cachedVaryId=" + ((CachedRawResponse)item)._cachedVaryId.ToString() + ", cVary.CachedVaryId=" + cachedVary.CachedVaryId.ToString();
-                        Debug.Trace("OutputCacheModuleEnter", msg + key +
+                        System.Web.Util.Debug.Trace("OutputCacheModuleEnter", msg + key +
                                     "\nReturning from OutputCacheModule::Enter");
                     }
 #endif
@@ -693,7 +693,7 @@ namespace System.Web.Caching {
 
             // From this point on, we have an entry to work with.
 
-            Debug.Assert(item is CachedRawResponse, "item is CachedRawResponse");
+            System.Web.Util.Debug.Assert(item is CachedRawResponse, "item is CachedRawResponse");
             cachedRawResponse = (CachedRawResponse) item;
             settings = cachedRawResponse._settings;
             if (cachedVary == null && !settings.IgnoreParams) {
@@ -701,7 +701,7 @@ namespace System.Web.Caching {
                  * This cached output has no vary policy, so make sure it doesn't have a query string or form post.
                  */
                 if (request.HttpVerb == HttpVerb.POST) {
-                    Debug.Trace("OutputCacheModuleEnter", "Output cache item found but method is POST and no VaryByParam specified." +
+                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Output cache item found but method is POST and no VaryByParam specified." +
                                 "\n\tkey=" + key +
                                 "\nReturning from OutputCacheModule::Enter");
                     RecordCacheMiss();
@@ -709,7 +709,7 @@ namespace System.Web.Caching {
                 }
                 
                 if (request.HasQueryString) {
-                    Debug.Trace("OutputCacheModuleEnter", "Output cache item found but contains a querystring and no VaryByParam specified." +
+                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Output cache item found but contains a querystring and no VaryByParam specified." +
                                 "\n\tkey=" + key +
                                 "\nReturning from OutputCacheModule::Enter");
                     RecordCacheMiss();
@@ -719,8 +719,8 @@ namespace System.Web.Caching {
 
             if (settings.IgnoreRangeRequests) {
                 string rangeHeader = request.Headers["Range"];
-                if (StringUtil.StringStartsWithIgnoreCase(rangeHeader, "bytes")) {
-                    Debug.Trace("OutputCacheModuleEnter", "Output cache item found but this is a Range request and IgnoreRangeRequests is true." +
+                if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(rangeHeader, "bytes")) {
+                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Output cache item found but this is a Range request and IgnoreRangeRequests is true." +
                                 "\n\tkey=" + key +
                                 "\nReturning from OutputCacheModule::Enter");
                     // Don't record this as a cache miss. The response for a range request is not cached, and so
@@ -745,7 +745,7 @@ namespace System.Web.Caching {
                     for (i = 0; i < cacheDirectives.Length; i++) {
                         directive = cacheDirectives[i];
                         if (directive == "no-cache" || directive == "no-store") {
-                            Debug.Trace("OutputCacheModuleEnter", 
+                            System.Web.Util.Debug.Trace("OutputCacheModuleEnter", 
                                         "Skipping lookup because of Cache-Control: no-cache or no-store directive." + 
                                         "\nReturning from OutputCacheModule::Enter");
 
@@ -753,7 +753,7 @@ namespace System.Web.Caching {
                             return;
                         }
 
-                        if (StringUtil.StringStartsWith(directive, "max-age=")) {
+                        if (System.Web.Util.StringUtil.StringStartsWith(directive, "max-age=")) {
                             try {
                                 maxage = Convert.ToInt32(directive.Substring(8), CultureInfo.InvariantCulture);
                             }
@@ -764,7 +764,7 @@ namespace System.Web.Caching {
                             if (maxage >= 0) {
                                 age = (int) ((context.UtcTimestamp.Ticks - settings.UtcTimestampCreated.Ticks) / TimeSpan.TicksPerSecond);
                                 if (age >= maxage) {
-                                    Debug.Trace("OutputCacheModuleEnter", 
+                                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", 
                                                 "Not returning found item due to Cache-Control: max-age directive." + 
                                                 "\nReturning from OutputCacheModule::Enter");
 
@@ -773,7 +773,7 @@ namespace System.Web.Caching {
                                 }
                             }
                         }
-                        else if (StringUtil.StringStartsWith(directive, "min-fresh=")) {
+                        else if (System.Web.Util.StringUtil.StringStartsWith(directive, "min-fresh=")) {
                             try {
                                 minfresh = Convert.ToInt32(directive.Substring(10), CultureInfo.InvariantCulture);
                             }
@@ -784,7 +784,7 @@ namespace System.Web.Caching {
                             if (minfresh >= 0 && settings.IsExpiresSet && !settings.SlidingExpiration) {
                                 fresh = (int) ((settings.UtcExpires.Ticks - context.UtcTimestamp.Ticks) / TimeSpan.TicksPerSecond);
                                 if (fresh < minfresh) {
-                                    Debug.Trace("OutputCacheModuleEnter", 
+                                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", 
                                                 "Not returning found item due to Cache-Control: min-fresh directive." + 
                                                 "\nReturning from OutputCacheModule::Enter");
 
@@ -801,7 +801,7 @@ namespace System.Web.Caching {
                     pragmaDirectives = pragma.Split(s_fieldSeparators);
                     for (i = 0; i < pragmaDirectives.Length; i++) {
                         if (pragmaDirectives[i] == "no-cache") {
-                            Debug.Trace("OutputCacheModuleEnter", 
+                            System.Web.Util.Debug.Trace("OutputCacheModuleEnter", 
                                         "Skipping lookup because of Pragma: no-cache directive." + 
                                         "\nReturning from OutputCacheModule::Enter");
 
@@ -829,7 +829,7 @@ namespace System.Web.Caching {
 
                     switch (validationStatus) {
                         case HttpValidationStatus.Invalid:
-                            Debug.Trace("OutputCacheModuleEnter", "Output cache item found but callback invalidated it." +
+                            System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Output cache item found but callback invalidated it." +
                                         "\n\tkey=" + key +
                                         "\nReturning from OutputCacheModule::Enter");
 
@@ -845,7 +845,7 @@ namespace System.Web.Caching {
                             break;
 
                         default:
-                            Debug.Trace("OutputCacheModuleEnter", "Invalid validation status, ignoring it, status=" + validationStatus + 
+                            System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Invalid validation status, ignoring it, status=" + validationStatus + 
                                         "\n\tkey=" + key);
 
                             validationStatus = validationStatusFinal;
@@ -855,7 +855,7 @@ namespace System.Web.Caching {
                 }
 
                 if (validationStatusFinal == HttpValidationStatus.IgnoreThisRequest) {
-                    Debug.Trace("OutputCacheModuleEnter", "Output cache item found but callback status is IgnoreThisRequest." +
+                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Output cache item found but callback status is IgnoreThisRequest." +
                                 "\n\tkey=" + key +
                                 "\nReturning from OutputCacheModule::Enter");
 
@@ -864,7 +864,7 @@ namespace System.Web.Caching {
                     return;
                 }
 
-                Debug.Assert(validationStatusFinal == HttpValidationStatus.Valid, 
+                System.Web.Util.Debug.Assert(validationStatusFinal == HttpValidationStatus.Valid, 
                              "validationStatusFinal == HttpValidationStatus.Valid");
             }
 
@@ -918,7 +918,7 @@ namespace System.Web.Caching {
                         }
                     }
                     catch {
-                        Debug.Trace("OutputCacheModuleEnter", "Ignore If-Modified-Since header, invalid format: " + ifModifiedSinceHeader);
+                        System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Ignore If-Modified-Since header, invalid format: " + ifModifiedSinceHeader);
                     }
                 }
                 
@@ -947,7 +947,7 @@ namespace System.Web.Caching {
                 /*
                  * Send 304 Not Modified
                  */
-                Debug.Trace("OutputCacheModuleEnter", "Hit, conditional request satisfied, status=304." + 
+                System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Hit, conditional request satisfied, status=304." + 
                             "\n\tkey=" + key + 
                             "\nReturning from OutputCacheModule::Enter");
 
@@ -960,12 +960,12 @@ namespace System.Web.Caching {
                  */
 #if DBG
                 if (send304 == -1) {
-                    Debug.Trace("OutputCacheModuleEnter", "Hit.\n\tkey=" + key +
+                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Hit.\n\tkey=" + key +
                                 "\nReturning from OutputCacheModule::Enter");
 
                 }
                 else {
-                    Debug.Trace("OutputCacheModuleEnter", "Hit, but conditional request not satisfied.\n\tkey=" + key +
+                    System.Web.Util.Debug.Trace("OutputCacheModuleEnter", "Hit, but conditional request not satisfied.\n\tkey=" + key +
                                 "\nReturning from OutputCacheModule::Enter");
                 }
 #endif
@@ -1021,7 +1021,7 @@ namespace System.Web.Caching {
             int                     i, n;
             bool                    cacheAuthorizedPage;
 
-            Debug.Trace("OutputCacheModuleLeave", "Beginning OutputCacheModule::Leave");
+            System.Web.Util.Debug.Trace("OutputCacheModuleLeave", "Beginning OutputCacheModule::Leave");
 
             app = (HttpApplication)source;
             context = app.Context;
@@ -1152,8 +1152,8 @@ namespace System.Web.Caching {
              */
             if (!cacheable) {
 #if DBG
-                Debug.Assert(reason != null, "reason != null");
-                Debug.Trace("OutputCacheModuleLeave", "Item is not output cacheable because " + reason + 
+                System.Web.Util.Debug.Assert(reason != null, "reason != null");
+                System.Web.Util.Debug.Trace("OutputCacheModuleLeave", "Item is not output cacheable because " + reason + 
                             "\n\tUrl=" + request.Path + 
                             "\nReturning from OutputCacheModule::Leave");
 #endif
@@ -1179,7 +1179,7 @@ namespace System.Web.Caching {
             /* Create the key if it was not created in OnEnter */
             if (_key == null) {
                 _key = CreateOutputCachedItemKey(context, null);
-                Debug.Assert(_key != null, "_key != null");
+                System.Web.Util.Debug.Assert(_key != null, "_key != null");
             }
 
 
@@ -1222,14 +1222,14 @@ namespace System.Web.Caching {
                 cachedVary = new CachedVary(varyByContentEncodings, varyByHeaders, varyByParams, varyByAllParams, settings.VaryByCustom);
                 keyRawResponse = CreateOutputCachedItemKey(context, cachedVary);
                 if (keyRawResponse == null) {
-                    Debug.Trace("OutputCacheModuleLeave", "Couldn't add non-cacheable post.\n\tkey=" + _key);
+                    System.Web.Util.Debug.Trace("OutputCacheModuleLeave", "Couldn't add non-cacheable post.\n\tkey=" + _key);
                     return;
                 }
 
                 // it is possible that the user code calculating custom vary-by
                 // string would Flush making the response non-cacheable. Check fo it here.
                 if (!response.IsBuffered()) {
-                    Debug.Trace("OutputCacheModuleLeave", "Response.Flush() inside GetVaryByCustomString\n\tkey=" + _key);
+                    System.Web.Util.Debug.Trace("OutputCacheModuleLeave", "Response.Flush() inside GetVaryByCustomString\n\tkey=" + _key);
                     return;
                 }
             }
@@ -1257,7 +1257,7 @@ namespace System.Web.Caching {
                 Guid cachedVaryId = (cachedVary != null) ? cachedVary.CachedVaryId : Guid.Empty;
                 CachedRawResponse cachedRawResponse = new CachedRawResponse(httpRawResponse, settings, kernelCacheUrl, cachedVaryId);
 
-                Debug.Trace("OutputCacheModuleLeave", "Adding response to cache.\n\tkey=" + keyRawResponse);
+                System.Web.Util.Debug.Trace("OutputCacheModuleLeave", "Adding response to cache.\n\tkey=" + keyRawResponse);
 
                 CacheDependency dep = response.CreateCacheDependencyForResponse();
                 try {
@@ -1276,7 +1276,7 @@ namespace System.Web.Caching {
 
             _key = null;
             
-            Debug.Trace("OutputCacheModuleLeave", "Returning from OutputCacheModule::Leave");
+            System.Web.Util.Debug.Trace("OutputCacheModuleLeave", "Returning from OutputCacheModule::Leave");
         }
     }
 }

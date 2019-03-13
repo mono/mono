@@ -35,7 +35,7 @@ namespace System.Web.SessionState {
             InProcSessionState state;
             String id;
 
-            Debug.Trace("SessionOnEnd", "OnCacheItemRemoved called, reason = " + reason);
+            System.Web.Util.Debug.Trace("SessionOnEnd", "OnCacheItemRemoved called, reason = " + reason);
 
             PerfCounters.DecrementCounter(AppPerfCounter.SESSIONS_ACTIVE);
 
@@ -43,7 +43,7 @@ namespace System.Web.SessionState {
             
             if ((state._flags & (int)SessionStateItemFlags.IgnoreCacheItemRemoved) != 0 ||
                 (state._flags & (int)SessionStateItemFlags.Uninitialized) != 0) {
-                Debug.Trace("SessionOnEnd", "OnCacheItemRemoved ignored");
+                System.Web.Util.Debug.Trace("SessionOnEnd", "OnCacheItemRemoved ignored");
                 return;
             }
             
@@ -132,7 +132,7 @@ namespace System.Web.SessionState {
                     // If initialFlags != return value of CompareExchange, it means another request has
                     // removed the flag.
 
-                    Debug.Trace("SessionStateClientSet", "Removing the Uninit flag for item; key = " + key);
+                    System.Web.Util.Debug.Trace("SessionStateClientSet", "Removing the Uninit flag for item; key = " + key);
                     if (initialFlags == Interlocked.CompareExchange(
                                             ref state._flags, 
                                             initialFlags & (~((int)SessionStateItemFlags.Uninitialized)), 
@@ -217,7 +217,7 @@ namespace System.Web.SessionState {
         public override void ReleaseItemExclusive(HttpContext context, 
                                 String id, 
                                 object lockId) {
-            Debug.Assert(lockId != null, "lockId != null");
+            System.Web.Util.Debug.Assert(lockId != null, "lockId != null");
             
             string  key = CreateSessionStateCacheKey(id);
             int     lockCookie = (int)lockId;
@@ -255,9 +255,9 @@ namespace System.Web.SessionState {
             ISessionStateItemCollection items = null;
             HttpStaticObjectsCollection staticObjects = null;
 
-            Debug.Assert(item.Items != null, "item.Items != null");
-            Debug.Assert(item.StaticObjects != null, "item.StaticObjects != null");
-            Debug.Assert(item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES, "item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES");
+            System.Web.Util.Debug.Assert(item.Items != null, "item.Items != null");
+            System.Web.Util.Debug.Assert(item.StaticObjects != null, "item.StaticObjects != null");
+            System.Web.Util.Debug.Assert(item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES, "item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES");
 
             SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
 
@@ -270,7 +270,7 @@ namespace System.Web.SessionState {
             }
 
             if (!newItem) {
-                Debug.Assert(lockId != null, "lockId != null");
+                System.Web.Util.Debug.Assert(lockId != null, "lockId != null");
                 InProcSessionState  stateCurrent = (InProcSessionState) cacheInternal.Get(key);
                 int                 lockCookie = (int)lockId;
 
@@ -278,15 +278,15 @@ namespace System.Web.SessionState {
                 if (stateCurrent == null)
                     return;
 
-                Debug.Trace("SessionStateClientSet", "state is inStorage; key = " + key);
-                Debug.Assert((stateCurrent._flags & (int)SessionStateItemFlags.Uninitialized) == 0, "Should never set an unitialized item; key = " + key);
+                System.Web.Util.Debug.Trace("SessionStateClientSet", "state is inStorage; key = " + key);
+                System.Web.Util.Debug.Assert((stateCurrent._flags & (int)SessionStateItemFlags.Uninitialized) == 0, "Should never set an unitialized item; key = " + key);
                 
                 stateCurrent._spinLock.AcquireWriterLock();
                 
                 try {
                     /* Only set the state if we are the owner */
                     if (!stateCurrent._locked || stateCurrent._lockCookie != lockCookie) {
-                        Debug.Trace("SessionStateClientSet", "Leave because we're not the owner; key = " + key);
+                        System.Web.Util.Debug.Trace("SessionStateClientSet", "Leave because we're not the owner; key = " + key);
                         return;
                     }
 
@@ -303,7 +303,7 @@ namespace System.Web.SessionState {
 
                         // Don't need to insert into the Cache because an in-place copy is good enough.
                         doInsert = false;
-                        Debug.Trace("SessionStateClientSet", "Changing state inplace; key = " + key);
+                        System.Web.Util.Debug.Trace("SessionStateClientSet", "Changing state inplace; key = " + key);
                     }
                     else {
                         /* We are going to insert a new item to replace the current one in Cache
@@ -332,7 +332,7 @@ namespace System.Web.SessionState {
             } 
 
             if (doInsert) {
-                Debug.Trace("SessionStateClientSet", "Inserting state into Cache; key = " + key);
+                System.Web.Util.Debug.Trace("SessionStateClientSet", "Inserting state into Cache; key = " + key);
                 InProcSessionState state = new InProcSessionState(
                         items,
                         staticObjects,
@@ -363,11 +363,11 @@ namespace System.Web.SessionState {
         public override void CreateUninitializedItem(HttpContext context, String id, int timeout) {
             string          key = CreateSessionStateCacheKey(id);
 
-            Debug.Assert(timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES, "item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES");
+            System.Web.Util.Debug.Assert(timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES, "item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES");
             
             SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
 
-            Debug.Trace("SessionStateClientSet", "Inserting an uninitialized item into Cache; key = " + key);
+            System.Web.Util.Debug.Trace("SessionStateClientSet", "Inserting an uninitialized item into Cache; key = " + key);
 
             InProcSessionState state = new InProcSessionState(
                     null,
@@ -403,7 +403,7 @@ namespace System.Web.SessionState {
                                         String id, 
                                         object lockId, 
                                         SessionStateStoreData item) {
-            Debug.Assert(lockId != null, "lockId != null");
+            System.Web.Util.Debug.Assert(lockId != null, "lockId != null");
                 
             string          key = CreateSessionStateCacheKey(id);
             CacheStoreProvider     cacheInternal = HttpRuntime.Cache.InternalCache;
@@ -459,7 +459,7 @@ namespace System.Web.SessionState {
         [System.Diagnostics.Conditional("DBG")]
         internal static void TraceSessionStats() {
 #if DBG
-            Debug.Trace("SessionState", 
+            System.Web.Util.Debug.Trace("SessionState", 
                         "sessionsTotal="          + PerfCounters.GetCounter(AppPerfCounter.SESSIONS_TOTAL) + 
                         ", sessionsActive="       + PerfCounters.GetCounter(AppPerfCounter.SESSIONS_ACTIVE) + 
                         ", sessionsAbandoned="    + PerfCounters.GetCounter(AppPerfCounter.SESSIONS_ABANDONED) + 

@@ -21,6 +21,7 @@ namespace System.Web.DataAccess {
     using System.Web.Hosting;
     using System.Web.Management;
     using System.Web.Util;
+    
 
     internal static class SqlConnectionHelper {
         internal const string s_strDataDir = "DataDirectory";
@@ -33,7 +34,7 @@ namespace System.Web.DataAccess {
         internal static void EnsureNoUserInstance(string connectionString) {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connectionString);
             if (builder.UserInstance) {
-                throw new ProviderException(SR.GetString(SR.LocalDB_cannot_have_userinstance_flag));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.LocalDB_cannot_have_userinstance_flag));
             }
         }
 
@@ -176,13 +177,14 @@ namespace System.Web.DataAccess {
                 return;
 
             if (fullFileName == null)
-                throw new ProviderException(SR.GetString(SR.SqlExpress_file_not_found_in_connection_string));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.SqlExpress_file_not_found_in_connection_string));
 
             if (File.Exists(fullFileName))
                 return;
-
+#if (!MONO || !FEATURE_PAL)
             if (!HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.High))
-                throw new ProviderException(SR.GetString(SR.Provider_can_not_create_file_in_this_trust_level));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_can_not_create_file_in_this_trust_level));
+#endif
 
             if (!connectionString.Contains("Database=master"))
                 connectionString += ";Database=master";
@@ -292,7 +294,7 @@ namespace System.Web.DataAccess {
                 System.Web.Util.Debug.Assert(_Connection != null);
             }
             catch (ArgumentException e) {
-                throw new ArgumentException(SR.GetString(SR.SqlError_Connection_String), "connectionString", e);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.SqlError_Connection_String), "connectionString", e);
             }
         }
 

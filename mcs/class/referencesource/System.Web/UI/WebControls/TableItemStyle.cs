@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(HorizontalAlign.NotSet),
-        WebSysDescription(SR.TableItem_HorizontalAlign),
+        WebSysDescription(System.Web.SR.TableItem_HorizontalAlign),
         NotifyParentProperty(true)
         ]
         public virtual HorizontalAlign HorizontalAlign {
@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(VerticalAlign.NotSet),
-        WebSysDescription(SR.TableItem_VerticalAlign),
+        WebSysDescription(System.Web.SR.TableItem_VerticalAlign),
         NotifyParentProperty(true)
         ]
         public virtual VerticalAlign VerticalAlign {
@@ -121,7 +121,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(true),
-        WebSysDescription(SR.TableItemStyle_Wrap),
+        WebSysDescription(System.Web.SR.TableItemStyle_Wrap),
         NotifyParentProperty(true)
         ]
         public virtual bool Wrap {

@@ -130,11 +130,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test (Description="Bug 646505")]
 		public void BoundField_Bug646505 ()
 		{
-			string originalHtml = "<div>\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\n\t\t<tr>\n\t\t\t<th scope=\"col\">&nbsp;</th><th scope=\"col\">&nbsp;</th>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;gridView$ctl02$ctl00&#39;,&#39;&#39;)\">Update</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;gridView&#39;,&#39;Cancel$0&#39;)\">Cancel</a></td><td><input name=\"gridView$ctl02$ctl02\" type=\"text\" value=\"False\" /></td>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;gridView&#39;,&#39;Edit$1&#39;)\">Edit</a></td><td>False</td>\n\t\t</tr>\n\t</table>\n</div>\n";
+			string originalHtml = "<div>\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\n\t\t<tr>\n\t\t\t<th scope=\"col\">&nbsp;</th><th scope=\"col\">&nbsp;</th>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;gridView$ctl02$ctl00&#39;,&#39;&#39;)\">Update</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;gridView&#39;,&#39;Cancel$0&#39;)\">Cancel</a></td><td><input name=\"gridView$ctl02$ctl02\" type=\"text\" size=\"5\" value=\"False\" /></td>\n\t\t</tr><tr>\n\t\t\t<td><a href=\"javascript:__doPostBack(&#39;gridView&#39;,&#39;Edit$1&#39;)\">Edit</a></td><td>False</td>\n\t\t</tr>\n\t</table>\n</div>\n";
 			WebTest t = new WebTest ("BoundField_Bug646505.aspx");
 			t.Run ();
 
-			FormRequest fr = new FormRequest (t.Response, "form1");
+			FormRequest fr = new FormRequest ("BoundField_Bug646505.aspx", t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls ["__EVENTTARGET"].Value = "gridView";

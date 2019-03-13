@@ -23,7 +23,7 @@ namespace System.Web.UI.WebControls {
                 style.Font.Underline = style.Font.Underline;
             }
             else {
-                throw new ArgumentException(SR.GetString(SR.SubMenuStyleCollection_InvalidArgument), "value");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.SubMenuStyleCollection_InvalidArgument), "value");
             }
         }
         

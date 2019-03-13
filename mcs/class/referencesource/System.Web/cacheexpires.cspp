@@ -31,9 +31,9 @@ namespace System.Web.Caching {
         uint _ref;
 
         internal ExpiresEntryRef(int pageIndex, int entryIndex) {
-            Debug.Assert((pageIndex & 0x00ffffff) == pageIndex, "(pageIndex & 0x00ffffff) == pageIndex");
-            Debug.Assert((entryIndex & ENTRY_MASK) == entryIndex, "(entryIndex & ENTRY_MASK) == entryIndex");
-            Debug.Assert(entryIndex != 0 || pageIndex == 0, "entryIndex != 0 || pageIndex == 0");
+            System.Web.Util.Debug.Assert((pageIndex & 0x00ffffff) == pageIndex, "(pageIndex & 0x00ffffff) == pageIndex");
+            System.Web.Util.Debug.Assert((entryIndex & ENTRY_MASK) == entryIndex, "(entryIndex & ENTRY_MASK) == entryIndex");
+            System.Web.Util.Debug.Assert(entryIndex != 0 || pageIndex == 0, "entryIndex != 0 || pageIndex == 0");
 
             _ref = ( (((uint)pageIndex) << PAGE_SHIFT) | (((uint)(entryIndex)) & ENTRY_MASK) );
         }
@@ -235,13 +235,13 @@ namespace System.Web.Caching {
             ResetCounts(utcNow);
             InitZeroPages();
 
-            Debug.Validate("CacheValidateExpires", this);
+            System.Web.Util.Debug.Validate("CacheValidateExpires", this);
         }
 
         void InitZeroPages() {
-            Debug.Assert(_cPagesInUse == 0, "_cPagesInUse == 0");
-            Debug.Assert(_cEntriesInUse == 0, "_cEntriesInUse == 0");
-            Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
+            System.Web.Util.Debug.Assert(_cPagesInUse == 0, "_cPagesInUse == 0");
+            System.Web.Util.Debug.Assert(_cEntriesInUse == 0, "_cEntriesInUse == 0");
+            System.Web.Util.Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
 
             _pages = null;
             _minEntriesInUse = -1;
@@ -321,12 +321,12 @@ namespace System.Web.Caching {
 
         // Add a page to the head of a list.
         void AddToListHead(int pageIndex, ref ExpiresPageList list) {
-            Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
+            System.Web.Util.Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
 
             PagePrev(pageIndex) = -1;
             PageNext(pageIndex) = list._head;
             if (list._head != -1) {
-                Debug.Assert(PagePrev(list._head) == -1, "PagePrev(list._head) == -1");
+                System.Web.Util.Debug.Assert(PagePrev(list._head) == -1, "PagePrev(list._head) == -1");
                 PagePrev(list._head) = pageIndex;
             }
             else {
@@ -338,12 +338,12 @@ namespace System.Web.Caching {
 
         // Add a page to the tail of a list.
         void AddToListTail(int pageIndex, ref ExpiresPageList list) {
-            Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
+            System.Web.Util.Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
 
             PageNext(pageIndex) = -1;
             PagePrev(pageIndex) = list._tail;
             if (list._tail != -1) {
-                Debug.Assert(PageNext(list._tail) == -1, "PageNext(list._tail) == -1");
+                System.Web.Util.Debug.Assert(PageNext(list._tail) == -1, "PageNext(list._tail) == -1");
                 PageNext(list._tail) = pageIndex;
             }
             else {
@@ -355,7 +355,7 @@ namespace System.Web.Caching {
 
         // Remove a page from the head of a list.
         int RemoveFromListHead(ref ExpiresPageList list) {
-            Debug.Assert(list._head != -1, "list._head != -1");
+            System.Web.Util.Debug.Assert(list._head != -1, "list._head != -1");
 
             int oldHead = list._head;
             RemoveFromList(oldHead, ref list);
@@ -364,23 +364,23 @@ namespace System.Web.Caching {
 
         // Remove a page from the list.
         void RemoveFromList(int pageIndex, ref ExpiresPageList list) {
-            Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
+            System.Web.Util.Debug.Assert((list._head == -1) == (list._tail == -1), "(list._head == -1) == (list._tail == -1)");
 
             if (PagePrev(pageIndex) != -1) {
-                Debug.Assert(PageNext(PagePrev(pageIndex)) == pageIndex, "PageNext(PagePrev(pageIndex)) == pageIndex");
+                System.Web.Util.Debug.Assert(PageNext(PagePrev(pageIndex)) == pageIndex, "PageNext(PagePrev(pageIndex)) == pageIndex");
                 PageNext(PagePrev(pageIndex)) = PageNext(pageIndex);
             }
             else {
-                Debug.Assert(list._head == pageIndex, "list._head == pageIndex");
+                System.Web.Util.Debug.Assert(list._head == pageIndex, "list._head == pageIndex");
                 list._head = PageNext(pageIndex);
             }
 
             if (PageNext(pageIndex) != -1) {
-                Debug.Assert(PagePrev(PageNext(pageIndex)) == pageIndex, "PagePrev(PageNext(pageIndex)) == pageIndex");
+                System.Web.Util.Debug.Assert(PagePrev(PageNext(pageIndex)) == pageIndex, "PagePrev(PageNext(pageIndex)) == pageIndex");
                 PagePrev(PageNext(pageIndex)) = PagePrev(pageIndex);
             }
             else {
-                Debug.Assert(list._tail == pageIndex, "list._tail == pageIndex");
+                System.Web.Util.Debug.Assert(list._tail == pageIndex, "list._tail == pageIndex");
                 list._tail = PagePrev(pageIndex);
             }
 
@@ -390,8 +390,8 @@ namespace System.Web.Caching {
 
         // Move a page to the head of the list
         void MoveToListHead(int pageIndex, ref ExpiresPageList list) {
-            Debug.Assert(list._head != -1, "list._head != -1");
-            Debug.Assert(list._tail != -1, "list._tail != -1");
+            System.Web.Util.Debug.Assert(list._head != -1, "list._head != -1");
+            System.Web.Util.Debug.Assert(list._tail != -1, "list._tail != -1");
 
             // already at head?
             if (list._head == pageIndex)
@@ -406,8 +406,8 @@ namespace System.Web.Caching {
 
         // Move to the tail of the list
         void MoveToListTail(int pageIndex, ref ExpiresPageList list) {
-            Debug.Assert(list._head != -1, "list._head != -1");
-            Debug.Assert(list._tail != -1, "list._tail != -1");
+            System.Web.Util.Debug.Assert(list._head != -1, "list._head != -1");
+            System.Web.Util.Debug.Assert(list._tail != -1, "list._tail != -1");
 
             // already at tail?
             if (list._tail == pageIndex)
@@ -430,8 +430,8 @@ namespace System.Web.Caching {
             }
             else {
                 int capacity = _cPagesInUse * NUM_ENTRIES;
-                Debug.Assert(capacity > 0, "capacity > 0");
-                Debug.Assert(MIN_LOAD_FACTOR < 1.0, "MIN_LOAD_FACTOR < 1.0");
+                System.Web.Util.Debug.Assert(capacity > 0, "capacity > 0");
+                System.Web.Util.Debug.Assert(MIN_LOAD_FACTOR < 1.0, "MIN_LOAD_FACTOR < 1.0");
 
                 _minEntriesInUse = (int) (capacity * MIN_LOAD_FACTOR);
 
@@ -443,7 +443,7 @@ namespace System.Web.Caching {
             }
 
 #if DBG
-            if (Debug.IsTagPresent("CacheExpiresNoReduce") && Debug.IsTagEnabled("CacheExpiresNoReduce")) {
+            if (System.Web.Util.Debug.IsTagPresent("CacheExpiresNoReduce") && System.Web.Util.Debug.IsTagEnabled("CacheExpiresNoReduce")) {
                 _minEntriesInUse = -1;
             }
 #endif
@@ -452,7 +452,7 @@ namespace System.Web.Caching {
 
         // Remove a ExpiresPage that is in use, and put in on the list of free pages.
         void RemovePage(int pageIndex) {
-            Debug.Assert(FreeEntryCount(EntriesI(pageIndex)) == NUM_ENTRIES, "FreeEntryCount(EntriesI(pageIndex)) == NUM_ENTRIES");
+            System.Web.Util.Debug.Assert(FreeEntryCount(EntriesI(pageIndex)) == NUM_ENTRIES, "FreeEntryCount(EntriesI(pageIndex)) == NUM_ENTRIES");
 
             // release the page from the free entries list
             RemoveFromList(pageIndex, ref _freeEntryList);
@@ -461,7 +461,7 @@ namespace System.Web.Caching {
             AddToListHead(pageIndex, ref _freePageList);
 
             // remove reference to page
-            Debug.Assert(EntriesI(pageIndex) != null, "EntriesI(pageIndex) != null");
+            System.Web.Util.Debug.Assert(EntriesI(pageIndex) != null, "EntriesI(pageIndex) != null");
             EntriesI(pageIndex) = null;
 
             // decrement count of pages and update _cMinEntriesInUse
@@ -477,7 +477,7 @@ namespace System.Web.Caching {
         // Get a free ExpiresEntry.
         ExpiresEntryRef GetFreeExpiresEntry() {
             // get the page of the free entry
-            Debug.Assert(_freeEntryList._head >= 0, "_freeEntryList._head >= 0");
+            System.Web.Util.Debug.Assert(_freeEntryList._head >= 0, "_freeEntryList._head >= 0");
             int pageIndex = _freeEntryList._head;
 
             // get a free entry from _entries
@@ -489,15 +489,15 @@ namespace System.Web.Caching {
             FreeEntryCount(entries)--;
             if (FreeEntryCount(entries) == 0) {
                 // remove page from list of free pages
-                Debug.Assert(FreeEntryHead(entries).IsInvalid, "FreeEntryHead(entries).IsInvalid");
+                System.Web.Util.Debug.Assert(FreeEntryHead(entries).IsInvalid, "FreeEntryHead(entries).IsInvalid");
                 RemoveFromList(pageIndex, ref _freeEntryList);
             }
 
 #if DBG
-            Debug.Assert(EntryIsFree(new ExpiresEntryRef(pageIndex, entryIndex)), "EntryIsFree(new ExpiresEntryRef(pageIndex, entryIndex))");
+            System.Web.Util.Debug.Assert(EntryIsFree(new ExpiresEntryRef(pageIndex, entryIndex)), "EntryIsFree(new ExpiresEntryRef(pageIndex, entryIndex))");
             if (!FreeEntryHead(entries).IsInvalid) {
-                Debug.Assert(FreeEntryHead(entries).Index != entryIndex, "FreeEntryHead(entries).Index != entryIndex");
-                Debug.Assert(EntryIsFree(new ExpiresEntryRef(pageIndex, FreeEntryHead(entries).Index)), "EntryIsFree(new ExpiresEntryRef(pageIndex, FreeEntryHead(entries).Index))");
+                System.Web.Util.Debug.Assert(FreeEntryHead(entries).Index != entryIndex, "FreeEntryHead(entries).Index != entryIndex");
+                System.Web.Util.Debug.Assert(EntryIsFree(new ExpiresEntryRef(pageIndex, FreeEntryHead(entries).Index)), "EntryIsFree(new ExpiresEntryRef(pageIndex, FreeEntryHead(entries).Index))");
             }
 #endif
 
@@ -510,7 +510,7 @@ namespace System.Web.Caching {
             ExpiresEntry[] entries = EntriesR(entryRef);
             int entryIndex = entryRef.Index;
 
-            Debug.Assert(entries[entryIndex]._cacheEntry == null, "entries[entryIndex]._cacheEntry == null");
+            System.Web.Util.Debug.Assert(entries[entryIndex]._cacheEntry == null, "entries[entryIndex]._cacheEntry == null");
             entries[entryIndex]._cFree = 0;
 
             entries[entryIndex]._next = FreeEntryHead(entries);
@@ -532,9 +532,9 @@ namespace System.Web.Caching {
         // We will need to allocate a new page, and perhaps expand the _pages array.
         // Note that we never collapse the _pages array.
         void Expand() {
-            Debug.Assert(_cPagesInUse * NUM_ENTRIES == _cEntriesInUse, "_cPagesInUse * NUM_ENTRIES == _cEntriesInUse");
-            Debug.Assert(_freeEntryList._head == -1, "_freeEntryList._head == -1");
-            Debug.Assert(_freeEntryList._tail == -1, "_freeEntryList._tail == -1");
+            System.Web.Util.Debug.Assert(_cPagesInUse * NUM_ENTRIES == _cEntriesInUse, "_cPagesInUse * NUM_ENTRIES == _cEntriesInUse");
+            System.Web.Util.Debug.Assert(_freeEntryList._head == -1, "_freeEntryList._head == -1");
+            System.Web.Util.Debug.Assert(_freeEntryList._tail == -1, "_freeEntryList._tail == -1");
 
             // exapnd _pages if there are no more
             if (_freePageList._head == -1) {
@@ -547,13 +547,13 @@ namespace System.Web.Caching {
                     oldLength = _pages.Length;
                 }
 
-                Debug.Assert(_cPagesInUse == oldLength, "_cPagesInUse == oldLength");
-                Debug.Assert(_cEntriesInUse == oldLength * NUM_ENTRIES, "_cEntriesInUse == oldLength * ExpiresEntryRef.NUM_ENTRIES");
+                System.Web.Util.Debug.Assert(_cPagesInUse == oldLength, "_cPagesInUse == oldLength");
+                System.Web.Util.Debug.Assert(_cEntriesInUse == oldLength * NUM_ENTRIES, "_cEntriesInUse == oldLength * ExpiresEntryRef.NUM_ENTRIES");
 
                 int newLength = oldLength * 2;
                 newLength = Math.Max(oldLength + MIN_PAGES_INCREMENT, newLength);
                 newLength = Math.Min(newLength, oldLength + MAX_PAGES_INCREMENT);
-                Debug.Assert(newLength > oldLength, "newLength > oldLength");
+                System.Web.Util.Debug.Assert(newLength > oldLength, "newLength > oldLength");
 
                 ExpiresPage[] newPages = new ExpiresPage[newLength];
 
@@ -606,9 +606,9 @@ namespace System.Web.Caching {
             if (_cEntriesInUse >= _minEntriesInUse || _blockReduce)
                 return;
 
-            Debug.Assert(_freeEntryList._head != -1, "_freeEntryList._head != -1");
-            Debug.Assert(_freeEntryList._tail != -1, "_freeEntryList._tail != -1");
-            Debug.Assert(_freeEntryList._head != _freeEntryList._tail, "_freeEntryList._head != _freeEntryList._tail");
+            System.Web.Util.Debug.Assert(_freeEntryList._head != -1, "_freeEntryList._head != -1");
+            System.Web.Util.Debug.Assert(_freeEntryList._tail != -1, "_freeEntryList._tail != -1");
+            System.Web.Util.Debug.Assert(_freeEntryList._head != _freeEntryList._tail, "_freeEntryList._head != _freeEntryList._tail");
 
             // Rearrange free page list to put pages with more free entries at the tail
             int meanFree = (int) (NUM_ENTRIES - (NUM_ENTRIES * MIN_LOAD_FACTOR));
@@ -645,7 +645,7 @@ namespace System.Web.Caching {
                     break;
 
                 entries = EntriesI(_freeEntryList._tail);
-                Debug.Assert(FreeEntryCount(entries) > 0, "FreeEntryCount(entries) > 0");
+                System.Web.Util.Debug.Assert(FreeEntryCount(entries) > 0, "FreeEntryCount(entries) > 0");
                 int availableFreeEntries = (_cPagesInUse * NUM_ENTRIES) - FreeEntryCount(entries) - _cEntriesInUse;
                 if (availableFreeEntries < (NUM_ENTRIES - FreeEntryCount(entries)))
                     break;
@@ -657,16 +657,16 @@ namespace System.Web.Caching {
                         continue;
 
                     // get a free ExpiresEntry from the head of the list.
-                    Debug.Assert(_freeEntryList._head != _freeEntryList._tail, "_freeEntryList._head != _freeEntryList._tail");
+                    System.Web.Util.Debug.Assert(_freeEntryList._head != _freeEntryList._tail, "_freeEntryList._head != _freeEntryList._tail");
                     ExpiresEntryRef newRef = GetFreeExpiresEntry();
-                    Debug.Assert(newRef.PageIndex != _freeEntryList._tail, "newRef.PageIndex != _freeEntryList._tail");
+                    System.Web.Util.Debug.Assert(newRef.PageIndex != _freeEntryList._tail, "newRef.PageIndex != _freeEntryList._tail");
 
                     // update the CacheEntry
                     CacheEntry cacheEntry = entries[i]._cacheEntry;
 
 #if DBG
                     ExpiresEntryRef oldRef = new ExpiresEntryRef(_freeEntryList._tail, i);
-                    Debug.Assert(cacheEntry.ExpiresEntryRef == oldRef, "cacheEntry.ExpiresEntryRef == oldRef");
+                    System.Web.Util.Debug.Assert(cacheEntry.ExpiresEntryRef == oldRef, "cacheEntry.ExpiresEntryRef == oldRef");
 #endif
 
                     cacheEntry.ExpiresEntryRef = newRef;
@@ -684,7 +684,7 @@ namespace System.Web.Caching {
                 // now the page is free - release its memory
                 RemovePage(_freeEntryList._tail);
 
-                Debug.Validate("CacheValidateExpires", this);
+                System.Web.Util.Debug.Validate("CacheValidateExpires", this);
             }
         }
 
@@ -700,7 +700,7 @@ namespace System.Web.Caching {
 
                 // If item is already added to a bucket, do nothing.
                 ExpiresEntryRef entryRef = cacheEntry.ExpiresEntryRef;
-                Debug.Assert((cacheEntry.ExpiresBucket == 0xff) == entryRef.IsInvalid, "(cacheEntry.ExpiresBucket == 0xff) == entryRef.IsInvalid");
+                System.Web.Util.Debug.Assert((cacheEntry.ExpiresBucket == 0xff) == entryRef.IsInvalid, "(cacheEntry.ExpiresBucket == 0xff) == entryRef.IsInvalid");
                 if (cacheEntry.ExpiresBucket != 0xff || !entryRef.IsInvalid)
                     return;
 
@@ -711,8 +711,8 @@ namespace System.Web.Caching {
 
                 // get the free entry
                 ExpiresEntryRef freeRef = GetFreeExpiresEntry();
-                Debug.Assert(cacheEntry.ExpiresBucket == 0xff, "cacheEntry.ExpiresBucket == 0xff");
-                Debug.Assert(cacheEntry.ExpiresEntryRef.IsInvalid, "cacheEntry.ExpiresEntryRef.IsInvalid");
+                System.Web.Util.Debug.Assert(cacheEntry.ExpiresBucket == 0xff, "cacheEntry.ExpiresBucket == 0xff");
+                System.Web.Util.Debug.Assert(cacheEntry.ExpiresEntryRef.IsInvalid, "cacheEntry.ExpiresEntryRef.IsInvalid");
                 cacheEntry.ExpiresBucket = _bucket;
                 cacheEntry.ExpiresEntryRef = freeRef;
 
@@ -729,15 +729,15 @@ namespace System.Web.Caching {
 
 #if DBG 
                 {
-                    Debug.Trace("CacheExpiresAdd", 
+                    System.Web.Util.Debug.Trace("CacheExpiresAdd", 
                                 "Added item=" + cacheEntry.Key + 
                                 ",_bucket=" + _bucket + 
                                 ",_ref=" + freeRef + 
-                                ",now=" + Debug.FormatLocalDate(DateTime.Now) + 
+                                ",now=" + System.Web.Util.Debug.FormatLocalDate(DateTime.Now) + 
                                 ",expires=" + DateTimeUtil.ConvertToLocalTime(cacheEntry.UtcExpires));
     
-                    Debug.Validate("CacheValidateExpires", this);
-                    Debug.Dump("CacheExpiresAdd", this);
+                    System.Web.Util.Debug.Validate("CacheValidateExpires", this);
+                    System.Web.Util.Debug.Dump("CacheExpiresAdd", this);
                 }
 #endif
 
@@ -763,7 +763,7 @@ namespace System.Web.Caching {
             int             entryIndex = entryRef.Index;
 
 #if DBG
-            Debug.Assert(cacheEntry == entries[entryIndex]._cacheEntry, "cacheEntry == entries[entryIndex]._cacheEntry");
+            System.Web.Util.Debug.Assert(cacheEntry == entries[entryIndex]._cacheEntry, "cacheEntry == entries[entryIndex]._cacheEntry");
 #endif
 
             // update Count
@@ -785,16 +785,16 @@ namespace System.Web.Caching {
             // remove pages if necessary
             Reduce();
 
-            Debug.Trace("CacheExpiresRemove", 
+            System.Web.Util.Debug.Trace("CacheExpiresRemove", 
                         "Removed item=" + cacheEntry.Key + 
                         ",_bucket=" + _bucket + 
                         ",ref=" + entryRef + 
-                        ",now=" + Debug.FormatLocalDate(DateTime.Now) +
+                        ",now=" + System.Web.Util.Debug.FormatLocalDate(DateTime.Now) +
                         ",expires=" + DateTimeUtil.ConvertToLocalTime(cacheEntry.UtcExpires));
 
 
-            Debug.Validate("CacheValidateExpires", this);
-            Debug.Dump("CacheExpiresRemove", this);
+            System.Web.Util.Debug.Validate("CacheValidateExpires", this);
+            System.Web.Util.Debug.Dump("CacheExpiresRemove", this);
         }
 
         // Remove an item from the bucket.
@@ -814,7 +814,7 @@ namespace System.Web.Caching {
                 ExpiresEntry[]  entries = EntriesR(entryRef);
                 int             entryIndex = entryRef.Index;
 
-                Debug.Assert(cacheEntry == entries[entryIndex]._cacheEntry);
+                System.Web.Util.Debug.Assert(cacheEntry == entries[entryIndex]._cacheEntry);
 
                 // update count
                 RemoveCount(entries[entryIndex]._utcExpires);
@@ -826,8 +826,8 @@ namespace System.Web.Caching {
                 // update the cache entry
                 cacheEntry.UtcExpires = utcExpires;
 
-                Debug.Validate("CacheValidateExpires", this);
-                Debug.Trace("CacheExpiresUpdate", "Updated item " + cacheEntry.Key + " in bucket " + _bucket);
+                System.Web.Util.Debug.Validate("CacheValidateExpires", this);
+                System.Web.Util.Debug.Trace("CacheExpiresUpdate", "Updated item " + cacheEntry.Key + " in bucket " + _bucket);
             }
         }
 
@@ -837,7 +837,7 @@ namespace System.Web.Caching {
             if (_cEntriesInUse == 0 || GetExpiresCount(utcNow) == 0)
                 return 0;
 
-            Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
+            System.Web.Util.Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
 
             // We create a list of ExpiresEntry's that we wish to flush. These entries
             // are not considered free, so the page that holds them will not be removed.
@@ -855,15 +855,15 @@ namespace System.Web.Caching {
                 }
                 
                 lock (this) {
-                    Debug.Assert(_blockReduce == false, "_blockReduce == false");
+                    System.Web.Util.Debug.Assert(_blockReduce == false, "_blockReduce == false");
 
                     // Recheck if there is something to flush.
                     if (_cEntriesInUse == 0 || GetExpiresCount(utcNow) == 0)
                         return 0;
 
 #if DBG
-                    Debug.Trace("CacheExpiresFlush", "FlushExpiredItems ExpiresCount=" + GetExpiresCount(utcNow) +
-                                " bucket=" + _bucket + "; Time=" + Debug.FormatLocalDate(DateTime.Now));
+                    System.Web.Util.Debug.Trace("CacheExpiresFlush", "FlushExpiredItems ExpiresCount=" + GetExpiresCount(utcNow) +
+                                " bucket=" + _bucket + "; Time=" + System.Web.Util.Debug.FormatLocalDate(DateTime.Now));
 #endif
 
                     // Walk through all ExpiresEntries, create a list of expired items, 
@@ -911,8 +911,8 @@ namespace System.Web.Caching {
                     }
 
                     if (flushed == 0) {
-                        Debug.Trace("CacheExpiresFlushTotal", "FlushExpiredItems flushed " + flushed +
-                                    " expired items, bucket=" + _bucket + "; Time=" + Debug.FormatLocalDate(DateTime.Now));
+                        System.Web.Util.Debug.Trace("CacheExpiresFlushTotal", "FlushExpiredItems flushed " + flushed +
+                                    " expired items, bucket=" + _bucket + "; Time=" + System.Web.Util.Debug.FormatLocalDate(DateTime.Now));
 
                         return 0;
                     }
@@ -933,7 +933,7 @@ namespace System.Web.Caching {
                 }
             }
 
-            Debug.Assert(!inFlushHead.IsInvalid, "!inFlushHead.IsInvalid");
+            System.Web.Util.Debug.Assert(!inFlushHead.IsInvalid, "!inFlushHead.IsInvalid");
 
             // Remove items on the inFlush list from the rest of the cache.
             CacheSingle cacheSingle = _cacheExpires.CacheSingle;
@@ -948,7 +948,7 @@ namespace System.Web.Caching {
                 // remove the entry
                 cacheEntry = entries[entryIndex]._cacheEntry;
                 entries[entryIndex]._cacheEntry = null;
-                Debug.Assert(cacheEntry.ExpiresEntryRef.IsInvalid, "cacheEntry.ExpiresEntryRef.IsInvalid");
+                System.Web.Util.Debug.Assert(cacheEntry.ExpiresEntryRef.IsInvalid, "cacheEntry.ExpiresEntryRef.IsInvalid");
                 cacheSingle.Remove(cacheEntry, CacheItemRemovedReason.Expired);
 
                 //iterate
@@ -978,15 +978,15 @@ namespace System.Web.Caching {
                     }
 
                     // try to reduce
-                    Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
+                    System.Web.Util.Debug.Assert(_cEntriesInFlush == 0, "_cEntriesInFlush == 0");
                     _blockReduce = false;
                     Reduce();
 
-                    Debug.Trace("CacheExpiresFlushTotal", "FlushExpiredItems flushed " + flushed +
-                                " expired items, bucket=" + _bucket + "; Time=" + Debug.FormatLocalDate(DateTime.Now));
+                    System.Web.Util.Debug.Trace("CacheExpiresFlushTotal", "FlushExpiredItems flushed " + flushed +
+                                " expired items, bucket=" + _bucket + "; Time=" + System.Web.Util.Debug.FormatLocalDate(DateTime.Now));
 
-                    Debug.Validate("CacheValidateExpires", this);
-                    Debug.Dump("CacheExpiresFlush", this);
+                    System.Web.Util.Debug.Validate("CacheValidateExpires", this);
+                    System.Web.Util.Debug.Dump("CacheExpiresFlush", this);
                 }
             }
             finally {
@@ -1013,12 +1013,12 @@ namespace System.Web.Caching {
                 pagesLength = _pages.Length;
             }
 
-            Debug.CheckValid(-1 <= _freePageList._head && _freePageList._head <= pagesLength, "-1 <= _freePageList._head && _freePageList._head <= pagesLength");
-            Debug.CheckValid(-1 <= _freeEntryList._head && _freeEntryList._head <= pagesLength, "-1 <= _freeEntryList._head && _freeEntryList._head <= pagesLength");
-            Debug.CheckValid(-1 <= _freeEntryList._tail && _freeEntryList._tail <= pagesLength, "-1 <= _freeEntryList._tail && _freeEntryList._tail <= pagesLength");
-            Debug.CheckValid((_freeEntryList._head == -1) == (_freeEntryList._tail == -1), "(_freeEntryList._head == -1) == (_freeEntryList._tail == -1)");
-            Debug.CheckValid(_minEntriesInUse >= -1, "_minEntriesInUse >= -1");
-            Debug.CheckValid(_cEntriesInFlush >= 0, "_cEntriesInFlush >= 0");
+            System.Web.Util.Debug.CheckValid(-1 <= _freePageList._head && _freePageList._head <= pagesLength, "-1 <= _freePageList._head && _freePageList._head <= pagesLength");
+            System.Web.Util.Debug.CheckValid(-1 <= _freeEntryList._head && _freeEntryList._head <= pagesLength, "-1 <= _freeEntryList._head && _freeEntryList._head <= pagesLength");
+            System.Web.Util.Debug.CheckValid(-1 <= _freeEntryList._tail && _freeEntryList._tail <= pagesLength, "-1 <= _freeEntryList._tail && _freeEntryList._tail <= pagesLength");
+            System.Web.Util.Debug.CheckValid((_freeEntryList._head == -1) == (_freeEntryList._tail == -1), "(_freeEntryList._head == -1) == (_freeEntryList._tail == -1)");
+            System.Web.Util.Debug.CheckValid(_minEntriesInUse >= -1, "_minEntriesInUse >= -1");
+            System.Web.Util.Debug.CheckValid(_cEntriesInFlush >= 0, "_cEntriesInFlush >= 0");
 
             // check counts
             for (int i = 0; i < pagesLength; i++) {
@@ -1027,7 +1027,7 @@ namespace System.Web.Caching {
                     cPagesInUse++;
                     cFree = 0;
 
-                    Debug.CheckValid(entries[0]._cacheEntry == null, "entries[0]._cacheEntry == null");
+                    System.Web.Util.Debug.CheckValid(entries[0]._cacheEntry == null, "entries[0]._cacheEntry == null");
 
                     for (int j = 1; j < entries.Length; j++) {
                         if (entries[j]._cacheEntry == null && entries[j]._cFree == 0) {
@@ -1045,7 +1045,7 @@ namespace System.Web.Caching {
                         }
                     }
 
-                    Debug.CheckValid(cFree == FreeEntryCount(entries), "cFree == FreeEntryCount(entries)");
+                    System.Web.Util.Debug.CheckValid(cFree == FreeEntryCount(entries), "cFree == FreeEntryCount(entries)");
 
                     // walk the free list
                     cFree = 0;
@@ -1053,7 +1053,7 @@ namespace System.Web.Caching {
                         int j = FreeEntryHead(entries).Index;
                         for (;;) {
                             cFree++;
-                            Debug.CheckValid(cFree <= FreeEntryCount(entries), "cFree <= FreeEntryCount(entries)");
+                            System.Web.Util.Debug.CheckValid(cFree <= FreeEntryCount(entries), "cFree <= FreeEntryCount(entries)");
 
                             if (entries[j]._next.IsInvalid)
                                 break;
@@ -1061,15 +1061,15 @@ namespace System.Web.Caching {
                             j = entries[j]._next.Index;
                         }
                     }
-                    Debug.CheckValid(cFree == FreeEntryCount(entries), "cFree == FreeEntryCount(entries)");
+                    System.Web.Util.Debug.CheckValid(cFree == FreeEntryCount(entries), "cFree == FreeEntryCount(entries)");
                 }
             }
 
-            Debug.CheckValid(cPagesInUse == _cPagesInUse, "cPagesInUse == _cPagesInUse");
-            Debug.CheckValid(cEntriesInUse == _cEntriesInUse, "cEntriesInUse == _cEntriesInUse");
+            System.Web.Util.Debug.CheckValid(cPagesInUse == _cPagesInUse, "cPagesInUse == _cPagesInUse");
+            System.Web.Util.Debug.CheckValid(cEntriesInUse == _cEntriesInUse, "cEntriesInUse == _cEntriesInUse");
 
             for (int i = 0; i < _counts.Length; i++) {
-                Debug.CheckValid(_counts[i] == counts[i], "_counts[i] == counts[i]");
+                System.Web.Util.Debug.CheckValid(_counts[i] == counts[i], "_counts[i] == counts[i]");
             }
 
             // walk the free slot list
@@ -1077,18 +1077,18 @@ namespace System.Web.Caching {
             if (_freePageList._head != -1) {
                 for (int i = _freePageList._head; i != -1; i = _pages[i]._pageNext) {
                     cFreeSlots++;
-                    Debug.CheckValid(cFreeSlots <= pagesLength, "cFreeSlots <= pagesLength");
-                    Debug.CheckValid(_pages[i]._entries == null, "_pages[i]._entries == null");
+                    System.Web.Util.Debug.CheckValid(cFreeSlots <= pagesLength, "cFreeSlots <= pagesLength");
+                    System.Web.Util.Debug.CheckValid(_pages[i]._entries == null, "_pages[i]._entries == null");
                     if (_freePageList._head != i) {
-                        Debug.CheckValid(PageNext(PagePrev(i)) == i, "PageNext(PagePrev(i)) == i");
+                        System.Web.Util.Debug.CheckValid(PageNext(PagePrev(i)) == i, "PageNext(PagePrev(i)) == i");
                     }
 
                     if (_freePageList._tail != i) {
-                        Debug.CheckValid(PagePrev(PageNext(i)) == i, "PagePrev(PageNext(i)) == i");
+                        System.Web.Util.Debug.CheckValid(PagePrev(PageNext(i)) == i, "PagePrev(PageNext(i)) == i");
                     }
                 }
             }
-            Debug.CheckValid(cFreeSlots == pagesLength - _cPagesInUse, "cFreeSlots == pagesLength - _cPagesInUse");
+            System.Web.Util.Debug.CheckValid(cFreeSlots == pagesLength - _cPagesInUse, "cFreeSlots == pagesLength - _cPagesInUse");
 
             // walk the free page list
             int cFreeEntries = 0;
@@ -1096,21 +1096,21 @@ namespace System.Web.Caching {
             if (_freeEntryList._head != -1) {
                 for (int i = _freeEntryList._head; i != -1; i = _pages[i]._pageNext) {
                     cFreePages++;
-                    Debug.CheckValid(cFreePages <= pagesLength, "cFreePages < pagesLength");
+                    System.Web.Util.Debug.CheckValid(cFreePages <= pagesLength, "cFreePages < pagesLength");
                     ExpiresEntry[] entries = _pages[i]._entries;
-                    Debug.CheckValid(entries != null, "entries != null");
+                    System.Web.Util.Debug.CheckValid(entries != null, "entries != null");
                     cFreeEntries += FreeEntryCount(entries);
                     if (_freeEntryList._head != i) {
-                        Debug.CheckValid(PageNext(PagePrev(i)) == i, "PageNext(PagePrev(i)) == i");
+                        System.Web.Util.Debug.CheckValid(PageNext(PagePrev(i)) == i, "PageNext(PagePrev(i)) == i");
                     }
 
                     if (_freeEntryList._tail != i) {
-                        Debug.CheckValid(PagePrev(PageNext(i)) == i, "PagePrev(PageNext(i)) == i");
+                        System.Web.Util.Debug.CheckValid(PagePrev(PageNext(i)) == i, "PagePrev(PageNext(i)) == i");
                     }
                 }
             }
 
-            Debug.CheckValid(cFreeEntries == (_cPagesInUse * NUM_ENTRIES) - _cEntriesInUse, "cFreeEntries == (_cPagesInUse * NUM_ENTRIES) - _cEntriesInUse");
+            System.Web.Util.Debug.CheckValid(cFreeEntries == (_cPagesInUse * NUM_ENTRIES) - _cEntriesInUse, "cFreeEntries == (_cPagesInUse * NUM_ENTRIES) - _cEntriesInUse");
         }
 
         internal string DebugDescription(string indent) {
@@ -1156,7 +1156,7 @@ namespace System.Web.Caching {
 
 
         internal CacheExpires(CacheSingle cacheSingle) {
-            Debug.Assert(NUMBUCKETS < Byte.MaxValue);
+            System.Web.Util.Debug.Assert(NUMBUCKETS < Byte.MaxValue);
 
             DateTime utcNow = DateTime.UtcNow;
 
@@ -1190,8 +1190,8 @@ namespace System.Web.Caching {
                             flushed += bucket.FlushExpiredItems(utcNow, useInsertBlock);
                         }
 
-                        Debug.Trace("CacheExpiresFlushTotal", "FlushExpiredItems flushed a total of " + flushed + " items; Time=" + Debug.FormatLocalDate(DateTime.Now));
-                        Debug.Dump("CacheExpiresFlush", this);
+                        System.Web.Util.Debug.Trace("CacheExpiresFlushTotal", "FlushExpiredItems flushed a total of " + flushed + " items; Time=" + System.Web.Util.Debug.FormatLocalDate(DateTime.Now));
+                        System.Web.Util.Debug.Dump("CacheExpiresFlush", this);
                     }
 
                 }
@@ -1213,7 +1213,7 @@ namespace System.Web.Caching {
 
         internal void EnableExpirationTimer(bool enable) {
 #if DBG
-            if (Debug.IsTagPresent("Timer") && !Debug.IsTagEnabled("Timer")) {
+            if (System.Web.Util.Debug.IsTagPresent("Timer") && !System.Web.Util.Debug.IsTagEnabled("Timer")) {
                 enable = false;
             }
 #endif
@@ -1226,14 +1226,14 @@ namespace System.Web.Caching {
                             due.Ticks / TimeSpan.TicksPerMillisecond, _tsPerBucket.Ticks / TimeSpan.TicksPerMillisecond);
                     _timerHandleRef = new DisposableGCHandleRef<Timer>(timer);
 
-                    Debug.Trace("Cache", "Cache expiration timer created.");
+                    System.Web.Util.Debug.Trace("Cache", "Cache expiration timer created.");
                 }
             }
             else {
                 DisposableGCHandleRef<Timer> timerHandleRef = _timerHandleRef;
                 if (timerHandleRef != null && Interlocked.CompareExchange(ref _timerHandleRef, null, timerHandleRef) == timerHandleRef) {
                     timerHandleRef.Dispose();
-                    Debug.Trace("Cache", "Cache expiration timer disposed.");
+                    System.Web.Util.Debug.Trace("Cache", "Cache expiration timer disposed.");
                     while (_inFlush != 0) {
                         Thread.Sleep(100);
                     }
@@ -1283,7 +1283,7 @@ namespace System.Web.Caching {
             int newBucket = UtcCalcExpiresBucket(utcNewExpires);
             
             if (oldBucket != newBucket) {
-                Debug.Trace("CacheExpiresUpdate", 
+                System.Web.Util.Debug.Trace("CacheExpiresUpdate", 
                             "Updating item " + cacheEntry.Key + " from bucket " + oldBucket + " to new bucket " + newBucket);
 
                 if (oldBucket != 0xff) {

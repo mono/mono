@@ -222,7 +222,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			c.Enabled = true;
 			c.EnableViewState = true;
 			string html = c.Render ();
-			HtmlDiff.AssertAreEqual ("<span style=\"color:Red;\">aw shucks</span>", html, "Render#1");
+			HtmlDiff.AssertAreEqual ("<span>aw shucks</span>", html, "Render#1");
 		}
 
 		

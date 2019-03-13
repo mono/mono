@@ -37,8 +37,8 @@ namespace System.Web.UI.WebControls {
     ParseChildren(true),
     PersistChildren(false),
     ToolboxBitmap(typeof(XmlDataSource)),
-    WebSysDescription(SR.XmlDataSource_Description),
-    WebSysDisplayName(SR.XmlDataSource_DisplayName)
+    WebSysDescription(System.Web.SR.XmlDataSource_Description),
+    WebSysDisplayName(System.Web.SR.XmlDataSource_DisplayName)
     ]
     public class XmlDataSource : HierarchicalDataSourceControl, IDataSource, IListSource {
 
@@ -81,7 +81,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(DataSourceCache.Infinite),
         TypeConverterAttribute(typeof(DataSourceCacheDurationConverter)),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_Duration),
+        WebSysDescription(System.Web.SR.DataSourceCache_Duration),
         ]
         public virtual int CacheDuration {
             get {
@@ -98,7 +98,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(DataSourceCacheExpiry.Absolute),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_ExpirationPolicy),
+        WebSysDescription(System.Web.SR.DataSourceCache_ExpirationPolicy),
         ]
         public virtual DataSourceCacheExpiry CacheExpirationPolicy {
             get {
@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_KeyDependency),
+        WebSysDescription(System.Web.SR.DataSourceCache_KeyDependency),
         ]
         public virtual string CacheKeyDependency {
             get {
@@ -130,7 +130,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Cache"),
-        WebSysDescription(SR.XmlDataSource_CacheKeyContext),
+        WebSysDescription(System.Web.SR.XmlDataSource_CacheKeyContext),
         ]
         public virtual string CacheKeyContext {
             get {
@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls {
         PersistenceMode(PersistenceMode.InnerProperty),
         TypeConverter("System.ComponentModel.MultilineStringConverter," + AssemblyRef.System),
         WebCategory("Data"),
-        WebSysDescription(SR.XmlDataSource_Data),
+        WebSysDescription(System.Web.SR.XmlDataSource_Data),
         ]
         public virtual string Data {
             get {
@@ -165,7 +165,7 @@ namespace System.Web.UI.WebControls {
                 }
                 if (Data != value) {
                     if (_disallowChanges) {
-                        throw new InvalidOperationException(SR.GetString(SR.XmlDataSource_CannotChangeWhileLoading, "Data", ID));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.XmlDataSource_CannotChangeWhileLoading, "Data", ID));
                     }
                     _data = value;
                     _xmlDocument = null;
@@ -181,7 +181,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.XmlDataFileEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         WebCategory("Data"),
-        WebSysDescription(SR.XmlDataSource_DataFile),
+        WebSysDescription(System.Web.SR.XmlDataSource_DataFile),
         ]
         public virtual string DataFile {
             get {
@@ -193,7 +193,7 @@ namespace System.Web.UI.WebControls {
             set {
                 if (DataFile != value) {
                     if (_disallowChanges) {
-                        throw new InvalidOperationException(SR.GetString(SR.XmlDataSource_CannotChangeWhileLoading, "DataFile", ID));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.XmlDataSource_CannotChangeWhileLoading, "DataFile", ID));
                     }
                     _dataFile = value;
                     _xmlDocument = null;
@@ -209,7 +209,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(true),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_Enabled),
+        WebSysDescription(System.Web.SR.DataSourceCache_Enabled),
         ]
         public virtual bool EnableCaching {
             get {
@@ -241,7 +241,7 @@ namespace System.Web.UI.WebControls {
         PersistenceMode(PersistenceMode.InnerProperty),
         TypeConverter("System.ComponentModel.MultilineStringConverter," + AssemblyRef.System),
         WebCategory("Data"),
-        WebSysDescription(SR.XmlDataSource_Transform),
+        WebSysDescription(System.Web.SR.XmlDataSource_Transform),
         ]
         public virtual string Transform {
             get {
@@ -256,7 +256,7 @@ namespace System.Web.UI.WebControls {
                 }
                 if (Transform != value) {
                     if (_disallowChanges) {
-                        throw new InvalidOperationException(SR.GetString(SR.XmlDataSource_CannotChangeWhileLoading, "Transform", ID));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.XmlDataSource_CannotChangeWhileLoading, "Transform", ID));
                     }
                     _transform = value;
                     _xmlDocument = null;
@@ -288,7 +288,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.XslTransformFileEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         WebCategory("Data"),
-        WebSysDescription(SR.XmlDataSource_TransformFile),
+        WebSysDescription(System.Web.SR.XmlDataSource_TransformFile),
         ]
         public virtual string TransformFile {
             get {
@@ -300,7 +300,7 @@ namespace System.Web.UI.WebControls {
             set {
                 if (TransformFile != value) {
                     if (_disallowChanges) {
-                        throw new InvalidOperationException(SR.GetString(SR.XmlDataSource_CannotChangeWhileLoading, "TransformFile", ID));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.XmlDataSource_CannotChangeWhileLoading, "TransformFile", ID));
                     }
                     _transformFile = value;
                     _xmlDocument = null;
@@ -328,7 +328,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.XmlDataSource_XPath),
+        WebSysDescription(System.Web.SR.XmlDataSource_XPath),
         ]
         public virtual string XPath {
             get {
@@ -340,7 +340,7 @@ namespace System.Web.UI.WebControls {
             set {
                 if (XPath != value) {
                     if (_disallowChanges) {
-                        throw new InvalidOperationException(SR.GetString(SR.XmlDataSource_CannotChangeWhileLoading, "XPath", ID));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.XmlDataSource_CannotChangeWhileLoading, "XPath", ID));
                     }
                     _xPath = value;
                     OnDataSourceChanged(EventArgs.Empty);
@@ -354,7 +354,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.XmlDataSource_Transforming),
+        WebSysDescription(System.Web.SR.XmlDataSource_Transforming),
         ]
         public event EventHandler Transforming {
             add {
@@ -416,7 +416,7 @@ namespace System.Web.UI.WebControls {
                 sb.Append(':');
                 string uniqueID = UniqueID;
                 if (String.IsNullOrEmpty(uniqueID)) {
-                    throw new InvalidOperationException(SR.GetString(SR.XmlDataSource_NeedUniqueIDForCache));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.XmlDataSource_NeedUniqueIDForCache));
                 }
                 sb.Append(uniqueID);
             }
@@ -450,7 +450,7 @@ namespace System.Web.UI.WebControls {
                     if (uri.Scheme == Uri.UriSchemeHttp) {
                         // Check for Web permissions for the URL we want
                         if (!HttpRuntime.HasWebPermission(uri)) {
-                            throw new InvalidOperationException(SR.GetString(SR.XmlDataSource_NoWebPermission, uri.PathAndQuery, ID));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.XmlDataSource_NoWebPermission, uri.PathAndQuery, ID));
                         }
                         // Dependencies are not supported with HTTP URLs
                         cacheDependency = null;
@@ -467,7 +467,7 @@ namespace System.Web.UI.WebControls {
                 if (virtualPath != null && DesignMode) {
                     // This exception should never be thrown - the designer always maps paths
                     // before using the runtime control.
-                    throw new NotSupportedException(SR.GetString(SR.XmlDataSource_DesignTimeRelativePathsNotSupported, ID));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.XmlDataSource_DesignTimeRelativePathsNotSupported, ID));
                 }
 
                 Stream dataStream = OpenFileAndGetDependency(virtualPath, physicalPath, out cacheDependency);
@@ -549,7 +549,7 @@ namespace System.Web.UI.WebControls {
                 PopulateXmlDocument(_xmlDocument, out dataCacheDependency, out transformCacheDependency);
 
                 if (cacheKey != null) {
-                    Debug.Assert(Cache.Enabled);
+                    System.Web.Util.Debug.Assert(Cache.Enabled);
 
                     // If caching is enabled, save the XmlDocument to cache.
                     CacheDependency fileDependency;
@@ -662,11 +662,11 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         public void Save() {
             if (!IsModifiable) {
-                throw new InvalidOperationException(SR.GetString(SR.XmlDataSource_SaveNotAllowed, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.XmlDataSource_SaveNotAllowed, ID));
             }
 
             string writeableDataFile = WriteableDataFile;
-            Debug.Assert(!String.IsNullOrEmpty(writeableDataFile), "Did not expect WriteableDataFile to be empty in Save()");
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(writeableDataFile), "Did not expect WriteableDataFile to be empty in Save()");
 
             // Check for write permissions
             HttpRuntime.CheckFilePermission(writeableDataFile, true);

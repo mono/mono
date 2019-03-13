@@ -19,6 +19,7 @@ namespace System.Web.UI.HtmlControls {
     using System.ComponentModel;
     using System.Web;
     using System.Web.UI;
+    
     using System.Security.Permissions;
 
 
@@ -177,7 +178,7 @@ namespace System.Web.UI.HtmlControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.PostBackControl_ValidationGroup)
+        WebSysDescription(System.Web.SR.PostBackControl_ValidationGroup)
         ]
         public virtual string ValidationGroup {
             get {
@@ -198,7 +199,7 @@ namespace System.Web.UI.HtmlControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.HtmlInputImage_OnServerClick)
+        WebSysDescription(System.Web.SR.HtmlInputImage_OnServerClick)
         ]
         public event ImageClickEventHandler ServerClick {
             add {

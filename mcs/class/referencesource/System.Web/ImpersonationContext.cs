@@ -11,6 +11,7 @@ namespace System.Web {
     using System.Web.Configuration;
     using System.Web.Hosting;
     using System.Web.Util;
+    
 
     internal class ImpersonationContext : IDisposable {
         private HandleRef _savedToken;
@@ -60,7 +61,7 @@ namespace System.Web {
                 // impersonate token if not zero
                 if (token.Handle != IntPtr.Zero) { 
                     if (UnsafeNativeMethods.SetThreadToken(IntPtr.Zero, token.Handle) == 0) {
-                        throw new HttpException(SR.GetString(SR.Cannot_impersonate));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_impersonate));
                     }
 
                     _impersonating = true;
@@ -84,7 +85,7 @@ namespace System.Web {
             if (_savedToken.Handle != IntPtr.Zero) {
                 if (_reverted) {
                     if (UnsafeNativeMethods.SetThreadToken(IntPtr.Zero, _savedToken.Handle) == 0) {
-                        throw new HttpException(SR.GetString(SR.Cannot_impersonate));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_impersonate));
                     }
                 }
 
@@ -113,7 +114,7 @@ namespace System.Web {
 
                 // if the last error is ERROR_NO_TOKEN it is ok, otherwise throw
                 if (Marshal.GetLastWin32Error() != UnsafeNativeMethods.ERROR_NO_TOKEN) {
-                    throw new HttpException(SR.GetString(SR.Cannot_impersonate));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_impersonate));
                 }
             }
 

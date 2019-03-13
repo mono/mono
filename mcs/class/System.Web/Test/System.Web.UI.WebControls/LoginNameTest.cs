@@ -106,7 +106,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Context.User = principal;
 		}
 
-		protected internal override HttpContext Context {
+		protected override HttpContext Context {
 			get {
 				if (ctx == null) {
 					ctx = new HttpContext (

@@ -18,6 +18,7 @@ namespace System.Web.Management {
     using System.Globalization;
     using System.Runtime.Serialization;
     using System.Collections;
+    
 
 
     [Flags]
@@ -116,8 +117,7 @@ namespace System.Web.Management {
             get { return _sqlException; }
         }
     }
-
-    [AspNetHostingPermission(SecurityAction.LinkDemand, Level=AspNetHostingPermissionLevel.High)]
+    
     public static class SqlServices {
         public static void Install(string server, string user, string password, string database, SqlFeatures features) {
             SetupApplicationServices(server, user, password, false, null, database, null, features, true);
@@ -344,7 +344,7 @@ namespace System.Web.Management {
             if( dbFileName != null )
             {
                 if (dbFileName.Contains("[") || dbFileName.Contains("]") || dbFileName.Contains("'"))
-                    throw new ArgumentException(SR.GetString(SR.DbFileName_can_not_contain_invalid_chars));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.DbFileName_can_not_contain_invalid_chars));
                 database = database.TrimStart( '[' );
                 database = database.TrimEnd( ']' );
 
@@ -396,7 +396,7 @@ namespace System.Web.Management {
             string          cur;
             SqlCommand      sqlCmd;
 
-            Debug.Trace("SqlServices", "Execute File: about to run " + fullpath);
+            System.Web.Util.Debug.Trace("SqlServices", "Execute File: about to run " + fullpath);
             // We need to replace the name of the database with the one specified by the caller
             if( file.Equals( INSTALL_COMMON_SQL ) )
             {
@@ -423,7 +423,7 @@ namespace System.Web.Management {
                     run = true;
                 }
                 else {
-                    if (StringUtil.EqualsIgnoreCase(cur.Trim(), "GO"))
+                    if (System.Web.Util.StringUtil.EqualsIgnoreCase(cur.Trim(), "GO"))
                     {
                         run = true;
                     }
@@ -445,7 +445,7 @@ namespace System.Web.Management {
                         SqlException sqlExpt = e as SqlException;
 
                         if (sqlExpt != null) {
-                            Debug.Trace("SqlServices", "Error executing command.  SqlException:" +
+                            System.Web.Util.Debug.Trace("SqlServices", "Error executing command.  SqlException:" +
                                 "\nMessage=" + sqlExpt.Message +
                                 "\nNumber=" + sqlExpt.Number);
                             int expectedError = -1;
@@ -460,17 +460,17 @@ namespace System.Web.Management {
                                 expectedError = 14262; /* doesn't exists */
 
                                 if (sessionState && !isInstall) {
-                                    throw new SqlExecutionException(SR.GetString(SR.SQL_Services_Error_Deleting_Session_Job),
+                                    throw new SqlExecutionException(System.Web.SR.GetString(System.Web.SR.SQL_Services_Error_Deleting_Session_Job),
                                         server, database, file, cmdText, sqlExpt);
                                 }
                             }
 
                             if (sqlExpt.Number == expectedError) {
-                                Debug.Trace("SqlServices", "Got expected error: " + expectedError + "; not throwing");
+                                System.Web.Util.Debug.Trace("SqlServices", "Got expected error: " + expectedError + "; not throwing");
                             }
                             else {
                                 throw new SqlExecutionException(
-                                    SR.GetString(SR.SQL_Services_Error_Executing_Command,
+                                    System.Web.SR.GetString(System.Web.SR.SQL_Services_Error_Executing_Command,
                                         file, sqlExpt.Number.ToString(CultureInfo.CurrentCulture), sqlExpt.Message),
                                     server, database, file, cmdText, sqlExpt);
                             }
@@ -492,7 +492,7 @@ namespace System.Web.Management {
             }
 
             if ((features & SqlFeatures.All) != features) {
-                throw new ArgumentException(SR.GetString(SR.SQL_Services_Invalid_Feature));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.SQL_Services_Invalid_Feature));
             }
 
             // VSWhidbey 355946:
@@ -507,12 +507,12 @@ namespace System.Web.Management {
                 database = database.TrimEnd();
 
                 if (database.Length == 0)
-                    throw new ArgumentException(SR.GetString(SR.SQL_Services_Database_Empty_Or_Space_Only_Arg));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.SQL_Services_Database_Empty_Or_Space_Only_Arg));
 
                 database = RemoveSquareBrackets(database);
 
                 if (database.Contains("'") || database.Contains("[") || database.Contains("]"))
-                    throw new ArgumentException(SR.GetString(SR.SQL_Services_Database_contains_invalid_chars));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.SQL_Services_Database_contains_invalid_chars));
             }
 
             if (database == null) {
@@ -520,7 +520,7 @@ namespace System.Web.Management {
             }
             else {
                 // Wrap it with [] if not already
-                //if (!(StringUtil.StringStartsWith(database, '[') && StringUtil.StringEndsWith(database, ']'))) {
+                //if (!(System.Web.Util.StringUtil.StringStartsWith(database, '[') && System.Web.Util.StringUtil.StringEndsWith(database, ']'))) {
                 database = "[" + database + "]";
                 //}
             }
@@ -545,7 +545,7 @@ namespace System.Web.Management {
         }
 
         static string RemoveSquareBrackets(string database) {
-            if (database != null && StringUtil.StringStartsWith(database, '[') && StringUtil.StringEndsWith(database, ']'))
+            if (database != null && System.Web.Util.StringUtil.StringStartsWith(database, '[') && System.Web.Util.StringUtil.StringEndsWith(database, ']'))
                 return database.Substring(1, database.Length-2);
             return database;
         }
@@ -563,7 +563,7 @@ namespace System.Web.Management {
             if (res == null || res == System.DBNull.Value) {
                 // The database doesn't even exist.
                 throw new HttpException(
-                    SR.GetString(SR.SQL_Services_Error_Cant_Uninstall_Nonexisting_Database,
+                    System.Web.SR.GetString(System.Web.SR.SQL_Services_Error_Cant_Uninstall_Nonexisting_Database,
                         databaseNoSquareBrackets));
             }
         }
@@ -583,7 +583,7 @@ namespace System.Web.Management {
             SqlConnection   sqlConnection   = null;
             ArrayList       files;
 
-            Debug.Trace("SqlServices",
+            System.Web.Util.Debug.Trace("SqlServices",
                             "SetupApplicationServices called: server=" + server + ", database=" +
                             database  + ", user=" + user + ", password=" + password +
                             ", trusted=" + trusted + ", connectionString=" + connectionString +
@@ -618,7 +618,7 @@ namespace System.Web.Management {
                     }
                     if (!string.IsNullOrEmpty(table))
                         throw new NotSupportedException(
-                                    SR.GetString(SR.SQL_Services_Error_Cant_Uninstall_Nonempty_Table,
+                                    System.Web.SR.GetString(System.Web.SR.SQL_Services_Error_Cant_Uninstall_Nonempty_Table,
                                         table, database));
                 }
 
@@ -645,12 +645,12 @@ namespace System.Web.Management {
         static void SessionStateParamCheck(SessionStateType type, ref string customDatabase) {
             if (type == SessionStateType.Custom && String.IsNullOrEmpty(customDatabase)) {
                 throw new ArgumentException(
-                    SR.GetString(SR.SQL_Services_Error_missing_custom_database), "customDatabase");
+                    System.Web.SR.GetString(System.Web.SR.SQL_Services_Error_missing_custom_database), "customDatabase");
             }
 
             if (type != SessionStateType.Custom && customDatabase != null) {
                 throw new ArgumentException(
-                    SR.GetString(SR.SQL_Services_Error_Cant_use_custom_database), "customDatabase");
+                    System.Web.SR.GetString(System.Web.SR.SQL_Services_Error_Cant_use_custom_database), "customDatabase");
             }
             CheckDatabaseName(ref customDatabase);
         }
@@ -659,7 +659,7 @@ namespace System.Web.Management {
                            string connectionString, string customDatabase, SessionStateType type, bool install) {
             SqlConnection   sqlConnection   = null;
 
-            Debug.Trace("SqlServices",
+            System.Web.Util.Debug.Trace("SqlServices",
                             "SetupSessionState called: server=" + server + ", customDatabase=" +
                             customDatabase  + ", user=" + user + ", password=" + password +
                             ", trusted=" + trusted + ", connectionString=" + connectionString +
@@ -699,7 +699,7 @@ namespace System.Web.Management {
             // Construct the connection string
 
             if (String.IsNullOrEmpty(server)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("server");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("server");
             }
 
             connectionString += "server=" + server;
@@ -709,7 +709,7 @@ namespace System.Web.Management {
             }
             else {
                 if (String.IsNullOrEmpty(user)) {
-                    throw ExceptionUtil.ParameterNullOrEmpty("user");
+                    throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("user");
                 }
 
                 connectionString += ";UID=" + user + ";" + "PWD=" + password + ";";
@@ -728,14 +728,14 @@ namespace System.Web.Management {
             }
 
             try {
-                Debug.Trace("SqlServices", "Connecting to SQL: " + connectionString);
+                System.Web.Util.Debug.Trace("SqlServices", "Connecting to SQL: " + connectionString);
                 sqlConnection = new SqlConnection(connectionString);
                 sqlConnection.Open();
             }
             catch (Exception e) {
                 sqlConnection = null;
                 throw new HttpException(
-                    SR.GetString(SR.SQL_Services_Cant_connect_sql_database),
+                    System.Web.SR.GetString(System.Web.SR.SQL_Services_Cant_connect_sql_database),
                     e);
             }
 

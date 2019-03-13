@@ -153,7 +153,7 @@ namespace System.Web.UI.WebControls {
                         // The caller should not call this in the case of an IEnumerator datasource
                         // This is required for paging, but the assumption is that the user will set
                         // up custom paging.
-                        throw new HttpException(SR.GetString(SR.PagedDataSource_Cannot_Get_Count));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.PagedDataSource_Cannot_Get_Count));
                     }
                 }
             }
@@ -468,7 +468,7 @@ namespace System.Web.UI.WebControls {
             public object Current {
                 get {
                     if (index < 0) {
-                        throw new InvalidOperationException(SR.GetString(SR.Enumerator_MoveNext_Not_Called));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Enumerator_MoveNext_Not_Called));
                     }
                     return collection[startIndex + index];
                 }
@@ -508,7 +508,7 @@ namespace System.Web.UI.WebControls {
             public object Current {
                 get {
                     if (index < 0) {
-                        throw new InvalidOperationException(SR.GetString(SR.Enumerator_MoveNext_Not_Called));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Enumerator_MoveNext_Not_Called));
                     }
                     return array[startIndex + index];
                 }

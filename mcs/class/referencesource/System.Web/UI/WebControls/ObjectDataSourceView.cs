@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         public ObjectDataSourceView(ObjectDataSource owner, string name, HttpContext context)
             : base(owner, name) {
-            Debug.Assert(owner != null);
+            System.Web.Util.Debug.Assert(owner != null);
             _owner = owner;
             _context = context;
         }
@@ -340,7 +340,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue("{0}"),
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_OldValuesParameterFormatString),
+        WebSysDescription(System.Web.SR.DataSource_OldValuesParameterFormatString),
         ]
         public string OldValuesParameterFormatString {
             get {
@@ -679,12 +679,12 @@ namespace System.Web.UI.WebControls {
         /// pairs in the dictionary.
         /// </devdoc>
         private object BuildDataObject(Type dataObjectType, IDictionary inputParameters) {
-            Debug.Assert(inputParameters != null, "Did not expect null parameter dictionary");
-            Debug.Assert(dataObjectType != null, "Did not expect null DataObjectType");
+            System.Web.Util.Debug.Assert(inputParameters != null, "Did not expect null parameter dictionary");
+            System.Web.Util.Debug.Assert(dataObjectType != null, "Did not expect null DataObjectType");
 
             object dataObject = Activator.CreateInstance(dataObjectType);
 
-            Debug.Assert(dataObject != null, "We should never get back a null instance of the DataObject if the creation succeeded.");
+            System.Web.Util.Debug.Assert(dataObject != null, "We should never get back a null instance of the DataObject if the creation succeeded.");
 
             PropertyDescriptorCollection props = TypeDescriptor.GetProperties(dataObject);
             foreach (DictionaryEntry de in inputParameters) {
@@ -692,10 +692,10 @@ namespace System.Web.UI.WebControls {
                 string propName = (de.Key == null ? String.Empty : de.Key.ToString());
                 PropertyDescriptor pd = props.Find(propName, true);
                 if (pd == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_DataObjectPropertyNotFound, propName, _owner.ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_DataObjectPropertyNotFound, propName, _owner.ID));
                 }
                 if (pd.IsReadOnly) {
-                    throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_DataObjectPropertyReadOnly, propName, _owner.ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_DataObjectPropertyReadOnly, propName, _owner.ID));
                 }
                 object value = BuildObjectValue(de.Value, pd.PropertyType, propName, ParsingCulture);
                 pd.SetValue(dataObject, value);
@@ -735,7 +735,7 @@ namespace System.Web.UI.WebControls {
                     Type paramValueType = value.GetType();
                     if (innerDestinationType != paramValueType) {
                         // Throw if for example, we are trying to convert from int to Nullable<bool>
-                        throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_CannotConvertType, paramName, paramValueType.FullName, String.Format(CultureInfo.InvariantCulture, "Nullable<{0}>", destinationType.GetGenericArguments()[0].FullName)));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_CannotConvertType, paramName, paramValueType.FullName, String.Format(CultureInfo.InvariantCulture, "Nullable<{0}>", destinationType.GetGenericArguments()[0].FullName)));
                     }
                 }
             }
@@ -752,7 +752,7 @@ namespace System.Web.UI.WebControls {
             if (s != null) {
                 // Get the type converter for the destination type
                 TypeConverter converter = TypeDescriptor.GetConverter(type);
-                Debug.Assert(converter != null);
+                System.Web.Util.Debug.Assert(converter != null);
                 if (converter != null) {
                     // Perform the conversion
                     try {
@@ -764,10 +764,10 @@ namespace System.Web.UI.WebControls {
                         }
                     }
                     catch (NotSupportedException) {
-                        throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_CannotConvertType, paramName, typeof(string).FullName, type.FullName));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_CannotConvertType, paramName, typeof(string).FullName, type.FullName));
                     }
                     catch (FormatException) {
-                        throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_CannotConvertType, paramName, typeof(string).FullName, type.FullName));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_CannotConvertType, paramName, typeof(string).FullName, type.FullName));
                     }
                 }
             }
@@ -781,11 +781,11 @@ namespace System.Web.UI.WebControls {
         private IEnumerable CreateEnumerableData(object dataObject, DataSourceSelectArguments arguments) {
             if (FilterExpression.Length > 0) {
                 // Since this type is not valid for filtering, throw if there is a filter
-                throw new NotSupportedException(SR.GetString(SR.ObjectDataSourceView_FilterNotSupported, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_FilterNotSupported, _owner.ID));
             }
 
             if (!String.IsNullOrEmpty(arguments.SortExpression)) {
-                throw new NotSupportedException(SR.GetString(SR.ObjectDataSourceView_SortNotSupportedOnIEnumerable, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_SortNotSupportedOnIEnumerable, _owner.ID));
             }
 
             IEnumerable enumerable = dataObject as IEnumerable;
@@ -833,11 +833,11 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override int ExecuteDelete(IDictionary keys, IDictionary oldValues) {
             if (!CanDelete) {
-                throw new NotSupportedException(SR.GetString(SR.ObjectDataSourceView_DeleteNotSupported, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_DeleteNotSupported, _owner.ID));
             }
 
             Type type = GetType(TypeName);
-            Debug.Assert(type != null, "Should not have a null type at this point");
+            System.Web.Util.Debug.Assert(type != null, "Should not have a null type at this point");
 
             // Try to get the DataObject type. If we do get the type then we will construct
             // DataObjects representing the old values.
@@ -853,7 +853,7 @@ namespace System.Web.UI.WebControls {
 
                 if (ConflictDetection == ConflictOptions.CompareAllValues) {
                     if (oldValues == null) {
-                        throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_Pessimistic, SR.GetString(SR.DataSourceView_delete), _owner.ID, "oldValues"));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_Pessimistic, System.Web.SR.GetString(System.Web.SR.DataSourceView_delete), _owner.ID, "oldValues"));
                     }
                     MergeDictionaries(DeleteParameters, oldValues, caseInsensitiveOldValues);
                 }
@@ -881,7 +881,7 @@ namespace System.Web.UI.WebControls {
 
                 if (ConflictDetection == ConflictOptions.CompareAllValues) {
                     if (oldValues == null) {
-                        throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_Pessimistic, SR.GetString(SR.DataSourceView_delete), _owner.ID, "oldValues"));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_Pessimistic, System.Web.SR.GetString(System.Web.SR.DataSourceView_delete), _owner.ID, "oldValues"));
                     }
                     MergeDictionaries(DeleteParameters, oldValues, caseInsensitiveAllValues, oldValuesParameterFormatString);
                 }
@@ -911,11 +911,11 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override int ExecuteInsert(IDictionary values) {
             if (!CanInsert) {
-                throw new NotSupportedException(SR.GetString(SR.ObjectDataSourceView_InsertNotSupported, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_InsertNotSupported, _owner.ID));
             }
 
             Type type = GetType(TypeName);
-            Debug.Assert(type != null, "Should not have a null type at this point");
+            System.Web.Util.Debug.Assert(type != null, "Should not have a null type at this point");
 
             // Try to get the DataObject type. If we do get the type then we will construct
             // DataObjects representing the new values.
@@ -926,7 +926,7 @@ namespace System.Web.UI.WebControls {
             if (dataObjectType != null) {
                 // Build DataObject (New)
                 if (values == null || values.Count == 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_InsertRequiresValues, _owner.ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_InsertRequiresValues, _owner.ID));
                 }
 
                 IDictionary caseInsensitiveNewValues = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
@@ -977,7 +977,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected internal override IEnumerable ExecuteSelect(DataSourceSelectArguments arguments) {
             if (SelectMethod.Length == 0) {
-                throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_SelectNotSupported, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_SelectNotSupported, _owner.ID));
             }
 
             if (CanSort) {
@@ -1012,7 +1012,7 @@ namespace System.Web.UI.WebControls {
                         }
                         if (FilterExpression.Length > 0) {
                             // Since this type is not valid for filtering, throw if there is a filter
-                            throw new NotSupportedException(SR.GetString(SR.ObjectDataSourceView_FilterNotSupported, _owner.ID));
+                            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_FilterNotSupported, _owner.ID));
                         }
                         if (String.IsNullOrEmpty(arguments.SortExpression)) {
                             // If there is no sort expression, we can return the cached DataView
@@ -1078,7 +1078,7 @@ namespace System.Web.UI.WebControls {
                 string startRowIndexParameterName = StartRowIndexParameterName;
                 if (String.IsNullOrEmpty(maximumRowsParameterName) ||
                     String.IsNullOrEmpty(startRowIndexParameterName)) {
-                    throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_MissingPagingSettings, _owner.ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_MissingPagingSettings, _owner.ID));
                 }
                 // Create a new dictionary with the paging information and merge it in (so we get type conversions)
                 IDictionary pagingParameters = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
@@ -1089,7 +1089,7 @@ namespace System.Web.UI.WebControls {
 
 
             Type type = GetType(TypeName);
-            Debug.Assert(type != null, "Should not have a null type at this point");
+            System.Web.Util.Debug.Assert(type != null, "Should not have a null type at this point");
 
             object instance = null;
             ObjectDataSourceResult result = null;
@@ -1138,13 +1138,13 @@ namespace System.Web.UI.WebControls {
                     }
                     if (FilterExpression.Length > 0) {
                         // Since this type is not valid for filtering, throw if there is a filter
-                        throw new NotSupportedException(SR.GetString(SR.ObjectDataSourceView_FilterNotSupported, _owner.ID));
+                        throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_FilterNotSupported, _owner.ID));
                     }
 
                     if (!String.IsNullOrEmpty(arguments.SortExpression)) {
                         if (cacheEnabled) {
                             // Since this type is not valid for caching, throw if caching is enabled
-                            throw new NotSupportedException(SR.GetString(SR.ObjectDataSourceView_CacheNotSupportedOnSortedDataView, _owner.ID));
+                            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_CacheNotSupportedOnSortedDataView, _owner.ID));
                         }
                         dataView.Sort = arguments.SortExpression;
                     }
@@ -1180,7 +1180,7 @@ namespace System.Web.UI.WebControls {
                             if (enumerableReturnValue is IDataReader) {
                                 // IDataReader is specifically not supported with caching since the contract
                                 // is that they are forward-only (i.e. not resettable).
-                                throw new NotSupportedException(SR.GetString(SR.ObjectDataSourceView_CacheNotSupportedOnIDataReader, _owner.ID));
+                                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_CacheNotSupportedOnIDataReader, _owner.ID));
                             }
                             SaveDataAndRowCountToCache(arguments, enumerableReturnValue);
                         }
@@ -1194,11 +1194,11 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override int ExecuteUpdate(IDictionary keys, IDictionary values, IDictionary oldValues) {
             if (!CanUpdate) {
-                throw new NotSupportedException(SR.GetString(SR.ObjectDataSourceView_UpdateNotSupported, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_UpdateNotSupported, _owner.ID));
             }
 
             Type type = GetType(TypeName);
-            Debug.Assert(type != null, "Should not have a null type at this point");
+            System.Web.Util.Debug.Assert(type != null, "Should not have a null type at this point");
 
             // Try to get the DataObject type. If we do get the type then we will construct
             // DataObjects representing the new (and possibly old) values.
@@ -1210,7 +1210,7 @@ namespace System.Web.UI.WebControls {
                 if (ConflictDetection == ConflictOptions.CompareAllValues) {
                     // Build two DataObjects (Old + New)
                     if (oldValues == null) {
-                        throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_Pessimistic, SR.GetString(SR.DataSourceView_update), _owner.ID, "oldValues"));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_Pessimistic, System.Web.SR.GetString(System.Web.SR.DataSourceView_update), _owner.ID, "oldValues"));
                     }
 
                     IDictionary caseInsensitiveNewValues = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
@@ -1227,7 +1227,7 @@ namespace System.Web.UI.WebControls {
                     // For optimistic updates we require that there be old values, and then
                     // we move them into a case-insensitive dictionary for merging.
                     if (oldValues == null) {
-                        throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_Pessimistic, SR.GetString(SR.DataSourceView_update), _owner.ID, "oldValues"));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_Pessimistic, System.Web.SR.GetString(System.Web.SR.DataSourceView_update), _owner.ID, "oldValues"));
                     }
                     caseInsensitiveOldValues = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
                     MergeDictionaries(UpdateParameters, oldValues, caseInsensitiveOldValues);
@@ -1339,8 +1339,8 @@ namespace System.Web.UI.WebControls {
         }
 
         private ObjectDataSourceMethod GetResolvedMethodData(Type type, string methodName, Type dataObjectType, object oldDataObject, object newDataObject, DataSourceOperation operation) {
-            Debug.Assert(dataObjectType != null, "This overload of GetResolvedMethodData should only be called when using a DataObject");
-            Debug.Assert(oldDataObject != null || newDataObject != null, "Did not expect both oldDataObject and newDataObject to be null");
+            System.Web.Util.Debug.Assert(dataObjectType != null, "This overload of GetResolvedMethodData should only be called when using a DataObject");
+            System.Web.Util.Debug.Assert(oldDataObject != null || newDataObject != null, "Did not expect both oldDataObject and newDataObject to be null");
 
             // Get a list of all the overloads of the requested method
             MethodInfo[] methods = type.GetMethods(
@@ -1401,10 +1401,10 @@ namespace System.Web.UI.WebControls {
             }
 
             if (matchedMethod == null) {
-                throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_MethodNotFoundForDataObject, _owner.ID, methodName, dataObjectType.FullName));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_MethodNotFoundForDataObject, _owner.ID, methodName, dataObjectType.FullName));
             }
 
-            Debug.Assert(matchedMethodParameters != null, "Method parameters should not be null if a method was found");
+            System.Web.Util.Debug.Assert(matchedMethodParameters != null, "Method parameters should not be null if a method was found");
 
             // Set up parameter array for method call
             OrderedDictionary parameters = new OrderedDictionary(2, StringComparer.OrdinalIgnoreCase);
@@ -1434,7 +1434,7 @@ namespace System.Web.UI.WebControls {
                             parameters.Add(param1Name, newDataObject);
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_NoOldValuesParams, _owner.ID));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_NoOldValuesParams, _owner.ID));
                         }
                     }
                 }
@@ -1454,7 +1454,7 @@ namespace System.Web.UI.WebControls {
         /// values to be passed in for the invocation.
         /// </devdoc>
         private ObjectDataSourceMethod GetResolvedMethodData(Type type, string methodName, IDictionary allParameters, DataSourceOperation operation) {
-            Debug.Assert(allParameters != null, "The 'allParameters' dictionary should never be null");
+            System.Web.Util.Debug.Assert(allParameters != null, "The 'allParameters' dictionary should never be null");
 
             // Since there is no method type for SelectCount, we special case it
             bool isSelectCount = (operation == DataSourceOperation.SelectCount);
@@ -1551,22 +1551,22 @@ namespace System.Web.UI.WebControls {
                 // There was more than one method that looked like a good match, but none had
                 // a higher confidence level than the others, so we fail. See comment above
                 // regarding confidence levels.
-                throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_MultipleOverloads, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_MultipleOverloads, _owner.ID));
             }
 
             if (matchedMethod == null) {
                 if (allParameterCount == 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_MethodNotFoundNoParams, _owner.ID, methodName));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_MethodNotFoundNoParams, _owner.ID, methodName));
                 }
                 else {
                     string[] paramNames = new string[allParameterCount];
                     allParameters.Keys.CopyTo(paramNames, 0);
                     string paramString = String.Join(", ", paramNames);
-                    throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_MethodNotFoundWithParams, _owner.ID, methodName, paramString));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_MethodNotFoundWithParams, _owner.ID, methodName, paramString));
                 }
             }
 
-            Debug.Assert(matchedMethodParameters != null, "Method parameters should not be null if a method was found");
+            System.Web.Util.Debug.Assert(matchedMethodParameters != null, "Method parameters should not be null if a method was found");
 
             OrderedDictionary parameters = null;
 
@@ -1579,7 +1579,7 @@ namespace System.Web.UI.WebControls {
                     ParameterInfo methodParameter = matchedMethodParameters[i];
                     string paramName = methodParameter.Name;
                     // Check if the required parameter exists in the input parameters
-                    Debug.Assert(allParameters.Contains(paramName));
+                    System.Web.Util.Debug.Assert(allParameters.Contains(paramName));
 
                     object parameterValue = allParameters[paramName];
                     if (convertNullToDBNull && (parameterValue == null)) {
@@ -1598,7 +1598,7 @@ namespace System.Web.UI.WebControls {
 
         private Type GetType(string typeName) {
             if (TypeName.Length == 0) {
-                throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_TypeNotSpecified, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_TypeNotSpecified, _owner.ID));
             }
 
             // Load the type using BuildManager (do not throw on fail, ignore case)
@@ -1606,7 +1606,7 @@ namespace System.Web.UI.WebControls {
 
             // If the type was not found, throw
             if (type == null) {
-                throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_TypeNotFound, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_TypeNotFound, _owner.ID));
             }
 
             return type;
@@ -1764,8 +1764,8 @@ namespace System.Web.UI.WebControls {
         /// added to the destination dictionary.
         /// </devdoc>
         private static void MergeDictionaries(ParameterCollection reference, IDictionary source, IDictionary destination, string parameterNameFormatString) {
-            Debug.Assert(destination != null);
-            Debug.Assert(reference != null);
+            System.Web.Util.Debug.Assert(destination != null);
+            System.Web.Util.Debug.Assert(reference != null);
 
             if (source != null) {
                 foreach (DictionaryEntry de in source) {
@@ -1939,7 +1939,7 @@ namespace System.Web.UI.WebControls {
                 }
 
                 Type type = GetType(TypeName);
-                Debug.Assert(type != null, "Should not have a null type at this point");
+                System.Web.Util.Debug.Assert(type != null, "Should not have a null type at this point");
 
                 ObjectDataSourceMethod method = GetResolvedMethodData(type, SelectCountMethod, mergedParameters, DataSourceOperation.SelectCount);
                 ObjectDataSourceResult result = InvokeMethod(method, disposeInstance, ref instance);
@@ -1953,7 +1953,7 @@ namespace System.Web.UI.WebControls {
         }
 
         private void ReleaseInstance(object instance) {
-            Debug.Assert(instance != null, "ReleaseInstance: Instance shouldn't be null");
+            System.Web.Util.Debug.Assert(instance != null, "ReleaseInstance: Instance shouldn't be null");
             ObjectDataSourceDisposingEventArgs disposingEventArgs = new ObjectDataSourceDisposingEventArgs(instance);
             OnObjectDisposing(disposingEventArgs);
 
@@ -2032,7 +2032,7 @@ namespace System.Web.UI.WebControls {
             Type dataObjectType = BuildManager.GetType(dataObjectTypeName, false, true);
             if (dataObjectType == null) {
                 // If the type was not found, throw
-                throw new InvalidOperationException(SR.GetString(SR.ObjectDataSourceView_DataObjectTypeNotFound, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ObjectDataSourceView_DataObjectTypeNotFound, _owner.ID));
             }
             return dataObjectType;
         }

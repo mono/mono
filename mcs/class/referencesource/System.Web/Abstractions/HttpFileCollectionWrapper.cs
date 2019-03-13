@@ -92,7 +92,7 @@ namespace System.Web {
 
         public override IList<HttpPostedFileBase> GetMultiple(string name) {
             ICollection<HttpPostedFile> files = _collection.GetMultiple(name);
-            Debug.Assert(files != null);
+            System.Web.Util.Debug.Assert(files != null);
             return files.Select(f => (HttpPostedFileBase)new HttpPostedFileWrapper(f)).ToList().AsReadOnly();
         }
 

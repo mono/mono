@@ -43,7 +43,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		private HttpContext ctx;
 
 		// don't call base class (so _context is never set to a non-null value)
-		protected internal override HttpContext Context {
+		protected override HttpContext Context {
 			get {
 				if (ctx == null) {
 					ctx = new HttpContext (
@@ -190,6 +190,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 #if !TARGET_DOTNET
 		[Test]
+		[Ignore("Does not seem to be a valid test for .net")]
 		public void ActionStringWithQuery ()
 		{
 			TestPage p = new TestPage ();
@@ -208,6 +209,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 #endif
 
 		[Test]
+		[Ignore("Does not seem to be a valid test w/ .NET.  Browsercaps does not load this way")]
 		public void Undocumented_ActionProperty ()
 		{
 			TestPage p = new TestPage ();
@@ -264,13 +266,12 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void RenderChildren ()
 		{
 			Page p = new Page();
 			FormPoker form = new FormPoker ();
 			form.Page = p;
-			HtmlDiff.AssertAreEqual ("<div>\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"\r\n__VIEWSTATE\" value=\"\" />\r\n</div>", form.RenderChildren ().Trim (), "A1");
+			HtmlDiff.AssertAreEqual ("<div class=\"aspNetHidden\">\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"\r\n__VIEWSTATE\" value=\"\" />\r\n</div>", form.RenderChildren ().Trim (), "A1");
 		}
 
 		[Test]

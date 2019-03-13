@@ -30,20 +30,20 @@ namespace System.Web.UI.WebControls.WebParts {
         private static readonly WebPartDescriptionCollection DesignModeAvailableWebParts =
             new WebPartDescriptionCollection(new WebPartDescription[] {
                 new WebPartDescription("webpart1", String.Format(CultureInfo.CurrentCulture,
-                    SR.GetString(SR.CatalogPart_SampleWebPartTitle), "1"), null, null),
+                    System.Web.SR.GetString(System.Web.SR.CatalogPart_SampleWebPartTitle), "1"), null, null),
                 new WebPartDescription("webpart2", String.Format(CultureInfo.CurrentCulture,
-                    SR.GetString(SR.CatalogPart_SampleWebPartTitle), "2"), null, null),
+                    System.Web.SR.GetString(System.Web.SR.CatalogPart_SampleWebPartTitle), "2"), null, null),
                 new WebPartDescription("webpart3", String.Format(CultureInfo.CurrentCulture,
-                    SR.GetString(SR.CatalogPart_SampleWebPartTitle), "3"), null, null),
+                    System.Web.SR.GetString(System.Web.SR.CatalogPart_SampleWebPartTitle), "3"), null, null),
             });
 
         [
-        WebSysDefaultValue(SR.PageCatalogPart_PartTitle),
+        WebSysDefaultValue(System.Web.SR.PageCatalogPart_PartTitle),
         ]
         public override string Title {
             get {
                 string s = (string)ViewState["Title"];
-                return (s != null) ? s : SR.GetString(SR.PageCatalogPart_PartTitle);
+                return (s != null) ? s : System.Web.SR.GetString(System.Web.SR.PageCatalogPart_PartTitle);
             }
             set {
                 ViewState["Title"] = value;
@@ -89,7 +89,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private WebPartCollection GetClosedWebParts() {
             // WebPartManager is checked for null in calling code
-            Debug.Assert(WebPartManager != null);
+            System.Web.Util.Debug.Assert(WebPartManager != null);
 
             ArrayList closedWebParts = new ArrayList();
 
@@ -112,7 +112,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             WebPartDescriptionCollection webPartDescriptions = GetAvailableWebPartDescriptions();
             if (!webPartDescriptions.Contains(description)) {
-                throw new ArgumentException(SR.GetString(SR.CatalogPart_UnknownDescription), "description");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.CatalogPart_UnknownDescription), "description");
             }
 
             return description.WebPart;
@@ -212,7 +212,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [Browsable(false), DefaultValue(false), EditorBrowsable(EditorBrowsableState.Never), Themeable(false)]
         public override bool EnableTheming {
             get { return false; }
-            set { throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name)); }
+            set { throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name)); }
         }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never), Themeable(false)]
@@ -253,7 +253,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [Browsable(false), DefaultValue(""), EditorBrowsable(EditorBrowsableState.Never), Themeable(false)]
         public override string SkinID {
             get { return String.Empty; }
-            set { throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name)); }
+            set { throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name)); }
         }
 
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never), Themeable(false)]

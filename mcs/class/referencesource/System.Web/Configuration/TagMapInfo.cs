@@ -18,6 +18,7 @@ namespace System.Web.Configuration {
     using System.Threading;
     using System.Web.Configuration;
     using System.Security.Permissions;
+    
 
     public sealed class TagMapInfo : ConfigurationElement {
         private static ConfigurationPropertyCollection _properties;
@@ -56,15 +57,15 @@ namespace System.Web.Configuration {
 
         public override bool Equals(object o) {
             TagMapInfo tm = o as TagMapInfo;
-            return StringUtil.Equals(TagType, tm.TagType) &&
-                   StringUtil.Equals(MappedTagType, tm.MappedTagType);
+            return System.Web.Util.StringUtil.Equals(TagType, tm.TagType) &&
+                   System.Web.Util.StringUtil.Equals(MappedTagType, tm.MappedTagType);
         }
 
         public override int GetHashCode() {
             return TagType.GetHashCode() ^ MappedTagType.GetHashCode();
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -95,18 +96,18 @@ namespace System.Web.Configuration {
         void Verify() {
             if (String.IsNullOrEmpty(TagType)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Config_base_required_attribute_missing, 
+                    System.Web.SR.GetString(System.Web.SR.Config_base_required_attribute_missing, 
                         "tagType"));
             }
 
             if (String.IsNullOrEmpty(MappedTagType)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Config_base_required_attribute_missing, 
+                    System.Web.SR.GetString(System.Web.SR.Config_base_required_attribute_missing, 
                         "mappedTagType"));
             }
         }
 
-        protected override bool SerializeElement(XmlWriter writer, bool serializeCollectionKey) {
+        protected internal override bool SerializeElement(XmlWriter writer, bool serializeCollectionKey) {
             Verify();
             return base.SerializeElement(writer, serializeCollectionKey);
         }

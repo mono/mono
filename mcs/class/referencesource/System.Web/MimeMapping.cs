@@ -455,9 +455,10 @@ namespace System.Web {
             protected override void PopulateMappings() {
                 IntPtr mimeMapCollection = IntPtr.Zero;
                 try {
-                    int result;
-                    int mimeMapCount;
+                    int result = 0;
+                    int mimeMapCount = 0;
 
+#if !FEATURE_PAL
                     // Read the collection
                     result = UnsafeIISMethods.MgdGetMimeMapCollection(IntPtr.Zero, _applicationContext, out mimeMapCollection, out mimeMapCount);
                     Marshal.ThrowExceptionForHR(result);
@@ -474,8 +475,8 @@ namespace System.Web {
                             result = UnsafeIISMethods.MgdGetNextMimeMap(mimeMapCollection, (uint)i, out bstrFileExtension, out cBstrFileExtension, out bstrMimeType, out cBstrMimeType);
                             Marshal.ThrowExceptionForHR(result);
 
-                            string fileExtension = (cBstrFileExtension > 0) ? StringUtil.StringFromWCharPtr(bstrFileExtension, cBstrFileExtension) : null;
-                            string mimeType = (cBstrMimeType > 0) ? StringUtil.StringFromWCharPtr(bstrMimeType, cBstrMimeType) : null;
+                            string fileExtension = (cBstrFileExtension > 0) ? System.Web.Util.StringUtil.StringFromWCharPtr(bstrFileExtension, cBstrFileExtension) : null;
+                            string mimeType = (cBstrMimeType > 0) ? System.Web.Util.StringUtil.StringFromWCharPtr(bstrMimeType, cBstrMimeType) : null;
                             AddMapping(fileExtension, mimeType);
                         }
                         finally {
@@ -484,6 +485,7 @@ namespace System.Web {
                             if (bstrMimeType != IntPtr.Zero) Marshal.FreeBSTR(bstrMimeType);
                         }
                     }
+#endif
                 }
                 finally {
                     // It's our responsibility to release the collection when we're done

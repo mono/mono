@@ -47,7 +47,7 @@ public static class VirtualPathUtility {
 
         VirtualPath appVirtualPath = VirtualPath.CreateAbsoluteTrailingSlash(applicationPath);
 
-        return UrlPath.MakeVirtualPathAppRelative(virtualPathObject.VirtualPathString,
+        return System.Web.Util.UrlPath.MakeVirtualPathAppRelative(virtualPathObject.VirtualPathString,
             appVirtualPath.VirtualPathString, true /*nullIfNotInApp*/);
     }
 
@@ -65,7 +65,7 @@ public static class VirtualPathUtility {
 
         VirtualPath appVirtualPath = VirtualPath.CreateAbsoluteTrailingSlash(applicationPath);
 
-        return UrlPath.MakeVirtualPathAppAbsolute(virtualPathObject.AppRelativeVirtualPathString,
+        return System.Web.Util.UrlPath.MakeVirtualPathAppAbsolute(virtualPathObject.AppRelativeVirtualPathString,
             appVirtualPath.VirtualPathString);
     }
 
@@ -93,11 +93,11 @@ public static class VirtualPathUtility {
 
     /* Canonicalize virtual paths */
     public static string AppendTrailingSlash(string virtualPath) {
-        return UrlPath.AppendSlashToPathIfNeeded(virtualPath);
+        return System.Web.Util.UrlPath.AppendSlashToPathIfNeeded(virtualPath);
     }
 
     public static string RemoveTrailingSlash(string virtualPath) {
-        return UrlPath.RemoveSlashFromPathIfNeeded(virtualPath);
+        return System.Web.Util.UrlPath.RemoveSlashFromPathIfNeeded(virtualPath);
     }
 
 // Removing Reduce per DevDiv 43118
@@ -116,7 +116,7 @@ public static class VirtualPathUtility {
     }
 
     public static string MakeRelative(string fromPath, string toPath) {
-        return UrlPath.MakeRelative(fromPath, toPath);
+        return System.Web.Util.UrlPath.MakeRelative(fromPath, toPath);
     }
 }
 

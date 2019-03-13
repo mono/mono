@@ -270,7 +270,7 @@ namespace MonoTests.System.Web.Compilation
 		private HttpContext ctx;
 
 		// don't call base class (so _context is never set to a non-null value)
-		protected internal override HttpContext Context
+		protected override HttpContext Context
 		{
 			get
 			{

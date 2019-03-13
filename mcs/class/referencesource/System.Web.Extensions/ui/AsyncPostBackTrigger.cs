@@ -42,8 +42,10 @@ namespace System.Web.UI {
 
         [
         SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID"),
+#if !MONO
         TypeConverter("System.Web.UI.Design.AsyncPostBackTriggerControlIDConverter, " +
             AssemblyRef.SystemWebExtensionsDesign)
+#endif
         ]
         public new string ControlID {
             get {
@@ -58,8 +60,8 @@ namespace System.Web.UI {
         DefaultValue(""),
         Category("Behavior"),
         ResourceDescription("AsyncPostBackTrigger_EventName"),
-        TypeConverter("System.Web.UI.Design.AsyncPostBackTriggerEventNameConverter, " +
-            AssemblyRef.SystemWebExtensionsDesign),
+        //TypeConverter("System.Web.UI.Design.AsyncPostBackTriggerEventNameConverter, " +
+        //    AssemblyRef.SystemWebExtensionsDesign),
         ]
         public string EventName {
             get {

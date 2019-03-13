@@ -40,8 +40,7 @@ namespace System.Web {
     using System.Web.UI;
     using System.Web.Util;
     using System.Web.WebSockets;
-
-
+    
     /// <devdoc>
     ///    <para>Encapsulates
     ///       all HTTP-specific
@@ -217,10 +216,10 @@ namespace System.Web {
 
                 switch (GetWebSocketInitStatus()) {
                     case WebSocketInitStatus.RequiresIntegratedMode:
-                        throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                        throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
 
                     case WebSocketInitStatus.CannotCallFromBeginRequest:
-                        throw new InvalidOperationException(SR.GetString(SR.WebSockets_CannotBeCalledDuringBeginRequest));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebSockets_CannotBeCalledDuringBeginRequest));
 
                     case WebSocketInitStatus.Success:
                         return true;
@@ -294,7 +293,7 @@ namespace System.Web {
 
             if (IsWebSocketRequestUpgrading) {
                 // this method cannot be called multiple times
-                throw new InvalidOperationException(SR.GetString(SR.WebSockets_AcceptWebSocketRequestCanOnlyBeCalledOnce));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebSockets_AcceptWebSocketRequestCanOnlyBeCalledOnce));
             }
 
             // DevDiv #384514: Task<T> doesn't work correctly using the legacy SynchronizationContext setting. Since
@@ -304,31 +303,31 @@ namespace System.Web {
 
             switch (GetWebSocketInitStatus()) {
                 case WebSocketInitStatus.RequiresIntegratedMode:
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
 
                 case WebSocketInitStatus.CannotCallFromBeginRequest:
-                    throw new InvalidOperationException(SR.GetString(SR.WebSockets_CannotBeCalledDuringBeginRequest));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebSockets_CannotBeCalledDuringBeginRequest));
 
                 case WebSocketInitStatus.NativeModuleNotEnabled:
-                    throw new PlatformNotSupportedException(SR.GetString(SR.WebSockets_WebSocketModuleNotEnabled));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.WebSockets_WebSocketModuleNotEnabled));
 
                 case WebSocketInitStatus.NotAWebSocketRequest:
-                    throw new HttpException((int)HttpStatusCode.BadRequest, SR.GetString(SR.WebSockets_NotAWebSocketRequest));
+                    throw new HttpException((int)HttpStatusCode.BadRequest, System.Web.SR.GetString(System.Web.SR.WebSockets_NotAWebSocketRequest));
 
                 case WebSocketInitStatus.CurrentRequestIsChildRequest:
-                    throw new InvalidOperationException(SR.GetString(SR.WebSockets_CannotBeCalledDuringChildExecute));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebSockets_CannotBeCalledDuringChildExecute));
 
                 case WebSocketInitStatus.Success:
                     break;
 
                 default:
                     // fallback error message - not a WebSocket request
-                    throw new HttpException(SR.GetString(SR.WebSockets_UnknownErrorWhileAccepting));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.WebSockets_UnknownErrorWhileAccepting));
             }
 
             if (CurrentNotification > RequestNotification.ExecuteRequestHandler) {
                 // it is too late to call this method
-                throw new InvalidOperationException(SR.GetString(SR.WebSockets_CannotBeCalledAfterHandlerExecute));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebSockets_CannotBeCalledAfterHandlerExecute));
             }
             // End argument & state checking
 
@@ -338,7 +337,7 @@ namespace System.Web {
             if (options != null && options.RequireSameOrigin) {
                 if (!WebSocketUtil.IsSameOriginRequest(wr)) {
                     // use Forbidden (HTTP 403) since it's not an authentication error; it's a usage error
-                    throw new HttpException((int)HttpStatusCode.Forbidden, SR.GetString(SR.WebSockets_OriginCheckFailed));
+                    throw new HttpException((int)HttpStatusCode.Forbidden, System.Web.SR.GetString(System.Web.SR.WebSockets_OriginCheckFailed));
                 }
             }
 
@@ -353,7 +352,7 @@ namespace System.Web {
                 if (incomingProtocols == null || !incomingProtocols.Contains(subprotocol, StringComparer.Ordinal)) {
                     // The caller requested a subprotocol that wasn't in the list of accepted protocols coming from the client.
                     // This is disallowed by the WebSockets protocol spec, Sec. 5.2.2 (#2).
-                    throw new ArgumentException(SR.GetString(SR.WebSockets_SubProtocolCannotBeNegotiated, subprotocol), "options");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebSockets_SubProtocolCannotBeNegotiated, subprotocol), "options");
                 }
             }
             // End options checking and parsing
@@ -375,7 +374,7 @@ namespace System.Web {
             // Make sure the state transition is happening in the correct order
 #if DBG
             WebSocketTransitionState expectedOldState = checked(newState - 1);
-            Debug.Assert(WebSocketTransitionState == expectedOldState, String.Format(CultureInfo.InvariantCulture, "Expected WebSocketTransitionState to be '{0}', but it was '{1}'.", expectedOldState, WebSocketTransitionState));
+            System.Web.Util.Debug.Assert(WebSocketTransitionState == expectedOldState, String.Format(CultureInfo.InvariantCulture, "Expected WebSocketTransitionState to be '{0}', but it was '{1}'.", expectedOldState, WebSocketTransitionState));
 #endif
 
             WebSocketTransitionState = newState;
@@ -393,7 +392,7 @@ namespace System.Web {
         // helper that throws an exception if we have transitioned the current request to a WebSocket request
         internal void EnsureHasNotTransitionedToWebSocket() {
             if (HasWebSocketRequestTransitionCompleted) {
-                throw new NotSupportedException(SR.GetString(SR.WebSockets_MethodNotAvailableDuringWebSocketProcessing));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.WebSockets_MethodNotAvailableDuringWebSocketProcessing));
             }
         }
 
@@ -499,7 +498,7 @@ namespace System.Web {
                     idxStartEurl--;
                 }
                 if (idxStartEurl >= 0
-                    && StringUtil.Equals(path, idxStartEurl, eurl, 0, eurl.Length)) {                    
+                    && System.Web.Util.StringUtil.Equals(path, idxStartEurl, eurl, 0, eurl.Length)) {                    
                     // restore original URL
                     int originalUrlLen = idxStartEurl;
                     if (hasTrailingSlash) {
@@ -532,7 +531,7 @@ namespace System.Web {
                 try {
                     IntPtr pBuffer = UnsafeNativeMethods.GetExtensionlessUrlAppendage();
                     if (pBuffer != IntPtr.Zero) {
-                        eurl = StringUtil.StringFromWCharPtr(pBuffer, UnsafeNativeMethods.lstrlenW(pBuffer));
+                        eurl = System.Web.Util.StringUtil.StringFromWCharPtr(pBuffer, UnsafeNativeMethods.lstrlenW(pBuffer));
                     }
                 }
                 catch {} // ignore all exceptions
@@ -567,7 +566,7 @@ namespace System.Web {
             get {
 #if DBG
                 if (NeedDebugAssertOnAccessToCurrent) {
-                    Debug.Assert(ContextBase.Current != null);
+                    System.Web.Util.Debug.Assert(ContextBase.Current != null);
                 }
 #endif
                 return ContextBase.Current as HttpContext;
@@ -754,7 +753,7 @@ namespace System.Web {
                 // The setter should never have been made public.  It probably happened in 1.0, before it was possible
                 // to have getter and setter with different accessibility.
                 if (_isIntegratedPipeline && _appInstance != null && value != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.Application_instance_cannot_be_changed));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Application_instance_cannot_be_changed));
                 }
                 else {
                     _appInstance = value;
@@ -880,7 +879,7 @@ namespace System.Web {
             if (wr != null) {
                 // Remap handler not allowed after ResolveRequestCache notification
                 if (_notificationContext.CurrentNotification >= RequestNotification.MapRequestHandler) {
-                    throw new InvalidOperationException(SR.GetString(SR.Invoke_before_pipeline_event, "HttpContext.RemapHandler", "HttpApplication.MapRequestHandler"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Invoke_before_pipeline_event, "HttpContext.RemapHandler", "HttpApplication.MapRequestHandler"));
                 }
 
                 string handlerTypeName = null;
@@ -914,7 +913,7 @@ namespace System.Web {
         public HttpRequest Request {
             get {
                  if (HideRequestResponse)
-                    throw new HttpException(SR.GetString(SR.Request_not_available));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Request_not_available));
                 return _request;
             }
         }
@@ -929,7 +928,7 @@ namespace System.Web {
         public HttpResponse Response {
             get {
                 if (HideRequestResponse || HasWebSocketRequestTransitionCompleted)
-                    throw new HttpException(SR.GetString(SR.Response_not_available));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Response_not_available));
                 return _response;
             }
         }
@@ -1010,7 +1009,7 @@ namespace System.Web {
                 if (_delayedSessionState) {
                     lock (this) {
                         if (_delayedSessionState) {
-                            Debug.Assert(_sessionStateModule != null, "_sessionStateModule != null");
+                            System.Web.Util.Debug.Assert(_sessionStateModule != null, "_sessionStateModule != null");
 
                             // If it's not null, it means we have a delayed session state item
                             _sessionStateModule.InitStateStoreItem(true);
@@ -1051,7 +1050,7 @@ namespace System.Web {
 
         internal void AddHttpSessionStateModule(SessionStateModule module, bool delayed) {
             if (_sessionStateModule != null && _sessionStateModule != module) {
-                throw new HttpException(SR.GetString(SR.Cant_have_multiple_session_module));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_have_multiple_session_module));
             }
             _sessionStateModule = module;
             _delayedSessionState = delayed;
@@ -1286,7 +1285,7 @@ namespace System.Web {
           Justification = "An internal property already exists. This method does additional work.")]
         public void SetSessionStateBehavior(SessionStateBehavior sessionStateBehavior) {
             if (_notificationContext != null && _notificationContext.CurrentNotification >= RequestNotification.AcquireRequestState) {
-                throw new InvalidOperationException(SR.GetString(SR.Invoke_before_pipeline_event, "HttpContext.SetSessionStateBehavior", "HttpApplication.AcquireRequestState"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Invoke_before_pipeline_event, "HttpContext.SetSessionStateBehavior", "HttpApplication.AcquireRequestState"));
             }
 
             SessionStateBehavior = sessionStateBehavior;
@@ -1864,7 +1863,7 @@ namespace System.Web {
                     Thread.ResetAbort();
                     PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_TIMED_OUT);
 
-                    throw new HttpException(SR.GetString(SR.Request_timed_out),
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Request_timed_out),
                                         null, WebEventCodes.RuntimeErrorRequestAbort);
                 }
             }
@@ -1887,7 +1886,7 @@ namespace System.Web {
         }
 
         internal void PopTraceContext() {
-            Debug.Assert(_traceContextStack != null);
+            System.Web.Util.Debug.Assert(_traceContextStack != null);
             _topTraceContext = (TraceContext) _traceContextStack.Pop();
         }
 
@@ -1909,7 +1908,7 @@ namespace System.Web {
         internal int CallISAPI(UnsafeNativeMethods.CallISAPIFunc iFunction, byte [] bufIn, byte [] bufOut) {
 
             if (_wr == null || !(_wr is System.Web.Hosting.ISAPIWorkerRequest))
-                throw new HttpException(SR.GetString(SR.Cannot_call_ISAPI_functions));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_call_ISAPI_functions));
 #if !FEATURE_PAL // FEATURE_PAL does not enable IIS-based hosting features
             return ((System.Web.Hosting.ISAPIWorkerRequest) _wr).CallISAPI(iFunction, bufIn, bufOut);
 #else // !FEATURE_PAL
@@ -1972,14 +1971,14 @@ namespace System.Web {
                 EnsureHasNotTransitionedToWebSocket();
 
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
 
                 return _notificationContext.CurrentNotification;
             }
             internal set {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
 
                 _notificationContext.CurrentNotification = value;
@@ -2105,13 +2104,13 @@ namespace System.Web {
                 EnsureHasNotTransitionedToWebSocket();
 
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
                 return _notificationContext.IsPostNotification;
             }
             internal set {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
                 _notificationContext.IsPostNotification = value;
             }
@@ -2259,7 +2258,7 @@ namespace System.Web {
 
         internal CultureInfo CultureFromConfig(string configString, bool requireSpecific) {
             //auto
-            if(StringUtil.EqualsIgnoreCase(configString, HttpApplication.AutoCulture)) {
+            if(System.Web.Util.StringUtil.EqualsIgnoreCase(configString, HttpApplication.AutoCulture)) {
                 string[] userLanguages = UserLanguagesFromContext();
                 if (userLanguages != null) {
                     try {
@@ -2273,7 +2272,7 @@ namespace System.Web {
                     return null;
                 }
             }
-            else if(StringUtil.StringStartsWithIgnoreCase(configString, "auto:")) {
+            else if(System.Web.Util.StringUtil.StringStartsWithIgnoreCase(configString, "auto:")) {
                 string[] userLanguages = UserLanguagesFromContext();
                 if (userLanguages != null) {
                     try {

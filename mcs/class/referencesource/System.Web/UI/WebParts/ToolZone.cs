@@ -45,7 +45,7 @@ namespace System.Web.UI.WebControls.WebParts {
             foreach (WebPartDisplayMode mode in associatedDisplayModes) {
                 _associatedDisplayModes.Add(mode);
             }
-            _associatedDisplayModes.SetReadOnly(SR.ToolZone_DisplayModesReadOnly);
+            _associatedDisplayModes.SetReadOnly(System.Web.SR.ToolZone_DisplayModesReadOnly);
         }
 
         protected ToolZone(WebPartDisplayMode associatedDisplayMode) {
@@ -55,7 +55,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             _associatedDisplayModes = new WebPartDisplayModeCollection();
             _associatedDisplayModes.Add(associatedDisplayMode);
-            _associatedDisplayModes.SetReadOnly(SR.ToolZone_DisplayModesReadOnly);
+            _associatedDisplayModes.SetReadOnly(System.Web.SR.ToolZone_DisplayModesReadOnly);
         }
 
         [
@@ -87,7 +87,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.ToolZone_EditUIStyle),
+        WebSysDescription(System.Web.SR.ToolZone_EditUIStyle),
         ]
         public Style EditUIStyle {
             get {
@@ -108,7 +108,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.ToolZone_HeaderCloseVerb),
+        WebSysDescription(System.Web.SR.ToolZone_HeaderCloseVerb),
         ]
         public virtual WebPartVerb HeaderCloseVerb {
             get {
@@ -129,7 +129,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.ToolZone_HeaderVerbStyle),
+        WebSysDescription(System.Web.SR.ToolZone_HeaderVerbStyle),
         ]
         public Style HeaderVerbStyle {
             get {
@@ -149,7 +149,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Localizable(true),
         WebSysDefaultValue(""),
         WebCategory("Behavior"),
-        WebSysDescription(SR.ToolZone_InstructionText),
+        WebSysDescription(System.Web.SR.ToolZone_InstructionText),
         ]
         public virtual string InstructionText {
             get {
@@ -167,7 +167,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.ToolZone_InstructionTextStyle),
+        WebSysDescription(System.Web.SR.ToolZone_InstructionTextStyle),
         ]
         public Style InstructionTextStyle {
             get {
@@ -188,7 +188,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.ToolZone_LabelStyle),
+        WebSysDescription(System.Web.SR.ToolZone_LabelStyle),
         ]
         public Style LabelStyle {
             get {
@@ -215,7 +215,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
             set {
                 if (!DesignMode) {
-                    throw new InvalidOperationException(SR.GetString(SR.ToolZone_CantSetVisible));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ToolZone_CantSetVisible));
                 }
             }
         }
@@ -229,7 +229,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 object[] myState = (object[]) savedState;
                 if (myState.Length != viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[baseIndex]);
