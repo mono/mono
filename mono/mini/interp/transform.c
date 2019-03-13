@@ -88,7 +88,7 @@ typedef struct
 	const unsigned char *in_start;
 	InterpInst *last_ins, *first_ins;
 	int code_size;
-	int body_start_offset;
+	int body_start_offset; // FIXME this and the one from InterpMethod is useless (after the stinarg removal opt) and needs to die
 	int *in_offsets;
 	StackInfo **stack_state;
 	int *stack_height;
@@ -289,6 +289,8 @@ interp_add_ins_explicit (TransformData *td, guint16 opcode, int len)
 	// Size of data region of instruction is length of instruction minus 1 (the opcode slot)
 	new_inst = mono_mempool_alloc0 (td->mempool, sizeof (InterpInst) + sizeof (guint16) * (len - 1));
 	new_inst->opcode = opcode;
+	// opcodes from inlined methods don't have il offset associated with them since the offset
+	// stored here is relevant only for the original method
 	if (!td->inlined_method)
 		new_inst->il_offset = td->in_start - td->il_code;
 	else
@@ -331,6 +333,45 @@ interp_add_ins (TransformData *td, guint16 opcode)
 		} \
 	} while (0)
 
+#if NO_UNALIGNED_ACCESS
+#define WRITE32(ip, v) \
+	do { \
+		* (ip) = * (guint16 *)(v); \
+		* ((ip) + 1) = * ((guint16 *)(v) + 1); \
+		(ip) += 2; \
+	} while (0)
+
+#define WRITE32_INS(ins, index, v) \
+	do { \
+		(ins)->data [index] = * (guint16 *)(v); \
+		(ins)->data [index + 1] = * ((guint16 *)(v) + 1); \
+	} while (0)
+
+#define WRITE64_INS(ins, index, v) \
+	do { \
+		(ins)->data [index] = * (guint16 *)(v); \
+		(ins)->data [index + 1] = * ((guint16 *)(v) + 1); \
+		(ins)->data [index + 2] = * ((guint16 *)(v) + 2); \
+		(ins)->data [index + 3] = * ((guint16 *)(v) + 3); \
+	} while (0)
+#else
+#define WRITE32(ip, v) \
+	do { \
+		* (guint32*)(ip) = * (guint32 *)(v); \
+		(ip) += 2; \
+	} while (0)
+#define WRITE32_INS(ins, index, v) \
+	do { \
+		* (guint32 *)(&(ins)->data [index]) = * (guint32 *)(v); \
+	} while (0)
+
+#define WRITE64_INS(ins, index, v) \
+	do { \
+		* (guint64 *)(&(ins)->data [index]) = * (guint64 *)(v); \
+	} while (0)
+
+#endif
+
 
 static void 
 handle_branch (TransformData *td, int short_op, int long_op, int offset)
@@ -352,35 +393,16 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 			td->stack_state [target] = (StackInfo*)g_memdup (td->stack, td->stack_height [target] * sizeof (td->stack [0]));
 		td->vt_stack_size [target] = td->vt_sp;
 	}
-	if (offset < 0) {
-		offset = td->in_offsets [target] - (td->new_ip - td->new_code);
-		if (offset >= -32768) {
-			shorten_branch = 1;
-		}
-	} else {
-		if (td->header->code_size <= 25000) /* FIX to be precise somehow? */
-			shorten_branch = 1;
 
-		Reloc *reloc = (Reloc*)mono_mempool_alloc0 (td->mempool, sizeof (Reloc));
-		if (shorten_branch) {
-			offset = 0xffff;
-			reloc->type = RELOC_SHORT_BRANCH;
-		} else {
-			offset = 0xdeadbeef;
-			reloc->type = RELOC_LONG_BRANCH;
-		}
-		reloc->offset = td->new_ip - td->new_code;
-		reloc->target = target;
-		g_ptr_array_add (td->relocs, reloc);
-	}
-	g_error ("FIXME. Wee need to do this offset addition in the compact phase, not now");
+	if (td->header->code_size <= 25000) /* FIX to be precise somehow? */
+		shorten_branch = 1;
+
 	if (shorten_branch) {
 		interp_add_ins (td, short_op);
-		td->last_ins->data [0] = offset;
+		td->last_ins->data [0] = (guint16) target;
 	} else {
 		interp_add_ins (td, long_op);
-		td->last_ins->data [0] = * (guint16 *)(&offset);
-		td->last_ins->data [1] = * ((guint16 *)&offset + 1) ;
+		WRITE32_INS (td->last_ins, 0, &target);
 	}
 }
 
@@ -554,33 +576,6 @@ can_store (int st_value, int vt_value)
 	do { \
 		(td)->vt_sp -= ALIGN_TO ((size), MINT_VT_ALIGNMENT); \
 	} while (0)
-
-#if NO_UNALIGNED_ACCESS
-#define WRITE32_INS(ins, index, v) \
-	do { \
-		(ins)->data [index] = * (guint16 *)(v); \
-		(ins)->data [index + 1] = * ((guint16 *)(v) + 1); \
-	} while (0)
-
-#define WRITE64_INS(ins, index, v) \
-	do { \
-		(ins)->data [index] = * (guint16 *)(v); \
-		(ins)->data [index + 1] = * ((guint16 *)(v) + 1); \
-		(ins)->data [index + 2] = * ((guint16 *)(v) + 2); \
-		(ins)->data [index + 3] = * ((guint16 *)(v) + 3); \
-	} while (0)
-#else
-#define WRITE32_INS(ins, index, v) \
-	do { \
-		* (guint32 *)(&(ins)->data [index]) = * (guint32 *)(v); \
-	} while (0)
-
-#define WRITE64_INS(ins, index, v) \
-	do { \
-		* (guint64 *)(&(ins)->data [index]) = * (guint64 *)(v); \
-	} while (0)
-
-#endif
 
 static MonoType*
 get_arg_type_exact (TransformData *td, int n, int *mt)
@@ -1393,7 +1388,6 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	int *prev_stack_height, *prev_vt_stack_size, *prev_clause_indexes, *prev_in_offsets;
 	guint8 *prev_is_bb_start;
 	gboolean ret;
-	GPtrArray *prev_relocs;
 	unsigned int prev_max_stack_height, prev_max_vt_sp, prev_total_locals_size;
 	int prev_n_data_items, prev_n_line_numbers;
 	int i, prev_vt_sp;
@@ -1423,7 +1417,6 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	prev_stack_height = td->stack_height;
 	prev_vt_stack_size = td->vt_stack_size;
 	prev_clause_indexes = td->clause_indexes;
-	prev_relocs = td->relocs;
 	prev_inlined_method = td->inlined_method;
 	prev_last_ins = td->last_ins;
 	td->inlined_method = target_method;
@@ -1471,6 +1464,17 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 		UnlockedIncrement (&mono_interp_stats.inline_failures);
 	} else {
 		UnlockedIncrement (&mono_interp_stats.inlined_methods);
+		// Make sure we have an IR instruction associated with the now removed IL CALL
+		// FIXME This could be prettier. We might be able to make inlining saner now that
+		// that we can easily tweak the instruction list.
+		if (!prev_inlined_method) {
+			if (prev_last_ins) {
+				if (prev_last_ins->next)
+					prev_last_ins->next->il_offset = prev_in_start - prev_il_code;
+			} else if (td->first_ins) {
+				td->first_ins->il_offset = prev_in_start - prev_il_code;
+			}
+		}
 	}
 
 	td->ip = prev_ip;
@@ -1480,7 +1484,6 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	td->stack_height = prev_stack_height;
 	td->vt_stack_size = prev_vt_stack_size;
 	td->clause_indexes = prev_clause_indexes;
-	td->relocs = prev_relocs;
 	td->is_bb_start = prev_is_bb_start;
 	td->inlined_method = prev_inlined_method;
 
@@ -1670,8 +1673,6 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		return_val_if_nok (error, FALSE);
 
 		if (method == target_method && *(td->ip + 5) == CEE_RET && !(csignature->hasthis && m_class_is_valuetype (target_method->klass))) {
-			int offset;
-
 			if (td->inlined_method)
 				return FALSE;
 
@@ -1681,10 +1682,9 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			for (i = csignature->param_count - 1 + !!csignature->hasthis; i >= 0; --i)
 				store_arg (td, i);
 
-			g_error ("FIXME. IL offset we are branching to is 0");
 			interp_add_ins (td, MINT_BR_S);
-			offset = body_start_offset - ((td->new_ip - 1) - td->new_code);
-			td->last_ins->data [0] = offset;
+			// We are branching to the beginning of the method
+			td->last_ins->data [0] = 0;
 			if (!is_bb_start [td->ip + 5 - td->il_code])
 				++td->ip; /* gobble the CEE_RET if it isn't branched to */				
 			td->ip += 5;
@@ -1993,7 +1993,7 @@ interp_save_debug_info (InterpMethod *rtm, MonoMethodHeader *header, TransformDa
 	dinfo->num_locals = header->num_locals;
 	dinfo->locals = g_new0 (MonoDebugVarInfo, header->num_locals);
 	dinfo->code_start = (guint8*)rtm->code;
-	dinfo->code_size = td->new_ip - td->new_code;
+	dinfo->code_size = td->new_code_end - td->new_code;
 	dinfo->epilogue_begin = 0;
 	dinfo->has_var_info = TRUE;
 	dinfo->num_line_numbers = line_numbers->len;
@@ -2425,7 +2425,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	td->vt_stack_size = (int*)g_malloc(header->code_size * sizeof(int));
 	td->clause_indexes = (int*)g_malloc (header->code_size * sizeof (int));
 	td->is_bb_start = (guint8*)g_malloc0(header->code_size);
-	td->relocs = g_ptr_array_new ();
 
 	init_bb_start (td, header);
 
@@ -3033,7 +3032,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			++td->ip;
 			n = read32 (td->ip);
 			interp_add_ins_explicit (td, MINT_SWITCH, MINT_SWITCH_LEN (n));
-			g_error ("After you figure out branches, fix also switch");
 			WRITE32_INS (td->last_ins, 0, &n);
 			td->ip += 4;
 			next_ip = td->ip + n * 4;
@@ -3047,19 +3045,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					if (stack_height > 0 && stack_height != td->stack_height [target])
 						g_warning ("SWITCH with back branch and non-empty stack");
 #endif
-					target = td->in_offsets [target] - (td->new_ip - td->new_code);
 				} else {
 					td->stack_height [target] = stack_height;
 					td->vt_stack_size [target] = td->vt_sp;
 					if (stack_height > 0)
 						td->stack_state [target] = (StackInfo*)g_memdup (td->stack, stack_height * sizeof (td->stack [0]));
-
-					Reloc *reloc = (Reloc*)mono_mempool_alloc0 (td->mempool, sizeof (Reloc));
-					reloc->type = RELOC_SWITCH;
-					reloc->offset = td->new_ip - td->new_code;
-					reloc->target = target;
-					g_ptr_array_add (td->relocs, reloc);
-					target = 0xffff;
 				}
 				WRITE32_INS (td->last_ins, 2 + i * 2, &target);
 				td->ip += 4;
@@ -5290,43 +5280,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			g_error ("transform.c: Unimplemented opcode: %02x at 0x%x\n", *td->ip, td->ip-header->code);
 		}
 
-		// No IR instructions were added as part of the IL instruction. Extend bb_start */
+		// No IR instructions were added as part of the IL instruction. Extend bb_start
 		if (prev_last_ins == td->last_ins && td->is_bb_start [in_offset] && td->ip < end)
 			td->is_bb_start [td->ip - td->il_code] = 1;
 	}
 
 	g_assert (td->ip == end);
-
-	/* Handle relocations */
-	for (int i = 0; i < td->relocs->len; ++i) {
-		Reloc *reloc = (Reloc*)g_ptr_array_index (td->relocs, i);
-
-		int offset = td->in_offsets [reloc->target] - reloc->offset;
-
-		switch (reloc->type) {
-		case RELOC_SHORT_BRANCH:
-			g_assert (td->new_code [reloc->offset + 1] == 0xffff);
-			td->new_code [reloc->offset + 1] = offset;
-			break;
-		case RELOC_LONG_BRANCH: {
-			guint16 *v = (guint16 *) &offset;
-			g_assert (td->new_code [reloc->offset + 1] == 0xbeef);
-			g_assert (td->new_code [reloc->offset + 2] == 0xdead);
-			td->new_code [reloc->offset + 1] = *(guint16 *) v;
-			td->new_code [reloc->offset + 2] = *(guint16 *) (v + 1);
-			break;
-		}
-		case RELOC_SWITCH: {
-			guint16 *v = (guint16*)&offset;
-			td->new_code [reloc->offset] = *(guint16*)v;
-			td->new_code [reloc->offset + 1] = *(guint16*)(v + 1);
-			break;
-		}
-		default:
-			g_assert_not_reached ();
-			break;
-		}
-	}
 
 exit_ret:
 	g_free (arg_offsets);
@@ -5338,12 +5297,185 @@ exit_ret:
 	g_free (td->vt_stack_size);
 	g_free (td->clause_indexes);
 	g_free (td->is_bb_start);
-	g_ptr_array_free (td->relocs, TRUE);
 
 	return ret;
 exit:
 	ret = FALSE;
 	goto exit_ret;
+}
+
+// We are trying to branch to an il offset that has no associated ir instruction with it.
+// We will branch instead to the next instruction that we find
+static int
+resolve_in_offset (TransformData *td, int il_offset)
+{
+	int i = il_offset;
+	g_assert (!td->in_offsets [il_offset]);
+	while (!td->in_offsets [i])
+		i++;
+	td->in_offsets [il_offset] = td->in_offsets [i];
+	return td->in_offsets [il_offset];
+}
+
+// We store in the in_offset array the native_offset + 1, so 0 can mean only that the il
+// offset is uninitialized. Otherwise 0 is valid value for first interp instruction.
+static int
+get_in_offset (TransformData *td, int il_offset)
+{
+	int target_offset = td->in_offsets [il_offset];
+	if (target_offset)
+		return target_offset - 1;
+	return resolve_in_offset (td, il_offset) - 1;
+}
+
+static void
+handle_relocations (TransformData *td)
+{
+	// Handle relocations
+	for (int i = 0; i < td->relocs->len; ++i) {
+		Reloc *reloc = (Reloc*)g_ptr_array_index (td->relocs, i);
+		int offset = get_in_offset (td, reloc->target) - reloc->offset;
+
+		switch (reloc->type) {
+		case RELOC_SHORT_BRANCH:
+			g_assert (td->new_code [reloc->offset + 1] == 0xdead);
+			td->new_code [reloc->offset + 1] = offset;
+			break;
+		case RELOC_LONG_BRANCH: {
+			guint16 *v = (guint16 *) &offset;
+			g_assert (td->new_code [reloc->offset + 1] == 0xdead);
+			g_assert (td->new_code [reloc->offset + 2] == 0xbeef);
+			td->new_code [reloc->offset + 1] = *(guint16 *) v;
+			td->new_code [reloc->offset + 2] = *(guint16 *) (v + 1);
+			break;
+		}
+		case RELOC_SWITCH: {
+			guint16 *v = (guint16*)&offset;
+			g_assert (td->new_code [reloc->offset] == 0xdead);
+			g_assert (td->new_code [reloc->offset + 1] == 0xbeef);
+			td->new_code [reloc->offset] = *(guint16*)v;
+			td->new_code [reloc->offset + 1] = *(guint16*)(v + 1);
+			break;
+		}
+		default:
+			g_assert_not_reached ();
+			break;
+		}
+	}
+}
+
+
+static int
+get_inst_length (InterpInst *ins)
+{
+	if (ins->opcode == MINT_SWITCH)
+		return MINT_SWITCH_LEN (READ32 (&ins->data [0]));
+	else
+		return mono_interp_oplen [ins->opcode];
+}
+
+static guint16*
+emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *ins)
+{
+	guint16 opcode = ins->opcode;
+	guint16 *ip = start_ip;
+
+	// We know what IL offset this instruction was created for. We can now map the IL offset
+	// to the IR offset. We use this array to resolve the relocations, which reference the IL.
+	if (ins->il_offset != -1 && !td->in_offsets [ins->il_offset]) {
+		g_assert (ins->il_offset >= 0 && ins->il_offset < td->header->code_size);
+		td->in_offsets [ins->il_offset] = start_ip - td->new_code + 1;
+	}
+
+	*ip++ = opcode;
+	if (opcode == MINT_SWITCH) {
+		int labels = READ32 (&ins->data [0]);
+		// Write number of switch labels
+		*ip++ = ins->data [0];
+		*ip++ = ins->data [1];
+		// Add relocation for each label
+		for (int i = 0; i < labels; i++) {
+			Reloc *reloc = (Reloc*)mono_mempool_alloc0 (td->mempool, sizeof (Reloc));
+			reloc->type = RELOC_SWITCH;
+			reloc->offset = ip - td->new_code;
+			reloc->target = READ32 (&ins->data [2 + i * 2]);
+			g_ptr_array_add (td->relocs, reloc);
+			*ip++ = 0xdead;
+			*ip++ = 0xbeef;
+		}
+	} else if ((opcode >= MINT_BRFALSE_I4_S && opcode <= MINT_BRTRUE_R8_S) ||
+			(opcode >= MINT_BEQ_I4_S && opcode <= MINT_BLT_UN_R8_S) ||
+			opcode == MINT_BR_S || opcode == MINT_LEAVE_S || opcode == MINT_LEAVE_S_CHECK) {
+		const int br_offset = start_ip - td->new_code;
+		if (ins->data [0] < ins->il_offset) {
+			// Backwards branch. We can already patch it.
+			*ip++ = get_in_offset (td, ins->data [0]) - br_offset;
+		} else {
+			// We don't know the in_offset of the target, add a reloc
+			Reloc *reloc = (Reloc*)mono_mempool_alloc0 (td->mempool, sizeof (Reloc));
+			reloc->type = RELOC_SHORT_BRANCH;
+			reloc->offset = br_offset;
+			reloc->target = ins->data [0];
+			g_ptr_array_add (td->relocs, reloc);
+			*ip++ = 0xdead;
+		}
+	} else if ((opcode >= MINT_BRFALSE_I4 && opcode <= MINT_BRTRUE_R8) ||
+			(opcode >= MINT_BEQ_I4 && opcode <= MINT_BLT_UN_R8) ||
+			opcode == MINT_BR || opcode == MINT_LEAVE || opcode == MINT_LEAVE_CHECK) {
+		const int br_offset = start_ip - td->new_code;
+		int target_il = READ32 (&ins->data [0]);
+		if (target_il < ins->il_offset) {
+			// Backwards branch. We can already patch it
+			const int br_offset = start_ip - td->new_code;
+			int target_offset = get_in_offset (td, target_il) - br_offset;
+			WRITE32 (ip, &target_offset);
+		} else {
+			Reloc *reloc = (Reloc*)mono_mempool_alloc0 (td->mempool, sizeof (Reloc));
+			reloc->type = RELOC_LONG_BRANCH;
+			reloc->offset = br_offset;
+			reloc->target = target_il;
+			g_ptr_array_add (td->relocs, reloc);
+			*ip++ = 0xdead;
+			*ip++ = 0xbeef;
+		}
+	} else {
+		int size = get_inst_length (ins) - 1;
+		// Emit the rest of the data
+		for (int i = 0; i < size; i++)
+			*ip++ = ins->data [i];
+	}
+	return ip;
+}
+
+// Generates the final code, after we are done with all the passes
+static void
+generate_compacted_code (TransformData *td)
+{
+	guint16 *ip;
+	int size = 0;
+	td->relocs = g_ptr_array_new ();
+
+	// Iterate once to compute the exact size of the compacted code
+	InterpInst *ins = td->first_ins;
+	while (ins) {
+		size += get_inst_length (ins);
+		ins = ins->next;
+	}
+
+	// Generate the compacted stream of instructions
+	td->new_code = ip = (guint16*)mono_domain_alloc0 (td->rtm->domain, size * sizeof (guint16));
+	ins = td->first_ins;
+	while (ins) {
+		ip = emit_compacted_instruction (td, ip, ins);
+		ins = ins->next;
+	}
+	td->new_code_end = ip;
+	td->in_offsets [td->header->code_size] = td->new_code_end - td->new_code;
+
+	// Patch all branches
+	handle_relocations (td);
+
+	g_ptr_array_free (td->relocs, TRUE);
 }
 
 static void
@@ -5412,10 +5544,12 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	generate_code (td, method, header, generic_context, error);
 	goto_if_nok (error, exit);
 
+	generate_compacted_code (td);
+
 	if (td->verbose_level) {
 		g_print ("Runtime method: %s %p, VT stack size: %d\n", mono_method_full_name (method, TRUE), rtm, td->max_vt_sp);
 		g_print ("Calculated stack size: %d, stated size: %d\n", td->max_stack_height, header->max_stack);
-		dump_mint_code (td->new_code, td->new_ip);
+		dump_mint_code (td->new_code, td->new_code_end);
 	}
 
 	/* Check if we use excessive stack space */
@@ -5423,26 +5557,26 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 		g_warning ("Excessive stack space usage for method %s, %d/%d", method->name, td->max_stack_height, header->max_stack);
 
 	int code_len;
-	code_len = td->new_ip - td->new_code;
+	code_len = td->new_code_end - td->new_code;
 
 	rtm->clauses = (MonoExceptionClause*)mono_domain_alloc0 (domain, header->num_clauses * sizeof (MonoExceptionClause));
 	memcpy (rtm->clauses, header->clauses, header->num_clauses * sizeof(MonoExceptionClause));
-	rtm->code = (gushort*)mono_domain_alloc0 (domain, (td->new_ip - td->new_code) * sizeof (gushort));
-	memcpy (rtm->code, td->new_code, (td->new_ip - td->new_code) * sizeof(gushort));
-	g_free (td->new_code);
+	rtm->code = (gushort*)td->new_code;
 	rtm->new_body_start = rtm->code + td->body_start_offset;
 	rtm->init_locals = header->init_locals;
 	rtm->num_clauses = header->num_clauses;
 	for (i = 0; i < header->num_clauses; i++) {
 		MonoExceptionClause *c = rtm->clauses + i;
 		int end_off = c->try_offset + c->try_len;
-		c->try_offset = td->in_offsets [c->try_offset];
-		c->try_len = td->in_offsets [end_off] - c->try_offset;
+		c->try_offset = get_in_offset (td, c->try_offset);
+		c->try_len = get_in_offset (td, end_off) - c->try_offset;
+		g_assert (c->try_len >= 0 && (c->try_offset + c->try_len) < code_len);
 		end_off = c->handler_offset + c->handler_len;
-		c->handler_offset = td->in_offsets [c->handler_offset];
-		c->handler_len = td->in_offsets [end_off] - c->handler_offset;
+		c->handler_offset = get_in_offset (td, c->handler_offset);
+		c->handler_len = get_in_offset (td, end_off) - c->handler_offset;
+		g_assert (c->handler_len >= 0 && (c->handler_offset + c->handler_len) <= code_len);
 		if (c->flags & MONO_EXCEPTION_CLAUSE_FILTER)
-			c->data.filter_offset = td->in_offsets [c->data.filter_offset];
+			c->data.filter_offset = get_in_offset (td, c->data.filter_offset);
 	}
 	rtm->stack_size = (sizeof (stackval)) * (td->max_stack_height + 2); /* + 1 for returns of called functions  + 1 for 0-ing in trace*/
 	rtm->stack_size = ALIGN_TO (rtm->stack_size, MINT_VT_ALIGNMENT);
