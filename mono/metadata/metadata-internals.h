@@ -61,6 +61,14 @@ typedef struct {
 	MonoSingleCustomMod modifiers[1]; /* Actual length is count */
 } MonoAggregateModContainer;
 
+/* ECMA says upto 64 custom modifiers.  It's possible we could see more at
+ * runtime due to modifiers being appended together when we inflate type.  In
+ * that case we should revisit the places where this define is used to make
+ * sure that we don't blow up the stack (or switch to heap allocation for
+ * temporaries).
+ */
+#define MONO_MAX_EXPECTED_CMODS 64
+
 typedef struct {
 	MonoType unmodified;
 	gboolean is_aggregate;

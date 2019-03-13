@@ -671,6 +671,8 @@ decode_type (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *err
 		t = (MonoType*)g_malloc0 (mono_sizeof_type_with_mods (count, TRUE));
 		mono_type_with_mods_init (t, count, TRUE);
 
+		/* Try not to blow up the stack. See comment on MONO_MAX_EXPECTED_CMODS */
+		g_assert (count < MONO_MAX_EXPECTED_CMODS);
 		MonoAggregateModContainer *cm = g_alloca (mono_sizeof_aggregate_modifiers (count));
 		cm->count = count;
 		for (int i = 0; i < count; ++i) {

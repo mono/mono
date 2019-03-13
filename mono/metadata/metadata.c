@@ -5934,6 +5934,14 @@ do_metadata_type_dup_append_cmods (MonoImage *image, const MonoType *o, const Mo
 		memcpy (r, o, mono_sizeof_type_with_mods (0, FALSE));
 		deep_type_dup_fixup (image, r, o);
 
+		/* Try not to blow up the stack. See comment on
+		 * MONO_MAX_EXPECTED_CMODS.  Since here we're appending all the
+		 * mods together, it's possible we'll end up with more than the
+		 * maximum allowed.  If that ever happens in practice, we
+		 * should redefine the bound and possibly make this function
+		 * fail dynamically instead of asserting.
+		 */
+		g_assert (total_cmods < MONO_MAX_EXPECTED_CMODS);
 		size_t r_container_size = mono_sizeof_aggregate_modifiers (total_cmods);
 		MonoAggregateModContainer *r_container_candidate = g_alloca (r_container_size);
 		memset (r_container_candidate, 0, r_container_size);

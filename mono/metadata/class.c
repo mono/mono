@@ -854,6 +854,8 @@ inflate_generic_custom_modifiers (MonoImage *image, const MonoType *type, MonoGe
 	int count = mono_type_custom_modifier_count (type);
 	gboolean changed = FALSE;
 
+	/* Try not to blow up the stack. See comment on MONO_MAX_EXPECTED_CMODS. */
+	g_assert (count < MONO_MAX_EXPECTED_CMODS);
 	size_t aggregate_size = mono_sizeof_aggregate_modifiers (count);
 	MonoAggregateModContainer *candidate_mods = g_alloca (aggregate_size);
 	memset (candidate_mods, 0, aggregate_size);
