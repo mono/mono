@@ -7472,6 +7472,8 @@ emit_method_inner (EmitContext *ctx)
 	MonoMethodHeader *header;
 	MonoExceptionClause *clause;
 	char **names;
+	LLVMBuilderRef entry_builder = NULL;
+	LLVMBasicBlockRef entry_bb = NULL;
 
 	if (cfg->gsharedvt && !cfg->llvm_only) {
 		set_failure (ctx, "gsharedvt");
@@ -7798,8 +7800,8 @@ emit_method_inner (EmitContext *ctx)
 	 * Second pass: generate code.
 	 */
 	// Emit entry point
-	LLVMBuilderRef entry_builder = create_builder (ctx);
-	LLVMBasicBlockRef entry_bb = get_bb (ctx, cfg->bb_entry);
+	entry_builder = create_builder (ctx);
+	entry_bb = get_bb (ctx, cfg->bb_entry);
 	LLVMPositionBuilderAtEnd (entry_builder, entry_bb);
 	emit_entry_bb (ctx, entry_builder);
 
