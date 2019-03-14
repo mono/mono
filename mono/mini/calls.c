@@ -688,8 +688,9 @@ mini_emit_llvmonly_virtual_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 		variant_iface = TRUE;
 
 	if (!helper_sig_llvmonly_imt_trampoline) {
-		helper_sig_llvmonly_imt_trampoline = mono_create_icall_signature ("ptr ptr ptr");
+		MonoMethodSignature *tmp = mono_create_icall_signature ("ptr ptr ptr");
 		mono_memory_barrier ();
+		helper_sig_llvmonly_imt_trampoline = tmp;
 	}
 
 	if (!fsig->generic_param_count && !is_iface && !is_gsharedvt) {
