@@ -174,6 +174,17 @@ typedef struct MonoDebugOptions {
 	gboolean dyn_runtime_invoke;
 	gboolean gdb;
 	gboolean lldb;
+
+	/*
+	 * With LLVM codegen, this option will cause methods to be called indirectly through the
+	 * PLT (As they are in other FullAOT modes, without LLVM). The indirection allows 
+	 * class constructors to be executed before the first time that any method of a 
+	 * given class is called. Without this option, LLVM codegen will insert code at the
+	 * beginning of every method to check the initialization status and call the class 
+	 * constructors, if necessary. With this option, LLVM will do a slightly worse job 
+	 * of code generation, but the result will be slightly smaller. Without this 
+	 * option, LLVM may be able to optimize more aggressively, but the code may be bigger.
+	 */
 	gboolean llvm_disable_self_init;
 	gboolean use_fallback_tls;
 	/*
