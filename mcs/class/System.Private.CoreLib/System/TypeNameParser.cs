@@ -2,9 +2,7 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using StackCrawlMark = System.Threading.StackCrawlMark;
+using System.Threading;
 
 namespace System
 {
@@ -128,11 +126,10 @@ namespace System
             if (typeResolver != null) {
                 type = typeResolver (assembly, name, ignoreCase);
                 if (type == null && throwOnError) {
-                    string error;
 					if (assembly == null)
-						throw new TypeLoadException (String.Format (SR.TypeLoad_ResolveType, name));
+						throw new TypeLoadException (SR.Format (SR.TypeLoad_ResolveType, name));
 					else
-						throw new TypeLoadException (String.Format (SR.TypeLoad_ResolveTypeFromAssembly, name, assembly.FullName));
+						throw new TypeLoadException (SR.Format (SR.TypeLoad_ResolveTypeFromAssembly, name, assembly.FullName));
 				}
 			} else {
                 if (assembly == null)
@@ -153,7 +150,7 @@ namespace System
 				type = type.GetNestedType (names[i], bindingFlags);
 				if (type == null) {
 					if (throwOnError)
-						throw new TypeLoadException (String.Format (SR.TypeLoad_ResolveNestedType, names[i], names[i-1]));
+						throw new TypeLoadException (SR.Format (SR.TypeLoad_ResolveNestedType, names[i], names[i-1]));
 					else
 						break;
                 }
@@ -249,7 +246,6 @@ namespace System
 			bool isbyref = false;
 			bool isptr = false;
 			int rank = -1;
-			List<ParsedName> type_args = null;
 
 			bool end = false;
 			while (pos < name.Length && !end) {
