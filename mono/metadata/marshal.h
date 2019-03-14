@@ -210,12 +210,20 @@ typedef struct {
 	MonoMethodSignature *sig;
 } InterpInWrapperInfo;
 
+// This is serialized using the follow ints
+// as a unique reference to which wrapper we have
+typedef enum {
+	AOT_INIT_METHOD = 0,
+	AOT_INIT_METHOD_GSHARED_MRGCTX = 1,
+	AOT_INIT_METHOD_GSHARED_THIS = 2,
+	AOT_INIT_METHOD_GSHARED_VTABLE = 3
+} MonoAotInitSubtype;
+
 typedef struct {
 	// We emit this code when we init the module,
 	// and later match up the native code with this method
 	// using the name.
-	const char *icall_name;
-	int subtype;
+	MonoAotInitSubtype subtype;
 } AOTInitWrapperInfo;
 
 /*
@@ -427,7 +435,10 @@ MonoMethod *
 mono_marshal_get_icall_wrapper (MonoMethodSignature *sig, const char *name, gconstpointer func, gboolean check_exceptions);
 
 MonoMethod *
-mono_marshal_get_aot_init_wrapper (int subtype);
+mono_marshal_get_aot_init_wrapper (MonoAotInitSubtype subtype);
+
+const char *
+mono_marshal_get_aot_init_wrapper_name (MonoAotInitSubtype subtype);
 
 MonoMethod *
 mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, gboolean aot);

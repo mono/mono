@@ -2858,7 +2858,7 @@ emit_llvm_code_start (MonoLLVMModule *module)
 }
 
 static LLVMValueRef
-emit_init_icall_wrapper (MonoLLVMModule *module, const char *name, const char *icall_name, int subtype)
+emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 {
 	LLVMModuleRef lmodule = module->lmodule;
 	LLVMValueRef func, indexes [2], got_entry_addr, args [16], callee;
@@ -2867,19 +2867,26 @@ emit_init_icall_wrapper (MonoLLVMModule *module, const char *name, const char *i
 	LLVMTypeRef sig;
 	MonoJumpInfo *ji;
 	int got_offset;
+	const char *name = mono_marshal_get_aot_init_wrapper_name (subtype);
+	const char *icall_name = NULL;
 
 	switch (subtype) {
-	case 0:
+	case AOT_INIT_METHOD:
+		icall_name = "mini_llvmonly_init_method"; 
 		func = LLVMAddFunction (lmodule, name, LLVMFunctionType1 (LLVMVoidType (), LLVMInt32Type (), FALSE));
 		sig = LLVMFunctionType2 (LLVMVoidType (), IntPtrType (), LLVMInt32Type (), FALSE);
 		break;
-	case 1:
-	case 3:
+	case AOT_INIT_METHOD_GSHARED_MRGCTX:
+		icall_name = "mini_llvmonly_init_gshared_method_mrgctx"; // Deliberate fall-through
+	case AOT_INIT_METHOD_GSHARED_VTABLE:
 		/* mrgctx/vtable */
+		if (!icall_name)
+			icall_name = "mini_llvmonly_init_gshared_method_vtable";
 		func = LLVMAddFunction (lmodule, name, LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), IntPtrType (), FALSE));
 		sig = LLVMFunctionType3 (LLVMVoidType (), IntPtrType (), LLVMInt32Type (), IntPtrType (), FALSE);
 		break;
-	case 2:
+	case AOT_INIT_METHOD_GSHARED_THIS:
+		icall_name = "mini_llvmonly_init_gshared_method_this";
 		func = LLVMAddFunction (lmodule, name, LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), ObjRefType (), FALSE));
 		sig = LLVMFunctionType3 (LLVMVoidType (), IntPtrType (), LLVMInt32Type (), ObjRefType (), FALSE);
 		break;
@@ -2887,6 +2894,7 @@ emit_init_icall_wrapper (MonoLLVMModule *module, const char *name, const char *i
 		g_assert_not_reached ();
 	}
 
+	g_assert (icall_name);
 	LLVMSetLinkage (func, LLVMInternalLinkage);
 
 	mono_llvm_add_func_attr (func, LLVM_ATTR_NO_INLINE);
@@ -2950,10 +2958,27 @@ emit_init_icall_wrapper (MonoLLVMModule *module, const char *name, const char *i
 static void
 emit_init_icall_wrappers (MonoLLVMModule *module)
 {
-	module->init_method = emit_init_icall_wrapper (module, "init_method", "mini_llvmonly_init_method", 0);
-	module->init_method_gshared_mrgctx = emit_init_icall_wrapper (module, "init_method_gshared_mrgctx", "mini_llvmonly_init_gshared_method_mrgctx", 1);
-	module->init_method_gshared_this = emit_init_icall_wrapper (module, "init_method_gshared_this", "mini_llvmonly_init_gshared_method_this", 2);
-	module->init_method_gshared_vtable = emit_init_icall_wrapper (module, "init_method_gshared_vtable", "mini_llvmonly_init_gshared_method_vtable", 3);
+	module->init_method = emit_init_icall_wrapper (module, AOT_INIT_METHOD);
+	module->init_method_gshared_mrgctx = emit_init_icall_wrapper (module, AOT_INIT_METHOD_GSHARED_MRGCTX);
+	module->init_method_gshared_this = emit_init_icall_wrapper (module, AOT_INIT_METHOD_GSHARED_THIS);
+	module->init_method_gshared_vtable = emit_init_icall_wrapper (module, AOT_INIT_METHOD_GSHARED_VTABLE);
+}
+
+static LLVMValueRef
+get_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
+{
+	switch (subtype) {
+		case AOT_INIT_METHOD:
+			return module->init_method;
+		case AOT_INIT_METHOD_GSHARED_MRGCTX:
+			return module->init_method_gshared_mrgctx;
+		case AOT_INIT_METHOD_GSHARED_THIS:
+			return module->init_method_gshared_this;
+		case AOT_INIT_METHOD_GSHARED_VTABLE:
+			return module->init_method_gshared_vtable;
+		default:
+			g_assert_not_reached ();
+	}
 }
 
 static void
@@ -7502,34 +7527,23 @@ emit_method_inner (EmitContext *ctx)
 	}
 #endif
 
+	// If we come upon one of the init_method wrappers, we need to find
+	// the method that we have already emitted and tell LLVM that this
+	// managed method info for the wrapper is associated with this method
+	// we constructed ourselves from LLVM IR.
+	//
+	// This is necessary to unwind through the init_method, in the case that
+	// it has to run a static cctor that throws an exception
 	if (cfg->method->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
-		const gchar *name = NULL;
 		if (info->subtype == WRAPPER_SUBTYPE_AOT_INIT) {
-			switch (info->d.aot_init.subtype) {
-				case 0:
-					method = ctx->module->init_method;
-					name = "init_method";
-					break;
-				case 1:
-					method = ctx->module->init_method_gshared_mrgctx;
-					name = "init_method_gshared_mrgctx";
-					break;
-				case 2:
-					method = ctx->module->init_method_gshared_this;
-					name = "init_method_gshared_this";
-					break;
-				case 3:
-					method = ctx->module->init_method_gshared_vtable;
-					name = "init_method_gshared_vtable";
-					break;
-				default:
-					g_assert_not_reached ();
-			}
+			method = get_init_icall_wrapper (ctx->module, info->d.aot_init.subtype);
 			ctx->lmethod = method;
-			ctx->method_name = g_strdup (name);
-			ctx->cfg->asm_symbol = g_strdup (name);
 			ctx->module->max_method_idx = MAX (ctx->module->max_method_idx, cfg->method_index);
+
+			const char *init_name = mono_marshal_get_aot_init_wrapper_name (info->d.aot_init.subtype);
+			ctx->method_name = g_strdup (init_name);
+			ctx->cfg->asm_symbol = g_strdup (init_name);
 
 			if (!cfg->llvm_only && ctx->module->external_symbols) {
 				LLVMSetLinkage (method, LLVMExternalLinkage);

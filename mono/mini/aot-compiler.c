@@ -4166,9 +4166,10 @@ add_jit_icall_wrapper (gpointer key, gpointer value, gpointer user_data)
 static void
 add_lazy_init_wrappers (MonoAotCompile *acfg)
 {
-	const int num_init_wrappers = 4;
-	for (int i=0; i < num_init_wrappers; i++)
-		add_method (acfg, mono_marshal_get_aot_init_wrapper (i));
+	add_method (acfg, mono_marshal_get_aot_init_wrapper (AOT_INIT_METHOD));
+	add_method (acfg, mono_marshal_get_aot_init_wrapper (AOT_INIT_METHOD_GSHARED_MRGCTX));
+	add_method (acfg, mono_marshal_get_aot_init_wrapper (AOT_INIT_METHOD_GSHARED_VTABLE));
+	add_method (acfg, mono_marshal_get_aot_init_wrapper (AOT_INIT_METHOD_GSHARED_THIS));
 }
 
 static MonoMethod*

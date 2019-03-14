@@ -2965,49 +2965,55 @@ mono_marshal_get_icall_wrapper (MonoMethodSignature *sig, const char *name, gcon
 	return res;
 }
 
-MonoMethod *
-mono_marshal_get_aot_init_wrapper (int subtype)
+const char *
+mono_marshal_get_aot_init_wrapper_name (MonoAotInitSubtype subtype)
 {
-	MonoMethodBuilder *mb;
-	MonoMethod *res;
-	WrapperInfo *info;
 	const char *name = NULL;
-	MonoMethodSignature *csig = NULL;
-	MonoType *void_type = mono_get_void_type ();
-	MonoType *obj_type = mono_get_object_type ();
-	MonoType *int_type = mono_get_int_type ();
-
 	switch (subtype) {
-		case 0:
-			csig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
-			csig->ret = void_type;
-			csig->params [0] = obj_type;
-			csig->params [1] = int_type;
+		case AOT_INIT_METHOD:
+			name = "init_method";
 			break;
-		case 1:
-		case 2:
-		case 3:
-			csig = mono_metadata_signature_alloc (mono_defaults.corlib, 3);
-			csig->ret = void_type;
-			csig->params [0] = obj_type;
-			csig->params [1] = int_type;
-			csig->params [2] = obj_type;
+		case AOT_INIT_METHOD_GSHARED_MRGCTX:
+			name = "init_method_gshared_mrgctx";
+			break;
+		case AOT_INIT_METHOD_GSHARED_THIS:
+			name = "init_method_gshared_this";
+			break;
+		case AOT_INIT_METHOD_GSHARED_VTABLE:
+			name = "init_method_gshared_vtable";
 			break;
 		default:
 			g_assert_not_reached ();
 	}
+	return name;
+}
+
+MonoMethod *
+mono_marshal_get_aot_init_wrapper (MonoAotInitSubtype subtype)
+{
+	MonoMethodBuilder *mb;
+	MonoMethod *res;
+	WrapperInfo *info;
+	MonoMethodSignature *csig = NULL;
+	MonoType *void_type = mono_get_void_type ();
+	MonoType *int_type = mono_get_int_type ();
+	const char *name = mono_marshal_get_aot_init_wrapper_name (subtype);
+
 	switch (subtype) {
-		case 0:
-			name = "init_method";
+		case AOT_INIT_METHOD:
+			csig = mono_metadata_signature_alloc (mono_defaults.corlib, 2);
+			csig->ret = void_type;
+			csig->params [0] = int_type;
+			csig->params [1] = int_type;
 			break;
-		case 1:
-			name = "init_method_gshared_mrgctx";
-			break;
-		case 2:
-			name = "init_method_gshared_this";
-			break;
-		case 3:
-			name = "init_method_gshared_vtable";
+		case AOT_INIT_METHOD_GSHARED_MRGCTX:
+		case AOT_INIT_METHOD_GSHARED_THIS:
+		case AOT_INIT_METHOD_GSHARED_VTABLE:
+			csig = mono_metadata_signature_alloc (mono_defaults.corlib, 3);
+			csig->ret = void_type;
+			csig->params [0] = int_type;
+			csig->params [1] = int_type;
+			csig->params [2] = int_type;
 			break;
 		default:
 			g_assert_not_reached ();
@@ -3020,7 +3026,6 @@ mono_marshal_get_aot_init_wrapper (int subtype)
 	get_marshal_cb ()->emit_return (mb);
 
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_AOT_INIT);
-	info->d.aot_init.icall_name = name;
 	info->d.aot_init.subtype = subtype;
 	res = mono_mb_create (mb, csig, csig->param_count + 16, info);
 	mono_mb_free (mb);

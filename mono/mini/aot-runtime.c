@@ -1104,7 +1104,7 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				ref->method = mini_get_gsharedvt_out_sig_wrapper (sig);
 			} else if (subtype == WRAPPER_SUBTYPE_AOT_INIT) {
 				guint32 init_type = decode_value (p, &p);
-				ref->method = mono_marshal_get_aot_init_wrapper (init_type);
+				ref->method = mono_marshal_get_aot_init_wrapper ((MonoAotInitSubtype) init_type);
 			} else {
 				mono_error_set_bad_image_by_name (error, module->aot_name, "Invalid UNKNOWN wrapper subtype %d", subtype);
 				return FALSE;
