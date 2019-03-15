@@ -100,7 +100,7 @@ describe("The WebAssembly Browser Test Suite",function(){
       URL.revokeObjectURL(blobUrl);
     }, DEFAULT_TIMEOUT);
 
-    it('RequestByteArray: should return size of ByteArrray with streaming', (done) => {
+    it('RequestByteArray: should return size of ByteArray with streaming', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
@@ -121,7 +121,7 @@ describe("The WebAssembly Browser Test Suite",function(){
       
     }, DEFAULT_TIMEOUT);
 
-    it('RequestByteArray: blob should return size of ByteArrray with streaming', (done) => {
+    it('RequestByteArray: blob should return size of ByteArray with streaming', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       var blob = new Blob([JSON.stringify({hello: "world"}, null, 2)], {type : 'application/json'});
@@ -190,7 +190,7 @@ describe("The WebAssembly Browser Test Suite",function(){
       URL.revokeObjectURL(blobUrl);
     }, DEFAULT_TIMEOUT);    
 
-    it('RequestByteArray: should return size of ByteArrray without streaming', (done) => {
+    it('RequestByteArray: should return size of ByteArray without streaming', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
@@ -211,7 +211,7 @@ describe("The WebAssembly Browser Test Suite",function(){
       
     }, DEFAULT_TIMEOUT);
 
-    it('RequestByteArray: blob should return size of ByteArrray without streaming', (done) => {
+    it('RequestByteArray: blob should return size of ByteArray without streaming', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       var blob = new Blob([JSON.stringify({hello: "world"}, null, 2)], {type : 'application/json'});

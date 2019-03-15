@@ -8,7 +8,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using WebAssembly.Core;
+using WebAssembly.Host;
 
 namespace WebAssembly.Net.WebSockets {
 
@@ -23,7 +24,6 @@ namespace WebAssembly.Net.WebSockets {
 		private WebSocketCloseStatus? innerWebSocketCloseStatus;
 		private string innerWebSocketCloseStatusDescription;
 
-		private JSObject wsFunctionPtr;
 		private JSObject innerWebSocket;
 
 		private Action<JSObject> onOpen;
@@ -47,7 +47,6 @@ namespace WebAssembly.Net.WebSockets {
 		/// </summary>
 		public ClientWebSocket ()
 		{
-			wsFunctionPtr = (JSObject)Runtime.GetGlobalObject ("WebSocket");
 			state = created;
 			options = new ClientWebSocketOptions ();
 			cts = new CancellationTokenSource ();
@@ -185,14 +184,14 @@ namespace WebAssembly.Net.WebSockets {
 			// In the failure case we need to release the references and dispose of the objects.
 			using (cancellationToken.Register (() => tcsConnect.TrySetCanceled ())) {
 				try {
-					JSObject subProtocols = null;
+					Core.Array subProtocols = null;
 					if (Options.RequestedSubProtocols.Count > 0) {
-						subProtocols = Runtime.NewJSArray ();
+						subProtocols = new Core.Array();
 						foreach (var item in Options.RequestedSubProtocols) {
-							subProtocols.Invoke ("push", item);
+							subProtocols.Push(item);
 						}
 					}
-					innerWebSocket = Runtime.NewJSObject (wsFunctionPtr, uri.ToString (), subProtocols);
+					innerWebSocket = new HostObject ("WebSocket", uri.ToString (), subProtocols);
 
 					subProtocols?.Dispose ();
 
@@ -248,17 +247,16 @@ namespace WebAssembly.Net.WebSockets {
 							if (innerWebSocket.GetObjectProperty ("binaryType").ToString () == "blob") {
 
 								Action<JSObject> loadend = null;
-								// Obtain a reference to "FileReader" object
-								using (var readerF = (JSObject)Runtime.GetGlobalObject ("FileReader"))
 								// Create a new "FileReader" object
-								using (var reader = Runtime.NewJSObject (readerF)) {
+								using (var reader = new HostObject("FileReader")) {
 									loadend = new Action<JSObject> ((loadEvent) => {
 										using (var target = (JSObject)loadEvent.GetObjectProperty ("target")) {
 											if ((int)target.GetObjectProperty ("readyState") == 2) {
-												byte [] result = (byte [])target.GetObjectProperty ("result");
-												var mess = new ReceivePayload (result, WebSocketMessageType.Binary);
-												receiveMessageQueue.BufferPayload (mess);
-												Runtime.FreeObject (loadend);
+												using (var binResult = (ArrayBuffer)target.GetObjectProperty ("result")) {
+													var mess = new ReceivePayload (binResult, WebSocketMessageType.Binary);
+													receiveMessageQueue.BufferPayload (mess);
+													Runtime.FreeObject (loadend);
+												}
 											}
 										}
 										loadEvent.Dispose ();
@@ -372,14 +370,14 @@ namespace WebAssembly.Net.WebSockets {
 			// Otherwise any timeout/cancellation would apply to the full session.
 			using (cancellationToken.Register (() => tcsSend.TrySetCanceled ())) {
 
-				var bytesToSend = new byte [buffer.Count];
-				Buffer.BlockCopy (buffer.Array, buffer.Offset, bytesToSend, 0, buffer.Count);
-
 				if (messageType == WebSocketMessageType.Binary) {
 
 					try {
-						innerWebSocket.Invoke ("send", bytesToSend);
-						tcsSend.SetResult (true);
+						using (var uint8Buffer = Uint8Array.From(buffer))
+						{
+							innerWebSocket.Invoke ("send", uint8Buffer);
+							tcsSend.SetResult (true);
+						}
 					} catch (Exception excb) {
 						throw new WebSocketException (WebSocketError.NativeError, excb);
 					}
@@ -389,6 +387,8 @@ namespace WebAssembly.Net.WebSockets {
 				if (messageType == WebSocketMessageType.Text) {
 
 					try {
+						var bytesToSend = new byte [buffer.Count];
+						Buffer.BlockCopy (buffer.Array, buffer.Offset, bytesToSend, 0, buffer.Count);
 
 						var strBuffer = Encoding.UTF8.GetString (bytesToSend, 0, bytesToSend.Length);
 						innerWebSocket.Invoke ("send", strBuffer);

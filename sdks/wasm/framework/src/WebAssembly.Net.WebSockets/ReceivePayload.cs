@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.WebSockets;
+using WebAssembly.Core;
 
 namespace WebAssembly.Net.WebSockets {
 	class ReceivePayload {
@@ -12,6 +13,15 @@ namespace WebAssembly.Net.WebSockets {
 		{
 			dataMessageReceived = array;
 			this.messageType = messageType;
+		}
+
+		public ReceivePayload (ArrayBuffer arrayBuffer, WebSocketMessageType messageType = WebSocketMessageType.Binary)
+		{
+			using (var bin = new Uint8Array (arrayBuffer)) {
+				dataMessageReceived = bin.ToArray();
+				this.messageType = messageType;
+			}
+
 		}
 
 		public ReceivePayload (ArraySegment<byte> payload, WebSocketMessageType messageType = WebSocketMessageType.Binary)
