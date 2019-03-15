@@ -13,7 +13,7 @@ namespace WebAssembly.Core {
 		/// <summary>
 		/// Push the specified elements.
 		/// </summary>
-		/// <returns>The push.</returns>
+		/// <returns>The new length of the Array push was called on</returns>
 		/// <param name="elements">Elements.</param>
 		public int Push (params object[] elements) => (int)Invoke ("push", elements);
 		/// <summary>
