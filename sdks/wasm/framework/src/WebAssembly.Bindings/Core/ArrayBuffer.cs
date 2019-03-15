@@ -25,7 +25,7 @@ namespace WebAssembly.Core {
 		/// <summary>
 		/// The length of an ArrayBuffer in bytes. 
 		/// </summary>
-		/// <value>The length of the byte.</value>
+		/// <value>The length of the underlying ArrayBuffer in bytes.</value>
 		public int ByteLength => (int)GetObjectProperty ("byteLength");
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="T:WebAssembly.Core.ArrayBuffer"/> is view.
