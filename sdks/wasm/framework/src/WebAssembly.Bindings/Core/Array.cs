@@ -19,7 +19,7 @@ namespace WebAssembly.Core {
 		/// <summary>
 		/// Pop this instance.
 		/// </summary>
-		/// <returns>The pop.</returns>
+		/// <returns>The element removed from the array or null if the array was empty</returns>
 		public int Pop () => (int)Invoke ("pop");
 		/// <summary>
 		/// Shift this instance.
