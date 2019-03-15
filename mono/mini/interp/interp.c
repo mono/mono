@@ -3469,7 +3469,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 #define ZEROP(datamem, op) \
 	--sp; \
 	if (sp->data.datamem op 0) \
-		ip += READ32(ip + 1); \
+		ip += (gint32)READ32(ip + 1); \
 	else \
 		ip += 3;
 
@@ -3533,7 +3533,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 #define CONDBR(cond) \
 	sp -= 2; \
 	if (cond) \
-		ip += READ32(ip + 1); \
+		ip += (gint32)READ32(ip + 1); \
 	else \
 		ip += 3;
 
@@ -3695,7 +3695,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 #define BRELOP_CAST(datamem, op, type) \
 	sp -= 2; \
 	if ((type) sp[0].data.datamem op (type) sp[1].data.datamem) \
-		ip += READ32(ip + 1); \
+		ip += (gint32)READ32(ip + 1); \
 	else \
 		ip += 3;
 
