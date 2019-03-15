@@ -928,7 +928,6 @@ var BindingSupportLib = {
 			return BINDING.js_string_to_mono_string ("Invalid JS object handle '" + js_handle + "'");
 		}
 
-		var res;
 		try {
 			var m = obj [property_index];
 			return BINDING.js_to_mono_obj (m);
