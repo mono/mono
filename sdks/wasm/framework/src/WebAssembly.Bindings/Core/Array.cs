@@ -35,7 +35,7 @@ namespace WebAssembly.Core {
 		/// <summary>
 		/// Index of the search element.
 		/// </summary>
-		/// <returns>The of.</returns>
+		/// <returns>The index of first occurrence of searchElement in the Array or -1 if not Found</returns>
 		/// <param name="searchElement">Search element.</param>
 		/// <param name="fromIndex">The index to start the search from</param>
 		public int IndexOf (object searchElement, int fromIndex = 0) => (int)Invoke ("indexOf", searchElement, fromIndex);
