@@ -2867,7 +2867,8 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	LLVMTypeRef sig;
 	MonoJumpInfo *ji;
 	int got_offset;
-	const char *name = mono_marshal_get_aot_init_wrapper_name (subtype);
+	const char *wrapper_name = mono_marshal_get_aot_init_wrapper_name (subtype);
+	char *name = g_strdup_printf ("%s%s", module->global_prefix, wrapper_name);
 	const char *icall_name = NULL;
 
 	switch (subtype) {
@@ -7542,8 +7543,8 @@ emit_method_inner (EmitContext *ctx)
 			ctx->module->max_method_idx = MAX (ctx->module->max_method_idx, cfg->method_index);
 
 			const char *init_name = mono_marshal_get_aot_init_wrapper_name (info->d.aot_init.subtype);
-			ctx->method_name = g_strdup (init_name);
-			ctx->cfg->asm_symbol = g_strdup (init_name);
+			ctx->method_name = g_strdup_printf ("%s%s", ctx->module->global_prefix, init_name);
+			ctx->cfg->asm_symbol = g_strdup (ctx->method_name);
 
 			if (!cfg->llvm_only && ctx->module->external_symbols) {
 				LLVMSetLinkage (method, LLVMExternalLinkage);
