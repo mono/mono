@@ -1389,7 +1389,7 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	guint8 *prev_is_bb_start;
 	gboolean ret;
 	unsigned int prev_max_stack_height, prev_max_vt_sp, prev_total_locals_size;
-	int prev_n_data_items, prev_n_line_numbers;
+	int prev_n_data_items;
 	int i, prev_vt_sp;
 	int prev_new_ip_offset, prev_sp_offset;
 	MonoGenericContext *generic_context = NULL;
@@ -1426,7 +1426,6 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	prev_total_locals_size = td->total_locals_size;
 
 	prev_n_data_items = td->n_data_items;
-	prev_n_line_numbers = td->line_numbers->len;
 	prev_in_offsets = td->in_offsets;
 	td->in_offsets = (int*)g_malloc0((header->code_size + 1) * sizeof(int));
 
@@ -1453,7 +1452,6 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 			g_hash_table_remove (td->data_hash, td->data_items [i]);
 		}
 		td->n_data_items = prev_n_data_items;
-		td->line_numbers->len = prev_n_line_numbers;
 		td->sp = td->stack + prev_sp_offset;
 		memcpy (&td->sp [-nargs], prev_param_area, nargs * sizeof (StackInfo));
 		td->vt_sp = prev_vt_sp;
@@ -2559,11 +2557,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		in_offset = td->ip - header->code;
 		td->in_start = td->ip;
 		InterpInst *prev_last_ins = td->last_ins;
-
-		MonoDebugLineNumberEntry lne;
-		lne.native_offset = (guint8*)td->new_ip - (guint8*)td->new_code;
-		lne.il_offset = in_offset;
-		g_array_append_val (td->line_numbers, lne);
 
 		if (td->stack_height [in_offset] >= 0) {
 			g_assert (td->is_bb_start [in_offset]);
@@ -5387,6 +5380,11 @@ emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *in
 	if (ins->il_offset != -1 && !td->in_offsets [ins->il_offset]) {
 		g_assert (ins->il_offset >= 0 && ins->il_offset < td->header->code_size);
 		td->in_offsets [ins->il_offset] = start_ip - td->new_code + 1;
+
+		MonoDebugLineNumberEntry lne;
+		lne.native_offset = (guint8*)start_ip - (guint8*)td->new_code;
+		lne.il_offset = ins->il_offset;
+		g_array_append_val (td->line_numbers, lne);
 	}
 
 	*ip++ = opcode;
@@ -5540,7 +5538,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	td->stack_capacity = header->max_stack + 1;
 	td->sp = td->stack;
 	td->max_stack_height = 0;
-
 	td->line_numbers = g_array_new (FALSE, TRUE, sizeof (MonoDebugLineNumberEntry));
 
 	generate_code (td, method, header, generic_context, error);
