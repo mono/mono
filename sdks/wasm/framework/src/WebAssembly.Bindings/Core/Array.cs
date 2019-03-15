@@ -42,7 +42,7 @@ namespace WebAssembly.Core {
 		/// <summary>
 		/// Lasts index of the search element.
 		/// </summary>
-		/// <returns>The index of.</returns>
+		/// <returns>The index of the last occurrence</returns>
 		/// <param name="searchElement">Search element.</param>
 		public int LastIndexOf (object searchElement) => (int)Invoke ("lastIndexOf", searchElement);
 		/// <summary>
