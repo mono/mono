@@ -27,7 +27,7 @@ namespace WebAssembly.Core {
 		/// <returns>The removed element</returns>
 		public object Shift () => Invoke ("shift");
 		/// <summary>
-		/// Unshift this instancet.
+		/// Add <paramref name="elements"/> to the array starting at index <c>0</c>
 		/// </summary>
 		/// <returns>The length after shift.</returns>
 		/// <param name="elements">Elements.</param>
