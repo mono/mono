@@ -22,7 +22,7 @@ namespace WebAssembly.Core {
 		/// <returns>The element removed from the array or null if the array was empty</returns>
 		public int Pop () => (int)Invoke ("pop");
 		/// <summary>
-		/// Shift this instance.
+		/// Remove the first element of the Array and return that element
 		/// </summary>
 		/// <returns>The removed element</returns>
 		public object Shift () => Invoke ("shift");
