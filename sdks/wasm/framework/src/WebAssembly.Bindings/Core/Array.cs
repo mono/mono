@@ -24,7 +24,7 @@ namespace WebAssembly.Core {
 		/// <summary>
 		/// Shift this instance.
 		/// </summary>
-		/// <returns>The shift.</returns>
+		/// <returns>The removed element</returns>
 		public object Shift () => Invoke ("shift");
 		/// <summary>
 		/// Unshift this instancet.
