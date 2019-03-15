@@ -55,7 +55,7 @@ namespace WebAssembly.Core {
 		public int LastIndexOf (object searchElement, int endIndex) => (int)Invoke ("lastIndexOf", searchElement, endIndex);
 
 		/// <summary>
-		/// Gets or sets the <see cref="T:WebAssembly.Core.Array"/> with the specified i.
+		/// Gets or sets the <see cref="T:WebAssembly.Core.Array"/> with the index specified by <paramref name="i" />.
 		/// </summary>
 		/// <param name="i">The index.</param>
 		public object this [int i] {
