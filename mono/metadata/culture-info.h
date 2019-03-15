@@ -88,6 +88,7 @@ typedef struct {
 // 7x byte, make something more guaranteed to match between native and managed.
 // mono/metadta/culture-info.h NumberFormatEntryManaged must match
 // mcs/class/corlib/ReferenceSources/CultureData.cs NumberFormatEntryManaged.
+// This is sorted alphabetically.
 struct NumberFormatEntryManaged {
 	gint32 currency_decimal_digits;
 	gint32 currency_decimal_separator;

@@ -626,6 +626,7 @@ namespace System.Globalization
 
 		// mono/metadta/culture-info.h NumberFormatEntryManaged must match
 		// mcs/class/corlib/ReferenceSources/CultureData.cs NumberFormatEntryManaged.
+		// This is sorted alphabetically.
 		[StructLayout (LayoutKind.Sequential)]
 		internal struct NumberFormatEntryManaged
 		{
