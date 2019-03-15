@@ -40,7 +40,7 @@ namespace WebAssembly.Core {
 		/// <param name="fromIndex">The index to start the search from</param>
 		public int IndexOf (object searchElement, int fromIndex = 0) => (int)Invoke ("indexOf", searchElement, fromIndex);
 		/// <summary>
-		/// Lasts index of the search element.
+		/// Finds the index of the last occurrence of<paramref name="searchElement" />
 		/// </summary>
 		/// <returns>The index of the last occurrence</returns>
 		/// <param name="searchElement">Search element.</param>
