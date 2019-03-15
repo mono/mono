@@ -12,35 +12,39 @@ namespace System
 {
 	partial class Buffer
 	{
-		public static void BlockCopy (Array src, int srcOffset, Array dst, int dstOffset, int count)
+		public static void BlockCopy (Array src, int srcOffset, Array dest, int dstOffset, int count)
 		{
 			if (src == null)
 				throw new ArgumentNullException (nameof (src));
-			if (dst == null)
-				throw new ArgumentNullException (nameof (dst));
+			if (dest == null)
+				throw new ArgumentNullException (nameof (dest));
 
 			if (srcOffset < 0)
-				throw new ArgumentOutOfRangeException (SR.ArgumentOutOfRange_MustBeNonNegInt32, nameof (srcOffset));
+				throw new ArgumentOutOfRangeException (nameof (srcOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			if (dstOffset < 0)
-				throw new ArgumentOutOfRangeException (SR.ArgumentOutOfRange_MustBeNonNegInt32, nameof (dstOffset));
+				throw new ArgumentOutOfRangeException (nameof (dstOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			if (count < 0)
-				throw new ArgumentOutOfRangeException (SR.ArgumentOutOfRange_MustBeNonNegInt32, nameof (count));
+				throw new ArgumentOutOfRangeException (nameof (count), SR.ArgumentOutOfRange_MustBeNonNegInt32);
+			if (!(src is byte[]))
+				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (src));
+			if (!(dest is byte[]))
+				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (dest));
 
 			var uCount = (nuint) count;
 			var uSrcOffset = (nuint) srcOffset;
 			var uDstOffset = (nuint) dstOffset;
 
 			var uSrcLen = (nuint) src.Length;
-			var uDstLen = (nuint) dst.Length;
+			var uDstLen = (nuint) dest.Length;
 
 			if (uSrcLen < uSrcOffset + uCount)
-				throw new ArgumentException (SR.Argument_InvalidOffLen);
+				throw new ArgumentException (SR.Argument_InvalidOffLen, "");
 			if (uDstLen < uDstOffset + uCount)
-				throw new ArgumentException (SR.Argument_InvalidOffLen);
+				throw new ArgumentException (SR.Argument_InvalidOffLen, "");
 
 			if (uCount != 0) {
 				unsafe {
-					fixed (byte* pSrc = &src.GetRawArrayData (), pDst = &dst.GetRawArrayData ()) {
+					fixed (byte* pSrc = &src.GetRawArrayData (), pDst = &dest.GetRawArrayData ()) {
 						Memmove (pDst + uDstOffset, pSrc + uSrcOffset, uCount);
 					}
 				}

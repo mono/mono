@@ -2446,13 +2446,11 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Diagnostics.Tracing.EventSourceCreatedEventArgs))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.KnownColor))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Data.Common.DbProviderFactories))]
-#if !NO_SYSTEM_DRAWING
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.ColorConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.PointConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.RectangleConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.SizeConverter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Drawing.SizeFConverter))]
-#endif
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Globalization.ISOWeek))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.EnumerationOptions))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.IO.MatchCasing))]

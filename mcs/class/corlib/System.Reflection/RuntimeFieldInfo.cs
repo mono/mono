@@ -327,9 +327,7 @@ namespace System.Reflection {
 		}
 #endif
 
-#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeFieldInfo> (other);
-#endif
 
 		public override int MetadataToken {
 			get {

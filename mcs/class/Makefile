@@ -1,6 +1,6 @@
 thisdir = class
 
-NO_FACADES_PROFILE := $(filter monodroid_tools monotouch_tools wasm_tools testing_aot_hybrid binary_reference_assemblies xbuild_12 xbuild_14 netcore, $(PROFILE))
+NO_FACADES_PROFILE := $(filter monodroid_tools monotouch_tools wasm_tools binary_reference_assemblies xbuild_12 xbuild_14 netcore, $(PROFILE))
 
 ifndef NO_FACADES_PROFILE
 FACADES_FOLDER := Facades
@@ -95,8 +95,7 @@ mobile_common_dirs_parallel := \
 testing_aot_full_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
 	Mono.Simd \
-	Mono.CSharp \
-	System.Drawing
+	Mono.CSharp
 
 testing_aot_full_interp_dirs_parallel := $(testing_aot_full_dirs_parallel)
 
@@ -158,23 +157,19 @@ monotouch_tv_runtime_dirs := \
 
 winaot_dirs_parallel := \
 	$(mobile_common_dirs_parallel)	\
-	System.Drawing \
 	Mono.Simd
 
 unreal_dirs_parallel := \
-	$(mobile_common_dirs_parallel)	\
-	System.Drawing
+	$(mobile_common_dirs_parallel)
 
 wasm_dirs_parallel := \
-	$(mobile_common_dirs_parallel)	\
-	System.Drawing
+	$(mobile_common_dirs_parallel)
 
 wasm_tools_dirs_parallel := \
 	Mono.Cecil
 
 orbis_dirs_parallel := \
-	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))	\
-	System.Drawing
+	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))
 
 xammac_4_5_dirs_parallel := \
 	Mono.Security \

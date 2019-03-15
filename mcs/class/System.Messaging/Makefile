@@ -14,10 +14,6 @@ LIB_MCS_FLAGS = /resource:System.Messaging/MessageQueue.resx
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 TEST_LIB_REFS =
 
-ifneq ($(PROFILE),xammac_net_4_5)
-TEST_LIB_REFS += nunit.mocks
-endif
-
 EXTRA_DISTFILES = System.Messaging/MessageQueue.resx
 
 ifdef NO_WINFORMS_DEPENDENCY

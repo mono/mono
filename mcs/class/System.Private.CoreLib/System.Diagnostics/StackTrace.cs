@@ -6,7 +6,8 @@ namespace System.Diagnostics
 {
 	// Need our own stackframe class since the shared version has its own fields
 	[StructLayout (LayoutKind.Sequential)]
-	class MonoStackFrame {
+	class MonoStackFrame
+	{
 		#region Keep in sync with object-internals.h
 		internal int ilOffset;
 		internal int nativeOffset;
@@ -25,24 +26,22 @@ namespace System.Diagnostics
 
 	partial class StackTrace
 	{
-		internal StackTrace (StackFrame[] frames) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static MonoStackFrame[] get_trace (Exception e, int skipFrames, bool fNeedFileInfo);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static MonoStackFrame [] get_trace (Exception e, int skipFrames, bool fNeedFileInfo);
-
-		void InitializeForCurrentThread (int skipFrames, bool fNeedFileInfo) {
+		void InitializeForCurrentThread (int skipFrames, bool fNeedFileInfo)
+		{
 		}
 		
-		void InitializeForException (Exception e, int skipFrames, bool fNeedFileInfo) {
+		void InitializeForException (Exception e, int skipFrames, bool fNeedFileInfo)
+		{
 			var frames = get_trace (e, skipFrames, fNeedFileInfo);
 			_numOfFrames = frames.Length;
-			_stackFrames = new StackFrame [frames.Length];
-			for (int i = 0; i < frames.Length; ++i) {
+			_stackFrames = new StackFrame [_numOfFrames];
+			for (int i = 0; i < _numOfFrames; ++i) {
+				var sf = _stackFrames [i] = new StackFrame ();
+
 				var f = frames [i];
-				_stackFrames [i] = new StackFrame ();
-				var sf = _stackFrames [i];
 				sf.SetMethodBase (f.methodBase);
 				sf.SetOffset (f.nativeOffset);
 				sf.SetILOffset (f.ilOffset);

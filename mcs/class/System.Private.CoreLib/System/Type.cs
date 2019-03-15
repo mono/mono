@@ -1,4 +1,7 @@
+using System.Text;
+using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -54,19 +57,29 @@ namespace System
 			return RuntimeType.GetType (typeName, false, false, false, ref stackMark);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Type GetType (string typeName, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver)
 		{
-			throw new NotImplementedException ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, assemblyResolver, typeResolver, false, false, ref stackMark);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Type GetType (string typeName, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver, bool throwOnError)
 		{
-			throw new NotImplementedException ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, assemblyResolver, typeResolver, throwOnError, false, ref stackMark);
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public static Type GetType (string typeName, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver, bool throwOnError, bool ignoreCase)
 		{
-			throw new NotImplementedException ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, assemblyResolver, typeResolver, throwOnError, ignoreCase, ref stackMark);
+		}
+
+		static Type GetType (string typeName, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver, bool throwOnError, bool ignoreCase, ref StackCrawlMark stackMark) {
+			return TypeNameParser.GetType (typeName, assemblyResolver, typeResolver, throwOnError, ignoreCase, ref stackMark);
 		}
 
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)

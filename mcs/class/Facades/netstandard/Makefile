@@ -22,7 +22,7 @@ ifneq ($(PROFILE),build)
 LIB_REFS += System.Transactions System.Runtime.Serialization System.Data
 
 ifeq ($(PROFILE),xammac_net_4_5)
-LIB_REFS += System.Web.Services Facades/System.Drawing.Primitives
+LIB_REFS += System.Web.Services
 else ifeq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Web.Services
 else
@@ -31,40 +31,12 @@ endif
 
 endif
 
-ifeq ($(PROFILE),monodroid)
-# XA implements System.Drawing API inside Mono.Android
-API_BIN_REFS := Mono.Android
-LIB_REFS += Facades/System.Drawing.Common
-endif
-
-ifeq ($(PROFILE),monotouch)
-API_BIN_REFS := Xamarin.iOS OpenTK-1.0
-endif
-
-ifeq ($(PROFILE),monotouch_tv)
-API_BIN_REFS := Xamarin.TVOS OpenTK-1.0
-endif
-
-ifeq ($(PROFILE),monotouch_watch)
-API_BIN_REFS := Xamarin.WatchOS
-endif
-
-ifeq ($(PROFILE),xammac)
-API_BIN_REFS := Xamarin.Mac OpenTK
-endif
-
-# profiles which build a System.Drawing.dll in the repo
-REPO_DRAWING_DEP := $(filter build net_4_x orbis winaot unreal testing_aot_full wasm, $(PROFILE))
-
-ifdef REPO_DRAWING_DEP
+ifneq (,$(filter build net_4_x, $(PROFILE)))
+# drawing types are inside System.Drawing.dll
 LIB_REFS += System.Drawing
-endif
-
-# profiles without System.Drawing (TODO: fix)
-NO_SYSTEM_DRAWING := $(filter xammac xammac_net_4_5 monotouch_watch monotouch_tv monotouch_watch monotouch testing_aot_full, $(PROFILE))
-
-ifdef NO_SYSTEM_DRAWING
-LIB_MCS_FLAGS += -d:NO_SYSTEM_DRAWING 
+else
+# drawing types are inside System.Drawing.Common.dll
+LIB_REFS += Facades/System.Drawing.Common
 endif
 
 PLATFORM_DEBUG_FLAGS =

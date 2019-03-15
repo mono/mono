@@ -90,6 +90,10 @@ To experiment with the debugger, do the following steps:
 
 Beware that the debugger is in active development so bugs and missing features will be present.
 
+# WebAssembly packager.exe
+
+Read usage information about the utility see [WebAssembly packager.exe](./docs/packager)
+
 # AOT support
 
 AOT support is enabled by passing --aot to the packager.
