@@ -1,7 +1,7 @@
-diff --git a/mono/config.make.in b/mono/config.make.in
+diff --git a/mono/config.make b/mono/config.make
 index 3106ab99f..8af247ffd 100644
---- a/mono/config.make.in
-+++ b/mono/config.make.in
+--- a/mono/config.make
++++ b/mono/config.make
 @@ -148,6 +148,7 @@ install-sdk-lib:
  	    echo " --> $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v12.0/FSharp/"; \
  	    echo " --> $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v14.0/FSharp/"; \
