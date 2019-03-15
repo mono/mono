@@ -23,7 +23,7 @@ namespace WebAssembly.Core {
 		{ }
 
 		/// <summary>
-		/// Gets the length of the byte.
+		/// The length of an ArrayBuffer in bytes. 
 		/// </summary>
 		/// <value>The length of the byte.</value>
 		public int ByteLength => (int)GetObjectProperty ("byteLength");
