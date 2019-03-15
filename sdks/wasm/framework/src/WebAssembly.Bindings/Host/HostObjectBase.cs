@@ -1,6 +1,6 @@
 ﻿using System;
 namespace WebAssembly.Host {
-	public abstract class HostObjectBase : JSObject, HostObjectInterface {
+	public abstract class HostObjectBase : JSObject, IHostObject {
 
 		protected HostObjectBase (int js_handle) : base (js_handle)
 		{
