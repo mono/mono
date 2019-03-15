@@ -54,34 +54,34 @@ typedef struct {
 
 typedef struct {
 	// 12x ushort -- 6 ints
-	stridx_t currency_decimal_separator;
-	stridx_t currency_group_separator;
-	stridx_t number_decimal_separator;
-	stridx_t number_group_separator;
+	const stridx_t currency_decimal_separator;
+	const stridx_t currency_group_separator;
+	const stridx_t number_decimal_separator;
+	const stridx_t number_group_separator;
 
-	stridx_t currency_symbol;
-	stridx_t percent_symbol;
-	stridx_t nan_symbol;
-	stridx_t per_mille_symbol;
-	stridx_t negative_infinity_symbol;
-	stridx_t positive_infinity_symbol;
+	const stridx_t currency_symbol;
+	const stridx_t percent_symbol;
+	const stridx_t nan_symbol;
+	const stridx_t per_mille_symbol;
+	const stridx_t negative_infinity_symbol;
+	const stridx_t positive_infinity_symbol;
 
-	stridx_t negative_sign;
-	stridx_t positive_sign;
+	const stridx_t negative_sign;
+	const stridx_t positive_sign;
 
 	// 7x gint8 -- FIXME expand to 8, or sort by size.
 	// For this reason, copy the data to a simpler "managed" form.
-	gint8 currency_negative_pattern;
-	gint8 currency_positive_pattern;
-	gint8 percent_negative_pattern;
-	gint8 percent_positive_pattern;
-	gint8 number_negative_pattern;
+	const gint8 currency_negative_pattern;
+	const gint8 currency_positive_pattern;
+	const gint8 percent_negative_pattern;
+	const gint8 percent_positive_pattern;
+	const gint8 number_negative_pattern;
 
-	gint8 currency_decimal_digits;
-	gint8 number_decimal_digits;
+	const gint8 currency_decimal_digits;
+	const gint8 number_decimal_digits;
 
-	gint currency_group_sizes [2];
-	gint number_group_sizes [2];
+	const gint currency_group_sizes [2];
+	const gint number_group_sizes [2];
 } NumberFormatEntry;
 
 // Due to the questionable layout of NumberFormatEntry, in particular
