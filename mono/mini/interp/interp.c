@@ -3320,6 +3320,39 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			}
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_CALL_VARARG) {
+			stackval *endsp = sp;
+			int num_varargs = 0;
+			MonoMethodSignature *csig;
+
+			frame->ip = ip;
+
+			child_frame.imethod = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
+			/* The real signature for vararg calls */
+			csig = (MonoMethodSignature*) imethod->data_items [* (guint16*) (ip + 2)];
+			/* Push all vararg arguments from normal sp to vt_sp together with the signature */
+			num_varargs = csig->param_count - csig->sentinelpos;
+			child_frame.varargs = (char*) vt_sp;
+			copy_varargs_vtstack (csig, sp, &vt_sp);
+
+			ip += 3;
+			sp->data.p = vt_sp;
+			child_frame.retval = sp;
+
+			/* decrement by the actual number of args */
+			sp -= child_frame.imethod->param_count + child_frame.imethod->hasthis + num_varargs;
+			child_frame.stack_args = sp;
+
+			interp_exec_method (&child_frame, context);
+
+			CHECK_RESUME_STATE (context);
+
+			if (csig->ret->type != MONO_TYPE_VOID) {
+				*sp = *endsp;
+				sp++;
+			}
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_CALL)
 		MINT_IN_CASE(MINT_VCALL)
 		MINT_IN_CASE(MINT_CALLVIRT)
@@ -3327,25 +3360,16 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			gboolean is_void = *ip == MINT_VCALL || *ip == MINT_VCALLVIRT;
 			gboolean is_virtual = *ip == MINT_CALLVIRT || *ip == MINT_VCALLVIRT;
 			stackval *endsp = sp;
-			int num_varargs = 0;;
 
 			frame->ip = ip;
 			
 			child_frame.imethod = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
-			if (child_frame.imethod->vararg) {
-				/* The real signature for vararg calls */
-				MonoMethodSignature *csig = (MonoMethodSignature*) imethod->data_items [* (guint16*) (ip + 2)];
-				/* Push all vararg arguments from normal sp to vt_sp together with the signature */
-				num_varargs = csig->param_count - csig->sentinelpos;
-				child_frame.varargs = (char*) vt_sp;
-				copy_varargs_vtstack (csig, sp, &vt_sp);
-			}
-			ip += 2 + child_frame.imethod->vararg;
+			ip += 2;
 			sp->data.p = vt_sp;
 			child_frame.retval = sp;
 
 			/* decrement by the actual number of args */
-			sp -= child_frame.imethod->param_count + child_frame.imethod->hasthis + num_varargs;
+			sp -= child_frame.imethod->param_count + child_frame.imethod->hasthis;
 			child_frame.stack_args = sp;
 
 			if (is_virtual) {
