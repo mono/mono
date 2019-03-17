@@ -23,7 +23,7 @@ namespace System
 		};
 
 		static bool IsPrimitiveType (CorElementType type) {
-			return (type >= CorElementType.Void && type <= CorElementType.R8) || type == CorElementType.I || type == CorElementType.U;
+			return (type >= CorElementType.ELEMENT_TYPE_VOID && type <= CorElementType.ELEMENT_TYPE_R8) || type == CorElementType.ELEMENT_TYPE_I || type == CorElementType.ELEMENT_TYPE_U;
 		}
 
 		static bool CanChangePrimitive (Type source, Type target)
