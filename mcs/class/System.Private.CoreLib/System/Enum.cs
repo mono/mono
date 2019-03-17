@@ -33,7 +33,8 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern int InternalCompareTo (object o1, object o2);
 
-		static CorElementType InternalGetCorElementType () => throw new NotImplementedException ();
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern CorElementType InternalGetCorElementType ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern RuntimeType InternalGetUnderlyingType (RuntimeType enumType);
