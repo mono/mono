@@ -131,21 +131,21 @@ namespace System
 				// FIXME: More checks
 				bool match = true;
 				switch (dst_etype) {
-				case CorElementType.Object:
-				case CorElementType.String:
-				case CorElementType.Class:
-				case CorElementType.Array:
-				case CorElementType.SzArray:
+				case CorElementType.ELEMENT_TYPE_OBJECT:
+				case CorElementType.ELEMENT_TYPE_STRING:
+				case CorElementType.ELEMENT_TYPE_CLASS:
+				case CorElementType.ELEMENT_TYPE_ARRAY:
+				case CorElementType.ELEMENT_TYPE_SZARRAY:
 					if (src_type.IsPointer)
 						match = false;
 					break;
-				case CorElementType.Ptr:
+				case CorElementType.ELEMENT_TYPE_PTR:
 					switch (src_etype) {
-					case CorElementType.Object:
-					case CorElementType.String:
-					case CorElementType.Class:
-					case CorElementType.Array:
-					case CorElementType.SzArray:
+					case CorElementType.ELEMENT_TYPE_OBJECT:
+					case CorElementType.ELEMENT_TYPE_STRING:
+					case CorElementType.ELEMENT_TYPE_CLASS:
+					case CorElementType.ELEMENT_TYPE_ARRAY:
+					case CorElementType.ELEMENT_TYPE_SZARRAY:
 						match = false;
 						break;
 					default:
