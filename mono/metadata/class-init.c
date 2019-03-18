@@ -3178,7 +3178,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 				MonoClass *parent = klass->parent;
 				// Reverse order, so that last added methods are preferred
 				for (cm_index = parent->vtable_size - 1; cm_index >= 0; cm_index--) {
-					MonoMethod *cm = parent->vtable [cm_index];
+					cm = parent->vtable [cm_index];
 					
 					TRACE_INTERFACE_VTABLE ((cm != NULL) && printf ("    For slot %d ('%s'.'%s':'%s'), trying (ancestor) method '%s'.'%s':'%s'... ", im_slot, ic->name_space, ic->name, im->name, cm->klass->name_space, cm->klass->name, cm->name));
 					if ((cm != NULL) && check_interface_method_override (klass, im, cm, FALSE, FALSE, TRUE)) {
@@ -3204,6 +3204,9 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 					vtable [im_slot] = im;
 				}
 			}
+			
+			if (override_im)
+				g_assert (vtable [im_slot] == cm || vtable [im_slot] == override_im);
 		}
 	}
 	
