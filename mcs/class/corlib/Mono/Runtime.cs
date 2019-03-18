@@ -147,6 +147,11 @@ namespace Mono {
 			SendMicrosoftTelemetry (payload_str, portable_hash, unportable_hash);
 		}
 
+		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str)
+		{
+			EnableMicrosoftTelemetry (appBundleID_str, appSignature_str, appVersion_str, merpGUIPath_str, eventType_str, appPath_str, null)
+		}
+
 		// All must be set except for configDir_str
 		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str, string configDir_str)
 		{
