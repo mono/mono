@@ -102,8 +102,11 @@ namespace System.Runtime.CompilerServices
 			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
 		}
 
-		// TODO: Implement
-		public static bool IsBitwiseEquatable<T> () => false;
+		[Intrinsic]
+		internal static bool IsBitwiseEquatable<T> ()
+		{
+			throw new NotImplementedException ();
+		}
 
 		[Intrinsic]
 		internal static unsafe bool ObjectHasComponentSize (object obj)
