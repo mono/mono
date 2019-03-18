@@ -3387,7 +3387,10 @@ mono_interface_implements_interface (MonoClass *interface_implementer, MonoClass
 	int i;
 	ERROR_DECL (error);
 	mono_class_setup_interfaces (interface_implementer, error);
-	return_val_if_nok (error, FALSE);
+	if (!is_ok (error)) {
+		mono_error_cleanup  (error);
+		return FALSE;
+	}
 	MonoClass **klass_interfaces = m_class_get_interfaces (interface_implementer);
 	for (i = 0; i < m_class_get_interface_count (interface_implementer); i++) {
 		MonoClass *ic = klass_interfaces [i];
