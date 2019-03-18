@@ -99,7 +99,7 @@ class Program
 			throw new Exception ("Unable to emit inline data: " + val.GetType () + " " + val);
 		}
 
-		if (val != null && val.GetType () != expectedType)
+		if (val != null && val.GetType () != expectedType && !expectedType.IsGenericParameter)
 			result = new CodeCastExpression (new CodeTypeReference (expectedType), result);
 
 		return result;
