@@ -97,10 +97,13 @@ namespace System.Runtime.CompilerServices
 		}
 
 		[Intrinsic]
-		public static bool IsReferenceOrContainsReferences<T>()
+		public static bool IsReferenceOrContainsReferences<T> ()
 		{
 			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
 		}
+
+		// TODO: Implement
+		public static bool IsBitwiseEquatable<T> () => false;
 
 		[Intrinsic]
 		internal static unsafe bool ObjectHasComponentSize (object obj)
