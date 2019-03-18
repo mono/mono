@@ -94,7 +94,6 @@ typedef struct
 	const unsigned char *in_start;
 	InterpInst *last_ins, *first_ins;
 	int code_size;
-	int body_start_offset; // FIXME this and the one from InterpMethod is useless (after the stinarg removal opt) and needs to die
 	int *in_offsets;
 	StackInfo **stack_state;
 	int *stack_height;
@@ -102,7 +101,6 @@ typedef struct
 	unsigned char *is_bb_start;
 	unsigned short *new_code;
 	unsigned short *new_code_end;
-	unsigned short *new_ip;
 	unsigned int max_code_size;
 	StackInfo *stack;
 	StackInfo *sp;
@@ -1397,7 +1395,7 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	unsigned int prev_max_stack_height, prev_max_vt_sp, prev_total_locals_size;
 	int prev_n_data_items;
 	int i, prev_vt_sp;
-	int prev_new_ip_offset, prev_sp_offset;
+	int prev_sp_offset;
 	MonoGenericContext *generic_context = NULL;
 	StackInfo *prev_param_area;
 	MonoMethod *prev_inlined_method;
@@ -1417,7 +1415,6 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	prev_il_code = td->il_code;
 	prev_in_start = td->in_start;
 	prev_sp_offset = td->sp - td->stack;
-	prev_new_ip_offset = td->new_ip - td->new_code;
 	prev_vt_sp = td->vt_sp;
 	prev_stack_state = td->stack_state;
 	prev_stack_height = td->stack_height;
@@ -1461,7 +1458,6 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 		td->sp = td->stack + prev_sp_offset;
 		memcpy (&td->sp [-nargs], prev_param_area, nargs * sizeof (StackInfo));
 		td->vt_sp = prev_vt_sp;
-		td->new_ip = td->new_code + prev_new_ip_offset;
 		td->last_ins = prev_last_ins;
 		if (td->last_ins)
 			td->last_ins->next = NULL;
@@ -1502,7 +1498,7 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 
 /* Return FALSE if error, including inline failure */
 static gboolean
-interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target_method, MonoDomain *domain, MonoGenericContext *generic_context, unsigned char *is_bb_start, int body_start_offset, MonoClass *constrained_class, gboolean readonly, MonoError *error, gboolean check_visibility)
+interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target_method, MonoDomain *domain, MonoGenericContext *generic_context, unsigned char *is_bb_start, MonoClass *constrained_class, gboolean readonly, MonoError *error, gboolean check_visibility)
 {
 	MonoImage *image = m_class_get_image (method->klass);
 	MonoMethodSignature *csignature;
@@ -2388,7 +2384,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	MonoSimpleBasicBlock *bb = NULL, *original_bb = NULL;
 	gboolean sym_seq_points = FALSE;
 	MonoBitSet *seq_point_locs = NULL;
-	MonoBitSet *seq_point_set_locs = NULL;
 	gboolean readonly = FALSE;
 	gboolean volatile_ = FALSE;
 	MonoClass *constrained_class = NULL;
@@ -2464,7 +2459,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			mono_debug_get_seq_points (minfo, NULL, NULL, NULL, &sps, &n_il_offsets);
 			// FIXME: Free
 			seq_point_locs = mono_bitset_mem_new (mono_mempool_alloc0 (td->mempool, mono_bitset_alloc_size (header->code_size, 0)), header->code_size, 0);
-			seq_point_set_locs = mono_bitset_mem_new (mono_mempool_alloc0 (td->mempool, mono_bitset_alloc_size (header->code_size, 0)), header->code_size, 0);
 			sym_seq_points = TRUE;
 
 			for (i = 0; i < n_il_offsets; ++i) {
@@ -2484,7 +2478,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		} else if (!method->wrapper_type && !method->dynamic && mono_debug_image_has_debug_info (m_class_get_image (method->klass))) {
 			/* Methods without line number info like auto-generated property accessors */
 			seq_point_locs = mono_bitset_new (header->code_size, 0);
-			seq_point_set_locs = mono_bitset_new (header->code_size, 0);
 			sym_seq_points = TRUE;
 		}
 	}
@@ -2506,8 +2499,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			g_free (tmp);
 			g_free (name);
 		}
-
-		td->body_start_offset = td->new_ip - td->new_code;
 
 		if (header->num_locals && header->init_locals)
 			interp_add_ins (td, MINT_INITLOCALS);
@@ -2593,8 +2584,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				interp_add_ins (td, MINT_SDB_INTR_LOC);
 
 			last_seq_point = interp_add_ins (td, MINT_SDB_SEQ_POINT);
-
-			mono_bitset_set_fast (seq_point_set_locs, td->ip - header->code);
 		}
 
 		if (td->is_bb_start [in_offset]) {
@@ -2814,7 +2803,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (sym_seq_points && !mono_bitset_test_fast (seq_point_locs, td->ip + 5 - header->code))
 				need_seq_point = TRUE;
 
-			if (!interp_transform_call (td, method, NULL, domain, generic_context, td->is_bb_start, td->body_start_offset, constrained_class, readonly, error, TRUE))
+			if (!interp_transform_call (td, method, NULL, domain, generic_context, td->is_bb_start, constrained_class, readonly, error, TRUE))
 				goto exit;
 
 			if (need_seq_point) {
@@ -3718,7 +3707,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					target_method = mono_class_get_method_from_name_checked (klass, "Unbox", 1, 0, error);
 				goto_if_nok (error, exit);
 				/* td->ip is incremented by interp_transform_call */
-				if (!interp_transform_call (td, method, target_method, domain, generic_context, td->is_bb_start, td->body_start_offset, NULL, FALSE, error, FALSE))
+				if (!interp_transform_call (td, method, target_method, domain, generic_context, td->is_bb_start, NULL, FALSE, error, FALSE))
 					goto exit;
 				/*
 				 * CEE_UNBOX needs to push address of vtype while Nullable.Unbox returns the value type
@@ -3755,7 +3744,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					target_method = mono_class_get_method_from_name_checked (klass, "Unbox", 1, 0, error);
 				goto_if_nok (error, exit);
 				/* td->ip is incremented by interp_transform_call */
-				if (!interp_transform_call (td, method, target_method, domain, generic_context, td->is_bb_start, td->body_start_offset, NULL, FALSE, error, FALSE))
+				if (!interp_transform_call (td, method, target_method, domain, generic_context, td->is_bb_start, NULL, FALSE, error, FALSE))
 					goto exit;
 			} else {
 				int mt = mint_type (m_class_get_byval_arg (klass));
@@ -3808,7 +3797,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 				MonoMethod *wrapper = mono_marshal_get_ldflda_wrapper (field->type);
 				/* td->ip is incremented by interp_transform_call */
-				if (!interp_transform_call (td, method, wrapper, domain, generic_context, td->is_bb_start, td->body_start_offset, NULL, FALSE, error, FALSE))
+				if (!interp_transform_call (td, method, wrapper, domain, generic_context, td->is_bb_start, NULL, FALSE, error, FALSE))
 					goto exit;
 			} else
 #endif
@@ -4123,7 +4112,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				MonoMethod *target_method = mono_class_get_method_from_name_checked (klass, "Box", 1, 0, error);
 				goto_if_nok (error, exit);
 				/* td->ip is incremented by interp_transform_call */
-				if (!interp_transform_call (td, method, target_method, domain, generic_context, td->is_bb_start, td->body_start_offset, NULL, FALSE, error, FALSE))
+				if (!interp_transform_call (td, method, target_method, domain, generic_context, td->is_bb_start, NULL, FALSE, error, FALSE))
 					goto exit;
 			} else if (!m_class_is_valuetype (klass)) {
 				/* already boxed, do nothing. */
@@ -4827,7 +4816,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					interp_add_ins (td, MINT_POP);
 					td->last_ins->data [0] = 1;
 					--td->sp;
-					if (!interp_transform_call (td, method, NULL, domain, generic_context, td->is_bb_start, td->body_start_offset, NULL, FALSE, error, FALSE))
+					if (!interp_transform_call (td, method, NULL, domain, generic_context, td->is_bb_start, NULL, FALSE, error, FALSE))
 						goto exit;
 					break;
 				case CEE_MONO_JIT_ICALL_ADDR: {
@@ -5510,8 +5499,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	td->header = header;
 	td->max_code_size = td->code_size;
 	td->in_offsets = (int*)g_malloc0((header->code_size + 1) * sizeof(int));
-	td->new_code = (unsigned short *)g_malloc(td->max_code_size * sizeof(gushort));
-	td->new_code_end = td->new_code + td->max_code_size;
 	td->mempool = mono_mempool_new ();
 	td->n_data_items = 0;
 	td->max_data_items = 0;
@@ -5540,8 +5527,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 		}
 	}
 
-	td->new_ip = td->new_code;
-
 	td->stack = (StackInfo*)g_malloc0 ((header->max_stack + 1) * sizeof (td->stack [0]));
 	td->stack_capacity = header->max_stack + 1;
 	td->sp = td->stack;
@@ -5569,7 +5554,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	rtm->clauses = (MonoExceptionClause*)mono_domain_alloc0 (domain, header->num_clauses * sizeof (MonoExceptionClause));
 	memcpy (rtm->clauses, header->clauses, header->num_clauses * sizeof(MonoExceptionClause));
 	rtm->code = (gushort*)td->new_code;
-	rtm->new_body_start = rtm->code + td->body_start_offset;
 	rtm->init_locals = header->init_locals;
 	rtm->num_clauses = header->num_clauses;
 	for (i = 0; i < header->num_clauses; i++) {

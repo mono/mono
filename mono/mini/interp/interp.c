@@ -3157,10 +3157,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 #endif
 			locals = vt_sp + imethod->vt_stack_size;
 			frame->locals = locals;
-			if (realloc_frame)
-				ip = imethod->code;
-			else
-				ip = imethod->new_body_start; /* bypass storing input args from callers frame */
+			ip = imethod->code;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CALLI) {
