@@ -3381,6 +3381,20 @@ mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc,
 	return result;
 }
 
+static gboolean 
+mono_interface_implements_interface (MonoClass *interface_implementer, MonoClass *interface_implemented)
+{
+	int i;
+	for (i = 0; i < interface_implementer->interface_count; i++) {
+		MonoClass *ic = interface_implementer->interfaces[i];
+		if (mono_class_is_ginst (ic))
+			ic = mono_class_get_generic_type_definition (ic);
+		if (ic == interface_implemented)
+			return TRUE;
+	}
+	return FALSE;
+}
+
 gboolean
 mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc,
 				    gboolean check_interfaces)
@@ -5518,7 +5532,12 @@ is_valid_family_access (MonoClass *access_klass, MonoClass *member_klass, MonoCl
 		/* Can happen with default interface methods */
 		if (!mono_class_implements_interface (access_klass, member_klass))
 			return FALSE;
-	} else {
+	} if (MONO_CLASS_IS_INTERFACE_INTERNAL (member_klass) && MONO_CLASS_IS_INTERFACE_INTERNAL (access_klass)) {
+		/* Can happen with default interface methods */
+		if (!mono_interface_implements_interface (access_klass, member_klass)) {
+			return FALSE;
+		}
+	}else {
 		if (!mono_class_has_parent_and_ignore_generics (access_klass, member_klass))
 			return FALSE;
 	}
