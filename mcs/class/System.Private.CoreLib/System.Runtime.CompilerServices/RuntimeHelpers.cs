@@ -103,7 +103,7 @@ namespace System.Runtime.CompilerServices
 		}
 
 		[Intrinsic]
-		public static bool IsBitwiseEquatable<T> ()
+		internal static bool IsBitwiseEquatable<T> ()
 		{
 			throw new NotImplementedException ();
 		}
