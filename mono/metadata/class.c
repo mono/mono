@@ -3385,8 +3385,9 @@ static gboolean
 mono_interface_implements_interface (MonoClass *interface_implementer, MonoClass *interface_implemented)
 {
 	int i;
-	for (i = 0; i < interface_implementer->interface_count; i++) {
-		MonoClass *ic = interface_implementer->interfaces[i];
+	MonoClass **klass_interfaces = m_class_get_interfaces (interface_implementer);
+	for (i = 0; i < m_class_get_interface_count (interface_implementer); i++) {
+		MonoClass *ic = klass_interfaces [i];
 		if (mono_class_is_ginst (ic))
 			ic = mono_class_get_generic_type_definition (ic);
 		if (ic == interface_implemented)
