@@ -25,7 +25,7 @@ namespace WebAssembly.Core {
 		/// <returns>The bind.</returns>
 		/// <param name="thisArg">This argument.</param>
 		/// <param name="argsArray">Arguments.</param>
-		public Function Bind (object thisArg = null, object [] argsArray) => (Function)Invoke ("bind", thisArg, argsArray);
+		public Function Bind (object thisArg = null, object [] argsArray = null) => (Function)Invoke ("bind", thisArg, argsArray);
 
 		/// <summary>
 		/// Calls a function with a given `this` value and arguments provided individually.
