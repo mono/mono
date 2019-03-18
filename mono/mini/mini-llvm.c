@@ -2873,21 +2873,21 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 
 	switch (subtype) {
 	case AOT_INIT_METHOD:
-		icall_name = "mini_llvmonly_init_method"; 
+		icall_name = "mini_llvm_init_method"; 
 		func = LLVMAddFunction (lmodule, name, LLVMFunctionType1 (LLVMVoidType (), LLVMInt32Type (), FALSE));
 		sig = LLVMFunctionType2 (LLVMVoidType (), IntPtrType (), LLVMInt32Type (), FALSE);
 		break;
 	case AOT_INIT_METHOD_GSHARED_MRGCTX:
-		icall_name = "mini_llvmonly_init_gshared_method_mrgctx"; // Deliberate fall-through
+		icall_name = "mini_llvm_init_gshared_method_mrgctx"; // Deliberate fall-through
 	case AOT_INIT_METHOD_GSHARED_VTABLE:
 		/* mrgctx/vtable */
 		if (!icall_name)
-			icall_name = "mini_llvmonly_init_gshared_method_vtable";
+			icall_name = "mini_llvm_init_gshared_method_vtable";
 		func = LLVMAddFunction (lmodule, name, LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), IntPtrType (), FALSE));
 		sig = LLVMFunctionType3 (LLVMVoidType (), IntPtrType (), LLVMInt32Type (), IntPtrType (), FALSE);
 		break;
 	case AOT_INIT_METHOD_GSHARED_THIS:
-		icall_name = "mini_llvmonly_init_gshared_method_this";
+		icall_name = "mini_llvm_init_gshared_method_this";
 		func = LLVMAddFunction (lmodule, name, LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), ObjRefType (), FALSE));
 		sig = LLVMFunctionType3 (LLVMVoidType (), IntPtrType (), LLVMInt32Type (), ObjRefType (), FALSE);
 		break;

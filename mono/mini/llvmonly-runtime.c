@@ -791,7 +791,7 @@ init_llvmonly_method (MonoAotModule *amodule, guint32 method_index, MonoClass *i
 
 /* Called from generated code to initialize a method */
 void
-mini_llvmonly_init_method (gpointer aot_module, guint32 method_index)
+mini_llvm_init_method (gpointer aot_module, guint32 method_index)
 {
 	MonoAotModule *amodule = (MonoAotModule *)aot_module;
 
@@ -800,7 +800,7 @@ mini_llvmonly_init_method (gpointer aot_module, guint32 method_index)
 
 /* Same for gshared methods with a this pointer */
 void
-mini_llvmonly_init_gshared_method_this (gpointer aot_module, guint32 method_index, MonoObject *this_obj)
+mini_llvm_init_gshared_method_this (gpointer aot_module, guint32 method_index, MonoObject *this_obj)
 {
 	MonoAotModule *amodule = (MonoAotModule *)aot_module;
 	MonoClass *klass;
@@ -819,7 +819,7 @@ mini_llvmonly_init_gshared_method_this (gpointer aot_module, guint32 method_inde
 
 /* Same for gshared methods with an mrgctx arg */
 void
-mini_llvmonly_init_gshared_method_mrgctx (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx)
+mini_llvm_init_gshared_method_mrgctx (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx)
 {
 	MonoAotModule *amodule = (MonoAotModule *)aot_module;
 	MonoGenericContext context = { NULL, NULL };
@@ -836,7 +836,7 @@ mini_llvmonly_init_gshared_method_mrgctx (gpointer aot_module, guint32 method_in
 
 /* Same for gshared methods with a vtable arg */
 void
-mini_llvmonly_init_gshared_method_vtable (gpointer aot_module, guint32 method_index, MonoVTable *vtable)
+mini_llvm_init_gshared_method_vtable (gpointer aot_module, guint32 method_index, MonoVTable *vtable)
 {
 	MonoAotModule *amodule = (MonoAotModule *)aot_module;
 	MonoClass *klass;
