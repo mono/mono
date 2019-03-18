@@ -900,6 +900,7 @@ endif # CROSS_COMPILING
 BUILT_SOURCES += $(TAILCALL_FSHARP_DEEPTAIL_IL) $(TAILCALL_INTERFACE_CONSERVESTACK_IL)
 
 TESTS_IL_SRC=			\
+	always-fail.il	\
 	tailcall/2.il	     \
 	tailcall/3.il	     \
 	tailcall/4.il	     \
