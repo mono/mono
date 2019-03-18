@@ -9114,8 +9114,7 @@ append_mangled_wrapper (GString *s, MonoMethod *method)
 		} else if (info->subtype == WRAPPER_SUBTYPE_INTERP_LMF)
 			g_string_append_printf (s, "%s", method->name);
 		else if (info->subtype == WRAPPER_SUBTYPE_AOT_INIT) {
-			g_string_append_printf (s, "%s_", m_class_get_image (method->klass)->assembly->aname.name);
-			g_string_append_printf (s, "%d_", info->d.aot_init.subtype);
+			g_string_append_printf (s, "%s_%d_", m_class_get_image (method->klass)->assembly->aname.name, info->d.aot_init.subtype);
 			append_sig = FALSE;
 		}
 		break;
