@@ -1442,12 +1442,12 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	memcpy (prev_param_area, &td->sp [-nargs], nargs * sizeof (StackInfo));
 
 	if (td->verbose_level)
-		g_print ("Inlining method %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
+		g_print ("Inline start method %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
 	ret = generate_code (td, target_method, header, generic_context, error);
 
 	if (!ret) {
 		if (td->verbose_level)
-			g_print ("Inline failed for method %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
+			g_print ("Inline aborted method %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
 		td->max_stack_height = prev_max_stack_height;
 		td->max_vt_sp = prev_max_vt_sp;
 		td->total_locals_size = prev_total_locals_size;
@@ -1467,6 +1467,8 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 			td->last_ins->next = NULL;
 		UnlockedIncrement (&mono_interp_stats.inline_failures);
 	} else {
+		if (td->verbose_level)
+			g_print ("Inline end method %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
 		UnlockedIncrement (&mono_interp_stats.inlined_methods);
 		// Make sure we have an IR instruction associated with the now removed IL CALL
 		// FIXME This could be prettier. We might be able to make inlining saner now that
@@ -2568,12 +2570,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		}
 
 		if (td->verbose_level > 1) {
-			g_print ("IL_%04lx %s %-10s -> IL_%04lx, sp %ld, %s %-12s vt_sp %u (max %u)\n", 
+			g_print ("IL_%04lx %s %-10s, sp %ld, %s %-12s vt_sp %u (max %u)\n",
 				td->ip - td->il_code,
 				td->is_bb_start [td->ip - td->il_code] == 3 ? "<>" :
 				td->is_bb_start [td->ip - td->il_code] == 2 ? "< " :
 				td->is_bb_start [td->ip - td->il_code] == 1 ? " >" : "  ",
-				mono_opcode_name (*td->ip), td->new_ip - td->new_code, td->sp - td->stack, 
+				mono_opcode_name (*td->ip), td->sp - td->stack,
 				td->sp > td->stack ? stack_type_string [td->sp [-1].type] : "  ",
 				(td->sp > td->stack && (td->sp [-1].type == STACK_TYPE_O || td->sp [-1].type == STACK_TYPE_VT)) ? (td->sp [-1].klass == NULL ? "?" : m_class_get_name (td->sp [-1].klass)) : "",
 				td->vt_sp, td->max_vt_sp);
