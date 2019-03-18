@@ -3142,6 +3142,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 		// Loop on all interface methods...
 		int mcount = mono_class_get_method_count (ic);
 		for (im_index = 0; im_index < mcount; im_index++) {
+			gboolean foundOverrideInClassOrParent = FALSE;
 			MonoMethod *im = ic->methods [im_index];
 			int im_slot = ic_offset + im->slot;
 			MonoMethod *override_im = (override_map != NULL) ? (MonoMethod *)g_hash_table_lookup (override_map, im) : NULL;
@@ -3161,6 +3162,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 				if (check_interface_method_override (klass, im, cm, TRUE, interface_is_explicitly_implemented_by_class, (vtable [im_slot] == NULL))) {
 					TRACE_INTERFACE_VTABLE (printf ("[check ok]: ASSIGNING"));
 					vtable [im_slot] = cm;
+					foundOverrideInClassOrParent = TRUE;
 					/* Why do we need this? */
 					if (cm->slot < 0) {
 						cm->slot = im_slot;
@@ -3184,6 +3186,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 					if ((cm != NULL) && check_interface_method_override (klass, im, cm, FALSE, FALSE, TRUE)) {
 						TRACE_INTERFACE_VTABLE (printf ("[everything ok]: ASSIGNING"));
 						vtable [im_slot] = cm;
+						foundOverrideInClassOrParent = TRUE;
 						/* Why do we need this? */
 						if (cm->slot < 0) {
 							cm->slot = im_slot;
@@ -3205,8 +3208,8 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 				}
 			}
 			
-			if (override_im)
-				g_assert (vtable [im_slot] == cm || vtable [im_slot] == override_im);
+			if (override_im != NULL && !foundOverrideInClassOrParent)
+				g_assert (vtable [im_slot] == override_im);
 		}
 	}
 	
