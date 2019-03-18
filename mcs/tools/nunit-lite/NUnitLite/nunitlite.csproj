@@ -18,7 +18,7 @@
     <TargetFrameworkVersion>v2.1</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
     <DelaySign>true</DelaySign>
-    <AssemblyOriginatorKeyFile>nunit.pub</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>../../../class/mono.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0,
