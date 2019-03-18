@@ -31,6 +31,7 @@ var BindingSupportLib = {
 			this.mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number']);
 			this.js_string_to_mono_string = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
 			this.mono_get_obj_type = Module.cwrap ('mono_wasm_get_obj_type', 'number', ['number']);
+			this.mono_is_simple_array = Module.cwrap ('mono_wasm_is_simple_array', 'number', ['number']);
 			this.mono_unbox_int = Module.cwrap ('mono_unbox_int', 'number', ['number']);
 			this.mono_unbox_float = Module.cwrap ('mono_wasm_unbox_float', 'number', ['number']);
 			this.mono_array_length = Module.cwrap ('mono_wasm_array_length', 'number', ['number']);
@@ -122,7 +123,13 @@ var BindingSupportLib = {
 			var res = [];
 			var len = this.mono_array_length (mono_array);
 			for (var i = 0; i < len; ++i)
-				res.push (this.unbox_mono_obj (this.mono_array_get (mono_array, i)));
+			{
+				var ele = this.mono_array_get (mono_array, i);
+				if (this.mono_is_simple_array(ele))
+					res.push(this.mono_array_to_js_array(ele));
+				else
+					res.push (this.unbox_mono_obj (ele));
+			}
 
 			return res;
 		},
