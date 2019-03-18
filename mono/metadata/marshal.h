@@ -210,8 +210,6 @@ typedef struct {
 	MonoMethodSignature *sig;
 } InterpInWrapperInfo;
 
-// This is serialized using the follow ints
-// as a unique reference to which wrapper we have
 typedef enum {
 	AOT_INIT_METHOD = 0,
 	AOT_INIT_METHOD_GSHARED_MRGCTX = 1,

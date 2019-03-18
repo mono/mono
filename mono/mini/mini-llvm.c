@@ -3192,10 +3192,6 @@ emit_init_method (EmitContext *ctx)
 	 * scratch registers, since the call will not clobber them.
 	 */
 
-	// FIXME? Using this with mono debug info causes unwind.c to explode when
-	// parsing some of these registers saved by this call. Can't unwind through it.
-	// Not an issue with llvmonly because it doesn't use that DWARF
-
 	if (ctx->llvm_only)
 		set_call_preserveall_cc (call);
 	else
