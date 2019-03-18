@@ -142,7 +142,7 @@ namespace System
 			return m_serializationCtor;
 		}
 
-		internal Object CreateInstanceSlow(bool publicOnly, bool wrapExceptions, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+		internal Object CreateInstanceSlow(bool publicOnly, bool wrapExceptions, bool skipCheckThis, bool fillCache)
 		{
 			//bool bNeedSecurityCheck = true;
 			//bool bCanBeCached = false;
@@ -697,11 +697,7 @@ namespace System
 				var a = new RuntimeFieldInfo[n];
 				for (int i = 0; i < n; i++) {
 					var fh = new RuntimeFieldHandle (h[i]);
-#if NETCORE
-					throw new NotImplementedException ();
-#else
 					a[i] = (RuntimeFieldInfo) FieldInfo.GetFieldFromHandle (fh, refh);
-#endif
 				}
 				return a;
 			}
@@ -717,7 +713,7 @@ namespace System
 				for (int i = 0; i < n; i++) {
 					var eh = new Mono.RuntimeEventHandle (h[i]);
 #if NETCORE
-					throw new NotImplementedException ();
+					a[i] = (RuntimeEventInfo) RuntimeEventInfo.GetEventFromHandle (eh, refh);
 #else
 					a[i] = (RuntimeEventInfo) EventInfo.GetEventFromHandle (eh, refh);
 #endif
@@ -736,7 +732,8 @@ namespace System
 		{
 			string internalName = null;
 #if NETCORE
-			throw new NotImplementedException ();
+			if (displayName != null)
+				internalName = displayName;
 #else
 			if (displayName != null)
 				internalName = TypeIdentifiers.FromDisplay (displayName).InternalName;
@@ -774,7 +771,19 @@ namespace System
 			get;
 		}
 
-#if MOBILE
+#if NETCORE
+		public override bool IsSecurityTransparent {
+			get { return false; }
+		}
+
+		public override bool IsSecurityCritical {
+			get { return true; }
+		}
+
+		public override bool IsSecuritySafeCritical {
+			get { return false; }
+		}
+#elif MOBILE
 		static int get_core_clr_security_level ()
 		{
 			return 1;
@@ -797,6 +806,7 @@ namespace System
 		}
 #endif
 
+#if !NETCORE
 		public override int GetHashCode()
 		{
 			Type t = UnderlyingSystemType;
@@ -804,6 +814,7 @@ namespace System
 				return t.GetHashCode ();
 			return (int)_impl.Value;
 		}
+#endif
 
 		public override string FullName {
 			get {
@@ -822,9 +833,7 @@ namespace System
 			}
 		}
 
-#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeType> (other);	
-#endif
 
 		public override bool IsSZArray {
 			get {

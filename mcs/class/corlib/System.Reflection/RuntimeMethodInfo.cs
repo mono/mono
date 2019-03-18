@@ -510,7 +510,6 @@ namespace System.Reflection {
 				attrs [count ++] = new PreserveSigAttribute ();
 			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
 #if NETCORE
-				throw new NotImplementedException ();
 #else
 				attrs [count ++] = DllImportAttribute.GetCustomAttribute (this);
 #endif
@@ -704,11 +703,7 @@ namespace System.Reflection {
 		}
 
 		public override MethodBody GetMethodBody () {
-#if NETCORE
-			throw new NotImplementedException ();
-#else
 			return GetMethodBody (mhandle);
-#endif
 		}
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
@@ -738,9 +733,7 @@ namespace System.Reflection {
 			get { return get_core_clr_security_level () == 1; }
 		}
 
-#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeMethodInfo> (other);
-#endif
 	}
 	
 	[Serializable()]
@@ -966,7 +959,16 @@ namespace System.Reflection {
 
 		public override string ToString () {
 #if NETCORE
-			throw new NotImplementedException ();
+			StringBuilder sbName = new StringBuilder(Name);
+			sbName.Append ("Void ");
+
+			TypeNameFormatFlags format = TypeNameFormatFlags.FormatBasic;
+
+			sbName.Append("(");
+			RuntimeParameterInfo.FormatParameters (sbName, GetParametersNoCopy (), CallingConvention, false);
+			sbName.Append(")");
+
+			return sbName.ToString();
 #else
 			return "Void " + FormatNameAndSig (false);
 #endif
@@ -986,9 +988,7 @@ namespace System.Reflection {
 		public extern int get_core_clr_security_level ();
 #endif
 
-#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeConstructorInfo> (other);
-#endif
 
 		public override bool IsSecurityTransparent {
 			get { return get_core_clr_security_level () == 0; }

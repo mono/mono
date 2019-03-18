@@ -326,10 +326,12 @@ typedef struct {
 	MonoException base;
 } MonoSystemException;
 
+#ifndef ENABLE_NETCORE
 typedef struct {
 	MonoSystemException base;
 	MonoString *param_name;
 } MonoArgumentException;
+#endif
 
 typedef struct {
 	MonoObject   object;
@@ -485,6 +487,13 @@ typedef struct {
 
 typedef struct {
 	MonoObject obj;
+	MonoArray *frames;
+	MonoArray *captured_traces;
+	MonoBoolean debug_info;
+} MonoStackTrace;
+
+typedef struct {
+	MonoObject obj;
 	gint32 il_offset;
 	gint32 native_offset;
 	gint64 method_address;
@@ -504,7 +513,15 @@ typedef enum {
 
 struct _MonoThreadInfo;
 
+#ifdef ENABLE_NETCORE
+/*
+ * There is only one thread object, MonoInternalThread is aliased to MonoThread,
+ * thread->internal_thread points to itself.
+ */
+struct _MonoThread {
+#else
 struct _MonoInternalThread {
+#endif
 	MonoObject  obj;
 	volatile int lock_thread_id; /* to be used as the pre-shifted thread id in thin locks. Used for appdomain_ref push/pop */
 	MonoThreadHandle *handle;
@@ -548,6 +565,11 @@ struct _MonoInternalThread {
 	gint32 self_suspended; // TRUE | FALSE
 
 	gsize thread_state;
+#ifdef ENABLE_NETCORE
+	struct _MonoThread *internal_thread;
+	MonoObject *start_obj;
+	MonoException *pending_exception;
+#else
 	/* 
 	 * These fields are used to avoid having to increment corlib versions
 	 * when a new field is added to this structure.
@@ -555,7 +577,7 @@ struct _MonoInternalThread {
 	 * same field there.
 	 */
 	gsize unused2;
-
+#endif
 	/* This is used only to check that we are in sync between the representation
 	 * of MonoInternalThread in native and InternalThread in managed
 	 *
@@ -563,12 +585,16 @@ struct _MonoInternalThread {
 	gpointer last;
 };
 
+#ifdef ENABLE_NETCORE
+#define _MonoInternalThread _MonoThread
+#else
 struct _MonoThread {
 	MonoObject obj;
 	MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
 };
+#endif
 
 typedef struct {
 	guint32 state;
@@ -968,7 +994,9 @@ TYPED_HANDLE_DECL (MonoReflectionProperty);
 /*This is System.EventInfo*/
 struct _MonoReflectionEvent {
 	MonoObject object;
+#ifndef ENABLE_NETCORE
 	MonoObject *cached_add_event;
+#endif
 };
 
 /* Safely access System.Reflection.EventInfo from native code */
@@ -985,13 +1013,6 @@ TYPED_HANDLE_DECL (MonoReflectionMonoEvent);
 
 typedef struct {
 	MonoObject object;
-	guint32 AttrsImpl;	
-	MonoReflectionType *ClassImpl;
-	MonoObject *DefaultValueImpl;
-	MonoObject *MemberImpl;
-	MonoString *NameImpl;
-	gint32 PositionImpl;
-	MonoObject *MarshalAsImpl;
 } MonoReflectionParameter;
 
 /* Safely access System.Reflection.ParameterInfo from native code */
@@ -1759,6 +1780,9 @@ mono_nullable_init (guint8 *buf, MonoObject *value, MonoClass *klass);
 void
 mono_nullable_init_from_handle (guint8 *buf, MonoObjectHandle value, MonoClass *klass);
 
+void
+mono_nullable_init_unboxed (guint8 *buf, gpointer value, MonoClass *klass);
+
 MonoObject *
 mono_value_box_checked (MonoDomain *domain, MonoClass *klass, void* val, MonoError *error);
 
@@ -1849,6 +1873,9 @@ mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error);
 
 MonoVTable *
 mono_class_try_get_vtable (MonoDomain *domain, MonoClass *klass);
+
+gboolean
+mono_runtime_run_module_cctor (MonoImage *image, MonoDomain *domain, MonoError *error);
 
 gboolean
 mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error);
@@ -2011,6 +2038,9 @@ mono_object_handle_isinst (MonoObjectHandle obj, MonoClass *klass, MonoError *er
 
 MonoObjectHandle
 mono_object_handle_isinst_mbyref (MonoObjectHandle obj, MonoClass *klass, MonoError *error);
+
+gboolean
+mono_object_handle_isinst_mbyref_raw (MonoObjectHandle obj, MonoClass *klass, MonoError *error);
 
 MonoStringHandle
 mono_string_new_size_handle (MonoDomain *domain, gint32 len, MonoError *error);
@@ -2240,6 +2270,8 @@ mono_field_static_set_value_internal (MonoVTable *vt, MonoClassField *field, voi
 
 void
 mono_field_get_value_internal (MonoObject *obj, MonoClassField *field, void *value);
+
+MonoMethod* mono_get_context_capture_method (void);
 
 /* GC handles support
  *

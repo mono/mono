@@ -8,9 +8,6 @@ var Module = {
 			<#=EnableDebugging?1:0#>,
 			[ "<#=string.Join("\", \"", FileList)#>" ],
 			function () {
-<#if(InitBindings){#>
-				Module.mono_bindings_init("[WebAssembly.Bindings]WebAssembly.Runtime");
-<#}#>
 				App.init ();
 			}
 		);
@@ -23,5 +20,4 @@ public string VfsPrefix { get; set; }
 public string DeployPrefix { get; set; }
 public bool EnableDebugging { get; set; }
 public IEnumerable<string> FileList { get; set; }
-public bool InitBindings { get; set; }
 #>

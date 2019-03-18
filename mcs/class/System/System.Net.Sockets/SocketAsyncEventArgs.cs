@@ -238,6 +238,11 @@ namespace System.Net.Sockets
 			Buffer = buffer;
 		}
 
+		public void SetBuffer(Memory<byte> buffer)
+		{
+			SetBuffer(buffer.ToArray(), 0, buffer.Length);
+		}
+
 		internal void StartOperationCommon (Socket socket)
 		{
 			current_socket = socket;

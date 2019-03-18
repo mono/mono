@@ -80,11 +80,9 @@ namespace System {
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
         extern static void RecordPressure (long bytesAllocated);
 
-#if !NETCORE
         // TODO: Move following to ConditionalWeakTable
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
         internal extern static void register_ephemeron_array (Ephemeron[] array);
-#endif
 
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
         extern static object get_ephemeron_tombstone ();
@@ -283,7 +281,7 @@ namespace System {
 
             if ((mode < GCCollectionMode.Default) || (mode > GCCollectionMode.Optimized))
             {
-                throw new ArgumentOutOfRangeException(Environment.GetResourceString("ArgumentOutOfRange_Enum"));
+                throw new ArgumentOutOfRangeException("mode", Environment.GetResourceString("ArgumentOutOfRange_Enum"));
             }
 
             Contract.EndContractBlock();

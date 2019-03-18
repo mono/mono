@@ -35,9 +35,9 @@ extern GCStats mono_gc_stats;
 #include <mach/task_info.h>
 #endif
 
-#include <sys/param.h>
+#ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
-#include <fcntl.h>
+#endif
 
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
@@ -47,6 +47,7 @@ extern GCStats mono_gc_stats;
 #include <execinfo.h>
 #endif
 
+#if defined(ENABLE_CHECKED_BUILD_CRASH_REPORTING) && defined (ENABLE_OVERRIDABLE_ALLOCATORS)
 // Fixme: put behind preprocessor symbol?
 static void
 assert_not_reached_mem (const char *msg)
@@ -96,6 +97,7 @@ assert_not_reached_fn_ptr_calloc (gsize n, gsize x)
 	assert_not_reached_mem ("Attempted to call calloc during merp dump");
 	return NULL;
 }
+#endif /* defined(ENABLE_CHECKED_BUILD_CRASH_REPORTING) && defined (ENABLE_OVERRIDABLE_ALLOCATORS) */
 
 void
 mono_summarize_toggle_assertions (gboolean enable)
@@ -548,20 +550,56 @@ mono_native_state_add_frames (MonoStateWriter *writer, int num_frames, MonoFrame
 
 	mono_state_writer_printf(writer, "[\n");
 
-	// Where you are: everything works but
-	// the add_frame method
-
-	mono_native_state_add_frame (writer, &frames [0]);
-	  for (int i = 1; i < num_frames; ++i) {
-	  	mono_state_writer_printf(writer, ",\n");
-	  	mono_native_state_add_frame (writer, &frames [i]);
-	  }
+	for (int i = 0; i < num_frames; ++i) {
+		if (i > 0)
+			mono_state_writer_printf(writer, ",\n");
+		mono_native_state_add_frame (writer, &frames [i]);
+	}
 	mono_state_writer_printf(writer, "\n");
 
 	mono_state_writer_indent (writer);
 	writer->indent--;
 	mono_state_writer_printf(writer, "]");
 }
+
+static void
+mono_native_state_add_managed_exc (MonoStateWriter *writer, MonoExcSummary *exc)
+{
+	mono_state_writer_indent (writer);
+	mono_state_writer_printf(writer, "{\n");
+	writer->indent++;
+
+	assert_has_space (writer);
+	mono_state_writer_indent (writer);
+	mono_state_writer_object_key (writer, "type");
+	mono_state_writer_printf(writer, "\"%s.%s\",\n", m_class_get_name_space (exc->managed_exc_type), m_class_get_name (exc->managed_exc_type));
+
+	mono_native_state_add_frames (writer, exc->num_managed_frames, exc->managed_frames, "managed_frames");
+
+	mono_state_writer_indent (writer);
+	writer->indent--;
+	mono_state_writer_printf(writer, "}\n");
+}
+
+static void
+mono_native_state_add_managed_excs (MonoStateWriter *writer, int num_excs, MonoExcSummary *excs)
+{
+	mono_state_writer_indent (writer);
+	mono_state_writer_object_key (writer, "exceptions");
+
+	mono_state_writer_printf(writer, "[\n");
+
+	for (int i = 0; i < num_excs; ++i) {
+		if (i > 0)
+			mono_state_writer_printf(writer, ",\n");
+		mono_native_state_add_managed_exc (writer, &excs [i]);
+	}
+
+	mono_state_writer_indent (writer);
+	writer->indent--;
+	mono_state_writer_printf(writer, "]");
+}
+
 
 void
 mono_native_state_add_thread (MonoStateWriter *writer, MonoThreadSummary *thread, MonoContext *ctx, gboolean first_thread, gboolean crashing_thread)
@@ -622,17 +660,14 @@ mono_native_state_add_thread (MonoStateWriter *writer, MonoThreadSummary *thread
 		mono_state_writer_printf(writer, "\"%s\"", thread->name);
 	}
 
-	if (thread->managed_exc_type) {
-		mono_state_writer_printf(writer, ",\n");
-		assert_has_space (writer);
-		mono_state_writer_indent (writer);
-		mono_state_writer_object_key (writer, "managed_exception_type");
-		mono_state_writer_printf(writer, "\"%s.%s\"", m_class_get_name_space (thread->managed_exc_type), m_class_get_name (thread->managed_exc_type));
-	}
-
 	if (ctx) {
 		mono_state_writer_printf(writer, ",\n");
 		mono_native_state_add_ctx (writer, ctx);
+	}
+
+	if (thread->num_exceptions > 0) {
+		mono_state_writer_printf(writer, ",\n");
+		mono_native_state_add_managed_excs (writer, thread->num_exceptions, thread->exceptions);
 	}
 
 	if (thread->num_managed_frames > 0) {
@@ -654,6 +689,7 @@ mono_native_state_add_thread (MonoStateWriter *writer, MonoThreadSummary *thread
 static void
 mono_native_state_add_ee_info  (MonoStateWriter *writer)
 {
+#ifndef MONO_PRIVATE_CRASHES
 	// FIXME: setup callbacks to enable
 	/*const char *aot_mode;*/
 	/*MonoAotMode mono_aot_mode = mono_jit_get_aot_mode ();*/
@@ -705,6 +741,7 @@ mono_native_state_add_ee_info  (MonoStateWriter *writer)
 	writer->indent--;
 	mono_state_writer_indent (writer);
 	mono_state_writer_printf(writer, "},\n");
+#endif
 }
 
 // Taken from driver.c
@@ -899,9 +936,7 @@ mono_native_state_add_prologue (MonoStateWriter *writer)
 
 	mono_native_state_add_version (writer);
 
-#ifndef MONO_PRIVATE_CRASHES
 	mono_native_state_add_ee_info (writer);
-#endif
 
 	mono_native_state_add_memory (writer);
 

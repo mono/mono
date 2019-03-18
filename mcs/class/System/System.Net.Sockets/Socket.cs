@@ -1383,6 +1383,20 @@ namespace System.Net.Sockets
 			return ret;
 		}
 
+		public int Receive(Span<byte> buffer, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			byte[] tempBuffer = new byte[buffer.Length];
+			int result = Receive(tempBuffer, 0, tempBuffer.Length, socketFlags, out errorCode);
+			tempBuffer.CopyTo (buffer);
+			return result;
+		}
+
+		public int Send(ReadOnlySpan<byte> buffer, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			byte[] bufferBytes = buffer.ToArray();
+			return Send(bufferBytes, 0, bufferBytes.Length, socketFlags, out errorCode);
+		}
+
 		public int Receive (Span<byte> buffer, SocketFlags socketFlags)
 		{
 			byte[] tempBuffer = new byte[buffer.Length];

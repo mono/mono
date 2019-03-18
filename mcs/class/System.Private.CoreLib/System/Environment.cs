@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Globalization;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Mono;
@@ -30,6 +31,11 @@ namespace System
 			get;
 		}
 
+		public static string StackTrace {
+			[MethodImpl (MethodImplOptions.NoInlining)] // Prevent inlining from affecting where the stacktrace starts
+			get => new StackTrace (true).ToString (System.Diagnostics.StackTrace.TraceFormat.Normal);
+		}
+
 		public extern static int TickCount {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
@@ -51,9 +57,16 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static string internalGetEnvironmentVariable_native (IntPtr variable);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static string [] GetEnvironmentVariableNames ();
+
 		public static IDictionary GetEnvironmentVariables ()
 		{
-			throw new NotImplementedException ();
+			Hashtable vars = new Hashtable ();
+			foreach (string name in GetEnvironmentVariableNames ()) {
+				vars [name] = GetEnvironmentVariableCore (name);
+			}
+			return vars;
 		}
 
 		static unsafe void SetEnvironmentVariableCore (string variable, string value)
@@ -103,10 +116,13 @@ namespace System
 
 		internal static String GetStackTrace (Exception e, bool needFileInfo)
 		{
-			throw new NotImplementedException ();
+			StackTrace st;
+			if (e == null)
+				st = new StackTrace (needFileInfo);
+			else
+				st = new StackTrace (e, needFileInfo);
+			return st.ToString (System.Diagnostics.StackTrace.TraceFormat.Normal);
 		}
-
-		internal static int GetPageSize () => 0;
 	}
 #endregion
 }

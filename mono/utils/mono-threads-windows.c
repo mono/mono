@@ -16,13 +16,15 @@
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-threads-debug.h>
 #include <mono/utils/mono-os-wait.h>
+#include <mono/metadata/w32subset.h>
 #include <limits.h>
 
 enum Win32APCInfo {
 	WIN32_APC_INFO_CLEARED = 0,
 	WIN32_APC_INFO_ALERTABLE_WAIT_SLOT = 1 << 0,
-	WIN32_APC_INFO_PENDING_INTERRUPT_SLOT = 1 << 1,
-	WIN32_APC_INFO_PENDING_ABORT_SLOT = 1 << 2
+	WIN32_APC_INFO_BLOCKING_IO_SLOT = 1 << 1,
+	WIN32_APC_INFO_PENDING_INTERRUPT_SLOT = 1 << 2,
+	WIN32_APC_INFO_PENDING_ABORT_SLOT = 1 << 3
 };
 
 static inline void
@@ -78,7 +80,7 @@ abort_apc (ULONG_PTR param)
 		// Check if pending interrupt is still relevant and current thread has not left alertable wait region.
 		// NOTE, can only be reset by current thread, currently running this APC.
 		gint32 win32_apc_info = mono_atomic_load_i32 (&info->win32_apc_info);
-		if (win32_apc_info & WIN32_APC_INFO_PENDING_ABORT_SLOT) {
+		if (win32_apc_info & WIN32_APC_INFO_BLOCKING_IO_SLOT) {
 			// Check if current thread registered an IO handle when entering alertable wait (blocking IO call).
 			// No need for CAS on win32_apc_info_io_handle since its only loaded/stored by current thread
 			// currently running APC.
@@ -108,14 +110,6 @@ static void
 suspend_abort_syscall (PVOID thread_info, HANDLE native_thread_handle, DWORD tid)
 {
 	request_interrupt (thread_info, native_thread_handle, WIN32_APC_INFO_PENDING_ABORT_SLOT, abort_apc, tid);
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-	// In case thread is blocked on sync IO preventing it from running above queued APC, cancel
-	// all outputstanding sync IO for target thread. If its not blocked on a sync IO request, below
-	// call will just fail and nothing will be canceled. If thread is waiting on overlapped IO,
-	// the queued APC will take care of cancel specific outstanding IO requests.
-	CancelSynchronousIo (native_thread_handle);
-#endif
 }
 
 static inline void
@@ -126,7 +120,7 @@ enter_alertable_wait_ex (MonoThreadInfo *info, HANDLE io_handle)
 	info->win32_apc_info_io_handle = io_handle;
 
 	//Set alertable wait flag.
-	mono_atomic_xchg_i32 (&info->win32_apc_info, WIN32_APC_INFO_ALERTABLE_WAIT_SLOT);
+	mono_atomic_xchg_i32 (&info->win32_apc_info, (io_handle == INVALID_HANDLE_VALUE) ? WIN32_APC_INFO_ALERTABLE_WAIT_SLOT : WIN32_APC_INFO_BLOCKING_IO_SLOT);
 }
 
 static inline void
@@ -241,6 +235,21 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 	suspend_abort_syscall (info, info->native_handle, id);
 }
 
+void
+mono_win32_abort_blocking_io_call (MonoThreadInfo *info)
+{
+#if HAVE_API_SUPPORT_WIN32_CANCEL_SYNCHRONOUS_IO
+	// In case thread is blocked on sync IO preventing it from running above queued APC, cancel
+	// all outputstanding sync IO for target thread. If its not blocked on a sync IO request, below
+	// call will just fail and nothing will be canceled. If thread is waiting on overlapped IO,
+	// the queued APC will take care of cancel specific outstanding IO requests.
+	gint32 win32_apc_info = mono_atomic_load_i32 (&info->win32_apc_info);
+	if (win32_apc_info & WIN32_APC_INFO_BLOCKING_IO_SLOT) {
+		CancelSynchronousIo (info->native_handle);
+	}
+#endif
+}
+
 gboolean
 mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 {
@@ -250,9 +259,9 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 
 	handle = info->native_handle;
 	g_assert (handle);
-	
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 	if (info->async_target) {
+#if HAVE_API_SUPPORT_WIN32_SET_THREAD_CONTEXT
 		MonoContext ctx;
 		CONTEXT context;
 		gboolean res;
@@ -278,10 +287,10 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 		if (!res) {
 			return FALSE;
 		}
-	}
 #else
-	g_error ("Not implemented due to lack of SetThreadContext");	
+		g_error ("Not implemented due to lack of SetThreadContext");
 #endif
+	}
 
 	result = ResumeThread (handle);
 
@@ -401,8 +410,7 @@ mono_native_thread_join_handle (HANDLE thread_handle, gboolean close_handle)
  * Can't OpenThread on UWP until SDK 15063 (our minspec today is 10240),
  * but this function doesn't seem to be used on Windows anyway
  */
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-
+#if HAVE_API_SUPPORT_WIN32_OPEN_THREAD
 gboolean
 mono_native_thread_join (MonoNativeThreadId tid)
 {
@@ -413,7 +421,6 @@ mono_native_thread_join (MonoNativeThreadId tid)
 
 	return mono_native_thread_join_handle (handle, TRUE);
 }
-
 #endif
 
 #if HAVE_DECL___READFSDWORD==0
@@ -456,7 +463,7 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 }
 
-#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if SIZEOF_VOID_P == 4 && HAVE_API_SUPPORT_WIN32_IS_WOW64_PROCESS
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 static gboolean is_wow64 = FALSE;
 #endif
@@ -465,7 +472,7 @@ static gboolean is_wow64 = FALSE;
 void
 mono_threads_platform_init (void)
 {
-#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if SIZEOF_VOID_P == 4 && HAVE_API_SUPPORT_WIN32_IS_WOW64_PROCESS
 	LPFN_ISWOW64PROCESS is_wow64_func = (LPFN_ISWOW64PROCESS) GetProcAddress (GetModuleHandle (TEXT ("kernel32")), "IsWow64Process");
 	if (is_wow64_func)
 		is_wow64_func (GetCurrentProcess (), &is_wow64);
@@ -484,7 +491,7 @@ gboolean
 mono_threads_platform_in_critical_region (MonoNativeThreadId tid)
 {
 	gboolean ret = FALSE;
-#if SIZEOF_VOID_P == 4 && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if SIZEOF_VOID_P == 4 && HAVE_API_SUPPORT_WIN32_OPEN_THREAD
 /* FIXME On cygwin these are not defined */
 #if defined(CONTEXT_EXCEPTION_REQUEST) && defined(CONTEXT_EXCEPTION_REPORTING) && defined(CONTEXT_EXCEPTION_ACTIVE)
 	if (is_wow64) {

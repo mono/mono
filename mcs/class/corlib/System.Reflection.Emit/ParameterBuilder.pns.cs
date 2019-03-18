@@ -86,6 +86,8 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public virtual ParameterToken GetToken() => throw new PlatformNotSupportedException ();
 	}
 }
 

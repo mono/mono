@@ -83,8 +83,11 @@ jsup:
 .PHONY: toolchain
 toolchain: .stamp-jsvu
 
-driver.o: driver.c
-	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver.o
+driver.o: driver.c corebindings.c
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver.o
+
+corebindings.o: corebindings.c
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o corebindings.o
 
 debug/:
 	mkdir -p $@
@@ -95,13 +98,13 @@ MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmon
 
 EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s EMULATED_FUNCTION_POINTERS=1
 
-debug/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a | debug/
-	$(EMCC) $(EMCC_FLAGS) -g4 -Os -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o debug/mono.js
+debug/.stamp-build: driver.o corebindings.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a | debug/
+	$(EMCC) $(EMCC_FLAGS) -g4 -Os -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o $(MONO_LIBS) -o debug/mono.js
 	touch $@
 
 # Notice that release/.stamp-build depends on debug/.stamp-build. This is the case as emcc is believed to not work well with parallel builds.
-release/.stamp-build: driver.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a debug/.stamp-build | release/
-	$(EMCC) $(EMCC_FLAGS) -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o $(MONO_LIBS) -o release/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
+release/.stamp-build: driver.o corebindings.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a debug/.stamp-build | release/
+	$(EMCC) $(EMCC_FLAGS) -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o $(MONO_LIBS) -o release/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
 	touch $@
 
 build-native: debug/.stamp-build release/.stamp-build
@@ -126,7 +129,7 @@ mini_tests.dll: $(MINI_TEST_SOURCES) mini-test-runner.cs
 	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ -define:__MOBILE__,ARCH_32 $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(MINI_TEST_SOURCES) mini-test-runner.cs
 
 binding_tests.dll: $(WASM_FRAMEWORK)/.stamp-framework $(BINDING_TEST_SOURCES)
-	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(WASM_FRAMEWORK_DEPS) $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
+	$(CSC) $(CSC_FLAGS) /unsafe -target:library -out:$@ $(WASM_FRAMEWORK_DEPS) $(BCL_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll /r:$(WASM_BCL_DIR)/nunitlite.dll $(BINDING_TEST_SOURCES)
 
 $(WASM_FRAMEWORK)/.stamp-framework: $(WASM_FRAMEWORK_SOURCES)
 	dotnet build $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln
@@ -138,6 +141,9 @@ Simple.Dependency.dll: dependency.cs $(WASM_FRAMEWORK)/.stamp-framework
 
 sample.dll: Simple.Dependency.dll sample.cs $(WASM_FRAMEWORK)/.stamp-framework
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) sample.cs
+
+debugger-test.dll: debugger-test.cs debugger-test2.cs Simple.Dependency.dll
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:Simple.Dependency.dll debugger-test.cs debugger-test2.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
@@ -152,26 +158,30 @@ tuner.exe: tuner.cs Mono.Cecil.dll System.Json.dll
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll /r:System.Json.dll tuner.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
 .stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
-	mono packager.exe -debug -out=debug_sample sample.dll
-	cp debug.html debug_sample
+	mono --debug packager.exe --copy=always -debug -out=debug_sample --asset=debug.html sample.dll
 	touch $@	
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 bin/test-suite/mono.js: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono --debug packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
 
 build-test-suite: bin/test-suite/mono.js
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/HttpTestSuite.cs 
-	mono packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll
+	mono --debug packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
+.stamp-build-debugger-test-app: $(DRIVER_CONF)/.stamp-build packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
+	mono packager.exe --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
+	ninja -v -C obj/debugger-test-suite
+	touch $@
+
 build-aot-sample: packager.exe hello.exe
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js hello.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js hello.exe
 	ninja -v -C obj/aot-sample
 
 hello.exe: hello.cs
@@ -181,14 +191,14 @@ run-aot-sample: build-aot-sample
 	(cd bin/aot-sample && $(SM) runtime.js --run hello.exe)
 
 build-interp-sample: packager.exe hello.exe
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe --linker --link-icalls
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-sample --nobinding --builddir=obj/interp-sample --template=runtime-tests.js hello.exe --linker --link-icalls
 	ninja -v -C obj/interp-sample
 
 run-interp-sample: build-interp-sample
 	(cd bin/interp-sample && $(SM) runtime.js --run hello.exe)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
 	ninja -v -C obj/aot-mini
 
 check-aot-mini run-aot-mini: build-aot-mini
@@ -198,11 +208,11 @@ get-sysnative-exports:
 	nm ../out/wasm-runtime-release/lib/libmono-native.a  | grep SystemNative | cut -d ' ' -f 3 | grep -v '^$$'
 
 build-aot-bindings-sample: packager.exe sample.dll
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-sample --builddir=obj/aot-bindings-sample --aot --template=runtime.js --link-mode=SdkOnly --asset=sample.html sample.dll
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-sample --builddir=obj/aot-bindings-sample --aot --template=runtime.js --link-mode=SdkOnly --asset=sample.html sample.dll
 	ninja -v -C obj/aot-bindings-sample
 
 build-aot-bindings-interp-sample: packager.exe sample.dll
-	mono packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-interp-sample --builddir=obj/aot-bindings-interp-sample --aot --template=runtime.js --link-mode=SdkOnly --linker --link-icalls --asset=sample.html sample.dll
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-interp-sample --builddir=obj/aot-bindings-interp-sample --aot --template=runtime.js --link-mode=SdkOnly --linker --link-icalls --asset=sample.html sample.dll
 	ninja -v -C obj/aot-bindings-interp-sample
 
 ##
@@ -214,7 +224,7 @@ build-aot-bindings-interp-sample: packager.exe sample.dll
 define AotTestTemplate
 
 build-aot-$(1): packager.exe runtime-tests.js main.exe $$(WASM_FRAMEWORK)/.stamp-framework $$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll binding_tests.dll $$(WASM_BCL_DIR)/nunitlite.dll $$(WASM_BCL_DIR)/tests/$(2)
-	mono packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2) --linker --link-icalls $(4)
+	mono --debug packager.exe --emscripten-sdkdir=$$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$$(TOP)/sdks/out -appdir=bin/aot-$(1) --builddir=obj/aot-$(1) --aot --template=runtime-tests.js main.exe binding_tests.dll $$(WASM_BCL_DIR)/tests/$(2) --linker --link-icalls $(4)
 	ninja -v -C obj/aot-$(1)
 
 clean-aot-$(1):
@@ -238,16 +248,20 @@ build-aot-all: build
 	$(MAKE) $(patsubst %,build-aot-%,$(AOT_TEST_SUITES))
 
 run-aot-all: build-aot-all
-	for suite in System.Core; do make run-aot-$$suite || exit 1; done
+	for suite in System.Core; do $(MAKE) run-aot-$$suite || exit 1; done
 
 build-debug-sample: .stamp-build-debug-sample
 
+build-debugger-test-app: .stamp-build-debugger-test-app
 build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
 	dotnet build ProxyDriver
 
-build: build-native build-managed
+build-dbg-testsuite:
+	dotnet build DebuggerTestSuite
+
+build: build-native build-managed build-debugger-test-app
 
 CHAKRA=~/.jsvu/ch
 D8=~/.jsvu/v8
@@ -268,15 +282,19 @@ run-sm-%: toolchain build-test-suite
 
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
-	make -C . run-ch-$*
-	make -C . run-v8-$*
-	make -C . run-sm-$*
-	make -C . run-jsc-$*
+	$(MAKE) -C . run-ch-$*
+	$(MAKE) -C . run-v8-$*
+	$(MAKE) -C . run-sm-$*
+	$(MAKE) -C . run-jsc-$*
+
+test-debugger: build-debugger-test-app build-dbg-testsuite
+	dotnet test DebuggerTestSuite
 
 run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 	(cd $(BROWSER_TEST) && npm test)
 
 clean:
+	$(RM) -r ./obj
 	$(RM) -r ./bin
 	$(RM) -r .stamp-build-debug-sample
 	$(RM) -r .stamp-build-test-suite

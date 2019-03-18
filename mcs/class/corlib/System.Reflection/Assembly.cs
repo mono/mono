@@ -791,5 +791,7 @@ namespace System.Reflection {
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
+
+		public virtual Type[] GetForwardedTypes() => throw new PlatformNotSupportedException();
 	}
 }

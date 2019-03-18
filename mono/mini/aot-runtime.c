@@ -667,23 +667,26 @@ decode_type (MonoAotModule *module, guint8 *buf, guint8 **endbuf, MonoError *err
 
 		int count = decode_value (p, &p);
 
-		t = (MonoType*)g_malloc0 (mono_sizeof_type_with_mods (count));
-		t->has_cmods = TRUE;
+		/* TODO: encode aggregate cmods differently than simple cmods and make it possible to use the more compact encoding here. */
+		t = (MonoType*)g_malloc0 (mono_sizeof_type_with_mods (count, TRUE));
+		mono_type_with_mods_init (t, count, TRUE);
 
-		MonoCustomModContainer *cm = mono_type_get_cmods (t);
-		int iindex = decode_value (p, &p);
-		cm->image = load_image (module, iindex, error);
-		if (!cm->image) {
-			g_free (t);
-			return NULL;
-		}
+		/* Try not to blow up the stack. See comment on MONO_MAX_EXPECTED_CMODS */
+		g_assert (count < MONO_MAX_EXPECTED_CMODS);
+		MonoAggregateModContainer *cm = g_alloca (mono_sizeof_aggregate_modifiers (count));
 		cm->count = count;
-		for (int i = 0; i < cm->count; ++i) {
-			cm->modifiers [i].required = decode_value (p, &p);
-			cm->modifiers [i].token = decode_value (p, &p);
+		for (int i = 0; i < count; ++i) {
+			MonoSingleCustomMod *cmod = &cm->modifiers [i];
+			cmod->required = decode_value (p, &p);
+			cmod->type = decode_type (module, p, &p, error);
+			goto_if_nok (error, fail);
 		}
+
+		mono_type_set_amods (t, mono_metadata_get_canonical_aggregate_modifiers (cm));
+		for (int i = 0; i < count; ++i)
+			mono_metadata_free_type (cm->modifiers [i].type);
 	} else {
-		t = (MonoType *) g_malloc0 (sizeof (MonoType));
+		t = (MonoType *) g_malloc0 (MONO_SIZEOF_TYPE);
 	}
 
 	while (TRUE) {
@@ -4134,6 +4137,11 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 	}
 
 	if (!code) {
+		if (method_index < amodule->info.nmethods)
+			code = (guint8 *)amodule->methods [method_index];
+		else
+			return NULL;
+
 		/* JITted method */
 		if (amodule->methods [method_index] == GINT_TO_POINTER (-1)) {
 			if (mono_trace_is_traced (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT)) {
@@ -4152,8 +4160,6 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 			}
 			return NULL;
 		}
-		if (method_index < amodule->info.nmethods)
-			code = (guint8 *)amodule->methods [method_index];
 	}
 
 	info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
@@ -5883,6 +5889,20 @@ i16_idx_comparer (const void *key, const void *member)
 	return idx1 - idx2;
 }
 
+static gboolean
+aot_is_slim_amodule (MonoAotModule *amodule)
+{
+	if (!amodule)
+		return FALSE;
+
+	/* "slim" only applies to mscorlib.dll */
+	if (strcmp (amodule->aot_name, "mscorlib"))
+		return FALSE;
+
+	guint32 f = amodule->info.flags;
+	return (f & MONO_AOT_FILE_FLAG_INTERP) && !(f & MONO_AOT_FILE_FLAG_FULL_AOT);
+}
+
 gpointer
 mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 {
@@ -5910,7 +5930,7 @@ mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 	} else
 		amodule = m_class_get_image (method->klass)->aot_module;
 
-	if (amodule == NULL || method_index == 0xffffff) {
+	if (amodule == NULL || method_index == 0xffffff || aot_is_slim_amodule (amodule)) {
 		/* couldn't find unbox trampoline specifically generated for that
 		 * method. this should only happen when an unbox trampoline is needed
 		 * for `fullAOT code -> native-to-interp -> interp` transition if

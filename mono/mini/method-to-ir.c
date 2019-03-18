@@ -182,7 +182,6 @@ static MonoMethodSignature *helper_sig_rgctx_lazy_fetch_trampoline;
 static MonoMethodSignature *helper_sig_jit_thread_attach;
 static MonoMethodSignature *helper_sig_get_tls_tramp;
 static MonoMethodSignature *helper_sig_set_tls_tramp;
-MonoMethodSignature *helper_sig_llvmonly_imt_trampoline;
 
 /* type loading helpers */
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (debuggable_attribute, "System.Diagnostics", "DebuggableAttribute")
@@ -393,7 +392,6 @@ mono_create_helper_signatures (void)
 {
 	helper_sig_domain_get = mono_create_icall_signature ("ptr");
 	helper_sig_rgctx_lazy_fetch_trampoline = mono_create_icall_signature ("ptr ptr");
-	helper_sig_llvmonly_imt_trampoline = mono_create_icall_signature ("ptr ptr ptr");
 	helper_sig_jit_thread_attach = mono_create_icall_signature ("ptr ptr");
 	helper_sig_get_tls_tramp = mono_create_icall_signature ("ptr");
 	helper_sig_set_tls_tramp = mono_create_icall_signature ("void ptr");
@@ -1236,8 +1234,12 @@ type_from_op (MonoCompile *cfg, MonoInst *ins, MonoInst *src1, MonoInst *src2)
 		break;
 	}
 
-	if (ins->type == STACK_MP)
-		ins->klass = mono_defaults.object_class;
+	if (ins->type == STACK_MP) {
+		if (src1->type == STACK_MP)
+			ins->klass = src1->klass;
+		else
+			ins->klass = mono_defaults.object_class;
+	}
 }
 
 void
@@ -2149,7 +2151,10 @@ check_method_sharing (MonoCompile *cfg, MonoMethod *cmethod, gboolean *out_pass_
 	}
 
 	if (mini_method_needs_mrgctx (cmethod)) {
-		g_assert (!pass_vtable);
+		if (mini_method_is_default_method (cmethod))
+			pass_vtable = FALSE;
+		else
+			g_assert (!pass_vtable);
 
 		if (mono_method_is_generic_sharable_full (cmethod, TRUE, TRUE, TRUE)) {
 			pass_mrgctx = TRUE;
@@ -3988,7 +3993,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 		static const int fast_log2 [] = { 1, 0, 1, -1, 2, -1, -1, -1, 3 };
 
 		EMIT_NEW_X86_LEA (cfg, ins, array_reg, index2_reg, fast_log2 [size], MONO_STRUCT_OFFSET (MonoArray, vector));
-		ins->klass = m_class_get_element_class (klass);
+		ins->klass = klass;
 		ins->type = STACK_MP;
 
 		return ins;
@@ -4011,7 +4016,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	}
 	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 	NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, MONO_STRUCT_OFFSET (MonoArray, vector));
-	ins->klass = m_class_get_element_class (klass);
+	ins->klass = klass;
 	ins->type = STACK_MP;
 	MONO_ADD_INS (cfg->cbb, ins);
 
@@ -5182,8 +5187,7 @@ handle_call_res_devirt (MonoCompile *cfg, MonoMethod *cmethod, MonoInst *call_re
 	 * This depends on the implementation of EqualityComparer.Default, which is
 	 * in mcs/class/referencesource/mscorlib/system/collections/generic/equalitycomparer.cs
 	 */
-	if (FALSE &&
-		m_class_get_image (cmethod->klass) == mono_defaults.corlib &&
+	if (m_class_get_image (cmethod->klass) == mono_defaults.corlib &&
 		!strcmp (m_class_get_name (cmethod->klass), "EqualityComparer`1") &&
 		!strcmp (cmethod->name, "get_Default")) {
 		MonoType *param_type = mono_class_get_generic_class (cmethod->klass)->context.class_inst->type_argv [0];
@@ -5698,16 +5702,6 @@ handle_constrained_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignat
 				mono_tailcall_print ("missed tailcall constrained_partial %s -> %s\n", method->name, cmethod->name);
 			return ins;
 		}
-	} else if (m_class_is_valuetype (constrained_class) && (cmethod->klass == mono_defaults.object_class || cmethod->klass == m_class_get_parent (mono_defaults.enum_class) || cmethod->klass == mono_defaults.enum_class)) {
-		/*
-		 * The type parameter is instantiated as a valuetype,
-		 * but that type doesn't override the method we're
-		 * calling, so we need to box `this'.
-		 */
-		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
-		ins->klass = constrained_class;
-		sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
-		CHECK_CFG_EXCEPTION;
 	} else if (!m_class_is_valuetype (constrained_class)) {
 		int dreg = alloc_ireg_ref (cfg);
 
@@ -5719,31 +5713,23 @@ handle_constrained_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignat
 		EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, sp [0]->dreg, 0);
 		ins->type = STACK_OBJ;
 		sp [0] = ins;
+	} else if (cmethod->klass == mono_defaults.object_class || cmethod->klass == m_class_get_parent (mono_defaults.enum_class) || cmethod->klass == mono_defaults.enum_class) {
+		/*
+		 * The type parameter is instantiated as a valuetype,
+		 * but that type doesn't override the method we're
+		 * calling, so we need to box `this'.
+		 */
+		EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
+		ins->klass = constrained_class;
+		sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+		CHECK_CFG_EXCEPTION;
 	} else {
-		if (m_class_is_valuetype (cmethod->klass)) {
-			/* Own method */
-		} else {
-			/* Interface method */
-			int ioffset, slot;
-
-			mono_class_setup_vtable (constrained_class);
-			CHECK_TYPELOAD (constrained_class);
-			ioffset = mono_class_interface_offset (constrained_class, cmethod->klass);
-			if (ioffset == -1)
-				TYPE_LOAD_ERROR (constrained_class);
-			slot = mono_method_get_vtable_slot (cmethod);
-			if (slot == -1)
-				TYPE_LOAD_ERROR (cmethod->klass);
-			cmethod = m_class_get_vtable (constrained_class) [ioffset + slot];
-			*ref_cmethod = cmethod;
-
-			if (cmethod->klass == mono_defaults.enum_class) {
-				/* Enum implements some interfaces, so treat this as the first case */
-				EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
-				ins->klass = constrained_class;
-				sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
-				CHECK_CFG_EXCEPTION;
-			}
+		if (cmethod->klass != constrained_class) {
+			/* Enums/default interface methods */
+			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, m_class_get_byval_arg (constrained_class), sp [0]->dreg, 0);
+			ins->klass = constrained_class;
+			sp [0] = mini_emit_box (cfg, ins, constrained_class, mono_class_check_context_used (constrained_class));
+			CHECK_CFG_EXCEPTION;
 		}
 		*ref_virtual = FALSE;
 	}
@@ -8893,7 +8879,7 @@ calli_end:
 				break;
 			}
 
-			if (m_class_is_enumtype (klass) && !(val->type == STACK_I8 && TARGET_SIZEOF_VOID_P == 4)) {
+			if (m_class_is_enumtype (klass) && !mini_is_gsharedvt_klass (klass) && !(val->type == STACK_I8 && TARGET_SIZEOF_VOID_P == 4)) {
 				/* Can't do this with 64 bit enums on 32 bit since the vtype decomp pass is ran after the long decomp pass */
 				if (val->opcode == OP_ICONST) {
 					MONO_INST_NEW (cfg, ins, OP_BOX_ICONST);
@@ -11006,16 +10992,20 @@ mono_ldptr:
 				CHECK_CFG_ERROR;
 
 				val = mono_type_size (type, &ialign);
+				EMIT_NEW_ICONST (cfg, ins, val);
 			} else {
 				MonoClass *klass = mini_get_class (method, token, generic_context);
 				CHECK_TYPELOAD (klass);
 
-				val = mono_type_size (m_class_get_byval_arg (klass), &ialign);
-
-				if (mini_is_gsharedvt_klass (klass))
-					GSHAREDVT_FAILURE (il_op);
+				if (mini_is_gsharedvt_klass (klass)) {
+					MonoInst *ins = mini_emit_get_gsharedvt_info_klass (cfg, klass, MONO_RGCTX_INFO_CLASS_SIZEOF);
+					ins->type = STACK_I4;
+				} else {
+					val = mono_type_size (m_class_get_byval_arg (klass), &ialign);
+					EMIT_NEW_ICONST (cfg, ins, val);
+				}
 			}
-			EMIT_NEW_ICONST (cfg, ins, val);
+
 			*sp++ = ins;
 			break;
 		}

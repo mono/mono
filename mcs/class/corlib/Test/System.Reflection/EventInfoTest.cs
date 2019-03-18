@@ -149,7 +149,25 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual(0, events.Length, "MyEvent event is static in parent class and should be hidden.");
 		}
 
+		// https://github.com/mono/mono/issues/13350
+		[Test]
+		public void ReflectedType () {
+			Type type = typeof (B);
+			EventInfo eventInfo = type.GetEvent (nameof (A.Event));
+			MemberInfo memberInfo = eventInfo.AddMethod;
+			Assert.AreEqual (type, memberInfo.ReflectedType);
+		}
+
 #pragma warning disable 67
+		public class A
+		{
+			public event Action Event { add { } remove { } }
+		}
+
+		public class B : A
+		{
+		}
+
 		public class PrivateEvent
 		{
 			private static event EventHandler x;

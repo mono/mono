@@ -116,7 +116,6 @@ var Module = {
 			config.enable_debugging,
 			config.file_list,
 			function () {
-				config.add_bindings ();
 				App.init ();
 			},
 			function (asset ) 

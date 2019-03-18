@@ -1019,10 +1019,10 @@ static void
 set_preserveall_cc (LLVMValueRef func)
 {
 	/*
-	 * xcode10 doesn't seem to support preserveall on watchos, it fails with:
+	 * xcode10 (watchOS) and ARM/ARM64 doesn't seem to support preserveall, it fails with:
 	 * fatal error: error in backend: Unsupported calling convention
 	 */
-#ifndef TARGET_WATCHOS
+#if !defined(TARGET_WATCHOS) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
 	mono_llvm_set_preserveall_cc (func);
 #endif
 }
@@ -1030,7 +1030,7 @@ set_preserveall_cc (LLVMValueRef func)
 static void
 set_call_preserveall_cc (LLVMValueRef func)
 {
-#ifndef TARGET_WATCHOS
+#if !defined(TARGET_WATCHOS) && !defined(TARGET_ARM) && !defined(TARGET_ARM64)
 	mono_llvm_set_call_preserveall_cc (func);
 #endif
 }
@@ -2946,6 +2946,73 @@ emit_init_icall_wrappers (MonoLLVMModule *module)
 }
 
 static void
+emit_gc_safepoint_poll (MonoLLVMModule *module)
+{
+	LLVMModuleRef lmodule = module->lmodule;
+	LLVMValueRef func, indexes [2], got_entry_addr, flag_addr, val_ptr, callee, val, cmp;
+	LLVMBasicBlockRef entry_bb, poll_bb, exit_bb;
+	LLVMBuilderRef builder;
+	LLVMTypeRef sig;
+	MonoJumpInfo *ji;
+	int got_offset;
+
+	sig = LLVMFunctionType0 (LLVMVoidType (), FALSE);
+	func = mono_llvm_get_or_insert_gc_safepoint_poll (lmodule);
+	mono_llvm_add_func_attr (func, LLVM_ATTR_NO_UNWIND);
+	LLVMSetLinkage (func, LLVMWeakODRLinkage);
+	// set_preserveall_cc (func);
+
+	entry_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.entry");
+	poll_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.poll");
+	exit_bb = LLVMAppendBasicBlock (func, "gc.safepoint_poll.exit");
+
+	builder = LLVMCreateBuilder ();
+
+	/* entry: */
+	LLVMPositionBuilderAtEnd (builder, entry_bb);
+
+	/* get_aotconst */
+	ji = g_new0 (MonoJumpInfo, 1);
+	ji->type = MONO_PATCH_INFO_GC_SAFE_POINT_FLAG;
+	ji = mono_aot_patch_info_dup (ji);
+	got_offset = mono_aot_get_got_offset (ji);
+	module->max_got_offset = MAX (module->max_got_offset, got_offset);
+	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+	indexes [1] = LLVMConstInt (LLVMInt32Type (), got_offset, FALSE);
+	got_entry_addr = LLVMBuildGEP (builder, module->got_var, indexes, 2, "");
+	flag_addr = LLVMBuildLoad (builder, got_entry_addr, "");
+	val_ptr = LLVMBuildLoad (builder, flag_addr, "");
+	val = LLVMBuildPtrToInt (builder, val_ptr, IntPtrType (), "");
+	cmp = LLVMBuildICmp (builder, LLVMIntEQ, val, LLVMConstNull (LLVMTypeOf (val)), "");
+	LLVMBuildCondBr (builder, cmp, exit_bb, poll_bb);
+
+	/* poll: */
+	LLVMPositionBuilderAtEnd(builder, poll_bb);
+
+	ji = g_new0 (MonoJumpInfo, 1);
+	ji->type = MONO_PATCH_INFO_JIT_ICALL;
+	ji->data.name = "mono_threads_state_poll";
+	ji = mono_aot_patch_info_dup (ji);
+	got_offset = mono_aot_get_got_offset (ji);
+	module->max_got_offset = MAX (module->max_got_offset, got_offset);
+	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+	indexes [1] = LLVMConstInt (LLVMInt32Type (), got_offset, FALSE);
+	got_entry_addr = LLVMBuildGEP (builder, module->got_var, indexes, 2, "");
+	callee = LLVMBuildLoad (builder, got_entry_addr, "");
+	callee = LLVMBuildBitCast (builder, callee, LLVMPointerType (sig, 0), "");
+	LLVMBuildCall (builder, callee, NULL, 0, "");
+	LLVMBuildBr(builder, exit_bb);
+
+	/* exit: */
+	LLVMPositionBuilderAtEnd(builder, exit_bb);
+
+	LLVMBuildRetVoid (builder);
+
+	LLVMVerifyFunction(func, LLVMAbortProcessAction);
+	LLVMDisposeBuilder (builder);
+}
+
+static void
 emit_llvm_code_end (MonoLLVMModule *module)
 {
 	LLVMModuleRef lmodule = module->lmodule;
@@ -3060,7 +3127,8 @@ emit_init_method (EmitContext *ctx)
 	LLVMPositionBuilderAtEnd (ctx->builder, notinited_bb);
 
 	// FIXME: Cache
-	if (ctx->rgctx_arg && cfg->method->is_inflated && mono_method_get_context (cfg->method)->method_inst) {
+	if (ctx->rgctx_arg && ((cfg->method->is_inflated && mono_method_get_context (cfg->method)->method_inst) ||
+						   mini_method_is_default_method (cfg->method))) {
 		args [0] = LLVMConstInt (LLVMInt32Type (), cfg->method_index, 0);
 		args [1] = convert (ctx, ctx->rgctx_arg, IntPtrType ());
 		callee = ctx->module->init_method_gshared_mrgctx;
@@ -6042,6 +6110,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_GC_SAFE_POINT: {
 			LLVMValueRef val, cmp, callee;
 			LLVMBasicBlockRef poll_bb, cont_bb;
+			LLVMValueRef args [2];
 			static LLVMTypeRef sig;
 			const char *icall_name = "mono_threads_state_poll";
 
@@ -6057,6 +6126,11 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			cmp = LLVMBuildICmp (builder, LLVMIntEQ, val, LLVMConstNull (LLVMTypeOf (val)), "");
 			poll_bb = gen_bb (ctx, "POLL_BB");
 			cont_bb = gen_bb (ctx, "CONT_BB");
+
+			args [0] = cmp;
+			args [1] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
+			cmp = LLVMBuildCall (ctx->builder, get_intrinsic (ctx, "llvm.expect.i1"), args, 2, "");
+
 			LLVMBuildCondBr (builder, cmp, cont_bb, poll_bb);
 
 			ctx->builder = builder = create_builder (ctx);
@@ -7428,6 +7502,8 @@ emit_method_inner (EmitContext *ctx)
 
 	if (!cfg->llvm_only)
 		LLVMSetFunctionCallConv (method, LLVMMono1CallConv);
+	if (!cfg->llvm_only && cfg->compile_aot && mono_threads_are_safepoints_enabled ())
+		LLVMSetGC (method, "mono");
 	LLVMSetLinkage (method, LLVMPrivateLinkage);
 
 	mono_llvm_add_func_attr (method, LLVM_ATTR_UW_TABLE);
@@ -7719,16 +7795,15 @@ emit_method_inner (EmitContext *ctx)
 			if (ctx->unreachable [node->in_bb->block_num])
 				continue;
 
-			if (!values [sreg1]) {
-				/* Can happen with values in EH clauses */
-				set_failure (ctx, "incoming phi sreg1");
-				return;
-			}
-
 			if (phi->opcode == OP_VPHI) {
 				g_assert (LLVMTypeOf (ctx->addresses [sreg1]) == LLVMTypeOf (values [phi->dreg]));
 				LLVMAddIncoming (values [phi->dreg], &ctx->addresses [sreg1], &in_bb, 1);
 			} else {
+				if (!values [sreg1]) {
+					/* Can happen with values in EH clauses */
+					set_failure (ctx, "incoming phi sreg1");
+					return;
+				}
 				if (LLVMTypeOf (values [sreg1]) != LLVMTypeOf (values [phi->dreg])) {
 					set_failure (ctx, "incoming phi arg type mismatch");
 					return;
@@ -9049,6 +9124,8 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 
 	if (llvm_only)
 		emit_init_icall_wrappers (module);
+
+	emit_gc_safepoint_poll (module);
 
 	emit_llvm_code_start (module);
 

@@ -1,13 +1,19 @@
+using System.Runtime.CompilerServices;
+
 namespace System.Runtime.InteropServices
 {
 	partial struct GCHandle
 	{
-		static IntPtr InternalAlloc (object value, GCHandleType type) => throw new NotImplementedException ();
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern IntPtr InternalAlloc (object value, GCHandleType type);
 
-		static void InternalFree (IntPtr handle) => throw new NotImplementedException ();
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void InternalFree (IntPtr handle);
 
-		static object InternalGet (IntPtr handle) => throw new NotImplementedException ();
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern object InternalGet (IntPtr handle);
 
-		static void InternalSet (IntPtr handle, object value) => throw new NotImplementedException ();
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void InternalSet (IntPtr handle, object value);
 	}
 }

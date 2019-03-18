@@ -15,6 +15,10 @@ MONO_API int coreclr_execute_assembly (void* hostHandle, unsigned int domainId,
 
 MONO_API int coreclr_shutdown_2 (void* hostHandle, unsigned int domainId, int* latchedExitCode);
 
+MONO_API int coreclr_create_delegate (void* hostHandle, unsigned int domainId,
+	const char* entryPointAssemblyName, const char* entryPointTypeName, const char* entryPointMethodName,
+	void** delegate);
+
 typedef struct {
 	int assembly_count;
 	char **basenames; /* Foo.dll */
@@ -156,6 +160,8 @@ int coreclr_initialize (const char* exePath, const char* appDomainFriendlyName,
 	int propertyCount, const char** propertyKeys, const char** propertyValues,
 	void** hostHandle, unsigned int* domainId)
 {
+	mono_runtime_register_appctx_properties (propertyCount, propertyKeys, propertyValues);
+
 	// TODO: TRUSTED_PLATFORM_ASSEMBLIES is the property key for managed assemblies mapping
 	if (!parse_properties (propertyCount, propertyKeys, propertyValues))
 		return 0x80004005; /* E_FAIL */
@@ -230,5 +236,27 @@ int coreclr_shutdown_2 (void* hostHandle, unsigned int domainId, int* latchedExi
 	trusted_platform_assemblies = NULL;
 	mono_core_trusted_platform_assemblies_free (a);
 
+	return 0;
+}
+
+//
+// Create a native callable delegate for a managed method.
+//
+// Parameters:
+//  hostHandle              - Handle of the host
+//  domainId                - Id of the domain 
+//  entryPointAssemblyName  - Name of the assembly which holds the custom entry point
+//  entryPointTypeName      - Name of the type which holds the custom entry point
+//  entryPointMethodName    - Name of the method which is the custom entry point
+//  delegate                - Output parameter, the function stores a pointer to the delegate at the specified address
+//
+// Returns:
+//  HRESULT indicating status of the operation. S_OK if the assembly was successfully executed
+//
+int coreclr_create_delegate (void* hostHandle, unsigned int domainId,
+	const char* entryPointAssemblyName, const char* entryPointTypeName, const char* entryPointMethodName,
+	void** delegate)
+{
+	g_error ("Not implemented");
 	return 0;
 }

@@ -274,7 +274,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 50
+#define MINOR_VERSION 51
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -408,7 +408,8 @@ typedef enum {
 	CMD_ASSEMBLY_GET_IS_DYNAMIC = 9,
 	CMD_ASSEMBLY_GET_PDB_BLOB = 10,
 	CMD_ASSEMBLY_GET_TYPE_FROM_TOKEN = 11,
-	CMD_ASSEMBLY_GET_METHOD_FROM_TOKEN = 12
+	CMD_ASSEMBLY_GET_METHOD_FROM_TOKEN = 12,
+	CMD_ASSEMBLY_HAS_DEBUG_INFO = 13
 } CmdAssembly;
 
 typedef enum {
@@ -2950,39 +2951,46 @@ suspend_current (void)
  	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	g_assert (tls);
 
-	mono_coop_mutex_lock (&suspend_mutex);
+	gboolean do_resume = FALSE;
+	while (!do_resume) {
+		mono_coop_mutex_lock (&suspend_mutex);
 
-	tls->suspending = FALSE;
-	tls->really_suspended = TRUE;
+		tls->suspending = FALSE;
+		tls->really_suspended = TRUE;
 
-	if (!tls->suspended) {
-		tls->suspended = TRUE;
-		mono_coop_sem_post (&suspend_sem);
-	}
+		if (!tls->suspended) {
+			tls->suspended = TRUE;
+			mono_coop_sem_post (&suspend_sem);
+		}
 
-	mono_debugger_log_suspend (tls);
-	DEBUG_PRINTF (1, "[%p] Suspended.\n", (gpointer) (gsize) mono_native_thread_id_get ());
+		mono_debugger_log_suspend (tls);
+		DEBUG_PRINTF (1, "[%p] Suspended.\n", (gpointer) (gsize) mono_native_thread_id_get ());
 
-	while (suspend_count - tls->resume_count > 0) {
-		mono_coop_cond_wait (&suspend_cond, &suspend_mutex);
-	}
+		while (suspend_count - tls->resume_count > 0) {
+			mono_coop_cond_wait (&suspend_cond, &suspend_mutex);
+		}
 
-	tls->suspended = FALSE;
-	tls->really_suspended = FALSE;
+		tls->suspended = FALSE;
+		tls->really_suspended = FALSE;
 
-	threads_suspend_count --;
+		threads_suspend_count --;
 
-	mono_coop_mutex_unlock (&suspend_mutex);
+		mono_coop_mutex_unlock (&suspend_mutex);
 
-	mono_debugger_log_resume (tls);
-	DEBUG_PRINTF (1, "[%p] Resumed.\n", (gpointer) (gsize) mono_native_thread_id_get ());
+		mono_debugger_log_resume (tls);
+		DEBUG_PRINTF (1, "[%p] Resumed.\n", (gpointer) (gsize) mono_native_thread_id_get ());
 
-	if (tls->pending_invoke) {
-		/* Save the original context */
-		tls->pending_invoke->has_ctx = TRUE;
-		tls->pending_invoke->ctx = tls->context.ctx;
+		if (tls->pending_invoke) {
+			/* Save the original context */
+			tls->pending_invoke->has_ctx = TRUE;
+			tls->pending_invoke->ctx = tls->context.ctx;
 
-		invoke_method ();
+			invoke_method ();
+
+			/* Have to suspend again */
+		} else {
+			do_resume = TRUE;
+		}
 	}
 
 	/* The frame info becomes invalid after a resume */
@@ -3216,7 +3224,7 @@ compute_frame_info_from (MonoInternalThread *thread, DebuggerTlsData *tls, MonoT
 }
 
 static void
-compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
+compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls, gboolean force_update)
 {
 	ComputeFramesUserData user_data;
 	GSList *tmp;
@@ -3225,7 +3233,7 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 	MonoUnwindOptions opts = (MonoUnwindOptions)(MONO_UNWIND_DEFAULT | MONO_UNWIND_REG_LOCATIONS);
 
 	// FIXME: Locking on tls
-	if (tls->frames && tls->frames_up_to_date)
+	if (tls->frames && tls->frames_up_to_date && !force_update)
 		return;
 
 	DEBUG_PRINTF (1, "Frames for %p(tid=%lx):\n", thread, (glong)thread->tid);
@@ -4227,7 +4235,7 @@ ss_calculate_framecount (void *the_tls, MonoContext *ctx, gboolean force_use_ctx
 
 	if (force_use_ctx || !tls->context.valid)
 		mono_thread_state_init_from_monoctx (&tls->context, ctx);
-	compute_frame_info (tls->thread, tls);
+	compute_frame_info (tls->thread, tls, FALSE);
 	if (frames)
 		*frames = (DbgEngineStackFrame**)tls->frames;
 	if (nframes)
@@ -4787,7 +4795,7 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
 			if (frames && nframes)
 				frame = frames [0];
 		} else {
-			compute_frame_info (ss_req->thread, tls);
+			compute_frame_info (ss_req->thread, tls, FALSE);
 
 			if (tls->frame_count)
 				frame = tls->frames [0];
@@ -6364,8 +6372,6 @@ invoke_method (void)
 
 	g_free (invoke->p);
 	g_free (invoke);
-
-	suspend_current ();
 }
 
 static gboolean
@@ -7396,6 +7402,10 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
         mono_error_cleanup (error);
         break;
     }
+	case CMD_ASSEMBLY_HAS_DEBUG_INFO: {
+		buffer_add_byte (buf, !ass->dynamic && mono_debug_image_has_debug_info (ass->image));
+		break;
+	}
 	default:
 		return ERR_NOT_IMPLEMENTED;
 	}
@@ -8597,7 +8607,7 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 		g_assert (tls);
 
-		compute_frame_info (thread, tls);
+		compute_frame_info (thread, tls, TRUE); //the last parameter is TRUE to force that the frame info that will be send is synchronised with the debugged thread
 
 		buffer_add_int (buf, tls->frame_count);
 		for (i = 0; i < tls->frame_count; ++i) {
@@ -8651,7 +8661,7 @@ thread_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 		g_assert (tls);
 
-		compute_frame_info (thread, tls);
+		compute_frame_info (thread, tls, FALSE);
 		if (tls->frame_count == 0 || tls->frames [0]->actual_method != method)
 			return ERR_INVALID_ARGUMENT;
 
@@ -8726,6 +8736,9 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	if (i == tls->frame_count)
 		return ERR_INVALID_FRAMEID;
 
+	/* The thread is still running native code, can't get frame variables info */
+	if (!tls->really_suspended && !tls->async_state.valid) 
+		return ERR_NOT_SUSPENDED;
 	frame_idx = i;
 	frame = tls->frames [frame_idx];
 
@@ -9347,7 +9360,8 @@ static const char* assembly_cmds_str[] = {
 	"GET_OBJECT",
 	"GET_TYPE",
 	"GET_NAME",
-	"GET_DOMAIN"
+	"GET_DOMAIN",
+	"HAS_DEBUG_INFO"
 };
 
 static const char* module_cmds_str[] = {

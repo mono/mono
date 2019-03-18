@@ -1,94 +1,108 @@
+using System.Text;
+using System.IO;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System
 {
 	partial class Type
 	{
-#region keep in sync with object-internals.h
+		#region keep in sync with object-internals.h
 		internal RuntimeTypeHandle _impl;
-#endregion
-
-		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError) => throw new NotImplementedException ();
-		public static Type GetTypeFromProgID (string progID, string server, bool throwOnError) => throw new NotImplementedException ();
+		#endregion
 
 		internal bool IsRuntimeImplemented () => this.UnderlyingSystemType is RuntimeType;
 
 		internal string FullNameOrDefault {
 			get {
-				throw new NotImplementedException ();
+				return FullName;
 			}
 		}
 
 		internal string NameOrDefault {
 			get {
-				throw new NotImplementedException ();
+				return Name;
 			}
 		}
 
 		public bool IsInterface {
 			get {
-				RuntimeType rt = this as RuntimeType;
-				if (rt != null)
+				if (this is RuntimeType rt)
 					return RuntimeTypeHandle.IsInterface (rt);
-				return ((GetAttributeFlagsImpl() & TypeAttributes.ClassSemanticsMask) == TypeAttributes.Interface);
+
+				return (GetAttributeFlagsImpl () & TypeAttributes.ClassSemanticsMask) == TypeAttributes.Interface;
 			}
 		}
 
-		public static Type GetType (String typeName, bool throwOnError, bool ignoreCase)
+		public static Type GetType (string typeName, bool throwOnError, bool ignoreCase)
 		{
-			throw new NotImplementedException ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, throwOnError, ignoreCase, false, ref stackMark);
 		}
 
-		public static Type GetType (String typeName, bool throwOnError)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		public static Type GetType (string typeName, bool throwOnError)
 		{
-			throw new NotImplementedException ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, throwOnError, false, false, ref stackMark);
 		}
 
-		public static Type GetType (String typeName)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		public static Type GetType (string typeName)
 		{
-			throw new NotImplementedException ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, false, false, false, ref stackMark);
 		}
 
-		public static Type GetType (
-			string typeName,
-			Func<AssemblyName, Assembly> assemblyResolver,
-			Func<Assembly, string, bool, Type> typeResolver)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		public static Type GetType (string typeName, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver)
 		{
-			throw new NotImplementedException ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, assemblyResolver, typeResolver, false, false, ref stackMark);
 		}
 
-		public static Type GetType (
-			string typeName,
-			Func<AssemblyName, Assembly> assemblyResolver,
-			Func<Assembly, string, bool, Type> typeResolver,
-			bool throwOnError)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		public static Type GetType (string typeName, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver, bool throwOnError)
 		{
-			throw new NotImplementedException ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, assemblyResolver, typeResolver, throwOnError, false, ref stackMark);
 		}
 
-		public static Type GetType(
-			string typeName,
-			Func<AssemblyName, Assembly> assemblyResolver,
-			Func<Assembly, string, bool, Type> typeResolver,
-			bool throwOnError,
-			bool ignoreCase)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		public static Type GetType (string typeName, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver, bool throwOnError, bool ignoreCase)
 		{
-			throw new NotImplementedException ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return RuntimeType.GetType (typeName, assemblyResolver, typeResolver, throwOnError, ignoreCase, ref stackMark);
+		}
+
+		static Type GetType (string typeName, Func<AssemblyName, Assembly> assemblyResolver, Func<Assembly, string, bool, Type> typeResolver, bool throwOnError, bool ignoreCase, ref StackCrawlMark stackMark) {
+			return TypeNameParser.GetType (typeName, assemblyResolver, typeResolver, throwOnError, ignoreCase, ref stackMark);
 		}
 
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
 		{
 			if (handle.Value == IntPtr.Zero)
-				// This is not consistent with the other GetXXXFromHandle methods, but
-				// MS.NET seems to do this
 				return null;
 
 			return internal_from_handle (handle.Value);
 		}
 
-		internal string FormatTypeName () => throw new NotImplementedException ();
+		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError) => throw new PlatformNotSupportedException ();
+
+		public static Type GetTypeFromProgID (string progID, string server, bool throwOnError) => throw new PlatformNotSupportedException ();
+
+		internal string FormatTypeName ()
+		{
+			return FormatTypeName (false);
+		}
+
+		internal virtual string FormatTypeName (bool serialization)
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern Type internal_from_handle (IntPtr handle);

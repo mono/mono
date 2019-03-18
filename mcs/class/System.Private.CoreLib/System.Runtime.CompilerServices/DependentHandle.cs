@@ -1,63 +1,69 @@
 namespace System.Runtime.CompilerServices
 {
-	//=========================================================================================
-	// This struct collects all operations on native DependentHandles. The DependentHandle
-	// merely wraps an IntPtr so this struct serves mainly as a "managed typedef."
+	struct Ephemeron
+	{
+		public object key;
+		public object value;
+	}
+
 	//
-	// DependentHandles exist in one of two states:
+	// Instead of dependent handles, mono uses arrays of Ephemeron objects.
 	//
-	//    IsAllocated == false
-	//        No actual handle is allocated underneath. Illegal to call GetPrimary
-	//        or GetPrimaryAndSecondary(). Ok to call Free().
-	//
-	//        Initializing a DependentHandle using the nullary ctor creates a DependentHandle
-	//        that's in the !IsAllocated state.
-	//        (! Right now, we get this guarantee for free because (IntPtr)0 == NULL unmanaged handle.
-	//         ! If that assertion ever becomes false, we'll have to add an _isAllocated field
-	//         ! to compensate.)
-	//        
-	//
-	//    IsAllocated == true
-	//        There's a handle allocated underneath. You must call Free() on this eventually
-	//        or you cause a native handle table leak.
-	//
-	// This struct intentionally does no self-synchronization. It's up to the caller to
-	// to use DependentHandles in a thread-safe way.
-	//=========================================================================================
 	struct DependentHandle
 	{
-		IntPtr handle;
+		Ephemeron[] data;
 
 		public DependentHandle (object primary, object secondary)
 		{
-			handle = IntPtr.Zero;
+			data = new Ephemeron [1];
+			data [0].key = primary;
+			data [0].value = secondary;
+			GC.register_ephemeron_array (data);
 		}
 
-		public bool IsAllocated => handle != IntPtr.Zero;
+		public bool IsAllocated => data != null;
 
 		// Getting the secondary object is more expensive than getting the first so
 		// we provide a separate primary-only accessor for those times we only want the
 		// primary.
-		public object GetPrimary () => throw new NotImplementedException ();
-
-		public object GetPrimaryAndSecondary (out object secondary) => throw new NotImplementedException ();
-
-		public void SetPrimary (object primary) => throw new NotImplementedException ();
-
-		public void SetSecondary (object secondary) => throw new NotImplementedException ();
-
-		public void Free()
+		public object GetPrimary ()
 		{
-			if (handle != IntPtr.Zero)
-			{
-				IntPtr _handle = handle;
-				handle = IntPtr.Zero;
-				FreeHandle (_handle);
-			}
+			if (!IsAllocated)
+				throw new NotSupportedException ();
+			if (data [0].key == GC.EPHEMERON_TOMBSTONE)
+				return null;
+			return data [0].key;
 		}
 
-		static void FreeHandle (IntPtr handle)
+		public object GetPrimaryAndSecondary (out object secondary)
 		{
+			if (!IsAllocated)
+				throw new NotSupportedException ();
+			if (data [0].key == GC.EPHEMERON_TOMBSTONE) {
+				secondary = null;
+				return null;
+			}
+			secondary = data [0].value;
+			return data [0].key;
+		}
+
+		public void SetPrimary (object primary)
+		{
+			if (!IsAllocated)
+				throw new NotSupportedException ();
+			data [0].key = primary;
+		}
+
+		public void SetSecondary (object secondary)
+		{
+			if (!IsAllocated)
+				throw new NotSupportedException ();
+			data [0].value = secondary;
+		}
+
+		public void Free ()
+		{
+			data = null;
 		}
 	}
 }

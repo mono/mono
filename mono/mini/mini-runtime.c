@@ -944,7 +944,7 @@ mono_thread_abort (MonoObject *obj)
 
 	if ((mono_runtime_unhandled_exception_policy_get () == MONO_UNHANDLED_POLICY_LEGACY) ||
 			(obj->vtable->klass == mono_defaults.threadabortexception_class) ||
-			((obj->vtable->klass) == mono_class_get_appdomain_unloaded_exception_class () &&
+			((obj->vtable->klass) == mono_class_try_get_appdomain_unloaded_exception_class () &&
 			mono_thread_info_current ()->runtime_thread)) {
 		mono_thread_exit ();
 	} else {
@@ -1422,20 +1422,14 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	case MONO_PATCH_INFO_JIT_ICALL: {
 		MonoJitICallInfo *mi = mono_find_jit_icall_by_name (patch_info->data.name);
-		if (!mi) {
-			g_warning ("unknown MONO_PATCH_INFO_JIT_ICALL %s", patch_info->data.name);
-			g_assert_not_reached ();
-		}
+		g_assertf (mi, "unknown MONO_PATCH_INFO_JIT_ICALL %s", patch_info->data.name);
 		target = mono_icall_get_wrapper (mi);
 		break;
 	}
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL: {
 		MonoJitICallInfo *mi = mono_find_jit_icall_by_name (patch_info->data.name);
-		if (!mi) {
-			g_warning ("unknown MONO_PATCH_INFO_JIT_ICALL_ADDR %s", patch_info->data.name);
-			g_assert_not_reached ();
-		}
+		g_assertf (mi, "unknown MONO_PATCH_INFO_JIT_ICALL_ADDR %s", patch_info->data.name);
 		target = mi->func;
 		break;
 	}
@@ -3580,17 +3574,18 @@ mini_init_delegate (MonoDelegateHandle delegate, MonoError *error)
 {
 	MonoDelegate *del = MONO_HANDLE_RAW (delegate);
 
-	if (mono_use_interpreter)
-		mini_get_interp_callbacks ()->init_delegate (del);
+	if (mono_use_interpreter) {
+		mini_get_interp_callbacks ()->init_delegate (del, error);
+		return_if_nok (error);
+	}
+
 	if (mono_llvm_only) {
 		g_assert (del->method);
 		/* del->method_ptr might already be set to no_llvmonly_interp_method_pointer if the delegate was created from the interpreter */
 		del->method_ptr = mini_llvmonly_load_method_delegate (del->method, FALSE, FALSE, &del->extra_arg, error);
-	} else {
-		if (!del->method_ptr) {
-			del->method_ptr = create_delegate_method_ptr (del->method, error);
-			return_if_nok (error);
-		}
+	} else if (!del->method_ptr && !del->interp_method) {
+		del->method_ptr = create_delegate_method_ptr (del->method, error);
+		return_if_nok (error);
 	}
 }
 
@@ -3828,45 +3823,45 @@ register_jit_stats (void)
 	mono_counters_register ("Methods JITted using mono JIT", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_without_llvm);
 	mono_counters_register ("Methods JITted using LLVM", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_with_llvm);
 	mono_counters_register ("Methods using the interpreter", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.methods_with_interp);
-	mono_counters_register ("JIT/method_to_ir (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_method_to_ir);
-	mono_counters_register ("JIT/liveness_handle_exception_clauses (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_liveness_handle_exception_clauses);
-	mono_counters_register ("JIT/handle_out_of_line_bblock (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_handle_out_of_line_bblock);
-	mono_counters_register ("JIT/decompose_long_opts (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_decompose_long_opts);
-	mono_counters_register ("JIT/decompose_typechecks (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_decompose_typechecks);
-	mono_counters_register ("JIT/local_cprop (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_local_cprop);
-	mono_counters_register ("JIT/local_emulate_ops (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_local_emulate_ops);
-	mono_counters_register ("JIT/optimize_branches (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_optimize_branches);
-	mono_counters_register ("JIT/handle_global_vregs (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_handle_global_vregs);
-	mono_counters_register ("JIT/local_deadce (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_local_deadce);
-	mono_counters_register ("JIT/local_alias_analysis (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_local_alias_analysis);
-	mono_counters_register ("JIT/if_conversion (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_if_conversion);
-	mono_counters_register ("JIT/bb_ordering (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_bb_ordering);
-	mono_counters_register ("JIT/compile_dominator_info (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_compile_dominator_info);
-	mono_counters_register ("JIT/compute_natural_loops (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_compute_natural_loops);
-	mono_counters_register ("JIT/insert_safepoints (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_insert_safepoints);
-	mono_counters_register ("JIT/ssa_compute (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_ssa_compute);
-	mono_counters_register ("JIT/ssa_cprop (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_ssa_cprop);
-	mono_counters_register ("JIT/ssa_deadce(sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_ssa_deadce);
-	mono_counters_register ("JIT/perform_abc_removal (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_perform_abc_removal);
-	mono_counters_register ("JIT/ssa_remove (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_ssa_remove);
-	mono_counters_register ("JIT/local_cprop2 (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_local_cprop2);
-	mono_counters_register ("JIT/handle_global_vregs2 (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_handle_global_vregs2);
-	mono_counters_register ("JIT/local_deadce2 (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_local_deadce2);
-	mono_counters_register ("JIT/optimize_branches2 (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_optimize_branches2);
-	mono_counters_register ("JIT/decompose_vtype_opts (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_decompose_vtype_opts);
-	mono_counters_register ("JIT/decompose_array_access_opts (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_decompose_array_access_opts);
-	mono_counters_register ("JIT/liveness_handle_exception_clauses2 (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_liveness_handle_exception_clauses2);
-	mono_counters_register ("JIT/analyze_liveness (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_analyze_liveness);
-	mono_counters_register ("JIT/linear_scan (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_linear_scan);
-	mono_counters_register ("JIT/arch_allocate_vars (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_arch_allocate_vars);
-	mono_counters_register ("JIT/spill_global_vars (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_spill_global_vars);
-	mono_counters_register ("JIT/local_cprop3 (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_local_cprop3);
-	mono_counters_register ("JIT/local_deadce3 (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_local_deadce3);
-	mono_counters_register ("JIT/codegen (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_codegen);
-	mono_counters_register ("JIT/create_jit_info (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_create_jit_info);
-	mono_counters_register ("JIT/gc_create_gc_map (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_gc_create_gc_map);
-	mono_counters_register ("JIT/save_seq_point_info (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_save_seq_point_info);
-	mono_counters_register ("Total time spent JITting (sec)", MONO_COUNTER_JIT | MONO_COUNTER_DOUBLE, &mono_jit_stats.jit_time);
+	mono_counters_register ("JIT/method_to_ir", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_method_to_ir);
+	mono_counters_register ("JIT/liveness_handle_exception_clauses", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_liveness_handle_exception_clauses);
+	mono_counters_register ("JIT/handle_out_of_line_bblock", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_handle_out_of_line_bblock);
+	mono_counters_register ("JIT/decompose_long_opts", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_decompose_long_opts);
+	mono_counters_register ("JIT/decompose_typechecks", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_decompose_typechecks);
+	mono_counters_register ("JIT/local_cprop", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_local_cprop);
+	mono_counters_register ("JIT/local_emulate_ops", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_local_emulate_ops);
+	mono_counters_register ("JIT/optimize_branches", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_optimize_branches);
+	mono_counters_register ("JIT/handle_global_vregs", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_handle_global_vregs);
+	mono_counters_register ("JIT/local_deadce", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_local_deadce);
+	mono_counters_register ("JIT/local_alias_analysis", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_local_alias_analysis);
+	mono_counters_register ("JIT/if_conversion", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_if_conversion);
+	mono_counters_register ("JIT/bb_ordering", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_bb_ordering);
+	mono_counters_register ("JIT/compile_dominator_info", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_compile_dominator_info);
+	mono_counters_register ("JIT/compute_natural_loops", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_compute_natural_loops);
+	mono_counters_register ("JIT/insert_safepoints", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_insert_safepoints);
+	mono_counters_register ("JIT/ssa_compute", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_ssa_compute);
+	mono_counters_register ("JIT/ssa_cprop", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_ssa_cprop);
+	mono_counters_register ("JIT/ssa_deadce", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_ssa_deadce);
+	mono_counters_register ("JIT/perform_abc_removal", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_perform_abc_removal);
+	mono_counters_register ("JIT/ssa_remove", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_ssa_remove);
+	mono_counters_register ("JIT/local_cprop2", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_local_cprop2);
+	mono_counters_register ("JIT/handle_global_vregs2", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_handle_global_vregs2);
+	mono_counters_register ("JIT/local_deadce2", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_local_deadce2);
+	mono_counters_register ("JIT/optimize_branches2", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_optimize_branches2);
+	mono_counters_register ("JIT/decompose_vtype_opts", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_decompose_vtype_opts);
+	mono_counters_register ("JIT/decompose_array_access_opts", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_decompose_array_access_opts);
+	mono_counters_register ("JIT/liveness_handle_exception_clauses2", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_liveness_handle_exception_clauses2);
+	mono_counters_register ("JIT/analyze_liveness", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_analyze_liveness);
+	mono_counters_register ("JIT/linear_scan", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_linear_scan);
+	mono_counters_register ("JIT/arch_allocate_vars", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_arch_allocate_vars);
+	mono_counters_register ("JIT/spill_global_var", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_spill_global_vars);
+	mono_counters_register ("JIT/local_cprop3", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_local_cprop3);
+	mono_counters_register ("JIT/local_deadce3", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_local_deadce3);
+	mono_counters_register ("JIT/codegen", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_codegen);
+	mono_counters_register ("JIT/create_jit_info", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_create_jit_info);
+	mono_counters_register ("JIT/gc_create_gc_map", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_gc_create_gc_map);
+	mono_counters_register ("JIT/save_seq_point_info", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_save_seq_point_info);
+	mono_counters_register ("Total time spent JITting", MONO_COUNTER_JIT | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &mono_jit_stats.jit_time);
 	mono_counters_register ("Basic blocks", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.basic_blocks);
 	mono_counters_register ("Max basic blocks", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.max_basic_blocks);
 	mono_counters_register ("Allocated vars", MONO_COUNTER_JIT | MONO_COUNTER_INT, &mono_jit_stats.allocate_var);
@@ -4118,7 +4113,7 @@ mono_interp_to_native_trampoline (gpointer addr, gpointer ccontext)
 }
 
 static gboolean
-mini_is_interpreter_enabled ()
+mini_is_interpreter_enabled (void)
 {
 	return mono_use_interpreter;
 }
@@ -4479,7 +4474,9 @@ register_icalls (void)
 	register_icall (mono_llvm_set_unhandled_exception_handler, "mono_llvm_set_unhandled_exception_handler", NULL, TRUE);
 
 	// FIXME: This is broken
+#ifndef TARGET_WASM
 	register_icall (mono_debug_personality, "mono_debug_personality", "int int int ptr ptr ptr", TRUE);
+#endif
 #endif
 
 	if (!mono_llvm_only) {

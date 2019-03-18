@@ -44,7 +44,6 @@ namespace Mono.WebAssembly.Build
 				EnableDebugging = EnableDebugging,
 				VfsPrefix = VfsPrefix,
 				DeployPrefix = DeployPrefix,
-				InitBindings = InitBindings,
 				FileList = FileList.Select (f => f.GetMetadata ("Filename") + f.GetMetadata ("Extension"))
 			};
 

@@ -37,7 +37,7 @@ using NUnit.Framework;
 
 namespace StandAloneTests.DataPager_NumericPagerField_Bug615315
 {
-	[TestCase ("DataPager_NumericPagerField_Bug615315, Test 01", "Page numbers must be sequential (Query Mode)")]
+	[StandAloneRunnerSupport.TestCase ("DataPager_NumericPagerField_Bug615315, Test 01", "Page numbers must be sequential (Query Mode)")]
 	public sealed class Test_01 : ITestCase
 	{
 		public string PhysicalPath {
@@ -68,7 +68,7 @@ namespace StandAloneTests.DataPager_NumericPagerField_Bug615315
 		}
 	}
 
-	[TestCase ("DataPager_NumericPagerField_Bug615315, Test 02", "Page numbers must be sequential (PostBack Mode)")]
+	[StandAloneRunnerSupport.TestCase ("DataPager_NumericPagerField_Bug615315, Test 02", "Page numbers must be sequential (PostBack Mode)")]
 	public sealed class Test_02 : ITestCase
 	{
 		public string PhysicalPath {

@@ -55,11 +55,11 @@ namespace System.IO {
 			}
 
 			DriveInfo [] drives = GetDrives ();
+			Array.Sort (drives, (DriveInfo di1, DriveInfo di2) => String.Compare (di2.path, di1.path, true));
 			foreach (DriveInfo d in drives){
-				if (d.path == driveName){
+				if (driveName.StartsWith (d.path, StringComparison.OrdinalIgnoreCase)){
 					this.path = d.path;
 					this.drive_format = d.drive_format;
-					this.path = d.path;
 					return;
 				}
 			}

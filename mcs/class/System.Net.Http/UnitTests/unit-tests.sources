@@ -1,6 +1,10 @@
+../../test-helpers/Configuration.Certificates.cs
 ../../corlib/corefx/SR.cs
 ../../corlib/ReferenceSources/SR.cs
 ../../../build/common/SR.cs
+
+../HttpClient.DefaultHandler.cs
+../HttpRequestMessage.Mono.cs
 
 # Common Sources
 
@@ -43,12 +47,10 @@
 ../../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/ConsoleEventListener.cs
 ../../../../external/corefx/src/Common/tests/System/IO/DelegateStream.cs
 ../../../../external/corefx/src/Common/tests/System/Net/RemoteServerQuery.cs
-../../../../external/corefx/src/Common/tests/System/Net/Configuration.Certificates.cs
 ../../../../external/corefx/src/Common/tests/System/Net/EventSourceTestLogging.cs
 ../../../../external/corefx/src/Common/tests/System/Net/HttpsTestServer.cs
 ../../../../external/corefx/src/Common/tests/System/Net/Capability.Security.cs
 ../../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
-../../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
 ../../../../external/corefx/src/Common/tests/System/Net/Configuration.Security.cs
 ../../../../external/corefx/src/Common/tests/System/Net/TestWebProxies.cs
 ../../../../external/corefx/src/Common/tests/System/Net/VerboseTestLogging.cs

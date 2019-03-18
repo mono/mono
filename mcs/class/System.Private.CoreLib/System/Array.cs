@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace System
 {
@@ -84,22 +85,22 @@ namespace System
 		public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
 			if (sourceArray == null)
-				throw new ArgumentNullException ("sourceArray");
+				throw new ArgumentNullException (nameof (sourceArray));
 
 			if (destinationArray == null)
-				throw new ArgumentNullException ("destinationArray");
+				throw new ArgumentNullException (nameof (destinationArray));
 
 			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", "Value has to be >= 0.");
+				throw new ArgumentOutOfRangeException (nameof (length), "Value has to be >= 0.");
 
 			if (sourceArray.Rank != destinationArray.Rank)
 				throw new RankException(SR.Rank_MultiDimNotSupported);
 
 			if (sourceIndex < 0)
-				throw new ArgumentOutOfRangeException ("sourceIndex", "Value has to be >= 0.");
+				throw new ArgumentOutOfRangeException (nameof (sourceIndex), "Value has to be >= 0.");
 
 			if (destinationIndex < 0)
-				throw new ArgumentOutOfRangeException ("destinationIndex", "Value has to be >= 0.");
+				throw new ArgumentOutOfRangeException (nameof (destinationIndex), "Value has to be >= 0.");
 
 			if (FastCopy (sourceArray, sourceIndex, destinationArray, destinationIndex, length))
 				return;
@@ -108,11 +109,11 @@ namespace System
 			int dest_pos = destinationIndex - destinationArray.GetLowerBound (0);
 
 			if (dest_pos < 0)
-				throw new ArgumentOutOfRangeException ("destinationIndex", "Index was less than the array's lower bound in the first dimension.");
+				throw new ArgumentOutOfRangeException (nameof (destinationIndex), "Index was less than the array's lower bound in the first dimension.");
 
 			// re-ordered to avoid possible integer overflow
 			if (source_pos > sourceArray.Length - length)
-				throw new ArgumentException ("length");
+				throw new ArgumentException (SR.Arg_LongerThanSrcArray, nameof (sourceArray));
 
 			if (dest_pos > destinationArray.Length - length) {
 				throw new ArgumentException ("Destination array was not long enough. Check destIndex and length, and the array's lower bounds", nameof (destinationArray));
@@ -121,6 +122,42 @@ namespace System
 			Type src_type = sourceArray.GetType ().GetElementType ();
 			Type dst_type = destinationArray.GetType ().GetElementType ();
 			var dst_type_vt = dst_type.IsValueType;
+
+			// Need to check types even if nothing is copied
+			if (length == 0) {
+				var src_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)src_type);
+				var dst_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)dst_type);
+
+				// FIXME: More checks
+				bool match = true;
+				switch (dst_etype) {
+				case CorElementType.ELEMENT_TYPE_OBJECT:
+				case CorElementType.ELEMENT_TYPE_STRING:
+				case CorElementType.ELEMENT_TYPE_CLASS:
+				case CorElementType.ELEMENT_TYPE_ARRAY:
+				case CorElementType.ELEMENT_TYPE_SZARRAY:
+					if (src_type.IsPointer)
+						match = false;
+					break;
+				case CorElementType.ELEMENT_TYPE_PTR:
+					switch (src_etype) {
+					case CorElementType.ELEMENT_TYPE_OBJECT:
+					case CorElementType.ELEMENT_TYPE_STRING:
+					case CorElementType.ELEMENT_TYPE_CLASS:
+					case CorElementType.ELEMENT_TYPE_ARRAY:
+					case CorElementType.ELEMENT_TYPE_SZARRAY:
+						match = false;
+						break;
+					default:
+						break;
+					}
+					break;
+				default:
+					break;
+				}
+				if (!match)
+					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
+			}
 
 			if (!Object.ReferenceEquals (sourceArray, destinationArray) || source_pos > dest_pos) {
 				for (int i = 0; i < length; i++) {
@@ -178,6 +215,9 @@ namespace System
 
 		public static Array CreateInstance (Type elementType, int length)
 		{
+			if (length < 0)
+				throw new ArgumentOutOfRangeException (nameof (length));
+
 			int[] lengths = {length};
 
 			return CreateInstance (elementType, lengths);
@@ -185,6 +225,11 @@ namespace System
 
 		public static Array CreateInstance (Type elementType, int length1, int length2)
 		{
+			if (length1 < 0)
+				throw new ArgumentOutOfRangeException (nameof (length1));
+			if (length2 < 0)
+				throw new ArgumentOutOfRangeException (nameof (length2));
+
 			int[] lengths = {length1, length2};
 
 			return CreateInstance (elementType, lengths);
@@ -192,6 +237,13 @@ namespace System
 
 		public static Array CreateInstance (Type elementType, int length1, int length2, int length3)
 		{
+			if (length1 < 0)
+				throw new ArgumentOutOfRangeException (nameof (length1));
+			if (length2 < 0)
+				throw new ArgumentOutOfRangeException (nameof (length2));
+			if (length3 < 0)
+				throw new ArgumentOutOfRangeException (nameof (length3));
+
 			int[] lengths = {length1, length2, length3};
 
 			return CreateInstance (elementType, lengths);
@@ -203,10 +255,14 @@ namespace System
 				throw new ArgumentNullException ("elementType");
 			if (lengths == null)
 				throw new ArgumentNullException ("lengths");
-
+			if (lengths.Length == 0)
+				throw new ArgumentException (nameof (lengths));
 			if (lengths.Length > 255)
 				throw new TypeLoadException ();
-
+			for (int i = 0; i < lengths.Length; ++i) {
+				if (lengths [i] < 0)
+					throw new ArgumentOutOfRangeException ($"lengths[{i}]", SR.ArgumentOutOfRange_NeedNonNegNum);
+			}
 			int[] bounds = null;
 
 			elementType = elementType.UnderlyingSystemType as RuntimeType;
@@ -245,7 +301,7 @@ namespace System
 
 			for (int j = 0; j < lowerBounds.Length; j ++) {
 				if (lengths [j] < 0)
-					throw new ArgumentOutOfRangeException ("lengths", "Each value has to be >= 0.");
+					throw new ArgumentOutOfRangeException ($"lengths[{j}]", "Each value has to be >= 0.");
 				if ((long)lowerBounds [j] + (long)lengths [j] > (long)Int32.MaxValue)
 					throw new ArgumentOutOfRangeException ("lengths", "Length + bound must not exceed Int32.MaxValue.");
 			}
@@ -295,12 +351,12 @@ namespace System
 
 		static int IndexOfImpl<T>(T[] array, T value, int startIndex, int count)
 		{
-			throw new NotImplementedException ();
+			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, count);
 		}
 
 		static int LastIndexOfImpl<T>(T[] array, T value, int startIndex, int count)
 		{
-			throw new NotImplementedException ();
+			return EqualityComparer<T>.Default.LastIndexOf (array, value, startIndex, count);
 		}
 
 		public void SetValue (object value, int index)
@@ -352,9 +408,10 @@ namespace System
 			return ref Unsafe.As<RawData>(this).Data;
 		}
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		internal ref byte GetRawArrayData ()
 		{
-			throw new NotImplementedException ();
+			return ref Unsafe.As<RawData>(this).Data;
 		}
 
 		//

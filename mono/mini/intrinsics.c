@@ -199,7 +199,7 @@ emit_span_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature
 		/* Portable Span<T> */
 		return NULL;
 
-	if (!strcmp (cmethod->name, "get_Item")) {
+	if (!strcmp (cmethod->name, "get_Item") && fsig->params [0]->type != MONO_TYPE_VALUETYPE) {
 		MonoClassField *length_field = mono_class_get_field_from_name_full (cmethod->klass, "_length", NULL);
 
 		g_assert (length_field);
@@ -341,15 +341,18 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		g_assert (ctx->method_inst->type_argc == 1);
 		g_assert (fsig->param_count == 2);
 
-		t = ctx->method_inst->type_argv [0];
-		if (mini_is_gsharedvt_variable_type (t))
-			return NULL;
-
-		t = mini_type_get_underlying_type (t);
-		int esize = mono_class_array_element_size (mono_class_from_mono_type_internal (t));
-
 		int mul_reg = alloc_preg (cfg);
-		EMIT_NEW_BIALU_IMM (cfg, ins, OP_IMUL_IMM, mul_reg, args [1]->dreg, esize);
+
+		t = ctx->method_inst->type_argv [0];
+		if (mini_is_gsharedvt_variable_type (t)) {
+			MonoInst *esize_ins = mini_emit_get_gsharedvt_info_klass (cfg, mono_class_from_mono_type_internal (t), MONO_RGCTX_INFO_CLASS_SIZEOF);
+			EMIT_NEW_BIALU (cfg, ins, OP_IMUL, mul_reg, args [1]->dreg, esize_ins->dreg);
+		} else {
+			t = mini_type_get_underlying_type (t);
+			int esize = mono_class_array_element_size (mono_class_from_mono_type_internal (t));
+
+			EMIT_NEW_BIALU_IMM (cfg, ins, OP_IMUL_IMM, mul_reg, args [1]->dreg, esize);
+		}
 		if (SIZEOF_REGISTER == 8)
 			MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, mul_reg, mul_reg);
 		dreg = alloc_preg (cfg);
@@ -385,10 +388,12 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		g_assert (fsig->param_count == 0);
 
 		t = ctx->method_inst->type_argv [0];
-		if (mini_is_gsharedvt_variable_type (t))
-			return NULL;
-		int esize = mono_type_size (t, &align);
-		EMIT_NEW_ICONST (cfg, ins, esize);
+		if (mini_is_gsharedvt_variable_type (t)) {
+			ins = mini_emit_get_gsharedvt_info_klass (cfg, mono_class_from_mono_type_internal (t), MONO_RGCTX_INFO_CLASS_SIZEOF);
+		} else {
+			int esize = mono_type_size (t, &align);
+			EMIT_NEW_ICONST (cfg, ins, esize);
+		}
 		ins->type = STACK_I4;
 		return ins;
 	} else if (!strcmp (cmethod->name, "ReadUnaligned")) {
@@ -420,6 +425,16 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 			ins->flags |= MONO_INST_UNALIGNED;
 			return ins;
 		}
+	} else if (!strcmp (cmethod->name, "ByteOffset")) {
+		g_assert (ctx);
+		g_assert (ctx->method_inst);
+		g_assert (ctx->method_inst->type_argc == 1);
+		g_assert (fsig->param_count == 2);
+
+		int dreg = alloc_preg (cfg);
+		EMIT_NEW_BIALU (cfg, ins, OP_PSUB, dreg, args [1]->dreg, args [0]->dreg);
+		ins->type = STACK_PTR;
+		return ins;
 	}
 
 	return NULL;
@@ -445,6 +460,12 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		int dreg = alloc_preg (cfg);
 		EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, args [0]->dreg, 0);
 		return ins;
+	} else if (in_corlib && cmethod->klass == mono_defaults.object_class) {
+		if (!strcmp (cmethod->name, "GetRawData")) {
+			int dreg = alloc_preg (cfg);
+			EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, dreg, args [0]->dreg, MONO_ABI_SIZEOF (MonoObject));
+			return ins;
+		}
 	}
 
 	if (!(cfg->opt & MONO_OPT_INTRINS))
@@ -645,7 +666,8 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 			dreg = alloc_ireg (cfg);
 
-			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoVTable, flags));
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, dreg, args [0]->dreg, MONO_STRUCT_OFFSET (MonoObject, vtable));
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADU1_MEMBASE, dreg, dreg, MONO_STRUCT_OFFSET (MonoVTable, flags));
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, dreg, dreg, 	MONO_VT_FLAG_ARRAY_OR_STRING);
 			EMIT_NEW_BIALU_IMM (cfg, ins, OP_COMPARE_IMM, -1, dreg, 0);
 			EMIT_NEW_UNALU (cfg, ins, OP_ICGT, dreg, -1);

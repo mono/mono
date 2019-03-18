@@ -12,13 +12,6 @@ android {
         externalNativeBuild {
             cmake {
                 cFlags "-O0 -g"
-                if (project.hasProperty('mono.bcltests'))
-                    cFlags "-DMONO_BCL_TESTS=1"
-                else if (project.hasProperty('mono.debuggertests'))
-                    cFlags "-DMONO_DEBUGGER_TESTS=1"
-
-                if (project.hasProperty('mono.waitforlldb'))
-                    cFlags "-DMONO_WAIT_LLDB=1"
             }
         }
         ndk {

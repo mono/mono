@@ -98,6 +98,9 @@ namespace Mono.WebAssembly.Build
 
 			sb.Append (" --verbose");
 
+			// add exclude features
+			sb.Append (" --exclude-feature remoting --exclude-feature com --exclude-feature etw");
+
 			string coremode, usermode;
 
 			switch ((WasmLinkMode)Enum.Parse (typeof (WasmLinkMode), LinkMode)) {

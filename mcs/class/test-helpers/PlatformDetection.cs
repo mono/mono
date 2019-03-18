@@ -8,6 +8,7 @@ namespace System
 		public static readonly bool IsWindowsNanoServer = false;
 		public static bool IsNotWindowsNanoServer => true;
 		public static bool IsNotWindowsServerCore => true;
+		public static bool IsMono => true;
 
 		public static bool IsWindows7 => false;
 		public static bool IsWindows10Version1607OrGreater => false;
@@ -33,7 +34,8 @@ namespace System
 
 		public static bool IsNetfx462OrNewer => false;
 
-		public static bool IsSsl2AndSsl3Supported => false;
+		public static bool SupportsAlpn => false;
+		public static bool SupportsClientAlpn => false;
 
 		public static bool IsWindows {
 			get {
@@ -44,5 +46,7 @@ namespace System
 		public static bool IsInAppContainer => false;
 		public static bool IsAlpine => false;
 		public static bool IsNetCore => false;
-	}
+
+		public static int WindowsVersion => -1;
+    }
 }

@@ -3,7 +3,7 @@ HttpClientHandler.cs
 HttpClientHandler.Legacy.cs
 IMonoHttpClientHandler.cs
 MonoWebRequestHandler.cs
-HeaderUtils.Legacy.cs
+PlatformHelper.Legacy.cs
 System.Net.Http/ByteArrayContent.cs
 System.Net.Http/ClientCertificateOption.cs
 System.Net.Http/DelegatingHandler.cs
@@ -22,6 +22,7 @@ System.Net.Http/MultipartContent.cs
 System.Net.Http/MultipartFormDataContent.cs
 System.Net.Http/StreamContent.cs
 System.Net.Http/StringContent.cs
+corefx/ReadOnlyMemoryContent.cs
 System.Net.Http.Headers/AuthenticationHeaderValue.cs
 System.Net.Http.Headers/CacheControlHeaderValue.cs
 System.Net.Http.Headers/CollectionExtensions.cs

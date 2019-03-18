@@ -1,88 +1,49 @@
 using System.IO;
-using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
-using System.Configuration.Assemblies;
-using System.Runtime.Serialization;
 using System.Security;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
+using System.Threading;
 
 namespace System.Reflection
 {
 	[StructLayout (LayoutKind.Sequential)]
-	class RuntimeAssembly : Assembly
+	sealed class RuntimeAssembly : Assembly
 	{
+		private sealed class ResolveEventHolder
+		{
+			public event ModuleResolveEventHandler ModuleResolve;
+		}
+
+		private sealed class UnmanagedMemoryStreamForModule : UnmanagedMemoryStream
+		{
+			Module module;
+
+			public unsafe UnmanagedMemoryStreamForModule (byte* pointer, long length, Module module)
+				: base (pointer, length)
+			{
+				this.module = module;
+			}
+		}
+
 		//
 		// KEEP IN SYNC WITH mcs/class/corlib/System.Reflection/RuntimeAssembly.cs
 		//
-		#region
-#pragma warning disable 649
-		internal IntPtr _mono_assembly;
-#pragma warning restore 649
-		// Unused in netcore, kept for layout compatibility
-		object _evidence;
+		#region VM dependency
+		IntPtr _mono_assembly;
+		object _evidence; 		// Unused, kept for layout compatibility
 		#endregion
 
-		bool fromByteArray;
-		string assemblyName;
 		ResolveEventHolder resolve_event_holder;
-
-		internal class ResolveEventHolder {
-#pragma warning disable 67
-			public event ModuleResolveEventHandler ModuleResolve;
-#pragma warning restore
-		}
-
-		// FIXME: Merge some of these
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern string get_location ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static string get_code_base (Assembly a, bool escaped);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static string get_fullname (Assembly a);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static string InternalImageRuntimeVersion (Assembly a);
 
 		public override extern MethodInfo EntryPoint {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
 
-		public override extern bool ReflectionOnly {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public override extern String[] GetManifestResourceNames ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern bool GetManifestResourceInfoInternal (string name, ManifestResourceInfo info);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Module GetManifestModuleInternal ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Module[] GetModulesInternal ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern IntPtr InternalGetReferencedAssemblies (Assembly module);
-
-		public override Type[] GetExportedTypes() {
-			throw new NotImplementedException ();
-		}
-
-		public override Type[] GetForwardedTypes() {
-			throw new NotImplementedException ();
-		}
+		public override bool ReflectionOnly => false;
 
 		public override string CodeBase {
 			get {
@@ -94,137 +55,6 @@ namespace System.Reflection
 			get {
 				return get_fullname (this);
 			}
-		}
-
-		public override string ImageRuntimeVersion {
-			get {
-				return InternalImageRuntimeVersion (this);
-			}
-		}
-
-		public override string Location {
-			get {
-				if (fromByteArray)
-					return String.Empty;
-
-				return get_location ();
-			}
-		}
-
-		public override bool IsCollectible {
-			get {
-				return false;
-			}
-		}
-
-		public override ManifestResourceInfo GetManifestResourceInfo (string resourceName) {
-			if (resourceName == null)
-				throw new ArgumentNullException ("resourceName");
-			if (resourceName.Length == 0)
-				throw new ArgumentException ("String cannot have zero length.");
-			ManifestResourceInfo result = new ManifestResourceInfo (null, null, 0);
-			bool found = GetManifestResourceInfoInternal (resourceName, result);
-			if (found)
-				return result;
-			else
-				return null;
-		}
-
-		public override Stream GetManifestResourceStream (string name) {
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			if (name.Length == 0)
-				throw new ArgumentException ("String cannot have zero length.",
-					"name");
-
-			ManifestResourceInfo info = GetManifestResourceInfo (name);
-			if (info == null) {
-				// FIXME: resource resolve
-				return null;
-			}
-
-			if (info.ReferencedAssembly != null)
-				return info.ReferencedAssembly.GetManifestResourceStream (name);
-			if ((info.FileName != null) && (info.ResourceLocation == 0)) {
-				if (fromByteArray)
-					throw new FileNotFoundException (info.FileName);
-
-				string location = Path.GetDirectoryName (Location);
-				string filename = Path.Combine (location, info.FileName);
-				return new FileStream (filename, FileMode.Open, FileAccess.Read);
-			}
-
-			if (IsCollectible)
-				throw new NotImplementedException ();
-
-			int size;
-			Module module;
-			IntPtr data = GetManifestResourceInternal (name, out size, out module);
-			if (data == (IntPtr) 0)
-				return null;
-			else {
-				var buffer = new ResourceSafeBuffer (data, (ulong)size);
-				return new UnmanagedMemoryStream (buffer, 0, size);
-			}
-		}
-
-		public override Stream GetManifestResourceStream (Type type, string name) {
-			StringBuilder sb = new StringBuilder ();
-			if (type == null) {
-				if (name == null)
-						throw new ArgumentNullException ("type");
-			} else {
-				String nameSpace = type.Namespace;
-				if (nameSpace != null) {
-					sb.Append (nameSpace);
-					if (name != null)
-						sb.Append (Type.Delimiter);
-				}
-			}
-
-			if (name != null)
-				sb.Append(name);
-
-			return GetManifestResourceStream (sb.ToString());
-		}
-
-		public override AssemblyName GetName(bool copiedName) {
-			return AssemblyName.Create (this, true);
-		}
-
-		public override Type GetType(string name, bool throwOnError, bool ignoreCase) {
-			Type res;
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			if (name.Length == 0)
-				throw new ArgumentException ("name", "Name cannot be empty");
-
-			return InternalGetType (null, name, throwOnError, ignoreCase);
-		}
-
-		public override bool IsDefined(Type attributeType, bool inherit) {
-			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
-		}
-
-		public override IList<CustomAttributeData> GetCustomAttributesData() {
-			return CustomAttributeData.GetCustomAttributes (this);
-		}
-
-		public override object[] GetCustomAttributes(bool inherit) {
-			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
-		}
-
-		public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
-		}
-
-		public override object CreateInstance(string typeName, bool ignoreCase, BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture, object[] activationAttributes)
-		{
-		    Type t = GetType(typeName, throwOnError: false, ignoreCase: ignoreCase);
-		    if (t == null)
-				return null;
-
-		    return Activator.CreateInstance(t, bindingAttr, binder, args, culture, activationAttributes);
 		}
 
 		//
@@ -240,13 +70,140 @@ namespace System.Reflection
 			}
 		}
 
-		public override Module ManifestModule {
+		public override Module ManifestModule => GetManifestModuleInternal ();
+
+		public override bool GlobalAssemblyCache => false;
+
+		public override long HostContext => 0;
+
+		public override string ImageRuntimeVersion => InternalImageRuntimeVersion (this);
+
+		public override string Location {
 			get {
-				return GetManifestModuleInternal ();
+				return get_location ();
 			}
 		}
 
-		public override Module GetModule (string name) {
+		// TODO:
+		public override bool IsCollectible => false;
+
+		internal static AssemblyName CreateAssemblyName (string assemblyString, out RuntimeAssembly assemblyFromResolveEvent)
+		{
+           if (assemblyString == null)
+                throw new ArgumentNullException (nameof (assemblyString));
+
+            if ((assemblyString.Length == 0) ||
+                (assemblyString[0] == '\0'))
+                throw new ArgumentException (SR.Format_StringZeroLength);
+
+			assemblyFromResolveEvent = null;
+			try {
+				return new AssemblyName (assemblyString);
+			} catch (Exception) {
+				assemblyFromResolveEvent = (RuntimeAssembly)AssemblyLoadContext.DoAssemblyResolve (assemblyString);
+				if (assemblyFromResolveEvent == null)
+					throw new FileLoadException (assemblyString);
+				return null;
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public override extern String[] GetManifestResourceNames ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public override extern Type[] GetExportedTypes ();
+
+		public override Type[] GetForwardedTypes ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override ManifestResourceInfo GetManifestResourceInfo (string resourceName)
+		{
+			if (resourceName == null)
+				throw new ArgumentNullException ("resourceName");
+			if (resourceName.Length == 0)
+				throw new ArgumentException ("String cannot have zero length.");
+			ManifestResourceInfo result = new ManifestResourceInfo (null, null, 0);
+			bool found = GetManifestResourceInfoInternal (resourceName, result);
+			if (found)
+				return result;
+			else
+				return null;
+		}
+
+		public override Stream GetManifestResourceStream (string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException (nameof (name));
+
+			if (name.Length == 0)
+				throw new ArgumentException ("String cannot have zero length.",
+					"name");
+
+			unsafe {
+				byte* data = (byte*) GetManifestResourceInternal (name, out int length, out Module resourceModule);
+				if (data == null)
+					return null;
+
+				// It cannot use SafeBuffer mode because not all methods are supported in this
+				// mode (e.g. UnmanagedMemoryStream.get_PositionPointer)
+				return new UnmanagedMemoryStreamForModule (data, length, resourceModule);
+			}
+		}
+
+		public override Stream GetManifestResourceStream (Type type, string name)
+		{
+			if (type == null && name == null)
+				throw new ArgumentNullException (nameof (type));
+
+			string nameSpace = type?.Namespace;
+
+			string resourceName = nameSpace != null && name != null ?
+				nameSpace + Type.Delimiter + name :
+				nameSpace + name;
+
+			return GetManifestResourceStream (resourceName);
+		}
+
+		public override AssemblyName GetName(bool copiedName)
+		{
+			return AssemblyName.Create (this, true);
+		}
+
+		public override Type GetType (string name, bool throwOnError, bool ignoreCase)
+		{
+			if (name == null)
+				throw new ArgumentNullException (nameof (name));
+
+			if (name.Length == 0)
+				throw new ArgumentException ("name", "Name cannot be empty");
+
+			return InternalGetType (null, name, throwOnError, ignoreCase);
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
+		}
+
+		public override IList<CustomAttributeData> GetCustomAttributesData ()
+		{
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+
+		public override object[] GetCustomAttributes (bool inherit)
+		{
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
+		}
+
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+		}
+
+		public override Module GetModule (string name)
+		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (name.Length == 0)
@@ -261,7 +218,8 @@ namespace System.Reflection
 			return null;
 		}
 
-		public override Module[] GetModules (bool getResourceModules) {
+		public override Module[] GetModules (bool getResourceModules)
+		{
 			Module[] modules = GetModulesInternal ();
 
 			if (!getResourceModules) {
@@ -275,11 +233,13 @@ namespace System.Reflection
 				return modules;
 		}
 
-		public override Module[] GetLoadedModules (bool getResourceModules) {
+		public override Module[] GetLoadedModules (bool getResourceModules)
+		{
 			return GetModules (getResourceModules);
 		}
 
-		public override AssemblyName[] GetReferencedAssemblies() {
+		public override AssemblyName[] GetReferencedAssemblies ()
+		{
 			using (var nativeNames = new Mono.SafeGPtrArrayHandle (InternalGetReferencedAssemblies (this))) {
 				var numAssemblies = nativeNames.Length;
 				try {
@@ -308,35 +268,33 @@ namespace System.Reflection
 			}
 		}
 
-		public override Assembly GetSatelliteAssembly(CultureInfo culture) {
+		public override Assembly GetSatelliteAssembly (CultureInfo culture)
+		{
+			return GetSatelliteAssembly (culture, null);
+		}
+
+		public override Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public override Assembly GetSatelliteAssembly(CultureInfo culture, Version version) {
+		public override FileStream GetFile (string name)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public override FileStream GetFile(string name) {
+		public override FileStream[] GetFiles (bool getResourceModules)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public override FileStream[] GetFiles(bool getResourceModules) {
+		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder = default)
+		{
 			throw new NotImplementedException ();
 		}
 
-		public override bool GlobalAssemblyCache {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override long HostContext {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public override Module LoadModule(string moduleName, byte[] rawModule, byte[] rawSymbolStore) {
+		public override Module LoadModule (string moduleName, byte[] rawModule, byte[] rawSymbolStore)
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -346,16 +304,33 @@ namespace System.Reflection
 			}
 		}
 
-		internal class ResourceSafeBuffer : SafeBuffer
-		{
-			public ResourceSafeBuffer (IntPtr data, ulong size) : base (true) {
-				SetHandle (data);
-				Initialize (size);
-			}
+		// FIXME: Merge some of these
 
-            protected override unsafe bool ReleaseHandle () {
-                return true;
-            }
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern string get_location ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static string get_code_base (Assembly a, bool escaped);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static string get_fullname (Assembly a);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static string InternalImageRuntimeVersion (Assembly a);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern bool GetManifestResourceInfoInternal (string name, ManifestResourceInfo info);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern IntPtr /* byte* */ GetManifestResourceInternal (string name, out int size, out Module module);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern Module GetManifestModuleInternal ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern Module[] GetModulesInternal ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern IntPtr InternalGetReferencedAssemblies (Assembly module);
 	}
 }

@@ -28,6 +28,8 @@
 
 #if !MONO_FEATURE_SRE
 
+using System.Runtime.InteropServices;
+
 namespace System.Reflection.Emit
 {
 	public class ILGenerator
@@ -182,6 +184,8 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		public virtual void EmitCalli (OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] parameterTypes) => throw new PlatformNotSupportedException ();
 
 		public virtual void EmitWriteLine (LocalBuilder localBuilder)
 		{

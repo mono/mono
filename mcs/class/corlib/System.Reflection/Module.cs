@@ -37,12 +37,6 @@ using System.Collections.Generic;
 
 namespace System.Reflection {
 
-	internal enum ResolveTokenError {
-		OutOfRange,
-		BadTable,
-		Other
-	};
-
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
 	partial class Module {
@@ -66,12 +60,6 @@ namespace System.Reflection {
 		public virtual X509Certificate GetSignerCertificate ()
 		{
 			throw NotImplemented.ByDesign;
-		}
-
-		internal virtual IntPtr MonoModule {
-			get {
-				throw NotImplemented.ByDesign;
-			}
 		}
 	}
 }

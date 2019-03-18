@@ -137,6 +137,9 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugSafeHandle.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ExceptionCheck.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpStatusDescription.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\IPAddressParserStatics.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\IPv4AddressHelper.Common.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\IPv6AddressHelper.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Logging\NetEventSource.Common.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\DomainLiteralReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Mail\DotAtomReader.cs" />
@@ -158,6 +161,7 @@
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\WebSockets\ManagedWebSocket.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\WebSockets\WebSocketValidate.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\NotImplemented.cs" />
+    <Compile Include="..\..\..\external\corefx\src\Common\src\System\PasteArguments.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\DerEncoder.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\Security\Cryptography\DerSequenceReader.cs" />
     <Compile Include="..\..\..\external\corefx\src\Common\src\System\StringExtensions.cs" />
@@ -407,7 +411,6 @@
     <Compile Include="..\..\..\external\corefx\src\System.IO.Compression\src\System\IO\Compression\GZipStream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\WaitForChangedResult.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemName.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\Base64Stream.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\BufferBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\CloseableStream.cs" />
@@ -441,6 +444,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.Net.Mail\src\System\Net\TrackingValidationObjectDictionary.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\HttpStatusCode.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\HttpVersion.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPAddress.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPAddressParser.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.Primitives\src\System\Net\IPEndPoint.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.ServicePoint\src\System\Net\SecurityProtocolType.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Net.WebClient\src\System\Net\WebClient.cs" />
@@ -470,6 +475,8 @@
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\ComponentModel\PropertyChangedEventHandler.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\ComponentModel\PropertyChangingEventArgs.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.ObjectModel\src\System\ComponentModel\PropertyChangingEventHandler.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Private.Uri\src\System\IPv4AddressHelper.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Private.Uri\src\System\IPv6AddressHelper.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Private.Uri\src\System\UriBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\CodeDom\Compiler\IndentedTextWriter.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Runtime.Extensions\src\System\StringNormalizationExtensions.cs" />
@@ -482,12 +489,13 @@
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidCollection.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidEnumerator.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\System\Security\Cryptography\OidGroup.cs" />
-    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Primitives\src\System\Security\Cryptography\CryptographicOperations.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Oids.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Internal\Cryptography\Pal.OSX\CertificateData.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\GeneralNameEncoder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\OpenFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreLocation.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\StoreName.cs" />
+    <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\SubjectAlternativeNameBuilder.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X500DistinguishedNameFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509ChainStatusFlags.cs" />
     <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\System\Security\Cryptography\X509Certificates\X509FindType.cs" />
@@ -626,7 +634,6 @@
     <Compile Include="..\referencesource\System\net\System\Net\ICertificatePolicy.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\ICredentials.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\ICredentialsByHost.cs" />
-    <Compile Include="..\referencesource\System\net\System\Net\IPAddress.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\IPHostEntry.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\IWebProxyFinder.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\IWebRequestCreate.cs" />
@@ -751,8 +758,6 @@
     <Compile Include="..\referencesource\System\net\System\UriParserTemplates.cs" />
     <Compile Include="..\referencesource\System\net\System\UriScheme.cs" />
     <Compile Include="..\referencesource\System\net\System\_DomainName.cs" />
-    <Compile Include="..\referencesource\System\net\System\_IPv4Address.cs" />
-    <Compile Include="..\referencesource\System\net\System\_IPv6Address.cs" />
     <Compile Include="..\referencesource\System\net\System\_UncName.cs" />
     <Compile Include="..\referencesource\System\net\System\_UriSyntax.cs" />
     <Compile Include="..\referencesource\System\security\system\security\Authentication\ExtendedProtection\ServiceNameCollection.cs" />
@@ -1007,8 +1012,10 @@
     <Compile Include="System\Platform.cs" />
     <Compile Include="System\SRDescriptionAttribute.cs" />
     <Compile Include="System\UriTypeConverter.cs" />
+    <Compile Include="corefx\CertificateRequest.cs" />
     <Compile Include="corefx\NameValueCollection.cs" />
     <Compile Include="corefx\StringDictionary.cs" />
+    <Compile Include="corefx\X509SignatureGenerator.cs" />
     <Compile Include="corefx\ZLibNative.cs" />
   </ItemGroup>
   <!--End of common files-->
@@ -1085,6 +1092,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1205,6 +1213,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\Win32UnixFactoryPal.cs" />
         <Compile Include="System.Net.Security\SslStream.cs" />
@@ -1300,6 +1309,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1424,6 +1434,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1544,6 +1555,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -1866,6 +1878,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -2335,6 +2348,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -2843,6 +2857,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -3339,6 +3354,7 @@
             <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
             <Compile Include="ReferenceSources\BinaryCompatibility.cs" />
             <Compile Include="ReferenceSources\ConfigurationManagerInternalFactory.cs" />
+            <Compile Include="ReferenceSources\DynamicRoleClaimProvider.cs" />
             <Compile Include="System.CodeDom.Compiler\CodeDomConfigurationHandler.cs" />
             <Compile Include="System.CodeDom.Compiler\Compiler.cs" />
             <Compile Include="System.CodeDom.Compiler\CompilerCollection.cs" />
@@ -3651,6 +3667,7 @@
         <Compile Include="Mono.AppleTls\SafeHandles.cs" />
         <Compile Include="Mono.AppleTls\X509CertificateImplApple.cs" />
         <Compile Include="Mono.AppleTls\X509PalImpl.Apple.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -3678,6 +3695,9 @@
         <Compile Include="System.Net.NetworkInformation\UnixNetworkInterfaceFactory.cs" />
         <Compile Include="System.Net.NetworkInformation\UnixTcpStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\UnixUdpStatistics.cs" />
+        <Compile Include="System.Net.Security\SslApplicationProtocol.pns.cs" />
+        <Compile Include="System.Net.Security\SslClientAuthenticationOptions.pns.cs" />
+        <Compile Include="System.Net.Security\SslServerAuthenticationOptions.pns.cs" />
         <Compile Include="System.Net.Security\SslStream.platformnotsupported.cs" />
         <Compile Include="System.Net.Sockets\TcpClient.platformnotsupported.cs" />
         <Compile Include="System.Net.Sockets\TcpListener.platformnotsupported.cs" />
@@ -3776,6 +3796,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -3917,6 +3938,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
@@ -4051,6 +4073,7 @@
         <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
         <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
         <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
         <Compile Include="System.Net.Mail\SmtpClient.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />

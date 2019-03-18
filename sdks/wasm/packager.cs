@@ -56,12 +56,15 @@ class Driver {
 	static string app_prefix, framework_prefix, bcl_prefix, bcl_tools_prefix, bcl_facades_prefix, out_prefix;
 	static HashSet<string> asm_map = new HashSet<string> ();
 	static List<string>  file_list = new List<string> ();
+	static HashSet<string> assemblies_with_dbg_info = new HashSet<string> ();
 	static List<string> root_search_paths = new List<string>();
 
 	const string BINDINGS_ASM_NAME = "WebAssembly.Bindings";
 	const string BINDINGS_RUNTIME_CLASS_NAME = "WebAssembly.Runtime";
 	const string HTTP_ASM_NAME = "WebAssembly.Net.Http";
 	const string WEBSOCKETS_ASM_NAME = "WebAssembly.Net.WebSockets";
+	const string BINDINGS_MODULE = "corebindings.o";
+	const string BINDINGS_MODULE_SUPPORT = "$tool_prefix/binding_support.js";
 
 	class AssemblyData {
 		// Assembly name
@@ -235,8 +238,10 @@ class Driver {
 		var data = new AssemblyData () { name = image.Assembly.Name.Name, src_path = ra };
 		assemblies.Add (data);
 
-		if (add_pdb && kind == AssemblyKind.User)
+		if (add_pdb && kind == AssemblyKind.User) {
 			file_list.Add (Path.ChangeExtension (ra, "pdb"));
+			assemblies_with_dbg_info.Add (Path.ChangeExtension (ra, "pdb"));
+		}
 
 		foreach (var ar in image.AssemblyReferences) {
 			// Resolve using root search paths first
@@ -534,7 +539,18 @@ class Driver {
 			wasm_core_assemblies [HTTP_ASM_NAME] = true;
 			wasm_core_assemblies [WEBSOCKETS_ASM_NAME] = true;
 		}
-
+		// wasm core bindings module
+		var wasm_core_bindings = string.Empty;
+		if (add_binding) {
+			wasm_core_bindings = BINDINGS_MODULE;
+		}
+		// wasm core bindings support file
+		var wasm_core_support = string.Empty;
+		var wasm_core_support_library = string.Empty;
+		if (add_binding) {
+			wasm_core_support = BINDINGS_MODULE_SUPPORT;
+			wasm_core_support_library = $"--js-library {BINDINGS_MODULE_SUPPORT}";
+		}
 		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, "runtime.js");
 		if (emit_ninja) {
 			File.Delete (runtime_js);
@@ -569,8 +585,6 @@ class Driver {
 
 		var file_list_str = string.Join (",", file_list.Select (f => $"\"{Path.GetFileName (f)}\"").Distinct());
 		var config = String.Format ("config = {{\n \tvfs_prefix: \"{0}\",\n \tdeploy_prefix: \"{1}\",\n \tenable_debugging: {2},\n \tfile_list: [ {3} ],\n", vfs_prefix, deploy_prefix, enable_debug ? "1" : "0", file_list_str);
-		if (add_binding || true)
-			config += "\tadd_bindings: function() { " + $"Module.mono_bindings_init (\"[{BINDINGS_ASM_NAME}]{BINDINGS_RUNTIME_CLASS_NAME}\");" + " }\n";
 		config += "}\n";
 		var config_js = Path.Combine (emit_ninja ? builddir : out_prefix, "mono-config.js");
 		File.Delete (config_js);
@@ -650,10 +664,19 @@ class Driver {
 		ninja.WriteLine ($"bcl_dir = {bcl_prefix}");
 		ninja.WriteLine ($"bcl_facades_dir = {bcl_facades_prefix}");
 		ninja.WriteLine ($"tools_dir = {bcl_tools_prefix}");
+		if (add_binding) {
+			ninja.WriteLine ($"wasm_core_bindings = $builddir/{BINDINGS_MODULE}");
+			ninja.WriteLine ($"wasm_core_support = {wasm_core_support}");
+			ninja.WriteLine ($"wasm_core_support_library = {wasm_core_support_library}");
+		} else {
+			ninja.WriteLine ("wasm_core_bindings =");
+			ninja.WriteLine ("wasm_core_support =");
+			ninja.WriteLine ("wasm_core_support_library =");
+		}
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
 		// -s ASSERTIONS=2 is very slow
-		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\"");
+		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\" -s \"DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\'setThrew\']\"");
 
 		// Rules
 		ninja.WriteLine ("rule aot");
@@ -673,7 +696,7 @@ class Driver {
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
 		ninja.WriteLine ("rule emcc-link");
-		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags -o $out --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/binding_support.js --js-library $tool_prefix/dotnet_support.js $in'");
+		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags -o $out --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in'");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out");
 		ninja.WriteLine ("rule linker");
 		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /nologo /out:$$f /target:library empty.cs; fi; done");
@@ -700,6 +723,15 @@ class Driver {
 
 			var driver_cflags = enable_aot ? "-DENABLE_AOT=1" : "";
 
+			if (add_binding) {
+				var bindings_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "corebindings.c"));
+				ninja.WriteLine ($"build $builddir/corebindings.c: cpifdiff {bindings_source_file}");
+
+				ninja.WriteLine ($"build $builddir/corebindings.o: emcc $builddir/corebindings.c");
+				ninja.WriteLine ($"  flags = -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
+				driver_cflags += " -DCORE_BINDINGS ";
+			}
+
 			ninja.WriteLine ($"build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c {driver_deps}");
 			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 		} else {
@@ -723,10 +755,12 @@ class Driver {
 				continue;
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
-
+			string filename_pdb = Path.ChangeExtension (filename, "pdb");
 			var source_file_path = Path.GetFullPath (assembly);
+			var source_file_path_pdb = Path.ChangeExtension (source_file_path, "pdb");
 			string infile = "";
-
+			string infile_pdb = "";
+			bool emit_pdb = assemblies_with_dbg_info.Contains (source_file_path_pdb);
 			if (enable_linker) {
 				a.linkin_path = $"$builddir/linker-in/{filename}";
 				a.linkout_path = $"$builddir/linker-out/{filename}";
@@ -737,6 +771,10 @@ class Driver {
 			} else {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
+				if (emit_pdb){
+					ninja.WriteLine ($"build $builddir/{filename_pdb}: cpifdiff {source_file_path_pdb}");
+					infile_pdb = $"$builddir/{filename_pdb}";
+				}
 			}
 
 			a.final_path = infile;
@@ -746,7 +784,8 @@ class Driver {
 			}
 
 			ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename}: cpifdiff {a.final_path}");
-
+			if (emit_pdb)
+				ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename_pdb}: cpifdiff {infile_pdb}");
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
 
@@ -792,7 +831,7 @@ class Driver {
 			ninja.WriteLine ($"  runtime_table=$builddir/icall-table.json");
 		}
 		if (build_wasm) {
-			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/binding_support.js $tool_prefix/dotnet_support.js");
+			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
 		}
 		if (enable_linker) {
 			switch (linkMode) {

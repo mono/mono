@@ -957,7 +957,7 @@ namespace System {
 		}
 
 		// private methods
-#if (MONOTOUCH || MONODROID || XAMMAC)
+#if (MONOTOUCH || MONODROID || XAMMAC || WASM)
 		internal const bool IsRunningOnWindows = false;
 #else
 		internal static bool IsRunningOnWindows {
@@ -986,7 +986,7 @@ namespace System {
 		internal extern static string internalGetGacPath ();
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string [] GetLogicalDrivesInternal ();
+		internal extern static string [] GetLogicalDrivesInternal ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetEnvironmentVariableNames ();

@@ -427,7 +427,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 50;
+		internal const int MINOR_VERSION = 51;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -548,7 +548,8 @@ namespace Mono.Debugger.Soft
 			GET_IS_DYNAMIC = 9,
 			GET_PDB_BLOB = 10,
 			GET_TYPE_FROM_TOKEN = 11,
-			GET_METHOD_FROM_TOKEN = 12
+			GET_METHOD_FROM_TOKEN = 12,
+			HAS_DEBUG_INFO = 13,
 		}
 
 		enum CmdModule {
@@ -1618,8 +1619,8 @@ namespace Mono.Debugger.Soft
 			/* Wait for the reply packet */
 			while (true) {
 				lock (reply_packets_monitor) {
-					if (reply_packets.ContainsKey (packetId)) {
-						byte[] reply = reply_packets [packetId];
+					byte[] reply;
+					if (reply_packets.TryGetValue (packetId, out reply)) {
 						reply_packets.Remove (packetId);
 						PacketReader r = new PacketReader (this, reply);
 
@@ -2224,6 +2225,10 @@ namespace Mono.Debugger.Soft
 
 		internal long Assembly_GetMethod (long id, uint token) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_METHOD_FROM_TOKEN, new PacketWriter ().WriteId (id).WriteInt ((int)token)).ReadId ();
+		}
+
+		internal bool Assembly_HasDebugInfo (long id) {
+			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.HAS_DEBUG_INFO, new PacketWriter ().WriteId (id)).ReadBool ();
 		}
 
 		/*
