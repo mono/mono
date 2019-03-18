@@ -28,8 +28,6 @@ link-mono:
 
 prepare: $(NETCORESDK_FILE) link-mono
 
-all: build-System.Runtime.Tests
-
 COREFX_BINDIR=$(COREFX_ROOT)/artifacts/bin
 
 check-env:
@@ -54,6 +52,8 @@ TEST_SUITES = \
 	System.Runtime.Tests \
 	System.Runtime.CompilerServices.Unsafe.Tests \
 	System.Collections.Tests
+
+all: $(addprefix build-, $(TEST_SUITES))
 
 # The binary directory under $(COREFIX_BINDIR)
 System.Runtime.CompilerServices.Unsafe.Tests_PROFILE = netstandard-Debug
