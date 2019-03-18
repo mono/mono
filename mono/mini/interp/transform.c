@@ -30,6 +30,11 @@
 #include "interp-internals.h"
 #include "interp.h"
 
+#define INTERP_INST_FLAG_SEQ_POINT_NONEMPTY_STACK 1
+#define INTERP_INST_FLAG_SEQ_POINT_METHOD_ENTRY 2
+#define INTERP_INST_FLAG_SEQ_POINT_METHOD_EXIT 4
+#define INTERP_INST_FLAG_SEQ_POINT_NESTED_CALL 8
+
 MonoInterpStats mono_interp_stats;
 
 #define DEBUG 0
@@ -49,6 +54,7 @@ struct InterpInst {
 	// If this is -1, this instruction is not logically associated with an IL offset, it is
 	// part of the IL instruction associated with the previous interp instruction.
 	int il_offset;
+	guint32 flags;
 	guint16 data [MONO_ZERO_LEN_ARRAY];
 };
 
@@ -2188,24 +2194,6 @@ save_seq_points (TransformData *td, MonoJitInfo *jinfo)
 	jinfo->seq_points = info;
 }
 
-static void
-emit_seq_point (TransformData *td, int il_offset, InterpBasicBlock *cbb, gboolean nonempty_stack)
-{
-	SeqPoint *seqp;
-
-	seqp = (SeqPoint*)mono_mempool_alloc0 (td->mempool, sizeof (SeqPoint));
-	seqp->il_offset = il_offset;
-	seqp->native_offset = (guint8*)td->new_ip - (guint8*)td->new_code;
-	if (nonempty_stack)
-		seqp->flags |= MONO_SEQ_POINT_FLAG_NONEMPTY_STACK;
-
-	interp_add_ins (td, MINT_SDB_SEQ_POINT);
-	g_ptr_array_add (td->seq_points, seqp);
-
-	cbb->seq_points = g_slist_prepend_mempool (td->mempool, cbb->seq_points, seqp);
-	cbb->last_seq_point = seqp;
-}
-
 #define BARRIER_IF_VOLATILE(td) \
 	do { \
 		if (volatile_) { \
@@ -2399,7 +2387,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	gboolean sym_seq_points = FALSE;
 	MonoBitSet *seq_point_locs = NULL;
 	MonoBitSet *seq_point_set_locs = NULL;
-	InterpBasicBlock *bb_exit = NULL;
 	gboolean readonly = FALSE;
 	gboolean volatile_ = FALSE;
 	MonoClass *constrained_class = NULL;
@@ -2412,6 +2399,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	gboolean ret = TRUE;
 	gboolean emitted_funccall_seq_point = FALSE;
 	guint32 *arg_offsets = NULL;
+	InterpInst *last_seq_point = NULL;
 
 	original_bb = bb = mono_basic_block_split (method, error, header);
 	goto_if_nok (error, exit);
@@ -2500,9 +2488,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	}
 
 	if (sym_seq_points) {
-		InterpBasicBlock *cbb = td->offset_to_bb [0];
-		g_assert (cbb);
-		emit_seq_point (td, METHOD_ENTRY_IL_OFFSET, cbb, FALSE);
+		last_seq_point = interp_add_ins (td, MINT_SDB_SEQ_POINT);
+		last_seq_point->flags = INTERP_INST_FLAG_SEQ_POINT_METHOD_ENTRY;
 	}
 
 	if (mono_debugger_method_has_breakpoint (method))
@@ -2603,13 +2590,10 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (in_offset == 0 || g_slist_length (cbb->preds) > 1)
 				interp_add_ins (td, MINT_SDB_INTR_LOC);
 
-			emit_seq_point (td, in_offset, cbb, FALSE);
+			last_seq_point = interp_add_ins (td, MINT_SDB_SEQ_POINT);
 
 			mono_bitset_set_fast (seq_point_set_locs, td->ip - header->code);
 		}
-
-		if (sym_seq_points)
-			bb_exit = td->offset_to_bb [td->ip - header->code];
 
 		if (td->is_bb_start [in_offset]) {
 			int index = td->clause_indexes [in_offset];
@@ -2832,19 +2816,19 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				goto exit;
 
 			if (need_seq_point) {
-				InterpBasicBlock *cbb = td->offset_to_bb [td->ip - header->code];
-				g_assert (cbb);
-
 				//check is is a nested call and remove the MONO_INST_NONEMPTY_STACK of the last breakpoint, only for non native methods
 				if (!(method->flags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
 					if (emitted_funccall_seq_point)	{
-						if (cbb->last_seq_point)
-							cbb->last_seq_point->flags |= MONO_SEQ_POINT_FLAG_NESTED_CALL;
+						if (last_seq_point)
+							last_seq_point->flags |= INTERP_INST_FLAG_SEQ_POINT_NESTED_CALL;
 					}
 					else
 						emitted_funccall_seq_point = TRUE;	
 				}
-				emit_seq_point (td, td->ip - header->code, cbb, TRUE);
+				last_seq_point = interp_add_ins (td, MINT_SDB_SEQ_POINT);
+				// This seq point is actually associated with the instruction following the call
+				last_seq_point->il_offset = td->ip - header->code;
+				last_seq_point->flags = INTERP_INST_FLAG_SEQ_POINT_NONEMPTY_STACK;
 			}
 
 			constrained_class = NULL;
@@ -2876,9 +2860,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				g_error ("%s: CEE_RET: value type stack: %d vs. %d", mono_method_full_name (td->method, TRUE), td->vt_sp, vt_size);
 
 			if (sym_seq_points) {
-				InterpBasicBlock *cbb = td->offset_to_bb [td->ip - header->code];
-				g_assert (cbb);
-				emit_seq_point (td, METHOD_EXIT_IL_OFFSET, bb_exit, FALSE);
+				last_seq_point = interp_add_ins (td, MINT_SDB_SEQ_POINT);
+				td->last_ins->flags = INTERP_INST_FLAG_SEQ_POINT_METHOD_EXIT;
 			}
 
 			if (vt_size == 0)
@@ -5438,6 +5421,29 @@ emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *in
 			*ip++ = 0xdead;
 			*ip++ = 0xbeef;
 		}
+	} else if (opcode == MINT_SDB_SEQ_POINT) {
+		SeqPoint *seqp = (SeqPoint*)mono_mempool_alloc0 (td->mempool, sizeof (SeqPoint));
+		InterpBasicBlock *cbb;
+
+		if (ins->flags & INTERP_INST_FLAG_SEQ_POINT_METHOD_ENTRY) {
+			seqp->il_offset = METHOD_ENTRY_IL_OFFSET;
+			cbb = td->offset_to_bb [0];
+		} else {
+			if (ins->flags & INTERP_INST_FLAG_SEQ_POINT_METHOD_EXIT)
+				seqp->il_offset = METHOD_EXIT_IL_OFFSET;
+			else
+				seqp->il_offset = ins->il_offset;
+			cbb = td->offset_to_bb [ins->il_offset];
+		}
+		seqp->native_offset = (guint8*)start_ip - (guint8*)td->new_code;
+		if (ins->flags & INTERP_INST_FLAG_SEQ_POINT_NONEMPTY_STACK)
+			seqp->flags |= MONO_SEQ_POINT_FLAG_NONEMPTY_STACK;
+		if (ins->flags & INTERP_INST_FLAG_SEQ_POINT_NESTED_CALL)
+			seqp->flags |= MONO_SEQ_POINT_FLAG_NESTED_CALL;
+		g_ptr_array_add (td->seq_points, seqp);
+
+		cbb->seq_points = g_slist_prepend_mempool (td->mempool, cbb->seq_points, seqp);
+		cbb->last_seq_point = seqp;
 	} else {
 		int size = get_inst_length (ins) - 1;
 		// Emit the rest of the data
