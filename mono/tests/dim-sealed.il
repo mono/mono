@@ -10,7 +10,7 @@
   .ver 4:0:0:0
   .publickeytoken = (B7 7A 5C 56 19 34 E0 89 ) // .z\V.4..
 }
-.assembly '13466'
+.assembly 'sealed'
 {
   .custom instance void class [mscorlib]System.Runtime.CompilerServices.CompilationRelaxationsAttribute::'.ctor'(int32) =  (01 00 08 00 00 00 00 00 ) // ........
 
@@ -23,7 +23,7 @@
   .hash algorithm 0x00008004
   .ver  0:0:0:0
 }
-.module 13466.exe // GUID = {A4E97AD7-126F-4034-838B-627DE47F9E63}
+.module sealed.exe // GUID = {A4E97AD7-126F-4034-838B-627DE47F9E63}
 
 
   .class interface private auto ansi abstract I1
