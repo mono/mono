@@ -335,6 +335,32 @@ public class TestClass {
 		obj.SetObjectProperty("onlyif", RequestCache.OnlyIfCached);
 	}
 
+	static Function sum;
+	public static void CreateFunctionSum () 
+	{
+		sum = new Function("a", "b", "return a + b");
+	}
+
+	public static int sumValue = 0;
+	public static void CallFunctionSum () 
+	{
+		sumValue = (int)sum.Call(null, 3, 5);
+	}
+
+	static Function mathMin;
+	public static void CreateFunctionApply () 
+	{
+		var math = (JSObject)Runtime.GetGlobalObject("Math");
+		mathMin = (Function)math.GetObjectProperty("min");
+
+	}
+
+	public static int minValue = 0;
+	public static void CallFunctionApply () 
+	{
+		minValue = (int)mathMin.Apply(null, new object[] { 5, 6, 2, 3, 7 });
+	}
+
 }
 
 
@@ -998,6 +1024,26 @@ public class BindingTests {
 		Assert.AreEqual (18, TestClass.taDouble.Length);
 		Assert.AreEqual (3.14d, TestClass.taDouble[0]);
 		Assert.AreEqual (3.14d, TestClass.taDouble[TestClass.taDouble.Length - 1]);
+	}
+
+	[Test]
+	public static void TestFunctionSum () {
+		TestClass.sumValue = 0;
+		Runtime.InvokeJS (@"
+			call_test_method (""CreateFunctionSum"", null, [ ]);
+			call_test_method (""CallFunctionSum"", null, [  ]);
+		");
+		Assert.AreEqual (8, TestClass.sumValue);
+	}
+
+	[Test]
+	public static void TestFunctionApply () {
+		TestClass.minValue = 0;
+		Runtime.InvokeJS (@"
+			call_test_method (""CreateFunctionApply"", null, [ ]);
+			call_test_method (""CallFunctionApply"", null, [  ]);
+		");
+		Assert.AreEqual (2, TestClass.minValue);
 	}
 
 
