@@ -10,7 +10,7 @@
   .ver 4:0:0:0
   .publickeytoken = (B7 7A 5C 56 19 34 E0 89 ) // .z\V.4..
 }
-.assembly 'Program'
+.assembly 'dim-implements-multiple-interfaces'
 {
   .custom instance void class [mscorlib]System.Runtime.CompilerServices.CompilationRelaxationsAttribute::'.ctor'(int32) =  (01 00 08 00 00 00 00 00 ) // ........
 
@@ -23,7 +23,7 @@
   .hash algorithm 0x00008004
   .ver  0:0:0:0
 }
-.module Program.exe // GUID = {E3359E21-7B55-42A2-955D-56EEE1BBB2BB}
+.module 'dim-implements-multiple-interfaces.exe' // GUID = {07D2CB79-FB07-4F86-A98B-DDB6DB7760DE}
 
 
 .namespace Application
@@ -36,13 +36,12 @@
            instance default void M1 ()  cil managed 
     {
         // Method begins at RVA 0x2050
-	// Code size 13 (0xd)
+	// Code size 12 (0xc)
 	.maxstack 8
 	IL_0000:  nop 
-	IL_0001:  ldstr "Unexpected!!!"
-	IL_0006:  call void class [mscorlib]System.Console::WriteLine(string)
-	IL_000b:  nop 
-	IL_000c:  ret 
+	IL_0001:  ldstr "Shoud not be called"
+	IL_0006:  newobj instance void class [mscorlib]System.Exception::'.ctor'(string)
+	IL_000b:  throw 
     } // end of method I1::M1
 
   } // end of class Application.I1
@@ -57,15 +56,14 @@
     .method public final virtual hidebysig 
            instance default void Application.I1.M1 ()  cil managed 
     {
-        // Method begins at RVA 0x205e
+        // Method begins at RVA 0x2050
 	.override class Application.I1::M1
-	// Code size 13 (0xd)
+	// Code size 12 (0xc)
 	.maxstack 8
 	IL_0000:  nop 
-	IL_0001:  ldstr "I2.I1.M1"
-	IL_0006:  call void class [mscorlib]System.Console::WriteLine(string)
-	IL_000b:  nop 
-	IL_000c:  ret 
+	IL_0001:  ldstr "Shoud not be called"
+	IL_0006:  newobj instance void class [mscorlib]System.Exception::'.ctor'(string)
+	IL_000b:  throw 
     } // end of method I2::Application.I1.M1
 
   } // end of class Application.I2
@@ -80,15 +78,14 @@
     .method public final virtual hidebysig 
            instance default void Application.I1.M1 ()  cil managed 
     {
-        // Method begins at RVA 0x206c
+        // Method begins at RVA 0x2050
 	.override class Application.I1::M1
-	// Code size 13 (0xd)
+	// Code size 12 (0xc)
 	.maxstack 8
 	IL_0000:  nop 
-	IL_0001:  ldstr "I3.I1.M1"
-	IL_0006:  call void class [mscorlib]System.Console::WriteLine(string)
-	IL_000b:  nop 
-	IL_000c:  ret 
+	IL_0001:  ldstr "Shoud not be called"
+	IL_0006:  newobj instance void class [mscorlib]System.Exception::'.ctor'(string)
+	IL_000b:  throw 
     } // end of method I3::Application.I1.M1
 
   } // end of class Application.I3
@@ -103,15 +100,14 @@
     .method public final virtual hidebysig 
            instance default void Application.I1.M1 ()  cil managed 
     {
-        // Method begins at RVA 0x207a
+        // Method begins at RVA 0x2050
 	.override class Application.I1::M1
-	// Code size 13 (0xd)
+	// Code size 12 (0xc)
 	.maxstack 8
 	IL_0000:  nop 
-	IL_0001:  ldstr "I4.I1.M1"
-	IL_0006:  call void class [mscorlib]System.Console::WriteLine(string)
-	IL_000b:  nop 
-	IL_000c:  ret 
+	IL_0001:  ldstr "Shoud not be called"
+	IL_0006:  newobj instance void class [mscorlib]System.Exception::'.ctor'(string)
+	IL_000b:  throw 
     } // end of method I4::Application.I1.M1
 
   } // end of class Application.I4
@@ -127,7 +123,7 @@
     .method public final virtual hidebysig newslot 
            instance default void M1 ()  cil managed 
     {
-        // Method begins at RVA 0x2088
+        // Method begins at RVA 0x205d
 	// Code size 13 (0xd)
 	.maxstack 8
 	IL_0000:  nop 
@@ -141,7 +137,7 @@
     .method public hidebysig specialname rtspecialname 
            instance default void '.ctor' ()  cil managed 
     {
-        // Method begins at RVA 0x2096
+        // Method begins at RVA 0x206b
 	// Code size 8 (0x8)
 	.maxstack 8
 	IL_0000:  ldarg.0 
@@ -163,7 +159,7 @@
     .method public static hidebysig 
            default void Main (string[] args)  cil managed 
     {
-        // Method begins at RVA 0x20a0
+        // Method begins at RVA 0x2074
 	.entrypoint
 	// Code size 15 (0xf)
 	.maxstack 1
@@ -182,7 +178,7 @@
     .method public hidebysig specialname rtspecialname 
            instance default void '.ctor' ()  cil managed 
     {
-        // Method begins at RVA 0x2096
+        // Method begins at RVA 0x206b
 	// Code size 8 (0x8)
 	.maxstack 8
 	IL_0000:  ldarg.0 
