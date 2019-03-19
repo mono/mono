@@ -36,8 +36,8 @@ namespace System.Windows.Forms {
 		internal abstract void		ShutdownDriver(IntPtr token);
 		internal delegate IntPtr	WndProc(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
 
-
 		#region XplatUI Driver Properties
+
 		internal virtual int ActiveWindowTrackingDelay { get { return 0; } }
 
 		internal virtual Color ForeColor {
@@ -414,6 +414,8 @@ namespace System.Windows.Forms {
 		internal abstract IntPtr SendMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
 		internal abstract bool PostMessage(IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam);
 		internal abstract int SendInput(IntPtr hwnd, System.Collections.Queue keys);
+		internal abstract bool InterProcessPostMessage(IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam);
+		internal abstract uint RegisterWindowMessage (string lpString);
 
 		internal abstract object StartLoop(Thread thread);
 		internal abstract void EndLoop(Thread thread);
@@ -423,6 +425,8 @@ namespace System.Windows.Forms {
 		internal abstract void RequestAdditionalWM_NCMessages(IntPtr hwnd, bool hover, bool leave);
 
 		internal abstract void RaiseIdle (EventArgs e);
+
+		internal abstract bool EnumTopLevelWindows (XplatUI.EnumWindowsProc lpEnumFunc, IntPtr lParam);
 		
 		// System information
 		internal abstract int KeyboardSpeed { get; } 

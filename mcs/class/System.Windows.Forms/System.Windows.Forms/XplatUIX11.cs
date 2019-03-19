@@ -70,7 +70,8 @@ using Mono.Unix.Native;
 
 /// X11 Version
 namespace System.Windows.Forms {
-	internal class XplatUIX11 : XplatUIDriver {
+
+	internal partial class XplatUIX11 : XplatUIDriver {
 		#region Local Variables
 		// General
 		static volatile XplatUIX11	Instance;
@@ -79,7 +80,7 @@ namespace System.Windows.Forms {
 		static bool		themes_enabled;
 
 		// General X11
-		static IntPtr		DisplayHandle;		// X11 handle to display
+		public static IntPtr		DisplayHandle;		// X11 handle to display
 		static int		ScreenNo;		// Screen number used
 		static IntPtr		DefaultColormap;	// Colormap for screen
 		static IntPtr		CustomVisual;		// Visual for window creation
@@ -97,7 +98,7 @@ namespace System.Windows.Forms {
 		static ClipboardData	Clipboard;		// Our clipboard
 
 		// Communication
-		static IntPtr		PostAtom;		// PostMessage atom
+		public static IntPtr		PostAtom;		// PostMessage atom
 		static IntPtr		AsyncAtom;		// Support for async messages
 
 		// Message Loop
@@ -135,6 +136,10 @@ namespace System.Windows.Forms {
 		// Last window containing the pointer
 		static IntPtr		LastPointerWindow;	// The last window containing the pointer
 
+		// Additional Mono-specific window infomation:
+		static IntPtr MonoWindowInfo;  // Atom to identify custom window property.
+		static IntPtr MonoWindowInfoData;  // Atom to identify custom data type -- the `MonoWindowInfoData` structure.
+		
 		// Our atoms
 		static IntPtr WM_PROTOCOLS;
 		static IntPtr WM_DELETE_WINDOW;
@@ -292,6 +297,7 @@ namespace System.Windows.Forms {
 				}
 				RefCount++;
 			}
+
 			return Instance;
 		}
 
@@ -634,7 +640,9 @@ namespace System.Windows.Forms {
 				"TARGETS",
 				"_SWF_AsyncAtom",
 				"_SWF_PostMessageAtom",
-				"_SWF_HoverAtom" };
+				"_SWF_HoverAtom",
+				"_SWF_MonoWindowInfo",
+				"_SWF_MonoWindowInfoData" };
 
 			IntPtr[] atoms = new IntPtr [atom_names.Length];;
 
@@ -711,6 +719,8 @@ namespace System.Windows.Forms {
 			AsyncAtom = atoms [off++];
 			PostAtom = atoms [off++];
 			HoverState.Atom = atoms [off++];
+			MonoWindowInfo = atoms [off++];
+			MonoWindowInfoData = atoms [off++];
 
 			//DIB = (IntPtr)Atom.XA_PIXMAP;
 			_NET_SYSTEM_TRAY_S = XInternAtom (DisplayHandle, "_NET_SYSTEM_TRAY_S" + ScreenNo.ToString(), false);
@@ -728,9 +738,24 @@ namespace System.Windows.Forms {
 		}
 
 		void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2, IntPtr l3) {
-			XEvent	xev;
+			var xev = MakeClientMessageSendXEvent(window, message_type, l0, l1, l2, l3);
+			var event_mask = new IntPtr ((int) (EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask));
+			XSendEvent(DisplayHandle, RootWindow, false, event_mask, ref xev);
+		}
 
-			xev = new XEvent();
+		void SendNetClientMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
+			SendNetClientMessage (window, message_type, l0, l1, l2, IntPtr.Zero);
+		}
+
+		void SendNetClientMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2, IntPtr l3) {
+			var xev = MakeClientMessageSendXEvent(window, message_type, l0, l1, l2, l3);
+			var event_mask = new IntPtr ((int)EventMask.NoEventMask);
+			XSendEvent(DisplayHandle, window, false, event_mask, ref xev);
+		}
+
+		XEvent MakeClientMessageSendXEvent(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2, IntPtr l3)
+		{
+			var xev = new XEvent();
 			xev.ClientMessageEvent.type = XEventName.ClientMessage;
 			xev.ClientMessageEvent.send_event = true;
 			xev.ClientMessageEvent.window = window;
@@ -740,22 +765,7 @@ namespace System.Windows.Forms {
 			xev.ClientMessageEvent.ptr2 = l1;
 			xev.ClientMessageEvent.ptr3 = l2;
 			xev.ClientMessageEvent.ptr4 = l3;
-			XSendEvent(DisplayHandle, RootWindow, false, new IntPtr ((int) (EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask)), ref xev);
-		}
-
-		void SendNetClientMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
-			XEvent	xev;
-
-			xev = new XEvent();
-			xev.ClientMessageEvent.type = XEventName.ClientMessage;
-			xev.ClientMessageEvent.send_event = true;
-			xev.ClientMessageEvent.window = window;
-			xev.ClientMessageEvent.message_type = message_type;
-			xev.ClientMessageEvent.format = 32;
-			xev.ClientMessageEvent.ptr1 = l0;
-			xev.ClientMessageEvent.ptr2 = l1;
-			xev.ClientMessageEvent.ptr3 = l2;
-			XSendEvent(DisplayHandle, window, false, new IntPtr ((int)EventMask.NoEventMask), ref xev);
+			return xev;
 		}
 
 		// For WM_LBUTTONDOWN, WM_MBUTTONDOWN, WM_RBUTTONDOWN, WM_XBUTTONDOWN
@@ -2660,7 +2670,7 @@ namespace System.Windows.Forms {
 			if (hwnd != null) {
 				lock (XlibLock) {
 					if (true /* the window manager supports NET_ACTIVE_WINDOW */) {
-						SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, (IntPtr)1, IntPtr.Zero, IntPtr.Zero);
+						SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, (IntPtr)1, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 						XEventQueue q = null;
 						lock (unattached_timer_list) {
 							foreach (Timer t in unattached_timer_list) {
@@ -2982,6 +2992,11 @@ namespace System.Windows.Forms {
 			hwnd.Queue = ThreadQueue(Thread.CurrentThread);
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
+
+			var monoWindowInfoData = new MonoWindowInfoData {
+				ClientWindow = ClientWindow
+			};
+			XChangeProperty (DisplayHandle, WholeWindow, MonoWindowInfo, MonoWindowInfoData, 32, PropertyMode.Replace, ref monoWindowInfoData, 1);
 
 			DriverDebug("Created window {0:X} / {1:X} parent {2:X}, Style {3}, ExStyle {4}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, (WindowStyles)cp.Style, (WindowExStyles)cp.ExStyle);
 			
@@ -3525,6 +3540,8 @@ namespace System.Windows.Forms {
 					}
 					return (IntPtr)1;
 				}
+				default:
+					break;
 			}
 			return IntPtr.Zero;
 		}
@@ -4700,9 +4717,11 @@ namespace System.Windows.Forms {
 					}
 
 					if (xevent.ClientMessageEvent.message_type == (IntPtr)PostAtom) {						
+						var s = String.Format ("Posted message:" + (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 () + " for 0x{0:x}", xevent.ClientMessageEvent.ptr1.ToInt32 ());
 						DebugHelper.Indent ();
-						DebugHelper.WriteLine (String.Format ("Posted message:" + (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 () + " for 0x{0:x}", xevent.ClientMessageEvent.ptr1.ToInt32 ()));
+						DebugHelper.WriteLine (s);
 						DebugHelper.Unindent ();
+
 						msg.hwnd = xevent.ClientMessageEvent.ptr1;
 						msg.message = (Msg) xevent.ClientMessageEvent.ptr2.ToInt32 ();
 						msg.wParam = xevent.ClientMessageEvent.ptr3;
@@ -5178,6 +5197,13 @@ namespace System.Windows.Forms {
 			return GetMessage(queue_id, ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
+		internal override bool InterProcessPostMessage (IntPtr handle, int message, IntPtr wParam, IntPtr lParam)
+		{
+			SendNetClientMessage (handle, PostAtom, handle, new IntPtr(message), wParam, lParam);
+			XFlush (DisplayHandle);
+			return true;
+		}
+
 		internal override bool PostMessage (IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam)
 		{
 			XEvent xevent = new XEvent ();
@@ -5192,7 +5218,7 @@ namespace System.Windows.Forms {
 				xevent.ClientMessageEvent.window = IntPtr.Zero;
 			}
 
-			xevent.ClientMessageEvent.message_type = (IntPtr) PostAtom;
+			xevent.ClientMessageEvent.message_type = PostAtom;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = handle;
 			xevent.ClientMessageEvent.ptr2 = (IntPtr) message;
@@ -5477,6 +5503,7 @@ namespace System.Windows.Forms {
 
 				return IntPtr.Zero;
 			}
+
 			string key = hwnd + ":" + message;
 			if (messageHold[key] != null)
 				messageHold[key] = ((int)messageHold[key]) - 1;
@@ -5950,7 +5977,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height)
 		{
 			Hwnd		hwnd;
@@ -6366,10 +6392,73 @@ namespace System.Windows.Forms {
 			XFreeGC (DisplayHandle, gc);
 		}
 
+		internal override bool EnumTopLevelWindows (XplatUI.EnumWindowsProc lpEnumFunc, IntPtr lParam)
+		{
+			const int MAX_DEPTH_LEVEL = 2;  // Windows manager stores top-level windows as child for wrapper windows.
+			const int RET_CODE_NORMAL = 0;
+			const int RET_CODE_STOP_ITER = 1;
+			const int XSTATUS_FAIL = 0;
+
+			int sizeInBytes = Marshal.SizeOf<MonoWindowInfoData> ();
+			int sizeIn32bits = (sizeInBytes / 4) + (sizeInBytes % 4 > 0 ? 1 : 0);
+			
+			IntPtr propDataPtr = IntPtr.Zero;
+			int status = 0;
+
+			IterateChildren (RootWindow, 1);
+
+			return (status != XSTATUS_FAIL);
+
+			int IterateChildren (IntPtr windowHandle, int depthLevel)
+			{
+				if (depthLevel > MAX_DEPTH_LEVEL)
+					return RET_CODE_NORMAL;
+
+				status = XQueryTree (DisplayHandle, windowHandle, out _, out _, out IntPtr childrenPtr, out int nchildren);
+				if (status == XSTATUS_FAIL)
+					return RET_CODE_STOP_ITER;
+
+				if (childrenPtr != IntPtr.Zero) {
+					var children = new IntPtr[nchildren];
+					Marshal.Copy (childrenPtr, children, 0, nchildren);
+
+					foreach (var childHandle in children) {
+						XGetWindowProperty (DisplayHandle, childHandle, MonoWindowInfo, IntPtr.Zero, new IntPtr (sizeIn32bits), false, MonoWindowInfoData, out IntPtr actualType, out int actualFormat, out _, out _, ref propDataPtr);
+						bool notMonoWindow = (actualType == IntPtr.Zero && actualFormat == 0);  // ignoring bytes_after here to simplify
+
+						if (notMonoWindow) {
+							var retCode = IterateChildren (childHandle, depthLevel + 1);
+							if (retCode == RET_CODE_STOP_ITER)
+								return RET_CODE_STOP_ITER;
+						}
+						else {
+							// `Form.Handle` returns handle of its `ClientWindow`. Hence we should use here `propData.ClientWindow`.
+							var propData = Marshal.PtrToStructure<MonoWindowInfoData> (propDataPtr);
+							bool continueEnumeration = lpEnumFunc (propData.ClientWindow, lParam);
+							if (!continueEnumeration)
+								return RET_CODE_STOP_ITER;
+						}
+					}
+
+					XFree (childrenPtr);
+				}
+
+				return RET_CODE_NORMAL;
+			}
+		}
+
+		internal override uint RegisterWindowMessage (string lpString)
+		{
+			var storage = new WindowMessagesStorage ();
+			return storage.RegisterWindowMessage (lpString);
+		}
+
 		#endregion	// Public Static Methods
 
 		#region Events
+
 		internal override event EventHandler Idle;
+
 		#endregion	// Events
 
 		
@@ -6803,6 +6892,14 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int _XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref MotifWmHints data, int nelements);
 		internal static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref MotifWmHints data, int nelements)
+		{
+			DebugHelper.TraceWriteLine ("XChangeProperty");
+			return _XChangeProperty(display, window, property, type, format, mode, ref data, nelements);
+		}
+
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
+		internal extern static int _XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref MonoWindowInfoData data, int nelements);
+		internal static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref MonoWindowInfoData data, int nelements)
 		{
 			DebugHelper.TraceWriteLine ("XChangeProperty");
 			return _XChangeProperty(display, window, property, type, format, mode, ref data, nelements);
@@ -7459,6 +7556,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref MotifWmHints data, int nelements);
+
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
+		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref MonoWindowInfoData data, int nelements);
 
 		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, IntPtr property, IntPtr type, int format, PropertyMode mode, ref uint value, int nelements);

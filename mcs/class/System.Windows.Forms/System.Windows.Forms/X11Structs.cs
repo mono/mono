@@ -1818,4 +1818,9 @@ namespace System.Windows.Forms {
 		public short width;
 		public short height;
 	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct MonoWindowInfoData {
+		public IntPtr ClientWindow;
+	}
 }

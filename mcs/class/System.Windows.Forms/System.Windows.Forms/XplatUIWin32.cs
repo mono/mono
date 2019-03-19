@@ -2562,7 +2562,7 @@ namespace System.Windows.Forms {
 
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
-			Win32PostMessage(GetFosterParent(), Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
+			Win32PostMessage(GetFosterParent(), (int)Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
 		}
 
 		internal override void SetTimer (Timer timer)
@@ -3231,8 +3231,12 @@ namespace System.Windows.Forms {
 			return Win32SendMessage(hwnd, message, wParam, lParam);
 		}
 
-		internal override bool PostMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
+		internal override bool InterProcessPostMessage (IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam) {
 			return Win32PostMessage(hwnd, message, wParam, lParam);
+		}
+
+		internal override bool PostMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
+			return Win32PostMessage(hwnd, (int)message, wParam, lParam);
 		}
 
 		internal override int SendInput (IntPtr hwnd, Queue keys) {
@@ -3332,10 +3336,21 @@ namespace System.Windows.Forms {
 			Win32SetForegroundWindow(handle);
 		}
 
+		internal override bool EnumTopLevelWindows (XplatUI.EnumWindowsProc lpEnumFunc, IntPtr lParam)
+		{
+			return Win32EnumWindows (lpEnumFunc, lParam);
+		}
+
+		internal override uint RegisterWindowMessage (string lpString)
+		{
+			return Win32RegisterWindowMessage (lpString);
+		}
+
 		internal override event EventHandler Idle;
 		#endregion	// Public Static Methods
 
 		#region Win32 Imports
+
 		[DllImport ("kernel32.dll", EntryPoint="GetLastError", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint Win32GetLastError();
 
@@ -3606,7 +3621,7 @@ namespace System.Windows.Forms {
 		private extern static IntPtr Win32SendMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
 
 		[DllImport ("user32.dll", EntryPoint="PostMessageW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
-		private extern static bool Win32PostMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
+		private extern static bool Win32PostMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam);
 
 		[DllImport ("user32.dll", EntryPoint="SendInput", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static UInt32 Win32SendInput(UInt32 nInputs, [MarshalAs(UnmanagedType.LPArray)] INPUT[] inputs, Int32 cbSize);
@@ -3737,6 +3752,13 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="SetForegroundWindow", CallingConvention=CallingConvention.StdCall)]
 		extern static bool Win32SetForegroundWindow(IntPtr hWnd);
+
+		[DllImport ("user32.dll", EntryPoint="EnumWindows", CallingConvention=CallingConvention.StdCall)]
+		extern static bool Win32EnumWindows(XplatUI.EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+		[DllImport ("user32.dll", EntryPoint="RegisterWindowMessage", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
+		extern static uint Win32RegisterWindowMessage(string lpString);
+		
 		#endregion
 	}
 }

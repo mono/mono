@@ -3851,6 +3851,27 @@ namespace Mono.Unix.Native {
 		public static extern int remap_file_pages (IntPtr start, ulong size,
 				MmapProts prot, long pgoff, MmapFlags flags);
 
+		// shm_open(3)
+		//    int shm_open(const char *name, int oflag, mode_t mode);
+		[DllImport (MPH, SetLastError=true, EntryPoint="shm_open")]
+		private static extern int _shm_open (
+			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+			string name, int oflag, uint mode);
+
+		public static int shm_open (string name, OpenFlags oflag, FilePermissions mode)
+		{
+			int _oflag = NativeConvert.FromOpenFlags (oflag);
+			uint _mode = NativeConvert.FromFilePermissions (mode);
+			return _shm_open (name, _oflag, _mode);
+		}
+
+		// shm_open(3)
+		//    int shm_unlink(const char *name);
+		[DllImport (MPH, SetLastError=true)]
+		public static extern int shm_unlink (
+			[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+			string name);
+
 		#endregion
 
 		#region <sys/poll.h> Declarations

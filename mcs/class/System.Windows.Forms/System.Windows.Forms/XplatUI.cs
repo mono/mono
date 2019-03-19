@@ -630,6 +630,12 @@ namespace System.Windows.Forms {
 			driver.DrawReversibleRectangle (handle, rect, line_width);
 		}
 
+		internal static bool EnumTopLevelWindows (EnumWindowsProc lpEnumFunc, IntPtr lParam)
+		{
+			DriverDebug ("EnumTopLevelWindows ({0}, {1:X}): Called", lpEnumFunc, lParam.ToInt32 ());
+			return driver.EnumTopLevelWindows (lpEnumFunc, lParam);
+		}
+
 		internal static void FillReversibleRectangle (Rectangle rectangle, Color backColor)
 		{
 			DriverDebug ("FillReversibleRectangle ({0}, {1}): Called", rectangle, backColor);
@@ -776,6 +782,12 @@ namespace System.Windows.Forms {
 			driver.HandleException (e);
 		}
 
+		internal static bool InterProcessPostMessage (IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam)
+		{
+			DriverDebug ("InterProcessPostMessage ({0}, {1}, {2:X}, {3:X}): Called", Window (hwnd), message, wParam.ToInt32 (), lParam.ToInt32 ());
+			return driver.InterProcessPostMessage (hwnd, message, wParam, lParam);
+		}
+
 		internal static void Invalidate (IntPtr handle, Rectangle rc, bool clear)
 		{
 			DriverDebug ("Invalidate ({0}, {1}, {2}): Called", Window (handle), rc, clear);
@@ -787,7 +799,6 @@ namespace System.Windows.Forms {
 			DriverDebug ("InvalidateNC ({0}): Called", Window (handle));
 			driver.InvalidateNC (handle);
 		}
-
 
 		internal static bool IsEnabled (IntPtr handle)
 		{
@@ -873,8 +884,13 @@ namespace System.Windows.Forms {
 		internal static void RaiseIdle (EventArgs e)
 		{
 			DriverDebug ("RaiseIdle ({0}): Called", e.ToString ());
-			
 			driver.RaiseIdle (e);
+		}
+
+		internal static uint RegisterWindowMessage (string lpString)
+		{
+			DriverDebug ("RegisterWindowMessage (): Called");
+			return driver.RegisterWindowMessage (lpString);
 		}
 		
 		internal static void RequestAdditionalWM_NCMessages (IntPtr handle, bool hover, bool leave)
@@ -1218,8 +1234,11 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Methods
 
 		#region	Delegates
+
 		public delegate bool ClipboardToObject (int type, IntPtr data, out object obj);
 		public delegate bool ObjectToClipboard (ref int type, object obj, out byte[] data);
+		public delegate bool EnumWindowsProc (IntPtr hwnd, IntPtr lParam);
+
 		#endregion	// Delegates
 
 		[DllImport ("libc")]

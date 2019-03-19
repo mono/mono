@@ -1,0 +1,6 @@
+<Namespace Name="Mono.PortabilityUtils">
+  <Docs>
+    <summary>Utilities which helps to make portable applications.</summary>
+    <remarks>This namespace declares classes which helps to create portable applications. Contained here methods hides some OS-specific features providing platform-independent API.</remarks>
+  </Docs>
+</Namespace>

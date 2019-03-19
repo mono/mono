@@ -1610,6 +1610,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO]
+		internal override bool InterProcessPostMessage (IntPtr hwnd, int message, IntPtr wParam, IntPtr lParam) {
+			throw new NotImplementedException ();
+		}
+
 		internal override bool PostMessage (IntPtr hwnd, Msg message, IntPtr wParam, IntPtr lParam) {
 			MSG msg = new MSG();
 			msg.hwnd = hwnd;
@@ -2287,7 +2292,16 @@ namespace System.Windows.Forms {
 				return XplatUICarbon.themes_enabled;
 			}
 		}
- 
+	
+		[MonoTODO]
+		internal override bool EnumTopLevelWindows (XplatUI.EnumWindowsProc lpEnumFunc, IntPtr lParam) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		internal override uint RegisterWindowMessage (string lpString) {
+			throw new NotImplementedException ();
+		}
 
 		#endregion
 		
