@@ -173,6 +173,30 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
 	   exit 0
 fi
 
+if [[ ${CI_TAGS} == *'sdks-mac'* ]];
+then
+    # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
+    export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+    export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+
+    echo "DISABLE_IOS=1" > sdks/Make.config
+    echo "DISABLE_ANDROID=1" > sdks/Make.config
+    echo "DISABLE_WASM=1" >> sdks/Make.config
+    echo "DISABLE_DESKTOP=1" >> sdks/Make.config
+    if [[ ${CI_TAGS} == *'cxx'* ]]; then
+        echo "ENABLE_CXX=1" >> sdks/Make.config
+    fi
+    if [[ ${CI_TAGS} == *'debug'* ]]; then
+        echo "CONFIGURATION=debug" >> sdks/Make.config
+    fi
+
+    ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-mac NINJA=
+    ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-mac     NINJA=
+    ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-mac   NINJA=
+
+    exit 0
+fi
+
 if [[ ${CI_TAGS} == *'sdks-android'* ]];
    then
         echo "DISABLE_IOS=1" > sdks/Make.config

@@ -37,6 +37,13 @@ parallel (
             }
         }
     },
+    "Archive-mac-release-Darwin": {
+        throttle(['provisions-mac-toolchain']) {
+            node ("osx-devices") {
+                archive ("mac", "release", "Darwin")
+            }
+        }
+    },
     "Archive-wasm-release-Linux": {
         throttle(['provisions-wasm-toolchain']) {
             node ("ubuntu-1804-amd64") {
