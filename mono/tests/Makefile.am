@@ -1004,6 +1004,7 @@ TESTS_IL_SRC=			\
 	dim-simple.il	\
 	dim-valuetypes.il \
 	dim-generic-interface.il \
+	dim-implements-multiple-interfaces.il \
 	dim-sealed.il \
 	tailcall-generic-cast-conservestack-il.il \
 	tailcall-generic-cast-nocrash-il.il \
