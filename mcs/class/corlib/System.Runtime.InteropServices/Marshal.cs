@@ -1288,7 +1288,19 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-		public static IntPtr SecureStringToCoTaskMemAnsi (SecureString s)
+		internal delegate IntPtr SecureStringAllocator(int len);
+
+		internal static IntPtr SecureStringCoTaskMemAllocator (int len)
+		{
+			return AllocCoTaskMem (len);
+		}
+
+		internal static IntPtr SecureStringGlobalAllocator (int len)
+		{
+			return AllocHGlobal (len);
+		}
+
+		internal static IntPtr SecureStringToAnsi (SecureString s, SecureStringAllocator allocator)
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
@@ -1297,7 +1309,7 @@ namespace System.Runtime.InteropServices
 			return s.MarshalToString (false, false);
 #else
 			int len = s.Length;
-			IntPtr ctm = AllocCoTaskMem (len + 1);
+			IntPtr ctm = allocator (len + 1);
 			byte [] copy = new byte [len+1];
 
 			try {
@@ -1321,7 +1333,7 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-		public static IntPtr SecureStringToCoTaskMemUnicode (SecureString s)
+		internal static IntPtr SecureStringToUnicode (SecureString s, SecureStringAllocator allocator)
 		{
 			if (s == null)
 				throw new ArgumentNullException ("s");
@@ -1329,7 +1341,7 @@ namespace System.Runtime.InteropServices
 			return s.MarshalToString (false, true);
 #else
 			int len = s.Length;
-			IntPtr ctm = AllocCoTaskMem (len * 2 + 2);
+			IntPtr ctm = allocator (len * 2 + 2);
 			byte [] buffer = null;
 			try {
 				buffer = s.GetBuffer ();
@@ -1345,6 +1357,17 @@ namespace System.Runtime.InteropServices
 			}
 			return ctm;
 #endif
+
+		}
+
+		public static IntPtr SecureStringToCoTaskMemAnsi (SecureString s)
+		{
+			return SecureStringToAnsi (s, SecureStringCoTaskMemAllocator);
+		}
+
+		public static IntPtr SecureStringToCoTaskMemUnicode (SecureString s)
+		{
+			return SecureStringToUnicode (s, SecureStringCoTaskMemAllocator);
 		}
 
 		public static IntPtr SecureStringToGlobalAllocAnsi (SecureString s)
@@ -1354,7 +1377,7 @@ namespace System.Runtime.InteropServices
 #if NETCORE
 			return s.MarshalToString (true, false);
 #else
-			return SecureStringToCoTaskMemAnsi (s);
+			return SecureStringToAnsi (s, SecureStringGlobalAllocator);
 #endif
 		}
 
@@ -1365,7 +1388,7 @@ namespace System.Runtime.InteropServices
 #if NETCORE
 			return s.MarshalToString (true, true);
 #else
-			return SecureStringToCoTaskMemUnicode (s);
+			return SecureStringToUnicode (s, SecureStringGlobalAllocator);
 #endif
 		}
 
