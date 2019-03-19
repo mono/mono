@@ -53,8 +53,6 @@ TEST_SUITES = \
 	System.Runtime.CompilerServices.Unsafe.Tests \
 	System.Collections.Tests
 
-all: $(addprefix build-, $(TEST_SUITES))
-
 # The binary directory under $(COREFIX_BINDIR)
 System.Runtime.CompilerServices.Unsafe.Tests_PROFILE = netstandard-Debug
 System.Runtime.Tests_PROFILE = netcoreapp-Unix-Debug
@@ -71,6 +69,11 @@ build-%: check-env
 
 run-%: check-env
 	cd tests/$* && MONO_PATH=bin/Debug/netcoreapp3.0 MONO_ENV_OPTIONS="--debug --explicit-null-checks" COMPlus_DebugWriteToStdErr=1 ../../dotnet bin/Debug/netcoreapp3.0/$*-runner.dll
+
+all: $(addprefix build-, $(TEST_SUITES))
+
+check: $(addprefix run-, $(TEST_SUITES))
+
 clean:
 	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
