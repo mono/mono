@@ -1,3 +1,4 @@
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -25,6 +26,7 @@ namespace System.Runtime.Loader
 		{
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 
+			assemblyPath = assemblyPath.Replace ('\\', Path.DirectorySeparatorChar);
 			// TODO: Handle nativeImagePath
 			return InternalLoadFile (assemblyPath, ref stackMark);
 		}
@@ -54,5 +56,10 @@ namespace System.Runtime.Loader
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static Assembly InternalLoadFile (string assemblyFile, ref StackCrawlMark stackMark);
+
+		internal static Assembly DoAssemblyResolve (string name)
+		{
+			return AssemblyResolve (null, new ResolveEventArgs (name));
+		}
 	}
 }

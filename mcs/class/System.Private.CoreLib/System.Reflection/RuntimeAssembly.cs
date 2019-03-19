@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Security;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 using System.Threading;
 
 namespace System.Reflection
@@ -86,10 +87,24 @@ namespace System.Reflection
 		// TODO:
 		public override bool IsCollectible => false;
 
-
 		internal static AssemblyName CreateAssemblyName (string assemblyString, out RuntimeAssembly assemblyFromResolveEvent)
 		{
-			throw new NotImplementedException ();
+           if (assemblyString == null)
+                throw new ArgumentNullException (nameof (assemblyString));
+
+            if ((assemblyString.Length == 0) ||
+                (assemblyString[0] == '\0'))
+                throw new ArgumentException (SR.Format_StringZeroLength);
+
+			assemblyFromResolveEvent = null;
+			try {
+				return new AssemblyName (assemblyString);
+			} catch (Exception) {
+				assemblyFromResolveEvent = (RuntimeAssembly)AssemblyLoadContext.DoAssemblyResolve (assemblyString);
+				if (assemblyFromResolveEvent == null)
+					throw new FileLoadException (assemblyString);
+				return null;
+			}
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

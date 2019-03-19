@@ -164,42 +164,42 @@ namespace System
 		internal static bool IsPrimitive (RuntimeType type)
 		{
 			CorElementType corElemType = GetCorElementType (type);
-			return (corElemType >= CorElementType.Boolean && corElemType <= CorElementType.R8) ||
-				corElemType == CorElementType.I ||
-				corElemType == CorElementType.U;
+			return (corElemType >= CorElementType.ELEMENT_TYPE_BOOLEAN && corElemType <= CorElementType.ELEMENT_TYPE_R8) ||
+				corElemType == CorElementType.ELEMENT_TYPE_I ||
+				corElemType == CorElementType.ELEMENT_TYPE_U;
 		}
 
 		internal static bool IsByRef (RuntimeType type)
 		{
 			CorElementType corElemType = GetCorElementType (type);
-			return (corElemType == CorElementType.ByRef);
+			return corElemType == CorElementType.ELEMENT_TYPE_BYREF;
 		}
 
 		internal static bool IsPointer (RuntimeType type)
 		{
 			CorElementType corElemType = GetCorElementType (type);
-			return (corElemType == CorElementType.Ptr);
+			return corElemType == CorElementType.ELEMENT_TYPE_PTR;
 		}
 
 		internal static bool IsArray (RuntimeType type)
 		{
 			CorElementType corElemType = GetCorElementType (type);
-			return (corElemType == CorElementType.Array || corElemType == CorElementType.SzArray);
+			return corElemType == CorElementType.ELEMENT_TYPE_ARRAY || corElemType == CorElementType.ELEMENT_TYPE_SZARRAY;
 		}
 
 		internal static bool IsSzArray (RuntimeType type)
 		{
 			CorElementType corElemType = GetCorElementType (type);
-			return (corElemType == CorElementType.SzArray);
+			return corElemType == CorElementType.ELEMENT_TYPE_SZARRAY;
 		}
 
 		internal static bool HasElementType (RuntimeType type)
 		{
 			CorElementType corElemType = GetCorElementType(type);
 
-			return ((corElemType == CorElementType.Array || corElemType == CorElementType.SzArray) // IsArray
-				   || (corElemType == CorElementType.Ptr)											// IsPointer
-				   || (corElemType == CorElementType.ByRef));										// IsByRef
+			return ((corElemType == CorElementType.ELEMENT_TYPE_ARRAY || corElemType == CorElementType.ELEMENT_TYPE_SZARRAY) // IsArray
+				   || (corElemType == CorElementType.ELEMENT_TYPE_PTR)											// IsPointer
+				   || (corElemType == CorElementType.ELEMENT_TYPE_BYREF));										// IsByRef
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

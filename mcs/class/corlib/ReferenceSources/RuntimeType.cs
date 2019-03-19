@@ -833,9 +833,7 @@ namespace System
 			}
 		}
 
-#if !NETCORE
 		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeType> (other);	
-#endif
 
 		public override bool IsSZArray {
 			get {

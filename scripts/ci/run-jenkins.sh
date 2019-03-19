@@ -80,13 +80,7 @@ elif [[ ${CI_TAGS} == *'aot'* ]];                then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'bitcodeinterp'* ]];      then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcodeinterp"; export PATH="$PATH:${MONO_REPO_ROOT}/llvm/usr/bin";
 elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcode"; export PATH="$PATH:${MONO_REPO_ROOT}/llvm/usr/bin";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
-elif [[ ${CI_TAGS} == *'all-profiles'* ]]; then
-    # only enable build of the additional profiles on one config to save time
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=all"
-    # when building profiles like monotouch/monodroid which don't build System.Drawing.dll in the Mono repo we need
-    # to build the facades against _something_ to satisfy the typeforwards. In CI we can cheat a little and pass
-    # them System.Drawing.dll from the 'build' profile since we don't test those profiles here (we just ensure they compile).
-    export EXTERNAL_FACADE_DRAWING_REFERENCE=${MONO_REPO_ROOT}/mcs/class/lib/build/System.Drawing.dll
+elif [[ ${CI_TAGS} == *'all-profiles'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=all";
 fi
 
 if [ -x "/usr/bin/dpkg-architecture" ];

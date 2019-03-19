@@ -2502,7 +2502,7 @@ namespace System
             if (!RuntimeType.FilterApplyBase(type, bindingFlags, isPublic, type.IsNestedAssembly, isStatic, name, prefixLookup))
                 return false;
 
-            if (ns != null && !type.Namespace.Equals(ns))
+            if (ns != null && ns != type.Namespace)
                 return false;
 
             return true;
@@ -5660,6 +5660,11 @@ namespace System
 #endif
             )
         {
+#if NETCORE
+			if (IsByRefLike)
+				throw new NotSupportedException (SR.NotSupported_ByRefLike);
+#endif
+
             if (GetType() == typeof(ReflectionOnlyType))
                 throw new InvalidOperationException(Environment.GetResourceString("InvalidOperation_NotAllowedInReflectionOnly"));
 #if !MONO

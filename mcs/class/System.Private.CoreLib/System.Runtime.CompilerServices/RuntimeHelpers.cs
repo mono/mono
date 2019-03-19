@@ -80,8 +80,7 @@ namespace System.Runtime.CompilerServices
 			if (method.IsNullHandle ())
 				throw new ArgumentException (SR.Argument_InvalidHandle);
 			unsafe {
-				int length;
-				IntPtr[] instantiations = RuntimeTypeHandle.CopyRuntimeTypeHandles (instantiation, out length);
+				IntPtr[] instantiations = RuntimeTypeHandle.CopyRuntimeTypeHandles (instantiation, out int length);
 				fixed (IntPtr* pinst = instantiations) {
 					PrepareMethod (method.Value, pinst, length);
 					GC.KeepAlive (instantiation);
@@ -98,9 +97,15 @@ namespace System.Runtime.CompilerServices
 		}
 
 		[Intrinsic]
-		public static bool IsReferenceOrContainsReferences<T>()
+		public static bool IsReferenceOrContainsReferences<T> ()
 		{
 			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
+		}
+
+		[Intrinsic]
+		internal static bool IsBitwiseEquatable<T> ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		[Intrinsic]
@@ -111,11 +116,7 @@ namespace System.Runtime.CompilerServices
 
 		static object GetUninitializedObjectInternal (Type type)
 		{
-			if (type == null)
-				throw new ArgumentNullException (nameof (type));
-			if (!(type is RuntimeType))
-				throw new NotImplementedException ();
-			return GetUninitializedObjectInternal (new RuntimeTypeHandle (type as RuntimeType).Value);
+			return GetUninitializedObjectInternal (new RuntimeTypeHandle ((RuntimeType)type).Value);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

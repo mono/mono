@@ -150,6 +150,11 @@ namespace System
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");	
 
+#if NETCORE
+			if (!typeof (Attribute).IsAssignableFrom (attributeType) && attributeType != typeof (MonoCustomAttrs))
+				throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass);
+#endif
+
 			if (attributeType == typeof (MonoCustomAttrs))
 				attributeType = null;
 			
@@ -613,7 +618,16 @@ namespace System
 				return GetBaseEventDefinition ((RuntimeEventInfo)obj);
 			else if (obj is RuntimeMethodInfo)
 				method = (MethodInfo) obj;
-
+			if (obj is RuntimeParameterInfo parinfo) {
+				var member = parinfo.Member;
+				if (member is MethodInfo) {
+					method = (MethodInfo)member;
+					MethodInfo bmethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
+					if (bmethod == method)
+						return null;
+					return bmethod.GetParameters ()[parinfo.Position];
+				}
+			}
 			/**
 			 * ParameterInfo -> null
 			 * Assembly -> null
