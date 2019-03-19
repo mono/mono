@@ -180,7 +180,7 @@ then
     export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
 
     echo "DISABLE_IOS=1" > sdks/Make.config
-    echo "DISABLE_ANDROID=1" > sdks/Make.config
+    echo "DISABLE_ANDROID=1" >> sdks/Make.config
     echo "DISABLE_WASM=1" >> sdks/Make.config
     echo "DISABLE_DESKTOP=1" >> sdks/Make.config
     if [[ ${CI_TAGS} == *'cxx'* ]]; then
