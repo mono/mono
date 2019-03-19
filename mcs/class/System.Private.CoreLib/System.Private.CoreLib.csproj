@@ -115,6 +115,7 @@
       <Compile Include="System\Attribute.cs" />
       <Compile Include="System\Buffer.cs" />
       <Compile Include="System\DefaultBinder.cs" />
+      <Compile Include="System\Enum.cs" />
       <Compile Include="System\Environment.cs" />
       <Compile Include="System\Exception.cs" />
       <Compile Include="System\GC.cs" />
@@ -126,6 +127,7 @@
       <Compile Include="System\Nullable.cs" />
       <Compile Include="System\String.cs" />
       <Compile Include="System\Type.cs" />
+      <Compile Include="System\TypeLoadException.cs" />
       <Compile Include="System\TypeNameParser.cs" />
       <Compile Include="System\__ComObject.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
@@ -140,9 +142,9 @@
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
       <Compile Include="System.Reflection\Assembly.cs" />
-      <Compile Include="System.Reflection\CorElementType.cs" />
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
+      <Compile Include="System.Reflection\MemberInfo.cs" />
       <Compile Include="System.Reflection\MethodBase.cs" />
       <Compile Include="System.Reflection\RuntimeAssembly.cs" />
       <Compile Include="System.Reflection\RuntimeMethodBody.cs" />
@@ -225,9 +227,7 @@
       <Compile Include="..\corlib\System.Reflection\RuntimeModule.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="..\referencesource\mscorlib\system\enum.cs" />
       <Compile Include="..\referencesource\mscorlib\system\gc.cs" />
-      <Compile Include="..\referencesource\mscorlib\system\typeloadexception.cs" />
       <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />

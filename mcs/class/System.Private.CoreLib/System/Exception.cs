@@ -204,7 +204,7 @@ namespace System
 
 		internal DispatchState CaptureDispatchState ()
 		{
-			throw new NotImplementedException ();
+			return default;
 		}
 
 		internal void RestoreDispatchState (DispatchState state)

@@ -4,6 +4,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using WebAssembly.Core;
+using WebAssembly.Host;
 
 namespace WebAssembly.Net.Http.HttpClient {
 	public class WasmHttpMessageHandler : HttpMessageHandler {
@@ -70,7 +72,7 @@ namespace WebAssembly.Net.Http.HttpClient {
 		private async Task doFetch (TaskCompletionSource<HttpResponseMessage> tcs, HttpRequestMessage request, CancellationToken cancellationToken)
 		{
 			try {
-				var requestObject = Runtime.NewJSObject ();
+				var requestObject = new JSObject ();
 				requestObject.SetObjectProperty ("method", request.Method.Method);
 
 				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
@@ -90,15 +92,17 @@ namespace WebAssembly.Net.Http.HttpClient {
 					if (request.Content is StringContent) {
 						requestObject.SetObjectProperty ("body", await request.Content.ReadAsStringAsync ());
 					} else {
-						requestObject.SetObjectProperty ("body", await request.Content.ReadAsByteArrayAsync ());
+						using (var uint8Buffer = Uint8Array.From(await request.Content.ReadAsByteArrayAsync ()))
+						{
+							requestObject.SetObjectProperty ("body", uint8Buffer);
+						}
 					}
 				}
 
 				// Process headers
 				// Cors has it's own restrictions on headers.
 				// https://developer.mozilla.org/en-US/docs/Web/API/Headers
-				using (var headersObj = (JSObject)WebAssembly.Runtime.GetGlobalObject ("Headers"))
-				using (var jsHeaders = Runtime.NewJSObject (headersObj)) {
+				using (var jsHeaders = new HostObject ("Headers")) {
 					if (request.Headers != null) {
 						foreach (var header in request.Headers) {
 							foreach (var value in header.Value) {
@@ -122,23 +126,23 @@ namespace WebAssembly.Net.Http.HttpClient {
 
 				CancellationTokenRegistration abortRegistration = default (CancellationTokenRegistration);
 				if (cancellationToken.CanBeCanceled) {
-					using (var abortObj = (JSObject)WebAssembly.Runtime.GetGlobalObject ("AbortController"))
-						abortController = Runtime.NewJSObject (abortObj);
+
+					abortController = new HostObject ("AbortController");
 
 					signal = (JSObject)abortController.GetObjectProperty ("signal");
 					requestObject.SetObjectProperty ("signal", signal);
-					abortRegistration = cancellationToken.Register (() => {
+					abortRegistration = cancellationToken.Register ((Action)(() => {
 						if (abortController.JSHandle != -1) {
-							abortController.Invoke ("abort");
+							abortController.Invoke ((string)"abort");
 							abortController?.Dispose ();
 						}
 						wasmHttpReadStream?.Dispose ();
-					});
+					}));
 				}
 
-				var args = Runtime.NewJSArray ();
-				args.Invoke ("push", request.RequestUri.ToString ());
-				args.Invoke ("push", requestObject);
+				var args = new Core.Array();
+				args.Push (request.RequestUri.ToString ());
+				args.Push (requestObject);
 
 				requestObject.Dispose ();
 
@@ -274,9 +278,14 @@ namespace WebAssembly.Net.Http.HttpClient {
 					return _data;
 				}
 
-				_data = (byte [])await _status.ArrayBuffer ();
-				_status.Dispose ();
-				_status = null;
+				using (ArrayBuffer dataBuffer = (ArrayBuffer)await _status.ArrayBuffer ()) {
+					using (Uint8Array dataBinView = new Uint8Array(dataBuffer)) {
+						_data = dataBinView.ToArray();
+						_status.Dispose ();
+						_status = null;
+
+					}
+				}
 
 				return _data;
 			}
@@ -371,7 +380,9 @@ namespace WebAssembly.Net.Http.HttpClient {
 					}
 
 					_position = 0;
-					_bufferedBytes = (byte [])read.GetObjectProperty ("value");
+					// value for fetch streams is a Uint8Array
+					using (Uint8Array binValue = (Uint8Array)read.GetObjectProperty ("value"))
+						_bufferedBytes = binValue.ToArray ();
 				}
 
 				return ReadBuffered ();

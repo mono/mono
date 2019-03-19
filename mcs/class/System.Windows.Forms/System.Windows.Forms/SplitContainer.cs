@@ -395,7 +395,7 @@ namespace System.Windows.Forms
 				if (value < panel1_min_size)
 					value = panel1_min_size;
 
-				bool updated = true;
+				bool updated = false;
 				if (orientation == Orientation.Vertical) {
 					if (this.Width - (this.SplitterWidth + value) < panel2_min_size)
 						value = this.Width - (this.SplitterWidth + panel2_min_size);

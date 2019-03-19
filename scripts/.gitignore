@@ -60,7 +60,6 @@
 /mono-find-provides
 /mono-find-requires
 /monolinker
-/mono-nunit.pc
 /monop
 /monop1
 /monop2
@@ -71,9 +70,6 @@
 /mono-symbolicate
 /mono-xmltool
 /mozroots
-/nunit-console
-/nunit-console2
-/nunit-console4
 /pdb2mdb
 /permview
 /peverify

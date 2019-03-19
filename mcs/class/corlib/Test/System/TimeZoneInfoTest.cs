@@ -80,7 +80,7 @@ namespace MonoTests.System
 		public static void SetLocal (TimeZoneInfo val)
 		{
 			if (localField == null) {
-#if MOBILE && !WIN_PLATFORM
+#if MOBILE
 					localField = typeof (TimeZoneInfo).GetField ("local",
 							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
 #else
@@ -1229,7 +1229,7 @@ namespace MonoTests.System
 		{
 			private static void GetDaylightTime (TimeZoneInfo tz, int year, out DateTime start, out DateTime end, out TimeSpan delta)
 			{
-#if !MOBILE || (MOBILE && WIN_PLATFORM)
+#if !MOBILE
 					var rule = tz.GetAdjustmentRules ().FirstOrDefault (r => r.DateStart.Year <= year && r.DateEnd.Year >= year);
 					if (rule == null) {
 						start = DateTime.MinValue;
