@@ -189,9 +189,9 @@ then
         echo "CONFIGURATION=debug" >> sdks/Make.config
     fi
 
-    ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-mac NINJA=
-    ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-mac     NINJA=
-    ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-mac   NINJA=
+    ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-mac NINJA=
+    ${TESTCMD} --label=build     --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-mac     NINJA=
+    ${TESTCMD} --label=archive   --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-mac   NINJA=
 
     exit 0
 fi
