@@ -275,7 +275,37 @@ namespace System.Reflection
 
 		public override Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
-			throw new NotImplementedException ();
+			if (culture == null)
+				throw new ArgumentNullException (nameof (culture));
+
+			return InternalGetSatelliteAssembly (culture, version, true);
+		}
+
+		internal Assembly InternalGetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnFileNotFound)
+		{
+			var aname = GetName ();
+
+			var an = new AssemblyName ();
+			if (version == null)
+				an.Version = aname.Version;
+			else
+				an.Version = version;
+
+			an.CultureInfo = culture;
+			an.Name = aname.Name + ".resources";
+
+			Assembly res = null;
+			try {
+				StackCrawlMark unused = default;
+				res = Assembly.Load (an, ref unused, IntPtr.Zero);
+			} catch {
+			}
+
+			if (res == this)
+				res = null;
+			if (res == null && throwOnFileNotFound)
+				throw new FileNotFoundException (String.Format (culture, SR.IO_FileNotFound_FileName, an.Name));
+			return res;
 		}
 
 		public override FileStream GetFile (string name)
