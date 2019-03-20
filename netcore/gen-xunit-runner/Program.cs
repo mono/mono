@@ -226,6 +226,20 @@ unchecked {
 			return result;
 		}
 
+		if (val is Guid guid) {
+			var argumentList = SeparatedList (new[] { Argument(LiteralExpression (SyntaxKind.StringLiteralExpression, Literal (guid.ToString ()))) });
+			var guidParse = MemberAccessExpression (SyntaxKind.SimpleMemberAccessExpression, IdentifierName ("Guid"), IdentifierName ("Parse"));
+			result = InvocationExpression (guidParse, ArgumentList (argumentList));
+		}
+
+		if (val is IntPtr ptr) {
+			result = LiteralWithCast (nameof (IntPtr), Literal ((ulong) ptr));
+		}
+
+		if (val is UIntPtr uptr) {
+			result = LiteralWithCast (nameof (UIntPtr), Literal ((ulong) uptr));
+		}
+
 		if (result == null) {
 			Console.WriteLine ($"Unhandled value: {val} ({val?.GetType()})");
 			return null;
@@ -327,21 +341,12 @@ unchecked {
 						if (rows == null)
 							continue;
 
-						var notSupportedPrimitiveTypes = new [] {
-							typeof (IntPtr),
-							typeof (UIntPtr),
-							typeof (TimeSpan),
-							typeof (Guid),
-						};
-
 						foreach (ParameterInfo parameter in m.GetParameters ()) {
 							var pType = parameter.ParameterType;
-							// only primitive types + string are supported at this moment
-							if (pType.IsPrimitive && notSupportedPrimitiveTypes.Contains (pType))
-								goto notsupported;
-							
-							if (pType != typeof (string) && pType != typeof (decimal))
-								goto notsupported;
+							if (!pType.IsPrimitive && 
+								pType != typeof (string) && 
+							    pType != typeof (decimal) && 
+							    pType != typeof (Guid)) goto notsupported;
 						}
 
 						foreach (object[] data in rows) {
