@@ -25,17 +25,17 @@ namespace System
 				throw new ArgumentOutOfRangeException (nameof (dstOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			if (count < 0)
 				throw new ArgumentOutOfRangeException (nameof (count), SR.ArgumentOutOfRange_MustBeNonNegInt32);
-			if (!IsPrimitiveTypeArray(src))
+			if (!IsPrimitiveTypeArray (src))
 				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (src));
-			if (!IsPrimitiveTypeArray(dest))
+			if (!IsPrimitiveTypeArray (dest))
 				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (dest));
 
 			var uCount = (nuint) count;
 			var uSrcOffset = (nuint) srcOffset;
 			var uDstOffset = (nuint) dstOffset;
 
-			var uSrcLen = (nuint) ByteLength(src);
-			var uDstLen = (nuint) ByteLength(dest);
+			var uSrcLen = (nuint) ByteLength (src);
+			var uDstLen = (nuint) ByteLength (dest);
 
 			if (uSrcLen < uSrcOffset + uCount)
 				throw new ArgumentException (SR.Argument_InvalidOffLen, "");
