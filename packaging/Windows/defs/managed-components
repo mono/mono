@@ -74,6 +74,7 @@ install()
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/xsp					${REPODIR}/../../tmp/mono/lib/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/Microsoft*				${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/msbuild				${REPODIR}/../../tmp/mono/lib/mono/
+	rm -f ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/libhostfxr.dylib
 	rm -f ${REPODIR}/../../tmp/mono/lib/mono/msbuild/Current/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/libhostfxr.dylib
 	if [ "$1" = "x64" ]; then
 		cp ${REPODIR}/hostfxr-x64/hostfxr.dll ${REPODIR}/../../tmp/mono/lib/mono/msbuild/Current/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/
