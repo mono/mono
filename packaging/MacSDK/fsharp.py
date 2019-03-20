@@ -11,6 +11,7 @@ class FsharpPackage(GitHubTarballPackage):
                              'patches/fsharp-portable-pdb.patch',
                              'patches/fsharp-noinstall.patch',
                              'patches/fsharp-GetFileNameWithoutExtension-type-inference.patch',
+                             'patches/fsharp-destdir-or-prefix-not-both.patch',
                              'patches/fsharp-msbuild-16-0.patch'])
 
     def prep(self):
