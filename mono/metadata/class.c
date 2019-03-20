@@ -5496,7 +5496,7 @@ mono_class_has_parent_and_ignore_generics (MonoClass *klass, MonoClass *parent)
 	}
 
 	if (mono_class_implements_interface (klass, parent))
-        return TRUE;
+		return TRUE;
 		
 	return FALSE;
 }
