@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace System.Collections.Generic
 {
 	partial class Comparer<T>
@@ -24,26 +26,21 @@ namespace System.Collections.Generic
 				// If T is a Nullable<U> where U implements IComparable<U> return a NullableComparer<U>
 				if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>)) {
 					RuntimeType u = (RuntimeType)t.GetGenericArguments()[0];
-					if (typeof(IComparable<>).MakeGenericType(u).IsAssignableFrom(u)) {
-						// FIXME:
-						throw new NotImplementedException ();
-					}
+					if (typeof(IComparable<>).MakeGenericType (u).IsAssignableFrom (u))
+						return (Comparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(NullableComparer<>), u);
 				}
 
 				if (t.IsEnum)
-					// FIXME:
-					throw new NotImplementedException ();
+					return (Comparer<T>)RuntimeType.CreateInstanceForAnotherGenericParameter (typeof(EnumComparer<>), t);
 
 				// Otherwise return an ObjectComparer<T>
-				return new ObjectComparer<T>();
+				return new ObjectComparer<T> ();
 		}
 	}
 
 	partial class EnumComparer<T>
 	{
-		public override int Compare(T x, T y)
-		{
-			throw new NotImplementedException();
-		}
+		[MethodImpl (MethodImplOptions.AggressiveInlining)]
+		public override int Compare (T x, T y) => JitHelpers.EnumCompareTo (x, y);
 	}
 }
