@@ -41,9 +41,7 @@ class MsgSink : IMessageSink {
 }
 
 class Program
-{ 
-
-	
+{
 	static int nskipped = 0;
 
 	// The template for the whole progeam
