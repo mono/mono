@@ -5494,6 +5494,10 @@ mono_class_has_parent_and_ignore_generics (MonoClass *klass, MonoClass *parent)
 		if (parent == mono_class_get_generic_type_definition (m_class_get_supertypes (klass) [i]))
 			return TRUE;
 	}
+
+	if (mono_class_implements_interface (klass, parent))
+        return TRUE;
+		
 	return FALSE;
 }
 /*
