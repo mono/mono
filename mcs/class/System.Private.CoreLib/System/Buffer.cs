@@ -25,9 +25,9 @@ namespace System
 				throw new ArgumentOutOfRangeException (nameof (dstOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			if (count < 0)
 				throw new ArgumentOutOfRangeException (nameof (count), SR.ArgumentOutOfRange_MustBeNonNegInt32);
-			if (!(src is byte[]))
+			if (!IsPrimitiveTypeArray(src))
 				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (src));
-			if (!(dest is byte[]))
+			if (!IsPrimitiveTypeArray(dest))
 				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (dest));
 
 			var uCount = (nuint) count;
