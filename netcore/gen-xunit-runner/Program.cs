@@ -41,7 +41,9 @@ class MsgSink : IMessageSink {
 }
 
 class Program
-{
+{ 
+
+	
 	static int nskipped = 0;
 
 	// The template for the whole progeam
@@ -195,6 +197,9 @@ unchecked {
 		case TypeCode.UInt64:
 			result = LiteralExpression (SyntaxKind.NumericLiteralExpression, Literal ((ulong)val));
 			break;
+		case TypeCode.Decimal:
+			result = LiteralExpression (SyntaxKind.NumericLiteralExpression, Literal ((decimal)val));
+			break;
 		case TypeCode.Single:
 			result = LiteralExpression (SyntaxKind.NumericLiteralExpression, Literal ((float)val));
 			break;
@@ -224,11 +229,11 @@ unchecked {
 		}
 
 		if (result == null) {
-			Console.WriteLine ("Unhandled value: " + val);
+			Console.WriteLine ($"Unhandled value: {val} ({val?.GetType()})");
 			return null;
 		}
 
-		if (val != null && expectedType != null && val.GetType () != expectedType && !expectedType.IsGenericParameter)
+		if (val != null && expectedType != null && Nullable.GetUnderlyingType(expectedType) == null && val.GetType () != expectedType && !expectedType.IsGenericParameter)
 			result = CastExpression (IdentifierName (GetTypeName (expectedType)), ParenthesizedExpression (result));
 		return result;
 	}
@@ -315,6 +320,43 @@ unchecked {
 						}
 						if (!unhandled)
 							cases.Add (new TcCase () { Values = data });
+					} else if (cattr is MemberDataAttribute memberData) {
+						MethodInfo testDataMethod = m.DeclaringType.GetMethod (memberData.MemberName);
+						if (testDataMethod == null)
+							continue;
+
+						var rows = testDataMethod.Invoke (null, memberData.Parameters) as IEnumerable<object []>;
+						if (rows == null)
+							continue;
+
+						var notSupportedPrimitiveTypes = new [] {
+							typeof (IntPtr),
+							typeof (UIntPtr),
+							typeof (TimeSpan),
+							typeof (Guid),
+						};
+
+						foreach (ParameterInfo parameter in m.GetParameters ()) {
+							var pType = parameter.ParameterType;
+							// only primitive types + string are supported at this moment
+							if (pType.IsPrimitive && notSupportedPrimitiveTypes.Contains (pType))
+								goto notsupported;
+							
+							if (pType != typeof (string) && pType != typeof (decimal))
+								goto notsupported;
+						}
+
+						foreach (object[] data in rows) {
+							foreach (object dataItem in data) {
+								// literals for NaN and Infinity are not supported yet
+								if (dataItem is double d && !double.IsFinite (d)) goto notsupported;
+								if (dataItem is float f && !float.IsFinite (f)) goto notsupported;
+								
+								cases.Add (new TcCase { Values = data });
+							}
+						}
+						notsupported:
+							continue;
 					}
 			} else {
 				cases.Add (new TcCase ());
