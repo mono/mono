@@ -34,8 +34,8 @@ namespace System
 			var uSrcOffset = (nuint) srcOffset;
 			var uDstOffset = (nuint) dstOffset;
 
-			var uSrcLen = (nuint) src.Length;
-			var uDstLen = (nuint) dest.Length;
+			var uSrcLen = (nuint) ByteLength(src);
+			var uDstLen = (nuint) ByteLength(dest);
 
 			if (uSrcLen < uSrcOffset + uCount)
 				throw new ArgumentException (SR.Argument_InvalidOffLen, "");
