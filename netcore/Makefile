@@ -77,3 +77,8 @@ check: $(addprefix run-, $(TEST_SUITES))
 clean:
 	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
+testlist:
+	wget -O $@ $(TESTLIST_URL)
+
+download-test-zips: testlist
+	python dlzips.py testlist zips
