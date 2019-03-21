@@ -41,45 +41,65 @@ using MonoTests.Helpers;
 
 namespace MonoTests.Mono.Data.Sqlite
 {
-        [TestFixture]
-        public class SqliteDataReaderTest
-        {
-                readonly static string _uri = TestResourceHelper.GetFullPathOfResource("Test/test.db");
-                readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
-                SqliteConnection _conn = new SqliteConnection ();
+	[TestFixture]
+	public class SqliteDataReaderTest
+	{
+		readonly static string _uri = TestResourceHelper.GetFullPathOfResource("Test/test.db");
+		readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
+		SqliteConnection _conn = new SqliteConnection ();
 
-                [TestFixtureSetUp]
-                public void FixtureSetUp ()
-                {
-                        if (! File.Exists (_uri) || new FileInfo (_uri).Length == 0) {
-                                // ignore all tests
-                                Assert.Ignore ("#000 ignoring all fixtures. No database present");
-                        }
-                }
-                
-                
-                [Test]
-                [Category ("NotWorking")]
-                public void GetSchemaTableTest ()
-                {
-                        _conn.ConnectionString = _connectionString;
-                        SqliteDataReader reader = null;
-                        using (_conn) {
-                                _conn.Open ();
-                                SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
-                                cmd.CommandText = "select * from test";
-                                reader = cmd.ExecuteReader ();
-                                try {
-                                        DataTable dt = reader.GetSchemaTable ();
-                                        Assert.IsNotNull (dt, "#GS1 should return valid table");
-                                        Assert.IsTrue (dt.Rows.Count > 0, "#GS2 should return with rows ;-)");
-                                } finally {
-                                        if (reader != null && !reader.IsClosed)
-                                                reader.Close ();
-                                        _conn.Close ();
-                                }
-                        }
-                }
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			if (! File.Exists (_uri) || new FileInfo (_uri).Length == 0) {
+				// ignore all tests
+				Assert.Ignore ("#000 ignoring all fixtures. No database present");
+			}
+		}
+
+		[Test]
+		public void EmptyStatementThrowsAgrumentException ()
+		{
+			_conn.ConnectionString = _connectionString;
+			SqliteDataReader reader = null;
+			using (_conn) {
+				_conn.Open ();
+				SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd.CommandText = string.Empty;
+				reader = cmd.ExecuteReader ();
+				try {
+					reader.Read ();
+					Assert.Fail ();
+				} catch (ArgumentException ex){
+					// expected this one
+				} catch (Exception ex) {
+					Assert.Fail ();
+				}
+			}
+		}
+		
+		[Test]
+		[Category ("NotWorking")]
+		public void GetSchemaTableTest ()
+		{
+			_conn.ConnectionString = _connectionString;
+			SqliteDataReader reader = null;
+			using (_conn) {
+				_conn.Open ();
+				SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd.CommandText = "select * from test";
+				reader = cmd.ExecuteReader ();
+				try {
+					DataTable dt = reader.GetSchemaTable ();
+					Assert.IsNotNull (dt, "#GS1 should return valid table");
+					Assert.IsTrue (dt.Rows.Count > 0, "#GS2 should return with rows ;-)");
+				} finally {
+					if (reader != null && !reader.IsClosed)
+						reader.Close ();
+					_conn.Close ();
+				}
+			}
+		}
 
 		[Test]
 		public void TypeOfNullInResultTest ()
@@ -301,5 +321,5 @@ namespace MonoTests.Mono.Data.Sqlite
 				}
 			}
 		}
-        }
+	}
 }
