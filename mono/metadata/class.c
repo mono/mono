@@ -4987,6 +4987,12 @@ static mono_bool
 class_implements_interface (MonoClass* klass, MonoClass* iface)
 {
 	int i;
+	ERROR_DECL (error);
+	mono_class_setup_interfaces (klass, error);
+	if (!is_ok (error)) {
+		mono_error_cleanup  (error);
+		return FALSE;
+	}
 	MonoClass **klass_interfaces = m_class_get_interfaces (klass);
 	for (i = 0; i < m_class_get_interface_count (klass); i++) {
 		MonoClass *ic = klass_interfaces [i];
