@@ -4,7 +4,6 @@ namespace System.Threading
 {
 	partial class ThreadPool
 	{
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void InitializeVMTp(ref bool enableWorkerTracking);
 
@@ -17,11 +16,10 @@ namespace System.Threading
 			}
 		}
 
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool RequestWorkerThread();
 
-		internal static bool KeepDispatching(int startTickCount) => true; // just like in ThreadPool.Portable.cs
+		internal static bool KeepDispatching(int startTickCount) => true;
 
 		internal static void NotifyWorkItemProgress ()
 		{
@@ -29,7 +27,6 @@ namespace System.Threading
 			NotifyWorkItemProgressNative();
 		}
 
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void NotifyWorkItemProgressNative();
 
@@ -52,31 +49,24 @@ namespace System.Threading
 			return waiter;
 		}
 
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void ReportThreadStatus(bool isWorking);
 
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool NotifyWorkItemComplete();
 
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool SetMinThreadsNative(int workerThreads, int completionPortThreads);
 
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool SetMaxThreadsNative(int workerThreads, int completionPortThreads);
 
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void GetMinThreadsNative(out int workerThreads, out int completionPortThreads);
 
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void GetMaxThreadsNative(out int workerThreads, out int completionPortThreads);
 
-		[System.Security.SecurityCritical]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void GetAvailableThreadsNative(out int workerThreads, out int completionPortThreads);
 
@@ -85,7 +75,6 @@ namespace System.Threading
 			return SetMaxThreadsNative(workerThreads, completionPortThreads);
 		}
 
-		[System.Security.SecuritySafeCritical]  // auto-generated
 		public static void GetMaxThreads(out int workerThreads, out int completionPortThreads)
 		{
 			GetMaxThreadsNative(out workerThreads, out completionPortThreads);
@@ -96,13 +85,11 @@ namespace System.Threading
 			return SetMinThreadsNative(workerThreads, completionPortThreads);
 		}
 
-		[System.Security.SecuritySafeCritical]  // auto-generated
 		public static void GetMinThreads(out int workerThreads, out int completionPortThreads)
 		{
 			GetMinThreadsNative(out workerThreads, out completionPortThreads);
 		}
 
-		[System.Security.SecuritySafeCritical]  // auto-generated
 		public static void GetAvailableThreads(out int workerThreads, out int completionPortThreads)
 		{
 			GetAvailableThreadsNative(out workerThreads, out completionPortThreads);
