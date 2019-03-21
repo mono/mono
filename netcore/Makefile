@@ -84,4 +84,5 @@ run-xunit: check-env
 		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/
 	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(VERSION)" \
 		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/xunit.console.dll \
-		$(TEST_ASSEMBLY) -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests
+		$(TEST_ASSEMBLY) -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests \
+		-noappdomain -noshadow -parallel none -nunit TestResult-netcore-xunit.xml
