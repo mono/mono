@@ -77,12 +77,10 @@ check: $(addprefix run-, $(TEST_SUITES))
 clean:
 	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
-TEST_ASSEMBLY=$(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/System.Runtime.Tests.dll
-#TEST_ASSEMBLY=$(COREFX_BINDIR)/System.Collections.Tests/netcoreapp-Debug/System.Collections.Tests.dll
 run-xunit: check-env
 	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib \
 		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/
 	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(VERSION)" \
 		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/xunit.console.dll \
 		$(TEST_ASSEMBLY) -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests \
-		-noappdomain -noshadow -parallel none -nunit TestResult-netcore-xunit.xml
+		-noappdomain -noshadow -parallel all -nunit TestResult-netcore-xunit.xml < excludes-System.Runtime.Tests.rsp
