@@ -7,37 +7,115 @@ using WebAssembly;
 using System.Threading;
 using System.IO;
 using ClientWebSocket = WebAssembly.Net.WebSockets.ClientWebSocket;
+using System.Net.WebSockets;
 
 namespace TestSuite
 {
     public class Program
     {
-		static ClientWebSocket cws;
-		static CancellationTokenSource _cancellation;
-
-		static async void CheckWebSocket (Uri server, string protocols = "")
+		static ClientWebSocket CreateWebSocket (Uri server, string protocols = "")
 		{
-			if (cws == null) {
+			var cws = new ClientWebSocket ();
 
-				cws = new ClientWebSocket ();
+			if (!string.IsNullOrEmpty(protocols)) {
 
-				if (!string.IsNullOrEmpty(protocols)) {
-
-					foreach (var p in protocols.Split(';')) {
-						cws.Options.AddSubProtocol (p);
-					}
-
+				foreach (var p in protocols.Split(';')) {
+					cws.Options.AddSubProtocol (p);
 				}
 
 			}
 
+			return cws;
+
+		}
+		public async Task<int> ConnectWebSocketStatus (Uri server, string protocols)
+		{
+			var cws = CreateWebSocket (server, protocols);
+
+            WebSocketCloseStatus status = cws.CloseStatus ?? WebSocketCloseStatus.Empty;
+
+			try {
+				Task taskConnect = cws.ConnectAsync (server, CancellationToken.None);
+				await taskConnect;
+			} catch (Exception exc) {
+				Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+			}
+			finally {
+				status = cws.CloseStatus ?? WebSocketCloseStatus.Empty;
+				cws = null;
+			}
+            return (int)status;
 		}
 
-		public async Task<object> ConnectWebSocket (Uri server, string protocols)
+		public async Task<int> ConnectWebSocketStatusWithToken (Uri server, string protocols)
 		{
-			_cancellation = new CancellationTokenSource ();
+			var cws = CreateWebSocket (server, protocols);
 
-			CheckWebSocket (server, protocols);
+            WebSocketCloseStatus status = cws.CloseStatus ?? WebSocketCloseStatus.Empty;
+			using (var cts2 = new CancellationTokenSource (500)) {
+
+				try {
+					Task taskConnect = cws.ConnectAsync (server, cts2.Token);
+					await taskConnect;
+				} catch (Exception exc) {
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+				}
+                finally {
+                    status = cws.CloseStatus ?? WebSocketCloseStatus.Empty;
+                    cws = null;
+                }
+			}
+            return (int)status;
+		}
+
+		public async Task<WebSocketState> OpenWebSocket (Uri server, string protocols)
+		{
+			var cws = CreateWebSocket (server, protocols);
+
+            var state = cws.State;
+			using (var cts2 = new CancellationTokenSource (500)) {
+
+				try {
+					Task taskConnect = cws.ConnectAsync (server, cts2.Token);
+					await taskConnect;
+				} catch (Exception exc) {
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+				}
+                finally {
+                    state = cws.State;
+                    cws = null;
+                }
+			}
+            return state;
+		}
+
+		public async Task<WebSocketState> CloseWebSocket (Uri server, string protocols)
+		{
+			var cws = CreateWebSocket (server, protocols);
+
+            var state = cws.State;
+			using (var cts2 = new CancellationTokenSource (500)) {
+
+				try {
+					Task taskConnect = cws.ConnectAsync (server, cts2.Token);
+					await taskConnect;
+					if (cws.State == WebSocketState.Open)
+						await cws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Hic sunt Dracones!!", CancellationToken.None);
+				} catch (Exception exc) {
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+				}
+                finally {
+                    state = cws.State;
+                    cws = null;
+                }
+			}
+            return state;
+		}
+
+		public async Task<WebSocketState> ConnectWebSocket (Uri server, string protocols)
+		{
+			var cws = CreateWebSocket(server, protocols);
+
             var state = cws.State;
 			using (var cts2 = new CancellationTokenSource (4000)) {
 
@@ -45,8 +123,6 @@ namespace TestSuite
 					Task taskConnect = cws.ConnectAsync (server, cts2.Token);
 					await taskConnect;
 				} catch (Exception exc) {
-                    //return $"Close Status: [{cws.CloseStatus}] Description: [{cws.CloseStatusDescription}]";
-                    //return $"{exc.Message} / {exc.InnerException.Message}";
                     Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
 				}
                 finally {
