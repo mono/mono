@@ -4,6 +4,7 @@ using System.Net.Http;
 using WebAssembly.Net.Http.HttpClient; 
 using System.Threading.Tasks;
 using WebAssembly;
+using WebAssembly.Core;
 using System.Threading;
 using System.IO;
 using ClientWebSocket = WebAssembly.Net.WebSockets.ClientWebSocket;
@@ -169,6 +170,59 @@ namespace TestSuite
             return description;
 		}
 
+		public async Task<string> WebSocketSendText (Uri server, string protocols, string text)
+		{
+			var cws = CreateWebSocket (server, protocols);
+
+			using (var cts2 = new CancellationTokenSource (500)) {
+
+				try {
+					Task taskConnect = cws.ConnectAsync (server, cts2.Token);
+					await taskConnect;
+					if (cws.State == WebSocketState.Open) {
+						var sndBuffer = Encoding.UTF8.GetBytes (text);
+						await cws.SendAsync (new ArraySegment<byte> (sndBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
+						var rcvBuffer = new ArraySegment<byte> (new byte [4096]);
+						var r = await cws.ReceiveAsync (rcvBuffer, CancellationToken.None);
+						return Encoding.UTF8.GetString (rcvBuffer.Array, rcvBuffer.Offset, r.Count);
+					}
+					
+				} catch (Exception exc) {
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+				}
+                finally {
+                    cws = null;
+                }
+			}
+            return "SomethingWentWrong";
+		}
+
+		public async Task<string> WebSocketSendBinary (Uri server, string protocols, string text)
+		{
+			var cws = CreateWebSocket (server, protocols);
+
+			using (var cts2 = new CancellationTokenSource (500)) {
+
+				try {
+					Task taskConnect = cws.ConnectAsync (server, cts2.Token);
+					await taskConnect;
+					if (cws.State == WebSocketState.Open) {
+						var sndBuffer = Encoding.UTF8.GetBytes (text);
+						await cws.SendAsync (new ArraySegment<byte> (sndBuffer), WebSocketMessageType.Binary, true, CancellationToken.None);
+						var rcvBuffer = new ArraySegment<byte> (new byte [4096]);
+						var r = await cws.ReceiveAsync (rcvBuffer, CancellationToken.None);
+						return Encoding.UTF8.GetString (rcvBuffer.Array, rcvBuffer.Offset, r.Count);
+					}
+					
+				} catch (Exception exc) {
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+				}
+                finally {
+                    cws = null;
+                }
+			}
+            return "SomethingWentWrong";
+		}
 
 		public async Task<WebSocketState> ConnectWebSocket (Uri server, string protocols)
 		{

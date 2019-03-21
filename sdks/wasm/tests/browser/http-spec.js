@@ -420,6 +420,44 @@ describe("The WebAssembly Browser Test Suite",function(){
       
     }, DEFAULT_TIMEOUT);    
 
+    it('WebSocketSendText: should return echoed text.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:WebSocketSendText", ["ws://localhost:8889", "echo-protocol", "Hello WebSockets"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Hello WebSockets', "result does not match Hello WebSockets.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
 
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('WebSocketSendBinary: should return echoed text.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      var binBuffer = new Uint8Array([49,50,51,52,53,54,55,56,57])
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:WebSocketSendBinary", ["ws://localhost:8889", "echo-protocol", "Hello WebSockets"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Hello WebSockets', "result does not match Hello WebSockets.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_WS_TIMEOUT);    
 
   });
