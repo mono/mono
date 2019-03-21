@@ -77,3 +77,7 @@ check: $(addprefix run-, $(TEST_SUITES))
 clean:
 	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
+
+TEST_ASSEMBLY=tests/System.Runtime.Tests/bin/Debug/netcoreapp3.0/System.Runtime.Tests.dll
+run-simple-xunit-runner:
+	dotnet build simple-xunit-runner && COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(VERSION)" simple-xunit-runner/bin/Debug/netcoreapp3.0/SimpleXunitRunner.dll $(TEST_ASSEMBLY)
