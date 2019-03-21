@@ -994,6 +994,8 @@ namespace Mono.Data.Sqlite
     public override bool Read()
     {
       CheckClosed();
+      if (_activeStatement == null)
+        throw new ArgumentException ("Empty SQL statement");
 
       if (_readingState == -1) // First step was already done at the NextResult() level, so don't step again, just return true.
       {
