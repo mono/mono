@@ -7939,7 +7939,7 @@ ves_icall_System_TypedReference_InternalMakeTypedReference (MonoTypedRef *res, M
 
 	g_assert (mono_array_handle_length (fields) > 0);
 
-	mono_handle_class (target);
+	klass = mono_handle_class (target);
 
 	int offset = 0;
 	for (i = 0; i < mono_array_handle_length (fields); ++i) {
