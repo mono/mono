@@ -6,6 +6,6 @@ using System.Runtime.InteropServices;
 
 internal static partial class Interop
 {
-	[DllImport("__Internal")]
+	[DllImport("System.Native")]
 	internal static extern void mono_pal_init ();
 }
