@@ -5,39 +5,37 @@ namespace System
 {
 	partial class Enum
 	{
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern bool GetEnumValuesAndNames (RuntimeType enumType, out ulong[] values, out string[] names);
-
-		static TypeValuesAndNames GetCachedValuesAndNames (RuntimeType enumType, bool getNames)
+		sealed class EnumInfo
 		{
-			var entry = enumType.GenericCache as TypeValuesAndNames;
+			public readonly bool HasFlagsAttribute;
+			public readonly ulong[] Values;
+			public readonly string[] Names;
 
-			if (entry == null || (getNames && entry.Names == null)) {
-				ulong[] values = null;
-				String[] names = null;
-
-				if (!GetEnumValuesAndNames (enumType, out values, out names))
-					Array.Sort (values, names, System.Collections.Generic.Comparer<ulong>.Default);
-
-				bool isFlags = enumType.IsDefined (typeof(FlagsAttribute), inherit: false);
-				entry = new TypeValuesAndNames (isFlags, values, names);
-				enumType.GenericCache = entry;
+			// Each entry contains a list of sorted pair of enum field names and values, sorted by values
+			public EnumInfo (bool hasFlagsAttribute, ulong[] values, string[] names)
+			{
+				HasFlagsAttribute = hasFlagsAttribute;
+				Values = values;
+				Names = names;
 			}
-
-			return entry;
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern object InternalBoxEnum (RuntimeType enumType, long value);
+		public int CompareTo (object target)
+		{
+			const int retIncompatibleMethodTables = 2;  // indicates that the method tables did not match
+			const int retInvalidEnumType = 3; // indicates that the enum was of an unknown/unsupported underlying type
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern int InternalCompareTo (object o1, object o2);
+			int ret = InternalCompareTo (this, target);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern CorElementType InternalGetCorElementType ();
+			if (ret < retIncompatibleMethodTables)
+				// -1, 0 and 1 are the normal return codes
+				return ret;
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern RuntimeType InternalGetUnderlyingType (RuntimeType enumType);
+			if (ret == retIncompatibleMethodTables)
+				throw new ArgumentException (SR.Format (SR.Arg_EnumAndObjectMustBeSameType, target.GetType (), GetType ()));
+
+			throw new InvalidOperationException (SR.InvalidOperation_UnknownEnumType);
+		}
 
 		public override bool Equals (object obj)
 		{
@@ -82,7 +80,58 @@ namespace System
 			return enumType.GetEnumValues ();
 		}
 
-		private static RuntimeType ValidateRuntimeType (Type enumType)
+		public static bool IsDefined (Type enumType, object value)
+		{
+			if (enumType == null)
+				throw new ArgumentNullException (nameof(enumType));
+
+			return enumType.IsEnumDefined (value);
+		}
+
+		internal static ulong[] InternalGetValues (RuntimeType enumType)
+		{
+			// Get all of the values
+			return GetEnumInfo (enumType, false).Values;
+		}
+
+		internal static string[] InternalGetNames (RuntimeType enumType)
+		{
+			// Get all of the names
+			return GetEnumInfo (enumType, true).Names;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern bool GetEnumValuesAndNames (RuntimeType enumType, out ulong[] values, out string[] names);
+
+		static EnumInfo GetEnumInfo (RuntimeType enumType, bool getNames = true)
+		{
+			var entry = enumType.GenericCache as EnumInfo;
+
+			if (entry == null || (getNames && entry.Names == null)) {
+				if (!GetEnumValuesAndNames (enumType, out var values, out var names))
+					Array.Sort (values, names, System.Collections.Generic.Comparer<ulong>.Default);
+
+				bool hasFlagsAttribute = enumType.IsDefined (typeof(FlagsAttribute), inherit: false);
+				entry = new EnumInfo (hasFlagsAttribute, values, names);
+				enumType.GenericCache = entry;
+			}
+
+			return entry;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern object InternalBoxEnum (RuntimeType enumType, long value);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern int InternalCompareTo (object o1, object o2);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern CorElementType InternalGetCorElementType ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern RuntimeType InternalGetUnderlyingType (RuntimeType enumType);
+
+		static RuntimeType ValidateRuntimeType (Type enumType)
 		{
 			if (enumType == null)
 				throw new ArgumentNullException (nameof (enumType));
@@ -91,6 +140,6 @@ namespace System
 			if (!(enumType is RuntimeType rtType))
 				throw new ArgumentException (SR.Arg_MustBeType, nameof (enumType));
 			return rtType;
-		}		
+		}
 	}
 }
