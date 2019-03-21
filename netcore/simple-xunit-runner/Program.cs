@@ -16,7 +16,8 @@ namespace Xunit
                 // works as "TestDisplayName contains X"
                 "IndexOfSequenceMultipleMatch_Char",
                 "Test_ToLower_Culture",
-                "Exception_TargetSite_Aot"
+                "Exception_TargetSite_Aot",
+                "PointerTests"
             };
         
         public static void Main(string[] args)
