@@ -3811,6 +3811,19 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 				}
 			}
 		}
+
+		int i;
+		MonoClass **klass_interfaces = m_class_get_interfaces (oklass);
+        for (i = 0; i < m_class_get_interface_count (oklass); i++) {
+            MonoClass *ic = klass_interfaces [i];
+            if (mono_class_is_ginst (ic))
+                ic = mono_class_get_generic_type_definition (ic);
+            if (ic == klass) {
+                *result = TRUE;
+                return;
+            }
+        }
+		
 		*result = FALSE;
 		return;
 	} else if (m_class_is_delegate (klass)) {
@@ -5481,6 +5494,8 @@ mono_class_get_generic_type_definition (MonoClass *klass)
  * Generic instantiations are ignored for all super types of @klass.
  * 
  * Visibility checks ignoring generic instantiations.  
+ * 
+ * Class implementing interface visibility checks ignore generic instantiations 
  */
 gboolean
 mono_class_has_parent_and_ignore_generics (MonoClass *klass, MonoClass *parent)
