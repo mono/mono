@@ -50,12 +50,14 @@ check-env:
 
 TEST_SUITES = \
 	System.Runtime.Tests \
+	System.Runtime.Loader.Tests \
 	System.Runtime.CompilerServices.Unsafe.Tests \
 	System.Collections.Tests
 
 # The binary directory under $(COREFIX_BINDIR)
 System.Runtime.CompilerServices.Unsafe.Tests_PROFILE = netstandard-Debug
 System.Runtime.Tests_PROFILE = netcoreapp-Unix-Debug
+System.Runtime.Loader.Tests_PROFILE = netcoreapp-Unix-Debug
 System.Runtime.Tests_XUNIT_ARGS = @../excludes-System.Runtime.Tests.rsp
 System.Collections.Tests_PROFILE = netcoreapp-Debug
 
@@ -66,6 +68,7 @@ build-%: check-env
 	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib tests/$*
 	sed -e 's/9.9.9/$(VERSION)/g' < tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json > 2 && mv 2 tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json
 	cd tests/$* && dotnet build
+	cp $(COREFX_BINDIR)/System.Runtime.Loader.Test.Assembly/netcoreapp-Debug/System.Runtime.Loader.Test.Assembly.dll tests/$*/bin/Debug/netcoreapp3.0/System.Runtime.Loader.Test.Assembly.dll
 
 run-%: check-env
 	cd tests/$* && MONO_PATH=bin/Debug/netcoreapp3.0 MONO_ENV_OPTIONS="--debug --explicit-null-checks" COMPlus_DebugWriteToStdErr=1 ../../dotnet bin/Debug/netcoreapp3.0/$*-runner.dll
