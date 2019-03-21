@@ -74,6 +74,6 @@ namespace System.Collections.Generic
 	partial class EnumEqualityComparer<T>
 	{
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
-		public override bool Equals (T x, T y) => JitHelpers.UnsafeEnumCast (x) == JitHelpers.UnsafeEnumCast (y);
+		public override bool Equals (T x, T y) => JitHelpers.EnumEquals (x, y);
 	}
 }
