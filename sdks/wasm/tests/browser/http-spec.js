@@ -257,7 +257,7 @@ describe("The WebAssembly Browser Test Suite",function(){
       
     }, DEFAULT_TIMEOUT);  
 
-    it('ConnectWebSocketStatus: should return Closed because unresolved host.', (done) => {
+    it('ConnectWebSocketStatus: should return Error Code 1006 because unresolved host.', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
@@ -277,7 +277,7 @@ describe("The WebAssembly Browser Test Suite",function(){
       
     }, DEFAULT_WS_TIMEOUT); 
        
-    it('ConnectWebSocketStatus: should return Closed because of invalid protocol.', (done) => {
+    it('ConnectWebSocketStatus: should return Error Code 1006 because of invalid protocol.', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
@@ -297,7 +297,7 @@ describe("The WebAssembly Browser Test Suite",function(){
       
     }, DEFAULT_WS_TIMEOUT); 
 
-    it('ConnectWebSocketStatusWithToken: should return Closed because unresolved host.', (done) => {
+    it('ConnectWebSocketStatusWithToken: should return Error Code 1006 because unresolved host.', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
@@ -317,7 +317,7 @@ describe("The WebAssembly Browser Test Suite",function(){
       
     }, DEFAULT_WS_TIMEOUT); 
        
-    it('ConnectWebSocketStatusWithToken: should return Closed because of invalid protocol.', (done) => {
+    it('ConnectWebSocketStatusWithToken: should return Error Code 1006 because of invalid protocol.', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
@@ -376,6 +376,50 @@ describe("The WebAssembly Browser Test Suite",function(){
       );
       
     }, DEFAULT_TIMEOUT);    
-    
+
+        
+    it('RecieveHostCloseWebSocket: should return Closed.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:RecieveHostCloseWebSocket", ["ws://localhost:8889", "echo-protocol"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Closed', "result doesn't match expected result Closed.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('CloseStatusDescCloseWebSocket: should return Close Code and Description.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:CloseStatusDescCloseWebSocket", ["ws://localhost:8889", "echo-protocol"]).then(
+        (result) => 
+        {
+            try {
+              var resultObj = JSON.parse(result);
+              assert.equal(resultObj.code, 'NormalClosure', "code result doesn't match expected result NormalClosure.");
+              assert.equal(resultObj.desc, 'bye!', "description result doesn't match expected result 'bye!'.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+
+
 
   });

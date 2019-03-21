@@ -8,6 +8,7 @@ using System.Threading;
 using System.IO;
 using ClientWebSocket = WebAssembly.Net.WebSockets.ClientWebSocket;
 using System.Net.WebSockets;
+using System.Text;
 
 namespace TestSuite
 {
@@ -111,6 +112,63 @@ namespace TestSuite
 			}
             return state;
 		}
+
+		public async Task<WebSocketState> RecieveHostCloseWebSocket (Uri server, string protocols)
+		{
+			var cws = CreateWebSocket (server, protocols);
+
+            var state = cws.State;
+			using (var cts2 = new CancellationTokenSource (500)) {
+
+				try {
+					Task taskConnect = cws.ConnectAsync (server, cts2.Token);
+					await taskConnect;
+					if (cws.State == WebSocketState.Open) {
+						var sndBuffer = Encoding.UTF8.GetBytes ("closeme");
+						await cws.SendAsync (new ArraySegment<byte> (sndBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
+						var rcvBuffer = new ArraySegment<byte> (new byte [4096]);
+						var r = await cws.ReceiveAsync (rcvBuffer, CancellationToken.None);
+					}
+					
+				} catch (Exception exc) {
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+				}
+                finally {
+                    state = cws.State;
+                    cws = null;
+                }
+			}
+            return state;
+		}
+
+		public async Task<string> CloseStatusDescCloseWebSocket (Uri server, string protocols)
+		{
+			var cws = CreateWebSocket (server, protocols);
+
+			var description = $"{{ \"code\": \"{cws.CloseStatus}\", \"desc\": \"{cws.CloseStatusDescription}\" }}";
+			using (var cts2 = new CancellationTokenSource (500)) {
+
+				try {
+					Task taskConnect = cws.ConnectAsync (server, cts2.Token);
+					await taskConnect;
+					if (cws.State == WebSocketState.Open) {
+						var sndBuffer = Encoding.UTF8.GetBytes ("closeme");
+						await cws.SendAsync (new ArraySegment<byte> (sndBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
+						var rcvBuffer = new ArraySegment<byte> (new byte [4096]);
+						var r = await cws.ReceiveAsync (rcvBuffer, CancellationToken.None);
+					}
+					
+				} catch (Exception exc) {
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException.Message}");
+				}
+                finally {
+           			description = $"{{ \"code\": \"{cws.CloseStatus}\", \"desc\": \"{cws.CloseStatusDescription}\" }}";
+                    cws = null;
+                }
+			}
+            return description;
+		}
+
 
 		public async Task<WebSocketState> ConnectWebSocket (Uri server, string protocols)
 		{

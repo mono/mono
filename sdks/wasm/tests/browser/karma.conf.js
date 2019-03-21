@@ -78,8 +78,14 @@ module.exports = function(config) {
                     console.log((new Date()) + ' Connection accepted.');
                     connection.on('message', function(message) {
                         if (message.type === 'utf8') {
-                            console.log('Received Message: ' + message.utf8Data);
-                            connection.sendUTF(message.utf8Data);
+                            if (message.utf8Data === "closeme")
+                            {
+                                connection.close(1000, "bye!");
+                            }
+                            else {
+                                console.log('Received Message: ' + message.utf8Data);
+                                connection.sendUTF(message.utf8Data);
+                            }
                         }
                         else if (message.type === 'binary') {
                             console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
