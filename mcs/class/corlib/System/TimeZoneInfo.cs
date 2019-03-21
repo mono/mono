@@ -834,10 +834,12 @@ namespace System
 
 			if (tzRule != null && tz.IsInDST (tzRule, dateTime)) {
 				// Replicate what .NET does when given a time which falls into the hour which is lost when
-				// DST starts. isDST should always be true but the offset should be BaseUtcOffset without the
+				// DST starts. isDST should be false and the offset should be BaseUtcOffset without the
 				// DST delta while in that hour.
-				isDST = true;
+				if (forOffset)
+					isDST = true;
 				if (tz.IsInDST (tzRule, dstUtcDateTime)) {
+					isDST = true;
 					return tz.BaseUtcOffset + tzRule.DaylightDelta;
 				} else {
 					return tz.BaseUtcOffset;

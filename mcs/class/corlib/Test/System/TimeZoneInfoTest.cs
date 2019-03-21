@@ -436,17 +436,17 @@ namespace MonoTests.System
 				try {
 
 					var date = new DateTime (2014, 3, 30 , 3, 0, 0);
-					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 					date = new DateTime (2014, 3, 30 , 3, 1, 0);
-					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 					date = new DateTime (2014, 3, 30 , 3, 59, 0);
-					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
