@@ -1309,6 +1309,7 @@
     <Compile Include="Mono.Xml\SecurityParser.cs" />
     <Compile Include="Mono.Xml\SmallXmlParser.cs" />
     <Compile Include="Mono\CertificateImportFlags.cs" />
+    <Compile Include="Mono\Codegen.cs" />
     <Compile Include="Mono\DataConverter.cs" />
     <Compile Include="Mono\DependencyInjector.cs" />
     <Compile Include="Mono\ISystemCertificateProvider.cs" />
