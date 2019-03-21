@@ -4353,16 +4353,29 @@ add_gc_wrappers (MonoAotCompile *acfg)
 	}
 }
 
-static gboolean enable_method_specialization;
+static gboolean
+contains_cannot_specialize_attribute (MonoCustomAttrInfo *cattr)
+{
+	for (int i = 0; i < cattr->num_attrs; ++i) {
+		MonoCustomAttrEntry *attr = &cattr->attrs [i];
+
+		if (!attr->ctor)
+			return FALSE;
+
+		if (strcmp (m_class_get_name_space (attr->ctor->klass), "System.Runtime.CompilerServices"))
+			return FALSE;
+
+		if (strcmp (m_class_get_name (attr->ctor->klass), "DisablePrivateReflectionAttribute"))
+			return FALSE;
+	}
+
+	return TRUE;
+}
 
 gboolean
 mono_aot_can_specialize (MonoMethod *method)
 {
-	// FIXME: Cache!?
-	if (!enable_method_specialization)
-		return FALSE;
-
-	if (!method )
+	if (!method)
 		return FALSE;
 
 	if (method->wrapper_type != MONO_WRAPPER_NONE)
@@ -4373,31 +4386,44 @@ mono_aot_can_specialize (MonoMethod *method)
 		return FALSE;
 
 	// If it has the attribute disabling the specialization, we can't specialize
+	//
+	// Set by linker, indicates that the method can be found through reflection
+	// and that call-site specialization shouldn't be done.
+	//
+	// Important that this attribute is used for *nothing else*
+	//
+	// If future authors make use of it (to disable more optimizations),
+	// change this place to use a new attribute.
 	ERROR_DECL (cattr_error);
-	MonoCustomAttrInfo *cattr = mono_custom_attrs_from_method_checked (method, cattr_error);
+	MonoCustomAttrInfo *cattr = mono_custom_attrs_from_class_checked (method->klass, cattr_error);
+
 	if (!is_ok (cattr_error)) {
 		mono_error_cleanup (cattr_error);
 		goto cleanup_false;
-	} else if (!cattr) {
+	} else if (cattr && contains_cannot_specialize_attribute (cattr)) {
 		goto cleanup_true;
 	}
 
-	for (int i = 0; i < cattr->num_attrs; ++i) {
-		if (!cattr->attrs [i].ctor)
-			continue;
+	cattr = mono_custom_attrs_from_method_checked (method, cattr_error);
 
-		if (!strcmp (m_class_get_name (cattr->attrs [i].ctor->klass), "Reflected")) {
-			goto cleanup_false;
-		}
+	if (!is_ok (cattr_error)) {
+		mono_error_cleanup (cattr_error);
+		goto cleanup_false;
+	} else if (cattr && contains_cannot_specialize_attribute (cattr)) {
+		goto cleanup_true;
+	} else {
+		goto cleanup_false;
 	}
 
-cleanup_true:
-	mono_custom_attrs_free (cattr);
-	return TRUE;
-
 cleanup_false:
-	mono_custom_attrs_free (cattr);
+	if (cattr)
+		mono_custom_attrs_free (cattr);
 	return FALSE;
+
+cleanup_true:
+	if (cattr)
+		mono_custom_attrs_free (cattr);
+	return TRUE;
 }
 
 static void
@@ -8046,8 +8072,6 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		// Intentionally undocumented: Used for internal debugging
 		} else if (str_begins_with (arg, "dump")) {
 			opts->dump_json = TRUE;
-		} else if (str_begins_with (arg, "opt-callee")) {
-			enable_method_specialization = TRUE;
 		} else if (str_begins_with (arg, "llvmonly")) {
 			opts->mode = MONO_AOT_MODE_FULL;
 			opts->llvm = TRUE;
