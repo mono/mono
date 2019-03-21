@@ -51,9 +51,9 @@ namespace System.Windows.Forms {
 		private bool			closed;
 		FormBorderStyle			form_border_style;
 		private bool			is_active;
-		private bool		        autoscale;
+		private bool			autoscale;
 		private Size			clientsize_set;
-		private Size		        autoscale_base_size;
+		private Size			autoscale_base_size;
 		private bool			allow_transparency;
 		private static Icon		default_icon;
 		internal bool			is_modal;
@@ -90,11 +90,11 @@ namespace System.Windows.Forms {
 		internal int			is_changing_visible_state;
 		internal bool			has_been_visible;
 		private bool			shown_raised;
-		private bool                    close_raised;
+		private bool			close_raised;
 		private bool			is_clientsize_set;
 		internal bool			suppress_closing_events;
 		internal bool			waiting_showwindow; // for XplatUIX11
-		private bool                    is_minimizing;
+		private bool			is_minimizing;
 		private bool			show_icon = true;
 		private MenuStrip		main_menu_strip;
 		private bool			right_to_left_layout;
@@ -383,33 +383,25 @@ namespace System.Windows.Forms {
 			InternalClientSize = new Size (this.Width - (SystemInformation.FrameBorderSize.Width * 2), this.Height - (SystemInformation.FrameBorderSize.Height * 2) - SystemInformation.CaptionHeight);
 			restore_bounds = Bounds;
 		}
-		#endregion	// Public Constructor & Destructor
+		#endregion // Public Constructor & Destructor
 
-		#region Public Static Properties
+		#region Public Static Properties (with helper functions)
 
 		public static Form ActiveForm {
 			get {
-				Control	active;
+				Control ctrl = FromHandle (XplatUI.GetActive ());
 
-				active = FromHandle(XplatUI.GetActive());
-
-				if (active != null) {
-					if ( !(active is Form)) {
-						Control	parent;
-
-						parent = active.Parent;
-						while (parent != null) {
-							if (parent is Form) {
-								return (Form)parent;
-							}
-							parent = parent.Parent;
-						}
-					} else {
-						return (Form)active;
-					}
+				while (!(ctrl == null || Form.IsVisibleAndNotClosedForm (ctrl))) {
+					ctrl = ctrl.Parent;
 				}
-				return null;
+
+				return (Form) ctrl;  // null or Form
 			}
+		}
+
+		private static bool IsVisibleAndNotClosedForm (Control ctrl)
+		{
+			return (ctrl is Form form) && !form.closed && form.Visible;
 		}
 
 		#endregion	// Public Static Properties
@@ -2546,6 +2538,7 @@ namespace System.Windows.Forms {
 				return; // prevent closing a disabled form.
 
 			Form act = Form.ActiveForm;
+
 			// Don't close this form if there's another modal form visible.
 			if (act != null && act != this && act.Modal == true) {
 				// Check if any of the parents up the tree is the modal form, 
@@ -2575,9 +2568,9 @@ namespace System.Windows.Forms {
 				if (is_modal) {
 					Hide ();
 				} else {
-					Dispose ();					
+					Dispose ();
 					if (act != null && act != this)
-						act.SelectActiveControl ();
+						act.SelectActiveControl();
 				}
 				mdi_parent = null;
 			} else {
