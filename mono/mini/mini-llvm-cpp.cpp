@@ -254,6 +254,12 @@ mono_llvm_set_call_nonnull_arg (LLVMValueRef calli, int argNo)
 }
 
 void
+mono_llvm_set_call_nonnull_ret (LLVMValueRef calli)
+{
+	unwrap<CallInst>(calli)->addAttribute (AttributeList::ReturnIndex, Attribute::NonNull);
+}
+
+void
 mono_llvm_set_func_nonnull_arg (LLVMValueRef func, int argNo)
 {
 	unwrap<Function>(func)->addParamAttr (argNo, Attribute::NonNull);

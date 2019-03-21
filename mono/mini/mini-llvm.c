@@ -4098,6 +4098,12 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 			mono_llvm_set_call_nonnull_arg (lcall, i);
 	}
 
+	// If we just allocated an object, it's not null.
+	if (call->method && call->method->wrapper_type == MONO_WRAPPER_ALLOC) {
+			mono_llvm_set_call_nonnull_ret (lcall);
+			g_hash_table_insert (ctx->module->module_nonnull, lcall, lcall);
+	}
+
 	if (ins->opcode != OP_TAILCALL && ins->opcode != OP_TAILCALL_MEMBASE && LLVMGetInstructionOpcode (lcall) == LLVMCall)
 		mono_llvm_set_call_notailcall (lcall);
 
