@@ -4988,6 +4988,8 @@ class_implements_interface (MonoClass* klass, MonoClass* iface)
 {
 	int i;
 	ERROR_DECL (error);
+	if (mono_class_is_assignable_from_internal (iface, klass))
+		return TRUE;
 	mono_class_setup_interfaces (klass, error);
 	if (!is_ok (error)) {
 		mono_error_cleanup  (error);
