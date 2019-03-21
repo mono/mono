@@ -8784,10 +8784,9 @@ static const char mono_icall_sig_ptrref = 0;
 
 #define ICALL_SIG_TYPES(n, types) ICALL_SIG_TYPES_ ## n types
 
-// FIXME A simpler way?
-#define MONO_ROUND_UP(a, b) \
-    ((a) + (((a) & ((b) - 1)) ? ((b) - ((a) & ((b) - 1))) : 0))
-
+// A scheme to make these const would be nice.
+// For example, if types[] could remain indirect, or
+// an offset within mono_defaults.
 static struct {
 #define ICALL_SIG(n, xtypes) 			\
 	struct {				\
