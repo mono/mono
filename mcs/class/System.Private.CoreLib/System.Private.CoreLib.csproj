@@ -150,7 +150,35 @@
       <Compile Include="System.Reflection\RuntimeMethodBody.cs" />
       <Compile Include="System.Reflection\RuntimeLocalVariableInfo.cs" />
       <Compile Include="System.Reflection\RuntimeExceptionHandlingClause.cs" />
-      <Compile Include="System.Reflection.Emit\Stubs.cs" />
+      <Compile Include="System.Reflection.Emit\AssemblyBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\ConstructorBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\ConstructorOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\CustomAttributeBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\DerivedTypes.cs" />
+      <Compile Include="System.Reflection.Emit\DynamicILInfo.cs" />
+      <Compile Include="System.Reflection.Emit\DynamicMethod.cs" />
+      <Compile Include="System.Reflection.Emit\DynamicMethod.notsupported.cs" />
+      <Compile Include="System.Reflection.Emit\EnumBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\EventBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\EventOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\FieldBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\FieldOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\GenericTypeParameterBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\ILGenerator.cs" />
+      <Compile Include="System.Reflection.Emit\LocalBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\MethodBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\MethodOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\MethodRental.cs" />
+      <Compile Include="System.Reflection.Emit\ModuleBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\MonoArrayMethod.cs" />
+      <Compile Include="System.Reflection.Emit\OpCodeNames.cs" />
+      <Compile Include="System.Reflection.Emit\ParameterBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\PropertyBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\PropertyOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\SignatureHelper.cs" />
+      <Compile Include="System.Reflection.Emit\TypeBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\TypeBuilderInstantiation.cs" />
+      <Compile Include="System.Reflection.Emit\UnmanagedMarshal.cs" />
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="System.Resources\ManifestBasedResourceGroveler.cs" />
       <Compile Include="System.Runtime\GCSettings.cs" />
@@ -243,7 +271,7 @@
   <PropertyGroup>
     <DefineConstants>FEATURE_DEFAULT_INTERFACES;FEATURE_MANAGED_ETW_CHANNELS;$(DefineConstants)</DefineConstants>
 
-    <DefineConstants>MONO;NETCORE;DISABLE_REMOTING;$(DefineConstants)</DefineConstants>
+    <DefineConstants>MONO;NETCORE;DISABLE_REMOTING;MONO_FEATURE_SRE;$(DefineConstants)</DefineConstants>
     <NoWarn>3021,$(NoWarn)</NoWarn>
   </PropertyGroup>
 

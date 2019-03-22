@@ -1,3 +1,4 @@
+#if FALSE
 namespace System.Reflection.Emit
 {
 	public partial class CustomAttributeBuilder
@@ -584,3 +585,4 @@ namespace System.Reflection.Emit
         public DynamicILInfo GetDynamicILInfo() { throw null; }
     }
 }
+#endif
