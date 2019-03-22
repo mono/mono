@@ -113,16 +113,6 @@ namespace System
 		{
 			return string.Format (CultureInfo.InvariantCulture, key, values);
 		}
-
-		internal static String GetStackTrace (Exception e, bool needFileInfo)
-		{
-			StackTrace st;
-			if (e == null)
-				st = new StackTrace (needFileInfo);
-			else
-				st = new StackTrace (e, needFileInfo);
-			return st.ToString (System.Diagnostics.StackTrace.TraceFormat.Normal);
-		}
 	}
 #endregion
 }
