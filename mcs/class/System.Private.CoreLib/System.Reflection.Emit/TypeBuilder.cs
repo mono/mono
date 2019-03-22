@@ -341,12 +341,12 @@ namespace System.Reflection.Emit
 		public TypeBuilder DefineNestedType (string name)
 		{
 			return DefineNestedType (name, TypeAttributes.NestedPrivate,
-				pmodule.assemblyb.corlib_object_type, null);
+									 typeof (object), null);
 		}
 
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr)
 		{
-			return DefineNestedType (name, attr, pmodule.assemblyb.corlib_object_type, null);
+			return DefineNestedType (name, attr, typeof (object), null);
 		}
 
 		public TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent)
@@ -438,7 +438,7 @@ namespace System.Reflection.Emit
 			if (parent != null)
 				parent_type = parent;
 			else
-				parent_type = pmodule.assemblyb.corlib_object_type;
+				parent_type = typeof (object);
 
 			old_parent_type = parent_type;
 			parent_type = parent_type.InternalResolve ();
@@ -504,7 +504,7 @@ namespace System.Reflection.Emit
 				throw new ArgumentException ("Interface method must be abstract and virtual.");
 
 			if (returnType == null)
-				returnType = pmodule.assemblyb.corlib_void_type;
+				returnType = typeof (void);
 			MethodBuilder res = new MethodBuilder (this, name, attributes, 
 				callingConvention, returnType,
 				returnTypeRequiredCustomModifiers,
@@ -715,8 +715,8 @@ namespace System.Reflection.Emit
 			if (createTypeCalled)
 				return created;
 
-			if (!IsInterface && (parent == null) && (this != pmodule.assemblyb.corlib_object_type) && (FullName != "<Module>")) {
-				SetParent (pmodule.assemblyb.corlib_object_type);
+			if (!IsInterface && (parent == null) && (this != typeof (object)) && (FullName != "<Module>")) {
+				SetParent (typeof (object));
 			}
 
 			// Fire TypeResolve events for fields whose type is an unfinished
@@ -753,7 +753,7 @@ namespace System.Reflection.Emit
 			if ((parent != null) && parent.IsSealed)
 				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because the parent type is sealed.");
 
-			if (parent == pmodule.assemblyb.corlib_enum_type && methods != null)
+			if (parent == typeof (Enum) && methods != null)
 				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is an enum with methods.");
 			if (interfaces != null) {
 				foreach (var iface in interfaces) {
@@ -1310,11 +1310,9 @@ namespace System.Reflection.Emit
 		// FIXME: I doubt just removing this still works.
 		protected override bool IsValueTypeImpl ()
 		{
-			if (this == pmodule.assemblyb.corlib_value_type || this == pmodule.assemblyb.corlib_enum_type)
-				return false;
 			Type parent_type = parent;
 			while (parent_type != null) {
-				if (parent_type == pmodule.assemblyb.corlib_value_type)
+				if (parent_type == typeof (ValueType))
 					return true;
 				parent_type = parent_type.BaseType;
 			}
@@ -1540,7 +1538,7 @@ namespace System.Reflection.Emit
 			if (datablobtype == null) {
 				TypeBuilder tb = DefineNestedType (typeName,
 					TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
-					pmodule.assemblyb.corlib_value_type, null, PackingSize.Size1, size);
+												   typeof (ValueType), null, PackingSize.Size1, size);
 				tb.CreateType ();
 				datablobtype = tb;
 			}

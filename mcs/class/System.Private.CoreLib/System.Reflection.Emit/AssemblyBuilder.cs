@@ -203,10 +203,6 @@ namespace System.Reflection.Emit
 
 		AssemblyName aname;
 		string assemblyName;
-		internal Type corlib_object_type = typeof (System.Object);
-		internal Type corlib_value_type = typeof (System.ValueType);
-		internal Type corlib_enum_type = typeof (System.Enum);
-		internal Type corlib_void_type = typeof (void);
 		bool created;
 		bool is_module_only;
 		string versioninfo_culture;

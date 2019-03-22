@@ -170,7 +170,6 @@
       <Compile Include="System.Reflection.Emit\MethodOnTypeBuilderInst.cs" />
       <Compile Include="System.Reflection.Emit\ModuleBuilder.cs" />
       <Compile Include="System.Reflection.Emit\MonoArrayMethod.cs" />
-      <Compile Include="System.Reflection.Emit\OpCodeNames.cs" />
       <Compile Include="System.Reflection.Emit\ParameterBuilder.cs" />
       <Compile Include="System.Reflection.Emit\PropertyBuilder.cs" />
       <Compile Include="System.Reflection.Emit\PropertyOnTypeBuilderInst.cs" />

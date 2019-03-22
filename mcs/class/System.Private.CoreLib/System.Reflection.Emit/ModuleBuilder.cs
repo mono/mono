@@ -172,7 +172,7 @@ namespace System.Reflection.Emit {
 			if (datablobtype == null) {
 				TypeBuilder tb = DefineType (typeName, 
 				    TypeAttributes.Public|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
-					assemblyb.corlib_value_type, null, PackingSize.Size1, size);
+											 typeof (ValueType), null, PackingSize.Size1, size);
 				tb.CreateType ();
 				datablobtype = tb;
 			}
