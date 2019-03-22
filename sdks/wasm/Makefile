@@ -331,6 +331,7 @@ package: build build-dbg-proxy
 	rm -rf tmp/wasm-bcl/wasm/tests
 	rm -rf tmp/wasm-bcl/wasm/corlib.unsafe.dll.tmp
 	cp driver.c tmp/
+	cp corebindings.c tmp/
 	cp $(MONO_LIBS) tmp/
 	cp library_mono.js tmp/
 	cp binding_support.js tmp/
