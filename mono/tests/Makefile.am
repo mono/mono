@@ -1023,7 +1023,6 @@ TESTS_IL_SRC=			\
 	abstractcalls.il \
 	debug3.il \
 	provider.il \
-	ambiguousconstraint.il \
 	genericcontext.il \
 	sharedinterfacemethod.il \
 	boring.il \
