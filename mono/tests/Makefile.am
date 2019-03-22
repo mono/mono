@@ -1009,6 +1009,33 @@ TESTS_IL_SRC=			\
 	dim-sealed.il \
 	dim-protected-accessibility1.il \
 	dim-protected-accessibility2.il \
+	constrained2.il	\
+	constrainedcall.il	\
+	sharedgenerics.il \
+	constrained2_gm.il \
+	diamondshape.il	\
+	simple.il \
+	constrained3.il	\
+	genericmethods.il \
+	valuetypes.il \
+	constrained3_gm.il \
+	methodimpl.il \
+	abstractcalls.il \
+	debug3.il \
+	provider.il \
+	ambiguousconstraint.il \
+	genericcontext.il \
+	sharedinterfacemethod.il \
+	boring.il \
+	interfacecctor.il \
+	twopassvariance.il \
+	consumer.il	\
+	methodimpl.il \
+	variance.il \
+	createdelegate.il \
+	nonvirtualcall.il \
+	debug15.il \
+	notimplemented.il \
 	tailcall-generic-cast-conservestack-il.il \
 	tailcall-generic-cast-nocrash-il.il \
 	tailcall-member-function-in-valuetype.il \
