@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -41,7 +41,7 @@ using System.Text;
 namespace System.Reflection.Emit
 {
 	[StructLayout (LayoutKind.Sequential)]
-	abstract partial class SymbolType
+	abstract partial class SymbolType : TypeInfo
 	{
 		internal Type m_baseType;
 
@@ -115,7 +115,7 @@ namespace System.Reflection.Emit
 				return FormatName (m_baseType.Name);
 			}
 		}
-	
+
 		public override Type UnderlyingSystemType {
 			get {
 				return this;
@@ -132,6 +132,204 @@ namespace System.Reflection.Emit
 		internal override Type RuntimeResolve () {
 			return InternalResolve ();
 		}
+
+        public override Guid GUID
+        {
+            get { throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType")); }
+        }
+
+        public override Object InvokeMember(String name, BindingFlags invokeAttr, Binder binder, Object target,
+            Object[] args, ParameterModifier[] modifiers, CultureInfo culture, String[] namedParameters)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override Module Module
+        {
+            get
+            {
+                Type baseType;
+
+                for (baseType = m_baseType; baseType is SymbolType; baseType = ((SymbolType) baseType).m_baseType);
+
+                return baseType.Module;
+            }
+        }
+        public override Assembly Assembly
+        {
+            get
+            {
+                Type baseType;
+
+                for (baseType = m_baseType; baseType is SymbolType; baseType = ((SymbolType) baseType).m_baseType);
+
+                return baseType.Assembly;
+            }
+        }
+
+        public override RuntimeTypeHandle TypeHandle
+        {
+             get { throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType")); }
+        }
+
+        public override String Namespace
+        {
+            get { return m_baseType.Namespace; }
+        }
+
+        public override Type BaseType
+        {
+            get { return typeof(System.Array); }
+        }
+
+        protected override ConstructorInfo GetConstructorImpl(BindingFlags bindingAttr,Binder binder,
+                CallingConventions callConvention, Type[] types,ParameterModifier[] modifiers)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override ConstructorInfo[] GetConstructors(BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        protected override MethodInfo GetMethodImpl(String name,BindingFlags bindingAttr,Binder binder,
+                CallingConventions callConvention, Type[] types,ParameterModifier[] modifiers)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override MethodInfo[] GetMethods(BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override FieldInfo GetField(String name, BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override FieldInfo[] GetFields(BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override Type GetInterface(String name,bool ignoreCase)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override Type[] GetInterfaces()
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override EventInfo GetEvent(String name,BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override EventInfo[] GetEvents()
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        protected override PropertyInfo GetPropertyImpl(String name, BindingFlags bindingAttr, Binder binder,
+                Type returnType, Type[] types, ParameterModifier[] modifiers)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override PropertyInfo[] GetProperties(BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override Type[] GetNestedTypes(BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override Type GetNestedType(String name, BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override MemberInfo[] GetMember(String name,  MemberTypes type, BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override MemberInfo[] GetMembers(BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override InterfaceMapping GetInterfaceMap(Type interfaceType)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override EventInfo[] GetEvents(BindingFlags bindingAttr)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        protected override TypeAttributes GetAttributeFlagsImpl()
+        {
+            // Return the attribute flags of the base type?
+            Type baseType;
+            for (baseType = m_baseType; baseType is SymbolType; baseType = ((SymbolType)baseType).m_baseType);
+            return baseType.Attributes;
+        }
+
+        protected override bool IsPrimitiveImpl()
+        {
+            return false;
+        }
+
+        protected override bool IsValueTypeImpl()
+        {
+            return false;
+        }
+
+        protected override bool IsCOMObjectImpl()
+        {
+            return false;
+        }
+
+        public override bool IsConstructedGenericType
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public override Type GetElementType()
+        {
+            return m_baseType;
+        }
+
+        protected override bool HasElementTypeImpl()
+        {
+            return m_baseType != null;
+        }
+
+        public override Object[] GetCustomAttributes(bool inherit)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override Object[] GetCustomAttributes(Type attributeType, bool inherit)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
+
+        public override bool IsDefined (Type attributeType, bool inherit)
+        {
+            throw new NotSupportedException(Environment.GetResourceString("NotSupported_NonReflectedType"));
+        }
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
@@ -170,6 +368,12 @@ namespace System.Reflection.Emit
 			return true;
 		}
 
+        public override bool IsSZArray {
+			get {
+				return rank == 0;
+			}
+		}
+
 		public override int GetArrayRank ()
 		{
 			return (rank == 0) ? 1 : rank;
@@ -199,7 +403,7 @@ namespace System.Reflection.Emit
 
 		internal override Type InternalResolve ()
 		{
-			return m_baseType.InternalResolve ().MakeByRefType (); 
+			return m_baseType.InternalResolve ().MakeByRefType ();
 		}
 
 		protected override bool IsByRefImpl ()
@@ -244,7 +448,7 @@ namespace System.Reflection.Emit
 
 		internal override Type InternalResolve ()
 		{
-			return m_baseType.InternalResolve ().MakePointerType (); 
+			return m_baseType.InternalResolve ().MakePointerType ();
 		}
 
 		protected override bool IsPointerImpl ()

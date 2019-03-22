@@ -33,9 +33,7 @@
 #if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
-using System.Resources;
 using System.IO;
-using System.Security.Policy;
 using System.Runtime.Serialization;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -44,57 +42,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Cryptography;
-using System.Security.Permissions;
 using System.Threading;
-
-using Mono.Security;
-using Mono.Security.Cryptography;
 
 namespace System.Reflection.Emit
 {
-	internal enum NativeResourceType
-	{
-		None,
-		Unmanaged,
-		Assembly,
-		Explicit
-	}
-
-	internal struct RefEmitPermissionSet {
-		public SecurityAction action;
-		public string pset;
-
-		public RefEmitPermissionSet (SecurityAction action, string pset) {
-			this.action = action;
-			this.pset = pset;
-		}
-	}
-
-	internal struct MonoResource {
-#pragma warning disable 649
-		public byte[] data;
-		public string name;
-		public string filename;
-		public ResourceAttributes attrs;
-		public int offset;
-		public Stream stream;
-#pragma warning restore 649
-	}
-
-	internal struct MonoWin32Resource {
-		public int res_type;
-		public int res_id;
-		public int lang_id;
-		public byte[] data;
-
-		public MonoWin32Resource (int res_type, int res_id, int lang_id, byte[] data) {
-			this.res_type = res_type;
-			this.res_id = res_id;
-			this.lang_id = lang_id;
-			this.data = data;
-		}
-	}
-
 	internal class GenericInstanceKey {
 		Type gtd;
 		internal Type[] args;
@@ -207,35 +158,6 @@ namespace System.Reflection.Emit
 		}
 	}
 
-
-#if !MOBILE
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_AssemblyBuilder))]
-	[ClassInterface (ClassInterfaceType.None)]
-	partial class AssemblyBuilder :  _AssemblyBuilder
-	{
-		void _AssemblyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _AssemblyBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _AssemblyBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _AssemblyBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-#endif
-
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed partial class AssemblyBuilder : Assembly
 	{
@@ -246,11 +168,7 @@ namespace System.Reflection.Emit
 #pragma warning disable 649
 		internal IntPtr _mono_assembly;
 #pragma warning restore 649
-#if !MOBILE
-		internal Evidence _evidence;
-#else
 		object _evidence;
-#endif
 		#endregion
 
 #pragma warning disable 169, 414, 649
@@ -261,7 +179,7 @@ namespace System.Reflection.Emit
 		private string name;
 		private string dir;
 		private CustomAttributeBuilder[] cattrs;
-		private MonoResource[] resources;
+		private object resources;
 		byte[] public_key;
 		string version;
 		string culture;
@@ -271,10 +189,10 @@ namespace System.Reflection.Emit
 		bool delay_sign;
 		uint access;
 		Module[] loaded_modules;
-		MonoWin32Resource[] win32_resources;
-		private RefEmitPermissionSet[] permissions_minimum;
-		private RefEmitPermissionSet[] permissions_optional;
-		private RefEmitPermissionSet[] permissions_refused;
+		object win32_resources;
+		private object permissions_minimum;
+		private object permissions_optional;
+		private object permissions_refused;
 		PortableExecutableKinds peKind;
 		ImageFileMachine machine;
 		bool corlib_internal;
@@ -283,26 +201,14 @@ namespace System.Reflection.Emit
 		#endregion
 #pragma warning restore 169, 414, 649
 
-#if !MOBILE
-		internal PermissionSet _minimum;	// for SecurityAction.RequestMinimum
-		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
-		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
-		internal PermissionSet _granted;		// for the resolved assembly granted permissions
-		internal PermissionSet _denied;		// for the resolved assembly denied permissions
-#else
-		object _minimum, _optional, _refuse, _granted, _denied;
-#endif
+		AssemblyName aname;
 		string assemblyName;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
 		internal Type corlib_void_type = typeof (void);
-		ArrayList resource_writers = null;
-		Win32VersionResource version_res;
 		bool created;
 		bool is_module_only;
-		private Mono.Security.StrongName sn;
-		NativeResourceType native_resource;
 		string versioninfo_culture;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -311,16 +217,9 @@ namespace System.Reflection.Emit
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void UpdateNativeCustomAttributes (AssemblyBuilder ab);
 
-		/* Keep this in sync with codegen.cs in mcs */
-		private const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
-
 		[PreserveDependency ("RuntimeResolve", "System.Reflection.Emit.ModuleBuilder")]
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access, bool corlib_internal)
 		{
-			/* This is obsolete now, as mcs doesn't use SRE any more */
-			if ((access & COMPILER_ACCESS) != 0)
-				throw new NotImplementedException ("COMPILER_ACCESS is no longer supperted, use a newer mcs.");
-
 			if (!Enum.IsDefined (typeof (AssemblyBuilderAccess), access))
 				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
 					"Argument value {0} is not valid.", (int) access),
@@ -330,12 +229,7 @@ namespace System.Reflection.Emit
 			this.access = (uint)access;
 			flags = (uint) n.Flags;
 
-			// don't call GetCurrentDirectory for Run-only builders (CAS may not like that)
-			if (IsSave && (directory == null || directory.Length == 0)) {
-				dir = Directory.GetCurrentDirectory ();
-			} else {
-				dir = directory;
-			}
+			dir = directory;
 
 			/* Set defaults from n */
 			if (n.CultureInfo != null) {
@@ -347,40 +241,13 @@ namespace System.Reflection.Emit
 				version = v.ToString ();
 			}
 
-			if (n.KeyPair != null) {
-				// full keypair is available (for signing)
-				sn = n.KeyPair.StrongName ();
-			} else {
-				// public key is available (for delay-signing)
-				byte[] pk = n.GetPublicKey ();
-				if ((pk != null) && (pk.Length > 0)) {
-					sn = new Mono.Security.StrongName (pk);
-				}
-			}
-
-			if (sn != null)
-				flags |= (uint) AssemblyNameFlags.PublicKey;
-
-			this.corlib_internal = corlib_internal;
-			if (sn != null) {
-				this.pktoken = new byte[sn.PublicKeyToken.Length * 2];
-				int pkti = 0;
-				foreach (byte pkb in sn.PublicKeyToken) {
-					string part = pkb.ToString("x2");
-					this.pktoken[pkti++] = (byte)part[0];
-					this.pktoken[pkti++] = (byte)part[1];
-				}
-			}
+			aname = n;
 
 			basic_init (this);
 		}
 
 		public override string CodeBase {
 			get { throw not_supported (); }
-		}
-
-		public override string EscapedCodeBase {
-			get { return RuntimeAssembly.GetCodeBase (this, true); }
 		}
 		
 		public override MethodInfo EntryPoint {
@@ -395,125 +262,9 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		/* This is to keep signature compatibility with MS.NET */
-		public override string ImageRuntimeVersion {
-			get {
-				return RuntimeAssembly.InternalImageRuntimeVersion (this);
-			}
-		}
-
-		[MonoTODO]
 		public override bool ReflectionOnly {
 			get { return base.ReflectionOnly; }
 		}
-
-		public void AddResourceFile (string name, string fileName)
-		{
-			AddResourceFile (name, fileName, ResourceAttributes.Public);
-		}
-
-		public void AddResourceFile (string name, string fileName, ResourceAttributes attribute)
-		{
-			AddResourceFile (name, fileName, attribute, true);
-		}
-
-		private void AddResourceFile (string name, string fileName, ResourceAttributes attribute, bool fileNeedsToExists)
-		{
-			check_name_and_filename (name, fileName, fileNeedsToExists);
-
-			// Resource files are created/searched under the assembly storage
-			// directory
-			if (dir != null)
-				fileName = Path.Combine (dir, fileName);
-
-			if (resources != null) {
-				MonoResource[] new_r = new MonoResource [resources.Length + 1];
-				System.Array.Copy(resources, new_r, resources.Length);
-				resources = new_r;
-			} else {
-				resources = new MonoResource [1];
-			}
-			int p = resources.Length - 1;
-			resources [p].name = name;
-			resources [p].filename = fileName;
-			resources [p].attrs = attribute;
-		}
-
-		internal void AddPermissionRequests (PermissionSet required, PermissionSet optional, PermissionSet refused)
-		{
-#if !MOBILE
-			if (created)
-				throw new InvalidOperationException ("Assembly was already saved.");
-
-			// required for base Assembly class (so the permissions
-			// can be used even if the assembly isn't saved to disk)
-			_minimum = required;
-			_optional = optional;
-			_refuse = refused;
-
-			// required to reuse AddDeclarativeSecurity support 
-			// already present in the runtime
-			if (required != null) {
-				permissions_minimum = new RefEmitPermissionSet [1];
-				permissions_minimum [0] = new RefEmitPermissionSet (
-					SecurityAction.RequestMinimum, required.ToXml ().ToString ());
-			}
-			if (optional != null) {
-				permissions_optional = new RefEmitPermissionSet [1];
-				permissions_optional [0] = new RefEmitPermissionSet (
-					SecurityAction.RequestOptional, optional.ToXml ().ToString ());
-			}
-			if (refused != null) {
-				permissions_refused = new RefEmitPermissionSet [1];
-				permissions_refused [0] = new RefEmitPermissionSet (
-					SecurityAction.RequestRefuse, refused.ToXml ().ToString ());
-			}
-#endif
-		}
-
-		// Still in use by al.exe
-		internal void EmbedResourceFile (string name, string fileName)
-		{
-			EmbedResourceFile (name, fileName, ResourceAttributes.Public);
-		}
-
-		void EmbedResourceFile (string name, string fileName, ResourceAttributes attribute)
-		{
-			if (resources != null) {
-				MonoResource[] new_r = new MonoResource [resources.Length + 1];
-				System.Array.Copy(resources, new_r, resources.Length);
-				resources = new_r;
-			} else {
-				resources = new MonoResource [1];
-			}
-			int p = resources.Length - 1;
-			resources [p].name = name;
-			resources [p].attrs = attribute;
-			try {
-				FileStream s = new FileStream (fileName, FileMode.Open, FileAccess.Read);
-				long len = s.Length;
-				resources [p].data = new byte [len];
-				s.Read (resources [p].data, 0, (int)len);
-				s.Close ();
-			} catch {
-			}
-		}
-/*
-		internal void EmbedResource (string name, byte[] blob, ResourceAttributes attribute)
-		{
-			if (resources != null) {
-				MonoResource[] new_r = new MonoResource [resources.Length + 1];
-				System.Array.Copy(resources, new_r, resources.Length);
-				resources = new_r;
-			} else {
-				resources = new MonoResource [1];
-			}
-			int p = resources.Length - 1;
-			resources [p].name = name;
-			resources [p].attrs = attribute;
-			resources [p].data = blob;
-		}
-*/
 
 		public static AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
@@ -556,7 +307,7 @@ namespace System.Reflection.Emit
 
 		private ModuleBuilder DefineDynamicModule (string name, string fileName, bool emitSymbolInfo, bool transient)
 		{
-			check_name_and_filename (name, fileName, false);
+			check_name_and_filename (name, fileName);
 
 			if (!transient) {
 				if (Path.GetExtension (fileName) == String.Empty)
@@ -581,171 +332,6 @@ namespace System.Reflection.Emit
 			}
 			modules [modules.Length - 1] = r;
 			return r;
-		}
-
-		public IResourceWriter DefineResource (string name, string description, string fileName)
-		{
-			return DefineResource (name, description, fileName, ResourceAttributes.Public);
-		}
-
-		public IResourceWriter DefineResource (string name, string description,
-						       string fileName, ResourceAttributes attribute)
-		{
-			IResourceWriter writer;
-
-			// description seems to be ignored
-			AddResourceFile (name, fileName, attribute, false);
-			writer = new ResourceWriter (fileName);
-			if (resource_writers == null)
-				resource_writers = new ArrayList ();
-			resource_writers.Add (writer);
-			return writer;
-		}
-
-		private void AddUnmanagedResource (Win32Resource res) {
-			MemoryStream ms = new MemoryStream ();
-			res.WriteTo (ms);
-
-			if (win32_resources != null) {
-				MonoWin32Resource[] new_res = new MonoWin32Resource [win32_resources.Length + 1];
-				System.Array.Copy (win32_resources, new_res, win32_resources.Length);
-				win32_resources = new_res;
-			}
-			else
-				win32_resources = new MonoWin32Resource [1];
-
-			win32_resources [win32_resources.Length - 1] = new MonoWin32Resource (res.Type.Id, res.Name.Id, res.Language, ms.ToArray ());
-		}
-
-		[MonoTODO ("Not currently implemenented")]
-		public void DefineUnmanagedResource (byte[] resource)
-		{
-			if (resource == null)
-				throw new ArgumentNullException ("resource");
-			if (native_resource != NativeResourceType.None)
-				throw new ArgumentException ("Native resource has already been defined.");
-
-			// avoid definition of more than one unmanaged resource
-			native_resource = NativeResourceType.Unmanaged;
-
-			/*
-			 * The format of the argument byte array is not documented
-			 * so this method is impossible to implement.
-			 *
-			 * https://connect.microsoft.com/VisualStudio/feedback/details/95784/fatal-assemblybuilder-defineunmanagedresource-byte-and-modulebuilder-defineunmanagedresource-byte-bugs-renders-them-useless
-			 */
-
-			throw new NotImplementedException ();
-		}
-
-		public void DefineUnmanagedResource (string resourceFileName)
-		{
-			if (resourceFileName == null)
-				throw new ArgumentNullException ("resourceFileName");
-			if (resourceFileName.Length == 0)
-				throw new ArgumentException ("resourceFileName");
-			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
-				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exist or is a directory.");
-			if (native_resource != NativeResourceType.None)
-				throw new ArgumentException ("Native resource has already been defined.");
-
-			// avoid definition of more than one unmanaged resource
-			native_resource = NativeResourceType.Unmanaged;
-
-			using (FileStream fs = new FileStream (resourceFileName, FileMode.Open, FileAccess.Read)) {
-				Win32ResFileReader reader = new Win32ResFileReader (fs);
-
-				foreach (Win32EncodedResource res in reader.ReadResources ()) {
-					if (res.Name.IsName || res.Type.IsName)
-						throw new InvalidOperationException ("resource files with named resources or non-default resource types are not supported.");
-
-					AddUnmanagedResource (res);
-				}
-			}
-		}
-
-		public void DefineVersionInfoResource ()
-		{
-			if (native_resource != NativeResourceType.None)
-				throw new ArgumentException ("Native resource has already been defined.");
-
-			// avoid definition of more than one unmanaged resource
-			native_resource = NativeResourceType.Assembly;
-
-			version_res = new Win32VersionResource (1, 0, false);
-		}
-
-		public void DefineVersionInfoResource (string product, string productVersion,
-						       string company, string copyright, string trademark)
-		{
-			if (native_resource != NativeResourceType.None)
-				throw new ArgumentException ("Native resource has already been defined.");
-
-			// avoid definition of more than one unmanaged resource
-			native_resource = NativeResourceType.Explicit;
-
-			/*
-			 * We can only create the resource later, when the file name and
-			 * the binary version is known.
-			 */
-
-			version_res = new Win32VersionResource (1, 0, false);
-			version_res.ProductName = product != null ? product : " ";
-			version_res.ProductVersion = productVersion != null ? productVersion : " ";
-			version_res.CompanyName = company != null ? company : " ";
-			version_res.LegalCopyright = copyright != null ? copyright : " ";
-			version_res.LegalTrademarks = trademark != null ? trademark : " ";
-		}
-
-		private void DefineVersionInfoResourceImpl (string fileName)
-		{
-			if (versioninfo_culture != null)
-				version_res.FileLanguage = new CultureInfo (versioninfo_culture).LCID;
-			version_res.Version = version == null ? "0.0.0.0" : version;
-
-			if (cattrs != null) {
-				switch (native_resource) {
-				case NativeResourceType.Assembly:
-					foreach (CustomAttributeBuilder cb in cattrs) {
-						string attrname = cb.Ctor.ReflectedType.FullName;
-
-						if (attrname == "System.Reflection.AssemblyProductAttribute")
-							version_res.ProductName = cb.string_arg ();
-						else if (attrname == "System.Reflection.AssemblyCompanyAttribute")
-							version_res.CompanyName = cb.string_arg ();
-						else if (attrname == "System.Reflection.AssemblyCopyrightAttribute")
-							version_res.LegalCopyright = cb.string_arg ();
-						else if (attrname == "System.Reflection.AssemblyTrademarkAttribute")
-							version_res.LegalTrademarks = cb.string_arg ();
-						else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
-							version_res.FileLanguage = new CultureInfo (cb.string_arg ()).LCID;
-						} else if (attrname == "System.Reflection.AssemblyFileVersionAttribute") {
-							version_res.FileVersion = cb.string_arg ();
-						} else if (attrname == "System.Reflection.AssemblyInformationalVersionAttribute")
-							version_res.ProductVersion = cb.string_arg ();
-						else if (attrname == "System.Reflection.AssemblyTitleAttribute")
-							version_res.FileDescription = cb.string_arg ();
-						else if (attrname == "System.Reflection.AssemblyDescriptionAttribute")
-							version_res.Comments = cb.string_arg ();
-					}
-					break;
-				case NativeResourceType.Explicit:
-					foreach (CustomAttributeBuilder cb in cattrs) {
-						string attrname = cb.Ctor.ReflectedType.FullName;
-
-						if (attrname == "System.Reflection.AssemblyCultureAttribute") {
-							version_res.FileLanguage = new CultureInfo (cb.string_arg ()).LCID;
-						} else if (attrname == "System.Reflection.AssemblyDescriptionAttribute")
-							version_res.Comments = cb.string_arg ();
-					}
-					break;
-				}
-			}
-
-			version_res.OriginalFilename = fileName;
-			version_res.InternalName = Path.GetFileNameWithoutExtension (fileName);
-
-			AddUnmanagedResource (version_res);
 		}
 
 		public ModuleBuilder GetDynamicModule (string name)
@@ -776,56 +362,6 @@ namespace System.Reflection.Emit
 			throw not_supported ();
 		}
 
-		internal override Module[] GetModulesInternal () {
-			if (modules == null)
-				return new Module [0];
-			else
-				return (Module[])modules.Clone ();
-		}
-
-		internal override Type[] GetTypes (bool exportedOnly) {
-			Type[] res = null;
-			if (modules != null) {
-				for (int i = 0; i < modules.Length; ++i) {
-					Type[] types = modules [i].GetTypes ();
-					if (res == null)
-						res = types;
-					else {
-						Type[] tmp = new Type [res.Length + types.Length];
-						Array.Copy (res, 0, tmp, 0, res.Length);
-						Array.Copy (types, 0, tmp, res.Length, types.Length);
-					}
-				}
-			}
-			if (loaded_modules != null) {
-				for (int i = 0; i < loaded_modules.Length; ++i) {
-					Type[] types = loaded_modules [i].GetTypes ();
-					if (res == null)
-						res = types;
-					else {
-						Type[] tmp = new Type [res.Length + types.Length];
-						Array.Copy (res, 0, tmp, 0, res.Length);
-						Array.Copy (types, 0, tmp, res.Length, types.Length);
-					}
-				}
-			}
-
-			if (res != null) {
-				List<Exception> exceptions = null;
-				foreach (var type in res) {
-					if (type is TypeBuilder) {
-						if (exceptions == null)
-							exceptions = new List <Exception> ();
-						exceptions.Add (new TypeLoadException (string.Format ("Type '{0}' is not finished", type.FullName))); 
-					}
-				}
-				if (exceptions != null)
-					throw new ReflectionTypeLoadException (new Type [exceptions.Count], exceptions.ToArray ());
-			}
-			
-			return res == null ? Type.EmptyTypes : res;
-		}
-
 		public override ManifestResourceInfo GetManifestResourceInfo(string resourceName) {
 			throw not_supported ();
 		}
@@ -843,16 +379,13 @@ namespace System.Reflection.Emit
 
 		internal bool IsSave {
 			get {
-				return access != (uint)AssemblyBuilderAccess.Run;
+				return false;
 			}
 		}
 
 		internal bool IsRun {
 			get {
-				return access == (uint)AssemblyBuilderAccess.Run || access == (uint)AssemblyBuilderAccess.RunAndSave
-					 || access == (uint)AssemblyBuilderAccess.RunAndCollect
-				;
-
+				return true;
 			}
 		}
 /*
@@ -880,100 +413,6 @@ namespace System.Reflection.Emit
 			set {
 				is_module_only = value;
 			}
-		}
-
-		ModuleBuilder manifest_module;
-
-		//
-		// MS.NET seems to return a ModuleBuilder when GetManifestModule () is called
-		// on an assemblybuilder.
-		//
-		internal override Module GetManifestModule () {
-			if (manifest_module == null)
-				manifest_module = DefineDynamicModule ("Default Dynamic Module");
-			return manifest_module;
-		}
-
-		[MonoLimitation ("No support for PE32+ assemblies for AMD64 and IA64")]
-		public 
-		void Save (string assemblyFileName, PortableExecutableKinds portableExecutableKind, ImageFileMachine imageFileMachine)
-		{
-			this.peKind = portableExecutableKind;
-			this.machine = imageFileMachine;
-
-			if ((peKind & PortableExecutableKinds.PE32Plus) != 0 || (peKind & PortableExecutableKinds.Unmanaged32Bit) != 0)
-				throw new NotImplementedException (peKind.ToString ());
-			if (machine == ImageFileMachine.IA64 || machine == ImageFileMachine.AMD64)
-				throw new NotImplementedException (machine.ToString ());
-
-			if (resource_writers != null) {
-				foreach (IResourceWriter writer in resource_writers) {
-					writer.Generate ();
-					writer.Close ();
-				}
-			}
-
-			// Create a main module if not already created
-			ModuleBuilder mainModule = null;
-			if (modules != null) {
-				foreach (ModuleBuilder module in modules)
-					if (module.FileName == assemblyFileName)
-						mainModule = module;
-			}
-			if (mainModule == null)
-				mainModule = DefineDynamicModule ("RefEmit_OnDiskManifestModule", assemblyFileName);
-
-			if (!is_module_only)
-				mainModule.IsMain = true;
-
-			/* 
-			 * Create a new entry point if the one specified
-			 * by the user is in another module.
-			 */
-			if ((entry_point != null) && entry_point.DeclaringType.Module != mainModule) {
-				Type[] paramTypes;
-				if (entry_point.GetParametersCount () == 1)
-					paramTypes = new Type [] { typeof (string) };
-				else
-					paramTypes = Type.EmptyTypes;
-
-				MethodBuilder mb = mainModule.DefineGlobalMethod ("__EntryPoint$", MethodAttributes.Static|MethodAttributes.PrivateScope, entry_point.ReturnType, paramTypes);
-				ILGenerator ilgen = mb.GetILGenerator ();
-				if (paramTypes.Length == 1)
-					ilgen.Emit (OpCodes.Ldarg_0);
-				ilgen.Emit (OpCodes.Tailcall);
-				ilgen.Emit (OpCodes.Call, entry_point);
-				ilgen.Emit (OpCodes.Ret);
-
-				entry_point = mb;
-			}
-
-			if (version_res != null)
-				DefineVersionInfoResourceImpl (assemblyFileName);
-
-			if (sn != null) {
-				// runtime needs to value to embed it into the assembly
-				public_key = sn.PublicKey;
-			}
-
-			foreach (ModuleBuilder module in modules)
-				if (module != mainModule)
-					module.Save ();
-
-			// Write out the main module at the end, because it needs to
-			// contain the hash of the other modules
-			mainModule.Save ();
-
-			if ((sn != null) && (sn.CanSign)) {
-				sn.Sign (System.IO.Path.Combine (this.AssemblyDir, assemblyFileName));
-			}
-
-			created = true;
-		}
-
-		public void Save (string assemblyFileName)
-		{
-			Save (assemblyFileName, PortableExecutableKinds.ILOnly, ImageFileMachine.I386);
 		}
 
 		public void SetEntryPoint (MethodInfo entryMethod)
@@ -1029,8 +468,8 @@ namespace System.Reflection.Emit
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
-		private void check_name_and_filename (string name, string fileName,
-											  bool fileNeedsToExists) {
+		private void check_name_and_filename (string name, string fileName)
+		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (fileName == null)
@@ -1047,18 +486,6 @@ namespace System.Reflection.Emit
 			string fullFileName = fileName;
 			if (dir != null)
 				fullFileName = Path.Combine (dir, fileName);
-
-			if (fileNeedsToExists && !File.Exists (fullFileName))
-				throw new FileNotFoundException ("Could not find file '" + fileName + "'");
-
-			if (resources != null) {
-				for (int i = 0; i < resources.Length; ++i) {
-					if (resources [i].filename == fullFileName)
-						throw new ArgumentException ("Duplicate file name '" + fileName + "'");
-					if (resources [i].name == name)
-						throw new ArgumentException ("Duplicate name '" + name + "'");
-				}
-			}
 
 			if (modules != null) {
 				for (int i = 0; i < modules.Length; ++i) {
@@ -1153,6 +580,8 @@ namespace System.Reflection.Emit
 
 		public override Module[] GetModules (bool getResourceModules)
 		{
+			throw new NotImplementedException ();
+#if FALSE
 			Module[] modules = GetModulesInternal ();
 
 			if (!getResourceModules) {
@@ -1163,23 +592,20 @@ namespace System.Reflection.Emit
 				return result.ToArray ();
 			}
 			return modules;
+#endif
 		}
 
 		public override AssemblyName GetName (bool copiedName)
 		{
-			var aname = AssemblyName.Create (this, false);
-
-			if (sn != null) {
-				aname.SetPublicKey (sn.PublicKey);
-				aname.SetPublicKeyToken (sn.PublicKeyToken);
-			}
-			return aname;
-
+			return AssemblyName.Create (this, false);
 		}
 
-		[MonoTODO ("This always returns an empty array")]
+		// FIXME: "This always returns an empty array"
 		public override AssemblyName[] GetReferencedAssemblies () {
+			throw new NotImplementedException ();
+#if FALSE
 			return GetReferencedAssemblies (this);
+#endif
 		}
 
 		public override Module[] GetLoadedModules (bool getResourceModules)
@@ -1191,21 +617,31 @@ namespace System.Reflection.Emit
 		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public override Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
+			throw new NotImplementedException ();
+#if FALSE
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			return GetSatelliteAssembly (culture, null, true, ref stackMark);
+#endif
 		}
 
 		//FIXME MS has issues loading satelite assemblies from SRE
 		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
 		public override Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
+			throw new NotImplementedException ();
+#if FALSE
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
 			return GetSatelliteAssembly (culture, version, true, ref stackMark);
+#endif
 		}
+
+		ModuleBuilder manifest_module;
 
 		public override Module ManifestModule {
 			get {
-				return GetManifestModule ();
+				if (manifest_module == null)
+					manifest_module = DefineDynamicModule ("Default Dynamic Module");
+				return manifest_module;
 			}
 		}
 
@@ -1254,34 +690,15 @@ namespace System.Reflection.Emit
 		}
 
 		public override string FullName {
-			get { return RuntimeAssembly.get_fullname (this); }
+			get {
+				return aname.ToString ();
+			}
 		}
 
 		internal override IntPtr MonoAssembly {
 			get {
 				return _mono_assembly;
 			}
-		}
-
-		public override Evidence Evidence {
-			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
-			get { return UnprotectedGetEvidence (); }
-		}
-
-		internal override Evidence UnprotectedGetEvidence ()
-		{
-#if MOBILE
-			return null;
-#else
-			// if the host (runtime) hasn't provided it's own evidence...
-			if (_evidence == null) {
-				// ... we will provide our own
-				lock (this) {
-					_evidence = Evidence.GetDefaultHostEvidence (this);
-				}
-			}
-			return _evidence;
-#endif
 		}
 	}
 }

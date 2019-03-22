@@ -39,39 +39,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 using System.IO;
-using System.Resources;
 using System.Globalization;
 
 namespace System.Reflection.Emit {
-
-#if !MOBILE
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_ModuleBuilder))]
-	[ClassInterface (ClassInterfaceType.None)]
-	partial class ModuleBuilder : _ModuleBuilder
-	{
-		void _ModuleBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ModuleBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-#endif
-
 	[StructLayout (LayoutKind.Sequential)]
 	public partial class ModuleBuilder : Module {
 
@@ -97,7 +67,7 @@ namespace System.Reflection.Emit {
 		private MethodBuilder[] global_methods;
 		private FieldBuilder[] global_fields;
 		bool is_main;
-		private MonoResource[] resources;
+		private object resources;
 		private IntPtr unparented_classes;
 		private int[] table_indexes;
 		#endregion
@@ -126,9 +96,7 @@ namespace System.Reflection.Emit {
 			this.fqname = fullyqname;
 			this.assembly = this.assemblyb = assb;
 			this.transient = transient;
-			// to keep mcs fast we do not want CryptoConfig wo be involved to create the RNG
-			guid = Guid.FastNewGuidArray ();
-			// guid = Guid.NewGuid().ToByteArray ();
+			guid = Guid.NewGuid ().ToByteArray ();
 			table_idx = get_next_table_index (this, 0x00, 1);
 			name_cache = new Dictionary<TypeName, TypeBuilder> ();
 			us_string_cache = new Dictionary<string, int> (512);
@@ -142,39 +110,6 @@ namespace System.Reflection.Emit {
 				Type type = tb.CreateType ();
 				set_wrappers_type (this, type);
 			}
-
-			if (emitSymbolInfo) {
-				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
-
-				Type t = null;
-				if (asm != null)
-					t = asm.GetType ("Mono.CompilerServices.SymbolWriter.SymbolWriterImpl");
-
-				if (t == null) {
-					WarnAboutSymbolWriter ("Failed to load the default Mono.CompilerServices.SymbolWriter assembly");
-				} else {
-					try {
-						symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
-					} catch (System.MissingMethodException) {
-						WarnAboutSymbolWriter ("The default Mono.CompilerServices.SymbolWriter is not available on this platform");					
-						return;
-					}
-				}
-				
-				string fileName = fqname;
-				if (assemblyb.AssemblyDir != null)
-					fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
-				symbolWriter.Initialize (IntPtr.Zero, fileName, true);
-			}
-		}
-
-		static void WarnAboutSymbolWriter (string message) 
-		{
-			if (has_warned_about_symbolWriter)
-				return;
-
-			has_warned_about_symbolWriter = true;
-			Console.Error.WriteLine ("WARNING: {0}", message);
 		}
 
 		public override string FullyQualifiedName {
@@ -558,95 +493,13 @@ namespace System.Reflection.Emit {
 			return copy;
 		}
 
-		public IResourceWriter DefineResource (string name, string description, ResourceAttributes attribute)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			if (name == String.Empty)
-				throw new ArgumentException ("name cannot be empty");
-			if (transient)
-				throw new InvalidOperationException ("The module is transient");
-			if (!assemblyb.IsSave)
-				throw new InvalidOperationException ("The assembly is transient");
-			ResourceWriter writer = new ResourceWriter (new MemoryStream ());
-			if (resource_writers == null)
-				resource_writers = new Hashtable ();
-			resource_writers [name] = writer;
-
-			// The data is filled out later
-			if (resources != null) {
-				MonoResource[] new_r = new MonoResource [resources.Length + 1];
-				System.Array.Copy(resources, new_r, resources.Length);
-				resources = new_r;
-			} else {
-				resources = new MonoResource [1];
-			}
-			int p = resources.Length - 1;
-			resources [p].name = name;
-			resources [p].attrs = attribute;
-
-			return writer;
-		}
-
-		public IResourceWriter DefineResource (string name, string description)
-		{
-			return DefineResource (name, description, ResourceAttributes.Public);
-		}
-
-		[MonoTODO]
-		public void DefineUnmanagedResource (byte[] resource)
-		{
-			if (resource == null)
-				throw new ArgumentNullException ("resource");
-
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void DefineUnmanagedResource (string resourceFileName)
-		{
-			if (resourceFileName == null)
-				throw new ArgumentNullException ("resourceFileName");
-			if (resourceFileName == String.Empty)
-				throw new ArgumentException ("resourceFileName");
-			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
-				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exist or is a directory.");
-
-			throw new NotImplementedException ();
-		}
-
-		public void DefineManifestResource (string name, Stream stream, ResourceAttributes attribute) {
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			if (name == String.Empty)
-				throw new ArgumentException ("name cannot be empty");
-			if (stream == null)
-				throw new ArgumentNullException ("stream");
-			if (transient)
-				throw new InvalidOperationException ("The module is transient");
-			if (!assemblyb.IsSave)
-				throw new InvalidOperationException ("The assembly is transient");
-
-			if (resources != null) {
-				MonoResource[] new_r = new MonoResource [resources.Length + 1];
-				System.Array.Copy(resources, new_r, resources.Length);
-				resources = new_r;
-			} else {
-				resources = new MonoResource [1];
-			}
-			int p = resources.Length - 1;
-			resources [p].name = name;
-			resources [p].attrs = attribute;
-			resources [p].stream = stream;
-		}
-
-		[MonoTODO]
+		// FIXME:
 		public void SetSymCustomAttribute (string name, byte[] data)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public void SetUserEntryPoint (MethodInfo entryPoint)
 		{
 			if (entryPoint == null)
@@ -699,10 +552,11 @@ namespace System.Reflection.Emit {
 			if (field == null)
 				throw new ArgumentNullException ("field");
 
-			return new FieldToken (GetToken (field));
+			throw new NotImplementedException ();
+			//return new FieldToken (GetToken (field));
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public SignatureToken GetSignatureToken (byte[] sigBytes, int sigLength)
 		{
 			throw new NotImplementedException ();
@@ -973,77 +827,6 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		internal void Save ()
-		{
-			if (transient && !is_main)
-				return;
-
-			if (types != null) {
-				for (int i = 0; i < num_types; ++i)
-					if (!types [i].is_created)
-						throw new NotSupportedException ("Type '" + types [i].FullName + "' was not completed.");
-			}
-
-			FixupTokens ();
-
-			if ((global_type != null) && (global_type_created == null))
-				global_type_created = global_type.CreateType ();
-
-			if (resources != null) {
-				for (int i = 0; i < resources.Length; ++i) {
-					IResourceWriter rwriter;
-					if (resource_writers != null && (rwriter = resource_writers [resources [i].name] as IResourceWriter) != null) {
-						ResourceWriter writer = (ResourceWriter)rwriter;
-						writer.Generate ();
-						MemoryStream mstream = (MemoryStream)writer._output;
-						resources [i].data = new byte [mstream.Length];
-						mstream.Seek (0, SeekOrigin.Begin);
-						mstream.Read (resources [i].data, 0, (int)mstream.Length);
-						continue;
-					}
-					Stream stream = resources [i].stream;
-
-					// According to MSDN docs, the stream is read during assembly save, not earlier
-					if (stream != null) {
-						try {
-							long len = stream.Length;
-							resources [i].data = new byte [len];
-							stream.Seek (0, SeekOrigin.Begin);
-							stream.Read (resources [i].data, 0, (int)len);
-						} catch {
-							/* do something */
-						}
-					}
-				}
-			}
-
-			build_metadata (this);
-
-			string fileName = fqname;
-			if (assemblyb.AssemblyDir != null)
-				fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
-
-			try {
-				// We mmap the file, so unlink the previous version since it may be in use
-				File.Delete (fileName);
-			} catch {
-				// We can safely ignore
-			}
-			using (FileStream file = new FileStream (fileName, FileMode.Create, FileAccess.Write))
-				WriteToFile (file.Handle);
-			
-			//
-			// The constant 0x80000000 is internal to Mono, it means `make executable'
-			//
-			File.SetAttributes (fileName, (FileAttributes) (unchecked ((int) 0x80000000)));
-			
-			if (types != null && symbolWriter != null) {
-				for (int i = 0; i < num_types; ++i)
-					types [i].GenerateDebugInfo (symbolWriter);
-				symbolWriter.Close ();
-			}
-		}
-
 		internal string FileName {
 			get {
 				return fqname;
@@ -1061,17 +844,6 @@ namespace System.Reflection.Emit {
 				global_type = new TypeBuilder (this, 0, 1);
 		}
 
-		internal override Guid GetModuleVersionId ()
-		{
-			return new Guid (guid);
-		}
-
-		// Used by mcs, the symbol writer, and mdb through reflection
-		internal static Guid Mono_GetGuid (ModuleBuilder mb)
-		{
-			return mb.GetModuleVersionId ();
-		}
-
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}
@@ -1086,11 +858,10 @@ namespace System.Reflection.Emit {
 
 		public override Guid ModuleVersionId {
 			get {
-				return GetModuleVersionId ();
+				return new Guid (guid);
 			}
 		}
 
-		//XXX resource modules can't be defined with ModuleBuilder
 		public override bool IsResource ()
 		{
 			return false;
@@ -1237,6 +1008,26 @@ namespace System.Reflection.Emit {
 			return mb.GetToken (helper);
 		}
 	}
+
+    internal sealed class ReferenceEqualityComparer<T> : IEqualityComparer<T> where T : class
+    {
+        internal static readonly ReferenceEqualityComparer<T> Instance = new ReferenceEqualityComparer<T>();
+
+        private ReferenceEqualityComparer()
+        {
+        }
+
+        public bool Equals(T x, T y)
+        {
+            return ReferenceEquals (x, y);
+        }
+
+        public int GetHashCode(T obj)
+        {
+            return RuntimeHelpers.GetHashCode (obj);
+        }
+    }
+
 }
 
 #endif

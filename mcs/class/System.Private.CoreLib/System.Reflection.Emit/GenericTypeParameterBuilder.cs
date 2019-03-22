@@ -257,7 +257,13 @@ namespace System.Reflection.Emit
 		{
 			return base_type != null ? base_type.IsValueType : false;
 		}
-		
+
+        public override bool IsSZArray {
+			get {
+				return false;
+			}
+		}
+
 		public override object InvokeMember (string name, BindingFlags invokeAttr,
 						     Binder binder, object target, object[] args,
 						     ParameterModifier[] modifiers,
@@ -403,7 +409,7 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		[MonoTODO ("unverified implementation")]
+		// FIXME: "unverified implementation"
 		public void SetCustomAttribute (ConstructorInfo con, byte [] binaryAttribute)
 		{
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
@@ -419,13 +425,13 @@ namespace System.Reflection.Emit
 			return name;
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public override bool Equals (object o)
 		{
 			return base.Equals (o);
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();

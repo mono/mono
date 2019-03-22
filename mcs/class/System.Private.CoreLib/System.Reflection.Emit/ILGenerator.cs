@@ -54,7 +54,7 @@ namespace System.Reflection.Emit {
 		internal int filter_offset;
 		
 		internal void Debug () {
-#if NO
+#if FALSE
 			System.Console.Write ("\ttype="+type.ToString()+" start="+start.ToString()+" len="+len.ToString());
 			if (extype != null)
 				System.Console.WriteLine (" extype="+extype.ToString());
@@ -149,7 +149,7 @@ namespace System.Reflection.Emit {
 
 		internal void Debug (int b)
 		{
-#if NO
+#if FALSE
 			System.Console.WriteLine ("Handler {0} at {1}, len: {2}", b, start, len);
 			for (int i = 0; i < handlers.Length; ++i)
 				handlers [i].Debug ();
@@ -185,32 +185,6 @@ namespace System.Reflection.Emit {
 
 		int GetToken (SignatureHelper helper);
 	}		
-
-#if !MOBILE
-	partial class ILGenerator : _ILGenerator
-	{
-		void _ILGenerator.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ILGenerator.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ILGenerator.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ILGenerator.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}		
-	}
-#endif
-
 
 	[StructLayout (LayoutKind.Sequential)]
 	public partial class ILGenerator {
@@ -303,10 +277,9 @@ namespace System.Reflection.Emit {
 			/* 
 			 * there is already enough room allocated in code.
 			 */
-			// access op1 and op2 directly since the Value property is useless
 			if (opcode.Size == 2)
-				code [code_len++] = opcode.op1;
-			code [code_len++] = opcode.op2;
+				code [code_len++] = (byte)(opcode.Value >> 8);
+			code [code_len++] = (byte)(opcode.Value & 0xff);
 			/*
 			 * We should probably keep track of stack needs here.
 			 * Or we may want to run the verifier on the code before saving it
@@ -616,8 +589,8 @@ namespace System.Reflection.Emit {
 			int tlen = target_len (opcode);
 			make_room (6);
 			ll_emit (opcode);
-			if (cur_stack > labels [label.label].maxStack)
-				labels [label.label].maxStack = cur_stack;
+			if (cur_stack > labels [label.m_label].maxStack)
+				labels [label.m_label].maxStack = cur_stack;
 			
 			if (fixups == null)
 				fixups = new LabelFixup [defaultFixupSize]; 
@@ -628,7 +601,7 @@ namespace System.Reflection.Emit {
 			}
 			fixups [num_fixups].offset = tlen;
 			fixups [num_fixups].pos = code_len;
-			fixups [num_fixups].label_idx = label.label;
+			fixups [num_fixups].label_idx = label.m_label;
 			num_fixups++;
 			code_len += tlen;
 
@@ -645,8 +618,8 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 
 			for (int i = 0; i < count; ++i)
-				if (cur_stack > this.labels [labels [i].label].maxStack)
-					this.labels [labels [i].label].maxStack = cur_stack;
+				if (cur_stack > this.labels [labels [i].m_label].maxStack)
+					this.labels [labels [i].m_label].maxStack = cur_stack;
 
 			emit_int (count);
 			if (fixups == null)
@@ -674,7 +647,7 @@ namespace System.Reflection.Emit {
 			for (int i = 0, remaining = count * 4; i < count; ++i, remaining -= 4) {
 				fixups [num_fixups].offset = remaining;
 				fixups [num_fixups].pos = code_len;
-				fixups [num_fixups].label_idx = labels [i].label;
+				fixups [num_fixups].label_idx = labels [i].m_label;
 				num_fixups++;
 				code_len += 4;
 			}
@@ -842,7 +815,7 @@ namespace System.Reflection.Emit {
 			emit_int (token);
 		}
 
-		[MonoLimitation ("vararg methods are not supported")]
+		// FIXME: vararg methods are not supported
 		public virtual void EmitCall (OpCode opcode, MethodInfo methodInfo, Type[] optionalParameterTypes)
 		{
 			if (methodInfo == null)
@@ -880,6 +853,11 @@ namespace System.Reflection.Emit {
 			SignatureHelper helper = SignatureHelper.GetMethodSigHelper (module as ModuleBuilder, callingConvention, 0, returnType, parameterTypes);
 			Emit (opcode, helper);
 		}
+
+        static Type GetConsoleType ()
+        {
+            return Type.GetType ("System.Console, System.Console", throwOnError: true);
+        }
 		
 		public virtual void EmitWriteLine (FieldInfo fld)
 		{
@@ -895,7 +873,7 @@ namespace System.Reflection.Emit {
 				Emit (OpCodes.Ldarg_0);
 				Emit (OpCodes.Ldfld, fld);
 			}
-			Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type[1] { fld.FieldType }));
+			Emit (OpCodes.Call, GetConsoleType ().GetMethod ("WriteLine", new Type[1] { fld.FieldType }));
 		}
 
 		public virtual void EmitWriteLine (LocalBuilder localBuilder)
@@ -907,13 +885,13 @@ namespace System.Reflection.Emit {
 			// The MS implementation does not check for valuetypes here but it
 			// should.
 			Emit (OpCodes.Ldloc, localBuilder);
-			Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type[1] { localBuilder.LocalType }));
+			Emit (OpCodes.Call, GetConsoleType ().GetMethod ("WriteLine", new Type[1] { localBuilder.LocalType }));
 		}
 		
 		public virtual void EmitWriteLine (string value)
 		{
 			Emit (OpCodes.Ldstr, value);
-			Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type[1] { typeof(string)}));
+			Emit (OpCodes.Call, GetConsoleType ().GetMethod ("WriteLine", new Type[1] { typeof(string)}));
 		}
 
 		public virtual void EndExceptionBlock ()
@@ -944,13 +922,13 @@ namespace System.Reflection.Emit {
 
 		public virtual void MarkLabel (Label loc)
 		{
-			if (loc.label < 0 || loc.label >= num_labels)
+			if (loc.m_label < 0 || loc.m_label >= num_labels)
 				throw new System.ArgumentException ("The label is not valid");
-			if (labels [loc.label].addr >= 0)
+			if (labels [loc.m_label].addr >= 0)
 				throw new System.ArgumentException ("The label was already defined");
-			labels [loc.label].addr = code_len;
-			if (labels [loc.label].maxStack > cur_stack)
-				cur_stack = labels [loc.label].maxStack;
+			labels [loc.m_label].addr = code_len;
+			if (labels [loc.m_label].maxStack > cur_stack)
+				cur_stack = labels [loc.m_label].maxStack;
 		}
 
 		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine,
@@ -1009,7 +987,7 @@ namespace System.Reflection.Emit {
 			Emit (OpCodes.Throw);
 		}
 
-		[MonoTODO("Not implemented")]
+		// FIXME: "Not implemented"
 		public virtual void UsingNamespace (String usingNamespace)
 		{
 			throw new NotImplementedException ();
@@ -1245,6 +1223,73 @@ namespace System.Reflection.Emit {
 		public int Col;
 		public int EndLine;
 		public int EndCol;
+	}
+
+    class Stack
+    {
+        Object[] _array;
+        int _size;
+        int _version;
+
+        private const int _defaultCapacity = 10;
+
+        public Stack()
+        {
+            _array = new Object[_defaultCapacity];
+            _size = 0;
+            _version = 0;
+        }
+
+        public Stack(int initialCapacity)
+        {
+            if (initialCapacity < 0)
+                throw new ArgumentOutOfRangeException(nameof(initialCapacity), SR.ArgumentOutOfRange_NeedNonNegNum);
+
+            if (initialCapacity < _defaultCapacity)
+                initialCapacity = _defaultCapacity;
+            _array = new Object[initialCapacity];
+            _size = 0;
+            _version = 0;
+        }
+
+        public virtual int Count
+        {
+            get
+            {
+                return _size;
+            }
+        }
+
+        public virtual Object Peek()
+        {
+            if (_size == 0)
+                throw new InvalidOperationException ();
+
+            return _array[_size - 1];
+        }
+
+        public virtual Object Pop()
+        {
+            if (_size == 0)
+                throw new InvalidOperationException ();
+
+            _version++;
+            Object obj = _array[--_size];
+            _array[_size] = null;
+            return obj;
+        }
+
+        public virtual void Push(Object obj)
+        {
+            if (_size == _array.Length)
+            {
+                Object[] newArray = new Object[2 * _array.Length];
+                Array.Copy(_array, 0, newArray, 0, _size);
+                _array = newArray;
+            }
+            _array[_size++] = obj;
+            _version++;
+        }
 	}
 }
 #endif

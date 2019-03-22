@@ -36,41 +36,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
-using System.Security;
-using System.Security.Permissions;
 using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
-
-#if !MOBILE
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_ConstructorBuilder))]
-	[ClassInterface (ClassInterfaceType.None)]
-	partial class ConstructorBuilder : _ConstructorBuilder
-	{
-		void _ConstructorBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ConstructorBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ConstructorBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _ConstructorBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-#endif
-
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed partial class ConstructorBuilder : ConstructorInfo {
 	
@@ -88,7 +57,7 @@ namespace System.Reflection.Emit {
 		private bool init_locals = true;
 		private Type[][] paramModReq;
 		private Type[][] paramModOpt;
-		private RefEmitPermissionSet[] permissions;
+		private object permissions;
 #pragma warning restore 169, 414
 
 		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
@@ -111,7 +80,7 @@ namespace System.Reflection.Emit {
 			((ModuleBuilder) tb.Module).RegisterToken (this, GetToken ().Token);
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public override CallingConventions CallingConvention {
 			get {
 				return call_conv;
@@ -227,36 +196,6 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
-		{
-#if !MOBILE
-			if (pset == null)
-				throw new ArgumentNullException ("pset");
-			if ((action == SecurityAction.RequestMinimum) ||
-				(action == SecurityAction.RequestOptional) ||
-				(action == SecurityAction.RequestRefuse))
-				throw new ArgumentOutOfRangeException ("action", "Request* values are not permitted");
-
-			RejectIfCreated ();
-
-			if (permissions != null) {
-				/* Check duplicate actions */
-				foreach (RefEmitPermissionSet set in permissions)
-					if (set.action == action)
-						throw new InvalidOperationException ("Multiple permission sets specified with the same SecurityAction.");
-
-				RefEmitPermissionSet[] new_array = new RefEmitPermissionSet [permissions.Length + 1];
-				permissions.CopyTo (new_array, 0);
-				permissions = new_array;
-			}
-			else
-				permissions = new RefEmitPermissionSet [1];
-
-			permissions [permissions.Length - 1] = new RefEmitPermissionSet (action, pset.ToXml ().ToString ());
-			attrs |= MethodAttributes.HasSecurity;
-#endif
-		}
-
 		public ParameterBuilder DefineParameter (int iSequence, ParameterAttributes attributes, string strParamName)
 		{
 			// The 0th ParameterBuilder does not correspond to an
@@ -301,14 +240,6 @@ namespace System.Reflection.Emit {
 			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), streamSize);
 			return ilgen;
 		}
-
-		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature,
-			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups)
-		{
-			var ilgen = GetILGenerator ();
-			ilgen.Init (il, maxStack, localSignature, exceptionHandlers, tokenFixups);
-		}
-
 
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
 		{
@@ -364,7 +295,7 @@ namespace System.Reflection.Emit {
 			return new MethodToken (0x06000000 | table_idx);
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public void SetSymCustomAttribute (string name, byte[] data)
 		{
 			if (type.is_created)

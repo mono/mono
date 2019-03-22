@@ -40,11 +40,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_SignatureHelper))]
-	[ClassInterface (ClassInterfaceType.None)]
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class SignatureHelper : _SignatureHelper {
+	public sealed class SignatureHelper {
 		internal enum SignatureHelperType {
 			HELPER_FIELD,
 			HELPER_LOCAL,
@@ -115,13 +112,13 @@ namespace System.Reflection.Emit {
 			return GetMethodSigHelper (mod, CallingConventions.Standard, (CallingConvention)0, returnType, parameterTypes);
 		}
 
-		[MonoTODO("Not implemented")]
+		// FIXME: "Not implemented"
 		public static SignatureHelper GetPropertySigHelper (Module mod, Type returnType, Type[] parameterTypes)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not implemented")]
+		// FIXME: "Not implemented"
 		public static SignatureHelper GetPropertySigHelper (Module mod, Type returnType,
 								    Type [] requiredReturnTypeCustomModifiers,
 								    Type [] optionalReturnTypeCustomModifiers,
@@ -132,7 +129,7 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not implemented")]
+		// FIXME: "Not implemented"
 		public static SignatureHelper GetPropertySigHelper (Module mod,
 									CallingConventions callingConvention,
 									Type returnType,
@@ -189,9 +186,9 @@ namespace System.Reflection.Emit {
 				if (modifier == null)
 					throw new ArgumentNullException (name);
 				if (modifier.IsArray)
-					throw new ArgumentException (Locale.GetText ("Array type not permitted"), name);
+					throw new ArgumentException ("Array type not permitted", name);
 				if (modifier.ContainsGenericParameters)
-					throw new ArgumentException (Locale.GetText ("Open Generic Type not permitted"), name);
+					throw new ArgumentException ("Open Generic Type not permitted", name);
 			}
 		}
 
@@ -201,9 +198,7 @@ namespace System.Reflection.Emit {
 				return;
 
 			if (custom_modifiers.Length != n)
-				throw new ArgumentException (
-				     Locale.GetText (
-				     	String.Format ("Custom modifiers length `{0}' does not match the size of the arguments")));
+				throw new ArgumentException (String.Format ("Custom modifiers length `{0}' does not match the size of the arguments"));
 			
 			foreach (Type [] parameter_modifiers in custom_modifiers){
 				if (parameter_modifiers == null)
@@ -218,7 +213,7 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ("Mono does not currently support setting modOpt/modReq through SignatureHelper");
 		}
 
-		[MonoTODO("Currently we ignore requiredCustomModifiers and optionalCustomModifiers")]
+		// FIXME: "Currently we ignore requiredCustomModifiers and optionalCustomModifiers"
 		public void AddArguments (Type[] arguments, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
 			if (arguments == null)
@@ -239,7 +234,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MonoTODO ("pinned is ignored")]
+		// FIXME: "pinned is ignored"
 		public void AddArgument (Type argument, bool pinned)
 		{
 			AddArgument (argument);
@@ -270,7 +265,7 @@ namespace System.Reflection.Emit {
 			AppendArray (ref arguments, clsArgument);
 		}
 
-		[MonoTODO("Not implemented")]
+		// FIXME: "Not implemented"
 		public void AddSentinel ()
 		{
 			throw new NotImplementedException ();
@@ -409,26 +404,6 @@ namespace System.Reflection.Emit {
 
 			return helper;
 		}
-
-                void _SignatureHelper.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                void _SignatureHelper.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                void _SignatureHelper.GetTypeInfoCount (out uint pcTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                void _SignatureHelper.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-                {
-                        throw new NotImplementedException ();
-                }
 	}
 }
 #endif

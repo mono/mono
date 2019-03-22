@@ -53,7 +53,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public int GetTokenFor (byte[] signature) {
 			throw new NotImplementedException ();
 		}
@@ -80,12 +80,12 @@ namespace System.Reflection.Emit {
 			return method.GetILGenerator ().TokenGenerator.GetToken (literal);
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public int GetTokenFor (RuntimeMethodHandle method, RuntimeTypeHandle contextType) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public int GetTokenFor (RuntimeFieldHandle field, RuntimeTypeHandle contextType) {
 			throw new NotImplementedException ();
 		}
@@ -103,18 +103,18 @@ namespace System.Reflection.Emit {
 			method.GetILGenerator ().SetCode (code, codeSize, maxStackSize);
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public void SetExceptions (byte[] exceptions) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		// FIXME:
 		[CLSCompliantAttribute(false)] 
 		public unsafe void SetExceptions (byte* exceptions, int exceptionsSize) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public void SetLocalSignature (byte[] localSignature) {
 			throw new NotImplementedException ();
 		}

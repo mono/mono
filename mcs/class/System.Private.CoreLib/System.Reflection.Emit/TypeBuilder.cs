@@ -41,42 +41,10 @@ using System.Runtime.InteropServices;
 using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security;
-using System.Security.Permissions;
 using System.Diagnostics.SymbolStore;
-
 
 namespace System.Reflection.Emit
 {
-#if !MOBILE
-	
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_TypeBuilder))]
-	[ClassInterface (ClassInterfaceType.None)]
-	partial class TypeBuilder : _TypeBuilder
-	{
-		void _TypeBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _TypeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _TypeBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _TypeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}		
-	}
-#endif
-
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed partial class TypeBuilder : TypeInfo
 	{
@@ -103,7 +71,7 @@ namespace System.Reflection.Emit
 		private PackingSize packing_size;
 		private IntPtr generic_container;
 		private GenericTypeParameterBuilder[] generic_params;
-		private RefEmitPermissionSet[] permissions;
+		private object permissions;
 		private TypeInfo created;
 		private int state;
 		#endregion
@@ -266,36 +234,6 @@ namespace System.Reflection.Emit
 
 		public override Type ReflectedType {
 			get { return nesting_type; }
-		}
-
-		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
-		{
-#if !MOBILE
-			if (pset == null)
-				throw new ArgumentNullException ("pset");
-			if ((action == SecurityAction.RequestMinimum) ||
-				(action == SecurityAction.RequestOptional) ||
-				(action == SecurityAction.RequestRefuse))
-				throw new ArgumentOutOfRangeException ("Request* values are not permitted", "action");
-
-			check_not_created ();
-
-			if (permissions != null) {
-				/* Check duplicate actions */
-				foreach (RefEmitPermissionSet set in permissions)
-					if (set.action == action)
-						throw new InvalidOperationException ("Multiple permission sets specified with the same SecurityAction.");
-
-				RefEmitPermissionSet[] new_array = new RefEmitPermissionSet [permissions.Length + 1];
-				permissions.CopyTo (new_array, 0);
-				permissions = new_array;
-			}
-			else
-				permissions = new RefEmitPermissionSet [1];
-
-			permissions [permissions.Length - 1] = new RefEmitPermissionSet (action, pset.ToXml ().ToString ());
-			attrs |= TypeAttributes.HasSecurity;
-#endif
 		}
 
 		[ComVisible (true)]
@@ -791,7 +729,7 @@ namespace System.Reflection.Emit
 					if (!fb.IsStatic && (ft is TypeBuilder) && ft.IsValueType && (ft != this) && is_nested_in (ft)) {
 						TypeBuilder tb = (TypeBuilder)ft;
 						if (!tb.is_created) {
-							AppDomain.CurrentDomain.DoTypeResolve (tb);
+							throw new NotImplementedException ();
 							if (!tb.is_created) {
 								// FIXME: We should throw an exception here,
 								// but mcs expects that the type is created
@@ -1382,7 +1320,13 @@ namespace System.Reflection.Emit
 			}
 			return false;
 		}
-		
+
+        public override bool IsSZArray {
+			get {
+				return false;
+			}
+		}
+
 		public override Type MakeArrayType ()
 		{
 			return new ArrayType (this, 0);
@@ -1690,13 +1634,13 @@ namespace System.Reflection.Emit
 			return FullName;
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public override bool IsAssignableFrom (Type c)
 		{
 			return base.IsAssignableFrom (c);
 		}
 
-		[MonoTODO ("arrays")]
+		// FIXME: "arrays"
 		internal bool IsAssignableTo (Type c)
 		{
 			if (c == this)
@@ -1770,7 +1714,7 @@ namespace System.Reflection.Emit
 			get { return IsGenericTypeDefinition; }
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public override int GenericParameterPosition {
 			get {
 				return 0;

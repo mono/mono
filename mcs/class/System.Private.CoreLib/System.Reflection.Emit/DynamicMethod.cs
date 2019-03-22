@@ -92,7 +92,7 @@ namespace System.Reflection.Emit {
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes) : this (name, returnType, parameterTypes, false) {
 		}
 
-		[MonoTODO ("Visibility is not restricted")]
+		// FIXME: "Visibility is not restricted"
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, bool restrictedSkipVisibility)
 			: this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, null, null, restrictedSkipVisibility, true)
 		{
@@ -212,7 +212,7 @@ namespace System.Reflection.Emit {
 
 		public override object[] GetCustomAttributes (bool inherit) {
 			// support for MethodImplAttribute PCA
-			return new Object[] { new MethodImplAttribute(GetMethodImplementationFlags()) };
+			return new Object[] { new MethodImplAttribute((MethodImplOptions)GetMethodImplementationFlags()) };
 		}
 
 		public override object[] GetCustomAttributes (Type attributeType,
@@ -221,7 +221,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentNullException ("attributeType");
 
 			if (attributeType.IsAssignableFrom (typeof (MethodImplAttribute)))
-				return new Object[] { new MethodImplAttribute (GetMethodImplementationFlags()) };
+				return new Object[] { new MethodImplAttribute ((MethodImplOptions)GetMethodImplementationFlags()) };
 			else
 				return EmptyArray<Object>.Value;
 		}
@@ -375,7 +375,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MonoTODO("Not implemented")]
+		// FIXME: "Not implemented"
 		public override ParameterInfo ReturnParameter {
 			get {
 				throw new NotImplementedException ();
@@ -388,7 +388,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MonoTODO("Not implemented")]
+		// FIXME: "Not implemented"
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes {
 			get {
 				throw new NotImplementedException ();
@@ -431,9 +431,9 @@ namespace System.Reflection.Emit {
 			static AnonHostModuleHolder () {
 				AssemblyName aname = new AssemblyName ();
 				aname.Name = "Anonymously Hosted DynamicMethods Assembly";
-				AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Run);
+				AssemblyBuilder ab = AssemblyBuilder.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Run);
 
-				anon_host_module = ab.GetManifestModule ();
+				anon_host_module = ab.ManifestModule;
 			}
 
 			public static Module AnonHostModule {

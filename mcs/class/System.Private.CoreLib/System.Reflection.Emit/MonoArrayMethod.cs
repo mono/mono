@@ -58,7 +58,7 @@ namespace System.Reflection {
 			call_conv = callingConvention;
 		}
 		
-		[MonoTODO("Always returns this")]
+		// FIXME: "Always returns this"
 		public override MethodInfo GetBaseDefinition() {
 			return this; /* FIXME */
 		}
@@ -68,17 +68,17 @@ namespace System.Reflection {
 			}
 		}
 
-		[MonoTODO("Not implemented.  Always returns null")]
+		// FIXME: "Not implemented.  Always returns null"
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes { 
 			get {return null;}
 		}
 		
-		[MonoTODO("Not implemented.  Always returns zero")]
+		// FIXME: "Not implemented.  Always returns zero"
 		public override MethodImplAttributes GetMethodImplementationFlags() {
 			return (MethodImplAttributes)0;
 		}
 
-		[MonoTODO("Not implemented.  Always returns an empty array")]
+		// FIXME: "Not implemented.  Always returns an empty array"
 		public override ParameterInfo[] GetParameters()
 		{
 			return GetParametersInternal ();			
@@ -89,13 +89,13 @@ namespace System.Reflection {
 			return EmptyArray<ParameterInfo>.Value;
 		}	
 		
-		[MonoTODO("Not implemented.  Always returns 0")]
+		// FIXME: "Not implemented.  Always returns 0"
 		internal override int GetParametersCount ()
 		{
 			return 0;
 		}		
 
-		[MonoTODO("Not implemented")]
+		// FIXME: "Not implemented"
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
 			throw new NotImplementedException ();
 		}
@@ -104,7 +104,7 @@ namespace System.Reflection {
 			get {return mhandle;} 
 		}
 
-		[MonoTODO("Not implemented.  Always returns zero")]
+		// FIXME: "Not implemented.  Always returns zero"
 		public override MethodAttributes Attributes { 
 			get {
 				return (MethodAttributes)0;

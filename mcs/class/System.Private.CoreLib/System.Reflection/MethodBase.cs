@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Reflection.Emit;
 
 namespace System.Reflection
 {
@@ -49,9 +50,39 @@ namespace System.Reflection
 			throw new NotImplementedException ();
 		}
 
+		internal virtual Type GetParameterType (int pos)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal virtual Type[] GetParameterTypes ()
+		{
+			ParameterInfo[] paramInfo = GetParametersNoCopy ();
+
+			Type[] parameterTypes = new Type [paramInfo.Length];
+			for (int i = 0; i < paramInfo.Length; i++)
+				parameterTypes [i] = paramInfo [i].ParameterType;
+
+			return parameterTypes;
+		}
+
 		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal virtual int get_next_table_index (object obj, int table, int count) {
+#if !FULL_AOT_RUNTIME
+			if (this is MethodBuilder) {
+				MethodBuilder mb = (MethodBuilder)this;
+				return mb.get_next_table_index (obj, table, count);
+			}
+			if (this is ConstructorBuilder) {
+				ConstructorBuilder mb = (ConstructorBuilder)this;
+				return mb.get_next_table_index (obj, table, count);
+			}
+#endif
+			throw new Exception ("Method is not a builder method");
 		}
 	}
 }

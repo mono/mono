@@ -41,41 +41,14 @@ using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
-
-#if !MOBILE
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_LocalBuilder))]
-	[ClassInterface (ClassInterfaceType.None)]
-	partial class LocalBuilder : _LocalBuilder
-	{
-		void _LocalBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _LocalBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _LocalBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _LocalBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-#endif
-	
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed partial class LocalBuilder : LocalVariableInfo
 	{
-
-		// Some fields are already defined in LocalVariableInfo
+		// Needs to have the same layout as RuntimeLocalVariableInfo
 		#region Sync with reflection.h
+		internal Type type;
+		internal bool is_pinned;
+		internal ushort position;
 		private string name;
 		#endregion
 		

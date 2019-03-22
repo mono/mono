@@ -84,11 +84,11 @@ namespace System.Reflection.Emit
 		internal override Type RuntimeResolve ()
 		{
 			if (generic_type is TypeBuilder && !(generic_type as TypeBuilder).IsCreated ())
-				AppDomain.CurrentDomain.DoTypeResolve (generic_type);
+				throw new NotImplementedException ();
 			for (int i = 0; i < type_arguments.Length; ++i) {
 				var t = type_arguments [i];
 				if (t is TypeBuilder && !(t as TypeBuilder).IsCreated ())
-					AppDomain.CurrentDomain.DoTypeResolve (t);
+					throw new NotImplementedException ();
 			}
 			return InternalResolve ();
 		}

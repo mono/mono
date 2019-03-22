@@ -40,35 +40,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
-
-#if !MOBILE
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_FieldBuilder))]
-	[ClassInterface (ClassInterfaceType.None)]
-	partial class FieldBuilder : _FieldBuilder
-	{
-		void _FieldBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _FieldBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _FieldBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _FieldBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}		
-	}
-#endif
-
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed partial class FieldBuilder : FieldInfo {
 	
@@ -151,7 +122,7 @@ namespace System.Reflection.Emit {
 		public override int MetadataToken { get { return ((ModuleBuilder) typeb.Module).GetToken (this); } }
 
 		public FieldToken GetToken() {
-			return new FieldToken (MetadataToken);
+			return new FieldToken (MetadataToken, type);
 		}
 
 		public override object GetValue(object obj) {

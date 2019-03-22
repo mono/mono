@@ -35,8 +35,6 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
-using System.Security;
-using System.Security.Permissions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
@@ -44,34 +42,6 @@ using System.Collections.Generic;
 
 namespace System.Reflection.Emit
 {
-#if !MOBILE
-	[ComVisible (true)]
-	[ComDefaultInterface (typeof (_MethodBuilder))]
-	[ClassInterface (ClassInterfaceType.None)]
-	partial class MethodBuilder : _MethodBuilder
-	{
-		void _MethodBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _MethodBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _MethodBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _MethodBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-#endif
-
 	[StructLayout (LayoutKind.Sequential)]
 	public sealed partial class MethodBuilder : MethodInfo
 	{
@@ -102,7 +72,7 @@ namespace System.Reflection.Emit
 		private Type[] returnModOpt;
 		private Type[][] paramModReq;
 		private Type[][] paramModOpt;
-		private RefEmitPermissionSet[] permissions;
+		private object permissions;
 #pragma warning restore 169, 414
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
@@ -197,7 +167,7 @@ namespace System.Reflection.Emit
 			get { return call_conv; }
 		}
 
-		[MonoTODO("Not implemented")]
+		// FIXME: "Not implemented"
 		public string Signature {
 			get {
 				throw new NotImplementedException ();
@@ -302,13 +272,6 @@ namespace System.Reflection.Emit
 				code = new byte [count];
 				System.Array.Copy(il, code, count);
 			}
-		}
-
-		public void SetMethodBody (byte[] il, int maxStack, byte[] localSignature,
-			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups)
-		{
-			var ilgen = GetILGenerator ();
-			ilgen.Init (il, maxStack, localSignature, exceptionHandlers, tokenFixups);
 		}
 
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
@@ -531,36 +494,6 @@ namespace System.Reflection.Emit
 			iattrs = attributes;
 		}
 
-		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
-		{
-#if !MOBILE
-			if (pset == null)
-				throw new ArgumentNullException ("pset");
-			if ((action == SecurityAction.RequestMinimum) ||
-				(action == SecurityAction.RequestOptional) ||
-				(action == SecurityAction.RequestRefuse))
-				throw new ArgumentOutOfRangeException ("Request* values are not permitted", "action");
-
-			RejectIfCreated ();
-
-			if (permissions != null) {
-				/* Check duplicate actions */
-				foreach (RefEmitPermissionSet set in permissions)
-					if (set.action == action)
-						throw new InvalidOperationException ("Multiple permission sets specified with the same SecurityAction.");
-
-				RefEmitPermissionSet[] new_array = new RefEmitPermissionSet [permissions.Length + 1];
-				permissions.CopyTo (new_array, 0);
-				permissions = new_array;
-			}
-			else
-				permissions = new RefEmitPermissionSet [1];
-
-			permissions [permissions.Length - 1] = new RefEmitPermissionSet (action, pset.ToXml ().ToString ());
-			attrs |= MethodAttributes.HasSecurity;
-#endif
-		}
-
 		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
 		public void SetMarshal (UnmanagedMarshal unmanagedMarshal)
 		{
@@ -568,7 +501,7 @@ namespace System.Reflection.Emit
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public void SetSymCustomAttribute (string name, byte[] data)
 		{
 			RejectIfCreated ();
@@ -580,7 +513,7 @@ namespace System.Reflection.Emit
 			return "MethodBuilder [" + type.Name + "::" + name + "]";
 		}
 
-		[MonoTODO]
+		// FIXME:
 		public override bool Equals (object obj)
 		{
 			return base.Equals (obj);
@@ -726,5 +659,111 @@ namespace System.Reflection.Emit
 			get { return base.ReturnParameter; }
 		}
 	}
+
+    [StructLayout(LayoutKind.Sequential)]
+    readonly struct ExceptionHandler : IEquatable<ExceptionHandler>
+    {
+        internal readonly int m_exceptionClass;
+        internal readonly int m_tryStartOffset;
+        internal readonly int m_tryEndOffset;
+        internal readonly int m_filterOffset;
+        internal readonly int m_handlerStartOffset;
+        internal readonly int m_handlerEndOffset;
+        internal readonly ExceptionHandlingClauseOptions m_kind;
+
+        public int ExceptionTypeToken
+        {
+            get { return m_exceptionClass; }
+        }
+
+        public int TryOffset
+        {
+            get { return m_tryStartOffset; }
+        }
+
+        public int TryLength
+        {
+            get { return m_tryEndOffset - m_tryStartOffset; }
+        }
+
+        public int FilterOffset
+        {
+            get { return m_filterOffset; }
+        }
+
+        public int HandlerOffset
+        {
+            get { return m_handlerStartOffset; }
+        }
+
+        public int HandlerLength
+        {
+            get { return m_handlerEndOffset - m_handlerStartOffset; }
+        }
+
+        public ExceptionHandlingClauseOptions Kind
+        {
+            get { return m_kind; }
+        }
+
+        internal ExceptionHandler(int tryStartOffset, int tryEndOffset, int filterOffset, int handlerStartOffset, int handlerEndOffset,
+            int kind, int exceptionTypeToken)
+        {
+            m_tryStartOffset = tryStartOffset;
+            m_tryEndOffset = tryEndOffset;
+            m_filterOffset = filterOffset;
+            m_handlerStartOffset = handlerStartOffset;
+            m_handlerEndOffset = handlerEndOffset;
+            m_kind = (ExceptionHandlingClauseOptions)kind;
+            m_exceptionClass = exceptionTypeToken;
+        }
+
+        private static bool IsValidKind(ExceptionHandlingClauseOptions kind)
+        {
+            switch (kind)
+            {
+                case ExceptionHandlingClauseOptions.Clause:
+                case ExceptionHandlingClauseOptions.Filter:
+                case ExceptionHandlingClauseOptions.Finally:
+                case ExceptionHandlingClauseOptions.Fault:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return m_exceptionClass ^ m_tryStartOffset ^ m_tryEndOffset ^ m_filterOffset ^ m_handlerStartOffset ^ m_handlerEndOffset ^ (int)m_kind;
+        }
+
+        public override bool Equals(Object obj)
+        {
+            return obj is ExceptionHandler && Equals((ExceptionHandler)obj);
+        }
+
+        public bool Equals(ExceptionHandler other)
+        {
+            return
+                other.m_exceptionClass == m_exceptionClass &&
+                other.m_tryStartOffset == m_tryStartOffset &&
+                other.m_tryEndOffset == m_tryEndOffset &&
+                other.m_filterOffset == m_filterOffset &&
+                other.m_handlerStartOffset == m_handlerStartOffset &&
+                other.m_handlerEndOffset == m_handlerEndOffset &&
+                other.m_kind == m_kind;
+        }
+
+        public static bool operator ==(ExceptionHandler left, ExceptionHandler right) 
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ExceptionHandler left, ExceptionHandler right)
+        {
+            return !left.Equals(right);
+        }
+    }
 }
 #endif
