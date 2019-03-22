@@ -214,6 +214,7 @@
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
 
+      <Compile Include="..\corlib\System.IO\MonoIOError.cs" />
       <Compile Include="..\corlib\System.Threading\Monitor.cs" />
       <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
 
