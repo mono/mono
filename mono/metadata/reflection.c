@@ -1312,6 +1312,11 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	memcpy (il_data, header->code, header->code_size);
 	mono_gchandle_free_internal (il_gchandle);
 
+#ifdef ENABLE_NETCORE
+	g_assert_not_reached ();
+	/* LocalVariable in netcore has no fields */
+#endif
+
 	/* Locals */
 	MonoArrayHandle locals_arr;
 	locals_arr = mono_array_new_handle (domain, mono_class_get_local_variable_info_class (), header->num_locals, error);
