@@ -4987,6 +4987,7 @@ static mono_bool
 class_implements_interface (MonoClass* klass, MonoClass* iface)
 {
 	int i;
+	MonoClass *parent;
 	ERROR_DECL (error);
 	if (mono_class_is_assignable_from_internal (iface, klass))
 		return TRUE;
@@ -5004,6 +5005,9 @@ class_implements_interface (MonoClass* klass, MonoClass* iface)
 			return TRUE;
 		}
 	}
+	parent = m_class_get_parent (klass);
+	if (parent != NULL && class_implements_interface(parent, iface))
+		return TRUE;
 	return FALSE;
 }
 		
