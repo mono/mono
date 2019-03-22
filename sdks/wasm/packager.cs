@@ -238,7 +238,7 @@ class Driver {
 		var data = new AssemblyData () { name = image.Assembly.Name.Name, src_path = ra };
 		assemblies.Add (data);
 
-		if (add_pdb && kind == AssemblyKind.User) {
+		if (add_pdb && (kind == AssemblyKind.User || kind == AssemblyKind.Framework)) {
 			file_list.Add (Path.ChangeExtension (ra, "pdb"));
 			assemblies_with_dbg_info.Add (Path.ChangeExtension (ra, "pdb"));
 		}
