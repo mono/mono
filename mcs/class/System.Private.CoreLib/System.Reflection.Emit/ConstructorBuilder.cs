@@ -237,6 +237,8 @@ namespace System.Reflection.Emit {
 		{
 			if (ilgen != null)
 				return ilgen;
+			if (!(((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)))
+				throw new InvalidOperationException ();
 			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), streamSize);
 			return ilgen;
 		}

@@ -888,6 +888,11 @@ namespace System.Reflection.Emit {
 			return results.ToArray ();
 		}
 
+		public override IList<CustomAttributeData> GetCustomAttributesData ()
+		{
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+
 		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
 		{
 			if (global_type_created == null)

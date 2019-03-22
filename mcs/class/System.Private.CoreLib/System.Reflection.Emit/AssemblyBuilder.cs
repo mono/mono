@@ -205,6 +205,8 @@ namespace System.Reflection.Emit
 		string assemblyName;
 		bool created;
 		string versioninfo_culture;
+		ModuleBuilder manifest_module;
+		bool manifest_module_used;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -215,6 +217,8 @@ namespace System.Reflection.Emit
 		[PreserveDependency ("RuntimeResolve", "System.Reflection.Emit.ModuleBuilder")]
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access, bool corlib_internal)
 		{
+			aname = (AssemblyName)n.Clone ();
+
 			if (!Enum.IsDefined (typeof (AssemblyBuilderAccess), access))
 				throw new ArgumentException (string.Format (CultureInfo.InvariantCulture,
 					"Argument value {0} is not valid.", (int) access),
@@ -236,9 +240,11 @@ namespace System.Reflection.Emit
 				version = v.ToString ();
 			}
 
-			aname = n;
-
 			basic_init (this);
+
+			// Netcore only allows one module per assembly
+			manifest_module = new ModuleBuilder (this, "RefEmit_InMemoryManifestModule", false);
+			modules = new ModuleBuilder [] { manifest_module };
 		}
 
 		public override string CodeBase {
@@ -272,8 +278,9 @@ namespace System.Reflection.Emit
 		public static AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes)
 		{
 			var ab = DefineDynamicAssembly (name, access);
-			foreach (var attr in  assemblyAttributes) {
-				ab.SetCustomAttribute (attr);
+			if (assemblyAttributes != null) {
+				foreach (var attr in assemblyAttributes)
+					ab.SetCustomAttribute (attr);
 			}
 
 			return ab;
@@ -290,25 +297,13 @@ namespace System.Reflection.Emit
 				throw new ArgumentNullException ("name");
 			if (name.Length == 0)
 				throw new ArgumentException ("Empty name is not legal.", "name");
+			if (name[0] == '\0')
+				throw new ArgumentException (SR.Argument_InvalidName, nameof (name));
 
-			if (modules != null) {
-				for (int i = 0; i < modules.Length; ++i) {
-					if (modules [i].Name == name)
-						throw new ArgumentException ("Duplicate name '" + name + "'");
-				}
-			}
-
-			ModuleBuilder r = new ModuleBuilder (this, name, emitSymbolInfo);
-
-			if (modules != null) {
-				ModuleBuilder[] new_modules = new ModuleBuilder [modules.Length + 1];
-				System.Array.Copy(modules, new_modules, modules.Length);
-				modules = new_modules;
-			} else {
-				modules = new ModuleBuilder [1];
-			}
-			modules [modules.Length - 1] = r;
-			return r;
+			if (manifest_module_used)
+				throw new InvalidOperationException (SR.InvalidOperation_NoMultiModuleAssembly);
+			manifest_module_used = true;
+			return manifest_module;
 		}
 
 		public ModuleBuilder GetDynamicModule (string name)
@@ -501,19 +496,7 @@ namespace System.Reflection.Emit
 
 		public override Module[] GetModules (bool getResourceModules)
 		{
-			throw new NotImplementedException ();
-#if FALSE
-			Module[] modules = GetModulesInternal ();
-
-			if (!getResourceModules) {
-				var result = new List<Module> (modules.Length);
-				foreach (Module m in modules)
-					if (!m.IsResource ())
-						result.Add (m);
-				return result.ToArray ();
-			}
-			return modules;
-#endif
+			return (Module[])modules.Clone ();
 		}
 
 		public override AssemblyName GetName (bool copiedName)
@@ -556,12 +539,8 @@ namespace System.Reflection.Emit
 #endif
 		}
 
-		ModuleBuilder manifest_module;
-
 		public override Module ManifestModule {
 			get {
-				if (manifest_module == null)
-					manifest_module = DefineDynamicModule ("Default Dynamic Module");
 				return manifest_module;
 			}
 		}
@@ -608,6 +587,11 @@ namespace System.Reflection.Emit
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+		}
+
+		public override IList<CustomAttributeData> GetCustomAttributesData ()
+		{
+			return CustomAttributeData.GetCustomAttributes (this);
 		}
 
 		public override string FullName {
