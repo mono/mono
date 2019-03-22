@@ -650,8 +650,6 @@ namespace System.Reflection {
 			if (hasUserType) {
 #if FULL_AOT_RUNTIME
 				throw new NotSupportedException ("User types are not supported under full aot");
-#elif NETCORE
-				throw new NotImplementedException ();
 #else
 				return new MethodOnTypeBuilderInst (this, methodInstantiation);
 #endif
