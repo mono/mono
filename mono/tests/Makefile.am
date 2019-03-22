@@ -1022,7 +1022,6 @@ TESTS_IL_SRC=			\
 	methodimpl.il \
 	abstractcalls.il \
 	debug3.il \
-	provider.il \
 	genericcontext.il \
 	sharedinterfacemethod.il \
 	boring.il \
