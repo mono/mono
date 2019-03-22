@@ -60,7 +60,7 @@ namespace System.Configuration
 		public SectionInformation SectionInformation {
 			get {
 				if (sectionInformation == null)
-					sectionInformation = new SectionInformation ();
+					sectionInformation = new SectionInformation (this);
 				return sectionInformation;
 			}
 		}
@@ -103,7 +103,6 @@ namespace System.Configuration
 						string path = Path.Combine (fileDir, SectionInformation.ConfigSource);
 						if (File.Exists (path)) {
 							RawXml = File.ReadAllText (path);
-							SectionInformation.SetRawXml (RawXml);
 						}
 					}
 				} catch {
@@ -178,7 +177,6 @@ namespace System.Configuration
 			if (config_source != null)
 				SectionInformation.ConfigSource = config_source;
 			
-			SectionInformation.SetRawXml (RawXml);
 			if (SectionHandler == null)
 				DeserializeElement (reader, false);
 		}
@@ -212,12 +210,10 @@ namespace System.Configuration
 			string path = Path.Combine (basePath, config_source);
 			if (!File.Exists (path)) {
 				RawXml = null;
-				SectionInformation.SetRawXml (null);
 				throw new ConfigurationErrorsException (string.Format ("Unable to open configSource file '{0}'.", path));
 			}
 			
 			RawXml = File.ReadAllText (path);
-			SectionInformation.SetRawXml (RawXml);
 			DeserializeElement (new ConfigXmlTextReader (new StringReader (RawXml), path), false);
 		}
 

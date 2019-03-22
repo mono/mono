@@ -34,6 +34,7 @@ namespace System.Configuration
 {
 	public sealed class SectionInformation
 	{
+		ConfigurationSection associatedConfigSection;
 		ConfigurationSection parent;
 		
 		ConfigurationAllowDefinition allow_definition = ConfigurationAllowDefinition.Everywhere;
@@ -46,14 +47,15 @@ namespace System.Configuration
 		string config_source = String.Empty;
 		bool force_update;
 		string name, type_name;
-		string raw_xml;
 		
 		ProtectedConfigurationProvider protection_provider;
 		
 
 		[MonoTODO ("default value for require_permission")]
-		internal SectionInformation ()
+		internal SectionInformation (ConfigurationSection associatedConfigSection)
 		{
+			this.associatedConfigSection = associatedConfigSection;
+
 			allow_definition = ConfigurationAllowDefinition.Everywhere;
 			allow_location = true;
 			allow_override = true;
@@ -172,7 +174,7 @@ namespace System.Configuration
 
 		public string GetRawXml ()
 		{
-			return raw_xml;
+			return associatedConfigSection.RawXml;
 		}
 
 		public void ProtectSection (string protectionProvider)
@@ -201,12 +203,6 @@ namespace System.Configuration
 			protection_provider = null;
 		}
 
-		public void SetRawXml (string rawXml)
-		{
-			raw_xml = rawXml;
-		}
-
-		[MonoTODO]
 		internal void SetName (string name)
 		{
 			this.name = name;

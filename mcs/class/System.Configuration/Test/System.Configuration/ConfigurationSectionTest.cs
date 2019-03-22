@@ -38,6 +38,28 @@ namespace MonoTests.System.Configuration {
 	[TestFixture]
 	public class ConfigurationElementCollectionTest
 	{
+		static readonly string TestTempDir = Path.GetFullPath (Path.Combine("Test", "runtime-tmp"));
+		static readonly string TestAppExePath = Path.Combine(TestTempDir, "app.exe");
+		static readonly string TestAppExeConfigPath = TestAppExePath + ".config";
+
+		[SetUp]
+		public void Setup ()
+		{
+			var config = @"
+<?xml version=""1.0"" encoding=""utf-8"" ?>
+<configuration>
+    <configSections>
+       <section name=""DefaultConfigSection"" type=""System.Configuration.DefaultSection"" />
+    </configSections>
+    <DefaultConfigSection>
+    </DefaultConfigSection>
+</configuration>".Trim ();
+
+			Directory.CreateDirectory (TestTempDir);
+			File.WriteAllText (TestAppExePath, String.Empty);  // Fake exe-file.
+			File.WriteAllText (TestAppExeConfigPath, config);
+		}
+
 		[Test]
 		public void TwoConfigElementsInARow () // Bug #521231
 		{
@@ -46,6 +68,17 @@ namespace MonoTests.System.Configuration {
 			fooSection.Load (config);
 		}
 
+		[Test]
+		public void GetRawXmlTest ()
+		{
+			var config = ConfigurationManager.OpenExeConfiguration (TestAppExePath);
+			var section = config.Sections["DefaultConfigSection"] as DefaultSection;
+			var rawXml = section.SectionInformation.GetRawXml ();
+
+			Assert.IsNotNull (rawXml, "#1: : GetRawXml() returns null");
+			Assert.IsFalse (string.IsNullOrEmpty (rawXml), "#2: GetRawXml() returns String.Empty");
+		}
+	
 		class FooConfigSection : ConfigurationSection
 		{
 			public void Load (string xml) 
@@ -114,8 +147,8 @@ namespace MonoTests.System.Configuration {
 			public int Id {
 				get { return (int)base["id"]; }
 				set { base["id"] = value; }
-			}		
-		}	
+			}
+		}
 	}
 }
 

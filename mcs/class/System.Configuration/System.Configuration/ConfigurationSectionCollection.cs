@@ -63,9 +63,9 @@ namespace System.Configuration
 			get {
 				ConfigurationSection sec = BaseGet (name) as ConfigurationSection;
 				if (sec == null) {
-					SectionInfo secData = group.Sections [name] as SectionInfo;
-					if (secData == null) return null;
-					sec = config.GetSectionInstance (secData, true);
+					SectionInfo sectionInfo = group.Sections [name] as SectionInfo;
+					if (sectionInfo == null) return null;
+					sec = config.GetSectionInstance (sectionInfo, true);
 					if (sec == null) return null;
 					lock(lockObject) {
 						BaseSet (name, sec);

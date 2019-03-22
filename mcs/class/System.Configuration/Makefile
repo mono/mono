@@ -16,6 +16,9 @@ LIBRARY_WARN_AS_ERROR = yes
 
 include ../../build/library.make
 
+clean:
+	rm -rf Test/runtime-tmp
+
 test-local:
 	cp -f Test/appSettings.config $(dir $(NUNITLITE_CONFIG_FILE))/System.Configuration-appSettings.config
 
