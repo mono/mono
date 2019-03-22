@@ -982,15 +982,6 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		// Used by MethodBuilder.SetMethodBody
-		internal void SetExceptionHandlers (ILExceptionInfo[] exHandlers) {
-			this.ex_handlers = exHandlers;
-		}
-
-		// Used by MethodBuilder.SetMethodBody
-		internal void SetTokenFixups (ILTokenInfo[] tokenFixups) {
-		}
-
 		// Used by DynamicILGenerator and MethodBuilder.SetMethodBody
 		internal void SetCode (byte[] code, int max_stack) {
 			// Make a copy to avoid possible security problems
@@ -1010,83 +1001,13 @@ namespace System.Reflection.Emit {
 			this.cur_stack = 0;
 		}
 
-		internal void Init (byte[] il, int maxStack, byte[] localSignature,
-			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups)
-		{
-			SetCode (il, maxStack);
-
-			// FIXME: Process local signature
-
-			// Process exception handlers
-			if (exceptionHandlers != null) {
-				// Group exception handlers by try blocks
-				var tryBlocks = new Dictionary <Tuple<int, int>, List<ExceptionHandler>> ();
-				foreach (var h in exceptionHandlers) {
-					List<ExceptionHandler> list;
-					var key = new Tuple <int, int> (h.TryOffset, h.TryLength);
-					if (!tryBlocks.TryGetValue (key, out list)) {
-						list = new List<ExceptionHandler> ();
-						tryBlocks.Add (key, list);
-					}
-					list.Add (h);
-				}
-
-				// Generate ILExceptionInfo from tryBlocks
-				var infos = new List<ILExceptionInfo> ();
-				foreach (var kv in tryBlocks) {
-					var info = new ILExceptionInfo () {
-						start = kv.Key.Item1,
-						len = kv.Key.Item2,
-						handlers = new ILExceptionBlock [kv.Value.Count],
-					};
-					infos.Add (info);
-					var i = 0;
-					foreach (var b in kv.Value) {
-						info.handlers [i++] = new ILExceptionBlock () {
-							start = b.HandlerOffset,
-							len = b.HandlerLength,
-							filter_offset = b.FilterOffset,
-							type = (int) b.Kind,
-							extype = module.ResolveType (b.ExceptionTypeToken),
-						};
-					}
-				}
-
-				SetExceptionHandlers (infos.ToArray ());
-			}
-
-			// Process token fixups
-			if (tokenFixups != null) {
-				var tokenInfos = new List<ILTokenInfo> ();
-				foreach (var pos in tokenFixups) {
-					var token = (int) BitConverter.ToUInt32 (il, pos);
-					var tokenInfo = new ILTokenInfo () {
-						code_pos = pos,
-						member = ((ModuleBuilder) module).ResolveOrGetRegisteredToken (token, null, null)
-					};
-					tokenInfos.Add (tokenInfo);
-				}
-
-				SetTokenFixups (tokenInfos.ToArray ());
-			}
-		}
-
-
 		internal TokenGenerator TokenGenerator {
 			get {
 				return token_gen;
 			}
 		}
 
-		// Still used by symbolwriter
-		[Obsolete ("Use ILOffset", true)]
-		internal static int Mono_GetCurrentOffset (ILGenerator ig)
-		{
-			return ig.code_len;
-		}	
-
-		public
-		virtual int ILOffset {
+		public virtual int ILOffset {
 			get { return code_len; }
 		}
 	}
