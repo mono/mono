@@ -4988,9 +4988,9 @@ class_implements_interface_ignore_generics (MonoClass* klass, MonoClass* iface)
 {
 	int i;
 	ERROR_DECL (error);
+	if (mono_class_is_ginst (iface))
+		iface = mono_class_get_generic_type_definition (iface);
 	while (klass != NULL) {
-		if (mono_class_is_ginst (iface))
-        	iface = mono_class_get_generic_type_definition (iface);
 		if (mono_class_is_assignable_from_internal (iface, klass))
 			return TRUE;
 		mono_class_setup_interfaces (klass, error);
@@ -5002,7 +5002,7 @@ class_implements_interface_ignore_generics (MonoClass* klass, MonoClass* iface)
 		for (i = 0; i < m_class_get_interface_count (klass); i++) {
 			MonoClass *ic = klass_interfaces [i];
 			if (mono_class_is_ginst (ic))
-			ic = mono_class_get_generic_type_definition (ic);
+				ic = mono_class_get_generic_type_definition (ic);
 			if (ic == iface) {
 				return TRUE;
 			}
