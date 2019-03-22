@@ -115,11 +115,7 @@ namespace MonoTests.System.Configuration {
 			public void Load (string xml)
 			{
 				Init ();
-				using (var sr = new StringReader (xml))
-				using (var reader = new XmlTextReader (sr))
-				{
-					DeserializeSection (reader);
-				}
+				SetRawXmlAndDeserialize (xml, string.Empty);
 			}
 
 			[ConfigurationProperty ("integerValidatorMinValue")]

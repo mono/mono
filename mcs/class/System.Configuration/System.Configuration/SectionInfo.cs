@@ -191,6 +191,7 @@ namespace System.Configuration
 			string xml;
 			
 			ConfigurationSection section = config.GetSectionInstance (this, false);
+
 			if (section != null) {
 				ConfigurationSection parentSection = config.Parent != null ? config.Parent.GetSectionInstance (this, false) : null;
 				xml = section.SerializeSection (parentSection, Name, mode);

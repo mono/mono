@@ -177,6 +177,11 @@ namespace System.Configuration
 			return associatedConfigSection.RawXml;
 		}
 
+		public void SetRawXml (string rawXml)
+		{
+			associatedConfigSection.SetRawXmlAndDeserialize (rawXml, String.Empty);
+		}
+
 		public void ProtectSection (string protectionProvider)
 		{
 			protection_provider = ProtectedConfiguration.GetProvider (protectionProvider, true);

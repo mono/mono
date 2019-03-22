@@ -35,7 +35,8 @@ internal class ConfigXmlTextReader : XmlTextReader, IConfigErrorInfo
 {
 	private readonly string fileName;
 
-	public ConfigXmlTextReader (Stream s, string fileName) : base (s)
+	public ConfigXmlTextReader (Stream s, string fileName)
+		: base (s)
 	{
 		if (fileName == null)
 			throw new ArgumentNullException ("fileName");
@@ -50,6 +51,11 @@ internal class ConfigXmlTextReader : XmlTextReader, IConfigErrorInfo
 			throw new ArgumentNullException ("fileName");
 
 		this.fileName = fileName;
+	}
+
+	public ConfigXmlTextReader (string rawXml, string fileName)
+		: this (new StringReader (rawXml), fileName)
+	{
 	}
 
 	public string Filename {

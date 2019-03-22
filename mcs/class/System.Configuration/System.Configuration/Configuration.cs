@@ -258,7 +258,7 @@ namespace System.Configuration {
 				return Sections [parts[0]];
 
 			ConfigurationSectionGroup group = SectionGroups [parts[0]];
-			for (int n=1; group != null && n<parts.Length-1; n++)
+			for (int n = 1; group != null && n < parts.Length - 1; n++)
 				group = group.SectionGroups [parts [n]];
 
 			if (group != null)
@@ -301,17 +301,8 @@ namespace System.Configuration {
 			sec.ConfigContext = system.Host.CreateDeprecatedConfigContext(configPath);
 			
 			string xml = data as string;
-			sec.RawXml = xml;
 			sec.Reset (parentSection);
-
-			if (xml != null) {
-				XmlTextReader r = new ConfigXmlTextReader (new StringReader (xml), FilePath);
-				sec.DeserializeSection (r);
-				r.Close ();
-
-				if (!String.IsNullOrEmpty (sec.SectionInformation.ConfigSource) && !String.IsNullOrEmpty (FilePath))
-					sec.DeserializeConfigSource (Path.GetDirectoryName (FilePath));
-			}
+			sec.SetRawXmlAndDeserialize (xml, FilePath);
 			
 			elementData [config] = sec;
 			return sec;

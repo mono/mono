@@ -241,8 +241,9 @@ namespace System.Configuration
 			foreach (ConfigInfoCollection col in new object[] {Sections, Groups}) {
 				foreach (string key in col) {
 					ConfigInfo cinfo = col [key];
-					if (cinfo.HasConfigContent (cfg))
+					if (cinfo.HasConfigContent (cfg)) {
 						cinfo.WriteConfig (cfg, writer, mode);
+					}
 				}
 			}
 			

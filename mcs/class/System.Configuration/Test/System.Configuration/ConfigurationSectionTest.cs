@@ -27,25 +27,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Configuration;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
 
-namespace MonoTests.System.Configuration {
-	[TestFixture]
-	public class ConfigurationElementCollectionTest
-	{
-		static readonly string TestTempDir = Path.GetFullPath (Path.Combine("Test", "runtime-tmp"));
-		static readonly string TestAppExePath = Path.Combine(TestTempDir, "app.exe");
-		static readonly string TestAppExeConfigPath = TestAppExePath + ".config";
+using MonoTests.System.Configuration.Util;
+using MonoTests.System.Configuration.ConfigurationSectionTestHelpers;
 
-		[SetUp]
-		public void Setup ()
-		{
-			var config = @"
+namespace MonoTests.System.Configuration {
+
+	[TestFixture]
+	public class ConfigurationSectionTest
+	{
+		const string DefaultConfigSectionConfig = @"
 <?xml version=""1.0"" encoding=""utf-8"" ?>
 <configuration>
     <configSections>
@@ -53,102 +49,139 @@ namespace MonoTests.System.Configuration {
     </configSections>
     <DefaultConfigSection>
     </DefaultConfigSection>
-</configuration>".Trim ();
+</configuration>";
 
-			Directory.CreateDirectory (TestTempDir);
-			File.WriteAllText (TestAppExePath, String.Empty);  // Fake exe-file.
-			File.WriteAllText (TestAppExeConfigPath, config);
-		}
+		static readonly string SimpleSectionConfig = string.Format (@"
+<?xml version=""1.0"" encoding=""utf-8"" ?>
+<configuration>
+    <configSections>
+	   <section name=""SimpleSection"" type=""{0}"" />
+    </configSections>
+	<SimpleSection>
+	</SimpleSection>
+</configuration>", typeof(SimpleSection).AssemblyQualifiedName);
 
-		[Test]
-		public void TwoConfigElementsInARow () // Bug #521231
-		{
-			string config = @"<fooconfig><foos><foo id=""1"" /></foos><bars><bar id=""1"" /></bars></fooconfig>";
-			var fooSection = new FooConfigSection ();
-			fooSection.Load (config);
-		}
+		static readonly string ProtectedCtorConfig = string.Format (@"
+<?xml version=""1.0"" encoding=""utf-8"" ?>
+<configuration>
+    <configSections>
+	   <section name=""ProtectedCtorSection"" type=""{0}"" />
+    </configSections>
+	<ProtectedCtorSection>
+	</ProtectedCtorSection>
+</configuration>", typeof(ProtectedCtorSection).AssemblyQualifiedName);
 
 		[Test]
 		public void GetRawXmlTest ()
 		{
-			var config = ConfigurationManager.OpenExeConfiguration (TestAppExePath);
-			var section = config.Sections["DefaultConfigSection"] as DefaultSection;
-			var rawXml = section.SectionInformation.GetRawXml ();
-
-			Assert.IsNotNull (rawXml, "#1: : GetRawXml() returns null");
-			Assert.IsFalse (string.IsNullOrEmpty (rawXml), "#2: GetRawXml() returns String.Empty");
-		}
-	
-		class FooConfigSection : ConfigurationSection
-		{
-			public void Load (string xml) 
-			{ 
-				Init (); 
-				using (StringReader sr = new StringReader(xml))  
-					using (XmlReader reader = new XmlTextReader(sr)) { 
-						DeserializeSection (reader); 
-					} 
-			}
-
-			[ConfigurationProperty("foos")]
-			[ConfigurationCollection(typeof(FooConfigElementCollection), AddItemName="foo")]
-			public FooConfigElementCollection Foos {
-				get { return (FooConfigElementCollection)base["foos"]; }
-				set { base["foos"] = value; }
-			}
-
-			[ConfigurationProperty("bars")]
-			[ConfigurationCollection(typeof(BarConfigElementCollection), AddItemName="bar")]
-			public BarConfigElementCollection Bars {
-				get { return (BarConfigElementCollection)base["bars"]; }
-				set { base["bars"] = value; }
-			}			
-		}
-
-		class FooConfigElementCollection : ConfigurationElementCollection
-		{
-			protected override ConfigurationElement CreateNewElement ()
+			TestUtil.RunWithTempFile ((tmpFileName) =>
 			{
-				return new FooConfigElement();
-			}
+				var config = TestUtil.WriteXmlToFileAndOpenConfiguration (DefaultConfigSectionConfig, tmpFileName);
 
-			protected override object GetElementKey (ConfigurationElement element)
-			{
-				return ((FooConfigElement)element).Id;
-			}
+				var section = config.Sections["DefaultConfigSection"] as DefaultSection;
+			 	var rawXml = section.SectionInformation.GetRawXml ();
+
+				Assert.IsNotNull (rawXml, "#1: : GetRawXml() returns null");
+				Assert.IsFalse (string.IsNullOrEmpty (rawXml), "#2: GetRawXml() returns String.Empty");
+			});
 		}
 
-		class FooConfigElement : ConfigurationElement
+		[Test]
+		public void SetRawXmlTest_DefaultSection ()
 		{
-			[ConfigurationProperty("id")]
-			public int Id {
-				get { return (int)base["id"]; }
-				set { base["id"] = value; }
-			}
+			TestUtil.RunWithTempFile ((tmpFileName) => {
+				CreateConfig (tmpFileName);
+				TestConfig (tmpFileName);
+			});
 
-		}
-
-		class BarConfigElementCollection : ConfigurationElementCollection
-		{
-			protected override ConfigurationElement CreateNewElement ()
+			void CreateConfig (string fileName)
 			{
-				return new BarConfigElement();
+				var config = TestUtil.WriteXmlToFileAndOpenConfiguration (DefaultConfigSectionConfig, fileName);
+				var section = config.Sections["DefaultConfigSection"] as DefaultSection;
+			 	section.SectionInformation.SetRawXml ("<DefaultConfigSection><TestTag /></DefaultConfigSection>");
+				config.Save(ConfigurationSaveMode.Full);
 			}
 
-			protected override object GetElementKey (ConfigurationElement element)
+			void TestConfig (string fileName)
 			{
-				return ((BarConfigElement)element).Id;
+				var config = TestUtil.OpenConfiguration (fileName);
+				var section = config.Sections["DefaultConfigSection"] as DefaultSection;
+				var rawXml = section.SectionInformation.GetRawXml ();
+
+				Assert.IsNotNull (rawXml, "#1: : GetRawXml() returns null");
+				Assert.IsFalse (string.IsNullOrEmpty (rawXml), "#2: GetRawXml() returns String.Empty");
+
+				var xmlDoc = new XmlDocument();
+				xmlDoc.LoadXml(rawXml);
+				var testTagNode = xmlDoc.SelectSingleNode (@"DefaultConfigSection/TestTag");
+				Assert.IsNotNull (testTagNode, "#1: :testTagNode is null");
 			}
 		}
 
-		class BarConfigElement : ConfigurationElement
+		[Test]
+		public void SetRawXmlTest_SimpleSection ()
 		{
-			[ConfigurationProperty("id")]
-			public int Id {
-				get { return (int)base["id"]; }
-				set { base["id"] = value; }
+			TestUtil.RunWithTempFile ((tmpFileName) => {
+				CreateConfig (tmpFileName, "<SimpleSection></SimpleSection>");
+				TestConfig (tmpFileName, SimpleElement.Default.Value, "#1");
+			});
+
+			TestUtil.RunWithTempFile ((tmpFileName) => {
+				CreateConfig (tmpFileName, "<SimpleSection><SimpleElement /></SimpleSection>");
+				TestConfig (tmpFileName, SimpleElement.Default.Value, "#2");
+			});
+
+			TestUtil.RunWithTempFile ((tmpFileName) => {
+				CreateConfig (tmpFileName, @"<SimpleSection><SimpleElement Value=""2"" /></SimpleSection>");
+				TestConfig (tmpFileName, 2, "#3");
+			});
+
+			void CreateConfig (string fileName, string sectionRawXml)
+			{
+				var config = TestUtil.WriteXmlToFileAndOpenConfiguration (SimpleSectionConfig, fileName);
+				var section = config.Sections["SimpleSection"] as SimpleSection;
+
+				section.SimpleElement.Value = 1;
+				section.SectionInformation.SetRawXml (sectionRawXml);
+
+				config.Save(ConfigurationSaveMode.Full);
+			}
+
+			void TestConfig (string fileName, int expectedValue, string testLabel)
+			{
+				var config = TestUtil.OpenConfiguration (fileName);
+				var section = config.Sections["SimpleSection"] as SimpleSection;
+				Assert.AreEqual (section.SimpleElement.Value, expectedValue, testLabel);
 			}
 		}
+	}
+}
+
+namespace MonoTests.System.Configuration.ConfigurationSectionTestHelpers
+{
+	public class SimpleSection : ConfigurationSection
+	{
+		[ConfigurationProperty("SimpleElement")]
+		public SimpleElement SimpleElement
+		{
+			get { return (SimpleElement)this["SimpleElement"]; }
+			set { this["SimpleElement"] = value; }
+		}
+	}
+
+	public class SimpleElement : ConfigurationElement
+	{
+		public static SimpleElement Default
+		{
+			get { return new SimpleElement(); }
+		}
+
+		[ConfigurationProperty("Value", DefaultValue = "0")]
+		public int Value
+		{
+			get { return (int)this["Value"]; }
+			set { this["Value"] = value; }
+		}	
 	}
 }
 

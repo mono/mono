@@ -30,10 +30,10 @@
 //
 
 using System.Collections;
-using System.Xml;
-using System.Reflection;
-using System.IO;
 using System.ComponentModel;
+using System.IO;
+using System.Reflection;
+using System.Xml;
 
 namespace System.Configuration
 {
@@ -75,12 +75,21 @@ namespace System.Configuration
 
 		internal string RawXml {
 			get { return rawXml; }
-			set {
-				// FIXME: this hack is nasty. We should make
-				// some refactory on the entire assembly.
-				if (rawXml == null || value != null)
-					rawXml = value;
-			}
+		}
+
+		// TODO: remove `protected` and tests to list of friendly assemblies.
+		internal protected void SetRawXmlAndDeserialize (string rawXml, string rawXmlFileSource)
+		{
+			this.rawXml = rawXml;
+			if (rawXml == null)
+				return;
+			using (var rawXmlReader = new ConfigXmlTextReader (rawXml, rawXmlFileSource))
+				DeserializeRawXml (rawXmlReader);
+		}
+
+		protected virtual void DeserializeRawXml (XmlReader rawXmlReader)
+		{
+			DeserializeElement (rawXmlReader, false);
 		}
 
 		protected internal virtual void Init ()
@@ -395,17 +404,23 @@ namespace System.Configuration
 			
 			modified = false;
 				
-			foreach (PropertyInformation prop in ElementInformation.Properties)
-				if (!String.IsNullOrEmpty(prop.Name) && prop.IsRequired && !readProps.ContainsKey (prop)) {
-					PropertyInformation p = ElementInformation.Properties [prop.Name];
-					if (p == null) {
-						object val = OnRequiredPropertyNotFound (prop.Name);
-						if (!object.Equals (val, prop.DefaultValue)) {
-							prop.Value = val;
-							prop.IsModified = false;
-						}
+			foreach (PropertyInformation prop in ElementInformation.Properties) {
+				if (String.IsNullOrEmpty(prop.Name) || readProps.ContainsKey (prop))
+					continue;
+
+				if (prop.IsRequired) {
+					// TODO: It seems, the following behaviour is wronng.
+					//       One need to compare with original .Net Framework.
+					object val = OnRequiredPropertyNotFound (prop.Name);
+					if (!object.Equals (val, prop.DefaultValue)) {
+						prop.Value = val;
+						prop.IsModified = false;
 					}
 				}
+				else {
+					prop.Reset (null);
+				}
+			}
 
 			PostDeserialize ();
 		}
@@ -525,6 +540,7 @@ namespace System.Configuration
 				if (val != null)
 					wroteData = val.SerializeToXmlElement (writer, prop.Name) || wroteData;
 			}
+
 			return wroteData;
 		}
 
@@ -538,9 +554,12 @@ namespace System.Configuration
 
 			if (elementName != null && elementName != "")
 				writer.WriteStartElement (elementName);
+
 			bool res = SerializeElement (writer, false);
+
 			if (elementName != null && elementName != "")
 				writer.WriteEndElement ();
+
 			return res;
 		}
 

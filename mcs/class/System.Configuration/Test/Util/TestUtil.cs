@@ -23,7 +23,9 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
+using System.Configuration;
 using System.IO;
 using System.Reflection;
 
@@ -76,6 +78,20 @@ namespace MonoTests.System.Configuration.Util {
 				var exe = Path.GetFileName (ThisApplicationPath);
 				return exe + ".config";
 			}
+		}
+
+		public static global::System.Configuration.Configuration WriteXmlToFileAndOpenConfiguration (string rawXmlConfig, string filePath)
+		{
+			File.WriteAllText (filePath, rawXmlConfig.Trim ());
+			return OpenConfiguration (filePath);
+		}
+
+		public static global::System.Configuration.Configuration OpenConfiguration (string filePath)
+		{
+			var map = new ExeConfigurationFileMap {
+				ExeConfigFilename = filePath
+			};
+			return ConfigurationManager.OpenMappedExeConfiguration (map, ConfigurationUserLevel.None);
 		}
 	}
 }

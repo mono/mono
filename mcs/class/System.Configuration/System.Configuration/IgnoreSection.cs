@@ -54,9 +54,9 @@ namespace System.Configuration {
 			return false;
 		}
 
-		protected internal override void DeserializeSection (XmlReader xmlReader)
+		protected override void DeserializeRawXml (XmlReader rawXmlReader)
 		{
-			xml = xmlReader.ReadOuterXml ();
+			xml = rawXmlReader.ReadOuterXml ();
 		}
 
 		[MonoTODO]

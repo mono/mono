@@ -40,18 +40,9 @@ namespace System.Configuration {
 			properties = new ConfigurationPropertyCollection ();
 		}
 
-		protected internal override void DeserializeSection (XmlReader xmlReader)
+		protected override void DeserializeRawXml (XmlReader rawXmlReader)
 		{
-			// not sure if it is the right thing to do,
-			// but DefaultSection does not raise errors on
-			// unrecognized contents.
-
-			// FIXME: it is nothing more than hack: RawXml should
-			// not be set more than once.
-			if (RawXml == null)
-				RawXml = xmlReader.ReadOuterXml ();
-			else
-				xmlReader.Skip ();
+			rawXmlReader.Skip ();
 		}
 
 		[MonoTODO]
@@ -75,7 +66,7 @@ namespace System.Configuration {
 		[MonoTODO]
 		protected internal override string SerializeSection (ConfigurationElement parentSection, string name, ConfigurationSaveMode saveMode)
 		{
-			return base.SerializeSection (parentSection, name, saveMode);
+			return SectionInformation.GetRawXml ();
 		}
 
 		protected internal override ConfigurationPropertyCollection Properties {

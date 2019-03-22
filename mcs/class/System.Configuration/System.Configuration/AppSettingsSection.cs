@@ -71,14 +71,18 @@ namespace System.Configuration {
 
 			if (File != "") {
 				try {
+					string fileName = File;
+
 					string filePath = File;
 					if (!Path.IsPathRooted (filePath))
 						filePath = Path.Combine (Path.GetDirectoryName (Configuration.FilePath), filePath);
 
 					Stream s = System.IO.File.OpenRead (filePath);
-					XmlReader subreader = new ConfigXmlTextReader (s, filePath);
-					base.DeserializeElement (subreader, serializeCollectionKey);
-					s.Close ();
+					using (var subreader = new ConfigXmlTextReader (s, filePath))
+						base.DeserializeElement (subreader, serializeCollectionKey);
+					
+					// We need to restore File property wich was overwritten by the second `DeserializeElement`:
+					File = fileName;
 				}
 				catch {
 					// nada, we just ignore a missing/unreadble file

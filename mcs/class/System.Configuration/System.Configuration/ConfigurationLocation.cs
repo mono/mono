@@ -95,7 +95,7 @@ namespace System.Configuration {
 				}
 				
 				configuration = new Configuration (parent, path);
-				using (XmlTextReader tr = new ConfigXmlTextReader (new StringReader (xmlContent), path))
+				using (XmlTextReader tr = new ConfigXmlTextReader (xmlContent, path))
 					configuration.ReadData (tr, allowOverride);
 
 				xmlContent = null;
