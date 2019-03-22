@@ -19,8 +19,6 @@ ifneq (,$(filter build net_4_x, $(PROFILE)))
 $(error This profile shouldn't build System.Drawing.Common.dll, it already has System.Drawing.dll)
 endif
 
-PLATFORM_DEBUG_FLAGS =
-
 NO_TEST = yes
 
 include $(MCS_BUILD_DIR)/library.make

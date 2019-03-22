@@ -1,10 +1,11 @@
 
 NETCORESDK_VERSION=3.0.100-preview4-010759
-URL:=https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$(NETCORESDK_VERSION)/dotnet-sdk-$(NETCORESDK_VERSION)-osx-x64.tar.gz
+NETCORESDK_FILE=dotnet-sdk-$(NETCORESDK_VERSION)-osx-x64.tar.gz
+URL:=https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$(NETCORESDK_VERSION)/$(NETCORESDK_FILE)
 
-download-sdk:
-	curl $(URL) --output dotnet-sdk-3.tar.gz
-	tar -xvf dotnet-sdk-3.tar.gz
+$(NETCORESDK_FILE):
+	curl $(URL) --output $(NETCORESDK_FILE)
+	tar -xvf $(NETCORESDK_FILE)
 
 build-sample:
 	dotnet build HelloWorld
@@ -25,9 +26,7 @@ link-mono:
 	cp ../mono/mini/.libs/libmonosgen-2.0.dylib $(SHAREDRUNTIME)/libcoreclr.dylib
 	cp ../mcs/class/System.Private.CoreLib/bin/x64/System.Private.CoreLib.dll $(SHAREDRUNTIME)
 
-prepare: download-sdk link-mono
-
-all: build-System.Runtime.Tests
+prepare: $(NETCORESDK_FILE) link-mono
 
 COREFX_BINDIR=$(COREFX_ROOT)/artifacts/bin
 
@@ -49,17 +48,39 @@ check-env:
 #   framework version.
 #
 
-build-System.Runtime.Tests: check-env
-	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/System.Runtime.Tests.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests @../excludes-System.Runtime.Tests.rsp $(XUNIT_ARGS)
-	cp $(COREFX_BINDIR)/RemoteExecutorConsoleApp/netstandard-Debug/RemoteExecutorConsoleApp.* tests/System.Runtime.Tests/
-	cp $(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/TestLoadAssembly.dll tests/System.Runtime.Tests/
-	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib tests/System.Runtime.Tests/
-	sed -e 's/9.9.9/$(VERSION)/g' < tests/System.Runtime.Tests/RemoteExecutorConsoleApp.runtimeconfig.json > 2 && mv 2 tests/System.Runtime.Tests/RemoteExecutorConsoleApp.runtimeconfig.json
-	cd tests/System.Runtime.Tests && dotnet build
+TEST_SUITES = \
+	System.Runtime.Tests \
+	System.Runtime.CompilerServices.Unsafe.Tests \
+	System.Collections.Tests
 
-run-System.Runtime.Tests: check-env
-	cd tests/System.Runtime.Tests && MONO_PATH=bin/Debug/netcoreapp3.0 MONO_ENV_OPTIONS="--debug --explicit-null-checks" COMPlus_DebugWriteToStdErr=1 ../../dotnet bin/Debug/netcoreapp3.0/System.Runtime.Tests-runner.dll
+# The binary directory under $(COREFIX_BINDIR)
+System.Runtime.CompilerServices.Unsafe.Tests_PROFILE = netstandard-Debug
+System.Runtime.Tests_PROFILE = netcoreapp-Unix-Debug
+System.Runtime.Tests_XUNIT_ARGS = @../excludes-System.Runtime.Tests.rsp
+System.Collections.Tests_PROFILE = netcoreapp-Debug
+
+build-%: check-env
+	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests $($*_XUNIT_ARGS) $(XUNIT_ARGS)
+	cp $(COREFX_BINDIR)/RemoteExecutorConsoleApp/netstandard-Debug/RemoteExecutorConsoleApp.* tests/$*
+	cp $(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/TestLoadAssembly.dll tests/$*
+	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib tests/$*
+	sed -e 's/9.9.9/$(VERSION)/g' < tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json > 2 && mv 2 tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json
+	cd tests/$* && dotnet build
+
+run-%: check-env
+	cd tests/$* && MONO_PATH=bin/Debug/netcoreapp3.0 MONO_ENV_OPTIONS="--debug --explicit-null-checks" COMPlus_DebugWriteToStdErr=1 ../../dotnet bin/Debug/netcoreapp3.0/$*-runner.dll
+
+all: $(addprefix build-, $(TEST_SUITES))
+
+check: $(addprefix run-, $(TEST_SUITES))
 
 clean:
-	rm -rf sdk shared host dotnet LICENSE.txt ThirdPartyNotices.txt dotnet-sdk-3.tar.gz
+	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
+run-xunit: check-env
+	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib \
+		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/
+	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(VERSION)" \
+		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/xunit.console.dll \
+		$(TEST_ASSEMBLY) -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests \
+		-noappdomain -noshadow -parallel all -nunit TestResult-netcore-xunit.xml < excludes-System.Runtime.Tests.rsp

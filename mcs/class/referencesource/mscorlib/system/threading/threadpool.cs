@@ -1986,8 +1986,7 @@ namespace System.Threading
         [System.Security.SecuritySafeCritical]
         internal static void NotifyWorkItemProgress()
         {
-            if (!ThreadPoolGlobals.vmTpInitialized)
-                ThreadPool.InitializeVMTp(ref ThreadPoolGlobals.enableWorkerTracking);
+            EnsureVMInitialized();
             NotifyWorkItemProgressNative();
         }
 

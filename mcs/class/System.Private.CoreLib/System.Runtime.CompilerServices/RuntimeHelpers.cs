@@ -97,9 +97,15 @@ namespace System.Runtime.CompilerServices
 		}
 
 		[Intrinsic]
-		public static bool IsReferenceOrContainsReferences<T>()
+		public static bool IsReferenceOrContainsReferences<T> ()
 		{
 			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
+		}
+
+		[Intrinsic]
+		internal static bool IsBitwiseEquatable<T> ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		[Intrinsic]

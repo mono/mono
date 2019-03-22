@@ -1216,6 +1216,7 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_remoting='yes'
    mono_feature_disable_reflection_emit_save='yes'
    mono_feature_disable_appdomains='yes'
+   mono_feature_disable_cleanup='yes'
    disable_mono_native=yes
 elif test x$with_runtime_preset = xnet_4_x; then
    with_profile4_x_default=yes
@@ -6202,6 +6203,7 @@ elif test x$platform_android = xyes; then
 	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
 	MONO_NATIVE_CFLAGS=$CFLAGS
 	MONO_NATIVE_LDFLAGS=$LDFLAGS
+	MONO_NATIVE_LIBADD="../mini/$LIBMONO_LA"
 
 	mono_native=yes
 	mono_native_compat=no

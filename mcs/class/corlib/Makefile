@@ -143,9 +143,11 @@ XTEST_LIB_FLAGS = -d:netcoreapp -publicsign -keyfile:../mono.snk
 XTEST_MCS_FLAGS = -resource:../../../external/corefx/src/System.Reflection/tests/Resources/ResourceTextFile.txt,ResourceTextFile.txt
 
 ifndef AOT_FRIENDLY_PROFILE
+ifneq ($(PROFILE),xammac)
 ifneq ($(PROFILE),testing_aot_hybrid)
 ifneq ($(PROFILE),testing_aot_full_interp)
 TEST_LIB_REFS += Mono.Posix
+endif
 endif
 endif
 endif

@@ -104,9 +104,6 @@ mprof-report
 msbuild
 nant
 nuget
-nunit-console
-nunit-console2
-nunit-console4
 pdb2mdb
 pedump
 permview
