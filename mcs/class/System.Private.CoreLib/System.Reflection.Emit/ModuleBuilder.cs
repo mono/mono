@@ -78,12 +78,8 @@ namespace System.Reflection.Emit {
 		// name_cache keys are display names
 		Dictionary<TypeName, TypeBuilder> name_cache;
 		Dictionary<string, int> us_string_cache;
-		bool transient;
 		ModuleBuilderTokenGenerator token_gen;
-		Hashtable resource_writers;
 		ISymbolWriter symbolWriter;
-
-		static bool has_warned_about_symbolWriter;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
@@ -91,11 +87,10 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void set_wrappers_type (ModuleBuilder mb, Type ab);
 
-		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo, bool transient) {
+		internal ModuleBuilder (AssemblyBuilder assb, string name, bool emitSymbolInfo) {
 			this.name = this.scopename = name;
-			this.fqname = fullyqname;
+			this.fqname = name;
 			this.assembly = this.assemblyb = assb;
-			this.transient = transient;
 			guid = Guid.NewGuid ().ToByteArray ();
 			table_idx = get_next_table_index (this, 0x00, 1);
 			name_cache = new Dictionary<TypeName, TypeBuilder> ();
@@ -105,11 +100,9 @@ namespace System.Reflection.Emit {
 
 			CreateGlobalType ();
 
-			if (assb.IsRun) {
-				TypeBuilder tb = new TypeBuilder (this, TypeAttributes.Abstract, 0xFFFFFF); /*last valid token*/
-				Type type = tb.CreateType ();
-				set_wrappers_type (this, type);
-			}
+			TypeBuilder tb = new TypeBuilder (this, TypeAttributes.Abstract, 0xFFFFFF); /*last valid token*/
+			Type type = tb.CreateType ();
+			set_wrappers_type (this, type);
 		}
 
 		public override string FullyQualifiedName {
@@ -127,7 +120,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public bool IsTransient () {
-			return transient;
+			return true;
 		}
 
 		public void CreateGlobalFunctions () 
@@ -623,7 +616,6 @@ namespace System.Reflection.Emit {
 		//
 		// Assign a pseudo token to the various TypeBuilderInst objects, so the runtime
 		// doesn't have to deal with them.
-		// For Save assemblies, the tokens will be fixed up later during Save ().
 		// For Run assemblies, the tokens will not be fixed up, so the runtime will
 		// still encounter these objects, it will resolve them by calling their
 		// RuntimeResolve () methods.

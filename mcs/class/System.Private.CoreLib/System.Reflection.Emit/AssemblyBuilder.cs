@@ -204,7 +204,6 @@ namespace System.Reflection.Emit
 		AssemblyName aname;
 		string assemblyName;
 		bool created;
-		bool is_module_only;
 		string versioninfo_culture;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -282,42 +281,24 @@ namespace System.Reflection.Emit
 
 		public ModuleBuilder DefineDynamicModule (string name)
 		{
-			return DefineDynamicModule (name, name, false, true);
+			return DefineDynamicModule (name, false);
 		}
 
 		public ModuleBuilder DefineDynamicModule (string name, bool emitSymbolInfo)
 		{
-			return DefineDynamicModule (name, name, emitSymbolInfo, true);
-		}
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name.Length == 0)
+				throw new ArgumentException ("Empty name is not legal.", "name");
 
-		public ModuleBuilder DefineDynamicModule(string name, string fileName)
-		{
-			return DefineDynamicModule (name, fileName, false, false);
-		}
-
-		public ModuleBuilder DefineDynamicModule (string name, string fileName,
-							  bool emitSymbolInfo)
-		{
-			return DefineDynamicModule (name, fileName, emitSymbolInfo, false);
-		}
-
-		private ModuleBuilder DefineDynamicModule (string name, string fileName, bool emitSymbolInfo, bool transient)
-		{
-			check_name_and_filename (name, fileName);
-
-			if (!transient) {
-				if (Path.GetExtension (fileName) == String.Empty)
-					throw new ArgumentException ("Module file name '" + fileName + "' must have file extension.");
-				if (!IsSave)
-					throw new NotSupportedException ("Persistable modules are not supported in a dynamic assembly created with AssemblyBuilderAccess.Run");
-				if (created)
-					throw new InvalidOperationException ("Assembly was already saved.");
+			if (modules != null) {
+				for (int i = 0; i < modules.Length; ++i) {
+					if (modules [i].Name == name)
+						throw new ArgumentException ("Duplicate name '" + name + "'");
+				}
 			}
 
-			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo, transient);
-
-			if ((modules != null) && is_module_only)
-				throw new InvalidOperationException ("A module-only assembly can only contain one module.");
+			ModuleBuilder r = new ModuleBuilder (this, name, emitSymbolInfo);
 
 			if (modules != null) {
 				ModuleBuilder[] new_modules = new ModuleBuilder [modules.Length + 1];
@@ -373,41 +354,15 @@ namespace System.Reflection.Emit
 			throw not_supported ();
 		}
 
-		internal bool IsSave {
-			get {
-				return false;
-			}
-		}
-
-		internal bool IsRun {
-			get {
-				return true;
-			}
-		}
-/*
-		internal bool IsCollectible {
+		public override bool IsCollectible {
 			get {
 				return access == (uint)AssemblyBuilderAccess.RunAndCollect;
 			}
 		}
-*/
+
 		internal string AssemblyDir {
 			get {
 				return dir;
-			}
-		}
-
-		/*
-		 * Mono extension. If this is set, the assembly can only contain one
-		 * module, access should be Save, and the saved image will not contain an
-		 * assembly manifest.
-		 */
-		internal bool IsModuleOnly {
-			get {
-				return is_module_only;
-			}
-			set {
-				is_module_only = value;
 			}
 		}
 
@@ -462,36 +417,6 @@ namespace System.Reflection.Emit
 		private Exception not_supported () {
 			// Strange message but this is what MS.NET prints...
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
-		}
-
-		private void check_name_and_filename (string name, string fileName)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			if (fileName == null)
-				throw new ArgumentNullException ("fileName");
-			if (name.Length == 0)
-				throw new ArgumentException ("Empty name is not legal.", "name");
-			if (fileName.Length == 0)
-				throw new ArgumentException ("Empty file name is not legal.", "fileName");
-			if (Path.GetFileName (fileName) != fileName)
-				throw new ArgumentException ("fileName '" + fileName + "' must not include a path.", "fileName");
-
-			// Resource files are created/searched under the assembly storage
-			// directory
-			string fullFileName = fileName;
-			if (dir != null)
-				fullFileName = Path.Combine (dir, fileName);
-
-			if (modules != null) {
-				for (int i = 0; i < modules.Length; ++i) {
-					// Use fileName instead of fullFileName here
-					if (!modules [i].IsTransient () && (modules [i].FileName == fileName))
-						throw new ArgumentException ("Duplicate file name '" + fileName + "'");
-					if (modules [i].Name == name)
-						throw new ArgumentException ("Duplicate name '" + name + "'");
-				}
-			}
 		}
 
 		private String create_assembly_version (String version) {
