@@ -10,7 +10,7 @@ namespace System.Threading
 		public void ReleaseMutex ()
 		{
 			if (!ReleaseMutex_internal (Handle))
-				throw new ApplicationException ("Mutex is not owned");
+				throw new ApplicationException (SR.Arg_SynchronizationLockException);
 		}
 
 		void CreateMutexCore (bool initiallyOwned, string name, out bool createdNew) =>
@@ -35,8 +35,8 @@ namespace System.Threading
 			}
 			
 			MonoIOError error;
-			IntPtr handle = OpenMutex_internal (name, MutexRights.Modify, out error);
-			if (handle == (IntPtr) null) {
+			IntPtr handle = OpenMutex_internal (name, out error);
+			if (handle == IntPtr.Zero) {
 				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) {
 					return OpenExistingResult.NameNotFound;
 				} else if (error == MonoIOError.ERROR_ACCESS_DENIED) {
@@ -50,31 +50,19 @@ namespace System.Threading
 			return OpenExistingResult.Success;
 		}
 
-		unsafe static IntPtr OpenMutex_internal (string name, MutexRights rights, out MonoIOError error)
+		unsafe static IntPtr OpenMutex_internal (string name, out MonoIOError error)
 		{
 			fixed (char *fixed_name = name)
-				return OpenMutex_icall (fixed_name, name?.Length ?? 0, rights, out error);
+				return OpenMutex_icall (fixed_name, name?.Length ?? 0, 0x000001 /* MutexRights.Modify */, out error);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private unsafe static extern IntPtr CreateMutex_icall (bool initiallyOwned, char *name, int name_length, out bool created);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private unsafe static extern IntPtr OpenMutex_icall (char *name, int name_length, MutexRights rights, out MonoIOError error);
+		private unsafe static extern IntPtr OpenMutex_icall (char *name, int name_length, int rights, out MonoIOError error);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern bool ReleaseMutex_internal (IntPtr handle);
-	}
-
-	[Flags]
-	public enum MutexRights
-	{
-		Modify = 0x000001,
-		Delete = 0x010000,
-		ReadPermissions = 0x020000,
-		ChangePermissions = 0x040000,
-		TakeOwnership = 0x080000,
-		Synchronize = 0x100000,
-		FullControl = 0x1F0001
 	}
 }

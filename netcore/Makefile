@@ -3,8 +3,6 @@ NETCORESDK_VERSION=3.0.100-preview4-010759
 NETCORESDK_FILE=dotnet-sdk-$(NETCORESDK_VERSION)-osx-x64.tar.gz
 URL:=https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$(NETCORESDK_VERSION)/$(NETCORESDK_FILE)
 
-.PHONY: all
-
 $(NETCORESDK_FILE):
 	curl $(URL) --output $(NETCORESDK_FILE)
 	tar -xvf $(NETCORESDK_FILE)
@@ -61,7 +59,7 @@ System.Runtime.Tests_PROFILE = netcoreapp-Unix-Debug
 System.Runtime.Tests_XUNIT_ARGS = @../excludes-System.Runtime.Tests.rsp
 System.Collections.Tests_PROFILE = netcoreapp-Debug
 
-build-%: check-env prepare
+build-%: check-env
 	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests $($*_XUNIT_ARGS) $(XUNIT_ARGS)
 	cp $(COREFX_BINDIR)/RemoteExecutorConsoleApp/netstandard-Debug/RemoteExecutorConsoleApp.* tests/$*
 	cp $(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/TestLoadAssembly.dll tests/$*
