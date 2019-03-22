@@ -239,8 +239,8 @@
         ldarg.0
         ldarg.1
         sizeof !!T
-        conv.i
         mul
+        conv.i
         add
         ret
   }
@@ -252,8 +252,8 @@
         ldarg.0
         ldarg.1
         sizeof !!T
-        conv.i
         mul
+        conv.i
         add
         ret
   }
@@ -266,6 +266,7 @@
         ldarg.1
         sizeof !!T
         mul
+        conv.i
         add
         ret
   }
