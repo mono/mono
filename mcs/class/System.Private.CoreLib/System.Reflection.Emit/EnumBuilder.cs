@@ -209,7 +209,10 @@ namespace System.Reflection.Emit {
 
 		public override object[] GetCustomAttributes(Type attributeType, bool inherit)
 		{
-			return _tb.GetCustomAttributes (attributeType, inherit);
+			if (attributeType == null)
+				return _tb.GetCustomAttributes (inherit);
+			else
+				return _tb.GetCustomAttributes (attributeType, inherit);
 		}
 
 		public override Type GetElementType()

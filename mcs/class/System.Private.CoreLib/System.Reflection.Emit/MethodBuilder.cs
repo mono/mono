@@ -74,6 +74,7 @@ namespace System.Reflection.Emit
 		private Type[][] paramModOpt;
 		private object permissions;
 #pragma warning restore 169, 414
+		RuntimeMethodInfo created;
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
 		{
@@ -651,7 +652,13 @@ namespace System.Reflection.Emit
 		}
 
 		public override ParameterInfo ReturnParameter {
-			get { return base.ReturnParameter; }
+			get {
+				if (!type.is_created)
+					throw new InvalidOperationException (SR.InvalidOperation_TypeNotCreated);
+				if (created == null)
+					created = (RuntimeMethodInfo)MethodBase.GetMethodFromHandle (mhandle);
+				return created.ReturnParameter;
+			}
 		}
 	}
 
