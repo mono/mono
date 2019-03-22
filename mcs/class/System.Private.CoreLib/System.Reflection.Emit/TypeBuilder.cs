@@ -826,21 +826,6 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		internal void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map) {
-			if (methods != null) {
-				for (int i = 0; i < num_methods; ++i)
-					methods[i].FixupTokens (token_map, member_map);
-			}
-			if (ctors != null) {
-				foreach (var cb in ctors)
-					cb.FixupTokens (token_map, member_map);
-			}
-			if (subtypes != null) {
-				foreach (var tb in subtypes)
-					tb.FixupTokens (token_map, member_map);
-			}
-		}
-
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
 			symbolWriter.OpenNamespace (this.Namespace);

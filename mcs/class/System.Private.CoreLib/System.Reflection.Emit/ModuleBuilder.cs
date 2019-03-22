@@ -759,66 +759,6 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void WriteToFile (IntPtr handle);
 
-		void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map, Dictionary<MemberInfo, int> inst_tokens,
-						  bool open) {
-			foreach (var v in inst_tokens) {
-				var member = v.Key;
-				var old_token = v.Value;
-				MemberInfo finished = null;
-
-				// Construct the concrete reflection object corresponding to the
-				// TypeBuilderInst object, and request a token for it instead.
-				if (member is TypeBuilderInstantiation || member is SymbolType) {
-					finished = (member as Type).RuntimeResolve ();
-				} else if (member is FieldOnTypeBuilderInst) {
-					finished = (member as FieldOnTypeBuilderInst).RuntimeResolve ();
-				} else if (member is ConstructorOnTypeBuilderInst) {
-					finished = (member as ConstructorOnTypeBuilderInst).RuntimeResolve ();
-				} else if (member is MethodOnTypeBuilderInst) {
-					finished = (member as MethodOnTypeBuilderInst).RuntimeResolve ();
-				} else if (member is FieldBuilder) {
-					finished = (member as FieldBuilder).RuntimeResolve ();
-				} else if (member is TypeBuilder) {
-					finished = (member as TypeBuilder).RuntimeResolve ();
-				} else if (member is EnumBuilder) {
-					finished = (member as EnumBuilder).RuntimeResolve ();
-				} else if (member is ConstructorBuilder) {
-					finished = (member as ConstructorBuilder).RuntimeResolve ();
-				} else if (member is MethodBuilder) {
-					finished = (member as MethodBuilder).RuntimeResolve ();
-				} else if (member is GenericTypeParameterBuilder) {
-					finished = (member as GenericTypeParameterBuilder).RuntimeResolve ();
-				} else {
-					throw new NotImplementedException ();
-				}
-
-				int new_token = GetToken (finished, open);
-				token_map [old_token] = new_token;
-				member_map [old_token] = finished;
-				// Replace the token mapping in the runtime so it points to the new object
-				RegisterToken (finished, old_token);
-			}
-		}
-
-		//
-		// Fixup the pseudo tokens assigned to the various SRE objects
-		//
-		void FixupTokens ()
-		{
-			var token_map = new Dictionary<int, int> ();
-			var member_map = new Dictionary<int, MemberInfo> ();
-			if (inst_tokens != null)
-				FixupTokens (token_map, member_map, inst_tokens, false);
-			if (inst_tokens_open != null)
-				FixupTokens (token_map, member_map, inst_tokens_open, true);
-
-			// Replace the tokens in the IL stream
-			if (types != null) {
-				for (int i = 0; i < num_types; ++i)
-					types [i].FixupTokens (token_map, member_map);
-			}
-		}
-
 		internal string FileName {
 			get {
 				return fqname;

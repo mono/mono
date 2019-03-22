@@ -334,11 +334,6 @@ namespace System.Reflection.Emit {
 					TypeBuilder.ResolveUserTypes (types);
 			}
 		}
-
-		internal void FixupTokens (Dictionary<int, int> token_map, Dictionary<int, MemberInfo> member_map) {
-			if (ilgen != null)
-				ilgen.FixupTokens (token_map, member_map);
-		}
 		
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
