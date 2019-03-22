@@ -91,6 +91,8 @@ unchecked {
 
 	static string GetTypeName (Type t)
 	{
+		if (t == typeof (void))
+			return "void";
 		if (t.IsNested)
 			return t.DeclaringType.FullName + "." + t.Name;
 		else
