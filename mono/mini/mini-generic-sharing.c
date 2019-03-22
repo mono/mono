@@ -3908,14 +3908,18 @@ get_shared_type (MonoType *t, MonoType *type)
 	} else if (type->type == MONO_TYPE_VAR || type->type == MONO_TYPE_MVAR) {
 		if (type->data.generic_param->gshared_constraint)
 			return mini_get_shared_gparam (t, type->data.generic_param->gshared_constraint);
-		ttype = MONO_TYPE_OBJECT;
+		MonoGenericParamInfo *info = mono_generic_param_info (type->data.generic_param);
+		if (info && (info->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT))
+			ttype = MONO_TYPE_VALUETYPE;
+		else
+			ttype = MONO_TYPE_OBJECT;
 	}
 
 	{
 		MonoType t2;
 		MonoClass *klass;
 
-		memset (&t2, 0, sizeof (t2));
+		memset (&t2, 0, MONO_SIZEOF_TYPE);
 		t2.type = ttype;
 		klass = mono_class_from_mono_type_internal (&t2);
 
