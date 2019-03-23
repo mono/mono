@@ -8746,6 +8746,10 @@ mono_lookup_icall_symbol (MonoMethod *m)
 
 // The initializer is an offset into mono_defaults,
 // or just past the end as a special case for ptrref.
+//
+// While the initializer might fit in smaller than a pointer,
+// such as int offset, or char index, or enum, its storage must
+// be pointer-sized as it gets replaced with MonoClass*.
 #define ICALL_SIG_TYPE_ptrref   (sizeof(mono_defaults))
 #define ICALL_SIG_TYPE_bool     (offsetof(MonoDefaults, boolean_class))
 #define ICALL_SIG_TYPE_boolean  (offsetof(MonoDefaults, boolean_class))
@@ -8784,7 +8788,7 @@ static struct {
 #define ICALL_SIG(n, xtypes) 			\
 	struct {				\
 		MonoMethodSignature sig;	\
-		MonoClass** types [n];		\
+		gsize types [n];		\
 	} ICALL_SIG_NAME (n, xtypes);
 ICALL_SIGS
 	MonoMethodSignature end;
@@ -8826,9 +8830,9 @@ mono_create_icall_signatures (void)
 	int n;
 	while ((n = sig->param_count)) {
 		--sig->param_count; // remove ret
-		size_t *offsets = (size_t*)(sig + 1);
+		gsize *offsets = (gsize*)(sig + 1);
 		for (int i = 0; i < n; ++i) {
-			size_t offset = *offsets++;
+			gsize offset = *offsets++;
 			MonoType* type = ptrref;
 			if (offset != ICALL_SIG_TYPE_ptrref) {
 				g_assert (offset < sizeof(mono_defaults));
