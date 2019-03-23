@@ -16,20 +16,20 @@ parallel (
             }
         }
     },
-    // "Archive-android-debug-Linux": {
-    //     throttle(['provisions-android-toolchain']) {
-    //         node ("debian-9-amd64multiarchi386-preview") {
-    //             archive ("android", "debug", "Linux",)
-    //         }
-    //     }
-    // },
-    // "Archive-android-release-Linux": {
-    //     throttle(['provisions-android-toolchain']) {
-    //         node ("debian-9-amd64multiarchi386-preview") {
-    //             archive ("android", "release", "Linux",)
-    //         }
-    //     }
-    // },
+    "Archive-android-debug-Linux": {
+        throttle(['provisions-android-toolchain']) {
+            node ("debian-9-amd64-exclusive") {
+                archive ("android", "debug", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
+            }
+        }
+    },
+    "Archive-android-release-Linux": {
+        throttle(['provisions-android-toolchain']) {
+            node ("debian-9-amd64-exclusive") {
+                archive ("android", "release", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
+            }
+        }
+    },
     "Archive-ios-release-Darwin": {
         throttle(['provisions-ios-toolchain']) {
             node ("osx-devices") {
@@ -53,7 +53,7 @@ parallel (
     }
 )
 
-def archive (product, configuration, platform, chrootname = "", chrootadditionalpackages = "") {
+def archive (product, configuration, platform, chrootname = "", chrootadditionalpackages = "", chrootBindMounts = "") {
     def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
     def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
     def jobName = (isPr ? "archive-mono-pullrequest" : "archive-mono")
@@ -95,6 +95,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                         } else if (platform == "Linux") {
                             chroot chrootName: chrootname,
                                 command: "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh",
+                                bindMounts: chrootBindMounts,
                                 additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
                         } else {
                             throw new Exception("Unknown platform \"${platform}\"")

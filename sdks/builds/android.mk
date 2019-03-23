@@ -2,7 +2,6 @@
 ANDROID_URI?=https://dl.google.com/android/repository/
 ANT_URI?=https://archive.apache.org/dist/ant/binaries/
 
-ANDROID_CMAKE_VERSION?="3.6.4111459"
 ANDROID_SDK_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/sdk
 ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/ndk/source.properties | cut -d '=' -f 2 | tr -d ' ' | cut -d '.' -f 1` -ge 18; then echo yes; else echo no; fi)
@@ -33,12 +32,14 @@ endef
 ifeq ($(UNAME),Darwin)
 $(eval $(call AndroidProvisioningTemplate,android-ndk-$(ANDROID_NDK_VERSION)-darwin-x86_64,ndk,,ndk))
 $(eval $(call AndroidProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-darwin,sdk,platform-tools))
-$(eval $(call AndroidProvisioningTemplate,sdk-tools-darwin-4333796,sdk,tools))
+$(eval $(call AndroidProvisioningTemplate,sdk-tools-darwin-$(ANDROID_SDKTOOLS_VERSION),sdk,tools))
+$(eval $(call AndroidProvisioningTemplate,cmake-$(ANDROID_CMAKE_VERSION)-darwin-x86_64,sdk,cmake/$(ANDROID_CMAKE_VERSION)))
 else
 ifeq ($(UNAME),Linux)
 $(eval $(call AndroidProvisioningTemplate,android-ndk-$(ANDROID_NDK_VERSION)-linux-x86_64,ndk,,ndk))
 $(eval $(call AndroidProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-linux,sdk,platform-tools))
-$(eval $(call AndroidProvisioningTemplate,sdk-tools-linux-4333796,sdk,tools))
+$(eval $(call AndroidProvisioningTemplate,sdk-tools-linux-$(ANDROID_SDKTOOLS_VERSION),sdk,tools))
+$(eval $(call AndroidProvisioningTemplate,cmake-$(ANDROID_CMAKE_VERSION)-linux-x86_64,sdk,cmake/$(ANDROID_CMAKE_VERSION)))
 endif
 endif
 
