@@ -136,6 +136,7 @@ namespace WsProxy {
 				{
 					// Capture the exception here as the 
 					// WebSocket connection is closed without proper handshake
+					Debug ($"Received WebSocketException: {exc.Message}");
 					return null;
 				}
 
@@ -208,9 +209,12 @@ namespace WsProxy {
 
 		void ProcessIdeMessage (string msg, CancellationToken token)
 		{
-			var res = JObject.Parse (msg);
+			if (!string.IsNullOrEmpty(msg)) {
+				var res = JObject.Parse (msg);
 
-			pending_ops.Add (OnCommand (res ["id"].Value<int> (), res ["method"].Value<string> (), res ["params"] as JObject, token));
+				pending_ops.Add (OnCommand (res ["id"].Value<int> (), res ["method"].Value<string> (), res ["params"] as JObject, token));
+
+			}
 		}
 
 		internal async Task<Result> SendCommand (string method, JObject args, CancellationToken token) {
