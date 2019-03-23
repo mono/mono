@@ -221,8 +221,12 @@ unchecked {
                                                                 SingletonSeparatedList<ExpressionSyntax>(
 																										 OmittedArraySizeExpression()))));
 			var elems = new List<ExpressionSyntax> ();
-			foreach (var elem in arr)
-				elems.Add (EncodeValue (elem, null));
+			foreach (var elem in arr) {
+				var encoded = EncodeValue (elem, null);
+				if (encoded == null)
+					return null;
+				elems.Add (encoded);
+			}
 			result = ArrayCreationExpression (type_node).WithInitializer (InitializerExpression (SyntaxKind.ArrayInitializerExpression, SeparatedList<ExpressionSyntax> (elems.ToArray ())));
 			return result;
 		}
