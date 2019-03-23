@@ -59,6 +59,7 @@ System.Runtime.Tests_PROFILE = netcoreapp-Unix-Debug
 System.Runtime.Tests_XUNIT_ARGS = @../excludes-System.Runtime.Tests.rsp
 System.Collections.Tests_PROFILE = netcoreapp-Debug
 System.Reflection.Emit.Tests_PROFILE = netcoreapp-Debug
+System.Reflection.Emit.Tests_XUNIT_ARGS = @../excludes-System.Reflection.Emit.Tests.rsp
 
 build-%: check-env
 	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests $($*_XUNIT_ARGS) $(XUNIT_ARGS)
