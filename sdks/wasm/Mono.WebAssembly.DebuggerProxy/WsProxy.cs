@@ -119,17 +119,26 @@ namespace WsProxy {
 			byte [] buff = new byte [4000];
 			var mem = new MemoryStream ();
 			while (true) {
-				var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
-				if (result.MessageType == WebSocketMessageType.Close) {
+				try {
+					var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
+					if (result.MessageType == WebSocketMessageType.Close) {
+						return null;
+					}
+
+					if (result.EndOfMessage) {
+						mem.Write (buff, 0, result.Count);
+						return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
+					} else {
+						mem.Write (buff, 0, result.Count);
+					}
+				}
+				catch (WebSocketException exc)
+				{
+					// Capture the exception here as the 
+					// WebSocket connection is closed without proper handshake
 					return null;
 				}
 
-				if (result.EndOfMessage) {
-					mem.Write (buff, 0, result.Count);
-					return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
-				} else {
-					mem.Write (buff, 0, result.Count);
-				}
 			}
 		}
 
