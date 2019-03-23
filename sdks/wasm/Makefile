@@ -164,7 +164,7 @@ tuner.exe: tuner.cs Mono.Cecil.dll System.Json.dll
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 bin/test-suite/mono.js: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll $(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
 
 build-test-suite: bin/test-suite/mono.js
