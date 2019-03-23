@@ -2,49 +2,49 @@
 properties([/* compressBuildLog() */])
 
 parallel (
-    "Archive-android-debug-Darwin": {
+    "Android Darwin (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("osx-devices") {
                 archive ("android", "debug", "Darwin")
             }
         }
     },
-    "Archive-android-release-Darwin": {
+    "Android Darwin (Release)": {
         throttle(['provisions-android-toolchain']) {
             node ("osx-devices") {
                 archive ("android", "release", "Darwin")
             }
         }
     },
-    "Archive-android-debug-Linux": {
+    "Android Linux (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-9-amd64-exclusive") {
                 archive ("android", "debug", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
             }
         }
     },
-    "Archive-android-release-Linux": {
+    "Android Linux (Release)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-9-amd64-exclusive") {
                 archive ("android", "release", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
             }
         }
     },
-    "Archive-ios-release-Darwin": {
+    "iOS": {
         throttle(['provisions-ios-toolchain']) {
             node ("osx-devices") {
                 archive ("ios", "release", "Darwin")
             }
         }
     },
-    "Archive-mac-release-Darwin": {
+    "Mac": {
         throttle(['provisions-mac-toolchain']) {
             node ("osx-devices") {
                 archive ("mac", "release", "Darwin")
             }
         }
     },
-    "Archive-wasm-release-Linux": {
+    "WASM Linux": {
         throttle(['provisions-wasm-toolchain']) {
             node ("ubuntu-1804-amd64") {
                 archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget")
