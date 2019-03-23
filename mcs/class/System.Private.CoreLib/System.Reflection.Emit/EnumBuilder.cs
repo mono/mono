@@ -48,6 +48,10 @@ namespace System.Reflection.Emit {
 
 		internal EnumBuilder (ModuleBuilder mb, string name, TypeAttributes visibility, Type underlyingType)
 		{
+			if ((visibility & ~TypeAttributes.VisibilityMask) != 0)
+				throw new ArgumentException (SR.Argument_ShouldOnlySetVisibilityFlags, nameof (name));
+			if ((visibility & TypeAttributes.VisibilityMask) >= TypeAttributes.NestedPublic && (visibility & TypeAttributes.VisibilityMask) <= TypeAttributes.NestedFamORAssem)
+				throw new ArgumentException ();
 			_tb = new TypeBuilder (mb, name, (visibility | TypeAttributes.Sealed), 
 				typeof(Enum), null, PackingSize.Unspecified, 0, null);
 			_underlyingType = underlyingType;

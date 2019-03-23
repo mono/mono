@@ -376,7 +376,7 @@ namespace System.Reflection.Emit
 
 		public override GenericParameterAttributes GenericParameterAttributes {
 			get {
-				throw new NotSupportedException ();
+				return attrs;
 			}
 		}
 
