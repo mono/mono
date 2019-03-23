@@ -21,13 +21,13 @@ namespace System.Threading
         static OpenExistingResult OpenExistingWorker(string name, out Semaphore result)
         {
             if (name == null)
-                throw new ArgumentNullException ("name");
+                throw new ArgumentNullException (nameof (name));
 
             if (name.Length  == 0)
-                throw new ArgumentException (SR.GetString ("SR.InvalidNullEmptyArgument", "name"), "name");
+                throw new ArgumentException (SR.Argument_StringZeroLength, nameof (name));
 
             if (null != name && MAX_PATH < name.Length)
-                throw new ArgumentException (SR.GetString (SR.Argument_WaitHandleNameTooLong));
+                throw new ArgumentException (SR.Argument_WaitHandleNameTooLong);
 
             result = null;
             MonoIOError errorCode;
@@ -53,7 +53,7 @@ namespace System.Threading
         void CreateSemaphoreCore (int initialCount, int maximumCount, string name, out bool createdNew)
         {
             if(null != name && MAX_PATH < name.Length)
-                throw new ArgumentException (SR.GetString (SR.Argument_WaitHandleNameTooLong));
+                throw new ArgumentException (SR.Argument_WaitHandleNameTooLong);
 
             MonoIOError errorCode;
             var myHandle = new SafeWaitHandle (CreateSemaphore_internal (initialCount, maximumCount, name, out errorCode), true);
