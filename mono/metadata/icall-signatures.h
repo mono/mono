@@ -257,6 +257,7 @@ ICALL_SIG (6, (void, ptr, ptr, int32, ptr, ptrref))	\
 ICALL_SIG (7, (int32, ptr, ptr, ptr, ptr, ptr, int32))	\
 ICALL_SIG (8, (void, ptr, ptr, int32, ptr, ptrref, ptr, ptrref)) 	\
 
+// ICALL_SIG_NAME: mono_icall_sig pasted with its parameters with underscores between each.
 #define ICALL_SIG_NAME_1(a) 		 	 mono_icall_sig_ ## a
 #define ICALL_SIG_NAME_2(a, b) 		 	 mono_icall_sig_ ## a ## _ ## b
 #define ICALL_SIG_NAME_3(a, b, c) 	 	 mono_icall_sig_ ## a ## _ ## b ## _ ## c
@@ -267,6 +268,9 @@ ICALL_SIG (8, (void, ptr, ptr, int32, ptr, ptrref, ptr, ptrref)) 	\
 #define ICALL_SIG_NAME_8(a, b, c, d, e, f, g, h) mono_icall_sig_ ## a ## _ ## b ## _ ## c ## _ ## d ## _ ## e ## _ ## f ## _ ## g ## _ ## h
 
 #define ICALL_SIG_NAME(n, types) ICALL_SIG_NAME_ ## n types
+
+// Declare each icall_sig as a MonoMethodSignature * const.
+// The address is constant but the contents are not quite.
 #define ICALL_SIG(n, types) extern MonoMethodSignature * const ICALL_SIG_NAME (n, types);
 
 ICALL_SIGS

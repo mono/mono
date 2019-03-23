@@ -8744,34 +8744,27 @@ mono_lookup_icall_symbol (MonoMethod *m)
 #define MONO_ICALL_SIGNATURE_CALL_CONVENTION 0
 #endif
 
-// The initializer has a slightly different type than the result and
-// is stored in the same place. Return type is with parameters.
-//
-// This version is a bit large and uses relocations.
-//
-// Other versions uses int8_t index into mono_defaults casted to pointer.
-// This would be smaller and save relocation cost, but alignment
-// needs to be fixed.
-static const char mono_icall_sig_ptrref = 0;
-#define ICALL_SIG_TYPE_ptrref   ((MonoClass**)&mono_icall_sig_ptrref)
-#define ICALL_SIG_TYPE_bool     (&mono_defaults.boolean_class)
-#define ICALL_SIG_TYPE_boolean  (&mono_defaults.boolean_class)
-#define ICALL_SIG_TYPE_double   (&mono_defaults.double_class)
-#define ICALL_SIG_TYPE_float    (&mono_defaults.single_class)
-#define ICALL_SIG_TYPE_int      (&mono_defaults.int_class)
-#define ICALL_SIG_TYPE_int16    (&mono_defaults.int16_class)
-#define ICALL_SIG_TYPE_int32    (&mono_defaults.int32_class)
-#define ICALL_SIG_TYPE_int8     (&mono_defaults.sbyte_class)
-#define ICALL_SIG_TYPE_long     (&mono_defaults.int64_class)
-#define ICALL_SIG_TYPE_obj      (&mono_defaults.object_class)
-#define ICALL_SIG_TYPE_object   (&mono_defaults.object_class)
-#define ICALL_SIG_TYPE_ptr      (&mono_defaults.int_class) // ?
-#define ICALL_SIG_TYPE_string   (&mono_defaults.string_class)
-#define ICALL_SIG_TYPE_uint16   (&mono_defaults.uint16_class)
-#define ICALL_SIG_TYPE_uint32   (&mono_defaults.uint32_class)
-#define ICALL_SIG_TYPE_uint8    (&mono_defaults.byte_class)
-#define ICALL_SIG_TYPE_ulong    (&mono_defaults.uint64_class)
-#define ICALL_SIG_TYPE_void     (&mono_defaults.void_class)
+// The initializer is an offset into mono_defaults,
+// or just past the end as a special case for ptrref.
+#define ICALL_SIG_TYPE_ptrref   (sizeof(mono_defaults))
+#define ICALL_SIG_TYPE_bool     (offsetof(MonoDefaults, boolean_class))
+#define ICALL_SIG_TYPE_boolean  (offsetof(MonoDefaults, boolean_class))
+#define ICALL_SIG_TYPE_double   (offsetof(MonoDefaults, double_class))
+#define ICALL_SIG_TYPE_float    (offsetof(MonoDefaults, single_class))
+#define ICALL_SIG_TYPE_int      (offsetof(MonoDefaults, int_class))
+#define ICALL_SIG_TYPE_int16    (offsetof(MonoDefaults, int16_class))
+#define ICALL_SIG_TYPE_int32    (offsetof(MonoDefaults, int32_class))
+#define ICALL_SIG_TYPE_int8     (offsetof(MonoDefaults, sbyte_class))
+#define ICALL_SIG_TYPE_long     (offsetof(MonoDefaults, int64_class))
+#define ICALL_SIG_TYPE_obj      (offsetof(MonoDefaults, object_class))
+#define ICALL_SIG_TYPE_object   (offsetof(MonoDefaults, object_class))
+#define ICALL_SIG_TYPE_ptr      (offsetof(MonoDefaults, int_class)) // ?
+#define ICALL_SIG_TYPE_string   (offsetof(MonoDefaults, string_class))
+#define ICALL_SIG_TYPE_uint16   (offsetof(MonoDefaults, uint16_class))
+#define ICALL_SIG_TYPE_uint32   (offsetof(MonoDefaults, uint32_class))
+#define ICALL_SIG_TYPE_uint8    (offsetof(MonoDefaults, byte_class))
+#define ICALL_SIG_TYPE_ulong    (offsetof(MonoDefaults, uint64_class))
+#define ICALL_SIG_TYPE_void     (offsetof(MonoDefaults, void_class))
 
 #define ICALL_SIG_TYPES_1(a) 		  	ICALL_SIG_TYPE_ ## a,
 #define ICALL_SIG_TYPES_2(a, b) 	  	ICALL_SIG_TYPES_1 (a            ) ICALL_SIG_TYPES_1 (b)
@@ -8808,7 +8801,8 @@ ICALL_SIGS
 	1, 			/* pinvoke */ \
 	0, 			/* is_inflated */ \
 	0,			/* has_type_parameters */ \
-}, { ICALL_SIG_TYPES (n, types) } }, /* params and ret */
+},  /* possible gap here, depending on MONO_ZERO_LEN_ARRAY */ \
+    { ICALL_SIG_TYPES (n, types) } }, /* params and ret */
 ICALL_SIGS
 };
 
@@ -8824,22 +8818,28 @@ mono_create_icall_signatures (void)
 	//   x = m_class_get_byval_arg (x)
 	//   Shift params [0] to ret and params [i + 1] to params [i].
 	//   ptrref is special
-    //
-    // TODO This is a bit obscure.
+	//
+	// TODO This is a bit obscure.
 
 	MonoType* ptrref = mono_class_get_byref_type (mono_defaults.int_class); // int?
 	MonoMethodSignature *sig = (MonoMethodSignature*)&mono_icall_signatures;
 	int n;
 	while ((n = sig->param_count)) {
 		--sig->param_count; // remove ret
-		MonoClass ***types = (MonoClass***)(sig + 1);
+		size_t *offsets = (size_t*)(sig + 1);
 		for (int i = 0; i < n; ++i) {
-			MonoClass** klass = *types++;
-			*(i ? &sig->params [i - 1] : &sig->ret) =
-                (klass == (MonoClass**)&mono_icall_sig_ptrref)
-				? ptrref : m_class_get_byval_arg (*klass);
+			size_t offset = *offsets++;
+			MonoType* type = ptrref;
+			if (offset != ICALL_SIG_TYPE_ptrref) {
+				g_assert (offset < sizeof(mono_defaults));
+				MonoClass *klass = *(MonoClass**)(offset + (char*)&mono_defaults);
+				g_assert (klass);
+				type = m_class_get_byval_arg (klass);
+			}
+			g_assert (type);
+			*(i ? &sig->params [i - 1] : &sig->ret) = type;
 		}
-        sig = (MonoMethodSignature*)types;
+		sig = (MonoMethodSignature*)offsets;
 	}
 }
 
