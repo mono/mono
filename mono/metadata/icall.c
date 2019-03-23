@@ -8744,12 +8744,7 @@ mono_lookup_icall_symbol (MonoMethod *m)
 #define MONO_ICALL_SIGNATURE_CALL_CONVENTION 0
 #endif
 
-// The initializer is an offset into mono_defaults,
-// or just past the end as a special case for ptrref.
-//
-// While the initializer might fit in smaller than a pointer,
-// such as int offset, or char index, or enum, its storage must
-// be pointer-sized as it gets replaced with MonoType*.
+// Storage for these enums is pointer-sized as it gets replaced with MonoType*.
 //
 // mono_create_icall_signatures depends on this order. Handle with care.
 // It is alphabetical.
@@ -8787,8 +8782,6 @@ typedef enum ICallSigType {
 #define ICALL_SIG_TYPES(n, types) ICALL_SIG_TYPES_ ## n types
 
 // A scheme to make these const would be nice.
-// For example, if types[] could remain indirect, or
-// an offset within mono_defaults.
 static struct {
 #define ICALL_SIG(n, xtypes) 			\
 	struct {				\
@@ -8796,7 +8789,7 @@ static struct {
 		gsize types [n];		\
 	} ICALL_SIG_NAME (n, xtypes);
 ICALL_SIGS
-	MonoMethodSignature end;
+	MonoMethodSignature end; // terminal zeroed element
 } mono_icall_signatures = {
 #undef ICALL_SIG
 #define ICALL_SIG(n, types) { { \
@@ -8825,7 +8818,7 @@ mono_create_icall_signatures (void)
 {
 	// Fixup the mostly statically initialized icall signatures.
 	//   x = m_class_get_byval_arg (x)
-	//   Shift params [0] to ret and params [i + 1] to params [i].
+	//   Initialize ret with params [0] and params [i] with params [i + 1].
 	//   ptrref is special
 	//
 	// FIXME This is a bit obscure.
