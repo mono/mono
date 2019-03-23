@@ -34,7 +34,7 @@
 // mono_icall_sig_int16_double
 // mono_icall_sig_int32_double
 // mono_icall_sig_int32_obj
-// mono_icall_sig_int32_object
+// mono_icall_sig_int32_object // alias of previous
 // mono_icall_sig_int8_double
 // mono_icall_sig_long_double
 // mono_icall_sig_long_float
@@ -42,10 +42,10 @@
 // mono_icall_sig_object_int
 // mono_icall_sig_object_int32
 // mono_icall_sig_object_object
-// mono_icall_sig_object_ptr
+// mono_icall_sig_object_ptr // alias
 // mono_icall_sig_ptr_int
 // mono_icall_sig_ptr_obj
-// mono_icall_sig_ptr_object
+// mono_icall_sig_ptr_object // alias of previous
 // mono_icall_sig_ptr_ptr
 // mono_icall_sig_uint16_double
 // mono_icall_sig_uint32_double
@@ -67,7 +67,7 @@
 // mono_icall_sig_int32_ptr_ptrref
 // mono_icall_sig_long_long_int32
 // mono_icall_sig_long_long_long
-// mono_icall_sig_obj_ptr_int
+// mono_icall_sig_obj_ptr_int // alias
 // mono_icall_sig_object_int_object
 // mono_icall_sig_object_object_ptr
 // mono_icall_sig_object_ptr_int
@@ -86,7 +86,7 @@
 // mono_icall_sig_void_int32_ptrref
 // mono_icall_sig_void_obj_ptr
 // mono_icall_sig_void_object_object
-// mono_icall_sig_void_object_ptr
+// mono_icall_sig_void_object_ptr // alias
 // mono_icall_sig_void_ptr_int
 // mono_icall_sig_void_ptr_int32
 // mono_icall_sig_void_ptr_object

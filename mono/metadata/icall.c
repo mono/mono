@@ -8749,26 +8749,28 @@ mono_lookup_icall_symbol (MonoMethod *m)
 //
 // While the initializer might fit in smaller than a pointer,
 // such as int offset, or char index, or enum, its storage must
-// be pointer-sized as it gets replaced with MonoClass*.
-#define ICALL_SIG_TYPE_ptrref   (sizeof (mono_defaults))
-#define ICALL_SIG_TYPE_bool     (offsetof (MonoDefaults, boolean_class))
-#define ICALL_SIG_TYPE_boolean  (offsetof (MonoDefaults, boolean_class))
-#define ICALL_SIG_TYPE_double   (offsetof (MonoDefaults, double_class))
-#define ICALL_SIG_TYPE_float    (offsetof (MonoDefaults, single_class))
-#define ICALL_SIG_TYPE_int      (offsetof (MonoDefaults, int_class))
-#define ICALL_SIG_TYPE_int16    (offsetof (MonoDefaults, int16_class))
-#define ICALL_SIG_TYPE_int32    (offsetof (MonoDefaults, int32_class))
-#define ICALL_SIG_TYPE_int8     (offsetof (MonoDefaults, sbyte_class))
-#define ICALL_SIG_TYPE_long     (offsetof (MonoDefaults, int64_class))
-#define ICALL_SIG_TYPE_obj      (offsetof (MonoDefaults, object_class))
-#define ICALL_SIG_TYPE_object   (offsetof (MonoDefaults, object_class))
-#define ICALL_SIG_TYPE_ptr      (offsetof (MonoDefaults, int_class)) // ?
-#define ICALL_SIG_TYPE_string   (offsetof (MonoDefaults, string_class))
-#define ICALL_SIG_TYPE_uint16   (offsetof (MonoDefaults, uint16_class))
-#define ICALL_SIG_TYPE_uint32   (offsetof (MonoDefaults, uint32_class))
-#define ICALL_SIG_TYPE_uint8    (offsetof (MonoDefaults, byte_class))
-#define ICALL_SIG_TYPE_ulong    (offsetof (MonoDefaults, uint64_class))
-#define ICALL_SIG_TYPE_void     (offsetof (MonoDefaults, void_class))
+// be pointer-sized as it gets replaced with MonoType*.
+typedef enum ICallSigType {
+	ICALL_SIG_TYPE_ptrref   = 0x01,
+	ICALL_SIG_TYPE_bool     = 0x02,
+	ICALL_SIG_TYPE_boolean  = ICALL_SIG_TYPE_bool,
+	ICALL_SIG_TYPE_double   = 0x03,
+	ICALL_SIG_TYPE_float    = 0x04,
+	ICALL_SIG_TYPE_int      = 0x05,
+	ICALL_SIG_TYPE_int16    = 0x06,
+	ICALL_SIG_TYPE_int32    = 0x07,
+	ICALL_SIG_TYPE_int8     = 0x08,
+	ICALL_SIG_TYPE_long     = 0x09,
+	ICALL_SIG_TYPE_obj      = 0x0A,
+	ICALL_SIG_TYPE_object   = ICALL_SIG_TYPE_obj,
+	ICALL_SIG_TYPE_ptr      = ICALL_SIG_TYPE_int,
+	ICALL_SIG_TYPE_string   = 0x0B,
+	ICALL_SIG_TYPE_uint16   = 0x0C,
+	ICALL_SIG_TYPE_uint32   = 0x0D,
+	ICALL_SIG_TYPE_uint8    = 0x0E,
+	ICALL_SIG_TYPE_ulong    = 0x0F,
+	ICALL_SIG_TYPE_void     = 0x10,
+} ICallSigType;
 
 #define ICALL_SIG_TYPES_1(a) 		  	ICALL_SIG_TYPE_ ## a,
 #define ICALL_SIG_TYPES_2(a, b) 	  	ICALL_SIG_TYPES_1 (a            ) ICALL_SIG_TYPES_1 (b)
@@ -8780,6 +8782,43 @@ mono_lookup_icall_symbol (MonoMethod *m)
 #define ICALL_SIG_TYPES_8(a, b, c, d, e, f, g, h) ICALL_SIG_TYPES_7 (a, b, c, d, e, f, g) ICALL_SIG_TYPES_1 (h)
 
 #define ICALL_SIG_TYPES(n, types) ICALL_SIG_TYPES_ ## n types
+
+static MonoClass*
+class_from_icall_sig_type (ICallSigType type)
+{
+	switch (type)
+	{
+	//case ICALL_SIG_TYPE_ptr:		// alias
+	case ICALL_SIG_TYPE_int:		return mono_defaults.int_class;
+	case ICALL_SIG_TYPE_void:		return mono_defaults.void_class;
+	case ICALL_SIG_TYPE_int32:		return mono_defaults.int32_class;
+	case ICALL_SIG_TYPE_uint32:		return mono_defaults.uint32_class;
+	case ICALL_SIG_TYPE_int8:		return mono_defaults.sbyte_class;
+	case ICALL_SIG_TYPE_uint8:		return mono_defaults.byte_class;
+	case ICALL_SIG_TYPE_int16:		return mono_defaults.int16_class;
+	case ICALL_SIG_TYPE_uint16:		return mono_defaults.uint16_class;
+	case ICALL_SIG_TYPE_long:		return mono_defaults.int64_class;
+	case ICALL_SIG_TYPE_ulong:		return mono_defaults.uint64_class;
+	case ICALL_SIG_TYPE_float:		return mono_defaults.single_class;
+	case ICALL_SIG_TYPE_double:		return mono_defaults.double_class;
+	//case ICALL_SIG_TYPE_object	// alias
+	case ICALL_SIG_TYPE_obj:		return mono_defaults.object_class;
+	case ICALL_SIG_TYPE_string:		return mono_defaults.string_class;
+	//case ICALL_SIG_TYPE_boolean:	// alias
+	case ICALL_SIG_TYPE_bool:		return mono_defaults.boolean_class;
+	default:
+		g_error ("%X", (int)type);
+		g_assert_not_reached ();
+	}
+}
+
+static MonoType*
+type_from_icall_sig_type (ICallSigType type)
+{
+	return (type == ICALL_SIG_TYPE_ptrref)
+		? mono_class_get_byref_type (mono_defaults.int_class)
+		: m_class_get_byval_arg(class_from_icall_sig_type (type));
+}
 
 // A scheme to make these const would be nice.
 // For example, if types[] could remain indirect, or
@@ -8825,25 +8864,20 @@ mono_create_icall_signatures (void)
 	//
 	// TODO This is a bit obscure.
 
-	MonoType* ptrref = mono_class_get_byref_type (mono_defaults.int_class); // int?
-	MonoMethodSignature *sig = (MonoMethodSignature*)&mono_icall_signatures;
+	typedef MonoMethodSignature G_MAY_ALIAS MonoMethodSignature_a;
+	typedef gsize G_MAY_ALIAS gsize_a;
+
+	MonoMethodSignature_a *sig = (MonoMethodSignature*)&mono_icall_signatures;
 	int n;
 	while ((n = sig->param_count)) {
 		--sig->param_count; // remove ret
-		gsize *offsets = (gsize*)(sig + 1);
+		gsize_a *types = (gsize*)(sig + 1);
 		for (int i = 0; i < n; ++i) {
-			gsize offset = *offsets++;
-			MonoType* type = ptrref;
-			if (offset != ICALL_SIG_TYPE_ptrref) {
-				g_assert (offset < sizeof (mono_defaults));
-				MonoClass *klass = *(MonoClass**)(offset + (char*)&mono_defaults);
-				g_assert (klass);
-				type = m_class_get_byval_arg (klass);
-			}
+			MonoType *type = type_from_icall_sig_type ((ICallSigType)*types++);
 			g_assert (type);
 			*(i ? &sig->params [i - 1] : &sig->ret) = type;
 		}
-		sig = (MonoMethodSignature*)offsets;
+		sig = (MonoMethodSignature*)types;
 	}
 }
 
