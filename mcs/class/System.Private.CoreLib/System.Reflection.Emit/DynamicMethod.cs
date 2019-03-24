@@ -83,10 +83,10 @@ namespace System.Reflection.Emit {
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility) : this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, owner, skipVisibility) {
 		}
 
-		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, owner, owner.Module, skipVisibility, false) {
+		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, owner, owner != null ? owner.Module : null, skipVisibility, false, true) {
 		}
 
-		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Module m, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, null, m, skipVisibility, false) {
+		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Module m, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, null, m, skipVisibility, false, false) {
 		}
 
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes) : this (name, returnType, parameterTypes, false) {
@@ -94,16 +94,18 @@ namespace System.Reflection.Emit {
 
 		// FIXME: "Visibility is not restricted"
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, bool restrictedSkipVisibility)
-			: this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, null, null, restrictedSkipVisibility, true)
+			: this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, null, null, restrictedSkipVisibility, true, false)
 		{
 		}
 
-		DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type [] parameterTypes, Type owner, Module m, bool skipVisibility, bool anonHosted)
+		DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type [] parameterTypes, Type owner, Module m, bool skipVisibility, bool anonHosted, bool typeOwner)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (returnType == null)
 				returnType = typeof (void);
+			if (owner == null && typeOwner)
+				throw new ArgumentNullException (nameof (owner));
 			if ((m == null) && !anonHosted)
 				throw new ArgumentNullException ("m");
 			if (returnType.IsByRef)
@@ -375,10 +377,11 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		// FIXME: "Not implemented"
 		public override ParameterInfo ReturnParameter {
 			get {
-				throw new NotImplementedException ();
+				if (deleg == null)
+					return null;
+				return deleg.Method.ReturnParameter;
 			}
 		}
 
