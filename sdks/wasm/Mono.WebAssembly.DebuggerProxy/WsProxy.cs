@@ -97,6 +97,7 @@ namespace WsProxy {
 
 	public class WsProxy {
 		TaskCompletionSource<bool> side_exception = new TaskCompletionSource<bool> ();
+		TaskCompletionSource<bool> websocket_error = new TaskCompletionSource<bool> ();
 		List<(int, TaskCompletionSource<Result>)> pending_cmds = new List<(int, TaskCompletionSource<Result>)> ();
 		ClientWebSocket browser;
 		WebSocket ide;
@@ -215,6 +216,8 @@ namespace WsProxy {
 				pending_ops.Add (OnCommand (res ["id"].Value<int> (), res ["method"].Value<string> (), res ["params"] as JObject, token));
 
 			}
+			else
+				websocket_error.SetResult(true);
 		}
 
 		internal async Task<Result> SendCommand (string method, JObject args, CancellationToken token) {
@@ -286,6 +289,7 @@ namespace WsProxy {
 					pending_ops.Add (ReadOne (browser, x.Token));
 					pending_ops.Add (ReadOne (ide, x.Token));
 					pending_ops.Add (side_exception.Task);
+					pending_ops.Add (websocket_error.Task);
 
 					try {
 						while (!x.IsCancellationRequested) {
@@ -302,6 +306,9 @@ namespace WsProxy {
 							} else if (task == pending_ops [2]) {
 								var res = ((Task<bool>)task).Result;
 								throw new Exception ("side task must always complete with an exception, what's going on???");
+							} else if (task == pending_ops [3]) {
+								var res = ((Task<bool>)task).Result;
+								x.Cancel ();
 							} else {
 								//must be a background task
 								pending_ops.Remove (task);
