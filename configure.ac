@@ -1,6 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
+# This line is parsed by mono.winconfig.targets.
 AC_INIT(mono, [6.1.0],
         [https://github.com/mono/mono/issues/new])
 
@@ -49,6 +50,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # the runtime requires an exact match.
 #
 # This is an arbitrary string, not necessarily a guid. It ends at whitespace or end of line.
+# This line is parsed by mono.winconfig.targets.
 #
 MONO_CORLIB_VERSION=march232019
 
