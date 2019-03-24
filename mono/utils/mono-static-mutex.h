@@ -45,7 +45,7 @@ mono_os_static_mutex_init_type(pthread_mutex_t *mutex, int type)
 #ifdef PTHREAD_PRIO_INHERIT
 	/* use PTHREAD_PRIO_INHERIT if possible */
 	res = pthread_mutexattr_setprotocol (&attr, PTHREAD_PRIO_INHERIT);
-	if (res)
+	if (res && res != ENOTSUP)
 		st_error ("%s: pthread_mutex_lock failed with \"%s\" (%d)", __func__, strerror (res), res);
 #endif
 
