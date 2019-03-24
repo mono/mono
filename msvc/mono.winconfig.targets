@@ -29,7 +29,8 @@
                       if (File.Exists (configureACFile))
                       {
                           var monoVersionRegEx = new Regex (@"(.*AC_INIT\(mono, \[)(\d+\.\d+\.\d+)");
-                          var monoCorlibVersionRegEx = new Regex (@"(MONO_CORLIB_VERSION=)([A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})");
+                          // MONO_CORLIB_VERSION is an arbitrary string
+                          var monoCorlibVersionRegEx = new Regex (@"^MONO_CORLIB_VERSION\s*=\s*(\S+)");
                           using (StreamReader reader = new StreamReader (configureACFile))
                           {
                               string line;
@@ -43,9 +44,9 @@
                                   }
 
                                   var monoCorlibVersionMatch = monoCorlibVersionRegEx.Match (line);
-                                  if (monoCorlibVersionMatch != null && monoCorlibVersionMatch.Success && monoCorlibVersionMatch.Groups.Count == 3)
+                                  if (monoCorlibVersionMatch != null && monoCorlibVersionMatch.Success)
                                   {
-                                      monoCorlibVersion = monoCorlibVersionMatch.Groups[2].Value;
+                                      monoCorlibVersion = monoCorlibVersionMatch.Groups[0].Value;
                                       continue;
                                   }
                               }
@@ -259,6 +260,18 @@
                     string monoVersion = null;
                     string monoCorlibVersion = null;
                     GetVersionsFromConfigureAC (configureACFile, out monoVersion, out monoCorlibVersion);
+
+                    if (monoVersion == null)
+                    {
+                        Log.LogError("failed to parse version from AC_INIT in {0}", configureACFile);
+                        return false;
+                    }
+
+                    if (monoCorlibVersion == null)
+                    {
+                        Log.LogError("failed to parse MONO_CORLIB_VERSION from {0}", configureACFile);
+                        return false;
+                    }
 
                     var disableDefines = GetDisabledConfigFeatures (cygConfigFile);
                     var enableDefines = (EnableDefines != null) ? EnableDefines.Split (';') : null;

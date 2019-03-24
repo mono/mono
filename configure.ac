@@ -46,9 +46,11 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
 #
 # There is no ordering of corlib versions, no old or new,
-# the runtime expects an exact match.
+# the runtime requires an exact match.
 #
-MONO_CORLIB_VERSION=4A9CEBCF-2544-4CB4-9F84-07A10C16BEEB
+# This is an arbitrary string, not necessarily a guid. It ends at whitespace or end of line.
+#
+MONO_CORLIB_VERSION=march232019
 
 #
 # Put a quoted #define in config.h.
