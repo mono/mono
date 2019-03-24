@@ -217,7 +217,7 @@ namespace WsProxy {
 
 			}
 			else
-				websocket_error.SetResult(true);
+				websocket_error.TrySetResult(true);
 		}
 
 		internal async Task<Result> SendCommand (string method, JObject args, CancellationToken token) {
