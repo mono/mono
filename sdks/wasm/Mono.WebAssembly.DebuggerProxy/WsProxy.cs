@@ -216,7 +216,7 @@ namespace WsProxy {
 				pending_ops.Add (OnCommand (res ["id"].Value<int> (), res ["method"].Value<string> (), res ["params"] as JObject, token));
 
 			} catch (Exception e) {
-				websocket_error.TrySetException (e);
+				websocket_error.SetException (e);
 			}
 		}
 
