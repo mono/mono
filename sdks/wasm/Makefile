@@ -54,7 +54,7 @@ MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 WASM_FRAMEWORK=$(TOP)/sdks/wasm/framework
 WASM_FRAMEWORK_SOURCE=$(TOP)/sdks/wasm/framework/src
 WASM_FRAMEWORK_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
-WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll
+WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
@@ -171,7 +171,8 @@ build-test-suite: bin/test-suite/mono.js
 
 $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/HttpTestSuite.cs 
-	mono --debug packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll
+	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/WebSocketTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/WebSocketTestSuite.cs 
+	mono --debug packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll $(BROWSER_TEST)/WebSocketTestSuite.dll
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
