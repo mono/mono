@@ -348,7 +348,7 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		if (mini_is_gsharedvt_variable_type (t)) {
 			esize_ins = mini_emit_get_gsharedvt_info_klass (cfg, mono_class_from_mono_type_internal (t), MONO_RGCTX_INFO_CLASS_SIZEOF);
 			if (SIZEOF_REGISTER == 8)
-				MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, esize_ins, esize_ins);
+				MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, esize_ins->dreg, esize_ins->dreg);
 		} else {
 			t = mini_type_get_underlying_type (t);
 			int esize = mono_class_array_element_size (mono_class_from_mono_type_internal (t));
