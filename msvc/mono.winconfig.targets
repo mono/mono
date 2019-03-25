@@ -296,7 +296,7 @@
 
                     CreateVersionFile (versionFile);
 
-                    Log.LogMessage (MessageImportance.High, "Successfully setup Mono configuration headers {0} {1} from {2}.", configFile, versionFile, winConfigFile);
+                    Log.LogMessage (MessageImportance.High, "Successfully setup Mono configuration headers {0} and {1} from {2}.", configFile, versionFile, winConfigFile);
 
                     return true;
                   }
