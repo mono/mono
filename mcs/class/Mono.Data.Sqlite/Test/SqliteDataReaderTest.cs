@@ -66,9 +66,8 @@ namespace MonoTests.Mono.Data.Sqlite
 				_conn.Open ();
 				SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
 				cmd.CommandText = string.Empty;
-				reader = cmd.ExecuteReader ();
 				try {
-					reader.Read ();
+					reader = cmd.ExecuteReader ();
 					Assert.Fail ();
 				} catch (ArgumentException ex){
 					// expected this one
@@ -77,7 +76,47 @@ namespace MonoTests.Mono.Data.Sqlite
 				}
 			}
 		}
-		
+
+		[Test]
+		public void NullStatementThrowsAgrumentException ()
+		{
+			_conn.ConnectionString = _connectionString;
+			SqliteDataReader reader = null;
+			using (_conn) {
+				_conn.Open ();
+				SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd.CommandText = null;
+				try {
+					reader = cmd.ExecuteReader ();
+					Assert.Fail ();
+				} catch (ArgumentException ex){
+					// expected this one
+				} catch (Exception ex) {
+					Assert.Fail ();
+				}
+			}
+		}
+
+		[Test]
+		public void WhitespaceOnlyStatementThrowsAgrumentException ()
+		{
+			_conn.ConnectionString = _connectionString;
+			SqliteDataReader reader = null;
+			using (_conn) {
+				_conn.Open ();
+				SqliteCommand cmd = (SqliteCommand) _conn.CreateCommand ();
+				cmd.CommandText = "   ";
+				try {
+					reader = cmd.ExecuteReader ();
+					Assert.Fail ();
+				} catch (ArgumentException ex){
+					// expected this one
+				} catch (Exception ex) {
+					Assert.Fail ();
+				}
+			}
+		}
+
 		[Test]
 		[Category ("NotWorking")]
 		public void GetSchemaTableTest ()
