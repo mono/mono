@@ -3,7 +3,6 @@
 
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
-# msvc/mono.winconfig.targets: ^AC_INIT\s*\(\s*mono,\s*\[?\s*([^\],\s]+)
 #
 AC_INIT(mono, [6.1.0],
         [https://github.com/mono/mono/issues/new])
@@ -59,7 +58,6 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 #
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
-# msvc/mono.winconfig.targets: ^MONO_CORLIB_VERSION\s*=\s*(\S+)
 #
 MONO_CORLIB_VERSION=4A9CEBCF-2544-4CB4-9F84-07A10C16BEEB
 
