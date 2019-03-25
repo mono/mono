@@ -14,7 +14,7 @@ namespace System
 		IDictionary _data;
 		Exception _innerException;
 		string _helpURL;
-		object _unused2;
+		object _traceIps;
 		string _stackTraceString;
 		string _unused3;
 		int _unused4;
@@ -43,6 +43,8 @@ namespace System
 		{
 			if (_stackTraceString != null)
 				return _stackTraceString;
+			if (_traceIps == null)
+				return null;
 
 			return new StackTrace (this, needFileInfo).ToString (System.Diagnostics.StackTrace.TraceFormat.Normal);
 		}
