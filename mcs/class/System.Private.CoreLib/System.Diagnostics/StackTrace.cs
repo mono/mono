@@ -39,15 +39,7 @@ namespace System.Diagnostics
 			_numOfFrames = frames.Length;
 			_stackFrames = new StackFrame [_numOfFrames];
 			for (int i = 0; i < _numOfFrames; ++i) {
-				var sf = _stackFrames [i] = new StackFrame ();
-
-				var f = frames [i];
-				sf.SetMethodBase (f.methodBase);
-				sf.SetOffset (f.nativeOffset);
-				sf.SetILOffset (f.ilOffset);
-				sf.SetFileName (f.fileName);
-				sf.SetLineNumber (f.lineNumber);
-				sf.SetColumnNumber (f.columnNumber);
+				_stackFrames [i] = new StackFrame (frames [i]);
 			}
 		}
 	}
