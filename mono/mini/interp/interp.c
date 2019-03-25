@@ -1959,13 +1959,9 @@ interp_entry (InterpEntryData *data)
 	}
 }
 
-/* MONO_NO_OPTIMIATION is needed due to usage of INTERP_PUSH_LMF_WITH_CTX. */
-static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE stackval *
+static stackval *
 do_icall (InterpFrame *frame, MonoMethodSignature *sig, int op, stackval *sp, gpointer ptr)
 {
-	MonoLMFExt ext;
-	INTERP_PUSH_LMF_WITH_CTX (frame, ext, &&exit_icall);
-
 	switch (op) {
 	case MINT_ICALL_V_V: {
 		typedef void (*T)(void);
@@ -2070,6 +2066,18 @@ do_icall (InterpFrame *frame, MonoMethodSignature *sig, int op, stackval *sp, gp
 	/* convert the native representation to the stackval representation */
 	if (sig)
 		stackval_from_data (sig->ret, &sp [-1], (char*) &sp [-1].data.p, sig->pinvoke);
+
+	return sp;
+}
+
+/* MONO_NO_OPTIMIATION is needed due to usage of INTERP_PUSH_LMF_WITH_CTX. */
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE stackval *
+do_icall_wrapper (InterpFrame *frame, MonoMethodSignature *sig, int op, stackval *sp, gpointer ptr)
+{
+	MonoLMFExt ext;
+	INTERP_PUSH_LMF_WITH_CTX (frame, ext, &&exit_icall);
+
+	sp = do_icall (frame, sig, op, sp, ptr);
 
 	interp_pop_lmf (&ext);
 
@@ -3213,7 +3221,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			sp--;
 			frame->ip = ip;
 
-			sp = do_icall (frame, csignature, opcode, sp, target_ip);
+			sp = do_icall_wrapper (frame, csignature, opcode, sp, target_ip);
 			EXCEPTION_CHECKPOINT;
 			CHECK_RESUME_STATE (context);
 			ip += 3;
@@ -5674,7 +5682,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				 * to check the abort threshold. For this to work we use child_frame as a
 				 * dummy frame that is stored in the lmf and serves as the transition frame
 				 */
-				do_icall (&child_frame, NULL, MINT_ICALL_V_P, &tmp_sp, (gpointer)mono_thread_get_undeniable_exception);
+				do_icall_wrapper (&child_frame, NULL, MINT_ICALL_V_P, &tmp_sp, (gpointer)mono_thread_get_undeniable_exception);
 
 				MonoException *abort_exc = (MonoException*)tmp_sp.data.p;
 				if (abort_exc)
@@ -5704,7 +5712,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		MINT_IN_CASE(MINT_ICALL_PPPPPP_V)
 		MINT_IN_CASE(MINT_ICALL_PPPPPP_P)
 			frame->ip = ip;
-			sp = do_icall (frame, NULL, *ip, sp, imethod->data_items [*(guint16 *)(ip + 1)]);
+			sp = do_icall_wrapper (frame, NULL, *ip, sp, imethod->data_items [*(guint16 *)(ip + 1)]);
 			EXCEPTION_CHECKPOINT;
 			CHECK_RESUME_STATE (context);
 			ip += 2;
