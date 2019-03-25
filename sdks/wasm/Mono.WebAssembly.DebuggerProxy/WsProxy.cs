@@ -210,14 +210,14 @@ namespace WsProxy {
 
 		void ProcessIdeMessage (string msg, CancellationToken token)
 		{
-			if (!string.IsNullOrEmpty(msg)) {
+			try {
 				var res = JObject.Parse (msg);
 
 				pending_ops.Add (OnCommand (res ["id"].Value<int> (), res ["method"].Value<string> (), res ["params"] as JObject, token));
 
+			} catch (Exception e) {
+				websocket_error.TrySetException (e);
 			}
-			else
-				websocket_error.TrySetResult(true);
 		}
 
 		internal async Task<Result> SendCommand (string method, JObject args, CancellationToken token) {
