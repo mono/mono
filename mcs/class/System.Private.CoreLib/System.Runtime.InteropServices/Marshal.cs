@@ -49,7 +49,7 @@ namespace System.Runtime.InteropServices
 
 		internal static bool IsPinnable (object obj)
 		{
-			throw new NotImplementedException ();
+			return obj == null || RuntimeTypeHandle.HasReferences (obj.GetType () as RuntimeType);
 		}
 
 		// TODO: Should be called from Windows only code
