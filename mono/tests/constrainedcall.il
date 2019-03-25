@@ -181,6 +181,6 @@ AllOK:
     ldstr "Compile time constraint resolution to default interface method OK"
     call void [mscorlib]System.Console::WriteLine(string)
 
-    ldc.i4 100
+    ldc.i4 0
     ret
 }

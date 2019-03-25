@@ -61,6 +61,7 @@
     constrained. valuetype Adder`1<object, string>
     callvirt instance int32 class IFrobber`1<string>::Frob()
     add
-
+    ldc.i4 100
+    sub
     ret
 }

@@ -30,6 +30,8 @@
     call instance int32 class IFoo::Frob()
     ldc.i4.1
     add
+    ldc.i4 100
+    sub
     ret
   }
 }
@@ -63,7 +65,7 @@
 
   // If default interfaces are not supported, consider the test successful.
   brtrue DoRunTest
-  ldc.i4 100
+  ldc.i4 0
   ret
 
 DoRunTest:

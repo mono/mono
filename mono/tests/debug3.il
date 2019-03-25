@@ -175,6 +175,7 @@
   //
 
   add
-
+  ldc.i4 100
+  sub
   ret
 }

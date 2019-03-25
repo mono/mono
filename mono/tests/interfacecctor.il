@@ -11,7 +11,7 @@
           void  .cctor() cil managed
   {
     .maxstack  8
-    ldc.i4.s   100
+    ldc.i4.s   0
     stsfld int32 s_result
     ret
   }

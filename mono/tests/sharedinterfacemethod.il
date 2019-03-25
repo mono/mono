@@ -86,6 +86,6 @@ SharedCallvirtIsGood:
 
 SharedCallIsGood:
 
-  ldc.i4 100
+  ldc.i4 0
   ret
 }

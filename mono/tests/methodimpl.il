@@ -50,7 +50,7 @@
 
   // If default interfaces are not supported, consider the test successful.
   brtrue DoRunTest
-  ldc.i4 100
+  ldc.i4 0
   ret
 
 DoRunTest:
@@ -59,5 +59,7 @@ DoRunTest:
   newobj instance void Fooer::.ctor()
   callvirt instance int32 IFoo::Unrelated()
   add
+  ldc.i4 100
+  sub
   ret
 }

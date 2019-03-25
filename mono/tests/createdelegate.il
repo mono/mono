@@ -53,7 +53,7 @@
 
 A_F1_OK:
 
-    ldc.i4.s   100
+    ldc.i4.s   0
 
     ret
   }
