@@ -8,7 +8,7 @@ $(NETCORESDK_FILE):
 	tar -xvf $(NETCORESDK_FILE)
 
 build-sample:
-	dotnet build HelloWorld
+	dotnet build sample/HelloWorld
 
 # COREHOST_TRACE=1 
 VERSION:=3.0.0-preview4-27514-06
