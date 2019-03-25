@@ -120,30 +120,19 @@ namespace WsProxy {
 			byte [] buff = new byte [4000];
 			var mem = new MemoryStream ();
 			while (true) {
-				try {
-					var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
-					if (result.MessageType == WebSocketMessageType.Close) {
-						return null;
-					}
-
-					if (result.EndOfMessage) {
-						mem.Write (buff, 0, result.Count);
-						return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
-					} else {
-						mem.Write (buff, 0, result.Count);
-					}
-				}
-				catch (WebSocketException exc)
-				{
-					// Capture the exception here as the 
-					// WebSocket connection is closed without proper handshake
-					Debug ($"Received WebSocketException: {exc.Message}");
+				var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
+				if (result.MessageType == WebSocketMessageType.Close) {
 					return null;
 				}
 
+				if (result.EndOfMessage) {
+					mem.Write (buff, 0, result.Count);
+					return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
+				} else {
+					mem.Write (buff, 0, result.Count);
+				}
 			}
 		}
-
 		WsQueue GetQueueForSocket (WebSocket ws)
 		{
 			return queues.FirstOrDefault (q => q.Ws == ws);
@@ -320,6 +309,10 @@ namespace WsProxy {
 								}
 							}
 						}
+					} catch (WebSocketException wse) {
+						// Capture the exception here as the 
+						// WebSocket connection is closed without proper handshake
+						Debug ($"Received WebSocketException: {wse.Message}");
 					} catch (Exception e) {
 						Debug ($"got exception {e}");
 						//throw;
