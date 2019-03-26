@@ -1504,33 +1504,19 @@ namespace MonoTests.System.Windows.Forms
         [Test]
         public void SetTextAfterDisposeTest()
         {
-            try
-            {
-                var comboBox = new ComboBox();
-                comboBox.Dispose();
-                comboBox.Text = "1";
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("#B1");
-            }
+            var comboBox = new ComboBox();
+            comboBox.Dispose();
+            comboBox.Text = "1";
         }
 
         [Test]
         public void SetNullTextDropDownTest()
         {
-            try
-            {
-                var comboBox = new ComboBox();
-                comboBox.DropDownStyle = ComboBoxStyle.DropDown;
-                comboBox.SelectedIndex = -1;
-                comboBox.Dispose();
-                comboBox.Text = null;
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("#C1");
-            }
+            var comboBox = new ComboBox();
+            comboBox.DropDownStyle = ComboBoxStyle.DropDown;
+            comboBox.SelectedIndex = -1;
+            comboBox.Dispose();
+            comboBox.Text = null;
         }
     }
 
