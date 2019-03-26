@@ -394,7 +394,25 @@ namespace System
 
 		static void SortImpl (Array keys, Array items, int index, int length, IComparer comparer)
 		{
-			throw new NotImplementedException ();
+			/* TODO: CoreCLR optimizes this case via an internal call
+			if (comparer == Comparer.Default)
+			{
+				bool r = TrySZSort(keys, items, index, index + length - 1);
+				if (r)
+					return;
+			}*/
+
+			object[] objKeys = keys as object[];
+			object[] objItems = null;
+			if (objKeys != null)
+				objItems = items as object[];
+			if (objKeys != null && (items == null || objItems != null)) {
+				SorterObjectArray sorter = new SorterObjectArray (objKeys, objItems, comparer);
+				sorter.Sort(index, length);
+			} else {
+				SorterGenericArray sorter = new SorterGenericArray (keys, items, comparer);
+				sorter.Sort(index, length);
+			}
 		}
 
 		public int GetUpperBound (int dimension)
