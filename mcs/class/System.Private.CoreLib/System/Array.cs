@@ -406,14 +406,11 @@ namespace System
 			object[] objItems = null;
 			if (objKeys != null)
 				objItems = items as object[];
-			if (objKeys != null && (items == null || objItems != null))
-			{
-				SorterObjectArray sorter = new SorterObjectArray(objKeys, objItems, comparer);
+			if (objKeys != null && (items == null || objItems != null)) {
+				SorterObjectArray sorter = new SorterObjectArray (objKeys, objItems, comparer);
 				sorter.Sort(index, length);
-			}
-			else
-			{
-				SorterGenericArray sorter = new SorterGenericArray(keys, items, comparer);
+			} else {
+				SorterGenericArray sorter = new SorterGenericArray (keys, items, comparer);
 				sorter.Sort(index, length);
 			}
 		}
