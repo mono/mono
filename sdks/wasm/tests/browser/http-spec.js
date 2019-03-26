@@ -4,6 +4,7 @@
 describe("The WebAssembly Browser Test Suite",function(){
     
     const DEFAULT_TIMEOUT = 1000;
+    const DEFAULT_WS_TIMEOUT = 5000;
 
     beforeAll(function(done){
       //load DOM custom matchers from karma-jasmine-dom package
@@ -254,6 +255,209 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       );
       
+    }, DEFAULT_TIMEOUT);  
+
+    it('ConnectWebSocketStatus: should return Error Code 1006 because unresolved host.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:ConnectWebSocketStatus", ["ws://localhost", ""]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, '1006', "result doesn't match expected result 1006.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_WS_TIMEOUT); 
+       
+    it('ConnectWebSocketStatus: should return Error Code 1006 because of invalid protocol.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:ConnectWebSocketStatus", ["ws://localhost:8889", ""]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, '1006', "result doesn't match expected result 1006.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_WS_TIMEOUT); 
+
+    it('ConnectWebSocketStatusWithToken: should return Error Code 1006 because unresolved host.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:ConnectWebSocketStatusWithToken", ["ws://localhost", ""]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, '1006', "result doesn't match expected result 1006.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_WS_TIMEOUT); 
+       
+    it('ConnectWebSocketStatusWithToken: should return Error Code 1006 because of invalid protocol.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:ConnectWebSocketStatusWithToken", ["ws://localhost:8889", ""]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, '1006', "result doesn't match expected result 1006.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_WS_TIMEOUT); 
+
+    it('OpenWebSocket: should return Open.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:OpenWebSocket", ["ws://localhost:8889", "echo-protocol"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Open', "result doesn't match expected result Open.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);  
+    
+    it('CloseWebSocket: should return Closed.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:CloseWebSocket", ["ws://localhost:8889", "echo-protocol"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Closed', "result doesn't match expected result Closed.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
     }, DEFAULT_TIMEOUT);    
+
+        
+    it('RecieveHostCloseWebSocket: should return Closed.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:RecieveHostCloseWebSocket", ["ws://localhost:8889", "echo-protocol"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Closed', "result doesn't match expected result Closed.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('CloseStatusDescCloseWebSocket: should return Close Code and Description.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:CloseStatusDescCloseWebSocket", ["ws://localhost:8889", "echo-protocol"]).then(
+        (result) => 
+        {
+            try {
+              var resultObj = JSON.parse(result);
+              assert.equal(resultObj.code, 'NormalClosure', "code result doesn't match expected result NormalClosure.");
+              assert.equal(resultObj.desc, 'bye!', "description result doesn't match expected result 'bye!'.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('WebSocketSendText: should return echoed text.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:WebSocketSendText", ["ws://localhost:8889", "echo-protocol", "Hello WebSockets"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Hello WebSockets', "result does not match Hello WebSockets.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('WebSocketSendBinary: should return echoed text.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      var binBuffer = new Uint8Array([49,50,51,52,53,54,55,56,57])
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:WebSocketSendBinary", ["ws://localhost:8889", "echo-protocol", "Hello WebSockets"]).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result, 'Hello WebSockets', "result does not match Hello WebSockets.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_WS_TIMEOUT);    
 
   });

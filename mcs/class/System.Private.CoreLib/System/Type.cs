@@ -104,6 +104,38 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
+		internal virtual Type InternalResolve ()
+		{
+			return UnderlyingSystemType;
+		}
+
+		// Called from the runtime to return the corresponding finished Type object
+		internal virtual Type RuntimeResolve ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal virtual bool IsUserType {
+			get {
+				return true;
+			}
+		}
+
+		internal virtual MethodInfo GetMethod (MethodInfo fromNoninstanciated)
+		{
+			throw new System.InvalidOperationException ("can only be called in generic type");
+		}
+
+		internal virtual ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
+		{
+			throw new System.InvalidOperationException ("can only be called in generic type");
+		}
+
+		internal virtual FieldInfo GetField (FieldInfo fromNoninstanciated)
+		{
+			throw new System.InvalidOperationException ("can only be called in generic type");
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern Type internal_from_handle (IntPtr handle);
 

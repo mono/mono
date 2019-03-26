@@ -91,6 +91,8 @@ unchecked {
 
 	static string GetTypeName (Type t)
 	{
+		if (t == typeof (void))
+			return "void";
 		if (t.IsNested)
 			return t.DeclaringType.FullName + "." + t.Name;
 		else
@@ -219,8 +221,12 @@ unchecked {
                                                                 SingletonSeparatedList<ExpressionSyntax>(
 																										 OmittedArraySizeExpression()))));
 			var elems = new List<ExpressionSyntax> ();
-			foreach (var elem in arr)
-				elems.Add (EncodeValue (elem, null));
+			foreach (var elem in arr) {
+				var encoded = EncodeValue (elem, null);
+				if (encoded == null)
+					return null;
+				elems.Add (encoded);
+			}
 			result = ArrayCreationExpression (type_node).WithInitializer (InitializerExpression (SyntaxKind.ArrayInitializerExpression, SeparatedList<ExpressionSyntax> (elems.ToArray ())));
 			return result;
 		}
@@ -379,7 +385,7 @@ unchecked {
 
 				var block = ParseText<BlockSyntax> (case_template
 					.Replace ("#MSG#", msg)
-					.Replace ("#NRUN#", test.MemberDataMethod == null ? "1" : ((IEnumerable<object []>) test.MemberDataMethod.Invoke (null, null)).Count ().ToString ()));
+					.Replace ("#NRUN#", test.MemberDataMethod == null ? "1" : ((IEnumerable) test.MemberDataMethod.Invoke (null, null)).Cast<object> ().Count ().ToString ()));
 				// Obtain the node for the CALL () line
 				var try_body_node = block.DescendantNodes ().OfType<ExpressionStatementSyntax> ().Skip (2).First ().Parent;
 				// Replace with the generated call code

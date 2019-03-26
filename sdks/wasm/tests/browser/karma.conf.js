@@ -29,7 +29,7 @@ module.exports = function(config) {
             properties: {} // key value pair of properties to add to the <properties> section of the report
         },
         //load karma-jasmine-dom and karma-jasmine
-        frameworks: ['jasmine-dom','jasmine','mocha', 'chai'],
+        frameworks: ['jasmine-dom','jasmine','mocha', 'chai', 'websocket-server'],
         //load karma-chrome-launcher
         browsers: ['ChromeHeadless', 'NoSandBoxHeadless'],
         customLaunchers: {
@@ -55,6 +55,56 @@ module.exports = function(config) {
                 height: "30vw"        
 
             }
-        }
+        },
+        websocketServer: {
+            port: 8889,
+            beforeStart: (server) => {
+                function originIsAllowed(origin) {
+                    // put logic here to detect whether the specified origin is allowed.
+                    return true;
+                  }
+            server.on('request', (request) => {
+            //     console.log(new Date() + ' new websocket request...');
+                if (!originIsAllowed(request.origin)) {
+                    // Make sure we only accept requests from an allowed origin
+                    request.reject();
+                    console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
+                    return;
+                }
+                
+                try 
+                {
+                    var connection = request.accept('echo-protocol', request.origin);
+                    console.log((new Date()) + ' Connection accepted.');
+                    connection.on('message', function(message) {
+                        if (message.type === 'utf8') {
+                            if (message.utf8Data === "closeme")
+                            {
+                                connection.close(1000, "bye!");
+                            }
+                            else {
+                                console.log('Received Message: ' + message.utf8Data);
+                                connection.sendUTF(message.utf8Data);
+                            }
+                        }
+                        else if (message.type === 'binary') {
+                            console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+                            connection.sendBytes(message.binaryData);
+                        }
+                    });
+                    connection.on('close', function(reasonCode, description) {
+                        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+                    });            
+                }
+                catch (error)
+                {
+                    console.log(error.message);
+                }
+              });
+            },
+            afterStart: (server) => {
+              console.log('Server now listening!');
+            }
+          }        
     });
   };
