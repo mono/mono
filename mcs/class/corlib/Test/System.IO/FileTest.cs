@@ -1316,6 +1316,10 @@ namespace MonoTests.System.IO
 		[Test]
 		public void LastWriteTimeSubMsCopy ()
 		{
+#if MONOTOUCH
+			if (Version.TryParse (Environment.GetEnvironmentVariable ("SIMULATOR_RUNTIME_VERSION"), out Version simulatorVersion) && simulatorVersion.Major < 11 && new DriveInfo("/").DriveFormat == "apfs")
+				Assert.Inconclusive ("This test doesn't work on old iOS Simulator versions running on newer macOS with APFS.");
+#endif
 			string path = tmpFolder + Path.DirectorySeparatorChar + "lastWriteTimeSubMs";
 			if (File.Exists (path))
 				File.Delete (path);
