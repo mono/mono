@@ -19,10 +19,16 @@ namespace System.Diagnostics
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		void BuildStackFrame (int skipFrames, bool needFileInfo)
 		{
-			if (get_frame_info (skipFrames + 3, needFileInfo, out var method, out var ilOffset, out var nativeOffset, out var fileName, out var line, out var column)) {
-				_method = method;
-				_ilOffset = ilOffset;
-				_nativeOffset = nativeOffset;
+			const int SystemDiagnosticsStackDepth = 3;
+
+			if (!get_frame_info (skipFrames + SystemDiagnosticsStackDepth, needFileInfo, out var method, out var ilOffset, out var nativeOffset, out var fileName, out var line, out var column))
+				return;
+
+			_method = method;
+			_ilOffset = ilOffset;
+			_nativeOffset = nativeOffset;
+
+			if (needFileInfo) {
 				_fileName = fileName;
 				_lineNumber = line;
 				_columnNumber = column;
@@ -32,7 +38,7 @@ namespace System.Diagnostics
 		bool AppendStackFrameWithoutMethodBase (StringBuilder sb) => false;
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool get_frame_info (int skipFrames, bool needFileInfo,
+		static extern bool get_frame_info (int skipFrames, bool needFileInfo,
 			out MethodBase method, out int ilOffset, out int nativeOffset, out string file, out int line, out int column);
 
 	}
