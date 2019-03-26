@@ -197,7 +197,7 @@ namespace MonoTests.System.Runtime.InteropServices
 				if (srcString.Contains("\0"))
 					continue;
 
-				IntPtr ptrString = Marshal.StringToAllocatedMemoryUTF8(srcString);
+				IntPtr ptrString = Marshal.StringToCoTaskMemUTF8(srcString);
 				string retString = Marshal.PtrToStringUTF8(ptrString);
 
 				Assert.AreEqual (srcString, retString, "#" + i);
@@ -206,7 +206,7 @@ namespace MonoTests.System.Runtime.InteropServices
 					string retString2 = Marshal.PtrToStringUTF8(ptrString, srcString.Length - 1);
 					Assert.AreEqual (srcString.Substring(0, srcString.Length - 1), retString2, "#s" + i);
 				}
-				Marshal.FreeHGlobal(ptrString);
+				Marshal.ZeroFreeCoTaskMemUTF8 (ptrString);
 			}			
 		}
 		
