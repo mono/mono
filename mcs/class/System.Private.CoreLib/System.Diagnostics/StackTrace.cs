@@ -23,12 +23,14 @@ namespace System.Diagnostics
 		// Unused
 		internal string internalMethodName;
 		#endregion
+
+		internal bool isLastFrameFromForeignException;
 	}
 
 	partial class StackTrace
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static MonoStackFrame[] get_trace (Exception e, int skipFrames, bool needFileInfo);
+		internal static extern MonoStackFrame[] get_trace (Exception e, int skipFrames, bool needFileInfo);
 
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		void InitializeForCurrentThread (int skipFrames, bool needFileInfo)
@@ -50,9 +52,26 @@ namespace System.Diagnostics
 		{
 			var frames = get_trace (e, skipFrames, needFileInfo);
 			_numOfFrames = frames.Length;
-			_stackFrames = new StackFrame [_numOfFrames];
-			for (int i = 0; i < _numOfFrames; ++i) {
-				_stackFrames [i] = new StackFrame (frames [i]);
+
+			int foreignFrames;
+			MonoStackFrame[] foreignExceptions = e.foreignExceptionsFrames;
+
+			if (foreignExceptions != null) {
+				foreignFrames = foreignExceptions.Length;
+				_numOfFrames += foreignFrames;
+
+				_stackFrames = new StackFrame [_numOfFrames];
+
+				for (int i = 0; i < foreignExceptions.Length; ++i) {
+					_stackFrames [i] = new StackFrame (foreignExceptions [i], needFileInfo);
+				}
+			} else {
+				_stackFrames = new StackFrame [_numOfFrames];
+				foreignFrames = 0;
+			}
+
+			for (int i = 0; i < frames.Length; ++i) {
+				_stackFrames [foreignFrames + i] = new StackFrame (frames [i], needFileInfo);
 			}
 		}
 	}
