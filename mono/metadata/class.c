@@ -1735,18 +1735,15 @@ compare_interface_ids (const void *p_key, const void *p_element)
 int
 mono_class_interface_offset (MonoClass *klass, MonoClass *itf)
 {
+	int i;
 	MonoClass **klass_interfaces_packed = m_class_get_interfaces_packed (klass);
-	MonoClass **result = (MonoClass **)mono_binary_search (
-			itf,
-			klass_interfaces_packed,
-			m_class_get_interface_offsets_count (klass),
-			sizeof (MonoClass *),
-			compare_interface_ids);
-	if (result) {
-		return m_class_get_interface_offsets_packed (klass) [result - klass_interfaces_packed];
-	} else {
-		return -1;
+	for (i = 0 ; i < m_class_get_interface_offsets_count (klass); i++ ){
+		MonoClass *result = klass_interfaces_packed[i];
+		if (m_class_get_interface_id(result) == m_class_get_interface_id(itf)) {
+			return m_class_get_interface_offsets_packed (klass) [i];
+		} 
 	}
+	return -1;
 }
 
 /**

@@ -1614,8 +1614,6 @@ set_interface_and_offset (int num_ifaces, MonoClass **interfaces_full, int *inte
 	for (i = 0; i < num_ifaces; ++i) {
 		if (interfaces_full [i]) {
 			int end;
-			if (interfaces_full [i]->interface_id < ic->interface_id)
-				continue;
 			end = i + 1;
 			while (end < num_ifaces && interfaces_full [end]) end++;
 			memmove (interfaces_full + i + 1, interfaces_full + i, sizeof (MonoClass*) * (end - i));
