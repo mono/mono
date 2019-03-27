@@ -6,14 +6,19 @@ namespace System.Diagnostics
 {
 	partial class StackFrame
 	{
-		internal StackFrame (MonoStackFrame monoStackFrame)
+		internal StackFrame (MonoStackFrame monoStackFrame, bool needFileInfo)
 		{
 			_method = monoStackFrame.methodBase;
 			_nativeOffset = monoStackFrame.nativeOffset;
 			_ilOffset = monoStackFrame.ilOffset;
-			_fileName = monoStackFrame.fileName;
-			_lineNumber = monoStackFrame.lineNumber;
-			_columnNumber = monoStackFrame.columnNumber;
+
+			if (needFileInfo) {
+				_fileName = monoStackFrame.fileName;
+				_lineNumber = monoStackFrame.lineNumber;
+				_columnNumber = monoStackFrame.columnNumber;
+			}
+
+			_isLastFrameFromForeignExceptionStackTrace = monoStackFrame.isLastFrameFromForeignException;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
