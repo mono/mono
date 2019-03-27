@@ -4093,12 +4093,40 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	 */
 	lcall = emit_call (ctx, bb, &builder, callee, args, LLVMCountParamTypes (llvm_sig));
 
-	for (int i = 0; i < nargs; i++) {
-		LLVMValueRef ref = args [i];
-		gboolean nonnull = g_hash_table_lookup (ctx->module->module_nonnull, ref) != NULL;
+	if (mono_aot_can_specialize (call->method)) {
+		g_assert (callee);
+		int num_params = LLVMCountParamTypes (llvm_sig);
+		int num_passed = LLVMGetNumArgOperands (lcall);
 
-		if (nonnull)
-			mono_llvm_set_call_nonnull_arg (lcall, i);
+		g_assert (num_params <= num_passed);
+
+		GArray *call_site_union = (GArray *) g_hash_table_lookup (ctx->module->method_to_call_info, call->method);
+
+		if (!call_site_union) {
+			call_site_union = g_array_sized_new (FALSE, TRUE, sizeof (gint32), num_params);
+			int zero = 0;
+			for (int i = 0; i < num_params; i++)
+				g_array_insert_val (call_site_union, i, zero);
+		}
+
+		for (int i = 0; i < num_params; i++) {
+			LLVMValueRef argument = args [i];
+
+			// Add to list of tracked callers/callees
+			GList *usages = (GList *) g_hash_table_lookup (ctx->module->lvalue_to_lcalls, argument);
+			usages = g_list_prepend (usages, lcall);
+			g_hash_table_insert (ctx->module->lvalue_to_lcalls, argument, usages);
+
+			if (g_hash_table_lookup (ctx->module->module_nonnull, argument)) {
+				g_assert (i < LLVMGetNumArgOperands (lcall));
+				mono_llvm_set_call_nonnull_arg (lcall, i);
+			} else {
+				gint32 *nullable_count = &g_array_index (call_site_union, gint32, i);
+				*nullable_count = *nullable_count + 1;
+			}
+		}
+
+		g_hash_table_insert (ctx->module->method_to_call_info, call->method, call_site_union);
 	}
 
 	// If we just allocated an object, it's not null.
@@ -9386,6 +9414,80 @@ emit_aot_file_info (MonoLLVMModule *module)
 	}
 }
 
+typedef struct {
+	LLVMValueRef lmethod;
+	int argument;
+} NonnullPropWorkItem;
+
+static void
+mono_llvm_propagate_nonnull_func (MonoLLVMModule *module, LLVMValueRef root_lmethod, int argument)
+{
+	// When we first traverse the mini IL, we mark the things that are
+	// nonnull (the roots). Then, for all of the methods that can be specialized, we
+	// see if their call sites have nonnull attributes. 
+
+	// If so, we mark the function's param. This param has uses to propagate
+	// the attribute to. This propagation can trigger a need to mark more attributes
+	// non-null, and so on and so forth.
+	GSList *queue = NULL;
+
+	NonnullPropWorkItem *root = g_malloc (sizeof (NonnullPropWorkItem));
+	root->lmethod = root_lmethod;
+	root->argument = argument;
+
+	queue = g_slist_prepend (queue, root);
+
+	while (queue) {
+		NonnullPropWorkItem *current = (NonnullPropWorkItem *) queue->data;
+		queue = queue->next;
+		g_assert (current->argument < LLVMCountParams (current->lmethod));
+
+		mono_llvm_set_func_nonnull_arg (current->lmethod, current->argument);
+		LLVMValueRef caller_argument = LLVMGetParam (current->lmethod, current->argument);
+
+		GSList *calls = (GSList *) g_hash_table_lookup (module->lvalue_to_lcalls, caller_argument);
+		for (GSList *cursor = calls; cursor != NULL; cursor = cursor->next) {
+			LLVMValueRef lcall = (LLVMValueRef) cursor->data;
+			LLVMValueRef callee_lmethod = LLVMGetCalledValue (lcall);
+
+			// Decrement number of nullable refs at that func's arg offset
+			MonoMethod *callee_method = (MonoMethod *) g_hash_table_lookup (module->lmethod_to_method, callee_lmethod);
+			if (!mono_aot_can_specialize (callee_method))
+				continue;
+
+			GArray *call_site_union = (GArray *) g_hash_table_lookup (module->method_to_call_info, callee_method);
+			int max_params = LLVMCountParams (callee_lmethod);
+			if (call_site_union->len != max_params) {
+				mono_llvm_dump_value (callee_lmethod);
+				g_assert_not_reached ();
+			}
+
+			LLVMValueRef *operands = mono_llvm_call_args (lcall);
+			for (int call_argument = 0; call_argument < max_params; call_argument++) {
+				if (caller_argument == operands [call_argument]) {
+
+					gint32 *nullable_count = &g_array_index (call_site_union, gint32, call_argument);
+					g_assert (*nullable_count > 0);
+					*nullable_count = *nullable_count - 1;
+
+					if (*nullable_count == 0) {
+						NonnullPropWorkItem *item = g_malloc (sizeof (NonnullPropWorkItem));
+						item->lmethod = callee_lmethod;
+						item->argument = call_argument;
+						queue = g_slist_prepend (queue, item);
+					}
+				}
+			}
+			g_free (operands);
+
+			g_hash_table_insert (module->method_to_call_info, callee_method, call_site_union);
+		}
+
+		g_free (current);
+	}
+
+}
+
 /*
  * Emit the aot module into the LLVM bitcode file FILENAME.
  */
@@ -9459,6 +9561,8 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 		MonoJumpInfo *ji;
 		LLVMValueRef callee;
 
+		GHashTable *directly_called = g_hash_table_new (NULL, NULL);
+
 		g_hash_table_iter_init (&iter, module->plt_entries_ji);
 		while (g_hash_table_iter_next (&iter, (void**)&ji, (void**)&callee)) {
 			if (mono_aot_is_direct_callable (ji)) {
@@ -9468,10 +9572,33 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 				/* The types might not match because the caller might pass an rgctx */
 				if (lmethod && LLVMTypeOf (callee) == LLVMTypeOf (lmethod)) {
 					mono_llvm_replace_uses_of (callee, lmethod);
+
+					g_hash_table_insert (directly_called, lmethod, ji->data.method);
 					mono_aot_mark_unused_llvm_plt_entry (ji);
 				}
 			}
 		}
+
+		// After direct calls are all computed, specialize directly called
+		// methods and propagate attrs from call sites
+		LLVMValueRef lmethod;
+		MonoMethod *method;
+		g_hash_table_iter_init (&iter, directly_called);
+		while (g_hash_table_iter_next (&iter, (void**)&lmethod, (void**)&method)) {
+			if (!mono_aot_can_specialize (method))
+				continue;
+
+			GArray *call_site_union = (GArray *) g_hash_table_lookup (module->method_to_call_info, method);
+
+			if (call_site_union)
+				g_assert (call_site_union->len == LLVMCountParams (lmethod));
+
+			for (int i = 0; call_site_union && i < call_site_union->len; i++)
+				if (g_array_index (call_site_union, gint32, i) == 0)
+					mono_llvm_propagate_nonnull_func (module, lmethod, i);
+		}
+
+		g_hash_table_destroy (directly_called);
 	}
 
 	/* Note: You can still dump an invalid bitcode file by running `llvm-dis`
