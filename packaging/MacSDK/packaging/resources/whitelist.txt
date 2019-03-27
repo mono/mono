@@ -87,7 +87,6 @@ monodocs2slashdoc
 mono-find-provides
 mono-find-requires
 mono-gdb.py
-monograph
 mono-heapviz
 monolinker
 monop
