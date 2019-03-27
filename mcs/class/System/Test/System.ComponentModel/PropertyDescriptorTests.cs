@@ -16,7 +16,7 @@ using System.ComponentModel.Design;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
-#if !MOBILE && !MONOMAC && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 using System.Drawing.Design;
 #endif
 using NUnit.Framework;
@@ -1053,7 +1053,7 @@ namespace MonoTests.System.ComponentModel
 					return attr;
 			return null;
 		}
-#if !MOBILE && !MONOMAC && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		class GetEditor_test 
 		{
 			[Editor (typeof (UIEditor), typeof (UITypeEditor))]

@@ -8,7 +8,7 @@
 // (C) 2006 Novell
 // 
 
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 
 using System;
 using System.CodeDom;
