@@ -265,6 +265,19 @@ mono_llvm_set_func_nonnull_arg (LLVMValueRef func, int argNo)
 	unwrap<Function>(func)->addParamAttr (argNo, Attribute::NonNull);
 }
 
+LLVMValueRef *
+mono_llvm_call_args (LLVMValueRef calli)
+{
+	CallInst *call = unwrap<CallInst> (calli);
+	unsigned int numOperands = call->getNumArgOperands ();
+
+	LLVMValueRef *ret = g_malloc (sizeof (LLVMValueRef) * numOperands);
+	for (int i=0; i < numOperands; i++)
+		ret [i] = wrap (call->getArgOperand (i));
+
+	return ret;
+}
+
 void
 mono_llvm_set_call_notailcall (LLVMValueRef func)
 {

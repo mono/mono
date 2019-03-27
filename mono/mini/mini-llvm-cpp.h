@@ -112,6 +112,9 @@ mono_llvm_set_call_nonnull_ret (LLVMValueRef calli);
 void
 mono_llvm_set_func_nonnull_arg (LLVMValueRef func, int argNo);
 
+LLVMValueRef *
+mono_llvm_call_args (LLVMValueRef calli);
+
 void
 mono_llvm_set_call_notailcall (LLVMValueRef call);
 
