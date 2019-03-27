@@ -65,6 +65,9 @@ typedef struct {
 	GHashTable *plt_entries;
 	GHashTable *plt_entries_ji;
 	GHashTable *method_to_lmethod;
+	GHashTable *lmethod_to_method;
+	GHashTable *method_to_call_info;
+	GHashTable *lvalue_to_lcalls;
 	GHashTable *direct_callables;
 	GHashTable *module_nonnull;
 	char **bb_names;
@@ -8161,6 +8164,9 @@ after_codegen:
 
 	if (ctx->module->method_to_lmethod)
 		g_hash_table_insert (ctx->module->method_to_lmethod, cfg->method, ctx->lmethod);
+	if (ctx->module->lmethod_to_method)
+		g_hash_table_insert (ctx->module->lmethod_to_method, ctx->lmethod, cfg->method);
+
 	if (ctx->module->idx_to_lmethod)
 		g_hash_table_insert (ctx->module->idx_to_lmethod, GINT_TO_POINTER (cfg->method_index), ctx->lmethod);
 
@@ -9012,8 +9018,11 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	module->plt_entries_ji = g_hash_table_new (NULL, NULL);
 	module->direct_callables = g_hash_table_new (g_str_hash, g_str_equal);
 	module->module_nonnull = g_hash_table_new (NULL, NULL);
-	module->method_to_lmethod = g_hash_table_new (NULL, NULL);
 	module->idx_to_lmethod = g_hash_table_new (NULL, NULL);
+	module->method_to_lmethod = g_hash_table_new (NULL, NULL);
+	module->lmethod_to_method = g_hash_table_new (NULL, NULL);
+	module->method_to_call_info = g_hash_table_new (NULL, NULL);
+	module->lvalue_to_lcalls = g_hash_table_new (NULL, NULL);
 	module->idx_to_unbox_tramp = g_hash_table_new (NULL, NULL);
 	module->callsite_list = g_ptr_array_new ();
 }
