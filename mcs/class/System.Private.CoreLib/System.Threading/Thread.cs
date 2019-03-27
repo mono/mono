@@ -70,7 +70,6 @@ namespace System.Threading
 		string _name;
 		Delegate m_start;
 		object m_start_arg;
-		int m_stacksize;
 		CultureInfo culture, ui_culture;
 		internal ExecutionContext _executionContext;
 		internal SynchronizationContext _synchronizationContext;
@@ -192,7 +191,7 @@ namespace System.Threading
 		void SetStartHelper (Delegate start, int maxStackSize)
 		{
 			m_start = start;
-			m_stacksize = maxStackSize;
+			stack_size = maxStackSize;
 		}
 
 		public static void SpinWait (int iterations)
