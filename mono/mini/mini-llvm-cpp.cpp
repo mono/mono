@@ -265,6 +265,37 @@ mono_llvm_set_func_nonnull_arg (LLVMValueRef func, int argNo)
 	unwrap<Function>(func)->addParamAttr (argNo, Attribute::NonNull);
 }
 
+gboolean
+mono_llvm_is_nonnull (LLVMValueRef wrapped)
+{
+	// Argument to function
+	Value *val = unwrap (wrapped);
+
+	while (val) {
+		if (Argument *arg = dyn_cast<Argument> (val)) {
+			return arg->hasNonNullAttr ();
+		} else if (CallInst *calli = dyn_cast<CallInst> (val)) {
+			return calli->hasRetAttr (Attribute::NonNull);
+		} else if (LoadInst *loadi = dyn_cast<LoadInst> (val)) {
+			return loadi->getMetadata("nonnull") != nullptr; // nonnull <index>
+		} else if (Instruction *inst = dyn_cast<Instruction> (val)) {
+			// If not a load or a function argument, the only case for us to
+			// consider is that it's a bitcast. If so, recurse on what was casted.
+			if (inst->getOpcode () == LLVMBitCast) {
+				val = inst->getOperand (0);
+				continue;
+			}
+
+			return FALSE;
+		} else {
+			mono_llvm_dump_value(wrapped);
+			g_assert_not_reached ();
+		}
+	}
+
+	return FALSE;
+}
+
 LLVMValueRef *
 mono_llvm_call_args (LLVMValueRef calli)
 {

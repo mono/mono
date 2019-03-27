@@ -115,6 +115,9 @@ mono_llvm_set_func_nonnull_arg (LLVMValueRef func, int argNo);
 LLVMValueRef *
 mono_llvm_call_args (LLVMValueRef calli);
 
+gboolean
+mono_llvm_is_nonnull (LLVMValueRef val);
+
 void
 mono_llvm_set_call_notailcall (LLVMValueRef call);
 
