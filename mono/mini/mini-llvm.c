@@ -9450,11 +9450,13 @@ mono_llvm_propagate_nonnull_func (MonoLLVMModule *module, LLVMValueRef root_lmet
 			LLVMValueRef lcall = (LLVMValueRef) cursor->data;
 			LLVMValueRef callee_lmethod = LLVMGetCalledValue (lcall);
 
-			// Decrement number of nullable refs at that func's arg offset
+			// If this wasn't a direct call, this lookup won't find a MonoMethod. By limiting ourselves to
+			// direct calls, we entire that the arity of the call site and the arity of the function are identical
 			MonoMethod *callee_method = (MonoMethod *) g_hash_table_lookup (module->lmethod_to_method, callee_lmethod);
 			if (!mono_aot_can_specialize (callee_method))
 				continue;
 
+			// Decrement number of nullable refs at that func's arg offset
 			GArray *call_site_union = (GArray *) g_hash_table_lookup (module->method_to_call_info, callee_method);
 			int max_params = LLVMCountParams (callee_lmethod);
 			if (call_site_union->len != max_params) {
