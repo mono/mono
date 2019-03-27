@@ -1,5 +1,6 @@
 // Copyright 2011-2015 Xamarin Inc. All rights reserved.
 
+using System;
 using ObjCRuntimeInternal;
 
 namespace Mono.AppleTls {
@@ -309,10 +310,8 @@ namespace Mono.AppleTls {
 		VerifyActionFailed					= -67825,	/* A verify action has failed. */
 		InvalidCertAuthority				= -67826,	/* The certificate authority was not valid. */
 		InvalidCRLAuthority					= -67827,	/* The CRL authority was not valid. */
-#if MONOMAC
 		[Obsolete ("Use InvalidCRLAuthority")]
 		InvaldCRLAuthority					= InvalidCRLAuthority,
-#endif
 		InvalidCRLEncoding					= -67828,	/* The CRL encoding was not valid. */
 		InvalidCRLType						= -67829,	/* The CRL type was not valid. */
 		InvalidCRL							= -67830,	/* The CRL was not valid. */
@@ -338,10 +337,8 @@ namespace Mono.AppleTls {
 		InvalidTupleGroup					= -67850,	/* The tuple group was not valid. */
 		InvalidBaseACLs						= -67851,	/* The base ACLs are not valid. */
 		InvalidTupleCredentials				= -67852,	/* The tuple credentials are not valid. */
-#if MONOMAC
 		[Obsolete ("Use InvalidTupleCredentials")]
 		InvalidTupleCredendtials			= InvalidTupleCredentials,
-#endif
 		InvalidEncoding						= -67853,	/* The encoding was not valid. */
 		InvalidValidityPeriod				= -67854,	/* The validity period was not valid. */
 		InvalidRequestor					= -67855,	/* The requestor was not valid. */
