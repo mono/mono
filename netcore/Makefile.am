@@ -89,14 +89,18 @@ check: $(addprefix run-, $(TEST_SUITES))
 clean:
 	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
-xtest-%: prepare check-env
-	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib \
-		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/
-	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(VERSION)" \
-		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/xunit.console.dll \
-		$(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
+# e.g. `make xtest-System.Collections.Tests COREFX_ROOT=/prj/corefx`
+xtest-%: prepare check-env dl-test-assets
+	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib assets/extracted/$*/
+	# we need COREFX_ROOT only for these two files:
+	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/xunit.console.deps.json assets/extracted/$*/
+	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/CoreFx.Private.TestUtilities.dll assets/extracted/$*/
+	cd assets/extracted/$* && \
+	(sed -i -e 's/9.9.9/$(VERSION)/g' RemoteExecutorConsoleApp.runtimeconfig.json || true) && \
+	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
+		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
 		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all -nunit TestResult-$*-netcore-xunit.xml \
-		$(shell grep -v '^#\|^$$' excludes-$*.rsp) $(FIXTURE)
+		$(shell grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp) $(FIXTURE)
 
 xtest-all: $(addprefix xtest-, $(TEST_SUITES))
 
