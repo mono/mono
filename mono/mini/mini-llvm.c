@@ -65,7 +65,6 @@ typedef struct {
 	GHashTable *plt_entries;
 	GHashTable *plt_entries_ji;
 	GHashTable *method_to_lmethod;
-	GHashTable *lmethod_to_method;
 	GHashTable *method_to_call_info;
 	GHashTable *lvalue_to_lcalls;
 	GHashTable *direct_callables;
@@ -8176,8 +8175,6 @@ after_codegen:
 
 	if (ctx->module->method_to_lmethod)
 		g_hash_table_insert (ctx->module->method_to_lmethod, cfg->method, ctx->lmethod);
-	if (ctx->module->lmethod_to_method)
-		g_hash_table_insert (ctx->module->lmethod_to_method, ctx->lmethod, cfg->method);
 
 	if (ctx->module->idx_to_lmethod)
 		g_hash_table_insert (ctx->module->idx_to_lmethod, GINT_TO_POINTER (cfg->method_index), ctx->lmethod);
@@ -9031,7 +9028,6 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	module->direct_callables = g_hash_table_new (g_str_hash, g_str_equal);
 	module->idx_to_lmethod = g_hash_table_new (NULL, NULL);
 	module->method_to_lmethod = g_hash_table_new (NULL, NULL);
-	module->lmethod_to_method = g_hash_table_new (NULL, NULL);
 	module->method_to_call_info = g_hash_table_new (NULL, NULL);
 	module->idx_to_unbox_tramp = g_hash_table_new (NULL, NULL);
 	module->callsite_list = g_ptr_array_new ();
@@ -9402,7 +9398,7 @@ typedef struct {
 } NonnullPropWorkItem;
 
 static void
-mono_llvm_propagate_nonnull_func (MonoLLVMModule *module, LLVMValueRef root_lmethod, int argument)
+mono_llvm_propagate_nonnull_func (GHashTable *all_directly_called, MonoLLVMModule *module, LLVMValueRef root_lmethod, int argument)
 {
 	// When we first traverse the mini IL, we mark the things that are
 	// nonnull (the roots). Then, for all of the methods that can be specialized, we
@@ -9434,7 +9430,7 @@ mono_llvm_propagate_nonnull_func (MonoLLVMModule *module, LLVMValueRef root_lmet
 
 			// If this wasn't a direct call, this lookup won't find a MonoMethod. By limiting ourselves to
 			// direct calls, we entire that the arity of the call site and the arity of the function are identical
-			MonoMethod *callee_method = (MonoMethod *) g_hash_table_lookup (module->lmethod_to_method, callee_lmethod);
+			MonoMethod *callee_method = (MonoMethod *) g_hash_table_lookup (all_directly_called, callee_lmethod);
 			if (!mono_aot_can_specialize (callee_method))
 				continue;
 
@@ -9580,7 +9576,7 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 
 			for (int i = 0; call_site_union && i < call_site_union->len; i++)
 				if (g_array_index (call_site_union, gint32, i) == 0)
-					mono_llvm_propagate_nonnull_func (module, lmethod, i);
+					mono_llvm_propagate_nonnull_func (directly_called, module, lmethod, i);
 		}
 
 		g_hash_table_destroy (directly_called);
