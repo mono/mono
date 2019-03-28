@@ -9,4 +9,4 @@
 #include "mono/metadata/exception-internals.h"
 #include "register-icall-def.h"
 
-MonoJitICallInfos mono_jit_icall_info;
+MonoJitICallInfos mono_jit_icall_info = { 0 };
