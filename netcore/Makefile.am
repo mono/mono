@@ -96,7 +96,7 @@ xtest-%: prepare check-env dl-test-assets
 	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib assets/extracted/$*/
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/xunit.console.deps.json assets/extracted/$*/
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/CoreFx.Private.TestUtilities.dll assets/extracted/$*/
-	if [ -a assets/extracted/RemoteExecutorConsoleApp.runtimeconfig.json ]; then sed -i -e 's/9.9.9/$(VERSION)/g' assets/extracted/RemoteExecutorConsoleApp.runtimeconfig.json; fi;
+	sed -i -e 's/9.9.9/$(VERSION)/g' assets/extracted/$*/*.runtimeconfig.json
 	cd assets/extracted/$* && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
 		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
@@ -128,7 +128,6 @@ EXCLUDED_COREFX_TESTS = \
 	System.Runtime.Serialization.Formatters.Tests \
 	System.Runtime.Serialization.Json.Tests \
 	System.Runtime.Serialization.Xml.Tests \
-	System.Threading.Tests \
 	System.Threading.Thread.Tests \
 	System.Threading.Timer.Tests \
 	System.Xml.XmlSchemaSet.Tests \
