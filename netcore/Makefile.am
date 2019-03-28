@@ -92,7 +92,7 @@ FEED_BASE_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core
 TEST_ASSETS_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core/corefx-tests/4.6.0-preview4.19156.10/OSX.x64/netcoreapp/corefx-test-assets.xml
 
 corefx-test-assets.xml:
-	wget $(TEST_ASSETS_URL)
+	curl $(TEST_ASSETS_URL) --output corefx-test-assets.xml
 
 dl-test-assets: corefx-test-assets.xml .stamp-dl-test-assets
 
