@@ -258,7 +258,7 @@ mono_path_path_separator_length (const char *a, size_t length)
 /**
  * mono_path_filename_in_basedir:
  *
- * Return \c TRUE if \p filename is in \p basedir
+ * Return \c TRUE if \p filename is "immediately" in \p basedir
  *
  * Both paths should be absolute and be mostly normalized.
  * If the file is in a subdirectory of \p basedir, returns \c FALSE.
@@ -266,6 +266,23 @@ mono_path_path_separator_length (const char *a, size_t length)
  *
  * In fact, filename might not be absolute, in which case, FALSE.
  * Ditto basedir.
+ *
+ * To belabor the intent:
+ *   /1/2/3 is considered to be in /1/2
+ *   /1/2/3/4 is not considered be in /1/2
+ *
+ * Besides a "slash sensitive" prefix match, also check for
+ * additional slashes.
+ *
+ * "Slash sensitive" prefix match means:
+ *    /a/b is a prefix of /a/b/
+ *    /a/b is not a prefix of /a/bc
+ *    /a/b is maybe a prefix of /a/b
+ * The string being checked against must either end, or continue with a path separator.
+ * "Normal" prefix matching would be true for both.
+ *
+ * This function also considers runs of slashes to be equivalent to single slashes,
+ * which is generally Windows behavior, except at the start of a path.
  */
 gboolean
 mono_path_filename_in_basedir (const char *filename, const char *basedir)
@@ -304,10 +321,16 @@ mono_path_filename_in_basedir (const char *filename, const char *basedir)
 	// /foob is not in /foo.
 	// /foo/1/2 is not in /foo.
 
+	// Skip basedir's length within filename.
 	const char *after_base = &filename [basedir_length];
 	size_t after_base_length = filename_length - basedir_length;
+
+	// Skip any number of slashes.
 	size_t skip_separators = mono_path_path_separator_length (after_base, after_base_length);
 	after_base += skip_separators;
 	after_base_length -= skip_separators;
+
+	// There must been at least one slash, and then after any non-slashes,
+	// there must not be any more slashes.
 	return skip_separators && !mono_path_contains_separator (after_base, after_base_length);
 }
