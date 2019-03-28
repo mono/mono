@@ -100,8 +100,8 @@ xtest-%: prepare check-env dl-test-assets
 	cd assets/extracted/$* && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
 		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
-		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all \
-		-html ../../TestResult-$*.html -nunit ../../../TestResult-$*-netcore-xunit.xml \
+		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel none -verbose \
+		-html ../../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
 		$(shell if [ -a $(CURDIR)/excludes-$*.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp; fi;) \
 		$(FIXTURE) || true
 
@@ -130,7 +130,6 @@ EXCLUDED_COREFX_TESTS = \
 	System.Runtime.Serialization.Xml.Tests \
 	System.Threading.Tests \
 	System.Threading.Thread.Tests \
-	System.Threading.ThreadPool.Tests \
 	System.Threading.Timer.Tests \
 	System.Xml.XmlSchemaSet.Tests \
 	System.Xml.XmlSerializer.Tests \
