@@ -89,15 +89,13 @@ check: $(addprefix run-, $(TEST_SUITES))
 clean:
 	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
-COREFX_ROOT=/prj/corefx-egor
 # e.g. `make xtest-System.Collections.Tests COREFX_ROOT=/prj/corefx`
 # '-parallel none -verbose' for debug, `-parallel all` to run all tests in parallel
+# we need COREFX_ROOT only for xunit.console.deps.json and CoreFx.Private.TestUtilities.dll
 xtest-%: prepare check-env dl-test-assets
 	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib assets/extracted/$*/
-	# we need COREFX_ROOT only for these two files:
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/xunit.console.deps.json assets/extracted/$*/
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/CoreFx.Private.TestUtilities.dll assets/extracted/$*/
-	# Replace 9.9.9 with $VERSION in RemoteExecutorConsoleApp.runtimeconfig.json
 	if [ -a assets/extracted/RemoteExecutorConsoleApp.runtimeconfig.json ]; then sed -i -e 's/9.9.9/$(VERSION)/g' assets/extracted/RemoteExecutorConsoleApp.runtimeconfig.json; fi;
 	cd assets/extracted/$* && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
