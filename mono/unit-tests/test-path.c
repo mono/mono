@@ -26,12 +26,12 @@ make_path (const char *a, int itrail, int slash, int upcase)
 int
 main (void)
 {
-	static const char * const bases [2] = {"/", "/foo"};
-	static const char * const files [3] = {"/foo", "/foo/bar", "/foob"};
+	static const char * const bases [2] = {"/", "/1"};
+	static const char * const files [6] = {"/1", "/1/2", "/1/2/3", "/12", "/2", "/2/2/"};
 
-	static const gboolean result [2][3] = {
-		{ TRUE, FALSE, TRUE },
-		{ FALSE, TRUE, FALSE }
+	static const gboolean result [2][6] = {
+		{ TRUE, FALSE, FALSE, TRUE, TRUE, FALSE },
+		{ FALSE, TRUE, FALSE, FALSE, FALSE, FALSE }
 	};
 
 	int i = 0;
@@ -47,13 +47,13 @@ main (void)
 		for (int upcase_base = 0; upcase_base <= win32; ++upcase_base) {
 			for (int itrail_base = 0; itrail_base <= 2; ++itrail_base) {
 				for (int itrail_file = 0; itrail_file <= 2; ++itrail_file) {
-					for (int ibase = 1; ibase < G_N_ELEMENTS (bases); ++ibase) {
+					for (int ibase = 0; ibase < G_N_ELEMENTS (bases); ++ibase) {
 						for (int ifile = 0; ifile < G_N_ELEMENTS (files); ++ifile) {
 							for (int islash_base = 0; islash_base <= win32; ++islash_base) {
 								for (int islash_file = 0; islash_file <= win32; ++islash_file) {
 									char *base = make_path (bases [ibase], itrail_base, islash_base, upcase_base);
 									char *file = make_path (files [ifile], itrail_file, islash_file, upcase_file);
-									verbose && printf ("mono_path_filename_in_basedir (%s, %s)\n", file, base);
+									//verbose && printf ("mono_path_filename_in_basedir (%s, %s)\n", file, base);
 									gboolean r = mono_path_filename_in_basedir (file, base);
 									verbose && printf ("mono_path_filename_in_basedir (%s, %s):%d\n", file, base, r);
 									g_assertf (result [ibase][ifile] == r,
