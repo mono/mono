@@ -1168,8 +1168,7 @@ namespace PEAPI {
 
 		internal override uint SortKey ()
 		{
-			return (theClass.Row << MetaData.CIxShiftMap[(uint)CIx.TypeDefOrRef])
-				| theClass.GetCodedIx (CIx.TypeDefOrRef);
+			throw new Exception ("Should not be used.");
 		}
 
 	}
@@ -5563,7 +5562,7 @@ namespace PEAPI {
 				  }*/
 			}
 			SortTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
-			SortTable(metaDataTables[(int)MDTable.InterfaceImpl]);
+			//SortTable(metaDataTables[(int)MDTable.InterfaceImpl]);
 			SortTable(metaDataTables[(int)MDTable.CustomAttribute]);
 
 		}

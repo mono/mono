@@ -48,7 +48,7 @@ namespace Mono.ILASM {
                 public void DefineAll ()
                 {
                         ArrayList type_list = new ArrayList (type_table.Values);
-                        type_list.Sort ();
+                        //type_list.Sort ();
                         foreach (TypeDef typedef in type_list) {
                                 typedef.Define (code_gen);
                         }
