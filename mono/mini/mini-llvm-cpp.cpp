@@ -241,22 +241,41 @@ mono_llvm_set_preserveall_cc (LLVMValueRef func)
 	unwrap<Function>(func)->setCallingConv (CallingConv::PreserveAll);
 }
 
+// Note that in future versions of LLVM, CallInst and InvokeInst
+// share a CallBase parent class that would make the below methods
+// look much better
+
 void
-mono_llvm_set_call_preserveall_cc (LLVMValueRef func)
+mono_llvm_set_call_preserveall_cc (LLVMValueRef wrapped_calli)
 {
-	unwrap<CallInst>(func)->setCallingConv (CallingConv::PreserveAll);
+	Instruction *calli = unwrap<Instruction> (wrapped_calli);
+
+	if (isa<CallInst> (calli))
+		dyn_cast<CallInst>(calli)->setCallingConv (CallingConv::PreserveAll);
+	else
+		dyn_cast<InvokeInst>(calli)->setCallingConv (CallingConv::PreserveAll);
 }
 
 void
-mono_llvm_set_call_nonnull_arg (LLVMValueRef calli, int argNo)
+mono_llvm_set_call_nonnull_arg (LLVMValueRef wrapped_calli, int argNo)
 {
-	unwrap<CallInst>(calli)->addParamAttr (argNo, Attribute::NonNull);
+	Instruction *calli = unwrap<Instruction> (wrapped_calli);
+
+	if (isa<CallInst> (calli))
+		dyn_cast<CallInst>(calli)->addParamAttr (argNo, Attribute::NonNull);
+	else
+		dyn_cast<InvokeInst>(calli)->addParamAttr (argNo, Attribute::NonNull);
 }
 
 void
-mono_llvm_set_call_nonnull_ret (LLVMValueRef calli)
+mono_llvm_set_call_nonnull_ret (LLVMValueRef wrapped_calli)
 {
-	unwrap<CallInst>(calli)->addAttribute (AttributeList::ReturnIndex, Attribute::NonNull);
+	Instruction *calli = unwrap<Instruction> (wrapped_calli);
+
+	if (isa<CallInst> (calli))
+		dyn_cast<CallInst>(calli)->addAttribute (AttributeList::ReturnIndex, Attribute::NonNull);
+	else
+		dyn_cast<InvokeInst>(calli)->addAttribute (AttributeList::ReturnIndex, Attribute::NonNull);
 }
 
 void
@@ -275,6 +294,8 @@ mono_llvm_is_nonnull (LLVMValueRef wrapped)
 		if (Argument *arg = dyn_cast<Argument> (val)) {
 			return arg->hasNonNullAttr ();
 		} else if (CallInst *calli = dyn_cast<CallInst> (val)) {
+			return calli->hasRetAttr (Attribute::NonNull);
+		} else if (InvokeInst *calli = dyn_cast<InvokeInst> (val)) {
 			return calli->hasRetAttr (Attribute::NonNull);
 		} else if (LoadInst *loadi = dyn_cast<LoadInst> (val)) {
 			return loadi->getMetadata("nonnull") != nullptr; // nonnull <index>
@@ -297,14 +318,28 @@ mono_llvm_is_nonnull (LLVMValueRef wrapped)
 }
 
 LLVMValueRef *
-mono_llvm_call_args (LLVMValueRef calli)
+mono_llvm_call_args (LLVMValueRef wrapped_calli)
 {
-	CallInst *call = unwrap<CallInst> (calli);
-	unsigned int numOperands = call->getNumArgOperands ();
+	Value *calli = unwrap(wrapped_calli);
+	CallInst *call = dyn_cast <CallInst> (calli);
+	InvokeInst *invoke = dyn_cast <InvokeInst> (calli);
+	g_assert (call || invoke);
+
+	unsigned int numOperands = 0;
+
+	if (call)
+		numOperands = call->getNumArgOperands ();
+	else
+		numOperands = invoke->getNumArgOperands ();
 
 	LLVMValueRef *ret = g_malloc (sizeof (LLVMValueRef) * numOperands);
-	for (int i=0; i < numOperands; i++)
-		ret [i] = wrap (call->getArgOperand (i));
+
+	for (int i=0; i < numOperands; i++) {
+		if (call)
+			ret [i] = wrap (call->getArgOperand (i));
+		else
+			ret [i] = wrap (invoke->getArgOperand (i));
+	}
 
 	return ret;
 }
