@@ -21,6 +21,7 @@ namespace Mono.ILASM {
                 {
                         this.code_gen = code_gen;
                         type_table = new Hashtable ();
+                        type_list = new ArrayList ();
                 }
 
                 public TypeDef this[string full_name] {
