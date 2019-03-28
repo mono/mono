@@ -4102,14 +4102,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		}
 
 		for (int i = 0; i < num_params; i++) {
-			LLVMValueRef argument = args [i];
-
-			// Add to list of tracked callers/callees
-			GList *usages = (GList *) g_hash_table_lookup (ctx->module->lvalue_to_lcalls, argument);
-			usages = g_list_prepend (usages, lcall);
-			g_hash_table_insert (ctx->module->lvalue_to_lcalls, argument, usages);
-
-			if (mono_llvm_is_nonnull (argument)) {
+			if (mono_llvm_is_nonnull (args [i])) {
 				g_assert (i < LLVMGetNumArgOperands (lcall));
 				mono_llvm_set_call_nonnull_arg (lcall, i);
 			} else {
@@ -9040,7 +9033,6 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	module->method_to_lmethod = g_hash_table_new (NULL, NULL);
 	module->lmethod_to_method = g_hash_table_new (NULL, NULL);
 	module->method_to_call_info = g_hash_table_new (NULL, NULL);
-	module->lvalue_to_lcalls = g_hash_table_new (NULL, NULL);
 	module->idx_to_unbox_tramp = g_hash_table_new (NULL, NULL);
 	module->callsite_list = g_ptr_array_new ();
 }
@@ -9435,7 +9427,7 @@ mono_llvm_propagate_nonnull_func (MonoLLVMModule *module, LLVMValueRef root_lmet
 		mono_llvm_set_func_nonnull_arg (current->lmethod, current->argument);
 		LLVMValueRef caller_argument = LLVMGetParam (current->lmethod, current->argument);
 
-		GSList *calls = (GSList *) g_hash_table_lookup (module->lvalue_to_lcalls, caller_argument);
+		GSList *calls = mono_llvm_calls_using (caller_argument);
 		for (GSList *cursor = calls; cursor != NULL; cursor = cursor->next) {
 			LLVMValueRef lcall = (LLVMValueRef) cursor->data;
 			LLVMValueRef callee_lmethod = LLVMGetCalledValue (lcall);
@@ -9474,6 +9466,7 @@ mono_llvm_propagate_nonnull_func (MonoLLVMModule *module, LLVMValueRef root_lmet
 
 			g_hash_table_insert (module->method_to_call_info, callee_method, call_site_union);
 		}
+		g_free (calls);
 
 		g_free (current);
 	}
