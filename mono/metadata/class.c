@@ -1737,7 +1737,7 @@ mono_class_interface_offset (MonoClass *klass, MonoClass *itf)
 {
 	int i;
 	MonoClass **klass_interfaces_packed = m_class_get_interfaces_packed (klass);
-	for (i = 0 ; i < m_class_get_interface_offsets_count (klass); i++ ){
+	for (i = m_class_get_interface_offsets_count (klass) -1 ; i >= 0 ; i-- ){
 		MonoClass *result = klass_interfaces_packed[i];
 		if (m_class_get_interface_id(result) == m_class_get_interface_id(itf)) {
 			return m_class_get_interface_offsets_packed (klass) [i];
