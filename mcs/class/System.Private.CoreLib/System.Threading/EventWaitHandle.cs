@@ -47,7 +47,17 @@ namespace System.Threading
 			throw new PlatformNotSupportedException (SR.PlatformNotSupported_NamedSynchronizationPrimitives);
 		}
 
-		internal static bool Set (SafeWaitHandle waitHandle) => throw new NotImplementedException ();
+		internal static bool Set (SafeWaitHandle waitHandle)
+		{
+			bool release = false;
+			try {
+				waitHandle.DangerousAddRef (ref release);
+				return SetEventInternal (waitHandle.DangerousGetHandle ());
+			} finally {
+				if (release)
+					waitHandle.DangerousRelease ();
+			}
+		}
 
 		SafeWaitHandle ValidateHandle (out bool success)
 		{
