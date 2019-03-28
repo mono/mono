@@ -130,7 +130,7 @@ EXCLUDED_COREFX_TESTS = \
 	System.Xml.Xsl.XslCompiledTransformApi.Tests
 
 xtestall: $(foreach workingtest, $(foreach test, $(wildcard assets/extracted/*), \
-		$(notdir $(filter-out $(EXCLUDED_COREFX_TESTS), $(test)))), $(addprefix xtest-, $(workingtest)))
+		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
 
 FEED_BASE_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core
 TEST_ASSETS_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core/corefx-tests/4.6.0-preview4.19156.10/OSX.x64/netcoreapp/corefx-test-assets.xml
