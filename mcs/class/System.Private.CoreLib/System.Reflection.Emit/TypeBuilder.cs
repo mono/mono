@@ -825,7 +825,7 @@ namespace System.Reflection.Emit
 				return t;
 			}
 		}
-
+/*
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
 			symbolWriter.OpenNamespace (this.Namespace);
@@ -849,7 +849,7 @@ namespace System.Reflection.Emit
 					subtypes [i].GenerateDebugInfo (symbolWriter);
 			}
 		}
-
+*/
 		[ComVisible (true)]
 		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
 		{

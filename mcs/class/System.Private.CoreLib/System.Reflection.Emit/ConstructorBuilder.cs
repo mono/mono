@@ -336,7 +336,7 @@ namespace System.Reflection.Emit {
 					TypeBuilder.ResolveUserTypes (types);
 			}
 		}
-		
+/*		
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
 			if (ilgen != null && ilgen.HasDebugInfo) {
@@ -347,7 +347,7 @@ namespace System.Reflection.Emit {
 				symbolWriter.CloseMethod ();
 			}
 		}
-
+*/
 		internal override int get_next_table_index (object obj, int table, int count)
 		{
 			return type.get_next_table_index (obj, table, count);

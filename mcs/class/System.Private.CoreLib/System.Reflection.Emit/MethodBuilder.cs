@@ -378,7 +378,7 @@ namespace System.Reflection.Emit
 					TypeBuilder.ResolveUserTypes (types);
 			}
 		}
-
+/*
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
 			if (ilgen != null && ilgen.HasDebugInfo) {
@@ -389,7 +389,7 @@ namespace System.Reflection.Emit
 				symbolWriter.CloseMethod ();
 			}
 		}
-
+*/
 		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
 		{
 			if (customBuilder == null)

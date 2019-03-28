@@ -240,8 +240,6 @@
       <Compile Include="..\corlib\System\TypeSpec.cs" />
 
       <Compile Include="..\corlib\System.Diagnostics\Debugger.cs" />
-	  <Compile Include="..\corlib\System.Diagnostics.SymbolStore\ISymbolWriter.cs" />
-	  <Compile Include="..\corlib\System.Diagnostics.SymbolStore\SymAddressKind.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
 
@@ -269,10 +267,6 @@
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeTypedArgument.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
       <Compile Include="..\corlib\corert\RuntimeAugments.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-	<Compile Include="..\..\..\external\corefx\src\System.Diagnostics.StackTrace\src\System\Diagnostics\SymbolStore\SymbolToken.cs" />
   </ItemGroup>
 
   <!-- Mono extensions -->
