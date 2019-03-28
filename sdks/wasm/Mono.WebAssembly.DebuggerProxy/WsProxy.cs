@@ -97,7 +97,6 @@ namespace WsProxy {
 
 	public class WsProxy {
 		TaskCompletionSource<bool> side_exception = new TaskCompletionSource<bool> ();
-		TaskCompletionSource<bool> websocket_error = new TaskCompletionSource<bool> ();
 		List<(int, TaskCompletionSource<Result>)> pending_cmds = new List<(int, TaskCompletionSource<Result>)> ();
 		ClientWebSocket browser;
 		WebSocket ide;
@@ -120,31 +119,20 @@ namespace WsProxy {
 			byte [] buff = new byte [4000];
 			var mem = new MemoryStream ();
 			while (true) {
-				try {
-					if (socket.State != WebSocketState.Open)
-						return null;
-
-					var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
-					if (result.MessageType == WebSocketMessageType.Close) {
-						return null;
-					}
-
-					if (result.EndOfMessage) {
-						mem.Write (buff, 0, result.Count);
-						return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
-					} else {
-						mem.Write (buff, 0, result.Count);
-					}
-				} 
-				catch (WebSocketException wse)
-				{
-					// Capture the exception here as the 
-					// WebSocket connection is closed without proper handshake
-					Debug ($"Received WebSocketException: {wse.Message}");
+				var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
+				if (result.MessageType == WebSocketMessageType.Close) {
 					return null;
+				}
+
+				if (result.EndOfMessage) {
+					mem.Write (buff, 0, result.Count);
+					return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
+				} else {
+					mem.Write (buff, 0, result.Count);
 				}
 			}
 		}
+
 		WsQueue GetQueueForSocket (WebSocket ws)
 		{
 			return queues.FirstOrDefault (q => q.Ws == ws);
@@ -211,13 +199,9 @@ namespace WsProxy {
 
 		void ProcessIdeMessage (string msg, CancellationToken token)
 		{
-			try {
+			if (!string.IsNullOrEmpty(msg)) {
 				var res = JObject.Parse (msg);
-
 				pending_ops.Add (OnCommand (res ["id"].Value<int> (), res ["method"].Value<string> (), res ["params"] as JObject, token));
-
-			} catch (Exception e) {
-				websocket_error.TrySetException (e);
 			}
 		}
 
@@ -290,7 +274,6 @@ namespace WsProxy {
 					pending_ops.Add (ReadOne (browser, x.Token));
 					pending_ops.Add (ReadOne (ide, x.Token));
 					pending_ops.Add (side_exception.Task);
-					pending_ops.Add (websocket_error.Task);
 
 					try {
 						while (!x.IsCancellationRequested) {
@@ -307,9 +290,6 @@ namespace WsProxy {
 							} else if (task == pending_ops [2]) {
 								var res = ((Task<bool>)task).Result;
 								throw new Exception ("side task must always complete with an exception, what's going on???");
-							} else if (task == pending_ops [3]) {
-								var res = ((Task<bool>)task).Result;
-								x.Cancel ();
 							} else {
 								//must be a background task
 								pending_ops.Remove (task);
@@ -321,10 +301,6 @@ namespace WsProxy {
 								}
 							}
 						}
-					} catch (WebSocketException wse) {
-						// Capture the exception here as the 
-						// WebSocket connection is closed without proper handshake
-						Debug ($"Received WebSocketException: {wse.Message}");
 					} catch (Exception e) {
 						Debug ($"got exception {e}");
 						//throw;
