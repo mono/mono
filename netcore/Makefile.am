@@ -94,6 +94,7 @@ clean:
 # we need COREFX_ROOT only for xunit.console.deps.json and CoreFx.Private.TestUtilities.dll
 xtest-%: prepare check-env dl-test-assets
 	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib assets/extracted/$*/
+	ln -sf $(CURDIR)/sdk/$(NETCORESDK_VERSION)/System.Text.Encoding.CodePages.dll assets/extracted/$*/
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/xunit.console.deps.json assets/extracted/$*/
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/CoreFx.Private.TestUtilities.dll assets/extracted/$*/
 	sed -i -e 's/9.9.9/$(VERSION)/g' assets/extracted/$*/*.runtimeconfig.json
@@ -110,7 +111,6 @@ EXCLUDED_COREFX_TESTS = \
 	Microsoft.CSharp.Tests \
 	Microsoft.XmlSerializer.Generator.Tests \
 	System.ComponentModel.Composition.Tests \
-	System.Data.Common.Tests \
 	System.Diagnostics.StackTrace.Tests \
 	System.Diagnostics.Tracing.Tests \
 	System.Dynamic.Runtime.Tests \
@@ -128,7 +128,6 @@ EXCLUDED_COREFX_TESTS = \
 	System.Runtime.Serialization.Formatters.Tests \
 	System.Runtime.Serialization.Json.Tests \
 	System.Runtime.Serialization.Xml.Tests \
-	System.Threading.Thread.Tests \
 	System.Threading.Timer.Tests \
 	System.Xml.XmlSchemaSet.Tests \
 	System.Xml.XmlSerializer.Tests \
