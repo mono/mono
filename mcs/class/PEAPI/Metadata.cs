@@ -5562,7 +5562,6 @@ namespace PEAPI {
 				  }*/
 			}
 			SortTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
-			//SortTable(metaDataTables[(int)MDTable.InterfaceImpl]);
 			SortTable(metaDataTables[(int)MDTable.CustomAttribute]);
 
 		}
