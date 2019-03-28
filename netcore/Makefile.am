@@ -103,8 +103,7 @@ xtest-%: prepare check-env dl-test-assets
 		-html ../../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
 		$(shell if [ -a $(CURDIR)/excludes-$*.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp; fi;) \
 		$(FIXTURE) || true
-		
-COREFX_ROOT=/prj/corefx-egor
+
 # these tests won't be included in `xtestall` (some of them crash runtime, some hang)
 EXCLUDED_COREFX_TESTS = \
 	Microsoft.CSharp.Tests \
