@@ -347,6 +347,6 @@ Fooer7_IFoo_BaseOK:
 
 Fooer7_IFoo_DerivedOK:
 
-    ldc.i4 100
+    ldc.i4 0
     ret
 }
