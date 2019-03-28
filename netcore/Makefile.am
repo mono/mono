@@ -89,6 +89,7 @@ check: $(addprefix run-, $(TEST_SUITES))
 clean:
 	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
+COREFX_ROOT=/prj/corefx-egor
 # e.g. `make xtest-System.Collections.Tests COREFX_ROOT=/prj/corefx`
 # '-parallel none -verbose' for debug, `-parallel all` to run all tests in parallel
 xtest-%: prepare check-env dl-test-assets
@@ -96,13 +97,17 @@ xtest-%: prepare check-env dl-test-assets
 	# we need COREFX_ROOT only for these two files:
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/xunit.console.deps.json assets/extracted/$*/
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/CoreFx.Private.TestUtilities.dll assets/extracted/$*/
+	# Replace 9.9.9 with $VERSION in RemoteExecutorConsoleApp.runtimeconfig.json
+	if [ -a assets/extracted/RemoteExecutorConsoleApp.runtimeconfig.json ]; then sed -i -e 's/9.9.9/$(VERSION)/g' assets/extracted/RemoteExecutorConsoleApp.runtimeconfig.json; fi;
 	cd assets/extracted/$* && \
-	(sed -i -e 's/9.9.9/$(VERSION)/g' RemoteExecutorConsoleApp.runtimeconfig.json || true) && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
 		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
-		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel none -verbose -nunit TestResult-$*-netcore-xunit.xml \
-		$(shell grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp) $(FIXTURE)
+		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all \
+		-html ../../TestResult-$*.html -nunit ../../../TestResult-$*-netcore-xunit.xml \
+		$(shell if [ -a $(CURDIR)/excludes-$*.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp; fi;) \
+		$(FIXTURE) || true
 
+# these tests won't be included in `xtestall` (some of them crash runtime, some hang)
 EXCLUDED_COREFX_TESTS = \
 	Microsoft.CSharp.Tests \
 	Microsoft.XmlSerializer.Generator.Tests \
@@ -134,7 +139,7 @@ EXCLUDED_COREFX_TESTS = \
 	System.Xml.Xsl.XslCompiledTransformApi.Tests
 
 xtestall: $(foreach workingtest, $(foreach test, $(wildcard assets/extracted/*), \
-						$(notdir $(filter-out $(EXCLUDED_COREFX_TESTS), $(test)))), xtest-$(workingtest))
+		$(notdir $(filter-out $(EXCLUDED_COREFX_TESTS), $(test)))), $(addprefix xtest-, $(workingtest)))
 
 FEED_BASE_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core
 TEST_ASSETS_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core/corefx-tests/4.6.0-preview4.19156.10/OSX.x64/netcoreapp/corefx-test-assets.xml
