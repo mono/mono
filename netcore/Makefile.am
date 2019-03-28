@@ -99,11 +99,12 @@ xtest-%: prepare check-env dl-test-assets
 	cd assets/extracted/$* && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
 		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
-		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel none -verbose \
+		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all -verbose \
 		-html ../../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
 		$(shell if [ -a $(CURDIR)/excludes-$*.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp; fi;) \
 		$(FIXTURE) || true
-
+		
+COREFX_ROOT=/prj/corefx-egor
 # these tests won't be included in `xtestall` (some of them crash runtime, some hang)
 EXCLUDED_COREFX_TESTS = \
 	Microsoft.CSharp.Tests \
@@ -115,19 +116,16 @@ EXCLUDED_COREFX_TESTS = \
 	System.IO.Ports.Tests \
 	System.Linq.Expressions.Tests \
 	System.Linq.Queryable.Tests \
-	System.Memory.Tests \
 	System.Net.Http.Functional.Tests \
 	System.Net.HttpListener.Tests \
 	System.Net.NameResolution.Functional.Tests \
 	System.Net.Sockets.Tests \
-	System.Reflection.Emit.ILGeneration.Tests \
 	System.Reflection.Tests \
 	System.Runtime.InteropServices.Tests \
 	System.Runtime.Serialization.Formatters.Tests \
 	System.Runtime.Serialization.Json.Tests \
 	System.Runtime.Serialization.Xml.Tests \
 	System.Threading.Timer.Tests \
-	System.Xml.XmlSchemaSet.Tests \
 	System.Xml.XmlSerializer.Tests \
 	System.Xml.Xsl.XslCompiledTransformApi.Tests
 
