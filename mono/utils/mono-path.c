@@ -177,14 +177,14 @@ mono_path_resolve_symlinks (const char *path)
 #endif
 }
 
-#ifndef HOST_WIN32
-#define HOST_WIN32 0
-#endif
-
 static gboolean
 mono_path_char_is_separator (char ch)
 {
-	return ch == '/' || (HOST_WIN32 && ch == '\\');
+#ifdef HOST_WIN32
+	return ch == '/' || ch == '\\';
+#else
+	return ch == '/';
+#endif
 }
 
 static gboolean
@@ -206,10 +206,12 @@ mono_path_remove_trailing_path_separators (const char *path,  size_t *length)
 	*length = i;
 }
 
+#ifdef HOST_WIN32
+
 static gboolean
 mono_path_char_is_lowercase (char ch)
 {
-	return HOST_WIN32 && ch >= 'a' && ch <= 'z';
+	return ch >= 'a' && ch <= 'z';
 }
 
 // Version-specific unichar2 upcase tables are stored per-volume at NTFS format-time.
@@ -228,17 +230,20 @@ mono_path_char_equal (char a, char b)
 		|| (mono_path_char_is_separator (a) && mono_path_char_is_separator (b));
 }
 
+#endif
+
 static gboolean
 mono_path_equal (const char *a, const char *b, size_t length)
 {
-	if (HOST_WIN32) {
-		size_t i = 0;
-		for (i = 0; i < length && mono_path_char_equal (a [i], b [i]); ++i) {
-			// nothing
-		}
-		return i == length;
+#ifdef HOST_WIN32
+	size_t i = 0;
+	for (i = 0; i < length && mono_path_char_equal (a [i], b [i]); ++i) {
+		// nothing
 	}
+	return i == length;
+#else
 	return memcmp (a, b, length) == 0;
+#endif
 }
 
 static size_t
