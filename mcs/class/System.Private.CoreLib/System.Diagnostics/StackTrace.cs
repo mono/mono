@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -22,32 +23,55 @@ namespace System.Diagnostics
 		// Unused
 		internal string internalMethodName;
 		#endregion
+
+		internal bool isLastFrameFromForeignException;
 	}
 
 	partial class StackTrace
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static MonoStackFrame[] get_trace (Exception e, int skipFrames, bool fNeedFileInfo);
+		internal static extern MonoStackFrame[] get_trace (Exception e, int skipFrames, bool needFileInfo);
 
-		void InitializeForCurrentThread (int skipFrames, bool fNeedFileInfo)
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		void InitializeForCurrentThread (int skipFrames, bool needFileInfo)
 		{
+			skipFrames += 2; // Current method + parent ctor
+
+			StackFrame sf;
+			var frames = new List<StackFrame> ();
+			while ((sf = new StackFrame (skipFrames, needFileInfo)) != null && sf.GetMethod () != null) {
+				frames.Add (sf);
+				skipFrames++;
+			}
+
+			_stackFrames = frames.ToArray ();
+			_numOfFrames = _stackFrames.Length;
 		}
 		
-		void InitializeForException (Exception e, int skipFrames, bool fNeedFileInfo)
+		void InitializeForException (Exception e, int skipFrames, bool needFileInfo)
 		{
-			var frames = get_trace (e, skipFrames, fNeedFileInfo);
+			var frames = get_trace (e, skipFrames, needFileInfo);
 			_numOfFrames = frames.Length;
-			_stackFrames = new StackFrame [_numOfFrames];
-			for (int i = 0; i < _numOfFrames; ++i) {
-				var sf = _stackFrames [i] = new StackFrame ();
 
-				var f = frames [i];
-				sf.SetMethodBase (f.methodBase);
-				sf.SetOffset (f.nativeOffset);
-				sf.SetILOffset (f.ilOffset);
-				sf.SetFileName (f.fileName);
-				sf.SetLineNumber (f.lineNumber);
-				sf.SetColumnNumber (f.columnNumber);
+			int foreignFrames;
+			MonoStackFrame[] foreignExceptions = e.foreignExceptionsFrames;
+
+			if (foreignExceptions != null) {
+				foreignFrames = foreignExceptions.Length;
+				_numOfFrames += foreignFrames;
+
+				_stackFrames = new StackFrame [_numOfFrames];
+
+				for (int i = 0; i < foreignExceptions.Length; ++i) {
+					_stackFrames [i] = new StackFrame (foreignExceptions [i], needFileInfo);
+				}
+			} else {
+				_stackFrames = new StackFrame [_numOfFrames];
+				foreignFrames = 0;
+			}
+
+			for (int i = 0; i < frames.Length; ++i) {
+				_stackFrames [foreignFrames + i] = new StackFrame (frames [i], needFileInfo);
 			}
 		}
 	}

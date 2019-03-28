@@ -210,7 +210,7 @@ namespace System.Drawing {
 			0xFF316AC5,	/* 174 - MenuHighlight */
 		};
 
-#if !MONOTOUCH && !MONOMAC && SUPPORTS_WINDOWS_COLORS
+#if !MONOTOUCH && !XAMMAC && !XAMMAC_4_5 && SUPPORTS_WINDOWS_COLORS
 		static KnownColors ()
 		{
 			if (GDIPlus.RunningOnWindows ()) {

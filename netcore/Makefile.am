@@ -8,7 +8,10 @@ $(NETCORESDK_FILE):
 	tar -xvf $(NETCORESDK_FILE)
 
 build-sample:
-	dotnet build HelloWorld
+	dotnet build sample/HelloWorld
+
+run-sample:
+	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(VERSION)" sample/HelloWorld/bin/Debug/netcoreapp3.0/HelloWorld.dll
 
 # COREHOST_TRACE=1 
 VERSION:=3.0.0-preview4-27514-06
@@ -24,9 +27,12 @@ runtime:
 
 link-mono:
 	cp ../mono/mini/.libs/libmonosgen-2.0.dylib $(SHAREDRUNTIME)/libcoreclr.dylib
-	cp ../mcs/class/System.Private.CoreLib/bin/x64/System.Private.CoreLib.dll $(SHAREDRUNTIME)
+	cp ../mcs/class/System.Private.CoreLib/bin/x64/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
 
 prepare: $(NETCORESDK_FILE) link-mono
+
+nupkg:
+	nuget pack runtime.nuspec -properties VERSION=@VERSION@\;RID=@RID@\;PLATFORM_AOT_SUFFIX=@PLATFORM_AOT_SUFFIX@
 
 COREFX_BINDIR=$(COREFX_ROOT)/artifacts/bin
 
@@ -62,6 +68,8 @@ System.Reflection.Emit.Tests_PROFILE = netcoreapp-Debug
 System.Reflection.Emit.Tests_XUNIT_ARGS = @../excludes-System.Reflection.Emit.Tests.rsp
 System.Reflection.Emit.ILGeneration.Tests_PROFILE = netcoreapp-Debug
 System.Reflection.Emit.Lightweight.Tests_PROFILE = netcoreapp-Debug
+System.Threading.Tests_PROFILE = netcoreapp-Debug
+System.Threading.Thread.Tests_PROFILE = netcoreapp-Debug
 
 build-%: check-env
 	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests $($*_XUNIT_ARGS) $(XUNIT_ARGS)
@@ -88,6 +96,18 @@ xtest-%: prepare check-env
 		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/xunit.console.dll \
 		$(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
 		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all -nunit TestResult-$*-netcore-xunit.xml \
-		$(shell grep -v '^#\|^$$' excludes-$*.rsp)
+		$(shell grep -v '^#\|^$$' excludes-$*.rsp) $(FIXTURE)
 
 xtest-all: $(addprefix xtest-, $(TEST_SUITES))
+
+FEED_BASE_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core
+TEST_ASSETS_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core/corefx-tests/4.6.0-preview4.19156.10/OSX.x64/netcoreapp/corefx-test-assets.xml
+
+corefx-test-assets.xml:
+	wget $(TEST_ASSETS_URL)
+
+dl-test-assets: corefx-test-assets.xml .stamp-dl-test-assets
+
+.stamp-dl-test-assets:
+	python dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) assets
+	touch $@

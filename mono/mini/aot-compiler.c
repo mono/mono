@@ -4158,17 +4158,11 @@ add_jit_icall_wrapper (gpointer key, gpointer value, gpointer user_data)
 {
 	MonoAotCompile *acfg = (MonoAotCompile *)user_data;
 	MonoJitICallInfo *callinfo = (MonoJitICallInfo *)value;
-	MonoMethod *wrapper;
-	char *name;
 
 	if (!callinfo->sig)
 		return;
 
-	name = g_strdup_printf ("__icall_wrapper_%s", callinfo->name);
-	wrapper = mono_marshal_get_icall_wrapper (callinfo->sig, name, callinfo->func, TRUE);
-	g_free (name);
-
-	add_method (acfg, wrapper);
+	add_method (acfg, mono_marshal_get_icall_wrapper (callinfo, TRUE));
 }
 
 static void
@@ -5301,13 +5295,12 @@ add_types_from_method_header (MonoAotCompile *acfg, MonoMethod *method)
 
 	depth = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->method_depth, method));
 
-	sig = mono_method_signature_checked (method, error);
+	sig = mono_method_signature_internal (method);
+
 	if (sig) {
 		for (j = 0; j < sig->param_count; ++j)
 			if (sig->params [j]->type == MONO_TYPE_GENERICINST)
 				add_generic_class_with_depth (acfg, mono_class_from_mono_type_internal (sig->params [j]), depth + 1, "arg");
-	} else {
-		mono_error_cleanup (error);
 	}
 
 	header = mono_method_get_header_checked (method, error);
@@ -7854,7 +7847,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		} else if (str_begins_with (arg, "msym-dir=")) {
 			mini_debug_options.no_seq_points_compact_data = FALSE;
 			opts->gen_msym_dir = TRUE;
-			opts->gen_msym_dir_path = g_strdup (arg + strlen ("msym_dir="));;
+			opts->gen_msym_dir_path = g_strdup (arg + strlen ("msym_dir="));
 		} else if (str_begins_with (arg, "direct-pinvoke")) {
 			opts->direct_pinvoke = TRUE;
 		} else if (str_begins_with (arg, "direct-icalls")) {
@@ -7928,7 +7921,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		} else if (!strcmp (arg, "no-opt")) {
 			opts->no_opt = TRUE;
 		} else if (str_begins_with (arg, "clangxx=")) {
-			opts->clangxx = g_strdup (arg + strlen ("clangxx="));;
+			opts->clangxx = g_strdup (arg + strlen ("clangxx="));
 		} else if (str_begins_with (arg, "help") || str_begins_with (arg, "?")) {
 			printf ("Supported options for --aot:\n");
 			printf ("    asmonly\n");
@@ -8290,10 +8283,6 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		return;
 
 	if (acfg->aot_opts.profile_only && !method->is_inflated && !g_hash_table_lookup (acfg->profile_methods, method))
-		return;
-
-	if (method->is_generic || mono_class_is_gtd (method->klass))
-		/* generic method which has no ref instantiation */
 		return;
 
 	mono_atomic_inc_i32 (&acfg->stats.mcount);
@@ -11603,12 +11592,12 @@ collect_methods (MonoAotCompile *acfg)
 
 		if (method->is_generic || mono_class_is_gtd (method->klass)) {
 			/* Compile the ref shared version instead */
-			MonoMethod *shared_method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
-			if (!shared_method) {
-				/* Fails ref constraints */
-				/* Keep the original method, compile_method () will skip it */
-			} else {
-				method = shared_method;
+			method = mini_get_shared_method_full (method, SHARE_MODE_NONE, error);
+			if (!method) {
+				aot_printerrf (acfg, "Failed to load method 0x%x from '%s' due to %s.\n", token, image->name, mono_error_get_message (error));
+				aot_printerrf (acfg, "Run with MONO_LOG_LEVEL=debug for more information.\n");
+				mono_error_cleanup (error);
+				return FALSE;
 			}
 		}
 

@@ -59,7 +59,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=4A9CEBCF-2544-4CB4-9F84-07A10C16BEEB
+MONO_CORLIB_VERSION=92351299-EECB-4E61-A590-39382BA4F7A0
 
 #
 # Put a quoted #define in config.h.
@@ -158,12 +158,13 @@ case "$host" in
 			fi
 		fi
 		HOST_CC="gcc"
-
+		RID="win-x86"
 		# Boehm not supported on 64-bit Windows.
 		case "$host" in
 		x86_64-*-* | amd64-*-*)
 			support_boehm=no
 			with_gc=sgen
+			RID="win-x64"
 			;;
 		esac
 
@@ -317,9 +318,30 @@ case "$host" in
 			;;
 		esac
 		case "$host" in
+		ppc64-*)
+			RID="linux-ppc64"
+			;;
+		ppc64le-*)
+			RID="linux-ppc64el"
+			;;
+		mipsel-*)
+			RID="linux-mipsel"
+			;;
+		x86-*)
+			RID="linux-x86"
+			;;
+		x86_64-*)
+			RID="linux-x64"
+			;;
+		arm-*)
+			# deal with this in the FPU detection section, since
+			# we cannot determine FPU from triplet and don't want
+			# to duplicate the logic
+			;;
 		aarch64-*)
 			support_boehm=no
 			with_gc=sgen
+			RID="linux-arm64"
 			;;
 		powerpc*-*-linux*)
 			# https://bugzilla.novell.com/show_bug.cgi?id=504411
@@ -393,9 +415,11 @@ case "$host" in
 				CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC $BROKEN_DARWIN_CPPFLAGS"
 				CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC $BROKEN_DARWIN_FLAGS"
 				with_sgen_default_concurrent=yes
+				RID="osx-x86"
 				;;
 			x*64-*-darwin*)
 				with_sgen_default_concurrent=yes
+				RID="osx-x64"
 				;;
 			arm*-darwin*)
 				platform_ios=yes
@@ -454,6 +478,7 @@ case "$host" in
 		with_tls=pthread
 		dnl ppc Linux is the same? test further
 		disable_munmap=yes
+		RID="aix-ppc64"
 		;;
 	*)
 		AC_MSG_WARN([*** Please add $host to configure.ac checks!])
@@ -1228,7 +1253,9 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_reflection_emit_save='yes'
    mono_feature_disable_appdomains='yes'
    mono_feature_disable_cleanup='yes'
+   mono_feature_disable_assembly_remapping='yes'
    disable_mono_native=yes
+   support_boehm=no
 elif test x$with_runtime_preset = xnet_4_x; then
    with_profile4_x_default=yes
    TEST_PROFILE=net_4_x
@@ -5196,7 +5223,16 @@ if test ${TARGET} = ARM; then
 		AC_DEFINE(HAVE_ARMV7, 1, [ARM v7])
 		CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DHAVE_ARMV7=1"
 	fi
+
+	if test x$host_linux = xyes; then
+		RID="linux-arm"
+		if test x$fpu = xNONE; then
+			RID="linux-armel"
+		fi
+	fi
 fi
+
+AC_SUBST(RID)
 
 if test ${TARGET} = RISCV32 -o ${TARGET} = RISCV64; then
 	AC_ARG_WITH([riscv-fpabi], [  --with-riscv-fpabi=auto,double,soft   Select RISC-V floating point ABI (auto)], [fpabi=$withval], [fpabi=double])
@@ -5785,7 +5821,8 @@ fi
 AC_SUBST(mono_runtime)
 AC_SUBST(mono_runtime_wrapper)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/tools/csc.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.1.0/csc.exe
+VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.1.0/VBCSCompiler.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -5801,6 +5838,7 @@ if test x$host_win32 = xyes; then
     mono_cfg_dir=`cygpath -w -a $mono_cfg_root`\\etc
     CSC=`cygpath -m -a $CSC`
     CSC_LOCATION=`cygpath -m -a $CSC_LOCATION`
+    VBCS_LOCATION=`cygpath -m -a $VBCS_LOCATION`
   else
     mono_cfg_dir=`echo $mono_cfg_root | tr '/' '\\'`\\etc
   fi
@@ -6388,6 +6426,7 @@ mono/profiler/Makefile
 mono/eglib/Makefile
 mono/eglib/eglib-config.h
 mono/eglib/test/Makefile
+netcore/Makefile
 m4/Makefile
 ikvm-native/Makefile
 scripts/Makefile
@@ -6538,7 +6577,7 @@ fi
 
     echo "STANDALONE_CSC_LOCATION=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
     echo "SERVER_CSC_LOCATION?=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
-    echo "VBCS_LOCATION?=" >> $srcdir/$mcsdir/build/config.make
+    echo "VBCS_LOCATION?=$VBCS_LOCATION" >> $srcdir/$mcsdir/build/config.make
 
     if test $csc_compiler = mcs; then
       echo "MCS_MODE = 1" >> $srcdir/$mcsdir/build/config.make

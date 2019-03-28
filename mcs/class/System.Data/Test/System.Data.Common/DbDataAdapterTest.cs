@@ -32,7 +32,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 
 /*--For Bug 853 Test Begin--*/
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 using Mono.Data.Sqlite;
 #endif
 /*--For Bug 853 Test End--*/
@@ -191,7 +191,7 @@ namespace MonoTests.System.Data.Common
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 		[Test]
 		[Category ("NotWorking")] // Requires newer sqlite than is on wrench
 		public void XimarinBugzillaBug853Test()

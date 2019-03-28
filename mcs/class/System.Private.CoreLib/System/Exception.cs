@@ -8,21 +8,31 @@ namespace System
 	[StructLayout (LayoutKind.Sequential)]
 	partial class Exception
 	{
+		internal readonly struct DispatchState
+		{
+			public readonly MonoStackFrame[] StackFrames;
+
+			public DispatchState (MonoStackFrame[] stackFrames)
+			{
+				StackFrames = stackFrames;
+			}
+		}
+
 		# region Keep in sync with MonoException in object-internals.h
 		string _unused1;
 		internal string _message;
 		IDictionary _data;
 		Exception _innerException;
 		string _helpURL;
-		object _unused2;
+		object _traceIPs;
 		string _stackTraceString;
 		string _unused3;
 		int _unused4;
-		object _unused5;
+		object _dynamicMethods; // Dynamic methods referenced by the stack trace
 		int _HResult;
 		string _source;
 		object _unused6;
-		StackTrace[] captured_traces;
+		internal MonoStackFrame[] foreignExceptionsFrames;
 		IntPtr[] native_trace_ips;
 		int caught_in_unmanaged;
 		#endregion
@@ -43,21 +53,39 @@ namespace System
 		{
 			if (_stackTraceString != null)
 				return _stackTraceString;
+			if (_traceIPs == null)
+				return null;
 
 			return new StackTrace (this, needFileInfo).ToString (System.Diagnostics.StackTrace.TraceFormat.Normal);
 		}
 
-		internal readonly struct DispatchState
-		{
-		}
-
 		internal DispatchState CaptureDispatchState ()
 		{
-			return default;
+			MonoStackFrame[] stackFrames = null;
+
+			if (_traceIPs != null) {
+				stackFrames = System.Diagnostics.StackTrace.get_trace (this, 0, true);
+				stackFrames [stackFrames.Length - 1].isLastFrameFromForeignException = true;
+
+				if (foreignExceptionsFrames != null) {
+					var combinedStackFrames = new MonoStackFrame [stackFrames.Length + foreignExceptionsFrames.Length];
+					Array.Copy (foreignExceptionsFrames, 0, combinedStackFrames, 0, foreignExceptionsFrames.Length);
+					Array.Copy (stackFrames, 0, combinedStackFrames, foreignExceptionsFrames.Length, stackFrames.Length);
+
+					stackFrames = combinedStackFrames;
+				}
+			} else {
+				stackFrames = foreignExceptionsFrames;
+			}
+
+			return new DispatchState (stackFrames);
 		}
 
 		internal void RestoreDispatchState (in DispatchState state)
 		{
+			foreignExceptionsFrames = state.StackFrames;
+
+			_stackTraceString = null;
 		}
 
 		string CreateSourceName ()
@@ -88,6 +116,6 @@ namespace System
 
 		static string SerializationWatsonBuckets => null;
 		static string SerializationRemoteStackTraceString => null;
-		static string SerializationStackTraceString => null;
+		string SerializationStackTraceString => GetStackTrace (true);
 	}
 }

@@ -74,7 +74,7 @@ namespace MonoTests.System.ServiceModel.Web
 			ch.Close ();
 		}
 
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 		[Test]
 		public void CreateAtom10Response ()
 		{

@@ -614,19 +614,13 @@ mono_debug_count (void)
 MonoMethod*
 mono_icall_get_wrapper_method (MonoJitICallInfo* callinfo)
 {
-	MonoMethod *wrapper;
 	gboolean check_exc = TRUE;
-	char *name;
 
 	if (!strcmp (callinfo->name, "mono_thread_interruption_checkpoint"))
 		/* This icall is used to check for exceptions, so don't check in the wrapper */
 		check_exc = FALSE;
 
-	name = g_strdup_printf ("__icall_wrapper_%s", callinfo->name);
-	wrapper = mono_marshal_get_icall_wrapper (callinfo->sig, name, callinfo->func, check_exc);
-	g_free (name);
-
-	return wrapper;
+	return mono_marshal_get_icall_wrapper (callinfo, check_exc);
 }
 
 gconstpointer
@@ -3199,6 +3193,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigfpe_signal_handler)
 {
 	MonoException *exc = NULL;
 	MonoJitInfo *ji;
+	MonoContext mctx;
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
@@ -3223,7 +3218,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigfpe_signal_handler)
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			goto exit;
 
-		mono_handle_native_crash ("SIGFPE", ctx, info);
+		mono_sigctx_to_monoctx (ctx, &mctx);
+		mono_handle_native_crash ("SIGFPE", &mctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			goto exit;
@@ -3238,14 +3234,15 @@ exit:
 
 MONO_SIG_HANDLER_FUNC (, mono_sigill_signal_handler)
 {
+	MonoContext mctx;
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
 	MONO_SIG_HANDLER_GET_CONTEXT;
 
 	if (mono_runtime_get_no_exec ())
 		exit (1);
 
-
-	mono_handle_native_crash ("SIGILL", ctx, info);
+	mono_sigctx_to_monoctx (ctx, &mctx);
+	mono_handle_native_crash ("SIGILL", &mctx, info);
 	if (mono_do_crash_chaining) {
 		mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 		return;
@@ -3291,12 +3288,16 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
 	gpointer fault_addr = NULL;
+	MonoContext mctx;
+
 #ifdef HAVE_SIG_INFO
 	MONO_SIG_HANDLER_INFO_TYPE *info = MONO_SIG_HANDLER_GET_INFO ();
 #else
 	void *info = NULL;
 #endif
 	MONO_SIG_HANDLER_GET_CONTEXT;
+
+	mono_sigctx_to_monoctx (ctx, &mctx);
 
 #if defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED) && defined(HAVE_SIG_INFO)
 	if (mono_arch_is_single_step_event (info, ctx)) {
@@ -3321,7 +3322,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	if (!mono_domain_get () || !jit_tls) {
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
-		mono_handle_native_crash ("SIGSEGV", ctx, info);
+		mono_handle_native_crash ("SIGSEGV", &mctx, info);
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			return;
@@ -3336,17 +3337,11 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	if (mono_handle_soft_stack_ovf (jit_tls, ji, ctx, info, (guint8*)info->si_addr))
 		return;
 
-#ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 	/* info->si_addr seems to be NULL on some kernels when handling stack overflows */
 	fault_addr = info->si_addr;
 	if (fault_addr == NULL) {
-		MonoContext mctx;
-
-		mono_sigctx_to_monoctx (ctx, &mctx);
-
 		fault_addr = MONO_CONTEXT_GET_SP (&mctx);
 	}
-#endif
 
 	if (jit_tls && jit_tls->stack_size &&
 		ABS ((guint8*)fault_addr - ((guint8*)jit_tls->end_of_stack - jit_tls->stack_size)) < 8192 * sizeof (gpointer)) {
@@ -3354,7 +3349,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		 * The hard-guard page has been hit: there is not much we can do anymore
 		 * Print a hopefully clear message and abort.
 		 */
-		mono_handle_hard_stack_ovf (jit_tls, ji, ctx, (guint8*)info->si_addr);
+		mono_handle_hard_stack_ovf (jit_tls, ji, &mctx, (guint8*)info->si_addr);
 		g_assert_not_reached ();
 	} else {
 		/* The original handler might not like that it is executed on an altstack... */
@@ -3364,7 +3359,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (is_addr_implicit_null_check (info->si_addr)) {
 			mono_arch_handle_altstack_exception (ctx, info, info->si_addr, FALSE);
 		} else {
-			mono_handle_native_crash ("SIGSEGV", ctx, info);
+			mono_handle_native_crash ("SIGSEGV", &mctx, info);
 		}
 	}
 #else
@@ -3373,7 +3368,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
 			return;
 
-		mono_handle_native_crash ("SIGSEGV", ctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
+		mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
 
 		if (mono_do_crash_chaining) {
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
@@ -3384,7 +3379,7 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 	if (is_addr_implicit_null_check (fault_addr)) {
 		mono_arch_handle_exception (ctx, NULL);
 	} else {
-		mono_handle_native_crash ("SIGSEGV", ctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
+		mono_handle_native_crash ("SIGSEGV", &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
 	}
 #endif
 }
