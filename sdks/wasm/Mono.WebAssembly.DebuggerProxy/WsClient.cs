@@ -29,8 +29,13 @@ namespace WsProxy {
 		}
 
 		protected virtual void Dispose (bool disposing) {
-			if (disposing)
+			if (disposing) {
+				if (socket.State == WebSocketState.Open) {
+					Console.WriteLine("Closing socket");
+					socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Shutting down tests", CancellationToken.None);
+				}
 				socket.Dispose ();
+			}
 		}
 
 		Task Pump (Task task, CancellationToken token)
