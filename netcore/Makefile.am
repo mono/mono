@@ -75,7 +75,6 @@ build-%: check-env
 	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests $($*_XUNIT_ARGS) $(XUNIT_ARGS)
 	cp $(COREFX_BINDIR)/RemoteExecutorConsoleApp/netstandard-Debug/RemoteExecutorConsoleApp.* tests/$*
 	cp $(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/TestLoadAssembly.dll tests/$*
-	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib tests/$*
 	sed -e 's/9.9.9/$(VERSION)/g' < tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json > 2 && mv 2 tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json
 	cd tests/$* && dotnet build
 
@@ -93,7 +92,6 @@ clean:
 # '-parallel none -verbose' for debug, `-parallel all` to run all tests in parallel
 # we need COREFX_ROOT only for xunit.console.deps.json and CoreFx.Private.TestUtilities.dll
 xtest-%: prepare check-env dl-test-assets
-	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib assets/extracted/$*/
 	ln -sf $(CURDIR)/sdk/$(NETCORESDK_VERSION)/System.Text.Encoding.CodePages.dll assets/extracted/$*/
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/xunit.console.deps.json assets/extracted/$*/
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/CoreFx.Private.TestUtilities.dll assets/extracted/$*/
