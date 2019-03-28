@@ -1210,6 +1210,9 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 			td->ip += 5;
 			return TRUE;
 		}
+	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "RuntimeMethodHandle") && !strcmp (tm, "GetFunctionPointer") && csignature->param_count == 1) {
+		// We must intrinsify this method on interp so we don't return a pointer to native code entering interpreter
+		*op = MINT_LDFTN_DYNAMIC;
 	}
 	return FALSE;
 }
