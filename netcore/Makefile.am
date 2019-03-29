@@ -39,54 +39,15 @@ COREFX_BINDIR=$(COREFX_ROOT)/artifacts/bin
 check-env:
 	@if [ "x$(COREFX_ROOT)" == "x" ]; then echo "Set COREFX_ROOT to the root of the fully built corefx repo."; exit 1; fi
 
-#
-# Running tests:
-#  - Tests are run using dotnet bin/Debug/netcoreapp3.0/<...>.dll
-# - One of the test helper assemblies contains pinvokes for System.Globalization.Native, so
-#   the dylib has to be in the current working directory when running, since the runtime will
-#   try to load the dylib from the same directory as the assembly which refers to it.
-#   It has to be symlinked otherwise we load 2 copies of it which fails.
-# - RemoteExecutorConsoleApp.exe needs to be in the current directory, since
-#   its executed as: 'dotnet RemoteExecutorConsoleApp.exe <test assembly> ...'
-# - MONO_PATH needs to be set to the bin dir so the remote executor can find the
-#   test assembly.
-# - The RemoteExecutorConsoleApp.runtimeconfig.json needs to be changed to use the proper
-#   framework version.
-#
-
-TEST_SUITES = \
-	System.Runtime.Tests \
-	System.Runtime.CompilerServices.Unsafe.Tests \
-	System.Collections.Tests
-
-# The binary directory under $(COREFIX_BINDIR)
-System.Runtime.CompilerServices.Unsafe.Tests_PROFILE = netstandard-Debug
-System.Runtime.Tests_PROFILE = netcoreapp-Unix-Debug
-System.Runtime.Tests_XUNIT_ARGS = @../excludes-System.Runtime.Tests.rsp
-System.Collections.Tests_PROFILE = netcoreapp-Debug
-System.Reflection.Emit.Tests_PROFILE = netcoreapp-Debug
-System.Reflection.Emit.Tests_XUNIT_ARGS = @../excludes-System.Reflection.Emit.Tests.rsp
-System.Reflection.Emit.ILGeneration.Tests_PROFILE = netcoreapp-Debug
-System.Reflection.Emit.Lightweight.Tests_PROFILE = netcoreapp-Debug
-System.Threading.Tests_PROFILE = netcoreapp-Debug
-System.Threading.Thread.Tests_PROFILE = netcoreapp-Debug
-
-build-%: check-env
-	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests $($*_XUNIT_ARGS) $(XUNIT_ARGS)
-	cp $(COREFX_BINDIR)/RemoteExecutorConsoleApp/netstandard-Debug/RemoteExecutorConsoleApp.* tests/$*
-	cp $(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/TestLoadAssembly.dll tests/$*
-	sed -e 's/9.9.9/$(VERSION)/g' < tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json > 2 && mv 2 tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json
-	cd tests/$* && dotnet build
-
-run-%: check-env
-	cd tests/$* && MONO_PATH=bin/Debug/netcoreapp3.0 MONO_ENV_OPTIONS="--debug --explicit-null-checks" COMPlus_DebugWriteToStdErr=1 ../../dotnet bin/Debug/netcoreapp3.0/$*-runner.dll
-
-all: $(addprefix build-, $(TEST_SUITES))
-
-check: $(addprefix run-, $(TEST_SUITES))
-
 clean:
 	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
+
+#
+# Running tests:
+#
+# We have two modes to run then with xtest-Foo.Test to be the prefered one because it runs all tests and simple runner
+# with rules like tes-Foo which runs limited set of test
+#
 
 # e.g. `make xtest-System.Collections.Tests COREFX_ROOT=/prj/corefx`
 # '-parallel none -verbose' for debug, `-parallel all` to run all tests in parallel
@@ -99,7 +60,7 @@ xtest-%: prepare check-env dl-test-assets
 	cd assets/extracted/$* && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
 		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
-		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all -verbose \
+		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all \
 		-html ../../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
 		$(shell if [ -a $(CURDIR)/excludes-$*.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp; fi;) \
 		$(FIXTURE) || true
@@ -128,3 +89,37 @@ dl-test-assets: corefx-test-assets.xml .stamp-dl-test-assets
 .stamp-dl-test-assets:
 	python dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) assets
 	touch $@
+
+#
+# console test runner (obsolete)
+#
+TEST_SUITES = \
+	System.Runtime.Tests \
+	System.Runtime.CompilerServices.Unsafe.Tests \
+	System.Collections.Tests
+
+# The binary directory under $(COREFIX_BINDIR)
+System.Runtime.CompilerServices.Unsafe.Tests_PROFILE = netstandard-Debug
+System.Runtime.Tests_PROFILE = netcoreapp-Unix-Debug
+System.Runtime.Tests_XUNIT_ARGS = @../excludes-System.Runtime.Tests.rsp
+System.Collections.Tests_PROFILE = netcoreapp-Debug
+System.Reflection.Emit.Tests_PROFILE = netcoreapp-Debug
+System.Reflection.Emit.Tests_XUNIT_ARGS = @../excludes-System.Reflection.Emit.Tests.rsp
+System.Reflection.Emit.ILGeneration.Tests_PROFILE = netcoreapp-Debug
+System.Reflection.Emit.Lightweight.Tests_PROFILE = netcoreapp-Debug
+System.Threading.Tests_PROFILE = netcoreapp-Debug
+System.Threading.Thread.Tests_PROFILE = netcoreapp-Debug
+
+build-%: check-env
+	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests $($*_XUNIT_ARGS) $(XUNIT_ARGS)
+	cp $(COREFX_BINDIR)/RemoteExecutorConsoleApp/netstandard-Debug/RemoteExecutorConsoleApp.* tests/$*
+	cp $(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/TestLoadAssembly.dll tests/$*
+	sed -e 's/9.9.9/$(VERSION)/g' < tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json > 2 && mv 2 tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json
+	cd tests/$* && dotnet build
+
+run-%: check-env
+	cd tests/$* && MONO_PATH=bin/Debug/netcoreapp3.0 MONO_ENV_OPTIONS="--debug --explicit-null-checks" COMPlus_DebugWriteToStdErr=1 ../../dotnet bin/Debug/netcoreapp3.0/$*-runner.dll
+
+build-base: $(addprefix build-, $(TEST_SUITES))
+
+check: $(addprefix run-, $(TEST_SUITES))
