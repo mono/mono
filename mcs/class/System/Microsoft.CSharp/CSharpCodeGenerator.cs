@@ -89,8 +89,11 @@ namespace Microsoft.CSharp
 			/*
 			 * reset MONO_GC_PARAMS - we are invoking compiler possibly with another GC that
 			 * may not handle some of the options causing compilation failure
+			 *
+			 * reset MONO_CFG_DIR - we don't want to propagate the current config to another mono
 			 */
-			mcs.StartInfo.EnvironmentVariables ["MONO_GC_PARAMS"] = String.Empty;
+			mcs.StartInfo.EnvironmentVariables.Remove ("MONO_GC_PARAMS");
+			mcs.StartInfo.EnvironmentVariables.Remove ("MONO_CFG_DIR");
 
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
