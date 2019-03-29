@@ -1462,9 +1462,6 @@ PROFILE_DISABLED_TESTS += \
 PROFILE_DISABLED_TESTS += \
 	delegate15.exe
 
-PROFILE_DISABLED_TESTS += \
-	twopassvariance.exe
-
 # https://bugzilla.xamarin.com/show_bug.cgi?id=60973
 PROFILE_DISABLED_TESTS += \
 	weak-fields.exe
