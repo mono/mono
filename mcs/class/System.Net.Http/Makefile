@@ -11,20 +11,30 @@ ifeq (monodroid,$(PROFILE))
 LIB_MCS_FLAGS += -d:XAMARIN_MODERN
 endif
 
-ifneq (,$(filter monotouch monotouch_tv monotouch_watch,$(PROFILE)))
-LIB_MCS_FLAGS += -D:XAMCORE_2_0 -D:XAMARIN_MODERN -D:SYSTEM_NET_HTTP -D:UNIFIED -D:__UNIFIED__
-endif
-
 ifeq (monotouch,$(PROFILE))
 API_BIN_REFS := Xamarin.iOS
+LIB_MCS_FLAGS += -d:XAMARIN_MODERN
 endif
 
 ifeq (monotouch_tv,$(PROFILE))
 API_BIN_REFS := Xamarin.TVOS
+LIB_MCS_FLAGS += -d:XAMARIN_MODERN
 endif
 
 ifeq (monotouch_watch,$(PROFILE))
 API_BIN_REFS := Xamarin.WatchOS
+LIB_MCS_FLAGS += -d:XAMARIN_MODERN
+endif
+
+ifeq (xammac,$(PROFILE))
+API_BIN_REFS := Xamarin.Mac
+LIB_MCS_FLAGS += -d:XAMARIN_MODERN
+endif
+
+ifeq (xammac_net_4_5,$(PROFILE))
+# we can't use API_BIN_REFS for xammac_net_4_5 as it inherits from net_4_x.make
+LIB_MCS_FLAGS += -r:$(topdir)/../external/binary-reference-assemblies/build/monotouch/Xamarin.Mac.dll
+LIB_MCS_FLAGS += -d:XAMARIN_MODERN
 endif
 
 TEST_LIB_REFS = System System.Core
