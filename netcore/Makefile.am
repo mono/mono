@@ -110,8 +110,7 @@ EXCLUDED_COREFX_TESTS = \
 	System.Net.Http.Functional.Tests \
 	System.Net.HttpListener.Tests \
 	System.Net.NameResolution.Functional.Tests \
-	System.Net.Sockets.Tests \
-	System.Threading.Timer.Tests
+	System.Net.Sockets.Tests
 
 xtestall: $(foreach workingtest, $(foreach test, $(wildcard assets/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
