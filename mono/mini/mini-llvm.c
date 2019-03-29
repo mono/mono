@@ -9462,7 +9462,7 @@ mono_llvm_propagate_nonnull_func (GHashTable *all_directly_called, MonoLLVMModul
 
 			g_hash_table_insert (module->method_to_call_info, callee_method, call_site_union);
 		}
-		g_free (calls);
+		g_slist_free (calls);
 
 		g_free (current);
 	}

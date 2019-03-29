@@ -322,9 +322,9 @@ mono_llvm_calls_using (LLVMValueRef wrapped_local)
 	GSList *usages = NULL;
 	Value *local = unwrap (wrapped_local);
 
-	for (User *U : local->users ()) {
-		if (isa<CallInst> (U) || isa<InvokeInst> (U)) {
-			usages = g_slist_prepend (usages, wrap (U));
+	for (User *user : local->users ()) {
+		if (isa<CallInst> (user) || isa<InvokeInst> (user)) {
+			usages = g_slist_prepend (usages, wrap (user));
 		}
 	}
 
