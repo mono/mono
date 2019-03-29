@@ -88,8 +88,6 @@ namespace System.Runtime.Remoting.Activation
 
 		public static object CreateProxyFromAttributes (Type type, object[] activationAttributes)
 		{
-			if (!AppDomain.IsRemotingSupported)
-				throw new PlatformNotSupportedException ();
 			string activationUrl = null;
 			foreach (object attr in activationAttributes)
 			{
