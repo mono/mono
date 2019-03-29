@@ -110,6 +110,7 @@
       <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
       <Compile Include="Mono\MonoDomain.cs" />
       <Compile Include="Mono\MonoDomainSetup.cs" />
+      <Compile Include="Mono\MonoListItem.cs" />
       <Compile Include="System\AppContext.cs" />
       <Compile Include="System\Array.cs" />
       <Compile Include="System\Attribute.cs" />
