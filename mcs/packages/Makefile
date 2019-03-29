@@ -20,6 +20,8 @@ ROSLYN_FILES_FOR_MONO = \
 	$(ROSLYN_CSC_DIR)/Microsoft.CodeAnalysis.Scripting.dll \
 	$(ROSLYN_CSC_DIR)/System.Collections.Immutable.dll	\
 	$(ROSLYN_CSC_DIR)/System.Reflection.Metadata.dll	\
+	$(ROSLYN_CSC_DIR)/System.Threading.Tasks.Extensions.dll	\
+	$(ROSLYN_CSC_DIR)/System.Memory.dll	\
 	$(ROSLYN_CSC_DIR)/VBCSCompiler.exe			\
 	$(ROSLYN_CSC_DIR)/VBCSCompiler.exe.config
 
