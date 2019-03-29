@@ -88,9 +88,14 @@ namespace WsProxy {
 
 				if (await Task.WhenAny (tcs.Task, Task.Delay (2000)) != tcs.Task) {
 					Console.WriteLine ("Didnt get the con string after 2s.");
-					throw new Exception ("node.js timedout");
+					throw new Exception ("TestHarnessStartup: timed out");
 				}
 				var con_str = await tcs.Task;
+				if (con_str.StartsWith("Whoops!!!", StringComparison.Ordinal))
+				{
+					throw new Exception(con_str);
+				}
+					
 				Console.WriteLine ($"TestHarnessStartup::LaunchAndServe: Lauching proxy for {con_str}");
 
 				var proxy = new MonoProxy ();
@@ -100,7 +105,7 @@ namespace WsProxy {
 				await proxy.Run (browserUri, ideSocket);
 				Console.WriteLine($"Proxy finished for {browserUri}");
 			} catch (Exception e) {
-				Console.WriteLine ("TestHarnessStartup::LaunchAndServe: Exception {0}", e.GetType ().FullName);
+				Console.WriteLine ($"TestHarnessStartup::LaunchAndServe: Exception {e.Message}");
 			} finally {
 				proc.CancelErrorRead ();
 				proc.CancelOutputRead ();
@@ -146,17 +151,23 @@ namespace WsProxy {
 					Console.WriteLine ("New test request");
 					await LaunchAndServe (psi, context, str => {
 						//We wait for it as a signal that chrome finished launching
+						Console.WriteLine($"launch-chrome-and-connect: {str}");
 						if (!str.StartsWith ("DevTools listening on ", StringComparison.Ordinal))
 							return null;
 
-						var client = new HttpClient ();
-						var res = client.GetStringAsync ("http://localhost:9333/json/list").Result;
-						Console.WriteLine ("res is {0}", res);
-						var obj = JArray.Parse (res);
-						var wsURl = obj? [0]? ["webSocketDebuggerUrl"]?.Value<string> ();
-						Console.WriteLine (">>> {0}", wsURl);
+						using (var client = new HttpClient ()) {
+							var res = client.GetStringAsync ("http://localhost:9333/json/list").Result;
+							Console.WriteLine ($"Websocket targets returned from chrome {res}");
+							var obj = JArray.Parse (res);
+							var wsURL = "Whoops!!!! Something went wrong while probing for available websocket targets.";
+							if (obj.Count > 0)
+                            {
+                                wsURL = obj?[0]?["webSocketDebuggerUrl"]?.Value<string>();
+                            }
 
-						return wsURl;
+                            Console.WriteLine(">>> {0}", wsURL);
+							return wsURL;
+                        }
 					});
 				});
 			});
