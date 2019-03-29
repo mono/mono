@@ -106,7 +106,6 @@ xtest-%: prepare check-env dl-test-assets
 
 # these tests won't be included in `xtestall` (some of them crash runtime, some hang)
 EXCLUDED_COREFX_TESTS = \
-	System.Diagnostics.StackTrace.Tests \
 	System.Diagnostics.Tracing.Tests \
 	System.Net.Http.Functional.Tests \
 	System.Net.HttpListener.Tests \

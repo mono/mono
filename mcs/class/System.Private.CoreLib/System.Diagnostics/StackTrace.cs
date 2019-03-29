@@ -39,7 +39,7 @@ namespace System.Diagnostics
 
 			StackFrame sf;
 			var frames = new List<StackFrame> ();
-			while ((sf = new StackFrame (skipFrames, needFileInfo)) != null && sf.GetMethod () != null) {
+			while (skipFrames >= 0 && (sf = new StackFrame (skipFrames, needFileInfo)) != null && sf.GetMethod () != null) {
 				frames.Add (sf);
 				skipFrames++;
 			}
