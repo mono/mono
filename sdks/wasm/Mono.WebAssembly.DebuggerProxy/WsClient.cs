@@ -31,8 +31,8 @@ namespace WsProxy {
 		protected virtual void Dispose (bool disposing) {
 			if (disposing) {
 				if (socket.State == WebSocketState.Open) {
-					Console.WriteLine("Closing socket");
-					socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Shutting down tests", CancellationToken.None);
+					Console.WriteLine("WsClient: Closing socket");
+					socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Shutting down WsClient", CancellationToken.None);
 				}
 				socket.Dispose ();
 			}
@@ -99,7 +99,7 @@ namespace WsProxy {
 			Func<CancellationToken, Task> send,
 			CancellationToken token) {
 
-			Console.WriteLine ("connecting to {0}", uri);
+			Console.WriteLine ($"WsClient connecting to {uri}");
 			this.socket = new ClientWebSocket ();
 			this.socket.Options.KeepAliveInterval = Timeout.InfiniteTimeSpan;
 

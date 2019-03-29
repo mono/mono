@@ -97,6 +97,7 @@ namespace WsProxy {
 
 	public class WsProxy {
 		TaskCompletionSource<bool> side_exception = new TaskCompletionSource<bool> ();
+		TaskCompletionSource<bool> client_initiated_close = new TaskCompletionSource<bool> ();
 		List<(int, TaskCompletionSource<Result>)> pending_cmds = new List<(int, TaskCompletionSource<Result>)> ();
 		ClientWebSocket browser;
 		WebSocket ide;
@@ -119,16 +120,23 @@ namespace WsProxy {
 			byte [] buff = new byte [4000];
 			var mem = new MemoryStream ();
 			while (true) {
-				var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
-				if (result.MessageType == WebSocketMessageType.Close) {
-					return null;
-				}
+				try {
+					var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
+					if (result.MessageType == WebSocketMessageType.Close) {
+						client_initiated_close.TrySetResult (true);
+						return null;
+					}
 
-				if (result.EndOfMessage) {
-					mem.Write (buff, 0, result.Count);
-					return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
-				} else {
-					mem.Write (buff, 0, result.Count);
+					if (result.EndOfMessage) {
+						mem.Write (buff, 0, result.Count);
+						return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
+					} else {
+						mem.Write (buff, 0, result.Count);
+					}
+				}
+				catch (Exception exc) {
+					client_initiated_close.TrySetResult (true);
+					return null;
 				}
 			}
 		}
@@ -259,21 +267,22 @@ namespace WsProxy {
 		 // , HttpContext context)
 		public async Task Run (Uri browserUri, WebSocket ideSocket) 
 		{
-			Debug ("wsproxy start");
+			Debug ($"WsProxy Starting on {browserUri}");
 			using (this.ide = ideSocket) {
-				Debug ("ide connected");
+				Debug ($"WsProxy: IDE waiting for connection on {browserUri}");
 				queues.Add (new WsQueue (this.ide));
 				using (this.browser = new ClientWebSocket ()) {
 					this.browser.Options.KeepAliveInterval = Timeout.InfiniteTimeSpan;
 					await this.browser.ConnectAsync (browserUri, CancellationToken.None);
 					queues.Add (new WsQueue (this.browser));
 
-					Debug ("client connected");
+					Debug ($"WsProxy: Client connected on {browserUri}");
 					var x = new CancellationTokenSource ();
 
 					pending_ops.Add (ReadOne (browser, x.Token));
 					pending_ops.Add (ReadOne (ide, x.Token));
 					pending_ops.Add (side_exception.Task);
+					pending_ops.Add (client_initiated_close.Task);
 
 					try {
 						while (!x.IsCancellationRequested) {
@@ -290,6 +299,10 @@ namespace WsProxy {
 							} else if (task == pending_ops [2]) {
 								var res = ((Task<bool>)task).Result;
 								throw new Exception ("side task must always complete with an exception, what's going on???");
+							} else if (task == pending_ops [3]) {
+								var res = ((Task<bool>)task).Result;
+								Debug ($"WsProxy: Client initiated close from {browserUri}");
+								x.Cancel ();
 							} else {
 								//must be a background task
 								pending_ops.Remove (task);
@@ -302,10 +315,11 @@ namespace WsProxy {
 							}
 						}
 					} catch (Exception e) {
-						Debug ($"got exception {e}");
+						Debug ($"WsProxy::Run: Exception {e}");
 						//throw;
 					} finally {
-						x.Cancel ();
+						if (!x.IsCancellationRequested)
+							x.Cancel ();
 					}
 				}
 			}

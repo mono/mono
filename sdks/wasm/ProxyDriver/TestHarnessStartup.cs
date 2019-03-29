@@ -75,13 +75,13 @@ namespace WsProxy {
 			var proc = Process.Start (psi);
 			try {
 				proc.ErrorDataReceived += (sender, e) => {
-					Console.WriteLine ($"stderr: {e.Data}");
+					Console.WriteLine ($"TestHarnessStartup::LaunchAndServe:stderr: {e.Data}");
 					var res = extract_conn_url (e.Data);
 					if (res != null)
 						tcs.TrySetResult (res);
 				};
 				proc.OutputDataReceived += (sender, e) => {
-					Console.WriteLine ($"stdout: {e.Data}");
+					Console.WriteLine ($"TestHarnessStartup::LaunchAndServe:stdout: {e.Data}");
 				};
 				proc.BeginErrorReadLine ();
 				proc.BeginOutputReadLine ();
@@ -91,16 +91,16 @@ namespace WsProxy {
 					throw new Exception ("node.js timedout");
 				}
 				var con_str = await tcs.Task;
-				Console.WriteLine ($"lauching proxy for {con_str}");
+				Console.WriteLine ($"TestHarnessStartup::LaunchAndServe: Lauching proxy for {con_str}");
 
 				var proxy = new MonoProxy ();
 				var browserUri = new Uri (con_str);
 				var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
 				await proxy.Run (browserUri, ideSocket);
-				Console.WriteLine("Proxy done");
+				Console.WriteLine($"Proxy finished for {browserUri}");
 			} catch (Exception e) {
-				Console.WriteLine ("got exception {0}", e.GetType ().FullName);
+				Console.WriteLine ("TestHarnessStartup::LaunchAndServe: Exception {0}", e.GetType ().FullName);
 			} finally {
 				proc.CancelErrorRead ();
 				proc.CancelOutputRead ();
