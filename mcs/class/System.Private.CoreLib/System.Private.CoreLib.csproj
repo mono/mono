@@ -116,6 +116,7 @@
       <Compile Include="System\Attribute.cs" />
       <Compile Include="System\Buffer.cs" />
       <Compile Include="System\DefaultBinder.cs" />
+      <Compile Include="System\Delegate.cs" />
       <Compile Include="System\Enum.cs" />
       <Compile Include="System\Environment.cs" />
       <Compile Include="System\Exception.cs" />
@@ -222,8 +223,6 @@
       <Compile Include="..\corlib\Mono\SafeGPtrArrayHandle.cs" />
 
       <Compile Include="..\corlib\System\ArgIterator.cs" />
-      <Compile Include="..\corlib\System\Delegate.cs" />
-      <Compile Include="..\corlib\System\DelegateSerializationHolder.cs" />
       <Compile Include="..\corlib\System\EmptyArray.cs" />
       <Compile Include="..\corlib\System\MathF.mono.cs" />
       <Compile Include="..\corlib\System\ModuleHandle.cs" />
