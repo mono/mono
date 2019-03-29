@@ -50,6 +50,7 @@ namespace System {
 
 #else
 		static bool isFreeBSD;
+		static bool isOpenBSD;
 
 		[DllImport ("libc")]
 		static extern int uname (IntPtr buf);
@@ -76,6 +77,9 @@ namespace System {
 				case "OS400":
 					isIBMi = true;
 					break;
+				case "OpenBSD":
+					isOpenBSD = true;
+					break;
 				}
 			}
 			Marshal.FreeHGlobal (buf);
@@ -96,6 +100,14 @@ namespace System {
 				if (!checkedOS)
 					CheckOS();
 				return isFreeBSD;
+			}
+		}
+
+		public static bool IsOpenBSD {
+			get {
+				if (!checkedOS)
+					CheckOS();
+				return isOpenBSD;
 			}
 		}
 
