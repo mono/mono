@@ -4470,6 +4470,28 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 			break;
 		}
+		MINT_IN_CASE(MINT_INTRINS_UNSAFE_ADD_BYTE_OFFSET) {
+			sp -= 2;
+			sp [0].data.p = (guint8*)sp [0].data.p + sp [1].data.i;
+			sp ++;
+			++ip;
+			MINT_IN_BREAK;
+			break;
+		}
+		MINT_IN_CASE(MINT_INTRINS_UNSAFE_BYTE_OFFSET) {
+			sp -= 2;
+			sp [0].data.i = (guint8*)sp [1].data.p - (guint8*)sp [0].data.p;
+			sp ++;
+			++ip;
+			MINT_IN_BREAK;
+			break;
+		}
+		MINT_IN_CASE(MINT_INTRINS_UNSAFE_AS) {
+			/* Just a type cast */
+			++ip;
+			MINT_IN_BREAK;
+			break;
+		}
 		MINT_IN_CASE(MINT_CASTCLASS_INTERFACE)
 		MINT_IN_CASE(MINT_ISINST_INTERFACE) {
 			gboolean isinst_instr = *ip == MINT_ISINST_INTERFACE;
