@@ -405,6 +405,7 @@ namespace MonoTests.System {
 		}
 #if FEATURE_REMOTING
 		[Test]
+		[Category("LinkerNotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetObject_TypeNull ()
 		{
@@ -413,6 +414,7 @@ namespace MonoTests.System {
 
 		[Test]
 		[Category ("MobileNotWorking")]
+		[Category("LinkerNotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetObject_UrlNull ()
 		{

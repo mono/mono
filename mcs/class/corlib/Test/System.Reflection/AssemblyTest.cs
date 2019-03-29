@@ -889,6 +889,7 @@ namespace MonoTests.System.Reflection
 
 		[Test] // bug #79715
 		[Category("MobileNotWorking")]
+		[Category ("LinkerNotWorking")]
 		public void Load_PartialVersion ()
 		{
 			string tempDir = TempFolder;

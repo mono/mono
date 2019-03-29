@@ -35,6 +35,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
+	[Category ("LinkerNotWorking")]
 	public class IBuiltInPermissionTest {
 
 		// IBuiltInPermission is internal but we can test it's values
