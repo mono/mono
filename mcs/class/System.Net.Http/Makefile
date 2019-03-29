@@ -11,10 +11,6 @@ ifeq (monodroid,$(PROFILE))
 LIB_MCS_FLAGS += -d:XAMARIN_MODERN
 endif
 
-ifneq (,$(filter monotouch monotouch_tv monotouch_watch,$(PROFILE)))
-LIB_MCS_FLAGS += -D:XAMCORE_2_0 -D:XAMARIN_MODERN -D:SYSTEM_NET_HTTP -D:UNIFIED -D:__UNIFIED__
-endif
-
 ifeq (monotouch,$(PROFILE))
 API_BIN_REFS := Xamarin.iOS
 endif

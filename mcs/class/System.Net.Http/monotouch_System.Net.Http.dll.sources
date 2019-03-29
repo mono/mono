@@ -1,6 +1,1 @@
 #include legacy.sources
-CFContentStream.cs
-CFNetworkHandler.cs
-HttpClientEx.cs
-NSUrlSessionHandler.cs
-RuntimeOptions.cs
