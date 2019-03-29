@@ -4461,14 +4461,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			/* Followed by a VTRESULT opcode which will push the result on the stack */
 			++sp;
 			MINT_IN_BREAK;
-			break;
 		}
 		MINT_IN_CASE(MINT_INTRINS_BYREFERENCE_GET_VALUE) {
 			gpointer *byreference_this = (gpointer*)sp [-1].data.p;
 			sp [-1].data.p = *byreference_this;
 			++ip;
 			MINT_IN_BREAK;
-			break;
 		}
 		MINT_IN_CASE(MINT_INTRINS_UNSAFE_ADD_BYTE_OFFSET) {
 			sp -= 2;
@@ -4476,7 +4474,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			sp ++;
 			++ip;
 			MINT_IN_BREAK;
-			break;
 		}
 		MINT_IN_CASE(MINT_INTRINS_UNSAFE_BYTE_OFFSET) {
 			sp -= 2;
@@ -4484,13 +4481,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			sp ++;
 			++ip;
 			MINT_IN_BREAK;
-			break;
-		}
-		MINT_IN_CASE(MINT_INTRINS_UNSAFE_AS) {
-			/* Just a type cast */
-			++ip;
-			MINT_IN_BREAK;
-			break;
 		}
 		MINT_IN_CASE(MINT_CASTCLASS_INTERFACE)
 		MINT_IN_CASE(MINT_ISINST_INTERFACE) {

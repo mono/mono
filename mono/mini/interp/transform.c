@@ -1200,10 +1200,10 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 #ifdef ENABLE_NETCORE
 		if (!strcmp (tm, "AddByteOffset"))
 			*op = MINT_INTRINS_UNSAFE_ADD_BYTE_OFFSET;
-		if (!strcmp (tm, "ByteOffset"))
+		else if (!strcmp (tm, "ByteOffset"))
 			*op = MINT_INTRINS_UNSAFE_BYTE_OFFSET;
 		else if (!strcmp (tm, "As"))
-			*op = MINT_INTRINS_UNSAFE_AS;
+			*op = MINT_NOP;
 		else if (!strcmp (tm, "SizeOf")) {
 			MonoGenericContext *ctx = mono_method_get_context (target_method);
 			g_assert (ctx);
