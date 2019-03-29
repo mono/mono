@@ -35,6 +35,7 @@ namespace System {
 
 #if MONOTOUCH || XAMMAC
 		const bool isFreeBSD = false;
+		const bool isOpenBSD = false;
 
 		private static void CheckOS() {
 			isMacOS = true;
@@ -43,6 +44,7 @@ namespace System {
 
 #elif ORBIS
 		const bool isFreeBSD = true;
+		const bool isOpenBSD = false;
 
  		private static void CheckOS() {
  			checkedOS = true;
