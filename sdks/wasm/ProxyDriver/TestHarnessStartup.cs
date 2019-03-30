@@ -164,12 +164,12 @@ namespace WsProxy {
 							var obj = JArray.Parse (res);
 							var wsURL = "Whoops!!!! Something went wrong while probing for available websocket targets.";
 							if (obj.Count > 0)
-						    {
-							wsURL = obj?[0]?["webSocketDebuggerUrl"]?.Value<string>();
-						    }
+							{
+								wsURL = obj?[0]?["webSocketDebuggerUrl"]?.Value<string>();
+							}
 
-						    Console.WriteLine(">>> {0}", wsURL);
-										return wsURL;
+							Console.WriteLine(">>> {0}", wsURL);
+							return wsURL;
 						}
 					});
 				});
