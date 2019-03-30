@@ -22,8 +22,9 @@ namespace DebuggerTests
 
 		public const string PAUSE = "pause";
 		public const string READY = "ready";
+        public const int NUMBER_OF_TRIES = 3;
 
-		public Task<JObject> WaitFor(string what) {
+        public Task<JObject> WaitFor(string what) {
 			if (notifications.ContainsKey (what))
 				throw new Exception ($"Invalid internal state, waiting for {what} while another wait is already setup");
 			var n = new TaskCompletionSource<JObject> ();
@@ -61,29 +62,58 @@ namespace DebuggerTests
 		}
 
 		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null) {
-			using (var cts = new CancellationTokenSource ()) {
-				cts.CancelAfter (60 * 1000); //tests have 1 minute to complete
-				var uri = new Uri ("ws://localhost:9300/launch-chrome-and-connect");
-				using (var client = new InspectorClient ()) {
-					await client.Connect (uri, OnMessage, async token => {
-						Task[] init_cmds = new Task [] {
-							client.SendCommand ("Profiler.enable", null, token),
-							client.SendCommand ("Runtime.enable", null, token),
-							client.SendCommand ("Debugger.enable", null, token),
-							client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token),
-							WaitFor (READY),
-						};
-						// await Task.WhenAll (init_cmds);
-						Console.WriteLine ("waiting for the runtime to be ready");
-						await init_cmds [4];
-						Console.WriteLine ("runtime ready, TEST TIME");
-						if (cb != null) {
-							Console.WriteLine("await cb(client, token)");
-							await cb(client, token);
-						}
-					}, cts.Token);
-				}
-			}
+
+            var tries = 0;
+            using (var readyCTS = new CancellationTokenSource())
+            {
+                while (!readyCTS.IsCancellationRequested && tries < NUMBER_OF_TRIES)
+                {
+                    if (tries > 0)
+                    {
+                        Console.WriteLine($"There seems to have been a problem trying again: Try {tries + 1} of {NUMBER_OF_TRIES}");
+                    }
+                    using (var cts = new CancellationTokenSource())
+                    {
+                        cts.CancelAfter(60 * 1000); //tests have 1 minute to complete
+                        var uri = new Uri("ws://localhost:9300/launch-chrome-and-connect");
+                        using (var client = new InspectorClient())
+                        {
+
+                            try
+                            {
+                                await client.Connect(uri, OnMessage, async token =>
+                                {
+                                    readyCTS.Cancel();
+                                    Task[] init_cmds = new Task[] {
+                                    client.SendCommand ("Profiler.enable", null, token),
+                                    client.SendCommand ("Runtime.enable", null, token),
+                                    client.SendCommand ("Debugger.enable", null, token),
+                                    client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token),
+                                    WaitFor (READY),
+                                    };
+                                // await Task.WhenAll (init_cmds);
+                                Console.WriteLine("waiting for the runtime to be ready");
+                                    await init_cmds[4];
+                                    Console.WriteLine("runtime ready, TEST TIME");
+                                    if (cb != null)
+                                    {
+                                        Console.WriteLine("await cb(client, token)");
+                                        await cb(client, token);
+                                    }
+                                }, cts.Token);
+                            }
+                            catch (Exception can)
+                            {
+                                Console.WriteLine(can.Message);
+                            }
+                            finally
+                            {
+                                tries++;
+                            }
+                        }
+                    }
+                }
+            }
 		}
 	}
 

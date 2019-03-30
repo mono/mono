@@ -100,31 +100,32 @@ namespace WsProxy {
 			CancellationToken token) {
 
 			Console.WriteLine ($"WsClient connecting to {uri}");
-			this.socket = new ClientWebSocket ();
-			this.socket.Options.KeepAliveInterval = Timeout.InfiniteTimeSpan;
+			using (this.socket = new ClientWebSocket ()) {
+				this.socket.Options.KeepAliveInterval = Timeout.InfiniteTimeSpan;
 
-			await this.socket.ConnectAsync (uri, token);
-			pending_ops.Add (ReadOne (token));
-			pending_ops.Add (side_exit.Task);
-			pending_ops.Add (MarkCompleteAfterward (send, token));
+				await this.socket.ConnectAsync (uri, token);
+				pending_ops.Add (ReadOne (token));
+				pending_ops.Add (side_exit.Task);
+				pending_ops.Add (MarkCompleteAfterward (send, token));
 
-			while (!token.IsCancellationRequested) {
-				var task = await Task.WhenAny (pending_ops);
-				if (task == pending_ops [0]) { //pending_ops[0] is for message reading
-					var msg = ((Task<string>)task).Result;
-					pending_ops [0] = ReadOne (token);
-					Task tsk = receive (msg, token);
-					if (tsk != null)
-						pending_ops.Add (tsk);
-				} else if (task == pending_ops [1]) {
-					var res = ((Task<bool>)task).Result;
-					//it might not throw if exiting successfull
-					return res;
-				} else { //must be a background task
-					pending_ops.Remove (task);
-					var tsk = Pump (task, token);
-					if (tsk != null)
-						pending_ops.Add (tsk);
+				while (!token.IsCancellationRequested) {
+					var task = await Task.WhenAny (pending_ops);
+					if (task == pending_ops [0]) { //pending_ops[0] is for message reading
+						var msg = ((Task<string>)task).Result;
+						pending_ops [0] = ReadOne (token);
+						Task tsk = receive (msg, token);
+						if (tsk != null)
+							pending_ops.Add (tsk);
+					} else if (task == pending_ops [1]) {
+						var res = ((Task<bool>)task).Result;
+						//it might not throw if exiting successfull
+						return res;
+					} else { //must be a background task
+						pending_ops.Remove (task);
+						var tsk = Pump (task, token);
+						if (tsk != null)
+							pending_ops.Add (tsk);
+					}
 				}
 			}
 
