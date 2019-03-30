@@ -74,41 +74,41 @@ namespace WsProxy {
 
 			var proc = Process.Start (psi);
 			try {
-			proc.ErrorDataReceived += (sender, e) => {
-			    Console.WriteLine($"TestHarnessStartup::LaunchAndServe:stderr: {e.Data}");
-			    var res = extract_conn_url(e.Data);
-			    if (res != null)
-				tcs.TrySetResult(res);
-			};
-			proc.OutputDataReceived += (sender, e) => {
-			    Console.WriteLine($"TestHarnessStartup::LaunchAndServe:stdout: {e.Data}");
-			};
-			proc.BeginErrorReadLine();
-			proc.BeginOutputReadLine();
+				proc.ErrorDataReceived += (sender, e) => {
+				    Console.WriteLine($"TestHarnessStartup::LaunchAndServe:stderr: {e.Data}");
+				    var res = extract_conn_url(e.Data);
+				    if (res != null)
+					tcs.TrySetResult(res);
+				};
+				proc.OutputDataReceived += (sender, e) => {
+				    Console.WriteLine($"TestHarnessStartup::LaunchAndServe:stdout: {e.Data}");
+				};
+				proc.BeginErrorReadLine();
+				proc.BeginOutputReadLine();
 
-			if (await Task.WhenAny(tcs.Task, Task.Delay(2000)) != tcs.Task) {
-			    Console.WriteLine("Didnt get the con string after 2s.");
-			    throw new Exception("TestHarnessStartup: timed out");
-			}
-			var con_str = await tcs.Task;
-			if (con_str.StartsWith("Whoops!!!", StringComparison.Ordinal))
-			{
-			    throw new ArgumentNullException("connectionString", con_str);
-			}
+				if (await Task.WhenAny(tcs.Task, Task.Delay(2000)) != tcs.Task) {
+				    Console.WriteLine("Didnt get the con string after 2s.");
+				    throw new Exception("TestHarnessStartup: timed out");
+				}
+				var con_str = await tcs.Task;
+				if (con_str.StartsWith("Whoops!!!", StringComparison.Ordinal))
+				{
+				    throw new ArgumentNullException("connectionString", con_str);
+				}
 
-			Console.WriteLine($"TestHarnessStartup::LaunchAndServe: Lauching proxy for {con_str}");
+				Console.WriteLine($"TestHarnessStartup::LaunchAndServe: Lauching proxy for {con_str}");
 
-			var proxy = new MonoProxy();
-			var browserUri = new Uri(con_str);
-			var ideSocket = await context.WebSockets.AcceptWebSocketAsync();
+				var proxy = new MonoProxy();
+				var browserUri = new Uri(con_str);
+				var ideSocket = await context.WebSockets.AcceptWebSocketAsync();
 
-			await proxy.Run(browserUri, ideSocket);
-			Console.WriteLine($"Proxy finished for {browserUri}");
+				await proxy.Run(browserUri, ideSocket);
+				Console.WriteLine($"Proxy finished for {browserUri}");
 			} catch (ArgumentNullException ane) {
-			//Console.WriteLine($"TestHarnessStartup::LaunchAndServe: ArgumentNullException {ane.Message}");
-			throw ane;
+				//Console.WriteLine($"TestHarnessStartup::LaunchAndServe: ArgumentNullException {ane.Message}");
+				throw ane;
 			} catch (Exception e) {
-			Console.WriteLine($"TestHarnessStartup::LaunchAndServe: Exception {e.Message}");
+				Console.WriteLine($"TestHarnessStartup::LaunchAndServe: Exception {e.Message}");
 			} finally {
 				proc.CancelErrorRead ();
 				proc.CancelOutputRead ();
