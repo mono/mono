@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "glib.h"
-#include "mono/utils/mono-path.h"
+
+#include "mono/utils/mono-path.c"
 
 static char*
 make_path (const char *a, int itrail, int slash, int upcase)
