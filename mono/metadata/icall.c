@@ -331,12 +331,6 @@ array_set_value_impl (MonoArrayHandle arr_handle, MonoObjectHandle value_handle,
 	MonoTypeEnum vt;
 	vt = m_class_get_byval_arg (vc)->type;
 
-#ifdef ENABLE_NETCORE
-	if (m_class_is_enumtype (ec) && m_class_is_primitive (vc))
-		/* Can't convert a primitive to an enum */
-		INVALID_CAST;
-#endif
-
 	/* Check element (destination) type. */
 	switch (et) {
 	case MONO_TYPE_STRING:
