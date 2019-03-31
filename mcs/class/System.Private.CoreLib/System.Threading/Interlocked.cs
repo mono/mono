@@ -69,6 +69,7 @@ namespace System.Threading
 
 		public static void MemoryBarrier () => Thread.MemoryBarrier ();
 
-		public static void MemoryBarrierProcessWide () => throw new NotImplementedException ();
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void MemoryBarrierProcessWide ();
 	}
 }
