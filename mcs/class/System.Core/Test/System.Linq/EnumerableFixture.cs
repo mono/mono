@@ -500,6 +500,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void Distinct_MixedCaseStringsWithCaseIgnoringComparer_YieldsFirstCaseOfEachDistinctStringInSourceOrder ()
 		{
 			var source = Read ("Foo Bar BAZ BaR baz FOo".Split ());
@@ -610,6 +611,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void Except_SecondArgComparerArg_ComparerIsUsed ()
 		{
 			var first = Read ("albert", "john", "simon");
@@ -773,6 +775,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void GroupBy_KeySelectorArgComparerArg_KeysThatDifferInCasingNonCaseSensitiveStringComparer_CorrectGrouping ()
 		{
 			var persons = Read (Person.CreatePersonsWithNamesUsingMixedCase ());
@@ -834,6 +837,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void GroupBy_KeySelectorArgElementSelectorArgComparerArg_ValidArguments_CorrectGroupingAndProcessing ()
 		{
 			var persons = Read (Person.CreatePersonsWithNamesUsingMixedCase ());
@@ -873,6 +877,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void GroupBy_KeySelectorArgResultSelectorArgComparerArg_ValidArguments_CorrectGroupingAndTransforming ()
 		{
 			var persons = Read (Person.CreatePersonsWithNamesUsingMixedCase ());
@@ -891,6 +896,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void GroupBy_KeySelectorArgElementSelectorArgResultSelectorArgComparerArg_ValidArguments_CorrectGroupingAndTransforming ()
 		{
 			var persons = Read (Person.CreatePersonsWithNamesUsingMixedCase ());
@@ -947,6 +953,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void GroupJoin_InnerArgOuterKeySelectorArgInnerKeySelectorArgResultSelectorArgComparerArg_ValidArguments_CorrectGroupingAndJoining ()
 		{
 			var persons = Read (Person.CreatePersons ());
@@ -1005,6 +1012,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void Intersect_MixedStringsAndCaseInsensitiveComparer_YieldsCommonSetFromFirstSource ()
 		{
 			var first = Read ("Heinrich", "Hubert", "Thomas");
@@ -1058,6 +1066,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void Join_InnerArgOuterKeySelectorArgInnerKeySelectorArgResultSelectorArgComparerArg_PetOwnersNamesCasingIsInconsistent_CaseInsensitiveJoinIsPerformed ()
 		{
 			var persons = Read (Person.CreatePersons ());
@@ -2080,6 +2089,7 @@ namespace MonoTests.System.Linq
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void Union_SecondArgComparerArg_UpperCaseAndLowerCaseStrings_PassedComparerIsUsed ()
 		{
 			var source = Read ("A", "B", "C", "D", "E", "F");

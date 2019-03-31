@@ -51,6 +51,7 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void Invariant ()
 		{
 			Comparer c = Comparer.DefaultInvariant;
@@ -71,6 +72,7 @@ namespace MonoTests.System.Collections {
 		}
 
 		[Test]
+		[Category ("ManagedCollator")]
 		public void Constructor ()
 		{
 			Comparer c = new Comparer (CultureInfo.InvariantCulture);

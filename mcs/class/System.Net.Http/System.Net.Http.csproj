@@ -39,17 +39,17 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../class/lib/monotouch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;XAMCORE_2_0;XAMARIN_MODERN;SYSTEM_NET_HTTP;UNIFIED;__UNIFIED__</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <OutputPath>./../../class/lib/monotouch_watch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_watch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;XAMCORE_2_0;XAMARIN_MODERN;SYSTEM_NET_HTTP;UNIFIED;__UNIFIED__</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <OutputPath>./../../class/lib/monotouch_tv</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;XAMCORE_2_0;XAMARIN_MODERN;SYSTEM_NET_HTTP;UNIFIED;__UNIFIED__</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
@@ -74,12 +74,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_DYNAMIC;XAMMAC;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;XAMARIN_MODERN;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
     <OutputPath>./../../class/lib/xammac_net_4_5</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-xammac_net_4_5</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;NO_SYSTEM_DRAWING_DEPENDENCY;NO_WINFORMS_DEPENDENCY;NO_SYSTEM_WEB_DEPENDENCY;XAMMAC_4_5;XAMARIN_MODERN;XAMARIN_MODERN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
     <OutputPath>./../../class/lib/orbis</OutputPath>
@@ -164,7 +164,7 @@
         <Compile Include="System.Net.Http\DelegatingHandler.cs" />
         <Compile Include="System.Net.Http\FormUrlEncodedContent.cs" />
         <Compile Include="System.Net.Http\HttpClient.cs" />
-        <Compile Include="System.Net.Http\HttpClient.mac.cs" />
+        <Compile Include="System.Net.Http\HttpClient.macios.cs" />
         <Compile Include="System.Net.Http\HttpCompletionOption.cs" />
         <Compile Include="System.Net.Http\HttpContent.cs" />
         <Compile Include="System.Net.Http\HttpMessageHandler.cs" />
@@ -873,10 +873,7 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_watch'">
       <ItemGroup>
-        <Compile Include="HttpClientEx.cs" />
-        <Compile Include="NSUrlSessionHandler.cs" />
         <Compile Include="PlatformHelper.Legacy.cs" />
-        <Compile Include="RuntimeOptions.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -915,6 +912,7 @@
         <Compile Include="System.Net.Http\DelegatingHandler.cs" />
         <Compile Include="System.Net.Http\FormUrlEncodedContent.cs" />
         <Compile Include="System.Net.Http\HttpClient.cs" />
+        <Compile Include="System.Net.Http\HttpClient.macios.cs" />
         <Compile Include="System.Net.Http\HttpClientHandler.platformnotsupported.cs" />
         <Compile Include="System.Net.Http\HttpCompletionOption.cs" />
         <Compile Include="System.Net.Http\HttpContent.cs" />
@@ -936,16 +934,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="CFContentStream.cs" />
-        <Compile Include="CFNetworkHandler.cs" />
-        <Compile Include="HttpClientEx.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
-        <Compile Include="NSUrlSessionHandler.cs" />
         <Compile Include="PlatformHelper.Legacy.cs" />
-        <Compile Include="RuntimeOptions.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -984,6 +977,7 @@
         <Compile Include="System.Net.Http\DelegatingHandler.cs" />
         <Compile Include="System.Net.Http\FormUrlEncodedContent.cs" />
         <Compile Include="System.Net.Http\HttpClient.cs" />
+        <Compile Include="System.Net.Http\HttpClient.macios.cs" />
         <Compile Include="System.Net.Http\HttpCompletionOption.cs" />
         <Compile Include="System.Net.Http\HttpContent.cs" />
         <Compile Include="System.Net.Http\HttpMessageHandler.cs" />
@@ -1004,16 +998,11 @@
       <ItemGroup>
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\CancellationHelper.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Http\src\System\Net\Http\SocketsHttpHandler\ConnectHelper.cs" />
-        <Compile Include="CFContentStream.cs" />
-        <Compile Include="CFNetworkHandler.cs" />
-        <Compile Include="HttpClientEx.cs" />
         <Compile Include="HttpClientHandler.Legacy.cs" />
         <Compile Include="HttpClientHandler.cs" />
         <Compile Include="IMonoHttpClientHandler.cs" />
         <Compile Include="MonoWebRequestHandler.cs" />
-        <Compile Include="NSUrlSessionHandler.cs" />
         <Compile Include="PlatformHelper.Legacy.cs" />
-        <Compile Include="RuntimeOptions.cs" />
         <Compile Include="System.Net.Http.Headers\AuthenticationHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CacheControlHeaderValue.cs" />
         <Compile Include="System.Net.Http.Headers\CollectionExtensions.cs" />
@@ -1052,6 +1041,7 @@
         <Compile Include="System.Net.Http\DelegatingHandler.cs" />
         <Compile Include="System.Net.Http\FormUrlEncodedContent.cs" />
         <Compile Include="System.Net.Http\HttpClient.cs" />
+        <Compile Include="System.Net.Http\HttpClient.macios.cs" />
         <Compile Include="System.Net.Http\HttpCompletionOption.cs" />
         <Compile Include="System.Net.Http\HttpContent.cs" />
         <Compile Include="System.Net.Http\HttpMessageHandler.cs" />
@@ -1228,6 +1218,20 @@
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <Reference Include="nunitlite">
       <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac' ">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/Xamarin.Mac.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/Xamarin.Mac.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'xammac_net_4_5' ">
+    <Reference Include="./../../../external/binary-reference-assemblies/build/monotouch/Xamarin.Mac.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/build/monotouch/Xamarin.Mac.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
