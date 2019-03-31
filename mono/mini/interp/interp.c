@@ -4242,14 +4242,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			sp -= 2;
 			MINT_IN_BREAK;
 		}
-		MINT_IN_CASE(MINT_LDOBJ) {
-			void *p;
-			c = (MonoClass*)imethod->data_items[* (guint16 *)(ip + 1)];
-			ip += 2;
-			p = sp [-1].data.p;
-			stackval_from_data (m_class_get_byval_arg (c), &sp [-1], p, FALSE);
-			MINT_IN_BREAK;
-		}
 		MINT_IN_CASE(MINT_LDOBJ_VT) {
 			void *p;
 			c = (MonoClass*)imethod->data_items[* (guint16 *)(ip + 1)];
