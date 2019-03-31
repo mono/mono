@@ -3609,12 +3609,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				goto_if_nok (error, exit);
 			}
 
-			MonoClass *tos_klass = td->sp [-1].klass;
-			if (tos_klass && td->sp [-1].type == STACK_TYPE_VT) {
-				int tos_size = mono_class_value_size (tos_klass, NULL);
-				POP_VT (td, tos_size);
-			}
-
 			int mt = mint_type (m_class_get_byval_arg (klass));
 
 			interp_add_ins (td, (mt == MINT_TYPE_VT) ? MINT_LDOBJ_VT: MINT_LDOBJ);
