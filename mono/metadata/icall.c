@@ -634,7 +634,11 @@ ves_icall_System_Array_SetValue (MonoArrayHandle arr, MonoObjectHandle value,
 
 	g_assert (m_class_get_rank (ic) == 1);
 	if (mono_handle_array_has_bounds (idxs) || MONO_HANDLE_GETVAL (idxs, max_length) != m_class_get_rank (ac)) {
+#ifdef ENABLE_NETCORE
+		mono_error_set_argument (error, NULL, "");
+#else
 		mono_error_set_argument (error, "idxs", "");
+#endif
 		return;
 	}
 

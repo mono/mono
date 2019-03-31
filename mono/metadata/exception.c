@@ -711,7 +711,7 @@ mono_exception_new_argument (const char *arg, const char *msg, MonoError *error)
 MonoExceptionHandle
 mono_exception_new_argument_null (const char *arg, MonoError *error)
 {
-	return mono_exception_new_argument_internal ("ArgumentNullException", arg, NULL, error);
+	return mono_exception_new_argument_internal ("ArgumentNullException", NULL, arg, error);
 }
 
 MonoExceptionHandle
