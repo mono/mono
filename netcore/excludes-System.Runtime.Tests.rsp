@@ -36,14 +36,6 @@
 -nomethod System.Tests.UriMethodTests.EscapeUriString_Invalid
 -nomethod System.Tests.UriMethodTests.GetComponents_Invalid
 
-# Remote test runner can't load System.Globalization.Native
--nomethod System.Text.Tests.StringBuilderTests.Test_Insert_Float
--nomethod System.Text.Tests.StringBuilderTests.Test_Insert_Double
--nomethod System.Text.Tests.StringBuilderTests.Test_Insert_Decimal
--nomethod System.Text.Tests.StringBuilderTests.Test_Append_Float
--nomethod System.Text.Tests.StringBuilderTests.Test_Append_Double
--nomethod System.Text.Tests.StringBuilderTests.Test_Append_Decimal
-
 # Works, but leads to a SIGSEGV under lldb even with explicit-null-checks
 -nomethod *Append_CharPointer_Null_ThrowsNullReferenceException
 
