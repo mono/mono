@@ -509,32 +509,29 @@ static void CaptureManagedHeap(MonoManagedHeap* heap, GHashTable* monoImages)
 	mono_metadata_image_set_foreach(CopyImageSetMemPool, &iterationContext);
 }
 
-static void GCHandleIterationCallback(MonoObject* managedObject, GList** managedObjects)
+static void GCHandleIterationCallback(MonoObject* managedObject, GPtrArray** managedObjects)
 {
-	*managedObjects = g_list_append(*managedObjects, managedObject);
+	g_ptr_array_add(*managedObjects, managedObject);
 }
 
 static inline void CaptureGCHandleTargets(MonoGCHandles* gcHandles)
 {
 	uint32_t i;
-	GList* trackedObjects, *trackedObject;
+	GPtrArray* trackedObjects;
 
-	trackedObjects = NULL;
+	trackedObjects = g_ptr_array_new();
 
 	mono_gc_strong_handle_foreach((GFunc)GCHandleIterationCallback, &trackedObjects);
 
-	gcHandles->trackedObjectCount = (uint32_t)g_list_length(trackedObjects);
+	gcHandles->trackedObjectCount = (uint32_t)trackedObjects->len;
 	gcHandles->pointersToObjects = (uint64_t*)g_new0(uint64_t, gcHandles->trackedObjectCount);
-
-	trackedObject = trackedObjects;
 
 	for (i = 0; i < gcHandles->trackedObjectCount; i++)
 	{
-		gcHandles->pointersToObjects[i] = (uint64_t)trackedObject->data;
-		trackedObject = g_list_next(trackedObject);
+		gcHandles->pointersToObjects[i] = (uint64_t)trackedObjects->pdata[i];
 	}
 
-	g_list_free(trackedObjects);
+	g_ptr_array_free(trackedObjects, TRUE);
 }
 
 static void FillRuntimeInformation(MonoRuntimeInformation* runtimeInfo)
