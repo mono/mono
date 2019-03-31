@@ -4911,18 +4911,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			sp -= 2;
 			MINT_IN_BREAK;
 		}
-		MINT_IN_CASE(MINT_STOBJ) {
-			c = (MonoClass*)imethod->data_items[* (guint16 *)(ip + 1)];
-			ip += 2;
-
-			g_assert (!m_class_get_byval_arg (c)->byref);
-			if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (c)))
-				mono_gc_wbarrier_generic_store_internal (sp [-2].data.o, sp [-1].data.o);
-			else
-				stackval_to_data (m_class_get_byval_arg (c), &sp [-1], sp [-2].data.p, FALSE);
-			sp -= 2;
-			MINT_IN_BREAK;
-		}
 		MINT_IN_CASE(MINT_CONV_OVF_I4_UN_R8)
 			if (sp [-1].data.f < 0 || sp [-1].data.f > G_MAXINT32)
 				THROW_EX (mono_get_exception_overflow (), ip);
