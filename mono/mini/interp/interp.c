@@ -4243,16 +4243,13 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDOBJ_VT) {
-			void *p;
+			int size;
 			c = (MonoClass*)imethod->data_items[* (guint16 *)(ip + 1)];
 			ip += 2;
-			p = sp [-1].data.p;
-			if (!m_class_is_enumtype (c)) {
-				int size = mono_class_value_size (c, NULL);
-				sp [-1].data.p = vt_sp;
-				vt_sp += ALIGN_TO (size, MINT_VT_ALIGNMENT);
-			}
-			stackval_from_data (m_class_get_byval_arg (c), &sp [-1], p, FALSE);
+			size = mono_class_value_size (c, NULL);
+			mono_value_copy_internal (vt_sp, sp [-1].data.p, c);
+			sp [-1].data.p = vt_sp;
+			vt_sp += ALIGN_TO (size, MINT_VT_ALIGNMENT);
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDSTR)
