@@ -255,7 +255,7 @@ namespace System.Threading
 			return YieldInternal ();
 		}
 
-		public bool TrySetApartmentStateUnchecked (ApartmentState state) => false;
+		public bool TrySetApartmentStateUnchecked (ApartmentState state) => state == ApartmentState.Unknown;
 
 		ThreadState ValidateThreadState ()
 		{
