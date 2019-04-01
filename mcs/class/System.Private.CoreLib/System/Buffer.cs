@@ -17,7 +17,7 @@ namespace System
 			if (src == null)
 				throw new ArgumentNullException (nameof (src));
 			if (dest == null)
-				throw new ArgumentNullException (nameof (dest));
+				throw new ArgumentNullException ("dst");
 
 			if (srcOffset < 0)
 				throw new ArgumentOutOfRangeException (nameof (srcOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
