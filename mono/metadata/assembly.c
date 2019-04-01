@@ -3337,6 +3337,8 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 				arch = MONO_PROCESSOR_ARCHITECTURE_IA64;
 			else if (!g_ascii_strcasecmp (procarch, "AMD64"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_AMD64;
+			else if (!g_ascii_strcasecmp (procarch, "ARM"))
+				arch = MONO_PROCESSOR_ARCHITECTURE_ARM;
 			else {
 				g_free (procarch_uq);
 				goto cleanup_and_fail;
