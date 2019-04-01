@@ -689,7 +689,10 @@ mono_exception_new_argument_internal (const char *type, const char *arg, const c
 	MonoStringHandle arg_str = arg ? mono_string_new_handle (mono_domain_get (), arg, error) : NULL_HANDLE_STRING;
 	MonoStringHandle msg_str = msg ? mono_string_new_handle (mono_domain_get (), msg, error) : NULL_HANDLE_STRING;
 
-	return mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System", type, msg_str, arg_str, error);
+	if (!strcmp (type, "ArgumentException"))
+		return mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System", type, msg_str, arg_str, error);
+	else
+		return mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System", type, arg_str, msg_str, error);
 #else
 	MonoExceptionHandle ex = mono_exception_new_by_name_msg (mono_get_corlib (), "System", type, msg, error);
 
@@ -711,7 +714,7 @@ mono_exception_new_argument (const char *arg, const char *msg, MonoError *error)
 MonoExceptionHandle
 mono_exception_new_argument_null (const char *arg, MonoError *error)
 {
-	return mono_exception_new_argument_internal ("ArgumentNullException", NULL, arg, error);
+	return mono_exception_new_argument_internal ("ArgumentNullException", arg, NULL, error);
 }
 
 MonoExceptionHandle
