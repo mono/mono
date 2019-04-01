@@ -923,7 +923,8 @@ ICALL_TYPE(RVH, "System.Runtime.Versioning.VersioningHelper", RVH_1)
 HANDLES(RVH_1, "GetRuntimeId", ves_icall_System_Runtime_Versioning_VersioningHelper_GetRuntimeId, gint32, 0, ())
 
 ICALL_TYPE(RFH, "System.RuntimeFieldHandle", RFH_1)
-ICALL(RFH_1, "SetValueDirect", ves_icall_System_RuntimeFieldHandle_SetValueDirect)
+HANDLES(RFH_1, "GetValueDirect", ves_icall_System_RuntimeFieldHandle_GetValueDirect, MonoObject, 4, (MonoReflectionField, MonoReflectionType, MonoTypedRef_ptr, MonoReflectionType))
+HANDLES(RFH_1a, "SetValueDirect", ves_icall_System_RuntimeFieldHandle_SetValueDirect, void, 5, (MonoReflectionField, MonoReflectionType, MonoTypedRef_ptr, MonoObject, MonoReflectionType))
 HANDLES_REUSE_WRAPPER(RFH_2, "SetValueInternal", ves_icall_RuntimeFieldInfo_SetValueInternal)
 
 ICALL_TYPE(MHAN, "System.RuntimeMethodHandle", MHAN_1)
