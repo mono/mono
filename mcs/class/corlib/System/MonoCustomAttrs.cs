@@ -121,6 +121,7 @@ namespace System
 		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)
 		{
 			object[] attrs;
+
 			if (IsUserCattrProvider (obj))
 				attrs = obj.GetCustomAttributes (attributeType, true);
 			else

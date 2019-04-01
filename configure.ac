@@ -1,6 +1,9 @@
 # Process this file with autoconf to produce a configure script.
 #AC_PREREQ([2.62])
 
+# This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
+# It should remain in the format they expect.
+#
 AC_INIT(mono, [6.1.0],
         [https://github.com/mono/mono/issues/new])
 
@@ -13,7 +16,7 @@ AC_CANONICAL_HOST
 # The extra brackets are to foil regex-based scans.
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
-AM_INIT_AUTOMAKE([1.9 dist-bzip2 tar-ustar no-dist-gzip foreign subdir-objects]
+AM_INIT_AUTOMAKE([1.9 dist-xz tar-ustar no-dist-gzip foreign subdir-objects]
                  m4_esyscmd([case `automake --version | head -n 1` in    # parallel-tests is default in automake 1.13+, we need to explicitly enable it
                              *1.11*|*1.12*) echo parallel-tests;;        # for 1.11 and 1.12 but not below as those versions don't recognize the flag
                              esac]))                                     # TODO: remove this hack once we require automake 1.11+
@@ -40,15 +43,23 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # of classes the runtime knows about, changing icall signature or
 # semantics etc), change this variable.
 #
-# This must be unique relative to corlib interface/semantics.
+# This must be unique relative to corlib interface and semantics.
+#
+# If you change corlib such that a runtime change is required, or
+# vice versa, change this string. Examples include removing icalls,
+# adding icalls, changing icall signatures, and changing type layouts
+# that both sides know.
+#
+# It is an arbitrary string and should be parsed as such.
+# A guid works and is encouraged.
 #
 # Generate it with uuidgen. For example:
 # perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
 #
-# There is no ordering of corlib versions, no old or new,
-# the runtime expects an exact match.
+# This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
+# It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=4A9CEBCF-2544-4CB4-9F84-07A10C16BEEB
+MONO_CORLIB_VERSION=48B64EB1-FC8C-4707-A363-84A1FE488DCA
 
 #
 # Put a quoted #define in config.h.
@@ -147,12 +158,13 @@ case "$host" in
 			fi
 		fi
 		HOST_CC="gcc"
-
+		RID="win-x86"
 		# Boehm not supported on 64-bit Windows.
 		case "$host" in
 		x86_64-*-* | amd64-*-*)
 			support_boehm=no
 			with_gc=sgen
+			RID="win-x64"
 			;;
 		esac
 
@@ -306,9 +318,30 @@ case "$host" in
 			;;
 		esac
 		case "$host" in
+		ppc64-*)
+			RID="linux-ppc64"
+			;;
+		ppc64le-*)
+			RID="linux-ppc64el"
+			;;
+		mipsel-*)
+			RID="linux-mipsel"
+			;;
+		x86-*)
+			RID="linux-x86"
+			;;
+		x86_64-*)
+			RID="linux-x64"
+			;;
+		arm-*)
+			# deal with this in the FPU detection section, since
+			# we cannot determine FPU from triplet and don't want
+			# to duplicate the logic
+			;;
 		aarch64-*)
 			support_boehm=no
 			with_gc=sgen
+			RID="linux-arm64"
 			;;
 		powerpc*-*-linux*)
 			# https://bugzilla.novell.com/show_bug.cgi?id=504411
@@ -382,9 +415,11 @@ case "$host" in
 				CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC $BROKEN_DARWIN_CPPFLAGS"
 				CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC $BROKEN_DARWIN_FLAGS"
 				with_sgen_default_concurrent=yes
+				RID="osx-x86"
 				;;
 			x*64-*-darwin*)
 				with_sgen_default_concurrent=yes
+				RID="osx-x64"
 				;;
 			arm*-darwin*)
 				platform_ios=yes
@@ -443,6 +478,7 @@ case "$host" in
 		with_tls=pthread
 		dnl ppc Linux is the same? test further
 		disable_munmap=yes
+		RID="aix-ppc64"
 		;;
 	*)
 		AC_MSG_WARN([*** Please add $host to configure.ac checks!])
@@ -604,6 +640,13 @@ if test x$have_zlib = xyes; then
    ])
 fi
 
+AC_ARG_WITH(static-zlib, [  --with-static-zlib=PATH    use the specified static zlib instead of -lz],[STATIC_ZLIB_PATH=$with_static_zlib],[STATIC_ZLIB_PATH=])
+if test "x$STATIC_ZLIB_PATH" != "x"; then
+	have_static_zlib=yes
+	AC_SUBST(STATIC_ZLIB_PATH)
+fi
+
+AM_CONDITIONAL(HAVE_STATIC_ZLIB, test x$have_static_zlib = xyes)
 AM_CONDITIONAL(HAVE_ZLIB, test x$have_zlib = xyes)
 AC_DEFINE(HAVE_ZLIB,1,[Have system zlib])
 
@@ -1217,7 +1260,9 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_reflection_emit_save='yes'
    mono_feature_disable_appdomains='yes'
    mono_feature_disable_cleanup='yes'
+   mono_feature_disable_assembly_remapping='yes'
    disable_mono_native=yes
+   support_boehm=no
 elif test x$with_runtime_preset = xnet_4_x; then
    with_profile4_x_default=yes
    TEST_PROFILE=net_4_x
@@ -5185,7 +5230,16 @@ if test ${TARGET} = ARM; then
 		AC_DEFINE(HAVE_ARMV7, 1, [ARM v7])
 		CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DHAVE_ARMV7=1"
 	fi
+
+	if test x$host_linux = xyes; then
+		RID="linux-arm"
+		if test x$fpu = xNONE; then
+			RID="linux-armel"
+		fi
+	fi
 fi
+
+AC_SUBST(RID)
 
 if test ${TARGET} = RISCV32 -o ${TARGET} = RISCV64; then
 	AC_ARG_WITH([riscv-fpabi], [  --with-riscv-fpabi=auto,double,soft   Select RISC-V floating point ABI (auto)], [fpabi=$withval], [fpabi=double])
@@ -5774,7 +5828,8 @@ fi
 AC_SUBST(mono_runtime)
 AC_SUBST(mono_runtime_wrapper)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/tools/csc.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.1.0/csc.exe
+VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.1.0/VBCSCompiler.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -5790,6 +5845,7 @@ if test x$host_win32 = xyes; then
     mono_cfg_dir=`cygpath -w -a $mono_cfg_root`\\etc
     CSC=`cygpath -m -a $CSC`
     CSC_LOCATION=`cygpath -m -a $CSC_LOCATION`
+    VBCS_LOCATION=`cygpath -m -a $VBCS_LOCATION`
   else
     mono_cfg_dir=`echo $mono_cfg_root | tr '/' '\\'`\\etc
   fi
@@ -6377,6 +6433,7 @@ mono/profiler/Makefile
 mono/eglib/Makefile
 mono/eglib/eglib-config.h
 mono/eglib/test/Makefile
+netcore/Makefile
 m4/Makefile
 ikvm-native/Makefile
 scripts/Makefile
@@ -6414,7 +6471,6 @@ data/config
 tools/Makefile
 tools/locale-builder/Makefile
 tools/sgen/Makefile
-tools/monograph/Makefile
 tools/pedump/Makefile
 runtime/Makefile
 msvc/Makefile
@@ -6527,7 +6583,7 @@ fi
 
     echo "STANDALONE_CSC_LOCATION=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
     echo "SERVER_CSC_LOCATION?=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
-    echo "VBCS_LOCATION?=" >> $srcdir/$mcsdir/build/config.make
+    echo "VBCS_LOCATION?=$VBCS_LOCATION" >> $srcdir/$mcsdir/build/config.make
 
     if test $csc_compiler = mcs; then
       echo "MCS_MODE = 1" >> $srcdir/$mcsdir/build/config.make

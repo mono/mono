@@ -110,11 +110,13 @@
       <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
       <Compile Include="Mono\MonoDomain.cs" />
       <Compile Include="Mono\MonoDomainSetup.cs" />
+      <Compile Include="Mono\MonoListItem.cs" />
       <Compile Include="System\AppContext.cs" />
       <Compile Include="System\Array.cs" />
       <Compile Include="System\Attribute.cs" />
       <Compile Include="System\Buffer.cs" />
       <Compile Include="System\DefaultBinder.cs" />
+      <Compile Include="System\Delegate.cs" />
       <Compile Include="System\Enum.cs" />
       <Compile Include="System\Environment.cs" />
       <Compile Include="System\Exception.cs" />
@@ -150,7 +152,33 @@
       <Compile Include="System.Reflection\RuntimeMethodBody.cs" />
       <Compile Include="System.Reflection\RuntimeLocalVariableInfo.cs" />
       <Compile Include="System.Reflection\RuntimeExceptionHandlingClause.cs" />
-      <Compile Include="System.Reflection.Emit\Stubs.cs" />
+      <Compile Include="System.Reflection.Emit\AssemblyBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\ConstructorBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\ConstructorOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\CustomAttributeBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\DerivedTypes.cs" />
+      <Compile Include="System.Reflection.Emit\DynamicILInfo.cs" />
+      <Compile Include="System.Reflection.Emit\DynamicMethod.cs" />
+      <Compile Include="System.Reflection.Emit\DynamicMethod.notsupported.cs" />
+      <Compile Include="System.Reflection.Emit\EnumBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\EventBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\EventOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\FieldBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\FieldOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\GenericTypeParameterBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\ILGenerator.cs" />
+      <Compile Include="System.Reflection.Emit\LocalBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\MethodBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\MethodOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\ModuleBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\MonoArrayMethod.cs" />
+      <Compile Include="System.Reflection.Emit\ParameterBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\PropertyBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\PropertyOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\SignatureHelper.cs" />
+      <Compile Include="System.Reflection.Emit\TypeBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\TypeBuilderInstantiation.cs" />
+      <Compile Include="System.Reflection.Emit\UnmanagedMarshal.cs" />
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="System.Resources\ManifestBasedResourceGroveler.cs" />
       <Compile Include="System.Runtime\GCSettings.cs" />
@@ -195,8 +223,6 @@
       <Compile Include="..\corlib\Mono\SafeGPtrArrayHandle.cs" />
 
       <Compile Include="..\corlib\System\ArgIterator.cs" />
-      <Compile Include="..\corlib\System\Delegate.cs" />
-      <Compile Include="..\corlib\System\DelegateSerializationHolder.cs" />
       <Compile Include="..\corlib\System\EmptyArray.cs" />
       <Compile Include="..\corlib\System\MathF.mono.cs" />
       <Compile Include="..\corlib\System\ModuleHandle.cs" />
@@ -209,11 +235,14 @@
       <Compile Include="..\corlib\System\ValueType.cs" />
       <Compile Include="..\corlib\System\WeakReference.cs" />
       <Compile Include="..\corlib\System\WeakReference_T.cs" />
+      <Compile Include="..\corlib\System\TypeIdentifier.cs" />
+      <Compile Include="..\corlib\System\TypeSpec.cs" />
 
       <Compile Include="..\corlib\System.Diagnostics\Debugger.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
 
+      <Compile Include="..\corlib\System.IO\MonoIOError.cs" />
       <Compile Include="..\corlib\System.Threading\Monitor.cs" />
       <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
 
@@ -243,7 +272,7 @@
   <PropertyGroup>
     <DefineConstants>FEATURE_DEFAULT_INTERFACES;FEATURE_MANAGED_ETW_CHANNELS;$(DefineConstants)</DefineConstants>
 
-    <DefineConstants>MONO;NETCORE;DISABLE_REMOTING;$(DefineConstants)</DefineConstants>
+    <DefineConstants>MONO;NETCORE;DISABLE_REMOTING;MONO_FEATURE_SRE;$(DefineConstants)</DefineConstants>
     <NoWarn>3021,$(NoWarn)</NoWarn>
   </PropertyGroup>
 

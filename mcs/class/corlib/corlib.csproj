@@ -1295,7 +1295,6 @@
     <Compile Include="Mono.Globalization.Unicode\MSCompatUnicodeTableUtil.cs" />
     <Compile Include="Mono.Globalization.Unicode\Normalization.cs" />
     <Compile Include="Mono.Globalization.Unicode\NormalizationTableUtil.cs" />
-    <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
     <Compile Include="Mono.Globalization.Unicode\SortKey.cs" />
     <Compile Include="Mono.Globalization.Unicode\SortKeyBuffer.cs" />
     <Compile Include="Mono.Interop\ComInteropProxy.cs" />
@@ -2133,6 +2132,7 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2235,6 +2235,7 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2377,6 +2378,7 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2451,6 +2453,7 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2594,6 +2597,7 @@
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
+            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
@@ -2662,6 +2666,7 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2738,6 +2743,7 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2814,6 +2820,7 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2881,6 +2888,7 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2951,6 +2959,7 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -3021,6 +3030,7 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -3095,6 +3105,7 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -3624,27 +3635,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkCHS.bin">
-      <LogicalName>collation.cjkCHS.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkCHT.bin">
-      <LogicalName>collation.cjkCHT.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkJA.bin">
-      <LogicalName>collation.cjkJA.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkKO.bin">
-      <LogicalName>collation.cjkKO.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
-      <LogicalName>collation.cjkKOlv2.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

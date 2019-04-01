@@ -1,0 +1,12 @@
+LICENSE.txt
+ThirdPartyNotices.txt
+tests
+/shared
+sdk
+dotnet*
+netcoreapp2.0/
+netcoreapp3.0/
+packs/
+.stamp-dl-test-assets
+assets/
+corefx-test-assets.xml

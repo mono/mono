@@ -2,7 +2,7 @@ namespace System.Runtime
 {
 	partial class GCSettings
 	{
-		public static bool IsServerGC => throw new NotImplementedException ();
+		public static bool IsServerGC => false;
 
 		static GCLatencyMode GetGCLatencyMode() => GCLatencyMode.Batch;
 

@@ -2,49 +2,49 @@
 properties([/* compressBuildLog() */])
 
 parallel (
-    "Archive-android-debug-Darwin": {
+    "Android Darwin (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("osx-devices") {
                 archive ("android", "debug", "Darwin")
             }
         }
     },
-    "Archive-android-release-Darwin": {
+    "Android Darwin (Release)": {
         throttle(['provisions-android-toolchain']) {
             node ("osx-devices") {
                 archive ("android", "release", "Darwin")
             }
         }
     },
-    // "Archive-android-debug-Linux": {
-    //     throttle(['provisions-android-toolchain']) {
-    //         node ("debian-9-amd64multiarchi386-preview") {
-    //             archive ("android", "debug", "Linux",)
-    //         }
-    //     }
-    // },
-    // "Archive-android-release-Linux": {
-    //     throttle(['provisions-android-toolchain']) {
-    //         node ("debian-9-amd64multiarchi386-preview") {
-    //             archive ("android", "release", "Linux",)
-    //         }
-    //     }
-    // },
-    "Archive-ios-release-Darwin": {
+    "Android Linux (Debug)": {
+        throttle(['provisions-android-toolchain']) {
+            node ("debian-9-amd64-exclusive") {
+                archive ("android", "debug", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
+            }
+        }
+    },
+    "Android Linux (Release)": {
+        throttle(['provisions-android-toolchain']) {
+            node ("debian-9-amd64-exclusive") {
+                archive ("android", "release", "Linux", "debian-9-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386", "${env.HOME}")
+            }
+        }
+    },
+    "iOS": {
         throttle(['provisions-ios-toolchain']) {
             node ("osx-devices") {
                 archive ("ios", "release", "Darwin")
             }
         }
     },
-    "Archive-mac-release-Darwin": {
+    "Mac": {
         throttle(['provisions-mac-toolchain']) {
             node ("osx-devices") {
                 archive ("mac", "release", "Darwin")
             }
         }
     },
-    "Archive-wasm-release-Linux": {
+    "WASM Linux": {
         throttle(['provisions-wasm-toolchain']) {
             node ("ubuntu-1804-amd64") {
                 archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget")
@@ -53,7 +53,7 @@ parallel (
     }
 )
 
-def archive (product, configuration, platform, chrootname = "", chrootadditionalpackages = "") {
+def archive (product, configuration, platform, chrootname = "", chrootadditionalpackages = "", chrootBindMounts = "") {
     def isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
     def monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
     def jobName = (isPr ? "archive-mono-pullrequest" : "archive-mono")
@@ -88,13 +88,14 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                     // build the Archive
                     timeout (time: 300, unit: 'MINUTES') {
                         if (platform == "Darwin") {
-                            def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz mingw-w64 make"
+                            def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz mingw-w64 make xamarin/xamarin-android-windeps/mingw-zlib"
+                            sh "brew tap xamarin/xamarin-android-windeps"
                             sh "brew install ${brewpackages} || brew upgrade ${brewpackages}"
-
                             sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"
                         } else if (platform == "Linux") {
                             chroot chrootName: chrootname,
                                 command: "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh",
+                                bindMounts: chrootBindMounts,
                                 additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
                         } else {
                             throw new Exception("Unknown platform \"${platform}\"")

@@ -49,10 +49,10 @@
   <!-- @BUILT_SOURCES@ -->
   <!--Common files-->
   <ItemGroup>
-    <Compile Include="..\..\..\external\linker\analyzer\ConsoleDependencyGraph.cs" />
-    <Compile Include="..\..\..\external\linker\analyzer\LinkerAnalyzerCore\DependencyGraph.cs" />
-    <Compile Include="..\..\..\external\linker\analyzer\LinkerAnalyzerCore\SpaceAnalyzer.cs" />
-    <Compile Include="..\..\..\external\linker\analyzer\Main.cs" />
+    <Compile Include="..\..\..\external\linker\src\analyzer\ConsoleDependencyGraph.cs" />
+    <Compile Include="..\..\..\external\linker\src\analyzer\LinkerAnalyzerCore\DependencyGraph.cs" />
+    <Compile Include="..\..\..\external\linker\src\analyzer\LinkerAnalyzerCore\SpaceAnalyzer.cs" />
+    <Compile Include="..\..\..\external\linker\src\analyzer\Main.cs" />
     <Compile Include="..\..\class\Mono.Options\Mono.Options\Options.cs" />
   </ItemGroup>
   <!--End of common files-->

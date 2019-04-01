@@ -49,7 +49,10 @@ namespace System.Runtime.InteropServices
 
 		internal static bool IsPinnable (object obj)
 		{
-			throw new NotImplementedException ();
+			if (obj == null)
+				return true;
+			Type type = obj.GetType ();
+			return !type.IsValueType || RuntimeTypeHandle.HasReferences (type as RuntimeType);
 		}
 
 		// TODO: Should be called from Windows only code
@@ -238,9 +241,9 @@ namespace System.Runtime.InteropServices
 
 			case HResults.STG_E_PATHNOTFOUND:
 			case HResults.CTL_E_PATHNOTFOUND: {
-				var ex = new System.IO.DirectoryNotFoundException ();
-				ex.SetErrorCode (errorCode);
-				return ex;
+				return new System.IO.DirectoryNotFoundException {
+					HResult = errorCode
+				};
 			}
 			case HResults.FUSION_E_INVALID_PRIVATE_ASM_LOCATION:
 			case HResults.FUSION_E_SIGNATURE_CHECK_FAILED:
@@ -267,14 +270,14 @@ namespace System.Runtime.InteropServices
 			case HResults.CORSEC_E_MISSING_STRONGNAME:
 			case HResults.MSEE_E_ASSEMBLYLOADINPROGRESS:
 			case HResults.ERROR_FILE_INVALID: {
-				var ex = new System.IO.FileLoadException ();
-				ex.SetErrorCode (errorCode);
-				return ex;
+				return new System.IO.FileLoadException {
+					HResult = errorCode
+				};
 			}
 			case HResults.CTL_E_FILENOTFOUND: {
-				var ex = new System.IO.FileNotFoundException ();
-				ex.SetErrorCode (errorCode);
-				return ex;
+				return new System.IO.FileNotFoundException {
+					HResult = errorCode
+				};
 			}
 			default:
 				throw new NotImplementedException (errorCode.ToString ());

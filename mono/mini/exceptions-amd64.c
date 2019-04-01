@@ -867,7 +867,7 @@ altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, gboolean stack_o
 	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), MONO_CONTEXT_GET_IP (ctx), NULL);
 
 	if (!ji)
-		mono_handle_native_crash ("SIGSEGV", NULL, NULL);
+		mono_handle_native_crash ("SIGSEGV", ctx, NULL);
 
 	mctx = *ctx;
 

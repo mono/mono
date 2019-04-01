@@ -48,7 +48,7 @@ using MdToken = System.Reflection.MetadataToken;
 using System.Runtime.Versioning;
 using System.Diagnostics.Contracts;
 
-#if MONO
+#if MONO || NETCORE
 using CustomAttribute=System.MonoCustomAttrs;
 #endif
 
@@ -5127,7 +5127,11 @@ namespace System
         [System.Security.SecuritySafeCritical]  // auto-generated
         public override Object[] GetCustomAttributes(bool inherit)
         {
+#if NETCORE
+            return CustomAttribute.GetCustomAttributes(this, inherit);
+#else
             return CustomAttribute.GetCustomAttributes(this, RuntimeType.ObjectType, inherit);
+#endif
         }
 
         [System.Security.SecuritySafeCritical]  // auto-generated

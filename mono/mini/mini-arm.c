@@ -3497,11 +3497,11 @@ loop_start:
 		case OP_ISBB:
 		case OP_SUBCC:
 		case OP_ISUBCC: {
-			int try = 2;
+			int try_count = 2;
 			MonoInst *current = ins;
 
 			/* may require a look-ahead of a couple instructions due to spilling */
-			while (try-- && current->next) {
+			while (try_count-- && current->next) {
 				if (current->next->opcode == OP_COND_EXC_C || current->next->opcode == OP_COND_EXC_IC) {
 					/* ARM sets the C flag to 1 if there was _no_ overflow */
 					current->next->opcode = OP_COND_EXC_NC;
@@ -6053,9 +6053,9 @@ void
 mono_arch_register_lowlevel_calls (void)
 {
 	/* The signature doesn't matter */
-	mono_register_jit_icall (mono_arm_throw_exception, "mono_arm_throw_exception", mono_create_icall_signature ("void"), TRUE);
-	mono_register_jit_icall (mono_arm_throw_exception_by_token, "mono_arm_throw_exception_by_token", mono_create_icall_signature ("void"), TRUE);
-	mono_register_jit_icall (mono_arm_unaligned_stack, "mono_arm_unaligned_stack", mono_create_icall_signature ("void"), TRUE);
+	mono_register_jit_icall (mono_arm_throw_exception, "mono_arm_throw_exception", mono_icall_sig_void, TRUE);
+	mono_register_jit_icall (mono_arm_throw_exception_by_token, "mono_arm_throw_exception_by_token", mono_icall_sig_void, TRUE);
+	mono_register_jit_icall (mono_arm_unaligned_stack, "mono_arm_unaligned_stack", mono_icall_sig_void, TRUE);
 }
 
 #define patch_lis_ori(ip,val) do {\

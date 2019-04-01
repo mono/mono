@@ -723,7 +723,8 @@ public class HashtableTest {
 	///  Test hashtable with CaseInsensitiveHashCodeProvider
 	///  and CaseInsensitive comparer.
 	/// </summary>
-        [Test]        
+	[Test]
+	[Category ("ManagedCollator")]
 	public void TestCaseInsensitive ()
 	{
 		// Not very meaningfull test, just to make

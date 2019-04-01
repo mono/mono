@@ -430,13 +430,13 @@ gpointer
 mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type);
 
 MonoMethod *
-mono_marshal_get_icall_wrapper (MonoMethodSignature *sig, const char *name, gconstpointer func, gboolean check_exceptions);
+mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_exceptions);
 
 MonoMethod *
-mono_marshal_get_aot_init_wrapper (MonoAotInitSubtype subtype);
+mono_marshal_get_aot_init_wrapper (MonoAotInitSubtype subtype) MONO_LLVM_INTERNAL;
 
 const char *
-mono_marshal_get_aot_init_wrapper_name (MonoAotInitSubtype subtype);
+mono_marshal_get_aot_init_wrapper_name (MonoAotInitSubtype subtype) MONO_LLVM_INTERNAL;
 
 MonoMethod *
 mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, gboolean aot);

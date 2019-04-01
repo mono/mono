@@ -424,7 +424,7 @@ var BindingSupportLib = {
 					newTypedArray = new Int16Array(end - begin);
 					break;
 				case 8: 
-					newTypedArray = new UInt16Array(end - begin);
+					newTypedArray = new Uint16Array(end - begin);
 					break;
 				case 9: 
 					newTypedArray = new Int32Array(end - begin);

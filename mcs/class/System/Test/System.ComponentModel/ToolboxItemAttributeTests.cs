@@ -16,7 +16,7 @@ namespace MonoTests.System.ComponentModel
 	[TestFixture]
 	public class ToolboxItemAttributeTests
 	{
-#if !MOBILE && !MONOMAC && !XAMMAC_4_5
+#if !MOBILE && !XAMMAC_4_5
 		[Test]
 		public void DefaultType ()
 		{

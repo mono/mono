@@ -842,13 +842,11 @@ namespace System
 			}
 		}
 
-#if !NETCORE
 		internal override bool IsUserType {
 			get {
 				return false;
 			}
 		}
-#endif
 
 		[System.Runtime.InteropServices.ComVisible(true)]
 		[Pure]

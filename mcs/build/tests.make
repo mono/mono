@@ -278,7 +278,7 @@ test_library = $(ASSEMBLY:$(ASSEMBLY_EXT)=)_test$(ASSEMBLY_EXT)
 
 test_sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).sources
 $(test_sourcefile): $(test_sourcefile_base) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources) $(depsdir)/.stamp
-	$(GENSOURCES) --trace:4 --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
+	$(GENSOURCES) --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 test_response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).response
 $(test_response): $(test_sourcefile) $(topdir)/build/tests.make $(depsdir)/.stamp
