@@ -9,10 +9,14 @@ else
 llvm_config=llvm-config
 endif
 
+if HAVE_STATIC_ZLIB
+llvm_extra_libs = $(STATIC_ZLIB_PATH)
+else
 if HAVE_ZLIB
 llvm_extra_libs=-lz
 else
 llvm_extra_libs=
+endif
 endif
 
 if INTERNAL_LLVM
