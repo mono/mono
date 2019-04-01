@@ -250,7 +250,7 @@ namespace System.Reflection
 
 			if (marshalAs != null) {
 #if NETCORE
-				throw new NotImplementedException ();
+				attrs [count ++] = (MarshalAsAttribute)marshalAs.CloneInternal ();
 #else
 				attrs [count ++] = marshalAs.Copy ();
 #endif

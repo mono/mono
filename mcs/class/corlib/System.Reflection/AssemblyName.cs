@@ -151,11 +151,7 @@ namespace System.Reflection {
 				if (codebase == null)
 					return null;
 
-#if NETCORE
-				throw new NotImplementedException ();
-#else
 				return Mono.Security.Uri.EscapeString (codebase, false, true, true);
-#endif
 			}
 		}
 
