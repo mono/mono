@@ -1,0 +1,16 @@
+# Invalid argument tests
+-nomethod System.Reflection.Tests.AssemblyNameTests.SetProcessorArchitecture_InvalidArchitecture_TakesLowerThreeBitsIfLessThanOrEqualToMax
+-nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_String_Invalid
+-nomethod System.Reflection.Tests.AssemblyNameTests.Version
+-nomethod System.Reflection.Tests.GetTypeTests.GetType_EmptyString
+
+# Fails because our Object class has extra instance methods
+-nomethod System.Reflection.Tests.TypeInfoTests.FindMembers
+-nomethod System.Reflection.Tests.TypeInfoTests.GetMethods
+-nomethod System.Reflection.Tests.TypeInfoTests.GetMembers
+-nomethod System.Reflection.Tests.TypeInfoTests.GetMethod
+
+# CustomConstantAttribute not supported
+-nomethod System.Reflection.Tests.ParameterInfoTests.RawDefaultValueFromAttribute
+
+-nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs__CornerCase_HasElementTypes
