@@ -3,11 +3,6 @@
 -nomethod *LastIndexOf_ArrayOfPointers_ThrowsNotSupportedException
 -nomethod *Reverse_ArrayOfPointers_ThrowsNotSupportedException
 # No SRE yet
--nomethod *CreateInstance_TypeNotRuntimeType_ThrowsArgumentException
--nomethod *CreateInstance_NotRuntimeType_ThrowsArgumentException
--nomethod *CreateInstance_NonPublicValueTypeWithPrivateDefaultConstructor_Success
--nomethod *CreateInstance_TypeBuilder_ThrowsNotSupportedException
--nomethod *CreateInstance_PublicOnlyValueTypeWithPrivateDefaultConstructor_ThrowsMissingMethodException
 -nomethod System.Tests.EnumTests.GetName_MultipleMatches
 -nomethod System.Tests.EnumTests.GetName_Invalid
 -nomethod System.Tests.EnumTests.GetName_NonIntegralTypes
@@ -70,10 +65,6 @@
 -nomethod System.Tests.GCTests.KeepAlive_Null
 -nomethod System.Tests.LazyTests.Value_Invalid
 -nomethod System.Tests.LazyTests.Value_ThrownException_DoesntCreateValue
-
-# GCHandle.ctor is not implemented
--nomethod System.Tests.UriCreateStringTests.Path_Query_Fragment
--nomethod System.Tests.UriCreateStringTests.OriginalString_AbsoluteUri_ToString
 
 -noclass System.Tests.TypeTestsExtended
 -noclass System.Tests.ArgIteratorTests
