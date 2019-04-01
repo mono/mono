@@ -605,8 +605,8 @@ namespace System.Reflection.Emit
 			if (names == null)
 				throw new ArgumentNullException ("names");
 			if (names.Length == 0)
-				throw new ArgumentException ("names");
-
+				throw new ArgumentException ("", "names");
+			type.check_not_created ();
 			generic_params = new GenericTypeParameterBuilder [names.Length];
 			for (int i = 0; i < names.Length; i++) {
 				string item = names [i];
@@ -628,7 +628,7 @@ namespace System.Reflection.Emit
 			if (parameterTypes != null) {
 				for (int i = 0; i < parameterTypes.Length; ++i)
 					if (parameterTypes [i] == null)
-						throw new ArgumentException ("Elements of the parameterTypes array cannot be null", "parameterTypes");
+						throw new ArgumentNullException (nameof (parameterTypes), "Elements of the parameterTypes array cannot be null");
 
 				this.parameters = new Type [parameterTypes.Length];
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
