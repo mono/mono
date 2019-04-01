@@ -5885,6 +5885,59 @@ ves_icall_System_Reflection_RuntimeAssembly_GetExportedTypes (MonoReflectionAsse
 {
 	return ves_icall_System_Reflection_Assembly_GetTypes (assembly_handle, TRUE, error);
 }
+
+MonoArrayHandle
+ves_icall_System_Reflection_RuntimeAssembly_GetForwardedTypes (MonoReflectionAssemblyHandle assembly_h, MonoError *error)
+{
+	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
+	MonoImage *image = assembly->image;
+	guint32 cols [MONO_EXP_TYPE_SIZE];
+	const char *name;
+	const char *nspace;
+	guint32 impl, assembly_idx;
+	int count = 0;
+
+	g_assert (!assembly_is_dynamic (assembly));
+	MonoTableInfo *table = &image->tables [MONO_TABLE_EXPORTEDTYPE];
+	for (int i = 0; i < table->rows; ++i) {
+		if (mono_metadata_decode_row_col (table, i, MONO_EXP_TYPE_FLAGS) & TYPE_ATTRIBUTE_FORWARDER)
+			count ++;
+	}
+	MonoArrayHandle res = mono_array_new_handle (mono_domain_get (), mono_defaults.runtimetype_class, count, error);
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
+	int aindex = 0;
+	for (int i = 0; i < table->rows; ++i) {
+		mono_metadata_decode_row (table, i, cols, MONO_EXP_TYPE_SIZE);
+		if (!(cols [MONO_EXP_TYPE_FLAGS] & TYPE_ATTRIBUTE_FORWARDER))
+			continue;
+		impl = cols [MONO_EXP_TYPE_IMPLEMENTATION];
+		name = mono_metadata_string_heap (image, cols [MONO_EXP_TYPE_NAME]);
+		nspace = mono_metadata_string_heap (image, cols [MONO_EXP_TYPE_NAMESPACE]);
+
+		g_assert ((impl & MONO_IMPLEMENTATION_MASK) == MONO_IMPLEMENTATION_ASSEMBLYREF);
+
+		assembly_idx = impl >> MONO_IMPLEMENTATION_BITS;
+
+		mono_assembly_load_reference (image, assembly_idx - 1);
+		g_assert (image->references [assembly_idx - 1]);
+		if (image->references [assembly_idx - 1] == (gpointer)-1)
+			continue;
+		MonoClass *klass = mono_class_from_name_checked (image->references [assembly_idx - 1]->image, nspace, name, error);
+		if (!is_ok (error))
+			continue;
+		MonoReflectionTypeHandle rt = mono_type_get_object_handle (mono_domain_get (), m_class_get_byval_arg (klass), error);
+		if (!is_ok (error))
+			continue;
+		MONO_HANDLE_ARRAY_SETREF (res, aindex, rt);
+		aindex ++;
+	}
+	if (aindex < count) {
+		// FIXME:
+		mono_error_set_type_load_name (error, g_strdup (""), g_strdup (""), "");
+		return MONO_HANDLE_NEW (MonoArray, NULL);
+	}
+	return res;
+}
 #endif
 
 void

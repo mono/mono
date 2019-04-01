@@ -679,6 +679,8 @@ HANDLES(MMETHI_3, "get_retval_marshal", ves_icall_System_MonoMethodInfo_get_retv
 ICALL_TYPE(RASSEM, "System.Reflection.RuntimeAssembly", RASSEM_1)
 #if ENABLE_NETCORE
 HANDLES(RASSEM_1, "GetExportedTypes", ves_icall_System_Reflection_RuntimeAssembly_GetExportedTypes, MonoArray, 1, (MonoReflectionAssembly))
+HANDLES(RASSEM_1a, "GetFilesInternal", ves_icall_System_Reflection_RuntimeAssembly_GetFilesInternal, MonoObject, 3, (MonoReflectionAssembly, MonoString, MonoBoolean))
+HANDLES(RASSEM_1b, "GetForwardedTypes", ves_icall_System_Reflection_RuntimeAssembly_GetForwardedTypes, MonoArray, 1, (MonoReflectionAssembly))
 HANDLES(RASSEM_2, "GetManifestModuleInternal", ves_icall_System_Reflection_Assembly_GetManifestModuleInternal, MonoReflectionModule, 1, (MonoReflectionAssembly))
 HANDLES(RASSEM_3, "GetManifestResourceInfoInternal", ves_icall_System_Reflection_RuntimeAssembly_GetManifestResourceInfoInternal, MonoBoolean, 3, (MonoReflectionAssembly, MonoString, MonoManifestResourceInfo))
 HANDLES(RASSEM_4, "GetManifestResourceInternal", ves_icall_System_Reflection_RuntimeAssembly_GetManifestResourceInternal, gpointer, 4, (MonoReflectionAssembly, MonoString, gint32_ref, MonoReflectionModuleOut))
