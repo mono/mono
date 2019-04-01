@@ -1579,41 +1579,17 @@ count_virtual_methods (MonoClass *klass)
 	return vcount;
 }
 
-static int
-find_interface (int num_ifaces, MonoClass **interfaces_full, MonoClass *ic)
-{
-	int m, l = 0;
-	if (!num_ifaces)
-		return -1;
-	while (1) {
-		if (l > num_ifaces)
-			return -1;
-		m = (l + num_ifaces) / 2;
-		if (interfaces_full [m] == ic)
-			return m;
-		if (l == num_ifaces)
-			return -1;
-		if (!interfaces_full [m] || interfaces_full [m]->interface_id > ic->interface_id) {
-			num_ifaces = m - 1;
-		} else {
-			l =  m + 1;
-		}
-	}
-}
-
 static mono_bool
 set_interface_and_offset (int num_ifaces, MonoClass **interfaces_full, int *interface_offsets_full, MonoClass *ic, int offset, mono_bool force_set)
 {
-	int i = find_interface (num_ifaces, interfaces_full, ic);
-	if (i >= 0) {
-		if (!force_set)
-			return TRUE;
-		interface_offsets_full [i] = offset;
-		return FALSE;
-	}
+	int i;
 	for (i = 0; i < num_ifaces; ++i) {
-		if (interfaces_full [i] && interfaces_full [i]->interface_id == ic->interface_id)
-			return TRUE;
+		if (interfaces_full [i] && interfaces_full [i]->interface_id == ic->interface_id) {
+			if (!force_set)
+				return TRUE;
+			interface_offsets_full [i] = offset;
+			return FALSE;
+		}
 		if (interfaces_full [i])
 			continue;
 		interfaces_full [i] = ic;
