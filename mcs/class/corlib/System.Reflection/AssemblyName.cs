@@ -477,8 +477,13 @@ namespace System.Reflection {
 
 			this.major = native->major;
 			this.minor = native->minor;
+#if NETCORE
+			this.build = native->build == 65535 ? -1 : native->build;
+			this.revision = native->revision == 65535 ? -1 : native->revision;
+#else
 			this.build = native->build;
 			this.revision = native->revision;
+#endif
 
 			this.flags = (AssemblyNameFlags)native->flags;
 
@@ -487,8 +492,19 @@ namespace System.Reflection {
 			this.versioncompat = AssemblyVersionCompatibility.SameMachine;
 			this.processor_architecture = (ProcessorArchitecture)native->arch;
 
+#if NETCORE
+			if (addVersion) {
+				if (this.build == -1)
+					this.version = new Version (this.major, this.minor);
+				else if (this.revision == -1)
+					this.version = new Version (this.major, this.minor, this.build);
+				else
+					this.version = new Version (this.major, this.minor, this.build, this.revision);
+			}
+#else
 			if (addVersion)
 				this.version = new Version (this.major, this.minor, this.build, this.revision);
+#endif
 
 			this.codebase = codeBase;
 
