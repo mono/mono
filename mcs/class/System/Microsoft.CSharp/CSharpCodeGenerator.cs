@@ -89,11 +89,16 @@ namespace Microsoft.CSharp
 			/*
 			 * reset MONO_GC_PARAMS - we are invoking compiler possibly with another GC that
 			 * may not handle some of the options causing compilation failure
-			 *
-			 * reset MONO_CFG_DIR - we don't want to propagate the current config to another mono
 			 */
 			mcs.StartInfo.EnvironmentVariables.Remove ("MONO_GC_PARAMS");
+
+#if XAMMAC_4_5
+			/*/
+			 * reset MONO_CFG_DIR - we don't want to propagate the current config to another mono
+			 * since it's specific to the XM application and won't work on system mono.
+			 */
 			mcs.StartInfo.EnvironmentVariables.Remove ("MONO_CFG_DIR");
+#endif
 
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
