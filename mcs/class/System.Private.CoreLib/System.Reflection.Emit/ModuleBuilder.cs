@@ -439,7 +439,10 @@ namespace System.Reflection.Emit {
 			return index;
 		}
 
-		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
+		{
+			if (customBuilder == null)
+				throw new ArgumentNullException (nameof (customBuilder));
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);

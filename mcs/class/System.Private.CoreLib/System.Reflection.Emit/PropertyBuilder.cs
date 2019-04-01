@@ -104,8 +104,14 @@ namespace System.Reflection.Emit {
 		public override Type ReflectedType {
 			get {return typeb;}
 		}
-		public void AddOtherMethod( MethodBuilder mdBuilder) {
+
+		public void AddOtherMethod (MethodBuilder mdBuilder)
+		{
+			if (mdBuilder == null)
+				throw new ArgumentNullException (nameof (mdBuilder));
+			typeb.check_not_created ();
 		}
+
 		public override MethodInfo[] GetAccessors( bool nonPublic) {
 			return null;
 		}
@@ -124,19 +130,30 @@ namespace System.Reflection.Emit {
 		public override MethodInfo GetSetMethod( bool nonPublic) {
 			return set_method;
 		}
-		public override object GetValue(object obj, object[] index) {
-			return null;
+
+		public override object GetValue (object obj, object[] index)
+		{
+			throw not_supported ();
 		}
-		public override object GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
+
+		public override object GetValue (object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
+		{
 			throw not_supported ();
 		}
 		public override bool IsDefined( Type attributeType, bool inherit) {
 			throw not_supported ();
 		}
-		public void SetConstant( object defaultValue) {
+		public void SetConstant (object defaultValue)
+		{
+			typeb.check_not_created ();
 			def_value = defaultValue;
 		}
-		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
+		{
+			if (customBuilder == null)
+				throw new ArgumentNullException (nameof (customBuilder));
+			typeb.check_not_created ();
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
 				attrs |= PropertyAttributes.SpecialName;
@@ -155,18 +172,33 @@ namespace System.Reflection.Emit {
 		}
 
 		[ComVisible (true)]
-		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
-		public void SetGetMethod( MethodBuilder mdBuilder) {
+
+		public void SetGetMethod (MethodBuilder mdBuilder)
+		{
+			typeb.check_not_created ();
+			if (mdBuilder == null)
+				throw new ArgumentNullException (nameof (mdBuilder));
 			get_method = mdBuilder;
 		}
-		public void SetSetMethod( MethodBuilder mdBuilder) {
+
+		public void SetSetMethod (MethodBuilder mdBuilder)
+		{
+			if (mdBuilder == null)
+				throw new ArgumentNullException (nameof (mdBuilder));
 			set_method = mdBuilder;
 		}
-		public override void SetValue( object obj, object value, object[] index) {
+
+		public override void SetValue (object obj, object value, object[] index)
+		{
+			throw not_supported ();
 		}
-		public override void SetValue( object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
+
+		public override void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
+		{
+			throw not_supported ();
 		}
 
 		public override Module Module {

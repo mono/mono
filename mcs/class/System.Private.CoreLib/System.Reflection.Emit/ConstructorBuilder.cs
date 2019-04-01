@@ -59,6 +59,7 @@ namespace System.Reflection.Emit {
 		private Type[][] paramModOpt;
 		private object permissions;
 #pragma warning restore 169, 414
+		internal bool finished;
 
 		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
 		{
@@ -235,6 +236,8 @@ namespace System.Reflection.Emit {
 
 		public ILGenerator GetILGenerator (int streamSize)
 		{
+			if (finished)
+				throw new InvalidOperationException ();
 			if (ilgen != null)
 				return ilgen;
 			if (!(((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)))
@@ -321,6 +324,10 @@ namespace System.Reflection.Emit {
 			if ((ilgen == null) || (ilgen.ILOffset == 0))
 				throw new InvalidOperationException ("Method '" + Name + "' does not have a method body.");
 			}
+			if (IsStatic &&
+				((call_conv & CallingConventions.VarArgs) != 0 ||
+				 (call_conv & CallingConventions.HasThis) != 0))
+				throw new TypeLoadException ();
 			if (ilgen != null)
 				ilgen.label_fixup (this);
 		}
