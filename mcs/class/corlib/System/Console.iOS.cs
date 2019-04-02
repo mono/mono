@@ -79,7 +79,7 @@ namespace System {
 				try {
 					lock (sb) {
 						sb.Append (value);
-						if (value != null && value.Length >= CoreNewLine.Length && EndsWithNewLine (value))
+						if (EndsWithNewLine (sb))
 							Flush ();
 					}
 				}
@@ -92,7 +92,7 @@ namespace System {
 				try {
 					lock (sb) {
 						sb.Append (buffer);
-						if (buffer != null && buffer.Length >= CoreNewLine.Length && EndsWithNewLine (buffer))
+						if (EndsWithNewLine (sb))
 							Flush ();
 					}
 				}
@@ -100,18 +100,11 @@ namespace System {
 				}
 			}
 			
-			bool EndsWithNewLine (string value)
+			bool EndsWithNewLine (StringBuilder value)
 			{
-				for (int i = 0, v = value.Length - CoreNewLine.Length; i < CoreNewLine.Length; ++i, ++v) {
-					if (value [v] != CoreNewLine [i])
-						return false;
-				}
-				
-				return true;
-			}
+				if (value.Length < CoreNewLine.Length)
+					return false;
 
-			bool EndsWithNewLine (char[] value)
-			{
 				for (int i = 0, v = value.Length - CoreNewLine.Length; i < CoreNewLine.Length; ++i, ++v) {
 					if (value [v] != CoreNewLine [i])
 						return false;
