@@ -107,6 +107,8 @@ namespace WebAssembly.Core {
 			ValidateFromSource (span);
 
 			int type = (int)Type.GetTypeCode (typeof (U));
+			if (type == 6 && typeof(T) == typeof(Uint8ClampedArray))
+				type = 15;  // Special case for clamped array
 
 			var bytes = MemoryMarshal.AsBytes (span);
 			fixed (byte* ptr = bytes) {
