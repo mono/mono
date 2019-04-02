@@ -16,7 +16,20 @@ namespace System.Threading
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		static extern int SignalAndWaitCore (IntPtr waitHandleToSignal, IntPtr waitHandleToWaitOn, int millisecondsTimeout);
+		static extern int SignalAndWait_Internal (IntPtr waitHandleToSignal, IntPtr waitHandleToWaitOn, int millisecondsTimeout);
+
+		const int ERROR_TOO_MANY_POSTS = 298;
+		const int ERROR_NOT_OWNED_BY_CALLER = 299;
+
+		static int SignalAndWaitCore (IntPtr waitHandleToSignal, IntPtr waitHandleToWaitOn, int millisecondsTimeout)
+		{
+			int ret = SignalAndWait_Internal (waitHandleToSignal, waitHandleToWaitOn, millisecondsTimeout);
+			if (ret == ERROR_TOO_MANY_POSTS)
+				throw new InvalidOperationException (SR.Threading_WaitHandleTooManyPosts);
+			if (ret == ERROR_NOT_OWNED_BY_CALLER)
+				throw new ApplicationException("Attempt to release mutex not owned by caller");
+			return ret;
+		}
 
 		internal static int WaitMultipleIgnoringSyncContext (Span<IntPtr> waitHandles, bool waitAll, int millisecondsTimeout)
 		{
