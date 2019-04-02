@@ -36,7 +36,7 @@ namespace System
 			// This handles I/U
 			if (src == dst)
 				return true;
-			return ((1 << (int)dst) | PrimitiveAttributes [(int)src]) != 0;
+			return ((1 << (int)dst) & PrimitiveAttributes [(int)src]) != 0;
 		}
 
 		private static bool CanChangePrimitiveObjectToType(object source, Type type)
