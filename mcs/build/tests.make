@@ -62,7 +62,7 @@ xunit_class_deps :=
 xunit_libs_ref = $(patsubst %,-r:$(topdir)/../external/xunit-binaries/%.dll,$(xunit_core))
 xunit_libs_ref += $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/Facades/%.dll,$(xunit_deps))
 
-xunit_libs_dep = $(xunit_class_deps:%=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)%.dll)
+xunit_libs_dep = $(xunit_class_deps:%=$(topdir)/class/lib/$(PROFILE)/%.dll)
 xunit_libs_ref += $(xunit_libs_dep:%=-r:%)
 
 TEST_LIB_REFS_ALL = $(TEST_LIB_REFS) $(DEFAULT_REFERENCES)
@@ -80,7 +80,7 @@ endif
 
 XTEST_LIB_MCS_FLAGS = $(patsubst %,-r:$(topdir)/class/lib/$(PROFILE)/%.dll,$(XTEST_LIB_REFS) $(DEFAULT_REFERENCES))
 
-test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)%)
+test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
 tests_CLEAN_FILES += TestResult*.xml
 
@@ -132,9 +132,7 @@ $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
-ifndef PARENT_PROFILE
 	cd ${topdir}/tools/nunit-lite && $(MAKE)
-endif
 	echo "stamp" >$@
 
 tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
