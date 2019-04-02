@@ -522,6 +522,10 @@ namespace System
 		{
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");
+#if NETCORE
+			if (!typeof (Attribute).IsAssignableFrom (attributeType) && attributeType != typeof (MonoCustomAttrs))
+				throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass);
+#endif
 
 			AttributeUsageAttribute usage = null;
 			do {
