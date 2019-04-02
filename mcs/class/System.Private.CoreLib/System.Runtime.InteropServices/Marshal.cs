@@ -42,17 +42,22 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
 
-		internal static IntPtr AllocBSTR (int length)
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static int GetArrayElementSize (Type type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern unsafe static IntPtr BufferToBSTR (char* ptr, int slen);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool IsPinnableType (Type type);
 
 		internal static bool IsPinnable (object obj)
 		{
-			if (obj == null)
+			if (obj == null || obj is string)
 				return true;
-			Type type = obj.GetType ();
-			return !type.IsValueType || RuntimeTypeHandle.HasReferences (type as RuntimeType);
+			return IsPinnableType (obj.GetType ());
+			//Type type = obj.GetType ();
+			//return !type.IsValueType || RuntimeTypeHandle.HasReferences (type as RuntimeType);
 		}
 
 		// TODO: Should be called from Windows only code
@@ -280,7 +285,7 @@ namespace System.Runtime.InteropServices
 				};
 			}
 			default:
-				throw new NotImplementedException (errorCode.ToString ());
+				return new COMException ("", errorCode);
 			}
 		}
 
@@ -294,14 +299,19 @@ namespace System.Runtime.InteropServices
 			PrelinkInternal (m);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void PtrToStructureInternal (IntPtr ptr, object structure, bool allowValueClasses);
+
 		static void PtrToStructureHelper (IntPtr ptr, object structure, bool allowValueClasses)
 		{
-			throw new NotImplementedException ();
+			PtrToStructureInternal (ptr, structure, allowValueClasses);
 		}
 
 		static object PtrToStructureHelper (IntPtr ptr, Type structureType)
 		{
-			throw new NotImplementedException ();
+			var obj = Activator.CreateInstance (structureType);
+			PtrToStructureHelper (ptr, obj, true);
+			return obj;
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -321,9 +331,20 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		public static IntPtr StringToBSTR (string s)
+		internal unsafe static IntPtr AllocBSTR (int length)
 		{
-			throw new NotImplementedException ();
+			var res = BufferToBSTR ((char*)IntPtr.Zero, length);
+			if (res == IntPtr.Zero)
+				throw new OutOfMemoryException ();
+			return res;
+		}
+
+		public unsafe static IntPtr StringToBSTR (string s)
+		{
+			if (s == null)
+				return IntPtr.Zero;
+			fixed (char* fixed_s = s)
+				return BufferToBSTR (fixed_s, s.Length);
 		}
 
 		#region PlatformNotSupported
