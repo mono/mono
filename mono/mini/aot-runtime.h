@@ -11,7 +11,8 @@
 #include "mini.h"
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 157
+// This is just a trial PR, as changing this appears to break the Linux amd64 bitcode PR lane.
+#define MONO_AOT_FILE_VERSION 999
 
 #define MONO_AOT_TRAMP_PAGE_SIZE 16384
 
