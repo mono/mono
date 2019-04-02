@@ -74,7 +74,7 @@ namespace System.Web.Handlers
 			if (currentHandler == null)
 				return;
 			Type pageType = currentHandler.GetType ();
-			if (typeof (Page).IsAssignableFrom (pageType) && !String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
+			if (typeof (Page).IsAssignableFrom (pageType) && !String.IsNullOrEmpty (request.PathInfo) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
 				IHttpHandler h = RestHandler.GetHandler (context, pageType, request.FilePath);
 				h.ProcessRequest (context);
 				app.CompleteRequest ();
