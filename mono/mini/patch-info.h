@@ -70,3 +70,16 @@ PATCH_INFO(PROFILER_CLAUSE_COUNT, "profiler_clause_count")
  * function.
  */
 PATCH_INFO(METHOD_FTNDESC, "method_ftndesc")
+
+
+// Formerly MONO_PATCH_INFO_JIT_ICALL_ADDR + sprintf ("trampoline_func_%d", tramp_type)
+// Now an enum. This is faster, fixes leaks, and is a step toward eliminating
+// JIT icall hash tables.
+// Shorter name?
+PATCH_INFO(TRAMPOLINE_FUNC_ADDR, "trampoline_func_addr")
+
+// Formerly MONO_PATCH_INFO_JIT_ICALL_ADDR + sprintf ("specific_trampoline_lazy_fetch_%u", slot)
+// Now an enum. This is faster, fixes leaks, and is a step toward eliminating
+// JIT icall hash tables.
+// Shorter name?
+PATCH_INFO(SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR, "specific_trampoline_lazy_fetch_addr")
