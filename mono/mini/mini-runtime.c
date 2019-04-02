@@ -100,6 +100,8 @@
 #endif
 #endif
 #include "mono/metadata/icall-signatures.h"
+#include "mono/metadata/register-icall-def.h"
+#include "mono/metadata/class-internals.h"
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
@@ -679,26 +681,31 @@ mono_dynamic_code_hash_lookup (MonoDomain *domain, MonoMethod *method)
 #ifdef __cplusplus
 template <typename T>
 static void
-register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, T func, const char *symbol, gboolean no_wrapper)
+register_opcode_emulation_info (int opcode, MonoJitICallInfo *info, const char *name, MonoMethodSignature *sig, T func, const char *symbol, gboolean no_wrapper)
 #else
 static void
-register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
+register_opcode_emulation_info (int opcode, MonoJitICallInfo *info, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
 #endif
 {
 #ifndef DISABLE_JIT
-	mini_register_opcode_emulation (opcode, name, sig, func, symbol, no_wrapper);
+	mini_register_opcode_emulation_info (opcode, info, name, sig, func, symbol, no_wrapper);
 #else
+	// FIXME ifdef in mini_register_opcode_emulation and just call it.
+
 	g_assert (!sig->hasthis);
 	g_assert (sig->param_count < 3);
 
-	mono_register_jit_icall_full (func, name, sig, no_wrapper, symbol);
+	mono_register_jit_icall_info_full (info, (gpointer)func, name, sig, no_wrapper, symbol);
 #endif
 }
 
-// This layering is only meant to provide smaller easier to read temporary change.
-// The de-stringing of name in the caller will be useful later.
-#define register_opcode_emulation(opcode, name, sig, func, symbol, no_wrapper) \
-	register_opcode_emulation (opcode, #name, sig, func, symbol, no_wrapper)
+// FIXME symbol can just be #func
+// The opcode emulation jit_icall_info does not need to be public, so instantiate
+// it here instead of in register-icall-def.h. A scope is not placed
+// here, to more likely catch duplicates.
+#define register_opcode_emulation(opcode, name, sig, func, symbol, no_wrapper) 	\
+	g_assert (!strcmp (#func, symbol)); \
+	register_opcode_emulation_info ((opcode), (&mono_jit_icall_info.name), (#name), (sig), (gpointer)(func), (symbol), (no_wrapper)) \
 
 /*
  * For JIT icalls implemented in C.
@@ -709,53 +716,42 @@ register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *si
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall (T func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper)
+register_icall_info (MonoJitICallInfo *info, T func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper)
 #else
 static void
-register_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper)
+register_icall_info (MonoJitICallInfo *info, gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper)
 #endif
 {
-	mono_register_jit_icall_full (func, name, sig, avoid_wrapper, name);
+	// FIXME Some versions of register_icall_info pass NULL for last parameter, some pass name.
+	// marshal.c: name
+	// remoting.c: NULL (via mono_register_jit_icall_info)
+	// cominterop.c: name
+	// mini-runtime.c: name
+	mono_register_jit_icall_info_full (info, func, name, sig, avoid_wrapper, name);
 }
 
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall_no_wrapper (T func, const char *name,  MonoMethodSignature *sig)
+register_icall_info_no_wrapper (MonoJitICallInfo *info, T func, const char *name, MonoMethodSignature *sig)
 #else
 static void
-register_icall_no_wrapper (gpointer func, const char *name,  MonoMethodSignature *sig)
+register_icall_info_no_wrapper (MonoJitICallInfo *info, gpointer func, const char *name, MonoMethodSignature *sig)
 #endif
 {
-	mono_register_jit_icall_full (func, name, sig, TRUE, name);
+	mono_register_jit_icall_info_full (info, func, name, sig, TRUE, name);
 }
 
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall_with_wrapper (T func, const char *name, MonoMethodSignature *sig)
+register_icall_info_with_wrapper (MonoJitICallInfo *info, T func, const char *name, MonoMethodSignature *sig)
 #else
 static void
-register_icall_with_wrapper (gpointer func, const char *name, MonoMethodSignature *sig)
+register_icall_info_with_wrapper (MonoJitICallInfo *info, gpointer func, const char *name, MonoMethodSignature *sig)
 #endif
 {
-	mono_register_jit_icall_full (func, name, sig, FALSE, name);
-}
-
-/*
- * Register an icall where FUNC is dynamically generated or otherwise not
- * possible to link to it using NAME during AOT.
- */
-#ifdef __cplusplus
-template <typename T>
-static void
-register_dyn_icall (T func, const char *name, MonoMethodSignature *sig, gboolean save)
-#else
-static void
-register_dyn_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean save)
-#endif
-{
-	mono_register_jit_icall (func, name, sig, save);
+	mono_register_jit_icall_info_full (info, func, name, sig, FALSE, name);
 }
 
 MonoLMF *
@@ -4456,9 +4452,9 @@ register_icalls (void)
 #endif
 
 	if (!mono_llvm_only) {
-		register_dyn_icall (mono_get_throw_exception (), "mono_arch_throw_exception", mono_icall_sig_void_object, TRUE);
-		register_dyn_icall (mono_get_rethrow_exception (), "mono_arch_rethrow_exception", mono_icall_sig_void_object, TRUE);
-		register_dyn_icall (mono_get_throw_corlib_exception (), "mono_arch_throw_corlib_exception", mono_icall_sig_void_ptr, TRUE);
+		register_dyn_icall (mono_get_throw_exception (), mono_arch_throw_exception, mono_icall_sig_void_object, TRUE);
+		register_dyn_icall (mono_get_rethrow_exception (), mono_arch_rethrow_exception, mono_icall_sig_void_object, TRUE);
+		register_dyn_icall (mono_get_throw_corlib_exception (), mono_arch_throw_corlib_exception, mono_icall_sig_void_ptr, TRUE);
 	}
 	register_icall (mono_thread_get_undeniable_exception, "mono_thread_get_undeniable_exception", mono_icall_sig_object, FALSE);
 	register_icall (ves_icall_thread_finish_async_abort, "ves_icall_thread_finish_async_abort", mono_icall_sig_void, FALSE);
@@ -4571,7 +4567,6 @@ register_icalls (void)
 		register_opcode_emulation (OP_FCGT_UN, __emul_fcmp_cgt_un, mono_icall_sig_uint32_double_double, mono_fcgt_un, "mono_fcgt_un", FALSE);
 		register_opcode_emulation (OP_FCLT, __emul_fcmp_clt, mono_icall_sig_uint32_double_double, mono_fclt, "mono_fclt", FALSE);
 		register_opcode_emulation (OP_FCLT_UN, __emul_fcmp_clt_un, mono_icall_sig_uint32_double_double, mono_fclt_un, "mono_fclt_un", FALSE);
-
 		register_icall (mono_fload_r4, "mono_fload_r4", mono_icall_sig_double_ptr, FALSE);
 		register_icall (mono_fstore_r4, "mono_fstore_r4", mono_icall_sig_void_double_ptr, FALSE);
 		register_icall (mono_fload_r4_arg, "mono_fload_r4_arg", mono_icall_sig_uint32_double, FALSE);
@@ -4584,6 +4579,7 @@ register_icalls (void)
 	register_icall (mono_class_interface_match, "mono_class_interface_match", mono_icall_sig_uint32_ptr_int32, TRUE);
 #endif
 
+	// FIXME Elsewhere these are registered with no_wrapper = FALSE
 #if SIZEOF_REGISTER == 4
 	register_opcode_emulation (OP_FCONV_TO_U, __emul_fconv_to_u, mono_icall_sig_uint32_double, mono_fconv_u4, "mono_fconv_u4", TRUE);
 #else
@@ -4630,7 +4626,8 @@ register_icalls (void)
 	register_icall (mono_gsharedvt_value_copy, "mono_gsharedvt_value_copy", mono_icall_sig_void_ptr_ptr_ptr, TRUE);
 
 	//WARNING We do runtime selection here but the string *MUST* be to a fallback function that has same signature and behavior
-	register_icall_no_wrapper (mono_gc_get_range_copy_func (), "mono_gc_wbarrier_range_copy", mono_icall_sig_void_ptr_ptr_int);
+	const MonoRangeCopyFunction mono_gc_wbarrier_range_copy = mono_gc_get_range_copy_func ();
+	register_icall_no_wrapper (mono_gc_wbarrier_range_copy, "mono_gc_wbarrier_range_copy", mono_icall_sig_void_ptr_ptr_int);
 
 	register_icall (mono_object_castclass_with_cache, "mono_object_castclass_with_cache", mono_icall_sig_object_object_ptr_ptr, FALSE);
 	register_icall (mono_object_isinst_with_cache, "mono_object_isinst_with_cache", mono_icall_sig_object_object_ptr_ptr, FALSE);
@@ -4638,7 +4635,7 @@ register_icalls (void)
 	register_icall (mono_fill_class_rgctx, "mono_fill_class_rgctx", mono_icall_sig_ptr_ptr_int, FALSE);
 	register_icall (mono_fill_method_rgctx, "mono_fill_method_rgctx", mono_icall_sig_ptr_ptr_int, FALSE);
 
-	register_dyn_icall (mini_get_dbg_callbacks ()->user_break, "mono_debugger_agent_user_break", mono_icall_sig_void, FALSE);
+	register_dyn_icall (mini_get_dbg_callbacks ()->user_break, mono_debugger_agent_user_break, mono_icall_sig_void, FALSE);
 
 	register_icall (mini_llvm_init_method, "mini_llvm_init_method", mono_icall_sig_void_ptr_int, TRUE);
 	register_icall (mini_llvm_init_gshared_method_this, "mini_llvm_init_gshared_method_this", mono_icall_sig_void_ptr_int_object, TRUE);

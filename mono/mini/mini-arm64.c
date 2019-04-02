@@ -28,6 +28,7 @@
 #include <mono/metadata/abi-details.h>
 
 #include "interp/interp.h"
+#include "mono/metadata/register-icall-def.h"
 
 /*
  * Documentation:
@@ -5393,7 +5394,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
-	return mono_arm_get_exception_trampolines (aot);
+	return mono_arm_get_exception_trampolines (aot, FALSE);
 }
 
 #else /* DISABLE_JIT */

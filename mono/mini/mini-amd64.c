@@ -48,6 +48,7 @@
 #include "mini-gc.h"
 #include "mini-runtime.h"
 #include "aot-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 #ifdef MONO_XEN_OPT
 static gboolean optimize_for_xen = TRUE;
@@ -3019,6 +3020,10 @@ static guint8*
 emit_call_body (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gconstpointer data)
 {
 	gboolean no_patch = FALSE;
+
+	g_assert (patch_type == MONO_PATCH_INFO_METHOD ||	// data is MonoMethod*; MONO_PATCH_INFO_METHOD_JUMP is already reasonable
+		  patch_type == MONO_PATCH_INFO_JIT_ICALL ||	// data is function name
+		  patch_type == MONO_PATCH_INFO_ABS);		// data is code pointer, hashed to MonoJumpInfo* with additional patch type/data
 
 	/* 
 	 * FIXME: Add support for thunks
@@ -6820,9 +6825,9 @@ mono_arch_register_lowlevel_calls (void)
 
 #if defined(TARGET_WIN32) || defined(HOST_WIN32)
 #if _MSC_VER
-	mono_register_jit_icall_full (__chkstk, "mono_chkstk_win64", NULL, TRUE, "__chkstk");
+	mono_register_jit_icall_info_full (&mono_jit_icall_info.mono_chkstk_win64, __chkstk, "mono_chkstk_win64", NULL, TRUE, "__chkstk");
 #else
-	mono_register_jit_icall_full (___chkstk_ms, "mono_chkstk_win64", NULL, TRUE, "___chkstk_ms");
+	mono_register_jit_icall_info_full (&mono_jit_icall_info.mono_chkstk_win64, ___chkstk_ms, "mono_chkstk_win64", NULL, TRUE, "___chkstk_ms");
 #endif
 #endif
 }
@@ -8331,7 +8336,7 @@ mono_arch_emit_load_aotconst (guint8 *start, guint8 *code, MonoJumpInfo **ji, Mo
 GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
-	return mono_amd64_get_exception_trampolines (aot);
+	return mono_amd64_get_exception_trampolines (aot, FALSE);
 }
 
 /* Soft Debug support */

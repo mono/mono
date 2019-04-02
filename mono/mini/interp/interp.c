@@ -77,6 +77,7 @@
 #include <mono/mini/mini-arm.h>
 #endif
 #include <mono/metadata/icall-decl.h>
+#include "mono/metadata/register-icall-def.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable:4102) // label' : unreferenced label
