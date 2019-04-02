@@ -14,6 +14,8 @@
 #define WAIT_ABANDONED_0   ((gint) 0x00000080)
 #define WAIT_TIMEOUT       ((gint) 0x00000102)
 #define WAIT_IO_COMPLETION ((gint) 0x000000C0)
+#define WAIT_TOO_MANY_POSTS ((gint) 0x0000012A)
+#define WAIT_NOT_OWNED_BY_CALLER ((gint) 0x0000012B)
 
 #define WINAPI
 
