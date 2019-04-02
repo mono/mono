@@ -17,8 +17,6 @@ namespace System
 		[Intrinsic]
 		internal ref byte GetRawData () => throw new NotImplementedException ();
 
-		internal object CloneInternal () {
-			return MemberwiseClone ();
-		}
+		internal object CloneInternal () => MemberwiseClone ();
 	}
 }
