@@ -544,10 +544,14 @@ mono_mb_emit_native_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, gpoin
 }
 
 void
-mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func)
+mono_mb_emit_icall_info (MonoMethodBuilder *mb, MonoJitICallInfo *jit_icall_info)
 {
+	g_assert (jit_icall_info);
+	g_assertf (jit_icall_info->name, "%d", (int)mono_jit_icall_info_index (jit_icall_info));
+	g_assertf (jit_icall_info->func, "%d", (int)mono_jit_icall_info_index (jit_icall_info));
+
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_ICALL, func);
+	mono_mb_emit_op (mb, CEE_MONO_ICALL, (gpointer)jit_icall_info->func);
 }
 
 void
