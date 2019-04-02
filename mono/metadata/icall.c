@@ -8881,6 +8881,9 @@ mono_find_jit_icall_by_name (const char *name)
 	mono_icall_lock ();
 	info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name);
 	mono_icall_unlock ();
+
+	g_assertf (!strstr (name, "trampoline_"), "%s", name);
+
 	return info;
 }
 
@@ -8893,6 +8896,8 @@ mono_find_jit_icall_by_addr (gconstpointer addr)
 	mono_icall_lock ();
 	info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_addr, (gpointer)addr);
 	mono_icall_unlock ();
+
+	g_assertf (!info || !strstr (info->name, "trampoline_"), "%s", info->name);
 
 	return info;
 }
@@ -8925,6 +8930,9 @@ mono_lookup_jit_icall_symbol (const char *name)
 	if (info)
 		res = info->c_symbol;
 	mono_icall_unlock ();
+
+	g_assertf (!strstr (name, "trampoline_"), "%s", name);
+
 	return res;
 }
 
@@ -8934,12 +8942,16 @@ mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
 	mono_icall_lock ();
 	g_hash_table_insert (jit_icall_hash_addr, (gpointer)wrapper, info);
 	mono_icall_unlock ();
+
+	g_assertf (!strstr(info->name, "trampoline_"), "%s", info->name);
 }
 
 MonoJitICallInfo *
 mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
 {
 	MonoJitICallInfo *info;
+
+	g_assertf (!strstr(name, "trampoline_"), "%s", name);
 
 	g_assert (func);
 	g_assert (name);
