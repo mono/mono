@@ -59,7 +59,7 @@ xtest-%: prepare check-env dl-test-assets
 	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/CoreFx.Private.TestUtilities.dll assets/extracted/$*/
 	sed -i -e 's/9.9.9/$(VERSION)/g' assets/extracted/$*/*.runtimeconfig.json
 	cd assets/extracted/$* && \
-	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
+	COMPlus_DebugWriteToStdErr=1 MONO_ENV_OPTIONS="--debug" $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
 		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
 		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all \
 		-html ../../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
@@ -82,11 +82,16 @@ PASSING_COREFX_TESTS = \
 	System.Runtime.CompilerServices.VisualC.Tests \
 	System.Runtime.InteropServices.RuntimeInformation.Tests
 
-xtestall: $(foreach workingtest, $(foreach test, $(wildcard assets/extracted/*), \
+xtestall: dl-test-assets $(foreach workingtest, $(foreach test, $(wildcard assets/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
 
-xtestpass: $(foreach workingtest, $(foreach test, $(wildcard assets/extracted/*), \
+xtestpass: dl-test-assets $(foreach workingtest, $(foreach test, $(wildcard assets/extracted/*), \
 		$(filter $(PASSING_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
+
+# build %-test from local COREFX_ROOT and copy dll/pdb to assets/extracted/% (to be able to quickly change tests)
+build-corefx-test-for-%: check-env
+	cd $(COREFX_ROOT)/src/$*/tests && dotnet build
+	cp $(COREFX_BINDIR)/$*.Tests/*/* assets/extracted/$*.Tests/
 
 FEED_BASE_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core
 TEST_ASSETS_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core/corefx-tests/4.6.0-preview4.19201.9/OSX.x64/netcoreapp/corefx-test-assets.xml
