@@ -958,7 +958,6 @@ void
 mono_arch_exceptions_init (void)
 {
 	GSList *tramps, *l;
-	gpointer tramp;
 
 	if (mono_ee_features.use_aot_trampolines) {
 

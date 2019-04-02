@@ -62,6 +62,7 @@
 #include <errno.h>
 #include "icall-decl.h"
 #include "icall-signatures.h"
+#include "class-internals.h"
 
 static void
 mono_string_utf16len_to_builder (MonoStringBuilderHandle sb, const gunichar2 *text, gsize len, MonoError *error);
@@ -2892,8 +2893,8 @@ emit_return_noilgen (MonoMethodBuilder *mb)
 
 /**
  * mono_marshal_get_icall_wrapper:
- * Generates IL code for the icall wrapper. The generated method
- * calls the unmanaged code in \p func.
+ * Generates IL code for the JIT icall wrapper. The generated method
+ * calls the unmanaged code in \p callinfo->func.
  */
 MonoMethod *
 mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_exceptions)

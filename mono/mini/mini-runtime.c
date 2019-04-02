@@ -100,6 +100,7 @@
 #endif
 #endif
 #include "mono/metadata/icall-signatures.h"
+#include "mono/metadata/class-internals.h"
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
@@ -688,6 +689,8 @@ register_opcode_emulation (int opcode, MonoJitICallInfo *jit_icall_info, const c
 #ifndef DISABLE_JIT
 	mini_register_opcode_emulation (opcode, jit_icall_info, name, sig, func, symbol, no_wrapper);
 #else
+	// FIXME ifdef in mini_register_opcode_emulation and just call it.
+
 	g_assert (!sig->hasthis);
 	g_assert (sig->param_count < 3);
 
@@ -4540,6 +4543,7 @@ register_icalls (void)
 	register_icall (mono_class_interface_match, mono_icall_sig_uint32_ptr_int32, TRUE);
 #endif
 
+	// FIXME Elsewhere these are registered with no_wrapper = FALSE
 #if SIZEOF_REGISTER == 4
 	register_opcode_emulation (OP_FCONV_TO_U, __emul_fconv_to_u, mono_icall_sig_uint32_double, mono_fconv_u4, TRUE);
 #else

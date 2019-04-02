@@ -1685,17 +1685,6 @@ mini_register_opcode_emulation (int opcode, MonoJitICallInfo *info, const char *
 	g_assert (sig->param_count < 3);
 
 	mono_register_jit_icall_info (info, func, name, sig, no_wrapper, symbol);
-
-	if (emul_opcode_num >= emul_opcode_alloced) {
-		int incr = emul_opcode_alloced? emul_opcode_alloced/2: 16;
-		emul_opcode_alloced += incr;
-		emul_opcode_map = (MonoJitICallInfo **)g_realloc (emul_opcode_map, sizeof (emul_opcode_map [0]) * emul_opcode_alloced);
-		emul_opcode_opcodes = (short *)g_realloc (emul_opcode_opcodes, sizeof (emul_opcode_opcodes [0]) * emul_opcode_alloced);
-	}
-	emul_opcode_map [emul_opcode_num] = info;
-	emul_opcode_opcodes [emul_opcode_num] = opcode;
-	emul_opcode_num++;
-	emul_opcode_hit_cache [opcode >> (EMUL_HIT_SHIFT + 3)] |= (1 << (opcode & EMUL_HIT_MASK));
 }
 
 static void

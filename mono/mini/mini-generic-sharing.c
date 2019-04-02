@@ -21,7 +21,6 @@
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/unlocked.h>
-
 #include "mini.h"
 #include "aot-runtime.h"
 #include "mini-runtime.h"
