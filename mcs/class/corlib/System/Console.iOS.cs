@@ -91,7 +91,7 @@ namespace System {
 			public override void Write(char[] buffer, int index, int count) {
 				try {
 					lock (sb) {
-						sb.Append (buffer);
+						sb.Append (buffer, index, count);
 						if (EndsWithNewLine (sb))
 							Flush ();
 					}
