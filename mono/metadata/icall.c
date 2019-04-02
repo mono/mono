@@ -8931,7 +8931,7 @@ mono_lookup_jit_icall_symbol (const char *name)
 		res = info->c_symbol;
 	mono_icall_unlock ();
 
-	g_assertf (!strstr (name, "trampoline_"), "%s", name);
+	g_assertf (!info || !strstr (name, "trampoline_"), "%s", name);
 
 	return res;
 }
