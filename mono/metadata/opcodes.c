@@ -14,7 +14,7 @@
 #include <config.h>
 
 #define MONO_PREFIX1_OFFSET MONO_CEE_ARGLIST
-#define MONO_CUSTOM_PREFIX_OFFSET MONO_CEE_MONO_ICALL
+#define MONO_CUSTOM_PREFIX_OFFSET MONO_CEE_MONO_JIT_ICALL
 
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
 	{ Mono ## e, MONO_FLOW_ ## j, MONO_ ## a },

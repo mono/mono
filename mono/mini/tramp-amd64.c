@@ -35,6 +35,8 @@
 #include "interp/interp.h"
 #endif
 
+#include "mono/metadata/register-icall-def.h"
+
 #define IS_REX(inst) (((inst) >= 0x40) && ((inst) <= 0x4f))
 
 #ifndef DISABLE_JIT
@@ -231,7 +233,7 @@ stack_unaligned (MonoTrampolineType tramp_type)
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
 {
-	char *tramp_name;
+	const char *tramp_name;
 	guint8 *buf, *code, *tramp, *br [2], *r11_save_code, *after_r11_save_code, *br_ex_check;
 	int i, lmf_offset, offset, res_offset, arg_offset, rax_offset, ex_offset, tramp_offset, ctx_offset, saved_regs_offset;
 	int r11_save_offset, saved_fpregs_offset, rbp_offset, framesize, orig_rsp_to_rbp_offset, cfa_offset;
@@ -429,7 +431,8 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	amd64_mov_membase_reg (code, AMD64_RBP, lmf_offset + MONO_STRUCT_OFFSET (MonoLMFTramp, ctx), AMD64_R11, sizeof (target_mgreg_t));
 
 	if (aot) {
-		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_get_lmf_addr");
+		mono_jit_icall_info.mono_get_lmf_addr.name = "mono_get_lmf_addr";
+		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, &mono_jit_icall_info.mono_get_lmf_addr);
 	} else {
 		amd64_mov_reg_imm (code, AMD64_R11, mono_get_lmf_addr);
 	}
@@ -491,7 +494,8 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	 * Have to call the _force_ variant, since there could be a protected wrapper on the top of the stack.
 	 */
 	if (aot) {
-		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_thread_force_interruption_checkpoint_noraise");
+		mono_jit_icall_info.mono_thread_force_interruption_checkpoint_noraise.name = "mono_thread_force_interruption_checkpoint_noraise";
+		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, &mono_jit_icall_info.mono_thread_force_interruption_checkpoint_noraise);
 	} else {
 		amd64_mov_reg_imm (code, AMD64_R11, (guint8*)mono_thread_force_interruption_checkpoint_noraise);
 	}
@@ -520,7 +524,8 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	 */
 	if (aot) {
 		/* Not really a jit icall */
-		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "rethrow_preserve_exception_addr");
+		mono_jit_icall_info.mono_rethrow_preserve_exception.name = "rethrow_preserve_exception";
+		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, &mono_jit_icall_info.mono_rethrow_preserve_exception);
 	} else {
 		amd64_mov_reg_imm (code, AMD64_R11, (guint8*)mono_get_rethrow_preserve_exception_addr ());
 	}
@@ -576,7 +581,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 
 	tramp_name = mono_get_generic_trampoline_name (tramp_type);
 	*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
-	g_free (tramp_name);
 
 	return buf;
 }
@@ -879,10 +883,13 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	amd64_lea_membase (code, AMD64_ARG_REG1, AMD64_RSP, ctx_offset);
 
 	if (aot) {
-		if (single_step)
-			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "debugger_agent_single_step_from_context");
-		else
-			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "debugger_agent_breakpoint_from_context");
+		if (single_step) {
+			mono_jit_icall_info.mono_debugger_agent_single_step_from_context.name = "debugger_agent_single_step_from_context";
+			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, &mono_jit_icall_info.mono_debugger_agent_single_step_from_context);
+		} else {
+			mono_jit_icall_info.mono_debugger_agent_breakpoint_from_context.name = "debugger_agent_breakpoint_from_context";
+			code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, &mono_jit_icall_info.mono_debugger_agent_breakpoint_from_context);
+		}
 	} else {
 		if (single_step)
 			amd64_mov_reg_imm (code, AMD64_R11, mini_get_dbg_callbacks ()->single_step_from_context);

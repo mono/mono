@@ -343,6 +343,7 @@ struct MonoJumpInfo {
 		MonoDelegateClassMethodPair *del_tramp;
 		/* MONO_PATCH_INFO_VIRT_METHOD */
 		MonoJumpInfoVirtMethod *virt_method;
+		MonoJitICallInfo *jit_icall_info;
 	} data;
 };
 
@@ -435,8 +436,8 @@ MONO_API int       mono_parse_default_optimizations  (const char* p);
 gboolean          mono_running_on_valgrind (void);
 
 MonoLMF * mono_get_lmf                      (void);
-#define mono_get_lmf_addr mono_tls_get_lmf_addr
-MonoLMF** mono_get_lmf_addr                 (void);
+MonoLMF** mono_get_lmf_addr                 (void); // mono_get_lmf_addr and mono_tls_get_lmf_addr are the same thing
+MonoLMF** mono_tls_get_lmf_addr				(void); // mono_get_lmf_addr and mono_tls_get_lmf_addr are the same thing
 void      mono_set_lmf                      (MonoLMF *lmf);
 void      mono_push_lmf                     (MonoLMFExt *ext);
 void      mono_pop_lmf                      (MonoLMF *lmf);

@@ -17,9 +17,22 @@
 #include <mono/metadata/class-abi-details.h>
 #include <mono/utils/mono-utils-debug.h>
 #include "mono/metadata/icall-signatures.h"
+#include "mono/metadata/register-icall-def.h"
 
 static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
 static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
+
+void
+mono_call_add_patch_info (MonoCompile *cfg, MonoCallInst *call, int ip)
+{
+	if (call->inst.flags & MONO_INST_HAS_METHOD)
+		mono_add_patch_info (cfg, ip, MONO_PATCH_INFO_METHOD, call->method);
+	// FIXMEjiticall Could probably repurpose fptr here?
+	else if (call->jit_icall_info)
+		mono_add_patch_info (cfg, ip, MONO_PATCH_INFO_JIT_ICALL, call->jit_icall_info);
+	else
+		mono_add_patch_info (cfg, ip, MONO_PATCH_INFO_ABS, call->fptr);
+}
 
 void
 mini_test_tailcall (MonoCompile *cfg, gboolean tailcall)
@@ -624,14 +637,28 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 }
 
 MonoInst*
-mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args)
+mono_emit_jit_icall_info (MonoCompile *cfg, MonoJitICallInfo *info, MonoInst **args)
 {
-	MonoJitICallInfo *info = mono_find_jit_icall_by_addr (func);
-
 	g_assert (info);
+	g_assertf (info->name, "%d", (int)mono_jit_icall_info_index (info));
+	g_assertf (info->func, "%d", (int)mono_jit_icall_info_index (info));
 
-	return mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
+	MonoCallInst *call = (MonoCallInst*)mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
+
+	call->jit_icall_info = info; // FIXMEjiticall fptr instead?
+
+	return &call->inst;
 }
+
+#if 0 // FIXMEjiticall
+static gboolean
+mono_patch_is_jit_icall (MonoJumpInfoType patch_type)
+{
+	return patch_type == MONO_PATCH_INFO_JIT_ICALL
+		|| patch_type == MONO_PATCH_INFO_JIT_ICALL_ADDR
+		|| patch_type == MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL;
+}
+#endif
 
 /*
  * mini_emit_abs_call:
@@ -642,6 +669,10 @@ MonoInst*
 mini_emit_abs_call (MonoCompile *cfg, MonoJumpInfoType patch_type, gconstpointer data, 
 					MonoMethodSignature *sig, MonoInst **args)
 {
+	// FIXMEjiticall We should be able to skip hashing JIT icalls here.
+
+	mono_check_patch (patch_type, data);
+
 	MonoJumpInfo *ji = mono_patch_info_new (cfg->mempool, 0, patch_type, data);
 	MonoInst *ins;
 
@@ -649,11 +680,20 @@ mini_emit_abs_call (MonoCompile *cfg, MonoJumpInfoType patch_type, gconstpointer
 	 * We pass ji as the call address, the PATCH_INFO_ABS resolving code will
 	 * handle it.
 	 */
-	if (cfg->abs_patches == NULL)
-		cfg->abs_patches = g_hash_table_new (NULL, NULL);
-	g_hash_table_insert (cfg->abs_patches, ji, ji);
+	//if (!mono_patch_is_jit_icall (patch_type)) // FIXMEjiticall
+	{
+		if (cfg->abs_patches == NULL)
+			cfg->abs_patches = g_hash_table_new (NULL, NULL);
+
+		g_hash_table_insert (cfg->abs_patches, ji, ji);
+	}
+
 	ins = mono_emit_native_call (cfg, ji, sig, args);
 	((MonoCallInst*)ins)->fptr_is_patch = TRUE;
+
+//	if (mono_patch_is_jit_icall (patch_type)) // FIXMEjiticall
+//		((MonoCallInst*)ins)->jit_icall_info = data; // fptr and bit flags instead?
+
 	return ins;
 }
 

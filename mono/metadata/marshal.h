@@ -174,10 +174,6 @@ typedef struct {
 } GenericArrayHelperWrapperInfo;
 
 typedef struct {
-	gpointer func;
-} ICallWrapperInfo;
-
-typedef struct {
 	MonoMethod *method;
 } ArrayAccessorWrapperInfo;
 
@@ -251,7 +247,7 @@ typedef struct {
 		/* GENERIC_ARRAY_HELPER */
 		GenericArrayHelperWrapperInfo generic_array_helper;
 		/* ICALL_WRAPPER */
-		ICallWrapperInfo icall;
+		MonoJitICallInfo *jit_icall_info;
 		/* ARRAY_ACCESSOR */
 		ArrayAccessorWrapperInfo array_accessor;
 		/* PROXY_ISINST etc. */
@@ -284,7 +280,7 @@ typedef enum {
 } MonoStelemrefKind;
 
 
-#define MONO_MARSHAL_CALLBACKS_VERSION 3
+#define MONO_MARSHAL_CALLBACKS_VERSION 4
 
 typedef struct {
 	int version;
@@ -323,7 +319,7 @@ typedef struct {
 	void (*emit_thunk_invoke_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig);
 	void (*emit_create_string_hack) (MonoMethodBuilder *mb, MonoMethodSignature *csig, MonoMethod *res);
 	void (*emit_native_icall_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *pinfo);
-	void (*emit_icall_wrapper) (MonoMethodBuilder *mb, MonoMethodSignature *sig, gconstpointer func, MonoMethodSignature *csig2, gboolean check_exceptions);
+	void (*emit_icall_wrapper) (MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoJitICallInfo *callinfo, MonoMethodSignature *csig2, gboolean check_exceptions);
 	void (*emit_return) (MonoMethodBuilder *mb);
 	void (*emit_vtfixup_ftnptr) (MonoMethodBuilder *mb, MonoMethod *method, int param_count, guint16 type);
 	void (*mb_skip_visibility) (MonoMethodBuilder *mb);

@@ -32,6 +32,7 @@
 #include "mini-ppc.h"
 #include "mini-runtime.h"
 #include "aot-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 /*
 
@@ -396,7 +397,8 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 		if (aot) {
 			code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_IMAGE, mono_defaults.corlib);
 			ppc_mr (code, ppc_r3, ppc_r12);
-			code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_exception_from_token");
+			mono_jit_icall_info.mono_exception_from_token.name = "mono_exception_from_token";
+			code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, &mono_jit_icall_info.mono_exception_from_token);
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 			ppc_ldptr (code, ppc_r2, sizeof (target_mgreg_t), ppc_r12);
 			ppc_ldptr (code, ppc_r12, 0, ppc_r12);
@@ -433,7 +435,8 @@ mono_arch_get_throw_exception_generic (int size, MonoTrampInfo **info, int corli
 		// r30 contains the got address.
 		// So emit the got address loading code too
 		code = mono_arch_emit_load_got_addr (start, code, NULL, &ji);
-		code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_ppc_throw_exception");
+		mono_jit_icall_info.mono_ppc_throw_exception.name = "mono_ppc_throw_exception";
+		code = mono_arch_emit_load_aotconst (start, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, &mono_jit_icall_info.mono_ppc_throw_exception);
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		ppc_ldptr (code, ppc_r2, sizeof (target_mgreg_t), ppc_r12);
 		ppc_ldptr (code, ppc_r12, 0, ppc_r12);

@@ -24,6 +24,7 @@
 #include "mini.h"
 #include "mini-ppc.h"
 #include "mini-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 #if 0
 /* Same as mono_create_ftnptr, but doesn't require a domain */
@@ -244,7 +245,7 @@ mono_arch_patch_plt_entry (guint8 *code, gpointer *got, host_mgreg_t *regs, guin
 guchar*
 mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInfo **info, gboolean aot)
 {
-	char *tramp_name;
+	const char *tramp_name;
 	guint8 *buf, *code = NULL, *exception_branch;
 	int i, offset, offset_r14 = 0;
 	gconstpointer tramp_handler;
@@ -300,7 +301,8 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	 * from emit_prolog in mini-ppc.c
 	 */
 	if (aot) {
-		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_get_lmf_addr");
+		mono_jit_icall_info.mono_get_lmf_addr.name = "mono_get_lmf_addr";
+		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, &mono_jit_icall_info.mono_get_lmf_addr);
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		ppc_ldptr (code, ppc_r2, sizeof (target_mgreg_t), ppc_r12);
 		ppc_ldptr (code, ppc_r12, 0, ppc_r12);
@@ -486,7 +488,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	g_assert (info);
 	tramp_name = mono_get_generic_trampoline_name (tramp_type);
 	*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
-	g_free (tramp_name);
 
 	return buf;
 }

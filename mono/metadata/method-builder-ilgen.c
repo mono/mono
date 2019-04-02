@@ -18,6 +18,7 @@
 #include <string.h>
 #include <errno.h>
 #include "class-init.h"
+#include "register-icall-def.h"
 
 #define OPDEF(a,b,c,d,e,f,g,h,i,j) \
 	a = i,
@@ -544,10 +545,13 @@ mono_mb_emit_native_call (MonoMethodBuilder *mb, MonoMethodSignature *sig, gpoin
 }
 
 void
-mono_mb_emit_icall (MonoMethodBuilder *mb, gpointer func)
+mono_mb_emit_icall_info (MonoMethodBuilder *mb, MonoJitICallInfo *jit_icall_info)
 {
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_ICALL, func);
+	mono_mb_emit_byte (mb, CEE_MONO_JIT_ICALL);
+	g_assert (MONO_JIT_ICALL_count < 0x200); // or 0x10000, but 0x200 works
+	// FIXMEjiticall mono_mb_emit_i2 should work
+	mono_mb_emit_i4 (mb, mono_jit_icall_info_index (jit_icall_info));
 }
 
 void

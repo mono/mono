@@ -279,6 +279,10 @@ mono_tls_get_tls_offset (MonoTlsKey key)
 MonoTlsGetter
 mono_tls_get_tls_getter (MonoTlsKey key)
 {
+	// FIXME Integrate better with jit_icall.
+	// i.e. the key enum can be a MonoJitICallId and
+	// this can be synonymous with mono_jit_icall_info.array [key].func.
+	// Note that get/set would need separate enum values.
 	switch (key) {
 	case TLS_KEY_THREAD:
 		return (MonoTlsGetter)mono_tls_get_thread;
@@ -338,9 +342,16 @@ SgenThreadInfo *mono_tls_get_sgen_thread_info (void)
 	return (SgenThreadInfo*)MONO_TLS_GET_VALUE (mono_tls_sgen_thread_info, mono_tls_key_sgen_thread_info);
 }
 
+#define MONO_GET_LMF_ADDR() ((MonoLMF**)MONO_TLS_GET_VALUE (mono_tls_lmf_addr, mono_tls_key_lmf_addr))
+
 MonoLMF **mono_tls_get_lmf_addr (void)
 {
-	return (MonoLMF**)MONO_TLS_GET_VALUE (mono_tls_lmf_addr, mono_tls_key_lmf_addr);
+	return MONO_GET_LMF_ADDR();
+}
+
+MonoLMF **mono_get_lmf_addr (void)
+{
+	return MONO_GET_LMF_ADDR();
 }
 
 /* Setters for each tls key */

@@ -71,7 +71,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	if (info) {
 		char *name = mono_get_generic_trampoline_name (tramp_type);
 		*info = mono_tramp_info_create (name, buf, code - buf, NULL, NULL);
-		g_free (name);
 	}
 
 	return buf;

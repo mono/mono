@@ -40,6 +40,7 @@
 #include "mini-gc.h"
 #include "aot-runtime.h"
 #include "mini-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 #ifndef TARGET_WIN32
 #ifdef MONO_XEN_OPT
@@ -3163,8 +3164,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_THROW: {
 			x86_alu_reg_imm (code, X86_SUB, X86_ESP, MONO_ARCH_FRAME_ALIGNMENT - 4);
 			x86_push_reg (code, ins->sreg1);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, 
-							  (gpointer)"mono_arch_throw_exception");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL,
+							  &mono_jit_icall_info.mono_arch_throw_exception);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			break;
@@ -3172,8 +3173,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RETHROW: {
 			x86_alu_reg_imm (code, X86_SUB, X86_ESP, MONO_ARCH_FRAME_ALIGNMENT - 4);
 			x86_push_reg (code, ins->sreg1);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, 
-							  (gpointer)"mono_arch_rethrow_exception");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL,
+							  &mono_jit_icall_info.mono_arch_rethrow_exception);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			break;
@@ -4837,7 +4838,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			x86_test_membase_imm (code, ins->sreg1, 0, 1);
 			br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, "mono_threads_state_poll");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, &mono_jit_icall_info.mono_threads_state_poll);
 			x86_patch (br [0], code);
 
 			break;
@@ -5340,7 +5341,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				}
 
 				x86_push_imm (code, m_class_get_type_token (exc_class) - MONO_TOKEN_TYPE_DEF);
-				patch_info->data.name = "mono_arch_throw_corlib_exception";
+				patch_info->data.jit_icall_info = &mono_jit_icall_info.mono_arch_throw_corlib_exception;
 				patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
 				patch_info->ip.i = code - cfg->native_code;
 				x86_call_code (code, 0);

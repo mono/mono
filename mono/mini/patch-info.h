@@ -6,7 +6,9 @@ PATCH_INFO(METHOD_JUMP, "method_jump")
 PATCH_INFO(METHOD_REL, "method_rel")
 PATCH_INFO(METHODCONST, "methodconst")
 /* Either the address of a C function implementing a JIT icall, or a wrapper around it */
+// jit_icall is no longer used and has been replaced by jit_icall_info.
 PATCH_INFO(JIT_ICALL, "jit_icall")
+PATCH_INFO(JIT_ICALL_INFO, "jit_icall_info")
 PATCH_INFO(SWITCH, "switch")
 PATCH_INFO(EXC, "exc")
 PATCH_INFO(EXC_NAME, "exc_name")

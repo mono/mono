@@ -81,6 +81,7 @@
 #include "lldb.h"
 #include "aot-runtime.h"
 #include "mini-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 MonoCallSpec *mono_jit_trace_calls;
 MonoMethodDesc *mono_inject_async_exc_method;
@@ -1678,15 +1679,14 @@ mono_find_jit_opcode_emulation (int opcode)
 }
 
 void
-mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
+mini_register_opcode_emulation_info (int opcode, MonoJitICallInfo *info, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
 {
-	MonoJitICallInfo *info;
-
 	g_assert (!sig->hasthis);
 	g_assert (sig->param_count < 3);
 
-	info = mono_register_jit_icall_full (func, name, sig, no_wrapper, symbol);
+	info = mono_register_jit_icall_info_full (info, func, name, sig, no_wrapper, symbol);
 
+//FIXME #ifndef DISABLE_JIT
 	if (emul_opcode_num >= emul_opcode_alloced) {
 		int incr = emul_opcode_alloced? emul_opcode_alloced/2: 16;
 		emul_opcode_alloced += incr;
@@ -1697,6 +1697,7 @@ mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignatur
 	emul_opcode_opcodes [emul_opcode_num] = opcode;
 	emul_opcode_num++;
 	emul_opcode_hit_cache [opcode >> (EMUL_HIT_SHIFT + 3)] |= (1 << (opcode & EMUL_HIT_MASK));
+//FIXME #endif
 }
 
 static void
@@ -1906,8 +1907,30 @@ mono_destroy_compile (MonoCompile *cfg)
 }
 
 void
+mono_check_patch (MonoJumpInfoType type, gconstpointer data)
+{
+	// Whatever lightweight checking can be done.
+	switch (type) {
+	default:
+		return;
+	case MONO_PATCH_INFO_JIT_ICALL:
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
+		break;
+	}
+	g_assert (data);
+	MonoJitICallInfo const * const jit_icall_info = mono_check_jit_icall_info (data);
+	g_assert (jit_icall_info);
+	g_assert (jit_icall_info->name);
+	// not true with AOT
+	//g_assert (jit_icall_info->func);
+}
+
+void
 mono_add_patch_info (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target)
 {
+	mono_check_patch (type, target);
+
 	MonoJumpInfo *ji = (MonoJumpInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoJumpInfo));
 
 	ji->ip.i = ip;
@@ -1921,6 +1944,8 @@ mono_add_patch_info (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpoin
 void
 mono_add_patch_info_rel (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target, int relocation)
 {
+	mono_check_patch (type, target);
+
 	MonoJumpInfo *ji = (MonoJumpInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoJumpInfo));
 
 	ji->ip.i = ip;
@@ -2085,14 +2110,18 @@ mono_postprocess_patches (MonoCompile *cfg)
 		switch (patch_info->type) {
 		case MONO_PATCH_INFO_ABS: {
 			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (patch_info->data.target);
-
+#ifndef TARGET_X86
+			// FIXMEjiticall Linux/x86 at least
+			//https://jenkins.mono-project.com/job/test-mono-pull-request-i386/24615/parsed_console/log.html
+			g_assertf (!info, "3 avoid ABS patches depending on jit icall hashing %s", info->name ? info->name : "");
+#endif
 			/*
 			 * Change patches of type MONO_PATCH_INFO_ABS into patches describing the 
 			 * absolute address.
 			 */
 			if (info) {
 				patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
-				patch_info->data.name = info->name;
+				patch_info->data.jit_icall_info = info;
 			}
 
 			if (patch_info->type == MONO_PATCH_INFO_ABS) {
@@ -2107,6 +2136,7 @@ mono_postprocess_patches (MonoCompile *cfg)
 
 			break;
 		}
+
 		case MONO_PATCH_INFO_SWITCH: {
 			gpointer *table;
 			if (cfg->method->dynamic) {
@@ -2871,9 +2901,9 @@ insert_safepoints (MonoCompile *cfg)
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 		/* These wrappers are called from the wrapper for the polling function, leading to potential stack overflow */
 		if (info && info->subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER &&
-				(info->d.icall.func == mono_threads_state_poll ||
-				 info->d.icall.func == mono_thread_interruption_checkpoint ||
-				 info->d.icall.func == mono_threads_exit_gc_safe_region_unbalanced)) {
+				(info->d.jit_icall_info == &mono_jit_icall_info.mono_threads_state_poll ||
+				 info->d.jit_icall_info == &mono_jit_icall_info.mono_thread_interruption_checkpoint ||
+				 info->d.jit_icall_info == &mono_jit_icall_info.mono_threads_exit_gc_safe_region_unbalanced)) {
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for the polling function icall\n");
 			return;

@@ -49,6 +49,7 @@
 #endif
 #include "icall-decl.h"
 #include "icall-signatures.h"
+#include "register-icall-def.h"
 
 static void
 mono_System_ComObject_ReleaseInterfaces (MonoComObjectHandle obj);
@@ -87,13 +88,18 @@ Code shared between the DISABLE_COM and !DISABLE_COM
 #ifdef __cplusplus
 template <typename T>
 static void
-register_icall (       T func, const char *name, MonoMethodSignature *sig, gboolean save)
+register_icall_info (MonoJitICallInfo *info,        T func, const char *name, MonoMethodSignature *sig, gboolean save)
 #else
 static void
-register_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean save)
+register_icall_info (MonoJitICallInfo *info, gpointer func, const char *name, MonoMethodSignature *sig, gboolean save)
 #endif
 {
-	mono_register_jit_icall_full (func, name, sig, save, name);
+	// FIXME Some versions of register_icall_info pass NULL for last parameter, some pass name.
+	// marshal.c: name
+	// remoting.c: NULL (via mono_register_jit_icall_info)
+	// cominterop.c: name
+	// mini-runtime.c: name
+	mono_register_jit_icall_info_full (info, func, name, sig, save, name);
 }
 
 mono_bstr

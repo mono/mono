@@ -740,6 +740,7 @@ struct MonoCallInst {
 	MonoInst *out_args;
 	MonoInst *vret_var;
 	gconstpointer fptr;
+	MonoJitICallInfo *jit_icall_info; // This pointer could be reduced to an int, even just 9 bits.
 	guint stack_usage;
 	guint stack_align_amount;
 	guint is_virtual : 1;
@@ -2039,6 +2040,8 @@ guint     mini_type_to_stind                (MonoCompile* cfg, MonoType *type);
 MonoJitInfo* mini_lookup_method             (MonoDomain *domain, MonoMethod *method, MonoMethod *shared);
 guint32   mono_reverse_branch_op            (guint32 opcode);
 void      mono_disassemble_code             (MonoCompile *cfg, guint8 *code, int size, char *id);
+void      mono_call_add_patch_info          (MonoCompile *cfg, MonoCallInst *call, int ip);
+void      mono_check_patch                  (MonoJumpInfoType type, gconstpointer target);
 void      mono_add_patch_info               (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target) MONO_LLVM_INTERNAL;
 void      mono_add_patch_info_rel           (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target, int relocation) MONO_LLVM_INTERNAL;
 void      mono_remove_patch_info            (MonoCompile *cfg, int ip);
@@ -2061,16 +2064,8 @@ gboolean mono_compile_is_broken (MonoCompile *cfg, MonoMethod *method, gboolean 
 MonoInst *mono_get_got_var (MonoCompile *cfg);
 void      mono_add_seq_point (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int native_offset);
 void      mono_add_var_location (MonoCompile *cfg, MonoInst *var, gboolean is_reg, int reg, int offset, int from, int to);
-MonoInst* mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args);
-
-#ifdef __cplusplus
-template <typename T>
-inline MonoInst*
-mono_emit_jit_icall (MonoCompile *cfg, T func, MonoInst **args)
-{
-	return mono_emit_jit_icall (cfg, (gconstpointer)func, args);
-}
-#endif // __cplusplus
+MonoInst* mono_emit_jit_icall_info (MonoCompile *cfg, MonoJitICallInfo *jit_icall_info, MonoInst **args);
+#define mono_emit_jit_icall(cfg, name, args) (mono_emit_jit_icall_info ((cfg), &mono_jit_icall_info.name, (args)))
 
 MonoInst* mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *info, MonoInst **args);
 MonoInst* mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, MonoInst *this_ins);
@@ -2102,14 +2097,14 @@ void      mono_add_ins_to_end               (MonoBasicBlock *bb, MonoInst *inst)
 
 void      mono_replace_ins                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **prev, MonoBasicBlock *first_bb, MonoBasicBlock *last_bb);
 
-void              mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_throw);
+void     mini_register_opcode_emulation_info (int opcode, MonoJitICallInfo *jit_icall_info, const char* name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_throw);
 
 #ifdef __cplusplus
 template <typename T>
 inline void
-mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, T func, const char *symbol, gboolean no_throw)
+mini_register_opcode_emulation_info (int opcode, MonoJitICallInfo *jit_icall_info, const char* name, MonoMethodSignature *sig, T func, gboolean no_throw)
 {
-	mini_register_opcode_emulation (opcode, name, sig, (gpointer)func, symbol, no_throw);
+	mini_register_opcode_emulation_info (opcode, jit_icall_info, name, sig, (gpointer)func, no_throw);
 }
 #endif // __cplusplus
 
@@ -2152,7 +2147,7 @@ void              mono_monitor_exit_trampoline (host_mgreg_t *regs, guint8 *code
 gconstpointer     mono_get_trampoline_func (MonoTrampolineType tramp_type);
 gpointer          mini_get_vtable_trampoline (MonoVTable *vt, int slot_index);
 const char*       mono_get_generic_trampoline_simple_name (MonoTrampolineType tramp_type);
-char*             mono_get_generic_trampoline_name (MonoTrampolineType tramp_type);
+const char*       mono_get_generic_trampoline_name (MonoTrampolineType tramp_type);
 char*             mono_get_rgctx_fetch_trampoline_name (int slot);
 gpointer          mini_get_nullified_class_init_trampoline (void);
 gpointer          mini_get_single_step_trampoline (void);
@@ -2719,7 +2714,7 @@ gboolean mini_gsharedvt_runtime_invoke_supported (MonoMethodSignature *sig);
 G_EXTERN_C void mono_interp_entry_from_trampoline (gpointer ccontext, gpointer imethod);
 G_EXTERN_C void mono_interp_to_native_trampoline (gpointer addr, gpointer ccontext);
 MonoMethod* mini_get_interp_in_wrapper (MonoMethodSignature *sig);
-MonoMethod* mini_get_interp_lmf_wrapper (const char *name, gpointer target);
+MonoMethod* mini_get_interp_lmf_wrapper (MonoJitICallInfo *jit_icall_info);
 char* mono_get_method_from_ip (void *ip);
 
 /* SIMD support */

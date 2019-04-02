@@ -217,13 +217,13 @@ struct _BinSection {
 	gboolean has_addr;
 };
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_start (MonoImageWriter *acfg)
 {
 	acfg->labels = g_hash_table_new (g_str_hash, g_str_equal);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_section_change (MonoImageWriter *acfg, const char *section_name, int subsection_index)
 {
 	BinSection *section;
@@ -247,14 +247,14 @@ bin_writer_emit_section_change (MonoImageWriter *acfg, const char *section_name,
 	}
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_set_section_addr (MonoImageWriter *acfg, guint64 addr)
 {
 	acfg->cur_section->addr = addr;
 	acfg->cur_section->has_addr = TRUE;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_symbol_inner (MonoImageWriter *acfg, const char *name, const char *end_label, gboolean is_global, gboolean func)
 {
 	BinSymbol *symbol = g_new0 (BinSymbol, 1);
@@ -270,19 +270,19 @@ bin_writer_emit_symbol_inner (MonoImageWriter *acfg, const char *name, const cha
 	acfg->symbols = symbol;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_global (MonoImageWriter *acfg, const char *name, gboolean func)
 {
 	bin_writer_emit_symbol_inner (acfg, name, NULL, TRUE, func);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_local_symbol (MonoImageWriter *acfg, const char *name, const char *end_label, gboolean func)
 {
 	bin_writer_emit_symbol_inner (acfg, name, end_label, FALSE, func);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_label (MonoImageWriter *acfg, const char *name)
 {
 	BinLabel *label = g_new0 (BinLabel, 1);
@@ -292,7 +292,7 @@ bin_writer_emit_label (MonoImageWriter *acfg, const char *name)
 	g_hash_table_insert (acfg->labels, label->name, label);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_ensure_buffer (BinSection *section, int size)
 {
 	int new_offset = section->cur_offset + size;
@@ -309,7 +309,7 @@ bin_writer_emit_ensure_buffer (BinSection *section, int size)
 	}
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_bytes (MonoImageWriter *acfg, const guint8* buf, int size)
 {
 	bin_writer_emit_ensure_buffer (acfg->cur_section, size);
@@ -317,20 +317,20 @@ bin_writer_emit_bytes (MonoImageWriter *acfg, const guint8* buf, int size)
 	acfg->cur_section->cur_offset += size;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_string (MonoImageWriter *acfg, const char *value)
 {
 	int size = strlen (value) + 1;
 	bin_writer_emit_bytes (acfg, (const guint8*)value, size);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_line (MonoImageWriter *acfg)
 {
 	/* Nothing to do in binary writer */
 }
 
-static void 
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void 
 bin_writer_emit_alignment (MonoImageWriter *acfg, int size)
 {
 	int offset = acfg->cur_section->cur_offset;
@@ -344,7 +344,7 @@ bin_writer_emit_alignment (MonoImageWriter *acfg, int size)
 	}
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_pointer_unaligned (MonoImageWriter *acfg, const char *target)
 {
 	BinReloc *reloc;
@@ -367,14 +367,14 @@ bin_writer_emit_pointer_unaligned (MonoImageWriter *acfg, const char *target)
 	acfg->cur_section->cur_offset += sizeof (gpointer);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_pointer (MonoImageWriter *acfg, const char *target)
 {
 	bin_writer_emit_alignment (acfg, sizeof (gpointer));
 	bin_writer_emit_pointer_unaligned (acfg, target);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_int16 (MonoImageWriter *acfg, int value)
 {
 	guint8 *data;
@@ -386,7 +386,7 @@ bin_writer_emit_int16 (MonoImageWriter *acfg, int value)
 	data [1] = value >> 8;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_int32 (MonoImageWriter *acfg, int value)
 {
 	guint8 *data;
@@ -420,7 +420,7 @@ create_reloc (MonoImageWriter *acfg, const char *end, const char* start, int off
 	return reloc;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_symbol_diff (MonoImageWriter *acfg, const char *end, const char* start, int offset)
 {
 	create_reloc (acfg, end, start, offset);
@@ -442,14 +442,14 @@ bin_writer_emit_reloc (MonoImageWriter *acfg, int reloc_type, const char *symbol
 	reloc->reloc_type = reloc_type;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_emit_zero_bytes (MonoImageWriter *acfg, int num)
 {
 	bin_writer_emit_ensure_buffer (acfg->cur_section, num);
 	acfg->cur_section->cur_offset += num;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_fwrite (MonoImageWriter *acfg, void *val, size_t size, size_t nmemb)
 {
 	if (acfg->fp)
@@ -461,7 +461,7 @@ bin_writer_fwrite (MonoImageWriter *acfg, void *val, size_t size, size_t nmemb)
 	}
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 bin_writer_fseek (MonoImageWriter *acfg, int offset)
 {
 	if (acfg->fp)
@@ -501,7 +501,7 @@ get_label_addr (MonoImageWriter *acfg, const char *name)
 }
 
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 resolve_reloc (MonoImageWriter *acfg, BinReloc *reloc, guint8 **out_data, gsize *out_vaddr, gsize *out_start_val, gsize *out_end_val)
 {
 	guint8 *data;
@@ -541,7 +541,7 @@ resolve_reloc (MonoImageWriter *acfg, BinReloc *reloc, guint8 **out_data, gsize 
 	*out_vaddr = vaddr;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 resolve_relocations (MonoImageWriter *acfg)
 {
 	BinReloc *reloc;
@@ -751,7 +751,7 @@ str_table_add (ElfStrTable *table, const char* value)
 	return idx;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 append_subsection (MonoImageWriter *acfg, ElfSectHeader *sheaders, BinSection *sect, BinSection *add)
 {
 	int offset = sect->cur_offset;
@@ -993,7 +993,7 @@ collect_syms (MonoImageWriter *acfg, int *hash, ElfStrTable *strtab, ElfSectHead
 	return symbols;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 reloc_symbols (MonoImageWriter *acfg, ElfSymbol *symbols, ElfSectHeader *sheaders, ElfStrTable *strtab, gboolean dynamic)
 {
 	BinSection *section;
@@ -1039,7 +1039,7 @@ reloc_symbols (MonoImageWriter *acfg, ElfSymbol *symbols, ElfSectHeader *sheader
 	++i;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 resolve_reloc (MonoImageWriter *acfg, BinReloc *reloc, guint8 **out_data, gsize *out_vaddr, gsize *out_start_val, gsize *out_end_val)
 {
 	guint8 *data;
@@ -1115,7 +1115,7 @@ resolve_relocations (MonoImageWriter *acfg)
 
 #else /* USE_ELF_RELA */
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 do_reloc (MonoImageWriter *acfg, BinReloc *reloc, guint8 *data, gssize addr)
 {
 #ifdef TARGET_ARM
@@ -1639,7 +1639,7 @@ bin_writer_emit_writeout (MonoImageWriter *acfg)
 
 /* ASM WRITER */
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_start (MonoImageWriter *acfg)
 {
 #if defined(TARGET_ASM_APPLE)
@@ -1655,7 +1655,7 @@ asm_writer_emit_writeout (MonoImageWriter *acfg)
 	return 0;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_unset_mode (MonoImageWriter *acfg)
 {
 	if (acfg->mode == EMIT_NONE)
@@ -1664,7 +1664,7 @@ asm_writer_emit_unset_mode (MonoImageWriter *acfg)
 	acfg->mode = EMIT_NONE;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_section_change (MonoImageWriter *acfg, const char *section_name, int subsection_index)
 {
 	asm_writer_emit_unset_mode (acfg);
@@ -1696,7 +1696,7 @@ asm_writer_emit_section_change (MonoImageWriter *acfg, const char *section_name,
 #endif
 }
 
-static inline
+static
 const char *get_label (const char *s)
 {
 #ifdef TARGET_ASM_APPLE
@@ -1727,7 +1727,7 @@ asm_writer_in_data_section (MonoImageWriter *acfg)
 	return in_data_section;
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean func, gboolean global)
 {
 	asm_writer_emit_unset_mode (acfg);
@@ -1744,7 +1744,7 @@ asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean f
 
 #else
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean func, gboolean global)
 {
 	const char *stype;
@@ -1766,7 +1766,7 @@ asm_writer_emit_symbol_type (MonoImageWriter *acfg, const char *name, gboolean f
 }
 #endif /* TARGET_WIN32 */
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_global (MonoImageWriter *acfg, const char *name, gboolean func)
 {
 	asm_writer_emit_unset_mode (acfg);
@@ -1776,7 +1776,7 @@ asm_writer_emit_global (MonoImageWriter *acfg, const char *name, gboolean func)
 	asm_writer_emit_symbol_type (acfg, name, func, TRUE);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_local_symbol (MonoImageWriter *acfg, const char *name, const char *end_label, gboolean func)
 {
 	asm_writer_emit_unset_mode (acfg);
@@ -1788,7 +1788,7 @@ asm_writer_emit_local_symbol (MonoImageWriter *acfg, const char *name, const cha
 	asm_writer_emit_symbol_type (acfg, name, func, FALSE);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_symbol_size (MonoImageWriter *acfg, const char *name, const char *end_label)
 {
 	asm_writer_emit_unset_mode (acfg);
@@ -1799,28 +1799,28 @@ asm_writer_emit_symbol_size (MonoImageWriter *acfg, const char *name, const char
 #endif
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_label (MonoImageWriter *acfg, const char *name)
 {
 	asm_writer_emit_unset_mode (acfg);
 	fprintf (acfg->fp, "%s:\n", get_label (name));
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_string (MonoImageWriter *acfg, const char *value)
 {
 	asm_writer_emit_unset_mode (acfg);
 	fprintf (acfg->fp, "\t%s \"%s\"\n", AS_STRING_DIRECTIVE, value);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_line (MonoImageWriter *acfg)
 {
 	asm_writer_emit_unset_mode (acfg);
 	fprintf (acfg->fp, "\n");
 }
 
-static void 
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void 
 asm_writer_emit_alignment (MonoImageWriter *acfg, int size)
 {
 	asm_writer_emit_unset_mode (acfg);
@@ -1839,7 +1839,7 @@ asm_writer_emit_alignment (MonoImageWriter *acfg, int size)
 }
 
 #ifndef USE_BIN_WRITER
-static void 
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void 
 asm_writer_emit_alignment_fill (MonoImageWriter *acfg, int size, int fill)
 {
 	asm_writer_emit_unset_mode (acfg);
@@ -1851,14 +1851,14 @@ asm_writer_emit_alignment_fill (MonoImageWriter *acfg, int size, int fill)
 }
 #endif
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_pointer_unaligned (MonoImageWriter *acfg, const char *target)
 {
 	asm_writer_emit_unset_mode (acfg);
 	fprintf (acfg->fp, "\t%s %s\n", AS_POINTER_DIRECTIVE, target ? target : "0");
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_pointer (MonoImageWriter *acfg, const char *target)
 {
 	asm_writer_emit_unset_mode (acfg);
@@ -1866,33 +1866,42 @@ asm_writer_emit_pointer (MonoImageWriter *acfg, const char *target)
 	asm_writer_emit_pointer_unaligned (acfg, target);
 }
 
-static char *byte_to_str;
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
+asm_writer_emit_byte (MonoImageWriter *volatile acfg, const guint8* volatile buf, int volatile size, int volatile i, FILE* volatile fp)
+{
+	static const char hex [] = "0123456789ABCDEF";
+	g_assert (acfg);
+	g_assert (fp);
 
-static void
+	if ((acfg->col_count % 32) == 0) {
+		fprintf (fp, "\n\t.byte %d", buf [i]);
+	} else if (buf [i] < 10) {
+		const char s [ ] = {',', hex [buf [i]]};
+		fwrite (s, 1, 2, fp);
+	} else {
+		const char s [ ] = {',', '0', 'x', hex [buf [i] >> 4], hex [buf [i] & 0xF]};
+		fwrite (s, 1, 5, fp);
+	}
+}
+
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_bytes (MonoImageWriter *acfg, const guint8* buf, int size)
 {
+	g_assert (acfg);
+	FILE *fp = acfg->fp;
+	g_assert (fp);
+
 	int i;
 	if (acfg->mode != EMIT_BYTE) {
 		acfg->mode = EMIT_BYTE;
 		acfg->col_count = 0;
 	}
 
-	if (byte_to_str == NULL) {
-		byte_to_str = g_new0 (char, 256 * 8);
-		for (i = 0; i < 256; ++i) {
-			sprintf (byte_to_str + (i * 8), ",%d", i);
-		}
-	}
-
-	for (i = 0; i < size; ++i, ++acfg->col_count) {
-		if ((acfg->col_count % 32) == 0)
-			fprintf (acfg->fp, "\n\t.byte %d", buf [i]);
-		else
-			fputs (byte_to_str + (buf [i] * 8), acfg->fp);
-	}
+	for (i = 0; i < size; ++i, ++acfg->col_count)
+		asm_writer_emit_byte (acfg, buf, size, i, fp);
 }
 
-static inline void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_int16 (MonoImageWriter *acfg, int value)
 {
 	if (acfg->mode != EMIT_WORD) {
@@ -1906,7 +1915,7 @@ asm_writer_emit_int16 (MonoImageWriter *acfg, int value)
 	fprintf (acfg->fp, "%d", value);
 }
 
-static inline void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_int32 (MonoImageWriter *acfg, int value)
 {
 	if (acfg->mode != EMIT_LONG) {
@@ -1920,7 +1929,7 @@ asm_writer_emit_int32 (MonoImageWriter *acfg, int value)
 	fprintf (acfg->fp, "%d", value);
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_symbol_diff (MonoImageWriter *acfg, const char *end, const char* start, int offset)
 {
 #ifdef TARGET_ASM_APPLE
@@ -1976,7 +1985,7 @@ asm_writer_emit_symbol_diff (MonoImageWriter *acfg, const char *end, const char*
 #endif
 }
 
-static void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
 asm_writer_emit_zero_bytes (MonoImageWriter *acfg, int num)
 {
 	asm_writer_emit_unset_mode (acfg);
@@ -2099,10 +2108,8 @@ mono_img_writer_emit_bytes (MonoImageWriter *acfg, const guint8* buf, int size)
 	if (acfg->use_bin_writer)
 		bin_writer_emit_bytes (acfg, buf, size);
 	else
-		asm_writer_emit_bytes (acfg, buf, size);
-#else
-	asm_writer_emit_bytes (acfg, buf, size);
 #endif
+	asm_writer_emit_bytes (acfg, buf, size);
 }
 
 void
@@ -2112,10 +2119,8 @@ mono_img_writer_emit_string (MonoImageWriter *acfg, const char *value)
 	if (acfg->use_bin_writer)
 		bin_writer_emit_string (acfg, value);
 	else
-		asm_writer_emit_string (acfg, value);
-#else
-	asm_writer_emit_string (acfg, value);
 #endif
+	asm_writer_emit_string (acfg, value);
 }
 
 void
@@ -2125,10 +2130,8 @@ mono_img_writer_emit_line (MonoImageWriter *acfg)
 	if (acfg->use_bin_writer)
 		bin_writer_emit_line (acfg);
 	else
-		asm_writer_emit_line (acfg);
-#else
-		asm_writer_emit_line (acfg);
 #endif
+		asm_writer_emit_line (acfg);
 }
 
 void
@@ -2138,10 +2141,8 @@ mono_img_writer_emit_alignment (MonoImageWriter *acfg, int size)
 	if (acfg->use_bin_writer)
 		bin_writer_emit_alignment (acfg, size);
 	else
-		asm_writer_emit_alignment (acfg, size);
-#else
-	asm_writer_emit_alignment (acfg, size);
 #endif
+	asm_writer_emit_alignment (acfg, size);
 }
 
 void
@@ -2164,10 +2165,8 @@ mono_img_writer_emit_pointer_unaligned (MonoImageWriter *acfg, const char *targe
 	if (acfg->use_bin_writer)
 		bin_writer_emit_pointer_unaligned (acfg, target);
 	else
-		asm_writer_emit_pointer_unaligned (acfg, target);
-#else
-	asm_writer_emit_pointer_unaligned (acfg, target);
 #endif
+	asm_writer_emit_pointer_unaligned (acfg, target);
 }
 
 void
@@ -2177,10 +2176,8 @@ mono_img_writer_emit_pointer (MonoImageWriter *acfg, const char *target)
 	if (acfg->use_bin_writer)
 		bin_writer_emit_pointer (acfg, target);
 	else
-		asm_writer_emit_pointer (acfg, target);
-#else
-	asm_writer_emit_pointer (acfg, target);
 #endif
+	asm_writer_emit_pointer (acfg, target);
 }
 
 void
@@ -2190,10 +2187,8 @@ mono_img_writer_emit_int16 (MonoImageWriter *acfg, int value)
 	if (acfg->use_bin_writer)
 		bin_writer_emit_int16 (acfg, value);
 	else
-		asm_writer_emit_int16 (acfg, value);
-#else
-	asm_writer_emit_int16 (acfg, value);
 #endif
+	asm_writer_emit_int16 (acfg, value);
 }
 
 void
@@ -2203,10 +2198,8 @@ mono_img_writer_emit_int32 (MonoImageWriter *acfg, int value)
 	if (acfg->use_bin_writer)
 		bin_writer_emit_int32 (acfg, value);
 	else
-		asm_writer_emit_int32 (acfg, value);
-#else
-	asm_writer_emit_int32 (acfg, value);
 #endif
+	asm_writer_emit_int32 (acfg, value);
 }
 
 void
@@ -2216,10 +2209,8 @@ mono_img_writer_emit_symbol_diff (MonoImageWriter *acfg, const char *end, const 
 	if (acfg->use_bin_writer)
 		bin_writer_emit_symbol_diff (acfg, end, start, offset);
 	else
-		asm_writer_emit_symbol_diff (acfg, end, start, offset);
-#else
-	asm_writer_emit_symbol_diff (acfg, end, start, offset);
 #endif
+	asm_writer_emit_symbol_diff (acfg, end, start, offset);
 }
 
 void

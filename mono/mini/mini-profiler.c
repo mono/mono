@@ -13,6 +13,7 @@
 #include "ir-emit.h"
 #include "mini.h"
 #include "trace.h"
+#include "mono/metadata/register-icall-def.h"
 
 #ifndef DISABLE_JIT
 

@@ -28,6 +28,7 @@
 #include <mono/metadata/abi-details.h>
 
 #include "interp/interp.h"
+#include "mono/metadata/register-icall-def.h"
 
 /*
  * Documentation:
@@ -3262,7 +3263,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * So instead of emitting a trap, we emit a call a C function and place a 
 			 * breakpoint there.
 			 */
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, (gpointer)"mono_break");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, &mono_jit_icall_info.mono_break);
 			break;
 		case OP_LOCALLOC: {
 			guint8 *buf [16];
@@ -4331,6 +4332,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			call = (MonoCallInst*)ins;
 			if (ins->flags & MONO_INST_HAS_METHOD)
 				code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method);
+			else if (call->jit_icall_info)
+				code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, call->jit_icall_info);
 			else
 				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
 			code = emit_move_return_value (cfg, code, ins);
@@ -4545,7 +4548,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* Slowpath */
 			g_assert (sreg1 == ARMREG_R0);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL,
-							  (gpointer)"mono_generic_class_init");
+							  &mono_jit_icall_info.mono_generic_class_init);
 
 			mono_arm_patch (jump, code, MONO_R_ARM64_CBZ);
 			break;
@@ -4600,14 +4603,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_THROW:
 			if (sreg1 != ARMREG_R0)
 				arm_movx (code, ARMREG_R0, sreg1);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, 
-							  (gpointer)"mono_arch_throw_exception");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL,
+							  &mono_jit_icall_info.mono_arch_throw_exception);
 			break;
 		case OP_RETHROW:
 			if (sreg1 != ARMREG_R0)
 				arm_movx (code, ARMREG_R0, sreg1);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, 
-							  (gpointer)"mono_arch_rethrow_exception");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL,
+							  &mono_jit_icall_info.mono_arch_rethrow_exception);
 			break;
 		case OP_CALL_HANDLER:
 			mono_add_patch_info_rel (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_target_bb, MONO_R_ARM64_BL);
@@ -4669,7 +4672,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* Call it if it is non-null */
 			buf [0] = code;
 			arm_cbzx (code, ARMREG_IP1, 0);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, "mono_threads_state_poll");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, &mono_jit_icall_info.mono_threads_state_poll);
 			mono_arm_patch (buf [0], code, MONO_R_ARM64_CBZ);
 			break;
 		}
@@ -5245,7 +5248,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 		/* Branch to the corlib exception throwing trampoline */
 		ji->ip.i = code - cfg->native_code;
 		ji->type = MONO_PATCH_INFO_JIT_ICALL;
-		ji->data.name = "mono_arch_throw_corlib_exception";
+		ji->data.jit_icall_info = &mono_jit_icall_info.mono_arch_throw_corlib_exception;
 		ji->relocation = MONO_R_ARM64_BL;
 		arm_bl (code, 0);
 		cfg->thunk_area += THUNK_SIZE;
@@ -5393,7 +5396,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
-	return mono_arm_get_exception_trampolines (aot);
+	return mono_arm_get_exception_trampolines (aot, FALSE);
 }
 
 #else /* DISABLE_JIT */

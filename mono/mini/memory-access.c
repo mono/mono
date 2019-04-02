@@ -15,6 +15,7 @@
 #include "mini.h"
 #include "ir-emit.h"
 #include "jit-icalls.h"
+#include "mono/metadata/register-icall-def.h"
 
 #define MAX_INLINE_COPIES 10
 #define MAX_INLINE_COPY_SIZE 10000
@@ -419,12 +420,12 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 					mono_emit_jit_icall (cfg, mono_value_copy_internal, iargs);
 			} else {
 				/* We don't unroll more than 5 stores to avoid code bloat. */
-				/*This is harmless and simplify mono_gc_get_range_copy_func */
+				/*This is harmless and simplify mono_gc_get_range_copy_func / mono_gc_wbarrier_range_copy */
 				size += (TARGET_SIZEOF_VOID_P - 1);
 				size &= ~(TARGET_SIZEOF_VOID_P - 1);
 
 				EMIT_NEW_ICONST (cfg, iargs [2], size);
-				mono_emit_jit_icall (cfg, mono_gc_get_range_copy_func (), iargs);
+				mono_emit_jit_icall (cfg, mono_gc_wbarrier_range_copy, iargs);
 			}
 			return;
 		}

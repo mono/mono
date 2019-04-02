@@ -31,6 +31,7 @@
 #endif
 
 #include <mono/utils/freebsd-dwarf.h>
+#include "mono/metadata/register-icall-def.h"
 
 #define DW_AT_MIPS_linkage_name 0x2007
 #define DW_LNE_set_prologue_end 0x0a
@@ -1396,16 +1397,17 @@ disasm_ins (MonoMethod *method, const guchar *ip, const guint8 **endip)
 		gpointer data;
 
 		switch (ip [1]) {
-		case CEE_MONO_ICALL: {
+
+		case CEE_MONO_JIT_ICALL: {
 			MonoJitICallInfo *info;
 
-			token = read32 (ip + 2);
-			data = mono_method_get_wrapper_data (method, token);
-			info = mono_find_jit_icall_by_addr (data);
-			g_assert (info);
+			guint icall_index = read32 (ip + 2); // FIXMEjiticall read16
+			g_assert (icall_index); // zero is reserved
+			info = &mono_jit_icall_info.array [icall_index];
+			g_assert (info && info->func && info->name);
 
-			dis = g_strdup_printf ("IL_%04x: mono_icall <%s>", (int)(ip - header->code), info->name);
-			ip += 6;
+			dis = g_strdup_printf ("IL_%04x: mono_jit_icall <%s>", (int)(ip - header->code), info->name);
+			ip += 4;
 			break;
 		}
 		case CEE_MONO_CLASSCONST: {

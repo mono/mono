@@ -85,6 +85,7 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 #include "llvmonly-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 #define BRANCH_COST 10
 #define CALL_COST 10
@@ -1650,6 +1651,8 @@ mini_emit_runtime_constant (MonoCompile *cfg, MonoJumpInfoType patch_type, gpoin
 {
 	MonoInst *ins;
 
+	mono_check_patch (patch_type, data);
+
 	if (cfg->compile_aot) {
 MONO_DISABLE_WARNING (4306) // 'type cast': conversion from 'MonoJumpInfoType' to 'MonoInst *' of greater size
 		EMIT_NEW_AOTCONST (cfg, ins, patch_type, data);
@@ -1710,8 +1713,11 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 		EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_GET_TLS_TRAMP, GUINT_TO_POINTER(key));
 		return mini_emit_calli (cfg, mono_icall_sig_ptr, NULL, addr, NULL, NULL);
 	} else {
-		gpointer getter = (gpointer)mono_tls_get_tls_getter (key);
-		return mono_emit_jit_icall (cfg, getter, NULL);
+		g_assert (TLS_KEY_THREAD == 0);
+		g_assert (TLS_KEY_NUM == 5);
+		MonoJitICallInfo *jit_icall_info = &mono_jit_icall_info.array [MONO_JIT_ICALL_mono_tls_get_thread + key];
+		jit_icall_info->func = (gpointer)mono_tls_get_tls_getter (key);
+		return mono_emit_jit_icall_info (cfg, jit_icall_info, NULL);
 	}
 }
 
@@ -2063,6 +2069,8 @@ handle_enum:
 MonoJumpInfo *
 mono_patch_info_new (MonoMemPool *mp, int ip, MonoJumpInfoType type, gconstpointer target)
 {
+	mono_check_patch (type, target);
+
 	MonoJumpInfo *ji = (MonoJumpInfo *)mono_mempool_alloc (mp, sizeof (MonoJumpInfo));
 
 	ji->ip.i = ip;
@@ -2181,7 +2189,7 @@ mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *
 
 		return args [0];
 	} else {
-		return mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
+		return mono_emit_jit_icall_info (cfg, info, args);
 	}
 }
  
@@ -2445,6 +2453,8 @@ emit_get_rgctx (MonoCompile *cfg, int context_used)
 static MonoJumpInfoRgctxEntry *
 mono_patch_info_rgctx_entry_new (MonoMemPool *mp, MonoMethod *method, gboolean in_mrgctx, MonoJumpInfoType patch_type, gconstpointer patch_data, MonoRgctxInfoType info_type)
 {
+	mono_check_patch (patch_type, patch_data);
+
 	MonoJumpInfoRgctxEntry *res = (MonoJumpInfoRgctxEntry *)mono_mempool_alloc0 (mp, sizeof (MonoJumpInfoRgctxEntry));
 	if (in_mrgctx)
 		res->d.method = method;
@@ -2578,8 +2588,10 @@ emit_rgctx_fetch (MonoCompile *cfg, MonoInst *rgctx, MonoJumpInfoRgctxEntry *ent
 {
 	if (cfg->llvm_only)
 		return emit_rgctx_fetch_inline (cfg, rgctx, entry);
-	else
+	else {
+		// FIXME avoid abs patch
 		return mini_emit_abs_call (cfg, MONO_PATCH_INFO_RGCTX_FETCH, entry, mono_icall_sig_ptr_ptr, &rgctx);
+	}
 }
 
 /*
@@ -3146,7 +3158,7 @@ static MonoInst*
 handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_used)
 {
 	MonoInst *iargs [2];
-	void *alloc_ftn;
+	MonoJitICallInfo *alloc_ftn;
 
 	if (mono_class_get_flags (klass) & TYPE_ATTRIBUTE_ABSTRACT) {
 		char* full_name = mono_type_get_full_name (klass);
@@ -3173,10 +3185,10 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 		if (cfg->opt & MONO_OPT_SHARED) {
 			EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
 			iargs [1] = data;
-			alloc_ftn = (gpointer)ves_icall_object_new;
+			alloc_ftn = &mono_jit_icall_info.ves_icall_object_new;
 		} else {
 			iargs [0] = data;
-			alloc_ftn = (gpointer)ves_icall_object_new_specific;
+			alloc_ftn = &mono_jit_icall_info.ves_icall_object_new_specific;
 		}
 
 		if (managed_alloc && !(cfg->opt & MONO_OPT_SHARED)) {
@@ -3190,19 +3202,19 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 		}
 
-		return mono_emit_jit_icall (cfg, alloc_ftn, iargs);
+		return mono_emit_jit_icall_info (cfg, alloc_ftn, iargs);
 	}
 
 	if (cfg->opt & MONO_OPT_SHARED) {
 		EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
 		EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 
-		alloc_ftn = (gpointer)ves_icall_object_new;
+		alloc_ftn = &mono_jit_icall_info.ves_icall_object_new;
 	} else if (cfg->compile_aot && cfg->cbb->out_of_line && m_class_get_type_token (klass) && m_class_get_image (klass) == mono_defaults.corlib && !mono_class_is_ginst (klass)) {
 		/* This happens often in argument checking code, eg. throw new FooException... */
 		/* Avoid relocations and save some space by calling a helper function specialized to mscorlib */
 		EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (m_class_get_type_token (klass)));
-		alloc_ftn = (gpointer)mono_helper_newobj_mscorlib;
+		alloc_ftn = &mono_jit_icall_info.mono_helper_newobj_mscorlib;
 	} else {
 		MonoVTable *vtable = mono_class_vtable_checked (cfg->domain, klass, &cfg->error);
 
@@ -3222,11 +3234,11 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 			EMIT_NEW_ICONST (cfg, iargs [1], size);
 			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 		}
-		alloc_ftn = (gpointer)ves_icall_object_new_specific;
+		alloc_ftn = &mono_jit_icall_info.ves_icall_object_new_specific;
 		EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
 	}
 
-	return mono_emit_jit_icall (cfg, alloc_ftn, iargs);
+	return mono_emit_jit_icall_info (cfg, alloc_ftn, iargs);
 }
 	
 /*
@@ -6533,7 +6545,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			break;
 		case MONO_CEE_BREAK:
 			if (mini_should_insert_breakpoint (cfg->method)) {
-				ins = mono_emit_jit_icall (cfg, mini_get_dbg_callbacks ()->user_break, NULL);
+				mono_jit_icall_info.mono_debugger_agent_user_break.func = (gpointer)mini_get_dbg_callbacks ()->user_break;
+				ins = mono_emit_jit_icall (cfg, mono_debugger_agent_user_break, NULL);
 			} else {
 				MONO_INST_NEW (cfg, ins, OP_NOP);
 			}
@@ -6912,6 +6925,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						|| info_type == MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR
 						|| info_type == MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR) {
 					tailcall = FALSE;
+					// FIXMEjiticall reduce hashing more
 					ins = (MonoInst*)mini_emit_abs_call (cfg, info_type, info_data, fsig, sp);
 					NULLIFY_INS (addr);
 					goto calli_end;
@@ -8543,16 +8557,16 @@ calli_end:
 				*sp = emit_get_rgctx_method (cfg, context_used,
 											 cmethod, MONO_RGCTX_INFO_METHOD);
 				/* Optimize the common cases */
-				gpointer function = NULL;
+				MonoJitICallInfo *function = NULL;
 				int n = fsig->param_count;
 				switch (n) {
-				case 1: function = (gpointer)mono_array_new_1;
+				case 1: function = &mono_jit_icall_info.mono_array_new_1;
 					break;
-				case 2: function = (gpointer)mono_array_new_2;
+				case 2: function = &mono_jit_icall_info.mono_array_new_2;
 					break;
-				case 3: function = (gpointer)mono_array_new_3;
+				case 3: function = &mono_jit_icall_info.mono_array_new_3;
 					break;
-				case 4: function = (gpointer)mono_array_new_4;
+				case 4: function = &mono_jit_icall_info.mono_array_new_4;
 					break;
 				default:
 					// FIXME Maximum value of param_count? Realistically 64. Fits in imm?
@@ -8574,10 +8588,10 @@ calli_end:
 					ins->type = STACK_PTR;
 					sp [2] = ins;
 					// FIXME Adjust sp by n - 3? Attempts failed.
-					function = (gpointer)mono_array_new_n_icall;
+					function = &mono_jit_icall_info.mono_array_new_n_icall;
 					break;
 				}
-				alloc = mono_emit_jit_icall (cfg, function, sp);
+				alloc = mono_emit_jit_icall_info (cfg, function, sp);
 			} else if (cmethod->string_ctor) {
 				g_assert (!context_used);
 				g_assert (!vtable_arg);
@@ -10089,21 +10103,20 @@ field_access_end:
 		 * Mono specific opcodes
 		 */
 
-		case MONO_CEE_MONO_ICALL: {
+		case MONO_CEE_MONO_JIT_ICALL: {
+
 			g_assert (method->wrapper_type != MONO_WRAPPER_NONE);
-			gpointer func;
+
 			MonoJitICallInfo *info;
 
-			func = mono_method_get_wrapper_data (method, token);
-			info = mono_find_jit_icall_by_addr (func);
-			if (!info)
-				g_error ("Could not find icall address in wrapper %s", mono_method_full_name (method, 1));
-			g_assert (info);
+			info = &mono_jit_icall_info.array [token];
+
+			g_assertf (info && info->func && info->name, "Could not find icall address in wrapper %s", mono_method_full_name (method, 1));
 
 			CHECK_STACK (info->sig->param_count);
 			sp -= info->sig->param_count;
 
-			if (!strcmp (info->name, "mono_threads_attach_coop")) {
+			if (info == &mono_jit_icall_info.mono_threads_attach_coop) {
 				MonoInst *addr;
 				MonoBasicBlock *next_bb;
 
@@ -10113,10 +10126,10 @@ field_access_end:
 					 * infrastructure. Use an indirect call through a got slot initialized at load time
 					 * instead.
 					 */
-					EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL, (char*)info->name);
+					EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL, info);
 					ins = mini_emit_calli (cfg, info->sig, sp, addr, NULL, NULL);
 				} else {
-					ins = mono_emit_jit_icall (cfg, info->func, sp);
+					ins = mono_emit_jit_icall_info (cfg, info, sp);
 				}
 
 				/*
@@ -10126,7 +10139,7 @@ field_access_end:
 				NEW_BBLOCK (cfg, next_bb);
 				MONO_START_BB (cfg, next_bb);
 			} else {
-				ins = mono_emit_jit_icall (cfg, info->func, sp);
+				ins = mono_emit_jit_icall_info (cfg, info, sp);
 			}
 
 			if (!MONO_TYPE_IS_VOID (info->sig->ret))
@@ -10173,13 +10186,13 @@ mono_ldptr:
 		}
 		case MONO_CEE_MONO_JIT_ICALL_ADDR: {
 			MonoJitICallInfo *callinfo;
-			gpointer ptr;
-
 			g_assert (method->wrapper_type != MONO_WRAPPER_NONE);
-			ptr = mono_method_get_wrapper_data (method, token);
-			callinfo = mono_find_jit_icall_by_addr (ptr);
+			callinfo = &mono_jit_icall_info.array [token]; // FIXMEjiticall 2byte index should suffice
+			mono_check_jit_icall_info (callinfo);
 			g_assert (callinfo);
-			EMIT_NEW_JIT_ICALL_ADDRCONST (cfg, ins, (char*)callinfo->name);
+			g_assertf (callinfo->name, "%d", (int)token);
+			g_assertf (callinfo->func, "%d", (int)token);
+			EMIT_NEW_JIT_ICALL_ADDRCONST (cfg, ins, callinfo);
 			*sp++ = ins;
 			inline_costs += CALL_COST * MIN(10, num_calls++);
 			break;

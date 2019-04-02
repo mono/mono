@@ -623,10 +623,15 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 
 			g_string_append_printf (sbuf, " ");
 			mono_print_ji (ji);
+		} else if (call->jit_icall_info) {
+			g_string_append_printf (sbuf, " [%s]", call->jit_icall_info->name);
 		} else if (call->fptr) {
+			// FIXMEjiticall abs/addr?
 			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (call->fptr);
-			if (info)
+			if (info) {
+				g_assertf (!info, "3 should no longer rely on hashing of JIT icalls.");
 				g_string_append_printf (sbuf, " [%s]", info->name);
+			}
 		}
 
 		list = call->out_ireg_args;

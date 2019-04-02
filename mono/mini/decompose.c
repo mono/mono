@@ -20,6 +20,7 @@
 #include <mono/utils/mono-compiler.h>
 #define MONO_MATH_DECLARE_ALL 1
 #include <mono/utils/mono-math.h>
+#include "mono/metadata/register-icall-def.h"
 
 #ifndef DISABLE_JIT
 
@@ -1810,9 +1811,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 					iargs [0]->dreg = ins->sreg1;
 					MONO_INST_NEW (cfg, iargs [1], OP_ARG);
 					iargs [1]->dreg = ins->sreg2;
-
-					call = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, iargs);
-
+					call = mono_emit_jit_icall_info (cfg, info, iargs);
 					MONO_INST_NEW (cfg, cmp, OP_ICOMPARE_IMM);
 					cmp->sreg1 = call->dreg;
 					cmp->inst_imm = 0;
@@ -1850,9 +1849,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 					iargs [0]->dreg = ins->sreg1;
 					MONO_INST_NEW (cfg, iargs [1], OP_ARG);
 					iargs [1]->dreg = ins->sreg2;
-
-					call = mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, iargs);
-
+					call = mono_emit_jit_icall_info (cfg, info, iargs);
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, call->dreg, 1);
 					MONO_EMIT_NEW_UNALU (cfg, OP_ICEQ, ins->dreg, -1);
 

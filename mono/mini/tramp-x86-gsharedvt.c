@@ -10,6 +10,7 @@
  */
 #include "mini.h"
 #include <mono/metadata/abi-details.h>
+#include "mono/metadata/register-icall-def.h"
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 
@@ -157,7 +158,8 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	/* Arg1 */
 	x86_push_membase (code, X86_EBP, info_offset);
 	if (aot) {
-		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_x86_start_gsharedvt_call");
+		mono_jit_icall_info.mono_x86_start_gsharedvt_call.name = "mono_x86_start_gsharedvt_call";
+		code = mono_arch_emit_load_aotconst (buf, code, &ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, &mono_jit_icall_info.mono_x86_start_gsharedvt_call);
 		x86_call_reg (code, X86_EAX);
 	} else {
 		x86_call_code (code, mono_x86_start_gsharedvt_call);

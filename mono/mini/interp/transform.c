@@ -22,9 +22,9 @@
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/utils/unlocked.h>
-
 #include <mono/mini/mini.h>
 #include <mono/mini/mini-runtime.h>
+#include <mono/metadata/register-icall-def.h>
 
 #include "mintops.h"
 #include "interp-internals.h"
@@ -825,7 +825,7 @@ static int mono_class_get_magic_index (MonoClass *k)
 static void
 interp_generate_mae_throw (TransformData *td, MonoMethod *method, MonoMethod *target_method)
 {
-	MonoJitICallInfo *info = mono_find_jit_icall_by_name ("mono_throw_method_access");
+	MonoJitICallInfo *info = &mono_jit_icall_info.mono_throw_method_access;
 
 	/* Inject code throwing MethodAccessException */
 	interp_add_ins (td, MINT_MONO_LDPTR);
@@ -2355,7 +2355,7 @@ init_bb_start (TransformData *td, MonoMethodHeader *header)
 		}
 		else if (in == 0xf0) {
 			ip++;
-			in = *ip + MONO_CEE_MONO_ICALL;
+			in = *ip + MONO_CEE_MONO_JIT_ICALL;
 		}
 		opcode = &mono_opcodes [in];
 		switch (opcode->argument) {
@@ -4953,38 +4953,32 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						goto exit;
 					break;
 				case CEE_MONO_JIT_ICALL_ADDR: {
-					guint32 token;
-					gpointer func;
-
-					token = read32 (td->ip + 1);
+					const guint icall_index = read32 (td->ip + 1); // FIXMEjiticall read16
 					td->ip += 5;
-					func = mono_method_get_wrapper_data (method, token);
+					g_assert (icall_index); // zero is reserved
+					MonoJitICallInfo const * const info = &mono_jit_icall_info.array [icall_index];
+					g_assert (info && info->func && info->name);
 
 					interp_add_ins (td, MINT_LDFTN);
-					td->last_ins->data [0] = get_data_item_index (td, func);
+					td->last_ins->data [0] = get_data_item_index (td, (gpointer)info->func);
 					PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 					break;
 				}
-				case CEE_MONO_ICALL: {
-					guint32 token;
-					gpointer func;
-					MonoJitICallInfo *info;
-					int icall_op;
-
-					token = read32 (td->ip + 1);
+				case CEE_MONO_JIT_ICALL: {
+					const guint icall_index = read32 (td->ip + 1); // FIXMEjiticall read16
 					td->ip += 5;
-					func = mono_method_get_wrapper_data (method, token);
-					info = mono_find_jit_icall_by_addr (func);
-					g_assert (info);
+					g_assert (icall_index); // zero is reserved
+					MonoJitICallInfo const * const info = &mono_jit_icall_info.array [icall_index];
+					g_assert (info && info->func && info->name);
 
 					CHECK_STACK (td, info->sig->param_count);
-					if (!strcmp (info->name, "mono_threads_attach_coop")) {
+					if (info == &mono_jit_icall_info.mono_threads_attach_coop) {
 						rtm->needs_thread_attach = 1;
 
 						/* attach needs two arguments, and has one return value: leave one element on the stack */
 						interp_add_ins (td, MINT_POP);
 						td->last_ins->data [0] = 0;
-					} else if (!strcmp (info->name, "mono_threads_detach_coop")) {
+					} else if (info == &mono_jit_icall_info.mono_threads_detach_coop) {
 						g_assert (rtm->needs_thread_attach);
 
 						/* detach consumes two arguments, and no return value: drop both of them */
@@ -4993,11 +4987,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						interp_add_ins (td, MINT_POP);
 						td->last_ins->data [0] = 0;
 					} else {
-						icall_op = interp_icall_op_for_sig (info->sig);
+						const int icall_op = interp_icall_op_for_sig (info->sig);
 						g_assert (icall_op != -1);
 
 						interp_add_ins (td, icall_op);
-						td->last_ins->data [0] = get_data_item_index (td, func);
+						td->last_ins->data [0] = get_data_item_index (td, (gpointer)info->func);
 					}
 					td->sp -= info->sig->param_count;
 
@@ -5814,7 +5808,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 			const char *name = method->name;
 			if (m_class_get_parent (method->klass) == mono_defaults.multicastdelegate_class) {
 				if (*name == '.' && (strcmp (name, ".ctor") == 0)) {
-					MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("ves_icall_mono_delegate_ctor_interp");
+					MonoJitICallInfo *mi = &mono_jit_icall_info.ves_icall_mono_delegate_ctor_interp;
 					g_assert (mi);
 					nm = mono_marshal_get_icall_wrapper (mi, TRUE);
 				} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {

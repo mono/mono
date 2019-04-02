@@ -516,7 +516,7 @@ gpointer
 mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg);
 
 GSList*
-mono_amd64_get_exception_trampolines (gboolean aot);
+mono_amd64_get_exception_trampolines (gboolean aot, gboolean reg);
 
 int
 mono_amd64_get_tls_gs_offset (void) MONO_LLVM_INTERNAL;
