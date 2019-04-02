@@ -37,6 +37,7 @@
 #include "cpu-sparc.h"
 #include "jit-icalls.h"
 #include "ir-emit.h"
+#include "mono/metadata/register-icall-def.h"
 
 /*
  * Sparc V9 means two things:

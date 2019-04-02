@@ -390,6 +390,8 @@ common_sources = \
 	w32handle.c	\
 	w32error.h	\
 	reflection.c	\
+	register-icall-def.c \
+	register-icall-def.h \
 	dynamic-image.c	\
 	sre.c	\
 	sre-encode.c	\

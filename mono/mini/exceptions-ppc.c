@@ -32,6 +32,7 @@
 #include "mini-ppc.h"
 #include "mini-runtime.h"
 #include "aot-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 /*
 

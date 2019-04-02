@@ -13,6 +13,7 @@
 #include "mini.h"
 #include "mini-arm64.h"
 #include "mini-arm64-gsharedvt.h"
+#include "mono/metadata/register-icall-def.h"
 
 /*
  * GSHAREDVT

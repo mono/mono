@@ -36,6 +36,7 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 #include <mono/utils/mono-math.h>
+#include "mono/metadata/register-icall-def.h"
 
 #ifndef DISABLE_JIT
 

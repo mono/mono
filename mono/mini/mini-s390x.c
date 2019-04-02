@@ -341,6 +341,7 @@ if (ins->inst_true_bb->native_offset) { 					\
 #include "mini-gc.h"
 #include "aot-runtime.h"
 #include "mini-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 /*========================= End of Includes ========================*/
 

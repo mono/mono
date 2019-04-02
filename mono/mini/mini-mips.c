@@ -30,6 +30,7 @@
 #include "ir-emit.h"
 #include "aot-runtime.h"
 #include "mini-runtime.h"
+#include "mono/metadata/register-icall-def.h"
 
 #define SAVE_FP_REGS		0
 

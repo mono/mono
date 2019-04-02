@@ -10,6 +10,7 @@
  */
 #include "mini.h"
 #include <mono/metadata/abi-details.h>
+#include "mono/metadata/register-icall-def.h"
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 
