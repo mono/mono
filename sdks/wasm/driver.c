@@ -762,19 +762,6 @@ mono_wasm_get_obj_type (MonoObject *obj)
 }
 
 EMSCRIPTEN_KEEPALIVE int
-mono_wasm_is_simple_array (MonoObject *obj)
-{
-	if (!obj)
-		return 0;
-	MonoClass *klass = mono_object_get_class (obj);
-	MonoType *type = mono_class_get_type (klass);
-
-	return mono_type_get_type (type) == MONO_TYPE_SZARRAY;
-}
-
-
-
-EMSCRIPTEN_KEEPALIVE int
 mono_unbox_int (MonoObject *obj)
 {
 	if (!obj)

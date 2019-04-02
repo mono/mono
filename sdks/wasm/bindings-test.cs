@@ -959,18 +959,18 @@ public class BindingTests {
 		Assert.AreEqual (32, TestClass.taShort[TestClass.taShort.Length - 1]);
 	}
 
-	// [Test]
-	// public static void MarshalTypedArrayUShort () {
-	// 	TestClass.int_val = 0;
-	// 	Runtime.InvokeJS (@"
-	// 		var obj = { };
-	// 		call_test_method (""SetTypedArrayUShort"", ""o"", [ obj ]);
-	// 		call_test_method (""GetTypedArrayUShort"", ""o"", [ obj ]);
-	// 	");
-	// 	Assert.AreEqual (14, TestClass.taUShort.Length);
-	// 	Assert.AreEqual (32, TestClass.taUShort[0]);
-	// 	Assert.AreEqual (32, TestClass.taUShort[TestClass.taUShort.Length - 1]);
-	// }
+	[Test]
+	public static void MarshalTypedArrayUShort () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayUShort"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayUShort"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (14, TestClass.taUShort.Length);
+		Assert.AreEqual (32, TestClass.taUShort[0]);
+		Assert.AreEqual (32, TestClass.taUShort[TestClass.taUShort.Length - 1]);
+	}
 
 
 	[Test]

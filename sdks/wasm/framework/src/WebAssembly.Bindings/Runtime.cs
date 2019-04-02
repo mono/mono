@@ -289,6 +289,17 @@ namespace WebAssembly {
 			return b == 0 ? false : true;
 		}
 
+		static bool IsSimpleArray (object a)
+		{
+			if (a is Array arr) {
+				if (arr.Rank == 1 && arr.GetLowerBound (0) == 0)
+					return true;
+			}
+			return false;
+		
+		}
+
+
 		[StructLayout (LayoutKind.Explicit)]
 		internal struct IntPtrAndHandle {
 			[FieldOffset (0)]
