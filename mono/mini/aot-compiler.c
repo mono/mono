@@ -6009,12 +6009,6 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 						g_assert (strlen (sym) < 1000);
 						direct_call_target = g_strdup_printf ("%s%s", acfg->user_symbol_prefix, sym);
 					}
-				} else if (patch_info->type == MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR) {
-					// There is a name for these, but in their previous MONO_PATCH_INFO_JIT_ICALL_ADDR form,
-					// they were never in the hashtable, so do nothing.
-				} else if (patch_info->type == MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR) {
-					// There is a name for these, but in their previous MONO_PATCH_INFO_JIT_ICALL_ADDR form,
-					// they were never in the hashtable, so do nothing.
 				} else if (patch_info->type == MONO_PATCH_INFO_JIT_ICALL) {
 					MonoJitICallInfo *info = mono_find_jit_icall_by_name (patch_info->data.name);
 					const char *sym = mono_lookup_jit_icall_symbol (patch_info->data.name);
@@ -9363,14 +9357,6 @@ mono_aot_get_direct_call_symbol (MonoJumpInfoType type, gconstpointer data)
 		if (type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
 			/* Call to a C function implementing a jit icall */
 			sym = mono_lookup_jit_icall_symbol ((const char *)data);
-		} else if (type == MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR) {
-			// There is a name for these, but in their previous MONO_PATCH_INFO_JIT_ICALL_ADDR form,
-			// they were never in the hashtable, so do nothing.
-			// See https://github.com/mono/mono/pull/13792
-		} else if (type == MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR) {
-			// There is a name for these, but in their previous MONO_PATCH_INFO_JIT_ICALL_ADDR form,
-			// they were never in the hashtable, so do nothing.
-			// See https://github.com/mono/mono/pull/13792
 		} else if (type == MONO_PATCH_INFO_ICALL_ADDR_CALL) {
 			MonoMethod *method = (MonoMethod *)data;
 			if (!(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
@@ -9406,14 +9392,6 @@ mono_aot_get_plt_symbol (MonoJumpInfoType type, gconstpointer data)
 		if (type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
 			/* Call to a C function implementing a jit icall */
 			sym = mono_lookup_jit_icall_symbol ((const char *)data);
-		} else if (type == MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR) {
-			// There is a name for these, but in their previous MONO_PATCH_INFO_JIT_ICALL_ADDR form,
-			// they were never in the hashtable, so do nothing.
-			// See https://github.com/mono/mono/pull/13792
-		} else if (type == MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR) {
-			// There is a name for these, but in their previous MONO_PATCH_INFO_JIT_ICALL_ADDR form,
-			// they were never in the hashtable, so do nothing.
-			// See https://github.com/mono/mono/pull/13792
 		} else if (type == MONO_PATCH_INFO_ICALL_ADDR_CALL) {
 			MonoMethod *method = (MonoMethod *)data;
 			if (!(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
