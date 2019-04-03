@@ -44,6 +44,7 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern bool InternalHasFlag(Enum flags);
 
+		[Intrinsic]
 		public bool HasFlag (Enum flag)
 		{
 			if (flag == null)
