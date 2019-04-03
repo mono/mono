@@ -54,5 +54,9 @@ namespace TestSuite
             var array = new double[50];
             return Float64Array.From(array);
         }
+        private static TypedArrayTypeCode TypedArrayType (ITypedArray arr)
+        {
+            return arr.GetTypedArrayType();
+        }
     }
 }

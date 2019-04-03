@@ -547,5 +547,88 @@ describe("The WebAssembly Browser Test Suite",function(){
       var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:Float64ArrayFrom", []);
       assert.equal(arr.length, 50, "result does not match length of 50.");
       assert.equal(Object.prototype.toString.call(arr), "[object Float64Array]", "TypedArray is not of type Float64Array" )
+    }, DEFAULT_TIMEOUT);  
+    
+    it('BindingTestSuite: Should return Int8Array type.', () => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      var type = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:TypedArrayType", [new Int8Array()]);
+      assert.equal(type, "Int8Array", "result does not match Int8Array.");
+
     }, DEFAULT_TIMEOUT);    
+    
+    it('BindingTestSuite: Should return Uint8Array type.', () => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      var type = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:TypedArrayType", [new Uint8Array()]);
+      assert.equal(type, "Uint8Array", "result does not match Uint8Array.");
+
+    }, DEFAULT_TIMEOUT);    
+    
+    it('BindingTestSuite: Should return Uint8ClampedArray type.', () => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      var type = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:TypedArrayType", [new Uint8ClampedArray()]);
+      assert.equal(type, "Uint8ClampedArray", "result does not match Uint8ClampedArray.");
+
+    }, DEFAULT_TIMEOUT);    
+    
+    it('BindingTestSuite: Should return Int16Array type.', () => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      var type = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:TypedArrayType", [new Int16Array()]);
+      assert.equal(type, "Int16Array", "result does not match Int16Array.");
+
+    }, DEFAULT_TIMEOUT);    
+    
+    it('BindingTestSuite: Should return Uint16Array type.', () => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      var type = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:TypedArrayType", [new Uint16Array()]);
+      assert.equal(type, "Uint16Array", "result does not match Uint16Array.");
+
+    }, DEFAULT_TIMEOUT);    
+    
+    it('BindingTestSuite: Should return Int32Array type.', () => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      var type = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:TypedArrayType", [new Int32Array()]);
+      assert.equal(type, "Int32Array", "result does not match Int32Array.");
+
+    }, DEFAULT_TIMEOUT);    
+    
+    it('BindingTestSuite: Should return Uint32Array type.', () => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      var type = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:TypedArrayType", [new Uint32Array()]);
+      assert.equal(type, "Uint32Array", "result does not match Uint32Array.");
+
+    }, DEFAULT_TIMEOUT);    
+    
+    it('BindingTestSuite: Should return Float32Array type.', () => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      var type = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:TypedArrayType", [new Float32Array()]);
+      assert.equal(type, "Float32Array", "result does not match Float32Array.");
+
+    }, DEFAULT_TIMEOUT);    
+    
+    it('BindingTestSuite: Should return Float64Array type.', () => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      var type = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:TypedArrayType", [new Float64Array()]);
+      assert.equal(type, "Float64Array", "result does not match Float64Array.");
+
+    }, DEFAULT_TIMEOUT);    
+
+    
   });
