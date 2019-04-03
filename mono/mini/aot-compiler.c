@@ -6337,6 +6337,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_SET_TLS_TRAMP:
 	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 		encode_value (patch_info->data.index, p, &p);
+		break;
 	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
 		encode_value (patch_info->data.uindex, p, &p);
 		break;
