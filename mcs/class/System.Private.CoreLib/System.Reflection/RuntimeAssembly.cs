@@ -347,7 +347,7 @@ namespace System.Reflection
 
 		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder = default)
 		{
-			throw new NotImplementedException ();
+			return (RuntimeAssembly) InternalLoad (assemblyRef.FullName, ref stackMark, ptrLoadContextBinder);
 		}
 
 		public override Module LoadModule (string moduleName, byte[] rawModule, byte[] rawSymbolStore)
