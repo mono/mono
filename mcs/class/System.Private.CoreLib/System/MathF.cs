@@ -1,10 +1,20 @@
+using System.Runtime.CompilerServices;
+
 namespace System
 {
 	partial class MathF
 	{
-		public static float FusedMultiplyAdd(float x, float y, float z) { throw null; }
-		public static int ILogB(float x) { throw null; }
-		public static float Log2(float x) { throw null; }
-		public static float ScaleB(float x, int n) { throw null; }
+		// [Intrinsic] TODO: implement intrinsic (FMA)
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		public static extern float FusedMultiplyAdd (float x, float y, float z);
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		public static extern int ILogB (float x);
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		public static extern float Log2 (float x);
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		public static extern float ScaleB (float x, int n);
 	}
 }
