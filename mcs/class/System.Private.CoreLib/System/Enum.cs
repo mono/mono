@@ -41,10 +41,17 @@ namespace System
 			return DefaultEquals (this, obj);
 		}
 
-		[Intrinsic]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern bool InternalHasFlag(Enum flags);
+
 		public bool HasFlag (Enum flag)
 		{
-			throw new NotImplementedException ();
+			if (flag == null)
+				throw new ArgumentNullException (nameof(flag));
+			if (!this.GetType().IsEquivalentTo (flag.GetType()))
+				throw new ArgumentException(SR.Format(SR.Argument_EnumTypeDoesNotMatch, flag.GetType(), this.GetType()));
+
+			return InternalHasFlag (flag);
 		}
 
 		public static string GetName (Type enumType, object value)
