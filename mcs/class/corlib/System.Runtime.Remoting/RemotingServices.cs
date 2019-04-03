@@ -78,6 +78,8 @@ namespace System.Runtime.Remoting
 		
 		static RemotingServices ()
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				return;
 			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector ();
 			StreamingContext context = new StreamingContext (StreamingContextStates.Remoting, null);
 			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
@@ -120,6 +122,8 @@ namespace System.Runtime.Remoting
 		internal static IMethodReturnMessage InternalExecuteMessage (
 		        MarshalByRefObject target, IMethodCallMessage reqMsg)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			ReturnMessage result;
 			
 			Type tt = target.GetType ();
@@ -183,6 +187,8 @@ namespace System.Runtime.Remoting
 		public static IMethodReturnMessage ExecuteMessage (
 			MarshalByRefObject target, IMethodCallMessage reqMsg)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			if (IsTransparentProxy(target))
 			{
 				// Message must go through all chain of sinks
@@ -262,6 +268,8 @@ namespace System.Runtime.Remoting
 
 		public static object Unmarshal (ObjRef objectRef, bool fRefine)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			Type classToProxy = fRefine ? objectRef.ServerType : typeof (MarshalByRefObject);
 			if (classToProxy == null) classToProxy = typeof (MarshalByRefObject);
 
@@ -301,6 +309,8 @@ namespace System.Runtime.Remoting
 		
 		public static ObjRef Marshal (MarshalByRefObject Obj, string ObjURI, Type RequestedType)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			if (IsTransparentProxy (Obj))
 			{
 				RealProxy proxy = RemotingServices.GetRealProxy (Obj);
@@ -371,6 +381,8 @@ namespace System.Runtime.Remoting
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public static RealProxy GetRealProxy (object proxy)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			if (!IsTransparentProxy(proxy)) throw new RemotingException("Cannot get the real proxy from an object that is not a transparent proxy.");
 			return (RealProxy)((TransparentProxy)proxy)._rp;
 		}
@@ -386,6 +398,8 @@ namespace System.Runtime.Remoting
 
 		internal static MethodBase GetMethodBaseFromName (Type type, string methodName, Type[] signature)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			if (type.IsInterface) {
 				return FindInterfaceMethod (type, methodName, signature);
 			}
@@ -539,6 +553,8 @@ namespace System.Runtime.Remoting
 		
 		internal static object CreateClientProxy (ActivatedClientTypeEntry entry, object[] activationAttributes)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			if (entry.ContextAttributes != null || activationAttributes != null)
 			{
 				ArrayList props = new ArrayList ();
@@ -633,6 +649,8 @@ namespace System.Runtime.Remoting
 
 		internal static ClientIdentity GetOrCreateClientIdentity(ObjRef objRef, Type proxyType, out object clientProxy)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			// This method looks for an identity for the given url. 
 			// If an identity is not found, it creates the identity and 
 			// assigns it a proxy to the remote object.
@@ -770,6 +788,8 @@ namespace System.Runtime.Remoting
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeCallData (object obj)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			var ctx = Thread.CurrentThread.GetExecutionContextReader().LogicalCallContext;
 			if (!ctx.IsNull) {
 				CACD cad = new CACD ();
@@ -790,6 +810,8 @@ namespace System.Runtime.Remoting
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static object DeserializeCallData (byte[] array)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			if (array == null) return null;
 			
 			MemoryStream ms = new MemoryStream (array);
@@ -813,6 +835,8 @@ namespace System.Runtime.Remoting
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeExceptionData (Exception ex)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			byte[] result = null;
 			try {
 				/* empty - we're only interested in the protected block */
@@ -828,6 +852,8 @@ namespace System.Runtime.Remoting
 		
 		internal static object GetDomainProxy(AppDomain domain) 
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			byte[] data = null;
 
 			Context currentContext = Thread.CurrentContext;

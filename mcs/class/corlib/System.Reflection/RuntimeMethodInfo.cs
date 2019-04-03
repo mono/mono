@@ -698,7 +698,8 @@ namespace System.Reflection {
 #if FULL_AOT_RUNTIME
 				throw new NotSupportedException ("User types are not supported under full aot");
 #else
-				return new MethodOnTypeBuilderInst (this, methodInstantiation);
+				if (RuntimeFeature.IsDynamicCodeSupported)
+					return new MethodOnTypeBuilderInst (this, methodInstantiation);
 #endif
 			}
 

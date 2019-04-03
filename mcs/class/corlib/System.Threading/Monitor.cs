@@ -78,14 +78,14 @@ namespace System.Threading
 
 			try {
 #if !DISABLE_REMOTING
-				if (exitContext)
+				if (exitContext && RuntimeFeature.IsRemotingSupported)
 					SynchronizationAttribute.ExitContext ();
 #endif
 
 				return Monitor_wait (obj, millisecondsTimeout);
 			} finally {
 #if !DISABLE_REMOTING
-				if (exitContext)
+				if (exitContext && RuntimeFeature.IsRemotingSupported)
 					SynchronizationAttribute.EnterContext ();
 #endif
 			}

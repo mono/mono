@@ -62,7 +62,7 @@ namespace System.Threading
 				waitableSafeHandle.DangerousAddRef (ref release);
 
 #if !DISABLE_REMOTING
-				if (exitContext)
+				if (exitContext && RuntimeFeature.IsRemotingSupported)
 					SynchronizationAttribute.ExitContext ();
 #endif
 
@@ -95,7 +95,7 @@ namespace System.Threading
 					waitableSafeHandle.DangerousRelease ();
 
 #if !DISABLE_REMOTING
-				if (exitContext)
+				if (exitContext && RuntimeFeature.IsRemotingSupported)
 					SynchronizationAttribute.EnterContext ();
 #endif
 			}
@@ -112,7 +112,7 @@ namespace System.Threading
 
 			try {
 #if !DISABLE_REMOTING
-				if (exitContext)
+				if (exitContext && RuntimeFeature.IsRemotingSupported)
 					SynchronizationAttribute.ExitContext ();
 #endif
 
@@ -152,7 +152,7 @@ namespace System.Threading
 				}
 
 #if !DISABLE_REMOTING
-				if (exitContext)
+				if (exitContext && RuntimeFeature.IsRemotingSupported)
 					SynchronizationAttribute.EnterContext ();
 #endif
 			}

@@ -74,7 +74,7 @@ namespace System {
                 throw new ArgumentNullException("type");
             Contract.EndContractBlock();
 #if !FULL_AOT_RUNTIME
-            if (type is System.Reflection.Emit.TypeBuilder)
+            if (RuntimeFeature.IsDynamicCodeSupported && type is System.Reflection.Emit.TypeBuilder)
                 throw new NotSupportedException(Environment.GetResourceString("NotSupported_CreateInstanceWithTypeBuilder"));
 #endif
             // If they didn't specify a lookup, then we will provide the default lookup.

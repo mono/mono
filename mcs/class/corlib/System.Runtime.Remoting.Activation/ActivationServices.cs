@@ -88,6 +88,8 @@ namespace System.Runtime.Remoting.Activation
 
 		public static object CreateProxyFromAttributes (Type type, object[] activationAttributes)
 		{
+			if (!AppDomain.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			string activationUrl = null;
 			foreach (object attr in activationAttributes)
 			{
@@ -197,6 +199,8 @@ namespace System.Runtime.Remoting.Activation
 
 		public static object CreateProxyForType (Type type)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			// Called by the runtime when creating an instance of a type
 			// that has been registered as remotely activated.
 

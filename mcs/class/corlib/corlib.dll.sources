@@ -1619,6 +1619,7 @@ corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs
 corefx/MethodInfo.cs
 corefx/RandomNumberGenerator.cs
+corefx/RuntimeFeature.cs
 corefx/RuntimeImports.cs
 corefx/TimeSpanParse.cs
 

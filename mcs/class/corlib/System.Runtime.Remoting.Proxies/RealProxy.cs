@@ -238,6 +238,8 @@ namespace System.Runtime.Remoting.Proxies
 		internal static object PrivateInvoke (RealProxy rp, IMessage msg, out Exception exc,
 						      out object [] out_args)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
 			mMsg.LogicalCallContext = Thread.CurrentThread.GetMutableExecutionContext().LogicalCallContext;
 			CallType call_type = mMsg.CallType;

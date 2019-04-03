@@ -28,6 +28,7 @@
 
 
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
@@ -119,6 +120,8 @@ namespace System.Security.Policy
 
 		public void FromXml (SecurityElement element) 
 		{
+			if (!RuntimeFeature.IsSecuritySupported)
+				throw new PlatformNotSupportedException ();
 			if (element == null)
 				throw new ArgumentNullException ("element");
 
@@ -165,6 +168,8 @@ namespace System.Security.Policy
 
 		public SecurityElement ToXml () 
 		{
+			if (!RuntimeFeature.IsSecuritySupported)
+				throw new PlatformNotSupportedException ();
 			SecurityElement se = new SecurityElement ("ApplicationTrust");
 			se.AddAttribute ("version", "1");
 

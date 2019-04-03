@@ -259,11 +259,14 @@ namespace System.Runtime.Serialization {
             if (!(type is RuntimeType)) {
                 throw new SerializationException(Environment.GetResourceString("Serialization_InvalidType", type.ToString()));
             }
-#if FEATURE_REMOTING            
-            if (Object.ReferenceEquals(type, typeof(System.Runtime.Remoting.Messaging.ConstructionCall)) || 
-                Object.ReferenceEquals(type, typeof(System.Runtime.Remoting.Messaging.LogicalCallContext)) ||
-                Object.ReferenceEquals(type, typeof(System.Runtime.Remoting.Contexts.SynchronizationAttribute)))
-                 return nativeGetUninitializedObject((RuntimeType)type);                                    
+#if FEATURE_REMOTING
+            if (RuntimeFeature.IsRemotingSupported)
+            {
+                if (Object.ReferenceEquals(type, typeof(System.Runtime.Remoting.Messaging.ConstructionCall)) ||
+                    Object.ReferenceEquals(type, typeof(System.Runtime.Remoting.Messaging.LogicalCallContext)) ||
+                    Object.ReferenceEquals(type, typeof(System.Runtime.Remoting.Contexts.SynchronizationAttribute)))
+                    return nativeGetUninitializedObject((RuntimeType)type);
+            }
 #endif
 
             try {                            

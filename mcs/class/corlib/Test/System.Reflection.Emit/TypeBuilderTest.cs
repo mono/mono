@@ -49,6 +49,7 @@ namespace MonoTests.System.Reflection.Emit
 	}
 
 	[TestFixture]
+	[Category ("ReflectionEmit")]
 	public class TypeBuilderTest
 	{
 		public interface AnInterface

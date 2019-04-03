@@ -199,6 +199,9 @@ namespace System {
 #if MONOTOUCH
 				return null;
 #else
+				if (!RuntimeFeature.IsSecuritySupported)
+					return null;
+
 				// if the host (runtime) hasn't provided it's own evidence...
 				if (_evidence == null) {
 					// ... we will provide our own
@@ -268,8 +271,10 @@ namespace System {
 					AppDomain rd = getRootDomain ();
 					if (rd == CurrentDomain)
 						default_domain = rd;
-					else
+					else if (RuntimeFeature.IsRemotingSupported)
 						default_domain = (AppDomain) RemotingServices.GetDomainProxy (rd);
+					else
+						throw new PlatformNotSupportedException ();
 				}
 				return default_domain;
 			}
@@ -1007,6 +1012,9 @@ namespace System {
 		[SecurityPermission (SecurityAction.Demand, ControlAppDomain = true)]
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
+
 			if (friendlyName == null)
 				throw new System.ArgumentNullException ("friendlyName");
 
@@ -1411,6 +1419,8 @@ namespace System {
 
 		internal byte[] GetMarshalledDomainObjRef ()
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			ObjRef oref = RemotingServices.Marshal (AppDomain.CurrentDomain, null, typeof (AppDomain));
 			return CADSerializer.SerializeObject (oref).GetBuffer();
 		}
@@ -1418,6 +1428,9 @@ namespace System {
 		internal void ProcessMessageInDomain (byte[] arrRequest, CADMethodCallMessage cadMsg,
 		                                      out byte[] arrResponse, out CADMethodReturnMessage cadMrm)
 		{
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
+
 			IMessage reqDomMsg;
 
 			if (null != arrRequest)

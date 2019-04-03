@@ -54,7 +54,7 @@ namespace System
 		{
 			Type type = obj as Type;
 #if !FULL_AOT_RUNTIME
-			if ((type is RuntimeType) || (type is TypeBuilder))
+			if ((type is RuntimeType) || (RuntimeFeature.IsDynamicCodeSupported && type is TypeBuilder))
 #else
 			if (type is RuntimeType)
 #endif
