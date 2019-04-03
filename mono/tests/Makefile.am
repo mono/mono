@@ -1586,8 +1586,7 @@ PROFILE_DISABLED_TESTS += \
 	unhandled-exception-7.exe \
 	unhandled-exception-test-case.2.exe \
 	unload-appdomain-on-shutdown.exe \
-	xdomain-threads.exe \
-	twopassvariance.exe
+	xdomain-threads.exe
 
 # Tests which load assemblies which are not in the profile
 PROFILE_DISABLED_TESTS += \

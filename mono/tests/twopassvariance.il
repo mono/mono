@@ -153,7 +153,7 @@
 
 Fooer1_IFoo_SuperDerivedOK:
     ldstr      "Fooer1_IFoo_SuperDerivedOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer2::.ctor()
     castclass class IFoo<class SuperDerived>
     callvirt instance class [mscorlib]System.Type class IFoo<class SuperDerived>::Gimme()
@@ -169,7 +169,7 @@ Fooer1_IFoo_SuperDerivedOK:
 
 Fooer2_IFoo_SuperDerivedOK:
     ldstr      "Fooer2_IFoo_SuperDerivedOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer3::.ctor()
     castclass class IFoo<class Base>
     callvirt instance class [mscorlib]System.Type class IFoo<class Base>::Gimme()
@@ -185,7 +185,7 @@ Fooer2_IFoo_SuperDerivedOK:
 
 Fooer3_IFoo_BaseOK:
     ldstr      "Fooer3_IFoo_BaseOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
 
     newobj instance void Fooer3::.ctor()
     castclass class IFoo<class Derived>
@@ -202,7 +202,7 @@ Fooer3_IFoo_BaseOK:
 
 Fooer3_IFoo_DerivedOK:
     ldstr      "Fooer3_IFoo_DerivedOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer3::.ctor()
     castclass class IFoo<class SuperDerived>
     callvirt instance class [mscorlib]System.Type class IFoo<class SuperDerived>::Gimme()
@@ -218,7 +218,7 @@ Fooer3_IFoo_DerivedOK:
 
 Fooer3_IFoo_SuperDerivedOK:
     ldstr      "Fooer3_IFoo_SuperDerivedOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer4::.ctor()
     castclass class IFoo<class Base>
     callvirt instance class [mscorlib]System.Type class IFoo<class Base>::Gimme()
@@ -234,7 +234,7 @@ Fooer3_IFoo_SuperDerivedOK:
 
 Fooer4_IFoo_BaseOK:
     ldstr      "Fooer4_IFoo_BaseOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer4::.ctor()
     castclass class IFoo<class Derived>
     callvirt instance class [mscorlib]System.Type class IFoo<class Derived>::Gimme()
@@ -250,7 +250,7 @@ Fooer4_IFoo_BaseOK:
 
 Fooer4_IFoo_DerivedOK:
     ldstr      "Fooer4_IFoo_DerivedOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
 
     newobj instance void Fooer4::.ctor()
     castclass class IFoo<class SuperDerived>
@@ -267,7 +267,7 @@ Fooer4_IFoo_DerivedOK:
 
 Fooer4_IFoo_SuperDerivedOK:
     ldstr      "Fooer4_IFoo_SuperDerivedOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer5::.ctor()
     castclass class IFoo<class SuperDerived>
     callvirt instance class [mscorlib]System.Type class IFoo<class SuperDerived>::Gimme()
@@ -283,7 +283,7 @@ Fooer4_IFoo_SuperDerivedOK:
 
 Fooer5_IFoo_SuperDerivedOK:
     ldstr      "Fooer5_IFoo_SuperDerivedOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer6::.ctor()
     castclass class IFoo<class Base>
     callvirt instance class [mscorlib]System.Type class IFoo<class Base>::Gimme()
@@ -299,7 +299,7 @@ Fooer5_IFoo_SuperDerivedOK:
 
 Fooer6_IFoo_BaseOK:
     ldstr      "Fooer6_IFoo_BaseOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer6::.ctor()
     castclass class IFoo<class Derived>
     callvirt instance class [mscorlib]System.Type class IFoo<class Derived>::Gimme()
@@ -315,7 +315,7 @@ Fooer6_IFoo_BaseOK:
 
 Fooer6_IFoo_DerivedOK:
     ldstr      "Fooer6_IFoo_DerivedOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer7::.ctor()
     castclass class IFoo<class Base>
     callvirt instance class [mscorlib]System.Type class IFoo<class Base>::Gimme()
@@ -331,7 +331,7 @@ Fooer6_IFoo_DerivedOK:
 
 Fooer7_IFoo_BaseOK:
     ldstr      "Fooer7_IFoo_BaseOK"
-    call       void [System.Console]System.Console::WriteLine(string)
+    call       void [mscorlib]System.Console::WriteLine(string)
     newobj instance void Fooer7::.ctor()
     castclass class IFoo<class Derived>
     callvirt instance class [mscorlib]System.Type class IFoo<class Derived>::Gimme()
