@@ -67,7 +67,7 @@ namespace System
 
 		public static void ConstrainedCopy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
-			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
+			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length, true);
 		}
 
 		public static void Copy (Array sourceArray, Array destinationArray, int length)
@@ -83,6 +83,11 @@ namespace System
 		}
 
 		public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
+		{
+			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length, false);
+		}
+
+		private static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length, bool reliable)
 		{
 			if (sourceArray == null)
 				throw new ArgumentNullException (nameof (sourceArray));
@@ -123,40 +128,25 @@ namespace System
 			Type dst_type = destinationArray.GetType ().GetElementType ();
 			var dst_type_vt = dst_type.IsValueType;
 
-			// Need to check types even if nothing is copied
-			if (length == 0) {
+			if (src_type.IsEnum)
+				src_type = Enum.GetUnderlyingType (src_type);
+			if (dst_type.IsEnum)
+				dst_type = Enum.GetUnderlyingType (dst_type);
+
+			if (reliable) {
 				var src_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)src_type);
 				var dst_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)dst_type);
-
-				// FIXME: More checks
-				bool match = true;
-				switch (dst_etype) {
-				case CorElementType.ELEMENT_TYPE_OBJECT:
-				case CorElementType.ELEMENT_TYPE_STRING:
-				case CorElementType.ELEMENT_TYPE_CLASS:
-				case CorElementType.ELEMENT_TYPE_ARRAY:
-				case CorElementType.ELEMENT_TYPE_SZARRAY:
-					if (src_type.IsPointer)
-						match = false;
-					break;
-				case CorElementType.ELEMENT_TYPE_PTR:
-					switch (src_etype) {
-					case CorElementType.ELEMENT_TYPE_OBJECT:
-					case CorElementType.ELEMENT_TYPE_STRING:
-					case CorElementType.ELEMENT_TYPE_CLASS:
-					case CorElementType.ELEMENT_TYPE_ARRAY:
-					case CorElementType.ELEMENT_TYPE_SZARRAY:
-						match = false;
-						break;
-					default:
-						break;
-					}
-					break;
-				default:
-					break;
-				}
-				if (!match)
+				if (src_etype != dst_etype) {
 					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
+				}
+			}
+
+			// Need to check types even if nothing is copied
+			if (length == 0) {
+				if (!CanAssignArrayElement (src_type, dst_type)) {
+					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
+				}
+				return;
 			}
 
 			if (!Object.ReferenceEquals (sourceArray, destinationArray) || source_pos > dest_pos) {
