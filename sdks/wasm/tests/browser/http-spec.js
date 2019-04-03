@@ -466,7 +466,7 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       var clamped = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:Uint8ClampedArrayFrom", []);
       assert.equal(clamped.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(clamped), "[object Uint8ClampedArray]", "TypedArray is not of type Float64Array" )
+      assert.equal(Object.prototype.toString.call(clamped), "[object Uint8ClampedArray]", "TypedArray is not of type Uint8ClampedArray" )
 
     }, DEFAULT_TIMEOUT);  
 
@@ -476,7 +476,7 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:Uint8ArrayFrom", []);
       assert.equal(arr.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Uint8Array]", "TypedArray is not of type Float64Array" )
+      assert.equal(Object.prototype.toString.call(arr), "[object Uint8Array]", "TypedArray is not of type Uint8Array" )
 
     }, DEFAULT_TIMEOUT);    
 
@@ -486,7 +486,7 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:Uint16ArrayFrom", []);
       assert.equal(arr.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Uint16Array]", "TypedArray is not of type Float64Array" )
+      assert.equal(Object.prototype.toString.call(arr), "[object Uint16Array]", "TypedArray is not of type Uint16Array" )
 
     }, DEFAULT_TIMEOUT);    
 
@@ -496,7 +496,7 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:Uint32ArrayFrom", []);
       assert.equal(arr.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Uint32Array]", "TypedArray is not of type Float64Array" )
+      assert.equal(Object.prototype.toString.call(arr), "[object Uint32Array]", "TypedArray is not of type Uint32Array" )
 
     }, DEFAULT_TIMEOUT);    
 
@@ -506,7 +506,7 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:Int8ArrayFrom", []);
       assert.equal(arr.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Int8Array]", "TypedArray is not of type Float64Array" )
+      assert.equal(Object.prototype.toString.call(arr), "[object Int8Array]", "TypedArray is not of type Int8Array" )
 
     }, DEFAULT_TIMEOUT);    
 
@@ -516,7 +516,7 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:Int16ArrayFrom", []);
       assert.equal(arr.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Int16Array]", "TypedArray is not of type Float64Array" )
+      assert.equal(Object.prototype.toString.call(arr), "[object Int16Array]", "TypedArray is not of type Int16Array" )
 
     }, DEFAULT_TIMEOUT);    
 
@@ -526,7 +526,7 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:Int32ArrayFrom", []);
       assert.equal(arr.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Int32Array]", "TypedArray is not of type Float64Array" )
+      assert.equal(Object.prototype.toString.call(arr), "[object Int32Array]", "TypedArray is not of type Int32Array" )
 
     }, DEFAULT_TIMEOUT);    
 
@@ -536,7 +536,7 @@ describe("The WebAssembly Browser Test Suite",function(){
 
       var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:Float32ArrayFrom", []);
       assert.equal(arr.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Float32Array]", "TypedArray is not of type Float64Array" )
+      assert.equal(Object.prototype.toString.call(arr), "[object Float32Array]", "TypedArray is not of type Float32Array" )
 
     }, DEFAULT_TIMEOUT);    
 
