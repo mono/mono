@@ -510,6 +510,7 @@ namespace System.Reflection {
 				attrs [count ++] = new PreserveSigAttribute ();
 			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
 #if NETCORE
+				attrs [count ++] = GetDllImportAttribute ();
 #else
 				attrs [count ++] = DllImportAttribute.GetCustomAttribute (this);
 #endif
@@ -517,6 +518,52 @@ namespace System.Reflection {
 
 			return attrs;
 		}
+
+#if NETCORE
+        Attribute GetDllImportAttribute ()
+        {
+            string entryPoint, dllName = null;
+            int token = MetadataToken;
+            PInvokeAttributes flags = 0;
+
+            GetPInvoke (out flags, out entryPoint, out dllName);
+
+            CharSet charSet = CharSet.None;
+
+            switch (flags & PInvokeAttributes.CharSetMask) {
+                case PInvokeAttributes.CharSetNotSpec: charSet = CharSet.None; break;
+                case PInvokeAttributes.CharSetAnsi: charSet = CharSet.Ansi; break;
+                case PInvokeAttributes.CharSetUnicode: charSet = CharSet.Unicode; break;
+                case PInvokeAttributes.CharSetAuto: charSet = CharSet.Auto; break;
+
+                // Invalid: default to CharSet.None
+                default: break;
+            }
+
+            CallingConvention callingConvention = InteropServicesCallingConvention.Cdecl;
+
+            switch (flags & PInvokeAttributes.CallConvMask) {
+                case PInvokeAttributes.CallConvWinapi: callingConvention = InteropServicesCallingConvention.Winapi; break;
+                case PInvokeAttributes.CallConvCdecl: callingConvention = InteropServicesCallingConvention.Cdecl; break;
+                case PInvokeAttributes.CallConvStdcall: callingConvention = InteropServicesCallingConvention.StdCall; break;
+                case PInvokeAttributes.CallConvThiscall: callingConvention = InteropServicesCallingConvention.ThisCall; break;
+                case PInvokeAttributes.CallConvFastcall: callingConvention = InteropServicesCallingConvention.FastCall; break;
+
+                // Invalid: default to CallingConvention.Cdecl
+                default: break;
+            }
+
+            bool exactSpelling = (flags & PInvokeAttributes.NoMangle) != 0;
+            bool setLastError = (flags & PInvokeAttributes.SupportsLastError) != 0;
+            bool bestFitMapping = (flags & PInvokeAttributes.BestFitMask) == PInvokeAttributes.BestFitEnabled;
+            bool throwOnUnmappableChar = (flags & PInvokeAttributes.ThrowOnUnmappableCharMask) == PInvokeAttributes.ThrowOnUnmappableCharEnabled;
+            bool preserveSig = (GetMethodImplementationFlags() & MethodImplAttributes.PreserveSig) != 0;
+
+			return new DllImportAttribute (dllName) { EntryPoint = entryPoint, CharSet = charSet, SetLastError = setLastError,
+					ExactSpelling = exactSpelling, PreserveSig = preserveSig, BestFitMapping = bestFitMapping,
+					ThrowOnUnmappableChar = throwOnUnmappableChar, CallingConvention = callingConvention };
+        }
+#endif // NETCORE
 
 		internal CustomAttributeData[] GetPseudoCustomAttributesData ()
 		{

@@ -303,7 +303,7 @@ namespace System
 				if (lengths [j] < 0)
 					throw new ArgumentOutOfRangeException ($"lengths[{j}]", "Each value has to be >= 0.");
 				if ((long)lowerBounds [j] + (long)lengths [j] > (long)Int32.MaxValue)
-					throw new ArgumentOutOfRangeException ("lengths", "Length + bound must not exceed Int32.MaxValue.");
+					throw new ArgumentOutOfRangeException (null, "Length + bound must not exceed Int32.MaxValue.");
 			}
 
 			if (lengths.Length > 255)

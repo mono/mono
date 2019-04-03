@@ -1,5 +1,5 @@
 
-NETCORESDK_VERSION=3.0.100-preview4-010759
+NETCORESDK_VERSION=3.0.100-preview4-011024
 NETCORESDK_FILE=dotnet-sdk-$(NETCORESDK_VERSION)-osx-x64.tar.gz
 URL:=https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$(NETCORESDK_VERSION)/$(NETCORESDK_FILE)
 
@@ -14,7 +14,7 @@ run-sample:
 	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(VERSION)" sample/HelloWorld/bin/Debug/netcoreapp3.0/HelloWorld.dll
 
 # COREHOST_TRACE=1 
-VERSION:=3.0.0-preview4-27514-06
+VERSION:=3.0.0-preview4-27601-05
 SHAREDRUNTIME:=shared/Microsoft.NETCore.App/$(VERSION)
 
 bcl:
@@ -39,21 +39,70 @@ COREFX_BINDIR=$(COREFX_ROOT)/artifacts/bin
 check-env:
 	@if [ "x$(COREFX_ROOT)" == "x" ]; then echo "Set COREFX_ROOT to the root of the fully built corefx repo."; exit 1; fi
 
+clean:
+	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
+
 #
 # Running tests:
-#  - Tests are run using dotnet bin/Debug/netcoreapp3.0/<...>.dll
-# - One of the test helper assemblies contains pinvokes for System.Globalization.Native, so
-#   the dylib has to be in the current working directory when running, since the runtime will
-#   try to load the dylib from the same directory as the assembly which refers to it.
-#   It has to be symlinked otherwise we load 2 copies of it which fails.
-# - RemoteExecutorConsoleApp.exe needs to be in the current directory, since
-#   its executed as: 'dotnet RemoteExecutorConsoleApp.exe <test assembly> ...'
-# - MONO_PATH needs to be set to the bin dir so the remote executor can find the
-#   test assembly.
-# - The RemoteExecutorConsoleApp.runtimeconfig.json needs to be changed to use the proper
-#   framework version.
+#
+# We have two modes to run then with xtest-Foo.Test to be the prefered one because it runs all tests and simple runner
+# with rules like tes-Foo which runs limited set of test
 #
 
+# e.g. `make xtest-System.Collections.Tests COREFX_ROOT=/prj/corefx`
+# '-parallel none -verbose' for debug, `-parallel all` to run all tests in parallel
+# we need COREFX_ROOT only for xunit.console.deps.json and CoreFx.Private.TestUtilities.dll
+xtest-%: prepare check-env dl-test-assets
+	echo -n "***************** $* *********************"
+	ln -sf $(CURDIR)/sdk/$(NETCORESDK_VERSION)/System.Text.Encoding.CodePages.dll assets/extracted/$*/
+	ln -sf $(CURDIR)/shared/Microsoft.AspNetCore.App/3.0.0-preview4-19180-01/Newtonsoft.Json.dll assets/extracted/$*/
+	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/xunit.console.deps.json assets/extracted/$*/
+	cp $(COREFX_BINDIR)/runtime/netcoreapp-OSX-Debug-x64/CoreFx.Private.TestUtilities.dll assets/extracted/$*/
+	sed -i -e 's/9.9.9/$(VERSION)/g' assets/extracted/$*/*.runtimeconfig.json
+	cd assets/extracted/$* && \
+	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(VERSION)" xunit.console.dll $*.dll \
+		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
+		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all \
+		-html ../../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
+		$(shell if [ -a $(CURDIR)/excludes-$*.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp; fi;) \
+		$(FIXTURE) || true
+
+# these tests won't be included in `xtestall` (some of them crash runtime, some hang)
+EXCLUDED_COREFX_TESTS = \
+	System.Diagnostics.Tracing.Tests \
+	System.Net.Http.Functional.Tests \
+	System.Net.HttpListener.Tests \
+	System.Net.NameResolution.Functional.Tests \
+	System.Net.Sockets.Tests
+
+# Tests suites which pass
+PASSING_COREFX_TESTS = \
+	System.Collections.Immutable.Tests \
+	System.Reflection.Extensions.Tests \
+	System.Runtime.CompilerServices.Unsafe.Tests \
+	System.Runtime.CompilerServices.VisualC.Tests \
+	System.Runtime.InteropServices.RuntimeInformation.Tests
+
+xtestall: $(foreach workingtest, $(foreach test, $(wildcard assets/extracted/*), \
+		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
+
+xtestpass: $(foreach workingtest, $(foreach test, $(wildcard assets/extracted/*), \
+		$(filter $(PASSING_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
+
+FEED_BASE_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core
+TEST_ASSETS_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core/corefx-tests/4.6.0-preview4.19201.9/OSX.x64/netcoreapp/corefx-test-assets.xml
+corefx-test-assets.xml:
+	curl $(TEST_ASSETS_URL) --output corefx-test-assets.xml
+
+dl-test-assets: corefx-test-assets.xml .stamp-dl-test-assets
+
+.stamp-dl-test-assets:
+	python dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) assets
+	touch $@
+
+#
+# console test runner (obsolete)
+#
 TEST_SUITES = \
 	System.Runtime.Tests \
 	System.Runtime.CompilerServices.Unsafe.Tests \
@@ -75,39 +124,12 @@ build-%: check-env
 	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests $($*_XUNIT_ARGS) $(XUNIT_ARGS)
 	cp $(COREFX_BINDIR)/RemoteExecutorConsoleApp/netstandard-Debug/RemoteExecutorConsoleApp.* tests/$*
 	cp $(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/TestLoadAssembly.dll tests/$*
-	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib tests/$*
 	sed -e 's/9.9.9/$(VERSION)/g' < tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json > 2 && mv 2 tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json
 	cd tests/$* && dotnet build
 
 run-%: check-env
 	cd tests/$* && MONO_PATH=bin/Debug/netcoreapp3.0 MONO_ENV_OPTIONS="--debug --explicit-null-checks" COMPlus_DebugWriteToStdErr=1 ../../dotnet bin/Debug/netcoreapp3.0/$*-runner.dll
 
-all: $(addprefix build-, $(TEST_SUITES))
+build-base: $(addprefix build-, $(TEST_SUITES))
 
 check: $(addprefix run-, $(TEST_SUITES))
-
-clean:
-	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
-
-xtest-%: prepare check-env
-	ln -sf $(CURDIR)/$(SHAREDRUNTIME)/System.Globalization.Native.dylib \
-		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/
-	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(VERSION)" \
-		$(COREFX_BINDIR)/testhost/netcoreapp-OSX-Debug-x64/shared/Microsoft.NETCore.App/9.9.9/xunit.console.dll \
-		$(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
-		-notrait category=nonnetcoreapptests -noappdomain -noshadow -parallel all -nunit TestResult-$*-netcore-xunit.xml \
-		$(shell grep -v '^#\|^$$' excludes-$*.rsp) $(FIXTURE)
-
-xtest-all: $(addprefix xtest-, $(TEST_SUITES))
-
-FEED_BASE_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core
-TEST_ASSETS_URL = https://dotnetfeed.blob.core.windows.net/dotnet-core/corefx-tests/4.6.0-preview4.19156.10/OSX.x64/netcoreapp/corefx-test-assets.xml
-
-corefx-test-assets.xml:
-	wget $(TEST_ASSETS_URL)
-
-dl-test-assets: corefx-test-assets.xml .stamp-dl-test-assets
-
-.stamp-dl-test-assets:
-	python dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) assets
-	touch $@

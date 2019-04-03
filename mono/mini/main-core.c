@@ -3,6 +3,7 @@
 #include "mini-runtime.h"
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/assembly-internals.h>
+#include <mono/metadata/loader-internals.h>
 #include <mono/utils/mono-logger-internals.h>
 
 MONO_API int coreclr_initialize (const char* exePath, const char* appDomainFriendlyName,
@@ -25,7 +26,13 @@ typedef struct {
 	char **assembly_filepaths; /* /blah/blah/blah/Foo.dll */
 } MonoCoreTrustedPlatformAssemblies;
 
+typedef struct {
+	int dir_count;
+	char **dirs;
+} MonoCoreNativeLibPaths;
+
 static MonoCoreTrustedPlatformAssemblies *trusted_platform_assemblies;
+static MonoCoreNativeLibPaths *native_lib_paths;
 
 static void
 mono_core_trusted_platform_assemblies_free (MonoCoreTrustedPlatformAssemblies *a)
@@ -35,6 +42,15 @@ mono_core_trusted_platform_assemblies_free (MonoCoreTrustedPlatformAssemblies *a
 	g_strfreev (a->basenames);
 	g_strfreev (a->assembly_filepaths);
 	g_free (a);
+}
+
+static void
+mono_core_native_lib_paths_free (MonoCoreNativeLibPaths *dl)
+{
+	if (!dl)
+		return;
+	g_strfreev (dl->dirs);
+	g_free (dl);
 }
 
 static gboolean
@@ -63,6 +79,27 @@ parse_trusted_platform_assemblies (const char *assemblies_paths)
 	a->basenames [asm_count] = NULL;
 
 	trusted_platform_assemblies = a;
+	return TRUE;
+}
+
+static gboolean
+parse_native_dll_search_directories (const char *native_dlls_dirs)
+{
+	char **parts = g_strsplit (native_dlls_dirs, G_SEARCHPATH_SEPARATOR_S, 0);
+	int dir_count = 0;
+	for (char **p = parts; *p != NULL && **p != '\0'; p++) {
+#if 0
+		const char *part = *p;
+		// can't use logger, it's not initialized yet.
+		printf ("\t\tnative search dir %d = <%s>\n", dir_count, part);
+#endif
+		dir_count++;
+	}
+	MonoCoreNativeLibPaths *dl = g_new0 (MonoCoreNativeLibPaths, 1);
+	dl->dirs = parts;
+	dl->dir_count = dir_count;
+
+	native_lib_paths = dl;
 	return TRUE;
 }
 
@@ -123,14 +160,14 @@ parse_properties (int propertyCount, const char** propertyKeys, const char** pro
 {
 	// The a partial list of relevant properties is
 	// https://docs.microsoft.com/en-us/dotnet/core/tutorials/netcore-hosting#step-3---prepare-runtime-properties
-	// TODO: We should also pick up at least
-	//  APP_PATHS, APP_NI_PATHS and NATIVE_DLL_SEARCH_DIRECTORIES
-	//
-	//  and PLATFORM_RESOURCE_ROOTS for satellite assemblies in culture-specific subdirectories
+	// TODO: We should also pick up at least APP_PATHS and APP_NI_PATHS
+	// and PLATFORM_RESOURCE_ROOTS for satellite assemblies in culture-specific subdirectories
 
 	for (int i = 0; i < propertyCount; ++i) {
 		if (!strcmp (propertyKeys[i], "TRUSTED_PLATFORM_ASSEMBLIES")) {
 			parse_trusted_platform_assemblies (propertyValues[i]);
+		} else if (!strcmp (propertyKeys[i], "NATIVE_DLL_SEARCH_DIRECTORIES")) {
+			parse_native_dll_search_directories (propertyValues[i]);
 		} else {
 #if 0
 			// can't use mono logger, it's not initialized yet.
@@ -167,6 +204,8 @@ int coreclr_initialize (const char* exePath, const char* appDomainFriendlyName,
 		return 0x80004005; /* E_FAIL */
 
 	install_assembly_loader_hooks ();
+	if (native_lib_paths != NULL)
+		mono_set_pinvoke_search_directories (native_lib_paths->dir_count, native_lib_paths->dirs);
 
 	return 0;
 }
@@ -232,6 +271,11 @@ int coreclr_execute_assembly (void* hostHandle, unsigned int domainId,
 //
 int coreclr_shutdown_2 (void* hostHandle, unsigned int domainId, int* latchedExitCode)
 {
+	mono_set_pinvoke_search_directories (0, NULL);
+	MonoCoreNativeLibPaths *dl = native_lib_paths;
+	native_lib_paths = NULL;
+	mono_core_native_lib_paths_free (dl);
+
 	MonoCoreTrustedPlatformAssemblies *a = trusted_platform_assemblies;
 	trusted_platform_assemblies = NULL;
 	mono_core_trusted_platform_assemblies_free (a);

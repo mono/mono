@@ -1,3 +1,3 @@
-SUBDIRS = locale-builder sgen monograph pedump
+SUBDIRS = locale-builder sgen pedump
 
 

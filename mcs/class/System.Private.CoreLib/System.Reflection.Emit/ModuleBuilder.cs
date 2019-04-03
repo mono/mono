@@ -79,7 +79,6 @@ namespace System.Reflection.Emit {
 		Dictionary<TypeName, TypeBuilder> name_cache;
 		Dictionary<string, int> us_string_cache;
 		ModuleBuilderTokenGenerator token_gen;
-		ISymbolWriter symbolWriter;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
@@ -440,7 +439,10 @@ namespace System.Reflection.Emit {
 			return index;
 		}
 
-		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
+		{
+			if (customBuilder == null)
+				throw new ArgumentNullException (nameof (customBuilder));
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);
@@ -456,19 +458,15 @@ namespace System.Reflection.Emit {
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
-
-		public ISymbolWriter GetSymWriter () {
-			return symbolWriter;
-		}
-
-		public ISymbolDocumentWriter DefineDocument (string url, Guid language, Guid languageVendor, Guid documentType)
+/*
+		internal ISymbolDocumentWriter DefineDocument (string url, Guid language, Guid languageVendor, Guid documentType)
 		{
 			if (symbolWriter != null)
 				return symbolWriter.DefineDocument (url, language, languageVendor, documentType);
 			else
 				return null;
 		}
-
+*/
 		public override Type [] GetTypes ()
 		{
 			if (types == null)

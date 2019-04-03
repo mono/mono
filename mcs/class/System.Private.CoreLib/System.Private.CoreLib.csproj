@@ -110,11 +110,13 @@
       <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
       <Compile Include="Mono\MonoDomain.cs" />
       <Compile Include="Mono\MonoDomainSetup.cs" />
+      <Compile Include="Mono\MonoListItem.cs" />
       <Compile Include="System\AppContext.cs" />
       <Compile Include="System\Array.cs" />
       <Compile Include="System\Attribute.cs" />
       <Compile Include="System\Buffer.cs" />
       <Compile Include="System\DefaultBinder.cs" />
+      <Compile Include="System\Delegate.cs" />
       <Compile Include="System\Enum.cs" />
       <Compile Include="System\Environment.cs" />
       <Compile Include="System\Exception.cs" />
@@ -131,8 +133,6 @@
       <Compile Include="System\TypeNameParser.cs" />
       <Compile Include="System\__ComObject.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
-      <Compile Include="System.Globalization\CultureData.cs" />
-      <Compile Include="System.Globalization\CultureInfo.cs" />
       <Compile Include="System.Collections.Generic\ArraySortHelper.cs" />
       <Compile Include="System.Collections.Generic\Comparer.cs" />
       <Compile Include="System.Collections.Generic\EqualityComparer.cs" />
@@ -219,10 +219,9 @@
       <Compile Include="..\corlib\Mono\RuntimeHandles.cs" />
       <Compile Include="..\corlib\Mono\SafeStringMarshal.cs" />
       <Compile Include="..\corlib\Mono\SafeGPtrArrayHandle.cs" />
+      <Compile Include="..\corlib\Mono.Security\Uri.cs" />
 
       <Compile Include="..\corlib\System\ArgIterator.cs" />
-      <Compile Include="..\corlib\System\Delegate.cs" />
-      <Compile Include="..\corlib\System\DelegateSerializationHolder.cs" />
       <Compile Include="..\corlib\System\EmptyArray.cs" />
       <Compile Include="..\corlib\System\MathF.mono.cs" />
       <Compile Include="..\corlib\System\ModuleHandle.cs" />
@@ -239,8 +238,6 @@
       <Compile Include="..\corlib\System\TypeSpec.cs" />
 
       <Compile Include="..\corlib\System.Diagnostics\Debugger.cs" />
-	  <Compile Include="..\corlib\System.Diagnostics.SymbolStore\ISymbolWriter.cs" />
-	  <Compile Include="..\corlib\System.Diagnostics.SymbolStore\SymAddressKind.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
 
@@ -268,10 +265,6 @@
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeTypedArgument.cs" />
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
       <Compile Include="..\corlib\corert\RuntimeAugments.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-	<Compile Include="..\..\..\external\corefx\src\System.Diagnostics.StackTrace\src\System\Diagnostics\SymbolStore\SymbolToken.cs" />
   </ItemGroup>
 
   <!-- Mono extensions -->

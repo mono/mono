@@ -915,6 +915,7 @@ namespace System.Reflection.Emit {
 			currentSequence.AddSequencePoint (code_len, startLine, startColumn, endLine, endColumn);
 		}
 		
+/*		
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
 			if (sequencePointLists != null) {
@@ -938,7 +939,8 @@ namespace System.Reflection.Emit {
 				sequencePointLists = null;
 			}
 		}
-		
+*/
+
 		internal bool HasDebugInfo
 		{
 			get { return sequencePointLists != null; }

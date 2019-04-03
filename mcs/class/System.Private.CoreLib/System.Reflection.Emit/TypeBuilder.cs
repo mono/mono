@@ -241,6 +241,8 @@ namespace System.Reflection.Emit
 		{
 			if (interfaceType == null)
 				throw new ArgumentNullException ("interfaceType");
+			if (interfaceType.IsByRef)
+				throw new ArgumentException (nameof (interfaceType));
 			check_not_created ();
 
 			if (interfaces != null) {
@@ -363,10 +365,14 @@ namespace System.Reflection.Emit
 				((attrs & TypeAttributes.VisibilityMask) == TypeAttributes.NotPublic))
 				throw new ArgumentException ("attr", "Bad type flags for nested type.");
 			*/
-			if (interfaces != null)
-				foreach (Type iface in interfaces)
+			if (interfaces != null) {
+				foreach (Type iface in interfaces) {
 					if (iface == null)
 						throw new ArgumentNullException ("interfaces");
+					if (iface.IsByRef)
+						throw new ArgumentException (nameof (interfaces));
+				}
+			}
 
 			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packSize, typeSize, this);
 			res.fullname = res.GetFullName ();
@@ -415,6 +421,8 @@ namespace System.Reflection.Emit
 		public ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
 			check_not_created ();
+			if (IsInterface && (attributes & MethodAttributes.Static) == 0)
+				throw new InvalidOperationException ();
 			ConstructorBuilder cb = new ConstructorBuilder (this, attributes,
 				callingConvention, parameterTypes, requiredCustomModifiers,
 				optionalCustomModifiers);
@@ -434,6 +442,11 @@ namespace System.Reflection.Emit
 		public ConstructorBuilder DefineDefaultConstructor (MethodAttributes attributes)
 		{
 			Type parent_type, old_parent_type;
+
+			if (IsInterface)
+				throw new InvalidOperationException ();
+			if ((attributes & (MethodAttributes.Static|MethodAttributes.Virtual)) > 0)
+				throw new ArgumentException (nameof (attributes));
 
 			if (parent != null)
 				parent_type = parent;
@@ -463,6 +476,7 @@ namespace System.Reflection.Emit
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Call, parent_constructor);
 			ig.Emit (OpCodes.Ret);
+			cb.finished = true;
 			return cb;
 		}
 
@@ -741,6 +755,13 @@ namespace System.Reflection.Emit
 				}
 			}
 
+			if (parent != null) {
+				if (parent.IsByRef)
+					throw new ArgumentException ();
+				if (IsInterface)
+					throw new TypeLoadException ();
+			}
+
 			//
 			// On classes, define a default constructor if not provided
 			//
@@ -750,8 +771,12 @@ namespace System.Reflection.Emit
 
 			createTypeCalled = true;
 
-			if ((parent != null) && parent.IsSealed)
-				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because the parent type is sealed.");
+			if (parent != null) {
+				if (parent.IsSealed)
+					throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because the parent type is sealed.");
+				if (parent.IsGenericTypeDefinition)
+					throw new BadImageFormatException ();
+			}
 
 			if (parent == typeof (Enum) && methods != null)
 				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is an enum with methods.");
@@ -759,6 +784,21 @@ namespace System.Reflection.Emit
 				foreach (var iface in interfaces) {
 					if (iface.IsNestedPrivate && iface.Assembly != Assembly)
 						throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is implements the inaccessible interface '" + iface.FullName + "'.");
+					if (iface.IsGenericTypeDefinition)
+						throw new BadImageFormatException ();
+					if (!iface.IsInterface)
+						throw new TypeLoadException ();
+					if (iface is TypeBuilder && !((TypeBuilder)iface).is_created)
+						throw new TypeLoadException ();
+				}
+			}
+
+			if (fields != null) {
+				foreach (FieldBuilder fb in fields) {
+					if (fb == null)
+						continue;
+					if (fb.FieldType.IsByRef)
+						throw new COMException ();
 				}
 			}
 
@@ -825,7 +865,7 @@ namespace System.Reflection.Emit
 				return t;
 			}
 		}
-
+/*
 		internal void GenerateDebugInfo (ISymbolWriter symbolWriter)
 		{
 			symbolWriter.OpenNamespace (this.Namespace);
@@ -849,7 +889,7 @@ namespace System.Reflection.Emit
 					subtypes [i].GenerateDebugInfo (symbolWriter);
 			}
 		}
-
+*/
 		[ComVisible (true)]
 		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
 		{
@@ -923,86 +963,14 @@ namespace System.Reflection.Emit
 
 		public override FieldInfo GetField (string name, BindingFlags bindingAttr)
 		{
-			if (created != null)
-				return created.GetField (name, bindingAttr);
-
-			if (fields == null)
-				return null;
-
-			bool match;
-			FieldAttributes mattrs;
-			
-			foreach (FieldInfo c in fields) {
-				if (c == null)
-					continue;
-				if (c.Name != name)
-					continue;
-				match = false;
-				mattrs = c.Attributes;
-				if ((mattrs & FieldAttributes.FieldAccessMask) == FieldAttributes.Public) {
-					if ((bindingAttr & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & FieldAttributes.Static) != 0) {
-					if ((bindingAttr & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				return c;
-			}
-			return null;
+			check_created ();
+			return created.GetField (name, bindingAttr);
 		}
 
 		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
 		{
-			if (created != null)
-				return created.GetFields (bindingAttr);
-
-			if (fields == null)
-				return new FieldInfo [0];
-			ArrayList l = new ArrayList ();
-			bool match;
-			FieldAttributes mattrs;
-			
-			foreach (FieldInfo c in fields) {
-				if (c == null)
-					continue;
-				match = false;
-				mattrs = c.Attributes;
-				if ((mattrs & FieldAttributes.FieldAccessMask) == FieldAttributes.Public) {
-					if ((bindingAttr & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & FieldAttributes.Static) != 0) {
-					if ((bindingAttr & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				l.Add (c);
-			}
-			FieldInfo[] result = new FieldInfo [l.Count];
-			l.CopyTo (result);
-			return result;
+			check_created ();
+			return created.GetFields (bindingAttr);
 		}
 
 		public override Type GetInterface (string name, bool ignoreCase)
@@ -1132,6 +1100,8 @@ namespace System.Reflection.Emit
 
 		public override MethodInfo[] GetMethods (BindingFlags bindingAttr)
 		{
+			check_created ();
+
 			return GetMethodsByName (null, bindingAttr, false, this);
 		}
 
@@ -1202,48 +1172,8 @@ namespace System.Reflection.Emit
 
 		public override PropertyInfo[] GetProperties (BindingFlags bindingAttr)
 		{
-			if (is_created)
-				return created.GetProperties (bindingAttr);
-
-			if (properties == null)
-				return new PropertyInfo [0];
-			ArrayList l = new ArrayList ();
-			bool match;
-			MethodAttributes mattrs;
-			MethodInfo accessor;
-			
-			foreach (PropertyInfo c in properties) {
-				match = false;
-				accessor = c.GetGetMethod (true);
-				if (accessor == null)
-					accessor = c.GetSetMethod (true);
-				if (accessor == null)
-					continue;
-				mattrs = accessor.Attributes;
-				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
-					if ((bindingAttr & BindingFlags.Public) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.NonPublic) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				match = false;
-				if ((mattrs & MethodAttributes.Static) != 0) {
-					if ((bindingAttr & BindingFlags.Static) != 0)
-						match = true;
-				} else {
-					if ((bindingAttr & BindingFlags.Instance) != 0)
-						match = true;
-				}
-				if (!match)
-					continue;
-				l.Add (c);
-			}
-			PropertyInfo[] result = new PropertyInfo [l.Count];
-			l.CopyTo (result);
-			return result;
+			check_created ();
+			return created.GetProperties (bindingAttr);
 		}
 		
 		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
@@ -1484,7 +1414,8 @@ namespace System.Reflection.Emit
 			if (eventtype == null)
 				throw new ArgumentNullException ("type");
 			check_not_created ();
-
+			if (eventtype.IsByRef)
+				throw new ArgumentException (nameof (eventtype));
 			EventBuilder res = new EventBuilder (this, name, attributes, eventtype);
 			if (events != null) {
 				EventBuilder[] new_events = new EventBuilder [events.Length+1];
@@ -1549,6 +1480,8 @@ namespace System.Reflection.Emit
 					this.parent = typeof (object);
 				}
 			} else {
+				if (parent.IsInterface)
+					throw new ArgumentException (nameof (parent));
 				this.parent = parent;
 			}
 			this.parent = ResolveUserType (this.parent);
@@ -1590,7 +1523,7 @@ namespace System.Reflection.Emit
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
-		private void check_not_created ()
+		internal void check_not_created ()
 		{
 			if (is_created)
 				throw new InvalidOperationException ("Unable to change after type has been created.");

@@ -113,10 +113,8 @@ namespace System.Reflection
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public override extern Type[] GetExportedTypes ();
 
-		public override Type[] GetForwardedTypes ()
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public override extern Type[] GetForwardedTypes ();
 
 		public override ManifestResourceInfo GetManifestResourceInfo (string resourceName)
 		{
@@ -310,12 +308,41 @@ namespace System.Reflection
 
 		public override FileStream GetFile (string name)
 		{
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException (nameof (name), SR.ArgumentNull_FileName);
+			if (name.Length == 0)
+				throw new ArgumentException (SR.Argument_EmptyFileName);
+
+			string location = Location;
+			if (location != null && Path.GetFileName (location) == name)
+				return new FileStream (location, FileMode.Open, FileAccess.Read);
+			string filename = (string)GetFilesInternal (name, true);
+			if (filename != null)
+				return new FileStream (filename, FileMode.Open, FileAccess.Read);
+			else
+				return null;
 		}
 
 		public override FileStream[] GetFiles (bool getResourceModules)
 		{
-			throw new NotImplementedException ();
+			string[] names = (string[]) GetFilesInternal (null, getResourceModules);
+			if (names == null)
+				return EmptyArray<FileStream>.Value;
+
+			string location = Location;
+
+			FileStream[] res;
+			if (location != String.Empty) {
+				res = new FileStream [names.Length + 1];
+				res [0] = new FileStream (location, FileMode.Open, FileAccess.Read);
+				for (int i = 0; i < names.Length; ++i)
+					res [i + 1] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			} else {
+				res = new FileStream [names.Length];
+				for (int i = 0; i < names.Length; ++i)
+					res [i] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			}
+			return res;
 		}
 
 		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder = default)
@@ -362,5 +389,8 @@ namespace System.Reflection
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern IntPtr InternalGetReferencedAssemblies (Assembly module);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern object GetFilesInternal (String name, bool getResourceModules);
 	}
 }

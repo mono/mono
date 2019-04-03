@@ -1,2 +1,2 @@
 #include legacy.sources
-System.Net.Http/HttpClient.mac.cs
+System.Net.Http/HttpClient.macios.cs

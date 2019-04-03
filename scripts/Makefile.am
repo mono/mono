@@ -36,7 +36,6 @@ bin_SCRIPTS = \
 	peverify		\
 	mcs			\
 	csc			\
-	csc-dim		\
 	vbc			\
 	csi			\
 	mono-package-runtime	\
@@ -159,7 +158,6 @@ EXTRA_DIST =			\
 	update_submodules.sh	\
 	mcs.in				\
 	csc.in				\
-	csc-dim.in				\
 	vbc.in				\
 	dmcs.in				\
 	csi.in			\
@@ -209,10 +207,6 @@ mcs: mcs.in Makefile
 
 csc: csc.in Makefile
 	$(REWRITE_COMMON) $(srcdir)/csc.in > $@.tmp
-	mv -f $@.tmp $@
-
-csc-dim: csc-dim.in Makefile
-	$(REWRITE_COMMON) $(srcdir)/csc-dim.in > $@.tmp
 	mv -f $@.tmp $@
 
 vbc: vbc.in Makefile
