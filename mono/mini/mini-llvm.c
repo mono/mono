@@ -2236,12 +2236,14 @@ static void
 emit_args_to_vtype (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMValueRef address, LLVMArgInfo *ainfo, LLVMValueRef *args)
 {
 	int j, size, nslots;
+	MonoClass *klass;
 
-	size = mono_class_value_size (mono_class_from_mono_type (t), NULL);
+	t = mini_get_underlying_type (t);
+	klass = mono_class_from_mono_type (t);
+	size = mono_class_value_size (klass, NULL);
 
-	if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (t))) {
+	if (MONO_CLASS_IS_SIMD (ctx->cfg, klass))
 		address = LLVMBuildBitCast (ctx->builder, address, LLVMPointerType (LLVMInt8Type (), 0), "");
-	}
 
 	if (ainfo->storage == LLVMArgAsFpArgs)
 		nslots = ainfo->nslots;
@@ -2262,8 +2264,8 @@ emit_args_to_vtype (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 		switch (ainfo->pair_storage [j]) {
 		case LLVMArgInIReg: {
 			part_type = LLVMIntType (part_size * 8);
-			if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (t))) {
-				index [0] = LLVMConstInt (LLVMInt32Type (), j * sizeof (gpointer), FALSE);
+			if (MONO_CLASS_IS_SIMD (ctx->cfg, klass)) {
+				index [0] = LLVMConstInt (LLVMInt32Type (), j * TARGET_SIZEOF_VOID_P, FALSE);
 				addr = LLVMBuildGEP (builder, address, index, 1, "");
 			} else {
 				daddr = LLVMBuildBitCast (ctx->builder, address, LLVMPointerType (IntPtrType (), 0), "");
@@ -2310,6 +2312,7 @@ emit_vtype_to_args (EmitContext *ctx, LLVMBuilderRef builder, MonoType *t, LLVMV
 	int j, size, nslots;
 	LLVMTypeRef arg_type;
 
+	t = mini_get_underlying_type (t);
 	size = get_vtype_size (t);
 
 	if (MONO_CLASS_IS_SIMD (ctx->cfg, mono_class_from_mono_type (t)))
@@ -3021,11 +3024,12 @@ emit_entry_bb (EmitContext *ctx, LLVMBuilderRef builder)
 		case LLVMArgAsIArgs: {
 			LLVMValueRef arg = LLVMGetParam (ctx->lmethod, pindex);
 			int size;
+			MonoType *t = mini_get_underlying_type (ainfo->type);
 
 			/* The argument is received as an array of ints, store it into the real argument */
-			ctx->addresses [reg] = build_alloca (ctx, ainfo->type);
+			ctx->addresses [reg] = build_alloca (ctx, t);
 
-			size = mono_class_value_size (mono_class_from_mono_type (ainfo->type), NULL);
+			size = mono_class_value_size (mono_class_from_mono_type (t), NULL);
 			if (size == 0) {
 			} else if (size < TARGET_SIZEOF_VOID_P) {
 				/* The upper bits of the registers might not be valid */
