@@ -5207,22 +5207,17 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructureInternal (gconstp
 	MonoType *t;
 	MonoClass *klass;
 
-	MONO_CHECK_ARG_NULL_NAMED (src, "ptr",);
-	MONO_CHECK_ARG_NULL_HANDLE_NAMED (dst, "structure",);
-
 	t = m_class_get_byval_arg (mono_handle_class (dst));
 	if (!allow_vtypes && MONO_TYPE_ISSTRUCT (t)) {
 		mono_error_set_argument (error, "structure", "The structure must not be a value class.");
 		return;
 	}
 
-#ifdef ENABLE_NETCORE
 	klass = mono_class_from_mono_type_internal (t);
 	if (m_class_is_auto_layout (klass)) {
 		mono_error_set_argument (error, "structure", "The specified structure must be blittable or have layout information.");
 		return;
 	}
-#endif
 
 	ptr_to_structure (src, dst, error);
 }
