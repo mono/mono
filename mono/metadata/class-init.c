@@ -1755,7 +1755,6 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 		interface_offsets_count = num_ifaces = gklass->interface_offsets_count;
 		interfaces_full = (MonoClass **)g_malloc (sizeof (MonoClass*) * num_ifaces);
 		interface_offsets_full = (int *)g_malloc (sizeof (int) * num_ifaces);
-		ClassAndOffset *co_pair = (ClassAndOffset *) g_malloc (sizeof (ClassAndOffset) * num_ifaces);
 
 		cur_slot = 0;
 		for (int i = 0; i < num_ifaces; ++i) {
@@ -1771,9 +1770,8 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 
 			mono_class_setup_interface_id_internal (inflated);
 
-			co_pair [i].ic = inflated;
-			co_pair [i].offset = gklass->interface_offsets_packed [i];
-			co_pair [i].insertion_order = i;
+			interfaces_full [i] = inflated;
+			interface_offsets_full [i] = gklass->interface_offsets_packed [i];
 
 			int count = count_virtual_methods (inflated);
 			if (count == -1) {
@@ -1787,20 +1785,6 @@ setup_interface_offsets (MonoClass *klass, int cur_slot, gboolean overwrite)
 			cur_slot = MAX (cur_slot, interface_offsets_full [i] + count);
 			max_iid = MAX (max_iid, inflated->interface_id);
 		}
-
-		/* qsort() is not guaranteed to be a stable sort (elements with
-		 * equal keys stay in the same relative order).  In practice,
-		 * qsort from MSVC isn't stable.  So we add a
-		 * ClassAndOffset:insertion_order field and use it as a
-		 * secondary sorting key when the interface ids are equal. */
-		qsort (co_pair, num_ifaces, sizeof (ClassAndOffset), compare_by_interface_id);
-		for (int i = 0; i < num_ifaces; ++i) {
-			interfaces_full [i] = co_pair [i].ic;
-			interface_offsets_full [i] = co_pair [i].offset;
-
-			g_assert (i == 0 || interfaces_full [i]->interface_id >= interfaces_full [i - 1]->interface_id);
-		}
-		g_free (co_pair);
 
 		goto publish;
 	}

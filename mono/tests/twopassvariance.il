@@ -134,6 +134,28 @@
     }
 }
 
+.class Fooer8<T>
+    implements class IFoo<class Base>, class IFoo<class Derived>
+{
+    .method public specialname rtspecialname instance void .ctor()
+    {
+        ldarg.0
+        call instance void [mscorlib]System.Object::.ctor()
+        ret
+    }
+}
+
+.class Fooer9<T>
+    implements class IFoo<class Derived>, class IFoo<class Base>
+{
+    .method public specialname rtspecialname instance void .ctor()
+    {
+        ldarg.0
+        call instance void [mscorlib]System.Object::.ctor()
+        ret
+    }
+}
+
 .method static int32 main()
 {
     .entrypoint
@@ -346,7 +368,40 @@ Fooer7_IFoo_BaseOK:
     ret
 
 Fooer7_IFoo_DerivedOK:
+    ldstr      "Fooer7_IFoo_DerivedOK"
+    call       void [mscorlib]System.Console::WriteLine(string)
+    newobj instance void class Fooer8<class Base>::.ctor()
+    castclass class IFoo<class SuperDerived>
+    callvirt instance class [mscorlib]System.Type class IFoo<class SuperDerived>::Gimme()
+    dup
+    callvirt instance string [mscorlib]System.Object::ToString()
+    call void [mscorlib]System.Console::WriteLine(string)
+    ldtoken class IFoo<class Base>
+    call class [mscorlib]System.Type [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
+    ceq
+    brtrue Fooer8_IFoo_SuperDerivedOK
+    ldc.i4.1
+    ret
 
+Fooer8_IFoo_SuperDerivedOK:
+    ldstr      "Fooer8_IFoo_SuperDerivedOK"
+    call       void [mscorlib]System.Console::WriteLine(string)
+    newobj instance void class Fooer9<class Base>::.ctor()
+    castclass class IFoo<class SuperDerived>
+    callvirt instance class [mscorlib]System.Type class IFoo<class SuperDerived>::Gimme()
+    dup
+    callvirt instance string [mscorlib]System.Object::ToString()
+    call void [mscorlib]System.Console::WriteLine(string)
+    ldtoken class IFoo<class Derived>
+    call class [mscorlib]System.Type [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
+    ceq
+    brtrue Fooer9_IFoo_SuperDerivedOK
+    ldc.i4.2
+    ret
+
+Fooer9_IFoo_SuperDerivedOK:
+    ldstr      "Fooer9_IFoo_SuperDerivedOK"
+    call       void [mscorlib]System.Console::WriteLine(string)
     ldc.i4 0
     ret
 }
