@@ -133,17 +133,20 @@ namespace System
 			if (dst_type.IsEnum)
 				dst_type = Enum.GetUnderlyingType (dst_type);
 
-			// Need to check types even if nothing is copied
-			if (length == 0 || reliable) {
-				if (reliable) {
-					var src_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)src_type);
-					var dst_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)dst_type);
-					if (src_etype != dst_etype) {
-						throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
-					}
-				} else if (!CanAssignArrayElement (src_type, dst_type)) {
+			if (reliable) {
+				var src_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)src_type);
+				var dst_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)dst_type);
+				if (src_etype != dst_etype) {
 					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
 				}
+			}
+
+			// Need to check types even if nothing is copied
+			if (length == 0) {
+				if (!CanAssignArrayElement (src_type, dst_type)) {
+					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
+				}
+				return;
 			}
 
 			if (!Object.ReferenceEquals (sourceArray, destinationArray) || source_pos > dest_pos) {
