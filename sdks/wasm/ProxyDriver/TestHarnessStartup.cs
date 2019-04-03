@@ -91,7 +91,7 @@ namespace WsProxy {
 				    throw new Exception("TestHarnessStartup: timed out");
 				}
 				var con_str = await tcs.Task;
-				if (con_str.StartsWith("Whoops!!!", StringComparison.Ordinal))
+				if (con_str.StartsWith("// Error:", StringComparison.Ordinal))
 				{
 				    throw new ArgumentNullException("connectionString", con_str);
 				}
@@ -162,7 +162,7 @@ namespace WsProxy {
 							var res = client.GetStringAsync ("http://localhost:9333/json/list").Result;
 							Console.WriteLine ($"Websocket targets returned from chrome {res}");
 							var obj = JArray.Parse (res);
-							var wsURL = "Whoops!!!! Something went wrong while probing for available websocket targets.";
+							var wsURL = "// Error: Something went wrong while probing for available websocket targets.";
 							if (obj.Count > 0)
 							{
 								wsURL = obj?[0]?["webSocketDebuggerUrl"]?.Value<string>();
