@@ -82,6 +82,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker\I18nAssemblies.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\ILogger.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\IXApiVisitor.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker\Inflater.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\KnownMembers.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\LinkContext.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\LoadException.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodBodyScanner.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodDefinitionExtensions.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodReferenceExtensions.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker\OverrideInformation.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\Pipeline.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\Tracer.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\TypeDefinitionExtensions.cs" />
