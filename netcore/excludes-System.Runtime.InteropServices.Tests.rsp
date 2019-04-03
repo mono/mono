@@ -60,3 +60,8 @@
 # Supported on Mono
 -nomethod System.Runtime.InteropServices.Tests.GetFunctionPointerForDelegateTests.GetFunctionPointer_GenericDelegate_ThrowsArgumentException
 
+# Causes an unhandled exception in a finalizer
+-nomethod *HandleCollectorTests*
+
+# typeof(object).Assembly.ImageRuntimeVersion returns null because the corelib metadata version string is empty
+#-nomethod System.Runtime.InteropServices.RuntimeEnvironmentTests.RuntimeEnvironmentSysVersion
