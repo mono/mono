@@ -134,19 +134,13 @@ namespace System
 				dst_type = Enum.GetUnderlyingType (dst_type);
 
 			if (reliable) {
-				var src_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)src_type);
-				var dst_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)dst_type);
-				if (src_etype != dst_etype) {
+				if (!dst_type.Equals(src_type)) {
 					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
 				}
-			}
-
-			// Need to check types even if nothing is copied
-			if (length == 0) {
+			} else {
 				if (!CanAssignArrayElement (src_type, dst_type)) {
 					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
 				}
-				return;
 			}
 
 			if (!Object.ReferenceEquals (sourceArray, destinationArray) || source_pos > dest_pos) {
@@ -160,10 +154,6 @@ namespace System
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
 					} catch (ArgumentException) {
 						throw CreateArrayTypeMismatchException ();
-					} catch (InvalidCastException) {
-						if (CanAssignArrayElement (src_type, dst_type))
-							throw;
-						throw CreateArrayTypeMismatchException ();
 					}
 				}
 			} else {
@@ -173,11 +163,6 @@ namespace System
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
 					} catch (ArgumentException) {
-						throw CreateArrayTypeMismatchException ();
-					} catch {
-						if (CanAssignArrayElement (src_type, dst_type))
-							throw;
-
 						throw CreateArrayTypeMismatchException ();
 					}
 				}
@@ -191,16 +176,31 @@ namespace System
 
 		static bool CanAssignArrayElement (Type source, Type target)
 		{
-			if (source.IsValueType)
-				return source.IsAssignableFrom (target);
+			if (!target.IsValueType && !target.IsPointer) {
+				if (!source.IsValueType && !source.IsPointer) {
+					// Reference to reference copy
+					return
+						source.IsInterface || target.IsInterface ||
+						source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
+				} else {
+					// Value to reference copy
+					return target.IsAssignableFrom (source);
+				}
+			} else {
+				if (source.IsEquivalentTo(target)) {
+					return true;
+				} else if (source.IsPointer && target.IsPointer) {
+					return true;
+				} else if (source.IsPrimitive && target.IsPrimitive) {
+					// Allow primitive type widening
+					return DefaultBinder.CanChangePrimitive (source, target);
+				} else if (!source.IsValueType && !source.IsPointer) {
+					// Source is base class or interface of destination type
+					return source.IsAssignableFrom (target);
+				}
+			}
 
-			if (source.IsInterface)
-				return !target.IsValueType;
-
-			if (target.IsInterface)
-				return !source.IsValueType;
-
-			return source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
+			return false;
 		}
 
 		public static Array CreateInstance (Type elementType, int length)
