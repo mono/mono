@@ -184,6 +184,8 @@ namespace System
 						source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
 				} else {
 					// Value to reference copy
+					if (source.IsPointer)
+						return false;
 					return target.IsAssignableFrom (source);
 				}
 			} else {
@@ -196,6 +198,8 @@ namespace System
 					return DefaultBinder.CanChangePrimitive (source, target);
 				} else if (!source.IsValueType && !source.IsPointer) {
 					// Source is base class or interface of destination type
+					if (target.IsPointer)
+						return false;
 					return source.IsAssignableFrom (target);
 				}
 			}
