@@ -933,7 +933,7 @@ HANDLES(REMSER_2, "IsTransparentProxy", ves_icall_IsTransparentProxy, MonoBoolea
 
 ICALL_TYPE(RUNIMPORT, "System.Runtime.RuntimeImports", RUNIMPORT_1)
 #if ENABLE_NETCORE
-NOHANDLES(ICALL(RUNIMPORT_1, "RhBulkMoveWithWriteBarrier", ves_icall_System_Runtime_RuntimeImports_Memmove))
+NOHANDLES(ICALL(RUNIMPORT_1, "RhBulkMoveWithWriteBarrier", ves_icall_System_Runtime_RuntimeImports_Memmove_wbarrier))
 NOHANDLES(ICALL(RUNIMPORT_2, "ZeroMemory", ves_icall_System_Runtime_RuntimeImports_ZeroMemory))
 #else
 NOHANDLES(ICALL(RUNIMPORT_1, "Memmove", ves_icall_System_Runtime_RuntimeImports_Memmove))
