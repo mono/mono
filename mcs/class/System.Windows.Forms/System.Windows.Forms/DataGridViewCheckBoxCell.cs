@@ -59,7 +59,8 @@ namespace System.Windows.Forms {
 		public DataGridViewCheckBoxCell (bool threeState) : this()
 		{
 			this.threeState = threeState;
-			editingCellFormattedValue = CheckState.Unchecked;
+			if (threeState)
+				editingCellFormattedValue = CheckState.Unchecked;
 		}
 
 		public virtual object EditingCellFormattedValue {
@@ -192,7 +193,11 @@ namespace System.Windows.Forms {
 
 		public virtual void PrepareEditingCellForEdit (bool selectAll)
 		{
-			editingCellFormattedValue = GetCurrentValue ();
+			CheckState cs = GetCurrentValue();
+			if (threeState)
+				editingCellFormattedValue = cs;
+			else
+				editingCellFormattedValue = cs == CheckState.Checked;
 		}
 
 		public override string ToString ()
