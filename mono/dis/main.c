@@ -1634,7 +1634,7 @@ disassemble_file (const char *file)
 		/* FIXME: is this call necessary? */
 		/* FIXME: if it's necessary, can it be refonly instead? */
 		MonoAssemblyLoadRequest req;
-		mono_assembly_request_prepare (&req, sizeof (req), MONO_ASMCTX_DEFAULT);
+		mono_assembly_request_prepare_load (&req, MONO_ASMCTX_DEFAULT);
 		mono_assembly_request_load_from (img, file, &req, &status);
 	}
 
@@ -1925,7 +1925,7 @@ monodis_preload (MonoAssemblyName *aname,
 
 	if (assemblies_path && assemblies_path [0] != NULL) {
 		MonoAssemblyOpenRequest req;
-		mono_assembly_request_prepare (&req.request, sizeof (req), refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT);
+		mono_assembly_request_prepare_open (&req, refonly ? MONO_ASMCTX_REFONLY : MONO_ASMCTX_DEFAULT);
 
 		result = real_load (assemblies_path, aname->culture, aname->name, &req);
 	}

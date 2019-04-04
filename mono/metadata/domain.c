@@ -1040,7 +1040,7 @@ mono_domain_assembly_open_internal (MonoDomain *domain, const char *name)
 	mono_domain_assemblies_unlock (domain);
 
 	MonoAssemblyOpenRequest req;
-	mono_assembly_request_prepare (&req.request, sizeof (req), MONO_ASMCTX_DEFAULT);
+	mono_assembly_request_prepare_open (&req, MONO_ASMCTX_DEFAULT);
 	if (domain != mono_domain_get ()) {
 		current = mono_domain_get ();
 

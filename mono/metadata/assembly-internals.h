@@ -79,9 +79,14 @@ typedef struct MonoAssemblyByNameRequest {
 	/* FIXME: predicate unused? */
 } MonoAssemblyByNameRequest;
 
-void                   mono_assembly_request_prepare (MonoAssemblyLoadRequest *req,
-						      size_t req_size,
-						      MonoAssemblyContextKind asmctx);
+void                   mono_assembly_request_prepare_load (MonoAssemblyLoadRequest *req,
+							   MonoAssemblyContextKind asmctx);
+
+void                   mono_assembly_request_prepare_open (MonoAssemblyOpenRequest *req,
+							   MonoAssemblyContextKind asmctx);
+
+void                   mono_assembly_request_prepare_byname (MonoAssemblyByNameRequest *req,
+							     MonoAssemblyContextKind asmctx);
 
 MonoAssembly*          mono_assembly_request_open (const char *filename,
 						     const MonoAssemblyOpenRequest *req,
