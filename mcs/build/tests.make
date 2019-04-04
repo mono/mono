@@ -131,7 +131,8 @@ ifndef NO_TEST
 $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
-$(topdir)/build/deps/nunit-$(PROFILE).stamp:
+# aot-runtime.h due to MONO_AOT_FILE_VERSION.
+$(topdir)/build/deps/nunit-$(PROFILE).stamp: $(topdir)/../mono/mini/aot-runtime.h
 	cd ${topdir}/tools/nunit-lite && $(MAKE)
 	echo "stamp" >$@
 
