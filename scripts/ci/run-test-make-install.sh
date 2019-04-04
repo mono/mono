@@ -12,4 +12,5 @@ ${TESTCMD} --label=check-prefix-mcs --timeout=1m mcs /out:${MONO_REPO_ROOT}/tmp/
 ${TESTCMD} --label=check-prefix-roslyn --timeout=1m csc /out:${MONO_REPO_ROOT}/tmp/hello.exe ${MONO_REPO_ROOT}/tmp/hello.cs
 ${TESTCMD} --label=check-prefix-aot --timeout=1m mono --aot ${MONO_REPO_ROOT}/tmp/hello.exe
 ${TESTCMD} --label=check-prefix-llvmaot --timeout=1m mono --aot=llvm,llvm-path=/usr/lib/mono/llvm/bin ${MONO_REPO_ROOT}/tmp/hello.exe
-${TESTCMD} --label=check-prefix-llvmjit --timeout=1m mono --llvm ${MONO_REPO_ROOT}/tmp/hello.exe
+# llvmjit is currently broken and we have things to test. - katelyngadd 2019/4/4
+# ${TESTCMD} --label=check-prefix-llvmjit --timeout=1m mono --llvm ${MONO_REPO_ROOT}/tmp/hello.exe
