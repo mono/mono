@@ -1218,7 +1218,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 			td->ip += 5;
 			return TRUE;
 		} else if (!strcmp (tm, "AreSame")) {
-			*op = MINT_CEQ_I4 + STACK_TYPE_I - STACK_TYPE_I4;
+			*op = MINT_CEQ_P;
 		}
 #endif
 	} else if (in_corlib && !strcmp (klass_name_space, "System.Runtime.CompilerServices") && !strcmp (klass_name, "RuntimeHelpers")) {
@@ -1229,21 +1229,12 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 			g_assert (ctx);
 			g_assert (ctx->method_inst);
 			g_assert (ctx->method_inst->type_argc == 1);
-			MonoType *arg_type = ctx->method_inst->type_argv [0];
-			MonoType *t;
-			int val;
-
-			t = mini_get_underlying_type (arg_type);
+			MonoType *t = mini_get_underlying_type (ctx->method_inst->type_argv [0]);
 
 			if (MONO_TYPE_IS_PRIMITIVE (t) && t->type != MONO_TYPE_R4 && t->type != MONO_TYPE_R8)
-				val = 1;
+				*op = MINT_LDC_I4_1;
 			else
-				val = 0;
-			interp_add_ins (td, MINT_LDC_I4);
-			WRITE32_INS (td->last_ins, 0, &val);
-			PUSH_SIMPLE_TYPE (td, STACK_TYPE_I4);
-			td->ip += 5;
-			return TRUE;
+				*op = MINT_LDC_I4_0;
 		} else if (!strcmp (tm, "ObjectHasComponentSize")) {
 			*op = MINT_INTRINS_RUNTIMEHELPERS_OBJECT_HAS_COMPONENT_SIZE;
 		}
