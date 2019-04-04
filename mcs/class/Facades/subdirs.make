@@ -81,6 +81,9 @@ wasm_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 testing_aot_full_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 testing_aot_full_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
+testing_aot_full_interp_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
+testing_aot_full_interp_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
+
 testing_aot_hybrid_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 testing_aot_hybrid_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
