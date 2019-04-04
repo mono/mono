@@ -134,7 +134,7 @@ namespace System
 				dst_type = Enum.GetUnderlyingType (dst_type);
 
 			if (reliable) {
-				if (!dst_type.Equals(src_type)) {
+				if (!dst_type.Equals (src_type)) {
 					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
 				}
 			} else {
@@ -189,7 +189,7 @@ namespace System
 					return target.IsAssignableFrom (source);
 				}
 			} else {
-				if (source.IsEquivalentTo(target)) {
+				if (source.IsEquivalentTo (target)) {
 					return true;
 				} else if (source.IsPointer && target.IsPointer) {
 					return true;
