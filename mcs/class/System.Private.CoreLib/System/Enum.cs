@@ -41,23 +41,23 @@ namespace System
 			return DefaultEquals (this, obj);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern bool InternalHasFlag(Enum flags);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern bool InternalHasFlag (Enum flags);
 
 		[Intrinsic]
 		public bool HasFlag (Enum flag)
 		{
-			if (flag == null)
+			if (flag is null)
 				throw new ArgumentNullException (nameof(flag));
-			if (!this.GetType().IsEquivalentTo (flag.GetType()))
-				throw new ArgumentException(SR.Format(SR.Argument_EnumTypeDoesNotMatch, flag.GetType(), this.GetType()));
+			if (!this.GetType ().IsEquivalentTo (flag.GetType ()))
+				throw new ArgumentException (SR.Format (SR.Argument_EnumTypeDoesNotMatch, flag.GetType (), this.GetType ()));
 
 			return InternalHasFlag (flag);
 		}
 
 		public static string GetName (Type enumType, object value)
 		{
-			if (enumType == null)
+			if (enumType is null)
 				throw new ArgumentNullException (nameof(enumType));
 
 			return enumType.GetEnumName (value);
@@ -65,7 +65,7 @@ namespace System
 
 		public static string[] GetNames (Type enumType)
 		{
-			if (enumType == null)
+			if (enumType is null)
 				throw new ArgumentNullException (nameof (enumType));
 
 			return enumType.GetEnumNames ();
@@ -73,24 +73,24 @@ namespace System
 
 		public static Type GetUnderlyingType (Type enumType)
 		{
-			if (enumType == null)
-				throw new ArgumentNullException (nameof(enumType));
+			if (enumType is null)
+				throw new ArgumentNullException (nameof (enumType));
 
 			return enumType.GetEnumUnderlyingType ();
 		}
 
-		public static Array GetValues(Type enumType)
+		public static Array GetValues (Type enumType)
 		{
-			if (enumType == null)
-				throw new ArgumentNullException (nameof(enumType));
+			if (enumType is null)
+				throw new ArgumentNullException (nameof (enumType));
 
 			return enumType.GetEnumValues ();
 		}
 
 		public static bool IsDefined (Type enumType, object value)
 		{
-			if (enumType == null)
-				throw new ArgumentNullException (nameof(enumType));
+			if (enumType is null)
+				throw new ArgumentNullException (nameof (enumType));
 
 			return enumType.IsEnumDefined (value);
 		}
