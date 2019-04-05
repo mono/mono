@@ -78,7 +78,7 @@ namespace WsProxy {
 				    Console.WriteLine($"TestHarnessStartup::LaunchAndServe:stderr: {e.Data}");
 				    var res = extract_conn_url(e.Data);
 				    if (res != null)
-					tcs.TrySetResult(res);
+					    tcs.TrySetResult(res);
 				};
 				proc.OutputDataReceived += (sender, e) => {
 				    Console.WriteLine($"TestHarnessStartup::LaunchAndServe:stdout: {e.Data}");
@@ -103,10 +103,12 @@ namespace WsProxy {
 				var ideSocket = await context.WebSockets.AcceptWebSocketAsync();
 
 				await proxy.Run(browserUri, ideSocket);
-				Console.WriteLine($"Proxy finished for {browserUri}");
+				Console.WriteLine($"MonoProxy finished for {browserUri}");
 			} catch (ArgumentNullException ane) {
-				//Console.WriteLine($"TestHarnessStartup::LaunchAndServe: ArgumentNullException {ane.Message}");
-				throw ane;
+                // We need to communicate the internal server error to the client so it can take appropriate action
+                var ideSocket = await context.WebSockets.AcceptWebSocketAsync();
+                await ideSocket.CloseAsync(WebSocketCloseStatus.InternalServerError, ane.Message, CancellationToken.None);
+                throw ane;
 			} catch (Exception e) {
 				Console.WriteLine($"TestHarnessStartup::LaunchAndServe: Exception {e.Message}");
 			} finally {
@@ -117,6 +119,7 @@ namespace WsProxy {
 				proc.Close ();
 			}
 		}
+        //static int counter = 0;
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure (IApplicationBuilder app, IHostingEnvironment env)
 		{
@@ -157,11 +160,18 @@ namespace WsProxy {
 						Console.WriteLine($"launch-chrome-and-connect: {str}");
 						if (!str.StartsWith ("DevTools listening on ", StringComparison.Ordinal))
 							return null;
-
 						using (var client = new HttpClient ()) {
 							var res = client.GetStringAsync ("http://localhost:9333/json/list").Result;
 							Console.WriteLine ($"Websocket targets returned from chrome {res}");
-							var obj = JArray.Parse (res);
+
+                            // Debug use only.  This will recreate the problem that is recieved on the CI
+                            // where the websocket list is not being returned randomly.
+                            // Not able to recreate locally.
+                            //if (counter++ % 2 == 0)
+                            //{
+                            //    res = "[ ]";
+                            //}
+                            var obj = JArray.Parse (res);
 							var wsURL = "// Error: Something went wrong while probing for available websocket targets.";
 							if (obj.Count > 0)
 							{

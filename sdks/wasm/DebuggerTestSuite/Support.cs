@@ -22,7 +22,7 @@ namespace DebuggerTests
 
 		public const string PAUSE = "pause";
 		public const string READY = "ready";
-		public const int NUMBER_OF_TRIES = 3;
+		public const int NUMBER_OF_ATTEMPTS = 5;
 
 		public Task<JObject> WaitFor(string what) {
 			if (notifications.ContainsKey (what))
@@ -63,58 +63,81 @@ namespace DebuggerTests
 
 		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null) {
 
-		    var tries = 0;
-		    using (var readyCTS = new CancellationTokenSource())
-		    {
-			while (!readyCTS.IsCancellationRequested && tries < NUMBER_OF_TRIES)
-			{
-			    if (tries > 0)
-			    {
-				Console.WriteLine($"There seems to have been a problem trying again: Try {tries + 1} of {NUMBER_OF_TRIES}");
-			    }
-			    using (var cts = new CancellationTokenSource())
-			    {
-				cts.CancelAfter(60 * 1000); //tests have 1 minute to complete
-				var uri = new Uri("ws://localhost:9300/launch-chrome-and-connect");
-				using (var client = new InspectorClient())
-				{
+            var attempts = 0;
+            bool internalServerError;
+            using (var cts = new CancellationTokenSource())
+            {
+                cts.CancelAfter(60 * 1000); //tests have 1 minute to complete
+                var uri = new Uri("ws://localhost:9300/launch-chrome-and-connect");
+                using (var readyCTS = new CancellationTokenSource())
+                {
+                    while (!readyCTS.IsCancellationRequested && !cts.IsCancellationRequested)
+                    {
+                        if (attempts > 0)
+                        {
+                            Console.WriteLine($">>> Problem connecting to InspectorClient. See previous log entry.  Trying again: Attempt {attempts} of {NUMBER_OF_ATTEMPTS}.");
+                        }
+                        internalServerError = false;
+                        try
+                        {
+                            using (var client = new InspectorClient())
+                            {
+                                await client.Connect(uri, OnMessage, async token =>
+                                {
+                                    Task[] init_cmds = new Task[] {
+                                        client.SendCommand ("Profiler.enable", null, token),
+                                        client.SendCommand ("Runtime.enable", null, token),
+                                        client.SendCommand ("Debugger.enable", null, token),
+                                        client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token),
+                                        WaitFor (READY),
+                                    };
+                                        // await Task.WhenAll (init_cmds);
+                                        Console.WriteLine("waiting for the runtime to be ready");
+                                    await init_cmds[4];
+                                    if (!internalServerError)
+                                    {
+                                        readyCTS.Cancel();
 
-				    try
-				    {
-					await client.Connect(uri, OnMessage, async token =>
-					{
-					    readyCTS.Cancel();
-					    Task[] init_cmds = new Task[] {
-					    client.SendCommand ("Profiler.enable", null, token),
-					    client.SendCommand ("Runtime.enable", null, token),
-					    client.SendCommand ("Debugger.enable", null, token),
-					    client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token),
-					    WaitFor (READY),
-					    };
-					// await Task.WhenAll (init_cmds);
-					Console.WriteLine("waiting for the runtime to be ready");
-					    await init_cmds[4];
-					    Console.WriteLine("runtime ready, TEST TIME");
-					    if (cb != null)
-					    {
-						Console.WriteLine("await cb(client, token)");
-						await cb(client, token);
-					    }
-					}, cts.Token);
-				    }
-				    catch (Exception can)
-				    {
-					Console.WriteLine(can.Message);
-				    }
-				    finally
-				    {
-					tries++;
-				    }
-				}
-			    }
-			}
-		    }
-		}
+                                        Console.WriteLine("runtime ready, TEST TIME");
+                                        if (cb != null)
+                                        {
+                                            Console.WriteLine("await cb(client, token)");
+                                            await cb(client, token);
+                                        }
+                                    }
+                                }, cts.Token);
+                            }
+
+
+                        }
+                        catch (Exception can)
+                        {
+                            if (attempts > NUMBER_OF_ATTEMPTS)
+                            {
+                                internalServerError = true;
+                                NotifyOf(READY, null);
+                                throw can;
+                            }
+                            if (can.InnerException != null && can.InnerException is ArgumentException)
+                            {
+                                if (((ArgumentException)can.InnerException).ParamName != "connectionString")
+                                    throw can;
+                                internalServerError = true;
+                                NotifyOf(READY, null);
+                            }
+                            else
+                                throw can;
+                        }
+                        finally
+                        {
+                            attempts++;
+                        }
+
+                    }
+
+                }
+            }
+        }
 	}
 
 	public class DebuggerTestBase {

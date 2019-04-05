@@ -14,6 +14,7 @@ namespace WsProxy {
 		ClientWebSocket socket;
 		List<Task> pending_ops = new List<Task> ();
 		TaskCompletionSource<bool> side_exit = new TaskCompletionSource<bool> ();
+		TaskCompletionSource<string> proxy_initiated_close = new TaskCompletionSource<string> ();
 		List<byte []> pending_writes = new List<byte []> ();
 		Task current_write;
 
@@ -31,7 +32,7 @@ namespace WsProxy {
 		protected virtual void Dispose (bool disposing) {
 			if (disposing) {
 				if (socket.State == WebSocketState.Open) {
-					Console.WriteLine("WsClient: Closing socket");
+					Console.WriteLine("WsClient::Dispose: Closing socket");
 					socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Shutting down WsClient", CancellationToken.None);
 				}
 				socket.Dispose ();
@@ -58,8 +59,17 @@ namespace WsProxy {
 			byte [] buff = new byte [4000];
 			var mem = new MemoryStream ();
 			while (true) {
+
 				var result = await this.socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
 				if (result.MessageType == WebSocketMessageType.Close) {
+					// Trap specific error so we can shut down cleanly.  This prevents hand-shake errors
+					if (this.socket.CloseStatus.Value == WebSocketCloseStatus.InternalServerError
+						&& this.socket.CloseStatusDescription.StartsWith("// Error:", StringComparison.Ordinal)) {
+
+						Console.WriteLine ($"WsClient::ReadOne recieved close internal server error: {this.socket.CloseStatus} / {this.socket.CloseStatusDescription}");
+						proxy_initiated_close.TrySetResult (this.socket.CloseStatusDescription);
+						throw new ArgumentException (this.socket.CloseStatusDescription, "connectionString");
+					}
 					return null;
 				}
 
@@ -103,30 +113,53 @@ namespace WsProxy {
 			using (this.socket = new ClientWebSocket ()) {
 				this.socket.Options.KeepAliveInterval = Timeout.InfiniteTimeSpan;
 
-				await this.socket.ConnectAsync (uri, token);
-				pending_ops.Add (ReadOne (token));
-				pending_ops.Add (side_exit.Task);
-				pending_ops.Add (MarkCompleteAfterward (send, token));
+				try {
+					await this.socket.ConnectAsync (uri, token);
+					pending_ops.Add (ReadOne (token));
+					pending_ops.Add (side_exit.Task);
+					pending_ops.Add (proxy_initiated_close.Task);
+					pending_ops.Add (MarkCompleteAfterward (send, token));
 
-				while (!token.IsCancellationRequested) {
-					var task = await Task.WhenAny (pending_ops);
-					if (task == pending_ops [0]) { //pending_ops[0] is for message reading
-						var msg = ((Task<string>)task).Result;
-						pending_ops [0] = ReadOne (token);
-						Task tsk = receive (msg, token);
-						if (tsk != null)
-							pending_ops.Add (tsk);
-					} else if (task == pending_ops [1]) {
-						var res = ((Task<bool>)task).Result;
-						//it might not throw if exiting successfull
-						return res;
-					} else { //must be a background task
-						pending_ops.Remove (task);
-						var tsk = Pump (task, token);
-						if (tsk != null)
-							pending_ops.Add (tsk);
+					using (var x = new CancellationTokenSource ()) {
+
+						while (!x.IsCancellationRequested && !token.IsCancellationRequested) {
+							var task = await Task.WhenAny (pending_ops);
+							if (task == pending_ops [0]) { //pending_ops[0] is for message reading
+								var msg = ((Task<string>)task).Result;
+								if (msg != null) {
+									pending_ops [0] = ReadOne (token);
+									Task tsk = receive (msg, token);
+									if (tsk != null)
+										pending_ops.Add (tsk);
+								}
+							} else if (task == pending_ops [1]) {
+								var res = ((Task<bool>)task).Result;
+								//it might not throw if exiting successfull
+								return res;
+							 } else if (task == pending_ops [2]) {
+							 	var res = ((Task<string>)task).Result;
+							 	Console.WriteLine ($"WsClient: Proxy internal server error recieved.  Check previous messages.");
+								x.Cancel ();
+							} else { //must be a background task
+								pending_ops.Remove (task);
+								var tsk = Pump (task, token);
+								if (tsk != null)
+									pending_ops.Add (tsk);
+							}
+						}
 					}
 				}
+				finally {
+					try {
+						// If we are still open shut it down cleanly.
+						if (socket.State == WebSocketState.Open) {
+							Console.WriteLine ($"WsClient: Closing socket to {uri}");
+							await socket.CloseAsync (WebSocketCloseStatus.NormalClosure, "Shutting down WsClient", CancellationToken.None);
+						}
+					}
+					catch { }
+				}
+
 			}
 
 			return false;

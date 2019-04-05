@@ -120,23 +120,24 @@ namespace WsProxy {
 			byte [] buff = new byte [4000];
 			var mem = new MemoryStream ();
 			while (true) {
-				try {
-					var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
-					if (result.MessageType == WebSocketMessageType.Close) {
-						client_initiated_close.TrySetResult (true);
-						return null;
-					}
 
-					if (result.EndOfMessage) {
-						mem.Write (buff, 0, result.Count);
-						return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
-					} else {
-						mem.Write (buff, 0, result.Count);
-					}
-				}
-				catch (Exception exc) {
+				if (socket.State != WebSocketState.Open) {
+					Console.WriteLine ($"WSProxy: Socket is no longer open.");
 					client_initiated_close.TrySetResult (true);
 					return null;
+				}
+
+				var result = await socket.ReceiveAsync (new ArraySegment<byte> (buff), token);
+				if (result.MessageType == WebSocketMessageType.Close) {
+					client_initiated_close.TrySetResult (true);
+					return null;
+				}
+
+				if (result.EndOfMessage) {
+					mem.Write (buff, 0, result.Count);
+					return Encoding.UTF8.GetString (mem.GetBuffer (), 0, (int)mem.Length);
+				} else {
+					mem.Write (buff, 0, result.Count);
 				}
 			}
 		}
@@ -290,12 +291,16 @@ namespace WsProxy {
 							//Console.WriteLine ("pump {0} {1}", task, pending_ops.IndexOf (task));
 							if (task == pending_ops [0]) {
 								var msg = ((Task<string>)task).Result;
-								pending_ops [0] = ReadOne (browser, x.Token); //queue next read
-								ProcessBrowserMessage (msg, x.Token);
+								if (msg != null) {
+									pending_ops [0] = ReadOne (browser, x.Token); //queue next read
+									ProcessBrowserMessage (msg, x.Token);
+								}
 							} else if (task == pending_ops [1]) {
 								var msg = ((Task<string>)task).Result;
-								pending_ops [1] = ReadOne (ide, x.Token); //queue next read
-								ProcessIdeMessage (msg, x.Token);
+								if (msg != null) {
+									pending_ops [1] = ReadOne (ide, x.Token); //queue next read
+									ProcessIdeMessage (msg, x.Token);
+								}
 							} else if (task == pending_ops [2]) {
 								var res = ((Task<bool>)task).Result;
 								throw new Exception ("side task must always complete with an exception, what's going on???");
