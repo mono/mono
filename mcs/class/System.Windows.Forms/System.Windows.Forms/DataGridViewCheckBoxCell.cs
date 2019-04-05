@@ -66,7 +66,7 @@ namespace System.Windows.Forms {
 		public virtual object EditingCellFormattedValue {
 			get { return editingCellFormattedValue; }
 			set {
-				if (FormattedValueType == null || value == null || value.GetType() != FormattedValueType || !(value is Boolean) || !(value is CheckState)) {
+				if (FormattedValueType == null || value == null || !FormattedValueType.IsAssignableFrom(value.GetType())) {
 					throw new ArgumentException("Cannot set this property.");
 				}
 				editingCellFormattedValue = value;
