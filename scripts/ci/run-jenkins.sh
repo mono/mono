@@ -281,8 +281,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=v8-system-core --timeout=20m $gnumake -C sdks/wasm run-v8-system-core
             ${TESTCMD} --label=sm-system-core --timeout=20m $gnumake -C sdks/wasm run-sm-system-core
             ${TESTCMD} --label=jsc-system-core --timeout=20m $gnumake -C sdks/wasm run-jsc-system-core
-            # disable for now until https://github.com/mono/mono/pull/13622 goes in
-            #${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm test-debugger
+            ${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm test-debugger
             ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
             ${TESTCMD} --label=v8-corlib --timeout=20m $gnumake -C sdks/wasm run-v8-corlib
             ${TESTCMD} --label=aot-mini --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-aot-mini
