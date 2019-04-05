@@ -9,7 +9,9 @@ namespace System.Runtime.InteropServices
 
 		public static int GetElementSize (this Array array)
 		{
-			throw new NotImplementedException ();
+			if (array == null)
+				throw new ArgumentNullException (nameof (array));
+			return Marshal.GetArrayElementSize (array.GetType ());
 		}
 	}
 }
