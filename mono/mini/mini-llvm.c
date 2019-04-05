@@ -7595,10 +7595,11 @@ emit_method_inner (EmitContext *ctx)
 	 *  (2) and no loops
 	 * we can skip the GC safepoint on method entry. */
 	gboolean requires_safepoint = cfg->has_calls;
-
-	for (bb = cfg->bb_entry->next_bb; bb; bb = bb->next_bb) {
-		if (bb->loop_body_start || (bb->flags & BB_EXCEPTION_HANDLER)) {
-			requires_safepoint = TRUE;
+	if (!requires_safepoint) {
+		for (bb = cfg->bb_entry->next_bb; bb; bb = bb->next_bb) {
+			if (bb->loop_body_start || (bb->flags & BB_EXCEPTION_HANDLER)) {
+				requires_safepoint = TRUE;
+			}
 		}
 	}
 
