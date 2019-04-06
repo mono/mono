@@ -14,7 +14,7 @@ namespace System
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	public abstract class Delegate : ICloneable, ISerializable
+	partial class Delegate
 	{
 		#region Sync with object-internals.h
 		IntPtr method_ptr;
@@ -462,114 +462,5 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern MethodInfo GetVirtualMethod_internal ();
-
-
-		internal Delegate ()
-		{
-		}
-
-		public virtual object Clone ()
-		{
-			return MemberwiseClone ();
-		}
-
-		public static Delegate Combine (Delegate a, Delegate b)
-		{
-			if ((object) a == null) // cast to object for a more efficient test
-				return b;
-
-			return a.CombineImpl (b);
-		}
-
-		public static Delegate Combine (params Delegate[] delegates)
-		{
-			if (delegates == null || delegates.Length == 0)
-				return null;
-
-			Delegate d = delegates [0];
-			for (int i = 1; i < delegates.Length; i++)
-				d = Combine(d, delegates[i]);
-
-			return d;
-		}
-
-		protected virtual Delegate CombineImpl (Delegate d)
-		{
-			throw new MulticastNotSupportedException (SR.Multicast_Combine);
-		}
-
-		// V2 api: Creates open or closed delegates to static or instance methods - relaxed signature checking allowed. 
-		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method) => CreateDelegate(type, firstArgument, method, throwOnBindFailure: true);
-
-		// V1 api: Creates open delegates to static or instance methods - relaxed signature checking allowed.
-		public static Delegate CreateDelegate (Type type, MethodInfo method) => CreateDelegate(type, method, throwOnBindFailure: true);
-
-		// V1 api: Creates closed delegates to instance methods only, relaxed signature checking disallowed.
-		public static Delegate CreateDelegate (Type type, object target, string method) => CreateDelegate(type, target, method, ignoreCase: false, throwOnBindFailure: true);
-		public static Delegate CreateDelegate (Type type, object target, string method, bool ignoreCase) => CreateDelegate(type, target, method, ignoreCase, throwOnBindFailure: true);
-
-		// V1 api: Creates open delegates to static methods only, relaxed signature checking disallowed.
-		public static Delegate CreateDelegate (Type type, Type target, string method) => CreateDelegate(type, target, method, ignoreCase: false, throwOnBindFailure: true);
-		public static Delegate CreateDelegate (Type type, Type target, string method, bool ignoreCase) => CreateDelegate(type, target, method, ignoreCase, throwOnBindFailure: true);
-
-		public object DynamicInvoke (params object[] args)
-		{
-			return DynamicInvokeImpl (args);
-		}
-
-		public virtual Delegate[] GetInvocationList ()
-		{
-			return new Delegate[] { this };
-		}
-
-		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public MethodInfo Method => GetMethodImpl ();
-
-		protected virtual Delegate RemoveImpl (Delegate d) => d.Equals (this) ? null : this;
-
-		public static Delegate Remove (Delegate source, Delegate value)
-		{
-			if (source == null)
-				return null;
-
-			if (value == null)
-				return source;
-
-			if (!InternalEqualTypes (source, value))
-				throw new ArgumentException (SR.Arg_DlgtTypeMis);
-
-			return source.RemoveImpl (value);
-		}
-
-		public static Delegate RemoveAll (Delegate source, Delegate value)
-		{
-			Delegate newDelegate = null;
-
-			do {
-				newDelegate = source;
-				source = Remove (source, value);
-			} while (newDelegate != source);
-
-			return newDelegate;
-		}
-
-		[MethodImpl (MethodImplOptions.AggressiveInlining)]
-		public static bool operator == (Delegate d1, Delegate d2)
-		{
-			if (d2 is null)
-				return d1 is null;
-
-			return ReferenceEquals (d2, d1) || d2.Equals ((object) d1);
-		}
-
-		[MethodImpl (MethodImplOptions.AggressiveInlining)]
-		public static bool operator != (Delegate d1, Delegate d2)
-		{
-			return !(d1 == d2);
-		}
 	}
 }
