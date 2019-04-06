@@ -22,9 +22,7 @@ namespace System.Runtime
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern unsafe void ZeroMemory (void* p, nuint byteLength);
 
-		internal static void RhBulkMoveWithWriteBarrier (ref byte dmem, ref byte smem, nuint size)
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		internal extern static void RhBulkMoveWithWriteBarrier (ref byte dmem, ref byte smem, nuint size);
 	}
 }
