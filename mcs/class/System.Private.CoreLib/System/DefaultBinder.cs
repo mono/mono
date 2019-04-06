@@ -26,7 +26,7 @@ namespace System
 			return (type >= CorElementType.ELEMENT_TYPE_VOID && type <= CorElementType.ELEMENT_TYPE_R8) || type == CorElementType.ELEMENT_TYPE_I || type == CorElementType.ELEMENT_TYPE_U;
 		}
 
-		static bool CanChangePrimitive (Type source, Type target)
+		internal static bool CanChangePrimitive (Type source, Type target)
 		{
 			var src = RuntimeTypeHandle.GetCorElementType ((RuntimeType)source);
 			var dst = RuntimeTypeHandle.GetCorElementType ((RuntimeType)target);
@@ -36,6 +36,8 @@ namespace System
 			// This handles I/U
 			if (src == dst)
 				return true;
+			if (src > CorElementType.ELEMENT_TYPE_R8)
+				return false;
 			return ((1 << (int)dst) & PrimitiveAttributes [(int)src]) != 0;
 		}
 
