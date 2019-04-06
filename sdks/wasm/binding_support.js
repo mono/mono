@@ -431,6 +431,9 @@ var BindingSupportLib = {
 				case 14:
 					newTypedArray = new Float64Array(end - begin);
 					break;
+				case 15:  // This is a special case because the typed array is also byte[]
+					newTypedArray = new Uint8ClampedArray(end - begin);
+					break;
 			}
 
 			this.typedarray_copy_from(newTypedArray, pinned_array, begin, end, bytes_per_element);
