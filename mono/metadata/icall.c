@@ -5522,7 +5522,6 @@ ves_icall_System_Reflection_RuntimeMethodInfo_GetMethodBodyInternal (MonoMethod 
 MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoStackCrawlMark *stack_mark, MonoError *error)
 {
-	error_init (error);
 	MonoAssembly *assembly;
 	assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
 	g_assert (assembly);
