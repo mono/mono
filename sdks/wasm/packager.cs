@@ -721,6 +721,10 @@ class Driver {
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
 			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
 
+			var pinvoke_file = Path.GetFullPath (Path.Combine (tool_prefix, "pinvoke-tables-default.h"));
+			ninja.WriteLine ($"build $builddir/pinvoke-tables-default.h: cpifdiff {pinvoke_file}");
+			driver_deps += $" $builddir/pinvoke-tables-default.h";
+
 			var driver_cflags = enable_aot ? "-DENABLE_AOT=1" : "";
 
 			if (add_binding) {

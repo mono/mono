@@ -11,260 +11,7 @@
 #include <mono/utils/mono-dl-fallback.h>
 #include <mono/jit/jit.h>
 
-// FIXME: Autogenerate this
-
-typedef struct {
-	const char *name;
-	void *func;
-} PinvokeImport;
-
-void SystemNative_ConvertErrorPalToPlatform ();
-void SystemNative_ConvertErrorPlatformToPal ();
-void SystemNative_StrErrorR ();
-void SystemNative_MemSet ();
-void SystemNative_GetEGid ();
-void SystemNative_GetEUid ();
-void SystemNative_GetPwNamR ();
-void SystemNative_GetPwUidR ();
-void SystemNative_SetEUid ();
-void SystemNative_GetAbsoluteTime ();
-void SystemNative_GetTimebaseInfo ();
-void SystemNative_GetTimestamp ();
-void SystemNative_GetTimestampResolution ();
-void SystemNative_UTime ();
-void SystemNative_UTimes ();
-void SystemNative_Access ();
-void SystemNative_ChDir ();
-void SystemNative_ChMod ();
-void SystemNative_Close ();
-void SystemNative_CloseDir ();
-void SystemNative_CopyFile ();
-void SystemNative_Dup ();
-void SystemNative_FChMod ();
-void SystemNative_FLock ();
-void SystemNative_FStat2 ();
-void SystemNative_FSync ();
-void SystemNative_FTruncate ();
-void SystemNative_FcntlCanGetSetPipeSz ();
-void SystemNative_FcntlGetPipeSz ();
-void SystemNative_FcntlSetCloseOnExec ();
-void SystemNative_FcntlSetIsNonBlocking ();
-void SystemNative_FcntlSetPipeSz ();
-void SystemNative_FnMatch ();
-void SystemNative_GetLine ();
-void SystemNative_GetPeerID ();
-void SystemNative_GetReadDirRBufferSize ();
-void SystemNative_INotifyAddWatch ();
-void SystemNative_INotifyInit ();
-void SystemNative_INotifyRemoveWatch ();
-void SystemNative_LSeek ();
-void SystemNative_LStat2 ();
-void SystemNative_Link ();
-void SystemNative_LockFileRegion ();
-void SystemNative_MAdvise ();
-void SystemNative_MLock ();
-void SystemNative_MMap ();
-void SystemNative_MProtect ();
-void SystemNative_MSync ();
-void SystemNative_MUnlock ();
-void SystemNative_MUnmap ();
-void SystemNative_MkDir ();
-void SystemNative_MksTemps ();
-void SystemNative_Open ();
-void SystemNative_OpenDir ();
-void SystemNative_Pipe ();
-void SystemNative_Poll ();
-void SystemNative_PosixFAdvise ();
-void SystemNative_Read ();
-void SystemNative_ReadDirR ();
-void SystemNative_ReadLink ();
-void SystemNative_RealPath ();
-void SystemNative_Rename ();
-void SystemNative_RmDir ();
-void SystemNative_ShmOpen ();
-void SystemNative_ShmUnlink ();
-void SystemNative_Stat2 ();
-void SystemNative_Sync ();
-void SystemNative_SysConf ();
-void SystemNative_Unlink ();
-void SystemNative_Write ();
-void SystemNative_Accept ();
-void SystemNative_Bind ();
-void SystemNative_CloseSocketEventPort ();
-void SystemNative_Connect ();
-void SystemNative_CreateSocketEventBuffer ();
-void SystemNative_CreateSocketEventPort ();
-void SystemNative_FreeHostEntry ();
-void SystemNative_FreeSocketEventBuffer ();
-void SystemNative_GetAddressFamily ();
-void SystemNative_GetAtOutOfBandMark ();
-void SystemNative_GetBytesAvailable ();
-void SystemNative_GetControlMessageBufferSize ();
-void SystemNative_GetDomainName ();
-void SystemNative_GetDomainSocketSizes ();
-void SystemNative_GetHostEntryForName ();
-void SystemNative_GetHostName ();
-void SystemNative_GetIPSocketAddressSizes ();
-void SystemNative_GetIPv4Address ();
-void SystemNative_GetIPv4MulticastOption ();
-void SystemNative_GetIPv6Address ();
-void SystemNative_GetIPv6MulticastOption ();
-void SystemNative_GetLingerOption ();
-void SystemNative_GetNameInfo ();
-void SystemNative_GetNextIPAddress ();
-void SystemNative_GetPeerName ();
-void SystemNative_GetPeerUserName ();
-void SystemNative_GetPort ();
-void SystemNative_GetSockName ();
-void SystemNative_GetSockOpt ();
-void SystemNative_GetSocketErrorOption ();
-void SystemNative_Listen ();
-void SystemNative_PlatformSupportsDualModeIPv4PacketInfo ();
-void SystemNative_ReceiveMessage ();
-void SystemNative_SendFile ();
-void SystemNative_SendMessage ();
-void SystemNative_SetAddressFamily ();
-void SystemNative_SetIPv4Address ();
-void SystemNative_SetIPv4MulticastOption ();
-void SystemNative_SetIPv6Address ();
-void SystemNative_SetIPv6MulticastOption ();
-void SystemNative_SetLingerOption ();
-void SystemNative_SetPort ();
-void SystemNative_SetReceiveTimeout ();
-void SystemNative_SetSendTimeout ();
-void SystemNative_SetSockOpt ();
-void SystemNative_Shutdown ();
-void SystemNative_Socket ();
-void SystemNative_TryChangeSocketEventRegistration ();
-void SystemNative_TryGetIPPacketInformation ();
-void SystemNative_WaitForSocketEvents ();
-void SystemNative_MapTcpState ();
-void SystemNative_GetNonCryptographicallySecureRandomBytes ();
-
-static PinvokeImport sysnative_imports [] = {
-	{"SystemNative_ConvertErrorPalToPlatform", SystemNative_ConvertErrorPalToPlatform},
-	{"SystemNative_ConvertErrorPlatformToPal", SystemNative_ConvertErrorPlatformToPal},
-	{"SystemNative_StrErrorR", SystemNative_StrErrorR},
-	{"SystemNative_MemSet", SystemNative_MemSet},
-	{"SystemNative_GetEGid", SystemNative_GetEGid},
-	{"SystemNative_GetEUid", SystemNative_GetEUid},
-	{"SystemNative_GetPwNamR", SystemNative_GetPwNamR},
-	{"SystemNative_GetPwUidR", SystemNative_GetPwUidR},
-	{"SystemNative_SetEUid", SystemNative_SetEUid},
-	{"SystemNative_GetAbsoluteTime", SystemNative_GetAbsoluteTime},
-	{"SystemNative_GetTimebaseInfo", SystemNative_GetTimebaseInfo},
-	{"SystemNative_GetTimestamp", SystemNative_GetTimestamp},
-	{"SystemNative_GetTimestampResolution", SystemNative_GetTimestampResolution},
-	{"SystemNative_UTime", SystemNative_UTime},
-	{"SystemNative_UTimes", SystemNative_UTimes},
-	{"SystemNative_Access", SystemNative_Access},
-	{"SystemNative_ChDir", SystemNative_ChDir},
-	{"SystemNative_ChMod", SystemNative_ChMod},
-	{"SystemNative_Close", SystemNative_Close},
-	{"SystemNative_CloseDir", SystemNative_CloseDir},
-	{"SystemNative_CopyFile", SystemNative_CopyFile},
-	{"SystemNative_Dup", SystemNative_Dup},
-	{"SystemNative_FChMod", SystemNative_FChMod},
-	{"SystemNative_FLock", SystemNative_FLock},
-	{"SystemNative_FStat2", SystemNative_FStat2},
-	{"SystemNative_FSync", SystemNative_FSync},
-	{"SystemNative_FTruncate", SystemNative_FTruncate},
-	{"SystemNative_FcntlCanGetSetPipeSz", SystemNative_FcntlCanGetSetPipeSz},
-	{"SystemNative_FcntlGetPipeSz", SystemNative_FcntlGetPipeSz},
-	{"SystemNative_FcntlSetCloseOnExec", SystemNative_FcntlSetCloseOnExec},
-	{"SystemNative_FcntlSetIsNonBlocking", SystemNative_FcntlSetIsNonBlocking},
-	{"SystemNative_FcntlSetPipeSz", SystemNative_FcntlSetPipeSz},
-	{"SystemNative_FnMatch", SystemNative_FnMatch},
-	{"SystemNative_GetLine", SystemNative_GetLine},
-	{"SystemNative_GetPeerID", SystemNative_GetPeerID},
-	{"SystemNative_GetReadDirRBufferSize", SystemNative_GetReadDirRBufferSize},
-	{"SystemNative_INotifyAddWatch", SystemNative_INotifyAddWatch},
-	{"SystemNative_INotifyInit", SystemNative_INotifyInit},
-	{"SystemNative_INotifyRemoveWatch", SystemNative_INotifyRemoveWatch},
-	{"SystemNative_LSeek", SystemNative_LSeek},
-	{"SystemNative_LStat2", SystemNative_LStat2},
-	{"SystemNative_Link", SystemNative_Link},
-	{"SystemNative_LockFileRegion", SystemNative_LockFileRegion},
-	{"SystemNative_MAdvise", SystemNative_MAdvise},
-	{"SystemNative_MLock", SystemNative_MLock},
-	{"SystemNative_MMap", SystemNative_MMap},
-	{"SystemNative_MProtect", SystemNative_MProtect},
-	{"SystemNative_MSync", SystemNative_MSync},
-	{"SystemNative_MUnlock", SystemNative_MUnlock},
-	{"SystemNative_MUnmap", SystemNative_MUnmap},
-	{"SystemNative_MkDir", SystemNative_MkDir},
-	{"SystemNative_MksTemps", SystemNative_MksTemps},
-	{"SystemNative_Open", SystemNative_Open},
-	{"SystemNative_OpenDir", SystemNative_OpenDir},
-	{"SystemNative_Pipe", SystemNative_Pipe},
-	{"SystemNative_Poll", SystemNative_Poll},
-	{"SystemNative_PosixFAdvise", SystemNative_PosixFAdvise},
-	{"SystemNative_Read", SystemNative_Read},
-	{"SystemNative_ReadDirR", SystemNative_ReadDirR},
-	{"SystemNative_ReadLink", SystemNative_ReadLink},
-	{"SystemNative_RealPath", SystemNative_RealPath},
-	{"SystemNative_Rename", SystemNative_Rename},
-	{"SystemNative_RmDir", SystemNative_RmDir},
-	{"SystemNative_ShmOpen", SystemNative_ShmOpen},
-	{"SystemNative_ShmUnlink", SystemNative_ShmUnlink},
-	{"SystemNative_Stat2", SystemNative_Stat2},
-	{"SystemNative_Sync", SystemNative_Sync},
-	{"SystemNative_SysConf", SystemNative_SysConf},
-	{"SystemNative_Unlink", SystemNative_Unlink},
-	{"SystemNative_Write", SystemNative_Write},
-	{"SystemNative_Accept", SystemNative_Accept},
-	{"SystemNative_Bind", SystemNative_Bind},
-	{"SystemNative_CloseSocketEventPort", SystemNative_CloseSocketEventPort},
-	{"SystemNative_Connect", SystemNative_Connect},
-	{"SystemNative_CreateSocketEventBuffer", SystemNative_CreateSocketEventBuffer},
-	{"SystemNative_CreateSocketEventPort", SystemNative_CreateSocketEventPort},
-	{"SystemNative_FreeHostEntry", SystemNative_FreeHostEntry},
-	{"SystemNative_FreeSocketEventBuffer", SystemNative_FreeSocketEventBuffer},
-	{"SystemNative_GetAddressFamily", SystemNative_GetAddressFamily},
-	{"SystemNative_GetAtOutOfBandMark", SystemNative_GetAtOutOfBandMark},
-	{"SystemNative_GetBytesAvailable", SystemNative_GetBytesAvailable},
-	{"SystemNative_GetControlMessageBufferSize", SystemNative_GetControlMessageBufferSize},
-	{"SystemNative_GetDomainName", SystemNative_GetDomainName},
-	{"SystemNative_GetDomainSocketSizes", SystemNative_GetDomainSocketSizes},
-	{"SystemNative_GetHostEntryForName", SystemNative_GetHostEntryForName},
-	{"SystemNative_GetHostName", SystemNative_GetHostName},
-	{"SystemNative_GetIPSocketAddressSizes", SystemNative_GetIPSocketAddressSizes},
-	{"SystemNative_GetIPv4Address", SystemNative_GetIPv4Address},
-	{"SystemNative_GetIPv4MulticastOption", SystemNative_GetIPv4MulticastOption},
-	{"SystemNative_GetIPv6Address", SystemNative_GetIPv6Address},
-	{"SystemNative_GetIPv6MulticastOption", SystemNative_GetIPv6MulticastOption},
-	{"SystemNative_GetLingerOption", SystemNative_GetLingerOption},
-	{"SystemNative_GetNameInfo", SystemNative_GetNameInfo},
-	{"SystemNative_GetNextIPAddress", SystemNative_GetNextIPAddress},
-	{"SystemNative_GetPeerName", SystemNative_GetPeerName},
-	{"SystemNative_GetPeerUserName", SystemNative_GetPeerUserName},
-	{"SystemNative_GetPort", SystemNative_GetPort},
-	{"SystemNative_GetSockName", SystemNative_GetSockName},
-	{"SystemNative_GetSockOpt", SystemNative_GetSockOpt},
-	{"SystemNative_GetSocketErrorOption", SystemNative_GetSocketErrorOption},
-	{"SystemNative_Listen", SystemNative_Listen},
-	{"SystemNative_PlatformSupportsDualModeIPv4PacketInfo", SystemNative_PlatformSupportsDualModeIPv4PacketInfo},
-	{"SystemNative_ReceiveMessage", SystemNative_ReceiveMessage},
-	{"SystemNative_SendFile", SystemNative_SendFile},
-	{"SystemNative_SendMessage", SystemNative_SendMessage},
-	{"SystemNative_SetAddressFamily", SystemNative_SetAddressFamily},
-	{"SystemNative_SetIPv4Address", SystemNative_SetIPv4Address},
-	{"SystemNative_SetIPv4MulticastOption", SystemNative_SetIPv4MulticastOption},
-	{"SystemNative_SetIPv6Address", SystemNative_SetIPv6Address},
-	{"SystemNative_SetIPv6MulticastOption", SystemNative_SetIPv6MulticastOption},
-	{"SystemNative_SetLingerOption", SystemNative_SetLingerOption},
-	{"SystemNative_SetPort", SystemNative_SetPort},
-	{"SystemNative_SetReceiveTimeout", SystemNative_SetReceiveTimeout},
-	{"SystemNative_SetSendTimeout", SystemNative_SetSendTimeout},
-	{"SystemNative_SetSockOpt", SystemNative_SetSockOpt},
-	{"SystemNative_Shutdown", SystemNative_Shutdown},
-	{"SystemNative_Socket", SystemNative_Socket},
-	{"SystemNative_TryChangeSocketEventRegistration", SystemNative_TryChangeSocketEventRegistration},
-	{"SystemNative_TryGetIPPacketInformation", SystemNative_TryGetIPPacketInformation},
-	{"SystemNative_WaitForSocketEvents", SystemNative_WaitForSocketEvents},
-	{"SystemNative_MapTcpState", SystemNative_MapTcpState},
-	{"SystemNative_GetNonCryptographicallySecureRandomBytes", SystemNative_GetNonCryptographicallySecureRandomBytes},
-};
+#include "pinvoke-tables-default.h"
 
 #ifdef CORE_BINDINGS
 void core_initialize_internals ();
@@ -409,24 +156,23 @@ mono_wasm_setenv (const char *name, const char *value)
 	monoeg_g_setenv (strdup (name), strdup (value), 1);
 }
 
-static int sysnative_dl_handle;
-
 static void*
 wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 {
-	// FIXME: Add a general approach, this just makes System.IO work
-	if (!strcmp (name, "System.Native"))
-		return &sysnative_dl_handle;
+	for (int i = 0; i < sizeof (pinvoke_tables) / sizeof (void*); ++i) {
+		if (!strcmp (name, pinvoke_names [i]))
+			return pinvoke_tables [i];
+	}
 	return NULL;
 }
 
 static void*
 wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 {
-	if (handle == &sysnative_dl_handle) {
-		for (int i = 0; i < sizeof (sysnative_imports) / sizeof (sysnative_imports [0]); ++i)
-			if (!strcmp (sysnative_imports [i].name, name))
-				return sysnative_imports [i].func;
+	PinvokeImport *table = (PinvokeImport*)handle;
+	for (int i = 0; table [i].name; ++i) {
+		if (!strcmp (table [i].name, name))
+				return table [i].func;
 	}
 	return NULL;
 }
