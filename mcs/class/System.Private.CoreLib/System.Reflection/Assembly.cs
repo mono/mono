@@ -30,7 +30,7 @@ namespace System.Reflection
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetEntryAssembly ();
 
-		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		public static Assembly Load (string assemblyString)
 		{
 			if (assemblyString == null)
@@ -43,7 +43,7 @@ namespace System.Reflection
 			return Load (name, ref stackMark, IntPtr.Zero);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		public static Assembly Load (AssemblyName assemblyRef)
 		{
 			if (assemblyRef == null)

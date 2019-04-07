@@ -279,6 +279,7 @@ namespace System.Reflection
 			return InternalGetSatelliteAssembly (culture, version, true);
 		}
 
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		internal Assembly InternalGetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnFileNotFound)
 		{
 			var aname = GetName ();

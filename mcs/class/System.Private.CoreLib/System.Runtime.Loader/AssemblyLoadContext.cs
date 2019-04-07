@@ -21,7 +21,7 @@ namespace System.Runtime.Loader
 			throw new NotImplementedException ();
 		}
 
-		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked non-inlineable        
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		Assembly InternalLoadFromPath (string assemblyPath, string nativeImagePath)
 		{
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;

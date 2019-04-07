@@ -518,7 +518,7 @@ namespace System.Reflection.Emit
 		}
 
 		//FIXME MS has issues loading satelite assemblies from SRE
-		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		public override Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
 			throw new NotImplementedException ();
@@ -529,7 +529,7 @@ namespace System.Reflection.Emit
 		}
 
 		//FIXME MS has issues loading satelite assemblies from SRE
-		[MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		public override Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
 			throw new NotImplementedException ();
