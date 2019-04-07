@@ -5518,6 +5518,17 @@ ves_icall_System_Reflection_RuntimeMethodInfo_GetMethodBodyInternal (MonoMethod 
 	return mono_method_body_get_object_handle (mono_domain_get (), method, error);
 }
 
+#if ENABLE_NETCORE
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoStackCrawlMark *stack_mark, MonoError *error)
+{
+	error_init (error);
+	MonoAssembly *assembly;
+	assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
+	g_assert (assembly);
+	return mono_assembly_get_object_handle (mono_domain_get (), assembly, error);
+}
+#else
 MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoError *error)
 {
@@ -5528,7 +5539,7 @@ ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoError *error)
 	g_assert (dest);
 	return mono_assembly_get_object_handle (mono_domain_get (), m_class_get_image (dest->klass)->assembly, error);
 }
-
+#endif
 
 MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_GetEntryAssembly (MonoError *error)
