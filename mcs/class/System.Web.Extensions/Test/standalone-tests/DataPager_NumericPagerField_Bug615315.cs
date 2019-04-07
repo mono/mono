@@ -41,7 +41,15 @@ namespace StandAloneTests.DataPager_NumericPagerField_Bug615315
 	public sealed class Test_01 : ITestCase
 	{
 		public string PhysicalPath {
-			get { return Path.Combine (Consts.BasePhysicalDir, "DataPager_NumericPagerField_Bug615315"); }
+			get {
+				var path = Path.Combine (Consts.BasePhysicalDir, "DataPager_NumericPagerField_Bug615315");
+
+				if (Path.DirectorySeparatorChar == '\\') {
+					path = path.Replace('/', '\\');
+				}
+
+				return path;
+			}
 		}
 		
 		public string VirtualPath  {
@@ -72,7 +80,15 @@ namespace StandAloneTests.DataPager_NumericPagerField_Bug615315
 	public sealed class Test_02 : ITestCase
 	{
 		public string PhysicalPath {
-			get { return Path.Combine (Consts.BasePhysicalDir, "DataPager_NumericPagerField_Bug615315"); }
+			get {
+				var path = Path.Combine (Consts.BasePhysicalDir, "DataPager_NumericPagerField_Bug615315");
+				
+				if (Path.DirectorySeparatorChar == '\\') {
+					path = path.Replace('/', '\\');
+				}
+
+				return path;
+			}
 		}
 		
 		public string VirtualPath  {
