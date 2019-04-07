@@ -83,7 +83,7 @@ jsup:
 .PHONY: toolchain
 toolchain: .stamp-jsvu
 
-driver.o: driver.c corebindings.c
+driver.o: driver.c corebindings.c pinvoke-tables-default.h
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver.o
 
 corebindings.o: corebindings.c
@@ -264,6 +264,9 @@ build-dbg-testsuite:
 
 build: build-native build-managed build-debugger-test-app
 
+gen-pinvoke-tables:
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(WASM_BCL_DIR)/mscorlib.dll > pinvoke-tables-default.h
+
 CHAKRA=~/.jsvu/ch
 D8=~/.jsvu/v8
 JSC=~/.jsvu/jsc
@@ -331,7 +334,7 @@ package: build build-dbg-proxy
 	rm -rf tmp/wasm-bcl/wasm/secxml
 	rm -rf tmp/wasm-bcl/wasm/tests
 	rm -rf tmp/wasm-bcl/wasm/corlib.unsafe.dll.tmp
-	cp driver.c tmp/
+	cp driver.c pinvoke-tables-default.h tmp/
 	cp corebindings.c tmp/
 	cp $(MONO_LIBS) tmp/
 	cp library_mono.js tmp/
