@@ -8,7 +8,7 @@ NETCORETESTS_VERSION := 4.6.0-preview5.19205.9
 # Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L13
 NETCOREAPP_VERSION := 3.0.0-preview5-27606-02
 
-NETCORESDK_FILE := dotnet-runtime-$(NETCOREAPP_VERSION)-osx-x64.tar.gz
+NETCORESDK_FILE := dotnet-runtime-$(NETCOREAPP_VERSION)-@RID@.tar.gz
 URL := https://dotnetcli.blob.core.windows.net/dotnet/Runtime/$(NETCOREAPP_VERSION)/$(NETCORESDK_FILE)
 FEED_BASE_URL := https://dotnetfeed.blob.core.windows.net/dotnet-core
 TEST_ASSETS_URL = $(FEED_BASE_URL)/corefx-tests/$(NETCORETESTS_VERSION)/OSX.x64/netcoreapp/corefx-test-assets.xml
@@ -47,10 +47,10 @@ bcl:
 
 runtime:
 	$(MAKE) -C ../mono
-	cp ../mono/mini/.libs/libmonosgen-2.0.dylib $(SHAREDRUNTIME)/libcoreclr.dylib
+	cp ../mono/mini/.libs/libmonosgen-2.0@PLATFORM_AOT_SUFFIX@ $(SHAREDRUNTIME)/libcoreclr@PLATFORM_AOT_SUFFIX@
 
 link-mono:
-	cp ../mono/mini/.libs/libmonosgen-2.0.dylib $(SHAREDRUNTIME)/libcoreclr.dylib
+	cp ../mono/mini/.libs/libmonosgen-2.0@PLATFORM_AOT_SUFFIX@ $(SHAREDRUNTIME)/libcoreclr@PLATFORM_AOT_SUFFIX@
 	cp ../mcs/class/System.Private.CoreLib/bin/x64/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
 
 prepare: $(NETCORESDK_FILE) update-corefx link-mono
