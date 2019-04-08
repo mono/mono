@@ -319,7 +319,7 @@ dump_metadata (MonoImage *meta)
 			mono_meta_table_name (table),
 			meta->tables [table].rows,
 			meta->tables [table].row_size,
-			(unsigned int)(meta->tables [table].base - m_image_get_raw_data (meta))
+			(unsigned int)(meta->tables [table].base - meta->raw_data)
 			);
 	}
 }
