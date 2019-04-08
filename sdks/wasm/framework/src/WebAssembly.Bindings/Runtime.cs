@@ -121,7 +121,6 @@ namespace WebAssembly {
 		static int BindJSObject (int js_id, string type)
 		{
 			JSObject obj;
-			Console.WriteLine (type);
 			if (!bound_objects.TryGetValue (js_id, out obj)) {
 				if (js_clr_mapping.TryGetValue (type, out Type mappedType)) {
 					return BindJSType (js_id, mappedType);
