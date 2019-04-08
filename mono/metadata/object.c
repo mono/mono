@@ -5578,10 +5578,8 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			return_val_if_nok (error, NULL);
 
 			res = mono_runtime_try_invoke (box_method, NULL, box_args, &box_exc, error);
-			if (box_exc != NULL) {
-				mono_error_set_exception_instance (error, (MonoException*)box_exc);
-				return NULL;
-			}
+			g_assert (box_exc == NULL);
+			mono_error_assert_ok (error);
 		}
 
 		if (has_byref_nullables) {
