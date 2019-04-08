@@ -167,7 +167,7 @@ public class TestClass {
 	}	
 
 	public static void MarshalInt32Array (Int32Array buffer) {
-		//intBuffer = buffer.ToArray();		
+		intBuffer = buffer.ToArray();		
 	}	
 
 	public static void MarshalByteBufferToInts (ArrayBuffer buffer) {
@@ -181,9 +181,14 @@ public class TestClass {
 	}	
 
 	public static float[] floatBuffer;
-	public static void MarshalFloat32Array (float[] buffer) {
-		floatBuffer = buffer;
+	public static void MarshalFloat32Array (Float32Array buffer) {
+		floatBuffer = buffer.ToArray();
 	}	
+	public static void MarshalArrayBufferToFloat32Array (ArrayBuffer buffer) {
+		using (var floats = new Float32Array(buffer))
+			floatBuffer = floats.ToArray();		
+	}	
+
 
 	public static void MarshalByteBufferToFloats (byte[] buffer) {
         floatBuffer = new float[buffer.Length / sizeof(float)];
@@ -193,97 +198,102 @@ public class TestClass {
 
 
 	public static double[] doubleBuffer;
-	public static void MarshalFloat64Array (double[] buffer) {
-		doubleBuffer = buffer;
+	public static void MarshalFloat64Array (Float64Array buffer) {
+		doubleBuffer = buffer.ToArray();
 	}	
 
-	public static void MarshalByteBufferToDoubles (byte[] buffer) {
-        doubleBuffer = new double[buffer.Length / sizeof(double)];
-        for (int i = 0; i < buffer.Length; i += sizeof(double))
-	        doubleBuffer[i / sizeof(double)] = BitConverter.ToDouble(buffer, i);
+	public static void MarshalArrayBufferToFloat64Array (ArrayBuffer buffer) {
+		using (var doubles = new Float64Array(buffer))
+			doubleBuffer = doubles.ToArray();		
+	}	
+
+
+	public static void MarshalByteBufferToDoubles (ArrayBuffer buffer) {
+		using (var doubles = new Float64Array(buffer))
+			doubleBuffer = doubles.ToArray();		
 	}	
 
 	public static void SetTypedArraySByte (JSObject obj) {
 		sbyte[] buffer = Enumerable.Repeat((sbyte)0x20, 11).ToArray();
-		obj.SetObjectProperty ("typedArray", buffer);
+		obj.SetObjectProperty ("typedArray", Int8Array.From(buffer));
 	}	
 
 	public static sbyte[] taSByte;
 	public static void GetTypedArraySByte (JSObject obj) {
-		taSByte = (sbyte[])obj.GetObjectProperty ("typedArray");
+		taSByte = ((Int8Array)obj.GetObjectProperty ("typedArray")).ToArray();
 	}	
 
 	public static void SetTypedArrayByte (JSObject obj) {
 		var dragons = "hic sunt dracones";
 		byte[] buffer = System.Text.Encoding.ASCII.GetBytes(dragons);
-		obj.SetObjectProperty ("dracones", buffer);
+		obj.SetObjectProperty ("dracones", Uint8Array.From(buffer));
 	}	
 
 	public static byte[] taByte;
 	public static void GetTypedArrayByte (JSObject obj) {
-		taByte = (byte[])obj.GetObjectProperty ("dracones");
+		taByte = ((Uint8Array)obj.GetObjectProperty ("dracones")).ToArray();
 	}	
 
 	public static void SetTypedArrayShort (JSObject obj) {
 		short[] buffer = Enumerable.Repeat((short)0x20, 13).ToArray();
-		obj.SetObjectProperty ("typedArray", buffer);
+		obj.SetObjectProperty ("typedArray", Int16Array.From(buffer));
 	}	
 
 	public static short[] taShort;
 	public static void GetTypedArrayShort (JSObject obj) {
-		taShort = (short[])obj.GetObjectProperty ("typedArray");
+		taShort = ((Int16Array)obj.GetObjectProperty ("typedArray")).ToArray();
 	}	
 
 	public static void SetTypedArrayUShort (JSObject obj) {
 		ushort[] buffer = Enumerable.Repeat((ushort)0x20, 14).ToArray();
-		obj.SetObjectProperty ("typedArray", buffer);
+		obj.SetObjectProperty ("typedArray", Uint16Array.From(buffer));
 	}	
 
 	public static ushort[] taUShort;
 	public static void GetTypedArrayUShort (JSObject obj) {
-		taUShort = (ushort[])obj.GetObjectProperty ("typedArray");
+		taUShort = ((Uint16Array)obj.GetObjectProperty ("typedArray")).ToArray();
 	}	
 
 
 	public static void SetTypedArrayInt (JSObject obj) {
 		int[] buffer = Enumerable.Repeat((int)0x20, 15).ToArray();
-		obj.SetObjectProperty ("typedArray", buffer);
+		obj.SetObjectProperty ("typedArray", Int32Array.From(buffer));
 	}	
 
 	public static int[] taInt;
 	public static void GetTypedArrayInt (JSObject obj) {
-		taInt = (int[])obj.GetObjectProperty ("typedArray");
+		taInt = ((Int32Array)obj.GetObjectProperty ("typedArray")).ToArray();
 	}	
 
 	public static void SetTypedArrayUInt (JSObject obj) {
 		uint[] buffer = Enumerable.Repeat((uint)0x20, 16).ToArray();
-		obj.SetObjectProperty ("typedArray", buffer);
+		obj.SetObjectProperty ("typedArray", Uint32Array.From(buffer));
 	}	
 
 	public static uint[] taUInt;
 	public static void GetTypedArrayUInt (JSObject obj) {
-		taUInt = (uint[])obj.GetObjectProperty ("typedArray");
+		taUInt = ((Uint32Array)obj.GetObjectProperty ("typedArray")).ToArray();
 	}	
 
 	public static void SetTypedArrayFloat (JSObject obj) {
 		float[] buffer = Enumerable.Repeat(3.14f, 17).ToArray();
-		obj.SetObjectProperty ("typedArray", buffer);
+		obj.SetObjectProperty ("typedArray", Float32Array.From(buffer));
 	}	
 
 	public static float[] taFloat;
 	public static void GetTypedArrayFloat (JSObject obj) {
-		taFloat = (float[])obj.GetObjectProperty ("typedArray");
+		taFloat = ((Float32Array)obj.GetObjectProperty ("typedArray")).ToArray();
 	}	
 
 
 	public static void SetTypedArrayDouble (JSObject obj) {
 		double[] buffer = Enumerable.Repeat(3.14d, 18).ToArray();
-		obj.SetObjectProperty ("typedArray", buffer);
+		obj.SetObjectProperty ("typedArray", Float64Array.From(buffer));
 	}	
 
 	public static double[] taDouble;
 	public static void GetTypedArrayDouble (JSObject obj) {
-		taDouble = (double[])obj.GetObjectProperty ("typedArray");
+		taDouble = ((Float64Array)obj.GetObjectProperty ("typedArray")).ToArray();
 	}	
 
 	public static HttpClient client;
@@ -323,6 +333,32 @@ public class TestClass {
 		obj.SetObjectProperty("nocache", RequestCache.NoCache);
 		obj.SetObjectProperty("force", RequestCache.ForceCache);
 		obj.SetObjectProperty("onlyif", RequestCache.OnlyIfCached);
+	}
+
+	static Function sum;
+	public static void CreateFunctionSum () 
+	{
+		sum = new Function("a", "b", "return a + b");
+	}
+
+	public static int sumValue = 0;
+	public static void CallFunctionSum () 
+	{
+		sumValue = (int)sum.Call(null, 3, 5);
+	}
+
+	static Function mathMin;
+	public static void CreateFunctionApply () 
+	{
+		var math = (JSObject)Runtime.GetGlobalObject("Math");
+		mathMin = (Function)math.GetObjectProperty("min");
+
+	}
+
+	public static int minValue = 0;
+	public static void CallFunctionApply () 
+	{
+		minValue = (int)mathMin.Apply(null, new object[] { 5, 6, 2, 3, 7 });
 	}
 
 }
@@ -783,19 +819,19 @@ public class BindingTests {
 		Assert.AreEqual (6, TestClass.intBuffer[3]);
 	}
 
-	// [Test]
-	// public static void MarshalTypedArray2Float () {
-	// 	Runtime.InvokeJS (@"
-	// 		var typedArray = new Float32Array([1, 2.1334, 3, 4.2, 5]);
-	// 		call_test_method (""MarshalFloat32Array"", ""o"", [ typedArray ]);		
-	// 	");
+	[Test]
+	public static void MarshalTypedArray2Float () {
+		Runtime.InvokeJS (@"
+			var typedArray = new Float32Array([1, 2.1334, 3, 4.2, 5]);
+			call_test_method (""MarshalFloat32Array"", ""o"", [ typedArray ]);		
+		");
 
-	// 	Assert.AreEqual (1, TestClass.floatBuffer[0]);
-	// 	Assert.AreEqual (2.1334f, TestClass.floatBuffer[1]);
-	// 	Assert.AreEqual (3, TestClass.floatBuffer[2]);
-	// 	Assert.AreEqual (4.2f, TestClass.floatBuffer[3]);
-	// 	Assert.AreEqual (5, TestClass.floatBuffer[4]);
-	// }
+		Assert.AreEqual (1, TestClass.floatBuffer[0]);
+		Assert.AreEqual (2.1334f, TestClass.floatBuffer[1]);
+		Assert.AreEqual (3, TestClass.floatBuffer[2]);
+		Assert.AreEqual (4.2f, TestClass.floatBuffer[3]);
+		Assert.AreEqual (5, TestClass.floatBuffer[4]);
+	}
 
 	// [Test]
 	// public static void MarshalArrayBuffer2Float () {
@@ -815,188 +851,200 @@ public class BindingTests {
 	// 	Assert.AreEqual (7.5f, TestClass.floatBuffer[3]);
 	// }
 
-	// [Test]
-	// public static void MarshalArrayBuffer2Float2 () {
-	// 	// This really does not work to be honest
-	// 	// The length of the marshalled array is 16 floats but 
-	// 	// the first 4 floats will be correct and the rest will 
-	// 	// probably be trash from memory
-	// 	Runtime.InvokeJS (@"
-	// 		var buffer = new ArrayBuffer(16);
-	// 		var float32View = new Float32Array(buffer);
-	// 		for (var i = 0; i < float32View.length; i++) {
-  	// 			float32View[i] = i * 2.5;
-	// 		}
-	// 		call_test_method (""MarshalFloat32Array"", ""o"", [ buffer ]);		
-	// 	");
+	[Test]
+	public static void MarshalArrayBuffer2Float2 () {
+		Runtime.InvokeJS (@"
+			var buffer = new ArrayBuffer(16);
+			var float32View = new Float32Array(buffer);
+			for (var i = 0; i < float32View.length; i++) {
+  				float32View[i] = i * 2.5;
+			}
+			call_test_method (""MarshalArrayBufferToFloat32Array"", ""o"", [ buffer ]);		
+		");
 
-	// 	Assert.AreEqual (16, TestClass.floatBuffer.Length);
-	// 	Assert.AreEqual (0, TestClass.floatBuffer[0]);
-	// 	Assert.AreEqual (2.5f, TestClass.floatBuffer[1]);
-	// 	Assert.AreEqual (5, TestClass.floatBuffer[2]);
-	// 	Assert.AreEqual (7.5f, TestClass.floatBuffer[3]);
-	// }
+		Assert.AreEqual (4, TestClass.floatBuffer.Length);
+		Assert.AreEqual (0, TestClass.floatBuffer[0]);
+		Assert.AreEqual (2.5f, TestClass.floatBuffer[1]);
+		Assert.AreEqual (5, TestClass.floatBuffer[2]);
+		Assert.AreEqual (7.5f, TestClass.floatBuffer[3]);
+	}
 
-	// [Test]
-	// public static void MarshalTypedArray2Double () {
-	// 	Runtime.InvokeJS (@"
-	// 		var typedArray = new Float64Array([1, 2.1334, 3, 4.2, 5]);
-	// 		call_test_method (""MarshalFloat64Array"", ""o"", [ typedArray ]);		
-	// 	");
+	[Test]
+	public static void MarshalTypedArray2Double () {
+		Runtime.InvokeJS (@"
+			var typedArray = new Float64Array([1, 2.1334, 3, 4.2, 5]);
+			call_test_method (""MarshalFloat64Array"", ""o"", [ typedArray ]);		
+		");
 
-	// 	Assert.AreEqual (1, TestClass.doubleBuffer[0]);
-	// 	Assert.AreEqual (2.1334d, TestClass.doubleBuffer[1]);
-	// 	Assert.AreEqual (3, TestClass.doubleBuffer[2]);
-	// 	Assert.AreEqual (4.2d, TestClass.doubleBuffer[3]);
-	// 	Assert.AreEqual (5, TestClass.doubleBuffer[4]);
-	// }
+		Assert.AreEqual (1, TestClass.doubleBuffer[0]);
+		Assert.AreEqual (2.1334d, TestClass.doubleBuffer[1]);
+		Assert.AreEqual (3, TestClass.doubleBuffer[2]);
+		Assert.AreEqual (4.2d, TestClass.doubleBuffer[3]);
+		Assert.AreEqual (5, TestClass.doubleBuffer[4]);
+	}
 
-	// [Test]
-	// public static void MarshalArrayBuffer2Double () {
-	// 	Runtime.InvokeJS (@"
-	// 		var buffer = new ArrayBuffer(32);
-	// 		var float64View = new Float64Array(buffer);
-	// 		for (var i = 0; i < float64View.length; i++) {
-  	// 			float64View[i] = i * 2.5;
-	// 		}
-	// 		call_test_method (""MarshalByteBufferToDoubles"", ""o"", [ buffer ]);		
-	// 	");
+	[Test]
+	public static void MarshalArrayBuffer2Double () {
+		Runtime.InvokeJS (@"
+			var buffer = new ArrayBuffer(32);
+			var float64View = new Float64Array(buffer);
+			for (var i = 0; i < float64View.length; i++) {
+  				float64View[i] = i * 2.5;
+			}
+			call_test_method (""MarshalByteBufferToDoubles"", ""o"", [ buffer ]);		
+		");
 
-	// 	Assert.AreEqual (4, TestClass.doubleBuffer.Length);
-	// 	Assert.AreEqual (0, TestClass.doubleBuffer[0]);
-	// 	Assert.AreEqual (2.5d, TestClass.doubleBuffer[1]);
-	// 	Assert.AreEqual (5, TestClass.doubleBuffer[2]);
-	// 	Assert.AreEqual (7.5d, TestClass.doubleBuffer[3]);
-	// }
+		Assert.AreEqual (4, TestClass.doubleBuffer.Length);
+		Assert.AreEqual (0, TestClass.doubleBuffer[0]);
+		Assert.AreEqual (2.5d, TestClass.doubleBuffer[1]);
+		Assert.AreEqual (5, TestClass.doubleBuffer[2]);
+		Assert.AreEqual (7.5d, TestClass.doubleBuffer[3]);
+	}
 
-	// [Test]
-	// public static void MarshalArrayBuffer2Double2 () {
-	// 	// This really does not work to be honest
-	// 	// The length of the marshalled array is 32 doubles but 
-	// 	// the first 4 doubles will be correct and the rest will 
-	// 	// probably be trash from memory
-	// 	Runtime.InvokeJS (@"
-	// 		var buffer = new ArrayBuffer(32);
-	// 		var float64View = new Float64Array(buffer);
-	// 		for (var i = 0; i < float64View.length; i++) {
-  	// 			float64View[i] = i * 2.5;
-	// 		}
-	// 		call_test_method (""MarshalFloat64Array"", ""o"", [ buffer ]);		
-	// 	");
+	[Test]
+	public static void MarshalArrayBuffer2Double2 () {
+		Runtime.InvokeJS (@"
+			var buffer = new ArrayBuffer(32);
+			var float64View = new Float64Array(buffer);
+			for (var i = 0; i < float64View.length; i++) {
+  				float64View[i] = i * 2.5;
+			}
+			call_test_method (""MarshalArrayBufferToFloat64Array"", ""o"", [ buffer ]);		
+		");
 
-	// 	Assert.AreEqual (32, TestClass.doubleBuffer.Length);
-	// 	Assert.AreEqual (0, TestClass.doubleBuffer[0]);
-	// 	Assert.AreEqual (2.5f, TestClass.doubleBuffer[1]);
-	// 	Assert.AreEqual (5, TestClass.doubleBuffer[2]);
-	// 	Assert.AreEqual (7.5f, TestClass.doubleBuffer[3]);
-	// }
+		Assert.AreEqual (4, TestClass.doubleBuffer.Length);
+		Assert.AreEqual (0, TestClass.doubleBuffer[0]);
+		Assert.AreEqual (2.5f, TestClass.doubleBuffer[1]);
+		Assert.AreEqual (5, TestClass.doubleBuffer[2]);
+		Assert.AreEqual (7.5f, TestClass.doubleBuffer[3]);
+	}
 
-	// [Test]
-	// public static void MarshalTypedArraySByte () {
-	// 	TestClass.int_val = 0;
-	// 	Runtime.InvokeJS (@"
-	// 		var obj = { };
-	// 		call_test_method (""SetTypedArraySByte"", ""o"", [ obj ]);
-	// 		call_test_method (""GetTypedArraySByte"", ""o"", [ obj ]);
-	// 	");
-	// 	Assert.AreEqual (11, TestClass.taSByte.Length);
-	// 	Assert.AreEqual (32, TestClass.taSByte[0]);
-	// 	Assert.AreEqual (32, TestClass.taSByte[TestClass.taSByte.Length - 1]);
-	// }
+	[Test]
+	public static void MarshalTypedArraySByte () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArraySByte"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArraySByte"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (11, TestClass.taSByte.Length);
+		Assert.AreEqual (32, TestClass.taSByte[0]);
+		Assert.AreEqual (32, TestClass.taSByte[TestClass.taSByte.Length - 1]);
+	}
 
-	// [Test]
-	// public static void MarshalTypedArrayByte () {
-	// 	TestClass.int_val = 0;
-	// 	Runtime.InvokeJS (@"
-	// 		var obj = { };
-	// 		call_test_method (""SetTypedArrayByte"", ""o"", [ obj ]);
-	// 		call_test_method (""GetTypedArrayByte"", ""o"", [ obj ]);
-	// 	");
-	// 	Assert.AreEqual (17, TestClass.taByte.Length);
-	// 	Assert.AreEqual (104, TestClass.taByte[0]);
-	// 	Assert.AreEqual (115, TestClass.taByte[TestClass.taByte.Length - 1]);
-	// 	Assert.AreEqual ("hic sunt dracones", System.Text.Encoding.Default.GetString(TestClass.taByte));
-	// }
+	[Test]
+	public static void MarshalTypedArrayByte () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayByte"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayByte"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (17, TestClass.taByte.Length);
+		Assert.AreEqual (104, TestClass.taByte[0]);
+		Assert.AreEqual (115, TestClass.taByte[TestClass.taByte.Length - 1]);
+		Assert.AreEqual ("hic sunt dracones", System.Text.Encoding.Default.GetString(TestClass.taByte));
+	}
 
-	// [Test]
-	// public static void MarshalTypedArrayShort () {
-	// 	TestClass.int_val = 0;
-	// 	Runtime.InvokeJS (@"
-	// 		var obj = { };
-	// 		call_test_method (""SetTypedArrayShort"", ""o"", [ obj ]);
-	// 		call_test_method (""GetTypedArrayShort"", ""o"", [ obj ]);
-	// 	");
-	// 	Assert.AreEqual (13, TestClass.taShort.Length);
-	// 	Assert.AreEqual (32, TestClass.taShort[0]);
-	// 	Assert.AreEqual (32, TestClass.taShort[TestClass.taShort.Length - 1]);
-	// }
+	[Test]
+	public static void MarshalTypedArrayShort () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayShort"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayShort"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (13, TestClass.taShort.Length);
+		Assert.AreEqual (32, TestClass.taShort[0]);
+		Assert.AreEqual (32, TestClass.taShort[TestClass.taShort.Length - 1]);
+	}
 
-	// [Test]
-	// public static void MarshalTypedArrayUShort () {
-	// 	TestClass.int_val = 0;
-	// 	Runtime.InvokeJS (@"
-	// 		var obj = { };
-	// 		call_test_method (""SetTypedArrayUShort"", ""o"", [ obj ]);
-	// 		call_test_method (""GetTypedArrayUShort"", ""o"", [ obj ]);
-	// 	");
-	// 	Assert.AreEqual (14, TestClass.taUShort.Length);
-	// 	Assert.AreEqual (32, TestClass.taUShort[0]);
-	// 	Assert.AreEqual (32, TestClass.taUShort[TestClass.taUShort.Length - 1]);
-	// }
+	[Test]
+	public static void MarshalTypedArrayUShort () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayUShort"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayUShort"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (14, TestClass.taUShort.Length);
+		Assert.AreEqual (32, TestClass.taUShort[0]);
+		Assert.AreEqual (32, TestClass.taUShort[TestClass.taUShort.Length - 1]);
+	}
 
 
-	// [Test]
-	// public static void MarshalTypedArrayInt () {
-	// 	TestClass.int_val = 0;
-	// 	Runtime.InvokeJS (@"
-	// 		var obj = { };
-	// 		call_test_method (""SetTypedArrayInt"", ""o"", [ obj ]);
-	// 		call_test_method (""GetTypedArrayInt"", ""o"", [ obj ]);
-	// 	");
-	// 	Assert.AreEqual (15, TestClass.taInt.Length);
-	// 	Assert.AreEqual (32, TestClass.taInt[0]);
-	// 	Assert.AreEqual (32, TestClass.taInt[TestClass.taInt.Length - 1]);
-	// }
+	[Test]
+	public static void MarshalTypedArrayInt () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayInt"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayInt"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (15, TestClass.taInt.Length);
+		Assert.AreEqual (32, TestClass.taInt[0]);
+		Assert.AreEqual (32, TestClass.taInt[TestClass.taInt.Length - 1]);
+	}
 
-	// [Test]
-	// public static void MarshalTypedArrayUInt () {
-	// 	TestClass.int_val = 0;
-	// 	Runtime.InvokeJS (@"
-	// 		var obj = { };
-	// 		call_test_method (""SetTypedArrayUInt"", ""o"", [ obj ]);
-	// 		call_test_method (""GetTypedArrayUInt"", ""o"", [ obj ]);
-	// 	");
-	// 	Assert.AreEqual (16, TestClass.taUInt.Length);
-	// 	Assert.AreEqual (32, TestClass.taUInt[0]);
-	// 	Assert.AreEqual (32, TestClass.taUInt[TestClass.taUInt.Length - 1]);
-	// }
+	[Test]
+	public static void MarshalTypedArrayUInt () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayUInt"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayUInt"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (16, TestClass.taUInt.Length);
+		Assert.AreEqual (32, TestClass.taUInt[0]);
+		Assert.AreEqual (32, TestClass.taUInt[TestClass.taUInt.Length - 1]);
+	}
 
-	// [Test]
-	// public static void MarshalTypedArrayFloat () {
-	// 	TestClass.int_val = 0;
-	// 	Runtime.InvokeJS (@"
-	// 		var obj = { };
-	// 		call_test_method (""SetTypedArrayFloat"", ""o"", [ obj ]);
-	// 		call_test_method (""GetTypedArrayFloat"", ""o"", [ obj ]);
-	// 	");
-	// 	Assert.AreEqual (17, TestClass.taFloat.Length);
-	// 	Assert.AreEqual (3.14f, TestClass.taFloat[0]);
-	// 	Assert.AreEqual (3.14f, TestClass.taFloat[TestClass.taFloat.Length - 1]);
-	// }
+	[Test]
+	public static void MarshalTypedArrayFloat () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayFloat"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayFloat"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (17, TestClass.taFloat.Length);
+		Assert.AreEqual (3.14f, TestClass.taFloat[0]);
+		Assert.AreEqual (3.14f, TestClass.taFloat[TestClass.taFloat.Length - 1]);
+	}
 
 
-	// [Test]
-	// public static void MarshalTypedArrayDouble () {
-	// 	TestClass.int_val = 0;
-	// 	Runtime.InvokeJS (@"
-	// 		var obj = { };
-	// 		call_test_method (""SetTypedArrayDouble"", ""o"", [ obj ]);
-	// 		call_test_method (""GetTypedArrayDouble"", ""o"", [ obj ]);
-	// 	");
-	// 	Assert.AreEqual (18, TestClass.taDouble.Length);
-	// 	Assert.AreEqual (3.14d, TestClass.taDouble[0]);
-	// 	Assert.AreEqual (3.14d, TestClass.taDouble[TestClass.taDouble.Length - 1]);
-	// }
+	[Test]
+	public static void MarshalTypedArrayDouble () {
+		TestClass.int_val = 0;
+		Runtime.InvokeJS (@"
+			var obj = { };
+			call_test_method (""SetTypedArrayDouble"", ""o"", [ obj ]);
+			call_test_method (""GetTypedArrayDouble"", ""o"", [ obj ]);
+		");
+		Assert.AreEqual (18, TestClass.taDouble.Length);
+		Assert.AreEqual (3.14d, TestClass.taDouble[0]);
+		Assert.AreEqual (3.14d, TestClass.taDouble[TestClass.taDouble.Length - 1]);
+	}
+
+	[Test]
+	public static void TestFunctionSum () {
+		TestClass.sumValue = 0;
+		Runtime.InvokeJS (@"
+			call_test_method (""CreateFunctionSum"", null, [ ]);
+			call_test_method (""CallFunctionSum"", null, [  ]);
+		");
+		Assert.AreEqual (8, TestClass.sumValue);
+	}
+
+	[Test]
+	public static void TestFunctionApply () {
+		TestClass.minValue = 0;
+		Runtime.InvokeJS (@"
+			call_test_method (""CreateFunctionApply"", null, [ ]);
+			call_test_method (""CallFunctionApply"", null, [  ]);
+		");
+		Assert.AreEqual (2, TestClass.minValue);
+	}
 
 
 	// [Test]

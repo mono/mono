@@ -82,6 +82,7 @@ var BindingSupportLib = {
 			this.box_js_int = get_method ("BoxInt");
 			this.box_js_double = get_method ("BoxDouble");
 			this.box_js_bool = get_method ("BoxBool");
+			this.is_simple_array = get_method ("IsSimpleArray");
 			this.setup_js_cont = get_method ("SetupJSContinuation");
 
 			this.create_tcs = get_method ("CreateTaskSource");
@@ -114,7 +115,11 @@ var BindingSupportLib = {
 
 			return res;
 		},
-		
+
+		is_nested_array: function (ele) {
+			return this.call_method (this.is_simple_array, null, "mi", [ ele ]);
+		},
+
 		mono_array_to_js_array: function (mono_array) {
 			if (mono_array == 0)
 				return null;
@@ -122,7 +127,13 @@ var BindingSupportLib = {
 			var res = [];
 			var len = this.mono_array_length (mono_array);
 			for (var i = 0; i < len; ++i)
-				res.push (this.unbox_mono_obj (this.mono_array_get (mono_array, i)));
+			{
+				var ele = this.mono_array_get (mono_array, i);
+				if (this.is_nested_array(ele))
+					res.push(this.mono_array_to_js_array(ele));
+				else
+					res.push (this.unbox_mono_obj (ele));
+			}
 
 			return res;
 		},

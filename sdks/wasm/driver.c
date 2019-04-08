@@ -507,7 +507,6 @@ mono_wasm_get_obj_type (MonoObject *obj)
 	}
 }
 
-
 EMSCRIPTEN_KEEPALIVE int
 mono_unbox_int (MonoObject *obj)
 {

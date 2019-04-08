@@ -78,6 +78,7 @@ namespace WebAssembly {
 			js_clr_mapping.Add ("[object Uint32Array]", typeof (Core.Uint32Array));
 			js_clr_mapping.Add ("[object Float32Array]", typeof (Core.Float32Array));
 			js_clr_mapping.Add ("[object Float64Array]", typeof (Core.Float64Array));
+			js_clr_mapping.Add ("[object Function]", typeof (Core.Function));
 		}
 
 		/// <summary>
@@ -110,8 +111,7 @@ namespace WebAssembly {
 		/// <param name="_params">Parameters.</param>
 		public static JSObject NewJSObject (JSObject js_func_ptr = null, params object [] _params)
 		{
-			int exception;
-			var res = NewObjectJS (js_func_ptr?.JSHandle ?? 0, _params, out exception);
+			var res = NewObjectJS (js_func_ptr?.JSHandle ?? 0, _params, out int exception);
 			if (exception != 0)
 				throw new JSException ((string)res);
 			return res as JSObject;
@@ -147,7 +147,6 @@ namespace WebAssembly {
 
 		static int BindJSType (int js_id, Type type)
 		{
-			//Console.WriteLine ($"BindJSType: {js_id} of {type} intptr: {(IntPtr)js_id}");
 			JSObject obj;
 			if (!bound_objects.TryGetValue (js_id, out obj)) {
 				var jsobjectnew = type.GetConstructor (BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.ExactBinding,
@@ -289,6 +288,17 @@ namespace WebAssembly {
 		{
 			return b == 0 ? false : true;
 		}
+
+		static bool IsSimpleArray (object a)
+		{
+			if (a is Array arr) {
+				if (arr.Rank == 1 && arr.GetLowerBound (0) == 0)
+					return true;
+			}
+			return false;
+		
+		}
+
 
 		[StructLayout (LayoutKind.Explicit)]
 		internal struct IntPtrAndHandle {
