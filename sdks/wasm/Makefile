@@ -61,6 +61,8 @@ BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
 BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/http-spec.html   \
     --asset=$(BROWSER_TEST)/http-spec.js   \
+    --asset=$(BROWSER_TEST)/core-bindings-spec.html   \
+    --asset=$(BROWSER_TEST)/core-bindings-spec.js   \
     --asset=$(BROWSER_TEST)/NowIsTheTime.txt   \
 
 UNAME := $(shell uname -s)
