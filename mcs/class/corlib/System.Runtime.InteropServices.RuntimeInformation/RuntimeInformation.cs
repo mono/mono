@@ -125,7 +125,7 @@ namespace System.Runtime.InteropServices
 
 		public static string FrameworkDescription {
 			get {
-				return ".NET Framework 4.7.3362.0";
+				return "Mono " + Mono.Runtime.GetDisplayName ();
 			}
 		}
 
