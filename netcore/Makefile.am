@@ -42,6 +42,7 @@ run-sample:
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
 bcl:
+	$(MAKE) -C ../mcs/build/ common/Consts.cs
 	$(MAKE) -C ../mcs/class/System.Private.CoreLib
 	cp ../mcs/class/System.Private.CoreLib/bin/x64/System.Private.CoreLib.dll $(SHAREDRUNTIME)
 
