@@ -1487,6 +1487,14 @@ mono_image_storage_dtor (gpointer self)
 
 	mono_image_storage_unpublish (storage);
 	
+#ifdef HOST_WIN32
+	if (storage->is_module_handle && !storage->has_entry_point) {
+		mono_images_lock ();
+		FreeLibrary ((HMODULE) storage->raw_data);
+		mono_images_unlock ();
+	}
+#endif
+
 	if (storage->raw_buffer_used) {
 		if (storage->raw_data != NULL) {
 #ifndef HOST_WIN32
@@ -2343,12 +2351,6 @@ mono_image_close_except_pools (MonoImage *image)
 
 	}
 
-#ifdef HOST_WIN32
-	mono_images_lock ();
-	if (m_image_is_module_handle (image) && !m_image_has_entry_point (image))
-		FreeLibrary ((HMODULE) image->raw_data);
-	mono_images_unlock ();
-#endif
 	if (image->storage)
 		mono_image_storage_close (image->storage);
 
