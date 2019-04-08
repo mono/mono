@@ -21,6 +21,15 @@ namespace WebAssembly.Core {
 		protected TypedArray (ArrayBuffer buffer, int byteOffset, int length) : base (Runtime.New<T> (buffer, byteOffset, length))
 		{ }
 
+		protected TypedArray (SharedArrayBuffer buffer) : base (Runtime.New<T> (buffer))
+		{ }
+
+		protected TypedArray (SharedArrayBuffer buffer, int byteOffset) : base (Runtime.New<T> (buffer, byteOffset))
+		{ }
+
+		protected TypedArray (SharedArrayBuffer buffer, int byteOffset, int length) : base (Runtime.New<T> (buffer, byteOffset, length))
+		{ }
+
 		internal TypedArray (IntPtr js_handle) : base (js_handle)
 		{ }
 

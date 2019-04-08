@@ -19,6 +19,15 @@ namespace WebAssembly.Core {
 		public Uint8ClampedArray (ArrayBuffer buffer, int byteOffset, int length) : base (buffer, byteOffset, length)
 		{ }
 
+		public Uint8ClampedArray (SharedArrayBuffer buffer) : base (buffer)
+		{ }
+
+		public Uint8ClampedArray (SharedArrayBuffer buffer, int byteOffset) : base (buffer, byteOffset)
+		{ }
+
+		public Uint8ClampedArray (SharedArrayBuffer buffer, int byteOffset, int length) : base (buffer, byteOffset, length)
+		{ }
+
 		internal Uint8ClampedArray (IntPtr js_handle) : base (js_handle)
 		{ }
 

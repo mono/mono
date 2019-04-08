@@ -12,6 +12,12 @@ namespace WebAssembly.Core {
 
 		public Float64Array (ArrayBuffer buffer, int byteOffset, int length) : base (buffer, byteOffset, length) { }
 
+		public Float64Array (SharedArrayBuffer buffer) : base (buffer) { }
+
+		public Float64Array (SharedArrayBuffer buffer, int byteOffset) : base (buffer, byteOffset) { }
+
+		public Float64Array (SharedArrayBuffer buffer, int byteOffset, int length) : base (buffer, byteOffset, length) { }
+
 		internal Float64Array (IntPtr js_handle) : base (js_handle) { }
 
 		/// <summary>

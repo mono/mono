@@ -79,6 +79,7 @@ namespace WebAssembly {
 			js_clr_mapping.Add ("[object Float32Array]", typeof (Core.Float32Array));
 			js_clr_mapping.Add ("[object Float64Array]", typeof (Core.Float64Array));
 			js_clr_mapping.Add ("[object Function]", typeof (Core.Function));
+			js_clr_mapping.Add ("[object SharedArrayBuffer]", typeof (Core.SharedArrayBuffer));
 		}
 
 		/// <summary>
@@ -120,6 +121,7 @@ namespace WebAssembly {
 		static int BindJSObject (int js_id, string type)
 		{
 			JSObject obj;
+			Console.WriteLine (type);
 			if (!bound_objects.TryGetValue (js_id, out obj)) {
 				if (js_clr_mapping.TryGetValue (type, out Type mappedType)) {
 					return BindJSType (js_id, mappedType);
