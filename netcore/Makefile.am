@@ -41,12 +41,12 @@ run-sample:
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
-bcl:
+bcl: prepare-stamp
 	$(MAKE) -C ../mcs/build/ common/Consts.cs
 	$(MAKE) -C ../mcs/class/System.Private.CoreLib
 	cp ../mcs/class/System.Private.CoreLib/bin/@COREARCH@/System.Private.CoreLib.dll $(SHAREDRUNTIME)
 
-runtime:
+runtime: prepare-stamp
 	$(MAKE) -C ../mono
 	cp ../mono/mini/.libs/libmonosgen-2.0@PLATFORM_AOT_SUFFIX@ $(SHAREDRUNTIME)/libcoreclr@PLATFORM_AOT_SUFFIX@
 
@@ -54,9 +54,12 @@ link-mono:
 	cp ../mono/mini/.libs/libmonosgen-2.0@PLATFORM_AOT_SUFFIX@ $(SHAREDRUNTIME)/libcoreclr@PLATFORM_AOT_SUFFIX@
 	cp ../mcs/class/System.Private.CoreLib/bin/@COREARCH@/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
 
-prepare: $(NETCORESDK_FILE) update-corefx link-mono
+prepare-stamp: prepare
 
-nupkg:
+prepare: $(NETCORESDK_FILE) update-corefx
+	touch prepare-stamp
+
+nupkg: runtime bcl
 	nuget pack runtime.nuspec -properties VERSION=@VERSION@\;RID=@RID@\;PLATFORM_AOT_SUFFIX=@PLATFORM_AOT_SUFFIX@\;COREARCH=@COREARCH@
 
 COREFX_BINDIR=$(COREFX_ROOT)/artifacts/bin
@@ -65,7 +68,7 @@ check-env:
 	@if [ "x$(COREFX_ROOT)" == "x" ]; then echo "Set COREFX_ROOT to the root of the fully built corefx repo."; exit 1; fi
 
 clean:
-	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
+	rm -rf sdk shared host dotnet tests LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) prepare-stamp
 
 #
 # Running tests:
