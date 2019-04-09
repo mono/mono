@@ -13,6 +13,12 @@ namespace WebAssembly.Core {
 
 		public Int32Array (ArrayBuffer buffer, int byteOffset, int length) : base (buffer, byteOffset, length) { }
 
+		public Int32Array (SharedArrayBuffer buffer) : base (buffer) { }
+
+		public Int32Array (SharedArrayBuffer buffer, int byteOffset) : base (buffer, byteOffset) { }
+
+		public Int32Array (SharedArrayBuffer buffer, int byteOffset, int length) : base (buffer, byteOffset, length) { }
+
 		internal Int32Array (IntPtr js_handle) : base (js_handle) { }
 
 		/// <summary>

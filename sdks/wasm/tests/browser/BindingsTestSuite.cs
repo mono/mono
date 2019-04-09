@@ -58,5 +58,46 @@ namespace TestSuite
         {
             return arr.GetTypedArrayType();
         }
+
+        private static Uint8ClampedArray Uint8ClampedArrayFromSharedArrayBuffer (SharedArrayBuffer sab)
+        {
+            return new Uint8ClampedArray(sab);
+        }
+
+        private static Uint8Array Uint8ArrayFromSharedArrayBuffer (SharedArrayBuffer sab)
+        {
+            return new Uint8Array(sab);
+        }
+        private static Uint16Array Uint16ArrayFromSharedArrayBuffer (SharedArrayBuffer sab)
+        {
+            return new Uint16Array(sab);
+        }
+        private static Uint32Array Uint32ArrayFromSharedArrayBuffer (SharedArrayBuffer sab)
+        {
+            return new Uint32Array(sab);
+        }
+        private static Int8Array Int8ArrayFromSharedArrayBuffer (SharedArrayBuffer sab)
+        {
+            return new Int8Array(sab);
+        }
+        private static Int16Array Int16ArrayFromSharedArrayBuffer (SharedArrayBuffer sab)
+        {
+            return new Int16Array(sab);
+        }
+        private static Int32Array Int32ArrayFromSharedArrayBuffer (SharedArrayBuffer sab)
+        {
+            return new Int32Array(sab);
+        }
+        private static Float32Array Float32ArrayFromSharedArrayBuffer (SharedArrayBuffer sab)
+        {
+            return new Float32Array(sab);
+        }
+        private static Float64Array Float64ArrayFromSharedArrayBuffer (SharedArrayBuffer sab)
+        {
+            return new Float64Array(sab);
+        }
+
+
+
     }
 }
