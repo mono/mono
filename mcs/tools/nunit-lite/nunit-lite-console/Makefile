@@ -8,3 +8,4 @@ LOCAL_MCS_FLAGS =
 
 include ../../../build/executable.make
 
+.NOTPARALLEL:
