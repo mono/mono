@@ -1,0 +1,19 @@
+diff --git a/mono/config.make b/mono/config.make
+index 00bd4a091..839b95e4e 100644
+--- a/mono/config.make
++++ b/mono/config.make
+@@ -2,9 +2,14 @@ DEFAULT: all
+ 
+ .PHONY: install-sdk-lib
+ 
++ifeq (x-$(PREFIX)-,x--)
+ monocmd = $(shell which mono)
+ monocmddir = $(dir $(monocmd))
+ prefix = $(shell (cd $(monocmddir)/..; pwd))
++else
++prefix = $(PREFIX)
++endif
++
+ thisdir = $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+ topdir = $(thisdir)../
+ builddir = $(topdir)
