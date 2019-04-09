@@ -12,3 +12,4 @@ NO_TEST = yes
 
 include ../../../build/library.make
 
+.NOTPARALLEL:
