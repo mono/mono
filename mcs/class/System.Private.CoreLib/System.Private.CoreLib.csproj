@@ -109,7 +109,6 @@
   </ItemGroup>
   <ItemGroup>
       <Compile Include="Microsoft.Win32\UnsafeNativeMethods.cs" />
-      <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
       <Compile Include="Mono\MonoDomain.cs" />
       <Compile Include="Mono\MonoDomainSetup.cs" />
       <Compile Include="Mono\MonoListItem.cs" />
@@ -119,8 +118,8 @@
       <Compile Include="System\Buffer.cs" />
       <Compile Include="System\DefaultBinder.cs" />
       <Compile Include="System\Delegate.cs" />
-      <Compile Include="System\Enum.cs" />
       <Compile Include="System\Environment.cs" />
+      <Compile Include="System\Enum.cs" />
       <Compile Include="System\Exception.cs" />
       <Compile Include="System\GC.cs" />
       <Compile Include="System\Object.cs" />
@@ -196,17 +195,25 @@
       <Compile Include="System.Runtime.Loader\AssemblyDependencyResolver.cs" />
       <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
       <Compile Include="System.Security\DynamicSecurityMethodAttribute.cs" />
-      <Compile Include="System.Threading\EventWaitHandle.cs" />
       <Compile Include="System.Threading\Interlocked.cs" />
-      <Compile Include="System.Threading\Mutex.cs" />
       <Compile Include="System.Threading\Overlapped.cs" />
       <Compile Include="System.Threading\PreAllocatedOverlapped.cs" />
-      <Compile Include="System.Threading\Semaphore.cs" />
       <Compile Include="System.Threading\StackCrawlMark.cs" />
       <Compile Include="System.Threading\Thread.cs" />
       <Compile Include="System.Threading\ThreadPool.cs" />
       <Compile Include="System.Threading\ThreadPoolBoundHandle.cs" />
       <Compile Include="System.Threading\WaitHandle.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetsUnix)' == 'true'">
+      <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
+      <Compile Include="System\Environment.Unix.cs" />
+      <Compile Include="System.Globalization\GlobalizationMode.Unix.cs" />
+      <Compile Include="System.Threading\EventWaitHandle.Unix.cs" />
+      <Compile Include="System.Threading\Mutex.Unix.cs" />
+      <Compile Include="System.Threading\Semaphore.Unix.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetsWindows)' == 'true'">
+      <Compile Include="System.Globalization\GlobalizationMode.Windows.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\build\common\Consts.cs" />
