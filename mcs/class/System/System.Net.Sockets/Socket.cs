@@ -972,7 +972,9 @@ namespace System.Net.Sockets
 			if (is_listening)
 				throw new InvalidOperationException ();
 
-			return BeginConnect (Dns.GetHostAddresses (host), port, requestCallback, state);
+			IPAddress[] hostAddresses = Dns.GetHostAddressesAsync (host).GetAwaiter ().GetResult ();
+
+			return BeginConnect (hostAddresses, port, requestCallback, state);
 		}
 
 		public IAsyncResult BeginConnect (EndPoint remoteEP, AsyncCallback callback, object state)
