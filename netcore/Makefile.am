@@ -44,7 +44,7 @@ SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 bcl:
 	$(MAKE) -C ../mcs/build/ common/Consts.cs
 	$(MAKE) -C ../mcs/class/System.Private.CoreLib
-	cp ../mcs/class/System.Private.CoreLib/bin/x64/System.Private.CoreLib.dll $(SHAREDRUNTIME)
+	cp ../mcs/class/System.Private.CoreLib/bin/@COREARCH@/System.Private.CoreLib.dll $(SHAREDRUNTIME)
 
 runtime:
 	$(MAKE) -C ../mono
@@ -52,12 +52,12 @@ runtime:
 
 link-mono:
 	cp ../mono/mini/.libs/libmonosgen-2.0@PLATFORM_AOT_SUFFIX@ $(SHAREDRUNTIME)/libcoreclr@PLATFORM_AOT_SUFFIX@
-	cp ../mcs/class/System.Private.CoreLib/bin/x64/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
+	cp ../mcs/class/System.Private.CoreLib/bin/@COREARCH@/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
 
 prepare: $(NETCORESDK_FILE) update-corefx link-mono
 
 nupkg:
-	nuget pack runtime.nuspec -properties VERSION=@VERSION@\;RID=@RID@\;PLATFORM_AOT_SUFFIX=@PLATFORM_AOT_SUFFIX@
+	nuget pack runtime.nuspec -properties VERSION=@VERSION@\;RID=@RID@\;PLATFORM_AOT_SUFFIX=@PLATFORM_AOT_SUFFIX@\;COREARCH=@COREARCH@
 
 COREFX_BINDIR=$(COREFX_ROOT)/artifacts/bin
 
