@@ -363,7 +363,7 @@ namespace System.Runtime.CompilerServices
                 }
             }
 
-            object IEnumerator.Current => Current;
+            object? IEnumerator.Current => Current; // TODO-NULLABLE: https://github.com/dotnet/roslyn/issues/23268
 
             public void Reset() { }
         }
@@ -752,9 +752,11 @@ namespace System.Runtime.CompilerServices
 
             ~Container()
             {
-                // Skip doing anything if the container is invalid, including if somehow
+                // We're just freeing per-appdomain unmanaged handles here. If we're already shutting down the AD,
+                // don't bother. (Despite its name, Environment.HasShutdownStart also returns true if the current
+                // AD is finalizing.)  We also skip doing anything if the container is invalid, including if someone
                 // the container object was allocated but its associated table never set.
-                if (_invalid || _parent is null)
+                if (Environment.HasShutdownStarted || _invalid || _parent is null)
                 {
                     return;
                 }
