@@ -27,6 +27,8 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsNotAsErrors>$(WarningsNotAsErrors);618</WarningsNotAsErrors>
     <NoWarn>649,3019,414,169,3015,591,1573,1591,0419</NoWarn>
+    <!-- Disable nullability-related warnings -->
+    <NoWarn>$(NoWarn),CS8609,CS8611,CS8631,CS8632</NoWarn>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <SignAssembly>true</SignAssembly>
     <DelaySign>true</DelaySign>
