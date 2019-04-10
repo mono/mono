@@ -5,7 +5,7 @@ class FsharpPackage(GitHubTarballPackage):
             '4.5.0',
             '3de387432de8d11a89f99d1af87aa9ce194fe21b',
             configure='',
-            override_properties={ 'make': 'make all install PREFIX="%{package_prefix}"' })
+            override_properties={ 'make': 'make all install PREFIX="%{package_prefix}" DESTDIR=%{stage_root}' })
 
         self.extra_stage_files = ['lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp/Microsoft.FSharp.Targets']
         self.sources.extend(['patches/fsharp-IsPathRooted-type-inference.patch',
