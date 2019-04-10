@@ -9,6 +9,7 @@ module.exports = function(config) {
         },
         files: [
             {pattern: './publish/http-spec.js',watched:true,served:true,included:true},
+            {pattern: './publish/core-bindings-spec.js',watched:true,served:true,included:true},
             {pattern: './publish/mono.wasm', included: false, served: true, type: 'wasm'},
             {pattern: './publish/mono.js', included: false, served: true},
             {pattern: './publish/mono-config.js', included: false, served: true},
@@ -47,7 +48,8 @@ module.exports = function(config) {
                 source: [
                     //indicate 'index.html' file that will be loaded in the browser
                     //the 'index' tag will be used to get the access to the Document object of 'index.html'
-                    {src:'./publish/http-spec.html', tag:'httpspec'}
+                    {src:'./publish/http-spec.html', tag:'httpspec'},
+                    {src:'./publish/core-bindings-spec.html', tag:'corebindingsspec'}
                 ],
                 timeout: 10000,
                 abort: 60000,

@@ -246,12 +246,6 @@ program that comes with Mono, and calling it like this:
 
 .fi
 .TP
-.I llcopts=[options]
-Use this option to add more flags to the built-in set of flags passed to the
-LLVM system compiler. If not provided, it will fallback to
-.I -mcpu=generic
-on x86 systems.
-.TP
 .I llvm-outfile=[filename]
 Gives the path for the temporary LLVM bitcode file created during AOT.
 .I dedup
@@ -645,6 +639,10 @@ running a 1.1 program on a 2.0 version:
 \fB--server\fR
 Configures the virtual machine to be better suited for server
 operations (currently, allows a heavier threadpool initialization).
+.TP
+\fB--use-map-jit\fR
+Instructs Mono to generate code using MAP_JIT on MacOS.  Necessary for
+bundled applications.
 .TP
 \fB--verify-all\fR 
 Verifies mscorlib and assemblies in the global

@@ -1,7 +1,7 @@
 //describe, beforeAll, it, expext - are the Jasmine default methods
 //karmaHTML is the karma-html package object with the access to all its features
  
-describe("The WebAssembly Browser Test Suite",function(){
+describe("The WebAssembly Http Test Suite",function(){
     
     const DEFAULT_TIMEOUT = 1000;
     const DEFAULT_WS_TIMEOUT = 5000;
@@ -457,7 +457,6 @@ describe("The WebAssembly Browser Test Suite",function(){
         (error) => done.fail(error)
 
       );
-      
-    }, DEFAULT_WS_TIMEOUT);    
-
+    }, DEFAULT_WS_TIMEOUT);  
+    
   });

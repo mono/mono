@@ -21,6 +21,7 @@ namespace WebAssembly.Core {
 
 		void Set (ITypedArray typedArray);
 		void Set (ITypedArray typedArray, int offset);
+		TypedArrayTypeCode GetTypedArrayType ();
 	}
 
 	public interface ITypedArray<T, U> where U : struct {

@@ -311,8 +311,8 @@ HANDLES(ENUM_2, "InternalBoxEnum", ves_icall_System_Enum_ToObject, MonoObject, 2
 HANDLES(ENUM_3, "InternalCompareTo", ves_icall_System_Enum_compare_value_to, int, 2, (MonoObject, MonoObject))
 HANDLES(ENUM_3a, "InternalGetCorElementType", ves_icall_System_Enum_InternalGetCorElementType, int, 1, (MonoObject))
 HANDLES(ENUM_4, "InternalGetUnderlyingType", ves_icall_System_Enum_get_underlying_type, MonoReflectionType, 1, (MonoReflectionType))
-#if !ENABLE_NETCORE
 HANDLES(ENUM_5, "InternalHasFlag", ves_icall_System_Enum_InternalHasFlag, MonoBoolean, 2, (MonoObject, MonoObject))
+#if !ENABLE_NETCORE
 HANDLES(ENUM_6, "get_hashcode", ves_icall_System_Enum_get_hashcode, int, 1, (MonoObject))
 HANDLES(ENUM_7, "get_value", ves_icall_System_Enum_get_value, MonoObject, 1, (MonoObject))
 #endif
@@ -488,11 +488,21 @@ NOHANDLES(ICALL(MATH_6, "Cosh", ves_icall_System_Math_Cosh))
 NOHANDLES(ICALL(MATH_7, "Exp", ves_icall_System_Math_Exp))
 NOHANDLES(ICALL(MATH_7a, "FMod", ves_icall_System_Math_FMod))
 NOHANDLES(ICALL(MATH_8, "Floor", ves_icall_System_Math_Floor))
+#if ENABLE_NETCORE
+NOHANDLES(ICALL(MATH_22, "FusedMultiplyAdd", ves_icall_System_Math_FusedMultiplyAdd))
+NOHANDLES(ICALL(MATH_23, "ILogB", ves_icall_System_Math_ILogB))
+#endif
 NOHANDLES(ICALL(MATH_9, "Log", ves_icall_System_Math_Log))
 NOHANDLES(ICALL(MATH_10, "Log10", ves_icall_System_Math_Log10))
+#if ENABLE_NETCORE
+NOHANDLES(ICALL(MATH_24, "Log2", ves_icall_System_Math_Log2))
+#endif
 NOHANDLES(ICALL(MATH_10a, "ModF", ves_icall_System_Math_ModF))
 NOHANDLES(ICALL(MATH_11, "Pow", ves_icall_System_Math_Pow))
 NOHANDLES(ICALL(MATH_12, "Round", ves_icall_System_Math_Round))
+#if ENABLE_NETCORE
+NOHANDLES(ICALL(MATH_25, "ScaleB", ves_icall_System_Math_ScaleB))
+#endif
 NOHANDLES(ICALL(MATH_14, "Sin", ves_icall_System_Math_Sin))
 NOHANDLES(ICALL(MATH_15, "Sinh", ves_icall_System_Math_Sinh))
 NOHANDLES(ICALL(MATH_16, "Sqrt", ves_icall_System_Math_Sqrt))
@@ -514,10 +524,20 @@ NOHANDLES(ICALL(MATHF_11, "Cosh", ves_icall_System_MathF_Cosh))
 NOHANDLES(ICALL(MATHF_12, "Exp", ves_icall_System_MathF_Exp))
 NOHANDLES(ICALL(MATHF_22, "FMod", ves_icall_System_MathF_FMod))
 NOHANDLES(ICALL(MATHF_13, "Floor", ves_icall_System_MathF_Floor))
+#if ENABLE_NETCORE
+NOHANDLES(ICALL(MATHF_24, "FusedMultiplyAdd", ves_icall_System_MathF_FusedMultiplyAdd))
+NOHANDLES(ICALL(MATHF_25, "ILogB", ves_icall_System_MathF_ILogB))
+#endif
 NOHANDLES(ICALL(MATHF_14, "Log", ves_icall_System_MathF_Log))
 NOHANDLES(ICALL(MATHF_15, "Log10", ves_icall_System_MathF_Log10))
+#if ENABLE_NETCORE
+NOHANDLES(ICALL(MATHF_26, "Log2", ves_icall_System_MathF_Log2))
+#endif
 NOHANDLES(ICALL(MATHF_23, "ModF(single,single*)", ves_icall_System_MathF_ModF))
 NOHANDLES(ICALL(MATHF_16, "Pow", ves_icall_System_MathF_Pow))
+#if ENABLE_NETCORE
+NOHANDLES(ICALL(MATHF_27, "ScaleB", ves_icall_System_MathF_ScaleB))
+#endif
 NOHANDLES(ICALL(MATHF_17, "Sin", ves_icall_System_MathF_Sin))
 NOHANDLES(ICALL(MATHF_18, "Sinh", ves_icall_System_MathF_Sinh))
 NOHANDLES(ICALL(MATHF_19, "Sqrt", ves_icall_System_MathF_Sqrt))
@@ -792,10 +812,10 @@ NOHANDLES(ICALL(RUNH_6, "get_OffsetToStringData", ves_icall_System_Runtime_Compi
 
 ICALL_TYPE(GCH, "System.Runtime.InteropServices.GCHandle", GCH_1)
 #if ENABLE_NETCORE
-HANDLES(GCH_1, "InternalAlloc", ves_icall_System_GCHandle_Alloc, gpointer, 2, (MonoObject, gint32))
-HANDLES(GCH_2, "InternalFree", ves_icall_System_GCHandle_Free, void, 1, (gpointer))
-HANDLES(GCH_3, "InternalGet", ves_icall_System_GCHandle_Get, MonoObject, 1, (gpointer))
-HANDLES(GCH_4, "InternalSet", ves_icall_System_GCHandle_Set, void, 2, (gpointer, MonoObject))
+HANDLES(GCH_1, "InternalAlloc", ves_icall_System_GCHandle_InternalAlloc, gpointer, 2, (MonoObject, gint32))
+HANDLES(GCH_2, "InternalFree", ves_icall_System_GCHandle_InternalFree, void, 1, (gpointer))
+HANDLES(GCH_3, "InternalGet", ves_icall_System_GCHandle_InternalGet, MonoObject, 1, (gpointer))
+HANDLES(GCH_4, "InternalSet", ves_icall_System_GCHandle_InternalSet, void, 2, (gpointer, MonoObject))
 #else
 NOHANDLES(ICALL(GCH_1, "CheckCurrentDomain", ves_icall_System_GCHandle_CheckCurrentDomain))
 NOHANDLES(ICALL(GCH_2, "FreeHandle", ves_icall_System_GCHandle_FreeHandle))
@@ -818,6 +838,7 @@ HANDLES(MARSHAL_4, "DestroyStructure", ves_icall_System_Runtime_InteropServices_
 NOHANDLES(ICALL(MARSHAL_5, "FreeBSTR", ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR))
 NOHANDLES(ICALL(MARSHAL_6, "FreeCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem))
 NOHANDLES(ICALL(MARSHAL_7, "FreeHGlobal", ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal))
+HANDLES(MARSHAL_7a, "GetArrayElementSize", ves_icall_System_Runtime_InteropServices_Marshal_GetArrayElementSize, int, 1, (MonoReflectionType))
 #ifndef DISABLE_COM
 HANDLES(MARSHAL_44, "GetCCW", ves_icall_System_Runtime_InteropServices_Marshal_GetCCW, gpointer, 2, (MonoObject, MonoReflectionType))
 HANDLES(MARSHAL_8, "GetComSlotForMethodInfoInternal", ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal, guint32, 1, (MonoReflectionMethod))
@@ -836,6 +857,9 @@ HANDLES(MARSHAL_47, "GetObjectForCCW", ves_icall_System_Runtime_InteropServices_
 HANDLES(MARSHAL_54, "GetRawIUnknownForComObjectNoAddRef", ves_icall_System_Runtime_InteropServices_Marshal_GetRawIUnknownForComObjectNoAddRef, gpointer, 1, (MonoObject))
 HANDLES(MARSHAL_48, "IsComObject", ves_icall_System_Runtime_InteropServices_Marshal_IsComObject, MonoBoolean, 1, (MonoObject))
 #endif
+#if ENABLE_NETCORE
+HANDLES(MARSHAL_48a, "IsPinnableType", ves_icall_System_Runtime_InteropServices_Marshal_IsPinnableType, MonoBoolean, 1, (MonoReflectionType))
+#endif
 HANDLES(MARSHAL_12, "OffsetOf", ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf, int, 2, (MonoReflectionType, MonoString))
 #ifndef ENABLE_NETCORE
 HANDLES(MARSHAL_13, "Prelink", ves_icall_System_Runtime_InteropServices_Marshal_Prelink, void, 1, (MonoReflectionMethod))
@@ -849,8 +873,12 @@ HANDLES(MARSHAL_16, "PtrToStringAnsi(intptr,int)", ves_icall_System_Runtime_Inte
 HANDLES(MARSHAL_17, "PtrToStringBSTR", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR, MonoString, 1, (mono_bstr_const))
 HANDLES(MARSHAL_18, "PtrToStringUni(intptr)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni, MonoString, 1, (const_gunichar2_ptr))
 HANDLES(MARSHAL_19, "PtrToStringUni(intptr,int)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len, MonoString, 2, (const_gunichar2_ptr, gint32))
+#ifdef ENABLE_NETCORE
+HANDLES(MARSHAL_20, "PtrToStructureInternal", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructureInternal, void, 3, (gconstpointer, MonoObject, MonoBoolean))
+#else
 HANDLES(MARSHAL_20, "PtrToStructure(intptr,System.Type)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type, MonoObject, 2, (gconstpointer, MonoReflectionType))
 HANDLES(MARSHAL_21, "PtrToStructure(intptr,object)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure, void, 2, (gconstpointer, MonoObject))
+#endif
 #ifndef DISABLE_COM
 NOHANDLES(ICALL(MARSHAL_22, "QueryInterfaceInternal", ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal))
 #endif
@@ -913,7 +941,8 @@ HANDLES(REMSER_2, "IsTransparentProxy", ves_icall_IsTransparentProxy, MonoBoolea
 
 ICALL_TYPE(RUNIMPORT, "System.Runtime.RuntimeImports", RUNIMPORT_1)
 #if ENABLE_NETCORE
-NOHANDLES(ICALL(RUNIMPORT_1, "ZeroMemory", ves_icall_System_Runtime_RuntimeImports_ZeroMemory))
+NOHANDLES(ICALL(RUNIMPORT_1, "RhBulkMoveWithWriteBarrier", ves_icall_System_Runtime_RuntimeImports_RhBulkMoveWithWriteBarrier))
+NOHANDLES(ICALL(RUNIMPORT_2, "ZeroMemory", ves_icall_System_Runtime_RuntimeImports_ZeroMemory))
 #else
 NOHANDLES(ICALL(RUNIMPORT_1, "Memmove", ves_icall_System_Runtime_RuntimeImports_Memmove))
 NOHANDLES(ICALL(RUNIMPORT_2, "Memmove_wbarrier", ves_icall_System_Runtime_RuntimeImports_Memmove_wbarrier))

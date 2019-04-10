@@ -37,6 +37,7 @@ using System.IO;
 namespace MonoTests.System.Globalization
 {
 	[TestFixture]
+	[Category ("Calendars")]
 	public class EastAsianLunisolarCalendarTest
 	{
 		static ChineseLunisolarCalendar cn = new ChineseLunisolarCalendar ();

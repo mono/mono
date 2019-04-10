@@ -123,6 +123,7 @@ sealed class Date {
 } // class Date
 
 [TestFixture]
+[Category ("Calendars")]
 public class CalendarTest {
 	private Calendar[] acal;
 	private GregorianCalendar gcal;

@@ -599,6 +599,7 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void SqlDateTimeToSqlString()
 		{
 			SqlDateTime TestTime = new SqlDateTime(2002, 10, 22, 9, 52, 30);

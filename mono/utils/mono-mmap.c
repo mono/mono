@@ -181,6 +181,15 @@ mono_pagesize (void)
 	saved_pagesize = getpagesize ();
 #endif
 
+
+	// While this could not happen in any of the Mono supported
+	// systems, this ensures this function never returns -1, and
+	// reduces the number of false positives
+	// that Coverity finds in consumer code.
+
+	if (saved_pagesize == -1)
+		return 64*1024;
+
 	return saved_pagesize;
 }
 
@@ -227,6 +236,22 @@ get_darwin_version (void)
 }
 #endif
 
+static int use_mmap_jit;
+
+/**
+ * mono_setmmapjit:
+ * \param flag indicating whether to enable or disable the use of MAP_JIT in mmap
+ *
+ * Call this method to enable or disable the use of MAP_JIT to create the pages
+ * for the JIT to use.   This is only needed for scenarios where Mono is bundled
+ * as an App in MacOS
+ */
+void
+mono_setmmapjit (int flag)
+{
+	use_mmap_jit = flag;
+}
+
 /**
  * mono_valloc:
  * \param addr memory address
@@ -262,7 +287,7 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 #endif
 
 #if defined(__APPLE__) && defined(MAP_JIT)
-	if (flags & MONO_MMAP_JIT) {
+	if ((flags & MONO_MMAP_JIT) && use_mmap_jit) {
 		if (get_darwin_version () >= DARWIN_VERSION_MOJAVE) {
 			mflags |= MAP_JIT;
 		}

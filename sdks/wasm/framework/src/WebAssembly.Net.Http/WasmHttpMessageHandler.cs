@@ -38,7 +38,8 @@ namespace WebAssembly.Net.Http.HttpClient {
 
 		static WasmHttpMessageHandler ()
 		{
-			StreamingSupported = Runtime.InvokeJS ("'body' in Response.prototype && typeof ReadableStream === 'function'") == "true";
+			using (var streamingSupported = new Function ("return 'body' in Response.prototype && typeof ReadableStream === 'function'"))
+				StreamingSupported = (bool)streamingSupported.Call ();
 		}
 
 		public WasmHttpMessageHandler ()

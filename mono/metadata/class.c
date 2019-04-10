@@ -1737,18 +1737,15 @@ compare_interface_ids (const void *p_key, const void *p_element)
 int
 mono_class_interface_offset (MonoClass *klass, MonoClass *itf)
 {
+	int i;
 	MonoClass **klass_interfaces_packed = m_class_get_interfaces_packed (klass);
-	MonoClass **result = (MonoClass **)mono_binary_search (
-			itf,
-			klass_interfaces_packed,
-			m_class_get_interface_offsets_count (klass),
-			sizeof (MonoClass *),
-			compare_interface_ids);
-	if (result) {
-		return m_class_get_interface_offsets_packed (klass) [result - klass_interfaces_packed];
-	} else {
-		return -1;
+	for (i = m_class_get_interface_offsets_count (klass) -1 ; i >= 0 ; i-- ){
+		MonoClass *result = klass_interfaces_packed[i];
+		if (m_class_get_interface_id(result) == m_class_get_interface_id(itf)) {
+			return m_class_get_interface_offsets_packed (klass) [i];
+		} 
 	}
+	return -1;
 }
 
 /**
@@ -1911,13 +1908,22 @@ mono_class_is_nullable (MonoClass *klass)
 	return gklass && gklass->container_class == mono_defaults.generic_nullable_class;
 }
 
-
 /** if klass is T? return T */
+MonoClass*
+mono_class_get_nullable_param_internal (MonoClass *klass)
+{
+	g_assert (mono_class_is_nullable (klass));
+	return mono_class_from_mono_type_internal (mono_class_get_generic_class (klass)->context.class_inst->type_argv [0]);
+}
+
 MonoClass*
 mono_class_get_nullable_param (MonoClass *klass)
 {
-       g_assert (mono_class_is_nullable (klass));
-       return mono_class_from_mono_type_internal (mono_class_get_generic_class (klass)->context.class_inst->type_argv [0]);
+	MonoClass *result = NULL;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_class_get_nullable_param_internal (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 gboolean
@@ -5994,6 +6000,10 @@ gboolean mono_type_is_valid_enum_basetype (MonoType * type) {
 	case MONO_TYPE_U8:
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
+#if ENABLE_NETCORE
+	case MONO_TYPE_R8:
+	case MONO_TYPE_R4:
+#endif
 		return TRUE;
 	default:
 		return FALSE;

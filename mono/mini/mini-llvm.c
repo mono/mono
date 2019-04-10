@@ -113,6 +113,7 @@ typedef struct {
 	GHashTable *objc_selector_to_var;
 	GPtrArray *cfgs;
 	int unbox_tramp_num, unbox_tramp_elemsize;
+	GHashTable *got_idx_to_type;
 } MonoLLVMModule;
 
 /*
@@ -1651,6 +1652,25 @@ get_aotconst_name (MonoJumpInfoType type, gconstpointer data, int got_offset)
 	return name;
 }
 
+static int
+compute_aot_got_offset (MonoLLVMModule *module, MonoJumpInfo *ji, LLVMTypeRef llvm_type)
+{
+	guint32 got_offset = mono_aot_get_got_offset (ji);
+
+	LLVMTypeRef lookup_type = (LLVMTypeRef) g_hash_table_lookup (module->got_idx_to_type, GINT_TO_POINTER (got_offset));
+
+	if (!lookup_type) {
+		lookup_type = llvm_type;
+	} else if (llvm_type != lookup_type) {
+		lookup_type = module->ptr_type;
+	} else {
+		return got_offset;
+	}
+
+	g_hash_table_insert (module->got_idx_to_type, GINT_TO_POINTER (got_offset), lookup_type);
+	return got_offset;
+}
+
 static LLVMValueRef
 get_aotconst_typed (EmitContext *ctx, MonoJumpInfoType type, gconstpointer data, LLVMTypeRef llvm_type)
 {
@@ -1672,7 +1692,7 @@ get_aotconst_typed (EmitContext *ctx, MonoJumpInfoType type, gconstpointer data,
 	ji->next = cfg->patch_info;
 	cfg->patch_info = ji;
 
-	got_offset = mono_aot_get_got_offset (cfg->patch_info);
+	got_offset = compute_aot_got_offset (ctx->module, cfg->patch_info, llvm_type);
 	ctx->module->max_got_offset = MAX (ctx->module->max_got_offset, got_offset);
 	/* 
 	 * If the got slot is shared, it means its initialized when the aot image is loaded, so we don't need to
@@ -2927,7 +2947,7 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	ji = g_new0 (MonoJumpInfo, 1);
 	ji->type = MONO_PATCH_INFO_AOT_MODULE;
 	ji = mono_aot_patch_info_dup (ji);
-	got_offset = mono_aot_get_got_offset (ji);
+	got_offset = compute_aot_got_offset (module, ji, IntPtrType ());
 	module->max_got_offset = MAX (module->max_got_offset, got_offset);
 	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
 	indexes [1] = LLVMConstInt (LLVMInt32Type (), got_offset, FALSE);
@@ -2941,7 +2961,7 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	ji->type = MONO_PATCH_INFO_JIT_ICALL;
 	ji->data.name = icall_name;
 	ji = mono_aot_patch_info_dup (ji);
-	got_offset = mono_aot_get_got_offset (ji);
+	got_offset = compute_aot_got_offset (module, ji, sig);
 	module->max_got_offset = MAX (module->max_got_offset, got_offset);
 	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
 	indexes [1] = LLVMConstInt (LLVMInt32Type (), got_offset, FALSE);
@@ -3023,7 +3043,7 @@ emit_gc_safepoint_poll (MonoLLVMModule *module)
 	ji = g_new0 (MonoJumpInfo, 1);
 	ji->type = MONO_PATCH_INFO_GC_SAFE_POINT_FLAG;
 	ji = mono_aot_patch_info_dup (ji);
-	got_offset = mono_aot_get_got_offset (ji);
+	got_offset = compute_aot_got_offset (module, ji, IntPtrType ());
 	module->max_got_offset = MAX (module->max_got_offset, got_offset);
 	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
 	indexes [1] = LLVMConstInt (LLVMInt32Type (), got_offset, FALSE);
@@ -3041,7 +3061,7 @@ emit_gc_safepoint_poll (MonoLLVMModule *module)
 	ji->type = MONO_PATCH_INFO_JIT_ICALL;
 	ji->data.name = "mono_threads_state_poll";
 	ji = mono_aot_patch_info_dup (ji);
-	got_offset = mono_aot_get_got_offset (ji);
+	got_offset = compute_aot_got_offset (module, ji, sig);
 	module->max_got_offset = MAX (module->max_got_offset, got_offset);
 	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
 	indexes [1] = LLVMConstInt (LLVMInt32Type (), got_offset, FALSE);
@@ -3972,6 +3992,11 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 
 	if (ins->opcode != OP_TAILCALL && ins->opcode != OP_TAILCALL_MEMBASE && LLVMGetInstructionOpcode (lcall) == LLVMCall)
 		mono_llvm_set_call_notailcall (lcall);
+
+	// As per the LLVM docs, a function has a noalias return value if and only if
+	// it is an allocation function. This is an allocation function.
+	if (call->method && call->method->wrapper_type == MONO_WRAPPER_ALLOC)
+		mono_llvm_set_call_noalias_ret (lcall);
 
 	/*
 	 * Modify cconv and parameter attributes to pass rgctx/imt correctly.
@@ -4946,6 +4971,14 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			CompRelation rel;
 			LLVMValueRef cmp, args [16];
 			gboolean likely = (ins->flags & MONO_INST_LIKELY) != 0;
+			gboolean unlikely = FALSE;
+
+			if (MONO_IS_COND_BRANCH_OP (ins->next)) {
+				if (ins->next->inst_false_bb->out_of_line)
+					likely = TRUE;
+				else if (ins->next->inst_true_bb->out_of_line)
+					unlikely = TRUE;
+			}
 
 			if (ins->next->opcode == OP_NOP)
 				break;
@@ -5001,9 +5034,9 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			} else
 				cmp = LLVMBuildICmp (builder, cond_to_llvm_cond [rel], lhs, rhs, "");
 
-			if (likely) {
+			if (likely || unlikely) {
 				args [0] = cmp;
-				args [1] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
+				args [1] = LLVMConstInt (LLVMInt1Type (), likely ? 1 : 0, FALSE);
 				cmp = LLVMBuildCall (ctx->builder, get_intrinsic (ctx, "llvm.expect.i1"), args, 2, "");
 			}
 
@@ -5803,7 +5836,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			cfg->patch_info = ji;
 				   
 			//mono_add_patch_info (cfg, 0, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
-			got_offset = mono_aot_get_got_offset (cfg->patch_info);
+			got_offset = compute_aot_got_offset (ctx->module, cfg->patch_info, NULL);
+
 			ctx->module->max_got_offset = MAX (ctx->module->max_got_offset, got_offset);
 			if (!mono_aot_is_shared_got_offset (got_offset)) {
 				//mono_print_ji (ji);
@@ -7584,7 +7618,21 @@ emit_method_inner (EmitContext *ctx)
 
 	if (!cfg->llvm_only)
 		LLVMSetFunctionCallConv (method, LLVMMono1CallConv);
-	if (!cfg->llvm_only && cfg->compile_aot && mono_threads_are_safepoints_enabled ())
+
+	/* if the method doesn't contain
+	 *  (1) a call (so it's a leaf method)
+	 *  (2) and no loops
+	 * we can skip the GC safepoint on method entry. */
+	gboolean requires_safepoint = cfg->has_calls;
+	if (!requires_safepoint) {
+		for (bb = cfg->bb_entry->next_bb; bb; bb = bb->next_bb) {
+			if (bb->loop_body_start || (bb->flags & BB_EXCEPTION_HANDLER)) {
+				requires_safepoint = TRUE;
+			}
+		}
+	}
+
+	if (!cfg->llvm_only && cfg->compile_aot && mono_threads_are_safepoints_enabled () && requires_safepoint)
 		LLVMSetGC (method, "mono");
 	LLVMSetLinkage (method, LLVMPrivateLinkage);
 
@@ -7978,7 +8026,7 @@ emit_method_inner (EmitContext *ctx)
 	}
 
 after_codegen:
-	if (!ctx->module->llvm_disable_self_init) {
+	if (cfg->compile_aot && !ctx->module->llvm_disable_self_init) {
 		g_ptr_array_add (ctx->module->cfgs, cfg);
 
 		/*
@@ -9097,7 +9145,9 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 {
 	MonoLLVMModule *module = &aot_module;
 	gboolean emit_dwarf = (flags & LLVM_MODULE_FLAG_DWARF) ? 1 : 0;
+#ifdef TARGET_WIN32_MSVC
 	gboolean emit_codeview = (flags & LLVM_MODULE_FLAG_CODEVIEW) ? 1 : 0;
+#endif
 	gboolean static_link = (flags & LLVM_MODULE_FLAG_STATIC) ? 1 : 0;
 	gboolean llvm_only = (flags & LLVM_MODULE_FLAG_LLVM_ONLY) ? 1 : 0;
 	gboolean interp = (flags & LLVM_MODULE_FLAG_INTERP) ? 1 : 0;
@@ -9212,6 +9262,7 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 		LLVMTypeRef got_type = LLVMArrayType (module->ptr_type, 0);
 
 		module->got_var = LLVMAddGlobal (module->lmodule, got_type, "mono_dummy_got");
+		module->got_idx_to_type = g_hash_table_new (NULL, NULL);
 		LLVMSetInitializer (module->got_var, LLVMConstNull (got_type));
 	}
 
@@ -9295,7 +9346,8 @@ mono_llvm_fixup_aot_module (void)
 			mono_llvm_replace_uses_of (placeholder, lmethod);
 			g_hash_table_insert (patches_to_null, site->ji, site->ji);
 		} else {
-			int got_offset = mono_aot_get_got_offset (site->ji);
+			int got_offset = compute_aot_got_offset (module, site->ji, site->type);
+
 			module->max_got_offset = MAX (module->max_got_offset, got_offset);
 
 			LLVMBuilderRef builder = LLVMCreateBuilder ();
@@ -9639,8 +9691,23 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 	 * Create the real got variable and replace all uses of the dummy variable with
 	 * the real one.
 	 */
-	got_type = LLVMArrayType (module->ptr_type, module->max_got_offset + 1);
+	int size = module->max_got_offset + 1;
+	LLVMTypeRef *members = g_malloc0 (sizeof (LLVMValueRef) * size);
+	for (int i = 0; i < size; i++) {
+		LLVMTypeRef lookup_type = NULL;
+
+		lookup_type = g_hash_table_lookup (module->got_idx_to_type, GINT_TO_POINTER (i));
+
+		if (!lookup_type)
+			lookup_type = module->ptr_type;
+
+		members [i] = LLVMPointerType (lookup_type, 0);
+	}
+
+	got_type = LLVMStructCreateNamed (module->context, g_strdup_printf ("MONO_GOT_%s", cu_name));
+	LLVMStructSetBody (got_type, members, size, FALSE);
 	real_got = LLVMAddGlobal (module->lmodule, got_type, module->got_symbol);
+
 	LLVMSetInitializer (real_got, LLVMConstNull (got_type));
 	if (module->external_symbols) {
 		LLVMSetLinkage (real_got, LLVMExternalLinkage);

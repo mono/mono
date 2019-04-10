@@ -364,6 +364,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void TestToStringGenitive ()
 		{
 			DateTime dt = new DateTime (2010, 1, 2, 3, 4, 5);
@@ -1134,6 +1135,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void TestParseWithDifferentMonthDayPatterns ()
 		{
 			CultureInfo cultureInfo = new CultureInfo("en-US");
@@ -1175,16 +1177,19 @@ namespace MonoTests.System
 		{
 			string s = "Wednesday, 09 June 2004";
 			DateTime.ParseExact (s, "dddd, dd MMMM yyyy", CultureInfo.InvariantCulture);
-			try {
-				DateTime.ParseExact (s, "dddd, dd MMMM yyyy", new CultureInfo ("ja-JP"));
-				Assert.Fail ("ja-JP culture does not support format \"dddd, dd MMMM yyyy\"");
-			} catch (FormatException) {
+			if (!GlobalizationMode.Invariant) {
+				try {
+					DateTime.ParseExact (s, "dddd, dd MMMM yyyy", new CultureInfo ("ja-JP"));
+					Assert.Fail ("ja-JP culture does not support format \"dddd, dd MMMM yyyy\"");
+				} catch (FormatException) {
+				}
 			}
 
 			// Ok, now we can assume ParseExact() works expectedly.
 
 			DateTime.Parse (s, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces);
-			DateTime.Parse (s, new CultureInfo ("ja-JP"), DateTimeStyles.AllowWhiteSpaces);
+			if (!GlobalizationMode.Invariant)
+				DateTime.Parse (s, new CultureInfo ("ja-JP"), DateTimeStyles.AllowWhiteSpaces);
 			//DateTime.Parse (s, null); currently am not sure if it works for _every_ culture.
 		}
 
@@ -1242,6 +1247,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // bug #72788
+		[Category ("Calendars")]
 		public void Parse_Bug72788 ()
 		{
 			DateTime dt = DateTime.Parse ("21/02/05", new CultureInfo ("fr-FR"));
@@ -1276,6 +1282,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void Parse_Bug53023b ()
 		{
 			foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
@@ -1297,6 +1304,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void Parse_SameTimeAndDateSeparator ()
 		{
 			var fiFI = (CultureInfo) CultureInfo.GetCultureInfo("fi-FI").Clone();
@@ -1341,6 +1349,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void ParseCOMDependentFormat ()
 		{
 			// Japanese format.
@@ -1359,6 +1368,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		[ExpectedException(typeof (FormatException))]
 		public void ParseFormatException1 ()
 		{
@@ -1399,6 +1409,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void ParseUtcNonUtc ()
 		{
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("es-ES");
@@ -1463,6 +1474,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void TimeZoneAdjustment ()
 		{
 			CultureInfo ci = Thread.CurrentThread.CurrentCulture;
@@ -1851,6 +1863,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void ParseExact_Bug80094 ()
 		{
 			// we can safely change the curernt culture, as the original value will
@@ -2584,6 +2597,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
+		[Category ("Calendars")]
 		public void GenitiveMonth ()
 		{
 			var ci = new CultureInfo ("ru-RU");
@@ -2592,6 +2606,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void Parse_ThaiCalendar ()
 		{
 			var culture = CultureInfo.GetCultureInfo ("th-TH");
@@ -2670,6 +2685,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // https://github.com/mono/mono/issues/11317
+		[Category ("Calendars")]
 		public void DateTimeKoCulture ()
 		{
 			foreach (var culture in new [] { new CultureInfo ("ko"), new CultureInfo ("ko-KR") })

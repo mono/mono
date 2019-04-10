@@ -10,3 +10,4 @@ NO_INSTALL = yes
 
 include ../../../build/executable.make
 
+.NOTPARALLEL:

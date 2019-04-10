@@ -1742,17 +1742,9 @@ emit_push_lmf (MonoCompile *cfg)
 	if (!cfg->lmf_addr_var)
 		cfg->lmf_addr_var = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
 
-#ifdef HOST_WIN32
-	ins = mono_create_tls_get (cfg, TLS_KEY_JIT_TLS);
-	g_assert (ins);
-	int jit_tls_dreg = ins->dreg;
-
-	lmf_reg = alloc_preg (cfg);
-	EMIT_NEW_BIALU_IMM (cfg, lmf_ins, OP_PADD_IMM, lmf_reg, jit_tls_dreg, MONO_STRUCT_OFFSET (MonoJitTlsData, lmf));
-#else
 	lmf_ins = mono_create_tls_get (cfg, TLS_KEY_LMF_ADDR);
 	g_assert (lmf_ins);
-#endif
+
 	lmf_ins->dreg = cfg->lmf_addr_var->dreg;
 
 	EMIT_NEW_VARLOADA (cfg, ins, cfg->lmf_var, NULL);
@@ -2171,7 +2163,6 @@ mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *
 	 * threads when debugging.
 	 */
 	if (direct_icalls_enabled (cfg)) {
-		char *name;
 		int costs;
 
 		if (!info->wrapper_method) {
@@ -2975,7 +2966,7 @@ handle_unbox_nullable (MonoCompile* cfg, MonoInst* val, MonoClass* klass, int co
 {
 	MonoMethod* method;
 
-	if (m_class_is_enumtype (mono_class_get_nullable_param (klass)))
+	if (m_class_is_enumtype (mono_class_get_nullable_param_internal (klass)))
 		method = get_method_nofail (klass, "UnboxExact", 1, 0);
 	else
 		method = get_method_nofail (klass, "Unbox", 1, 0);
@@ -4145,7 +4136,7 @@ mini_emit_array_store (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, gboole
 			int index_reg = sp [1]->dreg;
 			int offset = (mono_class_array_element_size (klass) * sp [1]->inst_c0) + MONO_STRUCT_OFFSET (MonoArray, vector);
 
-			if (SIZEOF_REGISTER == 8 && COMPILE_LLVM (cfg))
+			if (SIZEOF_REGISTER == 8 && COMPILE_LLVM (cfg) && sp [1]->inst_c0 < 0)
 				MONO_EMIT_NEW_UNALU (cfg, OP_ZEXT_I4, index_reg, index_reg);
 
 			if (safety_checks)
@@ -6913,7 +6904,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					ins = (MonoInst*)mini_emit_abs_call (cfg, MONO_PATCH_INFO_ICALL_ADDR_CALL, info_data, fsig, sp);
 					NULLIFY_INS (addr);
 					goto calli_end;
-				} else if (info_type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
+				} else if (info_type == MONO_PATCH_INFO_JIT_ICALL_ADDR
+						|| info_type == MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR
+						|| info_type == MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR) {
 					tailcall = FALSE;
 					ins = (MonoInst*)mini_emit_abs_call (cfg, info_type, info_data, fsig, sp);
 					NULLIFY_INS (addr);

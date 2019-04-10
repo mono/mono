@@ -377,7 +377,7 @@ namespace System.Reflection {
 					MethodInfo method = GetGetMethod (true);
 					if (method == null)
 						throw new ArgumentException ($"Get Method not found for '{Name}'");
-					if (!DeclaringType.IsValueType && !method.ContainsGenericParameters) { //FIXME find a way to build an invoke delegate for value types.
+					if (!DeclaringType.IsValueType && !PropertyType.IsByRef && !method.ContainsGenericParameters) { //FIXME find a way to build an invoke delegate for value types.
 						cached_getter = CreateGetterDelegate (method);
 						// The try-catch preserves the .Invoke () behaviour
 						try {

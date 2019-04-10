@@ -61,6 +61,8 @@ BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
 BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/http-spec.html   \
     --asset=$(BROWSER_TEST)/http-spec.js   \
+    --asset=$(BROWSER_TEST)/core-bindings-spec.html   \
+    --asset=$(BROWSER_TEST)/core-bindings-spec.js   \
     --asset=$(BROWSER_TEST)/NowIsTheTime.txt   \
 
 UNAME := $(shell uname -s)
@@ -83,7 +85,7 @@ jsup:
 .PHONY: toolchain
 toolchain: .stamp-jsvu
 
-driver.o: driver.c corebindings.c
+driver.o: driver.c corebindings.c pinvoke-tables-default.h
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver.o
 
 corebindings.o: corebindings.c
@@ -117,6 +119,9 @@ cross:
 
 bcl:
 	$(MAKE) -C ../builds package-wasm-bcl
+
+tuner:
+	$(MAKE) -C ../../mcs/tools/wasm-tuner PROFILE=wasm_tools
 
 mono: runtime cross bcl
 
@@ -172,7 +177,8 @@ build-test-suite: bin/test-suite/mono.js
 $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/HttpTestSuite.cs 
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/WebSocketTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/WebSocketTestSuite.cs 
-	mono --debug packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll $(BROWSER_TEST)/WebSocketTestSuite.dll
+	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/BindingsTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/BindingsTestSuite.cs 
+	mono --debug packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll $(BROWSER_TEST)/WebSocketTestSuite.dll $(BROWSER_TEST)/BindingsTestSuite.dll
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
@@ -264,6 +270,9 @@ build-dbg-testsuite:
 
 build: build-native build-managed build-debugger-test-app
 
+gen-pinvoke-tables:
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(WASM_BCL_DIR)/mscorlib.dll > pinvoke-tables-default.h
+
 CHAKRA=~/.jsvu/ch
 D8=~/.jsvu/v8
 JSC=~/.jsvu/jsc
@@ -331,7 +340,7 @@ package: build build-dbg-proxy
 	rm -rf tmp/wasm-bcl/wasm/secxml
 	rm -rf tmp/wasm-bcl/wasm/tests
 	rm -rf tmp/wasm-bcl/wasm/corlib.unsafe.dll.tmp
-	cp driver.c tmp/
+	cp driver.c pinvoke-tables-default.h tmp/
 	cp corebindings.c tmp/
 	cp $(MONO_LIBS) tmp/
 	cp library_mono.js tmp/

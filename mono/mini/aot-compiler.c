@@ -229,7 +229,6 @@ typedef struct MonoAotOptions {
 	char *instances_logfile_path;
 	char *logfile;
 	char *llvm_opts;
-	char *llc_opts;
 	char *llvm_llc;
 	gboolean dump_json;
 	gboolean profile_only;
@@ -1083,8 +1082,7 @@ arch_emit_unwind_info_sections (MonoAotCompile *acfg, const char *function_start
 static void
 arch_init (MonoAotCompile *acfg)
 {
-	gboolean has_custom_args = !!acfg->aot_opts.llc_opts;
-	char *custom_args = acfg->aot_opts.llc_opts;
+	gboolean has_custom_args = !!acfg->aot_opts.llvm_llc;
 	acfg->llc_args = g_string_new ("");
 	acfg->as_args = g_string_new ("");
 	acfg->llvm_owriter_supported = TRUE;
@@ -1099,11 +1097,11 @@ arch_init (MonoAotCompile *acfg)
 	acfg->user_symbol_prefix = "";
 
 #if defined(TARGET_X86)
-	g_string_append_printf (acfg->llc_args, " -march=x86 %s", has_custom_args ? custom_args : "-mcpu=generic");
+	g_string_append_printf (acfg->llc_args, " -march=x86 %s", has_custom_args ? "" : "-mcpu=generic");
 #endif
 
 #if defined(TARGET_AMD64)
-	g_string_append_printf (acfg->llc_args, " -march=x86-64 %s", has_custom_args ? custom_args : "-mcpu=generic");
+	g_string_append_printf (acfg->llc_args, " -march=x86-64 %s", has_custom_args ? "" : "-mcpu=generic");
 	/* NOP */
 	acfg->align_pad_value = 0x90;
 #endif
@@ -1136,9 +1134,6 @@ arch_init (MonoAotCompile *acfg)
 
 	if (acfg->aot_opts.mtriple)
 		mono_arch_set_target (acfg->aot_opts.mtriple);
-
-	if (has_custom_args)
-		g_string_append_printf (acfg->llc_args, " %s", custom_args);
 #endif
 
 #ifdef TARGET_ARM64
@@ -1146,9 +1141,6 @@ arch_init (MonoAotCompile *acfg)
 	acfg->inst_directive = ".inst";
 	if (acfg->aot_opts.mtriple)
 		mono_arch_set_target (acfg->aot_opts.mtriple);
-
-	if (has_custom_args)
-		g_string_append_printf (acfg->llc_args, " %s", custom_args);
 #endif
 
 #ifdef TARGET_MACH
@@ -1176,8 +1168,6 @@ arch_init (MonoAotCompile *acfg)
 	g_string_append (acfg->as_args, " -mabi=lp64");
 #endif
 
-	if (has_custom_args)
-		g_string_append_printf (acfg->llc_args, " %s", custom_args);
 #else
 
 	g_string_append (acfg->as_args, " -march=rv32i ");
@@ -3870,7 +3860,10 @@ is_plt_patch (MonoJumpInfo *patch_info)
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_ICALL_ADDR_CALL:
 	case MONO_PATCH_INFO_RGCTX_FETCH:
+	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
+	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
 		return TRUE;
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
 	default:
 		return FALSE;
 	}
@@ -6156,7 +6149,7 @@ get_debug_sym (MonoMethod *method, const char *prefix, GHashTable *cache)
 #endif
 
 	len = strlen (name1);
-	name2 = (char *)malloc (strlen (prefix) + len + 16);
+	name2 = (char *) g_malloc (strlen (prefix) + len + 16);
 	memcpy (name2, prefix, strlen (prefix));
 	j = strlen (prefix);
 	for (i = 0; i < len; ++i) {
@@ -6332,7 +6325,11 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_AOT_JIT_INFO:
 	case MONO_PATCH_INFO_GET_TLS_TRAMP:
 	case MONO_PATCH_INFO_SET_TLS_TRAMP:
+	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 		encode_value (patch_info->data.index, p, &p);
+		break;
+	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
+		encode_value (patch_info->data.uindex, p, &p);
 		break;
 	case MONO_PATCH_INFO_JIT_ICALL:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
@@ -7041,6 +7038,14 @@ get_plt_entry_debug_sym (MonoAotCompile *acfg, MonoJumpInfo *ji, GHashTable *cac
 		g_free (s);
 		break;
 	}
+	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
+		// FIXME Check with https://github.com/mono/mono/pull/13792
+		debug_sym = g_strdup_printf ("%s_jit_icall_native_trampoline_func_%d", prefix, ji->data.index);
+		break;
+	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
+		// FIXME Check with https://github.com/mono/mono/pull/13792
+		debug_sym = g_strdup_printf ("%s_jit_icall_native_specific_trampoline_lazy_fetch_%u", prefix, ji->data.uindex);
+		break;
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 		debug_sym = g_strdup_printf ("%s_jit_icall_native_%s", prefix, ji->data.name);
 		break;
@@ -7914,8 +7919,6 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
 		} else if (str_begins_with (arg, "llvmllc=")){
 			opts->llvm_llc = g_strdup (arg + strlen ("llvmllc="));
-		} else if (str_begins_with (arg, "llcopts=")) {
-			opts->llc_opts = g_strdup (arg + strlen ("llcopts="));
 		} else if (!strcmp (arg, "deterministic")) {
 			opts->deterministic = TRUE;
 		} else if (!strcmp (arg, "no-opt")) {

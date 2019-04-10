@@ -13,3 +13,4 @@ NO_INSTALL = yes
 
 include ../../../build/library.make
 
+.NOTPARALLEL:

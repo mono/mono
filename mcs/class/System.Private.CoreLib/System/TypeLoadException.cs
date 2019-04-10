@@ -7,7 +7,7 @@ namespace System
 			: this (null)
 		{
 			_className = className;
-			_className = assemblyName;
+			_assemblyName = assemblyName;
 		}
 
 		void SetMessageField ()
