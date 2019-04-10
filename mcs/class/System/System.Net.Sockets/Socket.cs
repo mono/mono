@@ -974,8 +974,8 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ();
 
 			var callback = new AsyncCallback ((result) => {
-				IPAddress[] hostAddresses = ((Task<IPAddress[]>)result).Result;
-				BeginConnect (hostAddresses, port, requestCallback, state);
+				var resultTask = ((Task<IPAddress[]>)result);
+				BeginConnect (resultTask.Result, port, requestCallback, resultTask.AsyncState);
 			});
 			return ConvertToApm<IPAddress[]> (Dns.GetHostAddressesAsync (host), callback, state);
 		}
