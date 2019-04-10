@@ -1,0 +1,11 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+steps:
+- script: |
+    sudo apt update
+    sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext dotnet-sdk-2.2
+    ./autogen.sh --with-core=only
+    make
+    make -C netcore nupkg
+  displayName: 'build'
