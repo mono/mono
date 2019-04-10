@@ -5,5 +5,7 @@ SUBDIRS =
 all-local:
 	dotnet build @CORETARGETS@ -p:BuildArch=@COREARCH@ -p:OutputPath=bin/@COREARCH@ -p:FeaturePortableTimer=true System.Private.CoreLib.csproj
 
+dist-recursive: dist-local
+
 dist-local:
 	@:
