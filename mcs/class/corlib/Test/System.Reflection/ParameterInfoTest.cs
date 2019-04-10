@@ -11,7 +11,7 @@
 using System;
 using System.Threading;
 using System.Reflection;
-#if !FULL_AOT_RUNTIME
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 using System.Reflection.Emit;
 #endif
 using System.Runtime.InteropServices;
@@ -535,7 +535,7 @@ namespace MonoTests.System.Reflection
 		public sealed class C { }
 		public sealed class D { }
 
-#if !FULL_AOT_RUNTIME
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		// https://github.com/mono/mono/issues/11302
 		public void CustomModifiersOrder()
