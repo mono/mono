@@ -24,4 +24,7 @@ class FsharpPackage(GitHubTarballPackage):
     def build(self):
         Package.make(self)
 
+    def install(self):
+        pass
+
 FsharpPackage()
