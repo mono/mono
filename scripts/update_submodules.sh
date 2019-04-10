@@ -9,6 +9,6 @@ if test -e .git; then \
 fi
 
 if ! test -e external/corefx/README.md; then
-	echo "Couldn't find the required submodules. This usually happens when using an archive from GitHub instead of https://download.mono-project.com/sources/mono/, or something went wrong while updating submodules."
+	echo "Error: Couldn't find the required submodules. This usually happens when using an archive from GitHub instead of https://download.mono-project.com/sources/mono/, or something went wrong while updating submodules."
 	exit 1
 fi
