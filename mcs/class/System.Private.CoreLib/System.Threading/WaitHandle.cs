@@ -18,8 +18,8 @@ namespace System.Threading
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		static extern int SignalAndWait_Internal (IntPtr waitHandleToSignal, IntPtr waitHandleToWaitOn, int millisecondsTimeout);
 
-		const int ERROR_TOO_MANY_POSTS = 298;
-		const int ERROR_NOT_OWNED_BY_CALLER = 299;
+		const int ERROR_TOO_MANY_POSTS = 0x12A;
+		const int ERROR_NOT_OWNED_BY_CALLER = 0x12B;
 
 		static int SignalAndWaitCore (IntPtr waitHandleToSignal, IntPtr waitHandleToWaitOn, int millisecondsTimeout)
 		{

@@ -64,6 +64,7 @@ namespace System.Threading
         private const int WAIT_ABANDONED = 0x80;
         private const int WAIT_FAILED = 0x7FFFFFFF;
         private const int ERROR_TOO_MANY_POSTS = 0x12A;
+        private const int ERROR_NOT_OWNED_BY_CALLER = 0x12B;
 
         internal enum OpenExistingResult
         {
@@ -620,6 +621,11 @@ namespace System.Threading
             if(ERROR_TOO_MANY_POSTS == ret)
             {
                 throw new InvalidOperationException(Environment.GetResourceString("Threading.WaitHandleTooManyPosts"));
+            }
+
+            if(ERROR_NOT_OWNED_BY_CALLER == ret)
+            {
+                throw new ApplicationException("Attempt to release mutex not owned by caller");
             }
 
             //Object was signaled
