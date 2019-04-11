@@ -4851,17 +4851,15 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDSFLD_VT) {
-			// FIXME This is still 30 times slower than JIT. Could we optimize it even further ?
 			MonoVTable *vtable = (MonoVTable*) imethod->data_items [*(guint16*)(ip + 1)];
 			gpointer addr = imethod->data_items [*(guint16*)(ip + 2)];
-			MonoClass *klass = (MonoClass*) imethod->data_items [*(guint16*)(ip + 3)];
+			i32 = READ32(ip + 3);
 			INIT_VTABLE (vtable);
 			sp->data.p = vt_sp;
-			mono_value_copy_internal (vt_sp, addr, klass);
 
-			int size = mono_class_value_size (klass, NULL);
-			vt_sp += ALIGN_TO (size, MINT_VT_ALIGNMENT);
-			ip += 4;
+			memcpy (vt_sp, addr, i32);
+			vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
+			ip += 5;
 			++sp;
 			MINT_IN_BREAK;
 		}
@@ -4897,12 +4895,11 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		MINT_IN_CASE(MINT_STSFLD_VT) {
 			MonoVTable *vtable = (MonoVTable*) imethod->data_items [*(guint16*)(ip + 1)];
 			gpointer addr = imethod->data_items [*(guint16*)(ip + 2)];
-			MonoClass *klass = (MonoClass*) imethod->data_items [*(guint16*)(ip + 3)];
+			i32 = READ32(ip + 3);
 			INIT_VTABLE (vtable);
-			mono_value_copy_internal (addr, sp [-1].data.vt, klass);
 
-			int size = mono_class_value_size (klass, NULL);
-			vt_sp -= ALIGN_TO (size, MINT_VT_ALIGNMENT);
+			memcpy (addr, sp [-1].data.vt, i32);
+			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 			ip += 4;
 			--sp;
 			MINT_IN_BREAK;

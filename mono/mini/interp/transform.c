@@ -4121,8 +4121,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->last_ins->data [1] = get_data_item_index (td, (char*)mono_vtable_get_static_field_data (vtable) + field->offset);
 
 				if (mt == MINT_TYPE_VT) {
-					td->last_ins->data [2] = get_data_item_index (td, klass);
 					int size = mono_class_value_size (klass, NULL);
+					WRITE32_INS(td->last_ins, 2, &size);
 					PUSH_VT(td, size);
 				}
 			}
@@ -4154,8 +4154,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->last_ins->data [1] = get_data_item_index (td, (char*)mono_vtable_get_static_field_data (vtable) + field->offset);
 
 				if (mt == MINT_TYPE_VT) {
-					td->last_ins->data [2] = get_data_item_index (td, fld_klass);
 					int size = mono_class_value_size (fld_klass, NULL);
+					WRITE32_INS(td->last_ins, 2, &size);
 					POP_VT(td, size);
                                 }
 			}
