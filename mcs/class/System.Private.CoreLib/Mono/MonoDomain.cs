@@ -24,6 +24,18 @@ namespace Mono
 			return null;
 		}
 
+		internal Assembly DoTypeResolve (string name)
+		{
+			return null;
+		}
+
+#if MONO_FEATURE_SRE
+		internal Assembly DoTypeBuilderResolve (System.Reflection.Emit.TypeBuilder tb)
+		{
+			return null;
+		}
+#endif
+
 		public event UnhandledExceptionEventHandler UnhandledException;
 
 		public event EventHandler ProcessExit;
