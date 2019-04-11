@@ -63,6 +63,8 @@ BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/http-spec.js   \
     --asset=$(BROWSER_TEST)/core-bindings-spec.html   \
     --asset=$(BROWSER_TEST)/core-bindings-spec.js   \
+    --asset=$(BROWSER_TEST)/issues-spec.html   \
+    --asset=$(BROWSER_TEST)/issues-spec.js   \
     --asset=$(BROWSER_TEST)/NowIsTheTime.txt   \
 
 UNAME := $(shell uname -s)
@@ -178,7 +180,8 @@ $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/HttpTestSuite.cs 
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/WebSocketTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/WebSocketTestSuite.cs 
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/BindingsTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/BindingsTestSuite.cs 
-	mono --debug packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll $(BROWSER_TEST)/WebSocketTestSuite.dll $(BROWSER_TEST)/BindingsTestSuite.dll
+	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/IssuesTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/IssuesTestSuite.cs 
+	mono --debug packager.exe -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll $(BROWSER_TEST)/WebSocketTestSuite.dll $(BROWSER_TEST)/BindingsTestSuite.dll $(BROWSER_TEST)/IssuesTestSuite.dll
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
