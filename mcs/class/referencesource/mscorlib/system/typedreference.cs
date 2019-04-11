@@ -56,7 +56,7 @@ namespace System {
                 if (field == null)
                     throw new ArgumentException(Environment.GetResourceString("Argument_MustBeRuntimeFieldInfo"));
 
-                if (field.IsInitOnly || field.IsStatic)
+                if (field.IsStatic)
                     throw new ArgumentException(Environment.GetResourceString("Argument_TypedReferenceInvalidField"));
                 
                 if (targetType != field.GetDeclaringTypeInternal() && !targetType.IsSubclassOf(field.GetDeclaringTypeInternal()))
