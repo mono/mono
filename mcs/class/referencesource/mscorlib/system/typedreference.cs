@@ -56,13 +56,8 @@ namespace System {
                 if (field == null)
                     throw new ArgumentException(Environment.GetResourceString("Argument_MustBeRuntimeFieldInfo"));
 
-#if NETCORE
                 if (field.IsStatic)
                     throw new ArgumentException(Environment.GetResourceString("Argument_TypedReferenceInvalidField"));
-#else
-                if (field.IsInitOnly || field.IsStatic)
-                    throw new ArgumentException(Environment.GetResourceString("Argument_TypedReferenceInvalidField"));
-#endif
                 
                 if (targetType != field.GetDeclaringTypeInternal() && !targetType.IsSubclassOf(field.GetDeclaringTypeInternal()))
                     throw new MissingMemberException(Environment.GetResourceString("MissingMemberTypeRef"));
