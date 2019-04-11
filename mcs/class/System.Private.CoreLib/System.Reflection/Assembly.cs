@@ -16,13 +16,16 @@ namespace System.Reflection
 			}
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern Assembly GetExecutingAssembly ();
-
-		internal static RuntimeAssembly GetExecutingAssembly (ref StackCrawlMark stackMark)
+		[System.Security.DynamicSecurityMethod]
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static Assembly GetExecutingAssembly()
 		{
-			return (RuntimeAssembly) GetExecutingAssembly ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetExecutingAssembly(ref stackMark);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern RuntimeAssembly GetExecutingAssembly (ref StackCrawlMark stackMark);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetCallingAssembly ();
