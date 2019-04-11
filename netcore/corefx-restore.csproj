@@ -24,6 +24,7 @@
     <PackageReference Include="System.Composition.Convention" Version="$(SystemCompositionVersions)" />
     <PackageReference Include="System.Composition.Runtime" Version="$(SystemCompositionVersions)" />
     <PackageReference Include="System.Composition.Hosting" Version="$(SystemCompositionVersions)" />
+    <PackageReference Include="System.Composition.TypedParts" Version="$(SystemCompositionVersions)" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="$(MicrosoftPrivateCoreFxNETCoreAppVersion)" />
     <PackageReference Include="System.Data.Odbc" Version="$(MicrosoftPrivateCoreFxNETCoreAppVersion)" />
     <PackageReference Include="System.Data.SqlClient" Version="$(SystemDataSqlClientVersion)" />
