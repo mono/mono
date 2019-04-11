@@ -38,7 +38,7 @@ void mono_free (void*);
 
 typedef struct {
 	int version;
-	void* (*lookup) (MonoMethod *method, char *classname, char *methodname, char *sigstart, uint8_t *uses_handles);
+	void* (*lookup) (MonoMethod *method, char *classname, char *methodname, char *sigstart, int32_t *uses_handles);
 	const char* (*lookup_icall_symbol) (void* func);
 } MonoIcallTableCallbacks;
 
@@ -196,7 +196,7 @@ compare_int (const void *k1, const void *k2)
 }
 
 static void*
-icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char *sigstart, uint8_t *uses_handles)
+icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char *sigstart, int32_t *uses_handles)
 {
 	uint32_t token = mono_method_get_token (method);
 	assert (token);
