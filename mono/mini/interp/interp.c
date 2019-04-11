@@ -3757,8 +3757,12 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			if (!sp[-1].data.p)
 				THROW_EX (mono_get_exception_null_reference (), ip);
 			++ip;
-			/* memmove handles unaligned case */
-			memmove (&sp [-1].data.l, sp [-1].data.p, sizeof (gint64));
+#ifdef NO_UNALIGNED_ACCESS
+			if ((gsize)sp [-1].data.p % SIZEOF_VOID_P)
+				memcpy (&sp [-1].data.l, sp [-1].data.p, sizeof (gint64));
+			else
+#endif
+			sp[-1].data.l = *(gint64*)sp[-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_I) {
 			guint16 offset = * (guint16 *)(ip + 1);
@@ -3787,6 +3791,11 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			if (!sp[-1].data.p)
 				THROW_EX (mono_get_exception_null_reference (), ip);
 			++ip;
+#ifdef NO_UNALIGNED_ACCESS
+			if ((gsize)sp [-1].data.p % SIZEOF_VOID_P)
+				memcpy (&sp [-1].data.f, sp [-1].data.p, sizeof (gdouble));
+			else
+#endif
 			sp[-1].data.f = *(gdouble*)sp[-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_REF)
