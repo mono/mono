@@ -68,7 +68,7 @@ clean:
 
 # e.g. `make xtest-System.Collections.Tests`
 # '-parallel none -verbose' for debug, `-parallel all` to run all tests in parallel
-xtest-%: prepare check-env update-corefx-tests
+xtest-%: prepare update-corefx-tests
 	echo -n "***************** $* *********************"
 	cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/xunit.console.deps.json
 	cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/Microsoft.DotNet.RemoteExecutorHost.deps.json
