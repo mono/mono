@@ -63,6 +63,9 @@
 #include "icall-decl.h"
 #include "icall-signatures.h"
 
+static void 
+mono_marshal_set_callconv_from_modopt (MonoMethod *method, MonoMethodSignature *csig);
+
 static void
 mono_string_utf16len_to_builder (MonoStringBuilderHandle sb, const gunichar2 *text, gsize len, MonoError *error);
 
@@ -3536,14 +3539,16 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	if (!aot)
 		g_assert (piinfo->addr);
 
+	csig = mono_metadata_signature_dup_full (get_method_image (method), sig);
+	mono_marshal_set_callconv_from_modopt (method, csig);
+
 	mspecs = g_new (MonoMarshalSpec*, sig->param_count + 1);
 	mono_method_get_marshal_info (method, mspecs);
 
-	mono_marshal_emit_native_wrapper (get_method_image (mb->method), mb, sig, piinfo, mspecs, piinfo->addr, aot, check_exceptions, FALSE);
+	mono_marshal_emit_native_wrapper (get_method_image (mb->method), mb, csig, piinfo, mspecs, piinfo->addr, aot, check_exceptions, FALSE);
 	info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_PINVOKE);
 	info->d.managed_to_native.method = method;
 
-	csig = mono_metadata_signature_dup_full (get_method_image (method), sig);
 	csig->pinvoke = 0;
 	res = mono_mb_create_and_cache_full (cache, method, mb, csig, csig->param_count + 16,
 										 info, NULL);
