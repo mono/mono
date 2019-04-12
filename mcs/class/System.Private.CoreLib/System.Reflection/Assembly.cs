@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 using System.Threading;
 
 namespace System.Reflection
@@ -43,7 +44,7 @@ namespace System.Reflection
 			// TODO: trigger assemblyFromResolveEvent
 
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-			return Load (name, ref stackMark, IntPtr.Zero);
+			return Load (name, ref stackMark, AssemblyLoadContext.CurrentContextualReflectionContext);
 		}
 
 		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
@@ -53,13 +54,14 @@ namespace System.Reflection
 				throw new ArgumentNullException (nameof (assemblyRef));
 
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-			return Load (assemblyRef, ref stackMark, IntPtr.Zero);
+			return Load (assemblyRef, ref stackMark, AssemblyLoadContext.CurrentContextualReflectionContext);
 		}
 
-		internal static Assembly Load (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder)
+		internal static Assembly Load (AssemblyName assemblyRef, ref StackCrawlMark stackMark, AssemblyLoadContext assemblyLoadContext)
 		{
 			// TODO: pass AssemblyName
-			var assembly = InternalLoad (assemblyRef.FullName, ref stackMark, ptrLoadContextBinder);
+			// TODO: pass assemblyLoadContext
+			var assembly = InternalLoad (assemblyRef.FullName, ref stackMark, IntPtr.Zero);
 			if (assembly == null)
 				throw new FileNotFoundException (null, assemblyRef.Name);
 			return assembly;

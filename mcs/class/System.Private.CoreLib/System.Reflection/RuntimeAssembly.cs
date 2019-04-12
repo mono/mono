@@ -245,12 +245,11 @@ namespace System.Reflection
 					const bool addVersion = true;
 					const bool addPublicKey = false;
 					const bool defaultToken = true;
-					const bool assemblyRef = true;
 					for (int i = 0; i < numAssemblies; i++) {
 						AssemblyName name = new AssemblyName ();
 						unsafe {
 							Mono.MonoAssemblyName *nativeName = (Mono.MonoAssemblyName*) nativeNames[i];
-							name.FillName (nativeName, null, addVersion, addPublicKey, defaultToken, assemblyRef);
+							name.FillName (nativeName, null, addVersion, addPublicKey, defaultToken);
 							result[i] = name;
 						}
 					}
@@ -296,7 +295,7 @@ namespace System.Reflection
 			Assembly res = null;
 			try {
 				StackCrawlMark unused = default;
-				res = Assembly.Load (an, ref unused, IntPtr.Zero);
+				res = Assembly.Load (an, ref unused, null);
 			} catch {
 			}
 
@@ -346,9 +345,10 @@ namespace System.Reflection
 			return res;
 		}
 
-		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder = default)
+		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark, AssemblyLoadContext assemblyLoadContext)
 		{
-			return (RuntimeAssembly) InternalLoad (assemblyRef.FullName, ref stackMark, ptrLoadContextBinder);
+			// TODO: Use assemblyLoadContext
+			return (RuntimeAssembly) InternalLoad (assemblyRef.FullName, ref stackMark, IntPtr.Zero);
 		}
 
 		public override Module LoadModule (string moduleName, byte[] rawModule, byte[] rawSymbolStore)
