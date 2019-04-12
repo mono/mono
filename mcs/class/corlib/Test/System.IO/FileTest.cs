@@ -2595,6 +2595,9 @@ namespace MonoTests.System.IO
 		public static extern int symlink (string oldpath, string newpath);
 
 		[Test]
+#if MONOTOUCH_TV
+		[Ignore ("See bug #59239: https://bugzilla.xamarin.com/show_bug.cgi?id=59239")]
+#endif
 		[Category ("NotWasm")]
 		public void SymLinkStats() {
 			if (!RunningOnUnix)
@@ -2652,7 +2655,7 @@ namespace MonoTests.System.IO
 
 		[Test]
 #if MONOTOUCH_TV
-		[Ignore ("See bug #59239")]
+		[Ignore ("See bug #59239: https://bugzilla.xamarin.com/show_bug.cgi?id=59239")]
 #endif
 		[Category ("NotWasm")]
 		public void SymLinkLoop ()
