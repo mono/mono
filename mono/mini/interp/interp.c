@@ -4243,10 +4243,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_CPOBJ_VT) {
 			c = (MonoClass*)imethod->data_items[* (guint16 *)(ip + 1)];
-			g_assert (m_class_is_valuetype (c));
-			/* if this assertion fails, we need to add a write barrier */
-			g_assert (!MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (c)));
-			stackval_from_data (m_class_get_byval_arg (c), &sp [-2], sp [-1].data.p, FALSE);
+			mono_value_copy_internal (sp [-2].data.vt, sp [-1].data.vt, c);
 			ip += 2;
 			sp -= 2;
 			MINT_IN_BREAK;
