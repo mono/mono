@@ -5173,13 +5173,13 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				sp [0].data.p = mono_array_get_fast (o, gpointer, aindex);
 				break;
 			case MINT_LDELEM_VT: {
-				MonoClass *klass_vt = (MonoClass*)imethod->data_items [*(guint16 *) (ip + 1)];
-				i32 = READ32 (ip + 2);
+				i32 = READ32 (ip + 1);
 				char *src_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
 				sp [0].data.vt = vt_sp;
-				stackval_from_data (m_class_get_byval_arg (klass_vt), sp, src_addr, FALSE);
+				// Copying to vtstack. No wbarrier needed
+				memcpy (sp [0].data.vt, src_addr, i32);
 				vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
-				ip += 3;
+				ip += 2;
 				break;
 			}
 			default:
@@ -5254,7 +5254,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				i32 = READ32 (ip + 2);
 				char *dst_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
 
-				stackval_to_data (m_class_get_byval_arg (klass_vt), &sp [2], dst_addr, FALSE);
+				mono_value_copy_internal (dst_addr, sp [2].data.vt, klass_vt);
 				vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 				ip += 3;
 				break;

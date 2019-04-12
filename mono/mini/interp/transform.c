@@ -4510,8 +4510,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					int size = mono_class_value_size (klass, NULL);
 					ENSURE_I4 (td, 1);
 					SIMPLE_OP (td, MINT_LDELEM_VT);
-					td->last_ins->data [0] = get_data_item_index (td, klass);
-					WRITE32_INS (td->last_ins, 1, &size);
+					WRITE32_INS (td->last_ins, 0, &size);
 					--td->sp;
 					SET_TYPE (td->sp - 1, STACK_TYPE_VT, klass);
 					PUSH_VT (td, size);

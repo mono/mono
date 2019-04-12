@@ -366,7 +366,7 @@ OPDEF(MINT_LDELEM_I8, "ldelem.i8", 1, MintOpNoArgs)
 OPDEF(MINT_LDELEM_R4, "ldelem.r4", 1, MintOpNoArgs)
 OPDEF(MINT_LDELEM_R8, "ldelem.r8", 1, MintOpNoArgs)
 OPDEF(MINT_LDELEM_REF, "ldelem.ref", 1, MintOpNoArgs)
-OPDEF(MINT_LDELEM_VT, "ldelem.vt", 4, MintOpShortAndInt)
+OPDEF(MINT_LDELEM_VT, "ldelem.vt", 3, MintOpInt)
 
 OPDEF(MINT_LDELEMA, "ldelema", 3, MintOpTwoShorts)
 OPDEF(MINT_LDELEMA_TC, "ldelema.tc", 3, MintOpTwoShorts)
