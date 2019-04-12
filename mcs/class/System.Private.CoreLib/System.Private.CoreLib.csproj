@@ -144,6 +144,7 @@
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
       <Compile Include="System.Reflection\Assembly.cs" />
+      <Compile Include="System.Reflection\AssemblyName.cs" />
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
       <Compile Include="System.Reflection\MemberInfo.cs" />
@@ -247,7 +248,6 @@
       <Compile Include="..\corlib\System.Threading\Monitor.cs" />
       <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
 
-      <Compile Include="..\corlib\System.Reflection\AssemblyName.cs" />
       <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeMethodInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeFieldInfo.cs" />
