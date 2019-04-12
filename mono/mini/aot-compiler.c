@@ -69,6 +69,10 @@
 #include "mini-llvm.h"
 #include "mini-runtime.h"
 
+//
+// A note on memory management: since this is a batch compiler, memory is leaked in a lot of places, and thats normal.
+//
+
 static MonoMethod*
 try_get_method_nofail (MonoClass *klass, const char *method_name, int param_count, int flags)
 {
@@ -11727,9 +11731,6 @@ compile_methods (MonoAotCompile *acfg)
 }
 
 static int
-link_output (MonoAotCompile *acfg);
-
-static int
 compile_asm (MonoAotCompile *acfg)
 {
 	char *command, *objfile;
@@ -11817,8 +11818,7 @@ compile_asm (MonoAotCompile *acfg)
 		g_free (objfile);
 		return 0;
 	}
-
-	return link_output (acfg);
+	return 0;
 }
 
 #if defined(sparc)
@@ -11849,15 +11849,12 @@ compile_asm (MonoAotCompile *acfg)
 #define LD_OPTIONS "-m elf64ppc"
 #endif
 
-#ifndef LD_OPTIONS
-#define LD_OPTIONS ""
-#endif
-
 static int
 link_output (MonoAotCompile *acfg)
 {
-	char *command, *objfile;
-	char *outfile_name, *tmp_outfile_name, *llvm_ofile;
+	char *command, *ld_exe, *objfile;
+	char *outfile_name, *tmp_outfile_name, *llvm_ofile, *jit_ofile;
+	const char *ld_options;
 	const char *tool_prefix = acfg->aot_opts.tool_prefix ? acfg->aot_opts.tool_prefix : "";
 	char *ld_flags = acfg->aot_opts.ld_flags ? acfg->aot_opts.ld_flags : g_strdup("");
 
@@ -11877,11 +11874,14 @@ link_output (MonoAotCompile *acfg)
 		objfile = g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname);
 	}
 
-	if (acfg->llvm) {
+	if (acfg->aot_opts.llvm_only)
+		jit_ofile = g_strdup ("");
+	else
+		jit_ofile = g_strdup_printf ("%s.%s", acfg->tmpfname, AS_OBJECT_FILE_SUFFIX);
+	if (acfg->llvm)
 		llvm_ofile = g_strdup_printf ("\"%s\"", acfg->llvm_ofile);
-	} else {
+	else
 		llvm_ofile = g_strdup ("");
-	}
 
 	/* replace the ; flags separators with spaces */
 	g_strdelimit (ld_flags, ';', ' ');
@@ -11890,45 +11890,42 @@ link_output (MonoAotCompile *acfg)
 		ld_flags = g_strdup_printf ("%s %s", ld_flags, "-lstdc++");
 
 #ifdef TARGET_WIN32_MSVC
-	g_assert (tmp_outfile_name != NULL);
-	g_assert (objfile != NULL);
+	// FIXME: Unify this as well
 	command = g_strdup_printf ("\"%s%s\" %s %s /OUT:%s %s %s", tool_prefix, LD_NAME,
 			acfg->aot_opts.nodebug ? LD_OPTIONS : LD_DEBUG_OPTIONS, ld_flags, wrap_path (tmp_outfile_name), wrap_path (objfile), wrap_path (llvm_ofile));
-#elif defined(LD_NAME)
-	command = g_strdup_printf ("%s%s %s -o %s %s %s %s", tool_prefix, LD_NAME, LD_OPTIONS,
-		wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
-		wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
+#else
+#if defined(LD_NAME)
+	ld_exe = g_strdup_printf ("\"%s%s\"", tool_prefix, LD_NAME);
 #else
 	// Default (linux)
-	if (acfg->aot_opts.tool_prefix) {
+	if (acfg->aot_opts.tool_prefix)
 		/* Cross compiling */
-		command = g_strdup_printf ("\"%sld\" %s -shared -o %s %s %s %s", tool_prefix, LD_OPTIONS,
-								   wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
-								   wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
-	} else {
-		char *args = g_strdup_printf ("%s -shared -o %s %s %s %s", LD_OPTIONS,
-									  wrap_path (tmp_outfile_name), wrap_path (llvm_ofile),
-									  wrap_path (g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname)), ld_flags);
-
-		if (acfg->aot_opts.llvm_only) {
-			command = g_strdup_printf ("%s %s", acfg->aot_opts.clangxx, args);
-		} else {
-			command = g_strdup_printf ("\"%sld\" %s", tool_prefix, args);
-		}
-		g_free (args);
-	}
+		ld_exe = g_strdup_printf ("\"%sld\"", tool_prefix);
+	else if (acfg->aot_opts.llvm_only)
+		ld_exe = g_strdup_printf ("%s", acfg->aot_opts.clangxx);
+	else
+		ld_exe = g_strdup_printf ("\"%sld\"", tool_prefix);
 #endif
+#ifdef LD_OPTIONS
+	ld_options = LD_OPTIONS;
+#else
+	ld_options = "-shared";
+#endif
+
+	command = g_strdup_printf ("%s %s -o %s %s %s %s", ld_exe, ld_options,
+							   wrap_path (tmp_outfile_name), wrap_path (llvm_ofile), wrap_path (jit_ofile), ld_flags);
+	g_free (ld_exe);
+#endif
+	g_free (ld_flags);
+
 	aot_printf (acfg, "Executing the native linker: %s\n", command);
 	if (execute_system (command) != 0) {
 		g_free (tmp_outfile_name);
 		g_free (outfile_name);
 		g_free (command);
 		g_free (objfile);
-		g_free (ld_flags);
 		return 1;
 	}
-
-	g_free (command);
 
 	/*com = g_strdup_printf ("strip --strip-unneeded %s%s", acfg->image->name, MONO_SOLIB_EXT);
 	printf ("Stripping the binary: %s\n", com);
@@ -12507,7 +12504,8 @@ acfg_free (MonoAotCompile *acfg)
 {
 	int i;
 
-	mono_img_writer_destroy (acfg->w);
+	if (acfg->w)
+		mono_img_writer_destroy (acfg->w);
 	for (i = 0; i < acfg->nmethods; ++i)
 		if (acfg->cfgs [i])
 			mono_destroy_compile (acfg->cfgs [i]);
@@ -13560,28 +13558,29 @@ emit_aot_image (MonoAotCompile *acfg)
 	}
 #endif
 
-	if (acfg->aot_opts.asm_only && !acfg->aot_opts.llvm_only) {
-		if (acfg->aot_opts.outfile)
-			acfg->tmpfname = g_strdup_printf ("%s", acfg->aot_opts.outfile);
-		else
-			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->image->name);
-		acfg->fp = fopen (acfg->tmpfname, "w+");
-	} else {
-		if (strcmp (acfg->aot_opts.temp_path, "") == 0) {
-			int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
-			acfg->fp = fdopen (i, "w+");
-		} else {
-			acfg->tmpbasename = g_build_filename (acfg->aot_opts.temp_path, "temp", NULL);
-			acfg->tmpfname = g_strdup_printf ("%s.s", acfg->tmpbasename);
+	if (!acfg->aot_opts.llvm_only) {
+		if (acfg->aot_opts.asm_only) {
+			if (acfg->aot_opts.outfile)
+				acfg->tmpfname = g_strdup_printf ("%s", acfg->aot_opts.outfile);
+			else
+				acfg->tmpfname = g_strdup_printf ("%s.s", acfg->image->name);
 			acfg->fp = fopen (acfg->tmpfname, "w+");
+		} else {
+			if (strcmp (acfg->aot_opts.temp_path, "") == 0) {
+				int i = g_file_open_tmp ("mono_aot_XXXXXX", &acfg->tmpfname, NULL);
+				acfg->fp = fdopen (i, "w+");
+			} else {
+				acfg->tmpbasename = g_build_filename (acfg->aot_opts.temp_path, "temp", NULL);
+				acfg->tmpfname = g_strdup_printf ("%s.s", acfg->tmpbasename);
+				acfg->fp = fopen (acfg->tmpfname, "w+");
+			}
 		}
-	}
-	if (acfg->fp == 0 && !acfg->aot_opts.llvm_only) {
-		aot_printerrf (acfg, "Unable to open file '%s': %s\n", acfg->tmpfname, strerror (errno));
-		return 1;
-	}
-	if (acfg->fp)
+		if (acfg->fp == 0) {
+			aot_printerrf (acfg, "Unable to open file '%s': %s\n", acfg->tmpfname, strerror (errno));
+			return 1;
+		}
 		acfg->w = mono_img_writer_create (acfg->fp, FALSE);
+	}
 
 	/* Compute symbols for methods */
 	for (i = 0; i < acfg->nmethods; ++i) {
@@ -13697,6 +13696,9 @@ emit_aot_image (MonoAotCompile *acfg)
 	if (acfg->aot_opts.data_outfile)
 		fclose (acfg->data_outfile);
 
+	if (!acfg->aot_opts.stats)
+		aot_printf (acfg, "Compiled: %d/%d\n", acfg->stats.ccount, acfg->stats.mcount);
+
 #ifdef ENABLE_LLVM
 	if (acfg->llvm) {
 		gboolean res;
@@ -13713,9 +13715,6 @@ emit_aot_image (MonoAotCompile *acfg)
 
 	acfg->stats.gen_time = TV_ELAPSED (atv, btv);
 
-	if (!acfg->aot_opts.stats)
-		aot_printf (acfg, "Compiled: %d/%d\n", acfg->stats.ccount, acfg->stats.mcount);
-
 	TV_GETTIME (atv);
 	if (acfg->w) {
 		res = mono_img_writer_emit_writeout (acfg->w);
@@ -13729,6 +13728,15 @@ emit_aot_image (MonoAotCompile *acfg)
 			return res;
 		}
 	}
+
+	if (link_shared_library (acfg)) {
+		res = link_output (acfg);
+		if (res != 0) {
+			acfg_free (acfg);
+			return res;
+		}
+	}
+
 	TV_GETTIME (btv);
 	acfg->stats.link_time = TV_ELAPSED (atv, btv);
 
