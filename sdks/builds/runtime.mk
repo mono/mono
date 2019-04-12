@@ -87,6 +87,9 @@ setup-custom-$(1)-$(2):
 package-$(1)-$(2):
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/mono install
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/support install
+	mkdir -p $$(TOP)/sdks/out/$(1)-$(2)-$$(CONFIGURATION)/etc/mono
+	cp $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/data/config $$(TOP)/sdks/out/$(1)-$(2)-$$(CONFIGURATION)/etc/mono
+
 
 .PHONY: clean-$(1)-$(2)
 clean-$(1)-$(2):
