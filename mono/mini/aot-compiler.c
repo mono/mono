@@ -11727,12 +11727,13 @@ compile_methods (MonoAotCompile *acfg)
 }
 
 static int
+link_output (MonoAotCompile *acfg);
+
+static int
 compile_asm (MonoAotCompile *acfg)
 {
 	char *command, *objfile;
-	char *outfile_name, *tmp_outfile_name, *llvm_ofile;
 	const char *tool_prefix = acfg->aot_opts.tool_prefix ? acfg->aot_opts.tool_prefix : "";
-	char *ld_flags = acfg->aot_opts.ld_flags ? acfg->aot_opts.ld_flags : g_strdup("");
 
 #ifdef TARGET_WIN32_MSVC
 #define AS_OPTIONS "-c -x assembler"
@@ -11762,38 +11763,6 @@ compile_asm (MonoAotCompile *acfg)
 #define AS_OBJECT_FILE_SUFFIX "obj"
 #else
 #define AS_OBJECT_FILE_SUFFIX "o"
-#endif
-
-#if defined(sparc)
-#define LD_NAME "ld"
-#define LD_OPTIONS "-shared -G"
-#elif defined(__ppc__) && defined(TARGET_MACH)
-#define LD_NAME "gcc"
-#define LD_OPTIONS "-dynamiclib"
-#elif defined(TARGET_AMD64) && defined(TARGET_MACH)
-#define LD_NAME "clang"
-#define LD_OPTIONS "--shared"
-#elif defined(TARGET_WIN32_MSVC)
-#define LD_NAME "link.exe"
-#define LD_OPTIONS "/DLL /MACHINE:X64 /NOLOGO /INCREMENTAL:NO"
-#define LD_DEBUG_OPTIONS LD_OPTIONS " /DEBUG"
-#elif defined(TARGET_WIN32) && !defined(TARGET_ANDROID)
-#define LD_NAME "gcc"
-#define LD_OPTIONS "-shared"
-#elif defined(TARGET_X86) && defined(TARGET_MACH)
-#define LD_NAME "clang"
-#define LD_OPTIONS "-m32 -dynamiclib"
-#elif defined(TARGET_X86) && !defined(TARGET_MACH)
-#define LD_OPTIONS "-m elf_i386"
-#elif defined(TARGET_ARM) && !defined(TARGET_ANDROID)
-#define LD_NAME "gcc"
-#define LD_OPTIONS "--shared"
-#elif defined(TARGET_POWERPC64)
-#define LD_OPTIONS "-m elf64ppc"
-#endif
-
-#ifndef LD_OPTIONS
-#define LD_OPTIONS ""
 #endif
 
 	if (acfg->aot_opts.asm_only) {
@@ -11849,12 +11818,64 @@ compile_asm (MonoAotCompile *acfg)
 		return 0;
 	}
 
+	return link_output (acfg);
+}
+
+#if defined(sparc)
+#define LD_NAME "ld"
+#define LD_OPTIONS "-shared -G"
+#elif defined(__ppc__) && defined(TARGET_MACH)
+#define LD_NAME "gcc"
+#define LD_OPTIONS "-dynamiclib"
+#elif defined(TARGET_AMD64) && defined(TARGET_MACH)
+#define LD_NAME "clang"
+#define LD_OPTIONS "--shared"
+#elif defined(TARGET_WIN32_MSVC)
+#define LD_NAME "link.exe"
+#define LD_OPTIONS "/DLL /MACHINE:X64 /NOLOGO /INCREMENTAL:NO"
+#define LD_DEBUG_OPTIONS LD_OPTIONS " /DEBUG"
+#elif defined(TARGET_WIN32) && !defined(TARGET_ANDROID)
+#define LD_NAME "gcc"
+#define LD_OPTIONS "-shared"
+#elif defined(TARGET_X86) && defined(TARGET_MACH)
+#define LD_NAME "clang"
+#define LD_OPTIONS "-m32 -dynamiclib"
+#elif defined(TARGET_X86) && !defined(TARGET_MACH)
+#define LD_OPTIONS "-m elf_i386"
+#elif defined(TARGET_ARM) && !defined(TARGET_ANDROID)
+#define LD_NAME "gcc"
+#define LD_OPTIONS "--shared"
+#elif defined(TARGET_POWERPC64)
+#define LD_OPTIONS "-m elf64ppc"
+#endif
+
+#ifndef LD_OPTIONS
+#define LD_OPTIONS ""
+#endif
+
+static int
+link_output (MonoAotCompile *acfg)
+{
+	char *command, *objfile;
+	char *outfile_name, *tmp_outfile_name, *llvm_ofile;
+	const char *tool_prefix = acfg->aot_opts.tool_prefix ? acfg->aot_opts.tool_prefix : "";
+	char *ld_flags = acfg->aot_opts.ld_flags ? acfg->aot_opts.ld_flags : g_strdup("");
+
 	if (acfg->aot_opts.outfile)
 		outfile_name = g_strdup_printf ("%s", acfg->aot_opts.outfile);
 	else
 		outfile_name = g_strdup_printf ("%s%s", acfg->image->name, MONO_SOLIB_EXT);
 
 	tmp_outfile_name = g_strdup_printf ("%s.tmp", outfile_name);
+
+	if (acfg->aot_opts.static_link) {
+		if (acfg->aot_opts.outfile)
+			objfile = g_strdup_printf ("%s", acfg->aot_opts.outfile);
+		else
+			objfile = g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->image->name);
+	} else {
+		objfile = g_strdup_printf ("%s." AS_OBJECT_FILE_SUFFIX, acfg->tmpfname);
+	}
 
 	if (acfg->llvm) {
 		llvm_ofile = g_strdup_printf ("\"%s\"", acfg->llvm_ofile);
