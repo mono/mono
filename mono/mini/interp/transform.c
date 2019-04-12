@@ -2545,8 +2545,12 @@ static void
 interp_emit_ldsfld (TransformData *td, MonoClassField *field, MonoClass *field_class, int mt, MonoError *error)
 {
 	if (mono_class_field_is_special_static (field)) {
-		interp_add_ins (td, MINT_LDSFLD);
+		interp_add_ins (td, (mt == MINT_TYPE_VT) ? MINT_LDSSFLD_VT_SLOW : MINT_LDSSFLD_SLOW);
 		td->last_ins->data [0] = get_data_item_index (td, field);
+		if (mt == MINT_TYPE_VT) {
+			int size = mono_class_value_size (field_class, NULL);
+			WRITE32_INS(td->last_ins, 1, &size);
+		}
 	} else {
 		MonoVTable *vtable = mono_class_vtable_checked (td->rtm->domain, field->parent, error);
 		return_if_nok (error);
@@ -2566,8 +2570,12 @@ static void
 interp_emit_stsfld (TransformData *td, MonoClassField *field, MonoClass *field_class, int mt, MonoError *error)
 {
 	if (mono_class_field_is_special_static (field)) {
-		interp_add_ins (td, MINT_STSFLD);
+		interp_add_ins (td, (mt == MINT_TYPE_VT) ? MINT_STSSFLD_VT_SLOW : MINT_STSSFLD_SLOW);
 		td->last_ins->data [0] = get_data_item_index (td, field);
+		if (mt == MINT_TYPE_VT) {
+			int size = mono_class_value_size (field_class, NULL);
+			WRITE32_INS(td->last_ins, 1, &size);
+		}
 	} else {
 		MonoVTable *vtable = mono_class_vtable_checked (td->rtm->domain, field->parent, error);
 		return_if_nok (error);
