@@ -1210,7 +1210,7 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 
 	if (signal_ret == MONO_W32HANDLE_WAIT_RET_TOO_MANY_POSTS ||
 		signal_ret == MONO_W32HANDLE_WAIT_RET_NOT_OWNED_BY_CALLER) {
-		ret = signal_ret;
+		ret = (MonoW32HandleWaitRet) signal_ret;
 		goto done;
 	}
 
