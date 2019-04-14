@@ -370,7 +370,7 @@ static void emit_dbg_info (MonoLLVMModule *module, const char *filename, const c
 static void emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *exc_type, LLVMValueRef cmp);
 static LLVMValueRef get_intrins_by_name (EmitContext *ctx, const char *name);
 static LLVMValueRef get_intrins (EmitContext *ctx, int id);
-static void decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame);
+static void llvm_jit_finalize_method (EmitContext *ctx);
 
 static inline void
 set_failure (EmitContext *ctx, const char *message)
@@ -8162,56 +8162,7 @@ after_codegen:
 #endif
 	} else {
 		//LLVMVerifyFunction (method, 0);
-#if LLVM_API_VERSION > 100
-		MonoDomain *domain = mono_domain_get ();
-		MonoJitDomainInfo *domain_info;
-		int nvars = g_hash_table_size (ctx->jit_callees);
-		LLVMValueRef *callee_vars = g_new0 (LLVMValueRef, nvars); 
-		gpointer *callee_addrs = g_new0 (gpointer, nvars);
-		GHashTableIter iter;
-		LLVMValueRef var;
-		MonoMethod *callee;
-		gpointer eh_frame;
-
-		/*
-		 * Compute the addresses of the LLVM globals pointing to the
-		 * methods called by the current method. Pass it to the trampoline
-		 * code so it can update them after their corresponding method was
-		 * compiled.
-		 */
-		g_hash_table_iter_init (&iter, ctx->jit_callees);
-		i = 0;
-		while (g_hash_table_iter_next (&iter, NULL, (void**)&var))
-			callee_vars [i ++] = var;
-
-		cfg->native_code = (guint8*)mono_llvm_compile_method (ctx->module->mono_ee, ctx->lmethod, nvars, callee_vars, callee_addrs, &eh_frame);
-
-		decode_llvm_eh_info (ctx, eh_frame);
-
-		mono_domain_lock (domain);
-		domain_info = domain_jit_info (domain);
-		if (!domain_info->llvm_jit_callees)
-			domain_info->llvm_jit_callees = g_hash_table_new (NULL, NULL);
-		g_hash_table_iter_init (&iter, ctx->jit_callees);
-		i = 0;
-		while (g_hash_table_iter_next (&iter, (void**)&callee, (void**)&var)) {
-			GSList *addrs = (GSList*)g_hash_table_lookup (domain_info->llvm_jit_callees, callee);
-			addrs = g_slist_prepend (addrs, callee_addrs [i]);
-			g_hash_table_insert (domain_info->llvm_jit_callees, callee, addrs);
-			i ++;
-		}
-		mono_domain_unlock (domain);
-#else
-		mono_llvm_optimize_method (ctx->module->mono_ee, ctx->lmethod);
-
-		if (cfg->verbose_level > 1)
-			mono_llvm_dump_value (ctx->lmethod);
-
-		cfg->native_code = (unsigned char*)LLVMGetPointerToGlobal (ctx->module->ee, ctx->lmethod);
-
-		/* Set by emit_cb */
-		g_assert (cfg->code_len);
-#endif
+		llvm_jit_finalize_method (ctx);
 	}
 
 	if (ctx->module->method_to_lmethod)
@@ -8348,236 +8299,6 @@ mono_llvm_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, 0, FALSE);
 		}
 	}
-}
-
-static unsigned char*
-alloc_cb (LLVMValueRef function, int size)
-{
-	MonoCompile *cfg;
-
-	cfg = (MonoCompile*)mono_native_tls_get_value (current_cfg_tls_id);
-
-	if (cfg) {
-		// FIXME: dynamic
-		return (unsigned char*)mono_domain_code_reserve (cfg->domain, size);
-	} else {
-		return (unsigned char*)mono_domain_code_reserve (mono_domain_get (), size);
-	}
-}
-
-static void
-emitted_cb (LLVMValueRef function, void *start, void *end)
-{
-	MonoCompile *cfg;
-
-	cfg = (MonoCompile*)mono_native_tls_get_value (current_cfg_tls_id);
-	g_assert (cfg);
-	cfg->code_len = (guint8*)end - (guint8*)start;
-}
-
-static void
-exception_cb (void *data)
-{
-	MonoCompile *cfg;
-	MonoJitExceptionInfo *ei;
-	guint32 ei_len, i, j, nested_len, nindex;
-	gpointer *type_info;
-	int this_reg, this_offset;
-
-	cfg = (MonoCompile*)mono_native_tls_get_value (current_cfg_tls_id);
-	g_assert (cfg);
-
-	/*
-	 * data points to a DWARF FDE structure, convert it to our unwind format and
-	 * save it.
-	 * An alternative would be to save it directly, and modify our unwinder to work
-	 * with it.
-	 */
-	cfg->encoded_unwind_ops = mono_unwind_decode_fde ((guint8*)data, &cfg->encoded_unwind_ops_len, NULL, &ei, &ei_len, &type_info, &this_reg, &this_offset);
-	if (cfg->verbose_level > 1)
-		mono_print_unwind_info (cfg->encoded_unwind_ops, cfg->encoded_unwind_ops_len);
-
-	/* Count nested clauses */
-	nested_len = 0;
-	for (i = 0; i < ei_len; ++i) {
-		gint32 cindex1 = *(gint32*)type_info [i];
-		MonoExceptionClause *clause1 = &cfg->header->clauses [cindex1];
-
-		for (j = 0; j < cfg->header->num_clauses; ++j) {
-			int cindex2 = j;
-			MonoExceptionClause *clause2 = &cfg->header->clauses [cindex2];
-
-			if (cindex1 != cindex2 && clause1->try_offset >= clause2->try_offset && clause1->handler_offset <= clause2->handler_offset) {
-				nested_len ++;
-			}
-		}
-	}
-
-	cfg->llvm_ex_info = (MonoJitExceptionInfo*)mono_mempool_alloc0 (cfg->mempool, (ei_len + nested_len) * sizeof (MonoJitExceptionInfo));
-	cfg->llvm_ex_info_len = ei_len + nested_len;
-	memcpy (cfg->llvm_ex_info, ei, ei_len * sizeof (MonoJitExceptionInfo));
-	/* Fill the rest of the information from the type info */
-	for (i = 0; i < ei_len; ++i) {
-		gint32 clause_index = *(gint32*)type_info [i];
-		MonoExceptionClause *clause = &cfg->header->clauses [clause_index];
-
-		cfg->llvm_ex_info [i].flags = clause->flags;
-		cfg->llvm_ex_info [i].data.catch_class = clause->data.catch_class;
-		cfg->llvm_ex_info [i].clause_index = clause_index;
-	}
-
-	/*
-	 * For nested clauses, the LLVM produced exception info associates the try interval with
-	 * the innermost handler, while mono expects it to be associated with all nesting clauses.
-	 * So add new clauses which use the IL info (catch class etc.) from the nesting clause,
-	 * and everything else from the nested clause.
-	 */
-	nindex = ei_len;
-	for (i = 0; i < ei_len; ++i) {
-		gint32 cindex1 = *(gint32*)type_info [i];
-		MonoExceptionClause *clause1 = &cfg->header->clauses [cindex1];
-
-		for (j = 0; j < cfg->header->num_clauses; ++j) {
-			int cindex2 = j;
-			MonoExceptionClause *clause2 = &cfg->header->clauses [cindex2];
-			MonoJitExceptionInfo *nesting_ei, *nested_ei;
-
-			if (cindex1 != cindex2 && clause1->try_offset >= clause2->try_offset && clause1->handler_offset <= clause2->handler_offset) {
-				/* clause1 is the nested clause */
-				nested_ei = &cfg->llvm_ex_info [i];
-				nesting_ei = &cfg->llvm_ex_info [nindex];
-				nindex ++;
-
-				memcpy (nesting_ei, nested_ei, sizeof (MonoJitExceptionInfo));
-
-				nesting_ei->flags = clause2->flags;
-				nesting_ei->data.catch_class = clause2->data.catch_class;
-				nesting_ei->clause_index = cindex2;
-			}
-		}
-	}
-	g_assert (nindex == ei_len + nested_len);
-	cfg->llvm_this_reg = this_reg;
-	cfg->llvm_this_offset = this_offset;
-
-	/* type_info [i] is cfg mempool allocated, no need to free it */
-
-	g_free (ei);
-	g_free (type_info);
-}
-
-#if LLVM_API_VERSION > 100
-/*
- * decode_llvm_eh_info:
- *
- *   Decode the EH table emitted by llvm in jit mode, and store
- * the result into cfg.
- */
-static void
-decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame)
-{
-	MonoCompile *cfg = ctx->cfg;
-	guint8 *cie, *fde;
-	int fde_len;
-	MonoLLVMFDEInfo info;
-	MonoJitExceptionInfo *ei;
-	guint8 *p = (guint8*)eh_frame;
-	int version, fde_count, fde_offset;
-	guint32 ei_len, i, nested_len;
-	gpointer *type_info;
-	gint32 *table;
-	guint8 *unw_info;
-
-	/*
-	 * Decode the one element EH table emitted by the MonoException class
-	 * in llvm.
-	 */
-
-	/* Similar to decode_llvm_mono_eh_frame () in aot-runtime.c */
-
-	version = *p;
-	g_assert (version == 3);
-	p ++;
-	p ++;
-	p = (guint8 *)ALIGN_PTR_TO (p, 4);
-
-	fde_count = *(guint32*)p;
-	p += 4;
-	table = (gint32*)p;
-
-	g_assert (fde_count <= 2);
-
-	/* The first entry is the real method */
-	g_assert (table [0] == 1);
-	fde_offset = table [1];
-	table += fde_count * 2;
-	/* Extra entry */
-	cfg->code_len = table [0];
-	fde_len = table [1] - fde_offset;
-	table += 2;
-
-	fde = (guint8*)eh_frame + fde_offset;
-	cie = (guint8*)table;
-
-	/* Compute lengths */
-	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, cfg->native_code, &info, NULL, NULL, NULL);
-
-	ei = (MonoJitExceptionInfo *)g_malloc0 (info.ex_info_len * sizeof (MonoJitExceptionInfo));
-	type_info = (gpointer *)g_malloc0 (info.ex_info_len * sizeof (gpointer));
-	unw_info = (guint8*)g_malloc0 (info.unw_info_len);
-
-	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, cfg->native_code, &info, ei, type_info, unw_info);
-
-	cfg->encoded_unwind_ops = unw_info;
-	cfg->encoded_unwind_ops_len = info.unw_info_len;
-	if (cfg->verbose_level > 1)
-		mono_print_unwind_info (cfg->encoded_unwind_ops, cfg->encoded_unwind_ops_len);
-	if (info.this_reg != -1) {
-		cfg->llvm_this_reg = info.this_reg;
-		cfg->llvm_this_offset = info.this_offset;
-	}
-
-	ei_len = info.ex_info_len;
-
-	// Nested clauses are currently disabled
-	nested_len = 0;
-
-	cfg->llvm_ex_info = (MonoJitExceptionInfo*)mono_mempool_alloc0 (cfg->mempool, (ei_len + nested_len) * sizeof (MonoJitExceptionInfo));
-	cfg->llvm_ex_info_len = ei_len + nested_len;
-	memcpy (cfg->llvm_ex_info, ei, ei_len * sizeof (MonoJitExceptionInfo));
-	/* Fill the rest of the information from the type info */
-	for (i = 0; i < ei_len; ++i) {
-		gint32 clause_index = *(gint32*)type_info [i];
-		MonoExceptionClause *clause = &cfg->header->clauses [clause_index];
-
-		cfg->llvm_ex_info [i].flags = clause->flags;
-		cfg->llvm_ex_info [i].data.catch_class = clause->data.catch_class;
-		cfg->llvm_ex_info [i].clause_index = clause_index;
-	}
-}
-#endif
-
-static char*
-dlsym_cb (const char *name, void **symbol)
-{
-	MonoDl *current;
-	char *err;
-
-	err = NULL;
-	if (!strcmp (name, "__bzero")) {
-		*symbol = (void*)bzero;
-	} else {
-		current = mono_dl_open (NULL, 0, NULL);
-		g_assert (current);
-
-		err = mono_dl_symbol (current, name, symbol);
-
-		mono_dl_close (current);
-	}
-#ifdef MONO_ARCH_HAVE_CREATE_LLVM_NATIVE_THUNK
-	*symbol = (char*)mono_arch_create_llvm_native_thunk (mono_domain_get (), (guint8*)(*symbol));
-#endif
-	return err;
 }
 
 static inline void
@@ -9089,52 +8810,6 @@ mono_llvm_init (void)
 	for (i = 0; i < INTRINS_NUM; ++i)
 		g_hash_table_insert (h, (gpointer)intrinsics [i].name, GINT_TO_POINTER (intrinsics [i].id + 1));
 	intrins_name_to_id = h;
-}
-
-static void
-init_jit_module (MonoDomain *domain)
-{
-	MonoJitDomainInfo *dinfo;
-	MonoLLVMModule *module;
-	char *name;
-
-	dinfo = domain_jit_info (domain);
-	if (dinfo->llvm_module)
-		return;
-
-	mono_loader_lock ();
-
-	if (dinfo->llvm_module) {
-		mono_loader_unlock ();
-		return;
-	}
-
-	module = g_new0 (MonoLLVMModule, 1);
-
-	name = g_strdup_printf ("mono-%s", domain->friendly_name);
-	module->lmodule = LLVMModuleCreateWithName (name);
-	module->context = LLVMGetGlobalContext ();
-
-	module->mono_ee = (MonoEERef*)mono_llvm_create_ee (LLVMCreateModuleProviderForExistingModule (module->lmodule), alloc_cb, emitted_cb, exception_cb, dlsym_cb, &module->ee);
-
-	add_intrinsics (module->lmodule);
-	add_types (module);
-
-	module->llvm_types = g_hash_table_new (NULL, NULL);
-
-#if LLVM_API_VERSION < 100
-	MonoJitICallInfo *info;
-
-	info = mono_find_jit_icall_by_name ("llvm_resume_unwind_trampoline");
-	g_assert (info);
-	LLVMAddGlobalMapping (module->ee, LLVMGetNamedFunction (module->lmodule, "llvm_resume_unwind_trampoline"), (void*)info->func);
-#endif
-
-	mono_memory_barrier ();
-
-	dinfo->llvm_module = module;
-
-	mono_loader_unlock ();
 }
 
 void
@@ -10212,3 +9887,343 @@ default_mono_llvm_unhandled_exception (void)
 }
 
 #endif /* DISABLE_JIT */
+
+#if !defined(DISABLE_JIT) && !defined(MONO_CROSS_COMPILE)
+
+/* LLVM JIT support */
+
+static unsigned char*
+alloc_cb (LLVMValueRef function, int size)
+{
+	MonoCompile *cfg;
+
+	cfg = (MonoCompile*)mono_native_tls_get_value (current_cfg_tls_id);
+
+	if (cfg) {
+		// FIXME: dynamic
+		return (unsigned char*)mono_domain_code_reserve (cfg->domain, size);
+	} else {
+		return (unsigned char*)mono_domain_code_reserve (mono_domain_get (), size);
+	}
+}
+
+static void
+emitted_cb (LLVMValueRef function, void *start, void *end)
+{
+	MonoCompile *cfg;
+
+	cfg = (MonoCompile*)mono_native_tls_get_value (current_cfg_tls_id);
+	g_assert (cfg);
+	cfg->code_len = (guint8*)end - (guint8*)start;
+}
+
+static void
+exception_cb (void *data)
+{
+	MonoCompile *cfg;
+	MonoJitExceptionInfo *ei;
+	guint32 ei_len, i, j, nested_len, nindex;
+	gpointer *type_info;
+	int this_reg, this_offset;
+
+	cfg = (MonoCompile*)mono_native_tls_get_value (current_cfg_tls_id);
+	g_assert (cfg);
+
+	/*
+	 * data points to a DWARF FDE structure, convert it to our unwind format and
+	 * save it.
+	 * An alternative would be to save it directly, and modify our unwinder to work
+	 * with it.
+	 */
+	cfg->encoded_unwind_ops = mono_unwind_decode_fde ((guint8*)data, &cfg->encoded_unwind_ops_len, NULL, &ei, &ei_len, &type_info, &this_reg, &this_offset);
+	if (cfg->verbose_level > 1)
+		mono_print_unwind_info (cfg->encoded_unwind_ops, cfg->encoded_unwind_ops_len);
+
+	/* Count nested clauses */
+	nested_len = 0;
+	for (i = 0; i < ei_len; ++i) {
+		gint32 cindex1 = *(gint32*)type_info [i];
+		MonoExceptionClause *clause1 = &cfg->header->clauses [cindex1];
+
+		for (j = 0; j < cfg->header->num_clauses; ++j) {
+			int cindex2 = j;
+			MonoExceptionClause *clause2 = &cfg->header->clauses [cindex2];
+
+			if (cindex1 != cindex2 && clause1->try_offset >= clause2->try_offset && clause1->handler_offset <= clause2->handler_offset) {
+				nested_len ++;
+			}
+		}
+	}
+
+	cfg->llvm_ex_info = (MonoJitExceptionInfo*)mono_mempool_alloc0 (cfg->mempool, (ei_len + nested_len) * sizeof (MonoJitExceptionInfo));
+	cfg->llvm_ex_info_len = ei_len + nested_len;
+	memcpy (cfg->llvm_ex_info, ei, ei_len * sizeof (MonoJitExceptionInfo));
+	/* Fill the rest of the information from the type info */
+	for (i = 0; i < ei_len; ++i) {
+		gint32 clause_index = *(gint32*)type_info [i];
+		MonoExceptionClause *clause = &cfg->header->clauses [clause_index];
+
+		cfg->llvm_ex_info [i].flags = clause->flags;
+		cfg->llvm_ex_info [i].data.catch_class = clause->data.catch_class;
+		cfg->llvm_ex_info [i].clause_index = clause_index;
+	}
+
+	/*
+	 * For nested clauses, the LLVM produced exception info associates the try interval with
+	 * the innermost handler, while mono expects it to be associated with all nesting clauses.
+	 * So add new clauses which use the IL info (catch class etc.) from the nesting clause,
+	 * and everything else from the nested clause.
+	 */
+	nindex = ei_len;
+	for (i = 0; i < ei_len; ++i) {
+		gint32 cindex1 = *(gint32*)type_info [i];
+		MonoExceptionClause *clause1 = &cfg->header->clauses [cindex1];
+
+		for (j = 0; j < cfg->header->num_clauses; ++j) {
+			int cindex2 = j;
+			MonoExceptionClause *clause2 = &cfg->header->clauses [cindex2];
+			MonoJitExceptionInfo *nesting_ei, *nested_ei;
+
+			if (cindex1 != cindex2 && clause1->try_offset >= clause2->try_offset && clause1->handler_offset <= clause2->handler_offset) {
+				/* clause1 is the nested clause */
+				nested_ei = &cfg->llvm_ex_info [i];
+				nesting_ei = &cfg->llvm_ex_info [nindex];
+				nindex ++;
+
+				memcpy (nesting_ei, nested_ei, sizeof (MonoJitExceptionInfo));
+
+				nesting_ei->flags = clause2->flags;
+				nesting_ei->data.catch_class = clause2->data.catch_class;
+				nesting_ei->clause_index = cindex2;
+			}
+		}
+	}
+	g_assert (nindex == ei_len + nested_len);
+	cfg->llvm_this_reg = this_reg;
+	cfg->llvm_this_offset = this_offset;
+
+	/* type_info [i] is cfg mempool allocated, no need to free it */
+
+	g_free (ei);
+	g_free (type_info);
+}
+
+static char*
+dlsym_cb (const char *name, void **symbol)
+{
+	MonoDl *current;
+	char *err;
+
+	err = NULL;
+	if (!strcmp (name, "__bzero")) {
+		*symbol = (void*)bzero;
+	} else {
+		current = mono_dl_open (NULL, 0, NULL);
+		g_assert (current);
+
+		err = mono_dl_symbol (current, name, symbol);
+
+		mono_dl_close (current);
+	}
+#ifdef MONO_ARCH_HAVE_CREATE_LLVM_NATIVE_THUNK
+	*symbol = (char*)mono_arch_create_llvm_native_thunk (mono_domain_get (), (guint8*)(*symbol));
+#endif
+	return err;
+}
+
+#if LLVM_API_VERSION > 100
+/*
+ * decode_llvm_eh_info:
+ *
+ *   Decode the EH table emitted by llvm in jit mode, and store
+ * the result into cfg.
+ */
+static void
+decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame)
+{
+	MonoCompile *cfg = ctx->cfg;
+	guint8 *cie, *fde;
+	int fde_len;
+	MonoLLVMFDEInfo info;
+	MonoJitExceptionInfo *ei;
+	guint8 *p = (guint8*)eh_frame;
+	int version, fde_count, fde_offset;
+	guint32 ei_len, i, nested_len;
+	gpointer *type_info;
+	gint32 *table;
+	guint8 *unw_info;
+
+	/*
+	 * Decode the one element EH table emitted by the MonoException class
+	 * in llvm.
+	 */
+
+	/* Similar to decode_llvm_mono_eh_frame () in aot-runtime.c */
+
+	version = *p;
+	g_assert (version == 3);
+	p ++;
+	p ++;
+	p = (guint8 *)ALIGN_PTR_TO (p, 4);
+
+	fde_count = *(guint32*)p;
+	p += 4;
+	table = (gint32*)p;
+
+	g_assert (fde_count <= 2);
+
+	/* The first entry is the real method */
+	g_assert (table [0] == 1);
+	fde_offset = table [1];
+	table += fde_count * 2;
+	/* Extra entry */
+	cfg->code_len = table [0];
+	fde_len = table [1] - fde_offset;
+	table += 2;
+
+	fde = (guint8*)eh_frame + fde_offset;
+	cie = (guint8*)table;
+
+	/* Compute lengths */
+	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, cfg->native_code, &info, NULL, NULL, NULL);
+
+	ei = (MonoJitExceptionInfo *)g_malloc0 (info.ex_info_len * sizeof (MonoJitExceptionInfo));
+	type_info = (gpointer *)g_malloc0 (info.ex_info_len * sizeof (gpointer));
+	unw_info = (guint8*)g_malloc0 (info.unw_info_len);
+
+	mono_unwind_decode_llvm_mono_fde (fde, fde_len, cie, cfg->native_code, &info, ei, type_info, unw_info);
+
+	cfg->encoded_unwind_ops = unw_info;
+	cfg->encoded_unwind_ops_len = info.unw_info_len;
+	if (cfg->verbose_level > 1)
+		mono_print_unwind_info (cfg->encoded_unwind_ops, cfg->encoded_unwind_ops_len);
+	if (info.this_reg != -1) {
+		cfg->llvm_this_reg = info.this_reg;
+		cfg->llvm_this_offset = info.this_offset;
+	}
+
+	ei_len = info.ex_info_len;
+
+	// Nested clauses are currently disabled
+	nested_len = 0;
+
+	cfg->llvm_ex_info = (MonoJitExceptionInfo*)mono_mempool_alloc0 (cfg->mempool, (ei_len + nested_len) * sizeof (MonoJitExceptionInfo));
+	cfg->llvm_ex_info_len = ei_len + nested_len;
+	memcpy (cfg->llvm_ex_info, ei, ei_len * sizeof (MonoJitExceptionInfo));
+	/* Fill the rest of the information from the type info */
+	for (i = 0; i < ei_len; ++i) {
+		gint32 clause_index = *(gint32*)type_info [i];
+		MonoExceptionClause *clause = &cfg->header->clauses [clause_index];
+
+		cfg->llvm_ex_info [i].flags = clause->flags;
+		cfg->llvm_ex_info [i].data.catch_class = clause->data.catch_class;
+		cfg->llvm_ex_info [i].clause_index = clause_index;
+	}
+}
+#endif
+
+static void
+init_jit_module (MonoDomain *domain)
+{
+	MonoJitDomainInfo *dinfo;
+	MonoLLVMModule *module;
+	char *name;
+
+	dinfo = domain_jit_info (domain);
+	if (dinfo->llvm_module)
+		return;
+
+	mono_loader_lock ();
+
+	if (dinfo->llvm_module) {
+		mono_loader_unlock ();
+		return;
+	}
+
+	module = g_new0 (MonoLLVMModule, 1);
+
+	name = g_strdup_printf ("mono-%s", domain->friendly_name);
+	module->lmodule = LLVMModuleCreateWithName (name);
+	module->context = LLVMGetGlobalContext ();
+
+	module->mono_ee = (MonoEERef*)mono_llvm_create_ee (LLVMCreateModuleProviderForExistingModule (module->lmodule), alloc_cb, emitted_cb, exception_cb, dlsym_cb, &module->ee);
+
+	add_intrinsics (module->lmodule);
+	add_types (module);
+
+	module->llvm_types = g_hash_table_new (NULL, NULL);
+
+#if LLVM_API_VERSION < 100
+	MonoJitICallInfo *info;
+
+	info = mono_find_jit_icall_by_name ("llvm_resume_unwind_trampoline");
+	g_assert (info);
+	LLVMAddGlobalMapping (module->ee, LLVMGetNamedFunction (module->lmodule, "llvm_resume_unwind_trampoline"), (void*)info->func);
+#endif
+
+	mono_memory_barrier ();
+
+	dinfo->llvm_module = module;
+
+	mono_loader_unlock ();
+}
+
+static void
+llvm_jit_finalize_method (EmitContext *ctx)
+{
+	MonoCompile *cfg = ctx->cfg;
+
+#if LLVM_API_VERSION > 100
+	MonoDomain *domain = mono_domain_get ();
+	MonoJitDomainInfo *domain_info;
+	int nvars = g_hash_table_size (ctx->jit_callees);
+	LLVMValueRef *callee_vars = g_new0 (LLVMValueRef, nvars); 
+	gpointer *callee_addrs = g_new0 (gpointer, nvars);
+	GHashTableIter iter;
+	LLVMValueRef var;
+	MonoMethod *callee;
+	gpointer eh_frame;
+	int i;
+
+	/*
+	 * Compute the addresses of the LLVM globals pointing to the
+	 * methods called by the current method. Pass it to the trampoline
+	 * code so it can update them after their corresponding method was
+	 * compiled.
+	 */
+	g_hash_table_iter_init (&iter, ctx->jit_callees);
+	i = 0;
+	while (g_hash_table_iter_next (&iter, NULL, (void**)&var))
+		callee_vars [i ++] = var;
+
+	cfg->native_code = (guint8*)mono_llvm_compile_method (ctx->module->mono_ee, ctx->lmethod, nvars, callee_vars, callee_addrs, &eh_frame);
+
+	decode_llvm_eh_info (ctx, eh_frame);
+
+	mono_domain_lock (domain);
+	domain_info = domain_jit_info (domain);
+	if (!domain_info->llvm_jit_callees)
+		domain_info->llvm_jit_callees = g_hash_table_new (NULL, NULL);
+	g_hash_table_iter_init (&iter, ctx->jit_callees);
+	i = 0;
+	while (g_hash_table_iter_next (&iter, (void**)&callee, (void**)&var)) {
+		GSList *addrs = (GSList*)g_hash_table_lookup (domain_info->llvm_jit_callees, callee);
+		addrs = g_slist_prepend (addrs, callee_addrs [i]);
+		g_hash_table_insert (domain_info->llvm_jit_callees, callee, addrs);
+		i ++;
+	}
+	mono_domain_unlock (domain);
+#else
+	mono_llvm_optimize_method (ctx->module->mono_ee, ctx->lmethod);
+
+	if (cfg->verbose_level > 1)
+		mono_llvm_dump_value (ctx->lmethod);
+
+	cfg->native_code = (unsigned char*)LLVMGetPointerToGlobal (ctx->module->ee, ctx->lmethod);
+
+	/* Set by emit_cb */
+	g_assert (cfg->code_len);
+#endif
+}
+
+#endif
