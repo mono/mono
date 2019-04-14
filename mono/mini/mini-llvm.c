@@ -1974,9 +1974,8 @@ emit_jit_callee (EmitContext *ctx, const char *name, LLVMTypeRef llvm_sig, gpoin
 	LLVMValueRef callee = LLVMBuildLoad (ctx->builder, tramp_var, "");
 	return callee;
 #else
-	LLVMValueRef callee = LLVMAddFunction (ctx->lmodule, "", llvm_sig);
-	LLVMAddGlobalMapping (ctx->module->ee, callee, target);
-	return callee;
+	g_assert_not_reached ();
+	return NULL;
 #endif
 }
 
@@ -3802,20 +3801,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 				}
 				callee = LLVMBuildLoad (builder, tramp_var, "");
 #else
-				target =
-					mono_create_jit_trampoline (mono_domain_get (),
-								    call->method, error);
-				if (!is_ok (error)) {
-					g_free (name);
-					set_failure (ctx, mono_error_get_message (error));
-					mono_error_cleanup (error);
-					return;
-				}
-
-				callee = LLVMAddFunction (ctx->lmodule, name, llvm_sig);
-				g_free (name);
-
-				LLVMAddGlobalMapping (ctx->module->ee, callee, target);
+				g_assert_not_reached ();
 #endif
 			}
 		}
@@ -3883,24 +3869,7 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 					g_assert_not_reached ();
 				}
 #else
-				callee = LLVMAddFunction (ctx->lmodule, "", llvm_sig);
-				target = NULL;
-				if (cfg->abs_patches) {
-					MonoJumpInfo *abs_ji = (MonoJumpInfo*)g_hash_table_lookup (cfg->abs_patches, call->fptr);
-					if (abs_ji) {
-						ERROR_DECL (error);
-
-						/*
-						 * FIXME: Some trampolines might have
-						 * their own calling convention on some platforms.
-						 */
-						target = mono_resolve_patch_target (cfg->method, cfg->domain, NULL, abs_ji, FALSE, error);
-						mono_error_assert_ok (error);
-						LLVMAddGlobalMapping (ctx->module->ee, callee, target);
-					}
-				}
-				if (!target)
-					LLVMAddGlobalMapping (ctx->module->ee, callee, (gpointer)call->fptr);
+				g_assert_not_reached ();
 #endif
 			}
 		}
@@ -4578,12 +4547,7 @@ emit_handler_start (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef builder
 		LLVMBuildRet (builder2, LLVMConstInt (LLVMInt32Type (), 0, FALSE));
 		LLVMDisposeBuilder (builder2);
 #else
-		static gint32 mapping_inited;
-
-		personality = LLVMGetNamedFunction (lmodule, "mono_personality");
-
-		if (mono_atomic_cas_i32 (&mapping_inited, 1, 0) == 0)
-			LLVMAddGlobalMapping (ctx->module->ee, personality, (gpointer)mono_personality);
+		g_assert_not_reached ();
 #endif
 	}
 
@@ -4611,19 +4575,7 @@ emit_handler_start (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef builder
 		type_info = LLVMAddGlobal (lmodule, LLVMInt32Type (), ti_name);
 		LLVMSetInitializer (type_info, LLVMConstInt (LLVMInt32Type (), clause_index, FALSE));
 #else
-		gint32 *ti;
-
-		/*
-		 * After the cfg mempool is freed, the type info will point to stale memory,
-		 * but this is not a problem, since we decode it once in exception_cb during
-		 * compilation.
-		 */
-		ti = (gint32*)mono_mempool_alloc (cfg->mempool, sizeof (gint32));
-		*(gint32*)ti = clause_index;
-
-		type_info = LLVMAddGlobal (lmodule, i8ptr, ti_name);
-
-		LLVMAddGlobalMapping (ctx->module->ee, type_info, ti);
+		g_assert_not_reached ();
 #endif
 	}
 
@@ -7286,7 +7238,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 					LLVMTypeRef icall_sig = LLVMFunctionType (LLVMVoidType (), NULL, 0, FALSE);
 					callee = emit_jit_callee (ctx, "llvm_resume_unwind_trampoline", icall_sig, target);
 #else
-					callee = LLVMGetNamedFunction (ctx->lmodule, "llvm_resume_unwind_trampoline");
+					g_assert_not_reached ();
+					callee = NULL;
 #endif
 				}
 				LLVMBuildCall (builder, callee, NULL, 0, "");
@@ -7735,11 +7688,7 @@ emit_method_inner (EmitContext *ctx)
 			}
 		}
 	} else {
-#if LLVM_API_VERSION > 100
 		LLVMSetLinkage (method, LLVMExternalLinkage);
-#else
-		LLVMSetLinkage (method, LLVMPrivateLinkage);
-#endif
 	}
 
 	if (cfg->method->save_lmf && !cfg->llvm_only) {
@@ -10031,7 +9980,6 @@ dlsym_cb (const char *name, void **symbol)
 	return err;
 }
 
-#if LLVM_API_VERSION > 100
 /*
  * decode_llvm_eh_info:
  *
@@ -10120,7 +10068,6 @@ decode_llvm_eh_info (EmitContext *ctx, gpointer eh_frame)
 		cfg->llvm_ex_info [i].clause_index = clause_index;
 	}
 }
-#endif
 
 static void
 init_jit_module (MonoDomain *domain)
@@ -10152,14 +10099,6 @@ init_jit_module (MonoDomain *domain)
 	add_types (module);
 
 	module->llvm_types = g_hash_table_new (NULL, NULL);
-
-#if LLVM_API_VERSION < 100
-	MonoJitICallInfo *info;
-
-	info = mono_find_jit_icall_by_name ("llvm_resume_unwind_trampoline");
-	g_assert (info);
-	LLVMAddGlobalMapping (module->ee, LLVMGetNamedFunction (module->lmodule, "llvm_resume_unwind_trampoline"), (void*)info->func);
-#endif
 
 	mono_memory_barrier ();
 
@@ -10214,15 +10153,7 @@ llvm_jit_finalize_method (EmitContext *ctx)
 	}
 	mono_domain_unlock (domain);
 #else
-	mono_llvm_optimize_method (ctx->module->mono_ee, ctx->lmethod);
-
-	if (cfg->verbose_level > 1)
-		mono_llvm_dump_value (ctx->lmethod);
-
-	cfg->native_code = (unsigned char*)LLVMGetPointerToGlobal (ctx->module->ee, ctx->lmethod);
-
-	/* Set by emit_cb */
-	g_assert (cfg->code_len);
+	g_assert_not_reached ();
 #endif
 }
 
