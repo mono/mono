@@ -118,8 +118,8 @@
       <Compile Include="System\Buffer.cs" />
       <Compile Include="System\DefaultBinder.cs" />
       <Compile Include="System\Delegate.cs" />
-      <Compile Include="System\Environment.cs" />
       <Compile Include="System\Enum.cs" />
+      <Compile Include="System\Environment.cs" />
       <Compile Include="System\Exception.cs" />
       <Compile Include="System\GC.cs" />
       <Compile Include="System\Object.cs" />
