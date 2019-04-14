@@ -2339,10 +2339,16 @@ emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *ex
 	LLVMValueRef args [2];
 	LLVMValueRef callee;
 	gboolean no_pc = FALSE;
+	static MonoClass *exc_classes [MONO_EXC_INTRINS_NUM];
 
 	if (IS_TARGET_AMD64)
 		/* Some platforms don't require the pc argument */
 		no_pc = TRUE;
+
+	int exc_id = mini_exception_id_by_name (exc_type);
+	if (!exc_classes [exc_id])
+		exc_classes [exc_id] = mono_class_load_from_name (mono_get_corlib (), "System", exc_type);
+	exc_class = exc_classes [exc_id];
 	
 	ex_bb = gen_bb (ctx, "EX_BB");
 	if (ctx->llvm_only)
@@ -2350,8 +2356,6 @@ emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *ex
 	noex_bb = gen_bb (ctx, "NOEX_BB");
 
 	LLVMBuildCondBr (ctx->builder, cmp, ex_bb, noex_bb);
-
-	exc_class = mono_class_load_from_name (mono_get_corlib (), "System", exc_type);
 
 	/* Emit exception throwing code */
 	ctx->builder = builder = create_builder (ctx);
@@ -2363,11 +2367,12 @@ emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *ex
 		ctx->builder = builder = create_builder (ctx);
 		LLVMPositionBuilderAtEnd (ctx->builder, ex2_bb);
 
-		if (!strcmp (exc_type, "NullReferenceException")) {
+		if (exc_id == MONO_EXC_NULL_REF) {
 			static LLVMTypeRef sig;
 
 			if (!sig)
 				sig = LLVMFunctionType0 (LLVMVoidType (), FALSE);
+			/* Can't cache this */
 			callee = get_callee (ctx, sig, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mini_llvmonly_throw_nullref_exception");
 			emit_call (ctx, bb, &builder, callee, NULL, 0);
 		} else {
@@ -2376,7 +2381,6 @@ emit_cond_system_exception (EmitContext *ctx, MonoBasicBlock *bb, const char *ex
 			if (!sig)
 				sig = LLVMFunctionType1 (LLVMVoidType (), LLVMInt32Type (), FALSE);
 			callee = get_callee (ctx, sig, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_llvm_throw_corlib_exception");
-
 			args [0] = LLVMConstInt (LLVMInt32Type (), m_class_get_type_token (exc_class) - MONO_TOKEN_TYPE_DEF, FALSE);
 			emit_call (ctx, bb, &builder, callee, args, 1);
 		}
@@ -3085,16 +3089,16 @@ static LLVMValueRef
 get_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 {
 	switch (subtype) {
-		case AOT_INIT_METHOD:
-			return module->init_method;
-		case AOT_INIT_METHOD_GSHARED_MRGCTX:
-			return module->init_method_gshared_mrgctx;
-		case AOT_INIT_METHOD_GSHARED_THIS:
-			return module->init_method_gshared_this;
-		case AOT_INIT_METHOD_GSHARED_VTABLE:
-			return module->init_method_gshared_vtable;
-		default:
-			g_assert_not_reached ();
+	case AOT_INIT_METHOD:
+		return module->init_method;
+	case AOT_INIT_METHOD_GSHARED_MRGCTX:
+		return module->init_method_gshared_mrgctx;
+	case AOT_INIT_METHOD_GSHARED_THIS:
+		return module->init_method_gshared_this;
+	case AOT_INIT_METHOD_GSHARED_VTABLE:
+		return module->init_method_gshared_vtable;
+	default:
+		g_assert_not_reached ();
 	}
 }
 
