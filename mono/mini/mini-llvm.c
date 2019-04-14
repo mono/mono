@@ -56,7 +56,7 @@
   */
 typedef struct {
 	LLVMModuleRef lmodule;
-	LLVMValueRef throw_icall, rethrow, match_exc, throw_corlib_exception, resume_eh;
+	LLVMValueRef throw_icall, rethrow, throw_corlib_exception;
 	GHashTable *llvm_types;
 	LLVMValueRef got_var;
 	const char *got_symbol;
@@ -4151,18 +4151,8 @@ emit_llvmonly_throw (EmitContext *ctx, MonoBasicBlock *bb, gboolean rethrow, LLV
 	if (!callee) {
 		LLVMTypeRef fun_sig = LLVMFunctionType1 (LLVMVoidType (), exc_type, FALSE);
 
-		if (ctx->cfg->compile_aot) {
-			callee = get_callee (ctx, fun_sig, MONO_PATCH_INFO_JIT_ICALL_ADDR, icall_name);
-		} else {
-			callee = LLVMAddFunction (ctx->lmodule, icall_name, fun_sig);
-			LLVMAddGlobalMapping (ctx->module->ee, callee, resolve_patch (ctx->cfg, MONO_PATCH_INFO_JIT_ICALL, icall_name));
-			mono_memory_barrier ();
-
-			if (rethrow)
-				ctx->module->rethrow = callee;
-			else
-				ctx->module->throw_icall = callee;
-		}
+		g_assert (ctx->cfg->compile_aot);
+		callee = get_callee (ctx, fun_sig, MONO_PATCH_INFO_JIT_ICALL_ADDR, icall_name);
 	}
 
 	LLVMValueRef args [2];
@@ -4221,21 +4211,12 @@ static void
 emit_resume_eh (EmitContext *ctx, MonoBasicBlock *bb)
 {
 	const char *icall_name = "mono_llvm_resume_exception";
-	LLVMValueRef callee = ctx->module->resume_eh;
+	LLVMValueRef callee;
 
 	LLVMTypeRef fun_sig = LLVMFunctionType0 (LLVMVoidType (), FALSE);
 
-	if (!callee) {
-		if (ctx->cfg->compile_aot) {
-			callee = get_callee (ctx, fun_sig, MONO_PATCH_INFO_JIT_ICALL, icall_name);
-		} else {
-			callee = LLVMAddFunction (ctx->lmodule, icall_name, fun_sig);
-			LLVMAddGlobalMapping (ctx->module->ee, callee, resolve_patch (ctx->cfg, MONO_PATCH_INFO_JIT_ICALL, icall_name));
-			mono_memory_barrier ();
-
-			ctx->module->resume_eh = callee;
-		}
-	}
+	g_assert (ctx->cfg->compile_aot);
+	callee = get_callee (ctx, fun_sig, MONO_PATCH_INFO_JIT_ICALL, icall_name);
 
 	emit_call (ctx, bb, &ctx->builder, callee, NULL, 0);
 
@@ -4315,20 +4296,11 @@ mono_llvm_emit_match_exception_call (EmitContext *ctx, LLVMBuilderRef builder, g
 		args [4] = LLVMConstInt (IntPtrType (), 0, 0);
 
 	LLVMTypeRef match_sig = LLVMFunctionType5 (LLVMInt32Type (), IntPtrType (), LLVMInt32Type (), LLVMInt32Type (), IntPtrType (), IntPtrType (), FALSE);
-	LLVMValueRef callee = ctx->module->match_exc;
-
-	if (!callee) {
-		if (ctx->cfg->compile_aot) {
-			ctx->builder = builder;
-			// get_callee expects ctx->builder to be the emitting builder
-			callee = get_callee (ctx, match_sig, MONO_PATCH_INFO_JIT_ICALL, icall_name);
-		} else {
-			callee = ctx->module->match_exc = LLVMAddFunction (ctx->lmodule, icall_name, match_sig);
-			LLVMAddGlobalMapping (ctx->module->ee, ctx->module->match_exc, resolve_patch (ctx->cfg, MONO_PATCH_INFO_JIT_ICALL, icall_name));
-			ctx->module->match_exc = callee;
-			mono_memory_barrier ();
-		}
-	}
+	LLVMValueRef callee;
+	g_assert (ctx->cfg->compile_aot);
+	ctx->builder = builder;
+	// get_callee expects ctx->builder to be the emitting builder
+	callee = get_callee (ctx, match_sig, MONO_PATCH_INFO_JIT_ICALL, icall_name);
 
 	g_assert (builder && callee);
 
@@ -4370,24 +4342,13 @@ static LLVMValueRef
 get_mono_personality (EmitContext *ctx)
 {
 	LLVMValueRef personality = NULL;
-	static gint32 mapping_inited = FALSE;
 	LLVMTypeRef personality_type = LLVMFunctionType (LLVMInt32Type (), NULL, 0, TRUE);
 
+	g_assert (ctx->cfg->compile_aot);
 	if (!use_debug_personality) {
-		if (ctx->cfg->compile_aot) {
-				personality = get_intrins_by_name (ctx, default_personality_name);
-		} else if (mono_atomic_cas_i32 (&mapping_inited, 1, 0) == 0) {
-				personality = LLVMAddFunction (ctx->lmodule, default_personality_name, personality_type);
-				LLVMAddGlobalMapping (ctx->module->ee, personality, personality);
-		}
+		personality = get_intrins_by_name (ctx, default_personality_name);
 	} else {
-		if (ctx->cfg->compile_aot) {
-			personality = get_callee (ctx, personality_type, MONO_PATCH_INFO_JIT_ICALL, default_personality_name);
-		} else {
-			personality = LLVMAddFunction (ctx->lmodule, default_personality_name, personality_type);
-			LLVMAddGlobalMapping (ctx->module->ee, personality, resolve_patch (ctx->cfg, MONO_PATCH_INFO_JIT_ICALL, default_personality_name));
-			mono_memory_barrier ();
-		}
+		personality = get_callee (ctx, personality_type, MONO_PATCH_INFO_JIT_ICALL, default_personality_name);
 	}
 
 	g_assert (personality);

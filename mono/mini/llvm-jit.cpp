@@ -319,13 +319,6 @@ mono_llvm_dispose_ee (MonoEERef *eeref)
 {
 }
 
-void
-LLVMAddGlobalMapping(LLVMExecutionEngineRef EE, LLVMValueRef Global,
-					 void* Addr)
-{
-	g_assert_not_reached ();
-}
-
 #else /* MONO_CROSS_COMPILE or LLVM_API_VERSION <= 100 */
 
 void
@@ -349,14 +342,6 @@ mono_llvm_compile_method (MonoEERef mono_ee, LLVMValueRef method, int nvars, LLV
 
 void
 mono_llvm_dispose_ee (MonoEERef *eeref)
-{
-	g_assert_not_reached ();
-}
-
-/* Not linked in */
-void
-LLVMAddGlobalMapping(LLVMExecutionEngineRef EE, LLVMValueRef Global,
-					 void* Addr)
 {
 	g_assert_not_reached ();
 }
