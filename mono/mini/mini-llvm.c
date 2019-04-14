@@ -10118,4 +10118,18 @@ llvm_jit_finalize_method (EmitContext *ctx)
 #endif
 }
 
+#else
+
+static void
+init_jit_module (MonoDomain *domain)
+{
+	g_assert_not_reached ();
+}
+
+static void
+llvm_jit_finalize_method (EmitContext *ctx)
+{
+	g_assert_not_reached ();
+}
+
 #endif
