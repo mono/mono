@@ -47,14 +47,6 @@
 #define TARGET_WIN32_MSVC
 #endif
 
-#if  defined(__MINGW32__) || defined(_MSC_VER)
-
-#include <stddef.h>
-extern void *memset(void *, int, size_t);
-void bzero (void *to, size_t count) { memset (to, 0, count); }
-
-#endif
-
 #if LLVM_API_VERSION < 4
 #error "The version of the mono llvm repository is too old."
 #endif
