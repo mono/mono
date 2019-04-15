@@ -4571,10 +4571,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			if (!o)
 				THROW_EX (mono_get_exception_null_reference (), ip);
 
-			MonoObject *isinst_obj;
-			isinst_obj = mono_object_isinst_checked (o, c, error);
-			mono_error_cleanup (error); /* FIXME: don't swallow the error */
-			if (!(isinst_obj || ((m_class_get_rank (o->vtable->klass) == 0) && (m_class_get_element_class (o->vtable->klass) == m_class_get_element_class (c)))))
+			if (!(m_class_get_rank (o->vtable->klass) == 0 && m_class_get_element_class (o->vtable->klass) == m_class_get_element_class (c)))
 				THROW_EX (mono_get_exception_invalid_cast (), ip);
 
 			sp [-1].data.p = mono_object_unbox_internal (o);
@@ -5413,11 +5410,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			sp [-1].data.i = (guint8) sp [-1].data.f;
 			++ip;
 			MINT_IN_BREAK;
-#if 0
-		MINT_IN_CASE(MINT_LDELEM) 
-		MINT_IN_CASE(MINT_STELEM) 
-		MINT_IN_CASE(MINT_UNBOX_ANY) 
-#endif
 		MINT_IN_CASE(MINT_CKFINITE)
 			if (!mono_isfinite (sp [-1].data.f))
 				THROW_EX (mono_get_exception_arithmetic (), ip);
