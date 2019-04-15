@@ -4976,25 +4976,29 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BOX) {
-			c = (MonoClass*)imethod->data_items [* (guint16 *)(ip + 1)];
+			MonoVTable *vtable = (MonoVTable*)imethod->data_items [* (guint16 *)(ip + 1)];
 			guint16 offset = * (guint16 *)(ip + 2);
 
-			stackval_to_data (m_class_get_byval_arg (c), &sp [-1 - offset], (char *) &sp [-1 - offset], FALSE);
-			sp [-1 - offset].data.p = mono_value_box_checked (imethod->domain, c, &sp [-1 - offset], error);
-			mono_error_cleanup (error); /* FIXME: don't swallow the error */
+			MonoObject *obj = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+			stackval_to_data (m_class_get_byval_arg (vtable->klass), &sp [-1 - offset], mono_object_get_data (obj), FALSE);
+
+			sp [-1 - offset].data.p = obj;
 
 			ip += 3;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_BOX_VT) {
-			c = (MonoClass*)imethod->data_items [* (guint16 *)(ip + 1)];
+			MonoVTable *vtable = (MonoVTable*)imethod->data_items [* (guint16 *)(ip + 1)];
+			c = vtable->klass;
 			guint16 offset = * (guint16 *)(ip + 2);
 			gboolean pop_vt_sp = !(offset & BOX_NOT_CLEAR_VT_SP);
 			offset &= ~BOX_NOT_CLEAR_VT_SP;
 
 			int size = mono_class_value_size (c, NULL);
-			sp [-1 - offset].data.p = mono_value_box_checked (imethod->domain, c, sp [-1 - offset].data.p, error);
-			mono_error_cleanup (error); /* FIXME: don't swallow the error */
+			MonoObject *obj = mono_gc_alloc_obj (vtable, m_class_get_instance_size (vtable->klass));
+			mono_value_copy_internal (mono_object_get_data (obj), sp [-1 - offset].data.p, c);
+
+			sp [-1 - offset].data.p = obj;
 			size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 			if (pop_vt_sp)
 				vt_sp -= size;

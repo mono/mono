@@ -1708,13 +1708,16 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				interp_add_ins (td, MINT_LDIND_I8);
 				td->last_ins->data [0] = csignature->param_count;
 			}
+			MonoVTable *vtable = mono_class_vtable_checked (domain, constrained_class, error);
+			return_val_if_nok (error, FALSE);
+
 			if (mint_type (m_class_get_byval_arg (constrained_class)) == MINT_TYPE_VT) {
 				interp_add_ins (td, MINT_BOX_VT);
-				td->last_ins->data [0] = get_data_item_index (td, constrained_class);
+				td->last_ins->data [0] = get_data_item_index (td, vtable);
 				td->last_ins->data [1] = csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP);
 			} else {
 				interp_add_ins (td, MINT_BOX);
-				td->last_ins->data [0] = get_data_item_index (td, constrained_class);
+				td->last_ins->data [0] = get_data_item_index (td, vtable);
 				td->last_ins->data [1] = csignature->param_count;
 			}
 		} else {
@@ -1730,13 +1733,16 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 					interp_add_ins (td, MINT_LDIND_I8);
 					td->last_ins->data [0] = csignature->param_count;
 				}
+				MonoVTable *vtable = mono_class_vtable_checked (domain, constrained_class, error);
+				return_val_if_nok (error, FALSE);
+
 				if (mint_type (m_class_get_byval_arg (constrained_class)) == MINT_TYPE_VT) {
 					interp_add_ins (td, MINT_BOX_VT);
-					td->last_ins->data [0] = get_data_item_index (td, constrained_class);
+					td->last_ins->data [0] = get_data_item_index (td, vtable);
 					td->last_ins->data [1] = csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP);
 				} else {
 					interp_add_ins (td, MINT_BOX);
-					td->last_ins->data [0] = get_data_item_index (td, constrained_class);
+					td->last_ins->data [0] = get_data_item_index (td, vtable);
 					td->last_ins->data [1] = csignature->param_count;
 				}
 			}
@@ -4262,11 +4268,14 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				} else if (td->sp [-1].type == STACK_TYPE_R8 && m_class_get_byval_arg (klass)->type == MONO_TYPE_R4) {
 					interp_add_ins (td, MINT_CONV_R4_R8);
 				}
+				MonoVTable *vtable = mono_class_vtable_checked (domain, klass, error);
+				goto_if_nok (error, exit);
+
 				if (mint_type (m_class_get_byval_arg (klass)) == MINT_TYPE_VT)
 					interp_add_ins (td, MINT_BOX_VT);
 				else
 					interp_add_ins (td, MINT_BOX);
-				td->last_ins->data [0] = get_data_item_index (td, klass);
+				td->last_ins->data [0] = get_data_item_index (td, vtable);
 				td->last_ins->data [1] = 0;
 				SET_TYPE(td->sp - 1, STACK_TYPE_O, klass);
 				td->ip += 5;
