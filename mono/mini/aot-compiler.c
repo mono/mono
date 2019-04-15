@@ -6331,6 +6331,7 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
 		encode_value (patch_info->data.uindex, p, &p);
 		break;
+	case MONO_PATCH_INFO_LDSTR_LIT:
 	case MONO_PATCH_INFO_JIT_ICALL:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL: {
@@ -6338,9 +6339,8 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 
 		encode_value (len, p, &p);
 
-		memcpy (p, patch_info->data.name, len);
-		p += len;
-		*p++ = '\0';
+		memcpy (p, patch_info->data.name, len + 1);
+		p += len + 1;
 		break;
 	}
 	case MONO_PATCH_INFO_LDSTR: {
@@ -6459,15 +6459,6 @@ encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info, guint8 *buf, guint
 				break;
 			}
 		}
-		break;
-	}
-	case MONO_PATCH_INFO_LDSTR_LIT: {
-		const char *s = (const char *)patch_info->data.target;
-		int len = strlen (s);
-
-		encode_value (len, p, &p);
-		memcpy (p, s, len + 1);
-		p += len + 1;
 		break;
 	}
 	case MONO_PATCH_INFO_VIRT_METHOD:
