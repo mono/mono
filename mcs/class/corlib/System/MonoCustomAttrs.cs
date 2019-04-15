@@ -147,17 +147,19 @@ namespace System
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
 			if (obj == null)
-				throw new ArgumentNullException ("obj");
+				throw new ArgumentNullException (nameof (obj));
 			if (attributeType == null)
-				throw new ArgumentNullException ("attributeType");
+				throw new ArgumentNullException (nameof (attributeType));
 			
 #if NETCORE
-			if (!attributeType.IsSubclassOf(typeof(Attribute)) &&
-			    attributeType != typeof(Attribute))
-				throw new ArgumentException(SR.Argument_MustHaveAttributeBaseClass);
+			if (!attributeType.IsSubclassOf (typeof (Attribute)) &&
+				attributeType != typeof (Attribute) &&
+				attributeType != typeof (MonoCustomAttrs))
+				throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass);
 #endif
 
-			if (attributeType == typeof (MonoCustomAttrs))
+			if (attributeType == typeof (MonoCustomAttrs) || 
+				attributeType == typeof (Attribute))
 				attributeType = null;
 			
 			object[] r;
