@@ -150,10 +150,6 @@ namespace System
 				throw new ArgumentNullException (nameof (obj));
 			if (attributeType == null)
 				throw new ArgumentNullException (nameof (attributeType));
-			
-#if NETCORE
-			
-#endif
 
 			if (attributeType == typeof (MonoCustomAttrs) || 
 				attributeType == typeof (Attribute))
