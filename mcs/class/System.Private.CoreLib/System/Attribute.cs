@@ -38,15 +38,29 @@ namespace System
         public static Attribute[] GetCustomAttributes(ParameterInfo element) => (Attribute[])MonoCustomAttrs.GetCustomAttributes (element, true);
         public static Attribute[] GetCustomAttributes(ParameterInfo element, bool inherit) => (Attribute[])MonoCustomAttrs.GetCustomAttributes (element, inherit);
         public static Attribute[] GetCustomAttributes(ParameterInfo element, Type attributeType) => (Attribute[])MonoCustomAttrs.GetCustomAttributes (element, attributeType, true);
-        public static Attribute[] GetCustomAttributes(ParameterInfo element, Type attributeType, bool inherit) => (Attribute[])MonoCustomAttrs.GetCustomAttributes (element, attributeType, inherit);
+        
+        public static Attribute[] GetCustomAttributes(ParameterInfo element, Type attributeType, bool inherit)
+        {
+            if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute))
+                throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass + " " + attributeType.FullName);
 
-        public static bool IsDefined (Assembly element, Type attributeType) => MonoCustomAttrs.IsDefined (element, attributeType, true);
-        public static bool IsDefined (Assembly element, Type attributeType, bool inherit) => MonoCustomAttrs.IsDefined (element, attributeType, inherit);
-        public static bool IsDefined (MemberInfo element, Type attributeType) => MonoCustomAttrs.IsDefined (element, attributeType, true);
-        public static bool IsDefined (MemberInfo element, Type attributeType, bool inherit) => MonoCustomAttrs.IsDefined (element, attributeType, inherit);
-        public static bool IsDefined (Module element, Type attributeType) => MonoCustomAttrs.IsDefined (element, attributeType, true);
-        public static bool IsDefined (Module element, Type attributeType, bool inherit) => MonoCustomAttrs.IsDefined (element, attributeType, inherit);
-        public static bool IsDefined (ParameterInfo element, Type attributeType) => MonoCustomAttrs.IsDefined (element, attributeType, true);
-        public static bool IsDefined (ParameterInfo element, Type attributeType, bool inherit) => MonoCustomAttrs.IsDefined (element, attributeType, inherit);
+            return (Attribute[])MonoCustomAttrs.GetCustomAttributes (element, attributeType, inherit);
+        }
+
+        public static bool IsDefined (Assembly element, Type attributeType) => IsDefined (element, attributeType, true);
+        public static bool IsDefined (Assembly element, Type attributeType, bool inherit) => IsDefined (element, attributeType, inherit);
+        public static bool IsDefined (MemberInfo element, Type attributeType) => IsDefined (element, attributeType, true);
+        public static bool IsDefined (MemberInfo element, Type attributeType, bool inherit) => IsDefined (element, attributeType, inherit);
+        public static bool IsDefined (Module element, Type attributeType) => IsDefined (element, attributeType, true);
+        public static bool IsDefined (Module element, Type attributeType, bool inherit) => IsDefined (element, attributeType, inherit);
+        public static bool IsDefined (ParameterInfo element, Type attributeType) => IsDefined (element, attributeType, true);
+        
+        public static bool IsDefined (ParameterInfo element, Type attributeType, bool inherit)
+        {
+            if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute))
+                throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass + " " + attributeType.FullName);
+
+            return MonoCustomAttrs.IsDefined (element, attributeType, inherit);
+        }
     }
 }
