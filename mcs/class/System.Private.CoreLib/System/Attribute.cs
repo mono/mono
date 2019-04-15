@@ -41,6 +41,8 @@ namespace System
         
         public static Attribute[] GetCustomAttributes(ParameterInfo element, Type attributeType, bool inherit)
         {
+            if (attributeType == null)
+                throw new ArgumentNullException (nameof (attributeType));
             if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute))
                 throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass + " " + attributeType.FullName);
 
@@ -57,6 +59,8 @@ namespace System
         
         public static bool IsDefined (ParameterInfo element, Type attributeType, bool inherit)
         {
+            if (attributeType == null)
+                throw new ArgumentNullException (nameof (attributeType));
             if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute))
                 throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass + " " + attributeType.FullName);
 
