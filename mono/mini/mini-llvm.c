@@ -77,6 +77,7 @@ typedef struct {
 	gboolean emit_dwarf;
 	int max_got_offset;
 	LLVMValueRef personality;
+	LLVMValueRef *intrins_by_id;
 
 	/* For AOT */
 	MonoAssembly *assembly;
@@ -357,7 +358,6 @@ static MonoNativeTlsKey current_cfg_tls_id;
 
 static MonoLLVMModule aot_module;
 
-static LLVMValueRef intrins_by_id [INTRINS_NUM];
 static GHashTable *intrins_id_to_name;
 static GHashTable *intrins_name_to_id;
 
@@ -8597,7 +8597,7 @@ get_intrins (EmitContext *ctx, int id)
 	 * Every method is emitted into its own module so
 	 * we can add intrinsics on demand.
 	 */
-	res = intrins_by_id [id];
+	res = ctx->module->intrins_by_id [id];
 	if (!res) {
 		res = LLVMGetNamedFunction (ctx->lmodule, name);
 		if (!res) {
@@ -8605,7 +8605,7 @@ get_intrins (EmitContext *ctx, int id)
 			res = LLVMGetNamedFunction (ctx->lmodule, name);
 			g_assert (res);
 		}
-		intrins_by_id [id] = res;
+		ctx->module->intrins_by_id [id] = res;
 	}
 	return res;
 #else
@@ -8797,6 +8797,7 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	module->max_got_offset = initial_got_size;
 	module->context = LLVMGetGlobalContext ();
 	module->cfgs = g_ptr_array_new ();
+	module->intrins_by_id = g_new0 (LLVMValueRef, INTRINS_NUM);
 
 	if (llvm_only)
 		/* clang ignores our debug info because it has an invalid version */
@@ -10053,6 +10054,7 @@ init_jit_module (MonoDomain *domain)
 	name = g_strdup_printf ("mono-%s", domain->friendly_name);
 	module->lmodule = LLVMModuleCreateWithName (name);
 	module->context = LLVMGetGlobalContext ();
+	module->intrins_by_id = g_new0 (LLVMValueRef, INTRINS_NUM);
 
 	module->mono_ee = (MonoEERef*)mono_llvm_create_ee (LLVMCreateModuleProviderForExistingModule (module->lmodule), alloc_cb, emitted_cb, exception_cb, dlsym_cb, &module->ee);
 
