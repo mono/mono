@@ -151,8 +151,11 @@ namespace System
 			if (attributeType == null)
 				throw new ArgumentNullException (nameof (attributeType));
 
-			if (attributeType == typeof (MonoCustomAttrs) || 
-				attributeType == typeof (Attribute))
+			if (attributeType == typeof (MonoCustomAttrs)
+#if NETCORE
+				|| attributeType == typeof (Attribute)
+#endif
+			   	)
 				attributeType = null;
 			
 			object[] r;
