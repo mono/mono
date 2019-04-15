@@ -4646,14 +4646,11 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			if (!o)
 				THROW_EX (mono_get_exception_null_reference (), ip);
 
-			MonoClassField *field = (MonoClassField*)imethod->data_items[* (guint16 *)(ip + 2)];
-			MonoClass *klass = mono_class_from_mono_type_internal (field->type);
-			i32 = mono_class_value_size (klass, NULL);
-
+			int size = READ32(ip + 2);
 			sp [-1].data.p = vt_sp;
-			memcpy (sp [-1].data.p, (char *)o + * (guint16 *)(ip + 1), i32);
-			vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
-			ip += 3;
+			memcpy (sp [-1].data.p, (char *)o + * (guint16 *)(ip + 1), size);
+			vt_sp += ALIGN_TO (size, MINT_VT_ALIGNMENT);
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 
@@ -4750,8 +4747,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				THROW_EX (mono_get_exception_null_reference (), ip);
 			sp -= 2;
 
-			MonoClassField *field = (MonoClassField*)imethod->data_items[* (guint16 *)(ip + 2)];
-			MonoClass *klass = mono_class_from_mono_type_internal (field->type);
+			MonoClass *klass = (MonoClass*)imethod->data_items[* (guint16 *)(ip + 2)];
 			i32 = mono_class_value_size (klass, NULL);
 
 			guint16 offset = * (guint16 *)(ip + 1);

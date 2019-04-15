@@ -4049,8 +4049,10 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 #endif
 					interp_add_ins (td, opcode);
 					td->last_ins->data [0] = m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset;
-					if (mt == MINT_TYPE_VT)
-						td->last_ins->data [1] = get_data_item_index (td, field);
+					if (mt == MINT_TYPE_VT) {
+						int size = mono_class_value_size (field_klass, NULL);
+						WRITE32_INS (td->last_ins, 1, &size);
+					}
 				}
 			}
 			if (mt == MINT_TYPE_VT) {
@@ -4122,11 +4124,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					interp_add_ins (td, opcode);
 					td->last_ins->data [0] = m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset;
 					if (mt == MINT_TYPE_VT) {
-						td->last_ins->data [1] = get_data_item_index (td, field);
-
 						/* the vtable of the field might not be initialized at this point */
 						mono_class_vtable_checked (domain, field_klass, error);
 						goto_if_nok (error, exit);
+
+						td->last_ins->data [1] = get_data_item_index (td, field_klass);
 					}
 				}
 			}
