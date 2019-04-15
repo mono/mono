@@ -113,6 +113,9 @@ namespace System
 			int source_pos = sourceIndex - sourceArray.GetLowerBound (0);
 			int dest_pos = destinationIndex - destinationArray.GetLowerBound (0);
 
+			if (source_pos < 0)
+				throw new ArgumentOutOfRangeException (nameof (sourceIndex), "Index was less than the array's lower bound in the first dimension.");
+
 			if (dest_pos < 0)
 				throw new ArgumentOutOfRangeException (nameof (destinationIndex), "Index was less than the array's lower bound in the first dimension.");
 
