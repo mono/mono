@@ -6,6 +6,14 @@ namespace System
 	{
 		static Attribute GetAttr (ICustomAttributeProvider element, Type attributeType, bool inherit)
 		{
+			if (attributeType == null)
+				throw new ArgumentNullException (nameof (attributeType));
+			
+			if (!attributeType.IsSubclassOf (typeof (Attribute)) &&
+			    attributeType != typeof (Attribute) &&
+			    attributeType != typeof (MonoCustomAttrs))
+				throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass);
+			
 			var attrs = MonoCustomAttrs.GetCustomAttributes (element, attributeType, inherit);
 			if (attrs == null || attrs.Length == 0)
 				return null;
