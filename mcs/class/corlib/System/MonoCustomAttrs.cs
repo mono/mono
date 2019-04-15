@@ -149,13 +149,7 @@ namespace System
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
 			if (attributeType == null)
-				throw new ArgumentNullException ("attributeType");
-			
-#if NETCORE
-			if (!attributeType.IsSubclassOf(typeof(Attribute)) &&
-			    attributeType != typeof(Attribute))
-				throw new ArgumentException(SR.Argument_MustHaveAttributeBaseClass);
-#endif
+				throw new ArgumentNullException ("attributeType");	
 
 			if (attributeType == typeof (MonoCustomAttrs))
 				attributeType = null;
