@@ -139,7 +139,6 @@
       <Compile Include="System.Collections.Generic\EqualityComparer.cs" />
       <Compile Include="System.Diagnostics\StackFrame.cs" />
       <Compile Include="System.Diagnostics\StackTrace.cs" />
-      <Compile Include="System.Diagnostics.Tracing\EventSource.cs" />
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
       <Compile Include="System.Reflection\Assembly.cs" />
