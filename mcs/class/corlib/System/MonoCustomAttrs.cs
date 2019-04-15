@@ -151,7 +151,7 @@ namespace System
 			if (attributeType == null)
 				throw new ArgumentNullException ("attributeType");
 			
-#if true
+#if NETCORE
 			if (!attributeType.IsSubclassOf(typeof(MonoCustomAttrs)) && 
 			    !attributeType.IsSubclassOf(typeof(Attribute)) &&
 			    attributeType != typeof(MonoCustomAttrs) &&
