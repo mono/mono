@@ -2474,8 +2474,8 @@ interp_emit_ldobj (TransformData *td, MonoClass *klass)
 
 	if (mt == MINT_TYPE_VT) {
 		interp_add_ins (td, MINT_LDOBJ_VT);
-		td->last_ins->data [0] = get_data_item_index(td, klass);
 		size = mono_class_value_size (klass, NULL);
+		WRITE32_INS (td->last_ins, 0, &size);
 		PUSH_VT (td, size);
 	} else {
 		int opcode;

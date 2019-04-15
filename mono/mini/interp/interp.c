@@ -4249,11 +4249,9 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDOBJ_VT) {
-			int size;
-			c = (MonoClass*)imethod->data_items[* (guint16 *)(ip + 1)];
-			ip += 2;
-			size = mono_class_value_size (c, NULL);
-			mono_value_copy_internal (vt_sp, sp [-1].data.p, c);
+			int size = READ32(ip + 1);
+			ip += 3;
+			memcpy (vt_sp, sp [-1].data.p, size);
 			sp [-1].data.p = vt_sp;
 			vt_sp += ALIGN_TO (size, MINT_VT_ALIGNMENT);
 			MINT_IN_BREAK;
