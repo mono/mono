@@ -152,9 +152,7 @@ namespace System
 				throw new ArgumentNullException ("attributeType");
 			
 #if NETCORE
-			if (!attributeType.IsSubclassOf(typeof(MonoCustomAttrs)) && 
-			    !attributeType.IsSubclassOf(typeof(Attribute)) &&
-			    attributeType != typeof(MonoCustomAttrs) &&
+			if (!attributeType.IsSubclassOf(typeof(Attribute)) &&
 			    attributeType != typeof(Attribute))
 				throw new ArgumentException(SR.Argument_MustHaveAttributeBaseClass);
 #endif

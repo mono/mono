@@ -44,8 +44,10 @@ namespace System
         {
             if (attributeType == null)
                 throw new ArgumentNullException (nameof (attributeType));
+#if !NETCORE
             if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute))
                 throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass + " " + attributeType.FullName);
+#endif
 
             return (Attribute[])MonoCustomAttrs.GetCustomAttributes (element, attributeType, inherit);
         }
