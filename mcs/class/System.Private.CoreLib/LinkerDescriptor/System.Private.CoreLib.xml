@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <linker>
-	<assembly fullname="mscorlib">
+	<assembly fullname="System.Private.CoreLib">
 	
 		<!-- domain.c: mono_defaults.appdomain_class -->
-		<type fullname="System.AppDomain" preserve="fields">
+		<type fullname="Mono.MonoDomain" preserve="fields">
 			<!-- appdomain.c: mono_domain_try_type_resolve -->
 			<method name="DoTypeResolve" />
 			<!-- appdomain.c: mono_domain_try_type_builder_resolve -->
@@ -12,25 +12,13 @@
 			<method name="DoAssemblyResolve" />
 			<!-- appdomain.c: mono_domain_fire_assembly_load -->
 			<method name="DoAssemblyLoad" />
-			<!-- appdomain.c: mono_domain_try_unload -->
-			<method name="DoDomainUnload" />
-			<!-- marshal.c: mono_remoting_marshal_init -->
-			<method name="InternalSetContext" />
-			<!-- System.Runtime.Remoting/RemotingServices.cs: GetDomainProxy(AppDomain domain) -->
-			<method name="GetMarshalledDomainObjRef" feature="remoting" />
 		</type>
 
 		<!-- appdomain.c: mono_runtime_init -->
-		<type fullname="System.AppDomainSetup" preserve="fields" >
+		<type fullname="Mono.MonoDomainSetup" preserve="fields" >
 			<!-- appdomain.c mono_object_new_checked in mono_domain_create_appdomain_checked -->
 			<method signature="System.Void .ctor()" />
 		</type>
-		
-		<!-- exception.c: mono_get_exception_appdomain_unloaded (used in several places), threadpool.c -->
-		<type fullname="System.AppDomainUnloadedException">
-			<!-- mono_exception_from_name -->
-			<method signature="System.Void .ctor()" />
- 		</type>
 		
 		<!-- marshal.c: emit_marshal_custom (should not be used on devices)
 		<type fullname="System.ApplicationException" />
@@ -40,20 +28,24 @@
 		<type fullname="System.ArgumentException">
 			<!-- mono_exception_from_name -->
 			<method signature="System.Void .ctor()" />
-			<!-- MONO_OBJECT_SETREF -->
-			<field name="param_name" />
+			<!-- create_exception_two_strings -->
+			<method signature="System.Void .ctor(System.String, System.String)" />
 		</type>
         
 		<!-- exception.c (mono_get_exception_argument_null) -->
 		<type fullname="System.ArgumentNullException">
 			<!-- mono_exception_from_name_msg -->
 			<method signature="System.Void .ctor(System.String)" />
+			<!-- create_exception_two_strings -->
+			<method signature="System.Void .ctor(System.String, System.String)" />
  		</type>
 
 		<!-- exception.c (mono_get_exception_argument_out_of_range) -->
 		<type fullname="System.ArgumentOutOfRangeException">
 			<!-- mono_exception_from_name -->
 			<method signature="System.Void .ctor()" />
+			<!-- create_exception_two_strings -->
+			<method signature="System.Void .ctor(System.String, System.String)" />
  		</type>
 
 		<!-- exception.c (mono_get_exception_arithmetic) -->
@@ -109,12 +101,6 @@
 		<!-- domain.c: mono_defaults.byte_class -->
 		<type fullname="System.Byte">
 		  <field name="m_value"/>
-		</type>
-		
-		<!-- exception.c" mono_get_exception_cannot_unload_appdomain (called by appdomain.c) -->
-		<type fullname="System.CannotUnloadAppDomainException">
-			<!-- mono_exception_from_name_msg -->
-			<method signature="System.Void .ctor(System.String)" />
 		</type>
 		
 		<!-- domain.c: mono_defaults.char_class -->
@@ -256,8 +242,6 @@
 			 <field name="Value" />
 		</type>
 
-		<type fullname="System.MarshalByRefObject" preserve="fields" feature="remoting" />
-
 		<type fullname="System.MethodAccessException">
 			<!-- exception.c: mono_get_exception_method_access / mono_exception_from_name -->
 			<method signature="System.Void .ctor()" />
@@ -320,7 +304,6 @@
 			<method name="Unbox" />
 			<!-- method-to-ir.c (handle_unbox_nullable) -->
 			<method name="UnboxExact" />
-
 		</type>
 		
 		<!-- domain.c: mono_defaults.object_class -->
@@ -330,9 +313,6 @@
 			<method name="GetHashCode" />
 			<!-- needed for debugging -->
 			<method name="obj_address" />
-			<!-- TransparentProxy.cs, RemotingServices.cs -->
-			<method name="FieldGetter" feature="remoting" />
-			<method name="FieldSetter" feature="remoting" />
 			<!-- appdomain.c mono_object_new_checked in create_domain_objects -->
 			<method signature="System.Void .ctor()" />
 		</type>
@@ -381,9 +361,6 @@
 			<method signature="System.Void .ctor()" />
 		</type>
 		
-		<!-- object.c: mono_runtime_exec_main -->
-		<type fullname="System.STAThreadAttribute" />
-		
 		<!-- domain.c: mono_defaults.string_class -->
 		<type fullname="System.String" preserve="fields">
 			<!-- method-to-ir.c: mini_redirect_call -->
@@ -403,6 +380,9 @@
 			<method name="memcpy_aligned_2" />
 			<method name="memcpy_aligned_4" />
 			<method name="memcpy_aligned_8" />
+
+			<!-- marshal.c: mono_marshal_get_native_wrapper -->
+			<method name="CreateString"/>
 		</type>
 
 		<!-- socket-io.c: created/raised several time -->
@@ -464,11 +444,6 @@
 		<!-- class.c: make_generic_param_class -->
 		<type fullname="System.ValueType" preserve="nothing" />
 
-		<!-- comiterop.c -->
-		<type fullname="System.Variant" preserve="fields" feature="com">
-			<method name="Clear" />
-		</type>
-
 		<!-- icall.c: create_version is used by
 			* ves_icall_System_Reflection_Assembly_GetReferencedAssemblies
 			* fill_reflection_assembly_name
@@ -482,9 +457,6 @@
 		
 		<!-- domain.c: mono_defaults.void_class -->
 		<type fullname="System.Void" preserve="nothing" />
-
-		<!-- comiterop.c -->
-		<type fullname="System.__ComObject" feature="com" />
 
 		<!-- class.c: generic_array_methods -->
 		<type fullname="System.Collections.Generic.ICollection`1" />
@@ -527,9 +499,6 @@
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
 
-		<!-- fileio.h: shared structure between the managed and unmanaged worlds -->
-		<type fullname="System.IO.MonoIOStat" preserve="fields" />
-
 		<!-- appdomain.c: ves_icall_System_AppDomain_GetAssemblies -->
 		<type fullname="System.Reflection.Assembly" preserve="fields"/>
 
@@ -550,7 +519,7 @@
 		<type fullname="System.Reflection.FieldInfo" preserve="nothing" />
 		
 		<!-- reflection.c: mono_method_body_get_object -->
-		<type fullname="System.Reflection.LocalVariableInfo" preserve="fields" >
+		<type fullname="System.Reflection.RuntimeLocalVariableInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in add_local_var_info_to_array -->
 			<method signature="System.Void .ctor()" />
 		</type>
@@ -558,13 +527,14 @@
 		<!-- domain.c: mono_defaults.method_info_class -->
 		<type fullname="System.Reflection.MethodInfo" preserve="nothing" />
 
-		<type fullname="System.Reflection.Module" preserve="fields" />
-		<type fullname="System.Reflection.RuntimeAssembly">
+		<type fullname="System.Reflection.RuntimeModule" preserve="fields" >
 			<method name=".ctor" />
 		</type>
-		<type fullname="System.Reflection.RuntimeModule">
+
+		<type fullname="System.Reflection.RuntimeAssembly" preserve="fields">
 			<method name=".ctor" />
 		</type>
+
 		<type fullname="System.Reflection.RuntimeConstructorInfo" preserve="fields" >
 			<!-- reflection.c mono_object_new_checked in method_object_construct -->
 			<method signature="System.Void .ctor()" />
@@ -688,62 +658,6 @@
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
 
-		<!-- appdomain.c: mono_context_init -->
-		<!-- marshal.c: mono_remoting_marshal_init / removed with DISABLE_REMOTING -->
-		<type fullname="System.Runtime.Remoting.Contexts.Context" preserve="fields" feature="remoting" >
-			<method name="get_NeedsContextSink" />
-		</type>
-
-		<!-- domain.c: mono_defaults.iremotingtypeinfo_class / removed with DISABLE_REMOTING -->
-		<type fullname="System.Runtime.Remoting.IRemotingTypeInfo" feature="remoting">
-			<method name="CanCastTo" />
-		</type>
-
-		<!-- domain.c: mono_defaults.asyncresult_class (Stubify can't be applied on this type) -->
-		<!-- object.c MONO_OBJECT_SETREF in mono_async_result_new -->
-		<!-- threadpool.c: MONO_OBJECT_SETREF in create_simple_asyncresult -->
-		<type fullname="System.Runtime.Remoting.Messaging.AsyncResult" preserve="fields" >
-			<!-- object.c mono_object_new_checked in mono_async_result_new -->
-			<method signature="System.Void .ctor()" />
-		</type>
-
-		<!-- marshal.c: mono_remoting_marshal_init / removed with DISABLE_REMOTING -->
-		<type fullname="System.Runtime.Remoting.Messaging.CallContext" feature="remoting" >
-			<method name="SetCurrentCallContext" />
-		</type>
-
-		<!-- domain.c: mono_defaults.mono_method_message_class -->
-		<type fullname="System.Runtime.Remoting.Messaging.MonoMethodMessage" preserve="fields">
-			<!-- object.c: mono_message_init -->
-			<method name="InitMessage" />
-			<!-- marshal.c mono_object_new_checked in mono_delegate_end_invoke-->
-			<method name=".ctor" feature="remoting" />
-		</type>
-		<!-- domain.c: mono_defaults.real_proxy_class / removed with DISABLE_REMOTING -->
-		<type fullname="System.Runtime.Remoting.Proxies.RealProxy" preserve="fields" feature="remoting" >
-			<method name="PrivateInvoke" />
-			<method name="GetAppDomainTarget" />
-			<!-- object.c mono_object_new_checked in make_transparent_proxy-->
-			<method name=".ctor" feature="remoting" />
-		</type>
-		<!-- domain.c: mono_defaults.transparent_proxy_class / removed with DISABLE_REMOTING -->
-		<type fullname="System.Runtime.Remoting.Proxies.TransparentProxy" preserve="fields" feature="remoting" >
-			<method name="LoadRemoteFieldNew" />
-			<method name="StoreRemoteField" />
-			<!-- icall.c mono_object_new_checked in ves_icall_Remoting_RealProxy_GetTransparentProxy -->
-			<method signature="System.Void .ctor()" feature="remoting" />
-		</type>
-		<type fullname="System.Runtime.Remoting.RemotingServices" feature="remoting" >
-			<method name="SerializeCallData" />
-			<method name="DeserializeCallData" />
-			<method name="SerializeExceptionData" />
-		</type>
-
-		<!-- object.c: mono_object_new_specific_checked -->
-		<type fullname="System.Runtime.Remoting.Activation.ActivationServices" feature="remoting">
-			<method name="CreateProxyForType"/>
-		</type>
-
 		<!-- exception.c (mono_get_exception_serialization) -->
 		<type fullname="System.Runtime.Serialization.SerializationException">
 			<!-- mono_exception_from_name_msg -->
@@ -822,11 +736,6 @@
 		  <method name="PerformWaitCallback"/>
 		</type>
 
-		<!-- cominterop.c -->
-		<type fullname="Mono.Interop.ComInteropProxy" feature="com" />
-		<type fullname="Mono.Interop.IDispatch" feature="com" />
-		<type fullname="Mono.Interop.IUnknown" feature="com"/>
-
 		<!--
 		Many applications rely on Mono.Runtime to exist in order to detect
 		whether they are running on Mono or .NET. Thus we always preserve it
@@ -847,5 +756,10 @@
 		<type fullname="Mono.ValueTuple`3" preserve="fields"/>
 		<type fullname="Mono.ValueTuple`4" preserve="fields"/>
 		<type fullname="Mono.ValueTuple`5" preserve="fields"/>
+
+		<type fullname="System.AppContext">
+		  <!-- appdomain.c: mono_runtime_install_appctx_properties -->
+		  <method name="Setup"/>
+		</type>
 	</assembly>
 </linker>
