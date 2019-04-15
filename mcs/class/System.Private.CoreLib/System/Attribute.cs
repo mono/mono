@@ -39,19 +39,7 @@ namespace System
         public static Attribute[] GetCustomAttributes (ParameterInfo element, bool inherit) => (Attribute[])MonoCustomAttrs.GetCustomAttributes (element, inherit);
         public static Attribute[] GetCustomAttributes (ParameterInfo element, Type attributeType) => (Attribute[])GetCustomAttributes ((ICustomAttributeProvider)element, attributeType, true);
         public static Attribute[] GetCustomAttributes (ParameterInfo element, Type attributeType, bool inherit) => (Attribute[])GetCustomAttributes ((ICustomAttributeProvider)element, attributeType, inherit);
-
-        internal static Attribute[] GetCustomAttributes (ICustomAttributeProvider element, Type attributeType, bool inherit)
-        {
-            if (attributeType == null)
-                throw new ArgumentNullException (nameof (attributeType));
-#if !NETCORE
-            if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute))
-                throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass + " " + attributeType.FullName);
-#endif
-
-            return (Attribute[])MonoCustomAttrs.GetCustomAttributes (element, attributeType, inherit);
-        }
-
+        internal static Attribute[] GetCustomAttributes (ICustomAttributeProvider element, Type attributeType, bool inherit) => (Attribute[])MonoCustomAttrs.GetCustomAttributes (element, attributeType, inherit);
         public static bool IsDefined (Assembly element, Type attributeType) => IsDefined ((ICustomAttributeProvider)element, attributeType, true);
         public static bool IsDefined (Assembly element, Type attributeType, bool inherit) => IsDefined ((ICustomAttributeProvider)element, attributeType, inherit);
         public static bool IsDefined (MemberInfo element, Type attributeType) => IsDefined ((ICustomAttributeProvider)element, attributeType, true);
