@@ -149,7 +149,15 @@ namespace System
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
 			if (attributeType == null)
-				throw new ArgumentNullException ("attributeType");	
+				throw new ArgumentNullException ("attributeType");
+			
+#if true
+			if (!attributeType.IsSubclassOf(typeof(MonoCustomAttrs)) && 
+			    !attributeType.IsSubclassOf(typeof(Attribute)) &&
+			    attributeType != typeof(MonoCustomAttrs) &&
+			    attributeType != typeof(Attribute))
+				throw new ArgumentException(SR.Argument_MustHaveAttributeBaseClass);
+#endif
 
 			if (attributeType == typeof (MonoCustomAttrs))
 				attributeType = null;
