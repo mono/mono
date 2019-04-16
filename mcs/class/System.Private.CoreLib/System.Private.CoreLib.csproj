@@ -294,5 +294,9 @@
     <!-- Don't need a strong name signature because we only ship the native image -->
     <StrongNameSig>None</StrongNameSig>
   </PropertyGroup>
+
+  <ItemGroup>
+	<EmbeddedResource LogicalName="System.Private.CoreLib.xml" Include="LinkerDescriptor/System.Private.CoreLib.xml"/>
+  </ItemGroup>
 </Project>
 
