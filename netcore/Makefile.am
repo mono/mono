@@ -118,7 +118,6 @@ EXCLUDED_COREFX_TESTS_NOT_PASSING = \
 	System.Runtime.Extensions.Tests \
 	System.Drawing.Common.Tests \
 	System.Dynamic.Runtime.Tests \
-	System.CodeDom.Tests \
 	System.Runtime.Numerics.Tests \
 	System.ComponentModel.Composition.Tests \
 	System.Reflection.Tests \
