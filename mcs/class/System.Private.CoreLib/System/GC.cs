@@ -2,7 +2,6 @@ using System.Runtime.CompilerServices;
 
 namespace System
 {
-	[Serializable]
 	public enum GCCollectionMode
 	{
 		Default = 0,
@@ -10,7 +9,6 @@ namespace System
 		Optimized = 2
 	}
 
-	[Serializable]
 	public enum GCNotificationStatus
 	{
 		Succeeded = 0,
@@ -50,7 +48,7 @@ namespace System
 		{
 			if (bytesAllocated <= 0)
 				throw new ArgumentOutOfRangeException (nameof (bytesAllocated), SR.ArgumentOutOfRange_NeedPosNum);
-			if ((IntPtr.Size == 4) && (bytesAllocated > Int32.MaxValue))
+			if (IntPtr.Size == 4 && bytesAllocated > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException (nameof (bytesAllocated), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			RecordPressure (bytesAllocated);
 		}
@@ -59,13 +57,13 @@ namespace System
 		{
 			if (bytesAllocated <= 0)
 				throw new ArgumentOutOfRangeException (nameof (bytesAllocated), SR.ArgumentOutOfRange_NeedPosNum);
-			if ((IntPtr.Size == 4) && (bytesAllocated > Int32.MaxValue))
+			if (IntPtr.Size == 4 && bytesAllocated > Int32.MaxValue)
 				throw new ArgumentOutOfRangeException (nameof (bytesAllocated), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			RecordPressure (-bytesAllocated);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern int GetGeneration (Object obj);
+		public static extern int GetGeneration (object obj);
 
 		public static void Collect (int generation)
 		{
@@ -99,7 +97,7 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.NoInlining)] // disable optimizations
-		public static void KeepAlive (Object obj)
+		public static void KeepAlive (object obj)
 		{
 		}
 
@@ -118,12 +116,12 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void WaitForPendingFinalizers ();
+		public static extern void WaitForPendingFinalizers ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern void _SuppressFinalize (Object o);
+		static extern void _SuppressFinalize (object o);
 
-		public static void SuppressFinalize (Object obj)
+		public static void SuppressFinalize (object obj)
 		{
 			if (obj == null)
 				throw new ArgumentNullException (nameof (obj));
@@ -131,9 +129,9 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern void _ReRegisterForFinalize (Object o);
+		static extern void _ReRegisterForFinalize (object o);
 
-		public static void ReRegisterForFinalize (Object obj)
+		public static void ReRegisterForFinalize (object obj)
 		{
 			if (obj == null)
 				throw new ArgumentNullException (nameof (obj));
