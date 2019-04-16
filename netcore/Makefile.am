@@ -103,9 +103,8 @@ xtest-%: prepare update-corefx-tests
 		$(shell if [ -a $(CURDIR)/excludes-$*.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp; fi;) \
 		$(FIXTURE) || true
 
-# these tests won't be included in `xtestall` (some of them crash runtime, some hang)
+# these tests won't be included in `xtestall`
 EXCLUDED_COREFX_TESTS = \
-	System.Net.HttpListener.Tests \
 	System.Utf8String.Experimental.Tests \
 	System.ComponentModel.Composition.Registration.Tests
 
