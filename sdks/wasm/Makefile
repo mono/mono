@@ -125,6 +125,9 @@ bcl:
 tuner:
 	$(MAKE) -C ../../mcs/tools/wasm-tuner PROFILE=wasm_tools
 
+cil-strip:
+	$(MAKE) -C ../../mcs/tools/cil-strip  PROFILE=wasm_tools
+
 mono: runtime cross bcl
 
 BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:$(WASM_BCL_DIR)/Facades/netstandard.dll 

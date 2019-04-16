@@ -63,7 +63,7 @@ monotouch_tools_PARALLEL_SUBDIRS = corcompare mono-api-html
 net_4_x_SUBDIRS =
 net_4_x_PARALLEL_SUBDIRS = $(net_4_5_dirs)
 wasm_tools_SUBDIRS =
-wasm_tools_PARALLEL_SUBDIRS = linker wasm-tuner
+wasm_tools_PARALLEL_SUBDIRS = linker wasm-tuner cil-strip
 
 DIST_SUBDIRS = $(net_4_5_dirs) cil-stringreplacer commoncryptogenerator resx2sr gensources upload-to-sentry mono-helix-client
 

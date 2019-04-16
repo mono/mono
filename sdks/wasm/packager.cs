@@ -708,7 +708,7 @@ class Driver {
 		ninja.WriteLine ("rule gen-icall-table");
 		ninja.WriteLine ("  command = mono $tools_dir/wasm-tuner.exe --gen-icall-table $runtime_table $in > $out");
 		ninja.WriteLine ("rule ilstrip");
-		ninja.WriteLine ("  command = cp $in $out; mono-cil-strip $out");
+		ninja.WriteLine ("  command = cp $in $out; mono $tools_dir/mono-cil-strip.exe $out");
 		ninja.WriteLine ("  description = [IL-STRIP]");
 
 		// Targets

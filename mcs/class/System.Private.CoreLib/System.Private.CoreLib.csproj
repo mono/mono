@@ -229,7 +229,6 @@
       <Compile Include="..\corlib\Mono\RuntimeHandles.cs" />
       <Compile Include="..\corlib\Mono\SafeStringMarshal.cs" />
       <Compile Include="..\corlib\Mono\SafeGPtrArrayHandle.cs" />
-      <Compile Include="..\corlib\Mono.Security\Uri.cs" />
 
       <Compile Include="..\corlib\System\ArgIterator.cs" />
       <Compile Include="..\corlib\System\EmptyArray.cs" />
