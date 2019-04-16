@@ -4710,7 +4710,6 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				addr = (char*)o + field->offset;
 
 			sp [-1].data.p = vt_sp;
-			memcpy(sp [-1].data.p, (char *)o + * (guint16 *)(ip + 1), i32);
 			vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 			memcpy(sp [-1].data.p, addr, i32);
 			MINT_IN_BREAK;
