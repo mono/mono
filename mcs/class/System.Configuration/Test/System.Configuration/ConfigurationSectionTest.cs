@@ -55,21 +55,11 @@ namespace MonoTests.System.Configuration {
 <?xml version=""1.0"" encoding=""utf-8"" ?>
 <configuration>
     <configSections>
-	   <section name=""SimpleSection"" type=""{0}"" />
+        <section name=""SimpleSection"" type=""{0}"" />
     </configSections>
-	<SimpleSection>
-	</SimpleSection>
+    <SimpleSection>
+    </SimpleSection>
 </configuration>", typeof(SimpleSection).AssemblyQualifiedName);
-
-		static readonly string ProtectedCtorConfig = string.Format (@"
-<?xml version=""1.0"" encoding=""utf-8"" ?>
-<configuration>
-    <configSections>
-	   <section name=""ProtectedCtorSection"" type=""{0}"" />
-    </configSections>
-	<ProtectedCtorSection>
-	</ProtectedCtorSection>
-</configuration>", typeof(ProtectedCtorSection).AssemblyQualifiedName);
 
 		[Test]
 		public void GetRawXmlTest ()
@@ -181,7 +171,6 @@ namespace MonoTests.System.Configuration.ConfigurationSectionTestHelpers
 		{
 			get { return (int)this["Value"]; }
 			set { this["Value"] = value; }
-		}	
+		}
 	}
 }
-
