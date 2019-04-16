@@ -198,6 +198,7 @@
       <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
       <Compile Include="System.Security\DynamicSecurityMethodAttribute.cs" />
       <Compile Include="System.Threading\Interlocked.cs" />
+      <Compile Include="System.Threading\Monitor.cs" />
       <Compile Include="System.Threading\Overlapped.cs" />
       <Compile Include="System.Threading\PreAllocatedOverlapped.cs" />
       <Compile Include="System.Threading\StackCrawlMark.cs" />
@@ -266,7 +267,6 @@
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
-      <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
