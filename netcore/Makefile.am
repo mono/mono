@@ -134,7 +134,6 @@ EXCLUDED_COREFX_TESTS_NOT_PASSING = \
 	System.Runtime.Loader.Tests \
 	System.Runtime.Serialization.Formatters.Tests \
 	System.Threading.Overlapped.Tests \
-	System.Threading.Tests \
 	System.Xml.Xsl.XslTransformApi.Tests
 
 xtestall: update-corefx-tests $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
