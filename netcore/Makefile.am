@@ -111,35 +111,35 @@ EXCLUDED_COREFX_TESTS = \
 # Tests suites which do pass yet
 EXCLUDED_COREFX_TESTS_NOT_PASSING = \
 	$(EXCLUDED_COREFX_TESTS) \
-	System.Runtime.Extensions.Tests \
-	System.Drawing.Common.Tests \
 	System.ComponentModel.Composition.Tests \
-	System.Reflection.Tests \
-	System.Reflection.Emit.Tests \
-	System.Runtime.InteropServices.Tests \
-	System.Reflection.MetadataLoadContext.Tests \
-	System.Reflection.Metadata.Tests \
-	System.Reflection.TypeExtensions.Tests \
-	System.Diagnostics.TraceSource.Tests \
-	System.Data.SqlClient.Tests \
-	System.Runtime.Serialization.Formatters.Tests \
-	System.Console.Tests \
-	System.Reflection.Emit.ILGeneration.Tests \
-	System.Diagnostics.StackTrace.Tests \
-	System.Reflection.Emit.Lightweight.Tests \
 	System.Composition.TypedParts.Tests \
-	System.Runtime.Loader.Tests \
-	System.Threading.Overlapped.Tests \
-	System.Reflection.TypeExtensions.CoreCLR.Tests \
-	System.Reflection.CoreCLR.Tests \
-	System.Runtime.Loader.DefaultContext.Tests \
-	System.Runtime.Loader.RefEmitLoadContext.Tests \
+	System.Console.Tests \
+	System.Data.Common.Tests \
+	System.Data.SqlClient.Tests \
+	System.Diagnostics.StackTrace.Tests \
+	System.Diagnostics.TraceSource.Tests \
+	System.Drawing.Common.Tests \
 	System.Linq.Parallel.Tests \
 	System.Numerics.Vectors.Tests \
 	System.Reflection.Context.Tests \
+	System.Reflection.CoreCLR.Tests \
+	System.Reflection.Emit.ILGeneration.Tests \
+	System.Reflection.Emit.Lightweight.Tests \
+	System.Reflection.Emit.Tests \
+	System.Reflection.Metadata.Tests \
+	System.Reflection.MetadataLoadContext.Tests \
+	System.Reflection.Tests \
+	System.Reflection.TypeExtensions.CoreCLR.Tests \
+	System.Reflection.TypeExtensions.Tests \
+	System.Runtime.Extensions.Tests \
+	System.Runtime.InteropServices.Tests \
+	System.Runtime.Loader.DefaultContext.Tests \
+	System.Runtime.Loader.RefEmitLoadContext.Tests \
+	System.Runtime.Loader.Tests \
+	System.Runtime.Serialization.Formatters.Tests \
+	System.Threading.Overlapped.Tests \
 	System.Threading.Tests \
-	System.Xml.Xsl.XslTransformApi.Tests \
-	System.Data.Common.Tests
+	System.Xml.Xsl.XslTransformApi.Tests
 
 xtestall: update-corefx-tests $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
