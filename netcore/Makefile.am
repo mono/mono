@@ -119,7 +119,6 @@ EXCLUDED_COREFX_TESTS_NOT_PASSING = \
 	System.Diagnostics.StackTrace.Tests \
 	System.Diagnostics.TraceSource.Tests \
 	System.Drawing.Common.Tests \
-	System.Linq.Parallel.Tests \
 	System.Numerics.Vectors.Tests \
 	System.Reflection.Context.Tests \
 	System.Reflection.CoreCLR.Tests \
