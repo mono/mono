@@ -923,7 +923,7 @@ namespace MonoTests.System.IO
 			}
 			
 			Assert.IsTrue (File.Exists (bar), "#1");
-			File.Move (bar, baz);
+			Assert.DoesNotThrow (() => File.Move (bar, baz), "#5");
 			Assert.IsFalse (File.Exists (bar), "#2");
 			Assert.IsTrue (File.Exists (baz), "#3");
 
@@ -939,7 +939,7 @@ namespace MonoTests.System.IO
 			Directory.CreateDirectory (dir);
 			Directory.CreateDirectory (dir2);
 			File.Create (dir_foo).Close ();
-			File.Move (dir_foo, dir2_foo);
+			Assert.DoesNotThrow (() => File.Move (dir_foo, dir2_foo), "#6");
 			Assert.IsTrue (File.Exists (dir2_foo), "#4");
 			
 			Directory.Delete (dir, true);
