@@ -112,7 +112,6 @@ EXCLUDED_COREFX_TESTS = \
 EXCLUDED_COREFX_TESTS_NOT_PASSING = \
 	$(EXCLUDED_COREFX_TESTS) \
 	System.Memory.Tests \
-	System.Runtime.Tests \
 	System.Collections.Tests \
 	System.Runtime.Extensions.Tests \
 	System.Drawing.Common.Tests \

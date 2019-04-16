@@ -60,3 +60,20 @@
 # crashes runtime (Assertion at method-to-ir.c:12303, condition `load_opcode != OP_LOADV_MEMBASE' not met)
 -noclass System.Text.Unicode.Tests.Utf16UtilityTests
 -noclass System.Text.Unicode.Tests.Utf8Tests
+
+# TODO: Incorrectly wrapped exceptions
+-nomethod System.Reflection.Tests.InvokeRefReturnNetcoreTests.TestNullRefReturnInvoke
+-nomethod System.Reflection.Tests.InvokeRefReturnNetcoreTests.TestNullRefReturnOfPointer
+
+# TODO: float- and double- backed enums
+-nomethod System.Tests.EnumTests.Parse
+-nomethod System.Tests.EnumTests.Parse_NetCoreApp11
+
+# TODO
+-nomethod System.Tests.ArrayTests.SetValue_Casting_Invalid
+-nomethod System.Tests.ArrayTests.Copy_SZArray
+-nomethod System.Tests.PseudoCustomAttributeTests.GetCustomAttribute
+-nomethod System.Tests.PseudoCustomAttributeTests.GetCustomAttributes
+-nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
+-nomethod System.Tests.ActivatorTests.CreateInstance_PublicOnlyValueTypeWithPrivateDefaultConstructor_ThrowsMissingMethodException
+-nomethod System.Tests.BufferTests.BlockCopy_Invalid
