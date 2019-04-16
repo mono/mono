@@ -117,7 +117,6 @@ EXCLUDED_COREFX_TESTS_NOT_PASSING = \
 	System.Data.Common.Tests \
 	System.Data.SqlClient.Tests \
 	System.Diagnostics.StackTrace.Tests \
-	System.Diagnostics.TraceSource.Tests \
 	System.Drawing.Common.Tests \
 	System.Numerics.Vectors.Tests \
 	System.Reflection.Context.Tests \
