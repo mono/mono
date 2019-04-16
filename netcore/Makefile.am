@@ -109,7 +109,9 @@ EXCLUDED_COREFX_TESTS = \
 	System.Net.Http.Functional.Tests \
 	System.Net.HttpListener.Tests \
 	System.Net.NameResolution.Functional.Tests \
-	System.Net.Sockets.Tests
+	System.Net.Sockets.Tests \
+	System.Utf8String.Experimental.Tests \
+	System.ComponentModel.Composition.Registration.Tests
 
 # Tests suites which pass
 PASSING_COREFX_TESTS = \
