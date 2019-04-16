@@ -8,7 +8,7 @@ namespace System
 		{
 			if (attributeType == null)
 				throw new ArgumentNullException (nameof (attributeType));
-			if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute))
+			if (!attributeType.IsSubclassOf (typeof (Attribute)) && attributeType != typeof (Attribute) && attributeType != typeof (MonoCustomAttrs))
 				throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass + " " + attributeType.FullName);
 
 			var attrs = MonoCustomAttrs.GetCustomAttributes (element, attributeType, inherit);
