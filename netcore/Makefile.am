@@ -111,7 +111,6 @@ EXCLUDED_COREFX_TESTS = \
 # Tests suites which do pass yet
 EXCLUDED_COREFX_TESTS_NOT_PASSING = \
 	$(EXCLUDED_COREFX_TESTS) \
-	System.Memory.Tests \
 	System.Runtime.Extensions.Tests \
 	System.Drawing.Common.Tests \
 	System.Dynamic.Runtime.Tests \
