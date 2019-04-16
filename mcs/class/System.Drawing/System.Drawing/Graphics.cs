@@ -2449,12 +2449,18 @@ namespace System.Drawing
 			}
 		}
 
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public object GetContextInfo ()
 		{
-			// only known source of information @ http://blogs.wdevs.com/jdunlap/Default.aspx
-			throw new NotImplementedException ();
+			// Returns a clipping region and transform matrix.
+			// The clipping region is relative to page space, not world space.
+			// Native accumulates world translations from individual saves for some strange reason.
+			Region rgn = Clip;
+			Matrix transform = Transform;
+			Matrix invTransform = transform.Clone();
+			invTransform.Invert ();
+			Clip.Transform (invTransform);
+			return new object[] { rgn, transform };
 		}
 	}
 }
