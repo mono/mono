@@ -2,3 +2,7 @@
 -nomethod *PlatformHandler*
 # TODO: Hangs
 -nomethod *ExpectedDiagnosticSourceActivityLogging*
+
+# Works, but may trigger UI!
+-nomethod System.Net.Http.Functional.Tests.SocketsHttpHandler_HttpClientHandler_DangerousAcceptAllCertificatesValidator_Test.SetDelegate_ConnectionSucceeds
+-nomethod System.Net.Http.Functional.Tests.SocketsHttpHandler_HttpClientHandler_ClientCertificates_Test.AutomaticOrManual_DoesntFailRegardlessOfWhetherClientCertsAreAvailable
