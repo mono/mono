@@ -108,7 +108,6 @@ EXCLUDED_COREFX_TESTS = \
 	System.Diagnostics.Tracing.Tests \
 	System.Net.Http.Functional.Tests \
 	System.Net.HttpListener.Tests \
-	System.Net.Sockets.Tests \
 	System.Utf8String.Experimental.Tests \
 	System.ComponentModel.Composition.Registration.Tests
 
