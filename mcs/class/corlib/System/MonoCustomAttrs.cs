@@ -149,15 +149,16 @@ namespace System
 			if (obj == null)
 				throw new ArgumentNullException (nameof (obj));
 			if (attributeType == null)
-				throw new ArgumentNullException (nameof (attributeType));
+				throw new ArgumentNullException (nameof (attributeType));	
 
-			if (attributeType == typeof (MonoCustomAttrs)
-#if NETCORE
-				|| attributeType == typeof (Attribute)
-#endif
-			   	)
+			if (attributeType == typeof (MonoCustomAttrs))
 				attributeType = null;
-			
+
+#if NETCORE
+			if (attributeType == typeof (Attribute))
+				attributeType = null;
+#endif
+
 			object[] r;
 			object[] res = GetCustomAttributesBase (obj, attributeType, false);
 			// shortcut
