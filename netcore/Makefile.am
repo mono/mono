@@ -131,7 +131,6 @@ EXCLUDED_COREFX_TESTS_NOT_PASSING = \
 	System.Diagnostics.StackTrace.Tests \
 	System.Reflection.Emit.Lightweight.Tests \
 	System.Composition.TypedParts.Tests \
-	System.Threading.ThreadPool.Tests \
 	System.Runtime.Loader.Tests \
 	System.Threading.Overlapped.Tests \
 	System.Reflection.TypeExtensions.CoreCLR.Tests \
