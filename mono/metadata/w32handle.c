@@ -1208,13 +1208,11 @@ mono_w32handle_signal_and_wait (gpointer signal_handle, gpointer wait_handle, gu
 
 	mono_w32handle_unlock (signal_handle_data);
 
-#if ENABLE_NETCORE
 	if (signal_ret == MONO_W32HANDLE_WAIT_RET_TOO_MANY_POSTS ||
 		signal_ret == MONO_W32HANDLE_WAIT_RET_NOT_OWNED_BY_CALLER) {
 		ret = (MonoW32HandleWaitRet) signal_ret;
 		goto done;
 	}
-#endif
 
 	if (mono_w32handle_test_capabilities (wait_handle_data, MONO_W32HANDLE_CAP_OWN)) {
 		if (own_if_owned (wait_handle_data, &abandoned)) {
