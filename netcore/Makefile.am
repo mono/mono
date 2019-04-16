@@ -105,7 +105,6 @@ xtest-%: prepare update-corefx-tests
 
 # these tests won't be included in `xtestall` (some of them crash runtime, some hang)
 EXCLUDED_COREFX_TESTS = \
-	System.Diagnostics.Tracing.Tests \
 	System.Net.Http.Functional.Tests \
 	System.Net.HttpListener.Tests \
 	System.Utf8String.Experimental.Tests \
