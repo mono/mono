@@ -48,6 +48,7 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mempool-internals.h>
 #include <mono/metadata/mono-endian.h>
+#include <mono/metadata/threads-types.h>
 #include <mono/metadata/custom-attrs-internals.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-compiler.h>
@@ -212,6 +213,7 @@ typedef struct MonoAotOptions {
 	gboolean llvm;
 	gboolean llvm_only;
 	gboolean llvm_disable_self_init;
+	int nthreads;
 	int ntrampolines;
 	int nrgctx_trampolines;
 	int nimt_trampolines;
@@ -7826,7 +7828,7 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		} else if (str_begins_with (arg, "interp")) {
 			opts->interp = TRUE;
 		} else if (str_begins_with (arg, "threads=")) {
-			// Obsolete
+			opts->nthreads = atoi (arg + strlen ("threads="));
 		} else if (str_begins_with (arg, "static")) {
 			opts->static_link = TRUE;
 			opts->no_dlsym = TRUE;
@@ -8263,6 +8265,7 @@ add_gsharedvt_wrappers (MonoAotCompile *acfg, MonoMethodSignature *sig, gboolean
  * compile_method:
  *
  *   AOT compile a given method.
+ * This function might be called by multiple threads, so it must be thread-safe.
  */
 static void
 compile_method (MonoAotCompile *acfg, MonoMethod *method)
@@ -8278,7 +8281,9 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	if (acfg->aot_opts.metadata_only)
 		return;
 
+	mono_acfg_lock (acfg);
 	index = get_method_index (acfg, method);
+	mono_acfg_unlock (acfg);
 
 	/* fixme: maybe we can also precompile wrapper methods */
 	if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) ||
@@ -8372,7 +8377,9 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	}
 
 	/* Collect method->token associations from the cfg */
+	mono_acfg_lock (acfg);
 	g_hash_table_foreach (cfg->token_info_hash, add_token_info_hash, acfg);
+	mono_acfg_unlock (acfg);
 	g_hash_table_destroy (cfg->token_info_hash);
 	cfg->token_info_hash = NULL;
 
@@ -8398,6 +8405,9 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		return;
 	}
 
+	/* Lock for the rest of the code */
+	mono_acfg_lock (acfg);
+
 	if (cfg->gsharedvt)
 		acfg->stats.method_categories [METHOD_CAT_GSHAREDVT] ++;
 	else if (cfg->gshared)
@@ -8420,6 +8430,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		if (acfg->aot_opts.print_skipped_methods)
 			printf ("Skip (patches): %s\n", mono_method_get_full_name (method));
 		acfg->stats.ocount++;
+		mono_acfg_unlock (acfg);
 		return;
 	}
 
@@ -8634,13 +8645,37 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 
 	g_hash_table_insert (acfg->method_to_cfg, cfg->orig_method, cfg);
 
+	/* Update global stats while holding a lock. */
 	mono_update_jit_stats (cfg);
-	mono_atomic_inc_i32 (&acfg->stats.ccount);
 
 	/*
 	if (cfg->orig_method->wrapper_type)
 		g_ptr_array_add (acfg->extra_methods, cfg->orig_method);
 	*/
+
+	mono_acfg_unlock (acfg);
+
+	mono_atomic_inc_i32 (&acfg->stats.ccount);
+}
+ 
+static mono_thread_start_return_t WINAPI
+compile_thread_main (gpointer user_data)
+{
+	MonoAotCompile *acfg = ((MonoAotCompile **)user_data) [0];
+	GPtrArray *methods = ((GPtrArray **)user_data) [1];
+	int i;
+
+	ERROR_DECL (error);
+	MonoInternalThread *internal = mono_thread_internal_current ();
+	MonoString *str = mono_string_new_checked (mono_domain_get (), "AOT compiler", error);
+	mono_error_assert_ok (error);
+	mono_thread_set_name_internal (internal, str, TRUE, FALSE, error);
+	mono_error_assert_ok (error);
+
+	for (i = 0; i < methods->len; ++i)
+		compile_method (acfg, (MonoMethod *)g_ptr_array_index (methods, i));
+
+	return 0;
 }
  
 /* Used by the LLVM backend */
@@ -11626,7 +11661,65 @@ collect_methods (MonoAotCompile *acfg)
 static void
 compile_methods (MonoAotCompile *acfg)
 {
-	for (int i = 0; i < acfg->methods->len; ++i) {
+	int i, methods_len;
+
+	if (acfg->aot_opts.nthreads > 0) {
+		GPtrArray *frag;
+		int len, j;
+		GPtrArray *threads;
+		MonoThreadHandle *thread_handle;
+		gpointer *user_data;
+		MonoMethod **methods;
+
+		methods_len = acfg->methods->len;
+
+		len = acfg->methods->len / acfg->aot_opts.nthreads;
+		g_assert (len > 0);
+		/* 
+		 * Partition the list of methods into fragments, and hand it to threads to
+		 * process.
+		 */
+		threads = g_ptr_array_new ();
+		/* Make a copy since acfg->methods is modified by compile_method () */
+		methods = g_new0 (MonoMethod*, methods_len);
+		//memcpy (methods, g_ptr_array_index (acfg->methods, 0), sizeof (MonoMethod*) * methods_len);
+		for (i = 0; i < methods_len; ++i)
+			methods [i] = (MonoMethod *)g_ptr_array_index (acfg->methods, i);
+		i = 0;
+		while (i < methods_len) {
+			ERROR_DECL (error);
+			MonoInternalThread *thread;
+
+			frag = g_ptr_array_new ();
+			for (j = 0; j < len; ++j) {
+				if (i < methods_len) {
+					g_ptr_array_add (frag, methods [i]);
+					i ++;
+				}
+			}
+
+			user_data = g_new0 (gpointer, 3);
+			user_data [0] = acfg;
+			user_data [1] = frag;
+			
+			thread = mono_thread_create_internal (mono_domain_get (), (gpointer)compile_thread_main, user_data, MONO_THREAD_CREATE_FLAGS_NONE, error);
+			mono_error_assert_ok (error);
+
+			thread_handle = mono_threads_open_thread_handle (thread->handle);
+			g_ptr_array_add (threads, thread_handle);
+		}
+		g_free (methods);
+
+		for (i = 0; i < threads->len; ++i) {
+			mono_thread_info_wait_one_handle ((MonoThreadHandle*)g_ptr_array_index (threads, i), MONO_INFINITE_WAIT, FALSE);
+			mono_threads_close_thread_handle ((MonoThreadHandle*)g_ptr_array_index (threads, i));
+		}
+	} else {
+		methods_len = 0;
+	}
+
+	/* Compile methods added by compile_method () or all methods if nthreads == 0 */
+	for (i = methods_len; i < acfg->methods->len; ++i) {
 		/* This can add new methods to acfg->methods */
 		compile_method (acfg, (MonoMethod *)g_ptr_array_index (acfg->methods, i));
 	}
