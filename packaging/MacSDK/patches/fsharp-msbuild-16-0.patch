@@ -1,7 +1,7 @@
-diff --git a/mono/config.make.in b/mono/config.make.in
+diff --git a/mono/config.make b/mono/config.make
 index 3106ab99f..8af247ffd 100644
---- a/mono/config.make.in
-+++ b/mono/config.make.in
+--- a/mono/config.make
++++ b/mono/config.make
 @@ -148,6 +148,7 @@ install-sdk-lib:
  	    echo " --> $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v12.0/FSharp/"; \
  	    echo " --> $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v14.0/FSharp/"; \
@@ -45,6 +45,13 @@ index 3106ab99f..8af247ffd 100644
  	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v14.0/FSharp/; \
  	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v15.0/FSharp/; \
 +	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v16.0/FSharp/; \
+ 	    \
+ 	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.Overrides.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v/FSharp/; \
+ 	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.Overrides.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v11.0/FSharp/; \
+ 	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.Overrides.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v12.0/FSharp/; \
+ 	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.Overrides.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v14.0/FSharp/; \
+ 	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.Overrides.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v15.0/FSharp/; \
++	    $(INSTALL_LIB) $(outdir)Microsoft.FSharp.Overrides.NetSdk.targets $(DESTDIR)$(monodir)/xbuild/Microsoft/VisualStudio/v16.0/FSharp/; \
  	fi
  	@if test x-$(outsuffix) = x-net40; then \
  	    if test -e $(outdir)$(NAME).dll; then \
