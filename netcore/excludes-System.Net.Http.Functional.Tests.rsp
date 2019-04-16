@@ -1,0 +1,4 @@
+# TODO: Crashes runtime inside Interop.Http.MultiPerform (marshalling issue?)
+-nomethod *PlatformHandler*
+# TODO: Hangs
+-nomethod *ExpectedDiagnosticSourceActivityLogging*
