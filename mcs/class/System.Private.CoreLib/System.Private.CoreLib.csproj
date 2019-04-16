@@ -264,7 +264,6 @@
       <Compile Include="..\corlib\System.Reflection\RuntimeModule.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="..\referencesource\mscorlib\system\gc.cs" />
       <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
       <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />
