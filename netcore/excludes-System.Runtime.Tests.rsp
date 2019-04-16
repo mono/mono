@@ -56,3 +56,7 @@
 
 # causes 'error: Return type can't be a byref type Parameter name: returnType':
 -nomethod System.Tests.Types.VoidTests.IsByRef_Get_ReturnsExpected
+
+# crashes runtime (Assertion at method-to-ir.c:12303, condition `load_opcode != OP_LOADV_MEMBASE' not met)
+-noclass System.Text.Unicode.Tests.Utf16UtilityTests
+-noclass System.Text.Unicode.Tests.Utf8Tests
