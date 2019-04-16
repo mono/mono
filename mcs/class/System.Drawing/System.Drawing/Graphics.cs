@@ -1795,7 +1795,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public static IntPtr GetHalftonePalette ()
 		{
-			throw new NotImplementedException ();
+			return IntPtr.Zero;
 		}
 
 		public IntPtr GetHdc ()
