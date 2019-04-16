@@ -170,7 +170,6 @@
 		<type fullname="System.Exception" preserve="fields">
 			<!-- used in mini-exceptions.c (if trace is enabled) -->
 			<method name="get_Message" />
-			<method name="FixRemotingException" feature="remoting" />
 		</type>
 		
 		<!-- exception.c (mono_get_exception_execution_engine) -->
@@ -311,10 +310,6 @@
 			<!-- class.c: initialize_object_slots -->
 			<method name="Finalize" />
 			<method name="GetHashCode" />
-			<!-- needed for debugging -->
-			<method name="obj_address" />
-			<!-- appdomain.c mono_object_new_checked in create_domain_objects -->
-			<method signature="System.Void .ctor()" />
 		</type>
 		
 		<!-- appdomain.c (create_domain_objects) domain->out_of_memory_ex -->
@@ -401,7 +396,7 @@
 		
 		<!-- exception.c (mono_get_exception_type_initialization) -->
 		<type fullname="System.TypeInitializationException">
-			<!-- iterates to find the (only) 2 paramaters .ctor -->
+			<!-- iterates to find the (only) 2 parameters .ctor -->
 			<method signature="System.Void .ctor(System.String,System.Exception)" />
 		</type>
 
@@ -701,9 +696,6 @@
 			<method name="get_CurrentContext" />
 		</type>
 		
-		<!-- domain.c: mono_defaults.internal_thread_class -->
-		<type fullname="System.Threading.InternalThread" preserve="fields" />
-		
 		<!-- domain.c: mono_defaults.threadabortexception_class -->
 		<!-- exception.c (mono_get_exception_thread_abort) -->
 		<type fullname="System.Threading.ThreadAbortException">
@@ -735,14 +727,6 @@
 		<type fullname="System.Threading._ThreadPoolWaitCallback">
 		  <method name="PerformWaitCallback"/>
 		</type>
-
-		<!--
-		Many applications rely on Mono.Runtime to exist in order to detect
-		whether they are running on Mono or .NET. Thus we always preserve it
-		to allow such detection logic to work, even if the class is not used
-		directly.
-		-->
-		<type fullname="Mono.Runtime" preserve="nothing" />
 
 		<!-- marshal-ilgen.c (emit_native_icall_wrapper_ilgen) -->
 		<type fullname="Mono.RuntimeStructs/MonoError" />
