@@ -403,4 +403,4 @@ clean-sdk:
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	dotnet build sdk/Mono.WebAssembly.Sdk
-	dotnet build sdk
+	dotnet build sdk/MonoWasmSdkCLI.sln
