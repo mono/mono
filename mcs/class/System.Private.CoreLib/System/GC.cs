@@ -43,21 +43,6 @@ namespace System
 
 		internal static readonly object EPHEMERON_TOMBSTONE = get_ephemeron_tombstone ();
 
-		internal static void GetMemoryInfo(out uint highMemLoadThreshold,
-												  out ulong totalPhysicalMem,
-												  out uint lastRecordedMemLoad,
-												  // The next two are size_t
-												  out UIntPtr lastRecordedHeapSize,
-												  out UIntPtr lastRecordedFragmentation)
-		{
-			// TODO: Fill properly
-			highMemLoadThreshold = 0;
-			totalPhysicalMem = ulong.MaxValue;
-			lastRecordedMemLoad = 0;
-			lastRecordedHeapSize = UIntPtr.Zero;
-			lastRecordedFragmentation = UIntPtr.Zero;
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern long GetAllocatedBytesForCurrentThread ();
 
