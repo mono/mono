@@ -310,13 +310,5 @@ namespace System.Web.Configuration
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-
-		protected internal override void DeserializeSection (XmlReader reader)
-		{
-			base.DeserializeSection (reader);
-
-			/* XXX more here?.. */
-		}
 	}
 }
-

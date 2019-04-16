@@ -63,18 +63,6 @@ namespace System.Web.Configuration
 			properties.Add (modeProp);
 			properties.Add (redirectModeProp);
 		}
-
-		// Why override?
-		protected internal override void DeserializeSection (XmlReader reader)
-		{
-			base.DeserializeSection (reader);
-		}
-
-		// Why override?
-		protected internal override void Reset (ConfigurationElement parentElement)
-		{
-			base.Reset (parentElement);
-		}
 		
 		[ConfigurationProperty ("defaultRedirect")]
 		public string DefaultRedirect {
