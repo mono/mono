@@ -5903,10 +5903,10 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (!cfg->llvm_only || mono_aot_is_shared_got_offset (got_offset)) {
 				/* Can't use this in llvmonly mode since the got slots are initialized by the methods themselves */
 				set_invariant_load_flag (values [ins->dreg]);
-
-				if (ji->type == MONO_PATCH_INFO_LDSTR)
-					set_nonnull_load_flag (values [ins->dreg]);
 			}
+
+			if (ji->type == MONO_PATCH_INFO_LDSTR)
+				set_nonnull_load_flag (values [ins->dreg]);
 			break;
 		}
 		case OP_NOT_REACHED:
