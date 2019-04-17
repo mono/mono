@@ -9081,6 +9081,33 @@ mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
 	mono_icall_unlock ();
 }
 
+static
+void
+assert_equivalent_jit_icall_info (const char *which, const MonoJitICallInfo *info, gconstpointer func,
+	const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
+{
+	g_assertf (!strcmp(info->name, name),
+		"jit icall name already %s %s %s %p %p\n",
+		which, name, info->name, func, info->func);
+
+	const char * const c_symbol1 = info->c_symbol ? info->c_symbol : "null1";
+	const char * const c_symbol2 =       c_symbol ?       c_symbol : "null2";
+
+	g_assertf (!strcmp(c_symbol1, c_symbol2),
+		"jit icall c_symbol already %s %s %s %s\n",
+		which, name, c_symbol1, c_symbol2);
+
+	g_assertf (info->func == func, "jit icall func already %s %s %p %p\n",
+		which, name, func, info->func);
+
+	g_assertf (info->sig == sig, "jit icall sig already %s %s %p %p\n",
+		which, name, sig, info->sig);
+
+	g_assertf (avoid_wrapper ? (info->wrapper == func) : (info->wrapper != func),
+		"jit icall wrapper already %s %s %d %p %p\n",
+		which, name, (int)avoid_wrapper, func, info->wrapper);
+}
+
 void
 mono_register_jit_icall_info_full (MonoJitICallInfo *info, gconstpointer func,
 	const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
@@ -9096,17 +9123,27 @@ mono_register_jit_icall_info_full (MonoJitICallInfo *info, gconstpointer func,
 		jit_icall_hash_addr = g_hash_table_new (NULL, NULL);
 	}
 
-	MonoJitICallInfo *existing_info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name);
+	// FIXME Some duplicate registration occurs. Allow it if it is equivalent.
 
-	g_assertf (!existing_info, "jit icall name already defined \"%s\" \"%s\" %p %p\n",
-		name, existing_info->name, func, existing_info->func);
+	MonoJitICallInfo const * const existing_infos [ ] = {
+		(MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name),
+		(MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_addr, (gpointer)func),
+	};
+	for (int i = 0; i < 2; ++i) {
+		MonoJitICallInfo const * const existing_info = existing_infos [i];
 
-	if ((existing_info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_addr, (gpointer)func))) {
-		g_error("jit icall func already defined \"%s\" \"%s\" %p %p\n",
-			name, existing_info->name, func, existing_info->func);
+		if (!existing_info)
+			continue;
+
+		g_assertf (info == existing_info, "jit icall info already hashed %s %s\n",
+			name, existing_info->name);
+
+		assert_equivalent_jit_icall_info ("hashed", existing_info, func, name, sig, avoid_wrapper, c_symbol);
 	}
 
-	g_assertf (!info->inited, "%s", name);
+	if (info->inited)
+		assert_equivalent_jit_icall_info ("inited", info, func, name, sig, avoid_wrapper, c_symbol);
+
 	info->inited = TRUE;
 	info->name = name;
 	info->func = func;
