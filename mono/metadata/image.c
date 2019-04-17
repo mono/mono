@@ -1387,7 +1387,8 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Loading problematic image %s", image->name);
 		} else {
 			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Denying load of problematic image %s", image->name);
-			*status = MONO_IMAGE_IMAGE_INVALID;
+			if (status)
+				*status = MONO_IMAGE_IMAGE_INVALID;
 			goto invalid_image;
 		}
 	}
