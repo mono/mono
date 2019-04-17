@@ -1590,6 +1590,23 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	return ret;
 }
 
+static void
+interp_constrained_box (TransformData *td, MonoDomain *domain, MonoClass *constrained_class, MonoMethodSignature *csignature, MonoError *error)
+{
+	MonoVTable *vtable = mono_class_vtable_checked (domain, constrained_class, error);
+	return_if_nok (error);
+
+	if (mint_type (m_class_get_byval_arg (constrained_class)) == MINT_TYPE_VT) {
+		interp_add_ins (td, MINT_BOX_VT);
+		td->last_ins->data [0] = get_data_item_index (td, vtable);
+		td->last_ins->data [1] = csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP);
+	} else {
+		interp_add_ins (td, MINT_BOX);
+		td->last_ins->data [0] = get_data_item_index (td, vtable);
+		td->last_ins->data [1] = csignature->param_count;
+	}
+}
+
 /* Return FALSE if error, including inline failure */
 static gboolean
 interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target_method, MonoDomain *domain, MonoGenericContext *generic_context, unsigned char *is_bb_start, MonoClass *constrained_class, gboolean readonly, MonoError *error, gboolean check_visibility)
@@ -1708,18 +1725,9 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				interp_add_ins (td, MINT_LDIND_I8);
 				td->last_ins->data [0] = csignature->param_count;
 			}
-			MonoVTable *vtable = mono_class_vtable_checked (domain, constrained_class, error);
-			return_val_if_nok (error, FALSE);
 
-			if (mint_type (m_class_get_byval_arg (constrained_class)) == MINT_TYPE_VT) {
-				interp_add_ins (td, MINT_BOX_VT);
-				td->last_ins->data [0] = get_data_item_index (td, vtable);
-				td->last_ins->data [1] = csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP);
-			} else {
-				interp_add_ins (td, MINT_BOX);
-				td->last_ins->data [0] = get_data_item_index (td, vtable);
-				td->last_ins->data [1] = csignature->param_count;
-			}
+			interp_constrained_box (td, domain, constrained_class, csignature, error);
+			return_val_if_nok (error, FALSE);
 		} else {
 			if (target_method->klass != constrained_class) {
 				/*
@@ -1733,18 +1741,9 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 					interp_add_ins (td, MINT_LDIND_I8);
 					td->last_ins->data [0] = csignature->param_count;
 				}
-				MonoVTable *vtable = mono_class_vtable_checked (domain, constrained_class, error);
-				return_val_if_nok (error, FALSE);
 
-				if (mint_type (m_class_get_byval_arg (constrained_class)) == MINT_TYPE_VT) {
-					interp_add_ins (td, MINT_BOX_VT);
-					td->last_ins->data [0] = get_data_item_index (td, vtable);
-					td->last_ins->data [1] = csignature->param_count | ((td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : BOX_NOT_CLEAR_VT_SP);
-				} else {
-					interp_add_ins (td, MINT_BOX);
-					td->last_ins->data [0] = get_data_item_index (td, vtable);
-					td->last_ins->data [1] = csignature->param_count;
-				}
+				interp_constrained_box (td, domain, constrained_class, csignature, error);
+				return_val_if_nok (error, FALSE);
 			}
 			is_virtual = FALSE;
 		}
