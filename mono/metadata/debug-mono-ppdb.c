@@ -142,9 +142,9 @@ mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 		if (size > 4 && strncmp ((char*)raw_contents, "BSJB", 4) == 0)
 			ppdb_image = mono_image_open_from_data_internal ((char*)raw_contents, size, TRUE, &status, FALSE, TRUE, NULL);
 	} else {
-		/* ppdb files drop the .exe/.dll extension */
+		/* ppdb files drop the .exe/.dll/.clr extension */
 		filename = mono_image_get_filename (image);
-		if (strlen (filename) > 4 && (!strcmp (filename + strlen (filename) - 4, ".exe") || !strcmp (filename + strlen (filename) - 4, ".dll"))) {
+		if (strlen (filename) > 4 && (!strcmp (filename + strlen (filename) - 4, ".exe") || !strcmp (filename + strlen (filename) - 4, ".dll") || !strcmp (filename + strlen (filename) - 4, ".clr"))) {
 			s = g_strdup (filename);
 			s [strlen (filename) - 4] = '\0';
 			ppdb_filename = g_strdup_printf ("%s.pdb", s);
