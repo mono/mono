@@ -4,7 +4,7 @@
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-AC_INIT(mono, [6.3.0],
+AC_INIT(mono, [6.2.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -159,22 +159,19 @@ case "$host" in
 		fi
 		HOST_CC="gcc"
 		RID="win-x86"
-		CORETARGETS="/p:TargetsWindows=true"
-		COREARCH="x86"
 		# Boehm not supported on 64-bit Windows.
 		case "$host" in
 		x86_64-*-* | amd64-*-*)
 			support_boehm=no
 			with_gc=sgen
 			RID="win-x64"
-			COREARCH="x64"
 			;;
 		esac
 
 		# Windows 7 or later is required
 		WIN32_CPPFLAGS="-DWINVER=0x0601 -D_WIN32_WINNT=0x0601 -D_WIN32_IE=0x0501 -D_UNICODE -DUNICODE -DWIN32_THREADS -DFD_SETSIZE=1024"
 		CPPFLAGS="$CPPFLAGS $WIN32_CPPFLAGS"
-		WIN32_LDFLAGS="-lbcrypt -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi -static-libgcc"
+		WIN32_LDFLAGS="-lbcrypt -lmswsock -lws2_32 -lole32 -loleaut32 -lpsapi -lversion -ladvapi32 -lwinmm -lkernel32 -liphlpapi"
 		LDFLAGS="$LDFLAGS $WIN32_LDFLAGS"
 		libmono_cflags="-mms-bitfields -mwindows"
 		libmono_ldflags="-mms-bitfields -mwindows"
@@ -309,7 +306,6 @@ case "$host" in
 		libmono_cflags="-D_REENTRANT"
 		libdl="-ldl"
 		libgc_threads=pthreads
-		CORETARGETS="/p:TargetsUnix=true"
 		use_sigposix=yes
 		if test "x$cross_compiling" != "xno"; then
                 	# to bypass the underscore linker check, not
@@ -333,11 +329,9 @@ case "$host" in
 			;;
 		x86-*)
 			RID="linux-x86"
-			COREARCH="x86"
 			;;
 		x86_64-*)
 			RID="linux-x64"
-			COREARCH="x64"
 			;;
 		arm-*)
 			# deal with this in the FPU detection section, since
@@ -348,7 +342,6 @@ case "$host" in
 			support_boehm=no
 			with_gc=sgen
 			RID="linux-arm64"
-			COREARCH="arm64"
 			;;
 		powerpc*-*-linux*)
 			# https://bugzilla.novell.com/show_bug.cgi?id=504411
@@ -401,7 +394,6 @@ case "$host" in
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		AC_DEFINE(USE_MACH_SEMA, 1, [...])
-		CORETARGETS="/p:TargetsUnix=true /p:TargetsOSX=true"
 		libdl=
 		libgc_threads=pthreads
 		has_dtrace=yes
@@ -424,12 +416,10 @@ case "$host" in
 				CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC $BROKEN_DARWIN_FLAGS"
 				with_sgen_default_concurrent=yes
 				RID="osx-x86"
-				COREARCH="x86"
 				;;
 			x*64-*-darwin*)
 				with_sgen_default_concurrent=yes
 				RID="osx-x64"
-				COREARCH="x64"
 				;;
 			arm*-darwin*)
 				platform_ios=yes
@@ -489,7 +479,6 @@ case "$host" in
 		dnl ppc Linux is the same? test further
 		disable_munmap=yes
 		RID="aix-ppc64"
-		CORETARGETS="/p:TargetsUnix=true"
 		;;
 	*)
 		AC_MSG_WARN([*** Please add $host to configure.ac checks!])
@@ -1258,8 +1247,7 @@ with_bitcode_default=no
 enable_cooperative_suspend_default=no
 enable_hybrid_suspend_default=no
 
-# For the sake of clearer error messages, these numbers should all be different from each other.
-INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4400,nftnptr-arg-trampolines=4000
+INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4000,nftnptr-arg-trampolines=4000
 
 AOT_BUILD_ATTRS=$INVARIANT_AOT_OPTIONS
 
@@ -5245,17 +5233,13 @@ if test ${TARGET} = ARM; then
 
 	if test x$host_linux = xyes; then
 		RID="linux-arm"
-		COREARCH="arm"
 		if test x$fpu = xNONE; then
 			RID="linux-armel"
-			COREARCH="armel"
 		fi
 	fi
 fi
 
 AC_SUBST(RID)
-AC_SUBST(COREARCH)
-AC_SUBST(CORETARGETS)
 
 if test ${TARGET} = RISCV32 -o ${TARGET} = RISCV64; then
 	AC_ARG_WITH([riscv-fpabi], [  --with-riscv-fpabi=auto,double,soft   Select RISC-V floating point ABI (auto)], [fpabi=$withval], [fpabi=double])
@@ -6412,7 +6396,6 @@ acceptance-tests/Makefile
 llvm/Makefile
 scripts/mono-find-provides
 scripts/mono-find-requires
-mcs/class/System.Private.CoreLib/Makefile
 mk/Makefile
 mono/Makefile
 mono/btls/Makefile
