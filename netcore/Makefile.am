@@ -10,7 +10,7 @@ NETCOREAPP_VERSION := 3.0.0-preview5-27609-17
 
 if HOST_WIN32
 NETCORESDK_EXT = zip
-UNZIPCMD = python unzip.py
+UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
 XUNIT_FLAGS =
 endif
 
