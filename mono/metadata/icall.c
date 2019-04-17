@@ -9082,19 +9082,25 @@ mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
 	mono_icall_unlock ();
 }
 
+void
+mono_no_trampolines (void)
+{
+	g_assert_not_reached ();
+}
+
 static
 void
 assert_equivalent_jit_icall_info (const char *which, const MonoJitICallInfo *info, gconstpointer func,
 	const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
 {
-	g_assertf (!strcmp(info->name, name),
+	g_assertf (func == (gpointer)mono_no_trampolines || !strcmp(info->name, name),
 		"jit icall name already %s %s %s %p %p\n",
 		which, name, info->name, func, info->func);
 
 	const char * const c_symbol1 = info->c_symbol ? info->c_symbol : "null1";
 	const char * const c_symbol2 =       c_symbol ?       c_symbol : "null2";
 
-	g_assertf (!strcmp(c_symbol1, c_symbol2),
+	g_assertf (func == (gpointer)mono_no_trampolines || !strcmp(c_symbol1, c_symbol2),
 		"jit icall c_symbol already %s %s %s %s\n",
 		which, name, c_symbol1, c_symbol2);
 
@@ -9136,7 +9142,7 @@ mono_register_jit_icall_info_full (MonoJitICallInfo *info, gconstpointer func,
 		if (!existing_info)
 			continue;
 
-		g_assertf (info == existing_info,
+		g_assertf (info == existing_info || func == (gpointer)mono_no_trampolines,
 			"jit icall info already hashed name:%s existing_name:%s func:%p existing_func:%p i:%d index:%d existing_index:%d\n",
 			name, existing_info->name, func, existing_info->func, i, mono_jit_icall_info_index (info),
 			mono_jit_icall_info_index (existing_info));
