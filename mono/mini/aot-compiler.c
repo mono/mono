@@ -9887,7 +9887,7 @@ emit_code (MonoAotCompile *acfg)
 			index = get_method_index (acfg, method);
 			sprintf (symbol, "ut_%d", index);
 
-			arch_emit_direct_call (acfg, symbol, FALSE, acfg->thumb_mixed && cfg->compile_llvm, NULL, &call_size);
+			arch_emit_label_address (acfg, symbol, FALSE, acfg->thumb_mixed && cfg->compile_llvm, NULL, &call_size);
 #endif
 		}
 	}
