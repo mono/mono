@@ -5066,10 +5066,21 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			} else if (ins->opcode == OP_RCOMPARE) {
 				cmp = LLVMBuildFCmp (builder, fpcond_to_llvm_cond [rel], convert (ctx, lhs, LLVMFloatType ()), convert (ctx, rhs, LLVMFloatType ()), "");
 			} else if (ins->opcode == OP_COMPARE_IMM) {
-				if (LLVMGetTypeKind (LLVMTypeOf (lhs)) == LLVMPointerTypeKind && ins->inst_imm == 0)
-					cmp = LLVMBuildICmp (builder, cond_to_llvm_cond [rel], lhs, LLVMConstNull (LLVMTypeOf (lhs)), "");
-				else
-					cmp = LLVMBuildICmp (builder, cond_to_llvm_cond [rel], convert (ctx, lhs, IntPtrType ()), LLVMConstInt (IntPtrType (), ins->inst_imm, FALSE), "");
+				LLVMIntPredicate llvm_pred = cond_to_llvm_cond [rel];
+				if (LLVMGetTypeKind (LLVMTypeOf (lhs)) == LLVMPointerTypeKind && ins->inst_imm == 0) {
+					// We are emitting a NULL check for a pointer
+					gboolean nonnull = mono_llvm_is_nonnull (lhs);
+
+					if (nonnull && llvm_pred == LLVMIntEQ)
+						cmp = LLVMConstInt (LLVMInt1Type (), FALSE, FALSE);
+					else if (nonnull && llvm_pred == LLVMIntNE)
+						cmp = LLVMConstInt (LLVMInt1Type (), TRUE, FALSE);
+					else
+						cmp = LLVMBuildICmp (builder, llvm_pred, lhs, LLVMConstNull (LLVMTypeOf (lhs)), "");
+
+				} else {
+					cmp = LLVMBuildICmp (builder, llvm_pred, convert (ctx, lhs, IntPtrType ()), LLVMConstInt (IntPtrType (), ins->inst_imm, FALSE), "");
+				}
 			} else if (ins->opcode == OP_LCOMPARE_IMM) {
 				cmp = LLVMBuildICmp (builder, cond_to_llvm_cond [rel], lhs, rhs, "");
 			}
