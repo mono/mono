@@ -6941,7 +6941,6 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 	if (mono_class_is_nullable (klass))
 		return mono_nullable_box_handle (value, klass, error);
 
-	
 	vtable = mono_class_vtable_checked (domain, klass, error);
 	return_val_if_nok (error, NULL_HANDLE);
 
@@ -6951,7 +6950,6 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 	return_val_if_nok (error, NULL_HANDLE);
 
 	size -= MONO_ABI_SIZEOF (MonoObject);
-	
 	if (mono_gc_is_moving ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
 		MONO_ENTER_NO_SAFEPOINTS;
@@ -6983,7 +6981,6 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 #endif
 		MONO_EXIT_NO_SAFEPOINTS;
 	}
-
 	if (m_class_has_finalize (klass))
 		mono_object_register_finalizer_handle (res_handle);
 
