@@ -1792,9 +1792,10 @@ mono_image_open_a_lot (const char *fname, MonoImageOpenStatus *status, gboolean 
 			g_assert (!image);
 			g_free (absfname);
 			if (status) {
-				if (last_error == ERROR_BAD_EXE_FORMAT || last_error == STATUS_INVALID_IMAGE_FORMAT)
-					*status = MONO_IMAGE_IMAGE_INVALID;
-				else {
+				if (last_error == ERROR_BAD_EXE_FORMAT || last_error == STATUS_INVALID_IMAGE_FORMAT) {
+					if (status)
+						*status = MONO_IMAGE_IMAGE_INVALID;
+				} else {
 					if (last_error == ERROR_FILE_NOT_FOUND || last_error == ERROR_PATH_NOT_FOUND)
 						mono_set_errno (ENOENT);
 					else
