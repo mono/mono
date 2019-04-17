@@ -9496,12 +9496,18 @@ mono_llvm_propagate_nonnull_final (GHashTable *all_specializable, MonoLLVMModule
 			// If this wasn't a direct call for which mono_aot_can_specialize is true, 
 			// this lookup won't find a MonoMethod. 
 			MonoMethod *callee_method = (MonoMethod *) g_hash_table_lookup (all_specializable, callee_lmethod);
+			if (!callee_method)
+				continue;
 
 			// Decrement number of nullable refs at that func's arg offset
 			GArray *call_site_union = (GArray *) g_hash_table_lookup (module->method_to_call_info, callee_method);
-			int max_params = LLVMCountParams (callee_lmethod);
+
+			// It has module-local callers and is specializable, should have seen this call site
+			// and inited this
+			g_assert (call_site_union);
 
 			// The function *definition* parameter arity should always be consistent
+			int max_params = LLVMCountParams (callee_lmethod);
 			if (call_site_union->len != max_params) {
 				mono_llvm_dump_value (callee_lmethod);
 				g_assert_not_reached ();
