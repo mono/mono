@@ -4385,7 +4385,8 @@ mini_init (const char *filename, const char *runtime_version)
 
 #ifdef MONO_ARCH_EMULATE_FREM
 // Wrapper to avoid taking address of overloaded function.
-static double
+G_EXTERN_C
+double
 mono_fmod (double a, double b)
 {
 	return fmod (a, b);
