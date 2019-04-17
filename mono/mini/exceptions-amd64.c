@@ -536,7 +536,7 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 		if (resume_unwind)
 			icall_name = "mono_amd64_resume_unwind";
 		else if (corlib)
-			icall_name = llvm_abs ? "mono_amd64_throw_corlib_exception_abs" : "mono_amd64_throw_corlib_exception";
+			icall_name = "mono_amd64_throw_corlib_exception";
 		else
 			icall_name = "mono_amd64_throw_exception";
 		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, icall_name);
