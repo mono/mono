@@ -663,8 +663,8 @@ namespace MonoTests.System.Reflection
 		{
 			Nullable<Double> val = new Nullable<Double>(new Double());
 			MethodInfo mi = typeof (Nullable<Double>).GetMethod ("op_Implicit");
-            object obj = val;
-            mi.Invoke(null, new[] { obj });
+			object obj = val;
+			mi.Invoke(null, new[] { obj });
 		}
 
 		public static void foo_generic<T> ()
