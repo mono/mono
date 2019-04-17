@@ -334,7 +334,7 @@ clean:
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
 
-package: build build-dbg-proxy
+package: build build-dbg-proxy build-sdk
 	rm -rf tmp
 	mkdir tmp
 	mkdir tmp/wasm-bcl
@@ -382,6 +382,8 @@ package: build build-dbg-proxy
 	cp -r ProxyDriver/bin/Debug/netcoreapp2.1/ tmp/dbg-proxy/
 	mkdir tmp/docs
 	cp -r ./docs/ tmp/docs/
+	mkdir tmp/packages
+	cp -r ./sdk/packages tmp/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
@@ -400,5 +402,5 @@ clean-sdk:
 	$(RM) -r sdk/**/**/obj
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
-	msbuild /r sdk/Mono.WebAssembly.Sdk
-	msbuild /r sdk
+	dotnet build sdk/Mono.WebAssembly.Sdk
+	dotnet build sdk/MonoWasmSdkCLI.sln
