@@ -536,7 +536,7 @@ get_throw_trampoline (MonoTrampInfo **info, gboolean rethrow, gboolean corlib, g
 		if (resume_unwind)
 			icall_name = "mono_amd64_resume_unwind";
 		else if (corlib)
-			icall_name = "mono_amd64_throw_corlib_exception";
+			icall_name = llvm_abs ? "mono_amd64_throw_corlib_exception_abs" : "mono_amd64_throw_corlib_exception";
 		else
 			icall_name = "mono_amd64_throw_exception";
 		ji = mono_patch_info_list_prepend (ji, code - start, MONO_PATCH_INFO_JIT_ICALL_ADDR, icall_name);
@@ -925,27 +925,28 @@ mono_amd64_get_exception_trampolines (gboolean aot, gboolean reg)
 {
 	MonoTrampInfo *info;
 	GSList *tramps = NULL;
+	const char *name;
 
 	/* LLVM needs different throw trampolines */
-	get_throw_trampoline (&info, FALSE, TRUE, FALSE, FALSE, "llvm_throw_corlib_exception_trampoline", aot, FALSE);
+	get_throw_trampoline (&info, FALSE, TRUE, FALSE, FALSE, name = "llvm_throw_corlib_exception_trampoline", aot, FALSE);
 	if (reg) {
-		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_throw_corlib_exception_trampoline, info->code, g_strdup (info->name), NULL, TRUE);
+		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_throw_corlib_exception_trampoline, info->code, name, NULL, TRUE);
 		mono_tramp_info_register (info, NULL);
 	} else {
 		tramps = g_slist_prepend (tramps, info);
 	}
 
-	get_throw_trampoline (&info, FALSE, TRUE, TRUE, FALSE, "llvm_throw_corlib_exception_abs_trampoline", aot, FALSE);
+	get_throw_trampoline (&info, FALSE, TRUE, TRUE, FALSE, name = "llvm_throw_corlib_exception_abs_trampoline", aot, FALSE);
 	if (reg) {
-		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_throw_corlib_exception_abs_trampoline, info->code, g_strdup (info->name), NULL, TRUE);
+		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_throw_corlib_exception_abs_trampoline, info->code, name, NULL, TRUE);
 		mono_tramp_info_register (info, NULL);
 	} else {
 		tramps = g_slist_prepend (tramps, info);
 	}
 
-	get_throw_trampoline (&info, FALSE, TRUE, TRUE, TRUE, "llvm_resume_unwind_trampoline", aot, FALSE);
+	get_throw_trampoline (&info, FALSE, TRUE, TRUE, TRUE, name = "llvm_resume_unwind_trampoline", aot, FALSE);
 	if (reg) {
-		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_resume_unwind_trampoline, info->code, g_strdup (info->name), NULL, TRUE);
+		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_resume_unwind_trampoline, info->code, name, NULL, TRUE);
 		mono_tramp_info_register (info, NULL);
 	} else {
 		tramps = g_slist_prepend (tramps, info);
