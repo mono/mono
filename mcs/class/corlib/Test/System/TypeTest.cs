@@ -4559,7 +4559,7 @@ namespace MonoTests.System
 
 		}
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME && !MONOMAC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		[Category ("AndroidNotWorking")] // requires symbol writer
 		public void FullNameGetTypeParseEscapeRoundtrip () // bug #26384

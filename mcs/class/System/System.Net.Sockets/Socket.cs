@@ -40,6 +40,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using System.Net.Configuration;
@@ -972,7 +973,32 @@ namespace System.Net.Sockets
 			if (is_listening)
 				throw new InvalidOperationException ();
 
-			return BeginConnect (Dns.GetHostAddresses (host), port, requestCallback, state);
+			var callback = new AsyncCallback ((result) => {
+				var resultTask = ((Task<IPAddress[]>)result);
+				BeginConnect (resultTask.Result, port, requestCallback, resultTask.AsyncState);
+			});
+			return ConvertToApm<IPAddress[]> (Dns.GetHostAddressesAsync (host), callback, state);
+		}
+
+		private static IAsyncResult ConvertToApm<T> (Task<T> task, AsyncCallback callback, object state)
+		{
+			if (task == null)
+				throw new ArgumentNullException ("task");
+
+			var tcs = new TaskCompletionSource<T> (state);
+			task.ContinueWith (t =>
+			{
+				if (t.IsFaulted)
+					tcs.TrySetException (t.Exception.InnerExceptions);
+				else if (t.IsCanceled)
+					tcs.TrySetCanceled ();
+				else
+					tcs.TrySetResult (t.Result);
+
+				if (callback != null)
+					callback (tcs.Task);
+			}, TaskScheduler.Default);
+			return tcs.Task;
 		}
 
 		public IAsyncResult BeginConnect (EndPoint remoteEP, AsyncCallback callback, object state)

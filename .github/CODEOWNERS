@@ -10,18 +10,18 @@
 
 
 # These owners will be the default owners for everything in the repo.
-* @luhenry @marek-safar
+* @marek-safar
 
 # Order is important. The last matching pattern has the most precedence.
 
 /acceptance-tests @akoeplinger @kg
 /acceptance-tests/profiler-stress* @alexrp @akoeplinger
 
-/data @marek-safar @akoeplinger @luhenry
-/data/gdb @vargaz @luhenry
+/data @directhex @akoeplinger
+/data/gdb @lewurm @vargaz
 /data/lldb @lewurm @vargaz
 
-/docs @luhenry @marek-safar @akoeplinger
+/docs @marek-safar @akoeplinger
 /docs/riscv.md @alexrp @lewurm
 /docs/sources/mono-api-profiler.html @alexrp
 
@@ -34,18 +34,18 @@
 /external/corefx @akoeplinger @marek-safar @egorbo @alexischr
 /external/corert @akoeplinger @marek-safar @egorbo @alexischr
 /external/linker @marek-safar
-/external/llvm @luhenry @vargaz
+/external/llvm @alexanderkyte @vargaz
 /external/nuget-buildtasks @radical @akoeplinger
 /external/roslyn-binaries @kg @marek-safar @akoeplinger
 
-/libgc @BrzVlad @vargaz @luhenry
+/libgc @BrzVlad @vargaz
 
-/llvm @vargaz @luhenry
+/llvm @vargaz @alexanderkyte
 
-/man @marek-safar @miguel @luhenry
+/man @marek-safar @miguel
 /man/*prof* @alexrp
 
-/mcs @marek-safar @luhenry
+/mcs @marek-safar @akoeplinger @egorbo
 
 /mcs/build @marek-safar @akoeplinger
 
@@ -56,7 +56,7 @@
 /mcs/class/Mono.Data.Tds @egorbo
 /mcs/class/Mono.Debugger.Soft @vargaz @thaystg
 /mcs/class/Mono.Options @jonpryor @marek-safar
-/mcs/class/Mono.Profiler.Log @alexrp @luhenry
+/mcs/class/Mono.Profiler.Log @lambdageek
 /mcs/class/Mono.Security/Mono.Security/Interface @baulig @marek-safar
 /mcs/class/System/Mono.AppleTls @baulig @rolf
 /mcs/class/System/Mono.Btls @baulig  @marek-safar
@@ -76,80 +76,77 @@
 /mcs/tools/resx2sr @baulig
 /mcs/tools/upload-to-sentry @alexanderkyte @akoeplinger
 
-/mono/arch @vargaz @lewurm @luhenry
+/mono/arch @vargaz @lewurm
 
-/mono/btls @baulig @luhenry @marek-safar
-/mono/dis @lambdageek @vargaz @luhenry
-/mono/eglib @vargaz @luhenry
+/mono/btls @baulig @marek-safar
+/mono/dis @lambdageek @vargaz
+/mono/eglib @vargaz @lambdageek
 
-/mono/benchmark @alexanderkyte @luhenry
+/mono/benchmark @alexanderkyte @lewurm
 
-/mono/metadata @vargaz @lambdageek @luhenry
-/mono/metadata/*verify* @lambdageek @luhenry
-/mono/metadata/*profiler* @alexrp @luhenry
-/mono/metadata/handle* @luhenry @lambdageek
-/mono/metadata/monitor* @brzvlad @vargaz @luhenry
-/mono/metadata/sgen* @brzvlad @vargaz @luhenry
-/mono/metadata/thread* @luhenry @lateralusX
-/mono/metadata/w32* @luhenry @lateralusX
-/mono/metadata/*-win* @lateralusX @luhenry
+/mono/metadata @vargaz @lambdageek @thaystg
+/mono/metadata/*profiler* @lambdageek
+/mono/metadata/handle* @lambdageek @vargaz
+/mono/metadata/monitor* @brzvlad @vargaz
+/mono/metadata/sgen* @brzvlad @vargaz
+/mono/metadata/thread* @lateralusX @lambdageek
+/mono/metadata/w32* @lateralusX @lambdageek
+/mono/metadata/*-win* @lateralusX @lambdageek
 
-/mono/mini @vargaz @lewurm @luhenry
-/mono/mini/*cfgdump* @lewurm @luhenry
-/mono/mini/*exceptions* @lewurm @luhenry
-/mono/mini/*ppc* @lewurm @vargaz @luhenry
-/mono/mini/*riscv* @alexrp @lewurm @luhenry
-/mono/mini/*type-check* @lewurm @lambdageek @luhenry
-/mono/mini/interp/* @lewurm @BrzVlad @luhenry
-/mono/mini/*profiler* @alexrp @luhenry
-/mono/mini/debugger-agent.c @vargaz @thaystg @DavidKarlas @luhenry
+/mono/mini @vargaz @lewurm @lambdageek
+/mono/mini/*cfgdump* @lewurm @vargaz
+/mono/mini/*exceptions* @lewurm @vargaz
+/mono/mini/*ppc* @lewurm @vargaz
+/mono/mini/*riscv* @alexrp @lewurm
+/mono/mini/*type-check* @lewurm @lambdageek
+/mono/mini/interp/* @lewurm @BrzVlad
+/mono/mini/*profiler* @alexrp @lambdageek
+/mono/mini/debugger-agent.c @vargaz @thaystg @DavidKarlas
 
-/mono/native @baulig @luhenry @marek-safar
+/mono/native @baulig @egorbo @alexischr @marek-safar
 
-/mono/profiler @alexrp @luhenry
+/mono/profiler @alexrp @lambdageek
 
-/mono/sgen @BrzVlad @luhenry
+/mono/sgen @BrzVlad @lambdageek
 
-/mono/utils @vargaz @lewurm @luhenry
-/mono/utils/atomic* @lewurm @luhenry
-/mono/utils/mono-hwcap* @lewurm @luhenry
-/mono/utils/mono-mem* @lewurm @luhenry
-/mono/utils/mono-threads* @luhenry @vargaz
-/mono/utils/*-win* @lateralusX @luhenry
+/mono/utils @vargaz @lewurm @lambdageek
+/mono/utils/atomic* @lewurm @vargaz
+/mono/utils/mono-hwcap* @lewurm @vargaz
+/mono/utils/mono-mem* @lewurm @vargaz
+/mono/utils/mono-threads* @lambdageek @vargaz
+/mono/utils/*-win* @lateralusX @lambdageek
 
-/msvc @lateralusX @luhenry
-/msvc/*profiler* @alexrp @luhenry
+/msvc @lateralusX @kg @akoeplinger
 /msvc/scripts @akoeplinger @kg
 
-/netcore @marek-safar @akoeplinger @egorbo @luhenry
+/netcore @marek-safar @akoeplinger @egorbo
 
-/packaging @alexischr @akoeplinger @luhenry @directhex
+/packaging @alexischr @akoeplinger @directhex
 /packaging/MacSDK/msbuild.py @radical @akoeplinger
 
-/runtime @akoeplinger @marek-safar @luhenry
+/runtime @akoeplinger @marek-safar
 
-/samples @luhenry @lewurm
-/samples/profiler @alexrp @luhenry
-/samples/size @alexrp @luhenry
+/samples @lambdageek @lewurm
+/samples/profiler @alexrp @lambdageek
+/samples/size @alexrp @lambdageek
 
-/scripts @akoeplinger @luhenry
-/scripts/ci @akoeplinger @alexischr @luhenry
+/scripts @akoeplinger @directhex
+/scripts/ci @akoeplinger @directhex
 
-/sdks @marek-safar @luhenry @vargaz
-/sdks/builds/android* @luhenry @jonpryor
-/sdks/builds/mxe* @luhenry @jonpryor
-/sdks/builds/ios* @vargaz @rolfbjarne @luhenry
-/sdks/builds/wasm* @vargaz @kjpou1 @lewing @luhenry
-/sdks/wasm @vargaz @kjpou1 @kg @lewing @luhenry
-/sdks/ios @vargaz @rolfbjarne @luhenry
-/sdks/android @luhenry @jonpryor
+/sdks @marek-safar @lewurm @vargaz
+/sdks/builds/android* @alexischr @jonpryor
+/sdks/builds/mxe* @alexischr @jonpryor
+/sdks/builds/ios* @vargaz @rolfbjarne
+/sdks/builds/wasm* @vargaz @kjpou1 @lewing
+/sdks/wasm @vargaz @kjpou1 @kg @lewing
+/sdks/ios @vargaz @rolfbjarne
+/sdks/android @alexischr @jonpryor
 
-/support @luhenry @vargaz
+/support @lambdageek @vargaz
 
-/tools @luhenry @vargaz
+/tools @lambdageek @vargaz
 /tools/locale-builder @marek-safar @egorbo
-/tools/monograph @vargaz @vargaz
-/tools/nuget-hash-extractor @marek-safar @radical
+/tools/nuget-hash-extractor @marek-safar @radical @akoeplinger
 /tools/offsets-tool @lewurm @rolfbjarne
 /tools/pedump @lambdageek @lewurm
-/tools/sgen @brzvlad @vargaz @luhenry
+/tools/sgen @brzvlad @vargaz

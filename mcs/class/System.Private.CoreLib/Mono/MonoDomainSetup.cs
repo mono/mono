@@ -6,6 +6,7 @@ namespace Mono
 	[StructLayout (LayoutKind.Sequential)]
 	internal sealed class MonoDomainSetup
 	{
+		#region Sync with object-internals.h
 		string application_base;
 		string application_name;
 		string cache_path;
@@ -31,6 +32,7 @@ namespace Mono
 		byte [] configuration_bytes;
 
 		byte [] serialized_non_primitives;
+		#endregion
 
 		public MonoDomainSetup ()
 		{

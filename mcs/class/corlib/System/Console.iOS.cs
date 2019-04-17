@@ -46,7 +46,11 @@ namespace System {
 			
 			public override void Flush ()
 			{
-				string s = sb.ToString ();
+				string s;
+				lock (sb) {
+					s = sb.ToString ();
+					sb.Length = 0;
+				}
 				try {
 					xamarin_log (s);
 				}
@@ -56,14 +60,14 @@ namespace System {
 						direct_write_to_stdout (Environment.NewLine);
 					} catch (Exception){}
 				}
-				sb.Length = 0;
 			}
 			
 			// minimum to override - see http://msdn.microsoft.com/en-us/library/system.io.textwriter.aspx
 			public override void Write (char value)
 			{
 				try {
-					sb.Append (value);
+					lock (sb)
+						sb.Append (value);
 				}
 				catch (Exception) {
 				}
@@ -73,9 +77,11 @@ namespace System {
 			public override void Write (string value)
 			{
 				try {
-					sb.Append (value);
-					if (value != null && value.Length >= CoreNewLine.Length && EndsWithNewLine (value))
-						Flush ();
+					lock (sb) {
+						sb.Append (value);
+						if (EndsWithNewLine (sb))
+							Flush ();
+					}
 				}
 				catch (Exception) {
 				}
@@ -84,26 +90,21 @@ namespace System {
 			/* Called from TextWriter:WriteLine(string) */
 			public override void Write(char[] buffer, int index, int count) {
 				try {
-					sb.Append (buffer);
-					if (buffer != null && buffer.Length >= CoreNewLine.Length && EndsWithNewLine (buffer))
-						Flush ();
+					lock (sb) {
+						sb.Append (buffer, index, count);
+						if (EndsWithNewLine (sb))
+							Flush ();
+					}
 				}
 				catch (Exception) {
 				}
 			}
 			
-			bool EndsWithNewLine (string value)
+			bool EndsWithNewLine (StringBuilder value)
 			{
-				for (int i = 0, v = value.Length - CoreNewLine.Length; i < CoreNewLine.Length; ++i, ++v) {
-					if (value [v] != CoreNewLine [i])
-						return false;
-				}
-				
-				return true;
-			}
+				if (value.Length < CoreNewLine.Length)
+					return false;
 
-			bool EndsWithNewLine (char[] value)
-			{
 				for (int i = 0, v = value.Length - CoreNewLine.Length; i < CoreNewLine.Length; ++i, ++v) {
 					if (value [v] != CoreNewLine [i])
 						return false;

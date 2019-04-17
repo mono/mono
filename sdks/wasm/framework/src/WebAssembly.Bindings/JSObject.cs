@@ -126,7 +126,19 @@ namespace WebAssembly {
 			set => SetObjectProperty ("length", value, false);
 		}
 
+		/// <summary>
+		/// Returns a boolean indicating whether the object has the specified property as its own property (as opposed to inheriting it).
+		/// </summary>
+		/// <returns><c>true</c>, if the object has the specified property as own property, <c>false</c> otherwise.</returns>
+		/// <param name="prop">The String name or Symbol of the property to test.</param>
 		public bool HasOwnProperty (string prop) => (bool)Invoke ("hasOwnProperty", prop);
+
+		/// <summary>
+		/// Returns a boolean indicating whether the specified property is enumerable.
+		/// </summary>
+		/// <returns><c>true</c>, if the specified property is enumerable, <c>false</c> otherwise.</returns>
+		/// <param name="prop">The String name or Symbol of the property to test.</param>
+		public bool PropertyIsEnumerable (string prop) => (bool)Invoke ("propertyIsEnumerable", prop);
 
 		protected void FreeHandle ()
 		{

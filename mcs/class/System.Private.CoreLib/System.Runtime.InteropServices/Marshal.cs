@@ -42,14 +42,22 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
 
-		internal static IntPtr AllocBSTR (int length)
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static int GetArrayElementSize (Type type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern unsafe static IntPtr BufferToBSTR (char* ptr, int slen);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static bool IsPinnableType (Type type);
 
 		internal static bool IsPinnable (object obj)
 		{
-			throw new NotImplementedException ();
+			if (obj == null || obj is string)
+				return true;
+			return IsPinnableType (obj.GetType ());
+			//Type type = obj.GetType ();
+			//return !type.IsValueType || RuntimeTypeHandle.HasReferences (type as RuntimeType);
 		}
 
 		// TODO: Should be called from Windows only code
@@ -238,9 +246,9 @@ namespace System.Runtime.InteropServices
 
 			case HResults.STG_E_PATHNOTFOUND:
 			case HResults.CTL_E_PATHNOTFOUND: {
-				var ex = new System.IO.DirectoryNotFoundException ();
-				ex.SetErrorCode (errorCode);
-				return ex;
+				return new System.IO.DirectoryNotFoundException {
+					HResult = errorCode
+				};
 			}
 			case HResults.FUSION_E_INVALID_PRIVATE_ASM_LOCATION:
 			case HResults.FUSION_E_SIGNATURE_CHECK_FAILED:
@@ -267,17 +275,17 @@ namespace System.Runtime.InteropServices
 			case HResults.CORSEC_E_MISSING_STRONGNAME:
 			case HResults.MSEE_E_ASSEMBLYLOADINPROGRESS:
 			case HResults.ERROR_FILE_INVALID: {
-				var ex = new System.IO.FileLoadException ();
-				ex.SetErrorCode (errorCode);
-				return ex;
+				return new System.IO.FileLoadException {
+					HResult = errorCode
+				};
 			}
 			case HResults.CTL_E_FILENOTFOUND: {
-				var ex = new System.IO.FileNotFoundException ();
-				ex.SetErrorCode (errorCode);
-				return ex;
+				return new System.IO.FileNotFoundException {
+					HResult = errorCode
+				};
 			}
 			default:
-				throw new NotImplementedException (errorCode.ToString ());
+				return new COMException ("", errorCode);
 			}
 		}
 
@@ -291,14 +299,23 @@ namespace System.Runtime.InteropServices
 			PrelinkInternal (m);
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void PtrToStructureInternal (IntPtr ptr, object structure, bool allowValueClasses);
+
 		static void PtrToStructureHelper (IntPtr ptr, object structure, bool allowValueClasses)
 		{
-			throw new NotImplementedException ();
+			if (ptr == null)
+				throw new ArgumentNullException (nameof (ptr));
+			if (structure == null)
+				throw new ArgumentNullException (nameof (structure));
+			PtrToStructureInternal (ptr, structure, allowValueClasses);
 		}
 
 		static object PtrToStructureHelper (IntPtr ptr, Type structureType)
 		{
-			throw new NotImplementedException ();
+			var obj = Activator.CreateInstance (structureType);
+			PtrToStructureHelper (ptr, obj, true);
+			return obj;
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
@@ -318,9 +335,20 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		public static IntPtr StringToBSTR (string s)
+		internal unsafe static IntPtr AllocBSTR (int length)
 		{
-			throw new NotImplementedException ();
+			var res = BufferToBSTR ((char*)IntPtr.Zero, length);
+			if (res == IntPtr.Zero)
+				throw new OutOfMemoryException ();
+			return res;
+		}
+
+		public unsafe static IntPtr StringToBSTR (string s)
+		{
+			if (s == null)
+				return IntPtr.Zero;
+			fixed (char* fixed_s = s)
+				return BufferToBSTR (fixed_s, s.Length);
 		}
 
 		#region PlatformNotSupported

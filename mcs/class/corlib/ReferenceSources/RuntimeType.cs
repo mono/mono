@@ -95,19 +95,18 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
 
-#if !NETCORE
 		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
-                {
+		{
 			if (fromNoninstanciated == null)
 				throw new ArgumentNullException ("fromNoninstanciated");
-                        return GetCorrespondingInflatedMethod (fromNoninstanciated);
-                }
+			return GetCorrespondingInflatedMethod (fromNoninstanciated);
+		}
 
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
 			if (fromNoninstanciated == null)
 				throw new ArgumentNullException ("fromNoninstanciated");
-                        return GetCorrespondingInflatedConstructor (fromNoninstanciated);
+			return GetCorrespondingInflatedConstructor (fromNoninstanciated);
 		}
 
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
@@ -117,7 +116,6 @@ namespace System
 			flags |= fromNoninstanciated.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
 			return GetField (fromNoninstanciated.Name, flags);
 		}
-#endif
 
 		string GetDefaultMemberName ()
 		{
@@ -431,7 +429,7 @@ namespace System
 		public override StructLayoutAttribute StructLayoutAttribute {
 			get {
 #if NETCORE
-				throw new NotImplementedException ();
+				return GetStructLayoutAttribute ();
 #else
 				return StructLayoutAttribute.GetCustomAttribute (this);
 #endif
@@ -842,13 +840,11 @@ namespace System
 			}
 		}
 
-#if !NETCORE
 		internal override bool IsUserType {
 			get {
 				return false;
 			}
 		}
-#endif
 
 		[System.Runtime.InteropServices.ComVisible(true)]
 		[Pure]
@@ -871,5 +867,44 @@ namespace System
 		}
 
 		public override bool IsTypeDefinition => RuntimeTypeHandle.IsTypeDefinition (this);
+
+#if NETCORE
+        private const int DEFAULT_PACKING_SIZE = 8;
+
+        internal StructLayoutAttribute GetStructLayoutAttribute ()
+        {
+            if (IsInterface || HasElementType || IsGenericParameter)
+                return null;
+
+            int pack = 0, size = 0;
+            LayoutKind layoutKind = LayoutKind.Auto;
+            switch (Attributes & TypeAttributes.LayoutMask)
+            {
+                case TypeAttributes.ExplicitLayout: layoutKind = LayoutKind.Explicit; break;
+                case TypeAttributes.AutoLayout: layoutKind = LayoutKind.Auto; break;
+                case TypeAttributes.SequentialLayout: layoutKind = LayoutKind.Sequential; break;
+                default: Contract.Assume(false); break;
+            }
+
+            CharSet charSet = CharSet.None;
+            switch (Attributes & TypeAttributes.StringFormatMask)
+            {
+                case TypeAttributes.AnsiClass: charSet = CharSet.Ansi; break;
+                case TypeAttributes.AutoClass: charSet = CharSet.Auto; break;
+                case TypeAttributes.UnicodeClass: charSet = CharSet.Unicode; break;
+                default: Contract.Assume(false); break;
+            }
+
+            GetPacking (out pack, out size);
+
+            // Metadata parameter checking should not have allowed 0 for packing size.
+            // The runtime later converts a packing size of 0 to 8 so do the same here
+            // because it's more useful from a user perspective. 
+            if (pack == 0)
+                pack = DEFAULT_PACKING_SIZE;
+
+            return new StructLayoutAttribute (layoutKind) { Pack = pack, Size = size, CharSet = charSet };
+        }
+#endif // NETCORE
 	}
 }

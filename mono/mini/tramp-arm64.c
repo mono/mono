@@ -107,7 +107,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	guint64 gregs_regset;
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
-	char *tramp_name;
+	const char *tramp_name;
 
 	buf_len = 768;
 	buf = code = mono_global_codeman_reserve (buf_len);
@@ -229,8 +229,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	arm_movx (code, ARMREG_R3, ARMREG_RZR);
 
 	if (aot) {
-		char *icall_name = g_strdup_printf ("trampoline_func_%d", tramp_type);
-		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, icall_name);
+		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR, GINT_TO_POINTER (tramp_type));
 	} else {
 		tramp = (guint8*)mono_get_trampoline_func (tramp_type);
 		code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)tramp);
@@ -318,7 +317,6 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	if (info) {
 		tramp_name = mono_get_generic_trampoline_name (tramp_type);
 		*info = mono_tramp_info_create (tramp_name, buf, code - buf, ji, unwind_ops);
-		g_free (tramp_name);
 	}
 
 	return buf;
@@ -471,7 +469,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	/* Call mono_rgctx_lazy_fetch_trampoline (), passing in the slot as argument */
 	/* The vtable/mrgctx is still in R0 */
 	if (aot) {
-		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, g_strdup_printf ("specific_trampoline_lazy_fetch_%u", slot));
+		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR, GUINT_TO_POINTER (slot));
 	} else {
 		tramp = (guint8*)mono_arch_create_specific_trampoline (GUINT_TO_POINTER (slot), MONO_TRAMPOLINE_RGCTX_LAZY_FETCH, mono_get_root_domain (), &code_len);
 		code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)tramp);

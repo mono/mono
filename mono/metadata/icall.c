@@ -15,6 +15,13 @@
  */
 
 #include <config.h>
+
+#if defined(TARGET_WIN32) || defined(HOST_WIN32)
+/* Needed for _ecvt_s */
+#define MINGW_HAS_SECURE_API 1
+#include <stdio.h>
+#endif
+
 #include <glib.h>
 #include <stdarg.h>
 #include <string.h>
@@ -31,6 +38,7 @@
 #if defined (HAVE_WCHAR_H)
 #include <wchar.h>
 #endif
+
 #include "mono/metadata/icall-internals.h"
 #include "mono/utils/mono-membar.h"
 #include <mono/metadata/object.h>
@@ -110,6 +118,7 @@
 #endif
 #include "icall-decl.h"
 #include "mono/utils/mono-threads-coop.h"
+#include "mono/metadata/icall-signatures.h"
 
 //#define MONO_DEBUG_ICALLARRAY
 
@@ -329,12 +338,6 @@ array_set_value_impl (MonoArrayHandle arr_handle, MonoObjectHandle value_handle,
 	et = m_class_get_byval_arg (ec)->type;
 	MonoTypeEnum vt;
 	vt = m_class_get_byval_arg (vc)->type;
-
-#ifdef ENABLE_NETCORE
-	if (m_class_is_enumtype (ec) && m_class_is_primitive (vc))
-		/* Can't convert a primitive to an enum */
-		INVALID_CAST;
-#endif
 
 	/* Check element (destination) type. */
 	switch (et) {
@@ -639,7 +642,11 @@ ves_icall_System_Array_SetValue (MonoArrayHandle arr, MonoObjectHandle value,
 
 	g_assert (m_class_get_rank (ic) == 1);
 	if (mono_handle_array_has_bounds (idxs) || MONO_HANDLE_GETVAL (idxs, max_length) != m_class_get_rank (ac)) {
+#ifdef ENABLE_NETCORE
+		mono_error_set_argument (error, NULL, "");
+#else
 		mono_error_set_argument (error, "idxs", "");
+#endif
 		return;
 	}
 
@@ -931,6 +938,13 @@ ves_icall_System_Runtime_RuntimeImports_Memmove (guint8 *destination, guint8 *so
 	mono_gc_memmove_atomic (destination, source, byte_count);
 }
 
+#if ENABLE_NETCORE
+void
+ves_icall_System_Runtime_RuntimeImports_RhBulkMoveWithWriteBarrier (guint8 *destination, guint8 *source, size_t byte_count)
+{
+	mono_gc_wbarrier_range_copy (destination, source, byte_count);
+}
+#else
 void
 ves_icall_System_Runtime_RuntimeImports_Memmove_wbarrier (guint8 *destination, guint8 *source, guint len, MonoType *type)
 {
@@ -939,6 +953,7 @@ ves_icall_System_Runtime_RuntimeImports_Memmove_wbarrier (guint8 *destination, g
 	else
 		mono_gc_wbarrier_value_copy_internal (destination, source, len, mono_class_from_mono_type_internal (type));
 }
+#endif
 
 void
 #if ENABLE_NETCORE
@@ -2345,31 +2360,41 @@ typed_reference_to_object (MonoTypedRef *tref, MonoError *error)
 	HANDLE_FUNCTION_RETURN_REF (MonoObject, result);
 }
 
-void
-ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionField *field, MonoReflectionType *field_type, MonoTypedRef *obj, MonoObject *value, MonoReflectionType *context_type)
+MonoObjectHandle
+ves_icall_System_RuntimeFieldHandle_GetValueDirect (MonoReflectionFieldHandle field_h, MonoReflectionTypeHandle field_type_h, MonoTypedRef *obj, MonoReflectionTypeHandle context_type_h, MonoError *error)
 {
-	ICALL_ENTRY ();
+	MonoClassField *field = MONO_HANDLE_GETVAL (field_h, field);
+	MonoClass *klass = mono_class_from_mono_type_internal (field->type);
 
-	MonoClassField *f;
+	if (!MONO_TYPE_ISSTRUCT (m_class_get_byval_arg (field->parent))) {
+		mono_error_set_not_implemented (error, "");
+		return MONO_HANDLE_NEW (MonoObject, NULL);
+	} else if (MONO_TYPE_IS_REFERENCE (field->type)) {
+		return MONO_HANDLE_NEW (MonoObject, *(MonoObject**)((guint8*)obj->value + field->offset - sizeof (MonoObject)));
+	} else {
+		return mono_value_box_handle (mono_domain_get (), klass, (guint8*)obj->value + field->offset - sizeof (MonoObject), error);
+	}
+}
 
-	g_assert (field);
+void
+ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionFieldHandle field_h, MonoReflectionTypeHandle field_type_h, MonoTypedRef *obj, MonoObjectHandle value_h, MonoReflectionTypeHandle context_type_h, MonoError *error)
+{
+	MonoClassField *f = MONO_HANDLE_GETVAL (field_h, field);
+
 	g_assert (obj);
-	g_assert (value);
 
-	f = field->field;
 	if (!MONO_TYPE_ISSTRUCT (m_class_get_byval_arg (f->parent))) {
-		MonoReflectionFieldHandle fieldHandle = MONO_HANDLE_NEW (MonoReflectionField, field);
-		MonoObjectHandle objHandle = typed_reference_to_object (obj, error), 
-			valueHandle = MONO_HANDLE_NEW (MonoObject, value);
-		goto_if_nok (error, leave);
-		ves_icall_RuntimeFieldInfo_SetValueInternal (fieldHandle, objHandle, valueHandle, error);
-	} else if (MONO_TYPE_IS_REFERENCE (f->type))
-		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), value, FALSE);
-	else
-		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), mono_object_unbox_internal (value), FALSE);
-
-leave:
-	ICALL_RETURN ();
+		MonoObjectHandle objHandle = typed_reference_to_object (obj, error);
+		return_if_nok (error);
+		ves_icall_RuntimeFieldInfo_SetValueInternal (field_h, objHandle, value_h, error);
+	} else if (MONO_TYPE_IS_REFERENCE (f->type)) {
+		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), MONO_HANDLE_RAW (value_h), FALSE);
+	} else {
+		guint gchandle = 0;
+		g_assert (MONO_HANDLE_RAW (value_h));
+		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), mono_object_handle_pin_unbox (value_h, &gchandle), FALSE);
+		mono_gchandle_free_internal (gchandle);
+	}
 }
 
 MonoObject *
@@ -3493,8 +3518,16 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 	}
 
 	if (sig->ret->byref) {
+#if ENABLE_NETCORE
+		MonoType* ret_byval = m_class_get_byval_arg (mono_class_from_mono_type_internal (sig->ret));
+		if (ret_byval->byref) {
+			mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "Cannot invoke method returning ByRef to ByRefLike type via reflection"));
+			return NULL;
+		}
+#else
 		mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "Cannot invoke method returning ByRef type via reflection"));
 		return NULL;
+#endif
 	}
 
 	pcount = params? mono_array_length_internal (params): 0;
@@ -3752,12 +3785,21 @@ read_enum_value (const char *mem, int type)
 	case MONO_TYPE_I2:
 		return (gint16) read16 (mem);
 	case MONO_TYPE_U4:
+	case MONO_TYPE_R4:
 		return read32 (mem);
 	case MONO_TYPE_I4:
 		return (gint32) read32 (mem);
 	case MONO_TYPE_U8:
 	case MONO_TYPE_I8:
+	case MONO_TYPE_R8:
 		return read64 (mem);
+	case MONO_TYPE_U:
+	case MONO_TYPE_I:
+#if SIZEOF_REGISTER == 8
+		return read64 (mem);
+#else
+		return read32 (mem);
+#endif
 	default:
 		g_assert_not_reached ();
 	}
@@ -3769,7 +3811,8 @@ write_enum_value (void *mem, int type, guint64 value)
 {
 	switch (type) {
 	case MONO_TYPE_U1:
-	case MONO_TYPE_I1: {
+	case MONO_TYPE_I1:
+	case MONO_TYPE_BOOLEAN: {
 		guint8 *p = (guint8*)mem;
 		*p = value;
 		break;
@@ -3782,15 +3825,29 @@ write_enum_value (void *mem, int type, guint64 value)
 		break;
 	}
 	case MONO_TYPE_U4:
-	case MONO_TYPE_I4: {
+	case MONO_TYPE_I4:
+	case MONO_TYPE_R4: {
 		guint32 *p = (guint32 *)mem;
 		*p = value;
 		break;
 	}
 	case MONO_TYPE_U8:
-	case MONO_TYPE_I8: {
+	case MONO_TYPE_I8:
+	case MONO_TYPE_R8: {
 		guint64 *p = (guint64 *)mem;
 		*p = value;
+		break;
+	}
+	case MONO_TYPE_U:
+	case MONO_TYPE_I: {
+#if SIZEOF_REGISTER == 8
+		guint64 *p = (guint64 *)mem;
+		*p = value;
+#else
+		guint32 *p = (guint32 *)mem;
+		*p = value;
+		break;
+#endif
 		break;
 	}
 	default:
@@ -3915,6 +3972,7 @@ ves_icall_System_Enum_compare_value_to (MonoObjectHandle enumHandle, MonoObjectH
 	} while (0)
 
 	switch (basetype->type) {
+		case MONO_TYPE_BOOLEAN:
 		case MONO_TYPE_U1:
 			COMPARE_ENUM_VALUES (guint8);
 		case MONO_TYPE_I1:
@@ -3928,10 +3986,26 @@ ves_icall_System_Enum_compare_value_to (MonoObjectHandle enumHandle, MonoObjectH
 			COMPARE_ENUM_VALUES (guint32);
 		case MONO_TYPE_I4:
 			COMPARE_ENUM_VALUES (gint32);
+		case MONO_TYPE_R4:
+			COMPARE_ENUM_VALUES (gfloat);
 		case MONO_TYPE_U8:
 			COMPARE_ENUM_VALUES (guint64);
 		case MONO_TYPE_I8:
 			COMPARE_ENUM_VALUES (gint64);
+		case MONO_TYPE_R8:
+			COMPARE_ENUM_VALUES (gdouble);
+		case MONO_TYPE_U:
+#if SIZEOF_REGISTER == 8
+			COMPARE_ENUM_VALUES (guint64);
+#else
+			COMPARE_ENUM_VALUES (guint32);
+#endif
+		case MONO_TYPE_I:
+#if SIZEOF_REGISTER == 8
+			COMPARE_ENUM_VALUES (gint64);
+#else
+			COMPARE_ENUM_VALUES (gint32);
+#endif
 	}
 #undef COMPARE_ENUM_VALUES
 	/* indicates that the enum was of an unsupported underlying type */
@@ -3961,13 +4035,24 @@ ves_icall_System_Enum_get_hashcode (MonoObjectHandle enumHandle, MonoError *erro
 			return ((int)(guint16)value | (((int)value) << 16));
 		}
 		case MONO_TYPE_U4:
+		case MONO_TYPE_R4:
 			return *((guint32*)data);
 		case MONO_TYPE_I4:
 			return *((gint32*)data);
 		case MONO_TYPE_U8:
-		case MONO_TYPE_I8: {
+		case MONO_TYPE_I8:
+		case MONO_TYPE_R8: {
 			gint64 value = *((gint64*)data);
 			return (gint)(value & 0xffffffff) ^ (int)(value >> 32);
+		}
+		case MONO_TYPE_I:
+		case MONO_TYPE_U: {
+#if SIZEOF_REGISTER == 8
+			gint64 value = *((gint64*)data);
+			return (gint)(value & 0xffffffff) ^ (int)(value >> 32);
+#else
+			return *((guint32*)data);
+#endif
 		}
 		default:
 			g_error ("Implement type 0x%02x in get_hashcode", basetype->type);
@@ -4047,7 +4132,7 @@ ves_icall_System_Enum_GetEnumValuesAndNames (MonoReflectionTypeHandle type, Mono
 	}
 	return_val_if_nok (error, FALSE);
 
-	return sorted;
+	return sorted || base_type == MONO_TYPE_R4 || base_type == MONO_TYPE_R8;
 }
 
 enum {
@@ -5441,6 +5526,16 @@ ves_icall_System_Reflection_RuntimeMethodInfo_GetMethodBodyInternal (MonoMethod 
 	return mono_method_body_get_object_handle (mono_domain_get (), method, error);
 }
 
+#if ENABLE_NETCORE
+MonoReflectionAssemblyHandle
+ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoStackCrawlMark *stack_mark, MonoError *error)
+{
+	MonoAssembly *assembly;
+	assembly = mono_runtime_get_caller_from_stack_mark (stack_mark);
+	g_assert (assembly);
+	return mono_assembly_get_object_handle (mono_domain_get (), assembly, error);
+}
+#else
 MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoError *error)
 {
@@ -5451,7 +5546,7 @@ ves_icall_System_Reflection_Assembly_GetExecutingAssembly (MonoError *error)
 	g_assert (dest);
 	return mono_assembly_get_object_handle (mono_domain_get (), m_class_get_image (dest->klass)->assembly, error);
 }
-
+#endif
 
 MonoReflectionAssemblyHandle
 ves_icall_System_Reflection_Assembly_GetEntryAssembly (MonoError *error)
@@ -5864,6 +5959,59 @@ MonoArrayHandle
 ves_icall_System_Reflection_RuntimeAssembly_GetExportedTypes (MonoReflectionAssemblyHandle assembly_handle, MonoError *error)
 {
 	return ves_icall_System_Reflection_Assembly_GetTypes (assembly_handle, TRUE, error);
+}
+
+MonoArrayHandle
+ves_icall_System_Reflection_RuntimeAssembly_GetForwardedTypes (MonoReflectionAssemblyHandle assembly_h, MonoError *error)
+{
+	MonoAssembly *assembly = MONO_HANDLE_GETVAL (assembly_h, assembly);
+	MonoImage *image = assembly->image;
+	guint32 cols [MONO_EXP_TYPE_SIZE];
+	const char *name;
+	const char *nspace;
+	guint32 impl, assembly_idx;
+	int count = 0;
+
+	g_assert (!assembly_is_dynamic (assembly));
+	MonoTableInfo *table = &image->tables [MONO_TABLE_EXPORTEDTYPE];
+	for (int i = 0; i < table->rows; ++i) {
+		if (mono_metadata_decode_row_col (table, i, MONO_EXP_TYPE_FLAGS) & TYPE_ATTRIBUTE_FORWARDER)
+			count ++;
+	}
+	MonoArrayHandle res = mono_array_new_handle (mono_domain_get (), mono_defaults.runtimetype_class, count, error);
+	return_val_if_nok (error, NULL_HANDLE_ARRAY);
+	int aindex = 0;
+	for (int i = 0; i < table->rows; ++i) {
+		mono_metadata_decode_row (table, i, cols, MONO_EXP_TYPE_SIZE);
+		if (!(cols [MONO_EXP_TYPE_FLAGS] & TYPE_ATTRIBUTE_FORWARDER))
+			continue;
+		impl = cols [MONO_EXP_TYPE_IMPLEMENTATION];
+		name = mono_metadata_string_heap (image, cols [MONO_EXP_TYPE_NAME]);
+		nspace = mono_metadata_string_heap (image, cols [MONO_EXP_TYPE_NAMESPACE]);
+
+		g_assert ((impl & MONO_IMPLEMENTATION_MASK) == MONO_IMPLEMENTATION_ASSEMBLYREF);
+
+		assembly_idx = impl >> MONO_IMPLEMENTATION_BITS;
+
+		mono_assembly_load_reference (image, assembly_idx - 1);
+		g_assert (image->references [assembly_idx - 1]);
+		if (image->references [assembly_idx - 1] == (gpointer)-1)
+			continue;
+		MonoClass *klass = mono_class_from_name_checked (image->references [assembly_idx - 1]->image, nspace, name, error);
+		if (!is_ok (error))
+			continue;
+		MonoReflectionTypeHandle rt = mono_type_get_object_handle (mono_domain_get (), m_class_get_byval_arg (klass), error);
+		if (!is_ok (error))
+			continue;
+		MONO_HANDLE_ARRAY_SETREF (res, aindex, rt);
+		aindex ++;
+	}
+	if (aindex < count) {
+		// FIXME:
+		mono_error_set_type_load_name (error, g_strdup (""), g_strdup (""), "");
+		return MONO_HANDLE_NEW (MonoArray, NULL);
+	}
+	return res;
 }
 #endif
 
@@ -8396,9 +8544,13 @@ ves_icall_System_IO_LogcatTextWriter_Log (const char *appname, gint32 level, con
 static MonoIcallTableCallbacks icall_table;
 static mono_mutex_t icall_mutex;
 static GHashTable *icall_hash = NULL;
-static GHashTable *icall_hash_foreign = NULL;
 static GHashTable *jit_icall_hash_name = NULL;
 static GHashTable *jit_icall_hash_addr = NULL;
+
+typedef struct _MonoIcallHashTableValue {
+	gconstpointer method;
+	guint32 flags;
+} MonoIcallHashTableValue;
 
 void
 mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb)
@@ -8413,8 +8565,7 @@ mono_icall_init (void)
 #ifndef DISABLE_ICALL_TABLES
 	mono_icall_table_init ();
 #endif
-	icall_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-	icall_hash_foreign = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+	icall_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	mono_os_mutex_init (&icall_mutex);
 }
 
@@ -8434,10 +8585,24 @@ void
 mono_icall_cleanup (void)
 {
 	g_hash_table_destroy (icall_hash);
-	g_hash_table_destroy (icall_hash_foreign);
 	g_hash_table_destroy (jit_icall_hash_name);
 	g_hash_table_destroy (jit_icall_hash_addr);
 	mono_os_mutex_destroy (&icall_mutex);
+}
+
+static void
+add_internal_call_with_flags (const char *name, gconstpointer method, guint32 flags)
+{
+	char *key = g_strdup (name);
+	MonoIcallHashTableValue *value = g_new (MonoIcallHashTableValue, 1);
+	if (key && value) {
+		value->method = method;
+		value->flags = flags;
+
+		mono_icall_lock ();
+		g_hash_table_insert (icall_hash, key, (gpointer)value);
+		mono_icall_unlock ();
+	}
 }
 
 /**
@@ -8529,11 +8694,7 @@ mono_dangerous_add_raw_internal_call (const char *name, gconstpointer method)
 void
 mono_add_internal_call_with_flags (const char *name, gconstpointer method, gboolean cooperative)
 {
-	mono_icall_lock ();
-
-	g_hash_table_insert (cooperative ? icall_hash : icall_hash_foreign , g_strdup (name), (gpointer) method);
-
-	mono_icall_unlock ();
+	add_internal_call_with_flags (name, method, cooperative ? MONO_ICALL_FLAGS_COOPERATIVE : MONO_ICALL_FLAGS_FOREIGN);
 }
 
 void
@@ -8569,30 +8730,15 @@ no_icall_table (void)
 	g_assert_not_reached ();
 }
 
-/**
- * mono_lookup_internal_call_full:
- * \param method the method to look up
- * \param uses_handles out argument if method needs handles around managed objects.
- * \returns a pointer to the icall code for the given method.  If
- * \p uses_handles is not NULL, it will be set to TRUE if the method
- * needs managed objects wrapped using the infrastructure in handle.h
- *
- * If the method is not found, warns and returns NULL.
- */
-gpointer
-mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mono_bool *uses_handles, mono_bool *foreign)
+gconstpointer
+mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_missing, guint32 *flags)
 {
 	char *sigstart;
 	char *tmpsig;
 	char mname [2048];
 	char *classname;
 	int typelen = 0, mlen, siglen;
-	gpointer res;
-
-	if (uses_handles)
-		*uses_handles = FALSE;
-	if (foreign)
-		*foreign = FALSE;
+	gconstpointer res;
 
 	g_assert (method != NULL);
 
@@ -8642,22 +8788,18 @@ mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mo
 
 	/* mono_marshal_get_native_wrapper () depends on this */
 	if (method->klass == mono_defaults.string_class && !strcmp (method->name, ".ctor"))
-		return (gpointer)ves_icall_System_String_ctor_RedirectToCreateString;
+		return (gconstpointer)ves_icall_System_String_ctor_RedirectToCreateString;
 
 	mono_icall_lock ();
 
 	res = g_hash_table_lookup (icall_hash, mname);
 	if (res) {
-		g_free (classname);
+		MonoIcallHashTableValue *value = (MonoIcallHashTableValue *)res;
+		if (flags)
+			*flags = value->flags;
+		res = value->method;
 		mono_icall_unlock ();
-		return res;
-	}
-	res = g_hash_table_lookup (icall_hash_foreign, mname);
-	if (res) {
-		if (foreign)
-			*foreign = TRUE;
 		g_free (classname);
-		mono_icall_unlock ();
 		return res;
 	}
 
@@ -8665,16 +8807,12 @@ mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mo
 	*sigstart = 0;
 	res = g_hash_table_lookup (icall_hash, mname);
 	if (res) {
-		g_free (classname);
+		MonoIcallHashTableValue *value = (MonoIcallHashTableValue *)res;
+		if (flags)
+			*flags = value->flags;
+		res = value->method;
 		mono_icall_unlock ();
-		return res;
-	}
-	res = g_hash_table_lookup (icall_hash_foreign, mname);
-	if (res) {
-		if (foreign)
-			*foreign = TRUE;
 		g_free (classname);
-		mono_icall_unlock ();
 		return res;
 	}
 
@@ -8682,12 +8820,14 @@ mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mo
 		mono_icall_unlock ();
 		g_free (classname);
 		/* Fail only when the result is actually used */
-		return (gpointer)no_icall_table;
+		return (gconstpointer)no_icall_table;
 	} else {
-		res = icall_table.lookup (method, classname, sigstart - mlen, sigstart, uses_handles);
-		g_free (classname);
-
+		gboolean uses_handles = FALSE;
+		res = icall_table.lookup (method, classname, sigstart - mlen, sigstart, &uses_handles);
+		if (res && flags && uses_handles)
+			*flags = *flags | MONO_ICALL_FLAGS_USES_HANDLES;
 		mono_icall_unlock ();
+		g_free (classname);
 
 		if (res)
 			return res;
@@ -8707,12 +8847,40 @@ mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mo
 }
 
 /**
+ * mono_lookup_internal_call_full:
+ * \param method the method to look up
+ * \param uses_handles out argument if method needs handles around managed objects.
+ * \returns a pointer to the icall code for the given method.  If
+ * \p uses_handles is not NULL, it will be set to TRUE if the method
+ * needs managed objects wrapped using the infrastructure in handle.h
+ *
+ * If the method is not found, warns and returns NULL.
+ */
+gconstpointer
+mono_lookup_internal_call_full (MonoMethod *method, gboolean warn_on_missing, mono_bool *uses_handles, mono_bool *foreign)
+{
+	if (uses_handles)
+		*uses_handles = FALSE;
+	if (foreign)
+		*foreign = FALSE;
+
+	guint32 flags = MONO_ICALL_FLAGS_NONE;
+	gconstpointer addr = mono_lookup_internal_call_full_with_flags (method, warn_on_missing, &flags);
+
+	if (uses_handles && (flags & MONO_ICALL_FLAGS_USES_HANDLES))
+		*uses_handles = TRUE;
+	if (foreign && (flags & MONO_ICALL_FLAGS_FOREIGN))
+		*foreign = TRUE;
+	return addr;
+}
+
+/**
  * mono_lookup_internal_call:
  */
 gpointer
 mono_lookup_internal_call (MonoMethod *method)
 {
-	return mono_lookup_internal_call_full (method, TRUE, NULL, NULL);
+	return (gpointer)mono_lookup_internal_call_full (method, TRUE, NULL, NULL);
 }
 
 /*
@@ -8727,117 +8895,138 @@ mono_lookup_icall_symbol (MonoMethod *m)
 		return NULL;
 
 	gpointer func;
-	func = mono_lookup_internal_call_full (m, FALSE, NULL, NULL);
+	func = (gpointer)mono_lookup_internal_call_full (m, FALSE, NULL, NULL);
 	if (!func)
 		return NULL;
 	return icall_table.lookup_icall_symbol (func);
 }
 
-static MonoType*
-type_from_typename (char *type_name)
-{
-	MonoClass *klass = NULL;	/* assignment to shut GCC warning up */
-
-	if (!strcmp (type_name, "int"))
-		klass = mono_defaults.int_class;
-	else if (!strcmp (type_name, "ptr&"))
-		return mono_class_get_byref_type (mono_defaults.int_class);
-	else if (!strcmp (type_name, "ptr"))
-		klass = mono_defaults.int_class;
-	else if (!strcmp (type_name, "void"))
-		klass = mono_defaults.void_class;
-	else if (!strcmp (type_name, "int32"))
-		klass = mono_defaults.int32_class;
-	else if (!strcmp (type_name, "uint32"))
-		klass = mono_defaults.uint32_class;
-	else if (!strcmp (type_name, "int8"))
-		klass = mono_defaults.sbyte_class;
-	else if (!strcmp (type_name, "uint8"))
-		klass = mono_defaults.byte_class;
-	else if (!strcmp (type_name, "int16"))
-		klass = mono_defaults.int16_class;
-	else if (!strcmp (type_name, "uint16"))
-		klass = mono_defaults.uint16_class;
-	else if (!strcmp (type_name, "long"))
-		klass = mono_defaults.int64_class;
-	else if (!strcmp (type_name, "ulong"))
-		klass = mono_defaults.uint64_class;
-	else if (!strcmp (type_name, "float"))
-		klass = mono_defaults.single_class;
-	else if (!strcmp (type_name, "double"))
-		klass = mono_defaults.double_class;
-	else if (!strcmp (type_name, "object"))
-		klass = mono_defaults.object_class;
-	else if (!strcmp (type_name, "obj"))
-		klass = mono_defaults.object_class;
-	else if (!strcmp (type_name, "string"))
-		klass = mono_defaults.string_class;
-	else if (!strcmp (type_name, "bool"))
-		klass = mono_defaults.boolean_class;
-	else if (!strcmp (type_name, "boolean"))
-		klass = mono_defaults.boolean_class;
-	else {
-		g_error ("%s", type_name);
-		g_assert_not_reached ();
-	}
-	return m_class_get_byval_arg (klass);
-}
-
-/**
- * LOCKING: Take the corlib image lock.
- */
-MonoMethodSignature*
-mono_create_icall_signature (const char *sigstr)
-{
-	gchar **parts;
-	int i, len;
-	gchar **tmp;
-	MonoMethodSignature *res, *res2;
-	MonoImage *corlib = mono_defaults.corlib;
-
-	mono_image_lock (corlib);
-	res = (MonoMethodSignature *)g_hash_table_lookup (corlib->helper_signatures, sigstr);
-	mono_image_unlock (corlib);
-
-	if (res)
-		return res;
-
-	parts = g_strsplit (sigstr, " ", 256);
-
-	tmp = parts;
-	len = 0;
-	while (*tmp) {
-		len ++;
-		tmp ++;
-	}
-
-	res = mono_metadata_signature_alloc (corlib, len - 1);
-	res->pinvoke = 1;
-
 #if defined(TARGET_WIN32) && defined(TARGET_X86)
-	/* 
-	 * Under windows, the default pinvoke calling convention is STDCALL but
-	 * we need CDECL.
-	 */
-	res->call_convention = MONO_CALL_C;
+/*
+ * Under windows, the default pinvoke calling convention is STDCALL but
+ * we need CDECL.
+ */
+#define MONO_ICALL_SIGNATURE_CALL_CONVENTION MONO_CALL_C
+#else
+#define MONO_ICALL_SIGNATURE_CALL_CONVENTION 0
 #endif
 
-	res->ret = type_from_typename (parts [0]);
-	for (i = 1; i < len; ++i) {
-		res->params [i - 1] = type_from_typename (parts [i]);
+// Storage for these enums is pointer-sized as it gets replaced with MonoType*.
+//
+// mono_create_icall_signatures depends on this order. Handle with care.
+// It is alphabetical.
+typedef enum ICallSigType {
+	ICALL_SIG_TYPE_bool     = 0x00,
+	ICALL_SIG_TYPE_boolean  = ICALL_SIG_TYPE_bool,
+	ICALL_SIG_TYPE_double   = 0x01,
+	ICALL_SIG_TYPE_float    = 0x02,
+	ICALL_SIG_TYPE_int      = 0x03,
+	ICALL_SIG_TYPE_int16    = 0x04,
+	ICALL_SIG_TYPE_int32    = 0x05,
+	ICALL_SIG_TYPE_int8     = 0x06,
+	ICALL_SIG_TYPE_long     = 0x07,
+	ICALL_SIG_TYPE_obj      = 0x08,
+	ICALL_SIG_TYPE_object   = ICALL_SIG_TYPE_obj,
+	ICALL_SIG_TYPE_ptr      = ICALL_SIG_TYPE_int,
+	ICALL_SIG_TYPE_ptrref   = 0x09,
+	ICALL_SIG_TYPE_string   = 0x0A,
+	ICALL_SIG_TYPE_uint16   = 0x0B,
+	ICALL_SIG_TYPE_uint32   = 0x0C,
+	ICALL_SIG_TYPE_uint8    = 0x0D,
+	ICALL_SIG_TYPE_ulong    = 0x0E,
+	ICALL_SIG_TYPE_void     = 0x0F,
+} ICallSigType;
+
+#define ICALL_SIG_TYPES_1(a) 		  	ICALL_SIG_TYPE_ ## a,
+#define ICALL_SIG_TYPES_2(a, b) 	  	ICALL_SIG_TYPES_1 (a            ) ICALL_SIG_TYPES_1 (b)
+#define ICALL_SIG_TYPES_3(a, b, c) 	  	ICALL_SIG_TYPES_2 (a, b         ) ICALL_SIG_TYPES_1 (c)
+#define ICALL_SIG_TYPES_4(a, b, c, d) 	  	ICALL_SIG_TYPES_3 (a, b, c      ) ICALL_SIG_TYPES_1 (d)
+#define ICALL_SIG_TYPES_5(a, b, c, d, e)	ICALL_SIG_TYPES_4 (a, b, c, d   ) ICALL_SIG_TYPES_1 (e)
+#define ICALL_SIG_TYPES_6(a, b, c, d, e, f)	ICALL_SIG_TYPES_5 (a, b, c, d, e) ICALL_SIG_TYPES_1 (f)
+#define ICALL_SIG_TYPES_7(a, b, c, d, e, f, g)	ICALL_SIG_TYPES_6 (a, b, c, d, e, f) ICALL_SIG_TYPES_1 (g)
+#define ICALL_SIG_TYPES_8(a, b, c, d, e, f, g, h) ICALL_SIG_TYPES_7 (a, b, c, d, e, f, g) ICALL_SIG_TYPES_1 (h)
+
+#define ICALL_SIG_TYPES(n, types) ICALL_SIG_TYPES_ ## n types
+
+// A scheme to make these const would be nice.
+static struct {
+#define ICALL_SIG(n, xtypes) 			\
+	struct {				\
+		MonoMethodSignature sig;	\
+		gsize types [n];		\
+	} ICALL_SIG_NAME (n, xtypes);
+ICALL_SIGS
+	MonoMethodSignature end; // terminal zeroed element
+} mono_icall_signatures = {
+#undef ICALL_SIG
+#define ICALL_SIG(n, types) { { \
+	0,			/* ret */ \
+	n,			/* param_count */ \
+	-1,			/* sentinelpos */ \
+	0,			/* generic_param_count */ \
+	MONO_ICALL_SIGNATURE_CALL_CONVENTION, \
+	0,			/* hasthis */ \
+	0, 			/* explicit_this */ \
+	1, 			/* pinvoke */ \
+	0, 			/* is_inflated */ \
+	0,			/* has_type_parameters */ \
+},  /* possible gap here, depending on MONO_ZERO_LEN_ARRAY */ \
+    { ICALL_SIG_TYPES (n, types) } }, /* params and ret */
+ICALL_SIGS
+};
+
+#undef ICALL_SIG
+#define ICALL_SIG(n, types) MonoMethodSignature * const ICALL_SIG_NAME (n, types) = &mono_icall_signatures.ICALL_SIG_NAME (n, types).sig;
+ICALL_SIGS
+#undef ICALL_SIG
+
+void
+mono_create_icall_signatures (void)
+{
+	// Fixup the mostly statically initialized icall signatures.
+	//   x = m_class_get_byval_arg (x)
+	//   Initialize ret with params [0] and params [i] with params [i + 1].
+	//   ptrref is special
+	//
+	// FIXME This is a bit obscure.
+
+	typedef MonoMethodSignature G_MAY_ALIAS MonoMethodSignature_a;
+	typedef gsize G_MAY_ALIAS gsize_a;
+
+	MonoType * const lookup [ ] = {
+		m_class_get_byval_arg (mono_defaults.boolean_class), // ICALL_SIG_TYPE_bool
+		m_class_get_byval_arg (mono_defaults.double_class),	 // ICALL_SIG_TYPE_double
+		m_class_get_byval_arg (mono_defaults.single_class),  // ICALL_SIG_TYPE_float
+		m_class_get_byval_arg (mono_defaults.int_class),	 // ICALL_SIG_TYPE_int
+		m_class_get_byval_arg (mono_defaults.int16_class),	 // ICALL_SIG_TYPE_int16
+		m_class_get_byval_arg (mono_defaults.int32_class),	 // ICALL_SIG_TYPE_int32
+		m_class_get_byval_arg (mono_defaults.sbyte_class),	 // ICALL_SIG_TYPE_int8
+		m_class_get_byval_arg (mono_defaults.int64_class),	 // ICALL_SIG_TYPE_long
+		m_class_get_byval_arg (mono_defaults.object_class),	 // ICALL_SIG_TYPE_obj
+		mono_class_get_byref_type (mono_defaults.int_class), // ICALL_SIG_TYPE_ptrref
+		m_class_get_byval_arg (mono_defaults.string_class),	 // ICALL_SIG_TYPE_string
+		m_class_get_byval_arg (mono_defaults.uint16_class),	 // ICALL_SIG_TYPE_uint16
+		m_class_get_byval_arg (mono_defaults.uint32_class),	 // ICALL_SIG_TYPE_uint32
+		m_class_get_byval_arg (mono_defaults.byte_class),	 // ICALL_SIG_TYPE_uint8
+		m_class_get_byval_arg (mono_defaults.uint64_class),	 // ICALL_SIG_TYPE_ulong
+		m_class_get_byval_arg (mono_defaults.void_class),	 // ICALL_SIG_TYPE_void
+	};
+
+	MonoMethodSignature_a *sig = (MonoMethodSignature*)&mono_icall_signatures;
+	int n;
+	while ((n = sig->param_count)) {
+		--sig->param_count; // remove ret
+		gsize_a *types = (gsize*)(sig + 1);
+		for (int i = 0; i < n; ++i) {
+			gsize index = *types++;
+			g_assert (index < G_N_ELEMENTS (lookup));
+			// Casts on next line are attempt to follow strict aliasing rules,
+			// to ensure reading from *types precedes writing
+			// to params [].
+			*(gsize*)(i ? &sig->params [i - 1] : &sig->ret) = (gsize)lookup [index];
+		}
+		sig = (MonoMethodSignature*)types;
 	}
-
-	g_strfreev (parts);
-
-	mono_image_lock (corlib);
-	res2 = (MonoMethodSignature *)g_hash_table_lookup (corlib->helper_signatures, sigstr);
-	if (res2)
-		res = res2; /*Value is allocated in the image pool*/
-	else
-		g_hash_table_insert (corlib->helper_signatures, (gpointer)sigstr, res);
-	mono_image_unlock (corlib);
-
-	return res;
 }
 
 MonoJitICallInfo *

@@ -47,38 +47,6 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static string[] GetCommandLineArgs ();
 
-		static string GetEnvironmentVariableCore (string variable)
-		{
-			using (var h = RuntimeMarshal.MarshalString (variable)) {
-				return internalGetEnvironmentVariable_native (h.Value);
-			}
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static string internalGetEnvironmentVariable_native (IntPtr variable);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string [] GetEnvironmentVariableNames ();
-
-		public static IDictionary GetEnvironmentVariables ()
-		{
-			Hashtable vars = new Hashtable ();
-			foreach (string name in GetEnvironmentVariableNames ()) {
-				vars [name] = GetEnvironmentVariableCore (name);
-			}
-			return vars;
-		}
-
-		static unsafe void SetEnvironmentVariableCore (string variable, string value)
-		{
-			fixed (char *fixed_variable = variable)
-			fixed (char *fixed_value = value)
-				InternalSetEnvironmentVariable (fixed_variable, variable.Length, fixed_value, value?.Length ?? 0);
-		}
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern unsafe void InternalSetEnvironmentVariable (char *variable, int variable_length, char *value, int value_length);
-
 		public static void FailFast (string message)
 		{
 			throw new NotImplementedException ();
@@ -112,16 +80,6 @@ namespace System
 		internal static string GetResourceString (string key, params object[] values)
 		{
 			return string.Format (CultureInfo.InvariantCulture, key, values);
-		}
-
-		internal static String GetStackTrace (Exception e, bool needFileInfo)
-		{
-			StackTrace st;
-			if (e == null)
-				st = new StackTrace (needFileInfo);
-			else
-				st = new StackTrace (e, needFileInfo);
-			return st.ToString (System.Diagnostics.StackTrace.TraceFormat.Normal);
 		}
 	}
 #endregion

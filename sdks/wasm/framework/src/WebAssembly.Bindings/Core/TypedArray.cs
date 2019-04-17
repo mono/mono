@@ -21,9 +21,43 @@ namespace WebAssembly.Core {
 		protected TypedArray (ArrayBuffer buffer, int byteOffset, int length) : base (Runtime.New<T> (buffer, byteOffset, length))
 		{ }
 
+		protected TypedArray (SharedArrayBuffer buffer) : base (Runtime.New<T> (buffer))
+		{ }
+
+		protected TypedArray (SharedArrayBuffer buffer, int byteOffset) : base (Runtime.New<T> (buffer, byteOffset))
+		{ }
+
+		protected TypedArray (SharedArrayBuffer buffer, int byteOffset, int length) : base (Runtime.New<T> (buffer, byteOffset, length))
+		{ }
+
 		internal TypedArray (IntPtr js_handle) : base (js_handle)
 		{ }
 
+		public TypedArrayTypeCode GetTypedArrayType()
+		{
+			switch (this) {
+			case Int8Array _:
+				return TypedArrayTypeCode.Int8Array;
+			case Uint8Array _:
+				return TypedArrayTypeCode.Uint8Array;
+			case Uint8ClampedArray _:
+				return TypedArrayTypeCode.Uint8ClampedArray;
+			case Int16Array _:
+				return TypedArrayTypeCode.Int16Array;
+			case Uint16Array _:
+				return TypedArrayTypeCode.Uint16Array;
+			case Int32Array _:
+				return TypedArrayTypeCode.Int32Array;
+			case Uint32Array _:
+				return TypedArrayTypeCode.Uint32Array;
+			case Float32Array _:
+				return TypedArrayTypeCode.Float32Array;
+			case Float64Array _:
+				return TypedArrayTypeCode.Float64Array;
+			default:
+				throw new ArrayTypeMismatchException ("TypedArray is not of correct type.");
+			}
+		}
 
 		public int BytesPerElement => (int)GetObjectProperty ("BYTES_PER_ELEMENT");
 		public string Name => (string)GetObjectProperty ("name");
@@ -106,11 +140,14 @@ namespace WebAssembly.Core {
 			// source has to be instantiated.
 			ValidateFromSource (span);
 
-			int type = (int)Type.GetTypeCode (typeof (U));
+			TypedArrayTypeCode type = (TypedArrayTypeCode)Type.GetTypeCode (typeof (U));
+			// Special case for Uint8ClampedArray, a clamped array which represents an array of 8-bit unsigned integers clamped to 0-255;
+			if (type == TypedArrayTypeCode.Uint8Array && typeof(T) == typeof(Uint8ClampedArray))
+				type = TypedArrayTypeCode.Uint8ClampedArray;  // This is only passed to the JavaScript side so it knows it will be a Uint8ClampedArray
 
 			var bytes = MemoryMarshal.AsBytes (span);
 			fixed (byte* ptr = bytes) {
-				var res = Runtime.TypedArrayFrom ((int)ptr, 0, span.Length, Marshal.SizeOf<U> (), type, out int exception);
+				var res = Runtime.TypedArrayFrom ((int)ptr, 0, span.Length, Marshal.SizeOf<U> (), (int)type, out int exception);
 				if (exception != 0)
 					throw new JSException ((string)res);
 				return (T)res;

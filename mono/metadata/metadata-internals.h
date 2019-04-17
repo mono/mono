@@ -168,7 +168,11 @@ struct _MonoAssemblyName {
 	uint32_t hash_alg;
 	uint32_t hash_len;
 	uint32_t flags;
+#ifdef ENABLE_NETCORE
+	int major, minor, build, revision, arch;
+#else
 	uint16_t major, minor, build, revision, arch;
+#endif
 };
 
 struct MonoTypeNameParse {
@@ -438,7 +442,6 @@ struct _MonoImage {
 	MonoConcurrentHashTable *typespec_cache; /* protected by the image lock */
 	/* indexed by token */
 	GHashTable *memberref_signatures;
-	GHashTable *helper_signatures;
 
 	/* Indexed by blob heap indexes */
 	GHashTable *method_signatures;
@@ -796,7 +799,7 @@ char*
 mono_image_strdup_vprintf (MonoImage *image, const char *format, va_list args);
 
 char*
-mono_image_strdup_printf (MonoImage *image, const char *format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);;
+mono_image_strdup_printf (MonoImage *image, const char *format, ...) MONO_ATTR_FORMAT_PRINTF(2,3);
 
 GList*
 mono_g_list_prepend_image (MonoImage *image, GList *list, gpointer data);

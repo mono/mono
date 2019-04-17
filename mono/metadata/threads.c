@@ -1706,7 +1706,7 @@ void
 ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThreadHandle this_obj_handle, MonoError *error)
 {
 	MonoInternalThread *this_obj = mono_internal_thread_handle_ptr (this_obj_handle);
-	THREAD_DEBUG (g_message ("%s: Closing thread %p, handle %p", __func__, this, this_obj->handle));
+	THREAD_DEBUG (g_message ("%s: Closing thread %p, handle %p", __func__, this_obj, this_obj->handle));
 
 	/*
 	 * Since threads keep a reference to their thread object while running, by
@@ -2196,6 +2196,10 @@ map_native_wait_result_to_managed (MonoW32HandleWaitRet val, gsize numobjects)
 		return WAIT_IO_COMPLETION;
 	} else if (val == MONO_W32HANDLE_WAIT_RET_TIMEOUT) {
 		return WAIT_TIMEOUT;
+	} else if (val == MONO_W32HANDLE_WAIT_RET_TOO_MANY_POSTS) {
+		return WAIT_TOO_MANY_POSTS;
+	} else if (val == MONO_W32HANDLE_WAIT_RET_NOT_OWNED_BY_CALLER) {
+		return WAIT_NOT_OWNED_BY_CALLER;
 	} else if (val == MONO_W32HANDLE_WAIT_RET_FAILED) {
 		/* WAIT_FAILED in waithandle.cs is different from WAIT_FAILED in Win32 API */
 		return MANAGED_WAIT_FAILED;
@@ -2531,6 +2535,12 @@ ves_icall_System_Threading_Interlocked_Read_Long (gint64 *location)
 	}
 #endif
 	return mono_atomic_load_i64 (location);
+}
+
+void
+ves_icall_System_Threading_Interlocked_MemoryBarrierProcessWide (void)
+{
+	mono_memory_barrier_process_wide ();
 }
 
 void
@@ -3722,6 +3732,11 @@ mono_thread_manage (void)
 		mono_thread_execute_interruption_void ();
 	}
 
+#ifndef ENABLE_NETCORE
+	/*
+	 * Under netcore, we don't abort any threads, just exit.
+	 * This is not a problem since we don't do runtime cleanup either.
+	 */
 	/* 
 	 * Remove everything but the finalizer thread and self.
 	 * Also abort all the background threads
@@ -3742,6 +3757,7 @@ mono_thread_manage (void)
 			wait_for_tids (wait, MONO_INFINITE_WAIT, FALSE);
 		}
 	} while (wait->num > 0);
+#endif
 	
 	/* 
 	 * give the subthreads a chance to really quit (this is mainly needed
@@ -6675,7 +6691,7 @@ ves_icall_System_Threading_Thread_StartInternal (MonoThreadObjectHandle thread_h
 
 	internal->state &= ~ThreadState_Unstarted;
 
-	THREAD_DEBUG (g_message ("%s: Started thread ID %" G_GSIZE_FORMAT " (handle %p)", __func__, tid, thread));
+	THREAD_DEBUG (g_message ("%s: Started thread ID %" G_GSIZE_FORMAT " (handle %p)", __func__, (gsize)internal->tid, internal->handle));
 
 	UNLOCK_THREAD (internal);
 }

@@ -1,12 +1,6 @@
 #include net_4_x_corlib.dll.sources
 #include win32_build_corlib.dll.sources
 
-../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
-../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.cs
-../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.BCryptGenRandom.GetRandomBytes.cs
-../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/BCrypt/Interop.NTSTATUS.cs
-
-../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.MemAllocFree.cs
 ../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.ThreadPoolIO.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/Interop.Errors.cs
 
@@ -36,12 +30,8 @@
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.Win32.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.cs
 
-corert/RuntimeImports.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Number.Windows.cs
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
-../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Windows.cs
-corefx/Mono.SafePasswordHandle.Windows.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/RegistryKey.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/Microsoft/Win32/SafeHandles/SafeRegistryHandle.cs
 ../../../external/corefx/src/Microsoft.Win32.Registry/src/System/Security/AccessControl/RegistrySecurity.cs

@@ -113,10 +113,8 @@ namespace System.Reflection
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public override extern Type[] GetExportedTypes ();
 
-		public override Type[] GetForwardedTypes ()
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public override extern Type[] GetForwardedTypes ();
 
 		public override ManifestResourceInfo GetManifestResourceInfo (string resourceName)
 		{
@@ -247,12 +245,11 @@ namespace System.Reflection
 					const bool addVersion = true;
 					const bool addPublicKey = false;
 					const bool defaultToken = true;
-					const bool assemblyRef = true;
 					for (int i = 0; i < numAssemblies; i++) {
 						AssemblyName name = new AssemblyName ();
 						unsafe {
 							Mono.MonoAssemblyName *nativeName = (Mono.MonoAssemblyName*) nativeNames[i];
-							name.FillName (nativeName, null, addVersion, addPublicKey, defaultToken, assemblyRef);
+							name.FillName (nativeName, null, addVersion, addPublicKey, defaultToken);
 							result[i] = name;
 						}
 					}
@@ -275,22 +272,83 @@ namespace System.Reflection
 
 		public override Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
 		{
-			throw new NotImplementedException ();
+			if (culture == null)
+				throw new ArgumentNullException (nameof (culture));
+
+			return InternalGetSatelliteAssembly (culture, version, true);
+		}
+
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
+		internal Assembly InternalGetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnFileNotFound)
+		{
+			var aname = GetName ();
+
+			var an = new AssemblyName ();
+			if (version == null)
+				an.Version = aname.Version;
+			else
+				an.Version = version;
+
+			an.CultureInfo = culture;
+			an.Name = aname.Name + ".resources";
+
+			Assembly res = null;
+			try {
+				StackCrawlMark unused = default;
+				res = Assembly.Load (an, ref unused, null);
+			} catch {
+			}
+
+			if (res == this)
+				res = null;
+			if (res == null && throwOnFileNotFound)
+				throw new FileNotFoundException (String.Format (culture, SR.IO_FileNotFound_FileName, an.Name));
+			return res;
 		}
 
 		public override FileStream GetFile (string name)
 		{
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException (nameof (name), SR.ArgumentNull_FileName);
+			if (name.Length == 0)
+				throw new ArgumentException (SR.Argument_EmptyFileName);
+
+			string location = Location;
+			if (location != null && Path.GetFileName (location) == name)
+				return new FileStream (location, FileMode.Open, FileAccess.Read);
+			string filename = (string)GetFilesInternal (name, true);
+			if (filename != null)
+				return new FileStream (filename, FileMode.Open, FileAccess.Read);
+			else
+				return null;
 		}
 
 		public override FileStream[] GetFiles (bool getResourceModules)
 		{
-			throw new NotImplementedException ();
+			string[] names = (string[]) GetFilesInternal (null, getResourceModules);
+			if (names == null)
+				return EmptyArray<FileStream>.Value;
+
+			string location = Location;
+
+			FileStream[] res;
+			if (location != String.Empty) {
+				res = new FileStream [names.Length + 1];
+				res [0] = new FileStream (location, FileMode.Open, FileAccess.Read);
+				for (int i = 0; i < names.Length; ++i)
+					res [i + 1] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			} else {
+				res = new FileStream [names.Length];
+				for (int i = 0; i < names.Length; ++i)
+					res [i] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
+			}
+			return res;
 		}
 
-		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder = default)
+		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark, AssemblyLoadContext assemblyLoadContext)
 		{
-			throw new NotImplementedException ();
+			// TODO: Use assemblyLoadContext
+			return (RuntimeAssembly) InternalLoad (assemblyRef.FullName, ref stackMark, IntPtr.Zero);
 		}
 
 		public override Module LoadModule (string moduleName, byte[] rawModule, byte[] rawSymbolStore)
@@ -332,5 +390,8 @@ namespace System.Reflection
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern IntPtr InternalGetReferencedAssemblies (Assembly module);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern object GetFilesInternal (String name, bool getResourceModules);
 	}
 }

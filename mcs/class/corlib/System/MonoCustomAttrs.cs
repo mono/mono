@@ -121,6 +121,7 @@ namespace System
 		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)
 		{
 			object[] attrs;
+
 			if (IsUserCattrProvider (obj))
 				attrs = obj.GetCustomAttributes (attributeType, true);
 			else
@@ -146,18 +147,18 @@ namespace System
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
 			if (obj == null)
-				throw new ArgumentNullException ("obj");
+				throw new ArgumentNullException (nameof (obj));
 			if (attributeType == null)
-				throw new ArgumentNullException ("attributeType");	
-
-#if NETCORE
-			if (!typeof (Attribute).IsAssignableFrom (attributeType) && attributeType != typeof (MonoCustomAttrs))
-				throw new ArgumentException (SR.Argument_MustHaveAttributeBaseClass);
-#endif
+				throw new ArgumentNullException (nameof (attributeType));	
 
 			if (attributeType == typeof (MonoCustomAttrs))
 				attributeType = null;
-			
+
+#if NETCORE
+			if (attributeType == typeof (Attribute))
+				attributeType = null;
+#endif
+
 			object[] r;
 			object[] res = GetCustomAttributesBase (obj, attributeType, false);
 			// shortcut

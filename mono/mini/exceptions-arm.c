@@ -252,6 +252,7 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 	int param_size = 8;
 	if (!resume_unwind && !corlib)
 		param_size += 4; // Extra arg
+	param_size = ALIGN_TO (param_size, MONO_ARCH_FRAME_ALIGNMENT);
 	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, param_size);
 	cfa_offset += param_size;
 	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, cfa_offset);
@@ -582,7 +583,7 @@ get_handle_signal_exception_addr (void)
 gboolean
 mono_arch_handle_exception (void *ctx, gpointer obj)
 {
-#if defined(MONO_CROSS_COMPILE) || !defined(MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX)
+#if defined(MONO_CROSS_COMPILE)
 	g_assert_not_reached ();
 #elif defined(MONO_ARCH_USE_SIGACTION)
 	arm_ucontext *sigctx = (arm_ucontext*)ctx;

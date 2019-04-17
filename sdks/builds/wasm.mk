@@ -1,7 +1,7 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.38.29
+EMSCRIPTEN_VERSION=1.38.30
 EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 $(TOP)/sdks/builds/toolchains/emsdk:

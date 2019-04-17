@@ -56,6 +56,8 @@ namespace MonoTests.System
 					return "GTB Standard Time";
 				case "US/Eastern":
 					return "Eastern Standard Time";
+				case "US/Central":
+					return "Central Standard Time";
 				case "US/Pacific":
 					return "Pacific Standard Time";
 				case "Australia/Sydney":
@@ -80,7 +82,7 @@ namespace MonoTests.System
 		public static void SetLocal (TimeZoneInfo val)
 		{
 			if (localField == null) {
-#if MOBILE && !WIN_PLATFORM
+#if MOBILE
 					localField = typeof (TimeZoneInfo).GetField ("local",
 							BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
 #else
@@ -386,15 +388,19 @@ namespace MonoTests.System
 			}
 
 			[Test]
-			[Category ("MobileNotWorking")]
 			public void TestAthensDST_InDSTDelta ()
 			{
-				// In .NET GetUtcOffset() returns the BaseUtcOffset for times within the hour
-				// lost when DST starts but IsDaylightSavingTime() returns true.
+				// In .NET/.Net Core GetUtcOffset() returns the BaseUtcOffset for times within the hour
+				// lost when DST starts and IsDaylightSavingTime() returns false for datetime and true for datetimeoffset
 
 				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Athens"));
 
-				var date = new DateTime (2014, 3, 30 , 3, 0, 0);
+				var date = new DateTime (2014, 3, 30 , 2, 0, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+				date = new DateTime (2014, 3, 30 , 3, 0, 0);
 				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
@@ -428,6 +434,31 @@ namespace MonoTests.System
 				offset = tzi.GetUtcOffset (date);
 				dateOffset = new DateTimeOffset (date, offset);
 				Assert.IsTrue (tzi.IsDaylightSavingTime (dateOffset));
+			}
+
+			// https://github.com/mono/mono/issues/9664
+			[Test]
+			public void Bug_9664 ()
+			{
+				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				var date = new DateTime (2019, 3, 9, 21, 0, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
+
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				date = new DateTime (2019, 3, 10, 2, 0, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
+
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				date = new DateTime (2019, 3, 10, 2, 30, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
+
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				date = new DateTime (2019, 3, 10, 3, 0, 0);
+				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (-5, 0, 0), tzi.GetUtcOffset (date));
 			}
 		}
 
@@ -1229,7 +1260,7 @@ namespace MonoTests.System
 		{
 			private static void GetDaylightTime (TimeZoneInfo tz, int year, out DateTime start, out DateTime end, out TimeSpan delta)
 			{
-#if !MOBILE || (MOBILE && WIN_PLATFORM)
+#if !MOBILE
 					var rule = tz.GetAdjustmentRules ().FirstOrDefault (r => r.DateStart.Year <= year && r.DateEnd.Year >= year);
 					if (rule == null) {
 						start = DateTime.MinValue;

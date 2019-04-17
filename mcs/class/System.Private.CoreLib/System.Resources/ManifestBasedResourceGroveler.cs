@@ -7,7 +7,7 @@ namespace System.Resources
 	{
 		static Assembly InternalGetSatelliteAssembly (Assembly mainAssembly, CultureInfo culture, Version version)
 		{
-			throw new NotImplementedException ();
+			return ((RuntimeAssembly)mainAssembly).InternalGetSatelliteAssembly (culture, version, throwOnFileNotFound: false);
 		}
 
 		static bool GetNeutralResourcesLanguageAttribute (Assembly assemblyHandle, ref string cultureName, out short fallbackLocation)

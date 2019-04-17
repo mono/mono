@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Globalization;
-using System.Threading;
+using System.Net.WebSockets;
 
 namespace WebAssembly.Net.WebSockets {
 	internal static class WebSocketHelpers {
+
+		private const int CloseStatusCodeAbort = 1006;
+		private const int CloseStatusCodeFailedTLSHandshake = 1015;
+		private const int InvalidCloseStatusCodesFrom = 0;
+		private const int InvalidCloseStatusCodesTo = 999;
 
 		private const string Separators = "()<>@,;:\\\"/[]?={} ";
 
@@ -52,6 +57,28 @@ namespace WebAssembly.Net.WebSockets {
 			}
 
 		}
+
+
+		internal static void ValidateCloseStatus (WebSocketCloseStatus closeStatus, string statusDescription)
+		{
+			if (closeStatus == WebSocketCloseStatus.Empty && !string.IsNullOrEmpty (statusDescription)) {
+				throw new ArgumentException ($"The close status description '{statusDescription}' is invalid. When using close status code '{WebSocketCloseStatus.Empty}' the description must be null.",
+				    nameof (statusDescription));
+			}
+
+			int closeStatusCode = (int)closeStatus;
+
+			if ((closeStatusCode >= InvalidCloseStatusCodesFrom &&
+			    closeStatusCode <= InvalidCloseStatusCodesTo) ||
+			    closeStatusCode == CloseStatusCodeAbort ||
+			    closeStatusCode == CloseStatusCodeFailedTLSHandshake) {
+				// CloseStatus 1006 means Aborted - this will never appear on the wire and is reflected by calling WebSocket.Abort
+				throw new ArgumentException ($"The close status code '{closeStatusCode}' is reserved for system use only and cannot be specified when calling this method.",
+				    nameof (closeStatus));
+			}
+
+		}
+
 
 	}
 }

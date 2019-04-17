@@ -92,6 +92,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void TestSpecificCultureFormats_es_ES ()
 		{
 			CultureInfo ci = new CultureInfo ("es-ES");
@@ -119,6 +120,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void MonthGenitiveNames ()
 		{
 			var dfi = new CultureInfo ("cs-CZ").DateTimeFormat;
@@ -127,6 +129,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void QuoteInValue ()
 		{
 			var culture = new CultureInfo("mt-MT");
@@ -144,6 +147,7 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		[Category ("Calendars")]
 		public void TestFirstYearOfJapaneseEra ()
 		{
 			DateTimeFormatInfo jpnFormat = new CultureInfo ("ja-JP").DateTimeFormat;

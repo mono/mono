@@ -2,14 +2,8 @@ namespace System.IO
 {
 	partial class Stream
 	{
-		private bool HasOverriddenBeginEndRead ()
-		{
-			throw new NotImplementedException ();
-		}
+		bool HasOverriddenBeginEndRead () => true;
 
-		private bool HasOverriddenBeginEndWrite ()
-		{
-			throw new NotImplementedException ();
-		}
+		bool HasOverriddenBeginEndWrite () => true;
 	}
 }

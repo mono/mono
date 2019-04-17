@@ -22,43 +22,59 @@
 
                 public class _WinConfigSetup : Task
                 {
-                  void GetVersionsFromConfigureAC (string configureACFile, out string monoVersion, out string monoCorlibVersion)
+                  bool GetVersionsFromConfigureAC (string configureACFile, out string monoVersion, out string monoCorlibVersion)
                   {
+                      bool result = true;
                       monoVersion = null;
                       monoCorlibVersion = null;
                       if (File.Exists (configureACFile))
                       {
-                          var monoVersionRegEx = new Regex (@"(.*AC_INIT\(mono, \[)(\d+\.\d+\.\d+)");
-                          var monoCorlibVersionRegEx = new Regex (@"(MONO_CORLIB_VERSION=)([A-F0-9]{8}(?:-[A-F0-9]{4}){3}-[A-F0-9]{12})");
+                          // These are both fairly arbitrary strings.
+                          var monoVersionRegEx = new Regex (@"^AC_INIT\s*\(\s*mono,\s*\[?\s*([^\],\s]+)");
+                          var monoCorlibVersionRegEx = new Regex (@"^MONO_CORLIB_VERSION\s*=\s*(\S+)");
                           using (StreamReader reader = new StreamReader (configureACFile))
                           {
                               string line;
                               while ((line = reader.ReadLine ()) != null && (monoVersion == null || monoCorlibVersion == null))
                               {
                                   var monoVersionMatch = monoVersionRegEx.Match (line);
-                                  if (monoVersionMatch != null && monoVersionMatch.Success && monoVersionMatch.Groups.Count == 3)
+                                  if (monoVersionMatch.Success)
                                   {
-                                      monoVersion = monoVersionMatch.Groups[2].Value;
+                                      if (monoVersion != null)
+                                      {
+                                          Log.LogError("duplicate MONO_INIT in {0}", configureACFile);
+                                          result = false;
+                                      }
+                                      monoVersion = monoVersionMatch.Groups[1].Value;
+                                      Log.LogMessage ("{0}:AC_INIT:MONO_VERSION=\"{1}\"", configureACFile, monoVersion);
                                       continue;
                                   }
 
                                   var monoCorlibVersionMatch = monoCorlibVersionRegEx.Match (line);
-                                  if (monoCorlibVersionMatch != null && monoCorlibVersionMatch.Success && monoCorlibVersionMatch.Groups.Count == 3)
+                                  if (monoCorlibVersionMatch.Success)
                                   {
-                                      monoCorlibVersion = monoCorlibVersionMatch.Groups[2].Value;
+                                      if (monoCorlibVersion != null)
+                                      {
+                                          // This is misleading. The loop stops when both found, so duplicates usually not noticed.
+                                          Log.LogError("duplicate MONO_CORLIB_VERSION in {0}", configureACFile);
+                                          result = false;
+                                      }
+                                      monoCorlibVersion = monoCorlibVersionMatch.Groups[1].Value;
+                                      Log.LogMessage ("{0}:MONO_CORLIB_VERSION=\"{1}\"", configureACFile, monoCorlibVersion);
                                       continue;
                                   }
                               }
                           }
                       }
+                      return result;
                   }
 
-                  string [] GetDisabledConfigFeatures (string path)
+                  List<string> GetConfigFeatures (string path, string featuresRegex)
                   {
-                      var disabledFeatures = new List<string> ();
+                      var features = new List<string> ();
                       if (File.Exists (path))
                       {
-                          var regex = new Regex (".*#define.*DISABLE_.*1");
+                          var regex = new Regex (featuresRegex);
                           using (StreamReader reader = new StreamReader (path))
                           {
                               string line;
@@ -76,7 +92,7 @@
                                               if (configItems != null && configItems.Length == 3)
                                               {
                                                   // Second item should be the define.
-                                                  disabledFeatures.Add (configItems[1]);
+                                                  features.Add (configItems[1]);
                                               }
                                           }
                                       }
@@ -84,7 +100,30 @@
                               }
                           }
                       }
-                      return disabledFeatures.ToArray ();
+                      return features;
+                  }
+
+                  string [] GetEnabledConfigFeatures (string path, string enableDefines)
+                  {
+                      string [] supportedFeatures = { "ENABLE_ICALL_SYMBOL_MAP",
+                                                      "ENABLE_LLVM",
+                                                      "ENABLE_LLVM_RUNTIME" };
+
+                      var enableFeatures = GetConfigFeatures(path, ".*#define.*ENABLE_.*1");
+                      if (enableDefines != null)
+                          enableFeatures.AddRange (enableDefines.Split (';'));
+
+                      // Only keep supported features on Windows platforms using MSVC.
+                      var features = new List<string> ();
+                      foreach (var feature in enableFeatures)
+                          if (Array.Exists(supportedFeatures, s => String.CompareOrdinal (s,feature) == 0))
+                              features.Add(feature);
+                      return features.ToArray ();
+                  }
+
+                  string [] GetDisabledConfigFeatures (string path)
+                  {
+                      return GetConfigFeatures(path, ".*#define.*DISABLE_.*1").ToArray ();
                   }
 
                   void CreateConfigUsingTemplate (string templatePath, string targetPath, string [] disabledDefines, string [] enabledDefines, string [] haveDefines, string monoVersion, string monoCorlibVersion)
@@ -258,16 +297,29 @@
 
                     string monoVersion = null;
                     string monoCorlibVersion = null;
-                    GetVersionsFromConfigureAC (configureACFile, out monoVersion, out monoCorlibVersion);
+                    if (!GetVersionsFromConfigureAC (configureACFile, out monoVersion, out monoCorlibVersion))
+                        return false;
+
+                    if (monoVersion == null)
+                    {
+                        Log.LogError("failed to parse version from AC_INIT in {0}", configureACFile);
+                        return false;
+                    }
+
+                    if (monoCorlibVersion == null)
+                    {
+                        Log.LogError("failed to parse MONO_CORLIB_VERSION from {0}", configureACFile);
+                        return false;
+                    }
 
                     var disableDefines = GetDisabledConfigFeatures (cygConfigFile);
-                    var enableDefines = (EnableDefines != null) ? EnableDefines.Split (';') : null;
+                    var enableDefines = GetEnabledConfigFeatures (cygConfigFile, EnableDefines);
                     var haveDefines = (HaveDefines != null) ? HaveDefines.Split (';') : null;
                     CreateConfigUsingTemplate (winConfigFile, configFile, disableDefines, enableDefines, haveDefines, monoVersion, monoCorlibVersion);
 
                     CreateVersionFile (versionFile);
 
-                    Log.LogMessage (MessageImportance.High, "Successfully setup Mono configuration headers.");
+                    Log.LogMessage (MessageImportance.High, "Successfully setup Mono configuration headers {0} and {1} from {2}.", configFile, versionFile, winConfigFile);
 
                     return true;
                   }

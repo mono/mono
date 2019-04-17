@@ -623,6 +623,7 @@ can_inflate_gparam_with (MonoGenericParam *gparam, MonoType *type)
 {
 	if (!mono_type_is_valid_generic_argument (type))
 		return FALSE;
+#if FALSE
 	/* Avoid inflating gparams with valuetype constraints with ref types during gsharing */
 	MonoGenericParamInfo *info = mono_generic_param_info (gparam);
 	if (info && (info->flags & GENERIC_PARAMETER_ATTRIBUTE_VALUE_TYPE_CONSTRAINT)) {
@@ -632,6 +633,7 @@ can_inflate_gparam_with (MonoGenericParam *gparam, MonoType *type)
 				return FALSE;
 		}
 	}
+#endif
 	return TRUE;
 }
 
@@ -1735,18 +1737,15 @@ compare_interface_ids (const void *p_key, const void *p_element)
 int
 mono_class_interface_offset (MonoClass *klass, MonoClass *itf)
 {
+	int i;
 	MonoClass **klass_interfaces_packed = m_class_get_interfaces_packed (klass);
-	MonoClass **result = (MonoClass **)mono_binary_search (
-			itf,
-			klass_interfaces_packed,
-			m_class_get_interface_offsets_count (klass),
-			sizeof (MonoClass *),
-			compare_interface_ids);
-	if (result) {
-		return m_class_get_interface_offsets_packed (klass) [result - klass_interfaces_packed];
-	} else {
-		return -1;
+	for (i = m_class_get_interface_offsets_count (klass) -1 ; i >= 0 ; i-- ){
+		MonoClass *result = klass_interfaces_packed[i];
+		if (m_class_get_interface_id(result) == m_class_get_interface_id(itf)) {
+			return m_class_get_interface_offsets_packed (klass) [i];
+		} 
 	}
+	return -1;
 }
 
 /**
@@ -1909,13 +1908,22 @@ mono_class_is_nullable (MonoClass *klass)
 	return gklass && gklass->container_class == mono_defaults.generic_nullable_class;
 }
 
-
 /** if klass is T? return T */
+MonoClass*
+mono_class_get_nullable_param_internal (MonoClass *klass)
+{
+	g_assert (mono_class_is_nullable (klass));
+	return mono_class_from_mono_type_internal (mono_class_get_generic_class (klass)->context.class_inst->type_argv [0]);
+}
+
 MonoClass*
 mono_class_get_nullable_param (MonoClass *klass)
 {
-       g_assert (mono_class_is_nullable (klass));
-       return mono_class_from_mono_type_internal (mono_class_get_generic_class (klass)->context.class_inst->type_argv [0]);
+	MonoClass *result = NULL;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_class_get_nullable_param_internal (klass);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 gboolean
@@ -3381,6 +3389,27 @@ mono_class_is_subclass_of (MonoClass *klass, MonoClass *klassc,
 	return result;
 }
 
+static gboolean 
+mono_interface_implements_interface (MonoClass *interface_implementer, MonoClass *interface_implemented)
+{
+	int i;
+	ERROR_DECL (error);
+	mono_class_setup_interfaces (interface_implementer, error);
+	if (!is_ok (error)) {
+		mono_error_cleanup  (error);
+		return FALSE;
+	}
+	MonoClass **klass_interfaces = m_class_get_interfaces (interface_implementer);
+	for (i = 0; i < m_class_get_interface_count (interface_implementer); i++) {
+		MonoClass *ic = klass_interfaces [i];
+		if (mono_class_is_ginst (ic))
+			ic = mono_class_get_generic_type_definition (ic);
+		if (ic == interface_implemented)
+			return TRUE;
+	}
+	return FALSE;
+}
+
 gboolean
 mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc,
 				    gboolean check_interfaces)
@@ -3811,6 +3840,7 @@ mono_class_is_assignable_from_checked (MonoClass *klass, MonoClass *oklass, gboo
 				}
 			}
 		}
+
 		*result = FALSE;
 		return;
 	} else if (m_class_is_delegate (klass)) {
@@ -4961,6 +4991,36 @@ mono_class_implements_interface (MonoClass* klass, MonoClass* iface)
 	return mono_class_is_assignable_from_internal (iface, klass);
 }
 
+static mono_bool
+class_implements_interface_ignore_generics (MonoClass* klass, MonoClass* iface)
+{
+	int i;
+	ERROR_DECL (error);
+	if (mono_class_is_ginst (iface))
+		iface = mono_class_get_generic_type_definition (iface);
+	while (klass != NULL) {
+		if (mono_class_is_assignable_from_internal (iface, klass))
+			return TRUE;
+		mono_class_setup_interfaces (klass, error);
+		if (!is_ok (error)) {
+			mono_error_cleanup  (error);
+			return FALSE;
+		}
+		MonoClass **klass_interfaces = m_class_get_interfaces (klass);
+		for (i = 0; i < m_class_get_interface_count (klass); i++) {
+			MonoClass *ic = klass_interfaces [i];
+			if (mono_class_is_ginst (ic))
+				ic = mono_class_get_generic_type_definition (ic);
+			if (ic == iface) {
+				return TRUE;
+			}
+		}
+		klass = m_class_get_parent (klass);
+	}
+	return FALSE;
+}
+		
+
 /**
  * mono_field_get_name:
  * \param field the \c MonoClassField to act on
@@ -5481,6 +5541,8 @@ mono_class_get_generic_type_definition (MonoClass *klass)
  * Generic instantiations are ignored for all super types of @klass.
  * 
  * Visibility checks ignoring generic instantiations.  
+ * 
+ * Class implementing interface visibility checks ignore generic instantiations 
  */
 gboolean
 mono_class_has_parent_and_ignore_generics (MonoClass *klass, MonoClass *parent)
@@ -5494,6 +5556,10 @@ mono_class_has_parent_and_ignore_generics (MonoClass *klass, MonoClass *parent)
 		if (parent == mono_class_get_generic_type_definition (m_class_get_supertypes (klass) [i]))
 			return TRUE;
 	}
+
+	if (MONO_CLASS_IS_INTERFACE_INTERNAL (parent) && class_implements_interface_ignore_generics (klass, parent))
+		return TRUE;
+		
 	return FALSE;
 }
 /*
@@ -5516,7 +5582,11 @@ is_valid_family_access (MonoClass *access_klass, MonoClass *member_klass, MonoCl
 {
 	if (MONO_CLASS_IS_INTERFACE_INTERNAL (member_klass) && !MONO_CLASS_IS_INTERFACE_INTERNAL (access_klass)) {
 		/* Can happen with default interface methods */
-		if (!mono_class_implements_interface (access_klass, member_klass))
+		if (!class_implements_interface_ignore_generics (access_klass, member_klass))
+			return FALSE;
+	} else if (member_klass != access_klass && MONO_CLASS_IS_INTERFACE_INTERNAL (member_klass) && MONO_CLASS_IS_INTERFACE_INTERNAL (access_klass)) {
+		/* Can happen with default interface methods */
+		if (!mono_interface_implements_interface (access_klass, member_klass))
 			return FALSE;
 	} else {
 		if (!mono_class_has_parent_and_ignore_generics (access_klass, member_klass))
@@ -5930,6 +6000,10 @@ gboolean mono_type_is_valid_enum_basetype (MonoType * type) {
 	case MONO_TYPE_U8:
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
+#if ENABLE_NETCORE
+	case MONO_TYPE_R8:
+	case MONO_TYPE_R4:
+#endif
 		return TRUE;
 	default:
 		return FALSE;

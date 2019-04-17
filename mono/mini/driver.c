@@ -1202,15 +1202,22 @@ compile_all_methods_thread_main_inner (CompileAllThreadArgs *args)
 			g_print ("Compiling %d %s\n", count, desc);
 			g_free (desc);
 		}
-		cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, args->opts), mono_get_root_domain (), (JitFlags)JIT_FLAG_DISCARD_RESULTS, 0, -1);
-		if (cfg->exception_type != MONO_EXCEPTION_NONE) {
-			const char *msg = cfg->exception_message;
-			if (cfg->exception_type == MONO_EXCEPTION_MONO_ERROR)
-				msg = mono_error_get_message (&cfg->error);
-			g_print ("Compilation of %s failed with exception '%s':\n", mono_method_full_name (cfg->method, TRUE), msg);
-			fail_count ++;
+		if (mono_use_interpreter) {
+			mini_get_interp_callbacks ()->create_method_pointer (method, TRUE, error);
+			// FIXME There are a few failures due to DllNotFoundException related to System.Native
+			if (verbose && !mono_error_ok (error))
+				g_print ("Compilation of %s failed\n", mono_method_full_name (method, TRUE));
+		} else {
+			cfg = mini_method_compile (method, mono_get_optimizations_for_method (method, args->opts), mono_get_root_domain (), (JitFlags)JIT_FLAG_DISCARD_RESULTS, 0, -1);
+			if (cfg->exception_type != MONO_EXCEPTION_NONE) {
+				const char *msg = cfg->exception_message;
+				if (cfg->exception_type == MONO_EXCEPTION_MONO_ERROR)
+					msg = mono_error_get_message (&cfg->error);
+				g_print ("Compilation of %s failed with exception '%s':\n", mono_method_full_name (cfg->method, TRUE), msg);
+				fail_count ++;
+			}
+			mono_destroy_compile (cfg);
 		}
-		mono_destroy_compile (cfg);
 	}
 
 	if (fail_count)
@@ -2393,6 +2400,8 @@ mono_main (int argc, char* argv[])
 			mono_parse_response_options (response_options, &argc, &argv, FALSE);
 			g_free (response_content);
 		} else if (argv [i][0] == '-' && argv [i][1] == '-' && mini_parse_debug_option (argv [i] + 2)) {
+		} else if (strcmp (argv [i], "--use-map-jit") == 0){
+			mono_setmmapjit (TRUE);
 		} else {
 			fprintf (stderr, "Unknown command line option: '%s'\n", argv [i]);
 			return 1;

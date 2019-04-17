@@ -57,6 +57,7 @@
 #include "external-only.h"
 #include "monitor.h"
 #include "icall-decl.h"
+#include "icall-signatures.h"
 
 // If no symbols in an object file in a static library are referenced, its exports will not be exported.
 // There are a few workarounds:
@@ -278,7 +279,7 @@ mono_type_initialization_init (void)
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
 	mono_coop_mutex_init (&ldstr_section);
-	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_create_icall_signature ("object int"), FALSE);
+	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_icall_sig_object_int, FALSE);
 }
 
 void
@@ -470,10 +471,13 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		return TRUE;
 	}
 	if (vtable->init_failed) {
-		mono_type_initialization_unlock ();
-
 		/* The type initialization already failed once, rethrow the same exception */
-		mono_error_set_exception_instance (error, get_type_init_exception_for_vtable (vtable));
+		MonoException *exp = get_type_init_exception_for_vtable (vtable);
+		/* Reset the stack_trace and trace_ips because the exception is reused */
+		exp->stack_trace = NULL;
+		exp->trace_ips = NULL;
+		mono_type_initialization_unlock ();
+		mono_error_set_exception_instance (error, exp);
 		return FALSE;
 	}
 	lock = (TypeInitializationLock *)g_hash_table_lookup (type_initialization_hash, vtable);
@@ -1549,7 +1553,7 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 				continue;
 			}
 
-			if (!(method->flags & METHOD_ATTRIBUTE_STATIC)) {
+			if (method->flags & METHOD_ATTRIBUTE_VIRTUAL) {
 				add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, vt_slot, slot_num);
 				vt_slot ++;
 			}
@@ -5607,7 +5611,15 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 
 			g_assert (res->vtable->klass == mono_defaults.int_class);
 			box_args [0] = ((MonoIntPtr*)res)->m_value;
-			box_args [1] = mono_type_get_object_checked (mono_domain_get (), sig->ret, error);
+			if (sig->ret->byref) {
+				// byref is already unboxed by the invoke code
+				MonoType *tmpret = mono_metadata_type_dup (NULL, sig->ret);
+				tmpret->byref = FALSE;
+				box_args [1] = mono_type_get_object_checked (mono_domain_get (), tmpret, error);
+				mono_metadata_free_type (tmpret);
+			} else {
+				box_args [1] = mono_type_get_object_checked (mono_domain_get (), sig->ret, error);
+			}
 			return_val_if_nok (error, NULL);
 
 			res = mono_runtime_try_invoke (box_method, NULL, box_args, &box_exc, error);

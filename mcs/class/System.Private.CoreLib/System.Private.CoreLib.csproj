@@ -27,6 +27,8 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsNotAsErrors>$(WarningsNotAsErrors);618</WarningsNotAsErrors>
     <NoWarn>649,3019,414,169,3015,591,1573,1591,0419</NoWarn>
+    <!-- Disable nullability-related warnings -->
+    <NoWarn>$(NoWarn),CS8609,CS8611,CS8631,CS8632</NoWarn>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <SignAssembly>true</SignAssembly>
     <DelaySign>true</DelaySign>
@@ -107,14 +109,15 @@
   </ItemGroup>
   <ItemGroup>
       <Compile Include="Microsoft.Win32\UnsafeNativeMethods.cs" />
-      <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
       <Compile Include="Mono\MonoDomain.cs" />
       <Compile Include="Mono\MonoDomainSetup.cs" />
+      <Compile Include="Mono\MonoListItem.cs" />
       <Compile Include="System\AppContext.cs" />
       <Compile Include="System\Array.cs" />
       <Compile Include="System\Attribute.cs" />
       <Compile Include="System\Buffer.cs" />
       <Compile Include="System\DefaultBinder.cs" />
+      <Compile Include="System\Delegate.cs" />
       <Compile Include="System\Enum.cs" />
       <Compile Include="System\Environment.cs" />
       <Compile Include="System\Exception.cs" />
@@ -127,21 +130,20 @@
       <Compile Include="System\Nullable.cs" />
       <Compile Include="System\String.cs" />
       <Compile Include="System\Type.cs" />
+      <Compile Include="System\TypedReference.cs" />
       <Compile Include="System\TypeLoadException.cs" />
       <Compile Include="System\TypeNameParser.cs" />
       <Compile Include="System\__ComObject.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
-      <Compile Include="System.Globalization\CultureData.cs" />
-      <Compile Include="System.Globalization\CultureInfo.cs" />
       <Compile Include="System.Collections.Generic\ArraySortHelper.cs" />
       <Compile Include="System.Collections.Generic\Comparer.cs" />
       <Compile Include="System.Collections.Generic\EqualityComparer.cs" />
       <Compile Include="System.Diagnostics\StackFrame.cs" />
       <Compile Include="System.Diagnostics\StackTrace.cs" />
-      <Compile Include="System.Diagnostics.Tracing\EventSource.cs" />
       <Compile Include="System.IO\Stream.cs" />
       <Compile Include="System.IO\FileLoadException.cs" />
       <Compile Include="System.Reflection\Assembly.cs" />
+      <Compile Include="System.Reflection\AssemblyName.cs" />
       <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
       <Compile Include="System.Reflection\MemberInfo.cs" />
@@ -150,7 +152,33 @@
       <Compile Include="System.Reflection\RuntimeMethodBody.cs" />
       <Compile Include="System.Reflection\RuntimeLocalVariableInfo.cs" />
       <Compile Include="System.Reflection\RuntimeExceptionHandlingClause.cs" />
-      <Compile Include="System.Reflection.Emit\Stubs.cs" />
+      <Compile Include="System.Reflection.Emit\AssemblyBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\ConstructorBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\ConstructorOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\CustomAttributeBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\DerivedTypes.cs" />
+      <Compile Include="System.Reflection.Emit\DynamicILInfo.cs" />
+      <Compile Include="System.Reflection.Emit\DynamicMethod.cs" />
+      <Compile Include="System.Reflection.Emit\DynamicMethod.notsupported.cs" />
+      <Compile Include="System.Reflection.Emit\EnumBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\EventBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\EventOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\FieldBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\FieldOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\GenericTypeParameterBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\ILGenerator.cs" />
+      <Compile Include="System.Reflection.Emit\LocalBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\MethodBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\MethodOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\ModuleBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\MonoArrayMethod.cs" />
+      <Compile Include="System.Reflection.Emit\ParameterBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\PropertyBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\PropertyOnTypeBuilderInst.cs" />
+      <Compile Include="System.Reflection.Emit\SignatureHelper.cs" />
+      <Compile Include="System.Reflection.Emit\TypeBuilder.cs" />
+      <Compile Include="System.Reflection.Emit\TypeBuilderInstantiation.cs" />
+      <Compile Include="System.Reflection.Emit\UnmanagedMarshal.cs" />
       <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
       <Compile Include="System.Resources\ManifestBasedResourceGroveler.cs" />
       <Compile Include="System.Runtime\GCSettings.cs" />
@@ -162,22 +190,32 @@
       <Compile Include="System.Runtime.InteropServices\GCHandle.cs" />
       <Compile Include="System.Runtime.InteropServices\InteropExtensions.cs" />
       <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
+      <Compile Include="System.Runtime.InteropServices\MarshalAsAttribute.cs" />
       <Compile Include="System.Runtime.InteropServices\NativeLibrary.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyDependencyResolver.cs" />
       <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
       <Compile Include="System.Security\DynamicSecurityMethodAttribute.cs" />
-      <Compile Include="System.Threading\EventWaitHandle.cs" />
       <Compile Include="System.Threading\Interlocked.cs" />
-      <Compile Include="System.Threading\Mutex.cs" />
+      <Compile Include="System.Threading\Monitor.cs" />
       <Compile Include="System.Threading\Overlapped.cs" />
       <Compile Include="System.Threading\PreAllocatedOverlapped.cs" />
-      <Compile Include="System.Threading\Semaphore.cs" />
       <Compile Include="System.Threading\StackCrawlMark.cs" />
       <Compile Include="System.Threading\Thread.cs" />
       <Compile Include="System.Threading\ThreadPool.cs" />
       <Compile Include="System.Threading\ThreadPoolBoundHandle.cs" />
       <Compile Include="System.Threading\WaitHandle.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetsUnix)' == 'true'">
+      <Compile Include="Microsoft.Win32.SafeHandles\SafeWaitHandle.Unix.cs" />
+      <Compile Include="System\Environment.Unix.cs" />
+      <Compile Include="System.Globalization\GlobalizationMode.Unix.cs" />
+      <Compile Include="System.Threading\EventWaitHandle.Unix.cs" />
+      <Compile Include="System.Threading\Mutex.Unix.cs" />
+      <Compile Include="System.Threading\Semaphore.Unix.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetsWindows)' == 'true'">
+      <Compile Include="System.Globalization\GlobalizationMode.Windows.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\build\common\Consts.cs" />
@@ -195,8 +233,6 @@
       <Compile Include="..\corlib\Mono\SafeGPtrArrayHandle.cs" />
 
       <Compile Include="..\corlib\System\ArgIterator.cs" />
-      <Compile Include="..\corlib\System\Delegate.cs" />
-      <Compile Include="..\corlib\System\DelegateSerializationHolder.cs" />
       <Compile Include="..\corlib\System\EmptyArray.cs" />
       <Compile Include="..\corlib\System\MathF.mono.cs" />
       <Compile Include="..\corlib\System\ModuleHandle.cs" />
@@ -209,15 +245,17 @@
       <Compile Include="..\corlib\System\ValueType.cs" />
       <Compile Include="..\corlib\System\WeakReference.cs" />
       <Compile Include="..\corlib\System\WeakReference_T.cs" />
+      <Compile Include="..\corlib\System\TypeIdentifier.cs" />
+      <Compile Include="..\corlib\System\TypeSpec.cs" />
 
       <Compile Include="..\corlib\System.Diagnostics\Debugger.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
 
+      <Compile Include="..\corlib\System.IO\MonoIOError.cs" />
       <Compile Include="..\corlib\System.Threading\Monitor.cs" />
       <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
 
-      <Compile Include="..\corlib\System.Reflection\AssemblyName.cs" />
       <Compile Include="..\corlib\System.Reflection\CustomAttributeData.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeMethodInfo.cs" />
       <Compile Include="..\corlib\System.Reflection\RuntimeFieldInfo.cs" />
@@ -227,10 +265,7 @@
       <Compile Include="..\corlib\System.Reflection\RuntimeModule.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="..\referencesource\mscorlib\system\gc.cs" />
-      <Compile Include="..\referencesource\mscorlib\system\typedreference.cs" />
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
-      <Compile Include="..\referencesource\mscorlib\system\threading\monitor.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
@@ -243,7 +278,7 @@
   <PropertyGroup>
     <DefineConstants>FEATURE_DEFAULT_INTERFACES;FEATURE_MANAGED_ETW_CHANNELS;$(DefineConstants)</DefineConstants>
 
-    <DefineConstants>MONO;NETCORE;DISABLE_REMOTING;$(DefineConstants)</DefineConstants>
+    <DefineConstants>MONO;NETCORE;DISABLE_REMOTING;MONO_FEATURE_SRE;$(DefineConstants)</DefineConstants>
     <NoWarn>3021,$(NoWarn)</NoWarn>
   </PropertyGroup>
 
@@ -258,5 +293,9 @@
     <!-- Don't need a strong name signature because we only ship the native image -->
     <StrongNameSig>None</StrongNameSig>
   </PropertyGroup>
+
+  <ItemGroup>
+	<EmbeddedResource LogicalName="System.Private.CoreLib.xml" Include="LinkerDescriptor/System.Private.CoreLib.xml"/>
+  </ItemGroup>
 </Project>
 

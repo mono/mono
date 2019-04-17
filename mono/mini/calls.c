@@ -16,9 +16,19 @@
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/class-abi-details.h>
 #include <mono/utils/mono-utils-debug.h>
+#include "mono/metadata/icall-signatures.h"
 
 static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
 static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
+
+void
+mono_call_add_patch_info (MonoCompile *cfg, MonoCallInst *call, int ip)
+{
+	if (call->inst.flags & MONO_INST_HAS_METHOD)
+		mono_add_patch_info (cfg, ip, MONO_PATCH_INFO_METHOD, call->method);
+	else
+		mono_add_patch_info (cfg, ip, MONO_PATCH_INFO_ABS, call->fptr);
+}
 
 void
 mini_test_tailcall (MonoCompile *cfg, gboolean tailcall)
@@ -467,6 +477,9 @@ mini_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 	if (cfg->llvm_only && cfg->interp && !virtual_ && !tailcall && can_enter_interp (cfg, method, FALSE)) {
 		MonoInst *ftndesc = mini_emit_get_rgctx_method (cfg, -1, method, MONO_RGCTX_INFO_METHOD_FTNDESC);
 
+		/* Need wrappers for this signature to be able to enter interpreter */
+		cfg->interp_in_signatures = g_slist_prepend_mempool (cfg->mempool, cfg->interp_in_signatures, sig);
+
 		/* This call might need to enter the interpreter so make it indirect */
 		return mini_emit_llvmonly_calli (cfg, sig, args, ftndesc);
 	}
@@ -688,7 +701,7 @@ mini_emit_llvmonly_virtual_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMeth
 		variant_iface = TRUE;
 
 	if (!helper_sig_llvmonly_imt_trampoline) {
-		MonoMethodSignature *tmp = mono_create_icall_signature ("ptr ptr ptr");
+		MonoMethodSignature *tmp = mono_icall_sig_ptr_ptr_ptr;
 		mono_memory_barrier ();
 		helper_sig_llvmonly_imt_trampoline = tmp;
 	}

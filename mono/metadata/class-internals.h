@@ -1067,9 +1067,6 @@ MONO_API gboolean
 mono_metadata_load_generic_param_constraints_checked (MonoImage *image, guint32 token,
 					      MonoGenericContainer *container, MonoError *error);
 
-MonoMethodSignature*
-mono_create_icall_signature (const char *sigstr);
-
 MonoJitICallInfo *
 mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean is_save);
 
@@ -1134,8 +1131,8 @@ MonoMethodSignature *mono_metadata_signature_deep_dup (MonoImage *image, MonoMet
 MONO_API void
 mono_image_init_name_cache (MonoImage *image);
 
-gboolean mono_class_is_nullable (MonoClass *klass);
-MonoClass *mono_class_get_nullable_param (MonoClass *klass);
+MonoClass*
+mono_class_get_nullable_param_internal (MonoClass *klass);
 
 /* object debugging functions, for use inside gdb */
 MONO_API void mono_object_describe        (MonoObject *obj);
@@ -1305,7 +1302,7 @@ mono_class_has_failure (const MonoClass *klass);
 
 /* Kind specific accessors */
 MonoGenericClass*
-mono_class_get_generic_class (MonoClass *klass);
+mono_class_get_generic_class (MonoClass *klass) MONO_LLVM_INTERNAL;
 
 MonoGenericClass*
 mono_class_try_get_generic_class (MonoClass *klass);

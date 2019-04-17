@@ -178,7 +178,6 @@
     <Compile Include="..\..\..\external\cecil\Mono\Disposable.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\Empty.cs" />
     <Compile Include="..\..\..\external\cecil\Mono\MergeSort.cs" />
-    <Compile Include="..\..\..\external\cecil\Mono\Type.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\MdbReader.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.Cecil.Mdb\MdbWriter.cs" />
     <Compile Include="..\..\..\external\cecil\symbols\mdb\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs" />

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using WebAssembly.Net.Http.HttpClient; 
+using WebAssembly.Net.Http.HttpClient;
 using System.Threading.Tasks;
 using WebAssembly;
 using System.Threading;
 using System.IO;
+using ClientWebSocket = WebAssembly.Net.WebSockets.ClientWebSocket;
 
 namespace TestSuite
 {
@@ -42,7 +43,7 @@ namespace TestSuite
                 {
                     Console.WriteLine($"streaming supported: { WasmHttpMessageHandler.StreamingSupported}");
                     WasmHttpMessageHandler.StreamingEnabled = streamingEnabled;
-                    Console.WriteLine($"streaming enabled: {WasmHttpMessageHandler.StreamingEnabled}");                
+                    Console.WriteLine($"streaming enabled: {WasmHttpMessageHandler.StreamingEnabled}");
                     using (var rspMsg = await httpClient.GetAsync(url, cts.Token))
                     {
                         requestTcs.SetResult((int)rspMsg.Content?.ReadAsStreamAsync().Result.Length);
@@ -70,7 +71,7 @@ namespace TestSuite
                     WasmHttpMessageHandler.StreamingEnabled = streamingEnabled;
                     Console.WriteLine($"streaming enabled: {WasmHttpMessageHandler.StreamingEnabled}");
                     Console.WriteLine($"url: {url}");
-                    
+
                     using (var rspMsg = await httpClient.GetAsync(url, cts.Token))
                     {
                         requestTcs.SetResult(rspMsg.Content?.ReadAsByteArrayAsync().Result.Length);
@@ -95,9 +96,9 @@ namespace TestSuite
             }
 
             return requestTcs.Task;
-        }        
+        }
 
-        static HttpClient CreateHttpClient ()
+        static HttpClient CreateHttpClient()
         {
             //Console.WriteLine("Create  HttpClient");
             string BaseApiUrl = string.Empty;
@@ -108,7 +109,6 @@ namespace TestSuite
             }
             WasmHttpMessageHandler.StreamingEnabled = true;
             return new HttpClient() { BaseAddress = new Uri(BaseApiUrl) };
-        }        
-
+        }
     }
 }

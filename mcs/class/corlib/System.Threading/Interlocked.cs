@@ -126,6 +126,7 @@ namespace System.Threading
 			Thread.MemoryBarrier ();
 		}
 
-		public static void MemoryBarrierProcessWide () => throw new PlatformNotSupportedException (); 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void MemoryBarrierProcessWide ();
 	}
 }

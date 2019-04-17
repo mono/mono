@@ -70,7 +70,7 @@ namespace System.Threading
 		string _name;
 		Delegate m_start;
 		object m_start_arg;
-		int m_stacksize;
+		CultureInfo culture, ui_culture;
 		internal ExecutionContext _executionContext;
 		internal SynchronizationContext _synchronizationContext;
 
@@ -151,7 +151,7 @@ namespace System.Threading
 
 		void Create (ParameterizedThreadStart start, int maxStackSize) => SetStartHelper ((Delegate) start, maxStackSize);
 
-		public ApartmentState GetApartmentState () => ApartmentState.MTA;
+		public ApartmentState GetApartmentState () => ApartmentState.Unknown;
 
 		public void DisableComObjectEagerCleanup ()
 		{
@@ -182,13 +182,16 @@ namespace System.Threading
 
 		void SetCultureOnUnstartedThreadNoCheck (CultureInfo value, bool uiCulture)
 		{
-			throw new NotImplementedException ();
+			if (uiCulture)
+				ui_culture = value;
+			else
+				culture = value;
 		}
 
 		void SetStartHelper (Delegate start, int maxStackSize)
 		{
 			m_start = start;
-			m_stacksize = maxStackSize;
+			stack_size = maxStackSize;
 		}
 
 		public static void SpinWait (int iterations)
@@ -225,6 +228,10 @@ namespace System.Threading
 		// Called from the runtime
 		internal void StartCallback ()
 		{
+			if (culture != null)
+				CurrentCulture = culture;
+			if (ui_culture != null)
+				CurrentUICulture = ui_culture;
 			if (m_start is ThreadStart del) {
 				m_start = null;
 				del ();
@@ -248,7 +255,7 @@ namespace System.Threading
 			return YieldInternal ();
 		}
 
-		public bool TrySetApartmentStateUnchecked (ApartmentState state) => false;
+		public bool TrySetApartmentStateUnchecked (ApartmentState state) => state == ApartmentState.Unknown;
 
 		ThreadState ValidateThreadState ()
 		{

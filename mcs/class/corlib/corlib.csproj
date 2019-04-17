@@ -1295,7 +1295,6 @@
     <Compile Include="Mono.Globalization.Unicode\MSCompatUnicodeTableUtil.cs" />
     <Compile Include="Mono.Globalization.Unicode\Normalization.cs" />
     <Compile Include="Mono.Globalization.Unicode\NormalizationTableUtil.cs" />
-    <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
     <Compile Include="Mono.Globalization.Unicode\SortKey.cs" />
     <Compile Include="Mono.Globalization.Unicode\SortKeyBuffer.cs" />
     <Compile Include="Mono.Interop\ComInteropProxy.cs" />
@@ -1949,7 +1948,6 @@
     <Compile Include="System.Security\SecurityManager.cs" />
     <Compile Include="System.Security\SecurityManager_mobile.cs" />
     <Compile Include="System.Security\SecurityState.cs" />
-    <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
     <Compile Include="System.Text\EncodingHelper.cs" />
     <Compile Include="System.Threading\CompressedStack.cs" />
     <Compile Include="System.Threading\HostExecutionContext.cs" />
@@ -1969,7 +1967,6 @@
     <Compile Include="System.Threading\Volatile.cs" />
     <Compile Include="System.Threading\WaitHandle.cs" />
     <Compile Include="System\ActivationContext.cs" />
-    <Compile Include="System\AndroidPlatform.cs" />
     <Compile Include="System\AppDomain.cs" />
     <Compile Include="System\AppDomainInitializer.cs" />
     <Compile Include="System\AppDomainManager.cs" />
@@ -1981,7 +1978,6 @@
     <Compile Include="System\CStreamReader.cs" />
     <Compile Include="System\CStreamWriter.cs" />
     <Compile Include="System\Console.cs" />
-    <Compile Include="System\Console.iOS.cs" />
     <Compile Include="System\ConsoleDriver.cs" />
     <Compile Include="System\ControlCharacters.cs" />
     <Compile Include="System\CrossAppDomainDelegate.cs" />
@@ -2019,7 +2015,6 @@
     <Compile Include="System\TermInfoNumbers.cs" />
     <Compile Include="System\TermInfoReader.cs" />
     <Compile Include="System\TermInfoStrings.cs" />
-    <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
     <Compile Include="System\TypeIdentifier.cs" />
     <Compile Include="System\TypeSpec.cs" />
     <Compile Include="System\UIntPtr.cs" />
@@ -2137,12 +2132,17 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
+        <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+        <Compile Include="System\AndroidPlatform.cs" />
+        <Compile Include="System\Console.iOS.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2158,21 +2158,10 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.BCryptGenRandom.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\BCrypt\Interop.NTSTATUS.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.FreeLibrary.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.LoadLibraryEx.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.MAX_PATH.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.MUI.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.Registry.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\Kernel32\Interop.TimeZone.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Windows\User32\Interop.LoadString.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Windows.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\Win32Marshal.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.AdjustmentRule.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.StringSerializer.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.TransitionTime.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.Win32.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\TimeZoneInfo.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.BOOL.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.BOOLEAN.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.Errors.cs" />
@@ -2186,20 +2175,6 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\NtDll\Interop.NtQueryDirectoryFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\NtDll\Interop.NtStatus.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\NtDll\Interop.RtlNtStatusToDosError.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegCloseKey.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegConnectRegistry.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegCreateKeyEx.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegDeleteKeyEx.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegDeleteValue.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegEnumKeyEx.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegEnumValue.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegFlushKey.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegOpenKeyEx.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegQueryInfoKey.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegQueryValueEx.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegSetValueEx.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegisterServiceCtrlHandler.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\advapi32\Interop.RegisterServiceCtrlHandlerEx.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CloseHandle.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CopyFile.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CopyFileEx.cs" />
@@ -2229,16 +2204,8 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.SetThreadErrorMode.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.WIN32_FILE_ATTRIBUTE_DATA.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.WIN32_FIND_DATA.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeLibraryHandle.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\DriveInfoInternal.Win32.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Memory\FixedBufferExtensions.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\Microsoft\Win32\Registry.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\Microsoft\Win32\RegistryKey.Windows.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\Microsoft\Win32\RegistryKey.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\Microsoft\Win32\SafeHandles\SafeRegistryHandle.Windows.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\Microsoft\Win32\SafeHandles\SafeRegistryHandle.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\System\Security\AccessControl\RegistrySecurity.Windows.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Microsoft.Win32.Registry\src\System\Security\AccessControl\RegistrySecurity.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\DisableMediaInsertionPrompt.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemEntry.Windows.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemEnumerator.Win32.cs" />
@@ -2248,20 +2215,11 @@
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Windows.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
-        <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.ThreadPoolIO.cs" />
-        <Compile Include="..\..\..\external\corert\src\Runtime.Base\src\System\Runtime\InteropServices\NativeCallableAttribute.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Threading\DeferredDisposableLifetime.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\Microsoft\Win32\SafeHandles\SafeThreadPoolIOHandle.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Windows.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\ThreadPoolCallbackWrapper.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolBoundHandle.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.ExecutionContextCallbackArgs.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.OverlappedData.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolNativeOverlapped.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Threading\Win32ThreadPoolPreAllocatedOverlapped.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
+        <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\descryptoserviceprovider.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\rc2cryptoserviceprovider.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\rijndaelmanaged.cs" />
@@ -2270,12 +2228,28 @@
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
         <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
+        <Compile Include="..\referencesource\mscorlib\system\timezoneinfo.cs" />
+        <Compile Include="Microsoft.Win32\IRegistryApi.cs" />
+        <Compile Include="Microsoft.Win32\Registry.cs" />
+        <Compile Include="Microsoft.Win32\RegistryKey.cs" />
+        <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
+        <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
+        <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
+        <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
+        <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
+        <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+        <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WinRT.cs" />
+        <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Windows.cs" />
-        <Compile Include="corefx\Registry.cs" />
+        <Compile Include="corefx\TimeZoneInfo.cs" />
+        <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
         <Compile Include="corert\RuntimeImports.cs" />
+        <Compile Include="corert\ThreadPoolBoundHandle.platformnotsupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
@@ -2336,9 +2310,13 @@
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+        <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+        <Compile Include="System\AndroidPlatform.cs" />
+        <Compile Include="System\Console.iOS.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2400,15 +2378,20 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+        <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+        <Compile Include="System\AndroidPlatform.cs" />
+        <Compile Include="System\Console.iOS.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2470,15 +2453,20 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+        <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+        <Compile Include="System\AndroidPlatform.cs" />
+        <Compile Include="System\Console.iOS.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2609,6 +2597,7 @@
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
+            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
@@ -2677,12 +2666,17 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
             <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+            <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+            <Compile Include="System\AndroidPlatform.cs" />
+            <Compile Include="System\Console.iOS.cs" />
+            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
             <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
             <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -2749,12 +2743,17 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
             <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+            <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+            <Compile Include="System\AndroidPlatform.cs" />
+            <Compile Include="System\Console.iOS.cs" />
+            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
             <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
             <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -2821,12 +2820,17 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
             <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
             <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
             <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+            <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+            <Compile Include="System\AndroidPlatform.cs" />
+            <Compile Include="System\Console.iOS.cs" />
+            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
             <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
             <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -2884,15 +2888,20 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
         <Compile Include="System.Text\EncodingHelper.MonoTouch.cs" />
+        <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+        <Compile Include="System\AndroidPlatform.cs" />
+        <Compile Include="System\Console.iOS.cs" />
         <Compile Include="System\Environment.iOS.cs" />
         <Compile Include="System\NotSupportedException.iOS.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2950,15 +2959,20 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
         <Compile Include="System.Text\EncodingHelper.MonoTouch.cs" />
+        <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+        <Compile Include="System\AndroidPlatform.cs" />
+        <Compile Include="System\Console.iOS.cs" />
         <Compile Include="System\Environment.iOS.cs" />
         <Compile Include="System\NotSupportedException.iOS.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -3016,15 +3030,20 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
         <Compile Include="System.Text\EncodingHelper.MonoTouch.cs" />
+        <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+        <Compile Include="System\AndroidPlatform.cs" />
+        <Compile Include="System\Console.iOS.cs" />
         <Compile Include="System\Environment.iOS.cs" />
         <Compile Include="System\NotSupportedException.iOS.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -3086,15 +3105,20 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
+        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
         <Compile Include="System.Security.Cryptography\MD5CryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\RNGCryptoServiceProvider.cs" />
         <Compile Include="System.Security.Cryptography\SHA1CryptoServiceProvider.cs" />
+        <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
+        <Compile Include="System\AndroidPlatform.cs" />
+        <Compile Include="System\Console.iOS.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
+        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -3611,27 +3635,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources/charinfo.nlp">
       <LogicalName>charinfo.nlp</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkCHS.bin">
-      <LogicalName>collation.cjkCHS.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkCHT.bin">
-      <LogicalName>collation.cjkCHT.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkJA.bin">
-      <LogicalName>collation.cjkJA.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkKO.bin">
-      <LogicalName>collation.cjkKO.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
-      <LogicalName>collation.cjkKOlv2.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.core.bin">
-      <LogicalName>collation.core.bin</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources/collation.tailoring.bin">
-      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

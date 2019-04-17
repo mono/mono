@@ -67,7 +67,7 @@ namespace System
 
 		public static void ConstrainedCopy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
-			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
+			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length, true);
 		}
 
 		public static void Copy (Array sourceArray, Array destinationArray, int length)
@@ -83,6 +83,11 @@ namespace System
 		}
 
 		public static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
+		{
+			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length, false);
+		}
+
+		private static void Copy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length, bool reliable)
 		{
 			if (sourceArray == null)
 				throw new ArgumentNullException (nameof (sourceArray));
@@ -108,6 +113,9 @@ namespace System
 			int source_pos = sourceIndex - sourceArray.GetLowerBound (0);
 			int dest_pos = destinationIndex - destinationArray.GetLowerBound (0);
 
+			if (source_pos < 0)
+				throw new ArgumentOutOfRangeException (nameof (sourceIndex), "Index was less than the array's lower bound in the first dimension.");
+
 			if (dest_pos < 0)
 				throw new ArgumentOutOfRangeException (nameof (destinationIndex), "Index was less than the array's lower bound in the first dimension.");
 
@@ -123,40 +131,19 @@ namespace System
 			Type dst_type = destinationArray.GetType ().GetElementType ();
 			var dst_type_vt = dst_type.IsValueType;
 
-			// Need to check types even if nothing is copied
-			if (length == 0) {
-				var src_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)src_type);
-				var dst_etype = RuntimeTypeHandle.GetCorElementType ((RuntimeType)dst_type);
+			if (src_type.IsEnum)
+				src_type = Enum.GetUnderlyingType (src_type);
+			if (dst_type.IsEnum)
+				dst_type = Enum.GetUnderlyingType (dst_type);
 
-				// FIXME: More checks
-				bool match = true;
-				switch (dst_etype) {
-				case CorElementType.ELEMENT_TYPE_OBJECT:
-				case CorElementType.ELEMENT_TYPE_STRING:
-				case CorElementType.ELEMENT_TYPE_CLASS:
-				case CorElementType.ELEMENT_TYPE_ARRAY:
-				case CorElementType.ELEMENT_TYPE_SZARRAY:
-					if (src_type.IsPointer)
-						match = false;
-					break;
-				case CorElementType.ELEMENT_TYPE_PTR:
-					switch (src_etype) {
-					case CorElementType.ELEMENT_TYPE_OBJECT:
-					case CorElementType.ELEMENT_TYPE_STRING:
-					case CorElementType.ELEMENT_TYPE_CLASS:
-					case CorElementType.ELEMENT_TYPE_ARRAY:
-					case CorElementType.ELEMENT_TYPE_SZARRAY:
-						match = false;
-						break;
-					default:
-						break;
-					}
-					break;
-				default:
-					break;
-				}
-				if (!match)
+			if (reliable) {
+				if (!dst_type.Equals (src_type)) {
 					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
+				}
+			} else {
+				if (!CanAssignArrayElement (src_type, dst_type)) {
+					throw new ArrayTypeMismatchException (SR.ArrayTypeMismatch_CantAssignType);
+				}
 			}
 
 			if (!Object.ReferenceEquals (sourceArray, destinationArray) || source_pos > dest_pos) {
@@ -170,10 +157,6 @@ namespace System
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
 					} catch (ArgumentException) {
 						throw CreateArrayTypeMismatchException ();
-					} catch (InvalidCastException) {
-						if (CanAssignArrayElement (src_type, dst_type))
-							throw;
-						throw CreateArrayTypeMismatchException ();
 					}
 				}
 			} else {
@@ -183,11 +166,6 @@ namespace System
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
 					} catch (ArgumentException) {
-						throw CreateArrayTypeMismatchException ();
-					} catch {
-						if (CanAssignArrayElement (src_type, dst_type))
-							throw;
-
 						throw CreateArrayTypeMismatchException ();
 					}
 				}
@@ -201,16 +179,35 @@ namespace System
 
 		static bool CanAssignArrayElement (Type source, Type target)
 		{
-			if (source.IsValueType)
-				return source.IsAssignableFrom (target);
+			if (!target.IsValueType && !target.IsPointer) {
+				if (!source.IsValueType && !source.IsPointer) {
+					// Reference to reference copy
+					return
+						source.IsInterface || target.IsInterface ||
+						source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
+				} else {
+					// Value to reference copy
+					if (source.IsPointer)
+						return false;
+					return target.IsAssignableFrom (source);
+				}
+			} else {
+				if (source.IsEquivalentTo (target)) {
+					return true;
+				} else if (source.IsPointer && target.IsPointer) {
+					return true;
+				} else if (source.IsPrimitive && target.IsPrimitive) {
+					// Allow primitive type widening
+					return DefaultBinder.CanChangePrimitive (source, target);
+				} else if (!source.IsValueType && !source.IsPointer) {
+					// Source is base class or interface of destination type
+					if (target.IsPointer)
+						return false;
+					return source.IsAssignableFrom (target);
+				}
+			}
 
-			if (source.IsInterface)
-				return !target.IsValueType;
-
-			if (target.IsInterface)
-				return !source.IsValueType;
-
-			return source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
+			return false;
 		}
 
 		public static Array CreateInstance (Type elementType, int length)
@@ -303,7 +300,7 @@ namespace System
 				if (lengths [j] < 0)
 					throw new ArgumentOutOfRangeException ($"lengths[{j}]", "Each value has to be >= 0.");
 				if ((long)lowerBounds [j] + (long)lengths [j] > (long)Int32.MaxValue)
-					throw new ArgumentOutOfRangeException ("lengths", "Length + bound must not exceed Int32.MaxValue.");
+					throw new ArgumentOutOfRangeException (null, "Length + bound must not exceed Int32.MaxValue.");
 			}
 
 			if (lengths.Length > 255)
@@ -394,7 +391,25 @@ namespace System
 
 		static void SortImpl (Array keys, Array items, int index, int length, IComparer comparer)
 		{
-			throw new NotImplementedException ();
+			/* TODO: CoreCLR optimizes this case via an internal call
+			if (comparer == Comparer.Default)
+			{
+				bool r = TrySZSort(keys, items, index, index + length - 1);
+				if (r)
+					return;
+			}*/
+
+			object[] objKeys = keys as object[];
+			object[] objItems = null;
+			if (objKeys != null)
+				objItems = items as object[];
+			if (objKeys != null && (items == null || objItems != null)) {
+				SorterObjectArray sorter = new SorterObjectArray (objKeys, objItems, comparer);
+				sorter.Sort(index, length);
+			} else {
+				SorterGenericArray sorter = new SorterGenericArray (keys, items, comparer);
+				sorter.Sort(index, length);
+			}
 		}
 
 		public int GetUpperBound (int dimension)

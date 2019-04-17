@@ -76,6 +76,11 @@ static gint32 signatures_size;
  */
 static MonoNativeTlsKey loader_lock_nest_id;
 
+#if ENABLE_NETCORE
+static int pinvoke_search_directories_count;
+static char **pinvoke_search_directories;
+#endif
+
 static void dllmap_cleanup (void);
 static void cached_module_cleanup(void);
 
@@ -1586,22 +1591,65 @@ pinvoke_probe_for_module (MonoImage *image, const char*new_scope, const char *im
 	return module;
 }
 
+#if ENABLE_NETCORE
+void
+mono_set_pinvoke_search_directories (int dir_count, char **dirs)
+{
+	pinvoke_search_directories_count = dir_count;
+	pinvoke_search_directories = dirs;
+}
+#endif
+
+static MonoDl*
+pinvoke_probe_for_module_in_directory (const char *mdirname, const char *file_name, char **found_name_out)
+{
+	void *iter = NULL;
+	char *full_name;
+	MonoDl* module = NULL;
+
+	while ((full_name = mono_dl_build_path (mdirname, file_name, &iter)) && module == NULL) {
+		char *error_msg;
+		module = cached_module_load (full_name, MONO_DL_LAZY, &error_msg);
+		if (!module) {
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT, "DllImport error loading library '%s': '%s'.", full_name, error_msg);
+			g_free (error_msg);
+		} else {
+			*found_name_out = g_strdup (full_name);
+		}
+		g_free (full_name);
+	}
+	g_free (full_name);
+
+	return module;
+}
+
 static MonoDl*
 pinvoke_probe_for_module_relative_directories (MonoImage *image, const char *file_name, char **found_name_out)
 {
-	char *full_name;
 	char *found_name = NULL;
 	MonoDl* module = NULL;
 
 	g_assert (found_name_out);
 
-			int j;
-			void *iter;
-			char *mdirname;
+#if ENABLE_NETCORE
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_DLLIMPORT, "netcore DllImport handler: wanted '%s'", file_name);
 
-			for (j = 0; j < 3; ++j) {
-				iter = NULL;
-				mdirname = NULL;
+	// Search in predefined directories first
+	for (int j = 0; j < pinvoke_search_directories_count && module == NULL; ++j) {
+		module = pinvoke_probe_for_module_in_directory (pinvoke_search_directories[j], file_name, &found_name);
+	}
+
+	// Fallback to image directory
+	if (module == NULL) {
+		// TODO: Check DefaultDllImportSearchPathsAttribute, NativeLibrary callback
+		char *mdirname = g_path_get_dirname (image->name);
+		if (mdirname)
+			module = pinvoke_probe_for_module_in_directory (mdirname, file_name, &found_name);
+		g_free (mdirname);
+	}
+#else
+			for (int j = 0; j < 3; ++j) {
+				char *mdirname = NULL;
 				switch (j) {
 					case 0:
 						mdirname = g_path_get_dirname (image->name);
@@ -1655,29 +1703,15 @@ pinvoke_probe_for_module_relative_directories (MonoImage *image, const char *fil
 				if (!mdirname)
 					continue;
 
-				while ((full_name = mono_dl_build_path (mdirname, file_name, &iter))) {
-					char *error_msg;
-					module = cached_module_load (full_name, MONO_DL_LAZY, &error_msg);
-					if (!module) {
-						mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_DLLIMPORT,
-							"DllImport error loading library '%s': '%s'.",
-									full_name, error_msg);
-						g_free (error_msg);
-					} else {
-						found_name = g_strdup (full_name);
-					}
-					g_free (full_name);
-					if (module)
-						break;
-
-				}
+				module = pinvoke_probe_for_module_in_directory (mdirname, file_name, &found_name);
 				g_free (mdirname);
 				if (module)
 					break;
 			}
+#endif
 
-		*found_name_out = found_name;
-		return module;
+	*found_name_out = found_name;
+	return module;
 }
 
 
@@ -1812,7 +1846,7 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 		MonoClass *handle_class;
 
 		result = (MonoMethod *)mono_lookup_dynamic_token_class (image, token, TRUE, &handle_class, context, error);
-		mono_error_assert_ok (error);
+		return_val_if_nok (error, NULL);
 
 		// This checks the memberref type as well
 		if (result && handle_class != mono_defaults.methodhandle_class) {
@@ -2072,6 +2106,8 @@ get_method_constrained (MonoImage *image, MonoMethod *method, MonoClass *constra
 			return NULL;
 		}
 	} else {
+		if ((method->flags & METHOD_ATTRIBUTE_VIRTUAL) == 0)
+			return method;
 		mono_class_setup_vtable (constrained_class);
 		if (mono_class_has_failure (constrained_class)) {
 			mono_error_set_for_class_failure (error, constrained_class);

@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#nullable enable
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
@@ -11,6 +12,7 @@ using Internal.Runtime.CompilerServices;
 #if CORERT
 using CorElementType = System.Runtime.RuntimeImports.RhCorElementType;
 using RuntimeType = System.Type;
+using EnumInfo = Internal.Runtime.Augments.EnumInfo;
 #endif
 
 // The code below includes partial support for float/double and
@@ -71,8 +73,7 @@ namespace System
                 case CorElementType.ELEMENT_TYPE_U:
                     return Unsafe.As<byte, UIntPtr>(ref data).ToString();
                 default:
-                    Debug.Fail("Invalid primitive type");
-                    return null;
+                    throw new InvalidOperationException(SR.InvalidOperation_UnknownEnumType);
             }
         }
 
@@ -132,52 +133,47 @@ namespace System
             }
         }
 
-        internal static string GetEnumName(RuntimeType eT, ulong ulValue)
+        internal static string? GetEnumName(RuntimeType enumType, ulong ulValue)
         {
-            Debug.Assert(eT != null);
-            ulong[] ulValues = InternalGetValues(eT);
-            int index = Array.BinarySearch(ulValues, ulValue);
+            return GetEnumName(GetEnumInfo(enumType), ulValue);
+        }
 
+        private static string? GetEnumName(EnumInfo enumInfo, ulong ulValue)
+        {
+            int index = Array.BinarySearch(enumInfo.Values, ulValue);
             if (index >= 0)
             {
-                string[] names = InternalGetNames(eT);
-                return names[index];
+                return enumInfo.Names[index];
             }
 
             return null; // return null so the caller knows to .ToString() the input
         }
 
-        private static string InternalFormat(RuntimeType eT, ulong value)
+        private static string? InternalFormat(RuntimeType enumType, ulong value)
         {
-            Debug.Assert(eT != null);
+            EnumInfo enumInfo = GetEnumInfo(enumType);
 
-            // These values are sorted by value. Don't change this
-            TypeValuesAndNames entry = GetCachedValuesAndNames(eT, true);
-
-            if (!entry.IsFlag) // Not marked with Flags attribute
+            if (!enumInfo.HasFlagsAttribute)
             {
-                return GetEnumName(eT, value);
+                return GetEnumName(enumInfo, value);
             }
             else // These are flags OR'ed together (We treat everything as unsigned types)
             {
-                return InternalFlagsFormat(eT, entry, value);
+                return InternalFlagsFormat(enumType, enumInfo, value);
             }
         }
 
-        private static string InternalFlagsFormat(RuntimeType eT, ulong result)
+        private static string? InternalFlagsFormat(RuntimeType enumType, ulong result)
         {
-            // These values are sorted by value. Don't change this
-            TypeValuesAndNames entry = GetCachedValuesAndNames(eT, true);
-
-            return InternalFlagsFormat(eT, entry, result);
+            return InternalFlagsFormat(enumType, GetEnumInfo(enumType), result);
         }
 
-        private static string InternalFlagsFormat(RuntimeType eT, TypeValuesAndNames entry, ulong resultValue)
+        private static string? InternalFlagsFormat(RuntimeType enumType, EnumInfo enumInfo, ulong resultValue)
         {
-            Debug.Assert(eT != null);
+            Debug.Assert(enumType != null);
 
-            string[] names = entry.Names;
-            ulong[] values = entry.Values;
+            string[] names = enumInfo.Names;
+            ulong[] values = enumInfo.Values;
             Debug.Assert(names.Length == values.Length);
 
             // Values are sorted, so if the incoming value is 0, we can check to see whether
@@ -326,9 +322,9 @@ namespace System
 
         public static object Parse(Type enumType, string value, bool ignoreCase)
         {
-            bool success = TryParse(enumType, value, ignoreCase, throwOnFailure: true, out object result);
+            bool success = TryParse(enumType, value, ignoreCase, throwOnFailure: true, out object? result);
             Debug.Assert(success);
-            return result;
+            return result!;
         }
 
         public static TEnum Parse<TEnum>(string value) where TEnum : struct =>
@@ -341,13 +337,13 @@ namespace System
             return result;
         }
 
-        public static bool TryParse(Type enumType, string value, out object result) =>
+        public static bool TryParse(Type enumType, string? value, out object? result) =>
             TryParse(enumType, value, ignoreCase: false, out result);
 
-        public static bool TryParse(Type enumType, string value, bool ignoreCase, out object result) =>
+        public static bool TryParse(Type enumType, string? value, bool ignoreCase, out object? result) =>
             TryParse(enumType, value, ignoreCase, throwOnFailure: false, out result);
 
-        private static bool TryParse(Type enumType, string value, bool ignoreCase, bool throwOnFailure, out object result)
+        private static bool TryParse(Type enumType, string? value, bool ignoreCase, bool throwOnFailure, out object? result)
         {
             // Validation on the enum type itself.  Failures here are considered non-parsing failures
             // and thus always throw rather than returning false.
@@ -417,13 +413,13 @@ namespace System
             }
         }
 
-        public static bool TryParse<TEnum>(string value, out TEnum result) where TEnum : struct =>
+        public static bool TryParse<TEnum>(string? value, out TEnum result) where TEnum : struct =>
             TryParse<TEnum>(value, ignoreCase: false, out result);
 
-        public static bool TryParse<TEnum>(string value, bool ignoreCase, out TEnum result) where TEnum : struct =>
+        public static bool TryParse<TEnum>(string? value, bool ignoreCase, out TEnum result) where TEnum : struct =>
             TryParse<TEnum>(value, ignoreCase, throwOnFailure: false, out result);
 
-        private static bool TryParse<TEnum>(string value, bool ignoreCase, bool throwOnFailure, out TEnum result) where TEnum : struct
+        private static bool TryParse<TEnum>(string? value, bool ignoreCase, bool throwOnFailure, out TEnum result) where TEnum : struct
         {
             // Validation on the enum type itself.  Failures here are considered non-parsing failures
             // and thus always throw rather than returning false.
@@ -497,15 +493,15 @@ namespace System
                     return parsed;
 
                 default:
-                    parsed = TryParseRareEnum(rt, value, valueSpan, ignoreCase, throwOnFailure, out object objectResult);
-                    result = parsed ? (TEnum)objectResult : default;
+                    parsed = TryParseRareEnum(rt, value, valueSpan, ignoreCase, throwOnFailure, out object? objectResult);
+                    result = parsed ? (TEnum)objectResult! : default; // TODO-NULLABLE: https://github.com/dotnet/roslyn/issues/34976
                     return parsed;
             }
         }
 
         /// <summary>Tries to parse the value of an enum with known underlying types that fit in an Int32 (Int32, Int16, and SByte).</summary>
         private static bool TryParseInt32Enum(
-            RuntimeType enumType, string originalValueString, ReadOnlySpan<char> value, int minInclusive, int maxInclusive, bool ignoreCase, bool throwOnFailure, TypeCode type, out int result)
+            RuntimeType enumType, string? originalValueString, ReadOnlySpan<char> value, int minInclusive, int maxInclusive, bool ignoreCase, bool throwOnFailure, TypeCode type, out int result)
         {
             Debug.Assert(
                 enumType.GetEnumUnderlyingType() == typeof(sbyte) ||
@@ -546,7 +542,7 @@ namespace System
         }
 
         /// <summary>Tries to parse the value of an enum with known underlying types that fit in a UInt32 (UInt32, UInt16, and Byte).</summary>
-        private static bool TryParseUInt32Enum(RuntimeType enumType, string originalValueString, ReadOnlySpan<char> value, uint maxInclusive, bool ignoreCase, bool throwOnFailure, TypeCode type, out uint result)
+        private static bool TryParseUInt32Enum(RuntimeType enumType, string? originalValueString, ReadOnlySpan<char> value, uint maxInclusive, bool ignoreCase, bool throwOnFailure, TypeCode type, out uint result)
         {
             Debug.Assert(
                 enumType.GetEnumUnderlyingType() == typeof(byte) ||
@@ -587,7 +583,7 @@ namespace System
         }
 
         /// <summary>Tries to parse the value of an enum with Int64 as the underlying type.</summary>
-        private static bool TryParseInt64Enum(RuntimeType enumType, string originalValueString, ReadOnlySpan<char> value, bool ignoreCase, bool throwOnFailure, out long result)
+        private static bool TryParseInt64Enum(RuntimeType enumType, string? originalValueString, ReadOnlySpan<char> value, bool ignoreCase, bool throwOnFailure, out long result)
         {
             Debug.Assert(enumType.GetEnumUnderlyingType() == typeof(long));
 
@@ -619,7 +615,7 @@ namespace System
         }
 
         /// <summary>Tries to parse the value of an enum with UInt64 as the underlying type.</summary>
-        private static bool TryParseUInt64Enum(RuntimeType enumType, string originalValueString, ReadOnlySpan<char> value, bool ignoreCase, bool throwOnFailure, out ulong result)
+        private static bool TryParseUInt64Enum(RuntimeType enumType, string? originalValueString, ReadOnlySpan<char> value, bool ignoreCase, bool throwOnFailure, out ulong result)
         {
             Debug.Assert(enumType.GetEnumUnderlyingType() == typeof(ulong));
 
@@ -650,7 +646,7 @@ namespace System
         }
 
         /// <summary>Tries to parse the value of an enum with an underlying type that can't be expressed in C# (e.g. char, bool, double, etc.)</summary>
-        private static bool TryParseRareEnum(RuntimeType enumType, string originalValueString, ReadOnlySpan<char> value, bool ignoreCase, bool throwOnFailure, out object result)
+        private static bool TryParseRareEnum(RuntimeType enumType, string? originalValueString, ReadOnlySpan<char> value, bool ignoreCase, bool throwOnFailure, out object? result)
         {
             Debug.Assert(
                 enumType.GetEnumUnderlyingType() != typeof(sbyte) &&
@@ -697,12 +693,12 @@ namespace System
             return false;
         }
 
-        private static bool TryParseByName(RuntimeType enumType, string originalValueString, ReadOnlySpan<char> value, bool ignoreCase, bool throwOnFailure, out ulong result)
+        private static bool TryParseByName(RuntimeType enumType, string? originalValueString, ReadOnlySpan<char> value, bool ignoreCase, bool throwOnFailure, out ulong result)
         {
             // Find the field. Let's assume that these are always static classes because the class is an enum.
-            TypeValuesAndNames entry = GetCachedValuesAndNames(enumType, getNames: true);
-            string[] enumNames = entry.Names;
-            ulong[] enumValues = entry.Values;
+            EnumInfo enumInfo = GetEnumInfo(enumType);
+            string[] enumNames = enumInfo.Names;
+            ulong[] enumValues = enumInfo.Values;
 
             bool parsed = true;
             ulong localResult = 0;
@@ -782,18 +778,6 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool StartsNumber(char c) => char.IsInRange(c, '0', '9') || c == '-' || c == '+';
 
-        internal static ulong[] InternalGetValues(RuntimeType enumType)
-        {
-            // Get all of the values
-            return GetCachedValuesAndNames(enumType, false).Values;
-        }
-
-        internal static string[] InternalGetNames(RuntimeType enumType)
-        {
-            // Get all of the names
-            return GetCachedValuesAndNames(enumType, true).Names;
-        }
-
         public static object ToObject(Type enumType, object value)
         {
             if (value == null)
@@ -840,14 +824,6 @@ namespace System
             }
         }
 
-        public static bool IsDefined(Type enumType, object value)
-        {
-            if (enumType == null)
-                throw new ArgumentNullException(nameof(enumType));
-
-            return enumType.IsEnumDefined(value);
-        }
-
         public static string Format(Type enumType, object value, string format)
         {
             RuntimeType rtType = ValidateRuntimeType(enumType);
@@ -886,11 +862,11 @@ namespace System
                 {
                     case 'G':
                     case 'g':
-                        return GetEnumName(rtType, ToUInt64(value)) ?? value.ToString();
+                        return GetEnumName(rtType, ToUInt64(value)) ?? value.ToString()!;
 
                     case 'D':
                     case 'd':
-                        return value.ToString();
+                        return value.ToString()!;
 
                     case 'X':
                     case 'x':
@@ -898,28 +874,11 @@ namespace System
 
                     case 'F':
                     case 'f':
-                        return InternalFlagsFormat(rtType, ToUInt64(value)) ?? value.ToString();
+                        return InternalFlagsFormat(rtType, ToUInt64(value)) ?? value.ToString()!;
                 }
             }
 
             throw new FormatException(SR.Format_InvalidEnumFormatSpecification);
-        }
-        #endregion
-
-        #region Definitions
-        private class TypeValuesAndNames
-        {
-            public readonly bool IsFlag;
-            public readonly ulong[] Values;
-            public readonly string[] Names;
-
-            // Each entry contains a list of sorted pair of enum field names and values, sorted by values
-            public TypeValuesAndNames(bool isFlag, ulong[] values, string[] names)
-            {
-                IsFlag = isFlag;
-                Values = values;
-                Names = names;
-            }
         }
         #endregion
 
@@ -958,8 +917,7 @@ namespace System
                 case CorElementType.ELEMENT_TYPE_U:
                     return Unsafe.As<byte, UIntPtr>(ref data);
                 default:
-                    Debug.Fail("Invalid primitive type");
-                    return null;
+                    throw new InvalidOperationException(SR.InvalidOperation_UnknownEnumType);
             }
         }
 
@@ -994,8 +952,7 @@ namespace System
                 case CorElementType.ELEMENT_TYPE_U:
                     return (ulong)Unsafe.As<byte, UIntPtr>(ref data);
                 default:
-                    Debug.Fail("Invalid primitive type");
-                    return 0;
+                    throw new InvalidOperationException(SR.InvalidOperation_UnknownEnumType);
             }
         }
 
@@ -1040,8 +997,7 @@ namespace System
                 case CorElementType.ELEMENT_TYPE_U:
                     return Unsafe.As<byte, UIntPtr>(ref data).GetHashCode();
                 default:
-                    Debug.Fail("Invalid primitive type");
-                    return 0;
+                    throw new InvalidOperationException(SR.InvalidOperation_UnknownEnumType);
             }
         }
 
@@ -1060,47 +1016,14 @@ namespace System
 
         #region IFormattable
         [Obsolete("The provider argument is not used. Please use ToString(String).")]
-        public string ToString(string format, IFormatProvider provider)
+        public string ToString(string? format, IFormatProvider? provider)
         {
             return ToString(format);
         }
         #endregion
 
-        #region IComparable
-        public int CompareTo(object target)
-        {
-            const int retIncompatibleMethodTables = 2;  // indicates that the method tables did not match
-            const int retInvalidEnumType = 3; // indicates that the enum was of an unknown/unsupported underlying type
-
-            if (this == null)
-                throw new NullReferenceException();
-
-            int ret = InternalCompareTo(this, target);
-
-            if (ret < retIncompatibleMethodTables)
-            {
-                // -1, 0 and 1 are the normal return codes
-                return ret;
-            }
-            else if (ret == retIncompatibleMethodTables)
-            {
-                Type thisType = this.GetType();
-                Type targetType = target.GetType();
-
-                throw new ArgumentException(SR.Format(SR.Arg_EnumAndObjectMustBeSameType, targetType, thisType));
-            }
-            else
-            {
-                // assert valid return code (3)
-                Debug.Assert(ret == retInvalidEnumType, "Enum.InternalCompareTo return code was invalid");
-
-                throw new InvalidOperationException(SR.InvalidOperation_UnknownEnumType);
-            }
-        }
-        #endregion
-
         #region Public Methods
-        public string ToString(string format)
+        public string ToString(string? format)
         {
             if (string.IsNullOrEmpty(format))
             {
@@ -1133,7 +1056,7 @@ namespace System
         }
 
         [Obsolete("The provider argument is not used. Please use ToString().")]
-        public string ToString(IFormatProvider provider)
+        public string ToString(IFormatProvider? provider)
         {
             return ToString();
         }
@@ -1170,77 +1093,77 @@ namespace System
             }
         }
 
-        bool IConvertible.ToBoolean(IFormatProvider provider)
+        bool IConvertible.ToBoolean(IFormatProvider? provider)
         {
             return Convert.ToBoolean(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        char IConvertible.ToChar(IFormatProvider provider)
+        char IConvertible.ToChar(IFormatProvider? provider)
         {
             return Convert.ToChar(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        sbyte IConvertible.ToSByte(IFormatProvider provider)
+        sbyte IConvertible.ToSByte(IFormatProvider? provider)
         {
             return Convert.ToSByte(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        byte IConvertible.ToByte(IFormatProvider provider)
+        byte IConvertible.ToByte(IFormatProvider? provider)
         {
             return Convert.ToByte(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        short IConvertible.ToInt16(IFormatProvider provider)
+        short IConvertible.ToInt16(IFormatProvider? provider)
         {
             return Convert.ToInt16(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        ushort IConvertible.ToUInt16(IFormatProvider provider)
+        ushort IConvertible.ToUInt16(IFormatProvider? provider)
         {
             return Convert.ToUInt16(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        int IConvertible.ToInt32(IFormatProvider provider)
+        int IConvertible.ToInt32(IFormatProvider? provider)
         {
             return Convert.ToInt32(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        uint IConvertible.ToUInt32(IFormatProvider provider)
+        uint IConvertible.ToUInt32(IFormatProvider? provider)
         {
             return Convert.ToUInt32(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        long IConvertible.ToInt64(IFormatProvider provider)
+        long IConvertible.ToInt64(IFormatProvider? provider)
         {
             return Convert.ToInt64(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        ulong IConvertible.ToUInt64(IFormatProvider provider)
+        ulong IConvertible.ToUInt64(IFormatProvider? provider)
         {
             return Convert.ToUInt64(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        float IConvertible.ToSingle(IFormatProvider provider)
+        float IConvertible.ToSingle(IFormatProvider? provider)
         {
             return Convert.ToSingle(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        double IConvertible.ToDouble(IFormatProvider provider)
+        double IConvertible.ToDouble(IFormatProvider? provider)
         {
             return Convert.ToDouble(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        decimal IConvertible.ToDecimal(IFormatProvider provider)
+        decimal IConvertible.ToDecimal(IFormatProvider? provider)
         {
             return Convert.ToDecimal(GetValue(), CultureInfo.CurrentCulture);
         }
 
-        DateTime IConvertible.ToDateTime(IFormatProvider provider)
+        DateTime IConvertible.ToDateTime(IFormatProvider? provider)
         {
             throw new InvalidCastException(SR.Format(SR.InvalidCast_FromTo, "Enum", "DateTime"));
         }
 
-        object IConvertible.ToType(Type type, IFormatProvider provider)
+        object IConvertible.ToType(Type type, IFormatProvider? provider)
         {
             return Convert.DefaultToType((IConvertible)this, type, provider);
         }

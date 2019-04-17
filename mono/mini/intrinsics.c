@@ -344,17 +344,21 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		int mul_reg = alloc_preg (cfg);
 
 		t = ctx->method_inst->type_argv [0];
+		MonoInst *esize_ins;
 		if (mini_is_gsharedvt_variable_type (t)) {
-			MonoInst *esize_ins = mini_emit_get_gsharedvt_info_klass (cfg, mono_class_from_mono_type_internal (t), MONO_RGCTX_INFO_CLASS_SIZEOF);
-			EMIT_NEW_BIALU (cfg, ins, OP_IMUL, mul_reg, args [1]->dreg, esize_ins->dreg);
+			esize_ins = mini_emit_get_gsharedvt_info_klass (cfg, mono_class_from_mono_type_internal (t), MONO_RGCTX_INFO_CLASS_SIZEOF);
+			if (SIZEOF_REGISTER == 8)
+				MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, esize_ins->dreg, esize_ins->dreg);
 		} else {
 			t = mini_type_get_underlying_type (t);
 			int esize = mono_class_array_element_size (mono_class_from_mono_type_internal (t));
-
-			EMIT_NEW_BIALU_IMM (cfg, ins, OP_IMUL_IMM, mul_reg, args [1]->dreg, esize);
+			EMIT_NEW_ICONST (cfg, esize_ins, esize);
 		}
-		if (SIZEOF_REGISTER == 8)
-			MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, mul_reg, mul_reg);
+		esize_ins->type = STACK_I4;
+
+		EMIT_NEW_BIALU (cfg, ins, OP_PMUL, mul_reg, args [1]->dreg, esize_ins->dreg);
+		ins->type = STACK_PTR;
+
 		dreg = alloc_preg (cfg);
 		EMIT_NEW_BIALU (cfg, ins, OP_PADD, dreg, args [0]->dreg, mul_reg);
 		ins->type = STACK_PTR;
@@ -434,6 +438,52 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		int dreg = alloc_preg (cfg);
 		EMIT_NEW_BIALU (cfg, ins, OP_PSUB, dreg, args [1]->dreg, args [0]->dreg);
 		ins->type = STACK_PTR;
+		return ins;
+	}
+
+	return NULL;
+}
+
+static MonoInst*
+emit_jit_helpers_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+	MonoInst *ins;
+	int dreg;
+	MonoGenericContext *ctx = mono_method_get_context (cmethod);
+	MonoType *t;
+
+	if (!strcmp (cmethod->name, "EnumEquals") || !strcmp (cmethod->name, "EnumCompareTo")) {
+		g_assert (ctx);
+		g_assert (ctx->method_inst);
+		g_assert (ctx->method_inst->type_argc == 1);
+		g_assert (fsig->param_count == 2);
+
+		t = ctx->method_inst->type_argv [0];
+		t = mini_get_underlying_type (t);
+		if (mini_is_gsharedvt_variable_type (t))
+			return NULL;
+
+		gboolean is_i8 = (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8);
+
+		// FIXME: Sign/zero extend
+		if (!strcmp (cmethod->name, "EnumEquals")) {
+			dreg = alloc_ireg (cfg);
+			EMIT_NEW_BIALU (cfg, ins, is_i8 ? OP_LCOMPARE : OP_ICOMPARE, -1, args [0]->dreg, args [1]->dreg);
+			EMIT_NEW_UNALU (cfg, ins, is_i8 ? OP_LCEQ : OP_ICEQ, dreg, -1);
+		} else {
+			// Use the branchless code (a > b) - (a < b)
+			int reg1, reg2;
+
+			reg1 = alloc_ireg (cfg);
+			reg2 = alloc_ireg (cfg);
+			dreg = alloc_ireg (cfg);
+
+			EMIT_NEW_BIALU (cfg, ins, is_i8 ? OP_LCOMPARE : OP_ICOMPARE, -1, args [0]->dreg, args [1]->dreg);
+			EMIT_NEW_UNALU (cfg, ins, is_i8 ? OP_LCGT : OP_ICGT, reg1, -1);
+			EMIT_NEW_BIALU (cfg, ins, is_i8 ? OP_LCOMPARE : OP_ICOMPARE, -1, args [0]->dreg, args [1]->dreg);
+			EMIT_NEW_UNALU (cfg, ins, is_i8 ? OP_LCLT : OP_ICLT, reg2, -1);
+			EMIT_NEW_BIALU (cfg, ins, OP_ISUB, dreg, reg1, reg2);
+		}
 		return ins;
 	}
 
@@ -657,6 +707,23 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				EMIT_NEW_BIALU_IMM (cfg, ins, OP_ISUB_IMM, dreg, info->dreg, 1);
 			}
 
+			return ins;
+		} else if (strcmp (cmethod->name, "IsBitwiseEquatable") == 0 && fsig->param_count == 0) {
+			MonoGenericContext *ctx = mono_method_get_context (cmethod);
+			g_assert (ctx);
+			g_assert (ctx->method_inst);
+			g_assert (ctx->method_inst->type_argc == 1);
+			MonoType *arg_type = ctx->method_inst->type_argv [0];
+			MonoType *t;
+			ins = NULL;
+
+			/* Resolve the argument class as possible so we can handle common cases fast */
+			t = mini_get_underlying_type (arg_type);
+
+			if (MONO_TYPE_IS_PRIMITIVE (t) && t->type != MONO_TYPE_R4 && t->type != MONO_TYPE_R8)
+				EMIT_NEW_ICONST (cfg, ins, 1);
+			else
+				EMIT_NEW_ICONST (cfg, ins, 0);
 			return ins;
 		} else if (!strcmp (cmethod->name, "ObjectHasComponentSize")) {
 			g_assert (fsig->param_count == 1);
@@ -1566,12 +1633,16 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		return emit_span_intrinsics (cfg, cmethod, fsig, args);
 	} else if (in_corlib &&
 			   !strcmp (cmethod_klass_name_space, "Internal.Runtime.CompilerServices") &&
-			   (!strcmp (cmethod_klass_name, "Unsafe"))) {
+			   !strcmp (cmethod_klass_name, "Unsafe")) {
 		return emit_unsafe_intrinsics (cfg, cmethod, fsig, args);
 	} else if (in_corlib &&
 			   !strcmp (cmethod_klass_name_space, "System.Runtime.CompilerServices") &&
-			   (!strcmp (cmethod_klass_name, "Unsafe"))) {
+			   !strcmp (cmethod_klass_name, "Unsafe")) {
 		return emit_unsafe_intrinsics (cfg, cmethod, fsig, args);
+	} else if (in_corlib &&
+			   !strcmp (cmethod_klass_name_space, "System.Runtime.CompilerServices") &&
+			   !strcmp (cmethod_klass_name, "JitHelpers")) {
+		return emit_jit_helpers_intrinsics (cfg, cmethod, fsig, args);
 	}
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS

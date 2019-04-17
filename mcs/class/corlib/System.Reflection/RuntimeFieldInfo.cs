@@ -309,6 +309,24 @@ namespace System.Reflection {
 		{
 			return 1;
 		}
+#elif NETCORE
+		public override bool IsSecurityTransparent {
+			get {
+				return false;
+			}
+		}
+
+		public override bool IsSecurityCritical {
+			get {
+				return true;
+			}
+		}
+
+		public override bool IsSecuritySafeCritical {
+			get {
+				return false;
+			}
+		}
 #else
 		//seclevel { transparent = 0, safe-critical = 1, critical = 2}
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

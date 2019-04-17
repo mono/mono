@@ -17,7 +17,7 @@ namespace System
 			if (src == null)
 				throw new ArgumentNullException (nameof (src));
 			if (dest == null)
-				throw new ArgumentNullException (nameof (dest));
+				throw new ArgumentNullException ("dst");
 
 			if (srcOffset < 0)
 				throw new ArgumentOutOfRangeException (nameof (srcOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
@@ -25,17 +25,17 @@ namespace System
 				throw new ArgumentOutOfRangeException (nameof (dstOffset), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			if (count < 0)
 				throw new ArgumentOutOfRangeException (nameof (count), SR.ArgumentOutOfRange_MustBeNonNegInt32);
-			if (!(src is byte[]))
+			if (!IsPrimitiveTypeArray (src))
 				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (src));
-			if (!(dest is byte[]))
+			if (!IsPrimitiveTypeArray (dest))
 				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (dest));
 
 			var uCount = (nuint) count;
 			var uSrcOffset = (nuint) srcOffset;
 			var uDstOffset = (nuint) dstOffset;
 
-			var uSrcLen = (nuint) src.Length;
-			var uDstLen = (nuint) dest.Length;
+			var uSrcLen = (nuint) ByteLength (src);
+			var uDstLen = (nuint) ByteLength (dest);
 
 			if (uSrcLen < uSrcOffset + uCount)
 				throw new ArgumentException (SR.Argument_InvalidOffLen, "");

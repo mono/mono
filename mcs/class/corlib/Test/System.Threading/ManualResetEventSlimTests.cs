@@ -234,11 +234,11 @@ namespace MonoTests.System.Threading
 				int count = 2;
 				SpinWait wait = new SpinWait ();
 
-				ThreadPool.QueueUserWorkItem (_ => { while (count > 1) wait.SpinOnce (); mre.Set (); Interlocked.Decrement (ref count); });
+				ThreadPool.QueueUserWorkItem (_ => { while (count > 1) wait.SpinOnce (100); mre.Set (); Interlocked.Decrement (ref count); });
 				ThreadPool.QueueUserWorkItem (_ => { mre.Reset (); Interlocked.Decrement (ref count); });
 
 				while (count > 0)
-					wait.SpinOnce ();
+					wait.SpinOnce (100);
 				Assert.AreEqual (mre.IsSet, mre.WaitHandle.WaitOne (0));
 			}
 		}

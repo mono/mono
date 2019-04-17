@@ -746,6 +746,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 	cfg->num_varinfo++;
 	if (cfg->verbose_level > 2)
 		g_print ("created temp %d (R%d) of type %s\n", num, vreg, mono_type_get_name (type));
+
 	return inst;
 }
 
@@ -753,6 +754,17 @@ MonoInst*
 mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 {
 	int dreg;
+
+#ifdef ENABLE_NETCORE
+	if (type->type == MONO_TYPE_VALUETYPE && !type->byref) {
+		MonoClass *klass = mono_class_from_mono_type_internal (type);
+		if (m_class_is_enumtype (klass) && m_class_get_image (klass) == mono_get_corlib () && !strcmp (m_class_get_name (klass), "StackCrawlMark")) {
+			if (!(cfg->method->flags & METHOD_ATTRIBUTE_REQSECOBJ))
+				g_error ("Method '%s' which contains a StackCrawlMark local variable must be decorated with [System.Security.DynamicSecurityMethod].", mono_method_get_full_name (cfg->method));
+		}
+	}
+#endif
+
 	type = mini_get_underlying_type (type);
 
 	if (mono_type_is_long (type))
@@ -1666,10 +1678,9 @@ mono_find_jit_opcode_emulation (int opcode)
 }
 
 void
-mini_register_opcode_emulation (int opcode, const char *name, const char *sigstr, gpointer func, const char *symbol, gboolean no_wrapper)
+mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
 {
 	MonoJitICallInfo *info;
-	MonoMethodSignature *sig = mono_create_icall_signature (sigstr);
 
 	g_assert (!sig->hasthis);
 	g_assert (sig->param_count < 3);
@@ -1897,6 +1908,9 @@ mono_destroy_compile (MonoCompile *cfg)
 void
 mono_add_patch_info (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target)
 {
+	if (type == MONO_PATCH_INFO_NONE)
+		return;
+
 	MonoJumpInfo *ji = (MonoJumpInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoJumpInfo));
 
 	ji->ip.i = ip;
@@ -1910,6 +1924,9 @@ mono_add_patch_info (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpoin
 void
 mono_add_patch_info_rel (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target, int relocation)
 {
+	if (type == MONO_PATCH_INFO_NONE)
+		return;
+
 	MonoJumpInfo *ji = (MonoJumpInfo *)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoJumpInfo));
 
 	ji->ip.i = ip;

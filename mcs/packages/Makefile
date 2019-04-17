@@ -19,7 +19,11 @@ ROSLYN_FILES_FOR_MONO = \
 	$(ROSLYN_CSC_DIR)/Microsoft.CodeAnalysis.dll		\
 	$(ROSLYN_CSC_DIR)/Microsoft.CodeAnalysis.Scripting.dll \
 	$(ROSLYN_CSC_DIR)/System.Collections.Immutable.dll	\
+	$(ROSLYN_CSC_DIR)/System.Numerics.Vectors.dll		\
 	$(ROSLYN_CSC_DIR)/System.Reflection.Metadata.dll	\
+	$(ROSLYN_CSC_DIR)/System.Runtime.CompilerServices.Unsafe.dll	\
+	$(ROSLYN_CSC_DIR)/System.Threading.Tasks.Extensions.dll	\
+	$(ROSLYN_CSC_DIR)/System.Memory.dll	\
 	$(ROSLYN_CSC_DIR)/VBCSCompiler.exe			\
 	$(ROSLYN_CSC_DIR)/VBCSCompiler.exe.config
 
@@ -29,8 +33,6 @@ ROSLYN_FILES_TO_COPY_FOR_MSBUILD = \
 	$(ROSLYN_CSC_DIR)/Microsoft.Managed.Core.targets	 \
 	$(ROSLYN_CSC_DIR)/Microsoft.VisualBasic.Core.targets
 
-ROSLYN_DIM_FILES = $(topdir)/../external/roslyn-binaries/Prototypes/DefaultInterfaceImplementation/*
-
 DISTFILES = $(ROSLYN_FILES_FOR_MONO) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) csi-test.csx
 
 ifeq ($(PROFILE), $(DEFAULT_PROFILE))
@@ -38,17 +40,13 @@ ifeq ($(PROFILE), $(DEFAULT_PROFILE))
 TARGET_DIR = $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 MSBUILD_ROSLYN_DIR = $(DESTDIR)$(mono_libdir)/mono/msbuild/Current/bin/Roslyn
 
-install-local: install-prototypes
+install-local:
 	$(MKINSTALLDIRS) $(TARGET_DIR)
 	$(INSTALL_LIB) $(ROSLYN_FILES_FOR_MONO) $(TARGET_DIR)
 	$(MKINSTALLDIRS) $(MSBUILD_ROSLYN_DIR)
 	$(INSTALL_LIB) $(ROSLYN_FILES_TO_COPY_FOR_MSBUILD) $(MSBUILD_ROSLYN_DIR)
 
 	(cd $(MSBUILD_ROSLYN_DIR); for asm in $(ROSLYN_FILES_FOR_MONO); do ln -fs ../../../../$(FRAMEWORK_VERSION)/$$(basename $$asm) . ; done)
-
-install-prototypes:
-	$(MKINSTALLDIRS) $(TARGET_DIR)/dim
-	$(INSTALL_LIB) $(ROSLYN_DIM_FILES) $(TARGET_DIR)/dim
 
 run-test-local: test-csi
 

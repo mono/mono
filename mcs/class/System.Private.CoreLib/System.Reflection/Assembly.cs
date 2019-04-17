@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 using System.Threading;
 
 namespace System.Reflection
@@ -16,13 +17,16 @@ namespace System.Reflection
 			}
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public static extern Assembly GetExecutingAssembly ();
-
-		internal static RuntimeAssembly GetExecutingAssembly (ref StackCrawlMark stackMark)
+		[System.Security.DynamicSecurityMethod]
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static Assembly GetExecutingAssembly()
 		{
-			return (RuntimeAssembly) GetExecutingAssembly ();
+			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+			return GetExecutingAssembly(ref stackMark);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern RuntimeAssembly GetExecutingAssembly (ref StackCrawlMark stackMark);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetCallingAssembly ();
@@ -30,7 +34,7 @@ namespace System.Reflection
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetEntryAssembly ();
 
-		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		public static Assembly Load (string assemblyString)
 		{
 			if (assemblyString == null)
@@ -40,30 +44,31 @@ namespace System.Reflection
 			// TODO: trigger assemblyFromResolveEvent
 
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-			return Load (name, ref stackMark, IntPtr.Zero);
+			return Load (name, ref stackMark, AssemblyLoadContext.CurrentContextualReflectionContext);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		public static Assembly Load (AssemblyName assemblyRef)
 		{
 			if (assemblyRef == null)
 				throw new ArgumentNullException (nameof (assemblyRef));
 
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-			return Load (assemblyRef, ref stackMark, IntPtr.Zero);
+			return Load (assemblyRef, ref stackMark, AssemblyLoadContext.CurrentContextualReflectionContext);
 		}
 
-		internal static Assembly Load (AssemblyName assemblyRef, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder)
+		internal static Assembly Load (AssemblyName assemblyRef, ref StackCrawlMark stackMark, AssemblyLoadContext assemblyLoadContext)
 		{
 			// TODO: pass AssemblyName
-			var assembly = InternalLoad (assemblyRef.FullName, ref stackMark, ptrLoadContextBinder);
+			// TODO: pass assemblyLoadContext
+			var assembly = InternalLoad (assemblyRef.FullName, ref stackMark, IntPtr.Zero);
 			if (assembly == null)
 				throw new FileNotFoundException (null, assemblyRef.Name);
 			return assembly;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern Assembly InternalLoad (string assemblyName, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder);
+		internal static extern Assembly InternalLoad (string assemblyName, ref StackCrawlMark stackMark, IntPtr ptrLoadContextBinder);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Type InternalGetType (Module module, string name, bool throwOnError, bool ignoreCase);

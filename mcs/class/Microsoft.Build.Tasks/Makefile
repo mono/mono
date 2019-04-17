@@ -41,7 +41,7 @@ endif
 EXTRA_DISTFILES = $(filter-out Test/resources/test.dll, $(TEST_RESOURCE_FILES))
 
 Test/resources/test.dll: Test/resources/test.cs
-	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -target:library /out:$@ $<
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/$(PARENT_PROFILE)mscorlib.dll -target:library /out:$@ $<
 
 clean-test-resources:
 	rm -f Test/resources/test.dll

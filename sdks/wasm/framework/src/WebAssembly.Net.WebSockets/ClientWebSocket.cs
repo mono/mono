@@ -195,16 +195,35 @@ namespace WebAssembly.Net.WebSockets {
 
 					subProtocols?.Dispose ();
 
+					// Setup the onError callback
 					onError = new Action<JSObject> ((errorEvt) => {
 
-						if (cancellationToken.CanBeCanceled &&
-						    (!tcsConnect.Task.IsCanceled && !tcsConnect.Task.IsCompleted && !tcsConnect.Task.IsFaulted))
-							tcsConnect.SetException (new WebSocketException (WebSocketError.NativeError));
 						errorEvt.Dispose ();
 					});
 
+					// Attach the onError callback
 					innerWebSocket.SetObjectProperty ("onerror", onError);
 
+					// Setup the onClose callback
+					onClose = new Action<JSObject> ((closeEvt) => {
+						innerWebSocketCloseStatus = (WebSocketCloseStatus)closeEvt.GetObjectProperty ("code");
+						innerWebSocketCloseStatusDescription = closeEvt.GetObjectProperty ("reason")?.ToString ();
+						var mess = new ReceivePayload (WebSocketHelpers.EmptyPayload, WebSocketMessageType.Close);
+						receiveMessageQueue.BufferPayload (mess);
+
+						if (!tcsConnect.Task.IsCanceled && !tcsConnect.Task.IsCompleted && !tcsConnect.Task.IsFaulted) {
+							tcsConnect.SetException (new WebSocketException (WebSocketError.NativeError));
+						} else {
+							tcsClose?.SetResult (true);
+						}
+
+						closeEvt.Dispose ();
+					});
+
+					// Attach the onClose callback
+					innerWebSocket.SetObjectProperty ("onclose", onClose);
+
+					// Setup the onOpen callback
 					onOpen = new Action<JSObject> ((evt) => {
 						if (!cancellationToken.IsCancellationRequested) {
 							// Change internal state to 'connected' to enable the other methods
@@ -219,20 +238,10 @@ namespace WebAssembly.Net.WebSockets {
 						evt.Dispose ();
 					});
 
+					// Attach the onOpen callback
 					innerWebSocket.SetObjectProperty ("onopen", onOpen);
 
-
-					onClose = new Action<JSObject> ((closeEvt) => {
-						innerWebSocketCloseStatus = (WebSocketCloseStatus)closeEvt.GetObjectProperty ("code");
-						innerWebSocketCloseStatusDescription = closeEvt.GetObjectProperty ("reason")?.ToString ();
-						tcsClose?.SetResult (true);
-						var mess = new ReceivePayload ( WebSocketHelpers.EmptyPayload, WebSocketMessageType.Close);
-						receiveMessageQueue.BufferPayload (mess);
-						closeEvt.Dispose ();
-					});
-
-					innerWebSocket.SetObjectProperty ("onclose", onClose);
-
+					// Setup the onMessage callback
 					onMessage = new Action<JSObject> ((messageEvent) => {
 						ThrowIfNotConnected ();
 
@@ -279,6 +288,7 @@ namespace WebAssembly.Net.WebSockets {
 
 					});
 
+					// Attach the onMessage callaback
 					innerWebSocket.SetObjectProperty ("onmessage", onMessage);
 
 					await tcsConnect.Task;
@@ -460,6 +470,8 @@ namespace WebAssembly.Net.WebSockets {
 			ThrowOnInvalidState (State,
 			    WebSocketState.Open, WebSocketState.CloseReceived, WebSocketState.CloseSent);
 
+			WebSocketHelpers.ValidateCloseStatus (closeStatus, statusDescription);
+
 			tcsClose = new TaskCompletionSource<bool> ();
 			// Wrap the cancellationToken in a using so that it can be disposed of whether
 			// we successfully connected or failed trying.
@@ -582,7 +594,7 @@ namespace WebAssembly.Net.WebSockets {
 			public void AddSubProtocol (string subProtocol)
 			{
 				ThrowIfReadOnly ();
-				WebSocketHelpers.ValidateSubprotocol (subProtocol);
+
 				// Duplicates not allowed.
 				foreach (string item in requestedSubProtocols) {
 					if (string.Equals (item, subProtocol, StringComparison.OrdinalIgnoreCase)) {

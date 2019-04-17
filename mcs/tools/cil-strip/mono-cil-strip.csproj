@@ -33,6 +33,11 @@
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
     <DefineConstants>NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'wasm_tools' ">
+    <OutputPath>./../../class/lib/wasm_tools</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm_tools</IntermediateOutputPath>
+    <DefineConstants>NET_4_6;MONO;WASM_TOOLS</DefineConstants>
+  </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

@@ -6,14 +6,16 @@
 //
 
 using System;
-using NUnit.Framework;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 using Timer = System.Windows.Forms.Timer;
 using System.Globalization;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -700,6 +702,120 @@ namespace MonoTests.System.Windows.Forms
 			myform.Close ();
 			Assert.AreEqual (true, args != null, "#A13");
 			Assert.AreEqual (false, myform.Visible, "#A14");
+		}
+	}
+
+	[TestFixture]
+	public class OnClosedOverride
+	{
+		[Test]
+		public void OnClosedOverride_Test1 ()
+		{
+			const bool removeButtonOnClick = false;
+
+			using (var f = new ButtonedForm (removeButtonOnClick)) {
+				f.Show ();
+				Assert.Null (f.onClosedForm.CatchedException, "An exception has been detected in `WndProc`");
+			}
+		}
+
+		[Test]
+		public void OnClosedOverride_Test2 ()
+		{
+			const bool removeButtonOnClick = true;
+
+			var task = Task.Run (() => {
+				using (var f = new ButtonedForm (removeButtonOnClick)) {
+					f.Show ();
+				}
+			});
+
+			var ok = task.Wait (TimeSpan.FromSeconds (1));
+			Assert.True (ok, "Infinite loop has been detected in `WndProc`");
+		}
+
+		public partial class ButtonedForm : Form
+		{
+			// We need to controls on this form. One of them must be active (button).
+			public Button button = new Button ();
+			private Label label = new Label ();
+			
+			private bool removeButtonOnClick;
+			
+			public OnClosedForm onClosedForm;
+
+			public ButtonedForm (bool removeButtonOnClick)
+			{
+				this.removeButtonOnClick = removeButtonOnClick;
+
+				this.Controls.Add( button);
+				this.Controls.Add (label);
+				
+				this.Text = "ButtonedForm";
+				button.Text = "Click to Close";
+
+				onClosedForm = new OnClosedForm (this);
+				onClosedForm.Show ();
+
+				button.Click += click_Button;
+				Shown += shown_ButtonedForm;
+			}
+
+			protected void click_Button (object sender, EventArgs e)
+			{
+				if (removeButtonOnClick)  // This property switches test between to two different issues.
+					this.Controls.Remove (button);
+				onClosedForm.Close ();
+			}
+
+			public void shown_ButtonedForm (object sender, EventArgs e)
+			{
+				// TODO:
+				// It is necessary to add some sleep before click button. This phenomenon apparently
+				// is stemmed from the asynchronous nature of `XplatUI.SendMessage`: see method
+				// `Form.SetVisibleCore()` in `Froms.cs`.
+				Thread.Sleep (200);
+				EmulateButtonClick ();
+			}
+
+			public void EmulateButtonClick ()
+			{
+				// When one click a button, the parent form an then the button take focus.
+				// This is vital to reproduce the issue https://github.com/mono/mono/issues/13150.
+				button.Focus ();
+				click_Button (null, null);
+			}
+		}
+		
+		public partial class OnClosedForm : Form
+		{
+			private ButtonedForm buttonedForm;
+
+			public Exception CatchedException;
+
+			public OnClosedForm (ButtonedForm buttonedForm)
+			{
+				this.buttonedForm = buttonedForm;
+				this.CatchedException = null;
+
+				this.Text = "OnClosedForm";
+			}
+
+			protected override void OnClosed (EventArgs e)
+			{
+				base.OnClosed (e);
+				buttonedForm.Close ();
+			}
+
+			protected override void WndProc (ref Message message)
+			{
+				try {
+					base.WndProc (ref message);
+				}
+				catch (Exception ex) {
+					CatchedException = ex;
+				}
+			}
 		}
 	}
 

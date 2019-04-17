@@ -3057,7 +3057,6 @@ parse_public_key (const gchar *key, gchar** pubkey, gboolean *is_ecma)
 static gboolean
 build_assembly_name (const char *name, const char *version, const char *culture, const char *token, const char *key, guint32 flags, guint32 arch, MonoAssemblyName *aname, gboolean save_public_key)
 {
-	gint major, minor, build, revision;
 	gint len;
 	gint version_parts;
 	gchar *pkeyptr, *encoded, tok [8];
@@ -3065,6 +3064,50 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 	memset (aname, 0, sizeof (MonoAssemblyName));
 
 	if (version) {
+#ifdef ENABLE_NETCORE
+		int parts [4];
+		int i;
+		int part_len;
+
+		parts [2] = -1;
+		parts [3] = -1;
+		const char *s = version;
+		version_parts = 0;
+		for (i = 0; i < 4; ++i) {
+			int n = sscanf (s, "%u%n", &parts [i], &part_len);
+			if (n != 1)
+				return FALSE;
+			if (parts [i] < 0 || parts [i] > 65535)
+				return FALSE;
+			if (i < 2 && parts [i] == 65535)
+				return FALSE;
+			version_parts ++;
+			s += part_len;
+			if (s [0] == '\0')
+				break;
+			if (i < 3) {
+				if (s [0] != '.')
+					return FALSE;
+				s ++;
+			}
+		}
+		if (s [0] != '\0')
+			return FALSE;
+		if (version_parts < 2 || version_parts > 4)
+			return FALSE;
+		aname->major = parts [0];
+		aname->minor = parts [1];
+		if (version_parts >= 3)
+			aname->build = parts [2];
+		else
+			aname->build = -1;
+		if (version_parts == 4)
+			aname->revision = parts [3];
+		else
+			aname->revision = -1;
+#else
+		gint major, minor, build, revision;
+
 		version_parts = sscanf (version, "%u.%u.%u.%u", &major, &minor, &build, &revision);
 		if (version_parts < 2 || version_parts > 4)
 			return FALSE;
@@ -3082,6 +3125,7 @@ build_assembly_name (const char *name, const char *version, const char *culture,
 			aname->revision = revision;
 		else
 			aname->revision = 0;
+#endif
 	}
 	
 	aname->flags = flags;
@@ -3293,6 +3337,8 @@ mono_assembly_name_parse_full (const char *name, MonoAssemblyName *aname, gboole
 				arch = MONO_PROCESSOR_ARCHITECTURE_IA64;
 			else if (!g_ascii_strcasecmp (procarch, "AMD64"))
 				arch = MONO_PROCESSOR_ARCHITECTURE_AMD64;
+			else if (!g_ascii_strcasecmp (procarch, "ARM"))
+				arch = MONO_PROCESSOR_ARCHITECTURE_ARM;
 			else {
 				g_free (procarch_uq);
 				goto cleanup_and_fail;
@@ -4131,6 +4177,12 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 	corlib = invoke_assembly_preload_hook (aname, NULL);
 	/* MonoCore preload hook should know how to find it */
 	/* FIXME: AOT compiler comes here without an installed hook. */
+	if (!corlib) {
+		if (assemblies_path) { // Custom assemblies path set via MONO_PATH or mono_set_assemblies_path
+			char *corlib_name = g_strdup_printf ("%s.dll", MONO_ASSEMBLY_CORLIB_NAME);
+			corlib = load_in_path (corlib_name, (const char**)assemblies_path, &req, status);
+		}
+	}
 	g_assert (corlib);
 #else
 	// A nonstandard preload hook may provide a special mscorlib assembly
@@ -4221,7 +4273,13 @@ mono_assembly_candidate_predicate_sn_same_name (MonoAssembly *candidate, gpointe
 gboolean
 exact_sn_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name)
 {
+#if ENABLE_NETCORE
+	gboolean result = mono_assembly_names_equal_flags (wanted_name, candidate_name, MONO_ANAME_EQ_IGNORE_VERSION);
+	if (result && assembly_names_compare_versions (wanted_name, candidate_name, -1) > 0)
+		result = FALSE;
+#else
 	gboolean result = mono_assembly_names_equal (wanted_name, candidate_name);
+#endif
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Predicate: candidate and wanted names %s\n",
 		    result ? "match, returning TRUE" : "don't match, returning FALSE");

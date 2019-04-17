@@ -148,8 +148,13 @@ _llvm-$(1)_CMAKE_ARGS = \
 	-DLLVM_BUILD_EXECUTION_ENGINE=Off \
 	$$(llvm-$(1)_CMAKE_ARGS)
 
+ifeq ($(UNAME),Darwin)
+_llvm-$(1)_CMAKE_ARGS += \
+	-DZLIB_ROOT=$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32 -DZLIB_LIBRARY=$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32/lib/libz.a -DZLIB_INCLUDE_DIR=$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32/include
+endif
+
 $$(TOP)/external/llvm/cmake/modules/$(3).cmake: $(3).cmake.in
-	sed -e 's,@MXE_PATH@,$$(MXE_PREFIX),' -e 's,@MXE_SUFFIX@,$$(if $$(filter $(UNAME),Darwin),.static),' < $$< > $$@
+	sed -e 's,@MXE_PATH@,$$(MXE_PREFIX),' < $$< > $$@
 
 .PHONY: setup-llvm-$(1)
 setup-llvm-$(1):

@@ -561,7 +561,10 @@ namespace UploadToSentry
 
 			var version_string = payload["protocol_version"].ToString();
 			JObject sentry_message = null;
-			if (version_string == "0.0.3") {
+			if (version_string == "0.0.4") {
+				// Same for now
+				sentry_message = Format_0_0_3 (filePath, payload, hash);
+			} else if (version_string == "0.0.3") {
 				sentry_message = Format_0_0_3 (filePath, payload, hash);
 			} else if (version_string == "0.0.2") {
 				sentry_message = Format_0_0_2 (filePath, payload, hash);

@@ -92,7 +92,7 @@ Beware that the debugger is in active development so bugs and missing features w
 
 # WebAssembly packager.exe
 
-Read usage information about the utility see [WebAssembly packager.exe](./docs/packager)
+Read usage information about the utility see [WebAssembly packager.exe](./docs/packager.md)
 
 # AOT support
 

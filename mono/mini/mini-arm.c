@@ -3496,11 +3496,21 @@ loop_start:
 		case OP_SBB:
 		case OP_ISBB:
 		case OP_SUBCC:
-		case OP_ISUBCC:
-			if (ins->next  && (ins->next->opcode == OP_COND_EXC_C || ins->next->opcode == OP_COND_EXC_IC))
-				/* ARM sets the C flag to 1 if there was _no_ overflow */
-				ins->next->opcode = OP_COND_EXC_NC;
+		case OP_ISUBCC: {
+			int try_count = 2;
+			MonoInst *current = ins;
+
+			/* may require a look-ahead of a couple instructions due to spilling */
+			while (try_count-- && current->next) {
+				if (current->next->opcode == OP_COND_EXC_C || current->next->opcode == OP_COND_EXC_IC) {
+					/* ARM sets the C flag to 1 if there was _no_ overflow */
+					current->next->opcode = OP_COND_EXC_NC;
+					break;
+				}
+				current = current->next;
+			}
 			break;
+		}
 		case OP_IDIV_IMM:
 		case OP_IDIV_UN_IMM:
 		case OP_IREM_IMM:
@@ -5121,10 +5131,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (IS_HARD_FLOAT)
 				code = emit_float_args (cfg, call, code, &max_len, &offset);
 
-			if (ins->flags & MONO_INST_HAS_METHOD)
-				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_METHOD, call->method);
-			else
-				mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_ABS, call->fptr);
+			mono_call_add_patch_info (cfg, call, code - cfg->native_code);
+
 			code = emit_call_seq (cfg, code);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
@@ -6043,9 +6051,9 @@ void
 mono_arch_register_lowlevel_calls (void)
 {
 	/* The signature doesn't matter */
-	mono_register_jit_icall (mono_arm_throw_exception, "mono_arm_throw_exception", mono_create_icall_signature ("void"), TRUE);
-	mono_register_jit_icall (mono_arm_throw_exception_by_token, "mono_arm_throw_exception_by_token", mono_create_icall_signature ("void"), TRUE);
-	mono_register_jit_icall (mono_arm_unaligned_stack, "mono_arm_unaligned_stack", mono_create_icall_signature ("void"), TRUE);
+	mono_register_jit_icall (mono_arm_throw_exception, "mono_arm_throw_exception", mono_icall_sig_void, TRUE);
+	mono_register_jit_icall (mono_arm_throw_exception_by_token, "mono_arm_throw_exception_by_token", mono_icall_sig_void, TRUE);
+	mono_register_jit_icall (mono_arm_unaligned_stack, "mono_arm_unaligned_stack", mono_icall_sig_void, TRUE);
 }
 
 #define patch_lis_ori(ip,val) do {\

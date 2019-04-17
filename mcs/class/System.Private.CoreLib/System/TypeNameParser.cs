@@ -101,10 +101,10 @@ namespace System
 
             if (assemblyResolver == null) {
 				if (throwOnError) {
-					return Assembly.Load (aname, ref stackMark, IntPtr.Zero);
+					return Assembly.Load (aname, ref stackMark, null);
 				} else {
                     try {
-						return Assembly.Load (aname, ref stackMark, IntPtr.Zero);
+						return Assembly.Load (aname, ref stackMark, null);
 					} catch (FileNotFoundException) {
 						return null;
 					}

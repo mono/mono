@@ -555,7 +555,11 @@ namespace System.Globalization
 				if (!constructed) Construct ();
 				CheckNeutral ();
 
-				var temp = new DateTimeFormatInfo (m_cultureData, Calendar);
+				DateTimeFormatInfo temp;
+				if (GlobalizationMode.Invariant)
+					temp = new DateTimeFormatInfo();
+				else
+					temp = new DateTimeFormatInfo(m_cultureData, Calendar);
 				temp._isReadOnly = m_isReadOnly;
 				System.Threading.Thread.MemoryBarrier();
 				dateTimeInfo = temp;

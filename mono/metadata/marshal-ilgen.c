@@ -702,7 +702,7 @@ emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, MonoMarshalConv 
 		pos = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
 		mono_mb_emit_ldloc (mb, 1);
 		mono_mb_emit_byte (mb, CEE_LDIND_I);
-		mono_mb_emit_icall (mb, g_free);
+		mono_mb_emit_icall (mb, g_free); // aka monoeg_g_free
 		mono_mb_patch_short_branch (mb, pos);
 
 		mono_mb_emit_ldloc (mb, 1);
@@ -1505,6 +1505,7 @@ handle_enum:
 		int ldind_op;
 		MonoType* ret_byval = m_class_get_byval_arg (mono_class_from_mono_type_internal (sig->ret));
 		g_assert (!ret_byval->byref);
+		// TODO: Handle null references
 		ldind_op = mono_type_to_ldind (ret_byval);
 		/* taken from similar code in mini-generic-sharing.c
 		 * we need to use mono_mb_emit_op to add method data when loading
@@ -3066,7 +3067,7 @@ emit_marshal_boolean_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	case MARSHAL_ACTION_MANAGED_CONV_OUT: {
 		guint8 stop = CEE_STIND_I4;
 		guint8 ldc_op = CEE_LDC_I4_1;
-		int label_null,label_false, label_end;;
+		int label_null,label_false, label_end;
 
 		if (!t->byref)
 			break;
@@ -6572,11 +6573,17 @@ emit_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *sig, gcons
 	mono_mb_emit_byte (mb, CEE_RET);
 }
 
+static void
+emit_return_ilgen (MonoMethodBuilder *mb)
+{
+	mono_mb_emit_byte (mb, CEE_RET);
+}
+
 void
 mono_marshal_ilgen_init (void)
 {
 	MonoMarshalCallbacks cb;
-	cb.version = MONO_MARSHAL_CALLBACKS_VERSION;;
+	cb.version = MONO_MARSHAL_CALLBACKS_VERSION;
 	cb.emit_marshal_array = emit_marshal_array_ilgen;
 	cb.emit_marshal_boolean = emit_marshal_boolean_ilgen;
 	cb.emit_marshal_ptr = emit_marshal_ptr_ilgen;
@@ -6612,6 +6619,7 @@ mono_marshal_ilgen_init (void)
 	cb.emit_create_string_hack = emit_create_string_hack_ilgen;
 	cb.emit_native_icall_wrapper = emit_native_icall_wrapper_ilgen;
 	cb.emit_icall_wrapper = emit_icall_wrapper_ilgen;
+	cb.emit_return = emit_return_ilgen;
 	cb.emit_vtfixup_ftnptr = emit_vtfixup_ftnptr_ilgen;
 	cb.mb_skip_visibility = mb_skip_visibility_ilgen;
 	cb.mb_set_dynamic = mb_set_dynamic_ilgen;

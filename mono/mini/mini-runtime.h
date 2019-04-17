@@ -174,6 +174,14 @@ typedef struct MonoDebugOptions {
 	gboolean dyn_runtime_invoke;
 	gboolean gdb;
 	gboolean lldb;
+
+	/*
+	 * With LLVM codegen, this option will cause methods to be called indirectly through the
+	 * PLT (As they are in other FullAOT modes, without LLVM). 
+	 *
+	 * Enable this to debug problems with direct calls in llvm
+	 */
+	gboolean llvm_disable_self_init;
 	gboolean use_fallback_tls;
 	/*
 	 * Whenever data such as next sequence points and flags is required.
@@ -316,6 +324,7 @@ struct MonoJumpInfo {
 		int             offset;
 #endif
 		int index;
+		guint uindex;
 		MonoBasicBlock *bb;
 		MonoInst       *inst;
 		MonoMethod     *method;
@@ -524,10 +533,10 @@ void
 mono_cleanup_native_crash_info (void);
 
 void
-mono_dump_native_crash_info (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info);
+mono_dump_native_crash_info (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info);
 
 void
-mono_post_native_crash_handler (const char *signal, void *ctx, MONO_SIG_HANDLER_INFO_TYPE *info, gboolean crash_chaining);
+mono_post_native_crash_handler (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info, gboolean crash_chaining);
 
 /*
  * Signal handling
