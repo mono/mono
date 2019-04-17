@@ -33,6 +33,7 @@
 ../../../external/linker/src/linker/Linker.Steps/LoadI18nAssemblies.cs
 ../../../external/linker/src/linker/Linker.Steps/ResolveFromXmlStep.cs
 ../../../external/linker/src/linker/Linker.Steps/SweepStep.cs
+../../../external/linker/src/linker/Linker.Steps/ReflectionBlockedStep.cs
 ../../../external/linker/src/linker/Linker.Steps/RegenerateGuidStep.cs
 ../../../external/linker/src/linker/Linker.Steps/RemoveSecurityStep.cs
 ../../../external/linker/src/linker/Linker.Steps/ResolveFromXApiStep.cs
