@@ -1711,9 +1711,9 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 		EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_GET_TLS_TRAMP, GUINT_TO_POINTER(key));
 		return mini_emit_calli (cfg, mono_icall_sig_ptr, NULL, addr, NULL, NULL);
 	} else {
-		g_assert (TLS_KEY_THREAD == 0); // static_assert
+		g_assert (TLS_KEY_THREAD == 0); // FIXME static_assert
 		MonoJitICallInfo *jit_icall_info = &mono_jit_icall_info.array [MONO_JIT_ICALL_mono_tls_get_thread + key];
-		jit_icall_info->func = (gpointer)mono_tls_get_tls_getter (key);
+		g_assert (jit_icall_info->func == (gpointer)mono_tls_get_tls_getter (key));
 		return mono_emit_jit_icall_info (cfg, jit_icall_info, NULL);
 	}
 }
