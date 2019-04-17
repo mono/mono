@@ -784,7 +784,7 @@ namespace MonoTests.System.Globalization
 			var dst = new Span<char> (new char [testStr.Length]);
 			CultureInfo savedCulture = CultureInfo.CurrentCulture;
 			CultureInfo.CurrentCulture = new InterceptingLocale ();
-			testStr.AsSpan().ToUpperInvariant(dst); // should not throw InvalidOperationException ("Shouldn't be called.")
+			testStr.AsSpan ().ToUpperInvariant (dst); // should not throw InvalidOperationException ("Shouldn't be called.")
 			CultureInfo.CurrentCulture = savedCulture;
 			Assert.AreEqual ("TEST", dst.ToString ());
 		}
