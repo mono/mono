@@ -9135,10 +9135,12 @@ mono_register_jit_icall_info_full (MonoJitICallInfo *info, gconstpointer func,
 		if (!existing_info)
 			continue;
 
-		g_assertf (info == existing_info, "jit icall info already hashed %s %s\n",
-			name, existing_info->name);
+		g_assertf (info == existing_info,
+			"jit icall info already hashed name:%s existing_name:%s func:%p existing_func:%p i:%d index:%d existing_index:%d\n",
+			name, existing_info->name, func, existing_info->func, i, mono_jit_icall_info_index (info),
+			mono_jit_icall_info_index (existing_info));
 
-		assert_equivalent_jit_icall_info ("hashed", existing_info, func, name, sig, avoid_wrapper, c_symbol);
+		assert_equivalent_jit_icall_info (i ? "hashed1" : "hashed0", existing_info, func, name, sig, avoid_wrapper, c_symbol);
 	}
 
 	if (info->inited)
