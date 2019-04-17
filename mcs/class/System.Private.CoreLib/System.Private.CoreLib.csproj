@@ -3,6 +3,15 @@
   <!-- Include common build properties -->
 <!--  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" /> -->
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!-- Default values -->
+  <PropertyGroup>
+    <TargetsUnix Condition="'$(TargetsUnix)'==''">true</TargetsUnix>
+    <TargetsOSX Condition="'$(TargetsOSX)'==''">true</TargetsOSX>
+    <TargetsWindows Condition="'$(TargetsWindows)'==''">false</TargetsWindows>
+    <BuildArch Condition="'$(BuildArch)'==''">x64</BuildArch>
+    <OutputPath Condition="'$(OutputPath)'==''">bin/x64</OutputPath>
+    <FeaturePortableTimer Condition="'$(FeaturePortableTimer)'==''">true</FeaturePortableTimer>
+  </PropertyGroup>
   <!-- Compilation options -->
   <PropertyGroup>
     <AvailablePlatforms>x64,x86,arm,armel,arm64</AvailablePlatforms>
