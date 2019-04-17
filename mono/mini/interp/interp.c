@@ -5003,6 +5003,24 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			ip += 3;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_BOX_NULLABLE) {
+			c = (MonoClass*)imethod->data_items [* (guint16 *)(ip + 1)];
+			guint16 offset = * (guint16 *)(ip + 2);
+			gboolean pop_vt_sp = !(offset & BOX_NOT_CLEAR_VT_SP);
+			offset &= ~BOX_NOT_CLEAR_VT_SP;
+
+			int size = mono_class_value_size (c, NULL);
+
+			sp [-1 - offset].data.p = mono_nullable_box (sp [-1 - offset].data.p, c, error);
+			mono_error_cleanup (error); /* FIXME: don't swallow the error */
+
+			size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
+			if (pop_vt_sp)
+				vt_sp -= size;
+
+			ip += 3;
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_NEWARR)
 			sp [-1].data.p = (MonoObject*) mono_array_new_checked (imethod->domain, (MonoClass*)imethod->data_items[*(guint16 *)(ip + 1)], sp [-1].data.i, error);
 			if (!mono_error_ok (error)) {
