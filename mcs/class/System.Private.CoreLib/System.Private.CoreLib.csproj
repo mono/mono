@@ -10,11 +10,11 @@
     <TargetsWindows>false</TargetsWindows>
     <BuildArch>x64</BuildArch>
     <OutputPath>bin/x64</OutputPath>
-    <FeaturePortableTimer>true</FeaturePortableTimer>
   </PropertyGroup>
   <!-- Compilation options -->
   <PropertyGroup>
     <AvailablePlatforms>x64,x86,arm,armel,arm64</AvailablePlatforms>
+    <FeaturePortableTimer>true</FeaturePortableTimer>
     <Configuration Condition=" '$(Configuration)' == '' ">$(BuildType)</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">$(BuildArch)</Platform>
     <Platform Condition=" '$(Platform)' == 'armel' ">arm</Platform>
