@@ -4354,7 +4354,7 @@ add_gc_wrappers (MonoAotCompile *acfg)
 }
 
 static gboolean
-contains_cannot_specialize_attribute (MonoCustomAttrInfo *cattr)
+contains_disable_reflection_attribute (MonoCustomAttrInfo *cattr)
 {
 	for (int i = 0; i < cattr->num_attrs; ++i) {
 		MonoCustomAttrEntry *attr = &cattr->attrs [i];
@@ -4400,7 +4400,7 @@ mono_aot_can_specialize (MonoMethod *method)
 	if (!is_ok (cattr_error)) {
 		mono_error_cleanup (cattr_error);
 		goto cleanup_false;
-	} else if (cattr && contains_cannot_specialize_attribute (cattr)) {
+	} else if (cattr && contains_disable_reflection_attribute (cattr)) {
 		goto cleanup_true;
 	}
 
@@ -4409,7 +4409,7 @@ mono_aot_can_specialize (MonoMethod *method)
 	if (!is_ok (cattr_error)) {
 		mono_error_cleanup (cattr_error);
 		goto cleanup_false;
-	} else if (cattr && contains_cannot_specialize_attribute (cattr)) {
+	} else if (cattr && contains_disable_reflection_attribute (cattr)) {
 		goto cleanup_true;
 	} else {
 		goto cleanup_false;
