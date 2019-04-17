@@ -71,7 +71,9 @@ namespace System
 			};
 		}
 
-		public object Target => _target;
+		public object Target => GetTarget();
+
+		internal virtual object GetTarget() => _target;
 
 		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure)
 		{
@@ -389,7 +391,7 @@ namespace System
 		{
 			Delegate d = obj as Delegate;
 
-			if (d == null)
+			if (d == null || !InternalEqualTypes(this, obj))
 				return false;
 
 			// Do not compare method_ptr, since it can point to a trampoline
