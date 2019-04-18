@@ -64,7 +64,7 @@ MonoExceptionHandle
 mono_exception_new_argument (const char *arg, const char *msg, MonoError *error);
 
 MonoExceptionHandle
-mono_exception_new_argument_null (const char *arg, MonoError *error);i
+mono_exception_new_argument_null (const char *arg, MonoError *error);
 
 MonoExceptionHandle
 mono_exception_new_argument_out_of_range(const char *arg, const char *msg, MonoError *error);
