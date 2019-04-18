@@ -1011,7 +1011,7 @@ mono_get_exception_method_access_msg (const char *msg)
 }
 
 /**
- * monhttps://fossies.org/linux/mono/mono/utils/mono-error-internals.ho_get_exception_reflection_type_load:
+ * mono_get_exception_reflection_type_load:
  * \param types an array of types that were defined in the moduled loaded.
  * \param exceptions an array of exceptions that were thrown during the type loading.
  * \returns a new instance of the \c System.Reflection.ReflectionTypeLoadException
