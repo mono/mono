@@ -1499,11 +1499,6 @@ mono_error_set_simple_file_not_found (MonoError *error, const char *file_name, g
 void
 mono_error_set_argument_out_of_range (MonoError *error, const char *param_name)
 {
-/* ORIGINAL IMPLEMENTATION
-	ERROR_DECL (error_creating_exception);
-	mono_error_set_exception_handle (error, mono_new_exception_argument_out_of_range (name, error_creating_exception));
-	mono_error_cleanup (error_creating_exception);
-*/
 	mono_error_set_specific (error, MONO_ERROR_ARGUMENT_OUT_OF_RANGE, "MonoArgumentException:%s", param_name);
 	if (param_name)
 		mono_error_set_first_argument (error, param_name);
