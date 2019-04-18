@@ -13526,7 +13526,7 @@ create_depfile (MonoAotCompile *acfg)
 		fprintf (depfile, "%s: ", targets [tindex]);
 		for (int i = 0; i < acfg->image_table->len; i++) {
 			MonoImage *image = (MonoImage*)g_ptr_array_index (acfg->image_table, i);
-			fprintf (depfile, " %s", image->name);
+			fprintf (depfile, " %s", image->filename);
 		}
 		fprintf (depfile, "\n");
 	}
