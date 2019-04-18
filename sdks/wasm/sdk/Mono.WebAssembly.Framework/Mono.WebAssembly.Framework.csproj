@@ -7,10 +7,10 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\..\..\out\bcl\wasm\*.dll" PackagePath="wasm-assemblies\%(Filename)%(Extension)" Link="runtime-assemblies\%(Filename)%(Extension)" />
-    <Content Include="..\..\..\out\bcl\wasm\*.pdb" PackagePath="wasm-assemblies\%(Filename)%(Extension)" Link="runtime-assemblies\%(Filename)%(Extension)" />
-    <Content Include="..\..\..\out\bcl\wasm\Facades\*.dll" PackagePath="wasm-assemblies\Facades\%(Filename)%(Extension)" Link="runtime-assemblies\Facades\%(Filename)%(Extension)" />
-    <Content Include="..\..\..\out\bcl\wasm\Facades\*.pdb" PackagePath="wasm-assemblies\Facades\%(Filename)%(Extension)" Link="runtime-assemblies\Facades\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\out\wasm-bcl\wasm\*.dll" PackagePath="wasm-assemblies\%(Filename)%(Extension)" Link="runtime-assemblies\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\out\wasm-bcl\wasm\*.pdb" PackagePath="wasm-assemblies\%(Filename)%(Extension)" Link="runtime-assemblies\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\out\wasm-bcl\wasm\Facades\*.dll" PackagePath="wasm-assemblies\Facades\%(Filename)%(Extension)" Link="runtime-assemblies\Facades\%(Filename)%(Extension)" />
+    <Content Include="..\..\..\out\wasm-bcl\wasm\Facades\*.pdb" PackagePath="wasm-assemblies\Facades\%(Filename)%(Extension)" Link="runtime-assemblies\Facades\%(Filename)%(Extension)" />
     <None Update="build\netstandard2.0\Mono.WebAssembly.Framework.props" Pack="True" />
   </ItemGroup>
 </Project>
