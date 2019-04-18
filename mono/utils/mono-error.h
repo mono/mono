@@ -36,6 +36,7 @@ enum {
 	MONO_ERROR_NOT_VERIFIABLE = 8,
 	MONO_ERROR_INVALID_PROGRAM = 12,
 	MONO_ERROR_MEMBER_ACCESS = 13,
+	MONO_ERROR_ARGUMENT_OUT_OF_RANGE = 14;
 
 	/*
 	 * This is a generic error mechanism is you need to raise an arbitrary corlib exception.

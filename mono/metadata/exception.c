@@ -718,6 +718,12 @@ mono_exception_new_argument_null (const char *arg, MonoError *error)
 }
 
 MonoExceptionHandle
+mono_exception_new_argument_out_of_range(const char *arg, const char *msg, MonoError *error)
+{
+	return mono_exception_new_argument_internal ("ArgumentOutOfRangeException", arg, msg, error);
+}
+
+MonoExceptionHandle
 mono_exception_new_serialization (const char *msg, MonoError *error)
 {
 	return mono_exception_new_by_name_msg (mono_get_corlib (),
@@ -1005,7 +1011,7 @@ mono_get_exception_method_access_msg (const char *msg)
 }
 
 /**
- * mono_get_exception_reflection_type_load:
+ * monhttps://fossies.org/linux/mono/mono/utils/mono-error-internals.ho_get_exception_reflection_type_load:
  * \param types an array of types that were defined in the moduled loaded.
  * \param exceptions an array of exceptions that were thrown during the type loading.
  * \returns a new instance of the \c System.Reflection.ReflectionTypeLoadException
@@ -1491,11 +1497,16 @@ mono_error_set_simple_file_not_found (MonoError *error, const char *file_name, g
 }
 
 void
-mono_error_set_argument_out_of_range (MonoError *error, const char *name)
+mono_error_set_argument_out_of_range (MonoError *error, const char *param_name)
 {
+/* ORIGINAL IMPLEMENTATION
 	ERROR_DECL (error_creating_exception);
 	mono_error_set_exception_handle (error, mono_new_exception_argument_out_of_range (name, error_creating_exception));
 	mono_error_cleanup (error_creating_exception);
+*/
+	mono_error_set_specific (error, MONO_ERROR_ARGUMENT_OUT_OF_RANGE, "MonoArgumentException:%s", param_name);
+	if (param_name)
+		mono_error_set_first_argument (error, param_name);
 }
 
 MonoExceptionHandle
