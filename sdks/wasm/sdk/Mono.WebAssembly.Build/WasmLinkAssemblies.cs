@@ -82,8 +82,7 @@ namespace Mono.WebAssembly.Build
 				return false;
 			}
 
-			WasmLinkMode linkme;
-			if (!Enum.TryParse<WasmLinkMode>(LinkMode, out linkme)) {
+			if (!Enum.TryParse<WasmLinkMode> (LinkMode, out var linkme)) {
 				Log.LogError ("LinkMode is invalid.");
 				return false;
 			}
@@ -95,7 +94,6 @@ namespace Mono.WebAssembly.Build
 		protected override string GenerateCommandLineCommands ()
 		{
 			var sb = new StringBuilder ();
-
 			sb.Append (" --verbose");
 
 			// add exclude features
@@ -118,24 +116,24 @@ namespace Mono.WebAssembly.Build
 				break;
 			}
 
-			sb.AppendFormat (" -c {0} -u {1}", coremode, usermode);
+			sb.AppendFormat ($" -c {coremode} -u {usermode}");
 
 			//the linker doesn't consider these core by default
-			sb.AppendFormat (" -p {0} WebAssembly.Bindings -p {0} WebAssembly.Net.Http -p {0} WebAssembly.Net.WebSockets", coremode);
+			sb.AppendFormat ($" -p {coremode} WebAssembly.Bindings -p {coremode} WebAssembly.Net.Http -p {coremode} WebAssembly.Net.WebSockets");
 
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var s in skips) {
-					sb.AppendFormat (" -p \"{0}\" copy", s);
+					sb.AppendFormat ($" -p \"{s}\" copy");
 				}
 			}
 
-			sb.AppendFormat (" -out \"{0}\"", OutputDir);
-			sb.AppendFormat (" -d \"{0}\"", FrameworkDir);
-			sb.AppendFormat (" -d \"{0}\"", Path.Combine(FrameworkDir, "Facades"));
-			sb.AppendFormat (" -b {0} -v {0}", Debug);
+			sb.AppendFormat ($" -out \"{OutputDir.Replace ("\\", "\\\\")}\"");
+			sb.AppendFormat ($" -d \"{FrameworkDir.Replace ("\\", "\\\\")}\"");
+			sb.AppendFormat ($" -d \"{Path.Combine (FrameworkDir, "Facades").Replace ("\\", "\\\\")}\"");
+			sb.AppendFormat ($" -b {Debug} -v {Debug}");
 
-			sb.AppendFormat (" -a \"{0}\"", RootAssembly[0].GetMetadata("FullPath"));
+			sb.AppendFormat ($" -a \"{RootAssembly[0].GetMetadata("FullPath").Replace ("\\", "\\\\")}\"");
 
 			//we'll normally have to check most of the because the SDK references most framework asm by default
 			//so let's enumerate upfront
@@ -156,7 +154,7 @@ namespace Mono.WebAssembly.Build
 						continue;
 					}
 
-					sb.AppendFormat (" -r \"{0}\"", p);
+					sb.AppendFormat ($" -r \"{p.Replace ("\\", "\\\\")}\"");
 				}
 			}
 
@@ -164,9 +162,8 @@ namespace Mono.WebAssembly.Build
 				sb.Append (" -l none");
 			} else {
 				var vals = I18n.Split (new[] { ',', ';', ' ', '\r', '\n', '\t' });
-				sb.AppendFormat (" -l {0}", string.Join(",", vals));
+				sb.AppendFormat ($" -l {string.Join (",", vals)}");
 			}
-
 			return sb.ToString ();
 		}
 	}
