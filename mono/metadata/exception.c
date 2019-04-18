@@ -1497,9 +1497,11 @@ mono_error_set_simple_file_not_found (MonoError *error, const char *file_name, g
 }
 
 void
-mono_error_set_argument_out_of_range (MonoError *error, const char *param_name)
+mono_error_set_argument_out_of_range (MonoError *error, const char *param_name, const char *msg_format, ...)
 {
-	mono_error_set_specific (error, MONO_ERROR_ARGUMENT_OUT_OF_RANGE, "MonoArgumentException:%s", param_name);
+	char *str;
+	SET_ERROR_MSG (str, msg_format);
+	mono_error_set_specific (error, MONO_ERROR_ARGUMENT_OUT_OF_RANGE, str);
 	if (param_name)
 		mono_error_set_first_argument (error, param_name);
 }
