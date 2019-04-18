@@ -3,9 +3,18 @@
   <!-- Include common build properties -->
 <!--  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" /> -->
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!-- Default values -->
+  <PropertyGroup Condition="'$(TargetsUnix)'=='' AND '$(TargetsOSX)'=='' AND '$(TargetsWindows)'==''">
+    <TargetsUnix>true</TargetsUnix>
+    <TargetsOSX>true</TargetsOSX>
+    <TargetsWindows>false</TargetsWindows>
+    <BuildArch>x64</BuildArch>
+    <OutputPath>bin/x64</OutputPath>
+  </PropertyGroup>
   <!-- Compilation options -->
   <PropertyGroup>
     <AvailablePlatforms>x64,x86,arm,armel,arm64</AvailablePlatforms>
+    <FeaturePortableTimer>true</FeaturePortableTimer>
     <Configuration Condition=" '$(Configuration)' == '' ">$(BuildType)</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">$(BuildArch)</Platform>
     <Platform Condition=" '$(Platform)' == 'armel' ">arm</Platform>
