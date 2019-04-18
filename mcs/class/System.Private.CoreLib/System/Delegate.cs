@@ -391,7 +391,7 @@ namespace System
 		{
 			Delegate d = obj as Delegate;
 
-			if (d == null || GetType () != obj.GetType ())
+			if (d == null || !InternalEqualTypes (this, obj))
 				return false;
 
 			// Do not compare method_ptr, since it can point to a trampoline
@@ -449,6 +449,11 @@ namespace System
 				}
 			}
 			this.data = delegate_data;
+		}
+
+		static bool InternalEqualTypes (object source, object value)
+		{
+			return source.GetType () == value.GetType ();
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
