@@ -71,9 +71,9 @@ namespace System
 			};
 		}
 
-		public object Target => GetTarget();
+		public object Target => GetTarget ();
 
-		internal virtual object GetTarget() => _target;
+		internal virtual object GetTarget () => _target;
 
 		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure)
 		{
@@ -391,7 +391,7 @@ namespace System
 		{
 			Delegate d = obj as Delegate;
 
-			if (d == null || !InternalEqualTypes(this, obj))
+			if (d == null || GetType () != obj.GetType ())
 				return false;
 
 			// Do not compare method_ptr, since it can point to a trampoline
@@ -449,11 +449,6 @@ namespace System
 				}
 			}
 			this.data = delegate_data;
-		}
-
-		static bool InternalEqualTypes (object source, object value)
-		{
-			return source.GetType () == value.GetType ();
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
