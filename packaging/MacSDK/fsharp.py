@@ -11,7 +11,8 @@ class FsharpPackage(GitHubTarballPackage):
         self.sources.extend(['patches/fsharp-IsPathRooted-type-inference.patch',
                              'patches/fsharp-portable-pdb.patch',
                              'patches/fsharp-noinstall.patch',
-                             'patches/fsharp-custom-prefix.patch'])
+                             'patches/fsharp-custom-prefix.patch',
+                             'patches/fsharp-msbuild-16-0.patch'])
 
     def prep(self):
         Package.prep(self)
