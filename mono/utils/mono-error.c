@@ -701,10 +701,6 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 	case MONO_ERROR_ARGUMENT_NULL:
 		exception = mono_exception_new_argument_null (error->first_argument, error_out);
 		break;
-	
-	case MONO_ERROR_ARGUMENT_OUT_OF_RANGE: 
-		exception = mono_exception_new_argument_out_of_range(error->first_argument, error->full_message, error_out); 
-		break;
 
 	case MONO_ERROR_NOT_VERIFIABLE:
 		if (error->exn.klass) {
