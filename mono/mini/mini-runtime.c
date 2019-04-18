@@ -700,12 +700,10 @@ register_opcode_emulation_info (int opcode, MonoJitICallInfo *info, const char *
 }
 
 // FIXME symbol can just be #func
-// The opcode emulation jit_icall_info does not need to be public, so instantiate
-// it here instead of in register-icall-def.h. A scope is not placed
-// here, to more likely catch duplicates.
-#define register_opcode_emulation(opcode, name, sig, func, symbol, no_wrapper) 	\
+#define register_opcode_emulation(opcode, name, sig, func, symbol, no_wrapper) 	do { \
 	g_assert (!strcmp (#func, symbol)); \
-	register_opcode_emulation_info ((opcode), (&mono_jit_icall_info.name), (#name), (sig), (gpointer)(func), (symbol), (no_wrapper)) \
+	register_opcode_emulation_info ((opcode), (&mono_jit_icall_info.name), (#name), (sig), (gpointer)(func), (symbol), (no_wrapper)); \
+} while(0)
 
 /*
  * For JIT icalls implemented in C.
