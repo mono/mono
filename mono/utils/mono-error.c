@@ -441,7 +441,7 @@ mono_error_set_not_supported (MonoError *oerror, const char *msg_format, ...)
 /**
  * mono_error_set_ambiguous_implementation:
  *
- * System.AmbiguousImplementationException
+ * System.Runtime.AmbiguousImplementationException
  */
 void
 mono_error_set_ambiguous_implementation (MonoError *oerror, const char *msg_format, ...)
