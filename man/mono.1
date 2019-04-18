@@ -267,6 +267,9 @@ Print the architecture the AOT in this copy of Mono targets and quit.
 Generates all required wrappers, so that it is possible to run --interpreter without
 any code generation at runtime.  This option only makes sense with \fBmscorlib.dll\fR.
 Embedders can set
+.TP
+.I depfile=[filename]
+Outputs a gcc style dependency file.
 
 .nf
 mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);
