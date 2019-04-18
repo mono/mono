@@ -14,11 +14,10 @@
 #ifndef __MONO_METADATA_REGISTER_JIT_ICALL_DEF_H__
 #define __MONO_METADATA_REGISTER_JIT_ICALL_DEF_H__
 
-// Changes to this file affect AOT file format.
 #define MONO_JIT_ICALLS \
 	\
-MONO_JIT_ICALL (mono_jit_icall_zero_is_reserved)	\
-/* generic_trampoline_* must be first, after zero */	\
+MONO_JIT_ICALL (ZeroIsReserved)	\
+	\
 /* These must be ordered like MonoTrampolineType. */	\
 MONO_JIT_ICALL (generic_trampoline_jit)	\
 MONO_JIT_ICALL (generic_trampoline_jump)	\
