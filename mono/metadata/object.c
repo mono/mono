@@ -5393,16 +5393,19 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 		return (MonoObject *)obj;
 	} else {
 		if (mono_class_is_nullable (method->klass)) {
-			MonoObject *nullable;
+			if (method->flags & METHOD_ATTRIBUTE_STATIC) {
+				obj = NULL;
+			} else {
+				MonoObject *nullable;
+				/* Convert the unboxed vtype into a Nullable structure */
+				nullable = mono_object_new_checked (mono_domain_get (), method->klass, error);
+				return_val_if_nok (error, NULL);
 
-			/* Convert the unboxed vtype into a Nullable structure */
-			nullable = mono_object_new_checked (mono_domain_get (), method->klass, error);
-			return_val_if_nok (error, NULL);
-
-			MonoObject *boxed = mono_value_box_checked (mono_domain_get (), m_class_get_cast_class (method->klass), obj, error);
-			return_val_if_nok (error, NULL);
-			mono_nullable_init ((guint8 *)mono_object_unbox (nullable), boxed, method->klass);
-			obj = mono_object_unbox (nullable);
+				MonoObject *boxed = mono_value_box_checked (mono_domain_get (), m_class_get_cast_class (method->klass), obj, error);
+				return_val_if_nok (error, NULL);
+				mono_nullable_init ((guint8 *)mono_object_unbox (nullable), boxed, method->klass);
+				obj = mono_object_unbox (nullable);
+			}
 		}
 
 		/* obj must be already unboxed if needed */
@@ -6791,6 +6794,8 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 	error_init (error);
 
 	g_assert (m_class_is_valuetype (klass));
+	g_assert (value != NULL);
+
 	if (mono_class_is_nullable (klass))
 		return mono_nullable_box_handle (value, klass, error);
 

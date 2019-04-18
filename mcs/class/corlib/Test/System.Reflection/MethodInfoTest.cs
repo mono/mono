@@ -658,6 +658,15 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (10, pi2.GetGetMethod ().Invoke (10, null));
 		}
 
+		[Test]
+		public void NullableTestsStatic ()
+		{
+			Nullable<Double> val = new Nullable<Double>(new Double());
+			MethodInfo mi = typeof (Nullable<Double>).GetMethod ("op_Implicit");
+			object obj = val;
+			mi.Invoke(null, new[] { obj });
+		}
+
 		public static void foo_generic<T> ()
 		{
 		}
