@@ -97,7 +97,39 @@ namespace TestSuite
             return new Float64Array(sab);
         }
 
+        private static int FunctionSumCall (int a, int b) 
+        {
+            var sum = new Function("a", "b", "return a + b");
+            return (int)sum.Call(null, a, b);
+        }
 
+        private static double FunctionSumCallD (double a, double b) 
+        {
+            var sum = new Function("a", "b", "return a + b");
+            return Math.Round((double)sum.Call(null, a, b), 2);
+        }
+        private static int FunctionSumApply (int a, int b) 
+        {
+            var sum = new Function("a", "b", "return a + b");
+            return (int)sum.Apply(null, new object[] { a, b });
+        }
+
+        private static double FunctionSumApplyD (double a, double b) 
+        {
+            var sum = new Function("a", "b", "return a + b");
+            return Math.Round((double)sum.Apply(null, new object[] { a, b }), 2);
+        }
+
+        private static object FunctionMathMin (WebAssembly.Core.Array array) 
+        {
+            object[] parms = new object[array.Length];
+            for (int x = 0; x < array.Length; x++)
+                parms[x] = array[x];
+
+            var math = (JSObject)Runtime.GetGlobalObject("Math");
+            var min = (Function)math.GetObjectProperty("min");
+            return min.Apply(null, parms);
+        }
 
     }
 }

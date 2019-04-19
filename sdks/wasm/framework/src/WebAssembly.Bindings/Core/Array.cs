@@ -11,6 +11,13 @@ namespace WebAssembly.Core {
 		{ }
 
 		/// <summary>
+		/// Initializes a new instance of the <see cref="T:WebAssembly.Core.Array"/> class.
+		/// </summary>
+		/// <param name="js_handle">Js handle.</param>
+		internal Array (IntPtr js_handle) : base (js_handle)
+		{ }		
+
+		/// <summary>
 		/// Push the specified elements.
 		/// </summary>
 		/// <returns>The new length of the Array push was called on</returns>
