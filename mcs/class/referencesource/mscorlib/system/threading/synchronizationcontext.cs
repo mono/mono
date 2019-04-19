@@ -293,6 +293,11 @@ namespace System.Threading
                 context = AndroidPlatform.GetDefaultSyncContext ();
 #endif
 
+#if UNITY_AOT
+            if (context == null)
+                context = OSSpecificSynchronizationContext.Get();
+#endif
+
             return context;
         }
 
@@ -371,4 +376,86 @@ namespace System.Threading
         }
 #endif
     }
+
+#if UNITY_AOT
+    class OSSpecificSynchronizationContext : SynchronizationContext
+    {
+        object m_OSSynchronizationContext;
+        private static readonly ConditionalWeakTable<object, OSSpecificSynchronizationContext> s_ContextCache = new ConditionalWeakTable<object, OSSpecificSynchronizationContext>();
+
+        private OSSpecificSynchronizationContext(object osContext)
+        {
+            m_OSSynchronizationContext = osContext;
+        }
+
+        public static OSSpecificSynchronizationContext Get()
+        {
+            var osContext = GetOSContext();
+            if (osContext == null)
+                return null;
+
+            return s_ContextCache.GetValue(osContext, _osContext => new OSSpecificSynchronizationContext(_osContext));
+        }
+
+        public override SynchronizationContext CreateCopy()
+        {
+            return new OSSpecificSynchronizationContext(m_OSSynchronizationContext);
+        }
+
+        public override void Send(SendOrPostCallback d, object state)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Post(SendOrPostCallback d, object state)
+        {
+            var callback = Marshal.GetFunctionPointerForDelegate((InvocationEntryDelegate)InvocationEntry);
+            var invocationContext = new InvocationContext(d, state);
+            var invocationContextHandle = GCHandle.Alloc(invocationContext);
+            PostInternal(m_OSSynchronizationContext, callback, GCHandle.ToIntPtr(invocationContextHandle));
+        }
+
+        private delegate void InvocationEntryDelegate(IntPtr arg);
+
+        [MonoPInvokeCallback(typeof(InvocationEntryDelegate))]
+        private static void InvocationEntry(IntPtr arg)
+        {
+            var invocationContextHandle = GCHandle.FromIntPtr(arg);
+            var invocationContext = (InvocationContext)invocationContextHandle.Target;
+            invocationContextHandle.Free();
+            invocationContext.Invoke();
+        }
+
+		[AttributeUsage (AttributeTargets.Method)]
+		sealed class MonoPInvokeCallbackAttribute : Attribute
+		{
+			public MonoPInvokeCallbackAttribute(Type t)
+            {
+			}
+		}
+
+        class InvocationContext
+        {
+            private SendOrPostCallback m_Delegate;
+            private object m_State;
+
+            public InvocationContext(SendOrPostCallback d, object state)
+            {
+                m_Delegate = d;
+                m_State = state;
+            }
+
+            public void Invoke()
+            {
+                m_Delegate(m_State);
+            }
+        }
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private extern static object GetOSContext();
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private extern static void PostInternal(object osSynchronizationContext, IntPtr callback, IntPtr arg);
+    }
+#endif
 }
