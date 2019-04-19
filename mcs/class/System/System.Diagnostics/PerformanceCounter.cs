@@ -126,8 +126,22 @@ namespace System.Diagnostics {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern IntPtr GetImpl (string category, string counter,
-				string instance, out PerformanceCounterType ctype, out bool custom);
+		static private unsafe extern IntPtr GetImpl_icall (char *category, int category_length,
+			char *counter, int counter_length, char *instance, int instance_length,
+			out PerformanceCounterType ctype, out bool custom);
+
+		static unsafe IntPtr GetImpl (string category, string counter,
+				string instance, out PerformanceCounterType ctype, out bool custom)
+		{
+			fixed (char* fixed_category = category,
+				     fixed_counter = counter,
+				     fixed_instance = instance) {
+				return GetImpl_icall (fixed_category, category?.Length ?? 0,
+					fixed_counter, counter?.Length ?? 0,
+					fixed_instance, instance?.Length ?? 0,
+					out ctype, out custom);
+			}
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern bool GetSample (IntPtr impl, bool only_value, out CounterSample sample);
