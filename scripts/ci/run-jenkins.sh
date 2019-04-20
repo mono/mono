@@ -374,6 +374,7 @@ elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];             then ${MONO_REPO_ROOT}/sc
 elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/scripts/ci/run-test-mac-sdk.sh;
 elif [[ ${CI_TAGS} == *'helix-tests'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-helix.sh;
 elif [[ ${CI_TAGS} == *'make-install'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-make-install.sh;
+elif [[ ${CI_TAGS} == *'compiler-server'* ]];          then ${MONO_REPO_ROOT}/scripts/ci/run-test-compiler-server.sh;
 elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then echo "Skipping tests.";
 else make check-ci;
 fi
