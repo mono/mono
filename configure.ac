@@ -54,7 +54,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # A guid works and is encouraged.
 #
 # Generate it with uuidgen. For example:
-# perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
+# perx -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
 #
 # There is no ordering of corlib versions, no old or new,
 # an exact match is required between corlib and runtime.
