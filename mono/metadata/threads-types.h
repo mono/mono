@@ -267,4 +267,10 @@ mono_thread_internal_describe (MonoInternalThread *internal, GString *str);
 gboolean
 mono_thread_internal_is_current (MonoInternalThread *internal);
 
+MonoObjectHandle
+ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext ();
+
+void
+ves_icall_System_Threading_OSSpecificSynchronizationContext_PostInternal (gpointer callback, gpointer arg);
+
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

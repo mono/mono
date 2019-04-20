@@ -8751,3 +8751,15 @@ mono_register_jit_icall (gconstpointer func, const char *name, MonoMethodSignatu
 	return mono_register_jit_icall_full (func, name, sig, no_wrapper, NULL);
 }
 
+MonoObjectHandle
+ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext ()
+{
+	return NULL_HANDLE;
+}
+
+void
+ves_icall_System_Threading_OSSpecificSynchronizationContext_PostInternal (gpointer callback, gpointer arg)
+{
+	/* This isn't actually reachable since ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext always returns NULL */
+	mono_set_pending_exception (mono_get_exception_not_implemented ("System.Threading.InteropServices.OSSpecificSynchronizationContext.PostInternal internal call is not implemented."));
+}
