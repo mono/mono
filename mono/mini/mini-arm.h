@@ -415,7 +415,7 @@ int
 mono_arm_i8_align (void);
 
 GSList*
-mono_arm_get_exception_trampolines (gboolean aot);
+mono_arm_get_exception_trampolines (gboolean aot, gboolean reg);
 
 guint8*
 mono_arm_get_thumb_plt_entry (guint8 *code);
