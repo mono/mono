@@ -314,6 +314,21 @@ interp_add_ins (TransformData *td, guint16 opcode)
 	return interp_add_ins_explicit (td, opcode, mono_interp_oplen [opcode]);
 }
 
+static void
+interp_remove_ins (TransformData *td, InterpInst *ins)
+{
+	if (ins->prev) {
+		ins->prev->next = ins->next;
+	} else {
+		td->first_ins = ins->next;
+	}
+	if (ins->next) {
+		ins->next->prev = ins->prev;
+	} else {
+		td->last_ins =  ins->prev;
+	}
+}
+
 #define CHECK_STACK(td, n) \
 	do { \
 		int stack_size = (td)->sp - (td)->stack; \
@@ -923,6 +938,28 @@ emit_store_value_as_local (TransformData *td, MonoType *src)
 	PUSH_TYPE (td, STACK_TYPE_VT, NULL);
 }
 
+// Returns whether we can optimize away the instructions starting at start.
+// If any instructions are part of a new basic block, we can't remove them.
+static gboolean
+interp_is_bb_start (TransformData *td, InterpInst *start, InterpInst *end)
+{
+	InterpInst *ins = start;
+	while (ins != end) {
+		if (ins->il_offset != -1) {
+			if (td->is_bb_start [ins->il_offset])
+				return TRUE;
+		}
+		ins = ins->next;
+	}
+	return FALSE;
+}
+
+static gboolean
+interp_ins_is_ldc (InterpInst *ins)
+{
+	return ins->opcode >= MINT_LDC_I4_M1 && ins->opcode <= MINT_LDC_I8;
+}
+
 /* Return TRUE if call transformation is finished */
 static gboolean
 interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMethodSignature *csignature, gboolean readonly, int *op)
@@ -1294,6 +1331,29 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 		else if (!strcmp (tm, "GetType"))
 			*op = MINT_INTRINS_GET_TYPE;
 #endif
+	} else if (in_corlib && target_method->klass == mono_defaults.enum_class && !strcmp (tm, "HasFlag")) {
+		if (td->last_ins && td->last_ins->opcode == MINT_BOX &&
+				td->last_ins->prev && interp_ins_is_ldc (td->last_ins->prev) &&
+				td->last_ins->prev->prev && td->last_ins->prev->prev->opcode == MINT_BOX &&
+				td->sp [-2].klass == td->sp [-1].klass &&
+				!interp_is_bb_start (td, td->last_ins->prev->prev, NULL) &&
+				!td->is_bb_start [td->in_start - td->il_code]) {
+			// csc pattern : box, ldc, box, call HasFlag
+			g_assert (m_class_is_enumtype (td->sp [-2].klass));
+			MonoType *base_type = mono_type_get_underlying_type (m_class_get_byval_arg (td->sp [-2].klass));
+			MonoClass *base_klass = mono_class_from_mono_type_internal (base_type);
+
+			// Remove the boxing of valuetypes and intrinsify HasFlag
+			interp_remove_ins (td, td->last_ins->prev->prev);
+			interp_remove_ins (td, td->last_ins);
+
+			interp_add_ins (td, MINT_INTRINS_ENUM_HASFLAG);
+			td->last_ins->data [0] = get_data_item_index (td, base_klass);
+			td->sp -= 2;
+			PUSH_SIMPLE_TYPE (td, STACK_TYPE_I4);
+			td->ip += 5;
+			return TRUE;
+		}
 	}
 
 	return FALSE;
