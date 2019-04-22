@@ -699,9 +699,9 @@ register_opcode_emulation_info (int opcode, MonoJitICallInfo *info, const char *
 #endif
 }
 
-// FIXME symbol can just be #func
+// FIXME symbol can just be #func, except for mono_fmod, unless mono_fmod gains an instruction.
 #define register_opcode_emulation(opcode, name, sig, func, symbol, no_wrapper) 	do { \
-	g_assert (!strcmp (#func, symbol)); \
+	g_assert (func == mono_fmod || !strcmp (#func, symbol)); \
 	register_opcode_emulation_info ((opcode), (&mono_jit_icall_info.name), (#name), (sig), (gpointer)(func), (symbol), (no_wrapper)); \
 } while(0)
 
@@ -4383,8 +4383,7 @@ mini_init (const char *filename, const char *runtime_version)
 
 #ifdef MONO_ARCH_EMULATE_FREM
 // Wrapper to avoid taking address of overloaded function.
-G_EXTERN_C
-double
+static double
 mono_fmod (double a, double b)
 {
 	return fmod (a, b);
