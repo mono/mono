@@ -850,7 +850,7 @@ public class DSACryptoServiceProviderTest {
 		catch (CryptographicException ce) {
 			// only root can create the required directory (if inexistant)
 			// afterward anyone can use (read from) it
-			if (!(ce.InnerException is UnauthorizedAccessException))
+			if (!(ce.InnerException is UnauthorizedAccessException) && !(ce.InnerException is IOException))
 				throw;
 		}
 		catch (UnauthorizedAccessException) {
