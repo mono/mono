@@ -1335,11 +1335,17 @@ find_category (const gunichar2 *category, int category_length)
 }
 
 void*
-mono_perfcounter_get_impl (const gunichar2 *category, gint32 category_length,
-		const gunichar2 *counter, gint32 counter_length,
-		const gunichar2 *instance, gint32 instance_length,
+mono_perfcounter_get_impl (const gunichar2 *category,
+		const gunichar2 *counter,
+		const gunichar2 *instance,
 		gint32 *type, MonoBoolean *custom, MonoError *error)
 {
+	// FIXME These lengths should come from managed, but experimenting
+	// due to PowerPC crash.
+	gint32 category_length = category ? g_utf16_len (category) : 0;
+	gint32 counter_length = counter ? g_utf16_len (counter) : 0;
+	gint32 instance_length = instance ? g_utf16_len (instance) : 0;
+
 	const CategoryDesc *cdesc;
 	void *result = NULL;
 	cdesc = find_category (category, category_length);

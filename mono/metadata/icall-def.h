@@ -277,8 +277,7 @@ ICALL(FILEV_1, "GetVersionInfo_internal(string)", ves_icall_System_Diagnostics_F
 
 ICALL_TYPE(PERFCTR, "System.Diagnostics.PerformanceCounter", PERFCTR_1)
 NOHANDLES(ICALL(PERFCTR_1, "FreeData", mono_perfcounter_free_data))
-HANDLES(PERFCTR_2, "GetImpl_icall", mono_perfcounter_get_impl, gpointer, 8,
-	(const_gunichar2_ptr, gint32, const_gunichar2_ptr, gint32, const_gunichar2_ptr, gint32, gint32_ref, MonoBoolean_ref))
+HANDLES(PERFCTR_2, "GetImpl_icall", mono_perfcounter_get_impl, gpointer, 5, (const_gunichar2_ptr, const_gunichar2_ptr, const_gunichar2_ptr, gint32_ref, MonoBoolean_ref))
 NOHANDLES(ICALL(PERFCTR_3, "GetSample", mono_perfcounter_get_sample))
 NOHANDLES(ICALL(PERFCTR_4, "UpdateValue", mono_perfcounter_update_value))
 
