@@ -699,11 +699,23 @@ register_opcode_emulation_info (int opcode, MonoJitICallInfo *info, const char *
 #endif
 }
 
+#ifdef MONO_ARCH_EMULATE_FREM
+
 // FIXME symbol can just be #func, except for mono_fmod, unless mono_fmod gains an instruction.
 #define register_opcode_emulation(opcode, name, sig, func, symbol, no_wrapper) 	do { \
 	g_assert (func == mono_fmod || !strcmp (#func, symbol)); \
 	register_opcode_emulation_info ((opcode), (&mono_jit_icall_info.name), (#name), (sig), (gpointer)(func), (symbol), (no_wrapper)); \
 } while(0)
+
+#else
+
+// FIXME symbol can just be #func, except for mono_fmod, unless mono_fmod gains an instruction.
+#define register_opcode_emulation(opcode, name, sig, func, symbol, no_wrapper) 	do { \
+	g_assert (!strcmp (#func, symbol)); \
+	register_opcode_emulation_info ((opcode), (&mono_jit_icall_info.name), (#name), (sig), (gpointer)(func), (symbol), (no_wrapper)); \
+} while(0)
+
+#endif
 
 /*
  * For JIT icalls implemented in C.
