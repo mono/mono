@@ -1783,7 +1783,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 				mono_call_inst_add_outarg_reg (cfg, call, dreg, ainfo->reg + i, FALSE);
 				soffset += sizeof (target_mgreg_t);
 			}
-		if (ovf_size != 0)
+		if (ovf_size != 0) // just a comment because cannot CI otherwise
 			mini_emit_memcpy (cfg, ppc_r1, doffset + soffset, src->dreg, soffset, ovf_size * sizeof (target_mgreg_t), TARGET_SIZEOF_VOID_P);
 	} else if (ainfo->regtype == RegTypeFPStructByVal) {
 		soffset = 0;
