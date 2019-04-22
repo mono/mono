@@ -293,6 +293,9 @@ HANDLES(ICALL(ENV_18, "internalGetGacPath", ves_icall_System_Environment_GetGacP
 HANDLES(ICALL(ENV_19, "internalGetHome", ves_icall_System_Environment_InternalGetHome))
 ICALL(ENV_20, "set_ExitCode", mono_environment_exitcode_set)
 
+ICALL_TYPE(EXCEPTION, "System.Exception", EXCEPTION_1)
+HANDLES(ICALL(EXCEPTION_1, "ReportUnhandledException", ves_icall_System_Exception_ReportUnhandledException))
+
 ICALL_TYPE(GC, "System.GC", GC_0)
 ICALL(GC_0, "GetCollectionCount", mono_gc_collection_count)
 ICALL(GC_0a, "GetGeneration", mono_gc_get_generation)

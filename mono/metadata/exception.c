@@ -1183,3 +1183,10 @@ mono_exception_from_name_four_strings_checked (MonoImage *image, const char *nam
 
 	return create_exception_four_strings (klass, a1, a2, a3, a4, error);
 }
+
+void
+ves_icall_System_Exception_ReportUnhandledException(MonoObject *exc)
+{
+	mono_unhandled_exception (exc);
+	mono_invoke_unhandled_exception_hook (exc);
+}

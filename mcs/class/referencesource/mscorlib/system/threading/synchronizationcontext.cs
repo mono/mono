@@ -420,10 +420,17 @@ namespace System.Threading
         [MonoPInvokeCallback(typeof(InvocationEntryDelegate))]
         private static void InvocationEntry(IntPtr arg)
         {
-            var invocationContextHandle = GCHandle.FromIntPtr(arg);
-            var invocationContext = (InvocationContext)invocationContextHandle.Target;
-            invocationContextHandle.Free();
-            invocationContext.Invoke();
+			try
+			{
+				var invocationContextHandle = GCHandle.FromIntPtr(arg);
+				var invocationContext = (InvocationContext)invocationContextHandle.Target;
+				invocationContextHandle.Free();
+				invocationContext.Invoke();
+			}
+			catch (Exception e)
+			{
+				Exception.ReportUnhandledException(e);
+			}
         }
 
 		[AttributeUsage (AttributeTargets.Method)]
