@@ -982,6 +982,27 @@ interp_ins_is_ldc (InterpInst *ins)
 	return ins->opcode >= MINT_LDC_I4_M1 && ins->opcode <= MINT_LDC_I8;
 }
 
+static gint32
+interp_ldc_i4_get_const (InterpInst *ins)
+{
+	switch (ins->opcode) {
+		case MINT_LDC_I4_M1: return -1;
+		case MINT_LDC_I4_0: return 0;
+		case MINT_LDC_I4_1: return 1;
+		case MINT_LDC_I4_2: return 2;
+		case MINT_LDC_I4_3: return 3;
+		case MINT_LDC_I4_4: return 4;
+		case MINT_LDC_I4_5: return 5;
+		case MINT_LDC_I4_6: return 6;
+		case MINT_LDC_I4_7: return 7;
+		case MINT_LDC_I4_8: return 8;
+		case MINT_LDC_I4_S: return (gint32)(gint8)ins->data [0];
+		case MINT_LDC_I4: return READ32 (&ins->data [0]);
+		default:
+			g_assert_not_reached ();
+	}
+}
+
 static int
 interp_get_ldind_for_mt (int mt)
 {
@@ -3748,9 +3769,18 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			case STACK_TYPE_R8:
 				interp_add_ins (td, MINT_CONV_I8_R8);
 				break;
-			case STACK_TYPE_I4:
-				interp_add_ins (td, MINT_CONV_I8_I4);
+			case STACK_TYPE_I4: {
+				if (interp_ins_is_ldc (td->last_ins) && !td->is_bb_start [in_offset]) {
+					gint64 ct = interp_ldc_i4_get_const (td->last_ins);
+					interp_remove_ins (td, td->last_ins);
+
+					interp_add_ins (td, MINT_LDC_I8);
+					WRITE64_INS (td->last_ins, 0, &ct);
+				} else {
+					interp_add_ins (td, MINT_CONV_I8_I4);
+				}
 				break;
+			}
 			case STACK_TYPE_I8:
 				break;
 			case STACK_TYPE_MP:
@@ -3809,7 +3839,15 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			CHECK_STACK (td, 1);
 			switch (td->sp [-1].type) {
 			case STACK_TYPE_I4:
-				interp_add_ins (td, MINT_CONV_U8_I4);
+				if (interp_ins_is_ldc (td->last_ins) && !td->is_bb_start [in_offset]) {
+					gint64 ct = (guint32)interp_ldc_i4_get_const (td->last_ins);
+					interp_remove_ins (td, td->last_ins);
+
+					interp_add_ins (td, MINT_LDC_I8);
+					WRITE64_INS (td->last_ins, 0, &ct);
+				} else {
+					interp_add_ins (td, MINT_CONV_U8_I4);
+				}
 				break;
 			case STACK_TYPE_I8:
 				break;
