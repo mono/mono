@@ -43,11 +43,15 @@ build-$(1)-bcl: build-bcl
 build-custom-$(1)-bcl:
 	$$(MAKE) -C bcl -C runtime all-mcs build_profiles="$(2)"
 	$$(if $(3),$$(MAKE) -C bcl -C runtime test xunit-test test_profiles="$(3)")
+	$$(MAKE) -C bcl -C mcs/tools/mono-api-html
+	$$(MAKE) -C bcl -C mcs/tools/corcompare
 
 .PHONY: package-$(1)-bcl
 package-$(1)-bcl:
 	$$(foreach profile,$(2), \
 		cp -R $$(TOP)/mcs/class/lib/$$(profile)/* $$(TOP)/sdks/out/$(1)-bcl/$$(profile);)
+	cp $$(TOP)/mcs/tools/mono-api-html/mono-api-html.exe $$(TOP)/sdks/out/$(1)/
+	cp $$(TOP)/mcs/tools/corcompare/mono-api-info.exe $$(TOP)/sdks/out/$(1)/
 
 .PHONY: clean-$(1)-bcl
 clean-$(1)-bcl: clean-bcl
