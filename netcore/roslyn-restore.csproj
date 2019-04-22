@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp30</TargetFramework>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <SkipImportRoslynProps>true</SkipImportRoslynProps>
+  </PropertyGroup>
+  <Import Project="$(MSBuildThisFileDirectory)roslyn.version.props" />
+  <ItemGroup>
+    <PackageReference Include="$(RoslynPackageName)" Version="$(RoslynVersion)" />
+  </ItemGroup>
+</Project>

@@ -40,8 +40,11 @@ $(NETCORESDK_FILE):
 update-corefx: corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION)
 
 corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION): corefx-restore.csproj
-	dotnet build --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/
+	dotnet build corefx-restore.csproj --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/
 	touch $@
+
+update-roslyn: roslyn-restore.csproj roslyn.version.props
+	dotnet restore roslyn-restore.csproj --packages roslyn/packages -p:OutputPath=roslyn/restore/
 
 update-corefx-tests: corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)
 
@@ -72,13 +75,13 @@ link-mono:
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
 
-prepare: $(NETCORESDK_FILE) update-corefx link-mono
+prepare: $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
 nupkg:
 	nuget pack runtime.nuspec -properties VERSION=$(VERSION)\;RID=$(RID)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)
 
 clean:
-	rm -rf sdk shared host dotnet tests obj corefx LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
+	rm -rf sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
 
 #
 # Running tests:

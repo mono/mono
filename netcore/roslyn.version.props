@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <RoslynVersion>3.1.0-beta3-19213-02</RoslynVersion>
+    <RoslynPackageName>Microsoft.Net.Compilers.Toolset</RoslynPackageName>
+    <RoslynPackageDir>$(MSBuildThisFileDirectory)roslyn/packages/$(RoslynPackageName.ToLower())/$(RoslynVersion)/</RoslynPackageDir>
+    <RoslynPropsFile>$(RoslynPackageDir)build/$(RoslynPackageName).props</RoslynPropsFile>
+  </PropertyGroup>
+
+  <!-- Use Roslyn Compilers to build -->
+  <Import Project="$(RoslynPropsFile)" Condition="'$(SkipImportRoslynProps)' != 'true'" />
+</Project>
