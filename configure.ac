@@ -6419,7 +6419,6 @@ acceptance-tests/Makefile
 llvm/Makefile
 scripts/mono-find-provides
 scripts/mono-find-requires
-mcs/class/System.Private.CoreLib/Makefile
 mk/Makefile
 mono/Makefile
 mono/btls/Makefile
