@@ -669,10 +669,8 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 		/* TypedReference and RuntimeArgumentHandle are byreflike by
 		 * definition. Otherwise, look for IsByRefLikeAttribute.
 		 */
-		if (mono_is_corlib_image (image) &&
-		    ((m_class_get_byval_arg (klass)->type == MONO_TYPE_TYPEDBYREF) ||
-		     (!strcmp (m_class_get_name_space (klass), "System") &&
-		      !strcmp (m_class_get_name (klass), "RuntimeArgumentHandle"))))
+		if (mono_is_corlib_image (image) ||
+		     !strcmp (m_class_get_name_space (klass), "System"))
 			klass->is_byreflike = 1; 
 		else if (class_has_isbyreflike_attribute (klass))
 			klass->is_byreflike = 1;
