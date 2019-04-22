@@ -4,6 +4,12 @@ source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
 helix_send_build_start_event "build/tests/$MONO_HELIX_TYPE/"
 ${TESTCMD} --label=compile-runtime-tests --timeout=20m --fatal make -w -C mono -j ${CI_CPU_COUNT} test
+# workaround some races in the tests build
+for dir in mcs/tools/nunit-lite mcs/class/Microsoft.Build*; do
+    ${TESTCMD} --label=compile-$(basename $dir) --timeout=5m make -w -C $dir test xunit-test
+    ${TESTCMD} --label=compile-$(basename $dir)-xbuild_12 --timeout=5m make -w -C $dir test xunit-test PROFILE=xbuild_12
+    ${TESTCMD} --label=compile-$(basename $dir)-xbuild_14 --timeout=5m make -w -C $dir test xunit-test PROFILE=xbuild_14
+done
 ${TESTCMD} --label=compile-bcl-tests --timeout=40m --fatal make -w -C runtime -j ${CI_CPU_COUNT} test xunit-test
 ${TESTCMD} --label=create-test-payload --timeout=5m --fatal make -w test-bundle TEST_BUNDLE_PATH="$MONO_REPO_ROOT/mono-test-bundle"
 helix_send_build_done_event "build/tests/$MONO_HELIX_TYPE/" 0

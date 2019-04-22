@@ -41,13 +41,15 @@ class IcallClass {
 
 class Pinvoke
 {
-	public Pinvoke (string entry_point, string module) {
+	public Pinvoke (string entry_point, string module, MethodReference method) {
 		EntryPoint = entry_point;
 		Module = module;
+		Method = method;
 	}
 
 	public string EntryPoint;
 	public string Module;
+	public MethodReference Method;
 }
 
 public class WasmTuner
@@ -116,6 +118,25 @@ public class WasmTuner
 		}
 	}
 
+	static string GenPinvokeDecl (Pinvoke pinvoke) {
+		var sb = new StringBuilder ();
+		var method = pinvoke.Method;
+		if (method.ReturnType.Name != "Void")
+			sb.Append ("int");
+		else
+			sb.Append ("void");
+		sb.Append ($" {pinvoke.EntryPoint} (");
+		int pindex = 0;
+		foreach (var p in method.Parameters) {
+			if (pindex > 0)
+				sb.Append (",");
+			sb.Append ("int");
+			pindex ++;
+		}
+		sb.Append (");");
+		return sb.ToString ();
+	}
+
 	int GenPinvokeTable (String[] args) {
 		var modules = new Dictionary<string, string> ();
 		foreach (var module in args [1].Split (','))
@@ -142,7 +163,7 @@ public class WasmTuner
 
 		foreach (var pinvoke in pinvokes) {
 			if (modules.ContainsKey (pinvoke.Module))
-				Console.WriteLine ($"void {pinvoke.EntryPoint} ();");
+				Console.WriteLine (GenPinvokeDecl (pinvoke));
 		}
 
 		foreach (var module in modules.Keys) {
@@ -175,7 +196,7 @@ public class WasmTuner
 			var info = method.PInvokeInfo;
 			if (info == null)
 				continue;
-			pinvokes.Add (new Pinvoke (info.EntryPoint, info.Module.Name));
+			pinvokes.Add (new Pinvoke (info.EntryPoint, info.Module.Name, method));
 		}
 	}
 

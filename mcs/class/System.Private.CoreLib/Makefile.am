@@ -6,7 +6,7 @@ dirs := $(dir $(wildcard */*))
 files := $(wildcard */*.cs)
 
 all-local:
-	dotnet build @CORETARGETS@ -p:BuildArch=@COREARCH@ -p:OutputPath=bin/@COREARCH@ -p:FeaturePortableTimer=true System.Private.CoreLib.csproj
+	dotnet build @CORETARGETS@ -p:BuildArch=@COREARCH@ -p:OutputPath=bin/@COREARCH@ System.Private.CoreLib.csproj
 
 dist-recursive:
 	$(mkdir_p) $(distdir)

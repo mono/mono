@@ -289,6 +289,43 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       assert.equal(Object.prototype.toString.call(arr), "[object Float64Array]", "TypedArray is not of type Float64Array" )
     }, DEFAULT_TIMEOUT);  
     
+    it('BindingTestSuite: Should return Sum of two int values from Function.Call.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
 
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:FunctionSumCall", [5,3]);
+      assert.equal(result, 8, "result does not match value 8.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return Sum of two double values from Function.Call.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:FunctionSumCallD", [2,1.14]);
+      assert.equal(result, 3.14, "result does not match value 3.14.");
+    }, DEFAULT_TIMEOUT);  
     
+    it('BindingTestSuite: Should return Sum of two int values from Function.Apply.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:FunctionSumApply", [5,3]);
+      assert.equal(result, 8, "result does not match value 8.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return Sum of two double values from Function.Apply.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:FunctionSumApplyD", [2,1.14]);
+      assert.equal(result, 3.14, "result does not match value 3.14.");
+    }, DEFAULT_TIMEOUT);  
+
+    it('BindingTestSuite: Should return lowest-valued number passed to JavaScript Math.min.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:FunctionMathMin", [[5, 6, 2, 3, 7]]);
+      assert.equal(result, 2, "result does not match value 2.");
+    }, DEFAULT_TIMEOUT);  
   });

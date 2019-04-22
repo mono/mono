@@ -56,10 +56,13 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # Generate it with uuidgen. For example:
 # perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
 #
+# There is no ordering of corlib versions, no old or new,
+# an exact match is required between corlib and runtime.
+#
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=48B64EB1-FC8C-4707-A363-84A1FE488DCA
+MONO_CORLIB_VERSION=8678BDEC-A621-42D3-B0F5-862BA3A90DC8
 
 #
 # Put a quoted #define in config.h.
@@ -532,17 +535,21 @@ AM_CONDITIONAL(HOST_WASM, test x$platform_wasm = xyes)
 
 if test -z "$HOST_DARWIN_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.dylib
+PLATFORM_AOT_PREFIX=lib
 fi
 
 if test -z "$HOST_LINUX_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.so
+PLATFORM_AOT_PREFIX=lib
 fi
 
 if test -z "$HOST_WIN32_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.dll
+PLATFORM_AOT_PREFIX=
 fi
 
 AC_SUBST(PLATFORM_AOT_SUFFIX)
+AC_SUBST(PLATFORM_AOT_PREFIX)
 
 if test -z "$HOST_WASM_TRUE"; then :
 AC_DEFINE(HAVE_UTIME)
