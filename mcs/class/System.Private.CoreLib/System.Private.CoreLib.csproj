@@ -294,7 +294,7 @@
   <Import Project="..\..\..\netcore\System.Private.CoreLib\shared\System.Private.CoreLib.Shared.projitems" />
 
   <!-- Use Roslyn Compilers to build -->
-  <Import Project="..\..\..\netcore\roslyn\packages\microsoft.net.compilers.toolset\$(RoslynVersion)\build\Microsoft.Net.Compilers.Toolset.props" />
+  <Import Project="$(RoslynPropsFile)" />
 
 <!--  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" /> -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
