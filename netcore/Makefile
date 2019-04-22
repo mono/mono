@@ -10,6 +10,8 @@ NETCORETESTS_VERSION := 4.6.0-preview5.19215.16
 # Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L14
 NETCOREAPP_VERSION := 3.0.0-preview5-27609-17
 
+include roslyn.make
+
 ifeq ($(HOST_PLATFORM),win32)
 NETCORESDK_EXT = zip
 UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
@@ -43,8 +45,8 @@ corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION): corefx-restore.csproj
 	dotnet build corefx-restore.csproj --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/
 	touch $@
 
-update-roslyn: roslyn-restore.csproj roslyn.version.props
-	dotnet restore roslyn-restore.csproj --packages roslyn/packages -p:OutputPath=roslyn/restore/
+update-roslyn: roslyn-restore.csproj roslyn.make
+	dotnet restore roslyn-restore.csproj -p:RoslynVersion=$(ROSLYN_VERSION) --packages roslyn/packages -p:OutputPath=roslyn/restore/
 
 update-corefx-tests: corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)
 

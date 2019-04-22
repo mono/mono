@@ -7,8 +7,7 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <SkipImportRoslynProps>true</SkipImportRoslynProps>
   </PropertyGroup>
-  <Import Project="$(MSBuildThisFileDirectory)roslyn.version.props" />
   <ItemGroup>
-    <PackageReference Include="$(RoslynPackageName)" Version="$(RoslynVersion)" />
+    <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="$(RoslynVersion)" />
   </ItemGroup>
 </Project>
