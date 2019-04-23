@@ -4,7 +4,7 @@ pool:
 steps:
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
   - script: |
-      sed -i 's#git://github.com/#https://dnceng@dev.azure.com/dnceng/internal/_git/#; s#\.git$##; s#\(.*\)/\(.*\)#\1-\2#' .gitmodules
+      sed -i 's#git://github.com/#https://dnceng@dev.azure.com/dnceng/internal/_git/#; s#\.git$##; s#\(url = .*\)/\(.*\)#\1-\2#' .gitmodules
     displayName: 'rewrite .gitmodules'
 
 - script: |
