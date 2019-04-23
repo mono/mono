@@ -103,27 +103,44 @@ xtest-%: prepare update-corefx-tests
 		$(shell if [ -a $(CURDIR)/excludes-$*.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp; fi;) \
 		$(FIXTURE) || true
 
-# these tests won't be included in `xtestall` (some of them crash runtime, some hang)
+# these tests won't be included in `xtestall`
 EXCLUDED_COREFX_TESTS = \
-	System.Diagnostics.Tracing.Tests \
-	System.Net.Http.Functional.Tests \
-	System.Net.HttpListener.Tests \
-	System.Net.NameResolution.Functional.Tests \
-	System.Net.Sockets.Tests
+	System.Utf8String.Experimental.Tests \
+	System.ComponentModel.Composition.Registration.Tests
 
-# Tests suites which pass
-PASSING_COREFX_TESTS = \
-	System.Collections.Immutable.Tests \
-	System.Reflection.Extensions.Tests \
-	System.Runtime.CompilerServices.Unsafe.Tests \
-	System.Runtime.CompilerServices.VisualC.Tests \
-	System.Runtime.InteropServices.RuntimeInformation.Tests
+# Tests suites which do pass yet
+EXCLUDED_COREFX_TESTS_NOT_PASSING = \
+	$(EXCLUDED_COREFX_TESTS) \
+	System.ComponentModel.Composition.Tests \
+	System.Composition.TypedParts.Tests \
+	System.Console.Tests \
+	System.Data.Common.Tests \
+	System.Data.SqlClient.Tests \
+	System.Diagnostics.StackTrace.Tests \
+	System.Drawing.Common.Tests \
+	System.Numerics.Vectors.Tests \
+	System.Reflection.Context.Tests \
+	System.Reflection.CoreCLR.Tests \
+	System.Reflection.Emit.ILGeneration.Tests \
+	System.Reflection.Emit.Lightweight.Tests \
+	System.Reflection.Metadata.Tests \
+	System.Reflection.MetadataLoadContext.Tests \
+	System.Reflection.TypeExtensions.CoreCLR.Tests \
+	System.Reflection.TypeExtensions.Tests \
+	System.Runtime.Extensions.Tests \
+	System.Runtime.InteropServices.Tests \
+	System.Runtime.Loader.DefaultContext.Tests \
+	System.Runtime.Loader.RefEmitLoadContext.Tests \
+	System.Runtime.Loader.Tests \
+	System.Runtime.Serialization.Formatters.Tests \
+	System.Threading.Overlapped.Tests \
+	System.Xml.Xsl.XslTransformApi.Tests
 
 xtestall: update-corefx-tests $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
 
 xtestpass: update-corefx-tests $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
-		$(filter $(PASSING_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
+		$(filter-out $(EXCLUDED_COREFX_TESTS_NOT_PASSING), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
 
 build-local-corefx-test-%: check-env
 	cd $(COREFX_ROOT)/src/$*/tests && dotnet build -o "$(CURDIR)/corefx/tests/extracted/tmp"

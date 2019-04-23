@@ -285,6 +285,12 @@
 			<!-- mono_get_exception_not_implemented -->
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
+
+		<!-- mono-error.c (mono_error_set_ambiguous_implementation) -->
+		<type fullname="System.Runtime.AmbiguousImplementationException">
+			<!-- mono_error_set_ambiguous_implementation -->
+			<method signature="System.Void .ctor(System.String)" />
+		</type>
         
 		<!-- appdomain.c (create_domain_objects) domain->null_reference_ex -->
 		<!-- exception.c (mono_get_exception_null_reference) -->
