@@ -248,45 +248,56 @@ mono_llvm_set_preserveall_cc (LLVMValueRef func)
 void
 mono_llvm_set_call_preserveall_cc (LLVMValueRef wrapped_calli)
 {
+#if LLVM_API_VERSION > 100
 	Instruction *calli = unwrap<Instruction> (wrapped_calli);
 
 	if (isa<CallInst> (calli))
 		dyn_cast<CallInst>(calli)->setCallingConv (CallingConv::PreserveAll);
 	else
 		dyn_cast<InvokeInst>(calli)->setCallingConv (CallingConv::PreserveAll);
+#else
+	unwrap<CallInst>(wrapped_calli)->setCallingConv (CallingConv::PreserveAll);
+#endif
 }
 
 void
 mono_llvm_set_call_nonnull_arg (LLVMValueRef wrapped_calli, int argNo)
 {
+#if LLVM_API_VERSION > 100
 	Instruction *calli = unwrap<Instruction> (wrapped_calli);
 
 	if (isa<CallInst> (calli))
 		dyn_cast<CallInst>(calli)->addParamAttr (argNo, Attribute::NonNull);
 	else
 		dyn_cast<InvokeInst>(calli)->addParamAttr (argNo, Attribute::NonNull);
+#endif
 }
 
 void
 mono_llvm_set_call_nonnull_ret (LLVMValueRef wrapped_calli)
 {
+#if LLVM_API_VERSION > 100
 	Instruction *calli = unwrap<Instruction> (wrapped_calli);
 
 	if (isa<CallInst> (calli))
 		dyn_cast<CallInst>(calli)->addAttribute (AttributeList::ReturnIndex, Attribute::NonNull);
 	else
 		dyn_cast<InvokeInst>(calli)->addAttribute (AttributeList::ReturnIndex, Attribute::NonNull);
+#endif
 }
 
 void
 mono_llvm_set_func_nonnull_arg (LLVMValueRef func, int argNo)
 {
+#if LLVM_API_VERSION > 100
 	unwrap<Function>(func)->addParamAttr (argNo, Attribute::NonNull);
+#endif
 }
 
 gboolean
 mono_llvm_is_nonnull (LLVMValueRef wrapped)
 {
+#if LLVM_API_VERSION > 100
 	// Argument to function
 	Value *val = unwrap (wrapped);
 
@@ -313,6 +324,7 @@ mono_llvm_is_nonnull (LLVMValueRef wrapped)
 		}
 	}
 
+#endif
 	return FALSE;
 }
 

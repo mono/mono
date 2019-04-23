@@ -9395,6 +9395,7 @@ typedef struct {
 static void
 mono_llvm_nonnull_state_update (EmitContext *ctx, LLVMValueRef lcall, MonoMethod *call_method, LLVMValueRef *args, int num_params)
 {
+#if LLVM_API_VERSION > 100
 	if (!ctx->module->llvm_disable_self_init && mono_aot_can_specialize (call_method)) {
 		int num_passed = LLVMGetNumArgOperands (lcall);
 		g_assert (num_params <= num_passed);
@@ -9421,11 +9422,13 @@ mono_llvm_nonnull_state_update (EmitContext *ctx, LLVMValueRef lcall, MonoMethod
 
 		g_hash_table_insert (ctx->module->method_to_call_info, call_method, call_site_union);
 	}
+#endif
 }
 
 static void
 mono_llvm_propagate_nonnull_final (GHashTable *all_specializable, MonoLLVMModule *module)
 {
+#if LLVM_API_VERSION > 100
 	// When we first traverse the mini IL, we mark the things that are
 	// nonnull (the roots). Then, for all of the methods that can be specialized, we
 	// see if their call sites have nonnull attributes. 
@@ -9542,7 +9545,7 @@ mono_llvm_propagate_nonnull_final (GHashTable *all_specializable, MonoLLVMModule
 
 		g_free (current);
 	}
-
+#endif
 }
 
 /*
