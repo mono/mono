@@ -1381,7 +1381,11 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 
 		typedarg = create_cattr_typed_arg (arginfo [i].type, obj, error);
 		goto_if_nok (error, leave);
+#if ENABLE_NETCORE
+		namedarg = create_cattr_named_arg (minfo, obj, error);
+#else
 		namedarg = create_cattr_named_arg (minfo, typedarg, error);
+#endif
 		goto_if_nok (error, leave);
 
 		mono_array_setref_internal (namedargs, i, namedarg);
