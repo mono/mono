@@ -399,6 +399,10 @@ namespace System.Reflection {
 				} catch (MethodAccessException) {
 					throw;
 #endif
+#if NETCORE
+				} catch (Mono.NullByRefReturnException) {
+					throw new NullReferenceException ();
+#endif
 				} catch (OverflowException) {
 					throw;
 				} catch (Exception e) {
@@ -407,7 +411,15 @@ namespace System.Reflection {
 			}
 			else
 			{
+#if NETCORE
+				try {
+					o = InternalInvoke (obj, parameters, out exc);
+				} catch (Mono.NullByRefReturnException) {
+					throw new NullReferenceException ();
+				}
+#else
 				o = InternalInvoke (obj, parameters, out exc);
+#endif
 			}
 
 			if (exc != null)
