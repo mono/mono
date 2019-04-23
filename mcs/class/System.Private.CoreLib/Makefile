@@ -1,6 +1,6 @@
 thisdir = class/System.Private.CoreLib
 SUBDIRS =
-include ../../build/config.make
+include ../../build/rules.make
 
 dirs := $(dir $(wildcard */*))
 files := $(wildcard */*.cs)

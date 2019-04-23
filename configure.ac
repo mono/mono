@@ -6539,9 +6539,10 @@ fi
     echo "RUNTIME = $mono_build_root/runtime/mono-wrapper" >> $mcs_topdir/build/config.make
     echo "ILDISASM = $mono_build_root/runtime/monodis-wrapper" >> $mcs_topdir/build/config.make
     echo "JAY_CFLAGS = $JAY_CFLAGS" >> $mcs_topdir/build/config.make
-	echo "RID = $RID" >> $mcs_topdir/build/config.make
-	echo "COREARCH = $COREARCH" >> $mcs_topdir/build/config.make
-	echo "CORETARGETS = $CORETARGETS" >> $mcs_topdir/build/config.make
+    echo "RID = $RID" >> $mcs_topdir/build/config.make
+    echo "COREARCH = $COREARCH" >> $mcs_topdir/build/config.make
+    echo "CORETARGETS = $CORETARGETS" >> $mcs_topdir/build/config.make
+    echo "VERSION = $VERSION" >> $mcs_topdir/build/config.make
 
     case $INSTALL in
     [[\\/$]]* | ?:[[\\/]]* ) mcs_INSTALL=$INSTALL ;;
