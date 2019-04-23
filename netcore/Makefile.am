@@ -3,10 +3,10 @@
 #
 
 # Extracted MicrosoftPrivateCoreFxNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L11
-NETCORETESTS_VERSION := 4.6.0-preview5.19209.12
+NETCORETESTS_VERSION := 4.6.0-preview5.19217.2
 
 # Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L13
-NETCOREAPP_VERSION := 3.0.0-preview5-27609-17
+NETCOREAPP_VERSION := 3.0.0-preview5-27620-01
 
 if HOST_WIN32
 NETCORESDK_EXT = zip
