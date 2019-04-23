@@ -400,6 +400,7 @@ clean-sdk:
 	$(RM) -r sdk/**/obj
 	$(RM) -r sdk/**/**/bin
 	$(RM) -r sdk/**/**/obj
+	$(RM) -r sdk/packages
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	dotnet build sdk/Mono.WebAssembly.Sdk
