@@ -1,12 +1,12 @@
 thisdir = class/System.Private.CoreLib
 SUBDIRS =
-#include ../../build/rules.make
+include ../../build/rules.make
 
 dirs := $(dir $(wildcard */*))
 files := $(wildcard */*.cs)
 
 all-local:
-	dotnet build @CORETARGETS@ -p:BuildArch=@COREARCH@ -p:OutputPath=bin/@COREARCH@ System.Private.CoreLib.csproj
+	dotnet build $(CORETARGETS) -p:BuildArch=$(COREARCH) -p:OutputPath=bin/$(COREARCH) System.Private.CoreLib.csproj
 
 dist-recursive:
 	$(mkdir_p) $(distdir)
