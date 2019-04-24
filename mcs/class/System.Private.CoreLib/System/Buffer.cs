@@ -12,11 +12,11 @@ namespace System
 {
 	partial class Buffer
 	{
-		public static void BlockCopy (Array src, int srcOffset, Array dest, int dstOffset, int count)
+		public static void BlockCopy (Array src, int srcOffset, Array dst, int dstOffset, int count)
 		{
 			if (src == null)
 				throw new ArgumentNullException (nameof (src));
-			if (dest == null)
+			if (dst == null)
 				throw new ArgumentNullException ("dst");
 
 			if (srcOffset < 0)
@@ -27,15 +27,15 @@ namespace System
 				throw new ArgumentOutOfRangeException (nameof (count), SR.ArgumentOutOfRange_MustBeNonNegInt32);
 			if (!IsPrimitiveTypeArray (src))
 				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (src));
-			if (!IsPrimitiveTypeArray (dest))
-				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (dest));
+			if (!IsPrimitiveTypeArray (dst))
+				throw new ArgumentException (SR.Arg_MustBePrimArray, nameof (dst));
 
 			var uCount = (nuint) count;
 			var uSrcOffset = (nuint) srcOffset;
 			var uDstOffset = (nuint) dstOffset;
 
 			var uSrcLen = (nuint) ByteLength (src);
-			var uDstLen = (nuint) ByteLength (dest);
+			var uDstLen = (nuint) ByteLength (dst);
 
 			if (uSrcLen < uSrcOffset + uCount)
 				throw new ArgumentException (SR.Argument_InvalidOffLen, "");
@@ -44,7 +44,7 @@ namespace System
 
 			if (uCount != 0) {
 				unsafe {
-					fixed (byte* pSrc = &src.GetRawArrayData (), pDst = &dest.GetRawArrayData ()) {
+					fixed (byte* pSrc = &src.GetRawArrayData (), pDst = &dst.GetRawArrayData ()) {
 						Memmove (pDst + uDstOffset, pSrc + uSrcOffset, uCount);
 					}
 				}
