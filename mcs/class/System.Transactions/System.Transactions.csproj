@@ -38,17 +38,17 @@
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch' ">
     <OutputPath>./../../class/lib/monotouch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MOBILE</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MOBILE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_watch' ">
     <OutputPath>./../../class/lib/monotouch_watch</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_watch</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;MOBILE</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;FEATURE_NO_BSD_SOCKETS;MONOTOUCH_WATCH;MOBILE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'monotouch_tv' ">
     <OutputPath>./../../class/lib/monotouch_tv</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monotouch_tv</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_REMOTING;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;MOBILE</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MOBILE;MOBILE_LEGACY;MONO;MONOTOUCH;DISABLE_COM;FEATURE_INTERCEPTABLE_THREADPOOL_CALLBACK;FULL_AOT_RUNTIME;MONOTOUCH_TV;MOBILE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
@@ -63,12 +63,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;MOBILE</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;MOBILE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_REMOTING;DISABLE_COM;WIN_PLATFORM;MOBILE</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;WIN_PLATFORM;MOBILE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
@@ -83,7 +83,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'orbis' ">
     <OutputPath>./../../class/lib/orbis</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-orbis</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;ORBIS;DISABLE_REMOTING;DISABLE_COM;MOBILE</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;ORBIS;DISABLE_COM;MOBILE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'unreal' ">
     <OutputPath>./../../class/lib/unreal</OutputPath>
@@ -93,7 +93,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
     <OutputPath>./../../class/lib/wasm</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_REMOTING;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;MOBILE</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;MOBILE</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
