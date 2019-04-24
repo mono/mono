@@ -1811,28 +1811,7 @@ mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 gboolean
 mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig, gboolean virtual_)
 {
-	g_assert (caller_sig);
-	g_assert (callee_sig);
-
-	CallInfo *caller_info = get_call_info (NULL, caller_sig);
-	CallInfo *callee_info = get_call_info (NULL, callee_sig);
-
-	/*
-	 * Tailcalls with more callee stack usage than the caller cannot be supported, since
-	 * the extra stack space would be left on the stack after the tailcall.
-	 */
-	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
-				&& IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage);
-
-	// FIXME The limit here is that moving the parameters requires addressing the parameters
-	// with 12bit (4K) immediate offsets. - 4 for TAILCALL_REG/MEMBASE
-	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (4096 - 4));
-	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (4096 - 4));
-
-	g_free (caller_info);
-	g_free (callee_info);
-
-	return res;
+	return FALSE;
 }
 
 static gboolean
@@ -5008,107 +4987,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 
 		case OP_TAILCALL_PARAMETER:
-			// This opcode helps compute sizes, i.e.
-			// of the subsequent OP_TAILCALL, but contributes no code.
-			g_assert (ins->next);
-			break;
-
 		case OP_TAILCALL:
 		case OP_TAILCALL_MEMBASE:
-		case OP_TAILCALL_REG: {
-			gboolean const tailcall_membase = ins->opcode == OP_TAILCALL_MEMBASE;
-			gboolean const tailcall_reg = ins->opcode == OP_TAILCALL_REG;
-			MonoCallInst *call = (MonoCallInst*)ins;
-
-			max_len += call->stack_usage / sizeof (target_mgreg_t) * ins_get_size (OP_TAILCALL_PARAMETER);
-
-			if (IS_HARD_FLOAT)
-				code = emit_float_args (cfg, call, code, &max_len, &offset);
-
-			code = realloc_code (cfg, max_len);
-
-			/*
-			 * The stack looks like the following:
-			 * <caller argument area>
-			 * <saved regs etc>
-			 * <rest of frame>
-			 * <callee argument area>
-			 * Need to copy the arguments from the callee argument area to
-			 * the caller argument area, and pop the frame.
-			 */
-			if (call->stack_usage) {
-				int i, prev_sp_offset = 0;
-				
-				/* Compute size of saved registers restored below */
-				if (iphone_abi)
-					prev_sp_offset = 2 * 4;
-				else
-					prev_sp_offset = 1 * 4;
-				for (i = 0; i < 16; ++i) {
-					if (cfg->used_int_regs & (1 << i))
-						prev_sp_offset += 4;
-				}
-
-				code = emit_big_add (code, ARMREG_IP, cfg->frame_reg, cfg->stack_usage + prev_sp_offset);
-
-				/* Copy arguments on the stack to our argument area */
-				// FIXME a fixed size memcpy is desirable here,
-				// at least for larger values of stack_usage.
-				for (i = 0; i < call->stack_usage; i += sizeof (target_mgreg_t)) {
-					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, i);
-					ARM_STR_IMM (code, ARMREG_LR, ARMREG_IP, i);
-				}
-
-			}
-
-			// For reg and membase, get destination in IP.
-
-			if (tailcall_reg) {
-				g_assert (ins->sreg1 > -1);
-				if (ins->sreg1 != ARMREG_IP)
-					ARM_MOV_REG_REG (code, ARMREG_IP, ins->sreg1);
-			} else if (tailcall_membase) {
-				g_assert (ins->sreg1 > -1);
-				if (!arm_is_imm12 (ins->inst_offset)) {
-					g_assert (ins->sreg1 != ARMREG_IP); // temp in emit_big_add
-					code = emit_big_add (code, ARMREG_IP, ins->sreg1, ins->inst_offset);
-					ARM_LDR_IMM (code, ARMREG_IP, ARMREG_IP, 0);
-				} else {
-					ARM_LDR_IMM (code, ARMREG_IP, ins->sreg1, ins->inst_offset);
-				}
-			}
-
-			/*
-			 * Keep in sync with mono_arch_emit_epilog
-			 */
-			g_assert (!cfg->method->save_lmf);
-			code = emit_big_add_temp (code, ARMREG_SP, cfg->frame_reg, cfg->stack_usage, ARMREG_LR);
-			if (iphone_abi) {
-				if (cfg->used_int_regs)
-					ARM_POP (code, cfg->used_int_regs);
-				ARM_POP (code, (1 << ARMREG_R7) | (1 << ARMREG_LR));
-			} else {
-				ARM_POP (code, cfg->used_int_regs | (1 << ARMREG_LR));
-			}
-
-			if (tailcall_reg || tailcall_membase) {
-				code = emit_jmp_reg (code, ARMREG_IP);
-			} else {
-				mono_add_patch_info (cfg, (guint8*) code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
-
-				if (cfg->compile_aot) {
-					ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
-					ARM_B (code, 0);
-					*(gpointer*)code = NULL;
-					code += 4;
-					ARM_LDR_REG_REG (code, ARMREG_PC, ARMREG_PC, ARMREG_IP);
-				} else {
-					code = mono_arm_patchable_b (code, ARMCOND_AL);
-					cfg->thunk_area += THUNK_SIZE;
-				}
-			}
+		case OP_TAILCALL_REG:
+			g_assert_not_reached ();
 			break;
-		}
+
 		case OP_CHECK_THIS:
 			/* ensure ins->sreg1 is not NULL */
 			ARM_LDRB_IMM (code, ARMREG_LR, ins->sreg1, 0);

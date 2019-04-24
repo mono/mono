@@ -3011,10 +3011,10 @@ init_backend (MonoBackend *backend)
 // can pass context to generics or interfaces?
 	backend->have_volatile_non_param_register = MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER;
 #ifdef MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE
-	backend->have_op_tailcall_membase = 1;
+	backend->have_op_tailcall_membase = MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE;
 #endif
 #ifdef MONO_ARCH_HAVE_OP_TAILCALL_REG
-	backend->have_op_tailcall_reg = 1;
+	backend->have_op_tailcall_reg = MONO_ARCH_HAVE_OP_TAILCALL_REG;
 #endif
 #ifndef MONO_ARCH_MONITOR_ENTER_ADJUSTMENT
 	backend->monitor_enter_adjustment = 1;

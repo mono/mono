@@ -100,9 +100,9 @@ vcall: len:64 clob:c
 vcall_reg: src1:i len:64 clob:c
 vcall_membase: src1:b len:70 clob:c
 
-tailcall: len:255 clob:c # FIXME len
-tailcall_membase: src1:b len:255 clob:c # FIXME len
-tailcall_reg: src1:b len:255 clob:c # FIXME len
+tailcall: len:0
+tailcall_membase: len:0
+tailcall_reg: len:0
 
 # tailcall_parameter models the size of moving one parameter,
 # so that the required size of a branch around a tailcall can
@@ -112,11 +112,7 @@ tailcall_reg: src1:b len:255 clob:c # FIXME len
 # a[large] = a[another large]
 # }
 #
-# In current implementation with 4K limit this is typically
-# two full instructions, howevever raising the limit some
-# can lead two instructions and two thumb instructions.
-# FIXME A fixed size sequence to move parameters would moot this.
-tailcall_parameter: len:12
+tailcall_parameter: len:0
 
 iconst: dest:i len:16
 r4const: dest:f len:24
