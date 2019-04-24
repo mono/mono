@@ -26,8 +26,10 @@
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
+using MonoSecurity::Mono.Security.Authenticode;
 #else
 using Mono.Security;
+using Mono.Security.Authenticode;
 #endif
 
 using System;
@@ -124,6 +126,14 @@ namespace Mono
 				int start = pem.IndexOf ("-----BEGIN CERTIFICATE-----");
 				if (start >= 0)
 					return X509ContentType.Cert;
+			}
+
+			try {
+				AuthenticodeDeformatter ad = new AuthenticodeDeformatter (rawData);
+
+				return X509ContentType.Authenticode;
+			} catch {
+				return X509ContentType.Unknown;
 			}
 
 			return X509ContentType.Unknown;

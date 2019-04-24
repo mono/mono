@@ -33,10 +33,12 @@
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
 using MonoSecurity::Mono.Security.Cryptography;
+using MonoSecurity::Mono.Security.Authenticode;
 using MX = MonoSecurity::Mono.Security.X509;
 #else
 using Mono.Security;
 using Mono.Security.Cryptography;
+using Mono.Security.Authenticode;
 using MX = Mono.Security.X509;
 #endif
 
@@ -95,6 +97,11 @@ namespace System.Security.Cryptography.X509Certificates
 			case X509ContentType.Cert:
 			case X509ContentType.Pkcs7:
 				_cert = new MX.X509Certificate (rawData);
+				break;
+
+			case X509ContentType.Authenticode:
+				AuthenticodeDeformatter ad = new AuthenticodeDeformatter (rawData);
+				_cert = ad.SigningCertificate;
 				break;
 
 			default:
