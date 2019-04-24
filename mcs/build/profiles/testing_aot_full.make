@@ -5,7 +5,6 @@ include $(topdir)/build/profiles/testing_aot_common.make
 PROFILE_MCS_FLAGS += \
 	-d:FULL_AOT_DESKTOP \
 	-d:FULL_AOT_RUNTIME \
-	-d:DISABLE_REMOTING \
 	-d:DISABLE_COM
 
 AOT_FRIENDLY_PROFILE = yes

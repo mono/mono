@@ -22,7 +22,6 @@ PROFILE_MCS_FLAGS = \
 	-d:FULL_AOT_DESKTOP	\
 	-d:FULL_AOT_RUNTIME \
 	-d:ORBIS \
-	-d:DISABLE_REMOTING \
 	-d:DISABLE_COM \
 	-nowarn:1699 \
 	-nostdlib \
