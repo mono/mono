@@ -61,6 +61,7 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\OutputStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\PreserveCalendarsStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\PreserveDependencyLookupStep.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\ReflectionBlockedStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\RegenerateGuidStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\RemoveFeaturesStep.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker.Steps\RemoveSecurityStep.cs" />
