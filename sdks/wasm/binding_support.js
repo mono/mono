@@ -6,7 +6,8 @@ var BindingSupportLib = {
 		mono_wasm_object_registry: [],
 		mono_wasm_ref_counter: 0,
 		mono_wasm_free_list: [],
-		mono_wasm_marshal_enum_as_int: false,	
+		mono_wasm_marshal_enum_as_int: false,
+		mono_wasm_core_map: {},	
 		mono_bindings_init: function (binding_asm) {
 			this.BINDING_ASM = binding_asm;
 		},
@@ -83,6 +84,7 @@ var BindingSupportLib = {
 			this.box_js_double = get_method ("BoxDouble");
 			this.box_js_bool = get_method ("BoxBool");
 			this.is_simple_array = get_method ("IsSimpleArray");
+			this.get_core_type = get_method ("GetCoreType");
 			this.setup_js_cont = get_method ("SetupJSContinuation");
 
 			this.create_tcs = get_method ("CreateTaskSource");
@@ -94,7 +96,7 @@ var BindingSupportLib = {
 			this.object_to_string = get_method ("ObjectToString");
 
 			this.object_to_enum = get_method ("ObjectToEnum");
-
+			BINDING.mono_wasm_core_map = new Map();
 			this.init = true;
 		},		
 
@@ -464,7 +466,7 @@ var BindingSupportLib = {
 		},
 		wasm_binding_obj_new: function (js_obj_id, type)
 		{
-			return this.call_method (this.bind_js_obj, null, "is", [js_obj_id, type]);
+			return this.call_method (this.bind_js_obj, null, "io", [js_obj_id, type]);
 		},
 		wasm_bind_existing: function (mono_obj, js_id)
 		{
@@ -726,6 +728,38 @@ var BindingSupportLib = {
 				return BINDING.call_method (method, null, signature, arguments);
 			};
 		},
+		wasm_get_core_type: function (obj)
+		{
+			var coreType = this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
+			if (typeof coreType !== "undefined") {
+				BINDING.mono_wasm_core_map.set(obj.constructor, coreType);
+			}
+			return coreType;
+		},
+		core_object_type: function(obj) {
+			var coreType = BINDING.mono_wasm_core_map.get(obj.constructor);
+			if (typeof coreType === "undefined") {
+				var switchName = obj.constructor.name;
+				switch (true) {
+					case switchName === "Array":
+					case switchName === "ArrayBuffer":
+					case switchName === "Int8Array":
+					case switchName === "Uint8Array":
+					case switchName === "Uint8ClampedArray":
+					case switchName === "Int16Array":
+					case switchName === "Uint16Array":
+					case switchName === "Int32Array":
+					case switchName === "Uint32Array":
+					case switchName === "Float32Array":
+					case switchName === "Float64Array":
+					case switchName === "Function":
+					case switchName === "SharedArrayBuffer":
+						coreType = this.wasm_get_core_type(obj);
+						break;
+				}
+		  }
+			return coreType;
+		},
 		// Object wrapping helper functions to handle reference handles that will
 		// be used in managed code.
 		mono_wasm_register_obj: function(obj) {
@@ -739,9 +773,9 @@ var BindingSupportLib = {
 					var handle = this.mono_wasm_free_list.length ?
 								this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
 					obj.__mono_jshandle__ = handle;
-					// Obtaining the java script class name is very simple right now and will probably chande in
-					// in the near future.  It works for javascript core objects as well as host objects.
-					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1, Object.prototype.toString.call(obj));
+					// Obtain the core object JS -> C# type mapping.
+					var coreObjType = this.core_object_type(obj);
+					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1, coreObjType);
 					this.mono_wasm_object_registry[handle] = obj;
 						
 				}
