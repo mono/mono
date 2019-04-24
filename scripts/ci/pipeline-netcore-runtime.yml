@@ -1,7 +1,18 @@
 pool:
   vmImage: 'Ubuntu 16.04'
 
+variables:
+- ${{ if ne(variables['System.TeamProject'], 'public') }}:
+  - group: DotNet-VSTS-Bot
+
 steps:
+- ${{ if ne(variables['System.TeamProject'], 'public') }}:
+  - script: |
+      sed -i "s#git://github.com/#https://dn-bot:${dncengpat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
+    env:
+      dncengpat: $(dn-bot-dotnet-build-rw-code-rw)
+    displayName: 'rewrite .gitmodules'
+
 - script: |
     sudo apt update
     sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext dotnet-sdk-2.2

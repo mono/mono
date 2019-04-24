@@ -56,10 +56,13 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # Generate it with uuidgen. For example:
 # perl -pi.bak -e "s/^MONO_CORLIB_VERSION=\S+/MONO_CORLIB_VERSION=`uuidgen`/" configure.ac
 #
+# There is no ordering of corlib versions, no old or new,
+# an exact match is required between corlib and runtime.
+#
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=48B64EB1-FC8C-4707-A363-84A1FE488DCA
+MONO_CORLIB_VERSION=8678BDEC-A621-42D3-B0F5-862BA3A90DC8
 
 #
 # Put a quoted #define in config.h.
@@ -532,17 +535,21 @@ AM_CONDITIONAL(HOST_WASM, test x$platform_wasm = xyes)
 
 if test -z "$HOST_DARWIN_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.dylib
+PLATFORM_AOT_PREFIX=lib
 fi
 
 if test -z "$HOST_LINUX_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.so
+PLATFORM_AOT_PREFIX=lib
 fi
 
 if test -z "$HOST_WIN32_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.dll
+PLATFORM_AOT_PREFIX=
 fi
 
 AC_SUBST(PLATFORM_AOT_SUFFIX)
+AC_SUBST(PLATFORM_AOT_PREFIX)
 
 if test -z "$HOST_WASM_TRUE"; then :
 AC_DEFINE(HAVE_UTIME)
@@ -6412,7 +6419,6 @@ acceptance-tests/Makefile
 llvm/Makefile
 scripts/mono-find-provides
 scripts/mono-find-requires
-mcs/class/System.Private.CoreLib/Makefile
 mk/Makefile
 mono/Makefile
 mono/btls/Makefile
@@ -6450,7 +6456,6 @@ mono/profiler/Makefile
 mono/eglib/Makefile
 mono/eglib/eglib-config.h
 mono/eglib/test/Makefile
-netcore/Makefile
 m4/Makefile
 ikvm-native/Makefile
 scripts/Makefile
@@ -6534,6 +6539,10 @@ fi
     echo "RUNTIME = $mono_build_root/runtime/mono-wrapper" >> $mcs_topdir/build/config.make
     echo "ILDISASM = $mono_build_root/runtime/monodis-wrapper" >> $mcs_topdir/build/config.make
     echo "JAY_CFLAGS = $JAY_CFLAGS" >> $mcs_topdir/build/config.make
+    echo "RID = $RID" >> $mcs_topdir/build/config.make
+    echo "COREARCH = $COREARCH" >> $mcs_topdir/build/config.make
+    echo "CORETARGETS = $CORETARGETS" >> $mcs_topdir/build/config.make
+    echo "VERSION = $VERSION" >> $mcs_topdir/build/config.make
 
     case $INSTALL in
     [[\\/$]]* | ?:[[\\/]]* ) mcs_INSTALL=$INSTALL ;;
@@ -6572,6 +6581,7 @@ fi
       echo "XTEST_PLATFORM ?= unix" >> $mcs_topdir/build/config.make
     fi
 
+    echo "PLATFORM_AOT_PREFIX = $PLATFORM_AOT_PREFIX" >> $mcs_topdir/build/config.make
     if test "x$PLATFORM_AOT_SUFFIX" != "x"; then
       echo "PLATFORM_AOT_SUFFIX = $PLATFORM_AOT_SUFFIX" >> $mcs_topdir/build/config.make
     fi

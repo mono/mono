@@ -943,6 +943,7 @@
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\MissingMemberException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Number.Parsing.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\OutOfMemoryException.cs" />
+    <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\AmbiguousImplementationException.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\CompilerServices\TaskAwaiter.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\ConstrainedExecution\CriticalFinalizerObject.cs" />
     <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\shared\System\Runtime\InteropServices\SafeBuffer.cs" />

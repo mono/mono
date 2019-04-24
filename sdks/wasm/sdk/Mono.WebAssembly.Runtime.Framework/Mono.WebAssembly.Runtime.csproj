@@ -13,5 +13,6 @@
     <Content Include="..\..\..\wasm\debug\mono.wasm.map" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\mono.wasm.map" />
     <Content Include="..\..\..\wasm\release\mono.js" PackagePath="mono-wasm-runtime\release\%(Filename)%(Extension)" Link="mono-wasm-runtime\release\mono.js" />
     <Content Include="..\..\..\wasm\release\mono.wasm" PackagePath="mono-wasm-runtime\release\%(Filename)%(Extension)" Link="mono-wasm-runtime\release\mono.wasm" />
+    <None Update="build\netstandard2.0\Mono.WebAssembly.Runtime.props" PackagePath="build\netstandard2.0\Mono.WebAssembly.Runtime.props" Pack="True" />
   </ItemGroup>
 </Project>

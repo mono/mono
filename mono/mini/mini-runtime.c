@@ -695,6 +695,11 @@ register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *si
 #endif
 }
 
+// This layering is only meant to provide smaller easier to read temporary change.
+// The de-stringing of name in the caller will be useful later.
+#define register_opcode_emulation(opcode, name, sig, func, symbol, no_wrapper) \
+	register_opcode_emulation (opcode, #name, sig, func, symbol, no_wrapper)
+
 /*
  * For JIT icalls implemented in C.
  * NAME should be the same as the name of the C function whose address is FUNC.
@@ -1201,17 +1206,24 @@ guint
 mono_patch_info_hash (gconstpointer data)
 {
 	const MonoJumpInfo *ji = (MonoJumpInfo*)data;
+	const MonoJumpInfoType type = ji->type;
+	guint hash = type << 8;
 
-	switch (ji->type) {
+	switch (type) {
 	case MONO_PATCH_INFO_RVA:
 	case MONO_PATCH_INFO_LDSTR:
 	case MONO_PATCH_INFO_LDTOKEN:
 	case MONO_PATCH_INFO_DECLSEC:
-		return (ji->type << 8) | ji->data.token->token;
+		return hash | ji->data.token->token;
 	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
-		return (ji->type << 8) | ji->data.token->token | (ji->data.token->has_context ? (gsize)ji->data.token->context.class_inst : 0);
+		return hash | ji->data.token->token | (ji->data.token->has_context ? (gsize)ji->data.token->context.class_inst : 0);
+	case MONO_PATCH_INFO_OBJC_SELECTOR_REF: // Hash on the selector name
+	case MONO_PATCH_INFO_LDSTR_LIT:
+		return g_str_hash (ji->data.name);
 	case MONO_PATCH_INFO_JIT_ICALL:
-		return (ji->type << 8) | g_str_hash (ji->data.name);
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
+		return hash | g_str_hash (ji->data.name);
 	case MONO_PATCH_INFO_VTABLE:
 	case MONO_PATCH_INFO_CLASS:
 	case MONO_PATCH_INFO_IID:
@@ -1232,17 +1244,17 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_AOT_JIT_INFO:
 	case MONO_PATCH_INFO_GET_TLS_TRAMP:
 	case MONO_PATCH_INFO_SET_TLS_TRAMP:
-		return (ji->type << 8) | (gssize)ji->data.target;
+		return hash | (gssize)ji->data.target;
 	case MONO_PATCH_INFO_GSHAREDVT_CALL:
-		return (ji->type << 8) | (gssize)ji->data.gsharedvt->method;
+		return hash | (gssize)ji->data.gsharedvt->method;
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
 		MonoJumpInfoRgctxEntry *e = ji->data.rgctx_entry;
-
+		hash |= e->in_mrgctx | e->info_type | mono_patch_info_hash (e->data);
 		if (e->in_mrgctx)
-			return (ji->type << 8) | (gssize)e->d.method | (e->in_mrgctx) | e->info_type | mono_patch_info_hash (e->data);
+			return hash | (gssize)e->d.method;
 		else
-			return (ji->type << 8) | (gssize)e->d.klass | (e->in_mrgctx) | e->info_type | mono_patch_info_hash (e->data);
+			return hash | (gssize)e->d.klass;
 	}
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
 	case MONO_PATCH_INFO_MSCORLIB_GOT_ADDR:
@@ -1254,33 +1266,25 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_AOT_MODULE:
 	case MONO_PATCH_INFO_PROFILER_ALLOCATION_COUNT:
 	case MONO_PATCH_INFO_PROFILER_CLAUSE_COUNT:
-		return (ji->type << 8);
+		return hash;
 	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
-		return (ji->type << 8) | (ji->data.uindex);
+		return hash | ji->data.uindex;
 	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
-		return (ji->type << 8) | (ji->data.index);
+		return hash | ji->data.index;
 	case MONO_PATCH_INFO_SWITCH:
-		return (ji->type << 8) | ji->data.table->table_size;
+		return hash | ji->data.table->table_size;
 	case MONO_PATCH_INFO_GSHAREDVT_METHOD:
-		return (ji->type << 8) | (gssize)ji->data.gsharedvt_method->method;
-	case MONO_PATCH_INFO_OBJC_SELECTOR_REF:
-		/* Hash on the selector name */
-		return g_str_hash (ji->data.target);
+		return hash | (gssize)ji->data.gsharedvt_method->method;
 	case MONO_PATCH_INFO_DELEGATE_TRAMPOLINE:
-		return (ji->type << 8) | (gsize)ji->data.del_tramp->klass | (gsize)ji->data.del_tramp->method | (gsize)ji->data.del_tramp->is_virtual;
-	case MONO_PATCH_INFO_LDSTR_LIT:
-		return g_str_hash (ji->data.target);
+		return hash | (gsize)ji->data.del_tramp->klass | (gsize)ji->data.del_tramp->method | (gsize)ji->data.del_tramp->is_virtual;
 	case MONO_PATCH_INFO_VIRT_METHOD: {
 		MonoJumpInfoVirtMethod *info = ji->data.virt_method;
 
-		return (ji->type << 8) | (gssize)info->klass | (gssize)info->method;
+		return hash | (gssize)info->klass | (gssize)info->method;
 	}
-	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
-	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
-		return (ji->type << 8) | g_str_hash (ji->data.target);
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
-		return (ji->type << 8) | mono_signature_hash (ji->data.sig);
+		return hash | mono_signature_hash (ji->data.sig);
 	default:
 		printf ("info type: %d\n", ji->type);
 		mono_print_ji (ji); printf ("\n");
@@ -1311,14 +1315,16 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
 	case MONO_PATCH_INFO_LDTOKEN:
 	case MONO_PATCH_INFO_DECLSEC:
-		if ((ji1->data.token->image != ji2->data.token->image) ||
-			(ji1->data.token->token != ji2->data.token->token) ||
-			(ji1->data.token->has_context != ji2->data.token->has_context) ||
-			(ji1->data.token->context.class_inst != ji2->data.token->context.class_inst) ||
-			(ji1->data.token->context.method_inst != ji2->data.token->context.method_inst))
-			return 0;
-		break;
+		return ji1->data.token->image == ji2->data.token->image &&
+		       ji1->data.token->token == ji2->data.token->token &&
+		       ji1->data.token->has_context == ji2->data.token->has_context &&
+		       ji1->data.token->context.class_inst == ji2->data.token->context.class_inst &&
+		       ji1->data.token->context.method_inst == ji2->data.token->context.method_inst;
+	case MONO_PATCH_INFO_OBJC_SELECTOR_REF:
+	case MONO_PATCH_INFO_LDSTR_LIT:
 	case MONO_PATCH_INFO_JIT_ICALL:
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
+	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
 		return g_str_equal (ji1->data.name, ji2->data.name);
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
@@ -1344,22 +1350,13 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 		return ji1->data.index == ji2->data.index;
 	case MONO_PATCH_INFO_VIRT_METHOD:
 		return ji1->data.virt_method->klass == ji2->data.virt_method->klass && ji1->data.virt_method->method == ji2->data.virt_method->method;
-	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
-	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
-		if (ji1->data.target == ji2->data.target)
-			return 1;
-		return strcmp ((const char*)ji1->data.target, (const char*)ji2->data.target) == 0 ? 1 : 0;
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
-		return mono_metadata_signature_equal (ji1->data.sig, ji2->data.sig) ? 1 : 0;
+		return mono_metadata_signature_equal (ji1->data.sig, ji2->data.sig);
 	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
 		return 1;
-	default:
-		if (ji1->data.target != ji2->data.target)
-			return 0;
-		break;
 	}
 
-	return 1;
+	return ji1->data.target == ji2->data.target;
 }
 
 gpointer
@@ -4463,109 +4460,109 @@ register_icalls (void)
 	register_icall (mono_threads_state_poll, "mono_threads_state_poll", mono_icall_sig_void, FALSE);
 
 #ifndef MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
-	register_opcode_emulation (OP_LMUL, "__emul_lmul", mono_icall_sig_long_long_long, mono_llmult, "mono_llmult", FALSE);
-	register_opcode_emulation (OP_LDIV, "__emul_ldiv", mono_icall_sig_long_long_long, mono_lldiv, "mono_lldiv", FALSE);
-	register_opcode_emulation (OP_LDIV_UN, "__emul_ldiv_un", mono_icall_sig_long_long_long, mono_lldiv_un, "mono_lldiv_un", FALSE);
-	register_opcode_emulation (OP_LREM, "__emul_lrem", mono_icall_sig_long_long_long, mono_llrem, "mono_llrem", FALSE);
-	register_opcode_emulation (OP_LREM_UN, "__emul_lrem_un", mono_icall_sig_long_long_long, mono_llrem_un, "mono_llrem_un", FALSE);
+	register_opcode_emulation (OP_LMUL, __emul_lmul, mono_icall_sig_long_long_long, mono_llmult, "mono_llmult", FALSE);
+	register_opcode_emulation (OP_LDIV, __emul_ldiv, mono_icall_sig_long_long_long, mono_lldiv, "mono_lldiv", FALSE);
+	register_opcode_emulation (OP_LDIV_UN, __emul_ldiv_un, mono_icall_sig_long_long_long, mono_lldiv_un, "mono_lldiv_un", FALSE);
+	register_opcode_emulation (OP_LREM, __emul_lrem, mono_icall_sig_long_long_long, mono_llrem, "mono_llrem", FALSE);
+	register_opcode_emulation (OP_LREM_UN, __emul_lrem_un, mono_icall_sig_long_long_long, mono_llrem_un, "mono_llrem_un", FALSE);
 #endif
 #if !defined(MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS) || defined(MONO_ARCH_EMULATE_LONG_MUL_OVF_OPTS)
-	register_opcode_emulation (OP_LMUL_OVF_UN, "__emul_lmul_ovf_un", mono_icall_sig_long_long_long, mono_llmult_ovf_un, "mono_llmult_ovf_un", FALSE);
-	register_opcode_emulation (OP_LMUL_OVF, "__emul_lmul_ovf", mono_icall_sig_long_long_long, mono_llmult_ovf, "mono_llmult_ovf", FALSE);
+	register_opcode_emulation (OP_LMUL_OVF_UN, __emul_lmul_ovf_un, mono_icall_sig_long_long_long, mono_llmult_ovf_un, "mono_llmult_ovf_un", FALSE);
+	register_opcode_emulation (OP_LMUL_OVF, __emul_lmul_ovf, mono_icall_sig_long_long_long, mono_llmult_ovf, "mono_llmult_ovf", FALSE);
 #endif
 
 #ifndef MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS
-	register_opcode_emulation (OP_LSHL, "__emul_lshl", mono_icall_sig_long_long_int32, mono_lshl, "mono_lshl", TRUE);
-	register_opcode_emulation (OP_LSHR, "__emul_lshr", mono_icall_sig_long_long_int32, mono_lshr, "mono_lshr", TRUE);
-	register_opcode_emulation (OP_LSHR_UN, "__emul_lshr_un", mono_icall_sig_long_long_int32, mono_lshr_un, "mono_lshr_un", TRUE);
+	register_opcode_emulation (OP_LSHL, __emul_lshl, mono_icall_sig_long_long_int32, mono_lshl, "mono_lshl", TRUE);
+	register_opcode_emulation (OP_LSHR, __emul_lshr, mono_icall_sig_long_long_int32, mono_lshr, "mono_lshr", TRUE);
+	register_opcode_emulation (OP_LSHR_UN, __emul_lshr_un, mono_icall_sig_long_long_int32, mono_lshr_un, "mono_lshr_un", TRUE);
 #endif
 
 #if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_EMULATE_DIV)
-	register_opcode_emulation (OP_IDIV, "__emul_op_idiv", mono_icall_sig_int32_int32_int32, mono_idiv, "mono_idiv", FALSE);
-	register_opcode_emulation (OP_IDIV_UN, "__emul_op_idiv_un", mono_icall_sig_int32_int32_int32, mono_idiv_un, "mono_idiv_un", FALSE);
-	register_opcode_emulation (OP_IREM, "__emul_op_irem", mono_icall_sig_int32_int32_int32, mono_irem, "mono_irem", FALSE);
-	register_opcode_emulation (OP_IREM_UN, "__emul_op_irem_un", mono_icall_sig_int32_int32_int32, mono_irem_un, "mono_irem_un", FALSE);
+	register_opcode_emulation (OP_IDIV, __emul_op_idiv, mono_icall_sig_int32_int32_int32, mono_idiv, "mono_idiv", FALSE);
+	register_opcode_emulation (OP_IDIV_UN, __emul_op_idiv_un, mono_icall_sig_int32_int32_int32, mono_idiv_un, "mono_idiv_un", FALSE);
+	register_opcode_emulation (OP_IREM, __emul_op_irem, mono_icall_sig_int32_int32_int32, mono_irem, "mono_irem", FALSE);
+	register_opcode_emulation (OP_IREM_UN, __emul_op_irem_un, mono_icall_sig_int32_int32_int32, mono_irem_un, "mono_irem_un", FALSE);
 #endif
 
 #ifdef MONO_ARCH_EMULATE_MUL_DIV
-	register_opcode_emulation (OP_IMUL, "__emul_op_imul", mono_icall_sig_int32_int32_int32, mono_imul, "mono_imul", TRUE);
+	register_opcode_emulation (OP_IMUL, __emul_op_imul, mono_icall_sig_int32_int32_int32, mono_imul, "mono_imul", TRUE);
 #endif
 
 #if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_EMULATE_MUL_OVF)
-	register_opcode_emulation (OP_IMUL_OVF, "__emul_op_imul_ovf", mono_icall_sig_int32_int32_int32, mono_imul_ovf, "mono_imul_ovf", FALSE);
-	register_opcode_emulation (OP_IMUL_OVF_UN, "__emul_op_imul_ovf_un", mono_icall_sig_int32_int32_int32, mono_imul_ovf_un, "mono_imul_ovf_un", FALSE);
+	register_opcode_emulation (OP_IMUL_OVF, __emul_op_imul_ovf, mono_icall_sig_int32_int32_int32, mono_imul_ovf, "mono_imul_ovf", FALSE);
+	register_opcode_emulation (OP_IMUL_OVF_UN, __emul_op_imul_ovf_un, mono_icall_sig_int32_int32_int32, mono_imul_ovf_un, "mono_imul_ovf_un", FALSE);
 #endif
 
 #if defined(MONO_ARCH_EMULATE_MUL_DIV) || defined(MONO_ARCH_SOFT_FLOAT_FALLBACK)
-	register_opcode_emulation (OP_FDIV, "__emul_fdiv", mono_icall_sig_double_double_double, mono_fdiv, "mono_fdiv", FALSE);
+	register_opcode_emulation (OP_FDIV, __emul_fdiv, mono_icall_sig_double_double_double, mono_fdiv, "mono_fdiv", FALSE);
 #endif
 
-	register_opcode_emulation (OP_FCONV_TO_U8, "__emul_fconv_to_u8", mono_icall_sig_ulong_double, mono_fconv_u8_2, "mono_fconv_u8_2", FALSE);
-	register_opcode_emulation (OP_RCONV_TO_U8, "__emul_rconv_to_u8", mono_icall_sig_ulong_float, mono_rconv_u8, "mono_rconv_u8", FALSE);
-	register_opcode_emulation (OP_FCONV_TO_U4, "__emul_fconv_to_u4", mono_icall_sig_uint32_double, mono_fconv_u4_2, "mono_fconv_u4_2", FALSE);
-	register_opcode_emulation (OP_FCONV_TO_OVF_I8, "__emul_fconv_to_ovf_i8", mono_icall_sig_long_double, mono_fconv_ovf_i8, "mono_fconv_ovf_i8", FALSE);
-	register_opcode_emulation (OP_FCONV_TO_OVF_U8, "__emul_fconv_to_ovf_u8", mono_icall_sig_ulong_double, mono_fconv_ovf_u8, "mono_fconv_ovf_u8", FALSE);
-	register_opcode_emulation (OP_RCONV_TO_OVF_I8, "__emul_rconv_to_ovf_i8", mono_icall_sig_long_float, mono_rconv_ovf_i8, "mono_rconv_ovf_i8", FALSE);
-	register_opcode_emulation (OP_RCONV_TO_OVF_U8, "__emul_rconv_to_ovf_u8", mono_icall_sig_ulong_float, mono_rconv_ovf_u8, "mono_rconv_ovf_u8", FALSE);
+	register_opcode_emulation (OP_FCONV_TO_U8, __emul_fconv_to_u8, mono_icall_sig_ulong_double, mono_fconv_u8_2, "mono_fconv_u8_2", FALSE);
+	register_opcode_emulation (OP_RCONV_TO_U8, __emul_rconv_to_u8, mono_icall_sig_ulong_float, mono_rconv_u8, "mono_rconv_u8", FALSE);
+	register_opcode_emulation (OP_FCONV_TO_U4, __emul_fconv_to_u4, mono_icall_sig_uint32_double, mono_fconv_u4_2, "mono_fconv_u4_2", FALSE);
+	register_opcode_emulation (OP_FCONV_TO_OVF_I8, __emul_fconv_to_ovf_i8, mono_icall_sig_long_double, mono_fconv_ovf_i8, "mono_fconv_ovf_i8", FALSE);
+	register_opcode_emulation (OP_FCONV_TO_OVF_U8, __emul_fconv_to_ovf_u8, mono_icall_sig_ulong_double, mono_fconv_ovf_u8, "mono_fconv_ovf_u8", FALSE);
+	register_opcode_emulation (OP_RCONV_TO_OVF_I8, __emul_rconv_to_ovf_i8, mono_icall_sig_long_float, mono_rconv_ovf_i8, "mono_rconv_ovf_i8", FALSE);
+	register_opcode_emulation (OP_RCONV_TO_OVF_U8, __emul_rconv_to_ovf_u8, mono_icall_sig_ulong_float, mono_rconv_ovf_u8, "mono_rconv_ovf_u8", FALSE);
 
 
 #ifdef MONO_ARCH_EMULATE_FCONV_TO_I8
-	register_opcode_emulation (OP_FCONV_TO_I8, "__emul_fconv_to_i8", mono_icall_sig_long_double, mono_fconv_i8, "mono_fconv_i8", FALSE);
-	register_opcode_emulation (OP_RCONV_TO_I8, "__emul_rconv_to_i8", mono_icall_sig_long_float, mono_rconv_i8, "mono_rconv_i8", FALSE);
+	register_opcode_emulation (OP_FCONV_TO_I8, __emul_fconv_to_i8, mono_icall_sig_long_double, mono_fconv_i8, "mono_fconv_i8", FALSE);
+	register_opcode_emulation (OP_RCONV_TO_I8, __emul_rconv_to_i8, mono_icall_sig_long_float, mono_rconv_i8, "mono_rconv_i8", FALSE);
 #endif
 
 #ifdef MONO_ARCH_EMULATE_CONV_R8_UN
-	register_opcode_emulation (OP_ICONV_TO_R_UN, "__emul_iconv_to_r_un", mono_icall_sig_double_int32, mono_conv_to_r8_un, "mono_conv_to_r8_un", FALSE);
+	register_opcode_emulation (OP_ICONV_TO_R_UN, __emul_iconv_to_r_un, mono_icall_sig_double_int32, mono_conv_to_r8_un, "mono_conv_to_r8_un", FALSE);
 #endif
 #ifdef MONO_ARCH_EMULATE_LCONV_TO_R8
-	register_opcode_emulation (OP_LCONV_TO_R8, "__emul_lconv_to_r8", mono_icall_sig_double_long, mono_lconv_to_r8, "mono_lconv_to_r8", FALSE);
+	register_opcode_emulation (OP_LCONV_TO_R8, __emul_lconv_to_r8, mono_icall_sig_double_long, mono_lconv_to_r8, "mono_lconv_to_r8", FALSE);
 #endif
 #ifdef MONO_ARCH_EMULATE_LCONV_TO_R4
-	register_opcode_emulation (OP_LCONV_TO_R4, "__emul_lconv_to_r4", mono_icall_sig_float_long, mono_lconv_to_r4, "mono_lconv_to_r4", FALSE);
+	register_opcode_emulation (OP_LCONV_TO_R4, __emul_lconv_to_r4, mono_icall_sig_float_long, mono_lconv_to_r4, "mono_lconv_to_r4", FALSE);
 #endif
 #ifdef MONO_ARCH_EMULATE_LCONV_TO_R8_UN
-	register_opcode_emulation (OP_LCONV_TO_R_UN, "__emul_lconv_to_r8_un", mono_icall_sig_double_long, mono_lconv_to_r8_un, "mono_lconv_to_r8_un", FALSE);
+	register_opcode_emulation (OP_LCONV_TO_R_UN, __emul_lconv_to_r8_un, mono_icall_sig_double_long, mono_lconv_to_r8_un, "mono_lconv_to_r8_un", FALSE);
 #endif
 #ifdef MONO_ARCH_EMULATE_FREM
-	register_opcode_emulation (OP_FREM, "__emul_frem", mono_icall_sig_double_double_double, mono_fmod, "fmod", FALSE);
-	register_opcode_emulation (OP_RREM, "__emul_rrem", mono_icall_sig_float_float_float, fmodf, "fmodf", FALSE);
+	register_opcode_emulation (OP_FREM, __emul_frem, mono_icall_sig_double_double_double, mono_fmod, "fmod", FALSE);
+	register_opcode_emulation (OP_RREM, __emul_rrem, mono_icall_sig_float_float_float, fmodf, "fmodf", FALSE);
 #endif
 
 #ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 	if (mono_arch_is_soft_float ()) {
-		register_opcode_emulation (OP_FSUB, "__emul_fsub", mono_icall_sig_double_double_double, mono_fsub, "mono_fsub", FALSE);
-		register_opcode_emulation (OP_FADD, "__emul_fadd", mono_icall_sig_double_double_double, mono_fadd, "mono_fadd", FALSE);
-		register_opcode_emulation (OP_FMUL, "__emul_fmul", mono_icall_sig_double_double_double, mono_fmul, "mono_fmul", FALSE);
-		register_opcode_emulation (OP_FNEG, "__emul_fneg", mono_icall_sig_double_double, mono_fneg, "mono_fneg", FALSE);
-		register_opcode_emulation (OP_ICONV_TO_R8, "__emul_iconv_to_r8", mono_icall_sig_double_int32, mono_conv_to_r8, "mono_conv_to_r8", FALSE);
-		register_opcode_emulation (OP_ICONV_TO_R4, "__emul_iconv_to_r4", mono_icall_sig_double_int32, mono_conv_to_r4, "mono_conv_to_r4", FALSE);
-		register_opcode_emulation (OP_FCONV_TO_R4, "__emul_fconv_to_r4", mono_icall_sig_double_double, mono_fconv_r4, "mono_fconv_r4", FALSE);
-		register_opcode_emulation (OP_FCONV_TO_I1, "__emul_fconv_to_i1", mono_icall_sig_int8_double, mono_fconv_i1, "mono_fconv_i1", FALSE);
-		register_opcode_emulation (OP_FCONV_TO_I2, "__emul_fconv_to_i2", mono_icall_sig_int16_double, mono_fconv_i2, "mono_fconv_i2", FALSE);
-		register_opcode_emulation (OP_FCONV_TO_I4, "__emul_fconv_to_i4", mono_icall_sig_int32_double, mono_fconv_i4, "mono_fconv_i4", FALSE);
-		register_opcode_emulation (OP_FCONV_TO_U1, "__emul_fconv_to_u1", mono_icall_sig_uint8_double, mono_fconv_u1, "mono_fconv_u1", FALSE);
-		register_opcode_emulation (OP_FCONV_TO_U2, "__emul_fconv_to_u2", mono_icall_sig_uint16_double, mono_fconv_u2, "mono_fconv_u2", FALSE);
+		register_opcode_emulation (OP_FSUB, __emul_fsub, mono_icall_sig_double_double_double, mono_fsub, "mono_fsub", FALSE);
+		register_opcode_emulation (OP_FADD, __emul_fadd, mono_icall_sig_double_double_double, mono_fadd, "mono_fadd", FALSE);
+		register_opcode_emulation (OP_FMUL, __emul_fmul, mono_icall_sig_double_double_double, mono_fmul, "mono_fmul", FALSE);
+		register_opcode_emulation (OP_FNEG, __emul_fneg, mono_icall_sig_double_double, mono_fneg, "mono_fneg", FALSE);
+		register_opcode_emulation (OP_ICONV_TO_R8, __emul_iconv_to_r8, mono_icall_sig_double_int32, mono_conv_to_r8, "mono_conv_to_r8", FALSE);
+		register_opcode_emulation (OP_ICONV_TO_R4, __emul_iconv_to_r4, mono_icall_sig_double_int32, mono_conv_to_r4, "mono_conv_to_r4", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_R4, __emul_fconv_to_r4, mono_icall_sig_double_double, mono_fconv_r4, "mono_fconv_r4", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_I1, __emul_fconv_to_i1, mono_icall_sig_int8_double, mono_fconv_i1, "mono_fconv_i1", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_I2, __emul_fconv_to_i2, mono_icall_sig_int16_double, mono_fconv_i2, "mono_fconv_i2", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_I4, __emul_fconv_to_i4, mono_icall_sig_int32_double, mono_fconv_i4, "mono_fconv_i4", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_U1, __emul_fconv_to_u1, mono_icall_sig_uint8_double, mono_fconv_u1, "mono_fconv_u1", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_U2, __emul_fconv_to_u2, mono_icall_sig_uint16_double, mono_fconv_u2, "mono_fconv_u2", FALSE);
 
 #if TARGET_SIZEOF_VOID_P == 4
-		register_opcode_emulation (OP_FCONV_TO_I, "__emul_fconv_to_i", mono_icall_sig_int32_double, mono_fconv_i4, "mono_fconv_i4", FALSE);
+		register_opcode_emulation (OP_FCONV_TO_I, __emul_fconv_to_i, mono_icall_sig_int32_double, mono_fconv_i4, "mono_fconv_i4", FALSE);
 #endif
 
-		register_opcode_emulation (OP_FBEQ, "__emul_fcmp_eq", mono_icall_sig_uint32_double_double, mono_fcmp_eq, "mono_fcmp_eq", FALSE);
-		register_opcode_emulation (OP_FBLT, "__emul_fcmp_lt", mono_icall_sig_uint32_double_double, mono_fcmp_lt, "mono_fcmp_lt", FALSE);
-		register_opcode_emulation (OP_FBGT, "__emul_fcmp_gt", mono_icall_sig_uint32_double_double, mono_fcmp_gt, "mono_fcmp_gt", FALSE);
-		register_opcode_emulation (OP_FBLE, "__emul_fcmp_le", mono_icall_sig_uint32_double_double, mono_fcmp_le, "mono_fcmp_le", FALSE);
-		register_opcode_emulation (OP_FBGE, "__emul_fcmp_ge", mono_icall_sig_uint32_double_double, mono_fcmp_ge, "mono_fcmp_ge", FALSE);
-		register_opcode_emulation (OP_FBNE_UN, "__emul_fcmp_ne_un", mono_icall_sig_uint32_double_double, mono_fcmp_ne_un, "mono_fcmp_ne_un", FALSE);
-		register_opcode_emulation (OP_FBLT_UN, "__emul_fcmp_lt_un", mono_icall_sig_uint32_double_double, mono_fcmp_lt_un, "mono_fcmp_lt_un", FALSE);
-		register_opcode_emulation (OP_FBGT_UN, "__emul_fcmp_gt_un", mono_icall_sig_uint32_double_double, mono_fcmp_gt_un, "mono_fcmp_gt_un", FALSE);
-		register_opcode_emulation (OP_FBLE_UN, "__emul_fcmp_le_un", mono_icall_sig_uint32_double_double, mono_fcmp_le_un, "mono_fcmp_le_un", FALSE);
-		register_opcode_emulation (OP_FBGE_UN, "__emul_fcmp_ge_un", mono_icall_sig_uint32_double_double, mono_fcmp_ge_un, "mono_fcmp_ge_un", FALSE);
+		register_opcode_emulation (OP_FBEQ, __emul_fcmp_eq, mono_icall_sig_uint32_double_double, mono_fcmp_eq, "mono_fcmp_eq", FALSE);
+		register_opcode_emulation (OP_FBLT, __emul_fcmp_lt, mono_icall_sig_uint32_double_double, mono_fcmp_lt, "mono_fcmp_lt", FALSE);
+		register_opcode_emulation (OP_FBGT, __emul_fcmp_gt, mono_icall_sig_uint32_double_double, mono_fcmp_gt, "mono_fcmp_gt", FALSE);
+		register_opcode_emulation (OP_FBLE, __emul_fcmp_le, mono_icall_sig_uint32_double_double, mono_fcmp_le, "mono_fcmp_le", FALSE);
+		register_opcode_emulation (OP_FBGE, __emul_fcmp_ge, mono_icall_sig_uint32_double_double, mono_fcmp_ge, "mono_fcmp_ge", FALSE);
+		register_opcode_emulation (OP_FBNE_UN, __emul_fcmp_ne_un, mono_icall_sig_uint32_double_double, mono_fcmp_ne_un, "mono_fcmp_ne_un", FALSE);
+		register_opcode_emulation (OP_FBLT_UN, __emul_fcmp_lt_un, mono_icall_sig_uint32_double_double, mono_fcmp_lt_un, "mono_fcmp_lt_un", FALSE);
+		register_opcode_emulation (OP_FBGT_UN, __emul_fcmp_gt_un, mono_icall_sig_uint32_double_double, mono_fcmp_gt_un, "mono_fcmp_gt_un", FALSE);
+		register_opcode_emulation (OP_FBLE_UN, __emul_fcmp_le_un, mono_icall_sig_uint32_double_double, mono_fcmp_le_un, "mono_fcmp_le_un", FALSE);
+		register_opcode_emulation (OP_FBGE_UN, __emul_fcmp_ge_un, mono_icall_sig_uint32_double_double, mono_fcmp_ge_un, "mono_fcmp_ge_un", FALSE);
 
-		register_opcode_emulation (OP_FCEQ, "__emul_fcmp_ceq", mono_icall_sig_uint32_double_double, mono_fceq, "mono_fceq", FALSE);
-		register_opcode_emulation (OP_FCGT, "__emul_fcmp_cgt", mono_icall_sig_uint32_double_double, mono_fcgt, "mono_fcgt", FALSE);
-		register_opcode_emulation (OP_FCGT_UN, "__emul_fcmp_cgt_un", mono_icall_sig_uint32_double_double, mono_fcgt_un, "mono_fcgt_un", FALSE);
-		register_opcode_emulation (OP_FCLT, "__emul_fcmp_clt", mono_icall_sig_uint32_double_double, mono_fclt, "mono_fclt", FALSE);
-		register_opcode_emulation (OP_FCLT_UN, "__emul_fcmp_clt_un", mono_icall_sig_uint32_double_double, mono_fclt_un, "mono_fclt_un", FALSE);
+		register_opcode_emulation (OP_FCEQ, __emul_fcmp_ceq, mono_icall_sig_uint32_double_double, mono_fceq, "mono_fceq", FALSE);
+		register_opcode_emulation (OP_FCGT, __emul_fcmp_cgt, mono_icall_sig_uint32_double_double, mono_fcgt, "mono_fcgt", FALSE);
+		register_opcode_emulation (OP_FCGT_UN, __emul_fcmp_cgt_un, mono_icall_sig_uint32_double_double, mono_fcgt_un, "mono_fcgt_un", FALSE);
+		register_opcode_emulation (OP_FCLT, __emul_fcmp_clt, mono_icall_sig_uint32_double_double, mono_fclt, "mono_fclt", FALSE);
+		register_opcode_emulation (OP_FCLT_UN, __emul_fcmp_clt_un, mono_icall_sig_uint32_double_double, mono_fclt_un, "mono_fclt_un", FALSE);
 
 		register_icall (mono_fload_r4, "mono_fload_r4", mono_icall_sig_double_ptr, FALSE);
 		register_icall (mono_fstore_r4, "mono_fstore_r4", mono_icall_sig_void_double_ptr, FALSE);
@@ -4580,9 +4577,9 @@ register_icalls (void)
 #endif
 
 #if SIZEOF_REGISTER == 4
-	register_opcode_emulation (OP_FCONV_TO_U, "__emul_fconv_to_u", mono_icall_sig_uint32_double, mono_fconv_u4, "mono_fconv_u4", TRUE);
+	register_opcode_emulation (OP_FCONV_TO_U, __emul_fconv_to_u, mono_icall_sig_uint32_double, mono_fconv_u4, "mono_fconv_u4", TRUE);
 #else
-	register_opcode_emulation (OP_FCONV_TO_U, "__emul_fconv_to_u", mono_icall_sig_ulong_double, mono_fconv_u8, "mono_fconv_u8", TRUE);
+	register_opcode_emulation (OP_FCONV_TO_U, __emul_fconv_to_u, mono_icall_sig_ulong_double, mono_fconv_u8, "mono_fconv_u8", TRUE);
 #endif
 
 	/* other jit icalls */
