@@ -4842,23 +4842,27 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		}
 
-		MINT_IN_CASE(MINT_LDSSFLD_SLOW)
-		MINT_IN_CASE(MINT_LDSSFLD_VT_SLOW) {
-			gboolean is_vt = *ip == MINT_LDSSFLD_VT_SLOW;
+		MINT_IN_CASE(MINT_LDSSFLD) {
 			MonoClassField *field = (MonoClassField*)imethod->data_items [* (guint16 *)(ip + 1)];
-			gpointer addr = mono_class_static_field_address (imethod->domain, field);
-			EXCEPTION_CHECKPOINT;
-			if (is_vt) {
-				int size = READ32 (ip + 2);
-				sp->data.p = vt_sp;
-				vt_sp += ALIGN_TO (size, MINT_VT_ALIGNMENT);
-			}
+			guint32 offset = READ32(ip + 2);
+			gpointer addr = mono_get_special_static_data (offset);
 			stackval_from_data (field->type, sp, addr, FALSE);
-			ip += (is_vt ? 4 : 2);
+			ip += 4;
 			++sp;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_LDSSFLD_VT) {
+			guint32 offset = READ32(ip + 1);
+			gpointer addr = mono_get_special_static_data (offset);
 
+			int size = READ32 (ip + 3);
+			memcpy (vt_sp, addr, size);
+			sp->data.p = vt_sp;
+			vt_sp += ALIGN_TO (size, MINT_VT_ALIGNMENT);
+			ip += 5;
+			++sp;
+			MINT_IN_BREAK;
+		}
 #define STSFLD(datamem, fieldtype) { \
 	MonoVTable *vtable = (MonoVTable*) imethod->data_items [*(guint16*)(ip + 1)]; \
 	INIT_VTABLE (vtable); \
@@ -4891,23 +4895,26 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		}
 
-		MINT_IN_CASE(MINT_STSSFLD_SLOW)
-		MINT_IN_CASE(MINT_STSSFLD_VT_SLOW) {
-			gboolean is_vt = *ip == MINT_STSSFLD_VT_SLOW;
+		MINT_IN_CASE(MINT_STSSFLD) {
 			MonoClassField *field = (MonoClassField*)imethod->data_items [* (guint16 *)(ip + 1)];
-			gpointer addr = mono_class_static_field_address (imethod->domain, field);
-			EXCEPTION_CHECKPOINT;
+			guint32 offset = READ32(ip + 2);
+			gpointer addr = mono_get_special_static_data (offset);
 			--sp;
 			stackval_to_data (field->type, sp, addr, FALSE);
-			if (is_vt) {
-				int size = READ32 (ip + 2);
-				vt_sp -= ALIGN_TO (size, MINT_VT_ALIGNMENT);
-				ip += 4;
-			} else {
-				ip += 2;
-			}
+			ip += 4;
 			MINT_IN_BREAK;
 		}
+		MINT_IN_CASE(MINT_STSSFLD_VT) {
+			guint32 offset = READ32(ip + 1);
+			gpointer addr = mono_get_special_static_data (offset);
+			--sp;
+			int size = READ32 (ip + 3);
+			memcpy (addr, sp->data.vt, size);
+			vt_sp -= ALIGN_TO (size, MINT_VT_ALIGNMENT);
+			ip += 5;
+			MINT_IN_BREAK;
+		}
+
 		MINT_IN_CASE(MINT_STOBJ_VT) {
 			int size;
 			c = (MonoClass*)imethod->data_items[* (guint16 *)(ip + 1)];
