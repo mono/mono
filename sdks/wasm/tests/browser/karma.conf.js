@@ -16,6 +16,7 @@ module.exports = function(config) {
             {pattern: './publish/mono-config.js', included: false, served: true},
             {pattern: './publish/runtime.js', included: false, served: true},
             {pattern: './publish/managed/*.dll', included: false, served: true},
+            {pattern: './publish/managed/*.pdb', included: false, served: true},
             {pattern: './publish/**/*.txt', included: false, served: true, type: 'text'},
         ],
         //load karma-mocha-reporter and karma-html
