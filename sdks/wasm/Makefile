@@ -384,6 +384,8 @@ package: build build-dbg-proxy build-sdk
 	cp -r ./docs/ tmp/docs/
 	mkdir tmp/packages
 	cp -r ./sdk/packages tmp/
+	mkdir tmp/Templates
+	cp -r ./sdk/Templates tmp/
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
