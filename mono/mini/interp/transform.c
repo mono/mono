@@ -2571,16 +2571,23 @@ interp_emit_sfld_access (TransformData *td, MonoClassField *field, MonoClass *fi
 		mono_domain_unlock (domain);
 		g_assert (offset);
 
-		if (mt == MINT_TYPE_VT) {
-			interp_add_ins (td, is_load ? MINT_LDSSFLD_VT : MINT_STSSFLD_VT);
+		// Offset is SpecialStaticOffset
+		if ((offset & 0x80000000) == 0 && mt != MINT_TYPE_VT) {
+			// This field is thread static
+			interp_add_ins (td, (is_load ? MINT_LDTSFLD_I1 : MINT_STTSFLD_I1) + mt);
 			WRITE32_INS(td->last_ins, 0, &offset);
-
-			int size = mono_class_value_size (field_class, NULL);
-			WRITE32_INS(td->last_ins, 2, &size);
 		} else {
-			interp_add_ins (td, is_load ? MINT_LDSSFLD : MINT_STSSFLD);
-			td->last_ins->data [0] = get_data_item_index (td, field);
-			WRITE32_INS(td->last_ins, 1, &offset);
+			if (mt == MINT_TYPE_VT) {
+				interp_add_ins (td, is_load ? MINT_LDSSFLD_VT : MINT_STSSFLD_VT);
+				WRITE32_INS(td->last_ins, 0, &offset);
+
+				int size = mono_class_value_size (field_class, NULL);
+				WRITE32_INS(td->last_ins, 2, &size);
+			} else {
+				interp_add_ins (td, is_load ? MINT_LDSSFLD : MINT_STSSFLD);
+				td->last_ins->data [0] = get_data_item_index (td, field);
+				WRITE32_INS(td->last_ins, 1, &offset);
+			}
 		}
 	} else {
 		if (is_load)
