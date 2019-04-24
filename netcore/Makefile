@@ -35,6 +35,10 @@ URL := https://dotnetcli.blob.core.windows.net/dotnet/Runtime/$(NETCOREAPP_VERSI
 FEED_BASE_URL := https://dotnetfeed.blob.core.windows.net/dotnet-core
 TEST_ASSETS_URL = $(FEED_BASE_URL)/corefx-tests/$(NETCORETESTS_VERSION)/OSX.x64/netcoreapp/corefx-test-assets.xml
 
+# used to calculate exact version number for generating nupkg
+BLAME = $(shell git blame ../configure.ac | grep AC_INIT | cut -f1 -d' ')
+VERSTUB = .$(shell git rev-list --count $(BLAME)..HEAD)
+
 $(NETCORESDK_FILE):
 	curl $(URL) --output $(NETCORESDK_FILE)
 	$(UNZIPCMD) $(NETCORESDK_FILE)
@@ -80,7 +84,7 @@ link-mono:
 prepare: $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
 nupkg:
-	nuget pack runtime.nuspec -properties VERSION=$(VERSION)\;RID=$(RID)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)
+	nuget pack runtime.nuspec -properties VERSION=$(VERSION)$(VERSTUB)\;RID=$(RID)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)
 
 clean:
 	rm -rf sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
