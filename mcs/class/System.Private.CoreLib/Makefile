@@ -2,11 +2,17 @@ thisdir = class/System.Private.CoreLib
 SUBDIRS =
 include ../../build/rules.make
 
+include ../../../netcore/roslyn.make
+ROSLYN_PROPS_FILE := ../../../netcore/roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/build/Microsoft.Net.Compilers.Toolset.props
+
 dirs := $(dir $(wildcard */*))
 files := $(wildcard */*.cs)
 
-all-local:
-	dotnet build $(CORETARGETS) -p:BuildArch=$(COREARCH) -p:OutputPath=bin/$(COREARCH) System.Private.CoreLib.csproj
+all-local: $(ROSLYN_PROPS_FILE)
+	dotnet build $(CORETARGETS) -p:BuildArch=$(COREARCH) -p:OutputPath=bin/$(COREARCH) -p:RoslynPropsFile="$(ROSLYN_PROPS_FILE)" System.Private.CoreLib.csproj
+
+$(ROSLYN_PROPS_FILE):
+	make -C ../../../netcore update-roslyn
 
 dist-recursive:
 	$(mkdir_p) $(distdir)
