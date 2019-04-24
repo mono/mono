@@ -623,7 +623,7 @@ namespace System
 
 		internal bool IsTransparentProxy ()
 		{
-#if DISABLE_REMOTING
+#if !FEATURE_REMOTING
 			return false;
 #else
 			return RemotingServices.IsTransparentProxy (m_target);
