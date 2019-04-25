@@ -19,6 +19,8 @@ PROFILE_MCS_FLAGS = \
 	-d:NET_4_5 \
 	-d:MONO \
 	-d:MOBILE,MOBILE_LEGACY \
+	-d:DISABLE_REMOTING \
+	-d:DISABLE_SECURITY \
 	-nowarn:1699 \
 	-nostdlib \
 	$(PLATFORM_DEBUG_FLAGS)
