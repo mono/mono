@@ -7,7 +7,7 @@ var BindingSupportLib = {
 		mono_wasm_ref_counter: 0,
 		mono_wasm_free_list: [],
 		mono_wasm_marshal_enum_as_int: false,
-		mono_wasm_core_map: {},	
+		mono_wasm_core_map: null,	
 		mono_bindings_init: function (binding_asm) {
 			this.BINDING_ASM = binding_asm;
 		},
@@ -96,7 +96,7 @@ var BindingSupportLib = {
 			this.object_to_string = get_method ("ObjectToString");
 
 			this.object_to_enum = get_method ("ObjectToEnum");
-			BINDING.mono_wasm_core_map = new Map();
+			BINDING.mono_wasm_core_map = new WeakMap();
 			this.init = true;
 		},		
 
@@ -739,21 +739,20 @@ var BindingSupportLib = {
 		core_object_type: function(obj) {
 			var coreType = BINDING.mono_wasm_core_map.get(obj.constructor);
 			if (typeof coreType === "undefined") {
-				var switchName = obj.constructor.name;
-				switch (true) {
-					case switchName === "Array":
-					case switchName === "ArrayBuffer":
-					case switchName === "Int8Array":
-					case switchName === "Uint8Array":
-					case switchName === "Uint8ClampedArray":
-					case switchName === "Int16Array":
-					case switchName === "Uint16Array":
-					case switchName === "Int32Array":
-					case switchName === "Uint32Array":
-					case switchName === "Float32Array":
-					case switchName === "Float64Array":
-					case switchName === "Function":
-					case switchName === "SharedArrayBuffer":
+				switch (obj.constructor.name) {
+					case "Array":
+					case "ArrayBuffer":
+					case "Int8Array":
+					case "Uint8Array":
+					case "Uint8ClampedArray":
+					case "Int16Array":
+					case "Uint16Array":
+					case "Int32Array":
+					case "Uint32Array":
+					case "Float32Array":
+					case "Float64Array":
+					case "Function":
+					case "SharedArrayBuffer":
 						coreType = this.wasm_get_core_type(obj);
 						break;
 				}
