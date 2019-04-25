@@ -8,7 +8,10 @@ include ../mcs/build/config.make
 NETCORETESTS_VERSION := 4.6.0-preview5.19217.2
 
 # Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L14
-NETCOREAPP_VERSION := 3.0.0-preview5-27620-01
+NETCOREAPP_VERSION := 3.0.0-preview5-27622-01
+
+# TODO: detect automatically for given NETCOREAPP_VERSION
+ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
 
 include roslyn.make
 
@@ -31,13 +34,19 @@ XUNIT_FLAGS = -notrait category=nonlinuxtests
 endif
 
 NETCORESDK_FILE := dotnet-runtime-$(NETCOREAPP_VERSION)-$(RID).$(NETCORESDK_EXT)
-URL := https://dotnetcli.blob.core.windows.net/dotnet/Runtime/$(NETCOREAPP_VERSION)/$(NETCORESDK_FILE)
+ASPNETCORESDK_FILE := aspnetcore-runtime-$(ASPNETCOREAPP_VERSION)-$(RID).$(NETCORESDK_EXT)
+NETCORE_URL := https://dotnetcli.blob.core.windows.net/dotnet/Runtime/$(NETCOREAPP_VERSION)/$(NETCORESDK_FILE)
+ASPNETCORE_URL := https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/$(ASPNETCOREAPP_VERSION)/$(ASPNETCORESDK_FILE)
 FEED_BASE_URL := https://dotnetfeed.blob.core.windows.net/dotnet-core
 TEST_ASSETS_URL = $(FEED_BASE_URL)/corefx-tests/$(NETCORETESTS_VERSION)/OSX.x64/netcoreapp/corefx-test-assets.xml
 
 $(NETCORESDK_FILE):
-	curl $(URL) --output $(NETCORESDK_FILE)
+	curl $(NETCORE_URL) --output $(NETCORESDK_FILE)
 	$(UNZIPCMD) $(NETCORESDK_FILE)
+
+$(ASPNETCORESDK_FILE):
+	curl $(ASPNETCORE_URL) --output $(ASPNETCORESDK_FILE)
+	$(UNZIPCMD) $(ASPNETCORESDK_FILE)
 
 update-corefx: corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION)
 
@@ -55,11 +64,13 @@ corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 	python dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) corefx/tests
 	touch $@
 
-build-sample:
-	dotnet build sample/HelloWorld
-
 run-sample:
+	dotnet build sample/HelloWorld
 	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" sample/HelloWorld/bin/Debug/netcoreapp3.0/HelloWorld.dll
+
+run-aspnet-sample:
+	dotnet build sample/AspNetMvc
+	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(ASPNETCOREAPP_VERSION)" sample/AspNetMvc/bin/Debug/netcoreapp3.0/AspNetMvc.dll
 
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
@@ -77,13 +88,13 @@ link-mono:
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
 
-prepare: $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
+prepare: $(ASPNETCORESDK_FILE) $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
 nupkg:
 	nuget pack runtime.nuspec -properties VERSION=$(VERSION)\;RID=$(RID)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)
 
 clean:
-	rm -rf sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE)
+	rm -rf sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) $(ASPNETCORESDK_FILE)
 
 #
 # Running tests:
