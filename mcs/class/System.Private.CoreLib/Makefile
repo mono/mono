@@ -14,10 +14,9 @@ all-local: $(ROSLYN_PROPS_FILE)
 $(ROSLYN_PROPS_FILE):
 	make -C ../../../netcore update-roslyn
 
-dist-recursive:
-	$(mkdir_p) $(distdir)
-	cp -a Makefile.am $(distdir)
-	cp -a Makefile.in $(distdir)
+dist-local:
+	mkdir -p $(distdir)
+	cp -a Makefile $(distdir)
 	cp -a *.csproj $(distdir)
-	for i in $(dirs); do $(mkdir_p) $(distdir)/$$i; done
+	for i in $(dirs); do mkdir -p $(distdir)/$$i; done
 	for i in $(files); do cp -a $$i $(distdir)/$$i; done
