@@ -623,13 +623,14 @@ class Driver {
 			GenDriver (builddir, profilers, ee_mode, link_icalls);
 		}
 
-		string runtime_libs = "$mono_sdkdir/wasm-runtime-release/lib/libmonosgen-2.0.a";
+		string runtime_libs = "";
 		if (ee_mode == ExecMode.AotInterp || link_icalls) {
-			runtime_libs += " $mono_sdkdir/wasm-runtime-release/lib/libmono-ee-interp.a $mono_sdkdir/wasm-runtime-release/lib/libmono-ilgen.a";
+			runtime_libs += "$mono_sdkdir/wasm-runtime-release/lib/libmono-ee-interp.a $mono_sdkdir/wasm-runtime-release/lib/libmono-ilgen.a ";
 			// We need to link the icall table because the interpreter uses it to lookup icalls even if the aot-ed icall wrappers are available
 			if (!link_icalls)
-				runtime_libs += " $mono_sdkdir/wasm-runtime-release/lib/libmono-icall-table.a";
+				runtime_libs += "$mono_sdkdir/wasm-runtime-release/lib/libmono-icall-table.a ";
 		}
+		runtime_libs += "$mono_sdkdir/wasm-runtime-release/lib/libmonosgen-2.0.a";
 
 		string aot_args = "";
 		string profiler_libs = "";
