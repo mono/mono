@@ -1372,6 +1372,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("Remoting")]
 		public void GetValueContextBoundObject ()
 		{
 			var instance = new CBOTest ();
@@ -1394,6 +1395,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		[Category ("Remoting")]
 		public void SetValueContextBoundObject ()
 		{
 			var instance = new CBOTest ();
