@@ -348,6 +348,7 @@ package: build build-dbg-proxy build-sdk
 	rm -rf tmp/wasm-bcl/wasm/corlib.unsafe.dll.tmp
 	cp driver.c pinvoke-tables-default.h tmp/
 	cp corebindings.c tmp/
+	cp pinvoke-tables-default.h tmp/
 	cp $(MONO_LIBS) tmp/
 	cp library_mono.js tmp/
 	cp binding_support.js tmp/
