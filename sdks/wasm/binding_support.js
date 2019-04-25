@@ -756,7 +756,7 @@ var BindingSupportLib = {
 						coreType = this.wasm_get_core_type(obj);
 						break;
 				}
-		  }
+		  	}
 			return coreType;
 		},
 		// Object wrapping helper functions to handle reference handles that will
