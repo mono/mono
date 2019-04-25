@@ -10,8 +10,9 @@ NETCORETESTS_VERSION := 4.6.0-preview5.19217.2
 # Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L14
 NETCOREAPP_VERSION := 3.0.0-preview5-27622-01
 
-# TODO: detect automatically for given NETCOREAPP_VERSION
+# Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
+ASPNET_NETCOREAPP_VERSION := 3.0.0-preview-27122-01
 
 include roslyn.make
 
@@ -68,25 +69,32 @@ run-sample:
 	dotnet build sample/HelloWorld
 	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" sample/HelloWorld/bin/Debug/netcoreapp3.0/HelloWorld.dll
 
-run-aspnet-sample:
-	dotnet build sample/AspNetMvc
-	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(ASPNETCOREAPP_VERSION)" sample/AspNetMvc/bin/Debug/netcoreapp3.0/AspNetMvc.dll
+run-aspnet-sample: prepare
+	dotnet publish sample/AspNetMvc -c Debug -r $(RID)
+	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) sample/AspNetMvc/bin/Debug/netcoreapp3.0/osx-x64/publish/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
+	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll sample/AspNetMvc/bin/Debug/netcoreapp3.0/osx-x64/publish/
+	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(ASPNETCOREAPP_VERSION)" sample/AspNetMvc/bin/Debug/netcoreapp3.0/osx-x64/publish/AspNetMvc.dll
 
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
+ASPNET_SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(ASPNET_NETCOREAPP_VERSION)
 
 bcl:
 	$(MAKE) -C ../mcs/build/ common/Consts.cs
 	$(MAKE) -C ../mcs/class/System.Private.CoreLib
 	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll $(SHAREDRUNTIME)
+	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll $(ASPNET_SHAREDRUNTIME)
 
 runtime:
 	$(MAKE) -C ../mono
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
+	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(ASPNET_SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 
 link-mono:
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
+	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(ASPNET_SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
+	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.{dll,pdb} $(ASPNET_SHAREDRUNTIME)
 
 prepare: $(ASPNETCORESDK_FILE) $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
