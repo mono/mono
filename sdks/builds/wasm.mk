@@ -93,6 +93,11 @@ archive-wasm: package-wasm-runtime
 
 wasm_ARCHIVE += wasm-runtime-$(CONFIGURATION)
 
+ifeq ($(UNAME),Darwin)
+# The c# offsets tool is 32 bit, and the 64 bit version doesn't work
+USE_OFFSETS_TOOL_PY = 1
+endif
+
 ##
 # Parameters
 #  $(1): target
