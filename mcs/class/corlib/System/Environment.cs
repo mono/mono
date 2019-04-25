@@ -563,10 +563,12 @@ namespace System {
 
 			string dir = null;
 
+#pragma warning disable 162
 			if (Environment.IsRunningOnWindows)
 				dir = GetWindowsFolderPath ((int) folder);
 			else
 				dir = UnixGetFolderPath (folder, option);
+#pragma warning restore 162
 
 #if MONO_FEATURE_CAS
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
