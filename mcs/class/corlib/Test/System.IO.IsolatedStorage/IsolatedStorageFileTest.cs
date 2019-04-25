@@ -42,6 +42,7 @@ using NUnit.Framework;
 namespace MonoTests.System.IO.IsolatedStorageTest {
 
 	[TestFixture]
+	[Category ("LinkerNotWorking")]
 	public class IsolatedStorageFileTest {
 
 		private const string dirname = "mono-unit-test";

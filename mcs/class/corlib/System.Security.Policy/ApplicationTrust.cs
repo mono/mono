@@ -28,6 +28,7 @@
 
 
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
@@ -119,6 +120,11 @@ namespace System.Security.Policy
 
 		public void FromXml (SecurityElement element) 
 		{
+#if DISABLE_SECURITY
+			throw new PlatformNotSupportedException ();
+#else
+			if (!RuntimeFeature.IsSecuritySupported)
+				throw new PlatformNotSupportedException ();
 			if (element == null)
 				throw new ArgumentNullException ("element");
 
@@ -161,10 +167,16 @@ namespace System.Security.Policy
 					}
 				}
 			}
+#endif
 		}
 
 		public SecurityElement ToXml () 
 		{
+#if DISABLE_SECURITY
+			throw new PlatformNotSupportedException ();
+#else
+			if (!RuntimeFeature.IsSecuritySupported)
+				throw new PlatformNotSupportedException ();
 			SecurityElement se = new SecurityElement ("ApplicationTrust");
 			se.AddAttribute ("version", "1");
 
@@ -197,6 +209,7 @@ namespace System.Security.Policy
 			}
 
 			return se;
+#endif
 		}
 		
 		public IList<StrongName> FullTrustAssemblies {

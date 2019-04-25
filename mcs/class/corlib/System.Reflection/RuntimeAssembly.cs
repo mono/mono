@@ -621,6 +621,8 @@ namespace System.Reflection {
 #if MOBILE
 			return null;
 #else
+			if (!RuntimeFeature.IsSecuritySupported)
+				return null;
 			// if the host (runtime) hasn't provided it's own evidence...
 			if (_evidence == null) {
 				// ... we will provide our own
