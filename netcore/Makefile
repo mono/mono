@@ -8,7 +8,7 @@ include ../mcs/build/config.make
 NETCORETESTS_VERSION := 4.6.0-preview5.19217.2
 
 # Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L14
-NETCOREAPP_VERSION := 3.0.0-preview5-27622-01
+NETCOREAPP_VERSION := 3.0.0-preview5-27620-01
 
 # Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
