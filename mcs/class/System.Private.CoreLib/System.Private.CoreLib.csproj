@@ -277,9 +277,9 @@
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
   </ItemGroup>
   <ItemGroup>
-      <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeNamedArgument.cs" />
-      <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\CustomAttributeTypedArgument.cs" />
-      <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Reflection\MissingMetadataException.cs" />
+      <Compile Include="System.Reflection\CustomAttributeNamedArgument.cs" />
+      <Compile Include="System.Reflection\CustomAttributeTypedArgument.cs" />
+      <Compile Include="System.Reflection\MissingMetadataException.cs" />
       <Compile Include="..\corlib\corert\RuntimeAugments.cs" />
   </ItemGroup>
 
