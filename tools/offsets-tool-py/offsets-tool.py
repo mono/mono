@@ -30,10 +30,10 @@ class OffsetsTool:
 	def parse_args(self):
 		parser = argparse.ArgumentParser ()
 		parser.add_argument ('--xcode-path', dest='xcode_path', help='path to Xcode.app')
-		parser.add_argument ('--emscripten-path', dest='emscripten_path', help='path to emscripten sdk')
+		parser.add_argument ('--emscripten-sdk', dest='emscripten_path', help='path to emscripten sdk')
 		parser.add_argument ('--outfile', dest='outfile', help='path to output file', required=True)
-		parser.add_argument ('--mono-path', dest='mono_path', help='path to mono source tree', required=True)
-		parser.add_argument ('--target-path', dest='target_path', help='path to mono tree configured for target', required=True)
+		parser.add_argument ('--monodir', dest='mono_path', help='path to mono source tree', required=True)
+		parser.add_argument ('--targetdir', dest='target_path', help='path to mono tree configured for target', required=True)
 		parser.add_argument ('--abi=', dest='abi', help='ABI triple to generate', required=True)
 		args = parser.parse_args ()
 
