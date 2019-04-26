@@ -382,6 +382,12 @@ cominterop_get_com_slot_begin (MonoClass* klass)
 		return 7; /* 7 methods in IDispatch*/
 }
 
+static gboolean
+cominterop_interface_is_dispatch (MonoClass* klass)
+{
+	return (cominterop_get_com_slot_begin (klass) == 7);
+}
+
 /**
  * cominterop_get_method_interface:
  * @method: method being called
@@ -2545,6 +2551,7 @@ cominterop_ccw_queryinterface_impl (MonoCCWInterface* ccwe, const guint8* riid, 
 	MonoCCW* ccw = ccwe->ccw;
 	MonoClass* klass_iter = NULL;
 	MonoObjectHandle object = mono_gchandle_get_target_handle (ccw->gc_handle);
+	gboolean handling_idispatch = FALSE;
 	
 	g_assert (!MONO_HANDLE_IS_NULL (object));
 	MonoClass* const klass = mono_handle_class (object);
@@ -2566,14 +2573,15 @@ cominterop_ccw_queryinterface_impl (MonoCCWInterface* ccwe, const guint8* riid, 
 
 	/* handle IDispatch special */
 	if (cominterop_class_guid_equal (riid, mono_class_get_idispatch_class ())) {
-		if (!cominterop_can_support_dispatch (klass))
-			return MONO_E_NOINTERFACE;
-		
-		*ppv = cominterop_get_ccw_checked (object, mono_class_get_idispatch_class (), error);
-		mono_error_assert_ok (error);
-		/* remember to addref on QI */
-		cominterop_ccw_addref ((MonoCCWInterface *)*ppv);
-		return MONO_S_OK;
+		if (cominterop_can_support_dispatch (klass)) {
+			*ppv = cominterop_get_ccw_checked (object, mono_class_get_idispatch_class (), error);
+			mono_error_assert_ok (error);
+			/* remember to addref on QI */
+			cominterop_ccw_addref ((MonoCCWInterface *)*ppv);
+			return MONO_S_OK;
+		}
+
+		handling_idispatch = TRUE;
 	}
 
 #ifdef HOST_WIN32
@@ -2592,7 +2600,9 @@ cominterop_ccw_queryinterface_impl (MonoCCWInterface* ccwe, const guint8* riid, 
 			for (i = 0; i < ifaces->len; ++i) {
 				MonoClass *ic = NULL;
 				ic = (MonoClass *)g_ptr_array_index (ifaces, i);
-				if (cominterop_class_guid_equal (riid, ic)) {
+				if (handling_idispatch
+					? cominterop_interface_is_dispatch (ic)
+					: cominterop_class_guid_equal (riid, ic)) {
 					itf = ic;
 					break;
 				}
