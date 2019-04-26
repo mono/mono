@@ -1,7 +1,6 @@
 # The test runner
 
-The test runner is an objective-c app which embeds the runtime. It has a command line interface similar to the mono runtime, i.e.
-<exe> <arguments>.
+The test runner is an objective-c app which embeds the runtime. It has a command line interface similar to the mono runtime, i.e. `<exe> <arguments>`.
 
 # The test harness
 
@@ -48,12 +47,14 @@ etc.
 of the default ad-hoc signing. It also needs to include a provisioning
 profile. This can be done using:
 
+```
 make build-ios-dev-<app> IOS_SIGNING_IDENTITY="iPhone Developer: XXX" IOS_PROVISIONING_PROFILE="$HOME/Library/MobileDevice/Provisioning Profiles/test.mobileprovision"
+```
 
 * The certificates/provisioning profiles need to be installed on the
 host/device.
 
-* The app is installed/run using 'ios-deploy'.
+* The app is installed/run using 'ios-deploy', make sure it is installed.
 
 * The host and the device needs to be on the same network. This is
 needed because the test results are sent back over a tcp connection.
