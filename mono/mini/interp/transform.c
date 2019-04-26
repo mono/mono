@@ -1012,6 +1012,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 		} else if (!strcmp ("op_Implicit", tm ) || !strcmp ("op_Explicit", tm)) {
 			MonoType *src = csignature->params [0];
 			MonoType *dst = csignature->ret;
+			MonoClass *src_klass = mono_class_from_mono_type_internal (src);
 			int src_size = mini_magic_type_size (NULL, src);
 			int dst_size = mini_magic_type_size (NULL, dst);
 
@@ -1022,6 +1023,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 				if (!mini_magic_is_int_type (src) || !mini_magic_is_int_type (dst)) {
 					if (mini_magic_is_int_type (src))
 						store_value_as_local = TRUE;
+					else if (mono_class_is_magic_float (src_klass))
+						store_value_as_local = TRUE;
 					else
 						return FALSE;
 				}
@@ -1029,6 +1032,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoMeth
 			case 2:
 				if (!mini_magic_is_float_type (src) || !mini_magic_is_float_type (dst)) {
 					if (mini_magic_is_float_type (src))
+						store_value_as_local = TRUE;
+					else if (mono_class_is_magic_int (src_klass))
 						store_value_as_local = TRUE;
 					else
 						return FALSE;
