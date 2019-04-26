@@ -169,6 +169,7 @@ typedef struct {
 typedef struct {
 	gpointer vtable;
 	MonoCCW* ccw;
+	MonoClass* iface;
 } MonoCCWInterface;
 
 /* IUnknown */
@@ -2167,6 +2168,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 		ccw_entry = g_new0 (MonoCCWInterface, 1);
 		ccw_entry->ccw = ccw;
 		ccw_entry->vtable = vtable;
+		ccw_entry->iface = iface;
 		g_hash_table_insert (ccw->vtable_hash, itf, ccw_entry);
 		g_hash_table_insert (ccw_interface_hash, ccw_entry, ccw);
 	}
@@ -2652,6 +2654,9 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 	return result;
 }
 
+/* Common base value for sequential dispid's */
+#define MONO_DISPID_BASE 0x60020000
+
 static int STDCALL 
 cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 				      gunichar2** rgszNames, guint32 cNames,
@@ -2661,47 +2666,59 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 	static MonoClass *ComDispIdAttribute = NULL;
 	ERROR_DECL (error);
 	MonoCustomAttrInfo *cinfo = NULL;
-	int i,ret = MONO_S_OK;
-	MonoMethod* method;
+	int i, j, methodcount, pos, ret = MONO_S_OK;
+	MonoMethod* method = NULL;
+	MonoMethod** methods = NULL;
 	gchar* methodname;
-	MonoClass *klass = NULL;
-	MonoCCW* ccw = ccwe->ccw;
-	MonoObject* object = mono_gchandle_get_target_internal (ccw->gc_handle);
+	MonoClass* iface = ccwe->iface;
 
 	/* Handle DispIdAttribute */
 	if (!ComDispIdAttribute)
 		ComDispIdAttribute = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "DispIdAttribute");
 
-	g_assert (object);
-	klass = mono_object_class (object);
-
 	if (!mono_domain_get ())
 		 mono_thread_attach (mono_get_root_domain ());
+
+	mono_class_setup_methods (iface);
+	methodcount = mono_class_get_method_count (iface);
+	methods = m_class_get_methods (iface);
 
 	for (i=0; i < cNames; i++) {
 		methodname = mono_unicode_to_external (rgszNames[i]);
 
-		method = mono_class_get_method_from_name_checked(klass, methodname, -1, 0, error);
-		if (method && is_ok (error)) {
+		if (mono_class_is_interface (iface))
+			pos = 0;
+		else
+			/* TODO: methods on Object should be properly included? */
+			pos = 4;
+
+		for (j = 0; j < methodcount; j++) {
+			method = methods [j];
+
+			if (strcmp(method->name, methodname) == 0)
+				break;
+
+			pos++;
+		}
+
+		if (j < methodcount) {
 			cinfo = mono_custom_attrs_from_method_checked (method, error);
 			mono_error_assert_ok (error); /* FIXME what's reasonable to do here */
 			if (cinfo) {
-				MonoObject *result = mono_custom_attrs_get_attr_checked (cinfo, ComDispIdAttribute, error);
+				MonoDispIdAttribute *result = (MonoDispIdAttribute*)mono_custom_attrs_get_attr_checked (cinfo, ComDispIdAttribute, error);
 				mono_error_assert_ok (error); /*FIXME proper error handling*/;
 
 				if (result)
-					rgDispId[i] = *(gint32*)mono_object_unbox_internal (result);
+					rgDispId[i] = result->dispid;
 				else
-					rgDispId[i] = (gint32)method->token;
+					rgDispId[i] = MONO_DISPID_BASE + pos;
 
 				if (!cinfo->cached)
 					mono_custom_attrs_free (cinfo);
 			}
 			else
-				rgDispId[i] = (gint32)method->token;
+				rgDispId[i] = MONO_DISPID_BASE + pos;
 		} else {
-			mono_error_cleanup (error);
-			error_init (error); /* reuse for next iteration */
 			rgDispId[i] = MONO_E_DISPID_UNKNOWN;
 			ret = MONO_E_DISP_E_UNKNOWNNAME;
 		}
