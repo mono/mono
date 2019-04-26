@@ -8,7 +8,6 @@ using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Xamarin.ProcessControl;
 
 namespace Mono.WebAssembly.Build
 {
@@ -94,94 +93,79 @@ namespace Mono.WebAssembly.Build
 
 		protected override string GenerateCommandLineCommands ()
 		{
-            ProcessArguments arguments = ProcessArguments.Create("--verbose");
+			var sb = new StringBuilder ();
+			sb.Append (" --verbose");
 
-            // add exclude features
-            arguments = arguments.AddRange("--exclude-feature", "remoting", "--exclude-feature", "com", "--exclude-feature", "etw");
+			// add exclude features
+			sb.Append (" --exclude-feature remoting --exclude-feature com --exclude-feature etw");
 
-            string coremode, usermode;
+			string coremode, usermode;
 
-            switch ((WasmLinkMode)Enum.Parse(typeof(WasmLinkMode), LinkMode))
-            {
-                case WasmLinkMode.SdkOnly:
-                    coremode = "link";
-                    usermode = "copy";
-                    break;
-                case WasmLinkMode.Full:
-                    coremode = "link";
-                    usermode = "link";
-                    break;
-                default:
-                    coremode = "copyused";
-                    usermode = "copy";
-                    break;
-            }
+			switch ((WasmLinkMode)Enum.Parse (typeof (WasmLinkMode), LinkMode)) {
+			case WasmLinkMode.SdkOnly:
+				coremode = "link";
+				usermode = "copy";
+				break;
+			case WasmLinkMode.Full:
+				coremode = "link";
+				usermode = "link";
+				break;
+			default:
+				coremode = "copyused";
+				usermode = "copy";
+				break;
+			}
 
-            arguments = arguments.AddRange("-c", coremode, "-u", usermode);
+			sb.AppendFormat ($" -c {coremode} -u {usermode}");
 
-            //the linker doesn't consider these core by default
-            arguments = arguments.AddRange("-p", coremode, "WebAssembly.Bindings");
-            arguments = arguments.AddRange("-p", coremode, "WebAssembly.Net.Http");
-            arguments = arguments.AddRange("-p", coremode, "WebAssembly.Net.WebSockets");
+			//the linker doesn't consider these core by default
+			sb.AppendFormat ($" -p {coremode} WebAssembly.Bindings -p {coremode} WebAssembly.Net.Http -p {coremode} WebAssembly.Net.WebSockets");
 
-            if (!string.IsNullOrEmpty(LinkSkip))
-            {
-                var skips = LinkSkip.Split(new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var s in skips)
-                {
-                    arguments = arguments.AddRange("-p", s, "copy");
-                }
-            }
+			if (!string.IsNullOrEmpty (LinkSkip)) {
+				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (var s in skips) {
+					sb.AppendFormat ($" -p \"{s}\" copy");
+				}
+			}
 
-            arguments = arguments.AddRange("-out", OutputDir);
+			sb.AppendFormat ($" -out \"{OutputDir.Replace ("\\", "\\\\")}\"");
+			sb.AppendFormat ($" -d \"{FrameworkDir.Replace ("\\", "\\\\")}\"");
+			sb.AppendFormat ($" -d \"{Path.Combine (FrameworkDir, "Facades").Replace ("\\", "\\\\")}\"");
+			sb.AppendFormat ($" -b {Debug} -v {Debug}");
 
-            arguments = arguments.AddRange("-d", FrameworkDir);
+			sb.AppendFormat ($" -a \"{RootAssembly[0].GetMetadata("FullPath").Replace ("\\", "\\\\")}\"");
 
-            arguments = arguments.AddRange("-d", Path.Combine(FrameworkDir, "Facades"));
+			//we'll normally have to check most of the because the SDK references most framework asm by default
+			//so let's enumerate upfront
+			var frameworkAssemblies = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			foreach (var f in Directory.EnumerateFiles (FrameworkDir)) {
+				frameworkAssemblies.Add (Path.GetFileNameWithoutExtension (f));
+			}
+			foreach (var f in Directory.EnumerateFiles (Path.Combine (FrameworkDir, "Facades"))) {
+				frameworkAssemblies.Add (Path.GetFileNameWithoutExtension (f));
+			}
 
-            arguments = arguments.AddRange("-b", Debug.ToString());
-            arguments = arguments.AddRange("-v", Debug.ToString());
+			//add references for non-framework assemblies
+			if (Assemblies != null) {
+				foreach (var asm in Assemblies) {
 
-            arguments = arguments.AddRange("-a", RootAssembly[0].GetMetadata("FullPath"));
+					var p = asm.GetMetadata ("FullPath");
+					if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p))) {
+						continue;
+					}
 
-            //we'll normally have to check most of the because the SDK references most framework asm by default
-            //so let's enumerate upfront
-            var frameworkAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var f in Directory.EnumerateFiles(FrameworkDir))
-            {
-                frameworkAssemblies.Add(Path.GetFileNameWithoutExtension(f));
-            }
-            foreach (var f in Directory.EnumerateFiles(Path.Combine(FrameworkDir, "Facades")))
-            {
-                frameworkAssemblies.Add(Path.GetFileNameWithoutExtension(f));
-            }
+					sb.AppendFormat ($" -r \"{p.Replace ("\\", "\\\\")}\"");
+				}
+			}
 
-            //add references for non-framework assemblies
-            if (Assemblies != null)
-            {
-                foreach (var asm in Assemblies)
-                {
-                    var p = asm.GetMetadata("FullPath");
-                    if (frameworkAssemblies.Contains(Path.GetFileNameWithoutExtension(p)))
-                    {
-                        continue;
-                    }
-                    arguments = arguments.AddRange("-r", p);
-                }
-            }
-
-            if (string.IsNullOrEmpty(I18n))
-            {
-                arguments = arguments.AddRange("-l", "none");
-            }
-            else
-            {
-                var vals = I18n.Split(new[] { ',', ';', ' ', '\r', '\n', '\t' });
-                arguments = arguments.AddRange("-l", string.Join(",", vals));
-            }
-
-            return arguments.ToString();
-        }
+			if (string.IsNullOrEmpty (I18n)) {
+				sb.Append (" -l none");
+			} else {
+				var vals = I18n.Split (new[] { ',', ';', ' ', '\r', '\n', '\t' });
+				sb.AppendFormat ($" -l {string.Join (",", vals)}");
+			}
+			return sb.ToString ();
+		}
 	}
 
 	public enum WasmLinkMode
