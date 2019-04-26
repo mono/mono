@@ -93,7 +93,6 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 	--enable-minimal=ssa,com,interpreter,jit,reflection_emit_save,reflection_emit,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,remoting,shared_perfcounters \
 	--enable-monotouch \
 	--with-lazy-gc-thread-creation=yes \
-	--with-monotouch \
 	--with-tls=pthread \
 	--without-ikvm-native \
 	--without-sigaltstack \
@@ -115,9 +114,9 @@ watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SD
 watchos5_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS5_VERSION).sdk -mwatchos-version-min=$(WATCHOS5_VERSION_MIN)
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
-ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes --with-monotouch-tv
-ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes --with-monotouch-watch
-ios-targetwatch64_32_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes --with-monotouch-watch
+ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes
+ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes
+ios-targetwatch64_32_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes
 
 ios-target32_SYSROOT = $(ios_sysroot)
 ios-target32s_SYSROOT = $(ios_sysroot)
@@ -350,4 +349,7 @@ $(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp
 # 64->arm32 cross compiler
 $(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE_DIR)))
 
+##
+# BCL builds
+##
 $(eval $(call BclTemplate,ios,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime monotouch_tools,monotouch monotouch_tv monotouch_watch))
