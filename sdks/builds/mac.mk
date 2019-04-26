@@ -43,7 +43,10 @@ _mac-$(1)_CONFIGURE_FLAGS= \
 .stamp-mac-$(1)-toolchain:
 	touch $$@
 
+package-local-mac-$(1):
+
 $$(eval $$(call RuntimeTemplate,mac,$(1),$(2)-apple-darwin10))
+
 
 endef
 

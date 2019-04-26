@@ -104,6 +104,8 @@ _ios-$(1)_CONFIGURE_FLAGS = \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
+package-local-ios-$(1):
+
 $$(eval $$(call RuntimeTemplate,ios,$(1),$(2)))
 
 
@@ -236,7 +238,10 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 .stamp-ios-$(1)-toolchain:
 	touch $$@
 
+package-local-ios-$(1):
+
 $$(eval $$(call RuntimeTemplate,ios,$(1),$(2)))
+
 
 endef
 
@@ -338,7 +343,10 @@ _ios-$(1)_CONFIGURE_FLAGS= \
 	--enable-monotouch \
 	--disable-crash-reporting
 
+package-local-ios-$(1):
+
 $$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3),$(4),$(5),$(6)))
+
 
 endef
 

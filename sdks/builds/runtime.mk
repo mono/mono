@@ -84,7 +84,10 @@ setup-custom-$(1)-$(2):
 	mkdir -p $$(TOP)/sdks/out/$(1)-$(2)-$$(CONFIGURATION)
 
 .PHONY: package-$(1)-$(2)
-package-$(1)-$(2):
+package-$(1)-$(2): do-package-$(1)-$(2) package-local-$(1)-$(2)
+
+.PHONY: do-package-$(1)-$(2)
+do-package-$(1)-$(2):
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/mono install
 	$$(MAKE) -C $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION)/support install
 

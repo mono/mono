@@ -121,8 +121,9 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	python "$$(ANDROID_TOOLCHAIN_DIR)/ndk/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_SDK_VERSION_$(1)) --arch=$(2) --install-dir=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang
 	touch $$@
 
-$$(eval $$(call RuntimeTemplate,android,$(1),$(4)))
+package-local-android-$(1):
 
+$$(eval $$(call RuntimeTemplate,android,$(1),$(4)))
 endef
 
 ## android-armeabi-v7a
@@ -181,6 +182,8 @@ _android-$(1)_CONFIGURE_FLAGS= \
 .stamp-android-$(1)-toolchain:
 	touch $$@
 
+package-local-android-$(1):
+
 $$(eval $$(call RuntimeTemplate,android,$(1)))
 
 endef
@@ -235,6 +238,14 @@ endif
 
 .stamp-android-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
 
+ifeq ($(2),x86_64)
+package-local-android-$(1):
+	mkdir -p $$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION)/bin
+	cp $(shell x86_64-w64-mingw32-gcc -print-file-name=libgcc_s_seh-1.dll) $$(TOP)/sdks/out/android-$(1)-$$(CONFIGURATION)/bin
+else
+package-local-android-$(1):
+endif
+
 $$(eval $$(call RuntimeTemplate,android,$(1),$(2)-w64-mingw32))
 
 endef
@@ -281,6 +292,8 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--with-tls=pthread
 
 $$(eval $$(call CrossRuntimeTemplate,android,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu)),$(3)-linux-android,$(4),$(5),$(6)))
+
+package-local-android-$(1):
 
 endef
 
@@ -342,7 +355,11 @@ endif
 
 .stamp-android-$(1)-$$(CONFIGURATION)-configure: | $(if $(IGNORE_PROVISION_MXE),,provision-mxe)
 
+package-local-android-$(1):
+
+
 $$(eval $$(call CrossRuntimeTemplate,android,$(1),$(2)-w64-mingw32,$(3)-linux-android,$(4),$(5),$(6)))
+
 
 endef
 
