@@ -16,6 +16,6 @@ OLD_PATH=${PATH}
 export PATH=/tmp/xplat-master/tmp-links/:${OLD_CWD}:${PATH}
 
 # This fails for some reason due to weird bugs in the msbuild infra, and I can't suppress it using testcmd?
-${TESTCMD} --label=compile-msbuild --timeout=15m ./eng/cibuild_bootstrapped_msbuild.sh --host_type mono --configuration Release --binaryLog --skip_tests /p:DisableNerdbankVersioning=true "/p:Projects=/tmp/xplat-master/src/MSBuild/MSBuild.csproj" /p:AssemblyVersion=15.1.0.0
+${TESTCMD} --label=compile-msbuild --timeout=15m ./eng/cibuild_bootstrapped_msbuild.sh --host_type mono --configuration Release -skip_tests /p:DisableNerdbankVersioning=true "/p:Projects=/tmp/xplat-master/src/MSBuild/MSBuild.csproj" /p:AssemblyVersion=15.1.0.0
 
 ${TESTCMD} --label=check-for-dll --timeout=1m test -s /tmp/xplat-master/artifacts/bin/MSBuild/*-MONO/net472/MSBuild.dll
