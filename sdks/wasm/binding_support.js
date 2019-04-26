@@ -7,7 +7,6 @@ var BindingSupportLib = {
 		mono_wasm_ref_counter: 0,
 		mono_wasm_free_list: [],
 		mono_wasm_marshal_enum_as_int: false,
-		mono_wasm_core_map: null,	
 		mono_bindings_init: function (binding_asm) {
 			this.BINDING_ASM = binding_asm;
 		},
@@ -96,7 +95,6 @@ var BindingSupportLib = {
 			this.object_to_string = get_method ("ObjectToString");
 
 			this.object_to_enum = get_method ("ObjectToEnum");
-			BINDING.mono_wasm_core_map = new WeakMap();
 			this.init = true;
 		},		
 
@@ -730,30 +728,89 @@ var BindingSupportLib = {
 		},
 		wasm_get_core_type: function (obj)
 		{
-			var coreType = this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
-			if (typeof coreType !== "undefined") {
-				BINDING.mono_wasm_core_map.set(obj.constructor, coreType);
-			}
-			return coreType;
+			return this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
 		},
-		core_object_type: function(obj) {
-			var coreType = BINDING.mono_wasm_core_map.get(obj.constructor);
+		get_wasm_type: function(obj) {
+			var coreType = obj[Symbol.for("wasm type")];
 			if (typeof coreType === "undefined") {
 				switch (obj.constructor.name) {
 					case "Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "ArrayBuffer":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							ArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "Int8Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Int8Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "Uint8Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Uint8Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "Uint8ClampedArray":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Uint8ClampedArray.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "Int16Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Int16Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "Uint16Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Uint16Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "Int32Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Int32Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "Uint32Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Uint32Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						return coreType;
 					case "Float32Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Float32Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "Float64Array":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Float64Array.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "Function":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Function.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 					case "SharedArrayBuffer":
 						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							SharedArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
+						}
 						break;
 				}
 		  	}
@@ -772,9 +829,9 @@ var BindingSupportLib = {
 					var handle = this.mono_wasm_free_list.length ?
 								this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
 					obj.__mono_jshandle__ = handle;
-					// Obtain the core object JS -> C# type mapping.
-					var coreObjType = this.core_object_type(obj);
-					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1, coreObjType);
+					// Obtain the JS -> C# type mapping.
+					var wasm_type = this.get_wasm_type(obj);
+					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1, wasm_type);
 					this.mono_wasm_object_registry[handle] = obj;
 						
 				}
