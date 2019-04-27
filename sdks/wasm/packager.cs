@@ -127,6 +127,7 @@ class Driver {
 		Console.WriteLine ("\t--profile=x     Enable the 'x' mono profiler.");
 		Console.WriteLine ("\t--aot-assemblies=x List of assemblies to AOT in AOT+INTERP mode.");
 		Console.WriteLine ("\t--link-mode=sdkonly|all        Set the link type used for AOT. (EXPERIMENTAL)");
+		Console.WriteLine ("\t--pinvoke-libs=x DllImport libraries used.");
 		Console.WriteLine ("\t\t              'sdkonly' only link the Core libraries.");
 		Console.WriteLine ("\t\t              'all' link Core and User assemblies. (default)");
 
@@ -348,10 +349,12 @@ class Driver {
 		bool build_wasm = false;
 		bool enable_lto = false;
 		bool link_icalls = false;
+		bool gen_pinvoke = false;
 		var il_strip = false;
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
+		var pinvoke_libs = "";
 		var copyTypeParm = "default";
 		var copyType = CopyType.Default;
 		var ee_mode = ExecMode.Interp;
@@ -388,6 +391,7 @@ class Driver {
 				{ "copy=", s => copyTypeParm = s },
 				{ "aot-assemblies=", s => aot_assemblies = s },
 				{ "link-mode=", s => linkModeParm = s },
+				{ "pinvoke-libs=", s => pinvoke_libs = s },
 				{ "help", s => print_usage = true },
 					};
 
@@ -427,6 +431,7 @@ class Driver {
 		use_release_runtime = !opts.DebugRuntime;
 		il_strip = opts.ILStrip;
 		linker_verbose = opts.LinkerVerbose;
+		gen_pinvoke = pinvoke_libs != "";
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
@@ -437,7 +442,7 @@ class Driver {
 			link_icalls = true;
 		if (!enable_linker || !enable_aot)
 			enable_dedup = false;
-		if (enable_aot || link_icalls)
+		if (enable_aot || link_icalls || gen_pinvoke)
 			build_wasm = true;
 		if (!enable_aot && link_icalls)
 			enable_lto = true;
@@ -651,6 +656,8 @@ class Driver {
 		string driver_deps = "";
 		if (link_icalls)
 			driver_deps += "$builddir/icall-table.h";
+		if (gen_pinvoke)
+			driver_deps += "$builddir/pinvoke-table.h";
 		string emcc_flags = "";
 		if (enable_lto)
 			emcc_flags += "--llvm-lto 1 ";
@@ -711,6 +718,8 @@ class Driver {
 		ninja.WriteLine ("  command = $cross --print-icall-table > $out");
 		ninja.WriteLine ("rule gen-icall-table");
 		ninja.WriteLine ("  command = mono $tools_dir/wasm-tuner.exe --gen-icall-table $runtime_table $in > $out");
+		ninja.WriteLine ("rule gen-pinvoke-table");
+		ninja.WriteLine ("  command = mono $tools_dir/wasm-tuner.exe --gen-pinvoke-table $pinvoke_libs $in > $out");
 		ninja.WriteLine ("rule ilstrip");
 		ninja.WriteLine ("  command = cp $in $out; mono $tools_dir/mono-cil-strip.exe $out");
 		ninja.WriteLine ("  description = [IL-STRIP]");
@@ -739,6 +748,8 @@ class Driver {
 				ninja.WriteLine ($"  flags = -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
 				driver_cflags += " -DCORE_BINDINGS ";
 			}
+			if (gen_pinvoke)
+				driver_cflags += " -DGEN_PINVOKE ";
 
 			ninja.WriteLine ($"build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c {driver_deps}");
 			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
@@ -837,6 +848,13 @@ class Driver {
 			ninja.WriteLine ("build $builddir/icall-table.json: gen-runtime-icall-table");
 			ninja.WriteLine ($"build $builddir/icall-table.h: gen-icall-table {icall_assemblies}");
 			ninja.WriteLine ($"  runtime_table=$builddir/icall-table.json");
+		}
+		if (gen_pinvoke) {
+			string pinvoke_assemblies = "";
+			foreach (var a in assemblies)
+				pinvoke_assemblies += $"{a.linkout_path} ";
+			ninja.WriteLine ($"build $builddir/pinvoke-table.h: gen-pinvoke-table {pinvoke_assemblies}");
+			ninja.WriteLine ($"  pinvoke_libs=System.Native,{pinvoke_libs}");
 		}
 		if (build_wasm) {
 			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");

@@ -118,19 +118,27 @@ public class WasmTuner
 		}
 	}
 
+	static string MapType (TypeReference t) {
+		if (t.Name == "Void")
+			return "void";
+		else if (t.Name == "Double")
+			return "double";
+		else if (t.Name == "Float")
+			return "float";
+		else
+			return "int";
+	}
+
 	static string GenPinvokeDecl (Pinvoke pinvoke) {
 		var sb = new StringBuilder ();
 		var method = pinvoke.Method;
-		if (method.ReturnType.Name != "Void")
-			sb.Append ("int");
-		else
-			sb.Append ("void");
+		sb.Append (MapType (method.ReturnType));
 		sb.Append ($" {pinvoke.EntryPoint} (");
 		int pindex = 0;
 		foreach (var p in method.Parameters) {
 			if (pindex > 0)
 				sb.Append (",");
-			sb.Append ("int");
+			sb.Append (MapType (method.Parameters [pindex].ParameterType));
 			pindex ++;
 		}
 		sb.Append (");");
