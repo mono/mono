@@ -280,6 +280,9 @@ namespace System.Runtime.Serialization {
         ==============================================================================*/
         [System.Security.SecurityCritical]  // auto-generated
         private bool ResolveObjectReference(ObjectHolder holder) {
+#if DISABLE_REMOTING
+            throw new PlatformNotSupportedException();
+#else
             Object tempObject;
             Contract.Assert(holder.IsIncompleteObjectReference,"holder.IsIncompleteObjectReference");
 
@@ -324,6 +327,7 @@ namespace System.Runtime.Serialization {
             holder.IsIncompleteObjectReference=false;
             DoNewlyRegisteredObjectFixups(holder);
             return true;
+#endif
         }
 
 
