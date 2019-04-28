@@ -633,6 +633,9 @@ namespace System.Runtime.Remoting
 
 		internal static ClientIdentity GetOrCreateClientIdentity(ObjRef objRef, Type proxyType, out object clientProxy)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			// This method looks for an identity for the given url. 
 			// If an identity is not found, it creates the identity and 
 			// assigns it a proxy to the remote object.
@@ -683,6 +686,7 @@ namespace System.Runtime.Remoting
 				}
 				return identity;
 			}
+#endif
 		}
 
 		static IMessageSink GetClientChannelSinkChain(string url, object channelData, out string objectUri)

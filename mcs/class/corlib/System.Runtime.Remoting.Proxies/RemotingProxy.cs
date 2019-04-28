@@ -35,7 +35,9 @@ using System;
 using System.Reflection;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Activation;
+#if !DISABLE_REMOTING
 using System.Runtime.Remoting.Channels;
+#endif
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -49,6 +51,7 @@ namespace System.Runtime.Remoting.Proxies
 		static MethodInfo _cache_GetTypeMethod = typeof(System.Object).GetMethod("GetType");
 		static MethodInfo _cache_GetHashCodeMethod = typeof(System.Object).GetMethod("GetHashCode");
 
+#if !DISABLE_REMOTING
 		IMessageSink _sink;
 		bool _hasEnvoySink;
 		ConstructionCall _ctorCall;
@@ -59,15 +62,23 @@ namespace System.Runtime.Remoting.Proxies
 			_hasEnvoySink = false;
 			_targetUri = identity.TargetUri;
 		}
+#endif
 
 		internal RemotingProxy (Type type, string activationUrl, object[] activationAttributes) : base (type)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			_hasEnvoySink = false;
 			_ctorCall = ActivationServices.CreateConstructionCall (type, activationUrl, activationAttributes);
+#endif
 		}
 
 		public override IMessage Invoke (IMessage request)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			IMethodCallMessage mm = request as IMethodCallMessage;
 
 			if (mm != null) {
@@ -109,10 +120,14 @@ namespace System.Runtime.Remoting.Proxies
 			_objectIdentity.NotifyClientDynamicSinks (false, request, true, false);
 
 			return response;
+#endif
 		}
 
 		internal void AttachIdentity (Identity identity)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			_objectIdentity = identity;
 
 			if (identity is ClientActivatedIdentity)	// It is a CBO
@@ -140,15 +155,20 @@ namespace System.Runtime.Remoting.Proxies
 				_sink = _objectIdentity.ChannelSink;
 
 			_ctorCall = null;	// Object already constructed
+#endif
 		}
 
 		internal IMessage ActivateRemoteObject (IMethodMessage request)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			if (_ctorCall == null)	// It must be a WKO
 				return new ConstructionResponse (this, null, (IMethodCallMessage) request);	// Ignore constructor call for WKOs
 
 			_ctorCall.CopyFrom (request);
 			return ActivationServices.Activate (this, _ctorCall);
+#endif
 		}
 
 		public string TypeName 
