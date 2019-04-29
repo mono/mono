@@ -1,1 +1,4 @@
 System.Runtime.Remoting.Activation/ActivationServices.cs
+
+System.Runtime.Remoting.Messaging/ClientContextTerminatorSink.cs
+System.Runtime.Remoting.Messaging/ServerContextTerminatorSink.cs
