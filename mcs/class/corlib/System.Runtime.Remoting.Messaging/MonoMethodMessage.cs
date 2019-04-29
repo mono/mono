@@ -41,9 +41,9 @@ namespace System.Runtime.Remoting.Messaging {
 	
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage
+	internal class MonoMethodMessage
 #if !DISABLE_REMOTING
-		, IInternalMessage
+		: IMethodCallMessage, IMethodReturnMessage, IInternalMessage
 #endif
 	{
 #pragma warning disable 649

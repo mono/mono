@@ -314,6 +314,7 @@ namespace System.Runtime.Remoting.Messaging{
         {   
         }
 
+#if !DISABLE_REMOTING
         internal struct Reader
         {
             LogicalCallContext m_ctx;
@@ -334,6 +335,7 @@ namespace System.Runtime.Remoting.Messaging{
 
             public Object HostContext { get { return IsNull ? null : m_ctx.HostContext; } }
         }
+#endif
 
         [System.Security.SecurityCritical]  // auto-generated
         internal LogicalCallContext(SerializationInfo info, StreamingContext context)

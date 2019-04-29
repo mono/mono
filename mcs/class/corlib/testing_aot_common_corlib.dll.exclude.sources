@@ -18,6 +18,9 @@ System.Runtime.Remoting.Messaging/EnvoyTerminatorSink.cs
 System.Runtime.Remoting.Messaging/ErrorMessage.cs
 System.Runtime.Remoting.Messaging/InternalMessageWrapper.cs
 System.Runtime.Remoting.Messaging/IInternalMessage.cs
+System.Runtime.Remoting.Messaging/IMethodMessage.cs
+System.Runtime.Remoting.Messaging/IMethodCallMessage.cs
+System.Runtime.Remoting.Messaging/IMethodReturnMessage.cs
 System.Runtime.Remoting.Messaging/IRemotingFormatter.cs
 System.Runtime.Remoting.Messaging/ISerializationRootObject.cs
 System.Runtime.Remoting.Messaging/MessageSurrogateFilter.cs
@@ -49,6 +52,7 @@ ReferenceSources/RemotingFieldCachedData.cs
 
 Mono.Interop/*.cs
 
+../referencesource/mscorlib/system/runtime/remoting/callcontext.cs
 ../referencesource/mscorlib/system/security/claims/ClaimsPrincipal.cs
 
 System.Security.Permissions/PrincipalPermission.cs
