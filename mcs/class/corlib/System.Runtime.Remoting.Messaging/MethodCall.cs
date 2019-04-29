@@ -76,6 +76,7 @@ namespace System.Runtime.Remoting.Messaging {
 				InitMethodProperty ((string)entry.Name, entry.Value);
 		}
 
+#if !DISABLE_REMOTING
 		internal MethodCall (CADMethodCallMessage msg) 
 		{
 			_uri = string.Copy (msg.Uri);
@@ -95,6 +96,7 @@ namespace System.Runtime.Remoting.Messaging {
 			if (msg.PropertiesCount > 0)
 				CADMessageBase.UnmarshalProperties (Properties, msg.PropertiesCount, args);
 		}
+#endif
 
 		public MethodCall (IMessage msg)
 		{

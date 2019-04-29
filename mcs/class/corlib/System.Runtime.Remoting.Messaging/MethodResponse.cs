@@ -104,6 +104,7 @@ namespace System.Runtime.Remoting.Messaging {
 			_args = outArgs;
 		}
 
+#if !DISABLE_REMOTING
 		internal MethodResponse (IMethodCallMessage msg, CADMethodReturnMessage retmsg) {
 			_callMsg = msg;
 
@@ -125,6 +126,8 @@ namespace System.Runtime.Remoting.Messaging {
 			if (retmsg.PropertiesCount > 0)
 				CADMessageBase.UnmarshalProperties (Properties, retmsg.PropertiesCount, args);
 		}
+#endif
+
 #if FEATURE_REMOTING
         internal MethodResponse(IMethodCallMessage msg,
                                 Object handlerObject,

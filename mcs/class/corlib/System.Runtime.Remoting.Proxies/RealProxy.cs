@@ -365,12 +365,14 @@ namespace System.Runtime.Remoting.Proxies
 			return _objTP;
 		}
 
+#if !DISABLE_REMOTING
 		[MonoTODO]
 		[ComVisible (true)]
 		public IConstructionReturnMessage InitializeServerObject(IConstructionCallMessage ctorMsg)
 		{
 			throw new NotImplementedException();
 		}
+#endif
 
 		protected void AttachServer(MarshalByRefObject s)
 		{
@@ -397,12 +399,16 @@ namespace System.Runtime.Remoting.Proxies
 		// Called by the runtime
 		internal object GetAppDomainTarget ()
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			if (_server == null) {
 				ClientActivatedIdentity identity = RemotingServices.GetIdentityForUri (_targetUri) as ClientActivatedIdentity;
 				if (identity == null) throw new RemotingException ("Server for uri '" + _targetUri + "' not found");
 				_server = identity.GetServerObject ();
 			}
 			return _server;
+#endif
 		}
 
 		static object[] ProcessResponse (IMethodReturnMessage mrm, MonoMethodMessage call)

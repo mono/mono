@@ -200,11 +200,13 @@ namespace System.Runtime.Remoting.Proxies
 		
 		~RemotingProxy()
 		{
+#if !DISABLE_REMOTING
 			if (_objectIdentity != null)
 			{
 				if (!(_objectIdentity is ClientActivatedIdentity))	// Local CBO proxy?
 					RemotingServices.DisposeIdentity (_objectIdentity);
 			}
+#endif
 		}
 		
 	}

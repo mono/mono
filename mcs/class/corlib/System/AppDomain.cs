@@ -45,7 +45,9 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Contexts;
+#if !DISABLE_REMOTING
 using System.Runtime.Remoting.Channels;
+#endif
 using System.Runtime.Remoting.Messaging;
 using System.Security;
 using System.Security.Permissions;
@@ -1418,7 +1420,6 @@ namespace System {
 			ObjRef oref = RemotingServices.Marshal (AppDomain.CurrentDomain, null, typeof (AppDomain));
 			return CADSerializer.SerializeObject (oref).GetBuffer();
 		}
-#endif
 
 		internal void ProcessMessageInDomain (byte[] arrRequest, CADMethodCallMessage cadMsg,
 		                                      out byte[] arrResponse, out CADMethodReturnMessage cadMrm)
@@ -1439,6 +1440,7 @@ namespace System {
 			else
 				arrResponse = null;
 		}
+#endif
 
 #pragma warning restore 169
 

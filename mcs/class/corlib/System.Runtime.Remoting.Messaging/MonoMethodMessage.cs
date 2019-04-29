@@ -59,7 +59,9 @@ namespace System.Runtime.Remoting.Messaging {
 
 		string uri;
 
+#if !DISABLE_REMOTING
 		MCMDictionary properties;
+#endif
 
 		Type[] methodSignature;
 
@@ -132,8 +134,12 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public IDictionary Properties {
 			get {
+#if DISABLE_REMOTING
+				throw new PlatformNotSupportedException ();
+#else
 				if (properties == null) properties = new MCMDictionary (this);
 				return properties;
+#endif
 			}
 		}
 
@@ -373,7 +379,11 @@ namespace System.Runtime.Remoting.Messaging {
 
 		bool IInternalMessage.HasProperties()
 		{
+#if DISABLE_REMOTING
+			return false;
+#else
 			return properties != null;
+#endif
 		}
 
 		public bool IsAsync

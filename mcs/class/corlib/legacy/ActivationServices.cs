@@ -1,5 +1,3 @@
-
-using System;
 using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Remoting.Activation

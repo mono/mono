@@ -52,6 +52,7 @@ namespace System
 		{
 		}
 
+#if !DISABLE_REMOTING
 #if !FEATURE_REMOTING
 		internal ServerIdentity ObjectIdentity {
 			get { throw new NotSupportedException (); }
@@ -79,6 +80,7 @@ namespace System
 			get { return _identity; }
 			set { _identity = value; }
 		}
+#endif
 #endif
 
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]

@@ -52,8 +52,10 @@ namespace System.Runtime.Remoting
 
 		protected IMessageSink _envoySink = null;
 
+#if !DISABLE_REMOTING
 		DynamicPropertyCollection _clientDynamicProperties;
 		DynamicPropertyCollection _serverDynamicProperties;
+#endif
 
 		// The ObjRef 
 		protected ObjRef _objRef;
@@ -106,6 +108,7 @@ namespace System.Runtime.Remoting
 			set { _disposed = value; }
 		}
 
+#if !DISABLE_REMOTING
 		public DynamicPropertyCollection ClientDynamicProperties
 		{
 			get { 
@@ -143,6 +146,7 @@ namespace System.Runtime.Remoting
 			if (_serverDynamicProperties != null && _serverDynamicProperties.HasProperties) 
 				_serverDynamicProperties.NotifyMessage (start, req_msg, client_site, async);
 		}
+#endif
 	}
 
 	internal class ClientIdentity : Identity

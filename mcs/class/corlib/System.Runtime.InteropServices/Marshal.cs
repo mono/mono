@@ -1620,7 +1620,9 @@ namespace System.Runtime.InteropServices
 			const int ERROR_FILENAME_EXCED_RANGE = unchecked ((int)0xCE);
 			const int COR_E_RANK = unchecked ((int)0x80131517L);
 			const int COR_E_REFLECTIONTYPELOAD = unchecked ((int)0x80131602L);
+#if !DISABLE_REMOTING
 			const int COR_E_REMOTING = unchecked ((int)0x8013150BL);
+#endif
 			const int COR_E_SAFEARRAYTYPEMISMATCH = unchecked ((int)0x80131533L);
 			const int COR_E_SECURITY = unchecked ((int)0x8013150AL);
 			const int COR_E_SERIALIZATION = unchecked ((int)0x8013150CL);
@@ -1737,8 +1739,10 @@ namespace System.Runtime.InteropServices
 					return new RankException ();
 				case COR_E_REFLECTIONTYPELOAD:
 					return new System.Reflection.ReflectionTypeLoadException (new Type[] { }, new Exception[] { });
+#if !DISABLE_REMOTING
 				case COR_E_REMOTING:
 					return new System.Runtime.Remoting.RemotingException ();
+#endif
 				case COR_E_SAFEARRAYTYPEMISMATCH:
 					return new SafeArrayTypeMismatchException ();
 				case COR_E_SECURITY:
