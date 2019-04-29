@@ -2683,6 +2683,8 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 	MonoMethod** methods = NULL;
 	gchar* methodname;
 	MonoClass* iface = ccwe->iface;
+	MonoCCW* ccw = ccwe->ccw;
+	MonoObject* object;
 
 	/* Handle DispIdAttribute */
 	if (!ComDispIdAttribute)
@@ -2690,6 +2692,12 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 
 	if (!mono_domain_get ())
 		 mono_thread_attach (mono_get_root_domain ());
+
+	if (iface == mono_class_get_idispatch_class ()) {
+		object = mono_gchandle_get_target_internal (ccw->gc_handle);
+		g_assert (object);
+		iface = mono_object_class (object);
+	}
 
 	mono_class_setup_methods (iface);
 	methodcount = mono_class_get_method_count (iface);
