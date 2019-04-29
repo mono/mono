@@ -60,31 +60,6 @@ namespace System.Runtime.Remoting
 			throw new PlatformNotSupportedException ();
 		}
 
-		public static object Unmarshal (ObjRef objectRef)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public static object Unmarshal (ObjRef objectRef, bool fRefine)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public static ObjRef Marshal (MarshalByRefObject Obj)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public static ObjRef Marshal (MarshalByRefObject Obj, string URI)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public static ObjRef Marshal (MarshalByRefObject Obj, string ObjURI, Type RequestedType)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
 		public static RealProxy GetRealProxy (object proxy)
 		{
 			throw new PlatformNotSupportedException ();
@@ -106,11 +81,6 @@ namespace System.Runtime.Remoting
 		}
 
 		public static void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		public static ObjRef GetObjRefForProxy(MarshalByRefObject obj)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -178,16 +148,6 @@ namespace System.Runtime.Remoting
 		}
 
 		internal static Identity GetObjectIdentity (MarshalByRefObject obj)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		internal static object GetProxyForRemoteObject (ObjRef objref, Type classToProxy)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		internal static object GetRemoteObject(ObjRef objRef, Type proxyType)
 		{
 			throw new PlatformNotSupportedException ();
 		}
