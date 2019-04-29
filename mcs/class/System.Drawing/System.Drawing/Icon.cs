@@ -129,8 +129,6 @@ namespace System.Drawing
 			} else {
 				IconInfo ii;
 				GDIPlus.GetIconInfo (handle, out ii);
-				if (!ii.IsIcon)
-					throw new NotImplementedException (Locale.GetText ("Handle doesn't represent an ICON."));
 
 				// If this structure defines an icon, the hot spot is always in the center of the icon
 				iconSize = new Size (ii.xHotspot * 2, ii.yHotspot * 2);
