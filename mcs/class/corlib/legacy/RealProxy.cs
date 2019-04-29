@@ -39,7 +39,7 @@ namespace System.Runtime.Remoting.Proxies
 		internal MarshalByRefObject _server;
 		int _targetDomainId = -1;
 		internal string _targetUri;
-		internal Identity _objectIdentity;
+		internal Object _objectIdentity;
 		Object _objTP;
 		object _stubData;
 

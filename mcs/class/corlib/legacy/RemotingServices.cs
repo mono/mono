@@ -8,6 +8,35 @@ namespace System.Runtime.Remoting
 {
 	public static class RemotingServices
 	{
+#region Keep this code, it is used by the runtime
+
+		// This method is called by the runtime
+		internal static object GetServerObject (string uri)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		// This method is called by the runtime
+		internal static byte[] SerializeCallData (object obj)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		// This method is called by the runtime
+		internal static object DeserializeCallData (byte[] array)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		// This method is called by the runtime
+		internal static byte[] SerializeExceptionData (Exception ex)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+#endregion
+
+#if !FIXME
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static object InternalExecute (MethodBase method, Object obj,
 							       Object[] parameters, out object [] out_args);
@@ -142,56 +171,7 @@ namespace System.Runtime.Remoting
 			throw new PlatformNotSupportedException ();
 		}
 
-		internal static Identity GetIdentityForUri (string uri)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		internal static Identity GetObjectIdentity (MarshalByRefObject obj)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		// This method is called by the runtime
-		internal static object GetServerObject (string uri)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		// This method is called by the runtime
-		internal static byte[] SerializeCallData (object obj)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		// This method is called by the runtime
-		internal static object DeserializeCallData (byte[] array)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		// This method is called by the runtime
-		internal static byte[] SerializeExceptionData (Exception ex)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
 		internal static object GetDomainProxy(AppDomain domain)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		internal static void DisposeIdentity (Identity ident)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		internal static Identity GetMessageTargetIdentity (IMessage msg)
-		{
-			throw new PlatformNotSupportedException ();
-		}
-
-		internal static void SetMessageTargetIdentity (IMessage msg, Identity ident)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -202,5 +182,6 @@ namespace System.Runtime.Remoting
 		}
 
 		#endregion
+		#endif
 	}
 }

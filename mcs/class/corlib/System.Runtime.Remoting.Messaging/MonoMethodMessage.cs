@@ -64,11 +64,10 @@ namespace System.Runtime.Remoting.Messaging {
 
 #if !DISABLE_REMOTING
 		MCMDictionary properties;
+		Identity identity;
 #endif
 
 		Type[] methodSignature;
-
-		Identity identity;
 
 		internal void InitMessage (RuntimeMethodInfo method, object [] out_args)
 		{
