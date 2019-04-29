@@ -4,11 +4,13 @@ namespace System.Runtime.Remoting.Activation
 {
 	internal class ActivationServices
 	{
+#region Keep this code, it is used by the runtime
 		// Called from the runtime.
 		public static object CreateProxyForType (Type type)
 		{
 			throw new PlatformNotSupportedException ();
 		}
+#endregion
 
 		// Allocates an uninitialized instance. It never creates proxies.
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
