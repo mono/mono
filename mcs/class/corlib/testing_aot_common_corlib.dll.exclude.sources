@@ -43,3 +43,5 @@ System.Runtime.Remoting.Metadata.W3cXsd2001/*.cs
 System.Runtime.Remoting.Proxies/*.cs
 
 System.Runtime.Remoting.Services/*.cs
+
+Mono.Interop/*.cs

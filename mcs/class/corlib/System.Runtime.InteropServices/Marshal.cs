@@ -41,7 +41,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 using System.Runtime.ConstrainedExecution;
-#if !FULL_AOT_RUNTIME && !NETCORE
+#if !FULL_AOT_RUNTIME && !NETCORE && !DISABLE_REMOTING
 using Mono.Interop;
 #endif
 
@@ -294,7 +294,7 @@ namespace System.Runtime.InteropServices
 
 		public static object CreateWrapperOfType (object o, Type t)
 		{
-#if FULL_AOT_RUNTIME || NETCORE
+#if FULL_AOT_RUNTIME || NETCORE || DISABLE_REMOTING
 			throw new PlatformNotSupportedException ();
 #else
 			__ComObject co = o as __ComObject;
@@ -724,7 +724,7 @@ namespace System.Runtime.InteropServices
 
 		public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t)
 		{
-#if NETCORE
+#if NETCORE || DISABLE_REMOTING
 			throw new NotImplementedException ();
 #else
 			ComInteropProxy proxy = new ComInteropProxy (pUnk, t);
