@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace System.Runtime.Remoting.Contexts
 {
 	[StructLayout (LayoutKind.Sequential)]
-	public class Context
+	public sealed class Context
 	{
 #region Keep this code, it is used by the runtime
 #pragma warning disable 169, 414
@@ -18,7 +18,11 @@ namespace System.Runtime.Remoting.Contexts
 #pragma warning restore 169, 414
 
 		internal bool NeedsContextSink => throw new PlatformNotSupportedException ();
-
 #endregion
+
+		Context ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
 	}
 }

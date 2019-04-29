@@ -1,6 +1,6 @@
 namespace System.Runtime.Remoting
 {
-	public class ObjectHandle : MarshalByRefObject
+	public sealed class ObjectHandle : MarshalByRefObject
 	{
 #region Keep this code, it is used by the runtime
 #pragma warning disable 169, 649

@@ -8,11 +8,19 @@ namespace System.Runtime.Remoting.Messaging
 
 	class LogicalCallContext
 	{
-
+		LogicalCallContext ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
 	}
 
 	class CallContext
 	{
+		CallContext ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
 #region Keep this code, it is used by the runtime
 		internal static object SetCurrentCallContext (LogicalCallContext ctx)
 		{

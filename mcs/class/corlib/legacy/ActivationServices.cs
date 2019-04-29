@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Remoting.Activation
 {
-	internal class ActivationServices
+	internal static class ActivationServices
 	{
 #region Keep this code, it is used by the runtime
 		// Called from the runtime.

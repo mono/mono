@@ -56,5 +56,10 @@ namespace System.Runtime.Remoting.Proxies
 
 #pragma warning disable 169, 649
 #endregion
+
+		RealProxy ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
 	}
 }
