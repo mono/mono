@@ -1,3 +1,5 @@
 #include unix_build_corlib.dll.exclude.sources
 
 Mono.Globalization.Unicode/SimpleCollator.cs
+
+System.Runtime.Remoting.Activation/ActivationServices.cs
