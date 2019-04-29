@@ -1,3 +1,2 @@
 #include unix_build_corlib.dll.sources
-
-legacy/*.cs
+#include testing_aot_common_corlib.dll.sources
