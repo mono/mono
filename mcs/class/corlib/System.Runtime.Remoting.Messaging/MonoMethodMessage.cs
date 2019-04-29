@@ -402,8 +402,10 @@ namespace System.Runtime.Remoting.Messaging {
 			{
 				// FIXME: ideally, the OneWay type would be set by the runtime
 				
+#if !DISABLE_REMOTING
 				if (call_type == CallType.Sync && RemotingServices.IsOneWay (method))
 					call_type = CallType.OneWay;
+#endif
 				return call_type;
 			}
 		}
