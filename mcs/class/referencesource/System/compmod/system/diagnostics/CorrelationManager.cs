@@ -20,17 +20,22 @@ namespace System.Diagnostics {
 
         public Guid ActivityId {
             get {
+#if !DISABLE_REMOTING
                 Object id = CallContext.LogicalGetData(activityIdSlotName);
                 if (id != null)
                     return (Guid) id;
                 else
+#endif
                     return Guid.Empty;
             }
             set {
+#if !DISABLE_REMOTING
                 CallContext.LogicalSetData(activityIdSlotName, value);
+#endif
             }
         }
 
+#if !DISABLE_REMOTING
         public Stack LogicalOperationStack {
             get {
                 return GetLogicalOperationStack();
@@ -63,6 +68,6 @@ namespace System.Diagnostics {
 
             return idStack;
         }
-
+#endif
     }
 }

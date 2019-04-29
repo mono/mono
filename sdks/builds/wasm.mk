@@ -189,6 +189,6 @@ $$(eval $$(call CrossRuntimeTemplate,wasm,$(1),$(2)-w64-mingw32$$(if $$(filter $
 
 endef
 
-$(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,runtime,llvm-llvmwin32,wasm32-unknown-unknown))
+# $(eval $(call WasmCrossMXETemplate,cross-win,i686,wasm32,runtime,llvm-llvmwin32,wasm32-unknown-unknown))
 
 $(eval $(call BclTemplate,wasm,wasm wasm_tools,wasm))

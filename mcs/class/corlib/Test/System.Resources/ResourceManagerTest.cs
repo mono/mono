@@ -794,6 +794,7 @@ namespace MonoTests.System.Resources
 		[Category ("Globalization")]
 		[Category ("StackWalks")]
 		[Category ("NotWasm")]
+		[Category ("LinkerNotWorking")]
 		public void TestSatellites ()
 		{
 			ResourceManager manager = new ResourceManager("Resources", GetType ().Assembly);

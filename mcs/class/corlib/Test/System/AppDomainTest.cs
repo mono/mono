@@ -79,6 +79,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // bug #80934
+		[Category ("LinkerNotWorking")]
 		public void ConfigurationFile_Relative ()
 		{
 			// Note:
@@ -129,6 +130,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // bug #80934
+		[Category ("LinkerNotWorking")]
 		public void ConfigurationFile_Absolute ()
 		{
 			// Note:
@@ -175,6 +177,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // bug #80934
+		[Category ("LinkerNotWorking")]
 		public void ConfigurationFile_Null ()
 		{
 			// Note:
@@ -2809,6 +2812,7 @@ namespace MonoTests.System
 		}
 
 		[Test] // bug #79715
+		[Category ("LinkerNotWorking")]
 		public void Load_PartialVersion ()
 		{
 			AppDomain ad = CreateTestDomain (tempDir, true);
@@ -3002,6 +3006,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("LinkerNotWorking")]
 		public void ReflectionOnlyAssemblyResolve ()
 		{
 			AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += new ResolveEventHandler(CurrentDomain_ReflectionOnlyAssemblyResolve);
@@ -3066,6 +3071,7 @@ namespace MonoTests.System
 		}
 
 		[Test] //BXC #12611
+		[Category ("LinkerNotWorking")]
 		public void ReflectionObjectsAreSerializableTest ()
 		{
 			ad = CreateTestDomain (tempDir, true);
@@ -3097,6 +3103,7 @@ namespace MonoTests.System
 		}
 
 		[Test] //BXC #12611
+		[Category ("LinkerNotWorking")]
 		public void GenericReflectionObjectsAreSerializableTest ()
 		{
 			ad = CreateTestDomain (tempDir, true);
@@ -3108,6 +3115,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("LinkerNotWorking")]
 		public void ShadowCopyTypeGetTypeMissingAssemblyTest ()
 		{
 			ad = CreateShadowCopyAppDomain (tempDir, true);
@@ -3116,6 +3124,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("LinkerNotWorking")]
 		public void ShadowCopyDontChangeAssemblyCodeBase ()
 		{
 			var setup = new AppDomainSetup ();

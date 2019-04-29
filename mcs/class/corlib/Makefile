@@ -104,7 +104,11 @@ REFERENCE_SOURCES_FLAGS += -d:FEATURE_MACL
 endif
 
 ifndef AOT_FRIENDLY_PROFILE
+ifndef DISABLE_REMOTING
 REFERENCE_SOURCES_FLAGS += -d:FEATURE_REMOTING,MONO_COM,FEATURE_COMINTEROP,FEATURE_ROLE_BASED_SECURITY
+else
+REFERENCE_SOURCES_FLAGS += -d:FEATURE_ROLE_BASED_SECURITY
+endif
 endif
 
 ifndef NO_THREAD_ABORT
@@ -161,7 +165,7 @@ endif
 endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe \
+TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe -nowarn:67,114,162,169,649,659 \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%) -resource:LinkerDescriptor/mscorlib_test.xml,$(test_lib:.dll=.xml)
 
 ifeq ($(PROFILE),net_4_x)

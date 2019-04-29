@@ -66,7 +66,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 
         //MethodCall and MethodReturn are handled special for perf reasons
         private bool bFullDeserialization;
-#if FEATURE_REMOTING        
+#if FEATURE_REMOTING
         private bool bMethodCall;
         private bool bMethodReturn;
         private BinaryMethodCall binaryMethodCall;
@@ -95,7 +95,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                     m_objectManager.TopObject = value;
             }
         }
-#if FEATURE_REMOTING        
+#if FEATURE_REMOTING
         internal void SetMethodCall(BinaryMethodCall binaryMethodCall)
         {
             bMethodCall = true;
@@ -141,7 +141,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 
         }
 
-#if FEATURE_REMOTING || MOBILE_LEGACY
+#if FEATURE_REMOTING || (MOBILE_LEGACY && !DISABLE_REMOTING)
         [System.Security.SecurityCritical]  // auto-generated
         internal Object Deserialize(HeaderHandler handler, __BinaryParser serParser, bool fCheck, bool isCrossAppDomain, IMethodCallMessage methodCallMessage) {
             if (serParser == null)
@@ -193,10 +193,12 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                 if (HasSurrogate(TopObject.GetType())  && topId != 0)//Not yet resolved
                     TopObject = m_objectManager.GetObject(topId);
 
+#if !DISABLE_REMOTING
                 if (TopObject is IObjectReference)
                 {
                     TopObject = ((IObjectReference)TopObject).GetRealObject(m_context);
                 }
+#endif
             }
 
             SerTrace.Log( this, "Deserialize Exit ",TopObject);
@@ -289,10 +291,12 @@ namespace System.Runtime.Serialization.Formatters.Binary {
                 if (HasSurrogate(TopObject.GetType())  && topId != 0)//Not yet resolved
                     TopObject = m_objectManager.GetObject(topId);
 
+#if !DISABLE_REMOTING
                 if (TopObject is IObjectReference)
                 {
                     TopObject = ((IObjectReference)TopObject).GetRealObject(m_context);
                 }
+#endif
             }
 
             SerTrace.Log( this, "Deserialize Exit ",TopObject);
