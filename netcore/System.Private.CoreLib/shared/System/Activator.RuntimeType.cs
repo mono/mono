@@ -5,6 +5,7 @@
 #nullable enable
 using System.Reflection;
 using System.Globalization;
+using System.Runtime.Loader;
 using System.Runtime.Remoting;
 using System.Threading;
 
@@ -122,7 +123,7 @@ namespace System
                 {
                     // Classic managed type
                     assembly = RuntimeAssembly.InternalLoadAssemblyName(
-                        assemblyName, ref stackMark);
+                        assemblyName, ref stackMark, AssemblyLoadContext.CurrentContextualReflectionContext);
                 }
             }
 
