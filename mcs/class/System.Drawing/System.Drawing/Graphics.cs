@@ -1703,8 +1703,7 @@ namespace System.Drawing
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public static Graphics FromHdcInternal (IntPtr hdc)
 		{
-			GDIPlus.Display = hdc;
-			return null;
+			return FromHdc (hdc);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
@@ -1795,7 +1794,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public static IntPtr GetHalftonePalette ()
 		{
-			throw new NotImplementedException ();
+			return IntPtr.Zero;
 		}
 
 		public IntPtr GetHdc ()
@@ -2450,12 +2449,18 @@ namespace System.Drawing
 			}
 		}
 
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public object GetContextInfo ()
 		{
-			// only known source of information @ http://blogs.wdevs.com/jdunlap/Default.aspx
-			throw new NotImplementedException ();
+			// Returns a clipping region and transform matrix.
+			// The clipping region is relative to page space, not world space.
+			// Native accumulates world translations from individual saves for some strange reason.
+			Region rgn = Clip;
+			Matrix transform = Transform;
+			Matrix invTransform = transform.Clone();
+			invTransform.Invert ();
+			Clip.Transform (invTransform);
+			return new object[] { rgn, transform };
 		}
 	}
 }

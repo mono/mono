@@ -2065,6 +2065,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 		}
 
 		iface = itf;
+		mono_class_setup_methods (iface);
 		for (i = mono_class_get_method_count (iface) - 1; i >= 0; i--) {
 			int param_index = 0;
 			MonoMethodBuilder *mb;
