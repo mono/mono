@@ -151,6 +151,17 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 	switch (er->ExceptionCode) {
 	case EXCEPTION_STACK_OVERFLOW:
 		if (!mono_aot_only && restore_stack) {
+			if (er->NumberParameters == 2) {
+				/* Use actual stack fault address rather than relying on the
+				 * SP of the current frame. If we try to enter a method with a
+				 * large prolog (many locals) we may try to allocate more stack
+				 * than is available, however the SP has not been updated. This
+				 * means the stack overflow heuristic to free up enough space
+				 * may fail, as the used stack may be smaller than the amount
+				 * of stack that was attempted to be unwound.
+				 */
+				ctx->Rsp = er->ExceptionInformation[1]; /* FaultAddress */
+			}
 			if (mono_arch_handle_exception (ctx, domain->stack_overflow_ex)) {
 				/* need to restore stack protection once stack is unwound
 				 * restore_stack will restore stack protection and then
