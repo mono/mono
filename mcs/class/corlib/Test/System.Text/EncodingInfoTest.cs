@@ -18,6 +18,7 @@ namespace MonoTests.System.Text
 {
 	[TestFixture]
 	[Category ("MobileNotWorking")]
+	[Category ("LinkerNotWorking")]
 	public class EncodingInfoTest
 	{
 		[Test]

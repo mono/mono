@@ -37,7 +37,9 @@ using System.Reflection;
 using System.Collections;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Channels;
+#if !DISABLE_REMOTING
 using System.Runtime.Remoting.Lifetime;
+#endif
 using Mono.Xml;
 
 namespace System.Runtime.Remoting
@@ -306,11 +308,15 @@ namespace System.Runtime.Remoting
 
 		public static void RegisterWellKnownServiceType (WellKnownServiceTypeEntry entry) 
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			lock (channelTemplates)
 			{
 				wellKnownServiceEntries [entry.ObjectUri] = entry;
 				RemotingServices.CreateWellKnownServerIdentity (entry.ObjectType, entry.ObjectUri, entry.Mode);
 			}
+#endif
 		}
 
 		internal static void RegisterChannelTemplate (ChannelData channel)
@@ -330,6 +336,9 @@ namespace System.Runtime.Remoting
 		
 		internal static void RegisterChannels (ArrayList channels, bool onlyDelayed)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			foreach (ChannelData channel in channels)
 			{
 				if (onlyDelayed && channel.DelayLoadAsClientChannel != "true")
@@ -367,6 +376,7 @@ namespace System.Runtime.Remoting
 				
 				ChannelServices.RegisterChannelConfig (channel);
 			}
+#endif
 		}
 		
 		internal static void RegisterTypes (ArrayList types)
@@ -469,6 +479,9 @@ namespace System.Runtime.Remoting
 		
 		public void ParseElement (string name, SmallXmlParser.IAttrList attrs)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			if (currentProviderData != null)
 			{
 				ReadCustomProviderData (name, attrs);
@@ -598,6 +611,7 @@ namespace System.Runtime.Remoting
 				default:
 					throw new RemotingException ("Element '" + name + "' is not valid in system.remoting.configuration section");
 			}
+#endif
 		}
 		
 		public void OnEndElement (string name)
@@ -624,6 +638,7 @@ namespace System.Runtime.Remoting
 			currentProviderData.Push (data);
 		}
 
+#if !DISABLE_REMOTING
 		void ReadLifetine (SmallXmlParser.IAttrList attrs)
 		{
 			for (int i=0; i < attrs.Names.Length; ++i) {
@@ -645,6 +660,7 @@ namespace System.Runtime.Remoting
 				}
 			}
 		}
+#endif
 		
 		TimeSpan ParseTime (string s)
 		{

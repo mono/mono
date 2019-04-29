@@ -211,10 +211,13 @@ namespace System.Runtime.Remoting.Contexts {
 		{
 			get
 			{
+#if DISABLE_REMOTING
+				return false;
+#else
 				// Needs to go through the client context sink if there are custom
 				// client context or dynamic sinks.
-
 				return ( !(GetClientContextSinkChain() is ClientContextTerminatorSink) || HasDynamicSinks || HasGlobalDynamicSinks);
+#endif
 			}
 		}
 
@@ -262,6 +265,9 @@ namespace System.Runtime.Remoting.Contexts {
 
 		internal IMessageSink GetServerContextSinkChain()
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			if (server_context_sink_chain == null)
 			{
 				if (default_server_context_sink == null)
@@ -279,10 +285,14 @@ namespace System.Runtime.Remoting.Contexts {
 				}
 			}
 			return server_context_sink_chain;
+#endif
 		}
 
 		internal IMessageSink GetClientContextSinkChain()
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			if (client_context_sink_chain == null)
 			{
 				client_context_sink_chain = new ClientContextTerminatorSink (this);
@@ -296,6 +306,7 @@ namespace System.Runtime.Remoting.Contexts {
 				}
 			}
 			return client_context_sink_chain;
+#endif
 		}
 
 		internal IMessageSink CreateServerObjectSinkChain (MarshalByRefObject obj, bool forceInternalExecute)

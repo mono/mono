@@ -3782,7 +3782,7 @@ namespace System
             }
 #if !FULL_AOT_RUNTIME
             // Special case for TypeBuilder to be backward-compatible.
-            if (c is System.Reflection.Emit.TypeBuilder)
+            if (RuntimeFeature.IsDynamicCodeSupported && c is System.Reflection.Emit.TypeBuilder)
             {
                 // If c is a subclass of this class, then c can be cast to this type.
                 if (c.IsSubclassOf(this))
@@ -4303,6 +4303,8 @@ namespace System
 #if NETCORE
                     throw new NotImplementedException ();
 #else
+                    if (!RuntimeFeature.IsDynamicCodeSupported)
+                        throw new PlatformNotSupportedException();
                     return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
 #endif
                 }

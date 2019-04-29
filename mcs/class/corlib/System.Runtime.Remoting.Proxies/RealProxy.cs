@@ -69,7 +69,11 @@ namespace System.Runtime.Remoting.Proxies
 			return IsContextBoundObject && Object.ReferenceEquals (TargetContext, Thread.CurrentContext);
 		}
 
-		internal object LoadRemoteFieldNew (IntPtr classPtr, IntPtr fieldPtr) {
+		internal object LoadRemoteFieldNew (IntPtr classPtr, IntPtr fieldPtr)
+		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			Mono.RuntimeClassHandle classHandle = new Mono.RuntimeClassHandle (classPtr);
 			RuntimeFieldHandle fieldHandle = new RuntimeFieldHandle (fieldPtr);
 			RuntimeTypeHandle typeHandle = classHandle.GetTypeHandle ();
@@ -96,9 +100,14 @@ namespace System.Runtime.Remoting.Proxies
 			if (exc != null)
 				throw exc;
 			return outArgs[0];
+#endif
 		}
 
-		internal void StoreRemoteField (IntPtr classPtr, IntPtr fieldPtr, object arg) {
+		internal void StoreRemoteField (IntPtr classPtr, IntPtr fieldPtr, object arg)
+		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			Mono.RuntimeClassHandle classHandle = new Mono.RuntimeClassHandle (classPtr);
 			RuntimeFieldHandle fieldHandle = new RuntimeFieldHandle (fieldPtr);
 			RuntimeTypeHandle typeHandle = classHandle.GetTypeHandle ();
@@ -125,6 +134,7 @@ namespace System.Runtime.Remoting.Proxies
 			RealProxy.PrivateInvoke (_rp, msg, out exc, out outArgs);
 			if (exc != null)
 				throw exc;
+#endif
 		}
 
 	}
@@ -159,10 +169,12 @@ namespace System.Runtime.Remoting.Proxies
 		{
 		}
 
+#if !DISABLE_REMOTING
 		internal RealProxy (Type classToProxy, ClientIdentity identity) : this(classToProxy, IntPtr.Zero, null)
 		{
 			_objectIdentity = identity;
 		}
+#endif
 
 		protected RealProxy (Type classToProxy, IntPtr stub, object stubData)
 		{
@@ -238,6 +250,9 @@ namespace System.Runtime.Remoting.Proxies
 		internal static object PrivateInvoke (RealProxy rp, IMessage msg, out Exception exc,
 						      out object [] out_args)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
 			mMsg.LogicalCallContext = Thread.CurrentThread.GetMutableExecutionContext().LogicalCallContext;
 			CallType call_type = mMsg.CallType;
@@ -324,6 +339,7 @@ namespace System.Runtime.Remoting.Proxies
 			}
 
 			return res_msg.ReturnValue;
+#endif
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -349,12 +365,14 @@ namespace System.Runtime.Remoting.Proxies
 			return _objTP;
 		}
 
+#if !DISABLE_REMOTING
 		[MonoTODO]
 		[ComVisible (true)]
 		public IConstructionReturnMessage InitializeServerObject(IConstructionCallMessage ctorMsg)
 		{
 			throw new NotImplementedException();
 		}
+#endif
 
 		protected void AttachServer(MarshalByRefObject s)
 		{
@@ -381,12 +399,16 @@ namespace System.Runtime.Remoting.Proxies
 		// Called by the runtime
 		internal object GetAppDomainTarget ()
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			if (_server == null) {
 				ClientActivatedIdentity identity = RemotingServices.GetIdentityForUri (_targetUri) as ClientActivatedIdentity;
 				if (identity == null) throw new RemotingException ("Server for uri '" + _targetUri + "' not found");
 				_server = identity.GetServerObject ();
 			}
 			return _server;
+#endif
 		}
 
 		static object[] ProcessResponse (IMethodReturnMessage mrm, MonoMethodMessage call)

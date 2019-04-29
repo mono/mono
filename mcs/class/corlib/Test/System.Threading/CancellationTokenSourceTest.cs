@@ -445,8 +445,9 @@ namespace MonoTests.System.Threading
 			bool canceled = false;
 			cts.Token.Register (() => canceled = true);
 
-			using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cts.Token))
+			using (var linked = CancellationTokenSource.CreateLinkedTokenSource (cts.Token)) {
 				;
+			}
 
 			Assert.IsFalse (canceled, "#1");
 			Assert.IsFalse (cts.IsCancellationRequested, "#2");

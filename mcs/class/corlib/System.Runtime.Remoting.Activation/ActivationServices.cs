@@ -38,12 +38,15 @@ using System.Runtime.Remoting.Proxies;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Collections;
+#if !DISABLE_REMOTING
 using System.Runtime.Remoting.Channels;
+#endif
 
 namespace System.Runtime.Remoting.Activation
 {
 	internal class ActivationServices
 	{
+#if !DISABLE_REMOTING
 		static IActivator _constructionActivator;
 
 		static IActivator ConstructionActivator {
@@ -73,9 +76,13 @@ namespace System.Runtime.Remoting.Activation
 
 			return response;
 		}
+#endif
 
 		public static IMessage RemoteActivate (IConstructionCallMessage ctorCall)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			try 
 			{
 				return ctorCall.Activator.Activate (ctorCall);
@@ -83,9 +90,11 @@ namespace System.Runtime.Remoting.Activation
 			catch (Exception ex) 
 			{
 				return new ReturnMessage (ex, ctorCall);
-			}		
+			}
+#endif
 		}
 
+#if !DISABLE_REMOTING
 		public static object CreateProxyFromAttributes (Type type, object[] activationAttributes)
 		{
 			string activationUrl = null;
@@ -173,9 +182,15 @@ namespace System.Runtime.Remoting.Activation
 
 			return ctorCall;
 		}
+#endif
 
 		public static IMessage CreateInstanceFromMessage (IConstructionCallMessage ctorCall)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			object obj = AllocateUninitializedClassInstance (ctorCall.ActivationType);
 
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (ctorCall);
@@ -193,10 +208,16 @@ namespace System.Runtime.Remoting.Activation
 				ctorCall.MethodBase.Invoke (obj, ctorCall.Args);
 
 			return new ConstructionResponse (obj, null, ctorCall);
+#endif
 		}
 
 		public static object CreateProxyForType (Type type)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
+			if (!RuntimeFeature.IsRemotingSupported)
+				throw new PlatformNotSupportedException ();
 			// Called by the runtime when creating an instance of a type
 			// that has been registered as remotely activated.
 
@@ -219,6 +240,7 @@ namespace System.Runtime.Remoting.Activation
 			}
 #endif
 			return null;
+#endif
 		}
 
 		internal static void PushActivationAttributes (Type serverType, Object[] attributes)

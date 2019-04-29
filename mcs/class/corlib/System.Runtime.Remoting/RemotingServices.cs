@@ -84,10 +84,12 @@ namespace System.Runtime.Remoting
 			_deserializationFormatter = new BinaryFormatter (null, context);
 			_serializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Full;
 			_deserializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Full;
-			
+
+#if !DISABLE_REMOTING
 			RegisterInternalChannels ();
 			CreateWellKnownServerIdentity (typeof(RemoteActivator), "RemoteActivationService.rem", WellKnownObjectMode.Singleton);
-			
+#endif
+
 			FieldSetterMethod = typeof(object).GetMethod ("FieldSetter", BindingFlags.NonPublic|BindingFlags.Instance);
 			FieldGetterMethod = typeof(object).GetMethod ("FieldGetter", BindingFlags.NonPublic|BindingFlags.Instance);
 		}
@@ -301,6 +303,9 @@ namespace System.Runtime.Remoting
 		
 		public static ObjRef Marshal (MarshalByRefObject Obj, string ObjURI, Type RequestedType)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			if (IsTransparentProxy (Obj))
 			{
 				RealProxy proxy = RemotingServices.GetRealProxy (Obj);
@@ -353,6 +358,7 @@ namespace System.Runtime.Remoting
 			
 			TrackingServices.NotifyMarshaledObject (Obj, oref);
 			return oref;
+#endif
 		}
 
 		static string NewUri ()
@@ -633,6 +639,9 @@ namespace System.Runtime.Remoting
 
 		internal static ClientIdentity GetOrCreateClientIdentity(ObjRef objRef, Type proxyType, out object clientProxy)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			// This method looks for an identity for the given url. 
 			// If an identity is not found, it creates the identity and 
 			// assigns it a proxy to the remote object.
@@ -683,6 +692,7 @@ namespace System.Runtime.Remoting
 				}
 				return identity;
 			}
+#endif
 		}
 
 		static IMessageSink GetClientChannelSinkChain(string url, object channelData, out string objectUri)
@@ -704,6 +714,7 @@ namespace System.Runtime.Remoting
 			return sink;
 		}
 
+#if !DISABLE_REMOTING
 		internal static ClientActivatedIdentity CreateContextBoundObjectIdentity(Type objectType)
 		{
 			ClientActivatedIdentity identity = new ClientActivatedIdentity (null, objectType);
@@ -743,12 +754,17 @@ namespace System.Runtime.Remoting
 				uri_hash[identity.ObjectUri] = identity;
 			}
 		}
+#endif
 
 		internal static object GetProxyForRemoteObject (ObjRef objref, Type classToProxy)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			ClientActivatedIdentity identity = GetIdentityForUri (objref.URI) as ClientActivatedIdentity;
 			if (identity != null) return identity.GetServerObject ();
 			else return GetRemoteObject (objref, classToProxy);
+#endif
 		}
 
 		internal static object GetRemoteObject(ObjRef objRef, Type proxyType)
@@ -761,9 +777,13 @@ namespace System.Runtime.Remoting
 		// This method is called by the runtime
 		internal static object GetServerObject (string uri)
 		{
+#if DISABLE_REMOTING
+			throw new PlatformNotSupportedException ();
+#else
 			ClientActivatedIdentity identity = GetIdentityForUri (uri) as ClientActivatedIdentity;
 			if (identity == null) throw new RemotingException ("Server for uri '" + uri + "' not found");
 			return identity.GetServerObject ();
+#endif
 		}
 
 		// This method is called by the runtime

@@ -52,6 +52,7 @@ namespace System
 		{
 		}
 
+#if !DISABLE_REMOTING
 #if !FEATURE_REMOTING
 		internal ServerIdentity ObjectIdentity {
 			get { throw new NotSupportedException (); }
@@ -80,7 +81,9 @@ namespace System
 			set { _identity = value; }
 		}
 #endif
+#endif
 
+#if !DISABLE_REMOTING
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public virtual ObjRef CreateObjRef (Type requestedType)
 		{
@@ -93,6 +96,7 @@ namespace System
 			return _identity.CreateObjRef (requestedType);
 #endif
 		}
+#endif
 
 		// corcompare says it is "virtual final", so there is likely
 		// an internal interface in .NET.
