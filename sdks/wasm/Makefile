@@ -115,7 +115,7 @@ release/.stamp-build: driver.o corebindings.o library_mono.js binding_support.js
 
 # Notice that release/.stamp-build depends on debug/.stamp-build. This is the case as emcc is believed to not work well with parallel builds.
 release-dynamic/.stamp-build: driver.o corebindings.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a debug/.stamp-build | release-dynamic/
-	$(EMCC) $(EMCC_FLAGS)  -s EXPORT_ALL=1 -s MAIN_MODULE=1 -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o $(MONO_LIBS) -o release/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
+	$(EMCC) $(EMCC_FLAGS)  -s EXPORT_ALL=1 -s MAIN_MODULE=1 -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o $(MONO_LIBS) -o release-dynamic/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
 	touch $@
 
 build-native: debug/.stamp-build release/.stamp-build release-dynamic/.stamp-build
