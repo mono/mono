@@ -45,6 +45,8 @@ System.Runtime.Remoting.Proxies/*.cs
 
 System.Runtime.Remoting.Services/*.cs
 
+ReferenceSources/RemotingFieldCachedData.cs
+
 Mono.Interop/*.cs
 
 ../referencesource/mscorlib/system/security/claims/ClaimsPrincipal.cs
