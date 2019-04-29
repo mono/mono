@@ -41,8 +41,11 @@ namespace System.Runtime.Remoting.Messaging {
 	
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
-	internal class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage, IInternalMessage {
-
+	internal class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage
+#if !DISABLE_REMOTING
+		, IInternalMessage
+#endif
+	{
 #pragma warning disable 649
 		#region keep in sync with MonoMessage in object-internals.h
 		RuntimeMethodInfo method;
@@ -371,6 +374,7 @@ namespace System.Runtime.Remoting.Messaging {
 			return null;
 		}
 
+#if !DISABLE_REMOTING
 		Identity IInternalMessage.TargetIdentity
 		{
 			get { return identity; }
@@ -379,12 +383,9 @@ namespace System.Runtime.Remoting.Messaging {
 
 		bool IInternalMessage.HasProperties()
 		{
-#if DISABLE_REMOTING
-			return false;
-#else
 			return properties != null;
-#endif
 		}
+#endif
 
 		public bool IsAsync
 		{

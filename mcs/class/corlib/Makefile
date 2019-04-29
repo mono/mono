@@ -165,7 +165,7 @@ endif
 endif
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
-TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe \
+TEST_MCS_FLAGS += -debug -nowarn:168,219,618,672 -unsafe -nowarn:67,114,162,169,649,659 \
 				 -define:MONO_DATACONVERTER_STATIC_METHODS $(TEST_RESX_RESOURCES:%=-resource:%) -resource:LinkerDescriptor/mscorlib_test.xml,$(test_lib:.dll=.xml)
 
 ifeq ($(PROFILE),net_4_x)

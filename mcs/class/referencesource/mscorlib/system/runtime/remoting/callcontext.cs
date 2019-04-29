@@ -82,6 +82,7 @@ namespace System.Runtime.Remoting.Messaging{
             return Thread.CurrentThread.GetExecutionContextReader().IllogicalCallContext.GetData(name);
         }
 
+#if !DISABLE_SECURITY
         internal static IPrincipal Principal
         {
             [System.Security.SecurityCritical]  // auto-generated
@@ -97,6 +98,7 @@ namespace System.Runtime.Remoting.Messaging{
                     GetMutableExecutionContext().LogicalCallContext.Principal = value;
             }
         }
+#endif
 
         public static Object HostContext
         {
@@ -295,8 +297,10 @@ namespace System.Runtime.Remoting.Messaging{
 
         // Private member data
         private Hashtable m_Datastore;
+#if !DISABLE_REMOTING
         private CallContextRemotingData m_RemotingData = null; 
         private CallContextSecurityData m_SecurityData = null;
+#endif
         private Object m_HostContext = null;
         private bool m_IsCorrelationMgr = false;
 
@@ -321,7 +325,9 @@ namespace System.Runtime.Remoting.Messaging{
 
             public LogicalCallContext Clone() { return (LogicalCallContext)m_ctx.Clone(); }
 
+#if !DISABLE_SECURITY
             public IPrincipal Principal { get { return IsNull ? null : m_ctx.Principal; } }
+#endif
 
             [System.Security.SecurityCritical]
             public Object GetData(String name) { return IsNull ? null : m_ctx.GetData(name); }
@@ -335,7 +341,12 @@ namespace System.Runtime.Remoting.Messaging{
             SerializationInfoEnumerator e = info.GetEnumerator();
             while (e.MoveNext())
             {
-                if (e.Name.Equals("__RemotingData"))
+                if (e.Name.Equals("__HostContext"))
+                {
+                    m_HostContext = e.Value;
+                }
+#if !DISABLE_REMOTING
+                else if (e.Name.Equals("__RemotingData"))
                 {
                     m_RemotingData = (CallContextRemotingData) e.Value;
                 }
@@ -350,10 +361,7 @@ namespace System.Runtime.Remoting.Messaging{
                         BCLDebug.Assert(false, "Security data should only be serialized in cross appdomain case.");
                     }
                 }
-                else if (e.Name.Equals("__HostContext"))
-                {
-                    m_HostContext = e.Value;
-                }
+#endif
                 else if (e.Name.Equals("__CorrelationMgrSlotPresent"))
                 {
                     m_IsCorrelationMgr = (bool)e.Value;
@@ -372,6 +380,7 @@ namespace System.Runtime.Remoting.Messaging{
             if (info == null)
                 throw new ArgumentNullException("info");
             info.SetType(s_callContextType);
+#if !DISABLE_REMOTING
             if (m_RemotingData != null)
             {
                 info.AddValue("__RemotingData", m_RemotingData);
@@ -383,6 +392,7 @@ namespace System.Runtime.Remoting.Messaging{
                     info.AddValue("__SecurityData", m_SecurityData);
                 }
             }
+#endif
             if (m_HostContext != null)
             {
                 info.AddValue("__HostContext", m_HostContext);
@@ -416,10 +426,12 @@ namespace System.Runtime.Remoting.Messaging{
         public Object Clone()
         {
             LogicalCallContext lc = new LogicalCallContext();
+#if !DISABLE_REMOTING
             if (m_RemotingData != null)
                 lc.m_RemotingData = (CallContextRemotingData)m_RemotingData.Clone();
             if (m_SecurityData != null)
                 lc.m_SecurityData = (CallContextSecurityData)m_SecurityData.Clone();
+#endif
             if (m_HostContext != null)
                 lc.m_HostContext = m_HostContext;
             lc.m_IsCorrelationMgr = m_IsCorrelationMgr;
@@ -486,8 +498,10 @@ namespace System.Runtime.Remoting.Messaging{
                 // Set the flag to true if there is either remoting data, or
                 // security data or user data
                 if( 
+#if !DISABLE_REMOTING
                     (m_RemotingData != null &&  m_RemotingData.HasInfo) ||
                     (m_SecurityData != null &&  m_SecurityData.HasInfo) ||
+#endif
                     (m_HostContext != null) ||
                     HasUserData
                   )
@@ -504,6 +518,7 @@ namespace System.Runtime.Remoting.Messaging{
             get { return ((m_Datastore != null) && (m_Datastore.Count > 0));}
         }
 
+#if !DISABLE_REMOTING
         internal CallContextRemotingData RemotingData
         {
             get 
@@ -525,7 +540,8 @@ namespace System.Runtime.Remoting.Messaging{
                 return m_SecurityData; 
             }
         }
-        
+#endif
+
         internal Object HostContext
         {
             get
@@ -551,15 +567,18 @@ namespace System.Runtime.Remoting.Messaging{
             }
         }
 
+#if !DISABLE_SECURITY
         // This is used for quick access to the current principal when going
         // between appdomains.
         internal IPrincipal Principal
         {
             get 
-            { 
+            {
+#if !DISABLE_REMOTING
                 // This MUST not fault in the security data object if it doesn't exist.
                 if (m_SecurityData != null)
                     return m_SecurityData.Principal;
+#endif
 
                 return null;
             } // get
@@ -570,6 +589,7 @@ namespace System.Runtime.Remoting.Messaging{
                 SecurityData.Principal = value;
             } // set
         } // Principal
+#endif
 
         /*=========================================================================
         ** Frees a named data slot.
@@ -627,6 +647,7 @@ namespace System.Runtime.Remoting.Messaging{
             return _recvHeaders;
         } // InternalGetHeaders
 
+#if !DISABLE_SECURITY
         // Nulls out the principal if its not serializable.
         // Since principals do flow for x-appdomain cases
         // we need to handle this behaviour both during invoke
@@ -644,6 +665,7 @@ namespace System.Runtime.Remoting.Messaging{
             }
             return currentPrincipal;
         }
+#endif
 
         // Takes outgoing headers and inserts them        
         [System.Security.SecurityCritical]  // auto-generated
@@ -685,6 +707,7 @@ namespace System.Runtime.Remoting.Messaging{
                 return header.Name;                
         } // GetPropertyKeyForHeader
 
+#if !DISABLE_REMOTING
         // Take headers out of message and stores them in call context
         [System.Security.SecurityCritical]  // auto-generated
         internal void PropagateIncomingHeadersToCallContext(IMessage msg)
@@ -746,10 +769,10 @@ namespace System.Runtime.Remoting.Messaging{
             _recvHeaders = headers;
             _sendHeaders = null;
         } // PropagateIncomingHeadersToCallContext
+#endif
     } // class LogicalCallContext
 
-    
-
+#if !DISABLE_REMOTING
     [Serializable]   
     internal class CallContextSecurityData : ICloneable
     {
@@ -812,4 +835,5 @@ namespace System.Runtime.Remoting.Messaging{
             return rd;
         }
     }
- }
+#endif
+}

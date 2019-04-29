@@ -1,0 +1,6 @@
+System/AppDomainCas.cs
+
+System.Security.Claims/*.cs
+System.Security.Principal/*.cs
+
+System.Threading/ThreadPrincipalTests.cs

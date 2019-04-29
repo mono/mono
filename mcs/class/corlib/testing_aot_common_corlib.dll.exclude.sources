@@ -17,6 +17,7 @@ System.Runtime.Remoting.Messaging/ConstructionResponse.cs
 System.Runtime.Remoting.Messaging/EnvoyTerminatorSink.cs
 System.Runtime.Remoting.Messaging/ErrorMessage.cs
 System.Runtime.Remoting.Messaging/InternalMessageWrapper.cs
+System.Runtime.Remoting.Messaging/IInternalMessage.cs
 System.Runtime.Remoting.Messaging/IRemotingFormatter.cs
 System.Runtime.Remoting.Messaging/ISerializationRootObject.cs
 System.Runtime.Remoting.Messaging/MessageSurrogateFilter.cs
@@ -45,3 +46,11 @@ System.Runtime.Remoting.Proxies/*.cs
 System.Runtime.Remoting.Services/*.cs
 
 Mono.Interop/*.cs
+
+../referencesource/mscorlib/system/security/claims/ClaimsPrincipal.cs
+
+System.Security.Permissions/PrincipalPermission.cs
+System.Security.Permissions/PrincipalPermissionAttribute.cs
+
+System.Security.Principal/GenericPrincipal.cs
+System.Security.Principal/WindowsPrincipal.cs
