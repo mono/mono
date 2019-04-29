@@ -782,6 +782,11 @@ typedef struct {
 
 typedef struct {
 	MonoObject object;
+	guint32 ifacetype;
+} MonoClassInterfaceAttribute;
+
+typedef struct {
+	MonoObject object;
 	guint32 dispid;
 } MonoDispIdAttribute;
 

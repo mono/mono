@@ -146,8 +146,14 @@ GENERATE_GET_CLASS_WITH_CACHE (iunknown,      "Mono.Interop", "IUnknown")
 GENERATE_GET_CLASS_WITH_CACHE (com_object, "System", "__ComObject")
 GENERATE_GET_CLASS_WITH_CACHE (variant,    "System", "Variant")
 
+static GENERATE_GET_CLASS_WITH_CACHE (class_interface_attribute, "System.Runtime.InteropServices", "ClassInterfaceAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (interface_type_attribute, "System.Runtime.InteropServices", "InterfaceTypeAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (guid_attribute, "System.Runtime.InteropServices", "GuidAttribute")
+
+/* ClassInterfaceType values */
+#define CLASS_INTERFACE_NONE 0
+#define CLASS_INTERFACE_AUTODUAL 1
+#define CLASS_INTERFACE_AUTODISPATCH 2
 
 /* Upon creation of a CCW, only allocate a weak handle and set the
  * reference count to 0. If the unmanaged client code decides to addref and
@@ -545,6 +551,26 @@ cominterop_com_visible (MonoClass* klass)
 	}
 	return visible;
 
+}
+
+static guint32
+cominterop_class_iface_type (MonoClass* klass)
+{
+	ERROR_DECL (error);
+	MonoCustomAttrInfo *cinfo;
+	guint32 result = CLASS_INTERFACE_AUTODISPATCH;
+
+	cinfo = mono_custom_attrs_from_class_checked (klass, error);
+	mono_error_assert_ok (error);
+	if (cinfo) {
+		MonoClassInterfaceAttribute *attr = (MonoClassInterfaceAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_class_interface_attribute_class (), error);
+		mono_error_assert_ok (error); /*FIXME proper error handling*/
+
+		if (attr)
+			result = attr->ifacetype;
+	}
+
+	return result;
 }
 
 static void
@@ -1631,6 +1657,9 @@ cominterop_can_support_dispatch (MonoClass* klass)
 		return FALSE;
 
 	if (!cominterop_com_visible (klass))
+		return FALSE;
+
+	if (cominterop_class_iface_type (klass) == CLASS_INTERFACE_NONE)
 		return FALSE;
 
 	return TRUE;
