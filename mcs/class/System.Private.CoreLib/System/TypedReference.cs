@@ -5,10 +5,11 @@ namespace System
 {
 	public ref struct TypedReference
 	{
-		#pragma Region sync with object-internals.h
+		#region sync with object-internals.h
 		RuntimeTypeHandle type;
 		IntPtr Value;
 		IntPtr Type;
+		#endregion
 
 		public static TypedReference MakeTypedReference (Object target, FieldInfo[] flds)
 		{

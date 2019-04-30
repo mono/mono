@@ -345,8 +345,9 @@ namespace System.Reflection
 			return res;
 		}
 
-		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark)
+		internal static RuntimeAssembly InternalLoadAssemblyName (AssemblyName assemblyRef, ref StackCrawlMark stackMark, AssemblyLoadContext assemblyLoadContext)
 		{
+			// TODO: Use assemblyLoadContext
 			return (RuntimeAssembly) InternalLoad (assemblyRef.FullName, ref stackMark, IntPtr.Zero);
 		}
 
