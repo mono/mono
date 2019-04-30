@@ -125,7 +125,6 @@
       <Compile Include="System\Array.cs" />
       <Compile Include="System\Attribute.cs" />
       <Compile Include="System\Buffer.cs" />
-      <Compile Include="System\DefaultBinder.cs" />
       <Compile Include="System\Delegate.cs" />
       <Compile Include="System\Enum.cs" />
       <Compile Include="System\Environment.cs" />
