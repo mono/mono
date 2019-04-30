@@ -6724,7 +6724,21 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_PCMPEQW:
 		case OP_PCMPEQD:
 		case OP_PCMPEQQ: {
-			values [ins->dreg] = LLVMBuildSExt (builder, LLVMBuildICmp (builder, LLVMIntEQ, lhs, rhs, ""), LLVMTypeOf (lhs), "");
+			LLVMValueRef pcmp;
+			LLVMTypeRef retType;
+
+			if (LLVMTypeOf (lhs) == LLVMTypeOf (rhs)) {
+				pcmp = LLVMBuildICmp (builder, LLVMIntEQ, lhs, rhs, "");
+				retType = LLVMTypeOf (lhs);
+			} else {
+				LLVMTypeRef flatType = LLVMVectorType (LLVMInt8Type (), 16);
+				LLVMValueRef flatRHS = convert (ctx, rhs, flatType);
+				LLVMValueRef flatLHS = convert (ctx, lhs, flatType);
+				pcmp = LLVMBuildICmp (builder, LLVMIntEQ, flatLHS, flatRHS, "");
+				retType = flatType;
+			}
+
+			values [ins->dreg] = LLVMBuildSExt (builder, pcmp, retType, "");
 			break;
 		}
 		case OP_PCMPGTB: {
