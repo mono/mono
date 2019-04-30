@@ -7201,7 +7201,7 @@ mono_arch_context_set_int_reg (MonoContext *ctx, int reg, host_mgreg_t val)
 GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
-	return mono_arm_get_exception_trampolines (aot, FALSE);
+	return mono_arm_get_exception_trampolines (aot);
 }
 
 #if defined(MONO_ARCH_SOFT_DEBUG_SUPPORTED)

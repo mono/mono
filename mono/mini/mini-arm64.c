@@ -5394,7 +5394,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
-	return mono_arm_get_exception_trampolines (aot, FALSE);
+	return mono_arm_get_exception_trampolines (aot);
 }
 
 #else /* DISABLE_JIT */

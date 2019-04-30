@@ -386,35 +386,23 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 }	
 
 GSList*
-mono_arm_get_exception_trampolines (gboolean aot, gboolean reg)
+mono_arm_get_exception_trampolines (gboolean aot)
 {
 	MonoTrampInfo *info;
 	GSList *tramps = NULL;
 
 	/* LLVM uses the normal trampolines, but with a different name */
 	get_throw_trampoline (168, TRUE, FALSE, FALSE, FALSE, "llvm_throw_corlib_exception_trampoline", &info, aot, FALSE);
-	if (reg) {
-		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_throw_corlib_exception_trampoline, info->code, g_strdup (info->name), NULL, TRUE);
-		mono_tramp_info_register (info, NULL);
-	} else {
-		tramps = g_slist_prepend (tramps, info);
-	}
+	info->jit_icall_info = &mono_jit_icall_info.mono_llvm_throw_corlib_exception_trampoline;
+	tramps = g_slist_prepend (tramps, info);
 	
 	get_throw_trampoline (168, TRUE, FALSE, TRUE, FALSE, "llvm_throw_corlib_exception_abs_trampoline", &info, aot, FALSE);
-	if (reg) {
-		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_throw_corlib_exception_abs_trampoline, info->code, g_strdup (info->name), NULL, TRUE);
-		mono_tramp_info_register (info, NULL);
-	} else {
-		tramps = g_slist_prepend (tramps, info);
-	}
+	info->jit_icall_info = &mono_jit_icall_info.mono_llvm_throw_corlib_exception_abs_trampoline;
+	tramps = g_slist_prepend (tramps, info);
 
 	get_throw_trampoline (168, FALSE, FALSE, FALSE, TRUE, "llvm_resume_unwind_trampoline", &info, aot, FALSE);
-	if (reg) {
-		mono_register_jit_icall_info (&mono_jit_icall_info.mono_llvm_resume_unwind_trampoline, info->code, g_strdup (info->name), NULL, TRUE);
-		mono_tramp_info_register (info, NULL);
-	} else {
-		tramps = g_slist_prepend (tramps, info);
-	}
+	info->jit_icall_info = &mono_jit_icall_info.mono_llvm_resume_unwind_trampoline;
+	tramps = g_slist_prepend (tramps, info);
 
 	return tramps;
 }
@@ -422,7 +410,7 @@ mono_arm_get_exception_trampolines (gboolean aot, gboolean reg)
 #else
 
 GSList*
-mono_arm_get_exception_trampolines (gboolean aot, gboolean reg)
+mono_arm_get_exception_trampolines (gboolean aot)
 {
 	g_assert_not_reached ();
 	return NULL;
@@ -433,6 +421,8 @@ mono_arm_get_exception_trampolines (gboolean aot, gboolean reg)
 void
 mono_arch_exceptions_init (void)
 {
+	GSList *tramps, *l;
+
 	if (mono_aot_only) {
 
 		typedef struct MonoArchExceptionsInit {
@@ -452,7 +442,14 @@ mono_arch_exceptions_init (void)
 			mono_register_jit_icall_info (init->jit_icall_info, tramp, init->name, NULL, TRUE);
 		}
 	} else {
-		mono_arm_get_exception_trampolines (FALSE, TRUE);
+		tramps = mono_arm_get_exception_trampolines (FALSE);
+		for (l = tramps; l; l = l->next) {
+			MonoTrampInfo *info = (MonoTrampInfo*)l->data;
+
+			mono_register_jit_icall_info (info->jit_icall_info, info->code, g_strdup (info->name), NULL, TRUE);
+			mono_tramp_info_register (info, NULL);
+		}
+		g_slist_free (tramps);
 	}
 }
 

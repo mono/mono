@@ -8336,7 +8336,7 @@ mono_arch_emit_load_aotconst (guint8 *start, guint8 *code, MonoJumpInfo **ji, Mo
 GSList *
 mono_arch_get_trampolines (gboolean aot)
 {
-	return mono_amd64_get_exception_trampolines (aot, FALSE);
+	return mono_amd64_get_exception_trampolines (aot);
 }
 
 /* Soft Debug support */
