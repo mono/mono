@@ -141,7 +141,9 @@ define LLVMMxeTemplate
 # -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
 # -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
 # -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
+# -DCMAKE_EXE_LINKER_FLAGS=-static is needed so that we don't dynamically link with any of the mingw gcc support libs.
 _llvm-$(1)_CMAKE_ARGS = \
+	-DCMAKE_EXE_LINKER_FLAGS=\"-static\" \
 	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$$(TOP)/external/llvm/cmake/modules/NATIVE.cmake \
 	-DCMAKE_TOOLCHAIN_FILE=$$(TOP)/external/llvm/cmake/modules/$(3).cmake \
 	-DLLVM_ENABLE_THREADS=Off \
