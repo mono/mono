@@ -4,13 +4,21 @@ pool:
 variables:
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
   - group: DotNet-VSTS-Bot
+  - group: DotNet-Blob-Feed
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+  # Variables used to publish packages to blob feed
+  - name: dotnetFeedUrl
+    value: https://dotnetfeed.blob.core.windows.net/mono-mono/index.json
+  # Variables used by arcade to gather asset manifests
+  - name: _DotNetPublishToBlobFeed
+    value: true
 
 steps:
-- ${{ if ne(variables['System.TeamProject'], 'public') }}:
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
   - script: |
-      sed -i "s#git://github.com/#https://dn-bot:${dncengpat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
+      sed -i "s#git://github.com/#https://dn-bot:${dncengPat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
     env:
-      dncengpat: $(dn-bot-dotnet-build-rw-code-rw)
+      dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
     displayName: 'rewrite .gitmodules'
 
 - script: |
@@ -20,3 +28,13 @@ steps:
     make
     make -C netcore nupkg
   displayName: 'build'
+
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+  - script: |
+      ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.Repository.LocalPath)/eng/empty.proj
+    displayName: 'restore Arcade stuff'
+  - script: |
+      dotnet msbuild eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetfeedUrl) /p:AzureAccountKey=${dotnetFeedPat}
+    env:
+      dotnetFeedPat: $(dotnetfeed-storage-access-key-1)
+    displayName: 'publish with Arcade'
