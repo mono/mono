@@ -823,6 +823,12 @@ var BindingSupportLib = {
 							SharedArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
 						}
 						break;
+					case "DataView":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							DataView.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
 				}
 		  	}
 			return coreType;
