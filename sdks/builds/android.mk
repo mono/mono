@@ -283,6 +283,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-llvm \
 	--disable-mcs-build \
 	--disable-nls \
+	--enable-static-gcc-libs \
 	--enable-maintainer-mode \
 	--enable-monodroid \
 	--with-monodroid \
@@ -406,23 +407,22 @@ _android-$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32-strip
 
 _android-$(1)_CFLAGS= \
 	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
-	-static-libgcc \
 	-DXAMARIN_PRODUCT_VERSION=0 \
 	-I$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32/include
 
 _android-$(1)_CXXFLAGS= \
 	$$(if $$(RELEASE),,-DDEBUG_CROSS) \
-	-static-libgcc \
 	-DXAMARIN_PRODUCT_VERSION=0 \
 	-I$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32/include
 
-_android-$(1)_LDFLAGS= \
-	-static-libgcc
+_android-$(1)_LDFLAGS=
+
 
 _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
 	--disable-mcs-build \
 	--disable-nls \
+	--enable-static-gcc-libs \
 	--enable-maintainer-mode \
 	--with-tls=pthread
 
