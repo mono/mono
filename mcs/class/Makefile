@@ -424,6 +424,9 @@ wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 netcore_SUBDIRS := System.Private.CoreLib
 netcore_PARALLEL_SUBDIRS :=
 
+monodroid_designer_SUBDIRS := $(mobile_common_dirs)
+monodroid_designer_PARALLEL_SUBDIRS := $(monodroid_dirs_parallel)
+
 include ../build/rules.make
 
 DIST_SUBDIRS = $(testing_aot_full_dirs_parallel) $(testing_aot_hybrid_dirs_parallel) $(monotouch_dirs_parallel) $(monotouch_tools_dirs_parallel) \

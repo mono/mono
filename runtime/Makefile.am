@@ -37,7 +37,7 @@ net_profile = net_4_x
 endif
 
 if INSTALL_MONODROID
-build_profiles += monodroid monodroid_tools
+build_profiles += monodroid monodroid_tools monodroid_designer
 endif
 
 if INSTALL_MONOTOUCH
@@ -88,7 +88,7 @@ if ENABLE_NETCORE
 build_profiles += netcore
 endif
 
-test_profiles = $(filter-out binary_reference_assemblies monodroid_tools wasm_tools,$(build_profiles))
+test_profiles = $(filter-out binary_reference_assemblies monodroid_tools wasm_tools monodroid_designer,$(build_profiles))
 
 MAKE_FLAGS=$(if $(V),,--no-print-directory -s)
 
