@@ -39,6 +39,9 @@ $(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(TOP)/external/llvm))
+ifeq ($(UNAME),Windows)
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64-msvc,$(TOP)/external/llvm))
+endif
 ifeq ($(UNAME),Darwin)
 $(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)))
 endif
@@ -179,4 +182,28 @@ ifneq ($(MXE_PREFIX),)
 llvm-llvmwin32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
 $(eval $(call LLVMMxeTemplate,llvmwin32,i686,mxe-Win32))
 $(eval $(call LLVMMxeTemplate,llvmwin64,x86_64,mxe-Win64))
+endif
+
+##
+# Parameters
+#  $(1): target
+#  $(2): arch
+define LLVMMsvcTemplate
+
+.PHONY: setup-llvm-$(1)
+setup-llvm-$(1):
+	mkdir -p $$(TOP)/sdks/out/llvm-$(1)
+
+.PHONY: package-llvm-$(1)
+package-llvm-$(1): setup-llvm-$(1)
+	$$(TOP)/llvm/build_llvm_msbuild.sh "build" "$(2)" "release" "$$(TOP)/msvc/" "$$(TOP)/sdks/builds/llvm-$(1)" "$$(TOP)/sdks/out/llvm-$(1)"
+
+.PHONY: clean-llvm-$(1)
+clean-llvm-$(1):
+	$$(TOP)/llvm/build_llvm_msbuild.sh "clean" "$(2)" "release" "$$(TOP)/msvc/" "$$(TOP)/sdks/builds/llvm-$(1)" "$$(TOP)/sdks/out/llvm-$(1)"
+
+endef
+
+ifeq ($(UNAME),Windows)
+$(eval $(call LLVMMsvcTemplate,llvmwin64-msvc,x86_64))
 endif
