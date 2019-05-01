@@ -5,6 +5,9 @@ namespace System.IO
 {
 	public partial class File
 	{
+		public static FileStream Create (string path, int bufferSize, FileOptions options, System.Security.AccessControl.FileSecurity fileSecurity)
+			=> new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None, bufferSize, options); // ignore fileSecurity
+
 		public static FileSecurity GetAccessControl (string path)
 		{
 			// AccessControlSections.Audit requires special permissions.
@@ -27,5 +30,5 @@ namespace System.IO
 
 			fileSecurity.PersistModifications (path);
 		}
-    }
+	}
 }
