@@ -81,7 +81,7 @@ namespace Mono.AppleTls
 			 * may get a popup message on XamMac).
 			 */
 
-#if MOBILE
+#if MOBILE  && !MONODROID_DESIGNER
 			using (var secCert = MonoCertificatePal.FromOtherCertificate (certificate))
 				return MonoCertificatePal.FindIdentity (secCert, true);
 #else
