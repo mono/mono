@@ -1,0 +1,17 @@
+#include net_4_x_System.dll.sources
+#include corefx.windows.sources
+
+System.Net.NetworkInformation/Win32UnixFactoryPal.cs
+
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CreateFile.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FileOperations.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.SECURITY_ATTRIBUTES.cs
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.BOOL.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CloseHandle.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.ReadDirectoryChangesW.cs
+../../../external/corefx/src/Common/src/System/IO/PathInternal.Windows.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.Win32.cs
+../../../external/corefx/src/Common/src/System/Net/ContextAwareResult.Windows.cs
+../../../external/corefx/src/Common/src/Interop/Windows/Crypt32/Interop.FindOidInfo.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/src/Internal/Cryptography/OidLookup.Windows.cs

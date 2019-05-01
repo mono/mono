@@ -22,15 +22,10 @@ PROFILE_MCS_FLAGS = \
 	-d:MOBILE_DYNAMIC \
 	-d:MONODROID \
 	-d:ANDROID \
+	-d:MONODROID_DESIGNER \
 	-nowarn:1699 \
 	-nostdlib \
 	$(PLATFORM_DEBUG_FLAGS)
 
 API_BIN_PROFILE = build/monodroid
 FRAMEWORK_VERSION = 2.1
-
-# the tuner takes care of the install
-NO_INSTALL = yes
-MOBILE_DYNAMIC = yes
-MOBILE_PROFILE = yes
-NO_CONSOLE = yes
