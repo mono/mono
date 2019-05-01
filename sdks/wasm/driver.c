@@ -610,3 +610,9 @@ mono_wasm_strdup (const char *s)
 {
 	return (int)strdup (s);
 }
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_parse_runtime_options (int argc, char* argv[])
+{
+	mono_jit_parse_options (argc, argv);
+}
