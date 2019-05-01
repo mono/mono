@@ -16,6 +16,27 @@ namespace System.Reflection
 				throw new NotImplementedException ();
 			}
 		}
+		
+		[Obsolete("This method has been deprecated. Please use Assembly.Load() instead. https://go.microsoft.com/fwlink/?linkid=14202")]
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
+		public static Assembly? LoadWithPartialName(string partialName)
+		{
+			if (partialName == null)
+				throw new ArgumentNullException(nameof(partialName));
+
+			if ((partialName.Length == 0) || (partialName[0] == '\0'))
+				throw new ArgumentException(SR.Format_StringZeroLength, nameof(partialName));
+
+			try
+			{
+				StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
+				return RuntimeAssembly.InternalLoad(partialName, ref stackMark, IntPtr.Zero);
+			}
+			catch (FileNotFoundException)
+			{
+				return null;
+			}
+		}
 
 		[System.Security.DynamicSecurityMethod]
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
