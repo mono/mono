@@ -200,7 +200,7 @@ wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 
 	PinvokeImport *table = (PinvokeImport*)handle;
 	for (int i = 0; table [i].name; ++i) {
-		if (!strcmp (table [i].name, name)) 
+		if (!strcmp (table [i].name, name))
 			return table [i].func;
 	}
 	return NULL;
