@@ -199,7 +199,6 @@
       <Compile Include="System.Runtime.InteropServices\InteropExtensions.cs" />
       <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
       <Compile Include="System.Runtime.InteropServices\MarshalAsAttribute.cs" />
-      <Compile Include="System.Runtime.InteropServices\NativeLibrary.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyDependencyResolver.cs" />
       <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
@@ -221,9 +220,11 @@
       <Compile Include="System.Threading\EventWaitHandle.Unix.cs" />
       <Compile Include="System.Threading\Mutex.Unix.cs" />
       <Compile Include="System.Threading\Semaphore.Unix.cs" />
+      <Compile Include="System.Runtime.InteropServices\NativeLibrary.Unix.cs" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetsWindows)' == 'true'">
       <Compile Include="System.Globalization\GlobalizationMode.Windows.cs" />
+      <Compile Include="System.Runtime.InteropServices\NativeLibrary.Windows.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\build\common\Consts.cs" />
