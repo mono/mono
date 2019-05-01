@@ -352,3 +352,4 @@ $(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,x86,llvm-llvmwin32
 $(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 
 $(eval $(call BclTemplate,android,monodroid monodroid_tools,monodroid monodroid_tools))
+$(eval $(call BclCrossTemplate,android,win32,monodroid_designer,))

@@ -67,3 +67,61 @@ archive-$(1): package-$(1)-bcl
 $(1)_ARCHIVE += $(1)-bcl
 
 endef
+
+##
+# Parameters
+#  $(1): product
+#  $(2): profile platform
+#  $(3): build profiles
+#  $(4): test profiles
+define BclCrossTemplate
+
+.stamp-$(1)-bcl-cross-$(2)-toolchain:
+	touch $$@
+
+# TODO: this depends on the same .stamp-bcl-configure as the non-cross BclTemplate, so we build out of the same tree.  May want to rethink that.
+.stamp-$(1)-bcl-cross-$(2)-configure: .stamp-bcl-configure
+	touch $$@
+
+.PHONY: setup-custom-$(1)-bcl-cross-$(2)
+setup-custom-$(1)-bcl-cross-$(2):
+	mkdir -p $$(TOP)/sdks/out/$(1)-bcl-cross-$(2) $$(foreach profile,$(3),$$(TOP)/sdks/out/$(1)-bcl-cross-$(2)/$$(profile))
+
+.PHONY: build-$(1)-bcl-cross-$(2)
+build-$(1)-bcl-cross-$(2): build-bcl
+
+# First we build the "build" profile of the build platform (we need at least
+# gensources), then we build the platform-specific versions of the requested
+# profiles.
+.PHONY: build-custom-$(1)-bcl-cross-$(2)
+build-custom-$(1)-bcl-cross-$(2):
+	$$(MAKE) -C bcl -C runtime NO_DIR_CHECK=1 build_profiles=build all-mcs
+	-$$(MAKE) -C bcl -C runtime all-mcs build_profiles="$(3)" PROFILE_PLATFORM="$(2)"
+# FIXME: get rid of that '-' above.  It's just there until all the assemblies in the profile build properly
+# FIXME: add tests also
+# $$(if $(4),$$(MAKE) -C bcl -C runtime test xunit-test test_profiles="$(4)")
+
+.PHONY: package-$(1)-bcl-cross-$(2)
+package-$(1)-bcl-cross-$(2):
+	$$(foreach profile,$(3), \
+		cp -R $$(TOP)/mcs/class/lib/$$(profile)-$(2)/* $$(TOP)/sdks/out/$(1)-bcl-cross-$(2)/$$(profile);)
+
+.PHONY: clean-$(1)-bcl-cross-$(2)
+clean-$(1)-bcl-cross-$(2): clean-bcl
+	rm -rf $$(TOP)/sdks/out/$(1)-bcl-cross-$(2) $$(foreach profile,$(3),$$(TOP)/sdks/out/$(1)-bcl-cross-$(2)/$$(profile))
+
+$$(eval $$(call TargetTemplate,$(1),bcl-cross-$(2)))
+
+.PHONY: configure-$(1)
+configure-$(1): configure-$(1)-bcl-cross-$(2)
+
+.PHONY: build-$(1)
+build-$(1): build-$(1)-bcl-cross-$(2)
+
+.PHONY: archive-$(1)
+archive-$(1): package-$(1)-bcl-cross-$(2)
+
+$(1)_ARCHIVE += $(1)-bcl-cross-$(2)
+
+endef
+
