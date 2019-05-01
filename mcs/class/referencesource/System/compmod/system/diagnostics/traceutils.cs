@@ -112,7 +112,7 @@ namespace System.Diagnostics {
             return newObject;
         }
 
-#if !MOBILE
+#if !MOBILE || MONODROID_DESIGNER
         // Our own tracelisteners that needs extra config validation 
         internal static bool IsOwnedTL(Type type) {
             return (typeof(EventLogTraceListener) == type  

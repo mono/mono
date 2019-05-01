@@ -1,4 +1,4 @@
-#if !MOBILE
+#if !MOBILE || MONODROID_DESIGNER
 
 using System.Diagnostics;
 using System.IO;

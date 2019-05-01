@@ -37,7 +37,7 @@ using System.Threading;
 
 namespace System.Diagnostics {
 
-#if !MOBILE
+#if !MOBILE || MONODROID_DESIGNER
 	internal class TraceImplSettings {
 		public const string Key = ".__TraceInfoSettingsKey__.";
 

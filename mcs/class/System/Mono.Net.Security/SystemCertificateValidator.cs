@@ -133,7 +133,7 @@ namespace Mono.Net.Security
 			var leaf = certs [0];
 			bool result;
 
-#if MONODROID
+#if MONODROID && !MONODROID_DESIGNER
 			try {
 				result = AndroidPlatform.TrustEvaluateSsl (certs);
 				if (result) {

@@ -425,7 +425,7 @@ netcore_SUBDIRS := System.Private.CoreLib
 netcore_PARALLEL_SUBDIRS :=
 
 monodroid_designer_SUBDIRS := $(mobile_common_dirs)
-monodroid_designer_PARALLEL_SUBDIRS := $(monodroid_dirs_parallel)
+monodroid_designer_PARALLEL_SUBDIRS := System
 
 include ../build/rules.make
 
