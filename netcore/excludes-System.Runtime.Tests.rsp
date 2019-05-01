@@ -30,7 +30,8 @@
 -nomethod System.Tests.DelegateTests.DynamicInvoke_OptionalParameter_WithMissingValue
 -nomethod System.Tests.DelegateTests.DynamicInvoke_ParameterSpecification_ArrayOfMissing
 
-# AppContext.OnProcessExit is never called (in CoreCLR it's called from Runtime)
+# mono doesn't support termination signals, the test kills a process via libc's kill(pid)
+# and expects it to trigger domain.ProcessExit event
 -nomethod System.Tests.ExitCodeTests.SigTermExitCode
 
 # crashes runtime
@@ -39,12 +40,6 @@
 # causes 'error: Return type can't be a byref type Parameter name: returnType':
 # while the test passes, xunit fails in the end if it's enabled
 -nomethod System.Tests.Types.VoidTests.IsByRef_Get_ReturnsExpected
-
-# crashes runtime (Assertion at method-to-ir.c:12303, condition `load_opcode != OP_LOADV_MEMBASE' not met)
--nomethod System.Text.Unicode.Tests.Utf16UtilityTests.GetIndexOfFirstInvalidUtf16Sequence_WithSmallValidBuffers
--nomethod System.Text.Unicode.Tests.Utf16UtilityTests.GetIndexOfFirstInvalidUtf16Sequence_WithSmallInvalidBuffers
--nomethod System.Text.Unicode.Tests.Utf8Tests.ToChars_ValidBuffers
--nomethod System.Text.Unicode.Tests.Utf8Tests.ToBytes_WithLargeValidBuffers
 
 # TODO: float- and double- backed enums
 -nomethod System.Tests.EnumTests.Parse
@@ -56,8 +51,8 @@
 -nomethod System.Tests.ArrayTests.CreateInstance_NotSupportedType_ThrowsNotSupportedException
 
 # TODO: missing exceptions
--method System.Tests.ActivatorTests.CreateInstance_PublicOnlyValueTypeWithPrivateDefaultConstructor_ThrowsMissingMethodException
--method System.Tests.ActivatorTests.CreateInstance_PrimitiveWidening_ThrowsInvalidCastException
+-nomethod System.Tests.ActivatorTests.CreateInstance_PublicOnlyValueTypeWithPrivateDefaultConstructor_ThrowsMissingMethodException
+-nomethod System.Tests.ActivatorTests.CreateInstance_PrimitiveWidening_ThrowsInvalidCastException
 
 # TODO:
 -nomethod System.Reflection.Tests.InvokeRefReturnNetcoreTests.TestByRefLikeRefReturn
