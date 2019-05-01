@@ -13,9 +13,13 @@ export PATH=/tmp/mono-from-source/bin/:${OLD_PATH}
 ${TESTCMD} --label=cert-sync --timeout=15m cert-sync /etc/ssl/certs/ca-certificates.crt
 
 ${TESTCMD} --label=remove-msbuild-temp-dir --timeout=1m rm -rf /tmp/xplat-master
+
+MSBUILD_REVISION=`grep -Po "(?<=revision \= \')[0-9a-f]+" packaging/MacSDK/msbuild.py`
+echo Detected msbuild hash ${MSBUILD_REVISION} in MacSDK/msbuild.py
+
 ${TESTCMD} --label=clone-msbuild --timeout=5m git clone https://github.com/mono/msbuild.git /tmp/xplat-master
 cd /tmp/xplat-master
-${TESTCMD} --label=checkout-xplat-master --timeout=5m git checkout xplat-master
+${TESTCMD} --label=checkout-xplat-master --timeout=5m git checkout ${MSBUILD_REVISION}
 
 ${TESTCMD} --label=compile-msbuild --timeout=15m ./eng/cibuild_bootstrapped_msbuild.sh --host_type mono --configuration Release /p:DisableNerdbankVersioning=true "/p:Projects=/tmp/xplat-master/src/MSBuild.Bootstrap/MSBuild.Bootstrap.csproj" /p:AssemblyVersion=15.1.0.0
 
