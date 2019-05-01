@@ -14,7 +14,7 @@ index 68360e406..419e4cbb5 100644
 --- a/src/support.js
 +++ b/src/support.js
 @@ -302,14 +302,31 @@ function loadDynamicLibrary(lib, flags) {
-     dso.module = libModule;
+     dso.module = libModule;supp
    }
  
 +  function cleanupOnError() {
