@@ -1,12 +1,24 @@
+using System.IO;
 using System.Reflection;
 
 namespace System.Runtime.InteropServices
 {
 	partial class NativeLibrary
 	{
+		[DllImport ("libdl")]
+		private static extern IntPtr dlopen (string libName, int flags);
+		
+		private const int RTLD_LAZY = 0x001;
+		
 		static IntPtr LoadLibraryByName (string libraryName, Assembly assembly, DllImportSearchPath? searchPath, bool throwOnError) => throw new NotImplementedException ();
 
-		static IntPtr LoadFromPath (string libraryName, bool throwOnError) => throw new NotImplementedException ();
+		static IntPtr LoadFromPath (string libraryName, bool throwOnError) {
+			IntPtr ptr = dlopen (libraryName, RTLD_LAZY);
+			if (ptr == IntPtr.Zero && throwOnError) {
+				throw new DllNotFoundException();
+			}
+			return ptr;
+		}
 
 		static IntPtr LoadByName (string libraryName, RuntimeAssembly callingAssembly, bool hasDllImportSearchPathFlag, uint dllImportSearchPathFlag, bool throwOnError) => throw new NotImplementedException ();
 
