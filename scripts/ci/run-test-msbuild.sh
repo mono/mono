@@ -21,6 +21,12 @@ ${TESTCMD} --label=clone-msbuild --timeout=5m git clone https://github.com/mono/
 cd /tmp/xplat-master
 ${TESTCMD} --label=checkout-xplat-master --timeout=5m git checkout ${MSBUILD_REVISION}
 
-${TESTCMD} --label=compile-msbuild --timeout=15m ./eng/cibuild_bootstrapped_msbuild.sh --host_type mono --configuration Release /p:DisableNerdbankVersioning=true "/p:Projects=/tmp/xplat-master/src/MSBuild.Bootstrap/MSBuild.Bootstrap.csproj" /p:AssemblyVersion=15.1.0.0
+${TESTCMD} --label=compile-msbuild --timeout=15m ./eng/cibuild_bootstrapped_msbuild.sh --host_type mono --configuration Release /p:DisableNerdbankVersioning=true /p:CreateBootstrap=true "/p:Projects=/tmp/xplat-master/src/MSBuild.Bootstrap/MSBuild.Bootstrap.csproj" /p:AssemblyVersion=15.1.0.0
 
 ${TESTCMD} --label=check-for-dll --timeout=1m test -s /tmp/xplat-master/artifacts/bin/MSBuild/*-MONO/net472/MSBuild.dll
+
+DLL_PATH=`/tmp/xplat-master/artifacts/bin/MSBuild/*-MONO/net472/MSBuild.dll`
+
+${TESTCMD} --label=remove-culevel --timeout=1m rm mcs/class/lib/net_4_x-*/culevel.exe
+
+${TESTCMD} --label=try-to-use-built-msbuild-to-build-culevel --timeout=1m mono ${DLL_PATH} ${OLD_CWD}/mcs/class/tools/culevel/culevel.csproj
