@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
+#include <dlfcn.h>
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tokentype.h>
@@ -163,6 +164,14 @@ mono_wasm_setenv (const char *name, const char *value)
 static void*
 wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 {
+#if WASM_SUPPORTS_DLOPEN
+	void* handle = dlopen (name, flags);
+
+	if (handle) {
+		return handle;
+	}
+#endif
+
 	for (int i = 0; i < sizeof (pinvoke_tables) / sizeof (void*); ++i) {
 		if (!strcmp (name, pinvoke_names [i]))
 			return pinvoke_tables [i];
@@ -170,13 +179,29 @@ wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 	return NULL;
 }
 
+static mono_bool
+wasm_dl_is_pinvoke_tables (void* handle) {
+	for (int i = 0; i < sizeof (pinvoke_tables) / sizeof (void*); ++i) {
+		if (pinvoke_tables [i] == handle) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 static void*
 wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 {
+#if WASM_SUPPORTS_DLOPEN
+	if (!wasm_dl_is_pinvoke_tables (handle)) {
+		return dlsym (handle, name);
+	}
+#endif
+
 	PinvokeImport *table = (PinvokeImport*)handle;
 	for (int i = 0; table [i].name; ++i) {
-		if (!strcmp (table [i].name, name))
-				return table [i].func;
+		if (!strcmp (table [i].name, name)) 
+			return table [i].func;
 	}
 	return NULL;
 }
