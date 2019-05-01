@@ -1114,6 +1114,9 @@ namespace System {
 
             return this;
         }
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern void ReportUnhandledException(Exception exception);
 #endif
     }
 

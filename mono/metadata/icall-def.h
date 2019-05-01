@@ -293,6 +293,9 @@ HANDLES(ICALL(ENV_18, "internalGetGacPath", ves_icall_System_Environment_GetGacP
 HANDLES(ICALL(ENV_19, "internalGetHome", ves_icall_System_Environment_InternalGetHome))
 ICALL(ENV_20, "set_ExitCode", mono_environment_exitcode_set)
 
+ICALL_TYPE(EXCEPTION, "System.Exception", EXCEPTION_1)
+HANDLES(ICALL(EXCEPTION_1, "ReportUnhandledException", ves_icall_System_Exception_ReportUnhandledException))
+
 ICALL_TYPE(GC, "System.GC", GC_0)
 ICALL(GC_0, "GetCollectionCount", mono_gc_collection_count)
 ICALL(GC_0a, "GetGeneration", mono_gc_get_generation)
@@ -934,6 +937,10 @@ HANDLES(ICALL(NATIVEC_2, "CreateEvent_internal(bool,bool,string,int&)", ves_ical
 HANDLES(ICALL(NATIVEC_3, "OpenEvent_internal(string,System.Security.AccessControl.EventWaitHandleRights,int&)", ves_icall_System_Threading_Events_OpenEvent_internal))
 ICALL(NATIVEC_4, "ResetEvent_internal",  ves_icall_System_Threading_Events_ResetEvent_internal)
 ICALL(NATIVEC_5, "SetEvent_internal",    ves_icall_System_Threading_Events_SetEvent_internal)
+
+ICALL_TYPE(OSSYNCCONTEXT, "System.Threading.OSSpecificSynchronizationContext", OSSYNCCONTEXT_1)
+HANDLES(ICALL(OSSYNCCONTEXT_1, "GetOSContext", ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext))
+ICALL(OSSYNCCONTEXT_2, "PostInternal", ves_icall_System_Threading_OSSpecificSynchronizationContext_PostInternal)
 
 ICALL_TYPE(SEMA, "System.Threading.Semaphore", SEMA_1)
 ICALL(SEMA_1, "CreateSemaphore_internal(int,int,string,int&)", ves_icall_System_Threading_Semaphore_CreateSemaphore_internal)

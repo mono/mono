@@ -161,6 +161,9 @@ typedef void  (*MonoUnhandledExceptionFunc)         (MonoObject *exc, void *user
 MONO_API void mono_install_unhandled_exception_hook (MonoUnhandledExceptionFunc func, void *user_data);
 void          mono_invoke_unhandled_exception_hook  (MonoObject *exc);
 
+void
+ves_icall_System_Exception_ReportUnhandledException (MonoObject *exc);
+
 MONO_END_DECLS
 
 #endif /* _MONO_METADATA_EXCEPTION_H_ */
