@@ -424,7 +424,7 @@ wasm_tools_PARALLEL_SUBDIRS := $(wasm_tools_dirs_parallel)
 netcore_SUBDIRS := System.Private.CoreLib
 netcore_PARALLEL_SUBDIRS :=
 
-monodroid_designer_SUBDIRS := $(mobile_common_dirs)
+monodroid_designer_SUBDIRS := $(mobile_common_dirs) Mono.Security
 monodroid_designer_PARALLEL_SUBDIRS := System
 
 include ../build/rules.make
