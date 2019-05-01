@@ -70,6 +70,7 @@ var args = testArguments;
 print("Arguments: " + testArguments);
 profilers = [];
 setenv = {};
+runtime_args = [];
 while (true) {
 	if (args [0].startsWith ("--profile=")) {
 		var arg = args [0].substring ("--profile=".length);
@@ -83,6 +84,10 @@ while (true) {
 		if (parts.length != 2)
 			fail_exec ("Error: malformed argument: '" + args [0]);
 		setenv [parts [0]] = parts [1];
+		args = args.slice (1);
+	} else if (args [0].startsWith ("--runtime-arg=")) {
+		var arg = args [0].substring ("--runtime-arg=".length);
+		runtime_args.push (arg);
 		args = args.slice (1);
 	} else {
 		break;
@@ -154,6 +159,7 @@ var obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 
 var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
 var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
 var wasm_set_main_args = Module.cwrap ('mono_wasm_set_main_args', 'void', ['number', 'number']);
+var wasm_parse_runtime_options = Module.cwrap ('mono_wasm_parse_runtime_options', 'void', ['number', 'number']);
 var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string'])
 
 const IGNORE_PARAM_COUNT = -1;
@@ -186,6 +192,16 @@ var App = {
 				fail_exec ("REGRESSION TEST FAILED");
 
 			return;
+		}
+
+		if (runtime_args.length > 0) {
+			var argv = Module._malloc (runtime_args.length * 4);
+			aindex = 0;
+			for (var i = 0; i < runtime_args.length; ++i) {
+				Module.setValue (argv + (aindex * 4), wasm_strdup (runtime_args [i]), "i32");
+				aindex += 1;
+			}
+			wasm_parse_runtime_options (runtime_args.length, argv);
 		}
 
 		if (args[0] == "--run") {
