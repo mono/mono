@@ -164,18 +164,15 @@ mono_wasm_setenv (const char *name, const char *value)
 static void*
 wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 {
-#if WASM_SUPPORTS_DLOPEN
-	void* handle = dlopen (name, flags);
-
-	if (handle) {
-		return handle;
-	}
-#endif
-
 	for (int i = 0; i < sizeof (pinvoke_tables) / sizeof (void*); ++i) {
 		if (!strcmp (name, pinvoke_names [i]))
 			return pinvoke_tables [i];
 	}
+
+#if WASM_SUPPORTS_DLOPEN
+	return dlopen(name, flags);
+#endif
+
 	return NULL;
 }
 
