@@ -618,7 +618,7 @@ namespace System.Reflection {
 		// note: the security runtime requires evidences but may be unable to do so...
 		internal override Evidence UnprotectedGetEvidence ()
 		{
-#if MOBILE
+#if MOBILE || DISABLE_SECURITY
 			return null;
 #else
 			// if the host (runtime) hasn't provided it's own evidence...

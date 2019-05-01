@@ -1,4 +1,5 @@
 #include mobile_tests.exclude.sources
+#include testing_aot_common_corlib_test.dll.exclude.sources
 Mono/NativePlatformTest.cs
 Mono/MonoNativePlatform.cs
 Mono/MonoNativePlatformType.cs
