@@ -23,6 +23,10 @@ echo Detected msbuild hash ${MSBUILD_REVISION} in MacSDK/msbuild.py
 
 ${TESTCMD} --label=clone-msbuild --timeout=5m git clone https://github.com/mono/msbuild.git /tmp/xplat-master
 cd /tmp/xplat-master
+
+# fixme: we need to bump macsdk
+MSBUILD_REVISION=xplat-master
+
 ${TESTCMD} --label=checkout-xplat-master --timeout=5m git checkout ${MSBUILD_REVISION}
 
 ${TESTCMD} --label=compile-msbuild --timeout=15m ./eng/cibuild_bootstrapped_msbuild.sh --host_type mono --configuration Release /p:DisableNerdbankVersioning=true /p:CreateBootstrap=true "/p:Projects=/tmp/xplat-master/src/MSBuild.Bootstrap/MSBuild.Bootstrap.csproj" /p:AssemblyVersion=15.1.0.0
@@ -32,8 +36,17 @@ DLL_PATH=`realpath /tmp/xplat-master/artifacts/2/bin/MSBuild.Bootstrap/*-MONO/ne
 
 ${TESTCMD} --label=check-for-dll --timeout=1m test -s ${DLL_PATH}
 
+export PATH=/tmp/xplat-master/artifacts/mono-msbuild:/tmp/mono-from-source/bin:${OLD_PATH}
+
+# fixme: this also requires a bump
+sed -i "s/ln -sfh Current/ln -sfn Current/g" ./install-mono-prefix.sh
+
+${TESTCMD} --label=install-msbuild --timeout=2m ./install-mono-prefix.sh /tmp/mono-from-source/
+
 rm -f mcs/class/lib/net_4_x-*/culevel.exe || true
 
-${TESTCMD} --label=try-to-use-built-msbuild-to-build-culevel --timeout=1m ${MONO} ${DLL_PATH} ${OLD_CWD}/mcs/tools/culevel/culevel.csproj /p:BuildProjectReferences=false
+export PATH=/tmp/mono-from-source/bin:${OLD_PATH}
+
+${TESTCMD} --label=try-to-use-installed-msbuild-to-build-culevel --timeout=1m msbuild ${OLD_CWD}/mcs/tools/culevel/culevel.csproj /p:BuildProjectReferences=false
 
 ${TESTCMD} --label=check-for-culevel-exe --timeout=1m test -s ${OLD_CWD}/mcs/class/lib/net_4_x-*/culevel.exe
