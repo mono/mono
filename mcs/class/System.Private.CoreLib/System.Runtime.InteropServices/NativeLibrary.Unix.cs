@@ -6,13 +6,14 @@ namespace System.Runtime.InteropServices
 	partial class NativeLibrary
 	{
 		[DllImport ("libdl")]
-		private static extern IntPtr dlopen (string libName, int flags);
-		
-		private const int RTLD_LAZY = 0x001;
-		
+		static extern IntPtr dlopen (string libName, int flags);
+				
 		static IntPtr LoadLibraryByName (string libraryName, Assembly assembly, DllImportSearchPath? searchPath, bool throwOnError) => throw new NotImplementedException ();
 
-		static IntPtr LoadFromPath (string libraryName, bool throwOnError) {
+		static IntPtr LoadFromPath (string libraryName, bool throwOnError)
+		{
+			const int RTLD_LAZY = 0x001;
+			
 			IntPtr ptr = dlopen (libraryName, RTLD_LAZY);
 			if (ptr == IntPtr.Zero && throwOnError) {
 				throw new DllNotFoundException();
