@@ -70,15 +70,6 @@ MONO_API gint ReadZStream (ZStream *stream, guchar *buffer, gint length);
 MONO_API gint WriteZStream (ZStream *stream, guchar *buffer, gint length);
 static gint flush_internal (ZStream *stream, gboolean is_final);
 
-void zlibhelper_initialize_internals ()
-{
-	mono_add_internal_call ("System.IO.Compression.DeflateStreamNative::CreateZStream", CreateZStream);
-	mono_add_internal_call ("System.IO.Compression.DeflateStreamNative::CloseZStream", CloseZStream);
-	mono_add_internal_call ("System.IO.Compression.DeflateStreamNative::Flush", Flush);
-	mono_add_internal_call ("System.IO.Compression.DeflateStreamNative::ReadZStream", ReadZStream);
-	mono_add_internal_call ("System.IO.Compression.DeflateStreamNative::WriteZStream", WriteZStream);
-}
-
 static void *
 z_alloc (void *opaque, unsigned int nitems, unsigned int item_size)
 {
