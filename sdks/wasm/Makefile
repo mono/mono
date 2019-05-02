@@ -88,10 +88,13 @@ jsup:
 toolchain: .stamp-jsvu
 
 driver.o: driver.c corebindings.c pinvoke-tables-default.h
-	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver.o
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DCORE_BINDINGS -DUSE_ZLIB -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver.o
 
 corebindings.o: corebindings.c
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o corebindings.o
+
+zlib-helper.o: zlib-helper.c
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(TOP)/support zlib-helper.c -c -o zlib-helper.o
 
 debug/:
 	mkdir -p $@
@@ -100,15 +103,15 @@ release/:
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 
-EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s EMULATED_FUNCTION_POINTERS=1
+EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s EMULATED_FUNCTION_POINTERS=1 -s USE_ZLIB=1
 
-debug/.stamp-build: driver.o corebindings.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a | debug/
-	$(EMCC) $(EMCC_FLAGS) -g4 -Os -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o $(MONO_LIBS) -o debug/mono.js
+debug/.stamp-build: driver.o corebindings.o zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a | debug/
+	$(EMCC) $(EMCC_FLAGS) -g4 -Os -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o zlib-helper.o $(MONO_LIBS) -o debug/mono.js
 	touch $@
 
 # Notice that release/.stamp-build depends on debug/.stamp-build. This is the case as emcc is believed to not work well with parallel builds.
-release/.stamp-build: driver.o corebindings.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a debug/.stamp-build | release/
-	$(EMCC) $(EMCC_FLAGS) -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o $(MONO_LIBS) -o release/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
+release/.stamp-build: driver.o corebindings.o zlib-helper.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a debug/.stamp-build | release/
+	$(EMCC) $(EMCC_FLAGS) -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o zlib-helper.o $(MONO_LIBS) -o release/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
 	touch $@
 
 build-native: debug/.stamp-build release/.stamp-build
@@ -130,7 +133,7 @@ cil-strip:
 
 mono: runtime cross bcl
 
-BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:$(WASM_BCL_DIR)/Facades/netstandard.dll 
+BCL_DEPS=/r:$(WASM_BCL_DIR)/mscorlib.dll /r:$(WASM_BCL_DIR)/System.Core.dll /r:$(WASM_BCL_DIR)/System.dll /r:$(WASM_BCL_DIR)/System.Net.Http.dll /r:$(WASM_BCL_DIR)/Facades/netstandard.dll /r:$(WASM_BCL_DIR)/System.IO.Compression.dll /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll 
 
 main.exe: $(APP_SOURCES)
 	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(BCL_DEPS) /r:$(WASM_BCL_DIR)/nunitlite.dll  $(APP_SOURCES)
@@ -196,6 +199,15 @@ $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.
 build-aot-sample: packager.exe hello.exe
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js hello.exe
 	ninja -v -C obj/aot-sample
+
+zlibtest.exe: zlibtest.cs
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) zlibtest.cs
+
+run-zlib-test: build-zlib-sample
+	(cd bin/zlib-sample && $(SM) runtime.js --run zlibtest.exe)
+
+build-zlib-sample: packager.exe zlibtest.exe
+	mono packager.exe --nobinding --template=runtime-tests.js --out=bin/zlib-sample zlibtest.exe
 
 hello.exe: hello.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello.cs
@@ -348,6 +360,8 @@ package: build build-dbg-proxy build-sdk
 	rm -rf tmp/wasm-bcl/wasm/corlib.unsafe.dll.tmp
 	cp driver.c pinvoke-tables-default.h tmp/
 	cp corebindings.c tmp/
+	cp zlib-helper.c tmp/
+	cp zlib-helper.o tmp/
 	cp pinvoke-tables-default.h tmp/
 	cp $(MONO_LIBS) tmp/
 	cp library_mono.js tmp/

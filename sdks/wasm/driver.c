@@ -17,6 +17,10 @@
 void core_initialize_internals ();
 #endif
 
+#ifdef USE_ZLIB
+void zlibhelper_initialize_internals ();
+#endif
+
 // Blazor specific custom routines - see dotnet_support.js for backing code
 extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
 extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, MonoString *funcName, void* arg0, void* arg1, void* arg2);
@@ -265,6 +269,10 @@ void mono_initialize_internals ()
 
 #ifdef CORE_BINDINGS	
 	core_initialize_internals();
+#endif
+
+#ifdef USE_ZLIB
+	zlibhelper_initialize_internals();
 #endif
 
 }
