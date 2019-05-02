@@ -1,4 +1,2 @@
-#include mono_fsw.sources
-../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.UnknownUnix.cs
 corefx/Unix/Interop.cs
 corefx/Unix/Interop.Read.cs
