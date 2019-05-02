@@ -711,12 +711,11 @@ namespace System.Reflection {
 			}
 
 			if (hasUserType) {
-#if FULL_AOT_RUNTIME
-				throw new NotSupportedException ("User types are not supported under full aot");
-#else
+#if !FULL_AOT_RUNTIME
 				if (RuntimeFeature.IsDynamicCodeSupported)
 					return new MethodOnTypeBuilderInst (this, methodInstantiation);
 #endif
+				throw new NotSupportedException ("User types are not supported under full aot");
 			}
 
 			MethodInfo ret = MakeGenericMethod_impl (methodInstantiation);
