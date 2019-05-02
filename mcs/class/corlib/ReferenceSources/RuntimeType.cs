@@ -159,7 +159,11 @@ namespace System
 		{
 			var ctor = GetDefaultConstructor ();
 			if (!nonPublic && ctor != null && !ctor.IsPublic) {
+#if NETCORE
+				throw new MissingMethodException(SR.Format(SR.Arg_NoDefCTor, FullName));
+#else
 				ctor = null;
+#endif
 			}
 
 			if (ctor == null) {
@@ -170,7 +174,7 @@ namespace System
 				if (IsValueType)
 					return CreateInstanceInternal (this);
 
-				throw new MissingMethodException ("Default constructor not found for type " + FullName);
+				throw new MissingMethodException(SR.Format(SR.Arg_NoDefCTor, FullName));
 			}
 
 			// TODO: .net does more checks in unmanaged land in RuntimeTypeHandle::CreateInstance
