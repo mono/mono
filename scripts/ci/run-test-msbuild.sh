@@ -2,7 +2,7 @@
 
 set -u
 set -e
-set -x
+# set -x
 
 OLD_CWD=`pwd`
 TESTCMD=`realpath ${TESTCMD}`
@@ -29,12 +29,11 @@ ${TESTCMD} --label=compile-msbuild --timeout=15m ./eng/cibuild_bootstrapped_msbu
 
 MONO=/tmp/mono-from-source/bin/mono
 DLL_PATH=`realpath /tmp/xplat-master/artifacts/2/bin/MSBuild.Bootstrap/*-MONO/net472/MSBuild.dll`
-EXE_PATH=mcs/class/lib/net_4_x-*/culevel.exe
 
 ${TESTCMD} --label=check-for-dll --timeout=1m test -s ${DLL_PATH}
 
-rm -f ${EXE_PATH} || true
+rm -f mcs/class/lib/net_4_x-*/culevel.exe || true
 
 ${TESTCMD} --label=try-to-use-built-msbuild-to-build-culevel --timeout=1m ${MONO} ${DLL_PATH} ${OLD_CWD}/mcs/tools/culevel/culevel.csproj /p:BuildProjectReferences=false
 
-${TESTCMD} --label=check-for-culevel-exe --timeout=1m test -s ${EXE_PATH}
+${TESTCMD} --label=check-for-culevel-exe --timeout=1m test -s ${OLD_CWD}/mcs/class/lib/net_4_x-*/culevel.exe
