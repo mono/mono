@@ -7653,7 +7653,7 @@ ves_icall_System_IO_get_temp_path (MonoError *error)
 	return mono_string_new_handle (mono_domain_get (), g_get_tmp_dir (), error);
 }
 
-#if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH) || defined(HOST_WASM)
+#if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH) || defined(TARGET_WASM)
 
 G_EXTERN_C gpointer CreateZStream (gint32 compress, MonoBoolean gzip, gpointer feeder, gpointer data);
 G_EXTERN_C gint32   CloseZStream (gpointer stream);
