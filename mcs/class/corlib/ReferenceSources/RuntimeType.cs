@@ -174,7 +174,7 @@ namespace System
 				if (IsValueType)
 					return CreateInstanceInternal (this);
 
-				throw new MissingMethodException(SR.Format(SR.Arg_NoDefCTor, FullName));
+				throw new MissingMethodException ("Default constructor not found for type " + FullName);
 			}
 
 			// TODO: .net does more checks in unmanaged land in RuntimeTypeHandle::CreateInstance
