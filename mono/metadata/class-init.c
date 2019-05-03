@@ -665,10 +665,10 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	}
 
 	// compute is_byreflike
-	if (m_class_is_valuetype (klass)) {
+	if (m_class_is_valuetype (klass))
+		if (IsByRefLikeAttribute(klass))
 			klass->is_byreflike = 1; 
-	}
-
+		
 	mono_loader_unlock ();
 
 	MONO_PROFILER_RAISE (class_loaded, (klass));
