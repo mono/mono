@@ -11,24 +11,39 @@ variables:
     value: true
 
 jobs:
-- job: Build_Linux_x64
+- job: Build
+  strategy:
+    matrix:
+      Linux x64:
+        poolname: Hosted Ubuntu 1604
+      OSX x64:
+        poolname: Hosted macOS
   pool:
-    vmImage: 'Ubuntu 16.04'
+    name: $(poolname)
   steps:
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     - script: |
         sed -i "s#git://github.com/#https://dn-bot:${dncengPat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
       env:
         dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
-      displayName: 'rewrite .gitmodules'
-  
-  - script: |
+      displayName: 'Rewrite .gitmodules'
+
+  - script: |  
+      brew install autoconf automake libtool
+    displayName: 'Prepare OSX dependencies'
+    condition: eq(variables['poolname'], 'Hosted macOS')
+
+  - script: |  
       sudo apt update
       sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext dotnet-sdk-2.2
+    displayName: 'Prepare Linux dependencies'
+    condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
+  
+  - script: |
       ./autogen.sh --with-core=only
       make
       make -C netcore nupkg
-    displayName: 'build'
+    displayName: 'Build'
   
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     - script: |
@@ -59,6 +74,7 @@ jobs:
   - template: /eng/common/templates/phases/publish-build-assets.yml
     parameters:
       dependsOn:
-        - Build_Linux_x64
+        - Build Linux x64
+        - Build OSX x64
       queue:
         name: Hosted VS2017
