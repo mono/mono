@@ -416,6 +416,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			Assert.IsFalse (clone.Boolean, "Boolean");
 		}
 		
+#if !DISABLE_REMOTING
 		[Test]
 		public void NestedObjectReference ()
 		{
@@ -436,6 +437,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			}
 			Assert.AreEqual (101, NewObjectReference.Count, "#4");
 		}
+#endif
 
 		[Test]
 		public void DateTimeArray ()
@@ -589,6 +591,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			ms.Close ();
 		}
 
+#if !DISABLE_REMOTING
 		[Test]
 		public void NestedObjectReferences ()
 		{
@@ -605,6 +608,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 			Instance ins = (Instance) bf.Deserialize (ms);
 			Assert.AreEqual ("MyClass", ins.Class.Name);
 		}
+#endif
 
 		class SimpleSerializationBinder2 : SerializationBinder
 		{
