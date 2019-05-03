@@ -90,12 +90,42 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object get_default_value (RuntimePropertyInfo prop);
 
+		
+#if NETCORE
 		internal BindingFlags BindingFlags {
-			get {
-				return 0;
+			get
+			{
+				CachePropertyInfo (PInfo.GetMethod | PInfo.SetMethod);
+				bool isPublic = info.set_method?.IsPublic == true || info.get_method?.IsPublic == true;
+				bool isStatic = info.set_method?.IsStatic == true || info.get_method?.IsStatic == true;
+				bool isInherited = DeclaringType != ReflectedType;
+				return FilterPreCalculate(isPublic, isInherited, isStatic);
 			}
 		}
-
+		
+		static BindingFlags FilterPreCalculate (bool isPublic, bool isInherited, bool isStatic)
+		{
+			BindingFlags bindingFlags = isPublic ? BindingFlags.Public : BindingFlags.NonPublic;
+			if (isInherited) {
+				// We arrange things so the DeclaredOnly flag means "include inherited members"
+				bindingFlags |= BindingFlags.DeclaredOnly;
+				if (isStatic)
+					bindingFlags |= BindingFlags.Static | BindingFlags.FlattenHierarchy;
+				else
+					bindingFlags |= BindingFlags.Instance;
+			}
+			else {
+				if (isStatic)
+					bindingFlags |= BindingFlags.Static;
+				else
+					bindingFlags |= BindingFlags.Instance;
+			}
+			return bindingFlags;
+		}
+#else
+		internal BindingFlags BindingFlags => 0;
+#endif
+		
 		public override Module Module {
 			get {
 				return GetRuntimeModule ();
