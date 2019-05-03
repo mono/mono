@@ -49,7 +49,7 @@ namespace Cairo {
 
 	public class Context : IDisposable
 	{
-		IntPtr handle = IntPtr.Zero;
+		IntPtr handle;
 
 		static int native_glyph_size, c_compiler_long_size;
 
