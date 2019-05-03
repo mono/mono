@@ -7,7 +7,7 @@
 			<!-- appdomain.c: mono_domain_try_type_resolve -->
 			<method name="DoTypeResolve" />
 			<!-- appdomain.c: mono_domain_try_type_builder_resolve -->
-			<method name="DoTypeBuilderResolve" />
+			<method name="DoTypeBuilderResolve" feature="sre" />
 			<!-- appdomain.c: mono_try_assembly_resolve -->
 			<method name="DoAssemblyResolve" />
 			<!-- appdomain.c: mono_domain_fire_assembly_load -->

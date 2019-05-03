@@ -2044,6 +2044,7 @@
     <Compile Include="corefx\MethodInfo.cs" />
     <Compile Include="corefx\MonoLinqHelper.cs" />
     <Compile Include="corefx\RandomNumberGenerator.cs" />
+    <Compile Include="corefx\RuntimeFeature.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\SR.missing.cs" />
