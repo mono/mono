@@ -1,6 +1,3 @@
-pool:
-  vmImage: 'Ubuntu 16.04'
-
 variables:
 - ${{ if ne(variables['System.TeamProject'], 'public') }}:
   - group: DotNet-VSTS-Bot
@@ -13,28 +10,55 @@ variables:
   - name: _DotNetPublishToBlobFeed
     value: true
 
-steps:
-- ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+jobs:
+- job: Build_Linux_x64
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  steps:
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - script: |
+        sed -i "s#git://github.com/#https://dn-bot:${dncengPat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
+      env:
+        dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
+      displayName: 'rewrite .gitmodules'
+  
   - script: |
-      sed -i "s#git://github.com/#https://dn-bot:${dncengPat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
-    env:
-      dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
-    displayName: 'rewrite .gitmodules'
+      sudo apt update
+      sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext dotnet-sdk-2.2
+      ./autogen.sh --with-core=only
+      make
+      make -C netcore nupkg
+    displayName: 'build'
+  
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - script: |
+        ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.Repository.LocalPath)/eng/empty.proj
+      displayName: 'restore Arcade stuff'
+    - script: |
+        dotnet msbuild eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetfeedUrl) /p:AzureAccountKey=${dotnetFeedPat}
+      env:
+        dotnetFeedPat: $(dotnetfeed-storage-access-key-1)
+      displayName: 'publish with Arcade'
+    - task: CopyFiles@2
+      displayName: Gather Asset Manifests
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)/artifacts/log/Debug/AssetManifest'
+        TargetFolder: '$(Build.StagingDirectory)/AssetManifests'
+      continueOnError: false
+      condition: and(succeeded(), eq(variables['_DotNetPublishToBlobFeed'], 'true'))
+    - task: PublishBuildArtifacts@1
+      displayName: Push Asset Manifests
+      inputs:
+        PathtoPublish: '$(Build.StagingDirectory)/AssetManifests'
+        PublishLocation: Container
+        ArtifactName: AssetManifests
+      continueOnError: false
+      condition: and(succeeded(), eq(variables['_DotNetPublishToBlobFeed'], 'true'))
 
-- script: |
-    sudo apt update
-    sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext dotnet-sdk-2.2
-    ./autogen.sh --with-core=only
-    make
-    make -C netcore nupkg
-  displayName: 'build'
-
 - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-  - script: |
-      ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.Repository.LocalPath)/eng/empty.proj
-    displayName: 'restore Arcade stuff'
-  - script: |
-      dotnet msbuild eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetfeedUrl) /p:AzureAccountKey=${dotnetFeedPat}
-    env:
-      dotnetFeedPat: $(dotnetfeed-storage-access-key-1)
-    displayName: 'publish with Arcade'
+  - template: /eng/common/templates/phases/publish-build-assets.yml
+    parameters:
+      dependsOn:
+        - Build_Linux_x64
+      queue:
+        name: Hosted VS2017
