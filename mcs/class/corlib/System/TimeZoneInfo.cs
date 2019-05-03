@@ -1523,18 +1523,31 @@ namespace System
 			return GetUtcOffset (dateTime, out dst);
 		}
 
-		static internal TimeSpan GetUtcOffsetFromUtc (DateTime time, TimeZoneInfo zone, out Boolean isDaylightSavings, out Boolean isAmbiguousLocalDst)
+		internal static TimeSpan GetUtcOffsetFromUtc (DateTime time, TimeZoneInfo zone, out Boolean isDaylightSavings, out Boolean isAmbiguousLocalDst)
 		{
 			isDaylightSavings = false;
 			isAmbiguousLocalDst = false;
 			TimeSpan baseOffset = zone.BaseUtcOffset;
+			var baseOffsetTicks = baseOffset.Ticks;
+			var timeYear = time.Year;
 
 			if (zone.IsAmbiguousTime (time)) {
 				isAmbiguousLocalDst = true;
-//				return baseOffset;
 			}
 
-			return zone.GetUtcOffset (time, out isDaylightSavings);
+			AdjustmentRule current = zone.GetApplicableRule (time);
+			if (current != null) {
+				DateTime tStart = TransitionPoint (current.DaylightTransitionStart, timeYear);
+				DateTime tEnd = TransitionPoint (current.DaylightTransitionEnd, timeYear);
+				TryAddTicks (tStart, -baseOffsetTicks, out tStart, DateTimeKind.Utc);
+				TryAddTicks (tEnd, -baseOffsetTicks, out tEnd, DateTimeKind.Utc);
+				if ((time >= tStart) && (time <= tEnd)) {
+					baseOffset += current.DaylightDelta;
+					isDaylightSavings = true;
+				}
+			}
+
+			return baseOffset;
 		}
 #endregion
 	}
