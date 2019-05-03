@@ -16,20 +16,15 @@ jobs:
     matrix:
       Linux x64:
         poolname: Hosted Ubuntu 1604
+        sed: sed
       OSX x64:
         poolname: Hosted macOS
+        sed: gsed
   pool:
     name: $(poolname)
   steps:
-  - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-    - script: |
-        sed -i "s#git://github.com/#https://dn-bot:${dncengPat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
-      env:
-        dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
-      displayName: 'Rewrite .gitmodules'
-
   - script: |  
-      brew install autoconf automake libtool
+      brew install autoconf automake libtool gnu-sed
     displayName: 'Prepare OSX dependencies'
     condition: eq(variables['poolname'], 'Hosted macOS')
 
@@ -39,6 +34,14 @@ jobs:
     displayName: 'Prepare Linux dependencies'
     condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
   
+  - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - script: |
+        ${sed} -i "s#git://github.com/#https://dn-bot:${dncengPat}@dev.azure.com/dnceng/internal/_git/#; s#\.git\$##; s#\(url = .*\)/\(.*\)#\1-\2#" .gitmodules
+      env:
+        dncengPat: $(dn-bot-dotnet-build-rw-code-rw)
+        sed: $(sed)
+      displayName: 'Rewrite .gitmodules'
+
   - script: |
       ./autogen.sh --with-core=only
       make
