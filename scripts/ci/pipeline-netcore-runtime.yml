@@ -16,9 +16,11 @@ jobs:
     matrix:
       Linux x64:
         poolname: Hosted Ubuntu 1604
+        manifest: linux-x64
         sed: sed
       OSX x64:
         poolname: Hosted macOS
+        manifest: osx-x64
         sed: gsed
   pool:
     name: $(poolname)
@@ -53,9 +55,10 @@ jobs:
         ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.Repository.LocalPath)/eng/empty.proj
       displayName: 'restore Arcade stuff'
     - script: |
-        dotnet msbuild eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetfeedUrl) /p:AzureAccountKey=${dotnetFeedPat}
+        dotnet msbuild eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetfeedUrl) /p:AzureAccountKey=${dotnetFeedPat} /p:AssetManifest=${manifest}
       env:
         dotnetFeedPat: $(dotnetfeed-storage-access-key-1)
+        manifest: $(manifest)
       displayName: 'publish with Arcade'
     - task: CopyFiles@2
       displayName: Gather Asset Manifests
