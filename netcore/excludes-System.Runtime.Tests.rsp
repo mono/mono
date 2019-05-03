@@ -55,9 +55,6 @@
 -nomethod System.Tests.ActivatorTests.CreateInstance_PrimitiveWidening_ThrowsInvalidCastException
 -nomethod System.Reflection.Tests.InvokeRefReturnNetcoreTests.TestByRefLikeRefReturn
 
-# `private new T Foo` doesn't hide members from Type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
--nomethod System.Reflection.Tests.TypeTests_HiddenTestingOrder.HideDetectionHappensBeforeBindingFlagChecks
-
 # IEEE rounding issues
 -nomethod System.Tests.TimeSpanTests.FromMilliseconds
 -nomethod System.Tests.TimeSpanTests.FromMilliseconds_Invalid
