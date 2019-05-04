@@ -90,6 +90,26 @@ get_long_arg (InterpMethodArguments *margs, int idx)
 
 #include "wasm_m2n_invoke.g.h"
 
+gpointer
+mono_wasm_get_interp_to_native_trampoline (MonoMethodSignature *sig)
+{
+	char cookie [32];
+	int c_count;
+
+	c_count = sig->param_count + sig->hasthis + 1;
+	g_assert (c_count < sizeof (cookie)); //ensure we don't overflow the local
+
+	cookie [0] = type_to_c (sig->ret);
+	if (sig->hasthis)
+		cookie [1] = 'I';
+	for (int i = 0; i < sig->param_count; ++i) {
+		cookie [1 + sig->hasthis + i] = type_to_c (sig->params [i]);
+	}
+	cookie [c_count] = 0;
+
+	return get_icall_trampoline (cookie);
+}
+
 void
 mono_wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs)
 {

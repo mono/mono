@@ -1597,4 +1597,194 @@ icall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodAr
 		}
 	}
 	g_error ("CANNOT HANDLE COOKIE %s\n", cookie);
+	}
+
+typedef void (*WasmInvokeTramp) (void *target_func, InterpMethodArguments *margs);
+
+static WasmInvokeTramp
+get_icall_trampoline (const char *cookie)
+{
+	if (!strcmp ("DD", cookie))
+		return wasm_invoke_dd;
+	else if (!strcmp ("DDD", cookie))
+		return wasm_invoke_ddd;
+	else if (!strcmp ("DDI", cookie))
+		return wasm_invoke_ddi;
+	else if (!strcmp ("DI", cookie))
+		return wasm_invoke_di;
+	else if (!strcmp ("DID", cookie))
+		return wasm_invoke_did;
+	else if (!strcmp ("DIDD", cookie))
+		return wasm_invoke_didd;
+	else if (!strcmp ("FF", cookie))
+		return wasm_invoke_ff;
+	else if (!strcmp ("FFF", cookie))
+		return wasm_invoke_fff;
+	else if (!strcmp ("FI", cookie))
+		return wasm_invoke_fi;
+	else if (!strcmp ("FIF", cookie))
+		return wasm_invoke_fif;
+	else if (!strcmp ("FIFF", cookie))
+		return wasm_invoke_fiff;
+	else if (!strcmp ("I", cookie))
+		return wasm_invoke_i;
+	else if (!strcmp ("IDIII", cookie))
+		return wasm_invoke_idiii;
+	else if (!strcmp ("IFFFFFFI", cookie))
+		return wasm_invoke_iffffffi;
+	else if (!strcmp ("IFFII", cookie))
+		return wasm_invoke_iffii;
+	else if (!strcmp ("II", cookie))
+		return wasm_invoke_ii;
+	else if (!strcmp ("IIF", cookie))
+		return wasm_invoke_iif;
+	else if (!strcmp ("IIFF", cookie))
+		return wasm_invoke_iiff;
+	else if (!strcmp ("IIFFF", cookie))
+		return wasm_invoke_iifff;
+	else if (!strcmp ("IIFFFFFF", cookie))
+		return wasm_invoke_iiffffff;
+	else if (!strcmp ("IIFFFFFFFF", cookie))
+		return wasm_invoke_iiffffffff;
+	else if (!strcmp ("IIFFFFI", cookie))
+		return wasm_invoke_iiffffi;
+	else if (!strcmp ("IIFFFFII", cookie))
+		return wasm_invoke_iiffffii;
+	else if (!strcmp ("IIFFFI", cookie))
+		return wasm_invoke_iifffi;
+	else if (!strcmp ("IIFFI", cookie))
+		return wasm_invoke_iiffi;
+	else if (!strcmp ("IIFFII", cookie))
+		return wasm_invoke_iiffii;
+	else if (!strcmp ("IIFFIII", cookie))
+		return wasm_invoke_iiffiii;
+	else if (!strcmp ("IIFI", cookie))
+		return wasm_invoke_iifi;
+	else if (!strcmp ("IIFII", cookie))
+		return wasm_invoke_iifii;
+	else if (!strcmp ("IIFIII", cookie))
+		return wasm_invoke_iifiii;
+	else if (!strcmp ("III", cookie))
+		return wasm_invoke_iii;
+	else if (!strcmp ("IIIF", cookie))
+		return wasm_invoke_iiif;
+	else if (!strcmp ("IIIFFFF", cookie))
+		return wasm_invoke_iiiffff;
+	else if (!strcmp ("IIIFFFFF", cookie))
+		return wasm_invoke_iiifffff;
+	else if (!strcmp ("IIIFFFFFF", cookie))
+		return wasm_invoke_iiiffffff;
+	else if (!strcmp ("IIIFFFFFFFF", cookie))
+		return wasm_invoke_iiiffffffff;
+	else if (!strcmp ("IIIFFFFFFFFIII", cookie))
+		return wasm_invoke_iiiffffffffiii;
+	else if (!strcmp ("IIIFI", cookie))
+		return wasm_invoke_iiifi;
+	else if (!strcmp ("IIIFII", cookie))
+		return wasm_invoke_iiifii;
+	else if (!strcmp ("IIIFIII", cookie))
+		return wasm_invoke_iiifiii;
+	else if (!strcmp ("IIII", cookie))
+		return wasm_invoke_iiii;
+	else if (!strcmp ("IIIIF", cookie))
+		return wasm_invoke_iiiif;
+	else if (!strcmp ("IIIIFI", cookie))
+		return wasm_invoke_iiiifi;
+	else if (!strcmp ("IIIIFII", cookie))
+		return wasm_invoke_iiiifii;
+	else if (!strcmp ("IIIIFIII", cookie))
+		return wasm_invoke_iiiifiii;
+	else if (!strcmp ("IIIII", cookie))
+		return wasm_invoke_iiiii;
+	else if (!strcmp ("IIIIIFFFFIIII", cookie))
+		return wasm_invoke_iiiiiffffiiii;
+	else if (!strcmp ("IIIIII", cookie))
+		return wasm_invoke_iiiiii;
+	else if (!strcmp ("IIIIIIFII", cookie))
+		return wasm_invoke_iiiiiifii;
+	else if (!strcmp ("IIIIIII", cookie))
+		return wasm_invoke_iiiiiii;
+	else if (!strcmp ("IIIIIIIF", cookie))
+		return wasm_invoke_iiiiiiif;
+	else if (!strcmp ("IIIIIIIFF", cookie))
+		return wasm_invoke_iiiiiiiff;
+	else if (!strcmp ("IIIIIIII", cookie))
+		return wasm_invoke_iiiiiiii;
+	else if (!strcmp ("IIIIIIIII", cookie))
+		return wasm_invoke_iiiiiiiii;
+	else if (!strcmp ("IIIIIIIIII", cookie))
+		return wasm_invoke_iiiiiiiiii;
+	else if (!strcmp ("IIIIIIIIIII", cookie))
+		return wasm_invoke_iiiiiiiiiii;
+	else if (!strcmp ("IIIIIIIIIIII", cookie))
+		return wasm_invoke_iiiiiiiiiiii;
+	else if (!strcmp ("IIIIIIIIIIIII", cookie))
+		return wasm_invoke_iiiiiiiiiiiii;
+	else if (!strcmp ("IIIIIIIIIIIIII", cookie))
+		return wasm_invoke_iiiiiiiiiiiiii;
+	else if (!strcmp ("IIL", cookie))
+		return wasm_invoke_iil;
+	else if (!strcmp ("IILI", cookie))
+		return wasm_invoke_iili;
+	else if (!strcmp ("IILIIII", cookie))
+		return wasm_invoke_iiliiii;
+	else if (!strcmp ("IILLLI", cookie))
+		return wasm_invoke_iillli;
+	else if (!strcmp ("ILI", cookie))
+		return wasm_invoke_ili;
+	else if (!strcmp ("L", cookie))
+		return wasm_invoke_l;
+	else if (!strcmp ("LI", cookie))
+		return wasm_invoke_li;
+	else if (!strcmp ("LII", cookie))
+		return wasm_invoke_lii;
+	else if (!strcmp ("LIL", cookie))
+		return wasm_invoke_lil;
+	else if (!strcmp ("LILII", cookie))
+		return wasm_invoke_lilii;
+	else if (!strcmp ("LILL", cookie))
+		return wasm_invoke_lill;
+	else if (!strcmp ("LL", cookie))
+		return wasm_invoke_ll;
+	else if (!strcmp ("V", cookie))
+		return wasm_invoke_v;
+	else if (!strcmp ("VI", cookie))
+		return wasm_invoke_vi;
+	else if (!strcmp ("VID", cookie))
+		return wasm_invoke_vid;
+	else if (!strcmp ("VIF", cookie))
+		return wasm_invoke_vif;
+	else if (!strcmp ("VIFF", cookie))
+		return wasm_invoke_viff;
+	else if (!strcmp ("VIFFFF", cookie))
+		return wasm_invoke_viffff;
+	else if (!strcmp ("VIFFFFFI", cookie))
+		return wasm_invoke_vifffffi;
+	else if (!strcmp ("VII", cookie))
+		return wasm_invoke_vii;
+	else if (!strcmp ("VIIFFI", cookie))
+		return wasm_invoke_viiffi;
+	else if (!strcmp ("VIII", cookie))
+		return wasm_invoke_viii;
+	else if (!strcmp ("VIIII", cookie))
+		return wasm_invoke_viiii;
+	else if (!strcmp ("VIIIII", cookie))
+		return wasm_invoke_viiiii;
+	else if (!strcmp ("VIIIIII", cookie))
+		return wasm_invoke_viiiiii;
+	else if (!strcmp ("VIIIIIII", cookie))
+		return wasm_invoke_viiiiiii;
+	else if (!strcmp ("VIIIIIIII", cookie))
+		return wasm_invoke_viiiiiiii;
+	else if (!strcmp ("VIIIIIIIII", cookie))
+		return wasm_invoke_viiiiiiiii;
+	else if (!strcmp ("VIIIIIIIIII", cookie))
+		return wasm_invoke_viiiiiiiiii;
+	else if (!strcmp ("VIL", cookie))
+		return wasm_invoke_vil;
+	else if (!strcmp ("VILLI", cookie))
+		return wasm_invoke_villi;
+	else {
+		g_error ("CANNOT HANDLE COOKIE %s\n", cookie);
+	}
 }

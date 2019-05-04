@@ -195,7 +195,26 @@ class Driver {
 			Array.Sort (cookies);
 			WritePartition (cookies, 0);
 			Console.WriteLine ("\tg_error (\"CANNOT HANDLE COOKIE %s\\n\", cookie);");
+			Console.WriteLine ("\t}");
 		}
+
+		Console.WriteLine ();
+		Console.WriteLine ("typedef void (*WasmInvokeTramp) (void *target_func, InterpMethodArguments *margs);");
+		Console.WriteLine ();
+		Console.WriteLine ("static WasmInvokeTramp\nget_icall_trampoline (const char *cookie)");
+		Console.WriteLine ("{");
+
+		for (int i = 0; i < cookies.Length; ++i) {
+			var c = cookies [i];
+			Console.Write ("\t");
+			if (i > 0)
+				Console.Write ("else ");
+			Console.WriteLine ($"if (!strcmp (\"{c}\", cookie))");
+			Console.WriteLine ($"\t\treturn wasm_invoke_{c.ToLower ()};");
+		}
+		Console.WriteLine ("\telse {");
+		Console.WriteLine ("\t\tg_error (\"CANNOT HANDLE COOKIE %s\\n\", cookie);");
+		Console.WriteLine ("\t}");
 
 		Console.WriteLine ("}");
 	}
