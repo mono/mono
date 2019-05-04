@@ -360,6 +360,7 @@ class Driver {
 		var ee_mode = ExecMode.Interp;
 		var linkModeParm = "all";
 		var linkMode = LinkMode.All;
+		var linkDescriptor = "";
 		string coremode, usermode;
 		var linker_verbose = false;
 
@@ -391,6 +392,7 @@ class Driver {
 				{ "copy=", s => copyTypeParm = s },
 				{ "aot-assemblies=", s => aot_assemblies = s },
 				{ "link-mode=", s => linkModeParm = s },
+				{ "link-descriptor=", s => linkDescriptor = s },
 				{ "pinvoke-libs=", s => pinvoke_libs = s },
 				{ "help", s => print_usage = true },
 					};
@@ -876,9 +878,17 @@ class Driver {
 			}
 
 			string linker_args = "";
-			foreach (var assembly in root_assemblies) {
-				string filename = Path.GetFileName (assembly);
-				linker_args += $"-a linker-in/{filename} ";
+			if (!string.IsNullOrEmpty (linkDescriptor)) {
+				linker_args += $"-x {linkDescriptor} ";
+				foreach (var assembly in root_assemblies) {
+					string filename = Path.GetFileName (assembly);
+					linker_args += $"-p {usermode} {filename} -r linker-in/{filename} ";
+				}
+			} else {
+				foreach (var assembly in root_assemblies) {
+					string filename = Path.GetFileName (assembly);
+					linker_args += $"-a linker-in/{filename} ";
+				}
 			}
 
 			// the linker does not consider these core by default
