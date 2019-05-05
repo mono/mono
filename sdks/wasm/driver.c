@@ -11,7 +11,11 @@
 #include <mono/utils/mono-dl-fallback.h>
 #include <mono/jit/jit.h>
 
+#ifdef GEN_PINVOKE
+#include "pinvoke-table.h"
+#else
 #include "pinvoke-tables-default.h"
+#endif
 
 #ifdef CORE_BINDINGS
 void core_initialize_internals ();
@@ -609,4 +613,10 @@ EMSCRIPTEN_KEEPALIVE int
 mono_wasm_strdup (const char *s)
 {
 	return (int)strdup (s);
+}
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_parse_runtime_options (int argc, char* argv[])
+{
+	mono_jit_parse_options (argc, argv);
 }

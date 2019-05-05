@@ -448,19 +448,6 @@ namespace System
             return (value == null || 0u >= (uint)value.Length) ? true : false;
         }
 
-        [System.Runtime.CompilerServices.IndexerName("Chars")]
-        public char this[Index index]
-        {
-            get
-            {
-                int actualIndex = index.GetOffset(Length);
-                return this[actualIndex];
-            }
-        }
-
-        [System.Runtime.CompilerServices.IndexerName("Chars")]
-        public string this[Range range] => Substring(range);
-
         public static bool IsNullOrWhiteSpace(string? value)
         {
             if (value == null) return true;
@@ -787,17 +774,15 @@ namespace System
 
         public bool IsNormalized(NormalizationForm normalizationForm)
         {
-#if CORECLR
-            if (this.IsFastSort())
+            if (this.IsAscii())
             {
-                // If its FastSort && one of the 4 main forms, then its already normalized
+                // If its ASCII && one of the 4 main forms, then its already normalized
                 if (normalizationForm == NormalizationForm.FormC ||
                     normalizationForm == NormalizationForm.FormKC ||
                     normalizationForm == NormalizationForm.FormD ||
                     normalizationForm == NormalizationForm.FormKD)
                     return true;
             }
-#endif
             return Normalization.IsNormalized(this, normalizationForm);
         }
 
@@ -808,18 +793,24 @@ namespace System
 
         public string Normalize(NormalizationForm normalizationForm)
         {
-#if CORECLR
             if (this.IsAscii())
             {
-                // If its FastSort && one of the 4 main forms, then its already normalized
+                // If its ASCII && one of the 4 main forms, then its already normalized
                 if (normalizationForm == NormalizationForm.FormC ||
                     normalizationForm == NormalizationForm.FormKC ||
                     normalizationForm == NormalizationForm.FormD ||
                     normalizationForm == NormalizationForm.FormKD)
                     return this;
             }
-#endif
             return Normalization.Normalize(this, normalizationForm);
+        }
+
+        private unsafe bool IsAscii()
+        {
+            fixed (char* str = &_firstChar)
+            {
+                return ASCIIUtility.GetIndexOfFirstNonAsciiChar(str, (uint)Length) == (uint)Length;
+            }
         }
     }
 }

@@ -176,7 +176,7 @@ HANDLES(KPAIR_5, "_ProtectUser", ves_icall_Mono_Security_Cryptography_KeyPairPer
 #endif /* !PLATFORM_RO_FS */
 
 ICALL_TYPE(APPDOM, "System.AppDomain", APPDOM_23)
-HANDLES(APPDOM_23, "DoUnhandledException", ves_icall_System_AppDomain_DoUnhandledException, void, 1, (MonoException))
+HANDLES(APPDOM_23, "DoUnhandledException", ves_icall_System_AppDomain_DoUnhandledException, void, 2, (MonoAppDomain, MonoException))
 HANDLES(APPDOM_1, "ExecuteAssembly", ves_icall_System_AppDomain_ExecuteAssembly, gint32, 3, (MonoAppDomain, MonoReflectionAssembly, MonoArray))
 HANDLES(APPDOM_2, "GetAssemblies", ves_icall_System_AppDomain_GetAssemblies, MonoArray, 2, (MonoAppDomain, MonoBoolean))
 HANDLES(APPDOM_3, "GetData", ves_icall_System_AppDomain_GetData, MonoObject, 2, (MonoAppDomain, MonoString))
@@ -825,7 +825,7 @@ HANDLES(GCH_4, "GetTarget", ves_icall_System_GCHandle_GetTarget, MonoObject, 1, 
 HANDLES(GCH_5, "GetTargetHandle", ves_icall_System_GCHandle_GetTargetHandle, guint32, 3, (MonoObject, guint32, gint32))
 #endif
 
-#ifndef DISABLE_COM
+#if !defined(DISABLE_COM) || defined (HOST_WIN32)
 ICALL_TYPE(MARSHAL, "System.Runtime.InteropServices.Marshal", MARSHAL_1)
 NOHANDLES(ICALL(MARSHAL_1, "AddRefInternal", ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal))
 #else
@@ -880,13 +880,15 @@ HANDLES(MARSHAL_20, "PtrToStructureInternal", ves_icall_System_Runtime_InteropSe
 HANDLES(MARSHAL_20, "PtrToStructure(intptr,System.Type)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type, MonoObject, 2, (gconstpointer, MonoReflectionType))
 HANDLES(MARSHAL_21, "PtrToStructure(intptr,object)", ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure, void, 2, (gconstpointer, MonoObject))
 #endif
-#ifndef DISABLE_COM
+#if !defined (DISABLE_COM) || defined (HOST_WIN32)
 NOHANDLES(ICALL(MARSHAL_22, "QueryInterfaceInternal", ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal))
 #endif
 HANDLES(MARSHAL_43, "ReAllocCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem, gpointer, 2, (gpointer, int))
 HANDLES(MARSHAL_23, "ReAllocHGlobal", ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal, gpointer, 2, (gpointer, gsize))
 #ifndef DISABLE_COM
 HANDLES(MARSHAL_49, "ReleaseComObjectInternal", ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal, gint32, 1, (MonoObject))
+#endif
+#if !defined (DISABLE_COM) || defined (HOST_WIN32)
 NOHANDLES(ICALL(MARSHAL_29, "ReleaseInternal", ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal))
 #endif
 HANDLES(MARSHAL_30, "SizeOf", ves_icall_System_Runtime_InteropServices_Marshal_SizeOf, guint32, 1, (MonoReflectionType))
@@ -1206,17 +1208,14 @@ NOHANDLES(ICALL(THREAD_51, "VolatileWrite(ulong&,ulong)", ves_icall_System_Threa
 NOHANDLES(ICALL(THREAD_9, "YieldInternal", ves_icall_System_Threading_Thread_YieldInternal))
 #endif
 
-ICALL_TYPE(THREADP, "System.Threading.ThreadPool", THREADP_1)
-HANDLES(THREADP_1, "BindIOCompletionCallbackNative", ves_icall_System_Threading_ThreadPool_BindIOCompletionCallbackNative, MonoBoolean, 1, (gpointer))
+ICALL_TYPE(THREADP, "System.Threading.ThreadPool", THREADP_2)
 HANDLES(THREADP_2, "GetAvailableThreadsNative", ves_icall_System_Threading_ThreadPool_GetAvailableThreadsNative, void, 2, (gint32_ref, gint32_ref))
 HANDLES(THREADP_3, "GetMaxThreadsNative", ves_icall_System_Threading_ThreadPool_GetMaxThreadsNative, void, 2, (gint32_ref, gint32_ref))
 HANDLES(THREADP_4, "GetMinThreadsNative", ves_icall_System_Threading_ThreadPool_GetMinThreadsNative, void, 2, (gint32_ref, gint32_ref))
 HANDLES(THREADP_5, "InitializeVMTp", ves_icall_System_Threading_ThreadPool_InitializeVMTp, void, 1, (MonoBoolean_ref))
-HANDLES(THREADP_6, "IsThreadPoolHosted", ves_icall_System_Threading_ThreadPool_IsThreadPoolHosted, MonoBoolean, 0, ())
 HANDLES(THREADP_7, "NotifyWorkItemComplete", ves_icall_System_Threading_ThreadPool_NotifyWorkItemComplete, MonoBoolean, 0, ())
 HANDLES(THREADP_8, "NotifyWorkItemProgressNative", ves_icall_System_Threading_ThreadPool_NotifyWorkItemProgressNative, void, 0, ())
 HANDLES(THREADP_8m, "NotifyWorkItemQueued", ves_icall_System_Threading_ThreadPool_NotifyWorkItemQueued, void, 0, ())
-HANDLES(THREADP_9, "PostQueuedCompletionStatus", ves_icall_System_Threading_ThreadPool_PostQueuedCompletionStatus, MonoBoolean, 1, (MonoNativeOverlapped_ptr))
 HANDLES(THREADP_11, "ReportThreadStatus", ves_icall_System_Threading_ThreadPool_ReportThreadStatus, void, 1, (MonoBoolean))
 HANDLES(THREADP_12, "RequestWorkerThread", ves_icall_System_Threading_ThreadPool_RequestWorkerThread, MonoBoolean, 0, ())
 HANDLES(THREADP_13, "SetMaxThreadsNative", ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative, MonoBoolean, 2, (gint32, gint32))

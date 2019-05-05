@@ -23,6 +23,7 @@ PROFILE_MCS_FLAGS = \
 	-d:FULL_AOT_RUNTIME \
 	-d:DISABLE_COM \
 	-d:WIN_PLATFORM \
+	-d:WINAOT \
 	-nowarn:1699 \
 	-nostdlib \
 	$(PLATFORM_DEBUG_FLAGS)

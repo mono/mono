@@ -125,7 +125,6 @@
       <Compile Include="System\Array.cs" />
       <Compile Include="System\Attribute.cs" />
       <Compile Include="System\Buffer.cs" />
-      <Compile Include="System\DefaultBinder.cs" />
       <Compile Include="System\Delegate.cs" />
       <Compile Include="System\Enum.cs" />
       <Compile Include="System\Environment.cs" />
@@ -200,7 +199,6 @@
       <Compile Include="System.Runtime.InteropServices\InteropExtensions.cs" />
       <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
       <Compile Include="System.Runtime.InteropServices\MarshalAsAttribute.cs" />
-      <Compile Include="System.Runtime.InteropServices\NativeLibrary.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyDependencyResolver.cs" />
       <Compile Include="System.Runtime.Remoting.Contexts\Context.cs" />
@@ -222,9 +220,11 @@
       <Compile Include="System.Threading\EventWaitHandle.Unix.cs" />
       <Compile Include="System.Threading\Mutex.Unix.cs" />
       <Compile Include="System.Threading\Semaphore.Unix.cs" />
+      <Compile Include="System.Runtime.InteropServices\NativeLibrary.Unix.cs" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetsWindows)' == 'true'">
       <Compile Include="System.Globalization\GlobalizationMode.Windows.cs" />
+      <Compile Include="System.Runtime.InteropServices\NativeLibrary.Windows.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\..\build\common\Consts.cs" />
@@ -294,7 +294,7 @@
   <Import Project="..\..\..\netcore\System.Private.CoreLib\shared\System.Private.CoreLib.Shared.projitems" />
 
   <!-- Use Roslyn Compilers to build -->
-  <Import Project="$(RoslynPropsFile)" />
+  <Import Condition="'$(RoslynPropsFile)' != ''" Project="$(RoslynPropsFile)" />
 
 <!--  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" /> -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
