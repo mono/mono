@@ -184,7 +184,7 @@ write_to_managed (ZStream *stream)
 		args[2] = &stream->gchandle;
 		exception = NULL;
 
-		result = mono_runtime_invoke(unmanagedWrite, NULL, args, NULL);
+		result = mono_runtime_invoke(unmanagedWrite, NULL, args, &exception);
 		if (exception) {
 			MonoClass* eklass = mono_object_get_class((MonoObject*)exception);
 			MonoProperty* prop = mono_class_get_property_from_name(eklass, "Message");
@@ -256,7 +256,7 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 			args[2] = &stream->gchandle;
 			exception = NULL;
 
-			result = mono_runtime_invoke(unmanagedRead, NULL, args, NULL);
+			result = mono_runtime_invoke(unmanagedRead, NULL, args, &exception);
 			if (exception) {
 				MonoClass* eklass = mono_object_get_class((MonoObject*)exception);
 				MonoProperty* prop = mono_class_get_property_from_name(eklass, "Message");
@@ -331,13 +331,13 @@ GetReadOrWriteCallback (gint compress, void *gchandle)
 {
 	MonoObject* callback = mono_gchandle_get_target (gchandle);
 	if (!callback) {
-		fprintf(stderr, "Callback Target Not found!!!!!!!!!!!-------------------------->\n");
+		fprintf(stderr, "Error: zlib-helper - Callback target not found.\n");
 		return NULL;
 	}	
 
 	MonoClass* klass = mono_object_get_class(callback);
 	if (!klass) {
-		fprintf(stderr, "Callback Class Not found!!!!!!!!!!!-------------------------->\n");
+		fprintf(stderr, "Error: zlib-helper - Callback class not found.\n");
 		return NULL;
 	}
 
@@ -346,24 +346,24 @@ GetReadOrWriteCallback (gint compress, void *gchandle)
 	if (compress == 1) {  // compress stream
 		desc = mono_method_desc_new(":UnmanagedWrite", FALSE);
 		if (!desc) {
-			fprintf(stderr, "MethodDesc for UnmanagedWrite Not found!!!!!!!!!!!-------------------------->\n");
+			fprintf(stderr, "Error: zlib-helper - MethodDesc for UnmanagedWrite not found.\n");
 			return NULL;
 		}
 		read_write_method = mono_method_desc_search_in_class (desc, klass);
 		if (!read_write_method) {
-			fprintf(stderr, "Method UnmanagedWrite Not found!!!!!!!!!!!-------------------------->\n");
+			fprintf(stderr, "Error: zlib-helper - Method UnmanagedWrite not found.\n");
 			return NULL;
 		}
 	}
 	else {
 		desc = mono_method_desc_new(":UnmanagedRead", FALSE);
 		if (!desc) {
-			fprintf(stderr, "MethodDesc for UnmanagedRead Not found!!!!!!!!!!!-------------------------->\n");
+			fprintf(stderr, "Error: zlib-helper - MethodDesc for UnmanagedRead not found.\n");
 			return NULL;
 		}
 		read_write_method = mono_method_desc_search_in_class (desc, klass);
 		if (!read_write_method) {
-			fprintf(stderr, "Method UnmanagedRead Not found!!!!!!!!!!!-------------------------->\n");
+			fprintf(stderr, "Error: zlib-helper - Method UnmanagedRead not found.\n");
 			return NULL;
 		}
 	}
