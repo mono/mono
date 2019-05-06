@@ -12,6 +12,12 @@
 #include <mono/utils/mono-dl-fallback.h>
 #include <mono/jit/jit.h>
 
+typedef int32_t gboolean;
+typedef void* gpointer;
+extern gboolean mono_icall_table_ready;
+#define TRUE 1
+#define FALSE 0
+
 #ifdef GEN_PINVOKE
 #include "pinvoke-table.h"
 #else
@@ -19,7 +25,7 @@
 #endif
 
 #ifdef CORE_BINDINGS
-void core_initialize_internals ();
+void core_initialize_internals (void);
 #endif
 
 // Blazor specific custom routines - see dotnet_support.js for backing code
@@ -43,12 +49,12 @@ void mono_free (void*);
 
 typedef struct {
 	int version;
-	void* (*lookup) (MonoMethod *method, char *classname, char *methodname, char *sigstart, int32_t *uses_handles);
+	void* (*lookup) (MonoMethod *method, const char *classname, const char *methodname, char *sigstart, int32_t *uses_handles);
 	const char* (*lookup_icall_symbol) (void* func);
 } MonoIcallTableCallbacks;
 
 void
-mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb);
+mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *cb);
 
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
 void mono_trace_init (void);
@@ -60,7 +66,7 @@ m_strdup (const char *str)
 		return NULL;
 
 	int len = strlen (str) + 1;
-	char *res = malloc (len);
+	char *res = (char*)malloc (len);
 	memcpy (res, str, len);
 	return res;
 }
@@ -221,8 +227,8 @@ compare_int (const void *k1, const void *k2)
 	return *(int*)k1 - *(int*)k2;
 }
 
-static void*
-icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char *sigstart, int32_t *uses_handles)
+gpointer
+mono_icall_table_lookup (MonoMethod *method, const char *classname, const char *methodname, char *sigstart, gboolean *uses_handles)
 {
 	uint32_t token = mono_method_get_token (method);
 	assert (token);
@@ -272,8 +278,24 @@ icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char 
 #endif
 }
 
-static const char*
-icall_table_lookup_symbol (void *func)
+const char*
+mono_icall_table_lookup_symbol (gpointer func)
+{
+	assert (0);
+	return NULL;
+}
+
+#elif !defined (NEED_NORMAL_ICALL_TABLES)
+
+gpointer
+mono_icall_table_lookup (MonoMethod *method, const char *classname, const char *methodname, char *sigstart, gboolean *uses_handles)
+{
+	assert (0);
+	return NULL;
+}
+
+const char*
+mono_icall_table_lookup_symbol (gpointer func)
 {
 	assert (0);
 	return NULL;
@@ -281,7 +303,7 @@ icall_table_lookup_symbol (void *func)
 
 #endif
 
-void mono_initialize_internals ()
+void mono_initialize_internals (void)
 {
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
 
@@ -317,17 +339,20 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 		mono_wasm_enable_debugging ();
 #endif
 
-#ifdef LINK_ICALLS
-	/* Link in our own linked icall table */
-	MonoIcallTableCallbacks cb;
-	memset (&cb, 0, sizeof (MonoIcallTableCallbacks));
-	cb.version = MONO_ICALL_TABLE_CALLBACKS_VERSION;
-	cb.lookup = icall_table_lookup;
-	cb.lookup_icall_symbol = icall_table_lookup_symbol;
-
-	mono_install_icall_table_callbacks (&cb);
+#if defined (LINK_ICALLS) && defined (NEED_NORMAL_ICALL_TABLES)
+#error "LINK_ICALLS and NEED_NORMAL_ICALL_TABLES are mutually exclusive."
 #endif
 
+#ifdef LINK_ICALLS
+	/* Link in our own linked icall table */
+	static const MonoIcallTableCallbacks cb =
+	{
+		MONO_ICALL_TABLE_CALLBACKS_VERSION,
+		mono_icall_table_lookup,
+		mono_icall_table_lookup_symbol,
+	};
+	mono_install_icall_table_callbacks (&cb);
+#endif
 #ifdef NEED_NORMAL_ICALL_TABLES
 	mono_icall_table_init ();
 #endif

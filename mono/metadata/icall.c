@@ -8590,7 +8590,7 @@ ves_icall_System_IO_LogcatTextWriter_Log (const char *appname, gint32 level, con
 	g_log (appname, (GLogLevelFlags)level, "%s", message);
 }
 
-static MonoIcallTableCallbacks icall_table;
+gboolean mono_icall_table_ready;
 static mono_mutex_t icall_mutex;
 static GHashTable *icall_hash = NULL;
 static GHashTable *jit_icall_hash_name = NULL;
@@ -8601,17 +8601,31 @@ typedef struct _MonoIcallHashTableValue {
 	guint32 flags;
 } MonoIcallHashTableValue;
 
+// FIXME Wasm is very sensitive; leave it unchanged.
+#if HOST_WASM || DISABLE_ICALL_TABLES
+#define SPLIT_ICALL_TABLES
+#endif
+
+#if SPLIT_ICALL_TABLES
+static const MonoIcallTableCallbacks *mono_icall_table_callbacks;
+#endif
+
 void
-mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb)
+mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *icall_table_callbacks)
 {
-	g_assert (cb->version == MONO_ICALL_TABLE_CALLBACKS_VERSION);
-	memcpy (&icall_table, cb, sizeof (MonoIcallTableCallbacks));
+	g_assert (icall_table_callbacks->version == MONO_ICALL_TABLE_CALLBACKS_VERSION);
+
+	// If runtime has tables, silently ignore whatever is given.
+#if SPLIT_ICALL_TABLES
+	mono_icall_table_callbacks = icall_table_callbacks;
+#endif
+	mono_icall_table_ready = TRUE;
 }
 
 void
 mono_icall_init (void)
 {
-#ifndef DISABLE_ICALL_TABLES
+#if !SPLIT_ICALL_TABLES
 	mono_icall_table_init ();
 #endif
 	icall_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
@@ -8865,14 +8879,18 @@ mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_
 		return res;
 	}
 
-	if (!icall_table.lookup) {
+	if (!mono_icall_table_ready) {
 		mono_icall_unlock ();
 		g_free (classname);
 		/* Fail only when the result is actually used */
 		return (gconstpointer)no_icall_table;
 	} else {
 		gboolean uses_handles = FALSE;
-		res = icall_table.lookup (method, classname, sigstart - mlen, sigstart, &uses_handles);
+#if SPLIT_ICALL_TABLES
+		res = mono_icall_table_callbacks->lookup (method, classname, sigstart - mlen, sigstart, &uses_handles);
+#else
+		res = mono_icall_table_lookup (method, classname, sigstart - mlen, sigstart, &uses_handles);
+#endif
 		if (res && flags && uses_handles)
 			*flags = *flags | MONO_ICALL_FLAGS_USES_HANDLES;
 		mono_icall_unlock ();
@@ -8940,14 +8958,17 @@ mono_lookup_internal_call (MonoMethod *method)
 const char*
 mono_lookup_icall_symbol (MonoMethod *m)
 {
-	if (!icall_table.lookup_icall_symbol)
+	if (!mono_icall_table_ready)
 		return NULL;
-
 	gpointer func;
 	func = (gpointer)mono_lookup_internal_call_full (m, FALSE, NULL, NULL);
 	if (!func)
 		return NULL;
-	return icall_table.lookup_icall_symbol (func);
+#if SPLIT_ICALL_TABLES
+	return mono_icall_table_callbacks->lookup_icall_symbol (func);
+#else
+	return mono_lookup_icall_symbol_internal (func);
+#endif
 }
 
 #if defined(TARGET_WIN32) && defined(TARGET_X86)

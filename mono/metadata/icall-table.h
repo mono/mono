@@ -15,12 +15,20 @@
 
 typedef struct {
 	int version;
-	gpointer (*lookup) (MonoMethod *method, char *classname, char *methodname, char *sigstart, gboolean *uses_handles);
+	gpointer (*lookup) (MonoMethod *method, const char *classname, const char *methodname, char *sigstart, gboolean *uses_handles);
 	const char* (*lookup_icall_symbol) (gpointer func);
 } MonoIcallTableCallbacks;
 
 void
-mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb);
+mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *cb);
+
+// Subject to configure, runtime might already implement the functions.
+// FIXME ifdef here?
+gpointer
+mono_icall_table_lookup (MonoMethod *method, const char *classname, const char *methodname, char *sigstart, gboolean *uses_handles);
+
+const char*
+mono_lookup_icall_symbol_internal (gpointer func);
 
 MONO_API void
 mono_icall_table_init (void);

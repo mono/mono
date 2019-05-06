@@ -38,6 +38,11 @@
 #include "handle-decl.h"
 #include "icall-decl.h"
 
+// FIXME Wasm is very sensitive; leave it unchanged.
+#if HOST_WASM || DISABLE_ICALL_TABLES
+#define SPLIT_ICALL_TABLES
+#endif
+
 // These definitions are used for multiple includes of icall-def.h and eventually undefined.
 #define NOHANDLES(inner) inner
 #define HANDLES(id, name, func, ...)	ICALL (id, name, func ## _raw)
@@ -222,8 +227,8 @@ find_class_icalls (const char *name)
 	return &icall_type_descs [nameslot - &icall_type_names_idx [0]];
 }
 
-static gpointer
-icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char *sigstart, gboolean *uses_handles)
+gpointer
+mono_icall_table_lookup (MonoMethod *method, const char *classname, const char *methodname, char *sigstart, gboolean *uses_handles)
 {
 	const IcallTypeDesc *imap = NULL;
 	gpointer res;
@@ -261,8 +266,8 @@ func_cmp (gconstpointer key, gconstpointer p)
 }
 #endif
 
-static const char*
-lookup_icall_symbol (gpointer func)
+const char*
+mono_lookup_icall_symbol_internal (gpointer func)
 {
 #ifdef ENABLE_ICALL_SYMBOL_MAP
 	int i;
@@ -311,6 +316,8 @@ lookup_icall_symbol (gpointer func)
 #endif
 }
 
+extern gboolean mono_icall_table_ready;
+
 void
 mono_icall_table_init (void)
 {
@@ -340,12 +347,15 @@ mono_icall_table_init (void)
 			}
 		}
 	}
-
-	MonoIcallTableCallbacks cb;
-	memset (&cb, 0, sizeof (MonoIcallTableCallbacks));
-	cb.version = MONO_ICALL_TABLE_CALLBACKS_VERSION;
-	cb.lookup = icall_table_lookup;
-	cb.lookup_icall_symbol = lookup_icall_symbol;
-
-	mono_install_icall_table_callbacks (&cb);
+// FIXME Wasm is very sensitive; leave it unchanged.
+#if HOST_WASM
+	static const MonoIcallTableCallbacks icall_table_callbacks =
+	{
+		MONO_ICALL_TABLE_CALLBACKS_VERSION,
+		mono_icall_table_lookup,
+		mono_lookup_icall_symbol_internal,
+	};
+	mono_install_icall_table_callbacks (&icall_table_callbacks);
+#endif
+	mono_icall_table_ready = TRUE;
 }
