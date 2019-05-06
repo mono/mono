@@ -338,9 +338,19 @@ SgenThreadInfo *mono_tls_get_sgen_thread_info (void)
 	return (SgenThreadInfo*)MONO_TLS_GET_VALUE (mono_tls_sgen_thread_info, mono_tls_key_sgen_thread_info);
 }
 
+// This is duplicated because JIT icall infrastructure checks for duplicates (same function, multiple names).
+#define MONO_GET_LMF_ADDR() ((MonoLMF**)MONO_TLS_GET_VALUE (mono_tls_lmf_addr, mono_tls_key_lmf_addr))
+
 MonoLMF **mono_tls_get_lmf_addr (void)
+// This is duplicated because JIT icall infrastructure checks for duplicates (same function, multiple names).
 {
-	return (MonoLMF**)MONO_TLS_GET_VALUE (mono_tls_lmf_addr, mono_tls_key_lmf_addr);
+	return MONO_GET_LMF_ADDR();
+}
+
+MonoLMF **mono_get_lmf_addr (void)
+// This is duplicated because JIT icall infrastructure checks for duplicates (same function, multiple names).
+{
+	return MONO_GET_LMF_ADDR();
 }
 
 /* Setters for each tls key */

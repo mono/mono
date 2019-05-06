@@ -9097,10 +9097,48 @@ mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
 	mono_icall_unlock ();
 }
 
+void
+mono_no_trampolines (void)
+{
+	g_assert_not_reached ();
+}
+
+static
+void
+assert_equivalent_jit_icall_info (const char *which, const MonoJitICallInfo *info, gconstpointer func,
+	const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
+{
+	g_assertf (func == (gpointer)mono_no_trampolines || !strcmp(info->name, name),
+		"jit icall name already %s %s %s %p %p\n",
+		which, name, info->name, func, info->func);
+
+	const char * const c_symbol1 = info->c_symbol ? info->c_symbol : "null1";
+	const char * const c_symbol2 =       c_symbol ?       c_symbol : "null2";
+
+	g_assertf (func == (gpointer)mono_no_trampolines || !strcmp(c_symbol1, c_symbol2),
+		"jit icall c_symbol already %s %s %s %s\n",
+		which, name, c_symbol1, c_symbol2);
+
+	g_assertf (info->func == func, "jit icall func already %s %s %p %p\n",
+		which, name, func, info->func);
+
+	g_assertf (info->sig == sig, "jit icall sig already %s %s %p %p\n",
+		which, name, sig, info->sig);
+
+	g_assertf (avoid_wrapper ? (info->wrapper == func) : (info->wrapper != func),
+		"jit icall wrapper already %s %s %d %p %p\n",
+		which, name, (int)avoid_wrapper, func, info->wrapper);
+}
+
+// temporary
+#ifndef mono_jit_icall_info_index
+#define mono_jit_icall_info_index(...) 0
+#endif
+
 MonoJitICallInfo *
 mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
 {
-	MonoJitICallInfo *info;
+	MonoJitICallInfo *info = NULL;
 
 	g_assert (func);
 	g_assert (name);
@@ -9112,18 +9150,34 @@ mono_register_jit_icall_full (gconstpointer func, const char *name, MonoMethodSi
 		jit_icall_hash_addr = g_hash_table_new (NULL, NULL);
 	}
 
-	if ((info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name))) {
-		g_warning ("jit icall already defined \"%s\" \"%s\" %p %p\n", name, info->name, func, info->func);
-		g_assert_not_reached ();
+	// FIXME Some duplicate registration occurs. Allow it if it is equivalent.
+
+	MonoJitICallInfo const * const existing_infos [ ] = {
+		(MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name),
+		(MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_addr, (gpointer)func),
+	};
+	for (int i = 0; i < 2; ++i) {
+		MonoJitICallInfo const * const existing_info = existing_infos [i];
+
+		if (!existing_info)
+			continue;
+
+		g_assertf (info == existing_info || func == (gpointer)mono_no_trampolines,
+			"jit icall info already hashed name:%s existing_name:%s func:%p existing_func:%p i:%d index:%d existing_index:%d\n",
+			name, existing_info->name, func, existing_info->func, i, mono_jit_icall_info_index (info),
+			mono_jit_icall_info_index (existing_info));
+
+		assert_equivalent_jit_icall_info (i ? "hashed1" : "hashed0", existing_info, func, name, sig, avoid_wrapper, c_symbol);
 	}
 
 	info = g_new0 (MonoJitICallInfo, 1);
-	
 	info->name = name;
 	info->func = func;
 	info->sig = sig;
 	info->c_symbol = c_symbol;
 
+	// Fill in wrapper ahead of time, to just be func, to avoid
+	// later initializing it to anything else. So therefore, no wrapper.
 	if (avoid_wrapper) {
 		info->wrapper = func;
 	} else {
