@@ -40,7 +40,6 @@
 #include "aot-runtime.h"
 #include "mono/utils/mono-sigcontext.h"
 #include "mono/utils/mono-compiler.h"
-#include "mono/metadata/register-icall-def.h"
 
 #ifndef DISABLE_JIT
 

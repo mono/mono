@@ -106,8 +106,6 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\opcodes.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\property-bag.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\property-bag.c" />
-    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\register-icall-def.h" />
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\register-icall-def.c" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\w32socket.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\w32socket.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\w32socket-internals.h" />

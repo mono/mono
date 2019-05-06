@@ -31,7 +31,6 @@
 #endif
 
 #include <mono/utils/freebsd-dwarf.h>
-#include "mono/metadata/register-icall-def.h"
 
 #define DW_AT_MIPS_linkage_name 0x2007
 #define DW_LNE_set_prologue_end 0x0a

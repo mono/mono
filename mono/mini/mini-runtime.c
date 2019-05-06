@@ -100,7 +100,6 @@
 #endif
 #endif
 #include "mono/metadata/icall-signatures.h"
-#include "mono/metadata/register-icall-def.h"
 #include "mono/metadata/class-internals.h"
 
 static guint32 default_opt = 0;

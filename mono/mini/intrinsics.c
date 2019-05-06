@@ -18,7 +18,6 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/monitor.h>
 #include <mono/utils/mono-memory-model.h>
-#include "mono/metadata/register-icall-def.h"
 
 static GENERATE_GET_CLASS_WITH_CACHE (runtime_helpers, "System.Runtime.CompilerServices", "RuntimeHelpers")
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")

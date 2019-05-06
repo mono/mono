@@ -26,7 +26,6 @@
 #include "mono/metadata/assembly.h"
 #include "icall-decl.h"
 #include "icall-signatures.h"
-#include "register-icall-def.h"
 
 typedef enum {
 	MONO_MARSHAL_NONE,			/* No marshalling needed */

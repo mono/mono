@@ -17,7 +17,6 @@
 #include <mono/metadata/class-abi-details.h>
 #include <mono/utils/mono-utils-debug.h>
 #include "mono/metadata/icall-signatures.h"
-#include "mono/metadata/register-icall-def.h"
 
 static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
 static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code

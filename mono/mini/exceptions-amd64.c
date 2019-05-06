@@ -45,7 +45,6 @@
 #include "mini-runtime.h"
 #include "aot-runtime.h"
 #include "tasklets.h"
-#include "mono/metadata/register-icall-def.h"
 
 #ifdef TARGET_WIN32
 static void (*restore_stack) (void);

@@ -27,7 +27,6 @@
 #include "mini-runtime.h"
 #include "debugger-agent.h"
 #include "jit-icalls.h"
-#include "mono/metadata/register-icall-def.h"
 
 /*
  * mono_arch_get_unbox_trampoline:

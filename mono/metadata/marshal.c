@@ -62,7 +62,6 @@
 #include <errno.h>
 #include "icall-decl.h"
 #include "icall-signatures.h"
-#include "register-icall-def.h"
 #include "class-internals.h"
 
 static void

@@ -20,7 +20,6 @@
 
 #include <mono/arch/arm64/arm64-codegen.h>
 #include <mono/metadata/abi-details.h>
-#include "mono/metadata/register-icall-def.h"
 
 #ifndef DISABLE_JIT
 

@@ -33,7 +33,6 @@
 #include "mini-runtime.h"
 #include "tasklets.h"
 #include "aot-runtime.h"
-#include "mono/metadata/register-icall-def.h"
 
 static gpointer signal_exception_trampoline;
 

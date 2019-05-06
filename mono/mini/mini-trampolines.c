@@ -26,8 +26,6 @@
 
 #include "interp/interp.h"
 
-#include "mono/metadata/register-icall-def.h"
-
 /*
  * Address of the trampoline code.  This is used by the debugger to check
  * whether a method is a trampoline.

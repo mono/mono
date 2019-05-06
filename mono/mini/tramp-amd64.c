@@ -35,8 +35,6 @@
 #include "interp/interp.h"
 #endif
 
-#include "mono/metadata/register-icall-def.h"
-
 #define IS_REX(inst) (((inst) >= 0x40) && ((inst) <= 0x4f))
 
 #ifndef DISABLE_JIT

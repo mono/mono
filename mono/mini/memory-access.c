@@ -15,7 +15,6 @@
 #include "mini.h"
 #include "ir-emit.h"
 #include "jit-icalls.h"
-#include "mono/metadata/register-icall-def.h"
 
 #define MAX_INLINE_COPIES 10
 #define MAX_INLINE_COPY_SIZE 10000

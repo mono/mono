@@ -49,7 +49,6 @@
 #endif
 #include "icall-decl.h"
 #include "icall-signatures.h"
-#include "register-icall-def.h"
 
 static void
 mono_System_ComObject_ReleaseInterfaces (MonoComObjectHandle obj);

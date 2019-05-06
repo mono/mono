@@ -25,7 +25,6 @@
 #include "aot-runtime.h"
 #include "mini-runtime.h"
 #include "llvmonly-runtime.h"
-#include "mono/metadata/register-icall-def.h"
 
 #define ALLOW_PARTIAL_SHARING TRUE
 //#define ALLOW_PARTIAL_SHARING FALSE

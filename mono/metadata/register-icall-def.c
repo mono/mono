@@ -7,9 +7,7 @@
 #include <config.h>
 #include <glib.h>
 #include "mono/metadata/exception-internals.h"
-#include "register-icall-def.h"
 
-// FIXME move to jit-icalls.c
 MonoJitICallInfos mono_jit_icall_info = { 0 };
 
 

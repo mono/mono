@@ -28,7 +28,6 @@
 #include <mono/metadata/abi-details.h>
 
 #include "interp/interp.h"
-#include "mono/metadata/register-icall-def.h"
 
 /*
  * Documentation:

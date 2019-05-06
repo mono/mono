@@ -39,7 +39,6 @@
 #ifdef _AIX
 #include <sys/systemcfg.h>
 #endif
-#include "mono/metadata/register-icall-def.h"
 
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (math, "System", "Math")
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (mathf, "System", "MathF")

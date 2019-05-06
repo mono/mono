@@ -18,7 +18,7 @@
 #include <mono/utils/mono-forward-internal.h>
 
 /* TLS entries used by the runtime */
-/* These values are mimiced in mono_create_tls_get and register-icall-def.h */
+/* These values are mimiced in mono_create_tls_get and MONO_JIT_ICALLS */
 typedef enum {
 	/* mono_thread_internal_current () */
 	TLS_KEY_THREAD = 0,

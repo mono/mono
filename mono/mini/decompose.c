@@ -20,7 +20,6 @@
 #include <mono/utils/mono-compiler.h>
 #define MONO_MATH_DECLARE_ALL 1
 #include <mono/utils/mono-math.h>
-#include "mono/metadata/register-icall-def.h"
 
 #ifndef DISABLE_JIT
 

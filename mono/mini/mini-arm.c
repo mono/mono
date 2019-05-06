@@ -34,7 +34,6 @@
 #include "mini-runtime.h"
 #include "aot-runtime.h"
 #include "mono/arch/arm/arm-vfp-codegen.h"
-#include "mono/metadata/register-icall-def.h"
 
 /* Sanity check: This makes no sense */
 #if defined(ARM_FPU_NONE) && (defined(ARM_FPU_VFP) || defined(ARM_FPU_VFP_HARD))

@@ -40,7 +40,6 @@
 #include "mini-gc.h"
 #include "aot-runtime.h"
 #include "mini-runtime.h"
-#include "mono/metadata/register-icall-def.h"
 
 #ifndef TARGET_WIN32
 #ifdef MONO_XEN_OPT

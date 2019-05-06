@@ -68,7 +68,6 @@
 #include "mini-gc.h"
 #include "mini-llvm.h"
 #include "mini-runtime.h"
-#include "mono/metadata/register-icall-def.h"
 
 static MonoMethod*
 try_get_method_nofail (MonoClass *klass, const char *method_name, int param_count, int flags)
