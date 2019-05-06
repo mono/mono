@@ -197,8 +197,7 @@ namespace System
 					return true;
 				} else if (source.IsPrimitive && target.IsPrimitive) {
 					
-					// DefaultBinder.CanChangePrimitive for some reason doesn't allow UInt16 (0-65535) to Char (0-65535) conversion
-					// but does support Char to UInt16.
+					// Special case: normally C# doesn't allow implicit ushort->char cast).
 					if (source == typeof (ushort) && target == typeof (char))
 						return true;
 					
