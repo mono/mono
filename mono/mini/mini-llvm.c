@@ -7498,12 +7498,6 @@ is_externally_callable (EmitContext *ctx, MonoMethod *method)
 	return FALSE;
 }
 
-void
-mono_llvm_register_failure (MonoCompile *cfg)
-{
-	mono_aot_register_llvm_failure (cfg->method);
-}
-
 /*
  * mono_llvm_emit_method:
  *

@@ -274,6 +274,21 @@ typedef struct _UnwindInfoSectionCacheItem {
 } UnwindInfoSectionCacheItem;
 #endif
 
+typedef struct MonoAOTDirectCallStats {
+	guint32 wrappers;
+	guint32 pinvoke;
+	guint32 synchronized;
+	guint32 static_ctor;
+	guint32 begin_invoke;
+	guint32 end_invoke;
+	guint32 duplicated;
+	guint32 beforefieldinit;
+	guint32 privateimpl;
+	guint32 gsharedvt;
+	guint32 callee_failure;
+	guint32 success;
+} MonoAOTDirectCallStats;
+
 typedef struct MonoAotCompile {
 	MonoImage *image;
 	GPtrArray *methods;
@@ -362,7 +377,7 @@ typedef struct MonoAotCompile {
 	gboolean llvm;
 	gboolean has_jitted_code;
 	gboolean is_full_aot;
-	gboolean dedup_collect_only;
+	gboolean silent_aot;
 	MonoAotFileFlags flags;
 	MonoDynamicStream blob;
 	gboolean blob_closed;
@@ -390,6 +405,7 @@ typedef struct MonoAotCompile {
 	int gc_name_offset;
 	// In this mode, we are emitting dedupable methods that we encounter
 	gboolean dedup_emit_mode;
+	MonoAOTDirectCallStats direct_call_stats;
 } MonoAotCompile;
 
 typedef struct {
@@ -9532,53 +9548,87 @@ mono_aot_has_external_symbol (MonoMethod *method)
 	return TRUE;
 }
 
+static void
+aot_direct_call_log_stat (const char *name, int count)
+{
+	if (count)
+		aot_printf (llvm_acfg, "\tIndirection Cause: %s Count: %d\n", name, count);
+}
+
+static void
+mono_aot_direct_call_stats (MonoAotCompile *acfg)
+{
+	aot_printf (acfg, "Call indirection stats:\n");
+	aot_printf (acfg, "\tDirect Calls Made: %d\n", acfg->direct_call_stats.success);
+	aot_direct_call_log_stat ("Wrappers", acfg->direct_call_stats.wrappers);
+	aot_direct_call_log_stat ("Pinvoke", acfg->direct_call_stats.pinvoke);
+	aot_direct_call_log_stat ("Synchronized", acfg->direct_call_stats.synchronized);
+	aot_direct_call_log_stat ("Static Ctor", acfg->direct_call_stats.static_ctor);
+	aot_direct_call_log_stat ("BeginInvoke", acfg->direct_call_stats.begin_invoke);
+	aot_direct_call_log_stat ("Duplicated", acfg->direct_call_stats.duplicated);
+	aot_direct_call_log_stat ("BeforeFieldInit", acfg->direct_call_stats.beforefieldinit);
+	aot_direct_call_log_stat ("PrivateImpl", acfg->direct_call_stats.privateimpl);
+	aot_direct_call_log_stat ("GSharedVT", acfg->direct_call_stats.gsharedvt);
+}
+
 gboolean
 mono_aot_can_directly_call (MonoMethod *method)
 {
 	if (method->wrapper_type != MONO_WRAPPER_NONE) {
+		llvm_acfg->direct_call_stats.wrappers++;
 		return FALSE;
 	}
 
 	if (method->signature->pinvoke) {
+		llvm_acfg->direct_call_stats.pinvoke++;
 		return FALSE;
 	}
 
 	if (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) {
+		llvm_acfg->direct_call_stats.synchronized++;
 		return FALSE;
 	}
 
 	if (!strcmp (method->name, ".cctor")) {
+		llvm_acfg->direct_call_stats.static_ctor++;
 		return FALSE;
 	}
 
 	if (!strcmp (method->name, "BeginInvoke")) {
+		llvm_acfg->direct_call_stats.begin_invoke++;
 		return FALSE;
 	}
 
 	if (!strcmp (method->name, "EndInvoke")) {
+		llvm_acfg->direct_call_stats.end_invoke++;
 		return FALSE;
 	}
 
 	gboolean dedup_mode = llvm_acfg->aot_opts.dedup_include || llvm_acfg->aot_opts.dedup;
 	gboolean duplicated = !dedup_mode && mono_aot_can_dedup (method);
 	if (duplicated) {
+		llvm_acfg->direct_call_stats.duplicated++;
 		return FALSE;
 	}
 
 	// FIXME: this blocks a *lot* of direct calls. Remove.
 	if (mono_class_is_before_field_init (method->klass)) {
+		llvm_acfg->direct_call_stats.beforefieldinit++;
 		return FALSE;
 	}
 
 	const char *klass_name = m_class_get_name (method->klass);
 	if (strstr (klass_name, "<PrivateImplementationDetails>") == klass_name) {
+		llvm_acfg->direct_call_stats.privateimpl++;
 		return FALSE;
 	}
 
 	if (mini_is_gsharedvt_sharable_method (method)) {
+		llvm_acfg->direct_call_stats.gsharedvt++;
 		return FALSE;
 	}
 
+	llvm_acfg->direct_call_stats.success++;
 	return TRUE;
 }
 
@@ -13204,6 +13254,8 @@ typedef struct {
 	MonoAssembly *inflated_assembly;
 
 	GHashTable *callee_failures;
+	gboolean collecting_callee_failures;
+
 	gboolean emit_target_assemblies;
 } MonoAotState;
 
@@ -13217,6 +13269,8 @@ alloc_aot_state (void)
 	// Start in "collect mode"
 	state->emit_inflated_methods = FALSE;
 	state->emit_target_assemblies = FALSE;
+	state->collecting_callee_failures = FALSE;
+
 	state->callee_failures = g_hash_table_new (g_str_hash, g_str_equal);
 
 	state->inflated_assembly = NULL;
@@ -13393,7 +13447,7 @@ mono_compile_assemblies (MonoDomain *domain, char **argv, int argc, guint32 opts
 		}
 
 		if (aot_opts.dedup_include || aot_opts.dedup) {
-			g_hash_table_insert (to_preprocess, target_assembly, target_assembly);
+			g_hash_table_insert (to_preprocess, target_assembly, (gpointer *) argv [a]);
 			continue;
 		}
 
@@ -13417,19 +13471,16 @@ mono_compile_assemblies (MonoDomain *domain, char **argv, int argc, guint32 opts
 	}
 
 	MonoAotState *aot_state = alloc_aot_state ();
+	aot_state->collecting_callee_failures = TRUE;
 	MonoAssembly *assem = NULL;
 	GHashTableIter iter;
 
-	fprintf (stderr, "AOT: Analyzing support assemblies\n");
-
 	g_hash_table_iter_init (&iter, to_preprocess);
 	while (g_hash_table_iter_next (&iter, (gpointer *) &assem, NULL)) {
-		fprintf (stderr, "AOT: Analyzing %s\n", assem->image->name);
-
 		int res = mono_compile_assembly (assem, opts, aot_options, (gpointer) &aot_state);
 
 		if (res != 0) {
-			fprintf (stderr, "AOT of image %s failed.\n", assem->image->name);
+			fprintf (stderr, "AOT-time preprocessing of image %s failed.\n", assem->image->name);
 			exit (1);
 		}
 	}
@@ -13437,14 +13488,14 @@ mono_compile_assemblies (MonoDomain *domain, char **argv, int argc, guint32 opts
 	if (aot_opts.dedup_include)
 		aot_state->emit_inflated_methods = TRUE;
 
-	if (!aot_opts.disable_direct_external_calls)
+	if (!aot_opts.disable_direct_external_calls) {
 		aot_state->emit_target_assemblies = TRUE;
-
-	fprintf (stderr, "AOT: Compiling target assemblies\n");
+		aot_state->collecting_callee_failures = FALSE;
+	}
 
 	g_hash_table_iter_init (&iter, to_emit);
 	while (g_hash_table_iter_next (&iter, (gpointer *) &assem, NULL)) {
-		fprintf (stderr, "AOT: Compiling %s\n", assem->image->name);
+		g_assert (!aot_state->collecting_callee_failures);
 
 		int res = mono_compile_assembly (assem, opts, aot_options, (gpointer) &aot_state);
 		if (res != 0) {
@@ -13507,9 +13558,15 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (target_codegen_assembly && astate && !astate->emit_target_assemblies)
 		return 0;
 
+	// Don't log when not doing code emission
 	if (acfg->aot_opts.dedup_include && !is_dedup_dummy)
-		acfg->dedup_collect_only = TRUE;
+		acfg->silent_aot = TRUE;
+
+	if (astate->collecting_callee_failures)
+		acfg->silent_aot = TRUE;
+
 	// end dedup
+
 
 	if (acfg->aot_opts.logfile) {
 		acfg->logfile = fopen (acfg->aot_opts.logfile, "a+");
@@ -13550,14 +13607,14 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (acfg->opts & MONO_OPT_GSHAREDVT)
 		mono_set_generic_sharing_vt_supported (TRUE);
 
-	if (!acfg->dedup_collect_only)
+	if (!acfg->silent_aot)
 		aot_printf (acfg, "Mono Ahead of Time compiler - compiling assembly %s\n", image->name);
 
 	if (!acfg->aot_opts.deterministic)
 		generate_aotid ((guint8*) &acfg->image->aotid);
 
 	char *aotid = mono_guid_to_string (acfg->image->aotid);
-	if (!acfg->dedup_collect_only)
+	if (!acfg->silent_aot)
 		aot_printf (acfg, "AOTID %s\n", aotid);
 	g_free (aotid);
 
@@ -13797,6 +13854,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (acfg->aot_opts.dedup_include && !is_dedup_dummy)
 		/* We only collected methods from this assembly */
 		return 0;
+
 	if (!acfg->aot_opts.disable_direct_external_calls && !target_codegen_assembly)
 		return 0;
 
@@ -13866,6 +13924,9 @@ print_stats (MonoAotCompile *acfg)
 
 	if (acfg->aot_opts.dedup || acfg->dedup_emit_mode)
 		mono_dedup_log_stats (acfg);
+
+	if (acfg->aot_opts.llvm || mono_use_llvm)
+		mono_aot_direct_call_stats (acfg);
 }
 
 static void
