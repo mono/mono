@@ -329,7 +329,7 @@ WriteZStream (ZStream *stream, guchar *buffer, gint length)
 MonoMethod* 
 GetReadOrWriteCallback (gint compress, void *gchandle)
 {
-	MonoObject* callback = mono_gchandle_get_target (gchandle);
+	MonoObject* callback = mono_gchandle_get_target ((guint32)gchandle);
 	if (!callback) {
 		fprintf(stderr, "Error: zlib-helper - Callback target not found.\n");
 		return NULL;
