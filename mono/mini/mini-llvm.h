@@ -33,6 +33,7 @@ MONO_API void mono_personality              (void);
 int      mono_llvm_load                     (const char* bpath);
 void     mono_llvm_create_vars (MonoCompile *cfg) MONO_LLVM_INTERNAL;
 void     mono_llvm_fixup_aot_module         (void) MONO_LLVM_INTERNAL;
+void     mono_llvm_register_failure         (MonoCompile *cfg) MONO_LLVM_INTERNAL;
 
 gboolean mini_llvm_init                     (void);
 

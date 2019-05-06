@@ -462,6 +462,18 @@ mono_llvm_add_func_attr (LLVMValueRef func, AttrKind kind)
 #endif
 }
 
+LLVMTypeRef
+mono_llvm_get_function_type (LLVMValueRef func)
+{
+	return wrap (unwrap<Function>(func)->getFunctionType ());
+}
+
+LLVMTypeRef
+mono_llvm_get_ptr_dst_type (LLVMTypeRef ptr)
+{
+	return wrap (unwrap<PointerType>(ptr)->getElementType ());
+}
+
 void
 mono_llvm_add_param_attr (LLVMValueRef param, AttrKind kind)
 {

@@ -204,6 +204,7 @@ typedef struct MonoAotOptions {
 	// The name of the assembly for which the AOT module is going to have all deduped methods moved to. 
 	// When set, we are emitting inflated methods only
 	char *dedup_include; 
+	gboolean disable_direct_external_calls;
 	gboolean gnu_asm;
 	gboolean try_llvm;
 	gboolean llvm;
@@ -297,6 +298,7 @@ typedef struct MonoAotCompile {
 	GPtrArray *method_order;
 	GHashTable *dedup_stats;
 	GHashTable *dedup_cache;
+	GHashTable *callee_failures;
 	gboolean dedup_cache_changed;
 	GHashTable *export_names;
 	/* Maps MonoClass* -> blob offset */
@@ -4096,6 +4098,17 @@ add_method (MonoAotCompile *acfg, MonoMethod *method)
 	return add_method_full (acfg, method, FALSE, 0);
 }
 
+void
+mono_aot_register_llvm_failure (MonoMethod *method)
+{
+	if (!mono_aot_can_directly_call (method))
+		return;
+
+	char *name = mono_aot_get_mangled_method_name (method);
+	if (llvm_acfg->callee_failures)
+		g_hash_table_insert (llvm_acfg->callee_failures, name, name);
+}
+
 static void
 mono_dedup_cache_method (MonoAotCompile *acfg, MonoMethod *method)
 {
@@ -6389,25 +6402,24 @@ emit_method_code (MonoAotCompile *acfg, MonoCompile *cfg)
 		 *   yet supported.
 		 * - it allows the setting of breakpoints of aot-ed methods.
 		 */
+		gboolean duplicated = mono_aot_can_dedup (method) && !(acfg->aot_opts.dedup || acfg->aot_opts.dedup_include);
+		gboolean direct_calls = !acfg->aot_opts.disable_direct_external_calls && (mono_use_llvm || acfg->aot_opts.llvm);
+		gboolean external = duplicated || !direct_calls;
 
-		// Comment out to force dedup to link these symbols and forbid compiling
-		// in duplicated code. This is an "assert when linking if broken" trick.
-		/*if (mono_aot_can_dedup (method) && (acfg->aot_opts.dedup || acfg->aot_opts.dedup_include))*/
-			/*debug_sym = mono_aot_get_mangled_method_name (method);*/
-		/*else*/
+		if (external)
 			debug_sym = get_debug_sym (method, "", acfg->method_label_hash);
+		else
+			debug_sym = mono_aot_get_mangled_method_name (method);
 
 		cfg->asm_debug_symbol = g_strdup (debug_sym);
 
 		if (acfg->need_no_dead_strip)
 			fprintf (acfg->fp, "	.no_dead_strip %s\n", debug_sym);
 
-		// Comment out to force dedup to link these symbols and forbid compiling
-		// in duplicated code. This is an "assert when linking if broken" trick.
-		/*if (mono_aot_can_dedup (method) && (acfg->aot_opts.dedup || acfg->aot_opts.dedup_include))*/
-			/*emit_global_inner (acfg, debug_sym, TRUE);*/
-		/*else*/
+		if (external)
 			emit_local_symbol (acfg, debug_sym, symbol, TRUE);
+		else
+			emit_global_inner (acfg, debug_sym, TRUE);
 
 		emit_label (acfg, debug_sym);
 	}
@@ -9186,6 +9198,9 @@ sanitize_mangled_string (const char *input)
 		case '(':
 			g_string_append (s, "_lparen_");
 			break;
+		case '|':
+			g_string_append (s, "_vertbar_");
+			break;
 		case '-':
 			g_string_append (s, "_dash_");
 			break;
@@ -9492,6 +9507,81 @@ mono_aot_get_mangled_method_name (MonoMethod *method)
 		return cleaned;
 	}
 }
+
+gboolean
+mono_aot_has_external_symbol (MonoMethod *method)
+{
+	if (!mono_aot_can_directly_call (method))
+		return FALSE;
+
+	// Now that we know that we *can* make this a directly-called
+	// method, we have to ask *did* we? 
+	gchar *name = mono_aot_get_mangled_method_name (method);
+	gboolean failed = g_hash_table_lookup (llvm_acfg->callee_failures, name) != NULL;
+	g_free (name);
+
+	if (failed)
+		return FALSE;
+
+	// FIXME: cache by making per-assembly file of failures,
+	// memoize this without introducing true build dependency
+
+	// Can't just look the symbol up because it would prohibit
+	// circular direct calls
+
+	return TRUE;
+}
+
+gboolean
+mono_aot_can_directly_call (MonoMethod *method)
+{
+	if (method->wrapper_type != MONO_WRAPPER_NONE) {
+		return FALSE;
+	}
+
+	if (method->signature->pinvoke) {
+		return FALSE;
+	}
+
+	if (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) {
+		return FALSE;
+	}
+
+	if (!strcmp (method->name, ".cctor")) {
+		return FALSE;
+	}
+
+	if (!strcmp (method->name, "BeginInvoke")) {
+		return FALSE;
+	}
+
+	if (!strcmp (method->name, "EndInvoke")) {
+		return FALSE;
+	}
+
+	gboolean dedup_mode = llvm_acfg->aot_opts.dedup_include || llvm_acfg->aot_opts.dedup;
+	gboolean duplicated = !dedup_mode && mono_aot_can_dedup (method);
+	if (duplicated) {
+		return FALSE;
+	}
+
+	// FIXME: this blocks a *lot* of direct calls. Remove.
+	if (mono_class_is_before_field_init (method->klass)) {
+		return FALSE;
+	}
+
+	const char *klass_name = m_class_get_name (method->klass);
+	if (strstr (klass_name, "<PrivateImplementationDetails>") == klass_name) {
+		return FALSE;
+	}
+
+	if (mini_is_gsharedvt_sharable_method (method)) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 
 gboolean
 mono_aot_is_direct_callable (MonoJumpInfo *patch_info)
@@ -11928,7 +12018,7 @@ compile_asm (MonoAotCompile *acfg)
 #define LD_OPTIONS "-dynamiclib"
 #elif defined(TARGET_AMD64) && defined(TARGET_MACH)
 #define LD_NAME "clang"
-#define LD_OPTIONS "--shared"
+#define LD_OPTIONS "-undefined dynamic_lookup --shared"
 #elif defined(TARGET_WIN32_MSVC)
 #define LD_NAME "link.exe"
 #define LD_OPTIONS "/DLL /MACHINE:X64 /NOLOGO /INCREMENTAL:NO"
@@ -13112,6 +13202,7 @@ typedef struct {
 	GHashTable *stats;
 	gboolean emit_inflated_methods;
 	MonoAssembly *inflated_assembly;
+	gboolean emit_target_assemblies;
 } MonoAotState;
 
 static MonoAotState *
@@ -13149,6 +13240,32 @@ mono_add_deferred_extra_methods (MonoAotCompile *acfg, MonoAotState *astate)
 	}
 	return;
 }
+
+static void
+mono_setup_direct_external_call_state (MonoAotCompile *acfg, MonoAotState **global_aot_state, MonoAssembly *ass, MonoAotState **astate, gboolean *target_codegen_assembly)
+{
+	if (acfg->aot_opts.disable_direct_external_calls)
+		return;
+
+	// Since we emit all of our target assemblies after the dependencies are processed,
+	// here we know we are a targeted assembly if the shared state has been set
+	if (global_aot_state && *global_aot_state && (*global_aot_state)->emit_target_assemblies) {
+		*target_codegen_assembly = TRUE;
+	}
+
+	if (global_aot_state && *global_aot_state && acfg->aot_opts.dedup_include) {
+	// Thread the state through when making the inflate pass
+		*astate = *global_aot_state;
+	}
+
+	if (!*astate) {
+		*astate = alloc_aot_state ();
+		*global_aot_state = *astate;
+	}
+
+	acfg->llvm_failures = (*astate)->llvm_failures;
+}
+
 
 static void
 mono_setup_dedup_state (MonoAotCompile *acfg, MonoAotState **global_aot_state, MonoAssembly *ass, MonoAotState **astate, gboolean *is_dedup_dummy) 
@@ -13192,36 +13309,6 @@ mono_setup_dedup_state (MonoAotCompile *acfg, MonoAotState **global_aot_state, M
 	}
 }
 
-int 
-mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpointer **aot_state)
-{
-	// create assembly, loop and add extra_methods
-	// in add_generic_instances , rip out what's in that for loop
-	// and apply that to this aot_state inside of mono_compile_assembly
-	MonoAotState *astate;
-	astate = *(MonoAotState **)aot_state;
-	g_assert (astate);
-
-	// FIXME: allow suffixes?
-	if (!astate->inflated_assembly) {
-		const char* inflate = strstr (aot_options, "dedup-inflate");
-		if (!inflate)
-			return 0;
-		else 
-			g_error ("Error: mono was not given an assembly with the provided inflate name\n");
-	}
-
-	// Switch modes
-	astate->emit_inflated_methods = TRUE;
-
-	int res = mono_compile_assembly (astate->inflated_assembly, opts, aot_options, aot_state);
-
-	*aot_state = NULL;
-	free_aot_state (astate);
-
-	return res;
-}
-
 #ifndef MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE
 static MonoMethodSignature * const * const interp_in_static_sigs [] = {
     &mono_icall_sig_bool_ptr_int32_ptrref,
@@ -13255,6 +13342,99 @@ static MonoMethodSignature * const * const interp_in_static_sigs [] = {
     &mono_icall_sig_void,
 };
 #endif
+
+int
+mono_compile_assemblies (MonoDomain *domain, const char *argv, int argc, guint32 opts, const char *aot_options)
+{
+	GHashTable *to_preprocess;
+	GHashTable *to_emit;
+
+	MonoAotOptions *aot_opts;
+	mono_aot_parse_options (aot_options, aot_opts);
+
+	for (int a = 0; a < argc; a++) {
+		MonoAssembly *target_assembly = mono_domain_assembly_open (domain, argv [a]);
+
+		if (!target_assembly) {
+			fprintf (stderr, "Can not open image %s\n", main_args->argv [i]);
+			exit (1);
+		}
+
+		/* Check that the assembly loaded matches the filename */
+		MonoImageOpenStatus status;
+		MonoImage *img = mono_image_open (argv [a], &status);
+		if (img && strcmp (img->name, target_assembly->image->name)) {
+			fprintf (stderr, "Error: Loaded assembly '%s' doesn't match original file name '%s'. Set MONO_PATH to the assembly's location.\n", assembly->image->name, img->name);
+			exit (1);
+		}
+
+		if (aot_opts.dedup_include) {
+			gchar **asm_path = g_strsplit (ass->image->name, G_DIR_SEPARATOR_S, 0);
+			gchar *asm_file = NULL;
+
+			// Get the last part of the path, the filename
+			for (int i=0; asm_path [i] != NULL; i++)
+				asm_file = asm_path [i];
+
+			gboolean is_dedup_dummy = !strcmp (acfg->aot_opts.dedup_include, asm_file);
+			g_strfreev (asm_path);
+
+			if (is_dedup_dummy) {
+				g_hash_table_insert (to_emit, target_assembly, target_assembly);
+				continue;
+			}
+		}
+
+		if (aot_opts.dedup_include || aot_opts.dedup_skip) {
+			g_hash_table_insert (to_preprocess, target_assembly, target_assembly);
+			continue;
+		}
+
+		g_hash_table_insert (to_emit, target_assembly, target_assembly);
+
+		if (aot_opts.llvm && !aot_opts.disable_direct_external_calls) {
+			/* Load and precompile referenced assemblies as well */
+			int nrows = mono_image_get_table_rows (assembly->image, MONO_TABLE_ASSEMBLYREF);
+			for (i = 0; i < nrows; ++i) {
+				mono_assembly_load_reference (assembly->image, i);
+
+				// FIXME: memoize per-assembly with file, maybe skip compiling
+				MonoAssembly *referenced_assembly = image->references [i];
+				g_hash_table_insert (to_preprocess, referenced_assembly, referenced_assembly);
+			}
+		}
+	}
+
+	gpointer *aot_state = NULL;
+	GHashTableIter iter = NULL;
+	MonoAssembly *assm = NULL;
+
+	g_hash_table_iter_init (&iter, to_preprocess);
+	while (g_hash_table_iter_next (&iter, &assem, NULL)) {
+		int res = mono_compile_assembly (ass, opts, aot_options, &aot_state);
+		if (res != 0) {
+			fprintf (stderr, "AOT of image %s failed.\n", assm->image->name);
+			exit (1);
+		}
+	}
+
+	if (aot_opts.dedup_include)
+		aot_state->emit_inflated_methods = TRUE;
+
+	if (aot_state)
+		aot_state->emit_target_assemblies = TRUE;
+
+	g_hash_table_iter_init (&iter, to_emit);
+	while (g_hash_table_iter_next (&iter, &assem, NULL)) {
+		int res = mono_compile_assembly (ass, opts, aot_options, &aot_state);
+		if (res != 0) {
+			fprintf (stderr, "Deferred AOT of image %s failed.\n", assm->image->name);
+			exit (1);
+		}
+	}
+
+	g_assert (aot_state);
+}
 
 int
 mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options, gpointer **global_aot_state)
@@ -13292,10 +13472,13 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	MonoAotState *astate = NULL;
 	gboolean is_dedup_dummy = FALSE;
 	mono_setup_dedup_state (acfg, (MonoAotState **) global_aot_state, ass, &astate, &is_dedup_dummy);
+	mono_setup_direct_external_call_state (acfg, (MonoAotState **) global_aot_state, ass, &astate, &target_codegen_assembly);
 
 	// Process later
 	if (is_dedup_dummy && astate && !astate->emit_inflated_methods)
 		return 0; 
+	if (target_codegen_assembly && astate && !astate->emit_target_assemblies)
+		return 0;
 
 	if (acfg->aot_opts.dedup_include && !is_dedup_dummy)
 		acfg->dedup_collect_only = TRUE;
@@ -13586,6 +13769,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 
 	if (acfg->aot_opts.dedup_include && !is_dedup_dummy)
 		/* We only collected methods from this assembly */
+		return 0;
+	if (!acfg->aot_opts.disable_direct_external_calls && !target_codegen_assembly)
 		return 0;
 
 	return emit_aot_image (acfg);
@@ -13929,6 +14114,12 @@ void*
 mono_aot_readonly_field_override (MonoClassField *field)
 {
 	return NULL;
+}
+
+int
+mono_compile_assemblies (MonoDomain *domain, char **argv, int argc, guint32 opts, const char *aot_options)
+{
+	return 0;
 }
 
 int

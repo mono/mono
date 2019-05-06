@@ -130,6 +130,12 @@ mono_llvm_set_call_noalias_ret (LLVMValueRef wrapped_calli);
 void
 mono_llvm_add_func_attr (LLVMValueRef func, AttrKind kind);
 
+LLVMTypeRef
+mono_llvm_get_function_type (LLVMValueRef func);
+
+LLVMTypeRef
+mono_llvm_get_ptr_dst_type (LLVMTypeRef ptr);
+
 void
 mono_llvm_add_param_attr (LLVMValueRef param, AttrKind kind);
 

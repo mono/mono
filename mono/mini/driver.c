@@ -1346,40 +1346,7 @@ static void main_thread_handler (gpointer user_data)
 	MonoAssembly *assembly;
 
 	if (mono_compile_aot) {
-		int i, res;
-		gpointer *aot_state = NULL;
-
-		/* Treat the other arguments as assemblies to compile too */
-		for (i = 0; i < main_args->argc; ++i) {
-			assembly = mono_domain_assembly_open (main_args->domain, main_args->argv [i]);
-			if (!assembly) {
-				fprintf (stderr, "Can not open image %s\n", main_args->argv [i]);
-				exit (1);
-			}
-			/* Check that the assembly loaded matches the filename */
-			{
-				MonoImageOpenStatus status;
-				MonoImage *img;
-
-				img = mono_image_open (main_args->argv [i], &status);
-				if (img && strcmp (img->name, assembly->image->name)) {
-					fprintf (stderr, "Error: Loaded assembly '%s' doesn't match original file name '%s'. Set MONO_PATH to the assembly's location.\n", assembly->image->name, img->name);
-					exit (1);
-				}
-			}
-			res = mono_compile_assembly (assembly, main_args->opts, main_args->aot_options, &aot_state);
-			if (res != 0) {
-				fprintf (stderr, "AOT of image %s failed.\n", main_args->argv [i]);
-				exit (1);
-			}
-		}
-		if (aot_state) {
-			res = mono_compile_deferred_assemblies (main_args->opts, main_args->aot_options, &aot_state);
-			if (res != 0) {
-				fprintf (stderr, "AOT of mode-specific deferred assemblies failed.\n");
-				exit (1);
-			}
-		}
+		mono_compile_assemblies (main_args->domain, main_args->argv, main_args->argc, main_args->opts, main_args->aot_options);
 	} else {
 		assembly = mono_domain_assembly_open (main_args->domain, main_args->file);
 		if (!assembly){

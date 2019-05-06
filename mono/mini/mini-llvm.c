@@ -1901,44 +1901,42 @@ get_callee_llvmonly (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType ty
 	 */
 	if (type == MONO_PATCH_INFO_METHOD) {
 		MonoMethod *method = (MonoMethod*)data;
-		if (m_class_get_image (method->klass)->assembly == ctx->module->assembly) {
-			MonoJumpInfo tmp_ji;
-			tmp_ji.type = type;
-			tmp_ji.data.target = data;
+		MonoJumpInfo tmp_ji;
+		tmp_ji.type = type;
+		tmp_ji.data.target = data;
 
-			MonoJumpInfo *ji = mono_aot_patch_info_dup (&tmp_ji);
-			ji->next = ctx->cfg->patch_info;
-			ctx->cfg->patch_info = ji;
-			LLVMTypeRef llvm_type = LLVMPointerType (llvm_sig, 0);
+		MonoJumpInfo *ji = mono_aot_patch_info_dup (&tmp_ji);
+		ji->next = ctx->cfg->patch_info;
+		ctx->cfg->patch_info = ji;
+		LLVMTypeRef llvm_type = LLVMPointerType (llvm_sig, 0);
 
-			ctx->cfg->got_access_count ++;
+		ctx->cfg->got_access_count ++;
 
-			CallSite *info = g_new0 (CallSite, 1);
-			info->method = method;
-			info->ji = ji;
-			info->type = llvm_type;
+		CallSite *info = g_new0 (CallSite, 1);
+		info->method = method;
+		info->ji = ji;
+		info->type = llvm_type;
 
-			/*
-			 * Emit a dummy load to represent the callee, and either replace it with
-			 * a reference to the llvm method for the callee, or from a load from the
-			 * GOT.
-			 */
-			LLVMValueRef indexes [2];
-			LLVMValueRef got_entry_addr, load;
+		/*
+		 * Emit a dummy load to represent the callee, and either replace it with
+		 * a reference to the llvm method for the callee, or from a load from the
+		 * GOT.
+		 */
+		LLVMValueRef indexes [2];
+		LLVMValueRef got_entry_addr, load;
 
-			LLVMBuilderRef builder = ctx->builder;
-			indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
-			indexes [1] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
-			got_entry_addr = LLVMBuildGEP (builder, ctx->module->got_var, indexes, 2, "");
+		LLVMBuilderRef builder = ctx->builder;
+		indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+		indexes [1] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
+		got_entry_addr = LLVMBuildGEP (builder, ctx->module->got_var, indexes, 2, "");
 
-			load = LLVMBuildLoad (builder, got_entry_addr, "");
-			load = convert (ctx, load, llvm_type);
-			info->load = load;
+		load = LLVMBuildLoad (builder, got_entry_addr, "");
+		load = convert (ctx, load, llvm_type);
+		info->load = load;
 
-			g_ptr_array_add (ctx->callsite_list, info);
+		g_ptr_array_add (ctx->callsite_list, info);
 
-			return load;
-		}
+		return load;
 	}
 
 	/*
@@ -7494,7 +7492,16 @@ is_externally_callable (EmitContext *ctx, MonoMethod *method)
 {
 	if (ctx->module->llvm_only && ctx->module->static_link && (method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE || method_is_direct_callable (method)))
 		return TRUE;
+	if (mono_aot_can_directly_call (method))
+		return TRUE;
+
 	return FALSE;
+}
+
+void
+mono_llvm_register_failure (MonoCompile *cfg)
+{
+	mono_aot_register_llvm_failure (cfg->method);
 }
 
 /*
@@ -9072,6 +9079,12 @@ mono_llvm_fixup_aot_module (void)
 				g_hash_table_insert (specializable, lmethod, method);
 
 			g_hash_table_insert (patches_to_null, site->ji, site->ji);
+		} else if (!lmethod && method->klass->image->assembly != module->assembly && mono_aot_has_external_symbol (method)) {
+			LLVMTypeRef llvm_sig = mono_llvm_get_ptr_dst_type (site->type);
+			LLVMValueRef external_method = LLVMAddFunction (module->lmodule, mono_aot_get_mangled_method_name (method), llvm_sig);
+
+			mono_llvm_replace_uses_of (placeholder, external_method);
+			g_hash_table_insert (patches_to_null, site->ji, site->ji);
 		} else {
 			int got_offset = compute_aot_got_offset (module, site->ji, site->type);
 
@@ -9643,10 +9656,15 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 
 		g_hash_table_iter_init (&iter, module->plt_entries_ji);
 		while (g_hash_table_iter_next (&iter, (void**)&ji, (void**)&callee)) {
+			if (ji->type != MONO_PATCH_INFO_METHOD)
+				continue;
+
+			MonoMethod *method = ji->data.method;
+
 			if (mono_aot_is_direct_callable (ji)) {
 				LLVMValueRef lmethod;
 
-				lmethod = (LLVMValueRef)g_hash_table_lookup (module->method_to_lmethod, ji->data.method);
+				lmethod = (LLVMValueRef)g_hash_table_lookup (module->method_to_lmethod, method);
 				/* The types might not match because the caller might pass an rgctx */
 				if (lmethod && LLVMTypeOf (callee) == LLVMTypeOf (lmethod)) {
 					mono_llvm_replace_uses_of (callee, lmethod);
@@ -9654,8 +9672,24 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 					if (!module->llvm_disable_self_init && mono_aot_can_specialize (ji->data.method))
 						g_hash_table_insert (specializable, lmethod, ji->data.method);
 					mono_aot_mark_unused_llvm_plt_entry (ji);
+					continue;
 				}
+
+				if (lmethod)
+					continue;
 			}
+
+			if (method->klass->image->assembly != module->assembly) {
+				if (!mono_aot_has_external_symbol (method))
+					continue;
+
+				LLVMTypeRef llvm_sig = mono_llvm_get_function_type (callee);
+				LLVMValueRef external_method = LLVMAddFunction (module->lmodule, mono_aot_get_mangled_method_name (method), llvm_sig);
+				mono_llvm_replace_uses_of (callee, external_method);
+
+				mono_aot_mark_unused_llvm_plt_entry (ji);
+				continue;
+ 			}
 		}
 
 		mono_llvm_propagate_nonnull_final (specializable, module);

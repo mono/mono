@@ -8,6 +8,7 @@
 #include "mini.h"
 
 int mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options, gpointer **aot_state);
+int mono_compile_assemblies (MonoDomain *domain, char **argv, int argc, guint32 opts, const char *aot_options);
 int mono_compile_deferred_assemblies (guint32 opts, const char *aot_options, gpointer **aot_state);
 void* mono_aot_readonly_field_override (MonoClassField *field);
 gboolean mono_aot_direct_icalls_enabled_for_method (MonoCompile *cfg, MonoMethod *method);
@@ -16,6 +17,9 @@ gboolean mono_aot_is_shared_got_offset (int offset) MONO_LLVM_INTERNAL;
 guint32  mono_aot_get_got_offset            (MonoJumpInfo *ji) MONO_LLVM_INTERNAL;
 char*    mono_aot_get_method_name           (MonoCompile *cfg) MONO_LLVM_INTERNAL;
 char*    mono_aot_get_mangled_method_name   (MonoMethod *method) MONO_LLVM_INTERNAL;
+gboolean mono_aot_can_directly_call         (MonoMethod *method) MONO_LLVM_INTERNAL;
+void     mono_aot_register_llvm_failure     (MonoMethod *method) MONO_LLVM_INTERNAL;
+gboolean mono_aot_has_external_symbol       (MonoMethod *method) MONO_LLVM_INTERNAL;
 gboolean mono_aot_is_direct_callable        (MonoJumpInfo *patch_info) MONO_LLVM_INTERNAL;
 void     mono_aot_mark_unused_llvm_plt_entry(MonoJumpInfo *patch_info) MONO_LLVM_INTERNAL;
 char*    mono_aot_get_plt_symbol            (MonoJumpInfoType type, gconstpointer data) MONO_LLVM_INTERNAL;
