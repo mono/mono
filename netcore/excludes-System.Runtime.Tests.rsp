@@ -42,7 +42,6 @@
 
 # Implement more checks in Array.Copy
 -nomethod System.Tests.ArrayTests.SetValue_Casting_Invalid
--nomethod System.Tests.ArrayTests.Copy_SZArray
 -nomethod System.Tests.ArrayTests.CreateInstance_NotSupportedType_ThrowsNotSupportedException
 -nomethod System.Tests.ActivatorTests.CreateInstance_PrimitiveWidening_ThrowsInvalidCastException
 

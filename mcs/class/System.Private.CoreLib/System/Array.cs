@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Reflection;
 
 namespace System
 {
@@ -129,7 +128,7 @@ namespace System
 
 			Type src_type = sourceArray.GetType ().GetElementType ();
 			Type dst_type = destinationArray.GetType ().GetElementType ();
-			var dst_type_vt = dst_type.IsValueType;
+			var dst_type_vt = dst_type.IsValueType && Nullable.GetUnderlyingType(dst_type) == null;
 
 			if (src_type.IsEnum)
 				src_type = Enum.GetUnderlyingType (src_type);
