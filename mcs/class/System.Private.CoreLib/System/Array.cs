@@ -197,6 +197,12 @@ namespace System
 				} else if (source.IsPointer && target.IsPointer) {
 					return true;
 				} else if (source.IsPrimitive && target.IsPrimitive) {
+					
+					// DefaultBinder.CanChangePrimitive for some reason doesn't allow UInt16 (0-65535) to Char (0-65535) conversion
+					// but does support Char to UInt16.
+					if (source == typeof (ushort) && target == typeof (char))
+						return true;
+					
 					// Allow primitive type widening
 					return DefaultBinder.CanChangePrimitive (source, target);
 				} else if (!source.IsValueType && !source.IsPointer) {

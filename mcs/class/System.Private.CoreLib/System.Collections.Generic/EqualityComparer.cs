@@ -1,5 +1,7 @@
 using System.Runtime.CompilerServices;
 
+#nullable enable
+
 namespace System.Collections.Generic
 {
 	partial class EqualityComparer<T>
