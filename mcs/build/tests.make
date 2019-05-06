@@ -134,7 +134,7 @@ ifdef HAVE_CS_TESTS
 test_assemblies += $(test_lib_output)
 
 check: run-test
-test-local: $(test_assemblies)
+test-local: $(test_assemblies) $(test_lib_dir)/nunit-excludes.txt
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
@@ -233,6 +233,9 @@ else
 TEST_HARNESS_EXEC=$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(TEST_HARNESS)
 endif
 
+$(test_lib_dir)/nunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
+	@echo "$(TEST_HARNESS_EXCLUDES)" > $@
+
 ## FIXME: i18n problem in the 'sed' command below
 run-test-lib: test-local test-local-aot-compile copy-nunitlite-appconfig
 	ok=:; \
@@ -326,8 +329,11 @@ XTEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(P
 endif
 
 check: run-xunit-test-local
-xunit-test-local: $(xtest_lib_output)
+xunit-test-local: $(xtest_lib_output) $(test_lib_dir)/xunit-excludes.txt
 run-xunit-test-local: run-xunit-test-lib
+
+$(test_lib_dir)/xunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
+	@echo "$(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM)" > $@
 
 # cp -rf is a HACK for xunit runner to require xunit.execution.dOTNET.dll file in local folder on .net only
 run-xunit-test-lib: xunit-test-local
