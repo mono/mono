@@ -4387,15 +4387,6 @@ mini_init (const char *filename, const char *runtime_version)
 	return domain;
 }
 
-#ifdef MONO_ARCH_EMULATE_FREM
-// Wrapper to avoid taking address of overloaded function.
-double
-mono_fmod (double a, double b)
-{
-	return fmod (a, b);
-}
-#endif
-
 static void
 register_icalls (void)
 {
