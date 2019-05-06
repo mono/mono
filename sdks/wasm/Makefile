@@ -23,6 +23,19 @@ MINI_PATH=$(TOP)/mono/mini
 CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-wrapper $(CSC_LOCATION)
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
+MONO_SUPPORT=$(TOP)/support
+
+ZLIB_HEADERS = \
+	$(MONO_SUPPORT)/crc32.h		\
+	$(MONO_SUPPORT)/deflate.h  	\
+	$(MONO_SUPPORT)/inffast.h  	\
+	$(MONO_SUPPORT)/inffixed.h  	\
+	$(MONO_SUPPORT)/inflate.h  	\
+	$(MONO_SUPPORT)/inftrees.h  	\
+	$(MONO_SUPPORT)/trees.h  	\
+	$(MONO_SUPPORT)/zconf.h  	\
+	$(MONO_SUPPORT)/zlib.h  	\
+	$(MONO_SUPPORT)/zutil.h
 
 MINI_TEST_FILES= \
     TestDriver.cs   \
@@ -94,7 +107,7 @@ corebindings.o: corebindings.c
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o corebindings.o
 
 zlib-helper.o: zlib-helper.c
-	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(TOP)/support zlib-helper.c -c -o zlib-helper.o
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 -I$(MONO_SUPPORT) zlib-helper.c -c -o zlib-helper.o
 
 debug/:
 	mkdir -p $@
@@ -209,6 +222,13 @@ run-zlib-test: build-zlib-sample
 
 build-zlib-sample: packager.exe zlibtest.exe
 	mono packager.exe --nobinding --template=runtime-tests.js --out=bin/zlib-sample zlibtest.exe
+
+build-zlib-interp-sample: packager.exe zlibtest.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-zlib-sample --nobinding --builddir=obj/interp-zlib-sample --template=runtime-tests.js zlibtest.exe --linker --link-icalls
+	ninja -v -C obj/interp-zlib-sample
+
+run-zlib-interp-sample: build-zlib-interp-sample
+	(cd bin/interp-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
 hello.exe: hello.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello.cs
@@ -405,6 +425,8 @@ package: build build-dbg-proxy build-sdk
 	cp -r ./sdk/packages tmp/
 	mkdir tmp/Templates
 	cp -r ./sdk/Templates tmp/
+	mkdir tmp/support
+	cp -r $(ZLIB_HEADERS) tmp/support
 	(cd tmp;  zip -r9 ../mono-wasm-$(shell git rev-parse --short HEAD).zip .)
 	rm -rf tmp
 
