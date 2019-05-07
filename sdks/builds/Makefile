@@ -42,7 +42,6 @@ endif
 ifeq ($(UNAME),Windows)
 DISABLE_IOS=1
 DISABLE_MAC=1
-DISABLE_ANDROID=1
 DISABLE_WASM=1
 DISABLE_WASM_CROSS=1
 DISABLE_DESKTOP=1
@@ -181,9 +180,11 @@ include runtime.mk
 include bcl.mk
 
 ## MXE targets
+ifneq ($(BUILD_PLATFORM),CYGWIN)
 ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_WASM_CROSS)),)
 # FIXME add iOS support(?)
 include mxe.mk
+endif
 endif
 
 ## LLVM targets
