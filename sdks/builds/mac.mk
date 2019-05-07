@@ -1,4 +1,9 @@
 
+PKG_CONFIG_DIR = $(TOP)/sdks/out/mac-pkgconfig
+ADDITIONAL_PACKAGE_DEPS += $(PKG_CONFIG_DIR)/mono-2.pc
+
+mac_ARCHIVE += mac-pkgconfig
+
 ##
 # Parameters
 #  $(1): target
@@ -51,3 +56,7 @@ $(eval $(call MacTemplate,mac32,i386,$(XCODE32_DIR)))
 $(eval $(call MacTemplate,mac64,x86_64,$(XCODE_DIR)))
 
 $(eval $(call BclTemplate,mac,xammac xammac_net_4_5,xammac xammac_net_4_5))
+
+$(PKG_CONFIG_DIR)/mono-2.pc: package-mac-mac64
+	mkdir -p $(PKG_CONFIG_DIR)
+	cp -f $(TOP)/sdks/builds/mac-mac64-$(CONFIGURATION)/data/mono-2.pc $(PKG_CONFIG_DIR)
