@@ -363,7 +363,6 @@ class Driver {
 		var linkDescriptor = "";
 		string coremode, usermode;
 		var linker_verbose = false;
-		string zlib_includes = null;
 
 		var opts = new WasmOptions () {
 				AddBinding = true,
@@ -471,7 +470,6 @@ class Driver {
 			framework_prefix = Path.Combine (tool_prefix, "framework"); //all framework assemblies are currently side built to packager.exe
 			bcl_prefix = Path.Combine (sdkdir, "wasm-bcl/wasm");
 			bcl_tools_prefix = Path.Combine (sdkdir, "wasm-bcl/wasm_tools");
-			zlib_includes = Path.Combine (sdkdir, "../../support");
 		} else if (Directory.Exists (Path.Combine (tool_prefix, "../out/wasm-bcl/wasm"))) {
 			framework_prefix = Path.Combine (tool_prefix, "framework"); //all framework assemblies are currently side built to packager.exe
 			bcl_prefix = Path.Combine (tool_prefix, "../out/wasm-bcl/wasm");
@@ -671,7 +669,6 @@ class Driver {
 		// Defines
 		ninja.WriteLine ($"mono_sdkdir = {sdkdir}");
 		ninja.WriteLine ($"emscripten_sdkdir = {emscripten_sdkdir}");
-		ninja.WriteLine ($"zlib_includes = {zlib_includes}");
 		ninja.WriteLine ($"tool_prefix = {tool_prefix}");
 		ninja.WriteLine ($"appdir = {out_prefix}");
 		ninja.WriteLine ($"builddir = .");
@@ -763,7 +760,7 @@ class Driver {
 			ninja.WriteLine ($"build $builddir/zlib-helper.c: cpifdiff {zlib_source_file}");
 
 			ninja.WriteLine ($"build $builddir/zlib-helper.o: emcc $builddir/zlib-helper.c");
-			ninja.WriteLine ($"  flags = -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0 -I{zlib_includes}");
+			ninja.WriteLine ($"  flags = -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0 -I$mono_sdkdir/wasm-runtime-release/include/support");
 
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
