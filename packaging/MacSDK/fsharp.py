@@ -11,7 +11,8 @@ class FsharpPackage(GitHubTarballPackage):
         self.sources.extend(['patches/fsharp-portable-pdb.patch',
                              'patches/fsharp-string-switchName.patch',
                              'patches/fsharp-path-overloads.patch',
-                             'patches/fsharp-debug-pinvoke-fix.patch'])
+                             'patches/fsharp-debug-pinvoke-fix.patch',
+                             'patches/fsharp-msbuild-16-0.patch'])
 
     def prep(self):
         Package.prep(self)

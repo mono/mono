@@ -3263,6 +3263,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("System.Int32", t.FullName);
 		}
 
+/*
 		[Test]
 #if MONOTOUCH || FULL_AOT_RUNTIME
 		[ExpectedException (typeof (NotSupportedException))]
@@ -3321,6 +3322,7 @@ namespace MonoTests.System
 			var g0 = t.GetGenericArguments () [0];
 			Assert.AreSame (g0, ut, "#1");
 		}
+*/
 
 		[Test]
 		public void MakeGenericType_WrongNumOfArguments ()

@@ -3,33 +3,45 @@ properties([/* compressBuildLog() */])
 
 parallel (
     "Archive-android-debug-Darwin": {
-        node ("osx-devices") {
-            archive ("android", "debug", "Darwin")
+        throttle(['provisions-android-toolchain']) {
+            node ("osx-devices") {
+                archive ("android", "debug", "Darwin")
+            }
         }
     },
     "Archive-android-release-Darwin": {
-        node ("osx-devices") {
-            archive ("android", "release", "Darwin")
+        throttle(['provisions-android-toolchain']) {
+            node ("osx-devices") {
+                archive ("android", "release", "Darwin")
+            }
         }
     },
     // "Archive-android-debug-Linux": {
-    //     node ("debian-9-amd64multiarchi386-preview") {
-    //         archive ("android", "debug", "Linux",)
+    //     throttle(['provisions-android-toolchain']) {
+    //         node ("debian-9-amd64multiarchi386-preview") {
+    //             archive ("android", "debug", "Linux",)
+    //         }
     //     }
     // },
     // "Archive-android-release-Linux": {
-    //     node ("debian-9-amd64multiarchi386-preview") {
-    //         archive ("android", "release", "Linux",)
+    //     throttle(['provisions-android-toolchain']) {
+    //         node ("debian-9-amd64multiarchi386-preview") {
+    //             archive ("android", "release", "Linux",)
+    //         }
     //     }
     // },
     "Archive-ios-release-Darwin": {
-        node ("osx-devices") {
-            archive ("ios", "release", "Darwin")
+        throttle(['provisions-ios-toolchain']) {
+            node ("osx-devices") {
+                archive ("ios", "release", "Darwin")
+            }
         }
     },
     "Archive-wasm-release-Linux": {
-        node ("ubuntu-1804-amd64") {
-            archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget")
+        throttle(['provisions-wasm-toolchain']) {
+            node ("ubuntu-1804-amd64") {
+                archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget")
+            }
         }
     }
 )
@@ -66,19 +78,17 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                     // build the Archive
                     timeout (time: 300, unit: 'MINUTES') {
-                        lock ("${product}-${env.NODE_NAME}") {
-                            if (platform == "Darwin") {
-                                def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz"
-                                sh "brew install ${brewpackages} || brew upgrade ${brewpackages}"
+                        if (platform == "Darwin") {
+                            def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz mingw-w64 make"
+                            sh "brew install ${brewpackages} || brew upgrade ${brewpackages}"
 
-                                sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"
-                            } else if (platform == "Linux") {
-                                chroot chrootName: chrootname,
-                                    command: "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh",
-                                    additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
-                            } else {
-                                throw new Exception("Unknown platform \"${platform}\"")
-                            }
+                            sh "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh"
+                        } else if (platform == "Linux") {
+                            chroot chrootName: chrootname,
+                                command: "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh",
+                                additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
+                        } else {
+                            throw new Exception("Unknown platform \"${platform}\"")
                         }
                     }
                     // move Archive to the workspace root

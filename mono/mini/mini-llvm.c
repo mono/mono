@@ -8621,6 +8621,14 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	add_intrinsics (module->lmodule);
 	add_types (module);
 
+#ifdef MONO_ARCH_LLVM_TARGET_LAYOUT
+	LLVMSetDataLayout (module->lmodule, MONO_ARCH_LLVM_TARGET_LAYOUT);
+#endif
+
+#ifdef MONO_ARCH_LLVM_TARGET_TRIPLE
+	LLVMSetTarget (module->lmodule, MONO_ARCH_LLVM_TARGET_TRIPLE);
+#endif
+
 #if LLVM_API_VERSION > 100
 	if (module->emit_dwarf) {
 		char *dir, *build_info, *s, *cu_name;
