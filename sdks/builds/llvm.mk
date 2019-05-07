@@ -35,8 +35,28 @@ archive-$(1)-$(2): package-$(1)-$(2)
 	tar -cvzf $$(TOP)/$$(_$(1)-$(2)_PACKAGE) -C $$(TOP)/sdks/out/$(1)-$(2) .
 endef
 
+# LLVMProvisionTemplateStub
+#    Doesn't actually provision anything - used to mark work that's not done.
+# $(1): version
+# $(2): target
+define LLVMProvisionTemplateStub
+.PHONY: provision-$(1)-$(2)
+provision-$(1)-$(2): $(3)
+	@echo "TODO: provision $(1)-$(2) on $(UNAME)"
+
+.PHONY: archive-$(1)-$(2)
+archive-$(1)-$(2):
+	@echo "TODO: archive $(1)-$(2) on $(UNAME)"
+endef
+
+# TODO: provision LLVM on win32
+ifeq ($(BUILD_PLATFORM),CYGWIN)
+$(eval $(call LLVMProvisionTemplateStub,llvm,llvm32))
+$(eval $(call LLVMProvisionTemplateStub,llvm,llvm64))
+else
 $(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(TOP)/external/llvm))
+ifneq ($(BUILD_PLATFORM),CYGWIN)
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(TOP)/external/llvm))
 ifeq ($(UNAME),Windows)
@@ -44,6 +64,7 @@ $(eval $(call LLVMProvisionTemplate,llvm,llvmwin64-msvc,$(TOP)/external/llvm))
 endif
 ifeq ($(UNAME),Darwin)
 $(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)))
+endif
 endif
 
 ##
@@ -73,9 +94,33 @@ clean-llvm-$(1)::
 
 endef
 
+##
+# Parameters:
+#  $(1): target
+define LLVMTemplateStub
+
+.PHONY: setup-llvm-$(1)
+setup-llvm-$(1):
+	@echo "TODO: setup-llvm-$(1) on $(NAME)"
+
+.PHONY: package-llvm-$(1)
+package-llvm-$(1):
+	@echo "TODO: package-llvm-$(1) on $(UNAME)"
+
+.PHONY: clean-llvm-$(1)
+clean-llvm-$(1)::
+	@echo "TODO: clean-llvm-$(1) on $(UNAME)"
+
+endef
+
+ifeq ($(BUILD_PLATFORM),CYGWIN)
+$(eval $(call LLVMTemplateStub,llvm32))
+$(eval $(call LLVMTemplateStub,llvm64))
+else
 llvm-llvm32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
 $(eval $(call LLVMTemplate,llvm32))
 $(eval $(call LLVMTemplate,llvm64))
+endif
 
 ##
 # Parameters
