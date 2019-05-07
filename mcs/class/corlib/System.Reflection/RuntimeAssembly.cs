@@ -332,6 +332,15 @@ namespace System.Reflection {
 			return GetTypes (true);
 		}
 
+		internal static byte[] GetAotId () {
+			var guid = new byte [16];
+			var res = GetAotIdInternal (guid);
+			if (res)
+				return guid;
+			else
+				return null;
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static string get_code_base (Assembly a, bool escaped);
 
@@ -342,7 +351,7 @@ namespace System.Reflection {
 		internal extern static string get_fullname (Assembly a);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static string GetAotId ();
+		internal extern static bool GetAotIdInternal (byte[] aotid);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static string InternalImageRuntimeVersion (Assembly a);
