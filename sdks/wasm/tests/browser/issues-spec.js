@@ -1,4 +1,4 @@
-//describe, beforeAll, it, expext - are the Jasmine default methods
+//describe, beforeAll, it, expect - are the Jasmine default methods
 //karmaHTML is the karma-html package object with the access to all its features
  
 describe("The WebAssembly Issues Test Suite",function(){
