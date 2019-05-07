@@ -78,7 +78,11 @@ BROWSER_TEST_ASSETS = \
     --asset=$(BROWSER_TEST)/core-bindings-spec.js   \
     --asset=$(BROWSER_TEST)/issues-spec.html   \
     --asset=$(BROWSER_TEST)/issues-spec.js   \
+    --asset=$(BROWSER_TEST)/zip-spec.html   \
+    --asset=$(BROWSER_TEST)/zip-spec.js   \
     --asset=$(BROWSER_TEST)/NowIsTheTime.txt   \
+    --asset=$(BROWSER_TEST)/resources/archive.zip   \
+    --asset=$(BROWSER_TEST)/resources/test.nupkg   \
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
@@ -211,7 +215,8 @@ $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/WebSocketTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/WebSocketTestSuite.cs 
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/BindingsTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/BindingsTestSuite.cs 
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/IssuesTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/IssuesTestSuite.cs 
-	mono packager.exe -debug -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll $(BROWSER_TEST)/WebSocketTestSuite.dll $(BROWSER_TEST)/BindingsTestSuite.dll $(BROWSER_TEST)/IssuesTestSuite.dll
+	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/ZipTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/ZipTestSuite.cs 
+	mono packager.exe -debug -out=$(BROWSER_TEST)/publish --copy=IfNewer --template=$(BROWSER_TEST)/runtime.js $(BROWSER_TEST_ASSETS) $(BROWSER_TEST)/HttpTestSuite.dll $(BROWSER_TEST)/WebSocketTestSuite.dll $(BROWSER_TEST)/BindingsTestSuite.dll $(BROWSER_TEST)/IssuesTestSuite.dll $(BROWSER_TEST)/ZipTestSuite.dll
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
