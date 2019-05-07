@@ -380,6 +380,8 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	pthread_t tid;
 	gboolean ret;
 
+	HANDLE_FUNCTION_ENTER ();
+
 	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
 		g_warning ("%s: unkown handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
@@ -430,7 +432,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	mono_w32handle_unlock (handle_data);
 	mono_w32handle_unref (handle_data);
 
-	return ret;
+	HANDLE_FUNCTION_RETURN_VAL (ret);
 }
 
 gpointer
