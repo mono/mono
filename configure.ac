@@ -6516,6 +6516,24 @@ if test x$host_darwin = xyes; then
    sed -e 's,lock_old_archive_extraction=yes,lock_old_archive_extraction=no,g' < libtool > libtool.new && mv libtool.new libtool && chmod +x libtool
 fi
 
+AC_MSG_CHECKING([Compiler server])
+AC_ARG_WITH(compiler-server, [  --with-compiler-server=yes,no,default      Enables or disables compiler server],[
+   if test x$withval = xyes; then
+   	   enable_compiler_server=yes;
+   elif test x$withval = xno; then
+       enable_compiler_server=no;
+   elif test x$withval = xdefault; then
+       enable_compiler_server=yes;
+   else
+       AC_MSG_ERROR([You must supply one of "yes", "no" or "default" to the --with-compiler-server option])
+   fi
+
+   if test x$csc_compiler = xmcs; then
+       AC_MSG_WARN([mcs does not support the compiler server])
+       enable_compiler_server=no;
+   fi
+],[enable_compiler_server=yes])
+
 (
   case $prefix in
   NONE) prefix=$ac_default_prefix ;;
