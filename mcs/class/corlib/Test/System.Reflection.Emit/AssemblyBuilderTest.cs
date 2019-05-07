@@ -1906,6 +1906,17 @@ public class AssemblyBuilderTest
 			});
 	}
 
+	[Test]
+	public void GetReflectionOnly ()
+	{
+		// Regression test for 13028.
+		// Asserts ReflectionOnly is actually implemented.
+		AssemblyBuilder ab1 = genAssembly ();
+		AssemblyBuilder ab2 = genAssembly (AssemblyBuilderAccess.ReflectionOnly);
+		Assert.IsFalse (ab1.ReflectionOnly, "#1");
+		Assert.IsTrue (ab2.ReflectionOnly, "#2");
+	}
+
 
 }
 }
