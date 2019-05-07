@@ -11,9 +11,6 @@ RELEASE=$(if $(filter $(CONFIGURATION),release),1)
 
 lowercase=$(shell echo "$(1)" | tr '[:upper:]' '[:lower:]')
 
-CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
-NINJA:=$(shell which ninja)
-
 UNAME=$(shell uname)
 
 ifneq (,$(findstring CYGWIN,$(UNAME)))
@@ -40,6 +37,20 @@ ifneq ($(UNAME),Darwin)
 DISABLE_IOS=1
 DISABLE_MAC=1
 endif
+
+# On Windows, we will just trigger LLVM builds using this make file.
+ifeq ($(UNAME),Windows)
+DISABLE_IOS=1
+DISABLE_MAC=1
+DISABLE_WASM=1
+DISABLE_WASM_CROSS=1
+DISABLE_DESKTOP=1
+DISABLE_CCACHE=1
+DISABLE_LIBTOOLIZE=1
+endif
+
+CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
+NINJA:=$(shell which ninja)
 
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
@@ -167,9 +178,11 @@ include runtime.mk
 include bcl.mk
 
 ## MXE targets
+ifneq ($(BUILD_PLATFORM),CYGWIN)
 ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_WASM_CROSS)),)
 # FIXME add iOS support(?)
 include mxe.mk
+endif
 endif
 
 ## LLVM targets
