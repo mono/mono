@@ -4540,9 +4540,11 @@ register_icalls (void)
 	/* other jit icalls */
 	register_icall (ves_icall_mono_delegate_ctor, mono_icall_sig_void_object_object_ptr, FALSE);
 	register_icall (ves_icall_mono_delegate_ctor_interp, mono_icall_sig_void_object_object_ptr, FALSE);
-	register_icall (mono_class_static_field_address, mono_icall_sig_ptr_ptr_ptr, FALSE);
+	register_icall (mono_class_static_field_address,
+				 mono_icall_sig_ptr_ptr_ptr, FALSE);
 	register_icall (mono_ldtoken_wrapper, mono_icall_sig_ptr_ptr_ptr_ptr, FALSE);
-	register_icall (mono_ldtoken_wrapper_generic_shared, mono_icall_sig_ptr_ptr_ptr_ptr, FALSE);
+	register_icall (mono_ldtoken_wrapper_generic_shared,
+		mono_icall_sig_ptr_ptr_ptr_ptr, FALSE);
 	register_icall (mono_get_special_static_data, mono_icall_sig_ptr_int, FALSE);
 	register_icall (ves_icall_mono_ldstr, mono_icall_sig_object_ptr_ptr_int32, FALSE);
 	register_icall (mono_helper_stelem_ref_check, mono_icall_sig_void_object_object, FALSE);
