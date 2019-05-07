@@ -273,6 +273,8 @@ array_set_value_impl (MonoArrayHandle arr_handle, MonoObjectHandle value_handle,
 	gint64 i64 = 0;
 	gdouble r64 = 0;
 	gboolean castOk = FALSE;
+	gboolean et_isenum = FALSE;
+	gboolean vt_isenum = FALSE;
 
 	error_init (error);
 
@@ -411,12 +413,14 @@ array_set_value_impl (MonoArrayHandle arr_handle, MonoObjectHandle value_handle,
 
 	vsize = mono_class_value_size (vc, NULL);
 
-	gboolean et_isenum = et == MONO_TYPE_VALUETYPE && m_class_is_enumtype (m_class_get_byval_arg (ec)->data.klass);
-	gboolean vt_isenum = vt == MONO_TYPE_VALUETYPE && m_class_is_enumtype (m_class_get_byval_arg (vc)->data.klass);
+	et_isenum = et == MONO_TYPE_VALUETYPE && m_class_is_enumtype (m_class_get_byval_arg (ec)->data.klass);
+	vt_isenum = vt == MONO_TYPE_VALUETYPE && m_class_is_enumtype (m_class_get_byval_arg (vc)->data.klass);
 
 #if ENABLE_NETCORE
-	if (strict && et_isenum && !vt_isenum)
+	if (strict && et_isenum && !vt_isenum) {
 		INVALID_CAST;
+		goto leave;
+	}
 #endif
 
 	if (et_isenum)
