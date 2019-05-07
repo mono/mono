@@ -70,5 +70,110 @@ describe("The WebAssembly Zip Test Suite",function(){
       );
       
     }, DEFAULT_TIMEOUT);
+
+    it('ZipGetEntryCreateMode: accessing entry in Create Mode should fail.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:ZipGetEntryCreateMode", []).then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            try {
+              done.fail("CreateMode: should fail in this case with - System.NotSupportedException: Cannot access entries in Create mode.")
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);
+
+    it('ZipGetEntryUpdateMode: entry for foo.txt should exist', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:ZipGetEntryUpdateMode", ["foo.txt"]).then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            try {
+              assert.isDefined(result, "result should not be undefined.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);
+
+    it('ZipGetEntryUpdateMode: entry for foobar.txt should not exist', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:ZipGetEntryUpdateMode", ["foobar.txt"]).then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            try {
+              assert.isUndefined(result, "result should be undefined but it seems we have an entry.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);
+
+    it('ZipGetEntryOpen: should open entry foo.txt ', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:ZipGetEntryOpen", []).then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            try {
+              assert.isDefined(result, "result should be the opend entry.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('ZipOpenAndReopenEntry: reopening an entry should fail.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:ZipOpenAndReopenEntry", []).then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            try {
+              done.fail("Reopening entry: should fail in this case with - System.IO.IOException: Entries cannot be opened multiple times in Update mode.")
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);
+
+
     
   });
