@@ -93,16 +93,16 @@ namespace System.Reflection {
 		
 #if NETCORE
 		internal BindingFlags BindingFlags {
-			get
-			{
+			get {
 				CachePropertyInfo (PInfo.GetMethod | PInfo.SetMethod);
 				bool isPublic = info.set_method?.IsPublic == true || info.get_method?.IsPublic == true;
 				bool isStatic = info.set_method?.IsStatic == true || info.get_method?.IsStatic == true;
 				bool isInherited = DeclaringType != ReflectedType;
-				return FilterPreCalculate(isPublic, isInherited, isStatic);
+				return FilterPreCalculate (isPublic, isInherited, isStatic);
 			}
 		}
 		
+		// Copied from https://github.com/dotnet/coreclr/blob/7a24a538cd265993e5864179f51781398c28ecdf/src/System.Private.CoreLib/src/System/RtType.cs#L2022
 		static BindingFlags FilterPreCalculate (bool isPublic, bool isInherited, bool isStatic)
 		{
 			BindingFlags bindingFlags = isPublic ? BindingFlags.Public : BindingFlags.NonPublic;
