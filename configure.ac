@@ -6516,10 +6516,10 @@ if test x$host_darwin = xyes; then
    sed -e 's,lock_old_archive_extraction=yes,lock_old_archive_extraction=no,g' < libtool > libtool.new && mv libtool.new libtool && chmod +x libtool
 fi
 
-AC_MSG_CHECKING([Compiler server])
+AC_MSG_CHECKING([compiler server])
 AC_ARG_WITH(compiler-server, [  --with-compiler-server=yes,no,default      Enables or disables compiler server],[
    if test x$withval = xyes; then
-   	   enable_compiler_server=yes;
+       enable_compiler_server=yes;
    elif test x$withval = xno; then
        enable_compiler_server=no;
    elif test x$withval = xdefault; then
