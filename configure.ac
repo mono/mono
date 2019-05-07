@@ -6699,8 +6699,9 @@ if test x$buildsgen = xyes; then
 fi
 	
 echo "
-        mcs source:    $mcsdir
+	mcs source:    $mcsdir
 	C# Compiler:   $csc_compiler
+	CompilerServer:$enable_compiler_server
 
    Engine:
 	Host:	       $host
