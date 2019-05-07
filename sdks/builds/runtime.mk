@@ -4,6 +4,7 @@
 #  $(1): product
 #  $(2): target
 #  $(3): host triple
+#  $(4): exclude from archive
 #
 # Flags:
 #  _$(1)-$(2)_AR
@@ -100,10 +101,15 @@ configure-$(1): configure-$(1)-$(2)
 .PHONY: build-$(1)
 build-$(1): build-$(1)-$(2)
 
-.PHONY: archive-$(1)
-archive-$(1): package-$(1)-$(2)
+.PHONY: package-$(1)
+package-$(1): package-$(1)-$(2) $$(ADDITIONAL_PACKAGE_DEPS)
 
+.PHONY: archive-$(1)
+archive-$(1): package-$(1)
+
+ifneq ($(4),yes)
 $(1)_ARCHIVE += $(1)-$(2)-$$(CONFIGURATION)
+endif
 
 endef
 

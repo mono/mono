@@ -126,7 +126,7 @@ namespace Mono.WebAssembly.Build
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 				foreach (var s in skips) {
-					arguments = arguments.AddRange ("-p", s, "copy");
+					arguments = arguments.AddRange ("-p", "copy", s);
 				}
 			}
 
