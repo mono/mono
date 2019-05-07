@@ -29,18 +29,38 @@ provision-android: $$(ANDROID_TOOLCHAIN_DIR)/$(2)/.stamp-$$(or $(4),$(1))
 
 endef
 
+##
+# Parameters:
+# $(1): target
+# $(2): dir
+# $(3): subdir (optional)
+# $(4): stamp (optional, default to $(1))
+define AndroidProvisioningTemplateStub
+
+.PHONY: provision-android-$(1)
+provision-android-$(1):
+	@echo "TODO: provision $(2)/.stamp-$$(or $(4),$(1)) for $$(UNAME)"
+
+.PHONY: provision-android
+provision-android: provision-android-$(1)
+
+endef
+
 ifeq ($(UNAME),Darwin)
 $(eval $(call AndroidProvisioningTemplate,android-ndk-$(ANDROID_NDK_VERSION)-darwin-x86_64,ndk,,ndk))
 $(eval $(call AndroidProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-darwin,sdk,platform-tools))
 $(eval $(call AndroidProvisioningTemplate,sdk-tools-darwin-$(ANDROID_SDKTOOLS_VERSION),sdk,tools))
 $(eval $(call AndroidProvisioningTemplate,cmake-$(ANDROID_CMAKE_VERSION)-darwin-x86_64,sdk,cmake/$(ANDROID_CMAKE_VERSION)))
-else
-ifeq ($(UNAME),Linux)
+else ifeq ($(UNAME),Linux)
 $(eval $(call AndroidProvisioningTemplate,android-ndk-$(ANDROID_NDK_VERSION)-linux-x86_64,ndk,,ndk))
 $(eval $(call AndroidProvisioningTemplate,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-linux,sdk,platform-tools))
 $(eval $(call AndroidProvisioningTemplate,sdk-tools-linux-$(ANDROID_SDKTOOLS_VERSION),sdk,tools))
 $(eval $(call AndroidProvisioningTemplate,cmake-$(ANDROID_CMAKE_VERSION)-linux-x86_64,sdk,cmake/$(ANDROID_CMAKE_VERSION)))
-endif
+else ifeq ($(BUILD_PLATFORM),CYGWIN)
+$(eval $(call AndroidProvisioningTemplateStub,android-ndk-$(ANDROID_NDK_VERSION)-win32-x86_64,ndk,,ndk))
+$(eval $(call AndroidProvisioningTemplateStub,platform-tools_r$(ANDROID_PLATFORM_TOOLS_VERSION)-win32,sdk,platform-tools))
+$(eval $(call AndroidProvisioningTemplateStub,sdk-tools-win32-$(ANDROID_SDKTOOLS_VERSION),sdk,tools))
+$(eval $(call AndroidProvisioningTemplateStub,cmake-$(ANDROID_CMAKE_VERSION)-win32-x86_64,sdk,cmake/$(ANDROID_CMAKE_VERSION)))
 endif
 
 ##
