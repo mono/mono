@@ -273,6 +273,8 @@ namespace System
 				throw new NotSupportedException ("Array type can not be void");
 			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
+			if (elementType.IsByRef)
+				throw new NotSupportedException (SR.NotSupported_Type);
 			
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
@@ -293,6 +295,8 @@ namespace System
 				throw new NotSupportedException ("Array type can not be void");
 			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
+			if (elementType.IsByRef)
+				throw new NotSupportedException (SR.NotSupported_Type);
 
 			if (lengths.Length < 1)
 				throw new ArgumentException ("Arrays must contain >= 1 elements.");
