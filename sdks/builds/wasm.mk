@@ -4,6 +4,20 @@ SHELL:=/bin/bash
 EMSCRIPTEN_VERSION=1.38.30
 EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
+MONO_SUPPORT=$(TOP)/support
+
+ZLIB_HEADERS = \
+	$(MONO_SUPPORT)/crc32.h		\
+	$(MONO_SUPPORT)/deflate.h  	\
+	$(MONO_SUPPORT)/inffast.h  	\
+	$(MONO_SUPPORT)/inffixed.h  	\
+	$(MONO_SUPPORT)/inflate.h  	\
+	$(MONO_SUPPORT)/inftrees.h  	\
+	$(MONO_SUPPORT)/trees.h  	\
+	$(MONO_SUPPORT)/zconf.h  	\
+	$(MONO_SUPPORT)/zlib.h  	\
+	$(MONO_SUPPORT)/zutil.h
+
 $(TOP)/sdks/builds/toolchains/emsdk:
 	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
 
@@ -75,6 +89,10 @@ setup-custom-wasm-runtime:
 .PHONY: package-wasm-runtime
 package-wasm-runtime:
 	$(MAKE) -C $(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION)/mono install
+	# We do not build the support library but we will use the zlib headers to activate
+	# zlib support for wasm through emscripten.  See flag "-s USE_ZLIB=1" in wasm build
+	mkdir -p $(TOP)/sdks/out/wasm-runtime-$(CONFIGURATION)/include/support
+	cp -r $(ZLIB_HEADERS) $(TOP)/sdks/out/wasm-runtime-$(CONFIGURATION)/include/support/
 
 .PHONY: clean-wasm-runtime
 clean-wasm-runtime:
