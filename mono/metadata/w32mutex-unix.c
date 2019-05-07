@@ -385,14 +385,16 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	if (!mono_w32handle_lookup_and_ref (handle, &handle_data)) {
 		g_warning ("%s: unkown handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
+		ret = FALSE;
+		goto exit;
 	}
 
 	if (handle_data->type != MONO_W32TYPE_MUTEX && handle_data->type != MONO_W32TYPE_NAMEDMUTEX) {
 		g_warning ("%s: unknown mutex handle %p", __func__, handle);
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		mono_w32handle_unref (handle_data);
-		return FALSE;
+		ret = FALSE;
+		goto exit;
 	}
 
 	mutex_handle = (MonoW32HandleMutex*) handle_data->specific;
@@ -432,6 +434,7 @@ ves_icall_System_Threading_Mutex_ReleaseMutex_internal (gpointer handle)
 	mono_w32handle_unlock (handle_data);
 	mono_w32handle_unref (handle_data);
 
+exit:
 	HANDLE_FUNCTION_RETURN_VAL (ret);
 }
 
