@@ -37,7 +37,7 @@ namespace BuildProgram
 				{
 					var artifactName = item.Item1;
 					var artifactId = item.Item2;
-					var repoName = item.Item3;
+					var repoName = new RepoName(item.Item3);
 					DownloadArtifact(artifactId, artifactName, repoName);
 				}
 			}
@@ -47,7 +47,7 @@ namespace BuildProgram
 			}
 		}
 
-		private static void DownloadArtifact(string artifactId, string artifactName, string repoName)
+		private static void DownloadArtifact(string artifactId, string artifactName, RepoName repoName)
 		{
 			Console.WriteLine($">>> Registering artifact {artifactName}");
 			var artifact = new StevedoreArtifact(repoName, new ArtifactId(artifactId));
