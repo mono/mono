@@ -402,9 +402,10 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		[MonoTODO]
 		public override bool ReflectionOnly {
-			get { return base.ReflectionOnly; }
+			get {
+				return access == (uint)AssemblyBuilderAccess.ReflectionOnly;
+			}
 		}
 
 		public void AddResourceFile (string name, string fileName)
