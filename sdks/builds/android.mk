@@ -186,6 +186,7 @@ _android-$(1)_CFLAGS= \
 	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9)
 
 _android-$(1)_CONFIGURE_FLAGS= \
+	$$(if $$(filter $$(BUILD_PLATFORM),CYGWIN),--host=$$(CYGWIN_BUILD_MACHINE)-w64-mingw32) \
 	--disable-boehm \
 	--disable-iconv \
 	--disable-mono-debugger \
