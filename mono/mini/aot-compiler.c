@@ -13570,6 +13570,10 @@ mono_compile_assemblies (MonoDomain *domain, char **argv, int argc, guint32 opts
 		g_assert (!aot_state->collecting_callee_failures);
 
 		int res = mono_compile_assembly (assem, opts, aot_options, (gpointer) &aot_state);
+
+		if (!aot_opts.disable_direct_external_calls)
+			mono_write_callee_failures (aot_state->exported_method_failures, assem->image);
+
 		if (res != 0) {
 			fprintf (stderr, "Deferred AOT of image %s failed.\n", assem->image->name);
 			exit (1);
