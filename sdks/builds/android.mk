@@ -145,24 +145,60 @@ $$(eval $$(call RuntimeTemplate,android,$(1),$(4)))
 
 endef
 
+##
+# Parameters:
+#  $(1): target
+#  $(2): arch
+#  $(3): abi_name
+#  $(4): host_triple
+#
+# Flags:
+#  android-$(1)_CFLAGS
+#  android-$(1)_CXXFLAGS
+#  android-$(1)_LDFLAGS
+define AndroidTargetTemplateStub
+
+.stamp-android-$(1)-toolchain: | $$(if $$(IGNORE_PROVISION_ANDROID),,provision-android)
+	touch $$@
+
+$$(eval $$(call RuntimeTemplateStub,android,$(1),$(4)))
+
+endef
+
 ## android-armeabi-v7a
 android-armeabi-v7a_CFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv7-a -mtune=cortex-a8 -mfpu=vfp -mfloat-abi=softfp
 android-armeabi-v7a_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -march=armv7-a -mtune=cortex-a8 -mfpu=vfp -mfloat-abi=softfp
 android-armeabi-v7a_LDFLAGS=-Wl,--fix-cortex-a8
+ifeq ($(BUILD_PLATFORM),CYGWIN)
+$(eval $(call AndroidTargetTemplateStub,armeabi-v7a,arm,arm-linux-androideabi,armv5-linux-androideabi))
+else
 $(eval $(call AndroidTargetTemplate,armeabi-v7a,arm,arm-linux-androideabi,armv5-linux-androideabi))
+endif
 
 ## android-arm64-v8a
 android-arm64-v8a_CFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -DL_cuserid=9 -DANDROID64
 android-arm64-v8a_CXXFLAGS=-D__POSIX_VISIBLE=201002 -DSK_RELEASE -DNDEBUG -UDEBUG -fpic -DL_cuserid=9 -DANDROID64
+ifeq ($(BUILD_PLATFORM),CYGWIN)
+$(eval $(call AndroidTargetTemplateStub,arm64-v8a,arm64,aarch64-linux-android,aarch64-linux-android))
+else
 $(eval $(call AndroidTargetTemplate,arm64-v8a,arm64,aarch64-linux-android,aarch64-linux-android))
+endif
 
 ## android-x86
+ifeq ($(BUILD_PLATFORM),CYGWIN)
+$(eval $(call AndroidTargetTemplateStub,x86,x86,i686-linux-android,i686-linux-android))
+else
 $(eval $(call AndroidTargetTemplate,x86,x86,i686-linux-android,i686-linux-android))
+endif
 
 ## android-x86_64
 android-x86_64_CFLAGS=-DL_cuserid=9
 android-x86_64_CXXFLAGS=-DL_cuserid=9
+ifeq ($(BUILD_PLATFORM),CYGWIN)
+$(eval $(call AndroidTargetTemplateStub,x86_64,x86_64,x86_64-linux-android,x86_64-linux-android))
+else
 $(eval $(call AndroidTargetTemplate,x86_64,x86_64,x86_64-linux-android,x86_64-linux-android))
+endif
 
 ##
 # Parameters
@@ -260,8 +296,10 @@ $$(eval $$(call RuntimeTemplate,android,$(1),$(2)-w64-mingw32))
 
 endef
 
+ifneq ($(BUILD_PLATFORM),CYGWIN)
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686))
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))
+endif
 
 ##
 # Parameters
@@ -305,10 +343,31 @@ $$(eval $$(call CrossRuntimeTemplate,android,$(1),$$(if $$(filter $$(UNAME),Darw
 
 endef
 
+##
+# Parameters
+#  $(1): target
+#  $(2): host arch
+#  $(3): target arch
+#  $(4): device target (armeabi-v7a, arm64-v8a, x86 or x86_64)
+#  $(5): llvm (llvm32, llvm64, llvmwin32 or llvmwin64)
+#  $(6): offsets dumper abi
+define AndroidCrossTemplateStub
+
+$$(eval $$(call CrossRuntimeTemplateStub,android,$(1),$$(if $$(filter $$(UNAME),Darwin),$(2)-apple-darwin10,$$(if $$(filter $$(UNAME),Linux),$(2)-linux-gnu)),$(3)-linux-android,$(4),$(5),$(6)))
+
+endef
+
+ifeq ($(BUILD_PLATFORM),CYGWIN)
+$(eval $(call AndroidCrossTemplateStub,cross-arm,i686,armv7,armeabi-v7a,llvm-llvm32,armv7-none-linux-androideabi))
+$(eval $(call AndroidCrossTemplateStub,cross-arm64,x86_64,aarch64-v8a,arm64-v8a,llvm-llvm64,aarch64-v8a-linux-android))
+$(eval $(call AndroidCrossTemplateStub,cross-x86,i686,i686,x86,llvm-llvm32,i686-none-linux-android))
+$(eval $(call AndroidCrossTemplateStub,cross-x86_64,x86_64,x86_64,x86_64,llvm-llvm64,x86_64-none-linux-android))
+else
 $(eval $(call AndroidCrossTemplate,cross-arm,i686,armv7,armeabi-v7a,llvm-llvm32,armv7-none-linux-androideabi))
 $(eval $(call AndroidCrossTemplate,cross-arm64,x86_64,aarch64-v8a,arm64-v8a,llvm-llvm64,aarch64-v8a-linux-android))
 $(eval $(call AndroidCrossTemplate,cross-x86,i686,i686,x86,llvm-llvm32,i686-none-linux-android))
 $(eval $(call AndroidCrossTemplate,cross-x86_64,x86_64,x86_64,x86_64,llvm-llvm64,x86_64-none-linux-android))
+endif
 
 ##
 # Parameters
@@ -367,9 +426,11 @@ $$(eval $$(call CrossRuntimeTemplate,android,$(1),$(2)-w64-mingw32,$(3)-linux-an
 
 endef
 
+ifneq ($(BUILD_PLATFORM),CYGWIN)
 $(eval $(call AndroidCrossMXETemplate,cross-arm-win,i686,armv7,armeabi-v7a,llvm-llvmwin32,armv7-none-linux-androideabi))
 $(eval $(call AndroidCrossMXETemplate,cross-arm64-win,x86_64,aarch64-v8a,arm64-v8a,llvm-llvmwin64,aarch64-v8a-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,x86,llvm-llvmwin32,i686-none-linux-android))
 $(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
+endif
 
 $(eval $(call BclTemplate,android,monodroid monodroid_tools,monodroid monodroid_tools))
