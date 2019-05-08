@@ -313,7 +313,8 @@ typedef struct MonoAotCompile {
 	GPtrArray *method_order;
 	GHashTable *dedup_stats;
 	GHashTable *dedup_cache;
-	GHashTable *callee_failures;
+	GHashTable *exported_method_failures;
+	GHashTable *imported_method_failures;
 	gboolean dedup_cache_changed;
 	GHashTable *export_names;
 	/* Maps MonoClass* -> blob offset */
@@ -4121,8 +4122,10 @@ mono_aot_register_llvm_failure (MonoMethod *method)
 		return;
 
 	char *name = mono_aot_get_mangled_method_name (method);
-	if (llvm_acfg->callee_failures)
-		g_hash_table_insert (llvm_acfg->callee_failures, name, name);
+
+	llvm_acfg->direct_call_stats.callee_failure++;
+	if (llvm_acfg->exported_method_failures)
+		g_hash_table_insert (llvm_acfg->exported_method_failures, name, GINT_TO_POINTER (0x1));
 }
 
 static void
@@ -9533,7 +9536,7 @@ mono_aot_has_external_symbol (MonoMethod *method)
 	// Now that we know that we *can* make this a directly-called
 	// method, we have to ask *did* we? 
 	gchar *name = mono_aot_get_mangled_method_name (method);
-	gboolean failed = g_hash_table_lookup (llvm_acfg->callee_failures, name) != NULL;
+	gboolean failed = g_hash_table_lookup (llvm_acfg->imported_method_failures, name) != NULL;
 	g_free (name);
 
 	if (failed)
@@ -13140,41 +13143,104 @@ mono_dedup_log_stats (MonoAotCompile *acfg)
 	acfg->dedup_stats = NULL;
 }
 
-// Flush the cache to tell future calls what to skip
 static void
-mono_flush_method_cache (MonoAotCompile *acfg)
+mono_write_string_set (char *filename, GHashTable *table)
 {
-	GHashTable *method_cache = acfg->dedup_cache;
-	char *filename = g_strdup_printf ("%s.dedup", acfg->image->name);
-	if (!acfg->dedup_cache_changed || !acfg->aot_opts.dedup) {
-		g_free (filename);
-		return;
-	}
-
-	acfg->dedup_cache = NULL;
-
 	FILE *cache = fopen (filename, "w");
 
 	if (!cache)
-		g_error ("Could not create cache at %s because of error: %s\n", filename, strerror (errno));
+		g_error ("Could not create table at %s because of error: %s\n", filename, strerror (errno));
 	
 	GHashTableIter iter;
 	gchar *name = NULL;
-	g_hash_table_iter_init (&iter, method_cache);
+	g_hash_table_iter_init (&iter, table);
 	gboolean cont = TRUE;
 	while (cont && g_hash_table_iter_next (&iter, (gpointer *) &name, NULL)) {
 		int res = fprintf (cache, "%s\n", name);
 		cont = res >= 0;
 	}
-	// FIXME: don't assert if error when flushing
 	g_assert (cont);
 
 	fclose (cache);
-	g_free (filename);
+}
+
+static gboolean
+mono_read_string_set (char *filename, GHashTable *out_table, gpointer sentinel, gboolean copy)
+{
+	gboolean success = TRUE;
+
+	FILE *cache;
+	cache = fopen (filename, "r");
+	if (!cache)
+		goto fail;
+
+	if (fseek (cache, 0L, SEEK_END))
+		goto fail;
+
+	size_t fileLength;
+	fileLength = ftell (cache);
+
+	if (fileLength == 0)
+		goto fail;
+
+	g_assert (fileLength > 0);
+	if (fseek (cache, 0L, SEEK_SET))
+		goto fail;
+
+	// Avoid thousands of new malloc entries
+	// FIXME: allocate into imageset, so we don't need to free.
+	// put the other mangled names there too.
+	char *bulk;
+	bulk = g_malloc0 (fileLength * sizeof (char));
+	size_t offset;
+	offset = 0;
+
+	while (fgets (&bulk [offset], fileLength - offset, cache)) {
+		// strip newline
+		char *line = &bulk [offset];
+		size_t len = strlen (line);
+		if (len == 0)
+			break;
+
+		if (len >= 0 && line [len - 1] == '\n')
+			line [len - 1] = '\0';
+		offset += strlen (line) + 1;
+		g_assert (fileLength >= offset);
+
+		if (copy)
+			line = g_strdup (line);
+
+		g_hash_table_insert (out_table, line, sentinel);
+	}
+
+cleanup:
+	fclose (cache);
+	return success;
+
+fail:
+	success = FALSE;
+	goto cleanup;
+}
+
+// Flush the cache to tell future calls what to skip
+static void
+mono_flush_method_cache (MonoAotCompile *acfg)
+{
+	char *filename = g_strdup_printf ("%s.dedup", acfg->image->name);
+	GHashTable *method_cache = acfg->dedup_cache;
+	acfg->dedup_cache = NULL;
+	if (!acfg->dedup_cache_changed || !acfg->aot_opts.dedup)
+		goto early_exit;
+
+	mono_write_string_set (filename, method_cache);
 
 	// The keys are all in the imageset, nothing to free
 	// Values are just pointers to memory owned elsewhere, or sentinels
 	g_hash_table_destroy (method_cache);
+
+early_exit:
+	g_free (filename);
+	return;
 }
 
 // Read in what has been emitted by previous invocations,
@@ -13194,57 +13260,37 @@ mono_read_method_cache (MonoAotCompile *acfg)
 	if (!acfg->aot_opts.dedup)
 		goto early_exit;
 
-	g_assert (acfg->dedup_cache);
-
-	FILE *cache;
-	cache = fopen (filename, "r");
-	if (!cache)
-		goto early_exit;
-
 	// Since we do pointer comparisons, and it can't be allocated at
 	// the address 0x1 due to alignment, we use this as a sentinel
 	gpointer other_acfg_sentinel;
 	other_acfg_sentinel = GINT_TO_POINTER (0x1);
 
-	if (fseek (cache, 0L, SEEK_END))
-		goto cleanup;
-
-	size_t fileLength;
-	fileLength = ftell (cache);
-	g_assert (fileLength > 0);
-
-	if (fseek (cache, 0L, SEEK_SET))
-		goto cleanup;
-
-	// Avoid thousands of new malloc entries
-	// FIXME: allocate into imageset, so we don't need to free.
-	// put the other mangled names there too.
-	char *bulk;
-	bulk = g_malloc0 (fileLength * sizeof (char));
-	size_t offset;
-	offset = 0;
-
-	while (fgets (&bulk [offset], fileLength - offset, cache)) {
-		// strip newline
-		char *line = &bulk [offset];
-		size_t len = strlen (line);
-		if (len == 0)
-			break;
-
-		if (len >= 0 && line [len] == '\n')
-			line [len] = '\0';
-		offset += strlen (line) + 1;
-		g_assert (fileLength >= offset);
-
-		g_hash_table_insert (acfg->dedup_cache, line, other_acfg_sentinel);
-	}
-
-cleanup:
-	fclose (cache);
+	mono_read_string_set (filename, acfg->dedup_cache, other_acfg_sentinel, FALSE);
 
 early_exit:
 	g_free (filename);
 	return;
+}
+
+static void
+mono_write_callee_failures (GHashTable *exported_method_failures, MonoImage *image)
+{
+	char *filename = g_strdup_printf ("%s.%s.aot_failure", image->name, image->guid);
+	g_assert (exported_method_failures);
+
+	mono_write_string_set (filename, exported_method_failures);
+
+	g_free (filename);
+}
+
+static gboolean
+mono_read_callee_failures (MonoImage *aimage, GHashTable *failures)
+{
+	char *filename = g_strdup_printf ("%s.%s.aot_failure", aimage->name, aimage->guid);
+	gboolean success = mono_read_string_set (filename, failures, GINT_TO_POINTER (0x1), TRUE);
+
+	g_free (filename);
+	return success;
 }
 
 typedef struct {
@@ -13253,7 +13299,8 @@ typedef struct {
 	gboolean emit_inflated_methods;
 	MonoAssembly *inflated_assembly;
 
-	GHashTable *callee_failures;
+	GHashTable *exported_method_failures;
+	GHashTable *imported_method_failures;
 	gboolean collecting_callee_failures;
 
 	gboolean emit_target_assemblies;
@@ -13271,7 +13318,8 @@ alloc_aot_state (void)
 	state->emit_target_assemblies = FALSE;
 	state->collecting_callee_failures = FALSE;
 
-	state->callee_failures = g_hash_table_new (g_str_hash, g_str_equal);
+	state->imported_method_failures = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+	state->exported_method_failures = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
 	state->inflated_assembly = NULL;
 	return state;
@@ -13323,7 +13371,24 @@ mono_setup_direct_external_call_state (MonoAotCompile *acfg, MonoAotState **glob
 	}
 
 	g_assert (*astate);
-	acfg->callee_failures = (*astate)->callee_failures;
+
+	acfg->imported_method_failures = (*astate)->imported_method_failures;
+	// Everything we previously failed to export is now something we fail to import
+
+	GHashTableIter iter;
+	gpointer key;
+	gpointer value;
+	g_hash_table_iter_init (&iter, (*astate)->exported_method_failures);
+	while (g_hash_table_iter_next (&iter, &key, &value))
+		g_hash_table_insert (acfg->imported_method_failures, g_strdup (key), value);
+
+	// Clear out exports table for a fresh iteration
+	GHashTable *old = (*astate)->exported_method_failures;
+
+	(*astate)->exported_method_failures = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+	acfg->exported_method_failures = (*astate)->exported_method_failures;
+
+	g_hash_table_destroy (old);
 }
 
 
@@ -13477,7 +13542,14 @@ mono_compile_assemblies (MonoDomain *domain, char **argv, int argc, guint32 opts
 
 	g_hash_table_iter_init (&iter, to_preprocess);
 	while (g_hash_table_iter_next (&iter, (gpointer *) &assem, NULL)) {
+		if (!aot_opts.disable_direct_external_calls && mono_read_callee_failures (assem->image, aot_state->exported_method_failures)) {
+			continue;
+		}
+
 		int res = mono_compile_assembly (assem, opts, aot_options, (gpointer) &aot_state);
+
+		if (!aot_opts.disable_direct_external_calls)
+			mono_write_callee_failures (aot_state->exported_method_failures, assem->image);
 
 		if (res != 0) {
 			fprintf (stderr, "AOT-time preprocessing of image %s failed.\n", assem->image->name);
