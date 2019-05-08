@@ -222,7 +222,6 @@ _android-$(1)_CFLAGS= \
 	$$(if $$(filter $$(UNAME),Darwin),-mmacosx-version-min=10.9)
 
 _android-$(1)_CONFIGURE_FLAGS= \
-	$$(if $$(filter $$(BUILD_PLATFORM),CYGWIN),--host=$$(CYGWIN_BUILD_MACHINE)-w64-mingw32) \
 	--disable-boehm \
 	--disable-iconv \
 	--disable-mono-debugger \
@@ -242,7 +241,9 @@ $$(eval $$(call RuntimeTemplate,android,$(1)))
 
 endef
 
+ifneq ($(BUILD_PLATFORM),CYGWIN)
 $(eval $(call AndroidHostTemplate,host-$(UNAME)))
+endif
 
 ##
 # Parameters
@@ -299,6 +300,10 @@ endef
 ifneq ($(BUILD_PLATFORM),CYGWIN)
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686))
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))
+else
+# on Cygwin the mingw-built Mono is the host mono.  But we have to use the cross template
+# because 'gcc' is the cygwin compiler, while the x86_64-w64-mingw32-gcc is the windows native compiler.
+$(eval $(call AndroidHostMxeTemplate,host-$(UNAME),$(CYGWIN_BUILD_MACHINE)))
 endif
 
 ##
