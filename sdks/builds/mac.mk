@@ -63,8 +63,8 @@ $(mac_BIN_DIR): package-mac-mac32 package-mac-mac64
 	rm -rf $(mac_BIN_DIR)
 	mkdir -p $(mac_BIN_DIR)
 
-	cp $(TOP)/sdks/builds/mac-mac64-$(CONFIGURATION)/bin/mono-sgen $(mac_BIN_DIR)/mono-sgen
-	cp $(TOP)/sdks/builds/mac-mac32-$(CONFIGURATION)/bin/mono-sgen $(mac_BIN_DIR)/mono-sgen-32
+	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/bin/mono-sgen $(mac_BIN_DIR)/mono-sgen
+	cp $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/bin/mono-sgen $(mac_BIN_DIR)/mono-sgen-32
 
 $(mac_PKG_CONFIG_DIR): package-mac-mac64
 	rm -rf $(mac_PKG_CONFIG_DIR)
