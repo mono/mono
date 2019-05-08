@@ -6527,12 +6527,14 @@ AC_ARG_WITH(compiler-server, [  --with-compiler-server=yes,no,default      Enabl
    else
        AC_MSG_ERROR([You must supply one of "yes", "no" or "default" to the --with-compiler-server option])
    fi
+],[enable_compiler_server=yes])
 
+if test x$enable_compiler_server = xyes; then
    if test x$csc_compiler = xmcs; then
        AC_MSG_WARN([mcs does not support the compiler server])
        enable_compiler_server=no;
    fi
-],[enable_compiler_server=yes])
+fi
 
 (
   case $prefix in
