@@ -264,14 +264,16 @@ _android-$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32-ranlib
 _android-$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32-strip
 
 _android-$(1)_AC_VARS= \
-	ac_cv_header_zlib_h=no \
+	$$(if $$(filter $$(BUILD_PLATFORM),CYGWIN),,ac_cv_header_zlib_h=no) \
 	ac_cv_search_dlopen=no
 
 _android-$(1)_CFLAGS= \
-	-DXAMARIN_PRODUCT_VERSION=0 -I$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32/include
+	-DXAMARIN_PRODUCT_VERSION=0 \
+	$$(if $$(filter $$(BUILD_PLATFORM),CYGWIN),,-I$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32/include)
 
 _android-$(1)_CXXFLAGS= \
-	-DXAMARIN_PRODUCT_VERSION=0 -I$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32/include
+	-DXAMARIN_PRODUCT_VERSION=0 \
+		$$(if $$(filter $$(BUILD_PLATFORM),CYGWIN),,-I$$(MXE_PREFIX)/opt/mingw-zlib/usr/$(2)-w64-mingw32/include)
 
 _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
