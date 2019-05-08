@@ -149,7 +149,7 @@ namespace System
 				for (int i = 0; i < length; i++) {
 					Object srcval = sourceArray.GetValueImpl (source_pos + i);
 
-					if (srcval == null && dst_type_vt)
+					if (dst_type_vt && (srcval == null || (src_type == typeof (object) && srcval.GetType () != dst_type)))
 						throw new InvalidCastException ();
 
 					try {
