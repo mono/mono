@@ -30,13 +30,12 @@ ifndef BUILD_TOOLS_PROFILE
 BUILD_TOOLS_PROFILE = build
 endif
 
-ifeq ("$(ENABLE_COMPILER_SERVER)","1")
-COMPILER_SERVER_ARGS=/shared:$(COMPILER_SERVER_PIPENAME)
-CSC_LOCATION=$(SERVER_CSC_LOCATION)
-else
-COMPILER_SERVER_ARGS:=
-CSC_LOCATION=$(STANDALONE_CSC_LOCATION)
-endif
+# NOTE: We have to use conditional functions to branch on the state of ENABLE_COMPILER_SERVER
+#  because the value of this flag can change after rules.make is evaluated. If we use regular ifeq
+#  statements our builds will opt to use or not use the compiler server seemingly at random.
+COMPILER_SERVER_ENABLED_ARGS = /shared:$(COMPILER_SERVER_PIPENAME)
+COMPILER_SERVER_ARGS = $(if $(findstring 1,$(ENABLE_COMPILER_SERVER)),$(COMPILER_SERVER_ENABLED_ARGS),)
+CSC_LOCATION = $(if $(findstring 1,$(ENABLE_COMPILER_SERVER)),$(SERVER_CSC_LOCATION),$(STANDALONE_CSC_LOCATION))
 
 USE_MCS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) /nologo /noconfig /deterministic $(LOCAL_MCS_FLAGS) $(PLATFORM_MCS_FLAGS) $(PROFILE_MCS_FLAGS) $(MCS_FLAGS)
 USE_MBAS_FLAGS = $(COMPILER_SERVER_ARGS) /codepage:$(CODEPAGE) $(LOCAL_MBAS_FLAGS) $(PLATFORM_MBAS_FLAGS) $(PROFILE_MBAS_FLAGS) $(MBAS_FLAGS)
