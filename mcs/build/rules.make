@@ -32,7 +32,10 @@ endif
 
 # NOTE: We have to use conditional functions to branch on the state of ENABLE_COMPILER_SERVER
 #  because the value of this flag can change after rules.make is evaluated. If we use regular ifeq
-#  statements our builds will opt to use or not use the compiler server seemingly at random.
+#  statements our builds will opt to use or not use the compiler server seemingly at random because
+#  we include rules.make many times and the last observed value from rules.make does not match the
+#  value used when actually executing csc. you can observe this by adding an $ ( info here and an
+#  echo above the csc invocation and printing the values.
 COMPILER_SERVER_ENABLED_ARGS = /shared:$(COMPILER_SERVER_PIPENAME)
 COMPILER_SERVER_ARGS = $(if $(findstring 1,$(ENABLE_COMPILER_SERVER)),$(COMPILER_SERVER_ENABLED_ARGS),)
 CSC_LOCATION = $(if $(findstring 1,$(ENABLE_COMPILER_SERVER)),$(SERVER_CSC_LOCATION),$(STANDALONE_CSC_LOCATION))
