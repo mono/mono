@@ -251,7 +251,13 @@ build-zlib-aot-sample: packager.exe zlibtest.exe
 
 run-zlib-aot-sample: build-zlib-aot-sample
 	(cd bin/aot-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
+	
+build-mixed-sample: packager.exe hello.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --aot-interp --aot-assemblies=mscorlib --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/mixed-sample --nobinding --builddir=obj/mixed-sample --template=runtime-tests.js hello.exe
+	ninja -v -C obj/mixed-sample
 
+run-mixed-sample: build-mixed-sample
+	(cd bin/mixed-sample && $(SM) runtime.js --run hello.exe)
 
 hello.exe: hello.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello.cs
