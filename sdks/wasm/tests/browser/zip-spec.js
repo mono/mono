@@ -354,5 +354,212 @@ describe("The WebAssembly Zip Test Suite",function(){
       );
       
     }, DEFAULT_TIMEOUT);    
+
+    it('ZipEnumerateEntriesReadMode: should enumerate archive entries.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:ZipEnumerateEntriesReadMode", []).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result.length, 5, "result does not match expected result values");
+              assert.equal(result[0], "bar.txt", "result[0] does not match expected result.");
+              assert.equal(result[1], "foo.txt", "result[1] does not match expected result.");
+              assert.equal(result[2], "foobar/", "result[2] does not match expected result.");
+              assert.equal(result[3], "foobar/bar.txt", "result[3] does not match expected.");
+              assert.equal(result[4], "foobar/foo.txt", "result[4] does not match expected.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('ZipEnumerateEntriesUpdateMode: should enumerate archive entries.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:ZipEnumerateEntriesUpdateMode", []).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result.length, 5, "result does not match expected result values");
+              assert.equal(result[0], "bar.txt", "result[0] does not match expected result.");
+              assert.equal(result[1], "foo.txt", "result[1] does not match expected result.");
+              assert.equal(result[2], "foobar/", "result[2] does not match expected result.");
+              assert.equal(result[3], "foobar/bar.txt", "result[3] does not match expected.");
+              assert.equal(result[4], "foobar/foo.txt", "result[4] does not match expected.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('ZipEnumerateEntriesCreateMode: should not enumerate archive entries in Create Mode.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:ZipEnumerateEntriesCreateMode", []).then(
+        (result) => 
+        {
+            try {
+              done.fail("CreateMode: should fail in this case with - System.InvalidOperationException.")
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);  
+    
+    it('ZipUpdateEmptyArchive: should allow update on empty stream.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:ZipUpdateEmptyArchive", []).then(
+        (result) => 
+        {
+            try {
+              assert.isTrue(result, "result does not match expected.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+      
+    }, DEFAULT_TIMEOUT);    
+    
+    it('Compress: should compress string.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      var result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:Compress", ["Hello"]);
+      try {
+        assert.isString(result, "result does not match expected.");
+        done()
+      } catch (e) {
+        done.fail(e);
+      }
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('CompressDecompress: should compress and decompress to equal string.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      var result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:Compress", ["Hello"]);
+      result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:Decompress", [result]);
+      try {
+        assert.equal(result, "Hello", "result does not match expected.");
+        done()
+      } catch (e) {
+        done.fail(e);
+      }
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('CompressDecompressLarge: should compress and decompress to equal large string.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      var lorum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum porttitor elit ac dui ullamcorper pellentesque. Etiam elementum vel dolor vitae luctus. Vestibulum fringilla varius cursus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec tempus fringilla velit, sed imperdiet ipsum consequat id. Duis nec justo vel lacus convallis tristique. Mauris luctus erat vitae justo sagittis bibendum. Nullam justo justo, dictum porta augue ut, pretium malesuada velit.  Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam pretium, ex eu vestibulum egestas, nisi sapien semper eros, vitae facilisis elit nisi sed erat. Cras ultricies auctor tempor. Ut euismod magna ac tellus viverra varius. Phasellus ut lectus dapibus, sagittis erat vel, tristique lectus. Praesent dictum fermentum mauris eget consequat. Donec cursus mauris sagittis lectus dictum, a tincidunt dolor semper. Integer dapibus neque et elit volutpat.";
+      var result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:Compress", [lorum]);
+      result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:Decompress", [result]);
+      try {
+        assert.equal(result, lorum, "result does not match expected.");
+        done()
+      } catch (e) {
+        done.fail(e);
+      }
+      
+    }, DEFAULT_TIMEOUT); 
+
+    it('CompressDecompressVeryLarge: should compress and decompress to equal very large string.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      var lorum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum porttitor elit ac dui ullamcorper pellentesque. Etiam elementum vel dolor vitae luctus. Vestibulum fringilla varius cursus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec tempus fringilla velit, sed imperdiet ipsum consequat id. Duis nec justo vel lacus convallis tristique. Mauris luctus erat vitae justo sagittis bibendum. Nullam justo justo, dictum porta augue ut, pretium malesuada velit.  Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam pretium, ex eu vestibulum egestas, nisi sapien semper eros, vitae facilisis elit nisi sed erat. Cras ultricies auctor tempor. Ut euismod magna ac tellus viverra varius. Phasellus ut lectus dapibus, sagittis erat vel, tristique lectus. Praesent dictum fermentum mauris eget consequat. Donec cursus mauris sagittis lectus dictum, a tincidunt dolor semper. Integer dapibus neque et elit volutpat.";
+      var result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:Compress", [lorum.repeat(1000)]);
+      result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:Decompress", [result]);
+      try {
+        assert.equal(result, lorum.repeat(1000), "result does not match expected.");
+        done()
+      } catch (e) {
+        done.fail(e);
+      }
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('CompressGZip: should compress string.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      var result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:CompressGZip", ["Hello GZip"]);
+      try {
+        assert.isString(result, "result does not match expected.");
+        done()
+      } catch (e) {
+        done.fail(e);
+      }
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('CompressDecompressGZip: should compress and decompress to equal string.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      
+      var result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:CompressGZip", ["Hello GZip"]);
+      result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:DecompressGZip", [result]);
+      try {
+        assert.equal(result, "Hello GZip", "result does not match expected.");
+        done()
+      } catch (e) {
+        done.fail(e);
+      }
+      
+    }, DEFAULT_TIMEOUT);    
+
+    it('CompressDecompressGZipLarge: should compress and decompress to equal large string.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      var lorum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum porttitor elit ac dui ullamcorper pellentesque. Etiam elementum vel dolor vitae luctus. Vestibulum fringilla varius cursus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec tempus fringilla velit, sed imperdiet ipsum consequat id. Duis nec justo vel lacus convallis tristique. Mauris luctus erat vitae justo sagittis bibendum. Nullam justo justo, dictum porta augue ut, pretium malesuada velit.  Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam pretium, ex eu vestibulum egestas, nisi sapien semper eros, vitae facilisis elit nisi sed erat. Cras ultricies auctor tempor. Ut euismod magna ac tellus viverra varius. Phasellus ut lectus dapibus, sagittis erat vel, tristique lectus. Praesent dictum fermentum mauris eget consequat. Donec cursus mauris sagittis lectus dictum, a tincidunt dolor semper. Integer dapibus neque et elit volutpat.";
+      var result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:CompressGZip", [lorum]);
+      result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:DecompressGZip", [result]);
+      try {
+        assert.equal(result, lorum, "result does not match expected.");
+        done()
+      } catch (e) {
+        done.fail(e);
+      }
+      
+    }, DEFAULT_TIMEOUT); 
+
+    it('CompressDecompressGZipVeryLarge: should compress and decompress to equal very large string.', (done) => {
+      //karmaHTML.zipspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.zipspec.document;
+      var lorum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum porttitor elit ac dui ullamcorper pellentesque. Etiam elementum vel dolor vitae luctus. Vestibulum fringilla varius cursus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec tempus fringilla velit, sed imperdiet ipsum consequat id. Duis nec justo vel lacus convallis tristique. Mauris luctus erat vitae justo sagittis bibendum. Nullam justo justo, dictum porta augue ut, pretium malesuada velit.  Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam pretium, ex eu vestibulum egestas, nisi sapien semper eros, vitae facilisis elit nisi sed erat. Cras ultricies auctor tempor. Ut euismod magna ac tellus viverra varius. Phasellus ut lectus dapibus, sagittis erat vel, tristique lectus. Praesent dictum fermentum mauris eget consequat. Donec cursus mauris sagittis lectus dictum, a tincidunt dolor semper. Integer dapibus neque et elit volutpat.";
+      var result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:CompressGZip", [lorum.repeat(1000)]);
+      result = _document.Module.BINDING.call_static_method("[ZipTestSuite]TestSuite.Program:DecompressGZip", [result]);
+      try {
+        assert.equal(result, lorum.repeat(1000), "result does not match expected.");
+        done()
+      } catch (e) {
+        done.fail(e);
+      }
+      
+    }, DEFAULT_TIMEOUT);    
     
   });
