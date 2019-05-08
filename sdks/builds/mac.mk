@@ -2,9 +2,10 @@
 mac_BIN_DIR = $(TOP)/sdks/out/mac-bin
 mac_PKG_CONFIG_DIR = $(TOP)/sdks/out/mac-pkgconfig
 mac_LIBS_DIR = $(TOP)/sdks/out/mac-libs
-mac_ARCHIVE += mac-bin mac-pkgconfig mac-libs
+mac_MONO_VERSION = $(TOP)/sdks/out/mac-mono-version.txt
 
-ADDITIONAL_PACKAGE_DEPS += $(mac_BIN_DIR) $(mac_PKG_CONFIG_DIR) $(mac_LIBS_DIR)
+mac_ARCHIVE += mac-bin mac-pkgconfig mac-libs mac-mono-version.txt
+ADDITIONAL_PACKAGE_DEPS += $(mac_BIN_DIR) $(mac_PKG_CONFIG_DIR) $(mac_LIBS_DIR) $(mac_MONO_VERSION)
 
 ##
 # Parameters
@@ -84,8 +85,11 @@ $(mac_LIBS_DIR): package-mac-mac32 package-mac-mac64
 	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmono-native-compat.a      $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-compat.a      -create -output $(mac_LIBS_DIR)/libmono-native-compat.a
 	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmono-native-unified.a     $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-native-unified.a     -create -output $(mac_LIBS_DIR)/libmono-native-unified.a
 	$(mac_mac64_PLATFORM_BIN)/lipo $(TOP)/sdks/out/mac-mac32-$(CONFIGURATION)/lib/libmono-profiler-log.a       $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/lib/libmono-profiler-log.a       -create -output $(mac_LIBS_DIR)/libmono-profiler-log.a
-	
+
 	$(mac_mac64_PLATFORM_BIN)/install_name_tool -id @rpath/libmonosgen-2.0.dylib        $(mac_LIBS_DIR)/libmonosgen-2.0.dylib
 	$(mac_mac64_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-compat.dylib  $(mac_LIBS_DIR)/libmono-native-compat.dylib
 	$(mac_mac64_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-unified.dylib $(mac_LIBS_DIR)/libmono-native-unified.dylib
 	$(mac_mac64_PLATFORM_BIN)/install_name_tool -id @rpath/libMonoPosixHelper.dylib     $(mac_LIBS_DIR)/libMonoPosixHelper.dylib
+
+$(mac_MONO_VERSION): $(TOP)/configure.ac
+	grep AC_INIT $(TOP)/configure.ac | sed -e 's/.*\[//' -e 's/\].*//' > $@
