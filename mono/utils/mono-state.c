@@ -35,7 +35,7 @@ extern GCStats mono_gc_stats;
 #include <mach/task_info.h>
 
 // OSX 10.9 does not have MAP_ANONYMOUS
-#if !defined(
+#if !defined(MAP_ANONYMOUS)
   #define NO_MAP_ANONYMOUS
   #if defined(MAP_ANON)
     #define MAP_ANONYMOUS MAP_ANON
