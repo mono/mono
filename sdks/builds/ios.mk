@@ -12,10 +12,12 @@
 
 ios_FRAMEWORKS_DIR = $(TOP)/sdks/out/ios-frameworks
 ios_LIBS_DIR = $(TOP)/sdks/out/ios-libs
-ios_ARCHIVE += ios-frameworks ios-libs
-ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
+ios_MONO_VERSION = $(TOP)/sdks/out/ios-mono-version.txt
 
-ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR)
+ios_ARCHIVE += ios-frameworks ios-libs ios-mono-version.txt
+ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_MONO_VERSION)
+
+ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ##
 # Device builds
@@ -553,6 +555,10 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
+
+
+$(ios_MONO_VERSION): $(TOP)/configure.ac
+	grep AC_INIT $(TOP)/configure.ac | sed -e 's/.*\[//' -e 's/\].*//' > $@
 
 ##
 # BCL builds
