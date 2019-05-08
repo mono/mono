@@ -40,6 +40,11 @@ sub CompileVCProj
 	my $config;
 
 	my $msbuild = $ENV{"ProgramFiles(x86)"}."/MSBuild/$msBuildVersion/Bin/MSBuild.exe";
+	
+	if ((! -d $extraBuildTools) || ($ENV{YAMATO_PROJECT_ID}) || ($ENV{USERNAME} == "bokken"))
+	{
+		$msbuild = $ENV{"ProgramFiles(x86)"}."/Microsoft Visual Studio/2017/Professional/MSBuild/15.0/Bin/MSBuild.exe";
+	}
 
     $config = $debug ? "Debug" : "Release";
 	my $arch = $arch32 ? "Win32" : "x64";

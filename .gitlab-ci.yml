@@ -119,13 +119,20 @@ build_android:
 build_win:
   stage: build
   tags:
-  - buildfarm
-  - windows
+    - bokken-job
+  variables:
+    BOKKEN_VM: build_win_vm
+    BOKKEN_JOB: |
+      resources:
+        - name: build_win_vm
+          image: platform-foundation/windows-mono-bokken:latest
+          flavor: b1.xlarge
+          type: Unity::VM
   script:
   - git submodule update --init --recursive
   - perl external/buildscripts/build_runtime_win64.pl --stevedorebuilddeps=1
-  - mkdir -p incomingbuilds/win64
-  - cp -r builds/* incomingbuilds/win64/
+  - powershell mkdir -p incomingbuilds/win64
+  - powershell cp -r builds/* incomingbuilds/win64/
   artifacts:
     paths:
     - incomingbuilds/win64
@@ -137,13 +144,20 @@ build_win:
 build_win_x86:
   stage: build
   tags:
-  - buildfarm
-  - windows
+    - bokken-job
+  variables:
+    BOKKEN_VM: build_win_x86_vm
+    BOKKEN_JOB: |
+      resources:
+        - name: build_win_x86_vm
+          image: platform-foundation/windows-mono-bokken:latest
+          flavor: b1.xlarge
+          type: Unity::VM
   script:
   - git submodule update --init --recursive
   - perl external/buildscripts/build_runtime_win.pl --stevedorebuilddeps=1
-  - mkdir -p incomingbuilds/win32
-  - cp -r builds/* incomingbuilds/win32/
+  - powershell mkdir -p incomingbuilds/win32
+  - powershell cp -r builds/* incomingbuilds/win32/
   artifacts:
     paths:
     - incomingbuilds/win32
@@ -155,13 +169,20 @@ build_win_x86:
 build_win_bare_minimum:
   stage: build
   tags:
-  - buildfarm
-  - windows
+    - bokken-job
+  variables:
+    BOKKEN_VM: build_win_bare_minimum
+    BOKKEN_JOB: |
+      resources:
+        - name: build_win_bare_minimum
+          image: platform-foundation/windows-mono-bokken:latest
+          flavor: b1.xlarge
+          type: Unity::VM
   script:
   - git submodule update --init --recursive
   - perl external/buildscripts/build_unityscript_bareminimum_win.pl
-  - mkdir -p incomingbuilds/bareminimum
-  - cp -r builds/* incomingbuilds/bareminimum/
+  - powershell mkdir -p incomingbuilds/bareminimum
+  - powershell cp -r builds/* incomingbuilds/bareminimum/
   artifacts:
     paths:
     - incomingbuilds/bareminimum
