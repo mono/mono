@@ -35,6 +35,7 @@
 #include <mono/metadata/class-init.h>
 #include <mono/metadata/debug-internals.h>
 #include <mono/metadata/assembly-internals.h>
+#include <mono/metadata/appdomain-internals.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/appdomain.h>
@@ -965,7 +966,9 @@ mono_domain_set_internal_with_options (MonoDomain *domain, gboolean migrate_exce
 void
 mono_domain_set_internal (MonoDomain *domain)
 {
+	MONO_ENTER_GC_UNSAFE;
 	mono_domain_set_internal_with_options (domain, TRUE);
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /**
@@ -1045,9 +1048,9 @@ mono_domain_assembly_open_internal (MonoDomain *domain, const char *name)
 	if (domain != mono_domain_get ()) {
 		current = mono_domain_get ();
 
-		mono_domain_set (domain, FALSE);
+		mono_domain_set_fast (domain, FALSE);
 		ass = mono_assembly_request_open (name, &req, NULL);
-		mono_domain_set (current, FALSE);
+		mono_domain_set_fast (current, FALSE);
 	} else {
 		ass = mono_assembly_request_open (name, &req, NULL);
 	}

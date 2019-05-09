@@ -44,6 +44,7 @@
 #include <mono/metadata/w32event.h>
 #include <mono/metadata/custom-attrs-internals.h>
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/appdomain-internals.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-error-internals.h>
@@ -487,7 +488,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		if (mono_domain_get () != domain) {
 			/* Transfer into the target domain */
 			last_domain = mono_domain_get ();
-			if (!mono_domain_set (domain, FALSE)) {
+			if (!mono_domain_set_fast (domain, FALSE)) {
 				vtable->initialized = 1;
 				mono_type_initialization_unlock ();
 				mono_error_set_exception_instance (error, mono_get_exception_appdomain_unloaded ());
@@ -584,7 +585,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		}
 
 		if (last_domain)
-			mono_domain_set (last_domain, TRUE);
+			mono_domain_set_fast (last_domain, TRUE);
 
 		/* Signal to the other threads that we are done */
 		mono_type_init_lock (lock);

@@ -39,6 +39,7 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/threads.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/appdomain-internals.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
@@ -844,7 +845,7 @@ mono_jit_thread_attach (MonoDomain *domain)
 
 	orig = mono_domain_get ();
 	if (orig != domain)
-		mono_domain_set (domain, TRUE);
+		mono_domain_set_fast (domain, TRUE);
 
 	return orig != domain ? orig : NULL;
 }
@@ -860,7 +861,7 @@ mono_jit_set_domain (MonoDomain *domain)
 	g_assert (!mono_threads_is_blocking_transition_enabled ());
 
 	if (domain)
-		mono_domain_set (domain, TRUE);
+		mono_domain_set_fast (domain, TRUE);
 }
 
 /**

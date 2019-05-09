@@ -32,6 +32,7 @@
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/debug-internals.h>
+#include <mono/metadata/appdomain-internals.h>
 #include <mono/utils/monobitset.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-mmap.h>
@@ -876,7 +877,7 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	domain = mono_object_domain (thread);
 
 	mono_thread_push_appdomain_ref (domain);
-	if (!mono_domain_set (domain, force_domain)) {
+	if (!mono_domain_set_fast (domain, force_domain)) {
 		mono_thread_pop_appdomain_ref ();
 		goto fail;
 	}
@@ -1503,7 +1504,7 @@ mono_thread_attach (MonoDomain *domain)
 
 	if (mono_thread_internal_current_is_attached ()) {
 		if (domain != mono_domain_get ())
-			mono_domain_set (domain, TRUE);
+			mono_domain_set_fast (domain, TRUE);
 		/* Already attached */
 		return mono_thread_current ();
 	}
@@ -6048,7 +6049,7 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 	}
 
 	if (orig != domain)
-		mono_domain_set (domain, TRUE);
+		mono_domain_set_fast (domain, TRUE);
 
 	if (mono_threads_is_blocking_transition_enabled ()) {
 		if (external) {
@@ -6106,7 +6107,7 @@ mono_threads_detach_coop_internal (MonoDomain *orig, gpointer cookie, MonoStackD
 		if (!orig)
 			mono_domain_unset ();
 		else
-			mono_domain_set (orig, TRUE);
+			mono_domain_set_fast (orig, TRUE);
 	}
 }
 

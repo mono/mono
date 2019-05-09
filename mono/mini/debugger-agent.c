@@ -62,6 +62,7 @@
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/assembly-internals.h>
+#include <mono/metadata/appdomain-internals.h>
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/reflection-internals.h>
@@ -4132,13 +4133,13 @@ send_types_for_domain (MonoDomain *domain, void *user_data)
 
 	old_domain = mono_domain_get ();
 
-	mono_domain_set (domain, TRUE);
+	mono_domain_set_fast (domain, TRUE);
 	
 	mono_loader_lock ();
 	g_hash_table_foreach (info->loaded_classes, emit_type_load, NULL);
 	mono_loader_unlock ();
 
-	mono_domain_set (old_domain, TRUE);
+	mono_domain_set_fast (old_domain, TRUE);
 }
 
 static void
@@ -4149,7 +4150,7 @@ send_assemblies_for_domain (MonoDomain *domain, void *user_data)
 
 	old_domain = mono_domain_get ();
 
-	mono_domain_set (domain, TRUE);
+	mono_domain_set_fast (domain, TRUE);
 
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
@@ -4158,7 +4159,7 @@ send_assemblies_for_domain (MonoDomain *domain, void *user_data)
 	}
 	mono_domain_assemblies_unlock (domain);
 
-	mono_domain_set (old_domain, TRUE);
+	mono_domain_set_fast (old_domain, TRUE);
 }
 
 static void
@@ -7308,7 +7309,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		MonoDomain *d = mono_domain_get ();
 
 		/* This is needed to be able to find referenced assemblies */
-		res = mono_domain_set (domain, FALSE);
+		res = mono_domain_set_fast (domain, FALSE);
 		g_assert (res);
 
 		if (!mono_reflection_parse_type_checked (s, &info, error)) {
@@ -7329,7 +7330,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_reflection_free_type_info (&info);
 		g_free (s);
 
-		mono_domain_set (d, TRUE);
+		mono_domain_set_fast (d, TRUE);
 
 		break;
 	}
@@ -8090,11 +8091,11 @@ type_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	old_domain = mono_domain_get ();
 
-	mono_domain_set (domain, TRUE);
+	mono_domain_set_fast (domain, TRUE);
 
 	err = type_commands_internal (command, klass, domain, p, end, buf);
 
-	mono_domain_set (old_domain, TRUE);
+	mono_domain_set_fast (old_domain, TRUE);
 
 	return err;
 }
@@ -8543,11 +8544,11 @@ method_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 	old_domain = mono_domain_get ();
 
-	mono_domain_set (domain, TRUE);
+	mono_domain_set_fast (domain, TRUE);
 
 	err = method_commands_internal (command, method, domain, p, end, buf);
 
-	mono_domain_set (old_domain, TRUE);
+	mono_domain_set_fast (old_domain, TRUE);
 
 	return err;
 }
