@@ -15,10 +15,6 @@ name : MacBuildEnvironment
 id : MacBuildEnvironment/9df1e3b3b120_2fc8e616a2e5dfb7907fc42d9576b427e692223c266dc3bc305de4bf03714e30.7z
 repo: testing
 
-name : mono 
-id : mono/9df1e3b3b120_f81c172b91f45b2e045f4ba52d5f65cc54041da1527f2c854bf9db3a99495007.7z
-repo: testing
-
 name : MonoBleedingEdge 
 id : MonoBleedingEdge/9df1e3b3b120_ab6d2f131e6bd4fe2aacafb0f683e8fa4e1ccba35552b6fe89bf359b6ee16215.7z 
 repo: testing
