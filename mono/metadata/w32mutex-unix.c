@@ -38,9 +38,10 @@ mono_w32mutex_open (const char* utf8_name, gint32 rights G_GNUC_UNUSED, gint32 *
 
 static void
 thread_own_mutex (MonoInternalThread *internal, gpointer handle, MonoW32Handle *handle_data)
-// Thread and InternalThread are pinned/mature.
-// Take advantage of that and do not use handles here.
 {
+	// Thread and InternalThread are pinned/mature.
+	// Take advantage of that and do not use handles here.
+
 	/* if we are not on the current thread, there is a
 	 * race condition when allocating internal->owned_mutexes */
 	g_assert (mono_thread_internal_is_current (internal));
@@ -53,9 +54,9 @@ thread_own_mutex (MonoInternalThread *internal, gpointer handle, MonoW32Handle *
 
 static void
 thread_disown_mutex (MonoInternalThread *internal, gpointer handle)
-// Thread and InternalThread are pinned/mature.
-// Take advantage of that and do not use handles here.
 {
+	// Thread and InternalThread are pinned/mature.
+	// Take advantage of that and do not use handles here.
 	gboolean removed;
 
 	g_assert (mono_thread_internal_is_current (internal));
@@ -475,9 +476,9 @@ mono_w32mutex_open (const char* utf8_name, gint32 rights G_GNUC_UNUSED, gint32 *
 
 void
 mono_w32mutex_abandon (MonoInternalThread *internal)
-// Thread and InternalThread are pinned/mature.
-// Take advantage of that and do not use handles here.
 {
+	// Thread and InternalThread are pinned/mature.
+	// Take advantage of that and do not use handles here.
 	g_assert (mono_thread_internal_is_current (internal));
 
 	if (!internal->owned_mutexes)
