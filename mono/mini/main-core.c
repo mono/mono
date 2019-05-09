@@ -1,4 +1,7 @@
 #include <config.h>
+
+#if ENABLE_NETCORE
+
 #include "mini.h"
 #include "mini-runtime.h"
 #include <mono/metadata/assembly.h>
@@ -321,3 +324,5 @@ int STDAPICALLTYPE coreclr_create_delegate (void* hostHandle, unsigned int domai
 	g_error ("Not implemented");
 	return 0;
 }
+
+#endif // ENABLE_NETCORE
