@@ -270,7 +270,7 @@ define CrossRuntimeTemplateStub
 .stamp-$(1)-$(2)-toolchain:
 	touch $$@
 
-.stamp-$(1)-$(2)-$$(CONFIGURATION)-configure: | $$(if $$(IGNORE_PROVISION_LLVM),,provision-$(6))
+.stamp-$(1)-$(2)-$$(CONFIGURATION)-configure:
 
 $$(eval $$(call RuntimeTemplateStub,$(1),$(2),$(3)))
 
