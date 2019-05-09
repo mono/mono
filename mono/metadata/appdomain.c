@@ -988,11 +988,13 @@ mono_domain_owns_vtable_slot (MonoDomain *domain, gpointer vtable_slot)
 gboolean
 mono_domain_set (MonoDomain *domain, gboolean force)
 {
-	gboolean result;
+	if (!force && domain->state == MONO_APPDOMAIN_UNLOADED)
+		return FALSE;
+
 	MONO_ENTER_GC_UNSAFE;
-	result = mono_domain_set_fast (domain, force);
+	mono_domain_set_internal_with_options (domain, TRUE);
 	MONO_EXIT_GC_UNSAFE;
-	return result;
+	return TRUE;
 }
 
 gboolean
