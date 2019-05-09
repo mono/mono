@@ -136,6 +136,12 @@
         </_CheckConfigurationProperty>
     </Target>
 
+    <Target Name="_CheckEnableNetCore" Condition="'$(MONO_ENABLE_NETCORE)' != 'true'">
+        <_CheckConfigurationProperty ConfFile="$(MONO_DIR)/cygconfig.h" ConfRegEx=".*#define.*ENABLE_NETCORE.*1">
+            <Output TaskParameter="ConfPropertyFoundMatch" PropertyName="MONO_ENABLE_NETCORE" />
+        </_CheckConfigurationProperty>
+    </Target>
+
     <Target Name="_CheckInternalLLVM" Condition="'$(_MonoEnableInternalLLVM)' != 'true' and '$(_MonoEnableExternalLLVM)' != 'true' and '$(MONO_ENABLE_LLVM)' == 'true'" DependsOnTargets="_CheckEnableLLVM">
         <_CheckConfigurationProperty ConfFile="$(MONO_DIR)/cygconfig.h" ConfRegEx=".*#define.*INTERNAL_LLVM.*1">
             <Output TaskParameter="ConfPropertyFoundMatch" PropertyName="_MonoEnableInternalLLVM" />
