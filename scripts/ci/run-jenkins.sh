@@ -210,9 +210,12 @@ if [[ ${CI_TAGS} == *'sdks-android'* ]];
             echo "CONFIGURATION=debug" >> sdks/Make.config
         fi
 
+        # TODO: provision-android on Windows.
+        if [[ ${CI_TAGS} != *'win-'* ]]; then
         # For some very strange reasons, `make -C sdks/android accept-android-license` get stuck when invoked through ${TESTCMD}
-        # but doesn't get stuck when called via the shell, so let's just call it here now.
-        ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
+            # but doesn't get stuck when called via the shell, so let's just call it here now.
+            ${TESTCMD} --label=provision-android --timeout=120m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-android && make -C sdks/android accept-android-license
+        fi
         ${TESTCMD} --label=provision-mxe --timeout=240m --fatal make -j ${CI_CPU_COUNT} -C sdks/builds provision-mxe
 
         ${TESTCMD} --label=configure --timeout=180m --fatal make -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
