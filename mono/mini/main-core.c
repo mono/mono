@@ -10,7 +10,7 @@
 #define STDAPICALLTYPE
 #endif
 
-#ifdef _MSC_VER && TARGET_WIN32
+#if defined(_MSC_VER) && defined(HOST_WIN32) && defined(HOST_X86)
 // Ensure that the exported symbols are not decorated and that only one set is exported
 #pragma comment(linker, "/export:coreclr_initialize=_coreclr_initialize@28")
 #pragma comment(linker, "/export:coreclr_execute_assembly=_coreclr_execute_assembly@24")
