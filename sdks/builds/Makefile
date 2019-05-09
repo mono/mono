@@ -184,11 +184,9 @@ include runtime.mk
 include bcl.mk
 
 ## MXE targets
-ifneq ($(UNAME),Windows)
 ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_WASM_CROSS)),)
 # FIXME add iOS support(?)
 include mxe.mk
-endif
 endif
 
 ## LLVM targets
