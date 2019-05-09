@@ -30,8 +30,11 @@
 #include <stdio.h>
 #include <math.h>
 #include <glib.h>
+
 #include "mono-hash.h"
+#include "mono-hash-internals.h"
 #include "metadata/gc-internals.h"
+
 #include <mono/utils/checked-build.h>
 #include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/unlocked.h>
@@ -52,9 +55,6 @@ struct _MonoGHashTable {
 	void *key;
 	const char *msg;
 };
-
-MonoGHashTable *
-mono_g_hash_table_new_type_internal (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type, MonoGCRootSource source, void *key, const char *msg);
 
 #if UNUSED
 static gboolean

@@ -45,6 +45,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/mono-ptr-array.h>
+#include <mono/metadata/mono-hash-internals.h>
 #include <mono/utils/mono-string.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/checked-build.h>
@@ -500,7 +501,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	mono_loader_lock (); /*FIXME mono_class_init_internal and mono_class_vtable acquire it*/
 	mono_domain_lock (domain);
 	if (!domain->type_hash)
-		domain->type_hash = mono_g_hash_table_new_type ((GHashFunc)mono_metadata_type_hash, 
+		domain->type_hash = mono_g_hash_table_new_type_internal ((GHashFunc)mono_metadata_type_hash, 
 				(GCompareFunc)mono_metadata_type_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Reflection Type Table");
 	if ((res = (MonoReflectionType *)mono_g_hash_table_lookup (domain->type_hash, type))) {
 		mono_domain_unlock (domain);
