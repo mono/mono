@@ -217,7 +217,14 @@
       </Lib>
     </ItemGroup>
   </Target>
-  <Target Name="_ConfigureExternalCompileDependency" DependsOnTargets="_ConfigureExternalMonoBuildEnvironment;_SetupMonoLLVMBuildProperties;_SetupMonoLLVMCompileItems" />
+  <Target Name="_SetupMonoNetCoreCompileItems" Condition="$(MONO_ENABLE_NETCORE)=='true'">
+    <ItemGroup>
+      <ClCompile Condition="'%(ClCompile._MonoNetCoreSourceFile)' == 'true'">
+        <ExcludedFromBuild>false</ExcludedFromBuild>
+      </ClCompile>
+    </ItemGroup>
+  </Target>
+  <Target Name="_ConfigureExternalCompileDependency" DependsOnTargets="_ConfigureExternalMonoBuildEnvironment;_SetupMonoLLVMBuildProperties;_SetupMonoLLVMCompileItems;_SetupMonoNetCoreCompileItems" />
   <Target Name="_ConfigureExternalLinkDependency" DependsOnTargets="_ConfigureExternalMonoBuildEnvironment;_SetupMonoLLVMBuildProperties;_SetupMonoLLVMLinkItems" />
   <PropertyGroup>
     <PrepareForBuildDependsOn>

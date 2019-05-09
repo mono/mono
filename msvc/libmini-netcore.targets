@@ -7,6 +7,7 @@
   <ItemGroup Label="netcore_sources">
     <ClCompile Include="$(MonoSourceLocation)\mono\mini\main-core.c">
       <ExcludedFromBuild>$(ExcludeNetCoreFromWindowsBuild)</ExcludedFromBuild>
+      <_MonoNetCoreSourceFile>true</_MonoNetCoreSourceFile>
     </ClCompile>
   </ItemGroup>
 </Project>

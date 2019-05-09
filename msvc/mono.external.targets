@@ -237,7 +237,8 @@
 
     <Target Name="_ConfigureExternalMonoLLVMBuildEnvironment" DependsOnTargets="_SetDefaultLLVMProperties;_CheckEnableLLVM;_CheckInternalLLVM;_CheckExternalLLVM;_CheckLLVMPlatformSupport" />
     <Target Name="_ConfigureExternalMonoBTLSBuildEnvironment" DependsOnTargets="_CheckEnableBtls" />
-    <Target Name="_ConfigureExternalMonoBuildEnvironment" DependsOnTargets="_ConfigureExternalMonoLLVMBuildEnvironment;_ConfigureExternalMonoBTLSBuildEnvironment" />
+    <Target Name="_ConfigureExternalMonoNetCoreBuildEnvironment" DependsOnTargets="_CheckEnableNetCore" />
+    <Target Name="_ConfigureExternalMonoBuildEnvironment" DependsOnTargets="_ConfigureExternalMonoLLVMBuildEnvironment;_ConfigureExternalMonoBTLSBuildEnvironment;_ConfigureExternalMonoNetCoreBuildEnvironment" />
 
     <PropertyGroup>
         <PrepareForBuildDependsOn>
