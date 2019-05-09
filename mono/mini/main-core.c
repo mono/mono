@@ -10,6 +10,16 @@
 #define STDAPICALLTYPE
 #endif
 
+#ifdef _MSC_VER && TARGET_WIN32
+// Ensure that the exported symbols are not decorated and that only one set is exported
+#pragma comment(linker, "/export:coreclr_initialize=_coreclr_initialize@28")
+#pragma comment(linker, "/export:coreclr_execute_assembly=_coreclr_execute_assembly@24")
+#pragma comment(linker, "/export:coreclr_shutdown_2=_coreclr_shutdown_2@12")
+#pragma comment(linker, "/export:coreclr_create_delegate=_coreclr_create_delegate@24")
+#undef MONO_API
+#define MONO_API
+#endif
+
 MONO_API int STDAPICALLTYPE coreclr_initialize (const char* exePath, const char* appDomainFriendlyName,
 	int propertyCount, const char** propertyKeys, const char** propertyValues,
 	void** hostHandle, unsigned int* domainId);
