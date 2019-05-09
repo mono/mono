@@ -50,13 +50,13 @@ archive-$(1)-$(2):
 endef
 
 # TODO: provision LLVM on win32
-ifeq ($(BUILD_PLATFORM),CYGWIN)
+ifeq ($(UNAME),Windows)
 $(eval $(call LLVMProvisionTemplateStub,llvm,llvm32))
 $(eval $(call LLVMProvisionTemplateStub,llvm,llvm64))
 else
 $(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(TOP)/external/llvm))
-ifneq ($(BUILD_PLATFORM),CYGWIN)
+ifneq ($(UNAME),Windows)
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(TOP)/external/llvm))
 ifeq ($(UNAME),Darwin)
@@ -110,7 +110,7 @@ clean-llvm-$(1)::
 
 endef
 
-ifeq ($(BUILD_PLATFORM),CYGWIN)
+ifeq ($(UNAME),Windows)
 $(eval $(call LLVMTemplateStub,llvm32))
 $(eval $(call LLVMTemplateStub,llvm64))
 else
