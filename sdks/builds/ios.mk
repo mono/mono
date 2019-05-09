@@ -12,10 +12,11 @@
 
 ios_FRAMEWORKS_DIR = $(TOP)/sdks/out/ios-frameworks
 ios_LIBS_DIR = $(TOP)/sdks/out/ios-libs
+ios_SOURCES_DIR = $(TOP)/sdks/out/ios-sources
 ios_MONO_VERSION = $(TOP)/sdks/out/ios-mono-version.txt
 
-ios_ARCHIVE += ios-frameworks ios-libs ios-mono-version.txt
-ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_MONO_VERSION)
+ios_ARCHIVE += ios-frameworks ios-libs ios-sources ios-mono-version.txt
+ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_SOURCES_DIR) $(ios_MONO_VERSION)
 
 ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
@@ -556,6 +557,11 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
 
+$(ios_SOURCES_DIR)/mcs/build/common/Consts.cs:  # we use this as a sentinel file to avoid rsyncing everything on each build (slows down iterating)
+	mkdir -p $(ios_SOURCES_DIR)
+	cd $(TOP) && rsync -r --exclude='external/api-doc-tools/*' --exclude='external/api-snapshot/*' --exclude='external/aspnetwebstack/*' --exclude='external/binary-reference-assemblies/*' --exclude='netcore/*' --include='*.cs' --include='*/' --exclude="*" --prune-empty-dirs . $(ios_SOURCES_DIR)
+
+$(ios_SOURCES_DIR): $(ios_SOURCES_DIR)/mcs/build/common/Consts.cs
 
 $(ios_MONO_VERSION): $(TOP)/configure.ac
 	mkdir -p $(dir $(ios_MONO_VERSION))
