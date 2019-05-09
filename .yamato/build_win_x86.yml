@@ -1,0 +1,16 @@
+name: build_win_x86
+
+agent:
+  type: Unity::VM
+  image: platform-foundation/windows-mono-bokken:latest
+  flavor: b1.xlarge
+
+interpreter: powershell
+
+commands:
+  - .yamato/build_win_x86.bat
+
+artifacts: 
+  win32.zip:
+    paths:
+      - incomingbuilds\win32\**
