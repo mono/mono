@@ -292,7 +292,7 @@ namespace System.Threading
                 context = GetWinRTContext();
 #endif
 
-#if MONODROID
+#if MONODROID && !MOBILE_DESKTOP_HOST
             if (context == null)
                 context = AndroidPlatform.GetDefaultSyncContext ();
 #endif

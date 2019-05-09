@@ -30,3 +30,5 @@ hidden_suffix = .tmp
 
 platform-check:
 	@:
+
+PLATFORM_WIN32=1
