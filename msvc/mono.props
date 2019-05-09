@@ -27,6 +27,8 @@
     <MONO_COMPILE_AS_CPP>false</MONO_COMPILE_AS_CPP>
     <!-- When true, mono binaries will link and include BTLS. When false, mono binaries will not link and include BTLS.  -->
     <MONO_ENABLE_BTLS>false</MONO_ENABLE_BTLS>
+    <!-- When true, mono binaries will be compiled for use as a .NET Core runtime.  -->
+    <MONO_ENABLE_NETCORE>false</MONO_ENABLE_NETCORE>
   </PropertyGroup>
   <PropertyGroup Label="MonoDirectories">
     <MonoSourceLocation Condition="'$(MonoSourceLocation)' == '' ">..</MonoSourceLocation>
@@ -63,6 +65,10 @@
     <GC_LIB>libgc.lib</GC_LIB>
     <MONO_TARGET_SUFFIX Condition="'$(MONO_USE_TARGET_SUFFIX)'=='true'">-boehm</MONO_TARGET_SUFFIX>
     <MONO_BUILD_DIR_PREFIX Condition="'$(MONO_USE_SEPARATE_BUILD_DIR)'=='true'">$(MONO_BUILD_DIR_PREFIX)boehm/</MONO_BUILD_DIR_PREFIX>
+  </PropertyGroup>
+  <PropertyGroup Label="MonoNETCORE" Condition="$(MONO_ENABLE_NETCORE)=='true'">
+    <NETCORE_DEFINES>ENABLE_NETCORE</NETCORE_DEFINES>
+    <MONO_LIBMONO_DEF>libmono-netcore.def</MONO_LIBMONO_DEF>
   </PropertyGroup>
   <PropertyGroup Label="Static-Mono-Libraries">
     <MONO_RUNTIME_LIBS>libmonoutils.lib;libmonoruntime$(MONO_TARGET_SUFFIX).lib;libmini$(MONO_TARGET_SUFFIX).lib;$(GC_LIB)</MONO_RUNTIME_LIBS>
@@ -111,6 +117,9 @@
     </BuildMacro>
     <BuildMacro Include="MONO_ENABLE_BTLS">
       <Value>$(MONO_ENABLE_BTLS)</Value>
+    </BuildMacro>
+    <BuildMacro Include="MONO_ENABLE_NETCORE">
+      <Value>$(MONO_ENABLE_NETCORE)</Value>
     </BuildMacro>
   </ItemGroup>
   <PropertyGroup Label="MonoDefaultPreprocessorDefinitions">
