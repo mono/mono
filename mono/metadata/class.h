@@ -92,7 +92,7 @@ mono_class_get_field_token (MonoClassField *field);
 MONO_API uint32_t
 mono_class_get_event_token (MonoEvent *event);
 
-MONO_API MonoProperty*
+MONO_API MONO_RT_EXTERNAL_ONLY MonoProperty *
 mono_class_get_property_from_name (MonoClass *klass, const char *name);
 
 MONO_API uint32_t

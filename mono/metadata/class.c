@@ -65,8 +65,6 @@ static gboolean can_access_type (MonoClass *access_klass, MonoClass *member_klas
 static char* mono_assembly_name_from_token (MonoImage *image, guint32 type_token);
 static guint32 mono_field_resolve_flags (MonoClassField *field);
 
-static MonoProperty* mono_class_get_property_from_name_internal (MonoClass *klass, const char *name);
-
 static gboolean mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
 
 GENERATE_GET_CLASS_WITH_CACHE (valuetype, "System", "ValueType")

@@ -814,6 +814,9 @@ mono_class_has_special_static_fields (MonoClass *klass);
 const char*
 mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_type);
 
+MonoProperty* 
+mono_class_get_property_from_name_internal (MonoClass *klass, const char *name);
+
 const char*
 mono_class_get_property_default_value (MonoProperty *property, MonoTypeEnum *def_type);
 
