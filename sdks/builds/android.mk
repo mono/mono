@@ -263,6 +263,8 @@ _android-$(1)_OBJDUMP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32-objdump
 _android-$(1)_RANLIB=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32-ranlib
 _android-$(1)_STRIP=$$(MXE_PREFIX)/bin/$(2)-w64-mingw32-strip
 
+# On Cygwin, assume x86_64-mingw32-zlib and i686-mingw32-zlib are installed
+# TODO: WSL packages will depend on the distro
 _android-$(1)_AC_VARS= \
 	$$(if $$(filter $$(BUILD_PLATFORM),CYGWIN),,ac_cv_header_zlib_h=no) \
 	ac_cv_search_dlopen=no
@@ -303,9 +305,10 @@ ifneq ($(BUILD_PLATFORM),CYGWIN)
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686))
 $(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))
 else
-# on Cygwin the mingw-built Mono is the host mono.  But we have to use the cross template
-# because 'gcc' is the cygwin compiler, while the x86_64-w64-mingw32-gcc is the windows native compiler.
-$(eval $(call AndroidHostMxeTemplate,host-$(UNAME),$(CYGWIN_BUILD_MACHINE)))
+# on Windows the MinGW-built Mono is the host Mono.  But we have to use the cross template
+# because 'gcc' is the cygwin or WSL compiler, while the x86_64-w64-mingw32-gcc is the windows native compiler.
+$(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))
+# TODO: also build $(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686))
 endif
 
 ##
