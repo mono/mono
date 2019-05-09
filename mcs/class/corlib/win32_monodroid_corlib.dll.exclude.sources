@@ -1,0 +1,18 @@
+#include System.IO.platformnotsupported.sources
+
+../../../external/corert/src/System.Private.CoreLib/src/System/Number.Unix.cs
+../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.Number.cs
+
+corefx/Mono.SafePasswordHandle.Unix.cs
+../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Unix.cs
+
+System/TimeZoneInfo.MonoTouch.cs
+System/TimeZoneInfo.WebAssembly.cs
+System/TimeZoneInfo.Android.cs
+
+corefx/Interop.GetRandomBytes.Mono.cs
+
+System.Text/EncodingHelper.WebAssembly.cs
+
+System/Console.iOS.cs
+System/AndroidPlatform.cs

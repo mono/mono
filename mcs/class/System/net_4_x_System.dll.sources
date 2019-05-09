@@ -1,5 +1,6 @@
 #include common.sources
 #include common_networking.sources
+#include mono_fsw.sources
 
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.VisualBasic/VBCodeGenerator.cs
@@ -132,17 +133,6 @@ System.Diagnostics/PerformanceCounterPermissionEntry.cs
 System.Diagnostics/PerformanceCounterType.cs
 System.Diagnostics/TraceSourceInfo.cs
 System.Diagnostics/Win32EventLog.cs
-
-System.IO/DefaultWatcher.cs
-System.IO/FAMWatcher.cs
-System.IO/NullFileWatcher.cs
-System.IO/FileAction.cs
-System.IO/FileSystemWatcher.cs
-System.IO/IFileWatcher.cs
-System.IO/KeventWatcher.cs
-System.IO/SearchPattern.cs
-
-System.IO/CoreFXFileSystemWatcherProxy.cs
 
 System.IO.Ports/Handshake.cs
 System.IO.Ports/ISerialStream.cs
