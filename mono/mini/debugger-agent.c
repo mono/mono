@@ -55,6 +55,7 @@
 
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/debug-internals.h>
+#include <mono/metadata/domain-internals.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/mono-hash-internals.h>
@@ -62,7 +63,6 @@
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/assembly-internals.h>
-#include <mono/metadata/appdomain-internals.h>
 #include <mono/metadata/runtime.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/reflection-internals.h>

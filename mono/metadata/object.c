@@ -44,7 +44,6 @@
 #include <mono/metadata/w32event.h>
 #include <mono/metadata/custom-attrs-internals.h>
 #include <mono/metadata/abi-details.h>
-#include <mono/metadata/appdomain-internals.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-error-internals.h>

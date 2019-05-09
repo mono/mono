@@ -22,9 +22,9 @@
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/exception.h"
 #include "mono/metadata/debug-helpers.h"
+#include "mono/metadata/domain-internals.h"
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/assembly.h"
-#include "mono/metadata/appdomain-internals.h"
 #include "icall-decl.h"
 #include "icall-signatures.h"
 

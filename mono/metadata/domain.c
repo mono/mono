@@ -35,7 +35,6 @@
 #include <mono/metadata/class-init.h>
 #include <mono/metadata/debug-internals.h>
 #include <mono/metadata/assembly-internals.h>
-#include <mono/metadata/appdomain-internals.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/appdomain.h>

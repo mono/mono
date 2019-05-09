@@ -27,8 +27,8 @@
 #include <config.h>
 #include <glib.h>
 
-#include <mono/metadata/appdomain-internals.h>
 #include <mono/metadata/class-internals.h>
+#include <mono/metadata/domain-internals.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/object.h>
