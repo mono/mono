@@ -481,8 +481,15 @@ void
 mono_g_hash_table_insert (MonoGHashTable *h, gpointer k, gpointer v)
 {
 	MONO_ENTER_GC_UNSAFE;
-	mono_g_hash_table_insert_replace (h, k, v, FALSE);
+	mono_g_hash_table_insert_internal (h, k, v);
 	MONO_EXIT_GC_UNSAFE;
+}
+
+void
+mono_g_hash_table_insert_internal (MonoGHashTable *h, gpointer k, gpointer v)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	mono_g_hash_table_insert_replace (h, k, v, FALSE);
 }
 
 /**

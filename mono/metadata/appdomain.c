@@ -47,6 +47,7 @@
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/mono-gc.h>
+#include <mono/metadata/mono-hash-internals.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/marshal-internals.h>
 #include <mono/metadata/monitor.h>
@@ -1060,7 +1061,7 @@ ves_icall_System_AppDomain_SetData (MonoAppDomainHandle ad, MonoStringHandle nam
 
 	mono_domain_lock (add);
 
-	mono_g_hash_table_insert (add->env, MONO_HANDLE_RAW (name), MONO_HANDLE_RAW (data));
+	mono_g_hash_table_insert_internal (add->env, MONO_HANDLE_RAW (name), MONO_HANDLE_RAW (data));
 
 	mono_domain_unlock (add);
 }

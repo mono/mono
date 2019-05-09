@@ -35,7 +35,7 @@ MONO_API gpointer mono_g_hash_table_find            (MonoGHashTable *hash, GHRFu
 MONO_API gboolean mono_g_hash_table_remove          (MonoGHashTable *hash, gconstpointer key);
 MONO_API guint    mono_g_hash_table_foreach_remove  (MonoGHashTable *hash, GHRFunc func, gpointer user_data);
 MONO_API void     mono_g_hash_table_destroy         (MonoGHashTable *hash);
-MONO_API void     mono_g_hash_table_insert          (MonoGHashTable *h, gpointer k, gpointer v);
+MONO_API MONO_RT_EXTERNAL_ONLY void mono_g_hash_table_insert (MonoGHashTable *h, gpointer k, gpointer v);
 MONO_API void     mono_g_hash_table_replace         (MonoGHashTable *h, gpointer k, gpointer v);
 MONO_API void     mono_g_hash_table_print_stats     (MonoGHashTable *table);
 

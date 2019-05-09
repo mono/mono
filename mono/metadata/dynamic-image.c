@@ -168,7 +168,7 @@ mono_dynamic_image_register_token (MonoDynamicImage *assembly, guint32 token, Mo
 			g_assert_not_reached ();
 		}
 	}
-	mono_g_hash_table_insert (assembly->tokens, GUINT_TO_POINTER (token), MONO_HANDLE_RAW (obj));
+	mono_g_hash_table_insert_internal (assembly->tokens, GUINT_TO_POINTER (token), MONO_HANDLE_RAW (obj));
 	dynamic_image_unlock (assembly);
 }
 #else
