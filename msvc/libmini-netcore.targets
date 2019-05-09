@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ExcludeNetCoreFromWindowsBuild Condition="'$(MONO_ENABLE_NETCORE)'=='true'">false</ExcludeNetCoreFromWindowsBuild>
+    <ExcludeNetCoreFromWindowsBuild Condition="'$(MONO_ENABLE_NETCORE)'=='' Or '$(MONO_ENABLE_NETCORE)'!='true'">true</ExcludeNetCoreFromWindowsBuild>
+  </PropertyGroup>
   <ItemGroup Label="netcore_sources">
-    <ClCompile Include="$(MonoSourceLocation)\mono\mini\main-core.c" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\mini\main-core.c">
+      <ExcludedFromBuild>$(ExcludeNetCoreFromWindowsBuild)</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
 </Project>
