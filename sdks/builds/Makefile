@@ -32,13 +32,18 @@ endif
 endif
 endif
 
+ifeq ($(UNAME),Windows)
+# x86_64 or i686
+HOST_ARCH_MINGW32=$(shell uname -m)
+endif
+
 ifneq ($(UNAME),Darwin)
 # iOS and Mac requires Xcode to be available, and Xcode is only available on macOS
 DISABLE_IOS=1
 DISABLE_MAC=1
 endif
 
-# On Windows, we will just trigger LLVM builds using this make file.
+# On Windows, we will just trigger LLVM and Android builds using this Makefile.
 ifeq ($(UNAME),Windows)
 DISABLE_IOS=1
 DISABLE_MAC=1
@@ -181,7 +186,7 @@ include runtime.mk
 include bcl.mk
 
 ## MXE targets
-ifneq ($(BUILD_PLATFORM),CYGWIN)
+ifneq ($(UNAME),Windows)
 ifeq ($(and $(DISABLE_ANDROID),$(DISABLE_WASM_CROSS)),)
 # FIXME add iOS support(?)
 include mxe.mk
