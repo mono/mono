@@ -975,28 +975,6 @@ mono_domain_owns_vtable_slot (MonoDomain *domain, gpointer vtable_slot)
 	return res;
 }
 
-/**
- * mono_domain_set:
- * \param domain domain
- * \param force force setting.
- *
- * Set the current appdomain to \p domain. If \p force is set, set it even
- * if it is being unloaded.
- *
- * \returns TRUE on success; FALSE if the domain is unloaded
- */
-gboolean
-mono_domain_set (MonoDomain *domain, gboolean force)
-{
-	if (!force && domain->state == MONO_APPDOMAIN_UNLOADED)
-		return FALSE;
-
-	MONO_ENTER_GC_UNSAFE;
-	mono_domain_set_internal_with_options (domain, TRUE);
-	MONO_EXIT_GC_UNSAFE;
-	return TRUE;
-}
-
 gboolean
 mono_domain_set_fast (MonoDomain *domain, gboolean force)
 {

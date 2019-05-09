@@ -140,18 +140,6 @@ static inline int mono_g_hash_table_find_slot (MonoGHashTable *hash, const MonoO
 	return i;
 }
 
-
-MonoGHashTable *
-mono_g_hash_table_new_type (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type, MonoGCRootSource source, void *key, const char *msg)
-{
-	MonoGHashTable *result;
-	MONO_ENTER_GC_UNSAFE;
-	result = mono_g_hash_table_new_type_internal (hash_func, key_equal_func, type, source, key, msg);
-	MONO_EXIT_GC_UNSAFE;
-	return result;
-}
-
-
 MonoGHashTable *
 mono_g_hash_table_new_type_internal (GHashFunc hash_func, GEqualFunc key_equal_func, MonoGHashGCType type, MonoGCRootSource source, void *key, const char *msg)
 {

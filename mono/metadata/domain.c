@@ -957,20 +957,6 @@ mono_domain_set_internal_with_options (MonoDomain *domain, gboolean migrate_exce
 }
 
 /**
- * mono_domain_set_internal:
- * \param domain the new domain
- *
- * Sets the current domain to \p domain.
- */
-void
-mono_domain_set_internal (MonoDomain *domain)
-{
-	MONO_ENTER_GC_UNSAFE;
-	mono_domain_set_internal_with_options (domain, TRUE);
-	MONO_EXIT_GC_UNSAFE;
-}
-
-/**
  * mono_domain_foreach:
  * \param func function to invoke with the domain data
  * \param user_data user-defined pointer that is passed to the supplied \p func fo reach domain
