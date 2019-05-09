@@ -67,7 +67,6 @@
     <MONO_BUILD_DIR_PREFIX Condition="'$(MONO_USE_SEPARATE_BUILD_DIR)'=='true'">$(MONO_BUILD_DIR_PREFIX)boehm/</MONO_BUILD_DIR_PREFIX>
   </PropertyGroup>
   <PropertyGroup Label="MonoNETCORE" Condition="$(MONO_ENABLE_NETCORE)=='true'">
-    <NETCORE_DEFINES>ENABLE_NETCORE</NETCORE_DEFINES>
     <MONO_LIBMONO_DEF>libmono-netcore.def</MONO_LIBMONO_DEF>
   </PropertyGroup>
   <PropertyGroup Label="Static-Mono-Libraries">
