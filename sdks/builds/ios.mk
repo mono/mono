@@ -558,6 +558,7 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 
 
 $(ios_MONO_VERSION): $(TOP)/configure.ac
+	mkdir -p $(dir $(ios_MONO_VERSION))
 	grep AC_INIT $(TOP)/configure.ac | sed -e 's/.*\[//' -e 's/\].*//' > $@
 
 ##

@@ -92,4 +92,5 @@ $(mac_LIBS_DIR): package-mac-mac32 package-mac-mac64
 	$(mac_mac64_PLATFORM_BIN)/install_name_tool -id @rpath/libMonoPosixHelper.dylib     $(mac_LIBS_DIR)/libMonoPosixHelper.dylib
 
 $(mac_MONO_VERSION): $(TOP)/configure.ac
+	mkdir -p $(dir $(mac_MONO_VERSION))
 	grep AC_INIT $(TOP)/configure.ac | sed -e 's/.*\[//' -e 's/\].*//' > $@
