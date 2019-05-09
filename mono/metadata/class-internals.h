@@ -1229,6 +1229,9 @@ mono_class_has_variant_generic_params (MonoClass *klass);
 gboolean
 mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass, gboolean check_for_reference_conv);
 
+gboolean 
+mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
+
 mono_bool
 mono_class_is_assignable_from_internal (MonoClass *klass, MonoClass *oklass);
 

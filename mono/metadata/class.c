@@ -65,8 +65,6 @@ static gboolean can_access_type (MonoClass *access_klass, MonoClass *member_klas
 static char* mono_assembly_name_from_token (MonoImage *image, guint32 type_token);
 static guint32 mono_field_resolve_flags (MonoClassField *field);
 
-static gboolean mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
-
 GENERATE_GET_CLASS_WITH_CACHE (valuetype, "System", "ValueType")
 GENERATE_TRY_GET_CLASS_WITH_CACHE (handleref, "System.Runtime.InteropServices", "HandleRef")
 
@@ -3412,6 +3410,7 @@ gboolean
 mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc,
 				    gboolean check_interfaces)
 {
+	MONO_REQ_GC_UNSAFE_MODE;
 	/* FIXME test for interfaces with variant generic arguments */
 	mono_class_init_internal (klass);
 	mono_class_init_internal (klassc);
