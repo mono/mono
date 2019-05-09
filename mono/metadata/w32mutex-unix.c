@@ -101,8 +101,6 @@ mutex_handle_signal (MonoW32Handle *handle_data)
 			mono_w32handle_set_signal_state (handle_data, TRUE, FALSE);
 		}
 	}
-
-	HANDLE_FUNCTION_RETURN ();
 }
 
 static gboolean
