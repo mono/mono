@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable enable
 using System.Diagnostics;
 using System.Text;
 
@@ -130,7 +129,7 @@ namespace System.IO
             // them properly. As such we need to manually remove segments and not use GetFullPath().
 
             return PathInternal.IsDevice(combinedPath.AsSpan())
-                ? PathInternal.RemoveRelativeSegments(combinedPath)
+                ? PathInternal.RemoveRelativeSegments(combinedPath, PathInternal.GetRootLength(combinedPath.AsSpan()))
                 : GetFullPath(combinedPath);
         }
 
