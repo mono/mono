@@ -20,7 +20,7 @@
 #pragma comment(linker, "/export:coreclr_shutdown_2=_coreclr_shutdown_2@12")
 #pragma comment(linker, "/export:coreclr_create_delegate=_coreclr_create_delegate@24")
 #undef MONO_API
-#define MONO_API
+#define MONO_API MONO_EXTERN_C
 #endif
 
 MONO_API int STDAPICALLTYPE coreclr_initialize (const char* exePath, const char* appDomainFriendlyName,
