@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Reflection;
 
 namespace System
 {
@@ -129,7 +128,7 @@ namespace System
 
 			Type src_type = sourceArray.GetType ().GetElementType ();
 			Type dst_type = destinationArray.GetType ().GetElementType ();
-			var dst_type_vt = dst_type.IsValueType;
+			var dst_type_vt = dst_type.IsValueType && Nullable.GetUnderlyingType(dst_type) == null;
 
 			if (src_type.IsEnum)
 				src_type = Enum.GetUnderlyingType (src_type);
@@ -150,7 +149,7 @@ namespace System
 				for (int i = 0; i < length; i++) {
 					Object srcval = sourceArray.GetValueImpl (source_pos + i);
 
-					if (srcval == null && dst_type_vt)
+					if (dst_type_vt && (srcval == null || (src_type == typeof (object) && srcval.GetType () != dst_type)))
 						throw new InvalidCastException ();
 
 					try {
@@ -197,6 +196,11 @@ namespace System
 				} else if (source.IsPointer && target.IsPointer) {
 					return true;
 				} else if (source.IsPrimitive && target.IsPrimitive) {
+					
+					// Special case: normally C# doesn't allow implicit ushort->char cast).
+					if (source == typeof (ushort) && target == typeof (char))
+						return true;
+					
 					// Allow primitive type widening
 					return DefaultBinder.CanChangePrimitive (source, target);
 				} else if (!source.IsValueType && !source.IsPointer) {
@@ -269,6 +273,8 @@ namespace System
 				throw new NotSupportedException ("Array type can not be void");
 			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
+			if (elementType.IsByRef)
+				throw new NotSupportedException (SR.NotSupported_Type);
 			
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
@@ -289,6 +295,8 @@ namespace System
 				throw new NotSupportedException ("Array type can not be void");
 			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
+			if (elementType.IsByRef)
+				throw new NotSupportedException (SR.NotSupported_Type);
 
 			if (lengths.Length < 1)
 				throw new ArgumentException ("Arrays must contain >= 1 elements.");
