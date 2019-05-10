@@ -166,14 +166,15 @@ namespace System.Threading {
 		private extern static byte[] ByteArrayToCurrentDomain (byte[] arr);
 
 #if !NETCORE
-		IPrincipal principal;
-		int principal_version;
-
 		public static Context CurrentContext {
 			get {
 				return(AppDomain.InternalGetContext ());
 			}
 		}
+
+#if !DISABLE_SECURITY
+		IPrincipal principal;
+		int principal_version;
 
 		static void DeserializePrincipal (Thread th)
 		{
@@ -291,6 +292,7 @@ namespace System.Threading {
 				th.principal = value;
 			}
 		}
+#endif
 
 		public static AppDomain GetDomain() {
 			return AppDomain.CurrentDomain;

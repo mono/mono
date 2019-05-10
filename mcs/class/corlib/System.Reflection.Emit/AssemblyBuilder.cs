@@ -1271,7 +1271,7 @@ namespace System.Reflection.Emit
 
 		internal override Evidence UnprotectedGetEvidence ()
 		{
-#if MOBILE
+#if MOBILE || DISABLE_SECURITY
 			return null;
 #else
 			// if the host (runtime) hasn't provided it's own evidence...
