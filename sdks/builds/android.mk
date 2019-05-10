@@ -463,4 +463,9 @@ $(eval $(call AndroidCrossMXETemplateStub,cross-x86-win,i686,i686,x86,llvm-llvmw
 $(eval $(call AndroidCrossMXETemplateStub,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 endif
 
+ifeq ($(UNAME),Windows)
+_bcl_android_BUILD_FLAGS += \
+	PROFILE_PLATFORM=win32
+endif
+
 $(eval $(call BclTemplate,android,monodroid monodroid_tools,monodroid monodroid_tools))
