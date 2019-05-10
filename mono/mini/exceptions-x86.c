@@ -766,25 +766,28 @@ mono_arch_exceptions_init (void)
 		return;
 	}
 
+	// FIXME more in the macro
+#define TRAMPOLINE(name) (mono_register_jit_icall_info (&mono_jit_icall_info.mono_ ## name, tramp, #name, NULL, TRUE, NULL))
+
 	/* LLVM needs different throw trampolines */
 	tramp = get_throw_trampoline ("llvm_throw_exception_trampoline", FALSE, TRUE, FALSE, FALSE, FALSE, &tinfo, FALSE,  FALSE);
-	mono_register_jit_icall (tramp, "llvm_throw_exception_trampoline", NULL, TRUE);
+	TRAMPOLINE (llvm_throw_exception_trampoline);
 	mono_tramp_info_register (tinfo, NULL);
 
 	tramp = get_throw_trampoline ("llvm_rethrow_exception_trampoline", TRUE, TRUE, FALSE, FALSE, FALSE, &tinfo, FALSE, FALSE);
-	mono_register_jit_icall (tramp, "llvm_rethrow_exception_trampoline", NULL, TRUE);
+	TRAMPOLINE (llvm_rethrow_exception_trampoline);
 	mono_tramp_info_register (tinfo, NULL);
 
 	tramp = get_throw_trampoline ("llvm_throw_corlib_exception_trampoline", FALSE, TRUE, TRUE, FALSE, FALSE, &tinfo, FALSE, FALSE);
-	mono_register_jit_icall (tramp, "llvm_throw_corlib_exception_trampoline", NULL, TRUE);
+	TRAMPOLINE (llvm_throw_corlib_exception_trampoline);
 	mono_tramp_info_register (tinfo, NULL);
 
 	tramp = get_throw_trampoline ("llvm_throw_corlib_exception_abs_trampoline", FALSE, TRUE, TRUE, TRUE, FALSE, &tinfo, FALSE, FALSE);
-	mono_register_jit_icall (tramp, "llvm_throw_corlib_exception_abs_trampoline", NULL, TRUE);
+	TRAMPOLINE (llvm_throw_corlib_exception_abs_trampoline);
 	mono_tramp_info_register (tinfo, NULL);
 
 	tramp = get_throw_trampoline ("llvm_resume_unwind_trampoline", FALSE, FALSE, FALSE, FALSE, TRUE, &tinfo, FALSE, FALSE);
-	mono_register_jit_icall (tramp, "llvm_resume_unwind_trampoline", NULL, TRUE);
+	TRAMPOLINE (llvm_resume_unwind_trampoline);
 	mono_tramp_info_register (tinfo, NULL);
 
 	signal_exception_trampoline = mono_x86_get_signal_exception_trampoline (&tinfo, FALSE);

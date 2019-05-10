@@ -925,15 +925,23 @@ mono_amd64_get_exception_trampolines (gboolean aot)
 	MonoTrampInfo *info;
 	GSList *tramps = NULL;
 
+	// FIXME more in the macro
+#define TRAMPOLINE(name) (info->jit_icall_info = &mono_jit_icall_info.mono_ ## name)
+
 	/* LLVM needs different throw trampolines */
 	get_throw_trampoline (&info, FALSE, TRUE, FALSE, FALSE, "llvm_throw_corlib_exception_trampoline", aot, FALSE);
+	TRAMPOLINE (llvm_throw_corlib_exception_trampoline);
 	tramps = g_slist_prepend (tramps, info);
 
 	get_throw_trampoline (&info, FALSE, TRUE, TRUE, FALSE, "llvm_throw_corlib_exception_abs_trampoline", aot, FALSE);
+	TRAMPOLINE (llvm_throw_corlib_exception_abs_trampoline);
 	tramps = g_slist_prepend (tramps, info);
 
 	get_throw_trampoline (&info, FALSE, TRUE, TRUE, TRUE, "llvm_resume_unwind_trampoline", aot, FALSE);
+	TRAMPOLINE (llvm_resume_unwind_trampoline);
 	tramps = g_slist_prepend (tramps, info);
+
+#undef TRAMPOLINE
 
 	return tramps;
 }
@@ -956,19 +964,26 @@ mono_arch_exceptions_init (void)
 	gpointer tramp;
 
 	if (mono_ee_features.use_aot_trampolines) {
+
+		// FIXME more in the macro
+#define TRAMPOLINE(name) (mono_register_jit_icall_info (&mono_jit_icall_info.mono_ ## name, tramp, #name, NULL, TRUE, NULL))
+
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_trampoline");
-		mono_register_jit_icall (tramp, "llvm_throw_corlib_exception_trampoline", NULL, TRUE);
+		TRAMPOLINE (llvm_throw_corlib_exception_trampoline);
 		tramp = mono_aot_get_trampoline ("llvm_throw_corlib_exception_abs_trampoline");
-		mono_register_jit_icall (tramp, "llvm_throw_corlib_exception_abs_trampoline", NULL, TRUE);
+		TRAMPOLINE (llvm_throw_corlib_exception_abs_trampoline);
 		tramp = mono_aot_get_trampoline ("llvm_resume_unwind_trampoline");
-		mono_register_jit_icall (tramp, "llvm_resume_unwind_trampoline", NULL, TRUE);
+		TRAMPOLINE (llvm_resume_unwind_trampoline);
+
+#undef TRAMPOLINE
+
 	} else if (!mono_llvm_only) {
 		/* Call this to avoid initialization races */
 		tramps = mono_amd64_get_exception_trampolines (FALSE);
 		for (l = tramps; l; l = l->next) {
 			MonoTrampInfo *info = (MonoTrampInfo *)l->data;
 
-			mono_register_jit_icall (info->code, g_strdup (info->name), NULL, TRUE);
+			mono_register_jit_icall_info (info->jit_icall_info, info->code, g_strdup (info->name), NULL, TRUE, NULL);
 			mono_tramp_info_register (info, NULL);
 		}
 		g_slist_free (tramps);
