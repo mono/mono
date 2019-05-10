@@ -35,7 +35,9 @@
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsNotAsErrors>$(WarningsNotAsErrors);618</WarningsNotAsErrors>
-    <NoWarn>649,3019,414,169,3015,591,1573,1591,0419</NoWarn>
+    <!-- Remove CS8608 once https://github.com/dotnet/roslyn/issues/23268 is resolved -->
+    <NoWarn>649,1573,1591,0419,3021,CS8609</NoWarn>
+
     <!-- Disable nullability-related warnings -->
     <NoWarn>$(NoWarn),CS8609,CS8611,CS8631,CS8632</NoWarn>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
@@ -136,11 +138,13 @@
       <Compile Include="System\MissingMemberException.cs" />
       <Compile Include="System\NotImplemented.cs" />
       <Compile Include="System\Nullable.cs" />
+      <Compile Include="System\RuntimeType.cs" />
       <Compile Include="System\String.cs" />
       <Compile Include="System\Type.cs" />
       <Compile Include="System\TypedReference.cs" />
       <Compile Include="System\TypeLoadException.cs" />
       <Compile Include="System\TypeNameParser.cs" />
+      <Compile Include="System\ValueType.cs" />
       <Compile Include="System\__ComObject.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
       <Compile Include="System.Collections.Generic\ArraySortHelper.cs" />
@@ -233,7 +237,6 @@
       <Compile Include="..\corlib\coreclr\Math.CoreCLR.cs" />
 
       <Compile Include="..\corlib\ReferenceSources\JitHelpers.cs" />
-      <Compile Include="..\corlib\ReferenceSources\RuntimeType.cs" />
 
       <Compile Include="..\corlib\Mono\RuntimeStructs.cs" />
       <Compile Include="..\corlib\Mono\RuntimeMarshal.cs" />
@@ -251,7 +254,6 @@
       <Compile Include="..\corlib\System\RuntimeFieldHandle.cs" />
       <Compile Include="..\corlib\System\RuntimeTypeHandle.cs" />
       <Compile Include="..\corlib\System\RuntimeMethodHandle.cs" />
-      <Compile Include="..\corlib\System\ValueType.cs" />
       <Compile Include="..\corlib\System\WeakReference.cs" />
       <Compile Include="..\corlib\System\WeakReference_T.cs" />
       <Compile Include="..\corlib\System\TypeIdentifier.cs" />
