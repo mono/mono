@@ -137,6 +137,7 @@ extensions-config.h
 *.mlpd
 llvm/build/
 llvm/usr/
+sdks/builds/llvm-*/
 
 ##############################################################################
 # Arcade output directories
