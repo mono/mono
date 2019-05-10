@@ -308,7 +308,7 @@ $(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))
 else
 # on Windows the MinGW-built Mono is the host Mono.  But we have to use the cross template
 # because 'gcc' is the cygwin or WSL compiler, while the x86_64-w64-mingw32-gcc is the windows native compiler.
-$(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))
+# TODO: build $(eval $(call AndroidHostMxeTemplate,host-mxe-Win64,x86_64))
 # TODO: also build $(eval $(call AndroidHostMxeTemplate,host-mxe-Win32,i686))
 endif
 
