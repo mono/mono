@@ -434,9 +434,6 @@ gboolean
 mono_thread_internal_is_current (MonoInternalThread *internal);
 
 gboolean
-mono_thread_internal_is_current_handle (MonoInternalThreadHandle internal);
-
-gboolean
 mono_threads_is_current_thread_in_protected_block (void);
 
 gboolean
