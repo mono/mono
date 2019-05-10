@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace System.Collections.Generic
 {
 	partial class ArraySortHelper<T>
