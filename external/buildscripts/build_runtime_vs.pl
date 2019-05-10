@@ -41,7 +41,7 @@ sub CompileVCProj
 
 	my $msbuild = $ENV{"ProgramFiles(x86)"}."/MSBuild/$msBuildVersion/Bin/MSBuild.exe";
 	
-	if (($ENV{YAMATO_PROJECT_ID}) || ($ENV{USERNAME} == "bokken"))
+	if (($ENV{YAMATO_PROJECT_ID}) || ($ENV{USERNAME} eq "bokken"))
 	{
 		$msbuild = $ENV{"ProgramFiles(x86)"}."/Microsoft Visual Studio/2017/Professional/MSBuild/15.0/Bin/MSBuild.exe";
 	}
