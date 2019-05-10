@@ -1310,7 +1310,7 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	params [3] = &init_locals_param;
 	params [4] = &sig_token_param;
 	params [5] = &max_stack_param;
-	mono_runtime_invoke_handle (ctor, MONO_HANDLE_CAST (MonoObject, ret), params, error);
+	mono_runtime_invoke_handle_void (ctor, MONO_HANDLE_CAST (MonoObject, ret), params, error);
 	mono_error_assert_ok (error);
 
 	return ret;
