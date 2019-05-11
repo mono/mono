@@ -126,6 +126,7 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 
 	MonoClass * const klass = MONO_HANDLE_GETVAL (this_obj, vtable)->klass;
@@ -142,7 +143,7 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 		mono_runtime_invoke_handle_void (method, this_obj, NULL, error);
 	}
 
-	return is_ok (error);
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
 /**
