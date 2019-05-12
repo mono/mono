@@ -136,6 +136,9 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
 	   export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
 	   export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
 
+        # make sure we embed the correct path into the PDBs
+        export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
+
         echo "DISABLE_ANDROID=1" > sdks/Make.config
         echo "DISABLE_WASM=1" >> sdks/Make.config
         echo "DISABLE_DESKTOP=1" >> sdks/Make.config
@@ -179,6 +182,9 @@ then
     # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
     export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
     export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+
+    # make sure we embed the correct path into the PDBs
+    export XAMMAC_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.Mac.framework/Versions/Current/src/Xamarin.Mac/
 
     echo "DISABLE_IOS=1" > sdks/Make.config
     echo "DISABLE_ANDROID=1" >> sdks/Make.config
