@@ -573,12 +573,11 @@ dnl We should use AM_PROG_AS, but it's not available on automake/aclocal 1.4
 AC_SUBST(CCAS)
 AC_SUBST(CCASFLAGS)
 
-# AC_PROG_CXX helpfully sets CXX to g++ even if no c++ compiler is found so check
+# With old versions of autoconf, AC_PROG_CXX helpfully sets CXX to g++ even if no c++ compiler is found so check
 # GXX instead. See http://lists.gnu.org/archive/html/bug-autoconf/2002-04/msg00056.html
-if test "x$CXX" = "xg++"; then
+# With new versions of autoconf, AC_PROG_CXX sets CXX to no if no C++ compiler is found so check also this value
+if test "x$CXX" = "xg++" -o "x$CXX" = "xno"; then
 	if test "x$GXX" != "xyes"; then
-		# automake/libtool is so broken, it requires g++ even if the c++ sources
-		# are inside automake conditionals
 		AC_MSG_ERROR([You need to install g++])
 	fi
 fi
