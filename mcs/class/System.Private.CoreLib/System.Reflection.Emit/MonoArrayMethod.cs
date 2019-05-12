@@ -1,3 +1,5 @@
+#nullable disable
+
 //
 // System.Reflection/MonoMethod.cs
 // The class used to represent methods from the mono runtime.

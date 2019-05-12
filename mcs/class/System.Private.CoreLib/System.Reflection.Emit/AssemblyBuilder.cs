@@ -1,3 +1,5 @@
+#nullable disable
+
 //
 // System.Reflection.Emit/AssemblyBuilder.cs
 //

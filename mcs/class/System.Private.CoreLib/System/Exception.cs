@@ -19,37 +19,37 @@ namespace System
 		}
 
 		# region Keep in sync with MonoException in object-internals.h
-		string _unused1;
+		string? _unused1;
 		internal string _message;
 		IDictionary _data;
 		Exception _innerException;
 		string _helpURL;
 		object _traceIPs;
-		string _stackTraceString;
-		string _unused3;
+		string? _stackTraceString;
+		string? _unused3;
 		int _unused4;
 		object _dynamicMethods; // Dynamic methods referenced by the stack trace
 		int _HResult;
 		string _source;
-		object _unused6;
+		object? _unused6;
 		internal MonoStackFrame[] foreignExceptionsFrames;
 		IntPtr[] native_trace_ips;
 		int caught_in_unmanaged;
 		#endregion
 
-		public MethodBase TargetSite {
+		public MethodBase? TargetSite {
 			get {
 				StackTrace st = new StackTrace (this, true);
 				if (st.FrameCount > 0)
-					return st.GetFrame (0).GetMethod ();
+					return st.GetFrame (0)?.GetMethod ();
 
 				return null;
 			}
 		}
 
-		public virtual String StackTrace => GetStackTrace (true);
+		public virtual string? StackTrace => GetStackTrace (true);
 
-		string GetStackTrace (bool needFileInfo)
+		string? GetStackTrace (bool needFileInfo)
 		{
 			if (_stackTraceString != null)
 				return _stackTraceString;
@@ -61,7 +61,7 @@ namespace System
 
 		internal DispatchState CaptureDispatchState ()
 		{
-			MonoStackFrame[] stackFrames = null;
+			MonoStackFrame[] stackFrames;
 
 			if (_traceIPs != null) {
 				stackFrames = System.Diagnostics.StackTrace.get_trace (this, 0, true);
@@ -88,11 +88,11 @@ namespace System
 			_stackTraceString = null;
 		}
 
-		string CreateSourceName ()
+		string? CreateSourceName ()
 		{
 			var st = new StackTrace (this, fNeedFileInfo: false);
 			if (st.FrameCount > 0) {
-				StackFrame sf = st.GetFrame (0);
+				StackFrame sf = st.GetFrame (0)!;
 				MethodBase method = sf.GetMethod ();
 
 				Module module = method.Module;
@@ -114,8 +114,8 @@ namespace System
 
 		static IDictionary CreateDataContainer () => new ListDictionaryInternal ();
 
-		static string SerializationWatsonBuckets => null;
-		static string SerializationRemoteStackTraceString => null;
-		string SerializationStackTraceString => GetStackTrace (true);
+		static string? SerializationWatsonBuckets => null;
+		static string? SerializationRemoteStackTraceString => null;
+		string? SerializationStackTraceString => GetStackTrace (true);
 	}
 }

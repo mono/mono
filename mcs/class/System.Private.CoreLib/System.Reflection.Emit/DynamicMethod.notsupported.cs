@@ -1,3 +1,5 @@
+#nullable disable
+
 //
 // DynamicMethod.cs
 //
