@@ -1,3 +1,5 @@
+#nullable disable
+
 //
 // System.Reflection.Emit.TypeBuilder.cs
 //
@@ -744,12 +746,6 @@ namespace System.Reflection.Emit
 						TypeBuilder tb = (TypeBuilder)ft;
 						if (!tb.is_created) {
 							throw new NotImplementedException ();
-							if (!tb.is_created) {
-								// FIXME: We should throw an exception here,
-								// but mcs expects that the type is created
-								// even if the exception is thrown
-								//throw new TypeLoadException ("Could not load type " + tb);
-							}
 						}
 					}
 				}

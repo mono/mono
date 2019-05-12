@@ -1,14 +1,3 @@
-//
-// Wrapper handles for Mono Runtime internal structs
-//
-// Authors:
-//   Aleksey Kliger <aleksey@xamarin.com>
-//   Rodrigo Kumpera <kumpera@xamarin.com>
-//
-// Copyright 2016 Dot net foundation.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-//
-
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -31,7 +20,7 @@ namespace Mono
 
 		internal RuntimeStructs.MonoClass* Value => value;
 
-		public override bool Equals (object obj)
+		public override bool Equals (object? obj)
 		{
 			if (obj == null || GetType () != obj.GetType ())
 				return false;
@@ -46,27 +35,27 @@ namespace Mono
 			return value == handle.Value;
 		}
 
-		public static bool operator == (RuntimeClassHandle left, object right)
+		public static bool operator == (RuntimeClassHandle left, object? right)
 		{
 			return right != null && right is RuntimeClassHandle rch && left.Equals (rch);
 		}
 
-		public static bool operator != (RuntimeClassHandle left, object right)
+		public static bool operator != (RuntimeClassHandle left, object? right)
 		{
 			return !(left == right);
 		}
 
-		public static bool operator == (object left, RuntimeClassHandle right)
+		public static bool operator == (object? left, RuntimeClassHandle right)
 		{
 			return left != null && left is RuntimeClassHandle rch && rch.Equals (right);
 		}
 
-		public static bool operator != (object left, RuntimeClassHandle right)
+		public static bool operator != (object? left, RuntimeClassHandle right)
 		{
 			return !(left == right);
 		}
 
-		[MethodImpl(MethodImplOptions.InternalCall)]
+		[MethodImpl (MethodImplOptions.InternalCall)]
 		internal unsafe extern static IntPtr GetTypeFromClass (RuntimeStructs.MonoClass *klass);
 
 		internal RuntimeTypeHandle GetTypeHandle () => new RuntimeTypeHandle (GetTypeFromClass (value));
@@ -140,7 +129,7 @@ namespace Mono
 
 		public IntPtr Value => value;
 
-		public override bool Equals (object obj)
+		public override bool Equals (object? obj)
 		{
 			if (obj == null || GetType () != obj.GetType ())
 				return false;
@@ -180,7 +169,7 @@ namespace Mono
 
 		public IntPtr Value => value;
 
-		public override bool Equals (object obj)
+		public override bool Equals (object? obj)
 		{
 			if (obj == null || GetType () != obj.GetType ())
 				return false;
@@ -238,7 +227,8 @@ namespace Mono
 		[MethodImpl(MethodImplOptions.InternalCall)]
 		extern static void GPtrArrayFree (RuntimeStructs.GPtrArray* value);
 
-		internal static void DestroyAndFree (ref RuntimeGPtrArrayHandle h) {
+		internal static void DestroyAndFree (ref RuntimeGPtrArrayHandle h)
+		{
 			GPtrArrayFree (h.value);
 			h.value = null;
 		}

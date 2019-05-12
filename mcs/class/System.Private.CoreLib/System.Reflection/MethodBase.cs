@@ -66,12 +66,8 @@ namespace System.Reflection
 			return parameterTypes;
 		}
 
-		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle)
+		internal virtual int get_next_table_index (object obj, int table, int count)
 		{
-			throw new NotImplementedException ();
-		}
-
-		internal virtual int get_next_table_index (object obj, int table, int count) {
 			throw new NotImplementedException ();
 		}
 	}
