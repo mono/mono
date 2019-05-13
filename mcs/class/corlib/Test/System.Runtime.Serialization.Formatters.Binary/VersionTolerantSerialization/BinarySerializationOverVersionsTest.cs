@@ -1,3 +1,4 @@
+#if !DISABLE_REMOTING
 using System;
 using System.Collections;
 using System.Text;
@@ -134,3 +135,4 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		}
 	}
 }
+#endif

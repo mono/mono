@@ -524,7 +524,7 @@ namespace MonoTests.System {
 		}
 #endif
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME
+#if !MONOTOUCH && !FULL_AOT_RUNTIME && !DISABLE_REMOTING
 		[Test]
 		public void CreateInstanceCustomDomain ()
 		{
