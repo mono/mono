@@ -120,6 +120,7 @@ namespace System.Reflection.Emit
 			return attrs;
 		}
 
+		[PreserveDependency ("DoTypeBuilderResolve", "System.AppDomain")]
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx)
 		{
 			this.parent = null;
