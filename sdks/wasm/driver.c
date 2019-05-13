@@ -48,7 +48,7 @@ typedef struct {
 } MonoIcallTableCallbacks;
 
 void
-mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb);
+mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *cb);
 
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
 void mono_trace_init (void);
@@ -319,13 +319,13 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 
 #ifdef LINK_ICALLS
 	/* Link in our own linked icall table */
-	MonoIcallTableCallbacks cb;
-	memset (&cb, 0, sizeof (MonoIcallTableCallbacks));
-	cb.version = MONO_ICALL_TABLE_CALLBACKS_VERSION;
-	cb.lookup = icall_table_lookup;
-	cb.lookup_icall_symbol = icall_table_lookup_symbol;
-
-	mono_install_icall_table_callbacks (&cb);
+	static const MonoIcallTableCallbacks mono_icall_table_callbacks =
+	{
+		MONO_ICALL_TABLE_CALLBACKS_VERSION,
+		icall_table_lookup,
+		icall_table_lookup_symbol
+	};
+	mono_install_icall_table_callbacks (&mono_icall_table_callbacks);
 #endif
 
 #ifdef NEED_NORMAL_ICALL_TABLES
