@@ -1294,7 +1294,6 @@
     <Compile Include="Mono.Globalization.Unicode\MSCompatUnicodeTableUtil.cs" />
     <Compile Include="Mono.Globalization.Unicode\Normalization.cs" />
     <Compile Include="Mono.Globalization.Unicode\NormalizationTableUtil.cs" />
-    <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
     <Compile Include="Mono.Globalization.Unicode\SortKey.cs" />
     <Compile Include="Mono.Globalization.Unicode\SortKeyBuffer.cs" />
     <Compile Include="Mono.Security.Cryptography\DSAManaged.cs" />
@@ -1919,7 +1918,6 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.GetRandomBytes.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.Stat.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\Guid.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\System\IO\PathInternal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.ChMod.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.CopyFile.cs" />
@@ -1943,9 +1941,6 @@
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
-        <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
-        <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
-        <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD4Managed.cs" />
         <Compile Include="..\referencesource\mscorlib\microsoft\win32\safehandles\saferegistryhandle.cs" />
         <Compile Include="..\referencesource\mscorlib\system\runtime\remoting\callcontext.cs" />
         <Compile Include="..\referencesource\mscorlib\system\runtime\serialization\formatters\soapfault.cs" />
@@ -2146,8 +2141,6 @@
         <Compile Include="System.Text\EncodingHelper.WebAssembly.cs" />
         <Compile Include="System\AndroidPlatform.cs" />
         <Compile Include="System\Console.iOS.cs" />
-        <Compile Include="System\Environment.iOS.cs" />
-        <Compile Include="System\NotSupportedException.iOS.cs" />
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
@@ -2155,7 +2148,6 @@
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
-        <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
         <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -2222,12 +2214,9 @@
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\Enumeration\FileSystemEnumerator.Windows.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystem.Windows.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem\src\System\IO\FileSystemInfo.Windows.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.X509Certificates\src\Microsoft\Win32\SafeHandles\SafePasswordHandle.Windows.cs" />
-        <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Unix\System.Private.CoreLib.Native\Interop.Number.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
         <Compile Include="..\..\..\external\corert\src\Common\src\Interop\Windows\mincore\Interop.MemAllocFree.cs" />
-        <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Unix.cs" />
         <Compile Include="..\..\..\external\corert\src\System.Private.CoreLib\src\System\Number.Windows.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\ARC4Managed.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\MD2Managed.cs" />
@@ -2433,11 +2422,8 @@
         <Compile Include="System.Security.Permissions\PrincipalPermission.cs" />
         <Compile Include="System.Security.Permissions\PrincipalPermissionAttribute.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
-        <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
-        <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Windows.cs" />
         <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -2497,11 +2483,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="System.IO.Enumeration\FileSystemEntry.NotSupported.cs" />
-        <Compile Include="System.IO.Enumeration\FileSystemEnumerator.NotSupported.cs" />
-        <Compile Include="System.IO\FileSystem.NotSupported.cs" />
-        <Compile Include="System.IO\FileSystemInfo.NotSupported.cs" />
-        <Compile Include="System.IO\PathInternal.NotSupported.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAccessRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistryAuditRule.cs" />
         <Compile Include="System.Security.AccessControl\RegistrySecurity.cs" />
@@ -2518,7 +2499,6 @@
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
-        <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
         <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -2778,7 +2758,6 @@
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
-        <Compile Include="corefx\Interop.GetRandomBytes.Mono.cs" />
         <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
         <Compile Include="corefx\TimeZoneInfo.cs" />
         <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
