@@ -16,6 +16,7 @@ System.Reflection/AssemblyTest.cs
 
 System.Reflection.Emit/AssemblyBuilderTest.cs
 System.Reflection.Emit/FieldBuilderTest.cs
+System.Reflection.Emit/FieldInfoTest.cs
 
 System.Runtime.InteropServices/GCHandleTest.cs
 
