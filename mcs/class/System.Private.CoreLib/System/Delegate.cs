@@ -362,10 +362,10 @@ namespace System
 			// replace all Type.Missing with default values defined on parameters of the delegate if any
 			MethodInfo? invoke = GetType ().GetMethod ("Invoke");
 			if (invoke != null && args != null) {
-				var delegateParameters = invoke.GetParameters ();
+				ParameterInfo[] delegateParameters = invoke.GetParameters ();
 				for (int i = 0; i < args.Length; i++) {
 					if (args [i] == Type.Missing) {
-						var dlgParam = delegateParameters [i];
+						ParameterInfo dlgParam = delegateParameters [i];
 						if (dlgParam.HasDefaultValue) {
 							args [i] = dlgParam.DefaultValue;
 						}
