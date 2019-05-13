@@ -399,26 +399,23 @@ namespace System.Configuration
 					if(depth == reader.Depth)
 						reader.Read();
 
-				} while (depth < reader.Depth);				
+				} while (depth < reader.Depth);
 			}
 			
 			modified = false;
 				
 			foreach (PropertyInformation prop in ElementInformation.Properties) {
+				// TODO: It seems, the following behaviour is wronng.
+				//       One need to compare with original .Net Framework.
 				if (String.IsNullOrEmpty(prop.Name) || readProps.ContainsKey (prop))
 					continue;
 
 				if (prop.IsRequired) {
-					// TODO: It seems, the following behaviour is wronng.
-					//       One need to compare with original .Net Framework.
 					object val = OnRequiredPropertyNotFound (prop.Name);
 					if (!object.Equals (val, prop.DefaultValue)) {
 						prop.Value = val;
 						prop.IsModified = false;
 					}
-				}
-				else {
-					prop.Reset (null);
 				}
 			}
 
