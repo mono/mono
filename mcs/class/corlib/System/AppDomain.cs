@@ -72,7 +72,9 @@ namespace System {
 #endif
         #pragma warning disable 169
         #region Sync with object-internals.h
+		#region Sync with LinkerDescriptor/mscorlib.xml
 		IntPtr _mono_app_domain;
+		#endregion
 		#endregion
         #pragma warning restore 169
 		static string _process_guid;
