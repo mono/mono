@@ -80,32 +80,30 @@ namespace MonoTests.System.Configuration {
 		public void SetRawXmlTest_DefaultSection ()
 		{
 			TestUtil.RunWithTempFile ((tmpFileName) => {
-				CreateConfig (tmpFileName);
-				TestConfig (tmpFileName);
+				SetRawXmlTest_DefaultSection_CreateConfig (tmpFileName);
+				SetRawXmlTest_DefaultSection_TestConfig (tmpFileName);
 			});
+		}
+		void SetRawXmlTest_DefaultSection_CreateConfig (string fileName)
+		{
+			var config = TestUtil.WriteXmlToFileAndOpenConfiguration (DefaultConfigSectionConfig, fileName);
+			var section = config.Sections["DefaultConfigSection"] as DefaultSection;
+			section.SectionInformation.SetRawXml ("<DefaultConfigSection><TestTag /></DefaultConfigSection>");
+			config.Save(ConfigurationSaveMode.Full);
+		}
+		void SetRawXmlTest_DefaultSection_TestConfig (string fileName)
+		{
+			var config = TestUtil.OpenConfiguration (fileName);
+			var section = config.Sections["DefaultConfigSection"] as DefaultSection;
+			var rawXml = section.SectionInformation.GetRawXml ();
 
-			void CreateConfig (string fileName)
-			{
-				var config = TestUtil.WriteXmlToFileAndOpenConfiguration (DefaultConfigSectionConfig, fileName);
-				var section = config.Sections["DefaultConfigSection"] as DefaultSection;
-			 	section.SectionInformation.SetRawXml ("<DefaultConfigSection><TestTag /></DefaultConfigSection>");
-				config.Save(ConfigurationSaveMode.Full);
-			}
+			Assert.IsNotNull (rawXml, "#1: : GetRawXml() returns null");
+			Assert.IsFalse (string.IsNullOrEmpty (rawXml), "#2: GetRawXml() returns String.Empty");
 
-			void TestConfig (string fileName)
-			{
-				var config = TestUtil.OpenConfiguration (fileName);
-				var section = config.Sections["DefaultConfigSection"] as DefaultSection;
-				var rawXml = section.SectionInformation.GetRawXml ();
-
-				Assert.IsNotNull (rawXml, "#1: : GetRawXml() returns null");
-				Assert.IsFalse (string.IsNullOrEmpty (rawXml), "#2: GetRawXml() returns String.Empty");
-
-				var xmlDoc = new XmlDocument();
-				xmlDoc.LoadXml(rawXml);
-				var testTagNode = xmlDoc.SelectSingleNode (@"DefaultConfigSection/TestTag");
-				Assert.IsNotNull (testTagNode, "#1: :testTagNode is null");
-			}
+			var xmlDoc = new XmlDocument();
+			xmlDoc.LoadXml(rawXml);
+			var testTagNode = xmlDoc.SelectSingleNode (@"DefaultConfigSection/TestTag");
+			Assert.IsNotNull (testTagNode, "#1: :testTagNode is null");
 		}
 
 		[Test]
@@ -113,37 +111,35 @@ namespace MonoTests.System.Configuration {
 		public void SetRawXmlTest_SimpleSection ()
 		{
 			TestUtil.RunWithTempFile ((tmpFileName) => {
-				CreateConfig (tmpFileName, "<SimpleSection></SimpleSection>");
-				TestConfig (tmpFileName, SimpleElement.Default.Value, "#1");
+				SetRawXmlTest_SimpleSection_CreateConfig (tmpFileName, "<SimpleSection></SimpleSection>");
+				SetRawXmlTest_SimpleSection_TestConfig (tmpFileName, SimpleElement.Default.Value, "#1");
 			});
 
 			TestUtil.RunWithTempFile ((tmpFileName) => {
-				CreateConfig (tmpFileName, "<SimpleSection><SimpleElement /></SimpleSection>");
-				TestConfig (tmpFileName, SimpleElement.Default.Value, "#2");
+				SetRawXmlTest_SimpleSection_CreateConfig (tmpFileName, "<SimpleSection><SimpleElement /></SimpleSection>");
+				SetRawXmlTest_SimpleSection_TestConfig (tmpFileName, SimpleElement.Default.Value, "#2");
 			});
 
 			TestUtil.RunWithTempFile ((tmpFileName) => {
-				CreateConfig (tmpFileName, @"<SimpleSection><SimpleElement Value=""2"" /></SimpleSection>");
-				TestConfig (tmpFileName, 2, "#3");
+				SetRawXmlTest_SimpleSection_CreateConfig (tmpFileName, @"<SimpleSection><SimpleElement Value=""2"" /></SimpleSection>");
+				SetRawXmlTest_SimpleSection_TestConfig (tmpFileName, 2, "#3");
 			});
+		}
+		void SetRawXmlTest_SimpleSection_CreateConfig (string fileName, string sectionRawXml)
+		{
+			var config = TestUtil.WriteXmlToFileAndOpenConfiguration (SimpleSectionConfig, fileName);
+			var section = config.Sections["SimpleSection"] as SimpleSection;
 
-			void CreateConfig (string fileName, string sectionRawXml)
-			{
-				var config = TestUtil.WriteXmlToFileAndOpenConfiguration (SimpleSectionConfig, fileName);
-				var section = config.Sections["SimpleSection"] as SimpleSection;
+			section.SimpleElement.Value = 1;
+			section.SectionInformation.SetRawXml (sectionRawXml);
 
-				section.SimpleElement.Value = 1;
-				section.SectionInformation.SetRawXml (sectionRawXml);
-
-				config.Save(ConfigurationSaveMode.Full);
-			}
-
-			void TestConfig (string fileName, int expectedValue, string testLabel)
-			{
-				var config = TestUtil.OpenConfiguration (fileName);
-				var section = config.Sections["SimpleSection"] as SimpleSection;
-				Assert.AreEqual (section.SimpleElement.Value, expectedValue, testLabel);
-			}
+			config.Save(ConfigurationSaveMode.Full);
+		}
+		void SetRawXmlTest_SimpleSection_TestConfig (string fileName, int expectedValue, string testLabel)
+		{
+			var config = TestUtil.OpenConfiguration (fileName);
+			var section = config.Sections["SimpleSection"] as SimpleSection;
+			Assert.AreEqual (section.SimpleElement.Value, expectedValue, testLabel);
 		}
 	}
 }
