@@ -1711,7 +1711,7 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 		return mini_emit_calli (cfg, mono_icall_sig_ptr, NULL, addr, NULL, NULL);
 	} else {
 		g_assert (TLS_KEY_THREAD == 0); // FIXME static_assert
-		MonoJitICallId jit_icall_id = MONO_JIT_ICALL_mono_tls_get_thread + key;
+		const MonoJitICallId jit_icall_id = (MonoJitICallId)(MONO_JIT_ICALL_mono_tls_get_thread + key);
 		g_assert (mono_jit_icall_info.array [jit_icall_id].func == (gpointer)mono_tls_get_tls_getter (key));
 		return mono_emit_jit_icall_id (cfg, jit_icall_id, NULL);
 	}
