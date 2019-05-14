@@ -8193,6 +8193,11 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		opts->nunbox_arbitrary_trampolines = 0;
 	}
 
+#ifndef MONO_DYNAMIC_AOT_DIRECT_CALLS
+	if (!opts->static_link)
+		opts->disable_direct_external_calls = TRUE;
+#endif
+
 	g_ptr_array_free (args, /*free_seg=*/TRUE);
 }
 
@@ -12072,6 +12077,7 @@ compile_asm (MonoAotCompile *acfg)
 #elif defined(TARGET_AMD64) && defined(TARGET_MACH)
 #define LD_NAME "clang"
 #define LD_OPTIONS "-undefined dynamic_lookup --shared"
+#define MONO_DYNAMIC_AOT_DIRECT_CALLS TRUE
 #elif defined(TARGET_WIN32_MSVC)
 #define LD_NAME "link.exe"
 #define LD_OPTIONS "/DLL /MACHINE:X64 /NOLOGO /INCREMENTAL:NO"
@@ -12081,7 +12087,8 @@ compile_asm (MonoAotCompile *acfg)
 #define LD_OPTIONS "-shared"
 #elif defined(TARGET_X86) && defined(TARGET_MACH)
 #define LD_NAME "clang"
-#define LD_OPTIONS "-m32 -dynamiclib"
+#define LD_OPTIONS "-undefined dynamic_lookup -m32 -dynamiclib"
+#define MONO_DYNAMIC_AOT_DIRECT_CALLS TRUE
 #elif defined(TARGET_X86) && !defined(TARGET_MACH)
 #define LD_OPTIONS "-m elf_i386"
 #elif defined(TARGET_ARM) && !defined(TARGET_ANDROID)
