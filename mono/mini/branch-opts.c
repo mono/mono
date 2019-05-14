@@ -384,7 +384,7 @@ mono_if_conversion (MonoCompile *cfg)
 
 			/* FIXME: */
 			/* ins->type might not be set */
-			if (INS_INFO (ins1->opcode) [MONO_INST_DEST] != 'i')
+			if (INS_INFO (ins1->opcode)->dest != 'i')
 				continue;
 
 			if (cfg->verbose_level > 2) {
@@ -537,7 +537,7 @@ mono_if_conversion (MonoCompile *cfg)
 
 			/* FIXME: */
 			/* ins->type might not be set */
-			if (INS_INFO (ins1->opcode) [MONO_INST_DEST] != 'i')
+			if (INS_INFO (ins1->opcode)->dest != 'i')
 				continue;
 
 			/* FIXME: */

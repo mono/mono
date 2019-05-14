@@ -194,8 +194,8 @@ static GENERATE_GET_CLASS_WITH_CACHE (geqcomparer, "System.Collections.Generic",
 #ifdef MINI_OP3
 #undef MINI_OP3
 #endif
-#define MINI_OP(a,b,dest,src1,src2) dest, src1, src2, ' ',
-#define MINI_OP3(a,b,dest,src1,src2,src3) dest, src1, src2, src3,
+#define MINI_OP(a,b,dest,src1,src2) {{ dest, src1, src2, ' ' }},
+#define MINI_OP3(a,b,dest,src1,src2,src3) {{ dest, src1, src2, src3 }},
 #define NONE ' '
 #define IREG 'i'
 #define FREG 'f'
@@ -207,7 +207,7 @@ static GENERATE_GET_CLASS_WITH_CACHE (geqcomparer, "System.Collections.Generic",
 #define LREG 'l'
 #endif
 /* keep in sync with the enum in mini.h */
-const char
+const MonoInstSpec
 mini_ins_info[] = {
 #include "mini-ops.h"
 };
@@ -11625,7 +11625,7 @@ mono_handle_global_vregs (MonoCompile *cfg)
 
 		cfg->cbb = bb;
 		for (; ins; ins = ins->next) {
-			const char *spec = INS_INFO (ins->opcode);
+			const MonoInstSpec *spec = INS_INFO (ins->opcode);
 			int regtype = 0, regindex;
 			gint32 prev_bb;
 
@@ -11638,22 +11638,22 @@ mono_handle_global_vregs (MonoCompile *cfg)
 				int vreg = 0;
 
 				if (regindex == 0) {
-					regtype = spec [MONO_INST_DEST];
+					regtype = spec->dest;
 					if (regtype == ' ')
 						continue;
 					vreg = ins->dreg;
 				} else if (regindex == 1) {
-					regtype = spec [MONO_INST_SRC1];
+					regtype = spec->src1;
 					if (regtype == ' ')
 						continue;
 					vreg = ins->sreg1;
 				} else if (regindex == 2) {
-					regtype = spec [MONO_INST_SRC2];
+					regtype = spec->src2;
 					if (regtype == ' ')
 						continue;
 					vreg = ins->sreg2;
 				} else if (regindex == 3) {
-					regtype = spec [MONO_INST_SRC3];
+					regtype = spec->src3;
 					if (regtype == ' ')
 						continue;
 					vreg = ins->sreg3;
@@ -11772,13 +11772,13 @@ mono_handle_global_vregs (MonoCompile *cfg)
 					call_index = -1;
 					ins_index = 0;
 					for (ins = vreg_to_bb [var->dreg]->code; ins; ins = ins->next) {
-						const char *spec = INS_INFO (ins->opcode);
+						const MonoInstSpec *spec = INS_INFO (ins->opcode);
 
-						if ((spec [MONO_INST_DEST] != ' ') && (ins->dreg == var->dreg))
+						if (spec->dest != ' ' && ins->dreg == var->dreg)
 							def_index = ins_index;
 
-						if (((spec [MONO_INST_SRC1] != ' ') && (ins->sreg1 == var->dreg)) ||
-							((spec [MONO_INST_SRC1] != ' ') && (ins->sreg1 == var->dreg))) {
+						if ((spec->src1 != ' ' && ins->sreg1 == var->dreg) ||
+							(spec->src1 != ' ' && ins->sreg1 == var->dreg)) {
 							if (call_index > def_index) {
 								spilled = TRUE;
 								break;
@@ -11884,7 +11884,7 @@ void
 mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 {
 	MonoBasicBlock *bb;
-	char spec2 [16];
+	MonoInstSpec spec2 = { 0 };
 	int orig_next_vreg;
 	guint32 *vreg_to_lvreg;
 	guint32 *lvregs;
@@ -11895,8 +11895,6 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 	MonoBasicBlock **live_range_start_bb, **live_range_end_bb;
 
 	*need_local_opts = FALSE;
-
-	memset (spec2, 0, sizeof (spec2));
 
 	/* FIXME: Move this function to mini.c */
 	stacktypes [(int)'i'] = STACK_PTR;
@@ -11997,7 +11995,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 
 		cfg->cbb = bb;
 		MONO_BB_FOR_EACH_INS (bb, ins) {
-			const char *spec = INS_INFO (ins->opcode);
+			const MonoInstSpec *spec = INS_INFO (ins->opcode);
 			int regtype, srcindex, sreg, tmp_reg, prev_dreg, num_sregs;
 			gboolean store, no_lvreg;
 			int sregs [MONO_MAX_SRC_REGS];
@@ -12113,11 +12111,11 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 				ins->sreg2 = tmp_reg;
 				store = TRUE;
 
-				spec2 [MONO_INST_DEST] = ' ';
-				spec2 [MONO_INST_SRC1] = spec [MONO_INST_SRC1];
-				spec2 [MONO_INST_SRC2] = spec [MONO_INST_DEST];
-				spec2 [MONO_INST_SRC3] = ' ';
-				spec = spec2;
+				spec2.dest = ' ';
+				spec2.src1 = spec->src1;
+				spec2.src2 = spec->dest;
+				spec2.src3 = ' ';
+				spec = &spec2;
 			} else if (MONO_IS_STORE_MEMINDEX (ins))
 				g_assert_not_reached ();
 			else
@@ -12125,7 +12123,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 			no_lvreg = FALSE;
 
 			if (G_UNLIKELY (cfg->verbose_level > 2)) {
-				printf ("\t %.3s %d", spec, ins->dreg);
+				printf ("\t %.3s %d", spec->bytes, ins->dreg);
 				num_sregs = mono_inst_get_src_registers (ins, sregs);
 				for (srcindex = 0; srcindex < num_sregs; ++srcindex)
 					printf (" %d", sregs [srcindex]);
@@ -12135,7 +12133,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 			/***************/
 			/*    DREG     */
 			/***************/
-			regtype = spec [MONO_INST_DEST];
+			regtype = spec->dest;
 			g_assert (((ins->dreg == -1) && (regtype == ' ')) || ((ins->dreg != -1) && (regtype != ' ')));
 			prev_dreg = -1;
 			int dreg_using_dest_to_membase_op = -1;
@@ -12151,7 +12149,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 
 				if (var->opcode == OP_REGVAR) {
 					ins->dreg = var->dreg;
-				} else if ((ins->dreg == ins->sreg1) && (spec [MONO_INST_DEST] == 'i') && (spec [MONO_INST_SRC1] == 'i') && !vreg_to_lvreg [ins->dreg] && (op_to_op_dest_membase (store_opcode, ins->opcode) != -1)) {
+				} else if ((ins->dreg == ins->sreg1) && (spec->dest == 'i') && (spec->src1 == 'i') && !vreg_to_lvreg [ins->dreg] && (op_to_op_dest_membase (store_opcode, ins->opcode) != -1)) {
 					/* 
 					 * Instead of emitting a load+store, use a _membase opcode.
 					 */
@@ -12219,11 +12217,11 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 							ins->sreg2 = tmp_reg;
 							store = TRUE;
 
-							spec2 [MONO_INST_DEST] = ' ';
-							spec2 [MONO_INST_SRC1] = spec [MONO_INST_SRC1];
-							spec2 [MONO_INST_SRC2] = spec [MONO_INST_DEST];
-							spec2 [MONO_INST_SRC3] = ' ';
-							spec = spec2;
+							spec2.dest = ' ';
+							spec2.src1 = spec->src1;
+							spec2.src2 = spec->dest;
+							spec2.src3 = ' ';
+							spec = &spec2;
 						} else if (!lvreg && (op_to_op_store_membase (store_opcode, ins->opcode) != -1)) {
 							// FIXME: The backends expect the base reg to be in inst_basereg
 							ins->opcode = op_to_op_store_membase (store_opcode, ins->opcode);
@@ -12271,7 +12269,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 			/************/
 			num_sregs = mono_inst_get_src_registers (ins, sregs);
 			for (srcindex = 0; srcindex < 3; ++srcindex) {
-				regtype = spec [MONO_INST_SRC1 + srcindex];
+				regtype = spec->src [srcindex];
 				sreg = sregs [srcindex];
 
 				g_assert (((sreg == -1) && (regtype == ' ')) || ((sreg != -1) && (regtype != ' ')));

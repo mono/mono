@@ -1293,12 +1293,13 @@ mono_perform_abc_removal (MonoCompile *cfg)
 			printf ("\nABCREM BLOCK %d:\n", bb->block_num);
 
 		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = INS_INFO (ins->opcode);
+			const MonoInstSpec *spec = INS_INFO (ins->opcode);
 			gint32 idx, *reg;
 			
-			if (spec [MONO_INST_DEST] == ' ' || MONO_IS_STORE_MEMBASE (ins))
+			if (spec->dest == ' ' || MONO_IS_STORE_MEMBASE (ins))
 				continue;
 
+			// FIXME rewrite this
 			MONO_INS_FOR_EACH_REG (ins, idx, reg) {
 				MonoInst *var = get_vreg_to_inst (cfg, *reg);
 				if (var && (var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)))
@@ -1310,7 +1311,7 @@ mono_perform_abc_removal (MonoCompile *cfg)
 				continue;
 			}
 
-			if (spec [MONO_INST_DEST] == 'i') {
+			if (spec->dest == 'i') {
 				MonoIntegerValueKind effective_value_kind;
 				MonoRelationsEvaluationRange range;
 				MonoSummarizedValueRelation *type_relation;

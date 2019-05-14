@@ -360,7 +360,47 @@ extern int valgrind_register;
 
 #define INS_INFO(opcode) (&mini_ins_info [((opcode) - OP_START - 1) * 4])
 
-extern const char mini_ins_info[];
+/* instruction description for use in regalloc/scheduling */
+
+enum {
+	// FIXME Remove this enum. There is one user.
+	MONO_INST_DEST = 0,
+	MONO_INST_SRC1 = 1,		/* we depend on the SRCs to be consecutive */
+	MONO_INST_SRC2 = 2,
+	MONO_INST_SRC3 = 3,
+	MONO_INST_LEN = 4,
+	//MONO_INST_CLOB = 5,
+	/* Unused, commented out to reduce the size of the mdesc tables
+	MONO_INST_FLAGS,
+	MONO_INST_COST,
+	MONO_INST_DELAY,
+	MONO_INST_RES,
+	*/
+	MONO_INST_MAX = 6
+};
+
+typedef union MonoInstSpec // instruction specification
+{
+	struct {
+		char dest;
+		char src1;
+		char src2;
+		char src3;
+		unsigned char len;
+		char clob;
+		// char flags;
+		// char cost;
+		// char delay;
+		// char res;
+	};
+	struct {
+		char xdest;
+		char src [3];
+	};
+	char bytes[MONO_INST_MAX];
+} MonoInstSpec;
+
+extern const MonoInstSpec mini_ins_info[];
 extern const gint8 mini_ins_sreg_counts [];
 
 #ifndef DISABLE_JIT
@@ -386,14 +426,15 @@ extern const gint8 mini_ins_sreg_counts [];
  * Relies on the existing order of the MONO_INST enum: MONO_INST_{DREG,SREG1,SREG2,SREG3,LEN}
  * INS is the instruction, IDX is the register index, REG is the pointer to a register.
  */
-#define MONO_INS_FOR_EACH_REG(ins, idx, reg) for ((idx) = INS_INFO ((ins)->opcode)[MONO_INST_DEST] != ' ' ? MONO_INST_DEST : \
+// FIXME rewrite this
+#define MONO_INS_FOR_EACH_REG(ins, idx, reg) for ((idx) = INS_INFO ((ins)->opcode)->dest != ' ' ? MONO_INST_DEST : \
 							  (mono_inst_get_num_src_registers (ins) ? MONO_INST_SRC1 : MONO_INST_LEN); \
 						  (reg) = (idx) == MONO_INST_DEST ? &(ins)->dreg : \
 							  ((idx) == MONO_INST_SRC1 ? &(ins)->sreg1 : \
 							   ((idx) == MONO_INST_SRC2 ? &(ins)->sreg2 : \
 							    ((idx) == MONO_INST_SRC3 ? &(ins)->sreg3 : NULL))), \
 							  idx < MONO_INST_LEN; \
-						  (idx) = (idx) > mono_inst_get_num_src_registers (ins) + (INS_INFO ((ins)->opcode)[MONO_INST_DEST] != ' ') ? MONO_INST_LEN : (idx) + 1)
+						  (idx) = (idx) > mono_inst_get_num_src_registers (ins) + (INS_INFO ((ins)->opcode)->dest != ' ') ? MONO_INST_LEN : (idx) + 1)
 
 struct MonoSpillInfo {
 	int offset;
@@ -883,23 +924,6 @@ mono_inst_set_src_registers (MonoInst *ins, int *regs)
 	ins->sreg2 = regs [1];
 	ins->sreg3 = regs [2];
 }
-
-/* instruction description for use in regalloc/scheduling */
-enum {
-	MONO_INST_DEST,
-	MONO_INST_SRC1,		/* we depend on the SRCs to be consecutive */
-	MONO_INST_SRC2,
-	MONO_INST_SRC3,
-	MONO_INST_LEN,
-	MONO_INST_CLOB,
-	/* Unused, commented out to reduce the size of the mdesc tables
-	MONO_INST_FLAGS,
-	MONO_INST_COST,
-	MONO_INST_DELAY,
-	MONO_INST_RES,
-	*/
-	MONO_INST_MAX
-};
 
 typedef union {
 	struct {
@@ -1761,18 +1785,18 @@ typedef struct {
 	int type;
 } StackSlot;
 
-extern const char MONO_ARCH_CPU_SPEC [];
+extern const MonoInstSpec MONO_ARCH_CPU_SPEC [];
 #define MONO_ARCH_CPU_SPEC_IDX_COMBINE(a) a ## _idx
 #define MONO_ARCH_CPU_SPEC_IDX(a) MONO_ARCH_CPU_SPEC_IDX_COMBINE(a)
 extern const guint16 MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC) [];
-#define ins_get_spec(op) ((const char*)&MONO_ARCH_CPU_SPEC + MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC)[(op) - OP_LOAD])
+#define ins_get_spec(op) (&MONO_ARCH_CPU_SPEC[MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC)[(op) - OP_LOAD]])
 
 #ifndef DISABLE_JIT
 
 static inline int
 ins_get_size (int opcode)
 {
-	return ((guint8 *)ins_get_spec (opcode))[MONO_INST_LEN];
+	return ins_get_spec (opcode)->len;
 }
 
 guint8*

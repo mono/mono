@@ -373,8 +373,8 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, int bank)
 #endif
 
 #define reg_is_fp(desc) (MONO_ARCH_INST_IS_FLOAT (desc))
-#define dreg_is_fp(spec)  (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_DEST]))
-#define sreg_is_fp(n,spec) (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_SRC1+(n)]))
+#define dreg_is_fp(spec)  (MONO_ARCH_INST_IS_FLOAT (spec->dest))
+#define sreg_is_fp(n,spec) (MONO_ARCH_INST_IS_FLOAT (spec->src [n]))
 #define sreg1_is_fp(spec) sreg_is_fp (0,(spec))
 #define sreg2_is_fp(spec) sreg_is_fp (1,(spec))
 
@@ -390,10 +390,10 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, int bank)
 
 #endif
 
-#define sreg_bank(n,spec) reg_bank ((spec)[MONO_INST_SRC1+(n)])
+#define sreg_bank(n,spec) reg_bank ((spec)->src [n])
 #define sreg1_bank(spec) sreg_bank (0, (spec))
 #define sreg2_bank(spec) sreg_bank (1, (spec))
-#define dreg_bank(spec) reg_bank ((spec)[MONO_INST_DEST])
+#define dreg_bank(spec) reg_bank ((spec)->dest)
 
 #define sreg_bank_ins(n,ins) sreg_bank ((n), ins_get_spec ((ins)->opcode))
 #define sreg1_bank_ins(ins) sreg_bank_ins (0, (ins))
@@ -429,7 +429,7 @@ mono_print_ins_index (int i, MonoInst *ins)
 GString *
 mono_print_ins_index_strbuf (int i, MonoInst *ins)
 {
-	const char *spec = ins_get_spec (ins->opcode);
+	const MonoInstSpec *spec = ins_get_spec (ins->opcode);
 	GString *sbuf = g_string_new (NULL);
 	int num_sregs, j;
 	int sregs [MONO_MAX_SRC_REGS];
@@ -512,10 +512,10 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		return sbuf;
 	}
 
-	if (spec [MONO_INST_DEST]) {
+	if (spec->dest) {
 		int bank = dreg_bank (spec);
 		if (is_soft_reg (ins->dreg, bank)) {
-			if (spec [MONO_INST_DEST] == 'b') {
+			if (spec->dest == 'b') {
 				if (ins->inst_offset == 0)
 					g_string_append_printf (sbuf, " [R%d] <-", ins->dreg);
 				else
@@ -523,7 +523,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 			}
 			else
 				g_string_append_printf (sbuf, " R%d <-", ins->dreg);
-		} else if (spec [MONO_INST_DEST] == 'b') {
+		} else if (spec->dest == 'b') {
 			if (ins->inst_offset == 0)
 				g_string_append_printf (sbuf, " [%s] <-", mono_arch_regname (ins->dreg));
 			else
@@ -531,14 +531,14 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		} else
 			g_string_append_printf (sbuf, " %s <-", mono_regname_full (ins->dreg, bank));
 	}
-	if (spec [MONO_INST_SRC1]) {
+	if (spec->src1) {
 		int bank = sreg1_bank (spec);
 		if (is_soft_reg (ins->sreg1, bank)) {
-			if (spec [MONO_INST_SRC1] == 'b')
+			if (spec->src1 == 'b')
 				g_string_append_printf (sbuf, " [R%d + 0x%lx]", ins->sreg1, (long)ins->inst_offset);
 			else
 				g_string_append_printf (sbuf, " R%d", ins->sreg1);
-		} else if (spec [MONO_INST_SRC1] == 'b')
+		} else if (spec->src1 == 'b')
 			g_string_append_printf (sbuf, " [%s + 0x%lx]", mono_arch_regname (ins->sreg1), (long)ins->inst_offset);
 		else
 			g_string_append_printf (sbuf, " %s", mono_regname_full (ins->sreg1, bank));
@@ -730,8 +730,8 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		break;
 	}
 
-	if (spec [MONO_INST_CLOB])
-		g_string_append_printf (sbuf, " clobbers: %c", spec [MONO_INST_CLOB]);
+	if (spec->clob)
+		g_string_append_printf (sbuf, " clobbers: %c", spec->clob);
 	return sbuf;
 }
 
@@ -1128,7 +1128,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	MonoRegState *rs = cfg->rs;
 	int i, j, val, max;
 	RegTrack *reginfo;
-	const char *spec;
+	const MonoInstSpec *spec;
 	unsigned char spec_src1, spec_dest;
 	int bank = 0;
 #if MONO_ARCH_USE_FPSTACK
@@ -1150,16 +1150,16 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		/* Validate the cpu description against the info in mini-ops.h */
 #if defined(TARGET_AMD64) || defined(TARGET_X86) || defined(TARGET_ARM) || defined(TARGET_ARM64) || defined (TARGET_RISCV)
 		for (i = OP_LOAD; i < OP_LAST; ++i) {
-			const char *ispec;
+			const MonoInstSpec *ispec;
 
 			spec = ins_get_spec (i);
 			ispec = INS_INFO (i);
 
-			if ((spec [MONO_INST_DEST] && (ispec [MONO_INST_DEST] == ' ')))
+			if (spec->dest && ispec->dest == ' ')
 				printf ("Instruction metadata for %s inconsistent.\n", mono_inst_name (i));
-			if ((spec [MONO_INST_SRC1] && (ispec [MONO_INST_SRC1] == ' ')))
+			if (spec->src1 && ispec->src1 == ' ')
 				printf ("Instruction metadata for %s inconsistent.\n", mono_inst_name (i));
-			if ((spec [MONO_INST_SRC2] && (ispec [MONO_INST_SRC2] == ' ')))
+			if (spec->src2 && ispec->src2 == ' ')
 				printf ("Instruction metadata for %s inconsistent.\n", mono_inst_name (i));
 		}
 #endif
@@ -1204,7 +1204,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		if ((ins->dreg != -1) && (ins->dreg < max)) {
 			memset (&reginfo [ins->dreg], 0, sizeof (RegTrack));
 #if SIZEOF_REGISTER == 4
-			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) {
+			if (MONO_ARCH_INST_IS_REGPAIR (spec->dest)) {
 				/**
 				 * In the new IR, the two vregs of the regpair do not alias the
 				 * original long vreg. shift the vreg here so the rest of the 
@@ -1222,7 +1222,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (sregs [j] < max) {
 				memset (&reginfo [sregs [j]], 0, sizeof (RegTrack));
 #if SIZEOF_REGISTER == 4
-				if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1 + j])) {
+				if (MONO_ARCH_INST_IS_REGPAIR (spec->src [j])) {
 					sregs [j]++;
 					modify = TRUE;
 					memset (&reginfo [sregs [j] + 1], 0, sizeof (RegTrack));
@@ -1242,7 +1242,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	/* forward pass on the instructions to collect register liveness info */
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		spec = ins_get_spec (ins->opcode);
-		spec_dest = spec [MONO_INST_DEST];
+		spec_dest = spec->dest;
 
 		if (G_UNLIKELY (spec == MONO_ARCH_CPU_SPEC)) {
 			g_error ("Opcode '%s' missing from machine description file.", mono_inst_name (ins->opcode));
@@ -1265,7 +1265,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		for (j = 0; j < num_sregs; ++j) {
 			int sreg = sregs [j];
-			int sreg_spec = spec [MONO_INST_SRC1 + j];
+			int sreg_spec = spec->src [j];
 			if (sreg_spec) {
 				bank = sreg_bank (j, spec);
 				g_assert (sreg != -1);
@@ -1341,8 +1341,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		const unsigned char *ip;
 		--i;
 		spec = ins_get_spec (ins->opcode);
-		spec_src1 = spec [MONO_INST_SRC1];
-		spec_dest = spec [MONO_INST_DEST];
+		spec_src1 = spec->src1;
+		spec_dest = spec->dest;
 		prev_dreg = -1;
 		clob_reg = -1;
 		dest_dreg = -1;
@@ -1351,10 +1351,10 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		dreg_mask = get_callee_mask (spec_dest);
 		for (j = 0; j < MONO_MAX_SRC_REGS; ++j) {
 			prev_sregs [j] = -1;
-			sreg_masks [j] = get_callee_mask (spec [MONO_INST_SRC1 + j]);
-			dest_sregs [j] = desc_to_fixed_reg [(int)spec [MONO_INST_SRC1 + j]];
+			sreg_masks [j] = get_callee_mask (spec->src [j]);
+			dest_sregs [j] = desc_to_fixed_reg [(int)spec->src [j]];
 #ifdef MONO_ARCH_INST_FIXED_MASK
-			sreg_fixed_masks [j] = MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_SRC1 + j]);
+			sreg_fixed_masks [j] = MONO_ARCH_INST_FIXED_MASK (spec->src [j]);
 #else
 			sreg_fixed_masks [j] = 0;
 #endif
@@ -1371,7 +1371,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * FIXED REGS
 		 */
 		dest_dreg = desc_to_fixed_reg [spec_dest];
-		clob_reg = desc_to_fixed_reg [(int)spec [MONO_INST_CLOB]];
+		clob_reg = desc_to_fixed_reg [(int)spec->clob];
 		sreg_masks [1] &= ~ (MONO_ARCH_INST_SREG2_MASK (spec));
 
 #ifdef MONO_ARCH_INST_FIXED_MASK
@@ -1484,7 +1484,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				 * First check if dreg is assigned to dest_sreg2, since we
 				 * can't spill a dreg.
 				 */
-				if (spec [MONO_INST_DEST])
+				if (spec->dest)
 					val = rs->vassign [ins->dreg];
 				else
 					val = -1;
@@ -1740,7 +1740,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			free_up_hreg (cfg, bb, tmp, ins, clob_reg, 0);
 		}
 
-		if (spec [MONO_INST_CLOB] == 'c') {
+		if (spec->clob == 'c') {
 			int j, s, dreg, dreg2, cur_bank;
 			guint64 clob_mask;
 
@@ -1808,7 +1808,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		/*
 		 * TRACK ARGUMENT REGS
 		 */
-		if (spec [MONO_INST_CLOB] == 'c' && MONO_IS_CALL (ins)) {
+		if (spec->clob == 'c' && MONO_IS_CALL (ins)) {
 			MonoCallInst *call = (MonoCallInst*)ins;
 			GSList *list;
 
@@ -1865,7 +1865,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * TRACK SREG1
 		 */
 		bank = sreg1_bank (spec);
-		if (MONO_ARCH_INST_IS_REGPAIR (spec_dest) && (spec [MONO_INST_CLOB] == '1')) {
+		if (MONO_ARCH_INST_IS_REGPAIR (spec_dest) && (spec->clob == '1')) {
 			int sreg1 = sregs [0];
 			int dest_sreg1 = dest_sregs [0];
 
@@ -1952,7 +1952,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					sreg_masks [0] = regmask (ins->dreg);
 				}
 
-				if (spec [MONO_INST_CLOB] == '1' && !dreg_bank (spec) && (rs->ifree_mask & (regmask (ins->dreg))))
+				if (spec->clob == '1' && !dreg_bank (spec) && (rs->ifree_mask & (regmask (ins->dreg))))
 					/* Allocate the same reg to sreg1 to avoid a copy later */
 					sreg_masks [0] = regmask (ins->dreg);
 
@@ -1987,7 +1987,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			sreg_masks [j] &= ~(regmask (sregs [0]));
 
 		/* Handle the case when sreg1 is a regpair but dreg is not */
-		if (MONO_ARCH_INST_IS_REGPAIR (spec_src1) && (spec [MONO_INST_CLOB] != '1')) {
+		if (MONO_ARCH_INST_IS_REGPAIR (spec_src1) && (spec->clob != '1')) {
 			int reg2 = prev_sregs [0] + 1;
 
 			g_assert (!bank);
@@ -2031,7 +2031,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		/* Handle dreg==sreg1 */
-		if (((dreg_is_fp (spec) && sreg1_is_fp (spec)) || spec [MONO_INST_CLOB] == '1') && ins->dreg != sregs [0]) {
+		if (((dreg_is_fp (spec) && sreg1_is_fp (spec)) || spec->clob == '1') && ins->dreg != sregs [0]) {
 			MonoInst *sreg2_copy = NULL;
 			MonoInst *copy;
 			int bank = reg_bank (spec_src1);
@@ -2092,7 +2092,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			int k;
 
 			bank = sreg_bank (j, spec);
-			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1 + j]))
+			if (MONO_ARCH_INST_IS_REGPAIR (spec->src [j]))
 				g_assert_not_reached ();
 
 			if (dest_sregs [j] != -1 && is_global_ireg (sregs [j])) {

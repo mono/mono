@@ -1656,7 +1656,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 			restart = FALSE;
 
 			for (ins = bb->code; ins; ins = ins->next) {
-				const char *spec = INS_INFO (ins->opcode);
+				const MonoInstSpec *spec = INS_INFO (ins->opcode);
 
 				/* Most fp operations are handled automatically by opcode emulation */
 
@@ -1886,7 +1886,7 @@ mono_decompose_soft_float (MonoCompile *cfg)
 					break;
 				}
 				default:
-					if (spec [MONO_INST_SRC1] == 'f' || spec [MONO_INST_SRC2] == 'f' || spec [MONO_INST_DEST] == 'f') {
+					if (spec->src1 == 'f' || spec->src2 == 'f' || spec->dest == 'f') {
 						mono_print_ins (ins);
 						g_assert_not_reached ();
 					}

@@ -4724,7 +4724,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 	has_terminator = FALSE;
 	starting_builder = builder;
 	for (ins = bb->code; ins; ins = ins->next) {
-		const char *spec = LLVM_INS_INFO (ins->opcode);
+		const MonoInstSpec *spec = LLVM_INS_INFO (ins->opcode);
 		char *dname = NULL;
 		char dname_buf [128];
 
@@ -4776,12 +4776,12 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			/* There could be instructions after a terminator, skip them */
 			break;
 
-		if (spec [MONO_INST_DEST] != ' ' && !MONO_IS_STORE_MEMBASE (ins)) {
+		if (spec->dest != ' ' && !MONO_IS_STORE_MEMBASE (ins)) {
 			sprintf (dname_buf, "t%d", ins->dreg);
 			dname = dname_buf;
 		}
 
-		if (spec [MONO_INST_SRC1] != ' ' && spec [MONO_INST_SRC1] != 'v') {
+		if (spec->src1 != ' ' && spec->src1 != 'v') {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->sreg1);
 
 			if (var && var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT) && var->opcode != OP_GSHAREDVT_ARG_REGOFFSET) {
@@ -4798,7 +4798,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			lhs = NULL;
 		}
 
-		if (spec [MONO_INST_SRC2] != ' ' && spec [MONO_INST_SRC2] != ' ') {
+		if (spec->src2] != ' ' && spec->src2] != ' ') {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->sreg2);
 			if (var && var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) {
 				rhs = emit_volatile_load (ctx, ins->sreg2);
@@ -5287,8 +5287,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_LSHL:
 		case OP_LSHR:
 		case OP_LSHR_UN:
-			lhs = convert (ctx, lhs, regtype_to_llvm_type (spec [MONO_INST_DEST]));
-			rhs = convert (ctx, rhs, regtype_to_llvm_type (spec [MONO_INST_DEST]));
+			lhs = convert (ctx, lhs, regtype_to_llvm_type (spec->dest));
+			rhs = convert (ctx, rhs, regtype_to_llvm_type (spec->dest));
 
 			emit_div_check (ctx, builder, bb, ins, lhs, rhs);
 			if (!ctx_ok (ctx))
@@ -5423,7 +5423,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_SHR_UN_IMM: {
 			LLVMValueRef imm;
 
-			if (spec [MONO_INST_SRC1] == 'l') {
+			if (spec->src1 == 'l') {
 				imm = LLVMConstInt (LLVMInt64Type (), GET_LONG_IMM (ins), FALSE);
 			} else {
 				imm = LLVMConstInt (LLVMInt32Type (), ins->inst_imm, FALSE);
@@ -6031,8 +6031,8 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_RMAX: {
 			LLVMValueRef v;
 
-			lhs = convert (ctx, lhs, regtype_to_llvm_type (spec [MONO_INST_DEST]));
-			rhs = convert (ctx, rhs, regtype_to_llvm_type (spec [MONO_INST_DEST]));
+			lhs = convert (ctx, lhs, regtype_to_llvm_type (spec->dest));
+			rhs = convert (ctx, rhs, regtype_to_llvm_type (spec->dest));
 
 			switch (ins->opcode) {
 			case OP_IMIN:
@@ -7308,7 +7308,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 
 		/* Convert the value to the type required by phi nodes */
-		if (spec [MONO_INST_DEST] != ' ' && !MONO_IS_STORE_MEMBASE (ins) && ctx->vreg_types [ins->dreg]) {
+		if (spec->dest != ' ' && !MONO_IS_STORE_MEMBASE (ins) && ctx->vreg_types [ins->dreg]) {
 			if (ctx->is_vphi [ins->dreg])
 				/* vtypes */
 				values [ins->dreg] = addresses [ins->dreg];
@@ -7317,7 +7317,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		/* Add stores for volatile variables */
-		if (spec [MONO_INST_DEST] != ' ' && spec [MONO_INST_DEST] != 'v' && !MONO_IS_STORE_MEMBASE (ins))
+		if (spec->dest != ' ' && spec->dest != 'v' && !MONO_IS_STORE_MEMBASE (ins))
 			emit_volatile_store (ctx, ins->dreg);
 	}
 

@@ -897,11 +897,11 @@ mono_simd_decompose_intrinsics (MonoCompile *cfg)
 static int
 get_simd_vreg (MonoCompile *cfg, MonoMethod *cmethod, MonoInst *src)
 {
-	const char *spec = INS_INFO (src->opcode);
+	const MonoInstSpec *spec = INS_INFO (src->opcode);
 
 	if (src->opcode == OP_XMOVE) {
 		return src->sreg1;
-	} else if (spec [MONO_INST_DEST] == 'x') {
+	} else if (spec->dest == 'x') {
 		return src->dreg;
 	} else if (src->opcode == OP_VCALL || src->opcode == OP_VCALL_MEMBASE) {
 		return src->dreg;
@@ -918,7 +918,7 @@ get_simd_vreg (MonoCompile *cfg, MonoMethod *cmethod, MonoInst *src)
 static int
 load_simd_vreg_class (MonoCompile *cfg, MonoClass *klass, MonoInst *src, gboolean *indirect)
 {
-	const char *spec = INS_INFO (src->opcode);
+	const MonoInstSpec *spec = INS_INFO (src->opcode);
 
 	if (indirect)
 		*indirect = FALSE;
@@ -927,7 +927,7 @@ load_simd_vreg_class (MonoCompile *cfg, MonoClass *klass, MonoInst *src, gboolea
 	} else if (src->opcode == OP_LDADDR) {
 		int res = ((MonoInst*)src->inst_p0)->dreg;
 		return res;
-	} else if (spec [MONO_INST_DEST] == 'x') {
+	} else if (spec->dest == 'x') {
 		return src->dreg;
 	} else if (src->type == STACK_PTR || src->type == STACK_MP) {
 		MonoInst *ins;

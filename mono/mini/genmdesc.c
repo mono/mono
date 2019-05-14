@@ -41,7 +41,7 @@ typedef struct {
 	const char *name;
 	char *desc;
 	char *comment;
-	char spec [MONO_INST_MAX];
+	MonoInstSpec spec;
 } OpDesc;
 
 static int nacl = 0;
@@ -117,32 +117,32 @@ load_file (const char *name) {
 		g_string_truncate (comment, 0);
 		while (*p) {
 			if (strncmp (p, "dest:", 5) == 0) {
-				desc->spec [MONO_INST_DEST] = p [5];
+				desc->spec.dest = p [5];
 				p += 6;
 			} else if (strncmp (p, "src1:", 5) == 0) {
-				desc->spec [MONO_INST_SRC1] = p [5];
+				desc->spec.src1 = p [5];
 				p += 6;
 			} else if (strncmp (p, "src2:", 5) == 0) {
-				desc->spec [MONO_INST_SRC2] = p [5];
+				desc->spec.src2 = p [5];
 				p += 6;
 			} else if (strncmp (p, "src3:", 5) == 0) {
-				desc->spec [MONO_INST_SRC3] = p [5];
+				desc->spec.src3 = p [5];
 				p += 6;
 			} else if (strncmp (p, "clob:", 5) == 0) {
-				desc->spec [MONO_INST_CLOB] = p [5];
+				desc->spec.clob = p [5];
 				p += 6;
 				/* Currently unused fields
 			} else if (strncmp (p, "cost:", 5) == 0) {
-				desc->spec [MONO_INST_COST] = p [5];
+				desc->spec.cost = p [5];
 				p += 6;
 			} else if (strncmp (p, "res:", 4) == 0) {
-				desc->spec [MONO_INST_RES] = p [4];
+				desc->spec.res = p [4];
 				p += 5;
 			} else if (strncmp (p, "flags:", 6) == 0) {
-				desc->spec [MONO_INST_FLAGS] = p [6];
+				desc->spec.flags = p [6];
 				p += 7;
 			} else if (strncmp (p, "delay:", 6) == 0) {
-				desc->spec [MONO_INST_DELAY] = p [6];
+				desc->spec.delay = p [6];
 				p += 7;
 				*/
 			} else if (strncmp (p, "len:", 4) == 0) {
@@ -154,14 +154,14 @@ load_file (const char *name) {
 					g_error ("Invalid length '%s' at line %d in %s\n", p, line, name);
 				p = endptr;
 				if (!nacl_length_set) {
-					desc->spec [MONO_INST_LEN] = size;
+					desc->spec.len = size;
 				}
 			} else if (strncmp (p, "nacl:", 5) == 0) {
 				unsigned long size;
 				p += 5;
 				size = strtoul (p, &p, 10);
 				if (nacl) {
-					desc->spec [MONO_INST_LEN] = size;
+					desc->spec.len = size;
 					nacl_length_set = TRUE;
 				}
 			} else if (strncmp (p, "template:", 9) == 0) {
@@ -176,10 +176,10 @@ load_file (const char *name) {
 				if (!tdesc)
 					g_error ("Invalid template name %s at '%s' at line %d in %s\n", tname, p, line, name);
 				for (i = 0; i < MONO_INST_MAX; ++i) {
-					if (desc->spec [i])
+					if (desc->spec.bytes [i])
 						g_error ("The template overrides any previous value set at line %d in %s\n", line, name);
 				}
-				memcpy (desc->spec, tdesc->spec, sizeof (desc->spec));
+				memcpy (&desc->spec, &tdesc->spec, sizeof (desc->spec));
 			} else if (strncmp (p, "name:", 5) == 0) {
 				char *tname;
 				if (!is_template)
@@ -261,9 +261,9 @@ build_table (const char *fname, const char *name) {
 		else {
 			fprintf (f, "\t\"");
 			for (j = 0; j < MONO_INST_MAX; ++j)
-				output_char (f, desc->spec [j]);
+				output_char (f, desc->spec.bytes [j]);
 			fprintf (f, "\"\t/* %s */\n", desc->name);
-			g_string_append_printf (idx_array, "\t%d,\t/* %s */\n", idx * MONO_INST_MAX, desc->name);
+			g_string_append_printf (idx_array, "\t%d,\t/* %s */\n", idx, desc->name);
 			++idx;
 		}
 	}

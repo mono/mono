@@ -580,9 +580,9 @@ mono_decompose_op_imm (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins)
 	int opcode2 = mono_op_imm_to_op (ins->opcode);
 	MonoInst *temp;
 	guint32 dreg;
-	const char *spec = INS_INFO (ins->opcode);
+	const MonoInstSpec *spec = INS_INFO (ins->opcode);
 
-	if (spec [MONO_INST_SRC2] == 'l') {
+	if (spec->src2 == 'l') {
 		dreg = mono_alloc_lreg (cfg);
 
 		/* Load the 64bit constant using decomposed ops */

@@ -178,7 +178,7 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboole
 
 	/* First pass: Create new vars */
 	for (ins = bb->code; ins; ins = ins->next) {
-		const char *spec = INS_INFO (ins->opcode);
+		const MonoInstSpec *spec = INS_INFO (ins->opcode);
 		int num_sregs;
 		int sregs [MONO_MAX_SRC_REGS];
 
@@ -191,7 +191,7 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboole
 		/* SREGs */
 		num_sregs = mono_inst_get_src_registers (ins, sregs);
 		for (i = 0; i < num_sregs; ++i) {
-			if (spec [MONO_INST_SRC1 + i] != ' ') {
+			if (spec->src [i] != ' ') {
 				MonoInst *var = get_vreg_to_inst (cfg, sregs [i]);
 				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
 					int idx = var->inst_c0;
@@ -228,7 +228,7 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, gboole
 		}
 
 		/* DREG */
-		if ((spec [MONO_INST_DEST] != ' ') && !MONO_IS_STORE_MEMBASE (ins)) {
+		if ((spec->dest != ' ') && !MONO_IS_STORE_MEMBASE (ins)) {
 			MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 			MonoMethodVar *info;
 
@@ -627,14 +627,14 @@ mono_ssa_remove (MonoCompile *cfg)
 		MonoBasicBlock *bb = cfg->bblocks [bbindex];
 
 		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = INS_INFO (ins->opcode);
+			const MonoInstSpec *spec = INS_INFO (ins->opcode);
 			int num_sregs;
 			int sregs [MONO_MAX_SRC_REGS];
 
 			if (ins->opcode == OP_NOP)
 				continue;
 
-			if (spec [MONO_INST_DEST] != ' ') {
+			if (spec->dest != ' ') {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 
 				if (var) {
@@ -691,7 +691,7 @@ mono_ssa_create_def_use (MonoCompile *cfg)
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		for (ins = bb->code; ins; ins = ins->next) {
-			const char *spec = INS_INFO (ins->opcode);
+			const MonoInstSpec *spec = INS_INFO (ins->opcode);
 			MonoMethodVar *info;
 			int num_sregs;
 			int sregs [MONO_MAX_SRC_REGS];
@@ -721,7 +721,7 @@ mono_ssa_create_def_use (MonoCompile *cfg)
 			}
 
 			/* DREG */
-			if ((spec [MONO_INST_DEST] != ' ') && !MONO_IS_STORE_MEMBASE (ins)) {
+			if ((spec->dest != ' ') && !MONO_IS_STORE_MEMBASE (ins)) {
 				MonoInst *var = get_vreg_to_inst (cfg, ins->dreg);
 
 				if (var && !(var->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
@@ -812,7 +812,7 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 	int rs [MONO_MAX_SRC_REGS];
 	MonoInst *c0;
 	gboolean const_args = TRUE;
-	const char *spec = INS_INFO (ins->opcode);
+	const MonoInstSpec *spec = INS_INFO (ins->opcode);
 	int num_sregs, i;
 	int sregs [MONO_MAX_SRC_REGS];
 
@@ -845,7 +845,7 @@ evaluate_ins (MonoCompile *cfg, MonoInst *ins, MonoInst **res, MonoInst **carray
 
 	if (num_sregs > 0 && const_args) {
 		g_assert (num_sregs <= 2);
-		if ((spec [MONO_INST_DEST] != ' ') && carray [ins->dreg]) {
+		if ((spec->dest != ' ') && carray [ins->dreg]) {
 			// Cached value
 			*res = carray [ins->dreg];
 			return 1;
@@ -909,7 +909,7 @@ add_cprop_bb (MonoCompile *cfg, MonoBasicBlock *bb, GList **bblist)
 static void
 visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, GList **bblist, MonoInst **carray)
 {
-	const char *spec = INS_INFO (ins->opcode);
+	const MonoInstSpec *spec = INS_INFO (ins->opcode);
 
 	if (ins->opcode == OP_NOP)
 		return;
@@ -964,11 +964,11 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 			g_assert (c0->opcode == OP_ICONST);
 		}
 	}
-	else if (!MONO_IS_STORE_MEMBASE (ins) && ((spec [MONO_INST_SRC1] != ' ') || (spec [MONO_INST_SRC2] != ' ') || (spec [MONO_INST_DEST] != ' '))) {
+	else if (!MONO_IS_STORE_MEMBASE (ins) && ((spec->src1 != ' ') || (spec->src2 != ' ') || (spec->dest != ' '))) {
 		MonoInst *var, *c0;
 		int state;
 
-		if (spec [MONO_INST_DEST] !=  ' ')
+		if (spec->dest !=  ' ')
 			var = get_vreg_to_inst (cfg, ins->dreg);
 		else
 			var = NULL;
@@ -1095,12 +1095,12 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 static void
 fold_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **carray)
 {
-	const char *spec = INS_INFO (ins->opcode);
+	const MonoInstSpec *spec = INS_INFO (ins->opcode);
 	int opcode2;
 	int num_sregs = mono_inst_get_num_src_registers (ins);
 
 	if ((ins->opcode != OP_NOP) && (ins->dreg != -1) && !MONO_IS_STORE_MEMBASE (ins)) {
-		if (carray [ins->dreg] && (spec [MONO_INST_DEST] == 'i') && (ins->dreg >= MONO_MAX_IREGS)) {
+		if (carray [ins->dreg] && (spec->dest == 'i') && (ins->dreg >= MONO_MAX_IREGS)) {
 			/* Perform constant folding */
 			/* FIXME: */
 			g_assert (carray [ins->dreg]->opcode == OP_ICONST);
@@ -1484,11 +1484,11 @@ mono_ssa_loop_invariant_code_motion (MonoCompile *cfg)
 
 					skip = FALSE;
 					for (tins = ins->prev; tins; tins = tins->prev) {
-						const char *spec = INS_INFO (tins->opcode);
+						const MonoInstSpec *spec = INS_INFO (tins->opcode);
 
 						if (tins->opcode == OP_MOVE && tins->dreg == sreg) {
 							sreg = tins->sreg1;
-						} if (spec [MONO_INST_DEST] != ' ' && tins->dreg == sreg) {
+						} if (spec->dest != ' ' && tins->dreg == sreg) {
 							skip = TRUE;
 							break;
 						}

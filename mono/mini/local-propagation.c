@@ -521,8 +521,8 @@ mono_local_cprop (MonoCompile *cfg)
 
 			if (ins->dreg != -1) {
 #if SIZEOF_REGISTER == 4
-				const char *spec = INS_INFO (ins->opcode);
-				if (spec [MONO_INST_DEST] == 'l') {
+				const MonoInstSpec *spec = INS_INFO (ins->opcode);
+				if (spec->dest == 'l') {
 					defs [ins->dreg + 1] = NULL;
 					defs [ins->dreg + 2] = NULL;
 				}
@@ -534,8 +534,8 @@ mono_local_cprop (MonoCompile *cfg)
 			for (i = 0; i < num_sregs; ++i) {
 				int sreg = sregs [i];
 #if SIZEOF_REGISTER == 4
-				const char *spec = INS_INFO (ins->opcode);
-				if (spec [MONO_INST_SRC1 + i] == 'l') {
+				const MonoInstSpec *spec = INS_INFO (ins->opcode);
+				if (spec->src [i] == 'l') {
 					defs [sreg + 1] = NULL;
 					defs [sreg + 2] = NULL;
 				}
@@ -547,7 +547,7 @@ mono_local_cprop (MonoCompile *cfg)
 		ins_index = 0;
 		last_call_index = -1;
 		MONO_BB_FOR_EACH_INS (bb, ins) {
-			const char *spec = INS_INFO (ins->opcode);
+			const MonoInstSpec *spec = INS_INFO (ins->opcode);
 			int regtype, srcindex, sreg;
 			int num_sregs;
 			int sregs [MONO_MAX_SRC_REGS];
@@ -591,7 +591,7 @@ mono_local_cprop (MonoCompile *cfg)
 
 				mono_inst_get_src_registers (ins, sregs);
 
-				regtype = spec [MONO_INST_SRC1 + srcindex];
+				regtype = spec->src [srcindex];
 				sreg = sregs [srcindex];
 
 				if ((regtype == ' ') || (sreg == -1) || (!defs [sreg]))
@@ -791,7 +791,7 @@ mono_local_cprop (MonoCompile *cfg)
 				continue;
 			}
 
-			if (spec [MONO_INST_DEST] != ' ') {
+			if (spec->dest != ' ') {
 				MonoInst *def = defs [ins->dreg];
 
 				if (def && (def->opcode == OP_ADD_IMM) && (def->sreg1 == cfg->frame_reg) && (MONO_IS_STORE_MEMBASE (ins))) {
@@ -888,11 +888,11 @@ mono_local_deadce (MonoCompile *cfg)
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		/* Manually init the defs entries used by the bblock */
 		MONO_BB_FOR_EACH_INS (bb, ins) {
-			const char *spec = INS_INFO (ins->opcode);
+			const MonoInstSpec *spec = INS_INFO (ins->opcode);
 			int sregs [MONO_MAX_SRC_REGS];
 			int num_sregs, i;
 
-			if (spec [MONO_INST_DEST] != ' ') {
+			if (spec->dest != ' ') {
 				mono_bitset_clear_fast (used, ins->dreg);
 				mono_bitset_clear_fast (defined, ins->dreg);
 #if SIZEOF_REGISTER == 4
@@ -914,7 +914,7 @@ mono_local_deadce (MonoCompile *cfg)
 		 * Make a reverse pass over the instruction list
 		 */
 		MONO_BB_FOR_EACH_INS_REVERSE_SAFE (bb, prev, ins) {
-			const char *spec = INS_INFO (ins->opcode);
+			const MonoInstSpec *spec = INS_INFO (ins->opcode);
 			int sregs [MONO_MAX_SRC_REGS];
 			int num_sregs, i;
 			MonoInst *prev_f = mono_inst_prev (ins, FILTER_NOP | FILTER_IL_SEQ_POINT);
@@ -928,7 +928,7 @@ mono_local_deadce (MonoCompile *cfg)
 
 			if (MONO_IS_NON_FP_MOVE (ins) && prev_f) {
 				MonoInst *def;
-				const char *spec2;
+				const MonoInstSpec *spec2;
 
 				def = prev_f;
 				spec2 = INS_INFO (def->opcode);
@@ -939,7 +939,7 @@ mono_local_deadce (MonoCompile *cfg)
 				 * This isn't copyprop, not deadce, but it can only be performed
 				 * after handle_global_vregs () has run.
 				 */
-				if (!get_vreg_to_inst (cfg, ins->sreg1) && (spec2 [MONO_INST_DEST] != ' ') && (def->dreg == ins->sreg1) && !mono_bitset_test_fast (used, ins->sreg1) && !MONO_IS_STORE_MEMBASE (def) && reg_is_softreg (ins->sreg1, spec [MONO_INST_DEST]) && !mono_is_simd_accessor (def)) {
+				if (!get_vreg_to_inst (cfg, ins->sreg1) && (spec2->dest != ' ') && (def->dreg == ins->sreg1) && !mono_bitset_test_fast (used, ins->sreg1) && !MONO_IS_STORE_MEMBASE (def) && reg_is_softreg (ins->sreg1, spec->dest) && !mono_is_simd_accessor (def)) {
 					if (cfg->verbose_level > 2) {
 						printf ("\tReverse copyprop in BB%d on ", bb->block_num);
 						mono_print_ins (ins);
@@ -952,7 +952,7 @@ mono_local_deadce (MonoCompile *cfg)
 			}
 
 			/* Enabling this on x86 could screw up the fp stack */
-			if (reg_is_softreg_no_fpstack (ins->dreg, spec [MONO_INST_DEST])) {
+			if (reg_is_softreg_no_fpstack (ins->dreg, spec->dest)) {
 				/* 
 				 * Assignments to global vregs can only be eliminated if there is another
 				 * assignment to the same vreg later in the same bblock.
@@ -974,11 +974,11 @@ mono_local_deadce (MonoCompile *cfg)
 					spec = INS_INFO (ins->opcode);
 				}
 
-				if (spec [MONO_INST_DEST] != ' ')
+				if (spec->dest != ' ')
 					mono_bitset_clear_fast (used, ins->dreg);
 			}
 
-			if (spec [MONO_INST_DEST] != ' ')
+			if (spec->dest != ' ')
 				mono_bitset_set_fast (defined, ins->dreg);
 			num_sregs = mono_inst_get_src_registers (ins, sregs);
 			for (i = 0; i < num_sregs; ++i)
