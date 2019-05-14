@@ -57,9 +57,9 @@ void
 mono_mb_emit_managed_call (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *opt_sig);
 
 void
-mono_mb_emit_icall_info (MonoMethodBuilder *mb, MonoJitICallInfo *jit_icall_info);
+mono_mb_emit_icall_id (MonoMethodBuilder *mb, MonoJitICallId jit_icall_id);
 
-#define mono_mb_emit_icall(mb, name) (mono_mb_emit_icall_info ((mb), &mono_jit_icall_info.name))
+#define mono_mb_emit_icall(mb, name) (mono_mb_emit_icall_id ((mb), MONO_JIT_ICALL_ ## name))
 
 int
 mono_mb_add_local (MonoMethodBuilder *mb, MonoType *type);
