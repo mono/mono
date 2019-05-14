@@ -699,7 +699,7 @@ namespace System {
         }
 #endif // FEATURE_COMINTEROP                                  
 
-#if FEATURE_REMOTING || MOBILE_LEGACY
+#if !DISABLE_REMOTING && (FEATURE_REMOTING || MOBILE_LEGACY)
         //  This method is a helper method and delegates to the remoting 
         //  services to do the actual work. 
         [System.Security.SecurityCritical]  // auto-generated_required
