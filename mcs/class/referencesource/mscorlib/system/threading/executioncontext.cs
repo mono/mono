@@ -1,4 +1,4 @@
-#if MOBILE_LEGACY
+#if MOBILE_LEGACY && !DISABLE_REMOTING
 #define FEATURE_REMOTING
 #endif
 // ==++==

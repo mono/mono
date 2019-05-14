@@ -166,11 +166,13 @@ namespace System.Threading {
 		private extern static byte[] ByteArrayToCurrentDomain (byte[] arr);
 
 #if !NETCORE
+#if !DISABLE_REMOTING
 		public static Context CurrentContext {
 			get {
 				return(AppDomain.InternalGetContext ());
 			}
 		}
+#endif
 
 #if !DISABLE_SECURITY
 		IPrincipal principal;

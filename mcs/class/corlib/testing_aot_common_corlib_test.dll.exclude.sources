@@ -10,3 +10,20 @@ System.Security.Policy/EvidenceTest.cs
 
 System.Threading/ExecutionContextTest.cs
 System.Threading/ThreadPrincipalTests.cs
+
+System.Reflection/AssemblyCas.cs
+System.Reflection/AssemblyTest.cs
+
+System.Reflection.Emit/AssemblyBuilderTest.cs
+System.Reflection.Emit/FieldBuilderTest.cs
+
+System.Runtime.InteropServices/GCHandleTest.cs
+
+System.Runtime.CompilerServices/AsyncTaskMethodBuilderTest.cs
+
+System.Runtime.Remoting/*.cs
+System.Runtime.Remoting.Channels/*.cs
+System.Runtime.Remoting.Contexts/*.cs
+System.Runtime.Remoting.Proxies/*.cs
+System.Runtime.Remoting.Messaging/*.cs
+System.Runtime.Remoting.Metadata.W3cXsd2001/*.cs
