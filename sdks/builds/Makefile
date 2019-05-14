@@ -16,9 +16,22 @@ NINJA:=$(shell which ninja)
 
 UNAME=$(shell uname)
 
+ifneq (,$(findstring CYGWIN,$(UNAME)))
+UNAME=Windows
+endif
+
+ifeq ($(UNAME),Linux)
+UNAME_WSL_CHECK=$(shell uname -a)
+ifneq (,$(findstring Microsoft,$(UNAME_WSL_CHECK)))
+UNAME=Windows
+endif
+endif
+
 ifneq ($(UNAME),Darwin)
 ifneq ($(UNAME),Linux)
+ifneq ($(UNAME),Windows)
 $(error "Unsupported UNAME=$(UNAME)")
+endif
 endif
 endif
 
