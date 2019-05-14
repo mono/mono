@@ -9582,6 +9582,9 @@ mono_aot_direct_call_stats (MonoAotCompile *acfg)
 gboolean
 mono_aot_can_directly_call (MonoMethod *method)
 {
+	if (llvm_acfg->aot_opts.disable_direct_external_calls)
+		return FALSE;
+
 	if (method->wrapper_type != MONO_WRAPPER_NONE) {
 		llvm_acfg->direct_call_stats.wrappers++;
 		return FALSE;
@@ -13544,7 +13547,7 @@ mono_compile_assemblies (MonoDomain *domain, char **argv, int argc, guint32 opts
 	}
 
 	MonoAotState *aot_state = alloc_aot_state ();
-	aot_state->collecting_callee_failures = TRUE;
+	aot_state->collecting_callee_failures = !aot_opts.disable_direct_external_calls;
 	MonoAssembly *assem = NULL;
 	GHashTableIter iter;
 
@@ -13568,7 +13571,7 @@ mono_compile_assemblies (MonoDomain *domain, char **argv, int argc, guint32 opts
 	if (aot_opts.dedup_include)
 		aot_state->emit_inflated_methods = TRUE;
 
-	if (!aot_opts.disable_direct_external_calls) {
+	if (aot_state->collecting_callee_failures) {
 		aot_state->emit_target_assemblies = TRUE;
 		aot_state->collecting_callee_failures = FALSE;
 	}
@@ -13646,7 +13649,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 	if (acfg->aot_opts.dedup_include && !is_dedup_dummy)
 		acfg->silent_aot = TRUE;
 
-	if (astate->collecting_callee_failures)
+	if (astate && astate->collecting_callee_failures)
 		acfg->silent_aot = TRUE;
 
 	// end dedup
