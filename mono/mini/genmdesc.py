@@ -188,13 +188,13 @@ def gen_output(f, opcodes):
                     f.write ("   %d" % ord (c))
                 else:
                     f.write ("0x%02x" % ord (c))
-                if j != MONO_INST_MAX:
+                if j < MONO_INST_MAX:
                     f.write (", ")
             f.write ("}}, // %s\n" % op.name)
             op.desc_idx = idx
             idx += 1
         except:
-            pass # print ("Error emitting opcode '{0}': '{1}'.".format (op.name, sys.exc_info()))
+            print ("Error emitting opcode '{0}': '{1}'.".format (op.name, sys.exc_info()))
     f.write ("};\n")
 
     # Write index table

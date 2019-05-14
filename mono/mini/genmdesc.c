@@ -255,7 +255,15 @@ build_table (const char *fname, const char *name) {
 	idx = 1;
 	g_string_append_printf (idx_array, "const guint16 mono_%s_idx [] = {\n", name);
 
+	int row = 40;
+
 	for (i = OP_LOAD; i < OP_LAST; ++i) {
+		if (row == 40) {
+			fprintf (f, "//  dest  src1  src2  src3   len  clob\n");
+			fprintf (f, "// ----- ----- ----- ----  ----- -----\n");
+			row = 0;
+		} else
+			row += 1;
 		desc = opcodes + i;
 		if (!desc->desc)
 			g_string_append_printf (idx_array, " 0, // %s\n", desc->name ? desc->name : "");
