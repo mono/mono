@@ -236,27 +236,6 @@ HANDLES(GC_7, "_SuppressFinalize", ves_icall_System_GC_SuppressFinalize, void, 1
 HANDLES(GC_9, "get_ephemeron_tombstone", ves_icall_System_GC_get_ephemeron_tombstone, MonoObject, 0, ())
 HANDLES(GC_8, "register_ephemeron_array", ves_icall_System_GC_register_ephemeron_array, void, 1, (MonoObject))
 
-ICALL_TYPE(CALDATA, "System.Globalization.CalendarData", CALDATA_1)
-ICALL(CALDATA_1, "fill_calendar_data", ves_icall_System_Globalization_CalendarData_fill_calendar_data)
-
-ICALL_TYPE(COMPINF, "System.Globalization.CompareInfo", COMPINF_4)
-NOHANDLES(ICALL(COMPINF_4, "internal_compare_icall", ves_icall_System_Globalization_CompareInfo_internal_compare))
-NOHANDLES(ICALL(COMPINF_6, "internal_index_icall", ves_icall_System_Globalization_CompareInfo_internal_index))
-
-ICALL_TYPE(CULDATA, "System.Globalization.CultureData", CULDATA_1)
-ICALL(CULDATA_1, "fill_culture_data", ves_icall_System_Globalization_CultureData_fill_culture_data)
-NOHANDLES(ICALL(CULDATA_2, "fill_number_data", ves_icall_System_Globalization_CultureData_fill_number_data))
-
-ICALL_TYPE(CULINF, "System.Globalization.CultureInfo", CULINF_5)
-ICALL(CULINF_5, "construct_internal_locale_from_lcid", ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_lcid)
-ICALL(CULINF_6, "construct_internal_locale_from_name", ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name)
-HANDLES(CULINF_7, "get_current_locale_name", ves_icall_System_Globalization_CultureInfo_get_current_locale_name, MonoString, 0, ())
-ICALL(CULINF_9, "internal_get_cultures", ves_icall_System_Globalization_CultureInfo_internal_get_cultures)
-//ICALL(CULINF_10, "internal_is_lcid_neutral", ves_icall_System_Globalization_CultureInfo_internal_is_lcid_neutral)
-
-ICALL_TYPE(REGINF, "System.Globalization.RegionInfo", REGINF_2)
-ICALL(REGINF_2, "construct_internal_region_from_name", ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_name)
-
 #if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH)
 ICALL_TYPE(DEFLATESTREAM, "System.IO.Compression.DeflateStreamNative", DEFLATESTREAM_1)
 NOHANDLES(ICALL(DEFLATESTREAM_1, "CloseZStream", ves_icall_System_IO_Compression_DeflateStreamNative_CloseZStream))
@@ -272,82 +251,6 @@ NOHANDLES(ICALL(IODRIVEINFO_1, "GetDiskFreeSpaceInternal", ves_icall_System_IO_D
 HANDLES(IODRIVEINFO_2, "GetDriveFormatInternal", ves_icall_System_IO_DriveInfo_GetDriveFormat, MonoString, 2, (const_gunichar2_ptr, int))
 HANDLES(IODRIVEINFO_3, "GetDriveTypeInternal", ves_icall_System_IO_DriveInfo_GetDriveType, guint32, 2, (const_gunichar2_ptr, int))
 #endif
-
-ICALL_TYPE(FAMW, "System.IO.FAMWatcher", FAMW_1)
-ICALL(FAMW_1, "InternalFAMNextEvent", ves_icall_System_IO_FAMW_InternalFAMNextEvent)
-
-ICALL_TYPE(FILEW, "System.IO.FileSystemWatcher", FILEW_4)
-ICALL(FILEW_4, "InternalSupportsFSW", ves_icall_System_IO_FSW_SupportsFSW)
-
-ICALL_TYPE(KQUEM, "System.IO.KqueueMonitor", KQUEM_1)
-ICALL(KQUEM_1, "kevent_notimeout", ves_icall_System_IO_KqueueMonitor_kevent_notimeout)
-
-ICALL_TYPE(LOGCATEXTWRITER, "System.IO.LogcatTextWriter", LOGCATEXTWRITER_1)
-NOHANDLES(ICALL(LOGCATEXTWRITER_1, "Log", ves_icall_System_IO_LogcatTextWriter_Log))
-
-ICALL_TYPE(MMAPIMPL, "System.IO.MemoryMappedFiles.MemoryMapImpl", MMAPIMPL_1)
-// FIXME rename to ves_icall...
-HANDLES(MMAPIMPL_1, "CloseMapping", mono_mmap_close, void, 1, (gpointer))
-HANDLES(MMAPIMPL_2, "ConfigureHandleInheritability", mono_mmap_configure_inheritability, void, 2, (gpointer, gint32))
-HANDLES(MMAPIMPL_3, "Flush", mono_mmap_flush, void,  1, (gpointer))
-HANDLES(MMAPIMPL_4, "MapInternal", mono_mmap_map, int, 6, (gpointer, gint64, gint64_ref, int, gpointer_ref, gpointer_ref))
-HANDLES(MMAPIMPL_5, "OpenFileInternal", mono_mmap_open_file, gpointer, 9, (const_gunichar2_ptr, int, int, const_gunichar2_ptr, int, gint64_ref, int, int, int_ref))
-HANDLES(MMAPIMPL_6, "OpenHandleInternal", mono_mmap_open_handle, gpointer, 7, (gpointer, const_gunichar2_ptr, int, gint64_ref, int, int, int_ref))
-HANDLES(MMAPIMPL_7, "Unmap", mono_mmap_unmap, MonoBoolean, 1, (gpointer))
-
-ICALL_TYPE(MONOIO, "System.IO.MonoIO", MONOIO_1)
-NOHANDLES(ICALL(MONOIO_1, "Close(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Close))
-#ifndef PLATFORM_RO_FS
-NOHANDLES(ICALL(MONOIO_2, "CopyFile(char*,char*,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CopyFile))
-NOHANDLES(ICALL(MONOIO_3, "CreateDirectory(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CreateDirectory))
-NOHANDLES(ICALL(MONOIO_4, "CreatePipe", ves_icall_System_IO_MonoIO_CreatePipe))
-NOHANDLES(ICALL(MONOIO_5, "DeleteFile(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_DeleteFile))
-#endif /* !PLATFORM_RO_FS */
-NOHANDLES(ICALL(MONOIO_38, "DumpHandles", ves_icall_System_IO_MonoIO_DumpHandles))
-NOHANDLES(ICALL(MONOIO_34, "DuplicateHandle", ves_icall_System_IO_MonoIO_DuplicateHandle))
-NOHANDLES(ICALL(MONOIO_37a, "FindCloseFile", ves_icall_System_IO_MonoIO_FindCloseFile))
-HANDLES(MONOIO_35a, "FindFirstFile", ves_icall_System_IO_MonoIO_FindFirstFile, gpointer, 4, (const_gunichar2_ptr, MonoStringOut, gint32_ref, gint32_ref))
-HANDLES(MONOIO_36a, "FindNextFile", ves_icall_System_IO_MonoIO_FindNextFile, MonoBoolean, 4, (gpointer, MonoStringOut, gint32_ref, gint32_ref))
-NOHANDLES(ICALL(MONOIO_6, "Flush(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Flush))
-HANDLES(MONOIO_7, "GetCurrentDirectory(System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetCurrentDirectory, MonoString, 1, (gint32_ref))
-NOHANDLES(ICALL(MONOIO_8, "GetFileAttributes(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileAttributes))
-NOHANDLES(ICALL(MONOIO_9, "GetFileStat(char*,System.IO.MonoIOStat&,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileStat))
-NOHANDLES(ICALL(MONOIO_11, "GetFileType(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileType))
-NOHANDLES(ICALL(MONOIO_12, "GetLength(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetLength))
-#ifndef PLATFORM_RO_FS
-NOHANDLES(ICALL(MONOIO_14, "Lock(intptr,long,long,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Lock))
-NOHANDLES(ICALL(MONOIO_15, "MoveFile(char*,char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_MoveFile))
-#endif /* !PLATFORM_RO_FS */
-NOHANDLES(ICALL(MONOIO_16, "Open(char*,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.IO.FileOptions,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Open))
-HANDLES(MONOIO_17, "Read(intptr,byte[],int,int,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Read, gint32, 5, (gpointer, MonoArray, gint32, gint32, gint32_ref))
-#ifndef PLATFORM_RO_FS
-NOHANDLES(ICALL(MONOIO_18, "RemoveDirectory(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_RemoveDirectory))
-NOHANDLES(ICALL(MONOIO_18M, "ReplaceFile(char*,char*,char*,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_ReplaceFile))
-#endif /* !PLATFORM_RO_FS */
-NOHANDLES(ICALL(MONOIO_19, "Seek(intptr,long,System.IO.SeekOrigin,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Seek))
-NOHANDLES(ICALL(MONOIO_20, "SetCurrentDirectory(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetCurrentDirectory))
-NOHANDLES(ICALL(MONOIO_21, "SetFileAttributes(char*,System.IO.FileAttributes,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetFileAttributes))
-NOHANDLES(ICALL(MONOIO_22, "SetFileTime(intptr,long,long,long,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetFileTime))
-NOHANDLES(ICALL(MONOIO_23, "SetLength(intptr,long,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_SetLength))
-#ifndef PLATFORM_RO_FS
-NOHANDLES(ICALL(MONOIO_24, "Unlock(intptr,long,long,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Unlock))
-#endif
-HANDLES(MONOIO_25, "Write(intptr,byte[],int,int,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Write, gint32, 5, (gpointer, MonoArray, gint32, gint32, gint32_ref))
-NOHANDLES(ICALL(MONOIO_26, "get_AltDirectorySeparatorChar", ves_icall_System_IO_MonoIO_get_AltDirectorySeparatorChar))
-NOHANDLES(ICALL(MONOIO_27, "get_ConsoleError", ves_icall_System_IO_MonoIO_get_ConsoleError))
-NOHANDLES(ICALL(MONOIO_28, "get_ConsoleInput", ves_icall_System_IO_MonoIO_get_ConsoleInput))
-NOHANDLES(ICALL(MONOIO_29, "get_ConsoleOutput", ves_icall_System_IO_MonoIO_get_ConsoleOutput))
-NOHANDLES(ICALL(MONOIO_30, "get_DirectorySeparatorChar", ves_icall_System_IO_MonoIO_get_DirectorySeparatorChar))
-HANDLES(MONOIO_31, "get_InvalidPathChars", ves_icall_System_IO_MonoIO_get_InvalidPathChars, MonoArray, 0, ())
-NOHANDLES(ICALL(MONOIO_32, "get_PathSeparator", ves_icall_System_IO_MonoIO_get_PathSeparator))
-NOHANDLES(ICALL(MONOIO_33, "get_VolumeSeparatorChar", ves_icall_System_IO_MonoIO_get_VolumeSeparatorChar))
-
-ICALL_TYPE(IOPATH, "System.IO.Path", IOPATH_1)
-HANDLES(IOPATH_1, "get_temp_path", ves_icall_System_IO_get_temp_path, MonoString, 0, ())
-
-ICALL_TYPE(IOSELECTOR, "System.IOSelector", IOSELECTOR_1)
-ICALL(IOSELECTOR_1, "Add", ves_icall_System_IOSelector_Add)
-NOHANDLES(ICALL(IOSELECTOR_2, "Remove", ves_icall_System_IOSelector_Remove))
 
 ICALL_TYPE(MATH, "System.Math", MATH_19)
 NOHANDLES(ICALL(MATH_19, "Abs(double)", ves_icall_System_Math_Abs_double))
@@ -860,9 +763,6 @@ HANDLES(STRING_11, "InternalIsInterned", ves_icall_System_String_InternalIsInter
 
 ICALL_TYPE(TENC, "System.Text.EncodingHelper", TENC_1)
 HANDLES(TENC_1, "InternalCodePage", ves_icall_System_Text_EncodingHelper_InternalCodePage, MonoString, 1, (gint32_ref))
-
-ICALL_TYPE(UNORM, "System.Text.Normalization", UNORM_1)
-HANDLES(UNORM_1, "load_normalization_resource", ves_icall_System_Text_Normalization_load_normalization_resource, void, 6, (guint8_ptr_ref, guint8_ptr_ref, guint8_ptr_ref, guint8_ptr_ref, guint8_ptr_ref, guint8_ptr_ref))
 
 ICALL_TYPE(NATIVEC, "System.Threading.EventWaitHandle", EWH_1)
 HANDLES(EWH_1, "CreateEventInternal", ves_icall_System_Threading_Events_CreateEvent_icall, gpointer, 5, (MonoBoolean, MonoBoolean, const_gunichar2_ptr, gint32, gint32_ref))
