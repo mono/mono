@@ -313,9 +313,14 @@ namespace Cairo {
 
 		public void SetTarget (Surface target)
 		{
+			IntPtr newHandle = NativeMethods.cairo_create (target.Handle);
+			if (newHandle == IntPtr.Zero)
+				throw new InvalidOperationException ("Surface had an invalid handle.");
+
 			if (handle != IntPtr.Zero)
 				NativeMethods.cairo_destroy (handle);
-			handle = NativeMethods.cairo_create (target.Handle);
+
+			handle = newHandle;
 		}
 
 		[Obsolete("Use GetScaledFont/SetScaledFont")]
