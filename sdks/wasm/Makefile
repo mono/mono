@@ -17,6 +17,7 @@ CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)
 
 EMSCRIPTEN_SDKDIR=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
+EMCC_DYNAMIC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && EMCC_FORCE_STDLIBS=1 emcc
 WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
 WASM_RUNTIME_DIR=$(TOP)/sdks/out/wasm-runtime-release
 MINI_PATH=$(TOP)/mono/mini
@@ -118,7 +119,7 @@ release/.stamp-build: driver.o corebindings.o library_mono.js binding_support.js
 
 # Notice that release-dynamic/.stamp-build depends on release/.stamp-build. This is the case as emcc is believed to not work well with parallel builds.
 release-dynamic/.stamp-build: driver-dynamic.o corebindings.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a release/.stamp-build | release-dynamic/
-	EMCC_FORCE_STDLIBS=libcxx,libcxxabi $(EMCC) $(EMCC_FLAGS) -s MAIN_MODULE=1 -s EXPORT_ALL=1 -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver-dynamic.o corebindings.o $(MONO_LIBS) -o release-dynamic/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
+	$(EMCC_DYNAMIC) $(EMCC_FLAGS) -s MAIN_MODULE=1 -s EXPORT_ALL=1 -s RESERVED_FUNCTION_POINTERS=64 -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver-dynamic.o corebindings.o $(MONO_LIBS) -o release-dynamic/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
 	touch $@
 
 build-native: debug/.stamp-build release/.stamp-build release-dynamic/.stamp-build
