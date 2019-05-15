@@ -108,7 +108,7 @@
 //
 
 #if ENABLE_NETCORE
-#include "icall-def-core.h"
+#include "icall-def-netcore.h"
 #else
 
 ICALL_TYPE(CLR_INTEROP_SYS, "Interop/Sys", CLR_INTEROP_SYS_1)
