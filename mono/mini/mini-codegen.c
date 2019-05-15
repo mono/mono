@@ -1156,11 +1156,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			ispec = INS_INFO (i);
 
 			if ((spec [MONO_INST_DEST] && (ispec [MONO_INST_DEST] == ' ')))
-				printf ("Instruction metadata for %s inconsistent.\n", mono_inst_name (i));
+				printf ("Instruction metadata for %s inconsistent (%c %c).\n", mono_inst_name (i), spec [MONO_INST_DEST], ispec [MONO_INST_DEST]);
 			if ((spec [MONO_INST_SRC1] && (ispec [MONO_INST_SRC1] == ' ')))
-				printf ("Instruction metadata for %s inconsistent.\n", mono_inst_name (i));
+				printf ("Instruction metadata for %s inconsistent (%c %c).\n", mono_inst_name (i), spec [MONO_INST_SRC1], ispec [MONO_INST_SRC1]);
 			if ((spec [MONO_INST_SRC2] && (ispec [MONO_INST_SRC2] == ' ')))
-				printf ("Instruction metadata for %s inconsistent.\n", mono_inst_name (i));
+				printf ("Instruction metadata for %s inconsistent (%c %c).\n", mono_inst_name (i), spec [MONO_INST_SRC2], ispec [MONO_INST_SRC2]);
 		}
 #endif
 	}

@@ -358,7 +358,8 @@ extern gboolean	mono_using_xdebug;
 extern int mini_verbose;
 extern int valgrind_register;
 
-#define INS_INFO(opcode) (&mini_ins_info [((opcode) - OP_START - 1) * 4])
+// FIXME use the type, not char*
+#define INS_INFO(opcode) ((const char*)&mini_ins_info [(opcode) - OP_START - 1])
 
 /* instruction description for use in regalloc/scheduling */
 
@@ -378,7 +379,21 @@ enum {
 	MONO_INST_MAX = 6
 };
 
-typedef union MonoInstSpec { // instruction specification
+typedef union MonoInstInfo { // instruction info
+	struct {
+		char dest;
+		char src1;
+		char src2;
+		char src3;
+	};
+	struct {
+		char xdest;
+		char src [3];
+	};
+	char bytes[4];
+} MonoInstInfo;
+
+typedef union MonoInstSpec { // instruction specification, superset of info
 	struct {
 		char dest;
 		char src1;
@@ -400,7 +415,7 @@ typedef union MonoInstSpec { // instruction specification
 	char bytes[MONO_INST_MAX];
 } MonoInstSpec;
 
-extern const char mini_ins_info[];
+extern const MonoInstInfo mini_ins_info [];
 extern const gint8 mini_ins_sreg_counts [];
 
 #ifndef DISABLE_JIT
@@ -1788,6 +1803,7 @@ extern const MonoInstSpec MONO_ARCH_CPU_SPEC [];
 #define MONO_ARCH_CPU_SPEC_IDX_COMBINE(a) a ## _idx
 #define MONO_ARCH_CPU_SPEC_IDX(a) MONO_ARCH_CPU_SPEC_IDX_COMBINE(a)
 extern const guint16 MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC) [];
+// FIXME use the type, not char*
 #define ins_get_spec(op) ((const char*)&MONO_ARCH_CPU_SPEC [MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC)[(op) - OP_LOAD]])
 
 #ifndef DISABLE_JIT

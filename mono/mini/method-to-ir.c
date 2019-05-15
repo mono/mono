@@ -194,8 +194,8 @@ static GENERATE_GET_CLASS_WITH_CACHE (geqcomparer, "System.Collections.Generic",
 #ifdef MINI_OP3
 #undef MINI_OP3
 #endif
-#define MINI_OP(a,b,dest,src1,src2) dest, src1, src2, ' ',
-#define MINI_OP3(a,b,dest,src1,src2,src3) dest, src1, src2, src3,
+#define MINI_OP(a,b,dest,src1,src2) {{ dest, src1, src2, ' ' }},
+#define MINI_OP3(a,b,dest,src1,src2,src3) {{ dest, src1, src2, src3 }},
 #define NONE ' '
 #define IREG 'i'
 #define FREG 'f'
@@ -207,8 +207,8 @@ static GENERATE_GET_CLASS_WITH_CACHE (geqcomparer, "System.Collections.Generic",
 #define LREG 'l'
 #endif
 /* keep in sync with the enum in mini.h */
-const char
-mini_ins_info[] = {
+const MonoInstInfo
+mini_ins_info [] = {
 #include "mini-ops.h"
 };
 #undef MINI_OP

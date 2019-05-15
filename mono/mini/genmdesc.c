@@ -230,7 +230,7 @@ static void
 output_char (FILE *f, char c) {
 	if (isalnum_char (c))
 		fprintf (f, " '%c'", c);
-	else if (c < 9)
+	else if (c >= 0 && c <= 9)
 		fprintf (f, "   %u", (guint8)c);
 	else
 		fprintf (f, "0x%02X", (guint8)c);
@@ -255,15 +255,18 @@ build_table (const char *fname, const char *name) {
 	idx = 1;
 	g_string_append_printf (idx_array, "const guint16 mono_%s_idx [] = {\n", name);
 
-	int row = 40;
+	// FIXME compression scheme from genmdesc.py
+
+	// Write the heading ever few rows for readability.
+	int heading_row = 40;
 
 	for (i = OP_LOAD; i < OP_LAST; ++i) {
-		if (row == 40) {
+		if (heading_row == 40) {
 			fprintf (f, "//  dest  src1  src2  src3   len  clob\n");
 			fprintf (f, "// ----- ----- ----- ----  ----- -----\n");
-			row = 0;
+			heading_row = 0;
 		} else
-			row += 1;
+			heading_row += 1;
 		desc = opcodes + i;
 		if (!desc->desc)
 			g_string_append_printf (idx_array, " 0, // %s\n", desc->name ? desc->name : "");
