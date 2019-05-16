@@ -1,4 +1,3 @@
-../../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
 ../corefx/GlobalizationMode.cs
 Microsoft.Win32/RegistryKeyTest.cs
 Mono/DataConvertTest.cs

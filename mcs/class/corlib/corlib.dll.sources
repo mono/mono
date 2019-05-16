@@ -1650,8 +1650,6 @@ corert/RuntimeAugments.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Collections/Generic/ArraySortHelper.cs
 ../../../external/corert/src/System.Private.CoreLib/src/System/Collections/Generic/ArraySortHelper.CoreRT.cs
 
-../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/GlobalizationMode.cs
-
 ../../../external/corert/src/System.Private.CoreLib/src/System/Runtime/CompilerServices/ReflectionBlockedAttribute.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/CompilerServices/TaskAwaiter.cs
 
