@@ -23,6 +23,7 @@ class Icall : IComparable<Icall>
 	public string Assembly;
 	public bool Handles;
 	public int TokenIndex;
+	public MethodReference Method;
 
 	public int CompareTo (Icall other) {
 		return TokenIndex - other.TokenIndex;
@@ -123,8 +124,12 @@ public class WasmTuner
 			return "void";
 		else if (t.Name == "Double")
 			return "double";
-		else if (t.Name == "Float")
+		else if (t.Name == "Single")
 			return "float";
+		else if (t.Name == "Int64")
+			return "int64_t";
+		else if (t.Name == "UInt64")
+			return "uint64_t";
 		else
 			return "int";
 	}
@@ -208,6 +213,34 @@ public class WasmTuner
 		}
 	}
 
+	static string GenIcallDecl (Icall icall) {
+		var sb = new StringBuilder ();
+		var method = icall.Method;
+		sb.Append (MapType (method.ReturnType));
+		sb.Append ($" {icall.Func} (");
+		int pindex = 0;
+		int aindex = 0;
+		if (method.HasThis) {
+			sb.Append ("int");
+			aindex ++;
+		}
+		foreach (var p in method.Parameters) {
+			if (aindex > 0)
+				sb.Append (",");
+			sb.Append (MapType (method.Parameters [pindex].ParameterType));
+			pindex ++;
+			aindex ++;
+		}
+		if (icall.Handles) {
+			if (aindex > 0)
+				sb.Append (",");
+			sb.Append ("int");
+			pindex ++;
+		}
+		sb.Append (");");
+		return sb.ToString ();
+	}
+
 	//
 	// Given the runtime generated icall table, and a set of assemblies, generate
 	// a smaller linked icall table mapping tokens to C function names
@@ -245,7 +278,7 @@ public class WasmTuner
 				Console.WriteLine (String.Format ("{0},", icall.TokenIndex));
 			Console.WriteLine ("};");
 			foreach (var icall in sorted)
-				Console.WriteLine (String.Format ("void {0} ();", icall.Func));
+				Console.WriteLine (GenIcallDecl (icall));
 			Console.WriteLine ($"static void *{assembly}_icall_funcs [] = {{");
 			foreach (var icall in sorted) {
 				Console.WriteLine (String.Format ("// token {0},", icall.TokenIndex));
@@ -372,6 +405,7 @@ public class WasmTuner
 				// Registered at runtime
 				continue;
 
+			icall.Method = method;
 			icall.TokenIndex = (int)method.MetadataToken.RID;
 			icall.Assembly = method.DeclaringType.Module.Assembly.Name.Name;
 			icalls.Add (icall);
