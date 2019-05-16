@@ -7,7 +7,9 @@ set -e
 OLD_CWD=`pwd`
 TESTCMD=`realpath ${TESTCMD}`
 
-${TESTCMD} --label=remove-mono-temp-dir --timeout=1m rm -rf /tmp/xplat-master
+rm -rf /tmp/xplat-master || true
+rm -rf /tmp/mono-from-source || true
+
 ${TESTCMD} --label=autogen --timeout=15m ./autogen.sh --prefix=/tmp/mono-from-source
 ${TESTCMD} --label=make --timeout=30m make PROFILE=net_4_x -j 2
 ${TESTCMD} --label=make-install --timeout=15m make install
@@ -17,8 +19,6 @@ export PATH=/tmp/mono-from-source/bin/:${OLD_PATH}
 
 # hack: execution environment may not have certificates, which breaks nuget. roslyn and msbuild both need nuget.
 ${TESTCMD} --label=cert-sync --timeout=15m /tmp/mono-from-source/bin/cert-sync /etc/ssl/certs/ca-certificates.crt
-
-rm -rf /tmp/xplat-master || true
 
 # we bump the OS X version of msbuild by modifying msbuild.py, so we want to pull that revision hash out
 #  and match it here so we are verifying the same revision mac users get
@@ -31,7 +31,9 @@ cd /tmp/xplat-master
 XPLAT_MASTER_REVISION=`git rev-parse xplat-master`
 echo Detected msbuild hash ${XPLAT_MASTER_REVISION} in mono/msbuild branch xplat-master
 
-${TESTCMD} --label=compare-hashes --timeout=5m "test '${MSBUILD_REVISION}' = '${XPLAT_MASTER_REVISION}'"
+COMPARISON="\"${MSBUILD_REVISION}\" = \"${XPLAT_MASTER_REVISION}\""
+
+${TESTCMD} --label=compare-hashes --timeout=5m test ${COMPARISON}
 
 # hack: we can test against latest xplat-master but we don't want to do that on ci
 #MSBUILD_REVISION=${XPLAT_MASTER_REVISION}
