@@ -2851,10 +2851,10 @@ int main(void) {
   exit(0);
 }
 	], [
-				AC_MSG_RESULT(yes)
-				AC_DEFINE(HAVE_COMPATIBLE_ILOGB0, 1, [Have a portable FP_ILOGB0])
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_COMPATIBLE_ILOGB0, 1, [Have a portable FP_ILOGB0])
 	], [
-				AC_MSG_RESULT(no)
+		AC_MSG_RESULT(no)
 	])
 
 	AC_MSG_CHECKING(for compatible FP_ILOGBNAN)
@@ -2868,10 +2868,10 @@ int main(void) {
   exit(0);
 }
 	], [
-				AC_MSG_RESULT(yes)
-				AC_DEFINE(HAVE_COMPATIBLE_ILOGBNAN, 1, [Have a portable FP_ILOGBNAN])
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_COMPATIBLE_ILOGBNAN, 1, [Have a portable FP_ILOGBNAN])
 	], [
-				AC_MSG_RESULT(no)
+		AC_MSG_RESULT(no)
 	])
 
 	dnl ****************************************************************
