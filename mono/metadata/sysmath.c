@@ -205,17 +205,11 @@ gint32
 ves_icall_System_Math_ILogB (gdouble x)
 {
 	int ret;
-#if !HAVE_COMPATIBLE_ILOGB0
-	if (x == 0.0)
+	if (FP_ILOGB0 != -2147483648 && x == 0.0)
 		ret = -2147483648;
-	else 
-#endif
-
-#if !HAVE_COMPATIBLE_ILOGBNAN
-	if (isnan(x))
+	else if (FP_ILOGBNAN != 2147483647 && isnan(x))
 		ret = 2147483647;
 	else
-#endif
 		ret = ilogb(x);
 	return ret;
 }
@@ -382,17 +376,11 @@ gint32
 ves_icall_System_MathF_ILogB (float x)
 {
 	int ret;
-#if !HAVE_COMPATIBLE_ILOGB0
-	if (x == 0.0f)
+	if (FP_ILOGB0 != -2147483648 && x == 0.0)
 		ret = -2147483648;
-	else 
-#endif
-
-#if !HAVE_COMPATIBLE_ILOGBNAN
-	if (isnan(x))
+	else if (FP_ILOGBNAN != 2147483647 && isnan(x))
 		ret = 2147483647;
 	else
-#endif
 		ret = ilogbf(x);
 	return ret;
 }
