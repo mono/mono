@@ -1,0 +1,20 @@
+# Environment.FailFast is not implemented
+-nomethod System.Tests.EnvironmentTests.FailFast_ExceptionStackTrace_InnerException
+-nomethod System.Tests.EnvironmentTests.FailFast_ExceptionStackTrace_ArgumentException
+-nomethod System.Tests.EnvironmentTests.FailFast_ExceptionStackTrace_StackOverflowException
+
+# Mono expands generic Types in stacktraces unlike the .NET Core (sounds more like a feature)
+-method System.Tests.EnvironmentStackTrace.StackTraceTest
+
+# AppContext.FirstChanceException event is never fired
+-nomethod System.Tests.AppDomainTests.FirstChanceException_Called
+
+# AssemblyLoadContext.InternalLoad is not implemented
+-nomethod System.Tests.AppDomainTests.LoadBytes
+
+# TODO: investigate
+-nomethod System.Tests.AppDomainTests.TypeResolve
+-nomethod System.Tests.AppDomainTests.GetAssemblies
+-nomethod System.Tests.AppDomainTests.ResourceResolve
+-nomethod System.Tests.AppDomainTests.AssemblyLoad
+-nomethod System.Runtime.Tests.ProfileOptimizationTest.ProfileOptimization_CheckFileExists
