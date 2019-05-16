@@ -92,7 +92,6 @@ namespace MonoTests.System.Xml.Xsl
 			xslt.Load (new XPathDocument (new XmlTextReader (xsl, XmlNodeType.Document, null)));
 		}
 
-#if !DISABLE_SECURITY
 		[Test]
 	    [Category ("MobileNotWorking")]
 		public void MsxslTest() {
@@ -130,7 +129,6 @@ xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" xmlns:stringutils=""urn:schemas-s
 
 			Assert.AreEqual ("test".PadRight(20), sb.ToString());
 		}
-#endif
 
 		[Test]
 		public void MSXslNodeSet ()

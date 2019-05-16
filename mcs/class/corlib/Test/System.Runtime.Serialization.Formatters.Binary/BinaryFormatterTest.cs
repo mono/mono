@@ -417,7 +417,6 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		}
 		
 		[Test]
-		[Category ("Remoting")]
 		public void NestedObjectReference ()
 		{
 			MemoryStream ms = new MemoryStream();
@@ -591,7 +590,6 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Binary
 		}
 
 		[Test]
-		[Category ("Remoting")]
 		public void NestedObjectReferences ()
 		{
 			MemoryStream ms = new MemoryStream ();
