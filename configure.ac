@@ -2840,6 +2840,40 @@ if test x$host_win32 = xno; then
 	dnl *********************************
 	AC_SEARCH_LIBS(sqrtf, m)
 
+	AC_MSG_CHECKING(for compatible FP_ILOGB0)
+	AC_TRY_RUN([
+#include <math.h>
+#include <stdlib.h>
+int main(void) {
+  if (FP_ILOGB0 != -2147483648) {
+    exit(1);
+  }
+  exit(0);
+}
+	], [
+				AC_MSG_RESULT(yes)
+				AC_DEFINE(HAVE_COMPATIBLE_ILOGB0, 1, [Have a portable FP_ILOGB0])
+	], [
+				AC_MSG_RESULT(no)
+	])
+
+	AC_MSG_CHECKING(for compatible FP_ILOGBNAN)
+	AC_TRY_RUN([
+#include <math.h>
+#include <stdlib.h>
+int main(void) {
+  if (FP_ILOGBNAN != 2147483647) {
+    exit(1);
+  }
+  exit(0);
+}
+	], [
+				AC_MSG_RESULT(yes)
+				AC_DEFINE(HAVE_COMPATIBLE_ILOGBNAN, 1, [Have a portable FP_ILOGBNAN])
+	], [
+				AC_MSG_RESULT(no)
+	])
+
 	dnl ****************************************************************
 	dnl *** Checks for working poll() (macosx defines it but doesn't ***
 	dnl *** have it in the library (duh))                            ***

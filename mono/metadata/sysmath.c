@@ -204,7 +204,20 @@ ves_icall_System_Math_Ceiling (gdouble v)
 gint32
 ves_icall_System_Math_ILogB (gdouble x)
 {
-	return ilogb (x);
+	int ret;
+#if !HAVE_COMPATIBLE_ILOGB0
+	if (x == 0.0)
+		ret = -2147483648;
+	else 
+#endif
+
+#if !HAVE_COMPATIBLE_ILOGBNAN
+	if (isnan(x))
+		ret = 2147483647;
+	else
+#endif
+		ret = ilogb(x);
+	return ret;
 }
 
 gdouble
@@ -368,7 +381,20 @@ ves_icall_System_MathF_ModF (float x, float *d)
 gint32
 ves_icall_System_MathF_ILogB (float x)
 {
-	return ilogbf (x);
+	int ret;
+#if !HAVE_COMPATIBLE_ILOGB0
+	if (x == 0.0f)
+		ret = -2147483648;
+	else 
+#endif
+
+#if !HAVE_COMPATIBLE_ILOGBNAN
+	if (isnan(x))
+		ret = 2147483647;
+	else
+#endif
+		ret = ilogbf(x);
+	return ret;
 }
 
 float
