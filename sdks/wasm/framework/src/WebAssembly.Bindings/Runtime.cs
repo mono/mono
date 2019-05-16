@@ -351,8 +351,8 @@ namespace WebAssembly {
 					} else {
  						if (t.IsValueType)
  							throw new Exception("Can't handle VT arguments");
+						res += "o";
 					}
-					res += "o";
 					break;
 				}
 			}
