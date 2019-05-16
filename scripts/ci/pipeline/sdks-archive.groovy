@@ -19,8 +19,8 @@ parallel (
     "Android Windows (Release)": {
         throttle(['provisions-android-toolchain']) {
             node ("w64") {
-                archive ("android, "release", "Windows")
-	    }
+                archive ("android", "release", "Windows")
+            }
         }
     },
     "Android Linux (Debug)": {
