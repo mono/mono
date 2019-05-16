@@ -1,4 +1,8 @@
+
+System/AppDomainManager.cs
 System/MarshalByRefObject.cs
+
+System.Runtime.Hosting/ApplicationActivator.cs
 
 System.Runtime.Remoting/*.cs
 

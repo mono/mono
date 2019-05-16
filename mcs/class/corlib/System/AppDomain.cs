@@ -1490,13 +1490,14 @@ namespace System {
 			get { return true; }
 		}
 
-        #pragma warning disable 649
+#pragma warning disable 649
+#if !DISABLE_REMOTING
 #if !MOBILE
 		private AppDomainManager _domain_manager;
 #else
 		object _domain_manager;
 #endif
-        #pragma warning restore 649
+#pragma warning restore 649
 
 #if MONO_FEATURE_MULTIPLE_APPDOMAINS
 		// default is null
@@ -1509,6 +1510,7 @@ namespace System {
 			get { throw new PlatformNotSupportedException ("AppDomain.DomainManager is not supported on this platform."); }
 		}
 #endif // MONO_FEATURE_MULTIPLE_APPDOMAINS
+#endif
 
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
 
