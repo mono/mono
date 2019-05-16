@@ -1,5 +1,6 @@
 
 _bcl_CONFIGURE_FLAGS = \
+	$(if $(filter $(UNAME),Windows),--host=$(HOST_ARCH_MINGW32)-w64-mingw32) \
 	--disable-boehm \
 	--disable-btls-lib \
 	--disable-nls \

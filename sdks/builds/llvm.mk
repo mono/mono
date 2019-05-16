@@ -70,6 +70,25 @@ clean-llvm-$(1)::
 
 endef
 
+##
+# Parameters:
+#  $(1): target
+define LLVMTemplateStub
+
+.PHONY: setup-llvm-$(1)
+setup-llvm-$(1):
+	@echo "TODO: setup-llvm-$(1) on $(NAME)"
+
+.PHONY: package-llvm-$(1)
+package-llvm-$(1):
+	@echo "TODO: package-llvm-$(1) on $(UNAME)"
+
+.PHONY: clean-llvm-$(1)
+clean-llvm-$(1)::
+	@echo "TODO: clean-llvm-$(1) on $(UNAME)"
+
+endef
+
 llvm-llvm32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
 $(eval $(call LLVMTemplate,llvm32))
 $(eval $(call LLVMTemplate,llvm64))

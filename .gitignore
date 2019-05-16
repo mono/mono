@@ -135,3 +135,5 @@ extensions-config.h
 *.mlpd
 llvm/build/
 llvm/usr/
+sdks/builds/llvm-*/
+sdks/builds/android-*/
