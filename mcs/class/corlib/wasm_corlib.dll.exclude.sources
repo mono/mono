@@ -2,3 +2,7 @@
 #include testing_aot_common_corlib.dll.exclude.sources
 
 Mono.Globalization.Unicode/SimpleCollator.cs
+
+legacy/IRemotingTypeInfo.cs
+legacy/RealProxy.cs
+legacy/RemotingServices.cs
