@@ -521,7 +521,6 @@ typedef struct MonoInstSpecs
 } MonoInstSpecs;
 
 extern const char mini_ins_info [];
->>>>>>> python removal
 extern const gint8 mini_ins_sreg_counts [];
 
 #ifndef DISABLE_JIT
