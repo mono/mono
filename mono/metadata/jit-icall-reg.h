@@ -352,7 +352,7 @@ mono_check_jit_icall_info (gconstpointer jit_icall_info)
 }
 
 static inline MonoJitICallInfo*
-mono_jit_icall_info_at (int index)
+mono_find_jit_icall_info (int index)
 {
 	g_assert (index && (guint)index < MONO_JIT_ICALL_count);
 

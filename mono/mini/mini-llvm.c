@@ -7276,7 +7276,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 #if LLVM_API_VERSION > 100
 					MonoJitICallInfo *info;
 
-					info = mono_jit_icall_info_at (MONO_JIT_ICALL_mono_llvm_resume_unwind_trampoline);
+					info = mono_find_jit_icall_info (MONO_JIT_ICALL_mono_llvm_resume_unwind_trampoline);
 					g_assert (info);
 					gpointer target = (void*)info->func;
 					LLVMTypeRef icall_sig = LLVMFunctionType (LLVMVoidType (), NULL, 0, FALSE);
