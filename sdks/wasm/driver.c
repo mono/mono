@@ -488,6 +488,7 @@ mono_wasm_get_obj_type (MonoObject *obj)
 	case MONO_TYPE_U4:
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
+	case MONO_TYPE_I:	// IntPtr
 		return MARSHAL_TYPE_INT;
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8:
@@ -552,6 +553,7 @@ mono_unbox_int (MonoObject *obj)
 	case MONO_TYPE_U2:
 		return *(unsigned short*)ptr;
 	case MONO_TYPE_I4:
+	case MONO_TYPE_I:
 		return *(int*)ptr;
 	case MONO_TYPE_U4:
 		return *(unsigned int*)ptr;
