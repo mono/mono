@@ -46,6 +46,7 @@ namespace System.Runtime.ExceptionServices {
         {
             // Copy over the details we need to save.
             m_Exception = exception;
+#if !WASM
 #if MONO
 			var traces = exception.captured_traces;
 			var count = traces == null ? 0 : traces.Length;
@@ -68,6 +69,7 @@ namespace System.Runtime.ExceptionServices {
 
             m_IPForWatsonBuckets = exception.IPForWatsonBuckets;
             m_WatsonBuckets = exception.WatsonBuckets;                                                        
+#endif
 #endif
         }
 
@@ -150,7 +152,7 @@ namespace System.Runtime.ExceptionServices {
 #endif
         public void Throw()
         {
-#if FEATURE_EXCEPTIONDISPATCHINFO
+#if FEATURE_EXCEPTIONDISPATCHINFO && !WASM
             // Restore the exception dispatch details before throwing the exception.
             m_Exception.RestoreExceptionDispatchInfo(this);
 #endif

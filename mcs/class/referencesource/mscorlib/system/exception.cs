@@ -22,7 +22,9 @@ namespace System {
     using System.Runtime.CompilerServices;
     using System.Runtime.Serialization;
     using System.Runtime.Versioning;
+#if !WASM
     using System.Diagnostics;
+#endif
 #if !MONO
     using System.Security.Permissions;
 #endif
@@ -314,7 +316,9 @@ namespace System {
         public MethodBase TargetSite {
             [System.Security.SecuritySafeCritical]  // auto-generated
             get {
-#if MONO
+#if WASM
+                return null;
+#elif MONO
                 StackTrace st = new StackTrace (this, true);
                 if (st.FrameCount > 0)
                     return st.GetFrame (0).GetMethod ();
@@ -431,6 +435,7 @@ namespace System {
             [System.Security.SecurityCritical] // auto-generated
             #endif
             get { 
+#if !WASM
                 if (_source == null)
                 {
                     StackTrace st = new StackTrace(this,true);
@@ -461,6 +466,7 @@ namespace System {
 #endif
                     }
                 }
+#endif
 
                 return _source;
             }
@@ -769,7 +775,7 @@ namespace System {
         }
 #endif
  
-#if FEATURE_EXCEPTIONDISPATCHINFO
+#if FEATURE_EXCEPTIONDISPATCHINFO && !WASM
 
         // This is the object against which a lock will be taken
         // when attempt to restore the EDI. Since its static, its possible
@@ -990,7 +996,7 @@ namespace System {
         private SafeSerializationManager _safeSerializationManager;
 #endif // FEATURE_SERIALIZATION
 
-#if MONO
+#if MONO && !WASM
         // Mono: Used when rethrowing exception
         internal StackTrace[] captured_traces;
 

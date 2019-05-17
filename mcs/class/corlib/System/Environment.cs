@@ -313,8 +313,12 @@ namespace System {
 		public static string StackTrace {
 			[EnvironmentPermission (SecurityAction.Demand, Unrestricted=true)]
 			get {
+#if WASM
+				return string.Empty;
+#else
 				System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace (0, true);
 				return trace.ToString ();
+#endif
 			}
 		}
 
@@ -1037,6 +1041,9 @@ namespace System {
 		// Copied from referencesource Environment
 		internal static String GetStackTrace(Exception e, bool needFileInfo)
 		{
+#if WASM
+			return string.Empty;
+#else
 			System.Diagnostics.StackTrace st;
 			if (e == null)
 				st = new System.Diagnostics.StackTrace(needFileInfo);
@@ -1045,6 +1052,7 @@ namespace System {
 
 			// Do not include a trailing newline for backwards compatibility
 			return st.ToString( System.Diagnostics.StackTrace.TraceFormat.Normal );
+#endif
 		}
 
 		// Copied from referencesource Environment

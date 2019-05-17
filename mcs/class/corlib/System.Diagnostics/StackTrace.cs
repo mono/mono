@@ -137,9 +137,11 @@ namespace System.Diagnostics {
 			if (skipFrames < 0)
 				throw new ArgumentOutOfRangeException ("< 0", "skipFrames");
 
+#if !WASM
 			frames = get_trace (e, skipFrames, fNeedFileInfo);
 
 			captured_traces = e.captured_traces;
+#endif
 		}
 
 		public StackTrace (StackFrame frame)
