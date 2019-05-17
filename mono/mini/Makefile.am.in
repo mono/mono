@@ -569,21 +569,21 @@ regtests = $(filter-out $(regtests_DISABLED),$(regtests_UNIVERSAL))
 
 if WASM
 arch_sources = $(wasm_sources)
-arch_built=cpu-wasm.h
+arch_built=
 arch_define=__wasm__
 target_define=TARGET_WASM
 endif
 
 if X86
 arch_sources = $(x86_sources)
-arch_built=cpu-x86.h
+arch_built=
 arch_define=__i386__
 target_define=TARGET_X86
 endif
 
 if AMD64
 arch_sources = $(amd64_sources)
-arch_built=cpu-amd64.h
+arch_built=
 arch_define=__x86_64__
 target_define=TARGET_AMD64
 ARCH_FULLAOT_EXCLUDE=
@@ -591,21 +591,21 @@ endif
 
 if POWERPC
 arch_sources = $(ppc_sources)
-arch_built=cpu-ppc.h
+arch_built=
 arch_define=__ppc__
 target_define=TARGET_POWERPC
 endif
 
 if POWERPC64
 arch_sources = $(ppc_sources)
-arch_built=cpu-ppc64.h
+arch_built=
 arch_define=__ppc64__
 target_define=TARGET_POWERPC
 endif
 
 if MIPS
 arch_sources = $(mips_sources)
-arch_built=cpu-mips.h
+arch_built=
 arch_define=__mips__
 target_define=TARGET_MIPS
 endif
@@ -614,35 +614,35 @@ if ARM
 # pick up arm_dpimacros.h
 ARCH_CFLAGS = -I../arch/arm
 arch_sources = $(arm_sources)
-arch_built=cpu-arm.h
+arch_built=
 arch_define=__arm__
 target_define=TARGET_ARM
 endif
 
 if ARM64
 arch_sources = $(arm64_sources)
-arch_built=cpu-arm64.h
+arch_built=
 arch_define=__aarch64__
 target_define=TARGET_ARM64
 endif
 
 if SPARC
 arch_sources = $(sparc_sources)
-arch_built=cpu-sparc.h
+arch_built=
 arch_define=__sparc__
 target_define=TARGET_SPARC
 endif
 
 if SPARC64
 arch_sources = $(sparc_sources)
-arch_built=cpu-sparc.h
+arch_built=
 arch_define=__sparc__
 target_define=TARGET_SPARC
 endif
 
 if S390X
 arch_sources = $(s390x_sources)
-arch_built=cpu-s390x.h
+arch_built=
 arch_define=__s390__
 target_define=TARGET_S390X
 endif
@@ -773,46 +773,6 @@ generics-variant-types.dll: generics-variant-types.il
 
 MemoryIntrinsics.dll: MemoryIntrinsics.il
 	$(ILASM) -dll -output=$@ $<
-
-GENMDESC_OPTS=
-
-GENMDESC_PRG=echo python $(srcdir)/genmdesc.py $(target_define) $(srcdir)
-
-cpu-wasm.h: mini-ops.h cpu-wasm.md
-	$(GENMDESC_PRG) cpu-wasm.h wasm_desc $(srcdir)/cpu-wasm.md
-
-cpu-x86.h: mini-ops.h cpu-x86.md
-	$(GENMDESC_PRG) cpu-x86.h x86_desc $(srcdir)/cpu-x86.md
-
-cpu-amd64.h: mini-ops.h cpu-amd64.md
-	$(GENMDESC_PRG) cpu-amd64.h amd64_desc $(srcdir)/cpu-amd64.md
-
-cpu-ppc.h: mini-ops.h cpu-ppc.md
-	$(GENMDESC_PRG) cpu-ppc.h ppcg4 $(srcdir)/cpu-ppc.md
-
-cpu-ppc64.h: mini-ops.h cpu-ppc64.md
-	$(GENMDESC_PRG) cpu-ppc64.h ppc64_cpu_desc $(srcdir)/cpu-ppc64.md
-
-cpu-arm.h: mini-ops.h cpu-arm.md
-	$(GENMDESC_PRG) cpu-arm.h arm_cpu_desc $(srcdir)/cpu-arm.md
-
-cpu-arm64.h: mini-ops.h cpu-arm64.md
-	$(GENMDESC_PRG) cpu-arm64.h arm64_cpu_desc $(srcdir)/cpu-arm64.md
-
-cpu-sparc.h: mini-ops.h cpu-sparc.md
-	$(GENMDESC_PRG) cpu-sparc.h sparc_desc $(srcdir)/cpu-sparc.md
-
-cpu-s390x.h: mini-ops.h cpu-s390x.md
-	$(GENMDESC_PRG) cpu-s390x.h s390x_cpu_desc $(srcdir)/cpu-s390x.md
-
-cpu-mips.h: mini-ops.h cpu-mips.md
-	$(GENMDESC_PRG) cpu-mips.h mips_desc $(srcdir)/cpu-mips.md
-
-cpu-riscv32.h: cpu-riscv32.md
-	$(GENMDESC_PRG) cpu-riscv32.h riscv32_cpu_desc $(srcdir)/cpu-riscv32.md
-
-cpu-riscv64.h: cpu-riscv64.md
-	$(GENMDESC_PRG) cpu-riscv64.h riscv64_cpu_desc $(srcdir)/cpu-riscv64.md
 
 testi: mono test.exe
 	$(MINI_RUNTIME) -v -v --ncompile 1 --compile Test:$(mtest) test.exe

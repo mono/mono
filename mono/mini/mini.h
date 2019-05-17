@@ -378,6 +378,12 @@ enum {
 	MONO_INST_MAX = 6
 };
 
+#pragma GCC diagnostic push
+#ifdef __cplusplus
+#pragma GCC diagnostic ignored "-Wreorder"
+#endif
+
+
 typedef union MonoInstSpec { // instruction specification
 	struct {
 		char dest;
@@ -401,10 +407,10 @@ typedef union MonoInstSpec { // instruction specification
 
 #ifdef __cplusplus
 
-    constexpr MonoInstSpec() { }
+   constexpr MonoInstSpec() : dest (0), src1 (0), src2 (0), src3 (0), len (0), clob (0) { }
 
 // Provide a type per field for overloading, to allow any order.
-// i.e. so the parameter types are tieyyyd to the fields they initialize,
+// i.e. so the parameter types are tied to the fields they initialize,
 // so that the overloads are more strongly typed than just accepting char.
 //
 #define MONO_INST_SPEC_FIELD(name, type)				\
@@ -482,7 +488,7 @@ MDESC_OVERLOAD_5 (src1, src2, src3, dest, len)
 
 } MonoInstSpec;
 
-//#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 
 // FIXME each architecture
 typedef struct MonoInstSpecs
