@@ -383,7 +383,6 @@ enum {
 #pragma GCC diagnostic ignored "-Wreorder"
 #endif
 
-
 typedef union MonoInstSpec { // instruction specification
 	struct {
 		char dest;
@@ -1905,10 +1904,7 @@ typedef struct {
 } StackSlot;
 
 extern const MonoInstSpec MONO_ARCH_CPU_SPEC [];
-#define MONO_ARCH_CPU_SPEC_IDX_COMBINE(a) a ## _idx
-#define MONO_ARCH_CPU_SPEC_IDX(a) MONO_ARCH_CPU_SPEC_IDX_COMBINE(a)
-extern const guint16 MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC) [];
-#define ins_get_spec(op) ((const char*)&MONO_ARCH_CPU_SPEC [MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC)[(op) - OP_LOAD]])
+#define ins_get_spec(op) ((const char*)&MONO_ARCH_CPU_SPEC [(op) - OP_LOAD])
 
 #ifndef DISABLE_JIT
 
