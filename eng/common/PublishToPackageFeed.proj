@@ -48,12 +48,12 @@
       <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'ENTITYFRAMEWORKCORE'">https://dotnetfeed.blob.core.windows.net/aspnet-entityframeworkcore/index.json</TargetStaticFeed>
       <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'ASPNETEXTENSIONS'">https://dotnetfeed.blob.core.windows.net/aspnet-extensions/index.json</TargetStaticFeed>
       <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'CORECLR'">https://dotnetfeed.blob.core.windows.net/dotnet-coreclr/index.json</TargetStaticFeed>
-      <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'MONO'">https://dotnetfeed.blob.core.windows.net/mono-mono/index.json</TargetStaticFeed>
       <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'CORESDK'">https://dotnetfeed.blob.core.windows.net/dotnet-sdk/index.json</TargetStaticFeed>
       <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'TOOLSINTERNAL'">https://dotnetfeed.blob.core.windows.net/dotnet-tools-internal/index.json</TargetStaticFeed>
       <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'TOOLSET'">https://dotnetfeed.blob.core.windows.net/dotnet-toolset/index.json</TargetStaticFeed>
       <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'WINDOWSDESKTOP'">https://dotnetfeed.blob.core.windows.net/dotnet-windowsdesktop/index.json</TargetStaticFeed>
       <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'NUGETCLIENT'">https://dotnetfeed.blob.core.windows.net/nuget-nugetclient/index.json</TargetStaticFeed>
+      <TargetStaticFeed Condition="'$(ArtifactsCategory.ToUpper())' == 'ASPNETENTITYFRAMEWORK6'">https://dotnetfeed.blob.core.windows.net/aspnet-entityframework6/index.json</TargetStaticFeed>
     </PropertyGroup>
 
     <Error 
