@@ -45,7 +45,7 @@ struct MonoMethodDesc {
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
-#define WRAPPER(a,b) char MSGSTRFIELD(__LINE__) [sizeof (b)];
+#define WRAPPER(a,b) char MSGSTRFIELD(__LINE__) [sizeof (#b)];
 #include "wrapper-types.h"
 #undef WRAPPER
 } opstr = {

@@ -438,6 +438,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		g_string_append_printf (sbuf, "\t%-2d %s", i, mono_inst_name (ins->opcode));
 	else
 		g_string_append_printf (sbuf, " %s", mono_inst_name (ins->opcode));
+	// FIXME This check is no longer effective.
 	if (spec == &MONO_ARCH_CPU_SPEC) {
 		gboolean dest_base = FALSE;
 		switch (ins->opcode) {
@@ -1145,10 +1146,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	if (!desc_to_fixed_reg_inited) {
 		for (i = 0; i < 256; ++i)
 			desc_to_fixed_reg [i] = MONO_ARCH_INST_FIXED_REG (i);
-		desc_to_fixed_reg_inited = TRUE;
 
 		/* Validate the cpu description against the info in mini-ops.h */
-#if defined(TARGET_AMD64) || defined(TARGET_X86) || defined(TARGET_ARM) || defined(TARGET_ARM64) || defined (TARGET_RISCV)
+//#if defined(TARGET_AMD64) || defined(TARGET_X86) || defined(TARGET_ARM) || defined(TARGET_ARM64) || defined (TARGET_RISCV)
 		for (i = OP_LOAD; i < OP_LAST; ++i) {
 			const char *ispec;
 
@@ -1156,13 +1156,14 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			ispec = INS_INFO (i);
 
 			if ((spec [MONO_INST_DEST] && (ispec [MONO_INST_DEST] == ' ')))
-				printf ("Instruction metadata for %s inconsistent.\n", mono_inst_name (i));
+				g_error ("Instruction metadata for %s inconsistent (dest:%c %c).\n", mono_inst_name (i), spec [MONO_INST_DEST], ispec [MONO_INST_DEST]);
 			if ((spec [MONO_INST_SRC1] && (ispec [MONO_INST_SRC1] == ' ')))
-				printf ("Instruction metadata for %s inconsistent.\n", mono_inst_name (i));
+				g_error ("Instruction metadata for %s inconsistent (src1:%c %c).\n", mono_inst_name (i), spec [MONO_INST_SRC1], ispec [MONO_INST_SRC1]);
 			if ((spec [MONO_INST_SRC2] && (ispec [MONO_INST_SRC2] == ' ')))
-				printf ("Instruction metadata for %s inconsistent.\n", mono_inst_name (i));
+				g_error ("Instruction metadata for %s inconsistent (src2:%c %c).\n", mono_inst_name (i), spec [MONO_INST_SRC2], ispec [MONO_INST_SRC2]);
 		}
-#endif
+//#endif
+		desc_to_fixed_reg_inited = TRUE;
 	}
 
 	rs->next_vreg = bb->max_vreg;
@@ -1244,6 +1245,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		spec = ins_get_spec (ins->opcode);
 		spec_dest = spec [MONO_INST_DEST];
 
+		// FIXME This check is no longer effective.
 		if (G_UNLIKELY (spec == &MONO_ARCH_CPU_SPEC)) {
 			g_error ("Opcode '%s' missing from machine description file.", mono_inst_name (ins->opcode));
 		}

@@ -845,10 +845,3 @@ generic_class_init (src1 (A), len (32), clob (c)),
 get_last_error (dest(i), len (32)),
 
 fill_prof_call_ctx (src1 (i), len (128))
-
-#undef a
-#undef b
-#undef c
-#undef d
-#undef i
-#undef x

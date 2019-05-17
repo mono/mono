@@ -358,7 +358,7 @@ extern gboolean	mono_using_xdebug;
 extern int mini_verbose;
 extern int valgrind_register;
 
-#define INS_INFO(opcode) (&mini_ins_info [((opcode) - OP_START - 1) * 4])
+#define INS_INFO(opcode) (&mini_ins_info [((opcode) - OP_START - 1)].dest)
 
 /* instruction description for use in regalloc/scheduling */
 
@@ -383,6 +383,20 @@ enum {
 #pragma GCC diagnostic ignored "-Wreorder"
 #endif
 
+typedef union MonoInstInfo { // instruction info, like specification but a little smaller
+	struct {
+		char dest;
+		char src1;
+		char src2;
+		char src3;
+	};
+	struct {
+		char xdest;
+		char src [3];
+	};
+	char bytes [4];
+} MonoInstInfo;
+
 typedef union MonoInstSpec { // instruction specification
 	struct {
 		char dest;
@@ -402,10 +416,11 @@ typedef union MonoInstSpec { // instruction specification
 		unsigned char xlen;
 		char xclob;
 	};
-	char bytes[MONO_INST_MAX];
+	char bytes [MONO_INST_MAX];
 
 #ifdef __cplusplus
 
+    // FIXME remove this?
    constexpr MonoInstSpec() : dest (0), src1 (0), src2 (0), src3 (0), len (0), clob (0) { }
 
 // Provide a type per field for overloading, to allow any order.
@@ -487,10 +502,7 @@ MDESC_OVERLOAD_5 (src1, src2, src3, dest, len)
 //#pragma GCC diagnostic pop
 
 // FIXME each architecture
-typedef struct MonoInstSpecs
-{
-	MonoInstSpec null;
-
+typedef struct MonoInstSpecs {
 #ifdef __cplusplus
 	using src1 = MonoInstSpec::src1_t;
 	using src2 = MonoInstSpec::src2_t;
@@ -500,10 +512,12 @@ typedef struct MonoInstSpecs
 	using clob = MonoInstSpec::clob_t;
 	constexpr MonoInstSpecs();
 #endif
+	MonoInstSpec null;
 
+#define abs abs_
 #define break break_
-#define throw throw_
 #define switch switch_
+#define throw throw_
 
 #define MINI_OP(a,b,dest,src1,src2) MonoInstSpec b;
 #define MINI_OP3(a,b,dest,src1,src2,src3) MonoInstSpec b;
@@ -513,13 +527,15 @@ typedef struct MonoInstSpecs
 #undef MINI_OP
 #undef MINI_OP3
 
+#undef abs
 #undef break
-#undef throw
+#undef case
 #undef switch
+#undef throw
 
 } MonoInstSpecs;
 
-extern const char mini_ins_info [];
+extern const MonoInstInfo mini_ins_info [];
 extern const gint8 mini_ins_sreg_counts [];
 
 #ifndef DISABLE_JIT
@@ -1913,7 +1929,7 @@ extern const MonoInstSpecs MONO_ARCH_CPU_SPEC;
 #ifdef __cplusplus
 } // extern "C
 #endif
-#define ins_get_spec(op) ((const char*)&((&MONO_ARCH_CPU_SPEC.null) [(op) - OP_LOAD]))
+#define ins_get_spec(op) ((const char*)&((&MONO_ARCH_CPU_SPEC.null + 1) [(op) - OP_LOAD]))
 
 #ifndef DISABLE_JIT
 

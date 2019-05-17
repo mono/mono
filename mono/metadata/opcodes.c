@@ -31,7 +31,7 @@ mono_opcodes [MONO_CEE_LAST + 1] = {
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
-#define OPDEF(a,b,c,d,e,f,g,h,i,j) char MSGSTRFIELD(__LINE__) [sizeof (b)];
+#define OPDEF(a,b,c,d,e,f,g,h,i,j) char MSGSTRFIELD(__LINE__) [sizeof (#b)];
 #include "mono/cil/opcode.def"
 #undef OPDEF
 } opstr = {

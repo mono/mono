@@ -501,7 +501,7 @@ table_description [] = {
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
-#define TABLEDEF(a,b) char MSGSTRFIELD(__LINE__) [sizeof (b)];
+#define TABLEDEF(a,b) char MSGSTRFIELD(__LINE__) [sizeof (#b)];
 #include "mono/cil/tables.def"
 #undef TABLEDEF
 } tablestr = {
