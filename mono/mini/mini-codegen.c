@@ -438,8 +438,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		g_string_append_printf (sbuf, "\t%-2d %s", i, mono_inst_name (ins->opcode));
 	else
 		g_string_append_printf (sbuf, " %s", mono_inst_name (ins->opcode));
-	// FIXME This check is no longer effective.
-	if (spec == &MONO_ARCH_CPU_SPEC) {
+	if (spec [MONO_INST_NULL]) {
 		gboolean dest_base = FALSE;
 		switch (ins->opcode) {
 		case OP_STOREV_MEMBASE:
@@ -1246,7 +1245,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		spec_dest = spec [MONO_INST_DEST];
 
 		// FIXME This check is no longer effective.
-		if (G_UNLIKELY (spec == &MONO_ARCH_CPU_SPEC)) {
+		if (spec [MONO_INST_NULL]) {
 			g_error ("Opcode '%s' missing from machine description file.", mono_inst_name (ins->opcode));
 		}
 		
@@ -1264,7 +1263,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 		}
 #endif
-
 		for (j = 0; j < num_sregs; ++j) {
 			int sreg = sregs [j];
 			int sreg_spec = spec [MONO_INST_SRC1 + j];

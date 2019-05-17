@@ -369,13 +369,14 @@ enum {
 	MONO_INST_SRC3 = 3,
 	MONO_INST_LEN = 4,
 	MONO_INST_CLOB = 5,
+	MONO_INST_NULL = 6,
 	/* Unused, commented out to reduce the size of the mdesc tables
 	MONO_INST_FLAGS,
 	MONO_INST_COST,
 	MONO_INST_DELAY,
 	MONO_INST_RES,
 	*/
-	MONO_INST_MAX = 6
+	MONO_INST_MAX = 7
 };
 
 //#pragma GCC diagnostic push
@@ -399,12 +400,14 @@ typedef union MonoInstInfo { // instruction info, like specification but a littl
 
 typedef union MonoInstSpec { // instruction specification
 	struct {
+		// FIXME make these smaller
 		char dest;
 		char src1;
 		char src2;
 		char src3;
 		unsigned char len;
 		char clob;
+		unsigned char null;
 		// char flags;
 		// char cost;
 		// char delay;
@@ -420,8 +423,7 @@ typedef union MonoInstSpec { // instruction specification
 
 #ifdef __cplusplus
 
-    // FIXME remove this?
-   constexpr MonoInstSpec() : dest (0), src1 (0), src2 (0), src3 (0), len (0), clob (0) { }
+   constexpr MonoInstSpec() : dest (0), src1 (0), src2 (0), src3 (0), len (0), clob (0), null (1) { }
 
 // Provide a type per field for overloading, to allow any order.
 // i.e. so the parameter types are tied to the fields they initialize,
@@ -451,23 +453,23 @@ typedef union MonoInstSpec { // instruction specification
 
 #define MDESC_OVERLOAD_1(a)										\
     constexpr explicit MonoInstSpec (a ## _t v1)							\
-	: a(v1.value) { }
+	: null (0), a (v1.value) { }
 
 #define MDESC_OVERLOAD_2(a, b)										\
     constexpr explicit MonoInstSpec (a ## _t v1, b ## _t v2)			\
-	: a(v1.value), b(v2.value) { }
+	: null (0), a (v1.value), b (v2.value) { }
 
 #define MDESC_OVERLOAD_3(a, b, c)									\
     constexpr explicit MonoInstSpec (a ## _t v1, b ## _t v2, c ## _t v3)	\
-	: a (v1.value), b (v2.value), c (v3.value) { }
+	: null (0), a (v1.value), b (v2.value), c (v3.value) { }
 
 #define MDESC_OVERLOAD_4(a, b, c, d)								\
     constexpr explicit MonoInstSpec (a ## _t v1, b ## _t v2, c ## _t v3, d ## _t v4)   \
-	: a (v1.value), b (v2.value), c (v3.value), d (v4.value) { }
+	: null (0), a (v1.value), b (v2.value), c (v3.value), d (v4.value) { }
 
 #define MDESC_OVERLOAD_5(a, b, c, d, e)								\
     constexpr explicit MonoInstSpec (a ## _t v1, b ## _t v2, c ## _t v3, d ## _t v4, e ## _t v5)   \
-	: a (v1.value), b (v2.value), c (v3.value), d (v4.value), e (v5.value) { }
+	: null (0), a (v1.value), b (v2.value), c (v3.value), d (v4.value), e (v5.value) { }
 
 MDESC_OVERLOAD_1 (dest)
 MDESC_OVERLOAD_1 (len)

@@ -1173,7 +1173,23 @@ if test "x$enable_cxx" = "xyes"; then
 				   CXX_REMOVE_CFLAGS="$CXX_REMOVE_CFLAGS -Wno-format-zero-length" ])
 	CXXFLAGS=$ORIG_CXXFLAGS
 	AC_LANG_POP(C++)
+else
+	CXXFLAGS=" -xc++ $CXXFLAGS "
+
+	# See above.
+	AC_LANG_PUSH(C++)
+	ORIG_CXXFLAGS=$CXXFLAGS
+	CXXFLAGS="$CXXFLAGS -Werror -Wno-format-zero-length -xc++ "
+	AC_MSG_CHECKING(or C-only-ness of -Wno-format-zero-length)
+	AC_TRY_COMPILE([ ], [ ], [ AC_MSG_RESULT(yes)
+				   CXXFLAGS="$CXXFLAGS-Wno-format-zero-length" ],
+				 [ AC_MSG_RESULT(no) ])
+	CXXFLAGS=$ORIG_CXXFLAGS
+	AC_LANG_POP(C++)
+
 fi
+
+AC_SUBST(CXXFLAGS)
 AC_SUBST(CXX_ADD_CFLAGS)
 AC_SUBST(CXX_REMOVE_CFLAGS)
 
