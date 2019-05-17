@@ -1903,8 +1903,17 @@ typedef struct {
 	int type;
 } StackSlot;
 
-extern const MonoInstSpec MONO_ARCH_CPU_SPEC [];
-#define ins_get_spec(op) ((const char*)&MONO_ARCH_CPU_SPEC [(op) - OP_LOAD])
+#ifndef __cplusplus
+#define constexpr const
+#endif
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern const MonoInstSpecs MONO_ARCH_CPU_SPEC;
+#ifdef __cplusplus
+} // extern "C
+#endif
+#define ins_get_spec(op) ((const char*)((MonoInstSpec*)&MONO_ARCH_CPU_SPEC [(op) - OP_LOAD]))
 
 #ifndef DISABLE_JIT
 
