@@ -1738,6 +1738,26 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 	}
 }
 
+/*
+ * mini_patch_llvm_jit_callees:
+ *
+ *   Patch function address slots used by llvm JITed code.
+ */
+void
+mini_patch_llvm_jit_callees (MonoDomain *domain, MonoMethod *method, gpointer addr)
+{
+	if (!domain_jit_info (domain)->llvm_jit_callees)
+		return;
+	GSList *callees = (GSList*)g_hash_table_lookup (domain_jit_info (domain)->llvm_jit_callees, method);
+	GSList *l;
+
+	for (l = callees; l; l = l->next) {
+		gpointer *slot = (gpointer*)l->data;
+
+		*slot = addr;
+	}
+}
+
 void
 mini_init_gsctx (MonoDomain *domain, MonoMemPool *mp, MonoGenericContext *context, MonoGenericSharingContext *gsctx)
 {

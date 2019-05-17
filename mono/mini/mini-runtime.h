@@ -461,6 +461,7 @@ MonoJumpInfoToken* mono_jump_info_token_new2 (MonoMemPool *mp, MonoImage *image,
 gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors, MonoError *error) MONO_LLVM_INTERNAL;
 void mini_register_jump_site                (MonoDomain *domain, MonoMethod *method, gpointer ip);
 void mini_patch_jump_sites                  (MonoDomain *domain, MonoMethod *method, gpointer addr);
+void mini_patch_llvm_jit_callees            (MonoDomain *domain, MonoMethod *method, gpointer addr);
 gpointer  mono_jit_search_all_backends_for_jit_info (MonoDomain *domain, MonoMethod *method, MonoJitInfo **ji);
 gpointer  mono_jit_find_compiled_method_with_jit_info (MonoDomain *domain, MonoMethod *method, MonoJitInfo **ji);
 gpointer  mono_jit_find_compiled_method     (MonoDomain *domain, MonoMethod *method);
