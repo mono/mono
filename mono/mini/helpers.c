@@ -30,14 +30,14 @@
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
-#define MINI_OP(a,b,dest,src1,src2) char MSGSTRFIELD(__LINE__) [sizeof (b)];
-#define MINI_OP3(a,b,dest,src1,src2,src3) char MSGSTRFIELD(__LINE__) [sizeof (b)];
+#define MINI_OP(a,b,dest,src1,src2) char MSGSTRFIELD(__LINE__) [sizeof (#b)];
+#define MINI_OP3(a,b,dest,src1,src2,src3) char MSGSTRFIELD(__LINE__) [sizeof (#b)];
 #include "mini-ops.h"
 #undef MINI_OP
 #undef MINI_OP3
 } opstr = {
-#define MINI_OP(a,b,dest,src1,src2) b,
-#define MINI_OP3(a,b,dest,src1,src2,src3) b,
+#define MINI_OP(a,b,dest,src1,src2) #b,
+#define MINI_OP3(a,b,dest,src1,src2,src3) #b,
 #include "mini-ops.h"
 #undef MINI_OP
 #undef MINI_OP3

@@ -412,7 +412,7 @@ static GHashTable *method_to_external_icall_symbol_name;
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
-#define PATCH_INFO(a,b) char MSGSTRFIELD(__LINE__) [sizeof (b)];
+#define PATCH_INFO(a,b) char MSGSTRFIELD(__LINE__) [sizeof (#b)];
 #include "patch-info.h"
 #undef PATCH_INFO
 } opstr = {
