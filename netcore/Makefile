@@ -129,47 +129,14 @@ xtest-%: prepare update-corefx-tests
 		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
 		-notrait category=nonnetcoreapptests -notrait category=nonmonotests \
 		-html ../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
-		$(shell if [ -a $(CURDIR)/excludes-$*.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/excludes-$*.rsp; fi;) \
+		$(shell if [ -a $(CURDIR)/CoreFX.issues.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/CoreFX.issues.rsp; fi;) \
 		$(FIXTURE) || true
 
 # these tests won't be included in `xtestall`
-EXCLUDED_COREFX_TESTS = \
-	System.Utf8String.Experimental.Tests \
-	System.ComponentModel.Composition.Registration.Tests
-
-# Tests suites which do pass yet
-EXCLUDED_COREFX_TESTS_NOT_PASSING = \
-	$(EXCLUDED_COREFX_TESTS) \
-	System.ComponentModel.Composition.Tests \
-	System.Composition.TypedParts.Tests \
-	System.Console.Tests \
-	System.Data.Common.Tests \
-	System.Data.SqlClient.Tests \
-	System.Diagnostics.StackTrace.Tests \
-	System.Drawing.Common.Tests \
-	System.Numerics.Vectors.Tests \
-	System.Reflection.Context.Tests \
-	System.Reflection.CoreCLR.Tests \
-	System.Reflection.Emit.ILGeneration.Tests \
-	System.Reflection.Emit.Lightweight.Tests \
-	System.Reflection.Metadata.Tests \
-	System.Reflection.MetadataLoadContext.Tests \
-	System.Reflection.TypeExtensions.CoreCLR.Tests \
-	System.Reflection.TypeExtensions.Tests \
-	System.Runtime.Extensions.Tests \
-	System.Runtime.InteropServices.Tests \
-	System.Runtime.Loader.DefaultContext.Tests \
-	System.Runtime.Loader.RefEmitLoadContext.Tests \
-	System.Runtime.Loader.Tests \
-	System.Runtime.Serialization.Formatters.Tests \
-	System.Threading.Overlapped.Tests \
-	System.Xml.Xsl.XslTransformApi.Tests
+EXCLUDED_COREFX_TESTS =
 
 xtestall: update-corefx-tests $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
-
-xtestpass: update-corefx-tests $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
-		$(filter-out $(EXCLUDED_COREFX_TESTS_NOT_PASSING), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
 
 build-local-corefx-test-%: check-env
 	cd $(COREFX_ROOT)/src/$*/tests && dotnet build -o "$(CURDIR)/corefx/tests/extracted/tmp"
@@ -187,10 +154,8 @@ TEST_SUITES = \
 # The binary directory under $(COREFIX_BINDIR)
 System.Runtime.CompilerServices.Unsafe.Tests_PROFILE = netstandard-Debug
 System.Runtime.Tests_PROFILE = netcoreapp-Unix-Debug
-System.Runtime.Tests_XUNIT_ARGS = @../excludes-System.Runtime.Tests.rsp
 System.Collections.Tests_PROFILE = netcoreapp-Debug
 System.Reflection.Emit.Tests_PROFILE = netcoreapp-Debug
-System.Reflection.Emit.Tests_XUNIT_ARGS = @../excludes-System.Reflection.Emit.Tests.rsp
 System.Reflection.Emit.ILGeneration.Tests_PROFILE = netcoreapp-Debug
 System.Reflection.Emit.Lightweight.Tests_PROFILE = netcoreapp-Debug
 System.Threading.Tests_PROFILE = netcoreapp-Debug
@@ -202,7 +167,7 @@ check-env:
 	@if [ "x$(COREFX_ROOT)" == "x" ]; then echo "Set COREFX_ROOT to the root of the fully built corefx repo."; exit 1; fi
 
 build-%: check-env
-	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests $($*_XUNIT_ARGS) $(XUNIT_ARGS)
+	cd gen-xunit-runner && dotnet run ../tests $(COREFX_ROOT) $(COREFX_BINDIR)/$*/$($*_PROFILE)/$*.dll -notrait category=nonosxtests -notrait category=failing -notrait category=Outerloop -notrait category=nonnetcoreapptests CoreFX.issues.rsp $(XUNIT_ARGS)
 	cp $(COREFX_BINDIR)/RemoteExecutorConsoleApp/netstandard-Debug/RemoteExecutorConsoleApp.* tests/$*
 	cp $(COREFX_BINDIR)/System.Runtime.Tests/netcoreapp-Unix-Debug/TestLoadAssembly.dll tests/$*
 	sed -e 's/9.9.9/$(VERSION)/g' < tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json > 2 && mv 2 tests/$*/RemoteExecutorConsoleApp.runtimeconfig.json
