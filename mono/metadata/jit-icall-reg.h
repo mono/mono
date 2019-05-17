@@ -342,7 +342,7 @@ static inline MonoJitICallInfo*
 mono_check_jit_icall_info (gconstpointer jit_icall_info)
 {
 	// All pointers to MonoJitICallInfo must be within mono_jit_icall_info.
-	// This will enable converting to and from a small integer or enum.
+	// This enables converting to and from a small integer or enum.
 	g_assert ((char*)jit_icall_info >= (char*)&mono_jit_icall_info && (char*)jit_icall_info < (char*)(&mono_jit_icall_info + 1));
 
 	// Allow encoding in 16 bits, and maybe 9 (but not 8). FIXME static_assert.
@@ -352,7 +352,7 @@ mono_check_jit_icall_info (gconstpointer jit_icall_info)
 }
 
 static inline MonoJitICallInfo*
-mono_find_jit_icall_info (int index)
+mono_find_jit_icall_info (MonoJitICallId index)
 {
 	g_assert (index && (guint)index < MONO_JIT_ICALL_count);
 
