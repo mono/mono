@@ -455,33 +455,30 @@ typedef union MonoInstSpec { // instruction specification
     constexpr explicit MonoInstSpec (a ## _t v1, b ## _t v2, c ## _t v3, d ## _t v4, e ## _t v5)   \
 	: a (v1.value), b (v2.value), c (v3.value), d (v4.value), e (v5.value) { }
 
+MDESC_OVERLOAD_1 (dest)
+MDESC_OVERLOAD_1 (len)
 MDESC_OVERLOAD_1 (src1)
 MDESC_OVERLOAD_1 (src2)
 MDESC_OVERLOAD_1 (src3)
-MDESC_OVERLOAD_1 (dest)
-MDESC_OVERLOAD_1 (len)
-  
-MDESC_OVERLOAD_2 (src1, len)
 MDESC_OVERLOAD_2 (clob, len)
-
+MDESC_OVERLOAD_2 (dest, len)
+MDESC_OVERLOAD_2 (len, clob)
+MDESC_OVERLOAD_2 (src1, len)
 MDESC_OVERLOAD_3 (clob, src1, len)
 MDESC_OVERLOAD_3 (dest, clob, len)
-MDESC_OVERLOAD_2 (dest, len)
 MDESC_OVERLOAD_3 (dest, len, clob)
-
-MDESC_OVERLOAD_4 (dest, src1, clob, len)
 MDESC_OVERLOAD_3 (dest, src1, len)
-MDESC_OVERLOAD_4 (dest, src1, len, clob)
-MDESC_OVERLOAD_5 (dest, src1, src2, clob, len)
-MDESC_OVERLOAD_4 (dest, src1, src2, len)
-MDESC_OVERLOAD_5 (dest, src1, src2, len, clob)
-MDESC_OVERLOAD_2 (len, clob)
-MDESC_OVERLOAD_3 (src1, src2, len)
 MDESC_OVERLOAD_3 (src1, clob, len)
 MDESC_OVERLOAD_3 (src1, len, clob)
-MDESC_OVERLOAD_4 (src1, src2, clob, len) 
+MDESC_OVERLOAD_3 (src1, src2, len)
+MDESC_OVERLOAD_4 (dest, src1, clob, len)
+MDESC_OVERLOAD_4 (dest, src1, len, clob)
+MDESC_OVERLOAD_4 (dest, src1, src2, len)
+MDESC_OVERLOAD_4 (src1, src2, clob, len)
 MDESC_OVERLOAD_4 (src1, src2, dest, len)
 MDESC_OVERLOAD_4 (src1, src2, len, clob)
+MDESC_OVERLOAD_5 (dest, src1, src2, clob, len)
+MDESC_OVERLOAD_5 (dest, src1, src2, len, clob)
 MDESC_OVERLOAD_5 (src1, src2, src3, dest, len)
 
 #endif
