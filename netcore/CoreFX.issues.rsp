@@ -1,3 +1,6 @@
+-notrait category=OuterLoop 
+-notrait category=RequiresElevation
+
 ####################################################################
 ##  Microsoft.Bcl.AsyncInterfaces.Tests
 ####################################################################
