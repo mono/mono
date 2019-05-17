@@ -105,7 +105,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                                 bindMounts: chrootBindMounts,
                                 additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
                         } else if (platform == "Windows") {
-                            sh "CI_TAGS=sdks-${product},win-amd64,no-tests,${configuration} scripts/ci/run-jenkins.sh"
+                            sh "PATH=\"/usr/bin:/usr/local/bin:${PATH}\" CI_TAGS=sdks-${product},win-amd64,no-tests,${configuration} scripts/ci/run-jenkins.sh"
                         } else {
                             throw new Exception("Unknown platform \"${platform}\"")
                         }
