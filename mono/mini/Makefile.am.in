@@ -431,6 +431,7 @@ netcore_sources = \
 endif
 
 common_sources = \
+	cpu-data.cpp \
 	mini.c			\
 	mini-runtime.c	\
 	seq-points.c	\
@@ -649,14 +650,14 @@ endif
 
 if RISCV32
 arch_sources = $(riscv_sources)
-arch_built = cpu-riscv32.h
+arch_built =
 arch_define = __riscv
 target_define = TARGET_RISCV32
 endif
 
 if RISCV64
 arch_sources = $(riscv_sources)
-arch_built = cpu-riscv64.h
+arch_built =
 arch_define = __riscv
 target_define = TARGET_RISCV64
 endif
@@ -963,7 +964,6 @@ BUILT_SOURCES = version.h $(arch_built)
 CLEANFILES= $(BUILT_SOURCES) *.exe *.dll
 EXTRA_DIST = TestDriver.cs \
 	TestHelpers.cs \
-	genmdesc.py				\
 	$(test_sources) 			\
 	$(wasm_sources) cpu-wasm.md 		\
 	$(x86_sources) cpu-x86.md 		\
