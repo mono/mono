@@ -5195,19 +5195,19 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					break;
 				}
 				case CEE_MONO_ICALL: {
-					int icall_op = read32 (td->ip + 1);
-					MonoJitICallInfo const * const info = mono_find_jit_icall_info (icall_op);
+					MonoJitICallId const jit_icall_id = (MonoJitICallId)read32 (td->ip + 1);
+					MonoJitICallInfo const * const info = mono_find_jit_icall_info (jit_icall_id);
 					td->ip += 5;
 					g_assert (info);
 
 					CHECK_STACK (td, info->sig->param_count);
-					if (icall_op == MONO_JIT_ICALL_mono_threads_attach_coop) {
+					if (jit_icall_id == MONO_JIT_ICALL_mono_threads_attach_coop) {
 						rtm->needs_thread_attach = 1;
 
 						/* attach needs two arguments, and has one return value: leave one element on the stack */
 						interp_add_ins (td, MINT_POP);
 						td->last_ins->data [0] = 0;
-					} else if (icall_op == MONO_JIT_ICALL_mono_threads_detach_coop) {
+					} else if (jit_icall_id == MONO_JIT_ICALL_mono_threads_detach_coop) {
 						g_assert (rtm->needs_thread_attach);
 
 						/* detach consumes two arguments, and no return value: drop both of them */
@@ -5216,7 +5216,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						interp_add_ins (td, MINT_POP);
 						td->last_ins->data [0] = 0;
 					} else {
-						icall_op = interp_icall_op_for_sig (info->sig);
+						int const icall_op = interp_icall_op_for_sig (info->sig);
 						g_assert (icall_op != -1);
 
 						interp_add_ins (td, icall_op);
