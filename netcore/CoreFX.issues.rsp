@@ -226,6 +226,11 @@
 -nomethod System.Reflection.Emit.Tests.ILGeneratorEmit2.Emit_OpCodes_LocalBuilder_LocalFromDifferentMethod_ThrowsArgumentException
 -nomethod System.Reflection.Emit.Tests.SetCustomAttributeTests.SetCustomAttribute_NullArgument_ThrowsArgumentNullException
 -nomethod System.Reflection.Emit.Tests.ILGeneratorEmit4.TestEmitCalliNonBlittable
+-nomethod System.Reflection.Emit.Tests.SignatureHelperAddArguments.AddArgument_NullObjectInRequiredCustomModifiers_ThrowsArgumentNullException
+-nomethod System.Reflection.Emit.Tests.SignatureHelperAddArguments.AddArgument_NullObjectInOptionalCustomModifiers_ThrowsArgumentNullException
+-nomethod System.Reflection.Emit.Tests.SignatureHelperAddArguments.AddArgument_DifferentCountsForCustomModifiers_ThrowsArgumentException
+-nomethod System.Reflection.Emit.Tests.SignatureHelperAddArguments.AddArguments_SignatureFinished_ThrowsArgumentException
+-nomethod System.Reflection.Emit.Tests.SignatureHelperAddArguments.AddArguments
 
 ####################################################################
 ##  System.Reflection.Emit.Tests
@@ -497,6 +502,8 @@
 -nomethod System.Runtime.InteropServices.Tests.StructureToPtrTests.StructureToPtr_ByValDateArray_Success
 -nomethod System.Runtime.InteropServices.Tests.StructureToPtrTests.StructureToPtr_InvalidLengthByValArrayInStruct_ThrowsArgumentException
 
+-nomethod System.Runtime.InteropServices.Tests.GetDelegateForFunctionPointerTests.GetDelegateForFunctionPointer_CantCast_ThrowsInvalidCastException
+
 ####################################################################
 ##  System.Runtime.Numerics.Tests
 ####################################################################
@@ -634,6 +641,7 @@
 
 -nomethod System.ComponentModel.Composition.CompositionServicesTests.GetDefaultContractNameTest
 -nomethod System.ComponentModel.Composition.MetadataViewProviderTests.GetMetadataView_InterfaceWithIndexer_ShouldThrowNotSupportedException
+-nomethod Tests.Integration.ExportFactoryTests.ExportFactoryStandardImports_ShouldWorkProperly
 
 ####################################################################
 ##  System.Composition.TypedParts.Tests
@@ -898,3 +906,10 @@
 -nomethod System.ComponentModel.Composition.Registration.Tests.RegistrationBuilderExportFuncUnitTests.*
 -nomethod System.ComponentModel.Composition.Registration.Tests.PartBuilderInterfaceTests.*
 -nomethod System.ComponentModel.Composition.Registration.Tests.ExportInterfacesContractExclusionTests.*
+
+####################################################################
+##  System.Xml.Xsl.XslTransformApi.Tests
+####################################################################
+
+-nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
+-nomethod System.Xml.Tests.CXmlResolverTest.TC_AbsolutePath_Transform
