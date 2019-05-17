@@ -145,11 +145,8 @@ long_max_un (dest(i), src1(i), src2(i), len(16), clob(1)),
 throw (src1(i), len(24)),
 rethrow (src1(i), len(24)),
 start_handler (len(16)),
-
 endfinally (len(9)),
-
 endfilter (src1(a), len(9)),
-
 get_ex_obj (dest(a), len(16)),
 
 ckfinite (dest(f), src1(f), len(43)),
@@ -157,11 +154,9 @@ ceq (dest(c), len(8)),
 cgt (dest(c), len(8)),
 cgt_un (dest(c), len(8)),
 clt (dest(c), len(8)),
-
 clt_un (dest(c), len(8)),
 localloc (dest(i), src1(i), len(96)),
 compare (src1(i), src2(i), len(3)),
-
 lcompare (src1(i), src2(i), len(3)),
 icompare (src1(i), src2(i), len(3)),
 compare_imm (src1(i), len(13)),
@@ -305,7 +300,7 @@ float_clt_membase (dest(i), src1(f), src2(b), len(35)),
 float_clt_un_membase (dest(i), src1(f), src2(b), len(42)),
 float_conv_to_u (dest(i), src1(f), len(46)),
 
-// R4 opcodes),
+// R4 opcodes
 r4_conv_to_i1 (dest(i), src1(f), len(32)),
 r4_conv_to_u1 (dest(i), src1(f), len(32)),
 r4_conv_to_i2 (dest(i), src1(f), len(32)),
@@ -493,7 +488,7 @@ card_table_wbarrier (src1(a), src2(i), clob(d), len(56)),
 relaxed_nop (len(2)),
 hard_nop (len(1)),
 
-// Linear IR opcodes),
+// Linear IR opcodes
 nop (len(0)),
 dummy_use (src1(i), len(0)),
 dummy_iconst (dest(i), len(0)),
