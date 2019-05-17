@@ -87,10 +87,10 @@ jobs:
     condition: ne(variables['poolname'], 'Hosted VS2017')
   
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-    - script: |
+    - bash: |
         ./eng/common/build.sh /p:DotNetPublishToBlobFeed=true --ci --restore --projects $(Build.Repository.LocalPath)/eng/empty.proj
       displayName: 'restore Arcade stuff'
-    - script: |
+    - bash: |
         dotnet msbuild eng/publishwitharcade.proj /p:AzureFeedUrl=$(dotnetfeedUrl) /p:AzureAccountKey=${dotnetFeedPat} /p:AssetManifest=${manifest}
       env:
         dotnetFeedPat: $(dotnetfeed-storage-access-key-1)
