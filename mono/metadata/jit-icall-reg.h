@@ -350,3 +350,15 @@ mono_check_jit_icall_info (gconstpointer jit_icall_info)
 
 	return (MonoJitICallInfo*)jit_icall_info;
 }
+
+static inline MonoJitICallInfo*
+mono_jit_icall_info_at (int index)
+{
+	g_assert (index && (guint)index < MONO_JIT_ICALL_count);
+
+	MonoJitICallInfo *info = &mono_jit_icall_info.array [index];
+
+	g_assert (info->func);
+
+	return info;
+}

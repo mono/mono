@@ -2169,7 +2169,7 @@ compile_special (MonoMethod *method, MonoDomain *target_domain, MonoError *error
 
 		if (m_class_get_parent (method->klass) == mono_defaults.multicastdelegate_class) {
 			if (*name == '.' && (strcmp (name, ".ctor") == 0)) {
-				MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("ves_icall_mono_delegate_ctor");
+				MonoJitICallInfo *mi = mono_jit_icall_info_at (MONO_JIT_ICALL_ves_icall_mono_delegate_ctor);
 				g_assert (mi);
 				/*
 				 * We need to make sure this wrapper
