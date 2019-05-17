@@ -47,6 +47,7 @@ namespace System.Globalization
 
 		char ToUpperInternal (char c)
 		{
+#if !DISABLE_GLOBALIZATION
 			if (!m_cultureData.IsInvariantCulture) {
 				switch (c) {
 				case '\u00b5':
@@ -92,6 +93,7 @@ namespace System.Globalization
 						return ToUpperAsciiInvariant (c);
 				}
 			}
+#endif
 
 			if (c >= '\u00e0' && c <= '\u0586')
 				return TextInfoToUpperData.range_00e0_0586 [c - '\u00e0'];
@@ -129,6 +131,7 @@ namespace System.Globalization
 
 		char ToLowerInternal (char c)
 		{
+#if !DISABLE_GLOBALIZATION
 			if (!m_cultureData.IsInvariantCulture) {
 				switch (c) {
 				case '\u0130':
@@ -164,6 +167,7 @@ namespace System.Globalization
 						return ToLowerAsciiInvariant (c);
 				}
 			}
+#endif
 
 			if (c >= '\u00c0' && c <= '\u0556')
 				return TextInfoToLowerData.range_00c0_0556 [c - '\u00c0'];

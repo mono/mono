@@ -260,11 +260,13 @@ namespace System.Globalization
 			return items;
 		}
 
+#if !DISABLE_GLOBALIZATION
 		internal bool IsInvariantCulture {
 			get {
 				return string.IsNullOrEmpty (sRealName);
 			}
 		}
+#endif
 
 		internal String CultureName {
 			get {
@@ -624,6 +626,7 @@ namespace System.Globalization
 			return false;
 		}
 
+#if !DISABLE_GLOBALIZATION
 		// mono/metadta/culture-info.h NumberFormatEntryManaged must match
 		// mcs/class/corlib/ReferenceSources/CultureData.cs NumberFormatEntryManaged.
 		// This is sorted alphabetically.
@@ -678,7 +681,7 @@ namespace System.Globalization
 
 		internal unsafe void GetNFIValues (NumberFormatInfo nfi)
 		{
-			if (this.IsInvariantCulture)
+			if (IsInvariantCulture)
 			{
 				// Same as default values
 			}
@@ -729,5 +732,6 @@ namespace System.Globalization
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern unsafe static byte* fill_number_data (int index, ref NumberFormatEntryManaged nfe);
+#endif
 	}
 }

@@ -243,6 +243,9 @@ namespace System.Globalization {
         {
             if (cultureData != null)
             {
+#if DISABLE_GLOBALIZATION
+                this.m_isInvariant = true;
+#else
                 // We directly use fields here since these data is coming from data table or Win32, so we
                 // don't need to verify their values (except for invalid parsing situations).
                 cultureData.GetNFIValues(this);
@@ -252,6 +255,7 @@ namespace System.Globalization {
                     // For invariant culture
                     this.m_isInvariant = true;
                 }
+#endif
             }
         }
 

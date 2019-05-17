@@ -2,7 +2,7 @@ namespace System.Globalization
 {
 	partial class GlobalizationMode
 	{
-#if WASM
+#if DISABLE_GLOBALIZATION
 		internal const bool Invariant = true;
 #else
 		internal static bool Invariant { get; } = GetGlobalizationInvariantMode();
