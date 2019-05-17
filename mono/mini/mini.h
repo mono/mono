@@ -398,9 +398,127 @@ typedef union MonoInstSpec { // instruction specification
 		char xclob;
 	};
 	char bytes[MONO_INST_MAX];
+
+#ifdef __cplusplus
+
+    constexpr MonoInstSpec() { }
+
+// Provide a type per field for overloading, to allow any order.
+// i.e. so the parameter types are tieyyyd to the fields they initialize,
+// so that the overloads are more strongly typed than just accepting char.
+//
+#define MONO_INST_SPEC_FIELD(name, type)				\
+    struct name ## _t							\
+    {									\
+	    type value;							\
+	    explicit constexpr name ## _t (type v = 0) :value(v) { }	\
+    };
+
+    MONO_INST_SPEC_FIELD (dest, char)
+    MONO_INST_SPEC_FIELD (src1, char)
+    MONO_INST_SPEC_FIELD (src2, char)
+    MONO_INST_SPEC_FIELD (src3, char)
+    MONO_INST_SPEC_FIELD (len, unsigned char)
+    MONO_INST_SPEC_FIELD (clob, char)
+
+#undef MONO_INST_SPEC_FIELD
+
+// Provide a few overaloads.
+// These are provided so that existing .md syntax is mostly carried over.
+
+// t and _t is for type
+// v is for value
+
+#define MDESC_OVERLOAD_1(a)										\
+    constexpr explicit MonoInstSpec (a ## _t v1)							\
+	: a(v1.value) { }
+
+#define MDESC_OVERLOAD_2(a, b)										\
+    constexpr explicit MonoInstSpec (a ## _t v1, b ## _t v2)			\
+	: a(v1.value), b(v2.value) { }
+
+#define MDESC_OVERLOAD_3(a, b, c)									\
+    constexpr explicit MonoInstSpec (a ## _t v1, b ## _t v2, c ## _t v3)	\
+	: a (v1.value), b (v2.value), c (v3.value) { }
+
+#define MDESC_OVERLOAD_4(a, b, c, d)								\
+    constexpr explicit MonoInstSpec (a ## _t v1, b ## _t v2, c ## _t v3, d ## _t v4)   \
+	: a (v1.value), b (v2.value), c (v3.value), d (v4.value) { }
+
+#define MDESC_OVERLOAD_5(a, b, c, d, e)								\
+    constexpr explicit MonoInstSpec (a ## _t v1, b ## _t v2, c ## _t v3, d ## _t v4, e ## _t v5)   \
+	: a (v1.value), b (v2.value), c (v3.value), d (v4.value), e (v5.value) { }
+
+MDESC_OVERLOAD_1 (src1)
+MDESC_OVERLOAD_1 (src2)
+MDESC_OVERLOAD_1 (src3)
+MDESC_OVERLOAD_1 (dest)
+MDESC_OVERLOAD_1 (len)
+  
+MDESC_OVERLOAD_2 (src1, len)
+MDESC_OVERLOAD_2 (clob, len)
+
+MDESC_OVERLOAD_3 (clob, src1, len)
+MDESC_OVERLOAD_3 (dest, clob, len)
+MDESC_OVERLOAD_2 (dest, len)
+MDESC_OVERLOAD_3 (dest, len, clob)
+
+MDESC_OVERLOAD_4 (dest, src1, clob, len)
+MDESC_OVERLOAD_3 (dest, src1, len)
+MDESC_OVERLOAD_4 (dest, src1, len, clob)
+MDESC_OVERLOAD_5 (dest, src1, src2, clob, len)
+MDESC_OVERLOAD_4 (dest, src1, src2, len)
+MDESC_OVERLOAD_5 (dest, src1, src2, len, clob)
+MDESC_OVERLOAD_2 (len, clob)
+MDESC_OVERLOAD_3 (src1, src2, len)
+MDESC_OVERLOAD_3 (src1, clob, len)
+MDESC_OVERLOAD_3 (src1, len, clob)
+MDESC_OVERLOAD_4 (src1, src2, clob, len) 
+MDESC_OVERLOAD_4 (src1, src2, dest, len)
+MDESC_OVERLOAD_4 (src1, src2, len, clob)
+MDESC_OVERLOAD_5 (src1, src2, src3, dest, len)
+
+#endif
+
 } MonoInstSpec;
 
-extern const char mini_ins_info[];
+//#pragma GCC diagnostic pop
+
+// FIXME each architecture
+typedef struct MonoInstSpecs
+{
+	MonoInstSpec null;
+
+#ifdef __cplusplus
+	using src1 = MonoInstSpec::src1_t;
+	using src2 = MonoInstSpec::src2_t;
+	using src3 = MonoInstSpec::src3_t;
+	using dest = MonoInstSpec::dest_t;
+	using len = MonoInstSpec::len_t;
+	using clob = MonoInstSpec::clob_t;
+	constexpr MonoInstSpecs();
+#endif
+
+#define break break_
+#define throw throw_
+#define switch switch_
+
+#define MINI_OP(a,b,dest,src1,src2) MonoInstSpec b;
+#define MINI_OP3(a,b,dest,src1,src2,src3) MonoInstSpec b;
+
+#include "mini-ops.h"
+
+#undef MINI_OP
+#undef MINI_OP3
+
+#undef break
+#undef throw
+#undef switch
+
+} MonoInstSpecs;
+
+extern const char mini_ins_info [];
+>>>>>>> python removal
 extern const gint8 mini_ins_sreg_counts [];
 
 #ifndef DISABLE_JIT
