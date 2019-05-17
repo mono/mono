@@ -834,12 +834,12 @@ expand_r8 (dest(x), src1 (f), len (13)),
 
 roundpd (dest(x), src1 (x), len (10)),
 
-liverange_start (len(0))
-liverange_end (len(0))
-gc_liveness_def (len(0))
-gc_liveness_use (len(0))
-gc_spill_slot_liveness_def (len(0))
-gc_param_slot_liveness_def (len(0))
+liverange_start (len(0)),
+liverange_end (len(0)),
+gc_liveness_def (len(0)),
+gc_liveness_use (len(0)),
+gc_spill_slot_liveness_def (len(0)),
+gc_param_slot_liveness_def (len(0)),
 
 generic_class_init (src1 (A), len (32), clob (c)),
 get_last_error (dest(i), len (32)),

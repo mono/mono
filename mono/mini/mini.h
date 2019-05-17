@@ -378,7 +378,7 @@ enum {
 	MONO_INST_MAX = 6
 };
 
-#pragma GCC diagnostic push
+//#pragma GCC diagnostic push
 #ifdef __cplusplus
 #pragma GCC diagnostic ignored "-Wreorder"
 #endif
@@ -484,7 +484,7 @@ MDESC_OVERLOAD_5 (src1, src2, src3, dest, len)
 
 } MonoInstSpec;
 
-#pragma GCC diagnostic pop
+//#pragma GCC diagnostic pop
 
 // FIXME each architecture
 typedef struct MonoInstSpecs
@@ -1913,7 +1913,7 @@ extern const MonoInstSpecs MONO_ARCH_CPU_SPEC;
 #ifdef __cplusplus
 } // extern "C
 #endif
-#define ins_get_spec(op) ((const char*)((MonoInstSpec*)&MONO_ARCH_CPU_SPEC [(op) - OP_LOAD]))
+#define ins_get_spec(op) ((const char*)&((&MONO_ARCH_CPU_SPEC.null) [(op) - OP_LOAD]))
 
 #ifndef DISABLE_JIT
 
