@@ -1,5 +1,8 @@
 -notrait category=OuterLoop 
 -notrait category=RequiresElevation
+-notrait category=nonnetcoreapptests
+-notrait category=nonmonotests
+-notrait category=failing
 
 ####################################################################
 ##  Microsoft.Bcl.AsyncInterfaces.Tests
@@ -243,7 +246,6 @@
 -nomethod System.Reflection.Emit.Tests.AssemblyTests.DefineDynamicModule
 
 -nomethod System.Reflection.Emit.Tests.MethodBuilderEquals.Equals
-
 -nomethod System.Reflection.Emit.Tests.ConstructorBuilderToString.ToString_NullRequiredOptionalCustomModifiers
 -nomethod System.Reflection.Emit.Tests.ConstructorBuilderToString.ToString_NoRequiredOptionalCustomModifiers
 -nomethod System.Reflection.Emit.Tests.EnumBuilderMethodTests.DefineLiteral
@@ -374,18 +376,6 @@
 -nomethod System.Reflection.Tests.AssemblyTests.AssemblyLoadFromBytes
 -nomethod System.Reflection.Tests.AssemblyTests.AssemblyLoadFromBytesWithSymbols
 
-# Other failures
-#-nomethod System.Reflection.Tests.AssemblyTests.LoadFrom_SameIdentityAsAssemblyWithDifferentPath_ReturnsEqualAssemblies
-#-nomethod System.Reflection.Tests.AssemblyTests.GetType_DoesntSearchMscorlib
-#-nomethod System.Reflection.Tests.AssemblyTests.LoadFile
-#-nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs_GenericTypeParameters
-#-nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs__CornerCase_HasElementTypes
-#-nomethod System.Reflection.Tests.AssemblyNetCoreAppTests.AssemblyGetForwardedTypes
-#-nomethod System.Reflection.Tests.TypeInfoTests.IsAssignableFrom
-#-nomethod System.Reflection.Tests.MemberInfoTests.GenericMethodsInheritTheReflectedTypeOfTheirTemplate
-#-nomethod System.Reflection.Tests.AssemblyNetCoreAppTests.AssemblyGetForwardedTypesLoadFailure
-#-nomethod System.Reflection.Tests.GetTypeTests.GetType
-
 # TODO
 -nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_ValidArchitectureName_Succeeds
 -nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs__CornerCase_HasElementTypes
@@ -474,23 +464,30 @@
 -nomethod System.Runtime.InteropServices.Tests.Int64Tests.ReadInt64_NullObject_ThrowsAccessViolationException
 -nomethod System.Runtime.InteropServices.Tests.Int64Tests.ReadInt64_StructWithReferenceTypes_ReturnsExpected
 -nomethod System.Runtime.InteropServices.Tests.GetExceptionCodeTests.*
+
 # Not sure what to check
 -nomethod System.Runtime.InteropServices.Tests.DestroyStructureTests.DestroyStructure_NonRuntimeType_ThrowsArgumentException
 -nomethod System.Runtime.InteropServices.Tests.OffsetOfTests.OffsetOf_NotMarshallable_ThrowsArgumentException
+
 # Not sure what to check + checks that the name in the argument exception is null
 -nomethod System.Runtime.InteropServices.Tests.SizeOfTests.SizeOf_InvalidType_ThrowsArgumentException
+
 # Check that the name in the argument exception is null or different
 -nomethod System.Runtime.InteropServices.Tests.OffsetOfTests.OffsetOf_NullFieldName_ThrowsArgumentNullException
 -nomethod System.Runtime.InteropServices.Tests.OffsetOfTests.OffsetOf_NonRuntimeField_ThrowsArgumentException
+
 # Hardcodes offsets
 -nomethod System.Runtime.InteropServices.Tests.OffsetOfTests.OffsetOf_Decimal_ReturnsExpected
+
 # Wants exception messages to be non-empty
 -nomethod System.Runtime.InteropServices.Tests.GetExceptionForHRTests.GetExceptionForHR_ErrorInfo_ReturnsValidException
 -nomethod System.Runtime.InteropServices.Tests.GetExceptionForHRTests.GetExceptionForHR_NoErrorInfo_ReturnsValidException
 -nomethod System.Runtime.InteropServices.Tests.ThrowExceptionForHRTests.ThrowExceptionForHR_NoErrorInfo_ReturnsValidException
 -nomethod System.Runtime.InteropServices.Tests.ThrowExceptionForHRTests.ThrowExceptionForHR_ErrorInfo_ReturnsValidException
+
 # Not implemented
 -nomethod System.Runtime.InteropServices.Tests.GetExceptionPointersTests.GetExceptionPointers_ReturnsExpected
+
 # Supported on Mono
 -nomethod System.Runtime.InteropServices.Tests.GetFunctionPointerForDelegateTests.GetFunctionPointer_GenericDelegate_ThrowsArgumentException
 
@@ -569,15 +566,12 @@
 # and expects it to trigger domain.ProcessExit event
 -nomethod System.Tests.ExitCodeTests.SigTermExitCode
 
-# crashes runtime
-
 # causes 'error: Return type can't be a byref type Parameter name: returnType':
 # while the test passes, xunit fails in the end if it's enabled
 -nomethod System.Tests.Types.VoidTests.IsByRef_Get_ReturnsExpected
 
 # Boxed pointers are not supported? https://github.com/mono/mono/blob/ced517784b2a07fb851e2227dac04e0df2262d57/mcs/class/corlib/ReferenceSources/RuntimeType.cs#L229
 -nomethod System.Reflection.Tests.InvokeRefReturnNetcoreTests.TestByRefLikeRefReturn
-
 
 # TODO: ignore in CoreFX for mono runtime:
 -nomethod System.Reflection.Tests.PointerTests.*

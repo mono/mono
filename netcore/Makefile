@@ -126,10 +126,8 @@ xtest-%: prepare update-corefx-tests
 	sed -i -e 's/9.9.9/$(NETCOREAPP_VERSION)/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
-		-notrait category=outerloop -notrait category=nonosxtests -notrait category=failing \
-		-notrait category=nonnetcoreapptests -notrait category=nonmonotests \
 		-html ../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
-		$(shell if [ -a $(CURDIR)/CoreFX.issues.rsp ]; then grep -v '^#\|^$$' $(CURDIR)/CoreFX.issues.rsp; fi;) \
+		-notrait category=nonosxtests @../../../../CoreFX.issues.rsp \
 		$(FIXTURE) || true
 
 # these tests won't be included in `xtestall`
