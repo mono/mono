@@ -58,12 +58,13 @@ namespace Microsoft.CSharp
 			Process mcs=new Process();
 
 			// FIXME: these lines had better be platform independent.
+/* Start compiler directly in Wine Mono
 			if (Path.DirectorySeparatorChar == '\\') {
 				mcs.StartInfo.FileName = MonoToolsLocator.Mono;
 				mcs.StartInfo.Arguments = "\"" + MonoToolsLocator.McsCSharpCompiler + "\" ";
-			} else {
+			} else { */
 				mcs.StartInfo.FileName = MonoToolsLocator.McsCSharpCompiler;
-			}
+/*			} */
 
 			mcs.StartInfo.Arguments += BuildArgs (options, fileNames, _provOptions);
 

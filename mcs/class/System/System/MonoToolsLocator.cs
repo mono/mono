@@ -10,7 +10,9 @@ namespace System {
 
 	static class MonoToolsLocator
 	{
+#if !WIN_PLATFORM
 		public static readonly string Mono;
+#endif
 		public static readonly string McsCSharpCompiler;
 		public static readonly string VBCompiler;
 		public static readonly string AssemblyLinker;
@@ -25,6 +27,7 @@ namespace System {
 			if (Path.DirectorySeparatorChar == '\\') {
 				StringBuilder moduleName = new StringBuilder (1024);
 				GetModuleFileName (IntPtr.Zero, moduleName, moduleName.Capacity);
+#if !WIN_PLATFORM
 				string processExe = moduleName.ToString ();
 				string fileName = Path.GetFileName (processExe);
 				if (fileName.StartsWith ("mono") && fileName.EndsWith (".exe"))
@@ -45,6 +48,7 @@ namespace System {
 
 				//if (!File.Exists (Mono))
 				//	throw new FileNotFoundException ("Windows mono path not found: " + Mono);
+#endif
 
 				McsCSharpCompiler = Path.Combine (GacPath, "4.5", "mcs.exe");
 				if (!File.Exists (McsCSharpCompiler)) {
@@ -64,9 +68,11 @@ namespace System {
 				//		throw new FileNotFoundException ("Windows al path not found: " + AssemblyLinker);
 				}
 			} else {
+#if !WIN_PLATFORM
 				Mono = Path.Combine (GacPath, "bin", "mono");
 				if (!File.Exists (Mono))
 					Mono = "mono";
+#endif
 
 				var mscorlibPath = new Uri (typeof (object).Assembly.CodeBase).LocalPath;
 				McsCSharpCompiler = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "mcs"));

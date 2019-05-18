@@ -59,13 +59,14 @@ namespace Microsoft.VisualBasic
 			string vbnc_output = "";
 			string[] vbnc_output_lines;
 			// FIXME: these lines had better be platform independent.
+/* Start compiler directly in Wine Mono
 			if (Path.DirectorySeparatorChar == '\\') {
 				vbnc.StartInfo.FileName = MonoToolsLocator.Mono;
 				vbnc.StartInfo.Arguments = MonoToolsLocator.VBCompiler + ' ' + BuildArgs (options, fileNames);
-			} else {
+			} else { */
 				vbnc.StartInfo.FileName = MonoToolsLocator.VBCompiler;
 				vbnc.StartInfo.Arguments = BuildArgs (options, fileNames);
-			}
+/*			} */
 			//Console.WriteLine (vbnc.StartInfo.Arguments);
 			vbnc.StartInfo.CreateNoWindow = true;
 			vbnc.StartInfo.UseShellExecute = false;

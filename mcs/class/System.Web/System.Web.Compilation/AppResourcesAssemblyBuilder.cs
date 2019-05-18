@@ -230,13 +230,17 @@ namespace System.Web.Compilation
 
 		string SetAlPath (ProcessStartInfo info)
 		{			
+/* No mono.exe in Wine Mono
 			if (RuntimeHelpers.RunningOnWindows) {
 				info.FileName = MonoToolsLocator.Mono;
 				return MonoToolsLocator.AssemblyLinker + " ";
 			} else {
+*/
 				info.FileName = MonoToolsLocator.AssemblyLinker;
 				return String.Empty;
+/*
 			}
+*/
 		}
 
 		string BuildAssemblyPath (string cultureName)

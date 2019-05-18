@@ -560,7 +560,11 @@ namespace System.Windows.Forms
 			if (Assembly.GetEntryAssembly () == null)
 				throw new NotSupportedException ("The method 'Restart' is not supported by this application type.");
 
+#if WIN_PLATFORM
+			string mono_path = null; // No mono.exe in Wine Mono
+#else
 			string mono_path = MonoToolsLocator.Mono;
+#endif
 
 			//Get command line arguments
 			StringBuilder argsBuilder = new StringBuilder ();
