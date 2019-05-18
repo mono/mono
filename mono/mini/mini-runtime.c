@@ -123,6 +123,7 @@ int mini_verbose = 0;
  * it can load AOT code compiled by LLVM.
  */
 gboolean mono_use_llvm = FALSE;
+gboolean mono_try_llvm;
 
 gboolean mono_use_interpreter = FALSE;
 const char *mono_interp_opts_string = NULL;
@@ -4284,10 +4285,20 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 
 #ifdef ENABLE_LLVM
-	if (mono_use_llvm) {
-		if (!mono_llvm_load (NULL)) {
-			mono_use_llvm = FALSE;
-			fprintf (stderr, "Mono Warning: llvm support could not be loaded.\n");
+	if (mono_use_llvm || mono_try_llvm) {
+		if (mono_llvm_load (NULL)) {
+			mono_use_llvm = TRUE;
+			// mono_try_llvm no longer matters.
+		} else {
+			if (mono_try_llvm) {
+				// This is not fatal.
+				mono_use_llvm = FALSE;
+				fprintf (stderr, "Mono Warning: llvm support could not be loaded.\n");
+			} else {
+				fprintf (stderr, "Mono Error: llvm support could not be loaded.\n");
+				// exit (1) is bad, but the alternative is to risk later jumping to 0.
+				exit (1);
+			}
 		}
 	}
 	if (mono_use_llvm)

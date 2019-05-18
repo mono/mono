@@ -1555,6 +1555,7 @@ mini_usage (void)
 		"    --attach=OPTIONS       Pass OPTIONS to the attach agent in the runtime.\n"
 		"                           Currently the only supported option is 'disable'.\n"
 		"    --llvm, --nollvm       Controls whenever the runtime uses LLVM to compile code.\n"
+		"    ---try-llvm	    Try to use LLVM but ignore inability to load LLVM support.\n"
 	        "    --gc=[sgen,boehm]      Select SGen or Boehm GC (runs mono or mono-sgen)\n"
 #ifdef TARGET_OSX
 		"    --arch=[32,64]         Select architecture (runs mono32 or mono64)\n"
@@ -1757,6 +1758,14 @@ mono_jit_parse_options (int argc, char * argv[])
 			fprintf (stderr, "Mono Warning: --llvm not enabled in this runtime.\n");
 #else
 			mono_use_llvm = TRUE;
+#endif
+		} else if (strcmp (argv [i], "--try-llvm") == 0) {
+#ifndef MONO_ARCH_LLVM_SUPPORTED
+			fprintf (stderr, "Mono Warning: --try-llvm not supported on this platform.\n");
+#elif !defined(ENABLE_LLVM)
+			fprintf (stderr, "Mono Warning: --try-llvm not enabled in this runtime.\n");
+#else
+			mono_try_llvm = TRUE;
 #endif
 		} else if (argv [i][0] == '-' && argv [i][1] == '-' && mini_parse_debug_option (argv [i] + 2)) {
 		} else {
@@ -2338,8 +2347,17 @@ mono_main (int argc, char* argv[])
 #else
 			mono_use_llvm = TRUE;
 #endif
+		} else if (strcmp (argv [i], "--try-llvm") == 0) {
+#ifndef MONO_ARCH_LLVM_SUPPORTED
+			fprintf (stderr, "Mono Warning: --try-llvm not supported on this platform.\n");
+#elif !defined(ENABLE_LLVM)
+			fprintf (stderr, "Mono Warning: --try-llvm not enabled in this runtime.\n");
+#else
+			mono_try_llvm = TRUE;
+#endif
 		} else if (strcmp (argv [i], "--nollvm") == 0){
 			mono_use_llvm = FALSE;
+			mono_try_llvm = FALSE;
 		} else if ((strcmp (argv [i], "--interpreter") == 0) || !strcmp (argv [i], "--interp")) {
 			mono_enable_interp (NULL);
 		} else if (strncmp (argv [i], "--interp=", 9) == 0) {

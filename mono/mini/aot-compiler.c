@@ -13404,11 +13404,8 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_DEBUG);
 	}
 
-	if (acfg->aot_opts.try_llvm)
-		acfg->aot_opts.llvm = mini_llvm_init ();
+	if (mono_use_llvm || acfg->aot_opts.llvm || acfg->aot_opts.try_llvm) {
 
-	if (mono_use_llvm || acfg->aot_opts.llvm) {
-		acfg->llvm = TRUE;
 		acfg->aot_opts.asm_writer = TRUE;
 		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_WITH_LLVM);
 
@@ -13417,7 +13414,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 			return 1;
 		}
 
-		mini_llvm_init ();
+		// Between --llvm and --try-llvm, --try-llvm always dominates.
+		if (!(acfg->llvm = mini_llvm_init ()) && !acfg->aot_opts.try_llvm) {
+			aot_printerrf (acfg, "llvm_init failed, use --try-llvm or omit --llvm\n");
+			return 1;
+		}
 
 		if (acfg->aot_opts.asm_only && !acfg->aot_opts.llvm_outfile) {
 			aot_printerrf (acfg, "Compiling with LLVM and the asm-only option requires the llvm-outfile= option.\n");
