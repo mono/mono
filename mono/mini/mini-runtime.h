@@ -450,7 +450,7 @@ gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *c
 gpointer  mono_create_ftnptr                (MonoDomain *domain, gpointer addr);
 MonoMethod* mono_icall_get_wrapper_method    (MonoJitICallInfo* callinfo) MONO_LLVM_INTERNAL;
 gconstpointer     mono_icall_get_wrapper       (MonoJitICallInfo* callinfo) MONO_LLVM_INTERNAL;
-gconstpointer     mono_icall_get_wrapper_full  (MonoJitICallInfo* callinfo, gboolean do_compile);
+gconstpointer     mono_icall_get_wrapper_full  (MonoJitICallInfo* callinfo, gboolean do_compile) MONO_LLVM_INTERNAL;
 
 MonoJumpInfo* mono_patch_info_dup_mp        (MonoMemPool *mp, MonoJumpInfo *patch_info);
 guint     mono_patch_info_hash (gconstpointer data) MONO_LLVM_INTERNAL;
