@@ -26,52 +26,62 @@ typedef struct {
 
 static LoadedBackend backend;
 
+static
+void
+mono_llvm_fatal (void)
+{
+	fprintf (stderr, "Error: Mono LLVM support could not be loaded.\n");
+	exit (1);
+}
+
+#define mono_llvm_check(p) ((p) ? (p) : (mono_llvm_fatal (), NULL))
+
 void
 mono_llvm_init (void)
 {
-	backend.init ();
+	mono_llvm_check (backend.init) ();
 }
 
 void
 mono_llvm_cleanup (void)
 {
-	backend.cleanup ();
+	mono_llvm_check (backend.cleanup) ();
 }
 
 void
 mono_llvm_emit_method (MonoCompile *cfg)
 {
-	backend.emit_method (cfg);
+	mono_llvm_check (backend.emit_method) (cfg);
 }
 
 void
 mono_llvm_emit_call (MonoCompile *cfg, MonoCallInst *call)
 {
-	backend.emit_call (cfg, call);
+	mono_llvm_check (backend.emit_call) (cfg, call);
 }
 
 void
 mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, int initial_got_size, LLVMModuleFlags flags)
 {
-	backend.create_aot_module (assembly, global_prefix, initial_got_size, flags);
+	mono_llvm_check (backend.create_aot_module) (assembly, global_prefix, initial_got_size, flags);
 }
 
 void
 mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 {
-	backend.emit_aot_module (filename, cu_name);
+	mono_llvm_check (backend.emit_aot_module) (filename, cu_name);
 }
 
 void
 mono_llvm_fixup_aot_module (void)
 {
-	backend.fixup_aot_module ();
+	mono_llvm_check (backend.fixup_aot_module) ();
 }
 
 void
 mono_llvm_check_method_supported (MonoCompile *cfg)
 {
-	backend.check_method_supported (cfg);
+	mono_llvm_check (backend.check_method_supported) (cfg);
 }
 
 void
@@ -85,19 +95,19 @@ mono_llvm_free_domain_info (MonoDomain *domain)
 void
 mono_llvm_emit_aot_file_info (MonoAotFileInfo *info, gboolean has_jitted_code)
 {
-	backend.emit_aot_file_info (info, has_jitted_code);
+	mono_llvm_check (backend.emit_aot_file_info) (info, has_jitted_code);
 }
 
 void
 mono_llvm_emit_aot_data (const char *symbol, guint8 *data, int data_len)
 {
-	backend.emit_aot_data (symbol, data, data_len);
+	mono_llvm_check (backend.emit_aot_data) (symbol, data, data_len);
 }
 
 void
 mono_llvm_create_vars (MonoCompile *cfg)
 {
-	backend.create_vars (cfg);
+	mono_llvm_check (backend.create_vars) (cfg);
 }
 
 int
