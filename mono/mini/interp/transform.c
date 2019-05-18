@@ -862,7 +862,7 @@ static int mono_class_get_magic_index (MonoClass *k)
 static void
 interp_generate_mae_throw (TransformData *td, MonoMethod *method, MonoMethod *target_method)
 {
-	MonoJitICallInfo *info = mono_find_jit_icall_info (MONO_JIT_ICALL_mono_throw_method_access);
+	MonoJitICallInfo *info = mono_find_jit_icall_by_name ("mono_throw_method_access");
 
 	/* Inject code throwing MethodAccessException */
 	interp_add_ins (td, MINT_MONO_LDPTR);
@@ -5201,13 +5201,13 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					g_assert (info);
 
 					CHECK_STACK (td, info->sig->param_count);
-					if (jit_icall_id == MONO_JIT_ICALL_mono_threads_attach_coop) {
+					if (!strcmp (info->name, "mono_threads_attach_coop")) {
 						rtm->needs_thread_attach = 1;
 
 						/* attach needs two arguments, and has one return value: leave one element on the stack */
 						interp_add_ins (td, MINT_POP);
 						td->last_ins->data [0] = 0;
-					} else if (jit_icall_id == MONO_JIT_ICALL_mono_threads_detach_coop) {
+					} else if (!strcmp (info->name, "mono_threads_detach_coop")) {
 						g_assert (rtm->needs_thread_attach);
 
 						/* detach consumes two arguments, and no return value: drop both of them */
@@ -6037,7 +6037,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 			const char *name = method->name;
 			if (m_class_get_parent (method->klass) == mono_defaults.multicastdelegate_class) {
 				if (*name == '.' && (strcmp (name, ".ctor") == 0)) {
-					MonoJitICallInfo *mi = mono_find_jit_icall_info (MONO_JIT_ICALL_ves_icall_mono_delegate_ctor_interp);
+					MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("ves_icall_mono_delegate_ctor_interp");
 					g_assert (mi);
 					nm = mono_marshal_get_icall_wrapper (mi, TRUE);
 				} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
