@@ -19,18 +19,21 @@ ifeq ($(HOST_PLATFORM),win32)
 NETCORESDK_EXT = zip
 UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
 XUNIT_FLAGS =
+TESTS_PLATFORM = Windows_NT.x64
 endif
 
 ifeq ($(HOST_PLATFORM),macos)
 NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
 XUNIT_FLAGS = -notrait category=nonosxtests
+TESTS_PLATFORM = OSX.x64
 endif
 
 ifeq ($(HOST_PLATFORM),linux)
 NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
 XUNIT_FLAGS = -notrait category=nonlinuxtests
+TESTS_PLATFORM = Linux.x64
 endif
 
 NETCORESDK_FILE := dotnet-runtime-$(NETCOREAPP_VERSION)-$(RID).$(NETCORESDK_EXT)
@@ -38,7 +41,7 @@ ASPNETCORESDK_FILE := aspnetcore-runtime-$(ASPNETCOREAPP_VERSION)-$(RID).$(NETCO
 NETCORE_URL := https://dotnetcli.blob.core.windows.net/dotnet/Runtime/$(NETCOREAPP_VERSION)/$(NETCORESDK_FILE)
 ASPNETCORE_URL := https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/$(ASPNETCOREAPP_VERSION)/$(ASPNETCORESDK_FILE)
 FEED_BASE_URL := https://dotnetfeed.blob.core.windows.net/dotnet-core
-TEST_ASSETS_URL = $(FEED_BASE_URL)/corefx-tests/$(NETCORETESTS_VERSION)/OSX.x64/netcoreapp/corefx-test-assets.xml
+TEST_ASSETS_URL = $(FEED_BASE_URL)/corefx-tests/$(NETCORETESTS_VERSION)/$(TESTS_PLATFORM)/netcoreapp/corefx-test-assets.xml
 
 # used to calculate exact version number for generating nupkg
 BLAME = $(shell git blame ../configure.ac | grep AC_INIT | cut -f1 -d' ')
@@ -127,7 +130,7 @@ xtest-%: prepare update-corefx-tests
 	cd corefx/tests/extracted/$* && \
 	COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet --fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
 		-html ../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
-		-notrait category=nonosxtests @../../../../CoreFX.issues.rsp \
+		$(XUNIT_FLAGS) @../../../../CoreFX.issues.rsp \
 		$(FIXTURE) || true
 
 # these tests won't be included in `xtestall`
