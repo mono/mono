@@ -802,10 +802,6 @@
 # AssemblyLoadContext.SetProfileOptimizationRoot is no-op (not implemented)
 -nomethod System.Runtime.Tests.ProfileOptimizationTest.ProfileOptimization_CheckFileExists
 
-# to be fixed in #14500
--nomethod System.Tests.MathFTests.ILogB
--nomethod System.Tests.MathTests.ILogB
-
 ####################################################################
 ##  System.Reflection.TypeExtensions.Tests
 ####################################################################
