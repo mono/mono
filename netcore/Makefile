@@ -139,6 +139,8 @@ EXCLUDED_COREFX_TESTS =
 xtestall: update-corefx-tests $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
 
+# build a test assembly in COREFX_ROOT and copy it to corefx/tests/extracted
+# e.g. `make build-local-corefx-test-System.Runtime COREFX_ROOT=/prj/corefx-master`
 build-local-corefx-test-%: check-env
 	cd $(COREFX_ROOT)/src/$*/tests && dotnet build -o "$(CURDIR)/corefx/tests/extracted/tmp"
 	cp $(CURDIR)/corefx/tests/extracted/tmp/$*.Tests.{dll,pdb} $(CURDIR)/corefx/tests/extracted/$*.Tests/
