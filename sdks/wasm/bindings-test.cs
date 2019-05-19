@@ -46,6 +46,17 @@ public class TestClass {
 		int_val = i;
 	}
 
+	public static IntPtr intptr_val;
+	public static void InvokeIntPtr(IntPtr i) {
+		intptr_val = i;
+	}
+
+	public static IntPtr mkintptr_val;
+	public static IntPtr InvokeMkIntPtr() {
+		intptr_val = (IntPtr)42;
+		return intptr_val;
+	}
+
 	public static object obj1;
 	public static object InvokeObj1(object obj)
 	{
@@ -642,6 +653,33 @@ public class BindingTests {
 
 		Assert.AreEqual (200, TestClass.int_val);
 	}
+
+	[Test]
+	public static void BindIntPtrStaticMethod () {
+		TestClass.intptr_val = IntPtr.Zero;
+		Runtime.InvokeJS (@"
+			var invoke_int_ptr = Module.mono_bind_static_method (""[binding_tests]TestClass:InvokeIntPtr"");
+			invoke_int_ptr (42);
+		");
+
+		Assert.AreEqual (42, TestClass.intptr_val);
+	}
+
+
+	[Test]
+	public static void MarshalIntPtrToJS () {
+		TestClass.mkstr = TestClass.string_res = null;
+		Runtime.InvokeJS (@"
+			var invoke_mk_int = Module.mono_bind_static_method (""[binding_tests]TestClass:InvokeMkIntPtr"");
+			var r = invoke_mk_int ();
+
+			if (r != 42) throw `Invalid int_ptr value`;
+		");
+		Assert.IsNotNull (TestClass.mkstr);
+
+		Assert.AreEqual (TestClass.mkstr, TestClass.string_res);
+	}
+
 
 	[Test]
 	public static void InvokeStaticMethod () {

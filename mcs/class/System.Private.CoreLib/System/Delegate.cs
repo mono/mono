@@ -358,6 +358,20 @@ namespace System
 			var target = _target;
 			if (this.data is null)
 				InitializeDelegateData ();
+			
+			// replace all Type.Missing with default values defined on parameters of the delegate if any
+			MethodInfo? invoke = GetType ().GetMethod ("Invoke");
+			if (invoke != null && args != null) {
+				ParameterInfo[] delegateParameters = invoke.GetParameters ();
+				for (int i = 0; i < args.Length; i++) {
+					if (args [i] == Type.Missing) {
+						ParameterInfo dlgParam = delegateParameters [i];
+						if (dlgParam.HasDefaultValue) {
+							args [i] = dlgParam.DefaultValue;
+						}
+					}
+				}
+			}
 
 			if (Method.IsStatic) {
 				//

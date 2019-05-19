@@ -1623,6 +1623,11 @@ interp_method_check_inlining (TransformData *td, MonoMethod *method)
 	if (method->wrapper_type != MONO_WRAPPER_NONE)
 		return FALSE;
 
+	/* Our usage of `emit_store_value_as_local ()` for nint, nuint and nfloat
+	 * is kinda hacky, and doesn't work with the inliner */
+	if (mono_class_get_magic_index (method->klass) >= 0)
+		return FALSE;
+
 	return TRUE;
 }
 
@@ -5195,15 +5200,9 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					break;
 				}
 				case CEE_MONO_ICALL: {
-					guint32 token;
-					gpointer func;
-					MonoJitICallInfo *info;
-					int icall_op;
-
-					token = read32 (td->ip + 1);
+					MonoJitICallId const jit_icall_id = (MonoJitICallId)read32 (td->ip + 1);
+					MonoJitICallInfo const * const info = mono_find_jit_icall_info (jit_icall_id);
 					td->ip += 5;
-					func = mono_method_get_wrapper_data (method, token);
-					info = mono_find_jit_icall_by_addr (func);
 					g_assert (info);
 
 					CHECK_STACK (td, info->sig->param_count);
@@ -5222,11 +5221,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						interp_add_ins (td, MINT_POP);
 						td->last_ins->data [0] = 0;
 					} else {
-						icall_op = interp_icall_op_for_sig (info->sig);
+						int const icall_op = interp_icall_op_for_sig (info->sig);
 						g_assert (icall_op != -1);
 
 						interp_add_ins (td, icall_op);
-						td->last_ins->data [0] = get_data_item_index (td, func);
+						// hash here is overkill
+						td->last_ins->data [0] = get_data_item_index (td, (gpointer)info->func);
 					}
 					td->sp -= info->sig->param_count;
 

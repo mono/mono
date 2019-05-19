@@ -1712,7 +1712,7 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 	} else {
 		g_assert (TLS_KEY_THREAD == 0); // FIXME static_assert
 		const MonoJitICallId jit_icall_id = (MonoJitICallId)(MONO_JIT_ICALL_mono_tls_get_thread + key);
-		g_assert (mono_jit_icall_info.array [jit_icall_id].func == (gpointer)mono_tls_get_tls_getter (key));
+		g_assert (mono_get_jit_icall_info ()->array [jit_icall_id].func == (gpointer)mono_tls_get_tls_getter (key));
 		return mono_emit_jit_icall_id (cfg, jit_icall_id, NULL);
 	}
 }
@@ -10096,19 +10096,14 @@ field_access_end:
 
 		case MONO_CEE_MONO_ICALL: {
 			g_assert (method->wrapper_type != MONO_WRAPPER_NONE);
-			gpointer func;
-			MonoJitICallInfo *info;
-
-			func = mono_method_get_wrapper_data (method, token);
-			// FIXME int instead of pointer
-			info = mono_find_jit_icall_by_addr (func);
+			MonoJitICallInfo * const info = mono_find_jit_icall_info ((MonoJitICallId)token);
 			g_assertf (info, "Could not find icall address in wrapper %s", mono_method_full_name (method, 1));
 
 			CHECK_STACK (info->sig->param_count);
 			sp -= info->sig->param_count;
 
 			// FIXME int instead of pointer
-			if (info == &mono_jit_icall_info.mono_threads_attach_coop) {
+			if (info == &mono_get_jit_icall_info ()->mono_threads_attach_coop) {
 				MonoInst *addr;
 				MonoBasicBlock *next_bb;
 
