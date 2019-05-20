@@ -528,6 +528,24 @@ mono_gc_finalize_domain (MonoDomain *domain)
 	sgen_finalize_if (object_in_domain_predicate, domain);
 }
 
+// extend by dsqiu
+static gboolean
+object_in_assembly_predicate(MonoObject *obj, void *user_data)
+{
+	MonoImage* image = ((MonoAssembly*)user_data)->image;
+	if (mono_object_class(obj)->image == image)
+		return TRUE;
+	return FALSE;
+}
+
+void
+mono_gc_finalize_assembly(MonoAssembly *assembly)
+{
+	sgen_finalize_if(object_in_assembly_predicate, assembly);
+}
+
+// entend end
+
 void
 mono_gc_suspend_finalizers (void)
 {

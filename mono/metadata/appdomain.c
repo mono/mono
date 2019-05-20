@@ -3052,3 +3052,184 @@ exit:
 	unload_data_unref (thread_data);
 	HANDLE_FUNCTION_RETURN ();
 }
+
+// extend by dsqiu
+
+static void
+deregister_reflection_info_roots_for_unused_assembly(MonoDomain *domain, MonoAssembly* target)
+{
+	GSList *list;
+
+	mono_domain_assemblies_lock(domain);
+	for (list = domain->domain_assemblies; list; list = list->next) {
+		MonoAssembly *assembly = (MonoAssembly *)list->data;
+		if (target != assembly)
+		{
+			continue;
+		}
+		MonoImage *image = assembly->image;
+		int i;
+
+		/*
+		 * No need to take the image lock here since dynamic images are appdomain bound and
+		 * at this point the mutator is gone.  Taking the image lock here would mean
+		 * promoting it from a simple lock to a complex lock, which we better avoid if
+		 * possible.
+		 */
+		if (image_is_dynamic(image))
+			deregister_reflection_info_roots_from_list(image);
+
+		for (i = 0; i < image->module_count; ++i) {
+			MonoImage *module = image->modules[i];
+			if (module && image_is_dynamic(module))
+				deregister_reflection_info_roots_from_list(module);
+		}
+	}
+	mono_domain_assemblies_unlock(domain);
+}
+
+
+static gboolean
+mono_domain_remove_unused_special_field(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoClassField* field = (MonoClassField*)key;
+	MonoClass* parent = field->parent;
+	MonoImage* image = (MonoImage*)user_data;
+	if (image == parent->image)
+		return TRUE;
+	return FALSE;
+}
+
+static void
+unregister_vtable_reflection_type(MonoVTable *vtable)
+{
+	MonoObject *type = (MonoObject *)vtable->type;
+
+	if (type->vtable->klass != mono_defaults.runtimetype_class)
+		MONO_GC_UNREGISTER_ROOT_IF_MOVING(vtable->type);
+}
+
+static gboolean
+mono_domain_remove_unused_type_hash(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoType* mono_type = (MonoType*)key;
+	MonoReflectionType* res = (MonoReflectionType *)value;
+	MonoImage* image = (MonoImage*)user_data;
+	MonoClass* mono_class = NULL;
+	if (mono_type->type == MONO_TYPE_CLASS || mono_type->type == MONO_TYPE_VALUETYPE)
+	{
+		mono_class = mono_type->data.klass;
+	}
+	else if (mono_type->type == MONO_TYPE_ARRAY)
+	{
+		mono_class = mono_type->data.array->eklass;
+	}
+	else if (mono_type->type == MONO_TYPE_GENERICINST)
+	{
+		mono_class = mono_type->data.generic_class->container_class;
+	}
+	else if (mono_type->type == MONO_TYPE_VAR || mono_type->type == MONO_TYPE_MVAR)
+	{
+		// 先预留出来，后面再补
+		g_printerr("MONO_TYPE_VAR | MONO_TYPE_MVAR not release!!!");
+	}
+	else if (mono_type->type == MONO_TYPE_PTR)
+	{
+		// 先预留出来，后面再补
+		g_printerr("MONO_TYPE_PTR not release!!!");
+	}
+	else if (mono_type->type == MONO_TYPE_FNPTR)
+	{
+		g_printerr("MONO_TYPE_FNPTR not release!!!");
+	}
+	if (mono_class && mono_class->image == image)
+	{
+		return TRUE;
+	}
+	return FALSE;
+	
+}
+
+void 
+mono_domain_remove_unused_assembly(MonoAssembly* assembly)
+{
+	// 先确保对象释放回收
+#if defined(HAVE_SGEN_GC)
+	mono_gc_finalize_assembly(assembly);
+	mono_gc_invoke_finalizers();
+#endif
+	// 注意一个 class 跨多个assembly的情况？
+	MonoDomain* domain = mono_domain_get();
+	MonoImage* image = assembly->image;
+	GPtrArray* removed_class_vtable_array = g_ptr_array_new();
+	GPtrArray* removed_mono_class_array = g_ptr_array_new();
+	int i = 0;
+	// clear vtable
+	for (i = 0; i < domain->class_vtable_array->len; ++i)
+	{
+		MonoVTable* vtable = (MonoVTable *)g_ptr_array_index(domain->class_vtable_array, i);
+		if (vtable->klass->image == image)
+		{
+			g_ptr_array_add(removed_class_vtable_array, vtable);
+			g_ptr_array_add(removed_mono_class_array, vtable->klass);
+		}
+	}
+	// copy from unload_thread_main
+	for (i = 0; i < removed_class_vtable_array->len; ++i)
+		zero_static_data((MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i));
+	mono_gc_collect(0);
+	for (i = 0; i < removed_class_vtable_array->len; ++i)
+	{
+		MonoVTable* removed_vtable = (MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i);
+		clear_cached_vtable(removed_vtable);
+		// remove from domain
+		g_ptr_array_remove(domain->class_vtable_array, removed_vtable);
+	}
+
+	deregister_reflection_info_roots_for_unused_assembly(domain, assembly);
+
+	mono_assembly_cleanup_domain_binding_for_unused_assembly(domain->domain_id, assembly);
+	// mono_domain_free
+	// mono_debug_domain_unload
+	// special_static_fields
+	g_hash_table_foreach_remove(domain->special_static_fields, mono_domain_remove_unused_special_field, image);
+	// ldstr_table interned string
+	domain->ldstr_table;
+	// mono_reflection_cleanup_domain
+	mnoo_reflection_cleanup_for_unsed_assembly(domain, assembly);
+	// unregister_vtable_reflection_type
+	for (i = 0; i < removed_class_vtable_array->len; ++i)
+		unregister_vtable_reflection_type((MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i));
+	g_ptr_array_free(removed_class_vtable_array, TRUE);
+	// type_hash
+	if (domain->type_hash)
+	{
+		mono_g_hash_table_foreach_remove(domain->type_hash, mono_domain_remove_unused_type_hash, image);
+	}
+	// type_init_exception_hash
+	if (domain->type_init_exception_hash)
+	{
+		for (i = 0; i < removed_mono_class_array->len; i++)
+		{
+			MonoException* exception = (MonoException*)mono_g_hash_table_lookup(domain->type_init_exception_hash, g_ptr_array_index(removed_mono_class_array, i));
+			if (exception)
+			{
+				mono_g_hash_table_remove(domain->type_init_exception_hash, exception);
+			}
+		}
+	}
+	// mono_assembly_release_gc_roots
+	mono_assembly_release_gc_roots(assembly);
+	// mono_assembly_close
+	mono_assembly_close(assembly);
+	// proxy_vtable_hash: remote_class
+	// jit_code_hash: 
+	// aot_modules: aot 模块不支持更新，所以不用卸载
+	// jit_info_table
+	// finalizable_objects_hash:好像没用
+	// generic_virtual_cases:是jit的东西？
+	domain->domain_assemblies = g_slist_remove(domain->domain_assemblies, assembly);
+	
+}
+
+// extend end

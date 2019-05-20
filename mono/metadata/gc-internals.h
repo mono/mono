@@ -224,6 +224,9 @@ void  mono_gc_add_memory_pressure (gint64 value);
 MONO_API int   mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_deregister_root (char* addr);
 void  mono_gc_finalize_domain (MonoDomain *domain);
+// extend by dsqiu
+void  mono_gc_finalize_assembly(MonoAssembly *assembly);
+// extend end
 void  mono_gc_run_finalize (void *obj, void *data);
 void  mono_gc_clear_domain (MonoDomain * domain);
 /* Signal early termination of finalizer processing inside the gc */

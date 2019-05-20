@@ -225,6 +225,11 @@ typedef mono_bool (*MonoCoreClrPlatformCB) (const char *image_name);
 MONO_API void
 mono_security_set_core_clr_platform_callback (MonoCoreClrPlatformCB callback);
 
+// extend by dsqiu
+MONO_API void
+mono_domain_remove_unused_assembly(MonoAssembly* assembly);
+// extend end
+
 MONO_END_DECLS
 
 #endif /* _MONO_METADATA_APPDOMAIN_H_ */

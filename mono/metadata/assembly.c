@@ -4834,3 +4834,30 @@ mono_asmctx_get_name (const MonoAssemblyContext *asmctx)
 	g_assert (asmctx->kind >= 0 && asmctx->kind <= MONO_ASMCTX_LAST);
 	return names [asmctx->kind];
 }
+
+
+// extend by dsqiu
+void mono_assembly_cleanup_domain_binding_for_unused_assembly(guint32 domain_id, MonoAssembly* assembly)
+{
+	GSList **iter;
+	MonoAssemblyName aname = assembly->aname;
+	mono_assembly_binding_lock();
+	iter = &loaded_assembly_bindings;
+	while (*iter) {
+		GSList *l = *iter;
+		MonoAssemblyBindingInfo *info = (MonoAssemblyBindingInfo *)l->data;
+
+		if (info->domain_id == domain_id && strcmp(aname.name, info->name) && aname.major == info->major && aname.minor == info->minor) {
+			*iter = l->next;
+			mono_assembly_binding_info_free(info);
+			g_free(info);
+			g_slist_free_1(l);
+			break;
+		}
+		else {
+			iter = &l->next;
+		}
+	}
+	mono_assembly_binding_unlock();
+}
+// extend end

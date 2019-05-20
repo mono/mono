@@ -3057,3 +3057,43 @@ mono_class_from_mono_type_handle (MonoReflectionTypeHandle reftype)
 {
 	return mono_class_from_mono_type (MONO_HANDLE_RAW (reftype)->type);
 }
+
+
+// extend by dsqiu
+typedef struct UnusedCacheData
+{
+	MonoImage* image;
+	GPtrArray* cache_array;
+}UnusedCacheData;
+
+static void
+cached_unused_refobject_hash(gpointer key, gpointer value, gpointer user_data)
+{
+	ReflectedEntry* entry = (ReflectedEntry*)key;
+	UnusedCacheData* unused_cache_data = (UnusedCacheData*)user_data;
+	if (entry->refclass && entry->refclass->image == unused_cache_data->image)
+	{
+		g_ptr_array_add(unused_cache_data->cache_array, key);
+	}
+}
+
+void 
+mnoo_reflection_cleanup_for_unsed_assembly(MonoDomain* domain, MonoAssembly* assembly)
+{
+	if (domain->refobject_hash) {
+		GPtrArray* removed_refobject_hash_array = g_ptr_array_new();
+		UnusedCacheData user_data;
+		user_data.image = assembly->image;
+		user_data.image = removed_refobject_hash_array;
+		mono_conc_g_hash_table_foreach(domain->refobject_hash, cached_unused_refobject_hash, &user_data);
+		for (int i = 0; i < removed_refobject_hash_array->len; ++i)
+		{
+			ReflectedEntry* reflection = (ReflectedEntry*)g_ptr_array_index(removed_refobject_hash_array, i);
+			mono_conc_g_hash_table_remove(domain->refobject_hash, reflection);
+			free_reflected_entry(reflection);
+		}
+		g_ptr_array_free(removed_refobject_hash_array, TRUE);
+		// mono_conc_g_hash_table_foreach(domain->refobject_hash, cleanup_refobject_hash, NULL);
+	}
+}
+// extend end

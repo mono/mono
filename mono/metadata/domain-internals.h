@@ -613,6 +613,11 @@ void mono_reflection_cleanup_domain (MonoDomain *domain);
 
 void mono_assembly_cleanup_domain_bindings (guint32 domain_id);
 
+// extend by dsqiu
+MONO_API void mono_assembly_cleanup_domain_binding_for_unused_assembly(guint32 domain_id, MonoAssembly* assembly);
+void mnoo_reflection_cleanup_for_unsed_assembly(MonoDomain* domain, MonoAssembly* assembly);
+// extend end
+
 MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, gpointer addr, gboolean try_aot, gboolean allow_trampolines);
 
 void mono_enable_debug_domain_unload (gboolean enable);
