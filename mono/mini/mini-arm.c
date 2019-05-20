@@ -88,8 +88,6 @@ static gboolean thumb2_supported = FALSE;
  */
 static gboolean eabi_supported = FALSE;
 
-static gboolean arm64_32_abi = FALSE;
-
 /* 
  * Whenever to use the iphone ABI extensions:
  * http://developer.apple.com/library/ios/documentation/Xcode/Conceptual/iPhoneOSABIReference/index.html
@@ -7461,9 +7459,6 @@ mono_arch_set_target (char *mtriple)
 	}
 	if (strstr (mtriple, "gnueabi"))
 		eabi_supported = TRUE;
-
-	if (strstr (mtriple, "arm64_32"))
-		arm64_32_abi = TRUE;
 }
 
 gboolean
