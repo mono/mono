@@ -3962,7 +3962,6 @@ mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type)
 	MonoMethodSignature *sig;
 	MonoMethodBuilder *mb;
 	int i, param_count;
-
 	g_assert (token);
 
 	method = mono_get_method_checked (image, token, NULL, NULL, error);
@@ -3975,7 +3974,9 @@ mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type)
 		MonoMarshalSpec **mspecs;
 		EmitMarshalContext m;
 
+		MONO_ENTER_GC_UNSAFE;
 		sig = mono_method_signature_internal (method);
+		MONO_EXIT_GC_UNSAFE;
 		g_assert (!sig->hasthis);
 
 		mspecs = g_new0 (MonoMarshalSpec*, sig->param_count + 1);
@@ -4009,12 +4010,17 @@ mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type)
 				mono_metadata_free_marshal_spec (mspecs [i]);
 		g_free (mspecs);
 
-		gpointer compiled_ptr = mono_compile_method_checked (method, error);
+		gpointer compiled_ptr;
+		MONO_ENTER_GC_UNSAFE;
+		compiled_ptr = mono_compile_method_checked (method, error);
+		MONO_EXIT_GC_UNSAFE;
 		mono_error_assert_ok (error);
 		return compiled_ptr;
 	}
 
+	MONO_ENTER_GC_UNSAFE;
 	sig = mono_method_signature_internal (method);
+	MONO_EXIT_GC_UNSAFE;
 	mb = mono_mb_new (method->klass, method->name, MONO_WRAPPER_MANAGED_TO_MANAGED);
 
 	param_count = sig->param_count + sig->hasthis;
