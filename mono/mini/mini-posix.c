@@ -249,7 +249,7 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 	// Will return when the dumping is done, so this thread can continue
 	// running. Returns FALSE on unrecoverable error.
 	if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE, NULL, 0))
-		g_assert_not_reached ();
+		g_error ("Crash reporter dumper exited due to fatal error.");
 #endif
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
