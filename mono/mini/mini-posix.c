@@ -893,7 +893,7 @@ dump_memory_around_ip (MonoContext *mctx)
 		return;
 
 	g_async_safe_printf ("\n=================================================================\n");
-	g_async_safe_printf ("\tBasic Fault Adddress Reporting\n");
+	g_async_safe_printf ("\tBasic Fault Address Reporting\n");
 	g_async_safe_printf ("=================================================================\n");
 
 	gpointer native_ip = MONO_CONTEXT_GET_IP (mctx);
