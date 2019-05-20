@@ -81,7 +81,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 	gboolean ret;
 
 	shellex.cbSize = sizeof(SHELLEXECUTEINFO);
-	shellex.fMask = (gulong)(SEE_MASK_FLAG_DDEWAIT | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_UNICODE);
+	shellex.fMask = (gulong)(SEE_MASK_NOASYNC | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_UNICODE);
 	shellex.nShow = (gulong)MONO_HANDLE_GETVAL (proc_start_info, window_style);
 	shellex.nShow = (gulong)((shellex.nShow == 0) ? 1 : (shellex.nShow == 1 ? 0 : shellex.nShow));
 
