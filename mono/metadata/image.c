@@ -1013,6 +1013,10 @@ pe_image_load_pe_data (MonoImage *image)
 	offset = do_load_header (image, header, offset);
 	if (offset < 0)
 		goto invalid_image;
+#ifdef HOST_WIN32
+	if (m_image_is_module_handle (image))
+		image->raw_data_len = image->storage->raw_data_len;
+#endif
 
 	/*
 	 * this tests for a x86 machine type, but itanium, amd64 and others could be used, too.
