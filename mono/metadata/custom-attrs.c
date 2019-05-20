@@ -856,7 +856,7 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 		attr = mono_object_new_handle (mono_domain_get (), method->klass, error);
 		goto_if_nok (error, fail);
 
-		mono_runtime_invoke_handle (method, attr, NULL, error);
+		mono_runtime_invoke_handle_void (method, attr, NULL, error);
 		goto_if_nok (error, fail);
 
 		goto exit;
@@ -1368,7 +1368,7 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 
 	for (i = 0; i < mono_array_length_internal (namedargs); ++i) {
 		MonoObject *obj = mono_array_get_internal (namedargs, MonoObject*, i);
-		MonoObject *typedarg, *namedarg, *minfo;
+		MonoObject *namedarg, *minfo;
 
 		if (arginfo [i].prop) {
 			minfo = (MonoObject*)mono_property_get_object_checked (domain, arginfo [i].prop->parent, arginfo [i].prop, error);
@@ -1379,9 +1379,13 @@ reflection_resolve_custom_attribute_data (MonoReflectionMethod *ref_method, Mono
 			goto_if_nok (error, leave);
 		}
 
-		typedarg = create_cattr_typed_arg (arginfo [i].type, obj, error);
+#if ENABLE_NETCORE
+		namedarg = create_cattr_named_arg (minfo, obj, error);
+#else
+		MonoObject* typedarg = create_cattr_typed_arg (arginfo [i].type, obj, error);
 		goto_if_nok (error, leave);
 		namedarg = create_cattr_named_arg (minfo, typedarg, error);
+#endif
 		goto_if_nok (error, leave);
 
 		mono_array_setref_internal (namedargs, i, namedarg);
@@ -1456,7 +1460,7 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 	params [2] = &cattr->data;
 	params [3] = &cattr->data_size;
 
-	mono_runtime_invoke_handle (ctor, attr, params, error);
+	mono_runtime_invoke_handle_void (ctor, attr, params, error);
 	goto fail;
 result_null:
 	attr = MONO_HANDLE_CAST (MonoObject, mono_new_null ());

@@ -20,7 +20,7 @@ namespace System
 			}
 		}
 
-		public int CompareTo (object target)
+		public int CompareTo (object? target)
 		{
 			const int retIncompatibleMethodTables = 2;  // indicates that the method tables did not match
 
@@ -31,14 +31,9 @@ namespace System
 				return ret;
 
 			if (ret == retIncompatibleMethodTables)
-				throw new ArgumentException (SR.Format (SR.Arg_EnumAndObjectMustBeSameType, target.GetType (), GetType ()));
+				throw new ArgumentException (SR.Format (SR.Arg_EnumAndObjectMustBeSameType, target!.GetType (), GetType ()));
 
 			throw new InvalidOperationException (SR.InvalidOperation_UnknownEnumType);
-		}
-
-		public override bool Equals (object obj)
-		{
-			return DefaultEquals (this, obj);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -48,7 +43,7 @@ namespace System
 		public bool HasFlag (Enum flag)
 		{
 			if (flag is null)
-				throw new ArgumentNullException (nameof(flag));
+				throw new ArgumentNullException (nameof (flag));
 			if (!this.GetType ().IsEquivalentTo (flag.GetType ()))
 				throw new ArgumentException (SR.Format (SR.Argument_EnumTypeDoesNotMatch, flag.GetType (), this.GetType ()));
 
@@ -130,7 +125,7 @@ namespace System
 		static extern object InternalBoxEnum (RuntimeType enumType, long value);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern int InternalCompareTo (object o1, object o2);
+		static extern int InternalCompareTo (object o1, object? o2);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern CorElementType InternalGetCorElementType ();
@@ -140,7 +135,7 @@ namespace System
 
 		static RuntimeType ValidateRuntimeType (Type enumType)
 		{
-			if (enumType == null)
+			if (enumType is null)
 				throw new ArgumentNullException (nameof (enumType));
 			if (!enumType.IsEnum)
 				throw new ArgumentException (SR.Arg_MustBeEnum, nameof (enumType));

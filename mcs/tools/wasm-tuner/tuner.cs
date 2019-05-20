@@ -23,6 +23,7 @@ class Icall : IComparable<Icall>
 	public string Assembly;
 	public bool Handles;
 	public int TokenIndex;
+	public MethodReference Method;
 
 	public int CompareTo (Icall other) {
 		return TokenIndex - other.TokenIndex;
@@ -41,13 +42,15 @@ class IcallClass {
 
 class Pinvoke
 {
-	public Pinvoke (string entry_point, string module) {
+	public Pinvoke (string entry_point, string module, MethodReference method) {
 		EntryPoint = entry_point;
 		Module = module;
+		Method = method;
 	}
 
 	public string EntryPoint;
 	public string Module;
+	public MethodReference Method;
 }
 
 public class WasmTuner
@@ -116,6 +119,37 @@ public class WasmTuner
 		}
 	}
 
+	static string MapType (TypeReference t) {
+		if (t.Name == "Void")
+			return "void";
+		else if (t.Name == "Double")
+			return "double";
+		else if (t.Name == "Single")
+			return "float";
+		else if (t.Name == "Int64")
+			return "int64_t";
+		else if (t.Name == "UInt64")
+			return "uint64_t";
+		else
+			return "int";
+	}
+
+	static string GenPinvokeDecl (Pinvoke pinvoke) {
+		var sb = new StringBuilder ();
+		var method = pinvoke.Method;
+		sb.Append (MapType (method.ReturnType));
+		sb.Append ($" {pinvoke.EntryPoint} (");
+		int pindex = 0;
+		foreach (var p in method.Parameters) {
+			if (pindex > 0)
+				sb.Append (",");
+			sb.Append (MapType (method.Parameters [pindex].ParameterType));
+			pindex ++;
+		}
+		sb.Append (");");
+		return sb.ToString ();
+	}
+
 	int GenPinvokeTable (String[] args) {
 		var modules = new Dictionary<string, string> ();
 		foreach (var module in args [1].Split (','))
@@ -142,7 +176,7 @@ public class WasmTuner
 
 		foreach (var pinvoke in pinvokes) {
 			if (modules.ContainsKey (pinvoke.Module))
-				Console.WriteLine ($"void {pinvoke.EntryPoint} ();");
+				Console.WriteLine (GenPinvokeDecl (pinvoke));
 		}
 
 		foreach (var module in modules.Keys) {
@@ -175,8 +209,36 @@ public class WasmTuner
 			var info = method.PInvokeInfo;
 			if (info == null)
 				continue;
-			pinvokes.Add (new Pinvoke (info.EntryPoint, info.Module.Name));
+			pinvokes.Add (new Pinvoke (info.EntryPoint, info.Module.Name, method));
 		}
+	}
+
+	static string GenIcallDecl (Icall icall) {
+		var sb = new StringBuilder ();
+		var method = icall.Method;
+		sb.Append (MapType (method.ReturnType));
+		sb.Append ($" {icall.Func} (");
+		int pindex = 0;
+		int aindex = 0;
+		if (method.HasThis) {
+			sb.Append ("int");
+			aindex ++;
+		}
+		foreach (var p in method.Parameters) {
+			if (aindex > 0)
+				sb.Append (",");
+			sb.Append (MapType (method.Parameters [pindex].ParameterType));
+			pindex ++;
+			aindex ++;
+		}
+		if (icall.Handles) {
+			if (aindex > 0)
+				sb.Append (",");
+			sb.Append ("int");
+			pindex ++;
+		}
+		sb.Append (");");
+		return sb.ToString ();
 	}
 
 	//
@@ -216,7 +278,7 @@ public class WasmTuner
 				Console.WriteLine (String.Format ("{0},", icall.TokenIndex));
 			Console.WriteLine ("};");
 			foreach (var icall in sorted)
-				Console.WriteLine (String.Format ("void {0} ();", icall.Func));
+				Console.WriteLine (GenIcallDecl (icall));
 			Console.WriteLine ($"static void *{assembly}_icall_funcs [] = {{");
 			foreach (var icall in sorted) {
 				Console.WriteLine (String.Format ("// token {0},", icall.TokenIndex));
@@ -343,6 +405,7 @@ public class WasmTuner
 				// Registered at runtime
 				continue;
 
+			icall.Method = method;
 			icall.TokenIndex = (int)method.MetadataToken.RID;
 			icall.Assembly = method.DeclaringType.Module.Assembly.Name.Name;
 			icalls.Add (icall);

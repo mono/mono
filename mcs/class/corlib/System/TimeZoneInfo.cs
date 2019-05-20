@@ -149,7 +149,7 @@ namespace System
 			return true;
 		}
 
-#if !MONODROID && !MONOTOUCH && !XAMMAC && !WASM
+#if (!MONODROID && !MONOTOUCH && !XAMMAC && !WASM) || MOBILE_DESKTOP_HOST
 		static TimeZoneInfo CreateLocal ()
 		{
 #if WIN_PLATFORM

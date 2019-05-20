@@ -92,6 +92,10 @@
 #define TRY_MANAGED_SYSTEM_ENVIRONMENT_EXIT
 #endif
 
+#if DISABLE_SOCKETS
+#define DISABLE_SOCKET_TRANSPORT
+#endif
+
 #ifndef DISABLE_SDB
 
 #include <mono/utils/mono-os-mutex.h>
@@ -2775,6 +2779,8 @@ try_process_suspend (void *the_tls, MonoContext *ctx)
 	if (suspend_count > 0) {
 		/* Fastpath during invokes, see in process_suspend () */
 		if (suspend_count - tls->resume_count == 0)
+			return FALSE;
+		if (tls->invoke)
 			return FALSE;
 		process_suspend (tls, ctx);
 		return TRUE;

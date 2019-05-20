@@ -117,41 +117,14 @@ get_method_image (MonoMethod *method)
 	return m_class_get_image (method->klass);
 }
 
-#ifdef __cplusplus
-template <typename T>
-static void
-register_dyn_icall (T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
-#else
-static void
-register_dyn_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
-#endif
-{
-	mono_register_jit_icall_full (func, name, sig, no_wrapper, NULL);
-}
-
-#ifdef __cplusplus
-template <typename T>
-static void
-register_icall (T func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
-#else
-static void
-register_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean no_wrapper)
-#endif
-{
-	mono_register_jit_icall_full (func, name, sig, no_wrapper, name);
-}
-
-#ifdef __cplusplus
-template <typename T>
-static void
-register_icall_no_wrapper (T func, const char *name, MonoMethodSignature *sig)
-#else
-static void
-register_icall_no_wrapper (gpointer func, const char *name, MonoMethodSignature *sig)
-#endif
-{
-	mono_register_jit_icall_full (func, name, sig, TRUE, name);
-}
+// func is an identifier, that names a function, and is also in jit-icall-reg.h,
+// and therefore a field in mono_jit_icall_info and can be token pasted into an enum value.
+//
+// The name of func must be linkable for AOT, for example g_free does not work (monoeg_g_free instead),
+// nor does the C++ overload fmod (mono_fmod instead). These functions therefore
+// must be extern "C".
+#define register_icall(func, sig, no_wrapper) \
+	(mono_register_jit_icall_info (&mono_get_jit_icall_info ()->func, func, #func, (sig), (no_wrapper), #func))
 
 MonoMethodSignature*
 mono_signature_no_pinvoke (MonoMethod *method)
@@ -231,56 +204,56 @@ mono_marshal_init (void)
 		mono_coop_mutex_init_recursive (&marshal_mutex);
 		marshal_mutex_initialized = TRUE;
 
-		register_icall (mono_marshal_string_to_utf16, "mono_marshal_string_to_utf16", mono_icall_sig_ptr_obj, FALSE);
-		register_icall (mono_marshal_string_to_utf16_copy, "mono_marshal_string_to_utf16_copy", mono_icall_sig_ptr_obj, FALSE);
-		register_icall (mono_string_to_utf16_internal, "mono_string_to_utf16_internal", mono_icall_sig_ptr_obj, FALSE);
-		register_icall (ves_icall_mono_string_from_utf16, "ves_icall_mono_string_from_utf16", mono_icall_sig_obj_ptr, FALSE);
-		register_icall (mono_string_from_byvalstr, "mono_string_from_byvalstr", mono_icall_sig_obj_ptr_int, FALSE);
-		register_icall (mono_string_from_byvalwstr, "mono_string_from_byvalwstr", mono_icall_sig_obj_ptr_int, FALSE);
-		register_icall (mono_string_new_wrapper_internal, "mono_string_new_wrapper_internal", mono_icall_sig_obj_ptr, FALSE);
-		register_icall (ves_icall_string_new_wrapper, "ves_icall_string_new_wrapper", mono_icall_sig_obj_ptr, FALSE);
-		register_icall (mono_string_new_len_wrapper, "mono_string_new_len_wrapper", mono_icall_sig_obj_ptr_int, FALSE);
-		register_icall (ves_icall_mono_string_to_utf8, "ves_icall_mono_string_to_utf8", mono_icall_sig_ptr_obj, FALSE);
-		register_icall (mono_string_to_utf8str, "mono_string_to_utf8str", mono_icall_sig_ptr_obj, FALSE);
-		register_icall (mono_string_to_ansibstr, "mono_string_to_ansibstr", mono_icall_sig_ptr_object, FALSE);
-		register_icall (mono_string_builder_to_utf8, "mono_string_builder_to_utf8", mono_icall_sig_ptr_object, FALSE);
-		register_icall (mono_string_builder_to_utf16, "mono_string_builder_to_utf16", mono_icall_sig_ptr_object, FALSE);
-		register_icall (mono_array_to_savearray, "mono_array_to_savearray", mono_icall_sig_ptr_object, FALSE);
-		register_icall (mono_array_to_lparray, "mono_array_to_lparray", mono_icall_sig_ptr_object, FALSE);
-		register_icall (mono_free_lparray, "mono_free_lparray", mono_icall_sig_void_object_ptr, FALSE);
-		register_icall (mono_byvalarray_to_byte_array, "mono_byvalarray_to_byte_array", mono_icall_sig_void_object_ptr_int32, FALSE);
-		register_icall (mono_array_to_byte_byvalarray, "mono_array_to_byte_byvalarray", mono_icall_sig_void_ptr_object_int32, FALSE);
-		register_icall (mono_delegate_to_ftnptr, "mono_delegate_to_ftnptr", mono_icall_sig_ptr_object, FALSE);
-		register_icall (mono_ftnptr_to_delegate, "mono_ftnptr_to_delegate", mono_icall_sig_object_ptr_ptr, FALSE);
-		register_icall (mono_marshal_asany, "mono_marshal_asany", mono_icall_sig_ptr_object_int32_int32, FALSE);
-		register_icall (mono_marshal_free_asany, "mono_marshal_free_asany", mono_icall_sig_void_object_ptr_int32_int32, FALSE);
-		register_icall (ves_icall_marshal_alloc, "ves_icall_marshal_alloc", mono_icall_sig_ptr_ptr, FALSE);
-		register_icall (mono_marshal_free, "mono_marshal_free", mono_icall_sig_void_ptr, FALSE);
-		register_icall (mono_marshal_set_last_error, "mono_marshal_set_last_error", mono_icall_sig_void, TRUE);
-		register_icall (mono_marshal_set_last_error_windows, "mono_marshal_set_last_error_windows", mono_icall_sig_void_int32, TRUE);
-		register_icall (mono_string_utf8_to_builder, "mono_string_utf8_to_builder", mono_icall_sig_void_ptr_ptr, FALSE);
-		register_icall (mono_string_utf8_to_builder2, "mono_string_utf8_to_builder2", mono_icall_sig_object_ptr, FALSE);
-		register_icall (mono_string_utf16_to_builder, "mono_string_utf16_to_builder", mono_icall_sig_void_ptr_ptr, FALSE);
-		register_icall (mono_string_utf16_to_builder2, "mono_string_utf16_to_builder2", mono_icall_sig_object_ptr, FALSE);
-		register_icall (mono_marshal_free_array, "mono_marshal_free_array", mono_icall_sig_void_ptr_int32, FALSE);
-		register_icall (mono_string_to_byvalstr, "mono_string_to_byvalstr", mono_icall_sig_void_ptr_ptr_int32, FALSE);
-		register_icall (mono_string_to_byvalwstr, "mono_string_to_byvalwstr", mono_icall_sig_void_ptr_ptr_int32, FALSE);
+		register_icall (mono_marshal_string_to_utf16, mono_icall_sig_ptr_obj, FALSE);
+		register_icall (mono_marshal_string_to_utf16_copy, mono_icall_sig_ptr_obj, FALSE);
+		register_icall (mono_string_to_utf16_internal, mono_icall_sig_ptr_obj, FALSE);
+		register_icall (ves_icall_mono_string_from_utf16, mono_icall_sig_obj_ptr, FALSE);
+		register_icall (mono_string_from_byvalstr, mono_icall_sig_obj_ptr_int, FALSE);
+		register_icall (mono_string_from_byvalwstr, mono_icall_sig_obj_ptr_int, FALSE);
+		register_icall (mono_string_new_wrapper_internal, mono_icall_sig_obj_ptr, FALSE);
+		register_icall (ves_icall_string_new_wrapper, mono_icall_sig_obj_ptr, FALSE);
+		register_icall (mono_string_new_len_wrapper, mono_icall_sig_obj_ptr_int, FALSE);
+		register_icall (ves_icall_mono_string_to_utf8, mono_icall_sig_ptr_obj, FALSE);
+		register_icall (mono_string_to_utf8str, mono_icall_sig_ptr_obj, FALSE);
+		register_icall (mono_string_to_ansibstr, mono_icall_sig_ptr_object, FALSE);
+		register_icall (mono_string_builder_to_utf8, mono_icall_sig_ptr_object, FALSE);
+		register_icall (mono_string_builder_to_utf16, mono_icall_sig_ptr_object, FALSE);
+		register_icall (mono_array_to_savearray, mono_icall_sig_ptr_object, FALSE);
+		register_icall (mono_array_to_lparray, mono_icall_sig_ptr_object, FALSE);
+		register_icall (mono_free_lparray, mono_icall_sig_void_object_ptr, FALSE);
+		register_icall (mono_byvalarray_to_byte_array, mono_icall_sig_void_object_ptr_int32, FALSE);
+		register_icall (mono_array_to_byte_byvalarray, mono_icall_sig_void_ptr_object_int32, FALSE);
+		register_icall (mono_delegate_to_ftnptr, mono_icall_sig_ptr_object, FALSE);
+		register_icall (mono_ftnptr_to_delegate, mono_icall_sig_object_ptr_ptr, FALSE);
+		register_icall (mono_marshal_asany, mono_icall_sig_ptr_object_int32_int32, FALSE);
+		register_icall (mono_marshal_free_asany, mono_icall_sig_void_object_ptr_int32_int32, FALSE);
+		register_icall (ves_icall_marshal_alloc, mono_icall_sig_ptr_ptr, FALSE);
+		register_icall (mono_marshal_free, mono_icall_sig_void_ptr, FALSE);
+		register_icall (mono_marshal_set_last_error, mono_icall_sig_void, TRUE);
+		register_icall (mono_marshal_set_last_error_windows, mono_icall_sig_void_int32, TRUE);
+		register_icall (mono_string_utf8_to_builder, mono_icall_sig_void_ptr_ptr, FALSE);
+		register_icall (mono_string_utf8_to_builder2, mono_icall_sig_object_ptr, FALSE);
+		register_icall (mono_string_utf16_to_builder, mono_icall_sig_void_ptr_ptr, FALSE);
+		register_icall (mono_string_utf16_to_builder2, mono_icall_sig_object_ptr, FALSE);
+		register_icall (mono_marshal_free_array, mono_icall_sig_void_ptr_int32, FALSE);
+		register_icall (mono_string_to_byvalstr, mono_icall_sig_void_ptr_ptr_int32, FALSE);
+		register_icall (mono_string_to_byvalwstr, mono_icall_sig_void_ptr_ptr_int32, FALSE);
 		// Because #define g_free monoeg_g_free.
-		register_icall (g_free, "monoeg_g_free", mono_icall_sig_void_ptr, FALSE);
-		register_icall_no_wrapper (mono_object_isinst_icall, "mono_object_isinst_icall", mono_icall_sig_object_object_ptr);
-		register_icall (mono_struct_delete_old, "mono_struct_delete_old", mono_icall_sig_void_ptr_ptr, FALSE);
-		register_icall (mono_delegate_begin_invoke, "mono_delegate_begin_invoke", mono_icall_sig_object_object_ptr, FALSE);
-		register_icall (mono_delegate_end_invoke, "mono_delegate_end_invoke", mono_icall_sig_object_object_ptr, FALSE);
-		register_icall (mono_gc_wbarrier_generic_nostore_internal, "mono_gc_wbarrier_generic_nostore_internal", mono_icall_sig_void_ptr, FALSE);
-		register_icall (mono_gchandle_get_target_internal, "mono_gchandle_get_target_internal", mono_icall_sig_object_int32, TRUE);
-		register_icall (mono_marshal_isinst_with_cache, "mono_marshal_isinst_with_cache", mono_icall_sig_object_object_ptr_ptr, FALSE);
-		register_icall (mono_threads_enter_gc_safe_region_unbalanced, "mono_threads_enter_gc_safe_region_unbalanced", mono_icall_sig_ptr_ptr, TRUE);
-		register_icall (mono_threads_exit_gc_safe_region_unbalanced, "mono_threads_exit_gc_safe_region_unbalanced", mono_icall_sig_void_ptr_ptr, TRUE);
-		register_icall (mono_threads_enter_gc_unsafe_region_unbalanced, "mono_threads_enter_gc_unsafe_region_unbalanced", mono_icall_sig_ptr_ptr, TRUE);
-		register_icall (mono_threads_exit_gc_unsafe_region_unbalanced, "mono_threads_exit_gc_unsafe_region_unbalanced", mono_icall_sig_void_ptr_ptr, TRUE);
-		register_icall (mono_threads_attach_coop, "mono_threads_attach_coop", mono_icall_sig_ptr_ptr_ptr, TRUE);
-		register_icall (mono_threads_detach_coop, "mono_threads_detach_coop", mono_icall_sig_void_ptr_ptr, TRUE);
-		register_icall (mono_marshal_get_type_object, "mono_marshal_get_type_object", mono_icall_sig_object_ptr, TRUE);
+		register_icall (monoeg_g_free, mono_icall_sig_void_ptr, FALSE);
+		register_icall (mono_object_isinst_icall, mono_icall_sig_object_object_ptr, TRUE);
+		register_icall (mono_struct_delete_old, mono_icall_sig_void_ptr_ptr, FALSE);
+		register_icall (mono_delegate_begin_invoke, mono_icall_sig_object_object_ptr, FALSE);
+		register_icall (mono_delegate_end_invoke, mono_icall_sig_object_object_ptr, FALSE);
+		register_icall (mono_gc_wbarrier_generic_nostore_internal, mono_icall_sig_void_ptr, FALSE);
+		register_icall (mono_gchandle_get_target_internal, mono_icall_sig_object_int32, TRUE);
+		register_icall (mono_marshal_isinst_with_cache, mono_icall_sig_object_object_ptr_ptr, FALSE);
+		register_icall (mono_threads_enter_gc_safe_region_unbalanced, mono_icall_sig_ptr_ptr, TRUE);
+		register_icall (mono_threads_exit_gc_safe_region_unbalanced, mono_icall_sig_void_ptr_ptr, TRUE);
+		register_icall (mono_threads_enter_gc_unsafe_region_unbalanced, mono_icall_sig_ptr_ptr, TRUE);
+		register_icall (mono_threads_exit_gc_unsafe_region_unbalanced, mono_icall_sig_void_ptr_ptr, TRUE);
+		register_icall (mono_threads_attach_coop, mono_icall_sig_ptr_ptr_ptr, TRUE);
+		register_icall (mono_threads_detach_coop, mono_icall_sig_void_ptr_ptr, TRUE);
+		register_icall (mono_marshal_get_type_object, mono_icall_sig_object_ptr, TRUE);
 
 		mono_cominterop_init ();
 		mono_remoting_init ();
@@ -2907,7 +2880,7 @@ mono_marshal_get_runtime_invoke_for_sig (MonoMethodSignature *sig)
 
 #ifndef ENABLE_ILGEN
 static void
-emit_icall_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethodSignature *sig, gconstpointer func, MonoMethodSignature *csig2, gboolean check_exceptions)
+emit_icall_wrapper_noilgen (MonoMethodBuilder *mb, MonoJitICallInfo *callinfo, MonoMethodSignature *csig2, gboolean check_exceptions)
 {
 }
 
@@ -2919,8 +2892,8 @@ emit_return_noilgen (MonoMethodBuilder *mb)
 
 /**
  * mono_marshal_get_icall_wrapper:
- * Generates IL code for the icall wrapper. The generated method
- * calls the unmanaged code in \p func.
+ * Generates IL code for the JIT icall wrapper. The generated method
+ * calls the unmanaged code in \p callinfo->func.
  */
 MonoMethod *
 mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_exceptions)
@@ -2950,7 +2923,7 @@ mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_excep
 	else
 		csig2 = mono_metadata_signature_dup_full (mono_defaults.corlib, sig);
 
-	get_marshal_cb ()->emit_icall_wrapper (mb, sig, func, csig2, check_exceptions);
+	get_marshal_cb ()->emit_icall_wrapper (mb, callinfo, csig2, check_exceptions);
 
 	csig = mono_metadata_signature_dup_full (mono_defaults.corlib, sig);
 	csig->pinvoke = 0;
@@ -5195,7 +5168,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr (MonoObjectHandl
 
 	gpointer pa [ ] = { MONO_HANDLE_RAW (obj), &dst, &delete_old };
 
-	mono_runtime_invoke_handle (method, NULL_HANDLE, pa, error);
+	mono_runtime_invoke_handle_void (method, NULL_HANDLE, pa, error);
 }
 
 static void
@@ -6044,7 +6017,7 @@ mono_marshal_asany_impl (MonoObjectHandle o, MonoMarshalNative string_encoding, 
 			MonoBoolean delete_old = FALSE;
 			gpointer pa [ ] = { MONO_HANDLE_RAW (o), &res, &delete_old };
 
-			mono_runtime_invoke_handle (method, NULL_HANDLE, pa, error);
+			mono_runtime_invoke_handle_void (method, NULL_HANDLE, pa, error);
 			return_val_if_nok (error, NULL);
 		}
 

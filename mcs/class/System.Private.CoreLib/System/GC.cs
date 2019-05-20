@@ -18,7 +18,7 @@ namespace System
 		NotApplicable = 4
 	}
 
-	partial class GC
+	public static partial class GC
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static int GetCollectionCount (int generation);

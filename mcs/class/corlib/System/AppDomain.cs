@@ -72,7 +72,9 @@ namespace System {
 #endif
         #pragma warning disable 169
         #region Sync with object-internals.h
+		#region Sync with LinkerDescriptor/mscorlib.xml
 		IntPtr _mono_app_domain;
+		#endregion
 		#endregion
         #pragma warning restore 169
 		static string _process_guid;
@@ -194,6 +196,7 @@ namespace System {
 			}
 		}
 
+#if !DISABLE_SECURITY
 		public Evidence Evidence {
 			get {
 #if MONOTOUCH
@@ -239,6 +242,7 @@ namespace System {
 				return (IPrincipal)_principal; 
 			}
 		}
+#endif
 
 		// for AppDomain there is only an allowed (i.e. granted) set
 		// http://msdn.microsoft.com/library/en-us/cpguide/html/cpcondetermininggrantedpermissions.asp
@@ -1043,6 +1047,7 @@ namespace System {
 			info.SerializeNonPrimitives ();
 
 			AppDomain ad = (AppDomain) RemotingServices.GetDomainProxy (createDomain (friendlyName, info));
+#if !DISABLE_SECURITY
 			if (securityInfo == null) {
 				// get default domain's Evidence (unless we're are the default!)
 				if (def == null)
@@ -1052,6 +1057,7 @@ namespace System {
 			}
 			else
 				ad._evidence = new Evidence (securityInfo);	// copy
+#endif
 
 #if !MOBILE
 			if (info.AppDomainInitializer != null) {

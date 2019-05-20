@@ -3773,6 +3773,7 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 		}
 		break;
 	}
+	case MONO_PATCH_INFO_LDSTR_LIT:
 	case MONO_PATCH_INFO_JIT_ICALL:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL: {
@@ -3984,17 +3985,6 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 			}
 		}
 		ji->data.target = info;
-		break;
-	}
-	case MONO_PATCH_INFO_LDSTR_LIT: {
-		int len = decode_value (p, &p);
-		char *s;
-
-		s = (char *)mono_mempool_alloc0 (mp, len + 1);
-		memcpy (s, p, len + 1);
-		p += len + 1;
-
-		ji->data.target = s;
 		break;
 	}
 	case MONO_PATCH_INFO_VIRT_METHOD: {
@@ -5453,11 +5443,8 @@ get_mscorlib_aot_module (void)
 	return amodule;
 }
 
-static void
-no_trampolines (void)
-{
-	g_assert_not_reached ();
-}
+void
+mono_no_trampolines (void);
 
 /*
  * Return the trampoline identified by NAME from the mscorlib AOT file.
@@ -5470,14 +5457,14 @@ mono_aot_get_trampoline_full (const char *name, MonoTrampInfo **out_tinfo)
 
 	if (mono_llvm_only) {
 		*out_tinfo = NULL;
-		return (gpointer)no_trampolines;
+		return (gpointer)mono_no_trampolines;
 	}
 
 	return mono_create_ftnptr_malloc ((guint8 *)load_function_full (amodule, name, out_tinfo));
 }
 
 gpointer
-(mono_aot_get_trampoline) (const char *name)
+mono_aot_get_trampoline (const char *name)
 {
 	MonoTrampInfo *out_tinfo;
 	gpointer code;

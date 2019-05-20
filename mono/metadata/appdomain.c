@@ -1497,7 +1497,7 @@ mono_domain_fire_assembly_load (MonoAssembly *assembly, gpointer user_data)
 
 	void *params [1];
 	params [0] = MONO_HANDLE_RAW (reflection_assembly);
-	mono_runtime_invoke_handle (assembly_load_method, appdomain, params, error);
+	mono_runtime_invoke_handle_void (assembly_load_method, appdomain, params, error);
 leave:
 	mono_error_cleanup (error);
 	HANDLE_FUNCTION_RETURN ();
@@ -2668,7 +2668,7 @@ ves_icall_System_AppDomain_InternalIsFinalizingForUnload (gint32 domain_id, Mono
 }
 
 void
-ves_icall_System_AppDomain_DoUnhandledException (MonoExceptionHandle exc, MonoError *error)
+ves_icall_System_AppDomain_DoUnhandledException (MonoAppDomainHandle ad, MonoExceptionHandle exc, MonoError *error)
 {
 	mono_unhandled_exception_checked (MONO_HANDLE_CAST (MonoObject, exc), error);
 	mono_error_assert_ok (error);

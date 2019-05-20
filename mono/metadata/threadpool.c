@@ -498,13 +498,7 @@ mono_threadpool_end_invoke (MonoAsyncResult *ares, MonoArray **out_args, MonoObj
 			MONO_OBJECT_SETREF_INTERNAL (ares, handle, (MonoObject*) wait_handle);
 		}
 		mono_monitor_exit_internal ((MonoObject*) ares);
-#ifdef HOST_WIN32
-		MONO_ENTER_GC_SAFE;
-		mono_win32_wait_for_single_object_ex (wait_event, INFINITE, TRUE);
-		MONO_EXIT_GC_SAFE;
-#else
 		mono_w32handle_wait_one (wait_event, MONO_INFINITE_WAIT, TRUE);
-#endif
 	}
 
 	ac = (MonoAsyncCall*) ares->object_data;
@@ -803,25 +797,4 @@ ves_icall_System_Threading_ThreadPool_RequestWorkerThread (MonoError *error)
 
 	mono_refcount_dec (&threadpool);
 	return TRUE;
-}
-
-MonoBoolean G_GNUC_UNUSED
-ves_icall_System_Threading_ThreadPool_PostQueuedCompletionStatus (MonoNativeOverlapped *native_overlapped, MonoError *error)
-{
-	/* This copy the behavior of the current Mono implementation */
-	mono_error_set_not_implemented (error, "");
-	return FALSE;
-}
-
-MonoBoolean G_GNUC_UNUSED
-ves_icall_System_Threading_ThreadPool_BindIOCompletionCallbackNative (gpointer file_handle, MonoError *error)
-{
-	/* This copy the behavior of the current Mono implementation */
-	return TRUE;
-}
-
-MonoBoolean G_GNUC_UNUSED
-ves_icall_System_Threading_ThreadPool_IsThreadPoolHosted (MonoError *error)
-{
-	return FALSE;
 }

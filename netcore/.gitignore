@@ -4,10 +4,12 @@ tests
 /shared
 sdk
 dotnet*
+aspnetcore-runtime-*
 netcoreapp2.0/
 netcoreapp3.0/
 packs/
 /corefx
+/roslyn
 /obj
 corefx-test-assets.xml
 Makefile

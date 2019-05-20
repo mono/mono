@@ -1717,8 +1717,10 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 		EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_GET_TLS_TRAMP, GUINT_TO_POINTER(key));
 		return mini_emit_calli (cfg, mono_icall_sig_ptr, NULL, addr, NULL, NULL);
 	} else {
-		gpointer getter = (gpointer)mono_tls_get_tls_getter (key);
-		return mono_emit_jit_icall (cfg, getter, NULL);
+		g_assert (TLS_KEY_THREAD == 0); // FIXME static_assert
+		const MonoJitICallId jit_icall_id = (MonoJitICallId)(MONO_JIT_ICALL_mono_tls_get_thread + key);
+		g_assert (mono_get_jit_icall_info ()->array [jit_icall_id].func == (gpointer)mono_tls_get_tls_getter (key));
+		return mono_emit_jit_icall_id (cfg, jit_icall_id, NULL);
 	}
 }
 
@@ -2152,18 +2154,21 @@ check_method_sharing (MonoCompile *cfg, MonoMethod *cmethod, gboolean *out_pass_
 }
 
 static gboolean
-direct_icalls_enabled (MonoCompile *cfg)
+direct_icalls_enabled (MonoCompile *cfg, MonoMethod *method)
 {
-	return FALSE;
+	if (cfg->gen_sdb_seq_points || cfg->disable_direct_icalls)
+		return FALSE;
+
+	if (method && mono_aot_direct_icalls_enabled_for_method (cfg, method))
+		return TRUE;
 
 	/* LLVM on amd64 can't handle calls to non-32 bit addresses */
 #ifdef TARGET_AMD64
 	if (cfg->compile_llvm && !cfg->llvm_only)
 		return FALSE;
 #endif
-	if (cfg->gen_sdb_seq_points || cfg->disable_direct_icalls)
-		return FALSE;
-	return TRUE;
+
+	return FALSE;
 }
 
 MonoInst*
@@ -2174,7 +2179,7 @@ mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *
 	 * The wrapper is needed to be able to do stack walks for asynchronously suspended
 	 * threads when debugging.
 	 */
-	if (direct_icalls_enabled (cfg)) {
+	if (direct_icalls_enabled (cfg, NULL)) {
 		int costs;
 
 		if (!info->wrapper_method) {
@@ -3158,7 +3163,7 @@ static MonoInst*
 handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_used)
 {
 	MonoInst *iargs [2];
-	void *alloc_ftn;
+	MonoJitICallId alloc_ftn;
 
 	if (mono_class_get_flags (klass) & TYPE_ATTRIBUTE_ABSTRACT) {
 		char* full_name = mono_type_get_full_name (klass);
@@ -3185,10 +3190,10 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 		if (cfg->opt & MONO_OPT_SHARED) {
 			EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
 			iargs [1] = data;
-			alloc_ftn = (gpointer)ves_icall_object_new;
+			alloc_ftn = MONO_JIT_ICALL_ves_icall_object_new;
 		} else {
 			iargs [0] = data;
-			alloc_ftn = (gpointer)ves_icall_object_new_specific;
+			alloc_ftn = MONO_JIT_ICALL_ves_icall_object_new_specific;
 		}
 
 		if (managed_alloc && !(cfg->opt & MONO_OPT_SHARED)) {
@@ -3202,19 +3207,19 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 		}
 
-		return mono_emit_jit_icall (cfg, alloc_ftn, iargs);
+		return mono_emit_jit_icall_id (cfg, alloc_ftn, iargs);
 	}
 
 	if (cfg->opt & MONO_OPT_SHARED) {
 		EMIT_NEW_DOMAINCONST (cfg, iargs [0]);
 		EMIT_NEW_CLASSCONST (cfg, iargs [1], klass);
 
-		alloc_ftn = (gpointer)ves_icall_object_new;
+		alloc_ftn = MONO_JIT_ICALL_ves_icall_object_new;
 	} else if (cfg->compile_aot && cfg->cbb->out_of_line && m_class_get_type_token (klass) && m_class_get_image (klass) == mono_defaults.corlib && !mono_class_is_ginst (klass)) {
 		/* This happens often in argument checking code, eg. throw new FooException... */
 		/* Avoid relocations and save some space by calling a helper function specialized to mscorlib */
 		EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (m_class_get_type_token (klass)));
-		alloc_ftn = (gpointer)mono_helper_newobj_mscorlib;
+		alloc_ftn = MONO_JIT_ICALL_mono_helper_newobj_mscorlib;
 	} else {
 		MonoVTable *vtable = mono_class_vtable_checked (cfg->domain, klass, &cfg->error);
 
@@ -3234,11 +3239,11 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 			EMIT_NEW_ICONST (cfg, iargs [1], size);
 			return mono_emit_method_call (cfg, managed_alloc, iargs, NULL);
 		}
-		alloc_ftn = (gpointer)ves_icall_object_new_specific;
+		alloc_ftn = MONO_JIT_ICALL_ves_icall_object_new_specific;
 		EMIT_NEW_VTABLECONST (cfg, iargs [0], vtable);
 	}
 
-	return mono_emit_jit_icall (cfg, alloc_ftn, iargs);
+	return mono_emit_jit_icall_id (cfg, alloc_ftn, iargs);
 }
 	
 /*
@@ -6545,7 +6550,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			break;
 		case MONO_CEE_BREAK:
 			if (mini_should_insert_breakpoint (cfg->method)) {
-				ins = mono_emit_jit_icall (cfg, mini_get_dbg_callbacks ()->user_break, NULL);
+				ins = mono_emit_jit_icall (cfg, mono_debugger_agent_user_break, NULL);
 			} else {
 				MONO_INST_NEW (cfg, ins, OP_NOP);
 			}
@@ -7055,7 +7060,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL &&
 				mini_class_is_system_array (cmethod->klass)) {
 				array_rank = m_class_get_rank (cmethod->klass);
-			} else if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && direct_icalls_enabled (cfg)) {
+			} else if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && direct_icalls_enabled (cfg, cmethod)) {
 				direct_icall = TRUE;
 			} else if (fsig->pinvoke) {
 				MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod, TRUE, cfg->compile_aot);
@@ -8564,16 +8569,16 @@ calli_end:
 				*sp = emit_get_rgctx_method (cfg, context_used,
 											 cmethod, MONO_RGCTX_INFO_METHOD);
 				/* Optimize the common cases */
-				gpointer function = NULL;
+				MonoJitICallId function = MONO_JIT_ICALL_ZeroIsReserved;;
 				int n = fsig->param_count;
 				switch (n) {
-				case 1: function = (gpointer)mono_array_new_1;
+				case 1: function = MONO_JIT_ICALL_mono_array_new_1;
 					break;
-				case 2: function = (gpointer)mono_array_new_2;
+				case 2: function = MONO_JIT_ICALL_mono_array_new_2;
 					break;
-				case 3: function = (gpointer)mono_array_new_3;
+				case 3: function = MONO_JIT_ICALL_mono_array_new_3;
 					break;
-				case 4: function = (gpointer)mono_array_new_4;
+				case 4: function = MONO_JIT_ICALL_mono_array_new_4;
 					break;
 				default:
 					// FIXME Maximum value of param_count? Realistically 64. Fits in imm?
@@ -8595,10 +8600,10 @@ calli_end:
 					ins->type = STACK_PTR;
 					sp [2] = ins;
 					// FIXME Adjust sp by n - 3? Attempts failed.
-					function = (gpointer)mono_array_new_n_icall;
+					function = MONO_JIT_ICALL_mono_array_new_n_icall;
 					break;
 				}
-				alloc = mono_emit_jit_icall (cfg, function, sp);
+				alloc = mono_emit_jit_icall_id (cfg, function, sp);
 			} else if (cmethod->string_ctor) {
 				g_assert (!context_used);
 				g_assert (!vtable_arg);
@@ -9265,7 +9270,7 @@ calli_end:
 #ifdef HOST_WIN32
 			} else if ((field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) &&
 					field->parent && field->parent->image &&
-					field->parent->image->is_module_handle &&
+					m_image_is_module_handle (field->parent->image) &&
 					mono_field_get_data (field)) {
 				if (cfg->verbose_level > 3)
 				    g_print ("rva field %p\n", mono_field_get_data (field));
@@ -10121,19 +10126,14 @@ field_access_end:
 
 		case MONO_CEE_MONO_ICALL: {
 			g_assert (method->wrapper_type != MONO_WRAPPER_NONE);
-			gpointer func;
-			MonoJitICallInfo *info;
-
-			func = mono_method_get_wrapper_data (method, token);
-			info = mono_find_jit_icall_by_addr (func);
-			if (!info)
-				g_error ("Could not find icall address in wrapper %s", mono_method_full_name (method, 1));
-			g_assert (info);
+			MonoJitICallInfo * const info = mono_find_jit_icall_info ((MonoJitICallId)token);
+			g_assertf (info, "Could not find icall address in wrapper %s", mono_method_full_name (method, 1));
 
 			CHECK_STACK (info->sig->param_count);
 			sp -= info->sig->param_count;
 
-			if (!strcmp (info->name, "mono_threads_attach_coop")) {
+			// FIXME int instead of pointer
+			if (info == &mono_get_jit_icall_info ()->mono_threads_attach_coop) {
 				MonoInst *addr;
 				MonoBasicBlock *next_bb;
 
@@ -10146,7 +10146,7 @@ field_access_end:
 					EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL, (char*)info->name);
 					ins = mini_emit_calli (cfg, info->sig, sp, addr, NULL, NULL);
 				} else {
-					ins = mono_emit_jit_icall (cfg, info->func, sp);
+					ins = mono_emit_jit_icall_info (cfg, info, sp);
 				}
 
 				/*
@@ -10156,7 +10156,7 @@ field_access_end:
 				NEW_BBLOCK (cfg, next_bb);
 				MONO_START_BB (cfg, next_bb);
 			} else {
-				ins = mono_emit_jit_icall (cfg, info->func, sp);
+				ins = mono_emit_jit_icall_info (cfg, info, sp);
 			}
 
 			if (!MONO_TYPE_IS_VOID (info->sig->ret))

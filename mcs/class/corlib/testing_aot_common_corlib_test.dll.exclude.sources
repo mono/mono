@@ -1,0 +1,12 @@
+System/AppDomainCas.cs
+
+System.Security.Claims/*.cs
+System.Security.Principal/*.cs
+System.Security.Permissions/IBuiltInPermissionTest.cs
+System.Security.Permissions/PrincipalPermissionTest.cs
+System.Security.Permissions/PrincipalPermissionAttributeTest.cs
+System.Security.Policy/ApplicationTrustTest.cs
+System.Security.Policy/EvidenceTest.cs
+
+System.Threading/ExecutionContextTest.cs
+System.Threading/ThreadPrincipalTests.cs

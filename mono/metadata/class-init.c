@@ -665,19 +665,10 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	}
 
 	// compute is_byreflike
-	if (m_class_is_valuetype (klass)) {
-		/* TypedReference and RuntimeArgumentHandle are byreflike by
-		 * definition. Otherwise, look for IsByRefLikeAttribute.
-		 */
-		if (mono_is_corlib_image (image) &&
-		    ((m_class_get_byval_arg (klass)->type == MONO_TYPE_TYPEDBYREF) ||
-		     (!strcmp (m_class_get_name_space (klass), "System") &&
-		      !strcmp (m_class_get_name (klass), "RuntimeArgumentHandle"))))
+	if (m_class_is_valuetype (klass))
+		if (class_has_isbyreflike_attribute (klass))
 			klass->is_byreflike = 1; 
-		else if (class_has_isbyreflike_attribute (klass))
-			klass->is_byreflike = 1;
-	}
-
+		
 	mono_loader_unlock ();
 
 	MONO_PROFILER_RAISE (class_loaded, (klass));
@@ -3604,7 +3595,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			continue;
 #ifdef HOST_WIN32
 		if ((field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) &&
-			field->parent->image->is_module_handle &&
+			m_image_is_module_handle (field->parent->image) &&
 			mono_field_get_data(field))
 			continue;
 #endif

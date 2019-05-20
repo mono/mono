@@ -8,8 +8,8 @@ namespace System
 	/* Contains the rarely used fields of Delegate */
 	sealed class DelegateData
 	{
-		public Type target_type;
-		public string method_name;
+		public Type? target_type;
+		public string? method_name;
 		public bool curried_first_arg;
 	}
 
@@ -19,18 +19,18 @@ namespace System
 		#region Sync with object-internals.h
 		IntPtr method_ptr;
 		IntPtr invoke_impl;
-		object _target;
+		object? _target;
 		IntPtr method;
 		IntPtr delegate_trampoline;
 		IntPtr extra_arg;
 		IntPtr method_code;
 		IntPtr interp_method;
 		IntPtr interp_invoke_impl;
-		MethodInfo method_info;
+		MethodInfo? method_info;
 
 		// Keep a ref of the MethodInfo passed to CreateDelegate.
 		// Used to keep DynamicMethods alive.
-		MethodInfo original_method_info;
+		MethodInfo? original_method_info;
 
 		DelegateData data;
 
@@ -39,11 +39,11 @@ namespace System
 
 		protected Delegate (object target, string method)
 		{
-			if (target == null)
-				throw new ArgumentNullException (nameof(target));
+			if (target is null)
+				throw new ArgumentNullException (nameof (target));
 
-			if (method == null)
-				throw new ArgumentNullException (nameof(method));
+			if (method is null)
+				throw new ArgumentNullException (nameof (method));
 
 			this._target = target;
 			this.data = new DelegateData () {
@@ -53,13 +53,13 @@ namespace System
 
 		protected Delegate (Type target, string method)
 		{
-			if (target == null)
+			if (target is null)
 				throw new ArgumentNullException (nameof (target));
 
 			if (target.ContainsGenericParameters)
 				throw new ArgumentException (SR.Arg_UnboundGenParam, nameof (target));
 
-			if (method == null)
+			if (method is null)
 				throw new ArgumentNullException (nameof (method));
 
 			if (!target.IsRuntimeImplemented ())
@@ -71,27 +71,28 @@ namespace System
 			};
 		}
 
-		public object Target => _target;
+		public object? Target => GetTarget ();
 
-		public static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure)
+		internal virtual object? GetTarget () => _target;
+
+		public static Delegate CreateDelegate (Type type, object? firstArgument, MethodInfo method, bool throwOnBindFailure)
 		{
-			return CreateDelegate (type, firstArgument, method, throwOnBindFailure, true);
+			return CreateDelegate (type, firstArgument, method, throwOnBindFailure, true)!;
 		}
 
-		public static Delegate CreateDelegate (Type type, MethodInfo method, bool throwOnBindFailure)
+		public static Delegate? CreateDelegate (Type type, MethodInfo method, bool throwOnBindFailure)
 		{
 			return CreateDelegate (type, null, method, throwOnBindFailure, false);
 		}
 
-		static Delegate CreateDelegate (Type type, object firstArgument, MethodInfo method, bool throwOnBindFailure, bool allowClosed)
+		static Delegate? CreateDelegate (Type type, object? firstArgument, MethodInfo method, bool throwOnBindFailure, bool allowClosed)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException (nameof (type));
-			if (method == null)
+			if (method is null)
 				throw new ArgumentNullException (nameof (method));
 
-			RuntimeType rtType = type as RuntimeType;
-			if (rtType == null)
+			if (!(type is RuntimeType rtType))
 				throw new ArgumentException (SR.Argument_MustBeRuntimeType, nameof (type));
 			if (!(method is RuntimeMethodInfo || method is System.Reflection.Emit.DynamicMethod))
 				throw new ArgumentException (SR.Argument_MustBeRuntimeMethodInfo, nameof (method));
@@ -99,38 +100,38 @@ namespace System
 			if (!rtType.IsDelegate ())
 				throw new ArgumentException (SR.Arg_MustBeDelegate, nameof (type));
 
-			if (!IsMatchingCandidate (type, firstArgument, method, allowClosed, out DelegateData delegate_data)) {
+			if (!IsMatchingCandidate (type, firstArgument, method, allowClosed, out DelegateData? delegate_data)) {
 				if (throwOnBindFailure)
 					throw new ArgumentException (SR.Arg_DlgtTargMeth);
 
 				return null;
 			}
 
-			Delegate d = CreateDelegate_internal (type, firstArgument, method, throwOnBindFailure);
-			if (d != null)
+			Delegate? d = CreateDelegate_internal (type, firstArgument, method, throwOnBindFailure);
+			if (d != null) {
 				d.original_method_info = method;
-			if (delegate_data != null)
-				d.data = delegate_data;
+				d.data = delegate_data!;
+			}
+
 			return d;
 		}
 
-		public static Delegate CreateDelegate (Type type, object target, string method, bool ignoreCase, bool throwOnBindFailure)
+		public static Delegate? CreateDelegate (Type type, object target, string method, bool ignoreCase, bool throwOnBindFailure)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException (nameof (type));
-			if (target == null)
+			if (target is null)
 				throw new ArgumentNullException (nameof (target));
-			if (method == null)
+			if (method is null)
 				throw new ArgumentNullException (nameof (method));
 
-			RuntimeType rtType = type as RuntimeType;
-			if (rtType == null)
+			if (!(type is RuntimeType rtType))
 				throw new ArgumentException (SR.Argument_MustBeRuntimeType, nameof (type));
 			if (!rtType.IsDelegate ())
 				throw new ArgumentException (SR.Arg_MustBeDelegate, nameof (type));
 
-			MethodInfo info = GetCandidateMethod (type, target.GetType (), method, BindingFlags.Instance, ignoreCase);
-			if (info == null) {
+			MethodInfo? info = GetCandidateMethod (type, target.GetType (), method, BindingFlags.Instance, ignoreCase);
+			if (info is null) {
 				if (throwOnBindFailure)
 					throw new ArgumentException (SR.Arg_DlgtTargMeth);
 
@@ -140,28 +141,27 @@ namespace System
 			return CreateDelegate_internal (type, null, info, throwOnBindFailure);
 		}
 
-		public static Delegate CreateDelegate (Type type, Type target, string method, bool ignoreCase, bool throwOnBindFailure)
+		public static Delegate? CreateDelegate (Type type, Type target, string method, bool ignoreCase, bool throwOnBindFailure)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException (nameof (type));
-			if (target == null)
+			if (target is null)
 				throw new ArgumentNullException (nameof (target));
 			if (target.ContainsGenericParameters)
 				throw new ArgumentException (SR.Arg_UnboundGenParam, nameof (target));
-			if (method == null)
+			if (method is null)
 				throw new ArgumentNullException (nameof (method));
 
-			RuntimeType rtType = type as RuntimeType;
-			RuntimeType rtTarget = target as RuntimeType;
-			if (rtType == null)
+			if (!(type is RuntimeType rtType))
 				throw new ArgumentException (SR.Argument_MustBeRuntimeType, nameof (type));
-			if (rtTarget == null)
+
+			if (!target.IsRuntimeImplemented ())
 				throw new ArgumentException (SR.Argument_MustBeRuntimeType, nameof (target));
 			if (!rtType.IsDelegate ())
 				throw new ArgumentException (SR.Arg_MustBeDelegate, nameof (type));
 
-			MethodInfo info = GetCandidateMethod (type, target, method, BindingFlags.Static, ignoreCase);
-			if (info == null) {
+			MethodInfo? info = GetCandidateMethod (type, target, method, BindingFlags.Static, ignoreCase);
+			if (info is null) {
 				if (throwOnBindFailure)
 					throw new ArgumentException (SR.Arg_DlgtTargMeth);
 
@@ -171,9 +171,12 @@ namespace System
 			return CreateDelegate_internal (type, null, info, throwOnBindFailure);
 		}
 
-		static MethodInfo GetCandidateMethod (Type type, Type target, string method, BindingFlags bflags, bool ignoreCase)
+		static MethodInfo? GetCandidateMethod (Type type, Type target, string method, BindingFlags bflags, bool ignoreCase)
 		{
-			MethodInfo invoke = type.GetMethod ("Invoke");
+			MethodInfo? invoke = type.GetMethod ("Invoke");
+			if (invoke is null)
+				return null;
+
 			ParameterInfo [] delargs = invoke.GetParametersInternal ();
 			Type[] delargtypes = new Type [delargs.Length];
 
@@ -192,26 +195,23 @@ namespace System
 			if (ignoreCase)
 				flags |= BindingFlags.IgnoreCase;
 
-			MethodInfo info = null;
+			for (Type? targetType = target; targetType != null; targetType = targetType.BaseType) {
+				MethodInfo? mi = targetType.GetMethod (method, flags, null, delargtypes, Array.Empty<ParameterModifier>());
 
-			for (Type targetType = target; targetType != null; targetType = targetType.BaseType) {
-				MethodInfo mi = targetType.GetMethod (method, flags,
-					null, delargtypes, Array.Empty<ParameterModifier>());
-				if (mi != null && IsReturnTypeMatch (invoke.ReturnType, mi.ReturnType)) {
-					info = mi;
-					break;
+				if (mi != null && IsReturnTypeMatch (invoke.ReturnType!, mi.ReturnType!)) {
+					return mi;
 				}
 			}
 
-			return info;
+			return null;
 		}
 
-		static bool IsMatchingCandidate (Type type, object target, MethodInfo method, bool allowClosed, out DelegateData delegate_data)
+		static bool IsMatchingCandidate (Type type, object? target, MethodInfo method, bool allowClosed, out DelegateData? delegateData)
 		{
-			MethodInfo invoke = type.GetMethod ("Invoke");
+			MethodInfo? invoke = type.GetMethod ("Invoke");
 
-			if (!IsReturnTypeMatch (invoke.ReturnType, method.ReturnType)) {
-				delegate_data = null;
+			if (invoke == null || !IsReturnTypeMatch (invoke.ReturnType!, method.ReturnType!)) {
+				delegateData = null;
 				return false;
 			}
 
@@ -249,16 +249,16 @@ namespace System
 			}
 
 			if (!argLengthMatch) {
-				delegate_data = null;
+				delegateData = null;
 				return false;
 			}
 
 			bool argsMatch;
-			delegate_data = new DelegateData ();
+			delegateData = new DelegateData ();
 
 			if (target != null) {
 				if (!method.IsStatic) {
-					argsMatch = IsArgumentTypeMatchWithThis (target.GetType (), method.DeclaringType, true);
+					argsMatch = IsArgumentTypeMatchWithThis (target.GetType (), method.DeclaringType!, true);
 					for (int i = 0; i < args.Length; i++)
 						argsMatch &= IsArgumentTypeMatch (delargs [i].ParameterType, args [i].ParameterType);
 				} else {
@@ -266,13 +266,13 @@ namespace System
 					for (int i = 1; i < args.Length; i++)
 						argsMatch &= IsArgumentTypeMatch (delargs [i - 1].ParameterType, args [i].ParameterType);
 
-					delegate_data.curried_first_arg = true;
+					delegateData.curried_first_arg = true;
 				}
 			} else {
 				if (!method.IsStatic) {
 					if (args.Length + 1 == delargs.Length) {
 						// The first argument should match this
-						argsMatch = IsArgumentTypeMatchWithThis (delargs [0].ParameterType, method.DeclaringType, false);
+						argsMatch = IsArgumentTypeMatchWithThis (delargs [0].ParameterType, method.DeclaringType!, false);
 						for (int i = 0; i < args.Length; i++)
 							argsMatch &= IsArgumentTypeMatch (delargs [i + 1].ParameterType, args [i].ParameterType);
 					} else {
@@ -288,7 +288,7 @@ namespace System
 						for (int i = 0; i < delargs.Length; i++)
 							argsMatch &= IsArgumentTypeMatch (delargs [i].ParameterType, args [i + 1].ParameterType);
 
-						delegate_data.curried_first_arg = true;
+						delegateData.curried_first_arg = true;
 					} else {
 						argsMatch = true;
 						for (int i = 0; i < args.Length; i++)
@@ -345,9 +345,9 @@ namespace System
 			return match;
 		}
 
-		protected virtual object DynamicInvokeImpl (object[] args)
+		protected virtual object? DynamicInvokeImpl (object?[]? args)
 		{
-			if (Method == null) {
+			if (Method is null) {
 				Type[] mtypes = new Type [args.Length];
 				for (int i = 0; i < args.Length; ++i) {
 					mtypes [i] = args [i].GetType ();
@@ -356,16 +356,30 @@ namespace System
 			}
 
 			var target = _target;
-			if (this.data == null)
+			if (this.data is null)
 				InitializeDelegateData ();
+			
+			// replace all Type.Missing with default values defined on parameters of the delegate if any
+			MethodInfo? invoke = GetType ().GetMethod ("Invoke");
+			if (invoke != null && args != null) {
+				ParameterInfo[] delegateParameters = invoke.GetParameters ();
+				for (int i = 0; i < args.Length; i++) {
+					if (args [i] == Type.Missing) {
+						ParameterInfo dlgParam = delegateParameters [i];
+						if (dlgParam.HasDefaultValue) {
+							args [i] = dlgParam.DefaultValue;
+						}
+					}
+				}
+			}
 
 			if (Method.IsStatic) {
 				//
 				// The delegate is bound to _target
 				//
 				if (data.curried_first_arg) {
-					if (args == null) {
-						args = new [] { target };
+					if (args is null) {
+						args = new object?[] { target };
 					} else {
 						Array.Resize (ref args, args.Length + 1);
 						Array.Copy (args, 0, args, 1, args.Length - 1);
@@ -375,7 +389,7 @@ namespace System
 					target = null;
 				}
 			} else {
-				if (_target == null && args != null && args.Length > 0) {
+				if (_target is null && args?.Length > 0) {
 					target = args [0];
 					Array.Copy (args, 1, args, 0, args.Length - 1);
 					Array.Resize (ref args, args.Length - 1);
@@ -385,11 +399,9 @@ namespace System
 			return Method.Invoke (target, args);
 		}
 
-		public override bool Equals (object obj)
+		public override bool Equals (object? obj)
 		{
-			Delegate d = obj as Delegate;
-
-			if (d == null)
+			if (!(obj is Delegate d) || !InternalEqualTypes (this, obj))
 				return false;
 
 			// Do not compare method_ptr, since it can point to a trampoline
@@ -400,9 +412,9 @@ namespace System
 						return (d.data.target_type == data.target_type && d.data.method_name == data.method_name);
 					else {
 						if (d.data != null)
-							return d.data.target_type == null;
+							return d.data.target_type is null;
 						if (data != null)
-							return data.target_type == null;
+							return data.target_type is null;
 						return false;
 					}
 				}
@@ -414,7 +426,7 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			MethodInfo m = Method;
+			MethodInfo? m = Method;
 
 			return (m != null ? m.GetHashCode () : GetType ().GetHashCode ()) ^ RuntimeHelpers.GetHashCode (_target);
 		}
@@ -441,8 +453,8 @@ namespace System
 				if (_target != null) {
 					delegate_data.curried_first_arg = true;
 				} else {
-					MethodInfo invoke = GetType ().GetMethod ("Invoke");
-					if (invoke.GetParametersCount () + 1 == method_info.GetParametersCount ())
+					MethodInfo? invoke = GetType ().GetMethod ("Invoke");
+					if (invoke != null && invoke.GetParametersCount () + 1 == method_info.GetParametersCount ())
 						delegate_data.curried_first_arg = true;
 				}
 			}
@@ -458,7 +470,7 @@ namespace System
 		private protected extern static MulticastDelegate AllocDelegateLike_internal (Delegate d);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info, bool throwOnBindFailure);
+		static extern Delegate? CreateDelegate_internal (Type type, object? target, MethodInfo info, bool throwOnBindFailure);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern MethodInfo GetVirtualMethod_internal ();

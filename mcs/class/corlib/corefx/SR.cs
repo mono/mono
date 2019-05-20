@@ -1572,4 +1572,5 @@ partial class SR
 	public const string NotSupported_Method = "Method not supported.";
 	public const string Cryptography_AlgorithmTypesMustBeVisible = "Algorithms added to CryptoConfig must be accessable from outside their assembly.";
 	public const string Cryptography_AddNullOrEmptyName = "CryptoConfig cannot add a mapping for a null or empty name.";
+	public const string AmbiguousImplementationException_NullMessage = "Ambiguous implementation found.";
 }

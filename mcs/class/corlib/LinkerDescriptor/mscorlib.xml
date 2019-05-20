@@ -3,11 +3,10 @@
 	<assembly fullname="mscorlib">
 	
 		<!-- domain.c: mono_defaults.appdomain_class -->
-		<type fullname="System.AppDomain" preserve="fields">
+		<type fullname="System.AppDomain">
+		  <field name="_mono_app_domain" />
 			<!-- appdomain.c: mono_domain_try_type_resolve -->
 			<method name="DoTypeResolve" />
-			<!-- appdomain.c: mono_domain_try_type_builder_resolve -->
-			<method name="DoTypeBuilderResolve" />
 			<!-- appdomain.c: mono_try_assembly_resolve -->
 			<method name="DoAssemblyResolve" />
 			<!-- appdomain.c: mono_domain_fire_assembly_load -->
@@ -300,6 +299,12 @@
 		<!-- exception.c (mono_get_exception_not_supported) -->
 		<type fullname="System.NotSupportedException">
 			<!-- mono_get_exception_not_implemented -->
+			<method signature="System.Void .ctor(System.String)" />
+		</type>
+
+		<!-- mono-error.c (mono_error_set_ambiguous_implementation) -->
+		<type fullname="System.Runtime.AmbiguousImplementationException">
+			<!-- mono_error_set_ambiguous_implementation -->
 			<method signature="System.Void .ctor(System.String)" />
 		</type>
         
@@ -671,7 +676,7 @@
 		<type fullname="System.Runtime.InteropServices.ICustomMarshaler" />
 
 		<!-- domain.c: mono_defaults.marshal_class -->
-		<type fullname="System.Runtime.InteropServices.Marshal" preserve="fields" >
+		<type fullname="System.Runtime.InteropServices.Marshal">
 			<!-- marshal.c (mono_marshal_get_struct_to_ptr) -->
 			<method name="StructureToPtr" />
 		</type>

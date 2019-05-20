@@ -37,7 +37,7 @@ using System.Threading;
 
 namespace System.Diagnostics {
 
-#if !MOBILE
+#if !MOBILE || MOBILE_DESKTOP_HOST
 	internal class TraceImplSettings {
 		public const string Key = ".__TraceInfoSettingsKey__.";
 

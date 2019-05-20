@@ -1,7 +1,7 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.38.30
+EMSCRIPTEN_VERSION=1.38.31
 EMSCRIPTEN_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 $(TOP)/sdks/builds/toolchains/emsdk:
@@ -20,6 +20,7 @@ $(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
 .stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install sdk-$(EMSCRIPTEN_VERSION)-64bit
 	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded sdk-$(EMSCRIPTEN_VERSION)-64bit
+	cd $(TOP)/sdks/builds/toolchains/emsdk/emscripten/$(EMSCRIPTEN_VERSION) && (patch -N -p1 < $(TOP)/sdks/builds/fix-emscripten-8511.diff; exit 0)
 	touch $@
 
 .PHONY: provision-wasm
@@ -92,6 +93,11 @@ build-wasm: build-wasm-runtime
 archive-wasm: package-wasm-runtime
 
 wasm_ARCHIVE += wasm-runtime-$(CONFIGURATION)
+
+ifeq ($(UNAME),Darwin)
+# The c# offsets tool is 32 bit, and the 64 bit version doesn't work
+USE_OFFSETS_TOOL_PY = 1
+endif
 
 ##
 # Parameters

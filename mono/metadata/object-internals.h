@@ -618,6 +618,7 @@ typedef struct {
 	MonoObject *additional;
 } MonoStreamingContext;
 
+#if !ENABLE_NETCORE
 typedef struct {
 	MonoObject obj;
 	MonoBoolean readOnly;
@@ -756,6 +757,7 @@ typedef struct {
 	MonoString *currency_english_name;
 	MonoString *currency_native_name;
 } MonoRegionInfo;
+#endif
 
 typedef struct {
 	MonoObject object;
@@ -1737,7 +1739,6 @@ mono_string_handle_to_utf8 (MonoStringHandle s, MonoError *error);
 char *
 mono_string_to_utf8_image (MonoImage *image, MonoStringHandle s, MonoError *error);
 
-
 MonoArrayHandle
 mono_array_clone_in_domain (MonoDomain *domain, MonoArrayHandle array, MonoError *error);
 
@@ -2237,6 +2238,9 @@ mono_string_length_internal (MonoString *s);
 MonoString*
 mono_string_empty_internal (MonoDomain *domain);
 
+char *
+mono_string_to_utf8len (MonoStringHandle s, gsize *utf8len, MonoError *error);
+
 char*
 mono_string_to_utf8_checked_internal (MonoString *string_obj, MonoError *error);
 
@@ -2305,6 +2309,9 @@ void
 mono_field_get_value_internal (MonoObject *obj, MonoClassField *field, void *value);
 
 MonoMethod* mono_get_context_capture_method (void);
+
+guint8*
+mono_runtime_get_aotid_arr (void);
 
 /* GC handles support
  *

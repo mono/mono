@@ -100,7 +100,7 @@ namespace System.Runtime.Remoting
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static MethodBase GetVirtualMethod (Type type, MethodBase method);
 
-#if DISABLE_REMOTING
+#if !FEATURE_REMOTING
 		public static bool IsTransparentProxy (object proxy)
 		{
 			throw new NotSupportedException ();

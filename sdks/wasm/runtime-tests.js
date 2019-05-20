@@ -70,6 +70,7 @@ var args = testArguments;
 print("Arguments: " + testArguments);
 profilers = [];
 setenv = {};
+runtime_args = [];
 while (true) {
 	if (args [0].startsWith ("--profile=")) {
 		var arg = args [0].substring ("--profile=".length);
@@ -83,6 +84,10 @@ while (true) {
 		if (parts.length != 2)
 			fail_exec ("Error: malformed argument: '" + args [0]);
 		setenv [parts [0]] = parts [1];
+		args = args.slice (1);
+	} else if (args [0].startsWith ("--runtime-arg=")) {
+		var arg = args [0].substring ("--runtime-arg=".length);
+		runtime_args.push (arg);
 		args = args.slice (1);
 	} else {
 		break;
@@ -187,6 +192,9 @@ var App = {
 
 			return;
 		}
+
+		if (runtime_args.length > 0)
+			MONO.mono_wasm_set_runtime_options (runtime_args);
 
 		if (args[0] == "--run") {
 			// Run an exe

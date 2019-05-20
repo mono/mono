@@ -147,7 +147,7 @@ export VBCS_LOCATION
 
 start-compiler-server:
 	echo Attempting to start compiler server...
-	$(topdir)/build/start-compiler-server.sh '$(realpath $(topdir))' '$(realpath $(topdir)/build/compiler-server.log)' '$(COMPILER_SERVER_PIPENAME)'
+	./build/start-compiler-server.sh '$(realpath $(topdir))' '$(realpath $(topdir)/build)/compiler-server.log' '$(COMPILER_SERVER_PIPENAME)'
 else
 start-compiler-server:
 	

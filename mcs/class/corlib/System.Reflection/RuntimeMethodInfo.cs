@@ -399,6 +399,10 @@ namespace System.Reflection {
 				} catch (MethodAccessException) {
 					throw;
 #endif
+#if NETCORE
+				} catch (Mono.NullByRefReturnException) {
+					throw new NullReferenceException ();
+#endif
 				} catch (OverflowException) {
 					throw;
 				} catch (Exception e) {
@@ -407,7 +411,15 @@ namespace System.Reflection {
 			}
 			else
 			{
+#if NETCORE
+				try {
+					o = InternalInvoke (obj, parameters, out exc);
+				} catch (Mono.NullByRefReturnException) {
+					throw new NullReferenceException ();
+				}
+#else
 				o = InternalInvoke (obj, parameters, out exc);
+#endif
 			}
 
 			if (exc != null)
@@ -699,11 +711,11 @@ namespace System.Reflection {
 			}
 
 			if (hasUserType) {
-#if FULL_AOT_RUNTIME
-				throw new NotSupportedException ("User types are not supported under full aot");
-#else
-				return new MethodOnTypeBuilderInst (this, methodInstantiation);
+#if !FULL_AOT_RUNTIME
+				if (RuntimeFeature.IsDynamicCodeSupported)
+					return new MethodOnTypeBuilderInst (this, methodInstantiation);
 #endif
+				throw new NotSupportedException ("User types are not supported under full aot");
 			}
 
 			MethodInfo ret = MakeGenericMethod_impl (methodInstantiation);

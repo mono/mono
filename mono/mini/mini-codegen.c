@@ -438,7 +438,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		g_string_append_printf (sbuf, "\t%-2d %s", i, mono_inst_name (ins->opcode));
 	else
 		g_string_append_printf (sbuf, " %s", mono_inst_name (ins->opcode));
-	if (spec == MONO_ARCH_CPU_SPEC) {
+	if (spec == (gpointer)/*FIXME*/MONO_ARCH_CPU_SPEC) {
 		gboolean dest_base = FALSE;
 		switch (ins->opcode) {
 		case OP_STOREV_MEMBASE:
@@ -1244,7 +1244,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		spec = ins_get_spec (ins->opcode);
 		spec_dest = spec [MONO_INST_DEST];
 
-		if (G_UNLIKELY (spec == MONO_ARCH_CPU_SPEC)) {
+		if (G_UNLIKELY (spec == (gpointer)/*FIXME*/MONO_ARCH_CPU_SPEC)) {
 			g_error ("Opcode '%s' missing from machine description file.", mono_inst_name (ins->opcode));
 		}
 		
@@ -2691,6 +2691,8 @@ mono_peephole_ins (MonoBasicBlock *bb, MonoInst *ins)
 int
 mini_exception_id_by_name (const char *name)
 {
+	if (strcmp (name, "NullReferenceException") == 0)
+		return MONO_EXC_NULL_REF;
 	if (strcmp (name, "IndexOutOfRangeException") == 0)
 		return MONO_EXC_INDEX_OUT_OF_RANGE;
 	if (strcmp (name, "OverflowException") == 0)
@@ -2701,8 +2703,6 @@ mini_exception_id_by_name (const char *name)
 		return MONO_EXC_DIVIDE_BY_ZERO;
 	if (strcmp (name, "InvalidCastException") == 0)
 		return MONO_EXC_INVALID_CAST;
-	if (strcmp (name, "NullReferenceException") == 0)
-		return MONO_EXC_NULL_REF;
 	if (strcmp (name, "ArrayTypeMismatchException") == 0)
 		return MONO_EXC_ARRAY_TYPE_MISMATCH;
 	if (strcmp (name, "ArgumentException") == 0)

@@ -360,6 +360,46 @@ extern int valgrind_register;
 
 #define INS_INFO(opcode) (&mini_ins_info [((opcode) - OP_START - 1) * 4])
 
+/* instruction description for use in regalloc/scheduling */
+
+enum {
+	MONO_INST_DEST = 0,
+	MONO_INST_SRC1 = 1,             /* we depend on the SRCs to be consecutive */
+	MONO_INST_SRC2 = 2,
+	MONO_INST_SRC3 = 3,
+	MONO_INST_LEN = 4,
+	MONO_INST_CLOB = 5,
+	/* Unused, commented out to reduce the size of the mdesc tables
+	MONO_INST_FLAGS,
+	MONO_INST_COST,
+	MONO_INST_DELAY,
+	MONO_INST_RES,
+	*/
+	MONO_INST_MAX = 6
+};
+
+typedef union MonoInstSpec { // instruction specification
+	struct {
+		char dest;
+		char src1;
+		char src2;
+		char src3;
+		unsigned char len;
+		char clob;
+		// char flags;
+		// char cost;
+		// char delay;
+		// char res;
+	};
+	struct {
+		char xdest;
+		char src [3];
+		unsigned char xlen;
+		char xclob;
+	};
+	char bytes[MONO_INST_MAX];
+} MonoInstSpec;
+
 extern const char mini_ins_info[];
 extern const gint8 mini_ins_sreg_counts [];
 
@@ -884,23 +924,6 @@ mono_inst_set_src_registers (MonoInst *ins, int *regs)
 	ins->sreg3 = regs [2];
 }
 
-/* instruction description for use in regalloc/scheduling */
-enum {
-	MONO_INST_DEST,
-	MONO_INST_SRC1,		/* we depend on the SRCs to be consecutive */
-	MONO_INST_SRC2,
-	MONO_INST_SRC3,
-	MONO_INST_LEN,
-	MONO_INST_CLOB,
-	/* Unused, commented out to reduce the size of the mdesc tables
-	MONO_INST_FLAGS,
-	MONO_INST_COST,
-	MONO_INST_DELAY,
-	MONO_INST_RES,
-	*/
-	MONO_INST_MAX
-};
-
 typedef union {
 	struct {
 		guint16 tid; /* tree number */
@@ -1104,6 +1127,7 @@ typedef struct MonoJumpInfoRgctxEntry MonoJumpInfoRgctxEntry;
 typedef struct MonoJumpInfo MonoJumpInfo;
 typedef struct MonoJumpInfoGSharedVtCall MonoJumpInfoGSharedVtCall;
 
+// This ordering is mimiced in MONO_JIT_ICALLS.
 typedef enum {
 	MONO_TRAMPOLINE_JIT      = 0,
 	MONO_TRAMPOLINE_JUMP     = 1,
@@ -1760,11 +1784,11 @@ typedef struct {
 	int type;
 } StackSlot;
 
-extern const char MONO_ARCH_CPU_SPEC [];
+extern const MonoInstSpec MONO_ARCH_CPU_SPEC [];
 #define MONO_ARCH_CPU_SPEC_IDX_COMBINE(a) a ## _idx
 #define MONO_ARCH_CPU_SPEC_IDX(a) MONO_ARCH_CPU_SPEC_IDX_COMBINE(a)
 extern const guint16 MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC) [];
-#define ins_get_spec(op) ((const char*)&MONO_ARCH_CPU_SPEC + MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC)[(op) - OP_LOAD])
+#define ins_get_spec(op) ((const char*)&MONO_ARCH_CPU_SPEC [MONO_ARCH_CPU_SPEC_IDX(MONO_ARCH_CPU_SPEC)[(op) - OP_LOAD]])
 
 #ifndef DISABLE_JIT
 
@@ -1892,6 +1916,8 @@ enum {
 	 * Unwind information. Owned by this structure.
 	 */
 	GSList *unwind_ops;
+
+	MonoJitICallInfo *jit_icall_info;
 
 	 /*
 	  * Encoded unwind info loaded from AOT images
@@ -2062,16 +2088,9 @@ gboolean mono_compile_is_broken (MonoCompile *cfg, MonoMethod *method, gboolean 
 MonoInst *mono_get_got_var (MonoCompile *cfg);
 void      mono_add_seq_point (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int native_offset);
 void      mono_add_var_location (MonoCompile *cfg, MonoInst *var, gboolean is_reg, int reg, int offset, int from, int to);
-MonoInst* mono_emit_jit_icall (MonoCompile *cfg, gconstpointer func, MonoInst **args);
-
-#ifdef __cplusplus
-template <typename T>
-inline MonoInst*
-mono_emit_jit_icall (MonoCompile *cfg, T func, MonoInst **args)
-{
-	return mono_emit_jit_icall (cfg, (gconstpointer)func, args);
-}
-#endif // __cplusplus
+MonoInst* mono_emit_jit_icall_info (MonoCompile *cfg, MonoJitICallInfo *jit_icall_info, MonoInst **args); // FIXME remove/reduce
+MonoInst* mono_emit_jit_icall_id (MonoCompile *cfg, MonoJitICallId jit_icall_id, MonoInst **args);
+#define mono_emit_jit_icall(cfg, name, args) (mono_emit_jit_icall_id ((cfg), MONO_JIT_ICALL_ ## name, (args)))
 
 MonoInst* mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *info, MonoInst **args);
 MonoInst* mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, MonoInst *this_ins);
@@ -2103,14 +2122,14 @@ void      mono_add_ins_to_end               (MonoBasicBlock *bb, MonoInst *inst)
 
 void      mono_replace_ins                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **prev, MonoBasicBlock *first_bb, MonoBasicBlock *last_bb);
 
-void              mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_throw);
+void      mini_register_opcode_emulation (int opcode, MonoJitICallInfo *jit_icall_info, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_throw);
 
 #ifdef __cplusplus
 template <typename T>
 inline void
-mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, T func, const char *symbol, gboolean no_throw)
+mini_register_opcode_emulation (int opcode, MonoJitICallInfo *jit_icall_info, const char *name, MonoMethodSignature *sig, T func, const char *symbol, gboolean no_throw)
 {
-	mini_register_opcode_emulation (opcode, name, sig, (gpointer)func, symbol, no_throw);
+	mini_register_opcode_emulation (opcode, jit_icall_info, name, sig, (gpointer)func, symbol, no_throw);
 }
 #endif // __cplusplus
 
@@ -2240,7 +2259,7 @@ MonoTrampInfo*    mono_tramp_info_create (const char *name, guint8 *code, guint3
 void              mono_tramp_info_free (MonoTrampInfo *info);
 void              mono_aot_tramp_info_register (MonoTrampInfo *info, MonoDomain *domain);
 void              mono_tramp_info_register (MonoTrampInfo *info, MonoDomain *domain);
-int               mini_exception_id_by_name (const char *name);
+int               mini_exception_id_by_name (const char *name) MONO_LLVM_INTERNAL;
 gboolean          mini_type_is_hfa (MonoType *t, int *out_nfields, int *out_esize) MONO_LLVM_INTERNAL;
 
 int               mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_bblock, MonoBasicBlock *end_bblock, 

@@ -1678,14 +1678,13 @@ mono_find_jit_opcode_emulation (int opcode)
 }
 
 void
-mini_register_opcode_emulation (int opcode, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
+mini_register_opcode_emulation (int opcode, MonoJitICallInfo *info, const char *name, MonoMethodSignature *sig, gpointer func, const char *symbol, gboolean no_wrapper)
 {
-	MonoJitICallInfo *info;
-
+	g_assert (info);
 	g_assert (!sig->hasthis);
 	g_assert (sig->param_count < 3);
 
-	info = mono_register_jit_icall_full (func, name, sig, no_wrapper, symbol);
+	mono_register_jit_icall_info (info, func, name, sig, no_wrapper, symbol);
 
 	if (emul_opcode_num >= emul_opcode_alloced) {
 		int incr = emul_opcode_alloced? emul_opcode_alloced/2: 16;
@@ -4136,19 +4135,8 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	mono_destroy_compile (cfg);
 
+	mini_patch_llvm_jit_callees (target_domain, method, code);
 #ifndef DISABLE_JIT
-	/* Update llvm callees */
-	if (domain_jit_info (target_domain)->llvm_jit_callees) {
-		GSList *callees = (GSList*)g_hash_table_lookup (domain_jit_info (target_domain)->llvm_jit_callees, method);
-		GSList *l;
-
-		for (l = callees; l; l = l->next) {
-			gpointer *addr = (gpointer*)l->data;
-
-			*addr = code;
-		}
-	}
-
 	mono_emit_jit_map (jinfo);
 #endif
 	mono_domain_unlock (target_domain);

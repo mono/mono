@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Threading
 {
-	partial class Monitor
+	public static partial class Monitor
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern void Enter (object obj);

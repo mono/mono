@@ -185,6 +185,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 			}
 		}
 
+#if !DISABLE_SECURITY
 		[Test]
 		public void Property_Arguments_Mismatch ()
 		{
@@ -223,6 +224,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 			Assert.AreSame (pi, id.MemberInfo, "#3");
 			Assert.IsNotNull (id.Invoke (), "#4");
 		}
+#endif
 
 		[Test]
 		public void Property_MemberInfo_NonStatic ()

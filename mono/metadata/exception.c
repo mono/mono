@@ -202,7 +202,7 @@ create_exception_two_strings (MonoClass *klass, MonoStringHandle a1, MonoStringH
 
 	gpointer args [ ] = { MONO_HANDLE_RAW (a1), MONO_HANDLE_RAW (a2) };
 
-	mono_runtime_invoke_handle (method, o, args, error);
+	mono_runtime_invoke_handle_void (method, o, args, error);
 	if (!is_ok (error))
 		o = mono_new_null ();
 
@@ -718,6 +718,12 @@ mono_exception_new_argument_null (const char *arg, MonoError *error)
 }
 
 MonoExceptionHandle
+mono_exception_new_argument_out_of_range(const char *arg, const char *msg, MonoError *error)
+{
+	return mono_exception_new_argument_internal ("ArgumentOutOfRangeException", arg, msg, error);
+}
+
+MonoExceptionHandle
 mono_exception_new_serialization (const char *msg, MonoError *error)
 {
 	return mono_exception_new_by_name_msg (mono_get_corlib (),
@@ -859,7 +865,7 @@ mono_get_exception_type_initialization_handle (const gchar *type_name, MonoExcep
 	MonoObjectHandle exc = mono_object_new_handle (domain, klass, error);
 	mono_error_assert_ok (error);
 
-	mono_runtime_invoke_handle (method, exc, args, error);
+	mono_runtime_invoke_handle_void (method, exc, args, error);
 	goto_if_nok (error, return_null);
 	goto exit;
 return_null:
@@ -1103,7 +1109,7 @@ mono_get_exception_runtime_wrapped_handle (MonoObjectHandle wrapped_exception, M
 
 	gpointer args [ ] = { MONO_HANDLE_RAW (wrapped_exception) };
 
-	mono_runtime_invoke_handle (method, o, args, error);
+	mono_runtime_invoke_handle_void (method, o, args, error);
 	goto_if_nok (error, return_null);
 	goto exit;
 return_null:
@@ -1491,11 +1497,13 @@ mono_error_set_simple_file_not_found (MonoError *error, const char *file_name, g
 }
 
 void
-mono_error_set_argument_out_of_range (MonoError *error, const char *name)
+mono_error_set_argument_out_of_range (MonoError *error, const char *param_name, const char *msg_format, ...)
 {
-	ERROR_DECL (error_creating_exception);
-	mono_error_set_exception_handle (error, mono_new_exception_argument_out_of_range (name, error_creating_exception));
-	mono_error_cleanup (error_creating_exception);
+	char *str;
+	SET_ERROR_MSG (str, msg_format);
+	mono_error_set_specific (error, MONO_ERROR_ARGUMENT_OUT_OF_RANGE, str);
+	if (param_name)
+		mono_error_set_first_argument (error, param_name);
 }
 
 MonoExceptionHandle

@@ -127,6 +127,7 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 
 	MonoClass * const klass = MONO_HANDLE_GETVAL (this_obj, vtable)->klass;
@@ -140,10 +141,10 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 		mono_runtime_invoke_checked (method, raw, NULL, error);
 		mono_gchandle_free_internal (gchandle);
 	} else {
-		mono_runtime_invoke_handle (method, this_obj, NULL, error);
+		mono_runtime_invoke_handle_void (method, this_obj, NULL, error);
 	}
 
-	return is_ok (error);
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
 /**
@@ -279,7 +280,7 @@ mono_type_initialization_init (void)
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
 	mono_coop_mutex_init (&ldstr_section);
-	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_icall_sig_object_int, FALSE);
+	mono_register_jit_icall (ves_icall_string_alloc, mono_icall_sig_object_int, FALSE);
 }
 
 void
@@ -2134,7 +2135,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 		if (mono_field_is_deleted (field))
 			continue;
 #ifdef HOST_WIN32
-		if ((field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && field->parent->image->is_module_handle) {
+		if ((field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && m_image_is_module_handle(field->parent->image)) {
 			const char *data = mono_field_get_data (field);
 
 			g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_HAS_DEFAULT));
@@ -4851,7 +4852,7 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 	obj = mono_object_new_handle (mono_domain_get (), klass, error);
 	goto_if_nok (error, return_null);
 
-	mono_runtime_invoke_handle (method, obj, args, error);
+	mono_runtime_invoke_handle_void (method, obj, args, error);
 	goto_if_nok (error, return_null);
 	return obj;
 
@@ -5573,16 +5574,19 @@ mono_runtime_try_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 		return (MonoObject *)obj;
 	} else {
 		if (mono_class_is_nullable (method->klass)) {
-			MonoObject *nullable;
+			if (method->flags & METHOD_ATTRIBUTE_STATIC) {
+				obj = NULL;
+			} else {
+				MonoObject *nullable;
+				/* Convert the unboxed vtype into a Nullable structure */
+				nullable = mono_object_new_checked (mono_domain_get (), method->klass, error);
+				return_val_if_nok (error, NULL);
 
-			/* Convert the unboxed vtype into a Nullable structure */
-			nullable = mono_object_new_checked (mono_domain_get (), method->klass, error);
-			return_val_if_nok (error, NULL);
-
-			MonoObject *boxed = mono_value_box_checked (mono_domain_get (), m_class_get_cast_class (method->klass), obj, error);
-			return_val_if_nok (error, NULL);
-			mono_nullable_init ((guint8 *)mono_object_unbox_internal (nullable), boxed, method->klass);
-			obj = mono_object_unbox_internal (nullable);
+				MonoObject *boxed = mono_value_box_checked (mono_domain_get (), m_class_get_cast_class (method->klass), obj, error);
+				return_val_if_nok (error, NULL);
+				mono_nullable_init ((guint8 *)mono_object_unbox_internal (nullable), boxed, method->klass);
+				obj = mono_object_unbox_internal (nullable);
+			}
 		}
 
 		/* obj must be already unboxed if needed */
@@ -6652,12 +6656,11 @@ mono_string_new_utf32_checked (MonoDomain *domain, const mono_unichar4 *text, gi
 
 	MonoString *s;
 	mono_unichar2 *utf16_output = NULL;
-	gint32 utf16_len = 0;
 	
 	error_init (error);
 	utf16_output = g_ucs4_to_utf16 (text, len, NULL, NULL, NULL);
 	
-	while (utf16_output [utf16_len]) utf16_len++;
+	gint32 utf16_len = g_utf16_len (utf16_output);
 	
 	s = mono_string_new_size_checked (domain, utf16_len, error);
 	goto_if_nok (error, exit);
@@ -6782,11 +6785,15 @@ mono_string_new_utf8_len (MonoDomain *domain, const char *text, guint length, Mo
 
 	ut = eg_utf8_to_utf16_with_nuls (text, length, NULL, &items_written, &eg_error);
 
-	if (!eg_error)
-		o = mono_string_new_utf16_handle (domain, ut, items_written, error);
-	else {
+	if (eg_error) {
+		o = NULL_HANDLE_STRING;
+		// Like mono_ldstr_utf8:
 		mono_error_set_argument (error, "string", eg_error->message);
+		// FIXME? See mono_string_new_checked.
+		//mono_error_set_execution_engine (error, "String conversion error: %s", eg_error->message);
 		g_error_free (eg_error);
+	} else {
+		o = mono_string_new_utf16_handle (domain, ut, items_written, error);
 	}
 
 	g_free (ut);
@@ -6981,6 +6988,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 	error_init (error);
 
 	g_assert (m_class_is_valuetype (klass));
+	g_assert (value != NULL);
 	if (G_UNLIKELY (m_class_is_byreflike (klass))) {
 		char *full_name = mono_type_get_full_name (klass);
 		mono_error_set_execution_engine (error, "Cannot box IsByRefLike type %s", full_name);
@@ -6999,7 +7007,6 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 	return_val_if_nok (error, NULL_HANDLE);
 
 	size -= MONO_ABI_SIZEOF (MonoObject);
-
 	if (mono_gc_is_moving ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
 		MONO_ENTER_NO_SAFEPOINTS;
@@ -7728,6 +7735,9 @@ mono_utf16_to_utf8len (const gunichar2 *s, gsize slength, gsize *utf8_length, Mo
 	return as;
 }
 
+/**
+ * mono_utf16_to_utf8:
+ */
 char *
 mono_utf16_to_utf8 (const gunichar2 *s, gsize slength, MonoError *error)
 {
@@ -7749,6 +7759,24 @@ mono_string_to_utf8_checked_internal (MonoString *s, MonoError *error)
 		return g_strdup ("");
 
 	return mono_utf16_to_utf8 (mono_string_chars_internal (s), s->length, error);
+}
+
+char *
+mono_string_to_utf8len (MonoStringHandle s, gsize *utf8len, MonoError *error)
+{
+	*utf8len = 0;
+	if (MONO_HANDLE_IS_NULL (s))
+		return NULL;
+
+	char *utf8;
+
+	MONO_ENTER_NO_SAFEPOINTS;
+
+	utf8 = mono_utf16_to_utf8len (mono_string_chars_internal (MONO_HANDLE_RAW (s)), mono_string_handle_length (s), utf8len, error);
+
+	MONO_EXIT_NO_SAFEPOINTS;
+
+	return utf8;
 }
 
 /**

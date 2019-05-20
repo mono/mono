@@ -1932,8 +1932,7 @@ namespace System.Threading
                 throw new NotSupportedException(Environment.GetResourceString("Arg_NotSupportedException"));
             Contract.EndContractBlock();
 #endif
-
-            return PostQueuedCompletionStatus(overlapped);
+            throw new NotImplementedException("");
         }
 
         [SecurityCritical]
@@ -2004,8 +2003,10 @@ namespace System.Threading
 
         [System.Security.SecurityCritical]  // auto-generated
 //        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern bool IsThreadPoolHosted();
+        internal static bool IsThreadPoolHosted()
+        {
+            return false;
+        }
 
         [System.Security.SecurityCritical]  // auto-generated
 //        [ResourceExposure(ResourceScope.None)]
@@ -2074,8 +2075,10 @@ namespace System.Threading
 
         [System.Security.SecurityCritical]  // auto-generated
 //        [ResourceExposure(ResourceScope.None)]
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
-        private static extern bool BindIOCompletionCallbackNative(IntPtr fileHandle);
+        private static bool BindIOCompletionCallbackNative(IntPtr fileHandle)
+        {
+            return true;
+        }
     }
 }

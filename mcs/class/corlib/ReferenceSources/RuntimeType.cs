@@ -159,7 +159,11 @@ namespace System
 		{
 			var ctor = GetDefaultConstructor ();
 			if (!nonPublic && ctor != null && !ctor.IsPublic) {
+#if NETCORE
+				throw new MissingMethodException(SR.Format(SR.Arg_NoDefCTor, FullName));
+#else
 				ctor = null;
+#endif
 			}
 
 			if (ctor == null) {

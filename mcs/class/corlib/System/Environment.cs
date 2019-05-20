@@ -563,10 +563,12 @@ namespace System {
 
 			string dir = null;
 
+#pragma warning disable 162
 			if (Environment.IsRunningOnWindows)
 				dir = GetWindowsFolderPath ((int) folder);
 			else
 				dir = UnixGetFolderPath (folder, option);
+#pragma warning restore 162
 
 #if MONO_FEATURE_CAS
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
@@ -957,7 +959,7 @@ namespace System {
 		}
 
 		// private methods
-#if (MONOTOUCH || MONODROID || XAMMAC || WASM)
+#if (MONOTOUCH || MONODROID || XAMMAC || WASM) && !MOBILE_DESKTOP_HOST
 		internal const bool IsRunningOnWindows = false;
 #else
 		internal static bool IsRunningOnWindows {
