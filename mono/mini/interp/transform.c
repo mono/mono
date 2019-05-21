@@ -1437,6 +1437,12 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			td->ip += 5;
 			return TRUE;
 		}
+	} else if (in_corlib && !strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Interlocked")) {
+		if (!strcmp (tm, "MemoryBarrier") && csignature->param_count == 0) {
+			interp_add_ins (td, MINT_MONO_MEMORY_BARRIER);
+			td->ip += 5;
+			return TRUE;
+		}
 	}
 
 	return FALSE;
