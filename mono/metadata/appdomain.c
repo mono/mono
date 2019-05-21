@@ -3150,6 +3150,13 @@ mono_domain_remove_unused_type_hash(gpointer key, gpointer value, gpointer user_
 	
 }
 
+
+static gboolean
+mono_domain_ldstr_table_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	return TRUE;
+}
+
 void 
 mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 {
@@ -3193,8 +3200,9 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	// mono_debug_domain_unload
 	// special_static_fields
 	g_hash_table_foreach_remove(domain->special_static_fields, mono_domain_remove_unused_special_field, image);
-	// ldstr_table interned string
-	domain->ldstr_table;
+	// ldstr_table interned string remove all of them
+	mono_g_hash_table_foreach_remove(domain->ldstr_table, mono_domain_ldstr_table_remove, NULL);
+
 	// mono_reflection_cleanup_domain
 	mnoo_reflection_cleanup_for_unsed_assembly(domain, assembly);
 	// unregister_vtable_reflection_type
