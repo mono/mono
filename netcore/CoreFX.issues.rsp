@@ -565,7 +565,7 @@
 # crashes runtime:
 -nomethod System.Reflection.Tests.PointerTests.PointerFieldGetValue
 # Mono throws unexpected ArgumentExceptions for these:
--method System.Reflection.Tests.PointerTests.IntPtrFieldSetValue
+-nomethod System.Reflection.Tests.PointerTests.IntPtrFieldSetValue
 -nomethod System.Reflection.Tests.PointerTests.PointerFieldSetValue
 -nomethod System.Reflection.Tests.PointerTests.PointerPropertySetValue
 -nomethod System.Reflection.Tests.PointerTests.PointerPropertyGetValue
