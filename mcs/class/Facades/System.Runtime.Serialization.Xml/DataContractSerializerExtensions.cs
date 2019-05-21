@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#if !NO_CODEDOM
+#if !NO_CODEDOM || UNITY_AOT
 using System.CodeDom;
 #endif
 using System.Collections.ObjectModel;
@@ -73,7 +73,7 @@ namespace System.Runtime.Serialization
                 throw NotImplemented.ByDesign;
             }
 
-#if !NO_CODEDOM
+#if !NO_CODEDOM || UNITY_AOT
             public CodeTypeDeclaration ProcessImportedType(CodeTypeDeclaration typeDeclaration, CodeCompileUnit compileUnit)
             {
                 throw NotImplemented.ByDesign;
