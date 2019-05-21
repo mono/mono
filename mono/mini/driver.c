@@ -2048,7 +2048,7 @@ mono_main (int argc, char* argv[])
 			g_free (full_opts);
 		} else if (strcmp (argv [i], "--verbose") == 0 || strcmp (argv [i], "-v") == 0) {
 			mini_verbose_level++;
-		} else if (strcmp (argv [i], "--version-number") == 0) {
+		} else if (strcmp (argv [i], "--version=number") == 0) {
 			g_print ("%s\n", VERSION);
 			return 0;
 		} else if (strcmp (argv [i], "--version") == 0 || strcmp (argv [i], "-V") == 0) {
