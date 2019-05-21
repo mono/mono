@@ -99,6 +99,12 @@ namespace System.Drawing
 		};
 
 		[StructLayout(LayoutKind.Sequential)]
+		internal class AlphaImage : ImageData {
+			internal BitmapInfoHeader	iconHeader;	//image header
+			internal byte []		iconARGB;	// ARGB bits for icon
+		};
+
+		[StructLayout(LayoutKind.Sequential)]
 		internal class IconDump : ImageData {
 			internal byte []		data;
 		};
@@ -375,6 +381,35 @@ namespace System.Drawing
 			writer.Write (ii.iconAND);
 		}
 
+		private void SaveAlphaImage (BinaryWriter writer, AlphaImage ii)
+		{
+			BitmapInfoHeader bih = ii.iconHeader;
+			writer.Write (bih.biSize);
+			writer.Write (bih.biWidth);
+			writer.Write (bih.biHeight);
+			writer.Write (bih.biPlanes);
+			writer.Write (bih.biBitCount);
+			writer.Write (bih.biCompression);
+			writer.Write (bih.biSizeImage);
+			writer.Write (bih.biXPelsPerMeter);
+			writer.Write (bih.biYPelsPerMeter);
+			writer.Write (bih.biClrUsed);
+			writer.Write (bih.biClrImportant);
+
+			//now write bits
+			writer.Write (ii.iconARGB);
+		}
+
+		private void WriteImageData (BinaryWriter writer, ImageData i)
+		{
+			if (i is IconDump)
+				SaveIconDump (writer, (IconDump) i);
+			else if (i is AlphaImage)
+				SaveAlphaImage (writer, (AlphaImage) i);
+			else
+				SaveIconImage (writer, (IconImage) i);
+		}
+
 		private void SaveIconDump (BinaryWriter writer, IconDump id)
 		{
 			writer.Write (id.data);
@@ -410,12 +445,10 @@ namespace System.Drawing
 				while (writer.BaseStream.Length < iconDir.idEntries[i].imageOffset)
 					writer.Write ((byte) 0);
 
-				if (imageData [i] is IconDump)
-					SaveIconDump (writer, (IconDump) imageData [i]);
-				else
-					SaveIconImage (writer, (IconImage) imageData [i]);
+				WriteImageData (writer, imageData [i]);
 			}
 		}
+
 		// TODO: check image not ignored (presently this method doesnt seem to be called unless width/height 
 		// refer to image)
 		private void SaveBestSingleIcon (BinaryWriter writer, int width, int height)
@@ -438,7 +471,7 @@ namespace System.Drawing
 			}
 
 			SaveIconDirEntry (writer, iconDir.idEntries [best], 22);
-			SaveIconImage (writer, (IconImage) imageData [best]);
+			WriteImageData (writer, imageData [best]);
 		}
 
 		private void SaveBitmapAsIcon (BinaryWriter writer)
@@ -470,6 +503,7 @@ namespace System.Drawing
 			bih.biClrUsed = 0;
 			bih.biClrImportant = 0;
 
+			// FIXME: Write as AlphaImage ?
 			IconImage ii = new IconImage ();
 			ii.iconHeader = bih;
 			ii.iconColors = new uint [0];	// no palette
@@ -526,6 +560,32 @@ namespace System.Drawing
 
 			if (imageData == null)
 				return new Bitmap (32, 32);
+
+			if (imageData [id] is AlphaImage)
+			{
+				AlphaImage ai = (AlphaImage) imageData [id];
+
+				BitmapData bd = new BitmapData ();
+				bd.Width = ai.iconHeader.biWidth;
+				bd.Height = ai.iconHeader.biHeight / 2;
+				bd.PixelFormat = PixelFormat.Format32bppArgb;
+				bd.Stride = -ai.iconHeader.biWidth * 4;
+				bmp = new Bitmap (bd.Width, bd.Height, PixelFormat.Format32bppArgb);
+
+				unsafe {
+					fixed (byte* p = ai.iconARGB) {
+						bd.Scan0 = (IntPtr)(p + (bd.Width * 4 * (bd.Height - 1)));
+						BitmapData bd2 = bmp.LockBits (
+							new Rectangle (0, 0, bd.Width, bd.Height),
+							ImageLockMode.WriteOnly|ImageLockMode.UserInputBuffer,
+							PixelFormat.Format32bppArgb,
+							bd);
+						bmp.UnlockBits (bd2);
+					}
+				}
+
+				return bmp;
+			}
 
 			IconImage ii = (IconImage) imageData [id];
 			BitmapInfoHeader bih = ii.iconHeader;
@@ -851,6 +911,29 @@ Console.WriteLine ("\tbih.biClrImportant: {0}", bih.biClrImportant);
 					throw new ArgumentException (msg, "stream");
 				}
 				
+				if (bih.biBitCount == 32) {
+					// This may be an ARGB icon
+					bool has_alpha = false;
+
+					for (int k=3; k < xorSize; k+=4) {
+						if (iidata.iconXOR [k] != 0)
+						{
+							has_alpha = true;
+							break;
+						}
+					}
+
+					if (has_alpha) {
+						AlphaImage aidata = new AlphaImage ();
+						aidata.iconHeader = iidata.iconHeader;
+						aidata.iconARGB = iidata.iconXOR;
+
+						imageData [j] = aidata;
+						bihReader.Dispose ();
+						continue;
+					}
+				}
+
 				//Determine the AND array size
 				numBytesPerLine = (int)((((bih.biWidth) + 31) & ~31) >> 3);
 				int andSize = numBytesPerLine * iconHeight;
