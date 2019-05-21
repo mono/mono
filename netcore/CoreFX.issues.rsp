@@ -531,6 +531,9 @@
 ##  System.Runtime.Tests
 ####################################################################
 
+# GC.GetTotalAllocatedBytes is not implemented
+-nomethod System.Tests.GCTests.GetTotalAllocatedBytes
+
 # Mono for some reason returns true for `(Array)(new int*[0]) is object[]` while .NET Core returns false
 -nomethod System.Tests.ArrayTests.LastIndexOf_ArrayOfPointers_ThrowsNotSupportedException
 -nomethod System.Tests.ArrayTests.Reverse_ArrayOfPointers_ThrowsNotSupportedException
