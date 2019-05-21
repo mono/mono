@@ -1356,6 +1356,18 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_MP);
 			td->ip += 5;
 			return TRUE;
+		} else if (!strcmp (tm, "IsAddressLessThan")) {
+			MonoGenericContext *ctx = mono_method_get_context (target_method);
+			g_assert (ctx);
+			g_assert (ctx->method_inst);
+			g_assert (ctx->method_inst->type_argc == 1);
+
+			MonoClass *k = mono_defaults.boolean_class;
+			interp_add_ins (td, MINT_CLT_UN_P);
+			td->sp -= 1;
+			SET_TYPE (td->sp - 1, stack_type [mint_type (m_class_get_byval_arg (k))], k);
+			td->ip += 5;
+			return TRUE;
 		} else if (!strcmp (tm, "SizeOf")) {
 			MonoGenericContext *ctx = mono_method_get_context (target_method);
 			g_assert (ctx);
