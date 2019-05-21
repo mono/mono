@@ -200,6 +200,7 @@ static int stack_type [] = {
 #define MINT_CLT_FP MINT_CLT_R8
 #define MINT_CLE_FP MINT_CLE_R8
 
+#define MINT_CONV_OVF_U4_P MINT_CONV_OVF_U4_I8
 #else
 
 #define MINT_NEG_P MINT_NEG_I4
@@ -245,6 +246,7 @@ static int stack_type [] = {
 #define MINT_CLT_FP MINT_CLT_R4
 #define MINT_CLE_FP MINT_CLE_R4
 
+#define MINT_CONV_OVF_U4_P MINT_CONV_OVF_U4_I4
 #endif
 
 typedef struct {
@@ -5030,6 +5032,9 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				break;
 			case STACK_TYPE_I8:
 				interp_add_ins (td, MINT_CONV_OVF_U4_I8);
+				break;
+			case STACK_TYPE_MP:
+				interp_add_ins (td, MINT_CONV_OVF_U4_P);
 				break;
 			default:
 				g_assert_not_reached ();
