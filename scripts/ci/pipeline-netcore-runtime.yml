@@ -26,6 +26,13 @@ jobs:
           poolname: Xamarin-ARM64-Private
         manifest: linux-arm64
         sed: sed
+      Linux_ARM_Hard_Float:
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          poolname: Xamarin-ARMhf
+        ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+          poolname: Xamarin-ARMhf-Private
+        manifest: linux-arm
+        sed: sed
       Windows_x64:
         poolname: Hosted VS2017
         manifest: win-x64
