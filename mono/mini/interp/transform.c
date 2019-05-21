@@ -1349,7 +1349,12 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			*op = MINT_INTRINS_UNSAFE_BYTE_OFFSET;
 		else if (!strcmp (tm, "As") || !strcmp (tm, "AsRef"))
 			*op = MINT_NOP;
-		else if (!strcmp (tm, "SizeOf")) {
+		else if (!strcmp (tm, "AsPointer")) {
+			/* NOP */
+			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_MP);
+			td->ip += 5;
+			return TRUE;
+		} else if (!strcmp (tm, "SizeOf")) {
 			MonoGenericContext *ctx = mono_method_get_context (target_method);
 			g_assert (ctx);
 			g_assert (ctx->method_inst);
