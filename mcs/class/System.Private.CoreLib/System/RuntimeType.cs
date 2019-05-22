@@ -196,6 +196,11 @@ namespace System
 				var vtype = value.GetType ();
 				if (vtype == typeof (IntPtr) || vtype == typeof (UIntPtr))
 					return value;
+				if (value is Pointer pointer) {
+					Type pointerType = pointer.GetPointerType ();
+					if (pointerType == this)
+						return pointer.GetPointerValue ();
+				}
 			}
 
 			failed = true;
