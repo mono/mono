@@ -99,6 +99,8 @@ namespace System.Threading
 		public static unsafe bool UnsafeQueueNativeOverlapped (NativeOverlapped* overlapped)  => throw new NotImplementedException ();
 
 		static long PendingUnmanagedWorkItemCount => 0;
+		
+		public static long CompletedWorkItemCount => throw new PlatformNotSupportedException ();
 	}
 
 	internal static class _ThreadPoolWaitCallback

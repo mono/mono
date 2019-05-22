@@ -514,6 +514,7 @@
 -nomethod System.Runtime.InteropServices.Tests.StructureToPtrTests.StructureToPtr_InvalidLengthByValArrayInStruct_ThrowsArgumentException
 
 -nomethod System.Runtime.InteropServices.Tests.GetDelegateForFunctionPointerTests.GetDelegateForFunctionPointer_CantCast_ThrowsInvalidCastException
+-nomethod System.Runtime.InteropServices.Tests.GetDelegateForFunctionPointerTests.GetDelegateForFunctionPointer_CollectibleType_ReturnsExpected
 
 ####################################################################
 ##  System.Runtime.Numerics.Tests
@@ -547,6 +548,13 @@
 
 # Environment.FailFast is not implemented
 -nomethod System.Tests.RealFormatterTests.TestFormatterSingle_P20
+-nomethod System.Tests.RealFormatterTests.TestFormatterSingle_N20
+-nomethod System.Tests.RealFormatterTests.TestFormatterSingle_C20
+-nomethod System.Tests.RealFormatterTests.TestFormatterDouble_C20
+-nomethod System.Tests.RealFormatterTests.TestFormatterDouble_F20
+-nomethod System.Tests.RealFormatterTests.TestFormatterDouble_P20
+-nomethod System.Tests.RealFormatterTests.TestFormatterSingle_F20
+-nomethod System.Tests.RealFormatterTests.TestFormatterDouble_N20
 
 # Mono for some reason returns true for `(Array)(new int*[0]) is object[]` while .NET Core returns false
 -nomethod System.Tests.ArrayTests.LastIndexOf_ArrayOfPointers_ThrowsNotSupportedException
@@ -645,6 +653,9 @@
 # TODO: Differences in behaviour between NetFX and CoreFX
 -nomethod System.Threading.ThreadPools.Tests.ThreadPoolTests.SetMinThreadsTo0Test
 -nomethod System.Threading.ThreadPools.Tests.ThreadPoolTests.SetMinMaxThreadsTest_ChangedInDotNetCore
+
+# ThreadPool.CompletedWorkItemCount is not implemented
+-nomethod System.Threading.ThreadPools.Tests.ThreadPoolTests.MetricsTest
 
 ####################################################################
 ##  System.Xml.XmlSchemaSet.Tests
@@ -818,7 +829,7 @@
 -nomethod System.Tests.AppDomainTests.ResourceResolve
 -nomethod System.Tests.AppDomainTests.AssemblyLoad
 -nomethod System.Tests.AppDomainTests.FirstChanceException_Called
--nomethod System.Tests.System.Tests.AppDomainTests.AssemblyResolve_FirstChanceException
+-nomethod System.Tests.AppDomainTests.AssemblyResolve_FirstChanceException
 
 # AssemblyLoadContext.SetProfileOptimizationRoot is no-op (not implemented)
 -nomethod System.Runtime.Tests.ProfileOptimizationTest.ProfileOptimization_CheckFileExists
