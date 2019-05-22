@@ -93,6 +93,7 @@
 
 # Depends on precise GC
 -nomethod System.IO.Tests.FileStream_Dispose.FinalizeFlushesWriteBuffer
+-nomethod System.IO.Tests.FileStream_Dispose.NoDispose_CallsVirtualDisposeFalseArg_ThrowsDuringFlushWriteBuffer_FinalizerWontThrow
 # TODO: Hangs
 -nomethod System.IO.Tests.Directory_SetCurrentDirectory+Directory_SetCurrentDirectory_SymLink.SetToPathContainingSymLink
 
@@ -161,6 +162,16 @@
 # https://github.com/mono/mono/blob/18f0bf055eb2bfa8981062bdad3af2fb4bbc9be4/netcore/System.Private.CoreLib/shared/System/String.cs#L790-L800
 # https://github.com/mono/mono/blob/18f0bf055eb2bfa8981062bdad3af2fb4bbc9be4/netcore/System.Private.CoreLib/shared/System/String.cs#L811-L821
 -nomethod System.Tests.StringTests.NormalizationTest
+
+# Environment.FailFast is not implemented
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_C20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_C20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_N20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_P20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_N20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_F20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_P20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_F20
 
 -nomethod System.SpanTests.SpanTests.MemoryMarshal_GenericStaticReturningSpan
 -nomethod System.SpanTests.SpanTests.Span_Property
@@ -534,6 +545,9 @@
 # GC.GetTotalAllocatedBytes is not implemented
 -nomethod System.Tests.GCTests.GetTotalAllocatedBytes
 
+# Environment.FailFast is not implemented
+-nomethod System.Tests.RealFormatterTests.TestFormatterSingle_P20
+
 # Mono for some reason returns true for `(Array)(new int*[0]) is object[]` while .NET Core returns false
 -nomethod System.Tests.ArrayTests.LastIndexOf_ArrayOfPointers_ThrowsNotSupportedException
 -nomethod System.Tests.ArrayTests.Reverse_ArrayOfPointers_ThrowsNotSupportedException
@@ -607,6 +621,9 @@
 ####################################################################
 ##  System.Threading.Tests
 ####################################################################
+
+# Monitor.LockContentionCount is not implemented
+-nomethod System.Threading.Tests.MonitorTests.Enter_HasToWait_LockContentionCountTest
 
 -nomethod System.Threading.Tests.MutexTests.CrossProcess_NamedMutex_ProtectedFileAccessAtomic
 -nomethod System.Threading.Tests.SemaphoreSlimTests.RunSemaphoreSlimTest1_WaitAsync_NegativeCases
@@ -801,6 +818,7 @@
 -nomethod System.Tests.AppDomainTests.ResourceResolve
 -nomethod System.Tests.AppDomainTests.AssemblyLoad
 -nomethod System.Tests.AppDomainTests.FirstChanceException_Called
+-nomethod System.Tests.System.Tests.AppDomainTests.AssemblyResolve_FirstChanceException
 
 # AssemblyLoadContext.SetProfileOptimizationRoot is no-op (not implemented)
 -nomethod System.Runtime.Tests.ProfileOptimizationTest.ProfileOptimization_CheckFileExists
