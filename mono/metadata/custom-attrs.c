@@ -982,11 +982,13 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const guchar *data, gu
 		}
 		
 		g_free (name);
+		name = NULL;
 	}
 
 	goto exit;
 fail:
 	g_free (name);
+	name = NULL;
 	attr = mono_new_null ();
 exit:
 	if (field && !type_is_reference (field->type))
