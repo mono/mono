@@ -15,6 +15,7 @@
   <PropertyGroup>
     <AvailablePlatforms>x64,x86,arm,armel,arm64</AvailablePlatforms>
     <FeaturePortableTimer>true</FeaturePortableTimer>
+    <FeaturePerfTracing>true</FeaturePerfTracing>
     <Configuration Condition=" '$(Configuration)' == '' ">$(BuildType)</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">$(BuildArch)</Platform>
     <Platform Condition=" '$(Platform)' == 'armel' ">arm</Platform>
