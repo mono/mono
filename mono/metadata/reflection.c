@@ -3084,7 +3084,7 @@ mnoo_reflection_cleanup_for_unsed_assembly(MonoDomain* domain, MonoAssembly* ass
 		GPtrArray* removed_refobject_hash_array = g_ptr_array_new();
 		UnusedCacheData user_data;
 		user_data.image = assembly->image;
-		user_data.image = removed_refobject_hash_array;
+		user_data.cache_array = removed_refobject_hash_array;
 		mono_conc_g_hash_table_foreach(domain->refobject_hash, cached_unused_refobject_hash, &user_data);
 		for (int i = 0; i < removed_refobject_hash_array->len; ++i)
 		{

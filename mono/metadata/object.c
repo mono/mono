@@ -7386,7 +7386,6 @@ mono_ldstr_checked (MonoDomain *domain, MonoImage *image, guint32 idx, MonoError
 		if (!mono_verifier_verify_string_signature (image, idx, error))
 			return NULL;
 		MonoString *str = mono_ldstr_metadata_sig (domain, mono_metadata_user_string (image, idx), error);
-		const char* data = mono_string_to_utf8(str);
 		return str;
 	}
 }
