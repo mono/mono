@@ -329,11 +329,14 @@ XTEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(P
 endif
 
 check: run-xunit-test-local
-xunit-test-local: $(xtest_lib_output) $(test_lib_dir)/xunit-excludes.txt
+xunit-test-local: $(xtest_lib_output) $(test_lib_dir)/xunit-excludes.txt $(test_lib_dir)/Xunit.NetCore.Extensions.dll
 run-xunit-test-local: run-xunit-test-lib
 
 $(test_lib_dir)/xunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
 	@echo "$(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM)" > $@
+
+$(test_lib_dir)/Xunit.NetCore.Extensions.dll: $(topdir)/build/tests.make $(topdir)/../external/xunit-binaries/Xunit.NetCore.Extensions.dll | $(test_lib_dir)
+	@cp -f $(topdir)/../external/xunit-binaries/Xunit.NetCore.Extensions.dll $@
 
 # cp -rf is a HACK for xunit runner to require xunit.execution.dOTNET.dll file in local folder on .net only
 run-xunit-test-lib: xunit-test-local
