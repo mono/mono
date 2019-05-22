@@ -1413,6 +1413,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 		else if (!strcmp (tm, "GetType"))
 			*op = MINT_INTRINS_GET_TYPE;
 #endif
+#ifdef ENABLE_NETCORE
 		else if (!strcmp (tm, "GetRawData")) {
 			gint64 val = MONO_ABI_SIZEOF (MonoObject);
 			interp_add_ins (td, MINT_LDC_I8);
@@ -1424,6 +1425,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			td->ip += 5;
 			return TRUE;
 		}
+#endif
 	} else if (in_corlib && target_method->klass == mono_defaults.enum_class && !strcmp (tm, "HasFlag")) {
 		gboolean intrinsify = FALSE;
 		MonoClass *base_klass = NULL;
@@ -1469,8 +1471,10 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			return TRUE;
 		}
 	} else if (in_corlib && !strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Interlocked")) {
+#if ENABLE_NETCORE
 		if (!strcmp (tm, "MemoryBarrier") && csignature->param_count == 0)
 			*op = MINT_MONO_MEMORY_BARRIER;
+#endif
 	}
 
 	return FALSE;
