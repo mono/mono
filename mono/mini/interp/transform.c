@@ -1415,9 +1415,12 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 #endif
 #ifdef ENABLE_NETCORE
 		else if (!strcmp (tm, "GetRawData")) {
-			gint64 val = MONO_ABI_SIZEOF (MonoObject);
-			interp_add_ins (td, MINT_LDC_I8);
-			WRITE64_INS (td->last_ins, 0, &val);
+#if SIZEOF_VOID_P == 8
+			interp_add_ins (td, MINT_LDC_I8_S);
+#else
+			interp_add_ins (td, MINT_LDC_I4_S);
+#endif
+			td->last_ins->data [0] = (gint16) MONO_ABI_SIZEOF (MonoObject);
 
 			interp_add_ins (td, MINT_ADD_P);
 			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_MP);
