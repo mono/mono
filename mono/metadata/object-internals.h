@@ -2334,7 +2334,7 @@ uint32_t
 mono_gchandle_new_weakref_internal (MonoObject *obj, mono_bool track_resurrection);
 
 MonoObject*
-mono_gchandle_get_target_internal (uint32_t gchandle);
+mono_gchandle_get_target_internal (uint32_t gchandle) MONO_LLVM_INTERNAL;
 
 void mono_gchandle_free_internal (uint32_t gchandle);
 
