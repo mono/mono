@@ -1133,7 +1133,6 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				return FALSE;
 			}
 
-#if SIZEOF_VOID_P == 4
 			if (src_size > dst_size) { // 8 -> 4
 				switch (type_index) {
 				case 0: case 1:
@@ -1144,9 +1143,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 					break;
 				}
 			}
-#endif
 
-#if SIZEOF_VOID_P == 8
 			if (src_size < dst_size) { // 4 -> 8
 				switch (type_index) {
 				case 0:
@@ -1160,9 +1157,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 					break;
 				}
 			}
-#endif
 
-			SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
+			SET_TYPE (td->sp - 1, stack_type [mint_type (dst)], mono_class_from_mono_type_internal (dst));
 			td->ip += 5;
 			return TRUE;
 		} else if (!strcmp ("op_Increment", tm)) {
