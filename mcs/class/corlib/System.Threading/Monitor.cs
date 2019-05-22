@@ -117,6 +117,8 @@ namespace System.Threading
 			return Monitor_test_owner (obj);
 		}
 		
+#if NETCORE
 		public static long LockContentionCount => throw new PlatformNotSupportedException ();
+#endif
 	}
 }
