@@ -93,7 +93,17 @@ struct _LivenessState
 	register_object_callback filter_callback;
 	WorldStateChanged        onWorldStartCallback;
 	WorldStateChanged        onWorldStopCallback;
+	guint               traverse_depth; // track recursion. Prevent stack overflow by limiting recurion
 };
+
+/* number of sub elements of an array to process before recursing
+ * we take a depth first approach to use stack space rather than re-allocating
+ * processing array which requires restarting world to ensure allocator lock is not held
+*/
+const int kArrayElementsPerChunk = 256;
+
+/* how far we recurse processing array elements before we stop. Prevents stack overflow */
+const int kMaxTraverseRecursionDepth = 128;
 
 /* Liveness calculation */
 MONO_API LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max_count, register_object_callback callback, void* callback_userdata, WorldStateChanged onWorldStartCallback, WorldStateChanged onWorldStopCallback);
@@ -185,7 +195,7 @@ static void mono_traverse_generic_object( MonoObject* object, LivenessState* sta
 }
 
 
-static void mono_add_process_object (MonoObject* object, LivenessState* state)
+static gboolean mono_add_process_object (MonoObject* object, LivenessState* state)
 {
 	if (object && !IS_MARKED(object))
 	{
@@ -203,8 +213,11 @@ static void mono_add_process_object (MonoObject* object, LivenessState* state)
 			if(array_is_full(state->process_array))
 				array_safe_grow(state, state->process_array);
 			array_push_back(state->process_array, object);
+			return TRUE;
 		}
 	}
+
+	return FALSE;
 }
 
 static gboolean mono_field_can_contain_references(MonoClassField* field)
@@ -218,11 +231,12 @@ static gboolean mono_field_can_contain_references(MonoClassField* field)
 	return MONO_TYPE_IS_REFERENCE(field->type);
 }
 
-static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct, MonoClass* klass, LivenessState* state)
+static gboolean mono_traverse_object_internal (MonoObject* object, gboolean isStruct, MonoClass* klass, LivenessState* state)
 {
 	int i;
 	MonoClassField *field;
 	MonoClass *p;
+	gboolean added_objects = FALSE;
 
 	g_assert (object);
 	
@@ -250,10 +264,10 @@ static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct
 				if (field->type->type == MONO_TYPE_GENERICINST)
 				{
 					g_assert(field->type->data.generic_class->cached_class);
-					mono_traverse_object_internal((MonoObject*)offseted, TRUE, field->type->data.generic_class->cached_class, state);
+					added_objects |= mono_traverse_object_internal((MonoObject*)offseted, TRUE, field->type->data.generic_class->cached_class, state);
 				}
 				else
-					mono_traverse_object_internal((MonoObject*)offseted, TRUE, field->type->data.klass, state);
+					added_objects |= mono_traverse_object_internal((MonoObject*)offseted, TRUE, field->type->data.klass, state);
 				continue;
 			}
 
@@ -263,10 +277,12 @@ static void mono_traverse_object_internal (MonoObject* object, gboolean isStruct
 				MonoObject* val = NULL;
 				MonoVTable *vtable = NULL;
 				mono_field_get_value (object, field, &val);
-				mono_add_process_object (val, state);
+				added_objects |= mono_add_process_object (val, state);
 			}
 		}
 	}
+
+	return added_objects;
 }
 
 static void mono_traverse_object (MonoObject* object, LivenessState* state)
@@ -298,16 +314,25 @@ static void mono_traverse_objects (LivenessState* state)
 	int i = 0;
 	MonoObject* object = NULL;
 
+	state->traverse_depth++;
 	while (state->process_array->len > 0)
 	{
 		object = array_pop_back(state->process_array);
 		mono_traverse_generic_object(object, state);
 	}
+	state->traverse_depth--;
+}
+
+static gboolean should_traverse_objects (size_t index, gint32 recursion_depth)
+{
+	// Add kArrayElementsPerChunk objects at a time and then traverse
+	return ((index + 1) & (kArrayElementsPerChunk - 1)) == 0 && 
+		recursion_depth < kMaxTraverseRecursionDepth;
 }
 
 static void mono_traverse_array (MonoArray* array, LivenessState* state)
 {
-	int i = 0;
+	size_t i = 0;
 	gboolean has_references;
 	MonoObject* object = (MonoObject*)array;
 	MonoClass* element_class;
@@ -333,26 +358,28 @@ static void mono_traverse_array (MonoArray* array, LivenessState* state)
 	array_length = mono_array_length (array);
 	if (element_class->valuetype)
 	{
+		size_t items_processed = 0;
 		elementClassSize = mono_class_array_element_size (element_class);
 		for (i = 0; i < array_length; i++)
 		{
 			MonoObject* object = (MonoObject*)mono_array_addr_with_size (array, elementClassSize, i);
-			mono_traverse_object_internal (object, 1, element_class, state);
+			if (mono_traverse_object_internal (object, 1, element_class, state))
+				items_processed++;
 			
-			// Add 128 objects at a time and then traverse, 64 seems not be enough
-			if( ((i+1) & 127) == 0)
+			if(should_traverse_objects (items_processed, state->traverse_depth))
 				mono_traverse_objects(state);
 		}
 	}
 	else
 	{
+		size_t items_processed = 0;
 		for (i = 0; i < array_length; i++)
 		{
 			MonoObject* val =  mono_array_get(array, MonoObject*, i);
-			mono_add_process_object(val, state);
+			if (mono_add_process_object (val, state))
+				items_processed++;
 			
-			// Add 128 objects at a time and then traverse, 64 seems not be enough
-			if( ((i+1) & 127) == 0)
+			if (should_traverse_objects (items_processed, state->traverse_depth))
 				mono_traverse_objects(state);
 		}
 	}
@@ -572,13 +599,14 @@ LivenessState* mono_unity_liveness_allocate_struct (MonoClass* filter, guint max
 	// process_array. array that contains the objcets that should be processed. this should run depth first to reduce memory usage
 	// if all_objects run out of space, run through list, add objects that match the filter, clear bit in vtable and then clear the array.
 
-	state = g_new(LivenessState, 1);
+	state = g_new0(LivenessState, 1);
 	max_count = max_count < 1000 ? 1000 : max_count;
 	state->all_objects = array_create_and_initialize(max_count*4);
 	state->process_array = array_create_and_initialize (max_count);
 
 	state->first_index_in_all_objects = 0; 
 	state->filter = filter;
+	state->traverse_depth = 0;
 
 	state->callback_userdata = callback_userdata;
 	state->filter_callback = callback;
