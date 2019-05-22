@@ -628,34 +628,36 @@ mono_icall_get_wrapper_full (MonoJitICallInfo* callinfo, gboolean do_compile)
 {
 	ERROR_DECL (error);
 	MonoMethod *wrapper;
-	gconstpointer trampoline;
+	gconstpointer addr, trampoline;
 	MonoDomain *domain = mono_get_root_domain ();
 
 	if (callinfo->wrapper)
 		return callinfo->wrapper;
 
-	if (callinfo->trampoline)
-		return callinfo->trampoline;
-
 	wrapper = mono_icall_get_wrapper_method (callinfo);
 
 	if (do_compile) {
-		trampoline = mono_compile_method_checked (wrapper, error);
+		addr = mono_compile_method_checked (wrapper, error);
 		mono_error_assert_ok (error);
+		mono_memory_barrier ();
+		callinfo->wrapper = addr;
+		return addr;
 	} else {
+		if (callinfo->trampoline)
+			return callinfo->trampoline;
 		trampoline = mono_create_jit_trampoline (domain, wrapper, error);
 		mono_error_assert_ok (error);
 		trampoline = mono_create_ftnptr (domain, (gpointer)trampoline);
-	}
 
-	mono_loader_lock ();
-	if (!callinfo->trampoline) {
-		mono_register_jit_icall_wrapper (callinfo, trampoline);
-		callinfo->trampoline = trampoline;
-	}
-	mono_loader_unlock ();
+		mono_loader_lock ();
+		if (!callinfo->trampoline) {
+			mono_register_jit_icall_wrapper (callinfo, trampoline);
+			callinfo->trampoline = trampoline;
+		}
+		mono_loader_unlock ();
 
-	return callinfo->trampoline;
+		return callinfo->trampoline;
+	}
 }
 
 gconstpointer
@@ -698,7 +700,7 @@ register_opcode_emulation (int opcode, MonoJitICallInfo *jit_icall_info, const c
 }
 
 #define register_opcode_emulation(opcode, name, sig, func, no_wrapper) \
-	(register_opcode_emulation ((opcode), &mono_jit_icall_info.name, #name, (sig), func, #func, (no_wrapper)))
+	(register_opcode_emulation ((opcode), &mono_get_jit_icall_info ()->name, #name, (sig), func, #func, (no_wrapper)))
 
 /*
  * For JIT icalls implemented in C.
@@ -714,7 +716,7 @@ register_opcode_emulation (int opcode, MonoJitICallInfo *jit_icall_info, const c
  * must be extern "C".
  */
 #define register_icall(func, sig, avoid_wrapper) \
-	(mono_register_jit_icall_info (&mono_jit_icall_info.func, func, #func, (sig), (avoid_wrapper), #func))
+	(mono_register_jit_icall_info (&mono_get_jit_icall_info ()->func, func, #func, (sig), (avoid_wrapper), #func))
 
 #define register_icall_no_wrapper(func, sig) register_icall (func, sig, TRUE)
 #define register_icall_with_wrapper(func, sig) register_icall (func, sig, FALSE)
@@ -731,7 +733,7 @@ register_opcode_emulation (int opcode, MonoJitICallInfo *jit_icall_info, const c
  * This also passes last parameter c_symbol=NULL since there is not a directly linkable symbol.
  */
 #define register_dyn_icall(func, name, sig, save) \
-	(mono_register_jit_icall_info (&mono_jit_icall_info.name, (func), #name, (sig), (save), NULL))
+	(mono_register_jit_icall_info (&mono_get_jit_icall_info ()->name, (func), #name, (sig), (save), NULL))
 
 MonoLMF *
 mono_get_lmf (void)
@@ -1068,10 +1070,9 @@ mono_print_ji (const MonoJumpInfo *ji)
 		g_free (s);
 		break;
 	}
-	case MONO_PATCH_INFO_JIT_ICALL: {
-		printf ("[JIT_ICALL %s]", ji->data.name);
+	case MONO_PATCH_INFO_JIT_ICALL_ID:
+		printf ("[JIT_ICALL %s]", mono_find_jit_icall_info (ji->data.jit_icall_id)->name);
 		break;
-	}
 	case MONO_PATCH_INFO_CLASS:
 	case MONO_PATCH_INFO_VTABLE: {
 		char *name = mono_class_full_name (ji->data.klass);
@@ -1195,7 +1196,6 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_OBJC_SELECTOR_REF: // Hash on the selector name
 	case MONO_PATCH_INFO_LDSTR_LIT:
 		return g_str_hash (ji->data.name);
-	case MONO_PATCH_INFO_JIT_ICALL:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
 		return hash | g_str_hash (ji->data.name);
@@ -1244,6 +1244,7 @@ mono_patch_info_hash (gconstpointer data)
 		return hash;
 	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
 		return hash | ji->data.uindex;
+	case MONO_PATCH_INFO_JIT_ICALL_ID:
 	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		return hash | ji->data.index;
@@ -1281,10 +1282,13 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 	const MonoJumpInfo *ji1 = (MonoJumpInfo*)ka;
 	const MonoJumpInfo *ji2 = (MonoJumpInfo*)kb;
 
-	if (ji1->type != ji2->type)
+	MonoJumpInfoType const ji1_type = ji1->type;
+	MonoJumpInfoType const ji2_type = ji2->type;
+
+	if (ji1_type != ji2_type)
 		return 0;
 
-	switch (ji1->type) {
+	switch (ji1_type) {
 	case MONO_PATCH_INFO_RVA:
 	case MONO_PATCH_INFO_LDSTR:
 	case MONO_PATCH_INFO_TYPE_FROM_HANDLE:
@@ -1297,7 +1301,6 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 		       ji1->data.token->context.method_inst == ji2->data.token->context.method_inst;
 	case MONO_PATCH_INFO_OBJC_SELECTOR_REF:
 	case MONO_PATCH_INFO_LDSTR_LIT:
-	case MONO_PATCH_INFO_JIT_ICALL:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
 		return g_str_equal (ji1->data.name, ji2->data.name);
@@ -1323,6 +1326,8 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		return ji1->data.index == ji2->data.index;
+	case MONO_PATCH_INFO_JIT_ICALL_ID:
+		return ji1->data.jit_icall_id == ji2->data.jit_icall_id;
 	case MONO_PATCH_INFO_VIRT_METHOD:
 		return ji1->data.virt_method->klass == ji2->data.virt_method->klass && ji1->data.virt_method->method == ji2->data.virt_method->method;
 	case MONO_PATCH_INFO_GSHAREDVT_IN_WRAPPER:
@@ -1363,9 +1368,9 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_METHOD_REL:
 		target = code + patch_info->data.offset;
 		break;
-	case MONO_PATCH_INFO_JIT_ICALL: {
-		MonoJitICallInfo *mi = mono_find_jit_icall_by_name (patch_info->data.name);
-		g_assertf (mi, "unknown MONO_PATCH_INFO_JIT_ICALL %s", patch_info->data.name);
+	case MONO_PATCH_INFO_JIT_ICALL_ID: {
+		MonoJitICallInfo * const mi = mono_find_jit_icall_info (patch_info->data.jit_icall_id);
+		g_assertf (mi, "unknown MONO_PATCH_INFO_JIT_ICALL_ID %d", (int)patch_info->data.jit_icall_id);
 		target = mono_icall_get_wrapper (mi);
 		break;
 	}
@@ -1733,6 +1738,26 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 			mono_error_assert_ok (error);
 		}
 #endif
+	}
+}
+
+/*
+ * mini_patch_llvm_jit_callees:
+ *
+ *   Patch function address slots used by llvm JITed code.
+ */
+void
+mini_patch_llvm_jit_callees (MonoDomain *domain, MonoMethod *method, gpointer addr)
+{
+	if (!domain_jit_info (domain)->llvm_jit_callees)
+		return;
+	GSList *callees = (GSList*)g_hash_table_lookup (domain_jit_info (domain)->llvm_jit_callees, method);
+	GSList *l;
+
+	for (l = callees; l; l = l->next) {
+		gpointer *slot = (gpointer*)l->data;
+
+		*slot = addr;
 	}
 }
 

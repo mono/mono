@@ -196,6 +196,11 @@ namespace System
 				var vtype = value.GetType ();
 				if (vtype == typeof (IntPtr) || vtype == typeof (UIntPtr))
 					return value;
+				if (value is Pointer pointer) {
+					Type pointerType = pointer.GetPointerType ();
+					if (pointerType == this)
+						return pointer.GetPointerValue ();
+				}
 			}
 
 			failed = true;
@@ -394,7 +399,7 @@ namespace System
 			return MakePointerType (this);
 		}
 
-		public override StructLayoutAttribute StructLayoutAttribute {
+		public override StructLayoutAttribute? StructLayoutAttribute {
 			get {
 				return GetStructLayoutAttribute ();
 			}
@@ -568,8 +573,8 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern object CreateInstanceInternal (Type type);
 
-		public extern override MethodBase DeclaringMethod {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override MethodBase? DeclaringMethod {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}		
 		
@@ -645,24 +650,24 @@ namespace System
 			}
 		}
 
-		public override string AssemblyQualifiedName {
+		public override string? AssemblyQualifiedName {
 			get {
 				return getFullName (true, true);
 			}
 		}
 
-		public extern override Type DeclaringType {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override Type? DeclaringType {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
 
 		public extern override string Name {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
 
-		public extern override string Namespace {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override string? Namespace {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
 
@@ -678,7 +683,7 @@ namespace System
 			get { return false; }
 		}
 
-		public override string FullName {
+		public override string? FullName {
 			get {
 				// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
 				if (IsGenericType && ContainsGenericParameters && !IsGenericTypeDefinition)

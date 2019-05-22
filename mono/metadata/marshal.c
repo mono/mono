@@ -124,7 +124,7 @@ get_method_image (MonoMethod *method)
 // nor does the C++ overload fmod (mono_fmod instead). These functions therefore
 // must be extern "C".
 #define register_icall(func, sig, no_wrapper) \
-	(mono_register_jit_icall_info (&mono_jit_icall_info.func, func, #func, (sig), (no_wrapper), #func))
+	(mono_register_jit_icall_info (&mono_get_jit_icall_info ()->func, func, #func, (sig), (no_wrapper), #func))
 
 MonoMethodSignature*
 mono_signature_no_pinvoke (MonoMethod *method)
@@ -2880,7 +2880,7 @@ mono_marshal_get_runtime_invoke_for_sig (MonoMethodSignature *sig)
 
 #ifndef ENABLE_ILGEN
 static void
-emit_icall_wrapper_noilgen (MonoMethodBuilder *mb, MonoMethodSignature *sig, gconstpointer func, MonoMethodSignature *csig2, gboolean check_exceptions)
+emit_icall_wrapper_noilgen (MonoMethodBuilder *mb, MonoJitICallInfo *callinfo, MonoMethodSignature *csig2, gboolean check_exceptions)
 {
 }
 
@@ -2910,7 +2910,7 @@ mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_excep
 		return res;
 
 	MonoMethodSignature *const sig = callinfo->sig;
-	g_assert (sig->pinvoke);
+	g_assertf (sig->pinvoke, "%s %d", callinfo->name ? callinfo->name : "null", (int)mono_jit_icall_info_index (callinfo));
 
 	char *const name = g_strdup_printf ("__icall_wrapper_%s", callinfo->name);
 	mb = mono_mb_new (mono_defaults.object_class, name, MONO_WRAPPER_MANAGED_TO_NATIVE);
@@ -2923,7 +2923,7 @@ mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_excep
 	else
 		csig2 = mono_metadata_signature_dup_full (mono_defaults.corlib, sig);
 
-	get_marshal_cb ()->emit_icall_wrapper (mb, sig, func, csig2, check_exceptions);
+	get_marshal_cb ()->emit_icall_wrapper (mb, callinfo, csig2, check_exceptions);
 
 	csig = mono_metadata_signature_dup_full (mono_defaults.corlib, sig);
 	csig->pinvoke = 0;

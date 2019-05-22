@@ -57,7 +57,7 @@ namespace System
 		static bool IsPrimitiveTypeArray (Array array)
 		{
 			// TODO: optimize			
-			return array.GetType ().GetElementType ().IsPrimitive;
+			return array.GetType ().GetElementType ()!.IsPrimitive;
 		}
 
 		internal static unsafe void Memcpy (byte* dest, byte* src, int len) => Memmove (dest, src, (nuint) len);
