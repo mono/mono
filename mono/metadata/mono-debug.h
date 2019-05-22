@@ -10,6 +10,7 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/metadata/image.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/utils/mono-compiler.h>
 
 MONO_BEGIN_DECLS
 
