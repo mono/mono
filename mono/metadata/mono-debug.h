@@ -10,6 +10,7 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/metadata/image.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/utils/mono-compiler.h>
 
 MONO_BEGIN_DECLS
 
@@ -195,7 +196,7 @@ MonoDebugMethodAsyncInfo*
 mono_debug_lookup_method_async_debug_info (MonoMethod *method);
 
 MonoDebugSourceLocation *
-mono_debug_method_lookup_location (MonoDebugMethodInfo *minfo, int il_offset);
+mono_debug_method_lookup_location (MonoDebugMethodInfo *minfo, int il_offset) MONO_LLVM_INTERNAL;
 
 /*
  * Line number support.
