@@ -2767,6 +2767,8 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 			rgDispId[i] = MONO_E_DISPID_UNKNOWN;
 			ret = MONO_E_DISP_E_UNKNOWNNAME;
 		}
+
+		g_free (methodname);
 	}
 
 	return ret;
