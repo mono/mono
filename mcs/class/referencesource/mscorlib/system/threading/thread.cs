@@ -788,6 +788,9 @@ namespace System.Threading {
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern void SleepInternal(int millisecondsTimeout);
 
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private static extern long GetAllocatedBytes();
+
         [System.Security.SecuritySafeCritical]  // auto-generated
         public static void Sleep(int millisecondsTimeout)
         {

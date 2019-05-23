@@ -1777,6 +1777,12 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 	}
 }
 
+gint64
+ves_icall_System_Threading_Thread_GetAllocatedBytes_internal(MonoError *error)
+{
+	return 0;
+}
+
 void
 ves_icall_System_Threading_Thread_SpinWait_nop (MonoError *error)
 {
