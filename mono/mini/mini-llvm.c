@@ -10349,8 +10349,6 @@ static void
 llvm_jit_finalize_method (EmitContext *ctx)
 {
 	MonoCompile *cfg = ctx->cfg;
-
-#if LLVM_API_VERSION > 100
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitDomainInfo *domain_info;
 	int nvars = g_hash_table_size (ctx->jit_callees);
@@ -10390,9 +10388,6 @@ llvm_jit_finalize_method (EmitContext *ctx)
 		i ++;
 	}
 	mono_domain_unlock (domain);
-#else
-	g_assert_not_reached ();
-#endif
 }
 
 #else
