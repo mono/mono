@@ -1196,6 +1196,8 @@
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
+        <Compile Include="System.Linq.Expressions\LambdaExpression.NotSupported.cs" />
+        <Compile Include="System.Runtime.CompilerServices\RuntimeOps.NotSupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
@@ -1253,6 +1255,8 @@
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
+        <Compile Include="System.Linq.Expressions\LambdaExpression.NotSupported.cs" />
+        <Compile Include="System.Runtime.CompilerServices\RuntimeOps.NotSupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
@@ -1310,6 +1314,8 @@
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
+        <Compile Include="System.Linq.Expressions\LambdaExpression.NotSupported.cs" />
+        <Compile Include="System.Runtime.CompilerServices\RuntimeOps.NotSupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
