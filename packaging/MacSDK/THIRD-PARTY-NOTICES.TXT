@@ -22,4 +22,4 @@ Content: http://stackoverflow.com/a/7366753/494990
 Question author: Volodymyr Bezuglyy -- https://stackoverflow.com/users/167739/volodymyr-bezuglyy
 Answer author: mivk -- https://stackoverflow.com/users/111036/mivk
 
-Use: 
+Use: https://github.com/mono/mono/blob/7a1a832f6577ffb12d4d302d2868a5b1aaa5ec65/packaging/MacSDK/packaging/resources/postinstall#L96
