@@ -25,7 +25,9 @@ gpointer
 ves_icall_System_Threading_Semaphore_CreateSemaphore_icall (gint32 initialCount, gint32 maximumCount,
 	const gunichar2 *name, gint32 name_length, gint32 *win32error, MonoError *error)
 { 
+	MONO_ENTER_GC_SAFE;
 	HANDLE sem = CreateSemaphoreW (NULL, initialCount, maximumCount, name);
+	MONO_EXIT_GC_SAFE;
 	*win32error = GetLastError ();
 	return sem;
 }
@@ -34,14 +36,18 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_icall (gint32 initialCount,
 MonoBoolean
 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount, MonoError *error)
 {
+	MONO_ENTER_GC_SAFE;
 	return ReleaseSemaphore (handle, releaseCount, (PLONG)prevcount);
+	MONO_EXIT_GC_SAFE;
 }
 
 gpointer
 ves_icall_System_Threading_Semaphore_OpenSemaphore_icall (const gunichar2 *name, gint32 name_length,
 	gint32 rights, gint32 *win32error, MonoError *error)
 {
+	MONO_ENTER_GC_SAFE;
 	HANDLE sem = OpenSemaphoreW (rights, FALSE, name);
+	MONO_EXIT_GC_SAFE;
 	*win32error = GetLastError ();
 	return sem;
 }
