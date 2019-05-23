@@ -340,7 +340,7 @@ XTEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(P
 endif
 
 check: run-xunit-test-local
-xunit-test-local: $(xtest_lib_output) $(test_lib_dir)/xunit-excludes.txt $(test_lib_dir)/Xunit.NetCore.Extensions.dll
+xunit-test-local: $(xtest_lib_output) $(test_lib_dir)/xunit-excludes.txt $(test_lib_dir)/Xunit.NetCore.Extensions.dll $(test_lib_dir)/xunit.execution.dotnet.dll
 run-xunit-test-local: run-xunit-test-lib
 
 $(test_lib_dir)/xunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
@@ -349,14 +349,14 @@ $(test_lib_dir)/xunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
 $(test_lib_dir)/Xunit.NetCore.Extensions.dll: $(topdir)/build/tests.make $(topdir)/../external/xunit-binaries/Xunit.NetCore.Extensions.dll | $(test_lib_dir)
 	@cp -f $(topdir)/../external/xunit-binaries/Xunit.NetCore.Extensions.dll $@
 
-# cp -rf is a HACK for xunit runner to require xunit.execution.dOTNET.dll file in local folder on .net only
+$(test_lib_dir)/xunit.execution.dotnet.dll: $(topdir)/build/tests.make $(topdir)/../external/xunit-binaries/xunit.execution.dotnet.dll | $(test_lib_dir)
+	@cp -f $(topdir)/../external/xunit-binaries/xunit.execution.dotnet.dll $@
+
 run-xunit-test-lib: xunit-test-local
-	@cp -rf $(XTEST_HARNESS_PATH)/xunit.execution.dotnet.dll $(test_lib_dir)/xunit.execution.dotnet.dll
 	ok=:; \
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" REMOTE_EXECUTOR="$(XTEST_REMOTE_EXECUTOR_ABSPATH)" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(XTEST_COVERAGE_FLAGS) $(AOT_RUN_FLAGS) $(XTEST_HARNESS) $(xtest_lib_output) $(XTEST_HARNESS_FLAGS) $(XTEST_TRAIT) $(XTEST_TRAIT_PLATFORM) || ok=false; \
 	if [ -n "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE" ]; then echo "$(abspath $(XTEST_RESULT_FILE))" >> "$$MONO_BABYSITTER_NUNIT_XML_LIST_FILE"; fi; \
 	$$ok
-	@rm -f $(test_lib_dir)/xunit.execution.dotnet.dll
 
 # Some xunit tests want to be executed in a separate process (see RemoteExecutorTestBase)
 $(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs | $(test_lib_dir)
