@@ -28,7 +28,7 @@
 				<asp:HyperLinkColumn Text="" DataNavigateUrlField="Company" />
 				<asp:HyperLinkColumn Text="ClickHere" DataNavigateUrlField="Company" />
 				<asp:HyperLinkColumn Text="Get quote" DataNavigateUrlField="Symbol" DataNavigateUrlFormatString="~/quote.aspx?{0}" />
-				<asp:HyperLinkColumn Text="Google quote" DataNavigateUrlField="Symbol" DataNavigateUrlFormatString="http://www.google.com/search?q=stocks:{0}" />
+				<asp:HyperLinkColumn Text="Example quote" DataNavigateUrlField="Symbol" DataNavigateUrlFormatString="http://www.example.com/search?q=stocks:{0}" />
 			</Columns>
 			</asp:DataGrid>
 		</form>

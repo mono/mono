@@ -199,7 +199,7 @@ namespace System.Net {
 
 		/*
 		
-		SocketPermission s = new SocketPermission (NetworkAccess.Connect, TransportType.Tcp, "www.google.com", 80);
+		SocketPermission s = new SocketPermission (NetworkAccess.Connect, TransportType.Tcp, "www.example.com", 80);
 		s.AddPermission (NetworkAccess.Accept, TransportType.All, "localhost", 8080);
 		s.AddPermission (NetworkAccess.Accept, TransportType.All, "localhost", SocketPermission.AllPorts);
 		// s = new SocketPermission (PermissionState.None);
@@ -211,7 +211,7 @@ namespace System.Net {
 		<IPermission class="System.Net.SocketPermission, System, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
 			     version="1">
 		   <ConnectAccess>
-		      <ENDPOINT host="www.google.com"
+		      <ENDPOINT host="www.example.com"
 				transport="Tcp"
 				port="80"/>
 		   </ConnectAccess>

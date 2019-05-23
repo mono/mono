@@ -78,7 +78,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		public void Result_Replacement_Empty ()
 		{
 			Regex email = new Regex ("(?<user>[^@]+)@(?<domain>.+)");
-			Match m = email.Match ("mono@go-mono.com");
+			Match m = email.Match ("mono@example.com");
 			string exp = m.Result (string.Empty);
 			Assert.AreEqual (string.Empty, exp);
 		}

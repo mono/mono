@@ -80,23 +80,23 @@ namespace MonoTests.System.Xml {
 			} else
 				Assert.AreEqual ("file:///Moonlight", uri.ToString (), "ToString");
 
-			uri = new Uri ("http://www.mono-project.com");
+			uri = new Uri ("http://www.example.com");
 			Uri u2 = xr.ResolveUri (uri, null);
 			Assert.AreEqual (uri, u2, "Equals");
 			Assert.IsTrue (Object.ReferenceEquals (uri, u2), "ReferenceEquals");
 
 			u2 = xr.ResolveUri (uri, "/Moonlight");
 			Assert.IsTrue (uri.IsAbsoluteUri, "abs,string");
-			Assert.AreEqual ("http://www.mono-project.com/Moonlight", u2.ToString (), "ToString3");
+			Assert.AreEqual ("http://www.example.com/Moonlight", u2.ToString (), "ToString3");
 
-			u2 = xr.ResolveUri (null, "http://www.mono-project.com");
+			u2 = xr.ResolveUri (null, "http://www.example.com");
 			Assert.IsTrue (u2.IsAbsoluteUri, "null,absolute/http");
 			Assert.AreEqual (uri, u2, "Equals-2");
 
-			u2 = xr.ResolveUri (null, "https://www.mono-project.com");
+			u2 = xr.ResolveUri (null, "https://www.example.com");
 			Assert.IsTrue (u2.IsAbsoluteUri, "null,absolute/https");
 
-			u2 = xr.ResolveUri (null, "ftp://mono-project.com/download");
+			u2 = xr.ResolveUri (null, "ftp://example.com/download");
 			Assert.IsTrue (u2.IsAbsoluteUri, "null,absolute/ftp");
 
 			u2 = xr.ResolveUri (null, "file:///mystuff");
@@ -117,7 +117,7 @@ namespace MonoTests.System.Xml {
 		public void TestAsync ()
 		{
 			var ar = new AsyncXmlResolver ();
-			var uri = new Uri ("http://www.mono-project.com");
+			var uri = new Uri ("http://www.example.com");
 			ar.GetEntityAsync (uri, null, typeof(string));
 		}
 	}
