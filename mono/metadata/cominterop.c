@@ -149,6 +149,7 @@ GENERATE_GET_CLASS_WITH_CACHE (variant,    "System", "Variant")
 static GENERATE_GET_CLASS_WITH_CACHE (class_interface_attribute, "System.Runtime.InteropServices", "ClassInterfaceAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (interface_type_attribute, "System.Runtime.InteropServices", "InterfaceTypeAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (guid_attribute, "System.Runtime.InteropServices", "GuidAttribute")
+static GENERATE_GET_CLASS_WITH_CACHE (dispid_attribute, "System.Runtime.InteropServices", "DispIdAttribute")
 
 /* ClassInterfaceType values */
 #define CLASS_INTERFACE_NONE 0
@@ -2704,7 +2705,6 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 				      guint32 lcid, gint32 *rgDispId)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-	static MonoClass *ComDispIdAttribute = NULL;
 	ERROR_DECL (error);
 	MonoCustomAttrInfo *cinfo = NULL;
 	int i, j, methodcount, pos, ret = MONO_S_OK;
@@ -2714,10 +2714,6 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 	MonoClass* iface = ccwe->iface;
 	MonoCCW* ccw = ccwe->ccw;
 	MonoObject* object;
-
-	/* Handle DispIdAttribute */
-	if (!ComDispIdAttribute)
-		ComDispIdAttribute = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "DispIdAttribute");
 
 	if (!mono_domain_get ())
 		 mono_thread_attach (mono_get_root_domain ());
@@ -2754,7 +2750,7 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 			cinfo = mono_custom_attrs_from_method_checked (method, error);
 			mono_error_assert_ok (error); /* FIXME what's reasonable to do here */
 			if (cinfo) {
-				MonoDispIdAttribute *result = (MonoDispIdAttribute*)mono_custom_attrs_get_attr_checked (cinfo, ComDispIdAttribute, error);
+				MonoDispIdAttribute *result = (MonoDispIdAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_dispid_attribute_class (), error);
 				mono_error_assert_ok (error); /*FIXME proper error handling*/;
 
 				if (result)
