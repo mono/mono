@@ -2051,7 +2051,7 @@ void      mono_optimize_branches            (MonoCompile *cfg);
 void      mono_blockset_print               (MonoCompile *cfg, MonoBitSet *set, const char *name, guint idom);
 void      mono_print_ins_index              (int i, MonoInst *ins);
 GString  *mono_print_ins_index_strbuf       (int i, MonoInst *ins);
-void      mono_print_ins                    (MonoInst *ins);
+void      mono_print_ins                    (MonoInst *ins) MONO_LLVM_INTERNAL;
 void      mono_print_bb                     (MonoBasicBlock *bb, const char *msg);
 void      mono_print_code                   (MonoCompile *cfg, const char *msg);
 MONO_LLVM_INTERNAL const char* mono_inst_name                  (int op);
