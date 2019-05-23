@@ -1670,8 +1670,11 @@ mono_find_jit_opcode_emulation (int opcode)
 	if (emul_opcode_hit_cache [opcode >> (EMUL_HIT_SHIFT + 3)] & (1 << (opcode & EMUL_HIT_MASK))) {
 		int i;
 		for (i = 0; i < emul_opcode_num; ++i) {
-			if (emul_opcode_opcodes [i] == opcode)
-				return emul_opcode_map [i];
+			if (emul_opcode_opcodes [i] == opcode) {
+				MonoJitICallInfo * const info = emul_opcode_map [i];
+				g_assertf (info && info->name, "i:%d opcode:%d info:%p", i, opcode, info);
+				return info;
+			}
 		}
 	}
 	return NULL;
