@@ -2723,7 +2723,7 @@ gboolean mini_is_gsharedvt_signature (MonoMethodSignature *sig);
 gboolean mini_is_gsharedvt_variable_type (MonoType *t) MONO_LLVM_INTERNAL;
 gboolean mini_is_gsharedvt_variable_klass (MonoClass *klass) MONO_LLVM_INTERNAL;
 gboolean mini_is_gsharedvt_sharable_method (MonoMethod *method);
-gboolean mini_is_gsharedvt_variable_signature (MonoMethodSignature *sig);
+gboolean mini_is_gsharedvt_variable_signature (MonoMethodSignature *sig) MONO_LLVM_INTERNAL;
 gboolean mini_is_gsharedvt_sharable_inst (MonoGenericInst *inst);
 gboolean mini_method_is_default_method (MonoMethod *m) MONO_LLVM_INTERNAL;
 gboolean mini_method_needs_mrgctx (MonoMethod *m);
