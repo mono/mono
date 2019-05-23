@@ -196,7 +196,11 @@ MonoDebugMethodAsyncInfo*
 mono_debug_lookup_method_async_debug_info (MonoMethod *method);
 
 MonoDebugSourceLocation *
-mono_debug_method_lookup_location (MonoDebugMethodInfo *minfo, int il_offset) MONO_LLVM_INTERNAL;
+mono_debug_method_lookup_location (MonoDebugMethodInfo *minfo, int il_offset)
+#ifdef MONO_LLVM_INTERNAL
+MONO_LLVM_INTERNAL
+#endif
+;
 
 /*
  * Line number support.
