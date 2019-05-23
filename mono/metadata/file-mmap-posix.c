@@ -192,7 +192,7 @@ access_mode_to_unix (int access)
 }
 
 static int
-acess_to_mmap_flags (int access)
+access_to_mmap_flags (int access)
 {
 	switch (access) {
 	case MMAP_FILE_ACCESS_READ_WRITE:
@@ -526,7 +526,7 @@ mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mma
 	mmap_offset = align_down_to_page_size (offset);
 	eff_size += (offset - mmap_offset);
 	//FIXME translate some interesting errno values
-	res.address = mono_file_map ((size_t)eff_size, acess_to_mmap_flags (access), fh->fd, mmap_offset, &res.free_handle);
+	res.address = mono_file_map ((size_t)eff_size, access_to_mmap_flags (access), fh->fd, mmap_offset, &res.free_handle);
 	res.length = eff_size;
 
 	if (res.address) {
