@@ -26,14 +26,14 @@ _mac-$(1)_AC_VARS= \
 	ac_cv_func_utimensat=no
 
 _mac-$(1)_CFLAGS= \
+	-isysroot $(3)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
 	-arch $(2)
 
 _mac-$(1)_CXXFLAGS= \
+	-isysroot $(3)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$$(MACOS_VERSION).sdk -mmacosx-version-min=$$(MACOS_VERSION_MIN) \
 	-arch $(2)
 
-_mac-$(1)_CPPFLAGS= \
-	-isysroot $(3)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk \
-	-mmacosx-version-min=$(MACOS_VERSION_MIN) \
+_mac-$(1)_CPPFLAGS=
 
 _mac-$(1)_LDFLAGS= \
 	-Wl,-no_weak_imports
