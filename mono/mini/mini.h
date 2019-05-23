@@ -2610,7 +2610,7 @@ gpointer
 mono_method_fill_runtime_generic_context (MonoMethodRuntimeGenericContext *mrgctx, guint32 slot, MonoError *error);
 
 const char*
-mono_rgctx_info_type_to_str (MonoRgctxInfoType type);
+mono_rgctx_info_type_to_str (MonoRgctxInfoType type) MONO_LLVM_INTERNAL;
 
 MonoJumpInfoType
 mini_rgctx_info_type_to_patch_info_type (MonoRgctxInfoType info_type);
