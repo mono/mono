@@ -739,7 +739,7 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual ("NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
 			Assert.AreEqual ("NunitWeb/../MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/../MyPage.aspx"), "ResolveClientUrl Failed");
 			Assert.AreEqual ("NunitWeb/./MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/./MyPage.aspx"), "ResolveClientUrl Failed");
-			Assert.AreEqual ("http://google.com/", ctrl.ResolveClientUrl ("http://google.com/"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("http://example.com/", ctrl.ResolveClientUrl ("http://example.com/"), "ResolveClientUrl Failed");
 
 			Assert.AreEqual ("MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
 			Assert.AreEqual ("../MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/../MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
@@ -784,7 +784,7 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual ("Folder/NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
 			Assert.AreEqual ("Folder/MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/../MyPage.aspx"), "ResolveClientUrl Failed");
 			Assert.AreEqual ("Folder/NunitWeb/MyPage.aspx", ctrl.ResolveClientUrl ("NunitWeb/./MyPage.aspx"), "ResolveClientUrl Failed");
-			Assert.AreEqual ("http://google.com/", ctrl.ResolveClientUrl ("http://google.com/"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("http://example.com/", ctrl.ResolveClientUrl ("http://example.com/"), "ResolveClientUrl Failed");
 
 			Assert.AreEqual ("MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
 			Assert.AreEqual ("../MyPage.aspx?param=val&yes=no", ctrl.ResolveClientUrl ("~/../MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
@@ -825,7 +825,7 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual (appPath + "/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
 			Assert.AreEqual (appPath + "/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/../MyPage.aspx"), "ResolveClientUrl Failed");
 			Assert.AreEqual (appPath + "/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/./MyPage.aspx"), "ResolveClientUrl Failed");
-			Assert.AreEqual ("http://google.com/", ctrl.ResolveUrl ("http://google.com/"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("http://example.com/", ctrl.ResolveUrl ("http://example.com/"), "ResolveClientUrl Failed");
 
 			Assert.AreEqual (appPath + "/MyPage.aspx?param=val&yes=no", ctrl.ResolveUrl ("~/MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
 			Assert.AreEqual ("/MyPage.aspx?param=val&yes=no", ctrl.ResolveUrl ("~/../MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
@@ -872,7 +872,7 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual (appPath + "/Folder/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/MyPage.aspx"), "ResolveClientUrl Failed");
 			Assert.AreEqual (appPath + "/Folder/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/../MyPage.aspx"), "ResolveClientUrl Failed");
 			Assert.AreEqual (appPath + "/Folder/NunitWeb/MyPage.aspx", ctrl.ResolveUrl ("NunitWeb/./MyPage.aspx"), "ResolveClientUrl Failed");
-			Assert.AreEqual ("http://google.com/", ctrl.ResolveUrl ("http://google.com/"), "ResolveClientUrl Failed");
+			Assert.AreEqual ("http://example.com/", ctrl.ResolveUrl ("http://example.com/"), "ResolveClientUrl Failed");
 
 			Assert.AreEqual (appPath + "/MyPage.aspx?param=val&yes=no", ctrl.ResolveUrl ("~/MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");
 			Assert.AreEqual ("/MyPage.aspx?param=val&yes=no", ctrl.ResolveUrl ("~/../MyPage.aspx?param=val&yes=no"), "~/../MyPage.aspx");

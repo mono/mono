@@ -107,7 +107,7 @@ namespace MonoTests.System {
 		[Test]
 		public void NewsX ()
 		{
-			Uri uri = new Uri ("newsx://go-mono.com/");
+			Uri uri = new Uri ("newsx://example.com/");
 			Assert.AreEqual (2, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}
@@ -116,8 +116,8 @@ namespace MonoTests.System {
 		[Category ("NotWorking")]
 		public void NewsX_Methods ()
 		{
-			Uri uri = new Uri ("newsx://go-mono.com/");
-			Assert.AreEqual ("//go-mono.com/", uri.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped), "GetComponents");
+			Uri uri = new Uri ("newsx://example.com/");
+			Assert.AreEqual ("//example.com/", uri.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped), "GetComponents");
 			Assert.IsTrue (uri.IsBaseOf (uri), "IsBaseOf");
 			Assert.IsTrue (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString");
 			// ??? our parser doesn't seems to be called :(
@@ -126,7 +126,7 @@ namespace MonoTests.System {
 		[Test]
 		public void SecureNewsX ()
 		{
-			Uri uri = new Uri ("snewsx://go-mono.com/");
+			Uri uri = new Uri ("snewsx://example.com/");
 			Assert.AreEqual (-1, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}

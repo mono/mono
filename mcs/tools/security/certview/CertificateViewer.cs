@@ -299,7 +299,7 @@ namespace Mono.Tools.CertView {
 			this.issuedByLinkLabel.Size = new System.Drawing.Size(272, 16);
 			this.issuedByLinkLabel.TabIndex = 15;
 			this.issuedByLinkLabel.TabStop = true;
-			this.issuedByLinkLabel.Text = "http://www.go-mono.com/";
+			this.issuedByLinkLabel.Text = "http://www.mono-project.com/";
 			this.issuedByLinkLabel.Visible = false;
 			// 
 			// panel4

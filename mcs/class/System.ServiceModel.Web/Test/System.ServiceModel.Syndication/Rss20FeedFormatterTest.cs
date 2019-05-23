@@ -142,17 +142,17 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void WriteTo ()
 		{
 			SyndicationFeed feed = new SyndicationFeed ();
-			feed.BaseUri = new Uri ("http://mono-project.com");
+			feed.BaseUri = new Uri ("http://example.com");
 			feed.Copyright = new TextSyndicationContent ("No rights reserved");
 			feed.Generator = "mono test generator";
 			feed.Id = "urn:myid";
-			feed.ImageUrl = new Uri ("http://mono-project.com/images/mono.png");
+			feed.ImageUrl = new Uri ("http://example.com/images/mono.png");
 			feed.LastUpdatedTime = new DateTimeOffset (DateTime.SpecifyKind (new DateTime (2008, 1, 1), DateTimeKind.Utc));
 
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = CreateWriter (sw))
 				new Rss20FeedFormatter (feed).WriteTo (w);
-			Assert.AreEqual ("<rss xmlns:a10=\"http://www.w3.org/2005/Atom\" version=\"2.0\"><channel xml:base=\"http://mono-project.com/\"><title /><description /><copyright>No rights reserved</copyright><lastBuildDate>Tue, 01 Jan 2008 00:00:00 Z</lastBuildDate><generator>mono test generator</generator><image><url>http://mono-project.com/images/mono.png</url><title /><link /></image><a10:id>urn:myid</a10:id></channel></rss>", sw.ToString ());
+			Assert.AreEqual ("<rss xmlns:a10=\"http://www.w3.org/2005/Atom\" version=\"2.0\"><channel xml:base=\"http://example.com/\"><title /><description /><copyright>No rights reserved</copyright><lastBuildDate>Tue, 01 Jan 2008 00:00:00 Z</lastBuildDate><generator>mono test generator</generator><image><url>http://example.com/images/mono.png</url><title /><link /></image><a10:id>urn:myid</a10:id></channel></rss>", sw.ToString ());
 		}
 
 		[Test]

@@ -107,7 +107,7 @@ namespace MonoTests.System {
 		[Test]
 		public void NetTcpX ()
 		{
-			Uri uri = new Uri ("net.tcpx://www.mono-project.com/");
+			Uri uri = new Uri ("net.tcpx://www.example.com/");
 			Assert.AreEqual (2, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}
@@ -116,7 +116,7 @@ namespace MonoTests.System {
 		[Category ("NotWorking")]
 		public void NetTcpX_Methods ()
 		{
-			Uri uri = new Uri ("net.tcpx://www.mono-project.com/");
+			Uri uri = new Uri ("net.tcpx://www.example.com/");
 			Assert.AreEqual (String.Empty, uri.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped), "GetComponents");
 			Assert.IsTrue (uri.IsBaseOf (uri), "IsBaseOf");
 			Assert.IsTrue (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString");
@@ -126,7 +126,7 @@ namespace MonoTests.System {
 		[Test]
 		public void SecureNetTcpX ()
 		{
-			Uri uri = new Uri ("snet.tcpx://www.mono-project.com/");
+			Uri uri = new Uri ("snet.tcpx://www.example.com/");
 			Assert.AreEqual (-1, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}

@@ -130,15 +130,15 @@ namespace MonoTests.System.Net
 		public void DownloadMultiple ()
 		{
 			WebClient wc = new WebClient ();
-			var t1 = wc.OpenReadTaskAsync ("http://www.google.com/");
+			var t1 = wc.OpenReadTaskAsync ("http://www.example.org/");
 			Assert.That (t1.Wait (15000));
 			Assert.IsTrue (t1.IsCompleted, "#1");
 
-			var t2 = wc.OpenReadTaskAsync ("http://www.mono-project.com/");
+			var t2 = wc.OpenReadTaskAsync ("http://www.example.com/");
 			Assert.That (t2.Wait (15000));
 			Assert.IsTrue (t2.IsCompleted, "#2");
 
-			var t3 = wc.DownloadStringTaskAsync ("http://www.google.com/");
+			var t3 = wc.DownloadStringTaskAsync ("http://www.example.org/");
 			Assert.That (t3.Wait (15000));
 			Assert.IsTrue (t3.IsCompleted, "#3");
 		}
@@ -151,8 +151,8 @@ namespace MonoTests.System.Net
 			WebClient wc = new WebClient ();
 
 			MessagePumpSyncContext.Run (async () => {
-				await wc.DownloadStringTaskAsync ("http://www.google.com/");
-				await wc.DownloadDataTaskAsync ("http://www.mono-project.com/");
+				await wc.DownloadStringTaskAsync ("http://www.example.org/");
+				await wc.DownloadDataTaskAsync ("http://www.example.com/");
 			}, null, 15000);
 		}
 
@@ -179,8 +179,8 @@ namespace MonoTests.System.Net
 			};
 
 			MessagePumpSyncContext.Run (async () => {
-				await wc.DownloadStringTaskAsync ("http://www.google.com/");
-				await wc.DownloadDataTaskAsync ("http://www.mono-project.com/");
+				await wc.DownloadStringTaskAsync ("http://www.example.org/");
+				await wc.DownloadDataTaskAsync ("http://www.example.com/");
 			}, () => data_completed && string_completed, 15000);
 
 			Assert.IsTrue (data_completed, "#1");

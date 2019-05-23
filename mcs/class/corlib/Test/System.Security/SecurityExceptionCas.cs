@@ -358,7 +358,7 @@ namespace MonoCasTests.System.Security {
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void SetUrl ()
 		{
-			se.Url = "http://www.mono-project.com/";
+			se.Url = "http://www.example.com/";
 		}
 
 		[Test]
