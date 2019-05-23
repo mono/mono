@@ -18,6 +18,11 @@ dependencies:
 commands:
   - .yamato/collate_builds.sh
 
+triggers:
+  branches:
+    only:
+      - "/.*/"
+
 artifacts: 
   builds.zip:
     paths:
