@@ -2024,7 +2024,7 @@ MonoInst* mono_constant_fold_ins            (MonoCompile *cfg, MonoInst *ins, Mo
 int       mono_eval_cond_branch             (MonoInst *branch);
 int       mono_is_power_of_two              (guint32 val) MONO_LLVM_INTERNAL;
 void      mono_cprop_local                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **acp, int acp_size);
-MonoInst* mono_compile_create_var           (MonoCompile *cfg, MonoType *type, int opcode);
+MonoInst* mono_compile_create_var           (MonoCompile *cfg, MonoType *type, int opcode) MONO_LLVM_INTERNAL;
 MonoInst* mono_compile_create_var_for_vreg  (MonoCompile *cfg, MonoType *type, int opcode, int vreg);
 void      mono_compile_make_var_load        (MonoCompile *cfg, MonoInst *dest, gssize var_index);
 MonoInst* mini_get_int_to_float_spill_area  (MonoCompile *cfg);
