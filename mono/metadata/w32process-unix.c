@@ -2044,6 +2044,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 		 * On Linux, try: xdg-open, the FreeDesktop standard way of doing it,
 		 * if that fails, try to use gnome-open, then kfmclient
 		 */
+		MONO_ENTER_GC_SAFE;
 		handler = g_find_program_in_path ("xdg-open");
 		if (handler != NULL)
 			handler_needswait = TRUE;
@@ -2054,6 +2055,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 				if (handler == NULL){
 					handler_utf16 = (gunichar2 *) -1;
 					ret = FALSE;
+					MONO_EXIT_GC_SAFE;
 					goto done;
 				} else {
 					/* kfmclient needs exec argument */
@@ -2064,6 +2066,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 				}
 			}
 		}
+		MONO_EXIT_GC_SAFE;
 #endif
 		handler_utf16 = g_utf8_to_utf16 (handler, -1, NULL, NULL, NULL);
 		g_free (handler);
@@ -2093,7 +2096,9 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 		if (handler_needswait) {
 			gint32 exitcode;
 			MonoW32HandleWaitRet waitret;
+			MONO_ENTER_GC_SAFE;
 			waitret = process_wait ((MonoW32Handle*)process_info->process_handle, MONO_INFINITE_WAIT, NULL);
+			MONO_EXIT_GC_SAFE;
 			mono_get_exit_code_process (process_info->process_handle, &exitcode);
 			if (exitcode != 0)
 				ret = FALSE;
@@ -2219,7 +2224,9 @@ ves_icall_System_Diagnostics_Process_GetProcesses_internal (void)
 	gpointer *pidarray;
 	int i, count;
 
+	MONO_ENTER_GC_SAFE;
 	pidarray = mono_process_list (&count);
+	MONO_EXIT_GC_SAFE;
 	if (!pidarray) {
 		mono_error_set_not_supported (error, "This system does not support EnumProcesses");
 		mono_error_set_pending_exception (error);

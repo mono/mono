@@ -99,7 +99,10 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 	else
 		shellex.fMask = (gulong)(shellex.fMask | SEE_MASK_FLAG_NO_UI);
 
+	MONO_ENTER_GC_SAFE;
 	ret = ShellExecuteEx (&shellex);
+	MONO_EXIT_GC_SAFE;
+	
 	if (ret == FALSE) {
 		process_info->pid = -GetLastError ();
 	} else {
@@ -138,6 +141,7 @@ mono_process_create_process (MonoCreateProcessCoop *coop, MonoW32ProcessInfo *mo
 	gchandle_t cmd_gchandle = 0;
 	gunichar2 *cmd_chars = MONO_HANDLE_IS_NULL (cmd) ? NULL : mono_string_handle_pin_chars (cmd, &cmd_gchandle);
 
+	MONO_ENTER_GC_SAFE;
 	if (coop->username) {
 		guint32 logon_flags = mono_process_info->load_user_profile ? LOGON_WITH_PROFILE : 0;
 
@@ -161,6 +165,7 @@ mono_process_create_process (MonoCreateProcessCoop *coop, MonoW32ProcessInfo *mo
 					start_info,
 					process_info);
 	}
+	MONO_EXIT_GC_SAFE;
 
 	mono_gchandle_free_internal (cmd_gchandle);
 
@@ -209,6 +214,7 @@ process_complete_path (const gunichar2 *appname, gchar **completed)
 	utf8appmemory = g_utf16_to_utf8 (appname, -1, NULL, NULL, NULL);
 	utf8app = process_unquote_application_name (utf8appmemory);
 
+	MONO_ENTER_GC_SAFE;
 	if (g_path_is_absolute (utf8app)) {
 		*completed = process_quote_path (utf8app);
 		result = TRUE;
@@ -230,6 +236,7 @@ process_complete_path (const gunichar2 *appname, gchar **completed)
 
 	*completed = process_quote_path (found);
 exit:
+	MONO_EXIT_GC_SAFE;
 	g_free (found);
 	g_free (utf8appmemory);
 	return result;
@@ -358,7 +365,10 @@ exit:
 static gboolean
 mono_process_win_enum_processes (DWORD *pids, DWORD count, DWORD *needed)
 {
-	return !!EnumProcesses (pids, count, needed);
+	MONO_ENTER_GC_SAFE;
+	gboolean success = EnumProcesses (pids, count, needed);
+	MONO_EXIT_GC_SAFE;
+	return success;
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
