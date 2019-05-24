@@ -186,7 +186,7 @@ namespace System.Globalization
             // Abbreviated English Era Names are only used for the Japanese calendar.
             if (!GlobalizationMode.Invariant && calendarId == (int)CalendarId.JAPAN)
             {
-                this.saAbbrevEnglishEraNames = JapaneseCalendar.EnglishEraNames();
+                this.saAbbrevEnglishEraNames = GlobalizationGate.GetJapaneseEnglishEraNames();
             }
             else
             {
@@ -268,11 +268,7 @@ namespace System.Globalization
                     
                 case CalendarId.JAPAN:
                 case CalendarId.JAPANESELUNISOLAR:
-                    if (GlobalizationMode.Invariant)
-                    {
-                        throw new PlatformNotSupportedException();
-                    }
-                    this.saEraNames = JapaneseCalendar.EraNames();
+                    this.saEraNames = GlobalizationGate.GetJapaneseEraNames ();
                     break;
 
                 case CalendarId.PERSIAN:
