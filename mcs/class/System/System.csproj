@@ -1099,6 +1099,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1316,6 +1317,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1441,6 +1443,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1562,6 +1565,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -2529,6 +2533,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3038,6 +3043,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3535,6 +3541,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3666,6 +3673,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3787,6 +3795,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3921,6 +3930,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -4189,6 +4199,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -4327,6 +4338,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -4465,6 +4477,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
