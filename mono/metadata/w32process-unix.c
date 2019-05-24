@@ -2055,8 +2055,6 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 				if (handler == NULL){
 					handler_utf16 = (gunichar2 *) -1;
 					ret = FALSE;
-					MONO_EXIT_GC_SAFE;
-					goto done;
 				} else {
 					/* kfmclient needs exec argument */
 					char *old = handler;
@@ -2067,6 +2065,9 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 			}
 		}
 		MONO_EXIT_GC_SAFE;
+		if (ret == FALSE){
+			goto done;
+		}
 #endif
 		handler_utf16 = g_utf8_to_utf16 (handler, -1, NULL, NULL, NULL);
 		g_free (handler);
