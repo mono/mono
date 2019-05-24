@@ -62,6 +62,7 @@ static guint64 stat_bytes_alloced_los = 0;
 #define TLAB_NEXT	(__thread_info__->tlab_next)
 #define TLAB_TEMP_END	(__thread_info__->tlab_temp_end)
 #define TLAB_REAL_END	(__thread_info__->tlab_real_end)
+#define THREAD_BYTES_ALLOCATED	(__thread_info__->total_bytes_allocated) 
 
 static GCObject*
 alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
@@ -167,6 +168,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 	 */
 
 	if (real_size > SGEN_MAX_SMALL_OBJ_SIZE) {
+		THREAD_BYTES_ALLOCATED += size;
 		p = (void **)sgen_los_alloc_large_inner (vtable, ALIGN_UP (real_size));
 	} else {
 		/* tlab_next and tlab_temp_end are TLS vars so accessing them might be expensive */
@@ -204,9 +206,10 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			/* 
 			 * Run out of space in the TLAB. When this happens, some amount of space
 			 * remains in the TLAB, but not enough to satisfy the current allocation
-			 * request. Currently, we retire the TLAB in all cases, later we could
-			 * keep it if the remaining space is above a treshold, and satisfy the
-			 * allocation directly from the nursery.
+			 * request. We keep the TLAB for future allocations if the remaining
+			 * space is above a treshold, and satisfy the allocation directly
+			 * from the nursery. Otherwise, we attempt to get a new TLAB from the
+			 * nursery and allocate into it.
 			 */
 			TLAB_NEXT -= size;
 			/* when running in degraded mode, we continue allocing that way
@@ -218,6 +221,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			available_in_tlab = (int)(TLAB_REAL_END - TLAB_NEXT);//We'll never have tlabs > 2Gb
 			if (size > sgen_tlab_size || available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
 				/* Allocate directly from the nursery */
+				THREAD_BYTES_ALLOCATED += size;
 				p = (void **)sgen_nursery_alloc (size);
 				if (!p) {
 					/*
@@ -246,6 +250,8 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 				zero_tlab_if_necessary (p, size);
 			} else {
+				THREAD_BYTES_ALLOCATED += TLAB_END - TLAB_START;
+
 				size_t alloc_size = 0;
 				if (TLAB_START)
 					SGEN_LOG (3, "Retire TLAB: %p-%p [%ld]", TLAB_START, TLAB_REAL_END, (long)(TLAB_REAL_END - TLAB_NEXT - size));
