@@ -1657,9 +1657,9 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			   !strcmp (cmethod_klass_name_space, "Internal.Runtime.CompilerServices") &&
 			   !strcmp (cmethod_klass_name, "Unsafe")) {
 		return emit_unsafe_intrinsics (cfg, cmethod, fsig, args);
-	} else if (in_corlib &&
-			   !strcmp (cmethod_klass_name_space, "System.Runtime.CompilerServices") &&
-			   !strcmp (cmethod_klass_name, "Unsafe")) {
+	} else if (!strcmp (cmethod_klass_name_space, "System.Runtime.CompilerServices") &&
+			   !strcmp (cmethod_klass_name, "Unsafe") &&
+			   (in_corlib || !strcmp (cmethod_klass_image->assembly->aname.name, "System.Runtime.CompilerServices.Unsafe"))) {
 		return emit_unsafe_intrinsics (cfg, cmethod, fsig, args);
 	} else if (in_corlib &&
 			   !strcmp (cmethod_klass_name_space, "System.Runtime.CompilerServices") &&
