@@ -230,34 +230,7 @@ var MonoSupportLib = {
 		});
 	},
 
-	mono_wasm_add_int_var: function(var_value) {
-		MONO.var_info.push({
-			value: {
-				type: "number",
-				value: var_value,
-			}
-		});
-	},
-
-	mono_wasm_add_long_var: function(var_value) {
-		MONO.var_info.push({
-			value: {
-				type: "number",
-				value: var_value,
-			}
-		});
-	},
-
-	mono_wasm_add_float_var: function(var_value) {
-		MONO.var_info.push({
-			value: {
-				type: "number",
-				value: var_value,
-			}
-		});
-	},
-
-	mono_wasm_add_double_var: function(var_value) {
+	mono_wasm_add_number_var: function(var_value) {
 		MONO.var_info.push({
 			value: {
 				type: "number",
@@ -271,12 +244,13 @@ var MonoSupportLib = {
 			name: Module.UTF8ToString (name),
 		});
 	},
+
 	mono_wasm_add_array_item: function(position) {
 		MONO.var_info.push({
 			name: "[" + position + "]",
 		});
 	},
-	
+
 	mono_wasm_add_string_var: function(var_value) {
 		if (var_value == 0) {
 			MONO.var_info.push({
@@ -294,6 +268,7 @@ var MonoSupportLib = {
 			});
 		}
 	},
+
 	mono_wasm_add_obj_var: function(className, objectId) {
 		if (objectId == 0) {
 			MONO.var_info.push({
@@ -315,6 +290,7 @@ var MonoSupportLib = {
 			});
 		}
 	},
+
 	mono_wasm_add_array_var: function(className, objectId) {
 		if (objectId == 0) {
 			MONO.var_info.push({
@@ -336,7 +312,6 @@ var MonoSupportLib = {
 			});
 		}
 	},
-
 
 	mono_wasm_add_frame: function(il, method, name) {
 		MONO.active_frames.push( {
