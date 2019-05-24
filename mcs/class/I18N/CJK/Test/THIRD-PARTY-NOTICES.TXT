@@ -39,7 +39,6 @@ Use:
 
 * https://github.com/mono/mono/blob/c641b329305dd8dcba29a6fdd66d9ef0cc16a704/mcs/class/I18N/CJK/Test/texts/chinese2-950.txt
 * https://github.com/mono/mono/blob/c641b329305dd8dcba29a6fdd66d9ef0cc16a704/mcs/class/I18N/CJK/Test/texts/chinese2-utf8.txt
-* 
 
 License notice for FreeBSD 6.x + Netatalk + Samba
 -------------------------------------------------
