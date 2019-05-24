@@ -316,6 +316,10 @@ struct MonoJumpInfo {
 	} ip;
 
 	MonoJumpInfoType type;
+	/*
+	 * This array should consist of all-pointer sized elements, or
+	 * mixing fields on BE can result in invalid values.
+	 */
 	union {
 		gconstpointer   target;
 #if TARGET_SIZEOF_VOID_P == 8
@@ -333,7 +337,7 @@ struct MonoJumpInfo {
 		MonoImage      *image;
 		MonoVTable     *vtable;
 		const char     *name;
-		MonoJitICallId jit_icall_id; // Or just use index?
+		gsize jit_icall_id; // Or just use index?
 		MonoJumpInfoToken  *token;
 		MonoJumpInfoBBTable *table;
 		MonoJumpInfoRgctxEntry *rgctx_entry;
