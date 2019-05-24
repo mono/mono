@@ -4609,7 +4609,7 @@ add_wrappers (MonoAotCompile *acfg)
 		/* JIT icall wrappers */
 		/* FIXME: locking - this is "safe" as full-AOT threads don't mutate the icall data */
 		for (int i = 0; i < MONO_JIT_ICALL_count; ++i)
-			add_jit_icall_wrapper (acfg, mono_find_jit_icall_info ((MonoJitICallId)i));
+			add_jit_icall_wrapper (acfg, mono_find_jit_icall_info_all ((MonoJitICallId)i));
 	}
 
 	/* 
@@ -13572,7 +13572,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options,
 			add_gc_wrappers (acfg);
 
 			for (int i = 0; i < MONO_JIT_ICALL_count; ++i)
-				add_jit_icall_wrapper (acfg, mono_find_jit_icall_info ((MonoJitICallId)i));
+				add_jit_icall_wrapper (acfg, mono_find_jit_icall_info_all ((MonoJitICallId)i));
 		}
 	}
 

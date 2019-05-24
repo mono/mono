@@ -390,9 +390,10 @@ mono_check_jit_icall_info (gconstpointer jit_icall_info)
 }
 
 // Given an enum/id, get the MonoJitICallInfo*.
+// This can return uninitialized info. Caller checks.
 //
 static inline MonoJitICallInfo*
-mono_find_jit_icall_info (MonoJitICallId id)
+mono_find_jit_icall_info_all (MonoJitICallId id)
 {
 	const guint index = (guint)id;
 
@@ -400,3 +401,24 @@ mono_find_jit_icall_info (MonoJitICallId id)
 
 	return &mono_get_jit_icall_info ()->array [index];
 }
+
+// Given an enum/id, get the MonoJitICallInfo*.
+// Caller expects initialized info.
+//
+static inline MonoJitICallInfo*
+mono_find_jit_icall_info_internal (MonoJitICallId id, const char *func, int line)
+{
+	g_assertf (id != MONO_JIT_ICALL_ZeroIsReserved, "%s:%d", func, line);
+
+	MonoJitICallInfo* info = mono_find_jit_icall_info_all (id);
+
+	g_assertf (info->func, "%s:%d", func, line);
+
+	return info;
+}
+
+#if __ppc64__ || __powerpc64__ || TARGET_POWERPC || __ppc__ || __powerpc__
+#define mono_find_jit_icall_info(id) (mono_find_jit_icall_info_internal ((id), __func__, __LINE__))
+#else
+#define mono_find_jit_icall_info(id) (mono_find_jit_icall_info_internal ((id), "", 0))
+#endif
