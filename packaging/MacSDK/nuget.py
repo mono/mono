@@ -23,4 +23,4 @@ class NuGetBinary (Package):
             output.write(
                 'exec {0}/bin/mono $MONO_OPTIONS {1} "$@"\n'.format(self.staged_prefix, target))
         os.chmod(launcher, 0o755)
-NuGetBinary()
+NuGetBinary()   
