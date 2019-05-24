@@ -36,9 +36,7 @@ ves_icall_System_Threading_Semaphore_CreateSemaphore_icall (gint32 initialCount,
 MonoBoolean
 ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount, MonoError *error)
 {
-	MONO_ENTER_GC_SAFE;
 	return ReleaseSemaphore (handle, releaseCount, (PLONG)prevcount);
-	MONO_EXIT_GC_SAFE;
 }
 
 gpointer

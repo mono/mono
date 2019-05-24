@@ -320,11 +320,9 @@ void
 mono_mmap_configure_inheritability (void *mmap_handle, gint32 inheritability, MonoError *error)
 {
 	g_assert (mmap_handle);
-	MONO_ENTER_GC_SAFE;
 	if (!SetHandleInformation (mmap_handle, HANDLE_FLAG_INHERIT, inheritability ? HANDLE_FLAG_INHERIT : 0)) {
 		g_error ("mono_mmap_configure_inheritability: SetHandleInformation failed with error %d!", GetLastError ());
 	}
-	MONO_EXIT_GC_SAFE;
 }
 
 void
