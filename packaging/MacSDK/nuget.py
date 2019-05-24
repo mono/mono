@@ -4,6 +4,7 @@ import fileinput
 class NuGetBinary (Package):
 
     def __init__(self):
+        # this comment was added just to change the package manifest, see git blame (for a while it seems like the nuget 5.0.2 URL was pointing to a 5.0.0 binary)
         Package.__init__(self, name='NuGet', version='5.0.2', sources=[
                          'https://dist.nuget.org/win-x86-commandline/v%{version}/nuget.exe'])
 
