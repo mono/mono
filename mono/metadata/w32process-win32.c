@@ -365,8 +365,9 @@ exit:
 static gboolean
 mono_process_win_enum_processes (DWORD *pids, DWORD count, DWORD *needed)
 {
+	gboolean success;
 	MONO_ENTER_GC_SAFE;
-	gboolean success = EnumProcesses (pids, count, needed);
+	success = EnumProcesses (pids, count, needed);
 	MONO_EXIT_GC_SAFE;
 	return success;
 }
