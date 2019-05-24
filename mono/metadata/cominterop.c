@@ -2699,17 +2699,91 @@ cominterop_ccw_get_ids_of_names (MonoCCWInterface* ccwe, gpointer riid,
 /* Common base value for sequential dispid's */
 #define MONO_DISPID_BASE 0x60020000
 
+#define MONO_DISPID_VALUE 0
+
+static gboolean
+cominterop_class_search_dispid (MonoClass* klass, const gchar* methodname,
+	gint32* result, int* slot_count)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	ERROR_DECL (error);
+	MonoCustomAttrInfo *cinfo = NULL;
+	int pos=0;
+	int i;
+	MonoMethod** methods = NULL;
+	int methodcount;
+	MonoMethod* method = NULL;
+
+	if (klass == mono_defaults.object_class) {
+		/* System.Object gets special treatment for some reason. */
+		if (strcmp (methodname, "ToString") == 0) {
+			*result = MONO_DISPID_VALUE;
+			return TRUE;
+		}
+		if (strcmp (methodname, "Equals") == 0) {
+			*result = MONO_DISPID_BASE+1;
+			return TRUE;
+		}
+		if (strcmp (methodname, "GetHashCode") == 0) {
+			*result = MONO_DISPID_BASE+2;
+			return TRUE;
+		}
+		if (strcmp (methodname, "GetType") == 0) {
+			*result = MONO_DISPID_BASE+3;
+			return TRUE;
+		}
+		/* Method not found, subclasses start counting at 4 */
+		*slot_count = 4;
+		return FALSE;
+	}
+
+	if (!mono_class_is_interface (klass)) {
+		if (cominterop_class_search_dispid (m_class_get_parent (klass), methodname, result, &pos))
+			return TRUE;
+	}
+
+	mono_class_setup_methods (klass);
+	methodcount = mono_class_get_method_count (klass);
+	methods = m_class_get_methods (klass);
+
+	for (i = 0; i < methodcount; i++) {
+		method = methods [i];
+
+		if (strcmp(method->name, methodname) == 0) {
+			cinfo = mono_custom_attrs_from_method_checked (method, error);
+			mono_error_assert_ok (error); /* FIXME what's reasonable to do here */
+			if (cinfo) {
+				MonoDispIdAttribute *dispid = (MonoDispIdAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_dispid_attribute_class (), error);
+				mono_error_assert_ok (error); /*FIXME proper error handling*/;
+
+				if (dispid)
+					*result = dispid->dispid;
+				else
+					*result = MONO_DISPID_BASE + pos;
+
+				if (!cinfo->cached)
+					mono_custom_attrs_free (cinfo);
+			}
+			else
+				*result = MONO_DISPID_BASE + pos;
+
+			return TRUE;
+		}
+
+		pos++;
+	}
+
+	*slot_count = pos;
+	return FALSE;
+}
+
 static int STDCALL 
 cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 				      gunichar2** rgszNames, guint32 cNames,
 				      guint32 lcid, gint32 *rgDispId)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-	ERROR_DECL (error);
-	MonoCustomAttrInfo *cinfo = NULL;
-	int i, j, methodcount, pos, ret = MONO_S_OK;
-	MonoMethod* method = NULL;
-	MonoMethod** methods = NULL;
+	int i, dummy, ret = MONO_S_OK;
 	gchar* methodname;
 	MonoClass* iface = ccwe->iface;
 	MonoCCW* ccw = ccwe->ccw;
@@ -2724,46 +2798,10 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 		iface = mono_object_class (object);
 	}
 
-	mono_class_setup_methods (iface);
-	methodcount = mono_class_get_method_count (iface);
-	methods = m_class_get_methods (iface);
-
 	for (i=0; i < cNames; i++) {
 		methodname = mono_unicode_to_external (rgszNames[i]);
 
-		if (mono_class_is_interface (iface))
-			pos = 0;
-		else
-			/* TODO: methods on Object should be properly included? */
-			pos = 4;
-
-		for (j = 0; j < methodcount; j++) {
-			method = methods [j];
-
-			if (strcmp(method->name, methodname) == 0)
-				break;
-
-			pos++;
-		}
-
-		if (j < methodcount) {
-			cinfo = mono_custom_attrs_from_method_checked (method, error);
-			mono_error_assert_ok (error); /* FIXME what's reasonable to do here */
-			if (cinfo) {
-				MonoDispIdAttribute *result = (MonoDispIdAttribute*)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_dispid_attribute_class (), error);
-				mono_error_assert_ok (error); /*FIXME proper error handling*/;
-
-				if (result)
-					rgDispId[i] = result->dispid;
-				else
-					rgDispId[i] = MONO_DISPID_BASE + pos;
-
-				if (!cinfo->cached)
-					mono_custom_attrs_free (cinfo);
-			}
-			else
-				rgDispId[i] = MONO_DISPID_BASE + pos;
-		} else {
+		if (!cominterop_class_search_dispid (iface, methodname, &rgDispId[i], &dummy)) {
 			rgDispId[i] = MONO_E_DISPID_UNKNOWN;
 			ret = MONO_E_DISP_E_UNKNOWNNAME;
 		}
