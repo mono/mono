@@ -146,35 +146,43 @@ stub_delegate_ctor (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer
 	g_assert_not_reached ();
 }
 
+static const MonoEECallbacks mono_interp_stub_callbacks = {
+	NULL, // stub_entry_from_trampoline
+	NULL, // stub_to_native_trampoline
+	stub_create_method_pointer,
+	stub_create_method_pointer_llvmonly,
+	stub_runtime_invoke,
+	stub_init_delegate,
+	stub_delegate_ctor,
+	stub_get_remoting_invoke,
+	stub_set_resume_state,
+	stub_run_finally,
+	stub_run_filter,
+	stub_frame_iter_init,
+	stub_frame_iter_next,
+	stub_find_jit_info,
+	stub_set_breakpoint,
+	stub_clear_breakpoint,
+	stub_frame_get_jit_info,
+	stub_frame_get_ip,
+	stub_frame_get_arg,
+	stub_frame_get_local,
+	stub_frame_get_this,
+	NULL, // stub_frame_arg_to_data,
+	NULL, // stub_data_to_frame_arg,
+	NULL, // stub_frame_arg_to_storage,
+	NULL, // stub_frame_arg_set_storage,
+	stub_frame_get_parent,
+	stub_start_single_stepping,
+	stub_stop_single_stepping,
+};
+
 void
 mono_interp_stub_init (void)
 {
-	if (mini_get_interp_callbacks ()->create_method_pointer)
+	if (mini_get_interp_callbacks ())
 		/* already initialized */
 		return;
 
-	MonoEECallbacks c;
-	c.create_method_pointer = stub_create_method_pointer;
-	c.create_method_pointer_llvmonly = stub_create_method_pointer_llvmonly;
-	c.runtime_invoke = stub_runtime_invoke;
-	c.init_delegate = stub_init_delegate;
-	c.get_remoting_invoke = stub_get_remoting_invoke;
-	c.set_resume_state = stub_set_resume_state;
-	c.run_finally = stub_run_finally;
-	c.run_filter = stub_run_filter;
-	c.frame_iter_init = stub_frame_iter_init;
-	c.frame_iter_next = stub_frame_iter_next;
-	c.find_jit_info = stub_find_jit_info;
-	c.set_breakpoint = stub_set_breakpoint;
-	c.clear_breakpoint = stub_clear_breakpoint;
-	c.frame_get_jit_info = stub_frame_get_jit_info;
-	c.frame_get_ip = stub_frame_get_ip;
-	c.frame_get_arg = stub_frame_get_arg;
-	c.frame_get_local = stub_frame_get_local;
-	c.frame_get_this = stub_frame_get_this;
-	c.frame_get_parent = stub_frame_get_parent;
-	c.start_single_stepping = stub_start_single_stepping;
-	c.stop_single_stepping = stub_stop_single_stepping;
-	c.delegate_ctor = stub_delegate_ctor;
-	mini_install_interp_callbacks (&c);
+	mini_install_interp_callbacks (&mono_interp_stub_callbacks);
 }

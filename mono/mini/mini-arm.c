@@ -1684,7 +1684,7 @@ arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
 void
 mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
+	const MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	gpointer storage;
 	ArgInfo *ainfo;
@@ -1726,7 +1726,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 void
 mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb;
+	const MonoEECallbacks *interp_cb;
 	CallInfo *cinfo;
 	gpointer storage;
 	ArgInfo *ainfo;
@@ -1752,7 +1752,7 @@ mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 void
 mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
+	const MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	gpointer storage;
 	ArgInfo *ainfo;
@@ -1785,7 +1785,7 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 void
 mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb;
+	const MonoEECallbacks *interp_cb;
 	CallInfo *cinfo;
 	ArgInfo *ainfo;
 	gpointer storage;
