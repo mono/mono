@@ -149,32 +149,18 @@ stub_delegate_ctor (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer
 void
 mono_interp_stub_init (void)
 {
-	if (mini_get_interp_callbacks ()->create_method_pointer)
+	if (mini_get_interp_callbacks ())
 		/* already initialized */
 		return;
 
-	MonoEECallbacks c;
-	c.create_method_pointer = stub_create_method_pointer;
-	c.create_method_pointer_llvmonly = stub_create_method_pointer_llvmonly;
-	c.runtime_invoke = stub_runtime_invoke;
-	c.init_delegate = stub_init_delegate;
-	c.get_remoting_invoke = stub_get_remoting_invoke;
-	c.set_resume_state = stub_set_resume_state;
-	c.run_finally = stub_run_finally;
-	c.run_filter = stub_run_filter;
-	c.frame_iter_init = stub_frame_iter_init;
-	c.frame_iter_next = stub_frame_iter_next;
-	c.find_jit_info = stub_find_jit_info;
-	c.set_breakpoint = stub_set_breakpoint;
-	c.clear_breakpoint = stub_clear_breakpoint;
-	c.frame_get_jit_info = stub_frame_get_jit_info;
-	c.frame_get_ip = stub_frame_get_ip;
-	c.frame_get_arg = stub_frame_get_arg;
-	c.frame_get_local = stub_frame_get_local;
-	c.frame_get_this = stub_frame_get_this;
-	c.frame_get_parent = stub_frame_get_parent;
-	c.start_single_stepping = stub_start_single_stepping;
-	c.stop_single_stepping = stub_stop_single_stepping;
-	c.delegate_ctor = stub_delegate_ctor;
+#define stub_entry_from_trampoline NULL
+#define stub_to_native_trampoline NULL
+#define stub_frame_arg_to_data NULL
+#define stub_data_to_frame_arg NULL
+#define stub_frame_arg_to_storage NULL
+#define stub_frame_arg_set_storage NULL
+
+	static const MonoEECallbacks c = MONO_INIT_EE_CALLBACKS (stub);
+
 	mini_install_interp_callbacks (&c);
 }

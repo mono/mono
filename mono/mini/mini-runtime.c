@@ -4037,19 +4037,12 @@ mini_add_profiler_argument (const char *desc)
 	g_ptr_array_add (profile_options, (gpointer) desc);
 }
 
-
-static MonoEECallbacks interp_cbs = {0};
+const MonoEECallbacks *mono_interp_callbacks_pointer;
 
 void
-mini_install_interp_callbacks (MonoEECallbacks *cbs)
+mini_install_interp_callbacks (const MonoEECallbacks *interp_callbacks)
 {
-	memcpy (&interp_cbs, cbs, sizeof (MonoEECallbacks));
-}
-
-MonoEECallbacks *
-mini_get_interp_callbacks (void)
-{
-	return &interp_cbs;
+	mono_interp_callbacks_pointer = interp_callbacks;
 }
 
 static MonoDebuggerCallbacks dbg_cbs;
