@@ -3157,6 +3157,18 @@ mono_domain_ldstr_table_remove(gpointer key, gpointer value, gpointer user_data)
 	return TRUE;
 }
 
+static gboolean 
+mono_domain_jit_code_hash_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoImage* image = (MonoImage*)user_data;
+	MonoMethod* method = (MonoMethod*)key;
+	if (method->klass && method->klass->image == image)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
 void 
 mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 {
@@ -3209,6 +3221,7 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	for (i = 0; i < removed_class_vtable_array->len; ++i)
 		unregister_vtable_reflection_type((MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i));
 	g_ptr_array_free(removed_class_vtable_array, TRUE);
+
 	// type_hash
 	if (domain->type_hash)
 	{
@@ -3228,6 +3241,17 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	}
 	// mono_assembly_release_gc_roots
 	mono_assembly_release_gc_roots(assembly);
+	// remote class 这个应该没用吧
+	// create_proxy_for_type_method
+	// private_invoke_method
+	// proxy_vtable_hash
+
+	// jit_code_hash
+	mono_internal_hash_table_foreach_remove(&domain->jit_code_hash, mono_domain_jit_code_hash_remove, image);
+
+	// aot_modules
+	// jit_info_table
+	// generic_virtual_cases
 	// mono_assembly_close
 	mono_assembly_close(assembly);
 	// proxy_vtable_hash: remote_class
@@ -3237,6 +3261,8 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	// finalizable_objects_hash:好像没用
 	// generic_virtual_cases:是jit的东西？
 	domain->domain_assemblies = g_slist_remove(domain->domain_assemblies, assembly);
+	
+
 	
 }
 

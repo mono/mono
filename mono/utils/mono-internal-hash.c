@@ -125,3 +125,45 @@ mono_internal_hash_table_remove (MonoInternalHashTable *table, gpointer key)
 
 	return FALSE;
 }
+
+
+// extend by dsqiu
+
+guint
+mono_internal_hash_table_foreach_remove(MonoInternalHashTable *table, GHRFunc func, gpointer user_data)
+{
+	int i;
+	int count = 0;
+
+	g_return_val_if_fail(table != NULL, 0);
+	g_return_val_if_fail(func != NULL, 0);
+	if (table->num_entries > 0)
+	{
+		GPtrArray* removed_element_array = g_ptr_array_new();
+		for (i = 0; i < table->size; ++i) {
+			gpointer value;
+			value = table->table[i];
+			while (value != NULL) {
+				gpointer key;
+				gint hash;
+
+				key = table->key_extract(value);
+				if (func(key, value, user_data))
+				{
+					g_ptr_array_add(removed_element_array, key);
+				}
+				value = *(table->next_value(value));
+			}
+		}
+		if (removed_element_array->len > 0)
+		{
+			for (int index = 0; index < removed_element_array->len; index++)
+			{
+				mono_internal_hash_table_remove(table, g_ptr_array_index(removed_element_array, index));
+			}
+		}
+		g_ptr_array_free(removed_element_array, TRUE);
+	}
+	return count;
+}
+// extend end

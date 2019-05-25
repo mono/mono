@@ -74,4 +74,9 @@ mono_internal_hash_table_insert (MonoInternalHashTable *table,
 gboolean
 mono_internal_hash_table_remove (MonoInternalHashTable *table, gpointer key);
 
+
+// extend by dsqiu
+guint
+mono_internal_hash_table_foreach_remove(MonoInternalHashTable *table, GHRFunc func, gpointer user_data);
+// extend end
 #endif
