@@ -26,7 +26,7 @@ struct _MonoInterpStackIter {
 
 typedef gpointer MonoInterpFrameHandle;
 
-struct _MonoEECallbacks {
+typedef struct _MonoEECallbacks {
 	void (*entry_from_trampoline) (gpointer ccontext, gpointer imethod);
 	void (*to_native_trampoline) (gpointer addr, gpointer ccontext);
 	gpointer (*create_method_pointer) (MonoMethod *method, gboolean compile, MonoError *error);
@@ -55,8 +55,6 @@ struct _MonoEECallbacks {
 	MonoInterpFrameHandle (*frame_get_parent) (MonoInterpFrameHandle frame);
 	void (*start_single_stepping) (void);
 	void (*stop_single_stepping) (void);
-};
-
-typedef struct _MonoEECallbacks MonoEECallbacks;
+} MonoEECallbacks;
 
 #endif /* __MONO_EE_H__ */
