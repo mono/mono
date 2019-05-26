@@ -3517,6 +3517,10 @@ if test x$host_win32 = xno; then
 
 			int main ()
 			{
+			#ifdef __PASE__
+				/* IBM i doesn't implement this and returns SIGILL */
+				return -1;
+			#endif
 				int fd = shm_open("/mono_configure_shm_open", O_CREAT | O_RDWR, 0777);
 				if (fd == -1)
 					return -1;
