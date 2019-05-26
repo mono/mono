@@ -4193,6 +4193,7 @@ LIBC="libc.so.6"
 INTL="libc.so.6"
 SQLITE="libsqlite.so.0"
 SQLITE3="libsqlite3.so.0"
+SQLITE3="libodbc.so.2"
 X11="libX11.so"
 GDKX11="libgdk-x11-2.0.so.0"
 GTKX11="libgtk-x11-2.0.so.0"
@@ -5871,6 +5872,7 @@ AC_SUBST(LIBC)
 AC_SUBST(INTL)
 AC_SUBST(SQLITE)
 AC_SUBST(SQLITE3)
+AC_SUBST(ODBC)
 AC_SUBST(X11)
 AC_SUBST(GDKX11)
 AC_SUBST(GTKX11)
