@@ -38,7 +38,7 @@ namespace System.Reflection.Emit
 		{
 		}
 
-		public int ILOffset {
+		public virtual int ILOffset {
 			get	{
 				throw new PlatformNotSupportedException ();
 			}
@@ -213,6 +213,11 @@ namespace System.Reflection.Emit
 		}
 
 		public virtual void MarkLabel (Label loc)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public virtual void MarkSequencePoint (System.Diagnostics.SymbolStore.ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int endColumn)
 		{
 			throw new PlatformNotSupportedException ();
 		}
