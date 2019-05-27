@@ -131,9 +131,14 @@ fi
 
 if [[ ${CI_TAGS} == *'sdks-ios'* ]];
    then
-	   # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
-	   export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
-	   export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+        # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
+        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+        export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+        export MACOS_VERSION=10.14
+        export IOS_VERSION=12.1
+        export TVOS_VERSION=12.1
+        export WATCHOS_VERSION=5.1
+        export WATCHOS5_VERSION=5.1
 
         echo "DISABLE_ANDROID=1" > sdks/Make.config
         echo "DISABLE_WASM=1" >> sdks/Make.config
@@ -178,6 +183,7 @@ then
     # configuration on our bots: https://github.com/mono/mono/pull/11691#issuecomment-439178459
     export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
     export XCODE32_DIR=/Applications/Xcode94.app/Contents/Developer
+    export MACOS_VERSION=10.14
 
     echo "DISABLE_IOS=1" > sdks/Make.config
     echo "DISABLE_ANDROID=1" >> sdks/Make.config
