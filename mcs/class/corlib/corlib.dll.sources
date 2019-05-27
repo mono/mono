@@ -73,6 +73,7 @@ Mono.Xml/SecurityParser.cs
 System/ActivationContext.cs
 System/AndroidPlatform.cs
 System/AppDomain.cs
+System/AppDomain.pns.cs
 System/AppDomainInitializer.cs
 System/AppDomainManager.cs
 System/AppDomainSetup.cs
@@ -285,6 +286,7 @@ System.Reflection.Emit/MethodBuilder.cs
 System.Reflection.Emit/MethodOnTypeBuilderInst.cs
 System.Reflection.Emit/MethodToken.cs
 System.Reflection.Emit/MethodRental.cs
+System.Reflection.Emit/MethodRental.pns.cs
 System.Reflection.Emit/ModuleBuilder.cs
 System.Reflection.Emit/MonoArrayMethod.cs
 System.Reflection.Emit/OpCodeNames.cs
@@ -307,6 +309,7 @@ System.Reflection.Emit/TypeBuilder.cs
 System.Reflection.Emit/TypeBuilderInstantiation.cs
 System.Reflection.Emit/TypeToken.cs
 System.Reflection.Emit/UnmanagedMarshal.cs
+System.Reflection.Emit/UnmanagedMarshal.pns.cs
 System.Reflection.Emit/AssemblyBuilder.pns.cs
 System.Reflection.Emit/ConstructorBuilder.pns.cs
 System.Reflection.Emit/CustomAttributeBuilder.pns.cs

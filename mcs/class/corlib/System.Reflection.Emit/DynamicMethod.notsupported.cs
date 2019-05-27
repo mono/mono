@@ -94,10 +94,10 @@ namespace System.Reflection.Emit
 
 		public bool InitLocals { get; set; }
 
-		public override MethodImplAttributes MethodImplementationFlags {
+		public override Module Module {
 			get {
 				throw new PlatformNotSupportedException ();
-			}				
+			}
 		}
 
 		public override string Name {
@@ -137,6 +137,9 @@ namespace System.Reflection.Emit
 		public override Type ReflectedType { get { throw new PlatformNotSupportedException (); } }
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes { get { throw new PlatformNotSupportedException (); } }
 
+		public override sealed Delegate CreateDelegate (Type delegateType) { throw new PlatformNotSupportedException (); }
+		public override sealed Delegate CreateDelegate (Type delegateType, object target) { throw new PlatformNotSupportedException (); }
+
 		public override object[] GetCustomAttributes (bool inherit) { throw new PlatformNotSupportedException (); }
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
 		public override MethodImplAttributes GetMethodImplementationFlags () { throw new PlatformNotSupportedException (); }
@@ -145,6 +148,11 @@ namespace System.Reflection.Emit
 		public override object Invoke (object obj, BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) { throw new PlatformNotSupportedException (); }
 
 		public override bool IsDefined (Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
+
+		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string parameterName) => throw new PlatformNotSupportedException ();
+		public DynamicILInfo GetDynamicILInfo () => throw new PlatformNotSupportedException ();
+
+		public override string ToString () => throw new PlatformNotSupportedException ();
 	}
 }
 
