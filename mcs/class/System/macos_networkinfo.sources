@@ -1,3 +1,4 @@
+System.Net.NetworkInformation/FreeBSDNetworkInterface.cs
 System.Net.NetworkInformation/MacOsIPInterfaceProperties.cs
 System.Net.NetworkInformation/MacOsIPv4InterfaceProperties.cs
 System.Net.NetworkInformation/MacOsIPv4InterfaceStatistics.cs
