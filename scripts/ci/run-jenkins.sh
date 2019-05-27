@@ -279,14 +279,14 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
-            #${TESTCMD} --label=ch-mini-test --timeout=20m $gnumake -C sdks/wasm run-ch-mini
+            ${TESTCMD} --label=ch-mini-test --timeout=20m $gnumake -C sdks/wasm run-ch-mini
             ${TESTCMD} --label=v8-mini-test --timeout=20m $gnumake -C sdks/wasm run-v8-mini
             ${TESTCMD} --label=sm-mini-test --timeout=20m $gnumake -C sdks/wasm run-sm-mini
             ${TESTCMD} --label=jsc-mini-test --timeout=20m $gnumake -C sdks/wasm run-jsc-mini
             #The following tests are not passing yet, so enabling them would make us perma-red
             #${TESTCMD} --label=mini-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-all-corlib
             #${TESTCMD} --label=mini-system --timeout=20m $gnu$gnumake -C sdks/wasm run-all-system
-            #${TESTCMD} --label=ch-system-core --timeout=20m $gnumake -C sdks/wasm run-ch-system-core
+            ${TESTCMD} --label=ch-system-core --timeout=20m $gnumake -C sdks/wasm run-ch-system-core
             ${TESTCMD} --label=v8-system-core --timeout=20m $gnumake -C sdks/wasm run-v8-system-core
             ${TESTCMD} --label=sm-system-core --timeout=20m $gnumake -C sdks/wasm run-sm-system-core
             ${TESTCMD} --label=jsc-system-core --timeout=20m $gnumake -C sdks/wasm run-jsc-system-core
