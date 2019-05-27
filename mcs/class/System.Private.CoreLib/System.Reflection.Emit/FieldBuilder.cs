@@ -194,13 +194,6 @@ namespace System.Reflection.Emit {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
-		public void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
-			RejectIfCreated ();
-			marshal_info = unmanagedMarshal;
-			attrs |= FieldAttributes.HasFieldMarshal;
-		}
-
 		public void SetOffset( int iOffset) {
 			RejectIfCreated ();
 			if (iOffset < 0)

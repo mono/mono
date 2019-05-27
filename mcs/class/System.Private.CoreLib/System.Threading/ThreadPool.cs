@@ -103,6 +103,8 @@ namespace System.Threading
 		static long PendingUnmanagedWorkItemCount => 0;
 		
 		public static long CompletedWorkItemCount => throw new PlatformNotSupportedException ();
+
+		public static int ThreadCount => throw new NotImplementedException ();
 	}
 
 	internal static class _ThreadPoolWaitCallback

@@ -261,22 +261,6 @@ namespace System.Reflection.Emit
 			return type.Module;
 		}
 
-		public void CreateMethodBody (byte[] il, int count)
-		{
-			if ((il != null) && ((count < 0) || (count > il.Length)))
-				throw new ArgumentOutOfRangeException ("Index was out of range.  Must be non-negative and less than the size of the collection.");
-
-			if ((code != null) || type.is_created)
-				throw new InvalidOperationException ("Type definition of the method is complete.");
-
-			if (il == null)
-				code = null;
-			else {
-				code = new byte [count];
-				System.Array.Copy(il, code, count);
-			}
-		}
-
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
 		{
 			throw NotSupported ();
@@ -490,20 +474,6 @@ namespace System.Reflection.Emit
 		{
 			RejectIfCreated ();
 			iattrs = attributes;
-		}
-
-		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
-		public void SetMarshal (UnmanagedMarshal unmanagedMarshal)
-		{
-			RejectIfCreated ();
-			throw new NotImplementedException ();
-		}
-
-		// FIXME:
-		public void SetSymCustomAttribute (string name, byte[] data)
-		{
-			RejectIfCreated ();
-			throw new NotImplementedException ();
 		}
 
 		public override string ToString()
