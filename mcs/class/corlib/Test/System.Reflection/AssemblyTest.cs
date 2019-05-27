@@ -527,8 +527,7 @@ namespace MonoTests.System.Reflection
 			AssemblyBuilder ab = AppDomain.CurrentDomain
 				.DefineDynamicAssembly (assemblyName,
 				AssemblyBuilderAccess.Save,
-				TempFolder,
-				AppDomain.CurrentDomain.Evidence);
+				TempFolder);
 			ab.Save (Path.GetFileName (assemblyFileName));
 
 			using (FileStream fs = File.OpenRead (assemblyFileName)) {
@@ -623,8 +622,7 @@ namespace MonoTests.System.Reflection
 			AssemblyBuilder ab = AppDomain.CurrentDomain
 				.DefineDynamicAssembly (assemblyName,
 				AssemblyBuilderAccess.Save,
-				Path.GetDirectoryName (assemblyFileName),
-				AppDomain.CurrentDomain.Evidence);
+				Path.GetDirectoryName (assemblyFileName));
 			ab.Save (Path.GetFileName (assemblyFileName));
 
 			using (FileStream fs = File.OpenRead (assemblyFileName)) {
@@ -664,8 +662,7 @@ namespace MonoTests.System.Reflection
 			AssemblyBuilder ab = AppDomain.CurrentDomain
 				.DefineDynamicAssembly (assemblyName,
 				AssemblyBuilderAccess.Save,
-				TempFolder,
-				AppDomain.CurrentDomain.Evidence);
+				TempFolder);
 			ab.AddResourceFile ("read", "readme.txt");
 			ab.Save (Path.GetFileName (assemblyFileNameA));
 
@@ -930,8 +927,7 @@ namespace MonoTests.System.Reflection
 			setup.ApplicationBase = baseDirectory;
 			setup.ApplicationName = "testdomain";
 
-			AppDomain ad = AppDomain.CreateDomain ("testdomain", 
-				AppDomain.CurrentDomain.Evidence, setup);
+			AppDomain ad = AppDomain.CreateDomain ("testdomain", null, setup);
 
 			if (assemblyResolver) {
 				Assembly ea = Assembly.GetExecutingAssembly ();
@@ -1025,8 +1021,7 @@ namespace MonoTests.System.Reflection
 				AssemblyBuilder ab = AppDomain.CurrentDomain
 					.DefineDynamicAssembly (assemblyName,
 					AssemblyBuilderAccess.Save,
-					Path.GetDirectoryName (assemblyFileName),
-					AppDomain.CurrentDomain.Evidence);
+					Path.GetDirectoryName (assemblyFileName));
 				ab.Save (Path.GetFileName (assemblyFileName));
 
 				Assembly assembly;
@@ -1040,7 +1035,7 @@ namespace MonoTests.System.Reflection
 
 				Assert.AreEqual (string.Empty, assembly.Location, "#1");
 
-				assembly = Assembly.LoadFrom (assemblyFileName, AppDomain.CurrentDomain.Evidence);
+				assembly = Assembly.LoadFrom (assemblyFileName);
 				Assert.IsFalse (assembly.Location == string.Empty, "#2");
 				Assert.AreEqual (Path.GetFileName (assemblyFileName), Path.GetFileName(assembly.Location), "#3");
 				// note: we cannot check if directory names match, as MS.NET seems to 
@@ -1050,7 +1045,7 @@ namespace MonoTests.System.Reflection
 
 			public void bug78465 (string assemblyFileName)
 			{
-				Assembly assembly = Assembly.LoadFrom (assemblyFileName, AppDomain.CurrentDomain.Evidence);
+				Assembly assembly = Assembly.LoadFrom (assemblyFileName);
 				Assert.IsFalse (assembly.Location == string.Empty, "#2");
 				Assert.AreEqual (Path.GetFileName (assemblyFileName), Path.GetFileName (assembly.Location), "#3");
 				// note: we cannot check if directory names match, as MS.NET seems to 
@@ -1066,12 +1061,11 @@ namespace MonoTests.System.Reflection
 				AssemblyBuilder ab = AppDomain.CurrentDomain
 					.DefineDynamicAssembly (assemblyName,
 					AssemblyBuilderAccess.Save,
-					Path.GetDirectoryName (assemblyFileName),
-					AppDomain.CurrentDomain.Evidence);
+					Path.GetDirectoryName (assemblyFileName));
 				ab.AddResourceFile ("read", "readme.txt");
 				ab.Save (Path.GetFileName (assemblyFileName));
 
-				Assembly assembly = Assembly.LoadFrom (assemblyFileName, AppDomain.CurrentDomain.Evidence);
+				Assembly assembly = Assembly.LoadFrom (assemblyFileName);
 				Assert.IsTrue (assembly.Location != string.Empty, "#B1");
 				string[] resNames = assembly.GetManifestResourceNames ();
 				Assert.IsNotNull (resNames, "#B2");

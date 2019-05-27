@@ -1,5 +1,5 @@
 <xs:schema
-	targetNamespace="http://go-mono.com/tests"
+	targetNamespace="http://example.com/tests"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified">
 	<xs:include schemaLocation="77687inc.xsd"/>

@@ -62,7 +62,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=72b17ed6-e833-40ad-bc8b-d021b15b8d6e
+MONO_CORLIB_VERSION=62731146-81CF-4D61-826D-9A8DDED14432
 
 #
 # Put a quoted #define in config.h.
@@ -162,7 +162,7 @@ case "$host" in
 		fi
 		HOST_CC="gcc"
 		RID="win-x86"
-		CORETARGETS="/p:TargetsWindows=true"
+		CORETARGETS="-p:TargetsWindows=true"
 		COREARCH="x86"
 		# Boehm not supported on 64-bit Windows.
 		case "$host" in
@@ -312,7 +312,7 @@ case "$host" in
 		libmono_cflags="-D_REENTRANT"
 		libdl="-ldl"
 		libgc_threads=pthreads
-		CORETARGETS="/p:TargetsUnix=true"
+		CORETARGETS="-p:TargetsUnix=true"
 		use_sigposix=yes
 		if test "x$cross_compiling" != "xno"; then
                 	# to bypass the underscore linker check, not
@@ -404,7 +404,7 @@ case "$host" in
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		AC_DEFINE(USE_MACH_SEMA, 1, [...])
-		CORETARGETS="/p:TargetsUnix=true /p:TargetsOSX=true"
+		CORETARGETS="-p:TargetsUnix=true -p:TargetsOSX=true"
 		libdl=
 		libgc_threads=pthreads
 		has_dtrace=yes
@@ -492,7 +492,7 @@ case "$host" in
 		dnl ppc Linux is the same? test further
 		disable_munmap=yes
 		RID="aix-ppc64"
-		CORETARGETS="/p:TargetsUnix=true"
+		CORETARGETS="-p:TargetsUnix=true"
 		;;
 	*)
 		AC_MSG_WARN([*** Please add $host to configure.ac checks!])
@@ -572,6 +572,10 @@ dnl We should use AM_PROG_AS, but it's not available on automake/aclocal 1.4
 : ${CCASFLAGS='$(CFLAGS)'}
 AC_SUBST(CCAS)
 AC_SUBST(CCASFLAGS)
+
+if test "x$CXX" = "xno"; then
+	AC_MSG_ERROR([No c++ compiler found. You need to install a c++ compiler])
+fi
 
 # AC_PROG_CXX helpfully sets CXX to g++ even if no c++ compiler is found so check
 # GXX instead. See http://lists.gnu.org/archive/html/bug-autoconf/2002-04/msg00056.html
@@ -1269,6 +1273,8 @@ enable_hybrid_suspend_default=no
 INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4400,nftnptr-arg-trampolines=4000
 
 AOT_BUILD_ATTRS=$INVARIANT_AOT_OPTIONS
+
+MONO_LLVM_PATH_OPTION=llvm-path="`pwd`/llvm/usr/bin"
 
 if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    DISABLE_MCS_DOCS_default=yes
@@ -6621,8 +6627,13 @@ fi
 
     if test "x$AOT_BUILD_FLAGS" != "x" ; then
       echo "AOT_RUN_FLAGS=$AOT_RUN_FLAGS" >> $srcdir/$mcsdir/build/config.make
-      echo "AOT_BUILD_FLAGS=$AOT_BUILD_FLAGS" >> $srcdir/$mcsdir/build/config.make
       echo "AOT_BUILD_ATTRS=$AOT_BUILD_ATTRS" >> $srcdir/$mcsdir/build/config.make
+
+      if test "x$internal_llvm" != "xno"; then
+        echo "AOT_BUILD_FLAGS=$AOT_BUILD_FLAGS,$MONO_LLVM_PATH_OPTION" >> $srcdir/$mcsdir/build/config.make
+      else
+        echo "AOT_BUILD_FLAGS=$AOT_BUILD_FLAGS" >> $srcdir/$mcsdir/build/config.make
+      fi
     fi
 
     if test "x$AOT_MODE" != "x" ; then

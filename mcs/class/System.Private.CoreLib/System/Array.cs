@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Reflection;
 
 namespace System
 {
@@ -52,7 +51,7 @@ namespace System
 			if (length < 0)
 				ThrowHelper.ThrowIndexOutOfRangeException();
 
-			int low = array.GetLowerBound (0);
+			int low = array!.GetLowerBound (0);
 			if (index < low)
 				ThrowHelper.ThrowIndexOutOfRangeException();
 
@@ -127,9 +126,9 @@ namespace System
 				throw new ArgumentException ("Destination array was not long enough. Check destIndex and length, and the array's lower bounds", nameof (destinationArray));
 			}
 
-			Type src_type = sourceArray.GetType ().GetElementType ();
-			Type dst_type = destinationArray.GetType ().GetElementType ();
-			var dst_type_vt = dst_type.IsValueType;
+			Type src_type = sourceArray.GetType ().GetElementType ()!;
+			Type dst_type = destinationArray.GetType ().GetElementType ()!;
+			var dst_type_vt = dst_type.IsValueType && Nullable.GetUnderlyingType (dst_type) == null;
 
 			if (src_type.IsEnum)
 				src_type = Enum.GetUnderlyingType (src_type);
@@ -150,7 +149,7 @@ namespace System
 				for (int i = 0; i < length; i++) {
 					Object srcval = sourceArray.GetValueImpl (source_pos + i);
 
-					if (srcval == null && dst_type_vt)
+					if (dst_type_vt && (srcval == null || (src_type == typeof (object) && srcval.GetType () != dst_type)))
 						throw new InvalidCastException ();
 
 					try {
@@ -197,6 +196,11 @@ namespace System
 				} else if (source.IsPointer && target.IsPointer) {
 					return true;
 				} else if (source.IsPrimitive && target.IsPrimitive) {
+					
+					// Special case: normally C# doesn't allow implicit ushort->char cast).
+					if (source == typeof (ushort) && target == typeof (char))
+						return true;
+					
 					// Allow primitive type widening
 					return DefaultBinder.CanChangePrimitive (source, target);
 				} else if (!source.IsValueType && !source.IsPointer) {
@@ -260,17 +264,17 @@ namespace System
 				if (lengths [i] < 0)
 					throw new ArgumentOutOfRangeException ($"lengths[{i}]", SR.ArgumentOutOfRange_NeedNonNegNum);
 			}
-			int[] bounds = null;
 
-			elementType = elementType.UnderlyingSystemType as RuntimeType;
-			if (elementType == null)
+			if (!(elementType.UnderlyingSystemType is RuntimeType et))
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
-			if (elementType.Equals (typeof (void)))
+			if (et.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
-			if (elementType.ContainsGenericParameters)
+			if (et.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
+			if (et.IsByRef)
+				throw new NotSupportedException (SR.NotSupported_Type);
 			
-			return CreateInstanceImpl (elementType, lengths, bounds);
+			return CreateInstanceImpl (et, lengths, null);
 		}
 
 		public static Array CreateInstance (Type elementType, int[] lengths, int [] lowerBounds)
@@ -282,13 +286,14 @@ namespace System
 			if (lowerBounds == null)
 				throw new ArgumentNullException ("lowerBounds");
 
-			elementType = elementType.UnderlyingSystemType as RuntimeType;
-			if (elementType == null)
+			if (!(elementType.UnderlyingSystemType is RuntimeType rt))
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
-			if (elementType.Equals (typeof (void)))
+			if (rt.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
-			if (elementType.ContainsGenericParameters)
+			if (rt.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
+			if (rt.IsByRef)
+				throw new NotSupportedException (SR.NotSupported_Type);
 
 			if (lengths.Length < 1)
 				throw new ArgumentException ("Arrays must contain >= 1 elements.");
@@ -318,7 +323,7 @@ namespace System
 			if (index < lb || index > GetUpperBound (0))
 				throw new IndexOutOfRangeException ("Index has to be between upper and lower bound of the array.");
 
-			if (GetType ().GetElementType ().IsPointer)
+			if (GetType ().GetElementType ()!.IsPointer)
 				throw new NotSupportedException (SR.NotSupported_Type);
 
 			return GetValueImpl (index - lb);
@@ -356,7 +361,7 @@ namespace System
 			return EqualityComparer<T>.Default.LastIndexOf (array, value, startIndex, count);
 		}
 
-		public void SetValue (object value, int index)
+		public void SetValue (object? value, int index)
 		{
 			if (Rank != 1)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_Need1DArray);
@@ -365,13 +370,13 @@ namespace System
 			if (index < lb || index > GetUpperBound (0))
 				throw new IndexOutOfRangeException ("Index has to be >= lower bound and <= upper bound of the array.");
 
-			if (GetType ().GetElementType ().IsPointer)
+			if (GetType ().GetElementType ()!.IsPointer)
 				throw new NotSupportedException (SR.NotSupported_Type);
 
 			SetValueImpl (value, index - lb);
 		}
 
-		public void SetValue (object value, int index1, int index2)
+		public void SetValue (object? value, int index1, int index2)
 		{
 			if (Rank != 2)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_Need2DArray);
@@ -380,7 +385,7 @@ namespace System
 			SetValue (value, ind);
 		}
 
-		public void SetValue (object value, int index1, int index2, int index3)
+		public void SetValue (object? value, int index1, int index2, int index3)
 		{
 			if (Rank != 3)
 				ThrowHelper.ThrowArgumentException (ExceptionResource.Arg_Need3DArray);
@@ -389,7 +394,7 @@ namespace System
 			SetValue (value, ind);
 		}
 
-		static void SortImpl (Array keys, Array items, int index, int length, IComparer comparer)
+		static void SortImpl (Array keys, Array? items, int index, int length, IComparer comparer)
 		{
 			/* TODO: CoreCLR optimizes this case via an internal call
 			if (comparer == Comparer.Default)
@@ -399,8 +404,8 @@ namespace System
 					return;
 			}*/
 
-			object[] objKeys = keys as object[];
-			object[] objItems = null;
+			object[]? objKeys = keys as object[];
+			object[]? objItems = null;
 			if (objKeys != null)
 				objItems = items as object[];
 			if (objKeys != null && (items == null || objItems != null)) {
@@ -454,7 +459,7 @@ namespace System
 		extern static void ClearInternal (Array a, int index, int count);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static Array CreateInstanceImpl (Type elementType, int[] lengths, int[] bounds);
+		extern static Array CreateInstanceImpl (Type elementType, int[] lengths, int[]? bounds);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static bool FastCopy (Array source, int source_idx, Array dest, int dest_idx, int length);
@@ -472,7 +477,7 @@ namespace System
 		public extern object GetValue (params int[] indices);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern void SetValue (object value, params int[] indices);
+		public extern void SetValue (object? value, params int[] indices);
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -488,7 +493,7 @@ namespace System
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern void SetValueImpl (object value, int pos);
+		extern void SetValueImpl (object? value, int pos);
 
 		/*
 		 * These methods are used to implement the implicit generic interfaces 
@@ -582,11 +587,11 @@ namespace System
 			if ((uint)index >= (uint)Length)
 				ThrowHelper.ThrowArgumentOutOfRange_IndexException();
 
-			object[] oarray = this as object [];
-			if (oarray != null) {
-				oarray [index] = (object)item;
+			if (this is object[] oarray) {
+				oarray! [index] = (object)item;
 				return;
 			}
+
 			SetGenericValueImpl (index, ref item);
 		}
 	}

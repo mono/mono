@@ -6,7 +6,12 @@ endif
 LINUX_WITH_MINGW=:Ubuntu:,:Debian:,:Debian GNU/Linux:
 LINUX_HAS_MINGW=$(if $(findstring :$(LINUX_FLAVOR):,$(LINUX_WITH_MINGW)),yes)
 
-ifeq ($(LINUX_HAS_MINGW),yes)
+ifeq ($(UNAME),Windows)
+.PHONY: provision-mxe
+provision-mxe:
+	@echo "Won't provision MXE on Windows. Please install mingw packages, instead."
+
+else ifeq ($(LINUX_HAS_MINGW),yes)
 MXE_PREFIX=/usr
 
 .PHONY: provision-mxe

@@ -129,12 +129,17 @@ docs/perlmod*
 compile
 mono.h
 mono-*.tar.*
+mono_crash*
 tmpinst-dir.stamp
 msvc/scripts/inputs/
 extensions-config.h
+*.dylib.dSYM
 *.mlpd
 llvm/build/
 llvm/usr/
+sdks/builds/llvm-*/
+sdks/builds/android-*/
+
 
 ##############################################################################
 # Arcade output directories
@@ -142,3 +147,4 @@ llvm/usr/
 
 .packages
 artifacts
+.dotnet

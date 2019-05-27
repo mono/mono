@@ -775,7 +775,7 @@ namespace MonoTests.System.Net {
 				wait.WaitOne ();
 
 				NetworkStream ns = HttpListener2Test.CreateNS (port);
-				HttpListener2Test.Send (ns, "GET http://www.google.com/ HTTP/1.1\r\nHost: www.google.com\r\nContent-Length: 3\r\n\r\n123456");
+				HttpListener2Test.Send (ns, "GET http://www.example.com/ HTTP/1.1\r\nHost: www.example.com\r\nContent-Length: 3\r\n\r\n123456");
 
 				wait2.WaitOne ();
 				ns.Close ();
@@ -786,8 +786,8 @@ namespace MonoTests.System.Net {
 			wait.Set ();
 			HttpListenerContext ctx = listener.GetContext ();
 			
-			Assert.AreEqual ("http://www.google.com:" + port + "/", ctx.Request.Url.ToString ());
-			Assert.AreEqual ("http://www.google.com/", ctx.Request.RawUrl);
+			Assert.AreEqual ("http://www.example.com:" + port + "/", ctx.Request.Url.ToString ());
+			Assert.AreEqual ("http://www.example.com/", ctx.Request.RawUrl);
 			wait2.Set ();
 
 			listener.Close ();

@@ -42,7 +42,7 @@ namespace Mono.Net.Security
 		{
 #if MONOTOUCH
 			is_macosx = true;
-#elif MONODROID || ORBIS
+#elif (MONODROID || ORBIS) && !MOBILE_DESKTOP_HOST
 			is_macosx = false;
 #else
 			is_macosx = Environment.OSVersion.Platform != PlatformID.Win32NT && System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
@@ -133,7 +133,7 @@ namespace Mono.Net.Security
 			var leaf = certs [0];
 			bool result;
 
-#if MONODROID
+#if MONODROID && !MOBILE_DESKTOP_HOST
 			try {
 				result = AndroidPlatform.TrustEvaluateSsl (certs);
 				if (result) {

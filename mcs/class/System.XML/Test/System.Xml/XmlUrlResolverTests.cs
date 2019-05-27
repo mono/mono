@@ -54,7 +54,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void HttpUri2 ()
 		{
-			Assert.AreEqual (resolver.ResolveUri (new Uri ("http://go-mono.com"), null).ToString (), "http://go-mono.com/");
+			Assert.AreEqual (resolver.ResolveUri (new Uri ("http://example.com"), null).ToString (), "http://example.com/");
 		}
 
 		[Test]
@@ -70,7 +70,7 @@ namespace MonoTests.System.Xml
 //		[Test] Uncomment if you want to test.
 		public void GetEntityWithNullArgs ()
 		{
-			Uri uri = new Uri ("http://www.go-mono.com/index.rss");
+			Uri uri = new Uri ("http://www.example.com/index.rss");
 			resolver.GetEntity (uri, null, null);
 		}
 
@@ -85,7 +85,7 @@ namespace MonoTests.System.Xml
 		[ExpectedException (typeof (XmlException))]
 		public void GetEntityWithNonStreamReturnType ()
 		{
-			resolver.GetEntity (new Uri ("http://www.go-mono.com/"), null, typeof (File));
+			resolver.GetEntity (new Uri ("http://www.example.com/"), null, typeof (File));
 		}
 
 		[Test] // bug #998

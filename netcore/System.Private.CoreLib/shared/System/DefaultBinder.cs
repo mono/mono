@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable enable
 using System.Reflection;
 using System.Diagnostics;
 using CultureInfo = System.Globalization.CultureInfo;
@@ -218,7 +217,7 @@ namespace System
                     // now do a "classic" type check
                     if (pCls.IsPrimitive)
                     {
-                        if (argTypes[paramOrder[i][j]] == null || !CanChangePrimitive(args[paramOrder[i][j]]!.GetType(), pCls)) //TODO-NULLABLE https://github.com/dotnet/csharplang/issues/2388
+                        if (argTypes[paramOrder[i][j]] == null || !CanChangePrimitive(args[paramOrder[i][j]]?.GetType(), pCls))
                         {
                             break;
                         }
@@ -248,7 +247,7 @@ namespace System
                     {
                         if (paramArrayType.IsPrimitive)
                         {
-                            if (argTypes[j] == null || !CanChangePrimitive(args[j]?.GetType(), paramArrayType)) //TODO-NULLABLE https://github.com/dotnet/csharplang/issues/2388
+                            if (argTypes[j] == null || !CanChangePrimitive(args[j]?.GetType(), paramArrayType))
                                 break;
                         }
                         else

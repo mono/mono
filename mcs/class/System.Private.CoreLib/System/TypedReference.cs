@@ -11,7 +11,8 @@ namespace System
 		IntPtr Type;
 		#endregion
 
-		public static TypedReference MakeTypedReference (Object target, FieldInfo[] flds)
+		[CLSCompliant (false)]
+		public static TypedReference MakeTypedReference (object target, FieldInfo[] flds)
 		{
 			if (target == null)
 				throw new ArgumentNullException (nameof (target));
@@ -50,7 +51,7 @@ namespace System
 			return result;
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		unsafe static extern void InternalMakeTypedReference (void* result, Object target, IntPtr[] flds, RuntimeType lastFieldType);
 
 		public override int GetHashCode ()
@@ -61,18 +62,19 @@ namespace System
 				return __reftype (this).GetHashCode ();
 		}
 
-		public override bool Equals (Object o)
+		public override bool Equals (object? o)
 		{
 			throw new NotSupportedException (SR.NotSupported_NYI);
 		}
 
-		public unsafe static Object ToObject (TypedReference value)
+		[CLSCompliant (false)]
+		public unsafe static object ToObject (TypedReference value)
 		{
 			return InternalToObject (&value);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		unsafe extern static Object InternalToObject (void * value);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		unsafe extern static object InternalToObject (void * value);
 
 		internal bool IsNull {
 			get {
@@ -80,16 +82,19 @@ namespace System
 			}
 		}
 
+		[CLSCompliant (false)]
 		public static Type GetTargetType (TypedReference value)
 		{
 			return __reftype (value);
 		}
 
+		[CLSCompliant (false)]
 		public static RuntimeTypeHandle TargetTypeToken (TypedReference value)
 		{
 			return __reftype (value).TypeHandle;
 		}
 
+		[CLSCompliant (false)]
 		public unsafe static void SetTypedReference (TypedReference target, Object value)
 		{
 			throw new NotImplementedException ();

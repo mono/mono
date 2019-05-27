@@ -3020,6 +3020,10 @@ emit_call_body (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gco
 {
 	gboolean no_patch = FALSE;
 
+	g_assert (patch_type == MONO_PATCH_INFO_METHOD ||	// data is MonoMethod*; MONO_PATCH_INFO_METHOD_JUMP is already reasonable
+		  patch_type == MONO_PATCH_INFO_JIT_ICALL_ID ||	// data is function id
+		  patch_type == MONO_PATCH_INFO_ABS);		// data is code pointer, hashed to MonoJumpInfo* with additional patch type/data
+
 	/* 
 	 * FIXME: Add support for thunks
 	 */
@@ -3045,17 +3049,15 @@ emit_call_body (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gco
 					near_call = FALSE;
 			}
 
-			if (patch_type == MONO_PATCH_INFO_JIT_ICALL) {
+			if (patch_type == MONO_PATCH_INFO_JIT_ICALL_ID) {
 				/* 
 				 * The call might go directly to a native function without
 				 * the wrapper.
 				 */
-				MonoJitICallInfo *mi = mono_find_jit_icall_by_name ((const char *)data);
-				if (mi) {
-					gconstpointer target = mono_icall_get_wrapper (mi);
-					if ((((guint64)target) >> 32) != 0)
-						near_call = FALSE;
-				}
+				MonoJitICallInfo * const mi = mono_find_jit_icall_info ((MonoJitICallId)(gsize)data);
+				gconstpointer target = mono_icall_get_wrapper (mi);
+				if ((((guint64)target) >> 32) != 0)
+					near_call = FALSE;
 			}
 		}
 		else {
@@ -5062,7 +5064,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			jump = code;
 			amd64_branch8 (code, X86_CC_NZ, -1, 1);
 
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, "mono_generic_class_init", FALSE);
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_generic_class_init), FALSE);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 
@@ -5122,16 +5124,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		case OP_THROW: {
 			amd64_mov_reg_reg (code, AMD64_ARG_REG1, ins->sreg1, 8);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_throw_exception", FALSE);
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_throw_exception), FALSE);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			break;
 		}
 		case OP_RETHROW: {
 			amd64_mov_reg_reg (code, AMD64_ARG_REG1, ins->sreg1, 8);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_rethrow_exception", FALSE);
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_rethrow_exception), FALSE);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			break;
@@ -6768,7 +6770,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			amd64_test_membase_imm_size (code, ins->sreg1, 0, 1, 4);
 			br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, "mono_threads_state_poll", FALSE);
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_threads_state_poll), FALSE);
 			amd64_patch (br[0], code);
 			break;
 		}
@@ -6816,13 +6818,13 @@ void
 mono_arch_register_lowlevel_calls (void)
 {
 	/* The signature doesn't matter */
-	mono_register_jit_icall (mono_amd64_throw_exception, "mono_amd64_throw_exception", mono_icall_sig_void, TRUE);
+	mono_register_jit_icall (mono_amd64_throw_exception, mono_icall_sig_void, TRUE);
 
 #if defined(TARGET_WIN32) || defined(HOST_WIN32)
 #if _MSC_VER
-	mono_register_jit_icall_full (__chkstk, "mono_chkstk_win64", NULL, TRUE, "__chkstk");
+	mono_register_jit_icall_info (&mono_get_jit_icall_info ()->mono_chkstk_win64, __chkstk, "mono_chkstk_win64", NULL, TRUE, "__chkstk");
 #else
-	mono_register_jit_icall_full (___chkstk_ms, "mono_chkstk_win64", NULL, TRUE, "___chkstk_ms");
+	mono_register_jit_icall_info (&mono_get_jit_icall_info ()->mono_chkstk_win64, ___chkstk_ms, "mono_chkstk_win64", NULL, TRUE, "___chkstk_ms");
 #endif
 #endif
 }
@@ -6842,8 +6844,8 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 		if (!amd64_is_imm32 (disp)) {
 			printf ("TYPE: %d\n", ji->type);
 			switch (ji->type) {
-			case MONO_PATCH_INFO_JIT_ICALL:
-				printf ("V: %s\n", ji->data.name);
+			case MONO_PATCH_INFO_JIT_ICALL_ID:
+				printf ("V: %s\n", mono_find_jit_icall_info (ji->data.jit_icall_id)->name);
 				break;
 			case MONO_PATCH_INFO_METHOD_JUMP:
 			case MONO_PATCH_INFO_METHOD:
@@ -6897,7 +6899,7 @@ emit_prolog_setup_sp_win64 (MonoCompile *cfg, guint8 *code, int alloc_size, int 
 
 		if (alloc_size >= 0x1000) {
 			amd64_mov_reg_imm (code, AMD64_RAX, alloc_size);
-			code = emit_call_body (cfg, code, MONO_PATCH_INFO_JIT_ICALL, "mono_chkstk_win64");
+			code = emit_call_body (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_chkstk_win64));
 		}
 
 		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, alloc_size);
@@ -7571,7 +7573,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 				patch_info->type = MONO_PATCH_INFO_NONE;
 
-				code = emit_call_body (cfg, code, MONO_PATCH_INFO_JIT_ICALL, "mono_arch_throw_corlib_exception");
+				code = emit_call_body (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_throw_corlib_exception));
 
 				amd64_mov_reg_imm (buf, AMD64_ARG_REG2, (code - cfg->native_code) - throw_ip);
 				while (buf < buf2)

@@ -159,7 +159,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void WriteTo ()
 		{
 			SyndicationItem item = new SyndicationItem ();
-			item.BaseUri = new Uri ("http://mono-project.com");
+			item.BaseUri = new Uri ("http://example.com");
 			item.Copyright = new TextSyndicationContent ("No rights reserved");
 			item.Content = new XmlSyndicationContent (null, 5, (XmlObjectSerializer) null);
 			// .NET bug: it ignores this value.
@@ -172,7 +172,7 @@ namespace MonoTests.System.ServiceModel.Syndication
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = CreateWriter (sw))
 				new Atom10ItemFormatter (item).WriteTo (w);
-			Assert.AreEqual ("<entry xml:base=\"http://mono-project.com/\" xmlns=\"http://www.w3.org/2005/Atom\"><id>XXX</id><title type=\"text\"></title><summary type=\"text\">great text</summary><published>2000-01-01T00:00:00Z</published><updated>2008-01-01T00:00:00Z</updated><content type=\"text/xml\"><int xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/\">5</int></content><rights type=\"text\">No rights reserved</rights></entry>", DummyId (sw.ToString ()));
+			Assert.AreEqual ("<entry xml:base=\"http://example.com/\" xmlns=\"http://www.w3.org/2005/Atom\"><id>XXX</id><title type=\"text\"></title><summary type=\"text\">great text</summary><published>2000-01-01T00:00:00Z</published><updated>2008-01-01T00:00:00Z</updated><content type=\"text/xml\"><int xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/\">5</int></content><rights type=\"text\">No rights reserved</rights></entry>", DummyId (sw.ToString ()));
 		}
 
 		[Test]
@@ -194,12 +194,12 @@ namespace MonoTests.System.ServiceModel.Syndication
 		{
 			// ... and it passes.
 			SyndicationItem item = new SyndicationItem ();
-			item.Links.Add (new SyndicationLink (new Uri ("http://mono-project.com/Page1"), "alternate", "Page 1", "text/html", 0));
-			item.Links.Add (new SyndicationLink (new Uri ("http://mono-project.com/Page2"), "alternate", "Page 2", "text/html", 0));
+			item.Links.Add (new SyndicationLink (new Uri ("http://example.com/Page1"), "alternate", "Page 1", "text/html", 0));
+			item.Links.Add (new SyndicationLink (new Uri ("http://example.com/Page2"), "alternate", "Page 2", "text/html", 0));
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = CreateWriter (sw))
 				new Atom10ItemFormatter (item).WriteTo (w);
-			Assert.AreEqual ("<entry xmlns=\"http://www.w3.org/2005/Atom\"><id>XXX</id><title type=\"text\"></title><updated>XXX</updated><link rel=\"alternate\" type=\"text/html\" title=\"Page 1\" href=\"http://mono-project.com/Page1\" /><link rel=\"alternate\" type=\"text/html\" title=\"Page 2\" href=\"http://mono-project.com/Page2\" /></entry>", DummyUpdated (DummyId (sw.ToString ())));
+			Assert.AreEqual ("<entry xmlns=\"http://www.w3.org/2005/Atom\"><id>XXX</id><title type=\"text\"></title><updated>XXX</updated><link rel=\"alternate\" type=\"text/html\" title=\"Page 1\" href=\"http://example.com/Page1\" /><link rel=\"alternate\" type=\"text/html\" title=\"Page 2\" href=\"http://example.com/Page2\" /></entry>", DummyUpdated (DummyId (sw.ToString ())));
 		}
 
 		XmlWriter CreateWriter (StringWriter sw)

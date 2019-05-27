@@ -1,9 +1,7 @@
-using System;
-using System.Globalization;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace System.Reflection {
+namespace System.Reflection
+{
 	[StructLayout (LayoutKind.Sequential)]
 	internal sealed class RuntimeExceptionHandlingClause : ExceptionHandlingClause
 	{
@@ -23,7 +21,7 @@ namespace System.Reflection {
         public override int HandlerOffset => handler_offset;
         public override int HandlerLength => handler_length;
 		public override int FilterOffset => filter_offset;
-		public override Type CatchType => catch_type;
+		public override Type? CatchType => catch_type;
 	}
 
 }

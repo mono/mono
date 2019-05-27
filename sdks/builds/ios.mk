@@ -12,10 +12,13 @@
 
 ios_FRAMEWORKS_DIR = $(TOP)/sdks/out/ios-frameworks
 ios_LIBS_DIR = $(TOP)/sdks/out/ios-libs
-ios_ARCHIVE += ios-frameworks ios-libs
-ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
+ios_SOURCES_DIR = $(TOP)/sdks/out/ios-sources
+ios_MONO_VERSION = $(TOP)/sdks/out/ios-mono-version.txt
 
-ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR)
+ios_ARCHIVE += ios-frameworks ios-libs ios-sources ios-mono-version.txt
+ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_SOURCES_DIR) $(ios_MONO_VERSION)
+
+ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
 ##
 # Device builds
@@ -380,7 +383,7 @@ $(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp
 $(eval $(call iOSCrossTemplate,cross32-64,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(XCODE_DIR)))
 
 
-$(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib
+$(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-targetwatch64_32 package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib
 	rm -rf $(ios_FRAMEWORKS_DIR)
 
 	### Mono.framework for devices ###
@@ -389,7 +392,7 @@ $(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-ta
 	mkdir -p $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib -create -output $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targettv-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Mono
@@ -418,7 +421,7 @@ $(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-ta
 	cp $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Info.plist
 
 
-$(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib
+$(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-targetwatch64_32 package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib
 	rm -rf $(ios_LIBS_DIR)
 
 	### libs for devices ###
@@ -450,17 +453,25 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targettv-$(CONFIGURATION)/lib/libmono-profiler-log-static.a  -create -output $(ios_LIBS_DIR)/tvos/libmono-profiler-log.a
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targettv-$(CONFIGURATION)/lib/libmonosgen-2.0.a              -create -output $(ios_LIBS_DIR)/tvos/libmonosgen-2.0.a
 
-	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib          -m -o           $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-profiler-log.dylib     -m -o           $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-compat.dylib    -m -o           $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-unified.dylib   -m -o           $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
-	$(ios_PLATFORM_BIN)/lipo          $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-ee-interp.a            -create -output $(ios_LIBS_DIR)/watchos/libmono-ee-interp.a
-	$(ios_PLATFORM_BIN)/lipo          $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-icall-table.a          -create -output $(ios_LIBS_DIR)/watchos/libmono-icall-table.a
-	$(ios_PLATFORM_BIN)/lipo          $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-ilgen.a                -create -output $(ios_LIBS_DIR)/watchos/libmono-ilgen.a
-	$(ios_PLATFORM_BIN)/lipo          $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-compat.a        -create -output $(ios_LIBS_DIR)/watchos/libmono-native-compat.a
-	$(ios_PLATFORM_BIN)/lipo          $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-unified.a       -create -output $(ios_LIBS_DIR)/watchos/libmono-native-unified.a
-	$(ios_PLATFORM_BIN)/lipo          $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-profiler-log-static.a  -create -output $(ios_LIBS_DIR)/watchos/libmono-profiler-log.a
-	$(ios_PLATFORM_BIN)/lipo          $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.a              -create -output $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.a
+	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib               -m -o $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0-stripped.dylib
+	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-profiler-log.dylib          -m -o $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-profiler-log-stripped.dylib
+	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-compat.dylib         -m -o $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-compat-stripped.dylib
+	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-unified.dylib        -m -o $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-unified-stripped.dylib
+	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib          -m -o $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmonosgen-2.0-stripped.dylib
+	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-profiler-log.dylib     -m -o $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-profiler-log-stripped.dylib
+	$(ios_PLATFORM_BIN)/bitcode_strip $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-native.dylib           -m -o $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-native-stripped.dylib
+
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0-stripped.dylib         $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmonosgen-2.0-stripped.dylib        -create -output $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-profiler-log-stripped.dylib    $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-profiler-log-stripped.dylib   -create -output $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-compat-stripped.dylib                                                                                                   -create -output $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-unified-stripped.dylib  $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-native-stripped.dylib         -create -output $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-ee-interp.a                    $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-ee-interp.a                   -create -output $(ios_LIBS_DIR)/watchos/libmono-ee-interp.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-icall-table.a                  $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-icall-table.a                 -create -output $(ios_LIBS_DIR)/watchos/libmono-icall-table.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-ilgen.a                        $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-ilgen.a                       -create -output $(ios_LIBS_DIR)/watchos/libmono-ilgen.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-compat.a                                                                                                                -create -output $(ios_LIBS_DIR)/watchos/libmono-native-compat.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-native-unified.a               $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-native.a                      -create -output $(ios_LIBS_DIR)/watchos/libmono-native-unified.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmono-profiler-log-static.a          $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmono-profiler-log-static.a         -create -output $(ios_LIBS_DIR)/watchos/libmono-profiler-log.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.a                      $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmonosgen-2.0.a                     -create -output $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.a
 
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmonosgen-2.0.dylib        $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-profiler-log.dylib   -change $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib -change $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib -change $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib
@@ -473,9 +484,9 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-unified.dylib -change $(TOP)/sdks/out/ios-targettv-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib $(ios_LIBS_DIR)/tvos/libmono-native-unified.dylib
 
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmonosgen-2.0.dylib        $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-profiler-log.dylib   -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-compat.dylib  -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-unified.dylib -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-profiler-log.dylib   -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib -change $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-compat.dylib  -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib                                                                                                                        $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-unified.dylib -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib -change $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
 
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib
@@ -553,6 +564,16 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
 	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
+
+$(ios_SOURCES_DIR)/mcs/build/common/Consts.cs:  # we use this as a sentinel file to avoid rsyncing everything on each build (slows down iterating)
+	mkdir -p $(ios_SOURCES_DIR)
+	cd $(TOP) && rsync -r --exclude='external/api-doc-tools/*' --exclude='external/api-snapshot/*' --exclude='external/aspnetwebstack/*' --exclude='external/binary-reference-assemblies/*' --exclude='netcore/*' --include='*.cs' --include='*/' --exclude="*" --prune-empty-dirs . $(ios_SOURCES_DIR)
+
+$(ios_SOURCES_DIR): $(ios_SOURCES_DIR)/mcs/build/common/Consts.cs
+
+$(ios_MONO_VERSION): $(TOP)/configure.ac
+	mkdir -p $(dir $(ios_MONO_VERSION))
+	grep AC_INIT $(TOP)/configure.ac | sed -e 's/.*\[//' -e 's/\].*//' > $@
 
 ##
 # BCL builds

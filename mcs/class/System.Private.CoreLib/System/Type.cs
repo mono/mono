@@ -16,18 +16,6 @@ namespace System
 
 		internal bool IsRuntimeImplemented () => this.UnderlyingSystemType is RuntimeType;
 
-		internal string FullNameOrDefault {
-			get {
-				return FullName;
-			}
-		}
-
-		internal string NameOrDefault {
-			get {
-				return Name;
-			}
-		}
-
 		public bool IsInterface {
 			get {
 				if (this is RuntimeType rt)
@@ -83,7 +71,7 @@ namespace System
 			return TypeNameParser.GetType (typeName, assemblyResolver, typeResolver, throwOnError, ignoreCase, ref stackMark);
 		}
 
-		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
+		public static Type? GetTypeFromHandle (RuntimeTypeHandle handle)
 		{
 			if (handle.Value == IntPtr.Zero)
 				return null;
@@ -91,9 +79,9 @@ namespace System
 			return internal_from_handle (handle.Value);
 		}
 
-		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError) => throw new PlatformNotSupportedException ();
+		public static Type GetTypeFromCLSID (Guid clsid, string? server, bool throwOnError) => throw new PlatformNotSupportedException ();
 
-		public static Type GetTypeFromProgID (string progID, string server, bool throwOnError) => throw new PlatformNotSupportedException ();
+		public static Type GetTypeFromProgID (string progID, string? server, bool throwOnError) => throw new PlatformNotSupportedException ();
 
 		internal string FormatTypeName ()
 		{
@@ -140,12 +128,12 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern Type internal_from_handle (IntPtr handle);
 
-		public static bool operator == (Type left, Type right)
+		public static bool operator == (Type? left, Type? right)
 		{
 			return object.ReferenceEquals (left, right);
 		}
 
-		public static bool operator != (Type left, Type right)
+		public static bool operator != (Type? left, Type? right)
 		{
 			return !object.ReferenceEquals (left, right);
 		}

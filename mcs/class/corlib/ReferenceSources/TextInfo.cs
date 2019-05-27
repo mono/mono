@@ -252,20 +252,18 @@ namespace System.Globalization
 			if (source.IsEmpty)
 				return;
 
-			var ti = CultureInfo.CurrentCulture.TextInfo;
-
 			fixed (char* pSource = &MemoryMarshal.GetReference (source))
 			fixed (char* pResult = &MemoryMarshal.GetReference (destination)) {
 				int length = 0;
 				char* a = pSource, b = pResult;
 				if (toUpper) {
 					while (length < source.Length) {
-						*b++ = ti.ToUpper (*a++);
+						*b++ = this.ToUpper (*a++);
 						length++;
 					}
 				} else {
 					while (length < source.Length) {
-						*b++ = ti.ToLower (*a++);
+						*b++ = this.ToLower (*a++);
 						length++;
 					}
 				}

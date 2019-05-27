@@ -159,7 +159,7 @@ namespace GHTTests.System_Web_dll.System_Web_UI_WebControls
 		{
 			HyperLinkColumn column1 = new HyperLinkColumn();
 			column1.DataTextField = "ID";
-			column1.NavigateUrl = "http://www.google.com";
+			column1.NavigateUrl = "http://www.example.com";
 			this.setStyle(column1, tp);
 			this.setText(column1, tp, text);
 			return column1;
