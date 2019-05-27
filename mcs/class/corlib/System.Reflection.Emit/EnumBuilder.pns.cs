@@ -39,11 +39,8 @@ namespace System.Reflection.Emit
 		public override System.Type DeclaringType { get { throw new PlatformNotSupportedException (); } }
 		public override string FullName { get { throw new PlatformNotSupportedException (); } }
 		public override System.Guid GUID { get { throw new PlatformNotSupportedException (); } }
-		public override bool IsByRefLike { get { throw new PlatformNotSupportedException (); } }
 		public override bool IsConstructedGenericType { get { throw new PlatformNotSupportedException (); } }
-		public override bool IsSZArray { get { throw new PlatformNotSupportedException (); } }
 		public override bool IsTypeDefinition { get { throw new PlatformNotSupportedException (); } }
-		public override bool IsVariableBoundArray { get { throw new PlatformNotSupportedException (); } }
 		public override System.Reflection.Module Module { get { throw new PlatformNotSupportedException (); } }
 		public override string Name { get { throw new PlatformNotSupportedException (); } }
 		public override string Namespace { get { throw new PlatformNotSupportedException (); } }
@@ -81,6 +78,7 @@ namespace System.Reflection.Emit
 		protected override bool HasElementTypeImpl() { throw new PlatformNotSupportedException (); }
 		public override object InvokeMember(string name, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object target, object[] args, System.Reflection.ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] namedParameters) { throw new PlatformNotSupportedException (); }
 		protected override bool IsArrayImpl() { throw new PlatformNotSupportedException (); }
+		public override bool IsAssignableFrom (System.Reflection.TypeInfo typeInfo) { throw new PlatformNotSupportedException (); }
 		protected override bool IsByRefImpl() { throw new PlatformNotSupportedException (); }
 		protected override bool IsCOMObjectImpl() { throw new PlatformNotSupportedException (); }
 		public override bool IsDefined(System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }

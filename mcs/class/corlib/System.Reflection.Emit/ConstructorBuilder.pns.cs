@@ -36,9 +36,17 @@ namespace System.Reflection.Emit
 {
 	public class ConstructorBuilder : ConstructorInfo
 	{
+		internal ConstructorBuilder () {}
+
 		public bool InitLocals { get; set; }
 
 		public override MethodAttributes Attributes { 
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		public override CallingConventions CallingConvention {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -50,7 +58,20 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		public override Module Module {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
 		public override string Name {
+			get {
+				throw new PlatformNotSupportedException ();
+			}
+		}
+
+		[Obsolete]
+		public Type ReturnType {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -98,6 +119,7 @@ namespace System.Reflection.Emit
 			IEnumerable<ExceptionHandler> exceptionHandlers, IEnumerable<int> tokenFixups) => 
 				throw new PlatformNotSupportedException ();
 
+		public void AddDeclarativeSecurity (System.Security.Permissions.SecurityAction action, System.Security.PermissionSet pset) { throw new PlatformNotSupportedException (); }
 		public override System.Reflection.MethodImplAttributes GetMethodImplementationFlags() { throw new PlatformNotSupportedException (); }
 		public override System.RuntimeMethodHandle MethodHandle { get { throw new PlatformNotSupportedException (); } }
 		public override object Invoke(System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); }
@@ -106,6 +128,8 @@ namespace System.Reflection.Emit
 		public override object[] GetCustomAttributes(System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException (); }
 		public override System.Type ReflectedType { get { throw new PlatformNotSupportedException (); } }
 		public override object Invoke(object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object[] parameters, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); }
+		public void SetSymCustomAttribute (string name, byte[] data) { throw new PlatformNotSupportedException (); }
+		public override string ToString () { throw new PlatformNotSupportedException (); }
 	}
 }
 
