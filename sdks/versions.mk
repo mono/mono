@@ -36,7 +36,7 @@ TVOS_VERSION_MIN?=9.0
 WATCHOS_VERSION_MIN?=2.0
 WATCHOS5_VERSION_MIN?=5.1
 
-# versions of the platform SDKs
+# versions of the platform SDKs, these ship inside of Xcode
 #MACOS_VERSION?=10.13
 #IOS_VERSION?=11.1
 #TVOS_VERSION?=11.1
