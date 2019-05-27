@@ -274,7 +274,7 @@ endef
 
 ios_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator$(IOS_VERSION).sdk 
 tvos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVSimulator.platform/Developer/SDKs/AppleTVSimulator$(TVOS_VERSION).sdk
-watchos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator$(WATCH_VERSION).sdk
+watchos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator$(WATCHOS_VERSION).sdk
 
 ios-sim32_SYSROOT = $(ios_sim_sysroot) -mios-simulator-version-min=$(IOS_VERSION_MIN)
 ios-sim64_SYSROOT = $(ios_sim_sysroot) -mios-simulator-version-min=$(IOS_VERSION_MIN)
