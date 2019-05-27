@@ -1441,6 +1441,7 @@
     <Compile Include="System.Reflection.Emit\MethodBuilder.pns.cs" />
     <Compile Include="System.Reflection.Emit\MethodOnTypeBuilderInst.cs" />
     <Compile Include="System.Reflection.Emit\MethodRental.cs" />
+    <Compile Include="System.Reflection.Emit\MethodRental.pns.cs" />
     <Compile Include="System.Reflection.Emit\MethodToken.cs" />
     <Compile Include="System.Reflection.Emit\ModuleBuilder.cs" />
     <Compile Include="System.Reflection.Emit\ModuleBuilder.pns.cs" />
@@ -1465,6 +1466,7 @@
     <Compile Include="System.Reflection.Emit\TypeBuilderInstantiation.cs" />
     <Compile Include="System.Reflection.Emit\TypeToken.cs" />
     <Compile Include="System.Reflection.Emit\UnmanagedMarshal.cs" />
+    <Compile Include="System.Reflection.Emit\UnmanagedMarshal.pns.cs" />
     <Compile Include="System.Reflection.Metadata\AssemblyExtensions.cs" />
     <Compile Include="System.Reflection\Assembly.cs" />
     <Compile Include="System.Reflection\AssemblyName.cs" />
@@ -1792,6 +1794,7 @@
     <Compile Include="System.Threading\WaitHandle.cs" />
     <Compile Include="System\ActivationContext.cs" />
     <Compile Include="System\AppDomain.cs" />
+    <Compile Include="System\AppDomain.pns.cs" />
     <Compile Include="System\AppDomainInitializer.cs" />
     <Compile Include="System\AppDomainManager.cs" />
     <Compile Include="System\AppDomainSetup.cs" />
