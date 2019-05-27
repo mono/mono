@@ -7,7 +7,7 @@ LIBRARY_WARN_AS_ERROR = yes
 KEYFILE = $(LIBRARY_SNK)
 
 LIB_REFS = System System.Core
-LIB_MCS_FLAGS = /unsafe /publicsign /nowarn:0618
+LIB_MCS_FLAGS = /unsafe /publicsign /nowarn:0618 -D:MONO_DATACONVERTER_STATIC_METHOD
 
 XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
 
