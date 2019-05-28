@@ -226,8 +226,17 @@ MONO_API void
 mono_security_set_core_clr_platform_callback (MonoCoreClrPlatformCB callback);
 
 // extend by dsqiu
+typedef struct {
+	MonoAssembly* assembly;
+	MonoDomain* domain;
+} _DomainAssemblyData;
+
 MONO_API void
 mono_domain_remove_unused_assembly(MonoAssembly* assembly);
+
+void
+mono_object_remove_gerneric_virtual_case_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly);
+void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly);
 // extend end
 
 MONO_END_DECLS

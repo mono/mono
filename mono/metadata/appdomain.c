@@ -3157,17 +3157,12 @@ mono_domain_ldstr_table_remove(gpointer key, gpointer value, gpointer user_data)
 	return TRUE;
 }
 
-//typedef struct {
-//	MonoDomain* domain;
-//	MonoImage* image;
-//} DomainImageData;
 
 static gboolean 
 mono_domain_jit_code_hash_remove(gpointer key, gpointer value, gpointer user_data)
 {
 	MonoImage* image = (MonoImage*)user_data;
 	MonoMethod* method = (MonoMethod*)key;
-	MonoJitInfo* jit_info = (MonoJitInfo*)value;
 	if (method->klass && method->klass->image == image)
 	{
 		return TRUE;
@@ -3186,6 +3181,7 @@ mono_image_method_cache_foreach(gpointer key, gpointer value, gpointer user_data
 		callbacks->free_method(domain, method);
 	}
 }
+
 
 void 
 mono_domain_remove_unused_assembly(MonoAssembly* assembly)
@@ -3240,6 +3236,8 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 		unregister_vtable_reflection_type((MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i));
 	g_ptr_array_free(removed_class_vtable_array, TRUE);
 
+	// free_domain_hook: mini_free_jit_domain_info 
+	mono_mini_remove_runtime_info_for_unused_assembly(domain, assembly);
 	// type_hash
 	if (domain->type_hash)
 	{
@@ -3283,10 +3281,10 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	// domain->mp
 	// domain->code_mp
 	// callbacks.free_method = mono_jit_free_method; mini-runtime.c
-	// free_domain_hook: mini_free_jit_domain_info
+	
 
 	// generic_virtual_cases
-
+	mono_object_remove_gerneric_virtual_case_for_unused_assembly(domain, assembly);
 	// mono_assembly_close
 
 	mono_assembly_close(assembly);

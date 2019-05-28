@@ -5164,3 +5164,74 @@ mono_runtime_install_custom_handlers_usage (void)
 		 "No handlers supported on current platform.\n");
 }
 #endif /* HOST_WIN32 */
+
+// extend by dsqiu
+
+static gboolean
+delegate_trampoline_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoClassMethodPair* pair = (MonoClassMethodPair*)key;
+	MonoDelegateTrampInfo* tramp_info = (MonoDelegateTrampInfo*)value;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	MonoImage* image = data->assembly->image;
+	if (pair->klass->image == image || (pair->method && pair->method->klass->image == image))
+	{
+		mono_domain_mempool_free(data->domain, pair, sizeof(MonoClassMethodPair));
+		mono_domain_mempool_free(data->domain, tramp_info, sizeof(MonoDelegateTrampInfo));
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly)
+{
+	MonoImage* image = assembly->image;
+	_DomainAssemblyData user_data;
+	user_data.assembly = assembly;
+	user_data.domain = domain;
+	MonoJitDomainInfo *info = domain_jit_info(domain);
+
+//	g_hash_table_foreach(info->jump_target_hash, delete_jump_list, NULL);
+//	g_hash_table_destroy(info->jump_target_hash);
+//	if (info->jump_target_got_slot_hash) {
+//		g_hash_table_foreach(info->jump_target_got_slot_hash, delete_got_slot_list, NULL);
+//		g_hash_table_destroy(info->jump_target_got_slot_hash);
+//	}
+//	if (info->dynamic_code_hash) {
+//		g_hash_table_foreach(info->dynamic_code_hash, dynamic_method_info_free, NULL);
+//		g_hash_table_destroy(info->dynamic_code_hash);
+//	}
+//	g_hash_table_destroy(info->method_code_hash);
+//	g_hash_table_destroy(info->jump_trampoline_hash);
+//	g_hash_table_destroy(info->jit_trampoline_hash);
+	if (info->jit_trampoline_hash)
+	{
+
+	}
+//	g_hash_table_destroy(info->delegate_trampoline_hash);
+	if (info->delegate_trampoline_hash)
+	{
+		g_hash_table_foreach_remove(info->delegate_trampoline_hash, delegate_trampoline_hash_foreach_remove, &user_data);
+	}
+//	g_hash_table_destroy(info->static_rgctx_trampoline_hash);
+//	g_hash_table_destroy(info->mrgctx_hash);
+//	g_hash_table_destroy(info->method_rgctx_hash);
+//	g_hash_table_destroy(info->interp_method_pointer_hash);
+//	g_hash_table_destroy(info->llvm_vcall_trampoline_hash);
+//	mono_conc_hashtable_destroy(info->runtime_invoke_hash);
+//	g_hash_table_destroy(info->seq_points);
+//	g_hash_table_destroy(info->arch_seq_points);
+//	if (info->agent_info)
+//		mini_get_dbg_callbacks()->free_domain_info(domain);
+//	g_hash_table_destroy(info->gsharedvt_arg_tramp_hash);
+//	if (info->llvm_jit_callees) {
+//		g_hash_table_foreach(info->llvm_jit_callees, free_jit_callee_list, NULL);
+//		g_hash_table_destroy(info->llvm_jit_callees);
+//	}
+//	mono_internal_hash_table_destroy(&info->interp_code_hash);
+//#ifdef ENABLE_LLVM
+//	mono_llvm_free_domain_info(domain);
+//#endif
+
+}
+// extend end

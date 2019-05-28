@@ -1057,7 +1057,13 @@ void mono_jit_info_table_cleanup_for_unused_assembly(MonoDomain* domain, MonoAss
 			jit_info = chunk->data[index];
 			if (IS_JIT_INFO_TOMBSTONE(jit_info))
 				continue;
-			if (jit_info && !jit_info->is_trampoline && !jit_info->async && jit_info->d.method->klass->image == image )
+			if (jit_info->is_trampoline)
+			{
+				// todo
+				// free MonoTrampInfo and MonoJitInfo
+				continue;
+			}
+			else if (!jit_info->async && jit_info->d.method->klass->image == image )
 			{
 				g_ptr_array_add(removed_jit_info_table_array, jit_info);
 				// chunk->num_elements -= 1;

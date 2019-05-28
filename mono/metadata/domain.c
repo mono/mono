@@ -2000,3 +2000,16 @@ mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly)
 	mono_domain_assemblies_unlock (domain);
 	return assemblies;
 }
+
+void 
+mono_domain_mempool_free(MonoDomain *domain, void* addr, guint size)
+{
+	mono_domain_lock(domain);
+
+	gboolean res = mono_mempool_free(domain->mp, addr, size);
+#ifndef DISABLE_PERFCOUNTERS
+	if(res)
+		mono_atomic_fetch_add_i32(&mono_perfcounters->loader_bytes, -size);
+#endif
+	mono_domain_unlock(domain);
+}
