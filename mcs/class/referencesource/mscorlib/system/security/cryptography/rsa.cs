@@ -499,6 +499,18 @@ namespace System.Security.Cryptography {
 
         public virtual bool VerifyHash(ReadOnlySpan<byte> hash, ReadOnlySpan<byte> signature, HashAlgorithmName hashAlgorithm, RSASignaturePadding padding) =>
             VerifyHash(hash.ToArray(), signature.ToArray(), hashAlgorithm, padding);
+
+        public virtual byte[] ExportRSAPrivateKey () => throw new PlatformNotSupportedException ();
+        
+        public virtual byte[] ExportRSAPublicKey () => throw new PlatformNotSupportedException ();
+
+        public virtual void ImportRSAPrivateKey (System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+
+        public virtual void ImportRSAPublicKey (System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+
+        public virtual bool TryExportRSAPrivateKey (System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+
+        public virtual bool TryExportRSAPublicKey (System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
 #endif
     }
 }

@@ -1910,4 +1910,6 @@ corefx/MonoLinqHelper.cs
 corefx/ThrowHelper.cs
 corefx/EnumeratorCancellationAttribute.cs
 corefx/TaskAsyncEnumerableExtensions.cs
+corefx/PbeParameters.cs
+corefx/PbeEncryptionAlgorithm.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/AmbiguousImplementationException.cs
