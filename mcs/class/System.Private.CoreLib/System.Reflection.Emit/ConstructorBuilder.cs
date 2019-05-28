@@ -121,7 +121,7 @@ namespace System.Reflection.Emit {
 		internal override ParameterInfo [] GetParametersInternal ()
 		{
 			if (parameters == null)
-				return EmptyArray<ParameterInfo>.Value;
+				return Array.Empty<ParameterInfo> ();
 
 			ParameterInfo [] retval = new ParameterInfo [parameters.Length];
 			for (int i = 0; i < parameters.Length; i++)
