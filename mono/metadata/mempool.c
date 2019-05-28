@@ -329,6 +329,7 @@ gpointer
 
 	// If that doesn't work fall back on mono_mempool_alloc to handle new chunk allocation
 	if (G_UNLIKELY (pool->pos >= pool->end)) {
+		pool->pos -= size; // Back out
 		rval = mono_mempool_alloc (pool, size);
 	}
 #ifdef TRACE_ALLOCATIONS

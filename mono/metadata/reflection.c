@@ -3078,7 +3078,7 @@ cached_unused_refobject_hash(gpointer key, gpointer value, gpointer user_data)
 }
 
 void 
-mnoo_reflection_cleanup_for_unsed_assembly(MonoDomain* domain, MonoAssembly* assembly)
+mono_reflection_cleanup_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly)
 {
 	if (domain->refobject_hash) {
 		GPtrArray* removed_refobject_hash_array = g_ptr_array_new();

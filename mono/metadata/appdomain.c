@@ -3157,16 +3157,34 @@ mono_domain_ldstr_table_remove(gpointer key, gpointer value, gpointer user_data)
 	return TRUE;
 }
 
+//typedef struct {
+//	MonoDomain* domain;
+//	MonoImage* image;
+//} DomainImageData;
+
 static gboolean 
 mono_domain_jit_code_hash_remove(gpointer key, gpointer value, gpointer user_data)
 {
 	MonoImage* image = (MonoImage*)user_data;
 	MonoMethod* method = (MonoMethod*)key;
+	MonoJitInfo* jit_info = (MonoJitInfo*)value;
 	if (method->klass && method->klass->image == image)
 	{
 		return TRUE;
 	}
 	return FALSE;
+}
+
+static void
+mono_image_method_cache_foreach(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoRuntimeCallbacks* callbacks = mono_get_runtime_callbacks();
+	MonoDomain* domain = (MonoDomain*)user_data;
+	MonoMethod* method = (MonoMethod*)value;
+	if (callbacks && callbacks->free_method)
+	{
+		callbacks->free_method(domain, method);
+	}
 }
 
 void 
@@ -3216,7 +3234,7 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	mono_g_hash_table_foreach_remove(domain->ldstr_table, mono_domain_ldstr_table_remove, NULL);
 
 	// mono_reflection_cleanup_domain
-	mnoo_reflection_cleanup_for_unsed_assembly(domain, assembly);
+	mono_reflection_cleanup_for_unused_assembly(domain, assembly);
 	// unregister_vtable_reflection_type
 	for (i = 0; i < removed_class_vtable_array->len; ++i)
 		unregister_vtable_reflection_type((MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i));
@@ -3247,12 +3265,30 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	// proxy_vtable_hash
 
 	// jit_code_hash
+	//DomainImageData domain_image_data;
+	//domain_image_data.image = image;
+	//domain_image_data.domain = domain;
 	mono_internal_hash_table_foreach_remove(&domain->jit_code_hash, mono_domain_jit_code_hash_remove, image);
+	// aot_modules:aot_moudles不支持热更新，不用处理?
+	if (domain->aot_modules)
+	{
 
-	// aot_modules
+	}
 	// jit_info_table
+	if (domain->jit_info_table)
+	{
+		mono_jit_info_table_cleanup_for_unused_assembly(domain, assembly);
+	}
+	
+	// domain->mp
+	// domain->code_mp
+	// callbacks.free_method = mono_jit_free_method; mini-runtime.c
+	// free_domain_hook: mini_free_jit_domain_info
+
 	// generic_virtual_cases
+
 	// mono_assembly_close
+
 	mono_assembly_close(assembly);
 	// proxy_vtable_hash: remote_class
 	// jit_code_hash: 
