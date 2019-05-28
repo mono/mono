@@ -41,5 +41,4 @@ NO_CONSOLE = yes
 PROFILE_DISABLE_BTLS = yes
 NO_SRE=1
 
-# Note need for trailing comma. If you add, keep it
-PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking,PKITS,
+PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking PKITS

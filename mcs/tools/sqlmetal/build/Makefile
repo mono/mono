@@ -32,13 +32,13 @@ $(sqlite_tests): $(sqlite_tests_dep)
 test-sqlite: $(sqlite_tests)
 
 RUN_TEST_COMMAND = \
-	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(1) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -labels -format:nunit2 -result=TestResult-$(1:.dll=)-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) ;
+	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(1) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) -exclude=$(subst $(space),$(comma),$(TEST_HARNESS_EXCLUDES)) $(TEST_HARNESS_OUTPUT) -labels -format:nunit2 -result=TestResult-$(1:.dll=)-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) ;
 
 run-test-sqlite:
 	$(call RUN_TEST_COMMAND,$(sqlite_tests))
 
 foo:
-	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(sqlite_tests) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
+	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(sqlite_tests) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) -exclude=$(subst $(space),$(comma),$(TEST_HARNESS_EXCLUDES)) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
 	$(TEST_HARNESS_POSTPROC) ; $$ok
 
 all-local: $(sqlite_tests)
