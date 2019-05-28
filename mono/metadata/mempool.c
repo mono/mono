@@ -27,7 +27,7 @@
  * all memory when the pool is destroyed.
  */
 
-#define MEM_ALIGN 8
+#define MEM_ALIGN (2 * sizeof (void*)) // align like Windows heap
 #define ALIGN_SIZE(s)	(((s) + MEM_ALIGN - 1) & ~(MEM_ALIGN - 1))
 
 // Size of memory at start of mempool reserved for header
