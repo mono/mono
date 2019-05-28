@@ -4418,7 +4418,7 @@ public class DebuggerTests
 		var next_loc = locs.First (l => (l.LineNumber == frames [0].Location.LineNumber + 3));
 
 		e.Thread.SetIP (next_loc);
-
+		Assert.AreEqual(next_loc.ILOffset, e.Thread.GetFrames ()[0].Location.ILOffset);
 		/* Check that i ++; j = 5; was skipped */
 		bevent = run_until ("set_ip_2");
 		var f = bevent.Thread.GetFrames ()[1];
