@@ -24,6 +24,6 @@ triggers:
       - "/.*/"
 
 artifacts: 
-  builds.zip:
+  builds:
     paths:
       - collectedbuilds/builds.7z
