@@ -309,6 +309,12 @@ namespace System.Security.Cryptography {
                 }
             }
         }
+
+        public virtual byte[] ExportECPrivateKey () => throw new PlatformNotSupportedException ();
+        
+        public virtual bool TryExportECPrivateKey (System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+        
+        public virtual void ImportECPrivateKey (System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
 #endif
     }
 }

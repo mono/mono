@@ -113,5 +113,31 @@ namespace System.Security.Cryptography {
         public virtual String ToXmlString(bool includePrivateParameters) {
             throw new NotImplementedException();
         }
+
+#if MONO
+        public virtual byte[] ExportEncryptedPkcs8PrivateKey (System.ReadOnlySpan<byte> passwordBytes, System.Security.Cryptography.PbeParameters pbeParameters) => throw new PlatformNotSupportedException ();
+
+        public virtual byte[] ExportEncryptedPkcs8PrivateKey (System.ReadOnlySpan<char> password, System.Security.Cryptography.PbeParameters pbeParameters) => throw new PlatformNotSupportedException ();
+
+        public virtual byte[] ExportPkcs8PrivateKey () => throw new PlatformNotSupportedException ();
+
+        public virtual byte[] ExportSubjectPublicKeyInfo () => throw new PlatformNotSupportedException ();
+
+        public virtual void ImportEncryptedPkcs8PrivateKey (System.ReadOnlySpan<byte> passwordBytes, System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+
+        public virtual void ImportEncryptedPkcs8PrivateKey (System.ReadOnlySpan<char> password, System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+
+        public virtual void ImportPkcs8PrivateKey (System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+
+        public virtual void ImportSubjectPublicKeyInfo (System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+
+        public virtual bool TryExportEncryptedPkcs8PrivateKey (System.ReadOnlySpan<byte> passwordBytes, System.Security.Cryptography.PbeParameters pbeParameters, System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+
+        public virtual bool TryExportEncryptedPkcs8PrivateKey (System.ReadOnlySpan<char> password, System.Security.Cryptography.PbeParameters pbeParameters, System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+
+        public virtual bool TryExportPkcs8PrivateKey (System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+
+        public virtual bool TryExportSubjectPublicKeyInfo (System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+#endif
     }
 }    

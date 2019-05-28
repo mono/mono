@@ -77,8 +77,6 @@ corefx/SR.missing.cs
 ../referencesource/System.Core/System/Security/Cryptography/RsaCng.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellman.cs
 
-corefx/PbeParameters.cs
-corefx/PbeEncryptionAlgorithm.cs
 
 ../referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 
