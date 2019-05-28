@@ -171,7 +171,7 @@
       <Compile Include="System.Reflection\Assembly.cs" />
       <Compile Include="System.Reflection\AssemblyName.cs" />
       <Compile Include="System.Reflection\CustomAttributeData.cs" />
-      <Compile Include="System.Reflection\CustomAttributeExtensions.cs" />
+      <Compile Include="System.Reflection\CustomAttributeTypedArgument.cs" />
       <Compile Include="System.Reflection\FieldInfo.cs" />
       <Compile Include="System.Reflection\MemberInfo.cs" />
       <Compile Include="System.Reflection\MethodBase.cs" />
@@ -276,12 +276,6 @@
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />
-  </ItemGroup>
-  <ItemGroup>
-      <Compile Include="System.Reflection\CustomAttributeNamedArgument.cs" />
-      <Compile Include="System.Reflection\CustomAttributeTypedArgument.cs" />
-      <Compile Include="System.Reflection\MissingMetadataException.cs" />
-      <Compile Include="..\corlib\corert\RuntimeAugments.cs" />
   </ItemGroup>
 
   <!-- Mono extensions -->
