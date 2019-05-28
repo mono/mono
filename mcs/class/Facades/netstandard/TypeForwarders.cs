@@ -2536,6 +2536,8 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.SequencePosition))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.CryptographicOperations))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.ECDiffieHellman))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.PbeParameters))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.PbeEncryptionAlgorithm))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Xml.Serialization.SchemaImporter))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.CertificateRequest))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Security.Cryptography.X509Certificates.DSACertificateExtensions))]
