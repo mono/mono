@@ -52,7 +52,7 @@ Additional options (--option/--no-option):
         type: bool  default: true
   --linker-verbose (set verbose option on linker)
         type: bool  default: false
-  --enable-zlib (enable the use of zlib for System.IO.Compression support)
+  --zlib (enable the use of zlib for System.IO.Compression support)
         type: bool  default: false
 
 ```
