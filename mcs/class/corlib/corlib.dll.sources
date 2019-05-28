@@ -1905,4 +1905,6 @@ corefx/FileInfo.cs
 corefx/Directory.cs
 corefx/MonoLinqHelper.cs
 corefx/ThrowHelper.cs
+corefx/EnumeratorCancellationAttribute.cs
+corefx/TaskAsyncEnumerableExtensions.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/AmbiguousImplementationException.cs

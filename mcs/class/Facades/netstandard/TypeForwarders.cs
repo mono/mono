@@ -1482,6 +1482,7 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.DisablePrivateReflectionAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.DiscardableAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.DynamicAttribute))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.EnumeratorCancellationAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.ExtensionAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.FixedAddressValueTypeAttribute))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Runtime.CompilerServices.FixedBufferAttribute))]
@@ -2546,4 +2547,5 @@
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.IValueTaskSource<>))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.ValueTaskSourceOnCompletedFlags))]
 [assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.Sources.ValueTaskSourceStatus))]
+[assembly:System.Runtime.CompilerServices.TypeForwardedTo(typeof(System.Threading.Tasks.TaskAsyncEnumerableExtensions))]
 #endif
