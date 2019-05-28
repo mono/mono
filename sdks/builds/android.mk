@@ -6,6 +6,11 @@ ANDROID_SDK_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/sdk
 ANDROID_TOOLCHAIN_PREFIX?=$(ANDROID_TOOLCHAIN_DIR)/toolchains
 ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/ndk/source.properties | cut -d '=' -f 2 | tr -d ' ' | cut -d '.' -f 1` -ge 18; then echo yes; else echo no; fi)
 
+android_SOURCES_DIR = $(TOP)/sdks/out/android-sources
+
+android_ARCHIVE += android-sources
+ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR)
+
 ##
 # Parameters:
 #  $(1): target
@@ -352,3 +357,9 @@ $(eval $(call AndroidCrossMXETemplate,cross-x86-win,i686,i686,x86,llvm-llvmwin32
 $(eval $(call AndroidCrossMXETemplate,cross-x86_64-win,x86_64,x86_64,x86_64,llvm-llvmwin64,x86_64-none-linux-android))
 
 $(eval $(call BclTemplate,android,monodroid monodroid_tools,monodroid monodroid_tools))
+
+$(android_SOURCES_DIR)/external/linker/README.md:  # we use this as a sentinel file to avoid rsyncing everything on each build (slows down iterating)
+	mkdir -p $(android_SOURCES_DIR)/external/linker
+	cd $(TOP) && rsync -r --include='*.cs' --include="README.md" --include="*/" --exclude="*" external/linker $(android_SOURCES_DIR)/external
+
+$(android_SOURCES_DIR): $(android_SOURCES_DIR)/external/linker/README.md
