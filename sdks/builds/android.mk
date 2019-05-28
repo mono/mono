@@ -8,7 +8,7 @@ ANDROID_NEW_NDK=$(shell if test `grep 'Pkg\.Revision' $(ANDROID_TOOLCHAIN_DIR)/n
 
 android_SOURCES_DIR = $(TOP)/sdks/out/android-sources
 
-ifneq ($(UNAME),Windows)
+ifeq ($(UNAME),Darwin)
 android_ARCHIVE += android-sources
 ADDITIONAL_PACKAGE_DEPS += $(android_SOURCES_DIR)
 endif
