@@ -423,7 +423,7 @@ namespace System
 			}
 		}
 
-		public override Type[] GetGenericParameterConstraints()
+		public override Type[] GetGenericParameterConstraints ()
 		{
 			if (!IsGenericParameter)
 				throw new InvalidOperationException(Environment.GetResourceString("Arg_NotGenericParameter"));
@@ -431,10 +431,7 @@ namespace System
 			var paramInfo = new Mono.RuntimeGenericParamInfoHandle (RuntimeTypeHandle.GetGenericParameterInfo (this));
 			Type[] constraints = paramInfo.Constraints;
 
-			if (constraints == null)
-				constraints = EmptyArray<Type>.Value;
-
-			return constraints;
+			return constraints ?? Array.Empty<Type> ();
 		}
 
 		internal static object CreateInstanceForAnotherGenericParameter (Type genericType, RuntimeType genericArgument)

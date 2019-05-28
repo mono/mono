@@ -327,7 +327,7 @@ namespace System.Reflection
 		{
 			string[] names = (string[]) GetFilesInternal (null, getResourceModules);
 			if (names == null)
-				return EmptyArray<FileStream>.Value;
+				return Array.Empty<FileStream> ();
 
 			string location = Location;
 

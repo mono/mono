@@ -217,6 +217,7 @@
       <Compile Include="System.Runtime\GCSettings.cs" />
       <Compile Include="System.Runtime\RuntimeImports.cs" />
       <Compile Include="System.Runtime.CompilerServices\DependentHandle.cs" />
+      <Compile Include="System.Runtime.CompilerServices\JitHelpers.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeHelpers.cs" />
       <Compile Include="System.Runtime.CompilerServices\RuntimeFeature.cs" />
       <Compile Include="System.Runtime.InteropServices\CriticalHandle.cs" />
@@ -232,6 +233,7 @@
       <Compile Include="System.Threading\Monitor.cs" />
       <Compile Include="System.Threading\Overlapped.cs" />
       <Compile Include="System.Threading\PreAllocatedOverlapped.cs" />
+      <Compile Include="System.Threading\RegisteredWaitHandle.cs" />
       <Compile Include="System.Threading\StackCrawlMark.cs" />
       <Compile Include="System.Threading\Thread.cs" />
       <Compile Include="System.Threading\ThreadPool.cs" />
@@ -256,23 +258,17 @@
   <ItemGroup>
       <Compile Include="..\..\build\common\Consts.cs" />
 
-      <Compile Include="..\corlib\ReferenceSources\JitHelpers.cs" />
-
       <Compile Include="..\corlib\Mono\RuntimeStructs.cs" />
       <Compile Include="..\corlib\Mono\RuntimeMarshal.cs" />
       <Compile Include="..\corlib\Mono\SafeStringMarshal.cs" />
       <Compile Include="..\corlib\Mono\SafeGPtrArrayHandle.cs" />
 
-      <Compile Include="..\corlib\System\EmptyArray.cs" />
       <Compile Include="..\corlib\System\MonoCustomAttrs.cs" />
       <Compile Include="..\corlib\System\WeakReference.cs" />
       <Compile Include="..\corlib\System\WeakReference_T.cs" />
       <Compile Include="..\corlib\System\TypeSpec.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
-
-      <Compile Include="..\corlib\System.Threading\Monitor.cs" />
-      <Compile Include="..\corlib\System.Threading\RegisteredWaitHandle.cs" />
   </ItemGroup>
   <ItemGroup>
       <Compile Include="..\referencesource\mscorlib\system\rttype.cs" />

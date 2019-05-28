@@ -118,7 +118,7 @@ namespace System.Reflection.Emit
 			if (method != null)
 				return method.GetParameters ();
 
-			return EmptyArray<ParameterInfo>.Value;
+			return Array.Empty<ParameterInfo> ();
 		}
 
 		public override MethodInfo GetSetMethod (bool nonPublic)
