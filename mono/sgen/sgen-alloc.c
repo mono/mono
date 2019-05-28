@@ -250,7 +250,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 				zero_tlab_if_necessary (p, size);
 			} else {
-				THREAD_BYTES_ALLOCATED += TLAB_END - TLAB_START;
+				THREAD_BYTES_ALLOCATED += TLAB_NEXT - TLAB_START - size;
 
 				size_t alloc_size = 0;
 				if (TLAB_START)
