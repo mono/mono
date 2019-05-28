@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace System
 {
+	[CLSCompliantAttribute (false)]
 	public ref struct TypedReference
 	{
 		#region sync with object-internals.h

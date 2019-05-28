@@ -163,6 +163,7 @@
       <Compile Include="System.Collections.Generic\ArraySortHelper.cs" />
       <Compile Include="System.Collections.Generic\Comparer.cs" />
       <Compile Include="System.Collections.Generic\EqualityComparer.cs" />
+      <Compile Include="System.Diagnostics\Debugger.cs" />
       <Compile Include="System.Diagnostics\StackFrame.cs" />
       <Compile Include="System.Diagnostics\StackTrace.cs" />
       <Compile Include="System.IO\Stream.cs" />
@@ -267,8 +268,6 @@
       <Compile Include="..\corlib\System\WeakReference.cs" />
       <Compile Include="..\corlib\System\WeakReference_T.cs" />
       <Compile Include="..\corlib\System\TypeSpec.cs" />
-
-      <Compile Include="..\corlib\System.Diagnostics\Debugger.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
 

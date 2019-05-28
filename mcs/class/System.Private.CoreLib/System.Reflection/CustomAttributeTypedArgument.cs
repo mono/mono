@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace System.Reflection
 {
-    public struct CustomAttributeTypedArgument
+    public readonly struct CustomAttributeTypedArgument
     {
         public CustomAttributeTypedArgument(object value)
         {

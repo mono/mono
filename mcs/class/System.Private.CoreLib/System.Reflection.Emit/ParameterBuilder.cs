@@ -140,12 +140,6 @@ namespace System.Reflection.Emit {
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
-
-		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
-		public virtual void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
-			marshal_info = unmanagedMarshal;
-			attrs |= ParameterAttributes.HasFieldMarshal;
-		}
 	}
 }
 

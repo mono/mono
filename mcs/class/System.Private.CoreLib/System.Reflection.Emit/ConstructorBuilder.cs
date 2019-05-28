@@ -180,13 +180,6 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[Obsolete]
-		public Type ReturnType {
-			get {
-				return null;
-			}
-		}
-
 		public override string Name {
 			get {
 				return (attrs & MethodAttributes.Static) != 0 ? ConstructorInfo.TypeConstructorName : ConstructorInfo.ConstructorName;
@@ -300,13 +293,6 @@ namespace System.Reflection.Emit {
 		public MethodToken GetToken ()
 		{
 			return new MethodToken (0x06000000 | table_idx);
-		}
-
-		// FIXME:
-		public void SetSymCustomAttribute (string name, byte[] data)
-		{
-			if (type.is_created)
-				throw not_after_created ();
 		}
 
 		public override Module Module {

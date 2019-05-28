@@ -486,22 +486,6 @@ namespace System.Reflection.Emit {
 			return copy;
 		}
 
-		// FIXME:
-		public void SetSymCustomAttribute (string name, byte[] data)
-		{
-			throw new NotImplementedException ();
-		}
-
-		// FIXME:
-		public void SetUserEntryPoint (MethodInfo entryPoint)
-		{
-			if (entryPoint == null)
-				throw new ArgumentNullException ("entryPoint");
-			if (entryPoint.DeclaringType.Module != this)
-				throw new InvalidOperationException ("entryPoint is not contained in this module");
-			throw new NotImplementedException ();
-		}
-
 		public MethodToken GetMethodToken (MethodInfo method)
 		{
 			if (method == null)
@@ -510,14 +494,6 @@ namespace System.Reflection.Emit {
 			return new MethodToken (GetToken (method));
 		}
 		
-		public MethodToken GetMethodToken (MethodInfo method, IEnumerable<Type> optionalParameterTypes)
-		{
-			if (method == null)
-				throw new ArgumentNullException ("method");
-
-			return new MethodToken (GetToken (method, optionalParameterTypes));
-		}
-
 		public MethodToken GetArrayMethodToken (Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
 		{
 			return GetMethodToken (GetArrayMethod (arrayClass, methodName, callingConvention, returnType, parameterTypes));
@@ -532,14 +508,6 @@ namespace System.Reflection.Emit {
 			return new MethodToken (GetToken (con));
 		}
 		
-		public MethodToken GetConstructorToken (ConstructorInfo constructor, IEnumerable<Type> optionalParameterTypes)
-		{
-			if (constructor == null)
-				throw new ArgumentNullException ("constructor");
-
-			return new MethodToken (GetToken (constructor, optionalParameterTypes));
-		}
-
 		public FieldToken GetFieldToken (FieldInfo field)
 		{
 			if (field == null)
