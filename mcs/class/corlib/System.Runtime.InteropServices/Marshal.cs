@@ -391,7 +391,7 @@ namespace System.Runtime.InteropServices
 			FreeHGlobal (s);
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 		public static Guid GenerateGuidForType (Type type)
 		{
 			return type.GUID;
@@ -438,7 +438,7 @@ namespace System.Runtime.InteropServices
 				return GetCCW (o, T);
 		}
 #endif
-#endif // !FULL_AOT_RUNTIME
+#endif // !FULL_AOT_RUNTIME && !MONOTOUCH
 
 		public static IntPtr GetComInterfaceForObject (object o, Type T)
 		{
@@ -463,7 +463,7 @@ namespace System.Runtime.InteropServices
 			return GetComInterfaceForObject ((object)o, typeof (T));
 		}
 
-#if !FULL_AOT_RUNTIME && !NETCORE
+#if !FULL_AOT_RUNTIME && !NETCORE && !MONOTOUCH
 
 		public static IntPtr GetComInterfaceForObjectInContext (object o, Type t)
 		{
@@ -545,7 +545,7 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetIDispatchForObjectInternal (object o);
 
@@ -595,7 +595,7 @@ namespace System.Runtime.InteropServices
 
 		public static IntPtr GetIUnknownForObject (object o)
 		{
-#if FULL_AOT_RUNTIME
+#if FULL_AOT_RUNTIME || MONOTOUCH
 			throw new PlatformNotSupportedException ();
 #else
 			IntPtr pUnk = GetIUnknownForObjectInternal (o);
@@ -700,7 +700,7 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 
 #if !NETCORE
 
@@ -1123,7 +1123,7 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 		[Obsolete]
 
 		public static void ReleaseThreadCache()
