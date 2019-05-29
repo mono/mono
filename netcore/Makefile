@@ -21,6 +21,7 @@ NETCORESDK_EXT = zip
 UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
 XUNIT_FLAGS =
 TESTS_PLATFORM = Windows_NT.x64
+LOCAL_DOTNET = ../.dotnet/dotnet.exe
 endif
 
 ifeq ($(HOST_PLATFORM),macos)
@@ -28,6 +29,7 @@ NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
 XUNIT_FLAGS = -notrait category=nonosxtests
 TESTS_PLATFORM = OSX.x64
+LOCAL_DOTNET = ../.dotnet/dotnet
 endif
 
 ifeq ($(HOST_PLATFORM),linux)
@@ -35,6 +37,7 @@ NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
 XUNIT_FLAGS = -notrait category=nonlinuxtests
 TESTS_PLATFORM = Linux.x64
+LOCAL_DOTNET = ../.dotnet/dotnet
 endif
 
 NETCORESDK_FILE := dotnet-runtime-$(NETCOREAPP_VERSION)-$(RID).$(NETCORESDK_EXT)
@@ -50,10 +53,13 @@ VERSTUB = .$(shell git rev-list --count $(BLAME)..HEAD)
 
 all: runtime bcl
 
-LOCAL_DOTNET = ../.dotnet/dotnet
-$(LOCAL_DOTNET):
-	bash ../eng/common/dotnet-install.sh -v $(NETCOREAPP_VERSION) && \
+../.dotnet/dotnet:
+	bash ../eng/common/dotnet-install.sh -v $(NETCOREAPP_VERSION)
 	bash ../.dotnet/dotnet-install.sh  -c master -i ../.dotnet
+
+../.dotnet/dotnet.exe:
+	powershell -ExecutionPolicy ByPass -NoProfile -command ../eng/common/dotnet-install.ps1 -version $(NETCOREAPP_VERSION)
+	powershell -ExecutionPolicy ByPass -NoProfile -command ../.dotnet/dotnet-install.ps1 -c master -i ../.dotnet
 
 $(NETCORESDK_FILE):
 	curl $(NETCORE_URL) --output $(NETCORESDK_FILE)
