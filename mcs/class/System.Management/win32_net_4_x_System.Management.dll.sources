@@ -5,7 +5,8 @@
 Assembly/AssemblyInfo.cs
 corefx/SR.cs
 corefx/Interop.Libraries.cs
-../../../external/corefx/src/System.Management/src/System/Management/ManagementScope.cs
+corefx/ManagementScope.cs
+corefx/WMIInterop.cs
 ../../../external/corefx/src/System.Management/src/System/Management/ManagementBaseObject.cs
 ../../../external/corefx/src/System.Management/src/System/Management/ManagementClass.cs
 ../../../external/corefx/src/System.Management/src/System/Management/ManagementDateTime.cs
@@ -29,7 +30,6 @@ corefx/Interop.Libraries.cs
 ../../../external/corefx/src/System.Management/src/System/Management/WmiEventSink.cs
 ../../../external/corefx/src/System.Management/src/System/Management/wmiutil.cs
 ../../../external/corefx/src/System.Management/src/System/Management/WMIGenerator.cs
-../../../external/corefx/src/System.Management/src/System/Management/InteropClasses/WMIInterop.cs
 ../../../external/corefx/src/Common/src/CoreLib/Microsoft/Win32/SafeHandles/SafeLibraryHandle.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.GetProcAddress.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.LoadLibrary.cs
