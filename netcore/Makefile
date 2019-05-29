@@ -101,7 +101,7 @@ SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 bcl: $(LOCAL_DOTNET) update-roslyn
 	$(MAKE) -C ../mcs/build/ common/Consts.cs
 	$(LOCAL_DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:BuildArch=$(COREARCH) \
-	-p:OutputPath=../mcs/class/System.Private.CoreLib/bin/$(COREARCH) \
+	-p:OutputPath=bin/$(COREARCH) \
 	-p:RoslynPropsFile="../../../netcore/roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/build/Microsoft.Net.Compilers.Toolset.props" \
 	../mcs/class/System.Private.CoreLib/System.Private.CoreLib.csproj
 
