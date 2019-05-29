@@ -35,5 +35,10 @@ MONO_API void             mono_code_manager_install_callbacks (MonoCodeManagerCa
 typedef int    (*MonoCodeManagerFunc)      (void *data, int csize, int size, void *user_data);
 void            mono_code_manager_foreach  (MonoCodeManager *cman, MonoCodeManagerFunc func, void *user_data);
 
+// extend by dsqiu
+MONO_API mono_bool
+mono_code_chunk_free(MonoCodeManager* cman, void* addr, int size);
+// extend end
+
 #endif /* __MONO_CODEMAN_H__ */
 

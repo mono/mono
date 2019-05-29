@@ -1072,6 +1072,7 @@ void mono_jit_info_table_cleanup_for_unused_assembly(MonoDomain* domain, MonoAss
 	}
 	for (int index = 0; index < removed_jit_info_table_array->len; index++)
 	{
+		// todo freee jit_info_table
 		jit_info_table_remove(domain->jit_info_table, g_ptr_array_index(removed_jit_info_table_array, index));
 	}
 	g_ptr_array_free(removed_jit_info_table_array, FALSE);

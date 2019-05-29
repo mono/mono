@@ -65,6 +65,15 @@ static MonoCodeManagerCallbacks code_manager_callbacks;
 
 #define MONO_PROT_RWX (MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_EXEC|MONO_MMAP_JIT)
 
+// extend by dsqiu
+typedef struct _MonoUnusedEntity {
+	struct _MonoUnusedEntity* next;
+	guint32 size;
+	char* pos;
+} MonoUnusedEntity;
+
+// extend end
+
 typedef struct _CodeChunck CodeChunk;
 
 enum {
@@ -88,7 +97,239 @@ struct _MonoCodeManager {
 	CodeChunk *current;
 	CodeChunk *full;
 	CodeChunk *last;
+	// extend by dsqiu
+	// empty->empty->unused_memory->unused_memory
+	MonoUnusedEntity* unuseds;
+	// extend end
 };
+
+// extend by dsqiu
+static CodeChunk* mono_code_chunk_find(MonoCodeManager* cman, char* addr)
+{	
+	CodeChunk* chunk = NULL;
+	for (chunk = cman->current; chunk; chunk = chunk->next)
+	{
+		if (addr >= chunk->data && addr < chunk->data + chunk->size)
+			return chunk;
+	}
+	for (chunk = cman->full; chunk; chunk = chunk->next)
+	{
+		if (addr >= chunk->data && addr < chunk->data + chunk->size)
+			return chunk;
+	}
+	return NULL;
+}
+
+static void
+mono_code_unused_destroy(MonoUnusedEntity* unused_entity)
+{
+	MonoUnusedEntity *p, *n;
+	p = unused_entity;
+	while (p) {
+		n = p->next;
+		g_free(p);
+		p = n;
+	}
+}
+
+static MonoUnusedEntity*
+mono_code_unused_new()
+{
+	MonoUnusedEntity* unused_entity = (MonoUnusedEntity *)g_malloc(sizeof(MonoUnusedEntity));
+	unused_entity->pos = NULL;
+	unused_entity->size = 0;
+	unused_entity->next = NULL;
+	return unused_entity;
+}
+
+static void
+mono_code_unused_recycle(MonoCodeManager* root, MonoUnusedEntity* reuse_entity)
+{
+	reuse_entity->pos = NULL;
+	reuse_entity->size = 0;
+	MonoUnusedEntity* unused_list = root->unuseds;
+	while (unused_list)
+	{
+		if (unused_list->next == reuse_entity)
+		{
+			unused_list->next = reuse_entity->next;
+			reuse_entity->next = NULL;
+			break;
+		}
+		unused_list = unused_list->next;
+	}
+	reuse_entity->next = root->unuseds->next;
+	root->unuseds = reuse_entity;
+}
+
+// insert free memory to unuseds
+static gboolean
+mono_code_unused_insert(MonoCodeManager* root, char* addr, gint32 size, CodeChunk* chunk)
+{
+	MonoUnusedEntity* new_entity = NULL;
+	if (!root->unuseds)
+	{
+		root->unuseds = mono_code_unused_new();
+		root->unuseds->pos = addr;
+		root->unuseds->size = size;
+		return TRUE;
+	}
+	gpointer pool_end = (gpointer)(chunk->data + chunk->size);
+	gpointer pool_start = (gpointer)(chunk->data);
+	MonoUnusedEntity* unused_list = root->unuseds;
+	// check if has adjacent entity, join
+	while (unused_list)
+	{
+		gpointer pre_addr = (gpointer)unused_list;
+		if (pre_addr >= pool_start && pre_addr < pool_end)
+		{
+			if (addr == unused_list->pos)
+			{
+				g_print("Free code repeatly\n");
+				return FALSE;
+			}
+			// guint8* a = (guint8*)unused_list + unused_list->size;
+			// guint8* b = addr + size;
+			if (unused_list->pos + unused_list->size == addr)
+			{
+				unused_list->size += size;
+				// check next entity if adjacent
+				MonoUnusedEntity* next_entity = unused_list->next;
+				if (next_entity && (next_entity->pos == unused_list->pos + unused_list->size))
+				{
+					unused_list->size += next_entity->size;
+					mono_code_unused_recycle(root, next_entity);
+				}
+				return TRUE;
+			}
+			else if (addr + size == unused_list->pos)
+			{
+				unused_list->pos = addr;
+				unused_list->size += size;
+				return TRUE;
+			}
+		}
+		unused_list = unused_list->next;
+	}
+	if (root->unuseds->pos)
+	{
+		new_entity = mono_code_unused_new();
+	}
+	else
+	{
+		new_entity = root->unuseds;
+		root->unuseds = new_entity->next;
+		new_entity->next = NULL;
+	}
+	new_entity->size = size;
+	new_entity->pos = addr;
+	unused_list = root->unuseds;
+	gboolean has_same_pool = FALSE;
+	MonoUnusedEntity* pre_entity = NULL;
+	while (unused_list)
+	{
+		gpointer pre_addr = (gpointer)unused_list->pos;
+		if (pre_addr >= pool_start && pre_addr < pool_end)
+		{
+			has_same_pool = TRUE;
+			if (pre_addr > (gpointer)addr)
+			{
+				break;
+			}
+			else
+			{
+				pre_entity = unused_list;
+			}
+		}
+		else if (has_same_pool)
+		{
+			break;
+		}
+		else // last
+		{
+			pre_entity = unused_list;
+		}
+		unused_list = unused_list->next;
+	}
+	if (pre_entity)
+	{
+		new_entity->next = pre_entity->next;
+		pre_entity->next = new_entity;
+	}
+	else
+	{
+		root->unuseds = new_entity;
+	}
+	return TRUE;
+}
+
+
+static gpointer
+mono_code_unused_fetch(MonoCodeManager* root, guint32 size, guint32 alignment)
+{
+	MonoUnusedEntity* unused_list = root->unuseds;
+	MonoUnusedEntity* pre_entity = NULL;
+	MonoUnusedEntity* reuse_entity = NULL;
+	// max number
+	guint32 resue_size = (1 << (8* sizeof(guint32))) - 1;
+	guint32 align_mask = alignment - 1;
+	while (unused_list)
+	{
+		if (unused_list->pos)
+		{
+			char* ptr = (char*)(((uintptr_t)unused_list->pos + align_mask) & ~(uintptr_t)align_mask);
+			if (ptr + size <= unused_list->pos + unused_list->size)
+			{
+				if (ptr == unused_list->pos && unused_list->size == size)
+				{
+					reuse_entity = unused_list;
+					break;
+				}
+				else if (resue_size > unused_list->size)
+				{
+					resue_size = unused_list->size;
+					reuse_entity = unused_list;
+				}
+			}
+		}
+		pre_entity = unused_list;
+		unused_list = unused_list->next;
+	}
+	if (reuse_entity)
+	{
+		char* rval = (char*)(((uintptr_t)reuse_entity->pos + align_mask) & ~(uintptr_t)align_mask);
+		if (rval == reuse_entity->pos && reuse_entity->size == size)
+		{
+			if (pre_entity)
+			{
+				pre_entity->next = reuse_entity->next;
+			}
+			reuse_entity->pos = NULL;
+			reuse_entity->size = 0;
+			reuse_entity->next = root->unuseds->next;
+			root->unuseds = reuse_entity;
+		}
+		else
+		{
+			if (rval + size == reuse_entity->pos + reuse_entity->size)
+			{
+				reuse_entity->size -= size;
+			}
+			else
+			{
+				guint32 left_size = rval - reuse_entity->pos;
+				guint32 right_size = reuse_entity->size - left_size - size;
+				unused_list->size = left_size;
+				mono_code_unused_insert(root, rval + size, right_size, mono_code_chunk_find(root, reuse_entity->pos));
+			}
+		}
+		return rval;
+	}
+	return NULL;
+}
+
+// extend end
+
 
 #define ALIGN_INT(val,alignment) (((val) + (alignment - 1)) & ~(alignment - 1))
 
@@ -198,7 +439,12 @@ mono_code_manager_install_callbacks (MonoCodeManagerCallbacks* callbacks)
 MonoCodeManager* 
 mono_code_manager_new (void)
 {
-	return (MonoCodeManager *) g_malloc0 (sizeof (MonoCodeManager));
+	// extend by dsqiu
+	MonoCodeManager * value = (MonoCodeManager *)g_malloc0(sizeof(MonoCodeManager));
+	value->unuseds = NULL;
+	return value;
+	// extend end
+	//return (MonoCodeManager *) g_malloc0 (sizeof (MonoCodeManager));
 }
 
 /**
@@ -258,6 +504,10 @@ free_chunklist (CodeChunk *chunk)
 void
 mono_code_manager_destroy (MonoCodeManager *cman)
 {
+	// extend by dsqiu
+	mono_code_unused_destroy(cman->unuseds);
+	// extend end
+
 	free_chunklist (cman->full);
 	free_chunklist (cman->current);
 	g_free (cman);
@@ -467,14 +717,36 @@ void*
 
 	for (chunk = cman->current; chunk; chunk = chunk->next) {
 		if (ALIGN_INT (chunk->pos, alignment) + size <= chunk->size) {
+			// extend by dsqiu
+			int a = chunk->pos;
+			int b = ALIGN_INT(chunk->pos, alignment);
+			char* last_pos = chunk->data + chunk->pos;
+			// extend end
 			chunk->pos = ALIGN_INT (chunk->pos, alignment);
 			/* Align the chunk->data we add to chunk->pos */
 			/* or we can't guarantee proper alignment     */
 			ptr = (void*)((((uintptr_t)chunk->data + align_mask) & ~(uintptr_t)align_mask) + chunk->pos);
 			chunk->pos = ((char*)ptr - chunk->data) + size;
+			// extend by dsqiu
+			if (ptr == chunk->data + chunk->pos)
+			{
+				int c = (char*)ptr - (chunk->data + chunk->pos);
+			}
+			if (last_pos != ptr)
+			{
+				mono_code_unused_insert(cman, last_pos, (char*)ptr - last_pos, chunk);
+			}
+			// extend end
 			return ptr;
 		}
 	}
+
+	// extend by dsqiu
+	ptr = mono_code_unused_fetch(cman, size, alignment);
+	if (ptr)
+		return ptr;
+	// extend end
+
 	/* 
 	 * no room found, move one filled chunk to cman->full 
 	 * to keep cman->current from growing too much
@@ -498,11 +770,20 @@ void*
 	chunk->next = cman->current;
 	cman->current = chunk;
 	cman->last = cman->current;
+	// extend by dsqiu
+	char* last_pos = chunk->data + chunk->pos;
+	// extend end
 	chunk->pos = ALIGN_INT (chunk->pos, alignment);
 	/* Align the chunk->data we add to chunk->pos */
 	/* or we can't guarantee proper alignment     */
 	ptr = (void*)((((uintptr_t)chunk->data + align_mask) & ~(uintptr_t)align_mask) + chunk->pos);
 	chunk->pos = ((char*)ptr - chunk->data) + size;
+	// extend by dsqiu
+	if (last_pos != ptr)
+	{
+		mono_code_unused_insert(cman, last_pos, (char*)ptr - last_pos, chunk);
+	}
+	// extend end
 	return ptr;
 }
 
@@ -566,3 +847,15 @@ mono_code_manager_size (MonoCodeManager *cman, int *used_size)
 		*used_size = used;
 	return size;
 }
+
+
+// extend by dsqiu
+mono_bool
+mono_code_chunk_free(MonoCodeManager* cman, void* addr, int size)
+{
+	CodeChunk* chunk = mono_code_chunk_find(cman, addr);
+	if(!chunk)
+		return FALSE;
+	return mono_code_unused_insert(cman, addr, size, chunk);
+}
+// extend end

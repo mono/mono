@@ -163,9 +163,9 @@ mono_mempool_unused_insert(MonoMemPool* root, guint8* addr, gint32 size, MonoMem
 				g_print("Free memory repeatly\n");
 				return FALSE;
 			}
-			guint8* a = (guint8*)unused_list + unused_list->size;
-			guint8* b = addr + size;
-			if ((guint8*)unused_list + unused_list->size == addr)
+			// guint8* a = (guint8*)unused_list + unused_list->size;
+			// guint8* b = addr + size;
+			if (unused_list->pos + unused_list->size == addr)
 			{
 				unused_list->size += size;
 				// check next entity if adjacent
@@ -177,7 +177,7 @@ mono_mempool_unused_insert(MonoMemPool* root, guint8* addr, gint32 size, MonoMem
 				}
 				return TRUE;
 			}
-			else if (addr + size == pre_addr)
+			else if (addr + size == unused_list->pos)
 			{
 				unused_list->pos = addr;
 				unused_list->size += size;
@@ -201,9 +201,10 @@ mono_mempool_unused_insert(MonoMemPool* root, guint8* addr, gint32 size, MonoMem
 	unused_list = root->unuseds;
 	gboolean has_same_pool = FALSE;
 	MonoUnusedEntity* pre_entity = NULL;
+	// sort insert 
 	while (unused_list)
 	{
-		gpointer pre_addr = (gpointer)unused_list;
+		gpointer pre_addr = (gpointer)unused_list->pos;
 		if (pre_addr >= pool_start && pre_addr < pool_end)
 		{
 			has_same_pool = TRUE;
@@ -516,7 +517,12 @@ gpointer
 			// Notice: any unused memory at the end of the old head becomes simply abandoned in this case until the mempool is freed (see Bugzilla #35136)
 			guint new_size = get_next_size (pool, size);
 			MonoMemPool *np = (MonoMemPool *)g_malloc (new_size);
-
+			// extend by dsqiu
+			if (pool->pos < pool->end)
+			{
+				mono_mempool_free(pool, pool->pos, pool->end - pool->pos);
+			}
+			// extend end
 			np->next = pool->next;
 			np->size = new_size;
 			pool->next = np;
