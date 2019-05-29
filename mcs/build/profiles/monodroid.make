@@ -34,3 +34,5 @@ NO_INSTALL = yes
 MOBILE_DYNAMIC = yes
 MOBILE_PROFILE = yes
 NO_CONSOLE = yes
+
+PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking PKITS InetAccess AndroidNotWorking
