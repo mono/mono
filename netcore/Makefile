@@ -5,15 +5,16 @@ include ../mcs/build/config.make
 #
 
 # Extracted MicrosoftPrivateCoreFxNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L18
-NETCORETESTS_VERSION := 4.6.0-preview6.19271.5
+NETCORETESTS_VERSION := 4.6.0-preview6.19273.8
 
 # Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L22
-NETCOREAPP_VERSION := 3.0.0-preview6-27720-09
+NETCOREAPP_VERSION := 3.0.0-preview6-27727-02
 
 # Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
 
-include roslyn.make
+ROSLYN_VERSION := 3.2.0-beta3-19279-03
+
 
 ifeq ($(HOST_PLATFORM),win32)
 NETCORESDK_EXT = zip
@@ -47,6 +48,13 @@ TEST_ASSETS_URL = $(FEED_BASE_URL)/corefx-tests/$(NETCORETESTS_VERSION)/$(TESTS_
 BLAME = $(shell git blame ../configure.ac | grep AC_INIT | cut -f1 -d' ')
 VERSTUB = .$(shell git rev-list --count $(BLAME)..HEAD)
 
+all: runtime bcl
+
+LOCAL_DOTNET = ../.dotnet/dotnet
+$(LOCAL_DOTNET):
+	bash ../eng/common/dotnet-install.sh -v $(NETCOREAPP_VERSION) && \
+	bash ../.dotnet/dotnet-install.sh  -c master -i ../.dotnet
+
 $(NETCORESDK_FILE):
 	curl $(NETCORE_URL) --output $(NETCORESDK_FILE)
 	rm -rf shared/Microsoft.NETCore.App
@@ -61,12 +69,12 @@ $(ASPNETCORESDK_FILE):
 
 update-corefx: corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION)
 
-corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION): corefx-restore.csproj
-	dotnet build corefx-restore.csproj --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/
+corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION): corefx-restore.csproj $(LOCAL_DOTNET)
+	$(LOCAL_DOTNET) build corefx-restore.csproj --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/
 	touch $@
 
-update-roslyn: roslyn-restore.csproj roslyn.make
-	dotnet restore roslyn-restore.csproj -p:RoslynVersion=$(ROSLYN_VERSION) --packages roslyn/packages -p:OutputPath=roslyn/restore/
+update-roslyn: roslyn-restore.csproj $(LOCAL_DOTNET)
+	$(LOCAL_DOTNET) restore roslyn-restore.csproj -p:RoslynVersion=$(ROSLYN_VERSION) --packages roslyn/packages -p:OutputPath=roslyn/restore/
 
 update-corefx-tests: corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)
 
@@ -75,13 +83,13 @@ corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 	python dl-test-assets.py corefx-test-assets.xml $(FEED_BASE_URL) corefx/tests
 	touch $@
 
-run-sample: prepare
-	dotnet build sample/HelloWorld
+run-sample: prepare $(LOCAL_DOTNET)
+	$(LOCAL_DOTNET) build sample/HelloWorld
 	MONO_ENV_OPTIONS="--debug" COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" sample/HelloWorld/bin/Debug/netcoreapp3.0/HelloWorld.dll
 
-run-aspnet-sample: prepare
+run-aspnet-sample: prepare $(LOCAL_DOTNET)
 	rm -rf sample/AspNetCore/{bin,obj}
-	dotnet publish sample/AspNetCore -c Debug -r $(RID)
+	$(LOCAL_DOTNET) publish sample/AspNetCore -c Debug -r $(RID)
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) sample/AspNetCore/bin/Debug/netcoreapp3.0/$(RID)/publish/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.dll sample/AspNetCore/bin/Debug/netcoreapp3.0/$(RID)/publish/
 	COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(ASPNETCOREAPP_VERSION)" sample/AspNetCore/bin/Debug/netcoreapp3.0/$(RID)/publish/AspNetCore.dll
@@ -90,14 +98,15 @@ run-aspnet-sample: prepare
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
 # CORLIB_BUILD_FLAGS="-c Debug" to compile System.Private.CoreLib.dll in debug mode
-bcl:
+bcl: $(LOCAL_DOTNET) update-roslyn
 	$(MAKE) -C ../mcs/build/ common/Consts.cs
-	$(MAKE) -C ../mcs/class/System.Private.CoreLib
-	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
+	$(LOCAL_DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:BuildArch=$(COREARCH) \
+	-p:OutputPath=../mcs/class/System.Private.CoreLib/bin/$(COREARCH) \
+	-p:RoslynPropsFile="../../../netcore/roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/build/Microsoft.Net.Compilers.Toolset.props" \
+	../mcs/class/System.Private.CoreLib/System.Private.CoreLib.csproj
 
 runtime:
 	$(MAKE) -C ../mono
-	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 
 link-mono:
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
@@ -105,11 +114,11 @@ link-mono:
 
 prepare: $(ASPNETCORESDK_FILE) $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
-nupkg:
-	dotnet pack roslyn-restore.csproj -p:NuspecFile=runtime.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
+nupkg: $(LOCAL_DOTNET)
+	$(LOCAL_DOTNET) pack roslyn-restore.csproj -p:NuspecFile=runtime.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
 
 clean:
-	rm -rf sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) $(ASPNETCORESDK_FILE)
+	rm -rf ../.dotnet sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) $(ASPNETCORESDK_FILE)
 
 #
 # Running tests:
