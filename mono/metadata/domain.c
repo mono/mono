@@ -2001,6 +2001,7 @@ mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly)
 	return assemblies;
 }
 
+// extend by dsqiu
 void 
 mono_domain_mempool_free(MonoDomain *domain, void* addr, guint size)
 {
@@ -2013,3 +2014,13 @@ mono_domain_mempool_free(MonoDomain *domain, void* addr, guint size)
 #endif
 	mono_domain_unlock(domain);
 }
+
+void
+mono_domain_code_free(MonoDomain* domain, void* addr, guint size)
+{
+	mono_domain_lock(domain);
+	mono_code_chunk_free(domain->code_mp, addr, size);
+	mono_domain_unlock(domain);
+}
+
+// extend end
