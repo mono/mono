@@ -44,9 +44,13 @@ namespace System.Reflection.Emit
 		public System.Reflection.Emit.FieldToken GetToken() { throw null; }
 		public override object GetValue(object obj) { throw null; }
 		public override bool IsDefined(System.Type attributeType, bool inherit) { throw null; }
+		public override int MetadataToken { get { throw new PlatformNotSupportedException (); } }
+		public override Module Module { get { throw new PlatformNotSupportedException (); } }
 		public void SetConstant(object defaultValue) { throw new PlatformNotSupportedException (); } 
 		public void SetCustomAttribute(System.Reflection.ConstructorInfo con, byte[] binaryAttribute) { throw new PlatformNotSupportedException (); } 
 		public void SetCustomAttribute(System.Reflection.Emit.CustomAttributeBuilder customBuilder) { throw new PlatformNotSupportedException (); } 
+		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
+		public void SetMarshal (UnmanagedMarshal unmanagedMarshal) { throw new PlatformNotSupportedException (); }
 		public void SetOffset(int iOffset) { throw new PlatformNotSupportedException (); } 
 		public override void SetValue(object obj, object val, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Globalization.CultureInfo culture) { throw new PlatformNotSupportedException (); } 
 	}

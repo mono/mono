@@ -439,7 +439,7 @@ namespace MonoTests.System.Net.Http
 			}
 
 			try {
-				headers.Add ("location", new[] { "google.com", "xamarin.com" });
+				headers.Add ("location", new[] { "example.com", "example.org" });
 				Assert.Fail ("#7a");
 			} catch (FormatException) {
 			}

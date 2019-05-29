@@ -1,3 +1,4 @@
+#nullable disable
 
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
@@ -191,13 +192,6 @@ namespace System.Reflection.Emit {
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			RejectIfCreated ();
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
-		}
-
-		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
-		public void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
-			RejectIfCreated ();
-			marshal_info = unmanagedMarshal;
-			attrs |= FieldAttributes.HasFieldMarshal;
 		}
 
 		public void SetOffset( int iOffset) {

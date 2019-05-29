@@ -72,6 +72,7 @@
 #include <mono/mini/jit-icalls.h>
 #include <mono/mini/debugger-agent.h>
 #include <mono/mini/ee.h>
+#include <mono/mini/trace.h>
 
 #ifdef TARGET_ARM
 #include <mono/mini/mini-arm.h>
@@ -1321,8 +1322,7 @@ get_interp_to_native_trampoline (void)
 		} else {
 			MonoTrampInfo *info;
 			trampoline = (MonoPIFunc) mono_arch_get_interp_to_native_trampoline (&info);
-			// TODO:
-			// mono_tramp_info_register (info, NULL);
+			mono_tramp_info_register (info, NULL);
 		}
 		mono_memory_barrier ();
 	}
@@ -1374,6 +1374,9 @@ ves_pinvoke_method (InterpFrame *frame, MonoMethodSignature *sig, MonoFuncV addr
 #ifdef MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP
 	if (!frame->ex)
 		mono_arch_get_native_call_context_ret (&ccontext, frame, sig);
+
+	if (ccontext.stack != NULL)
+		g_free (ccontext.stack);
 #else
 	if (!frame->ex && !MONO_TYPE_ISSTRUCT (sig->ret))
 		stackval_from_data (sig->ret, frame->retval, (char*)&frame->retval->data.p, sig->pinvoke);
@@ -1828,8 +1831,12 @@ interp_entry (InterpEntryData *data)
 	if (rmethod->needs_thread_attach)
 		mono_threads_detach_coop (orig_domain, &attach_cookie);
 
-	// FIXME:
-	g_assert (frame.ex == NULL);
+	if (mono_llvm_only) {
+		if (frame.ex)
+			mono_llvm_reraise_exception (frame.ex);
+	} else {
+		g_assert (frame.ex == NULL);
+	}
 
 	type = rmethod->rtype;
 	switch (type->type) {
@@ -3000,6 +3007,11 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			ip += 4;
 			++sp;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_LDC_I8_S)
+			sp->data.l = *(const short *)(ip + 1);
+			ip += 2;
+			++sp;
+			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDC_R4) {
 			guint32 val;
 			++ip;
@@ -3043,7 +3055,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				MONO_PROFILER_RAISE (method_tail_call, (imethod->method, new_method->method));
 
 			if (!new_method->transformed) {
-				ERROR_DECL (error);
+				MONO_API_ERROR_INIT (error);
 
 				frame->ip = ip;
 				mono_interp_transform_method (new_method, context, error);
@@ -3306,14 +3318,14 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		}
 		MINT_IN_CASE(MINT_JIT_CALL) {
 			InterpMethod *rmethod = (InterpMethod*)imethod->data_items [* (guint16 *)(ip + 1)];
-			ERROR_DECL (error);
+			MONO_API_ERROR_INIT (error);
 			frame->ip = ip;
-			ip += 2;
 			sp = do_jit_call (sp, vt_sp, context, frame, rmethod, error);
 			if (!is_ok (error)) {
 				MonoException *ex = mono_error_convert_to_exception (error);
 				THROW_EX (ex, ip);
 			}
+			ip += 2;
 
 			CHECK_RESUME_STATE (context);
 
@@ -4800,10 +4812,18 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDSFLDA) {
-			MonoClassField *field = (MonoClassField*)imethod->data_items[*(guint16 *)(ip + 1)];
-			sp->data.p = mono_class_static_field_address (imethod->domain, field);
-			EXCEPTION_CHECKPOINT;
-			ip += 2;
+			MonoVTable *vtable = (MonoVTable*) imethod->data_items [*(guint16*)(ip + 1)];
+			INIT_VTABLE (vtable);
+			sp->data.p = imethod->data_items [*(guint16*)(ip + 2)];
+			ip += 3;
+			++sp;
+			MINT_IN_BREAK;
+		}
+
+		MINT_IN_CASE(MINT_LDSSFLDA) {
+			guint32 offset = READ32(ip + 1);
+			sp->data.p = mono_get_special_static_data (offset);
+			ip += 3;
 			++sp;
 			MINT_IN_BREAK;
 		}
@@ -5934,7 +5954,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDFTN_DYNAMIC) {
-			ERROR_DECL (error);
+			MONO_API_ERROR_INIT (error);
 			InterpMethod *m = mono_interp_get_imethod (mono_domain_get (), (MonoMethod*) sp [-1].data.p, error);
 			mono_error_assert_ok (error);
 			sp [-1].data.p = m;
@@ -6008,6 +6028,28 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				g_free (prof_ctx);
 			}
 
+			MINT_IN_BREAK;
+		}
+
+		MINT_IN_CASE(MINT_TRACE_ENTER) {
+			ip += 1;
+
+			MonoProfilerCallContext *prof_ctx = g_alloca (sizeof (MonoProfilerCallContext));
+			prof_ctx->interp_frame = frame;
+			prof_ctx->method = imethod->method;
+
+			mono_trace_enter_method (imethod->method, prof_ctx);
+			MINT_IN_BREAK;
+		}
+
+		MINT_IN_CASE(MINT_TRACE_EXIT) {
+			ip += 1;
+
+			MonoProfilerCallContext *prof_ctx = g_alloca (sizeof (MonoProfilerCallContext));
+			prof_ctx->interp_frame = frame;
+			prof_ctx->method = imethod->method;
+
+			mono_trace_leave_method (imethod->method, prof_ctx);
 			MINT_IN_BREAK;
 		}
 
@@ -6166,7 +6208,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 		   del = (MonoDelegate*)sp->data.p;
 		   if (!del->interp_method) {
 			   /* Not created from interpreted code */
-			   ERROR_DECL (error);
+			   MONO_API_ERROR_INIT (error);
 			   g_assert (del->method);
 			   del->interp_method = mono_interp_get_imethod (del->object.vtable->domain, del->method, error);
 			   mono_error_assert_ok (error);
@@ -6186,7 +6228,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 				 * First time we are called. Set up the invoke wrapper. We might be able to do this
 				 * in ctor but we would need to handle AllocDelegateLike_internal separately
 				 */
-				ERROR_DECL (error);
+				MONO_API_ERROR_INIT (error);
 				MonoMethod *invoke = mono_get_delegate_invoke_internal (del->object.vtable->klass);
 				del->interp_invoke_impl = mono_interp_get_imethod (del->object.vtable->domain, mono_marshal_get_delegate_invoke (invoke, del), error);
 				mono_error_assert_ok (error);

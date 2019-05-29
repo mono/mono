@@ -17,6 +17,7 @@ CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)
 
 EMSCRIPTEN_SDKDIR=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && emcc
+EMCC_DYNAMIC=source $(TOP)/sdks/builds/toolchains/emsdk/emsdk_env.sh && EMCC_FORCE_STDLIBS=1 emcc
 WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
 WASM_RUNTIME_DIR=$(TOP)/sdks/out/wasm-runtime-release
 MINI_PATH=$(TOP)/mono/mini
@@ -90,6 +91,9 @@ toolchain: .stamp-jsvu
 driver.o: driver.c corebindings.c pinvoke-tables-default.h
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver.o
 
+driver-dynamic.o: driver.c corebindings.c pinvoke-tables-default.h
+	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -DWASM_SUPPORTS_DLOPEN -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 driver.c -c -o driver-dynamic.o
+
 corebindings.o: corebindings.c
 	$(EMCC) -g -Os -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -I$(WASM_RUNTIME_DIR)/include/mono-2.0 corebindings.c -c -o corebindings.o
 
@@ -97,10 +101,12 @@ debug/:
 	mkdir -p $@
 release/:
 	mkdir -p $@
+release-dynamic/:
+	mkdir -p $@
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 
-EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s EMULATED_FUNCTION_POINTERS=1
+EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s EMULATED_FUNCTION_POINTERS=1
 
 debug/.stamp-build: driver.o corebindings.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a | debug/
 	$(EMCC) $(EMCC_FLAGS) -g4 -Os -s ASSERTIONS=1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o $(MONO_LIBS) -o debug/mono.js
@@ -111,7 +117,12 @@ release/.stamp-build: driver.o corebindings.o library_mono.js binding_support.js
 	$(EMCC) $(EMCC_FLAGS) -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver.o corebindings.o $(MONO_LIBS) -o release/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
 	touch $@
 
-build-native: debug/.stamp-build release/.stamp-build
+# Notice that release-dynamic/.stamp-build depends on release/.stamp-build. This is the case as emcc is believed to not work well with parallel builds.
+release-dynamic/.stamp-build: driver-dynamic.o corebindings.o library_mono.js binding_support.js dotnet_support.js $(TOP)/sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a release/.stamp-build | release-dynamic/
+	$(EMCC_DYNAMIC) $(EMCC_FLAGS) -s MAIN_MODULE=1 -s EXPORT_ALL=1 -s RESERVED_FUNCTION_POINTERS=64 -Oz --llvm-opts 2 --llvm-lto 1 --js-library library_mono.js --js-library binding_support.js --js-library dotnet_support.js driver-dynamic.o corebindings.o $(MONO_LIBS) -o release-dynamic/mono.js -s "EXPORTED_FUNCTIONS=['_putchar']"
+	touch $@
+
+build-native: debug/.stamp-build release/.stamp-build release-dynamic/.stamp-build
 
 runtime:
 	$(MAKE) -C ../builds package-wasm-runtime
@@ -124,6 +135,7 @@ bcl:
 
 tuner:
 	$(MAKE) -C ../../mcs/tools/wasm-tuner PROFILE=wasm_tools
+	cp ../../mcs/class/lib/wasm_tools/wasm-tuner.exe* ../out/wasm-bcl/wasm_tools/wasm-tuner.exe*
 
 cil-strip:
 	$(MAKE) -C ../../mcs/tools/cil-strip  PROFILE=wasm_tools
@@ -194,8 +206,15 @@ $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.
 	touch $@
 
 build-aot-sample: packager.exe hello.exe
-	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js hello.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-sample --nobinding --builddir=obj/aot-sample --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
 	ninja -v -C obj/aot-sample
+
+build-mixed-sample: packager.exe hello.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --aot-interp --aot-assemblies=mscorlib --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/mixed-sample --nobinding --builddir=obj/mixed-sample --template=runtime-tests.js hello.exe
+	ninja -v -C obj/mixed-sample
+
+run-mixed-sample: build-mixed-sample
+	(cd bin/mixed-sample && $(SM) runtime.js --run hello.exe)
 
 hello.exe: hello.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) hello.cs
@@ -355,8 +374,10 @@ package: build build-dbg-proxy build-sdk
 	cp dotnet_support.js tmp/
 	cp -r debug tmp/
 	cp -r release tmp/
+	cp -r release-dynamic tmp/
 	rm tmp/debug/.stamp-build
 	rm tmp/release/.stamp-build
+	rm tmp/release-dynamic/.stamp-build
 	mkdir tmp/framework
 	cp framework/WebAssembly.Bindings.dll tmp/framework
 	cp framework/WebAssembly.Bindings.pdb tmp/framework

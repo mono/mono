@@ -176,7 +176,11 @@ libmono_icall_table_la_SOURCES = \
 libmono_icall_table_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
 libmono_icall_table_la_LDFLAGS = $(libmonoldflags)
 if BITCODE
+if WASM
+libmono_icall_table_la_LIBADD = # empty to avoid duplicate symbols when enabling dynamic linking
+else
 libmono_icall_table_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
+endif
 endif
 endif
 
@@ -196,7 +200,11 @@ libmono_ilgen_la_SOURCES = \
 libmono_ilgen_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
 libmono_ilgen_la_LDFLAGS = $(libmonoldflags)
 if BITCODE
+if WASM
+libmono_ilgen_la_LIBADD =  # empty to avoid duplicate symbols when enabling dynamic linking
+else
 libmono_ilgen_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
+endif
 endif
 endif
 
@@ -280,6 +288,7 @@ common_sources = \
 	icall-table.h	\
 	image.c			\
 	image-internals.h	\
+	jit-icall-reg.h		\
 	jit-info.c		\
 	loader.c		\
 	loader-internals.h	\
@@ -301,12 +310,14 @@ common_sources = \
 	method-builder.c 	\
 	mono-basic-block.c	\
 	mono-basic-block.h	\
+	mono-config-internals.h	\
 	mono-config.c		\
 	mono-debug.h		\
 	mono-debug.c		\
 	debug-internals.h	\
 	mono-endian.c		\
 	mono-endian.h		\
+	mono-hash-internals.h	\
 	mono-hash.c		\
 	mono-hash.h		\
 	mono-conc-hash.c		\

@@ -1,3 +1,4 @@
+#nullable disable
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 
 namespace System.Reflection
 {
-    public struct CustomAttributeTypedArgument
+    public readonly struct CustomAttributeTypedArgument
     {
         public CustomAttributeTypedArgument(object value)
         {
@@ -59,10 +60,10 @@ namespace System.Reflection
             try
             {
                 if (ArgumentType.IsEnum)
-                    return string.Format(CultureInfo.CurrentCulture, typed ? "{0}" : "({1}){0}", Value, ArgumentType.FullNameOrDefault);
+                    return string.Format(CultureInfo.CurrentCulture, typed ? "{0}" : "({1}){0}", Value, ArgumentType.FullName);
 
                 else if (Value == null)
-                    return string.Format(CultureInfo.CurrentCulture, typed ? "null" : "({0})null", ArgumentType.NameOrDefault);
+                    return string.Format(CultureInfo.CurrentCulture, typed ? "null" : "({0})null", ArgumentType.Name);
 
                 else if (ArgumentType == typeof(string))
                     return string.Format(CultureInfo.CurrentCulture, "\"{0}\"", Value);
@@ -71,7 +72,7 @@ namespace System.Reflection
                     return string.Format(CultureInfo.CurrentCulture, "'{0}'", Value);
 
                 else if (ArgumentType == typeof(Type))
-                    return string.Format(CultureInfo.CurrentCulture, "typeof({0})", ((Type)Value).FullNameOrDefault);
+                    return string.Format(CultureInfo.CurrentCulture, "typeof({0})", ((Type)Value).FullName);
 
                 else if (ArgumentType.IsArray)
                 {
@@ -79,7 +80,7 @@ namespace System.Reflection
                     IList<CustomAttributeTypedArgument> array = Value as IList<CustomAttributeTypedArgument>;
 
                     Type elementType = ArgumentType.GetElementType();
-                    result = string.Format(CultureInfo.CurrentCulture, @"new {0}[{1}] {{ ", elementType.IsEnum ? elementType.FullNameOrDefault : elementType.NameOrDefault, array.Count);
+                    result = string.Format(CultureInfo.CurrentCulture, @"new {0}[{1}] {{ ", elementType.IsEnum ? elementType.FullName : elementType.Name, array.Count);
 
                     for (int i = 0; i < array.Count; i++)
                         result += string.Format(CultureInfo.CurrentCulture, i == 0 ? "{0}" : ", {0}", array[i].ToString(elementType != typeof(object)));
@@ -87,7 +88,7 @@ namespace System.Reflection
                     return result += " }";
                 }
 
-                return string.Format(CultureInfo.CurrentCulture, typed ? "{0}" : "({1}){0}", Value, ArgumentType.NameOrDefault);
+                return string.Format(CultureInfo.CurrentCulture, typed ? "{0}" : "({1}){0}", Value, ArgumentType.Name);
             }
             catch (MissingMetadataException)
             {

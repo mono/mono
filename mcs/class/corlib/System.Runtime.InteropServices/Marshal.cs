@@ -41,7 +41,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 using System.Runtime.ConstrainedExecution;
-#if !FULL_AOT_RUNTIME && !NETCORE
+#if !FULL_AOT_RUNTIME && !NETCORE && !DISABLE_REMOTING
 using Mono.Interop;
 #endif
 
@@ -53,14 +53,14 @@ namespace System.Runtime.InteropServices
 		public static readonly int SystemMaxDBCSCharSize = 2; // don't know what this is
 		public static readonly int SystemDefaultCharSize = Environment.IsRunningOnWindows ? 2 : 1;
 
-#if !MOBILE
+#if !MOBILE || WINAOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int AddRefInternal (IntPtr pUnk);
 #endif
 
 		public static int AddRef (IntPtr pUnk)
 		{
-#if !MOBILE
+#if !MOBILE || WINAOT
 			if (pUnk == IntPtr.Zero)
 				throw new ArgumentException ("Value cannot be null.", "pUnk");
 			return AddRefInternal (pUnk);
@@ -294,7 +294,7 @@ namespace System.Runtime.InteropServices
 
 		public static object CreateWrapperOfType (object o, Type t)
 		{
-#if FULL_AOT_RUNTIME || NETCORE
+#if FULL_AOT_RUNTIME || NETCORE || DISABLE_REMOTING
 			throw new PlatformNotSupportedException ();
 #else
 			__ComObject co = o as __ComObject;
@@ -391,7 +391,7 @@ namespace System.Runtime.InteropServices
 			FreeHGlobal (s);
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 		public static Guid GenerateGuidForType (Type type)
 		{
 			return type.GUID;
@@ -438,7 +438,7 @@ namespace System.Runtime.InteropServices
 				return GetCCW (o, T);
 		}
 #endif
-#endif // !FULL_AOT_RUNTIME
+#endif // !FULL_AOT_RUNTIME && !MONOTOUCH
 
 		public static IntPtr GetComInterfaceForObject (object o, Type T)
 		{
@@ -463,7 +463,7 @@ namespace System.Runtime.InteropServices
 			return GetComInterfaceForObject ((object)o, typeof (T));
 		}
 
-#if !FULL_AOT_RUNTIME && !NETCORE
+#if !FULL_AOT_RUNTIME && !NETCORE && !MONOTOUCH
 
 		public static IntPtr GetComInterfaceForObjectInContext (object o, Type t)
 		{
@@ -518,7 +518,7 @@ namespace System.Runtime.InteropServices
 
 			return (IntPtr)(-1);
 		}
-#else
+#elif !MONOTOUCH
 		public static IntPtr GetHINSTANCE (Module m) => throw new PlatformNotSupportedException();
 		public static IntPtr GetIDispatchForObject (object o) => throw new PlatformNotSupportedException();
 		public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t) => throw new PlatformNotSupportedException();
@@ -556,7 +556,7 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetIDispatchForObjectInternal (object o);
 
@@ -606,7 +606,7 @@ namespace System.Runtime.InteropServices
 
 		public static IntPtr GetIUnknownForObject (object o)
 		{
-#if FULL_AOT_RUNTIME
+#if FULL_AOT_RUNTIME || MONOTOUCH
 			throw new PlatformNotSupportedException ();
 #else
 			IntPtr pUnk = GetIUnknownForObjectInternal (o);
@@ -711,7 +711,7 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 
 #if !NETCORE
 
@@ -724,7 +724,7 @@ namespace System.Runtime.InteropServices
 
 		public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t)
 		{
-#if NETCORE
+#if NETCORE || DISABLE_REMOTING
 			throw new NotImplementedException ();
 #else
 			ComInteropProxy proxy = new ComInteropProxy (pUnk, t);
@@ -926,14 +926,14 @@ namespace System.Runtime.InteropServices
 			return (T) PtrToStructure (ptr, typeof (T));
 		}
 
-#if !MOBILE
+#if !MOBILE || WINAOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int QueryInterfaceInternal (IntPtr pUnk, ref Guid iid, out IntPtr ppv);
 #endif
 
 		public static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv)
 		{
-#if !MOBILE
+#if !MOBILE || WINAOT
 			if (pUnk == IntPtr.Zero)
 				throw new ArgumentException ("Value cannot be null.", "pUnk");
 			return QueryInterfaceInternal (pUnk, ref iid, out ppv);
@@ -1097,7 +1097,7 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr ReAllocHGlobal (IntPtr pv, IntPtr cb);
 
-#if !MOBILE
+#if !MOBILE || WINAOT
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int ReleaseInternal (IntPtr pUnk);
@@ -1106,7 +1106,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static int Release (IntPtr pUnk)
 		{
-#if !MOBILE
+#if !MOBILE || WINAOT
 			if (pUnk == IntPtr.Zero)
 				throw new ArgumentException ("Value cannot be null.", "pUnk");
 
@@ -1134,7 +1134,7 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME && !MONOTOUCH
 		[Obsolete]
 
 		public static void ReleaseThreadCache()
@@ -1620,7 +1620,9 @@ namespace System.Runtime.InteropServices
 			const int ERROR_FILENAME_EXCED_RANGE = unchecked ((int)0xCE);
 			const int COR_E_RANK = unchecked ((int)0x80131517L);
 			const int COR_E_REFLECTIONTYPELOAD = unchecked ((int)0x80131602L);
+#if !DISABLE_REMOTING
 			const int COR_E_REMOTING = unchecked ((int)0x8013150BL);
+#endif
 			const int COR_E_SAFEARRAYTYPEMISMATCH = unchecked ((int)0x80131533L);
 			const int COR_E_SECURITY = unchecked ((int)0x8013150AL);
 			const int COR_E_SERIALIZATION = unchecked ((int)0x8013150CL);
@@ -1737,8 +1739,10 @@ namespace System.Runtime.InteropServices
 					return new RankException ();
 				case COR_E_REFLECTIONTYPELOAD:
 					return new System.Reflection.ReflectionTypeLoadException (new Type[] { }, new Exception[] { });
+#if !DISABLE_REMOTING
 				case COR_E_REMOTING:
 					return new System.Runtime.Remoting.RemotingException ();
+#endif
 				case COR_E_SAFEARRAYTYPEMISMATCH:
 					return new SafeArrayTypeMismatchException ();
 				case COR_E_SECURITY:

@@ -50,7 +50,7 @@ namespace MonoTests.System.Net {
 			Assert.AreEqual ("dom", nc.Domain, "Domain");
 			Assert.AreEqual ("********", nc.Password, "Password");
 			Assert.AreEqual ("user", nc.UserName, "UserName");
-			Assert.AreSame (nc, nc.GetCredential (new Uri ("http://www.mono-project.com"), "basic"), "GetCredential");
+			Assert.AreSame (nc, nc.GetCredential (new Uri ("http://www.example.com"), "basic"), "GetCredential");
 		}
 
 		[Test]

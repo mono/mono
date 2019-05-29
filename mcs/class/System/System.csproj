@@ -67,22 +67,22 @@
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full_interp' ">
     <OutputPath>./../../class/lib/testing_aot_full_interp</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full_interp</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_INTERP;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;FULL_AOT_INTERP;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_hybrid' ">
     <OutputPath>./../../class/lib/testing_aot_hybrid</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_hybrid</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;MOBILE_DYNAMIC;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;MOBILE_DYNAMIC;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_SECURITY_ALIAS;FEATURE_COMPILED;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <OutputPath>./../../class/lib/testing_aot_full</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_aot_full</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_REMOTING;DISABLE_SECURITY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;WIN_PLATFORM;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;WIN_PLATFORM;WINAOT;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_FEATURE_THREAD_ABORT;MONO_FEATURE_THREAD_SUSPEND_RESUME;MONO_FEATURE_MULTIPLE_APPDOMAINS;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
@@ -107,7 +107,7 @@
   <PropertyGroup Condition=" '$(Platform)' == 'wasm' ">
     <OutputPath>./../../class/lib/wasm</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-wasm</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;WASM;DISABLE_COM;FEATURE_NO_BSD_SOCKETS;DISABLE_REMOTING;DISABLE_SECURITY;COREFX;CONFIGURATION_2_0;SYSTEM_NET_PRIMITIVES_DLL;XML_DEP;SECURITY_DEP;FEATURE_PAL;SYSTEM_NAMESPACE;MONO;PLATFORM_UNIX;MONO_FEATURE_PROCESS_START;MONO_SECURITY_ALIAS;MONO_FEATURE_BTLS</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -1099,6 +1099,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1316,6 +1317,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1441,6 +1443,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -1562,6 +1565,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -2529,6 +2533,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3038,6 +3043,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3535,6 +3541,7 @@
             <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
             <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3616,21 +3623,13 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_watch'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.CoreFoundation.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.EventStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.RunLoop.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RealPath.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Sync.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeCreateHandle.OSX.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeEventStreamHandle.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
@@ -3639,7 +3638,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.OSX.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.Cryptography\PKCS8.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\AuthorityKeyIdentifierExtension.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509.Extensions\BasicConstraintsExtension.cs" />
@@ -3674,6 +3673,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3723,21 +3723,13 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.CoreFoundation.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.EventStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.RunLoop.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RealPath.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Sync.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeCreateHandle.OSX.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeEventStreamHandle.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
@@ -3750,7 +3742,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.OSX.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -3803,6 +3795,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -3865,21 +3858,13 @@
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.CoreFoundation.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.EventStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\OSX\Interop.RunLoop.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.RealPath.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Sync.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeCreateHandle.OSX.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeEventStreamHandle.OSX.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
@@ -3892,7 +3877,7 @@
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
         <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.OSX.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.UnknownUnix.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
@@ -3945,6 +3930,7 @@
         <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
@@ -4006,142 +3992,557 @@
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
-      <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.FLock.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpDataStream.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
-        <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
-        <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
-        <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
-        <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
-        <Compile Include="Mono.Btls\MonoBtlsX509LookupAndroid.cs" />
-        <Compile Include="Mono.Http\NtlmClient.cs" />
-        <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
-        <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
-        <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
-        <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
-        <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
-        <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
-        <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
-        <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
-        <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
-        <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
-        <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
-        <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
-        <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
-        <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
-        <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
-        <Compile Include="System.Net.Mail\SmtpClient.cs" />
-        <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
-        <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
-        <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
-        <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
-        <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
-        <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
-        <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
-        <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
-        <Compile Include="System.Net.NetworkInformation\LinuxNetworkInterface.cs" />
-        <Compile Include="System.Net.NetworkInformation\LinuxNetworkInterfaceMarshal.cs" />
-        <Compile Include="System.Net.NetworkInformation\LinuxUnicastIPAddressInformation.cs" />
-        <Compile Include="System.Net.NetworkInformation\MacOsIPInterfaceProperties.cs" />
-        <Compile Include="System.Net.NetworkInformation\MacOsIPv4InterfaceProperties.cs" />
-        <Compile Include="System.Net.NetworkInformation\MacOsIPv4InterfaceStatistics.cs" />
-        <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterface.cs" />
-        <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterfaceMarshal.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixIPGlobalProperties.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixIPGlobalStatistics.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixIPInterfaceProperties.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixIPv4InterfaceProperties.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixIcmpV4Statistics.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixIcmpV6Statistics.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixNetworkInterface.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixNetworkInterfaceFactory.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixTcpStatistics.cs" />
-        <Compile Include="System.Net.NetworkInformation\UnixUdpStatistics.cs" />
-        <Compile Include="System.Net.Security\SslStream.cs" />
-        <Compile Include="System.Net\AuthenticationManager.cs" />
-        <Compile Include="System.Net\BufferedReadStream.cs" />
-        <Compile Include="System.Net\ChunkedInputStream.cs" />
-        <Compile Include="System.Net\ContentDecodeStream.cs" />
-        <Compile Include="System.Net\EndPointListener.cs" />
-        <Compile Include="System.Net\EndPointManager.cs" />
-        <Compile Include="System.Net\FixedSizeReadStream.cs" />
-        <Compile Include="System.Net\HttpConnection.cs" />
-        <Compile Include="System.Net\HttpListener.Mono.cs" />
-        <Compile Include="System.Net\HttpListener.cs" />
-        <Compile Include="System.Net\HttpListenerBasicIdentity.cs" />
-        <Compile Include="System.Net\HttpListenerContext.cs" />
-        <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
-        <Compile Include="System.Net\HttpListenerRequest.cs" />
-        <Compile Include="System.Net\HttpListenerResponse.cs" />
-        <Compile Include="System.Net\HttpListenerTimeoutManager.cs" />
-        <Compile Include="System.Net\HttpWebRequest.cs" />
-        <Compile Include="System.Net\HttpWebResponse.cs" />
-        <Compile Include="System.Net\ListenerAsyncResult.cs" />
-        <Compile Include="System.Net\MacProxy.cs" />
-        <Compile Include="System.Net\MonoChunkStream.cs" />
-        <Compile Include="System.Net\NtlmClient.cs" />
-        <Compile Include="System.Net\ResponseStream.cs" />
-        <Compile Include="System.Net\ServicePoint.cs" />
-        <Compile Include="System.Net\ServicePointManager.cs" />
-        <Compile Include="System.Net\ServicePointManager.extra.cs" />
-        <Compile Include="System.Net\ServicePointScheduler.cs" />
-        <Compile Include="System.Net\WebCompletionSource.cs" />
-        <Compile Include="System.Net\WebConnection.cs" />
-        <Compile Include="System.Net\WebConnectionStream.cs" />
-        <Compile Include="System.Net\WebConnectionTunnel.cs" />
-        <Compile Include="System.Net\WebOperation.cs" />
-        <Compile Include="System.Net\WebReadStream.cs" />
-        <Compile Include="System.Net\WebRequestStream.cs" />
-        <Compile Include="System.Net\WebResponseStream.cs" />
-        <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
-        <Compile Include="System\AndroidPlatform.cs" />
-        <Compile Include="corefx\Unix\Interop.Read.cs" />
-        <Compile Include="corefx\Unix\Interop.cs" />
-      </ItemGroup>
+      <!--Per-host-platform files-->
+      <Choose>
+        <When Condition="'$(HostPlatform)' == 'win32'">
+          <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Crypt32\Interop.FindOidInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Crypt32\Interop.certificates.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Crypt32\Interop.certificates_types.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.BOOL.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\SChannel\Interop.SECURITY_STATUS.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\SChannel\Interop.SecPkgContext_ApplicationProtocol.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\SChannel\SecPkgContext_ConnectionInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CloseHandle.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.CreateFile.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.FileOperations.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.ReadDirectoryChangesW.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\kernel32\Interop.SECURITY_ATTRIBUTES.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\GlobalSSPI.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\Interop.SSPI.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\NegotiationInfoClass.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SSPIAuthType.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SSPIInterface.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SSPISecureChannelType.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SSPIWrapper.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SafeDeleteContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecPkgContext_Bindings.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecPkgContext_NegotiationInfoW.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecPkgContext_Sizes.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecPkgContext_StreamSizes.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecurityPackageInfo.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecurityPackageInfoClass.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Windows\sspicli\SecuritySafeHandles.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Collections\Generic\BidirectionalDictionary.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\IO\PathInternal.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\DebugCriticalHandleZeroOrMinusOneIsInvalid.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\SecurityStatusAdapterPal.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NetEventSource.Security.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SecurityContextTokenHandle.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Win32.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpDataStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Security.Cryptography.Encoding\src\Internal\Cryptography\OidLookup.Windows.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+            <Compile Include="Mono.Http\NtlmClient.cs" />
+            <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
+            <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
+            <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
+            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
+            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
+            <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
+            <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
+            <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
+            <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="System.IO\CoreFXFileSystemWatcherProxy.cs" />
+            <Compile Include="System.IO\DefaultWatcher.cs" />
+            <Compile Include="System.IO\FAMWatcher.cs" />
+            <Compile Include="System.IO\FileAction.cs" />
+            <Compile Include="System.IO\FileSystemWatcher.cs" />
+            <Compile Include="System.IO\IFileWatcher.cs" />
+            <Compile Include="System.IO\KeventWatcher.cs" />
+            <Compile Include="System.IO\NullFileWatcher.cs" />
+            <Compile Include="System.IO\SearchPattern.cs" />
+            <Compile Include="System.Net.Mail\SmtpClient.cs" />
+            <Compile Include="System.Net.NetworkInformation\Win32UnixFactoryPal.cs" />
+            <Compile Include="System.Net.Security\SslStream.cs" />
+            <Compile Include="System.Net\AuthenticationManager.cs" />
+            <Compile Include="System.Net\BufferedReadStream.cs" />
+            <Compile Include="System.Net\ChunkedInputStream.cs" />
+            <Compile Include="System.Net\ContentDecodeStream.cs" />
+            <Compile Include="System.Net\EndPointListener.cs" />
+            <Compile Include="System.Net\EndPointManager.cs" />
+            <Compile Include="System.Net\FixedSizeReadStream.cs" />
+            <Compile Include="System.Net\HttpConnection.cs" />
+            <Compile Include="System.Net\HttpListener.Mono.cs" />
+            <Compile Include="System.Net\HttpListener.cs" />
+            <Compile Include="System.Net\HttpListenerBasicIdentity.cs" />
+            <Compile Include="System.Net\HttpListenerContext.cs" />
+            <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
+            <Compile Include="System.Net\HttpListenerRequest.cs" />
+            <Compile Include="System.Net\HttpListenerResponse.cs" />
+            <Compile Include="System.Net\HttpListenerTimeoutManager.cs" />
+            <Compile Include="System.Net\HttpWebRequest.cs" />
+            <Compile Include="System.Net\HttpWebResponse.cs" />
+            <Compile Include="System.Net\ListenerAsyncResult.cs" />
+            <Compile Include="System.Net\MacProxy.cs" />
+            <Compile Include="System.Net\MonoChunkStream.cs" />
+            <Compile Include="System.Net\NtlmClient.cs" />
+            <Compile Include="System.Net\ResponseStream.cs" />
+            <Compile Include="System.Net\ServicePoint.cs" />
+            <Compile Include="System.Net\ServicePointManager.cs" />
+            <Compile Include="System.Net\ServicePointManager.extra.cs" />
+            <Compile Include="System.Net\ServicePointScheduler.cs" />
+            <Compile Include="System.Net\WebCompletionSource.cs" />
+            <Compile Include="System.Net\WebConnection.cs" />
+            <Compile Include="System.Net\WebConnectionStream.cs" />
+            <Compile Include="System.Net\WebConnectionTunnel.cs" />
+            <Compile Include="System.Net\WebOperation.cs" />
+            <Compile Include="System.Net\WebReadStream.cs" />
+            <Compile Include="System.Net\WebRequestStream.cs" />
+            <Compile Include="System.Net\WebResponseStream.cs" />
+            <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
+          </ItemGroup>
+        </When>
+        <When Condition="'$(HostPlatform)' == 'unix'">
+          <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.FLock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpDataStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+            <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
+            <Compile Include="Mono.Btls\MonoBtlsX509LookupAndroid.cs" />
+            <Compile Include="Mono.Http\NtlmClient.cs" />
+            <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
+            <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
+            <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
+            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
+            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
+            <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
+            <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
+            <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
+            <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
+            <Compile Include="System.Net.Mail\SmtpClient.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxUnicastIPAddressInformation.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsIPv4InterfaceStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPGlobalProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPGlobalStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIcmpV4Statistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIcmpV6Statistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixNetworkInterfaceFactory.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixTcpStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixUdpStatistics.cs" />
+            <Compile Include="System.Net.Security\SslStream.cs" />
+            <Compile Include="System.Net\AuthenticationManager.cs" />
+            <Compile Include="System.Net\BufferedReadStream.cs" />
+            <Compile Include="System.Net\ChunkedInputStream.cs" />
+            <Compile Include="System.Net\ContentDecodeStream.cs" />
+            <Compile Include="System.Net\EndPointListener.cs" />
+            <Compile Include="System.Net\EndPointManager.cs" />
+            <Compile Include="System.Net\FixedSizeReadStream.cs" />
+            <Compile Include="System.Net\HttpConnection.cs" />
+            <Compile Include="System.Net\HttpListener.Mono.cs" />
+            <Compile Include="System.Net\HttpListener.cs" />
+            <Compile Include="System.Net\HttpListenerBasicIdentity.cs" />
+            <Compile Include="System.Net\HttpListenerContext.cs" />
+            <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
+            <Compile Include="System.Net\HttpListenerRequest.cs" />
+            <Compile Include="System.Net\HttpListenerResponse.cs" />
+            <Compile Include="System.Net\HttpListenerTimeoutManager.cs" />
+            <Compile Include="System.Net\HttpWebRequest.cs" />
+            <Compile Include="System.Net\HttpWebResponse.cs" />
+            <Compile Include="System.Net\ListenerAsyncResult.cs" />
+            <Compile Include="System.Net\MacProxy.cs" />
+            <Compile Include="System.Net\MonoChunkStream.cs" />
+            <Compile Include="System.Net\NtlmClient.cs" />
+            <Compile Include="System.Net\ResponseStream.cs" />
+            <Compile Include="System.Net\ServicePoint.cs" />
+            <Compile Include="System.Net\ServicePointManager.cs" />
+            <Compile Include="System.Net\ServicePointManager.extra.cs" />
+            <Compile Include="System.Net\ServicePointScheduler.cs" />
+            <Compile Include="System.Net\WebCompletionSource.cs" />
+            <Compile Include="System.Net\WebConnection.cs" />
+            <Compile Include="System.Net\WebConnectionStream.cs" />
+            <Compile Include="System.Net\WebConnectionTunnel.cs" />
+            <Compile Include="System.Net\WebOperation.cs" />
+            <Compile Include="System.Net\WebReadStream.cs" />
+            <Compile Include="System.Net\WebRequestStream.cs" />
+            <Compile Include="System.Net\WebResponseStream.cs" />
+            <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
+            <Compile Include="System\AndroidPlatform.cs" />
+            <Compile Include="corefx\Unix\Interop.Read.cs" />
+            <Compile Include="corefx\Unix\Interop.cs" />
+          </ItemGroup>
+        </When>
+        <When Condition="'$(HostPlatform)' == 'macos'">
+          <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.FLock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpDataStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+            <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
+            <Compile Include="Mono.Btls\MonoBtlsX509LookupAndroid.cs" />
+            <Compile Include="Mono.Http\NtlmClient.cs" />
+            <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
+            <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
+            <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
+            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
+            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
+            <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
+            <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
+            <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
+            <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
+            <Compile Include="System.Net.Mail\SmtpClient.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxUnicastIPAddressInformation.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsIPv4InterfaceStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPGlobalProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPGlobalStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIcmpV4Statistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIcmpV6Statistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixNetworkInterfaceFactory.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixTcpStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixUdpStatistics.cs" />
+            <Compile Include="System.Net.Security\SslStream.cs" />
+            <Compile Include="System.Net\AuthenticationManager.cs" />
+            <Compile Include="System.Net\BufferedReadStream.cs" />
+            <Compile Include="System.Net\ChunkedInputStream.cs" />
+            <Compile Include="System.Net\ContentDecodeStream.cs" />
+            <Compile Include="System.Net\EndPointListener.cs" />
+            <Compile Include="System.Net\EndPointManager.cs" />
+            <Compile Include="System.Net\FixedSizeReadStream.cs" />
+            <Compile Include="System.Net\HttpConnection.cs" />
+            <Compile Include="System.Net\HttpListener.Mono.cs" />
+            <Compile Include="System.Net\HttpListener.cs" />
+            <Compile Include="System.Net\HttpListenerBasicIdentity.cs" />
+            <Compile Include="System.Net\HttpListenerContext.cs" />
+            <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
+            <Compile Include="System.Net\HttpListenerRequest.cs" />
+            <Compile Include="System.Net\HttpListenerResponse.cs" />
+            <Compile Include="System.Net\HttpListenerTimeoutManager.cs" />
+            <Compile Include="System.Net\HttpWebRequest.cs" />
+            <Compile Include="System.Net\HttpWebResponse.cs" />
+            <Compile Include="System.Net\ListenerAsyncResult.cs" />
+            <Compile Include="System.Net\MacProxy.cs" />
+            <Compile Include="System.Net\MonoChunkStream.cs" />
+            <Compile Include="System.Net\NtlmClient.cs" />
+            <Compile Include="System.Net\ResponseStream.cs" />
+            <Compile Include="System.Net\ServicePoint.cs" />
+            <Compile Include="System.Net\ServicePointManager.cs" />
+            <Compile Include="System.Net\ServicePointManager.extra.cs" />
+            <Compile Include="System.Net\ServicePointScheduler.cs" />
+            <Compile Include="System.Net\WebCompletionSource.cs" />
+            <Compile Include="System.Net\WebConnection.cs" />
+            <Compile Include="System.Net\WebConnectionStream.cs" />
+            <Compile Include="System.Net\WebConnectionTunnel.cs" />
+            <Compile Include="System.Net\WebOperation.cs" />
+            <Compile Include="System.Net\WebReadStream.cs" />
+            <Compile Include="System.Net\WebRequestStream.cs" />
+            <Compile Include="System.Net\WebResponseStream.cs" />
+            <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
+            <Compile Include="System\AndroidPlatform.cs" />
+            <Compile Include="corefx\Unix\Interop.Read.cs" />
+            <Compile Include="corefx\Unix\Interop.cs" />
+          </ItemGroup>
+        </When>
+        <When Condition="'$(HostPlatform)' == 'linux'">
+          <ItemGroup>
+            <Compile Include="..\..\..\external\corefx\src\Common\src\CoreLib\Interop\Unix\System.Native\Interop.ReadDir.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Linux\System.Native\Interop.INotify.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Errors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.IOErrors.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Close.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.FLock.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Open.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.OpenFlags.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Poll.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.Stat.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssApiException.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.GssBuffer.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Net.Security.Native\Interop.NetSecurityNative.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\GssSafeHandles.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeDirectoryHandle.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\Microsoft\Win32\SafeHandles\SafeFileHandle.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextAwareResult.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\ContextFlagsAdapterPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\HttpValidationHelpers.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\CertificateHelper.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\NegotiateStreamPal.Unix.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\SslClientAuthenticationOptionsExtensions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeDeleteNegoContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeCredentials.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\Security\Unix\SafeFreeNegoCredentials.cs" />
+            <Compile Include="..\..\..\external\corefx\src\Common\src\System\Net\TlsStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.IO.FileSystem.Watcher\src\System\IO\FileSystemWatcher.Linux.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.HttpListener\src\System\Net\WebSockets\HttpListenerWebSocketContext.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\CommandStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpControlStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpDataStream.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebRequest.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\FtpWebResponse.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Requests\src\System\Net\NetworkStreamWrapper.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslApplicationProtocol.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunner.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
+            <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
+            <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
+            <Compile Include="Mono.Btls\MonoBtlsX509LookupAndroid.cs" />
+            <Compile Include="Mono.Http\NtlmClient.cs" />
+            <Compile Include="Mono.Net.Security\AsyncProtocolRequest.cs" />
+            <Compile Include="Mono.Net.Security\CallbackHelpers.cs" />
+            <Compile Include="Mono.Net.Security\ChainValidationHelper.cs" />
+            <Compile Include="Mono.Net.Security\LegacySslStream.cs" />
+            <Compile Include="Mono.Net.Security\LegacyTlsProvider.cs" />
+            <Compile Include="Mono.Net.Security\MobileAuthenticatedStream.cs" />
+            <Compile Include="Mono.Net.Security\MobileTlsContext.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslClientAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoSslServerAuthenticationOptions.cs" />
+            <Compile Include="Mono.Net.Security\MonoTlsProviderFactory.cs" />
+            <Compile Include="Mono.Net.Security\MonoTlsStream.cs" />
+            <Compile Include="Mono.Net.Security\NoReflectionHelper.cs" />
+            <Compile Include="Mono.Net.Security\SystemCertificateValidator.cs" />
+            <Compile Include="System.IO\FileSystemWatcher.DefaultEventAttribute.cs" />
+            <Compile Include="System.Net.Mail\SmtpClient.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixIPv4InterfaceStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\AixNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\FreeBSDNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxIPv4InterfaceStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\LinuxUnicastIPAddressInformation.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsIPv4InterfaceStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterfaceMarshal.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPGlobalProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPGlobalStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPInterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIPv4InterfaceProperties.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIcmpV4Statistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixIcmpV6Statistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixNetworkInterface.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixNetworkInterfaceFactory.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixTcpStatistics.cs" />
+            <Compile Include="System.Net.NetworkInformation\UnixUdpStatistics.cs" />
+            <Compile Include="System.Net.Security\SslStream.cs" />
+            <Compile Include="System.Net\AuthenticationManager.cs" />
+            <Compile Include="System.Net\BufferedReadStream.cs" />
+            <Compile Include="System.Net\ChunkedInputStream.cs" />
+            <Compile Include="System.Net\ContentDecodeStream.cs" />
+            <Compile Include="System.Net\EndPointListener.cs" />
+            <Compile Include="System.Net\EndPointManager.cs" />
+            <Compile Include="System.Net\FixedSizeReadStream.cs" />
+            <Compile Include="System.Net\HttpConnection.cs" />
+            <Compile Include="System.Net\HttpListener.Mono.cs" />
+            <Compile Include="System.Net\HttpListener.cs" />
+            <Compile Include="System.Net\HttpListenerBasicIdentity.cs" />
+            <Compile Include="System.Net\HttpListenerContext.cs" />
+            <Compile Include="System.Net\HttpListenerPrefixCollection.cs" />
+            <Compile Include="System.Net\HttpListenerRequest.cs" />
+            <Compile Include="System.Net\HttpListenerResponse.cs" />
+            <Compile Include="System.Net\HttpListenerTimeoutManager.cs" />
+            <Compile Include="System.Net\HttpWebRequest.cs" />
+            <Compile Include="System.Net\HttpWebResponse.cs" />
+            <Compile Include="System.Net\ListenerAsyncResult.cs" />
+            <Compile Include="System.Net\MacProxy.cs" />
+            <Compile Include="System.Net\MonoChunkStream.cs" />
+            <Compile Include="System.Net\NtlmClient.cs" />
+            <Compile Include="System.Net\ResponseStream.cs" />
+            <Compile Include="System.Net\ServicePoint.cs" />
+            <Compile Include="System.Net\ServicePointManager.cs" />
+            <Compile Include="System.Net\ServicePointManager.extra.cs" />
+            <Compile Include="System.Net\ServicePointScheduler.cs" />
+            <Compile Include="System.Net\WebCompletionSource.cs" />
+            <Compile Include="System.Net\WebConnection.cs" />
+            <Compile Include="System.Net\WebConnectionStream.cs" />
+            <Compile Include="System.Net\WebConnectionTunnel.cs" />
+            <Compile Include="System.Net\WebOperation.cs" />
+            <Compile Include="System.Net\WebReadStream.cs" />
+            <Compile Include="System.Net\WebRequestStream.cs" />
+            <Compile Include="System.Net\WebResponseStream.cs" />
+            <Compile Include="System.Security.Cryptography.X509Certificates\OSX509Certificates.cs" />
+            <Compile Include="System\AndroidPlatform.cs" />
+            <Compile Include="corefx\Unix\Interop.Read.cs" />
+            <Compile Include="corefx\Unix\Interop.cs" />
+          </ItemGroup>
+        </When>
+      </Choose>
+      <!--End of per-host-platform files-->
     </When>
   </Choose>
   <!--End of per-profile files-->

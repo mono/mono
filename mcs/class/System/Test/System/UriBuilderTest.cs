@@ -111,8 +111,8 @@ namespace MonoTests.System
 		[Test]
 		public void Constructor_StringStringInt ()
 		{
-			UriBuilder ub = new UriBuilder ("http", "www.mono-project.com", 80);
-			Assert.AreEqual ("http://www.mono-project.com/", ub.Uri.AbsoluteUri, "Uri.AbsoluteUri");
+			UriBuilder ub = new UriBuilder ("http", "www.example.com", 80);
+			Assert.AreEqual ("http://www.example.com/", ub.Uri.AbsoluteUri, "Uri.AbsoluteUri");
 		}
 
 		[Test]
@@ -281,10 +281,10 @@ namespace MonoTests.System
 		[Test]
 		public void TestAppendFragment ()
 		{
-			UriBuilder uri = new UriBuilder ("http://www.mono-project.com/Main_Page");
+			UriBuilder uri = new UriBuilder ("http://www.example.com/Main_Page");
 			uri.Fragment = "Features";
 			Assert.AreEqual ("#Features", uri.Fragment, "#1");
-			Assert.AreEqual ("http://www.mono-project.com/Main_Page#Features", uri.Uri.ToString (), "#2");
+			Assert.AreEqual ("http://www.example.com/Main_Page#Features", uri.Uri.ToString (), "#2");
 		}
 
 		[Test]
@@ -336,10 +336,10 @@ namespace MonoTests.System
 		{
 			// some URI can't be parsed by System.Uri but are accepted by UriBuilder
 			Uri u = null;
-			string uri = "www.mono-project.com";
+			string uri = "www.example.com";
 			Assert.IsFalse (Uri.TryCreate (uri, UriKind.Absolute, out u), "1.Uri.TryCreate");
 			UriBuilder ub = new UriBuilder (uri);
-			Assert.AreEqual ("www.mono-project.com", ub.Host, "1.Host");
+			Assert.AreEqual ("www.example.com", ub.Host, "1.Host");
 			Assert.AreEqual ("http", ub.Scheme, "1.Scheme");
 			Assert.AreEqual (80, ub.Port, "1.Port");
 			Assert.AreEqual ("/", ub.Path, "1.Path");

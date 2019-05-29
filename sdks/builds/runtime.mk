@@ -4,6 +4,7 @@
 #  $(1): product
 #  $(2): target
 #  $(3): host triple
+#  $(4): exclude from archive
 #
 # Flags:
 #  _$(1)-$(2)_AR
@@ -100,12 +101,82 @@ configure-$(1): configure-$(1)-$(2)
 .PHONY: build-$(1)
 build-$(1): build-$(1)-$(2)
 
+.PHONY: package-$(1)
+package-$(1): package-$(1)-$(2) $$(ADDITIONAL_PACKAGE_DEPS)
+
+.PHONY: archive-$(1)
+archive-$(1): package-$(1)
+
+ifneq ($(4),yes)
+$(1)_ARCHIVE += $(1)-$(2)-$$(CONFIGURATION)
+endif
+
+endef
+
+##
+# Parameters:
+#  $(1): product
+#  $(2): target
+#  $(3): host triple
+#
+# Flags:
+#  _$(1)-$(2)_AR
+#  _$(1)-$(2)_AS
+#  _$(1)-$(2)_CC
+#  _$(1)-$(2)_CPP
+#  _$(1)-$(2)_CXX
+#  _$(1)-$(2)_CXXCPP
+#  _$(1)-$(2)_DLLTOOL
+#  _$(1)-$(2)_LD
+#  _$(1)-$(2)_CMAKE
+#  _$(1)-$(2)_OBJDUMP
+#  _$(1)-$(2)_RANLIB
+#  _$(1)-$(2)_STRIP
+#  _$(1)-$(2)_CFLAGS
+#  _$(1)-$(2)_CXXFLAGS
+#  _$(1)-$(2)_CPPFLAGS
+#  _$(1)-$(2)_LDFLAGS
+#  _$(1)-$(2)_AC_VARS
+#  _$(1)-$(2)_CONFIGURE_FLAGS
+#  _$(1)-$(2)_PATH
+define RuntimeTemplateStub
+
+.stamp-$(1)-$(2)-$$(CONFIGURATION)-configure: $$(TOP)/configure .stamp-$(1)-$(2)-toolchain
+	touch $$@
+
+.stamp-$(1)-$(2)-configure: .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure
+	touch $$@
+
+.PHONY: build-custom-$(1)-$(2)
+build-custom-$(1)-$(2):
+	@echo "TODO: build-custom-$(1)-$(2) on $$(UNAME)"
+
+.PHONY: setup-custom-$(1)-$(2)
+setup-custom-$(1)-$(2):
+	@echo "TODO: setup-custom-$(1)-$(2) on $$(UNAME)"
+
+.PHONY: package-$(1)-$(2)
+package-$(1)-$(2):
+	@echo "TODO: package-$(1)-$(2) on $$(UNAME)"
+
+.PHONY: clean-$(1)-$(2)
+clean-$(1)-$(2):
+	rm -rf .stamp-$(1)-$(2)-toolchain .stamp-$(1)-$(2)-$$(CONFIGURATION)-configure $$(TOP)/sdks/builds/toolchains/$(1)-$(2) $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION) $$(TOP)/sdks/builds/$(1)-$(2)-$$(CONFIGURATION).config.cache $$(TOP)/sdks/out/$(1)-$(2)-$$(CONFIGURATION)
+
+$$(eval $$(call TargetTemplate,$(1),$(2)))
+
+.PHONY: configure-$(1)
+configure-$(1): configure-$(1)-$(2)
+
+.PHONY: build-$(1)
+build-$(1): build-$(1)-$(2)
+
 .PHONY: archive-$(1)
 archive-$(1): package-$(1)-$(2)
 
-$(1)_ARCHIVE += $(1)-$(2)-$$(CONFIGURATION)
 
 endef
+
 
 $(TOP)/tools/offsets-tool/MonoAotOffsetsDumper.exe: $(wildcard $(TOP)/tools/offsets-tool/*.cs)
 	$(MAKE) -C $(dir $@) MonoAotOffsetsDumper.exe
@@ -175,3 +246,45 @@ archive-$(1): provision-$(6)
 $(1)_ARCHIVE += $(6)
 
 endef
+
+##
+# Parameters:
+#  $(1): product
+#  $(2): target
+#  $(3): host triple
+#  $(4): target triple
+#  $(5): device target
+#  $(6): llvm
+#  $(7): offsets dumper abi
+#
+# Flags:
+#  _$(1)-$(2)_AR
+#  _$(1)-$(2)_AS
+#  _$(1)-$(2)_CC
+#  _$(1)-$(2)_CPP
+#  _$(1)-$(2)_CXX
+#  _$(1)-$(2)_CXXCPP
+#  _$(1)-$(2)_DLLTOOL
+#  _$(1)-$(2)_LD
+#  _$(1)-$(2)_OBJDUMP
+#  _$(1)-$(2)_RANLIB
+#  _$(1)-$(2)_STRIP
+#  _$(1)-$(2)_CFLAGS
+#  _$(1)-$(2)_CXXFLAGS
+#  _$(1)-$(2)_CPPFLAGS
+#  _$(1)-$(2)_LDFLAGS
+#  _$(1)-$(2)_AC_VARS
+#  _$(1)-$(2)_CONFIGURE_FLAGS
+#  _$(1)-$(2)_PATH
+#  _$(1)-$(2)_OFFSETS_DUMPER_ARGS
+define CrossRuntimeTemplateStub
+
+.stamp-$(1)-$(2)-toolchain:
+	touch $$@
+
+.stamp-$(1)-$(2)-$$(CONFIGURATION)-configure:
+
+$$(eval $$(call RuntimeTemplateStub,$(1),$(2),$(3)))
+
+endef
+

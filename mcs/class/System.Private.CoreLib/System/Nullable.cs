@@ -9,7 +9,7 @@ namespace System
 		//
 		// JIT implementation of box valuetype System.Nullable`1<T>
 		//
-		static object Box (T? o)
+		static object? Box (T? o)
 		{
 			if (!o.hasValue)
 				return null;

@@ -43,7 +43,7 @@ namespace System.Windows.Forms
 		private bool		is_link;	// Whether this tag is a link
 		private string		link_text;	// The full link text e.g. this might be 
 							// word-wrapped to "w" but this would be
-							// "www.mono-project.com"
+							// "www.example.com"
 
 		// Payload; text
 		private int		start;		// start, in chars; index into Line.text

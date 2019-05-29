@@ -665,19 +665,10 @@ mono_class_create_from_typedef (MonoImage *image, guint32 type_token, MonoError 
 	}
 
 	// compute is_byreflike
-	if (m_class_is_valuetype (klass)) {
-		/* TypedReference and RuntimeArgumentHandle are byreflike by
-		 * definition. Otherwise, look for IsByRefLikeAttribute.
-		 */
-		if (mono_is_corlib_image (image) &&
-		    ((m_class_get_byval_arg (klass)->type == MONO_TYPE_TYPEDBYREF) ||
-		     (!strcmp (m_class_get_name_space (klass), "System") &&
-		      !strcmp (m_class_get_name (klass), "RuntimeArgumentHandle"))))
+	if (m_class_is_valuetype (klass))
+		if (class_has_isbyreflike_attribute (klass))
 			klass->is_byreflike = 1; 
-		else if (class_has_isbyreflike_attribute (klass))
-			klass->is_byreflike = 1;
-	}
-
+		
 	mono_loader_unlock ();
 
 	MONO_PROFILER_RAISE (class_loaded, (klass));
@@ -2046,13 +2037,10 @@ print_method_signatures (MonoMethod *im, MonoMethod *cm) {
 static gboolean
 is_wcf_hack_disabled (void)
 {
-	static gboolean disabled;
-	static gboolean inited = FALSE;
-	if (!inited) {
-		disabled = g_hasenv ("MONO_DISABLE_WCF_HACK");
-		inited = TRUE;
-	}
-	return disabled;
+	static char disabled;
+	if (!disabled)
+		disabled = g_hasenv ("MONO_DISABLE_WCF_HACK") ? 1 : 2;
+	return disabled == 1;
 }
 
 static gboolean
@@ -5603,18 +5591,14 @@ MonoClass *
 mono_class_create_array_fill_type (void)
 {
 	static MonoClass klass;
-	static gboolean inited = FALSE;
 
-	if (!inited) {
-		klass.element_class = mono_defaults.int64_class;
-		klass.rank = 1;
-		klass.instance_size = MONO_SIZEOF_MONO_ARRAY;
-		klass.sizes.element_size = 8;
-		klass.size_inited = 1;
-		klass.name = "array_filler_type";
+	klass.element_class = mono_defaults.int64_class;
+	klass.rank = 1;
+	klass.instance_size = MONO_SIZEOF_MONO_ARRAY;
+	klass.sizes.element_size = 8;
+	klass.size_inited = 1;
+	klass.name = "array_filler_type";
 
-		inited = TRUE;
-	}
 	return &klass;
 }
 

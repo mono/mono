@@ -115,6 +115,19 @@ var MonoSupportLib = {
 			this.wasm_setenv (name, value);
 		},
 
+		mono_wasm_set_runtime_options: function (options) {
+			if (!this.wasm_parse_runtime_options)
+				this.wasm_parse_runtime_options = Module.cwrap ('mono_wasm_parse_runtime_options', 'void', ['number', 'number']);
+			var argv = Module._malloc (options.length * 4);
+			var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string']);
+			aindex = 0;
+			for (var i = 0; i < options.length; ++i) {
+				Module.setValue (argv + (aindex * 4), wasm_strdup (options [i]), "i32");
+				aindex += 1;
+			}
+			this.wasm_parse_runtime_options (options.length, argv);
+		},
+
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
 			var pending = file_list.length;
 			var loaded_files = [];

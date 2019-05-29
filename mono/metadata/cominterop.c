@@ -25,6 +25,7 @@
 #include "metadata/appdomain.h"
 #include "metadata/reflection-internals.h"
 #include "mono/metadata/class-init.h"
+#include "mono/metadata/class-internals.h"
 #include "mono/metadata/debug-helpers.h"
 #include "mono/metadata/threads.h"
 #include "mono/metadata/monitor.h"
@@ -53,7 +54,7 @@
 static void
 mono_System_ComObject_ReleaseInterfaces (MonoComObjectHandle obj);
 
-#ifndef DISABLE_COM
+#if !defined (DISABLE_COM) || defined (HOST_WIN32)
 
 static int
 mono_IUnknown_QueryInterface (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv)
@@ -84,17 +85,15 @@ mono_IUnknown_Release (MonoIUnknown *pUnk)
 /*
 Code shared between the DISABLE_COM and !DISABLE_COM
 */
-#ifdef __cplusplus
-template <typename T>
-static void
-register_icall (       T func, const char *name, MonoMethodSignature *sig, gboolean save)
-#else
-static void
-register_icall (gpointer func, const char *name, MonoMethodSignature *sig, gboolean save)
-#endif
-{
-	mono_register_jit_icall_full (func, name, sig, save, name);
-}
+
+// func is an identifier, that names a function, and is also in jit-icall-reg.h,
+// and therefore a field in mono_jit_icall_info and can be token pasted into an enum value.
+//
+// The name of func must be linkable for AOT, for example g_free does not work (monoeg_g_free instead),
+// nor does the C++ overload fmod (mono_fmod instead). These functions therefore
+// must be extern "C".
+#define register_icall(func, sig, save) \
+	(mono_register_jit_icall_info (&mono_get_jit_icall_info ()->func, func, #func, (sig), (save), #func))
 
 mono_bstr
 mono_string_to_bstr_impl (MonoStringHandle s, MonoError *error)
@@ -648,23 +647,23 @@ mono_cominterop_init (void)
 		com_provider = MONO_COM_MS;
 	g_free (com_provider_env);
 
-	register_icall (cominterop_get_method_interface, "cominterop_get_method_interface", mono_icall_sig_ptr_ptr, FALSE);
-	register_icall (cominterop_get_function_pointer, "cominterop_get_function_pointer", mono_icall_sig_ptr_ptr_int32, FALSE);
-	register_icall (cominterop_object_is_rcw, "cominterop_object_is_rcw", mono_icall_sig_int32_object, FALSE);
-	register_icall (cominterop_get_ccw, "cominterop_get_ccw", mono_icall_sig_ptr_object_ptr, FALSE);
-	register_icall (cominterop_get_ccw_object, "cominterop_get_ccw_object", mono_icall_sig_object_ptr_int32, FALSE);
-	register_icall (cominterop_get_interface, "cominterop_get_interface", mono_icall_sig_ptr_object_ptr, FALSE);
+	register_icall (cominterop_get_method_interface, mono_icall_sig_ptr_ptr, FALSE);
+	register_icall (cominterop_get_function_pointer, mono_icall_sig_ptr_ptr_int32, FALSE);
+	register_icall (cominterop_object_is_rcw, mono_icall_sig_int32_object, FALSE);
+	register_icall (cominterop_get_ccw, mono_icall_sig_ptr_object_ptr, FALSE);
+	register_icall (cominterop_get_ccw_object, mono_icall_sig_object_ptr_int32, FALSE);
+	register_icall (cominterop_get_interface, mono_icall_sig_ptr_object_ptr, FALSE);
 
-	register_icall (cominterop_type_from_handle, "cominterop_type_from_handle", mono_icall_sig_object_ptr, FALSE);
+	register_icall (cominterop_type_from_handle, mono_icall_sig_object_ptr, FALSE);
 
 	/* SAFEARRAY marshalling */
-	register_icall (mono_marshal_safearray_begin, "mono_marshal_safearray_begin", mono_icall_sig_int32_ptr_ptr_ptr_ptr_ptr_int32, FALSE);
-	register_icall (mono_marshal_safearray_get_value, "mono_marshal_safearray_get_value", mono_icall_sig_ptr_ptr_ptr, FALSE);
-	register_icall (mono_marshal_safearray_next, "mono_marshal_safearray_next", mono_icall_sig_int32_ptr_ptr, FALSE);
-	register_icall (mono_marshal_safearray_end, "mono_marshal_safearray_end", mono_icall_sig_void_ptr_ptr, FALSE);
-	register_icall (mono_marshal_safearray_create, "mono_marshal_safearray_create", mono_icall_sig_int32_object_ptr_ptr_ptr, FALSE);
-	register_icall (mono_marshal_safearray_set_value, "mono_marshal_safearray_set_value", mono_icall_sig_void_ptr_ptr_ptr, FALSE);
-	register_icall (mono_marshal_safearray_free_indices, "mono_marshal_safearray_free_indices", mono_icall_sig_void_ptr, FALSE);
+	register_icall (mono_marshal_safearray_begin, mono_icall_sig_int32_ptr_ptr_ptr_ptr_ptr_int32, FALSE);
+	register_icall (mono_marshal_safearray_get_value, mono_icall_sig_ptr_ptr_ptr, FALSE);
+	register_icall (mono_marshal_safearray_next, mono_icall_sig_int32_ptr_ptr, FALSE);
+	register_icall (mono_marshal_safearray_end, mono_icall_sig_void_ptr_ptr, FALSE);
+	register_icall (mono_marshal_safearray_create, mono_icall_sig_int32_object_ptr_ptr_ptr, FALSE);
+	register_icall (mono_marshal_safearray_set_value, mono_icall_sig_void_ptr_ptr_ptr, FALSE);
+	register_icall (mono_marshal_safearray_free_indices, mono_icall_sig_void_ptr, FALSE);
 #endif // DISABLE_COM
 	/*FIXME
 
@@ -676,9 +675,9 @@ mono_cominterop_init (void)
 	The proper fix would be to emit warning, remove them from marshal.c when DISABLE_COM is used and
 	emit an exception in the generated IL.
 	*/
-	register_icall (mono_string_to_bstr, "mono_string_to_bstr", mono_icall_sig_ptr_obj, FALSE);
-	register_icall (mono_string_from_bstr_icall, "mono_string_from_bstr_icall", mono_icall_sig_obj_ptr, FALSE);
-	register_icall (mono_free_bstr, "mono_free_bstr", mono_icall_sig_void_ptr, FALSE);
+	register_icall (mono_string_to_bstr, mono_icall_sig_ptr_obj, FALSE);
+	register_icall (mono_string_from_bstr_icall, mono_icall_sig_obj_ptr, FALSE);
+	register_icall (mono_free_bstr, mono_icall_sig_void_ptr, FALSE);
 }
 
 #ifndef DISABLE_COM
@@ -864,14 +863,14 @@ mono_cominterop_emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, 
 			static MonoProperty* iunknown = NULL;
 			
 			if (!iunknown)
-				iunknown = mono_class_get_property_from_name (mono_class_get_com_object_class (), "IUnknown");
+				iunknown = mono_class_get_property_from_name_internal (mono_class_get_com_object_class (), "IUnknown");
 			mono_mb_emit_managed_call (mb, iunknown->get, NULL);
 		}
 		else if (conv == MONO_MARSHAL_CONV_OBJECT_IDISPATCH) {
 			static MonoProperty* idispatch = NULL;
 			
 			if (!idispatch)
-				idispatch = mono_class_get_property_from_name (mono_class_get_com_object_class (), "IDispatch");
+				idispatch = mono_class_get_property_from_name_internal (mono_class_get_com_object_class (), "IDispatch");
 			mono_mb_emit_managed_call (mb, idispatch->get, NULL);
 		}
 		else {
@@ -3623,6 +3622,29 @@ mono_marshal_free_ccw (MonoObject* object)
 	return FALSE;
 }
 
+#ifdef HOST_WIN32
+
+int
+ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk)
+{
+	return mono_IUnknown_AddRef (pUnk);
+}
+
+int
+ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk)
+{
+	g_assert (pUnk);
+	return mono_IUnknown_Release (pUnk);
+}
+
+int
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv)
+{
+	return mono_IUnknown_QueryInterface (pUnk, riid, ppv);
+}
+
+#else /* HOST_WIN32 */
+
 int
 ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk)
 {
@@ -3637,6 +3659,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *
 	return 0;
 }
 
+
 int
 ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv)
 {
@@ -3644,6 +3667,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUn
 	return 0;
 }
 
+#endif /* HOST_WIN32 */
 #endif /* DISABLE_COM */
 
 MonoStringHandle

@@ -11,15 +11,30 @@ RELEASE=$(if $(filter $(CONFIGURATION),release),1)
 
 lowercase=$(shell echo "$(1)" | tr '[:upper:]' '[:lower:]')
 
-CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
-NINJA:=$(shell which ninja)
-
 UNAME=$(shell uname)
+
+ifneq (,$(findstring CYGWIN,$(UNAME)))
+UNAME=Windows
+endif
+
+ifeq ($(UNAME),Linux)
+UNAME_WSL_CHECK=$(shell uname -a)
+ifneq (,$(findstring Microsoft,$(UNAME_WSL_CHECK)))
+UNAME=Windows
+endif
+endif
 
 ifneq ($(UNAME),Darwin)
 ifneq ($(UNAME),Linux)
+ifneq ($(UNAME),Windows)
 $(error "Unsupported UNAME=$(UNAME)")
 endif
+endif
+endif
+
+ifeq ($(UNAME),Windows)
+# x86_64 or i686
+HOST_ARCH_MINGW32=$(shell uname -m)
 endif
 
 ifneq ($(UNAME),Darwin)
@@ -28,13 +43,30 @@ DISABLE_IOS=1
 DISABLE_MAC=1
 endif
 
+# On Windows, we will just trigger LLVM and Android builds using this Makefile.
+ifeq ($(UNAME),Windows)
+DISABLE_IOS=1
+DISABLE_MAC=1
+DISABLE_WASM=1
+DISABLE_WASM_CROSS=1
+DISABLE_DESKTOP=1
+DISABLE_CCACHE=1
+DISABLE_LIBTOOLIZE=1
+IGNORE_PROVISION_MXE=1
+endif
+
+CCACHE:=$(if $(DISABLE_CCACHE),,$(shell which ccache))
+NINJA:=$(shell which ninja)
+
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
+ifndef DISABLE_LIBTOOLIZE
 #brew's libtool is not compatible with some of the deps needed (I.E. V8) so in those systems we need to explicit add to the path
 #this is due mono not being compatible with xcode's libtool, which is what's on path by default
 ifeq (, $(shell which glibtoolize))
 EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
+endif
 endif
 
 all: package

@@ -618,6 +618,7 @@ typedef struct {
 	MonoObject *additional;
 } MonoStreamingContext;
 
+#if !ENABLE_NETCORE
 typedef struct {
 	MonoObject obj;
 	MonoBoolean readOnly;
@@ -756,6 +757,7 @@ typedef struct {
 	MonoString *currency_english_name;
 	MonoString *currency_native_name;
 } MonoRegionInfo;
+#endif
 
 typedef struct {
 	MonoObject object;
@@ -2307,6 +2309,9 @@ void
 mono_field_get_value_internal (MonoObject *obj, MonoClassField *field, void *value);
 
 MonoMethod* mono_get_context_capture_method (void);
+
+guint8*
+mono_runtime_get_aotid_arr (void);
 
 /* GC handles support
  *

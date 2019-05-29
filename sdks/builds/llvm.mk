@@ -39,6 +39,9 @@ $(eval $(call LLVMProvisionTemplate,llvm,llvm32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvm64,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin32,$(TOP)/external/llvm))
 $(eval $(call LLVMProvisionTemplate,llvm,llvmwin64,$(TOP)/external/llvm))
+ifeq ($(UNAME),Windows)
+$(eval $(call LLVMProvisionTemplate,llvm,llvmwin64-msvc,$(TOP)/external/llvm))
+endif
 ifeq ($(UNAME),Darwin)
 $(eval $(call LLVMProvisionTemplate,llvm36,llvm32,$(LLVM36_SRC)))
 endif
@@ -67,6 +70,25 @@ clean-llvm-$(1)::
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk clean-llvm \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)"
+
+endef
+
+##
+# Parameters:
+#  $(1): target
+define LLVMTemplateStub
+
+.PHONY: setup-llvm-$(1)
+setup-llvm-$(1):
+	@echo "TODO: setup-llvm-$(1) on $(NAME)"
+
+.PHONY: package-llvm-$(1)
+package-llvm-$(1):
+	@echo "TODO: package-llvm-$(1) on $(UNAME)"
+
+.PHONY: clean-llvm-$(1)
+clean-llvm-$(1)::
+	@echo "TODO: clean-llvm-$(1) on $(UNAME)"
 
 endef
 
@@ -141,7 +163,9 @@ define LLVMMxeTemplate
 # -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
 # -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
 # -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
+# -DCMAKE_EXE_LINKER_FLAGS=-static is needed so that we don't dynamically link with any of the mingw gcc support libs.
 _llvm-$(1)_CMAKE_ARGS = \
+	-DCMAKE_EXE_LINKER_FLAGS=\"-static\" \
 	-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=$$(TOP)/external/llvm/cmake/modules/NATIVE.cmake \
 	-DCMAKE_TOOLCHAIN_FILE=$$(TOP)/external/llvm/cmake/modules/$(3).cmake \
 	-DLLVM_ENABLE_THREADS=Off \
@@ -179,4 +203,28 @@ ifneq ($(MXE_PREFIX),)
 llvm-llvmwin32_CMAKE_ARGS=-DLLVM_BUILD_32_BITS=On
 $(eval $(call LLVMMxeTemplate,llvmwin32,i686,mxe-Win32))
 $(eval $(call LLVMMxeTemplate,llvmwin64,x86_64,mxe-Win64))
+endif
+
+##
+# Parameters
+#  $(1): target
+#  $(2): arch
+define LLVMMsvcTemplate
+
+.PHONY: setup-llvm-$(1)
+setup-llvm-$(1):
+	mkdir -p $$(TOP)/sdks/out/llvm-$(1)
+
+.PHONY: package-llvm-$(1)
+package-llvm-$(1): setup-llvm-$(1)
+	$$(TOP)/llvm/build_llvm_msbuild.sh "build" "$(2)" "release" "$$(TOP)/msvc/" "$$(TOP)/sdks/builds/llvm-$(1)" "$$(TOP)/sdks/out/llvm-$(1)"
+
+.PHONY: clean-llvm-$(1)
+clean-llvm-$(1):
+	$$(TOP)/llvm/build_llvm_msbuild.sh "clean" "$(2)" "release" "$$(TOP)/msvc/" "$$(TOP)/sdks/builds/llvm-$(1)" "$$(TOP)/sdks/out/llvm-$(1)"
+
+endef
+
+ifeq ($(UNAME),Windows)
+$(eval $(call LLVMMsvcTemplate,llvmwin64-msvc,x86_64))
 endif

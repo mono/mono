@@ -9,7 +9,7 @@ dirs := $(dir $(wildcard */*))
 files := $(wildcard */*.cs)
 
 all-local: $(ROSLYN_PROPS_FILE)
-	dotnet build $(CORETARGETS) -p:BuildArch=$(COREARCH) -p:OutputPath=bin/$(COREARCH) -p:RoslynPropsFile="$(ROSLYN_PROPS_FILE)" System.Private.CoreLib.csproj
+	dotnet build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:BuildArch=$(COREARCH) -p:OutputPath=bin/$(COREARCH) -p:RoslynPropsFile="$(ROSLYN_PROPS_FILE)" System.Private.CoreLib.csproj
 
 $(ROSLYN_PROPS_FILE):
 	make -C ../../../netcore update-roslyn

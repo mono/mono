@@ -32,6 +32,7 @@
 #include "mono/metadata/class-init.h"
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/marshal.h>
+#include <mono/metadata/mono-hash-internals.h>
 #include "mono/metadata/debug-helpers.h"
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threads-types.h>
@@ -127,6 +128,7 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
+	HANDLE_FUNCTION_ENTER ();
 	error_init (error);
 
 	MonoClass * const klass = MONO_HANDLE_GETVAL (this_obj, vtable)->klass;
@@ -140,10 +142,10 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 		mono_runtime_invoke_checked (method, raw, NULL, error);
 		mono_gchandle_free_internal (gchandle);
 	} else {
-		mono_runtime_invoke_handle (method, this_obj, NULL, error);
+		mono_runtime_invoke_handle_void (method, this_obj, NULL, error);
 	}
 
-	return is_ok (error);
+	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
 /**
@@ -279,7 +281,7 @@ mono_type_initialization_init (void)
 	type_initialization_hash = g_hash_table_new (NULL, NULL);
 	blocked_thread_hash = g_hash_table_new (NULL, NULL);
 	mono_coop_mutex_init (&ldstr_section);
-	mono_register_jit_icall (ves_icall_string_alloc, "ves_icall_string_alloc", mono_icall_sig_object_int, FALSE);
+	mono_register_jit_icall (ves_icall_string_alloc, mono_icall_sig_object_int, FALSE);
 }
 
 void
@@ -486,7 +488,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		if (mono_domain_get () != domain) {
 			/* Transfer into the target domain */
 			last_domain = mono_domain_get ();
-			if (!mono_domain_set (domain, FALSE)) {
+			if (!mono_domain_set_fast (domain, FALSE)) {
 				vtable->initialized = 1;
 				mono_type_initialization_unlock ();
 				mono_error_set_exception_instance (error, mono_get_exception_appdomain_unloaded ());
@@ -577,13 +579,13 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 			 */
 			mono_domain_lock (domain);
 			if (!domain->type_init_exception_hash)
-				domain->type_init_exception_hash = mono_g_hash_table_new_type (mono_aligned_addr_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Type Initialization Exception Table");
-			mono_g_hash_table_insert (domain->type_init_exception_hash, klass, exc_to_throw);
+				domain->type_init_exception_hash = mono_g_hash_table_new_type_internal (mono_aligned_addr_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Type Initialization Exception Table");
+			mono_g_hash_table_insert_internal (domain->type_init_exception_hash, klass, exc_to_throw);
 			mono_domain_unlock (domain);
 		}
 
 		if (last_domain)
-			mono_domain_set (last_domain, TRUE);
+			mono_domain_set_fast (last_domain, TRUE);
 
 		/* Signal to the other threads that we are done */
 		mono_type_init_lock (lock);
@@ -3373,7 +3375,11 @@ mono_field_set_value_internal (MonoObject *obj, MonoClassField *field, void *val
 		return;
 
 	dest = (char*)obj + field->offset;
+#if ENABLE_NETCORE
+	mono_copy_value (field->type, dest, value, value && field->type->type == MONO_TYPE_PTR);
+#else
 	mono_copy_value (field->type, dest, value, FALSE);
+#endif
 }
 
 /**
@@ -3673,8 +3679,12 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 			mono_field_get_value_internal (obj, field, v);
 		}
 
+#if ENABLE_NETCORE
+		args [0] = ptr;
+#else
 		/* MONO_TYPE_PTR is passed by value to runtime_invoke () */
 		args [0] = ptr ? *ptr : NULL;
+#endif
 		args [1] = mono_type_get_object_checked (mono_domain_get (), type, error);
 		return_val_if_nok (error, NULL);
 
@@ -4831,7 +4841,7 @@ create_unhandled_exception_eventargs (MonoObjectHandle exc, MonoError *error)
 	obj = mono_object_new_handle (mono_domain_get (), klass, error);
 	goto_if_nok (error, return_null);
 
-	mono_runtime_invoke_handle (method, obj, args, error);
+	mono_runtime_invoke_handle_void (method, obj, args, error);
 	goto_if_nok (error, return_null);
 	return obj;
 
@@ -7442,7 +7452,7 @@ mono_string_is_interned_lookup (MonoStringHandle str, gboolean insert, MonoError
 	if (res)
 		MONO_HANDLE_ASSIGN_RAW (s, res);
 	else
-		mono_g_hash_table_insert (ldstr_table, MONO_HANDLE_RAW (s), MONO_HANDLE_RAW (s));
+		mono_g_hash_table_insert_internal (ldstr_table, MONO_HANDLE_RAW (s), MONO_HANDLE_RAW (s));
 	ldstr_unlock ();
 	return s;
 }
@@ -8090,7 +8100,7 @@ mono_wait_handle_new (MonoDomain *domain, HANDLE handle, MonoError *error)
 
 	/* Even though this method is virtual, it's safe to invoke directly, since the object type matches.  */
 	if (!handle_set)
-		handle_set = mono_class_get_property_from_name (mono_defaults.manualresetevent_class, "Handle")->set;
+		handle_set = mono_class_get_property_from_name_internal (mono_defaults.manualresetevent_class, "Handle")->set;
 
 	params [0] = &handle;
 

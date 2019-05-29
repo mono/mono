@@ -11,7 +11,7 @@
     <div>
 	<a runat="server" id="anchor" href="/">Anchor</a><br />
 	<button runat="server" id="button" value="Button" /><br />
-	<img runat="server" id="img" src="http://google.com/favico.png" /><br />
+	<img runat="server" id="img" src="http://example.com/favico.png" /><br />
 	<link runat="server" id="link" rel="test" /><br />
 	<meta runat="server" id="meta" name="test" /><br />
 	<select runat="server" id="testSelect"></select><br />

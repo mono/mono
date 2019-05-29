@@ -1,5 +1,6 @@
 
 _bcl_CONFIGURE_FLAGS = \
+	$(if $(filter $(UNAME),Windows),--host=$(HOST_ARCH_MINGW32)-w64-mingw32) \
 	--disable-boehm \
 	--disable-btls-lib \
 	--disable-nls \
@@ -41,8 +42,8 @@ build-$(1)-bcl: build-bcl
 
 .PHONY: build-custom-$(1)-bcl
 build-custom-$(1)-bcl:
-	$$(MAKE) -C bcl -C runtime all-mcs build_profiles="$(2)"
-	$$(if $(3),$$(MAKE) -C bcl -C runtime test xunit-test test_profiles="$(3)")
+	$$(MAKE) -C bcl -C runtime all-mcs build_profiles="$(2)" $$(_bcl_$(1)_BUILD_FLAGS)
+	$$(if $(3),$$(MAKE) -C bcl -C runtime test xunit-test test_profiles="$(3)" $$(_bcl_$(1)_BUILD_FLAGS))
 
 .PHONY: package-$(1)-bcl
 package-$(1)-bcl:

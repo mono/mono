@@ -121,9 +121,12 @@ namespace WebAssembly {
 			GCHandle h = (GCHandle)(IntPtr)gcHandle;
 			JSObject obj = (JSObject)h.Target;
 
-			if (bound_objects.ContainsKey (js_id))
-				obj = bound_objects [js_id];
-			else
+			if (bound_objects.TryGetValue (js_id, out var existingObj)) {
+				if (existingObj.Handle != h && h.IsAllocated)
+					throw new JSException ($"Multiple handles pointing at js_id: {js_id}");
+
+				obj = existingObj;
+			} else
 				bound_objects [js_id] = obj;
 
 			return (int)(IntPtr)obj.Handle;
@@ -343,9 +346,13 @@ namespace WebAssembly {
 					res += "s";
 					break;
 				default:
-					if (t.IsValueType)
-						throw new Exception ("Can't handle VT arguments");
-					res += "o";
+					if (t == typeof(IntPtr)) { 
+ 						res += "i";
+					} else {
+ 						if (t.IsValueType)
+ 							throw new Exception("Can't handle VT arguments");
+						res += "o";
+					}
 					break;
 				}
 			}

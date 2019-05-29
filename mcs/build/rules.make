@@ -9,6 +9,7 @@
 
 empty :=
 space := $(empty) $(empty)
+comma := ,
 _FILTER_OUT = $(foreach x,$(2),$(if $(findstring $(1),$(x)),,$(x)))
 
 # given $(thisdir), we compute the path to the top directory

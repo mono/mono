@@ -332,6 +332,15 @@ namespace System.Reflection {
 			return GetTypes (true);
 		}
 
+		internal static byte[] GetAotId () {
+			var guid = new byte [16];
+			var res = GetAotIdInternal (guid);
+			if (res)
+				return guid;
+			else
+				return null;
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static string get_code_base (Assembly a, bool escaped);
 
@@ -342,7 +351,7 @@ namespace System.Reflection {
 		internal extern static string get_fullname (Assembly a);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static string GetAotId ();
+		internal extern static bool GetAotIdInternal (byte[] aotid);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static string InternalImageRuntimeVersion (Assembly a);
@@ -618,7 +627,7 @@ namespace System.Reflection {
 		// note: the security runtime requires evidences but may be unable to do so...
 		internal override Evidence UnprotectedGetEvidence ()
 		{
-#if MOBILE
+#if MOBILE || DISABLE_SECURITY
 			return null;
 #else
 			// if the host (runtime) hasn't provided it's own evidence...

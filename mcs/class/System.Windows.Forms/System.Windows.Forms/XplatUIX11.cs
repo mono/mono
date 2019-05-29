@@ -1808,27 +1808,27 @@ namespace System.Windows.Forms {
 
 					// Seems that some apps support asking for supported types
 					if (format_atom == TARGETS) {
-						int[]	atoms;
+						IntPtr[]	atoms;
 						int	atom_count;
 
-						atoms = new int[5];
+						atoms = new IntPtr[5];
 						atom_count = 0;
 
 						if (Clipboard.IsSourceText) {
-							atoms[atom_count++] = (int)Atom.XA_STRING;
-							atoms[atom_count++] = (int)OEMTEXT;
-							atoms[atom_count++] = (int)UTF8_STRING;
-							atoms[atom_count++] = (int)UTF16_STRING;
-							atoms[atom_count++] = (int)RICHTEXTFORMAT;
+							atoms[atom_count++] = (IntPtr)Atom.XA_STRING;
+							atoms[atom_count++] = (IntPtr)OEMTEXT;
+							atoms[atom_count++] = (IntPtr)UTF8_STRING;
+							atoms[atom_count++] = (IntPtr)UTF16_STRING;
+							atoms[atom_count++] = (IntPtr)RICHTEXTFORMAT;
 						} else if (Clipboard.IsSourceImage) {
-							atoms[atom_count++] = (int)Atom.XA_PIXMAP;
-							atoms[atom_count++] = (int)Atom.XA_BITMAP;
+							atoms[atom_count++] = (IntPtr)Atom.XA_PIXMAP;
+							atoms[atom_count++] = (IntPtr)Atom.XA_BITMAP;
 						} else {
 							// FIXME - handle other types
 						}
 
 						XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, 
-								(IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
+								(IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 						sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 					} else if (format_atom == (IntPtr)RICHTEXTFORMAT) {
 						string rtf_text = Clipboard.GetRtfText ();

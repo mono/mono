@@ -70,7 +70,7 @@ namespace MonoTests.System {
 	[TestFixture]
 	public class UriTypeConverterTest {
 
-		private const string url = "http://www.mono-project.com/";
+		private const string url = "http://www.example.com/";
 		private static Uri uri = new Uri (url);
 
 		private UriTypeConverter converter;

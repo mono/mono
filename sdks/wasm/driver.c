@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
+#include <dlfcn.h>
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tokentype.h>
@@ -11,7 +12,11 @@
 #include <mono/utils/mono-dl-fallback.h>
 #include <mono/jit/jit.h>
 
+#ifdef GEN_PINVOKE
+#include "pinvoke-table.h"
+#else
 #include "pinvoke-tables-default.h"
+#endif
 
 #ifdef CORE_BINDINGS
 void core_initialize_internals ();
@@ -43,7 +48,7 @@ typedef struct {
 } MonoIcallTableCallbacks;
 
 void
-mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb);
+mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *cb);
 
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
 void mono_trace_init (void);
@@ -163,16 +168,37 @@ wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 		if (!strcmp (name, pinvoke_names [i]))
 			return pinvoke_tables [i];
 	}
+
+#if WASM_SUPPORTS_DLOPEN
+	return dlopen(name, flags);
+#endif
+
 	return NULL;
+}
+
+static mono_bool
+wasm_dl_is_pinvoke_tables (void* handle) {
+	for (int i = 0; i < sizeof (pinvoke_tables) / sizeof (void*); ++i) {
+		if (pinvoke_tables [i] == handle) {
+			return 1;
+		}
+	}
+	return 0;
 }
 
 static void*
 wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 {
+#if WASM_SUPPORTS_DLOPEN
+	if (!wasm_dl_is_pinvoke_tables (handle)) {
+		return dlsym (handle, name);
+	}
+#endif
+
 	PinvokeImport *table = (PinvokeImport*)handle;
 	for (int i = 0; table [i].name; ++i) {
 		if (!strcmp (table [i].name, name))
-				return table [i].func;
+			return table [i].func;
 	}
 	return NULL;
 }
@@ -293,13 +319,13 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 
 #ifdef LINK_ICALLS
 	/* Link in our own linked icall table */
-	MonoIcallTableCallbacks cb;
-	memset (&cb, 0, sizeof (MonoIcallTableCallbacks));
-	cb.version = MONO_ICALL_TABLE_CALLBACKS_VERSION;
-	cb.lookup = icall_table_lookup;
-	cb.lookup_icall_symbol = icall_table_lookup_symbol;
-
-	mono_install_icall_table_callbacks (&cb);
+	static const MonoIcallTableCallbacks mono_icall_table_callbacks =
+	{
+		MONO_ICALL_TABLE_CALLBACKS_VERSION,
+		icall_table_lookup,
+		icall_table_lookup_symbol
+	};
+	mono_install_icall_table_callbacks (&mono_icall_table_callbacks);
 #endif
 
 #ifdef NEED_NORMAL_ICALL_TABLES
@@ -462,6 +488,7 @@ mono_wasm_get_obj_type (MonoObject *obj)
 	case MONO_TYPE_U4:
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
+	case MONO_TYPE_I:	// IntPtr
 		return MARSHAL_TYPE_INT;
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8:
@@ -526,6 +553,7 @@ mono_unbox_int (MonoObject *obj)
 	case MONO_TYPE_U2:
 		return *(unsigned short*)ptr;
 	case MONO_TYPE_I4:
+	case MONO_TYPE_I:
 		return *(int*)ptr;
 	case MONO_TYPE_U4:
 		return *(unsigned int*)ptr;
@@ -609,4 +637,10 @@ EMSCRIPTEN_KEEPALIVE int
 mono_wasm_strdup (const char *s)
 {
 	return (int)strdup (s);
+}
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_parse_runtime_options (int argc, char* argv[])
+{
+	mono_jit_parse_options (argc, argv);
 }

@@ -20,7 +20,7 @@ namespace System.Runtime.CompilerServices
 			return Object.InternalGetHashCode (o);
 		}
 
-		public static new bool Equals (object o1, object o2)
+		public static new bool Equals (object? o1, object? o2)
 		{
 			if (o1 == o2)
 				return true;

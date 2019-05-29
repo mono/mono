@@ -35,15 +35,24 @@ namespace System.Reflection.Emit
         internal ModuleBuilder() => throw new PlatformNotSupportedException();
         public override System.Reflection.Assembly Assembly { get { throw new PlatformNotSupportedException(); } }
         public override string FullyQualifiedName { get { throw new PlatformNotSupportedException(); } }
+        public override int MetadataToken { get { throw new PlatformNotSupportedException(); } }
+        public override System.Guid ModuleVersionId { get { throw new PlatformNotSupportedException(); } }
         public override string Name { get { throw new PlatformNotSupportedException(); } }
+        public override string ScopeName { get { throw new PlatformNotSupportedException(); } }
         public void CreateGlobalFunctions() => throw new PlatformNotSupportedException();
+        public System.Diagnostics.SymbolStore.ISymbolDocumentWriter DefineDocument (string url, System.Guid language, System.Guid languageVendor, System.Guid documentType) => throw new PlatformNotSupportedException ();
         public System.Reflection.Emit.EnumBuilder DefineEnum(string name, System.Reflection.TypeAttributes visibility, System.Type underlyingType) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.MethodBuilder DefineGlobalMethod(string name, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, System.Type returnType, System.Type[] parameterTypes) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.MethodBuilder DefineGlobalMethod(string name, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, System.Type returnType, System.Type[] requiredReturnTypeCustomModifiers, System.Type[] optionalReturnTypeCustomModifiers, System.Type[] parameterTypes, System.Type[][] requiredParameterTypeCustomModifiers, System.Type[][] optionalParameterTypeCustomModifiers) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.MethodBuilder DefineGlobalMethod(string name, System.Reflection.MethodAttributes attributes, System.Type returnType, System.Type[] parameterTypes) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.FieldBuilder DefineInitializedData(string name, byte[] data, System.Reflection.FieldAttributes attributes) { throw new PlatformNotSupportedException(); }
+        public void DefineManifestResource (string name, System.IO.Stream stream, System.Reflection.ResourceAttributes attribute) => throw new PlatformNotSupportedException ();
         public System.Reflection.Emit.MethodBuilder DefinePInvokeMethod(string name, string dllName, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, System.Type returnType, System.Type[] parameterTypes, System.Runtime.InteropServices.CallingConvention nativeCallConv, System.Runtime.InteropServices.CharSet nativeCharSet) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.MethodBuilder DefinePInvokeMethod(string name, string dllName, string entryName, System.Reflection.MethodAttributes attributes, System.Reflection.CallingConventions callingConvention, System.Type returnType, System.Type[] parameterTypes, System.Runtime.InteropServices.CallingConvention nativeCallConv, System.Runtime.InteropServices.CharSet nativeCharSet) { throw new PlatformNotSupportedException(); }
+        public System.Resources.IResourceWriter DefineResource (string name, string description) => throw new PlatformNotSupportedException ();
+        public System.Resources.IResourceWriter DefineResource (string name, string description, System.Reflection.ResourceAttributes attribute) => throw new PlatformNotSupportedException ();
+        public void DefineUnmanagedResource (byte[] resource) => throw new PlatformNotSupportedException ();
+        public void DefineUnmanagedResource (string resourceFileName) => throw new PlatformNotSupportedException ();
         public System.Reflection.Emit.TypeBuilder DefineType(string name) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.TypeBuilder DefineType(string name, System.Reflection.TypeAttributes attr) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.TypeBuilder DefineType(string name, System.Reflection.TypeAttributes attr, System.Type parent) { throw new PlatformNotSupportedException(); }
@@ -57,18 +66,38 @@ namespace System.Reflection.Emit
         public System.Reflection.Emit.MethodToken GetArrayMethodToken(System.Type arrayClass, string methodName, System.Reflection.CallingConventions callingConvention, System.Type returnType, System.Type[] parameterTypes) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.MethodToken GetConstructorToken(System.Reflection.ConstructorInfo con) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.MethodToken GetConstructorToken(System.Reflection.ConstructorInfo constructor, System.Collections.Generic.IEnumerable<System.Type> optionalParameterTypes) { throw new PlatformNotSupportedException(); }
+        public override object[] GetCustomAttributes (bool inherit) { throw new PlatformNotSupportedException(); }
+        public override object[] GetCustomAttributes (System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException(); }
+        public override System.Reflection.FieldInfo GetField (string name, System.Reflection.BindingFlags bindingAttr) { throw new PlatformNotSupportedException(); }
+        public override System.Reflection.FieldInfo[] GetFields (System.Reflection.BindingFlags bindingFlags) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.FieldToken GetFieldToken(System.Reflection.FieldInfo field) { throw new PlatformNotSupportedException(); }
         public override int GetHashCode() { throw new PlatformNotSupportedException(); }
+        protected override System.Reflection.MethodInfo GetMethodImpl (string name, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Reflection.CallingConventions callConvention, System.Type[] types, System.Reflection.ParameterModifier[] modifiers) { throw new PlatformNotSupportedException(); }
+        public override System.Reflection.MethodInfo[] GetMethods (System.Reflection.BindingFlags bindingFlags) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.MethodToken GetMethodToken(System.Reflection.MethodInfo method) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.MethodToken GetMethodToken(System.Reflection.MethodInfo method, System.Collections.Generic.IEnumerable<System.Type> optionalParameterTypes) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.SignatureToken GetSignatureToken(byte[] sigBytes, int sigLength) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.SignatureToken GetSignatureToken(System.Reflection.Emit.SignatureHelper sigHelper) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.StringToken GetStringConstant(string str) { throw new PlatformNotSupportedException(); }
+        public System.Diagnostics.SymbolStore.ISymbolWriter GetSymWriter () => throw new PlatformNotSupportedException ();
+        public override System.Type GetType (string className) { throw new PlatformNotSupportedException(); }
+        public override System.Type GetType (string className, bool ignoreCase) { throw new PlatformNotSupportedException(); }
+        public override System.Type GetType (string className, bool throwOnError, bool ignoreCase) { throw new PlatformNotSupportedException(); }
+        public override System.Type[] GetTypes () { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.TypeToken GetTypeToken(string name) { throw new PlatformNotSupportedException(); }
         public System.Reflection.Emit.TypeToken GetTypeToken(System.Type type) { throw new PlatformNotSupportedException(); }
+        public override bool IsDefined (System.Type attributeType, bool inherit) { throw new PlatformNotSupportedException(); }
+        public override bool IsResource () { throw new PlatformNotSupportedException(); }
         public bool IsTransient() { throw new PlatformNotSupportedException(); }
+        public override System.Reflection.FieldInfo ResolveField (int metadataToken, System.Type[] genericTypeArguments, System.Type[] genericMethodArguments) { throw new PlatformNotSupportedException(); }
+        public override System.Reflection.MemberInfo ResolveMember (int metadataToken, System.Type[] genericTypeArguments, System.Type[] genericMethodArguments) { throw new PlatformNotSupportedException(); }
+        public override System.Reflection.MethodBase ResolveMethod (int metadataToken, System.Type[] genericTypeArguments, System.Type[] genericMethodArguments) { throw new PlatformNotSupportedException(); }
+        public override byte[] ResolveSignature (int metadataToken) { throw new PlatformNotSupportedException(); }
+        public override string ResolveString (int metadataToken) { throw new PlatformNotSupportedException(); }
+        public override System.Type ResolveType (int metadataToken, System.Type[] genericTypeArguments, System.Type[] genericMethodArguments) { throw new PlatformNotSupportedException(); }
         public void SetCustomAttribute(System.Reflection.ConstructorInfo con, byte[] binaryAttribute) => throw new PlatformNotSupportedException();
         public void SetCustomAttribute(System.Reflection.Emit.CustomAttributeBuilder customBuilder) => throw new PlatformNotSupportedException();
+        public void SetSymCustomAttribute (string name, byte[] data) => throw new PlatformNotSupportedException ();
         public void SetUserEntryPoint(System.Reflection.MethodInfo entryPoint) => throw new PlatformNotSupportedException();
     }
 

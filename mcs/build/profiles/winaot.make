@@ -23,6 +23,7 @@ PROFILE_MCS_FLAGS = \
 	-d:FULL_AOT_RUNTIME \
 	-d:DISABLE_COM \
 	-d:WIN_PLATFORM \
+	-d:WINAOT \
 	-nowarn:1699 \
 	-nostdlib \
 	$(PLATFORM_DEBUG_FLAGS)
@@ -39,5 +40,4 @@ MOBILE_PROFILE = yes
 NO_VTS_TEST = yes
 NO_SRE=1
 
-# Note need for trailing comma. If you add, keep it
-PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking,PKITS,
+PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking PKITS

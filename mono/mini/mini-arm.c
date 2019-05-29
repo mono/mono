@@ -427,8 +427,8 @@ emit_save_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset)
 	if (mono_arch_have_fast_tls () && mono_tls_get_tls_offset (TLS_KEY_LMF_ADDR) != -1) {
 		code = emit_tls_get (code, ARMREG_R0, mono_tls_get_tls_offset (TLS_KEY_LMF_ADDR));
 	} else {
-		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL,
-							 (gpointer)"mono_tls_get_lmf_addr");
+		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+							 GUINT_TO_POINTER (MONO_JIT_ICALL_mono_tls_get_lmf_addr));
 		code = emit_call_seq (cfg, code);
 	}
 	/* we build the MonoLMF structure on the stack - see mini-arm.h */
@@ -2369,16 +2369,7 @@ mono_arch_get_llvm_call_info (MonoCompile *cfg, MonoMethodSignature *sig)
 			break;
 		case RegTypeStructByVal: {
 			lainfo->storage = LLVMArgAsIArgs;
-			int slotsize;
-#ifdef TARGET_WATCHOS
-			/* slotsize=4 would work for armv7k, however arm64_32 allows
-			 * passing structs with sizes up to 8 bytes in a single register.
-			 * On armv7k slotsize=8 boils down to the same generated native
-			 * code by LLVM, so it's okay. */
-			slotsize = 8;
-#else
-			slotsize = eabi_supported && ainfo->align == 8 ? 8 : 4;
-#endif
+			int slotsize = eabi_supported && ainfo->align == 8 ? 8 : 4;
 			lainfo->nslots = ALIGN_TO (ainfo->struct_size, slotsize) / slotsize;
 			lainfo->esize = slotsize;
 			break;
@@ -4260,8 +4251,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	cpos = bb->max_offset;
 
     if (mono_break_at_bb_method && mono_method_desc_full_match (mono_break_at_bb_method, cfg->method) && bb->block_num == mono_break_at_bb_bb_num) {
-		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-							 (gpointer)"mono_break");
+		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+							 GUINT_TO_POINTER (MONO_JIT_ICALL_mono_break));
 		code = emit_call_seq (cfg, code);
 	}
 
@@ -4586,8 +4577,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			//*(int*)code = 0xef9f0001;
 			//code += 4;
 			//ARM_DBRK (code);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-								 (gpointer)"mono_break");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+								 GUINT_TO_POINTER (MONO_JIT_ICALL_mono_break));
 			code = emit_call_seq (cfg, code);
 			break;
 		case OP_RELAXED_NOP:
@@ -5226,8 +5217,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* Uninitialized case */
 			g_assert (ins->sreg1 == ARMREG_R0);
 
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL,
-								 (gpointer)"mono_generic_class_init");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+								 GUINT_TO_POINTER (MONO_JIT_ICALL_mono_generic_class_init));
 			code = emit_call_seq (cfg, code);
 
 			/* Initialized case */
@@ -5334,16 +5325,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_THROW: {
 			if (ins->sreg1 != ARMREG_R0)
 				ARM_MOV_REG_REG (code, ARMREG_R0, ins->sreg1);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_throw_exception");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_throw_exception));
 			code = emit_call_seq (cfg, code);
 			break;
 		}
 		case OP_RETHROW: {
 			if (ins->sreg1 != ARMREG_R0)
 				ARM_MOV_REG_REG (code, ARMREG_R0, ins->sreg1);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, 
-					     (gpointer)"mono_arch_rethrow_exception");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_rethrow_exception));
 			code = emit_call_seq (cfg, code);
 			break;
 		}
@@ -6046,7 +6037,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ARM_CMP_REG_IMM (code, ARMREG_IP, 0, 0);
 			buf [0] = code;
 			ARM_B_COND (code, ARMCOND_EQ, 0);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, "mono_threads_state_poll");
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_threads_state_poll));
 			code = emit_call_seq (cfg, code);
 			arm_patch (buf [0], code);
 			break;
@@ -6081,9 +6072,9 @@ void
 mono_arch_register_lowlevel_calls (void)
 {
 	/* The signature doesn't matter */
-	mono_register_jit_icall (mono_arm_throw_exception, "mono_arm_throw_exception", mono_icall_sig_void, TRUE);
-	mono_register_jit_icall (mono_arm_throw_exception_by_token, "mono_arm_throw_exception_by_token", mono_icall_sig_void, TRUE);
-	mono_register_jit_icall (mono_arm_unaligned_stack, "mono_arm_unaligned_stack", mono_icall_sig_void, TRUE);
+	mono_register_jit_icall (mono_arm_throw_exception, mono_icall_sig_void, TRUE);
+	mono_register_jit_icall (mono_arm_throw_exception_by_token, mono_icall_sig_void, TRUE);
+	mono_register_jit_icall (mono_arm_unaligned_stack, mono_icall_sig_void, TRUE);
 }
 
 #define patch_lis_ori(ip,val) do {\
@@ -6115,10 +6106,6 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 	case MONO_PATCH_INFO_IP:
 		g_assert_not_reached ();
 		patch_lis_ori (ip, ip);
-		break;
-	case MONO_PATCH_INFO_METHOD_REL:
-		g_assert_not_reached ();
-		*((gpointer *)(ip)) = target;
 		break;
 	case MONO_PATCH_INFO_METHODCONST:
 	case MONO_PATCH_INFO_CLASS:
@@ -6315,7 +6302,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			ARM_MOV_REG_IMM8 (code, ARMREG_R0, 0);
 		else
 			code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)cfg->method);
-		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL, "mono_arm_unaligned_stack");
+		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arm_unaligned_stack));
 		code = emit_call_seq (cfg, code);
 		arm_patch (buf [0], code);
 	}
@@ -6839,8 +6826,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 			ARM_MOV_REG_REG (code, ARMREG_R1, ARMREG_LR);
 			ARM_LDR_IMM (code, ARMREG_R0, ARMREG_PC, 0);
-			patch_info->type = MONO_PATCH_INFO_JIT_ICALL;
-			patch_info->data.name = "mono_arch_throw_corlib_exception";
+			patch_info->type = MONO_PATCH_INFO_JIT_ICALL_ID;
+			patch_info->data.jit_icall_id = MONO_JIT_ICALL_mono_arch_throw_corlib_exception;
 			patch_info->ip.i = code - cfg->native_code;
 			ARM_BL (code, 0);
 			cfg->thunk_area += THUNK_SIZE;

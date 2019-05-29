@@ -45,6 +45,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/mono-ptr-array.h>
+#include <mono/metadata/mono-hash-internals.h>
 #include <mono/utils/mono-string.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/checked-build.h>
@@ -500,7 +501,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	mono_loader_lock (); /*FIXME mono_class_init_internal and mono_class_vtable acquire it*/
 	mono_domain_lock (domain);
 	if (!domain->type_hash)
-		domain->type_hash = mono_g_hash_table_new_type ((GHashFunc)mono_metadata_type_hash, 
+		domain->type_hash = mono_g_hash_table_new_type_internal ((GHashFunc)mono_metadata_type_hash, 
 				(GCompareFunc)mono_metadata_type_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Reflection Type Table");
 	if ((res = (MonoReflectionType *)mono_g_hash_table_lookup (domain->type_hash, type))) {
 		mono_domain_unlock (domain);
@@ -523,7 +524,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 			mono_loader_unlock ();
 			return NULL;
 		}
-		mono_g_hash_table_insert (domain->type_hash, type, res);
+		mono_g_hash_table_insert_internal (domain->type_hash, type, res);
 		mono_domain_unlock (domain);
 		mono_loader_unlock ();
 		return res;
@@ -566,7 +567,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	}
 
 	res->type = type;
-	mono_g_hash_table_insert (domain->type_hash, type, res);
+	mono_g_hash_table_insert_internal (domain->type_hash, type, res);
 
 	if (type->type == MONO_TYPE_VOID)
 		domain->typeof_void = (MonoObject*)res;
@@ -1042,7 +1043,7 @@ add_parameter_object_to_array (MonoDomain *domain, MonoMethod *method, MonoObjec
 	args [5] = MONO_HANDLE_RAW (member);
 	args [6] = MONO_HANDLE_RAW (mobj);
 
-	mono_runtime_invoke_handle (ctor, MONO_HANDLE_CAST (MonoObject, param), args, error);
+	mono_runtime_invoke_handle_void (ctor, MONO_HANDLE_CAST (MonoObject, param), args, error);
 	goto_if_nok (error, leave);
 
 	MONO_HANDLE_ARRAY_SETREF (dest, idx, param);
@@ -1346,7 +1347,7 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	params [3] = &init_locals_param;
 	params [4] = &sig_token_param;
 	params [5] = &max_stack_param;
-	mono_runtime_invoke_handle (ctor, MONO_HANDLE_CAST (MonoObject, ret), params, error);
+	mono_runtime_invoke_handle_void (ctor, MONO_HANDLE_CAST (MonoObject, ret), params, error);
 	mono_error_assert_ok (error);
 
 	return ret;
@@ -2648,7 +2649,7 @@ ves_icall_RuntimeMethodInfo_MakeGenericMethod_impl (MonoReflectionMethodHandle r
 		 * to the reflection objects representing their generic definitions.
 		 */
 		mono_image_lock ((MonoImage*)image);
-		mono_g_hash_table_insert (image->generic_def_objects, imethod, MONO_HANDLE_RAW (rmethod));
+		mono_g_hash_table_insert_internal (image->generic_def_objects, imethod, MONO_HANDLE_RAW (rmethod));
 		mono_image_unlock ((MonoImage*)image);
 	}
 
@@ -3163,7 +3164,7 @@ mono_class_from_mono_type_handle (MonoReflectionTypeHandle reftype)
 	return mono_class_from_mono_type_internal (MONO_HANDLE_RAW (reftype)->type);
 }
 
-// This is called by calls, it will return NULL and set pending exception (in wrapper) on failure.
+// This is called by icalls, it will return NULL and set pending exception (in wrapper) on failure.
 MonoReflectionTypeHandle
 mono_type_from_handle_impl (MonoType *handle, MonoError *error)
 {
