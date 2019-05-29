@@ -88,7 +88,7 @@ namespace System
 							return pseudoAttrs;
 						else
 							return new object [] { pseudoAttrs [i] };
-				return EmptyArray<object>.Value;
+				return Array.Empty<object> ();
 			}
 
 			return pseudoAttrs;

@@ -1,3 +1,5 @@
+#nullable disable
+
 //
 // System.Reflection.Emit/AssemblyBuilder.cs
 //
@@ -359,22 +361,6 @@ namespace System.Reflection.Emit
 			get {
 				return dir;
 			}
-		}
-
-		public void SetEntryPoint (MethodInfo entryMethod)
-		{
-			SetEntryPoint (entryMethod, PEFileKinds.ConsoleApplication);
-		}
-
-		public void SetEntryPoint (MethodInfo entryMethod, PEFileKinds fileKind)
-		{
-			if (entryMethod == null)
-				throw new ArgumentNullException ("entryMethod");
-			if (entryMethod.DeclaringType.Assembly != this)
-				throw new InvalidOperationException ("Entry method is not defined in the same assembly.");
-
-			entry_point = entryMethod;
-			pekind = fileKind;
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) 

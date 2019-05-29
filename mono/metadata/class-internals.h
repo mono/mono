@@ -817,6 +817,9 @@ mono_class_has_special_static_fields (MonoClass *klass);
 const char*
 mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_type);
 
+MonoProperty* 
+mono_class_get_property_from_name_internal (MonoClass *klass, const char *name);
+
 const char*
 mono_class_get_property_default_value (MonoProperty *property, MonoTypeEnum *def_type);
 
@@ -1221,6 +1224,9 @@ mono_class_has_variant_generic_params (MonoClass *klass);
 gboolean
 mono_class_is_variant_compatible (MonoClass *klass, MonoClass *oklass, gboolean check_for_reference_conv);
 
+gboolean 
+mono_class_is_subclass_of_internal (MonoClass *klass, MonoClass *klassc, gboolean check_interfaces);
+
 mono_bool
 mono_class_is_assignable_from_internal (MonoClass *klass, MonoClass *oklass);
 
@@ -1462,7 +1468,7 @@ gboolean
 mono_class_init_checked (MonoClass *klass, MonoError *error);
 
 MonoType*
-mono_class_enum_basetype_internal (MonoClass *klass);
+mono_class_enum_basetype_internal (MonoClass *klass) MONO_LLVM_INTERNAL;
 
 // Enum and static storage for JIT icalls.
 #include "jit-icall-reg.h"

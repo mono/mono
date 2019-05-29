@@ -39,23 +39,18 @@ namespace System.Reflection.Emit
 		public override System.Reflection.Assembly Assembly { get { throw new PlatformNotSupportedException (); } }
 		public override string AssemblyQualifiedName { get { throw new PlatformNotSupportedException (); } }
 		public override System.Type BaseType { get { throw new PlatformNotSupportedException (); } }
+		public override bool ContainsGenericParameters { get { throw new PlatformNotSupportedException (); } }
 		public override System.Reflection.MethodBase DeclaringMethod { get { throw new PlatformNotSupportedException (); } }
 		public override System.Type DeclaringType { get { throw new PlatformNotSupportedException (); } }
 		public override string FullName { get { throw new PlatformNotSupportedException (); } }
 		public override System.Reflection.GenericParameterAttributes GenericParameterAttributes { get { throw new PlatformNotSupportedException (); } }
 		public override int GenericParameterPosition { get { throw new PlatformNotSupportedException (); } }
 		public override System.Guid GUID { get { throw new PlatformNotSupportedException (); } }
-		public override bool IsByRefLike { get { throw new PlatformNotSupportedException (); } }
 		public override bool IsConstructedGenericType { get { throw new PlatformNotSupportedException (); } }
 		public override bool IsGenericParameter { get { throw new PlatformNotSupportedException (); } }
 		public override bool IsGenericType { get { throw new PlatformNotSupportedException (); } }
 		public override bool IsGenericTypeDefinition { get { throw new PlatformNotSupportedException (); } }
-		public override bool IsSecurityCritical { get { throw new PlatformNotSupportedException (); } }
-		public override bool IsSecuritySafeCritical { get { throw new PlatformNotSupportedException (); } }
-		public override bool IsSecurityTransparent { get { throw new PlatformNotSupportedException (); } }
-		public override bool IsSZArray { get { throw new PlatformNotSupportedException (); } }
 		public override bool IsTypeDefinition { get { throw new PlatformNotSupportedException (); } }
-		public override bool IsVariableBoundArray { get { throw new PlatformNotSupportedException (); } }
 		public override System.Reflection.Module Module { get { throw new PlatformNotSupportedException (); } }
 		public override string Name { get { throw new PlatformNotSupportedException (); } }
 		public override string Namespace { get { throw new PlatformNotSupportedException (); } }
@@ -65,6 +60,8 @@ namespace System.Reflection.Emit
 		public override System.RuntimeTypeHandle TypeHandle { get { throw new PlatformNotSupportedException (); } }
 		public System.Reflection.Emit.TypeToken TypeToken { get { throw new PlatformNotSupportedException (); } }
 		public override System.Type UnderlyingSystemType { get { throw new PlatformNotSupportedException (); } }
+
+		public void AddDeclarativeSecurity (System.Security.Permissions.SecurityAction action, System.Security.PermissionSet pset) { throw new PlatformNotSupportedException (); }
 		public void AddInterfaceImplementation(System.Type interfaceType) { throw new PlatformNotSupportedException (); } 
 		public System.Type CreateType() { throw new PlatformNotSupportedException (); }
 		public System.Reflection.TypeInfo CreateTypeInfo() { throw new PlatformNotSupportedException (); }
@@ -128,7 +125,8 @@ namespace System.Reflection.Emit
 		protected override bool HasElementTypeImpl() { throw new PlatformNotSupportedException (); }
 		public override object InvokeMember(string name, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, object target, object[] args, System.Reflection.ParameterModifier[] modifiers, System.Globalization.CultureInfo culture, string[] namedParameters) { throw new PlatformNotSupportedException (); }
 		protected override bool IsArrayImpl() { throw new PlatformNotSupportedException (); }
-		public override bool IsAssignableFrom(System.Type c) { throw new PlatformNotSupportedException (); }
+		public override bool IsAssignableFrom (System.Type c) { throw new PlatformNotSupportedException (); }
+		public override bool IsAssignableFrom (TypeInfo typeInfo) { throw new PlatformNotSupportedException (); }
 		protected override bool IsByRefImpl() { throw new PlatformNotSupportedException (); }
 		protected override bool IsCOMObjectImpl() { throw new PlatformNotSupportedException (); }
 		public bool IsCreated() { throw new PlatformNotSupportedException (); }
@@ -136,6 +134,7 @@ namespace System.Reflection.Emit
 		protected override bool IsPointerImpl() { throw new PlatformNotSupportedException (); }
 		protected override bool IsPrimitiveImpl() { throw new PlatformNotSupportedException (); }
 		public override bool IsSubclassOf(System.Type c) { throw new PlatformNotSupportedException (); }
+		protected override bool IsValueTypeImpl () { throw new PlatformNotSupportedException (); }
 		public override System.Type MakeArrayType() { throw new PlatformNotSupportedException (); }
 		public override System.Type MakeArrayType(int rank) { throw new PlatformNotSupportedException (); }
 		public override System.Type MakeByRefType() { throw new PlatformNotSupportedException (); }

@@ -1090,7 +1090,9 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 				ref->method = mini_get_interp_in_wrapper (sig);
 				g_free (sig);
 			} else if (subtype == WRAPPER_SUBTYPE_INTERP_LMF) {
-				MonoJitICallInfo *info = mono_find_jit_icall_by_name ((char *) p);
+				char const * const name = (const char*)p;
+				MonoJitICallInfo *info = mono_find_jit_icall_by_name (name);
+				p += strlen (name) + 1; // FIXME restrict strlen to file (on previous line)
 				g_assert (info);
 				ref->method = mini_get_interp_lmf_wrapper (info->name, (gpointer) info->func);
 			} else if (subtype == WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG) {
@@ -1144,12 +1146,11 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 		case MONO_WRAPPER_MANAGED_TO_NATIVE: {
 			MonoMethod *m;
 			int subtype = decode_value (p, &p);
-			char *name;
 
 			if (subtype == WRAPPER_SUBTYPE_ICALL_WRAPPER) {
-				name = (char*)p;
-
+				char const * const name = (const char*)p;
 				MonoJitICallInfo *info = mono_find_jit_icall_by_name (name);
+				p += strlen (name) + 1; // FIXME restrict strlen to file (on previous line)
 				g_assert (info);
 				ref->method = mono_icall_get_wrapper_method (info);
 			} else {
@@ -3773,8 +3774,6 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 		}
 		break;
 	}
-	case MONO_PATCH_INFO_JIT_ICALL://temporary
-		g_assert (!5);
 	case MONO_PATCH_INFO_LDSTR_LIT:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
@@ -3889,9 +3888,6 @@ decode_patch (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji, guin
 		if (!ji->data.klass)
 			goto cleanup;
 		ji->data.name = m_class_get_name (ji->data.klass);
-		break;
-	case MONO_PATCH_INFO_METHOD_REL:
-		ji->data.offset = decode_value (p, &p);
 		break;
 	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
 	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
@@ -5123,24 +5119,20 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 		}
 	}
 
-	g_assert (ji.type != MONO_PATCH_INFO_JIT_ICALL); //temporary
-
 	/*
 	 * The trampoline expects us to return a function descriptor on platforms which use
 	 * it, but resolve_patch_target returns a direct function pointer for some type of
 	 * patches, so have to translate between the two.
 	 * FIXME: Clean this up, but how ?
 	 */
-	if (ji.type == MONO_PATCH_INFO_ABS || ji.type == MONO_PATCH_INFO_JIT_ICALL_ID ||
-		ji.type == MONO_PATCH_INFO_JIT_ICALL //temporary
+	if (ji.type == MONO_PATCH_INFO_ABS || ji.type == MONO_PATCH_INFO_JIT_ICALL_ID
 		|| ji.type == MONO_PATCH_INFO_ICALL_ADDR
 		|| ji.type == MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR || ji.type == MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR
 		|| ji.type == MONO_PATCH_INFO_JIT_ICALL_ADDR || ji.type == MONO_PATCH_INFO_RGCTX_FETCH) {
 		/* These should already have a function descriptor */
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		/* Our function descriptors have a 0 environment, gcc created ones don't */
-		if (ji.type != MONO_PATCH_INFO_JIT_ICALL_ID &&
-				ji.type != MONO_PATCH_INFO_JIT_ICALL //temporary
+		if (ji.type != MONO_PATCH_INFO_JIT_ICALL_ID
 				&& ji.type != MONO_PATCH_INFO_JIT_ICALL_ADDR && ji.type != MONO_PATCH_INFO_ICALL_ADDR
 				&& ji.type != MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR && ji.type != MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR)
 			g_assert (((gpointer*)target) [2] == 0);
@@ -5315,11 +5307,8 @@ load_function_full (MonoAotModule *amodule, const char *name, MonoTrampInfo **ou
 
 	/* Load the code */
 
-	symbol = g_strdup_printf ("%s", name);
-	find_amodule_symbol (amodule, symbol, (gpointer *)&code);
-	g_free (symbol);
-	if (!code)
-		g_error ("Symbol '%s' not found in AOT file '%s'.\n", name, amodule->aot_name);
+	find_amodule_symbol (amodule, name, &code);
+	g_assertf (code, "Symbol '%s' not found in AOT file '%s'.\n", name, amodule->aot_name);
 
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT, "AOT: FOUND function '%s' in AOT file '%s'.", name, amodule->aot_name);
 

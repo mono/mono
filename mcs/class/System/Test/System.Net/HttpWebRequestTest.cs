@@ -53,7 +53,7 @@ namespace MonoTests.System.Net
 #endif
 		public void Proxy_Null ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.example.com");
 			Assert.IsNotNull (req.Proxy, "#1");
 			req.Proxy = null;
 			Assert.IsNull (req.Proxy, "#2");
@@ -66,7 +66,7 @@ namespace MonoTests.System.Net
 #endif
 		public void Sync ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.example.com");
 			Assert.IsNotNull (req.IfModifiedSince, "req:If Modified Since: ");
 
 			req.UserAgent = "MonoClient v1.0";
@@ -90,7 +90,7 @@ namespace MonoTests.System.Net
 #endif
 		public void AddRange ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.google.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://www.example.com");
 			req.AddRange (10);
 			req.AddRange (50, 90);
 			req.AddRange ("bytes", 100); 
@@ -2308,7 +2308,7 @@ namespace MonoTests.System.Net
 #endif
 		public void NullHost ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com");
 			req.Host = null;
 		}
 
@@ -2318,8 +2318,8 @@ namespace MonoTests.System.Net
 #endif
 		public void NoHost ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
-			Assert.AreEqual (req.Host, "go-mono.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com");
+			Assert.AreEqual (req.Host, "example.com");
 		}
 
 		[Test]
@@ -2330,7 +2330,7 @@ namespace MonoTests.System.Net
 #endif
 		public void EmptyHost ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com");
 			req.Host = "";
 		}
 
@@ -2340,10 +2340,10 @@ namespace MonoTests.System.Net
 #endif
 		public void HostAndPort ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:80");
-			Assert.AreEqual ("go-mono.com", req.Host, "#01");
-			req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:9000");
-			Assert.AreEqual ("go-mono.com:9000", req.Host, "#02");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com:80");
+			Assert.AreEqual ("example.com", req.Host, "#01");
+			req = (HttpWebRequest) WebRequest.Create ("http://example.com:9000");
+			Assert.AreEqual ("example.com:9000", req.Host, "#02");
 		}
 
 		[Test]
@@ -2356,8 +2356,8 @@ namespace MonoTests.System.Net
 				if (i == 80)
 					continue;
 				string s = i.ToString ();
-				HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com:" + s);
-				Assert.AreEqual ("go-mono.com:" + s, req.Host, "#" + s);
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com:" + s);
+				Assert.AreEqual ("example.com:" + s, req.Host, "#" + s);
 			}
 		}
 
@@ -2369,8 +2369,8 @@ namespace MonoTests.System.Net
 #endif
 		public void PortBelow ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
-			req.Host = "go-mono.com:-1";
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com");
+			req.Host = "example.com:-1";
 		}
 
 		[Test]
@@ -2381,8 +2381,8 @@ namespace MonoTests.System.Net
 #endif
 		public void PortAbove ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
-			req.Host = "go-mono.com:65536";
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com");
+			req.Host = "example.com:65536";
 		}
 
 		[Test]
@@ -2393,7 +2393,7 @@ namespace MonoTests.System.Net
 #endif
 		public void HostTooLong ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com");
 			string s = new string ('a', 100);
 			req.Host = s + "." + s + "." + s + "." + s + "." + s + "." + s; // Over 255 bytes
 		}
@@ -2402,7 +2402,7 @@ namespace MonoTests.System.Net
 		[Category ("NotWorking")] // #5490
 		public void InvalidNamesThatWork ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com");
 			req.Host = "-";
 			req.Host = "-.-";
 			req.Host = "á";
@@ -2415,7 +2415,7 @@ namespace MonoTests.System.Net
 #endif
 		public void NoDate ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com");
 			Assert.AreEqual (DateTime.MinValue, req.Date);
 		}
 
@@ -2425,7 +2425,7 @@ namespace MonoTests.System.Net
 #endif
 		public void UtcDate ()
 		{
-			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://go-mono.com");
+			HttpWebRequest req = (HttpWebRequest) WebRequest.Create ("http://example.com");
 			req.Date = DateTime.UtcNow;
 			DateTime date = req.Date;
 			Assert.AreEqual (DateTimeKind.Local, date.Kind);
@@ -2443,7 +2443,7 @@ namespace MonoTests.System.Net
 			var unspecified = new DateTime (1969, 7, 21, 2, 56, 0);
 			var local = landing.ToLocalTime ();
 
-			var req = (HttpWebRequest)WebRequest.Create ("http://www.mono-project.com/");
+			var req = (HttpWebRequest)WebRequest.Create ("http://www.example.com/");
 			req.Date = landing;
 			Assert.AreEqual (DateTimeKind.Local, req.Date.Kind);
 			Assert.AreEqual (local.Ticks, req.Date.Ticks);
@@ -3223,7 +3223,7 @@ namespace MonoTests.System.Net
 		// This test is supposed to fail prior to .NET 4.0
 		public void Post_EmptyRequestStream ()
 		{
-			var wr = HttpWebRequest.Create ("http://google.com");
+			var wr = HttpWebRequest.Create ("http://example.com");
 			wr.Method = "POST";
 			wr.GetRequestStream ();
 			

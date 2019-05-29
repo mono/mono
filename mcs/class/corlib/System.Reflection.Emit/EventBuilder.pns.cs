@@ -32,6 +32,8 @@ namespace System.Reflection.Emit
 {
 	public class EventBuilder
 	{		
+		private EventBuilder () {}
+
 		public void AddOtherMethod (MethodBuilder mdBuilder)
 		{
 			throw new PlatformNotSupportedException ();

@@ -922,8 +922,8 @@ namespace MonoTests.System
 			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName (":"), "#44");
 
 			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("*"), "#45");
-			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("*.go-mono.com"), "#46");
-			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www*.go-mono.com"), "#47");
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("*.example.com"), "#46");
+			Assert.AreEqual (UriHostNameType.Unknown, Uri.CheckHostName ("www*.example.com"), "#47");
 		}
 
 		[Test]
@@ -1016,20 +1016,20 @@ namespace MonoTests.System
 		[Test]
 		public void TestEquals2 ()
 		{
-			Uri a = new Uri ("http://www.go-mono.com");
-			Uri b = new Uri ("http://www.go-mono.com");
+			Uri a = new Uri ("http://www.example.com");
+			Uri b = new Uri ("http://www.example.com");
 
 			Assert.AreEqual (a, b, "#1");
 
-			a = new Uri ("mailto:user:pwd@go-mono.com?subject=uri");
-			b = new Uri ("MAILTO:USER:PWD@GO-MONO.COM?SUBJECT=URI");
+			a = new Uri ("mailto:user:pwd@example.com?subject=uri");
+			b = new Uri ("MAILTO:USER:PWD@EXAMPLE.COM?SUBJECT=URI");
 
 			Assert.IsTrue (a != b, "#2");
-			Assert.AreEqual ("mailto:user:pwd@go-mono.com?subject=uri", a.ToString (), "#2a");
-			Assert.AreEqual ("mailto:USER:PWD@go-mono.com?SUBJECT=URI", b.ToString (), "#2b");
+			Assert.AreEqual ("mailto:user:pwd@example.com?subject=uri", a.ToString (), "#2a");
+			Assert.AreEqual ("mailto:USER:PWD@example.com?SUBJECT=URI", b.ToString (), "#2b");
 
-			a = new Uri ("http://www.go-mono.com/ports/");
-			b = new Uri ("http://www.go-mono.com/PORTS/");
+			a = new Uri ("http://www.example.com/ports/");
+			b = new Uri ("http://www.example.com/PORTS/");
 
 			Assert.IsTrue (!a.Equals (b), "#3");
 		}
@@ -1037,15 +1037,15 @@ namespace MonoTests.System
 		[Test]
 		public void CaseSensitivity ()
 		{
-			Uri mailto = new Uri ("MAILTO:USER:PWD@GO-MONO.COM?SUBJECT=URI");
+			Uri mailto = new Uri ("MAILTO:USER:PWD@EXAMPLE.COM?SUBJECT=URI");
 			Assert.AreEqual ("mailto", mailto.Scheme, "#1");
-			Assert.AreEqual ("go-mono.com", mailto.Host, "#2");
-			Assert.AreEqual ("mailto:USER:PWD@go-mono.com?SUBJECT=URI", mailto.ToString (), "#3");
+			Assert.AreEqual ("example.com", mailto.Host, "#2");
+			Assert.AreEqual ("mailto:USER:PWD@example.com?SUBJECT=URI", mailto.ToString (), "#3");
 
-			Uri http = new Uri ("HTTP://GO-MONO.COM/INDEX.HTML");
+			Uri http = new Uri ("HTTP://EXAMPLE.COM/INDEX.HTML");
 			Assert.AreEqual ("http", http.Scheme, "#4");
-			Assert.AreEqual ("go-mono.com", http.Host, "#5");
-			Assert.AreEqual ("http://go-mono.com/INDEX.HTML", http.ToString (), "#6");
+			Assert.AreEqual ("example.com", http.Host, "#5");
+			Assert.AreEqual ("http://example.com/INDEX.HTML", http.ToString (), "#6");
 
 			// IPv6 Address
 			Uri ftp = new Uri ("FTP://[::ffFF:169.32.14.5]/");
@@ -1736,39 +1736,39 @@ namespace MonoTests.System
 		[Test]
 		public void GetComponents_AbsoluteUri ()
 		{
-			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263");
+			Uri uri = new Uri ("http://example.com/list?id=1%262&sort=asc#fragment%263");
 
-			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("http://example.com/list?id=1%262&sort=asc#fragment%263", uri.AbsoluteUri, "AbsoluteUri");
 
 			string safe = uri.GetComponents (UriComponents.AbsoluteUri, UriFormat.SafeUnescaped);
-			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263", safe, "SafeUnescaped");
+			Assert.AreEqual ("http://example.com/list?id=1%262&sort=asc#fragment%263", safe, "SafeUnescaped");
 
 			string unescaped = uri.GetComponents (UriComponents.AbsoluteUri, UriFormat.Unescaped);
-			Assert.AreEqual ("http://mono-project.com/list?id=1&2&sort=asc#fragment&3", unescaped, "Unescaped");
+			Assert.AreEqual ("http://example.com/list?id=1&2&sort=asc#fragment&3", unescaped, "Unescaped");
 
 			string escaped = uri.GetComponents (UriComponents.AbsoluteUri, UriFormat.UriEscaped);
-			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263", escaped, "UriEscaped");
+			Assert.AreEqual ("http://example.com/list?id=1%262&sort=asc#fragment%263", escaped, "UriEscaped");
 		}
 
 		[Test]
 		public void GetComponents_HttpRequestUrl ()
 		{
-			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263");
+			Uri uri = new Uri ("http://example.com/list?id=1%262&sort=asc#fragment%263");
 
 			string safe = uri.GetComponents (UriComponents.HttpRequestUrl, UriFormat.SafeUnescaped);
-			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc", safe, "SafeUnescaped");
+			Assert.AreEqual ("http://example.com/list?id=1%262&sort=asc", safe, "SafeUnescaped");
 
 			string unescaped = uri.GetComponents (UriComponents.HttpRequestUrl, UriFormat.Unescaped);
-			Assert.AreEqual ("http://mono-project.com/list?id=1&2&sort=asc", unescaped, "Unescaped");
+			Assert.AreEqual ("http://example.com/list?id=1&2&sort=asc", unescaped, "Unescaped");
 
 			string escaped = uri.GetComponents (UriComponents.HttpRequestUrl, UriFormat.UriEscaped);
-			Assert.AreEqual ("http://mono-project.com/list?id=1%262&sort=asc", escaped, "UriEscaped");
+			Assert.AreEqual ("http://example.com/list?id=1%262&sort=asc", escaped, "UriEscaped");
 		}
 
 		[Test]
 		public void GetComponents_KeepDelimiter ()
 		{
-			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263");
+			Uri uri = new Uri ("http://example.com/list?id=1%262&sort=asc#fragment%263");
 
 			string safe = uri.GetComponents (UriComponents.KeepDelimiter, UriFormat.SafeUnescaped);
 			Assert.AreEqual (String.Empty, safe, "SafeUnescaped");
@@ -1783,22 +1783,22 @@ namespace MonoTests.System
 		[Test]
 		public void GetComponents_StrongAuthority ()
 		{
-			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc#fragment%263");
+			Uri uri = new Uri ("http://example.com/list?id=1%262&sort=asc#fragment%263");
 
 			string safe = uri.GetComponents (UriComponents.StrongAuthority, UriFormat.SafeUnescaped);
-			Assert.AreEqual ("mono-project.com:80", safe, "SafeUnescaped");
+			Assert.AreEqual ("example.com:80", safe, "SafeUnescaped");
 
 			string unescaped = uri.GetComponents (UriComponents.StrongAuthority, UriFormat.Unescaped);
-			Assert.AreEqual ("mono-project.com:80", unescaped, "Unescaped");
+			Assert.AreEqual ("example.com:80", unescaped, "Unescaped");
 
 			string escaped = uri.GetComponents (UriComponents.StrongAuthority, UriFormat.UriEscaped);
-			Assert.AreEqual ("mono-project.com:80", escaped, "UriEscaped");
+			Assert.AreEqual ("example.com:80", escaped, "UriEscaped");
 		}
 
 		[Test]
 		public void GetComponents_Path ()
 		{
-			Uri uri1 = new Uri ("http://mono-project.com/Main%20Page");
+			Uri uri1 = new Uri ("http://example.com/Main%20Page");
 			Assert.AreEqual ("/Main Page", uri1.LocalPath, "Path1");
 
 			string safe = uri1.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped);
@@ -1811,7 +1811,7 @@ namespace MonoTests.System
 			Assert.AreEqual ("Main%20Page", escaped, "UriEscaped1");
 
 			// same result is unescaped original string
-			Uri uri2 = new Uri ("http://mono-project.com/Main Page");
+			Uri uri2 = new Uri ("http://example.com/Main Page");
 			Assert.AreEqual ("/Main Page", uri2.LocalPath, "Path2");
 
 			safe = uri2.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped);
@@ -1827,7 +1827,7 @@ namespace MonoTests.System
 		[Test]
 		public void GetComponents_PathAndQuery ()
 		{
-			Uri uri = new Uri ("http://mono-project.com/MåÏn Påge?id=1%262&sort=asc");
+			Uri uri = new Uri ("http://example.com/MåÏn Påge?id=1%262&sort=asc");
 
 			Assert.AreEqual ("/M%C3%A5%C3%8Fn%20P%C3%A5ge?id=1%262&sort=asc", uri.PathAndQuery, "PathAndQuery");
 
@@ -1844,7 +1844,7 @@ namespace MonoTests.System
 		[Test]
 		public void GetComponents_Query ()
 		{
-			Uri uri = new Uri ("http://mono-project.com/list?id=1%262&sort=asc");
+			Uri uri = new Uri ("http://example.com/list?id=1%262&sort=asc");
 
 			Assert.AreEqual ("?id=1%262&sort=asc", uri.Query, "Query");
 			
@@ -1861,7 +1861,7 @@ namespace MonoTests.System
 		[Test]
 		public void GetComponents_Fragment ()
 		{
-			Uri uri = new Uri ("http://mono-project.com/list#id=1%262&sort=asc");
+			Uri uri = new Uri ("http://example.com/list#id=1%262&sort=asc");
 
 			Assert.AreEqual ("#id=1%262&sort=asc", uri.Fragment, "Fragment");
 

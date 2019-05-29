@@ -1,4 +1,4 @@
-using System;
+#nullable disable
 using System.Runtime.InteropServices;
 
 namespace Mono

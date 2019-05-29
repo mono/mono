@@ -88,7 +88,7 @@ namespace System.Reflection
 				attrsData [count++] = new CustomAttributeData (
 					(typeof (FieldOffsetAttribute)).GetConstructor (new[] { typeof (int) }),
 					ctorArgs,
-					EmptyArray<CustomAttributeNamedArgument>.Value);
+					Array.Empty<CustomAttributeNamedArgument> ());
 			}
 
 			if (marshalAs != null) {
@@ -96,7 +96,7 @@ namespace System.Reflection
 				attrsData [count++] = new CustomAttributeData (
 					(typeof (MarshalAsAttribute)).GetConstructor (new[] { typeof (UnmanagedType) }),
 					ctorArgs,
-					EmptyArray<CustomAttributeNamedArgument>.Value);//FIXME Get named params
+					Array.Empty<CustomAttributeNamedArgument> ());//FIXME Get named params
 			}
 
 			return attrsData;

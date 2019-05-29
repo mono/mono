@@ -27,7 +27,7 @@
 				<cc1:GHTSubTest id="GHTSubTest1" runat="server" Height="72px" Width="553px">
 					<asp:Repeater id="Repeater1" runat="server">
 						<ItemTemplate>
-							<asp:HyperLink id="hl_name" NavigateUrl="http://www.google.com/" Runat="server">
+							<asp:HyperLink id="hl_name" NavigateUrl="http://www.example.com/" Runat="server">
 								<%# Container.DataItem %>
 							</asp:HyperLink>
 						</ItemTemplate>

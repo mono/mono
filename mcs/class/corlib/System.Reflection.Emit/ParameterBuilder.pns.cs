@@ -36,7 +36,7 @@ namespace System.Reflection.Emit
 		{
 		}
 
-		public int Attributes {
+		public virtual int Attributes {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -60,13 +60,13 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public string Name {
+		public virtual string Name {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		public int Position {
+		public virtual int Position {
 			get {
 				throw new PlatformNotSupportedException ();
 			}
@@ -86,6 +86,9 @@ namespace System.Reflection.Emit
 		{
 			throw new PlatformNotSupportedException ();
 		}
+
+		[Obsolete ("An alternate API is available: Emit the MarshalAs custom attribute instead.")]
+		public virtual void SetMarshal (UnmanagedMarshal unmanagedMarshal) => throw new PlatformNotSupportedException ();
 
 		public virtual ParameterToken GetToken() => throw new PlatformNotSupportedException ();
 	}

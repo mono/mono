@@ -1,10 +1,11 @@
+#nullable disable
 using System.Reflection;
 
 namespace System
 {
 	partial class Attribute
 	{
-		static Attribute GetAttr (ICustomAttributeProvider element, Type attributeType, bool inherit)
+		static Attribute? GetAttr (ICustomAttributeProvider element, Type attributeType, bool inherit)
 		{
 			if (attributeType == null)
 				throw new ArgumentNullException (nameof (attributeType));

@@ -139,7 +139,7 @@ namespace MonoTests.System.Net.Http
 			h.Dispose ();
 			var c = new HttpClient (h);
 			try {
-				c.GetAsync ("http://google.com").Wait ();
+				c.GetAsync ("http://www.example.com").Wait ();
 				Assert.Fail ("#1");
 			} catch (AggregateException e) {
 				Assert.IsTrue (e.InnerException is ObjectDisposedException, "#2");

@@ -35,11 +35,11 @@ namespace MonoTests.System.Net
 			
 			// A new, but empty file has been created. This is a test case
 			// for bug 81005
-			wc.DownloadFile("http://google.com/", filename);
+			wc.DownloadFile("http://example.com/", filename);
 			
 			// Now, remove the file and attempt to download again.
 			File.Delete(filename);
-			wc.DownloadFile("http://google.com/", filename);
+			wc.DownloadFile("http://example.com/", filename);
 		}
 
 		[Test]
@@ -651,7 +651,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadData ("http://www.mono-project.com",
+				wc.UploadData ("http://www.example.com",
 					(byte []) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -709,7 +709,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadData (new Uri ("http://www.mono-project.com"),
+				wc.UploadData (new Uri ("http://www.example.com"),
 					(byte []) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -768,7 +768,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadData ("http://www.mono-project.com",
+				wc.UploadData ("http://www.example.com",
 					"POST", (byte []) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -826,7 +826,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadData (new Uri ("http://www.mono-project.com"),
+				wc.UploadData (new Uri ("http://www.example.com"),
 					"POST", (byte []) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -1529,7 +1529,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadValues ("http://www.mono-project.com",
+				wc.UploadValues ("http://www.example.com",
 					(NameValueCollection) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -1589,7 +1589,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadValues (new Uri ("http://www.mono-project.com"),
+				wc.UploadValues (new Uri ("http://www.example.com"),
 					(NameValueCollection) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -1649,7 +1649,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadValues ("http://www.mono-project.com",
+				wc.UploadValues ("http://www.example.com",
 					"POST", (NameValueCollection) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
@@ -1710,7 +1710,7 @@ namespace MonoTests.System.Net
 		{
 			WebClient wc = new WebClient ();
 			try {
-				wc.UploadValues (new Uri ("http://www.mono-project.com"),
+				wc.UploadValues (new Uri ("http://www.example.com"),
 					"POST", (NameValueCollection) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {

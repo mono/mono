@@ -96,9 +96,15 @@ namespace System.Threading
 
 		public static bool BindHandle (IntPtr osHandle) => throw new NotImplementedException ();
 		public static bool BindHandle (System.Runtime.InteropServices.SafeHandle osHandle)  => throw new NotImplementedException ();
+
+		[CLSCompliant (false)]
 		public static unsafe bool UnsafeQueueNativeOverlapped (NativeOverlapped* overlapped)  => throw new NotImplementedException ();
 
 		static long PendingUnmanagedWorkItemCount => 0;
+		
+		public static long CompletedWorkItemCount => throw new PlatformNotSupportedException ();
+
+		public static int ThreadCount => throw new NotImplementedException ();
 	}
 
 	internal static class _ThreadPoolWaitCallback
