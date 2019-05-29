@@ -325,6 +325,13 @@ typedef struct {
 	void (*thread_state_init) (MonoThreadUnwindState *tctx);
 } MonoThreadInfoRuntimeCallbacks;
 
+#define MONO_INIT_THREAD_INFO_RUNTIME_CALLBACKS { \
+	mono_setup_async_callback,                \
+	mono_thread_state_init_from_sigctx,       \
+	mono_thread_state_init_from_handle,       \
+	mono_thread_state_init,                   \
+};
+
 //Not using 0 and 1 to ensure callbacks are not returning bad data
 typedef enum {
 	MonoResumeThread = 0x1234,
@@ -407,10 +414,11 @@ void
 mono_thread_info_signals_init (void);
 
 void
-mono_thread_info_runtime_init (MonoThreadInfoRuntimeCallbacks *callbacks);
+mono_thread_info_runtime_init (const MonoThreadInfoRuntimeCallbacks *callbacks);
 
-MonoThreadInfoRuntimeCallbacks *
-mono_threads_get_runtime_callbacks (void);
+extern const MonoThreadInfoRuntimeCallbacks *mono_runtime_callbacks;
+
+#define mono_threads_get_runtime_callbacks() (mono_runtime_callbacks)
 
 MONO_API int
 mono_thread_info_register_small_id (void);

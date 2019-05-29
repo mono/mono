@@ -1987,7 +1987,16 @@ thread_state_init (MonoThreadUnwindState *ctx)
 int
 main (int argc, char *argv [])
 {
-	MonoThreadInfoRuntimeCallbacks ticallbacks;
+	static const MonoThreadInfoRuntimeCallbacks ticallbacks = {
+		NULL, // setup_async_callback
+		NULL, // thread_state_init_from_sigctx
+		NULL, // thread_state_init_from_handle
+		thread_state_init,
+	};
+	g_assert (ticallbacks.setup_async_callback == NULL &&
+		  ticallbacks.thread_state_init_from_sigctx == NULL &&
+		  ticallbacks.thread_state_init_from_handle == NULL &&
+		  ticallbacks.thread_state_init == thread_state_init);
 
 	GList *input_files = NULL, *l;
 	int i, j;
@@ -2042,8 +2051,6 @@ main (int argc, char *argv [])
 	CHECKED_MONO_INIT ();
 	mono_counters_init ();
 	mono_tls_init_runtime_keys ();
-	memset (&ticallbacks, 0, sizeof (ticallbacks));
-	ticallbacks.thread_state_init = thread_state_init;
 #ifndef HOST_WIN32
 	mono_w32handle_init ();
 #endif

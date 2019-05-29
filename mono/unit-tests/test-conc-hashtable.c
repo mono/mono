@@ -332,13 +332,21 @@ test_conc_hashtable_main (void);
 int
 test_conc_hashtable_main (void)
 {
-	MonoThreadInfoRuntimeCallbacks ticallbacks;
+	static const MonoThreadInfoRuntimeCallbacks ticallbacks = {
+		NULL, // setup_async_callback
+		NULL, // thread_state_init_from_sigctx
+		NULL, // thread_state_init_from_handle
+		thread_state_init,
+	};
+	g_assert (ticallbacks.setup_async_callback == NULL &&
+		  ticallbacks.thread_state_init_from_sigctx == NULL &&
+		  ticallbacks.thread_state_init_from_handle == NULL &&
+		  ticallbacks.thread_state_init == thread_state_init);
+
 	int res = 0;
 
 	CHECKED_MONO_INIT ();
 	mono_thread_info_init (sizeof (MonoThreadInfo));
-	memset (&ticallbacks, 0, sizeof (ticallbacks));
-	ticallbacks.thread_state_init = thread_state_init;
 	mono_thread_info_runtime_init (&ticallbacks);
 #ifndef HOST_WIN32
 	mono_w32handle_init ();
