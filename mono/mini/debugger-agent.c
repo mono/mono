@@ -1092,9 +1092,11 @@ mono_debugger_get_generate_debug_info ()
 }
 
 MONO_API void
-mono_debugger_disconnect (const char *message)
+mono_debugger_disconnect ()
 {
 	stop_debugger_thread ();
+	transport_connect (agent_config.address);
+	start_debugger_thread ();
 }
 
 typedef void (*MonoDebuggerAttachFunc)(gboolean attached);
