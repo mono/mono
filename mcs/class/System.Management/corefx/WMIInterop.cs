@@ -750,7 +750,8 @@ namespace System.Management
     interface IEnumWbemClassObject
     {
         [PreserveSig] int Reset_();
-        [PreserveSig] int Next_([In] Int32 lTimeout, [In] UInt32 uCount, [In][Out][MarshalAs(UnmanagedType.LPArray)] IWbemClassObject_DoNotMarshal[] apObjects, [Out] out UInt32 puReturned);
+        // [PreserveSig] int Next_([In] Int32 lTimeout, [In] UInt32 uCount, [In][Out][MarshalAs(UnmanagedType.LPArray)] IWbemClassObject_DoNotMarshal[] apObjects, [Out] out UInt32 puReturned);
+        [PreserveSig] int Next_([In] Int32 lTimeout, [In] UInt32 uCount, out IWbemClassObject_DoNotMarshal obj, [Out] out UInt32 puReturned);
         [PreserveSig] int NextAsync_([In] UInt32 uCount, [In][MarshalAs(UnmanagedType.Interface)]  IWbemObjectSink   pSink);
         [PreserveSig] int Clone_([Out][MarshalAs(UnmanagedType.Interface)]  out IEnumWbemClassObject   ppEnum);
         [PreserveSig] int Skip_([In] Int32 lTimeout, [In] UInt32 nCount);

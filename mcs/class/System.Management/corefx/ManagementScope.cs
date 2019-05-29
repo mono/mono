@@ -10,6 +10,7 @@ using System.Reflection;
 using System.ComponentModel.Design.Serialization;
 using System.Security;
 using System.Security.Permissions;
+using System.Collections.Specialized;
 using Microsoft.Win32;
 
 namespace System.Management
@@ -152,7 +153,57 @@ namespace System.Management
 
         static internal int GetNames_f(int vFunc, IntPtr pWbemClassObject, [In][MarshalAs(UnmanagedType.LPWStr)]  string   wszQualifierName, [In] Int32 lFlags, [In] ref object pQualifierVal, [Out][MarshalAs(UnmanagedType.SafeArray, SafeArraySubType=VarEnum.VT_BSTR)]  out string[]   pNames)
         {
-            return wbemobj(pWbemClassObject).GetNames_(wszQualifierName, lFlags, ref pQualifierVal, out pNames);
+            /* Marshalling the array of names does not work in mono, so instead
+             * of calling GetNames_() we must enumerate through the names and
+             * build the list.
+             */
+            // return wbemobj(pWbemClassObject).GetNames_(wszQualifierName, lFlags, ref pQualifierVal, out pNames);
+
+            IWbemClassObject_DoNotMarshal   clsobj  = wbemobj(pWbemClassObject);
+            IWbemClassObject_DoNotMarshal   newobj  = null;
+            StringCollection                names   = new StringCollection();
+            int                             status;
+
+            /* Attempt to clone to attempt to avoid breaking any enumeration in progress */
+            status = clsobj.Clone_(out newobj);
+
+            if (null == newobj)
+                /* Clone is not implemented in wine */
+                newobj = clsobj;
+
+            newobj.BeginEnumeration_(0);
+            for (;;) {
+                string  name        = null;
+                Int32   pType       = 0;
+                Int32   plFlavor    = 0;
+
+                status = newobj.Next_(0, ref name, null, ref pType, ref plFlavor);
+                if (status < 0 || status == (int) tag_WBEMSTATUS.WBEM_S_NO_MORE_DATA)
+                    break;
+
+                /* Apply the flags */
+                if ((int) tag_WBEM_FLAVOR_TYPE.WBEM_FLAVOR_ORIGIN_SYSTEM == plFlavor) {
+                    if ((int) tag_WBEM_CONDITION_FLAG_TYPE.WBEM_FLAG_NONSYSTEM_ONLY != lFlags) {
+                        names.Add(name);
+                    }
+                } else {
+                    if ((int) tag_WBEM_CONDITION_FLAG_TYPE.WBEM_FLAG_SYSTEM_ONLY != lFlags) {
+                        names.Add(name);
+                    }
+                }
+            }
+
+            if (status == (int) tag_WBEMSTATUS.WBEM_S_NO_MORE_DATA)
+                status = (int) tag_WBEMSTATUS.WBEM_NO_ERROR;
+
+            if (status >= 0) {
+                pNames = new String[names.Count];
+                names.CopyTo(pNames, 0);
+            } else {
+                pNames = null;
+            }
+
+            return status;
         }
 
         static internal int BeginEnumeration_f(int vFunc, IntPtr pWbemClassObject, [In] Int32 lEnumFlags)
@@ -1078,8 +1129,27 @@ namespace System.Management
         }
         internal int Next_( int lTimeout, uint uCount, IWbemClassObject_DoNotMarshal[] ppOutParams, ref uint puReturned)
         {
-            int status = (int)tag_WBEMSTATUS.WBEM_E_FAILED;
-            status = pEnumWbemClassObjectsecurityHelper.Next_( lTimeout, uCount,  ppOutParams, out puReturned);
+            int status      = (int)tag_WBEMSTATUS.WBEM_NO_ERROR;
+            uint returned   = 0;
+
+            puReturned = 0;
+            if (0 == uCount)
+                return (int)tag_WBEMSTATUS.WBEM_E_FAILED;
+
+            /* The ppOutParams argument of Next_() should be marshaled as an
+             * array but that is not working right. Marshalling a single value
+             * directly does work however.
+             *
+             * So, to work around this call Next_() repeatedly with a uCount of
+             * 1 to emulate the same end result.
+             */
+            for (int i = 0; i < uCount; i++) {
+                status = pEnumWbemClassObjectsecurityHelper.Next_( lTimeout, 1,  out ppOutParams[i], out returned);
+                puReturned += returned;
+                if ((int)tag_WBEMSTATUS.WBEM_NO_ERROR != status)
+                    break;
+            }
+
             return status;
         }
         internal int NextAsync_( uint uCount, IWbemObjectSink pSink)
