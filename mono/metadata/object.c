@@ -2051,6 +2051,20 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 	interface_offsets = alloc_vtable (domain, vtable_size, imt_table_bytes);
 	vt = (MonoVTable*) ((char*)interface_offsets + imt_table_bytes);
+	// extend by dsqiu
+	vt->alloc_size = vtable_size;
+	// NOTICE: copy from alloc_vtable
+	size_t alloc_offset;
+	if (sizeof(gpointer) == 4 && (imt_table_bytes & 7)) {
+		g_assert((imt_table_bytes & 7) == 4);
+		vtable_size += 4;
+		alloc_offset = 4;
+	}
+	else {
+		alloc_offset = 0;
+	}
+	vt->alloc_start = (char*)interface_offsets - alloc_offset;
+	// extend end
 	g_assert (!((gsize)vt & 7));
 
 	vt->klass = klass;

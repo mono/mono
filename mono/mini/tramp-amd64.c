@@ -601,6 +601,9 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 #ifndef MONO_ARCH_NOMAP32BIT
 		g_assert_not_reached ();
 #endif
+		// extend by dsqiu
+		mono_domain_code_free(domain, code, size);
+		// extend end
 		far_addr = TRUE;
 		size += 16;
 		code = buf = (guint8 *)mono_domain_code_reserve_align (domain, size, 1);

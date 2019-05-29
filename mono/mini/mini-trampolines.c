@@ -1607,6 +1607,10 @@ mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, Mono
 	tramp_info = (MonoDelegateTrampInfo *)mono_domain_alloc0 (domain, sizeof (MonoDelegateTrampInfo));
 	tramp_info->invoke = invoke;
 	tramp_info->invoke_sig = mono_method_signature (invoke);
+	// extend by dsqiu
+	// 会分配内存和代码块，是全局的不需要回收
+	// todo 优化，这里会导致内存不连续
+	// extend end
 	tramp_info->impl_this = mono_arch_get_delegate_invoke_impl (mono_method_signature (invoke), TRUE);
 	tramp_info->impl_nothis = mono_arch_get_delegate_invoke_impl (mono_method_signature (invoke), FALSE);
 	tramp_info->method = method;
@@ -1617,6 +1621,10 @@ mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, Mono
 	}
 	tramp_info->invoke_impl = mono_create_specific_trampoline (tramp_info, MONO_TRAMPOLINE_DELEGATE, domain, &code_size);
 	g_assert (code_size);
+	// extend by dsqiu
+	tramp_info->code_start = tramp_info->invoke_impl;
+	tramp_info->code_size = code_size;
+	// extend end
 
 	dpair = (MonoClassMethodPair *)mono_domain_alloc0 (domain, sizeof (MonoClassMethodPair));
 	memcpy (dpair, &pair, sizeof (MonoClassMethodPair));

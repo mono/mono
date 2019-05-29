@@ -351,10 +351,17 @@ struct MonoVTable {
 
 	guint32     imt_collisions_bitmap;
 	MonoRuntimeGenericContext *runtime_generic_context;
+	// extend by dsqiu
+	// NOTICE:remote class √ª¥¶¿Ì
+	gpointer* alloc_start;
+	guint32 alloc_size;
+	// extend end
+
 	/* do not add any fields after vtable, the structure is dynamically extended */
 	/* vtable contains function pointers to methods or their trampolines, at the
 	 end there may be a slot containing the pointer to the static fields */
 	gpointer    vtable [MONO_ZERO_LEN_ARRAY];	
+	
 };
 
 #define MONO_SIZEOF_VTABLE (sizeof (MonoVTable) - MONO_ZERO_LEN_ARRAY * SIZEOF_VOID_P)

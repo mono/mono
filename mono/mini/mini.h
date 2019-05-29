@@ -1074,6 +1074,10 @@ typedef struct
 	gpointer impl_this;
 	gpointer impl_nothis;
 	gboolean need_rgctx_tramp;
+	// extend by dsqiu;
+	gpointer code_start;
+	guint32 code_size;
+	// extend end
 } MonoDelegateTrampInfo;
 
 /*

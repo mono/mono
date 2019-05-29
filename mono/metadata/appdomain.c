@@ -3215,6 +3215,7 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	{
 		MonoVTable* removed_vtable = (MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i);
 		clear_cached_vtable(removed_vtable);
+		mono_domain_mempool_free(domain, removed_vtable->alloc_start, removed_vtable->alloc_size);
 		// remove from domain
 		g_ptr_array_remove(domain->class_vtable_array, removed_vtable);
 	}

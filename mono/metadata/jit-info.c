@@ -1057,13 +1057,19 @@ void mono_jit_info_table_cleanup_for_unused_assembly(MonoDomain* domain, MonoAss
 			jit_info = chunk->data[index];
 			if (IS_JIT_INFO_TOMBSTONE(jit_info))
 				continue;
+			// 全局的不需要回收
 			if (jit_info->is_trampoline)
 			{
 				// todo
 				// free MonoTrampInfo and MonoJitInfo
 				continue;
 			}
-			else if (!jit_info->async && jit_info->d.method->klass->image == image )
+			// aot 不需要回收
+			else if (jit_info->async)
+			{
+				continue;
+			}
+			else if (jit_info->d.method->klass->image == image )  // method
 			{
 				g_ptr_array_add(removed_jit_info_table_array, jit_info);
 				// chunk->num_elements -= 1;
@@ -1072,8 +1078,10 @@ void mono_jit_info_table_cleanup_for_unused_assembly(MonoDomain* domain, MonoAss
 	}
 	for (int index = 0; index < removed_jit_info_table_array->len; index++)
 	{
+		MonoJitInfo *jit_info = (MonoJitInfo*) g_ptr_array_index(removed_jit_info_table_array, index);
+		mono_domain_code_free(domain, jit_info->code_start, jit_info->code_size);
 		// todo freee jit_info_table
-		jit_info_table_remove(domain->jit_info_table, g_ptr_array_index(removed_jit_info_table_array, index));
+		jit_info_table_remove(domain->jit_info_table, jit_info);
 	}
 	g_ptr_array_free(removed_jit_info_table_array, FALSE);
 	int a = 0;
