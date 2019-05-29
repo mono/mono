@@ -908,7 +908,7 @@ dump_memory_around_ip (MonoContext *mctx)
 static void
 print_process_map (void)
 {
-#ifdef __linux__
+#if defined(__linux__) && !defined(HOST_ANDROID)
 	FILE *fp = fopen ("/proc/self/maps", "r");
 	char line [256];
 
