@@ -1678,6 +1678,19 @@ namespace System.Management
         WMIQ_RPNF_QUALIFIER_FILTER = unchecked((int)0x00100000),
         WMIQ_RPNF_SELECTED_FROM_PATH = unchecked((int)0x00200000),
     }
+
+    enum APTTYPE {
+        APTTYPE_CURRENT = -1,
+        APTTYPE_STA     = 0,
+        APTTYPE_MTA     = 1,
+        APTTYPE_NA      = 2,
+        APTTYPE_MAINSTA = 3
+    }
+
+    enum THDTYPE {
+        THDTYPE_BLOCKMESSAGES   = 0,
+        THDTYPE_PROCESSMESSAGES = 1
+    }
     #endregion
 
     #region Structs
@@ -1944,7 +1957,7 @@ namespace System.Management
                 if(0 != CoGetObjectContext(ref IID_IComThreadingInfo, out pComThreadingInfo))
                     return false;
 
-                WmiNetUtilsHelper.APTTYPE aptType;
+                APTTYPE aptType;
 
                 // If we CANNOT get the apartment type, assume we are not in the 'no context MTA' for safety
                 // (NOTE: This call is expected to always succeed)
@@ -1952,7 +1965,7 @@ namespace System.Management
                     return false;
 
                 // If we are not in the MTA, return false
-                if(aptType != WmiNetUtilsHelper.APTTYPE.APTTYPE_MTA)
+                if(aptType != APTTYPE.APTTYPE_MTA)
                     return false;
 
                 // If we CAN get to the IObejctContext interface, we have a 'context'
