@@ -101,7 +101,7 @@ namespace System.Reflection.Emit
         public void SetUserEntryPoint(System.Reflection.MethodInfo entryPoint) => throw new PlatformNotSupportedException();
     }
 
-    public readonly partial struct MethodToken : System.IEquatable<MethodToken>
+    public readonly partial struct MethodToken
     {
         public static readonly System.Reflection.Emit.MethodToken Empty;
         public int Token { get { throw new PlatformNotSupportedException(); } }
@@ -112,7 +112,7 @@ namespace System.Reflection.Emit
         public static bool operator !=(System.Reflection.Emit.MethodToken a, System.Reflection.Emit.MethodToken b) { throw new PlatformNotSupportedException(); }
     }
 
-    public readonly partial struct SignatureToken : System.IEquatable<SignatureToken>
+    public readonly partial struct SignatureToken
     {
         public static readonly System.Reflection.Emit.SignatureToken Empty;
         public int Token { get { throw new PlatformNotSupportedException(); } }
@@ -123,7 +123,7 @@ namespace System.Reflection.Emit
         public static bool operator !=(System.Reflection.Emit.SignatureToken a, System.Reflection.Emit.SignatureToken b) { throw new PlatformNotSupportedException(); }
     }
 
-    public readonly partial struct FieldToken : System.IEquatable<FieldToken>
+    public readonly partial struct FieldToken
     {
         public static readonly System.Reflection.Emit.FieldToken Empty;
         public int Token { get { throw new PlatformNotSupportedException(); } }
@@ -134,7 +134,7 @@ namespace System.Reflection.Emit
         public static bool operator !=(System.Reflection.Emit.FieldToken a, System.Reflection.Emit.FieldToken b) { throw new PlatformNotSupportedException(); }
     }
 
-    public readonly partial struct StringToken : System.IEquatable<StringToken>
+    public readonly partial struct StringToken
     {
         public int Token { get { throw new PlatformNotSupportedException(); } }
         public override bool Equals(object obj) { throw new PlatformNotSupportedException(); }
@@ -144,7 +144,7 @@ namespace System.Reflection.Emit
         public static bool operator !=(System.Reflection.Emit.StringToken a, System.Reflection.Emit.StringToken b) { throw new PlatformNotSupportedException(); }
     }
 
-    public readonly partial struct TypeToken : System.IEquatable<TypeToken>
+    public readonly partial struct TypeToken
     {
         public static readonly System.Reflection.Emit.TypeToken Empty;
         public int Token { get { throw new PlatformNotSupportedException(); } }
@@ -178,7 +178,7 @@ namespace System.Reflection.Emit
         public void SetLocalSignature(byte[] localSignature) => throw new PlatformNotSupportedException();
     }
 
-    public readonly partial struct EventToken : System.IEquatable<EventToken>
+    public readonly partial struct EventToken
     {
         public static readonly System.Reflection.Emit.EventToken Empty;
         public int Token { get { throw new PlatformNotSupportedException(); } }
@@ -189,7 +189,7 @@ namespace System.Reflection.Emit
         public static bool operator !=(System.Reflection.Emit.EventToken a, System.Reflection.Emit.EventToken b) { throw new PlatformNotSupportedException(); }
     }
 
-    public readonly partial struct ParameterToken : System.IEquatable<ParameterToken>
+    public readonly partial struct ParameterToken
     {
         public static readonly System.Reflection.Emit.ParameterToken Empty;
         public int Token { get { throw new PlatformNotSupportedException(); } }
@@ -200,7 +200,7 @@ namespace System.Reflection.Emit
         public static bool operator !=(System.Reflection.Emit.ParameterToken a, System.Reflection.Emit.ParameterToken b) { throw new PlatformNotSupportedException(); }
     }
 
-    public readonly partial struct PropertyToken : System.IEquatable<PropertyToken>
+    public readonly partial struct PropertyToken
     {
         public static readonly System.Reflection.Emit.PropertyToken Empty;
         public int Token { get { throw new PlatformNotSupportedException(); } }
