@@ -62,7 +62,7 @@ static guint64 stat_bytes_alloced_los = 0;
 #define TLAB_NEXT	(__thread_info__->tlab_next)
 #define TLAB_TEMP_END	(__thread_info__->tlab_temp_end)
 #define TLAB_REAL_END	(__thread_info__->tlab_real_end)
-#define THREAD_BYTES_ALLOCATED	(__thread_info__->total_bytes_allocated) 
+#define THREAD_BYTES_ALLOCATED	( ((MonoThreadInfo*)__thread_info__)->total_bytes_allocated) 
 
 static GCObject*
 alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
