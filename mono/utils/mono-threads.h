@@ -278,6 +278,9 @@ typedef struct _MonoThreadInfo {
 	 * TODO support multiple values by multiple tools
 	 */
 	void *tools_data;
+
+	/* Total bytes allocated by this thread in its lifetime so far. */
+	gint64 total_bytes_allocated;
 } MonoThreadInfo;
 
 typedef struct {
