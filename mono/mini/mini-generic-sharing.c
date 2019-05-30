@@ -4267,3 +4267,14 @@ mini_method_to_shared (MonoMethod *method)
 }
 
 #endif /* !MONO_ARCH_GSHAREDVT_SUPPORTED */
+
+// extend by dsqiu
+void mono_mini_remove_generic_sharing_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly)
+{
+	MonoImage* image = assembly->image;
+	_DomainAssemblyData user_data;
+	user_data.assembly = assembly;
+	user_data.domain = domain;
+	MonoJitDomainInfo *info = domain_jit_info(domain);
+}
+// extend end

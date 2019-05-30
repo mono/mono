@@ -1830,3 +1830,34 @@ mini_get_breakpoint_trampoline (void)
 
 	return trampoline;
 }
+
+
+// extend by dsqiu
+
+static gboolean
+static_rgctx_trampoline_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	RgctxTrampInfo * info = (RgctxTrampInfo *)key;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	MonoImage* image = data->assembly->image;
+	if (info->m->klass->image == image)
+	{
+		mono_domain_mempool_free(data->domain, info, sizeof(RgctxTrampInfo));
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void mono_mini_remove_trampoline_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly)
+{
+	MonoImage* image = assembly->image;
+	_DomainAssemblyData user_data;
+	user_data.assembly = assembly;
+	user_data.domain = domain;
+	MonoJitDomainInfo *info = domain_jit_info(domain);
+	if (info->static_rgctx_trampoline_hash)
+	{
+		g_hash_table_foreach_remove(info->static_rgctx_trampoline_hash, static_rgctx_trampoline_hash_foreach_remove, &user_data);
+	}
+}
+// extend end

@@ -347,7 +347,7 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 		return rtm;
 
 	sig = mono_method_signature (method);
-
+	// check by dsqiu
 	rtm = (InterpMethod*)mono_domain_alloc0 (domain, sizeof (InterpMethod));
 	rtm->method = method;
 	rtm->domain = domain;
@@ -355,6 +355,7 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 	rtm->hasthis = sig->hasthis;
 	rtm->vararg = sig->call_convention == MONO_CALL_VARARG;
 	rtm->rtype = mini_get_underlying_type (sig->ret);
+	// check by dsqiu
 	rtm->param_types = (MonoType**)mono_domain_alloc0 (domain, sizeof (MonoType*) * sig->param_count);
 	for (i = 0; i < sig->param_count; ++i)
 		rtm->param_types [i] = mini_get_underlying_type (sig->params [i]);
@@ -6176,3 +6177,34 @@ mono_ee_interp_init (const char *opts)
 	c.stop_single_stepping = interp_stop_single_stepping;
 	mini_install_interp_callbacks (&c);
 }
+
+// extend by dsqiu
+static gboolean
+interp_code_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMethod* method = (MonoMethod*)key;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	InterpMethod* interp_meothod = (InterpMethod*)value;
+	MonoImage* image = data->assembly->image;
+	if (method->klass->image == image)
+	{
+		MonoMethodSignature *sig = mono_method_signature(method);
+		mono_domain_mempool_free(data->domain, interp_meothod, sizeof(InterpMethod));
+		mono_domain_mempool_free(data->domain, interp_meothod->param_types, sizeof(MonoType*) * sig->param_count);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void mono_mini_remove_interp_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly)
+{
+	MonoImage* image = assembly->image;
+	_DomainAssemblyData user_data;
+	user_data.assembly = assembly;
+	user_data.domain = domain;
+	MonoJitDomainInfo *info = domain_jit_info(domain);
+	mono_internal_hash_table_foreach_remove(&info->interp_code_hash, interp_code_hash_foreach_remove, &user_data);
+}
+
+
+// extend end

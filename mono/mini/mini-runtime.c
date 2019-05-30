@@ -5184,6 +5184,51 @@ delegate_trampoline_hash_foreach_remove(gpointer key, gpointer value, gpointer u
 	return FALSE;
 }
 
+static gboolean
+method_code_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMethod* method = (MonoMethod*)key;
+	guint8 ** code_solt = (guint8 **)value;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	MonoImage* image = data->assembly->image;
+	if (method->klass->image == image)
+	{
+		mono_domain_mempool_free(data->domain, code_solt, sizeof(gpointer));
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+static gboolean
+jump_trampoline_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMethod* method = (MonoMethod*)key;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	MonoImage* image = data->assembly->image;
+	if (method->klass->image == image)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+static gboolean
+seq_points_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMethod* method = (MonoMethod*)key;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	MonoImage* image = data->assembly->image;
+	if (method->klass->image == image)
+	{
+		return TRUE;
+	}
+	return FALSE;
+}
+
+
+
 void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly)
 {
 	MonoImage* image = assembly->image;
@@ -5194,6 +5239,7 @@ void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoA
 
 //	g_hash_table_foreach(info->jump_target_hash, delete_jump_list, NULL);
 //	g_hash_table_destroy(info->jump_target_hash);
+	// 只有aot 用到
 //	if (info->jump_target_got_slot_hash) {
 //		g_hash_table_foreach(info->jump_target_got_slot_hash, delete_got_slot_list, NULL);
 //		g_hash_table_destroy(info->jump_target_got_slot_hash);
@@ -5202,34 +5248,43 @@ void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoA
 //		g_hash_table_foreach(info->dynamic_code_hash, dynamic_method_info_free, NULL);
 //		g_hash_table_destroy(info->dynamic_code_hash);
 //	}
-//	g_hash_table_destroy(info->method_code_hash);
-//	g_hash_table_destroy(info->jump_trampoline_hash);
+	if (info->method_code_hash)
+	{
+		g_hash_table_foreach_remove(info->method_code_hash, method_code_hash_foreach_remove, &user_data);
+	}
+	if (info->jump_trampoline_hash)
+	{
+		g_hash_table_foreach_remove(info->jump_trampoline_hash, jump_trampoline_hash_foreach_remove, &user_data);
+	}
 //	g_hash_table_destroy(info->jit_trampoline_hash);
 	if (info->jit_trampoline_hash)
 	{
-
+		// todo: remove code
+		g_hash_table_foreach_remove(info->jit_trampoline_hash, jump_trampoline_hash_foreach_remove, &user_data);
 	}
-//	g_hash_table_destroy(info->delegate_trampoline_hash);
 	if (info->delegate_trampoline_hash)
 	{
 		g_hash_table_foreach_remove(info->delegate_trampoline_hash, delegate_trampoline_hash_foreach_remove, &user_data);
 	}
-//	g_hash_table_destroy(info->static_rgctx_trampoline_hash);
+	// 在 mini-trampolines 移除
+	// if (info->static_rgctx_trampoline_hash)
 //	g_hash_table_destroy(info->mrgctx_hash);
 //	g_hash_table_destroy(info->method_rgctx_hash);
 //	g_hash_table_destroy(info->interp_method_pointer_hash);
 //	g_hash_table_destroy(info->llvm_vcall_trampoline_hash);
 //	mono_conc_hashtable_destroy(info->runtime_invoke_hash);
-//	g_hash_table_destroy(info->seq_points);
+	// debug breakpoint
+	// if (info->seq_points)
 //	g_hash_table_destroy(info->arch_seq_points);
 //	if (info->agent_info)
 //		mini_get_dbg_callbacks()->free_domain_info(domain);
+
 //	g_hash_table_destroy(info->gsharedvt_arg_tramp_hash);
 //	if (info->llvm_jit_callees) {
 //		g_hash_table_foreach(info->llvm_jit_callees, free_jit_callee_list, NULL);
 //		g_hash_table_destroy(info->llvm_jit_callees);
 //	}
-//	mono_internal_hash_table_destroy(&info->interp_code_hash);
+	
 //#ifdef ENABLE_LLVM
 //	mono_llvm_free_domain_info(domain);
 //#endif

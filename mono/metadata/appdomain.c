@@ -3238,6 +3238,9 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	g_ptr_array_free(removed_class_vtable_array, TRUE);
 
 	// free_domain_hook: mini_free_jit_domain_info 
+	mono_mini_remove_generic_sharing_for_unused_assembly(domain, assembly);
+	mono_mini_remove_interp_for_unused_assembly(domain, assembly);
+	mono_mini_remove_trampoline_for_unused_assembly(domain, assembly);
 	mono_mini_remove_runtime_info_for_unused_assembly(domain, assembly);
 	// type_hash
 	if (domain->type_hash)
