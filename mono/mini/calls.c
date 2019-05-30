@@ -24,10 +24,23 @@ static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint
 void
 mono_call_add_patch_info (MonoCompile *cfg, MonoCallInst *call, int ip)
 {
-	if (call->inst.flags & MONO_INST_HAS_METHOD)
-		mono_add_patch_info (cfg, ip, MONO_PATCH_INFO_METHOD, call->method);
-	else
-		mono_add_patch_info (cfg, ip, MONO_PATCH_INFO_ABS, call->fptr);
+	MonoJumpInfoType type;
+	gconstpointer target;
+
+	if (call->inst.flags & MONO_INST_HAS_METHOD) {
+		type = MONO_PATCH_INFO_METHOD;
+		target = call->method;
+	} else {
+		const MonoJitICallId jit_icall_id = call->jit_icall_id;
+		if (jit_icall_id) {
+			type = MONO_PATCH_INFO_JIT_ICALL_ID;
+			target = GUINT_TO_POINTER (jit_icall_id);
+		} else {
+			type = MONO_PATCH_INFO_ABS;
+			target = call->fptr;
+		}
+	}
+	mono_add_patch_info (cfg, ip, type, target);
 }
 
 void
@@ -616,6 +629,7 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, Mo
 	return mini_emit_method_call_full (cfg, method, mono_method_signature_internal (method), FALSE, args, this_ins, NULL, NULL);
 }
 
+static
 MonoInst*
 mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig,
 					   MonoInst **args)
@@ -632,22 +646,16 @@ mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature
 	return (MonoInst*)call;
 }
 
-// FiXME remove or make static
-MonoInst*
-mono_emit_jit_icall_info (MonoCompile *cfg, MonoJitICallInfo *info, MonoInst **args)
-{
-	g_assert (info);
-	g_assertf (info->name, "%d", (int)mono_jit_icall_info_index (info));
-	g_assertf (info->func, "%d", (int)mono_jit_icall_info_index (info));
-
-	return mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
-}
-
-
 MonoInst*
 mono_emit_jit_icall_id (MonoCompile *cfg, MonoJitICallId jit_icall_id, MonoInst **args)
 {
-	return mono_emit_jit_icall_info (cfg, mono_find_jit_icall_info (jit_icall_id), args);
+	MonoJitICallInfo *info = mono_find_jit_icall_info (jit_icall_id);
+
+	MonoCallInst *call = (MonoCallInst *)mono_emit_native_call (cfg, mono_icall_get_wrapper (info), info->sig, args);
+
+	call->jit_icall_id = jit_icall_id;
+
+	return (MonoInst*)call;
 }
 
 /*
@@ -665,6 +673,8 @@ mini_emit_abs_call (MonoCompile *cfg, MonoJumpInfoType patch_type, gconstpointer
 	/* 
 	 * We pass ji as the call address, the PATCH_INFO_ABS resolving code will
 	 * handle it.
+	 * FIXME: Is the abs_patches hashtable avoidable?
+	 * Such as by putting the patch info in the call instruction?
 	 */
 	if (cfg->abs_patches == NULL)
 		cfg->abs_patches = g_hash_table_new (NULL, NULL);

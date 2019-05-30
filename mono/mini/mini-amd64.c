@@ -3048,7 +3048,7 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 
 #ifndef DISABLE_JIT
 static guint8*
-emit_call (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gconstpointer data)
+emit_call (MonoCompile *cfg, MonoCallInst *call, guint8 *code, MonoJumpInfoType patch_type, gconstpointer data)
 {
 	gboolean no_patch = FALSE;
 
@@ -3095,6 +3095,8 @@ emit_call (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gconstpo
 		else {
 			MonoJumpInfo *jinfo = NULL;
 
+			g_assert (call && data && call->fptr == data);
+
 			if (cfg->abs_patches)
 				jinfo = (MonoJumpInfo *)g_hash_table_lookup (cfg->abs_patches, data);
 			if (jinfo) {
@@ -3111,7 +3113,19 @@ emit_call (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gconstpo
 					near_call = TRUE;
 				}
 			} else {
-				MonoJitICallInfo *info = mono_find_jit_icall_by_addr (data);
+				MonoJitICallId jit_icall_id;
+				MonoJitICallInfo const *info;
+
+				if (call && (jit_icall_id = call->jit_icall_id)) {
+					info = mono_find_jit_icall_info (jit_icall_id);
+
+					// Change patch from ABS to JIT icall.
+					patch_type = MONO_PATCH_INFO_JIT_ICALL_ID;
+					data = GUINT_TO_POINTER (jit_icall_id);
+				} else {
+					info = mono_find_jit_icall_by_addr (data);
+					g_assertf (!info, "%s", info->name);
+				}
 				if (info) {
 					if (info->func == info->wrapper) {
 						/* No wrapper */
@@ -4916,9 +4930,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			code = amd64_handle_varargs_call (cfg, code, call, FALSE);
 			if (ins->flags & MONO_INST_HAS_METHOD)
-				code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method);
+				code = emit_call (cfg, NULL, code, MONO_PATCH_INFO_METHOD, call->method);
 			else
-				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
+				code = emit_call (cfg, call, code, MONO_PATCH_INFO_ABS, call->fptr);
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 			code = emit_move_return_value (cfg, ins, code);
@@ -5078,7 +5092,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			jump = code;
 			amd64_branch8 (code, X86_CC_NZ, -1, 1);
 
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_generic_class_init));
+			code = emit_call (cfg, NULL, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_generic_class_init));
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
 
@@ -5138,7 +5152,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		case OP_THROW: {
 			amd64_mov_reg_reg (code, AMD64_ARG_REG1, ins->sreg1, 8);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID,
+			code = emit_call (cfg, NULL, code, MONO_PATCH_INFO_JIT_ICALL_ID,
 					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_throw_exception));
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
@@ -5146,7 +5160,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		case OP_RETHROW: {
 			amd64_mov_reg_reg (code, AMD64_ARG_REG1, ins->sreg1, 8);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID,
+			code = emit_call (cfg, NULL, code, MONO_PATCH_INFO_JIT_ICALL_ID,
 					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_rethrow_exception));
 			ins->flags |= MONO_INST_GC_CALLSITE;
 			ins->backend.pc_offset = code - cfg->native_code;
@@ -6784,7 +6798,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			amd64_test_membase_imm_size (code, ins->sreg1, 0, 1, 4);
 			br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_threads_state_poll));
+			code = emit_call (cfg, NULL, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_threads_state_poll));
 			amd64_patch (br[0], code);
 			break;
 		}
@@ -6913,7 +6927,7 @@ emit_prolog_setup_sp_win64 (MonoCompile *cfg, guint8 *code, int alloc_size, int 
 
 		if (alloc_size >= 0x1000) {
 			amd64_mov_reg_imm (code, AMD64_RAX, alloc_size);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_chkstk_win64));
+			code = emit_call (cfg, NULL, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_chkstk_win64));
 		}
 
 		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, alloc_size);
@@ -7587,7 +7601,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 
 				patch_info->type = MONO_PATCH_INFO_NONE;
 
-				code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_throw_corlib_exception));
+				code = emit_call (cfg, NULL, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_throw_corlib_exception));
 
 				amd64_mov_reg_imm (buf, AMD64_ARG_REG2, (code - cfg->native_code) - throw_ip);
 				while (buf < buf2)

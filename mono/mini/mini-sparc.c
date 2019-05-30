@@ -2558,7 +2558,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * breakpoint there.
 			 */
 			//sparc_ta (code, 1);
-			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, mono_break);
+			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_break));
 			EMIT_CALL();
 			break;
 		case OP_ADDCC:
@@ -2876,9 +2877,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = emit_save_sp_to_lmf (cfg, code);
 			if (ins->flags & MONO_INST_HAS_METHOD)
 			    code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method);
-			else
-			    code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
-
+			else {
+				const MonoJitICallId jit_icall_id = call->jit_icall_id;
+				if (jit_icall_id)
+					code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (jit_icall_id));
+				else
+					code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
+			}
 			code = emit_vret_token (ins, code);
 			code = emit_move_return_value (ins, code);
 			break;
@@ -3702,8 +3707,9 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain, 
 	}
 }
 
+#error obsolete tracing?
 void*
-mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+mono_arch_instrument_prolog (MonoCompile *cfg, MonoJitICallId func, void *p, gboolean enable_arguments)
 {
 	int i;
 	guint32 *code = (guint32*)p;
@@ -3737,7 +3743,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	sparc_set (code, cfg->method, sparc_o0);
 	sparc_add_imm (code, FALSE, sparc_fp, MONO_SPARC_STACK_BIAS, sparc_o1);
 
-	mono_add_patch_info (cfg, (guint8*)code-cfg->native_code, MONO_PATCH_INFO_ABS, func);
+	mono_add_patch_info (cfg, (guint8*)code-cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (func));
 	EMIT_CALL ();
 
 	/* Restore float regs on V9 */
@@ -3771,8 +3777,9 @@ enum {
 	SAVE_FP
 };
 
+#error obsolete tracing?
 void*
-mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments)
+mono_arch_instrument_epilog (MonoCompile *cfg, MonoJitICallId func, void *p, gboolean enable_arguments)
 {
 	guint32 *code = (guint32*)p;
 	int save_mode = SAVE_NONE;
@@ -3843,7 +3850,7 @@ mono_arch_instrument_epilog (MonoCompile *cfg, void *func, void *p, gboolean ena
 
 	sparc_set (code, cfg->method, sparc_o0);
 
-	mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_ABS, func);
+	mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (func));
 	EMIT_CALL ();
 
 	/* Restore result */
@@ -3923,7 +3930,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 /*
 	if (strstr (cfg->method->name, "foo")) {
-		mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_ABS, mono_sparc_break);
+		mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_sparc_break));
 		sparc_call_simple (code, 0);
 		sparc_nop (code);
 	}
@@ -4074,8 +4082,9 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		code = (guint32*)mono_sparc_emit_save_lmf (code, lmf_offset);
 	}
 
+#error obsolete tracing?
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
-		code = (guint32*)mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
+		code = (guint32*)mono_arch_instrument_prolog (cfg, MONO_JIT_ICALL_mono_trace_enter_method, code, TRUE);
 
 	set_code_cursor (cfg, code);
 
@@ -4098,6 +4107,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 
 	code = (guint32 *)realloc_code (cfg, max_epilog_size);
 
+#error obsolete tracing?
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
 		code = (guint32*)mono_arch_instrument_epilog (cfg, mono_trace_leave_method, code, TRUE);
 
@@ -4227,7 +4237,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				}
 
 				/*
-				mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_ABS, mono_sparc_break);
+				mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_sparc_break));
 				EMIT_CALL();
 				*/
 

@@ -389,7 +389,7 @@ mono_find_jit_icall_info (MonoJitICallId id)
 	const guint index = (guint)id;
 
 	g_assert (index < MONO_JIT_ICALL_count);
-	g_static_assert (MONO_JIT_ICALL_count < 0x200); // fits in 9 bits
+	g_static_assert (MONO_JIT_ICALL_count < 0x200); // fits in 9 bits, see MonoCallInst
 
 	return &mono_get_jit_icall_info ()->array [index];
 }

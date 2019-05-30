@@ -2090,6 +2090,7 @@ mono_postprocess_patches (MonoCompile *cfg)
 		switch (patch_info->type) {
 		case MONO_PATCH_INFO_ABS: {
 			MonoJitICallInfo *info = mono_find_jit_icall_by_addr (patch_info->data.target);
+			g_assertf (!info, "%s", info->name);
 
 			/*
 			 * Change patches of type MONO_PATCH_INFO_ABS into patches describing the 

@@ -2641,8 +2641,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 			break;
 		case OP_BREAK: {
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_ABS, 
-					     mono_break);
+			mono_add_patch_info (cfg, code - cfg->native_code,
+					     MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_break);
 			S390_CALL_TEMPLATE (code, s390_r14);
 		}
 			break;
@@ -3617,10 +3618,17 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				mono_add_patch_info (cfg, code-cfg->native_code,
 						     MONO_PATCH_INFO_METHOD, 
 						     call->method);
-			else
-				mono_add_patch_info (cfg, code-cfg->native_code,
-						     MONO_PATCH_INFO_ABS, 
-						     call->fptr);
+			else {
+				const MonoJitICallId jit_icall_id = call->jit_icall_id;
+				if (jit_icall_id)
+					mono_add_patch_info (cfg, code-cfg->native_code,
+							     MONO_PATCH_INFO_JIT_ICALL_ID,
+							     GUINT_TO_POINTER (jit_icall_id));
+				else
+					mono_add_patch_info (cfg, code-cfg->native_code,
+							     MONO_PATCH_INFO_ABS,
+							     call->fptr);
+			}
 			S390_CALL_TEMPLATE (code, s390_r14);
 			if (!cfg->r4fp && call->signature->ret->type == MONO_TYPE_R4)
 				s390_ldebr (code, s390_f0, s390_f0);
@@ -4637,8 +4645,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			s390_ltg (code, s390_r0, 0, ins->sreg1, 0);	
 			s390_jz  (code, 0); CODEPTR(code, br);
-			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_ABS,
-					     mono_threads_state_poll);
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
+					     GUINT_TO_POINTER (MONO_JIT_ICALL_mono_threads_state_poll));
 			S390_CALL_TEMPLATE (code, s390_r14);
 			PTRSLOT (code, br);
 			break;

@@ -787,6 +787,11 @@ struct MonoCallInst {
 	guint tailcall : 1;
 	/* If this is TRUE, 'fptr' points to a MonoJumpInfo instead of an address. */
 	guint fptr_is_patch : 1;
+#if __cplusplus
+	MonoJitICallId jit_icall_id : 9; // 9 is checked in jit-icall-reg.h mono_find_jit_icall_info
+#else
+	guint jit_icall_id : 9; // 9 is checked in jit-icall-reg.h mono_find_jit_icall_info
+#endif
 	/*
 	 * If this is true, then the call returns a vtype in a register using the same 
 	 * calling convention as OP_CALL.
@@ -2092,13 +2097,11 @@ gboolean mono_compile_is_broken (MonoCompile *cfg, MonoMethod *method, gboolean 
 MonoInst *mono_get_got_var (MonoCompile *cfg);
 void      mono_add_seq_point (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int native_offset);
 void      mono_add_var_location (MonoCompile *cfg, MonoInst *var, gboolean is_reg, int reg, int offset, int from, int to);
-MonoInst* mono_emit_jit_icall_info (MonoCompile *cfg, MonoJitICallInfo *jit_icall_info, MonoInst **args); // FIXME remove/reduce
 MonoInst* mono_emit_jit_icall_id (MonoCompile *cfg, MonoJitICallId jit_icall_id, MonoInst **args);
 #define mono_emit_jit_icall(cfg, name, args) (mono_emit_jit_icall_id ((cfg), MONO_JIT_ICALL_ ## name, (args)))
 
 MonoInst* mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *info, MonoInst **args);
 MonoInst* mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, MonoInst *this_ins);
-MonoInst* mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig, MonoInst **args);
 gboolean  mini_should_insert_breakpoint (MonoMethod *method);
 int mono_target_pagesize (void);
 
