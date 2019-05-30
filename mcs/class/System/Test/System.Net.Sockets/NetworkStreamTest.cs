@@ -29,7 +29,7 @@ namespace MonoTests.System.Net.Sockets
 #endif
 		public void NetworkStreamConnection ()
 		{
-			IPEndPoint ipe = new IPEndPoint(Dns.GetHostEntry ("www.google.com").AddressList [0], 80);
+			IPEndPoint ipe = new IPEndPoint(Dns.GetHostEntry ("www.example.com").AddressList [0], 80);
 			Socket s = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			s.Close ();
 			NetworkStream ns = new NetworkStream (s);

@@ -44,6 +44,8 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern long GetAllocatedBytesForCurrentThread ();
 
+		public static long GetTotalAllocatedBytes (bool precise = false) => 0;
+
 		public static void AddMemoryPressure (long bytesAllocated)
 		{
 			if (bytesAllocated <= 0)
@@ -232,6 +234,11 @@ namespace System
 		public static GCMemoryInfo GetGCMemoryInfo ()
 		{
 			return default;
+		}
+
+		internal static T[] AllocateUninitializedArray<T> (int length)
+		{
+			return new T [length];
 		}
 	}
 }

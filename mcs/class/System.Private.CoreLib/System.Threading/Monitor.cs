@@ -102,5 +102,72 @@ namespace System.Threading
 				throw new ArgumentNullException (nameof (obj));
 			ObjPulseAll (obj);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static bool Monitor_test_synchronised (object obj);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static void Monitor_pulse (object obj);
+
+		static void ObjPulse (object obj)
+		{
+			if (!Monitor_test_synchronised (obj))
+				throw new SynchronizationLockException ("Object is not synchronized");
+
+			Monitor_pulse (obj);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static void Monitor_pulse_all (object obj);
+
+		static void ObjPulseAll (object obj)
+		{
+			if (!Monitor_test_synchronised (obj))
+				throw new SynchronizationLockException ("Object is not synchronized");
+
+			Monitor_pulse_all (obj);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static bool Monitor_wait (object obj, int ms);
+
+		static bool ObjWait (bool exitContext, int millisecondsTimeout, object obj)
+		{
+			if (millisecondsTimeout < 0 && millisecondsTimeout != (int) Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+			if (!Monitor_test_synchronised (obj))
+				throw new SynchronizationLockException ("Object is not synchronized");
+
+			return Monitor_wait (obj, millisecondsTimeout);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static void try_enter_with_atomic_var (object obj, int millisecondsTimeout, ref bool lockTaken);
+
+		static void ReliableEnterTimeout (object obj, int timeout, ref bool lockTaken)
+		{
+			if (obj == null)
+				throw new ArgumentNullException (nameof (obj));
+
+			if (timeout < 0 && timeout != (int) Timeout.Infinite)
+				throw new ArgumentOutOfRangeException (nameof (timeout));
+
+			try_enter_with_atomic_var (obj, timeout, ref lockTaken);
+		}
+
+		static void ReliableEnter (object obj, ref bool lockTaken)
+		{
+			ReliableEnterTimeout (obj, (int) Timeout.Infinite, ref lockTaken);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static bool Monitor_test_owner (object obj);
+
+		static bool IsEnteredNative (object obj)
+		{
+			return Monitor_test_owner (obj);
+		}
+		
+		public static long LockContentionCount => throw new PlatformNotSupportedException ();
 	}
 }

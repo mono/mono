@@ -147,3 +147,4 @@ sdks/builds/android-*/
 
 .packages
 artifacts
+.dotnet

@@ -26,14 +26,14 @@ _mac-$(1)_AC_VARS= \
 	ac_cv_func_utimensat=no
 
 _mac-$(1)_CFLAGS= \
+	$$(mac-$(1)_SYSROOT) \
 	-arch $(2)
 
 _mac-$(1)_CXXFLAGS= \
+	$$(mac-$(1)_SYSROOT) \
 	-arch $(2)
 
-_mac-$(1)_CPPFLAGS= \
-	-isysroot $(3)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk \
-	-mmacosx-version-min=$(MACOS_VERSION_MIN) \
+_mac-$(1)_CPPFLAGS=
 
 _mac-$(1)_LDFLAGS= \
 	-Wl,-no_weak_imports
@@ -54,6 +54,9 @@ _mac-$(1)_CONFIGURE_FLAGS= \
 $$(eval $$(call RuntimeTemplate,mac,$(1),$(2)-apple-darwin10,yes))
 
 endef
+
+mac-mac32_SYSROOT=-isysroot $(XCODE32_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
+mac-mac64_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 
 $(eval $(call MacTemplate,mac32,i386,$(XCODE32_DIR)))
 $(eval $(call MacTemplate,mac64,x86_64,$(XCODE_DIR)))

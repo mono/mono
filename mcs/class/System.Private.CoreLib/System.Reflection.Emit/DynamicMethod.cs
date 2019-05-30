@@ -1,3 +1,5 @@
+#nullable disable
+
 //
 // System.Reflection.Emit.DynamicMethod.cs
 //
@@ -225,7 +227,7 @@ namespace System.Reflection.Emit {
 			if (attributeType.IsAssignableFrom (typeof (MethodImplAttribute)))
 				return new Object[] { new MethodImplAttribute ((MethodImplOptions)GetMethodImplementationFlags()) };
 			else
-				return EmptyArray<Object>.Value;
+				return Array.Empty<object> ();
 		}
 
 		public DynamicILInfo GetDynamicILInfo () {
@@ -262,7 +264,7 @@ namespace System.Reflection.Emit {
 		internal override ParameterInfo[] GetParametersInternal ()
 		{
 			if (parameters == null)
-				return EmptyArray<ParameterInfo>.Value;
+				return Array.Empty<ParameterInfo> ();
 
 			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
 			for (int i = 0; i < parameters.Length; i++) {

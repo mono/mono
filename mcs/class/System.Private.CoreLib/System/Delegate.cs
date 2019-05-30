@@ -348,17 +348,21 @@ namespace System
 		protected virtual object? DynamicInvokeImpl (object?[]? args)
 		{
 			if (Method is null) {
+#nullable disable
+				// FIXME: This code cannot handle null argument values
 				Type[] mtypes = new Type [args.Length];
 				for (int i = 0; i < args.Length; ++i) {
 					mtypes [i] = args [i].GetType ();
 				}
 				method_info = _target.GetType ().GetMethod (data.method_name, mtypes);
+#nullable restore
 			}
 
 			var target = _target;
-			if (this.data is null)
-				InitializeDelegateData ();
-			
+
+			if (data is null)
+				data = CreateDelegateData ();
+
 			// replace all Type.Missing with default values defined on parameters of the delegate if any
 			MethodInfo? invoke = GetType ().GetMethod ("Invoke");
 			if (invoke != null && args != null) {
@@ -446,7 +450,7 @@ namespace System
 			return method_info;
 		}
 
-		void InitializeDelegateData ()
+		DelegateData CreateDelegateData ()
 		{
 			DelegateData delegate_data = new DelegateData ();
 			if (method_info.IsStatic) {
@@ -458,7 +462,8 @@ namespace System
 						delegate_data.curried_first_arg = true;
 				}
 			}
-			this.data = delegate_data;
+
+			return delegate_data;
 		}
 
 		static bool InternalEqualTypes (object source, object value)

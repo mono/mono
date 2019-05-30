@@ -31,7 +31,7 @@ namespace System.Runtime.InteropServices {
         {
             if (obj != null)
             {
-#if FULL_AOT_RUNTIME
+#if FULL_AOT_RUNTIME || MONOTOUCH
                 throw new PlatformNotSupportedException ();
 #else
                 // Make sure this guy has an IDispatch

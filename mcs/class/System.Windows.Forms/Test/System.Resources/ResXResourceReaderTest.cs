@@ -456,7 +456,7 @@ namespace MonoTests.System.Resources {
 		{
 			const string resXTemplate =
 				"<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-				"<o:Document xmlns:x=\"http://www.mono-project.com\" xmlns:o=\"http://tempuri.org\">" +
+				"<o:Document xmlns:x=\"http://www.example.com\" xmlns:o=\"http://tempuri.org\">" +
 				"	<o:Content>" +
 				"		<x:DaTa name=\"name\">" +
 				"			<o:value>de Icaza</o:value>" +

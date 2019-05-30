@@ -1095,7 +1095,8 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 static int
 arg_need_temp (ArgInfo *ainfo)
 {
-	if (ainfo->storage == ArgValuetypeInReg)
+	// Value types using one register doesn't need temp.
+	if (ainfo->storage == ArgValuetypeInReg && ainfo->nregs > 1)
 		return ainfo->nregs * sizeof (host_mgreg_t);
 	return 0;
 }
@@ -1110,11 +1111,27 @@ arg_get_storage (CallContext *ccontext, ArgInfo *ainfo)
 		case ArgInDoubleSSEReg:
 			return &ccontext->fregs [ainfo->reg];
 		case ArgOnStack:
+		case ArgValuetypeAddrOnStack:
 			return ccontext->stack + ainfo->offset;
 		case ArgValuetypeInReg:
 			// Empty struct
-			g_assert (!ainfo->nregs);
-			return NULL;
+			if (ainfo->nregs == 0)
+				return NULL;
+			// Value type using one register can be stored
+			// directly in its context gregs/fregs slot.
+			g_assert (ainfo->nregs == 1);
+			switch (ainfo->pair_storage [0]) {
+				case ArgInIReg:
+					return &ccontext->gregs [ainfo->pair_regs [0]];
+				case ArgInFloatSSEReg:
+				case ArgInDoubleSSEReg:
+					return &ccontext->fregs [ainfo->pair_regs [0]];
+				default:
+					g_assert_not_reached ();
+			}
+		case ArgValuetypeAddrInIReg:
+			g_assert (ainfo->pair_storage [0] == ArgInIReg && ainfo->pair_storage [1] == ArgNone);
+			return &ccontext->gregs [ainfo->pair_regs [0]];
 		default:
 			g_error ("Arg storage type not yet supported");
 	}
@@ -1195,6 +1212,13 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 
 	for (int i = 0; i < sig->param_count; i++) {
 		ainfo = &cinfo->args [i];
+
+		if (ainfo->storage == ArgValuetypeAddrInIReg || ainfo->storage == ArgValuetypeAddrOnStack) {
+			storage = arg_get_storage (ccontext, ainfo);
+			*(gpointer *)storage = interp_cb->frame_arg_to_storage (frame, sig, i);
+			continue;
+		}
+
 		int temp_size = arg_need_temp (ainfo);
 
 		if (temp_size)
@@ -1237,6 +1261,14 @@ mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 		if (temp_size)
 			arg_set_val (ccontext, ainfo, storage);
 	}
+#ifdef TARGET_WIN32
+	// Windows x64 ABI ainfo implementation includes info on how to return value type address.
+	// back to caller.
+	else {
+		storage = arg_get_storage (ccontext, ainfo);
+		*(gpointer *)storage = interp_cb->frame_arg_to_storage (frame, sig, -1);
+	}
+#endif
 
 	g_free (cinfo);
 }
@@ -1259,6 +1291,13 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 
 	for (int i = 0; i < sig->param_count + sig->hasthis; i++) {
 		ainfo = &cinfo->args [i];
+
+		if (ainfo->storage == ArgValuetypeAddrInIReg || ainfo->storage == ArgValuetypeAddrOnStack) {
+			storage = arg_get_storage (ccontext, ainfo);
+			interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, i, *(gpointer *)storage);
+			continue;
+		}
+
 		int temp_size = arg_need_temp (ainfo);
 
 		if (temp_size) {
@@ -1267,6 +1306,7 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 		} else {
 			storage = arg_get_storage (ccontext, ainfo);
 		}
+
 		interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, i, storage);
 	}
 
@@ -1396,14 +1436,6 @@ void
 mono_arch_init (void)
 {
 	mono_os_mutex_init_recursive (&mini_arch_mutex);
-
-	mono_aot_register_jit_icall ("mono_amd64_throw_exception", mono_amd64_throw_exception);
-	mono_aot_register_jit_icall ("mono_amd64_throw_corlib_exception", mono_amd64_throw_corlib_exception);
-	mono_aot_register_jit_icall ("mono_amd64_resume_unwind", mono_amd64_resume_unwind);
-
-#if defined(MONO_ARCH_GSHAREDVT_SUPPORTED)
-	mono_aot_register_jit_icall ("mono_amd64_start_gsharedvt_call", mono_amd64_start_gsharedvt_call);
-#endif
 
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();
@@ -3021,7 +3053,6 @@ emit_call_body (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gco
 	gboolean no_patch = FALSE;
 
 	g_assert (patch_type == MONO_PATCH_INFO_METHOD ||	// data is MonoMethod*; MONO_PATCH_INFO_METHOD_JUMP is already reasonable
-		  //patch_type == MONO_PATCH_INFO_JIT_ICALL ||	// data is function name //temporary
 		  patch_type == MONO_PATCH_INFO_JIT_ICALL_ID ||	// data is function id
 		  patch_type == MONO_PATCH_INFO_ABS);		// data is code pointer, hashed to MonoJumpInfo* with additional patch type/data
 
@@ -3050,22 +3081,15 @@ emit_call_body (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gco
 					near_call = FALSE;
 			}
 
-			if (patch_type == MONO_PATCH_INFO_JIT_ICALL || patch_type == MONO_PATCH_INFO_JIT_ICALL_ID) {
+			if (patch_type == MONO_PATCH_INFO_JIT_ICALL_ID) {
 				/* 
 				 * The call might go directly to a native function without
 				 * the wrapper.
 				 */
-				MonoJitICallInfo *mi;
-				if (patch_type == MONO_PATCH_INFO_JIT_ICALL) { //temporary
-					g_assert (!6);
-					mi = mono_find_jit_icall_by_name ((const char *)data);
-				} else
-					mi = mono_find_jit_icall_info ((MonoJitICallId)(gsize)data);
-				if (mi) {
-					gconstpointer target = mono_icall_get_wrapper (mi);
-					if ((((guint64)target) >> 32) != 0)
-						near_call = FALSE;
-				}
+				MonoJitICallInfo * const mi = mono_find_jit_icall_info ((MonoJitICallId)(gsize)data);
+				gconstpointer target = mono_icall_get_wrapper (mi);
+				if ((((guint64)target) >> 32) != 0)
+					near_call = FALSE;
 			}
 		}
 		else {
@@ -3075,7 +3099,7 @@ emit_call_body (MonoCompile *cfg, guint8 *code, MonoJumpInfoType patch_type, gco
 				jinfo = (MonoJumpInfo *)g_hash_table_lookup (cfg->abs_patches, data);
 			if (jinfo) {
 				if (jinfo->type == MONO_PATCH_INFO_JIT_ICALL_ADDR) {
-					MonoJitICallInfo *mi = mono_find_jit_icall_by_name (jinfo->data.name);
+					MonoJitICallInfo *mi = mono_find_jit_icall_info (jinfo->data.jit_icall_id);
 					if (mi && (((guint64)mi->func) >> 32) == 0)
 						near_call = TRUE;
 					no_patch = TRUE;
@@ -6852,10 +6876,6 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 		if (!amd64_is_imm32 (disp)) {
 			printf ("TYPE: %d\n", ji->type);
 			switch (ji->type) {
-			case MONO_PATCH_INFO_JIT_ICALL: //temporary
-				g_assert (!7);
-				printf ("V: %s\n", ji->data.name);
-				break;
 			case MONO_PATCH_INFO_JIT_ICALL_ID:
 				printf ("V: %s\n", mono_find_jit_icall_info (ji->data.jit_icall_id)->name);
 				break;
@@ -8541,4 +8561,19 @@ CallInfo*
 mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 {
 	return get_call_info (mp, sig);
+}
+
+gpointer
+mono_arch_load_function (MonoJitICallId jit_icall_id)
+{
+	gpointer target = NULL;
+	switch (jit_icall_id) {
+#undef MONO_AOT_ICALL
+#define MONO_AOT_ICALL(x) case MONO_JIT_ICALL_ ## x: target = (gpointer)x; break;
+	MONO_AOT_ICALL (mono_amd64_resume_unwind)
+	MONO_AOT_ICALL (mono_amd64_start_gsharedvt_call)
+	MONO_AOT_ICALL (mono_amd64_throw_corlib_exception)
+	MONO_AOT_ICALL (mono_amd64_throw_exception)
+	}
+	return target;
 }

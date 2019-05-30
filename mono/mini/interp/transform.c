@@ -10,6 +10,7 @@
 #include "config.h"
 #include <string.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/class-internals.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/exception-internals.h>
@@ -200,6 +201,7 @@ static int stack_type [] = {
 #define MINT_CLT_FP MINT_CLT_R8
 #define MINT_CLE_FP MINT_CLE_R8
 
+#define MINT_CONV_OVF_U4_P MINT_CONV_OVF_U4_I8
 #else
 
 #define MINT_NEG_P MINT_NEG_I4
@@ -245,6 +247,7 @@ static int stack_type [] = {
 #define MINT_CLT_FP MINT_CLT_R4
 #define MINT_CLE_FP MINT_CLE_R4
 
+#define MINT_CONV_OVF_U4_P MINT_CONV_OVF_U4_I4
 #endif
 
 typedef struct {
@@ -862,7 +865,7 @@ static int mono_class_get_magic_index (MonoClass *k)
 static void
 interp_generate_mae_throw (TransformData *td, MonoMethod *method, MonoMethod *target_method)
 {
-	MonoJitICallInfo *info = mono_find_jit_icall_by_name ("mono_throw_method_access");
+	MonoJitICallInfo *info = &mono_get_jit_icall_info ()->mono_throw_method_access;
 
 	/* Inject code throwing MethodAccessException */
 	interp_add_ins (td, MINT_MONO_LDPTR);
@@ -1133,7 +1136,6 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				return FALSE;
 			}
 
-#if SIZEOF_VOID_P == 4
 			if (src_size > dst_size) { // 8 -> 4
 				switch (type_index) {
 				case 0: case 1:
@@ -1144,9 +1146,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 					break;
 				}
 			}
-#endif
 
-#if SIZEOF_VOID_P == 8
 			if (src_size < dst_size) { // 4 -> 8
 				switch (type_index) {
 				case 0:
@@ -1160,9 +1160,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 					break;
 				}
 			}
-#endif
 
-			SET_TYPE (td->sp - 1, stack_type [mt], magic_class);
+			SET_TYPE (td->sp - 1, stack_type [mint_type (dst)], mono_class_from_mono_type_internal (dst));
 			td->ip += 5;
 			return TRUE;
 		} else if (!strcmp ("op_Increment", tm)) {
@@ -1244,7 +1243,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 		}
 
 		g_error ("TODO: interp_transform_call %s:%s", m_class_get_name (target_method->klass), tm);
-	} else if (mono_class_is_subclass_of (target_method->klass, mono_defaults.array_class, FALSE)) {
+	} else if (mono_class_is_subclass_of_internal (target_method->klass, mono_defaults.array_class, FALSE)) {
 		if (!strcmp (tm, "get_Rank")) {
 			*op = MINT_ARRAY_RANK;
 		} else if (!strcmp (tm, "get_Length")) {
@@ -1264,6 +1263,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				*op = MINT_BREAK;
 		}
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "ByReference`1")) {
+		g_assert (!strcmp (tm, "get_Value"));
 		*op = MINT_INTRINS_BYREFERENCE_GET_VALUE;
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "Math") && csignature->param_count == 1 && csignature->params [0]->type == MONO_TYPE_R8) {
 		if (tm [0] == 'A') {
@@ -1348,7 +1348,24 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			*op = MINT_INTRINS_UNSAFE_BYTE_OFFSET;
 		else if (!strcmp (tm, "As") || !strcmp (tm, "AsRef"))
 			*op = MINT_NOP;
-		else if (!strcmp (tm, "SizeOf")) {
+		else if (!strcmp (tm, "AsPointer")) {
+			/* NOP */
+			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_MP);
+			td->ip += 5;
+			return TRUE;
+		} else if (!strcmp (tm, "IsAddressLessThan")) {
+			MonoGenericContext *ctx = mono_method_get_context (target_method);
+			g_assert (ctx);
+			g_assert (ctx->method_inst);
+			g_assert (ctx->method_inst->type_argc == 1);
+
+			MonoClass *k = mono_defaults.boolean_class;
+			interp_add_ins (td, MINT_CLT_UN_P);
+			td->sp -= 1;
+			SET_TYPE (td->sp - 1, stack_type [mint_type (m_class_get_byval_arg (k))], k);
+			td->ip += 5;
+			return TRUE;
+		} else if (!strcmp (tm, "SizeOf")) {
 			MonoGenericContext *ctx = mono_method_get_context (target_method);
 			g_assert (ctx);
 			g_assert (ctx->method_inst);
@@ -1386,12 +1403,28 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "RuntimeMethodHandle") && !strcmp (tm, "GetFunctionPointer") && csignature->param_count == 1) {
 		// We must intrinsify this method on interp so we don't return a pointer to native code entering interpreter
 		*op = MINT_LDFTN_DYNAMIC;
-	} else if (target_method->klass == mono_defaults.object_class) {
+	} else if (in_corlib && target_method->klass == mono_defaults.object_class) {
 		if (!strcmp (tm, "InternalGetHashCode"))
 			*op = MINT_INTRINS_GET_HASHCODE;
 #ifdef DISABLE_REMOTING
 		else if (!strcmp (tm, "GetType"))
 			*op = MINT_INTRINS_GET_TYPE;
+#endif
+#ifdef ENABLE_NETCORE
+		else if (!strcmp (tm, "GetRawData")) {
+#if SIZEOF_VOID_P == 8
+			interp_add_ins (td, MINT_LDC_I8_S);
+#else
+			interp_add_ins (td, MINT_LDC_I4_S);
+#endif
+			td->last_ins->data [0] = (gint16) MONO_ABI_SIZEOF (MonoObject);
+
+			interp_add_ins (td, MINT_ADD_P);
+			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_MP);
+
+			td->ip += 5;
+			return TRUE;
+		}
 #endif
 	} else if (in_corlib && target_method->klass == mono_defaults.enum_class && !strcmp (tm, "HasFlag")) {
 		gboolean intrinsify = FALSE;
@@ -1437,6 +1470,11 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			td->ip += 5;
 			return TRUE;
 		}
+	} else if (in_corlib && !strcmp (klass_name_space, "System.Threading") && !strcmp (klass_name, "Interlocked")) {
+#if ENABLE_NETCORE
+		if (!strcmp (tm, "MemoryBarrier") && csignature->param_count == 0)
+			*op = MINT_MONO_MEMORY_BARRIER;
+#endif
 	}
 
 	return FALSE;
@@ -1896,7 +1934,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				 * but that type doesn't override the method we're
 				 * calling, so we need to box `this'.
 				 */
-				if ((td->sp - csignature->param_count - 1)->type == STACK_TYPE_MP) {
+				if (target_method->klass == mono_defaults.enum_class && (td->sp - csignature->param_count - 1)->type == STACK_TYPE_MP) {
 					/* managed pointer on the stack, we need to deref that puppy */
 					/* Always load the entire stackval, to handle also the case where the enum has long storage */
 					interp_add_ins (td, MINT_LDIND_I8);
@@ -5008,6 +5046,9 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			case STACK_TYPE_I8:
 				interp_add_ins (td, MINT_CONV_OVF_U4_I8);
 				break;
+			case STACK_TYPE_MP:
+				interp_add_ins (td, MINT_CONV_OVF_U4_P);
+				break;
 			default:
 				g_assert_not_reached ();
 			}
@@ -5187,15 +5228,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						goto exit;
 					break;
 				case CEE_MONO_JIT_ICALL_ADDR: {
-					guint32 token;
-					gpointer func;
-
-					token = read32 (td->ip + 1);
+					const guint32 token = read32 (td->ip + 1);
 					td->ip += 5;
-					func = mono_method_get_wrapper_data (method, token);
+					const gconstpointer func = mono_find_jit_icall_info ((MonoJitICallId)token)->func;
 
 					interp_add_ins (td, MINT_LDFTN);
-					td->last_ins->data [0] = get_data_item_index (td, func);
+					td->last_ins->data [0] = get_data_item_index (td, (gpointer)func);
 					PUSH_SIMPLE_TYPE (td, STACK_TYPE_I);
 					break;
 				}
@@ -5203,7 +5241,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					MonoJitICallId const jit_icall_id = (MonoJitICallId)read32 (td->ip + 1);
 					MonoJitICallInfo const * const info = mono_find_jit_icall_info (jit_icall_id);
 					td->ip += 5;
-					g_assert (info);
 
 					CHECK_STACK (td, info->sig->param_count);
 					if (!strcmp (info->name, "mono_threads_attach_coop")) {
@@ -6042,8 +6079,7 @@ mono_interp_transform_method (InterpMethod *imethod, ThreadContext *context, Mon
 			const char *name = method->name;
 			if (m_class_get_parent (method->klass) == mono_defaults.multicastdelegate_class) {
 				if (*name == '.' && (strcmp (name, ".ctor") == 0)) {
-					MonoJitICallInfo *mi = mono_find_jit_icall_by_name ("ves_icall_mono_delegate_ctor_interp");
-					g_assert (mi);
+					MonoJitICallInfo *mi = &mono_get_jit_icall_info ()->ves_icall_mono_delegate_ctor_interp;
 					nm = mono_marshal_get_icall_wrapper (mi, TRUE);
 				} else if (*name == 'I' && (strcmp (name, "Invoke") == 0)) {
 					/*

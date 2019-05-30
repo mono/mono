@@ -1,3 +1,5 @@
+#nullable disable
+
 //
 // System.Reflection/MonoMethod.cs
 // The class used to represent methods from the mono runtime.
@@ -86,7 +88,7 @@ namespace System.Reflection {
 
 		internal override ParameterInfo[] GetParametersInternal ()
 		{
-			return EmptyArray<ParameterInfo>.Value;
+			return Array.Empty<ParameterInfo> ();
 		}	
 		
 		// FIXME: "Not implemented.  Always returns 0"

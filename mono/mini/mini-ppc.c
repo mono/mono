@@ -584,8 +584,6 @@ mono_arch_init (void)
 	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT, MONO_MEM_ACCOUNT_OTHER);
 	mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
 
-	mono_aot_register_jit_icall ("mono_ppc_throw_exception", mono_ppc_throw_exception);
-
 	// FIXME: Fix partial sharing for power and remove this
 	mono_set_partial_sharing_supported (FALSE);
 }
@@ -4636,10 +4634,6 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 	case MONO_PATCH_INFO_IP:
 		patch_load_sequence (ip, ip);
 		break;
-	case MONO_PATCH_INFO_METHOD_REL:
-		g_assert_not_reached ();
-		*((gpointer *)(ip)) = code + ji->data.offset;
-		break;
 	case MONO_PATCH_INFO_SWITCH: {
 		gpointer *table = (gpointer *)ji->data.table->table;
 		int i;
@@ -4680,8 +4674,6 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 		/* everything is dealt with at epilog output time */
 		break;
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
-	case MONO_PATCH_INFO_JIT_ICALL: //temporary
-		g_assert (!21);
 	case MONO_PATCH_INFO_JIT_ICALL_ID:
 	case MONO_PATCH_INFO_ABS:
 	case MONO_PATCH_INFO_RGCTX_FETCH:
@@ -5993,3 +5985,14 @@ mono_arch_opcode_supported (int opcode)
 	}
 }
 
+gpointer
+mono_arch_load_function (MonoJitICallId jit_icall_id)
+{
+	gpointer target = NULL;
+	switch (jit_icall_id) {
+#undef MONO_AOT_ICALL
+#define MONO_AOT_ICALL(x) case MONO_JIT_ICALL_ ## x: target = (gpointer)x; break;
+	MONO_AOT_ICALL (mono_ppc_throw_exception)
+	}
+	return target;
+}

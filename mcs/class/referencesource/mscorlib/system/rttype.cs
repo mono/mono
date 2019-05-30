@@ -145,7 +145,7 @@ namespace System
             public T[] ToArray()
             {
                 if (_count == 0)
-                    return EmptyArray<T>.Value;
+                    return Array.Empty<T> ();
                 if (_count == 1)
                     return new T[1] { _item };
 
@@ -4261,7 +4261,7 @@ namespace System
 #endif
 
             if (types == null)
-                types = EmptyArray<Type>.Value;
+                types = Array.Empty<Type> ();
 
             return types;
         }
@@ -4306,7 +4306,7 @@ namespace System
 #pragma warning disable 162
                     if (!RuntimeFeature.IsDynamicCodeSupported)
                         throw new PlatformNotSupportedException();
-                    return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
+                    return MakeTypeBuilderInstantiation(instantiation);
 #pragma warning restore 162
 #endif
                 }
@@ -4336,6 +4336,13 @@ namespace System
 #endif
             return ret;
         }
+
+#if !NETCORE
+        Type MakeTypeBuilderInstantiation(Type[] instantiation)
+        {
+            return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
+        }
+#endif
 
         public override bool IsGenericTypeDefinition
         {
@@ -4589,7 +4596,7 @@ namespace System
             }
 
             if (members == null)
-                members = EmptyArray<MemberInfo>.Value;
+                members = Array.Empty<MemberInfo> ();
 
             return members;
         }
@@ -5041,7 +5048,7 @@ namespace System
                     finalists = new MethodInfo[] { finalist };
 
                 if (providedArgs == null)
-                        providedArgs = EmptyArray<Object>.Value;
+                        providedArgs = Array.Empty<Object>();
 
                 Object state = null;
 
@@ -5316,7 +5323,7 @@ namespace System
 #endif                    
                     
                     if (args == null)
-                        args = EmptyArray<Object>.Value;
+                        args = Array.Empty<Object> ();
 
                     int argCnt = args.Length;
 

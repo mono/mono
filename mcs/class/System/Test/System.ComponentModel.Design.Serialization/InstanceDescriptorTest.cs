@@ -41,7 +41,7 @@ namespace MonoTests.System.ComponentModel.Design.Serialization {
 	[TestFixture]
 	public class InstanceDescriptorTest {
 
-		private const string url = "http://www.mono-project.com/";
+		private const string url = "http://www.example.com/";
 		private ConstructorInfo ci;
 
 		[TestFixtureSetUp]

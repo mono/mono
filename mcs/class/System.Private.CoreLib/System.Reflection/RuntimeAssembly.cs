@@ -1,7 +1,7 @@
+#nullable disable
 using System.IO;
 using System.Globalization;
 using System.Collections.Generic;
-using System.Security;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Loader;
@@ -38,20 +38,20 @@ namespace System.Reflection
 
 		ResolveEventHolder resolve_event_holder;
 
-		public override extern MethodInfo EntryPoint {
+		public override extern MethodInfo? EntryPoint {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
 
 		public override bool ReflectionOnly => false;
 
-		public override string CodeBase {
+		public override string? CodeBase {
 			get {
 				return get_code_base (this, false);
 			}
 		}
 
-		public override string FullName {
+		public override string? FullName {
 			get {
 				return get_fullname (this);
 			}
@@ -70,7 +70,7 @@ namespace System.Reflection
 			}
 		}
 
-		public override Module ManifestModule => GetManifestModuleInternal ();
+		public override Module? ManifestModule => GetManifestModuleInternal ();
 
 		public override bool GlobalAssemblyCache => false;
 
@@ -327,7 +327,7 @@ namespace System.Reflection
 		{
 			string[] names = (string[]) GetFilesInternal (null, getResourceModules);
 			if (names == null)
-				return EmptyArray<FileStream>.Value;
+				return Array.Empty<FileStream> ();
 
 			string location = Location;
 

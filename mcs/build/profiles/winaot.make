@@ -38,7 +38,6 @@ ALWAYS_AOT_BCL = yes
 ALWAYS_AOT_TESTS = yes
 MOBILE_PROFILE = yes
 NO_VTS_TEST = yes
-NO_SRE=1
+NO_SRE = yes
 
-# Note need for trailing comma. If you add, keep it
-PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking,PKITS,
+PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking PKITS SRE NotWorkingLinqInterpreter

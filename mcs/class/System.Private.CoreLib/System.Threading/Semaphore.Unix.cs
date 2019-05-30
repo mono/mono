@@ -62,7 +62,7 @@ namespace System.Threading
 			
 			if (myHandle.IsInvalid) {
 				if (errorCode == MonoIOError.ERROR_INVALID_HANDLE && !string.IsNullOrEmpty (name))
-					throw new WaitHandleCannotBeOpenedException (SR.GetString (SR.Threading_WaitHandleCannotBeOpenedException_InvalidHandle, name));
+					throw new WaitHandleCannotBeOpenedException (SR.Format (SR.Threading_WaitHandleCannotBeOpenedException_InvalidHandle, name));
 
 				throw new IOException ($"Unknown Error '{errorCode}'");
 			}

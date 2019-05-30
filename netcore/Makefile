@@ -4,11 +4,11 @@ include ../mcs/build/config.make
 # NETCORETESTS_VERSION and NETCOREAPP_VERSION must be updated in sync, we are using coreclr repo for that but that's fine for now
 #
 
-# Extracted MicrosoftPrivateCoreFxNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L12
-NETCORETESTS_VERSION := 4.6.0-preview6.19257.4
+# Extracted MicrosoftPrivateCoreFxNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L18
+NETCORETESTS_VERSION := 4.6.0-preview6.19271.5
 
-# Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L14
-NETCOREAPP_VERSION := 3.0.0-preview5-27620-01
+# Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L22
+NETCOREAPP_VERSION := 3.0.0-preview6-27720-09
 
 # Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
@@ -89,6 +89,7 @@ run-aspnet-sample: prepare
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
+# CORLIB_BUILD_FLAGS="-c Debug" to compile System.Private.CoreLib.dll in debug mode
 bcl:
 	$(MAKE) -C ../mcs/build/ common/Consts.cs
 	$(MAKE) -C ../mcs/class/System.Private.CoreLib
@@ -106,6 +107,7 @@ prepare: $(ASPNETCORESDK_FILE) $(NETCORESDK_FILE) update-corefx update-roslyn li
 
 nupkg:
 	dotnet pack roslyn-restore.csproj -p:NuspecFile=runtime.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
+	dotnet pack roslyn-restore.csproj -p:NuspecFile=metapackage.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
 
 clean:
 	rm -rf sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) $(ASPNETCORESDK_FILE)
@@ -118,7 +120,7 @@ clean:
 #
 
 # e.g. `make xtest-System.Collections.Tests`
-# '-parallel none -verbose' for debug, `-parallel all` to run all tests in parallel
+# '-parallel none -verbose' and MONO_ENV_OPTIONS="--debug" for debug
 xtest-%: prepare update-corefx-tests
 	echo -n "***************** $* *********************"
 	cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/xunit.console.deps.json

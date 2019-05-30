@@ -5338,8 +5338,6 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain,
 			case MONO_PATCH_INFO_EXC:
 				s390_patch_addr (ip, (guint64) target);
 				continue;
-			case MONO_PATCH_INFO_JIT_ICALL: //temporary
-				g_assert (!13);
 			case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 			case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
 			case MONO_PATCH_INFO_METHOD:
@@ -5369,7 +5367,6 @@ mono_arch_patch_code (MonoCompile *cfg, MonoMethod *method, MonoDomain *domain,
 				continue;
 			case MONO_PATCH_INFO_R4:
 			case MONO_PATCH_INFO_R8:
-			case MONO_PATCH_INFO_METHOD_REL:
 				g_assert_not_reached ();
 				continue;
 			default:
@@ -6814,5 +6811,11 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 }
 
 #endif
+
+gpointer
+mono_arch_load_function (MonoJitICallId jit_icall_id)
+{
+	return NULL;
+}
 
 /*========================= End of Function ========================*/

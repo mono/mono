@@ -1,3 +1,5 @@
+#nullable disable
+
 //
 // System.Reflection.Emit.ConstructorBuilder.cs
 //
@@ -119,7 +121,7 @@ namespace System.Reflection.Emit {
 		internal override ParameterInfo [] GetParametersInternal ()
 		{
 			if (parameters == null)
-				return EmptyArray<ParameterInfo>.Value;
+				return Array.Empty<ParameterInfo> ();
 
 			ParameterInfo [] retval = new ParameterInfo [parameters.Length];
 			for (int i = 0; i < parameters.Length; i++)
@@ -175,13 +177,6 @@ namespace System.Reflection.Emit {
 		public override Type DeclaringType {
 			get {
 				return type;
-			}
-		}
-
-		[Obsolete]
-		public Type ReturnType {
-			get {
-				return null;
 			}
 		}
 
@@ -298,13 +293,6 @@ namespace System.Reflection.Emit {
 		public MethodToken GetToken ()
 		{
 			return new MethodToken (0x06000000 | table_idx);
-		}
-
-		// FIXME:
-		public void SetSymCustomAttribute (string name, byte[] data)
-		{
-			if (type.is_created)
-				throw not_after_created ();
 		}
 
 		public override Module Module {

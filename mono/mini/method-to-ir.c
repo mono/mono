@@ -1710,9 +1710,8 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 		EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_GET_TLS_TRAMP, GUINT_TO_POINTER(key));
 		return mini_emit_calli (cfg, mono_icall_sig_ptr, NULL, addr, NULL, NULL);
 	} else {
-		g_assert (TLS_KEY_THREAD == 0); // FIXME static_assert
+		g_static_assert (TLS_KEY_THREAD == 0);
 		const MonoJitICallId jit_icall_id = (MonoJitICallId)(MONO_JIT_ICALL_mono_tls_get_thread + key);
-		g_assert (mono_find_jit_icall_info (jit_icall_id)->func == (gpointer)mono_tls_get_tls_getter (key));
 		return mono_emit_jit_icall_id (cfg, jit_icall_id, NULL);
 	}
 }
@@ -5496,7 +5495,7 @@ handle_ctor_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fs
 		CHECK_CFG_EXCEPTION;
 	} else if ((cfg->opt & MONO_OPT_INLINE) && cmethod && !context_used && !vtable_arg &&
 			   mono_method_check_inlining (cfg, cmethod) &&
-			   !mono_class_is_subclass_of (cmethod->klass, mono_defaults.exception_class, FALSE)) {
+			   !mono_class_is_subclass_of_internal (cmethod->klass, mono_defaults.exception_class, FALSE)) {
 		int costs;
 
 		if ((costs = inline_method (cfg, cmethod, fsig, sp, ip, cfg->real_offset, FALSE))) {
@@ -10097,13 +10096,11 @@ field_access_end:
 		case MONO_CEE_MONO_ICALL: {
 			g_assert (method->wrapper_type != MONO_WRAPPER_NONE);
 			MonoJitICallInfo * const info = mono_find_jit_icall_info ((MonoJitICallId)token);
-			g_assertf (info, "Could not find icall address in wrapper %s", mono_method_full_name (method, 1));
 
 			CHECK_STACK (info->sig->param_count);
 			sp -= info->sig->param_count;
 
-			// FIXME int instead of pointer
-			if (info == &mono_get_jit_icall_info ()->mono_threads_attach_coop) {
+			if (token == MONO_JIT_ICALL_mono_threads_attach_coop) {
 				MonoInst *addr;
 				MonoBasicBlock *next_bb;
 
@@ -10113,7 +10110,7 @@ field_access_end:
 					 * infrastructure. Use an indirect call through a got slot initialized at load time
 					 * instead.
 					 */
-					EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL, (char*)info->name);
+					EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL, GUINT_TO_POINTER ((MonoJitICallId)token));
 					ins = mini_emit_calli (cfg, info->sig, sp, addr, NULL, NULL);
 				} else {
 					ins = mono_emit_jit_icall_info (cfg, info, sp);
@@ -10171,19 +10168,13 @@ mono_ldptr:
 			DISABLE_AOT (cfg);
 			break;
 		}
-		case MONO_CEE_MONO_JIT_ICALL_ADDR: {
-			MonoJitICallInfo *callinfo;
-			gpointer ptr;
-
+		case MONO_CEE_MONO_JIT_ICALL_ADDR:
 			g_assert (method->wrapper_type != MONO_WRAPPER_NONE);
-			ptr = mono_method_get_wrapper_data (method, token);
-			callinfo = mono_find_jit_icall_by_addr (ptr);
-			g_assert (callinfo);
-			EMIT_NEW_JIT_ICALL_ADDRCONST (cfg, ins, (char*)callinfo->name);
+			EMIT_NEW_JIT_ICALL_ADDRCONST (cfg, ins, GUINT_TO_POINTER (token));
 			*sp++ = ins;
 			inline_costs += CALL_COST * MIN(10, num_calls++);
 			break;
-		}
+
 		case MONO_CEE_MONO_ICALL_ADDR: {
 			MonoMethod *cmethod;
 			gpointer ptr;

@@ -50,7 +50,7 @@ namespace System
 			return InternalHasFlag (flag);
 		}
 
-		public static string GetName (Type enumType, object value)
+		public static string? GetName (Type enumType, object value)
 		{
 			if (enumType is null)
 				throw new ArgumentNullException (nameof(enumType));
