@@ -6184,13 +6184,28 @@ interp_code_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data
 {
 	MonoMethod* method = (MonoMethod*)key;
 	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
-	InterpMethod* interp_meothod = (InterpMethod*)value;
+	InterpMethod* interp_method = (InterpMethod*)value;
 	MonoImage* image = data->assembly->image;
 	if (method->klass->image == image)
 	{
 		MonoMethodSignature *sig = mono_method_signature(method);
-		mono_domain_mempool_free(data->domain, interp_meothod, sizeof(InterpMethod));
-		mono_domain_mempool_free(data->domain, interp_meothod->param_types, sizeof(MonoType*) * sig->param_count);
+		mono_domain_mempool_gc_collect(data->domain, interp_method, sizeof(InterpMethod));
+		mono_domain_mempool_gc_collect(data->domain, interp_method->param_types, sizeof(MonoType*) * sig->param_count);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+interp_method_pointer_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMethod* method = (MonoMethod*)key;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	InterpMethod* interp_method = (InterpMethod*)value;
+	MonoImage* image = data->assembly->image;
+	if (interp_method->method->klass->image == image)
+	{
+		// todo remove addr
 		return TRUE;
 	}
 	return FALSE;
@@ -6204,6 +6219,10 @@ void mono_mini_remove_interp_for_unused_assembly(MonoDomain* domain, MonoAssembl
 	user_data.domain = domain;
 	MonoJitDomainInfo *info = domain_jit_info(domain);
 	mono_internal_hash_table_foreach_remove(&info->interp_code_hash, interp_code_hash_foreach_remove, &user_data);
+	if (info->interp_method_pointer_hash)
+	{
+		g_hash_table_foreach_remove(info->interp_method_pointer_hash, interp_method_pointer_hash_foreach_remove, &user_data);
+	}
 }
 
 

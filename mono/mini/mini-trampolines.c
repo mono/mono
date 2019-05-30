@@ -1842,7 +1842,7 @@ static_rgctx_trampoline_hash_foreach_remove(gpointer key, gpointer value, gpoint
 	MonoImage* image = data->assembly->image;
 	if (info->m->klass->image == image)
 	{
-		mono_domain_mempool_free(data->domain, info, sizeof(RgctxTrampInfo));
+		mono_domain_mempool_gc_collect(data->domain, info, sizeof(RgctxTrampInfo));
 		return TRUE;
 	}
 	return FALSE;

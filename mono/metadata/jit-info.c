@@ -1079,7 +1079,7 @@ void mono_jit_info_table_cleanup_for_unused_assembly(MonoDomain* domain, MonoAss
 	for (int index = 0; index < removed_jit_info_table_array->len; index++)
 	{
 		MonoJitInfo *jit_info = (MonoJitInfo*) g_ptr_array_index(removed_jit_info_table_array, index);
-		mono_domain_code_free(domain, jit_info->code_start, jit_info->code_size);
+		mono_domain_code_gc_collect(domain, jit_info->code_start, jit_info->code_size);
 		// todo freee jit_info_table
 		// mini-trampolines.c:1491
 		jit_info_table_remove(domain->jit_info_table, jit_info);

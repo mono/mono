@@ -3092,7 +3092,7 @@ mono_reflection_cleanup_for_unused_assembly(MonoDomain* domain, MonoAssembly* as
 			mono_conc_g_hash_table_remove(domain->refobject_hash, reflection);
 			free_reflected_entry(reflection);
 		}
-		g_ptr_array_free(removed_refobject_hash_array, TRUE);
+		g_ptr_array_free(removed_refobject_hash_array, FALSE);
 		// mono_conc_g_hash_table_foreach(domain->refobject_hash, cleanup_refobject_hash, NULL);
 	}
 }

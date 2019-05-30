@@ -162,7 +162,7 @@ mono_internal_hash_table_foreach_remove(MonoInternalHashTable *table, GHRFunc fu
 				mono_internal_hash_table_remove(table, g_ptr_array_index(removed_element_array, index));
 			}
 		}
-		g_ptr_array_free(removed_element_array, TRUE);
+		g_ptr_array_free(removed_element_array, FALSE);
 	}
 	return count;
 }

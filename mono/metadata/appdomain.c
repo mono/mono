@@ -3186,13 +3186,15 @@ mono_image_method_cache_foreach(gpointer key, gpointer value, gpointer user_data
 void 
 mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 {
+	MonoDomain* domain = mono_domain_get();
 	// 先确保对象释放回收
+	mono_domain_code_gc_init(domain, assembly);
+	mono_domain_mempool_gc_init(domain, assembly);
 #if defined(HAVE_SGEN_GC)
 	mono_gc_finalize_assembly(assembly);
 	mono_gc_invoke_finalizers();
 #endif
 	// 注意一个 class 跨多个assembly的情况？
-	MonoDomain* domain = mono_domain_get();
 	MonoImage* image = assembly->image;
 	GPtrArray* removed_class_vtable_array = g_ptr_array_new();
 	GPtrArray* removed_mono_class_array = g_ptr_array_new();
@@ -3211,11 +3213,13 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	for (i = 0; i < removed_class_vtable_array->len; ++i)
 		zero_static_data((MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i));
 	mono_gc_collect(0);
+	
+	// remove vtable
 	for (i = 0; i < removed_class_vtable_array->len; ++i)
 	{
 		MonoVTable* removed_vtable = (MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i);
 		clear_cached_vtable(removed_vtable);
-		mono_domain_mempool_free(domain, removed_vtable->alloc_start, removed_vtable->alloc_size);
+		mono_domain_mempool_gc_collect(domain, removed_vtable->alloc_start, removed_vtable->alloc_size);
 		// remove from domain
 		g_ptr_array_remove(domain->class_vtable_array, removed_vtable);
 	}
@@ -3235,10 +3239,11 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	// unregister_vtable_reflection_type
 	for (i = 0; i < removed_class_vtable_array->len; ++i)
 		unregister_vtable_reflection_type((MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i));
-	g_ptr_array_free(removed_class_vtable_array, TRUE);
 
-	// free_domain_hook: mini_free_jit_domain_info 
-	mono_mini_remove_generic_sharing_for_unused_assembly(domain, assembly);
+	g_ptr_array_free(removed_class_vtable_array, FALSE);
+
+	// free_domain_hook: mini_free_jit_domain_info
+	// mono_mini_remove_generic_sharing_for_unused_assembly(domain, assembly);
 	mono_mini_remove_interp_for_unused_assembly(domain, assembly);
 	mono_mini_remove_trampoline_for_unused_assembly(domain, assembly);
 	mono_mini_remove_runtime_info_for_unused_assembly(domain, assembly);
@@ -3259,6 +3264,7 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 			}
 		}
 	}
+	g_ptr_array_free(removed_mono_class_array, FALSE);
 	// mono_assembly_release_gc_roots
 	mono_assembly_release_gc_roots(assembly);
 	// remote class 这个应该没用吧
@@ -3281,17 +3287,14 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	{
 		mono_jit_info_table_cleanup_for_unused_assembly(domain, assembly);
 	}
-	
-	// domain->mp
-	// domain->code_mp
-	// callbacks.free_method = mono_jit_free_method; mini-runtime.c
-	
 
 	// generic_virtual_cases
 	mono_object_remove_gerneric_virtual_case_for_unused_assembly(domain, assembly);
 	// mono_assembly_close
 
 	mono_assembly_close(assembly);
+	
+
 	// proxy_vtable_hash: remote_class
 	// jit_code_hash: 
 	// aot_modules: aot 模块不支持更新，所以不用卸载
@@ -3300,7 +3303,8 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	// generic_virtual_cases:是jit的东西？
 	domain->domain_assemblies = g_slist_remove(domain->domain_assemblies, assembly);
 	
-
+	mono_domain_code_gc_clear(domain, assembly);
+	mono_domain_mempool_gc_clear(domain, assembly);
 	
 }
 

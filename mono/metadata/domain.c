@@ -2023,4 +2023,71 @@ mono_domain_code_free(MonoDomain* domain, void* addr, guint size)
 	mono_domain_unlock(domain);
 }
 
+static GPtrArray* mempool_gc_collects = NULL;
+static GPtrArray* code_gc_collects = NULL;
+typedef struct {
+	gpointer addr;
+	guint size;
+} _GCEntity;
+
+void
+mono_domain_mempool_gc_init(MonoDomain* domain, MonoAssembly* assembly)
+{
+	if (mempool_gc_collects)
+	{
+		g_ptr_array_free(mempool_gc_collects, TRUE);
+	}
+	mempool_gc_collects = g_ptr_array_new();
+}
+void
+mono_domain_code_gc_init(MonoDomain* domain, MonoAssembly* assembly)
+{
+	if (code_gc_collects)
+	{
+		g_ptr_array_free(code_gc_collects, TRUE);
+	}
+	code_gc_collects = g_ptr_array_new();
+}
+void
+mono_domain_mempool_gc_collect(MonoDomain* domain, void* addr, guint size)
+{
+	_GCEntity* entity = g_new0(_GCEntity, 1);
+	entity->addr = addr;
+	entity->size = size;
+	g_ptr_array_add(mempool_gc_collects, entity);
+}
+void
+mono_domain_code_gc_collect(MonoDomain* domain, void* addr, guint size)
+{
+	_GCEntity* entity = g_new0(_GCEntity, 1);
+	entity->addr = addr;
+	entity->size = size;
+	g_ptr_array_add(code_gc_collects, entity);
+}
+
+void
+mono_domain_code_gc_clear(MonoDomain* domain, MonoAssembly* assembly)
+{
+	int index = 0;
+	for (index; index < code_gc_collects->len; index++)
+	{
+		_GCEntity* entity = (_GCEntity*)g_ptr_array_index(code_gc_collects, index);
+		mono_domain_code_free(domain, entity->addr, entity->size);
+	}
+	g_ptr_array_free(code_gc_collects, TRUE);
+	code_gc_collects = NULL;
+}
+void
+mono_domain_mempool_gc_clear(MonoDomain* domain, MonoAssembly* assembly)
+{
+	int index = 0;
+	for (index; index < mempool_gc_collects->len; index++)
+	{
+		_GCEntity* entity = (_GCEntity*)g_ptr_array_index(mempool_gc_collects, index);
+		mono_domain_mempool_free(domain, entity->addr, entity->size);
+	}
+	g_ptr_array_free(mempool_gc_collects, TRUE);
+	mempool_gc_collects = NULL;
+}
+
 // extend end

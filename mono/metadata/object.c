@@ -9139,7 +9139,7 @@ mono_object_remove_generic_virtual_case(gpointer key, gpointer value, gpointer u
 	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
 	if (vc && vc->method->klass->image == data->assembly->image)
 	{
-		mono_domain_mempool_free(data->domain, value, sizeof(GenericVirtualCase));
+		mono_domain_mempool_gc_collect(data->domain, value, sizeof(GenericVirtualCase));
 		return TRUE;
 	}
 	return FALSE;

@@ -5176,9 +5176,9 @@ delegate_trampoline_hash_foreach_remove(gpointer key, gpointer value, gpointer u
 	MonoImage* image = data->assembly->image;
 	if (pair->klass->image == image || (pair->method && pair->method->klass->image == image))
 	{
-		mono_domain_code_free(data->domain, tramp_info->code_start, tramp_info->code_size);
-		mono_domain_mempool_free(data->domain, pair, sizeof(MonoClassMethodPair));
-		mono_domain_mempool_free(data->domain, tramp_info, sizeof(MonoDelegateTrampInfo));
+		mono_domain_code_gc_collect(data->domain, tramp_info->code_start, tramp_info->code_size);
+		mono_domain_mempool_gc_collect(data->domain, pair, sizeof(MonoClassMethodPair));
+		mono_domain_mempool_gc_collect(data->domain, tramp_info, sizeof(MonoDelegateTrampInfo));
 		return TRUE;
 	}
 	return FALSE;
@@ -5193,15 +5193,14 @@ method_code_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data
 	MonoImage* image = data->assembly->image;
 	if (method->klass->image == image)
 	{
-		mono_domain_mempool_free(data->domain, code_solt, sizeof(gpointer));
+		mono_domain_mempool_gc_collect(data->domain, code_solt, sizeof(gpointer));
 		return TRUE;
 	}
 	return FALSE;
 }
 
-
 static gboolean
-jump_trampoline_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+mono_method_key_foreach_remove(gpointer key, gpointer value, gpointer user_data)
 {
 	MonoMethod* method = (MonoMethod*)key;
 	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
@@ -5212,21 +5211,6 @@ jump_trampoline_hash_foreach_remove(gpointer key, gpointer value, gpointer user_
 	}
 	return FALSE;
 }
-
-
-static gboolean
-seq_points_foreach_remove(gpointer key, gpointer value, gpointer user_data)
-{
-	MonoMethod* method = (MonoMethod*)key;
-	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
-	MonoImage* image = data->assembly->image;
-	if (method->klass->image == image)
-	{
-		return TRUE;
-	}
-	return FALSE;
-}
-
 
 
 void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly)
@@ -5254,25 +5238,34 @@ void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoA
 	}
 	if (info->jump_trampoline_hash)
 	{
-		g_hash_table_foreach_remove(info->jump_trampoline_hash, jump_trampoline_hash_foreach_remove, &user_data);
+		g_hash_table_foreach_remove(info->jump_trampoline_hash, mono_method_key_foreach_remove, &user_data);
 	}
 //	g_hash_table_destroy(info->jit_trampoline_hash);
 	if (info->jit_trampoline_hash)
 	{
 		// todo: remove code
-		g_hash_table_foreach_remove(info->jit_trampoline_hash, jump_trampoline_hash_foreach_remove, &user_data);
+		g_hash_table_foreach_remove(info->jit_trampoline_hash, mono_method_key_foreach_remove, &user_data);
 	}
 	if (info->delegate_trampoline_hash)
 	{
 		g_hash_table_foreach_remove(info->delegate_trampoline_hash, delegate_trampoline_hash_foreach_remove, &user_data);
 	}
-	// 在 mini-trampolines 移除
+	// 在 mini-trampolines 中
 	// if (info->static_rgctx_trampoline_hash)
+	// 在 mini-generic_sharing 中
 //	g_hash_table_destroy(info->mrgctx_hash);
 //	g_hash_table_destroy(info->method_rgctx_hash);
+	// 在interp.c中
 //	g_hash_table_destroy(info->interp_method_pointer_hash);
+	// 没用到
 //	g_hash_table_destroy(info->llvm_vcall_trampoline_hash);
+
 //	mono_conc_hashtable_destroy(info->runtime_invoke_hash);
+	if (info->runtime_invoke_hash)
+	{
+		mono_conc_hashtable_foreach_steal(info->runtime_invoke_hash, mono_method_key_foreach_remove, &user_data);
+	}
+
 	// debug breakpoint
 	// if (info->seq_points)
 //	g_hash_table_destroy(info->arch_seq_points);
