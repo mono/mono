@@ -41,6 +41,7 @@ jobs:
     condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
   
   - script: |
+      which powershell
       choco install msys2 --params="/InstallDir:%CD:~0,2%\msys64 /NoUpdate /NoPath"
       %CD:~0,2%\msys64\usr\bin\pacman --noconfirm -Syyuu
       %CD:~0,2%\msys64\usr\bin\pacman --noconfirm -Syuu
