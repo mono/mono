@@ -2,4 +2,6 @@
 
 . "../eng/common/tools.sh"
 
-InitializeToolset
+InitializeDotNetCli true
+
+which dotnet
