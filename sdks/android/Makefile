@@ -163,7 +163,7 @@ app/assets/x86_64/lldb-server: lldb-mono-0.1/android/x86_64/lldb-server | app/as
 check-Mono.Debugger.Soft: .stamp-install
 	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe \
 		-labels \
-		-exclude:NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,LargeFileSupport,AndroidSdksNotWorking \
+		-exclude:NotOnMac,NotWorking,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,LargeFileSupport,AndroidSdksNotWorking \
 		-remote:android:$(PACKAGE)/$(RUNNER) \
 		-result:TestResult-Mono.Debugger.Soft.xml \
 		-format:nunit2 \
@@ -175,7 +175,7 @@ check-Mono.Debugger.Soft: .stamp-install
 # check-Mono.Profiler.Log: .stamp-install
 # 	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe \
 # 		-labels \
-# 		-exclude:NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,AndroidSdksNotWorking \
+# 		-exclude:NotOnMac,NotWorking,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,AndroidSdksNotWorking \
 # 		-remote:android:$(PACKAGE)/$(RUNNER) \
 # 		-result:TestResult-Mono.Profiler.Log.xml \
 # 		-format:nunit2 \
@@ -186,7 +186,7 @@ check-Mono.Debugger.Soft: .stamp-install
 check-%: .stamp-install
 	PATH="$$PATH:$(dir $(ADB))" mono --debug $(TOP)/sdks/out/android-bcl/monodroid_tools/nunit-lite-console.exe \
 		-labels \
-		-exclude:NotOnMac,NotWorking,ValueAdd,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,LargeFileSupport,AndroidSdksNotWorking \
+		-exclude:NotOnMac,NotWorking,CAS,InetAccess,MobileNotWorking,AndroidNotWorking,LargeFileSupport,AndroidSdksNotWorking \
 		-android:$(PACKAGE)/$(RUNNER) \
 		-result:TestResult-$*.xml \
 		-format:nunit2 \
