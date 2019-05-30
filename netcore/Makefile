@@ -66,11 +66,11 @@ $(ASPNETCORESDK_FILE):
 
 update-corefx: corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION)
 
-corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION): corefx-restore.csproj init-tools
+corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION): corefx-restore.csproj
 	$(DOTNET) build corefx-restore.csproj --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/
 	touch $@
 
-update-roslyn: roslyn-restore.csproj init-tools
+update-roslyn: roslyn-restore.csproj
 	$(DOTNET) restore roslyn-restore.csproj -p:RoslynVersion=$(ROSLYN_VERSION) --packages roslyn/packages -p:OutputPath=roslyn/restore/
 
 update-corefx-tests: corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION)
@@ -95,7 +95,7 @@ run-aspnet-sample: prepare
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
 # CORLIB_BUILD_FLAGS="-c Debug" to compile System.Private.CoreLib.dll in debug mode
-bcl: init-tools update-roslyn
+bcl: update-roslyn
 	$(MAKE) -C ../mcs/build/ common/Consts.cs
 	$(DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:BuildArch=$(COREARCH) \
 	-p:OutputPath=bin/$(COREARCH) \
@@ -109,7 +109,7 @@ link-mono:
 	cp ../mono/mini/.libs/libmonosgen-2.0$(PLATFORM_AOT_SUFFIX) $(SHAREDRUNTIME)/$(PLATFORM_AOT_PREFIX)coreclr$(PLATFORM_AOT_SUFFIX)
 	cp ../mcs/class/System.Private.CoreLib/bin/$(COREARCH)/System.Private.CoreLib.{dll,pdb} $(SHAREDRUNTIME)
 
-prepare: init-tools $(ASPNETCORESDK_FILE) $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
+prepare: $(ASPNETCORESDK_FILE) $(NETCORESDK_FILE) update-corefx update-roslyn link-mono
 
 nupkg:
 	$(DOTNET) pack roslyn-restore.csproj -p:NuspecFile=runtime.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
