@@ -209,25 +209,29 @@ process_complete_path (const gunichar2 *appname, gchar **completed)
 	char *utf8app;
 	char *utf8appmemory = NULL;
 	char *found = NULL;
-	gboolean result;
+	gboolean result, file_test_result;
 
 	utf8appmemory = g_utf16_to_utf8 (appname, -1, NULL, NULL, NULL);
 	utf8app = process_unquote_application_name (utf8appmemory);
 
-	MONO_ENTER_GC_SAFE;
 	if (g_path_is_absolute (utf8app)) {
 		*completed = process_quote_path (utf8app);
 		result = TRUE;
 		goto exit;
 	}
 
-	if (g_file_test (utf8app, G_FILE_TEST_IS_EXECUTABLE) && !g_file_test (utf8app, G_FILE_TEST_IS_DIR)) {
+	MONO_ENTER_GC_SAFE;
+	file_test_result = g_file_test (utf8app, G_FILE_TEST_IS_EXECUTABLE) && !g_file_test (utf8app, G_FILE_TEST_IS_DIR);
+	MONO_EXIT_GC_SAFE;
+	if (file_test_result) {
 		*completed = process_quote_path (utf8app);
 		result = TRUE;
 		goto exit;
 	}
 	
+	MONO_ENTER_GC_SAFE;
 	found = g_find_program_in_path (utf8app);
+	MONO_EXIT_GC_SAFE;
 	if (found == NULL) {
 		*completed = NULL;
 		result = FALSE;
@@ -236,7 +240,6 @@ process_complete_path (const gunichar2 *appname, gchar **completed)
 
 	*completed = process_quote_path (found);
 exit:
-	MONO_EXIT_GC_SAFE;
 	g_free (found);
 	g_free (utf8appmemory);
 	return result;
