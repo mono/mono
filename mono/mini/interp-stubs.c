@@ -146,6 +146,45 @@ stub_delegate_ctor (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer
 	g_assert_not_reached ();
 }
 
+static void
+stub_entry_from_trampoline (gpointer ccontext, gpointer imethod)
+{
+	g_assert_not_reached ();
+}
+
+static void
+stub_to_native_trampoline (gpointer addr, gpointer ccontext)
+{
+	g_assert_not_reached ();
+}
+
+static void
+stub_frame_arg_to_data (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gpointer data)
+{
+	g_assert_not_reached ();
+}
+
+static void
+stub_data_to_frame_arg (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gpointer data)
+{
+	g_assert_not_reached ();
+}
+
+static gpointer
+stub_frame_arg_to_storage (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+static void
+stub_frame_arg_set_storage (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gpointer storage)
+{
+	g_assert_not_reached ();
+}
+
+static const MonoEECallbacks mono_interp_stub_callbacks = MONO_INIT_EE_CALLBACKS (stub);
+
 void
 mono_interp_stub_init (void)
 {
@@ -153,14 +192,5 @@ mono_interp_stub_init (void)
 		/* already initialized */
 		return;
 
-#define stub_entry_from_trampoline NULL
-#define stub_to_native_trampoline NULL
-#define stub_frame_arg_to_data NULL
-#define stub_data_to_frame_arg NULL
-#define stub_frame_arg_to_storage NULL
-#define stub_frame_arg_set_storage NULL
-
-	static const MonoEECallbacks c = MONO_INIT_EE_CALLBACKS (stub);
-
-	mini_install_interp_callbacks (&c);
+	mini_install_interp_callbacks (&mono_interp_stub_callbacks);
 }

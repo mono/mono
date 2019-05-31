@@ -58,35 +58,35 @@ typedef struct _MonoEECallbacks {
 } MonoEECallbacks;
 
 // static const MonoEECallbacks foo_ee_callbacks = MONO_INIT_EE_CALLBACKS (foo);
-#define MONO_INIT_EE_CALLBACKS(prefix) {		\
-	prefix ## _entry_from_trampoline,		\
-	prefix ## _to_native_trampoline,		\
-	prefix ## _create_method_pointer,		\
-	prefix ## _create_method_pointer_llvmonly,	\
-	prefix ## _runtime_invoke,			\
-	prefix ## _init_delegate,			\
-	prefix ## _delegate_ctor,			\
-	prefix ## _get_remoting_invoke,			\
-	prefix ## _set_resume_state,			\
-	prefix ## _run_finally,				\
-	prefix ## _run_filter,				\
-	prefix ## _frame_iter_init,			\
-	prefix ## _frame_iter_next,			\
-	prefix ## _find_jit_info,			\
-	prefix ## _set_breakpoint,			\
-	prefix ## _clear_breakpoint,			\
-	prefix ## _frame_get_jit_info,			\
-	prefix ## _frame_get_ip,			\
-	prefix ## _frame_get_arg,			\
-	prefix ## _frame_get_local,			\
-	prefix ## _frame_get_this,			\
-	prefix ## _frame_arg_to_data,			\
-	prefix ## _data_to_frame_arg,			\
-	prefix ## _frame_arg_to_storage,		\
-	prefix ## _frame_arg_set_storage,		\
-	prefix ## _frame_get_parent,			\
-	prefix ## _start_single_stepping,		\
-	prefix ## _stop_single_stepping,		\
+#define MONO_INIT_EE_CALLBACKS(prefix) {           \
+	prefix ## _entry_from_trampoline,          \
+	prefix ## _to_native_trampoline,           \
+	prefix ## _create_method_pointer,          \
+	prefix ## _create_method_pointer_llvmonly, \
+	prefix ## _runtime_invoke,                 \
+	prefix ## _init_delegate,                  \
+	prefix ## _delegate_ctor,                  \
+	prefix ## _get_remoting_invoke,            \
+	prefix ## _set_resume_state,               \
+	prefix ## _run_finally,                    \
+	prefix ## _run_filter,                     \
+	prefix ## _frame_iter_init,                \
+	prefix ## _frame_iter_next,                \
+	prefix ## _find_jit_info,                  \
+	prefix ## _set_breakpoint,                 \
+	prefix ## _clear_breakpoint,               \
+	prefix ## _frame_get_jit_info,             \
+	prefix ## _frame_get_ip,                   \
+	prefix ## _frame_get_arg,                  \
+	prefix ## _frame_get_local,                \
+	prefix ## _frame_get_this,                 \
+	prefix ## _frame_arg_to_data,              \
+	prefix ## _data_to_frame_arg,              \
+	prefix ## _frame_arg_to_storage,           \
+	prefix ## _frame_arg_set_storage,          \
+	prefix ## _frame_get_parent,               \
+	prefix ## _start_single_stepping,          \
+	prefix ## _stop_single_stepping,           \
 }
 
 #endif /* __MONO_EE_H__ */

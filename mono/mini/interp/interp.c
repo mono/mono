@@ -2483,7 +2483,11 @@ interp_entry_general (gpointer this_arg, gpointer res, gpointer *args, gpointer 
 	interp_entry (&data);
 }
 
-#define interp_entry_from_trampoline NULL
+static void
+interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untyped)
+{
+	g_assert_not_reached ();
+}
 
 #else
 
@@ -6655,6 +6659,8 @@ register_interp_stats (void)
 	mono_counters_register ("Inline failures", MONO_COUNTER_INTERP | MONO_COUNTER_INT, &mono_interp_stats.inline_failures);
 }
 
+static const MonoEECallbacks mono_interp_callbacks = MONO_INIT_EE_CALLBACKS (interp);
+
 void
 mono_ee_interp_init (const char *opts)
 {
@@ -6670,9 +6676,7 @@ mono_ee_interp_init (const char *opts)
 		mono_interp_opt &= ~INTERP_OPT_INLINE;
 	mono_interp_transform_init ();
 
-	static const MonoEECallbacks c = MONO_INIT_EE_CALLBACKS (interp);
-
-	mini_install_interp_callbacks (&c);
+	mini_install_interp_callbacks (&mono_interp_callbacks);
 
 	register_interp_stats ();
 }
