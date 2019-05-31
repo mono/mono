@@ -4306,7 +4306,7 @@ namespace System
 #pragma warning disable 162
                     if (!RuntimeFeature.IsDynamicCodeSupported)
                         throw new PlatformNotSupportedException();
-                    return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
+                    return MakeTypeBuilderInstantiation(instantiation);
 #pragma warning restore 162
 #endif
                 }
@@ -4336,6 +4336,13 @@ namespace System
 #endif
             return ret;
         }
+
+#if !NETCORE
+        Type MakeTypeBuilderInstantiation(Type[] instantiation)
+        {
+            return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
+        }
+#endif
 
         public override bool IsGenericTypeDefinition
         {
