@@ -20,7 +20,8 @@ NETCORESDK_EXT = zip
 UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
 XUNIT_FLAGS =
 TESTS_PLATFORM = Windows_NT.x64
-DOTNET = $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
+DOTNET := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
+DOTNET := $(subst \,/,$(DOTNET))
 endif
 
 ifeq ($(HOST_PLATFORM),macos)
@@ -28,7 +29,7 @@ NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
 XUNIT_FLAGS = -notrait category=nonosxtests
 TESTS_PLATFORM = OSX.x64
-DOTNET = $(shell ./init-tools.sh | tail -1)
+DOTNET := $(shell ./init-tools.sh | tail -1)
 endif
 
 ifeq ($(HOST_PLATFORM),linux)
@@ -36,7 +37,7 @@ NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
 XUNIT_FLAGS = -notrait category=nonlinuxtests
 TESTS_PLATFORM = Linux.x64
-DOTNET = $(shell ./init-tools.sh | tail -1)
+DOTNET := $(shell ./init-tools.sh | tail -1)
 endif
 
 NETCORESDK_FILE := dotnet-runtime-$(NETCOREAPP_VERSION)-$(RID).$(NETCORESDK_EXT)
