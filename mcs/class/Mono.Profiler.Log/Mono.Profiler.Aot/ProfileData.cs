@@ -1,20 +1,16 @@
-using System.Collections.Generic;
-
 namespace Mono.Profiler.Aot
 {
-	public class ProfileData
+	public sealed class ProfileData
 	{
-		internal ProfileData ()
+		public ProfileData (ModuleRecord[] modules, TypeRecord[] types, MethodRecord[] methods)
 		{
-			Modules = new List<ModuleRecord> ();
-			Types = new List<TypeRecord> ();
-			Methods = new List<MethodRecord> ();
+			this.Modules = modules;
+			this.Types = types;
+			this.Methods = methods;
 		}
 
-		public List<ModuleRecord> Modules { get; private set; }
-
-		public List<TypeRecord> Types { get; private set; }
-
-		public List<MethodRecord> Methods { get; private set; }
+		public ModuleRecord[] Modules { get; private set; }
+		public TypeRecord[] Types { get; private set; }
+		public MethodRecord[] Methods { get; private set; }
 	}
 }
