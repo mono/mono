@@ -36,7 +36,7 @@ jobs:
 
   - bash: |  
       sudo apt update
-      sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext dotnet-sdk-2.2
+      sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext
     displayName: 'Prepare Linux dependencies'
     condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
   
@@ -60,17 +60,10 @@ jobs:
         sed: $(sed)
       displayName: 'Rewrite .gitmodules'
 
-  - task: DotNetCoreInstaller@0
-    inputs:
-      packageType: 'sdk'
-      version: '2.2.203'
-    displayName: Install .NET Core 2.2 latest
-    condition: eq(variables['poolname'], 'Hosted VS2017')
-
   - script: |
       %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin ./autogen.sh --host=x86_64-w64-mingw32 --with-core=only"
       CALL msvc\run-msbuild.bat build x86_64 release "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen"
-      %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl"
+      %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/c/windows/System32/WindowsPowerShell/v1.0/:/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore bcl"
       MKDIR mono\mini\.libs\
       COPY msvc\build\sgen\x64\bin\Release\mono-2.0-sgen.dll mono\mini\.libs\monosgen-2.0.dll
       %CD:~0,2%\msys64\usr\bin\bash -lc "PATH=/usr/bin:/mingw64/bin:/c/hostedtoolcache/windows/dncs/2.2.203/x64:/c/Program\ Files/Git/bin make -C netcore nupkg"
