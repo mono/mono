@@ -288,8 +288,8 @@ var BindingSupportLib = {
 			}
 
 			if (js_obj.constructor.name === "Date")
-				//return this.call_method(this.create_date_time, null, "dm", [ ((js_obj.getTime() * 10000) + 621355968000000000) - (js_obj.getTimezoneOffset() * 600000000) ]);
-				return this.call_method(this.create_date_time, null, "dm", [ (js_obj.getTime() * 10000) + 621355968000000000 ]);
+				// We may need to take into account the TimeZone Offset
+				return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
 
 			return this.extract_mono_obj (js_obj);
 		},
