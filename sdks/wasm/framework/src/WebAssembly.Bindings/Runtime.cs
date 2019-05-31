@@ -458,6 +458,24 @@ namespace WebAssembly {
 			return o.ToString ();
 		}
 
+		static Int64 MinDateTimeTicks = 621355968000000000; // (new DateTime(1970, 1, 1, 0, 0, 0)).Ticks;
+		static double GetDateValue (object dtv)
+		{
+			var dt = (DateTime)dtv;
+			if (dt.Kind == DateTimeKind.Local)
+				dt = dt.ToUniversalTime ();
+			else if (dt.Kind == DateTimeKind.Unspecified)
+				dt = new DateTime (dt.Ticks, DateTimeKind.Utc);
+			Int64 value = (dt.Ticks - MinDateTimeTicks) / 10000;
+
+			return (double)value;
+		}
+
+		static DateTime CreateDateTime (double ticks)
+		{
+			return new DateTime ((Int64)ticks, DateTimeKind.Utc);
+		}
+
 		// This is simple right now and will include FlagsAttribute later.
 		public static Enum EnumFromExportContract (Type enumType, object value)
 		{

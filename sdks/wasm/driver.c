@@ -38,6 +38,9 @@ char *monoeg_g_getenv(const char *variable);
 int monoeg_g_setenv(const char *variable, const char *value, int overwrite);
 void mono_free (void*);
 
+static MonoClass* datetime_class;
+static MonoClass* datetimeoffset_class;
+
 /* Not part of public headers */
 #define MONO_ICALL_TABLE_CALLBACKS_VERSION 2
 
@@ -457,6 +460,8 @@ class_is_task (MonoClass *klass)
 #define MARSHAL_TYPE_OBJECT 7
 #define MARSHAL_TYPE_BOOL 8
 #define MARSHAL_TYPE_ENUM 9
+#define MARSHAL_TYPE_DATE 20
+#define MARSHAL_TYPE_DATEOFFSET 21
 
 // typed array marshalling
 #define MARSHAL_ARRAY_BYTE 11
@@ -473,6 +478,12 @@ mono_wasm_get_obj_type (MonoObject *obj)
 {
 	if (!obj)
 		return 0;
+
+	if (!datetime_class)
+		datetime_class = mono_class_from_name (mono_get_corlib(), "System", "DateTime");
+	if (!datetimeoffset_class)
+		datetimeoffset_class = mono_class_from_name (mono_get_corlib(), "System", "DateTimeOffset");
+
 	MonoClass *klass = mono_object_get_class (obj);
 	MonoType *type = mono_class_get_type (klass);
 
@@ -521,6 +532,10 @@ mono_wasm_get_obj_type (MonoObject *obj)
 		}		
 	}
 	default:
+		if (klass == datetime_class)
+			return MARSHAL_TYPE_DATE;
+		if (klass == datetimeoffset_class)
+			return MARSHAL_TYPE_DATEOFFSET;
 		if (mono_class_is_enum (klass))
 			return MARSHAL_TYPE_ENUM;
 		if (!mono_type_is_reference (type)) //vt
