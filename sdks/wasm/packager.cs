@@ -695,15 +695,16 @@ class Driver {
 		}
 		ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emscripten_sdkdir/emsdk_env.sh && emcc");
+		ninja.WriteLine ("wasm_strip = $emscripten_sdkdir/upstream/bin/wasm-strip");
 		// -s ASSERTIONS=2 is very slow
-		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\" -s \"DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\'setThrew\']\"");
+		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\" -s \"DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\'setThrew\', \'memset\']\"");
 
 		// Rules
 		ninja.WriteLine ("rule aot");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_args,{aot_args}llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile $src_file");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_args,{aot_args}llvmonly,asmonly,llvmopts=-O2,static,direct-icalls,llvm-outfile=$outfile $src_file");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		ninja.WriteLine ("rule aot-instances");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot={aot_args}llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile,dedup-include=$dedup_image $src_files");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot={aot_args}llvmonly,asmonly,llvmopts=-O2,static,direct-icalls,llvm-outfile=$outfile,dedup-include=$dedup_image $src_files");
 		ninja.WriteLine ("  description = [AOT-INSTANCES] $outfile");
 		ninja.WriteLine ("rule mkdir");
 		ninja.WriteLine ("  command = mkdir -p $out");
@@ -716,8 +717,8 @@ class Driver {
 		ninja.WriteLine ("  command = bash -c '$emcc $emcc_flags $flags -c -o $out $in'");
 		ninja.WriteLine ("  description = [EMCC] $in -> $out");
 		ninja.WriteLine ("rule emcc-link");
-		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags -o $out --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in'");
-		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out");
+		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' && $wasm_strip $out_wasm");
+		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out_js");
 		ninja.WriteLine ("rule linker");
 		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /nologo /out:$$f /target:library empty.cs; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
@@ -876,7 +877,9 @@ class Driver {
 		}
 		if (build_wasm) {
 			string zlibhelper = enable_zlib ? "$builddir/zlib-helper.o" : "";
-			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
+			ninja.WriteLine ($"build $appdir/mono.js $appdir/moon.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
+			ninja.WriteLine ("  out_js=$appdir/mono.js");
+			ninja.WriteLine ("  out_wasm=$appdir/mono.wasm");
 		}
 		if (enable_linker) {
 			switch (linkMode) {
