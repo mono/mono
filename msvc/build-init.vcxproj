@@ -25,32 +25,32 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92AE7622-5F58-4234-9A26-9EC71876B3F4}</ProjectGuid>
     <RootNamespace>buildinit</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -153,7 +153,6 @@
   <Import Project="mono.winconfig.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-
   <Target Name="AfterBuildWinSetup">
     <PropertyGroup>
       <_EnableDefines Condition="'$(MONO_ENABLE_LLVM)' == 'true'">$(_EnableDefines);ENABLE_LLVM;ENABLE_LLVM_RUNTIME</_EnableDefines>
@@ -162,24 +161,17 @@
       <_EnableDefines>$(_EnableDefines.Trim(';'))</_EnableDefines>
       <_HaveDefines>$(_HaveDefines.Trim(';'))</_HaveDefines>
     </PropertyGroup>
-    <WinConfigSetup ConfigFileRoot="$(MSBuildThisFileDirectory)..\"
-                    DisableDefines=""
-                    EnableDefines="$(_EnableDefines)"
-                    HaveDefines="$(_HaveDefines)"/>
+    <WinConfigSetup ConfigFileRoot="$(MSBuildThisFileDirectory)..\" DisableDefines="" EnableDefines="$(_EnableDefines)" HaveDefines="$(_HaveDefines)" />
   </Target>
-
   <Target Name="AfterBuild" DependsOnTargets="AfterBuildWinSetup" />
-
   <Target Name="_BackupConfigFile" Condition="'$(_MonoConfigFileBackupExists)' != 'true' and Exists('$(MONO_DIR)/config.h')">
     <Copy SourceFiles="$(MONO_DIR)/config.h" DestinationFiles="$(MONO_DIR)/cygconfig.h" />
   </Target>
-
   <Target Name="_CheckConfigFile">
     <_CheckConfigurationProperty ConfFile="$(MONO_DIR)/config.h" ConfRegEx="#include.*cygconfig.h.*">
       <Output TaskParameter="ConfPropertyFoundMatch" PropertyName="_MonoConfigFileBackupExists" />
     </_CheckConfigurationProperty>
   </Target>
-
   <PropertyGroup>
     <PrepareForBuildDependsOn>
       _CheckConfigFile;
@@ -187,5 +179,4 @@
       $(PrepareForBuildDependsOn);
     </PrepareForBuildDependsOn>
   </PropertyGroup>
-
 </Project>

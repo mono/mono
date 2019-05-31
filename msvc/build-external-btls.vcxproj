@@ -26,32 +26,32 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E41DDF41-0916-454B-A7C2-6E410E45CAFD}</ProjectGuid>
     <RootNamespace>buildexternalbtls</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -157,7 +157,7 @@
     <_BtlsCFlags Condition="'$(MONO_PREPROCESSOR_DEFINITIONS)' != ''">$(MONO_PREPROCESSOR_DEFINITIONS.Replace(";"," "))</_BtlsCFlags>
     <_BtlsCFlags>$(_BtlsCFlags.Trim())</_BtlsCFlags>
     <_BtlsCFlags Condition="'$(_BtlsCFlags)' != ''">-D$(_BtlsCFlags.Replace(" "," -D"))</_BtlsCFlags>
-    <_BtlsBuildCommand>build-external-btls.bat &quot;$(_MonoBtlsSourceDir)&quot; &quot;$(_BtlsSourceDir)&quot; &quot;$(_BtlsBuildDir)&quot; &quot;$(_MonoOutputDir)&quot; &quot;$(_BtlsCFlags)&quot; &quot;$(Platform)&quot; &quot;$(Configuration)&quot;</_BtlsBuildCommand>
+    <_BtlsBuildCommand>build-external-btls.bat "$(_MonoBtlsSourceDir)" "$(_BtlsSourceDir)" "$(_BtlsBuildDir)" "$(_MonoOutputDir)" "$(_BtlsCFlags)" "$(Platform)" "$(Configuration)"</_BtlsBuildCommand>
   </PropertyGroup>
   <Target Name="_AfterBuildExternalBtls" Condition="'$(MONO_ENABLE_BTLS)' == 'true'">
     <Exec Command="$(_BtlsBuildCommand) &quot;Build&quot; &quot;$(MSBuildBinPath)\&quot; &quot;$(_MonoExternalBuildForceMSBuild)&quot;">

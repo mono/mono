@@ -39,7 +39,7 @@ if /i "%~1" == "debug" (
 )
 shift
 
-set "VS_ADDITIONAL_ARGUMENTS=/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen"
+set "VS_ADDITIONAL_ARGUMENTS=/p:PlatformToolset=v142 /p:MONO_TARGET_GC=sgen"
 if /i not "%~1" == "" (
     set VS_ADDITIONAL_ARGUMENTS=%~1
 )

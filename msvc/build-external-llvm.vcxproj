@@ -26,32 +26,32 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C3D4C623-55F8-4653-980D-61AA629B4E1D}</ProjectGuid>
     <RootNamespace>buildexternalllvm</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -160,7 +160,7 @@
     <_LLVMEnableAsserts>-DLLVM_ENABLE_ASSERTIONS=Off</_LLVMEnableAsserts>
     <_LLVMEnableAsserts Condition="'$(MONO_ENABLE_LLVM_ASSERTS)' == 'true'">-DLLVM_ENABLE_ASSERTIONS=On</_LLVMEnableAsserts>
     <_LLVMAdditionalCMakeArgs>$(_LLVMEnableAsserts)</_LLVMAdditionalCMakeArgs>
-    <_LLVMBuildCommand>build-external-llvm.bat &quot;$(_LLVMSourceDir)&quot; &quot;$(_LLVMBuildDir)&quot; &quot;$(_LLVMInstallDir)&quot; &quot;$(_MonoOutputDir)&quot; &quot;$(_LLVMCFlags)&quot; &quot;$(_LLVMAdditionalCMakeArgs)&quot; &quot;$(Platform)&quot; &quot;$(Configuration)&quot;</_LLVMBuildCommand>
+    <_LLVMBuildCommand>build-external-llvm.bat "$(_LLVMSourceDir)" "$(_LLVMBuildDir)" "$(_LLVMInstallDir)" "$(_MonoOutputDir)" "$(_LLVMCFlags)" "$(_LLVMAdditionalCMakeArgs)" "$(Platform)" "$(Configuration)"</_LLVMBuildCommand>
   </PropertyGroup>
   <Target Name="_LLVMBuild" Condition="'$(MONO_ENABLE_LLVM)' == 'true' and '$(_MonoEnableInternalLLVM)' == 'true'">
     <Exec Command="$(_LLVMBuildCommand) &quot;Build&quot; &quot;$(MSBuildBinPath)\&quot; &quot;$(_MonoExternalBuildForceMSBuild)&quot;" Condition="'$(_MonoEnableInternalLLVM)' == 'true'">
@@ -181,11 +181,9 @@
   <Target Name="_AfterCleanExternalLLVM" Condition="'$(MONO_ENABLE_LLVM)' == 'true'" DependsOnTargets="_LLVMCleanBuild" />
   <Target Name="AfterBuild" DependsOnTargets="_ConfigureExternalMonoLLVMBuildEnvironment;_AfterBuildExternalLLVM" />
   <Target Name="AfterClean" DependsOnTargets="_ConfigureExternalMonoLLVMBuildEnvironment;_AfterCleanExternalLLVM" />
-
   <Target Name="_GetLLVMConfig" DependsOnTargets="_ConfigureExternalMonoLLVMBuildEnvironment" Returns="@(_GetLLVMConfigOutputItems)">
     <ItemGroup>
       <_GetLLVMConfigOutputItems Include="$(_MonoLLVMConfig)" />
     </ItemGroup>
   </Target>
-
 </Project>
