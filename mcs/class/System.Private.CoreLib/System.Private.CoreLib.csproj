@@ -158,6 +158,8 @@
       <Compile Include="System\TypeLoadException.cs" />
       <Compile Include="System\TypeNameParser.cs" />
       <Compile Include="System\ValueType.cs" />
+      <Compile Include="System\WeakReference.cs" />
+      <Compile Include="System\WeakReference.T.cs" />
       <Compile Include="System\__ComObject.cs" />
       <Compile Include="System.Globalization\GlobalizationMode.cs" />
       <Compile Include="System.Collections.Generic\ArraySortHelper.cs" />
@@ -264,8 +266,6 @@
       <Compile Include="..\corlib\Mono\SafeGPtrArrayHandle.cs" />
 
       <Compile Include="..\corlib\System\MonoCustomAttrs.cs" />
-      <Compile Include="..\corlib\System\WeakReference.cs" />
-      <Compile Include="..\corlib\System\WeakReference_T.cs" />
       <Compile Include="..\corlib\System\TypeSpec.cs" />
 
       <Compile Include="..\corlib\System.Runtime.CompilerServices\PreserveDependencyAttribute.cs" />
