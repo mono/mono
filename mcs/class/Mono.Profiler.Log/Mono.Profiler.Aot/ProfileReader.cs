@@ -60,10 +60,10 @@ namespace Mono.Profiler.Aot
 			return res;
 		}
 
-		public ProfileData Read (Stream s)
+		public ProfileData ReadAllData (Stream stream)
 		{
 			byte[] buf = new byte [16];
-			int len = s.Read (buf, 0, MAGIC.Length);
+			int len = stream.Read (buf, 0, MAGIC.Length);
 			if (len != MAGIC.Length)
 				throw new IOException ("Input file is too small.");
 			var magic = new String (Encoding.UTF8.GetChars (buf, 0, MAGIC.Length));
@@ -71,10 +71,10 @@ namespace Mono.Profiler.Aot
 				throw new IOException ("Input file is not a AOT profiler output file.");
 
 			// Profile files are not expected to be large, so reading them is ok
-			len = (int)s.Length - MAGIC.Length;
+			len = (int)stream.Length - MAGIC.Length;
 			data = new byte [len];
 			pos = 0;
-			int count = s.Read (data, 0, len);
+			int count = stream.Read (data, 0, len);
 			if (count != len)
 				throw new IOException ("Can't read profile file.");
 
@@ -83,7 +83,9 @@ namespace Mono.Profiler.Aot
 			if (version != expected_version)
 				throw new IOException (String.Format ("Expected file version 0x{0:x}, got 0x{1:x}.", expected_version, version));
 
-			ProfileData res = new ProfileData ();
+			var modules = new List<ModuleRecord> ();
+			var types = new List<TypeRecord> ();
+			var methods = new List<MethodRecord> ();
 
 			Dictionary<int, ProfileRecord> records = new Dictionary<int, ProfileRecord> ();
 
@@ -99,18 +101,18 @@ namespace Mono.Profiler.Aot
 					string mvid = ReadString ();
 					var module = new ModuleRecord (id, name, mvid);
 					records [id] = module;
-					res.Modules.Add (module);
+					modules.Add (module);
 					break;
 				}
 				case RecordType.GINST: {
 					int argc = ReadInt ();
 
-					TypeRecord[] types = new TypeRecord [argc];
+					TypeRecord[] tr = new TypeRecord [argc];
 					for (int i = 0; i < argc; ++i) {
 						int type_id = ReadInt ();
-						types [i] = (TypeRecord)records [type_id];
+						tr [i] = (TypeRecord)records [type_id];
 					}
-					var ginst = new GenericInstRecord (id, types);
+					var ginst = new GenericInstRecord (id, tr);
 					records [id] = ginst;
 					break;
 				}
@@ -129,7 +131,7 @@ namespace Mono.Profiler.Aot
 
 						var module = (ModuleRecord)records [image_id];
 						var type = new TypeRecord (id, module, name, inst);
-						res.Types.Add (type);
+						types.Add (type);
 						records [id] = type;
 						break;
 					}
@@ -148,7 +150,7 @@ namespace Mono.Profiler.Aot
 					var type = (TypeRecord)records [class_id];
 					GenericInstRecord ginst = ginst_id != -1 ? (GenericInstRecord)records [ginst_id] : null;
 					var method = new MethodRecord (id, type, ginst, name, sig, param_count);
-					res.Methods.Add (method);
+					methods.Add (method);
 					records [id] = method;
 					break;
 				}
@@ -157,8 +159,7 @@ namespace Mono.Profiler.Aot
 				}
 			}
 
-			data = null;
-			return res;
+			return new ProfileData (modules.ToArray (), types.ToArray (), methods.ToArray ());
 		}
 	}
 
