@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 PROGRAM = mono-symbolicate.exe
 
-LOCAL_MCS_FLAGS = /D:NO_AUTHENTICODE /D:CECIL -nowarn:649
+LOCAL_MCS_FLAGS = /D:NO_AUTHENTICODE /D:CECIL -nowarn:649 -unsafe
 
 LIB_REFS = System.Xml System.Core System
 
