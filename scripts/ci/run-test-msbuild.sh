@@ -10,15 +10,13 @@ TESTCMD=`realpath ${TESTCMD}`
 rm -rf /tmp/xplat-master || true
 rm -rf /tmp/mono-from-source || true
 
-${TESTCMD} --label=autogen --timeout=15m ./autogen.sh --prefix=/tmp/mono-from-source
-${TESTCMD} --label=make --timeout=30m make PROFILE=net_4_x -j 2
 ${TESTCMD} --label=make-install --timeout=15m make install
 
 OLD_PATH=${PATH}
 export PATH=/tmp/mono-from-source/bin/:${OLD_PATH}
 
 # hack: execution environment may not have certificates, which breaks nuget. roslyn and msbuild both need nuget.
-${TESTCMD} --label=cert-sync --timeout=15m /tmp/mono-from-source/bin/cert-sync /etc/ssl/certs/ca-certificates.crt
+# ${TESTCMD} --label=cert-sync --timeout=15m /tmp/mono-from-source/bin/cert-sync /etc/ssl/certs/ca-certificates.crt
 
 # we bump the OS X version of msbuild by modifying msbuild.py, so we want to pull that revision hash out
 #  and match it here so we are verifying the same revision mac users get
