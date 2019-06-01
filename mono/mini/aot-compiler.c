@@ -8071,7 +8071,13 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 		} else if (!strcmp (arg, "verbose")) {
 			opts->verbose = TRUE;
 		} else if (str_begins_with (arg, "llvmopts=")){
-			opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
+			if (opts->llvm_opts) {
+				char *s = g_strdup_printf ("%s %s", opts->llvm_opts, arg + strlen ("llvmopts="));
+				g_free (opts->llvm_opts);
+				opts->llvm_opts = s;
+			} else {
+				opts->llvm_opts = g_strdup (arg + strlen ("llvmopts="));
+			}
 		} else if (str_begins_with (arg, "llvmllc=")){
 			opts->llvm_llc = g_strdup (arg + strlen ("llvmllc="));
 		} else if (!strcmp (arg, "deterministic")) {
