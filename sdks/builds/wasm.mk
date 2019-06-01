@@ -44,6 +44,7 @@ WASM_RUNTIME_AC_VARS= \
 	ac_cv_func_shm_open_working_with_mmap=no
 
 WASM_RUNTIME_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
+WASM_RUNTIME_CXXFLAGS=$(WASM_RUNTIME_CFLAGS) -s DISABLE_EXCEPTION_CATCHING=0
 
 WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--cache-file=$(TOP)/sdks/builds/wasm-runtime-$(CONFIGURATION).config.cache \
@@ -66,7 +67,8 @@ WASM_RUNTIME_CONFIGURE_FLAGS = \
 	--disable-crash-reporting \
 	--with-bitcode=yes \
 	$(if $(ENABLE_CXX),--enable-cxx) \
-	CFLAGS="$(WASM_RUNTIME_CFLAGS)"
+	CFLAGS="$(WASM_RUNTIME_CFLAGS)" \
+	CXXFLAGS="$(WASM_RUNTIME_CXXFLAGS)" \
 
 .stamp-wasm-runtime-toolchain:
 	touch $@
