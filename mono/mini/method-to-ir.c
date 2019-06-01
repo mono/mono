@@ -7361,7 +7361,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				use_aotconst = TRUE;
 #endif
 			/* FIXME: we should really allocate this only late in the compilation process */
-			f = (float *)mono_domain_alloc (cfg->domain, sizeof (float));
+			// extend by dsqiu
+			f = (float*)mono_mempool_alloc(cfg->mempool, sizeof(float));
+			// extend end
+			// f = (float *)mono_domain_alloc (cfg->domain, sizeof (float));
 
 			if (use_aotconst) {
 				MonoInst *cons;

@@ -2090,4 +2090,19 @@ mono_domain_mempool_gc_clear(MonoDomain* domain, MonoAssembly* assembly)
 	mempool_gc_collects = NULL;
 }
 
+void mono_domain_set_assembly_unloadable(MonoAssembly* assembly)
+{
+
+}
+
+void mono_domain_method_mempool_track(MonoMethod* method, void* addr, guint32 size)
+{
+
+}
+
+void mono_domain_method_code_track(MonoMethod* method, void* addr, guint32 size)
+{
+
+}
+
 // extend end

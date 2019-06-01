@@ -233,6 +233,12 @@ typedef struct {
 
 MONO_API void
 mono_domain_remove_unused_assembly(MonoAssembly* assembly);
+MONO_API void
+mono_domain_set_assembly_unloadable(MonoAssembly* assembly);
+void 
+mono_domain_method_mempool_track(MonoMethod* method, void* addr, uint32_t size);
+void 
+mono_domain_method_code_track(MonoMethod* method, void* addr, uint32_t size);
 
 void mono_object_remove_gerneric_virtual_case_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly);
 void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly);
