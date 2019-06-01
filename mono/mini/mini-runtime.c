@@ -5212,6 +5212,21 @@ mono_method_key_foreach_remove(gpointer key, gpointer value, gpointer user_data)
 	return FALSE;
 }
 
+static gboolean
+jump_target_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMethod* method = (MonoMethod*)key;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	MonoImage* image = data->assembly->image;
+	if (method->klass->image == image)
+	{
+		MonoJumpList * jump_list = (MonoJumpList *)value;
+		g_slist_free((GSList*)jump_list->list);
+		mono_domain_mempool_free(data->domain, jump_list, sizeof(MonoJumpList));
+		return TRUE;
+	}
+	return FALSE;
+}
 
 void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly)
 {
@@ -5223,6 +5238,10 @@ void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoA
 
 //	g_hash_table_foreach(info->jump_target_hash, delete_jump_list, NULL);
 //	g_hash_table_destroy(info->jump_target_hash);
+	if (info->jump_target_hash)
+	{
+		g_hash_table_foreach_remove(info->jump_target_hash, jump_target_hash_foreach_remove, &user_data);
+	}
 	// 只有aot 用到
 //	if (info->jump_target_got_slot_hash) {
 //		g_hash_table_foreach(info->jump_target_got_slot_hash, delete_got_slot_list, NULL);

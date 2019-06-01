@@ -4274,7 +4274,6 @@ static gboolean
 rgctx_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
 {
 	MonoMethodRuntimeGenericContext* gc = (MonoMethodRuntimeGenericContext*)value;
-	MonoMethodRuntimeGenericContext* key1 = (MonoMethodRuntimeGenericContext*)key;
 	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
 	if (gc->class_vtable->klass->image == data->assembly->image)
 	{
@@ -4283,6 +4282,12 @@ rgctx_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
 		mono_domain_mempool_gc_collect(data->domain, gc, size);
 		return TRUE;
 	}
+	return FALSE;
+}
+
+static gboolean
+gsharedvt_arg_tramp_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
 	return FALSE;
 }
 
@@ -4299,6 +4304,11 @@ void mono_mini_remove_generic_sharing_for_unused_assembly(MonoDomain* domain, Mo
 	if (info->mrgctx_hash)
 	{
 		g_hash_table_foreach_remove(info->mrgctx_hash, rgctx_hash_foreach_remove, &user_data);
+	}
+
+	if (info->gsharedvt_arg_tramp_hash)
+	{
+		g_hash_table_foreach_remove(info->gsharedvt_arg_tramp_hash, gsharedvt_arg_tramp_hash_foreach_remove, &user_data);
 	}
 }
 // extend end
