@@ -10,11 +10,23 @@ void internal_test()
 
 }
 
+void internal_test1(MonoObject* var)
+{
+
+}
+
+void internal_test_float(float v)
+{
+
+}
+
 int
 main(int argc, char* argv[]) {
 	MonoDomain* domain = mono_jit_init_version("UnrealMono", "v4.0.30319");
 	mono_thread_set_main(mono_thread_current());
 	mono_add_internal_call("UnloadAssemblySecond.TestSecond::InternalMethod", internal_test);
+	mono_add_internal_call("UnloadAssemblySecond.TestSecond::InternalMethod1", internal_test1);
+	mono_add_internal_call("UnloadAssemblySecond.TestSecond::InternalFloatMethod", internal_test_float);
 	MonoDomain* newDomain = mono_domain_create_appdomain("UnrealDomain", NULL);
 	bool value = mono_domain_set(newDomain, false);
 	MonoImageOpenStatus status;
