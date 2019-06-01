@@ -4274,8 +4274,9 @@ static gboolean
 rgctx_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
 {
 	MonoMethodRuntimeGenericContext* gc = (MonoMethodRuntimeGenericContext*)value;
+	MonoMethodRuntimeGenericContext* key1 = (MonoMethodRuntimeGenericContext*)key;
 	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
-	if (gc->class_vtable->klass->image = data->assembly->image)
+	if (gc->class_vtable->klass->image == data->assembly->image)
 	{
 		// copy from top
 		gint32 size = mono_class_rgctx_get_array_size(0, 1) * sizeof(gpointer);
@@ -4287,7 +4288,6 @@ rgctx_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
 
 void mono_mini_remove_generic_sharing_for_unused_assembly(MonoDomain* domain, MonoAssembly* assembly)
 {
-	MonoImage* image = assembly->image;
 	_DomainAssemblyData user_data;
 	user_data.assembly = assembly;
 	user_data.domain = domain;
