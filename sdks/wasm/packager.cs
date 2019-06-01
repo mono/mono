@@ -644,7 +644,7 @@ class Driver {
 		}
 		runtime_libs += "$mono_sdkdir/wasm-runtime-release/lib/libmonosgen-2.0.a";
 
-		string aot_args = "";
+		string aot_args = "llvm-path=$emscripten_sdkdir/upstream/bin,";
 		string profiler_libs = "";
 		string profiler_aot_args = "";
 		foreach (var profiler in profilers) {
@@ -654,7 +654,7 @@ class Driver {
 			profiler_aot_args += $"--profile={profiler}";
 		}
 		if (ee_mode == ExecMode.AotInterp)
-			aot_args = "interp,";
+			aot_args += "interp,";
 
 		runtime_dir = Path.GetFullPath (runtime_dir);
 		sdkdir = Path.GetFullPath (sdkdir);
