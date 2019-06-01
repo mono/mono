@@ -3220,6 +3220,17 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 		MonoVTable* removed_vtable = (MonoVTable *)g_ptr_array_index(removed_class_vtable_array, i);
 		clear_cached_vtable(removed_vtable);
 		mono_domain_mempool_gc_collect(domain, removed_vtable->alloc_start, removed_vtable->alloc_size);
+		// remove vtable
+		MonoClass* klass = removed_vtable->klass;
+		gint32 class_size = mono_class_data_size(klass);
+		gint32 table_size = m_class_get_vtable_size(klass);
+		if (class_size > 0 && !m_class_has_static_refs(klass))
+		{
+			mono_domain_mempool_gc_collect(domain, removed_vtable->alloc_start, removed_vtable->alloc_size);
+			mono_domain_mempool_gc_collect(domain, removed_vtable->vtable[table_size], class_size);
+			
+		}
+
 		// remove from domain
 		g_ptr_array_remove(domain->class_vtable_array, removed_vtable);
 	}
