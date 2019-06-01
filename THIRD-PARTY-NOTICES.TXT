@@ -15,12 +15,21 @@ bring it to our attention. Post an issue or email us:
 License notice for Mono
 -----------------------
 
+Note: multiple license notices are provided that occure in source code.
+They are equivalent forms of the the MIT license from various copyright holders.
+
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 // Copyright 2003-2011 Novell, Inc.
 // Copyright 2011 Xamarin Inc
 
-License notice for Mono
------------------------
+/**
+ *
+ * Copyright 2001-2003 Ximian, Inc
+ * Copyright 2003-2010 Novell, Inc.
+ * Copyright (C) 2012 Xamarin Inc
+ *
+ * Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ */
 
 /******************************************************************************
 * The MIT License
