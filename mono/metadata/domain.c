@@ -2051,7 +2051,7 @@ mono_domain_code_gc_init(MonoDomain* domain, MonoAssembly* assembly)
 void
 mono_domain_mempool_gc_collect(MonoDomain* domain, void* addr, guint size)
 {
-	_GCEntity* entity = g_new0(_GCEntity, 1);
+	_GCEntity* entity = mono_domain_alloc0(domain, sizeof(_GCEntity));
 	entity->addr = addr;
 	entity->size = size;
 	g_ptr_array_add(mempool_gc_collects, entity);
@@ -2059,35 +2059,48 @@ mono_domain_mempool_gc_collect(MonoDomain* domain, void* addr, guint size)
 void
 mono_domain_code_gc_collect(MonoDomain* domain, void* addr, guint size)
 {
-	_GCEntity* entity = g_new0(_GCEntity, 1);
+	_GCEntity* entity = mono_domain_alloc0(domain, sizeof(_GCEntity));
 	entity->addr = addr;
 	entity->size = size;
 	g_ptr_array_add(code_gc_collects, entity);
 }
 
+static void mono_domain_code_array_clear(MonoDomain* domain, MonoAssembly* assembly, GPtrArray* array)
+{
+	int index = 0;
+	for (index; index < array->len; index++)
+	{
+		_GCEntity* entity = (_GCEntity*)g_ptr_array_index(array, index);
+		mono_domain_mempool_free(domain, entity, sizeof(_GCEntity));
+		mono_domain_code_free(domain, entity->addr, entity->size);
+	}
+	g_ptr_array_free(array, FALSE);
+	array = NULL;
+}
+
 void
 mono_domain_code_gc_clear(MonoDomain* domain, MonoAssembly* assembly)
 {
-	int index = 0;
-	for (index; index < code_gc_collects->len; index++)
-	{
-		_GCEntity* entity = (_GCEntity*)g_ptr_array_index(code_gc_collects, index);
-		mono_domain_code_free(domain, entity->addr, entity->size);
-	}
-	g_ptr_array_free(code_gc_collects, TRUE);
-	code_gc_collects = NULL;
+	mono_domain_code_array_clear(domain, assembly, code_gc_collects);
 }
+
+static void mono_domain_mempool_array_clear(MonoDomain* domain, MonoAssembly* assembly, GPtrArray* array)
+{
+	int index = 0;
+	for (index; index < array->len; index++)
+	{
+		_GCEntity* entity = (_GCEntity*)g_ptr_array_index(array, index);
+		mono_domain_mempool_free(domain, entity, sizeof(_GCEntity));
+		mono_domain_mempool_free(domain, entity->addr, entity->size);
+	}
+	g_ptr_array_free(array, FALSE);
+	array = NULL;
+}
+
 void
 mono_domain_mempool_gc_clear(MonoDomain* domain, MonoAssembly* assembly)
 {
-	int index = 0;
-	for (index; index < mempool_gc_collects->len; index++)
-	{
-		_GCEntity* entity = (_GCEntity*)g_ptr_array_index(mempool_gc_collects, index);
-		mono_domain_mempool_free(domain, entity->addr, entity->size);
-	}
-	g_ptr_array_free(mempool_gc_collects, TRUE);
-	mempool_gc_collects = NULL;
+	mono_domain_mempool_array_clear(domain, assembly, mempool_gc_collects);
 }
 
 void mono_domain_set_assembly_unloadable(MonoAssembly* assembly)
@@ -2095,14 +2108,121 @@ void mono_domain_set_assembly_unloadable(MonoAssembly* assembly)
 
 }
 
-void mono_domain_method_mempool_track(MonoMethod* method, void* addr, guint32 size)
+static GHashTable* domain_mempool_tracks;
+static GHashTable* domain_code_tracks;
+
+static void mono_domain_add_mempool_tracks(MonoVTable* vtable, void* addr, uint32_t size)
 {
+	if (!domain_mempool_tracks)
+	{
+		domain_mempool_tracks = g_hash_table_new(NULL, NULL);
+	}
+	GPtrArray* array = g_hash_table_lookup(domain_mempool_tracks, vtable);
+	if (!array)
+	{
+		array = g_ptr_array_new();
+		g_hash_table_insert(domain_mempool_tracks, vtable, array);
+	}
+	_GCEntity* entity = mono_domain_alloc0(mono_domain_get(), sizeof(_GCEntity));
+	entity->addr = addr;
+	entity->size = size;
+	g_ptr_array_add(array, entity);
 
 }
 
-void mono_domain_method_code_track(MonoMethod* method, void* addr, guint32 size)
+static void mono_domain_add_code_tracks(MonoVTable* vtable, void* addr, uint32_t size)
 {
-
+	if (!domain_code_tracks)
+	{
+		domain_code_tracks = g_hash_table_new(NULL, NULL);
+	}
+	GPtrArray* array = g_hash_table_lookup(domain_code_tracks, vtable);
+	if (!array)
+	{
+		array = g_ptr_array_new();
+		g_hash_table_insert(domain_code_tracks, vtable, array);
+	}
+	_GCEntity* entity = mono_domain_alloc0(mono_domain_get(), sizeof(_GCEntity));
+	entity->addr = addr;
+	entity->size = size;
+	g_ptr_array_add(array, entity);
 }
 
+void mono_domain_method_mempool_track(MonoMethod* method, void* addr, uint32_t size)
+{
+	if (!method || strcmp(method->klass->image->name, "UnloadAssemblySecond"))
+		return;
+	mono_domain_vtable_mempool_track(mono_class_vtable(mono_domain_get(), method->klass), addr, size);
+}
+
+void mono_domain_method_code_track(MonoMethod* method, void* addr, uint32_t size)
+{
+	if (!method || strcmp(method->klass->image->name, "UnloadAssemblySecond"))
+		return;
+	mono_domain_vtable_code_track(mono_class_vtable(mono_domain_get(), method->klass), addr, size);
+}
+
+void mono_domain_vtable_mempool_track(MonoVTable* vtable, void* addr, uint32_t size)
+{
+	if (!vtable || strcmp(vtable->klass->image->name, "UnloadAssemblySecond"))
+		return;
+	mono_domain_add_mempool_tracks(vtable, addr, size);
+}
+
+void mono_domain_vtable_code_track(MonoVTable* vtable, void* addr, uint32_t size)
+{
+	if (!vtable || strcmp(vtable->klass->image->name, "UnloadAssemblySecond"))
+		return;
+	mono_domain_add_code_tracks(vtable, addr, size);
+}
+
+static gboolean
+domain_mempool_track_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoVTable* vtable = (MonoVTable*)key;
+	GPtrArray* array = (GPtrArray*)value;
+	_DomainAssemblyData* data = (_DomainAssemblyData *)user_data;
+	if (vtable->klass->image = data->assembly->image)
+	{
+		mono_domain_mempool_array_clear(data->domain, data->assembly, array);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void mono_domain_mempool_track_clear(MonoDomain* domain, MonoAssembly* assembly)
+{
+	if (domain_mempool_tracks)
+	{
+		_DomainAssemblyData* data;
+		data->assembly = assembly;
+		data->domain = domain;
+		g_hash_table_foreach_remove(domain_mempool_tracks, domain_mempool_track_foreach_remove, &data);
+	}
+}
+
+static gboolean
+domain_code_track_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoVTable* vtable = (MonoVTable*)key;
+	GPtrArray* array = (GPtrArray*)value;
+	_DomainAssemblyData* data = (_DomainAssemblyData *)user_data;
+	if (vtable->klass->image = data->assembly->image)
+	{
+		mono_domain_code_array_clear(data->domain, data->assembly, array);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void mono_domain_code_track_clear(MonoDomain* domain, MonoAssembly* assembly)
+{
+	if (domain_code_tracks)
+	{
+		_DomainAssemblyData* data;
+		data->assembly = assembly;
+		data->domain = domain;
+		g_hash_table_foreach_remove(domain_code_tracks, domain_code_track_foreach_remove, &data);
+	}
+}
 // extend end

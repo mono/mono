@@ -2693,8 +2693,14 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 			}
 			break;
 		}
-		if (!rgctx [offset + 0])
-			rgctx [offset + 0] = alloc_rgctx_array (domain, i + 1, is_mrgctx);
+		if (!rgctx[offset + 0])
+		{
+			rgctx[offset + 0] = alloc_rgctx_array(domain, i + 1, is_mrgctx);
+			// extend by dsqiu
+			int track_size = mono_class_rgctx_get_array_size(i+1, is_mrgctx) * sizeof(gpointer);
+			mono_domain_vtable_mempool_track(class_vtable, rgctx[offset + 0], track_size);
+			// extend end
+		}
 		rgctx = (void **)rgctx [offset + 0];
 		first_slot += size - 1;
 		size = mono_class_rgctx_get_array_size (i + 1, is_mrgctx);
@@ -2754,6 +2760,7 @@ mono_class_fill_runtime_generic_context (MonoVTable *class_vtable, guint32 slot,
 
 	rgctx = class_vtable->runtime_generic_context;
 	if (!rgctx) {
+		// check by dsqiu
 		rgctx = alloc_rgctx_array (domain, 0, FALSE);
 		class_vtable->runtime_generic_context = rgctx;
 		UnlockedIncrement (&rgctx_num_allocated); /* interlocked by domain lock */
@@ -2845,7 +2852,7 @@ mini_method_get_mrgctx (MonoVTable *class_vtable, MonoMethod *method)
 
 	if (!mrgctx) {
 		//int i;
-
+		// check by dsqiu
 		mrgctx = (MonoMethodRuntimeGenericContext*)alloc_rgctx_array (domain, 0, TRUE);
 		mrgctx->class_vtable = class_vtable;
 		mrgctx->method_inst = method_inst;

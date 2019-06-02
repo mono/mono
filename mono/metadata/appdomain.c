@@ -3228,7 +3228,12 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 		{
 			mono_domain_mempool_gc_collect(domain, removed_vtable->alloc_start, removed_vtable->alloc_size);
 			mono_domain_mempool_gc_collect(domain, removed_vtable->vtable[table_size], class_size);
-			
+		}
+		// remove runtime_generic_context
+		if (removed_vtable->runtime_generic_context)
+		{
+			guint32 size = mono_class_rgctx_get_array_size(0, FALSE) * sizeof(gpointer);
+			mono_domain_mempool_gc_collect(domain, removed_vtable->runtime_generic_context, size);
 		}
 
 		// remove from domain
@@ -3314,8 +3319,11 @@ mono_domain_remove_unused_assembly(MonoAssembly* assembly)
 	// generic_virtual_cases:是jit的东西？
 	domain->domain_assemblies = g_slist_remove(domain->domain_assemblies, assembly);
 	
+	mono_domain_mempool_track_clear(domain, assembly);
+	mono_domain_code_track_clear(domain, assembly);
 	mono_domain_code_gc_clear(domain, assembly);
 	mono_domain_mempool_gc_clear(domain, assembly);
+
 	
 }
 
