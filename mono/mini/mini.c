@@ -2529,7 +2529,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 
 		if (cfg->method->dynamic)
 			gi->generic_sharing_context = g_new0 (MonoGenericSharingContext, 1);
-		else
+		else // check by dsqiu
 			gi->generic_sharing_context = (MonoGenericSharingContext *)mono_domain_alloc0 (cfg->domain, sizeof (MonoGenericSharingContext));
 		mini_init_gsctx (cfg->method->dynamic ? NULL : cfg->domain, NULL, cfg->gsctx_context, gi->generic_sharing_context);
 
@@ -2561,7 +2561,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 			gi->nlocs = g_slist_length (loclist);
 			if (cfg->method->dynamic)
 				gi->locations = (MonoDwarfLocListEntry *)g_malloc0 (gi->nlocs * sizeof (MonoDwarfLocListEntry));
-			else
+			else  // check by dsqiu
 				gi->locations = (MonoDwarfLocListEntry *)mono_domain_alloc0 (cfg->domain, gi->nlocs * sizeof (MonoDwarfLocListEntry));
 			i = 0;
 			for (l = loclist; l; l = l->next) {

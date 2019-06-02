@@ -1037,8 +1037,23 @@ mono_jit_info_get_unwind_info (MonoJitInfo *ji)
 // extend by dsqiu
 
 static void
-mono_jit_info_remove(MonoDomain* domain, MonoJitInfo *jit_info)
+mono_jit_info_remove_for_method(MonoDomain* domain, MonoJitInfo *jit_info)
 {
+	MonoMethod* method = mono_jit_info_get_method(jit_info);
+
+	MonoGenericJitInfo *gi = mono_jit_info_get_generic_jit_info(jit_info);
+	// free generic_sharing_context
+	if (gi)
+	{
+		if (gi->generic_sharing_context)
+		{
+			mono_domain_mempool_gc_collect(domain, gi->generic_sharing_context, sizeof(MonoGenericSharingContext));
+		}
+		if (gi->locations)
+		{
+			mono_domain_mempool_gc_collect(domain, gi->locations, gi->nlocs * sizeof(MonoDwarfLocListEntry));
+		}
+	}
 	mono_domain_code_gc_collect(domain, jit_info->code_start, jit_info->code_size);
 	mono_domain_mempool_gc_collect(domain, jit_info, jit_info->alloc_size);
 	// mini-trampolines.c:1491
@@ -1087,7 +1102,7 @@ void mono_jit_info_table_cleanup_for_unused_assembly(MonoDomain* domain, MonoAss
 	for (int index = 0; index < removed_jit_info_table_array->len; index++)
 	{
 		MonoJitInfo *jit_info = (MonoJitInfo*) g_ptr_array_index(removed_jit_info_table_array, index);
-		mono_jit_info_remove(domain, jit_info);
+		mono_jit_info_remove_for_method(domain, jit_info);
 	}
 	g_ptr_array_free(removed_jit_info_table_array, FALSE);
 	mono_domain_unlock(domain);
@@ -1116,7 +1131,7 @@ void mono_domain_remove_jit_info_for_method(MonoDomain* domain, MonoMethod* meth
 			jit_info = chunk->data[index];
 			if (!IS_JIT_INFO_TOMBSTONE(jit_info) && !jit_info->is_trampoline && !jit_info->async && jit_info->d.method == method && !jit_info->d.method->dynamic)  // method
 			{
-				mono_jit_info_remove(domain, jit_info);
+				mono_jit_info_remove_for_method(domain, jit_info);
 				break;
 			}
 		}
