@@ -227,6 +227,9 @@ struct _MonoJitInfo {
 	gpointer    code_start;
 	guint32     unwind_info;
 	int         code_size;
+	// extend by dsqiu
+	guint32 alloc_size;
+	// extend end
 	guint32     num_clauses:15;
 	/* Whenever the code is domain neutral or 'shared' */
 	gboolean    domain_neutral:1;
@@ -625,6 +628,8 @@ MONO_API void mono_domain_code_gc_collect(MonoDomain* domain, void* addr, guint 
 MONO_API void mono_domain_mempool_gc_collect(MonoDomain* domain, void* addr, guint size);
 MONO_API void mono_domain_code_gc_clear(MonoDomain* domain, MonoAssembly* assembly);
 MONO_API void mono_domain_mempool_gc_clear(MonoDomain* domain, MonoAssembly* assembly);
+
+void mono_domain_remove_jit_info_for_method(MonoDomain* domain, MonoMethod* method);
 // extend end
 
 MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, gpointer addr, gboolean try_aot, gboolean allow_trampolines);

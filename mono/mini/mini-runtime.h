@@ -56,6 +56,11 @@ typedef struct
 	GHashTable *method_rgctx_hash;
 	/* Maps gpointer -> InterpMethod */
 	GHashTable *interp_method_pointer_hash;
+	// extend by dsqiu
+	// invoke method cache ½ÚÔ¼ÄÚ´æ
+	GHashTable *invoke_method_hash;
+
+	// extend end
 } MonoJitDomainInfo;
 
 #define domain_jit_info(domain) ((MonoJitDomainInfo*)((domain)->runtime_info))

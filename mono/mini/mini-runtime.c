@@ -2121,6 +2121,9 @@ create_jit_info_for_trampoline (MonoMethod *wrapper, MonoTrampInfo *info)
 	}
 
 	jinfo = (MonoJitInfo *)mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
+	// extend by dsqiu
+	jinfo->alloc_size = MONO_SIZEOF_JIT_INFO;
+	// extend end
 	jinfo->d.method = wrapper;
 	jinfo->code_start = info->code;
 	jinfo->code_size = info->code_size;
@@ -2723,6 +2726,7 @@ typedef struct {
 	MonoMethod *method;
 	gpointer compiled_method;
 	gpointer runtime_invoke;
+	MonoMethod *invoke_method;
 	MonoVTable *vtable;
 	MonoDynCallInfo *dyn_call_info;
 	MonoClass *ret_box_class;
@@ -2835,6 +2839,8 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 #ifndef MONO_ARCH_GSHAREDVT_SUPPORTED
 			g_assert_not_reached ();
 #endif
+			// NOTICE by dsqiu
+			// todo 移除方法：compiled_method
 			info->gsharedvt_invoke = TRUE;
 			if (!callee_gsharedvt) {
 				/* Invoke a gsharedvt out wrapper instead */
@@ -2864,11 +2870,36 @@ create_runtime_invoke_info (MonoDomain *domain, MonoMethod *method, gpointer com
 				g_free (wrapper_sig);
 			}
 		}
-		info->runtime_invoke = mono_jit_compile_method (invoke, error);
-		if (!mono_error_ok (error)) {
-			g_free (info);
-			return NULL;
+		// extend by dsqiu
+		// optimization dy dsqiu
+		// cache
+		MonoJitDomainInfo* domain_jit_info = domain_jit_info(domain);
+		if (!domain_jit_info->invoke_method_hash)
+		{
+			domain_jit_info->invoke_method_hash = g_hash_table_new(NULL, NULL);
 		}
+		gpointer runtime_invoke = g_hash_table_lookup(domain_jit_info->invoke_method_hash, invoke);
+		if (runtime_invoke)
+		{
+			info->runtime_invoke = runtime_invoke;
+		}
+		else
+		{
+		// extend end
+			info->runtime_invoke = mono_jit_compile_method(invoke, error);
+			info->invoke_method = invoke;
+			if (!mono_error_ok(error)) {
+				g_free(info);
+				return NULL;
+			}
+		// extend by dsqiu
+			else {
+				g_hash_table_insert(domain_jit_info->invoke_method_hash, invoke, info->runtime_invoke);
+			}
+
+		}
+		// extend end
+		
 	}
 
 	return info;
@@ -4101,6 +4132,9 @@ mini_free_jit_domain_info (MonoDomain *domain)
 	g_hash_table_destroy (info->interp_method_pointer_hash);
 	g_hash_table_destroy (info->llvm_vcall_trampoline_hash);
 	mono_conc_hashtable_destroy (info->runtime_invoke_hash);
+	// extend by dsqiu
+	g_hash_table_destroy(info->invoke_method_hash);
+	// extend end
 	g_hash_table_destroy (info->seq_points);
 	g_hash_table_destroy (info->arch_seq_points);
 	if (info->agent_info)
@@ -5212,6 +5246,39 @@ mono_method_key_foreach_remove(gpointer key, gpointer value, gpointer user_data)
 	return FALSE;
 }
 
+static gboolean 
+runtime_invoke_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMethod* method = (MonoMethod*)key;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	MonoImage* image = data->assembly->image;
+	if (method->klass->image == image)
+	{
+		RuntimeInvokeInfo *info = (RuntimeInvokeInfo*)value;
+		// remove invoke_method
+		mono_domain_remove_jit_info_for_method(data->domain, info->invoke_method);
+		// todo remove compile_method
+		runtime_invoke_info_free(value);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+invoke_method_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
+{
+	MonoMethod* method = (MonoMethod*)key;
+	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
+	MonoImage* image = data->assembly->image;
+	if (method->klass->image == image)
+	{
+		// 
+		mono_domain_remove_jit_info_for_method(data->domain, method);
+		return TRUE;
+	}
+	return FALSE;
+}
+
 static gboolean
 jump_target_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
 {
@@ -5269,6 +5336,10 @@ void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoA
 	{
 		g_hash_table_foreach_remove(info->delegate_trampoline_hash, delegate_trampoline_hash_foreach_remove, &user_data);
 	}
+	if (info->invoke_method_hash)
+	{
+		g_hash_table_foreach_remove(info->invoke_method_hash, mono_method_key_foreach_remove, &user_data);
+	}
 	// 在 mini-trampolines 中
 	// if (info->static_rgctx_trampoline_hash)
 	// 在 mini-generic_sharing 中
@@ -5282,7 +5353,7 @@ void mono_mini_remove_runtime_info_for_unused_assembly(MonoDomain* domain, MonoA
 //	mono_conc_hashtable_destroy(info->runtime_invoke_hash);
 	if (info->runtime_invoke_hash)
 	{
-		mono_conc_hashtable_foreach_steal(info->runtime_invoke_hash, mono_method_key_foreach_remove, &user_data);
+		mono_conc_hashtable_foreach_steal(info->runtime_invoke_hash, runtime_invoke_hash_foreach_remove, &user_data);
 	}
 
 	// debug breakpoint

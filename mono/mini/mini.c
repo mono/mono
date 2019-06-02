@@ -2505,7 +2505,12 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 	if (cfg->method->dynamic)
 		jinfo = (MonoJitInfo *)g_malloc0 (mono_jit_info_size (flags, num_clauses, num_holes));
 	else
-		jinfo = (MonoJitInfo *)mono_domain_alloc0 (cfg->domain, mono_jit_info_size (flags, num_clauses, num_holes));
+	{
+		jinfo = (MonoJitInfo *)mono_domain_alloc0(cfg->domain, mono_jit_info_size(flags, num_clauses, num_holes));
+		// extend by dsqiu
+		jinfo->alloc_size = mono_jit_info_size(flags, num_clauses, num_holes);
+		// extend end
+	}
 	jinfo_try_holes_size += num_holes * sizeof (MonoTryBlockHoleJitInfo);
 
 	mono_jit_info_init (jinfo, cfg->method_to_register, cfg->native_code, cfg->code_len, flags, num_clauses, num_holes);

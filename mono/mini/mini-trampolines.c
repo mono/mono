@@ -1489,6 +1489,9 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 	g_assert (code_size);
 
 	ji = (MonoJitInfo *)mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
+	// extend by dsqiu
+	ji->alloc_size = MONO_SIZEOF_JIT_INFO;
+	// extend end
 	ji->code_start = code;
 	ji->code_size = code_size;
 	ji->d.method = method;
