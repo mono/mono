@@ -2035,7 +2035,7 @@ mono_domain_mempool_gc_init(MonoDomain* domain, MonoAssembly* assembly)
 {
 	if (mempool_gc_collects)
 	{
-		g_ptr_array_free(mempool_gc_collects, TRUE);
+		g_ptr_array_free(mempool_gc_collects, FALSE);
 	}
 	mempool_gc_collects = g_ptr_array_new();
 }
@@ -2044,7 +2044,7 @@ mono_domain_code_gc_init(MonoDomain* domain, MonoAssembly* assembly)
 {
 	if (code_gc_collects)
 	{
-		g_ptr_array_free(code_gc_collects, TRUE);
+		g_ptr_array_free(code_gc_collects, FALSE);
 	}
 	code_gc_collects = g_ptr_array_new();
 }
@@ -2065,8 +2065,9 @@ mono_domain_code_gc_collect(MonoDomain* domain, void* addr, guint size)
 	g_ptr_array_add(code_gc_collects, entity);
 }
 
-static void mono_domain_code_array_clear(MonoDomain* domain, MonoAssembly* assembly, GPtrArray* array)
+static void mono_domain_code_array_clear(MonoDomain* domain, MonoAssembly* assembly, GPtrArray** array_ptr)
 {
+	GPtrArray* array = *array_ptr;
 	int index = 0;
 	for (index; index < array->len; index++)
 	{
@@ -2075,18 +2076,19 @@ static void mono_domain_code_array_clear(MonoDomain* domain, MonoAssembly* assem
 		mono_domain_code_free(domain, entity->addr, entity->size);
 	}
 	g_ptr_array_free(array, FALSE);
-	array = NULL;
+	*array_ptr = NULL;
 }
 
 void
 mono_domain_code_gc_clear(MonoDomain* domain, MonoAssembly* assembly)
 {
-	mono_domain_code_array_clear(domain, assembly, code_gc_collects);
+	mono_domain_code_array_clear(domain, assembly, &code_gc_collects);
 }
 
-static void mono_domain_mempool_array_clear(MonoDomain* domain, MonoAssembly* assembly, GPtrArray* array)
+static void mono_domain_mempool_array_clear(MonoDomain* domain, MonoAssembly* assembly, GPtrArray** array_ptr)
 {
 	int index = 0;
+	GPtrArray* array = *array_ptr;
 	for (index; index < array->len; index++)
 	{
 		_GCEntity* entity = (_GCEntity*)g_ptr_array_index(array, index);
@@ -2094,13 +2096,13 @@ static void mono_domain_mempool_array_clear(MonoDomain* domain, MonoAssembly* as
 		mono_domain_mempool_free(domain, entity->addr, entity->size);
 	}
 	g_ptr_array_free(array, FALSE);
-	array = NULL;
+	*array_ptr = NULL;
 }
 
 void
 mono_domain_mempool_gc_clear(MonoDomain* domain, MonoAssembly* assembly)
 {
-	mono_domain_mempool_array_clear(domain, assembly, mempool_gc_collects);
+	mono_domain_mempool_array_clear(domain, assembly, &mempool_gc_collects);
 }
 
 void mono_domain_set_assembly_unloadable(MonoAssembly* assembly)
@@ -2184,7 +2186,7 @@ domain_mempool_track_foreach_remove(gpointer key, gpointer value, gpointer user_
 	_DomainAssemblyData* data = (_DomainAssemblyData *)user_data;
 	if (vtable->klass->image = data->assembly->image)
 	{
-		mono_domain_mempool_array_clear(data->domain, data->assembly, array);
+		mono_domain_mempool_array_clear(data->domain, data->assembly, &array);
 		return TRUE;
 	}
 	return FALSE;
@@ -2209,7 +2211,7 @@ domain_code_track_foreach_remove(gpointer key, gpointer value, gpointer user_dat
 	_DomainAssemblyData* data = (_DomainAssemblyData *)user_data;
 	if (vtable->klass->image = data->assembly->image)
 	{
-		mono_domain_code_array_clear(data->domain, data->assembly, array);
+		mono_domain_code_array_clear(data->domain, data->assembly, &array);
 		return TRUE;
 	}
 	return FALSE;
