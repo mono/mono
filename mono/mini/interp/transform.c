@@ -3098,12 +3098,16 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		}
 		case CEE_LDARGA_S: {
 			/* NOTE: n includes this */
-			INLINE_FAILURE; // probably uncommon
 			int n = ((guint8 *) td->ip) [1];
 
-			get_arg_type_exact (td, n, &mt);
-			interp_add_ins (td, mt == MINT_TYPE_VT ? MINT_LDARGA_VT : MINT_LDARGA);
-			td->last_ins->data [0] = n;
+			if (td->method == method) {
+				get_arg_type_exact (td, n, &mt);
+				interp_add_ins (td, mt == MINT_TYPE_VT ? MINT_LDARGA_VT : MINT_LDARGA);
+				td->last_ins->data [0] = n;
+			} else {
+				interp_add_ins (td, MINT_LDLOCA_S);
+				td->last_ins->data [0] = arg_offsets [n];
+			}
 			PUSH_SIMPLE_TYPE(td, STACK_TYPE_MP);
 			td->ip += 2;
 			break;
@@ -5524,12 +5528,16 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				break;
 			}
 			case CEE_LDARGA: {
-				INLINE_FAILURE;
 				int n = read16 (td->ip + 1);
 
-				get_arg_type_exact (td, n, &mt);
-				interp_add_ins (td, mt == MINT_TYPE_VT ? MINT_LDARGA_VT : MINT_LDARGA);
-				td->last_ins->data [0] = n;
+				if (td->method == method) {
+					get_arg_type_exact (td, n, &mt);
+					interp_add_ins (td, mt == MINT_TYPE_VT ? MINT_LDARGA_VT : MINT_LDARGA);
+					td->last_ins->data [0] = n;
+				} else {
+					interp_add_ins (td, MINT_LDLOCA_S);
+					td->last_ins->data [0] = arg_offsets [n];
+				}
 				PUSH_SIMPLE_TYPE(td, STACK_TYPE_MP);
 				td->ip += 3;
 				break;
