@@ -2859,6 +2859,13 @@ if test x$host_win32 = xno; then
 	AC_CHECK_FUNCS(shm_open)
 
 	dnl ********************************
+	dnl ***  Checks for gettext lib  ***
+	dnl ********************************
+	# This is needed for some hackery for AIX;
+	# Mono itself doesn't use it, but DllMap includes it
+	AC_SEARCH_LIBS([gettext], [intl])
+
+	dnl ********************************
 	dnl *** Checks for timezone stuff **
 	dnl ********************************
 	AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
@@ -4841,8 +4848,25 @@ case "$host" in
 	dnl or lib.so[.0](shr[_64].o) for libtool's hybrid convention
 	dnl we may hardcode 64-bit names at times, but we don't do 32-bit AIX
 	LIBC="libc.a(shr_64.o)"
-	# This is particularily nasty because we need to refer to libintl by version, which may not necessarily match what a system has.
+	# Thanks, I hate it! This is crumbly, especially the one-liner.
+	AC_MSG_CHECKING([how to dlopen libintl])
+	AC_LINK_IFELSE([AC_LANG_SOURCE([
+		/* XXX: Check for libintl header/gettext func better? */
+		#include <libintl.h>
+
+		int main (void) {
+			gettext("Dummy for autoconf");
+			return 1;
+		}
+	])],
+	[
+	INTL="$(dump -X64 -Hp conftest$EXEEXT | grep libintl | cut -c 38- | tr -s " " | awk '{print $1"("$2")"}')"
+	AC_MSG_RESULT([yes, $INTL])
+	],
+	[
 	INTL="libintl.a(libintl.so.8)"
+	AC_MSG_RESULT([no, falling back to $INTL])
+	])
 	SQLITE3="libsqlite3.a(libsqlite3.so.0)"
 	# it's very tempting to set a libsuffix, but it depends on the soname value
 	;;
