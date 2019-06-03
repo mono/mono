@@ -2713,10 +2713,7 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 
 	oti = class_get_rgctx_template_oti (get_shared_class (klass),
 										method_inst ? method_inst->type_argc : 0, slot, TRUE, TRUE, &do_free);
-	/* This might take the loader lock */
-	info = (MonoRuntimeGenericContext*)instantiate_info (domain, &oti, &context, klass, error);
-	return_val_if_nok (error, NULL);
-	g_assert (info);
+	
 
 	/*
 	if (method_inst)
@@ -2731,7 +2728,13 @@ fill_runtime_generic_context (MonoVTable *class_vtable, MonoRuntimeGenericContex
 	if (rgctx [rgctx_index])
 		info = (MonoRuntimeGenericContext*)rgctx [rgctx_index];
 	else
-		rgctx [rgctx_index] = info;
+	{
+		/* This might take the loader lock */
+		info = (MonoRuntimeGenericContext*)instantiate_info(domain, &oti, &context, klass, error);
+		return_val_if_nok(error, NULL);
+		g_assert(info);
+		rgctx[rgctx_index] = info;
+	}
 
 	mono_domain_unlock (domain);
 
