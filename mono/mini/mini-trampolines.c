@@ -131,7 +131,7 @@ mono_create_static_rgctx_trampoline (MonoMethod *m, gpointer addr)
 
 	mono_domain_lock (domain);
 	/* Duplicates inserted while we didn't hold the lock are OK */
-	info = (RgctxTrampInfo *)mono_domain_alloc (domain, sizeof (RgctxTrampInfo));
+	info = (RgctxTrampInfo *)mono_domain_alloc (domain, sizeof (RgctxTrampInfo));  // check by dsqiu
 	info->m = m;
 	info->addr = addr;
 	g_hash_table_insert (domain_jit_info (domain)->static_rgctx_trampoline_hash, info, res);
@@ -1488,7 +1488,7 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method, gboolean ad
 	code = mono_create_specific_trampoline (method, MONO_TRAMPOLINE_JUMP, mono_domain_get (), &code_size);
 	g_assert (code_size);
 
-	ji = (MonoJitInfo *)mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
+	ji = (MonoJitInfo *)mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);  // check by dsqiu
 	// extend by dsqiu
 	ji->alloc_size = MONO_SIZEOF_JIT_INFO;
 	// extend end
@@ -1606,8 +1606,8 @@ mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, Mono
 
 	invoke = mono_get_delegate_invoke (klass);
 	g_assert (invoke);
-
-	tramp_info = (MonoDelegateTrampInfo *)mono_domain_alloc0 (domain, sizeof (MonoDelegateTrampInfo));
+	// check by dsqiu
+	tramp_info = (MonoDelegateTrampInfo *)mono_domain_alloc0 (domain, sizeof (MonoDelegateTrampInfo));  // check by dsqiu
 	tramp_info->invoke = invoke;
 	tramp_info->invoke_sig = mono_method_signature (invoke);
 	// extend by dsqiu
@@ -1628,8 +1628,8 @@ mono_create_delegate_trampoline_info (MonoDomain *domain, MonoClass *klass, Mono
 	tramp_info->code_start = tramp_info->invoke_impl;
 	tramp_info->code_size = code_size;
 	// extend end
-
-	dpair = (MonoClassMethodPair *)mono_domain_alloc0 (domain, sizeof (MonoClassMethodPair));
+	// check by dsqiu
+	dpair = (MonoClassMethodPair *)mono_domain_alloc0 (domain, sizeof (MonoClassMethodPair));  // check by dsqiu
 	memcpy (dpair, &pair, sizeof (MonoClassMethodPair));
 
 	/* store trampoline address */

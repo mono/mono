@@ -104,6 +104,9 @@ typedef struct _InterpMethod
 	int num_clauses;
 	MonoExceptionClause *clauses;
 	void **data_items;
+	// extend by dsqiu
+	int data_size;
+	// extend end
 	int transformed;
 	guint32 *arg_offsets;
 	guint32 *local_offsets;

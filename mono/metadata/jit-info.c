@@ -1088,6 +1088,10 @@ void mono_jit_info_table_cleanup_for_unused_assembly(MonoDomain* domain, MonoAss
 				// free MonoTrampInfo and MonoJitInfo
 				continue;
 			}
+			else if (jit_info->is_interp)  // 在 interp.c 中释放回收
+			{
+				continue;
+			}
 			// aot 不需要回收
 			else if (jit_info->async)
 			{

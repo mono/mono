@@ -348,7 +348,7 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 
 	sig = mono_method_signature (method);
 	// check by dsqiu
-	rtm = (InterpMethod*)mono_domain_alloc0 (domain, sizeof (InterpMethod));
+	rtm = (InterpMethod*)mono_domain_alloc0 (domain, sizeof (InterpMethod));  // check by dsqiu
 	rtm->method = method;
 	rtm->domain = domain;
 	rtm->param_count = sig->param_count;
@@ -356,7 +356,7 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 	rtm->vararg = sig->call_convention == MONO_CALL_VARARG;
 	rtm->rtype = mini_get_underlying_type (sig->ret);
 	// check by dsqiu
-	rtm->param_types = (MonoType**)mono_domain_alloc0 (domain, sizeof (MonoType*) * sig->param_count);
+	rtm->param_types = (MonoType**)mono_domain_alloc0 (domain, sizeof (MonoType*) * sig->param_count);  // check by dsqiu
 	for (i = 0; i < sig->param_count; ++i)
 		rtm->param_types [i] = mini_get_underlying_type (sig->params [i]);
 
@@ -6188,9 +6188,27 @@ interp_code_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data
 	MonoImage* image = data->assembly->image;
 	if (method->klass->image == image)
 	{
+		MonoDomain* domain = data->domain;
 		MonoMethodSignature *sig = mono_method_signature(method);
-		mono_domain_mempool_gc_collect(data->domain, interp_method, sizeof(InterpMethod));
-		mono_domain_mempool_gc_collect(data->domain, interp_method->param_types, sizeof(MonoType*) * sig->param_count);
+		mono_domain_mempool_gc_collect(domain, interp_method, sizeof(InterpMethod));
+		mono_domain_mempool_gc_collect(domain, interp_method->param_types, sizeof(MonoType*) * sig->param_count);
+		// generate transform.c
+		if (interp_method->clauses)
+		{
+			mono_domain_mempool_gc_collect(domain, interp_method->clauses, interp_method->num_clauses * sizeof(MonoExceptionClause));
+		}
+		if (interp_method->code)
+		{
+			MonoJitInfo* jitinfo = interp_method->jinfo;
+			int code_len = jitinfo->code_size;
+			mono_domain_mempool_gc_collect(domain, interp_method->code, sizeof(gushort)*code_len);
+			int jinfo_len = mono_jit_info_size((MonoJitInfoFlags)0, interp_method->num_clauses, 0);
+			mono_domain_mempool_gc_collect(domain, interp_method->jinfo, jinfo_len);
+		}
+		if (interp_method->data_items)
+		{
+			mono_domain_mempool_gc_collect(domain, interp_method->data_items, interp_method->data_size);
+		}
 		return TRUE;
 	}
 	return FALSE;

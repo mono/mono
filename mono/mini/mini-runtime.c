@@ -483,7 +483,7 @@ mono_tramp_info_register_internal (MonoTrampInfo *info, MonoDomain *domain, gboo
 		domain = mono_get_root_domain ();
 
 	if (domain)
-		copy = mono_domain_alloc0 (domain, sizeof (MonoTrampInfo));
+		copy = mono_domain_alloc0 (domain, sizeof (MonoTrampInfo));  // check by dsqiu 这是全局缓存不需要回收
 	else
 		copy = g_new0 (MonoTrampInfo, 1);
 
@@ -497,7 +497,7 @@ mono_tramp_info_register_internal (MonoTrampInfo *info, MonoDomain *domain, gboo
 		if (domain) {
 			/* Move unwind info into the domain's memory pool so that it is removed once the domain is released. */
 			guint8 *temp = copy->uw_info;
-			copy->uw_info = mono_domain_alloc (domain, copy->uw_info_len);
+			copy->uw_info = mono_domain_alloc (domain, copy->uw_info_len);  // check by dsqiu 这是全局缓存不需要回收
 			memcpy (copy->uw_info, temp, copy->uw_info_len);
 			g_free (temp);
 		}
@@ -1424,7 +1424,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			domain_jit_info (domain)->method_code_hash = g_hash_table_new (NULL, NULL);
 		code_slot = g_hash_table_lookup (domain_jit_info (domain)->method_code_hash, patch_info->data.method);
 		if (!code_slot) {
-			code_slot = mono_domain_alloc0 (domain, sizeof (gpointer));
+			code_slot = mono_domain_alloc0 (domain, sizeof (gpointer));  // check by dsqiu
 			g_hash_table_insert (domain_jit_info (domain)->method_code_hash, patch_info->data.method, code_slot);
 		}
 		mono_domain_unlock (domain);
@@ -1441,7 +1441,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			jump_table = (void **)mono_code_manager_reserve (mono_dynamic_code_hash_lookup (domain, method)->code_mp, sizeof (gpointer) * patch_info->data.table->table_size);
 		} else {
 			if (mono_aot_only) {
-				jump_table = (void **)mono_domain_alloc (domain, sizeof (gpointer) * patch_info->data.table->table_size);
+				jump_table = (void **)mono_domain_alloc (domain, sizeof (gpointer) * patch_info->data.table->table_size); // check by dsqiu aot不支持热更
 			} else {
 				jump_table = (void **)mono_domain_code_reserve (domain, sizeof (gpointer) * patch_info->data.table->table_size);
 			}
@@ -1704,7 +1704,7 @@ mini_register_jump_site (MonoDomain *domain, MonoMethod *method, gpointer ip)
 	mono_domain_lock (domain);
 	jlist = (MonoJumpList *)g_hash_table_lookup (domain_jit_info (domain)->jump_target_hash, method);
 	if (!jlist) {
-		jlist = (MonoJumpList *)mono_domain_alloc0 (domain, sizeof (MonoJumpList));
+		jlist = (MonoJumpList *)mono_domain_alloc0 (domain, sizeof (MonoJumpList));  // check by dsqiu
 		g_hash_table_insert (domain_jit_info (domain)->jump_target_hash, method, jlist);
 	}
 	jlist->list = g_slist_prepend (jlist->list, ip);
@@ -2120,7 +2120,7 @@ create_jit_info_for_trampoline (MonoMethod *wrapper, MonoTrampInfo *info)
 		uw_info = mono_unwind_ops_encode (info->unwind_ops, &info_len);
 	}
 
-	jinfo = (MonoJitInfo *)mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);
+	jinfo = (MonoJitInfo *)mono_domain_alloc0 (domain, MONO_SIZEOF_JIT_INFO);  // check by dsqiu
 	// extend by dsqiu
 	jinfo->alloc_size = MONO_SIZEOF_JIT_INFO;
 	// extend end
@@ -5222,12 +5222,11 @@ static gboolean
 method_code_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data)
 {
 	MonoMethod* method = (MonoMethod*)key;
-	guint8 ** code_solt = (guint8 **)value;
 	_DomainAssemblyData* data = (_DomainAssemblyData*)user_data;
 	MonoImage* image = data->assembly->image;
 	if (method->klass->image == image)
 	{
-		mono_domain_mempool_gc_collect(data->domain, code_solt, sizeof(gpointer));
+		mono_domain_mempool_gc_collect(data->domain, value, sizeof(gpointer));
 		return TRUE;
 	}
 	return FALSE;
@@ -5289,7 +5288,7 @@ jump_target_hash_foreach_remove(gpointer key, gpointer value, gpointer user_data
 	{
 		MonoJumpList * jump_list = (MonoJumpList *)value;
 		g_slist_free((GSList*)jump_list->list);
-		mono_domain_mempool_free(data->domain, jump_list, sizeof(MonoJumpList));
+		mono_domain_mempool_gc_collect(data->domain, jump_list, sizeof(MonoJumpList));
 		return TRUE;
 	}
 	return FALSE;

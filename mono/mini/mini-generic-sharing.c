@@ -2635,6 +2635,7 @@ static gpointer*
 alloc_rgctx_array (MonoDomain *domain, int n, gboolean is_mrgctx)
 {
 	gint32 size = mono_class_rgctx_get_array_size (n, is_mrgctx) * sizeof (gpointer);
+	// check by dsqiu
 	gpointer *array = (gpointer *)mono_domain_alloc0 (domain, size);
 
 	/* interlocked by domain lock (by definition) */
