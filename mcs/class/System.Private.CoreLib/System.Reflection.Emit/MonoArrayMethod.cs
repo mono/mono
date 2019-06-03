@@ -88,7 +88,7 @@ namespace System.Reflection {
 
 		internal override ParameterInfo[] GetParametersInternal ()
 		{
-			return EmptyArray<ParameterInfo>.Value;
+			return Array.Empty<ParameterInfo> ();
 		}	
 		
 		// FIXME: "Not implemented.  Always returns 0"

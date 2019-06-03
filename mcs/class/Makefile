@@ -120,7 +120,8 @@ monodroid_tools_dirs_parallel := \
 	Mono.CompilerServices.SymbolWriter \
 	ICSharpCode.SharpZipLib	\
 	monodoc \
-	Mono.Debugger.Soft
+	Mono.Debugger.Soft \
+	Mono.Profiler.Log
 
 monotouch_tools_dirs_parallel := \
 	Mono.Cecil \

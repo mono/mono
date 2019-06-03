@@ -4,7 +4,7 @@
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-AC_INIT(mono, [6.3.0],
+AC_INIT(mono, [6.5.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([README.md])
@@ -1619,6 +1619,13 @@ if test x$USE_NLS = xprofile_default; then
 	AC_SUBST([USE_NLS])
 	AC_MSG_RESULT([$USE_NLS])
 fi
+
+AC_ARG_ENABLE(static-gcc-libs, [  --enable-static-gcc-libs      Statically link GCC support libs (for MinGW32)])
+if test "x$enable_static_gcc_libs" = "xyes"; then
+	# llvm/build.mk doesn't use automake, so make a regular make variable for it.
+	AC_SUBST(STATIC_GCC_LIBS,1)
+fi
+AM_CONDITIONAL(ENABLE_STATIC_GCC_LIBS, test "x$enable_static_gcc_libs" = "xyes")
 
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, 
@@ -6522,6 +6529,26 @@ if test x$host_darwin = xyes; then
    sed -e 's,lock_old_archive_extraction=yes,lock_old_archive_extraction=no,g' < libtool > libtool.new && mv libtool.new libtool && chmod +x libtool
 fi
 
+AC_MSG_CHECKING([compiler server])
+AC_ARG_WITH(compiler-server, [  --with-compiler-server=yes,no,default      Enables or disables compiler server],[
+   if test x$withval = xyes; then
+       enable_compiler_server=yes;
+   elif test x$withval = xno; then
+       enable_compiler_server=no;
+   elif test x$withval = xdefault; then
+       enable_compiler_server=no;
+   else
+       AC_MSG_ERROR([You must supply one of "yes", "no" or "default" to the --with-compiler-server option])
+   fi
+],[enable_compiler_server=no])
+
+if test x$enable_compiler_server = xyes; then
+   if test x$csc_compiler = xmcs; then
+       AC_MSG_WARN([mcs does not support the compiler server])
+       enable_compiler_server=no;
+   fi
+fi
+
 (
   case $prefix in
   NONE) prefix=$ac_default_prefix ;;
@@ -6692,8 +6719,9 @@ if test x$buildsgen = xyes; then
 fi
 	
 echo "
-        mcs source:    $mcsdir
+	mcs source:    $mcsdir
 	C# Compiler:   $csc_compiler
+	CompilerServer:$enable_compiler_server
 
    Engine:
 	Host:	       $host

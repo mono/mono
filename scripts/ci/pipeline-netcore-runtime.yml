@@ -96,6 +96,10 @@ jobs:
       displayName: 'restore Arcade stuff with Bash'
       condition: ne(variables['poolname'], 'Hosted VS2017')
     - bash: |
+        rm -f ./artifacts/Microsoft.NETCore.Runtime.Mono*nupkg
+      displayName: 'Delete metapackage, except on Windows'
+      condition: ne(variables['poolname'], 'Hosted VS2017')
+    - bash: |
         dotnet msbuild eng/publishwitharcade.proj -p:AzureFeedUrl=$(dotnetfeedUrl) -p:AzureAccountKey=${dotnetFeedPat} -p:AssetManifest=${manifest}
       env:
         dotnetFeedPat: $(dotnetfeed-storage-access-key-1)

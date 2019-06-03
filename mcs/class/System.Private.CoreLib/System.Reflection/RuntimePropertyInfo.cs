@@ -236,7 +236,7 @@ namespace System.Reflection
 				src = info.set_method.GetParametersInternal ();
 				length = src.Length - 1;
 			} else
-				return EmptyArray<ParameterInfo>.Value;
+				return Array.Empty<ParameterInfo> ();
 
 			var dest = new ParameterInfo [length];
 			for (int i = 0; i < length; ++i) {

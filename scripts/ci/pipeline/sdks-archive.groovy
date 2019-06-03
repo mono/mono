@@ -16,6 +16,13 @@ parallel (
             }
         }
     },
+    "Android Windows (Release)": {
+        throttle(['provisions-android-toolchain']) {
+            node ("w64") {
+                archive ("android", "release", "Windows")
+            }
+        }
+    },
     "Android Linux (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-9-amd64-exclusive") {
@@ -97,6 +104,8 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                                 command: "CI_TAGS=sdks-${product},no-tests,${configuration} scripts/ci/run-jenkins.sh",
                                 bindMounts: chrootBindMounts,
                                 additionalPackages: "xvfb xauth mono-devel git python wget bc build-essential libtool autoconf automake gettext iputils-ping cmake lsof libkrb5-dev curl p7zip-full ninja-build zip unzip gcc-multilib g++-multilib mingw-w64 binutils-mingw-w64 openjdk-8-jre ${chrootadditionalpackages}"
+                        } else if (platform == "Windows") {
+                            sh "PATH=\"/usr/bin:/usr/local/bin:$PATH\" CI_TAGS=sdks-${product},win-amd64,no-tests,${configuration} scripts/ci/run-jenkins.sh"
                         } else {
                             throw new Exception("Unknown platform \"${platform}\"")
                         }

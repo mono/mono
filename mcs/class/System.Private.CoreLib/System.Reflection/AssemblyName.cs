@@ -85,7 +85,7 @@ namespace System.Reflection
 				_publicKey = RuntimeMarshal.DecodeBlobArray (native->public_key);
 				_flags |= AssemblyNameFlags.PublicKey;
 			} else if (addPublickey) {
-				_publicKey = EmptyArray<byte>.Value;
+				_publicKey = Array.Empty<byte> ();
 				_flags |= AssemblyNameFlags.PublicKey;
 			}
 
@@ -98,7 +98,7 @@ namespace System.Reflection
 				}
 				_publicKeyToken = keyToken;
 			} else if (defaultToken) {
-				_publicKeyToken = EmptyArray<byte>.Value;
+				_publicKeyToken = Array.Empty<byte> ();
 			}
 		}
 

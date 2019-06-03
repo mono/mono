@@ -10,3 +10,7 @@ PROGRAM_USE_INTERMEDIATE_FILE = 1
 LIB_REFS = System System.Core
 
 include ../../build/executable.make
+
+ifneq ("$(PROFILE)","build")
+$(warning gensources is only intended to be compiled in the build profile)
+endif
