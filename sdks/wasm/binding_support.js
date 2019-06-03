@@ -93,6 +93,8 @@ var BindingSupportLib = {
 			this.get_call_sig = get_method ("GetCallSignature");
 
 			this.object_to_string = get_method ("ObjectToString");
+			this.get_date_value = get_method ("GetDateValue");
+			this.create_date_time = get_method ("CreateDateTime");
 
 			this.object_to_enum = get_method ("ObjectToEnum");
 			this.init = true;
@@ -216,8 +218,13 @@ var BindingSupportLib = {
 			case 18:
 			{
 				throw new Error ("Marshalling of primitive arrays are not supported.  Use the corresponding TypedArray instead.");
-			}			
-	
+			}
+			case 20: // clr .NET DateTime
+				var dateValue = this.call_method(this.get_date_value, null, "md", [ mono_obj ]);
+				return new Date(dateValue);
+			case 21: // clr .NET DateTimeOffset
+				var dateoffsetValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
+				return dateoffsetValue;
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
 			}
@@ -279,6 +286,10 @@ var BindingSupportLib = {
 
 				return this.get_task_and_bind (tcs, js_obj);
 			}
+
+			if (js_obj.constructor.name === "Date")
+				// We may need to take into account the TimeZone Offset
+				return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
 
 			return this.extract_mono_obj (js_obj);
 		},

@@ -29,7 +29,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'net_4_x' ">
     <OutputPath>./../../class/lib/net_4_x-$(HostPlatform)</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-net_4_x-$(HostPlatform)</IntermediateOutputPath>
-    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM</DefineConstants>
+    <DefineConstants>NET_4_0;NET_4_5;NET_4_6;MONO;WIN_PLATFORM;MONO_DATACONVERTER_STATIC_METHOD</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <OutputPath>./../../class/lib/monodroid_tools</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-monodroid_tools</IntermediateOutputPath>
+    <DefineConstants>NET_4_6;MONO;MONODROID_TOOLS;WIN_PLATFORM;MONO_DATACONVERTER_STATIC_METHOD</DefineConstants>
   </PropertyGroup>
   <!-- @ALL_PROFILE_PROPERTIES@ -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -48,8 +53,11 @@
   <!--Common files-->
   <ItemGroup>
     <Compile Include="..\..\build\common\Consts.cs" />
-    <Compile Include="..\..\build\common\Locale.cs" />
+    <Compile Include="..\corlib\Mono\DataConverter.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Mono.Profiler.Aot\ProfileData.cs" />
+    <Compile Include="Mono.Profiler.Aot\ProfileReader.cs" />
+    <Compile Include="Mono.Profiler.Aot\Records.cs" />
     <Compile Include="Mono.Profiler.Log\LogBufferHeader.cs" />
     <Compile Include="Mono.Profiler.Log\LogEnums.cs" />
     <Compile Include="Mono.Profiler.Log\LogEvent.cs" />
@@ -76,6 +84,23 @@
     <ProjectReference Include="../System/System.csproj" />
     <ProjectReference Include="../System.Core/System.Core.csproj" />
     <ProjectReference Include="../corlib/corlib.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'monodroid_tools' ">
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.6/System.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.6/System.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.6/System.Core.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.6/System.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="./../../../external/binary-reference-assemblies/v4.6/mscorlib.dll">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>./../../../external/binary-reference-assemblies/v4.6/mscorlib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <!-- @ALL_REFERENCES@ -->
   <!-- @ALL_RESOURCES@ -->
