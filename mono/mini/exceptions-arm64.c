@@ -96,8 +96,8 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	fregs_offset = offset;
 	offset += num_fregs * 8;
 	ctx_offset = offset;
-	ctx_offset += 8;
-	frame_size = ALIGN_TO (ctx_offset + 8, MONO_ARCH_FRAME_ALIGNMENT);
+	offset += 8;
+	frame_size = ALIGN_TO (offset, MONO_ARCH_FRAME_ALIGNMENT);
 
 	/*
 	 * We are being called from C code, ctx is in r0, the address to call is in r1.
