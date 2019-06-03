@@ -12,6 +12,13 @@
 		<_MonoWasmRuntimeJs>$(OutputPath)runtime.js</_MonoWasmRuntimeJs>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<CleanDependsOn>
+			$(CleanDependsOn);
+			CleanManaged;
+		</CleanDependsOn>
+	</PropertyGroup>
+
 	<!-- suppress local copy for now, we don't want any local copied dlls -->
 	<Target Name="CopyFilesToOutputDirectory" DependsOnTargets="MonoWasmCopyOutput" />
 
@@ -81,4 +88,10 @@
 			OutputFile="$(_MonoWasmRuntimeJs)"
 		/>
   </Target>
+	<Target Name = "CleanManaged">
+		<ItemGroup>
+			<FilesToDelete Include="$(_MonoWasmManagedOutputDir)**\*"/>
+		</ItemGroup>   
+    	<Delete Files="@(FilesToDelete)" />
+	</Target>
 </Project>
