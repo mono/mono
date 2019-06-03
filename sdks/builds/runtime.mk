@@ -107,9 +107,9 @@ package-$(1): package-$(1)-$(2) $$(ADDITIONAL_PACKAGE_DEPS)
 .PHONY: archive-$(1)
 archive-$(1): package-$(1)
 
-#ifneq ($(4),yes)
+ifneq ($(4),yes)
 $(1)_ARCHIVE += $(1)-$(2)-$$(CONFIGURATION)
-#endif
+endif
 
 endef
 
