@@ -82,9 +82,7 @@ elif [[ ${CI_TAGS} == *'bitcodeinterp'* ]];      then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcode"; export PATH="$PATH:${MONO_REPO_ROOT}/llvm/usr/bin";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
 elif [[ ${CI_TAGS} == *'all-profiles'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=all";
-elif [[ ${CI_TAGS} == *'compile-msbuild-source'* ]]; then 
-    EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=/tmp/mono-from-source"
-    make_continue="${make_continue} PROFILE=net_4_x"
+elif [[ ${CI_TAGS} == *'compile-msbuild-source'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=/tmp/mono-from-source";
 fi
 
 if [ -x "/usr/bin/dpkg-architecture" ];
