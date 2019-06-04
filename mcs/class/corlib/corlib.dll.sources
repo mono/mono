@@ -1906,7 +1906,6 @@ corefx/DirectoryInfo.cs
 corefx/File.cs
 corefx/FileInfo.cs
 corefx/Directory.cs
-corefx/GlobalizationGate.cs
 corefx/MonoLinqHelper.cs
 corefx/ThrowHelper.cs
 ../../../external/corert/src/System.Private.CoreLib/shared/System/Runtime/AmbiguousImplementationException.cs
