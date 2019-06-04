@@ -518,7 +518,7 @@ namespace System.Runtime.InteropServices
 
 			return (IntPtr)(-1);
 		}
-#elif !MONOTOUCH
+#else
 		public static IntPtr GetHINSTANCE (Module m) => throw new PlatformNotSupportedException();
 		public static IntPtr GetIDispatchForObject (object o) => throw new PlatformNotSupportedException();
 		public static object GetTypedObjectForIUnknown (IntPtr pUnk, Type t) => throw new PlatformNotSupportedException();

@@ -68,6 +68,11 @@ namespace System.Diagnostics {
 
             return idStack;
         }
+#else
+        public Stack LogicalOperationStack => throw new PlatformNotSupportedException ();
+        public void StartLogicalOperation (object operationId) => throw new PlatformNotSupportedException ();
+        public void StartLogicalOperation () => throw new PlatformNotSupportedException ();
+        public void StopLogicalOperation () => throw new PlatformNotSupportedException ();
 #endif
     }
 }
