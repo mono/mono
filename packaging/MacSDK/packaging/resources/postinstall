@@ -59,7 +59,7 @@ if [ -d ${FW_CURRENT} ]; then
 
     cd ${FW_CURRENT}/etc
     # Make sure we run the files we lay down, and not other stuff installed on the system
-    export PATH=${FW_CURRENT}/bin:$PATH
+    export PATH="${FW_CURRENT}/bin:$PATH"
     # gtk+ setup
     gdk-pixbuf-query-loaders --update-cache
     # pango setup

@@ -14,15 +14,15 @@ jobs:
 - job: Build
   strategy:
     matrix:
-      Linux x64:
+      Linux_x64:
         poolname: Hosted Ubuntu 1604
         manifest: linux-x64
         sed: sed
-      Windows x64:
+      Windows_x64:
         poolname: Hosted VS2017
         manifest: win-x64
         sed: sed
-      OSX x64:
+      OSX_x64:
         poolname: Hosted macOS
         manifest: osx-x64
         sed: gsed

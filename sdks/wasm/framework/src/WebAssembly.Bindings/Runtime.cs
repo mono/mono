@@ -458,6 +458,27 @@ namespace WebAssembly {
 			return o.ToString ();
 		}
 
+		static double GetDateValue (object dtv)
+		{
+			if (dtv == null)
+				throw new ArgumentNullException (nameof (dtv), "Value can not be null");
+			if (!(dtv is DateTime)) {
+				throw new InvalidCastException ($"Unable to cast object of type {dtv.GetType()} to type DateTime.");
+			}
+			var dt = (DateTime)dtv;
+			if (dt.Kind == DateTimeKind.Local)
+				dt = dt.ToUniversalTime ();
+			else if (dt.Kind == DateTimeKind.Unspecified)
+				dt = new DateTime (dt.Ticks, DateTimeKind.Utc);
+			return new DateTimeOffset(dt).ToUnixTimeMilliseconds();
+		}
+
+		static DateTime CreateDateTime (double ticks)
+		{
+			var unixTime = DateTimeOffset.FromUnixTimeMilliseconds((Int64)ticks);
+			return unixTime.DateTime;
+		}
+
 		// This is simple right now and will include FlagsAttribute later.
 		public static Enum EnumFromExportContract (Type enumType, object value)
 		{
