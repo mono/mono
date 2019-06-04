@@ -18,6 +18,7 @@
 //	This file is simply replaced C14N->ExcC14N, and then replaced expected
 //	output XML. So, they are *not* from c14n specification.
 //
+#if !MOBILE
 
 
 using System;
@@ -222,15 +223,15 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			return sb.ToString ();
 		}
 
-		static string xml = "<Test  attrib='at ' xmlns=\"http://www.go-mono.com/\" > \r\n &#xD; <Toto/> text &amp; </Test   >";
+		static string xml = "<Test  attrib='at ' xmlns=\"http://www.example.com/\" > \r\n &#xD; <Toto/> text &amp; </Test   >";
 		// BAD for XmlDocument input (framework 1.0 result)
-		static string c14xml1 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \r\n \r <Toto></Toto> text &amp; </Test>";
+		static string c14xml1 = "<Test xmlns=\"http://www.example.com/\" attrib=\"at \"> \r\n \r <Toto></Toto> text &amp; </Test>";
 		// GOOD for Stream input
-		static string c14xml2 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \n &#xD; <Toto></Toto> text &amp; </Test>";
+		static string c14xml2 = "<Test xmlns=\"http://www.example.com/\" attrib=\"at \"> \n &#xD; <Toto></Toto> text &amp; </Test>";
 		// GOOD for XmlDocument input. The difference is because once
 		// xml string is loaded to XmlDocument, there is no difference
 		// between \r and &#xD;, so every \r must be handled as &#xD;.
-		static string c14xml3 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> &#xD;\n &#xD; <Toto></Toto> text &amp; </Test>";
+		static string c14xml3 = "<Test xmlns=\"http://www.example.com/\" attrib=\"at \"> &#xD;\n &#xD; <Toto></Toto> text &amp; </Test>";
 
 		private XmlDocument GetDoc () 
 		{
@@ -259,7 +260,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			Assert.AreEqual ("<Test xmlns=\"http://www.go-mono.com/\"></Test>", output, "XmlChildNodes");
+			Assert.AreEqual ("<Test xmlns=\"http://www.example.com/\"></Test>", output, "XmlChildNodes");
 		}
 
 		[Test]
@@ -272,7 +273,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc.SelectNodes ("//*"));
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			string expected = "<Test xmlns=\"http://www.go-mono.com/\"><Toto></Toto></Test>";
+			string expected = "<Test xmlns=\"http://www.example.com/\"><Toto></Toto></Test>";
 			Assert.AreEqual (expected, output, "XmlChildNodes");
 		}
 
@@ -338,16 +339,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	    		Assert.AreEqual (ExcC14NSpecExample4Output, res, "Example 4 from c14n spec - Character Modifications and Character References (without comments)");
 	        }
 	    
-	        [Test]
-	        public void ExcC14NSpecExample5 ()
-	        {
-			using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
-				sw.Write ("world");
-				sw.Close ();
+			[Test]
+			[Ignore(".NET DOM implementation does not match W3C DOM specification.")]
+			public void ExcC14NSpecExample5 ()
+			{
+				using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
+					sw.Write ("world");
+					sw.Close ();
+				}
+				string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample5Input);
+				Assert.AreEqual (ExcC14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (without comments)");
 			}
-	    	    	string res = ExecuteXmlDSigExcC14NTransform (ExcC14NSpecExample5Input);
-	    	    	Assert.AreEqual (ExcC14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (without comments)");
-	        }
     
 		[Test]
 	        public void ExcC14NSpecExample6 ()
@@ -594,4 +596,5 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}    
 }
+#endif
 

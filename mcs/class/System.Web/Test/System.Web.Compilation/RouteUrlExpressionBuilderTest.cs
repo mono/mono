@@ -39,7 +39,7 @@ using NUnit.Framework;
 
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
-using MonoTests.Common;
+
 
 namespace MonoTests.System.Web.Compilation
 {
@@ -84,11 +84,11 @@ namespace MonoTests.System.Web.Compilation
 			obj = bldr.EvaluateExpression (null, entry, null, context);
 			Assert.IsNull (obj, "#A4");
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				bldr.EvaluateExpression (null, null, null, context);
 			}, "#A5-1");
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				bldr.EvaluateExpression (null, entry, null, null);
 			}, "#A5-2");
 		}
@@ -105,7 +105,7 @@ namespace MonoTests.System.Web.Compilation
 		[Test]
 		public void GetRouteUrl ()
 		{
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				RouteUrlExpressionBuilder.GetRouteUrl (null, "bar=test");
 			}, "#A1-1");
 
@@ -139,15 +139,15 @@ namespace MonoTests.System.Web.Compilation
 			Assert.IsNotNull (url, "#A6-1");
 			Assert.AreEqual ("/NunitWeb/test-foo", url, "#A6-2");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				url = RouteUrlExpressionBuilder.GetRouteUrl (new Control (), "routename");
 			}, "#A7-1");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				url = RouteUrlExpressionBuilder.GetRouteUrl (new Control (), String.Empty);
 			}, "#A7-2");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				url = RouteUrlExpressionBuilder.GetRouteUrl (new Control (), null);
 			}, "#A7-2");
 		}
@@ -165,7 +165,7 @@ namespace MonoTests.System.Web.Compilation
 			Assert.AreEqual (1, rvd.Count, "#A1-4-1");
 			Assert.AreEqual (String.Empty, rvd ["route"], "#A1-4-2");
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				RouteUrlExpressionBuilder.TryParseRouteExpression ("foo=bar", null, out routeName);
 			}, "#A1-5");
 
@@ -235,7 +235,7 @@ namespace MonoTests.System.Web.Compilation
 			var context = new ExpressionBuilderContext (new FakePage ());
 			CodeExpression expr;
 
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				expr = bldr.GetCodeExpression (null, "data", context);
 			}, "#A1-1");
 

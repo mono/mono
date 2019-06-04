@@ -26,6 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE
 
 
 using NUnit.Framework;
@@ -36,6 +37,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
@@ -373,7 +376,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicException))]
+		[ExpectedException (typeof (PlatformNotSupportedException))]
 		public void ComputeEmptySignature ()
 		{
 			SignedCms sp = new SignedCms ();
@@ -440,9 +443,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[Test]
 		public void CheckSignatureDetachedSignedCms ()
 		{
-			string path = Path.Combine ("Test", "System.Security.Cryptography.Pkcs");
-			var signedBytes = File.ReadAllBytes (Path.Combine (path, "detached.data"));
-			var bytes = File.ReadAllBytes (Path.Combine (path, "detached.p7"));
+			var signedBytes = File.ReadAllBytes (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Pkcs/detached.data"));
+			var bytes = File.ReadAllBytes (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Pkcs/detached.p7"));
 
 			var oid = new Oid ("1.2.840.113549.1.7.2");
 			var contentInfo = new ContentInfo (oid, signedBytes);
@@ -452,4 +454,4 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 	}
 }
-
+#endif

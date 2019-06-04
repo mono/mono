@@ -166,7 +166,6 @@ typedef gdouble		mips_freg;
 #define mips_ftemp mips_f18
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 /* Parameters used by the register allocator */
 
@@ -211,13 +210,13 @@ struct MonoLMF {
 	gpointer	lmf_addr;
 	MonoMethod	*method;
 	gpointer	eip;
-	mgreg_t     iregs [MONO_SAVED_GREGS];
+	host_mgreg_t    iregs [MONO_SAVED_GREGS];
 	mips_freg	fregs [MONO_SAVED_FREGS];
 	gulong		magic;
 };
 
 typedef struct MonoCompileArch {
-	gpointer    cinfo;
+	CallInfo	*cinfo;
 	guint		iregs_offset;
 	guint		lmf_offset;
 	guint		local_alloc_offset;
@@ -250,11 +249,11 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
 #endif
 
-#define MIPS_RET_ADDR_OFFSET	(-sizeof(gpointer))
+#define MIPS_RET_ADDR_OFFSET	(-sizeof (target_mgreg_t))
 #define MIPS_FP_ADDR_OFFSET	(-8)
 #define MIPS_STACK_ALIGNMENT	16
 #define MIPS_STACK_PARAM_OFFSET 16		/* from sp to first parameter */
-#define MIPS_MINIMAL_STACK_SIZE (4*sizeof(mgreg_t) + 4*sizeof(mgreg_t))
+#define MIPS_MINIMAL_STACK_SIZE (8 * sizeof (target_mgreg_t))
 #define MIPS_EXTRA_STACK_SIZE	16		/* from last parameter to top of frame */
 
 #if _MIPS_SIM == _ABIO32
@@ -279,10 +278,8 @@ typedef struct MonoCompileArch {
 
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
-#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
 #define MONO_ARCH_GSHARED_SUPPORTED 1
-#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
 
 /* set the next to 0 once inssel-mips.brg is updated */
 #define MIPS_PASS_STRUCTS_BY_VALUE 1
@@ -290,6 +287,10 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_USE_SIGACTION
 #define MONO_ARCH_NEED_DIV_CHECK 1
 #define MONO_ARCH_NO_IOV_CHECK 1
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0 // FIXME?
 
 #define MIPS_NUM_REG_ARGS (MIPS_LAST_ARG_REG-MIPS_FIRST_ARG_REG+1)
 #define MIPS_NUM_REG_FPARGS (MIPS_LAST_FPARG_REG-MIPS_FIRST_FPARG_REG+1)
@@ -418,6 +419,6 @@ typedef struct {
 	int offset;
 } MonoMIPSArgInfo;
 
-extern guint8 *mips_emit_load_const(guint8 *code, int dreg, mgreg_t v);
+guint8 *mips_emit_load_const (guint8 *code, int dreg, target_mgreg_t v);
 
 #endif /* __MONO_MINI_MIPS_H__ */  

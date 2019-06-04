@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -52,7 +52,7 @@ namespace MonoTests.System.ServiceModel.Description
 		IAsyncResult current_request;
 		int remaining, port;
 
-		static readonly string mex = File.ReadAllText ("Test/System.ServiceModel.Description/dump.xml");
+		static readonly string mex = File.ReadAllText (TestResourceHelper.GetFullPathOfResource ("Test/Resources/dump.xml"));
 
 		[SetUp]
 		public void StartupServer ()
@@ -375,3 +375,4 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 	}
 }
+#endif

@@ -34,102 +34,32 @@
 //
 //
 
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
+
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace System
 {
 	partial class String
 	{
-		public int Length {
-			get {
-				return m_stringLength;
-			}
-		}
+		[NonSerialized]
+		int _stringLength;
+		[NonSerialized]
+		char _firstChar;
 
-		internal static unsafe int CompareOrdinalUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)
-		{
-			if (strA == null) {
-				return strB == null ? 0 : -1;
-			}
-			if (strB == null) {
-				return 1;
-			}
-			int lengthA = Math.Min (lenA, strA.m_stringLength - indexA);
-			int lengthB = Math.Min (lenB, strB.m_stringLength - indexB);
+		public static readonly String Empty;
 
-			if (lengthA == lengthB && indexA == indexB && Object.ReferenceEquals (strA, strB))
-				return 0;
-
-			fixed (char* aptr = strA, bptr = strB) {
-				char* ap = aptr + indexA;
-				char* end = ap + Math.Min (lengthA, lengthB);
-				char* bp = bptr + indexB;
-				while (ap < end) {
-					if (*ap != *bp)
-						return *ap - *bp;
-					ap++;
-					bp++;
-				}
-				return lengthA - lengthB;
-			}
-		}
-
-		public int IndexOf (char value, int startIndex, int count)
-		{
-			if (startIndex < 0 || startIndex > this.m_stringLength)
-				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative and must be< 0");
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", "< 0");
-			if (startIndex > this.m_stringLength - count)
-				throw new ArgumentOutOfRangeException ("count", "startIndex + count > this.m_stringLength");
-
-			if ((startIndex == 0 && this.m_stringLength == 0) || (startIndex == this.m_stringLength) || (count == 0))
-				return -1;
-
-			return IndexOfUnchecked (value, startIndex, count);
-		}
-
-		internal unsafe int IndexOfUnchecked (char value, int startIndex, int count)
-		{
-			// It helps JIT compiler to optimize comparison
-			int value_32 = (int)value;
-
-			fixed (char* start = &m_firstChar) {
-				char* ptr = start + startIndex;
-				char* end_ptr = ptr + (count >> 3 << 3);
-
-				while (ptr != end_ptr) {
-					if (*ptr == value_32)
-						return (int)(ptr - start);
-					if (ptr[1] == value_32)
-						return (int)(ptr - start + 1);
-					if (ptr[2] == value_32)
-						return (int)(ptr - start + 2);
-					if (ptr[3] == value_32)
-						return (int)(ptr - start + 3);
-					if (ptr[4] == value_32)
-						return (int)(ptr - start + 4);
-					if (ptr[5] == value_32)
-						return (int)(ptr - start + 5);
-					if (ptr[6] == value_32)
-						return (int)(ptr - start + 6);
-					if (ptr[7] == value_32)
-						return (int)(ptr - start + 7);
-
-					ptr += 8;
-				}
-
-				end_ptr += count & 0x07;
-				while (ptr != end_ptr) {
-					if (*ptr == value_32)
-						return (int)(ptr - start);
-
-					ptr++;
-				}
-				return -1;
-			}
-		}
+		public int Length => _stringLength;
 
 		internal unsafe int IndexOfUnchecked (string value, int startIndex, int count)
 		{
@@ -137,13 +67,10 @@ namespace System
 			if (count < valueLen)
 				return -1;
 
-			if (valueLen <= 1) {
-				if (valueLen == 1)
-					return IndexOfUnchecked (value[0], startIndex, count);
+			if (valueLen == 0)
 				return startIndex;
-			}
 
-			fixed (char* thisptr = &m_firstChar, valueptr = value) {
+			fixed (char* thisptr = &_firstChar, valueptr = value) {
 				char* ap = thisptr + startIndex;
 				char* thisEnd = ap + count - valueLen + 1;
 				while (ap != thisEnd) {
@@ -161,372 +88,138 @@ namespace System
 			return -1;
 		}
 
-		public int IndexOfAny (char [] anyOf, int startIndex, int count)
+		[CLSCompliant(false)] 
+		public static String Concat(Object arg0, Object arg1, Object arg2, Object arg3, __arglist) 
 		{
-			if (anyOf == null)
-				throw new ArgumentNullException ();
-			if (startIndex < 0 || startIndex > this.m_stringLength)
-				throw new ArgumentOutOfRangeException ();
-			if (count < 0 || startIndex > this.m_stringLength - count)
-				throw new ArgumentOutOfRangeException ("count", "Count cannot be negative, and startIndex + count must be less than m_stringLength of the string.");
+			// Added to maintain backward compatibility, see https://github.com/mono/mono/issues/9996
+			throw new PlatformNotSupportedException();
+		}
 
-			return IndexOfAnyUnchecked (anyOf, startIndex, count);
-		}		
-
-		unsafe int IndexOfAnyUnchecked (char[] anyOf, int startIndex, int count)
+		internal unsafe int IndexOfUncheckedIgnoreCase (string value, int startIndex, int count)
 		{
-			if (anyOf.Length == 0)
+			int valueLen = value.Length;
+			if (count < valueLen)
 				return -1;
 
-			if (anyOf.Length == 1)
-				return IndexOfUnchecked (anyOf[0], startIndex, count);
+			if (valueLen == 0)
+				return startIndex;
 
-			fixed (char* any = anyOf) {
-				int highest = *any;
-				int lowest = *any;
+			var ti = CultureInfo.InvariantCulture.TextInfo;
 
-				char* end_any_ptr = any + anyOf.Length;
-				char* any_ptr = any;
-				while (++any_ptr != end_any_ptr) {
-					if (*any_ptr > highest) {
-						highest = *any_ptr;
-						continue;
-					}
-
-					if (*any_ptr < lowest)
-						lowest = *any_ptr;
-				}
-
-				fixed (char* start = &m_firstChar) {
-					char* ptr = start + startIndex;
-					char* end_ptr = ptr + count;
-
-					while (ptr != end_ptr) {
-						if (*ptr > highest || *ptr < lowest) {
-							ptr++;
-							continue;
+			fixed (char* thisptr = &_firstChar, valueptr = value) {
+				char* ap = thisptr + startIndex;
+				char* thisEnd = ap + count - valueLen + 1;
+				char valueUpper = ti.ToUpper (*valueptr);
+				while (ap != thisEnd) {
+					if (ti.ToUpper (*ap) == valueUpper) {
+						for (int i = 1; i < valueLen; i++) {
+							if (ti.ToUpper (ap[i]) != ti.ToUpper (valueptr [i]))
+								goto NextVal;
 						}
-
-						if (*ptr == *any)
-							return (int)(ptr - start);
-
-						any_ptr = any;
-						while (++any_ptr != end_any_ptr) {
-							if (*ptr == *any_ptr)
-								return (int)(ptr - start);
-						}
-
-						ptr++;
+						return (int)(ap - thisptr);
 					}
+					NextVal:
+					ap++;
 				}
 			}
 			return -1;
 		}
 
-		public int LastIndexOf (char value, int startIndex, int count)
+		internal unsafe int LastIndexOfUnchecked (string value, int startIndex, int count)
 		{
-			if (this.m_stringLength == 0)
-				return -1;
- 
-			// >= for char (> for string)
-			if ((startIndex < 0) || (startIndex >= this.Length))
-				throw new ArgumentOutOfRangeException ("startIndex", "< 0 || >= this.Length");
-			if ((count < 0) || (count > this.Length))
-				throw new ArgumentOutOfRangeException ("count", "< 0 || > this.Length");
-			if (startIndex - count + 1 < 0)
-				throw new ArgumentOutOfRangeException ("startIndex - count + 1 < 0");
-
-			return LastIndexOfUnchecked (value, startIndex, count);
-		}
-
-		internal unsafe int LastIndexOfUnchecked (char value, int startIndex, int count)
-		{
-			// It helps JIT compiler to optimize comparison
-			int value_32 = (int)value;
-
-			fixed (char* start = &m_firstChar) {
-				char* ptr = start + startIndex;
-				char* end_ptr = ptr - (count >> 3 << 3);
-
-				while (ptr != end_ptr) {
-					if (*ptr == value_32)
-						return (int)(ptr - start);
-					if (ptr[-1] == value_32)
-						return (int)(ptr - start) - 1;
-					if (ptr[-2] == value_32)
-						return (int)(ptr - start) - 2;
-					if (ptr[-3] == value_32)
-						return (int)(ptr - start) - 3;
-					if (ptr[-4] == value_32)
-						return (int)(ptr - start) - 4;
-					if (ptr[-5] == value_32)
-						return (int)(ptr - start) - 5;
-					if (ptr[-6] == value_32)
-						return (int)(ptr - start) - 6;
-					if (ptr[-7] == value_32)
-						return (int)(ptr - start) - 7;
-
-					ptr -= 8;
-				}
-
-				end_ptr -= count & 0x07;
-				while (ptr != end_ptr) {
-					if (*ptr == value_32)
-						return (int)(ptr - start);
-
-					ptr--;
-				}
-				return -1;
-			}
-		}
-
-		public int LastIndexOfAny (char [] anyOf, int startIndex, int count)
-		{
-			if (anyOf == null) 
-				throw new ArgumentNullException ();
-			if (this.m_stringLength == 0)
+			int valueLen = value.Length;
+			if (count < valueLen)
 				return -1;
 
-			if ((startIndex < 0) || (startIndex >= this.Length))
-				throw new ArgumentOutOfRangeException ("startIndex", "< 0 || > this.Length");
-			if ((count < 0) || (count > this.Length))
-				throw new ArgumentOutOfRangeException ("count", "< 0 || > this.Length");
-			if (startIndex - count + 1 < 0)
-				throw new ArgumentOutOfRangeException ("startIndex - count + 1 < 0");
+			if (valueLen == 0)
+				return startIndex;
 
-			if (this.m_stringLength == 0)
+			fixed (char* thisptr = &_firstChar, valueptr = value) {
+				char* ap = thisptr + startIndex;
+
+				char* thisEnd = ap - count + valueLen - 1;
+				char* valueEnd = valueptr + valueLen - 1;
+
+				while (ap != thisEnd) {
+					if (*ap == *valueEnd) {
+						char* apEnd = ap;
+						while (valueptr != valueEnd) {
+							valueEnd--;
+							ap--;
+							if (*ap != *valueEnd) {
+								valueEnd = valueptr + valueLen - 1;
+								ap = apEnd;
+								goto NextVal;
+							}
+						}
+
+						return (int)(ap - thisptr);
+					}
+				NextVal:
+					ap--;
+				}
+			}
+
+			return -1;
+		}
+
+		internal unsafe int LastIndexOfUncheckedIgnoreCase (string value, int startIndex, int count)
+		{
+			int valueLen = value.Length;
+			if (count < valueLen)
 				return -1;
 
-			return LastIndexOfAnyUnchecked (anyOf, startIndex, count);
-		}
+			if (valueLen == 0)
+				return startIndex;
 
-		private unsafe int LastIndexOfAnyUnchecked (char [] anyOf, int startIndex, int count)
-		{
-			if (anyOf.Length == 1)
-				return LastIndexOfUnchecked (anyOf[0], startIndex, count);
+			var ti = CultureInfo.InvariantCulture.TextInfo;
 
-			fixed (char* start = &m_firstChar, testStart = anyOf) {
-				char* ptr = start + startIndex;
-				char* ptrEnd = ptr - count;
-				char* test;
-				char* testEnd = testStart + anyOf.Length;
+			fixed (char* thisptr = &_firstChar, valueptr = value) {
+				char* ap = thisptr + startIndex;
 
-				while (ptr != ptrEnd) {
-					test = testStart;
-					while (test != testEnd) {
-						if (*test == *ptr)
-							return (int)(ptr - start);
-						test++;
+				char* thisEnd = ap - count + valueLen - 1;
+				char* valueEnd = valueptr + valueLen - 1;
+
+				var valueEndUpper = ti.ToUpper (*valueEnd);
+
+				while (ap != thisEnd) {
+					if (ti.ToUpper (*ap) == valueEndUpper) {
+						char* apEnd = ap;
+						while (valueptr != valueEnd) {
+							valueEnd--;
+							ap--;
+							if (ti.ToUpper (*ap) != ti.ToUpper (*valueEnd)) {
+								valueEnd = valueptr + valueLen - 1;
+								ap = apEnd;
+								goto NextVal;
+							}
+						}
+
+						return (int)(ap - thisptr);
 					}
-					ptr--;
-				}
-				return -1;
-			}
-		}
-
-		internal static int nativeCompareOrdinalEx (String strA, int indexA, String strB, int indexB, int count)
-		{
-			//
-			// .net does following checks in unmanaged land only which is quite
-			// wrong as it's not always necessary and argument names don't match
-			// but we are compatible
-			//
-			if (count < 0)
-				throw new ArgumentOutOfRangeException("count", Environment.GetResourceString("ArgumentOutOfRange_NegativeCount"));
-
-			if (indexA < 0 || indexA > strA.Length)
-				throw new ArgumentOutOfRangeException("indexA", Environment.GetResourceString("ArgumentOutOfRange_Index"));
-
-			if (indexB < 0 || indexB > strB.Length)
-				throw new ArgumentOutOfRangeException("indexB", Environment.GetResourceString("ArgumentOutOfRange_Index"));
-
-			return CompareOrdinalUnchecked (strA, indexA, count, strB, indexB, count);
-        }
-
-		unsafe String ReplaceInternal (char oldChar, char newChar)
-		{
-			if (this.m_stringLength == 0 || oldChar == newChar)
-				return this;
-
-			int start_pos = IndexOfUnchecked (oldChar, 0, this.m_stringLength);
-			if (start_pos == -1)
-				return this;
-
-			if (start_pos < 4)
-				start_pos = 0;
-
-			string tmp = FastAllocateString (m_stringLength);
-			fixed (char* dest = tmp, src = &m_firstChar) {
-				if (start_pos != 0)
-					CharCopy (dest, src, start_pos);
-
-				char* end_ptr = dest + m_stringLength;
-				char* dest_ptr = dest + start_pos;
-				char* src_ptr = src + start_pos;
-
-				while (dest_ptr != end_ptr) {
-					if (*src_ptr == oldChar)
-						*dest_ptr = newChar;
-					else
-						*dest_ptr = *src_ptr;
-
-					++src_ptr;
-					++dest_ptr;
-				}
-			}
-			return tmp;
-		}
-
-		internal String ReplaceInternal (String oldValue, String newValue)
-		{
-			// LAMESPEC: According to MSDN the following method is culture-sensitive but this seems to be incorrect
-			// LAMESPEC: Result is undefined if result Length is longer than maximum string Length
-
-			if (oldValue == null)
-				throw new ArgumentNullException ("oldValue");
-
-			if (oldValue.Length == 0)
-				throw new ArgumentException ("oldValue is the empty string.");
-
-			if (this.Length == 0)
-				return this;
-
-			if (newValue == null)
-				newValue = Empty;
-
-			return ReplaceUnchecked (oldValue, newValue);
-		}
-
-		private unsafe String ReplaceUnchecked (String oldValue, String newValue)
-		{
-			if (oldValue.m_stringLength > m_stringLength)
-				return this;
-
-			if (oldValue.m_stringLength == 1 && newValue.m_stringLength == 1) {
-				return Replace (oldValue[0], newValue[0]);
-				// ENHANCE: It would be possible to special case oldValue.m_stringLength == newValue.m_stringLength
-				// because the m_stringLength of the result would be this.m_stringLength and m_stringLength calculation unneccesary
-			}
-
-			const int maxValue = 200; // Allocate 800 byte maximum
-			int* dat = stackalloc int[maxValue];
-			fixed (char* source = &m_firstChar, replace = newValue) {
-				int i = 0, count = 0;
-				while (i < m_stringLength) {
-					int found = IndexOfUnchecked (oldValue, i, m_stringLength - i);
-					if (found < 0)
-						break;
-					else {
-						if (count < maxValue)
-							dat[count++] = found;
-						else
-							return ReplaceFallback (oldValue, newValue, maxValue);
-					}
-					i = found + oldValue.m_stringLength;
-				}
-				if (count == 0)
-					return this;
-
-				int nlen = 0;
-				checked {
-					try {
-						nlen = this.m_stringLength + ((newValue.m_stringLength - oldValue.m_stringLength) * count);
-					} catch (OverflowException) {
-						throw new OutOfMemoryException ();
-					}
-				}
-				String tmp = FastAllocateString (nlen);
-
-				int curPos = 0, lastReadPos = 0;
-				fixed (char* dest = tmp) {
-					for (int j = 0; j < count; j++) {
-						int precopy = dat[j] - lastReadPos;
-						CharCopy (dest + curPos, source + lastReadPos, precopy);
-						curPos += precopy;
-						lastReadPos = dat[j] + oldValue.m_stringLength;
-						CharCopy (dest + curPos, replace, newValue.m_stringLength);
-						curPos += newValue.m_stringLength;
-					}
-					CharCopy (dest + curPos, source + lastReadPos, m_stringLength - lastReadPos);
-				}
-				return tmp;
-			}
-		}
-
-		private String ReplaceFallback (String oldValue, String newValue, int testedCount)
-		{
-			int lengthEstimate = this.m_stringLength + ((newValue.m_stringLength - oldValue.m_stringLength) * testedCount);
-			StringBuilder sb = new StringBuilder (lengthEstimate);
-			for (int i = 0; i < m_stringLength;) {
-				int found = IndexOfUnchecked (oldValue, i, m_stringLength - i);
-				if (found < 0) {
-					sb.Append (InternalSubString (i, m_stringLength - i));
-					break;
-				}
-				sb.Append (InternalSubString (i, found - i));
-				sb.Append (newValue);
-				i = found + oldValue.m_stringLength;
-			}
-			return sb.ToString ();
-
-		}
-
-		unsafe String PadHelper (int totalWidth, char paddingChar, bool isRightPadded)
-		{
-			if (totalWidth < 0)
-				throw new ArgumentOutOfRangeException ("totalWidth", "Non-negative number required");
-			if (totalWidth <= m_stringLength)
-				return this;
-
-			string result = FastAllocateString (totalWidth);
-
-			fixed (char *dest = result, src = &m_firstChar) {
-				if (isRightPadded) {
-					CharCopy (dest, src, m_stringLength);
-					char *end = dest + totalWidth;
-					char *p = dest + m_stringLength;
-					while (p < end) {
-						*p++ = paddingChar;
-					}
-	 			} else {
-					char *p = dest;
-					char *end = p + totalWidth - m_stringLength;
-					while (p < end) {
-						*p++ = paddingChar;
-					}
-					CharCopy (p, src, m_stringLength);
+				NextVal:
+					ap--;
 				}
 			}
 
-			return result;
+			return -1;
 		}
 
 		internal bool StartsWithOrdinalUnchecked (String value)
 		{
-			return m_stringLength >= value.m_stringLength && CompareOrdinalUnchecked (this, 0, value.m_stringLength, value, 0, value.m_stringLength) == 0;
+			if (this.Length < value.Length || _firstChar != value._firstChar)
+				return false;
+
+			return value.Length == 1 ?
+				true :
+				SpanHelpers.SequenceEqual (
+					ref Unsafe.As<char, byte> (ref this.GetRawStringData ()),
+					ref Unsafe.As<char, byte> (ref value.GetRawStringData ()),
+					((nuint)value.Length) * 2);
 		}
 
-		internal unsafe bool IsAscii ()
-		{
-			fixed (char* src = &m_firstChar) {
-				char* end_ptr = src + m_stringLength;
-				char* str_ptr = src;
-
-				while (str_ptr != end_ptr) {
-					if (*str_ptr >= 0x80)
-						return false;
-
-					++str_ptr;
-				}
-			}
-
-			return true;
-		}
-
-		internal bool IsFastSort ()
-		{
-			return false;
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static String FastAllocateString (int length);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string InternalIsInterned (string str);
@@ -534,23 +227,19 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string InternalIntern (string str);
 
-		internal static unsafe void CharCopy (char *dest, char *src, int count) {
-			// Same rules as for memcpy, but with the premise that 
-			// chars can only be aligned to even addresses if their
-			// enclosing types are correctly aligned
-			if ((((int)(byte*)dest | (int)(byte*)src) & 3) != 0) {
-				if (((int)(byte*)dest & 2) != 0 && ((int)(byte*)src & 2) != 0 && count > 0) {
-					((short*)dest) [0] = ((short*)src) [0];
-					dest++;
-					src++;
-					count--;
-				}
-				if ((((int)(byte*)dest | (int)(byte*)src) & 2) != 0) {
-					Buffer.memcpy2 ((byte*)dest, (byte*)src, count * 2);
-					return;
-				}
+		static unsafe int FastCompareStringHelper (uint* strAChars, int countA, uint* strBChars, int countB)
+		{
+			// CoreRT implementation has alignment issues
+			char* ap = (char*) strAChars;
+			char* bp = (char*) strBChars;
+			char* end = ap + Math.Min (countA, countB);
+			while (ap < end) {
+				if (*ap != *bp)
+					return (int)*ap - (int)*bp;
+				ap++;
+				bp++;
 			}
-			Buffer.memcpy4 ((byte*)dest, (byte*)src, count * 2);
+			return countA - countB;
 		}
 
 		#region Runtime method-to-ir dependencies
@@ -649,99 +338,100 @@ namespace System
 		// Certain constructors are redirected to CreateString methods with
 		// matching argument list. The this pointer should not be used.
 
-		private unsafe String CreateString (sbyte* value)
+		unsafe String CreateString (sbyte* value)
 		{
-			if (value == null)
-				return Empty;
-
-			byte* bytes = (byte*) value;
-			int length = 0;
-
-			try {
-				while (bytes++ [0] != 0)
-					length++;
-			} catch (NullReferenceException) {
-				throw new ArgumentOutOfRangeException ("ptr", "Value does not refer to a valid string.");
-		}
-
-			return CreateString (value, 0, length, null);
+			return Ctor (value);
 		}
 
 		unsafe String CreateString (sbyte* value, int startIndex, int length)
 		{
-			return CreateString (value, startIndex, length, null);
+			return Ctor (value, startIndex, length);
 		}
 
-		unsafe string CreateString (char *value)
+		unsafe string CreateString (char* value)
 		{
-			return CtorCharPtr (value);
+			return Ctor (value);
 		}
 
-		unsafe string CreateString (char *value, int startIndex, int length)
+		unsafe string CreateString (char* value, int startIndex, int length)
 		{
-			return CtorCharPtrStartLength (value, startIndex, length);
+			return Ctor (value, startIndex, length);
 		}
 
 		string CreateString (char [] val, int startIndex, int length)
 		{
-			return CtorCharArrayStartLength (val, startIndex, length);
+			return Ctor (val, startIndex, length);
 		}
 
 		string CreateString (char [] val)
 		{
-			return CtorCharArray (val);
+			return Ctor (val);
 		}
 
-		unsafe string CreateString (char c, int count)
+		string CreateString (char c, int count)
 		{
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
-			if (count == 0)
-				return Empty;
-			string result = FastAllocateString (count);
-			fixed (char *dest = result) {
-				char *p = dest;
-				char *end = p + count;
-				while (p < end) {
-					*p = c;
-					p++;
+			return Ctor (c, count);
+		}
+
+		unsafe String CreateString (sbyte* value, int startIndex, int length, Encoding enc)
+		{
+			return Ctor (value, startIndex, length, enc);
+		}
+
+		String CreateString (ReadOnlySpan<char> value)
+		{
+			return Ctor (value);
+		}
+
+		[IndexerName ("Chars")]
+		public char this [int index] {
+			[IntrinsicAttribute]
+			get {
+				if ((uint)index >= _stringLength)
+					ThrowHelper.ThrowIndexOutOfRangeException ();
+
+				return Unsafe.Add (ref _firstChar, index);
+			}
+		}
+
+		public static String Intern (String str)
+		{
+			if (str == null) {
+				throw new ArgumentNullException ("str");
+			}
+
+			return InternalIntern (str);
+		}
+
+		public static String IsInterned (String str)
+		{
+			if (str == null)
+				throw new ArgumentNullException ("str");
+
+			return InternalIsInterned (str);
+		}
+
+		int LegacyStringGetHashCode ()
+		{
+			int hash1 = 5381;
+			int hash2 = hash1;
+
+			unsafe {
+				fixed (char *src = this) {
+					int c;
+					char *s = src;
+					while ((c = s[0]) != 0) {
+						hash1 = ((hash1 << 5) + hash1) ^ c;
+						c = s [1];
+						if (c == 0)
+							break;
+						hash2 = ((hash2 << 5) + hash2) ^ c;
+						s += 2;
+					}
 				}
 			}
-			return result;
-		}
 
-		private unsafe String CreateString (sbyte* value, int startIndex, int length, Encoding enc)
-		{
-			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", "Non-negative number required.");
-			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex", "Non-negative number required.");
-			if (value + startIndex < value)
-				throw new ArgumentOutOfRangeException ("startIndex", "Value, startIndex and length do not refer to a valid string.");
-
-			if (enc == null) {
-				if (value == null)
-					throw new ArgumentNullException ("value");
-				if (length == 0)
-					return Empty;
-
-				enc = Encoding.Default;
-			}
-
-			byte [] bytes = new byte [length];
-
-			if (length != 0)
-				fixed (byte* bytePtr = bytes)
-					try {
-						if (value == null)
-							throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");
-						memcpy (bytePtr, (byte*) (value + startIndex), length);
-					} catch (NullReferenceException) {
-						throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");
-					}
-
-			// GetString () is called even when length == 0
-			return enc.GetString (bytes);
+			return hash1 + (hash2 * 1566083941);
 		}
 	}
 }

@@ -35,16 +35,6 @@ namespace System.Windows.Forms
 		
 		static ThemeEngine ()
 		{
-			string theme_var;
-
-			theme_var = Environment.GetEnvironmentVariable("MONO_THEME");
-
-			if (theme_var == null) {
-				theme_var = "win32";
-			} else {
-				theme_var = theme_var.ToLower ();
-			}
-
 			if (Application.VisualStylesEnabled) {
 				theme = new ThemeVisualStyles ();
 			} else {

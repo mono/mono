@@ -1,3 +1,2 @@
-../../../build/common/MonoTODOAttribute.cs
-Assembly/AssemblyInfo.cs
-System.Reflection/DispatchProxy.cs
+AssemblyInfo.cs
+TypeForwarders.cs

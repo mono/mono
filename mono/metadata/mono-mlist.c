@@ -9,6 +9,7 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+#include <config.h>
 #include "mono/metadata/mono-mlist.h"
 #include "mono/metadata/appdomain.h"
 #include "mono/metadata/class-internals.h"
@@ -44,9 +45,9 @@ static MonoVTable *monolist_item_vtable = NULL;
 MonoMList*
 mono_mlist_alloc (MonoObject *data)
 {
-	MonoError error;
-	MonoMList *result = mono_mlist_alloc_checked (data, &error);
-	mono_error_cleanup (&error);
+	ERROR_DECL (error);
+	MonoMList *result = mono_mlist_alloc_checked (data, error);
+	mono_error_cleanup (error);
 	return result;
 }
 
@@ -67,13 +68,17 @@ mono_mlist_alloc_checked (MonoObject *data, MonoError *error)
 	error_init (error);
 	MonoMList* res;
 	if (!monolist_item_vtable) {
+#ifdef ENABLE_NETCORE
+		MonoClass *klass = mono_class_load_from_name (mono_defaults.corlib, "Mono", "MonoListItem");
+#else
 		MonoClass *klass = mono_class_load_from_name (mono_defaults.corlib, "System", "MonoListItem");
-		monolist_item_vtable = mono_class_vtable (mono_get_root_domain (), klass);
-		g_assert (monolist_item_vtable);
+#endif
+		monolist_item_vtable = mono_class_vtable_checked (mono_get_root_domain (), klass, error);
+		mono_error_assert_ok  (error);
 	}
-	res = (MonoMList*)mono_object_new_fast_checked (monolist_item_vtable, error);
+	res = (MonoMList*)mono_object_new_specific_checked (monolist_item_vtable, error);
 	return_val_if_nok (error, NULL);
-	MONO_OBJECT_SETREF (res, data, data);
+	MONO_OBJECT_SETREF_INTERNAL (res, data, data);
 	return res;
 }
 
@@ -96,7 +101,7 @@ mono_mlist_get_data (MonoMList* list)
 void
 mono_mlist_set_data (MonoMList* list, MonoObject *data)
 {
-	MONO_OBJECT_SETREF (list, data, data);
+	MONO_OBJECT_SETREF_INTERNAL (list, data, data);
 }
 
 /**
@@ -111,7 +116,7 @@ mono_mlist_set_next (MonoMList* list, MonoMList *next)
 	if (!list)
 		return next;
 
-	MONO_OBJECT_SETREF (list, next, next);
+	MONO_OBJECT_SETREF_INTERNAL (list, next, next);
 	return list;
 }
 
@@ -170,9 +175,9 @@ mono_mlist_last (MonoMList* list)
 MonoMList*
 mono_mlist_prepend (MonoMList* list, MonoObject *data)
 {
-	MonoError error;
-	MonoMList *result = mono_mlist_prepend_checked (list, data, &error);
-	mono_error_cleanup (&error);
+	ERROR_DECL (error);
+	MonoMList *result = mono_mlist_prepend_checked (list, data, error);
+	mono_error_cleanup (error);
 	return result;
 }
 
@@ -193,7 +198,7 @@ mono_mlist_prepend_checked (MonoMList* list, MonoObject *data, MonoError *error)
 	return_val_if_nok (error, NULL);
 
 	if (list)
-		MONO_OBJECT_SETREF (res, next, list);
+		MONO_OBJECT_SETREF_INTERNAL (res, next, list);
 	return res;
 }
 
@@ -208,9 +213,9 @@ mono_mlist_prepend_checked (MonoMList* list, MonoObject *data, MonoError *error)
 MonoMList*
 mono_mlist_append (MonoMList* list, MonoObject *data)
 {
-	MonoError error;
-	MonoMList *result = mono_mlist_append_checked (list, data, &error);
-	mono_error_cleanup (&error);
+	ERROR_DECL (error);
+	MonoMList *result = mono_mlist_append_checked (list, data, error);
+	mono_error_cleanup (error);
 	return result;
 }
 
@@ -233,7 +238,7 @@ mono_mlist_append_checked (MonoMList* list, MonoObject *data, MonoError *error)
 
 	if (list) {
 		MonoMList* last = mono_mlist_last (list);
-		MONO_OBJECT_SETREF (last, next, res);
+		MONO_OBJECT_SETREF_INTERNAL (last, next, res);
 		return list;
 	} else {
 		return res;
@@ -271,7 +276,7 @@ mono_mlist_remove_item (MonoMList* list, MonoMList *item)
 	}
 	prev = find_prev (list, item);
 	if (prev) {
-		MONO_OBJECT_SETREF (prev, next, item->next);
+		MONO_OBJECT_SETREF_INTERNAL (prev, next, item->next);
 		item->next = NULL;
 		return list;
 	} else {

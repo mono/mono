@@ -92,7 +92,9 @@ namespace PEAPI {
 	/// </summary>
 	public enum ImplAttr { IL, Native, Runtime = 0x03, Unmanaged = 0x04,
 		ForwardRef = 0x10, PreserveSig = 0x0080, InternalCall = 0x1000, 
-		Synchronised = 0x0020, Synchronized = 0x0020, NoInLining = 0x0008, NoOptimization = 0x0040, Optil = 0x0002}
+		Synchronised = 0x0020, Synchronized = 0x0020, NoInLining = 0x0008, NoOptimization = 0x0040, Optil = 0x0002,
+		AggressiveInlining = 0x0100
+	}
 
 	/// <summary>
 	/// Storage location for initial field data
@@ -1166,8 +1168,7 @@ namespace PEAPI {
 
 		internal override uint SortKey ()
 		{
-			return (theClass.Row << MetaData.CIxShiftMap[(uint)CIx.TypeDefOrRef])
-				| theClass.GetCodedIx (CIx.TypeDefOrRef);
+			throw new Exception ("Should not be used.");
 		}
 
 	}
@@ -1329,6 +1330,10 @@ namespace PEAPI {
 			output.WriteCodedIndex(CIx.MethodDefOrRef,header);
 		}
 
+		internal override uint SortKey()
+		{
+			return parent.Row;
+		}
 	}
 
 	/**************************************************************************/  
@@ -1639,6 +1644,7 @@ namespace PEAPI {
 	public class ClassDef : Class {
 
 		Class superType;
+		bool setSuperType;
 		ArrayList fields = new ArrayList();
 		ArrayList methods = new ArrayList();
 		ArrayList events;
@@ -1654,9 +1660,6 @@ namespace PEAPI {
 				MetaData md) : base(nsName, name, md) 
 		{
 			metaData = md;
-			if (! ((nsName == "" && name == "<Module>") || (nsName == "System" && name == "Object")) ) {
-				superType = metaData.mscorlib.GetSpecialSystemClass(PrimitiveType.Object);
-			}
 			flags = (uint)attrSet;
 			tabIx = MDTable.TypeDef;
 		}
@@ -1664,6 +1667,7 @@ namespace PEAPI {
 		internal void SetSuper(Class sClass) 
 		{
 			superType = sClass;
+			setSuperType = true;
 			if (! (sClass is GenericTypeInst))
 				typeIndexChecked = false;
 		}
@@ -1675,12 +1679,13 @@ namespace PEAPI {
 			else  
 				superType = metaData.mscorlib.ValueType();
 
+			setSuperType = true;
 			typeIndex = PrimitiveType.ValueType.GetTypeIndex ();
 		}
 
 		public void SpecialNoSuper() 
 		{
-			superType = null;
+			setSuperType = true;
 		}
 
 		/// <summary>
@@ -1922,8 +1927,13 @@ namespace PEAPI {
 
 		internal sealed override void BuildTables(MetaData md) 
 		{
-			if (done) return;
-			if ((flags & (uint)TypeAttr.Interface) != 0) { superType = null; }
+			if (done) 
+				return;
+			
+			if ((flags & (uint)TypeAttr.Interface) != 0) {
+				superType = null;
+				setSuperType = true;
+			}
 			// Console.WriteLine("Building tables for " + name);
 			if (layout != null) md.AddToTable(MDTable.ClassLayout,layout);
 			// Console.WriteLine("adding methods " + methods.Count);
@@ -1956,6 +1966,10 @@ namespace PEAPI {
 							((Property)properties[0]).Row,MDTable.Property));
 			}
 			// Console.WriteLine("End of building tables");
+
+			if (!setSuperType)
+				superType = metaData.mscorlib.GetSpecialSystemClass(PrimitiveType.Object);
+
 			done = true;
 		}
 
@@ -5050,7 +5064,7 @@ namespace PEAPI {
 		private byte heapSizes = 0;
 		MetaDataElement entryPoint;
 		BinaryWriter output;
-		public MSCorLib mscorlib;
+		MSCorLib _mscorlib;
 		private TypeSpec[] systemTypeSpecs = new TypeSpec[PrimitiveType.NumSystemTypes];
 		long mdStart;
 		private ArrayList cattr_list;
@@ -5075,8 +5089,14 @@ namespace PEAPI {
 			for (int i=0; i < lgeCIx.Length; i++) {
 				lgeCIx[i] = false;
 			}
-			mscorlib = new MSCorLib(this);
 		}
+
+		public MSCorLib mscorlib {
+			get {
+				return _mscorlib ?? (_mscorlib = new MSCorLib (this));
+			}
+		}
+
 
 		internal TypeSpec GetPrimitiveTypeSpec(int ix) 
 		{
@@ -5532,6 +5552,7 @@ namespace PEAPI {
 			SortTable(metaDataTables[(int)MDTable.FieldMarshal]);
 			SortTable(metaDataTables[(int)MDTable.DeclSecurity]);
 			SortTable(metaDataTables[(int)MDTable.MethodSemantics]);
+			SortTable(metaDataTables[(int)MDTable.MethodImpl]);
 			SortTable(metaDataTables[(int)MDTable.ImplMap]);
 			if (metaDataTables[(int)MDTable.GenericParam] != null) {
 				SortTable(metaDataTables[(int)MDTable.GenericParam]);
@@ -5541,7 +5562,6 @@ namespace PEAPI {
 				  }*/
 			}
 			SortTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
-			SortTable(metaDataTables[(int)MDTable.InterfaceImpl]);
 			SortTable(metaDataTables[(int)MDTable.CustomAttribute]);
 
 		}

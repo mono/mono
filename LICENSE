@@ -28,8 +28,6 @@ Mono itself, and does not end up in the redistributable part of Mono:
 
 * mcs/jay: 4-clause BSD licensed
 
-* mcs/nunit24: MS-PL
-
 * mcs/class/I18N/mklist.sh, tools/cvt.sh: GNU GPLv2
 
 Runtime Code
@@ -46,7 +44,7 @@ embeddable runtime:
 
 * mono/utils/bsearch.c: BSD license.
 
-* mono/io-layer/wapi_glob.h, wapi_glob.c: BSD license
+* mono/metadata/w32file-unix-glob.c, w32file-unix-glob.h: BSD license
 
 Class Library code
 ==================

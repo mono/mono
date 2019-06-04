@@ -38,6 +38,7 @@ namespace System.Diagnostics.Tracing
 		{
 			public IntPtr DataPointer { get; set; }
 			public int Size { get; set; }
+			internal int Reserved { get; set; }
 		}
 
 		protected EventSource ()
@@ -74,6 +75,11 @@ namespace System.Diagnostics.Tracing
 
 		public EventSource (string eventSourceName, EventSourceSettings config, params string[] traits)
 			: this (eventSourceName, config)
+		{
+		}
+
+		internal EventSource (Guid eventSourceGuid, string eventSourceName)
+			: this (eventSourceName)
 		{
 		}
 
@@ -271,56 +277,56 @@ namespace System.Diagnostics.Tracing
 		{
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public event EventHandler<EventCommandEventArgs> EventCommandExecuted
 		{
 			add { throw new NotImplementedException (); }
 			remove { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest, EventManifestOptions flags)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static Guid GetGuid (Type eventSourceType)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static string GetName (Type eventSourceType)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static IEnumerable<EventSource> GetSources ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static void SendCommand (EventSource eventSource, EventCommand command, IDictionary<string, string> commandArguments)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static void SetCurrentThreadActivityId (Guid activityId)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public static void SetCurrentThreadActivityId (Guid activityId, out Guid oldActivityThatWillContinue)
 		{
 			throw new NotImplementedException ();

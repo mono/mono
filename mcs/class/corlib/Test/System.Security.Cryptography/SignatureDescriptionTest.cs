@@ -309,17 +309,16 @@ public class SignatureDescriptionTest {
 	[Test]
 	public void RSASignatureDescription ()
 	{
-// TODO: this would be cleaner with NUnit TestCase'es but they're NUnit 2.5+ :(
-#if FULL_AOT_RUNTIME || MONOTOUCH || MONODROID
-		RSASignatureDescriptionCore ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", "System.Security.Cryptography.SHA1Cng", "System.Security.Cryptography.SHA1CryptoServiceProvider");
-		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "System.Security.Cryptography.SHA256Cng", "System.Security.Cryptography.SHA256Managed");
-		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "System.Security.Cryptography.SHA384Cng", "System.Security.Cryptography.SHA384Managed");
-		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", "System.Security.Cryptography.SHA512Cng", "System.Security.Cryptography.SHA512Managed");
-#else
+#if FEATURE_CRYPTO_CONFIGURABLE
 		RSASignatureDescriptionCore ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", "System.Security.Cryptography.SHA1Cng", "System.Security.Cryptography.SHA1Cng");
 		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "System.Security.Cryptography.SHA256Cng", "System.Security.Cryptography.SHA256Cng");
 		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "System.Security.Cryptography.SHA384Cng", "System.Security.Cryptography.SHA384Cng");
 		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", "System.Security.Cryptography.SHA512Cng", "System.Security.Cryptography.SHA512Cng");
+#else
+		RSASignatureDescriptionCore ("http://www.w3.org/2000/09/xmldsig#rsa-sha1", "System.Security.Cryptography.SHA1Cng", "System.Security.Cryptography.SHA1CryptoServiceProvider");
+		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "System.Security.Cryptography.SHA256Cng", "System.Security.Cryptography.SHA256Managed");
+		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "System.Security.Cryptography.SHA384Cng", "System.Security.Cryptography.SHA384Managed");
+		RSASignatureDescriptionCore ("http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", "System.Security.Cryptography.SHA512Cng", "System.Security.Cryptography.SHA512Managed");
 #endif
 	}
 

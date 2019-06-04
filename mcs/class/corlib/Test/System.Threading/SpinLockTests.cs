@@ -111,6 +111,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void LockUnicityTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
@@ -134,7 +135,7 @@ namespace MonoTests.System.Threading
 				}, 4);
 
 				Assert.IsFalse (fail);
-			}, 200);
+			}, 5);
 		}
 
 		[Test]

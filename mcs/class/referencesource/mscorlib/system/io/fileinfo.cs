@@ -254,7 +254,7 @@ namespace System.IO {
         [ResourceConsumption(ResourceScope.Machine)]
         public StreamReader OpenText()
         {
-            return new StreamReader(FullPath, Encoding.UTF8, true, StreamReader.DefaultBufferSize, false);
+            return new StreamReader(FullPath, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
         }
 
         [ResourceExposure(ResourceScope.Machine)]

@@ -43,6 +43,7 @@ namespace ICSharpCode.SharpZipLib.Tar {
 	/// This exception is used to indicate that there is a problem
 	/// with a TAR archive header.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class InvalidHeaderException : System.IO.IOException
 	{
 		public InvalidHeaderException()

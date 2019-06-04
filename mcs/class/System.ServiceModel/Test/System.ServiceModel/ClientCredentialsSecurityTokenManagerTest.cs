@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
@@ -50,8 +51,8 @@ namespace MonoTests.System.ServiceModel
 	public class ClientCredentialsSecurityTokenManagerTest
 	{
 		MyManager def_c;
-		X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-		X509Certificate2 certpub = new X509Certificate2 ("Test/Resources/test.cer");
+		X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
+		X509Certificate2 certpub = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 
 		[SetUp]
 		public void Initialize ()
@@ -228,202 +229,10 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsNotNull (p, "#1");
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateProviderAnonSslNoTargetAddress ()
-		{
-			SecurityTokenRequirement r =
-				new InitiatorServiceModelSecurityTokenRequirement ();
-//			r.TokenType = ServiceModelSecurityTokenTypes.AnonymousSslnego;
-			new MySslSecurityTokenParameters ().InitRequirement (r);
-			def_c.CreateSecurityTokenProvider (r);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateProviderAnonSslNoBindingElement ()
-		{
-			InitiatorServiceModelSecurityTokenRequirement r =
-				new InitiatorServiceModelSecurityTokenRequirement ();
-			r.TokenType = ServiceModelSecurityTokenTypes.AnonymousSslnego;
-			r.TargetAddress = new EndpointAddress ("http://localhost:8080");
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateProviderAnonSslNoIssuerBindingContext ()
-		{
-			InitiatorServiceModelSecurityTokenRequirement r =
-				new InitiatorServiceModelSecurityTokenRequirement ();
-//			r.TokenType = ServiceModelSecurityTokenTypes.AnonymousSslnego;
-			new MySslSecurityTokenParameters ().InitRequirement (r);
-			r.TargetAddress = new EndpointAddress ("http://localhost:8080");
-			r.SecurityBindingElement = new SymmetricSecurityBindingElement ();
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateProviderAnonSslNoMessageSecurityVersion ()
-		{
-			InitiatorServiceModelSecurityTokenRequirement r =
-				new InitiatorServiceModelSecurityTokenRequirement ();
-//			r.TokenType = ServiceModelSecurityTokenTypes.AnonymousSslnego;
-			new MySslSecurityTokenParameters ().InitRequirement (r);
-			r.TargetAddress = new EndpointAddress ("http://localhost:8080");
-			r.SecurityBindingElement = new SymmetricSecurityBindingElement ();
-			r.Properties [ReqType.IssuerBindingContextProperty] =
-				new BindingContext (new CustomBinding (), new BindingParameterCollection ());
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
-		}
-
 		EndpointAddress CreateEndpointAddress (string s, bool publicOnly)
 		{
 			return new EndpointAddress (new Uri (s),
 				new X509CertificateEndpointIdentity (publicOnly ? certpub : cert));
-		}
-
-		InitiatorServiceModelSecurityTokenRequirement  GetAnonSslProviderRequirement (bool useTransport)
-		{
-			return GetSslProviderRequirement (useTransport, false);
-		}
-
-		InitiatorServiceModelSecurityTokenRequirement  GetMutualSslProviderRequirement (bool useTransport)
-		{
-			return GetSslProviderRequirement (useTransport, true);
-		}
-		
-		InitiatorServiceModelSecurityTokenRequirement  GetSslProviderRequirement (bool useTransport, bool mutual)
-		{
-			InitiatorServiceModelSecurityTokenRequirement r =
-				new InitiatorServiceModelSecurityTokenRequirement ();
-			new MySslSecurityTokenParameters (mutual).InitRequirement (r);
-//			r.TokenType = ServiceModelSecurityTokenTypes.AnonymousSslnego;
-			r.TargetAddress = new EndpointAddress ("http://localhost:8080");
-//			r.TargetAddress = CreateEndpointAddress ("http://localhost:8080", true);
-			r.SecurityBindingElement = SecurityBindingElement.CreateUserNameForSslBindingElement ();
-			CustomBinding binding =
-				useTransport ?
-				new CustomBinding (new HandlerTransportBindingElement (null)) :
-				new CustomBinding ();
-			r.Properties [ReqType.IssuerBindingContextProperty] =
-				new BindingContext (binding, new BindingParameterCollection ());
-			r.MessageSecurityVersion =
-				MessageSecurityVersion.Default.SecurityTokenVersion;
-			r.SecurityAlgorithmSuite =
-				SecurityAlgorithmSuite.Default;
-
-Assert.IsFalse (new MyManager (new MyClientCredentials ()).IsIssued (r), "premise");
-			return r;
-		}
-
-		[Test]
-		public void CreateProviderAnonSsl ()
-		{
-			CreateProviderAnonSsl (false);
-			CreateProviderAnonSsl (true);
-		}
-
-		public void CreateProviderAnonSsl (bool useTransport)
-		{
-			InitiatorServiceModelSecurityTokenRequirement r =
-				GetAnonSslProviderRequirement (useTransport);
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
-
-			ICommunicationObject comm = p as ICommunicationObject;
-			Assert.IsNotNull (comm, "#2");
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
-		public void GetAnonSslProviderSecurityTokenNoTransport ()
-		{
-			InitiatorServiceModelSecurityTokenRequirement r =
-				GetAnonSslProviderRequirement (false);
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
-
-			ICommunicationObject comm = p as ICommunicationObject;
-			Assert.IsNotNull (comm, "#2");
-			comm.Open ();
-			try {
-				p.GetToken (TimeSpan.FromSeconds (5));
-			} finally {
-				comm.Close ();
-			}
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		public void GetAnonSslProviderSecurityTokenNoAlgorithmSuite ()
-		{
-			InitiatorServiceModelSecurityTokenRequirement r =
-				GetAnonSslProviderRequirement (true);
-			r.Properties.Remove (ReqType.SecurityAlgorithmSuiteProperty);
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
-
-			ICommunicationObject comm = p as ICommunicationObject;
-			Assert.IsNotNull (comm, "#2");
-			comm.Open ();
-			try {
-				p.GetToken (TimeSpan.FromSeconds (5));
-			} finally {
-				comm.Close ();
-			}
-		}
-
-		[Test]
-		[Ignore ("it somehow causes NRE - smells .NET bug.")]
-		public void GetAnonSslProviderSecurityToken ()
-		{
-			InitiatorServiceModelSecurityTokenRequirement r =
-				GetAnonSslProviderRequirement (true);
-
-			// What causes NRE!?
-			def_c.ClientCredentials.ClientCertificate.Certificate = certpub;
-			r.Properties [ReqType.IssuedSecurityTokenParametersProperty] =
-				new X509SecurityTokenParameters ();
-			r.TargetAddress = CreateEndpointAddress ("http://localhost:8080", true);
-			r.IssuerAddress = CreateEndpointAddress ("http://localhost:8080", true);
-			r.IssuerBinding = new CustomBinding (new HandlerTransportBindingElement (null));
-			def_c.ClientCredentials.ServiceCertificate.DefaultCertificate = certpub;
-
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
-
-			ICommunicationObject comm = p as ICommunicationObject;
-			Assert.IsNotNull (comm, "#2");
-			comm.Open ();
-			try {
-				p.GetToken (TimeSpan.FromSeconds (5));
-			} finally {
-				comm.Close ();
-			}
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		public void CreateProviderMutualSslWithoutClientCert ()
-		{
-			InitiatorServiceModelSecurityTokenRequirement r =
-				GetMutualSslProviderRequirement (true);
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
 		}
 
 		[Test]
@@ -825,3 +634,4 @@ Assert.IsFalse (new MyManager (new MyClientCredentials ()).IsIssued (r), "premis
 		}
 	}
 }
+#endif

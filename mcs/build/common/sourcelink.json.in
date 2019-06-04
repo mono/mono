@@ -1,0 +1,8 @@
+{
+    "documents": {
+        "@mono_topdir@/external/corefx/*": "https://raw.githubusercontent.com/mono/corefx/@corefx_commit_hash@/*",
+        "@mono_topdir@/external/corert/*": "https://raw.githubusercontent.com/mono/corert/@corert_commit_hash@/*",
+        "@mono_topdir@/external/cecil/*": "https://raw.githubusercontent.com/mono/cecil/@cecil_commit_hash@/*",
+        "@mono_topdir@/*": "https://raw.githubusercontent.com/mono/mono/@mono_commit_hash@/*"
+    }
+}

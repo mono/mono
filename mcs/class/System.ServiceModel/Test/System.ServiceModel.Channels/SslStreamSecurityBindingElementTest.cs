@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -35,6 +36,8 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.Text;
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel.Channels
 {
@@ -99,7 +102,7 @@ namespace MonoTests.System.ServiceModel.Channels
 		{
 			ServiceCredentials cred = new ServiceCredentials ();
 			X509Certificate2 cert = 
-				new X509Certificate2 ("Test/Resources/test.cer");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			cred.ServiceCertificate.Certificate = cert;
 			X509CertificateEndpointIdentity ident =
 				new X509CertificateEndpointIdentity (cert);
@@ -120,3 +123,4 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 	}
 }
+#endif

@@ -45,11 +45,16 @@ namespace System.ServiceModel.PeerResolvers
 	public class CustomPeerResolverService : IPeerResolverContract
 	{
 		static ServiceHost localhost;
+		static int port;
 
 		static void SetupCustomPeerResolverServiceHost ()
 		{
+			string customPort = Environment.GetEnvironmentVariable ("MONO_CUSTOMPEERRESOLVERSERVICE_PORT");
+			if (customPort == null || !int.TryParse (customPort, out port))
+				port = 8931;
+
 			// launch peer resolver service locally only when it does not seem to be running ...
-			var t = new TcpListener (8931);
+			var t = new TcpListener (port);
 			try {
 				t.Start ();
 				t.Stop ();
@@ -59,7 +64,7 @@ namespace System.ServiceModel.PeerResolvers
 			Console.WriteLine ("WARNING: it is running peer resolver service locally. This means, the node registration is valid only within this application domain...");
 			var host = new ServiceHost (new LocalPeerResolverService (TextWriter.Null));
 			host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().InstanceContextMode = InstanceContextMode.Single;
-			host.AddServiceEndpoint (typeof (ICustomPeerResolverContract), new BasicHttpBinding (), "http://localhost:8931");
+			host.AddServiceEndpoint (typeof (ICustomPeerResolverContract), new BasicHttpBinding (), $"http://localhost:{port}");
 			localhost = host;
 			host.Open ();
 		}
@@ -70,7 +75,7 @@ namespace System.ServiceModel.PeerResolvers
 
 		public CustomPeerResolverService ()
 		{
-			client = ChannelFactory<ICustomPeerResolverClient>.CreateChannel (new BasicHttpBinding (), new EndpointAddress ("http://localhost:8931"));
+			client = ChannelFactory<ICustomPeerResolverClient>.CreateChannel (new BasicHttpBinding (), new EndpointAddress ($"http://localhost:{port}"));
 
 			refresh_interval = new TimeSpan (0, 10, 0);
 			cleanup_interval = new TimeSpan (0, 1, 0);

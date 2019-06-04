@@ -85,15 +85,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(MONO_EGLIB_INCLUDE_DIR);$(MONO_EGLIB_SOURCE_DIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MONO_DIR);$(MONO_EGLIB_INCLUDE_DIR);$(MONO_EGLIB_SOURCE_DIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBTEST_EGLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -101,9 +98,6 @@
     <Link>
       <AdditionalDependencies>eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OptimizeReferences>false</OptimizeReferences>
-      <EnableCOMDATFolding>false</EnableCOMDATFolding>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
@@ -111,14 +105,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>$(MONO_EGLIB_INCLUDE_DIR);$(MONO_EGLIB_SOURCE_DIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MONO_DIR);$(MONO_EGLIB_INCLUDE_DIR);$(MONO_EGLIB_SOURCE_DIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBTEST_EGLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <StringPooling>true</StringPooling>
     </ClCompile>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -126,7 +119,6 @@
     <Link>
       <AdditionalDependencies>eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
     </Link>
@@ -137,15 +129,12 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(MONO_EGLIB_INCLUDE_DIR);$(MONO_EGLIB_SOURCE_DIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MONO_DIR);$(MONO_EGLIB_INCLUDE_DIR);$(MONO_EGLIB_SOURCE_DIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBTEST_EGLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -153,10 +142,6 @@
     <Link>
       <AdditionalDependencies>eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OptimizeReferences>false</OptimizeReferences>
-      <EnableCOMDATFolding>false</EnableCOMDATFolding>
-      <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -164,14 +149,13 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <Optimization>MinSpace</Optimization>
-      <AdditionalIncludeDirectories>$(MONO_EGLIB_INCLUDE_DIR);$(MONO_EGLIB_SOURCE_DIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(MONO_DIR);$(MONO_EGLIB_INCLUDE_DIR);$(MONO_EGLIB_SOURCE_DIR)%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LIBTEST_EGLIB_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <StringPooling>true</StringPooling>
     </ClCompile>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -179,51 +163,48 @@
     <Link>
       <AdditionalDependencies>eglib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\eglib\test\array.c" />
-    <ClCompile Include="..\eglib\test\dir.c" />
-    <ClCompile Include="..\eglib\test\driver.c" />
-    <ClCompile Include="..\eglib\test\endian.c" />
-    <ClCompile Include="..\eglib\test\fake.c" />
-    <ClCompile Include="..\eglib\test\file.c" />
+    <ClCompile Include="..\mono\eglib\test\array.c" />
+    <ClCompile Include="..\mono\eglib\test\dir.c" />
+    <ClCompile Include="..\mono\eglib\test\driver.c" />
+    <ClCompile Include="..\mono\eglib\test\endian.c" />
+    <ClCompile Include="..\mono\eglib\test\enum.cpp" />
+    <ClCompile Include="..\mono\eglib\test\fake.c" />
+    <ClCompile Include="..\mono\eglib\test\file.c" />
     <ClCompile Include="getopt.c" />
     <ClCompile Include="getopt_long.c" />
-    <ClCompile Include="..\eglib\test\hashtable.c" />
-    <ClCompile Include="..\eglib\test\list.c" />
-    <ClCompile Include="..\eglib\test\markup.c" />
-    <ClCompile Include="..\eglib\test\memory.c" />
-    <ClCompile Include="..\eglib\test\module.c" />
-    <ClCompile Include="..\eglib\test\path.c" />
-    <ClCompile Include="..\eglib\test\pattern.c" />
-    <ClCompile Include="..\eglib\test\ptrarray.c" />
-    <ClCompile Include="..\eglib\test\queue.c" />
-    <ClCompile Include="..\eglib\test\shell.c" />
-    <ClCompile Include="..\eglib\test\sizes.c" />
-    <ClCompile Include="..\eglib\test\slist.c" />
-    <ClCompile Include="..\eglib\test\spawn.c" />
-    <ClCompile Include="..\eglib\test\string-util.c" />
-    <ClCompile Include="..\eglib\test\string.c" />
-    <ClCompile Include="..\eglib\test\test.c" />
-    <ClCompile Include="..\eglib\test\timer.c" />
-    <ClCompile Include="..\eglib\test\unicode.c" />
-    <ClCompile Include="..\eglib\test\utf8.c" />
+    <ClCompile Include="..\mono\eglib\test\hashtable.c" />
+    <ClCompile Include="..\mono\eglib\test\list.c" />
+    <ClCompile Include="..\mono\eglib\test\markup.c" />
+    <ClCompile Include="..\mono\eglib\test\memory.c" />
+    <ClCompile Include="..\mono\eglib\test\module.c" />
+    <ClCompile Include="..\mono\eglib\test\path.c" />
+    <ClCompile Include="..\mono\eglib\test\pattern.c" />
+    <ClCompile Include="..\mono\eglib\test\ptrarray.c" />
+    <ClCompile Include="..\mono\eglib\test\queue.c" />
+    <ClCompile Include="..\mono\eglib\test\shell.c" />
+    <ClCompile Include="..\mono\eglib\test\sizes.c" />
+    <ClCompile Include="..\mono\eglib\test\slist.c" />
+    <ClCompile Include="..\mono\eglib\test\spawn.c" />
+    <ClCompile Include="..\mono\eglib\test\string-util.c" />
+    <ClCompile Include="..\mono\eglib\test\string.c" />
+    <ClCompile Include="..\mono\eglib\test\test.c" />
+    <ClCompile Include="..\mono\eglib\test\timer.c" />
+    <ClCompile Include="..\mono\eglib\test\unicode.c" />
+    <ClCompile Include="..\mono\eglib\test\utf8.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="getopt.h" />
     <ClInclude Include="getopt_long.h" />
-    <ClInclude Include="..\eglib\src\glib.h" />
-    <ClInclude Include="..\eglib\test\test.h" />
-    <ClInclude Include="..\eglib\test\tests.h" />
+    <ClInclude Include="..\mono\eglib\src\glib.h" />
+    <ClInclude Include="..\mono\eglib\test\test.h" />
+    <ClInclude Include="..\mono\eglib\test\tests.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="eglib.vcxproj">
       <Project>{158073ed-99ae-4196-9edc-ddb2344f8466}</Project>
-    </ProjectReference>
-    <ProjectReference Include="libmono.vcxproj">
-      <Project>{cb0d9e92-293c-439c-9ac7-c5f59b6e0771}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

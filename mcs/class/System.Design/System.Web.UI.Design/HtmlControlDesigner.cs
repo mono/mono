@@ -35,7 +35,7 @@ namespace System.Web.UI.Design
 		public HtmlControlDesigner () { throw new NotImplementedException (); }
 
 		[MonoTODO]
-		protected override void Dispose (bool disposing) { throw new NotImplementedException (); }
+		protected override void Dispose (bool disposing) { }
 
 		[MonoTODO]
 		[Obsolete ("Use ControlDesigner.Tag instead")]

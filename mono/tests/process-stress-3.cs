@@ -16,7 +16,7 @@ class Driver
 
 		ProcessStartInfo psi = new ProcessStartInfo () {
 			FileName = "find",
-			Arguments = "../.. -maxdepth 3", // this test should be run from mono/tests, so that will list all files in the repo
+			Arguments = ". -maxdepth 3", // this test should be run from mono/tests, so that will list all test files
 			UseShellExecute = false,
 			RedirectStandardOutput = true,
 			RedirectStandardError = true,
@@ -59,9 +59,9 @@ class Driver
 
 		if (!mre_exit.WaitOne (10000))
 			Environment.Exit (1);
-		if (!mre_output.WaitOne (1000))
+		if (!mre_output.WaitOne (10000))
 			Environment.Exit (2);
-		if (!mre_error.WaitOne (1000))
+		if (!mre_error.WaitOne (10000))
 			Environment.Exit (3);
 	}
 

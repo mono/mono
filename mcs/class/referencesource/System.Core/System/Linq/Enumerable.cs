@@ -10,7 +10,7 @@ using System.Core;
 
 namespace System.Linq
 {
-    public static class Enumerable
+    public static partial class Enumerable
     {
         public static IEnumerable<TSource> Where<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) {
             if (source == null) throw Error.ArgumentNull("source");
@@ -246,6 +246,120 @@ namespace System.Linq
 
             public override IEnumerable<TSource> Where(Func<TSource, bool> predicate) {
                 return new WhereListIterator<TSource>(source, CombinePredicates(this.predicate, predicate));
+            }
+        }
+
+        /// <summary>
+        /// An iterator that maps each item of an <see cref="IEnumerable{TSource}"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the source enumerable.</typeparam>
+        /// <typeparam name="TResult">The type of the mapped items.</typeparam>
+        class SelectEnumerableIterator<TSource, TResult> : Iterator<TResult>, IIListProvider<TResult>
+        {
+            private readonly IEnumerable<TSource> _source;
+            private readonly Func<TSource, TResult> _selector;
+            private IEnumerator<TSource> _enumerator;
+
+            public SelectEnumerableIterator(IEnumerable<TSource> source, Func<TSource, TResult> selector)
+            {
+                _source = source;
+                _selector = selector;
+            }
+
+            public override Iterator<TResult> Clone()
+            {
+                return new SelectEnumerableIterator<TSource, TResult>(_source, _selector);
+            }
+
+            public override void Dispose()
+            {
+                if (_enumerator != null)
+                {
+                    _enumerator.Dispose();
+                    _enumerator = null;
+                }
+
+                base.Dispose();
+            }
+
+            public override bool MoveNext()
+            {
+                switch (state)
+                {
+                    case 1:
+                        _enumerator = _source.GetEnumerator();
+                        state = 2;
+                        goto case 2;
+                    case 2:
+                        if (_enumerator.MoveNext())
+                        {
+                            current = _selector(_enumerator.Current);
+                            return true;
+                        }
+
+                        Dispose();
+                        break;
+                }
+
+                return false;
+            }
+
+            public override IEnumerable<TResult2> Select<TResult2>(Func<TResult, TResult2> selector)
+            {
+                return new SelectEnumerableIterator<TSource, TResult2>(_source, CombineSelectors(_selector, selector));
+            }
+
+            public override IEnumerable<TResult> Where(Func<TResult, bool> predicate)
+            {
+                return new WhereEnumerableIterator<TResult>(this, predicate);
+            }
+
+            public TResult[] ToArray()
+            {
+                var builder = new LargeArrayBuilder<TResult>(initialize: true);
+                
+                foreach (TSource item in _source)
+                {
+                    builder.Add(_selector(item));
+                }
+
+                return builder.ToArray();
+            }
+
+            public List<TResult> ToList()
+            {
+                var list = new List<TResult>();
+
+                foreach (TSource item in _source)
+                {
+                    list.Add(_selector(item));
+                }
+
+                return list;
+            }
+
+            public int GetCount(bool onlyIfCheap)
+            {
+                // In case someone uses Count() to force evaluation of
+                // the selector, run it provided `onlyIfCheap` is false.
+
+                if (onlyIfCheap)
+                {
+                    return -1;
+                }
+
+                int count = 0;
+
+                foreach (TSource item in _source)
+                {
+                    _selector(item);
+                    checked
+                    {
+                        count++;
+                    }
+                }
+
+                return count;
             }
         }
 

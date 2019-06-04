@@ -503,6 +503,9 @@ namespace Mono.Data.Sqlite
       if (_cnn.State != ConnectionState.Open)
         throw new InvalidOperationException("Database is not open");
 
+      if (string.IsNullOrWhiteSpace (CommandText))
+        throw new ArgumentException ("Empty SQL statement");
+
       // If the version of the connection has changed, clear out any previous commands before starting
       if (_cnn._version != _version)
       {

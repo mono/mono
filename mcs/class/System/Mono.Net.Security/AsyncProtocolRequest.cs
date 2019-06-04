@@ -158,7 +158,7 @@ namespace Mono.Net.Security
 			RunSynchronously = sync;
 		}
 
-		[SD.Conditional ("MARTIN_DEBUG")]
+		[SD.Conditional ("MONO_TLS_DEBUG")]
 		protected void Debug (string message, params object[] args)
 		{
 			Parent.Debug ("{0}({1}:{2}): {3}", Name, Parent.ID, ID, string.Format (message, args));
@@ -187,7 +187,8 @@ namespace Mono.Net.Security
 				await ProcessOperation (cancellationToken).ConfigureAwait (false);
 				return new AsyncProtocolResult (UserResult);
 			} catch (Exception ex) {
-				var info = Parent.SetException (MobileAuthenticatedStream.GetSSPIException (ex));
+				// Any exceptions thrown by the underlying stream will be propagated.
+				var info = Parent.SetException (ex);
 				return new AsyncProtocolResult (info);
 			}
 		}
@@ -218,7 +219,12 @@ namespace Mono.Net.Security
 				case AsyncOperationStatus.Initialize:
 				case AsyncOperationStatus.Continue:
 				case AsyncOperationStatus.ReadDone:
-					newStatus = Run (status);
+					try {
+						newStatus = Run (status);
+					} catch (Exception ex) {
+						// We only want to wrap exceptions that are thrown by the TLS code.
+						throw MobileAuthenticatedStream.GetSSPIException (ex);
+					}
 					break;
 				default:
 					throw new InvalidOperationException ();
@@ -226,7 +232,8 @@ namespace Mono.Net.Security
 
 				if (Interlocked.Exchange (ref WriteRequested, 0) != 0) {
 					// Flush the write queue.
-					await Parent.InnerWrite (RunSynchronously, cancellationToken);
+					Debug ("ProcessOperation - flushing write queue");
+					await Parent.InnerWrite (RunSynchronously, cancellationToken).ConfigureAwait (false);
 				}
 
 				Debug ("ProcessOperation done: {0} -> {1}", status, newStatus);
@@ -279,7 +286,7 @@ namespace Mono.Net.Security
 
 		protected override AsyncOperationStatus Run (AsyncOperationStatus status)
 		{
-			return Parent.ProcessHandshake (status);
+			return Parent.ProcessHandshake (status, false);
 		}
 	}
 
@@ -389,5 +396,17 @@ namespace Mono.Net.Security
 		}
 	}
 
+	class AsyncRenegotiateRequest : AsyncProtocolRequest
+	{
+		public AsyncRenegotiateRequest (MobileAuthenticatedStream parent)
+			: base (parent, false)
+		{
+		}
+
+		protected override AsyncOperationStatus Run (AsyncOperationStatus status)
+		{
+			return Parent.ProcessHandshake (status, true);
+		}
+	}
 }
 #endif

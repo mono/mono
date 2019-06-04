@@ -219,7 +219,6 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetString_Odd_Count_0 ()
 		{
 			byte [] array = new byte [3];
@@ -231,7 +230,6 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetString_Odd_Count_ff ()
 		{
 			byte [] array = new byte [3] { 0xff, 0xff, 0xff };

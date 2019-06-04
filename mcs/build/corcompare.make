@@ -1,5 +1,5 @@
 API_INFO = $(MONO_PATH) $(RUNTIME) $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe
-API_DIFF = $(MONO_PATH) $(RUNTIME) $(topdir)/tools/corcompare/mono-api-diff.exe
+API_DIFF = $(MONO_PATH) $(RUNTIME) $(topdir)/class/lib/$(PROFILE)/mono-api-diff.exe
 TRANSFORM = $(MONO_PATH) $(RUNTIME) $(topdir)/tools/corcompare/transform.exe
 
 OBJECTS = $(topdir)/build/corcompare/$(LIBRARY_NAME:.dll=.html)

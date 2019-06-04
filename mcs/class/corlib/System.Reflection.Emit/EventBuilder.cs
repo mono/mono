@@ -31,7 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -40,11 +40,37 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_EventBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class EventBuilder : _EventBuilder
+	{
+		void _EventBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _EventBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _EventBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _EventBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}		
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class EventBuilder : _EventBuilder {
+	public sealed partial class EventBuilder {
 #pragma warning disable 169, 414
 		internal string name;
 		Type type;
@@ -63,11 +89,11 @@ namespace System.Reflection.Emit {
 			attrs = eventAttrs;
 			type = eventType;
 			typeb = tb;
-			table_idx = get_next_table_index (this, 0x14, true);
+			table_idx = get_next_table_index (this, 0x14, 1);
 		}
 
-		internal int get_next_table_index (object obj, int table, bool inc) {
-			return typeb.get_next_table_index (obj, table, inc);
+		internal int get_next_table_index (object obj, int table, int count) {
+			return typeb.get_next_table_index (obj, table, count);
 		}
 
 		public void AddOtherMethod( MethodBuilder mdBuilder) {
@@ -138,26 +164,6 @@ namespace System.Reflection.Emit {
 		private void RejectIfCreated () {
 			if (typeb.is_created)
 				throw new InvalidOperationException ("Type definition of the method is complete.");
-		}
-
-		void _EventBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _EventBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _EventBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _EventBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

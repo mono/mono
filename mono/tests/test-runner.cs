@@ -17,6 +17,7 @@ using System.Globalization;
 using System.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 #if !FULL_AOT_DESKTOP && !MOBILE
 using Mono.Unix.Native;
@@ -38,6 +39,7 @@ public class TestRunner
 		public StringBuilder stdout, stderr;
 		public object stdoutLock = new object (), stderrLock = new object ();
 		public string stdoutName, stderrName;
+		public TimeSpan duration;
 	}
 
 	class TestInfo {
@@ -52,6 +54,7 @@ public class TestRunner
 		bool verbose = false;
 		string testsuiteName = null;
 		string inputFile = null;
+		int repeat = 1;
 
 		string disabled_tests = null;
 		string runtime = "mono";
@@ -59,6 +62,7 @@ public class TestRunner
 		string mono_path = null;
 		string runtime_args = null;
 		string mono_gac_prefix = null;
+		string xunit_output_path = null;
 		var opt_sets = new List<string> ();
 
 		// Process options
@@ -132,6 +136,14 @@ public class TestRunner
 					}
 					testsuiteName = args [i + 1];
 					i += 2;
+				} else if (args [i] == "--xunit") {
+					if (i + 1 >= args.Length) {
+						Console.WriteLine ("Missing argument to --xunit command line option.");
+						return 1;
+					}
+					xunit_output_path = args [i + 1].Substring(0, args [i + 1].Length);
+
+					i += 2;
 				} else if (args [i] == "--input-file") {
 					if (i + 1 >= args.Length) {
 						Console.WriteLine ("Missing argument to --input-file command line option.");
@@ -157,6 +169,17 @@ public class TestRunner
 				} else if (args [i] == "--verbose") {
 					verbose = true;
 					i ++;
+				} else if (args [i] == "--repeat") {
+					if (i + 1 >= args.Length) {
+						Console.WriteLine ("Missing argument to --repeat command line option.");
+						return 1;
+					}
+					repeat = Int32.Parse (args [i + 1]);
+					if (repeat <= 1) {
+						Console.WriteLine ("Invalid argument to --repeat command line option, should be > 1");
+						return 1;
+					}
+					i += 2;
 				} else {
 					Console.WriteLine ("Unknown command line option: '" + args [i] + "'.");
 					return 1;
@@ -181,13 +204,33 @@ public class TestRunner
 		var tests = new List<string> ();
 
 		if (!String.IsNullOrEmpty (inputFile)) {
-			tests.AddRange (File.ReadAllLines (inputFile));
+			foreach (string l in File.ReadAllLines (inputFile)) {
+				foreach (string m in l.Split (' ')) {
+					if (!String.IsNullOrEmpty (m)) {
+						for (int r = 0; r < repeat; ++r)
+							tests.Add (m);
+					}
+				}
+			}
 		} else {
 			// The remaining arguments are the tests
 			for (int j = i; j < args.Length; ++j)
-				if (!disabled.ContainsKey (args [j]))
-					tests.Add (args [j]);
+				if (!disabled.ContainsKey (args [j])) {
+					for (int r = 0; r < repeat; ++r)
+						tests.Add (args [j]);
+				}
 		}
+
+		if (!tests.Any ()) {
+			Console.WriteLine ("No tests selected, exiting.");
+			return 0;
+		}
+
+		/* If tests are repeated, we don't want the same test to run consecutively, so we need to randomise their order.
+		 * But to ease reproduction of certain order-based bugs (if and only if test A and B execute at the same time),
+		 * we want to use a constant seed so the tests always run in the same order. */
+		var random = new Random (0);
+		tests = tests.OrderBy (t => random.Next ()).ToList ();
 
 		var passed = new List<ProcessData> ();
 		var failed = new List<ProcessData> ();
@@ -301,6 +344,9 @@ public class TestRunner
 					p.BeginErrorReadLine ();
 
 					if (!p.WaitForExit (timeout * 1000)) {
+						var end = DateTime.UtcNow;
+						data.duration =  end - start;
+
 						lock (monitor) {
 							timedout.Add (data);
 						}
@@ -318,22 +364,24 @@ public class TestRunner
 						}
 					} else if (p.ExitCode != expectedExitCode) {
 						var end = DateTime.UtcNow;
+						data.duration =  end - start;
 
 						lock (monitor) {
 							failed.Add (data);
 						}
 
 						if (verbose)
-							output.Write ("failed, time: {0}, exit code: {1}", (end - start).ToString (TEST_TIME_FORMAT), p.ExitCode);
+							output.Write ("failed, time: {0}, exit code: {1}", data.duration.ToString (TEST_TIME_FORMAT), p.ExitCode);
 					} else {
 						var end = DateTime.UtcNow;
+						data.duration =  end - start;
 
 						lock (monitor) {
 							passed.Add (data);
 						}
 
 						if (verbose)
-							output.Write ("passed, time: {0}", (end - start).ToString (TEST_TIME_FORMAT));
+							output.Write ("passed, time: {0}", data.duration.ToString (TEST_TIME_FORMAT));
 					}
 
 					p.Close ();
@@ -355,16 +403,72 @@ public class TestRunner
 
 		TimeSpan test_time = DateTime.UtcNow - test_start_time;
 
-		int npassed = passed.Count;
-		int nfailed = failed.Count;
-		int ntimedout = timedout.Count;
+		if (xunit_output_path != null) {
+			WriteXUnitOutput (xunit_output_path, testsuiteName, test_time, passed, failed, timedout);
+		}
+		else {
+			var xmlPath = String.Format ("TestResult-{0}.xml", testsuiteName);
+			WriteNUnitOutput (xmlPath, testsuiteName, test_time, passed, failed, timedout);
+			string babysitterXmlList = Environment.GetEnvironmentVariable("MONO_BABYSITTER_NUNIT_XML_LIST_FILE");
+			if (!String.IsNullOrEmpty(babysitterXmlList)) {
+				try {
+					string fullXmlPath = Path.GetFullPath(xmlPath);
+					File.AppendAllText(babysitterXmlList, fullXmlPath + Environment.NewLine);
+				} catch (Exception e) {
+					Console.WriteLine("Attempted to record XML path to file {0} but failed.", babysitterXmlList);
+				}
+			}
+		}
 
+		if (verbose) {
+			Console.WriteLine ();
+			Console.WriteLine ("Time: {0}", test_time.ToString (TEST_TIME_FORMAT));
+			Console.WriteLine ();
+			Console.WriteLine ("{0,4} test(s) passed", passed.Count);
+			Console.WriteLine ("{0,4} test(s) failed", failed.Count);
+			Console.WriteLine ("{0,4} test(s) timed out", timedout.Count);
+		} else {
+			Console.WriteLine ();
+			Console.WriteLine (String.Format ("{0} test(s) passed, {1} test(s) did not pass.", passed.Count, failed.Count));
+		}
+
+		if (failed.Count > 0) {
+			Console.WriteLine ();
+			Console.WriteLine ("Failed test(s):");
+			foreach (ProcessData pd in failed) {
+				Console.WriteLine ();
+				Console.WriteLine (pd.test);
+				DumpFile (pd.stdoutName, pd.stdout.ToString ());
+				DumpFile (pd.stderrName, pd.stderr.ToString ());
+			}
+		}
+
+		if (timedout.Count > 0) {
+			Console.WriteLine ();
+			Console.WriteLine ("Timed out test(s):");
+			foreach (ProcessData pd in timedout) {
+				Console.WriteLine ();
+				Console.WriteLine (pd.test);
+				DumpFile (pd.stdoutName, pd.stdout.ToString ());
+				DumpFile (pd.stderrName, pd.stderr.ToString ());
+			}
+		}
+
+		return (timedout.Count == 0 && failed.Count == 0) ? 0 : 1;
+	}
+	
+	static void DumpFile (string filename, string text) {
+		Console.WriteLine ("=============== {0} ===============", filename);
+		Console.WriteLine (text);
+		Console.WriteLine ("=============== EOF ===============");
+	}
+
+	static void WriteNUnitOutput (string path, string testsuiteName, TimeSpan test_time, List<ProcessData> passed, List<ProcessData> failed, List<ProcessData> timedout) {
 		XmlWriterSettings xmlWriterSettings = new XmlWriterSettings ();
 		xmlWriterSettings.NewLineOnAttributes = true;
 		xmlWriterSettings.Indent = true;
 
-		string xmlPath = String.Format ("TestResult-{0}.xml", testsuiteName);
-		using (XmlWriter writer = XmlWriter.Create (xmlPath, xmlWriterSettings)) {
+		using (XmlWriter writer = XmlWriter.Create (path, xmlWriterSettings)) {
 			// <?xml version="1.0" encoding="utf-8" standalone="no"?>
 			writer.WriteStartDocument ();
 			// <!--This file represents the results of running a test suite-->
@@ -372,8 +476,8 @@ public class TestRunner
 			// <test-results name="/home/charlie/Dev/NUnit/nunit-2.5/work/src/bin/Debug/tests/mock-assembly.dll" total="21" errors="1" failures="1" not-run="7" inconclusive="1" ignored="4" skipped="0" invalid="3" date="2010-10-18" time="13:23:35">
 			writer.WriteStartElement ("test-results");
 			writer.WriteAttributeString ("name", String.Format ("{0}-tests.dummy", testsuiteName));
-			writer.WriteAttributeString ("total", (npassed + nfailed + ntimedout).ToString());
-			writer.WriteAttributeString ("failures", (nfailed + ntimedout).ToString());
+			writer.WriteAttributeString ("total", (passed.Count + failed.Count + timedout.Count).ToString());
+			writer.WriteAttributeString ("failures", (failed.Count + timedout.Count).ToString());
 			writer.WriteAttributeString ("not-run", "0");
 			writer.WriteAttributeString ("date", DateTime.Now.ToString ("yyyy-MM-dd"));
 			writer.WriteAttributeString ("time", DateTime.Now.ToString ("HH:mm:ss"));
@@ -396,25 +500,25 @@ public class TestRunner
 			//   <test-suite name="corlib_test_net_4_5.dll" success="True" time="114.318" asserts="0">
 			writer.WriteStartElement ("test-suite");
 			writer.WriteAttributeString ("name", String.Format ("{0}-tests.dummy", testsuiteName));
-			writer.WriteAttributeString ("success", (nfailed + ntimedout == 0).ToString());
-			writer.WriteAttributeString ("time", test_time.Seconds.ToString());
-			writer.WriteAttributeString ("asserts", (nfailed + ntimedout).ToString());
+			writer.WriteAttributeString ("success", (failed.Count + timedout.Count == 0).ToString());
+			writer.WriteAttributeString ("time", test_time.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+			writer.WriteAttributeString ("asserts", (failed.Count + timedout.Count).ToString());
 			//     <results>
 			writer.WriteStartElement ("results");
 			//       <test-suite name="MonoTests" success="True" time="114.318" asserts="0">
 			writer.WriteStartElement ("test-suite");
 			writer.WriteAttributeString ("name","MonoTests");
-			writer.WriteAttributeString ("success", (nfailed + ntimedout == 0).ToString());
-			writer.WriteAttributeString ("time", test_time.Seconds.ToString());
-			writer.WriteAttributeString ("asserts", (nfailed + ntimedout).ToString());
+			writer.WriteAttributeString ("success", (failed.Count + timedout.Count == 0).ToString());
+			writer.WriteAttributeString ("time", test_time.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+			writer.WriteAttributeString ("asserts", (failed.Count + timedout.Count).ToString());
 			//         <results>
 			writer.WriteStartElement ("results");
 			//           <test-suite name="MonoTests" success="True" time="114.318" asserts="0">
 			writer.WriteStartElement ("test-suite");
 			writer.WriteAttributeString ("name", testsuiteName);
-			writer.WriteAttributeString ("success", (nfailed + ntimedout == 0).ToString());
-			writer.WriteAttributeString ("time", test_time.Seconds.ToString());
-			writer.WriteAttributeString ("asserts", (nfailed + ntimedout).ToString());
+			writer.WriteAttributeString ("success", (failed.Count + timedout.Count == 0).ToString());
+			writer.WriteAttributeString ("time", test_time.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+			writer.WriteAttributeString ("asserts", (failed.Count + timedout.Count).ToString());
 			//             <results>
 			writer.WriteStartElement ("results");
 			// Dump all passing tests first
@@ -424,7 +528,7 @@ public class TestRunner
 				writer.WriteAttributeString ("name", String.Format ("MonoTests.{0}.{1}", testsuiteName, pd.test));
 				writer.WriteAttributeString ("executed", "True");
 				writer.WriteAttributeString ("success", "True");
-				writer.WriteAttributeString ("time", "0");
+				writer.WriteAttributeString ("time", pd.duration.TotalSeconds.ToString(CultureInfo.InvariantCulture));
 				writer.WriteAttributeString ("asserts", "0");
 				writer.WriteEndElement ();
 			}
@@ -435,7 +539,7 @@ public class TestRunner
 				writer.WriteAttributeString ("name", String.Format ("MonoTests.{0}.{1}", testsuiteName, pd.test));
 				writer.WriteAttributeString ("executed", "True");
 				writer.WriteAttributeString ("success", "False");
-				writer.WriteAttributeString ("time", "0");
+				writer.WriteAttributeString ("time", pd.duration.TotalSeconds.ToString(CultureInfo.InvariantCulture));
 				writer.WriteAttributeString ("asserts", "1");
 				writer.WriteStartElement ("failure");
 				writer.WriteStartElement ("message");
@@ -454,7 +558,7 @@ public class TestRunner
 				writer.WriteAttributeString ("name", String.Format ("MonoTests.{0}.{1}_timedout", testsuiteName, pd.test));
 				writer.WriteAttributeString ("executed", "True");
 				writer.WriteAttributeString ("success", "False");
-				writer.WriteAttributeString ("time", "0");
+				writer.WriteAttributeString ("time", pd.duration.TotalSeconds.ToString(CultureInfo.InvariantCulture));
 				writer.WriteAttributeString ("asserts", "1");
 				writer.WriteStartElement ("failure");
 				writer.WriteStartElement ("message");
@@ -481,59 +585,88 @@ public class TestRunner
 			// </test-results>
 			writer.WriteEndElement ();
 			writer.WriteEndDocument ();
-
-			string babysitterXmlList = Environment.GetEnvironmentVariable("MONO_BABYSITTER_NUNIT_XML_LIST_FILE");
-			if (!String.IsNullOrEmpty(babysitterXmlList)) {
-				try {
-					string fullXmlPath = Path.GetFullPath(xmlPath);
-					File.AppendAllText(babysitterXmlList, fullXmlPath + Environment.NewLine);
-				} catch (Exception e) {
-					Console.WriteLine("Attempted to record XML path to file {0} but failed.", babysitterXmlList);
-				}
-			}
 		}
-
-		if (verbose) {
-			Console.WriteLine ();
-			Console.WriteLine ("Time: {0}", test_time.ToString (TEST_TIME_FORMAT));
-			Console.WriteLine ();
-			Console.WriteLine ("{0,4} test(s) passed", npassed);
-			Console.WriteLine ("{0,4} test(s) failed", nfailed);
-			Console.WriteLine ("{0,4} test(s) timed out", ntimedout);
-		} else {
-			Console.WriteLine ();
-			Console.WriteLine (String.Format ("{0} test(s) passed, {1} test(s) did not pass.", npassed, nfailed));
-		}
-
-		if (nfailed > 0) {
-			Console.WriteLine ();
-			Console.WriteLine ("Failed test(s):");
-			foreach (ProcessData pd in failed) {
-				Console.WriteLine ();
-				Console.WriteLine (pd.test);
-				DumpFile (pd.stdoutName, pd.stdout.ToString ());
-				DumpFile (pd.stderrName, pd.stderr.ToString ());
-			}
-		}
-
-		if (ntimedout > 0) {
-			Console.WriteLine ();
-			Console.WriteLine ("Timed out test(s):");
-			foreach (ProcessData pd in timedout) {
-				Console.WriteLine ();
-				Console.WriteLine (pd.test);
-				DumpFile (pd.stdoutName, pd.stdout.ToString ());
-				DumpFile (pd.stderrName, pd.stderr.ToString ());
-			}
-		}
-
-		return (ntimedout == 0 && nfailed == 0) ? 0 : 1;
 	}
-	
-	static void DumpFile (string filename, string text) {
-		Console.WriteLine ("=============== {0} ===============", filename);
-		Console.WriteLine (text);
-		Console.WriteLine ("=============== EOF ===============");
+
+	static void WriteXUnitOutput (string path, string testsuiteName, TimeSpan test_time, List<ProcessData> passed, List<ProcessData> failed, List<ProcessData> timedout) {
+		XmlWriterSettings xmlWriterSettings = new XmlWriterSettings ();
+		xmlWriterSettings.Indent = true;
+
+		using (XmlWriter writer = XmlWriter.Create (path, xmlWriterSettings)) {
+
+			writer.WriteStartDocument ();
+
+			writer.WriteStartElement ("assemblies");
+
+			writer.WriteStartElement ("assembly");
+
+			writer.WriteAttributeString ("name", testsuiteName);
+			writer.WriteAttributeString ("environment", $"test-runner-version: {System.Reflection.Assembly.GetExecutingAssembly ().GetName ()}, clr-version: {Environment.Version}, os-version: {Environment.OSVersion}, platform: {Environment.OSVersion.Platform}, cwd: {Environment.CurrentDirectory}, machine-name: {Environment.MachineName}, user: {Environment.UserName}, user-domain: {Environment.UserDomainName}");
+			writer.WriteAttributeString ("test-framework", "test-runner");
+			writer.WriteAttributeString ("run-date", XmlConvert.ToString (DateTime.Now, "yyyy-MM-dd"));
+			writer.WriteAttributeString ("run-time", XmlConvert.ToString (DateTime.Now, "HH:mm:ss"));
+
+			writer.WriteAttributeString ("total", (passed.Count + failed.Count + timedout.Count).ToString ());
+			writer.WriteAttributeString ("errors", 0.ToString ());
+			writer.WriteAttributeString ("failed", (failed.Count + timedout.Count).ToString ());
+			writer.WriteAttributeString ("skipped", 0.ToString ());
+
+			writer.WriteAttributeString ("passed", passed.Count.ToString ());
+
+			writer.WriteStartElement ("collection");
+			writer.WriteAttributeString ("name", "tests");
+
+			foreach (var pd in passed) {
+				writer.WriteStartElement ("test");
+				writer.WriteAttributeString ("name", testsuiteName + ".tests." + pd.test);
+				writer.WriteAttributeString ("type", testsuiteName + ".tests");
+				writer.WriteAttributeString ("method", pd.test.ToString ());
+				writer.WriteAttributeString ("result", "Pass");
+				writer.WriteAttributeString ("time", pd.duration.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+				writer.WriteEndElement (); // test element
+			}
+
+			foreach (var pd in failed) {
+				writer.WriteStartElement ("test");
+				writer.WriteAttributeString ("name", testsuiteName + ".tests." + pd.test);
+				writer.WriteAttributeString ("type", testsuiteName + ".tests");
+				writer.WriteAttributeString ("method", pd.test.ToString ());
+				writer.WriteAttributeString ("result", "Fail");
+				writer.WriteAttributeString ("time", pd.duration.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+
+				writer.WriteStartElement ("failure");
+				writer.WriteAttributeString ("exception-type", "TestRunnerException");
+				writer.WriteStartElement ("message");
+				writer.WriteCData (FilterInvalidXmlChars ("STDOUT:\n" + pd.stdout.ToString () + "\n\nSTDERR:\n" + pd.stderr.ToString ()));
+				writer.WriteEndElement (); // message element
+				writer.WriteEndElement (); // failure element
+
+				writer.WriteEndElement(); // test element
+			}
+
+			foreach (var pd in timedout) {
+				writer.WriteStartElement ("test");
+				writer.WriteAttributeString ("name", testsuiteName + ".tests." + pd.test + "_timedout");
+				writer.WriteAttributeString ("type", testsuiteName + ".tests");
+				writer.WriteAttributeString ("method", pd.test.ToString ());
+				writer.WriteAttributeString ("result", "Fail");
+				writer.WriteAttributeString ("time", pd.duration.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+
+				writer.WriteStartElement ("failure");
+				writer.WriteAttributeString ("exception-type", "TestRunnerException");
+				writer.WriteStartElement ("message");
+				writer.WriteCData (FilterInvalidXmlChars ("STDOUT:\n" + pd.stdout.ToString () + "\n\nSTDERR:\n" + pd.stderr.ToString ()));
+				writer.WriteEndElement (); // message element
+				writer.WriteEndElement (); // failure element
+
+				writer.WriteEndElement(); // test element
+			}
+
+			writer.WriteEndElement (); // collection
+			writer.WriteEndElement (); // assembly
+			writer.WriteEndElement (); // assemblies
+			writer.WriteEndDocument ();
+		}
 	}
 
 	static string FilterInvalidXmlChars (string text) {

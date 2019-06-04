@@ -19,9 +19,9 @@ download()
 	report "Downloading Xar"
 	wget --quiet -O ${REPODIR}/xar.tar.gz https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/xar/xar-1.5.2.tar.gz || error "*** Could not download Xar ***"
 	report "Downloading x64 hostfxr.dll"
-	wget --quiet -O ${REPODIR}/hostfxr-x64.zip https://www.nuget.org/api/v2/package/runtime.win-x64.Microsoft.NETCore.DotNetHostResolver/2.0.0-preview2-25407-01 || error "*** Could not download 64bit hostfxr.dll ***"
+	wget --quiet -O ${REPODIR}/hostfxr-x64.zip https://www.nuget.org/api/v2/package/runtime.win-x64.Microsoft.NETCore.DotNetHostResolver/2.0.0 || error "*** Could not download 64bit hostfxr.dll ***"
 	report "Downloading x86 hostfxr.dll"
-	wget --quiet -O ${REPODIR}/hostfxr-x86.zip https://www.nuget.org/api/v2/package/runtime.win-x86.Microsoft.NETCore.DotNetHostResolver/2.0.0-preview2-25407-01 || error "*** Could not download 64bit hostfxr.dll ***"
+	wget --quiet -O ${REPODIR}/hostfxr-x86.zip https://www.nuget.org/api/v2/package/runtime.win-x86.Microsoft.NETCore.DotNetHostResolver/2.0.0 || error "*** Could not download 32bit hostfxr.dll ***"
 	report "Copying Mono MDK for Mac"
 	cp $1 ${REPODIR}/mono.xar
 }
@@ -63,7 +63,7 @@ build()
 	report "Unpacking Mono for Mac"
 	xar/src/xar -x -f mono.xar
 	zcat mono.pkg/Payload | bsdcpio -i
-	mv Library/Frameworks/Mono.framework/Versions/5.* mono-mac
+	mv Library/Frameworks/Mono.framework/Versions/[5,6].* mono-mac
 	popd
 }
 
@@ -75,25 +75,26 @@ install()
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/Microsoft*				${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/msbuild				${REPODIR}/../../tmp/mono/lib/mono/
 	rm -f ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/libhostfxr.dylib
+	rm -f ${REPODIR}/../../tmp/mono/lib/mono/msbuild/Current/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/libhostfxr.dylib
 	if [ "$1" = "x64" ]; then
-		cp ${REPODIR}/hostfxr-x64/hostfxr.dll ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/
+		cp ${REPODIR}/hostfxr-x64/hostfxr.dll ${REPODIR}/../../tmp/mono/lib/mono/msbuild/Current/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/
 	else
-		cp ${REPODIR}/hostfxr-x86/hostfxr.dll ${REPODIR}/../../tmp/mono/lib/mono/msbuild/15.0/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/
+		cp ${REPODIR}/hostfxr-x86/hostfxr.dll ${REPODIR}/../../tmp/mono/lib/mono/msbuild/Current/bin/SdkResolvers/Microsoft.DotNet.MSBuildSdkResolver/
 	fi
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/nuget				${REPODIR}/../../tmp/mono/lib/mono/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild-frameworks			${REPODIR}/../../tmp/mono/lib/mono/
-	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/NuGet/Microsoft.NuGet*					${REPODIR}/../../tmp/mono/lib/mono/xbuild/  # note: we can't copy the symlink in xbuild/ so we copy the file it points to
-	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/NuGet*					${REPODIR}/../../tmp/mono/lib/mono/xbuild/
-	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Newtonsoft.Json*					${REPODIR}/../../tmp/mono/lib/mono/xbuild/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/deniedAssembliesList.txt				${REPODIR}/../../tmp/mono/lib/mono/xbuild/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/15.0					${REPODIR}/../../tmp/mono/lib/mono/xbuild/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Current					${REPODIR}/../../tmp/mono/lib/mono/xbuild/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/Microsoft.NET.Build.Extensions					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/NuGet					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/Portable/VisualStudio					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/Portable/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v/FSharp					${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v11.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v11.0/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v12.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v12.0/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v14.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v14.0/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v15.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v15.0/
-	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/gac/FSharp.Core/4.4.1.0__b03f5f7f11d50a3a/FSharp*				${REPODIR}/../../tmp/mono/lib/mono/4.5/
-	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/gac/nunit*/2.4.8.0__96d09a1eb7f44a77/*.dll*					${REPODIR}/../../tmp/mono/lib/mono/4.5/
+	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/xbuild/Microsoft/VisualStudio/v16.0/FSharp				${REPODIR}/../../tmp/mono/lib/mono/xbuild/Microsoft/VisualStudio/v16.0/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/Microsoft.VisualBasic.dll	${REPODIR}/../../tmp/mono/lib/mono/4.5/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/Mono.Cecil.VB*			${REPODIR}/../../tmp/mono/lib/mono/4.5/
 	rsync -a --copy-links ${REPODIR}/mono-mac/lib/mono/4.5/Mono.WebServer2.dll		${REPODIR}/../../tmp/mono/lib/mono/4.5/
@@ -143,17 +144,19 @@ install()
 	cp xsp4.bat xsp.bat
 	chmod a+x *
 	cd ..
-	for i in lib/mono/4.5/Mono.Cecil.VB*.dll lib/mono/4.5/Microsoft.VisualBasic.dll lib/mono/*/xsp*.exe lib/mono/4.5/fastcgi-mono-server4.exe lib/mono/4.5/mod-mono-server4.exe lib/mono/4.5/mono-fpm.exe lib/mono/*/FSharp*.dll lib/mono/*/Mono.WebServer*.dll ../../repos/managed-components/mono-mac/lib/mono/gac/FSharp.Core/3.*/FSharp.Core.dll ../../repos/managed-components/mono-mac/lib/mono/gac/FSharp.Core/4.*/FSharp.Core.dll
+	for i in lib/mono/4.5/Mono.Cecil.VB*.dll lib/mono/4.5/Microsoft.VisualBasic.dll lib/mono/*/xsp*.exe lib/mono/4.5/fastcgi-mono-server4.exe lib/mono/4.5/mod-mono-server4.exe lib/mono/4.5/mono-fpm.exe lib/mono/*/Mono.WebServer*.dll
 		do bin/gacutil -i $i
 	done
-	rsync -a --copy-links lib/mono/4.5/FSharp.Core.*data lib/mono/gac/FSharp.Core/4.4.1.0__*/
-	rsync -a --copy-links lib/mono/4.5/FSharp.Core.*data lib/mono/gac/FSharp.Core/4.4.0.0__*/
-	rsync -a --copy-links lib/mono/4.5/FSharp.Core.*data lib/mono/gac/FSharp.Core/4.3.1.0__*/
-	rsync -a --copy-links lib/mono/4.5/FSharp.Core.*data lib/mono/gac/FSharp.Core/4.3.0.0__*/
 
 	# make sure we didn't miss any files with Mac paths
-	if grep -R 'Mono\.framework' . --exclude=xbuild.1 --exclude=MSBuild.dll.config; then
+	if grep -R 'Mono\.framework' . --exclude=xbuild.1 --exclude=MSBuild.dll.config --exclude=Microsoft.Common.Mono.Before.targets --exclude=macpack.exe; then
 		echo "Found Mac paths in files, please make sure they're fixed."
+		exit 1
+	fi
+
+	# make sure we didn't miss any files with cygwin install paths
+	if grep -R '/tmp/mono'. --exclude=*.pc --exclude=mono-find-provides --exclude=mono-find-requires; then
+		echo "Found cygwin paths in files, please make sure they're fixed."
 		exit 1
 	fi
 

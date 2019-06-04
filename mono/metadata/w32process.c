@@ -15,6 +15,7 @@
 #include "image.h"
 #include "utils/mono-proclib.h"
 #include "utils/w32api.h"
+#include "icall-decl.h"
 
 #define LOGDEBUG(...)
 /* define LOGDEBUG(...) g_message(__VA_ARGS__)  */
@@ -28,39 +29,49 @@ mono_w32process_get_pid (gpointer handle)
 }
 
 static gboolean
-mono_w32process_try_get_modules (gpointer process, gpointer *modules, guint32 size, guint32 *needed)
+mono_w32process_try_get_modules (gpointer process, HMODULE *modules, guint32 size, PDWORD needed)
 {
-	return EnumProcessModules (process, (HMODULE *) modules, size, (LPDWORD) needed);
+	return EnumProcessModules (process, modules, size, needed);
 }
 
 static guint32
 mono_w32process_module_get_name (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
 {
-	return GetModuleBaseName (process, module, basename, size);
+	return GetModuleBaseName (process, (HMODULE)module, basename, size);
 }
 
 static guint32
 mono_w32process_module_get_filename (gpointer process, gpointer module, gunichar2 *basename, guint32 size)
 {
-	return GetModuleFileNameEx (process, module, basename, size);
+	return GetModuleFileNameEx (process, (HMODULE)module, basename, size);
 }
 
 static gboolean
 mono_w32process_module_get_information (gpointer process, gpointer module, MODULEINFO *modinfo, guint32 size)
 {
-	return GetModuleInformation (process, module, modinfo, size);
-}
-
-static guint32
-mono_w32process_get_fileversion_info_size (gunichar2 *filename, guint32 *handle)
-{
-	return GetFileVersionInfoSize (filename, handle);
+	return GetModuleInformation (process, (HMODULE)module, modinfo, size);
 }
 
 static gboolean
-mono_w32process_get_fileversion_info (gunichar2 *filename, guint32 handle, guint32 len, gpointer data)
+mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
 {
-	return GetFileVersionInfo (filename, handle, len, data);
+	DWORD handle;
+	gsize datasize;
+
+	g_assert (data);
+	*data = NULL;
+
+	datasize = GetFileVersionInfoSize (filename, &handle);
+	if (datasize <= 0)
+		return FALSE;
+
+	*data = g_malloc0 (datasize);
+	if (!GetFileVersionInfo (filename, handle, datasize, *data)) {
+		g_free (*data);
+		return FALSE;
+	}
+
+	return TRUE;
 }
 
 static gboolean
@@ -132,10 +143,10 @@ process_set_field_object (MonoObject *obj, const gchar *fieldname, MonoObject *d
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
-	mono_gc_wbarrier_generic_store (((char *)obj) + field->offset, data);
+	mono_gc_wbarrier_generic_store_internal (((char *)obj) + field->offset, data);
 }
 
 static void
@@ -156,13 +167,13 @@ process_set_field_string (MonoObject *obj, const gchar *fieldname, const gunicha
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	string = mono_string_new_utf16_checked (domain, val, len, error);
 	return_if_nok (error);
 
-	mono_gc_wbarrier_generic_store (((char *)obj) + field->offset, (MonoObject*)string);
+	mono_gc_wbarrier_generic_store_internal (((char *)obj) + field->offset, (MonoObject*)string);
 }
 
 static void
@@ -182,13 +193,13 @@ process_set_field_string_char (MonoObject *obj, const gchar *fieldname, const gc
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	string = mono_string_new_checked (domain, val, error);
 	return_if_nok (error);
 
-	mono_gc_wbarrier_generic_store (((char *)obj) + field->offset, (MonoObject*)string);
+	mono_gc_wbarrier_generic_store_internal (((char *)obj) + field->offset, (MonoObject*)string);
 }
 
 static void
@@ -202,7 +213,7 @@ process_set_field_int (MonoObject *obj, const gchar *fieldname, guint32 val)
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	*(guint32 *)(((char *)obj) + field->offset)=val;
@@ -219,7 +230,7 @@ process_set_field_intptr (MonoObject *obj, const gchar *fieldname, gpointer val)
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	*(gpointer *)(((char *)obj) + field->offset) = val;
@@ -236,7 +247,7 @@ process_set_field_bool (MonoObject *obj, const gchar *fieldname, gboolean val)
 	klass = mono_object_class (obj);
 	g_assert (klass);
 
-	field = mono_class_get_field_from_name (klass, fieldname);
+	field = mono_class_get_field_from_name_full (klass, fieldname, NULL);
 	g_assert (field);
 
 	*(guint8 *)(((char *)obj) + field->offset) = val;
@@ -319,100 +330,98 @@ process_module_stringtable (MonoObject *filever, gpointer data, guchar lang_hi, 
 static void
 mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoError *error)
 {
-	DWORD verinfohandle;
 	VS_FIXEDFILEINFO *ffi;
 	gpointer data;
-	DWORD datalen;
 	guchar *trans_data;
 	gunichar2 *query;
 	UINT ffi_size, trans_size;
-	BOOL ok;
 	gunichar2 lang_buf[128];
 	guint32 lang, lang_count;
 
 	error_init (error);
 
-	datalen = mono_w32process_get_fileversion_info_size (filename, &verinfohandle);
-	if (datalen) {
-		data = g_malloc0 (datalen);
-		ok = mono_w32process_get_fileversion_info (filename, verinfohandle, datalen, data);
-		if (ok) {
-			query = g_utf8_to_utf16 ("\\", -1, NULL, NULL, NULL);
-			if (query == NULL) {
-				g_free (data);
-				return;
-			}
+	if (!mono_w32process_get_fileversion_info (filename, &data))
+		return;
 
-			if (mono_w32process_ver_query_value (data, query, (gpointer *)&ffi, &ffi_size)) {
-				#define LOWORD(i32) ((guint16)((i32) & 0xFFFF))
-				#define HIWORD(i32) ((guint16)(((guint32)(i32) >> 16) & 0xFFFF))
-
-				LOGDEBUG (g_message ("%s: recording assembly: FileName [%s] FileVersionInfo [%d.%d.%d.%d]",
-					__func__, g_utf16_to_utf8 (filename, -1, NULL, NULL, NULL), HIWORD (ffi->dwFileVersionMS),
-						LOWORD (ffi->dwFileVersionMS), HIWORD (ffi->dwFileVersionLS), LOWORD (ffi->dwFileVersionLS)));
-
-				process_set_field_int (filever, "filemajorpart", HIWORD (ffi->dwFileVersionMS));
-				process_set_field_int (filever, "fileminorpart", LOWORD (ffi->dwFileVersionMS));
-				process_set_field_int (filever, "filebuildpart", HIWORD (ffi->dwFileVersionLS));
-				process_set_field_int (filever, "fileprivatepart", LOWORD (ffi->dwFileVersionLS));
-
-				process_set_field_int (filever, "productmajorpart", HIWORD (ffi->dwProductVersionMS));
-				process_set_field_int (filever, "productminorpart", LOWORD (ffi->dwProductVersionMS));
-				process_set_field_int (filever, "productbuildpart", HIWORD (ffi->dwProductVersionLS));
-				process_set_field_int (filever, "productprivatepart", LOWORD (ffi->dwProductVersionLS));
-
-				process_set_field_bool (filever, "isdebug", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_DEBUG) != 0);
-				process_set_field_bool (filever, "isprerelease", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_PRERELEASE) != 0);
-				process_set_field_bool (filever, "ispatched", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_PATCHED) != 0);
-				process_set_field_bool (filever, "isprivatebuild", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_PRIVATEBUILD) != 0);
-				process_set_field_bool (filever, "isspecialbuild", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_SPECIALBUILD) != 0);
-
-				#undef LOWORD
-				#undef HIWORD
-			}
-			g_free (query);
-
-			query = g_utf8_to_utf16 ("\\VarFileInfo\\Translation", -1, NULL, NULL, NULL);
-			if (query == NULL) {
-				g_free (data);
-				return;
-			}
-
-			if (mono_w32process_ver_query_value (data, query, (gpointer *)&trans_data, &trans_size)) {
-				/* use the first language ID we see */
-				if (trans_size >= 4) {
-		 			LOGDEBUG (g_message("%s: %s has 0x%0x 0x%0x 0x%0x 0x%0x", __func__, g_utf16_to_utf8 (filename, -1, NULL, NULL, NULL), trans_data[0], trans_data[1], trans_data[2], trans_data[3]));
-					lang = (trans_data[0]) | (trans_data[1] << 8) | (trans_data[2] << 16) | (trans_data[3] << 24);
-					/* Only give the lower 16 bits to mono_w32process_ver_language_name, as Windows gets confused otherwise  */
-					lang_count = mono_w32process_ver_language_name (lang & 0xFFFF, lang_buf, 128);
-					if (lang_count) {
-						process_set_field_string (filever, "language", lang_buf, lang_count, error);
-						return_if_nok (error);
-					}
-					process_module_stringtable (filever, data, trans_data[0], trans_data[1], error);
-					return_if_nok (error);
-				}
-			} else {
-				int i;
-
-				for (i = 0; i < G_N_ELEMENTS (stringtable_entries); ++i) {
-					/* No strings, so set every field to the empty string */
-					process_set_field_string (filever, stringtable_entries [i].name, EMPTY_STRING, 0, error);
-					return_if_nok (error);
-				}
-
-				/* And language seems to be set to en_US according to bug 374600 */
-				lang_count = mono_w32process_ver_language_name (0x0409, lang_buf, 128);
-				if (lang_count) {
-					process_set_field_string (filever, "language", lang_buf, lang_count, error);
-					return_if_nok (error);
-				}
-			}
-
-			g_free (query);
-		}
+	query = g_utf8_to_utf16 ("\\", -1, NULL, NULL, NULL);
+	if (query == NULL) {
 		g_free (data);
+		return;
 	}
+
+	if (mono_w32process_ver_query_value (data, query, (gpointer *)&ffi, &ffi_size)) {
+		#define LOWORD(i32) ((guint16)((i32) & 0xFFFF))
+		#define HIWORD(i32) ((guint16)(((guint32)(i32) >> 16) & 0xFFFF))
+
+		LOGDEBUG (g_message ("%s: recording assembly: FileName [%s] FileVersionInfo [%d.%d.%d.%d]",
+			__func__, g_utf16_to_utf8 (filename, -1, NULL, NULL, NULL), HIWORD (ffi->dwFileVersionMS),
+				LOWORD (ffi->dwFileVersionMS), HIWORD (ffi->dwFileVersionLS), LOWORD (ffi->dwFileVersionLS)));
+
+		process_set_field_int (filever, "filemajorpart", HIWORD (ffi->dwFileVersionMS));
+		process_set_field_int (filever, "fileminorpart", LOWORD (ffi->dwFileVersionMS));
+		process_set_field_int (filever, "filebuildpart", HIWORD (ffi->dwFileVersionLS));
+		process_set_field_int (filever, "fileprivatepart", LOWORD (ffi->dwFileVersionLS));
+
+		process_set_field_int (filever, "productmajorpart", HIWORD (ffi->dwProductVersionMS));
+		process_set_field_int (filever, "productminorpart", LOWORD (ffi->dwProductVersionMS));
+		process_set_field_int (filever, "productbuildpart", HIWORD (ffi->dwProductVersionLS));
+		process_set_field_int (filever, "productprivatepart", LOWORD (ffi->dwProductVersionLS));
+
+		process_set_field_bool (filever, "isdebug", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_DEBUG) != 0);
+		process_set_field_bool (filever, "isprerelease", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_PRERELEASE) != 0);
+		process_set_field_bool (filever, "ispatched", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_PATCHED) != 0);
+		process_set_field_bool (filever, "isprivatebuild", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_PRIVATEBUILD) != 0);
+		process_set_field_bool (filever, "isspecialbuild", ((ffi->dwFileFlags & ffi->dwFileFlagsMask) & VS_FF_SPECIALBUILD) != 0);
+
+		#undef LOWORD
+		#undef HIWORD
+	}
+	g_free (query);
+
+	query = g_utf8_to_utf16 ("\\VarFileInfo\\Translation", -1, NULL, NULL, NULL);
+	if (query == NULL) {
+		g_free (data);
+		return;
+	}
+
+	if (mono_w32process_ver_query_value (data, query, (gpointer *)&trans_data, &trans_size)) {
+		/* use the first language ID we see */
+		if (trans_size >= 4) {
+ 			LOGDEBUG (g_message("%s: %s has 0x%0x 0x%0x 0x%0x 0x%0x", __func__, g_utf16_to_utf8 (filename, -1, NULL, NULL, NULL), trans_data[0], trans_data[1], trans_data[2], trans_data[3]));
+			lang = (trans_data[0]) | (trans_data[1] << 8) | (trans_data[2] << 16) | (trans_data[3] << 24);
+			/* Only give the lower 16 bits to mono_w32process_ver_language_name, as Windows gets confused otherwise  */
+			lang_count = mono_w32process_ver_language_name (lang & 0xFFFF, lang_buf, 128);
+			if (lang_count) {
+				process_set_field_string (filever, "language", lang_buf, lang_count, error);
+				if (!is_ok (error))
+					goto cleanup;
+			}
+			process_module_stringtable (filever, data, trans_data[0], trans_data[1], error);
+			if (!is_ok (error))
+				goto cleanup;
+		}
+	} else {
+		int i;
+
+		for (i = 0; i < G_N_ELEMENTS (stringtable_entries); ++i) {
+			/* No strings, so set every field to the empty string */
+			process_set_field_string (filever, stringtable_entries [i].name, EMPTY_STRING, 0, error);
+			if (!is_ok (error))
+				goto cleanup;
+		}
+
+		/* And language seems to be set to en_US according to bug 374600 */
+		lang_count = mono_w32process_ver_language_name (0x0409, lang_buf, 128);
+		if (lang_count) {
+			process_set_field_string (filever, "language", lang_buf, lang_count, error);
+			if (!is_ok (error))
+				goto cleanup;
+		}
+	}
+
+cleanup:
+	g_free (query);
+	g_free (data);
 }
 
 #endif /* #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
@@ -420,19 +429,19 @@ mono_w32process_get_fileversion (MonoObject *filever, gunichar2 *filename, MonoE
 void
 ves_icall_System_Diagnostics_FileVersionInfo_GetVersionInfo_internal (MonoObject *this_obj, MonoString *filename)
 {
-	MonoError error;
+	ERROR_DECL (error);
 
-	stash_system_image (mono_object_class (this_obj)->image);
+	stash_system_image (m_class_get_image (mono_object_class (this_obj)));
 
-	mono_w32process_get_fileversion (this_obj, mono_string_chars (filename), &error);
-	if (!mono_error_ok (&error)) {
-		mono_error_set_pending_exception (&error);
+	mono_w32process_get_fileversion (this_obj, mono_string_chars_internal (filename), error);
+	if (!mono_error_ok (error)) {
+		mono_error_set_pending_exception (error);
 		return;
 	}
 
-	process_set_field_string (this_obj, "filename", mono_string_chars (filename), mono_string_length (filename), &error);
-	if (!mono_error_ok (&error)) {
-		mono_error_set_pending_exception (&error);
+	process_set_field_string (this_obj, "filename", mono_string_chars_internal (filename), mono_string_length_internal (filename), error);
+	if (!mono_error_ok (error)) {
+		mono_error_set_pending_exception (error);
 	}
 }
 
@@ -452,7 +461,7 @@ get_domain_assemblies (MonoDomain *domain)
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		MonoAssembly *ass = (MonoAssembly *)tmp->data;
-		if (ass->image->fileio_used)
+		if (m_image_is_fileio_used (ass->image))
 			continue;
 		g_ptr_array_add (assemblies, ass);
 	}
@@ -515,7 +524,7 @@ process_get_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *er
 {
 	MonoObject *item, *filever;
 	MonoDomain *domain;
-	gchar *filename;
+	char *filename = NULL;
 	const gchar *modulename;
 
 	error_init (error);
@@ -526,27 +535,30 @@ process_get_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *er
 
 	/* Build a System.Diagnostics.ProcessModule with the data. */
 	item = mono_object_new_checked (domain, proc_class, error);
-	return_val_if_nok (error, NULL);
+	goto_if_nok (error, return_null);
 
 	filever = mono_object_new_checked (domain, get_file_version_info_class (), error);
-	return_val_if_nok (error, NULL);
+	goto_if_nok (error, return_null);
 
 	filename = g_strdup_printf ("[In Memory] %s", modulename);
 
 	process_get_assembly_fileversion (filever, assembly);
 	process_set_field_string_char (filever, "filename", filename, error);
-	return_val_if_nok (error, NULL);
+	goto_if_nok (error, return_null);
 	process_set_field_object (item, "version_info", filever);
 
 	process_set_field_intptr (item, "baseaddr", assembly->image->raw_data);
 	process_set_field_int (item, "memory_size", assembly->image->raw_data_len);
 	process_set_field_string_char (item, "filename", filename, error);
-	return_val_if_nok (error, NULL);
+	goto_if_nok (error, return_null);
 	process_set_field_string_char (item, "modulename", modulename, error);
-	return_val_if_nok (error, NULL);
+	goto_if_nok (error, return_null);
 
+	goto exit;
+return_null:
+	item = NULL;
+exit:
 	g_free (filename);
-
 	return item;
 }
 
@@ -554,7 +566,7 @@ process_get_module (MonoAssembly *assembly, MonoClass *proc_class, MonoError *er
 MonoArray *
 ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, HANDLE process)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoArray *temp_arr = NULL;
 	MonoArray *arr;
 	HMODULE mods[1024];
@@ -565,7 +577,7 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 	guint32 i, num_added = 0;
 	GPtrArray *assemblies = NULL;
 
-	stash_system_image (mono_object_class (this_obj)->image);
+	stash_system_image (m_class_get_image (mono_object_class (this_obj)));
 
 	if (mono_w32process_get_pid (process) == mono_process_current_pid ()) {
 		assemblies = get_domain_assemblies (mono_domain_get ());
@@ -576,32 +588,32 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 		module_count += needed / sizeof(HMODULE);
 
 	count = module_count + assembly_count;
-	temp_arr = mono_array_new_checked (mono_domain_get (), get_process_module_class (), count, &error);
-	if (mono_error_set_pending_exception (&error))
+	temp_arr = mono_array_new_checked (mono_domain_get (), get_process_module_class (), count, error);
+	if (mono_error_set_pending_exception (error))
 		return NULL;
 
 	for (i = 0; i < module_count; i++) {
 		if (mono_w32process_module_get_name (process, mods[i], modname, MAX_PATH)
 			 && mono_w32process_module_get_filename (process, mods[i], filename, MAX_PATH))
 		{
-			MonoObject *module = process_add_module (process, mods[i], filename, modname, get_process_module_class (), &error);
-			if (!mono_error_ok (&error)) {
-				mono_error_set_pending_exception (&error);
+			MonoObject *module = process_add_module (process, mods[i], filename, modname, get_process_module_class (), error);
+			if (!mono_error_ok (error)) {
+				mono_error_set_pending_exception (error);
 				return NULL;
 			}
-			mono_array_setref (temp_arr, num_added++, module);
+			mono_array_setref_internal (temp_arr, num_added++, module);
 		}
 	}
 
 	if (assemblies) {
 		for (i = 0; i < assembly_count; i++) {
 			MonoAssembly *ass = (MonoAssembly *)g_ptr_array_index (assemblies, i);
-			MonoObject *module = process_get_module (ass, get_process_module_class (), &error);
-			if (!mono_error_ok (&error)) {
-				mono_error_set_pending_exception (&error);
+			MonoObject *module = process_get_module (ass, get_process_module_class (), error);
+			if (!mono_error_ok (error)) {
+				mono_error_set_pending_exception (error);
 				return NULL;
 			}
-			mono_array_setref (temp_arr, num_added++, module);
+			mono_array_setref_internal (temp_arr, num_added++, module);
 		}
 		g_ptr_array_free (assemblies, TRUE);
 	}
@@ -610,12 +622,12 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 		arr = temp_arr;
 	} else {
 		/* shorter version of the array */
-		arr = mono_array_new_checked (mono_domain_get (), get_process_module_class (), num_added, &error);
-		if (mono_error_set_pending_exception (&error))
+		arr = mono_array_new_checked (mono_domain_get (), get_process_module_class (), num_added, error);
+		if (mono_error_set_pending_exception (error))
 			return NULL;
 
 		for (i = 0; i < num_added; i++)
-			mono_array_setref (arr, i, mono_array_get (temp_arr, MonoObject*, i));
+			mono_array_setref_internal (arr, i, mono_array_get_internal (temp_arr, MonoObject*, i));
 	}
 
 	return arr;
@@ -628,7 +640,7 @@ ves_icall_System_Diagnostics_Process_GetModules_internal (MonoObject *this_obj, 
 MonoString *
 ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoString *string;
 	gunichar2 name[MAX_PATH];
 	guint32 len;
@@ -644,9 +656,9 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process)
 	if (len == 0)
 		return NULL;
 
-	string = mono_string_new_utf16_checked (mono_domain_get (), name, len, &error);
-	if (!mono_error_ok (&error))
-		mono_error_set_pending_exception (&error);
+	string = mono_string_new_utf16_checked (mono_domain_get (), name, len, error);
+	if (!mono_error_ok (error))
+		mono_error_set_pending_exception (error);
 
 	return string;
 }
@@ -663,4 +675,49 @@ ves_icall_System_Diagnostics_Process_GetProcessData (int pid, gint32 data_type, 
 	if (error)
 		*error = perror;
 	return res;
+}
+
+static void
+mono_pin_string (MonoStringHandle in_coophandle, MonoStringHandle *out_coophandle, gunichar2 **chars, gsize *length, gchandle_t *gchandle)
+{
+	*out_coophandle = in_coophandle;
+	if (!MONO_HANDLE_IS_NULL (in_coophandle)) {
+		*chars = mono_string_handle_pin_chars (in_coophandle, gchandle);
+		*length = mono_string_handle_length (in_coophandle);
+	}
+}
+
+void
+mono_createprocess_coop_init (MonoCreateProcessCoop *coop, MonoW32ProcessStartInfoHandle proc_start_info, MonoW32ProcessInfo *process_info)
+{
+	memset (coop, 0, sizeof (*coop));
+
+#define PIN_STRING(h, x) (mono_pin_string (h, &coop->coophandle.x, &coop->x, &coop->length.x, &coop->gchandle.x))
+
+#define PIN(x) PIN_STRING (MONO_HANDLE_NEW_GET (MonoString, proc_start_info, x), x)
+	PIN (filename);
+	PIN (arguments);
+	PIN (working_directory);
+	PIN (verb);
+#undef PIN
+#define PIN(x) PIN_STRING (MONO_HANDLE_NEW (MonoString, process_info->x), x)
+	PIN (username);
+	PIN (domain);
+#undef PIN
+}
+
+static void
+mono_unpin_array (gchandle_t *gchandles, gsize count)
+{
+	for (gsize i = 0; i < count; ++i) {
+		mono_gchandle_free_internal (gchandles [i]);
+		gchandles [i] = 0;
+	}
+}
+
+void
+mono_createprocess_coop_cleanup (MonoCreateProcessCoop *coop)
+{
+	mono_unpin_array ((gchandle_t*)&coop->gchandle, sizeof (coop->gchandle) / sizeof (gchandle_t));
+	memset (coop, 0, sizeof (*coop));
 }

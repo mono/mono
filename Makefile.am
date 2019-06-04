@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_CFLAGS = $(WERROR_CFLAGS)
 
-MONOTOUCH_SUBDIRS = $(libgc_dir) eglib/src mono
+MONOTOUCH_SUBDIRS = $(libgc_dir) mono
 
 # Some tools might not build when cross-compiling
 if CROSS_COMPILING
@@ -11,15 +11,28 @@ else
 tools_dir = tools
 endif
 
-SUBDIRS = po $(libgc_dir) eglib mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) msvc $(docs_dir) acceptance-tests llvm
+if ENABLE_MSVC
+build_with_msvc = msvc
+build_without_msvc =
+else
+build_with_msvc =
+build_without_msvc = msvc
+endif
+
+if ENABLE_NETCORE
+update_submodules = 
+else
+update_submodules = update_submodules
+endif
+
+SUBDIRS = $(build_with_msvc) mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) $(build_without_msvc) $(docs_dir) acceptance-tests
 # Keep in sync with SUBDIRS
-DIST_SUBDIRS = m4 po $(libgc_dir) eglib mono ikvm-native support data runtime scripts man samples tools msvc docs acceptance-tests llvm
+DIST_SUBDIRS = $(build_with_msvc) m4 mk po $(libgc_dir) llvm mono ikvm-native support data runtime scripts man samples tools $(build_without_msvc) docs acceptance-tests netcore
 
-all: update_submodules
+all: $(update_submodules)
 
-SUBMODULE_ERROR='Could not recursively update all git submodules. You may experience compilation problems if some submodules are out of date'
 update_submodules:
-	@$(srcdir)/scripts/update_submodules.sh
+	@cd $(srcdir) && scripts/update_submodules.sh
 
 .PHONY: update_submodules
 
@@ -42,8 +55,16 @@ dist-hook:
 	test -d $(distdir)/mcs || mkdir $(distdir)/mcs
 	d=`cd $(distdir)/mcs && pwd`; cd $(mcs_topdir) && $(MAKE) distdir=$$d dist-recursive
 	rm -rf `find $(top_distdir)/external -path '*\.git'`
+	rm -rf `find $(top_distdir)/external -path '*\.libs'`
+	rm -rf `find $(top_distdir)/external -path '*\.deps'`
+	rm -f `find $(top_distdir)/external -path '*\.o'`
+	rm -f `find $(top_distdir)/external -path '*\.so'`
+	rm -f `find $(top_distdir)/external -path '*\.lo'`
+	rm -f `find $(top_distdir)/external -path '*\.Plo'`
+	rm -f `find $(top_distdir)/external -name '\.dirstamp'`
 	rm -f `find $(top_distdir)/external -path '*\.exe' -not -path '*/roslyn-binaries/*'`
-	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*' -not -path '*/roslyn-binaries/*'`
+	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*' -not -path '*/roslyn-binaries/*' -not -path '*/helix-binaries/*'`
+	rm -rf "$(top_distdir)/external/linker/test"
 
 pkgconfigdir = $(libdir)/pkgconfig
 noinst_DATA = mono-uninstalled.pc
@@ -58,9 +79,15 @@ if BITCODE
 BITCODE_CHECK=yes
 endif
 
+if DEFAULT_TESTS
+CI_TEST_SCRIPT=$(srcdir)/scripts/ci/run-test-default.sh
+else
+CI_TEST_SCRIPT=$(srcdir)/scripts/ci/run-test-$(TEST_PROFILE).sh
+endif
+
 .PHONY: check-ci
 check-ci:
-	MONO_LLVMONLY=$(BITCODE_CHECK) $(srcdir)/scripts/ci/run-test-$(TEST_PROFILE).sh
+	MONO_LLVMONLY=$(BITCODE_CHECK) $(CI_TEST_SCRIPT)
 
 .PHONY: validate do-build-mono-mcs mcs-do-clean mcs-do-tests
 validate: do-build-mono-mcs
@@ -109,29 +136,12 @@ monotouch-do-clean:
 
 endif
 
-win32getdeps:
-	wget http://www.go-mono.com/archive/pkgconfig-0.11-20020310.zip
-	wget http://www.go-mono.com/archive/glib-2.0.4-20020703.zip 
-	wget http://www.go-mono.com/archive/glib-dev-2.0.4-20020703.zip 
-	wget http://www.go-mono.com/archive/libiconv-1.7.zip 
-	wget http://www.go-mono.com/archive/libiconv-dev-1.7.zip 
-	wget http://www.go-mono.com/archive/libintl-0.10.40-20020101.zip
-	unzip -n -d / pkgconfig-0.11-20020310.zip
-	unzip -n -d / glib-2.0.4-20020703.zip
-	unzip -n -d / glib-dev-2.0.4-20020703.zip
-	unzip -n -d / libiconv-1.7.zip
-	unzip -n -d / libiconv-dev-1.7.zip
-	unzip -n -d / libintl-0.10.40-20020101.zip
-
-win32setup:
-	makensis /DMILESTONE=$(VERSION) /DSOURCE_INSTALL_DIR=$(SOURCE_INSTALL_DIR) /DBUILDNUM=$(BUILDNUM) monowiz.win32.nsi
-
 update-csproj:
 	-rm msvc/scripts/order 
 	-rm msvc/scripts/order.xml
 	-rm -rf msvc/scripts/inputs
 	-mkdir msvc/scripts/inputs
-	(cd runtime; make V=1 extra_targets=csproj-local)
+	(cd runtime; $(MAKE) V=1 extra_targets=csproj-local)
 
 package-inputs:
 	echo '<?xml version="1.0" encoding="utf-8"?>' > msvc/scripts/order.xml
@@ -142,6 +152,7 @@ package-inputs:
 		(echo "    <project dir=\"$$1\" library=\"$$2\">"; \
 		 read boot;   echo "      <boot>$$boot</boot>"; \
 		 read flags;  echo "      <flags>$$flags</flags>"; \
+		 read sources;echo "      <sources>$$sources</sources>"; \
 		 read output; echo "      <output>$$output</output>"; \
 		 read built;  echo "      <built_sources>`echo $$built | sed 's/\\\/\\\\/g'`</built_sources>"; \
 		 read libou;  echo "      <library_output>$$libou</library_output>"; \
@@ -160,6 +171,10 @@ update-llvm-version:
 
 
 update-solution-files:
-	make update-csproj
-	make package-inputs
-	(cd msvc/scripts; make genproj.exe; mono genproj.exe)
+	cd msvc/scripts && $(MAKE) genproj.exe || exit $$?;
+	$(MAKE) update-csproj
+	$(MAKE) package-inputs
+	(cd msvc/scripts; mono --debug genproj.exe $(GENPROJ_ARGS))
+
+update-solution-files-with-tests:
+	$(MAKE) "GENPROJ_ARGS=2012 true true" update-solution-files

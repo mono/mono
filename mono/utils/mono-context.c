@@ -61,15 +61,17 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->esi = UCONTEXT_REG_ESI (ctx);
 	mctx->edi = UCONTEXT_REG_EDI (ctx);
 	mctx->eip = UCONTEXT_REG_EIP (ctx);
-#ifdef UCONTEXT_REG_XMM
-	mctx->fregs [0] = UCONTEXT_REG_XMM0 (ctx);
-	mctx->fregs [1] = UCONTEXT_REG_XMM1 (ctx);
-	mctx->fregs [2] = UCONTEXT_REG_XMM2 (ctx);
-	mctx->fregs [3] = UCONTEXT_REG_XMM3 (ctx);
-	mctx->fregs [4] = UCONTEXT_REG_XMM4 (ctx);
-	mctx->fregs [5] = UCONTEXT_REG_XMM5 (ctx);
-	mctx->fregs [6] = UCONTEXT_REG_XMM6 (ctx);
-	mctx->fregs [7] = UCONTEXT_REG_XMM7 (ctx);
+#ifdef UCONTEXT_HAS_XMM
+	if (UCONTEXT_HAS_XMM (ctx)) {
+		mctx->fregs [0] = UCONTEXT_REG_XMM0 (ctx);
+		mctx->fregs [1] = UCONTEXT_REG_XMM1 (ctx);
+		mctx->fregs [2] = UCONTEXT_REG_XMM2 (ctx);
+		mctx->fregs [3] = UCONTEXT_REG_XMM3 (ctx);
+		mctx->fregs [4] = UCONTEXT_REG_XMM4 (ctx);
+		mctx->fregs [5] = UCONTEXT_REG_XMM5 (ctx);
+		mctx->fregs [6] = UCONTEXT_REG_XMM6 (ctx);
+		mctx->fregs [7] = UCONTEXT_REG_XMM7 (ctx);
+	}
 #endif
 #elif defined(HOST_WIN32)
 	CONTEXT *context = (CONTEXT*)sigctx;
@@ -117,15 +119,17 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	UCONTEXT_REG_ESI (ctx) = mctx->esi;
 	UCONTEXT_REG_EDI (ctx) = mctx->edi;
 	UCONTEXT_REG_EIP (ctx) = mctx->eip;
-#ifdef UCONTEXT_REG_XMM
-	UCONTEXT_REG_XMM0 (ctx) = mctx->fregs [0];
-	UCONTEXT_REG_XMM1 (ctx) = mctx->fregs [1];
-	UCONTEXT_REG_XMM2 (ctx) = mctx->fregs [2];
-	UCONTEXT_REG_XMM3 (ctx) = mctx->fregs [3];
-	UCONTEXT_REG_XMM4 (ctx) = mctx->fregs [4];
-	UCONTEXT_REG_XMM5 (ctx) = mctx->fregs [5];
-	UCONTEXT_REG_XMM6 (ctx) = mctx->fregs [6];
-	UCONTEXT_REG_XMM7 (ctx) = mctx->fregs [7];
+#ifdef UCONTEXT_HAS_XMM
+	if (UCONTEXT_HAS_XMM (ctx)) {
+		UCONTEXT_REG_XMM0 (ctx) = mctx->fregs [0];
+		UCONTEXT_REG_XMM1 (ctx) = mctx->fregs [1];
+		UCONTEXT_REG_XMM2 (ctx) = mctx->fregs [2];
+		UCONTEXT_REG_XMM3 (ctx) = mctx->fregs [3];
+		UCONTEXT_REG_XMM4 (ctx) = mctx->fregs [4];
+		UCONTEXT_REG_XMM5 (ctx) = mctx->fregs [5];
+		UCONTEXT_REG_XMM6 (ctx) = mctx->fregs [6];
+		UCONTEXT_REG_XMM7 (ctx) = mctx->fregs [7];
+	}
 #endif
 #elif defined(HOST_WIN32)
 	CONTEXT *context = (CONTEXT*)sigctx;
@@ -188,23 +192,25 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->gregs [AMD64_R15] = UCONTEXT_REG_R15 (ctx);
 	mctx->gregs [AMD64_RIP] = UCONTEXT_REG_RIP (ctx);
 
-#ifdef UCONTEXT_REG_XMM
-	mctx->fregs [0] = UCONTEXT_REG_XMM0 (ctx);
-	mctx->fregs [1] = UCONTEXT_REG_XMM1 (ctx);
-	mctx->fregs [2] = UCONTEXT_REG_XMM2 (ctx);
-	mctx->fregs [3] = UCONTEXT_REG_XMM3 (ctx);
-	mctx->fregs [4] = UCONTEXT_REG_XMM4 (ctx);
-	mctx->fregs [5] = UCONTEXT_REG_XMM5 (ctx);
-	mctx->fregs [6] = UCONTEXT_REG_XMM6 (ctx);
-	mctx->fregs [7] = UCONTEXT_REG_XMM7 (ctx);
-	mctx->fregs [8] = UCONTEXT_REG_XMM8 (ctx);
-	mctx->fregs [9] = UCONTEXT_REG_XMM9 (ctx);
-	mctx->fregs [10] = UCONTEXT_REG_XMM10 (ctx);
-	mctx->fregs [11] = UCONTEXT_REG_XMM11 (ctx);
-	mctx->fregs [12] = UCONTEXT_REG_XMM12 (ctx);
-	mctx->fregs [13] = UCONTEXT_REG_XMM13 (ctx);
-	mctx->fregs [14] = UCONTEXT_REG_XMM14 (ctx);
-	mctx->fregs [15] = UCONTEXT_REG_XMM15 (ctx);
+#ifdef UCONTEXT_HAS_XMM
+	if (UCONTEXT_HAS_XMM (ctx)) {
+		mctx->fregs [0] = UCONTEXT_REG_XMM0 (ctx);
+		mctx->fregs [1] = UCONTEXT_REG_XMM1 (ctx);
+		mctx->fregs [2] = UCONTEXT_REG_XMM2 (ctx);
+		mctx->fregs [3] = UCONTEXT_REG_XMM3 (ctx);
+		mctx->fregs [4] = UCONTEXT_REG_XMM4 (ctx);
+		mctx->fregs [5] = UCONTEXT_REG_XMM5 (ctx);
+		mctx->fregs [6] = UCONTEXT_REG_XMM6 (ctx);
+		mctx->fregs [7] = UCONTEXT_REG_XMM7 (ctx);
+		mctx->fregs [8] = UCONTEXT_REG_XMM8 (ctx);
+		mctx->fregs [9] = UCONTEXT_REG_XMM9 (ctx);
+		mctx->fregs [10] = UCONTEXT_REG_XMM10 (ctx);
+		mctx->fregs [11] = UCONTEXT_REG_XMM11 (ctx);
+		mctx->fregs [12] = UCONTEXT_REG_XMM12 (ctx);
+		mctx->fregs [13] = UCONTEXT_REG_XMM13 (ctx);
+		mctx->fregs [14] = UCONTEXT_REG_XMM14 (ctx);
+		mctx->fregs [15] = UCONTEXT_REG_XMM15 (ctx);
+	}
 #endif
 
 #elif defined(HOST_WIN32)
@@ -227,6 +233,27 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->gregs [AMD64_R13] = context->R13;
 	mctx->gregs [AMD64_R14] = context->R14;
 	mctx->gregs [AMD64_R15] = context->R15;
+#elif defined(__HAIKU__)
+	// Haiku uses sigcontext because there's no ucontext
+	struct sigcontext *ctx = (struct sigcontext *)sigctx;
+
+	mctx->gregs [AMD64_RIP] = ctx->regs.rip;
+	mctx->gregs [AMD64_RAX] = ctx->regs.rax;
+	mctx->gregs [AMD64_RCX] = ctx->regs.rcx;
+	mctx->gregs [AMD64_RDX] = ctx->regs.rdx;
+	mctx->gregs [AMD64_RBX] = ctx->regs.rbx;
+	mctx->gregs [AMD64_RSP] = ctx->regs.rsp;
+	mctx->gregs [AMD64_RBP] = ctx->regs.rbp;
+	mctx->gregs [AMD64_RSI] = ctx->regs.rsi;
+	mctx->gregs [AMD64_RDI] = ctx->regs.rdi;
+	mctx->gregs [AMD64_R8] = ctx->regs.r8;
+	mctx->gregs [AMD64_R9] = ctx->regs.r9;
+	mctx->gregs [AMD64_R10] = ctx->regs.r10;
+	mctx->gregs [AMD64_R11] = ctx->regs.r11;
+	mctx->gregs [AMD64_R12] = ctx->regs.r12;
+	mctx->gregs [AMD64_R13] = ctx->regs.r13;
+	mctx->gregs [AMD64_R14] = ctx->regs.r14;
+	mctx->gregs [AMD64_R15] = ctx->regs.r15;
 #else
 	g_assert_not_reached ();
 #endif
@@ -258,23 +285,25 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	UCONTEXT_REG_R15 (ctx) = mctx->gregs [AMD64_R15];
 	UCONTEXT_REG_RIP (ctx) = mctx->gregs [AMD64_RIP];
 
-#ifdef UCONTEXT_REG_XMM
-	UCONTEXT_REG_XMM0 (ctx) = mctx->fregs [0];
-	UCONTEXT_REG_XMM1 (ctx) = mctx->fregs [1];
-	UCONTEXT_REG_XMM2 (ctx) = mctx->fregs [2];
-	UCONTEXT_REG_XMM3 (ctx) = mctx->fregs [3];
-	UCONTEXT_REG_XMM4 (ctx) = mctx->fregs [4];
-	UCONTEXT_REG_XMM5 (ctx) = mctx->fregs [5];
-	UCONTEXT_REG_XMM6 (ctx) = mctx->fregs [6];
-	UCONTEXT_REG_XMM7 (ctx) = mctx->fregs [7];
-	UCONTEXT_REG_XMM8 (ctx) = mctx->fregs [8];
-	UCONTEXT_REG_XMM9 (ctx) = mctx->fregs [9];
-	UCONTEXT_REG_XMM10 (ctx) = mctx->fregs [10];
-	UCONTEXT_REG_XMM11 (ctx) = mctx->fregs [11];
-	UCONTEXT_REG_XMM12 (ctx) = mctx->fregs [12];
-	UCONTEXT_REG_XMM13 (ctx) = mctx->fregs [13];
-	UCONTEXT_REG_XMM14 (ctx) = mctx->fregs [14];
-	UCONTEXT_REG_XMM15 (ctx) = mctx->fregs [15];
+#ifdef UCONTEXT_HAS_XMM
+	if (UCONTEXT_HAS_XMM (ctx)) {
+		UCONTEXT_REG_XMM0 (ctx) = mctx->fregs [0];
+		UCONTEXT_REG_XMM1 (ctx) = mctx->fregs [1];
+		UCONTEXT_REG_XMM2 (ctx) = mctx->fregs [2];
+		UCONTEXT_REG_XMM3 (ctx) = mctx->fregs [3];
+		UCONTEXT_REG_XMM4 (ctx) = mctx->fregs [4];
+		UCONTEXT_REG_XMM5 (ctx) = mctx->fregs [5];
+		UCONTEXT_REG_XMM6 (ctx) = mctx->fregs [6];
+		UCONTEXT_REG_XMM7 (ctx) = mctx->fregs [7];
+		UCONTEXT_REG_XMM8 (ctx) = mctx->fregs [8];
+		UCONTEXT_REG_XMM9 (ctx) = mctx->fregs [9];
+		UCONTEXT_REG_XMM10 (ctx) = mctx->fregs [10];
+		UCONTEXT_REG_XMM11 (ctx) = mctx->fregs [11];
+		UCONTEXT_REG_XMM12 (ctx) = mctx->fregs [12];
+		UCONTEXT_REG_XMM13 (ctx) = mctx->fregs [13];
+		UCONTEXT_REG_XMM14 (ctx) = mctx->fregs [14];
+		UCONTEXT_REG_XMM15 (ctx) = mctx->fregs [15];
+	}
 #endif
 
 #elif defined(HOST_WIN32)
@@ -297,6 +326,27 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 	context->R13 = mctx->gregs [AMD64_R13];
 	context->R14 = mctx->gregs [AMD64_R14];
 	context->R15 = mctx->gregs [AMD64_R15];
+#elif defined(__HAIKU__)
+	// Haiku uses sigcontext because there's no ucontext
+	struct sigcontext *ctx = (struct sigcontext *)sigctx;
+
+	ctx->regs.rip = mctx->gregs [AMD64_RIP];
+	ctx->regs.rax = mctx->gregs [AMD64_RAX];
+	ctx->regs.rcx = mctx->gregs [AMD64_RCX];
+	ctx->regs.rdx = mctx->gregs [AMD64_RDX];
+	ctx->regs.rbx = mctx->gregs [AMD64_RBX];
+	ctx->regs.rsp = mctx->gregs [AMD64_RSP];
+	ctx->regs.rbp = mctx->gregs [AMD64_RBP];
+	ctx->regs.rsi = mctx->gregs [AMD64_RSI];
+	ctx->regs.rdi = mctx->gregs [AMD64_RDI];
+	ctx->regs.r8 = mctx->gregs [AMD64_R8];
+	ctx->regs.r9 = mctx->gregs [AMD64_R9];
+	ctx->regs.r10 = mctx->gregs [AMD64_R10];
+	ctx->regs.r11 = mctx->gregs [AMD64_R11];
+	ctx->regs.r12 = mctx->gregs [AMD64_R12];
+	ctx->regs.r13 = mctx->gregs [AMD64_R13];
+	ctx->regs.r14 = mctx->gregs [AMD64_R14];
+	ctx->regs.r15 = mctx->gregs [AMD64_R15];
 #else
 	g_assert_not_reached ();
 #endif
@@ -345,18 +395,31 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 #include <mono/arch/arm/arm-codegen.h>
 #include <mono/arch/arm/arm-vfp-codegen.h>
 
+#ifdef HOST_WIN32
+#include <windows.h>
+#endif
+
 void
 mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 {
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
+#elif defined(HOST_WIN32)
+	CONTEXT *context = (CONTEXT*)sigctx;
+
+	mctx->pc = context->Pc;
+	mctx->cpsr = context->Cpsr;
+	memcpy (&mctx->regs, &context->R0, sizeof (DWORD) * 16);
+	
+	/* Why are we only copying 16 registers?! There are 32! */
+	memcpy (&mctx->fregs, &context->D, sizeof (double) * 16);
 #else
-	arm_ucontext *my_uc = sigctx;
+	arm_ucontext *my_uc = (arm_ucontext*)sigctx;
 
 	mctx->pc = UCONTEXT_REG_PC (my_uc);
 	mctx->regs [ARMREG_SP] = UCONTEXT_REG_SP (my_uc);
 	mctx->cpsr = UCONTEXT_REG_CPSR (my_uc);
-	memcpy (&mctx->regs, &UCONTEXT_REG_R0 (my_uc), sizeof (mgreg_t) * 16);
+	memcpy (&mctx->regs, &UCONTEXT_REG_R0 (my_uc), sizeof (host_mgreg_t) * 16);
 #ifdef UCONTEXT_REG_VFPREGS
 	memcpy (&mctx->fregs, UCONTEXT_REG_VFPREGS (my_uc), sizeof (double) * 16);
 #endif
@@ -368,14 +431,23 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *ctx)
 {
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
+#elif defined(HOST_WIN32)
+	CONTEXT *context = (CONTEXT*)ctx;
+
+	context->Pc = mctx->pc;
+	context->Cpsr = mctx->cpsr;
+	memcpy (&context->R0, &mctx->regs, sizeof (DWORD) * 16);
+	
+	/* Why are we only copying 16 registers?! There are 32! */
+	memcpy (&context->D, &mctx->fregs, sizeof (double) * 16);
 #else
-	arm_ucontext *my_uc = ctx;
+	arm_ucontext *my_uc = (arm_ucontext*)ctx;
 
 	UCONTEXT_REG_PC (my_uc) = mctx->pc;
 	UCONTEXT_REG_SP (my_uc) = mctx->regs [ARMREG_SP];
 	UCONTEXT_REG_CPSR (my_uc) = mctx->cpsr;
 	/* The upper registers are not guaranteed to be valid */
-	memcpy (&UCONTEXT_REG_R0 (my_uc), &mctx->regs, sizeof (mgreg_t) * 12);
+	memcpy (&UCONTEXT_REG_R0 (my_uc), &mctx->regs, sizeof (host_mgreg_t) * 12);
 #ifdef UCONTEXT_REG_VFPREGS
 	memcpy (UCONTEXT_REG_VFPREGS (my_uc), &mctx->fregs, sizeof (double) * 16);
 #endif
@@ -392,7 +464,7 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
 #else
-	memcpy (mctx->regs, UCONTEXT_GREGS (sigctx), sizeof (mgreg_t) * 31);
+	memcpy (mctx->regs, UCONTEXT_GREGS (sigctx), sizeof (host_mgreg_t) * 31);
 	mctx->pc = UCONTEXT_REG_PC (sigctx);
 	mctx->regs [ARMREG_SP] = UCONTEXT_REG_SP (sigctx);
 #ifdef __linux__
@@ -401,8 +473,7 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 
 	g_assert (fpctx->head.magic == FPSIMD_MAGIC);
 	for (i = 0; i < 32; ++i)
-		/* Only store the bottom 8 bytes for now */
-		*(guint64*)&(mctx->fregs [i]) = fpctx->vregs [i];
+		mctx->fregs [i] = fpctx->vregs [i];
 #endif
 	/* FIXME: apple */
 #endif
@@ -414,7 +485,7 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
 #else
-	memcpy (UCONTEXT_GREGS (sigctx), mctx->regs, sizeof (mgreg_t) * 31);
+	memcpy (UCONTEXT_GREGS (sigctx), mctx->regs, sizeof (host_mgreg_t) * 31);
 	UCONTEXT_REG_PC (sigctx) = mctx->pc;
 	UCONTEXT_REG_SP (sigctx) = mctx->regs [ARMREG_SP];
 #endif
@@ -462,7 +533,7 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 	mctx->sc_ir = UCONTEXT_REG_NIP(uc);
 	mctx->sc_sp = UCONTEXT_REG_Rn(uc, 1);
 
-	memcpy (&mctx->regs, &UCONTEXT_REG_Rn(uc, 0), sizeof (mgreg_t) * MONO_MAX_IREGS);
+	memcpy (&mctx->regs, &UCONTEXT_REG_Rn(uc, 0), sizeof (host_mgreg_t) * MONO_MAX_IREGS);
 	memcpy (&mctx->fregs, &UCONTEXT_REG_FPRn(uc, 0), sizeof (double) * MONO_MAX_FREGS);
 }
 
@@ -471,12 +542,58 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 {
 	os_ucontext *uc = sigctx;
 
-	memcpy (&UCONTEXT_REG_Rn(uc, 0), &mctx->regs, sizeof (mgreg_t) * MONO_MAX_IREGS);
+	memcpy (&UCONTEXT_REG_Rn(uc, 0), &mctx->regs, sizeof (host_mgreg_t) * MONO_MAX_IREGS);
 	memcpy (&UCONTEXT_REG_FPRn(uc, 0), &mctx->fregs, sizeof (double) * MONO_MAX_FREGS);
 
 	/* The valid values for pc and sp are stored here and not in regs array */
 	UCONTEXT_REG_NIP(uc) = mctx->sc_ir;
 	UCONTEXT_REG_Rn(uc, 1) = mctx->sc_sp;
+}
+
+#elif defined (TARGET_WASM)
+
+#include <mono/utils/mono-context.h>
+
+void
+mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
+{
+	g_error ("MonoContext not supported");
+}
+
+void
+mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
+{
+	g_error ("MonoContext not supported");
+}
+
+#elif ((defined (HOST_RISCV) || defined (HOST_RISCV64)) && !defined (MONO_CROSS_COMPILE)) || defined (TARGET_RISCV)
+
+#include <mono/utils/mono-context.h>
+
+void
+mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
+{
+#ifdef MONO_CROSS_COMPILE
+	g_assert_not_reached ();
+#else
+	ucontext_t *uctx = sigctx;
+
+	memcpy (&mctx->gregs, &uctx->uc_mcontext.gregs, sizeof (host_mgreg_t) * G_N_ELEMENTS (mctx->gregs));
+	memcpy (&mctx->fregs, &uctx->uc_mcontext.fpregs, sizeof (double) * G_N_ELEMENTS (mctx->fregs));
+#endif
+}
+
+void
+mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
+{
+#ifdef MONO_CROSS_COMPILE
+	g_assert_not_reached ();
+#else
+	ucontext_t *uctx = sigctx;
+
+	memcpy (&uctx->uc_mcontext.gregs, &mctx->gregs, sizeof (host_mgreg_t) * G_N_ELEMENTS (mctx->gregs));
+	memcpy (&uctx->uc_mcontext.fpregs, &mctx->fregs, sizeof (double) * G_N_ELEMENTS (mctx->fregs));
+#endif
 }
 
 #endif /* #if defined(__i386__) */

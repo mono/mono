@@ -107,7 +107,7 @@ signal_and_unref (gpointer user_data)
 	data = (OSEventWaitData*) user_data;
 
 	mono_os_event_set (&data->event);
-	if (InterlockedDecrement ((gint32*) &data->ref) == 0) {
+	if (mono_atomic_dec_i32 ((gint32*) &data->ref) == 0) {
 		mono_os_event_destroy (&data->event);
 		g_free (data);
 	}
@@ -182,7 +182,7 @@ mono_os_event_wait_multiple (MonoOSEvent **events, gsize nevents, gboolean waita
 			signalled = (count > 0);
 
 		if (signalled) {
-			ret = MONO_OS_EVENT_WAIT_RET_SUCCESS_0 + lowest;
+			ret = (MonoOSEventWaitRet)(MONO_OS_EVENT_WAIT_RET_SUCCESS_0 + lowest);
 			goto done;
 		}
 
@@ -220,7 +220,7 @@ done:
 	if (alertable) {
 		mono_thread_info_uninstall_interrupt (&alerted);
 		if (alerted) {
-			if (InterlockedDecrement ((gint32*) &data->ref) == 0) {
+			if (mono_atomic_dec_i32 ((gint32*) &data->ref) == 0) {
 				mono_os_event_destroy (&data->event);
 				g_free (data);
 			}

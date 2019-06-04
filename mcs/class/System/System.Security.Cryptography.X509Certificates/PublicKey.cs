@@ -42,9 +42,13 @@ using Mono.Security.Cryptography;
 using MSX = Mono.Security.X509;
 #endif
 
+#endif
+
 namespace System.Security.Cryptography.X509Certificates {
 
 	public sealed class PublicKey {
+
+#if SECURITY_DEP
 
 		private const string rsaOid = "1.2.840.113549.1.1.1";
 		private const string dsaOid = "1.2.840.10040.4.1";
@@ -128,20 +132,15 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public AsymmetricAlgorithm Key {
 			get {
-				if (_key == null) {
-					switch (_oid.Value) {
-					case rsaOid:
-						_key = DecodeRSA (_keyValue.RawData);
-						break;
-					case dsaOid:
-						_key = DecodeDSA (_keyValue.RawData, _params.RawData);
-						break;
-					default:
-						string msg = Locale.GetText ("Cannot decode public key from unknown OID '{0}'.", _oid.Value);
-						throw new NotSupportedException (msg);
-					}
+				switch (_oid.Value) {
+				case rsaOid:
+					return DecodeRSA (_keyValue.RawData);
+				case dsaOid:
+					return DecodeDSA (_keyValue.RawData, _params.RawData);
+				default:
+					string msg = Locale.GetText ("Cannot decode public key from unknown OID '{0}'.", _oid.Value);
+					throw new NotSupportedException (msg);
 				}
-				return _key;
 			}
 		}
 
@@ -223,7 +222,17 @@ namespace System.Security.Cryptography.X509Certificates {
 			rsa.ImportParameters (rsaParams);
 			return rsa;
 		}
+#else
+		private PublicKey ()
+		{
+		}
+
+
+		public AsymmetricAlgorithm Key {
+			get {
+				return null;
+			}
+		}
+#endif
 	}
 }
-
-#endif

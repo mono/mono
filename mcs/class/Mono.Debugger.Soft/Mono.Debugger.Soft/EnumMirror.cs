@@ -19,7 +19,8 @@ namespace Mono.Debugger.Soft
 			if (!type.IsEnum)
 				throw new ArgumentException ("type must be an enum type", "type");
 			TypeMirror t = type.EnumUnderlyingType;
-			if (value.Value == null || !value.Value.GetType ().IsPrimitive || t != vm.RootDomain.GetCorrespondingType (value.Value.GetType ()))
+			// Can't access t's domain, so compare type names
+			if (value.Value == null || !value.Value.GetType ().IsPrimitive || t.Name != vm.RootDomain.GetCorrespondingType (value.Value.GetType ()).Name)
 				throw new ArgumentException ("Value '" + value.Value + "' does not match the type of the enum.");
 		}
 

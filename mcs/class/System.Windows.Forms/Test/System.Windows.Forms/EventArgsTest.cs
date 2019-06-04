@@ -33,7 +33,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (b, e2.Binding, "B1");
 			Assert.AreEqual (BindingCompleteState.Success, e2.BindingCompleteState, "B2");
 			Assert.AreEqual (c, e2.BindingCompleteContext, "B3");
-			Assert.AreEqual (false, e2.Cancel, "B4");
+			Assert.AreEqual (true, e2.Cancel, "B4");
 			Assert.AreEqual (errorText, e2.ErrorText, "B5");
 			Assert.AreEqual (null, e2.Exception, "B6");
 
@@ -42,7 +42,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (b, e3.Binding, "C1");
 			Assert.AreEqual (BindingCompleteState.Success, e3.BindingCompleteState, "C2");
 			Assert.AreEqual (c, e3.BindingCompleteContext, "C3");
-			Assert.AreEqual (false, e3.Cancel, "C4");
+			Assert.AreEqual (true, e3.Cancel, "C4");
 			Assert.AreEqual (errorText, e3.ErrorText, "C5");
 			Assert.AreEqual (ex, e3.Exception, "C6");
 
@@ -247,7 +247,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, e.IsInputKey, "A3");
 			Assert.AreEqual ((Keys)66, e.KeyCode, "A4");  // B
 			Assert.AreEqual (k, e.KeyData, "A5");
-			Assert.AreEqual (Convert.ToInt32 (k), e.KeyValue, "A6");
+			Assert.AreEqual (66, e.KeyValue, "A6");
 			Assert.AreEqual ((Keys)196608, e.Modifiers, "A7");  // Control + Shift
 			Assert.AreEqual (true, e.Shift, "A8");
 
@@ -441,7 +441,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void TestWebBrowserDocumentCompletedEventArgs()
 		{
-			Uri url = new Uri("http://www.mono-project.com/");
+			Uri url = new Uri("http://www.example.com/");
 			
 			WebBrowserDocumentCompletedEventArgs e = new WebBrowserDocumentCompletedEventArgs(url);
 			
@@ -451,7 +451,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void TestWebBrowserNavigatedEventArgs ()
 		{
-			Uri url = new Uri ("http://www.mono-project.com/");
+			Uri url = new Uri ("http://www.example.com/");
 
 			WebBrowserNavigatedEventArgs e = new WebBrowserNavigatedEventArgs (url);
 
@@ -461,7 +461,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void TestWebBrowserNavigatingEventArgs ()
 		{
-			Uri url = new Uri ("http://www.mono-project.com/");
+			Uri url = new Uri ("http://www.example.com/");
 			string frame = "TOP";
 
 			WebBrowserNavigatingEventArgs e = new WebBrowserNavigatingEventArgs (url, frame);

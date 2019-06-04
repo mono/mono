@@ -24,9 +24,15 @@ typedef struct {
 
 typedef struct {
 	short op_index;
+#ifdef __cplusplus
+	MonoStackType big_stack_type : 16;
+	MonoStackType small_stack_type : 16;
+	MonoStackType stack_type : 16;
+#else
 	short big_stack_type;
 	short small_stack_type;
 	short stack_type;
+#endif
 	short conv_4_to_8;
 	short conv_8_to_4;
 	short move;
@@ -37,7 +43,7 @@ typedef struct {
 } MagicTypeInfo;
 
 
-#if SIZEOF_VOID_P == 8
+#if TARGET_SIZEOF_VOID_P == 8
 #define OP_PT_ADD OP_LADD
 #define OP_PT_SUB OP_LSUB
 #define OP_PT_MUL OP_LMUL
@@ -112,9 +118,9 @@ static const IntIntrisic int_cmpop[] = {
 	{ "op_Inequality", { OP_ICNEQ, OP_ICNEQ, OP_FCNEQ, OP_RCNEQ } },
 	{ "op_Equality", { OP_ICEQ, OP_ICEQ, OP_FCEQ, OP_RCEQ } },
 	{ "op_GreaterThan", { OP_ICGT, OP_ICGT_UN, OP_FCGT, OP_RCGT } },
-	{ "op_GreaterThanOrEqual", { OP_ICGE, OP_ICGE_UN, OP_FCGE, OP_RCGE } },
+	{ "op_GreaterThanOrEqual", { OP_ICGE, OP_ICGE_UN, OP_FCLT_UN, OP_RCLT_UN } },
 	{ "op_LessThan", { OP_ICLT, OP_ICLT_UN, OP_FCLT, OP_RCLT } },
-	{ "op_LessThanOrEqual", { OP_ICLE, OP_ICLE_UN, OP_FCLE, OP_RCLE } },
+	{ "op_LessThanOrEqual", { OP_ICLE, OP_ICLE_UN, OP_FCGT_UN, OP_RCGT_UN } },
 };
 
 static const MagicTypeInfo type_info[] = {
@@ -126,28 +132,22 @@ static const MagicTypeInfo type_info[] = {
 	{ 2, STACK_R8, STACK_R8, STACK_R8, OP_FCONV_TO_R8, OP_FCONV_TO_R4, OP_FMOVE, 0, 0, OP_PT_STORE_FP_MEMBASE_REG, 0 },
 };
 
-static inline gboolean mono_class_is_magic_int (MonoClass *klass);
-static inline gboolean mono_class_is_magic_float (MonoClass *klass);
 
-
-static inline gboolean
-type_size (MonoCompile *cfg, MonoType *type)
+gsize
+mini_magic_type_size (MonoCompile *cfg, MonoType *type)
 {
 	if (type->type == MONO_TYPE_I4 || type->type == MONO_TYPE_U4)
 		return 4;
 	else if (type->type == MONO_TYPE_I8 || type->type == MONO_TYPE_U8)
 		return 8;
-	else if (type->type == MONO_TYPE_R4 && !type->byref && cfg->r4fp)
+	else if (type->type == MONO_TYPE_R4 && !type->byref && (!cfg || cfg->r4fp))
 		return 4;
 	else if (type->type == MONO_TYPE_R8 && !type->byref)
 		return 8;
-	return SIZEOF_VOID_P;
+	return TARGET_SIZEOF_VOID_P;
 }
 
 #ifndef DISABLE_JIT
-
-static gboolean is_int_type (MonoType *t);
-static gboolean is_float_type (MonoType *t);
 
 static MonoInst*
 emit_narrow (MonoCompile *cfg, const MagicTypeInfo *info, int sreg)
@@ -160,7 +160,7 @@ emit_narrow (MonoCompile *cfg, const MagicTypeInfo *info, int sreg)
 		ins->type = cfg->r4_stack_type;
 	else
 		ins->type = info->small_stack_type;
-	ins->dreg = alloc_dreg (cfg, ins->type);
+	ins->dreg = alloc_dreg (cfg, (MonoStackType)ins->type);
 	MONO_ADD_INS (cfg->cbb, ins);
 	return mono_decompose_opcode (cfg, ins);
 }
@@ -187,9 +187,10 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 	int i = 0;
 	const char *name = cmethod->name;
 	MonoInst *ins;
-	int type_index, stack_type;
+	int type_index;
+	MonoStackType stack_type;
 
-	if (info->op_index == 2 && cfg->r4fp && SIZEOF_VOID_P == 4) {
+	if (info->op_index == 2 && cfg->r4fp && TARGET_SIZEOF_VOID_P == 4) {
 		type_index = 3;
 		stack_type = STACK_R4;
 	} else {
@@ -198,16 +199,16 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 	}
 
 	if (!strcmp ("op_Implicit", name) || !strcmp ("op_Explicit", name)) {
-		int source_size = type_size (cfg, fsig->params [0]);
-		int dest_size = type_size (cfg, fsig->ret);
+		int source_size = mini_magic_type_size (cfg, fsig->params [0]);
+		int dest_size = mini_magic_type_size (cfg, fsig->ret);
 
 		switch (info->big_stack_type) {
 		case STACK_I8:
-			if (!is_int_type (fsig->params [0]) || !is_int_type (fsig->ret))
+			if (!mini_magic_is_int_type (fsig->params [0]) || !mini_magic_is_int_type (fsig->ret))
 				return NULL;
 			break;
 		case STACK_R8:
-			if (!is_float_type (fsig->params [0]) || !is_float_type (fsig->ret))
+			if (!mini_magic_is_float_type (fsig->params [0]) || !mini_magic_is_float_type (fsig->ret))
 				return NULL;
 			break;
 		default:
@@ -229,11 +230,11 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 	if (!strcmp (".ctor", name)) {
 		gboolean is_ldaddr = args [0]->opcode == OP_LDADDR;
 		int arg0 = args [1]->dreg;
-		int arg_size = type_size (cfg, fsig->params [0]);
+		int arg_size = mini_magic_type_size (cfg, fsig->params [0]);
 
-		if (arg_size > SIZEOF_VOID_P) //8 -> 4
+		if (arg_size > TARGET_SIZEOF_VOID_P) //8 -> 4
 			arg0 = emit_narrow (cfg, info, arg0)->dreg;
-		else if (arg_size < SIZEOF_VOID_P) //4 -> 8
+		else if (arg_size < TARGET_SIZEOF_VOID_P) //4 -> 8
 			arg0 = emit_widen (cfg, info, arg0)->dreg;
 
 		if (is_ldaddr) { /*Eliminate LDADDR if it's initing a local var*/
@@ -256,7 +257,7 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 
 		/* We have IR for inc/dec */
 		MONO_INST_NEW (cfg, ins, inc ? info->inc_op : info->dec_op);
-		ins->dreg = alloc_dreg (cfg, info->stack_type);
+		ins->dreg = alloc_dreg (cfg, (MonoStackType)info->stack_type);
 		ins->sreg1 = args [0]->dreg;
 		ins->inst_imm = 1;
 		ins->type = info->stack_type;
@@ -295,7 +296,9 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 
 	for (i = 0; i < sizeof (int_cmpop) / sizeof  (IntIntrisic); ++i) {
 		if (!strcmp (int_cmpop [i].op_name, name)) {
-			g_assert (int_cmpop [i].op_table [type_index]);
+			short op_cmp = int_cmpop [i].op_table [type_index];
+
+			g_assert (op_cmp);
 
 			if (info->compare_op) {
 				MONO_INST_NEW (cfg, ins, info->compare_op);
@@ -304,16 +307,40 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 		        ins->sreg2 = args [1]->dreg;
 				MONO_ADD_INS (cfg->cbb, ins);
 
-				MONO_INST_NEW (cfg, ins, int_cmpop [i].op_table [type_index]);
+				MONO_INST_NEW (cfg, ins, op_cmp);
 		        ins->dreg = alloc_preg (cfg);
 				ins->type = STACK_I4;
 				MONO_ADD_INS (cfg->cbb, ins);
 			} else {
-				MONO_INST_NEW (cfg, ins, int_cmpop [i].op_table [type_index]);
-				ins->dreg = alloc_ireg (cfg);
+				MONO_INST_NEW (cfg, ins, op_cmp);
+				guint32 fcmp_dreg = ins->dreg = alloc_ireg (cfg);
 				ins->sreg1 = args [0]->dreg;
 		        ins->sreg2 = args [1]->dreg;
 				MONO_ADD_INS (cfg->cbb, ins);
+				if (op_cmp == OP_FCLT_UN || op_cmp == OP_FCGT_UN || op_cmp == OP_RCLT_UN || op_cmp == OP_RCGT_UN) {
+					/* we have to negate the result of this comparison:
+					 *  - op_GreaterThanOrEqual maps to NOT x OP_FCLT_UN / OP_RCLT_UN
+					 *  - op_LessThanOrEqual    maps to NOT x OP_FCGT_UN / OP_RCGT_UN
+					 *
+					 *  this matches generated bytecode by C# when doing the
+					 *  same operations on float/double. the `_UN` suffix says
+					 *  that if an operand is NaN, the result is true. If
+					 *  OP_FCGE/OP_FCLE is used, it is mapped to instructions
+					 *  on some architectures that don't detect NaN. For
+					 *  example, on arm64 the condition `eq` doesn't respect
+					 *  NaN results of a `fcmp` instruction.
+					 */
+					MONO_INST_NEW (cfg, ins, OP_ICOMPARE_IMM);
+					ins->dreg = -1;
+					ins->sreg1 = fcmp_dreg;
+					ins->inst_imm = 0;
+					MONO_ADD_INS (cfg->cbb, ins);
+
+					MONO_INST_NEW (cfg, ins, OP_CEQ);
+					ins->dreg = alloc_preg (cfg);
+					ins->type = STACK_I4;
+					MONO_ADD_INS (cfg->cbb, ins);
+				}
 			}
 
 			return ins;
@@ -328,7 +355,7 @@ MonoInst*
 mono_emit_native_types_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	if (mono_class_is_magic_int (cmethod->klass)) {
-		const char *class_name = cmethod->klass->name;
+		const char *class_name = m_class_get_name (cmethod->klass);
 		if (!strcmp ("nint", class_name))
 			return emit_intrinsics (cfg, cmethod, fsig, args, &type_info [0]);
 		else
@@ -344,21 +371,24 @@ mono_emit_native_types_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMe
 static inline gboolean
 mono_class_is_magic_assembly (MonoClass *klass)
 {
-	if (!klass->image->assembly_name)
+	const char *aname = m_class_get_image (klass)->assembly_name;
+	if (!aname)
 		return FALSE;
-	if (!strcmp ("Xamarin.iOS", klass->image->assembly_name))
+	if (!strcmp ("Xamarin.iOS", aname))
 		return TRUE;
-	if (!strcmp ("Xamarin.Mac", klass->image->assembly_name))
+	if (!strcmp ("Xamarin.Mac", aname))
 		return TRUE;
-	if (!strcmp ("Xamarin.WatchOS", klass->image->assembly_name))
+	if (!strcmp ("Xamarin.WatchOS", aname))
 		return TRUE;
 	/* regression test suite */
-	if (!strcmp ("builtin-types", klass->image->assembly_name))
+	if (!strcmp ("builtin-types", aname))
+		return TRUE;
+	if (!strcmp ("mini_tests", aname))
 		return TRUE;
 	return FALSE;
 }
 
-static inline gboolean
+gboolean
 mono_class_is_magic_int (MonoClass *klass)
 {
 	static MonoClass *magic_nint_class;
@@ -376,22 +406,22 @@ mono_class_is_magic_int (MonoClass *klass)
 	if (!mono_class_is_magic_assembly (klass))
 		return FALSE;
 
-	if (strcmp ("System", klass->name_space) != 0)
+	if (strcmp ("System", m_class_get_name_space (klass)) != 0)
 		return FALSE;
 
-	if (strcmp ("nint", klass->name) == 0) {
+	if (strcmp ("nint", m_class_get_name (klass)) == 0) {
 		magic_nint_class = klass;
 		return TRUE;
 	}
 
-	if (strcmp ("nuint", klass->name) == 0){
+	if (strcmp ("nuint", m_class_get_name (klass)) == 0){
 		magic_nuint_class = klass;
 		return TRUE;
 	}
 	return FALSE;
 }
 
-static inline gboolean
+gboolean
 mono_class_is_magic_float (MonoClass *klass)
 {
 	static MonoClass *magic_nfloat_class;
@@ -405,36 +435,36 @@ mono_class_is_magic_float (MonoClass *klass)
 	if (!mono_class_is_magic_assembly (klass))
 		return FALSE;
 
-	if (strcmp ("System", klass->name_space) != 0)
+	if (strcmp ("System", m_class_get_name_space (klass)) != 0)
 		return FALSE;
 
-	if (strcmp ("nfloat", klass->name) == 0) {
+	if (strcmp ("nfloat", m_class_get_name (klass)) == 0) {
 		magic_nfloat_class = klass;
 
 		/* Assert that we are using the matching assembly */
-		MonoClassField *value_field = mono_class_get_field_from_name (klass, "v");
+		MonoClassField *value_field = mono_class_get_field_from_name_full (klass, "v", NULL);
 		g_assert (value_field);
-		MonoType *t = mono_field_get_type (value_field);
-		MonoType *native = mini_native_type_replace_type (&klass->byval_arg);
+		MonoType *t = mono_field_get_type_internal (value_field);
+		MonoType *native = mini_native_type_replace_type (m_class_get_byval_arg (klass));
 		if (t->type != native->type)
-			g_error ("Assembly used for native types '%s' doesn't match this runtime, %s is mapped to %s, expecting %s.\n", klass->image->name, klass->name, mono_type_full_name (t), mono_type_full_name (native));
+			g_error ("Assembly used for native types '%s' doesn't match this runtime, %s is mapped to %s, expecting %s.\n", m_class_get_image (klass)->name, m_class_get_name (klass), mono_type_full_name (t), mono_type_full_name (native));
 		return TRUE;
 	}
 	return FALSE;
 }
 
-static gboolean
-is_int_type (MonoType *t)
+gboolean
+mini_magic_is_int_type (MonoType *t)
 {
-	if (t->type != MONO_TYPE_I4 && t->type != MONO_TYPE_I8 && t->type != MONO_TYPE_U4 && t->type != MONO_TYPE_U8 && !mono_class_is_magic_int (mono_class_from_mono_type (t)))
+	if (t->type != MONO_TYPE_I && t->type != MONO_TYPE_I4 && t->type != MONO_TYPE_I8 && t->type != MONO_TYPE_U4 && t->type != MONO_TYPE_U8 && !mono_class_is_magic_int (mono_class_from_mono_type_internal (t)))
 		return FALSE;
 	return TRUE;
 }
 
-static gboolean
-is_float_type (MonoType *t)
+gboolean
+mini_magic_is_float_type (MonoType *t)
 {
-	if (t->type != MONO_TYPE_R4 && t->type != MONO_TYPE_R8 && !mono_class_is_magic_float (mono_class_from_mono_type (t)))
+	if (t->type != MONO_TYPE_R4 && t->type != MONO_TYPE_R8 && !mono_class_is_magic_float (mono_class_from_mono_type_internal (t)))
 		return FALSE;
 	return TRUE;
 }
@@ -449,12 +479,12 @@ mini_native_type_replace_type (MonoType *type)
 	klass = type->data.klass;
 
 	if (mono_class_is_magic_int (klass))
-		return type->byref ? &mono_defaults.int_class->this_arg : &mono_defaults.int_class->byval_arg;
+		return type->byref ? m_class_get_this_arg (mono_defaults.int_class) : mono_get_int_type ();
 	if (mono_class_is_magic_float (klass))
-#if SIZEOF_VOID_P == 8
-		return type->byref ? &mono_defaults.double_class->this_arg : &mono_defaults.double_class->byval_arg;
+#if TARGET_SIZEOF_VOID_P == 8
+		return type->byref ? m_class_get_this_arg (mono_defaults.double_class) : m_class_get_byval_arg (mono_defaults.double_class);
 #else
-		return type->byref ? &mono_defaults.single_class->this_arg : &mono_defaults.single_class->byval_arg;
+		return type->byref ? m_class_get_this_arg (mono_defaults.single_class) : m_class_get_byval_arg (mono_defaults.single_class);
 #endif
 	return type;
 }

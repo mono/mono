@@ -1099,7 +1099,11 @@ namespace MonoTests.System.ComponentModel
 		public void TestCreateDesigner ()
 		{
 			IDesigner des = TypeDescriptor.CreateDesigner (com, typeof(int));
+#if MOBILE
+			Assert.IsNull (des, "#1"); // We exclude DesignerAttribute on BCL types
+#else
 			Assert.IsTrue (des is MyDesigner, "#1");
+#endif
 			
 			des = TypeDescriptor.CreateDesigner (com, typeof(string));
 			Assert.IsNull (des, "#2");
@@ -1133,24 +1137,33 @@ namespace MonoTests.System.ComponentModel
 		{
 			AttributeCollection col = TypeDescriptor.GetAttributes (typeof(MyComponent));
 			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#A1");
+#if !MOBILE
 			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#A2");
+#endif
 			Assert.IsNull (col [typeof (EditorAttribute)], "#A3");
 			
 			col = TypeDescriptor.GetAttributes (com);
 			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#B1");
+#if !MOBILE
 			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#B2");
+#endif
 			Assert.IsNull (col [typeof (EditorAttribute)], "#B3");
 			
 			col = TypeDescriptor.GetAttributes (sitedcom);
 			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#C1");
+#if !MOBILE
 			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#C2");
+#endif
 			Assert.IsNotNull (col [typeof (EditorAttribute)], "#C3");
 
 			col = TypeDescriptor.GetAttributes (nfscom);
 			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#D1");
+#if !MOBILE
 			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#D2");
+#endif
 			Assert.IsNull (col [typeof (EditorAttribute)], "#D3");
 
+#if !MOBILE
 			col = TypeDescriptor.GetAttributes (typeof (MyDerivedComponent));
 			Assert.IsNotNull (col [typeof (DesignerAttribute)], "#E1");
 			Assert.IsNotNull (col [typeof (DescriptionAttribute)], "#E2");
@@ -1171,6 +1184,7 @@ namespace MonoTests.System.ComponentModel
 			// Shows that attributes are retrieved from the current type, the base types 
 			// and the implemented by the type interfaces.
 			Assert.AreEqual (3, TypeDescriptor.GetAttributes (typeof (TestDerivedClass)).Count, "#F1");
+#endif
 		}
 		
 		[Test]

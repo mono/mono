@@ -156,6 +156,40 @@ namespace System.Threading
             return target;
         }
 
+#if MONO
+        public static T EnsureInitialized<T>(ref T target, ref object syncLock, System.Func<T> valueFactory) where T : class 
+            => Volatile.Read(ref target) ?? EnsureInitializedCore(ref target, ref syncLock, valueFactory);
+
+        private static T EnsureInitializedCore<T>(ref T target, ref object syncLock, Func<T> valueFactory) where T : class
+        {
+            // Lazily initialize the lock if necessary and then double check if initialization is still required.
+            lock (EnsureLockInitialized(ref syncLock))
+            {
+                if (Volatile.Read(ref target) == null)
+                {
+                    Volatile.Write(ref target, valueFactory());
+                    if (target == null)
+                    {
+                        throw new InvalidOperationException(SR.Lazy_StaticInit_InvalidOperation);
+                    }
+                }
+            }
+
+            return target;
+        }
+
+                /// <summary>
+        /// Ensure the lock object is initialized.
+        /// </summary>
+        /// <param name="syncLock">A reference to a location containing a mutual exclusive lock. If <paramref name="syncLock"/> is null,
+        /// a new object will be instantiated.</param>
+        /// <returns>Initialized lock object.</returns>
+        private static object EnsureLockInitialized(ref object syncLock) =>
+            syncLock ??
+            Interlocked.CompareExchange(ref syncLock, new object(), null) ??
+            syncLock;
+#endif
+
 
         /// <summary>
         /// Initializes a target reference or value type with its default constructor if it has not already

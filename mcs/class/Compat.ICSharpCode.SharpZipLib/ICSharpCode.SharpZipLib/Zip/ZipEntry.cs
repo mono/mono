@@ -40,6 +40,7 @@ using System;
 namespace ICSharpCode.SharpZipLib.Zip 
 {
 	
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public enum CompressionMethod
 	{
 		Stored   = 0,
@@ -54,6 +55,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 	///
 	/// author of the original java version : Jochen Hoenicke
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class ZipEntry : ICloneable
 	{
 		static int KNOWN_SIZE   = 1;

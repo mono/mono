@@ -150,3 +150,37 @@ namespace System.ServiceModel.Channels
 {
 	public interface ITransportTokenAssertionProvider {}
 }
+
+namespace System.ServiceModel
+{
+	internal static class DiagnosticUtility
+	{
+		internal static class ExceptionUtility
+		{
+			internal static ArgumentException ThrowHelperArgument (string message)
+			{
+				return (ArgumentException)ThrowHelperError (new ArgumentException (message));
+			}
+
+			internal static ArgumentException ThrowHelperArgument (string paramName, string message)
+			{
+				return (ArgumentException)ThrowHelperError (new ArgumentException (message, paramName));
+			}
+
+			internal static ArgumentNullException ThrowHelperArgumentNull (string paramName)
+			{
+				return (ArgumentNullException)ThrowHelperError (new ArgumentNullException (paramName));
+			}
+
+			internal static Exception ThrowHelperError (Exception exception)
+			{
+				return exception;
+			}
+
+			internal static Exception ThrowHelperWarning (Exception exception)
+			{
+				return exception;
+			}
+		}
+	}
+}

@@ -23,22 +23,29 @@
 #endif
 #include <sys/types.h>
 #include <stdio.h>
+#ifdef HAVE_UTIME_H
 #include <utime.h>
+#endif
 #ifdef __linux__
 #include <sys/ioctl.h>
 #include <linux/fs.h>
 #include <mono/utils/linux_magic.h>
 #endif
+#ifdef _AIX
+#include <sys/mntctl.h>
+#include <sys/vmount.h>
+#endif
 #include <sys/time.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
 #endif
+#if HOST_DARWIN
+#include <dlfcn.h>
+#endif
 
 #include "w32file.h"
 #include "w32file-internals.h"
-
 #include "w32file-unix-glob.h"
-#include "w32handle.h"
 #include "w32error.h"
 #include "fdhandle.h"
 #include "utils/mono-io-portability.h"
@@ -47,6 +54,22 @@
 #include "utils/mono-threads.h"
 #include "utils/mono-threads-api.h"
 #include "utils/strenc.h"
+#include "utils/refcount.h"
+#include "icall-decl.h"
+#include "utils/mono-errno.h"
+
+#define NANOSECONDS_PER_MICROSECOND 1000LL
+#define TICKS_PER_MICROSECOND 10L
+#define TICKS_PER_MILLISECOND 10000L
+#define TICKS_PER_SECOND 10000000LL
+#define TICKS_PER_MINUTE 600000000LL
+#define TICKS_PER_HOUR 36000000000LL
+#define TICKS_PER_DAY 864000000000LL
+
+// Constants to convert Unix times to the API expected by .NET and Windows
+#define CONVERT_BASE  116444736000000000ULL
+
+#define INVALID_HANDLE_VALUE ((gpointer)-1)
 
 typedef struct {
 	guint64 device;
@@ -70,11 +93,13 @@ typedef struct {
 } FileHandle;
 
 typedef struct {
+	MonoRefCount ref;
+	MonoCoopMutex mutex;
 	gchar **namelist;
 	gchar *dir_part;
 	gint num;
 	gsize count;
-} MonoW32HandleFind;
+} FindHandle;
 
 /*
  * If SHM is disabled, this will point to a hash of FileShare structures, otherwise
@@ -84,12 +109,21 @@ typedef struct {
 static GHashTable *file_share_table;
 static MonoCoopMutex file_share_mutex;
 
+static GHashTable *finds;
+static MonoCoopMutex finds_mutex;
+
+#if HOST_DARWIN
+typedef int (*clonefile_fn) (const char *from, const char *to, int flags);
+static MonoDl *libc_handle;
+static clonefile_fn clonefile_ptr;
+#endif
+
 static void
 time_t_to_filetime (time_t timeval, FILETIME *filetime)
 {
 	guint64 ticks;
 	
-	ticks = ((guint64)timeval * 10000000) + 116444736000000000ULL;
+	ticks = ((guint64)timeval * 10000000) + CONVERT_BASE;
 	filetime->dwLowDateTime = ticks & 0xFFFFFFFF;
 	filetime->dwHighDateTime = ticks >> 32;
 }
@@ -119,7 +153,7 @@ file_data_close (MonoFDHandle *fdhandle)
 	filehandle = (FileHandle*) fdhandle;
 	g_assert (filehandle);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: closing fd %d", __func__, ((MonoFDHandle*) filehandle)->fd);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: closing fd %d", __func__, ((MonoFDHandle*) filehandle)->fd);
 
 	if (((MonoFDHandle*) filehandle)->type == MONO_FDTYPE_FILE && (filehandle->attrs & FILE_FLAG_DELETE_ON_CLOSE)) {
 		_wapi_unlink (filehandle->filename);
@@ -263,7 +297,7 @@ _wapi_open (const gchar *pathname, gint flags, mode_t mode)
 			located_filename = mono_portability_find_file (pathname, TRUE);
 
 			if (located_filename == NULL) {
-				errno = saved_errno;
+				mono_set_errno (saved_errno);
 				return -1;
 			}
 
@@ -290,7 +324,7 @@ _wapi_access (const gchar *pathname, gint mode)
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -309,31 +343,41 @@ _wapi_chmod (const gchar *pathname, mode_t mode)
 	gint ret;
 
 	MONO_ENTER_GC_SAFE;
+#if defined(HAVE_CHMOD)
 	ret = chmod (pathname, mode);
+#else
+	ret = -1;
+#endif
 	MONO_EXIT_GC_SAFE;
 	if (ret == -1 && (errno == ENOENT || errno == ENOTDIR) && IS_PORTABILITY_SET) {
 		gint saved_errno = errno;
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
+#if defined(HAVE_CHMOD)
 		MONO_ENTER_GC_SAFE;
 		ret = chmod (located_filename, mode);
 		MONO_EXIT_GC_SAFE;
+#else
+		ret = -1;
+#endif
 		g_free (located_filename);
 	}
 
 	return ret;
 }
 
+#ifndef HAVE_STRUCT_TIMEVAL
 static gint
 _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 {
-	gint ret;
+	gint ret = -1;
 
+#ifdef HAVE_UTIME
 	MONO_ENTER_GC_SAFE;
 	ret = utime (filename, buf);
 	MONO_EXIT_GC_SAFE;
@@ -342,7 +386,7 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 		gchar *located_filename = mono_portability_find_file (filename, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -351,9 +395,40 @@ _wapi_utime (const gchar *filename, const struct utimbuf *buf)
 		MONO_EXIT_GC_SAFE;
 		g_free (located_filename);
 	}
+#endif
 
 	return ret;
 }
+
+#else
+static gint
+_wapi_utimes (const gchar *filename, const struct timeval times[2])
+{
+	gint ret = -1;
+
+#ifdef HAVE_UTIMES
+	MONO_ENTER_GC_SAFE;
+	ret = utimes (filename, times);
+	MONO_EXIT_GC_SAFE;
+	if (ret == -1 && errno == ENOENT && IS_PORTABILITY_SET) {
+		gint saved_errno = errno;
+		gchar *located_filename = mono_portability_find_file (filename, TRUE);
+
+		if (located_filename == NULL) {
+			mono_set_errno (saved_errno);
+			return -1;
+		}
+
+		MONO_ENTER_GC_SAFE;
+		ret = utimes (located_filename, times);
+		MONO_EXIT_GC_SAFE;
+		g_free (located_filename);
+	}
+#endif
+
+	return ret;
+}
+#endif
 
 static gint
 _wapi_unlink (const gchar *pathname)
@@ -368,7 +443,7 @@ _wapi_unlink (const gchar *pathname)
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -404,7 +479,7 @@ _wapi_rename (const gchar *oldpath, const gchar *newpath)
 				g_free (located_oldpath);
 				g_free (located_newpath);
 
-				errno = saved_errno;
+				mono_set_errno (saved_errno);
 				return -1;
 			}
 
@@ -432,7 +507,7 @@ _wapi_stat (const gchar *path, struct stat *buf)
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -450,6 +525,7 @@ _wapi_lstat (const gchar *path, struct stat *buf)
 {
 	gint ret;
 
+#ifdef HAVE_LSTAT
 	MONO_ENTER_GC_SAFE;
 	ret = lstat (path, buf);
 	MONO_EXIT_GC_SAFE;
@@ -458,13 +534,16 @@ _wapi_lstat (const gchar *path, struct stat *buf)
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
 		ret = lstat (located_filename, buf);
 		g_free (located_filename);
 	}
+#else
+	ret = -1;
+#endif
 
 	return ret;
 }
@@ -502,7 +581,7 @@ _wapi_rmdir (const gchar *pathname)
 		gchar *located_filename = mono_portability_find_file (pathname, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -528,7 +607,7 @@ _wapi_chdir (const gchar *path)
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 
 		if (located_filename == NULL) {
-			errno = saved_errno;
+			mono_set_errno (saved_errno);
 			return -1;
 		}
 
@@ -546,9 +625,8 @@ _wapi_basename (const gchar *filename)
 {
 	gchar *new_filename = g_strdup (filename), *ret;
 
-	if (IS_PORTABILITY_SET) {
-		g_strdelimit (new_filename, "\\", '/');
-	}
+	if (IS_PORTABILITY_SET)
+		g_strdelimit (new_filename, '\\', '/');
 
 	if (IS_PORTABILITY_DRIVE && g_ascii_isalpha (new_filename[0]) && (new_filename[1] == ':')) {
 		gint len = strlen (new_filename);
@@ -568,9 +646,8 @@ _wapi_dirname (const gchar *filename)
 {
 	gchar *new_filename = g_strdup (filename), *ret;
 
-	if (IS_PORTABILITY_SET) {
-		g_strdelimit (new_filename, "\\", '/');
-	}
+	if (IS_PORTABILITY_SET)
+		g_strdelimit (new_filename, '\\', '/');
 
 	if (IS_PORTABILITY_DRIVE && g_ascii_isalpha (new_filename[0]) && (new_filename[1] == ':')) {
 		gint len = strlen (new_filename);
@@ -586,14 +663,14 @@ _wapi_dirname (const gchar *filename)
 }
 
 static GDir*
-_wapi_g_dir_open (const gchar *path, guint flags, GError **error)
+_wapi_g_dir_open (const gchar *path, guint flags, GError **gerror)
 {
 	GDir *ret;
 
 	MONO_ENTER_GC_SAFE;
-	ret = g_dir_open (path, flags, error);
+	ret = g_dir_open (path, flags, gerror);
 	MONO_EXIT_GC_SAFE;
-	if (ret == NULL && ((*error)->code == G_FILE_ERROR_NOENT || (*error)->code == G_FILE_ERROR_NOTDIR || (*error)->code == G_FILE_ERROR_NAMETOOLONG) && IS_PORTABILITY_SET) {
+	if (ret == NULL && ((*gerror)->code == G_FILE_ERROR_NOENT || (*gerror)->code == G_FILE_ERROR_NOTDIR || (*gerror)->code == G_FILE_ERROR_NAMETOOLONG) && IS_PORTABILITY_SET) {
 		gchar *located_filename = mono_portability_find_file (path, TRUE);
 		GError *tmp_error = NULL;
 
@@ -606,7 +683,7 @@ _wapi_g_dir_open (const gchar *path, guint flags, GError **error)
 		MONO_EXIT_GC_SAFE;
 		g_free (located_filename);
 		if (tmp_error == NULL) {
-			g_clear_error (error);
+			g_clear_error (gerror);
 		}
 	}
 
@@ -699,26 +776,26 @@ file_compare (gconstpointer a, gconstpointer b)
 static gint
 _wapi_io_scandir (const gchar *dirname, const gchar *pattern, gchar ***namelist)
 {
-	GError *error = NULL;
+	GError *gerror = NULL;
 	GDir *dir;
 	GPtrArray *names;
 	gint result;
 	mono_w32file_unix_glob_t glob_buf;
 	gint flags = 0, i;
 
-	dir = _wapi_g_dir_open (dirname, 0, &error);
+	dir = _wapi_g_dir_open (dirname, 0, &gerror);
 	if (dir == NULL) {
 		/* g_dir_open returns ENOENT on directories on which we don't
 		 * have read/x permission */
-		gint errnum = get_errno_from_g_file_error (error->code);
-		g_error_free (error);
+		gint errnum = get_errno_from_g_file_error (gerror->code);
+		g_error_free (gerror);
 		if (errnum == ENOENT &&
 		    !_wapi_access (dirname, F_OK) &&
 		    _wapi_access (dirname, R_OK|X_OK)) {
 			errnum = EACCES;
 		}
 
-		errno = errnum;
+		mono_set_errno (errnum);
 		return -1;
 	}
 
@@ -798,7 +875,7 @@ _wapi_lock_file_region (gint fd, off_t offset, off_t length)
 		ret = fcntl (fd, F_SETLK, &lock_data);
 	} while(ret == -1 && errno == EINTR);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fcntl returns %d", __func__, ret);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fcntl returns %d", __func__, ret);
 
 	if (ret == -1) {
 		/*
@@ -838,7 +915,7 @@ _wapi_unlock_file_region (gint fd, off_t offset, off_t length)
 		ret = fcntl (fd, F_SETLK, &lock_data);
 	} while(ret == -1 && errno == EINTR);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fcntl returns %d", __func__, ret);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fcntl returns %d", __func__, ret);
 
 	if (ret == -1) {
 		/*
@@ -863,28 +940,6 @@ _wapi_unlock_file_region (gint fd, off_t offset, off_t length)
 	return TRUE;
 }
 
-static const gchar* find_typename (void)
-{
-	return "Find";
-}
-
-static gsize find_typesize (void)
-{
-	return sizeof (MonoW32HandleFind);
-}
-
-static MonoW32HandleOps _wapi_find_ops = {
-	NULL,			/* close */
-	NULL,			/* signal */
-	NULL,			/* own */
-	NULL,			/* is_owned */
-	NULL,			/* special_wait */
-	NULL,			/* prewait */
-	NULL,			/* details */
-	find_typename,	/* typename */
-	find_typesize,	/* typesize */
-};
-
 static gboolean lock_while_writing = FALSE;
 
 /* Some utility functions.
@@ -908,6 +963,9 @@ static gboolean lock_while_writing = FALSE;
 static gboolean
 is_file_writable (struct stat *st, const gchar *path)
 {
+	gboolean ret;
+	gchar *located_path;
+
 #if __APPLE__
 	// OS X Finder "locked" or `ls -lO` "uchg".
 	// This only covers one of several cases where an OS X file could be unwritable through special flags.
@@ -927,10 +985,18 @@ is_file_writable (struct stat *st, const gchar *path)
 	if ((st->st_gid == getegid ()) && (st->st_mode & S_IWGRP))
 		return 1;
 
+	located_path = mono_portability_find_file (path, FALSE);
+
 	/* Fallback to using access(2). It's not ideal as it might not take into consideration euid/egid
 	 * but it's the only sane option we have on unix.
 	 */
-	return access (path, W_OK) == 0;
+	MONO_ENTER_GC_SAFE;
+	ret = access (located_path != NULL ? located_path : path, W_OK) == 0;
+	MONO_EXIT_GC_SAFE;
+
+	g_free (located_path);
+
+	return ret;
 }
 
 
@@ -1029,7 +1095,7 @@ file_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *by
 	}
 	
 	if(!(filehandle->fileaccess & (GENERIC_READ | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_READ access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_READ access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(FALSE);
@@ -1045,7 +1111,7 @@ file_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *by
 	if(ret==-1) {
 		gint err = errno;
 
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: read of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(err));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: read of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(err));
 		mono_w32error_set_last (mono_w32error_unix_to_win32 (err));
 		return(FALSE);
 	}
@@ -1058,7 +1124,7 @@ file_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *by
 }
 
 static gboolean
-file_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
+file_write (FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	gint ret;
 	off_t current_pos = 0;
@@ -1069,7 +1135,7 @@ file_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint
 	}
 	
 	if(!(filehandle->fileaccess & GENERIC_WRITE) && !(filehandle->fileaccess & GENERIC_ALL)) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(FALSE);
@@ -1084,7 +1150,7 @@ file_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint
 		current_pos = lseek (((MonoFDHandle*) filehandle)->fd, (off_t)0, SEEK_CUR);
 		MONO_EXIT_GC_SAFE;
 		if (current_pos == -1) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d lseek failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror (errno));
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d lseek failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror (errno));
 			_wapi_set_last_error_from_errno ();
 			return(FALSE);
 		}
@@ -1112,7 +1178,7 @@ file_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint
 		} else {
 			_wapi_set_last_error_from_errno ();
 				
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: write of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: write of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 			return(FALSE);
 		}
@@ -1128,7 +1194,7 @@ static gboolean file_flush(FileHandle *filehandle)
 	gint ret;
 
 	if(!(filehandle->fileaccess & (GENERIC_WRITE | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(FALSE);
@@ -1138,7 +1204,7 @@ static gboolean file_flush(FileHandle *filehandle)
 	ret=fsync(((MonoFDHandle*) filehandle)->fd);
 	MONO_EXIT_GC_SAFE;
 	if (ret==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fsync of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fsync of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 		_wapi_set_last_error_from_errno ();
 		return(FALSE);
@@ -1155,7 +1221,7 @@ static guint32 file_seek(FileHandle *filehandle, gint32 movedistance,
 	guint32 ret;
 
 	if(!(filehandle->fileaccess & (GENERIC_READ | GENERIC_WRITE | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(INVALID_SET_FILE_POINTER);
@@ -1172,7 +1238,7 @@ static guint32 file_seek(FileHandle *filehandle, gint32 movedistance,
 		whence=SEEK_END;
 		break;
 	default:
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: invalid seek type %d", __func__, method);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: invalid seek type %d", __func__, method);
 
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return(INVALID_SET_FILE_POINTER);
@@ -1181,21 +1247,21 @@ static guint32 file_seek(FileHandle *filehandle, gint32 movedistance,
 #ifdef HAVE_LARGE_FILE_SUPPORT
 	if(highmovedistance==NULL) {
 		offset=movedistance;
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setting offset to %" G_GINT64_FORMAT " (low %" G_GINT32_FORMAT ")", __func__,
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: setting offset to %" G_GINT64_FORMAT " (low %" G_GINT32_FORMAT ")", __func__,
 			  offset, movedistance);
 	} else {
 		offset=((gint64) *highmovedistance << 32) | (guint32)movedistance;
 		
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setting offset to %" G_GINT64_FORMAT " 0x%" PRIx64 " (high %" G_GINT32_FORMAT " 0x%" PRIx32 ", low %" G_GINT32_FORMAT " 0x%" PRIx32 ")",
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: setting offset to %" G_GINT64_FORMAT " 0x%" PRIx64 " (high %" G_GINT32_FORMAT " 0x%" PRIx32 ", low %" G_GINT32_FORMAT " 0x%" PRIx32 ")",
 			  __func__, offset, offset, *highmovedistance, *highmovedistance, movedistance, movedistance);
 	}
 #else
 	offset=movedistance;
 #endif
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: moving fd %d by %" G_GINT64_FORMAT " bytes from %d", __func__, ((MonoFDHandle*) filehandle)->fd, offset, whence);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: moving fd %d by %" G_GINT64_FORMAT " bytes from %d", __func__, ((MonoFDHandle*) filehandle)->fd, offset, whence);
 
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 	/* bionic doesn't support -D_FILE_OFFSET_BITS=64 */
 	MONO_ENTER_GC_SAFE;
 	newpos=lseek64(((MonoFDHandle*) filehandle)->fd, offset, whence);
@@ -1206,13 +1272,13 @@ static guint32 file_seek(FileHandle *filehandle, gint32 movedistance,
 	MONO_EXIT_GC_SAFE;
 #endif
 	if(newpos==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: lseek on fd %d returned error %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: lseek on fd %d returned error %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 		_wapi_set_last_error_from_errno ();
 		return(INVALID_SET_FILE_POINTER);
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: lseek returns %" G_GINT64_FORMAT, __func__, newpos);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: lseek returns %" G_GINT64_FORMAT, __func__, newpos);
 
 #ifdef HAVE_LARGE_FILE_SUPPORT
 	ret=newpos & 0xFFFFFFFF;
@@ -1227,7 +1293,7 @@ static guint32 file_seek(FileHandle *filehandle, gint32 movedistance,
 	}
 #endif
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: move of fd %d returning %" G_GUINT32_FORMAT "/%" G_GINT32_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, ret, highmovedistance==NULL?0:*highmovedistance);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: move of fd %d returning %" G_GUINT32_FORMAT "/%" G_GINT32_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, ret, highmovedistance==NULL?0:*highmovedistance);
 
 	return(ret);
 }
@@ -1240,7 +1306,7 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 	MonoThreadInfo *info = mono_thread_info_current ();
 	
 	if(!(filehandle->fileaccess & (GENERIC_WRITE | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(FALSE);
@@ -1256,7 +1322,7 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 	ret=fstat(((MonoFDHandle*) filehandle)->fd, &statbuf);
 	MONO_EXIT_GC_SAFE;
 	if(ret==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d fstat failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d fstat failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 		_wapi_set_last_error_from_errno ();
 		return(FALSE);
@@ -1266,7 +1332,7 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 	pos=lseek(((MonoFDHandle*) filehandle)->fd, (off_t)0, SEEK_CUR);
 	MONO_EXIT_GC_SAFE;
 	if(pos==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d lseek failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d lseek failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 		_wapi_set_last_error_from_errno ();
 		return(FALSE);
@@ -1294,7 +1360,7 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 			 !mono_thread_info_is_interrupt_state (info));
 
 		if(ret==-1) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d extend write failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d extend write failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 			_wapi_set_last_error_from_errno ();
 			return(FALSE);
@@ -1305,7 +1371,7 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 		ret = lseek (((MonoFDHandle*) filehandle)->fd, pos, SEEK_SET);
 		MONO_EXIT_GC_SAFE;
 		if (ret == -1) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d second lseek failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d second lseek failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 			_wapi_set_last_error_from_errno ();
 			return(FALSE);
@@ -1323,7 +1389,7 @@ static gboolean file_setendoffile(FileHandle *filehandle)
 	}
 	while (ret==-1 && errno==EINTR && !mono_thread_info_is_interrupt_state (info)); 
 	if(ret==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d ftruncate failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d ftruncate failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 		
 		_wapi_set_last_error_from_errno ();
 		return(FALSE);
@@ -1339,7 +1405,7 @@ static guint32 file_getfilesize(FileHandle *filehandle, guint32 *highsize)
 	gint ret;
 	
 	if(!(filehandle->fileaccess & (GENERIC_READ | GENERIC_WRITE | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(INVALID_FILE_SIZE);
@@ -1355,7 +1421,7 @@ static guint32 file_getfilesize(FileHandle *filehandle, guint32 *highsize)
 	ret = fstat(((MonoFDHandle*) filehandle)->fd, &statbuf);
 	MONO_EXIT_GC_SAFE;
 	if (ret == -1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d fstat failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d fstat failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 		_wapi_set_last_error_from_errno ();
 		return(INVALID_FILE_SIZE);
@@ -1370,7 +1436,7 @@ static guint32 file_getfilesize(FileHandle *filehandle, guint32 *highsize)
 		res = ioctl (((MonoFDHandle*) filehandle)->fd, BLKGETSIZE64, &bigsize);
 		MONO_EXIT_GC_SAFE;
 		if (res < 0) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d ioctl BLKGETSIZE64 failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d ioctl BLKGETSIZE64 failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 			_wapi_set_last_error_from_errno ();
 			return(INVALID_FILE_SIZE);
@@ -1381,7 +1447,7 @@ static guint32 file_getfilesize(FileHandle *filehandle, guint32 *highsize)
 			*highsize = bigsize>>32;
 		}
 
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Returning block device size %" G_GUINT32_FORMAT "/%" G_GUINT32_FORMAT,
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Returning block device size %" G_GUINT32_FORMAT "/%" G_GUINT32_FORMAT,
 			   __func__, size, *highsize);
 	
 		return(size);
@@ -1401,76 +1467,68 @@ static guint32 file_getfilesize(FileHandle *filehandle, guint32 *highsize)
 	size = statbuf.st_size;
 #endif
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Returning size %" G_GUINT32_FORMAT "/%" G_GUINT32_FORMAT, __func__, size, *highsize);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Returning size %" G_GUINT32_FORMAT "/%" G_GUINT32_FORMAT, __func__, size, *highsize);
 	
 	return(size);
 }
 
-static gboolean file_getfiletime(FileHandle *filehandle, FILETIME *create_time,
-				 FILETIME *access_time,
-				 FILETIME *write_time)
+static guint64
+convert_unix_filetime_ms (const FILETIME *file_time, const char *ttype)
 {
-	struct stat statbuf;
-	guint64 create_ticks, access_ticks, write_ticks;
-	gint ret;
+	guint64 t = ((guint64) file_time->dwHighDateTime << 32) + file_time->dwLowDateTime;
 
-	if(!(filehandle->fileaccess & (GENERIC_READ | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_READ access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
-
-		mono_w32error_set_last (ERROR_ACCESS_DENIED);
-		return(FALSE);
-	}
-	
-	MONO_ENTER_GC_SAFE;
-	ret=fstat(((MonoFDHandle*) filehandle)->fd, &statbuf);
-	MONO_EXIT_GC_SAFE;
-	if(ret==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d fstat failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
-
-		_wapi_set_last_error_from_errno ();
-		return(FALSE);
-	}
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: atime: %ld ctime: %ld mtime: %ld", __func__,
-		  statbuf.st_atime, statbuf.st_ctime,
-		  statbuf.st_mtime);
-
-	/* Try and guess a meaningful create time by using the older
-	 * of atime or ctime
+	/* This is (time_t)0.  We can actually go to INT_MIN,
+	 * but this will do for now.
 	 */
-	/* The magic constant comes from msdn documentation
-	 * "Converting a time_t Value to a File Time"
-	 */
-	if(statbuf.st_atime < statbuf.st_ctime) {
-		create_ticks=((guint64)statbuf.st_atime*10000000)
-			+ 116444736000000000ULL;
-	} else {
-		create_ticks=((guint64)statbuf.st_ctime*10000000)
-			+ 116444736000000000ULL;
-	}
-	
-	access_ticks=((guint64)statbuf.st_atime*10000000)+116444736000000000ULL;
-	write_ticks=((guint64)statbuf.st_mtime*10000000)+116444736000000000ULL;
-	
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: aticks: %" G_GUINT64_FORMAT " cticks: %" G_GUINT64_FORMAT " wticks: %" G_GUINT64_FORMAT, __func__,
-		  access_ticks, create_ticks, write_ticks);
-
-	if(create_time!=NULL) {
-		create_time->dwLowDateTime = create_ticks & 0xFFFFFFFF;
-		create_time->dwHighDateTime = create_ticks >> 32;
-	}
-	
-	if(access_time!=NULL) {
-		access_time->dwLowDateTime = access_ticks & 0xFFFFFFFF;
-		access_time->dwHighDateTime = access_ticks >> 32;
-	}
-	
-	if(write_time!=NULL) {
-		write_time->dwLowDateTime = write_ticks & 0xFFFFFFFF;
-		write_time->dwHighDateTime = write_ticks >> 32;
+	if (t < CONVERT_BASE) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set %s time too early", __func__, ttype);
+		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
+		return (FALSE);
 	}
 
-	return(TRUE);
+	return t - CONVERT_BASE;
+}
+
+#ifndef HAVE_STRUCT_TIMEVAL
+static guint64
+convert_unix_filetime (const FILETIME *file_time, size_t field_size, const char *ttype)
+{
+	guint64 t = convert_unix_filetime_ms (file_time, ttype);
+
+	if (field_size == 4 && (t / 10000000) > INT_MAX) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: attempt to set %s time that is too big for a 32bits time_t", __func__, ttype);
+		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
+		return (FALSE);
+	}
+
+	return t / 10000000;
+}
+#endif
+
+static void convert_stattime_access_to_timeval (struct timeval *dest, struct stat *statbuf)
+{
+#if HAVE_STRUCT_STAT_ST_ATIMESPEC
+	dest->tv_sec = statbuf->st_atimespec.tv_sec;
+	dest->tv_usec = statbuf->st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND;
+#else
+	dest->tv_sec = statbuf->st_atime;
+#if HAVE_STRUCT_STAT_ST_ATIM
+	dest->tv_usec = statbuf->st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND;
+#endif
+#endif
+}
+
+static void convert_stattime_mod_to_timeval (struct timeval *dest, struct stat *statbuf)
+{
+#if HAVE_STRUCT_STAT_ST_ATIMESPEC
+	dest->tv_sec = statbuf->st_mtimespec.tv_sec;
+	dest->tv_usec = statbuf->st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND;
+#else
+	dest->tv_sec = statbuf->st_mtime;
+#if HAVE_STRUCT_STAT_ST_ATIM
+	dest->tv_usec = statbuf->st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND;
+#endif
+#endif
 }
 
 static gboolean file_setfiletime(FileHandle *filehandle,
@@ -1478,21 +1536,18 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 				 const FILETIME *access_time,
 				 const FILETIME *write_time)
 {
-	struct utimbuf utbuf;
 	struct stat statbuf;
-	guint64 access_ticks, write_ticks;
 	gint ret;
 	
-	
 	if(!(filehandle->fileaccess & (GENERIC_WRITE | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(FALSE);
 	}
 
 	if(filehandle->filename == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d unknown filename", __func__, ((MonoFDHandle*) filehandle)->fd);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d unknown filename", __func__, ((MonoFDHandle*) filehandle)->fd);
 
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
 		return(FALSE);
@@ -1505,67 +1560,44 @@ static gboolean file_setfiletime(FileHandle *filehandle,
 	ret=fstat (((MonoFDHandle*) filehandle)->fd, &statbuf);
 	MONO_EXIT_GC_SAFE;
 	if(ret==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d fstat failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d fstat failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return(FALSE);
 	}
 
-	if(access_time!=NULL) {
-		access_ticks=((guint64)access_time->dwHighDateTime << 32) +
-			access_time->dwLowDateTime;
-		/* This is (time_t)0.  We can actually go to INT_MIN,
-		 * but this will do for now.
-		 */
-		if (access_ticks < 116444736000000000ULL) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: attempt to set access time too early",
-				   __func__);
-			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
-			return(FALSE);
-		}
+#ifdef HAVE_STRUCT_TIMEVAL
+	struct timeval times [2];
+	memset (times, 0, sizeof (times));
 
-		if (sizeof (utbuf.actime) == 4 && ((access_ticks - 116444736000000000ULL) / 10000000) > INT_MAX) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: attempt to set write time that is too big for a 32bits time_t",
-				   __func__);
-			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
-			return(FALSE);
-		}
-
-		utbuf.actime=(access_ticks - 116444736000000000ULL) / 10000000;
+	if (access_time) {
+		guint64 actime = convert_unix_filetime_ms (access_time, "access");
+		times [0].tv_sec = actime / TICKS_PER_SECOND;
+		times [0].tv_usec = (actime % TICKS_PER_SECOND) / TICKS_PER_MICROSECOND;
 	} else {
-		utbuf.actime=statbuf.st_atime;
+		convert_stattime_access_to_timeval (&times [0], &statbuf);
 	}
 
-	if(write_time!=NULL) {
-		write_ticks=((guint64)write_time->dwHighDateTime << 32) +
-			write_time->dwLowDateTime;
-		/* This is (time_t)0.  We can actually go to INT_MIN,
-		 * but this will do for now.
-		 */
-		if (write_ticks < 116444736000000000ULL) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: attempt to set write time too early",
-				   __func__);
-			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
-			return(FALSE);
-		}
-		if (sizeof (utbuf.modtime) == 4 && ((write_ticks - 116444736000000000ULL) / 10000000) > INT_MAX) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: attempt to set write time that is too big for a 32bits time_t",
-				   __func__);
-			mono_w32error_set_last (ERROR_INVALID_PARAMETER);
-			return(FALSE);
-		}
-		
-		utbuf.modtime=(write_ticks - 116444736000000000ULL) / 10000000;
+	if (write_time) {
+		guint64 wtime = convert_unix_filetime_ms (write_time, "write");
+		times [1].tv_sec = wtime / TICKS_PER_SECOND;
+		times [1].tv_usec = (wtime % TICKS_PER_SECOND) / TICKS_PER_MICROSECOND;
 	} else {
-		utbuf.modtime=statbuf.st_mtime;
+		convert_stattime_mod_to_timeval (&times [1], &statbuf);
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: setting fd %d access %ld write %ld", __func__,
-		   ((MonoFDHandle*) filehandle)->fd, utbuf.actime, utbuf.modtime);
+	ret = _wapi_utimes (filehandle->filename, times);
+#else
+	struct utimbuf utbuf;
+	utbuf.actime  = access_time ? convert_unix_filetime (access_time, sizeof (utbuf.actime), "access") : statbuf.st_atime;
+	utbuf.modtime = write_time  ? convert_unix_filetime (write_time,  sizeof (utbuf.modtime), "write") : statbuf.st_mtime;
+
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: setting fd %d access %ld write %ld", __func__, ((MonoFDHandle*) filehandle)->fd, utbuf.actime, utbuf.modtime);
 
 	ret = _wapi_utime (filehandle->filename, &utbuf);
+#endif
 	if (ret == -1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d [%s] utime failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->filename, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d [%s] utime failed: %s", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->filename, g_strerror(errno));
 
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return(FALSE);
@@ -1585,7 +1617,7 @@ console_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 
 	}
 	
 	if(!(filehandle->fileaccess & (GENERIC_READ | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_READ access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_READ access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(FALSE);
@@ -1598,7 +1630,7 @@ console_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 
 	} while (ret==-1 && errno==EINTR && !mono_thread_info_is_interrupt_state (info));
 
 	if(ret==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: read of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: read of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 		_wapi_set_last_error_from_errno ();
 		return(FALSE);
@@ -1612,7 +1644,7 @@ console_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 
 }
 
 static gboolean
-console_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
+console_write (FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	gint ret;
 	MonoThreadInfo *info = mono_thread_info_current ();
@@ -1622,7 +1654,7 @@ console_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, gu
 	}
 	
 	if(!(filehandle->fileaccess & (GENERIC_WRITE | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(FALSE);
@@ -1641,7 +1673,7 @@ console_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, gu
 		} else {
 			_wapi_set_last_error_from_errno ();
 			
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: write of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: write of fd %d error: %s", __func__, ((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 			return(FALSE);
 		}
@@ -1664,13 +1696,13 @@ pipe_read (FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *b
 	}
 	
 	if(!(filehandle->fileaccess & (GENERIC_READ | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_READ access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_READ access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(FALSE);
 	}
 	
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: reading up to %" G_GUINT32_FORMAT " bytes from pipe %d", __func__, numbytes, ((MonoFDHandle*) filehandle)->fd);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: reading up to %" G_GUINT32_FORMAT " bytes from pipe %d", __func__, numbytes, ((MonoFDHandle*) filehandle)->fd);
 
 	do {
 		MONO_ENTER_GC_SAFE;
@@ -1684,13 +1716,13 @@ pipe_read (FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *b
 		} else {
 			_wapi_set_last_error_from_errno ();
 			
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: read of fd %d error: %s", __func__,((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: read of fd %d error: %s", __func__,((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 			return(FALSE);
 		}
 	}
 	
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: read %d bytes from pipe %d", __func__, ret, ((MonoFDHandle*) filehandle)->fd);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: read %d bytes from pipe %d", __func__, ret, ((MonoFDHandle*) filehandle)->fd);
 
 	if(bytesread!=NULL) {
 		*bytesread=ret;
@@ -1700,7 +1732,7 @@ pipe_read (FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *b
 }
 
 static gboolean
-pipe_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
+pipe_write (FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *byteswritten)
 {
 	gint ret;
 	MonoThreadInfo *info = mono_thread_info_current ();
@@ -1710,13 +1742,13 @@ pipe_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint
 	}
 	
 	if(!(filehandle->fileaccess & (GENERIC_WRITE | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		return(FALSE);
 	}
 	
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: writing up to %" G_GUINT32_FORMAT " bytes to pipe %d", __func__, numbytes, ((MonoFDHandle*) filehandle)->fd);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: writing up to %" G_GUINT32_FORMAT " bytes to pipe %d", __func__, numbytes, ((MonoFDHandle*) filehandle)->fd);
 
 	do {
 		MONO_ENTER_GC_SAFE;
@@ -1731,7 +1763,7 @@ pipe_write(FileHandle *filehandle, gconstpointer buffer, guint32 numbytes, guint
 		} else {
 			_wapi_set_last_error_from_errno ();
 			
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: write of fd %d error: %s", __func__,((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: write of fd %d error: %s", __func__,((MonoFDHandle*) filehandle)->fd, g_strerror(errno));
 
 			return(FALSE);
 		}
@@ -1758,7 +1790,7 @@ static gint convert_flags(guint32 fileaccess, guint32 createmode)
 		flags=O_RDWR;
 		break;
 	default:
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Unknown access type 0x%" PRIx32, __func__,
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unknown access type 0x%" PRIx32, __func__,
 			  fileaccess);
 		break;
 	}
@@ -1779,7 +1811,7 @@ static gint convert_flags(guint32 fileaccess, guint32 createmode)
 		flags|=O_TRUNC;
 		break;
 	default:
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Unknown create mode 0x%" PRIx32, __func__,
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unknown create mode 0x%" PRIx32, __func__,
 			  createmode);
 		break;
 	}
@@ -1819,7 +1851,7 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 		 */
 		if (file_existing_share == 0) {
 			/* Quick and easy, no possibility to share */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing = NONE", __func__, fileaccess);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing = NONE", __func__, fileaccess);
 
 			file_share_release (*share_info);
 			*share_info = NULL;
@@ -1832,7 +1864,7 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 		    ((file_existing_share == FILE_SHARE_WRITE) &&
 		     (fileaccess != GENERIC_WRITE))) {
 			/* New access mode doesn't match up */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing: 0x%" PRIx32, __func__, fileaccess, file_existing_share);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing: 0x%" PRIx32, __func__, fileaccess, file_existing_share);
 
 			file_share_release (*share_info);
 			*share_info = NULL;
@@ -1845,7 +1877,7 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 		    ((file_existing_access & GENERIC_WRITE) &&
 		     !(sharemode & FILE_SHARE_WRITE))) {
 			/* New share mode doesn't match up */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Access mode prevents open: requested share: 0x%" PRIx32 ", file has access: 0x%" PRIx32, __func__, sharemode, file_existing_access);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Access mode prevents open: requested share: 0x%" PRIx32 ", file has access: 0x%" PRIx32, __func__, sharemode, file_existing_access);
 
 			file_share_release (*share_info);
 			*share_info = NULL;
@@ -1853,7 +1885,7 @@ static gboolean share_allows_open (struct stat *statbuf, guint32 sharemode,
 			return(FALSE);
 		}
 	} else {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: New file!", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: New file!", __func__);
 	}
 
 	return(TRUE);
@@ -1875,7 +1907,7 @@ share_allows_delete (struct stat *statbuf, FileShare **share_info)
 		 */
 		if (file_existing_share == 0) {
 			/* Quick and easy, no possibility to share */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing = NONE", __func__, (*share_info)->access);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing = NONE", __func__, (*share_info)->access);
 
 			file_share_release (*share_info);
 			*share_info = NULL;
@@ -1885,7 +1917,7 @@ share_allows_delete (struct stat *statbuf, FileShare **share_info)
 
 		if (!(file_existing_share & FILE_SHARE_DELETE)) {
 			/* New access mode doesn't match up */
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing: 0x%" PRIx32, __func__, (*share_info)->access, file_existing_share);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Share mode prevents open: requested access: 0x%" PRIx32 ", file has sharing: 0x%" PRIx32, __func__, (*share_info)->access, file_existing_share);
 
 			file_share_release (*share_info);
 			*share_info = NULL;
@@ -1893,7 +1925,7 @@ share_allows_delete (struct stat *statbuf, FileShare **share_info)
 			return(FALSE);
 		}
 	} else {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: New file!", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: New file!", __func__);
 	}
 
 	return(TRUE);
@@ -1925,7 +1957,7 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	}
 	
 	if (name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(INVALID_HANDLE_VALUE);
@@ -1933,13 +1965,13 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 
 	filename = mono_unicode_to_external (name);
 	if (filename == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(INVALID_HANDLE_VALUE);
 	}
 	
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Opening %s with share 0x%" PRIx32 " and access 0x%" PRIx32, __func__,
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Opening %s with share 0x%" PRIx32 " and access 0x%" PRIx32, __func__,
 		   filename, sharemode, fileaccess);
 	
 	fd = _wapi_open (filename, flags, perms);
@@ -1959,7 +1991,7 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	}
 	
 	if (fd == -1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Error opening file %s: %s", __func__, filename, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Error opening file %s: %s", __func__, filename, g_strerror(errno));
 		_wapi_set_last_path_error_from_errno (NULL, filename);
 		g_free (filename);
 
@@ -1970,7 +2002,7 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	ret = fstat (fd, &statbuf);
 	MONO_EXIT_GC_SAFE;
 	if (ret == -1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fstat error of file %s: %s", __func__, filename, g_strerror (errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fstat error of file %s: %s", __func__, filename, g_strerror (errno));
 		_wapi_set_last_error_from_errno ();
 		MONO_ENTER_GC_SAFE;
 		close (fd);
@@ -2010,7 +2042,7 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 	}
 	if (!filehandle->share_info) {
 		/* No space, so no more files can be opened */
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: No space in the share table", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: No space in the share table", __func__);
 
 		mono_w32error_set_last (ERROR_TOO_MANY_OPEN_FILES);
 		MONO_ENTER_GC_SAFE;
@@ -2044,7 +2076,7 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 
 	mono_fdhandle_insert ((MonoFDHandle*) filehandle);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: returning handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd));
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: returning handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd));
 
 	return GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd);
 }
@@ -2071,7 +2103,7 @@ gboolean mono_w32file_delete(const gunichar2 *name)
 #endif
 	
 	if(name==NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(FALSE);
@@ -2079,7 +2111,7 @@ gboolean mono_w32file_delete(const gunichar2 *name)
 
 	filename=mono_unicode_to_external(name);
 	if(filename==NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(FALSE);
@@ -2123,7 +2155,7 @@ gboolean mono_w32file_delete(const gunichar2 *name)
 		if (errno == EROFS) {
 			MonoIOStat stat;
 			if (mono_w32file_get_attributes_ex (name, &stat)) //The file exists, so must be due the RO file system
-				errno = EROFS;
+				mono_set_errno (EROFS);
 		}
 		_wapi_set_last_path_error_from_errno (NULL, filename);
 	} else {
@@ -2136,7 +2168,7 @@ gboolean mono_w32file_delete(const gunichar2 *name)
 }
 
 static gboolean
-MoveFile (gunichar2 *name, gunichar2 *dest_name)
+MoveFile (const gunichar2 *name, const gunichar2 *dest_name)
 {
 	gchar *utf8_name, *utf8_dest_name;
 	gint result, errno_copy;
@@ -2145,7 +2177,7 @@ MoveFile (gunichar2 *name, gunichar2 *dest_name)
 	FileShare *shareinfo;
 	
 	if(name==NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(FALSE);
@@ -2153,14 +2185,14 @@ MoveFile (gunichar2 *name, gunichar2 *dest_name)
 
 	utf8_name = mono_unicode_to_external (name);
 	if (utf8_name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 		
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return FALSE;
 	}
 	
 	if(dest_name==NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		g_free (utf8_name);
 		mono_w32error_set_last (ERROR_INVALID_NAME);
@@ -2169,7 +2201,7 @@ MoveFile (gunichar2 *name, gunichar2 *dest_name)
 
 	utf8_dest_name = mono_unicode_to_external (dest_name);
 	if (utf8_dest_name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 
 		g_free (utf8_name);
 		mono_w32error_set_last (ERROR_INVALID_NAME);
@@ -2305,7 +2337,7 @@ write_file (gint src_fd, gint dest_fd, struct stat *st_src, gboolean report_erro
 
 				if (report_errors)
 					_wapi_set_last_error_from_errno ();
-				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: write failed.", __func__);
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: write failed.", __func__);
 				g_free (buf);
 				return FALSE;
 			}
@@ -2319,19 +2351,41 @@ write_file (gint src_fd, gint dest_fd, struct stat *st_src, gboolean report_erro
 	return TRUE ;
 }
 
+#if HOST_DARWIN
+static int
+_wapi_clonefile(const char *from, const char *to, int flags)
+{
+	gchar *located_from, *located_to;
+	int ret;
+
+	g_assert (clonefile_ptr != NULL);
+
+	located_from = mono_portability_find_file (from, FALSE);
+	located_to = mono_portability_find_file (to, FALSE);
+
+	MONO_ENTER_GC_SAFE;
+	ret = clonefile_ptr (
+		located_from == NULL ? from : located_from,
+		located_to == NULL ? to : located_to,
+		flags);
+	MONO_EXIT_GC_SAFE;
+
+	g_free (located_from);
+	g_free (located_to);
+
+	return ret;
+}
+#endif
+
 static gboolean
 CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_exists)
 {
 	gchar *utf8_src, *utf8_dest;
-	gint src_fd, dest_fd;
 	struct stat st, dest_st;
-	struct utimbuf dest_time;
 	gboolean ret = TRUE;
-	gint ret_utime;
-	gint syscall_res;
 	
 	if(name==NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(FALSE);
@@ -2339,7 +2393,7 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	
 	utf8_src = mono_unicode_to_external (name);
 	if (utf8_src == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion of source returned NULL",
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion of source returned NULL",
 			   __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
@@ -2347,7 +2401,7 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	}
 	
 	if(dest_name==NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: dest is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: dest is NULL", __func__);
 
 		g_free (utf8_src);
 		mono_w32error_set_last (ERROR_INVALID_NAME);
@@ -2356,7 +2410,7 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	
 	utf8_dest = mono_unicode_to_external (dest_name);
 	if (utf8_dest == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion of dest returned NULL",
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion of dest returned NULL",
 			   __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
@@ -2365,7 +2419,11 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 		
 		return(FALSE);
 	}
-	
+
+	gint src_fd, dest_fd;
+	gint ret_utime;
+	gint syscall_res;
+
 	src_fd = _wapi_open (utf8_src, O_RDONLY, 0);
 	if (src_fd < 0) {
 		_wapi_set_last_path_error_from_errno (NULL, utf8_src);
@@ -2391,22 +2449,76 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 		return(FALSE);
 	}
 
-	/* Before trying to open/create the dest, we need to report a 'file busy'
-	 * error if src and dest are actually the same file. We do the check here to take
-	 * advantage of the IOMAP capability */
-	if (!_wapi_stat (utf8_dest, &dest_st) && st.st_dev == dest_st.st_dev && 
-			st.st_ino == dest_st.st_ino) {
+	if (!_wapi_stat (utf8_dest, &dest_st)) {
+		/* Before trying to open/create the dest, we need to report a 'file busy'
+		 * error if src and dest are actually the same file. We do the check here to take
+		 * advantage of the IOMAP capability */
+		if (st.st_dev == dest_st.st_dev && st.st_ino == dest_st.st_ino) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+			MONO_ENTER_GC_SAFE;
+			close (src_fd);
+			MONO_EXIT_GC_SAFE;
 
-		g_free (utf8_src);
-		g_free (utf8_dest);
-		MONO_ENTER_GC_SAFE;
-		close (src_fd);
-		MONO_EXIT_GC_SAFE;
+			mono_w32error_set_last (ERROR_SHARING_VIOLATION);
+			return (FALSE);
+		}
 
-		mono_w32error_set_last (ERROR_SHARING_VIOLATION);
-		return (FALSE);
+		/* Take advantage of the fact that we already know the file exists and bail out
+		 * early */
+		if (fail_if_exists) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+			MONO_ENTER_GC_SAFE;
+			close (src_fd);
+			MONO_EXIT_GC_SAFE;
+
+			mono_w32error_set_last (ERROR_ALREADY_EXISTS);
+			return (FALSE);
+		}
+
+#if HOST_DARWIN
+		/* If we attempt to use clonefile API we need to unlink the destination file
+		 * first */
+		if (clonefile_ptr != NULL) {
+
+			/* Bail out if the destination is read-only */
+			if (!is_file_writable (&dest_st, utf8_dest)) {
+				g_free (utf8_src);
+				g_free (utf8_dest);
+				MONO_ENTER_GC_SAFE;
+				close (src_fd);
+				MONO_EXIT_GC_SAFE;
+
+				mono_w32error_set_last (ERROR_ACCESS_DENIED);
+				return (FALSE);
+			}
+
+			_wapi_unlink (utf8_dest);
+		}
+#endif
 	}
-	
+
+#if HOST_DARWIN
+	if (clonefile_ptr != NULL) {
+		ret = _wapi_clonefile (utf8_src, utf8_dest, 0);
+		if (ret == 0 || (errno != ENOTSUP && errno != EXDEV)) {
+			g_free (utf8_src);
+			g_free (utf8_dest);
+			MONO_ENTER_GC_SAFE;
+			close (src_fd);
+			MONO_EXIT_GC_SAFE;
+
+			if (ret == 0) {
+				return (TRUE);
+			} else {
+				_wapi_set_last_error_from_errno ();
+				return (FALSE);
+			}
+		}
+	}
+#endif
+
 	if (fail_if_exists) {
 		dest_fd = _wapi_open (utf8_dest, O_WRONLY | O_CREAT | O_EXCL, st.st_mode);
 	} else {
@@ -2442,13 +2554,23 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	close (src_fd);
 	close (dest_fd);
 	
+#ifdef HAVE_STRUCT_TIMEVAL
+	struct timeval times [2];
+	memset (times, 0, sizeof (times));
+
+	convert_stattime_access_to_timeval (&times [0], &st);
+	convert_stattime_mod_to_timeval (&times [1], &st);
+
+	ret_utime = _wapi_utimes (utf8_dest, times);
+#else
+	struct utimbuf dest_time;
 	dest_time.modtime = st.st_mtime;
 	dest_time.actime = st.st_atime;
-	MONO_ENTER_GC_SAFE;
-	ret_utime = utime (utf8_dest, &dest_time);
-	MONO_EXIT_GC_SAFE;
+
+	ret_utime = _wapi_utime (utf8_dest, &dest_time);
+#endif
 	if (ret_utime == -1)
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: file [%s] utime failed: %s", __func__, utf8_dest, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: file [%s] utime failed: %s", __func__, utf8_dest, g_strerror(errno));
 	
 	g_free (utf8_src);
 	g_free (utf8_dest);
@@ -2462,14 +2584,14 @@ convert_arg_to_utf8 (const gunichar2 *arg, const gchar *arg_name)
 	gchar *utf8_ret;
 
 	if (arg == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: %s is NULL", __func__, arg_name);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: %s is NULL", __func__, arg_name);
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return NULL;
 	}
 
 	utf8_ret = mono_unicode_to_external (arg);
 	if (utf8_ret == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion of %s returned NULL",
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion of %s returned NULL",
 			   __func__, arg_name);
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return NULL;
@@ -2545,7 +2667,7 @@ _wapi_stdhandle_create (gint fd, const gchar *name)
 	gint flags;
 	FileHandle *filehandle;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: creating standard handle type %s, fd %d", __func__, name, fd);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: creating standard handle type %s, fd %d", __func__, name, fd);
 
 	/* Check if fd is valid */
 	do {
@@ -2556,7 +2678,7 @@ _wapi_stdhandle_create (gint fd, const gchar *name)
 		/* Invalid fd.  Not really much point checking for EBADF
 		 * specifically
 		 */
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fcntl error on fd %d: %s", __func__, fd, g_strerror(errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fcntl error on fd %d: %s", __func__, fd, g_strerror(errno));
 
 		mono_w32error_set_last (mono_w32error_unix_to_win32 (errno));
 		return INVALID_HANDLE_VALUE;
@@ -2576,7 +2698,7 @@ _wapi_stdhandle_create (gint fd, const gchar *name)
 		filehandle->fileaccess = GENERIC_READ | GENERIC_WRITE;
 		break;
 	default:
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Can't figure out flags 0x%x", __func__, flags);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Can't figure out flags 0x%x", __func__, flags);
 		filehandle->fileaccess = 0;
 		break;
 	}
@@ -2599,7 +2721,7 @@ _wapi_stdhandle_create (gint fd, const gchar *name)
 		return GINT_TO_POINTER(fd);
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: returning handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd));
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: returning handle %p", __func__, GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd));
 
 	return GINT_TO_POINTER(((MonoFDHandle*) filehandle)->fd);
 }
@@ -2650,66 +2772,53 @@ mono_w32file_get_std_handle (gint stdhandle)
 	return GINT_TO_POINTER (fd);
 }
 
-gboolean
-mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread)
+static gboolean
+mono_w32file_read_or_write (gboolean read, gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread, gint32 *win32error)
 {
-	FileHandle *filehandle;
-	gboolean ret;
+	MONO_REQ_GC_UNSAFE_MODE;
 
-	if (!mono_fdhandle_lookup_and_ref(GPOINTER_TO_INT(handle), (MonoFDHandle**) &filehandle)) {
+	FileHandle *filehandle;
+	gboolean ret = FALSE;
+
+	gboolean const ref = mono_fdhandle_lookup_and_ref(GPOINTER_TO_INT(handle), (MonoFDHandle**) &filehandle);
+	if (!ref) {
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
+		goto exit;
 	}
 
 	switch (((MonoFDHandle*) filehandle)->type) {
 	case MONO_FDTYPE_FILE:
-		ret = file_read(filehandle, buffer, numbytes, bytesread);
+		ret = (read ? file_read : file_write) (filehandle, buffer, numbytes, bytesread);
 		break;
 	case MONO_FDTYPE_CONSOLE:
-		ret = console_read(filehandle, buffer, numbytes, bytesread);
+		ret = (read ? console_read : console_write) (filehandle, buffer, numbytes, bytesread);
 		break;
 	case MONO_FDTYPE_PIPE:
-		ret = pipe_read(filehandle, buffer, numbytes, bytesread);
+		ret = (read ? pipe_read : pipe_write) (filehandle, buffer, numbytes, bytesread);
 		break;
 	default:
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_fdhandle_unref ((MonoFDHandle*) filehandle);
-		return FALSE;
+		break;
 	}
 
-	mono_fdhandle_unref ((MonoFDHandle*) filehandle);
+exit:
+	if (ref)
+		mono_fdhandle_unref ((MonoFDHandle*) filehandle);
+	if (!ret)
+		*win32error = mono_w32error_get_last ();
 	return ret;
 }
 
 gboolean
-mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten)
+mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread, gint32 *win32error)
 {
-	FileHandle *filehandle;
-	gboolean ret;
+	return mono_w32file_read_or_write (TRUE, handle, buffer, numbytes, bytesread, win32error);
+}
 
-	if (!mono_fdhandle_lookup_and_ref(GPOINTER_TO_INT(handle), (MonoFDHandle**) &filehandle)) {
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	switch (((MonoFDHandle*) filehandle)->type) {
-	case MONO_FDTYPE_FILE:
-		ret = file_write(filehandle, buffer, numbytes, byteswritten);
-		break;
-	case MONO_FDTYPE_CONSOLE:
-		ret = console_write(filehandle, buffer, numbytes, byteswritten);
-		break;
-	case MONO_FDTYPE_PIPE:
-		ret = pipe_write(filehandle, buffer, numbytes, byteswritten);
-		break;
-	default:
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_fdhandle_unref ((MonoFDHandle*) filehandle);
-		return FALSE;
-	}
-
-	mono_fdhandle_unref ((MonoFDHandle*) filehandle);
-	return ret;
+gboolean
+mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten, gint32 *win32error)
+{
+	return mono_w32file_read_or_write (FALSE, handle, (gpointer)buffer, numbytes, byteswritten, win32error);
 }
 
 gboolean
@@ -2844,31 +2953,6 @@ GetFileSize(gpointer handle, guint32 *highsize)
 }
 
 gboolean
-mono_w32file_get_times(gpointer handle, FILETIME *create_time, FILETIME *access_time, FILETIME *write_time)
-{
-	FileHandle *filehandle;
-	gboolean ret;
-
-	if (!mono_fdhandle_lookup_and_ref(GPOINTER_TO_INT(handle), (MonoFDHandle**) &filehandle)) {
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return FALSE;
-	}
-
-	switch (((MonoFDHandle*) filehandle)->type) {
-	case MONO_FDTYPE_FILE:
-		ret = file_getfiletime(filehandle, create_time, access_time, write_time);
-		break;
-	default:
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		mono_fdhandle_unref ((MonoFDHandle*) filehandle);
-		return FALSE;
-	}
-
-	mono_fdhandle_unref ((MonoFDHandle*) filehandle);
-	return ret;
-}
-
-gboolean
 mono_w32file_set_times(gpointer handle, const FILETIME *create_time, const FILETIME *access_time, const FILETIME *write_time)
 {
 	FileHandle *filehandle;
@@ -2897,12 +2981,6 @@ mono_w32file_set_times(gpointer handle, const FILETIME *create_time, const FILET
  * January 1 1601 GMT
  */
 
-#define TICKS_PER_MILLISECOND 10000L
-#define TICKS_PER_SECOND 10000000L
-#define TICKS_PER_MINUTE 600000000L
-#define TICKS_PER_HOUR 36000000000LL
-#define TICKS_PER_DAY 864000000000LL
-
 #define isleap(y) ((y) % 4 == 0 && ((y) % 100 != 0 || (y) % 400 == 0))
 
 static const guint16 mon_yday[2][13]={
@@ -2917,7 +2995,7 @@ mono_w32file_filetime_to_systemtime(const FILETIME *file_time, SYSTEMTIME *syste
 	const guint16 *ip;
 	
 	if(system_time==NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: system_time NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: system_time NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return(FALSE);
@@ -2931,7 +3009,7 @@ mono_w32file_filetime_to_systemtime(const FILETIME *file_time, SYSTEMTIME *syste
 	 * year and day calculation to work later
 	 */
 	if(file_ticks<0) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: file_time too big", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: file_time too big", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return(FALSE);
@@ -2939,31 +3017,31 @@ mono_w32file_filetime_to_systemtime(const FILETIME *file_time, SYSTEMTIME *syste
 
 	totaldays=(file_ticks / TICKS_PER_DAY);
 	rem = file_ticks % TICKS_PER_DAY;
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: totaldays: %" G_GINT64_FORMAT " rem: %" G_GINT64_FORMAT, __func__,
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: totaldays: %" G_GINT64_FORMAT " rem: %" G_GINT64_FORMAT, __func__,
 		  totaldays, rem);
 
 	system_time->wHour=rem/TICKS_PER_HOUR;
 	rem %= TICKS_PER_HOUR;
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Hour: %d rem: %" G_GINT64_FORMAT,  __func__,
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Hour: %d rem: %" G_GINT64_FORMAT,  __func__,
 		  system_time->wHour, rem);
 	
 	system_time->wMinute = rem / TICKS_PER_MINUTE;
 	rem %= TICKS_PER_MINUTE;
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Minute: %d rem: %" G_GINT64_FORMAT, __func__,
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Minute: %d rem: %" G_GINT64_FORMAT, __func__,
 		  system_time->wMinute, rem);
 	
 	system_time->wSecond = rem / TICKS_PER_SECOND;
 	rem %= TICKS_PER_SECOND;
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Second: %d rem: %" G_GINT64_FORMAT, __func__,
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Second: %d rem: %" G_GINT64_FORMAT, __func__,
 		  system_time->wSecond, rem);
 	
 	system_time->wMilliseconds = rem / TICKS_PER_MILLISECOND;
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Milliseconds: %d", __func__,
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Milliseconds: %d", __func__,
 		  system_time->wMilliseconds);
 
 	/* January 1, 1601 was a Monday, according to Emacs calendar */
 	system_time->wDayOfWeek = ((1 + totaldays) % 7) + 1;
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Day of week: %d", __func__, system_time->wDayOfWeek);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Day of week: %d", __func__, system_time->wDayOfWeek);
 	
 	/* This algorithm to find year and month given days from epoch
 	 * from glibc
@@ -2976,7 +3054,7 @@ mono_w32file_filetime_to_systemtime(const FILETIME *file_time, SYSTEMTIME *syste
 	while(totaldays < 0 || totaldays >= (isleap(y)?366:365)) {
 		/* Guess a corrected year, assuming 365 days per year */
 		gint64 yg = y + totaldays / 365 - (totaldays % 365 < 0);
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: totaldays: %" G_GINT64_FORMAT " yg: %" G_GINT64_FORMAT " y: %" G_GINT64_FORMAT, __func__,
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: totaldays: %" G_GINT64_FORMAT " yg: %" G_GINT64_FORMAT " y: %" G_GINT64_FORMAT, __func__,
 			  totaldays, yg, y);
 		g_message("%s: LEAPS(yg): %li LEAPS(y): %li", __func__,
 			  LEAPS_THRU_END_OF(yg-1), LEAPS_THRU_END_OF(y-1));
@@ -2985,14 +3063,14 @@ mono_w32file_filetime_to_systemtime(const FILETIME *file_time, SYSTEMTIME *syste
 		totaldays -= ((yg - y) * 365
 			      + LEAPS_THRU_END_OF (yg - 1)
 			      - LEAPS_THRU_END_OF (y - 1));
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: totaldays: %" G_GINT64_FORMAT,
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: totaldays: %" G_GINT64_FORMAT,
 			  __func__, totaldays);
 		y = yg;
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: y: %" G_GINT64_FORMAT, __func__, y);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: y: %" G_GINT64_FORMAT, __func__, y);
 	}
 	
 	system_time->wYear = y;
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Year: %d", __func__, system_time->wYear);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Year: %d", __func__, system_time->wYear);
 
 	ip = mon_yday[isleap(y)];
 	
@@ -3000,27 +3078,126 @@ mono_w32file_filetime_to_systemtime(const FILETIME *file_time, SYSTEMTIME *syste
 		continue;
 	}
 	totaldays-=ip[y];
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: totaldays: %" G_GINT64_FORMAT, __func__, totaldays);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: totaldays: %" G_GINT64_FORMAT, __func__, totaldays);
 	
 	system_time->wMonth = y + 1;
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Month: %d", __func__, system_time->wMonth);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Month: %d", __func__, system_time->wMonth);
 
 	system_time->wDay = totaldays + 1;
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Day: %d", __func__, system_time->wDay);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Day: %d", __func__, system_time->wDay);
 	
 	return(TRUE);
+}
+
+static void
+findhandle_destroy (gpointer data)
+{
+	FindHandle *findhandle;
+
+	findhandle = (FindHandle*) data;
+	g_assert (findhandle);
+
+	mono_coop_mutex_destroy (&findhandle->mutex);
+
+	if (findhandle->namelist)
+		g_strfreev (findhandle->namelist);
+	if (findhandle->dir_part)
+		g_free (findhandle->dir_part);
+
+	g_free (findhandle);
+}
+
+static FindHandle*
+findhandle_create (void)
+{
+	FindHandle* findhandle;
+
+	findhandle = g_new0 (FindHandle, 1);
+	mono_refcount_init (findhandle, findhandle_destroy);
+
+	mono_coop_mutex_init (&findhandle->mutex);
+
+	return findhandle;
+}
+
+static void
+findhandle_insert (FindHandle *findhandle)
+{
+	mono_coop_mutex_lock (&finds_mutex);
+
+	if (g_hash_table_lookup_extended (finds, (gpointer) findhandle, NULL, NULL))
+		g_error("%s: duplicate Find handle %p", __func__, (gpointer) findhandle);
+
+	g_hash_table_insert (finds, (gpointer) findhandle, findhandle);
+
+	mono_coop_mutex_unlock (&finds_mutex);
+}
+
+static gboolean
+findhandle_lookup_and_ref (gpointer handle, FindHandle **findhandle)
+{
+	mono_coop_mutex_lock (&finds_mutex);
+
+	if (!g_hash_table_lookup_extended (finds, handle, NULL, (gpointer*) findhandle)) {
+		mono_coop_mutex_unlock (&finds_mutex);
+		return FALSE;
+	}
+
+	mono_refcount_inc (*findhandle);
+
+	mono_coop_mutex_unlock (&finds_mutex);
+
+	return TRUE;
+}
+
+static void
+findhandle_unref (FindHandle *findhandle)
+{
+	mono_refcount_dec (findhandle);
+}
+
+static gboolean
+findhandle_close (gpointer handle)
+{
+	FindHandle *findhandle;
+	gboolean removed;
+
+	mono_coop_mutex_lock (&finds_mutex);
+
+	if (!g_hash_table_lookup_extended (finds, handle, NULL, (gpointer*) &findhandle)) {
+		mono_coop_mutex_unlock (&finds_mutex);
+
+		return FALSE;
+	}
+
+	removed = g_hash_table_remove (finds, (gpointer) findhandle);
+	g_assert (removed);
+
+	mono_coop_mutex_unlock (&finds_mutex);
+
+	return TRUE;
+}
+
+static void
+finds_remove (gpointer data)
+{
+	FindHandle* findhandle;
+
+	findhandle = (FindHandle*) data;
+	g_assert (findhandle);
+
+	mono_refcount_dec (findhandle);
 }
 
 gpointer
 mono_w32file_find_first (const gunichar2 *pattern, WIN32_FIND_DATA *find_data)
 {
-	MonoW32HandleFind find_handle = {0};
-	gpointer handle;
-	gchar *utf8_pattern = NULL, *dir_part, *entry_part;
+	FindHandle *findhandle;
+	gchar *utf8_pattern = NULL, *dir_part, *entry_part, **namelist;
 	gint result;
 	
 	if (pattern == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: pattern is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: pattern is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 		return(INVALID_HANDLE_VALUE);
@@ -3028,13 +3205,13 @@ mono_w32file_find_first (const gunichar2 *pattern, WIN32_FIND_DATA *find_data)
 
 	utf8_pattern = mono_unicode_to_external (pattern);
 	if (utf8_pattern == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 		
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(INVALID_HANDLE_VALUE);
 	}
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: looking for [%s]", __func__, utf8_pattern);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: looking for [%s]", __func__, utf8_pattern);
 	
 	/* Figure out which bit of the pattern is the directory */
 	dir_part = _wapi_dirname (utf8_pattern);
@@ -3074,9 +3251,9 @@ mono_w32file_find_first (const gunichar2 *pattern, WIN32_FIND_DATA *find_data)
 	 * than mess around with regexes.
 	 */
 
-	find_handle.namelist = NULL;
+	namelist = NULL;
 	result = _wapi_io_scandir (dir_part, entry_part,
-				   &find_handle.namelist);
+				   &namelist);
 	
 	if (result == 0) {
 		/* No files, which windows seems to call
@@ -3086,53 +3263,46 @@ mono_w32file_find_first (const gunichar2 *pattern, WIN32_FIND_DATA *find_data)
 		g_free (utf8_pattern);
 		g_free (entry_part);
 		g_free (dir_part);
+		g_strfreev (namelist);
 		return (INVALID_HANDLE_VALUE);
 	}
 	
 	if (result < 0) {
 		_wapi_set_last_path_error_from_errno (dir_part, NULL);
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: scandir error: %s", __func__, g_strerror (errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: scandir error: %s", __func__, g_strerror (errno));
 		g_free (utf8_pattern);
 		g_free (entry_part);
 		g_free (dir_part);
+		g_strfreev (namelist);
 		return (INVALID_HANDLE_VALUE);
 	}
 
 	g_free (utf8_pattern);
 	g_free (entry_part);
 	
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Got %d matches", __func__, result);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Got %d matches", __func__, result);
 
-	find_handle.dir_part = dir_part;
-	find_handle.num = result;
-	find_handle.count = 0;
-	
-	handle = mono_w32handle_new (MONO_W32HANDLE_FIND, &find_handle);
-	if (handle == INVALID_HANDLE_VALUE) {
-		g_warning ("%s: error creating find handle", __func__);
-		g_free (dir_part);
-		g_free (entry_part);
-		g_free (utf8_pattern);
-		mono_w32error_set_last (ERROR_GEN_FAILURE);
-		
-		return(INVALID_HANDLE_VALUE);
-	}
+	findhandle = findhandle_create ();
+	findhandle->namelist = namelist;
+	findhandle->dir_part = dir_part;
+	findhandle->num = result;
+	findhandle->count = 0;
 
-	if (handle != INVALID_HANDLE_VALUE &&
-	    !mono_w32file_find_next (handle, find_data)) {
-		mono_w32file_find_close (handle);
+	findhandle_insert (findhandle);
+
+	if (!mono_w32file_find_next ((gpointer) findhandle, find_data)) {
+		mono_w32file_find_close ((gpointer) findhandle);
 		mono_w32error_set_last (ERROR_NO_MORE_FILES);
-		handle = INVALID_HANDLE_VALUE;
+		return INVALID_HANDLE_VALUE;
 	}
 
-	return (handle);
+	return (gpointer) findhandle;
 }
 
 gboolean
 mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 {
-	MonoW32HandleFind *find_handle;
-	gboolean ok;
+	FindHandle *findhandle;
 	struct stat buf, linkbuf;
 	gint result;
 	gchar *filename;
@@ -3141,27 +3311,23 @@ mono_w32file_find_next (gpointer handle, WIN32_FIND_DATA *find_data)
 	time_t create_time;
 	glong bytes;
 	gboolean ret = FALSE;
-	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FIND,
-				(gpointer *)&find_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up find handle %p", __func__,
-			   handle);
+
+	if (!findhandle_lookup_and_ref (handle, &findhandle)) {
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
+		return FALSE;
 	}
 
-	mono_w32handle_lock_handle (handle);
-	
+	mono_coop_mutex_lock (&findhandle->mutex);
+
 retry:
-	if (find_handle->count >= find_handle->num) {
+	if (findhandle->count >= findhandle->num) {
 		mono_w32error_set_last (ERROR_NO_MORE_FILES);
 		goto cleanup;
 	}
 
 	/* stat next match */
 
-	filename = g_build_filename (find_handle->dir_part, find_handle->namelist[find_handle->count ++], NULL);
+	filename = g_build_filename (findhandle->dir_part, findhandle->namelist[findhandle->count ++], NULL);
 
 	result = _wapi_stat (filename, &buf);
 	if (result == -1 && errno == ENOENT) {
@@ -3170,7 +3336,7 @@ retry:
 	}
 	
 	if (result != 0) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: stat failed: %s", __func__, filename);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: stat failed: %s", __func__, filename);
 
 		g_free (filename);
 		goto retry;
@@ -3178,7 +3344,7 @@ retry:
 
 	result = _wapi_lstat (filename, &linkbuf);
 	if (result != 0) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: lstat failed: %s", __func__, filename);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: lstat failed: %s", __func__, filename);
 
 		g_free (filename);
 		goto retry;
@@ -3197,7 +3363,7 @@ retry:
 	}
 	g_free (filename);
 	
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Found [%s]", __func__, utf8_filename);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Found [%s]", __func__, utf8_filename);
 	
 	/* fill data block */
 
@@ -3251,7 +3417,9 @@ retry:
 	g_free (utf16_basename);
 
 cleanup:
-	mono_w32handle_unlock_handle (handle);
+	mono_coop_mutex_unlock (&findhandle->mutex);
+
+	findhandle_unref (findhandle);
 	
 	return(ret);
 }
@@ -3259,35 +3427,12 @@ cleanup:
 gboolean
 mono_w32file_find_close (gpointer handle)
 {
-	MonoW32HandleFind *find_handle;
-	gboolean ok;
-
-	if (handle == NULL) {
+	if (!findhandle_close (handle)) {
 		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
-	}
-	
-	ok=mono_w32handle_lookup (handle, MONO_W32HANDLE_FIND,
-				(gpointer *)&find_handle);
-	if(ok==FALSE) {
-		g_warning ("%s: error looking up find handle %p", __func__,
-			   handle);
-		mono_w32error_set_last (ERROR_INVALID_HANDLE);
-		return(FALSE);
+		return FALSE;
 	}
 
-	mono_w32handle_lock_handle (handle);
-	
-	g_strfreev (find_handle->namelist);
-	g_free (find_handle->dir_part);
-
-	mono_w32handle_unlock_handle (handle);
-	
-	MONO_ENTER_GC_SAFE;
-	mono_w32handle_close (handle);
-	MONO_EXIT_GC_SAFE;
-	
-	return(TRUE);
+	return TRUE;
 }
 
 gboolean
@@ -3297,7 +3442,7 @@ mono_w32file_create_directory (const gunichar2 *name)
 	gint result;
 	
 	if (name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(FALSE);
@@ -3305,7 +3450,7 @@ mono_w32file_create_directory (const gunichar2 *name)
 	
 	utf8_name = mono_unicode_to_external (name);
 	if (utf8_name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 	
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return FALSE;
@@ -3330,7 +3475,7 @@ mono_w32file_remove_directory (const gunichar2 *name)
 	gint result;
 	
 	if (name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(FALSE);
@@ -3338,7 +3483,7 @@ mono_w32file_remove_directory (const gunichar2 *name)
 
 	utf8_name = mono_unicode_to_external (name);
 	if (utf8_name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 		
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return FALSE;
@@ -3365,7 +3510,7 @@ mono_w32file_get_attributes (const gunichar2 *name)
 	guint32 ret;
 	
 	if (name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(FALSE);
@@ -3373,7 +3518,7 @@ mono_w32file_get_attributes (const gunichar2 *name)
 	
 	utf8_name = mono_unicode_to_external (name);
 	if (utf8_name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return (INVALID_FILE_ATTRIBUTES);
@@ -3414,7 +3559,7 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 	gint result;
 	
 	if (name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(FALSE);
@@ -3422,7 +3567,7 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 
 	utf8_name = mono_unicode_to_external (name);
 	if (utf8_name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
 		return FALSE;
@@ -3450,10 +3595,29 @@ mono_w32file_get_attributes_ex (const gunichar2 *name, MonoIOStat *stat)
 	/* fill stat block */
 
 	stat->attributes = _wapi_stat_to_file_attributes (utf8_name, &buf, &linkbuf);
-	stat->creation_time = (((guint64) (buf.st_mtime < buf.st_ctime ? buf.st_mtime : buf.st_ctime)) * 10 * 1000 * 1000) + 116444736000000000ULL;
-	stat->last_access_time = (((guint64) (buf.st_atime)) * 10 * 1000 * 1000) + 116444736000000000ULL;
-	stat->last_write_time = (((guint64) (buf.st_mtime)) * 10 * 1000 * 1000) + 116444736000000000ULL;
 	stat->length = (stat->attributes & FILE_ATTRIBUTE_DIRECTORY) ? 0 : buf.st_size;
+
+#if HAVE_STRUCT_STAT_ST_ATIMESPEC
+	if (linkbuf.st_mtimespec.tv_sec < linkbuf.st_ctimespec.tv_sec || (linkbuf.st_mtimespec.tv_sec == linkbuf.st_ctimespec.tv_sec && linkbuf.st_mtimespec.tv_nsec < linkbuf.st_ctimespec.tv_nsec))
+		stat->creation_time = linkbuf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	else
+		stat->creation_time = linkbuf.st_ctimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_ctimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+
+	stat->last_access_time = linkbuf.st_atimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_atimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_write_time = linkbuf.st_mtimespec.tv_sec * TICKS_PER_SECOND + (linkbuf.st_mtimespec.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+#elif HAVE_STRUCT_STAT_ST_ATIM
+	if (linkbuf.st_mtime < linkbuf.st_ctime || (linkbuf.st_mtime == linkbuf.st_ctime && linkbuf.st_mtim.tv_nsec < linkbuf.st_ctim.tv_nsec))
+		stat->creation_time = linkbuf.st_mtime * TICKS_PER_SECOND + (linkbuf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	else
+		stat->creation_time = linkbuf.st_ctime * TICKS_PER_SECOND + (linkbuf.st_ctim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+
+	stat->last_access_time = linkbuf.st_atime * TICKS_PER_SECOND + (linkbuf.st_atim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+	stat->last_write_time = linkbuf.st_mtime * TICKS_PER_SECOND + (linkbuf.st_mtim.tv_nsec / NANOSECONDS_PER_MICROSECOND) * TICKS_PER_MICROSECOND + CONVERT_BASE;
+#else
+	stat->creation_time = (((guint64) (linkbuf.st_mtime < linkbuf.st_ctime ? linkbuf.st_mtime : linkbuf.st_ctime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_access_time = (((guint64) (linkbuf.st_atime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+	stat->last_write_time = (((guint64) (linkbuf.st_mtime)) * TICKS_PER_SECOND) + CONVERT_BASE;
+#endif
 
 	g_free (utf8_name);
 	return TRUE;
@@ -3473,7 +3637,7 @@ mono_w32file_set_attributes (const gunichar2 *name, guint32 attrs)
 	 */
 	
 	if (name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: name is NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: name is NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return(FALSE);
@@ -3481,7 +3645,7 @@ mono_w32file_set_attributes (const gunichar2 *name, guint32 attrs)
 
 	utf8_name = mono_unicode_to_external (name);
 	if (utf8_name == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 
 		mono_w32error_set_last (ERROR_INVALID_NAME);
 		return FALSE;
@@ -3523,9 +3687,13 @@ mono_w32file_set_attributes (const gunichar2 *name, guint32 attrs)
 		if ((buf.st_mode & S_IROTH) != 0)
 			exec_mask |= S_IXOTH;
 
+#if defined(HAVE_CHMOD)
 		MONO_ENTER_GC_SAFE;
 		result = chmod (utf8_name, buf.st_mode | exec_mask);
 		MONO_EXIT_GC_SAFE;
+#else
+		result = -1;
+#endif
 	}
 	/* Don't bother to reset executable (might need to change this
 	 * policy)
@@ -3600,13 +3768,13 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 	gint filedes[2];
 	gint ret;
 	
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Creating pipe", __func__);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Creating pipe", __func__);
 
 	MONO_ENTER_GC_SAFE;
 	ret=pipe (filedes);
 	MONO_EXIT_GC_SAFE;
 	if (ret==-1) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Error creating pipe: (%d) %s",
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Error creating pipe: (%d) %s",
 			__func__, errno, g_strerror (errno));
 
 		_wapi_set_last_error_from_errno ();
@@ -3627,7 +3795,7 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 	*readpipe = GINT_TO_POINTER(((MonoFDHandle*) read_filehandle)->fd);
 	*writepipe = GINT_TO_POINTER(((MonoFDHandle*) write_filehandle)->fd);
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Returning pipe: read handle %p, write handle %p",
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Returning pipe: read handle %p, write handle %p",
 		__func__, GINT_TO_POINTER(((MonoFDHandle*) read_filehandle)->fd), GINT_TO_POINTER(((MonoFDHandle*) write_filehandle)->fd));
 
 	return(TRUE);
@@ -3673,6 +3841,49 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 		buf [total] = 0;
 	total++;
 	g_free (stats);
+	return total;
+}
+#elif _AIX
+gint32
+mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
+{
+	struct vmount *mounts;
+	// ret will first be the errno cond, then no of structs
+	int needsize, ret, total;
+	gunichar2 *dir;
+	glong length;
+	total = 0;
+
+	MONO_ENTER_GC_SAFE;
+	ret = mntctl (MCTL_QUERY, sizeof(needsize), &needsize);
+	MONO_EXIT_GC_SAFE;
+	if (ret == -1)
+		return 0;
+	mounts = (struct vmount *) g_malloc (needsize);
+	if (mounts == NULL)
+		return 0;
+	MONO_ENTER_GC_SAFE;
+	ret = mntctl (MCTL_QUERY, needsize, mounts);
+	MONO_EXIT_GC_SAFE;
+	if (ret == -1) {
+		g_free (mounts);
+		return 0;
+	}
+
+	for (int i = 0; i < ret; i++) {
+		dir = g_utf8_to_utf16 (vmt2dataptr(mounts, VMT_STUB), -1, NULL, &length, NULL);
+		if (total + length < len){
+			memcpy (buf + total, dir, sizeof (gunichar2) * length);
+			buf [total+length] = 0;
+		} 
+		g_free (dir);
+		total += length + 1;
+		mounts = (void*)mounts + mounts->vmt_length; // next!
+	}
+	if (total < len)
+		buf [total] = 0;
+	total++;
+	g_free (mounts);
 	return total;
 }
 #else
@@ -4127,10 +4338,15 @@ GetLogicalDriveStrings_Mtab (guint32 len, gunichar2 *buf)
 }
 #endif
 
-#if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
+#ifndef PLATFORM_NO_DRIVEINFO
 gboolean
 mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
 {
+	g_assert (free_bytes_avail);
+	g_assert (total_number_of_bytes);
+	g_assert (total_number_of_free_bytes);
+
+#if defined(HAVE_STATVFS) || defined(HAVE_STATFS)
 #ifdef HAVE_STATVFS
 	struct statvfs fsstat;
 #elif defined(HAVE_STATFS)
@@ -4151,7 +4367,7 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	else {
 		utf8_path_name = mono_unicode_to_external (path_name);
 		if (utf8_path_name == NULL) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 
 			mono_w32error_set_last (ERROR_INVALID_NAME);
 			return(FALSE);
@@ -4182,56 +4398,28 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 
 	if (ret == -1) {
 		_wapi_set_last_error_from_errno ();
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: statvfs failed: %s", __func__, g_strerror (errno));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: statvfs failed: %s", __func__, g_strerror (errno));
 		return(FALSE);
 	}
 
 	/* total number of free bytes for non-root */
-	if (free_bytes_avail != NULL) {
-		if (isreadonly) {
-			*free_bytes_avail = 0;
-		}
-		else {
-			*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
-		}
-	}
+	if (isreadonly)
+		*free_bytes_avail = 0;
+	else
+		*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
 
 	/* total number of bytes available for non-root */
-	if (total_number_of_bytes != NULL) {
-		*total_number_of_bytes = block_size * (guint64)fsstat.f_blocks;
-	}
+	*total_number_of_bytes = block_size * (guint64)fsstat.f_blocks;
 
 	/* total number of bytes available for root */
-	if (total_number_of_free_bytes != NULL) {
-		if (isreadonly) {
-			*total_number_of_free_bytes = 0;
-		}
-		else {
-			*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
-		}
-	}
-	
-	return(TRUE);
-}
-#else
-gboolean
-mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes)
-{
-	if (free_bytes_avail != NULL) {
-		*free_bytes_avail = (guint64) -1;
-	}
-
-	if (total_number_of_bytes != NULL) {
-		*total_number_of_bytes = (guint64) -1;
-	}
-
-	if (total_number_of_free_bytes != NULL) {
-		*total_number_of_free_bytes = (guint64) -1;
-	}
-
-	return(TRUE);
-}
+	if (isreadonly)
+		*total_number_of_free_bytes = 0;
+	else
+		*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
 #endif
+	return(TRUE);
+}
+#endif // PLATFORM_NO_DRIVEINFO
 
 /*
  * General Unix support
@@ -4239,29 +4427,42 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 typedef struct {
 	guint32 drive_type;
 #if __linux__
-	const long fstypeid;
+	// http://man7.org/linux/man-pages/man2/statfs.2.html
+	//
+	// The __fsword_t type used for various fields in the statfs structure
+	// definition is a glibc internal type, not intended for public use.
+	// This leaves the programmer in a bit of a conundrum when trying to
+	// copy or compare these fields to local variables in a program.  Using
+	// unsigned int for such variables suffices on most systems.
+	//
+	// Let's hope "most" is enough, and that it works with other libc.
+	unsigned fstypeid;
 #endif
 	const gchar* fstype;
 } _wapi_drive_type;
 
-static _wapi_drive_type _wapi_drive_types[] = {
-#if PLATFORM_MACOSX
+static const _wapi_drive_type _wapi_drive_types[] = {
+#if HOST_DARWIN
 	{ DRIVE_REMOTE, "afp" },
+	{ DRIVE_REMOTE, "afpfs" },
 	{ DRIVE_REMOTE, "autofs" },
 	{ DRIVE_CDROM, "cddafs" },
 	{ DRIVE_CDROM, "cd9660" },
 	{ DRIVE_RAMDISK, "devfs" },
+	{ DRIVE_RAMDISK, "nullfs" },
 	{ DRIVE_FIXED, "exfat" },
 	{ DRIVE_RAMDISK, "fdesc" },
 	{ DRIVE_REMOTE, "ftp" },
 	{ DRIVE_FIXED, "hfs" },
 	{ DRIVE_FIXED, "apfs" },
+	{ DRIVE_REMOTE, "kbfuse" },
 	{ DRIVE_FIXED, "msdos" },
 	{ DRIVE_REMOTE, "nfs" },
 	{ DRIVE_FIXED, "ntfs" },
 	{ DRIVE_REMOTE, "smbfs" },
 	{ DRIVE_FIXED, "udf" },
 	{ DRIVE_REMOTE, "webdav" },
+	{ DRIVE_FIXED, "ufsd_NTFS"},
 	{ DRIVE_UNKNOWN, NULL }
 #elif __linux__
 	{ DRIVE_FIXED, ADFS_SUPER_MAGIC, "adfs"},
@@ -4344,7 +4545,13 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_RAMDISK, "debugfs"    },
 	{ DRIVE_RAMDISK, "devpts"     },
 	{ DRIVE_RAMDISK, "securityfs" },
+	{ DRIVE_RAMDISK, "procfs"     }, // AIX procfs
+	{ DRIVE_RAMDISK, "namefs"     }, // AIX soft mounts
+	{ DRIVE_RAMDISK, "nullfs"     },
 	{ DRIVE_CDROM,   "iso9660"    },
+	{ DRIVE_CDROM,   "cdrfs"      }, // AIX ISO9660 CDs
+	{ DRIVE_CDROM,   "udfs"       }, // AIX UDF CDs
+	{ DRIVE_CDROM,   "QOPT"       }, // IBM i CD mount
 	{ DRIVE_FIXED,   "ext2"       },
 	{ DRIVE_FIXED,   "ext3"       },
 	{ DRIVE_FIXED,   "ext4"       },
@@ -4359,6 +4566,12 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_FIXED,   "qnx4"       },
 	{ DRIVE_FIXED,   "ntfs"       },
 	{ DRIVE_FIXED,   "ntfs-3g"    },
+	{ DRIVE_FIXED,   "jfs"        }, // IBM JFS
+	{ DRIVE_FIXED,   "jfs2"       }, // IBM JFS (AIX defalt filesystem)
+	{ DRIVE_FIXED,   "EPFS"       }, // IBM i IFS (root and QOpenSys)
+	{ DRIVE_FIXED,   "EPFSP"      }, // IBM i auxiliary storage pool FS
+	{ DRIVE_FIXED,   "QSYS"       }, // IBM i native system libraries
+	{ DRIVE_FIXED,   "QDLS"       }, // IBM i legacy S/36 directories
 	{ DRIVE_REMOTE,  "smbfs"      },
 	{ DRIVE_REMOTE,  "fuse"       },
 	{ DRIVE_REMOTE,  "nfs"        },
@@ -4367,14 +4580,21 @@ static _wapi_drive_type _wapi_drive_types[] = {
 	{ DRIVE_REMOTE,  "ncpfs"      },
 	{ DRIVE_REMOTE,  "coda"       },
 	{ DRIVE_REMOTE,  "afs"        },
+	{ DRIVE_REMOTE,  "nfs3"       },
+	{ DRIVE_REMOTE,  "stnfs"      }, // AIX "short-term" NFS
+	{ DRIVE_REMOTE,  "autofs"     }, // AIX automounter NFS
+	{ DRIVE_REMOTE,  "cachefs"    }, // AIX cached NFS
+	{ DRIVE_REMOTE,  "NFS"        }, // IBM i NFS
+	{ DRIVE_REMOTE,  "QNETC"      }, // IBM i CIFS
+	{ DRIVE_REMOTE,  "QRFS"       }, // IBM i native remote FS
 	{ DRIVE_UNKNOWN, NULL         }
 #endif
 };
 
 #if __linux__
-static guint32 _wapi_get_drive_type(long f_type)
+static guint32 _wapi_get_drive_type(unsigned f_type)
 {
-	_wapi_drive_type *current;
+	const _wapi_drive_type *current;
 
 	current = &_wapi_drive_types[0];
 	while (current->drive_type != DRIVE_UNKNOWN) {
@@ -4388,34 +4608,44 @@ static guint32 _wapi_get_drive_type(long f_type)
 #else
 static guint32 _wapi_get_drive_type(const gchar* fstype)
 {
-	_wapi_drive_type *current;
+	const _wapi_drive_type *current;
 
 	current = &_wapi_drive_types[0];
 	while (current->drive_type != DRIVE_UNKNOWN) {
 		if (strcmp (current->fstype, fstype) == 0)
-			break;
+			return current->drive_type;
 
 		current++;
 	}
 	
-	return current->drive_type;
+	return DRIVE_UNKNOWN;
 }
 #endif
 
-#if defined (PLATFORM_MACOSX) || defined (__linux__)
+#if defined (HOST_DARWIN) || defined (__linux__) || defined (_AIX)
 static guint32
 GetDriveTypeFromPath (const gchar *utf8_root_path_name)
 {
+#if defined (_AIX)
+	struct statvfs buf;
+#else
 	struct statfs buf;
+#endif
 	gint res;
 
 	MONO_ENTER_GC_SAFE;
+#if defined (_AIX)
+	res = statvfs (utf8_root_path_name, &buf);
+#else
 	res = statfs (utf8_root_path_name, &buf);
+#endif
 	MONO_EXIT_GC_SAFE;
 	if (res == -1)
 		return DRIVE_UNKNOWN;
-#if PLATFORM_MACOSX
+#if HOST_DARWIN
 	return _wapi_get_drive_type (buf.f_fstypename);
+#elif defined (_AIX)
+	return _wapi_get_drive_type (buf.f_basetype);
 #else
 	return _wapi_get_drive_type (buf.f_type);
 #endif
@@ -4478,8 +4708,10 @@ GetDriveTypeFromPath (const gchar *utf8_root_path_name)
 #endif
 
 guint32
-mono_w32file_get_drive_type(const gunichar2 *root_path_name)
+ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, gint32 root_path_name_length, MonoError *error)
 {
+	// FIXME Check for embedded nuls here or in managed.
+
 	gchar *utf8_root_path_name;
 	guint32 drive_type;
 
@@ -4492,7 +4724,7 @@ mono_w32file_get_drive_type(const gunichar2 *root_path_name)
 	else {
 		utf8_root_path_name = mono_unicode_to_external (root_path_name);
 		if (utf8_root_path_name == NULL) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: unicode conversion returned NULL", __func__);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: unicode conversion returned NULL", __func__);
 			return(DRIVE_NO_ROOT_DIR);
 		}
 		
@@ -4507,14 +4739,28 @@ mono_w32file_get_drive_type(const gunichar2 *root_path_name)
 	return (drive_type);
 }
 
-#if defined (PLATFORM_MACOSX) || defined (__linux__) || defined(PLATFORM_BSD) || defined(__FreeBSD_kernel__) || defined(__HAIKU__)
+#if defined (HOST_DARWIN) || defined (__linux__) || defined(HOST_BSD) || defined(__FreeBSD_kernel__) || defined(__HAIKU__) || defined(_AIX)
 static gchar*
 get_fstypename (gchar *utfpath)
 {
-#if defined (PLATFORM_MACOSX) || defined (__linux__)
+#if defined (_AIX)
+	/* statvfs offers the FS type name, easily, no need to iterate */
+	struct statvfs stat;
+	gint statvfs_res;
+
+	MONO_ENTER_GC_SAFE;
+	statvfs_res = statvfs (utfpath, &stat);
+	MONO_EXIT_GC_SAFE;
+
+	if (statvfs_res != -1) {
+		return g_strdup (stat.f_basetype);
+	}
+
+	return NULL;
+#elif defined (HOST_DARWIN) || defined (__linux__)
 	struct statfs stat;
 #if __linux__
-	_wapi_drive_type *current;
+	const _wapi_drive_type *current;
 #endif
 	gint statfs_res;
 	MONO_ENTER_GC_SAFE;
@@ -4522,7 +4768,7 @@ get_fstypename (gchar *utfpath)
 	MONO_EXIT_GC_SAFE;
 	if (statfs_res == -1)
 		return NULL;
-#if PLATFORM_MACOSX
+#if HOST_DARWIN
 	return g_strdup (stat.f_fstypename);
 #else
 	current = &_wapi_drive_types[0];
@@ -4540,7 +4786,7 @@ get_fstypename (gchar *utfpath)
 
 /* Linux has struct statfs which has a different layout */
 gboolean
-mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize)
+mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize)
 {
 	gchar *utfpath;
 	gchar *fstypename;
@@ -4587,7 +4833,7 @@ LockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 leng
 	}
 
 	if (!(filehandle->fileaccess & (GENERIC_READ | GENERIC_WRITE | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		mono_fdhandle_unref ((MonoFDHandle*) filehandle);
 		return FALSE;
@@ -4597,7 +4843,7 @@ LockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 leng
 	offset = ((gint64)offset_high << 32) | offset_low;
 	length = ((gint64)length_high << 32) | length_low;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Locking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Locking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #else
 	if (offset_high > 0 || length_high > 0) {
 		mono_w32error_set_last (ERROR_INVALID_PARAMETER);
@@ -4608,7 +4854,7 @@ LockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 leng
 	offset = offset_low;
 	length = length_low;
 
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Locking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Locking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #endif
 
 	ret = _wapi_lock_file_region (((MonoFDHandle*) filehandle)->fd, offset, length);
@@ -4636,7 +4882,7 @@ UnlockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 le
 	}
 
 	if (!(filehandle->fileaccess & (GENERIC_READ | GENERIC_WRITE | GENERIC_ALL))) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: fd %d doesn't have GENERIC_READ or GENERIC_WRITE access: %u", __func__, ((MonoFDHandle*) filehandle)->fd, filehandle->fileaccess);
 		mono_w32error_set_last (ERROR_ACCESS_DENIED);
 		mono_fdhandle_unref ((MonoFDHandle*) filehandle);
 		return FALSE;
@@ -4645,14 +4891,11 @@ UnlockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 le
 #ifdef HAVE_LARGE_FILE_SUPPORT
 	offset = ((gint64)offset_high << 32) | offset_low;
 	length = ((gint64)length_high << 32) | length_low;
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Unlocking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #else
 	offset = offset_low;
 	length = length_low;
-
-	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Unlocking fd %p, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 #endif
+	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_FILE, "%s: Unlocking fd %d, offset %" G_GINT64_FORMAT ", length %" G_GINT64_FORMAT, __func__, ((MonoFDHandle*) filehandle)->fd, (gint64) offset, (gint64) length);
 
 	ret = _wapi_unlock_file_region (((MonoFDHandle*) filehandle)->fd, offset, length);
 
@@ -4663,10 +4906,10 @@ UnlockFile (gpointer handle, guint32 offset_low, guint32 offset_high, guint32 le
 void
 mono_w32file_init (void)
 {
-	MonoFDHandleCallback file_data_callbacks = {
-		.close = file_data_close,
-		.destroy = file_data_destroy
-	};
+	MonoFDHandleCallback file_data_callbacks;
+	memset (&file_data_callbacks, 0, sizeof (file_data_callbacks));
+	file_data_callbacks.close = file_data_close;
+	file_data_callbacks.destroy = file_data_destroy;
 
 	mono_fdhandle_register (MONO_FDTYPE_FILE, &file_data_callbacks);
 	mono_fdhandle_register (MONO_FDTYPE_CONSOLE, &file_data_callbacks);
@@ -4674,7 +4917,14 @@ mono_w32file_init (void)
 
 	mono_coop_mutex_init (&file_share_mutex);
 
-	mono_w32handle_register_ops (MONO_W32HANDLE_FIND, &_wapi_find_ops);
+	finds = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, finds_remove);
+	mono_coop_mutex_init (&finds_mutex);
+
+#if HOST_DARWIN
+	libc_handle = mono_dl_open ("/usr/lib/libc.dylib", 0, NULL);
+	g_assert (libc_handle);
+	g_free (mono_dl_symbol (libc_handle, "clonefile", (void**)&clonefile_ptr));
+#endif
 
 	if (g_hasenv ("MONO_STRICT_IO_EMULATION"))
 		lock_while_writing = TRUE;
@@ -4687,10 +4937,17 @@ mono_w32file_cleanup (void)
 
 	if (file_share_table)
 		g_hash_table_destroy (file_share_table);
+
+	g_hash_table_destroy (finds);
+	mono_coop_mutex_destroy (&finds_mutex);
+
+#if HOST_DARWIN
+	mono_dl_close (libc_handle);
+#endif
 }
 
 gboolean
-mono_w32file_move (gunichar2 *path, gunichar2 *dest, gint32 *error)
+mono_w32file_move (const gunichar2 *path, const gunichar2 *dest, gint32 *error)
 {
 	gboolean result;
 
@@ -4701,7 +4958,7 @@ mono_w32file_move (gunichar2 *path, gunichar2 *dest, gint32 *error)
 }
 
 gboolean
-mono_w32file_copy (gunichar2 *path, gunichar2 *dest, gboolean overwrite, gint32 *error)
+mono_w32file_copy (const gunichar2 *path, const gunichar2 *dest, gboolean overwrite, gint32 *error)
 {
 	gboolean result;
 
@@ -4713,11 +4970,11 @@ mono_w32file_copy (gunichar2 *path, gunichar2 *dest, gboolean overwrite, gint32 
 }
 
 gboolean
-mono_w32file_replace (gunichar2 *destinationFileName, gunichar2 *sourceFileName, gunichar2 *destinationBackupFileName, guint32 flags, gint32 *error)
+mono_w32file_replace (const gunichar2 *destination_file_name, const gunichar2 *source_file_name, const gunichar2 *destination_backup_file_name, guint32 flags, gint32 *error)
 {
 	gboolean result;
 
-	result = ReplaceFile (destinationFileName, sourceFileName, destinationBackupFileName, flags, NULL, NULL);
+	result = ReplaceFile (destination_file_name, source_file_name, destination_backup_file_name, flags, NULL, NULL);
 	if (!result)
 		*error = mono_w32error_get_last ();
 	return result;

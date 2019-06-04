@@ -1,0 +1,5 @@
+#include System.IO.Compression.dll.sources
+corefx/BrotliStubs.cs
+
+# for clrcompression.dll (instead of BrotliStubs for Windows)
+#../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs

@@ -1,5 +1,6 @@
 #include common.sources
 #include common_networking.sources
+#include mono_fsw.sources
 
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.VisualBasic/VBCodeGenerator.cs
@@ -27,7 +28,7 @@ Microsoft.Win32/UserPreferenceChangingEventHandler.cs
 
 System/MonoToolsLocator.cs
 
-System.CodeDom.Compiler/Executor.cs
+System.CodeDom.Compiler/*.cs
 System.Configuration/ApplicationScopedSettingAttribute.cs
 System.Configuration/ApplicationSettingsBase.cs
 System.Configuration/ApplicationSettingsGroup.cs
@@ -133,17 +134,6 @@ System.Diagnostics/PerformanceCounterType.cs
 System.Diagnostics/TraceSourceInfo.cs
 System.Diagnostics/Win32EventLog.cs
 
-System.IO/DefaultWatcher.cs
-System.IO/FAMWatcher.cs
-System.IO/NullFileWatcher.cs
-System.IO/FileAction.cs
-System.IO/FileSystemWatcher.cs
-System.IO/IFileWatcher.cs
-System.IO/InotifyWatcher.cs
-System.IO/KeventWatcher.cs
-System.IO/SearchPattern.cs
-System.IO/WindowsWatcher.cs
-
 System.IO.Ports/Handshake.cs
 System.IO.Ports/ISerialStream.cs
 System.IO.Ports/Parity.cs
@@ -209,6 +199,8 @@ System.Net.Mail/SmtpPermission.cs
 System.Net.Mail/SmtpPermissionAttribute.cs
 
 System.Runtime.InteropServices/StandardOleMarshalObject.cs
+
+ReferenceSources/DynamicRoleClaimProvider.cs
 
 System.Security.Permissions/PermissionHelper.cs
 System.Security.Permissions/ResourcePermissionBase.cs
@@ -378,3 +370,8 @@ ReferenceSources/ConfigurationManagerInternalFactory.cs
 ../../../external/corefx/src/System.CodeDom/src/System/CodeDom/FieldDirection.cs
 ../../../external/corefx/src/System.CodeDom/src/System/CodeDom/MemberAttributes.cs
 ../../../external/corefx/src/System.CodeDom/src/System/Collections/Specialized/FixedStringLookup.cs
+
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexCompiler.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunner.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/CompiledRegexRunnerFactory.cs
+../../../external/corefx/src/System.Text.RegularExpressions/src/System/Text/RegularExpressions/RegexLWCGCompiler.cs

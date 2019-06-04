@@ -13,7 +13,7 @@ using System.Collections;
 namespace Mono.ILASM {
 
         public class TypeManager {
-
+                private ArrayList type_list;
                 private Hashtable type_table;
                 private CodeGen code_gen;
 
@@ -21,6 +21,7 @@ namespace Mono.ILASM {
                 {
                         this.code_gen = code_gen;
                         type_table = new Hashtable ();
+                        type_list = new ArrayList ();
                 }
 
                 public TypeDef this[string full_name] {
@@ -29,6 +30,7 @@ namespace Mono.ILASM {
                         }
                         set {
                                 type_table[full_name] = value;
+                                type_list.Add(value);
                         }
                 }
 
@@ -47,8 +49,6 @@ namespace Mono.ILASM {
 
                 public void DefineAll ()
                 {
-                        ArrayList type_list = new ArrayList (type_table.Values);
-                        type_list.Sort ();
                         foreach (TypeDef typedef in type_list) {
                                 typedef.Define (code_gen);
                         }

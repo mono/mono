@@ -1,30 +1,60 @@
-#
-# Conditional submodule for llvm
-#
-# make reset-llvm will checkout a version of llvm which is suitable for this version of mono
-# into $top_srcdir/llvm/llvm.
-#
 
-LLVM_PATH=llvm
+EXTRA_DIST=build.mk build_llvm_config.sh
 
-SUBMODULES_CONFIG_FILE = $(top_srcdir)/llvm/SUBMODULES.json
-include $(top_srcdir)/scripts/submodules/versions.mk
+if ENABLE_LLVM
 
-$(eval $(call ValidateVersionTemplate,llvm,LLVM))
+if HOST_WIN32
+llvm_config=llvm-config.exe
+else
+llvm_config=llvm-config
+endif
 
-# Bump the given submodule to the revision given by the REV make variable
-# If COMMIT is 1, commit the change
-bump-llvm: __bump-version-llvm
+if HAVE_STATIC_ZLIB
+llvm_extra_libs = $(STATIC_ZLIB_PATH)
+else
+if HAVE_ZLIB
+llvm_extra_libs=-lz
+else
+llvm_extra_libs=
+endif
+endif
 
-# Bump the given submodule to the branch given by the BRANCH/REMOTE_BRANCH make variables
-# If COMMIT is 1, commit the change
-bump-branch-llvm: __bump-branch-llvm
+if INTERNAL_LLVM
 
-# Bump the given submodule to its current GIT version
-# If COMMIT is 1, commit the change
-bump-current-llvm: __bump-current-version-llvm
+all-local: configure-llvm build-llvm install-llvm llvm_config.mk
 
-clean-local:
-	$(RM) -r $(LLVM_PATH)
+clean-local: clean-llvm clean-llvm-config
 
-EXTRA_DIST=SUBMODULES.json
+$(mono_build_root)/llvm/llvm_config.mk: install-llvm
+	$(top_srcdir)/llvm/build_llvm_config.sh "$(top_srcdir)/llvm/usr/bin/$(llvm_config)" "$(LLVM_CODEGEN_LIBS)" "$(llvm_extra_libs)" | tee $@
+
+else
+all-local: llvm_config.mk
+
+clean-local: clean-llvm-config
+
+$(mono_build_root)/llvm/llvm_config.mk: $(top_srcdir)/llvm/Makefile.am
+	$(top_srcdir)/llvm/build_llvm_config.sh "$(EXTERNAL_LLVM_CONFIG)" "$(LLVM_CODEGEN_LIBS)" "$(llvm_extra_libs)" | tee $@
+endif
+
+llvm_config.mk: $(mono_build_root)/llvm/llvm_config.mk
+
+clean-llvm-config:
+	- rm -rf llvm_config.mk
+
+else
+all-local: 
+
+clean-local: 
+endif
+
+# Override this so we don't try to re-copy llvm when we install mono
+install:
+
+if TARGET_WASM
+LLVM_TARGET=wasm32
+else
+LLVM_TARGET=
+endif
+
+include build.mk

@@ -649,8 +649,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (1, reader.Read (), "test#03");
 			Assert.AreEqual (2, reader.PeekChar (), "test#03");
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -687,8 +689,10 @@ namespace MonoTests.System.IO
 			reader.Close ();
 			reader.PeekChar ();
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 
@@ -706,8 +710,10 @@ namespace MonoTests.System.IO
 			reader.Close ();
 			reader.ReadBytes (1);
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 
@@ -727,8 +733,10 @@ namespace MonoTests.System.IO
 			reader.Close ();
 			Assert.AreEqual (null, reader.BaseStream, "test#03");
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 
@@ -767,8 +775,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (0, bytes [0], "test#10");
 			Assert.AreEqual (0, bytes [1], "test#11");				
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -804,8 +814,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (0, chars [0], "test#08");
 			Assert.AreEqual (0, chars [1], "test#09");
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 
 	}
@@ -827,8 +839,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (false, reader.ReadBoolean (), "test#04");
 			Assert.AreEqual (true, reader.ReadBoolean (), "test#05");		
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -848,8 +862,10 @@ namespace MonoTests.System.IO
 			reader.ReadBoolean ();
 			reader.ReadBoolean ();
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -872,8 +888,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (0, reader.ReadByte (), "test#04");
 			Assert.AreEqual (13, reader.ReadByte (), "test#05");		
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -894,8 +912,10 @@ namespace MonoTests.System.IO
 			reader.ReadByte ();
 			reader.ReadByte ();
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -925,8 +945,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (1, bytes.Length, "test#06");
 			
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -945,8 +967,10 @@ namespace MonoTests.System.IO
 			reader = new BinaryReader (stream);
 			reader.ReadBytes (-1);		
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -968,8 +992,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (0, reader.ReadChar (), "test#04");
 			Assert.AreEqual (13, reader.ReadChar (), "test#05");
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -990,8 +1016,10 @@ namespace MonoTests.System.IO
 			reader.ReadChar ();
 			reader.ReadChar ();
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 
@@ -1018,8 +1046,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (13, chars [0], "test#05");
 			Assert.AreEqual (1, chars.Length, "test#06");
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1037,8 +1067,10 @@ namespace MonoTests.System.IO
 			reader = new BinaryReader (stream);
 			reader.ReadChars (-1);
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1056,8 +1088,10 @@ namespace MonoTests.System.IO
 			reader = new BinaryReader (stream);		
 			Assert.AreEqual (-18295873486192640, reader.ReadDecimal (), "test#01");
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}		
 	}
 	
@@ -1071,8 +1105,10 @@ namespace MonoTests.System.IO
 			reader.ReadDecimal ();
 			reader.ReadDecimal ();		
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1085,8 +1121,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (1.8913127797311212E-307d, reader.ReadDouble (), "test#01");
 			Assert.AreEqual (1.2024538023802026E+111d, reader.ReadDouble (), "test#02");	
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1117,8 +1155,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (773, reader.ReadInt16 (), "test#03");
 			Assert.AreEqual (54, reader.ReadInt16 (), "test#04");		
 		} finally {
-			reader.Close ();
-			stream.Close ();			
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1132,8 +1172,10 @@ namespace MonoTests.System.IO
 			reader.ReadInt16 ();
 			reader.ReadInt16 ();
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 
@@ -1146,8 +1188,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (723517761, reader.ReadInt32 (), "test#01");
 			Assert.AreEqual (3539717, reader.ReadInt32 (), "test#02");
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1161,8 +1205,10 @@ namespace MonoTests.System.IO
 			reader.ReadInt32 ();
 			reader.ReadInt32 ();
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 
@@ -1175,8 +1221,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (15202969475612993, reader.ReadInt64 (), "test#01");
 			Assert.AreEqual (2471354792417887522, reader.ReadInt64 (), "test#02");
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1192,8 +1240,10 @@ namespace MonoTests.System.IO
 			reader.ReadInt64 ();
 			reader.ReadInt64 ();
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1208,8 +1258,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (-56, reader.ReadSByte (), "test#02");
 			Assert.AreEqual (32, reader.ReadSByte (), "test#03");
 		} finally {
-			reader.Close ();
-			stream.Close ();
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1225,8 +1277,10 @@ namespace MonoTests.System.IO
 			reader.ReadSByte ();
 			reader.ReadSByte ();		
 		} finally {
-			reader.Close ();
-			stream.Close ();			
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1255,8 +1309,10 @@ namespace MonoTests.System.IO
 			reader.ReadSingle ();
 			reader.ReadSingle ();
 		} finally {
-			reader.Close ();
-			stream.Close ();			
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 	
@@ -1275,8 +1331,10 @@ namespace MonoTests.System.IO
 			Assert.AreEqual ("mo", reader.ReadString (), "test#02");
 			Assert.AreEqual ("o::", reader.ReadString (), "test#03");
 		} finally {
-			reader.Close ();
-			stream.Close ();			
+			if (reader != null)
+				reader.Close ();
+			if (stream != null)
+				stream.Close ();
 		}
 	}
 

@@ -15,6 +15,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IO.Compression
 {
 	[TestFixture]
@@ -46,6 +48,7 @@ namespace MonoTests.System.IO.Compression
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void Constructor_Null ()
 		{
 			DeflateStream ds = new DeflateStream (null, CompressionMode.Compress);
@@ -53,12 +56,14 @@ namespace MonoTests.System.IO.Compression
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void Constructor_InvalidCompressionMode ()
 		{
 			DeflateStream ds = new DeflateStream (new MemoryStream (), (CompressionMode)Int32.MinValue);
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckCompressDecompress ()
 		{
 			byte [] data = new byte[100000];
@@ -81,6 +86,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckDecompress ()
 		{
 			MemoryStream backing = new MemoryStream (compressed_data);
@@ -92,6 +98,7 @@ namespace MonoTests.System.IO.Compression
 
 		// https://bugzilla.xamarin.com/show_bug.cgi?id=22346
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckEmptyRead ()
 		{
 			byte [] dummy = new byte[1];
@@ -102,6 +109,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void CheckNullRead ()
 		{
@@ -111,6 +119,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void CheckCompressingRead ()
 		{
@@ -121,6 +130,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ArgumentException))]
 		public void CheckRangeRead ()
 		{
@@ -132,6 +142,7 @@ namespace MonoTests.System.IO.Compression
 
 #if !MOBILE
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[Category("NotWorking")]
 		[ExpectedException (typeof (InvalidDataException))]
 		public void CheckInvalidDataRead ()
@@ -145,6 +156,7 @@ namespace MonoTests.System.IO.Compression
 #endif
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ObjectDisposedException))]
 		public void CheckClosedRead ()
 		{
@@ -156,6 +168,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ObjectDisposedException))]
 		public void CheckClosedFlush ()
 		{
@@ -166,6 +179,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckSeek ()
 		{
@@ -175,6 +189,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckSetLength ()
 		{
@@ -184,6 +199,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckGetCanSeekProp ()
 		{
 			MemoryStream backing = new MemoryStream (compressed_data);
@@ -204,6 +220,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckGetCanReadProp ()
 		{
 			MemoryStream backing = new MemoryStream (compressed_data);
@@ -224,6 +241,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckGetCanWriteProp ()
 		{
 			MemoryStream backing = new MemoryStream ();
@@ -244,6 +262,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckSetLengthProp ()
 		{
@@ -253,6 +272,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckGetLengthProp ()
 		{
@@ -262,6 +282,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (NotSupportedException))]
 		public void CheckGetPositionProp ()
 		{
@@ -271,6 +292,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void DisposeTest ()
 		{
 			MemoryStream backing = new MemoryStream (compressed_data);
@@ -284,6 +306,7 @@ namespace MonoTests.System.IO.Compression
 
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void JunkAtTheEnd ()
 		{
 			// Write a deflated stream, then some additional data...
@@ -330,6 +353,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void Bug19313 ()
 		{
 			byte [] buffer  = new byte [512];
@@ -344,6 +368,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void CheckNet45Overloads () // Xambug #21982
 		{
 			MemoryStream dataStream = GenerateStreamFromString("Hello");
@@ -362,6 +387,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[ExpectedException (typeof (ArgumentException))]
 		public void CheckBufferOverrun ()
 		{
@@ -374,6 +400,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void Bug28777_EmptyFlush ()
 		{
 			MemoryStream backing = new MemoryStream ();
@@ -384,6 +411,7 @@ namespace MonoTests.System.IO.Compression
 		}
 		
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void Bug28777_DoubleFlush ()
 		{
 			byte[] buffer = new byte [4096];
@@ -397,6 +425,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void Bug34916_Inflate ()
 		{
 			var base64String = @"H4sIAAAAAAAAA6yVu27bQBBF/4VtZGHeD3ZJmhTp5C5IIUiEIcCWDEUugiD/nmEQwYRNURFAsuFwd2exZ++d+farud89davT+um5aRsC1DuEO+R7lJayRV9m5gegFqBZNB83m5fjevOzadGWUPHjaXd62XYVEy3Z04wiMTKIX0dfV0G/6FO3Pu72D/+iL916W9GbOV/X58SaS6zEKKyoGUA1eNg/nLfF2jUEBBNMtT4Wzeq567Z9HkZkE1Osf93msN/+WO32m+7zsavsh30/BUU8fy+uUCC+QIHpPQW1RAXkEGWUmSnUy2iUYSMYOGpARYViiIHcqY5kExS8rg2vY8gLGEjeYsClBVE4ORQHz3kxsEF4iS01xzBIZkgYQcYQQ7C54LQaIrxWn5+4ioT1BiRQN8Fh6MrOPjOS9Eh3M8YRJJQMZioJkUODFA8RNJ9AYuYBNyGJW5D0oi3/EpZ3dWYk5X5PN81RJGJgDATMQ5X02nFS1imVlMGvu0XwBg5/K1hY1U8tecxcNDy1/FAnG+OAQSi9PliHRaNUiuoxQYFB6T8oyAUKEu9LJ6oipbr1spyZArhWX6qbi7EOUrs7SCAoDNVgzKagMlUz+q6DQ4N8/yM=";
@@ -415,6 +444,7 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		public void Bug44994_Inflate()
 		{
 			var base64String = @"7cWxCQAgDACwpeBjgqsgXiHU0fd9QzBLErX1EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADepcxcuU/atm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm3btm37zy8=";
@@ -434,11 +464,12 @@ namespace MonoTests.System.IO.Compression
 		}
 
 		[Test]
+		[Category ("StaticLinkedAotNotWorking")] // Native MPH loading issues
 		[Category ("MobileNotWorking")]
 		public void Bug44994_InflateByteByByte()
 		{
 			int byteCount = 0;
-			using (var fileStream = File.OpenRead(Path.Combine("Test", "compressed.bin")))
+			using (var fileStream = File.OpenRead(TestResourceHelper.GetFullPathOfResource ("Test/compressed.bin")))
 			{
 				using (var deflateStream = new DeflateStream(fileStream, CompressionMode.Decompress, false))
 				{
@@ -450,6 +481,61 @@ namespace MonoTests.System.IO.Compression
 			}
 
 			Assert.AreEqual(125387, byteCount);
+		}
+
+		[Test]
+		public void Issue10054_ZeroRead()
+		{
+			// "HelloWorld" as UTF8/DeflateStream(...,CompressionMode.Compress)
+			var buffer = new byte[] { 243, 72, 205, 201, 201, 15, 207, 47, 202, 73, 1, 0 };
+			var mem = new MemoryStream(buffer);
+			var chu = new ChunkedReader(mem);
+			var def = new DeflateStream(chu, CompressionMode.Decompress);
+			
+			var buffer2 = new byte[4096];
+			int read2 = 0;
+
+			chu.limit = 3;
+			read2 += def.Read(buffer2, read2, buffer2.Length - read2);
+			chu.limit = 100;
+			read2 += def.Read(buffer2, read2, buffer2.Length - read2);
+
+			var res = Encoding.UTF8.GetString(buffer2, 0, read2);
+			Assert.AreEqual("HelloWorld", res);
+		}
+
+		public class ChunkedReader : Stream
+		{
+			public int limit = 0;
+			private Stream baseStream;
+			
+			public ChunkedReader(Stream baseStream)
+			{
+				this.baseStream = baseStream;
+			}
+
+			public override int Read(byte[] buffer, int offset, int count)
+			{
+				int read = baseStream.Read(buffer, offset, Math.Min(count, this.limit));
+				this.limit -= read;
+				return read;
+			}
+
+			public override void Flush() => baseStream.Flush();
+			public override long Seek(long offset, SeekOrigin origin) => baseStream.Seek(offset, origin);
+			public override void SetLength(long value) => baseStream.SetLength(value);
+			public override void Write(byte[] buffer, int offset, int count) => baseStream.Write(buffer, offset, count);
+
+			public override bool CanRead => baseStream.CanRead;
+			public override bool CanSeek => baseStream.CanSeek;
+			public override bool CanWrite => baseStream.CanWrite;
+			public override long Length => baseStream.Length;
+
+			public override long Position
+			{
+				get => baseStream.Position;
+				set => baseStream.Position = value;
+			}
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -787,6 +788,11 @@ class Tests {
 		}
 		if (!ok)
 			return 12;
+
+		object arr = new int [10];
+		if (arr is IList<int?>)
+			return 13;
+
 		return 0;
 	}
 
@@ -1266,6 +1272,27 @@ ncells ) {
 		return sb.ToString () == "ADC" ? 0 : 1;
 	}
 
+	enum FlagsEnum {
+		None = 0,
+		A = 1,
+		B = 2,
+		C = 4
+	}
+
+	public static int test_0_intrins_enum_hasflag () {
+		var e = FlagsEnum.A | FlagsEnum.B;
+
+		if (!e.HasFlag (FlagsEnum.A))
+			return 1;
+		if (!e.HasFlag (FlagsEnum.A | FlagsEnum.B))
+			return 2;
+		if (!e.HasFlag (FlagsEnum.None))
+			return 3;
+		if (e.HasFlag (FlagsEnum.C))
+			return 4;
+		return 0;
+	}
+
 	public class Bar {
 		bool allowLocation = true;
         Foo f = new Foo ();	
@@ -1362,6 +1389,8 @@ ncells ) {
 		return 1.4e-45f;
 	}
 
+#if !NO_BITCODE
+	[Category ("!BITCODE")] // bug #59953
 	public static int test_0_float_return_spill () {
 		// The return value of return_float () is spilled because of the
 		// boxing call
@@ -1369,6 +1398,7 @@ ncells ) {
 		float f = return_float ();
 		return (float)o == f ? 0 : 1;
 	}
+#endif
 
 	class R4Holder {
 		public static float pi = 3.14f;
@@ -1828,6 +1858,149 @@ ncells ) {
 
 		return 0;
 	}
+
+	enum FooEnum { Bar }
+	//https://github.com/mono/mono/issues/6666
+	public static int test_0_bad_unbox_nullable_of_enum () {
+		try {
+			var enumValue = FooEnum.Bar;
+			object value = (int)enumValue;
+			var res = (FooEnum?)value; // Should throw
+		} catch (InvalidCastException) {
+			return 0;
+		}
+		return 1;
+	}
+
+	//https://github.com/mono/mono/issues/6666
+	public static int test_0_unbox_nullable_of_enum () {
+		try {
+			var enumValue = FooEnum.Bar;
+			object value = (object)enumValue;
+			var res = (FooEnum?)value; // Should not throw
+		} catch (InvalidCastException) {
+			return 1;
+		}
+		return 0;
+	}
+
+	static void decode (out sbyte v) {
+		byte tmp = 134;
+		v = (sbyte)tmp;
+	}
+
+	// gh #6414
+	public static int test_0_alias_analysis_sign_extend () {
+	  sbyte t;
+	  decode (out t);
+
+	  return t == -122 ? 0 : 1;
+	}
+
+	public interface IFoo
+	{
+	  int MyInt { get; }
+	}
+
+	public class IFooImpl : IFoo
+	{
+	  public int MyInt => 0;
+	}
+
+	//gh 6266
+    public static int test_0_store_to_magic_iface_array ()
+    {
+      ICollection<IFoo> arr1 = new IFooImpl[1] { new IFooImpl() };
+      ICollection<IFoo> arr2 = new IFooImpl[1] { new IFooImpl() };
+
+      ICollection<IFoo>[] a2d = new ICollection<IFoo>[2] {
+        arr1,
+        arr2,
+      };
+
+	  return 0;
+    }
+
+	static volatile bool abool;
+
+	public static unsafe int test_0_stind_r4_float32_stack_merge () {
+		Single* dataPtr = stackalloc Single[4];
+		abool = true;
+		dataPtr[0] = abool ? 1.0f : 2.0f;
+		return dataPtr [0] == 1.0f ? 0 : 1;
+	}
+
+	class AClass1 {
+	}
+
+	class BClass1 : AClass1 {
+	}
+
+	class CClass1 {
+	}
+
+	public static int test_0_array_of_magic_iface () {
+		// Need to make this an object otherwise csc removes the cast
+		object d = new [] { new [] { new BClass1 () } };
+		if (!(d is IList<AClass1> []))
+			return 1;
+		if (d is IList<CClass1> [])
+			return 2;
+		var e2 = (IList<AClass1> []) d;
+		return 0;
+	}
+
+	class SimpleContainer {
+		public Simple simple1;
+		public Simple simple2;
+
+		public static Simple constsimple;
+
+		public int SetFields () {
+			constsimple.a = 0x1337;
+			simple1 = simple2 = constsimple;
+			return simple1.a - simple2.a;
+		}
+	}
+
+	public static int test_0_dup_vtype () {
+		return new SimpleContainer ().SetFields ();
+	}
+
+	public struct Vec3 {
+		public int X, Y, Z;
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+			public Vec3(int x, int y, int z) {
+			X = x;
+			Y = y;
+			Z = z;
+		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int gh_11378_inner_1 (Vec3 p1, Vec3 p2) {
+		p1.X -= p2.X;
+		p1.Y -= p2.Y;
+		p1.Z -= p2.Z;
+
+		return (int)p2.Y;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int gh_11378_inner_2 (Vec3 c, Vec3 pos) {
+		return gh_11378_inner_1 (pos, c);
+	}
+
+	static int gh_11378_inner_3 (Vec3 c) {
+		var c2 = c;
+		return gh_11378_inner_2 (c, c2);
+	}
+
+	public static int test_2_gh_11378 () {
+		return gh_11378_inner_3 (new Vec3(0, 2, -20));
+	}
+
 }
 
 #if __MOBILE__

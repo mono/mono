@@ -8,7 +8,7 @@ MCS = $(BOOTSTRAP_MCS)
 profile-check:
 	@:
 
-DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+DEFAULT_REFERENCES = mscorlib
 
 PROFILE_MCS_FLAGS = \
 	-d:NET_1_1 \
@@ -22,9 +22,9 @@ PROFILE_MCS_FLAGS = \
 	-d:MONO \
 	-nowarn:1699 \
 	-nostdlib \
-	$(DEFAULT_REFERENCES) \
 	$(PLATFORM_DEBUG_FLAGS)
 
+API_BIN_PROFILE = build/monotouch
 FRAMEWORK_VERSION = 2.1
 
 NO_INSTALL = yes

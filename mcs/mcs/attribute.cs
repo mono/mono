@@ -789,6 +789,17 @@ namespace Mono.CSharp {
 			return ((BoolConstant) pos_args[0].Expr).Value;
 		}
 
+		public TypeSpec GetAsyncMethodBuilderValue ()
+		{
+			if (!arg_resolved)
+				Resolve ();
+
+			if (resolve_error)
+				return null;
+
+			return GetArgumentType ();
+		}
+
 		public TypeSpec GetCoClassAttributeValue ()
 		{
 			if (!arg_resolved)
@@ -1053,8 +1064,10 @@ namespace Mono.CSharp {
 			}
 
 			byte[] cdata;
+			List<Assembly> references;
 			if (pos_args == null && named_values == null) {
 				cdata = AttributeEncoder.Empty;
+				references = null;
 			} else {
 				AttributeEncoder encoder = new AttributeEncoder ();
 
@@ -1127,7 +1140,7 @@ namespace Mono.CSharp {
 					encoder.EncodeEmptyNamedArguments ();
 				}
 
-				cdata = encoder.ToArray ();
+				cdata = encoder.ToArray (out references);
 			}
 
 			if (!IsConditionallyExcluded (ctor.DeclaringType)) {
@@ -1146,6 +1159,8 @@ namespace Mono.CSharp {
 					Error_AttributeEmitError (e.Message);
 					return;
 				}
+
+				context.Module.AddAssemblyReferences (references);
 			}
 
 			if (!usage_attr.AllowMultiple && allEmitted != null) {
@@ -1404,6 +1419,7 @@ namespace Mono.CSharp {
 		byte[] buffer;
 		int pos;
 		const ushort Version = 1;
+		List<Assembly> imports;
 
 		static AttributeEncoder ()
 		{
@@ -1583,7 +1599,15 @@ namespace Mono.CSharp {
 		public void EncodeTypeName (TypeSpec type)
 		{
 			var old_type = type.GetMetaInfo ();
-			Encode (type.MemberDefinition.IsImported ? old_type.AssemblyQualifiedName : old_type.FullName);
+			if (type.MemberDefinition.IsImported) {
+				if (imports == null)
+					imports = new List<Assembly> ();
+
+				imports.Add (old_type.Assembly);
+				Encode (old_type.AssemblyQualifiedName);
+			} else {
+				Encode (old_type.FullName);
+			}
 		}
 
 		public void EncodeTypeName (TypeContainer type)
@@ -1664,8 +1688,10 @@ namespace Mono.CSharp {
 			Encode (value);
 		}
 
-		public byte[] ToArray ()
+		public byte[] ToArray (out List<Assembly> assemblyReferences)
 		{
+			assemblyReferences = imports;
+
 			byte[] buf = new byte[pos];
 			Array.Copy (buffer, buf, pos);
 			return buf;
@@ -1754,6 +1780,11 @@ namespace Mono.CSharp {
 
 		// New in .NET 4.7
 		public readonly PredefinedTupleElementNamesAttribute TupleElementNames;
+		public readonly PredefinedAttribute AsyncMethodBuilder;
+
+		// New in .NET 4.7.1
+		public readonly PredefinedAttribute IsReadOnly;
+		public readonly PredefinedAttribute IsByRefLike;
 
 		//
 		// Optional types which are used as types and for member lookup
@@ -1834,7 +1865,10 @@ namespace Mono.CSharp {
 			CallerLineNumberAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerLineNumberAttribute");
 			CallerFilePathAttribute = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "CallerFilePathAttribute");
 
+			AsyncMethodBuilder = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "AsyncMethodBuilderAttribute");
 			TupleElementNames = new PredefinedTupleElementNamesAttribute (module, "System.Runtime.CompilerServices", "TupleElementNamesAttribute");
+			IsReadOnly = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "IsReadOnlyAttribute");
+			IsByRefLike = new PredefinedAttribute (module, "System.Runtime.CompilerServices", "IsByRefLikeAttribute");
 
 			// TODO: Should define only attributes which are used for comparison
 			const System.Reflection.BindingFlags all_fields = System.Reflection.BindingFlags.Public |
@@ -1971,7 +2005,8 @@ namespace Mono.CSharp {
 			encoder.Encode ((int) state);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 	}
 
@@ -2005,7 +2040,8 @@ namespace Mono.CSharp {
 			encoder.Encode ((int) modes);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 	}
 
@@ -2031,7 +2067,8 @@ namespace Mono.CSharp {
 			encoder.Encode ((uint) bits[0]);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 
 		public void EmitAttribute (FieldBuilder builder, decimal value, Location loc)
@@ -2049,7 +2086,8 @@ namespace Mono.CSharp {
 			encoder.Encode ((uint) bits[0]);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 	}
 
@@ -2073,7 +2111,8 @@ namespace Mono.CSharp {
 			encoder.EncodeTypeName (type);
 			encoder.EncodeEmptyNamedArguments ();
 
-			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			module.AddAssemblyReferences (references);
 		}
 	}
 

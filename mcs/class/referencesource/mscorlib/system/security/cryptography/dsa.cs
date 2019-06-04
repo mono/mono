@@ -16,6 +16,9 @@ namespace System.Security.Cryptography {
     using System.Security.Util;
     using System.Globalization;
     using System.IO;
+#if MONO
+    using System.Buffers;
+#endif
     using System.Diagnostics.Contracts;
 
     // DSAParameters is serializable so that one could pass the public parameters
@@ -266,5 +269,128 @@ namespace System.Security.Cryptography {
         {
             return new ArgumentException(Environment.GetResourceString("Cryptography_HashAlgorithmNameNullOrEmpty"), "hashAlgorithm");
         }
+
+#if MONO
+        // these methods were copied from CoreFX for NS2.1 support
+        public static DSA Create(int keySizeInBits)
+        {
+            DSA dsa = Create();
+
+            try
+            {
+                dsa.KeySize = keySizeInBits;
+                return dsa;
+            }
+            catch
+            {
+                dsa.Dispose();
+                throw;
+            }
+        }
+
+        public static DSA Create(DSAParameters parameters)
+        {
+            DSA dsa = Create();
+
+            try
+            {
+                dsa.ImportParameters(parameters);
+                return dsa;
+            }
+            catch
+            {
+                dsa.Dispose();
+                throw;
+            }
+        }
+
+        public virtual bool TryCreateSignature(ReadOnlySpan<byte> hash, Span<byte> destination, out int bytesWritten)
+        {
+            byte[] sig = CreateSignature(hash.ToArray());
+            if (sig.Length <= destination.Length)
+            {
+                new ReadOnlySpan<byte>(sig).CopyTo(destination);
+                bytesWritten = sig.Length;
+                return true;
+            }
+            else
+            {
+                bytesWritten = 0;
+                return false;
+            }
+        }
+
+        protected virtual bool TryHashData(ReadOnlySpan<byte> data, Span<byte> destination, HashAlgorithmName hashAlgorithm, out int bytesWritten)
+        {
+            byte[] array = ArrayPool<byte>.Shared.Rent(data.Length);
+            try
+            {
+                data.CopyTo(array);
+                byte[] hash = HashData(array, 0, data.Length, hashAlgorithm);
+                if (destination.Length >= hash.Length)
+                {
+                    new ReadOnlySpan<byte>(hash).CopyTo(destination);
+                    bytesWritten = hash.Length;
+                    return true;
+                }
+                else
+                {
+                    bytesWritten = 0;
+                    return false;
+                }
+            }
+            finally
+            {
+                Array.Clear(array, 0, data.Length);
+                ArrayPool<byte>.Shared.Return(array);
+            }
+        }
+
+        public virtual bool TrySignData(ReadOnlySpan<byte> data, Span<byte> destination, HashAlgorithmName hashAlgorithm, out int bytesWritten)
+        {
+            if (string.IsNullOrEmpty(hashAlgorithm.Name))
+            {
+                throw HashAlgorithmNameNullOrEmpty();
+            }
+
+            if (TryHashData(data, destination, hashAlgorithm, out int hashLength) &&
+                TryCreateSignature(destination.Slice(0, hashLength), destination, out bytesWritten))
+            {
+                return true;
+            }
+
+            bytesWritten = 0;
+            return false;
+        }
+
+        public virtual bool VerifyData(ReadOnlySpan<byte> data, ReadOnlySpan<byte> signature, HashAlgorithmName hashAlgorithm)
+        {
+            if (string.IsNullOrEmpty(hashAlgorithm.Name))
+            {
+                throw HashAlgorithmNameNullOrEmpty();
+            }
+
+            for (int i = 256; ; i = checked(i * 2))
+            {
+                int hashLength = 0;
+                byte[] hash = ArrayPool<byte>.Shared.Rent(i);
+                try
+                {
+                    if (TryHashData(data, hash, hashAlgorithm, out hashLength))
+                    {
+                        return VerifySignature(new ReadOnlySpan<byte>(hash, 0, hashLength), signature);
+                    }
+                }
+                finally
+                {
+                    Array.Clear(hash, 0, hashLength);
+                    ArrayPool<byte>.Shared.Return(hash);
+                }
+            }
+        }
+
+        public virtual bool VerifySignature(ReadOnlySpan<byte> hash, ReadOnlySpan<byte> signature) =>
+            VerifySignature(hash.ToArray(), signature.ToArray());
+#endif
     }
 }

@@ -63,7 +63,7 @@ namespace System.Windows.Forms
 		}
 
 		public int KeyValue {
-			get { return Convert.ToInt32 (this.key_data); }
+			get { return (int) (this.key_data & Keys.KeyCode); }
 		}
 
 		public Keys Modifiers {

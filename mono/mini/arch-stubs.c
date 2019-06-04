@@ -59,10 +59,86 @@ mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *ins)
 }
 #endif
 
-#ifndef MONO_ARCH_HAVE_OP_TAIL_CALL
-gboolean
-mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+#ifndef MONO_ARCH_INTERPRETER_SUPPORTED
+
+gpointer
+mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 {
-	return mono_metadata_signature_equal (caller_sig, callee_sig) && !MONO_TYPE_ISSTRUCT (callee_sig->ret);
+	g_assert_not_reached ();
+	return NULL;
 }
+
+gpointer
+mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+void
+mono_arch_undo_ip_adjustment (MonoContext *context)
+{
+	g_assert_not_reached ();
+}
+
+void
+mono_arch_do_ip_adjustment (MonoContext *context)
+{
+	g_assert_not_reached ();
+}
+
 #endif
+
+#ifndef MONO_ARCH_HAVE_EXCEPTIONS_INIT
+
+void
+mono_arch_exceptions_init (void)
+{
+}
+
+#endif
+
+#if defined (DISABLE_JIT) && !defined (HOST_WASM)
+gpointer
+mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer
+mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+gpointer 
+mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
+{
+	g_assert_not_reached ();
+	return NULL;
+}
+
+#endif /* DISABLE_JIT */

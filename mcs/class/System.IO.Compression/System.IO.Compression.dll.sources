@@ -36,3 +36,11 @@ corefx/SR.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/DeflateManaged/MatchState.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/DeflateManaged/OutputBuffer.cs
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/DeflateManaged/OutputWindow.cs
+
+# Brotli
+../../../external/corefx/src/System.IO.Compression.Brotli/src/System/IO/Compression/dec/*.cs
+../../../external/corefx/src/System.IO.Compression.Brotli/src/System/IO/Compression/enc/*.cs
+../../../external/corefx/src/System.IO.Compression.Brotli/src/System/IO/Compression/*.cs
+../../../external/corefx/src/System.IO.Compression.Brotli/src/Interop/*.cs
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeBrotliHandle.cs
+corefx/Interop.Libraries.cs

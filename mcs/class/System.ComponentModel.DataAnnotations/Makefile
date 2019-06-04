@@ -7,7 +7,8 @@ LIB_REFS = System System.Core System.Data System.Xml
 KEYFILE = ../winfx.pub
 LIB_MCS_FLAGS = -nowarn:414
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_MCS_FLAGS =
+TEST_LIB_REFS = System System.Core
 
 TXT_RESOURCE_STRINGS = ../referencesource/System.ComponentModel.DataAnnotations/System.ComponentModel.DataAnnotations.txt
 

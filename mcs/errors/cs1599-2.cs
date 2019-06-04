@@ -1,4 +1,4 @@
-// CS1599: Method or delegate cannot return type `System.ArgIterator'
+// CS1599: The return type of `System.ArgIterator' is not allowed
 // Line: 8
 
 using System;

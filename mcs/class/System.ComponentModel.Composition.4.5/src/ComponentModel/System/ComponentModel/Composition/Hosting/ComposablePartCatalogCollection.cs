@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Microsoft.Internal;
 using Microsoft.Internal.Collections;
 using System.Collections;
+using Lock = Microsoft.Internal.Lock;
 
 namespace System.ComponentModel.Composition.Hosting
 {

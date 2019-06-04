@@ -1,1 +1,2 @@
+../../test-helpers/TestResourceHelper.cs
 System.IO.Compression.FileSystem/ZipTest.cs

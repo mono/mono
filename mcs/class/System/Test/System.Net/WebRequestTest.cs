@@ -279,7 +279,7 @@ namespace MonoTests.System.Net {
 		Assert.AreSame (proxy, WebRequest.DefaultWebProxy, "#A2");
 
 		HttpWebRequest req = (HttpWebRequest) WebRequest.CreateDefault (
-			new Uri ("http://www.mono-project.com"));
+			new Uri ("http://www.example.com"));
 		Assert.IsNotNull (req.Proxy, "#B1");
 		Assert.AreSame (proxy, req.Proxy, "#B2");
 
@@ -289,7 +289,7 @@ namespace MonoTests.System.Net {
 		Assert.AreSame (proxy, req.Proxy, "#C3");
 
 		req = (HttpWebRequest) WebRequest.CreateDefault (
-			new Uri ("http://www.mono-project.com"));
+			new Uri ("http://www.example.com"));
 		Assert.IsNull (req.Proxy, "#D");
 	}
 
@@ -297,7 +297,7 @@ namespace MonoTests.System.Net {
 	public void RegisterPrefix_Creator_Null ()
 	{
 		try {
-			WebRequest.RegisterPrefix ("http://www.mono-project.com", (IWebRequestCreate) null);
+			WebRequest.RegisterPrefix ("http://www.example.com", (IWebRequestCreate) null);
 			Assert.Fail ("#1");
 		} catch (ArgumentNullException ex) {
 			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
@@ -433,11 +433,7 @@ namespace MonoTests.System.Net {
 #endif
 	public void TestReceiveCancelation ()
 	{
-		var uri = "http://localhost:" + NetworkHelpers.FindFreePort () + "/";
-
-		HttpListener listener = new HttpListener ();
-		listener.Prefixes.Add (uri);
-		listener.Start ();
+		HttpListener listener = NetworkHelpers.CreateAndStartHttpListener ("http://localhost:", out var port, "/", out var uri);
 
 		try {
 			for (var i = 0; i < 10; i++) {

@@ -356,9 +356,12 @@ namespace System.ServiceModel.Dispatcher
 				owner.Listener.Open (openTimeout);
 
 				// It is tested at Open(), but strangely it is not instantiated at this point.
-				foreach (var ed in owner.Endpoints)
-					if (ed.DispatchRuntime.InstanceContextProvider == null && (ed.DispatchRuntime.Type == null || ed.DispatchRuntime.Type.GetConstructor (Type.EmptyTypes) == null))
+				foreach (var ed in owner.Endpoints) {
+					if ((ed.DispatchRuntime.InstanceProvider == null && ed.DispatchRuntime.InstanceContextProvider == null)
+						&& (ed.DispatchRuntime.Type == null || ed.DispatchRuntime.Type.GetConstructor (Type.EmptyTypes) == null)) {
 						throw new InvalidOperationException ("There is no default constructor for the service Type in the DispatchRuntime");
+					}
+				}
 				SetupChannelAcceptor ();
 			}
 
@@ -615,16 +618,16 @@ namespace System.ServiceModel.Dispatcher
 
 					if ((!(ex is SocketException)) && 
 					    (!(ex is XmlException)) &&
-					    (!(ex is IOException)))
+					    (!(ex is IOException)) &&
+					    rc != null)
 						rc.Reply (res);
 					
 					reply.Close (owner.DefaultCloseTimeout); // close the channel
 				} finally {
 					if (rc != null)
 						rc.Close ();
-					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
-					if (loop && reply.State != CommunicationState.Closed)
-						ProcessRequestOrInput (reply);
+
+					reply.Close (owner.DefaultCloseTimeout); // close the channel
 				}
 			}
 

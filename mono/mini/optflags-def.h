@@ -1,3 +1,5 @@
+// This file must be sorted based on the second column.
+// i.e. so that designated initializers are not required.
 OPTFLAG(PEEPHOLE ,0, "peephole",   "Peephole postpass")
 OPTFLAG(BRANCH   ,1, "branch",     "Branch optimizations")
 OPTFLAG(INLINE   ,2, "inline",     "Inline method calls")
@@ -10,7 +12,7 @@ OPTFLAG(CMOV     ,8, "cmov",       "Conditional moves")
 OPTFLAG(SHARED   ,9, "shared",     "Emit per-domain code")
 OPTFLAG(SCHED    ,10, "sched",      "Instruction scheduling")
 OPTFLAG(INTRINS  ,11, "intrins",    "Intrinsic method implementations")
-OPTFLAG(TAILC    ,12, "tailc",      "Tail recursion and tail calls")
+OPTFLAG(TAILCALL ,12, "tailc",      "Tail recursion and tailcalls")
 OPTFLAG(LOOP     ,13, "loop",       "Loop related optimizations")
 OPTFLAG(FCMOV    ,14, "fcmov",      "Fast x86 FP compares")
 OPTFLAG(LEAF     ,15, "leaf",       "Leaf procedures optimizations")

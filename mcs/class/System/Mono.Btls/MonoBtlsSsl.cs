@@ -33,7 +33,8 @@ using System.Runtime.CompilerServices;
 namespace Mono.Btls
 {
 	delegate int MonoBtlsVerifyCallback (MonoBtlsX509StoreCtx ctx);
-	delegate int MonoBtlsSelectCallback ();
+	delegate int MonoBtlsSelectCallback (string[] acceptableIssuers);
+	delegate int MonoBtlsServerNameCallback ();
 
 	class MonoBtlsSsl : MonoBtlsObject
 	{
@@ -129,6 +130,12 @@ namespace Mono.Btls
 
 		[DllImport (BTLS_DYLIB)]
 		extern static IntPtr mono_btls_ssl_get_server_name (IntPtr handle);
+
+		[DllImport (BTLS_DYLIB)]
+		extern static void mono_btls_ssl_set_renegotiate_mode (IntPtr handle, int mode);
+
+		[DllImport (BTLS_DYLIB)]
+		extern static int mono_btls_ssl_renegotiate_pending (IntPtr handle);
 
 		static BoringSslHandle Create_internal (MonoBtlsSslCtx ctx)
 		{
@@ -447,6 +454,17 @@ namespace Mono.Btls
 		{
 			if (!Handle.IsInvalid)
 				mono_btls_ssl_close (Handle.DangerousGetHandle ());
+		}
+
+		public void SetRenegotiateMode (MonoBtlsSslRenegotiateMode mode)
+		{
+			CheckThrow ();
+			mono_btls_ssl_set_renegotiate_mode (Handle.DangerousGetHandle (), (int)mode);
+		}
+
+		public bool RenegotiatePending ()
+		{
+			return mono_btls_ssl_renegotiate_pending (Handle.DangerousGetHandle ()) != 0;
 		}
 	}
 }

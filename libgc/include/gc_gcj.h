@@ -44,6 +44,10 @@
 #   include "gc.h"
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* The following allocators signal an out of memory condition with	*/
 /* return GC_oom_fn(bytes);						*/
 
@@ -109,5 +113,9 @@ extern int GC_gcj_debug_kind;
 #   define GC_GCJ_MALLOC_IGNORE_OFF_PAGE(s,d) \
 	GC_gcj_malloc_ignore_off_page(s,d)
 # endif
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif /* GC_GCJ_H */

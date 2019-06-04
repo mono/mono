@@ -7,9 +7,10 @@
 //   that gdiff.sh produced
 // 
 // Authors
-//    Sebastien Pouliot  <sebastien@xamarin.com>
+//    Sebastien Pouliot  <sebastien.pouliot@microsoft.com>
 //
 // Copyright 2013-2014 Xamarin Inc. http://www.xamarin.com
+// Copyright 2018 Microsoft Inc.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,53 +37,39 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-using Mono.Options;
+namespace Mono.ApiTools {
 
-namespace Xamarin.ApiDiff {
+	class State {
+		public TextWriter Output { get; set; }
+		public Formatter Formatter { get; set; }
+		public string Assembly { get; set; }
+		public string Namespace { get; set; }
+		public string Type { get; set; }
+		public string BaseType { get; set; }
+		public string Parent { get; set; }
+		public int Indent { get; set; }
+		public List<Regex> IgnoreAdded { get; } = new List<Regex> ();
+		public List<Regex> IgnoreNew { get; } = new List<Regex> ();
+		public List<Regex> IgnoreRemoved { get; } = new List<Regex> ();
+		public bool IgnoreParameterNameChanges { get; set; }
+		public bool IgnoreVirtualChanges { get; set; }
+		public bool IgnoreAddedPropertySetters { get; set; }
+		public bool IgnoreNonbreaking { get; set; }
+		public bool Lax { get; set; }
+		public bool Colorize { get; set; } = true;
+		public int Verbosity { get; set; }
 
-	public static class State {
-		static TextWriter output;
-
-		public static TextWriter Output { 
-			get {
-				if (output == null)
-					output = Console.Out;
-				return output;
-			}
-			set { output = value; } 
+		public void LogDebugMessage (string value)
+		{
+#if !EXCLUDE_DRIVER
+			if (Verbosity == 0)
+				return;
+			Console.WriteLine (value);
+#endif
 		}
-
-		public static string Assembly { get; set; }
-		public static string Namespace { get; set; }
-		public static string Type { get; set; }
-		public static string BaseType { get; set; }
-
-		public static int Indent { get; set; }
-
-		static List<Regex> ignoreAdded = new List<Regex> ();
-		public static List<Regex> IgnoreAdded {
-			get { return ignoreAdded; }
-		}
-
-		static List<Regex> ignoreNew = new List<Regex> ();
-		public static List<Regex> IgnoreNew {
-			get { return ignoreNew; }
-		}
-
-		static List<Regex> ignoreRemoved = new List<Regex> ();
-		public static List<Regex> IgnoreRemoved {
-			get { return ignoreRemoved; }
-		}
-
-		public  static  bool    IgnoreParameterNameChanges  { get; set; }
-		public  static  bool    IgnoreVirtualChanges        { get; set; }
-		public  static  bool    IgnoreAddedPropertySetters  { get; set; }
-
-		public static bool IgnoreNonbreaking { get; set; }
-
-		public static bool Lax;
-		public static bool Colorize = true;
 	}
+
+#if !EXCLUDE_DRIVER
 	class Program {
 
 		public static int Main (string[] args)
@@ -90,53 +77,51 @@ namespace Xamarin.ApiDiff {
 			var showHelp = false;
 			string diff = null;
 			List<string> extra = null;
+			var config = new ApiDiffFormattedConfig ();
 
-			var options = new OptionSet {
+			var options = new Mono.Options.OptionSet {
 				{ "h|help", "Show this help", v => showHelp = true },
-				{ "d|diff=", "HTML diff file out output (omit for stdout)", v => diff = v },
+				{ "d|o|out=|output=|diff=", "HTML diff file out output (omit for stdout)", v => diff = v },
 				{ "i|ignore=", "Ignore new, added, and removed members whose description matches a given C# regular expression (see below).",
 					v => {
 						var r = new Regex (v);
-						State.IgnoreAdded.Add (r);
-						State.IgnoreRemoved.Add (r);
-						State.IgnoreNew.Add (r);
+						config.IgnoreAdded.Add (r);
+						config.IgnoreRemoved.Add (r);
+						config.IgnoreNew.Add (r);
 					}
 				},
 				{ "a|ignore-added=", "Ignore added members whose description matches a given C# regular expression (see below).",
-					v => State.IgnoreAdded.Add (new Regex (v))
+					v => config.IgnoreAdded.Add (new Regex (v))
 				},
 				{ "r|ignore-removed=", "Ignore removed members whose description matches a given C# regular expression (see below).",
-					v => State.IgnoreRemoved.Add (new Regex (v))
+					v => config.IgnoreRemoved.Add (new Regex (v))
 				},
 				{ "n|ignore-new=", "Ignore new namespaces and types whose description matches a given C# regular expression (see below).",
-					v => State.IgnoreNew.Add (new Regex (v))
+					v => config.IgnoreNew.Add (new Regex (v))
 				},
 				{ "ignore-changes-parameter-names", "Ignore changes to parameter names for identically prototyped methods.",
-					v => State.IgnoreParameterNameChanges   = v != null
+					v => config.IgnoreParameterNameChanges   = v != null
 				},
 				{ "ignore-changes-property-setters", "Ignore adding setters to properties.",
-					v => State.IgnoreAddedPropertySetters = v != null
+					v => config.IgnoreAddedPropertySetters = v != null
 				},
 				{ "ignore-changes-virtual", "Ignore changing non-`virtual` to `virtual` or adding `override`.",
-					v => State.IgnoreVirtualChanges = v != null
+					v => config.IgnoreVirtualChanges = v != null
 				},
-				{ "c|colorize:", "Colorize HTML output", v => State.Colorize = string.IsNullOrEmpty (v) ? true : bool.Parse (v) },
-				{ "x|lax", "Ignore duplicate XML entries", v => State.Lax = true },
-				{ "ignore-nonbreaking", "Ignore all nonbreaking changes", v => State.IgnoreNonbreaking = true }
+				{ "c|colorize:", "Colorize HTML output", v => config.Colorize = string.IsNullOrEmpty (v) ? true : bool.Parse (v) },
+				{ "x|lax", "Ignore duplicate XML entries", v => config.IgnoreDuplicateXml = true },
+				{ "ignore-nonbreaking", "Ignore all nonbreaking changes", v => config.IgnoreNonbreaking = true },
+				{ "v|verbose:", "Verbosity level; when set, will print debug messages",
+				  (int? v) => config.Verbosity = v ?? (config.Verbosity + 1)},
+				{ "md|markdown", "Output markdown instead of HTML", v => config.Formatter = ApiDiffFormatter.Markdown },
+				new Mono.Options.ResponseFileSource (),
 			};
 
 			try {
 				extra = options.Parse (args);
-			} catch (OptionException e) {
+			} catch (Mono.Options.OptionException e) {
 				Console.WriteLine ("Option error: {0}", e.Message);
-				showHelp = true;
-			}
-
-			if (State.IgnoreNonbreaking) {
-				State.IgnoreAddedPropertySetters = true;
-				State.IgnoreVirtualChanges = true;
-				State.IgnoreNew.Add (new Regex (".*"));
-				State.IgnoreAdded.Add (new Regex (".*"));
+				extra = null;
 			}
 
 			if (showHelp || extra == null || extra.Count < 2 || extra.Count > 3) {
@@ -158,7 +143,7 @@ namespace Xamarin.ApiDiff {
 				Console.WriteLine ("  The regular expressions will match any member description ending with");
 				Console.WriteLine ("  'INSCopying' or 'INSCoding'.");
 				Console.WriteLine ();
-				return 1;
+				return showHelp ? 0 : 1;
 			}
 
 			var input = extra [0];
@@ -166,123 +151,136 @@ namespace Xamarin.ApiDiff {
 			if (extra.Count == 3 && diff == null)
 				diff = extra [2];
 
+			TextWriter outputStream = null;
 			try {
-				var ac = new AssemblyComparer (input, output);
-				if (diff != null) {
-					string diffHtml = String.Empty;
-					using (var writer = new StringWriter ()) {
-						State.Output = writer;
-						ac.Compare ();
-						diffHtml = State.Output.ToString ();
-					}
-					if (diffHtml.Length > 0) {
-						using (var file = new StreamWriter (diff)) {
-							file.WriteLine ("<div>");
-							if (State.Colorize) {
-								file.WriteLine ("<style scoped>");
-								file.WriteLine ("\t.obsolete { color: gray; }");
-								file.WriteLine ("\t.added { color: green; }");
-								file.WriteLine ("\t.removed-inline { text-decoration: line-through; }");
-								file.WriteLine ("\t.removed-breaking-inline { color: red;}");
-								file.WriteLine ("\t.added-breaking-inline { text-decoration: underline; }");
-								file.WriteLine ("\t.nonbreaking { color: black; }");
-								file.WriteLine ("\t.breaking { color: red; }");
-								file.WriteLine ("</style>");
-							}
-							file.WriteLine (
-@"<script type=""text/javascript"">
-	// Only some elements have 'data-is-[non-]breaking' attributes. Here we
-	// iterate over all descendents elements, and set 'data-is-[non-]breaking'
-	// depending on whether there are any descendents with that attribute.
-	function propagateDataAttribute (element)
-	{
-		if (element.hasAttribute ('data-is-propagated'))
-			return;
+				if (!string.IsNullOrEmpty (diff))
+					outputStream = new StreamWriter (diff);
 
-		var i;
-		var any_breaking = element.hasAttribute ('data-is-breaking');
-		var any_non_breaking = element.hasAttribute ('data-is-non-breaking');
-		for (i = 0; i < element.children.length; i++) {
-			var el = element.children [i];
-			propagateDataAttribute (el);
-			any_breaking |= el.hasAttribute ('data-is-breaking');
-			any_non_breaking |= el.hasAttribute ('data-is-non-breaking');
-		}
-		
-		if (any_breaking)
-			element.setAttribute ('data-is-breaking', null);
-		else if (any_non_breaking)
-			element.setAttribute ('data-is-non-breaking', null);
-		element.setAttribute ('data-is-propagated', null);
-	}
-
-	function hideNonBreakingChanges ()
-	{
-		var topNodes = document.querySelectorAll ('[data-is-topmost]');
-		var n;
-		var i;
-		for (n = 0; n < topNodes.length; n++) {
-			propagateDataAttribute (topNodes [n]);
-			var elements = topNodes [n].querySelectorAll ('[data-is-non-breaking]');
-			for (i = 0; i < elements.length; i++) {
-				var el = elements [i];
-				if (!el.hasAttribute ('data-original-display'))
-					el.setAttribute ('data-original-display', el.style.display);
-				el.style.display = 'none';
-			}
-		}
-		
-		var links = document.getElementsByClassName ('hide-nonbreaking');
-		for (i = 0; i < links.length; i++)
-			links [i].style.display = 'none';
-		links = document.getElementsByClassName ('restore-nonbreaking');
-		for (i = 0; i < links.length; i++)
-			links [i].style.display = '';
-	}
-
-	function showNonBreakingChanges ()
-	{
-		var elements = document.querySelectorAll ('[data-original-display]');
-		var i;
-		for (i = 0; i < elements.length; i++) {
-			var el = elements [i];
-			el.style.display = el.getAttribute ('data-original-display');
-		}
-
-		var links = document.getElementsByClassName ('hide-nonbreaking');
-		for (i = 0; i < links.length; i++)
-			links [i].style.display = '';
-		links = document.getElementsByClassName ('restore-nonbreaking');
-		for (i = 0; i < links.length; i++)
-			links [i].style.display = 'none';
-	}
-</script>");
-							if (ac.SourceAssembly == ac.TargetAssembly) {
-								file.WriteLine ("<h1>{0}.dll</h1>", ac.SourceAssembly);
-							} else {
-								file.WriteLine ("<h1>{0}.dll vs {1}.dll</h1>", ac.SourceAssembly, ac.TargetAssembly);
-							}
-							if (!State.IgnoreNonbreaking) {
-								file.WriteLine ("<a href='javascript: hideNonBreakingChanges (); ' class='hide-nonbreaking'>Hide non-breaking changes</a>");
-								file.WriteLine ("<a href='javascript: showNonBreakingChanges (); ' class='restore-nonbreaking' style='display: none;'>Show non-breaking changes</a>");
-								file.WriteLine ("<br/>");
-							}
-							file.WriteLine ("<div data-is-topmost>");
-							file.Write (diffHtml);
-							file.WriteLine ("</div> <!-- end topmost div -->");
-							file.WriteLine ("</div>");
-						}
-					}
-				} else {
-					State.Output = Console.Out;
-					ac.Compare ();
-				}
-			}
-			catch (Exception e) {
+				ApiDiffFormatted.Generate (input, output, outputStream ?? Console.Out, config);
+			} catch (Exception e) {
 				Console.WriteLine (e);
 				return 1;
+			} finally {
+				outputStream?.Dispose ();
 			}
 			return 0;
+		}
+	}
+#endif
+
+	public enum ApiDiffFormatter {
+		Html,
+		Markdown,
+	}
+
+	public class ApiDiffFormattedConfig {
+		public ApiDiffFormatter Formatter { get; set; }
+		public List<Regex> IgnoreAdded { get; set; } = new List<Regex> ();
+		public List<Regex> IgnoreNew { get; set; } = new List<Regex> ();
+		public List<Regex> IgnoreRemoved { get; set; } = new List<Regex> ();
+		public bool IgnoreParameterNameChanges { get; set; }
+		public bool IgnoreVirtualChanges { get; set; }
+		public bool IgnoreAddedPropertySetters { get; set; }
+		public bool IgnoreNonbreaking { get; set; }
+		public bool IgnoreDuplicateXml { get; set; }
+		public bool Colorize { get; set; } = true;
+
+		internal int Verbosity { get; set; }
+	}
+
+	public static class ApiDiffFormatted {
+
+		public static void Generate (Stream firstInfo, Stream secondInfo, TextWriter outStream, ApiDiffFormattedConfig config = null)
+		{
+			var state = CreateState (config);
+			Generate (firstInfo, secondInfo, outStream, state);
+		}
+
+		public static void Generate (string firstInfo, string secondInfo, TextWriter outStream, ApiDiffFormattedConfig config = null)
+		{
+			var state = CreateState (config);
+			Generate (firstInfo, secondInfo, outStream, state);
+		}
+
+		internal static void Generate (string firstInfo, string secondInfo, TextWriter outStream, State state)
+		{
+			var ac = new AssemblyComparer (firstInfo, secondInfo, state);
+			Generate (ac, outStream, state);
+		}
+
+		internal static void Generate (Stream firstInfo, Stream secondInfo, TextWriter outStream, State state)
+		{
+			var ac = new AssemblyComparer (firstInfo, secondInfo, state);
+			Generate (ac, outStream, state);
+		}
+
+		static void Generate (AssemblyComparer ac, TextWriter outStream, State state)
+		{
+			var diffHtml = String.Empty;
+			using (var writer = new StringWriter ()) {
+				state.Output = writer;
+				ac.Compare ();
+				diffHtml = state.Output.ToString ();
+			}
+
+			if (diffHtml.Length > 0) {
+				var title = $"{ac.SourceAssembly}.dll";
+				if (ac.SourceAssembly != ac.TargetAssembly)
+					title += $" vs {ac.TargetAssembly}.dll";
+
+				state.Formatter.BeginDocument (outStream, $"API diff: {title}");
+				state.Formatter.BeginAssembly (outStream);
+				outStream.Write (diffHtml);
+				state.Formatter.EndAssembly (outStream);
+				state.Formatter.EndDocument (outStream);
+			}
+		}
+
+		static State CreateState (ApiDiffFormattedConfig config)
+		{
+			if (config == null)
+				config = new ApiDiffFormattedConfig ();
+
+			var state = new State {
+				Colorize = config.Colorize,
+				Formatter = null,
+				IgnoreAddedPropertySetters = config.IgnoreAddedPropertySetters,
+				IgnoreVirtualChanges = config.IgnoreVirtualChanges,
+				IgnoreNonbreaking = config.IgnoreNonbreaking,
+				IgnoreParameterNameChanges = config.IgnoreParameterNameChanges,
+				Lax = config.IgnoreDuplicateXml,
+
+				Verbosity = config.Verbosity
+			};
+
+			state.IgnoreAdded.AddRange (config.IgnoreAdded);
+			state.IgnoreNew.AddRange (config.IgnoreNew);
+			state.IgnoreRemoved.AddRange (config.IgnoreRemoved);
+
+			switch (config.Formatter)
+			{
+				case ApiDiffFormatter.Html:
+					state.Formatter = new HtmlFormatter(state);
+					break;
+				case ApiDiffFormatter.Markdown:
+					state.Formatter = new MarkdownFormatter(state);
+					break;
+				default:
+					throw new ArgumentException("Invlid formatter specified.");
+			}
+
+			// unless specified default to HTML
+			if (state.Formatter == null)
+				state.Formatter = new HtmlFormatter (state);
+
+			if (state.IgnoreNonbreaking) {
+				state.IgnoreAddedPropertySetters = true;
+				state.IgnoreVirtualChanges = true;
+				state.IgnoreNew.Add (new Regex (".*"));
+				state.IgnoreAdded.Add (new Regex (".*"));
+			}
+
+			return state;
 		}
 	}
 }

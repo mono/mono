@@ -1,4 +1,3 @@
-#if MONO_FEATURE_APPLETLS
 // Copyright 2014 Xamarin Inc. All rights reserved.
 
 namespace Mono.AppleTls {
@@ -74,7 +73,7 @@ namespace Mono.AppleTls {
 		BadConfiguration			= -9848,
 		UnexpectedRecord			= -9849,
 		SSLWeakPeerEphemeralDHKey               = -9850,
-		SSLClientHelloReceived                  = -9851 // non falta
+		ClientHelloReceived			= -9851 // non falta
 	}
 
 	// Security.framework/Headers/SecureTransport.h
@@ -92,16 +91,16 @@ namespace Mono.AppleTls {
 		
 		// Fallback = 6,
 
-		// BreakOnClientHello = 7,
+		BreakOnClientHello = 7,
 
-		// AllowRenegotiation = 8,
+		AllowRenegotiation = 8,
 	}
 
 	// Security.framework/Headers/SecureTransport.h
 	// untyped enum
 	enum SslAuthenticate {
-		// Never,
-		// Always,
+		Never,
+		Always,
 		Try = 2,
 	}
 
@@ -123,11 +122,11 @@ namespace Mono.AppleTls {
 	// untyped enum
 	enum SslSessionState {
 		Invalid = -1,
-		// Idle,
-		// Handshake,
-		// Connected,
-		// Closed,
-		// Aborted
+		Idle,
+		Handshake,
+		Connected,
+		Closed,
+		Aborted
 	}
 
 	// Security.framework/Headers/SecureTransport.h
@@ -248,4 +247,3 @@ namespace Mono.AppleTls {
 		TLS_ECDH_RSA_WITH_AES_256_GCM_SHA384		= 0xC032,	// iOS 9+
 	}
 }
-#endif

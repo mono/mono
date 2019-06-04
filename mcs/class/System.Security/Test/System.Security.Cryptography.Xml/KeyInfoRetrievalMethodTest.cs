@@ -7,6 +7,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
+#if !MOBILE
 
 using System;
 using System.Security.Cryptography;
@@ -30,7 +31,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void TestNewKeyNode () 
 		{
-			string uri = "http://www.go-mono.com/";
+			string uri = "http://www.example.com/";
 			KeyInfoRetrievalMethod uri1 = new KeyInfoRetrievalMethod ();
 			uri1.Uri = uri;
 			XmlElement xel = uri1.GetXml ();
@@ -45,7 +46,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void TestImportKeyNode () 
 		{
-			string value = "<RetrievalMethod URI=\"http://www.go-mono.com/\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />";
+			string value = "<RetrievalMethod URI=\"http://www.example.com/\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />";
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml (value);
 
@@ -57,7 +58,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			Assert.AreEqual (value, s, "Xml");
 
 			// verify that property is parsed correctly
-			Assert.AreEqual ("http://www.go-mono.com/", uri1.Uri, "Uri");
+			Assert.AreEqual ("http://www.example.com/", uri1.Uri, "Uri");
 		}
 
 		[Test]
@@ -82,3 +83,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}
 }
+#endif

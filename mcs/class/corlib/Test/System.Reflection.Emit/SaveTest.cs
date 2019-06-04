@@ -67,9 +67,31 @@ public class SaveTest
 		0x79, 0xC0, 0x9B, 0x5F, 0x34, 0x86, 0xB2, 0xDE, 0xC4, 0x19, 0x84, 0x5F, 
 		0x0E, 0xED, 0x9B, 0xB8, 0xD3, 0x17, 0xDA, 0x78 };
 
+	string tempDir = Path.Combine (Path.GetTempPath (), typeof (SaveTest).FullName);
+
+	[SetUp]
+	protected void SetUp ()
+	{
+		var rand = new Random ();
+		string basePath = tempDir;
+		while (Directory.Exists (tempDir))
+			tempDir = Path.Combine (basePath, rand.Next ().ToString ());
+		Directory.CreateDirectory (tempDir);
+	}
+
+	[TearDown]
+	protected void TearDown ()
+	{
+		try {
+			// This throws an exception under MS.NET, since the directory contains loaded
+			// assemblies.
+			Directory.Delete (tempDir, true);
+		} catch (Exception) {
+		}
+	}
+
 	[Test]
 	public void Save () {
-		// FIXME: Temp dir etc.
 
 		//
 		// Create a test assembly, write it to disk, then read it back
@@ -81,9 +103,9 @@ public class SaveTest
 		aname.CultureInfo = new CultureInfo ("en");
 		aname.Flags = AssemblyNameFlags.Retargetable;
 		aname.HashAlgorithm = AssemblyHashAlgorithm.SHA256;
-		var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.RunAndSave);
+		var ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.RunAndSave, tempDir);
 
-		string strongfile = "strongname.snk";
+		string strongfile = Path.Combine (tempDir, "strongname.snk");
 		using (FileStream fs = File.OpenWrite (strongfile)) {
 			fs.Write (strongName, 0, strongName.Length);
 			fs.Close ();
@@ -264,7 +286,7 @@ public class SaveTest
 		ab.Save ("h.exe");
 
 		// Read the assembly and check data
-		Assembly a = Assembly.LoadFrom ("h.exe");
+		Assembly a = Assembly.LoadFrom (Path.Combine (tempDir, "h.exe"));
 		Assert.IsTrue (a != ab);
 		CheckAssembly (a);
 	}
@@ -295,9 +317,10 @@ public class SaveTest
 		// Type attributes
 		Assert.AreEqual (TypeAttributes.Public|TypeAttributes.SequentialLayout, type1.Attributes);
 		// Interfaces
-		Assert.AreEqual (2, type1.GetInterfaces ().Length); 
-		Assert.AreEqual (iface1, type1.GetInterfaces () [0]);
-		Assert.AreEqual (typeof (IComparable), type1.GetInterfaces () [1]);
+		var ifaces = type1.GetInterfaces ();
+		Assert.AreEqual (2, ifaces.Length);
+		Assert.IsTrue (iface1 == ifaces [0] || iface1 == ifaces [1]);
+		Assert.IsTrue (typeof (IComparable) == ifaces [0] || typeof (IComparable) == ifaces [1]);
 		CheckCattr (type1);
 		// FIXME: Class size/packing size
 

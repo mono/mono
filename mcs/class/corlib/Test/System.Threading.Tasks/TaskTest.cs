@@ -37,6 +37,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture]
+	[Category ("MultiThreaded")]
 	public class TaskTests
 	{
 		class MockScheduler : TaskScheduler
@@ -984,6 +985,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void UnobservedExceptionOnFinalizerThreadTest ()
 		{
 			bool wasCalled = false;
@@ -1258,7 +1260,7 @@ namespace MonoTests.System.Threading.Tasks
 		{
 			var t = Task.Delay (300);
 			Assert.IsTrue (TaskStatus.WaitingForActivation == t.Status || TaskStatus.Running == t.Status, "#1");
-			Assert.IsTrue (t.Wait (400), "#2");
+			Assert.IsTrue (t.Wait (1200), "#2");
 		}
 
 		[Test]

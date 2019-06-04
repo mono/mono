@@ -29,14 +29,13 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-
+using MonoTests.Helpers;
 using NUnit.Framework;
 
 namespace MonoTests.System {
 
 	[TestFixture]
 	public class GCTest {
-
 		class MyFinalizeObject
 		{
 			public volatile static int finalized;
@@ -56,12 +55,12 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ReRegisterForFinalizeTest ()
 		{
-			var thread =  new Thread (Run_ReRegisterForFinalizeTest);
-			thread.Start ();
-			thread.Join ();
-
+			FinalizerHelpers.PerformNoPinAction (delegate () {
+				Run_ReRegisterForFinalizeTest ();
+			});
 			var t = Task.Factory.StartNew (() => {
 				do {
 					GC.Collect ();

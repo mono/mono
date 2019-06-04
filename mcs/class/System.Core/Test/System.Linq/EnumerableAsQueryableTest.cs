@@ -39,6 +39,7 @@ using System.Collections;
 namespace MonoTests.System.Linq {
 
 	[TestFixture]
+	[Category("SRE")]
 	public class EnumerableAsQueryableTest {
 
 		int [] _array;
@@ -324,7 +325,7 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorkingInterpreter")]
+		[Category ("NotWorkingLinqInterpreter")]
 		public void UserExtensionMethod ()
 		{
 			BindingFlags extensionFlags = BindingFlags.Static | BindingFlags.Public;

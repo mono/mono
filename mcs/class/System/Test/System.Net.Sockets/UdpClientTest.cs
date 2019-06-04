@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Net.Sockets {
 	[TestFixture]
 	public class UdpClientTest {
@@ -212,7 +214,7 @@ namespace MonoTests.System.Net.Sockets {
 			IPEndPoint localEP;
 			IPEndPoint clientEP;
 
-			clientEP = new IPEndPoint (IPAddress.Loopback, 8001);
+			clientEP = new IPEndPoint (IPAddress.Loopback, NetworkHelpers.FindFreePort ());
 			using (MyUdpClient client = new MyUdpClient (clientEP))
 			{
 				s = client.Client;
@@ -381,9 +383,7 @@ namespace MonoTests.System.Net.Sockets {
 			Socket s;
 			IPEndPoint localEP;
 
-			// Bug #5503
-			// UDP port 0 doesn't seem to be valid.
-			using (MyUdpClient client = new MyUdpClient ("127.0.0.1", 53))
+			using (MyUdpClient client = new MyUdpClient ("127.0.0.1", NetworkHelpers.FindFreePort ()))
 			{
 				s = client.Client;
 				Assert.IsNotNull (s, "#A:Client");
@@ -481,7 +481,7 @@ namespace MonoTests.System.Net.Sockets {
 			byte[] bytes = new byte[] {10, 11, 12, 13};
 
 			try {
-				client.Send (bytes, bytes.Length, new IPEndPoint (IPAddress.Broadcast, 1235));
+				client.Send (bytes, bytes.Length, new IPEndPoint (IPAddress.Broadcast, NetworkHelpers.FindFreePort ()));
 			} finally {
 				client.Close ();
 			}
@@ -495,7 +495,7 @@ namespace MonoTests.System.Net.Sockets {
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 0))) {
 				client.JoinMulticastGroup (mcast_addr);
 			}
 		}
@@ -511,7 +511,7 @@ namespace MonoTests.System.Net.Sockets {
 
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 0))) {
 				client.JoinMulticastGroup (mcast_addr);
 			}
 		}
@@ -522,7 +522,7 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void JoinMulticastGroup1_MulticastAddr_Null ()
 		{
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 0))) {
 				try {
 					client.JoinMulticastGroup ((IPAddress) null);
 					Assert.Fail ("#1");
@@ -543,7 +543,7 @@ namespace MonoTests.System.Net.Sockets {
 		{
 			IPAddress mcast_addr = null;
 
-			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 1234));
+			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 0));
 			client.Close ();
 			try {
 				client.JoinMulticastGroup (mcast_addr);
@@ -578,7 +578,7 @@ namespace MonoTests.System.Net.Sockets {
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 0))) {
 				try {
 					client.JoinMulticastGroup (0, mcast_addr);
 					Assert.Fail ("#1");
@@ -606,7 +606,7 @@ namespace MonoTests.System.Net.Sockets {
 
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 0))) {
 				client.JoinMulticastGroup (0, mcast_addr);
 			}
 		}
@@ -617,7 +617,7 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void JoinMulticastGroup2_MulticastAddr_Null ()
 		{
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 0))) {
 				try {
 					client.JoinMulticastGroup (0, (IPAddress) null);
 					Assert.Fail ("#1");
@@ -641,7 +641,7 @@ namespace MonoTests.System.Net.Sockets {
 
 			IPAddress mcast_addr = null;
 
-			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 1234));
+			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 0));
 			client.Close ();
 			try {
 				client.JoinMulticastGroup (0, mcast_addr);
@@ -676,11 +676,11 @@ namespace MonoTests.System.Net.Sockets {
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 0))) {
 				client.JoinMulticastGroup (mcast_addr, 0);
 			}
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 0))) {
 				client.JoinMulticastGroup (mcast_addr, 255);
 			}
 		}
@@ -696,11 +696,11 @@ namespace MonoTests.System.Net.Sockets {
 
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 0))) {
 				client.JoinMulticastGroup (mcast_addr, 0);
 			}
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 0))) {
 				client.JoinMulticastGroup (mcast_addr, 255);
 			}
 		}
@@ -711,7 +711,7 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void JoinMulticastGroup3_MulticastAddr_Null ()
 		{
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 0))) {
 				try {
 					client.JoinMulticastGroup ((IPAddress) null, int.MaxValue);
 					Assert.Fail ("#1");
@@ -732,7 +732,7 @@ namespace MonoTests.System.Net.Sockets {
 		{
 			IPAddress mcast_addr = null;
 
-			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 1234));
+			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 0));
 			client.Close ();
 			try {
 				client.JoinMulticastGroup (mcast_addr, 0);
@@ -768,7 +768,7 @@ namespace MonoTests.System.Net.Sockets {
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
 			IPAddress local_addr = IPAddress.Any;
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 0))) {
 				client.JoinMulticastGroup (mcast_addr, local_addr);
 			}
 		}
@@ -785,7 +785,7 @@ namespace MonoTests.System.Net.Sockets {
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 			IPAddress local_addr = IPAddress.IPv6Any;
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.IPv6Any, 0))) {
 				try {
 					client.JoinMulticastGroup (mcast_addr, local_addr);
 					Assert.Fail ("#1");
@@ -810,7 +810,7 @@ namespace MonoTests.System.Net.Sockets {
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
 
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 0))) {
 				try {
 					client.JoinMulticastGroup (mcast_addr, (IPAddress) null);
 					Assert.Fail ("#1");
@@ -829,7 +829,7 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void JoinMulticastGroup4_MulticastAddr_Null ()
 		{
-			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 1234))) {
+			using (UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Loopback, 0))) {
 				try {
 					client.JoinMulticastGroup ((IPAddress) null, IPAddress.Loopback);
 					Assert.Fail ("#1");
@@ -851,7 +851,7 @@ namespace MonoTests.System.Net.Sockets {
 			IPAddress mcast_addr = null;
 			IPAddress local_addr = null;
 
-			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 1234));
+			UdpClient client = new UdpClient (new IPEndPoint (IPAddress.Any, 0));
 			client.Close ();
 			try {
 				client.JoinMulticastGroup (mcast_addr, local_addr);
@@ -872,7 +872,7 @@ namespace MonoTests.System.Net.Sockets {
 		public void JoinMulticastGroup4_Socket_NotBound ()
 		{
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.23");
-			IPAddress local_addr = Dns.GetHostEntry (string.Empty).AddressList [0];
+			IPAddress local_addr = Dns.GetHostEntry ("localhost").AddressList [0];
 
 			using (UdpClient client = new UdpClient (AddressFamily.InterNetwork)) {
 				client.JoinMulticastGroup (mcast_addr, local_addr);
@@ -885,18 +885,7 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void CloseInReceive ()
 		{
-			UdpClient client = null;
-			var rnd = new Random ();
-			for (int i = 0, max = 5; i < max; i++) {
-				int port = rnd.Next (1025, 65534);
-				try {
-					client = new UdpClient (port);
-					break;
-				} catch (Exception) {
-					if (i == max - 1)
-						throw;
-				}
-			}
+			UdpClient client = new UdpClient (0);
 
 			ManualResetEvent ready = new ManualResetEvent (false);
 			bool got_exc = false;
@@ -928,7 +917,7 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void JoinMulticastGroupWithLocal ()
 		{
-			UdpClient client = new UdpClient (9001);
+			UdpClient client = new UdpClient (0);
 			IPAddress mcast_addr = IPAddress.Parse ("224.0.0.24");
 			IPAddress local_addr = IPAddress.Any;
 
@@ -991,11 +980,11 @@ namespace MonoTests.System.Net.Sockets {
 						 "BeginSend #4");
 			}
 
-			IPAddress[] addresses = Dns.GetHostEntry (string.Empty).AddressList;
+			IPAddress[] addresses = Dns.GetHostEntry ("localhost").AddressList;
 			IPEndPoint ep = null;
 			foreach (IPAddress a in addresses) {
 				if (a.AddressFamily == AddressFamily.InterNetwork) {
-					ep = new IPEndPoint (a, 1236);
+					ep = new IPEndPoint (a, NetworkHelpers.FindFreePort ());
 					break;
 				}
 			}
@@ -1035,13 +1024,14 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void BeginReceive ()
 		{
-			UdpClient client = new UdpClient (1237);
+			UdpClient client = new UdpClient (0);
+			var port = ((IPEndPoint) client.Client.LocalEndPoint).Port;
 			
 			BRCalledBack.Reset ();
 			
 			client.BeginReceive (BRCallback, client);
 
-			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1237);
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, port);
 			byte[] send_bytes = new byte[] {10, 11, 12, 13};
 			client.Send (send_bytes, send_bytes.Length, ep);
 
@@ -1063,8 +1053,9 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void Available ()
 		{
-			using (UdpClient client = new UdpClient (1238)) {
-				IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 1238);
+			using (UdpClient client = new UdpClient (0)) {
+				var port = ((IPEndPoint) client.Client.LocalEndPoint).Port;
+				IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, port);
 				byte[] bytes = new byte[] {10, 11, 12, 13};
 				
 				int res = client.Send (bytes, bytes.Length, ep);
@@ -1129,7 +1120,7 @@ namespace MonoTests.System.Net.Sockets {
 		[Category ("NotWorking")] // Not supported on Linux
 		public void ExclusiveAddressUseBound ()
 		{
-			UdpClient client = new UdpClient (1239);
+			UdpClient client = new UdpClient (0);
 
 			client.ExclusiveAddressUse = true;
 
@@ -1158,17 +1149,18 @@ namespace MonoTests.System.Net.Sockets {
 			if (!Socket.OSSupportsIPv6)
 				Assert.Ignore ("IPv6 not enabled.");
 
-			int PORT = 9997;
-			using(var udpClient = new UdpClient (PORT, AddressFamily.InterNetworkV6))
-			using(var udpClient2 = new UdpClient (PORT+1, AddressFamily.InterNetworkV6))
+			using(var udpClient = new UdpClient (0, AddressFamily.InterNetworkV6)) {
+			var port1 = ((IPEndPoint) udpClient.Client.LocalEndPoint).Port;
+			using(var udpClient2 = new UdpClient (0, AddressFamily.InterNetworkV6))
 			{
 				var dataSent = new byte [] {1,2,3};
-				udpClient2.SendAsync (dataSent, dataSent.Length, "::1", PORT);
+				udpClient2.SendAsync (dataSent, dataSent.Length, "::1", port1);
 
 				IPEndPoint endPoint = new IPEndPoint (IPAddress.IPv6Any, 0);
 				var data = udpClient.Receive (ref endPoint);
 
 				Assert.AreEqual (dataSent.Length, data.Length);
+			}
 			}
 		}
 		

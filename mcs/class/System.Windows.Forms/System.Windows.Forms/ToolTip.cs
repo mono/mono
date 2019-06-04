@@ -93,6 +93,8 @@ namespace System.Windows.Forms {
 					BackColor = Color.Transparent;
 				} else
 					SetStyle (ControlStyles.Opaque, true);
+
+				SetTopLevel (true);
 			}
 
 			#endregion	// ToolTipWindow Class Constructor

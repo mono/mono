@@ -50,7 +50,6 @@ class MonoReleaseProfile(DarwinProfile):
         'gtk-quartz-engine',
 
         # Mono
-        'mono-llvm',
         'mono',
         'msbuild',
         'pcl-reference-assemblies',
@@ -64,7 +63,7 @@ class MonoReleaseProfile(DarwinProfile):
     ]
 
     def attach (self, bockbuild):
-        self.min_version = 7
+        self.min_version = 9
         DarwinProfile.attach (self, bockbuild)
 
         # quick disk space check (http://stackoverflow.com/questions/787776/)
@@ -100,7 +99,7 @@ class MonoReleaseProfile(DarwinProfile):
         self.env.set('PANGO_SYSCONFDIR', '%{staged_prefix}/etc')
         self.env.set('PANGO_LIBDIR', '%{staged_prefix}/lib')
         # self.env.set ('MONO_PATH', '%{staged_prefix}/lib/mono/4.0')
-        self.debug_info = ['gtk+', 'cairo',
+        self.debug_info = ['gtk', 'cairo', 'glib',
                            'pango', 'mono', 'llvm', 'libgdiplus']
         self.cache_host = None
 

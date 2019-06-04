@@ -36,8 +36,7 @@ namespace System.Xml.Serialization
 	/// <summary>
 	/// Summary description for XmlArrayAttribute.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field
-	| AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+	[AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.ReturnValue, AllowMultiple=false)]
 	public class XmlArrayAttribute : Attribute
 	{
 		private string elementName;

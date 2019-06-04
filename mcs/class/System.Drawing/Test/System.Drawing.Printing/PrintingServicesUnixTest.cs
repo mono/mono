@@ -104,6 +104,7 @@ namespace MonoTests.System.Drawing.Printing {
 
 		[Test]
 		[Platform (Exclude = "Win", Reason = "Depends on CUPS which is usually not installed on Windows")]
+		[Ignore]
 		public void Bug602934_PrinterSettingsReturnActualValues ()
 		{
 			if (PrinterSettings.InstalledPrinters.Count < 1)

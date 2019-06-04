@@ -804,7 +804,7 @@ namespace Mono.Data.Sqlite
       int enc;
       IntPtr p = UnsafeNativeMethods.sqlite3_context_collseq(context, out type, out enc, out len);
 
-      if (p != null) seq.Name = UTF8ToString(p, len);
+      if (p != IntPtr.Zero) seq.Name = UTF8ToString(p, len);
       seq.Type = (CollationTypeEnum)type;
       seq._func = func;
       seq.Encoding = (CollationEncodingEnum)enc;
@@ -929,29 +929,25 @@ namespace Mono.Data.Sqlite
       return UnsafeNativeMethods.sqlite3_aggregate_context(context, 1);
     }
 
-#if MONOTOUCH
-	internal override void SetPassword(byte[] passwordBytes)
-	{
-		throw new NotImplementedException ();
-	}
-
-	internal override void ChangePassword(byte[] newPasswordBytes)
-	{
-		throw new NotImplementedException ();
-	}
-#else
     internal override void SetPassword(byte[] passwordBytes)
     {
+#if MOBILE
+      throw new PlatformNotSupportedException();
+#else
       int n = UnsafeNativeMethods.sqlite3_key(_sql, passwordBytes, passwordBytes.Length);
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
+#endif
     }
 
     internal override void ChangePassword(byte[] newPasswordBytes)
     {
+#if MOBILE
+      throw new PlatformNotSupportedException();
+#else
       int n = UnsafeNativeMethods.sqlite3_rekey(_sql, newPasswordBytes, (newPasswordBytes == null) ? 0 : newPasswordBytes.Length);
       if (n > 0) throw new SqliteException(n, SQLiteLastError());
-    }
 #endif
+    }
 		
 #if MONOTOUCH
     SQLiteUpdateCallback update_callback;

@@ -8,6 +8,7 @@
 #ifdef USE_BSD_BACKEND
 
 #include <errno.h>
+#include <signal.h>
 #include <sys/proc.h>
 #include <sys/sysctl.h>
 #if !defined(__OpenBSD__)
@@ -18,8 +19,8 @@
 #endif
 
 #include <link.h>
-
 #include "utils/mono-logger-internals.h"
+#include "icall-decl.h"
 
 gchar*
 mono_w32process_get_name (pid_t pid)
@@ -35,7 +36,7 @@ mono_w32process_get_name (pid_t pid)
 	mib [2] = KERN_PROC_PID;
 	mib [3] = pid;
 	if (sysctl(mib, 4, NULL, &size, NULL, 0) < 0) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: sysctl() failed: %d", __func__, errno);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: sysctl() failed: %d", __func__, errno);
 		return NULL;
 	}
 
@@ -45,7 +46,7 @@ mono_w32process_get_name (pid_t pid)
 	if (sysctl (mib, 4, pi, &size, NULL, 0) < 0) {
 		if (errno == ENOMEM) {
 			g_free (pi);
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: Didn't allocate enough memory for kproc info", __func__);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Didn't allocate enough memory for kproc info", __func__);
 		}
 		return NULL;
 	}
@@ -63,7 +64,7 @@ mono_w32process_get_name (pid_t pid)
 
 retry:
 	if (sysctl(mib, 6, NULL, &size, NULL, 0) < 0) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: sysctl() failed: %d", __func__, errno);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: sysctl() failed: %d", __func__, errno);
 		return NULL;
 	}
 
@@ -92,7 +93,30 @@ retry:
 gchar*
 mono_w32process_get_path (pid_t pid)
 {
+#if defined (__OpenBSD__)
+	// No KERN_PROC_PATHNAME on OpenBSD
 	return mono_w32process_get_name (pid);
+#else
+	gsize path_len = PATH_MAX + 1;
+	gchar path [PATH_MAX + 1];
+	gint mib [4];
+	mib [0] = CTL_KERN;
+#if defined (__NetBSD__)
+	mib [1] = KERN_PROC_ARGS;
+	mib [2] = pid;
+	mib [3] = KERN_PROC_PATHNAME;
+#else // FreeBSD
+	mib [1] = KERN_PROC;
+	mib [2] = KERN_PROC_PATHNAME;
+	mib [3] = pid;
+#endif
+	if (sysctl (mib, 4, path, &path_len, NULL, 0) < 0) {
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: sysctl() failed: %d", __func__, errno);
+		return NULL;
+	} else {
+		return g_strdup (path);
+	}
+#endif
 }
 
 static gint
@@ -134,7 +158,7 @@ mono_w32process_get_modules (pid_t pid)
 		mod->inode = i;
 		mod->filename = g_strdup (info->dlpi_name);
 
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER, "%s: inode=%d, filename=%s, address_start=%p, address_end=%p",
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: inode=%d, filename=%s, address_start=%p, address_end=%p",
 			__func__, mod->inode, mod->filename, mod->address_start, mod->address_end);
 
 		g_free (info);

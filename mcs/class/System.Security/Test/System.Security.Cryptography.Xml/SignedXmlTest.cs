@@ -7,6 +7,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005, 2008 Novell, Inc (http://www.novell.com)
 //
+#if !MOBILE
 
 using System;
 using System.Globalization;
@@ -252,7 +253,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			signedXml.ComputeSignature ();
 
 			Assert.IsNull (signedXml.SigningKeyName, "SigningKeyName");
-			Assert.AreEqual (SignedXml.XmlDsigRSASHA1Url, signedXml.SignatureMethod, "SignatureMethod");
+			Assert.AreEqual (SignedXml.XmlDsigRSASHA256Url, signedXml.SignatureMethod, "SignatureMethod");
 			Assert.AreEqual (128, signedXml.SignatureValue.Length, "SignatureValue");
 			Assert.IsNull (signedXml.SigningKeyName, "SigningKeyName");
 
@@ -637,13 +638,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void DataReferenceToNonDataObject ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml ("<foo Id='id:1'/>");
+			doc.LoadXml ("<foo Id='test'/>");
 			SignedXml signedXml = new SignedXml (doc);
 			DSA key = DSA.Create ();
 			signedXml.SigningKey = key;
 
 			Reference reference = new Reference ();
-			reference.Uri = "#id:1";
+			reference.Uri = "#test";
 
 			XmlDsigC14NTransform t = new XmlDsigC14NTransform ();
 			reference.AddTransform (t);
@@ -706,12 +707,30 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			return sw.ToString ();
 		}
 
-		[Test]
-		public void GetIdElement_Null ()
+		[TestCase (null, TestName = "null")]
+		[TestCase ("", TestName = "empty")]
+		public void GetIdElement_WhenElementNameMustBeNonColonizedAndItIsNotProvided_ThrowsArgumentNullException (string elementName)
 		{
-			SignedXml sign = new SignedXml ();
-			Assert.IsNull (sign.GetIdElement (null, "value"));
-			Assert.IsNull (sign.GetIdElement (new XmlDocument (), null));
+			var sut = new SignedXml ();
+
+			var ex = Assert.Throws<ArgumentNullException> (() => sut.GetIdElement (new XmlDocument (), elementName), "Exception");
+			Assert.That (ex.ParamName, Is.EqualTo ("name"), "ParamName");
+		}
+
+		[Test]
+		public void GetIdElement_WhenElementNameMustBeNonColonizedAndItContainsColon_ReturnsNull ()
+		{
+			var sut = new SignedXml ();
+
+			Assert.That (sut.GetIdElement (new XmlDocument (), "t:test"), Is.Null);
+		}
+
+		[Test]
+		public void GetIdElement_WhenXmlDocumentIsNotProvided_ReturnsNull ()
+		{
+			var sut = new SignedXml ();
+
+			Assert.That (sut.GetIdElement (null, "value"), Is.Null);
 		}
 
 		[Test]
@@ -788,6 +807,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			SignedXml signedXml = new SignedXml (doc);
 			signedXml.SigningKey = cert.PrivateKey;
 			signedXml.SignedInfo.CanonicalizationMethod = SignedXml.XmlDsigExcC14NTransformUrl;
+			signedXml.SignedInfo.SignatureMethod = SignedXml.XmlDsigRSASHA1Url;
 
 			Reference reference = new Reference ();
 			reference.DigestMethod = SignedXml.XmlDsigSHA1Url;
@@ -1407,13 +1427,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			// verify MS-generated signature
 			Assert.IsTrue (sign.CheckSignature (new HMACRIPEMD160 (hmackey)));
 		}
-		// CVE-2009-0217
-		// * a 0-length signature is the worse case - it accepts anything
-		// * between 1-7 bits length are considered invalid (not a multiple of 8)
-		// * a 8 bits signature would have one chance, out of 256, to be valid
-		// * and so on... until we hit (output-length / 2) or 80 bits (see ERRATUM)
-
-		static bool erratum = true; // xmldsig erratum for CVE-2009-0217
 
 		static SignedXml GetSignedXml (string xml)
 		{
@@ -1425,31 +1438,15 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			return sign;
 		}
 
-		static void CheckErratum (SignedXml signed, KeyedHashAlgorithm hmac, string message)
-		{
-			if (erratum) {
-				try {
-					signed.CheckSignature (hmac);
-					Assert.Fail (message + ": unexcepted success");
-				}
-				catch (CryptographicException) {
-				}
-				catch (Exception e) {
-					Assert.Fail (message + ": unexcepted " + e.ToString ());
-				}
-			} else {
-				Assert.IsTrue (signed.CheckSignature (hmac), message);
-			}
-		}
-
-		private void HmacMustBeMultipleOfEightBits (int bits)
+		[Test]
+		public void CheckSignature_WhenHmacOutputLengthIsNotMultipleOf8_ThrowsCryptographicException ()
 		{
 			string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
   <SignedInfo>
     <CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" />
     <SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" >
-      <HMACOutputLength>{0}</HMACOutputLength>
+      <HMACOutputLength>81</HMACOutputLength>
     </SignatureMethod>
     <Reference URI=""#object"">
       <DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" />
@@ -1462,96 +1459,41 @@ namespace MonoTests.System.Security.Cryptography.Xml {
   <Object Id=""object"">some other text</Object>
 </Signature>
 ";
-			SignedXml sign = GetSignedXml (String.Format (xml, bits));
-			// only multiple of 8 bits are supported
-			sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("secret")));
+
+			var sut = GetSignedXml (xml);
+			sut.SignatureFormatValidator = null;
+
+			var ex = Assert.Throws<CryptographicException> (() => sut.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("secret"))), "Exception");
+			Assert.That (ex.Message, Is.StringContaining ("multiple of 8").IgnoreCase, "Message");
 		}
 
 		[Test]
-		public void HmacMustBeMultipleOfEightBits ()
+		public void CheckSignature_WhenDefaultSignatureFormatValidatorIsUsedAndSignatureUsesTruncatedHmac_ReturnsFalse ()
 		{
-			for (int i = 1; i < 160; i++) {
-				// The .NET framework only supports multiple of 8 bits
-				if (i % 8 == 0)
-					continue;
-
-				try {
-					HmacMustBeMultipleOfEightBits (i);
-					Assert.Fail ("Unexpected Success " + i.ToString ());
-				}
-				catch (CryptographicException) {
-				}
-				catch (Exception e) {
-					Assert.Fail ("Unexpected Exception " + i.ToString () + " : " + e.ToString ());
-				}
-			}
-		}
-
-		[Test]
-		[Category ("NotDotNet")] // will fail until a fix is available
-		public void VerifyHMAC_ZeroLength ()
-		{
-			string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
-  <SignedInfo>
-    <CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" />
-    <SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1"" >
-      <HMACOutputLength>0</HMACOutputLength>
-    </SignatureMethod>
-    <Reference URI=""#object"">
-      <DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" />
-      <DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue>
-    </Reference>
-  </SignedInfo>
-  <SignatureValue>
-  </SignatureValue>
-  <Object Id=""object"">some other text</Object>
-</Signature>
-";
-			SignedXml sign = GetSignedXml (xml);
-
-			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("no clue")), "1");
-			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("")), "2");
-			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("oops")), "3");
-			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("secret")), "4");
-		}
-
-		[Test]
-		[Category ("NotDotNet")] // will fail until a fix is available
-		public void VerifyHMAC_SmallerThanMinimumLength ()
-		{
-			// 72 is a multiple of 8 but smaller than the minimum of 80 bits
-			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1""><HMACOutputLength>72</HMACOutputLength></SignatureMethod><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue></Reference></SignedInfo><SignatureValue>2dimB+P5Aw5K</SignatureValue><Object Id=""object"">some other text</Object></Signature>";
-			SignedXml sign = GetSignedXml (xml);
-			CheckErratum (sign, new HMACSHA1 (Encoding.ASCII.GetBytes ("secret")), "72");
-		}
-
-		[Test]
-		public void VerifyHMAC_MinimumLength ()
-		{
-			// 80 bits is the minimum (and the half-size of HMACSHA1)
-			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#hmac-sha1""><HMACOutputLength>80</HMACOutputLength></SignatureMethod><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue></Reference></SignedInfo><SignatureValue>jVQPtLj61zNYjw==</SignatureValue><Object Id=""object"">some other text</Object></Signature>";
-			SignedXml sign = GetSignedXml (xml);
-			Assert.IsTrue (sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("secret"))));
-		}
-		[Test]
-		[Category ("NotDotNet")] // will fail until a fix is available
-		public void VerifyHMAC_SmallerHalfLength ()
-		{
-			// 80bits is smaller than the half-size of HMACSHA256
-			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2001/04/xmldsig-more#hmac-sha256""><HMACOutputLength>80</HMACOutputLength></SignatureMethod><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue></Reference></SignedInfo><SignatureValue>vPtw7zKVV/JwQg==</SignatureValue><Object Id=""object"">some other text</Object></Signature>";
-			SignedXml sign = GetSignedXml (xml);
-			CheckErratum (sign, new HMACSHA256 (Encoding.ASCII.GetBytes ("secret")), "80");
-		}
-
-		[Test]
-		public void VerifyHMAC_HalfLength ()
-		{
-			// 128 is the half-size of HMACSHA256
+			// The HMAC output length is 128, which is a half of HMACSHA256 that we're going to use.
 			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2001/04/xmldsig-more#hmac-sha256""><HMACOutputLength>128</HMACOutputLength></SignatureMethod><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue></Reference></SignedInfo><SignatureValue>aegpvkAwOL8gN/CjSnW6qw==</SignatureValue><Object Id=""object"">some other text</Object></Signature>";
-			SignedXml sign = GetSignedXml (xml);
-			Assert.IsTrue (sign.CheckSignature (new HMACSHA256 (Encoding.ASCII.GetBytes ("secret"))));
+			var sut = GetSignedXml (xml);
+
+			// Although the XML Signature standard allows using truncated HMACs (with some limitations),
+			// .NET Framework, by default, doesn't allow using them, since it may result in security issues.
+			Assert.That (sut.CheckSignature (new HMACSHA256 (Encoding.ASCII.GetBytes ("secret"))), Is.False);
 		}
+
+		[Test]
+		public void CheckSignature_WhenDefaultSignatureFormatValidatorIsNotUsedAndSignatureUsesTruncatedHmac_ReturnsTrue ()
+		{
+			// The HMAC output length is 128, which is a half of HMACSHA256 that we're going to use.
+			string xml = @"<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#""><SignedInfo><CanonicalizationMethod Algorithm=""http://www.w3.org/TR/2001/REC-xml-c14n-20010315"" /><SignatureMethod Algorithm=""http://www.w3.org/2001/04/xmldsig-more#hmac-sha256""><HMACOutputLength>128</HMACOutputLength></SignatureMethod><Reference URI=""#object""><DigestMethod Algorithm=""http://www.w3.org/2000/09/xmldsig#sha1"" /><DigestValue>nz4GS0NbH2SrWlD/4fX313CoTzc=</DigestValue></Reference></SignedInfo><SignatureValue>aegpvkAwOL8gN/CjSnW6qw==</SignatureValue><Object Id=""object"">some other text</Object></Signature>";
+			var sut = GetSignedXml (xml);
+
+			// By default, .NET Framework doesn't allow using truncated HMACs, since it may lead to security issues.
+			// That being said, the XML Signature standard allows using truncated HMACs, but with some limitations.
+			// It's possible to use truncated HMACs by using a custom signature format validator, or not using it at all.
+			sut.SignatureFormatValidator = null;
+
+			Assert.That (sut.CheckSignature (new HMACSHA256 (Encoding.ASCII.GetBytes ("secret"))), Is.True);
+		}
+
 		[Test]
 		public void VerifyHMAC_FullLength ()
 		{
@@ -1561,8 +1503,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void VerifyHMAC_HMACOutputLength_Signature_Mismatch ()
+		public void CheckSignature_WhenSignatureLengthIsGreaterThanHmacOutputLength_ThrowsCryptographicException ()
 		{
 			string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
@@ -1581,13 +1522,15 @@ namespace MonoTests.System.Security.Cryptography.Xml {
   <Object Id=""object"">some other text</Object>
 </Signature>
 ";
-			SignedXml sign = GetSignedXml (xml);
-			sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("no clue")));
+			var sut = GetSignedXml (xml);
+			sut.SignatureFormatValidator = null;
+
+			var ex = Assert.Throws<CryptographicException> (() => sut.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("no clue"))), "Exception");
+			Assert.That (ex.Message, Is.StringContaining ("length of the signature").IgnoreCase, "Message");
 		}
 
 		[Test]
-		[ExpectedException (typeof (FormatException))]
-		public void VerifyHMAC_HMACOutputLength_Invalid ()
+		public void CheckSignature_WhenHmacOutputLengthIsInvalid_ThrowsFormatException ()
 		{
 			string xml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
 <Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
@@ -1606,8 +1549,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
   <Object Id=""object"">some other text</Object>
 </Signature>
 ";
-			SignedXml sign = GetSignedXml (xml);
-			sign.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("no clue")));
+			var sut = GetSignedXml (xml);
+			sut.SignatureFormatValidator = null;
+
+			Assert.Throws<FormatException> (() => sut.CheckSignature (new HMACSHA1 (Encoding.ASCII.GetBytes ("no clue"))));
 		}
 
 		[Test]
@@ -1627,7 +1572,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		public void ComputeSignature_WhenSignatureMethodIsNotSpecifiedAndRsaSigningKeyIsUsed_UsesRsaSha1Algorithm ()
+		public void ComputeSignature_WhenSignatureMethodIsNotSpecifiedAndRsaSigningKeyIsUsed_UsesRsaSha256Algorithm ()
 		{
 			var unsignedXml = new XmlDocument ();
 			unsignedXml.LoadXml ("<test />");
@@ -1650,7 +1595,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 				string.Format ("/{0}:SignedInfo/{0}:SignatureMethod", XmlDsigNamespacePrefix),
 				namespaceManager);
 
-			Assert.That (signatureMethodElement.Attributes["Algorithm"].Value, Is.EqualTo (SignedXml.XmlDsigRSASHA1Url));
+			Assert.That (signatureMethodElement.Attributes["Algorithm"].Value, Is.EqualTo (SignedXml.XmlDsigRSASHA256Url));
 		}
 
 		[Test]
@@ -1770,3 +1715,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}
 }
+#endif

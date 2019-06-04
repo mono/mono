@@ -37,7 +37,7 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsFalse (((IList) d).Contains (null));
 		}
 
-		[Test, ExpectedException (typeof (ArgumentException))]
+		[Test]
 		public void TestICollectionCopyTo ()
 		{
 			SynchronizedReadOnlyCollection<int> c = new SynchronizedReadOnlyCollection<int> ();

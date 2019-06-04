@@ -1,10 +1,8 @@
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
-../../../external/corefx/src/Common/tests/System/PlatformDetection.cs
-../../../external/corefx/src/Common/src/System/MathF.netstandard.cs
 
 # ../../../external/corefx/src/System.Runtime.Numerics/tests/*.cs
 ../../../external/corefx/src/System.Runtime.Numerics/tests/BigInteger/*.cs
 
-../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/ConstantHelper.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Numerics/ConstantHelper.cs
 
-../../../external/corefx/src/System.Numerics.Vectors/tests/*.cs
+../../../external/corefx/src/System.Numerics.Vectors/tests/*.cs:GenericVectorTests.netcoreapp.cs

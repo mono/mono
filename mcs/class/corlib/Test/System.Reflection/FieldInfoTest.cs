@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Threading;
 using System.Reflection;
 #if !MONOTOUCH && !FULL_AOT_RUNTIME
@@ -222,6 +223,14 @@ namespace MonoTests.System.Reflection
 			attrs = fi.GetCustomAttributes (typeof (ObsoleteAttribute), true);
 			Assert.AreEqual (1, attrs.Length, "#D9");
 			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#D10");
+		}
+
+		[Test]
+		public void MetadataToken ()
+		{
+			Type type = typeof (FieldInfoTest);
+			FieldInfo field = type.GetField ("i");
+			Assert.IsTrue ((int)field.MetadataToken > 0);
 		}
 
 		[Test] // GetFieldFromHandle (RuntimeFieldHandle)
@@ -1362,6 +1371,67 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("B", fields.str);
 		}
 
+#if !DISABLE_REMOTING
+		[Test]
+		[Category ("Remoting")]
+		public void GetValueContextBoundObject ()
+		{
+			var instance = new CBOTest ();
+
+			var field1 = typeof (CBOTest).GetField ("d1");
+			var d1 = field1.GetValue (instance);
+			Assert.AreEqual ((double)d1, 14.0, "d1");
+
+			var field2 = typeof (CBOTest).GetField ("d2");
+			var d2 = field2.GetValue (instance);
+			Assert.AreEqual ((double)d2, -20, "d2");
+
+			var field3 = typeof (CBOTest).GetField ("s1");
+			var s1 = field3.GetValue (instance);
+			Assert.AreEqual (s1, "abcd", "s1");
+
+			var field4 = typeof (CBOTest).GetField ("s2");
+			var s2 = field4.GetValue (instance);
+			Assert.AreEqual (s2, "hijkl", "s2");
+		}
+
+		[Test]
+		[Category ("Remoting")]
+		public void SetValueContextBoundObject ()
+		{
+			var instance = new CBOTest ();
+
+			var field1 = typeof (CBOTest).GetField ("d1");
+			field1.SetValue (instance, 90.3);
+			var d1 = field1.GetValue (instance);
+			Assert.AreEqual ((double)d1, 90.3, "d1");
+
+			var field2 = typeof (CBOTest).GetField ("d2");
+			field2.SetValue (instance, 1);
+			var d2 = field2.GetValue (instance);
+			Assert.AreEqual ((double)d2, 1, "d2");
+
+			var field3 = typeof (CBOTest).GetField ("s1");
+			field3.SetValue (instance, "//////");
+			var s1 = field3.GetValue (instance);
+			Assert.AreEqual (s1, "//////", "s1");
+
+			var field4 = typeof (CBOTest).GetField ("s2");
+			field4.SetValue (instance, "This is a string");
+			var s2 = field4.GetValue (instance);
+			Assert.AreEqual (s2, "This is a string", "s2");
+
+		}
+#endif
+
+		class CBOTest : ContextBoundObject {
+			public double d1 = 14.0;
+			public double d2 = -20.0;
+			public string s1 = "abcd";
+			public string s2 = "hijkl";
+		}
+
+
 		public IntEnum PPP;
 
 		public class Foo<T>
@@ -1398,6 +1468,41 @@ namespace MonoTests.System.Reflection
 		public const FieldInfoTest object_field = null;
 		public int non_const_field;
 
+		class FieldInfoWrapper : FieldInfo
+		{
+			private FieldInfo fieldInfo;
+
+			public FieldInfoWrapper (FieldInfo fieldInfo)
+			{
+				this.fieldInfo = fieldInfo;
+			}
+
+			public override FieldAttributes Attributes => fieldInfo.Attributes;
+			public override Type DeclaringType => fieldInfo.DeclaringType;
+			public override RuntimeFieldHandle FieldHandle => fieldInfo.FieldHandle;
+			public override Type FieldType => fieldInfo.FieldType;
+			public override string Name => fieldInfo.Name;
+			public override Type ReflectedType => fieldInfo.ReflectedType;
+			
+			public override object[] GetCustomAttributes (bool inherit) => fieldInfo.GetCustomAttributes (inherit); 
+			public override object[] GetCustomAttributes (Type attributeType, bool inherit) => fieldInfo.GetCustomAttributes (attributeType, inherit);
+			public override object GetValue (object obj) => fieldInfo.GetValue (obj);
+			public override bool IsDefined (Type attributeType, bool inherit) => fieldInfo.IsDefined (attributeType, inherit);
+			public override void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture) =>
+				fieldInfo.SetValue (obj, value, invokeAttr, binder, culture);
+		}
+
+		[Test]
+		public void CustomFieldInfo () 
+		{
+			var fieldInfoWrapper = new FieldInfoWrapper (GetType ().GetField (nameof (non_const_field)));
+			MethodInfo method = typeof (FieldInfoWrapper).GetMethod ("GetFieldOffset", BindingFlags.NonPublic | BindingFlags.Instance);
+			Assert.IsNotNull (method);
+			Assert.IsTrue (method.IsVirtual);
+
+			var ex = Assert.Catch<Exception> (() => method.Invoke (fieldInfoWrapper, new object[] {}));
+			Assert.IsTrue (ex.InnerException is SystemException);
+		}
 	}
 
 	// We do not refernece the field, that is expected

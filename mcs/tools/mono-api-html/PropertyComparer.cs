@@ -30,9 +30,14 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class PropertyComparer : MemberComparer {
+	class PropertyComparer : MemberComparer {
+
+		public PropertyComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override string GroupName {
 			get { return "properties"; }
@@ -83,7 +88,7 @@ namespace Xamarin.ApiDiff {
 			var s = sAttr & MethodAttributes.MemberAccessMask;
 			// Visibility is ordered numerically (higher value = more visible).
 			// We want the most visible.
-			var visibility = (MethodAttributes) Math.Max ((int) g, (int) s);
+			var visibility = (MethodAttributes) System.Math.Max ((int) g, (int) s);
 			// Do a bitwise or with the rest of the flags
 			var g_no_visibility = gAttr & ~MethodAttributes.MemberAccessMask;
 			var s_no_visibility = sAttr & ~MethodAttributes.MemberAccessMask;
@@ -92,8 +97,8 @@ namespace Xamarin.ApiDiff {
 
 		void RenderPropertyType (XElement source, XElement target, ApiChange change)
 		{
-			var srcType = source.GetTypeName ("ptype");
-			var tgtType = target.GetTypeName ("ptype");
+			var srcType = source.GetTypeName ("ptype", State);
+			var tgtType = target.GetTypeName ("ptype", State);
 
 			if (srcType == tgtType) {
 				change.Append (tgtType);
@@ -146,8 +151,8 @@ namespace Xamarin.ApiDiff {
 				if (i > 0)
 					change.Append (", ");
 
-				var srcType = source.GetTypeName ("type");
-				var tgtType = target.GetTypeName ("type");
+				var srcType = source.GetTypeName ("type", State);
+				var tgtType = target.GetTypeName ("type", State);
 				if (srcType == tgtType) {
 					change.Append (tgtType);
 				} else {
@@ -185,7 +190,7 @@ namespace Xamarin.ApiDiff {
 				isIndexer = srcIndexers != null && srcIndexers.Count > 0;
 			}
 
-			var change = new ApiChange ();
+			var change = new ApiChange (GetDescription (source), State);
 			change.Header = "Modified " + GroupName;
 			RenderMethodAttributes (GetMethodAttributes (srcGetter, srcSetter), GetMethodAttributes (tgtGetter, tgtSetter), change);
 			RenderPropertyType (source, target, change);
@@ -224,7 +229,7 @@ namespace Xamarin.ApiDiff {
 		public override string GetDescription (XElement e)
 		{
 			string name = e.Attribute ("name").Value;
-			string ptype = e.GetTypeName ("ptype");
+			string ptype = e.GetTypeName ("ptype", State);
 
 			bool virt = false;
 			bool over = false;

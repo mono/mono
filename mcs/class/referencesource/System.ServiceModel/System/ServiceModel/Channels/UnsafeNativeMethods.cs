@@ -465,6 +465,9 @@ namespace System.ServiceModel.Channels
 
         public const uint MAX_PATH = 260;
 
+        public const uint LOAD_LIBRARY_AS_DATAFILE = 0x00000002;
+        public const uint LOAD_LIBRARY_SEARCH_SYSTEM32 = 0x00000800;
+
         [StructLayout(LayoutKind.Sequential)]
         internal class SECURITY_ATTRIBUTES
         {
@@ -1092,13 +1095,16 @@ namespace System.ServiceModel.Channels
         [ResourceExposure(ResourceScope.Process)]
         internal static extern SafeLibraryHandle LoadLibrary(string libFilename);
 
+        [DllImport(KERNEL32, CharSet = CharSet.Auto, SetLastError = true)]
+        [ResourceExposure(ResourceScope.Process)]
+        internal static extern SafeLibraryHandle LoadLibraryEx(string lpModuleName, IntPtr hFile, uint dwFlags);
+
         // On Vista and higher, check the value of the machine FIPS policy
         [DllImport(BCRYPT, SetLastError = true)]
         [ResourceExposure(ResourceScope.None)]
         internal static extern int BCryptGetFipsAlgorithmMode(
             [MarshalAs(UnmanagedType.U1), Out] out bool pfEnabled
             );
-
 
 #if !FEATURE_CORECLR
         private static IntPtr GetCurrentProcessToken() { return new IntPtr(-4); }

@@ -1182,6 +1182,7 @@ namespace System.IO.Pipes {
             // our WaitNamedPipe and CreateFile calls.
             int startTime = Environment.TickCount;
             int elapsed = 0;
+            var sw = new SpinWait();
             do {
                 // Wait for pipe to become free (this will block unless the pipe does not exist).
                 if (!UnsafeNativeMethods.WaitNamedPipe(m_normalizedPipePath, timeout - elapsed)) {
@@ -1189,6 +1190,7 @@ namespace System.IO.Pipes {
 
                     // Server is not yet created so let's keep looping.
                     if (errorCode == UnsafeNativeMethods.ERROR_FILE_NOT_FOUND) {
+                        sw.SpinOnce();
                         continue; 
                     }
 
@@ -1215,6 +1217,7 @@ namespace System.IO.Pipes {
                     // Handle the possible race condition of someone else connecting to the server 
                     // between our calls to WaitNamedPipe & CreateFile.
                     if (errorCode == UnsafeNativeMethods.ERROR_PIPE_BUSY) {
+                        sw.SpinOnce();
                         continue;
                     }
 
@@ -1284,6 +1287,7 @@ namespace System.IO.Pipes {
             // straight away in such cases), and 2) when another client connects to our server in between 
             // our WaitNamedPipe and CreateFile calls.
             int elapsed = 0;
+            var sw = new SpinWait();
             do {
                 // We want any other exception and and success to have priority over cancellation.
                 cancellationToken.ThrowIfCancellationRequested();
@@ -1303,6 +1307,7 @@ namespace System.IO.Pipes {
 
                     // Server is not yet created so let's keep looping.
                     if (errorCode == UnsafeNativeMethods.ERROR_FILE_NOT_FOUND) {
+                        sw.SpinOnce();
                         continue;
                     }
 
@@ -1311,6 +1316,7 @@ namespace System.IO.Pipes {
                         if (cancellationToken.CanBeCanceled) {
                             // It may not be real timeout and only checking for cancellation
                             // let the while condition check it and decide
+                            sw.SpinOnce();
                             continue;
                         }
                         else {
@@ -1336,6 +1342,7 @@ namespace System.IO.Pipes {
                     // Handle the possible race condition of someone else connecting to the server 
                     // between our calls to WaitNamedPipe & CreateFile.
                     if (errorCode == UnsafeNativeMethods.ERROR_PIPE_BUSY) {
+                        sw.SpinOnce();
                         continue;
                     }
 

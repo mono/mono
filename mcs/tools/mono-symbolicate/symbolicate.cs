@@ -81,11 +81,9 @@ namespace Mono
 
 			using (StreamReader r = new StreamReader (inputFile)) {
 				for (var line = r.ReadLine (); line != null; line = r.ReadLine ()) {
-					StackFrameData sfData;
-					if (StackFrameData.TryParse (line, out sfData) &&
-						symbolManager.TryResolveLocation (sfData)) {
-						Console.WriteLine (sfData.ToString ());
-						continue;
+					if (StackFrameData.TryParse (line, out var sfData) && symbolManager.TryResolveLocation (sfData, out var location)) {
+						var sign = sfData.Line.Substring (0, sfData.Line.IndexOf (" in <", StringComparison.Ordinal));
+						line = $"{sign} in {location.File}:{location.Line}";
 					}
 
 					Console.WriteLine (line);

@@ -12,8 +12,8 @@
 #include <winsock2.h>
 #include <windows.h>
 #include "mono/metadata/icall-windows-internals.h"
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#include "mono/metadata/w32subset.h"
+#if HAVE_API_SUPPORT_WIN32_SH_GET_FOLDER_PATH
 #include <shlobj.h>
 #endif
 
@@ -36,36 +36,35 @@ mono_icall_get_file_path_prefix (const gchar *path)
 }
 
 gpointer
-mono_icall_module_get_hinstance (MonoReflectionModuleHandle module)
+mono_icall_module_get_hinstance (MonoImage *image)
 {
-	MonoImage *image = MONO_HANDLE_GETVAL (module, image);
-	if (image && image->is_module_handle)
+	if (image && m_image_is_module_handle (image))
 		return image->raw_data;
 
 	return (gpointer) (-1);
 }
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if HAVE_API_SUPPORT_WIN32_GET_COMPUTER_NAME
+// Support older UWP SDK?
+WINBASEAPI
+BOOL
+WINAPI
+GetComputerNameW (
+	PWSTR buffer,
+	PDWORD size
+	);
+
 MonoStringHandle
 mono_icall_get_machine_name (MonoError *error)
 {
-	gunichar2 *buf;
-	guint32 len;
-	MonoStringHandle result;
+	gunichar2 buf [MAX_COMPUTERNAME_LENGTH + 1];
+	DWORD len = G_N_ELEMENTS (buf);
 
-	len = MAX_COMPUTERNAME_LENGTH + 1;
-	buf = g_new (gunichar2, len);
-
-	result = NULL;
-	if (GetComputerName (buf, (PDWORD) &len)) {
-		result = mono_string_new_utf16_handle (mono_domain_get (), buf, len, error);
-	} else
-		result = MONO_HANDLE_NEW (MonoString, NULL);
-
-	g_free (buf);
-	return result;
+	if (GetComputerNameW (buf, &len))
+		return mono_string_new_utf16_handle (mono_domain_get (), buf, len, error);
+	return MONO_HANDLE_NEW (MonoString, NULL);
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+#endif
 
 int
 mono_icall_get_platform (void)
@@ -134,10 +133,9 @@ mono_icall_get_environment_variable_names (MonoError *error)
 				equal_str = wcschr(env_string, '=');
 				g_assert(equal_str);
 				str = mono_string_new_utf16_checked (domain, env_string, (gint32)(equal_str - env_string), error);
-				if (!is_ok (error))
-					goto cleanup;
+				goto_if_nok (error, cleanup);
 
-				mono_array_setref (names, n, str);
+				mono_array_setref_internal (names, n, str);
 				n++;
 			}
 			while (*env_string != '\0')
@@ -155,27 +153,7 @@ cleanup:
 	return names;
 }
 
-void
-mono_icall_set_environment_variable (MonoString *name, MonoString *value)
-{
-	gunichar2 *utf16_name, *utf16_value;
-
-	utf16_name = mono_string_to_utf16 (name);
-	if ((value == NULL) || (mono_string_length (value) == 0) || (mono_string_chars (value)[0] == 0)) {
-		SetEnvironmentVariable (utf16_name, NULL);
-		g_free (utf16_name);
-		return;
-	}
-
-	utf16_value = mono_string_to_utf16 (value);
-
-	SetEnvironmentVariable (utf16_name, utf16_value);
-
-	g_free (utf16_name);
-	g_free (utf16_value);
-}
-
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if HAVE_API_SUPPORT_WIN32_SH_GET_FOLDER_PATH
 MonoStringHandle
 mono_icall_get_windows_folder_path (int folder, MonoError *error)
 {
@@ -194,28 +172,28 @@ mono_icall_get_windows_folder_path (int folder, MonoError *error)
 	}
 	return mono_string_new_handle (mono_domain_get (), "", error);
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+#endif
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-MonoBoolean
-mono_icall_broadcast_setting_change (MonoError *error)
+#if HAVE_API_SUPPORT_WIN32_SEND_MESSAGE_TIMEOUT
+ICALL_EXPORT void
+ves_icall_System_Environment_BroadcastSettingChange (MonoError *error)
 {
-	error_init (error);
 	SendMessageTimeout (HWND_BROADCAST, WM_SETTINGCHANGE, (WPARAM)NULL, (LPARAM)L"Environment", SMTO_ABORTIFHUNG, 2000, 0);
-	return TRUE;
 }
+#endif
 
+#if HAVE_API_SUPPORT_WIN32_WAIT_FOR_INPUT_IDLE
 gint32
 mono_icall_wait_for_input_idle (gpointer handle, gint32 milliseconds)
 {
 	return WaitForInputIdle (handle, milliseconds);
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+#endif
 
 void
-mono_icall_write_windows_debug_string (MonoString *message)
+mono_icall_write_windows_debug_string (const gunichar2 *message)
 {
-	OutputDebugString (mono_string_chars (message));
+	OutputDebugString (message);
 }
 
 #endif /* HOST_WIN32 */

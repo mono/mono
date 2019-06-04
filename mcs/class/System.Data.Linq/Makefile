@@ -3,41 +3,13 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Data.Linq.dll
-LIB_REFS = System System.Core System.Xml System.Data System.Runtime.Serialization
+LIB_REFS = System System.Core System.Xml System.Xml.Linq System.Data System.Runtime.Serialization System.Transactions
 KEYFILE = ../ecma.pub
-LIB_MCS_FLAGS = \
-	        /resource:./src/DbLinq/Schema/Dbml/DbmlSchema.xsd,DbLinq.Schema.Dbml.DbmlSchema.xsd \
-		/d:MONO_STRICT /d:MONO_DEPLOY -warn:1
+LIB_MCS_FLAGS = -d:ILGEN
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_MCS_FLAGS = -d:MONO_STRICT
+TEST_LIB_REFS = System System.Core System.Data System.Xml
 
-EXTRA_DISTFILES = src/DbLinq/Schema/Dbml/DbmlSchema.xsd
+TXT_RESOURCE_STRINGS = ../referencesource/System.Data.Linq/System.Data.Linq.txt
 
 include ../../build/library.make
-
-dist-local: dist-default dist-DbLinq
-
-dist-DbLinq:
-	find src -name '*.cs' -o -name '*.snk' -o -name '*.xml' -o -name '*.txt' > .files ; \
-	tar cTf .files - | (cd $(distdir); tar xf -) ; \
-	rm .files
-
-RSYNC_EXCLUDES = \
-	--exclude '*.cache'         \
-	--exclude '*.csproj.*.txt'  \
-	--exclude '*.dll'           \
-	--exclude '*.exe'           \
-	--exclude '*.force'         \
-	--exclude '*.pdb'           \
-	--exclude '*.pidb'          \
-	--exclude '*.suo'           \
-	--exclude '*.user'          \
-	--exclude '*.userprefs'     \
-	--exclude '*.usertasks'     \
-	--exclude '.svn' 
-
-update-dblinq:
-	rsync -avz $(RSYNC_EXCLUDES) $$HOME/Development/mono-HEAD/dblinq2007/src/ src/
-	rsync -avz $(RSYNC_EXCLUDES) $$HOME/Development/mono-HEAD/dblinq2007/tests/ tests/
-	rsync -avz $(RSYNC_EXCLUDES) $$HOME/Development/mono-HEAD/dblinq2007/examples/ examples/
-

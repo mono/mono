@@ -1,0 +1,22 @@
+#include net_4_x_System.Data.dll.sources
+
+#../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/GssSafeHandles.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolIdentity.Windows.cs
+../../../external/corefx/src/System.Data.SqlClient/src/Interop/SNINativeMethodWrapper.Windows.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserSafeHandles.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectNative.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParserStateObjectFactory.Managed.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/TdsParser.Windows.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/SNI/LocalDB.Windows.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.Common.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/SqlClient/LocalDBAPI.Windows.cs
+../../../external/corefx/src/System.Data.SqlClient/src/System/Data/ProviderBase/DbConnectionPoolIdentity.Windows.cs
+
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FreeLibrary.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.GetProcAddress.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.LoadLibraryEx.cs
+
+../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeLibraryHandle.cs
+
+# ODBC:
+../../../external/corefx/src/Common/src/Interop/Windows/Interop.Libraries.cs

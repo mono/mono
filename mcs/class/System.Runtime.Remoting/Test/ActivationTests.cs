@@ -14,6 +14,8 @@ using System.Runtime.Remoting.Channels.Tcp;
 using System.Runtime.Remoting.Channels.Http;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Remoting
 {
 	[TestFixture]
@@ -40,12 +42,14 @@ namespace MonoTests.Remoting
 				AppDomain domain = BaseCallTest.CreateDomain ("testdomain_activation");
 				server = (ActivationServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.ActivationServer");
 				
-				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject1), "tcp://localhost:9433");
-				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject2), "http://localhost:9434");
-				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSinglecall1), "tcp://localhost:9433/wkoSingleCall1");
-				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSingleton1), "tcp://localhost:9433/wkoSingleton1");
-				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSinglecall2), "http://localhost:9434/wkoSingleCall2");
-				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSingleton2), "http://localhost:9434/wkoSingleton2");
+				var tcpUrlPrefix = $"tcp://localhost:{server.TcpPort}";
+				var httpUrlPrefix = $"http://localhost:{server.HttpPort}";
+				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject1), tcpUrlPrefix);
+				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject2), httpUrlPrefix);
+				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSinglecall1), tcpUrlPrefix + "/wkoSingleCall1");
+				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSingleton1), tcpUrlPrefix + "/wkoSingleton1");
+				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSinglecall2), httpUrlPrefix + "/wkoSingleCall2");
+				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSingleton2), httpUrlPrefix + "/wkoSingleton2");
 			}
 			catch (Exception ex)
 			{
@@ -163,8 +167,10 @@ namespace MonoTests.Remoting
 		
 		public ActivationServer ()
 		{
-			tcp =  new TcpChannel (9433);
-			http =  new HttpChannel (9434);
+			TcpPort = NetworkHelpers.FindFreePort ();
+			HttpPort = NetworkHelpers.FindFreePort ();
+			tcp =  new TcpChannel (TcpPort);
+			http =  new HttpChannel (HttpPort);
 			
 			ChannelServices.RegisterChannel (tcp);
 			ChannelServices.RegisterChannel (http);
@@ -182,6 +188,9 @@ namespace MonoTests.Remoting
 			ChannelServices.UnregisterChannel (tcp);
 			ChannelServices.UnregisterChannel (http);
 		}
+
+		public int TcpPort { get; private set; }
+		public int HttpPort { get; private set; }
 	}
 	
 	public class BaseObject: MarshalByRefObject

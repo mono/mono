@@ -2,7 +2,9 @@
 ../../build/common/SR.cs
 Assembly/AssemblyInfo.cs
 corefx/SR.cs
-corefx/Vector.cs
+
+../../../external/corefx/src/Common/src/CoreLib/System/Runtime/CompilerServices/IntrinsicAttribute.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
 
 ../../../external/corefx/src/Common/src/System/Globalization/FormatProvider.Number.cs
 ../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
@@ -21,9 +23,6 @@ corefx/Vector.cs
 ../../../external/corefx/src/System.Runtime.Numerics/src/System/Numerics/Complex.cs
 ../../../external/corefx/src/System.Runtime.Numerics/src/System/Numerics/NumericsHelpers.cs
 
-../../../external/corefx/src/Common/src/System/MathF.netstandard.cs
-
-../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/JitIntrinsicAttribute.cs
 ../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/Matrix3x2.cs
 ../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/Matrix4x4.cs
 ../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/Plane.cs

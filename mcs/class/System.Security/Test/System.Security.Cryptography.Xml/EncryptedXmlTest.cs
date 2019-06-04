@@ -6,7 +6,7 @@
 //
 // Copyright (C) 2006 Novell, Inc (http://www.novell.com)
 //
-
+#if !MOBILE
 
 using System;
 using System.Collections;
@@ -18,6 +18,8 @@ using System.Xml;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Security.Cryptography.Xml
 {
 	[TestFixture]
@@ -26,7 +28,7 @@ namespace MonoTests.System.Security.Cryptography.Xml
 		[Test]
 		public void Sample1 ()
 		{
-			AssertDecryption1 ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml");
+			AssertDecryption1 (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample1.xml"));
 		}
 
 		void AssertDecryption1 (string filename)
@@ -35,7 +37,7 @@ namespace MonoTests.System.Security.Cryptography.Xml
 			doc.PreserveWhitespace = true;
 			doc.Load (filename);
 			EncryptedXml encxml = new EncryptedXml (doc);
-			RSACryptoServiceProvider rsa = new X509Certificate2 ("Test/System.Security.Cryptography.Xml/sample.pfx", "mono").PrivateKey as RSACryptoServiceProvider;
+			RSACryptoServiceProvider rsa = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Xml/sample.pfx"), "mono").PrivateKey as RSACryptoServiceProvider;
 			XmlNamespaceManager nm = new XmlNamespaceManager (doc.NameTable);
 			nm.AddNamespace ("s", "http://www.w3.org/2003/05/soap-envelope");
 			nm.AddNamespace ("o", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
@@ -68,7 +70,7 @@ namespace MonoTests.System.Security.Cryptography.Xml
 
 			XmlDocument doc = new XmlDocument ();
 			doc.PreserveWhitespace = true;
-			doc.Load ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample2.xml");
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample2.xml"));
 			EncryptedXml encxml = new EncryptedXml (doc);
 			EncryptedData edata = new EncryptedData ();
 			edata.LoadXml (doc.DocumentElement);
@@ -78,7 +80,7 @@ namespace MonoTests.System.Security.Cryptography.Xml
 		[Test]
 		public void Sample3 ()
 		{
-			AssertDecryption1 ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample3.xml");
+			AssertDecryption1 (TestResourceHelper.GetFullPathOfResource ("Test/System.Security.Cryptography.Xml/EncryptedXmlSample3.xml"));
 		}
 
 		[Test]
@@ -180,11 +182,22 @@ namespace MonoTests.System.Security.Cryptography.Xml
 			Assert.IsNull (ex.GetIdElement (null, "value"));
 		}
 
-		[Test]
-		public void GetIdElement_StringNull ()
+		[TestCase (null, TestName = "null")]
+		[TestCase ("", TestName = "empty")]
+		public void GetIdElement_WhenElementNameMustBeNonColonizedAndItIsNotProvided_ThrowsArgumentNullException (string elementName)
 		{
-			EncryptedXml ex = new EncryptedXml ();
-			Assert.IsNull (ex.GetIdElement (new XmlDocument (), null));
+			var sut = new EncryptedXml ();
+
+			var ex = Assert.Throws<ArgumentNullException> (() => sut.GetIdElement (new XmlDocument (), elementName), "Exception");
+			Assert.That (ex.ParamName, Is.EqualTo ("name"), "ParamName");
+		}
+
+		[Test]
+		public void GetIdElement_WhenElementNameMustBeNonColonizedAndItContainsColon_ReturnsNull ()
+		{
+			var sut = new EncryptedXml ();
+
+			Assert.That (sut.GetIdElement (new XmlDocument (), "t:test"), Is.Null);
 		}
 
 		[Test]
@@ -295,3 +308,4 @@ namespace MonoTests.System.Security.Cryptography.Xml
 		}
 	}
 }
+#endif

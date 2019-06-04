@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+  </head>
+  <body>
+	  C# output:
+	  <br>
+		 <textarea rows="10" cols="100" id="output"></textarea>
+	  <br>
+		  <button type="button" onclick="App.onClick()" id="button" disabled="true">SendEvent</button>
+	  <br>
+	
+      <script type="text/javascript" src="mono-config.js"></script>
+      <script type='text/javascript'>
+		var App = {
+			onClick: function () {
+				this.output.value = "...";
+				var res = this.int_add (10, 20);
+				this.output.value = "res is " + res;
+			},
+
+			init: function () {
+				this.int_add = Module.mono_bind_static_method ("[sample] Math:IntAdd");
+				this.output = document.getElementById ("output");
+				this.button = document.getElementById ("button");
+
+				this.button.disabled = false;
+				console.log ("ready");
+			},
+		};
+      </script>
+      <script type="text/javascript" src="runtime.js"></script>
+      <script async type="text/javascript" src="mono.js"></script>
+  </body>
+  </html>

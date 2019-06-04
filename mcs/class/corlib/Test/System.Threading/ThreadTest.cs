@@ -22,6 +22,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Threading
 {
+#if !DISABLE_SECURITY
 	// These tests seem to hang the 2.0 framework. So they are disabled for now
 	// Don't reenable them until you can run a few thousand times on an SMP box.
 	[Category ("NotWorking")]
@@ -84,6 +85,7 @@ namespace MonoTests.System.Threading
 			Assert.AreEqual ("good", Thread.CurrentPrincipal.Identity.Name, "#2");
 		}
 	}
+#endif
 
 	[TestFixture]
 	[Category("MobileNotWorking")] // Abort #10240
@@ -252,6 +254,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #325566
+		[Category ("MultiThreaded")]
 		public void GetHashCodeTest ()
 		{
 			C1Test test1 = new C1Test ();
@@ -281,6 +284,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #82700
+		[Category ("MultiThreaded")]
 		public void ManagedThreadId ()
 		{
 			C1Test test1 = new C1Test ();
@@ -307,6 +311,7 @@ namespace MonoTests.System.Threading
 
 		[Test]
 		[Category ("NotDotNet")] // it hangs.
+		[Category ("MultiThreaded")]
 		public void TestStart()
 		{
 		{
@@ -348,6 +353,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestApartmentState ()
 		{
 			C2Test test1 = new C2Test();
@@ -449,6 +455,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestUndivisibleByPageSizeMaxStackSize ()
 		{
 			const int undivisible_stacksize = 1048573;
@@ -459,6 +466,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestIsBackground1 ()
 		{
 			C2Test test1 = new C2Test();
@@ -478,6 +486,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestIsBackground2 ()
 		{
 			C2Test test1 = new C2Test();
@@ -503,6 +512,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestName()
 		{
 			C2Test test1 = new C2Test();
@@ -543,6 +553,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestNestedThreads1()
 		{
 			C3Test test1 = new C3Test();
@@ -560,6 +571,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestNestedThreads2()
 		{
 			C4Test test1 = new C4Test();
@@ -576,6 +588,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestJoin1()
 		{
 			C1Test test1 = new C1Test();
@@ -662,6 +675,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestThreadState ()
 		{
 			//TODO: Test The rest of the possible transitions
@@ -688,6 +702,7 @@ namespace MonoTests.System.Threading
 				"#103 Wrong Thread State: " + TestThread.ThreadState.ToString ());
 		}
 
+#if !DISABLE_SECURITY
 		[Test]
 		[Ignore ("see comment below.")]
 		public void CurrentPrincipal_PrincipalPolicy_NoPrincipal () 
@@ -761,11 +776,13 @@ namespace MonoTests.System.Threading
 #endif
 			}
 		}
+#endif
 
 		int counter = 0;
 
 #if MONO_FEATURE_THREAD_SUSPEND_RESUME
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestSuspend ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));
@@ -793,6 +810,7 @@ namespace MonoTests.System.Threading
 #if MONO_FEATURE_THREAD_SUSPEND_RESUME && MONO_FEATURE_THREAD_ABORT
 		[Test]
 		[Category("NotDotNet")] // On MS, ThreadStateException is thrown on Abort: "Thread is suspended; attempting to abort"
+		[Category ("MultiThreaded")]
 		public void TestSuspendAbort ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));
@@ -821,6 +839,7 @@ namespace MonoTests.System.Threading
 #endif
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void Test_Interrupt ()
 		{
 			ManualResetEvent mre = new ManualResetEvent (false);
@@ -980,6 +999,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #81720
+		[Category ("MultiThreaded")]
 		public void IsBackGround ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1015,6 +1035,28 @@ namespace MonoTests.System.Threading
 				Assert.IsNull (ex.InnerException, "#B7");
 				Assert.IsNotNull (ex.Message, "#B8");
 			}
+		}
+
+		[Test] // bug #60031
+		[Category ("MultiThreaded")]
+		public void StoppedThreadsThrowThreadStateException ()
+		{
+			var t = new Thread (() => { });
+			t.Start ();
+			t.Join ();
+
+			Assert.Throws<ThreadStateException> (() => { var isb = t.IsBackground; }, "IsBackground getter");
+			Assert.Throws<ThreadStateException> (() => { var isb = t.ApartmentState; }, "ApartmentState getter");
+			Assert.Throws<ThreadStateException> (() => t.ApartmentState = ApartmentState.MTA, "ApartmentState setter");
+			Assert.Throws<ThreadStateException> (() => t.IsBackground = false, "IsBackground setter");
+			Assert.Throws<ThreadStateException> (() => t.Start (), "Start ()");
+#if MONO_FEATURE_THREAD_SUSPEND_RESUME
+			Assert.Throws<ThreadStateException> (() => t.Resume (), "Resume ()");
+			Assert.Throws<ThreadStateException> (() => t.Suspend (), "Suspend ()");
+#endif
+			Assert.Throws<ThreadStateException> (() => t.GetApartmentState (), "GetApartmentState ()");
+			Assert.Throws<ThreadStateException> (() => t.SetApartmentState (ApartmentState.MTA), "SetApartmentState ()");
+			Assert.Throws<ThreadStateException> (() => t.TrySetApartmentState (ApartmentState.MTA), "TrySetApartmentState ()");
 		}
 	}
 
@@ -1127,6 +1169,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test] // bug #81658
+		[Category ("MultiThreaded")]
 		public void ApartmentState_StoppedThread ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1166,6 +1209,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestApartmentState ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1230,6 +1274,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestTrySetApartmentState ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1244,6 +1289,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TestTrySetApartmentStateRunning ()
 		{
 			Thread t1 = new Thread (new ThreadStart (Start));
@@ -1280,6 +1326,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ThreadStartSimple ()
 		{
 			int i = 0;
@@ -1293,6 +1340,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ParametrizedThreadStart ()
 		{
 			int i = 0;

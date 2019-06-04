@@ -29,7 +29,7 @@ build()
 	pushd ${REPODIR}
 	report "Building Mono"
 	mkdir -p ${INSTALLDIR}
-	EXTRA_CONF_FLAGS="--prefix=${INSTALLDIR}" CI_TAGS="no-tests" label="w64" scripts/ci/run-jenkins.sh || error "*** Could not run autogen ***"
+	EXTRA_CONF_FLAGS="--prefix=${INSTALLDIR}" CI_TAGS="win-amd64,no-tests" scripts/ci/run-jenkins.sh || error "*** Could not run autogen ***"
 	popd
 }
 
@@ -40,10 +40,12 @@ install()
 	rm -f	${INSTALLDIR}/bin/mono-sgen.* \
 		${INSTALLDIR}/bin/mono-boehm.* \
 		${INSTALLDIR}/lib/libmono-2.0.* \
+		${INSTALLDIR}/bin/libmonoboehm-2.0.* \
 		${INSTALLDIR}/lib/libmonoboehm-2.0.* \
+		${INSTALLDIR}/bin/libmonosgen-2.0.* \
 		${INSTALLDIR}/lib/libmonosgen-2.0.* \
-		${INSTALLDIR}/bin/MonoPosixHelper.* \
-		${INSTALLDIR}/lib/MonoPosixHelper.* \
+		${INSTALLDIR}/bin/*MonoPosixHelper.* \
+		${INSTALLDIR}/lib/*MonoPosixHelper.* \
 		${INSTALLDIR}/bin/mono \
 		${INSTALLDIR}/bin/pedump \
 		${INSTALLDIR}/bin/mono-package-runtime \
@@ -54,11 +56,17 @@ install()
 	cp -a msvc/build/sgen/x64/bin/Release/mono-sgen.exe		${INSTALLDIR}/bin/
 	cp -a msvc/build/sgen/x64/bin/Release/mono-sgen.pdb		${INSTALLDIR}/bin/
 	cp -a msvc/build/sgen/x64/bin/Release/mono-2.0-sgen.dll	${INSTALLDIR}/bin/
+	cp -a msvc/build/sgen/x64/bin/Release/mono-2.0-sgen.pdb	${INSTALLDIR}/bin/
 	cp -a msvc/build/sgen/x64/lib/Release/mono-2.0-sgen.lib	${INSTALLDIR}/lib/
 	cp -a msvc/build/sgen/x64/bin/Release/mono-2.0-sgen.pdb	${INSTALLDIR}/lib/
+	cp -a msvc/build/sgen/x64/lib/Release/libmono-static-sgen.lib	${INSTALLDIR}/lib/
 	cp -a msvc/build/sgen/x64/bin/Release/MonoPosixHelper.dll	${INSTALLDIR}/bin/
+	cp -a msvc/build/sgen/x64/bin/Release/MonoPosixHelper.pdb	${INSTALLDIR}/bin/
 	cp -a msvc/build/sgen/x64/lib/Release/MonoPosixHelper.lib	${INSTALLDIR}/lib/
 	cp -a msvc/build/sgen/x64/bin/Release/MonoPosixHelper.pdb	${INSTALLDIR}/lib/
+        if [ -e msvc/build/sgen/x64/bin/Release/libmono-btls-shared.dll ]; then
+                cp -a msvc/build/sgen/x64/bin/Release/libmono-btls-shared.dll ${INSTALLDIR}/bin/
+        fi
 	cp -a ${INSTALLDIR}/bin/mono-sgen.exe	${INSTALLDIR}/bin/mono.exe
 	cp -a ${INSTALLDIR}/bin/mono-sgen.pdb	${INSTALLDIR}/bin/mono.pdb
 	popd
@@ -82,6 +90,8 @@ install()
 	chmod a+x *.bat *.exe
 	popd
 	popd
+
+	find ${INSTALLDIR} -name monodoc.dll.config -exec sed -i 's#value=".*/lib/monodoc#value="C:\\Program Files\\Mono\\lib\\monodoc#g' {} \;
 }
 
 prerequisites()

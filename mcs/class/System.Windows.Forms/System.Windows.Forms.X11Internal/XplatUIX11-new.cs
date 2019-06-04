@@ -349,7 +349,7 @@ namespace System.Windows.Forms.X11Internal {
 
 			hwnd.CreateWindow (cp);
 
-			return hwnd.Handle;
+			return hwnd.zombie ? IntPtr.Zero : hwnd.Handle;
 		}
 
 		internal override IntPtr CreateWindow (IntPtr Parent, int X, int Y, int Width, int Height)
@@ -506,13 +506,18 @@ namespace System.Windows.Forms.X11Internal {
 
 		// XXX this should be someplace shareable by all non-win32 backends..  like in Hwnd itself.
 		// maybe a Hwnd.ParentHandle property
-		internal override IntPtr GetParent (IntPtr handle)
+		internal override IntPtr GetParent (IntPtr handle, bool with_owner)
 		{
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (hwnd != null && hwnd.parent != null) {
-				return hwnd.parent.Handle;
+			if (hwnd != null) {
+				if (hwnd.parent != null) {
+					return hwnd.parent.Handle;
+				}
+				if (hwnd.owner != null && with_owner) {
+					return hwnd.owner.Handle;
+				}
 			}
 			return IntPtr.Zero;
 		}
@@ -686,9 +691,9 @@ namespace System.Windows.Forms.X11Internal {
 			return display.PaintEventStart (ref m, handle, client);
 		}
 
-		internal override void PaintEventEnd (ref Message m, IntPtr handle, bool client)
+		internal override void PaintEventEnd (ref Message m, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
-			display.PaintEventEnd (ref m, handle, client);
+			display.PaintEventEnd (ref m, handle, client, pevent);
 		}
 
 

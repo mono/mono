@@ -392,6 +392,9 @@ namespace Mono.CSharp {
 				if (!TypeSpec.IsValueType (expr_type))
 					return null;
 
+				if (expr_type.IsByRefLike)
+					return null;
+
 				return expr == null ? EmptyExpression.Null : new BoxedCast (expr, target_type);
 
 			case BuiltinTypeSpec.Type.Enum:
@@ -816,7 +819,7 @@ namespace Mono.CSharp {
 			if (expr_type == target_type)
 				return true;
 
-			if (expr_type == InternalType.ThrowExpr)
+			if (expr_type == InternalType.ThrowExpr || expr_type == InternalType.DefaultType)
 				return target_type.Kind != MemberKind.InternalCompilerType;
 
 			if (target_type.IsNullableType)
@@ -1229,6 +1232,13 @@ namespace Mono.CSharp {
 					FindApplicableUserDefinedConversionOperators (rc, operators, source_type_expr, target_type, restr, ref candidates);
 				}
 
+				if (source_type_expr == source && source_type.IsNullableType) {
+					operators = MemberCache.GetUserOperator (source_type.TypeArguments [0], Operator.OpType.Implicit, declared_only);
+					if (operators != null) {
+						FindApplicableUserDefinedConversionOperators (rc, operators, source_type_expr, target_type, restr, ref candidates);
+					}
+				}
+
 				if (!implicitOnly) {
 					operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Explicit, declared_only);
 					if (operators != null) {
@@ -1478,6 +1488,10 @@ namespace Mono.CSharp {
 				return target_type.Kind == MemberKind.InternalCompilerType ? null : EmptyCast.Create (expr, target_type);
 			}
 
+			if (expr_type == InternalType.DefaultType) {
+				return new DefaultValueExpression (new TypeExpression (target_type, expr.Location), expr.Location).Resolve (ec);
+			}
+
 			if (target_type.IsNullableType)
 				return ImplicitNulableConversion (ec, expr, target_type);
 
@@ -1501,6 +1515,11 @@ namespace Mono.CSharp {
 
 				if (expr is TupleLiteral && TupleLiteral.ContainsNoTypeElement (expr_type))
 					return null;
+			}
+
+			if (expr is ReferenceExpression) {
+				// Only identify conversion is allowed
+				return null;
 			}
 
 			e = ImplicitNumericConversion (expr, expr_type, target_type);
@@ -1962,7 +1981,7 @@ namespace Mono.CSharp {
 			// From object or dynamic to any reference type or value type (unboxing)
 			//
 			if (source_type.BuiltinType == BuiltinTypeSpec.Type.Object || source_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
-				if (target_type.IsPointer)
+				if (target_type.IsPointer || target_type.IsByRefLike)
 					return null;
 
 				return

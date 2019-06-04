@@ -28,9 +28,14 @@ using System;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class EventComparer : MemberComparer {
+	class EventComparer : MemberComparer {
+
+		public EventComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override string GroupName {
 			get { return "events"; }
@@ -45,12 +50,12 @@ namespace Xamarin.ApiDiff {
 			if (base.Equals (source, target, changes))
 				return true;
 
-			var change = new ApiChange ();
+			var change = new ApiChange (GetDescription (source), State);
 			change.Header = "Modified " + GroupName;
 			change.Append ("public event ");
 
-			var srcEventType = source.GetTypeName ("eventtype");
-			var tgtEventType = target.GetTypeName ("eventtype");
+			var srcEventType = source.GetTypeName ("eventtype", State);
+			var tgtEventType = target.GetTypeName ("eventtype", State);
 
 			if (srcEventType != tgtEventType) {
 				change.AppendModified (srcEventType, tgtEventType, true);
@@ -67,7 +72,7 @@ namespace Xamarin.ApiDiff {
 			StringBuilder sb = new StringBuilder ();
 			// TODO: attribs
 			sb.Append ("public event ");
-			sb.Append (e.GetTypeName ("eventtype")).Append (' ');
+			sb.Append (e.GetTypeName ("eventtype", State)).Append (' ');
 			sb.Append (e.GetAttribute ("name")).Append (';');
 			return sb.ToString ();
 		}

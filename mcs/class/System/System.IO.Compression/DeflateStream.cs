@@ -32,8 +32,11 @@
 
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace System.IO.Compression
 {
@@ -130,6 +133,16 @@ namespace System.IO.Compression
 			}
 		}
 
+		internal ValueTask<int> ReadAsyncMemory (Memory<byte> destination, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal int ReadCore (Span<byte> destination)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public override int Read (byte[] array, int offset, int count)
 		{
 			if (disposed)
@@ -158,6 +171,16 @@ namespace System.IO.Compression
 				IntPtr ptr = new IntPtr (b + offset);
 				native.WriteZStream (ptr, count);
 			}
+		}
+
+		internal ValueTask WriteAsyncMemory (ReadOnlyMemory<byte> source, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal void WriteCore (ReadOnlySpan<byte> source)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public override void Write (byte[] array, int offset, int count)
@@ -322,10 +345,11 @@ namespace System.IO.Compression
 		UnmanagedReadOrWrite feeder; // This will be passed to unmanaged code and used there
 
 		Stream base_stream;
-		IntPtr z_stream;
+		SafeDeflateStreamHandle z_stream;
 		GCHandle data;
 		bool disposed;
 		byte [] io_buffer;
+		Exception last_error;
 
 		private DeflateStreamNative ()
 		{
@@ -337,7 +361,7 @@ namespace System.IO.Compression
 			dsn.data = GCHandle.Alloc (dsn);
 			dsn.feeder = mode == CompressionMode.Compress ? new UnmanagedReadOrWrite (UnmanagedWrite) : new UnmanagedReadOrWrite (UnmanagedRead);
 			dsn.z_stream = CreateZStream (mode, gzip, dsn.feeder, GCHandle.ToIntPtr (dsn.data));
-			if (dsn.z_stream == IntPtr.Zero) {
+			if (dsn.z_stream.IsInvalid) {
 				dsn.Dispose (true);
 				return null;
 			}
@@ -358,11 +382,13 @@ namespace System.IO.Compression
 				GC.SuppressFinalize (this);
 			
 				io_buffer = null;
-			
-				IntPtr zz = z_stream;
-				z_stream = IntPtr.Zero;
-				if (zz != IntPtr.Zero)
-					CloseZStream (zz); // This will Flush() the remaining output if any
+			} else {
+				// When we are in the finalizer we don't want to access the underlying stream anymore
+				base_stream = Stream.Null;
+			}
+
+			if (z_stream != null) {
+				z_stream.Dispose();
 			}
 
 			if (data.IsAllocated) {
@@ -405,7 +431,15 @@ namespace System.IO.Compression
 				io_buffer = new byte [BufferSize];
 
 			int count = Math.Min (length, io_buffer.Length);
-			int n = base_stream.Read (io_buffer, 0, count);
+			int n;
+
+			try {
+				n = base_stream.Read (io_buffer, 0, count);
+			} catch (Exception ex) {
+				last_error = ex;
+				return -12;
+			}
+
 			if (n > 0)
 				Marshal.Copy (io_buffer, 0, buffer, n);
 
@@ -422,6 +456,7 @@ namespace System.IO.Compression
 			return self.UnmanagedWrite (buffer, length);
 		}
 
+
 		int UnmanagedWrite (IntPtr buffer, int length)
 		{
 			int total = 0;
@@ -431,7 +466,12 @@ namespace System.IO.Compression
 
 				int count = Math.Min (length, io_buffer.Length);
 				Marshal.Copy (buffer, io_buffer, 0, count);
-				base_stream.Write (io_buffer, 0, count);
+				try {
+					base_stream.Write (io_buffer, 0, count);
+				} catch (Exception ex) {
+					last_error = ex;
+					return -12;
+				}
 				unsafe {
 					buffer = new IntPtr ((byte *) buffer.ToPointer () + count);
 				}
@@ -441,10 +481,14 @@ namespace System.IO.Compression
 			return total;
 		}
 
-		static void CheckResult (int result, string where)
+		void CheckResult (int result, string where)
 		{
 			if (result >= 0)
 				return;
+
+			var throw_me = Interlocked.Exchange (ref last_error, null);
+			if (throw_me != null)
+				throw throw_me;
 
 			string error;
 			switch (result) {
@@ -480,29 +524,8 @@ namespace System.IO.Compression
 			throw new IOException (error + " " + where);
 		}
 
-#if MONOTOUCH || MONODROID
-		const string LIBNAME = "__Internal";
-#else
-		const string LIBNAME = "MonoPosixHelper";
-#endif
-
-#if !ORBIS
-		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
-		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data);
-
-		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
-		static extern int CloseZStream (IntPtr stream);
-
-		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
-		static extern int Flush (IntPtr stream);
-
-		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
-		static extern int ReadZStream (IntPtr stream, IntPtr buffer, int length);
-
-		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
-		static extern int WriteZStream (IntPtr stream, IntPtr buffer, int length);
-#else
-		static IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data)
+#if ORBIS
+		static SafeDeflateStreamHandle CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data)
 		{
 			throw new PlatformNotSupportedException ();
 		}
@@ -512,22 +535,123 @@ namespace System.IO.Compression
 			throw new PlatformNotSupportedException ();
 		}
 
-		static int Flush (IntPtr stream)
+		static int Flush (SafeDeflateStreamHandle stream)
 		{
 			throw new PlatformNotSupportedException ();
 		}
 
-		static int ReadZStream (IntPtr stream, IntPtr buffer, int length)
+		static int ReadZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length)
 		{
 			throw new PlatformNotSupportedException ();
 		}
 
-		static int WriteZStream (IntPtr stream, IntPtr buffer, int length)
+		static int WriteZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length)
 		{
 			throw new PlatformNotSupportedException ();
 		}
+#elif MONOTOUCH || MONODROID
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern IntPtr CreateZStream (int compress, bool gzip, IntPtr feeder, IntPtr data);
+
+		static SafeDeflateStreamHandle CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data)
+		{
+			SafeDeflateStreamHandle res;
+			try {} finally {
+				res = new SafeDeflateStreamHandle (CreateZStream ((int) compress, gzip, Marshal.GetFunctionPointerForDelegate<UnmanagedReadOrWrite> (feeder), data));
+			}
+
+			return res;
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern int CloseZStream (IntPtr stream);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern int Flush (IntPtr stream);
+
+		static int Flush (SafeDeflateStreamHandle stream)
+		{
+			bool release = false;
+			try {
+				stream.DangerousAddRef (ref release);
+				return Flush (stream.DangerousGetHandle ());
+			} finally {
+				if (release)
+					stream.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern int ReadZStream (IntPtr stream, IntPtr buffer, int length);
+
+		static int ReadZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length)
+		{
+			bool release = false;
+			try {
+				stream.DangerousAddRef (ref release);
+				return ReadZStream (stream.DangerousGetHandle (), buffer, length);
+			} finally {
+				if (release)
+					stream.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern int WriteZStream (IntPtr stream, IntPtr buffer, int length);
+
+		static int WriteZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length)
+		{
+			bool release = false;
+			try {
+				stream.DangerousAddRef (ref release);
+				return WriteZStream (stream.DangerousGetHandle (), buffer, length);
+			} finally {
+				if (release)
+					stream.DangerousRelease ();
+			}
+		}
+#else
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
+		static extern SafeDeflateStreamHandle CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data);
+
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
+		static extern int CloseZStream (IntPtr stream);
+
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
+		static extern int Flush (SafeDeflateStreamHandle stream);
+
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
+		static extern int ReadZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length);
+
+		[DllImport ("MonoPosixHelper", CallingConvention=CallingConvention.Cdecl)]
+		static extern int WriteZStream (SafeDeflateStreamHandle stream, IntPtr buffer, int length);
 #endif
 
+		sealed class SafeDeflateStreamHandle : SafeHandle
+		{
+			public override bool IsInvalid
+			{
+				get { return handle == IntPtr.Zero; }
+			}
+
+			private SafeDeflateStreamHandle() : base(IntPtr.Zero, true)
+			{
+			}
+
+			internal SafeDeflateStreamHandle(IntPtr handle) : base (handle, true)
+			{
+			}
+
+			override protected bool ReleaseHandle()
+			{
+				try {
+					DeflateStreamNative.CloseZStream(handle);
+				} catch {
+					;
+				}
+				return true;
+			}
+		}
 	}
 }
 

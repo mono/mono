@@ -20,5 +20,7 @@
 // THE SOFTWARE.
 // 
 
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Globalization.GlobalizationExtensions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Globalization.IdnMapping))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.StringNormalizationExtensions))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Text.NormalizationForm))]

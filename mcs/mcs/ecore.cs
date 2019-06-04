@@ -241,7 +241,7 @@ namespace Mono.CSharp {
 
 		protected void CheckExpressionVariable (ResolveContext rc)
 		{
-			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope)) {
+			if (rc.HasAny (ResolveContext.Options.BaseInitializer | ResolveContext.Options.FieldInitializerScope) && rc.CurrentAnonymousMethod == null) {
 				rc.Report.Error (8200, loc, "Out variable and pattern variable declarations are not allowed within constructor initializers, field initializers, or property initializers");
 			} else if (rc.HasSet (ResolveContext.Options.QueryClauseScope)) {
 				rc.Report.Error (8201, loc, "Out variable and pattern variable declarations are not allowed within a query clause");
@@ -255,7 +255,7 @@ namespace Mono.CSharp {
 
 		public void Error_ExpressionMustBeConstant (ResolveContext rc, Location loc, string e_name)
 		{
-			rc.Report.Error (133, loc, "The expression being assigned to `{0}' must be constant", e_name);
+			rc.Report.Error (133, loc, "The expression being assigned to `{0}' must be a constant or default value", e_name);
 		}
 
 		public void Error_ConstantCanBeInitializedWithNullOnly (ResolveContext rc, TypeSpec type, Location loc, string name)
@@ -303,7 +303,12 @@ namespace Mono.CSharp {
 				return;
 
 			string from_type = type.GetSignatureForError ();
+			if (type.Kind == MemberKind.ByRef)
+				from_type = "ref " + from_type;
 			string to_type = target.GetSignatureForError ();
+			if (target.Kind == MemberKind.ByRef)
+				to_type = "ref " + to_type;
+
 			if (from_type == to_type) {
 				from_type = type.GetSignatureForErrorIncludingAssemblyName ();
 				to_type = target.GetSignatureForErrorIncludingAssemblyName ();
@@ -559,18 +564,18 @@ namespace Mono.CSharp {
 		public Expression ResolveLValue (ResolveContext ec, Expression right_side)
 		{
 			int errors = ec.Report.Errors;
-			bool out_access = right_side == EmptyExpression.OutAccess;
+			//bool out_access = right_side == EmptyExpression.OutAccess;
 
 			Expression e = DoResolveLValue (ec, right_side);
 
-			if (e != null && out_access && !(e is IMemoryLocation)) {
+			//if (e != null && out_access && !(e is IMemoryLocation)) {
 				// FIXME: There's no problem with correctness, the 'Expr = null' handles that.
 				//        Enabling this 'throw' will "only" result in deleting useless code elsewhere,
 
 				//throw new InternalErrorException ("ResolveLValue didn't return an IMemoryLocation: " +
 				//				  e.GetType () + " " + e.GetSignatureForError ());
-				e = null;
-			}
+			//	e = null;
+			//}
 
 			if (e == null) {
 				if (errors == ec.Report.Errors) {
@@ -2952,6 +2957,13 @@ namespace Mono.CSharp {
 				if ((restrictions & MemberLookupRestrictions.NameOfExcluded) == 0 && Name == "nameof")
 					return new NameOf (this);
 
+				if ((restrictions & MemberLookupRestrictions.ReadAccess) == 0 && Name == "_") {
+					if (rc.Module.Compiler.Settings.Version < LanguageVersion.V_7)
+						rc.Report.FeatureIsNotAvailable (rc.Module.Compiler, loc, "discards");
+
+					return new Discard (loc).Resolve (rc);
+				}
+
 				if (errorMode) {
 					if (variable_found) {
 						rc.Report.Error (841, loc, "A local variable `{0}' cannot be used before it is declared", Name);
@@ -4024,6 +4036,13 @@ namespace Mono.CSharp {
 			return Methods.First ().GetSignatureForError ();
 		}
 
+		static MethodSpec CandidateDevirtualization (TypeSpec type, MethodSpec method)
+		{
+			// Assumes no generics get involved
+			var filter = new MemberFilter (method.Name, method.Arity, MemberKind.Method, method.Parameters, null);
+			return MemberCache.FindMember (type, filter, BindingRestriction.InstanceOnly | BindingRestriction.OverrideOnly | BindingRestriction.DeclaredOnly) as MethodSpec;
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			if (best_candidate == null) {
@@ -4172,6 +4191,22 @@ namespace Mono.CSharp {
 						}
 
 						InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup | ResolveFlags.Type);
+
+						var expr_type = InstanceExpression.Type;
+						if ((expr_type.IsByRefLike || expr_type.IsSpecialRuntimeType) && best_candidate.DeclaringType != expr_type) {
+							MethodSpec devirt = null;
+							if ((best_candidate.Modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE)) != 0) {
+								devirt = CandidateDevirtualization (expr_type, best_candidate);
+							}
+
+							if (devirt == null) {
+								// CSC: Should be better error message
+								ec.Report.Error (29, InstanceExpression.Location, "Cannot implicitly convert type `{0}' to `{1}'",
+												 InstanceExpression.Type.GetSignatureForError (), best_candidate.DeclaringType.GetSignatureForError ());
+							} else {
+								best_candidate = devirt;
+							}
+						}
 					}
 				}
 
@@ -5414,8 +5449,13 @@ namespace Mono.CSharp {
 				}
 
 				if (arg_type != parameter) {
-					if (arg_type == InternalType.VarOutType)
+					if (arg_type == InternalType.VarOutType || arg_type == InternalType.Discard)
 						return 0;
+
+					var ref_arg_type = arg_type as ReferenceContainer;
+					if (ref_arg_type != null) {
+						arg_type = ref_arg_type.Element;
+					}
 
 					//
 					// Do full equality check after quick path
@@ -5982,13 +6022,13 @@ namespace Mono.CSharp {
 			int arg_count = args == null ? 0 : args.Count;
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
-				a = args[a_idx];
+				a = args [a_idx];
 				if (a == null)
 					continue;
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = cpd.FixedParameters [a_idx].ModFlags;
-					pt = ptypes[a_idx];
+					pt = ptypes [a_idx];
 					has_unsafe_arg |= pt.IsPointer;
 
 					if (p_mod == Parameter.Modifier.PARAMS) {
@@ -6018,6 +6058,19 @@ namespace Mono.CSharp {
 						continue;
 					}
 
+					if (arg_type == InternalType.Discard) {
+						a.Expr.Type = pt;
+						continue;
+					}
+
+					var ref_arg_type = arg_type as ReferenceContainer;
+					if (ref_arg_type != null) {
+						if (ref_arg_type.Element != pt)
+							break;
+
+						return true;
+					}
+
 					if (!TypeSpecComparer.IsEqual (arg_type, pt))
 						break;
 				}
@@ -6043,9 +6096,15 @@ namespace Mono.CSharp {
 						else
 							ec.Report.SymbolRelatedToPreviousError (member);
 
-						ec.Report.Error (1744, na.Location,
-							"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
-							na.Name);
+						if (name_index > a_idx) {
+							ec.Report.Error (8323, na.Location,
+								"Named argument `{0}' is used out of position but is followed by positional argument",
+								na.Name);
+						} else {
+							ec.Report.Error (1744, na.Location,
+								"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
+								na.Name);
+						}
 					}
 				}
 				
@@ -6525,12 +6584,12 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 				}
 
-				return null;
+				return ErrorExpression.Instance;
 			}
 
 			if (right_side == EmptyExpression.LValueMemberAccess) {
 				// Already reported as CS1648/CS1650
-				return null;
+				return ErrorExpression.Instance;
 			}
 
 			if (right_side == EmptyExpression.LValueMemberOutAccess) {
@@ -6541,7 +6600,7 @@ namespace Mono.CSharp {
 					rc.Report.Error (1649, loc, "Members of readonly field `{0}' cannot be passed ref or out (except in a constructor)",
 						GetSignatureForError ());
 				}
-				return null;
+				return ErrorExpression.Instance;
 			}
 
 			if (IsStatic) {
@@ -6552,7 +6611,7 @@ namespace Mono.CSharp {
 					GetSignatureForError ());
 			}
 
-			return null;
+			return ErrorExpression.Instance;
 		}
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
@@ -7332,6 +7391,9 @@ namespace Mono.CSharp {
 			if (!ResolveGetter (ec))
 				return null;
 
+			if (type.Kind == MemberKind.ByRef)
+				return ByRefDereference.Create (this).Resolve (ec);
+
 			return this;
 		}
 
@@ -7341,6 +7403,14 @@ namespace Mono.CSharp {
 				Error_NullPropagatingLValue (rc);
 
 			if (right_side == EmptyExpression.OutAccess) {
+				if (OverloadResolve (rc, null) == null)
+					return null;
+
+				if (best_candidate?.MemberType.Kind == MemberKind.ByRef) {
+					getter = CandidateToBaseOverride (rc, best_candidate.Get);
+					return this;
+				}
+
 				// TODO: best_candidate can be null at this point
 				INamedBlockVariable variable = null;
 				if (best_candidate != null && rc.CurrentBlock.ParametersBlock.TopBlock.GetLocalName (best_candidate.Name, rc.CurrentBlock, ref variable) && variable is Linq.RangeVariable) {
@@ -7366,6 +7436,11 @@ namespace Mono.CSharp {
 			if (!best_candidate.HasSet) {
 				if (ResolveAutopropertyAssignment (rc, right_side))
 					return this;
+
+				if (best_candidate.MemberType.Kind == MemberKind.ByRef) {
+					getter = CandidateToBaseOverride (rc, best_candidate.Get);
+					return ByRefDereference.Create (this).Resolve (rc);
+				}
 
 				rc.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read-only)",
 					GetSignatureForError ());

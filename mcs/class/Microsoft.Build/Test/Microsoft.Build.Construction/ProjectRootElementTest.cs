@@ -30,8 +30,9 @@ namespace MonoTests.Microsoft.Build.Construction
 			var xml = XmlReader.Create (new StringReader (empty_project_xml), null, "file:///foo.xml");
 			// This creator does not fill FullPath...
 			var root = ProjectRootElement.Create (xml);
+
 			Assert.IsNull (root.FullPath, "#2");
-			Assert.AreEqual (Path.GetDirectoryName (new Uri (GetType ().Assembly.CodeBase).LocalPath), root.DirectoryPath, "#3");
+			Assert.AreEqual (Environment.CurrentDirectory, root.DirectoryPath, "#3");
 		}
 
 		[Test]
@@ -39,7 +40,8 @@ namespace MonoTests.Microsoft.Build.Construction
 		{
 			var root = ProjectRootElement.Create ();
 			root.FullPath = "test" + Path.DirectorySeparatorChar + "foo.xml";
-			var full = Path.Combine (Path.GetDirectoryName (new Uri (GetType ().Assembly.CodeBase).LocalPath), "test", "foo.xml");
+
+			var full = Path.Combine (Environment.CurrentDirectory, "test", "foo.xml");
 			Assert.AreEqual (full, root.FullPath, "#1");
 			Assert.AreEqual (Path.GetDirectoryName (full), root.DirectoryPath, "#1");
 		}

@@ -8,8 +8,6 @@
      
 #if defined(GC_DARWIN_THREADS)
 # include "private/darwin_stop_world.h"
-#elif defined(GC_OPENBSD_THREADS)
-# include "private/openbsd_stop_world.h"
 #else
 # include "private/pthread_stop_world.h"
 #endif
@@ -45,7 +43,7 @@ typedef struct GC_Thread_Rep {
 				  /* guaranteed to be dead, but we may  */
 				  /* not yet have registered the join.) */
     pthread_t id;
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
     pid_t kernel_id;
 #endif
     /* Extra bookkeeping information the stopping code uses */

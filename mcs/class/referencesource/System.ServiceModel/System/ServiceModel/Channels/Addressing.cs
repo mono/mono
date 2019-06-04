@@ -466,7 +466,7 @@ namespace System.ServiceModel.Channels
 
             if (actor.Length == 0 && mustUnderstand == mustUnderstandValue && !relay)
             {
-                if ((object)to == (object)version.Anonymous)
+                if ((object)to == (object)version.AnonymousUri)
                 {
                     if (version == AddressingVersion.WSAddressing10)
                         return AnonymousTo10;

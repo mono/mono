@@ -11,7 +11,15 @@ Global options:
 
 Available commands:
         echo                 Echo arguments to the screen
+        equinox              Does something with the equinox?
         requires-args        Class-based Command subclass
+Commands with spaces are supported:
+        has spaces           spaces?!
+Nested CommandSets are also supported. They're invoked similarly to commands
+with spaces.
+        set file type        Does something or other.
+        set output           Sets  output location
+        completions          Show CommandSet completions
 
 $ mono commands.exe help
 usage: commands COMMAND [OPTIONS]
@@ -23,7 +31,15 @@ Global options:
 
 Available commands:
         echo                 Echo arguments to the screen
+        equinox              Does something with the equinox?
         requires-args        Class-based Command subclass
+Commands with spaces are supported:
+        has spaces           spaces?!
+Nested CommandSets are also supported. They're invoked similarly to commands
+with spaces.
+        set file type        Does something or other.
+        set output           Sets  output location
+        completions          Show CommandSet completions
 
 $ mono commands.exe help --help
 Usage: commands COMMAND [OPTIONS]
@@ -31,8 +47,13 @@ Use `commands help COMMAND` for help on a specific command.
 
 Available commands:
 
+        completions          Show CommandSet completions
         echo                 Echo arguments to the screen
+        equinox              Does something with the equinox?
+        has spaces           spaces?!
         requires-args        Class-based Command subclass
+        set file type        Does something or other.
+        set output           Sets  output location
         help                 Show this message and exit
 
 $ mono commands.exe help echo
@@ -72,3 +93,34 @@ commands: Use `commands help` for usage.
 $ mono commands.exe help invalid-command
 commands: Unknown command: invalid-command
 commands: Use `commands help` for usage.
+
+$ mono commands.exe has spaces
+spaces, yo! 
+
+$ mono commands.exe set file type whatever
+File type set to: whatever
+
+$ mono commands.exe completions
+Showing CommandSet completions for prefix '':
+	completion: echo
+	completion: equinox
+	completion: requires-args
+	completion: has spaces
+	completion: completions
+	completion: help
+	completion: set file type
+	completion: set output
+
+$ mono commands.exe completions e
+Showing CommandSet completions for prefix 'e':
+	completion: echo
+	completion: equinox
+
+$ mono commands.exe completions s
+Showing CommandSet completions for prefix 's':
+	completion: set file type
+	completion: set output
+
+$ mono commands.exe completions s o
+Showing CommandSet completions for prefix 's o':
+	completion: set output

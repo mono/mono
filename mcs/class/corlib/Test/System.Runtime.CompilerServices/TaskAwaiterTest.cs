@@ -160,6 +160,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void GetResultFaulted ()
 		{
 			TaskAwaiter awaiter;
@@ -179,6 +180,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void GetResultCanceled ()
 		{
 			TaskAwaiter awaiter;
@@ -195,6 +197,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void GetResultWaitOnCompletion ()
 		{
 			TaskAwaiter awaiter;
@@ -207,6 +210,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void CustomScheduler ()
 		{
 			// some test runners (e.g. Touch.Unit) will execute this on the main thread and that would lock them
@@ -249,6 +253,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 
 		[Test]
 		[Ignore ("Incompatible with nunitlite")]
+		[Category ("MultiThreaded")]
 		public void FinishedTaskOnCompleted ()
 		{
 			var mres = new ManualResetEvent (false);
@@ -273,6 +278,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void CompletionOnSameCustomSynchronizationContext ()
 		{
 			progress = "";
@@ -313,6 +319,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void CompletionOnDifferentCustomSynchronizationContext ()
 		{
 			mre = new ManualResetEvent (false);
@@ -365,6 +372,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void NestedLeakingSynchronizationContext ()
 		{
 			var sc = SynchronizationContext.Current;

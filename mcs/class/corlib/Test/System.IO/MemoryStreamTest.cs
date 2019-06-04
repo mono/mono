@@ -284,6 +284,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginRead ()
 		{
 			byte [] readBytes = new byte [5];
@@ -294,6 +295,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginRead_WithState ()
 		{
 			byte [] readBytes = new byte [5];
@@ -316,6 +318,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginReadAsync ()
 		{
 			byte[] readBytes = new byte[5];
@@ -334,6 +337,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginReadIsBlockingNextRead ()
 		{
 			byte[] readBytes = new byte[5];
@@ -374,6 +378,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginRead_Read ()
 		{
 			byte[] readBytes = new byte[5];
@@ -394,6 +399,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginRead_BeginWrite ()
 		{
 			byte[] readBytes = new byte[5];
@@ -431,6 +437,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginWrite ()
 		{
 			var writeBytes = new byte [5] { 2, 3, 4, 10, 12 };
@@ -441,6 +448,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginWrite_WithState ()
 		{
 			var writeBytes = new byte[5] { 2, 3, 4, 10, 12 };
@@ -463,6 +471,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void EndRead_Twice ()
 		{
 			byte[] readBytes = new byte[5];
@@ -480,6 +489,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void EndRead_Disposed ()
 		{
 			byte[] readBytes = new byte[5];
@@ -491,6 +501,7 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void EndWrite_OnBeginRead ()
 		{
 			byte[] readBytes = new byte[5];
@@ -508,6 +519,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void EndWrite_Twice ()
 		{
 			var wBytes = new byte[5];

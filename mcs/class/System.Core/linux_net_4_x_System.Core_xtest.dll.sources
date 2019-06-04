@@ -1,0 +1,3 @@
+#include System.Core_xtest.dll.sources
+#include namedpipe_xtest.sources
+../../../external/corefx/src/System.IO.Pipes/tests/NamedPipeTests/NamedPipeTest.UnixDomainSockets.cs

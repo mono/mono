@@ -1,4 +1,4 @@
-
+# -*- mode:text; -*-
 # x86-class cpu description file
 # this file is read by genmdesc to pruduce a table with all the relevant information
 # about the cpu instructions that may be used by the regsiter allocator, the scheduler
@@ -57,7 +57,35 @@
 #
 
 break: len:2
-tailcall: len:120 clob:c
+tailcall: len:255 clob:c
+tailcall_reg: src1:b len:255 clob:c
+tailcall_membase: src1:b len:255 clob:c
+
+# tailcall_parameter models the size of moving one parameter,
+# so that the required size of a branch around a tailcall can
+# be accurately estimated; something like:
+# void f1(volatile long *a)
+# {
+# a[large] = a[another large]
+# }
+#
+# If the offsets fit in 32bits, then len:14:
+#	48 8b 87 e0 04 00 00 	movq	1248(%rdi), %rax
+#	48 89 87 00 08 00 00 	movq	%rax, 2048(%rdi)
+#
+# else 64bits:
+#	48 b8 e0 fc b3 c4 04 00 00 00 	movabsq	$20479999200, %rax
+#	48 8b 04 07 	movq	(%rdi,%rax), %rax
+#	48 b9 00 00 b4 c4 04 00 00 00 	movabsq	$20480000000, %rcx
+#	48 89 04 0f 	movq	%rax, (%rdi,%rcx)
+#
+# Frame size is artificially limited to 1GB in mono_arch_tailcall_supported.
+# This is presently redundant with tailcall len:255, as the limit of
+# near branches is [-128, +127], after which the limit is
+# [-2GB, +2GB-1]
+# FIXME A fixed size sequence to move parameters would moot this.
+tailcall_parameter: len:14
+
 br: len:6
 label: len:0
 seq_point: len:46 clob:c
@@ -93,14 +121,14 @@ long_conv_to_u2: dest:i src1:i len:4
 long_conv_to_u1: dest:i src1:i len:4
 zext_i4: dest:i src1:i len:4
 
-long_mul_imm: dest:i src1:i clob:1 len:12
+long_mul_imm: dest:i src1:i clob:1 len:16
 long_min: dest:i src1:i src2:i len:16 clob:1
 long_min_un: dest:i src1:i src2:i len:16 clob:1
 long_max: dest:i src1:i src2:i len:16 clob:1
 long_max_un: dest:i src1:i src2:i len:16 clob:1
 
-throw: src1:i len:18
-rethrow: src1:i len:18
+throw: src1:i len:24
+rethrow: src1:i len:24
 start_handler: len:16
 endfinally: len:9
 endfilter: src1:a len:9
@@ -109,9 +137,9 @@ get_ex_obj: dest:a len:16
 ckfinite: dest:f src1:f len:43
 ceq: dest:c len:8
 cgt: dest:c len:8
-cgt.un: dest:c len:8
+cgt_un: dest:c len:8
 clt: dest:c len:8
-clt.un: dest:c len:8
+clt_un: dest:c len:8
 localloc: dest:i src1:i len:96
 compare: src1:i src2:i len:3
 lcompare: src1:i src2:i len:3
@@ -120,8 +148,8 @@ compare_imm: src1:i len:13
 icompare_imm: src1:i len:8
 fcompare: src1:f src2:f clob:a len:13
 rcompare: src1:f src2:f clob:a len:13
-oparglist: src1:b len:11
-checkthis: src1:b len:5
+arglist: src1:b len:11
+check_this: src1:b len:5
 call: dest:a clob:c len:32
 voidcall: clob:c len:32
 voidcall_reg: src1:i clob:c len:32
@@ -266,6 +294,7 @@ r4_conv_to_u2: dest:i src1:f len:32
 r4_conv_to_i4: dest:i src1:f len:16
 r4_conv_to_u4: dest:i src1:f len:32
 r4_conv_to_i8: dest:i src1:f len:32
+r4_conv_to_i: dest:i src1:f len:32
 r4_conv_to_r8: dest:f src1:f len:17
 r4_conv_to_r4: dest:f src1:f len:17
 r4_add: dest:f src1:f src2:f clob:1 len:5
@@ -289,7 +318,7 @@ move_i4_to_f: dest:f src1:i len:16
 move_f_to_i8: dest:i src1:f len:5
 move_i8_to_f: dest:f src1:i len:5
 call_handler: len:14 clob:c
-aot_const: dest:i len:10
+aotconst: dest:i len:10
 gc_safe_point: clob:c src1:i len:40
 x86_test_null: src1:i len:5
 x86_compare_membase_reg: src1:b src2:i len:9
@@ -307,6 +336,7 @@ x86_push_membase: src1:b len:8
 x86_push_obj: src1:b len:40
 x86_lea: dest:i src1:i src2:i len:8
 x86_lea_membase: dest:i src1:i len:11
+amd64_lea_membase: dest:i src1:i len:11
 x86_xchg: src1:i src2:i clob:x len:2
 x86_fpop: src1:f len:3
 x86_seteq_membase: src1:b len:9
@@ -448,9 +478,10 @@ hard_nop: len:1
 # Linear IR opcodes
 nop: len:0
 dummy_use: src1:i len:0
-dummy_store: len:0
 dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
 dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -616,9 +647,9 @@ sqrtps: dest:x src1:x len:5
 rsqrtps: dest:x src1:x len:5
 rcpps: dest:x src1:x len:5
 
-pshufflew_high: dest:x src1:x len:6
-pshufflew_low: dest:x src1:x len:6
-pshuffled: dest:x src1:x len:6
+pshuflew_high: dest:x src1:x len:6
+pshuflew_low: dest:x src1:x len:6
+pshufled: dest:x src1:x len:6
 shufps: dest:x src1:x src2:x len:5 clob:1
 shufpd: dest:x src1:x src2:x len:6 clob:1
 
@@ -663,7 +694,7 @@ pcmpgtw: dest:x src1:x src2:x len:5 clob:1
 pcmpgtd: dest:x src1:x src2:x len:5 clob:1
 pcmpgtq: dest:x src1:x src2:x len:6 clob:1
 
-psumabsdiff: dest:x src1:x src2:x len:5 clob:1
+psum_abs_diff: dest:x src1:x src2:x len:5 clob:1
 
 unpack_lowb: dest:x src1:x src2:x len:5 clob:1
 unpack_loww: dest:x src1:x src2:x len:5 clob:1
@@ -701,8 +732,8 @@ pmulw: dest:x src1:x src2:x len:5 clob:1
 pmuld: dest:x src1:x src2:x len:6 clob:1
 pmulq: dest:x src1:x src2:x len:5 clob:1
 
-pmul_high_un: dest:x src1:x src2:x len:5 clob:1
-pmul_high: dest:x src1:x src2:x len:5 clob:1
+pmulw_high_un: dest:x src1:x src2:x len:5 clob:1
+pmulw_high: dest:x src1:x src2:x len:5 clob:1
 
 pshrw: dest:x src1:x len:6 clob:1
 pshrw_reg: dest:x src1:x src2:x len:5 clob:1
@@ -782,6 +813,8 @@ expand_i4: dest:x src1:i len:11
 expand_i8: dest:x src1:i len:11
 expand_r4: dest:x src1:f len:16
 expand_r8: dest:x src1:f len:13
+
+roundpd: dest:x src1:x len:10
 
 liverange_start: len:0
 liverange_end: len:0

@@ -29,6 +29,8 @@ using MonoTests.System.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using NUnit;
 using NUnit.Framework;
@@ -67,6 +69,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void AddParallelWithoutDuplicateTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
@@ -98,6 +101,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void RemoveParallelTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
@@ -361,6 +365,21 @@ namespace MonoTests.System.Collections.Concurrent
 
 			Assert.IsTrue (dict.Contains (validKeyPair));
 			Assert.IsFalse (dict.Contains (wrongKeyPair));
+		}
+
+		[Test]
+		public void SerializationRoundTrip ()
+		{
+			var bf = new BinaryFormatter();
+
+			var cd = new ConcurrentDictionary<int, int>();
+			cd[0] = 42;
+			var ms = new MemoryStream();
+			bf.Serialize(ms, cd);
+
+			ms.Seek(0, SeekOrigin.Begin);
+			var result = (ConcurrentDictionary<int, int>) bf.Deserialize(ms);
+			Assert.AreEqual (42, result [0]);
 		}
 	}
 }

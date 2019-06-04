@@ -106,13 +106,22 @@ mono_thread_small_id_alloc (void)
 		hazard_table_size = HAZARD_TABLE_MAX_SIZE;
 #else
 		gpointer page_addr;
+#if defined(__PASE__)
+		/*
+		 * HACK: allocating the table with none prot will cause i 7.1
+		 * to segfault when accessing or protecting it
+		 */
+		int table_prot = MONO_MMAP_READ | MONO_MMAP_WRITE;
+#else
+		int table_prot = MONO_MMAP_NONE;
+#endif
 		int pagesize = mono_pagesize ();
 		int num_pages = (hazard_table_size * sizeof (MonoThreadHazardPointers) + pagesize - 1) / pagesize;
 
 		if (hazard_table == NULL) {
 			hazard_table = (MonoThreadHazardPointers *volatile) mono_valloc (NULL,
 				sizeof (MonoThreadHazardPointers) * HAZARD_TABLE_MAX_SIZE,
-				MONO_MMAP_NONE, MONO_MEM_ACCOUNT_HAZARD_POINTERS);
+				table_prot, MONO_MEM_ACCOUNT_HAZARD_POINTERS);
 		}
 
 		g_assert (hazard_table != NULL);
@@ -241,7 +250,7 @@ mono_hazard_pointer_save_for_signal_handler (void)
 	 */
 	g_assert (small_id < HAZARD_TABLE_OVERFLOW);
 
-	if (InterlockedCompareExchange (&overflow_busy [small_id], 1, 0) != 0)
+	if (mono_atomic_cas_i32 (&overflow_busy [small_id], 1, 0) != 0)
 		goto search;
 
 	hp_overflow = &hazard_table [small_id];
@@ -327,7 +336,7 @@ mono_thread_hazardous_queue_free (gpointer p, MonoHazardousFreeFunc free_func)
 {
 	DelayedFreeItem item = { p, free_func };
 
-	InterlockedIncrement (&hazardous_pointer_count);
+	mono_atomic_inc_i32 (&hazardous_pointer_count);
 
 	mono_lock_free_array_queue_push (&delayed_free_queue, &item);
 

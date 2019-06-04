@@ -586,19 +586,19 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void MethodRevertMergeNullArgument2 ()
 		{
 			ToolStrip ts = null;
-
-			Assert.AreEqual (false, ToolStripManager.RevertMerge (ts), "C2");
+			ToolStripManager.RevertMerge (ts);
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void MethodRevertMergeNullArgument3 ()
 		{
 			ToolStrip ts = new ToolStrip ();
-			
-			Assert.AreEqual (false, ToolStripManager.RevertMerge (ts, null), "C3");
+			ToolStripManager.RevertMerge (ts, null);
 		}
 		
 		[Test]

@@ -3,7 +3,7 @@
  * Runtime functions
  *
  * Authors:
- *  Jonathan Pryor 
+ *  Jonathan Pryor
  *
  * Copyright 2010 Novell, Inc (http://www.novell.com)
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -22,11 +22,12 @@
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/marshal.h>
 #include <mono/utils/atomic.h>
+#include <mono/utils/unlocked.h>
 
 static gboolean shutting_down_inited = FALSE;
 static gboolean shutting_down = FALSE;
 
-/** 
+/**
  * mono_runtime_set_shutting_down:
  * \deprecated This function can break the shutdown sequence.
  *
@@ -36,7 +37,7 @@ static gboolean shutting_down = FALSE;
 void
 mono_runtime_set_shutting_down (void)
 {
-	shutting_down = TRUE;
+	UnlockedWriteBool (&shutting_down, TRUE);
 }
 
 /**
@@ -47,28 +48,43 @@ mono_runtime_set_shutting_down (void)
 gboolean
 mono_runtime_is_shutting_down (void)
 {
-	return shutting_down;
+	return UnlockedReadBool (&shutting_down);
 }
 
 static void
 fire_process_exit_event (MonoDomain *domain, gpointer user_data)
 {
-	MonoError error;
+	ERROR_DECL (error);
+	MonoObject *exc;
+
+#if ENABLE_NETCORE
+	MonoClass *appcontext_class;
+	MonoMethod *procexit_method;
+
+	appcontext_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "AppContext");
+	g_assert (appcontext_class);
+	
+	procexit_method = mono_class_get_method_from_name_checked (appcontext_class, "OnProcessExit", 0, 0, error);
+	g_assert (procexit_method);
+	
+	mono_runtime_try_invoke (procexit_method, NULL, NULL, &exc, error);
+#else
 	MonoClassField *field;
 	gpointer pa [2];
-	MonoObject *delegate, *exc;
+	MonoObject *delegate;
 
-	field = mono_class_get_field_from_name (mono_defaults.appdomain_class, "ProcessExit");
+	field = mono_class_get_field_from_name_full (mono_defaults.appdomain_class, "ProcessExit", NULL);
 	g_assert (field);
 
-	delegate = *(MonoObject **)(((char *)domain->domain) + field->offset); 
+	delegate = *(MonoObject **)(((char *)domain->domain) + field->offset);
 	if (delegate == NULL)
 		return;
 
 	pa [0] = domain;
 	pa [1] = NULL;
-	mono_runtime_delegate_try_invoke (delegate, pa, &exc, &error);
-	mono_error_cleanup (&error);
+	mono_runtime_delegate_try_invoke (delegate, pa, &exc, error);
+	mono_error_cleanup (error);
+#endif
 }
 
 static void
@@ -78,7 +94,6 @@ mono_runtime_fire_process_exit_event (void)
 	mono_domain_foreach (fire_process_exit_event, NULL);
 #endif
 }
-
 
 /**
  * mono_runtime_try_shutdown:
@@ -92,18 +107,16 @@ mono_runtime_fire_process_exit_event (void)
 gboolean
 mono_runtime_try_shutdown (void)
 {
-	if (InterlockedCompareExchange (&shutting_down_inited, TRUE, FALSE))
+	if (mono_atomic_cas_i32 (&shutting_down_inited, TRUE, FALSE))
 		return FALSE;
 
 	mono_runtime_fire_process_exit_event ();
 
-	shutting_down = TRUE;
+	mono_runtime_set_shutting_down ();
 
 	mono_threads_set_shutting_down ();
 
 	/* No new threads will be created after this point */
-
-	mono_runtime_set_shutting_down ();
 
 	/*TODO move the follow to here:
 	mono_thread_suspend_all_other_threads (); OR  mono_thread_wait_all_other_threads
@@ -126,8 +139,8 @@ mono_runtime_init_tls (void)
 	mono_marshal_init_tls ();
 }
 
-char*
-mono_runtime_get_aotid (void)
+guint8*
+mono_runtime_get_aotid_arr (void)
 {
 	int i;
 	guint8 aotid_sum = 0;
@@ -137,12 +150,22 @@ mono_runtime_get_aotid (void)
 		return NULL;
 
 	guint8 (*aotid)[16] = &domain->entry_assembly->image->aotid;
-
 	for (i = 0; i < 16; ++i)
 		aotid_sum |= (*aotid)[i];
 
 	if (aotid_sum == 0)
 		return NULL;
 
-	return mono_guid_to_string ((guint8*) aotid);
+	return (guint8*)aotid;
+}
+
+char*
+mono_runtime_get_aotid (void)
+{
+	guint8 *aotid = mono_runtime_get_aotid_arr ();
+
+	if (!aotid)
+		return NULL;
+
+	return mono_guid_to_string (aotid);
 }

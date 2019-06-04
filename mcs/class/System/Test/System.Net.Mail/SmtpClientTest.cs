@@ -13,6 +13,8 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Threading;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Net.Mail
 {
 	[TestFixture]
@@ -20,23 +22,21 @@ namespace MonoTests.System.Net.Mail
 	{
 		SmtpClient _smtp;
 		SmtpClient smtp { get { return _smtp ?? (_smtp = new SmtpClient ()); } }
+		TempDirectory _tempFolder;
 		string tempFolder;
 		
 		[SetUp]
 		public void GetReady ()
 		{
-			tempFolder = Path.Combine (Path.GetTempPath (), this.GetType ().FullName);
-			if (Directory.Exists (tempFolder))
-				Directory.Delete (tempFolder, true);
-			Directory.CreateDirectory (tempFolder);
+			_tempFolder = new TempDirectory ();
+			tempFolder = _tempFolder.Path;
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
 			_smtp = null;
-			if (Directory.Exists (tempFolder))
-				Directory.Delete (tempFolder, true);
+			_tempFolder.Dispose ();
 		}
 
 		[Test]

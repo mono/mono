@@ -8,6 +8,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
+#if !MOBILE
 
 using System;
 using System.IO;
@@ -159,18 +160,19 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	    		Assert.AreEqual (C14NSpecExample4Output, res, "Example 4 from c14n spec - Character Modifications and Character References (with comments)");
 	        }
 	    
-	        [Test]
-	        public void C14NSpecExample5 ()
-	        {
-			if (!File.Exists ("world.txt")) {
-				using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
-					sw.Write ("world");
-					sw.Close ();
+			[Test]
+			[Ignore(".NET DOM implementation does not match W3C DOM specification.")]
+			public void C14NSpecExample5 ()
+			{
+				if (!File.Exists ("world.txt")) {
+					using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
+						sw.Write ("world");
+						sw.Close ();
+					}
 				}
+				string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input, false);
+				Assert.AreEqual (C14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (with comments)");
 			}
-	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input, false);
-	    	    	Assert.AreEqual (C14NSpecExample5Output, res, "Example 5 from c14n spec - Entity References (with comments)");
-	        }
     
 	        [Test]
 	        public void C14NSpecExample6 ()
@@ -407,3 +409,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		    	    "<e1 xmlns=\"http://www.ietf.org\" xmlns:w3c=\"http://www.w3.org\"><e3 xmlns=\"\" id=\"E3\" xml:space=\"preserve\"></e3></e1>";   
 	}
 }
+#endif

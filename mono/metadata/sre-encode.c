@@ -25,6 +25,7 @@
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/tokentype.h"
 #include "mono/utils/checked-build.h"
+#include "icall-decl.h"
 
 typedef struct {
 	char *p;
@@ -36,11 +37,13 @@ static guint32 create_typespec (MonoDynamicImage *assembly, MonoType *type);
 static void    encode_type (MonoDynamicImage *assembly, MonoType *type, SigBuffer *buf);
 static guint32 mono_image_typedef_or_ref (MonoDynamicImage *assembly, MonoType *type);
 
+#if G_BYTE_ORDER != G_LITTLE_ENDIAN
 static guint32
 mono_image_add_stream_data (MonoDynamicStream *stream, const char *data, guint32 len)
 {
 	return mono_dynstream_add_data (stream, data, len);
 }
+#endif
 
 static void
 alloc_table (MonoDynamicTable *table, guint nrows)
@@ -140,8 +143,8 @@ encode_generic_class (MonoDynamicImage *assembly, MonoGenericClass *gclass, SigB
 
 	sigbuffer_add_value (buf, MONO_TYPE_GENERICINST);
 	klass = gclass->container_class;
-	sigbuffer_add_value (buf, klass->byval_arg.type);
-	sigbuffer_add_value (buf, mono_dynimage_encode_typedef_or_ref_full (assembly, &klass->byval_arg, FALSE));
+	sigbuffer_add_value (buf, m_class_get_byval_arg (klass)->type);
+	sigbuffer_add_value (buf, mono_dynimage_encode_typedef_or_ref_full (assembly, m_class_get_byval_arg (klass), FALSE));
 
 	sigbuffer_add_value (buf, class_inst->type_argc);
 	for (i = 0; i < class_inst->type_argc; ++i)
@@ -189,11 +192,11 @@ encode_type (MonoDynamicImage *assembly, MonoType *type, SigBuffer *buf)
 		break;
 	case MONO_TYPE_SZARRAY:
 		sigbuffer_add_value (buf, type->type);
-		encode_type (assembly, &type->data.klass->byval_arg, buf);
+		encode_type (assembly, m_class_get_byval_arg (type->data.klass), buf);
 		break;
 	case MONO_TYPE_VALUETYPE:
 	case MONO_TYPE_CLASS: {
-		MonoClass *k = mono_class_from_mono_type (type);
+		MonoClass *k = mono_class_from_mono_type_internal (type);
 
 		if (mono_class_is_gtd (k)) {
 			MonoGenericClass *gclass = mono_metadata_lookup_generic_class (k, mono_class_get_generic_container (k)->context.class_inst, TRUE);
@@ -202,19 +205,19 @@ encode_type (MonoDynamicImage *assembly, MonoType *type, SigBuffer *buf)
 			/*
 			 * Make sure we use the correct type.
 			 */
-			sigbuffer_add_value (buf, k->byval_arg.type);
+			sigbuffer_add_value (buf, m_class_get_byval_arg (k)->type);
 			/*
 			 * ensure only non-byref gets passed to mono_image_typedef_or_ref(),
 			 * otherwise two typerefs could point to the same type, leading to
 			 * verification errors.
 			 */
-			sigbuffer_add_value (buf, mono_image_typedef_or_ref (assembly, &k->byval_arg));
+			sigbuffer_add_value (buf, mono_image_typedef_or_ref (assembly, m_class_get_byval_arg (k)));
 		}
 		break;
 	}
 	case MONO_TYPE_ARRAY:
 		sigbuffer_add_value (buf, type->type);
-		encode_type (assembly, &type->data.array->eklass->byval_arg, buf);
+		encode_type (assembly, m_class_get_byval_arg (type->data.array->eklass), buf);
 		sigbuffer_add_value (buf, type->data.array->rank);
 		sigbuffer_add_value (buf, 0); /* FIXME: set to 0 for now */
 		sigbuffer_add_value (buf, 0);
@@ -239,7 +242,7 @@ encode_reflection_type (MonoDynamicImage *assembly, MonoReflectionTypeHandle typ
 
 	error_init (error);
 
-	if (!type) {
+	if (MONO_HANDLE_IS_NULL (type)) {
 		sigbuffer_add_value (buf, MONO_TYPE_VOID);
 		return;
 	}
@@ -270,24 +273,39 @@ encode_custom_modifiers (MonoDynamicImage *assembly, MonoArrayHandle modreq, Mon
 
 	error_init (error);
 
-	if (!MONO_HANDLE_IS_NULL (modreq)) {
-		for (i = 0; i < mono_array_handle_length (modreq); ++i) {
-			MonoType *mod = mono_type_array_get_and_resolve (modreq, i, error);
-			if (!is_ok (error))
-				goto leave;
-			sigbuffer_add_byte (buf, MONO_TYPE_CMOD_REQD);
-			sigbuffer_add_value (buf, mono_image_typedef_or_ref (assembly, mod));
-		}
-	}
+	/* Have to follow .NET Framework behavior here.  For an IL type spec like:
+	 * int32 modreq(A) modreq(B) modopt(C) modopt(D)
+	 *
+	 * we emit:
+	 * cmod_opt [encoding of D] cmod_opt [encoding of C] cmod_req [encoding of B] cmod_req [encoding of A] I4.
+	 *
+	 * Even though the reflection API specifies required and optional
+	 * modifiers in separate arrays, the .NET Framework creates a typespec
+	 * as above: required mods first, then optional.  (And so we emit the
+	 * optional ones first, then required).
+	 */
+
 	if (!MONO_HANDLE_IS_NULL (modopt)) {
-		for (i = 0; i < mono_array_handle_length (modopt); ++i) {
+		int count = mono_array_handle_length (modopt);
+		g_assert (count > 0);
+		for (i = count - 1; i >= 0 ; --i) {
 			MonoType *mod = mono_type_array_get_and_resolve (modopt, i, error);
-			if (!is_ok (error))
-				goto leave;
+			goto_if_nok (error, leave);
 			sigbuffer_add_byte (buf, MONO_TYPE_CMOD_OPT);
 			sigbuffer_add_value (buf, mono_image_typedef_or_ref (assembly, mod));
 		}
 	}
+	if (!MONO_HANDLE_IS_NULL (modreq)) {
+		int count = mono_array_handle_length (modreq);
+		g_assert (count > 0);
+		for (i = count - 1; i >= 0 ; --i) {
+			MonoType *mod = mono_type_array_get_and_resolve (modreq, i, error);
+			goto_if_nok (error, leave);
+			sigbuffer_add_byte (buf, MONO_TYPE_CMOD_REQD);
+			sigbuffer_add_value (buf, mono_image_typedef_or_ref (assembly, mod));
+		}
+	}
+
 leave:
 	HANDLE_FUNCTION_RETURN ();
 }
@@ -362,9 +380,9 @@ mono_dynimage_encode_method_builder_signature (MonoDynamicImage *assembly, Refle
 	 */
 	SigBuffer buf;
 	int i;
-	guint32 nparams =  mb->parameters ? mono_array_length (mb->parameters): 0;
-	guint32 ngparams = mb->generic_params ? mono_array_length (mb->generic_params): 0;
-	guint32 notypes = mb->opt_types ? mono_array_length (mb->opt_types): 0;
+	guint32 nparams =  mb->parameters ? mono_array_length_internal (mb->parameters): 0;
+	guint32 ngparams = mb->generic_params ? mono_array_length_internal (mb->generic_params): 0;
+	guint32 notypes = mb->opt_types ? mono_array_length_internal (mb->opt_types): 0;
 	guint32 idx;
 
 	sigbuffer_init (&buf, 32);
@@ -381,37 +399,32 @@ mono_dynimage_encode_method_builder_signature (MonoDynamicImage *assembly, Refle
 		sigbuffer_add_value (&buf, ngparams);
 	sigbuffer_add_value (&buf, nparams + notypes);
 	encode_custom_modifiers_raw (assembly, mb->return_modreq, mb->return_modopt, &buf, error);
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 	encode_reflection_type_raw (assembly, mb->rtype, &buf, error);
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 	for (i = 0; i < nparams; ++i) {
 		MonoArray *modreq = NULL;
 		MonoArray *modopt = NULL;
 		MonoReflectionType *pt;
 
-		if (mb->param_modreq && (i < mono_array_length (mb->param_modreq)))
-			modreq = mono_array_get (mb->param_modreq, MonoArray*, i);
-		if (mb->param_modopt && (i < mono_array_length (mb->param_modopt)))
-			modopt = mono_array_get (mb->param_modopt, MonoArray*, i);
+		if (mb->param_modreq && (i < mono_array_length_internal (mb->param_modreq)))
+			modreq = mono_array_get_internal (mb->param_modreq, MonoArray*, i);
+		if (mb->param_modopt && (i < mono_array_length_internal (mb->param_modopt)))
+			modopt = mono_array_get_internal (mb->param_modopt, MonoArray*, i);
 		encode_custom_modifiers_raw (assembly, modreq, modopt, &buf, error);
-		if (!is_ok (error))
-			goto leave;
-		pt = mono_array_get (mb->parameters, MonoReflectionType*, i);
+		goto_if_nok (error, leave);
+		pt = mono_array_get_internal (mb->parameters, MonoReflectionType*, i);
 		encode_reflection_type_raw (assembly, pt, &buf, error);
-		if (!is_ok (error))
-			goto leave;
+		goto_if_nok (error, leave);
 	}
 	if (notypes)
 		sigbuffer_add_byte (&buf, MONO_TYPE_SENTINEL);
 	for (i = 0; i < notypes; ++i) {
 		MonoReflectionType *pt;
 
-		pt = mono_array_get (mb->opt_types, MonoReflectionType*, i);
+		pt = mono_array_get_internal (mb->opt_types, MonoReflectionType*, i);
 		encode_reflection_type_raw (assembly, pt, &buf, error);
-		if (!is_ok (error))
-			goto leave;
+		goto_if_nok (error, leave);
 	}
 
 	idx = sigbuffer_add_to_blob_cached (assembly, &buf);
@@ -430,7 +443,7 @@ mono_dynimage_encode_locals (MonoDynamicImage *assembly, MonoReflectionILGen *il
 	MonoDynamicTable *table;
 	guint32 *values;
 	guint32 idx, sig_idx;
-	guint nl = mono_array_length (ilgen->locals);
+	guint nl = mono_array_length_internal (ilgen->locals);
 	SigBuffer buf;
 	int i;
 
@@ -438,7 +451,7 @@ mono_dynimage_encode_locals (MonoDynamicImage *assembly, MonoReflectionILGen *il
 	sigbuffer_add_value (&buf, 0x07);
 	sigbuffer_add_value (&buf, nl);
 	for (i = 0; i < nl; ++i) {
-		MonoReflectionLocalBuilder *lb = mono_array_get (ilgen->locals, MonoReflectionLocalBuilder*, i);
+		MonoReflectionLocalBuilder *lb = mono_array_get_internal (ilgen->locals, MonoReflectionLocalBuilder*, i);
 		
 		if (lb->is_pinned)
 			sigbuffer_add_value (&buf, MONO_TYPE_PINNED);
@@ -476,10 +489,10 @@ mono_dynimage_encode_locals (MonoDynamicImage *assembly, MonoReflectionILGen *il
  * Copy len * nelem bytes from val to dest, swapping bytes to LE if necessary.
  * dest may be misaligned.
  */
+#if G_BYTE_ORDER != G_LITTLE_ENDIAN
 static void
 swap_with_size (char *dest, const char* val, int len, int nelem) {
 	MONO_REQ_GC_NEUTRAL_MODE;
-#if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	int elem;
 
 	for (elem = 0; elem < nelem; ++elem) {
@@ -513,10 +526,8 @@ swap_with_size (char *dest, const char* val, int len, int nelem) {
 		dest += len;
 		val += len;
 	}
-#else
-	memcpy (dest, val, len * nelem);
-#endif
 }
+#endif
 
 
 guint32
@@ -526,7 +537,7 @@ mono_dynimage_encode_constant (MonoDynamicImage *assembly, MonoObject *val, Mono
 
 	char blob_size [64];
 	char *b = blob_size;
-	char *box_val;
+	gpointer box_val;
 	char* buf;
 	guint32 idx = 0, len = 0, dummy = 0;
 
@@ -534,10 +545,10 @@ mono_dynimage_encode_constant (MonoDynamicImage *assembly, MonoObject *val, Mono
 	if (!val) {
 		*ret_type = MONO_TYPE_CLASS;
 		len = 4;
-		box_val = (char*)&dummy;
+		box_val = &dummy;
 	} else {
-		box_val = ((char*)val) + sizeof (MonoObject);
-		*ret_type = val->vtable->klass->byval_arg.type;
+		box_val = mono_object_get_data (val);
+		*ret_type = m_class_get_byval_arg (val->vtable->klass)->type;
 	}
 handle_enum:
 	switch (*ret_type) {
@@ -566,10 +577,10 @@ handle_enum:
 	case MONO_TYPE_VALUETYPE: {
 		MonoClass *klass = val->vtable->klass;
 		
-		if (klass->enumtype) {
-			*ret_type = mono_class_enum_basetype (klass)->type;
+		if (m_class_is_enumtype (klass)) {
+			*ret_type = mono_class_enum_basetype_internal (klass)->type;
 			goto handle_enum;
-		} else if (mono_is_corlib_image (klass->image) && strcmp (klass->name_space, "System") == 0 && strcmp (klass->name, "DateTime") == 0) {
+		} else if (mono_is_corlib_image (m_class_get_image (klass)) && strcmp (m_class_get_name_space (klass), "System") == 0 && strcmp (m_class_get_name (klass), "DateTime") == 0) {
 			len = 8;
 		} else 
 			g_error ("we can't encode valuetypes, we should have never reached this line");
@@ -584,22 +595,22 @@ handle_enum:
 		mono_metadata_encode_value (len, b, &b);
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 		{
-			char *swapped = g_malloc (2 * mono_string_length (str));
-			const char *p = (const char*)mono_string_chars (str);
+			char *swapped = g_malloc (2 * mono_string_length_internal (str));
+			const char *p = (const char*)mono_string_chars_internal (str);
 
-			swap_with_size (swapped, p, 2, mono_string_length (str));
+			swap_with_size (swapped, p, 2, mono_string_length_internal (str));
 			idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, swapped, len);
 			g_free (swapped);
 		}
 #else
-		idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, (char*)mono_string_chars (str), len);
+		idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, mono_string_chars_internal (str), len);
 #endif
 
 		g_free (buf);
 		return idx;
 	}
 	case MONO_TYPE_GENERICINST:
-		*ret_type = mono_class_get_generic_class (val->vtable->klass)->container_class->byval_arg.type;
+		*ret_type = m_class_get_byval_arg (mono_class_get_generic_class (val->vtable->klass)->container_class)->type;
 		goto handle_enum;
 	default:
 		g_error ("we don't encode constant type 0x%02x yet", *ret_type);
@@ -634,14 +645,13 @@ mono_dynimage_encode_field_signature (MonoDynamicImage *assembly, MonoReflection
 
 	type = mono_reflection_type_get_handle ((MonoReflectionType*)fb->type, error);
 	return_val_if_nok (error, 0);
-	klass = mono_class_from_mono_type (type);
+	klass = mono_class_from_mono_type_internal (type);
 
 	sigbuffer_init (&buf, 32);
 	
 	sigbuffer_add_value (&buf, 0x06);
 	encode_custom_modifiers_raw (assembly, fb->modreq, fb->modopt, &buf, error);
-	if (!is_ok (error))
-		goto fail;
+	goto_if_nok (error, fail);
 	/* encode custom attributes before the type */
 
 	if (mono_class_is_gtd (klass))
@@ -679,19 +689,20 @@ mono_dynimage_encode_fieldref_signature (MonoDynamicImage *assembly, MonoImage *
 	
 	sigbuffer_add_value (&buf, 0x06);
 	/* encode custom attributes before the type */
-	if (type->num_mods) {
-		for (i = 0; i < type->num_mods; ++i) {
+	if (type->has_cmods) {
+		MonoCustomModContainer *cmods = mono_type_get_cmods (type);
+		for (i = 0; i < cmods->count; ++i) {
 			if (field_image) {
-				MonoError error;
-				MonoClass *klass = mono_class_get_checked (field_image, type->modifiers [i].token, &error);
-				g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+				ERROR_DECL (error);
+				MonoClass *klass = mono_class_get_checked (field_image, cmods->modifiers [i].token, error);
+				g_assert (mono_error_ok (error)); /* FIXME don't swallow the error */
 
-				token = mono_image_typedef_or_ref (assembly, &klass->byval_arg);
+				token = mono_image_typedef_or_ref (assembly, m_class_get_byval_arg (klass));
 			} else {
-				token = type->modifiers [i].token;
+				token = cmods->modifiers [i].token;
 			}
 
-			if (type->modifiers [i].required)
+			if (cmods->modifiers [i].required)
 				sigbuffer_add_byte (&buf, MONO_TYPE_CMOD_REQD);
 			else
 				sigbuffer_add_byte (&buf, MONO_TYPE_CMOD_OPT);
@@ -739,7 +750,7 @@ create_typespec (MonoDynamicImage *assembly, MonoType *type)
 		break;
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_VALUETYPE: {
-		MonoClass *k = mono_class_from_mono_type (type);
+		MonoClass *k = mono_class_from_mono_type_internal (type);
 		if (!k || !mono_class_is_gtd (k)) {
 			sigbuffer_free (&buf);
 			return 0;
@@ -784,13 +795,14 @@ mono_dynimage_encode_typedef_or_ref_full (MonoDynamicImage *assembly, MonoType *
 	token = GPOINTER_TO_UINT (g_hash_table_lookup (assembly->typeref, type));
 	if (token)
 		goto leave;
-	klass = mono_class_from_mono_type (type);
+	klass = mono_class_from_mono_type_internal (type);
 
-	MonoReflectionTypeBuilderHandle tb = MONO_HANDLE_CAST (MonoReflectionTypeBuilder, mono_class_get_ref_info (klass));
+	MonoReflectionTypeBuilderHandle tb;
+	tb = MONO_HANDLE_CAST (MonoReflectionTypeBuilder, mono_class_get_ref_info (klass));
 	/*
 	 * If it's in the same module and not a generic type parameter:
 	 */
-	if ((klass->image == &assembly->image) && (type->type != MONO_TYPE_VAR) && 
+	if ((m_class_get_image (klass) == &assembly->image) && (type->type != MONO_TYPE_VAR) && 
 			(type->type != MONO_TYPE_MVAR)) {
 		token = MONO_TYPEDEFORREF_TYPEDEF | (MONO_HANDLE_GETVAL (tb, table_idx) << MONO_TYPEDEFORREF_BITS);
 		/* This function is called multiple times from sre and sre-save, so same object is okay */
@@ -798,21 +810,21 @@ mono_dynimage_encode_typedef_or_ref_full (MonoDynamicImage *assembly, MonoType *
 		goto leave;
 	}
 
-	if (klass->nested_in) {
-		enclosing = mono_dynimage_encode_typedef_or_ref_full (assembly, &klass->nested_in->byval_arg, FALSE);
+	if (m_class_get_nested_in (klass)) {
+		enclosing = mono_dynimage_encode_typedef_or_ref_full (assembly, m_class_get_byval_arg (m_class_get_nested_in (klass)), FALSE);
 		/* get the typeref idx of the enclosing type */
 		enclosing >>= MONO_TYPEDEFORREF_BITS;
 		scope = (enclosing << MONO_RESOLUTION_SCOPE_BITS) | MONO_RESOLUTION_SCOPE_TYPEREF;
 	} else {
-		scope = mono_reflection_resolution_scope_from_image (assembly, klass->image);
+		scope = mono_reflection_resolution_scope_from_image (assembly, m_class_get_image (klass));
 	}
 	table = &assembly->tables [MONO_TABLE_TYPEREF];
 	if (assembly->save) {
 		alloc_table (table, table->rows + 1);
 		values = table->values + table->next_idx * MONO_TYPEREF_SIZE;
 		values [MONO_TYPEREF_SCOPE] = scope;
-		values [MONO_TYPEREF_NAME] = mono_dynstream_insert_string (&assembly->sheap, klass->name);
-		values [MONO_TYPEREF_NAMESPACE] = mono_dynstream_insert_string (&assembly->sheap, klass->name_space);
+		values [MONO_TYPEREF_NAME] = mono_dynstream_insert_string (&assembly->sheap, m_class_get_name (klass));
+		values [MONO_TYPEREF_NAMESPACE] = mono_dynstream_insert_string (&assembly->sheap, m_class_get_name_space (klass));
 	}
 	token = MONO_TYPEDEFORREF_TYPEREF | (table->next_idx << MONO_TYPEDEFORREF_BITS); /* typeref */
 	g_hash_table_insert (assembly->typeref, type, GUINT_TO_POINTER(token));
@@ -878,13 +890,12 @@ encode_sighelper_arg (MonoDynamicImage *assembly, int i, MonoArrayHandle helper_
 		MONO_HANDLE_ARRAY_GETREF (modopts, helper_modopts, i);
 
 	encode_custom_modifiers (assembly, modreqs, modopts, buf, error);
-	if (!is_ok (error))
-		goto leave;
-	MonoReflectionTypeHandle pt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
+	goto_if_nok (error, leave);
+	MonoReflectionTypeHandle pt;
+	pt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
 	MONO_HANDLE_ARRAY_GETREF (pt, helper_arguments, i);
 	encode_reflection_type (assembly, pt, buf, error);
-	if (!is_ok (error))
-		goto leave;
+	goto_if_nok (error, leave);
 leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
@@ -932,10 +943,11 @@ mono_dynimage_encode_reflection_sighelper (MonoDynamicImage *assembly, MonoRefle
 	sigbuffer_add_byte (&buf, idx);
 	sigbuffer_add_value (&buf, nargs);
 	encode_reflection_type (assembly, MONO_HANDLE_NEW_GET (MonoReflectionType, helper, return_type), &buf, error);
-	if (!is_ok (error))
-		goto fail;
-	MonoArrayHandle modreqs = MONO_HANDLE_NEW_GET (MonoArray, helper, modreqs);
-	MonoArrayHandle modopts = MONO_HANDLE_NEW_GET (MonoArray, helper, modopts);
+	goto_if_nok (error, fail);
+	MonoArrayHandle modreqs;
+	modreqs = MONO_HANDLE_NEW_GET (MonoArray, helper, modreqs);
+	MonoArrayHandle modopts;
+	modopts = MONO_HANDLE_NEW_GET (MonoArray, helper, modopts);
 	for (i = 0; i < nargs; ++i) {
 		if (!encode_sighelper_arg (assembly, i, arguments, modreqs, modopts, &buf, error))
 			goto fail;
@@ -992,13 +1004,15 @@ reflection_sighelper_get_signature_local (MonoReflectionSigHelperHandle sig, Mon
 	}
 
 	buflen = buf.p - buf.buf;
-	MonoArrayHandle result = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, buflen, error);
-	if (!is_ok (error)) goto fail;
+	MonoArrayHandle result;
+	result = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, buflen, error);
+	goto_if_nok (error, fail);
 	uint32_t gchandle;
-	void *base = MONO_ARRAY_HANDLE_PIN (result, char, 0, &gchandle);
+	void *base;
+	base = MONO_ARRAY_HANDLE_PIN (result, char, 0, &gchandle);
 	memcpy (base, buf.buf, buflen);
 	sigbuffer_free (&buf);
-	mono_gchandle_free (gchandle);
+	mono_gchandle_free_internal (gchandle);
 	return result;
 fail:
 	sigbuffer_free (&buf);
@@ -1026,13 +1040,15 @@ reflection_sighelper_get_signature_field (MonoReflectionSigHelperHandle sig, Mon
 	}
 
 	buflen = buf.p - buf.buf;
-	MonoArrayHandle result = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, buflen, error);
-	if (!is_ok (error)) goto fail;
+	MonoArrayHandle result;
+	result = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, buflen, error);
+	goto_if_nok (error, fail);
 	uint32_t gchandle;
-	void *base = MONO_ARRAY_HANDLE_PIN (result, char, 0, &gchandle);
+	void *base;
+	base = MONO_ARRAY_HANDLE_PIN (result, char, 0, &gchandle);
 	memcpy (base, buf.buf, buflen);
 	sigbuffer_free (&buf);
-	mono_gchandle_free (gchandle);
+	mono_gchandle_free_internal (gchandle);
 
 	return result;
 fail:
@@ -1087,7 +1103,7 @@ mono_dynimage_save_encode_marshal_blob (MonoDynamicImage *assembly, MonoReflecti
 		break;
 	case MONO_NATIVE_CUSTOM:
 		if (minfo->guid) {
-			str = mono_string_to_utf8_checked (minfo->guid, error);
+			str = mono_string_to_utf8_checked_internal (minfo->guid, error);
 			if (!is_ok (error)) {
 				sigbuffer_free (&buf);
 				return 0;
@@ -1111,7 +1127,7 @@ mono_dynimage_save_encode_marshal_blob (MonoDynamicImage *assembly, MonoReflecti
 				}
 				str = type_get_fully_qualified_name (marshaltype);
 			} else {
-				str = mono_string_to_utf8_checked (minfo->marshaltype, error);
+				str = mono_string_to_utf8_checked_internal (minfo->marshaltype, error);
 				if (!is_ok (error)) {
 					sigbuffer_free (&buf);
 					return 0;
@@ -1126,7 +1142,7 @@ mono_dynimage_save_encode_marshal_blob (MonoDynamicImage *assembly, MonoReflecti
 			sigbuffer_add_value (&buf, 0);
 		}
 		if (minfo->mcookie) {
-			str = mono_string_to_utf8_checked (minfo->mcookie, error);
+			str = mono_string_to_utf8_checked_internal (minfo->mcookie, error);
 			if (!is_ok (error)) {
 				sigbuffer_free (&buf);
 				return 0;
@@ -1161,9 +1177,9 @@ mono_dynimage_save_encode_property_signature (MonoDynamicImage *assembly, MonoRe
 	guint32 idx, i;
 
 	if (mb && mb->parameters)
-		nparams = mono_array_length (mb->parameters);
+		nparams = mono_array_length_internal (mb->parameters);
 	if (!mb && smb && smb->parameters)
-		nparams = mono_array_length (smb->parameters) - 1;
+		nparams = mono_array_length_internal (smb->parameters) - 1;
 	sigbuffer_init (&buf, 32);
 	if (fb->call_conv & 0x20)
 		sigbuffer_add_byte (&buf, 0x28);
@@ -1175,19 +1191,19 @@ mono_dynimage_save_encode_property_signature (MonoDynamicImage *assembly, MonoRe
 		if (!is_ok (error))
 			goto fail;
 		for (i = 0; i < nparams; ++i) {
-			MonoReflectionType *pt = mono_array_get (mb->parameters, MonoReflectionType*, i);
+			MonoReflectionType *pt = mono_array_get_internal (mb->parameters, MonoReflectionType*, i);
 			encode_reflection_type_raw (assembly, pt, &buf, error);
 			if (!is_ok (error))
 				goto fail;
 		}
 	} else if (smb && smb->parameters) {
 		/* the property type is the last param */
-		encode_reflection_type_raw (assembly, mono_array_get (smb->parameters, MonoReflectionType*, nparams), &buf, error);
+		encode_reflection_type_raw (assembly, mono_array_get_internal (smb->parameters, MonoReflectionType*, nparams), &buf, error);
 		if (!is_ok (error))
 			goto fail;
 
 		for (i = 0; i < nparams; ++i) {
-			MonoReflectionType *pt = mono_array_get (smb->parameters, MonoReflectionType*, i);
+			MonoReflectionType *pt = mono_array_get_internal (smb->parameters, MonoReflectionType*, i);
 			encode_reflection_type_raw (assembly, pt, &buf, error);
 			if (!is_ok (error))
 				goto fail;

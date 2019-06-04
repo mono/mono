@@ -94,30 +94,7 @@ namespace System.ServiceModel.Security
 					new SecurityContextSecurityTokenAuthenticator ();
 				return new SecureConversationSecurityTokenAuthenticator (tokenRequirement, sc, resolver);
 			}
-			if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.AnonymousSslnego)
-				return CreateSslTokenAuthenticator (tokenRequirement);
-			if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.MutualSslnego)
-				return CreateSslTokenAuthenticator (tokenRequirement);
-			if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.Spnego)
-				return CreateSpnegoTokenAuthenticator (tokenRequirement);
-			else
-				throw new NotImplementedException ("Not implemented token type: " + tokenRequirement.TokenType);
-		}
-
-		SpnegoSecurityTokenAuthenticator CreateSpnegoTokenAuthenticator (SecurityTokenRequirement requirement)
-		{
-			SpnegoSecurityTokenAuthenticator a =
-				new SpnegoSecurityTokenAuthenticator (this, requirement);
-			InitializeAuthenticatorCommunicationObject (a.Communication, requirement);
-			return a;
-		}
-
-		SslSecurityTokenAuthenticator CreateSslTokenAuthenticator (SecurityTokenRequirement requirement)
-		{
-			SslSecurityTokenAuthenticator a =
-				new SslSecurityTokenAuthenticator (this, requirement);
-			InitializeAuthenticatorCommunicationObject (a.Communication, requirement);
-			return a;
+			throw new NotImplementedException ("Not implemented token type: " + tokenRequirement.TokenType);
 		}
 
 		UserNameSecurityTokenAuthenticator CreateUserNameAuthenticator (SecurityTokenRequirement requirement)

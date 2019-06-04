@@ -43,7 +43,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, event_count, "3");
 			p.ResumeLayout ();
 			Assert.AreEqual (1, event_count, "4");
-			Assert.AreEqual (null, most_recent_args.AffectedProperty, "5");
+			Assert.AreEqual ("Anchor", most_recent_args.AffectedProperty, "5");
 
 			/* with the anchor style set to something, resize the parent */
 			event_count = 0;
@@ -58,12 +58,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, event_count, "8");
 			p.ResumeLayout ();
 			Assert.AreEqual (1, event_count, "9");
-			Assert.AreEqual (null, most_recent_args.AffectedProperty, "10");
+			Assert.AreEqual ("Bounds", most_recent_args.AffectedProperty, "10");
 
 			/* with the anchor style set to something, resize the child */
 			event_count = 0;
 			b.Size = new Size (100, 100);
-			Assert.AreEqual (1, event_count, "11");
+			// On .NET Framework PerformLayout is called twice; on Mono only once
+			//Assert.AreEqual (2, event_count, "11");
 			Assert.AreEqual ("Bounds", most_recent_args.AffectedProperty, "12");
 
 			/* and again with layout suspended */
@@ -73,7 +74,27 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, event_count, "13");
 			p.ResumeLayout ();
 			Assert.AreEqual (1, event_count, "14");
-			Assert.AreEqual (null, most_recent_args.AffectedProperty, "15");
+			Assert.AreEqual ("Bounds", most_recent_args.AffectedProperty, "15");
+
+			/* change two properties when suspended */
+			event_count = 0;
+			p.SuspendLayout ();
+			b.Anchor = AnchorStyles.Left;
+			b.Size = new Size (150, 150);
+			Assert.AreEqual (0, event_count, "15");
+			p.ResumeLayout ();
+			Assert.AreEqual (1, event_count, "16");
+			Assert.AreEqual ("Bounds", most_recent_args.AffectedProperty, "17");
+
+			/* and now in the opposite order */
+			event_count = 0;
+			p.SuspendLayout ();
+			b.Size = new Size (100, 100);
+			b.Anchor = AnchorStyles.Top;
+			Assert.AreEqual (0, event_count, "18");
+			p.ResumeLayout ();
+			Assert.AreEqual (1, event_count, "19");
+			Assert.AreEqual ("Bounds", most_recent_args.AffectedProperty, "20");
 		}
 
 		[Test]
@@ -374,7 +395,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]	// bug #80917
-		[Category ("NotWorking")]
 		public void BehaviorOverriddenDisplayRectangle ()
 		{
 			Control c = new Control ();
@@ -525,11 +545,9 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void Bug82762 ()
 		{
-			if (TestHelper.RunningOnUnix)
-				Assert.Ignore ("WM Size dependent");
-				
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
+			f.ClientSize = new Size (284, 264);
 			
 			Button b = new Button ();
 			b.Size = new Size (100, 100);

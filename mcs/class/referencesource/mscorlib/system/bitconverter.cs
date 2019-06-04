@@ -472,7 +472,58 @@ namespace System {
             // If we ever run on big endian machines, produce two versions where endianness is specified.
             Contract.Assert(IsLittleEndian, "This method is implemented assuming little endian with an ambiguous spec.");
             return *((double*)&value);
-        }                    
+        }
+
+#if MONO
+        // Converts a Span into an int
+        public static unsafe int ToInt32(ReadOnlySpan<byte> value)
+        {
+            if (value.Length < sizeof(int))
+                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
+            fixed (byte* bytesPtr = &value.GetPinnableReference())
+            {
+                return Unsafe.ReadUnaligned<int>(bytesPtr);
+            }
+        }
+
+        // Convert a Span into a uint
+        [CLSCompliant(false)]
+        public static unsafe uint ToUInt32(ReadOnlySpan<byte> value)
+        {
+            if (value.Length < sizeof(uint))
+                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
+            fixed (byte* bytesPtr = &value.GetPinnableReference())
+            {
+                return Unsafe.ReadUnaligned<uint>(bytesPtr);
+            }
+        }
+
+        // Converts a Span into an unsigned long
+        [CLSCompliant(false)]
+        public static unsafe ulong ToUInt64(ReadOnlySpan<byte> value)
+        {
+            if (value.Length < sizeof(ulong))
+                ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument.value);
+            fixed (byte* bytesPtr = &value.GetPinnableReference())
+            {
+                return Unsafe.ReadUnaligned<ulong>(bytesPtr);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe int SingleToInt32Bits(float value)
+        {
+            return *((int*)&value);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe float Int32BitsToSingle(int value)
+        {
+            return *((float*)&value);
+        }
+
+#endif
+
     }
 
 

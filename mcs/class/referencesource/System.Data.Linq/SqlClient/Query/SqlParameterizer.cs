@@ -233,7 +233,11 @@ namespace System.Data.Linq.SqlClient {
                 this.parameterizer.annotations.Add(
                     node, 
                     new SqlServerCompatibilityAnnotation(
+#if (MONO)
+                        Strings.MaxSizeNotSupported(node.SourceExpression), SqlProvider.ProviderMode.Sql2000));
+#else
                         SqlClient.Strings.MaxSizeNotSupported(node.SourceExpression), SqlProvider.ProviderMode.Sql2000));
+#endif
                 return false;
             }
 

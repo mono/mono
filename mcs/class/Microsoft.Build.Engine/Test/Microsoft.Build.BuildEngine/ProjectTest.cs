@@ -40,6 +40,8 @@ using System.Text;
 
 using MBT = MonoTests.Microsoft.Build.Tasks;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.BuildEngine {
 
 	class TestLogger : Logger {
@@ -155,7 +157,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					<PropertyGroup />
 					<ItemGroup />
 					<Target Name='a' />
-					<Import Project='Test/resources/Import.csproj' />
+					<Import Project='" + TestResourceHelper.GetFullPathOfResource ("Test/resources/Import.csproj") + @"' />
 				</Project>
 			";
 
@@ -1055,7 +1057,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-					<Target Name='T' Inputs='Test\resources\TestTasks.cs' Outputs='Test\resources\TestTasks.dll'>
+					<Target Name='T' Inputs='A.cs' Outputs='A.dll'>
 						<Message Text='text' />
 					</Target>
 				</Project>
@@ -1306,7 +1308,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		{
 			//test for multiple items with same metadata also
 			 string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @""" />
 			<ItemGroup>
 				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
 				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
@@ -1346,7 +1348,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		public void TestBatchedMetadataRef2 ()
 		{
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @""" />
 			<ItemGroup>
 				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
 				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
@@ -1400,7 +1402,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		public void TestBatchedMetadataRef3 ()
 		{
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @""" />
 			<ItemGroup>
 				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
 				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
@@ -1436,7 +1438,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		public void TestBatchedMetadataRef4 ()
 		{
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @""" />
 			<ItemGroup>
 				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
 				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
@@ -1465,7 +1467,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		public void TestBatchedMetadataRef5 ()
 		{
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @""" />
 			<ItemGroup>
 				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
 				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
@@ -1500,7 +1502,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Category ("NotDotNet")]
 		public void TestBatchedMetadataRefInOutput () {
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @""" />
 			<ItemGroup>
 				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
 				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
@@ -2265,7 +2267,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			string expected_output_msg)
 		{
 			string projectString = String.Format (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-				<UsingTask TaskName=""{0}"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+				<UsingTask TaskName=""{0}"" AssemblyFile=""" + TestResourceHelper.GetFullPathOfResource ("Test/resources/TestTasks.dll") + @""" />
 				<Target Name=""foo"">
 					<{0} Property=""{1}"">
 						<Output TaskParameter=""Output"" ItemName=""OutItem""/>

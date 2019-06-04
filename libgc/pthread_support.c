@@ -764,7 +764,7 @@ GC_thread GC_new_thread(pthread_t id)
     }
     if (result == 0) return(0);
     result -> id = id;
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
     result -> kernel_id = gettid();
 #endif
     result -> next = GC_threads[hv];
@@ -1135,7 +1135,7 @@ void GC_thr_init()
 #       if defined(GC_HPUX_THREADS)
 	  GC_nprocs = pthread_num_processors_np();
 #       endif
-#	if defined(GC_OSF1_THREADS) || defined(GC_AIX_THREADS)
+#	if defined(GC_OSF1_THREADS) || defined(GC_AIX_THREADS) || defined(GC_HAIKU_THREADS)
 	  GC_nprocs = sysconf(_SC_NPROCESSORS_ONLN);
 	  if (GC_nprocs <= 0) GC_nprocs = 1;
 #	endif
@@ -1245,7 +1245,6 @@ void GC_start_blocking(void) {
     GC_thread me;
     LOCK();
     me = GC_lookup_thread(pthread_self());
-    GC_ASSERT(!(me -> thread_blocked));
 #   ifdef SPARC
 	me -> stop_info.stack_ptr = (ptr_t)GC_save_regs_in_stack();
 #   else
@@ -1273,7 +1272,6 @@ void GC_end_blocking(void) {
     GC_thread me;
     LOCK();   /* This will block if the world is stopped.	*/
     me = GC_lookup_thread(pthread_self());
-    GC_ASSERT(me -> thread_blocked);
     me -> thread_blocked = FALSE;
     UNLOCK();
 }

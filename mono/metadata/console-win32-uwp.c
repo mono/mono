@@ -12,17 +12,14 @@
 #if G_HAVE_API_SUPPORT(HAVE_UWP_WINAPI_SUPPORT)
 #include <windows.h>
 #include "mono/metadata/console-win32-internals.h"
+#include "icall-decl.h"
 
 MonoBoolean
-ves_icall_System_ConsoleDriver_Isatty (HANDLE handle)
+ves_icall_System_ConsoleDriver_Isatty (HANDLE handle, MonoError* error)
 {
-	MonoError mono_error;
-	error_init (&mono_error);
-
 	g_unsupported_api ("Console");
 
-	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "Console");
-	mono_error_set_pending_exception (&mono_error);
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "Console");
 
 	SetLastError (ERROR_NOT_SUPPORTED);
 
@@ -30,15 +27,11 @@ ves_icall_System_ConsoleDriver_Isatty (HANDLE handle)
 }
 
 MonoBoolean
-ves_icall_System_ConsoleDriver_SetEcho (MonoBoolean want_echo)
+ves_icall_System_ConsoleDriver_SetEcho (MonoBoolean want_echo, MonoError* error)
 {
-	MonoError mono_error;
-	error_init (&mono_error);
-
 	g_unsupported_api ("Console");
 
-	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "Console");
-	mono_error_set_pending_exception (&mono_error);
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "Console");
 
 	SetLastError (ERROR_NOT_SUPPORTED);
 
@@ -46,15 +39,11 @@ ves_icall_System_ConsoleDriver_SetEcho (MonoBoolean want_echo)
 }
 
 MonoBoolean
-ves_icall_System_ConsoleDriver_SetBreak (MonoBoolean want_break)
+ves_icall_System_ConsoleDriver_SetBreak (MonoBoolean want_break, MonoError* error)
 {
-	MonoError mono_error;
-	error_init (&mono_error);
-
 	g_unsupported_api ("Console");
 
-	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "Console");
-	mono_error_set_pending_exception (&mono_error);
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "Console");
 
 	SetLastError (ERROR_NOT_SUPPORTED);
 
@@ -62,15 +51,11 @@ ves_icall_System_ConsoleDriver_SetBreak (MonoBoolean want_break)
 }
 
 gint32
-ves_icall_System_ConsoleDriver_InternalKeyAvailable (gint32 timeout)
+ves_icall_System_ConsoleDriver_InternalKeyAvailable (gint32 timeout, MonoError* error)
 {
-	MonoError mono_error;
-	error_init (&mono_error);
-
 	g_unsupported_api ("Console");
 
-	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "Console");
-	mono_error_set_pending_exception (&mono_error);
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "Console");
 
 	SetLastError (ERROR_NOT_SUPPORTED);
 
@@ -78,15 +63,11 @@ ves_icall_System_ConsoleDriver_InternalKeyAvailable (gint32 timeout)
 }
 
 MonoBoolean
-ves_icall_System_ConsoleDriver_TtySetup (MonoString *keypad, MonoString *teardown, MonoArray **control_chars, int **size)
+ves_icall_System_ConsoleDriver_TtySetup (MonoStringHandle keypad, MonoStringHandle teardown, MonoArrayHandleOut control_chars, int **size, MonoError* error)
 {
-	MonoError mono_error;
-	error_init (&mono_error);
-
 	g_unsupported_api ("Console");
 
-	mono_error_set_not_supported (&mono_error, G_UNSUPPORTED_API, "Console");
-	mono_error_set_pending_exception (&mono_error);
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "Console");
 
 	SetLastError (ERROR_NOT_SUPPORTED);
 

@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE
 using System;
 using System.IdentityModel.Claims;
 using System.Net.Mail;
@@ -32,6 +33,8 @@ using System.Security.Principal;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.IdentityModel.Claims
 {
@@ -50,7 +53,7 @@ namespace MonoTests.System.IdentityModel.Claims
 			c = Claim.CreateDnsClaim ("123.45.6.7");
 			AssertClaim ("Dns", c, ClaimTypes.Dns, "123.45.6.7", Rights.PossessProperty);
 
-			Uri uri = new Uri ("http://www.mono-project.com");
+			Uri uri = new Uri ("http://www.example.com");
 			c = Claim.CreateUriClaim (uri);
 			AssertClaim ("Uri", c, ClaimTypes.Uri, uri, Rights.PossessProperty);
 
@@ -79,7 +82,7 @@ namespace MonoTests.System.IdentityModel.Claims
 			c = Claim.CreateRsaClaim (rsa);
 			AssertClaim ("Rsa", c, ClaimTypes.Rsa, rsa, Rights.PossessProperty);
 
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			byte [] chash = cert.GetCertHash ();
 			c = Claim.CreateThumbprintClaim (chash);
 			AssertClaim ("Thumbprint", c, ClaimTypes.Thumbprint, chash, Rights.PossessProperty);
@@ -116,3 +119,4 @@ namespace MonoTests.System.IdentityModel.Claims
 		}
 	}
 }
+#endif

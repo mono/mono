@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -120,10 +121,32 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void Parse ()
+		public void ParseWithoutWhiteSpaces ()
 		{
-			Assert.AreEqual (new Size (1, 2), Size.Parse ("1, 2"));
+			Assert.AreEqual (new Size (1, 2), Size.Parse ("1,2"));
+		}
+
+		[Test]
+		public void ParseWithWhiteSpaces ()
+		{
+			Assert.AreEqual (new Size (1, 2), Size.Parse (" 1, 2 "));
+		}
+
+		[Test]
+		public void ParseValueWithFloatingPoint ()
+		{
+			Assert.AreEqual (new Size (1.234, 5.678), Size.Parse ("1.234,5.678"));
+		}
+		[Test]
+		public void ParseEmpty ()
+		{
+			Assert.AreEqual (Size.Empty, Size.Parse ("Empty"));
+		}
+
+		[Test]
+		public void ParseEmptyWithWhiteSpaces ()
+		{
+			Assert.AreEqual (Size.Empty, Size.Parse (" Empty "));
 		}
 
 		[Test]
@@ -136,7 +159,7 @@ namespace MonoTests.System.Windows {
 		[Test]
 		public void ToStringTest ()
 		{
-			Assert.AreEqual ("1,2", (new Size (1, 2)).ToString());
+			Assert.AreEqual ("1,2", (new Size (1, 2)).ToString (CultureInfo.InvariantCulture));
 		}
 
 		[Test]

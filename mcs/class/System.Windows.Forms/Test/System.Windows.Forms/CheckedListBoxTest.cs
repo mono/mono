@@ -830,5 +830,27 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		[Test]
+		public void ResetCheckStateOnRemove()
+		{
+			CheckedListBox clb = new CheckedListBox();
+			int idx = clb.Items.Add("a", true);
+			Assert.IsTrue(clb.CheckedIndices.Contains(idx));
+			Assert.AreEqual(1, clb.CheckedIndices.Count);
+			clb.Items.Clear();
+			Assert.AreEqual(0, clb.CheckedIndices.Count);
+
+			idx = clb.Items.Add("a", true);
+			Assert.IsTrue(clb.CheckedIndices.Contains(idx));
+			Assert.AreEqual(1, clb.CheckedIndices.Count);
+			clb.Items.RemoveAt(idx);
+			Assert.AreEqual(0, clb.CheckedIndices.Count);
+
+			idx = clb.Items.Add("a", true);
+			Assert.IsTrue(clb.CheckedIndices.Contains(idx));
+			Assert.AreEqual(1, clb.CheckedIndices.Count);
+			clb.Items.Remove("a");
+			Assert.AreEqual(0, clb.CheckedIndices.Count);
+		}
 	}
 }

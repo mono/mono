@@ -26,6 +26,8 @@ namespace Mono.Profiler.Log {
 			set => throw new NotSupportedException ();
 		}
 
+		readonly byte[] _byteBuffer = new byte [1];
+
 		public LogStream (Stream baseStream)
 		{
 			if (baseStream == null)
@@ -46,6 +48,14 @@ namespace Mono.Profiler.Log {
 		public override void Flush ()
 		{
 			throw new NotSupportedException ();
+		}
+
+		public override int ReadByte ()
+		{
+			// The base method on Stream is extremely inefficient in that it
+			// allocates a 1-byte array for every call. Simply use a private
+			// buffer instead.
+			return Read (_byteBuffer, 0, sizeof (byte)) == 0 ? -1 : _byteBuffer [0];
 		}
 
 		public override int Read (byte[] buffer, int offset, int count)

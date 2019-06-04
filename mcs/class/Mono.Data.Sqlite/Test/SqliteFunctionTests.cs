@@ -20,7 +20,20 @@ namespace MonoTests.Mono.Data.Sqlite
 	[TestFixture]
 	public class SqliteFunctionTest
 	{
-		readonly static string uri = Path.Combine (Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "test.db");
+		string uri;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			uri = Path.GetTempFileName ();
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (File.Exists (uri))
+				File.Delete (uri);
+		}
 
 		[Test]
 		public void CollationTest()

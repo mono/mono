@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 using System.Windows.Forms;
+using System.Web.UI.Design;
 namespace System.Web.UI.Design.WebControls
 {
     partial class EntityDataSourceConfigureObjectContextPanel
@@ -44,6 +45,7 @@ namespace System.Web.UI.Design.WebControls
             this._connectionStringRadioButton = new System.Windows.Forms.RadioButton();
             this._containerNameLabel = new System.Windows.Forms.Label();
             this._containerNameComboBox = new System.Windows.Forms.ComboBox();
+            this._radioButtonsGroupContainer = new System.Windows.Forms.GroupBox();
             this.SuspendLayout();
             this.InitializeSizes();
 
@@ -56,12 +58,24 @@ namespace System.Web.UI.Design.WebControls
             // 
             // _databaseConnectionGroupBox
             // 
-            this._databaseConnectionGroupBox.Controls.Add(this._namedConnectionRadioButton);
-            this._databaseConnectionGroupBox.Controls.Add(this._namedConnectionComboBox);
-            this._databaseConnectionGroupBox.Controls.Add(this._connectionStringRadioButton);
-            this._databaseConnectionGroupBox.Controls.Add(this._connectionStringTextBox);
+            if (LocalAppContextSwitches.UseLegacyAccessibilityFeatures)
+            {
+                this._databaseConnectionGroupBox.Controls.Add(this._namedConnectionRadioButton);
+                this._databaseConnectionGroupBox.Controls.Add(this._namedConnectionComboBox);
+                this._databaseConnectionGroupBox.Controls.Add(this._connectionStringRadioButton);
+                this._databaseConnectionGroupBox.Controls.Add(this._connectionStringTextBox);
+            }
+            else
+            {
+                this._databaseConnectionGroupBox.Controls.Add(this._namedConnectionComboBox);
+                this._databaseConnectionGroupBox.Controls.Add(this._connectionStringTextBox);
+                this._radioButtonsGroupContainer.Controls.Add(this._namedConnectionRadioButton);
+                this._radioButtonsGroupContainer.Controls.Add(this._connectionStringRadioButton);
+                this._databaseConnectionGroupBox.Controls.Add(this._radioButtonsGroupContainer);
+            }
             this._databaseConnectionGroupBox.Name = "_databaseConnectionGroupBox";
-            this._databaseConnectionGroupBox.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;             
+            this._databaseConnectionGroupBox.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            this._radioButtonsGroupContainer.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
             // 
             // _namedConnectionRadioButton
             // 
@@ -130,6 +144,7 @@ namespace System.Web.UI.Design.WebControls
         private System.Windows.Forms.RadioButton _connectionStringRadioButton;
         private System.Windows.Forms.TextBox _connectionStringTextBox;
         private System.Windows.Forms.Label _containerNameLabel;
-        private System.Windows.Forms.ComboBox _containerNameComboBox;        
+        private System.Windows.Forms.ComboBox _containerNameComboBox;
+        private System.Windows.Forms.GroupBox _radioButtonsGroupContainer;
     }
 }

@@ -10,7 +10,7 @@ LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)/Facades
 LIBRARY = System.Runtime.Extensions.dll
 
 KEYFILE = ../../msfinal.pub
-SIGN_FLAGS = /delaysign /nowarn:1616,1699
+SIGN_FLAGS = /delaysign /nowarn:1616,1699,618
 LIB_REFS = System
 LIB_MCS_FLAGS = $(SIGN_FLAGS) 
 

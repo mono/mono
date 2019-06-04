@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Mono.Options;
 
@@ -25,17 +26,43 @@ class CommandDemo {
 			new Command ("echo", "Echo arguments to the screen") {
 				Run = ca => Console.WriteLine ("{0}", string.Join (" ", ca)),
 			},
-			new RequiresArgs (),
+			new Command ("equinox", "Does something with the equinox?") {
+				Run = ca => Console.WriteLine ("{0}", string.Join (" ", ca)),
+			},
+			new RequiresArgsCommand (),
+			"Commands with spaces are supported:",
+			new Command ("has spaces", "spaces?!") {
+				Run = ca => Console.WriteLine ("spaces, yo! {0}", string.Join (" ", ca)),
+			},
+			"Nested CommandSets are also supported. They're invoked similarly to commands with spaces.",
+			new CommandSet ("set") {
+				new Command ("file type", "Does something or other.") {
+					Run = ca => Console.WriteLine ("File type set to: {0}", string.Join (" ", ca)),
+				},
+				new Command ("output", "Sets  output location") {
+					Run = ca => Console.WriteLine ("Output set to: {0}", string.Join (" ", ca)),
+				},
+			},
 		};
+		commands.Add (new Command ("completions", "Show CommandSet completions") {
+				Run = ca => {
+					var start = ca.Any() ? string.Join (" ", ca) : "";
+					Console.WriteLine ($"Showing CommandSet completions for prefix '{start}':");
+					foreach (var completion in commands.GetCompletions (start)) {
+						Console.WriteLine ($"\tcompletion: {completion}");
+					}
+				},
+		});
+		commands.Add (commands);
 		return commands.Run (args);
 	}
 
 	public static int Verbosity;
 }
 
-class RequiresArgs : Command {
+class RequiresArgsCommand : Command {
 
-	public RequiresArgs ()
+	public RequiresArgsCommand ()
 		: base ("requires-args", "Class-based Command subclass")
 	{
 		Options = new OptionSet () {

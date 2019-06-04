@@ -989,6 +989,10 @@ namespace System.Net {
             }
         }
 
+#if MONO
+        internal static WebException TimeoutException => new WebException(SR.net_timeout);
+#endif
+
         internal static NotSupportedException MethodNotSupportedException {
             get {
                 return new NotSupportedException(SR.GetString(SR.net_MethodNotSupportedException));
@@ -1469,7 +1473,8 @@ typedef struct _SCHANNEL_CRED
 
 #endif // !FEATURE_PAL
 
-    [StructLayout(LayoutKind.Sequential)]
+#if false
+	[StructLayout(LayoutKind.Sequential)]
     internal unsafe struct SecurityBufferStruct {
         public int          count;
         public BufferType   type;
@@ -1543,6 +1548,7 @@ typedef struct _SCHANNEL_CRED
             GlobalLog.Print("    securityBufferArray = 0x" + (new IntPtr(UnmanagedPointer)).ToString("x"));
         }
     } // SecurityBufferDescriptor
+#endif
 
     internal  enum    CertificateEncoding {
         Zero                     = 0,

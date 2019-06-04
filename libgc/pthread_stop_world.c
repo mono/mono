@@ -2,8 +2,7 @@
 
 #if defined(GC_PTHREADS) && !defined(GC_SOLARIS_THREADS) \
      && !defined(GC_IRIX_THREADS) && !defined(GC_WIN32_THREADS) \
-     && !defined(GC_DARWIN_THREADS) && !defined(GC_AIX_THREADS) \
-     && !defined(GC_OPENBSD_THREADS)
+     && !defined(GC_DARWIN_THREADS) && !defined(GC_AIX_THREADS)
 
 #include <signal.h>
 #include <semaphore.h>
@@ -337,7 +336,7 @@ void GC_push_all_stacks()
 pthread_t GC_stopping_thread;
 int GC_stopping_pid;
 
-#ifdef PLATFORM_ANDROID
+#ifdef HOST_ANDROID
 static
 int android_thread_kill(pid_t tid, int sig)
 {
@@ -379,7 +378,7 @@ int GC_suspend_all()
 	      GC_printf1("Sending suspend signal to 0x%lx\n", p -> id);
 	    #endif
 
-#ifndef PLATFORM_ANDROID
+#ifndef HOST_ANDROID
         result = pthread_kill(p -> id, SIG_SUSPEND);
 #else
         result = android_thread_kill(p -> kernel_id, SIG_SUSPEND);
@@ -658,7 +657,7 @@ static void pthread_start_world()
 	      GC_printf1("Sending restart signal to 0x%lx\n", p -> id);
 	    #endif
 
-#ifndef PLATFORM_ANDROID
+#ifndef HOST_ANDROID
         result = pthread_kill(p -> id, SIG_THR_RESTART);
 #else
         result = android_thread_kill(p -> kernel_id, SIG_THR_RESTART);

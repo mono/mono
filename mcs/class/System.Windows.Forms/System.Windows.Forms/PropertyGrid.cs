@@ -937,6 +937,7 @@ namespace System.Windows.Forms
 			if (tabs != null && tabs.Count > 0) {
 				foreach (PropertyTab tab in tabs) {
 					PropertyToolBarButton button = new PropertyToolBarButton (tab);
+					button.Click += new EventHandler (toolbarbutton_clicked);
 					toolbar.Items.Add (button);
 					if (tab.Bitmap != null) {
 						tab.Bitmap.MakeTransparent ();
@@ -986,7 +987,7 @@ namespace System.Windows.Forms
 				scopes.Clear ();
 				IList currentIntersection = (i == 0 ? (IList)tabAttribute.TabClasses : (IList)intersection);
 				for (int j=0; j < currentIntersection.Count; j++) {
-					if ((Type)intersection[j] == tabAttribute.TabClasses[j]) {
+					if ((Type)currentIntersection[j] == tabAttribute.TabClasses[j]) {
 						new_intersection.Add (tabAttribute.TabClasses[j]);
 						scopes.Add (tabAttribute.TabScopes[j]);
 					}
@@ -1410,8 +1411,10 @@ namespace System.Windows.Forms
 						toRemove.Add (i);
 				}
 				foreach (int indexToRemove in toRemove) {
-					property_tabs.RemoveAt (indexToRemove);
-					property_tabs_scopes.RemoveAt (indexToRemove);
+					if (property_tabs.Count > indexToRemove)
+						property_tabs.RemoveAt (indexToRemove);
+					if (property_tabs_scopes.Count > indexToRemove)	
+						property_tabs_scopes.RemoveAt (indexToRemove);
 				}
 				property_grid.RefreshToolbar (this);
 			}

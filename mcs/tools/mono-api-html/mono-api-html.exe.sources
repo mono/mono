@@ -6,8 +6,11 @@ Comparer.cs
 ConstructorComparer.cs
 EventComparer.cs
 FieldComparer.cs
+Formatter.cs
 Helpers.cs
+HtmlFormatter.cs
 InterfaceComparer.cs
+MarkdownFormatter.cs
 MemberComparer.cs
 MethodComparer.cs
 NamespaceComparer.cs

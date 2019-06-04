@@ -1,10 +1,10 @@
-../corefx/SR.cs
+../../corlib/corefx/SR.cs
+../../test-helpers/TestResourceHelper.cs
 System.Security.Cryptography/CryptographicAttributeObjectCollectionTest.cs
 System.Security.Cryptography/CryptographicAttributeObjectEnumeratorTest.cs
 System.Security.Cryptography/CryptographicAttributeTest.cs
 System.Security.Cryptography/ProtectedDataTest.cs
 System.Security.Cryptography/ProtectedMemoryTest.cs
-System.Security.Cryptography.Pkcs/AlgorithmIdentifierTest.cs
 System.Security.Cryptography.Pkcs/CmsRecipientCollectionTest.cs
 System.Security.Cryptography.Pkcs/CmsRecipientTest.cs
 System.Security.Cryptography.Pkcs/CmsSignerTest.cs

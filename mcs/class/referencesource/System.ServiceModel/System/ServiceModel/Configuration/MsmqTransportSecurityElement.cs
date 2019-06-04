@@ -40,11 +40,11 @@ namespace System.ServiceModel.Configuration
             set { base[ConfigurationStrings.MsmqProtectionLevel] = value; }
         }
 
-        [ConfigurationProperty(ConfigurationStrings.MsmqSecureHashAlgorithm, DefaultValue = MsmqDefaults.MsmqSecureHashAlgorithm)]
+        [ConfigurationProperty(ConfigurationStrings.MsmqSecureHashAlgorithm)]
         [ServiceModelEnumValidator(typeof(MsmqSecureHashAlgorithmHelper))]
         public MsmqSecureHashAlgorithm MsmqSecureHashAlgorithm
         {
-            get { return (MsmqSecureHashAlgorithm)base[ConfigurationStrings.MsmqSecureHashAlgorithm]; }
+            get { return (MsmqSecureHashAlgorithm)(base[ConfigurationStrings.MsmqSecureHashAlgorithm] ?? MsmqDefaults.MsmqSecureHashAlgorithm); }
             set { base[ConfigurationStrings.MsmqSecureHashAlgorithm] = value; }
         }
 

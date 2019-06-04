@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows.Markup;
 
 namespace System.Windows.Media.Converters {
@@ -32,22 +33,26 @@ namespace System.Windows.Media.Converters {
 	{
 		public override bool CanConvertFromString (string value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
 		public override bool CanConvertToString (object value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			return value is Matrix;
 		}
 
 		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new NotSupportedException ("value != null");
+			return Matrix.Parse (value);
 		}
 
 		public override string ConvertToString (object value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			if (value is Matrix matrix)
+				return matrix.ToString (CultureInfo.InvariantCulture);
+			return base.ConvertToString (value, context);
 		}
 	}
 

@@ -53,10 +53,10 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsTrue (all.Check (e), "Check (empty)");
 			e.AddHost (new Zone (SecurityZone.MyComputer));
 			Assert.IsTrue (all.Check (e), "Check (zone)");
-			Url u = new Url ("http://www.go-mono.com/");
+			Url u = new Url ("http://www.example.com/");
 			e.AddAssembly (u);
 			Assert.IsTrue (all.Check (e), "Check (all-assembly)");
-			Site s = new Site ("www.go-mono.com");
+			Site s = new Site ("www.example.com");
 			e.AddHost (s);
 			Assert.IsTrue (all.Check (e), "Check (all-host)");
 		}

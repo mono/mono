@@ -38,6 +38,8 @@ namespace Mono.CSharp
 			// Conditional instance expression inserted as the first argument
 			ExtensionTypeConditionalAccess = 5 | ConditionalAccessFlag,
 
+			Readonly = 6,
+
 			ConditionalAccessFlag = 1 << 7
 		}
 
@@ -104,12 +106,12 @@ namespace Mono.CSharp
 			return Clone (Expr.Clone (clonectx));
 		}
 
-		public virtual Expression CreateExpressionTree (ResolveContext ec)
+		public virtual Expression CreateExpressionTree (ResolveContext rc)
 		{
 			if (ArgType == AType.Default)
-				ec.Report.Error (854, Expr.Location, "An expression tree cannot contain an invocation which uses optional parameter");
+				rc.Report.Error (854, Expr.Location, "An expression tree cannot contain an invocation which uses optional parameter");
 
-			return Expr.CreateExpressionTree (ec);
+			return Expr.CreateExpressionTree (rc);
 		}
 
 
@@ -126,12 +128,16 @@ namespace Mono.CSharp
 				return;
 			}
 
+			if (Expr.Type.Kind == MemberKind.ByRef) {
+				Expr.Emit (ec);
+				return;
+			}
+
 			AddressOp mode = AddressOp.Store;
 			if (ArgType == AType.Ref)
 				mode |= AddressOp.Load;
 
-			IMemoryLocation ml = (IMemoryLocation) Expr;
-			ml.AddressOf (ec, mode);
+			((IMemoryLocation)Expr).AddressOf (ec, mode);
 		}
 
 		public Argument EmitToField (EmitContext ec, bool cloneResult)
@@ -421,17 +427,19 @@ namespace Mono.CSharp
 			return all;
 		}
 
-		public static Arguments CreateForExpressionTree (ResolveContext ec, Arguments args, params Expression[] e)
+		public static Arguments CreateForExpressionTree (ResolveContext rc, Arguments args, params Expression[] e)
 		{
 			Arguments all = new Arguments ((args == null ? 0 : args.Count) + e.Length);
 			for (int i = 0; i < e.Length; ++i) {
-				if (e [i] != null)
-					all.Add (new Argument (e[i]));
+				var expr = e [i];
+				if (expr != null) {
+					all.Add (new Argument (expr));
+				}
 			}
 
 			if (args != null) {
 				foreach (Argument a in args.args) {
-					Expression tree_arg = a.CreateExpressionTree (ec);
+					Expression tree_arg = a.CreateExpressionTree (rc);
 					if (tree_arg != null)
 						all.Add (new Argument (tree_arg));
 				}

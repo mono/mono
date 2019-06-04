@@ -46,6 +46,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 	/// <summary>
 	/// The kind of compression used for an entry in an archive
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public enum CompressionMethod
 	{
 		/// <summary>
@@ -120,6 +121,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 	/// <summary>
 	/// This class contains constants used for Zip format files
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public sealed class ZipConstants
 	{
 		/// <summary>

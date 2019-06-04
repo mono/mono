@@ -100,7 +100,7 @@ namespace System.Runtime.Remoting
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static MethodBase GetVirtualMethod (Type type, MethodBase method);
 
-#if DISABLE_REMOTING
+#if !FEATURE_REMOTING
 		public static bool IsTransparentProxy (object proxy)
 		{
 			throw new NotSupportedException ();
@@ -478,7 +478,7 @@ namespace System.Runtime.Remoting
 		{
 			const BindingFlags bfinst = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 			RuntimeType type = (RuntimeType) msg.MethodBase.DeclaringType;
-			return type.GetMethodsByName (msg.MethodName, bfinst, false, type).Length > 1;
+			return type.GetMethodsByName (msg.MethodName, bfinst, RuntimeType.MemberListType.CaseSensitive, type).Length > 1;
 		}
 
 		public static bool IsObjectOutOfAppDomain(object tp)
@@ -780,7 +780,9 @@ namespace System.Runtime.Remoting
 			
 			if (obj == null) return null;
 			MemoryStream ms = new MemoryStream ();
-			_serializationFormatter.Serialize (ms, obj);
+			lock (_serializationFormatter) {
+				_serializationFormatter.Serialize (ms, obj);
+			}
 			return ms.ToArray ();
 		}
 
@@ -791,7 +793,10 @@ namespace System.Runtime.Remoting
 			if (array == null) return null;
 			
 			MemoryStream ms = new MemoryStream (array);
-			object obj = _deserializationFormatter.Deserialize (ms);
+			object obj;
+			lock (_deserializationFormatter) {
+				obj = _deserializationFormatter.Deserialize (ms);
+			}
 			
 			if (obj is CACD) {
 				CACD cad = (CACD) obj;
@@ -813,7 +818,9 @@ namespace System.Runtime.Remoting
 				/* empty - we're only interested in the protected block */
 			} finally {
 				MemoryStream ms = new MemoryStream ();
-				_serializationFormatter.Serialize (ms, ex);
+				lock (_serializationFormatter) {
+					_serializationFormatter.Serialize (ms, ex);
+				}
 				result = ms.ToArray ();
 			}
 			return result;

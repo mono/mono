@@ -98,6 +98,7 @@ namespace MonoTests.Mono.Options
 		{
 			var c = new CommandSet ("cs");
 			Assert.Throws<ArgumentNullException> (() => c.Add ((Command)null));
+			Assert.Throws<ArgumentNullException> (() => c.Add ((CommandSet)null));
 		}
 
 		[Test]
@@ -129,6 +130,42 @@ namespace MonoTests.Mono.Options
 		}
 
 		[Test]
+		public void GetCompletions ()
+		{
+			var commands = new CommandSet ("example") {
+				new Command ("a"),
+				new Command ("aa"),
+				new Command ("a a"),
+				new Command ("cs c"),
+				new CommandSet ("cs") {
+					new CommandSet ("cs2") {
+						new CommandSet ("cs3") {
+							new Command ("cs-cs2-cs3-c"),
+						},
+					},
+				},
+			};
+			Assert.IsTrue (new[]{
+					"a",
+					"aa",
+					"a a",
+					"cs c",
+					"cs cs2 cs3 cs-cs2-cs3-c",
+			}.SequenceEqual (commands.GetCompletions ()));
+
+			Assert.IsTrue (new[]{
+					"a",
+					"aa",
+					"a a",
+			}.SequenceEqual (commands.GetCompletions ("a")));
+
+			Assert.IsTrue (new[]{
+					"cs c",
+					"cs cs2 cs3 cs-cs2-cs3-c",
+			}.SequenceEqual (commands.GetCompletions ("cs")));
+		}
+
+		[Test]
 		public void Run_Help ()
 		{
 			var o = new StringWriter ();
@@ -153,7 +190,22 @@ namespace MonoTests.Mono.Options
 				"start a working area (see also: git help tutorial)",
 				new Command ("clone", "Clone a repository into a new directory"),
 				new Command ("init",  "Create an empty Git repository or reinitialize an existing one"),
+				new Command ("this\thas spaces", "Spaces in command names?!"),
 				new Command ("thisIsAVeryLongCommandNameInOrderToInduceWrapping", "Create an empty Git repository or reinitialize an existing one. Let's make this really long to cause a line wrap, shall we?"),
+				new CommandSet ("nested") {
+					"Surely nested commands need flavor text?",
+					new Command ("foo", "nested foo help"),
+					"And more text?",
+					new Command ("bar", "nested bar help"),
+					new CommandSet ("again") {
+						"Yet more text!",
+						new Command ("and again", "Wee! Nesting!"),
+					}
+				},
+				new CommandSet ("another") {
+					new Command ("foo", "another foo help"),
+					new Command ("bar", "another bar help"),
+				},
 			};
 
 			var expectedHelp = new StringWriter ();
@@ -170,10 +222,20 @@ namespace MonoTests.Mono.Options
 			expectedHelp.WriteLine ("        clone                Clone a repository into a new directory");
 			expectedHelp.WriteLine ("        init                 Create an empty Git repository or reinitialize an");
 			expectedHelp.WriteLine ("                               existing one");
+			expectedHelp.WriteLine ("        this has spaces      Spaces in command names?!");
 			expectedHelp.WriteLine ("        thisIsAVeryLongCommandNameInOrderToInduceWrapping");
 			expectedHelp.WriteLine ("                             Create an empty Git repository or reinitialize an");
 			expectedHelp.WriteLine ("                               existing one. Let's make this really long to");
 			expectedHelp.WriteLine ("                               cause a line wrap, shall we?");
+			expectedHelp.WriteLine ("Surely nested commands need flavor text?");
+			expectedHelp.WriteLine ("        nested foo           nested foo help");
+			expectedHelp.WriteLine ("And more text?");
+			expectedHelp.WriteLine ("        nested bar           nested bar help");
+			expectedHelp.WriteLine ("Yet more text!");
+			expectedHelp.WriteLine ("        nested again and again");
+			expectedHelp.WriteLine ("                             Wee! Nesting!");
+			expectedHelp.WriteLine ("        another foo          another foo help");
+			expectedHelp.WriteLine ("        another bar          another bar help");
 
 			Assert.AreEqual (0, git.Run (new [] { "help" }));
 			Assert.AreEqual (expectedHelp.ToString (), o.ToString ());
@@ -184,9 +246,16 @@ namespace MonoTests.Mono.Options
 			expectedHelpHelp.WriteLine ();
 			expectedHelpHelp.WriteLine ("Available commands:");
 			expectedHelpHelp.WriteLine ();
+			expectedHelpHelp.WriteLine ("        another bar          another bar help");
+			expectedHelpHelp.WriteLine ("        another foo          another foo help");
 			expectedHelpHelp.WriteLine ("        clone                Clone a repository into a new directory");
 			expectedHelpHelp.WriteLine ("        init                 Create an empty Git repository or reinitialize an");
 			expectedHelpHelp.WriteLine ("                               existing one");
+			expectedHelpHelp.WriteLine ("        nested again and again");
+			expectedHelpHelp.WriteLine ("                             Wee! Nesting!");
+			expectedHelpHelp.WriteLine ("        nested bar           nested bar help");
+			expectedHelpHelp.WriteLine ("        nested foo           nested foo help");
+			expectedHelpHelp.WriteLine ("        this has spaces      Spaces in command names?!");
 			expectedHelpHelp.WriteLine ("        thisIsAVeryLongCommandNameInOrderToInduceWrapping");
 			expectedHelpHelp.WriteLine ("                             Create an empty Git repository or reinitialize an");
 			expectedHelpHelp.WriteLine ("                               existing one. Let's make this really long to");
@@ -203,9 +272,13 @@ namespace MonoTests.Mono.Options
 		{
 			var a = 0;
 			var b = 0;
+			var d = 0;
+			var g = 0;
 			var c = new CommandSet ("set") {
 				new Command ("a") { Run = v => a = v.Count () },
 				new Command ("b") { Run = v => b = v.Count () },
+				new Command ("c d")       { Run = v => d = v.Count () },
+				new Command ("e\t f\ng")  { Run = v => g = v.Count () },
 			};
 			Assert.AreEqual (0, c.Run (new [] { "a", "extra" }));
 			Assert.AreEqual (1, a);
@@ -219,6 +292,54 @@ namespace MonoTests.Mono.Options
 			Assert.AreEqual (0, c.Run (new [] { "b", "one", "two" }));
 			Assert.AreEqual (0, a);
 			Assert.AreEqual (2, b);
+
+			Assert.AreEqual (1, c.Run (new [] { "c"}));
+
+			Assert.AreEqual (0, c.Run (new [] { "c d", "one"}));
+			Assert.AreEqual (1, d);
+
+			Assert.AreEqual (0, c.Run (new [] { "c", "d", "one", "two"}));
+			Assert.AreEqual (2, d);
+
+			Assert.AreEqual (1, c.Run (new [] { "e" }));
+			Assert.AreEqual (1, c.Run (new [] { "e f" }));
+			Assert.AreEqual (1, c.Run (new [] { "e", "f" }));
+
+			Assert.AreEqual (0, c.Run (new [] { "e f g"}));
+			Assert.AreEqual (0, g);
+
+			Assert.AreEqual (0, c.Run (new [] { "e f g", "one"}));
+			Assert.AreEqual (1, g);
+
+			Assert.AreEqual (0, c.Run (new [] { "e", "f", "g", "one", "two", "three"}));
+			Assert.AreEqual (3, g);
+		}
+
+		[Test]
+		public void Run_Command_NestedCommandSets ()
+		{
+			var a     = 0;
+			var i_b   = 0;
+			var i_i_c = 0;
+			var outer = new CommandSet ("outer") {
+				new Command ("a") { Run = v => a = v.Count () },
+				new CommandSet ("intermediate") {
+					new Command ("b") { Run = v => i_b = v.Count () },
+					new CommandSet ("inner") {
+						new Command ("c") { Run = v => i_i_c = v.Count () },
+					}
+				},
+			};
+			Assert.AreEqual (0, outer.Run (new[]{"a", "1"}));
+			Assert.AreEqual (1, a);
+
+			Assert.AreEqual (1, outer.Run (new[]{"intermediate"}));
+			Assert.AreEqual (0, outer.Run (new[]{"intermediate", "b", "1", "2"}));
+			Assert.AreEqual (2, i_b);
+
+			Assert.AreEqual (1, outer.Run (new[]{"intermediate inner"}));
+			Assert.AreEqual (0, outer.Run (new[]{"intermediate", "inner", "c", "1", "2", "3"}));
+			Assert.AreEqual (3, i_i_c);
 		}
 
 		[Test]

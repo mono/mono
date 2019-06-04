@@ -446,6 +446,8 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual ("t;t1;t4;", validating, "A11a");
 			Assert.AreEqual ("t;t1;t4;", validated, "A11b");
 			validating = string.Empty; validated = string.Empty;
+
+			f.Close();
 		}
 	}
 }

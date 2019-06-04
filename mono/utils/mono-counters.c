@@ -150,7 +150,7 @@ register_internal (const char *name, int type, void *addr, int size)
 
 	for (counter = counters; counter; counter = counter->next) {
 		if (counter->addr == addr) {
-			g_warning ("you are registering twice the same counter address");
+			g_warning ("you are registering the same counter address twice: %s at %p", name, addr);
 			mono_os_mutex_unlock (&counters_mutex);
 			return;
 		}
@@ -335,6 +335,12 @@ page_faults (void)
 	return mono_process_get_data (GINT_TO_POINTER (mono_process_current_pid ()), MONO_PROCESS_FAULTS);
 }
 
+static gint64
+paged_bytes (void)
+{
+	return mono_process_get_data (GINT_TO_POINTER (mono_process_current_pid ()), MONO_PROCESS_PAGED_BYTES);
+}
+
 
 // If cpu_load gets inlined on Windows then cpu_load_1min, cpu_load_5min and cpu_load_15min can be folded into a single function and that will
 // cause a failure when registering counters since the same function address will be used by all three functions. Preventing this method from being inlined
@@ -408,6 +414,7 @@ initialize_system_counters (void)
 	register_internal ("Working Set", SYSCOUNTER_BYTES, (gpointer) &working_set, sizeof (gint64));
 	register_internal ("Private Bytes", SYSCOUNTER_BYTES, (gpointer) &private_bytes, sizeof (gint64));
 	register_internal ("Virtual Bytes", SYSCOUNTER_BYTES, (gpointer) &virtual_bytes, sizeof (gint64));
+	register_internal ("Page File Bytes", SYSCOUNTER_BYTES, (gpointer) &paged_bytes, sizeof (gint64));
 	register_internal ("Page Faults", SYSCOUNTER_COUNT, (gpointer) &page_faults, sizeof (gint64));
 	register_internal ("CPU Load Average - 1min", SYSCOUNTER_LOAD, (gpointer) &cpu_load_1min, sizeof (double));
 	register_internal ("CPU Load Average - 5min", SYSCOUNTER_LOAD, (gpointer) &cpu_load_5min, sizeof (double));
@@ -537,7 +544,7 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 			fprintf (outfile, ENTRY_FMT "%llu\n", counter->name, *(unsigned long long *)buffer);
 		break;
 	case MONO_COUNTER_WORD:
-		fprintf (outfile, ENTRY_FMT "%zd\n", counter->name, *(gssize*)buffer);
+		fprintf (outfile, ENTRY_FMT "%lld\n", counter->name, (long long)*(gssize*)buffer);
 		break;
 	case MONO_COUNTER_DOUBLE:
 		fprintf (outfile, ENTRY_FMT "%.4f\n", counter->name, *(double*)buffer);
@@ -564,6 +571,7 @@ section_names [][12] = {
 	"System",
 	"", // MONO_COUNTER_PERFCOUNTERS - not used.
 	"Profiler",
+	"Interp",
 };
 
 static void

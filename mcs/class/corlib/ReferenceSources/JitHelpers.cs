@@ -1,7 +1,6 @@
 
 namespace System.Runtime.CompilerServices {
 
-	[FriendAccessAllowed]
 	internal static class JitHelpers
 	{
 		static internal T UnsafeCast<T>(Object o) where T : class
@@ -18,5 +17,13 @@ namespace System.Runtime.CompilerServices {
 		{
 			return Array.UnsafeMov<T, long> (val);
 		}
+
+#if NETCORE
+		[Intrinsic]
+		internal static bool EnumEquals<T>(T x, T y) where T : struct, Enum => throw new NotImplementedException ();
+
+		[Intrinsic]
+		internal static int EnumCompareTo<T>(T x, T y) where T : struct, Enum  => throw new NotImplementedException ();
+#endif
 	}
 }

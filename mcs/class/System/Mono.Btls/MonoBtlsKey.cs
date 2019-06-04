@@ -24,6 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 #if SECURITY_DEP && MONO_FEATURE_BTLS
+#if MONO_SECURITY_ALIAS
+extern alias MonoSecurity;
+using MX = MonoSecurity::Mono.Security.Cryptography;
+#else
+using MX = Mono.Security.Cryptography;
+#endif
 using System;
 using System.IO;
 using System.Text;
@@ -109,7 +115,7 @@ namespace Mono.Btls
 
 		public static MonoBtlsKey CreateFromRSAPrivateKey (System.Security.Cryptography.RSA privateKey)
 		{
-			var keyData = Mono.Security.Cryptography.PKCS8.PrivateKeyInfo.Encode (privateKey);
+			var keyData = MX.PKCS8.PrivateKeyInfo.Encode (privateKey);
 			var key = new MonoBtlsKey (new BoringKeyHandle (mono_btls_key_new ()));
 
 			var ret = mono_btls_key_assign_rsa_private_key (key.Handle.DangerousGetHandle (), keyData, keyData.Length);

@@ -38,8 +38,7 @@ namespace MonoTests.System.Net.Sockets
 			Socket lSock = new Socket(AddressFamily.InterNetwork,
 				SocketType.Stream, ProtocolType.Tcp);
 			
-			var port = NetworkHelpers.FindFreePort ();
-			lSock.Bind(new IPEndPoint(IPAddress.Any, port));
+			lSock.Bind(IPAddress.Any, out int port);
 			lSock.Listen(-1);
 
 
@@ -84,9 +83,10 @@ namespace MonoTests.System.Net.Sockets
 #endif
 		public void CloseTest ()
 		{
-			var port = NetworkHelpers.FindFreePort ();
-			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, port);
-			using (SocketResponder sr = new SocketResponder (localEP, s => CloseRequestHandler (s))) {
+			var port = 0;
+			IPEndPoint localEP;
+			using (SocketResponder sr = new SocketResponder (out localEP, s => CloseRequestHandler (s))) {
+				port = localEP.Port;
 				TcpClient tcpClient = new TcpClient (IPAddress.Loopback.ToString (), port);
 				NetworkStream ns = tcpClient.GetStream ();
 				Assert.IsNotNull (ns, "#A1");
@@ -155,7 +155,7 @@ namespace MonoTests.System.Net.Sockets
 			TcpClient client = new TcpClient ();
 			IPAddress[] ipAddresses = null;
 			
-			client.Connect (ipAddresses, 1234);
+			client.Connect (ipAddresses, NetworkHelpers.FindFreePort ());
 		}
 		
 		[Test]
@@ -170,7 +170,7 @@ namespace MonoTests.System.Net.Sockets
 			ipAddresses[0] = IPAddress.Any;
 			
 			try {
-				client.Connect (ipAddresses, 1234);
+				client.Connect (ipAddresses, NetworkHelpers.FindFreePort ());
 				Assert.Fail ("ConnectMultiAny #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10049, ex.ErrorCode, "ConnectMultiAny #2");
@@ -191,7 +191,7 @@ namespace MonoTests.System.Net.Sockets
 			ipAddresses[0] = IPAddress.Loopback;
 			
 			try {
-				client.Connect (ipAddresses, 1234);
+				client.Connect (ipAddresses, NetworkHelpers.FindFreePort ());
 				Assert.Fail ("ConnectMultiRefused #1");
 			} catch (SocketException ex) {
 				Assert.AreEqual (10061, ex.ErrorCode, "ConnectMultiRefused #2");

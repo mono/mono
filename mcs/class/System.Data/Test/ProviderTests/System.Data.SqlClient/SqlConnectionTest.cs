@@ -162,10 +162,10 @@ namespace MonoTests.System.Data.Connected.SqlClient
 				// Cannot open database "invalidDB" requested
 				// by the login. The login failed
 				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#2");
-				Assert.AreEqual ((byte) 14, ex.Class, "#3");
+				Assert.AreEqual ((byte) 11, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.AreEqual (18456, ex.Number, "#7");
+				Assert.AreEqual (4060, ex.Number, "#7");
 				Assert.AreEqual ((byte) 1, ex.State, "#8");
 			} finally {
 				conn.Close ();
@@ -629,7 +629,6 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual ("", conn.Database, "#C2");
 			Assert.AreEqual (8000, conn.PacketSize, "#C3");
 			Assert.AreEqual (15, conn.ConnectionTimeout, "#C4");
-			Assert.IsTrue (string.Compare (conn.WorkstationId, Environment.MachineName, true) == 0, "#C5");
 		}
 
 		[Test]
@@ -722,6 +721,17 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			conn.Close ();
 		}
 
+		[Test]
+		[Category("NotWorking")] //https://github.com/dotnet/corefx/issues/22871
+		public void WorkstationId()
+		{
+			var connection1 = new SqlConnection (connectionString + ";Workstation Id=Desktop");
+			var connection2 = new SqlConnection (connectionString);
+			connection1.Dispose();
+			Assert.AreEqual (Environment.MachineName, connection1.WorkstationId);
+			Assert.AreEqual (Environment.MachineName, connection2.WorkstationId);
+		}
+
 		[Test] // bug #412571
 		public void Dispose ()
 		{
@@ -740,7 +750,6 @@ namespace MonoTests.System.Data.Connected.SqlClient
 			Assert.AreEqual (string.Empty, conn.DataSource, "#A5");
 			Assert.AreEqual (8000, conn.PacketSize, "#A6");
 			Assert.AreEqual (ConnectionState.Closed, conn.State, "#A7");
-			Assert.IsTrue (string.Compare (conn.WorkstationId, Environment.MachineName, true) == 0, "#A8");
 			Assert.AreEqual (2, events.Count, "#A9");
 
 			stateChangeArgs = events [0] as StateChangeEventArgs;

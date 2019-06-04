@@ -32,6 +32,8 @@
 #include <mono/utils/mono-time.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/w32api.h>
+#include <mono/utils/mono-os-wait.h>
+#include "external-only.h"
 
 /*
  * Pull the list of opcodes
@@ -115,15 +117,12 @@ mon_status_init_entry_count (guint32 status)
 }
 
 static inline guint32
-mon_status_increment_entry_count (guint32 status)
+mon_status_add_entry_count (guint32 status, int val)
 {
-	return status + (1 << ENTRY_COUNT_SHIFT);
-}
-
-static inline guint32
-mon_status_decrement_entry_count (guint32 status)
-{
-	return status - (1 << ENTRY_COUNT_SHIFT);
+	if (val > 0)
+		return status + (val << ENTRY_COUNT_SHIFT);
+	else
+		return status - ((-val) << ENTRY_COUNT_SHIFT);
 }
 
 static inline gboolean
@@ -333,12 +332,12 @@ mono_locks_dump (gboolean include_untaken)
 					to_recycle++;
 			} else {
 				if (!monitor_is_on_freelist ((MonoThreadsSync *)mon->data)) {
-					MonoObject *holder = (MonoObject *)mono_gchandle_get_target ((guint32)mon->data);
+					MonoObject *holder = (MonoObject *)mono_gchandle_get_target_internal ((guint32)(gsize)mon->data);
 					if (mon_status_get_owner (mon->status)) {
 						g_print ("Lock %p in object %p held by thread %d, nest level: %d\n",
 							mon, holder, mon_status_get_owner (mon->status), mon->nest);
-						if (mon->entry_sem)
-							g_print ("\tWaiting on semaphore %p: %d\n", mon->entry_sem, mon_status_get_entry_count (mon->status));
+						if (mon->entry_cond)
+							g_print ("\tWaiting on condvar %p: %d\n", mon->entry_cond, mon_status_get_entry_count (mon->status));
 					} else if (include_untaken) {
 						g_print ("Lock %p in object %p untaken\n", mon, holder);
 					}
@@ -357,10 +356,15 @@ mon_finalize (MonoThreadsSync *mon)
 {
 	LOCK_DEBUG (g_message ("%s: Finalizing sync %p", __func__, mon));
 
-	if (mon->entry_sem != NULL) {
-		mono_coop_sem_destroy (mon->entry_sem);
-		g_free (mon->entry_sem);
-		mon->entry_sem = NULL;
+	if (mon->entry_cond != NULL) {
+		mono_coop_cond_destroy (mon->entry_cond);
+		g_free (mon->entry_cond);
+		mon->entry_cond = NULL;
+	}
+	if (mon->entry_mutex != NULL) {
+		mono_coop_mutex_destroy (mon->entry_mutex);
+		g_free (mon->entry_mutex);
+		mon->entry_mutex = NULL;
 	}
 	/* If this isn't empty then something is seriously broken - it
 	 * means a thread is still waiting on the object that owned
@@ -373,7 +377,7 @@ mon_finalize (MonoThreadsSync *mon)
 	mon->data = monitor_freelist;
 	monitor_freelist = mon;
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->gc_sync_blocks--;
+	mono_atomic_dec_i32 (&mono_perfcounters->gc_sync_blocks);
 #endif
 }
 
@@ -390,7 +394,7 @@ mon_new (gsize id)
 		new_ = NULL;
 		for (marray = monitor_allocated; marray; marray = marray->next) {
 			for (i = 0; i < marray->num_monitors; ++i) {
-				if (mono_gchandle_get_target ((guint32)marray->monitors [i].data) == NULL) {
+				if (mono_gchandle_get_target_internal ((guint32)(gsize)marray->monitors [i].data) == NULL) {
 					new_ = &marray->monitors [i];
 					if (new_->wait_list) {
 						/* Orphaned events left by aborted threads */
@@ -400,7 +404,7 @@ mon_new (gsize id)
 							new_->wait_list = g_slist_remove (new_->wait_list, new_->wait_list->data);
 						}
 					}
-					mono_gchandle_free ((guint32)new_->data);
+					mono_gchandle_free_internal ((guint32)(gsize)new_->data);
 					new_->data = monitor_freelist;
 					monitor_freelist = new_;
 				}
@@ -445,7 +449,7 @@ mon_new (gsize id)
 	new_->data = NULL;
 	
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->gc_sync_blocks++;
+	mono_atomic_inc_i32 (&mono_perfcounters->gc_sync_blocks);
 #endif
 	return new_;
 }
@@ -457,18 +461,17 @@ alloc_mon (MonoObject *obj, gint32 id)
 
 	mono_monitor_allocator_lock ();
 	mon = mon_new (id);
-	mon->data = (void *)(size_t)mono_gchandle_new_weakref (obj, TRUE);
+	mon->data = (void *)(size_t)mono_gchandle_new_weakref_internal (obj, TRUE);
 	mono_monitor_allocator_unlock ();
 
 	return mon;
 }
 
-
 static void
 discard_mon (MonoThreadsSync *mon)
 {
 	mono_monitor_allocator_lock ();
-	mono_gchandle_free ((guint32)mon->data);
+	mono_gchandle_free_internal ((guint32)(gsize)mon->data);
 	mon_finalize (mon);
 	mono_monitor_allocator_unlock ();
 }
@@ -496,7 +499,7 @@ mono_monitor_inflate_owned (MonoObject *obj, int id)
 	nlw = lock_word_new_inflated (mon);
 
 	mono_memory_write_barrier ();
-	tmp_lw.sync = (MonoThreadsSync *)InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, nlw.sync, old_lw.sync);
+	tmp_lw.sync = (MonoThreadsSync *)mono_atomic_cas_ptr ((gpointer*)&obj->synchronisation, nlw.sync, old_lw.sync);
 	if (tmp_lw.sync != old_lw.sync) {
 		/* Someone else inflated the lock in the meantime */
 		discard_mon (mon);
@@ -539,7 +542,7 @@ mono_monitor_inflate (MonoObject *obj)
 			mon->nest = lock_word_get_nest (old_lw);
 		}
 		mono_memory_write_barrier ();
-		tmp_lw.sync = (MonoThreadsSync *)InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, nlw.sync, old_lw.sync);
+		tmp_lw.sync = (MonoThreadsSync *)mono_atomic_cas_ptr ((gpointer*)&obj->synchronisation, nlw.sync, old_lw.sync);
 		if (tmp_lw.sync == old_lw.sync) {
 			/* Successfully inflated the lock */
 			return;
@@ -554,14 +557,8 @@ mono_monitor_inflate (MonoObject *obj)
 
 #define MONO_OBJECT_ALIGNMENT_SHIFT	3
 
-/*
- * mono_object_hash:
- * @obj: an object
- *
- * Calculate a hash code for @obj that is constant while @obj is alive.
- */
 int
-mono_object_hash (MonoObject* obj)
+mono_object_hash_internal (MonoObject* obj)
 {
 #ifdef HAVE_MOVING_COLLECTOR
 	LockWord lw;
@@ -595,7 +592,7 @@ mono_object_hash (MonoObject* obj)
 		LockWord old_lw;
 		lw = lock_word_new_thin_hash (hash);
 
-		old_lw.sync = (MonoThreadsSync *)InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, lw.sync, NULL);
+		old_lw.sync = (MonoThreadsSync *)mono_atomic_cas_ptr ((gpointer*)&obj->synchronisation, lw.sync, NULL);
 		if (old_lw.sync == NULL) {
 			return hash;
 		}
@@ -608,7 +605,7 @@ mono_object_hash (MonoObject* obj)
 		mono_monitor_inflate (obj);
 		lw.sync = obj->synchronisation;
 	} else if (lock_word_is_flat (lw)) {
-		int id = mono_thread_info_get_small_id ();
+		int const id = mono_thread_info_get_small_id ();
 		if (lock_word_get_owner (lw) == id)
 			mono_monitor_inflate_owned (obj, id);
 		else
@@ -631,6 +628,18 @@ mono_object_hash (MonoObject* obj)
 #endif
 }
 
+/*
+ * mono_object_hash:
+ * @obj: an object
+ *
+ * Calculate a hash code for @obj that is constant while @obj is alive.
+ */
+int
+mono_object_hash (MonoObject* obj)
+{
+	MONO_EXTERNAL_ONLY (int, mono_object_hash_internal (obj));
+}
+
 static gboolean
 mono_monitor_ensure_owned (LockWord lw, guint32 id)
 {
@@ -642,7 +651,9 @@ mono_monitor_ensure_owned (LockWord lw, guint32 id)
 			return TRUE;
 	}
 
-	mono_set_pending_exception (mono_get_exception_synchronization_lock ("Object synchronization method was called from an unsynchronized block of code."));
+	ERROR_DECL (error);
+	mono_error_set_synchronization_lock (error, "Object synchronization method was called from an unsynchronized block of code.");
+	mono_error_set_pending_exception (error);
 	return FALSE;
 }
 
@@ -666,23 +677,15 @@ mono_monitor_exit_inflated (MonoObject *obj)
 
 		old_status = mon->status;
 
-		/*
-		 * Release lock and do the wakeup stuff. It's possible that
-		 * the last blocking thread gave up waiting just before we
-		 * release the semaphore resulting in a negative entry count
-		 * and a futile wakeup next time there's contention for this
-		 * object.
-		 */
 		for (;;) {
-			gboolean have_waiters = mon_status_have_waiters (old_status);
-	
 			new_status = mon_status_set_owner (old_status, 0);
-			if (have_waiters)
-				new_status = mon_status_decrement_entry_count (new_status);
-			tmp_status = InterlockedCompareExchange ((gint32*)&mon->status, new_status, old_status);
+			tmp_status = mono_atomic_cas_i32 ((gint32*)&mon->status, new_status, old_status);
 			if (tmp_status == old_status) {
-				if (have_waiters)
-					mono_coop_sem_post (mon->entry_sem);
+				if (mon_status_have_waiters (old_status)) {
+					mono_coop_mutex_lock (mon->entry_mutex);
+					mono_coop_cond_signal (mon->entry_cond);
+					mono_coop_mutex_unlock (mon->entry_mutex);
+				}
 				break;
 			}
 			old_status = tmp_status;
@@ -711,7 +714,7 @@ mono_monitor_exit_flat (MonoObject *obj, LockWord old_lw)
 	else
 		new_lw.lock_word = 0;
 
-	tmp_lw.sync = (MonoThreadsSync *)InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, new_lw.sync, old_lw.sync);
+	tmp_lw.sync = (MonoThreadsSync *)mono_atomic_cas_ptr ((gpointer*)&obj->synchronisation, new_lw.sync, old_lw.sync);
 	if (old_lw.sync != tmp_lw.sync) {
 		/* Someone inflated the lock in the meantime */
 		mono_monitor_exit_inflated (obj);
@@ -720,24 +723,63 @@ mono_monitor_exit_flat (MonoObject *obj, LockWord old_lw)
 	LOCK_DEBUG (g_message ("%s: (%d) Object %p is now locked %d times; LW = %p", __func__, mono_thread_info_get_small_id (), obj, lock_word_get_nest (new_lw), obj->synchronisation));
 }
 
-static void
-mon_decrement_entry_count (MonoThreadsSync *mon)
+static gboolean
+mon_add_entry_count (MonoThreadsSync *mon, int val)
 {
 	guint32 old_status, tmp_status, new_status;
 
-	/* Decrement entry count */
 	old_status = mon->status;
 	for (;;) {
-		new_status = mon_status_decrement_entry_count (old_status);
-		tmp_status = InterlockedCompareExchange ((gint32*)&mon->status, new_status, old_status);
+		/* The lock is free, we should retry */
+		if (val > 0 && mon_status_get_owner (old_status) == 0)
+			return FALSE;
+		new_status = mon_status_add_entry_count (old_status, val);
+		tmp_status = mono_atomic_cas_i32 ((gint32*)&mon->status, new_status, old_status);
 		if (tmp_status == old_status) {
 			break;
 		}
 		old_status = tmp_status;
 	}
+
+	return TRUE;
 }
 
-/* If allow_interruption==TRUE, the method will be interrumped if abort or suspend
+static void
+mon_init_cond_var (MonoThreadsSync *mon)
+{
+	if (mon->entry_mutex == NULL) {
+		/* Create the mutex */
+		MonoCoopMutex *mutex = g_new0 (MonoCoopMutex, 1);
+		mono_coop_mutex_init (mutex);
+		if (mono_atomic_cas_ptr ((gpointer*)&mon->entry_mutex, mutex, NULL) != NULL) {
+			/* Someone else just put a handle here */
+			mono_coop_mutex_destroy (mutex);
+			g_free (mutex);
+		}
+	}
+
+	if (mon->entry_cond == NULL) {
+		/* Create the condition variable */
+		MonoCoopCond *cond = g_new0 (MonoCoopCond, 1);
+		mono_coop_cond_init (cond);
+		if (mono_atomic_cas_ptr ((gpointer*)&mon->entry_cond, cond, NULL) != NULL) {
+			/* Someone else just put a handle here */
+			mono_coop_cond_destroy (cond);
+			g_free (cond);
+		}
+	}
+}
+
+static void
+signal_monitor (gpointer mon_untyped)
+{
+	MonoThreadsSync *mon = (MonoThreadsSync*) mon_untyped;
+	mono_coop_mutex_lock (mon->entry_mutex);
+	mono_coop_cond_broadcast (mon->entry_cond);
+	mono_coop_mutex_unlock (mon->entry_mutex);
+}
+
+/* If allow_interruption==TRUE, the method will be interrupted if abort or suspend
  * is requested. In this case it returns -1.
  */ 
 static inline gint32 
@@ -745,18 +787,18 @@ mono_monitor_try_enter_inflated (MonoObject *obj, guint32 ms, gboolean allow_int
 {
 	LockWord lw;
 	MonoThreadsSync *mon;
-	HANDLE sem;
 	gint64 then = 0, now, delta;
 	guint32 waitms;
 	guint32 new_status, old_status, tmp_status;
-	MonoSemTimedwaitRet wait_ret;
 	MonoInternalThread *thread;
-	gboolean interrupted = FALSE;
+	gboolean interrupted, timedout;
 
 	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, ms));
 
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		ERROR_DECL (error);
+		mono_error_set_argument_null (error, "obj", "");
+		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
 
@@ -773,7 +815,7 @@ retry:
 		* operation
 		*/
 		new_status = mon_status_set_owner (old_status, id);
-		tmp_status = InterlockedCompareExchange ((gint32*)&mon->status, new_status, old_status);
+		tmp_status = mono_atomic_cas_i32 ((gint32*)&mon->status, new_status, old_status);
 		if (G_LIKELY (tmp_status == old_status)) {
 			/* Success */
 			g_assert (mon->nest == 1);
@@ -792,7 +834,7 @@ retry:
 
 	/* The object must be locked by someone else... */
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->thread_contentions++;
+	mono_atomic_inc_i32 (&mono_perfcounters->thread_contentions);
 #endif
 
 	/* If ms is 0 we don't block, but just fail straight away */
@@ -804,6 +846,9 @@ retry:
 	MONO_PROFILER_RAISE (monitor_contention, (obj));
 
 	/* The slow path begins here. */
+
+	/* Make sure the sync primitives are created */
+	mon_init_cond_var (mon);
 retry_contended:
 	/* a small amount of duplicated code, but it allows us to insert the profiler
 	 * callbacks without impacting the fast path: from here on we don't need to go back to the
@@ -820,7 +865,7 @@ retry_contended:
 		* operation
 		*/
 		new_status = mon_status_set_owner (old_status, id);
-		tmp_status = InterlockedCompareExchange ((gint32*)&mon->status, new_status, old_status);
+		tmp_status = mono_atomic_cas_i32 ((gint32*)&mon->status, new_status, old_status);
 		if (G_LIKELY (tmp_status == old_status)) {
 			/* Success */
 			g_assert (mon->nest == 1);
@@ -829,43 +874,21 @@ retry_contended:
 		}
 	}
 
-	/* If the object is currently locked by this thread... */
-	if (mon_status_get_owner (old_status) == id) {
-		mon->nest++;
-		MONO_PROFILER_RAISE (monitor_acquired, (obj));
-		return 1;
-	}
-
-	/* We need to make sure there's a semaphore handle (creating it if
-	 * necessary), and block on it
-	 */
-	if (mon->entry_sem == NULL) {
-		/* Create the semaphore */
-		sem = g_new0 (MonoCoopSem, 1);
-		mono_coop_sem_init (sem, 0);
-		if (InterlockedCompareExchangePointer ((gpointer*)&mon->entry_sem, sem, NULL) != NULL) {
-			/* Someone else just put a handle here */
-			mono_coop_sem_destroy (sem);
-			g_free (sem);
-		}
-	}
-
 	/*
-	 * We need to register ourselves as waiting if it is the first time we are waiting,
-	 * of if we were signaled and failed to acquire the lock.
+	 * We need to register ourselves as waiting.
+	 *
+	 * If we set the entry count, we are guaranteed to be notified when the monitor
+	 * is released. Because we have the entry_mutex lock taken during this time and
+	 * wait on the condvar, we are guaranteed not to miss the wakeup.
+	 *
+	 * If the owner of the monitor releases the lock and there are no registered
+	 * waiters at that point, a new entering thread is guaranteed to check first
+	 * that the monitor is free.
 	 */
-	if (!interrupted) {
-		old_status = mon->status;
-		for (;;) {
-			if (mon_status_get_owner (old_status) == 0)
-				goto retry_contended;
-			new_status = mon_status_increment_entry_count (old_status);
-			tmp_status = InterlockedCompareExchange ((gint32*)&mon->status, new_status, old_status);
-			if (tmp_status == old_status) {
-				break;
-			}
-			old_status = tmp_status;
-		}
+	mono_coop_mutex_lock (mon->entry_mutex);
+	if (!mon_add_entry_count (mon, 1)) {
+		mono_coop_mutex_unlock (mon->entry_mutex);
+		goto retry_contended;
 	}
 
 	if (ms != MONO_INFINITE_WAIT) {
@@ -874,51 +897,42 @@ retry_contended:
 	waitms = ms;
 	
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->thread_queue_len++;
-	mono_perfcounters->thread_queue_max++;
+	mono_atomic_inc_i32 (&mono_perfcounters->thread_queue_len);
+	mono_atomic_inc_i32 (&mono_perfcounters->thread_queue_max);
 #endif
 	thread = mono_thread_internal_current ();
 
-	/*
-	 * If we allow interruption, we check the test state for an abort request before going into sleep.
-	 * This is a workaround to the fact that Thread.Abort does non-sticky interruption of semaphores.
-	 *
-	 * Semaphores don't support the sticky interruption with mono_thread_info_install_interrupt.
-	 *
-	 * A better fix would be to switch to wait with something that allows sticky interrupts together
-	 * with wrapping it with abort_protected_block_count for the non-alertable cases.
-	 * And somehow make this whole dance atomic and not crazy expensive. Good luck.
-	 *
-	 */
-	if (allow_interruption) {
-		if (!mono_thread_test_and_set_state (thread, ThreadState_AbortRequested, ThreadState_WaitSleepJoin)) {
-			wait_ret = MONO_SEM_TIMEDWAIT_RET_ALERTED;
-			goto done_waiting;
+	mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+	mono_thread_info_install_interrupt (signal_monitor, mon, &interrupted);
+	if (!interrupted) {
+		timedout = FALSE;
+		if (ms == MONO_INFINITE_WAIT) {
+			mono_coop_cond_wait (mon->entry_cond, mon->entry_mutex);
+		} else {
+			if (mono_coop_cond_timedwait (mon->entry_cond, mon->entry_mutex, waitms) == -1)
+				timedout = TRUE;
 		}
-	} else {
-		mono_thread_set_state (thread, ThreadState_WaitSleepJoin);
+		mono_thread_info_uninstall_interrupt (&interrupted);
 	}
-
-	/*
-	 * We pass ALERTABLE instead of allow_interruption since we have to check for the
-	 * StopRequested case below.
-	 */
-	wait_ret = mono_coop_sem_timedwait (mon->entry_sem, waitms, MONO_SEM_FLAGS_ALERTABLE);
-
 	mono_thread_clr_state (thread, ThreadState_WaitSleepJoin);
 
-done_waiting:
+	mon_add_entry_count (mon, -1);
+	mono_coop_mutex_unlock (mon->entry_mutex);
+
 #ifndef DISABLE_PERFCOUNTERS
-	mono_perfcounters->thread_queue_len--;
+	mono_atomic_dec_i32 (&mono_perfcounters->thread_queue_len);
 #endif
 
-	if (wait_ret == MONO_SEM_TIMEDWAIT_RET_ALERTED && !allow_interruption) {
-		interrupted = TRUE;
+	if (timedout || (interrupted && allow_interruption)) {
+		/* we're done */
+	} else {
 		/* 
 		 * We have to obey a stop/suspend request even if 
 		 * allow_interruption is FALSE to avoid hangs at shutdown.
+		 * FIXME Handle abort protected blocks
 		 */
-		if (!mono_thread_test_state (mono_thread_internal_current (), ThreadState_SuspendRequested | ThreadState_AbortRequested)) {
+		if ((interrupted && !mono_thread_test_state (mono_thread_internal_current (), ThreadState_SuspendRequested | ThreadState_AbortRequested)) || !interrupted) {
+			/* We were interrupted (and allow_interruption is FALSE) or we were signaled */
 			if (ms != MONO_INFINITE_WAIT) {
 				now = mono_msec_ticks ();
 
@@ -935,23 +949,14 @@ done_waiting:
 			/* retry from the top */
 			goto retry_contended;
 		}
-	} else if (wait_ret == MONO_SEM_TIMEDWAIT_RET_SUCCESS) {
-		interrupted = FALSE;
-		/* retry from the top */
-		goto retry_contended;
-	} else if (wait_ret == MONO_SEM_TIMEDWAIT_RET_TIMEDOUT) {
-		/* we're done */
 	}
-
-	/* Timed out or interrupted */
-	mon_decrement_entry_count (mon);
 
 	MONO_PROFILER_RAISE (monitor_failed, (obj));
 
-	if (wait_ret == MONO_SEM_TIMEDWAIT_RET_ALERTED) {
+	if (interrupted) {
 		LOCK_DEBUG (g_message ("%s: (%d) interrupted waiting, returning -1", __func__, id));
 		return -1;
-	} else if (wait_ret == MONO_SEM_TIMEDWAIT_RET_TIMEDOUT) {
+	} else if (timedout) {
 		LOCK_DEBUG (g_message ("%s: (%d) timed out waiting, returning FALSE", __func__, id));
 		return 0;
 	} else {
@@ -968,7 +973,7 @@ static inline gint32
 mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_interruption)
 {
 	LockWord lw;
-	int id = mono_thread_info_get_small_id ();
+	int const id = mono_thread_info_get_small_id ();
 
 	LOCK_DEBUG (g_message("%s: (%d) Trying to lock object %p (%d ms)", __func__, id, obj, ms));
 
@@ -976,7 +981,7 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 
 	if (G_LIKELY (lock_word_is_free (lw))) {
 		LockWord nlw = lock_word_new_flat (id);
-		if (InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, nlw.sync, NULL) == NULL) {
+		if (mono_atomic_cas_ptr ((gpointer*)&obj->synchronisation, nlw.sync, NULL) == NULL) {
 			return 1;
 		} else {
 			/* Someone acquired it in the meantime or put a hash */
@@ -993,7 +998,7 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 			} else {
 				LockWord nlw, old_lw;
 				nlw = lock_word_increment_nest (lw);
-				old_lw.sync = (MonoThreadsSync *)InterlockedCompareExchangePointer ((gpointer*)&obj->synchronisation, nlw.sync, lw.sync);
+				old_lw.sync = (MonoThreadsSync *)mono_atomic_cas_ptr ((gpointer*)&obj->synchronisation, nlw.sync, lw.sync);
 				if (old_lw.sync != lw.sync) {
 					/* Someone else inflated it in the meantime */
 					g_assert (lock_word_is_inflated (old_lw));
@@ -1021,7 +1026,9 @@ mono_monitor_enter_internal (MonoObject *obj)
 	gint32 res;
 	gboolean allow_interruption = TRUE;
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		ERROR_DECL (error);
+		mono_error_set_argument_null (error, "obj", "");
+		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
 
@@ -1055,7 +1062,7 @@ mono_monitor_enter_internal (MonoObject *obj)
 gboolean
 mono_monitor_enter (MonoObject *obj)
 {
-	return mono_monitor_enter_internal (obj);
+	MONO_EXTERNAL_ONLY (gboolean, mono_monitor_enter_internal (obj));
 }
 
 /* Called from JITted code so we return guint32 instead of gboolean */
@@ -1077,24 +1084,25 @@ gboolean
 mono_monitor_try_enter (MonoObject *obj, guint32 ms)
 {
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		ERROR_DECL (error);
+		mono_error_set_argument_null (error, "obj", "");
+		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
-	return mono_monitor_try_enter_internal (obj, ms, FALSE) == 1;
+	MONO_EXTERNAL_ONLY (gboolean, mono_monitor_try_enter_internal (obj, ms, FALSE) == 1);
 }
 
-/**
- * mono_monitor_exit:
- */
 void
-mono_monitor_exit (MonoObject *obj)
+mono_monitor_exit_internal (MonoObject *obj)
 {
 	LockWord lw;
 	
 	LOCK_DEBUG (g_message ("%s: (%d) Unlocking %p", __func__, mono_thread_info_get_small_id (), obj));
 
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		ERROR_DECL (error);
+		mono_error_set_argument_null (error, "obj", "");
+		mono_error_set_pending_exception (error);
 		return;
 	}
 
@@ -1109,6 +1117,15 @@ mono_monitor_exit (MonoObject *obj)
 		mono_monitor_exit_flat (obj, lw);
 }
 
+/**
+ * mono_monitor_exit:
+ */
+void
+mono_monitor_exit (MonoObject *obj)
+{
+	MONO_EXTERNAL_ONLY_VOID (mono_monitor_exit_internal (obj));
+}
+
 guint32
 mono_monitor_get_object_monitor_gchandle (MonoObject *object)
 {
@@ -1118,7 +1135,7 @@ mono_monitor_get_object_monitor_gchandle (MonoObject *object)
 
 	if (lock_word_is_inflated (lw)) {
 		MonoThreadsSync *mon = lock_word_get_inflated_lock (lw);
-		return (guint32)mon->data;
+		return (guint32)(gsize)mon->data;
 	}
 	return 0;
 }
@@ -1148,7 +1165,9 @@ ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject
 	gint32 res;
 	gboolean allow_interruption = TRUE;
 	if (G_UNLIKELY (!obj)) {
-		mono_set_pending_exception (mono_get_exception_argument_null ("obj"));
+		ERROR_DECL (error);
+		mono_error_set_argument_null (error, "obj", "");
+		mono_error_set_pending_exception (error);
 		return;
 	}
 	do {
@@ -1175,15 +1194,8 @@ ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (MonoObject
 void
 mono_monitor_enter_v4 (MonoObject *obj, char *lock_taken)
 {
-	if (*lock_taken == 1) {
-		mono_set_pending_exception (mono_get_exception_argument ("lockTaken", "lockTaken is already true"));
-		return;
-	}
-
-	MonoBoolean taken;
-
-	ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var (obj, MONO_INFINITE_WAIT, &taken);
-	*lock_taken = taken;
+	g_static_assert (sizeof (MonoBoolean) == 1);
+	mono_monitor_enter_v4_internal  (obj, (MonoBoolean*)lock_taken);
 }
 
 /* Called from JITted code */
@@ -1191,7 +1203,9 @@ void
 mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken)
 {
 	if (*lock_taken == 1) {
-		mono_set_pending_exception (mono_get_exception_argument ("lockTaken", "lockTaken is already true"));
+		ERROR_DECL (error);
+		mono_error_set_argument (error, "lockTaken", "lockTaken is already true");
+		mono_error_set_pending_exception (error);
 		return;
 	}
 
@@ -1259,16 +1273,15 @@ ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObject *obj)
  * any extra struct locking
  */
 
-void
-ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
+static void
+mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all)
 {
-	int id;
+	int const id = mono_thread_info_get_small_id ();
 	LockWord lw;
 	MonoThreadsSync *mon;
 
-	LOCK_DEBUG (g_message ("%s: (%d) Pulsing %p", __func__, mono_thread_info_get_small_id (), obj));
+	LOCK_DEBUG (g_message ("%s: (%d) Pulsing %p", func, id, obj));
 	
-	id = mono_thread_info_get_small_id ();
 	lw.sync = obj->synchronisation;
 
 	if (!mono_monitor_ensure_owned (lw, id))
@@ -1281,46 +1294,28 @@ ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
 
 	mon = lock_word_get_inflated_lock (lw);
 
-	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", __func__, mono_thread_info_get_small_id (), g_slist_length (mon->wait_list)));
+	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", func, id, g_slist_length (mon->wait_list)));
 
-	if (mon->wait_list != NULL) {
-		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, mono_thread_info_get_small_id (), mon->wait_list->data));
-	
-		mono_w32event_set (mon->wait_list->data);
-		mon->wait_list = g_slist_remove (mon->wait_list, mon->wait_list->data);
-	}
+	do {
+		if (mon->wait_list != NULL) {
+			LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", func, id, mon->wait_list->data));
+
+			mono_w32event_set (mon->wait_list->data);
+			mon->wait_list = g_slist_remove (mon->wait_list, mon->wait_list->data);
+		}
+	} while (all && mon->wait_list);
+}
+
+void
+ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObject *obj)
+{
+	mono_monitor_pulse (obj, __func__, FALSE);
 }
 
 void
 ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObject *obj)
 {
-	int id;
-	LockWord lw;
-	MonoThreadsSync *mon;
-	
-	LOCK_DEBUG (g_message("%s: (%d) Pulsing all %p", __func__, mono_thread_info_get_small_id (), obj));
-
-	id = mono_thread_info_get_small_id ();
-	lw.sync = obj->synchronisation;
-
-	if (!mono_monitor_ensure_owned (lw, id))
-		return;
-
-	if (!lock_word_is_inflated (lw)) {
-		/* No threads waiting. A wait would have inflated the lock */
-		return;
-	}
-
-	mon = lock_word_get_inflated_lock (lw);
-
-	LOCK_DEBUG (g_message ("%s: (%d) %d threads waiting", __func__, mono_thread_info_get_small_id (), g_slist_length (mon->wait_list)));
-
-	while (mon->wait_list != NULL) {
-		LOCK_DEBUG (g_message ("%s: (%d) signalling and dequeuing handle %p", __func__, mono_thread_info_get_small_id (), mon->wait_list->data));
-	
-		mono_w32event_set (mon->wait_list->data);
-		mon->wait_list = g_slist_remove (mon->wait_list, mon->wait_list->data);
-	}
+	mono_monitor_pulse (obj, __func__, TRUE);
 }
 
 MonoBoolean
@@ -1334,9 +1329,9 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	gboolean success = FALSE;
 	gint32 regain;
 	MonoInternalThread *thread = mono_thread_internal_current ();
-	int id = mono_thread_info_get_small_id ();
+	int const id = mono_thread_info_get_small_id ();
 
-	LOCK_DEBUG (g_message ("%s: (%d) Trying to wait for %p with timeout %dms", __func__, mono_thread_info_get_small_id (), obj, ms));
+	LOCK_DEBUG (g_message ("%s: (%d) Trying to wait for %p with timeout %dms", __func__, id, obj, ms));
 
 	lw.sync = obj->synchronisation;
 
@@ -1356,11 +1351,13 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	
 	event = mono_w32event_create (FALSE, FALSE);
 	if (event == NULL) {
-		mono_set_pending_exception (mono_get_exception_synchronization_lock ("Failed to set up wait event"));
+		ERROR_DECL (error);
+		mono_error_set_synchronization_lock (error, "Failed to set up wait event");
+		mono_error_set_pending_exception (error);
 		return FALSE;
 	}
 	
-	LOCK_DEBUG (g_message ("%s: (%d) queuing handle %p", __func__, mono_thread_info_get_small_id (), event));
+	LOCK_DEBUG (g_message ("%s: (%d) queuing handle %p", __func__, id, event));
 
 	/* This looks superfluous */
 	if (mono_thread_current_check_pending_interrupt ()) {
@@ -1378,20 +1375,14 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	mono_memory_write_barrier ();
 	mono_monitor_exit_inflated (obj);
 
-	LOCK_DEBUG (g_message ("%s: (%d) Unlocked %p lock %p", __func__, mono_thread_info_get_small_id (), obj, mon));
+	LOCK_DEBUG (g_message ("%s: (%d) Unlocked %p lock %p", __func__, id, obj, mon));
 
 	/* There's no race between unlocking mon and waiting for the
 	 * event, because auto reset events are sticky, and this event
 	 * is private to this thread.  Therefore even if the event was
 	 * signalled before we wait, we still succeed.
 	 */
-	MONO_ENTER_GC_SAFE;
-#ifdef HOST_WIN32
-	ret = mono_w32handle_convert_wait_ret (WaitForSingleObjectEx (event, ms, TRUE), 1);
-#else
 	ret = mono_w32handle_wait_one (event, ms, TRUE);
-#endif /* HOST_WIN32 */
-	MONO_EXIT_GC_SAFE;
 
 	/* Reset the thread state fairly early, so we don't have to worry
 	 * about the monitor error checking
@@ -1408,19 +1399,13 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 
 	mon->nest = nest;
 
-	LOCK_DEBUG (g_message ("%s: (%d) Regained %p lock %p", __func__, mono_thread_info_get_small_id (), obj, mon));
+	LOCK_DEBUG (g_message ("%s: (%d) Regained %p lock %p", __func__, id, obj, mon));
 
 	if (ret == MONO_W32HANDLE_WAIT_RET_TIMEOUT) {
 		/* Poll the event again, just in case it was signalled
 		 * while we were trying to regain the monitor lock
 		 */
-		MONO_ENTER_GC_SAFE;
-#ifdef HOST_WIN32
-		ret = mono_w32handle_convert_wait_ret (WaitForSingleObjectEx (event, 0, FALSE), 1);
-#else
 		ret = mono_w32handle_wait_one (event, 0, FALSE);
-#endif /* HOST_WIN32 */
-		MONO_EXIT_GC_SAFE;
 	}
 
 	/* Pulse will have popped our event from the queue if it signalled
@@ -1434,10 +1419,10 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	 */
 	
 	if (ret == MONO_W32HANDLE_WAIT_RET_SUCCESS_0) {
-		LOCK_DEBUG (g_message ("%s: (%d) Success", __func__, mono_thread_info_get_small_id ()));
+		LOCK_DEBUG (g_message ("%s: (%d) Success", __func__, id));
 		success = TRUE;
 	} else {
-		LOCK_DEBUG (g_message ("%s: (%d) Wait failed, dequeuing handle %p", __func__, mono_thread_info_get_small_id (), event));
+		LOCK_DEBUG (g_message ("%s: (%d) Wait failed, dequeuing handle %p", __func__, id, event));
 		/* No pulse, so we have to remove ourself from the
 		 * wait queue
 		 */
@@ -1448,3 +1433,8 @@ ves_icall_System_Threading_Monitor_Monitor_wait (MonoObject *obj, guint32 ms)
 	return success;
 }
 
+void
+ves_icall_System_Threading_Monitor_Monitor_Enter (MonoObject *obj)
+{
+	mono_monitor_enter_internal (obj);
+}

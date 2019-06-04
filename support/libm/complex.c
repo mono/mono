@@ -10,13 +10,8 @@
  * ====================================================
  */
 
-#include <sys/cdefs.h>
-
 #include <float.h>
 #include <math.h>
-
-#include "complex.h"
-#include "math_private.h"
 
 /*-
  * Copyright (c) 2004 Stefan Farfeleder
@@ -46,20 +41,6 @@
  * $FreeBSD$
  */
 
-double
-creal(double complex z)
-{
-	return z;
-}
-
-double
-cimag(double complex z)
-{
-	const double_complex z1 = { .f = z };
-
-	return (IMAGPART(z1));
-}
-
 /*
  * cabs() wrapper for hypot().
  *
@@ -67,8 +48,13 @@ cimag(double complex z)
  * Placed into the Public Domain, 1994.
  */
 
+static inline
 double
-cabs(double complex z)
+mono_cabs (double_complex z)
 {
-	return hypot(creal(z), cimag(z));
+#ifdef _MSC_VER // older versions deprecate hypot
+	return _hypot (mono_creal (z), mono_cimag (z));
+#else
+	return hypot (mono_creal (z), mono_cimag (z));
+#endif
 }

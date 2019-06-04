@@ -45,6 +45,7 @@ namespace System.Configuration
 		{
 			this.property = property;
 			needPropertyValue = true;
+			needSerializedValue = true;
 		}
 
 		public bool Deserialized {
@@ -83,6 +84,8 @@ namespace System.Configuration
 					propertyValue = GetDeserializedValue (serializedValue);
 					if (propertyValue == null) {
 						propertyValue = GetDeserializedDefaultValue ();
+						serializedValue = null;
+						needSerializedValue = true;
 						defaulted = true;
 					}
 					needPropertyValue = false;
@@ -107,9 +110,7 @@ namespace System.Configuration
 
 		public object SerializedValue {
 			get {
-				if (needSerializedValue) {
-					needSerializedValue = false;
-
+				if ((needSerializedValue || IsDirty) && !UsingDefaultValue) {
 					switch (property.SerializeAs)
 					{
 					case SettingsSerializeAs.String:
@@ -143,6 +144,8 @@ namespace System.Configuration
 						break;
 					}
 
+					needSerializedValue = false;
+					dirty = false;
 				}
 
 				return serializedValue;
@@ -150,6 +153,7 @@ namespace System.Configuration
 			set {
 				serializedValue = value;
 				needPropertyValue = true;
+				needSerializedValue = false;
 			}
 		}
 
@@ -165,6 +169,7 @@ namespace System.Configuration
 			dirty = true;
 			defaulted = true;
 			needPropertyValue = true;
+			needSerializedValue = true;
 			return propertyValue;
 		}
 

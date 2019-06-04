@@ -32,8 +32,51 @@
 #include <errno.h>              /* for ERANGE */
 #include <glib.h>               /* for g* types, etc. */
 
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+
 #ifdef HAVE_STDINT_H
 #include <stdint.h>             /* for SIZE_MAX */
+#endif
+
+#ifdef ANDROID_UNIFIED_HEADERS
+#ifdef HAVE_STDIO_H
+#include <stdio.h>
+#endif
+
+#undef st_atime_nsec
+#undef st_mtime_nsec
+#undef st_ctime_nsec
+
+#ifndef L_cuserid
+#define L_cuserid       9       /* size for cuserid(); UT_NAMESIZE + 1 */
+#endif
+
+/* NDK unified headers will define fpos_t to be 64-bit if large files support is
+ * enabled (which is the case with Mono) so we need to make sure the offsets here
+ * are actually 32-bit for Android APIs before API24 which did NOT have the 64-bit
+ * versions.
+ */
+#if !defined(fgetpos) && __ANDROID_API__ < 24
+int fgetpos(FILE*, fpos_t*);
+#endif
+
+#if !defined(fsetpos) && __ANDROID_API__ < 24
+int fsetpos(FILE*, const fpos_t*);
+#endif
+
+#ifdef HAVE_PWD_H
+#include <pwd.h>
+#endif
+/* Unified headers define 'pw_gecos' to be an alias for 'pw_passwd` on 32-bit Android which
+ * results in two fields named 'pw_passwd' in map.h's 'struct passwd'
+ */
+#if !defined(__LP64__) && defined(pw_gecos)
+#undef pw_gecos
+#undef HAVE_STRUCT_PASSWD_PW_GECOS
+#endif
+
 #endif
 
 #if __APPLE__ || __BSD__ || __FreeBSD__ || __OpenBSD__
@@ -78,11 +121,11 @@
  * OS X doesn't define MAP_ANONYMOUS, but it does define MAP_ANON.
  * Alias them to fix: https://bugzilla.xamarin.com/show_bug.cgi?id=3419
  */
-#ifdef PLATFORM_MACOSX
+#ifdef HOST_DARWIN
 #ifndef MAP_ANONYMOUS
 #define MAP_ANONYMOUS MAP_ANON
 #endif  /* ndef MAP_ANONYMOUS */
-#endif  /* ndef PLATFORM_MACOSX */
+#endif  /* ndef HOST_DARWIN */
 
 /*
  * XATTR_AUTO is a synonym for 0 within XattrFlags, but most systems don't

@@ -120,7 +120,10 @@ namespace MonoTests.System.Net.Http.Headers
 			headers.TryAddWithoutValidation("User-Agent", "agent2/2.0");
 
 			Assert.AreEqual (1, headers.UserAgent.Count, "#1");
-			Assert.AreEqual ("agent2/2.0user,agent/1.0", headers.UserAgent.ToString (), "#2");
+			if (HttpClientTestHelpers.UsingSocketsHandler)
+				Assert.AreEqual ("agent2/2.0 user,agent/1.0", headers.UserAgent.ToString (), "#2");
+			else
+				Assert.AreEqual ("agent2/2.0user,agent/1.0", headers.UserAgent.ToString (), "#2");
 
 			Assert.AreEqual ("User-Agent: agent2/2.0 user,agent/1.0\r\n", headers.ToString (), "#3");
 

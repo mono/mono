@@ -48,6 +48,7 @@ public class MdbDump
 			writer.WriteStartDocument ();
 
 			writer.WriteStartElement ("symbols");
+			writer.WriteAttributeString ("guid", symbolFile.Guid.ToString ());
 
 			writer.WriteStartElement ("files");
 			foreach (var file in symbolFile.Sources) {

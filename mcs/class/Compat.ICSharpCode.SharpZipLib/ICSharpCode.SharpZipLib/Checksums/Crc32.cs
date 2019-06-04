@@ -64,6 +64,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 	/// the information needed to generate CRC's on data a byte at a time for all
 	/// combinations of CRC register values and incoming bytes.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public sealed class Crc32 : IChecksum
 	{
 		readonly static uint CrcSeed = 0xFFFFFFFF;

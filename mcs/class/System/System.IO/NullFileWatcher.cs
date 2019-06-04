@@ -35,12 +35,17 @@ namespace System.IO
 	{
 		static IFileWatcher instance;
 		
-		public void StartDispatching (FileSystemWatcher fsw)
+		public void StartDispatching (object handle)
 		{
 			// does nothing
 		}
 
-		public void StopDispatching (FileSystemWatcher fsw)
+		public void StopDispatching (object handle)
+		{
+			// does nothing
+		}
+
+		public void Dispose (object handle)
 		{
 			// does nothing
 		}

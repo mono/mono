@@ -27,6 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -34,113 +35,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-	[ComVisible (true)]
-	[ComDefaultInterfaceAttribute (typeof (_FieldInfo))]
 	[Serializable]
-	[ClassInterface(ClassInterfaceType.None)]
-#if MOBILE
-	public abstract class FieldInfo : MemberInfo {
-#else
-	public abstract class FieldInfo : MemberInfo, _FieldInfo {
-#endif
-		public abstract FieldAttributes Attributes {get;}
-		public abstract RuntimeFieldHandle FieldHandle {get;}
-
-		protected FieldInfo () {}
-		
-		public abstract Type FieldType { get; }
-
-		public abstract object GetValue(object obj);
-
-		public override MemberTypes MemberType {
-			get { return MemberTypes.Field;}
-		}
-
-		public bool IsLiteral
-		{
-			get {return (Attributes & FieldAttributes.Literal) != 0;}
-		} 
-
-		public bool IsStatic
-		{
-			get {return (Attributes & FieldAttributes.Static) != 0;}
-		} 
-
-		public bool IsInitOnly
-		{
-			get {return (Attributes & FieldAttributes.InitOnly) != 0;}
-		} 
-		public Boolean IsPublic
-		{ 
-			get
-			{
-				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Public;
-			}
-		}
-		public Boolean IsPrivate
-		{
-			get
-			{
-				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Private;
-			}
-		}
-		public Boolean IsFamily
-		{
-			get
-			{
-				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Family;
-			}
-		}
-		public Boolean IsAssembly
-		{
-			get
-			{
-				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.Assembly;
-			}
-		}
-		public Boolean IsFamilyAndAssembly
-		{
-			get {
-				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamANDAssem;
-			}
-		}
-		public Boolean IsFamilyOrAssembly
-		{
-			get
-			{
-				return (Attributes & FieldAttributes.FieldAccessMask) == FieldAttributes.FamORAssem;
-			}
-		}
-		public Boolean IsPinvokeImpl
-		{
-			get
-			{
-				return (Attributes & FieldAttributes.PinvokeImpl) == FieldAttributes.PinvokeImpl;
-			}
-		}
-		public Boolean IsSpecialName
-		{
-			get
-			{
-				return (Attributes & FieldAttributes.SpecialName) == FieldAttributes.SpecialName;
-			}
-		}
-		public Boolean IsNotSerialized
-		{
-			get
-			{
-				return (Attributes & FieldAttributes.NotSerialized) == FieldAttributes.NotSerialized;
-			}
-		}
-
-		public abstract void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
-
-		[DebuggerHidden]
-		[DebuggerStepThrough]
-		public void SetValue (object obj, object value)
-		{
-			SetValue (obj, value, 0, null, null);
-		}
+	partial class FieldInfo : MemberInfo {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern FieldInfo internal_from_handle_type (IntPtr field_handle, IntPtr type_handle);
@@ -163,31 +59,9 @@ namespace System.Reflection {
 			return fi;
 		}
 
-		//
-		// Note: making this abstract imposes an implementation requirement
-		//       on any class that derives from it.  However, since it's also
-		//       internal, that means only classes inside corlib can derive
-		//       from FieldInfo.  See
-		//
-		//          errors/cs0534-4.cs errors/CS0534-4-lib.cs
-		//
-		//          class/Microsoft.JScript/Microsoft.JScript/JSFieldInfo.cs
-		//
 		internal virtual int GetFieldOffset ()
 		{
 			throw new SystemException ("This method should not be called");
-		}
-
-		[CLSCompliant(false)]
-		public virtual object GetValueDirect (TypedReference obj)
-		{
-			throw new NotSupportedException(Environment.GetResourceString("NotSupported_AbstractNonCLS"));
-		}
-
-		[CLSCompliant(false)]
-		public virtual void SetValueDirect (TypedReference obj, object value)
-		{
-			throw new NotSupportedException(Environment.GetResourceString("NotSupported_AbstractNonCLS"));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -222,101 +96,45 @@ namespace System.Reflection {
 			return attrs;
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern Type[] GetTypeModifiers (bool optional);
-
-		public virtual Type[] GetOptionalCustomModifiers () {
-			Type[] types = GetTypeModifiers (true);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
-
-		public virtual Type[] GetRequiredCustomModifiers () {
-			Type[] types = GetTypeModifiers (false);
-			if (types == null)
-				return Type.EmptyTypes;
-			return types;
-		}
-
-		public virtual object GetRawConstantValue ()
+		internal CustomAttributeData[] GetPseudoCustomAttributesData ()
 		{
-			throw new NotSupportedException ("This non-CLS method is not implemented.");
-		}
+			int count = 0;
 
+			if (IsNotSerialized)
+				count++;
 
-		public override bool Equals (object obj)
-		{
-			return obj == (object) this;
-		}
+			if (DeclaringType.IsExplicitLayout)
+				count++;
 
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
-		}
+			MarshalAsAttribute marshalAs = get_marshal_info ();
+			if (marshalAs != null)
+				count++;
 
-		public static bool operator == (FieldInfo left, FieldInfo right)
-		{
-			if ((object)left == (object)right)
-				return true;
-			if ((object)left == null ^ (object)right == null)
-				return false;
-			return left.Equals (right);
-		}
+			if (count == 0)
+				return null;
+			CustomAttributeData[] attrsData = new CustomAttributeData [count];
+			count = 0;
 
-		public static bool operator != (FieldInfo left, FieldInfo right)
-		{
-			if ((object)left == (object)right)
-				return false;
-			if ((object)left == null ^ (object)right == null)
-				return true;
-			return !left.Equals (right);
-		}
-		
-		public virtual bool IsSecurityCritical {
-			get {
-				throw new NotSupportedException ();
+			if (IsNotSerialized)
+				attrsData [count++] = new CustomAttributeData ((typeof (NonSerializedAttribute)).GetConstructor (Type.EmptyTypes));
+			if (DeclaringType.IsExplicitLayout) {
+				var ctorArgs = new CustomAttributeTypedArgument[] { new CustomAttributeTypedArgument (typeof (int), GetFieldOffset ()) };
+				attrsData [count++] = new CustomAttributeData (
+					(typeof (FieldOffsetAttribute)).GetConstructor (new[] { typeof (int) }),
+					ctorArgs,
+					EmptyArray<CustomAttributeNamedArgument>.Value);
 			}
-		}
-		
-		public virtual bool IsSecuritySafeCritical {
-			get {
-				throw new NotSupportedException ();
+
+			if (marshalAs != null) {
+				var ctorArgs = new CustomAttributeTypedArgument[] { new CustomAttributeTypedArgument (typeof (UnmanagedType), marshalAs.Value) };
+				attrsData [count++] = new CustomAttributeData (
+					(typeof (MarshalAsAttribute)).GetConstructor (new[] { typeof (UnmanagedType) }),
+					ctorArgs,
+					EmptyArray<CustomAttributeNamedArgument>.Value);//FIXME Get named params
 			}
+
+			return attrsData;
 		}
 
-		public virtual bool IsSecurityTransparent {
-			get {
-				throw new NotSupportedException ();
-			}
-		}
-
-#if !MOBILE
-		void _FieldInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		Type _FieldInfo.GetType ()
-		{
-			// Required or object::GetType becomes virtual final
-			return base.GetType ();
-		}
-
-		void _FieldInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _FieldInfo.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _FieldInfo.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 	}
 }

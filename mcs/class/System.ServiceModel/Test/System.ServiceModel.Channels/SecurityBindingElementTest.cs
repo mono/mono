@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -429,7 +430,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			Binding b = new CustomBinding (be, new HttpTransportBindingElement ());
 			ClientCredentials cred = new ClientCredentials ();
 			cred.ClientCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			IChannelFactory<IReplyChannel> ch = b.BuildChannelFactory<IReplyChannel> (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()), cred);
 			try {
 				ch.Open ();
@@ -457,7 +458,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			Binding b = new CustomBinding (be, new HttpTransportBindingElement ());
 			ServiceCredentials cred = new ServiceCredentials ();
 			cred.ServiceCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			IChannelListener<IReplyChannel> ch = b.BuildChannelListener<IReplyChannel> (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()), cred);
 			try {
 				ch.Open ();
@@ -479,7 +480,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			be.EndpointSupportingTokenParameters.Endorsing.Add (
 				new UserNameSecurityTokenParameters ());
 			Binding b = new CustomBinding (be, new HttpTransportBindingElement ());
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			EndpointAddress ea = new EndpointAddress (new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()), new X509CertificateEndpointIdentity (cert));
 			CalcProxy client = new CalcProxy (b, ea);
 			client.ClientCredentials.UserName.UserName = "rupert";
@@ -634,3 +635,4 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 	}
 }
+#endif

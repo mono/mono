@@ -84,7 +84,11 @@ namespace System.Threading
 				lock (this) {
 					_unregistered = true;
 					if (_callsInProcess == 0 && _finalEvent != null)
+#if NETCORE
+						throw new NotImplementedException ();
+#else
 						NativeEventCalls.SetEvent (_finalEvent.SafeWaitHandle);
+#endif
 				}
 			} catch (ObjectDisposedException) {
 				// Can happen if we called Unregister before we had time to execute Wait
@@ -106,7 +110,11 @@ namespace System.Threading
 				{
 					_callsInProcess--;
 					if (_unregistered && _callsInProcess == 0 && _finalEvent != null)
+#if NETCORE
+						EventWaitHandle.Set (_finalEvent.SafeWaitHandle);
+#else					
 						NativeEventCalls.SetEvent (_finalEvent.SafeWaitHandle);
+#endif
 				}
 			}
 		}

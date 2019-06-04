@@ -116,12 +116,18 @@ namespace System.Diagnostics {
 #endif
             }
         }
-    
+
+#if MONO
+		internal static int ShowDefaultAssertDialog(String conditionString, String message, String stackTrace, String windowTitle) {
+			throw new NotImplementedException ();
+		}
+#else
       // Called when an assert happens.
       // windowTitle can be null.
       [System.Security.SecurityCritical]  // auto-generated
       [ResourceExposure(ResourceScope.Process)]
       [MethodImplAttribute(MethodImplOptions.InternalCall)]
       internal extern static int ShowDefaultAssertDialog(String conditionString, String message, String stackTrace, String windowTitle);
+#endif
     }
 }

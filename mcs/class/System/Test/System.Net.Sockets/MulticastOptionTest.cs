@@ -201,13 +201,16 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void Group ()
 		{
 			IPAddress group;
 			IPAddress local;
 			MulticastOption option;
 
-			local = Dns.GetHostEntry (string.Empty).AddressList [0];
+			local = Dns.GetHostEntry ("localhost").AddressList [0];
 			group = IPAddress.Parse ("239.255.255.250");
 			option = new MulticastOption (group, local);
 			group = IPAddress.Parse ("224.0.0.23");
@@ -234,6 +237,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void InterfaceIndex ()
 		{
 			IPAddress group;
@@ -255,7 +261,7 @@ namespace MonoTests.System.Net.Sockets
 			Assert.AreEqual (0xFFFFFF, option.InterfaceIndex, "#C2");
 			Assert.IsNull (option.LocalAddress, "#C3");
 
-			local = Dns.GetHostEntry (string.Empty).AddressList [0];
+			local = Dns.GetHostEntry ("localhost").AddressList [0];
 			option = new MulticastOption (group, local);
 			option.InterfaceIndex = 10;
 			Assert.AreSame (group, option.Group, "#D1");
@@ -296,13 +302,16 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void LocalAddress ()
 		{
 			IPAddress group;
 			IPAddress local;
 			MulticastOption option;
 
-			local = Dns.GetHostEntry (string.Empty).AddressList [0];
+			local = Dns.GetHostEntry ("localhost").AddressList [0];
 			group = IPAddress.Parse ("239.255.255.250");
 			option = new MulticastOption (group, local);
 			local = IPAddress.Loopback;
@@ -310,7 +319,7 @@ namespace MonoTests.System.Net.Sockets
 			Assert.AreSame (group, option.Group, "#A1");
 			Assert.AreEqual (0, option.InterfaceIndex, "#A2");
 			Assert.AreSame (local, option.LocalAddress, "#A3");
-			local = Dns.GetHostEntry (string.Empty).AddressList [0];
+			local = Dns.GetHostEntry ("localhost").AddressList [0];
 			option.LocalAddress = local;
 			Assert.AreSame (group, option.Group, "#B1");
 			Assert.AreEqual (0, option.InterfaceIndex, "#B2");

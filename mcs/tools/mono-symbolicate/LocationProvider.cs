@@ -25,13 +25,15 @@ namespace Mono
 			assemblyFullPath = assemblyPath;
 		}
 
-		public bool TryResolveLocation (StackFrameData sfData, SeqPointInfo seqPointInfo)
+		public bool TryResolveLocation (StackFrameData sfData, SeqPointInfo seqPointInfo, out Location location)
 		{
 			var readerParameters = new ReaderParameters { ReadSymbols = true };
 			using (var assembly = AssemblyDefinition.ReadAssembly (assemblyFullPath, readerParameters)) {
 
-				if (!assembly.MainModule.HasSymbols)
+				if (!assembly.MainModule.HasSymbols) {
+					location = default;
 					return false;
+				}
 
 				TypeDefinition type = null;
 				string[] nested;
@@ -51,6 +53,7 @@ namespace Mono
 
 					if (type == null) {
 						logger.LogWarning ("Could not find type: {0}", ntype);
+						location = default;
 						return false;
 					}
 
@@ -63,10 +66,12 @@ namespace Mono
 				var methods = type.Methods.Where (m => CompareName (m, methodName) && CompareParameters (m.Parameters, methodParameters)).ToArray ();
 				if (methods.Length == 0) {
 					logger.LogWarning ("Could not find method: {0}", methodName);
+					location = default;
 					return false;
 				}
 				if (methods.Length > 1) {
 					logger.LogWarning ("Ambiguous match for method: {0}", sfData.MethodSignature);
+					location = default;
 					return false;
 				}
 				var method = methods [0];
@@ -75,22 +80,34 @@ namespace Mono
 				if (sfData.IsILOffset) {
 					ilOffset = sfData.Offset;
 				} else {
-					if (seqPointInfo == null)
+					if (seqPointInfo == null) {
+						location = default;
 						return false;
+					}
 
 					ilOffset = seqPointInfo.GetILOffset (method.MetadataToken.ToInt32 (), sfData.MethodIndex, sfData.Offset);
 				}
 
-				if (ilOffset < 0)
+				if (ilOffset < 0) {
+					location = default;
 					return false;
+				}
 
-				if (!method.DebugInformation.HasSequencePoints)
+				if (!method.DebugInformation.HasSequencePoints) {
+					var async_method = GetAsyncStateMachine (method);
+					if (async_method?.ConstructorArguments?.Count == 1) {
+						string state_machine = ((TypeReference)async_method.ConstructorArguments [0].Value).FullName;
+						return TryResolveLocation (sfData.Relocate (state_machine, "MoveNext ()"), seqPointInfo, out location);
+					}
+
+					location = default;
 					return false;
+				}
 
 				SequencePoint prev = null;
 				foreach (var sp in method.DebugInformation.SequencePoints.OrderBy (l => l.Offset)) {
 					if (sp.Offset >= ilOffset) {
-						sfData.SetLocation (sp.Document.Url, sp.StartLine);
+						location = new Location (sp.Document.Url, sp.StartLine);
 						return true;
 					}
 
@@ -98,12 +115,22 @@ namespace Mono
 				}
 
 				if (prev != null) {
-					sfData.SetLocation (prev.Document.Url, prev.StartLine);
+					location = new Location (prev.Document.Url, prev.StartLine);
 					return true;
 				}
 
+				location = default;
 				return false;
 			}
+		}
+
+		static CustomAttribute GetAsyncStateMachine (MethodDefinition method)
+		{
+			if (!method.HasCustomAttributes)
+				return null;
+
+			return method.CustomAttributes.FirstOrDefault (l =>
+				l.AttributeType.Name == "AsyncStateMachineAttribute" && l.AttributeType.Namespace == "System.Runtime.CompilerServices");
 		}
 
 		static bool CompareName (MethodDefinition candidate, string expected)

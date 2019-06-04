@@ -31,7 +31,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
@@ -89,10 +88,10 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsTrue (sla.IsValid ("string"), "#A1-3");
 			Assert.IsTrue (sla.IsValid ("0123456789"), "#A1-4");
 			Assert.IsFalse (sla.IsValid ("0123456789A"), "#A1-5");
-			AssertExtensions.Throws<InvalidCastException> (() => {
+			Assert.Throws<InvalidCastException> (() => {
 				sla.IsValid (123);
 			}, "#A1-6");
-			AssertExtensions.Throws<InvalidCastException> (() => {
+			Assert.Throws<InvalidCastException> (() => {
 				sla.IsValid (DateTime.Now);
 			}, "#A1-7");
 
@@ -101,13 +100,13 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsTrue (sla.IsValid (String.Empty), "#B1-2");
 			Assert.IsFalse (sla.IsValid ("string"), "#B1-3");
 			sla = new StringLengthAttributePoker (-10);
-			AssertExtensions.Throws <InvalidOperationException> (() => {
+			Assert.Throws <InvalidOperationException> (() => {
 				sla.IsValid ("123");
 			}, "#C1-1");
 
 			sla = new StringLengthAttributePoker (10);
 			sla.MinimumLength = 20;
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				sla.IsValid ("123");
 			}, "#C1-2");
 

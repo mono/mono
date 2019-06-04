@@ -748,6 +748,11 @@ namespace Mono.CSharp {
 								Report.Error (737, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' is not public",
 									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError ());
+							} else if (mi.ReturnType.Kind == MemberKind.ByRef) {
+								Report.Error (8152, container.Location,
+									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not return by reference",
+									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError (),
+									candidate.ReturnType.GetSignatureForError ());
 							} else {
 								Report.Error (738, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not match interface member return type `{4}'",

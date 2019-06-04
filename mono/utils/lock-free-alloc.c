@@ -142,6 +142,7 @@ alloc_sb (Descriptor *desc)
 		mono_valloc (NULL, desc->block_size, prot_flags_for_activate (TRUE), desc->heap->account_type) :
 		mono_valloc_aligned (desc->block_size, desc->block_size, prot_flags_for_activate (TRUE), desc->heap->account_type);
 
+	g_assertf (sb_header, "Failed to allocate memory for the lock free allocator");
 	g_assert (sb_header == sb_header_for_addr (sb_header, desc->block_size));
 
 	*(Descriptor**)sb_header = desc;
@@ -171,16 +172,17 @@ desc_alloc (MonoMemAccountType type)
 	for (;;) {
 		gboolean success;
 
-		desc = (Descriptor *) mono_get_hazardous_pointer ((gpointer * volatile)&desc_avail, hp, 1);
+		desc = (Descriptor *) mono_get_hazardous_pointer ((volatile gpointer *)&desc_avail, hp, 1);
 		if (desc) {
 			Descriptor *next = desc->next;
-			success = (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, next, desc) == desc);
+			success = (mono_atomic_cas_ptr ((volatile gpointer *)&desc_avail, next, desc) == desc);
 		} else {
 			size_t desc_size = sizeof (Descriptor);
 			Descriptor *d;
 			int i;
 
 			desc = (Descriptor *) mono_valloc (NULL, desc_size * NUM_DESC_BATCH, prot_flags_for_activate (TRUE), type);
+			g_assertf (desc, "Failed to allocate memory for the lock free allocator");
 
 			/* Organize into linked list. */
 			d = desc;
@@ -193,7 +195,7 @@ desc_alloc (MonoMemAccountType type)
 
 			mono_memory_write_barrier ();
 
-			success = (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, desc->next, NULL) == NULL);
+			success = (mono_atomic_cas_ptr ((volatile gpointer *)&desc_avail, desc->next, NULL) == NULL);
 
 			if (!success)
 				mono_vfree (desc, desc_size * NUM_DESC_BATCH, type);
@@ -224,7 +226,7 @@ desc_enqueue_avail (gpointer _desc)
 		old_head = desc_avail;
 		desc->next = old_head;
 		mono_memory_write_barrier ();
-	} while (InterlockedCompareExchangePointer ((gpointer * volatile)&desc_avail, desc, old_head) != old_head);
+	} while (mono_atomic_cas_ptr ((volatile gpointer *)&desc_avail, desc, old_head) != old_head);
 }
 
 static void
@@ -330,7 +332,7 @@ set_anchor (Descriptor *desc, Anchor old_anchor, Anchor new_anchor)
 	if (old_anchor.data.state == STATE_EMPTY)
 		g_assert (new_anchor.data.state == STATE_EMPTY);
 
-	return InterlockedCompareExchange (&desc->anchor.value, new_anchor.value, old_anchor.value) == old_anchor.value;
+	return mono_atomic_cas_i32 (&desc->anchor.value, new_anchor.value, old_anchor.value) == old_anchor.value;
 }
 
 static gpointer
@@ -343,7 +345,7 @@ alloc_from_active_or_partial (MonoLockFreeAllocator *heap)
  retry:
 	desc = heap->active;
 	if (desc) {
-		if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, NULL, desc) != desc)
+		if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, NULL, desc) != desc)
 			goto retry;
 	} else {
 		desc = heap_get_partial (heap);
@@ -355,7 +357,7 @@ alloc_from_active_or_partial (MonoLockFreeAllocator *heap)
 
 	do {
 		unsigned int next;
-		new_anchor = old_anchor = *(volatile Anchor*)&desc->anchor.value;
+		new_anchor.value = old_anchor.value = ((volatile Anchor*)&desc->anchor)->value;
 		if (old_anchor.data.state == STATE_EMPTY) {
 			/* We must free it because we own it. */
 			desc_retire (desc);
@@ -380,7 +382,7 @@ alloc_from_active_or_partial (MonoLockFreeAllocator *heap)
 
 	/* If the desc is partial we have to give it back. */
 	if (new_anchor.data.state == STATE_PARTIAL) {
-		if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, desc, NULL) != NULL)
+		if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, desc, NULL) != NULL)
 			heap_put_partial (desc);
 	}
 
@@ -415,10 +417,12 @@ alloc_from_new_sb (MonoLockFreeAllocator *heap)
 	for (i = 1; i < count - 1; ++i)
 		*(unsigned int*)((char*)desc->sb + i * slot_size) = i + 1;
 
+	*(unsigned int*)((char*)desc->sb + (count - 1) * slot_size) = 0;
+
 	mono_memory_write_barrier ();
 
 	/* Make it active or free it again. */
-	if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, desc, NULL) == NULL) {
+	if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, desc, NULL) == NULL) {
 		return desc->sb;
 	} else {
 		desc->anchor.data.state = STATE_EMPTY;
@@ -460,7 +464,7 @@ mono_lock_free_free (gpointer ptr, size_t block_size)
 	sb = desc->sb;
 
 	do {
-		new_anchor = old_anchor = *(volatile Anchor*)&desc->anchor.value;
+		new_anchor.value = old_anchor.value = ((volatile Anchor*)&desc->anchor)->value;
 		*(unsigned int*)ptr = old_anchor.data.avail;
 		new_anchor.data.avail = ((char*)ptr - (char*)sb) / desc->slot_size;
 		g_assert (new_anchor.data.avail < LOCK_FREE_ALLOC_SB_USABLE_SIZE (block_size) / desc->slot_size);
@@ -477,7 +481,7 @@ mono_lock_free_free (gpointer ptr, size_t block_size)
 	if (new_anchor.data.state == STATE_EMPTY) {
 		g_assert (old_anchor.data.state != STATE_EMPTY);
 
-		if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, NULL, desc) == desc) {
+		if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, NULL, desc) == desc) {
 			/*
 			 * We own desc, check if it's still empty, in which case we retire it.
 			 * If it's partial we need to put it back either on the active slot or
@@ -486,7 +490,7 @@ mono_lock_free_free (gpointer ptr, size_t block_size)
 			if (desc->anchor.data.state == STATE_EMPTY) {
 				desc_retire (desc);
 			} else if (desc->anchor.data.state == STATE_PARTIAL) {
-				if (InterlockedCompareExchangePointer ((gpointer * volatile)&heap->active, desc, NULL) != NULL)
+				if (mono_atomic_cas_ptr ((volatile gpointer *)&heap->active, desc, NULL) != NULL)
 					heap_put_partial (desc);
 
 			}
@@ -505,7 +509,7 @@ mono_lock_free_free (gpointer ptr, size_t block_size)
 
 		g_assert (new_anchor.data.state == STATE_PARTIAL);
 
-		if (InterlockedCompareExchangePointer ((gpointer * volatile)&desc->heap->active, desc, NULL) != NULL)
+		if (mono_atomic_cas_ptr ((volatile gpointer *)&desc->heap->active, desc, NULL) != NULL)
 			heap_put_partial (desc);
 	}
 }
@@ -524,11 +528,7 @@ descriptor_check_consistency (Descriptor *desc, gboolean print)
 {
 	int count = desc->anchor.data.count;
 	int max_count = LOCK_FREE_ALLOC_SB_USABLE_SIZE (desc->block_size) / desc->slot_size;
-#if _MSC_VER
-	gboolean* linked = alloca(max_count*sizeof(gboolean));
-#else
-	gboolean linked [max_count];
-#endif
+	gboolean* linked = g_newa (gboolean, max_count);
 	int i, last;
 	unsigned int index;
 

@@ -542,7 +542,7 @@ namespace Mono.CSharp
 				}
 			);
 
-			fixed_buffer_type.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			fixed_buffer_type.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out _));
 #endif
 			//
 			// Don't emit FixedBufferAttribute attribute for private types
@@ -559,7 +559,8 @@ namespace Mono.CSharp
 			encoder.Encode (buffer_size);
 			encoder.EncodeEmptyNamedArguments ();
 
-			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray ());
+			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), encoder.ToArray (out var references));
+			Module.AddAssemblyReferences (references);
 		}
 	}
 
@@ -698,6 +699,16 @@ namespace Mono.CSharp
 			}
 
 			return true;
+		}
+
+		protected override void DoMemberTypeIndependentChecks ()
+		{
+			if ((Parent.PartialContainer.ModFlags & Modifiers.READONLY) != 0 && (ModFlags & (Modifiers.READONLY | Modifiers.STATIC)) == 0) {
+				Report.Error (8340, Location, "`{0}': Instance fields in readonly structs must be readonly",
+					GetSignatureForError ());
+			}
+
+			base.DoMemberTypeIndependentChecks ();
 		}
 
 		protected override void DoMemberTypeDependentChecks ()

@@ -3783,7 +3783,7 @@ namespace Mono.Unix.Native {
 		public static extern int epoll_ctl (int epfd, EpollOp op, int fd, ref EpollEvent ee);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_wait")]
-		private static extern int sys_epoll_wait (int epfd, EpollEvent [] ee, int maxevents, int timeout);
+		private static extern int sys_epoll_wait (int epfd, [In,Out] EpollEvent [] ee, int maxevents, int timeout);
 		#endregion
 		
 		#region <sys/mman.h> Declarations
@@ -3866,7 +3866,7 @@ namespace Mono.Unix.Native {
 #pragma warning restore 649
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="poll")]
-		private static extern int sys_poll (_pollfd[] ufds, uint nfds, int timeout);
+		private static extern int sys_poll ([In,Out] _pollfd[] ufds, uint nfds, int timeout);
 
 		public static int poll (Pollfd [] fds, uint nfds, int timeout)
 		{

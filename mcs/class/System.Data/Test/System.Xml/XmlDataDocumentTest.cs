@@ -42,6 +42,8 @@ using System.Xml.XPath;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data.Xml
 {
 	[TestFixture]
@@ -114,8 +116,8 @@ namespace MonoTests.System.Data.Xml
                 {
                 	XmlDataDocument doc = new XmlDataDocument ();
 			
-                	doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-                	doc.Load ("Test/System.Xml/region.xml");
+                	doc.DataSet.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
+                	doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
                 
                 	XmlDataDocument doc2 = (XmlDataDocument)doc.CloneNode (false);
 			
@@ -136,15 +138,15 @@ namespace MonoTests.System.Data.Xml
 		public void EditingXmlTree ()
 		{	
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-			doc.Load ("Test/System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 
 			XmlElement Element = doc.GetElementFromRow (doc.DataSet.Tables [0].Rows [1]);
 			Element.FirstChild.InnerText = "64";
 			Assert.AreEqual ("64", doc.DataSet.Tables [0].Rows [1] [0], "test#01");
 			
 			DataSet Set = new DataSet ();
-			Set.ReadXml ("Test/System.Xml/region.xml");
+			Set.ReadXml (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 			doc = new XmlDataDocument (Set);
 			
 			Element = doc.GetElementFromRow (doc.DataSet.Tables [0].Rows [1]);
@@ -168,7 +170,7 @@ namespace MonoTests.System.Data.Xml
 		{
 			string xml = "<Root><Region><RegionID>1</RegionID><RegionDescription>Eastern" + Environment.NewLine + "   </RegionDescription></Region><Region><RegionID>2</RegionID><RegionDescription>Western" + Environment.NewLine + "   </RegionDescription></Region><Region><RegionID>3</RegionID><RegionDescription>Northern" + Environment.NewLine + "   </RegionDescription></Region><Region><RegionID>4</RegionID><RegionDescription>Southern" + Environment.NewLine + "   </RegionDescription></Region><MoreData><Column1>12</Column1><Column2>Hi There</Column2></MoreData><MoreData><Column1>12</Column1><Column2>Hi There</Column2></MoreData></Root>";
 
-			XmlReader Reader = new XmlTextReader ("Test/System.Xml/region.xml");
+			XmlReader Reader = new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 			XmlDataDocument Doc = new XmlDataDocument ();
 			Doc.DataSet.ReadXml (Reader);
 			StringWriter sw = new StringWriter ();
@@ -189,8 +191,8 @@ namespace MonoTests.System.Data.Xml
 		public void CreateElement1 ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-			doc.Load ("Test/System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 			
 			XmlElement Element = doc.CreateElement ("prefix", "localname", "namespaceURI");
 			Assert.AreEqual ("prefix", Element.Prefix, "test#01");
@@ -232,8 +234,8 @@ namespace MonoTests.System.Data.Xml
 		public void CreateElement2 ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-			doc.Load ("Test/System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 
 			XmlElement Element = doc.CreateElement ("ElementName");
 			Assert.AreEqual (string.Empty, Element.Prefix, "test#01");
@@ -250,8 +252,8 @@ namespace MonoTests.System.Data.Xml
 		public void CreateElement3 ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-			doc.Load ("Test/System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 			
 			XmlElement Element = doc.CreateElement ("ElementName", "namespace");
 			Assert.AreEqual (string.Empty, Element.Prefix, "test#01");
@@ -268,8 +270,8 @@ namespace MonoTests.System.Data.Xml
 		public void Navigator ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-			doc.Load ("Test/System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 
 			XPathNavigator Nav = doc.CreateNavigator ();
 			
@@ -301,9 +303,9 @@ namespace MonoTests.System.Data.Xml
 			XmlDataDocument doc = new XmlDataDocument();
 
 			//Load the schema file.
-			doc.DataSet.ReadXmlSchema("Test/System.Xml/store.xsd"); 
+			doc.DataSet.ReadXmlSchema(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/store.xsd")); 
 			//Load the XML data.
-			doc.Load("Test/System.Xml/2books.xml");
+			doc.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/2books.xml"));
 			
 			//Update the price on the first book using the DataSet methods.
 			DataTable books = doc.DataSet.Tables["book"];
@@ -371,10 +373,10 @@ namespace MonoTests.System.Data.Xml
 		{
 			DataSet RegionDS = new DataSet ();
 			DataRow RegionRow;
-			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			RegionDS.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
 			Assert.AreEqual (1, RegionDS.Tables.Count, "Was read correct?");
 			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-			DataDoc.Load("Test/System.Xml/region.xml" );
+			DataDoc.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml") );
 
 			RegionRow = RegionDS.Tables[0].Rows[0];
 
@@ -509,8 +511,8 @@ namespace MonoTests.System.Data.Xml
 		{
 			XmlDataDocument DataDoc = new XmlDataDocument ();
 			DataSet dataset = DataDoc.DataSet;
-			dataset.ReadXmlSchema ("Test/System.Xml/region.xsd");
-			DataDoc.Load("Test/System.Xml/region.xml" );
+			dataset.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
+			DataDoc.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml") );
 
 			DataDoc.GetElementsByTagName ("Region") [0].RemoveAll ();
 
@@ -601,9 +603,9 @@ namespace MonoTests.System.Data.Xml
 		{
 			DataSet RegionDS = new DataSet ();
 
-			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			RegionDS.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
 			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-			DataDoc.Load ("Test/System.Xml/region.xml");
+			DataDoc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 			Assert.IsTrue (RegionDS.EnforceConstraints);
 			DataTable table = DataDoc.DataSet.Tables ["Region"];
 			DataRow newRow = table.NewRow ();
@@ -764,9 +766,9 @@ namespace MonoTests.System.Data.Xml
 		{
 			DataSet RegionDS = new DataSet ();
 
-			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			RegionDS.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
 			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-			DataDoc.Load("Test/System.Xml/region.xml" );
+			DataDoc.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml") );
 			try {
 				DataDoc.DocumentElement.AppendChild (DataDoc.DocumentElement.FirstChild);
 				Assert.Fail ("#G01");
@@ -819,9 +821,9 @@ namespace MonoTests.System.Data.Xml
 		{
 			DataSet RegionDS = new DataSet ();
 
-			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			RegionDS.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
 			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-			DataDoc.Load("Test/System.Xml/region.xml" );
+			DataDoc.Load(TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml") );
 			DataDoc.DataSet.EnforceConstraints = false;
 
 			XmlElement newNode = DataDoc.CreateElement ("Region");
@@ -873,8 +875,8 @@ namespace MonoTests.System.Data.Xml
 		public void GetElementFromRow ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-			doc.Load ("Test/System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 			DataTable table = doc.DataSet.Tables ["Region"];
 
 			XmlElement element = doc.GetElementFromRow (table.Rows [2]);
@@ -894,8 +896,8 @@ namespace MonoTests.System.Data.Xml
 		public void GetRowFromElement ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
-			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-			doc.Load ("Test/System.Xml/region.xml");
+			doc.DataSet.ReadXmlSchema (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xsd"));
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/System.Xml/region.xml"));
 			XmlElement root = doc.DocumentElement;
 
 			DataRow row = doc.GetRowFromElement((XmlElement)root.FirstChild);

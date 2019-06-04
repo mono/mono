@@ -7,7 +7,7 @@ namespace Mono.Debugger.Soft
 	/*
 	 * Represents a valuetype value in the debuggee
 	 */
-	public class StructMirror : Value {
+	public class StructMirror : Value, IInvokable {
 	
 		TypeMirror type;
 		Value[] fields;
@@ -84,11 +84,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		public Value EndInvokeMethod (IAsyncResult asyncResult) {
-			var result = ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
-			var outThis = result.OutThis as StructMirror;
-			if (outThis != null) {
-				SetFields (outThis.Fields);
-			}
+			var result = EndInvokeMethodWithResult (asyncResult);
 			return result.Result;
 		}
 
@@ -102,33 +98,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<Value> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (EndInvokeMethod (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
-			return tcs.Task;
+			return ObjectMirror.InvokeMethodAsync (vm, thread, method, this, arguments, options, EndInvokeMethod);
 		}
 
 		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<InvokeResult> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (ObjectMirror.EndInvokeMethodInternalWithResult (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
-			return tcs.Task;
+			return ObjectMirror.InvokeMethodAsync (vm, thread, method, this, arguments, options, EndInvokeMethodWithResult);
 		}
 	}
 }

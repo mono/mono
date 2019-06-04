@@ -42,11 +42,6 @@
 #   define GC_CONST
 #  endif
 
-# ifdef __cplusplus
-    extern "C" {
-# endif
-
-
 /* Define word and signed_word to be unsigned and signed types of the 	*/
 /* size as char * or void *.  There seems to be no way to do this	*/
 /* even semi-portably.  The following is probably no better/worse 	*/
@@ -64,6 +59,10 @@
   #include <stdint.h>
   typedef unsigned __int64 GC_word;
   typedef __int64 GC_signed_word;
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /* Public read-only variables */
@@ -501,7 +500,17 @@ GC_API GC_PTR GC_malloc_atomic_ignore_off_page GC_PROTO((size_t lb));
 #endif
 
 #if defined(__linux__) || defined(__GLIBC__)
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 # include <features.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 # if (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 1 || __GLIBC__ > 2) \
      && !defined(__ia64__)
 #   ifndef GC_HAVE_BUILTIN_BACKTRACE
@@ -835,6 +844,18 @@ typedef GC_PTR (*GC_fn_type) GC_PROTO((GC_PTR client_data));
 GC_API GC_PTR GC_call_with_alloc_lock
         	GC_PROTO((GC_fn_type fn, GC_PTR client_data));
 
+/*
+ * These are similar to GC_do_blocking () in upstream bdwgc. The design is
+ * simpler in that there is no distinction between active and inactive stack
+ * frames; instead, while a thread is in blocking state, it promises to not
+ * interact with the GC at all, and to not keep any pointers to GC memory
+ * around from before entering blocking state. Additionally, these can be
+ * called unbalanced (they simply set a flag internally).
+ */
+GC_API void GC_start_blocking GC_PROTO((void));
+
+GC_API void GC_end_blocking GC_PROTO((void));
+
 /* The following routines are primarily intended for use with a 	*/
 /* preprocessor which inserts calls to check C pointer arithmetic.	*/
 /* They indicate failure by invoking the corresponding _print_proc.	*/
@@ -953,7 +974,17 @@ GC_API void (*GC_is_visible_print_proc)
 
 #if !defined(GC_USE_LD_WRAP) && \
     (defined(GC_PTHREADS) || defined(GC_SOLARIS_THREADS) || defined(GC_DARWIN_THREADS) || defined(GC_MACOSX_THREADS))
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 # include "gc_pthread_redirects.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #endif
 
 # if defined(PCR) || defined(GC_SOLARIS_THREADS) || \
@@ -973,7 +1004,16 @@ extern void GC_thr_init(void);	/* Needed for Solaris/X86	*/
 #endif /* THREADS && !SRC_M3 */
 
 #if defined(GC_WIN32_THREADS) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 # include <windows.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 # ifdef GC_INSIDE_DLL
    BOOL WINAPI GC_DllMain(HINSTANCE inst, ULONG reason, LPVOID reserved);
@@ -1069,6 +1109,10 @@ extern void GC_thr_init(void);	/* Needed for Solaris/X86	*/
     GC_API void GC_win32_free_heap ();
 #endif
 
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 #if ( defined(_AMIGA) && !defined(GC_AMIGA_MAKINGLIB) )
   /* Allocation really goes through GC_amiga_allocwrapper_do */
 # include "gc_amiga_redirects.h"
@@ -1076,10 +1120,6 @@ extern void GC_thr_init(void);	/* Needed for Solaris/X86	*/
 
 #if defined(GC_REDIRECT_TO_LOCAL) && !defined(GC_LOCAL_ALLOC_H)
 #  include  "gc_local_alloc.h"
-#endif
-
-#ifdef __cplusplus
-    }  /* end of extern "C" */
 #endif
 
 #endif /* _GC_H */

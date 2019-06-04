@@ -48,11 +48,11 @@ namespace System {
 	public static partial class Environment {
 
 		/*
-		 * This is the version number of the corlib-runtime interface.
+		 * This is the version of the corlib-runtime interface.
 		 * It is defined in configure.ac.
 		 */
 #pragma warning disable 169
-		private const int mono_corlib_version = Consts.MonoCorlibVersion;
+		private const string mono_corlib_version = Consts.MonoCorlibVersion;
 #pragma warning restore 169
 
 		[ComVisible (true)]
@@ -151,10 +151,10 @@ namespace System {
 		public static string CurrentDirectory
 		{
 			get {
-				return Directory.GetCurrentDirectory ();
+				return Directory.InsecureGetCurrentDirectory ();
 			}
 			set {
-				Directory.SetCurrentDirectory (value);
+				Directory.InsecureSetCurrentDirectory  (value);
 			}
 		}
 		
@@ -214,7 +214,7 @@ namespace System {
 		//
 		static OperatingSystem os;
 
-		static extern PlatformID Platform {
+		static internal PlatformID Platform {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
@@ -563,10 +563,12 @@ namespace System {
 
 			string dir = null;
 
+#pragma warning disable 162
 			if (Environment.IsRunningOnWindows)
 				dir = GetWindowsFolderPath ((int) folder);
 			else
 				dir = UnixGetFolderPath (folder, option);
+#pragma warning restore 162
 
 #if MONO_FEATURE_CAS
 			if ((dir != null) && (dir.Length > 0) && SecurityManager.SecurityEnabled) {
@@ -904,7 +906,16 @@ namespace System {
 		}
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern void InternalSetEnvironmentVariable (string variable, string value);
+		internal unsafe static extern void InternalSetEnvironmentVariable (char *variable, int variable_length,
+									    char *value, int value_length);
+
+		internal unsafe static void InternalSetEnvironmentVariable (string variable, string value)
+		{
+			fixed (char *fixed_variable = variable)
+			fixed (char *fixed_value = value)
+			InternalSetEnvironmentVariable (fixed_variable, variable?.Length ?? 0,
+							fixed_value,    value?.Length ?? 0);
+		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)
@@ -948,7 +959,7 @@ namespace System {
 		}
 
 		// private methods
-#if (MONOTOUCH || MONODROID || XAMMAC)
+#if (MONOTOUCH || MONODROID || XAMMAC || WASM) && !MOBILE_DESKTOP_HOST
 		internal const bool IsRunningOnWindows = false;
 #else
 		internal static bool IsRunningOnWindows {
@@ -977,7 +988,7 @@ namespace System {
 		internal extern static string internalGetGacPath ();
 #endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string [] GetLogicalDrivesInternal ();
+		internal extern static string [] GetLogicalDrivesInternal ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetEnvironmentVariableNames ();

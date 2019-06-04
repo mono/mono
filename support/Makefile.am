@@ -3,13 +3,18 @@ SUPPORT=
 else
 SUPPORT=libMonoSupportW.la
 endif
+
+if BUILD_SUPPORT
 lib_LTLIBRARIES = 				\
 	libMonoPosixHelper.la			\
 	$(SUPPORT)
+endif
 
 AM_CPPFLAGS =					\
 	$(GLIB_CFLAGS)				\
 	-I$(top_srcdir)
+
+glib_libs = $(top_builddir)/mono/eglib/libeglib.la
 
 # Source code which helps implement the ANSI C standards, and thus *should* be
 # portable to any platform having a C compiler.
@@ -56,10 +61,10 @@ MPH_UNIX_SOURCE =				\
 
 if HOST_WIN32
 MPH_SOURCE = $(MPH_C_SOURCE)
-MPH_LIBS   = $(GLIB_LIBS) $(LIBICONV)
+MPH_LIBS   = $(glib_libs)
 else
 MPH_SOURCE = $(MPH_C_SOURCE) $(MPH_UNIX_SOURCE)
-MPH_LIBS   = $(GLIB_LIBS) $(LIBICONV)
+MPH_LIBS   = $(glib_libs)
 endif
 
 MINIZIP_SOURCE = \
@@ -94,12 +99,17 @@ ZLIB_SOURCES = \
 	zlib.h  	\
 	zutil.h
 
+if HAVE_STATIC_ZLIB
+Z_SOURCE = zlib-helper.c
+Z_LIBS = $(STATIC_ZLIB_PATH)
+else
 if HAVE_ZLIB
 Z_SOURCE = zlib-helper.c
 Z_LIBS= -lz
 else
 Z_SOURCE = zlib-helper.c $(ZLIB_SOURCES)
 Z_LIBS=
+endif
 endif
 
 libMonoPosixHelper_la_SOURCES =			\
@@ -122,7 +132,11 @@ libMonoSupportW_la_SOURCES =			\
 		supportw.h
 
 libMonoSupportW_la_LIBADD =			\
-		$(GLIB_LIBS) $(LIBICONV)
+		$(glib_libs)
+
+test-bundle-local:
+	mkdir -p $(TEST_BUNDLE_PATH)
+	cp -L .libs/libMonoPosixHelper$(libsuffix) $(TEST_BUNDLE_PATH)/
 
 # 
 # Use this target to refresh the values in map.[ch]

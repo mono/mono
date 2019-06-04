@@ -1,12 +1,3 @@
 ../../build/common/Consts.cs
-../../build/common/SR.cs
 Assembly/AssemblyInfo.cs
 Assembly/TypeForwarders.cs
-corefx/SR.cs
-
-../../../external/corefx/src/Common/src/System/Numerics/Hashing/HashHelpers.cs
-../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/ConstantHelper.cs
-../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/JitIntrinsicAttribute.cs
-../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/Register.cs
-../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/Vector_Operations.cs
-../../../external/corefx/src/System.Numerics.Vectors/src/System/Numerics/Vector.cs

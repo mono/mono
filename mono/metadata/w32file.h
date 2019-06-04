@@ -19,8 +19,7 @@
 
 #include <mono/metadata/object-internals.h>
 #include <mono/utils/mono-compiler.h>
-
-G_BEGIN_DECLS
+#include <mono/metadata/icalls.h>
 
 /* This is a copy of System.IO.FileAccess */
 typedef enum {
@@ -114,168 +113,147 @@ typedef struct _MonoFSAsyncResult {
 */
 /* System.IO.MonoIO */
 
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_CreateDirectory (MonoString *path, gint32 *error);
+#if !ENABLE_NETCORE
 
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_RemoveDirectory (MonoString *path, gint32 *error);
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_IO_MonoIO_CreateDirectory (const gunichar2 *path, gint32 *error);
 
-MonoArray *
-ves_icall_System_IO_MonoIO_GetFileSystemEntries (MonoString *path,
-						 MonoString *path_with_pattern,
-						 gint mask, gint attrs,
-						 gint32 *error);
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_IO_MonoIO_RemoveDirectory (const gunichar2 *path, gint32 *error);
 
-extern gpointer
-ves_icall_System_IO_MonoIO_FindFirstFile (MonoString *path_with_pattern,
-						MonoString **file_name,
-						gint32 *file_attr,
-						gint32 *ioerror);
-
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_FindNextFile (gpointer hnd,
-						MonoString **file_name,
-						gint32 *file_attr,
-						gint32 *ioerror);
-
-extern MonoBoolean
+ICALL_EXPORT
+MonoBoolean
 ves_icall_System_IO_MonoIO_FindCloseFile (gpointer hnd);
 
-extern MonoString *
-ves_icall_System_IO_MonoIO_FindFirst (MonoString *path,
-				      MonoString *path_with_pattern,
-				      gint32 *result_mask,
-				      gint32 *error,
-				      gpointer *handle);
-extern MonoString *
-ves_icall_System_IO_MonoIO_FindNext (gpointer handle, gint32 *result_mask, gint32 *error);
-
-extern int
-ves_icall_System_IO_MonoIO_FindClose (gpointer handle);
-
-extern MonoString *
-ves_icall_System_IO_MonoIO_GetCurrentDirectory (gint32 *error);
-
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_SetCurrentDirectory (MonoString *path,
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_IO_MonoIO_SetCurrentDirectory (const gunichar2 *path,
 						gint32 *error);
-
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_MoveFile (MonoString *path, MonoString *dest,
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_IO_MonoIO_MoveFile (const gunichar2 *path, const gunichar2 *dest,
 				     gint32 *error);
-
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_CopyFile (MonoString *path, MonoString *dest,
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_IO_MonoIO_CopyFile (const gunichar2 *path, const gunichar2 *dest,
 				     MonoBoolean overwrite, gint32 *error);
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_IO_MonoIO_DeleteFile (const gunichar2 *path, gint32 *error);
 
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_DeleteFile (MonoString *path, gint32 *error);
+ICALL_EXPORT
+gint32
+ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *error);
 
-extern gint32 
-ves_icall_System_IO_MonoIO_GetFileAttributes (MonoString *path, gint32 *error);
-
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_SetFileAttributes (MonoString *path, gint32 attrs,
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_IO_MonoIO_SetFileAttributes (const gunichar2 *path, gint32 attrs,
 					      gint32 *error);
-
-extern gint32
+ICALL_EXPORT
+gint32
 ves_icall_System_IO_MonoIO_GetFileType (gpointer handle, gint32 *error);
 
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_GetFileStat (MonoString *path, MonoIOStat *stat,
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_IO_MonoIO_GetFileStat (const gunichar2 *path, MonoIOStat *stat,
 					gint32 *error);
-
-extern gpointer 
-ves_icall_System_IO_MonoIO_Open (MonoString *filename, gint32 mode,
+ICALL_EXPORT
+gpointer
+ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 				 gint32 access_mode, gint32 share, gint32 options,
 				 gint32 *error);
-
-extern MonoBoolean
+ICALL_EXPORT
+MonoBoolean
 ves_icall_System_IO_MonoIO_Close (gpointer handle, gint32 *error);
 
-extern gint32 
-ves_icall_System_IO_MonoIO_Read (gpointer handle, MonoArray *dest,
-				 gint32 dest_offset, gint32 count,
-				 gint32 *error);
-
-extern gint32 
-ves_icall_System_IO_MonoIO_Write (gpointer handle, MonoArray *src,
-				  gint32 src_offset, gint32 count,
-				  gint32 *error);
-
-extern gint64 
+ICALL_EXPORT
+gint64
 ves_icall_System_IO_MonoIO_Seek (gpointer handle, gint64 offset, gint32 origin,
 				 gint32 *error);
-
-extern MonoBoolean
+ICALL_EXPORT
+MonoBoolean
 ves_icall_System_IO_MonoIO_Flush (gpointer handle, gint32 *error);
 
-extern gint64 
+ICALL_EXPORT
+gint64
 ves_icall_System_IO_MonoIO_GetLength (gpointer handle, gint32 *error);
 
-extern MonoBoolean
+ICALL_EXPORT
+MonoBoolean
 ves_icall_System_IO_MonoIO_SetLength (gpointer handle, gint64 length,
 				      gint32 *error);
-
-extern MonoBoolean
+ICALL_EXPORT
+MonoBoolean
 ves_icall_System_IO_MonoIO_SetFileTime (gpointer handle, gint64 creation_time,
 					gint64 last_access_time,
 					gint64 last_write_time, gint32 *error);
-
-extern gpointer 
+ICALL_EXPORT
+gpointer
 ves_icall_System_IO_MonoIO_get_ConsoleOutput (void);
 
-extern gpointer 
+ICALL_EXPORT
+gpointer
 ves_icall_System_IO_MonoIO_get_ConsoleInput (void);
 
-extern gpointer 
+ICALL_EXPORT
+gpointer
 ves_icall_System_IO_MonoIO_get_ConsoleError (void);
 
-extern MonoBoolean
+ICALL_EXPORT
+MonoBoolean
 ves_icall_System_IO_MonoIO_CreatePipe (gpointer *read_handle, gpointer *write_handle, gint32 *error);
 
-extern MonoBoolean
+ICALL_EXPORT
+MonoBoolean
 ves_icall_System_IO_MonoIO_DuplicateHandle (gpointer source_process_handle, gpointer source_handle,
 		gpointer target_process_handle, gpointer *target_handle, gint32 access, gint32 inherit, gint32 options, gint32 *error);
 
-extern gunichar2 
+ICALL_EXPORT
+gunichar2
 ves_icall_System_IO_MonoIO_get_VolumeSeparatorChar (void);
 
-extern gunichar2 
+ICALL_EXPORT
+gunichar2
 ves_icall_System_IO_MonoIO_get_DirectorySeparatorChar (void);
 
-extern gunichar2 
+ICALL_EXPORT
+gunichar2
 ves_icall_System_IO_MonoIO_get_AltDirectorySeparatorChar (void);
 
-extern gunichar2 
+ICALL_EXPORT
+gunichar2
 ves_icall_System_IO_MonoIO_get_PathSeparator (void);
 
-extern MonoArray *
-ves_icall_System_IO_MonoIO_get_InvalidPathChars (void);
-
-extern void ves_icall_System_IO_MonoIO_Lock (gpointer handle, gint64 position,
+ICALL_EXPORT
+void ves_icall_System_IO_MonoIO_Lock (gpointer handle, gint64 position,
 					     gint64 length, gint32 *error);
-extern void ves_icall_System_IO_MonoIO_Unlock (gpointer handle, gint64 position,
-					       gint64 length, gint32 *error);
 
-extern MonoBoolean
-ves_icall_System_IO_MonoIO_ReplaceFile (MonoString *sourceFileName, MonoString *destinationFileName,
-					MonoString *destinationBackupFileName, MonoBoolean ignoreMetadataErrors,
+ICALL_EXPORT
+void ves_icall_System_IO_MonoIO_Unlock (gpointer handle, gint64 position,
+					       gint64 length, gint32 *error);
+ICALL_EXPORT
+MonoBoolean
+ves_icall_System_IO_MonoIO_ReplaceFile (const gunichar2 *source_file_name, const gunichar2 *destination_file_name,
+					const gunichar2 *destination_backup_file_name, MonoBoolean ignore_metadata_errors,
 					gint32 *error);
+
+ICALL_EXPORT
+void
+ves_icall_System_IO_MonoIO_DumpHandles (void);
+
+#endif /* !ENABLE_NETCORE */
 
 #if defined (TARGET_IOS) || defined (TARGET_ANDROID)
 
-MONO_RT_EXTERNAL_ONLY
-extern gint64
+MONO_API MONO_RT_EXTERNAL_ONLY gint64
 mono_filesize_from_path (MonoString *path);
 
 extern gint64
 mono_filesize_from_fd (int fd);
 
 #endif
-
-void
-ves_icall_System_IO_MonoIO_DumpHandles (void);
 
 #if !defined(HOST_WIN32)
 
@@ -397,10 +375,10 @@ gboolean
 mono_w32file_delete (const gunichar2 *name);
 
 gboolean
-mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread);
+mono_w32file_read (gpointer handle, gpointer buffer, guint32 numbytes, guint32 *bytesread, gint32 *win32error);
 
 gboolean
-mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten);
+mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, guint32 *byteswritten, gint32 *win32error);
 
 gboolean
 mono_w32file_flush (gpointer handle);
@@ -412,16 +390,16 @@ guint32
 mono_w32file_seek (gpointer handle, gint32 movedistance, gint32 *highmovedistance, guint32 method);
 
 gboolean
-mono_w32file_move (gunichar2 *path, gunichar2 *dest, gint32 *error);
+mono_w32file_move (const gunichar2 *path, const gunichar2 *dest, gint32 *error);
 
 gboolean
-mono_w32file_copy (gunichar2 *path, gunichar2 *dest, gboolean overwrite, gint32 *error);
+mono_w32file_copy (const gunichar2 *path, const gunichar2 *dest, gboolean overwrite, gint32 *error);
 
 gboolean
 mono_w32file_lock (gpointer handle, gint64 position, gint64 length, gint32 *error);
 
 gboolean
-mono_w32file_replace (gunichar2 *destinationFileName, gunichar2 *sourceFileName, gunichar2 *destinationBackupFileName, guint32 flags, gint32 *error);
+mono_w32file_replace (const gunichar2 *destination_file_name, const gunichar2 *source_file_name, const gunichar2 *destination_backup_file_name, guint32 flags, gint32 *error);
 
 gboolean
 mono_w32file_unlock (gpointer handle, gint64 position, gint64 length, gint32 *error);
@@ -440,9 +418,6 @@ mono_w32file_get_file_size (gpointer handle, gint32 *error);
 
 gint
 mono_w32file_get_type (gpointer handle);
-
-gboolean
-mono_w32file_get_times (gpointer handle, FILETIME *create_time, FILETIME *access_time, FILETIME *write_time);
 
 gboolean
 mono_w32file_set_times (gpointer handle, const FILETIME *create_time, const FILETIME *access_time, const FILETIME *write_time);
@@ -486,15 +461,12 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 gint32
 mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf);
 
+#ifndef PLATFORM_NO_DRIVEINFO
 gboolean
 mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_bytes_avail, guint64 *total_number_of_bytes, guint64 *total_number_of_free_bytes);
-
-guint32
-mono_w32file_get_drive_type (const gunichar2 *root_path_name);
+#endif // PLATFORM_NO_DRIVEINFO
 
 gboolean
-mono_w32file_get_volume_information (const gunichar2 *path, gunichar2 *volumename, gint volumesize, gint *outserial, gint *maxcomp, gint *fsflags, gunichar2 *fsbuffer, gint fsbuffersize);
-
-G_END_DECLS
+mono_w32file_get_file_system_type (const gunichar2 *path, gunichar2 *fsbuffer, gint fsbuffersize);
 
 #endif /* _MONO_METADATA_W32FILE_H_ */

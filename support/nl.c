@@ -366,12 +366,6 @@ CloseNLSocket (gpointer sock)
 }
 #else
 int
-GetNLSocket (void)
-{
-	return -1;
-}
-
-int
 ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size)
 {
 	return 0;

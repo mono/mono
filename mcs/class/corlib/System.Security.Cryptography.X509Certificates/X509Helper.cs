@@ -32,121 +32,26 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 #if !MOBILE
 using System.Security.Permissions;
 #endif
-using MX = Mono.Security.X509;
+using Mono;
 
 namespace System.Security.Cryptography.X509Certificates
 {
 	static partial class X509Helper
 	{
-		static INativeCertificateHelper nativeHelper;
-
-		internal static void InstallNativeHelper (INativeCertificateHelper helper)
-		{
-			if (nativeHelper == null)
-				Interlocked.CompareExchange (ref nativeHelper, helper, null);
-		}
-
-#if MONO_FEATURE_APPLETLS
-		static bool ShouldUseAppleTls
-		{
-			get
-			{
-				if (!System.Environment.IsMacOS)
-					return false;
-				// MONO_TLS_PROVIDER values default or apple (not legacy or btls) and must be on MacOS
-				var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
-				return string.IsNullOrEmpty (variable) || variable == "default" || variable == "apple"; // On Platform.IsMacOS default is AppleTlsProvider
-			}
-		}
-#endif
-
-		public static X509CertificateImpl InitFromHandle (IntPtr handle)
-		{
-#if (MONO_FEATURE_APPLETLS && ONLY_APPLETLS) || MONO_FEATURE_APPLE_X509 // ONLY_APPLETLS should not support any other option
-			return InitFromHandleApple (handle);
-#else
-
-#if MONO_FEATURE_APPLETLS // If we support AppleTls, which is the default, and not overriding to legacy
-			if (ShouldUseAppleTls)
-				return InitFromHandleApple (handle);
-#endif
-#if !MOBILE
-			return InitFromHandleCore (handle);
-#elif !MONOTOUCH && !XAMMAC
-			throw new NotSupportedException ();
-#endif
-#endif
-		}
-
-		static X509CertificateImpl Import (byte[] rawData)
-		{
-#if (MONO_FEATURE_APPLETLS && ONLY_APPLETLS) || MONO_FEATURE_APPLE_X509 // ONLY_APPLETLS should not support any other option
-			return ImportApple (rawData);
-#else
-#if MONO_FEATURE_APPLETLS
-			if (ShouldUseAppleTls)
-				return ImportApple (rawData);
-#endif
-			return ImportCore (rawData);
-#endif
-		}
-
-#if !MOBILE
-		// typedef struct _CERT_CONTEXT {
-		//	DWORD                   dwCertEncodingType;
-		//	BYTE                    *pbCertEncoded;
-		//	DWORD                   cbCertEncoded;
-		//	PCERT_INFO              pCertInfo;
-		//	HCERTSTORE              hCertStore;
-		// } CERT_CONTEXT, *PCERT_CONTEXT;
-		// typedef const CERT_CONTEXT *PCCERT_CONTEXT;
-		[StructLayout (LayoutKind.Sequential)]
-		internal struct CertificateContext {
-			public UInt32 dwCertEncodingType;
-			public IntPtr pbCertEncoded;
-			public UInt32 cbCertEncoded;
-			public IntPtr pCertInfo;
-			public IntPtr hCertStore;
-		}
-		// NOTE: We only define the CryptoAPI structure (from WINCRYPT.H)
-		// so we don't create any dependencies on Windows DLL in corlib
-
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-		public static X509CertificateImpl InitFromHandleCore (IntPtr handle)
-		{
-			// both Marshal.PtrToStructure and Marshal.Copy use LinkDemand (so they will always success from here)
-			CertificateContext cc = (CertificateContext) Marshal.PtrToStructure (handle, typeof (CertificateContext));
-			byte[] data = new byte [cc.cbCertEncoded];
-			Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
-			var x509 = new MX.X509Certificate (data);
-			return new X509CertificateImplMono (x509);
-		}
-#endif
+		static ISystemCertificateProvider CertificateProvider => DependencyInjector.SystemProvider.CertificateProvider;
 
 		public static X509CertificateImpl InitFromCertificate (X509Certificate cert)
 		{
-			if (nativeHelper != null)
-				return nativeHelper.Import (cert);
-
-			return InitFromCertificate (cert.Impl);
+			return CertificateProvider.Import (cert, CertificateImportFlags.None);
 		}
 
 		public static X509CertificateImpl InitFromCertificate (X509CertificateImpl impl)
 		{
-			ThrowIfContextInvalid (impl);
-			var copy = impl.Clone ();
-			if (copy != null)
-				return copy;
-
-			var data = impl.GetRawCertData ();
-			if (data == null)
-				return null;
-
-			var x509 = new MX.X509Certificate (data);
-			return new X509CertificateImplMono (x509);
+			return impl?.Clone ();
 		}
 
 		public static bool IsValid (X509CertificateImpl impl)
@@ -165,95 +70,17 @@ namespace System.Security.Cryptography.X509Certificates
 			return new CryptographicException (Locale.GetText ("Certificate instance is empty."));
 		}
 
-		internal static MX.X509Certificate ImportPkcs12 (byte[] rawData, string password)
+		public static X509CertificateImpl Import (byte[] rawData)
 		{
-			var pfx = (password == null) ? new MX.PKCS12 (rawData) : new MX.PKCS12 (rawData, password);
-			if (pfx.Certificates.Count == 0) {
-				// no certificate was found
-				return null;
-			} else if (pfx.Keys.Count == 0) {
-				// no key were found - pick the first certificate
-				return pfx.Certificates [0];
-			} else {
-				// find the certificate that match the first key
-				var keypair = (pfx.Keys [0] as AsymmetricAlgorithm);
-				string pubkey = keypair.ToXmlString (false);
-				foreach (var c in pfx.Certificates) {
-					if ((c.RSA != null) && (pubkey == c.RSA.ToXmlString (false)))
-						return c;
-					if ((c.DSA != null) && (pubkey == c.DSA.ToXmlString (false)))
-						return c;
-				}
-				return pfx.Certificates [0]; // no match, pick first certificate without keys
-			}
+			return CertificateProvider.Import (rawData);
 		}
 
-		static byte[] PEM (string type, byte[] data)
+		public static X509CertificateImpl Import (byte[] rawData, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
 		{
-			string pem = Encoding.ASCII.GetString (data);
-			string header = String.Format ("-----BEGIN {0}-----", type);
-			string footer = String.Format ("-----END {0}-----", type);
-			int start = pem.IndexOf (header) + header.Length;
-			int end = pem.IndexOf (footer, start);
-			string base64 = pem.Substring (start, (end - start));
-			return Convert.FromBase64String (base64);
+			return CertificateProvider.Import (rawData, password, keyStorageFlags);
 		}
 
-		static byte[] ConvertData (byte[] data)
-		{
-			if (data == null || data.Length == 0)
-				return data;
-
-			// does it looks like PEM ?
-			if (data [0] != 0x30) {
-				try {
-					return PEM ("CERTIFICATE", data);
-				} catch {
-					// let the implementation take care of it.
-				}
-			}
-			return data;
-		}
-
-		static X509CertificateImpl ImportCore (byte[] rawData)
-		{
-			MX.X509Certificate x509;
-			try {
-				x509 = new MX.X509Certificate (rawData);
-			} catch (Exception e) {
-				try {
-					x509 = ImportPkcs12 (rawData, null);
-				} catch {
-					string msg = Locale.GetText ("Unable to decode certificate.");
-					// inner exception is the original (not second) exception
-					throw new CryptographicException (msg, e);
-				}
-			}
-
-			return new X509CertificateImplMono (x509);
-		}
-
-		public static X509CertificateImpl Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
-		{
-			if (password == null) {
-				rawData = ConvertData (rawData);
-				return Import (rawData);
-			}
-
-			MX.X509Certificate x509;
-			// try PKCS#12
-			try {
-				x509 = ImportPkcs12 (rawData, password);
-			} catch {
-				// it's possible to supply a (unrequired/unusued) password
-				// fix bug #79028
-				x509 = new MX.X509Certificate (rawData);
-			}
-
-			return new X509CertificateImplMono (x509);
-		}
-
-		public static byte[] Export (X509CertificateImpl impl, X509ContentType contentType, byte[] password)
+		public static byte[] Export (X509CertificateImpl impl, X509ContentType contentType, SafePasswordHandle password)
 		{
 			ThrowIfContextInvalid (impl);
 			return impl.Export (contentType, password);
@@ -268,8 +95,8 @@ namespace System.Security.Cryptography.X509Certificates
 			if (first.Equals (second, out result))
 				return result;
 
-			var firstRaw = first.GetRawCertData ();
-			var secondRaw = second.GetRawCertData ();
+			var firstRaw = first.RawData;
+			var secondRaw = second.RawData;
 
 			if (firstRaw == null)
 				return secondRaw == null;

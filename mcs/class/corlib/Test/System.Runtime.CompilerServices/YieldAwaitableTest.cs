@@ -124,6 +124,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void OnCompleted_2 ()
 		{
 			TaskScheduler scheduler = null;
@@ -164,6 +165,7 @@ namespace MonoTests.System.Runtime.CompilerServices
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void OnCompleted_4 ()
 		{
 			SynchronizationContext context_ran = null;

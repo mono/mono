@@ -1,5 +1,3 @@
-../../System.Web.DynamicData/Test/Common/AssertExtensions.cs
-
 ./IgnorePropertiesAttributeTests.cs
 ./QueryInterceptorAttributeTests.cs
 ./DataServiceTests.cs

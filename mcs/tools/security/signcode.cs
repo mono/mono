@@ -33,12 +33,12 @@ namespace Mono.Tools {
 		static private void Help () 
 		{
 			Console.WriteLine ("Usage: signcode [options] filename{0}", Environment.NewLine);
-			Console.WriteLine ("\t-spc spc\tSoftware Publisher Certificate file");
-			Console.WriteLine ("\t-v pvk\t\tPrivate Key file");
-			Console.WriteLine ("\t-a sha1 | md5\tHash Algorithm (default: SHA1)");
-			Console.WriteLine ("\t-$ indivisual | commercial\tSignature type");
-			Console.WriteLine ("\t-n description\tDescription for the signed file");
-			Console.WriteLine ("\t-i url\tURL for the signed file");
+			Console.WriteLine ("\t-spc spc\t\t\t\t\tSoftware Publisher Certificate file");
+			Console.WriteLine ("\t-v pvk\t\t\t\t\t\tPrivate Key file");
+			Console.WriteLine ("\t-a sha1 | md5 | sha2[56] | sha384 | sha512\tHash Algorithm (default: SHA1)");
+			Console.WriteLine ("\t-$ individual | commercial\t\tSignature type");
+			Console.WriteLine ("\t-n description\t\t\t\t\tDescription for the signed file");
+			Console.WriteLine ("\t-i url\t\t\t\t\t\tURL for the signed file");
 			Console.WriteLine ("Timestamp options");
 			Console.WriteLine ("\t-t url\tTimestamp service http URL");
 			Console.WriteLine ("\t-tr #\tNumber of retries for timestamp");

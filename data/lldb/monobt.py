@@ -11,16 +11,16 @@ def print_frames(thread, num_frames, current_thread):
         pc = str(frame.addr)
         var = frame
         function_name = frame.GetFunctionName()
-        if function_name == "ves_exec_method_with_context":
+        if function_name == "interp_exec_method_full":
             try:
-                s = 'frame->runtime_method->method'
+                s = 'frame->imethod->method'
                 klassname = frame.EvaluateExpression('(char*) ' + s + '->klass->name').summary[1:-1]
                 methodname = frame.EvaluateExpression('(char*) ' + s + '->name').summary[1:-1]
 
                 ipoffset = frame.EvaluateExpression('ip').GetValueAsUnsigned()
                 insn = ''
                 if ipoffset != 0:
-                    ipoffset -= frame.EvaluateExpression('rtm->code').GetValueAsUnsigned()
+                    ipoffset -= frame.EvaluateExpression('imethod->code').GetValueAsUnsigned()
                     insn = "\"" + frame.EvaluateExpression('mono_interp_opname [*ip]').summary[1:-1] + "\""
                 var = '%s::%s @ %d %s || %s' % (klassname, methodname, ipoffset, insn, frame)
             except Exception as e:

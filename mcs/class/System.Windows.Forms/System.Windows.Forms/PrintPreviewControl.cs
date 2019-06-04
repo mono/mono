@@ -62,8 +62,8 @@ namespace System.Windows.Forms {
 		public PrintPreviewControl() {
 			autozoom = true;
 			columns = 1;
-			rows = 0;
-			startPage = 1;
+			rows = 1;
+			startPage = 0;
 
 			this.BackColor = SystemColors.AppWorkspace;
 
@@ -127,15 +127,16 @@ namespace System.Windows.Forms {
 		}
 		[DefaultValue(0)]
 		public int StartPage {
-			get { return startPage; }
-			set {
-				if (value < 1)
-					return;
-				if (document != null && value + (Rows + 1) * Columns > page_infos.Length + 1) {
-					value = page_infos.Length + 1 - (Rows + 1) * Columns;
-					if (value < 1)
-						value = 1;
+			get {
+				int value = startPage;
+				if (page_infos != null) {
+					value = Math.Min (value, page_infos.Length - (rows * columns));
 				}
+				return Math.Max (value, 0);
+			}
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("StartPage");
 
 				int start = StartPage;
 				startPage = value;
@@ -195,14 +196,17 @@ namespace System.Windows.Forms {
 
 					if (page_infos.Length > 0) {
 						image_size = ThemeEngine.Current.PrintPreviewControlGetPageSize (this);
-						if (image_size.Width >= 0 && image_size.Width < page_infos[0].Image.Width
-						    && image_size.Height >= 0 && image_size.Height < page_infos[0].Image.Height) {
+						// Only resize the pages if they are stored as bitmaps. The print controller
+						// could internally use scalable metafiles and they should be preserved to
+						// allow loss-less resizing.
+						for (int i = 0; i < page_infos.Length; i ++) {
+							if (page_infos[i].Image is Bitmap
+								&& image_size.Width >= 0 && image_size.Width < page_infos[i].Image.Width
+						    	&& image_size.Height >= 0 && image_size.Height < page_infos[i].Image.Height) {
 
-							for (int i = 0; i < page_infos.Length; i ++) {
 								image_cache[i] = new Bitmap (image_size.Width, image_size.Height);
-								Graphics g = Graphics.FromImage (image_cache[i]);
-								g.DrawImage (page_infos[i].Image, new Rectangle (new Point (0, 0), image_size), 0, 0, page_infos[i].Image.Width, page_infos[i].Image.Height, GraphicsUnit.Pixel);
-								g.Dispose ();
+								using (Graphics g = Graphics.FromImage (image_cache[i]))
+									g.DrawImage (page_infos[i].Image, new Rectangle (new Point (0, 0), image_size), 0, 0, page_infos[i].Image.Width, page_infos[i].Image.Height, GraphicsUnit.Pixel);
 							}
 						}
 					}

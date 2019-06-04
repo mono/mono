@@ -27,8 +27,8 @@
 #include "config.h"
 #include <glib.h>
 #include "mini.h"
+#include "mini-runtime.h"
 
-#if !defined(DISABLE_AOT) && !defined(DISABLE_JIT) && USE_BIN_WRITER
 #include <sys/types.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -50,6 +50,9 @@
 #include <sys/stat.h>
 
 #include "image-writer.h"
+
+#if !defined(DISABLE_AOT) && !defined(DISABLE_JIT) && USE_BIN_WRITER
+
 #include "dwarfwriter.h"
 
 #include "mono/utils/mono-compiler.h"
@@ -76,10 +79,13 @@ typedef enum
   JIT_UNREGISTER_FN
 } jit_actions_t;
 
+struct jit_code_entry;
+typedef struct jit_code_entry jit_code_entry;
+
 struct jit_code_entry
 {
-	struct jit_code_entry *next_entry;
-	struct jit_code_entry *prev_entry;
+	jit_code_entry *next_entry;
+	jit_code_entry *prev_entry;
 	const char *symfile_addr;
 	/*
 	 * The gdb code in gdb/jit.c which reads this structure ignores alignment
@@ -88,15 +94,17 @@ struct jit_code_entry
 	guint32 symfile_size1, symfile_size2;
 };
 
-struct jit_descriptor
+typedef struct jit_descriptor
 {
-  guint32 version;
-  /* This type should be jit_actions_t, but we use guint32
-     to be explicit about the bitwidth.  */
-  guint32 action_flag;
-  struct jit_code_entry *relevant_entry;
-  struct jit_code_entry *first_entry;
-};
+	guint32 version;
+	/* This type should be jit_actions_t, but we use guint32
+	   to be explicit about the bitwidth.  */
+	guint32 action_flag;
+	jit_code_entry *relevant_entry;
+	jit_code_entry *first_entry;
+} jit_descriptor;
+
+G_BEGIN_DECLS
 
 /* GDB puts a breakpoint in this function.  */
 void MONO_NEVER_INLINE __jit_debug_register_code(void);
@@ -105,7 +113,7 @@ void MONO_NEVER_INLINE __jit_debug_register_code(void);
 
 /* LLVM already defines these */
 
-extern struct jit_descriptor __jit_debug_descriptor;
+extern jit_descriptor __jit_debug_descriptor;
 
 #else
 
@@ -118,9 +126,11 @@ void MONO_NEVER_INLINE __jit_debug_register_code(void) {
 
 /* Make sure to specify the version statically, because the
    debugger may check the version before we can set it.  */
-struct jit_descriptor __jit_debug_descriptor = { 1, 0, 0, 0 };
+jit_descriptor __jit_debug_descriptor = { 1, 0, 0, 0 };
 
 #endif
+
+G_END_DECLS
 
 static MonoImageWriter *xdebug_w;
 static MonoDwarfWriter *xdebug_writer;
@@ -199,7 +209,7 @@ xdebug_end_emit (MonoImageWriter *w, MonoDwarfWriter *dw, MonoMethod *method)
 {
 	guint8 *img;
 	guint32 img_size;
-	struct jit_code_entry *entry;
+	jit_code_entry *entry;
 	guint64 *psize;
 
 	il_file_line_index = mono_dwarf_writer_get_il_file_line_index (dw);
@@ -229,7 +239,7 @@ xdebug_end_emit (MonoImageWriter *w, MonoDwarfWriter *dw, MonoMethod *method)
 
 	/* Register the image with GDB */
 
-	entry = g_malloc0 (sizeof (struct jit_code_entry));
+	entry = g_malloc0 (sizeof (jit_code_entry));
 
 	entry->symfile_addr = (const char*)img;
 	psize = (guint64*)&entry->symfile_size1;
@@ -290,9 +300,9 @@ mono_save_xdebug_info (MonoCompile *cfg)
 
 		xdebug_method_count ++;
 
-		dmji = mono_debug_find_method (jinfo_get_method (cfg->jit_info), mono_domain_get ());;
+		dmji = mono_debug_find_method (jinfo_get_method (cfg->jit_info), mono_domain_get ());
 		mono_dwarf_writer_emit_method (xdebug_writer, cfg, jinfo_get_method (cfg->jit_info), NULL, NULL, NULL,
-									   cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
+									   (guint8*)cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
 		mono_debug_free_method_jit_info (dmji);
 
 #if 0
@@ -322,7 +332,7 @@ mono_save_xdebug_info (MonoCompile *cfg)
 		mono_loader_lock ();
 		dmji = mono_debug_find_method (jinfo_get_method (cfg->jit_info), mono_domain_get ());
 		mono_dwarf_writer_emit_method (xdebug_writer, cfg, jinfo_get_method (cfg->jit_info), NULL, NULL, NULL,
-									   cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
+									   (guint8*)cfg->jit_info->code_start, cfg->jit_info->code_size, cfg->args, cfg->locals, cfg->unwind_ops, dmji);
 		mono_debug_free_method_jit_info (dmji);
 		fflush (xdebug_fp);
 		mono_loader_unlock ();
@@ -339,6 +349,10 @@ mono_save_xdebug_info (MonoCompile *cfg)
 void
 mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
 {
+	const char *info_name = info->name;
+	if (info_name == NULL)
+		info_name = "";
+
 	if (use_gdb_interface) {
 		MonoImageWriter *w;
 		MonoDwarfWriter *dw;
@@ -348,7 +362,7 @@ mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
 
 		xdebug_begin_emit (&w, &dw);
 
-		mono_dwarf_writer_emit_trampoline (dw, info->name, NULL, NULL, info->code, info->code_size, info->unwind_ops);
+		mono_dwarf_writer_emit_trampoline (dw, info_name, NULL, NULL, info->code, info->code_size, info->unwind_ops);
 
 		xdebug_end_emit (w, dw, NULL);
 		
@@ -358,7 +372,7 @@ mono_save_trampoline_xdebug_info (MonoTrampInfo *info)
 			return;
 
 		mono_loader_lock_if_inited ();
-		mono_dwarf_writer_emit_trampoline (xdebug_writer, info->name, NULL, NULL, info->code, info->code_size, info->unwind_ops);
+		mono_dwarf_writer_emit_trampoline (xdebug_writer, info_name, NULL, NULL, info->code, info->code_size, info->unwind_ops);
 		fflush (xdebug_fp);
 		mono_loader_unlock_if_inited ();
 	}

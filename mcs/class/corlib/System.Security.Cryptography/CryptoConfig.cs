@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if FEATURE_CRYPTO_CONFIGURABLE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -50,8 +50,6 @@ namespace System.Security.Cryptography {
 [ComVisible (true)]
 public partial class CryptoConfig {
 
-	static private object lockObject;
-	static private Dictionary<string,Type> algorithms;
 	static private Dictionary<string,string> unresolved_algorithms;
 	static private Dictionary<string,string> oids;
 
@@ -204,6 +202,7 @@ public partial class CryptoConfig {
 	private const string urlSHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
 	private const string urlSHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
 	private const string urlSHA512 = "http://www.w3.org/2001/04/xmlenc#sha512";
+	private const string urlHMACSHA1 = "http://www.w3.org/2000/09/xmldsig#hmac-sha1";
 	private const string urlHMACSHA256 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256";
 	private const string urlHMACSHA384 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha384";
 	private const string urlHMACSHA512 = "http://www.w3.org/2001/04/xmldsig-more#hmac-sha512";
@@ -280,12 +279,6 @@ public partial class CryptoConfig {
 	// SHA512 provider
 	const string nameSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider";
 	const string defaultSHA512Provider = "System.Security.Cryptography.SHA512CryptoServiceProvider" + system_core_assembly;
-	static CryptoConfig () 
-	{
-		// lock(this) is bad
-		// http://msdn.microsoft.com/library/en-us/dnaskdr/html/askgui06032003.asp?frame=true
-		lockObject = new object ();
-	}
 
 	private static void Initialize () 
 	{
@@ -384,6 +377,7 @@ public partial class CryptoConfig {
 		algorithms.Add (urlSHA256, defaultSHA256);
 		algorithms.Add (urlSHA384, defaultSHA384);
 		algorithms.Add (urlSHA512, defaultSHA512);
+		algorithms.Add (urlHMACSHA1, defaultHMAC);
 		algorithms.Add (urlHMACSHA256, defaultHMACSHA256);
 		algorithms.Add (urlHMACSHA384, defaultHMACSHA384);
 		algorithms.Add (urlHMACSHA512, defaultHMACSHA512);
@@ -416,7 +410,7 @@ public partial class CryptoConfig {
 		unresolved_algorithms.Add (nameECDsa_2, defaultECDsa);
 		unresolved_algorithms.Add (nameECDsa_3, defaultECDsa);
 
-#if MONODROID
+#if MONODROID || XAMARIN_MODERN 
 		algorithms.Add (nameSHA1Cng, defaultSHA1);
 		algorithms.Add (nameSHA256Cng, defaultSHA256);
 		algorithms.Add (nameSHA256Provider, defaultSHA256);
@@ -539,11 +533,6 @@ public partial class CryptoConfig {
 		}
 	}
 
-	internal static string MapNameToOID (string name, OidGroup oidGroup)
-	{
-		return MapNameToOID (name);
-	}
-
 	public static string MapNameToOID (string name)
 	{
 		if (name == null)
@@ -558,20 +547,6 @@ public partial class CryptoConfig {
 		string result = null;
 		oids.TryGetValue (name, out result);
 		return result;
-	}
-
-	public static void AddAlgorithm (Type algorithm, params string[] names)
-	{
-		if (algorithm == null)
-				throw new ArgumentNullException ("algorithm");
-		if (names  == null)
-				throw new ArgumentNullException ("names");
-			
-		foreach (string name in names) {
-				if (String.IsNullOrWhiteSpace (name))
-					throw new ArithmeticException ("names");
-				algorithms [name] = algorithm;
-		}
 	}
 
 	public static void AddOID (string oid, params string[] names)

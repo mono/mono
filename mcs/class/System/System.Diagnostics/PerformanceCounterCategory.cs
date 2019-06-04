@@ -41,30 +41,82 @@ namespace System.Diagnostics
 		private PerformanceCounterCategoryType type = PerformanceCounterCategoryType.Unknown;
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern bool CategoryDelete (string name);
+		private static unsafe extern bool CategoryDelete_icall (char* name, int name_length);
+
+		static unsafe bool CategoryDelete (string name)
+		{
+			fixed (char* fixed_name = name)
+				return CategoryDelete_icall (fixed_name, name?.Length ?? 0);
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string CategoryHelpInternal (string category, string machine);
+		private unsafe static extern string CategoryHelp_icall (char* category, int category_length);
+
+		static unsafe string CategoryHelpInternal (string category)
+		{
+			fixed (char* fixed_category = category)
+				return CategoryHelp_icall (fixed_category, category?.Length ?? 0);
+		}
 
 		/* this icall allows a null counter and it will just search for the category */
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern bool CounterCategoryExists (string counter, string category, string machine);
+		private static unsafe extern bool CounterCategoryExists_icall (char* counter, int counter_length,
+			char* category, int category_length);
+
+		static unsafe bool CounterCategoryExists (string counter, string category)
+		{
+			fixed (char* fixed_counter = counter,
+				     fixed_category = category)
+				return CounterCategoryExists_icall (fixed_counter, counter?.Length ?? 0,
+					fixed_category, category?.Length ?? 0);
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern bool Create (string categoryName, string categoryHelp,
+		static private unsafe extern bool Create_icall (char* categoryName, int categoryName_length,
+			char* categoryHelp, int categoryHelp_length,
 			PerformanceCounterCategoryType categoryType, CounterCreationData[] items);
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern int InstanceExistsInternal (string instance, string category, string machine);
+		static unsafe bool Create (string categoryName, string categoryHelp,
+			PerformanceCounterCategoryType categoryType, CounterCreationData[] items)
+		{
+			fixed (char* fixed_categoryName = categoryName,
+				     fixed_categoryHelp = categoryHelp)
+				return Create_icall (fixed_categoryName, categoryName?.Length ?? 0,
+					fixed_categoryHelp, categoryHelp?.Length ?? 0, categoryType, items);
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string[] GetCategoryNames (string machine);
+		static private unsafe extern bool InstanceExistsInternal_icall (char* instance, int instance_length,
+			char* category, int category_length);
+
+		static unsafe bool InstanceExistsInternal (string instance, string category)
+		{
+			fixed (char* fixed_instance = instance,
+				     fixed_category = category)
+				return InstanceExistsInternal_icall (fixed_instance, instance?.Length ?? 0,
+					fixed_category, category?.Length ?? 0);
+		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string[] GetCounterNames (string category, string machine);
+		static extern string[] GetCategoryNames ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string[] GetInstanceNames (string category, string machine);
+		static private unsafe extern string[] GetCounterNames_icall (char* category, int category_length);
+
+		static unsafe string[] GetCounterNames (string category)
+		{
+			fixed (char* fixed_category = category)
+				return GetCounterNames_icall (fixed_category, category?.Length ?? 0);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static private unsafe extern string[] GetInstanceNames_icall (char* category, int category_length);
+
+		static unsafe string[] GetInstanceNames (string category)
+		{
+			fixed (char* fixed_category = category)
+				return GetInstanceNames_icall (fixed_category, category?.Length ?? 0);
+		}
 
 		static void CheckCategory (string categoryName) {
 			if (categoryName == null)
@@ -95,10 +147,17 @@ namespace System.Diagnostics
 			this.machineName = machineName;
 		}
 
+		static bool IsValidMachine (string machine)
+		{ // no support for counters on other machines
+			return machine == ".";
+		}
+
 		// may throw InvalidOperationException, Win32Exception
 		public string CategoryHelp {
 			get {
-				string res = CategoryHelpInternal (categoryName, machineName);
+				string res = null;
+				if (IsValidMachine (machineName))
+					res = CategoryHelpInternal (categoryName);
 				if (res != null)
 					return res;
 				throw new InvalidOperationException ();
@@ -154,7 +213,8 @@ namespace System.Diagnostics
 			CheckCategory (categoryName);
 			if (machineName == null)
 				throw new ArgumentNullException ("machineName");
-			return CounterCategoryExists (counterName, categoryName, machineName);
+			return IsValidMachine (machineName)
+				&& CounterCategoryExists (counterName, categoryName);
 		}
 
 		[Obsolete ("Use another overload that uses PerformanceCounterCategoryType instead")]
@@ -227,7 +287,8 @@ namespace System.Diagnostics
 		public static bool Exists (string categoryName, string machineName)
 		{
 			CheckCategory (categoryName);
-			return CounterCategoryExists (null, categoryName, machineName);
+			return IsValidMachine (machineName) &&
+				CounterCategoryExists (null, categoryName);
 		}
 
 		public static PerformanceCounterCategory[] GetCategories ()
@@ -239,7 +300,11 @@ namespace System.Diagnostics
 		{
 			if (machineName == null)
 				throw new ArgumentNullException ("machineName");
-			string[] catnames = GetCategoryNames (machineName);
+
+			if (!IsValidMachine (machineName))
+				return Array.Empty<PerformanceCounterCategory>();
+
+			string[] catnames = GetCategoryNames ();
 			PerformanceCounterCategory[] cats = new PerformanceCounterCategory [catnames.Length];
 			for (int i = 0; i < catnames.Length; ++i)
 				cats [i] = new PerformanceCounterCategory (catnames [i], machineName);
@@ -253,7 +318,9 @@ namespace System.Diagnostics
 
 		public PerformanceCounter[] GetCounters (string instanceName)
 		{
-			string[] countnames = GetCounterNames (categoryName, machineName);
+			if (!IsValidMachine (machineName))
+				return Array.Empty<PerformanceCounter>();
+			string[] countnames = GetCounterNames (categoryName);
 			PerformanceCounter[] counters = new PerformanceCounter [countnames.Length];
 			for (int i = 0; i < countnames.Length; ++i) {
 				counters [i] = new PerformanceCounter (categoryName, countnames [i], instanceName, machineName);
@@ -263,7 +330,9 @@ namespace System.Diagnostics
 
 		public string[] GetInstanceNames ()
 		{
-			return GetInstanceNames (categoryName, machineName);
+			if (!IsValidMachine (machineName))
+				return Array.Empty<string>();
+			return GetInstanceNames (categoryName);
 		}
 
 		public bool InstanceExists (string instanceName)
@@ -283,12 +352,12 @@ namespace System.Diagnostics
 			CheckCategory (categoryName);
 			if (machineName == null)
 				throw new ArgumentNullException ("machineName");
-			int val = InstanceExistsInternal (instanceName, categoryName, machineName);
-			if (val == 0)
-				return false;
-			if (val == 1)
-				return true;
-			throw new InvalidOperationException ();
+
+			//?FIXME: machine appears to be wrong
+			//if (!IsValidMachine (machineName))
+			//return false;
+
+			return InstanceExistsInternal (instanceName, categoryName);
 		}
 
 		[MonoTODO]

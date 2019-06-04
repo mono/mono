@@ -110,7 +110,7 @@ namespace MonoTests.System.XmlSerialization
 			try {
 				Serialize (10, ao);
 				Assert.Fail ("Should be invalid.");
-			} catch (InvalidOperationException ex) {
+			} catch (InvalidOperationException) {
 			}
 		}
 		

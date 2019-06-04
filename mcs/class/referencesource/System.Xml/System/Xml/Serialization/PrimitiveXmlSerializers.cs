@@ -154,6 +154,18 @@ namespace System.Xml.Serialization {
             WriteElementStringRaw(@"guid", @"", System.Xml.XmlConvert.ToString((System.Guid)((System.Guid)o)));
         }
 
+        internal void Write_TimeSpan(object o)
+        {
+            WriteStartDocument();
+            if (o == null)
+            {
+                WriteEmptyTag(@"TimeSpan", @"");
+                return;
+            }
+            TimeSpan timeSpan = (TimeSpan)o;
+            WriteElementStringRaw(@"TimeSpan", @"", System.Xml.XmlConvert.ToString(timeSpan));
+        }
+
         internal void Write_char(object o) {
             WriteStartDocument();
             if (o == null) {
@@ -489,6 +501,38 @@ namespace System.Xml.Serialization {
             return (object)o;
         }
 
+        internal object Read_TimeSpan()
+        {
+            object o = null;
+            Reader.MoveToContent();
+            if (Reader.NodeType == System.Xml.XmlNodeType.Element)
+            {
+                if (((object)Reader.LocalName == (object)id19_TimeSpan && (object)Reader.NamespaceURI == (object)id2_Item))
+                {
+                    if (Reader.IsEmptyElement)
+                    {
+                        Reader.Skip();
+                        //For backward compatibiity 
+                        //When using old serializer, the serialized TimeSpan value is empty string
+                        o = default(TimeSpan);
+                    }
+                    else
+                    {
+                        o = System.Xml.XmlConvert.ToTimeSpan(Reader.ReadElementString());
+                    }
+                }
+                else
+                {
+                    throw CreateUnknownNodeException();
+                }
+            }
+            else
+            {
+                UnknownNode(null);
+            }
+            return (object)o;
+        }
+
         internal object Read_char() {
             object o = null;
             Reader.MoveToContent();
@@ -542,6 +586,7 @@ namespace System.Xml.Serialization {
         System.String id9_decimal;
         System.String id8_double;
         System.String id17_guid;
+        System.String id19_TimeSpan;
         System.String id2_Item;
         System.String id13_unsignedShort;
         System.String id18_char;
@@ -563,6 +608,10 @@ namespace System.Xml.Serialization {
             id9_decimal = Reader.NameTable.Add(@"decimal");
             id8_double = Reader.NameTable.Add(@"double");
             id17_guid = Reader.NameTable.Add(@"guid");
+            if (LocalAppContextSwitches.EnableTimeSpanSerialization)
+            {
+                id19_TimeSpan = Reader.NameTable.Add(@"TimeSpan");
+            }
             id2_Item = Reader.NameTable.Add(@"");
             id13_unsignedShort = Reader.NameTable.Add(@"unsignedShort");
             id18_char = Reader.NameTable.Add(@"char");

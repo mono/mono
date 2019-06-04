@@ -139,7 +139,8 @@ namespace System.Web.Configuration {
             HttpCapabilitiesBase capabilities = null;
 
             // Get the config evaluator from the cached config object.
-            HttpCapabilitiesDefaultProvider capsbuilder = RuntimeConfig.GetConfig(request.Context).BrowserCaps;
+            HttpCapabilitiesDefaultProvider capsbuilder = request.Context.IsRuntimeErrorReported ?
+                RuntimeConfig.GetLKGConfig(request.Context).BrowserCaps : RuntimeConfig.GetConfig(request.Context).BrowserCaps;
             if (capsbuilder != null) {
                 if (BrowserCapabilitiesProvider != null) {
                     capsbuilder.BrowserCapabilitiesProvider = BrowserCapabilitiesProvider;

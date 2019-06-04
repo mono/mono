@@ -241,9 +241,6 @@ public class IPAddressTest
 	[Test]
 	public void IsLoopbackV6 ()
 	{
-//		if (!Socket.SupportsIPv6)
-//			Assert.Ignore ("IPv6 must be enabled in machine.config");
-
 		IPAddress ip = IPAddress.IPv6Loopback;
 		Assert.IsTrue (IPAddress.IsLoopback (ip), "#1");
 
@@ -332,7 +329,7 @@ public class IPAddressTest
 				Assert.Fail ("#1:" + i + " (" + ipAddress + ")");
 			} catch (FormatException ex) {
 				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#2:" + i);
-				Assert.IsNull (ex.InnerException, "#3:" + i);
+				Assert.IsNotNull (ex.InnerException, "#3:" + i);
 				Assert.IsNotNull (ex.Message, "#4:" + i);
 			}
 		}
@@ -537,7 +534,7 @@ public class IPAddressTest
 		IPAddress i;
 		Assert.IsTrue (IPAddress.TryParse ("0.0.0.0", out i), "#1");
 		Assert.IsTrue (IPAddress.TryParse ("127.0.0.1", out i), "#2");
-		Assert.IsFalse (IPAddress.TryParse ("www.mono-project.com", out i), "#3");
+		Assert.IsFalse (IPAddress.TryParse ("www.example.com", out i), "#3");
 		Assert.IsTrue (IPAddress.TryParse ("0001:0002:0003:0004:0005:0006:0007:0008", out i), "#4");
 		Assert.IsTrue (IPAddress.TryParse ("1:2:3:4:5:6:7:8", out i), "#5");
 		Assert.IsTrue (IPAddress.TryParse ("1::8", out i), "#6");
@@ -612,9 +609,6 @@ public class IPAddressTest
 	[Test]
 	public void ParseWrongV6 ()
 	{
-		//if (!Socket.SupportsIPv6)
-		//	Assert.Ignore ("IPv6 must be enabled in machine.config");
-
 		for (int i = 0; i < ipv6ParseWrong.Length; i++) {
 			string ipAddress = ipv6ParseWrong [i];
 
@@ -673,19 +667,6 @@ public class IPAddressTest
 		}
 
 	}
-
-	[Test]
-	[Category ("NotDotNet")]
-	public void UnixInterfaceNameAsZoneIndex ()
-	{
-		var ip = IPAddress.Parse ("fe80::bae8:56ff:fe47:af7e%en0");
-
-		// Should be en0 but it's of long type!
-		Assert.AreEqual (0, ip.ScopeId);
-		
-		Assert.AreEqual ("fe80::bae8:56ff:fe47:af7e", ip.ToString ());
-	}
-
 }
 }
 

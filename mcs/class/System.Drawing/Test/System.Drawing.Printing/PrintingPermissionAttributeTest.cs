@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if MONO_FEATURE_CAS
+
 using NUnit.Framework;
 using System;
 using System.Drawing.Printing;
@@ -132,3 +134,5 @@ namespace MonoTests.System.Drawing.Printing {
 		}
 	}
 }
+
+#endif

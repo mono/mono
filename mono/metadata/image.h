@@ -8,10 +8,10 @@
 #include <stdio.h>
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/mono-error.h>
+#include <mono/metadata/object-forward.h>
 
 MONO_BEGIN_DECLS
 
-typedef struct _MonoImage MonoImage;
 typedef struct _MonoAssembly MonoAssembly;
 typedef struct _MonoAssemblyName MonoAssemblyName;
 typedef struct _MonoTableInfo MonoTableInfo;
@@ -32,15 +32,20 @@ MONO_API MonoImage    *mono_image_open_full (const char *fname,
 				   MonoImageOpenStatus *status, mono_bool refonly);
 MONO_API MonoImage    *mono_pe_file_open     (const char *fname,
 				     MonoImageOpenStatus *status);
-MONO_API MonoImage    *mono_image_open_from_data (char *data, uint32_t data_len, mono_bool need_copy,
+MONO_API MONO_RT_EXTERNAL_ONLY
+MonoImage    *mono_image_open_from_data (char *data, uint32_t data_len, mono_bool need_copy,
                                          MonoImageOpenStatus *status);
-MONO_API MonoImage    *mono_image_open_from_data_full (char *data, uint32_t data_len, mono_bool need_copy,
+MONO_API MONO_RT_EXTERNAL_ONLY
+MonoImage    *mono_image_open_from_data_full (char *data, uint32_t data_len, mono_bool need_copy,
                                          MonoImageOpenStatus *status, mono_bool refonly);
-MONO_API MonoImage    *mono_image_open_from_data_with_name (char *data, uint32_t data_len, mono_bool need_copy,
+MONO_API MONO_RT_EXTERNAL_ONLY
+MonoImage    *mono_image_open_from_data_with_name (char *data, uint32_t data_len, mono_bool need_copy,
                                                    MonoImageOpenStatus *status, mono_bool refonly, const char *name);
 MONO_API void          mono_image_fixup_vtable (MonoImage *image);
-MONO_API MonoImage    *mono_image_loaded   (const char *name);
-MONO_API MonoImage    *mono_image_loaded_full   (const char *name, mono_bool refonly);
+MONO_API MONO_RT_EXTERNAL_ONLY
+MonoImage             *mono_image_loaded   (const char *name);
+MONO_API MONO_RT_EXTERNAL_ONLY
+MonoImage             *mono_image_loaded_full   (const char *name, mono_bool refonly);
 MONO_API MonoImage    *mono_image_loaded_by_guid (const char *guid);
 MONO_API MonoImage    *mono_image_loaded_by_guid_full (const char *guid, mono_bool refonly);
 MONO_API void          mono_image_init     (MonoImage *image);
@@ -55,9 +60,9 @@ MONO_API int           mono_image_ensure_section_idx (MonoImage *image,
 
 MONO_API uint32_t       mono_image_get_entry_point    (MonoImage *image);
 MONO_API const char   *mono_image_get_resource       (MonoImage *image, uint32_t offset, uint32_t *size);
-MONO_RT_EXTERNAL_ONLY MONO_API MonoImage*    mono_image_load_file_for_image (MonoImage *image, int fileidx);
+MONO_API MONO_RT_EXTERNAL_ONLY MonoImage*    mono_image_load_file_for_image (MonoImage *image, int fileidx);
 
-MONO_RT_EXTERNAL_ONLY MONO_API MonoImage*    mono_image_load_module (MonoImage *image, int idx);
+MONO_API MONO_RT_EXTERNAL_ONLY MonoImage*    mono_image_load_module (MonoImage *image, int idx);
 
 MONO_API const char*   mono_image_get_name       (MonoImage *image);
 MONO_API const char*   mono_image_get_filename   (MonoImage *image);

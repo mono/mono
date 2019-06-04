@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -54,7 +55,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertFrom ()
 		{
 			RectConverter r = new RectConverter ();
@@ -79,7 +79,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFrom_negative ()
 		{
@@ -88,14 +87,13 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertTo ()
 		{
 			RectConverter r = new RectConverter ();
 
 			Rect rect = new Rect (0, 0, 1, 2);
 
-			object o = r.ConvertTo (rect, typeof (string));
+			object o = r.ConvertTo (null, CultureInfo.InvariantCulture, rect, typeof (string));
 			
 			Assert.AreEqual (typeof (string), o.GetType());
 			Assert.AreEqual ("0,0,1,2", (string)o);

@@ -13,6 +13,12 @@ LIB_MCS_FLAGS = \
 		$(RESOURCE_FILES:%=/resource:%)
 TXT_RESOURCE_STRINGS = ../referencesource/System.Runtime.Serialization/System.Runtime.Serialization.txt
 
+XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq Facades/System.Threading.Tasks
+
+ifneq (,$(filter build net_4_x, $(PROFILE)))
+XTEST_LIB_REFS += System.Drawing
+endif
+
 ifneq (2.1, $(FRAMEWORK_VERSION))
 LIB_REFS += System.Data System.Configuration SMDiagnostics
 LIB_MCS_FLAGS += /d:NET_3_0
@@ -25,17 +31,27 @@ LIB_MCS_FLAGS += /d:NO_CONFIGURATION
 endif
 
 TEST_RESOURCE_FILES = \
-	Test/Resources/WSDL/collections.wsdl	\
-	Test/Resources/WSDL/custom-collections.wsdl
+	$(wildcard Test/Resources/FrameworkTypes/*.xml) \
+	$(wildcard Test/Resources/Schemas/*.xsd) \
+	Test/Resources/WSDL/collections.wsdl \
+	Test/Resources/WSDL/custom-collections.wsdl \
+	Test/Resources/one.xml
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(TEST_RESOURCE_FILES:%=/resource:%)
+# we need to write the test resource args into a response file to avoid
+# hitting "argument list too long" errors because of too many files
+TEST_RESOURCES_RESPONSE_FILE = $(depsdir)/$(LIBRARY)_test.resources.response
+
+$(TEST_RESOURCES_RESPONSE_FILE): $(TEST_RESOURCE_FILES)
+	@echo Creating $@ ...
+	@echo $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r)) > $(TEST_RESOURCES_RESPONSE_FILE)
+
+test-local: $(TEST_RESOURCES_RESPONSE_FILE)
+
+CLEAN_FILES += $(TEST_RESOURCES_RESPONSE_FILE)
+
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) @$(TEST_RESOURCES_RESPONSE_FILE)
 TEST_LIB_REFS = System.ServiceModel System.Web.Services
 
-EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES) \
-	Test/Resources/FrameworkTypes/* \
-	Test/Resources/Schemas/*.xsd \
-	Test/System.Runtime.Serialization/one.xml \
-	ReferenceSource.common.sources \
-	ReferenceSource.desktop.sources
+EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_RESOURCE_FILES)
 
 include ../../build/library.make

@@ -510,31 +510,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		private void WaitForHwndMessage (Hwnd hwnd, Msg message) {
-			MSG msg = new MSG ();
-
-			bool done = false;
-			do {
-				if (GetMessage(null, ref msg, IntPtr.Zero, 0, 0)) {
-					if ((Msg)msg.message == Msg.WM_QUIT) {
-						PostQuitMessage (0);
-						done = true;
-					}
-					else {
-						if (msg.hwnd == hwnd.Handle) {
-							if ((Msg)msg.message == message)
-								break;
-							else if ((Msg)msg.message == Msg.WM_DESTROY)
-								done = true;
-						}
-
-						TranslateMessage (ref msg);
-						DispatchMessage (ref msg);
-					}
-				}
-			} while (!done);
-		}
-
 		private void SendParentNotify(IntPtr child, Msg cause, int x, int y) {
 			Hwnd hwnd;
 			
@@ -931,9 +906,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			Point next;
-			if (cp.control is Form) {
-				next = Hwnd.GetNextStackedFormLocation (cp, parent_hwnd);
+			if (cp.control is Form && cp.X == int.MinValue && cp.Y == int.MinValue) {
+				Point next = Hwnd.GetNextStackedFormLocation (cp);
 				X = next.X;
 				Y = next.Y;
 			}
@@ -1056,7 +1030,6 @@ namespace System.Windows.Forms {
 						}
 					}
 					ShowWindow (WindowHandle);
-					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
 				}
 				HIViewSetVisible (WholeWindow, true);
 				HIViewSetVisible (ClientWindow, true);
@@ -1072,7 +1045,7 @@ namespace System.Windows.Forms {
 				SetWindowState(hwnd.Handle, FormWindowState.Maximized);
 			}
 
-			return hwnd.Handle;
+			return hwnd.zombie ? IntPtr.Zero : hwnd.Handle;
 		}
 
 		internal override IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height) {
@@ -1230,7 +1203,7 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			if (hwnd == null) {
+			if (hwnd == null || hwnd.zombie) {
 				return;
 			}
 
@@ -1241,11 +1214,13 @@ namespace System.Windows.Forms {
 			ArrayList windows = new ArrayList ();
 
 			AccumulateDestroyedHandles (Control.ControlNativeWindow.ControlFromHandle(hwnd.Handle), windows);
-
+			windows.Add (hwnd);
 
 			foreach (Hwnd h in windows) {
 				SendMessage (h.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
 				h.zombie = true;
+				h.expose_pending = h.nc_expose_pending = false;
+				h.Dispose();
 			}
 
 			// TODO: This is crashing swf-messageboxes
@@ -1256,9 +1231,11 @@ namespace System.Windows.Forms {
 				CFRelease (hwnd.client_window);
 			*/
 
-			if (WindowMapping [hwnd.Handle] != null) { 
-				DisposeWindow ((IntPtr)(WindowMapping [hwnd.Handle]));
-				WindowMapping.Remove (hwnd.Handle);
+			if (WindowMapping [handle] != null) { 
+				IntPtr window_handle = (IntPtr)(WindowMapping [handle]);
+				DisposeWindow (window_handle);
+				WindowMapping.Remove (handle);
+				HandleMapping.Remove (window_handle);
 			}
 		}
 
@@ -1310,12 +1287,17 @@ namespace System.Windows.Forms {
 			size = new Size ((int)bounds.size.width, (int)bounds.size.height);
 		}
 
-		internal override IntPtr GetParent(IntPtr handle) {
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (hwnd != null && hwnd.Parent != null) {
-				return hwnd.Parent.Handle;
+			if (hwnd != null) {
+				if (hwnd.parent != null) {
+					return hwnd.parent.Handle;
+				}
+				if (hwnd.owner != null && with_owner) {
+					return hwnd.owner.Handle;
+				}
 			}
 			return IntPtr.Zero;
 		}
@@ -1395,6 +1377,11 @@ namespace System.Windows.Forms {
 				goto loop;
 			} else {
 				msg = (MSG)queueobj;
+				if (msg.hwnd != IntPtr.Zero && msg.hwnd != FosterParent) {
+					Hwnd hwnd = Hwnd.ObjectFromHandle(msg.hwnd);
+					if (hwnd == null || hwnd.zombie)
+						goto loop;
+				}
 			}
 			return GetMessageResult;
 		}
@@ -1558,9 +1545,6 @@ namespace System.Windows.Forms {
 				paint_event = new PaintEventArgs(dc, hwnd.Invalid);
 				hwnd.expose_pending = false;
 				hwnd.ClearInvalidArea();
-
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
 			} else {
 				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
 
@@ -1573,29 +1557,16 @@ namespace System.Windows.Forms {
 				}
 				hwnd.nc_expose_pending = false;
 				hwnd.ClearNcInvalidArea ();
-
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
 			}
 
 			return paint_event;
 		}
 		
-		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			// FIXME: Pop is causing invalid stack ops sometimes; race condition?
-			try {
-				Graphics dc = (Graphics)hwnd.drawing_stack.Pop();
-				dc.Flush ();
-				dc.Dispose ();
-			
-				PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
-				pe.SetGraphics (null);
-				pe.Dispose ();  
-			} catch {}
+		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client, PaintEventArgs pevent) {
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose();
+			pevent.SetGraphics(null);
+			pevent.Dispose();
 
 			if (Caret.Visible == 1) {
 				ShowCaret();
@@ -1613,6 +1584,7 @@ namespace System.Windows.Forms {
 				ReleaseEvent (evtRef);
 			}
 			
+			loop:
 			lock (queuelock) {
 				if (MessageQueue.Count <= 0) {
 					return false;
@@ -1628,6 +1600,11 @@ namespace System.Windows.Forms {
 						return false;
 					}
 					msg = (MSG)queueobj;
+					if (msg.hwnd != IntPtr.Zero && msg.hwnd != FosterParent) {
+						Hwnd hwnd = Hwnd.ObjectFromHandle(msg.hwnd);
+						if (hwnd == null || hwnd.zombie)
+							goto loop;
+					}
 					return true;
 				}
 			}
@@ -1752,15 +1729,29 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void SetFocus(IntPtr handle) {
-			if (FocusWindow != IntPtr.Zero) {
-				PostMessage(FocusWindow, Msg.WM_KILLFOCUS, handle, IntPtr.Zero);
-			}
-			PostMessage(handle, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
+			if (FocusWindow == handle)
+				return;
+
+			IntPtr previous_focus = FocusWindow;
 			FocusWindow = handle;
+
+			if (previous_focus != IntPtr.Zero) {
+				SendMessage(previous_focus, Msg.WM_KILLFOCUS, handle, IntPtr.Zero);
+				// Focus was changed from inside WM_KILLFOCUS
+				if (FocusWindow != handle)
+					return;
+			}
+
+			if (handle != IntPtr.Zero) {
+				SendMessage(handle, Msg.WM_SETFOCUS, FocusWindow, IntPtr.Zero);
+			}
 		}
 
 		internal override void SetIcon(IntPtr handle, Icon icon) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			if (hwnd == null || hwnd.zombie)
+				return;
 
 			// FIXME: we need to map the icon for active window switches
 			if (WindowMapping [hwnd.Handle] != null) {
@@ -1843,11 +1834,21 @@ namespace System.Windows.Forms {
 		
 		internal override bool SetOwner(IntPtr hWnd, IntPtr hWndOwner) {
 			// TODO: Set window owner. 
+			Hwnd hwnd = Hwnd.ObjectFromHandle(hWnd);			
+			if (hWndOwner != IntPtr.Zero) {
+				hwnd.owner = Hwnd.ObjectFromHandle(hWndOwner);
+			} else {
+				hwnd.owner = null;
+			}
 			return true;
 		}
 		
 		internal override bool SetVisible(IntPtr handle, bool visible, bool activate) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			if (hwnd == null || hwnd.zombie)
+				return false;
+
 			object window = WindowMapping [hwnd.Handle];
 			if (window != null)
 				if (visible)
@@ -1932,13 +1933,13 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (!hwnd.zero_sized) {
-				hwnd.x = x;
-				hwnd.y = y;
-				hwnd.width = width;
-				hwnd.height = height;
-				SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			hwnd.x = x;
+			hwnd.y = y;
+			hwnd.width = width;
+			hwnd.height = height;
+			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
+			if (!hwnd.zero_sized) {
 				Control ctrl = Control.FromHandle (handle);
 				CreateParams cp = ctrl.GetCreateParams ();
 				Size TranslatedSize = TranslateWindowSizeToQuartzWindowSize (cp, new Size (width, height));
@@ -1998,6 +1999,10 @@ namespace System.Windows.Forms {
 		
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			if (hwnd == null || hwnd.zombie)
+				return;
+
 			SetHwndStyles(hwnd, cp);
 			
 			if (WindowMapping [hwnd.Handle] != null) {
@@ -2085,10 +2090,10 @@ namespace System.Windows.Forms {
 		internal override bool Text(IntPtr handle, string text) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			if (WindowMapping [hwnd.Handle] != null) {
-				SetWindowTitleWithCFString ((IntPtr)(WindowMapping [hwnd.Handle]), __CFStringMakeConstantString (text));
+				SetWindowTitleWithCFString ((IntPtr)(WindowMapping [hwnd.Handle]), CFStringCreateWithCString (IntPtr.Zero, text, Carbon.CFStringEncoding.kCFStringEncodingUTF8));
 			}
-			SetControlTitleWithCFString (hwnd.whole_window, __CFStringMakeConstantString (text));
-			SetControlTitleWithCFString (hwnd.client_window, __CFStringMakeConstantString (text));
+			SetControlTitleWithCFString (hwnd.whole_window, CFStringCreateWithCString (IntPtr.Zero, text, Carbon.CFStringEncoding.kCFStringEncodingUTF8));
+			SetControlTitleWithCFString (hwnd.client_window, CFStringCreateWithCString (IntPtr.Zero, text, Carbon.CFStringEncoding.kCFStringEncodingUTF8));
 			return true;
 		}
 		
@@ -2221,7 +2226,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override  Size IconSize { get{ throw new NotImplementedException(); } }
+		internal override  Size IconSize {
+			get {
+				return new Size (32, 32);
+			}
+		}
+
 		internal override  Size MaxWindowTrackSize { get{ throw new NotImplementedException(); } }
 		internal override bool MenuAccessKeysUnderlined {
 			get {
@@ -2382,7 +2392,9 @@ namespace System.Windows.Forms {
 		extern static int SetWindowTitleWithCFString (IntPtr hWnd, IntPtr titleCFStr);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static IntPtr __CFStringMakeConstantString (string cString);
-		
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static IntPtr CFStringCreateWithCString (IntPtr allocator, string cString, Carbon.CFStringEncoding encoding);
+
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static int CFRelease (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

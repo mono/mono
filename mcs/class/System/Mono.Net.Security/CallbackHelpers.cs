@@ -57,14 +57,6 @@ namespace Mono.Net.Security.Private
 			return (h, c, ch, e) => callback (h, c, ch, (SslPolicyErrors)e);
 		}
 
-		internal static MSI.MonoLocalCertificateSelectionCallback PublicToMono (LocalCertificateSelectionCallback callback)
-		{
-			if (callback == null)
-				return null;
-
-			return (t, lc, rc, ai) => callback (null, t, lc, rc, ai);
-		}
-
 		internal static MSI.MonoRemoteCertificateValidationCallback InternalToMono (RemoteCertValidationCallback callback)
 		{
 			if (callback == null)
@@ -87,14 +79,6 @@ namespace Mono.Net.Security.Private
 				return null;
 
 			return (t, lc, rc, ai) => callback (t, lc, rc, ai);
-		}
-
-		internal static RemoteCertificateValidationCallback MonoToPublic (MSI.MonoRemoteCertificateValidationCallback callback)
-		{
-			if (callback == null)
-				return null;
-
-			return (t, c, ch, e) => callback (null, c, ch, (MSI.MonoSslPolicyErrors)e);
 		}
 
 		internal static LocalCertificateSelectionCallback MonoToPublic (MSI.MonoLocalCertificateSelectionCallback callback)
@@ -121,6 +105,21 @@ namespace Mono.Net.Security.Private
 			return (t, lc, rc, ai) => callback (t, lc, rc, ai);
 		}
 
+		internal static ServerCertificateSelectionCallback MonoToPublic (MSI.MonoServerCertificateSelectionCallback callback)
+		{
+			if (callback == null)
+				return null;
+
+			return (s, h) => callback (s, h);
+		}
+
+		internal static MSI.MonoServerCertificateSelectionCallback PublicToMono (ServerCertificateSelectionCallback callback)
+		{
+			if (callback == null)
+				return null;
+
+			return (s, h) => callback (s, h);
+		}
 	}
 }
 

@@ -1,14 +1,13 @@
 using System;
 
-class X {
-	// Check installed compiler
-	static void Generic<T> ()
-	{
-		// we use 'var' all around in the compiler sources
-		var x = new X ();
-	}
-	
-	void DefaultParametersAvailable (int i = 3)
+interface II
+{
+
+}
+
+class X
+{
+	static void Foo (II a = default (II), II b = default, II c = (II) null)
 	{
 	}
 
@@ -42,9 +41,9 @@ class X {
 
 		Version min_mono_version;
 #if __MonoCS__
-		min_mono_version = new Version (5, 5);
+		min_mono_version = new Version (6, 2);
 #else
-		min_mono_version = new Version (4, 9);
+		min_mono_version = new Version (6, 2);
 #endif
 
 		if (version < min_mono_version)

@@ -153,7 +153,7 @@ reset_alloc_records (void)
 static void
 add_alloc_record (char *addr, size_t size, int reason)
 {
-	int idx = InterlockedIncrement (&next_record) - 1;
+	int idx = mono_atomic_inc_i32 (&next_record) - 1;
 	alloc_records [idx].address = addr;
 	alloc_records [idx].size = size;
 	alloc_records [idx].reason = reason;
@@ -322,7 +322,7 @@ try_again:
 			prev = &cur->next;
 		} else {
 			next = (SgenFragment *)unmask (next);
-			if (InterlockedCompareExchangePointer ((volatile gpointer*)prev, next, cur) != cur)
+			if (mono_atomic_cas_ptr ((volatile gpointer*)prev, next, cur) != cur)
 				goto try_again;
 			/*we must make sure that the next from cur->next happens after*/
 			mono_memory_write_barrier ();
@@ -341,7 +341,7 @@ claim_remaining_size (SgenFragment *frag, char *alloc_end)
 		return FALSE;
 
 	/* Try to alloc all the remaining space. */
-	return InterlockedCompareExchangePointer ((volatile gpointer*)&frag->fragment_next, frag->fragment_end, alloc_end) == alloc_end;
+	return mono_atomic_cas_ptr ((volatile gpointer*)&frag->fragment_next, frag->fragment_end, alloc_end) == alloc_end;
 }
 
 static void*
@@ -356,7 +356,7 @@ par_alloc_from_fragment (SgenFragmentAllocator *allocator, SgenFragment *frag, s
 	/* p = frag->fragment_next must happen before */
 	mono_memory_barrier ();
 
-	if (InterlockedCompareExchangePointer ((volatile gpointer*)&frag->fragment_next, end, p) != p)
+	if (mono_atomic_cas_ptr ((volatile gpointer*)&frag->fragment_next, end, p) != p)
 		return NULL;
 
 	if (frag->fragment_end - end < SGEN_MAX_NURSERY_WASTE) {
@@ -390,7 +390,7 @@ par_alloc_from_fragment (SgenFragmentAllocator *allocator, SgenFragment *frag, s
 				mono_memory_write_barrier ();
 
 				/*Fail if the next node is removed concurrently and its CAS wins */
-				if (InterlockedCompareExchangePointer ((volatile gpointer*)&frag->next, mask (next, 1), next) != next) {
+				if (mono_atomic_cas_ptr ((volatile gpointer*)&frag->next, mask (next, 1), next) != next) {
 					continue;
 				}
 			}
@@ -399,7 +399,7 @@ par_alloc_from_fragment (SgenFragmentAllocator *allocator, SgenFragment *frag, s
 			mono_memory_write_barrier ();
 
 			/* Fail if the previous node was deleted and its CAS wins */
-			if (InterlockedCompareExchangePointer ((volatile gpointer*)prev_ptr, unmask (next), frag) != frag) {
+			if (mono_atomic_cas_ptr ((volatile gpointer*)prev_ptr, unmask (next), frag) != frag) {
 				prev_ptr = find_previous_pointer_fragment (allocator, frag);
 				continue;
 			}
@@ -439,7 +439,7 @@ sgen_fragment_allocator_par_alloc (SgenFragmentAllocator *allocator, size_t size
 	SgenFragment *frag;
 
 #ifdef NALLOC_DEBUG
-	InterlockedIncrement (&alloc_count);
+	mono_atomic_inc_i32 (&alloc_count);
 #endif
 
 restart:
@@ -473,7 +473,7 @@ sgen_fragment_allocator_serial_range_alloc (SgenFragmentAllocator *allocator, si
 	size_t current_minimum = minimum_size;
 
 #ifdef NALLOC_DEBUG
-	InterlockedIncrement (&alloc_count);
+	mono_atomic_inc_i32 (&alloc_count);
 #endif
 
 	previous = &allocator->alloc_head;
@@ -528,7 +528,7 @@ restart:
 	current_minimum = minimum_size;
 
 #ifdef NALLOC_DEBUG
-	InterlockedIncrement (&alloc_count);
+	mono_atomic_inc_i32 (&alloc_count);
 #endif
 
 	for (frag = (SgenFragment *)unmask (allocator->alloc_head); frag; frag = (SgenFragment *)unmask (frag->next)) {
@@ -652,7 +652,7 @@ static void
 add_nursery_frag (SgenFragmentAllocator *allocator, size_t frag_size, char* frag_start, char* frag_end)
 {
 	SGEN_LOG (4, "Found empty fragment: %p-%p, size: %zd", frag_start, frag_end, frag_size);
-	binary_protocol_empty (frag_start, frag_size);
+	sgen_binary_protocol_empty (frag_start, frag_size);
 	/* Not worth dealing with smaller fragments: need to tune */
 	if (frag_size >= SGEN_MAX_NURSERY_WASTE) {
 		/* memsetting just the first chunk start is bound to provide better cache locality */
@@ -797,7 +797,7 @@ sgen_build_nursery_fragments (GCMemSection *nursery_section, SgenGrayQueue *unpi
 		SGEN_LOG (1, "Nursery fully pinned");
 		for (pin_entry = pin_start; pin_entry < pin_end; ++pin_entry) {
 			GCObject *p = (GCObject *)*pin_entry;
-			SGEN_LOG (3, "Bastard pinning obj %p (%s), size: %zd", p, sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (p)), sgen_safe_object_get_size (p));
+			SGEN_LOG (3, "Bastard pinning obj %p (%s), size: %ld", p, sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (p)), (long)sgen_safe_object_get_size (p));
 		}
 	}
 	return fragment_total;
@@ -927,7 +927,7 @@ sgen_resize_nursery (gboolean need_shrink)
 	if (sgen_nursery_min_size == sgen_nursery_max_size)
 		return;
 
-	major_size = major_collector.get_num_major_sections () * major_collector.section_size + los_memory_usage;
+	major_size = sgen_major_collector.get_num_major_sections () * sgen_major_collector.section_size + sgen_los_memory_usage;
 	/*
 	 * We attempt to use a larger nursery size, as long as it doesn't
 	 * exceed a certain percentage of the major heap.
@@ -939,8 +939,8 @@ sgen_resize_nursery (gboolean need_shrink)
 	 */
 	if ((sgen_nursery_size * 2) < (major_size / SGEN_DEFAULT_ALLOWANCE_NURSERY_SIZE_RATIO) &&
 			(sgen_nursery_size * 2) <= sgen_nursery_max_size && !need_shrink) {
-		if ((nursery_section->end_data - nursery_section->data) == sgen_nursery_size)
-			nursery_section->end_data += sgen_nursery_size;
+		if ((sgen_nursery_section->end_data - sgen_nursery_section->data) == sgen_nursery_size)
+			sgen_nursery_section->end_data += sgen_nursery_size;
 		sgen_nursery_size *= 2;
 	} else if ((sgen_nursery_size > (major_size / SGEN_DEFAULT_ALLOWANCE_NURSERY_SIZE_RATIO) || need_shrink) &&
 			(sgen_nursery_size / 2) >= sgen_nursery_min_size) {

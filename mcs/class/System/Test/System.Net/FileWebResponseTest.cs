@@ -13,6 +13,7 @@ using System.Net;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
 
 
 namespace MonoTests.System.Net
@@ -20,35 +21,22 @@ namespace MonoTests.System.Net
 	[TestFixture]
 	public class FileWebResponseTest
 	{
-		private string _tempDirectory;
+		private TempDirectory _tempDirectory;
 		private string _tempFile;
 		private Uri _tempFileUri;
 
 		[SetUp]
 		public void SetUp ()
 		{
-			_tempDirectory = Path.Combine (Path.GetTempPath (), "MonoTests.System.Net.FileWebResponseTest");
-			_tempFile = Path.Combine (_tempDirectory, "FileWebResponseTest.tmp");
-			if (!Directory.Exists (_tempDirectory)) {
-				Directory.CreateDirectory (_tempDirectory);
-			} else {
-				// ensure no files are left over from previous runs
-				string [] files = Directory.GetFiles (_tempDirectory, "*");
-				foreach (string file in files)
-					File.Delete (file);
-			}
+			_tempDirectory = new TempDirectory ();
+			_tempFile = Path.Combine (_tempDirectory.Path, "FileWebResponseTest.tmp");
 			_tempFileUri = GetTempFileUri ();
 		}
 
 		[TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (_tempDirectory)) {
-				string [] files = Directory.GetFiles (_tempDirectory, "*");
-				foreach (string file in files)
-					File.Delete (file);
-				Directory.Delete (_tempDirectory, true);
-			}
+			_tempDirectory.Dispose ();
 		}
 
 		[Test]
@@ -185,6 +173,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void ResponseUri ()
 		{
 			FileWebRequest req = (FileWebRequest) WebRequest.Create (_tempFileUri);

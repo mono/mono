@@ -237,7 +237,7 @@ thread_func (void *data)
 		}
 	}
 
-	return (mono_native_thread_return_t)0;
+	return 0;
 }
 
 int
@@ -285,7 +285,7 @@ sgen_thread_pool_start (void)
 	threadpool_shutdown = FALSE;
 
 	for (i = 0; i < threads_num; i++) {
-		mono_native_thread_create (&threads [i], thread_func, (void*)(gsize)i);
+		mono_native_thread_create (&threads [i], (gpointer)thread_func, (void*)(gsize)i);
 	}
 }
 
@@ -305,6 +305,10 @@ sgen_thread_pool_shutdown (void)
 	mono_os_mutex_destroy (&lock);
 	mono_os_cond_destroy (&work_cond);
 	mono_os_cond_destroy (&done_cond);
+
+	for (int i = 0; i < threads_num; i++) {
+		mono_threads_add_joinable_thread ((gpointer)threads [i]);
+	}
 }
 
 SgenThreadPoolJob*

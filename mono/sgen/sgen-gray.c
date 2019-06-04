@@ -28,7 +28,7 @@ guint64 stat_gray_queue_dequeue_slow_path;
 #ifdef SGEN_CHECK_GRAY_OBJECT_SECTIONS
 #define STATE_TRANSITION(s,o,n)	do {					\
 		int __old = (o);					\
-		if (InterlockedCompareExchange ((volatile int*)&(s)->state, (n), __old) != __old) \
+		if (mono_atomic_cas_i32 ((volatile int*)&(s)->state, (n), __old) != __old) \
 			g_assert_not_reached ();			\
 	} while (0)
 #define STATE_SET(s,v)		(s)->state = (v)
@@ -87,7 +87,7 @@ sgen_gray_object_alloc_queue_section (SgenGrayQueue *queue, gboolean is_parallel
 		 * do a write barrier once every other gray queue change, and request
 		 * to have a minimum of sections before stealing, to keep consistency.
 		 */
-		InterlockedIncrement (&queue->num_sections);
+		mono_atomic_inc_i32 (&queue->num_sections);
 	} else {
 		queue->num_sections++;
 	}
@@ -140,7 +140,7 @@ sgen_gray_object_enqueue (SgenGrayQueue *queue, GCObject *obj, SgenDescriptor de
 	*++queue->cursor = entry;
 
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	binary_protocol_gray_enqueue (queue, queue->cursor, obj);
+	sgen_binary_protocol_gray_enqueue (queue, queue->cursor, obj);
 #endif
 }
 
@@ -224,7 +224,7 @@ sgen_gray_object_dequeue (SgenGrayQueue *queue, gboolean is_parallel)
 	entry = *queue->cursor--;
 
 #ifdef SGEN_HEAVY_BINARY_PROTOCOL
-	binary_protocol_gray_dequeue (queue, queue->cursor + 1, entry.obj);
+	sgen_binary_protocol_gray_dequeue (queue, queue->cursor + 1, entry.obj);
 #endif
 
 	if (G_UNLIKELY (queue->cursor < GRAY_FIRST_CURSOR_POSITION (queue->first))) {
@@ -232,7 +232,7 @@ sgen_gray_object_dequeue (SgenGrayQueue *queue, gboolean is_parallel)
 		gint32 old_num_sections = 0;
 
 		if (is_parallel)
-			old_num_sections = InterlockedDecrement (&queue->num_sections);
+			old_num_sections = mono_atomic_dec_i32 (&queue->num_sections);
 		else
 			queue->num_sections--;
 
@@ -319,10 +319,10 @@ sgen_gray_object_steal_section (SgenGrayQueue *queue)
 	if (mono_os_mutex_trylock (&queue->steal_mutex) != 0)
 		return NULL;
 
-	sections_remaining = InterlockedDecrement (&queue->num_sections);
+	sections_remaining = mono_atomic_dec_i32 (&queue->num_sections);
 	if (sections_remaining <= 0) {
 		/* The section that we tried to steal might be the head of the queue. */
-		InterlockedIncrement (&queue->num_sections);
+		mono_atomic_inc_i32 (&queue->num_sections);
 	} else {
 		/* We have reserved for us the tail section of the queue */
 		section = queue->last;
@@ -365,7 +365,7 @@ sgen_gray_object_enqueue_section (SgenGrayQueue *queue, GrayQueueSection *sectio
 #endif
 	if (is_parallel) {
 		mono_memory_write_barrier ();
-		InterlockedIncrement (&queue->num_sections);
+		mono_atomic_inc_i32 (&queue->num_sections);
 	} else {
 		queue->num_sections++;
 	}
@@ -417,6 +417,8 @@ sgen_gray_object_queue_dispose (SgenGrayQueue *queue)
 
 	SGEN_ASSERT (0, !last_gray_queue_free_list, "Are we disposing two gray queues after another?");
 	last_gray_queue_free_list = queue->free_list;
+
+	mono_os_mutex_destroy (&queue->steal_mutex);
 
 	/* just to make sure */
 	memset (queue, 0, sizeof (SgenGrayQueue));

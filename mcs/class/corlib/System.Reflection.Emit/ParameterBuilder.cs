@@ -32,7 +32,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -41,12 +41,38 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_ParameterBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
-	[StructLayout (LayoutKind.Sequential)]
-	public class ParameterBuilder : _ParameterBuilder {
+	partial class ParameterBuilder : _ParameterBuilder
+	{
+		void _ParameterBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
 
+		void _ParameterBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ParameterBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ParameterBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}		
+	}
+#endif
+
+	[StructLayout (LayoutKind.Sequential)]
+	public partial class ParameterBuilder
+	{
 #pragma warning disable 169, 414
 		private MethodBase methodb; /* MethodBuilder, ConstructorBuilder or DynamicMethod */
 		private string name;
@@ -66,7 +92,7 @@ namespace System.Reflection.Emit {
 			if (mb is DynamicMethod)
 				table_idx = 0;
 			else
-				table_idx = mb.get_next_table_index (this, 0x08, true);
+				table_idx = mb.get_next_table_index (this, 0x08, 1);
 		}
 
 		public virtual int Attributes {
@@ -95,13 +121,8 @@ namespace System.Reflection.Emit {
 		public virtual void SetConstant (object defaultValue)
 		{
 			if (position > 0) {
-				Type t = methodb.GetParameterType (position - 1);
-				if (defaultValue != null && t != defaultValue.GetType ()) {
-					if(!t.IsEnum || t.UnderlyingSystemType != defaultValue.GetType ())
-						throw new ArgumentException ("Constant does not match the defined type.");
-				}
-				if (t.IsValueType && !t.IsPrimitive && !t.IsEnum && t != typeof (DateTime))
-					throw new ArgumentException ("" + t + " is not a supported constant type.");
+				TypeBuilder.SetConstantValue (methodb.GetParameterType (position - 1),
+								  defaultValue, ref defaultValue);
 			}
 
 			def_value = defaultValue;
@@ -153,26 +174,6 @@ namespace System.Reflection.Emit {
 			marshal_info = unmanagedMarshal;
 			attrs |= ParameterAttributes.HasFieldMarshal;
 		}
-
-                void _ParameterBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                void _ParameterBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                void _ParameterBuilder.GetTypeInfoCount (out uint pcTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                void _ParameterBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-                {
-                        throw new NotImplementedException ();
-                }
 	}
 }
 

@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 if SUPPORT_SGEN
 sgen_dirs = sgen
 endif
@@ -6,11 +8,19 @@ if BTLS
 btls_dirs = btls
 endif
 
+if MONO_NATIVE
+native_dirs = native
+endif
+
+if ENABLE_NETCORE
+btls_dirs = 
+endif
+
 if CROSS_COMPILING
-SUBDIRS = $(btls_dirs) arch utils cil metadata $(sgen_dirs) mini dis profiler
+SUBDIRS = $(btls_dirs) eglib arch utils cil $(sgen_dirs) metadata mini dis profiler $(native_dirs)
 else
 if INSTALL_MONOTOUCH
-SUBDIRS = $(btls_dirs) arch utils metadata $(sgen_dirs) mini profiler
+SUBDIRS = $(btls_dirs) eglib arch utils $(sgen_dirs) metadata mini profiler $(native_dirs)
 
 monotouch-do-build:
 	@list='$(SUBDIRS)'; for subdir in $$list; do \
@@ -34,7 +44,7 @@ monotouch-do-clean:
 	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
     done;
 else
-SUBDIRS = $(btls_dirs) arch utils cil metadata $(sgen_dirs) mini dis tests unit-tests benchmark profiler
+SUBDIRS = $(btls_dirs) eglib arch utils cil $(sgen_dirs) metadata mini dis tests unit-tests benchmark profiler $(native_dirs)
 endif
 endif
-DIST_SUBDIRS = btls arch utils cil metadata $(sgen_dirs) mini dis tests unit-tests benchmark profiler
+DIST_SUBDIRS = btls native eglib arch utils cil $(sgen_dirs) metadata mini dis tests unit-tests benchmark profiler

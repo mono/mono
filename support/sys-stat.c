@@ -19,8 +19,8 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include "mph.h" /* Don't remove or move after map.h! Works around issues with Android SDK unified headers */
 #include "map.h"
-#include "mph.h"
 
 G_BEGIN_DECLS
 
@@ -51,16 +51,24 @@ Mono_Posix_FromStat (struct Mono_Posix_Stat *from, void *_to)
 	to->st_atime       = from->st_atime_;
 	to->st_mtime       = from->st_mtime_;
 	to->st_ctime       = from->st_ctime_;
-#ifdef HAVE_STRUCT_STAT_ST_ATIM
+#if HAVE_STRUCT_STAT_ST_ATIMESPEC
+	to->st_atimespec.tv_sec = from->st_atime_;
+	to->st_atimespec.tv_nsec = from->st_atime_nsec;
+	to->st_mtimespec.tv_sec = from->st_mtime_;
+	to->st_mtimespec.tv_nsec = from->st_mtime_nsec;
+	to->st_ctimespec.tv_sec = from->st_ctime_;
+	to->st_ctimespec.tv_nsec = from->st_ctime_nsec;
+#else
+#    ifdef HAVE_STRUCT_STAT_ST_ATIM
 	to->st_atim.tv_nsec = from->st_atime_nsec;
-#endif
-#ifdef HAVE_STRUCT_STAT_ST_MTIM
+#    endif
+#    ifdef HAVE_STRUCT_STAT_ST_MTIM
 	to->st_mtim.tv_nsec = from->st_mtime_nsec;
-#endif
-#ifdef HAVE_STRUCT_STAT_ST_CTIM
+#    endif
+#    ifdef HAVE_STRUCT_STAT_ST_CTIM
 	to->st_ctim.tv_nsec = from->st_ctime_nsec;
+#    endif
 #endif
-
 	return 0;
 }
 
@@ -87,16 +95,21 @@ Mono_Posix_ToStat (void *_from, struct Mono_Posix_Stat *to)
 	to->st_atime_     = from->st_atime;
 	to->st_mtime_     = from->st_mtime;
 	to->st_ctime_     = from->st_ctime;
-#ifdef HAVE_STRUCT_STAT_ST_ATIM
+#if HAVE_STRUCT_STAT_ST_ATIMESPEC
+	to->st_atime_nsec = from->st_atimespec.tv_nsec;
+	to->st_mtime_nsec = from->st_mtimespec.tv_nsec;
+	to->st_ctime_nsec = from->st_ctimespec.tv_nsec;
+#else
+#    ifdef HAVE_STRUCT_STAT_ST_ATIM
 	to->st_atime_nsec = from->st_atim.tv_nsec;
-#endif
-#ifdef HAVE_STRUCT_STAT_ST_MTIM
+#    endif
+#    ifdef HAVE_STRUCT_STAT_ST_MTIM
 	to->st_mtime_nsec = from->st_mtim.tv_nsec;
-#endif
-#ifdef HAVE_STRUCT_STAT_ST_CTIM
+#    endif
+#    ifdef HAVE_STRUCT_STAT_ST_CTIM
 	to->st_ctime_nsec = from->st_ctim.tv_nsec;
+#    endif
 #endif
-
 	return 0;
 }
 

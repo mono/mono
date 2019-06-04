@@ -217,7 +217,7 @@ namespace System.Windows.Forms
 			popupButtonPanel.Dock = DockStyle.None;
 			popupButtonPanel.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left))));
 			popupButtonPanel.Location = new Point (6, 35);
-			popupButtonPanel.Size = new Size (87, 338);
+			popupButtonPanel.Size = new Size (89, 338);
 			popupButtonPanel.TabIndex = 9;
 			
 			// mwfFileView
@@ -234,7 +234,7 @@ namespace System.Windows.Forms
 			fileNameLabel.FlatStyle = FlatStyle.System;
 			fileNameLabel.Location = new Point (101, 326);
 			fileNameLabel.Size = new Size (70, 21);
-			fileNameLabel.Text = "File name:";
+			fileNameLabel.Text = Locale.GetText("File name:");
 			fileNameLabel.TextAlign = ContentAlignment.MiddleLeft;
 			
 			// fileNameComboBox
@@ -251,7 +251,7 @@ namespace System.Windows.Forms
 			fileTypeLabel.FlatStyle = FlatStyle.System;
 			fileTypeLabel.Location = new Point (101, 355);
 			fileTypeLabel.Size = new Size (90, 21);
-			fileTypeLabel.Text = "Files of type:";
+			fileTypeLabel.Text = Locale.GetText("Files of type:");
 			fileTypeLabel.TextAlign = ContentAlignment.MiddleLeft;
 			
 			// fileTypeComboBox
@@ -298,7 +298,7 @@ namespace System.Windows.Forms
 			cancelButton.Location = new Point (474, 353);
 			cancelButton.Size = new Size (75, 23);
 			cancelButton.TabIndex = 5;
-			cancelButton.Text = "Cancel";
+			cancelButton.Text = Locale.GetText("Cancel");
 			cancelButton.FlatStyle = FlatStyle.System;
 			
 			// helpButton
@@ -307,13 +307,13 @@ namespace System.Windows.Forms
 			helpButton.Location = new Point (474, 353);
 			helpButton.Size = new Size (75, 23);
 			helpButton.TabIndex = 6;
-			helpButton.Text = "Help";
+			helpButton.Text = Locale.GetText("Help");
 			helpButton.FlatStyle = FlatStyle.System;
 			helpButton.Visible = false;
 			
 			// checkBox
 			readonlyCheckBox.Anchor = ((AnchorStyles)(((AnchorStyles.Bottom | AnchorStyles.Left) | AnchorStyles.Right)));
-			readonlyCheckBox.Text = "Open Readonly";
+			readonlyCheckBox.Text = Locale.GetText("Open Readonly");
 			readonlyCheckBox.Location = new Point (195, 350);
 			readonlyCheckBox.Size = new Size (245, 21);
 			readonlyCheckBox.TabIndex = 3;
@@ -926,7 +926,7 @@ namespace System.Windows.Forms
 
 				if (checkFileExists) {
 					if (!File.Exists (internalfullfilename)) {
-						string message = "\"" + internalfullfilename + "\" does not exist. Please verify that you have entered the correct file name.";
+						string message = Locale.GetText("\"{0}\" does not exist. Please verify that you have entered the correct file name.", internalfullfilename);
 						MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						return;
 					}
@@ -935,7 +935,7 @@ namespace System.Windows.Forms
 				if (fileDialogType == FileDialogType.SaveFileDialog) {
 					if (overwritePrompt) {
 						if (File.Exists (internalfullfilename)) {
-							string message = "\"" + internalfullfilename + "\" already exists. Do you want to overwrite it?";
+							string message = Locale.GetText ("\"{0}\" already exists. Do you want to overwrite it?", internalfullfilename);
 							DialogResult dr = MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 							if (dr == DialogResult.Cancel)
 								return;
@@ -944,7 +944,7 @@ namespace System.Windows.Forms
 
 					if (createPrompt) {
 						if (!File.Exists (internalfullfilename)) {
-							string message = "\"" + internalfullfilename + "\" does not exist. Do you want to create it?";
+							string message = Locale.GetText ("\"{0}\" does not exist. Do you want to create it?", internalfullfilename);
 							DialogResult dr = MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
 							if (dr == DialogResult.Cancel)
 								return;
@@ -990,7 +990,7 @@ namespace System.Windows.Forms
 
 			if (checkPathExists && mwfFileView.CurrentRealFolder != null) {
 				if (!Directory.Exists (mwfFileView.CurrentRealFolder)) {
-					string message = "\"" + mwfFileView.CurrentRealFolder + "\" does not exist. Please verify that you have entered the correct directory name.";
+					string message = Locale.GetText ("\"{0}\" does not exist. Please verify that you have entered the correct directory name.", mwfFileView.CurrentRealFolder);
 					MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
 					if (InitialDirectory.Length == 0 || !Directory.Exists (InitialDirectory))
@@ -1475,15 +1475,22 @@ namespace System.Windows.Forms
 				gr.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
 				
 				// draw image
+				int i_y_padding = 4;
 				if (image != null) {
 					int i_x = (ClientSize.Width - image.Width) / 2;
-					int i_y = 4;
+					int i_y = i_y_padding;
 					gr.DrawImage (image, i_x, i_y);
 				}
 				
 				if (Text != String.Empty) {
-					if (text_rect == Rectangle.Empty)
-						text_rect = new Rectangle (0, Height - 30, Width, Height - 30); 
+					if (text_rect == Rectangle.Empty) {
+						int h_pad = 2;
+						int t_x = h_pad;
+						int t_y = i_y_padding + image.Height + 1;
+						int t_w = ClientSize.Width - t_x - h_pad - 1;
+						int t_h = ClientSize.Height - t_y - 1;
+						text_rect = new Rectangle (t_x, t_y, t_w, t_h);
+					}
 					
 					gr.DrawString (Text, Font, Brushes.White, text_rect, text_format);
 				}
@@ -1555,7 +1562,7 @@ namespace System.Windows.Forms
 			SuspendLayout ();
 			
 			BackColor = Color.FromArgb (128, 128, 128);
-			Size = new Size (85, 336);
+			Size = new Size (89, 338);
 			InternalBorderStyle = BorderStyle.Fixed3D;
 			
 			recentlyusedButton = new PopupButton ();
@@ -1569,7 +1576,7 @@ namespace System.Windows.Forms
 			recentlyusedButton.BackColor = BackColor;
 			recentlyusedButton.ForeColor = Color.Black;
 			recentlyusedButton.Location = new Point (2, 2);
-			recentlyusedButton.Text = "Recently\nused";
+			recentlyusedButton.Text = Locale.GetText("Recently used");
 			recentlyusedButton.Click += new EventHandler (OnClickButton);
 			
 			desktopButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesDesktop, 32);
@@ -1577,7 +1584,7 @@ namespace System.Windows.Forms
 			desktopButton.ForeColor = Color.Black;
 			desktopButton.Size = new Size (81, 64);
 			desktopButton.Location = new Point (2, 66);
-			desktopButton.Text = "Desktop";
+			desktopButton.Text = Locale.GetText("Desktop");
 			desktopButton.Click += new EventHandler (OnClickButton);
 			
 			personalButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesPersonal, 32);
@@ -1585,7 +1592,7 @@ namespace System.Windows.Forms
 			personalButton.ForeColor = Color.Black;
 			personalButton.Size = new Size (81, 64);
 			personalButton.Location = new Point (2, 130);
-			personalButton.Text = "Personal";
+			personalButton.Text = Locale.GetText("Personal");
 			personalButton.Click += new EventHandler (OnClickButton);
 			
 			mycomputerButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyComputer, 32);
@@ -1593,7 +1600,7 @@ namespace System.Windows.Forms
 			mycomputerButton.ForeColor = Color.Black;
 			mycomputerButton.Size = new Size (81, 64);
 			mycomputerButton.Location = new Point (2, 194);
-			mycomputerButton.Text = "My Computer";
+			mycomputerButton.Text = Locale.GetText("My Computer");
 			mycomputerButton.Click += new EventHandler (OnClickButton);
 			
 			networkButton.Image = ThemeEngine.Current.Images (UIIcon.PlacesMyNetwork, 32);
@@ -1601,7 +1608,7 @@ namespace System.Windows.Forms
 			networkButton.ForeColor = Color.Black;
 			networkButton.Size = new Size (81, 64);
 			networkButton.Location = new Point (2, 258);
-			networkButton.Text = "My Network";
+			networkButton.Text = Locale.GetText("My Network");
 			networkButton.Click += new EventHandler (OnClickButton);
 			
 			Controls.Add (recentlyusedButton);
@@ -1906,11 +1913,11 @@ namespace System.Windows.Forms
 			imageList.Images.Add (ThemeEngine.Current.Images (UIIcon.NormalFolder, 16));
 			imageList.TransparentColor = Color.Transparent;
 			
-			recentlyUsedDirComboboxItem = new DirComboBoxItem (imageList, 0, "Recently used", MWFVFS.RecentlyUsedPrefix, 0);
-			desktopDirComboboxItem = new DirComboBoxItem (imageList, 1, "Desktop", MWFVFS.DesktopPrefix, 0);
-			personalDirComboboxItem = new DirComboBoxItem (imageList, 2, "Personal folder", MWFVFS.PersonalPrefix, indent);
-			myComputerDirComboboxItem = new DirComboBoxItem (imageList, 3, "My Computer", MWFVFS.MyComputerPrefix, indent);
-			networkDirComboboxItem = new DirComboBoxItem (imageList, 4, "My Network", MWFVFS.MyNetworkPrefix, indent);
+			recentlyUsedDirComboboxItem = new DirComboBoxItem (imageList, 0, Locale.GetText("Recently used"), MWFVFS.RecentlyUsedPrefix, 0);
+			desktopDirComboboxItem = new DirComboBoxItem (imageList, 1, Locale.GetText("Desktop"), MWFVFS.DesktopPrefix, 0);
+			personalDirComboboxItem = new DirComboBoxItem (imageList, 2, Locale.GetText("Personal folder"), MWFVFS.PersonalPrefix, indent);
+			myComputerDirComboboxItem = new DirComboBoxItem (imageList, 3, Locale.GetText("My Computer"), MWFVFS.MyComputerPrefix, indent);
+			networkDirComboboxItem = new DirComboBoxItem (imageList, 4, Locale.GetText("My Network"), MWFVFS.MyNetworkPrefix, indent);
 			
 			ArrayList al = this.vfs.GetMyComputerContent ();
 			
@@ -2296,27 +2303,27 @@ namespace System.Windows.Forms
 			// contextMenu
 			
 			// View menu item
-			menuItemView = new MenuItem ("View");
+			menuItemView = new MenuItem (Locale.GetText("View"));
 			
-			smallIconMenutItem = new MenuItem ("Small Icon", new EventHandler (OnClickViewMenuSubItem));
+			smallIconMenutItem = new MenuItem (Locale.GetText("Small Icon"), new EventHandler (OnClickViewMenuSubItem));
 			smallIconMenutItem.RadioCheck = true;
 			menuItemView.MenuItems.Add (smallIconMenutItem);
 			
-			tilesMenutItem = new MenuItem ("Tiles", new EventHandler (OnClickViewMenuSubItem));
+			tilesMenutItem = new MenuItem (Locale.GetText("Tiles"), new EventHandler (OnClickViewMenuSubItem));
 			tilesMenutItem.RadioCheck = true;
 			menuItemView.MenuItems.Add (tilesMenutItem);
 			
-			largeIconMenutItem = new MenuItem ("Large Icon", new EventHandler (OnClickViewMenuSubItem));
+			largeIconMenutItem = new MenuItem (Locale.GetText("Large Icon"), new EventHandler (OnClickViewMenuSubItem));
 			largeIconMenutItem.RadioCheck = true;
 			menuItemView.MenuItems.Add (largeIconMenutItem);
 			
-			listMenutItem = new MenuItem ("List", new EventHandler (OnClickViewMenuSubItem));
+			listMenutItem = new MenuItem (Locale.GetText("List"), new EventHandler (OnClickViewMenuSubItem));
 			listMenutItem.RadioCheck = true;
 			listMenutItem.Checked = true;
 			menuItemView.MenuItems.Add (listMenutItem);
 			previousCheckedMenuItemIndex = listMenutItem.Index;
 			
-			detailsMenutItem = new MenuItem ("Details", new EventHandler (OnClickViewMenuSubItem));
+			detailsMenutItem = new MenuItem (Locale.GetText("Details"), new EventHandler (OnClickViewMenuSubItem));
 			detailsMenutItem.RadioCheck = true;
 			menuItemView.MenuItems.Add (detailsMenutItem);
 			
@@ -2325,9 +2332,9 @@ namespace System.Windows.Forms
 			contextMenu.MenuItems.Add (new MenuItem ("-"));
 			
 			// New menu item
-			menuItemNew = new MenuItem ("New");
+			menuItemNew = new MenuItem (Locale.GetText("New"));
 			
-			newFolderMenuItem = new MenuItem ("New Folder", new EventHandler (OnClickNewFolderMenuItem));
+			newFolderMenuItem = new MenuItem (Locale.GetText("New Folder"), new EventHandler (OnClickNewFolderMenuItem));
 			menuItemNew.MenuItems.Add (newFolderMenuItem);
 			
 			contextMenu.MenuItems.Add (menuItemNew);
@@ -2335,7 +2342,7 @@ namespace System.Windows.Forms
 			contextMenu.MenuItems.Add (new MenuItem ("-"));
 			
 			// Show hidden files menu item
-			showHiddenFilesMenuItem = new MenuItem ("Show hidden files", new EventHandler (OnClickContextMenu));
+			showHiddenFilesMenuItem = new MenuItem (Locale.GetText("Show hidden files"), new EventHandler (OnClickContextMenu));
 			showHiddenFilesMenuItem.Checked = showHiddenFiles;
 			contextMenu.MenuItems.Add (showHiddenFilesMenuItem);
 			
@@ -2351,10 +2358,10 @@ namespace System.Windows.Forms
 
 			// Create columns, but only add them when view changes to Details
 			columns = new ColumnHeader [4];
-			columns [0] = CreateColumnHeader (" Name", 170, HorizontalAlignment.Left);
-			columns [1] = CreateColumnHeader ("Size ", 80, HorizontalAlignment.Right);
-			columns [2] = CreateColumnHeader (" Type", 100, HorizontalAlignment.Left);
-			columns [3] = CreateColumnHeader (" Last Access", 150, HorizontalAlignment.Left);
+			columns [0] = CreateColumnHeader (Locale.GetText(" Name"), 170, HorizontalAlignment.Left);
+			columns [1] = CreateColumnHeader (Locale.GetText("Size "), 80, HorizontalAlignment.Right);
+			columns [2] = CreateColumnHeader (Locale.GetText(" Type"), 100, HorizontalAlignment.Left);
+			columns [3] = CreateColumnHeader (Locale.GetText(" Last Access"), 150, HorizontalAlignment.Left);
 
 			AllowColumnReorder = true;
 			
@@ -2509,7 +2516,7 @@ namespace System.Windows.Forms
 			else
 				folder = currentFolder;
 			
-			string tmp_filename = "New Folder";
+			string tmp_filename = Locale.GetText("New Folder");
 			
 			if (Directory.Exists (Path.Combine (folder, tmp_filename))) {
 				int i = 1;
@@ -2523,9 +2530,9 @@ namespace System.Windows.Forms
 				while (Directory.Exists (Path.Combine (folder, tmp_filename))) {
 					i++;
 					if (XplatUI.RunningOnUnix) {
-						tmp_filename = "New Folder" + "-" + i;
+						tmp_filename = Locale.GetText("New Folder") + "-" + i;
 					} else {
-						tmp_filename = "New Folder" + " (" + i + ")";
+						tmp_filename = Locale.GetText("New Folder") + " (" + i + ")";
 					}
 				}
 			}
@@ -2629,7 +2636,7 @@ namespace System.Windows.Forms
 			} catch (Exception e) {
 				if (should_push)
 					PopDir ();
-				MessageBox.Show (e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show (e.Message, Locale.GetText("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
@@ -2892,13 +2899,13 @@ namespace System.Windows.Forms
 					string output = String.Empty;
 					
 					if (fsEntry.FileType == FSEntry.FSEntryType.Directory)
-						output = "Directory: " + fsEntry.FullName;
+						output = Locale.GetText("Directory: {0}", fsEntry.FullName);
 					else if (fsEntry.FileType == FSEntry.FSEntryType.Device)
-						output = "Device: "+ fsEntry.FullName;
+						output = Locale.GetText("Device: {0}", fsEntry.FullName);
 					else if (fsEntry.FileType == FSEntry.FSEntryType.Network)
-						output = "Network: " + fsEntry.FullName;
+						output = Locale.GetText("Network: {0}", fsEntry.FullName);
 					else
-						output = "File: " + fsEntry.FullName;
+						output = Locale.GetText("File: {0}", fsEntry.FullName);
 					
 					toolTip.SetToolTip (this, output);	
 					
@@ -3133,7 +3140,7 @@ namespace System.Windows.Forms
 			switch (fsEntry.FileType) {
 				case FSEntry.FSEntryType.Directory:
 					SubItems.Add (String.Empty);
-					SubItems.Add ("Directory");
+					SubItems.Add (Locale.GetText("Directory"));
 					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
 					break;
 				case FSEntry.FSEntryType.File:
@@ -3146,17 +3153,17 @@ namespace System.Windows.Forms
 					}
 					
 					SubItems.Add (fileLen.ToString () + " KB");
-					SubItems.Add ("File");
+					SubItems.Add (Locale.GetText("File"));
 					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
 					break;
 				case FSEntry.FSEntryType.Device:
 					SubItems.Add (String.Empty);
-					SubItems.Add ("Device");
+					SubItems.Add (Locale.GetText("Device"));
 					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
 					break;
 				case FSEntry.FSEntryType.RemovableDevice:
 					SubItems.Add (String.Empty);
-					SubItems.Add ("RemovableDevice");
+					SubItems.Add (Locale.GetText("RemovableDevice"));
 					SubItems.Add (fsEntry.LastAccessTime.ToShortDateString () + " " + fsEntry.LastAccessTime.ToShortTimeString ());	
 					break;
 				default:
@@ -3261,13 +3268,13 @@ namespace System.Windows.Forms
 			groupBox1.Size = new Size (232, 160);
 			groupBox1.TabIndex = 5;
 			groupBox1.TabStop = false;
-			groupBox1.Text = "New Name";
+			groupBox1.Text = Locale.GetText("New Name");
 			
 			// cancelButton
 			cancelButton.DialogResult = DialogResult.Cancel;
 			cancelButton.Location = new Point (168, 176);
 			cancelButton.TabIndex = 4;
-			cancelButton.Text = "Cancel";
+			cancelButton.Text = Locale.GetText("Cancel");
 			
 			// iconPictureBox
 			iconPictureBox.BorderStyle = BorderStyle.Fixed3D;
@@ -3287,13 +3294,13 @@ namespace System.Windows.Forms
 			okButton.DialogResult = DialogResult.OK;
 			okButton.Location = new Point (80, 176);
 			okButton.TabIndex = 3;
-			okButton.Text = "OK";
+			okButton.Text = Locale.GetText("OK");
 			
 			// label1
 			label1.Location = new Point (16, 96);
 			label1.Size = new Size (200, 23);
 			label1.TabIndex = 4;
-			label1.Text = "Enter Name:";
+			label1.Text = Locale.GetText("Enter Name:");
 			label1.TextAlign = ContentAlignment.MiddleCenter;
 			
 			// MainForm
@@ -3305,7 +3312,7 @@ namespace System.Windows.Forms
 			Controls.Add (cancelButton);
 			Controls.Add (okButton);
 			FormBorderStyle = FormBorderStyle.FixedDialog;
-			Text = "New Folder or File";
+			Text = Locale.GetText("New Folder or File");
 			groupBox1.ResumeLayout (false);
 			ResumeLayout (false);
 			
@@ -3466,14 +3473,14 @@ namespace System.Windows.Forms
 		{
 			try {
 				if (Directory.Exists (new_folder)) {
-					string message = "Folder \"" + new_folder + "\" already exists.";
-					MessageBox.Show (message, new_folder, MessageBoxButtons.OK,
+					string message = Locale.GetText("Folder \"{0}\" already exists.", new_folder);
+					MessageBox.Show (message, Locale.GetText("Error Creating Folder"), MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return false;
 				} else
 					Directory.CreateDirectory (new_folder);
 			} catch (Exception e) {
-				MessageBox.Show (e.Message, new_folder, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show (e.Message, Locale.GetText("Error Creating Folder"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 			}
 			
@@ -3484,16 +3491,15 @@ namespace System.Windows.Forms
 		{
 			try {
 				if (Directory.Exists (destDirName)) {
-					string message = "Cannot rename " + Path.GetFileName (sourceDirName)
-						+ ": A folder with the name you specified already exists."
-						+ " Specify a different folder name.";
-					MessageBox.Show (message, "Error Renaming Folder", MessageBoxButtons.OK,
+					string message = Locale.GetText("Cannot rename \"{0}\": Folder \"{1}\" already exists."
+						+ " Specify a different folder name.", Path.GetFileName (sourceDirName), Path.GetFileName (destDirName));
+					MessageBox.Show (message, Locale.GetText("Error Renaming Folder"), MessageBoxButtons.OK,
 						MessageBoxIcon.Error);
 					return false;
 				} else
 					Directory.Move (sourceDirName, destDirName);
 			} catch (Exception e) {
-				MessageBox.Show (e.Message, "Error Renaming Folder", 
+				MessageBox.Show (e.Message, Locale.GetText("Error Renaming Folder"), 
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 			}
@@ -3505,16 +3511,15 @@ namespace System.Windows.Forms
 		{
 			try {
 				if (File.Exists (destFileName)) {
-					string message = "Cannot rename " + Path.GetFileName (sourceFileName)
-						+ ": A file with the name you specified already exists."
-						+ " Specify a different file name.";
-					MessageBox.Show (message, "Error Renaming File",
+					string message = Locale.GetText("Cannot rename \"{0}\": File \"{1}\" already exists."
+						+ " Specify a different file name.", Path.GetFileName (sourceFileName), Path.GetFileName (destFileName));
+					MessageBox.Show (message, Locale.GetText("Error Renaming File"),
 						MessageBoxButtons.OK, MessageBoxIcon.Error);
 					return false;
 				} else
 					File.Move (sourceFileName, destFileName);
 			} catch (Exception e) {
-				MessageBox.Show (e.Message, "Error Renaming File",
+				MessageBox.Show (e.Message, Locale.GetText("Error Renaming File"),
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 			}
@@ -3840,7 +3845,7 @@ namespace System.Windows.Forms
 			
 			desktopFSEntry.Attributes = FileAttributes.Directory;
 			desktopFSEntry.FullName = MWFVFS.DesktopPrefix;
-			desktopFSEntry.Name = "Desktop";
+			desktopFSEntry.Name = Locale.GetText("Desktop");
 			desktopFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
 			desktopFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("desktop/desktop");
@@ -3850,7 +3855,7 @@ namespace System.Windows.Forms
 			
 			recentlyusedFSEntry.Attributes = FileAttributes.Directory;
 			recentlyusedFSEntry.FullName = MWFVFS.RecentlyUsedPrefix;
-			recentlyusedFSEntry.Name = "Recently Used";
+			recentlyusedFSEntry.Name = Locale.GetText("Recently Used");
 			recentlyusedFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			recentlyusedFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("recently/recently");
 			recentlyusedFSEntry.LastAccessTime = DateTime.Now;
@@ -3859,7 +3864,7 @@ namespace System.Windows.Forms
 			
 			personalFSEntry.Attributes = FileAttributes.Directory;
 			personalFSEntry.FullName = MWFVFS.PersonalPrefix;
-			personalFSEntry.Name = "Personal";
+			personalFSEntry.Name = Locale.GetText("Personal");
 			personalFSEntry.MainTopNode = GetDesktopFSEntry ();
 			personalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
 			personalFSEntry.FileType = FSEntry.FSEntryType.Directory;
@@ -3870,7 +3875,7 @@ namespace System.Windows.Forms
 			
 			mycomputerpersonalFSEntry.Attributes = FileAttributes.Directory;
 			mycomputerpersonalFSEntry.FullName = MWFVFS.MyComputerPersonalPrefix;
-			mycomputerpersonalFSEntry.Name = "Personal";
+			mycomputerpersonalFSEntry.Name = Locale.GetText("Personal");
 			mycomputerpersonalFSEntry.MainTopNode = GetMyComputerFSEntry ();
 			mycomputerpersonalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
 			mycomputerpersonalFSEntry.FileType = FSEntry.FSEntryType.Directory;
@@ -3881,7 +3886,7 @@ namespace System.Windows.Forms
 			
 			mycomputerFSEntry.Attributes = FileAttributes.Directory;
 			mycomputerFSEntry.FullName = MWFVFS.MyComputerPrefix;
-			mycomputerFSEntry.Name = "My Computer";
+			mycomputerFSEntry.Name = Locale.GetText("My Computer");
 			mycomputerFSEntry.MainTopNode = GetDesktopFSEntry ();
 			mycomputerFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mycomputerFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("workplace/workplace");
@@ -3891,7 +3896,7 @@ namespace System.Windows.Forms
 			
 			mynetworkFSEntry.Attributes = FileAttributes.Directory;
 			mynetworkFSEntry.FullName = MWFVFS.MyNetworkPrefix;
-			mynetworkFSEntry.Name = "My Network";
+			mynetworkFSEntry.Name = Locale.GetText("My Network");
 			mynetworkFSEntry.MainTopNode = GetDesktopFSEntry ();
 			mynetworkFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mynetworkFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("network/network");
@@ -4135,6 +4140,38 @@ namespace System.Windows.Forms
 					if (!MWFVFS.MyComputerDevicesPrefix.Contains (contain_string))
 						MWFVFS.MyComputerDevicesPrefix.Add (contain_string, fsEntry);
 				}
+			} else {
+				foreach (var drive in System.IO.DriveInfo.GetDrives()) {
+					if (drive.DriveType == DriveType.Removable || drive.DriveType == DriveType.CDRom ||
+						drive.DriveType == DriveType.Fixed) {
+						FSEntry fsEntry = new FSEntry ();
+						fsEntry.FullName = drive.Name;
+						fsEntry.DeviceShort = drive.Name;
+						fsEntry.Attributes = FileAttributes.Directory;
+						fsEntry.MainTopNode = GetMyComputerFSEntry ();
+						if (String.IsNullOrEmpty(drive.VolumeLabel) || drive.VolumeLabel == drive.Name) {
+							fsEntry.Name = drive.Name;
+						} else {
+							fsEntry.Name = drive.VolumeLabel + " (" + fsEntry.Name + ")";
+						}
+						if (drive.DriveType == DriveType.Removable) {
+							fsEntry.FileType = FSEntry.FSEntryType.RemovableDevice;
+							fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("removable/removable");
+						} else if (drive.DriveType == DriveType.CDRom) {
+							fsEntry.FileType = FSEntry.FSEntryType.RemovableDevice;
+							fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("cdrom/cdrom");
+						} else {
+							fsEntry.FileType = FSEntry.FSEntryType.Device;
+							fsEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("harddisk/harddisk");
+						}
+
+						my_computer_content_arraylist.Add (fsEntry);
+
+						string contain_string = fsEntry.FullName + "://";
+						if (!MWFVFS.MyComputerDevicesPrefix.Contains (contain_string))
+							MWFVFS.MyComputerDevicesPrefix.Add (contain_string, fsEntry);				
+					}
+				}
 			}
 			
 			my_computer_content_arraylist.Add (GetMyComputerPersonalFSEntry ());
@@ -4231,7 +4268,7 @@ namespace System.Windows.Forms
 			
 			desktopFSEntry.Attributes = FileAttributes.Directory;
 			desktopFSEntry.FullName = MWFVFS.DesktopPrefix;
-			desktopFSEntry.Name = "Desktop";
+			desktopFSEntry.Name = Locale.GetText("Desktop");
 			desktopFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesDesktop);
 			desktopFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			desktopFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("desktop/desktop");
@@ -4242,7 +4279,7 @@ namespace System.Windows.Forms
 			recentlyusedFSEntry.Attributes = FileAttributes.Directory;
 			recentlyusedFSEntry.FullName = MWFVFS.RecentlyUsedPrefix;
 			recentlyusedFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesRecentDocuments);
-			recentlyusedFSEntry.Name = "Recently Used";
+			recentlyusedFSEntry.Name = Locale.GetText("Recently Used");
 			recentlyusedFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			recentlyusedFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("recently/recently");
 			recentlyusedFSEntry.LastAccessTime = DateTime.Now;
@@ -4251,7 +4288,7 @@ namespace System.Windows.Forms
 			
 			personalFSEntry.Attributes = FileAttributes.Directory;
 			personalFSEntry.FullName = MWFVFS.PersonalPrefix;
-			personalFSEntry.Name = "Personal";
+			personalFSEntry.Name = Locale.GetText("Personal");
 			personalFSEntry.MainTopNode = GetDesktopFSEntry ();
 			personalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
 			personalFSEntry.FileType = FSEntry.FSEntryType.Directory;
@@ -4262,7 +4299,7 @@ namespace System.Windows.Forms
 			
 			mycomputerpersonalFSEntry.Attributes = FileAttributes.Directory;
 			mycomputerpersonalFSEntry.FullName = MWFVFS.MyComputerPersonalPrefix;
-			mycomputerpersonalFSEntry.Name = "Personal";
+			mycomputerpersonalFSEntry.Name = Locale.GetText("Personal");
 			mycomputerpersonalFSEntry.MainTopNode = GetMyComputerFSEntry ();
 			mycomputerpersonalFSEntry.RealName = ThemeEngine.Current.Places (UIIcon.PlacesPersonal);
 			mycomputerpersonalFSEntry.FileType = FSEntry.FSEntryType.Directory;
@@ -4273,7 +4310,7 @@ namespace System.Windows.Forms
 			
 			mycomputerFSEntry.Attributes = FileAttributes.Directory;
 			mycomputerFSEntry.FullName = MWFVFS.MyComputerPrefix;
-			mycomputerFSEntry.Name = "My Computer";
+			mycomputerFSEntry.Name = Locale.GetText("My Computer");
 			mycomputerFSEntry.MainTopNode = GetDesktopFSEntry ();
 			mycomputerFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mycomputerFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("workplace/workplace");
@@ -4283,7 +4320,7 @@ namespace System.Windows.Forms
 			
 			mynetworkFSEntry.Attributes = FileAttributes.Directory;
 			mynetworkFSEntry.FullName = MWFVFS.MyNetworkPrefix;
-			mynetworkFSEntry.Name = "My Network";
+			mynetworkFSEntry.Name = Locale.GetText("My Network");
 			mynetworkFSEntry.MainTopNode = GetDesktopFSEntry ();
 			mynetworkFSEntry.FileType = FSEntry.FSEntryType.Directory;
 			mynetworkFSEntry.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("network/network");

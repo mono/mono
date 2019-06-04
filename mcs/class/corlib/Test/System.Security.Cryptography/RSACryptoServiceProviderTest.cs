@@ -1073,6 +1073,7 @@ public class RSACryptoServiceProviderTest {
 	}
 
 	[Test]
+	[Category("AndroidSdksNotWorking")]
 	public void UseMachineKeyStore () 
 	{
 		// note only applicable when CspParameters isn't used - which don't
@@ -1095,7 +1096,7 @@ public class RSACryptoServiceProviderTest {
 		catch (CryptographicException ce) {
 			// only root can create the required directory (if inexistant)
 			// afterward anyone can use (read from) it
-			if (!(ce.InnerException is UnauthorizedAccessException))
+			if (!(ce.InnerException is UnauthorizedAccessException) && !(ce.InnerException is IOException ioe && ioe.HResult == 30 /* Read-only file system */))
 				throw;
 		}
 		catch (UnauthorizedAccessException) {
@@ -1402,6 +1403,16 @@ public class RSACryptoServiceProviderTest {
 		byte[] blob = new byte [148]; // valid size for public key
 		rsa = new RSACryptoServiceProvider (minKeySize);
 		rsa.ImportCspBlob (blob);
+	}
+
+	[Test] //bug 38054
+	public void NonExportableKeysAreNonExportable ()
+	{
+		var cspParams = new CspParameters();
+		cspParams.KeyContainerName = "TestRSAKey";
+		cspParams.Flags = CspProviderFlags.UseNonExportableKey;
+		var rsa = new RSACryptoServiceProvider(cspParams);
+		Assert.Throws<CryptographicException>(() => rsa.ExportParameters(true));
 	}
 }
 

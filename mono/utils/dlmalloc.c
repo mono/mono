@@ -19,6 +19,8 @@
  * - the defines below
  */
 
+#include "mono-mmap.h"
+
 #define USE_DL_PREFIX 1
 #define USE_LOCKS 1
 /* Use mmap for allocating memory */
@@ -461,7 +463,9 @@ DEFAULT_MMAP_THRESHOLD       default: 256K
 #endif  /* _WIN32 */
 #endif  /* WIN32 */
 #ifdef WIN32
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #define HAVE_MMAP 1
 #define HAVE_MORECORE 0
@@ -536,7 +540,8 @@ DEFAULT_MMAP_THRESHOLD       default: 256K
 #endif  /* linux || __NetBSD__ */
 #endif  /* HAVE_MREMAP */
 #ifndef MALLOC_FAILURE_ACTION
-#define MALLOC_FAILURE_ACTION  errno = ENOMEM;
+#include <mono/utils/mono-errno.h>
+#define MALLOC_FAILURE_ACTION mono_set_errno (ENOMEM);
 #endif  /* MALLOC_FAILURE_ACTION */
 #ifndef HAVE_MORECORE
 #if ONLY_MSPACES
@@ -1185,7 +1190,7 @@ int mspace_mallopt(int, int);
 #include <string.h>      /* for memset etc */
 #endif  /* LACKS_STRING_H */
 #if USE_BUILTIN_FFS
-#ifndef LACKS_STRINGS_H
+#if !defined(LACKS_STRINGS_H) && defined(HAVE_STRINGS_H)
 #include <strings.h>     /* for ffs */
 #endif /* LACKS_STRINGS_H */
 #endif /* USE_BUILTIN_FFS */
@@ -1214,7 +1219,7 @@ extern void*     sbrk(ptrdiff_t);
 #      define _SC_PAGE_SIZE _SC_PAGESIZE
 #    endif
 #  endif
-#  ifdef _SC_PAGE_SIZE
+#  if defined (HAVE_SYSCONF) && defined (_SC_PAGESIZE)
 #    define malloc_getpagesize sysconf(_SC_PAGE_SIZE)
 #  else
 #    if defined(BSD) || defined(DGUX) || defined(HAVE_GETPAGESIZE)
@@ -1306,14 +1311,18 @@ extern void*     sbrk(ptrdiff_t);
 #define USE_MMAP_BIT         (SIZE_T_ONE)
 
 #ifndef WIN32
-#define CALL_MUNMAP(a, s)    munmap((a), (s))
+//#define CALL_MUNMAP(a, s)    munmap((a), (s))
+#define CALL_MUNMAP(a, s)    mono_vfree((a), (s), MONO_MEM_ACCOUNT_CODE)
 #define MMAP_PROT            (PROT_READ|PROT_WRITE|PROT_EXEC)
 #if !defined(MAP_ANONYMOUS) && defined(MAP_ANON)
 #define MAP_ANONYMOUS        MAP_ANON
 #endif /* MAP_ANON */
 #ifdef MAP_ANONYMOUS
 #define MMAP_FLAGS           (MAP_PRIVATE|MAP_ANONYMOUS)
-#define CALL_MMAP(s)         mmap(0, (s), MMAP_PROT, MMAP_FLAGS, -1, 0)
+
+//#define CALL_MMAP(s)         mmap(0, (s), MMAP_PROT, MMAP_FLAGS, -1, 0)
+#define CALL_MMAP(s) mono_valloc(NULL, (s), MONO_MMAP_READ|MONO_MMAP_WRITE|MONO_MMAP_EXEC|MONO_MMAP_JIT, MONO_MEM_ACCOUNT_CODE)
+
 #else /* MAP_ANONYMOUS */
 /*
    Nearly all versions of mmap support MAP_ANONYMOUS, so the following
@@ -1346,7 +1355,7 @@ static void* win32direct_mmap(size_t size) {
 /* This function supports releasing coalesed segments */
 static int win32munmap(void* ptr, size_t size) {
   MEMORY_BASIC_INFORMATION minfo;
-  char* cptr = ptr;
+  char* cptr = (char*)ptr;
   while (size) {
     if (VirtualQuery(cptr, &minfo, sizeof(minfo)) == 0)
       return -1;

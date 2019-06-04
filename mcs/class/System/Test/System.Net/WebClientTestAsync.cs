@@ -43,6 +43,7 @@ namespace MonoTests.System.Net
 		[Test]
 		[Category("Async")]
 		[Category("AndroidNotWorking")] // Attempts to access the test dll which won't work on Android
+		[Category("BitcodeNotSupported")]
 		public void DownloadData ()
 		{
 			WebClient wc;
@@ -79,12 +80,16 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if FEATURE_NO_BSD_SOCKETS
+		[ExpectedException (typeof (AggregateException))] // Something catches the PlatformNotSupportedException and re-throws an AggregateException
+#endif
+		[Category("InetAccess")]
 		public void DownloadFileTaskAsync ()
 		{
 			WebClient wc = new WebClient ();
 			string filename = Path.GetTempFileName ();
 
-			var task = wc.DownloadFileTaskAsync ("http://www.mono-project.com/", filename);
+			var task = wc.DownloadFileTaskAsync ("http://www.example.com/", filename);
 			Assert.IsTrue (task.Wait (15000));
 			Assert.IsTrue (task.IsCompleted);
 			
@@ -93,6 +98,7 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category("InetAccess")]
 		public void Cancellation ()
 		{
 			WebClient wc = new WebClient ();
@@ -120,35 +126,38 @@ namespace MonoTests.System.Net
 
 		[Test]
 		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+		[Category("InetAccess")]
 		public void DownloadMultiple ()
 		{
 			WebClient wc = new WebClient ();
-			var t1 = wc.OpenReadTaskAsync ("http://www.google.com/");
+			var t1 = wc.OpenReadTaskAsync ("http://www.example.org/");
 			Assert.That (t1.Wait (15000));
 			Assert.IsTrue (t1.IsCompleted, "#1");
 
-			var t2 = wc.OpenReadTaskAsync ("http://www.mono-project.com/");
+			var t2 = wc.OpenReadTaskAsync ("http://www.example.com/");
 			Assert.That (t2.Wait (15000));
 			Assert.IsTrue (t2.IsCompleted, "#2");
 
-			var t3 = wc.DownloadStringTaskAsync ("http://www.google.com/");
+			var t3 = wc.DownloadStringTaskAsync ("http://www.example.org/");
 			Assert.That (t3.Wait (15000));
 			Assert.IsTrue (t3.IsCompleted, "#3");
 		}
 
 		[Test]
+		[Category ("InetAccess")]
 		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple2 ()
 		{
 			WebClient wc = new WebClient ();
 
 			MessagePumpSyncContext.Run (async () => {
-				await wc.DownloadStringTaskAsync ("http://www.google.com/");
-				await wc.DownloadDataTaskAsync ("http://www.mono-project.com/");
+				await wc.DownloadStringTaskAsync ("http://www.example.org/");
+				await wc.DownloadDataTaskAsync ("http://www.example.com/");
 			}, null, 15000);
 		}
 
 		[Test]
+		[Category ("InetAccess")]
 		[Category ("NotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
 		public void DownloadMultiple3 ()
 		{
@@ -170,8 +179,8 @@ namespace MonoTests.System.Net
 			};
 
 			MessagePumpSyncContext.Run (async () => {
-				await wc.DownloadStringTaskAsync ("http://www.google.com/");
-				await wc.DownloadDataTaskAsync ("http://www.mono-project.com/");
+				await wc.DownloadStringTaskAsync ("http://www.example.org/");
+				await wc.DownloadDataTaskAsync ("http://www.example.com/");
 			}, () => data_completed && string_completed, 15000);
 
 			Assert.IsTrue (data_completed, "#1");

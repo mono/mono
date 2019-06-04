@@ -1,0 +1,14 @@
+{
+  "name": "wasm-driver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jsvu": "git+https://github.com/kjpou1/jsvu.git#mono-wasm"
+  }
+}

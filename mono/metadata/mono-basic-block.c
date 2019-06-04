@@ -324,6 +324,7 @@ mono_opcode_has_static_branch (int opcode)
 	case MONO_CEE_THROW:
 	case MONO_CEE_RETHROW:
 	case MONO_CEE_ENDFINALLY:
+	case MONO_CEE_MONO_RETHROW:
 		return TRUE;
 	}
 	return FALSE;
@@ -334,7 +335,8 @@ static void
 bb_formation_il_pass (const unsigned char *start, const unsigned char *end, MonoSimpleBasicBlock *bb, MonoSimpleBasicBlock **root, MonoMethod *method, MonoError *error)
 {
 	unsigned const char *ip = start;
-	int value, size;
+	MonoOpcodeEnum value;
+	int size;
 	guint cli_addr, offset;
 	MonoSimpleBasicBlock *branch, *next, *current;
 	const MonoOpcode *opcode;
@@ -568,7 +570,7 @@ fail:
  * Value is the opcode number. 
 */
 int
-mono_opcode_value_and_size (const unsigned char **ip, const unsigned char *end, int *value)
+mono_opcode_value_and_size (const unsigned char **ip, const unsigned char *end, MonoOpcodeEnum *value)
 {
 	const unsigned char *start = *ip, *p;
 	int i = *value = mono_opcode_value (ip, end);
@@ -611,7 +613,7 @@ mono_opcode_value_and_size (const unsigned char **ip, const unsigned char *end, 
 		entries = read32 (p + 1);
 		if (entries >= (0xFFFFFFFFU / 4))
 			return -1;
-		size = 4 + 4 * entries;
+		size = 5 + 4 * entries;
 		break;
 	}
 	default:
@@ -632,7 +634,7 @@ mono_opcode_value_and_size (const unsigned char **ip, const unsigned char *end, 
 int
 mono_opcode_size (const unsigned char *ip, const unsigned char *end)
 {
-	int tmp;
+	MonoOpcodeEnum tmp;
 	return mono_opcode_value_and_size (&ip, end, &tmp);
 }
 

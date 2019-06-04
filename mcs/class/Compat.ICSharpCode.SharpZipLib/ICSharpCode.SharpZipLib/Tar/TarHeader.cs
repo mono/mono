@@ -74,6 +74,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 	/// This class encapsulates the Tar Entry Header used in Tar Archives.
 	/// The class also holds a number of tar constants, used mostly in headers.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class TarHeader : ICloneable
 	{
 		/// <summary>

@@ -11,7 +11,9 @@ class Driver
 		for (int i = 0; i < 1000; ++i) {
 			ProcessStartInfo psi = new ProcessStartInfo () {
 				FileName = "echo",
-				Arguments = "hello 1>/dev/null",
+				Arguments = "hello",
+				RedirectStandardOutput = true,
+				UseShellExecute = false
 			};
 
 			Process p = Process.Start (psi);
@@ -20,16 +22,17 @@ class Driver
 
 			Task t = Task.Run (() => {
 				mre.Set ();
-				if (!p.WaitForExit (1000))
+				p.BeginOutputReadLine ();
+				if (!p.WaitForExit (10000))
 					Environment.Exit (1);
 			});
 
-			if (!mre.WaitOne (1000))
+			if (!mre.WaitOne (10000))
 				Environment.Exit (2);
-			if (!p.WaitForExit (1000))
+			if (!p.WaitForExit (10000))
 				Environment.Exit (3);
 
-			if (!t.Wait (1000))
+			if (!t.Wait (10000))
 				Environment.Exit (4);
 		}
 	}

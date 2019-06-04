@@ -30,15 +30,28 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public abstract class Comparer {
+	abstract class Comparer {
 
-		protected List<XElement> removed = new List<XElement> ();
-		protected ApiChanges modified = new ApiChanges ();
+		protected List<XElement> removed;
+		protected ApiChanges modified;
+
+		public Comparer (State state)
+		{
+			State = state;
+			removed = new List<XElement> ();
+			modified = new ApiChanges (state);
+		}
+
+		public State State { get; }
 
 		public TextWriter Output {
 			get { return State.Output; }
+		}
+
+		public Formatter Formatter {
+			get { return State.Formatter; }
 		}
 
 		protected TextWriter Indent ()

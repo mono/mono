@@ -1,3 +1,3 @@
-Package('sqlite-autoconf', '3090200', sources=[
-    'http://www.sqlite.org/2015/%{name}-%{version}.tar.gz'
-])
+Package('sqlite-autoconf', '3260000', sources=[
+    'https://www.sqlite.org/2018/%{name}-%{version}.tar.gz'
+],configure_flags=['--disable-editline'])

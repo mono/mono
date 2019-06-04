@@ -25,10 +25,21 @@ namespace System.Runtime {
     using System.Runtime.Versioning;
     using System.Runtime.CompilerServices;
 
-#if FEATURE_MULTICOREJIT
+#if FEATURE_MULTICOREJIT || MONO
 
     public static class ProfileOptimization
     {
+#if MONO
+        internal static void InternalSetProfileRoot(string directoryPath)
+        {
+            // ignore
+        }
+
+        internal static void InternalStartProfile(string profile, IntPtr ptrNativeAssemblyLoadContext)
+        {
+            // ignore
+        }
+#else
         [DllImport(JitHelpers.QCall, CharSet = CharSet.Unicode)]
         [SecurityCritical]
         [ResourceExposure(ResourceScope.None)]
@@ -40,6 +51,7 @@ namespace System.Runtime {
         [ResourceExposure(ResourceScope.None)]
         [SuppressUnmanagedCodeSecurity]
         internal static extern void InternalStartProfile(string profile, IntPtr ptrNativeAssemblyLoadContext);
+#endif
 
         [SecurityCritical]
         public static void SetProfileRoot(string directoryPath)

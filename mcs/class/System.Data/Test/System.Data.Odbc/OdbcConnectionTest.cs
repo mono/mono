@@ -131,6 +131,7 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
+		[Category("NotWorking")] //GetSchema is not implemented in corefx for ODBC
 		public void GetSchema_Connection_Closed ()
 		{
 			OdbcConnection cn = new OdbcConnection ();

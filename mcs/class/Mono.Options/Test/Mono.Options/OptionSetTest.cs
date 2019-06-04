@@ -413,6 +413,8 @@ namespace MonoTests.Mono.Options
 				{ "color2:",            "set {color}",                          v => {} },
 				{ "rk=",                "required key/value option",            (k, v) => {} },
 				{ "rk2=",               "required {{foo}} {0:key}/{1:value} option",    (k, v) => {} },
+				{ "rk3=",               "required {{foo}} {}",    k => {} },
+				{ "rk4=",               "required {{foo}} {0:val}",    k => {} },
 				{ "ok:",                "optional key/value option",            (k, v) => {} },
 				{ "long-desc",
 					"This has a really\nlong, multi-line description that also\ntests\n" +
@@ -456,6 +458,8 @@ namespace MonoTests.Mono.Options
 			expected.WriteLine ("      --color2[=color]       set color");
 			expected.WriteLine ("      --rk=VALUE1:VALUE2     required key/value option");
 			expected.WriteLine ("      --rk2=key:value        required {foo} key/value option");
+			expected.WriteLine ("      --rk3=VALUE            required {foo}");
+			expected.WriteLine ("      --rk4=val              required {foo} val");
 			expected.WriteLine ("      --ok[=VALUE1:VALUE2]   optional key/value option");
 			expected.WriteLine ("      --long-desc            This has a really");
 			expected.WriteLine ("                               long, multi-line description that also");

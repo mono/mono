@@ -38,7 +38,9 @@ rm -rf share/emacs
 rm -rf share/strings
 rm -rf share/pixmaps
 rm -rf share/intltool
+rm -rf share/llvm
 rm -rf var/cache/fontconfig
+rm -rf include/llvm
 
 # delete most of the *.a files
 rm -rf lib/cairo/libcairo-trace.a
@@ -46,38 +48,8 @@ rm -rf lib/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.a
 rm -rf lib/gtk-2.0/2.10.0/engines/libsvg.a
 rm -rf lib/libCompilerDriver.a
 rm -rf lib/libEnhancedDisassembly.a
-rm -rf lib/libLLVMAnalysis.a
-rm -rf lib/libLLVMArchive.a
-rm -rf lib/libLLVMAsmParser.a
-rm -rf lib/libLLVMAsmPrinter.a
-rm -rf lib/libLLVMBitReader.a
-rm -rf lib/libLLVMBitWriter.a
-rm -rf lib/libLLVMCodeGen.a
-rm -rf lib/libLLVMCore.a
-rm -rf lib/libLLVMExecutionEngine.a
-rm -rf lib/libLLVMInstCombine.a
-rm -rf lib/libLLVMInstrumentation.a
-rm -rf lib/libLLVMInterpreter.a
-rm -rf lib/libLLVMJIT.a
-rm -rf lib/libLLVMLinker.a
-rm -rf lib/libLLVMMC.a
-rm -rf lib/libLLVMMCDisassembler.a
-rm -rf lib/libLLVMMCJIT.a
-rm -rf lib/libLLVMMCParser.a
-rm -rf lib/libLLVMObject.a
-rm -rf lib/libLLVMScalarOpts.a
-rm -rf lib/libLLVMSelectionDAG.a
-rm -rf lib/libLLVMSupport.a
-rm -rf lib/libLLVMTarget.a
-rm -rf lib/libLLVMTransformUtils.a
-rm -rf lib/libLLVMX86AsmParser.a
-rm -rf lib/libLLVMX86AsmPrinter.a
-rm -rf lib/libLLVMX86CodeGen.a
-rm -rf lib/libLLVMX86Disassembler.a
-rm -rf lib/libLLVMX86Info.a
-rm -rf lib/libLLVMipa.a
-rm -rf lib/libLLVMipo.a
-rm -rf lib/libLTO.a
+rm -rf lib/libLLVM*.a
+rm -rf lib/libLTO.*
 # rm -rf lib/libMonoPosixHelper.a
 # rm -rf lib/libMonoSupportW.a
 rm -rf lib/libUnitTestMain.a
@@ -121,10 +93,12 @@ rm -rf lib/libxml2.a
 
 # we don't need any of the llvm executables except llc and opt
 rm -rf bin/bugpoint
-rm -rf bin/lli
+rm -rf bin/lli*
 rm -rf bin/llvm-*
 rm -rf bin/macho-dump
 rm -rf bin/ccache
+rm -rf bin/llc32
+rm -rf bin/opt32
 
 #
 # 14:39 <baulig> the install script needs to be modified not to

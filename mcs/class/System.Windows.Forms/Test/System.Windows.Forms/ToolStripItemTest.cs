@@ -821,7 +821,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, ao.Name, "L6");
 			//Assert.AreEqual (null, ao.Parent, "L7");
 			Assert.AreEqual (AccessibleRole.ToolBar, ao.Role, "L8");
-			Assert.AreEqual (AccessibleStates.None, ao.State, "L9");
+			Assert.AreEqual (AccessibleStates.Focusable, ao.State, "L9");
 			Assert.AreEqual (null, ao.Value, "L10");
 
 			ts.Name = "Label1";
@@ -836,7 +836,7 @@ namespace MonoTests.System.Windows.Forms
 			//Assert.AreEqual ("Test Label", ao.Name, "L16");
 			//Assert.AreEqual (null, ao.Parent, "L17");
 			Assert.AreEqual (AccessibleRole.ToolBar, ao.Role, "L18");
-			Assert.AreEqual (AccessibleStates.None, ao.State, "L19");
+			Assert.AreEqual (AccessibleStates.Focusable, ao.State, "L19");
 			Assert.AreEqual (null, ao.Value, "L20");
 
 			ts.AccessibleName = "Access Label";

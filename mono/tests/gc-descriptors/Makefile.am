@@ -1,3 +1,5 @@
+include $(top_srcdir)/mk/common.mk
+
 CLASS=$(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 
 TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/mono-wrapper
@@ -11,7 +13,7 @@ else
 
 check-local: test
 
-test : descriptor-tests.exe
+test-local : descriptor-tests.exe
 
 descriptor-tests.exe : descriptor-tests.cs
 	$(MCS) -Warn:0 descriptor-tests.cs

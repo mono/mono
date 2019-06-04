@@ -37,10 +37,10 @@ namespace System.IO.MemoryMappedFiles
 {
 	internal static class MemoryMapImpl {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern IntPtr OpenFileInternal (string path, FileMode mode, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, out int error);
+		static extern unsafe IntPtr OpenFileInternal (char* path, int path_length, FileMode mode, char* mapName, int mapName_length, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, out int error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern IntPtr OpenHandleInternal (IntPtr handle, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, out int error);
+		static extern unsafe IntPtr OpenHandleInternal (IntPtr handle, char* mapName, int mapName_length, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, out int error);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void CloseMapping (IntPtr handle);
@@ -93,22 +93,41 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 
-		internal static IntPtr OpenFile (string path, FileMode mode, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
+		static int StringLength (string a)
 		{
-			int error = 0;
-			IntPtr res = OpenFileInternal (path, mode, mapName, out capacity, access, options, out error);
-			if (error != 0)
-				throw CreateException (error, path);
-			return res;
+			return a?.Length ?? 0;
 		}
 
-		internal static IntPtr OpenHandle (IntPtr handle, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
+		static void CheckString (string name, string value)
 		{
-			int error = 0;
-			IntPtr res = OpenHandleInternal (handle, mapName, out capacity, access, options, out error);
-			if (error != 0)
-				throw CreateException (error, "<none>");
-			return res;
+			// Native code tends to truncate at NUL which is incorrect. Guard it here.
+			if (value?.IndexOf((char)0) >= 0)
+				throw new ArgumentException ("String must not contain embedded NULs.", name);
+		}
+
+		internal static unsafe IntPtr OpenFile (string path, FileMode mode, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
+		{
+			CheckString (nameof (path), path);
+			CheckString (nameof (mapName), mapName);
+			fixed (char* fpath = path, fmapName = mapName) {
+				int error = 0;
+				IntPtr res = OpenFileInternal (fpath, StringLength (path), mode, fmapName, StringLength (mapName), out capacity, access, options, out error);
+				if (error != 0)
+					throw CreateException (error, path);
+				return res;
+			}
+		}
+
+		internal static unsafe IntPtr OpenHandle (IntPtr handle, string mapName, out long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options)
+		{
+			CheckString (nameof (mapName), mapName);
+			fixed (char* fmapName = mapName) {
+				int error = 0;
+				IntPtr res = OpenHandleInternal (handle, fmapName, StringLength (mapName), out capacity, access, options, out error);
+				if (error != 0)
+					throw CreateException (error, "<none>");
+				return res;
+			}
 		}
 	}
 

@@ -26,6 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,6 +39,8 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel
 {
@@ -370,7 +373,7 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void WriteToWSA10 ()
 		{
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.cer");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			EndpointAddress a = new EndpointAddress (
 				new Uri ("http://localhost:8080"),
 				new X509CertificateEndpointIdentity (cert));
@@ -386,7 +389,7 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void WriteContentsToWSA10 ()
 		{
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.cer");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			EndpointAddress a = new EndpointAddress (
 				new Uri ("http://localhost:8080"),
 				new X509CertificateEndpointIdentity (cert));
@@ -434,4 +437,6 @@ namespace MonoTests.System.ServiceModel
 */
 	}
 }
+#endif
+
 

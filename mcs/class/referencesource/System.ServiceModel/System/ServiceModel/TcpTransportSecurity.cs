@@ -81,7 +81,7 @@ namespace System.ServiceModel
             }
         }
 
-        [DefaultValue(TransportDefaults.SslProtocols)]
+        [DefaultValue(TransportDefaults.OldDefaultSslProtocols)]
         public SslProtocols SslProtocols
         {
             get { return this.sslProtocols; }

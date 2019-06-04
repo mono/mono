@@ -1,4 +1,4 @@
-#if MOBILE_LEGACY
+#if MOBILE_LEGACY && !DISABLE_REMOTING
 #define FEATURE_REMOTING
 #endif
 // ==++==
@@ -42,6 +42,8 @@ namespace System.Threading
 #endif
     [System.Runtime.InteropServices.ComVisible(true)]
     public delegate void ContextCallback(Object state);
+
+    internal delegate void ContextCallback<TState>(ref TState state);
 
 #if FEATURE_CORECLR
 
@@ -576,6 +578,10 @@ namespace System.Threading
             }
         }
 
+#if MONO
+        internal static readonly ExecutionContext Default = new ExecutionContext();
+#endif
+
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal ExecutionContext()
         {            
@@ -904,6 +910,11 @@ namespace System.Threading
             RunInternal(executionContext, callback, state, preserveSyncCtx);
         }
 
+        internal static void RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+        {
+            RunInternal(executionContext, callback, state, false);
+        }
+
         // Actual implementation of Run is here, in a non-DynamicSecurityMethod, because the JIT seems to refuse to inline callees into
         // a DynamicSecurityMethod.
         [SecurityCritical]
@@ -955,6 +966,72 @@ namespace System.Threading
                 // Call the user's callback
                 //
                 callback(state);
+            }
+            finally
+            {
+                ecsw.Undo();
+            }
+        }
+
+        // Direct copy of the above RunInternal overload, except that it passes the state into the callback strongly-typed and by ref.
+        internal static void RunInternal<TState>(ExecutionContext executionContext, ContextCallback<TState> callback, ref TState state)
+        {
+            RunInternal(executionContext, callback, ref state, false);
+        }
+
+        // Actual implementation of Run is here, in a non-DynamicSecurityMethod, because the JIT seems to refuse to inline callees into
+        // a DynamicSecurityMethod.
+        [SecurityCritical]
+        [SuppressMessage("Microsoft.Concurrency", "CA8001", Justification = "Reviewed for thread safety")]
+        [HandleProcessCorruptedStateExceptions]
+        // Direct copy of the above RunInternal overload, except that it passes the state into the callback strongly-typed and by ref.
+        internal static void RunInternal<TState>(ExecutionContext executionContext, ContextCallback<TState> callback, ref TState state, bool preserveSyncCtx)
+        // internal static void RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, bool preserveSyncCtx)
+        {
+            Contract.Assert(executionContext != null);
+            if (executionContext.IsPreAllocatedDefault)
+            {
+                Contract.Assert(executionContext.IsDefaultFTContext(preserveSyncCtx));
+            }
+            else
+            {
+                Contract.Assert(executionContext.isNewCapture);
+                executionContext.isNewCapture = false;
+            }
+
+            Thread currentThread = Thread.CurrentThread;
+            ExecutionContextSwitcher ecsw = default(ExecutionContextSwitcher);
+
+            RuntimeHelpers.PrepareConstrainedRegions();
+            try
+            {
+                ExecutionContext.Reader ec = currentThread.GetExecutionContextReader();
+                if ( (ec.IsNull || ec.IsDefaultFTContext(preserveSyncCtx)) && 
+    #if FEATURE_IMPERSONATION || FEATURE_COMPRESSEDSTACK                
+                    SecurityContext.CurrentlyInDefaultFTSecurityContext(ec) && 
+    #endif // #if FEATURE_IMPERSONATION || FEATURE_COMPRESSEDSTACK                
+                    executionContext.IsDefaultFTContext(preserveSyncCtx) &&
+                    ec.HasSameLocalValues(executionContext)
+                    )
+                {
+                    // Neither context is interesting, so we don't need to set the context.
+                    // We do need to reset any changes made by the user's callback,
+                    // so here we establish a "copy-on-write scope".  Any changes will
+                    // result in a copy of the context being made, preserving the original
+                    // context.
+                    EstablishCopyOnWriteScope(currentThread, true, ref ecsw);
+                }
+                else
+                {
+                    if (executionContext.IsPreAllocatedDefault)
+                        executionContext = new ExecutionContext();
+                    ecsw = SetExecutionContext(executionContext, preserveSyncCtx);
+                }
+
+                //
+                // Call the user's callback
+                //
+                callback(ref state);
             }
             finally
             {
@@ -1239,7 +1316,11 @@ namespace System.Threading
             {
                 // capture the sync context
                 if (0 == (options & CaptureOptions.IgnoreSyncCtx))
+#if MONO
+                    syncCtxNew = ecCurrent.SynchronizationContext;
+#else
                     syncCtxNew = (ecCurrent.SynchronizationContext == null) ? null : ecCurrent.SynchronizationContext.CreateCopy();
+#endif
 
 #if FEATURE_REMOTING
                 // copy over the Logical Call Context

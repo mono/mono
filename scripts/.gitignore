@@ -11,6 +11,7 @@
 /chktrust
 /cilc
 /crlupdate
+/csi
 /csharp
 /csharp2
 /disco
@@ -29,6 +30,7 @@
 /ilasm
 /ilasm1
 /ilasm2
+/illinkanalyzer
 /installvst
 /lc
 /macpack
@@ -58,7 +60,6 @@
 /mono-find-provides
 /mono-find-requires
 /monolinker
-/mono-nunit.pc
 /monop
 /monop1
 /monop2
@@ -69,9 +70,6 @@
 /mono-symbolicate
 /mono-xmltool
 /mozroots
-/nunit-console
-/nunit-console2
-/nunit-console4
 /pdb2mdb
 /permview
 /peverify
@@ -86,6 +84,8 @@
 /sgen1
 /signcode
 /csc
+/csc-dim
+/vbc
 /sn
 /soapsuds
 /sqlmetal

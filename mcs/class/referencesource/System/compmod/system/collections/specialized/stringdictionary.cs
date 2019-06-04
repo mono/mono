@@ -15,6 +15,7 @@ namespace System.Collections.Specialized {
     using System.Globalization;
     using System.Collections.Generic;
     
+#if !COREFX
     /// <devdoc>
     ///    <para>Implements a hashtable with the key strongly typed to be
     ///       a string rather than an object. </para>
@@ -188,12 +189,13 @@ namespace System.Collections.Specialized {
         internal IDictionary<string, string> AsGenericDictionary() {
             return new GenericAdapter(this);
         }
+#endif
 
 #region GenericAdapter
         //
     // This class is used to make StringDictionary implement IDictionary<string,string> indirectly. 
     // This is done to prevent StringDictionary be serialized as IDictionary<string,string> and break its serialization by DataContractSerializer due to a bug in the serialization code.
-    private class GenericAdapter : IDictionary<string, string>
+    class GenericAdapter : IDictionary<string, string>
     {
 
         StringDictionary m_stringDictionary;
@@ -454,5 +456,7 @@ namespace System.Collections.Specialized {
         #endregion
     }
 #endregion
+#if !COREFX
     }
+#endif
 }

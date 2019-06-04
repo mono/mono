@@ -8,8 +8,10 @@
 
 #include "config.h"
 
-#include <sgen/sgen-gc.h>
-#include <sgen/sgen-qsort.h>
+#define  HAVE_SGEN_GC
+
+#include <mono/sgen/sgen-gc.h>
+#include <mono/sgen/sgen-qsort.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -104,8 +106,15 @@ compare_sorts2 (void *base, size_t nel)
 	free (b1);
 	free (b2);
 }
+
+#ifdef __cplusplus
+extern "C"
+#endif
 int
-main (void)
+test_sgen_qsort_main (void);
+
+int
+test_sgen_qsort_main (void)
 {
 	int i;
 	for (i = 1; i < 4000; ++i) {

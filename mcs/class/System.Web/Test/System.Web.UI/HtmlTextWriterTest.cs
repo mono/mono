@@ -170,10 +170,10 @@ namespace MonoTests.System.Web.UI {
 		[Test]
 		public void EscapeUrl ()
 		{
-			w.AddAttribute (HtwAttribute.Href, "http://www.google.com/search?hl=en&q=i+love+nunit&btnG=Google+Search");
+			w.AddAttribute (HtwAttribute.Href, "http://www.example.com/search?hl=en&q=i+love+nunit&btnG=Google+Search");
 			w.RenderBeginTag (HtwTag.A);
 			w.RenderEndTag ();
-			Assert.AreEqual ("<a href=\"http://www.google.com/search?hl=en&amp;q=i+love+nunit&amp;btnG=Google+Search\"></a>", sw.ToString ());
+			Assert.AreEqual ("<a href=\"http://www.example.com/search?hl=en&amp;q=i+love+nunit&amp;btnG=Google+Search\"></a>", sw.ToString ());
 		}
 
 		// Which attrs fall here
@@ -377,11 +377,11 @@ namespace MonoTests.System.Web.UI {
 		[Test]
 		public void AddStyleAttribute1 ()
 		{
-			w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, "http://www.go-mono.com/");
+			w.AddStyleAttribute (HtmlTextWriterStyle.BackgroundImage, "http://www.example.com/");
 			w.RenderBeginTag ("div");
 			w.RenderEndTag ();
 
-			Assert.AreEqual ("<div style=\"background-image:url(http://www.go-mono.com/);\">\n\n</div>", sw.ToString ());
+			Assert.AreEqual ("<div style=\"background-image:url(http://www.example.com/);\">\n\n</div>", sw.ToString ());
 		}
 
 		[Test]

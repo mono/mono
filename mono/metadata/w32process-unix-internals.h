@@ -12,7 +12,7 @@
  * FOR EXCLUSIVE USE BY w32process-unix.c
  */
 
-#if defined(PLATFORM_MACOSX)
+#if defined(HOST_DARWIN)
 #define USE_OSX_BACKEND
 #elif (defined(__OpenBSD__) || defined(__FreeBSD__)) && defined(HAVE_LINK_H)
 #define USE_BSD_BACKEND
@@ -40,7 +40,7 @@ mono_w32process_get_name (pid_t pid);
 GSList*
 mono_w32process_get_modules (pid_t pid);
 
-static void
+static void G_GNUC_UNUSED
 mono_w32process_module_free (MonoW32ProcessModule *module)
 {
 	g_free (module->perms);
@@ -51,7 +51,7 @@ mono_w32process_module_free (MonoW32ProcessModule *module)
 /*
  * Used to look through the GSList* returned by mono_w32process_get_modules
  */
-static gint
+static gint G_GNUC_UNUSED
 mono_w32process_module_equals (gconstpointer a, gconstpointer b)
 {
 	MonoW32ProcessModule *want = (MonoW32ProcessModule *)a;

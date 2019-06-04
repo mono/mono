@@ -48,6 +48,8 @@ void mono_mkbundle_init ()
 	Bytef *buffer;
 	int nbundles;
 
+	init_default_mono_api_struct ();
+	validate_api_struct ();
 	install_dll_config_files ();
 
 	ptr = (CompressedAssembly **) compressed;
@@ -56,6 +58,12 @@ void mono_mkbundle_init ()
 		nbundles++;
 
 	bundled = (MonoBundledAssembly **) malloc (sizeof (MonoBundledAssembly *) * (nbundles + 1));
+	if (bundled == NULL) {
+		// May fail...
+		mkbundle_log_error ("mkbundle: out of memory");
+		exit (1);
+	}
+
 	bundled_ptr = bundled;
 	ptr = (CompressedAssembly **) compressed;
 	while (*ptr != NULL) {
@@ -81,5 +89,5 @@ void mono_mkbundle_init ()
 		ptr++;
 	}
 	*bundled_ptr = NULL;
-	mono_register_bundled_assemblies((const MonoBundledAssembly **) bundled);
+	mono_api.mono_register_bundled_assemblies((const MonoBundledAssembly **) bundled);
 }

@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.Net.Security;
@@ -214,7 +215,7 @@ namespace MonoTests.System.ServiceModel.Channels
 
 			EndpointAddress address = new EndpointAddress (
 				new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()),
-				new X509CertificateEndpointIdentity (new X509Certificate2 ("Test/Resources/test.pfx", "mono")));
+				new X509CertificateEndpointIdentity (new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono")));
 
 			ChannelFactory<IRequestChannel> cf =
 				new ChannelFactory<IRequestChannel> (binding, address);
@@ -262,7 +263,7 @@ namespace MonoTests.System.ServiceModel.Channels
 
 			EndpointAddress address = new EndpointAddress (
 				new Uri ("http://localhost:" + NetworkHelpers.FindFreePort ()),
-				new X509CertificateEndpointIdentity (new X509Certificate2 ("Test/Resources/test.pfx", "mono")));
+				new X509CertificateEndpointIdentity (new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono")));
 
 			ChannelProtectionRequirements reqs =
 				new ChannelProtectionRequirements ();
@@ -443,3 +444,5 @@ namespace MonoTests.System.ServiceModel.Channels
 	{
 	}
 }
+#endif
+

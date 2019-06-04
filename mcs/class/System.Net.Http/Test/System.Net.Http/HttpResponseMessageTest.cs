@@ -275,7 +275,10 @@ namespace MonoTests.System.Net.Http
 					Assert.AreEqual ("v1", values[0]);
 					break;
 				case 1:
-					Assert.AreEqual ("cache-control", entry.Key);
+					if (HttpClientTestHelpers.UsingSocketsHandler)
+						Assert.AreEqual ("Cache-Control", entry.Key);
+					else
+						Assert.AreEqual ("cache-control", entry.Key);
 					values = entry.Value.ToList ();
 					Assert.AreEqual (1, values.Count);
 					Assert.AreEqual ("audio", values[0]);
@@ -436,7 +439,7 @@ namespace MonoTests.System.Net.Http
 			}
 
 			try {
-				headers.Add ("location", new[] { "google.com", "xamarin.com" });
+				headers.Add ("location", new[] { "example.com", "example.org" });
 				Assert.Fail ("#7a");
 			} catch (FormatException) {
 			}

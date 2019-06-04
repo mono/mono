@@ -47,22 +47,30 @@ static char sccsid[] = "@(#)main.c	5.5 (Berkeley) 5/24/93";
 #include <signal.h>
 #include "defs.h"
 
+// FIXME autoconf or use remove instead of unlink
+#ifdef _MSC_VER
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
+
 char tflag;
 char vflag;
 int csharp = 0;
 
-char *file_prefix = "y";
-char *myname = "yacc";
-char *temp_form = "yacc.XXXXXXX";
+const char *file_prefix = (char*)"y";
+char *myname = (char*)"yacc";
+const char *temp_form = "yacc.XXXXXXX";
 
 int lineno;
 int outline;
 
 char *action_file_name;
-char *input_file_name = "";
+char *input_file_name = (char*)"";
 char *prolog_file_name;
 char *local_file_name;
 char *verbose_file_name;
+char *output_file_name = 0;
 
 FILE *action_file;	/*  a temp file, used to save actions associated    */
 			/*  with rules until the parser is written	    */
@@ -70,6 +78,7 @@ FILE *input_file;	/*  the input file				    */
 FILE *prolog_file;	/*  temp files, used to save text until all	    */
 FILE *local_file;	/*  symbols have been defined			    */
 FILE *verbose_file;	/*  y.output					    */
+FILE *output_file; /* defaults to stdout */
 
 int nitems;
 int nrules;
@@ -100,25 +109,25 @@ extern char* mktemp();
 
 extern char *getenv();
 
-done(k)
-int k;
+void
+done (int k)
 {
     if (action_file) { fclose(action_file); unlink(action_file_name); }
     if (prolog_file) { fclose(prolog_file); unlink(prolog_file_name); }
     if (local_file) { fclose(local_file); unlink(local_file_name); }
+    if (output_file && (output_file != stdout)) { fclose(output_file); if (k != 0) unlink(output_file_name); }
     exit(k);
 }
 
-
-void
-onintr(signo)
-	int signo;
+static void
+onintr (int signo)
 {
+    (void)signo; // unused
     done(1);
 }
 
-
-set_signals()
+static void
+set_signals (void)
 {
 #ifdef SIGINT
     if (signal(SIGINT, SIG_IGN) != SIG_IGN)
@@ -134,23 +143,22 @@ set_signals()
 #endif
 }
 
-
-usage()
+static void
+usage (void)
 {
-    fprintf(stderr, "usage: %s [-tvcp] [-b file_prefix] filename\n", myname);
+    fprintf(stderr, "usage: %s [-tvcp] [-b file_prefix] [-o output_filename] input_filename\n", myname);
     exit(1);
 }
 
-void
+static void
 print_skel_dir(void)
 {
     printf ("%s\n", SKEL_DIRECTORY);
     exit (0);
 }
 
-getargs(argc, argv)
-int argc;
-char *argv[];
+static void
+getargs (int argc, char *argv[])
 {
     register int i;
     register char *s;
@@ -167,9 +175,9 @@ char *argv[];
 	    if (i + 1 < argc) usage();
 	    return;
 
-        case '-':
-            ++i;
-            goto no_more_options;
+    case '-':
+        ++i;
+        goto no_more_options;
 
 	case 'b':
 	    if (*++s)
@@ -180,13 +188,22 @@ char *argv[];
 		usage();
 	    continue;
 
-        case 't':
-            tflag = 1;
-            break;
+    case 'o':
+        if (*++s)
+            output_file_name = s;
+        else if (++i < argc)
+            output_file_name = argv[i];
+        else
+            usage();
+        continue;
+
+    case 't':
+        tflag = 1;
+        break;
 
 	case 'p':
-            print_skel_dir ();
-            break;
+        print_skel_dir ();
+        break;
 
 	case 'c':
 	    csharp = 1;
@@ -217,12 +234,12 @@ char *argv[];
 		vflag = 1;
 		break;
 
-            case 'p':
-                print_skel_dir ();
-                break;
+        case 'p':
+            print_skel_dir ();
+            break;
 
-            case 'c':
-		csharp = 1;
+        case 'c':
+		    csharp = 1;
 	        line_format = "#line %d \"%s\"\n";
         	default_line_format = "#line default\n";
 
@@ -240,17 +257,15 @@ no_more_options:;
     input_file_name = argv[i];
 }
 
-
 char *
-allocate(n)
-unsigned n;
+allocate (unsigned n)
 {
     register char *p;
 
     p = NULL;
     if (n)
     {
-	p = CALLOC(1, n);
+	p = (char*)CALLOC(1, n);
 	if (!p) no_space();
     }
     return (p);
@@ -262,10 +277,11 @@ unsigned n;
 #define GNUC_UNUSED
 #endif
 
-create_file_names()
+static void
+create_file_names (void)
 {
     int i, len;
-    char *tmpdir;
+    const char *tmpdir;
     int mkstemp_res GNUC_UNUSED;
 
 #if defined(_WIN32) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
@@ -282,11 +298,11 @@ create_file_names()
     if (len && tmpdir[len-1] != '/')
 	++i;
 
-    action_file_name = MALLOC(i);
+    action_file_name = (char*)MALLOC(i);
     if (action_file_name == 0) no_space();
-    prolog_file_name = MALLOC(i);
+    prolog_file_name =  (char*)MALLOC(i);
     if (prolog_file_name == 0) no_space();
-    local_file_name = MALLOC(i);
+    local_file_name =  (char*)MALLOC(i);
     if (local_file_name == 0) no_space();
 
     strcpy(action_file_name, tmpdir);
@@ -317,7 +333,7 @@ create_file_names()
 
     if (vflag)
     {
-	verbose_file_name = MALLOC(len + 8);
+	verbose_file_name = (char*)MALLOC(len + 8);
 	if (verbose_file_name == 0)
 	    no_space();
 	strcpy(verbose_file_name, file_prefix);
@@ -325,8 +341,8 @@ create_file_names()
     }
 }
 
-
-open_files()
+static void
+open_files (void)
 {
     create_file_names();
 
@@ -355,13 +371,22 @@ open_files()
 	if (verbose_file == 0)
 	    open_error(verbose_file_name);
     }
+
+    if (output_file == 0)
+    {
+        if (output_file_name != 0) {
+            output_file = fopen(output_file_name, "w");
+            if (output_file == 0)
+                open_error(output_file_name);
+        } else {
+            output_file = stdout;
+        }
+    }
 }
 
 
 int
-main(argc, argv)
-int argc;
-char *argv[];
+main (int argc, char *argv[])
 {
     set_signals();
     getargs(argc, argv);

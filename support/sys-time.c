@@ -10,6 +10,9 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <string.h>
+#ifdef __HAIKU__
+#include <os/kernel/OS.h>
+#endif
 
 #include "map.h"
 #include "mph.h"
@@ -47,11 +50,6 @@ Mono_Posix_Syscall_settimeofday (
 	struct Mono_Posix_Timeval *tv,
 	struct Mono_Posix_Timezone *tz)
 {
-#if defined(__HAIKU__)
-	/* FIXME: Haiku doesn't support this either, consider
-           using set_real_time_clock instead? */
-	return -1;
-#else
 	struct timeval _tv   = {0};
 	struct timeval *ptv  = NULL;
 	struct timezone _tz  = {0};
@@ -69,10 +67,14 @@ Mono_Posix_Syscall_settimeofday (
 		ptz = &_tz;
 	}
 
+#ifdef __HAIKU__
+	set_real_time_clock(ptv->tv_sec);
+	r = 0;
+#else
 	r = settimeofday (ptv, ptz);
+#endif
 
 	return r;
-#endif
 }
 
 static inline struct timeval*

@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,13 +37,15 @@ using System.Net;
 using System.ServiceModel;
 using System.Net.Security;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
 	public class CustomBindingElementTest
 	{
 		CustomBindingCollectionElement OpenConfig () {
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/customBinding").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/customBinding")).GetSectionGroup ("system.serviceModel");
 			Assert.AreEqual (7, config.Bindings.CustomBinding.Bindings.Count, "CustomBinding count");
 			return config.Bindings.CustomBinding;
 		}
@@ -403,3 +405,4 @@ namespace MonoTests.System.ServiceModel.Configuration
 		}
 	}
 }
+#endif

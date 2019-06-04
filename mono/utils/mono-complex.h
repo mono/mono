@@ -11,87 +11,51 @@
 
 #include <config.h>
 #include <glib.h>
-
-#if !defined (HAVE_COMPLEX_H)
-#include <../../support/libm/complex.h>
-#else
-#include <complex.h>
-#endif
-
 #define _USE_MATH_DEFINES // needed by MSVC to define math constants
 #include <math.h>
 
-#ifdef _MSC_VER
+typedef struct double_complex {
+	double real;
+	double imag;
+} double_complex;
 
-#define double_complex _C_double_complex
+#define mono_creal(c) ((c).real)
+#define mono_cimag(c) ((c).imag)
 
 static inline
 double_complex mono_double_complex_make(gdouble re, gdouble im)
 {
-	return _Cbuild (re, im);
+	double_complex const a = { re, im };
+	return a;
 }
 
 static inline
 double_complex mono_double_complex_scalar_div(double_complex c, gdouble s)
 {
-	return mono_double_complex_make(creal(c) / s, cimag(c) / s);
+	return mono_double_complex_make (mono_creal (c) / s, mono_cimag (c) / s);
 }
 
 static inline
 double_complex mono_double_complex_scalar_mul(double_complex c, gdouble s)
 {
-	return mono_double_complex_make(creal(c) * s, cimag(c) * s);
+	return mono_double_complex_make (mono_creal (c) * s, mono_cimag (c) * s);
 }
 
 static inline
 double_complex mono_double_complex_div(double_complex left, double_complex right)
 {
-	double denom = creal(right) * creal(right) + cimag(right) * cimag(right);
+	double denom = mono_creal (right) * mono_creal (right) + mono_cimag (right) * mono_cimag (right);
 
 	return mono_double_complex_make(
-		(creal(left) * creal(right) + cimag(left) * cimag(right)) / denom,
-		(-creal(left) * cimag(right) + cimag(left) * creal(right)) / denom);
+		(mono_creal (left) * mono_creal (right) + mono_cimag (left) * mono_cimag (right)) / denom,
+		(-mono_creal (left) * mono_cimag (right) + mono_cimag (left) * mono_creal (right)) / denom);
 }
 
 static inline
 double_complex mono_double_complex_sub(double_complex left, double_complex right)
 {
-	return mono_double_complex_make(creal(left) - creal(right), cimag(left)
-		- cimag(right));
+	return mono_double_complex_make (mono_creal (left) - mono_creal (right), mono_cimag (left)
+		- mono_cimag (right));
 }
 
-#else
-
-#define double_complex double complex
-
-static inline
-double_complex mono_double_complex_make(gdouble re, gdouble im)
-{
-	return re + im * I;
-}
-
-static inline
-double_complex mono_double_complex_scalar_div(double_complex c, gdouble s)
-{
-	return c / s;
-}
-
-static inline
-double_complex mono_double_complex_scalar_mul(double_complex c, gdouble s)
-{
-	return c * s;
-}
-
-static inline
-double_complex mono_double_complex_div(double_complex left, double_complex right)
-{
-	return left / right;
-}
-
-static inline
-double_complex mono_double_complex_sub(double_complex left, double_complex right)
-{
-	return left - right;
-}
-
-#endif
+#include "../../support/libm/complex.c"

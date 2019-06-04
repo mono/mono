@@ -46,9 +46,6 @@ using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Threading;
 
-using MonoTests.Common;
-
-
 namespace MonoTests.System.Web.UI.WebControls
 {
 
@@ -1501,7 +1498,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.UserData = "Empty";
 			string result;
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				result = t.Run ();
 			}, "#A1");
 		}
@@ -1517,7 +1514,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (String.Empty, renderedHtml, "#A1");
 
 			t.UserData = "OptionalSideBar_WithSideBar";
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				result = t.Run ();
 			}, "#A2");
 		}
@@ -1552,7 +1549,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (String.Empty, renderedHtml, "#A1");
 
 			t.UserData = "OptionalHeader_WithHeaderTemplate";
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				result = t.Run ();
 			}, "#A2");
 		}
@@ -1580,7 +1577,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
 			t.UserData = "StepPlaceHolder";
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				string result = t.Run ();
 			}, "#A1");
 		}
@@ -1590,7 +1587,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
 			t.UserData = "NavigationPlaceHolder";
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				string result = t.Run ();
 			}, "#A1");
 		}

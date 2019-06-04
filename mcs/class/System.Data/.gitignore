@@ -1,11 +1,1 @@
 y.output
-gen_OleDbConnection.cs
-gen_OleDbParameter.cs
-gen_OleDbParameterCollection.cs
-gen_OdbcConnection.cs
-gen_OdbcParameter.cs
-gen_OdbcParameterCollection.cs
-gen_SqlConnection.cs
-gen_SqlParameter.cs
-gen_SqlParameterCollection.cs
-

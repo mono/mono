@@ -10,6 +10,7 @@
 X11_MODE=%X11_MODE%
 MWF_MODE=%MWF_MODE%
 COCOASHARP_MODE=%COCOASHARP_MODE%
+MONO_ARGS=%MONO_ARGS%
 
 PWD=`pwd`
 # Fetch the path relative to the launch point where this shell script exists.
@@ -33,19 +34,24 @@ fi
 
 cd "$APP_PATH/Contents/Resources"
 
+mono4_path=/usr/local/bin/mono
+mono5_path=/Library/Frameworks/Mono.framework/Versions/Current/Commands/mono
+
 if [ "$X11_MODE" -eq "1" ]; then
 	open-x11 "$APP_NAME"
 
 # rcruzs00
 # El Capitan FIX: `which` wont work (system-integrity-protection)
 # elif: Keep compatibility with previous code
-elif [ -f /usr/local/bin/mono ]; then
+elif [ -f "$mono4_path" ]; then
         DIR=$(cd "$(dirname "$0")"; pwd)
-        /usr/local/bin/mono $DIR/../Resources/"$ASSEMBLY"
-
+        "$mono4_path" $MONO_ARGS $DIR/../Resources/"$ASSEMBLY"
+elif [ -f "$mono5_path" ]; then
+        DIR=$(cd "$(dirname "$0")"; pwd)
+        "$mono5_path" $MONO_ARGS $DIR/../Resources/"$ASSEMBLY"
 else
 	if [ ! -d "./bin" ]; then mkdir bin ; fi
 	if [ -f "./bin/$APP_NAME" ]; then rm -f "./bin/$APP_NAME" ; fi
 	ln -s `which mono` "./bin/$APP_NAME" 
-	"./bin/$APP_NAME" "$ASSEMBLY"
+	"./bin/$APP_NAME" $MONO_ARGS "$ASSEMBLY"
 fi

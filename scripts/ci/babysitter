@@ -364,13 +364,19 @@ def run(): # Returns exit code
 			code = wait(proc, duration)
 			timed_out = code is None
 			if timed_out:                  # Initial timeout
+				sys.stderr.write("%s: Sending %s to `%s`\n" % (scriptname, "SIG" + args.signal, command[0]))
 				send_signal(proc, timeout_signal)
 				if kill_after is not None: # Kill-after timeout
 					code = wait(proc, kill_after)
 					if code is None:
+						sys.stderr.write("%s: Sending SIGKILL to `%s`\n" % (scriptname, command[0]))
 						send_signal(proc, signal.SIGKILL)
+						code = wait(proc, 1)
+						sys.stderr.write("%s: Command `%s` returned with %s after SIGKILL\n" % (scriptname, command[0], str(code)))
+					else:
+						sys.stderr.write("%s: Command `%s` returned with %s after %s\n" % (scriptname, command[0], str(code), "SIG" + args.signal))
 				code = proc.wait()         # Waits forever
-				sys.stderr.write("%s: Command `%s` timed out\n" % (scriptname, command[0]))
+				sys.stderr.write("%s: Command `%s` timed out with %s\n" % (scriptname, command[0], str(code)))
 			died_politely = True
 
 			# The test suite has now run, and what happens next varies:

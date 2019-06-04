@@ -19,6 +19,9 @@
 #if HAVE_SYS_MMAN_H
 #include <sys/mman.h>
 #endif
+#ifdef HAVE_SYS_SYSCTL_H
+#include <sys/sysctl.h>
+#endif
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -61,7 +64,7 @@ typedef struct {
 } SAreaHeader;
 
 void*
-malloc_shared_area (int pid)
+mono_malloc_shared_area (int pid)
 {
 	int size = mono_pagesize ();
 	SAreaHeader *sarea = (SAreaHeader *) g_malloc0 (size);
@@ -74,7 +77,7 @@ malloc_shared_area (int pid)
 }
 
 char*
-aligned_address (char *mem, size_t size, size_t alignment)
+mono_aligned_address (char *mem, size_t size, size_t alignment)
 {
 	char *aligned = (char*)((size_t)(mem + (alignment - 1)) & ~(alignment - 1));
 	g_assert (aligned >= mem && aligned + size <= mem + size + alignment && !((size_t)aligned & (alignment - 1)));
@@ -86,10 +89,10 @@ static size_t total_allocation_count;
 static size_t alloc_limit;
 
 void
-account_mem (MonoMemAccountType type, ssize_t size)
+mono_account_mem (MonoMemAccountType type, ssize_t size)
 {
-	InterlockedAddP (&allocation_count [type], size);
-	InterlockedAddP (&total_allocation_count, size);
+	mono_atomic_fetch_add_word (&allocation_count [type], size);
+	mono_atomic_fetch_add_word (&total_allocation_count, size);
 }
 
 void
@@ -134,7 +137,7 @@ mono_mem_account_register_counters (void)
 {
 	for (int i = 0; i < MONO_MEM_ACCOUNT_MAX; ++i) {
 		const char *prefix = "Valloc ";
-		const char *name = mono_mem_account_type_name (i);
+		const char *name = mono_mem_account_type_name ((MonoMemAccountType)i);
 		char descr [128];
 		g_assert (strlen (prefix) + strlen (name) < sizeof (descr));
 		sprintf (descr, "%s%s", prefix, name);
@@ -144,6 +147,10 @@ mono_mem_account_register_counters (void)
 
 #ifdef HOST_WIN32
 // Windows specific implementation in mono-mmap-windows.c
+#define HAVE_VALLOC_ALIGNED
+
+#elif defined(HOST_WASM)
+// WebAssembly implementation in mono-mmap-wasm.c
 #define HAVE_VALLOC_ALIGNED
 
 #else
@@ -174,6 +181,15 @@ mono_pagesize (void)
 	saved_pagesize = getpagesize ();
 #endif
 
+
+	// While this could not happen in any of the Mono supported
+	// systems, this ensures this function never returns -1, and
+	// reduces the number of false positives
+	// that Coverity finds in consumer code.
+
+	if (saved_pagesize == -1)
+		return 64*1024;
+
 	return saved_pagesize;
 }
 
@@ -195,6 +211,45 @@ prot_from_flags (int flags)
 	if (flags & MONO_MMAP_EXEC)
 		prot |= PROT_EXEC;
 	return prot;
+}
+
+#if defined(__APPLE__)
+
+#define DARWIN_VERSION_MOJAVE 18
+
+static guint32
+get_darwin_version (void)
+{
+	static guint32 version;
+
+	/* This doesn't need locking */
+	if (!version) {
+		char str[256] = {0};
+		size_t size = sizeof(str);
+		int err = sysctlbyname("kern.osrelease", str, &size, NULL, 0);
+		g_assert (err == 0);
+		err = sscanf (str, "%d", &version);
+		g_assert (err == 1);
+		g_assert (version > 0);
+	}
+	return version;
+}
+#endif
+
+static int use_mmap_jit;
+
+/**
+ * mono_setmmapjit:
+ * \param flag indicating whether to enable or disable the use of MAP_JIT in mmap
+ *
+ * Call this method to enable or disable the use of MAP_JIT to create the pages
+ * for the JIT to use.   This is only needed for scenarios where Mono is bundled
+ * as an App in MacOS
+ */
+void
+mono_setmmapjit (int flag)
+{
+	use_mmap_jit = flag;
 }
 
 /**
@@ -225,6 +280,31 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 	if (flags & MONO_MMAP_32BIT)
 		mflags |= MAP_32BIT;
 
+#ifdef HOST_WASM
+	if (length == 0)
+		/* emscripten throws an exception on 0 length */
+		return NULL;
+#endif
+
+#if defined(__APPLE__) && defined(MAP_JIT)
+	if (get_darwin_version () >= DARWIN_VERSION_MOJAVE) {
+		/* Check for hardened runtime */
+		static int is_hardened_runtime;
+
+		if (is_hardened_runtime == 0 && !use_mmap_jit) {
+			ptr = mmap (NULL, getpagesize (), PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+			if (ptr == MAP_FAILED) {
+				is_hardened_runtime = 1;
+			} else {
+				is_hardened_runtime = 2;
+				munmap (ptr, getpagesize ());
+			}
+		}
+		if ((flags & MONO_MMAP_JIT) && (use_mmap_jit || is_hardened_runtime == 1))
+			mflags |= MAP_JIT;
+	}
+#endif
+
 	mflags |= MAP_ANONYMOUS;
 	mflags |= MAP_PRIVATE;
 
@@ -242,7 +322,7 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 	if (ptr == MAP_FAILED)
 		return NULL;
 
-	account_mem (type, (ssize_t)length);
+	mono_account_mem (type, (ssize_t)length);
 
 	return ptr;
 }
@@ -262,7 +342,7 @@ mono_vfree (void *addr, size_t length, MonoMemAccountType type)
 	res = munmap (addr, length);
 	END_CRITICAL_SECTION;
 
-	account_mem (type, -(ssize_t)length);
+	mono_account_mem (type, -(ssize_t)length);
 
 	return res;
 }
@@ -284,6 +364,13 @@ mono_vfree (void *addr, size_t length, MonoMemAccountType type)
 void*
 mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_handle)
 {
+	return mono_file_map_error (length, flags, fd, offset, ret_handle, NULL, NULL);
+}
+
+void*
+mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **ret_handle,
+	const char *filepath, char **error_message)
+{
 	void *ptr;
 	int mflags = 0;
 	int prot = prot_from_flags (flags);
@@ -297,11 +384,25 @@ mono_file_map (size_t length, int flags, int fd, guint64 offset, void **ret_hand
 	if (flags & MONO_MMAP_32BIT)
 		mflags |= MAP_32BIT;
 
+#ifdef HOST_WASM
+	if (length == 0)
+		/* emscripten throws an exception on 0 length */
+		*error_message = g_stdrup_printf ("%s failed file:%s length:0x%zx offset:0x%lluX error:%s\n",
+			__func__, filepath ? filepath : "", length, offset, "mmaps of zero length are not permitted with emscripten");
+		return NULL;
+#endif
+
+	// No GC safe transition because this is called early in main.c
 	BEGIN_CRITICAL_SECTION;
 	ptr = mmap (0, length, prot, mflags, fd, offset);
 	END_CRITICAL_SECTION;
-	if (ptr == MAP_FAILED)
+	if (ptr == MAP_FAILED) {
+		if (error_message) {
+			*error_message = g_strdup_printf ("%s failed file:%s length:0x%zX offset:0x%lluX error:%s(0x%X)\n",
+				__func__, filepath ? filepath : "", length, offset, g_strerror (errno), errno);
+		}
 		return NULL;
+	}
 	*ret_handle = (void*)length;
 	return ptr;
 }
@@ -319,6 +420,7 @@ mono_file_unmap (void *addr, void *handle)
 {
 	int res;
 
+	// No GC safe transition because this is called early in driver.c via mono_debug_init (with a few layers of indirection)
 	BEGIN_CRITICAL_SECTION;
 	res = munmap (addr, (size_t)handle);
 	END_CRITICAL_SECTION;
@@ -351,7 +453,8 @@ mono_mprotect (void *addr, size_t length, int flags)
 			memset (addr, 0, length);
 #else
 		memset (addr, 0, length);
-#ifdef HAVE_MADVISE
+/* some OSes (like AIX) have madvise but no MADV_FREE */
+#if defined(HAVE_MADVISE) && defined(MADV_FREE)
 		madvise (addr, length, MADV_DONTNEED);
 		madvise (addr, length, MADV_FREE);
 #else
@@ -359,6 +462,7 @@ mono_mprotect (void *addr, size_t length, int flags)
 #endif
 #endif
 	}
+	// No GC safe transition because this is called early in mini_init via mono_arch_init (with a few layers of indirection)
 	return mprotect (addr, length, prot);
 }
 
@@ -380,13 +484,19 @@ mono_valloc_granule (void)
 void*
 mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 {
-	return g_malloc (length);
+	g_assert (addr == NULL);
+	return mono_valloc_aligned (length, mono_pagesize (), flags, type);
 }
 
 void*
 mono_valloc_aligned (size_t size, size_t alignment, int flags, MonoMemAccountType type)
 {
-	g_assert_not_reached ();
+	void *res = NULL;
+	if (posix_memalign (&res, alignment, size))
+		return NULL;
+
+	memset (res, 0, size);
+	return res;
 }
 
 #define HAVE_VALLOC_ALIGNED
@@ -494,7 +604,7 @@ mono_shared_area (void)
 
 	if (shared_area_disabled ()) {
 		if (!malloced_shared_area)
-			malloced_shared_area = malloc_shared_area (0);
+			malloced_shared_area = mono_malloc_shared_area (0);
 		/* get the pid here */
 		return malloced_shared_area;
 	}
@@ -514,7 +624,7 @@ mono_shared_area (void)
 	 * even if it means the data can't be read by other processes
 	 */
 	if (fd == -1)
-		return malloc_shared_area (pid);
+		return mono_malloc_shared_area (pid);
 	if (ftruncate (fd, size) != 0) {
 		shm_unlink (buf);
 		close (fd);
@@ -526,7 +636,7 @@ mono_shared_area (void)
 	if (res == MAP_FAILED) {
 		shm_unlink (buf);
 		close (fd);
-		return malloc_shared_area (pid);
+		return mono_malloc_shared_area (pid);
 	}
 	/* we don't need the file descriptor anymore */
 	close (fd);
@@ -607,7 +717,7 @@ void*
 mono_shared_area (void)
 {
 	if (!malloced_shared_area)
-		malloced_shared_area = malloc_shared_area (getpid ());
+		malloced_shared_area = mono_malloc_shared_area (getpid ());
 	/* get the pid here */
 	return malloced_shared_area;
 }
@@ -652,7 +762,7 @@ mono_valloc_aligned (size_t size, size_t alignment, int flags, MonoMemAccountTyp
 	if (!mem)
 		return NULL;
 
-	aligned = aligned_address (mem, size, alignment);
+	aligned = mono_aligned_address (mem, size, alignment);
 
 	if (aligned > mem)
 		mono_vfree (mem, aligned - mem, type);
@@ -662,39 +772,3 @@ mono_valloc_aligned (size_t size, size_t alignment, int flags, MonoMemAccountTyp
 	return aligned;
 }
 #endif
-
-int
-mono_pages_not_faulted (void *addr, size_t size)
-{
-#ifdef HAVE_MINCORE
-	int i;
-	gint64 count;
-	int pagesize = mono_pagesize ();
-	int npages = (size + pagesize - 1) / pagesize;
-	char *faulted = (char *) g_malloc0 (sizeof (char*) * npages);
-
-	/*
-	 * We cast `faulted` to void* because Linux wants an unsigned
-	 * char* while BSD wants a char*.
-	 */
-#ifdef __linux__
-	if (mincore (addr, size, (unsigned char *)faulted) != 0) {
-#else
-	if (mincore (addr, size, (char *)faulted) != 0) {
-#endif
-		count = -1;
-	} else {
-		count = 0;
-		for (i = 0; i < npages; ++i) {
-			if (faulted [i] != 0)
-				++count;
-		}
-	}
-
-	g_free (faulted);
-
-	return count;
-#else
-	return -1;
-#endif
-}

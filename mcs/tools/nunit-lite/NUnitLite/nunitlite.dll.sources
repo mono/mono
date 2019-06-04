@@ -184,6 +184,7 @@
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/CommandStage.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/DelegatingTestCommand.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/ExpectedExceptionCommand.cs
+../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/FlakyTestRetriesCommand.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/ICommandDecorator.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/MaxTimeCommand.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Commands/OneTimeSetUpCommand.cs
@@ -255,6 +256,7 @@
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/FinallyDelegate.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Runner/OutputWriters/NUnit2XmlOutputWriter.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Runner/OutputWriters/NUnit3XmlOutputWriter.cs
+../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Runner/OutputWriters/XunitXmlOutputWriter.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Runner/OutputWriters/OutputWriter.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Runner/ResultReporter.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Runner/ResultSummary.cs
@@ -265,3 +267,6 @@
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/TestContext.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Throws.cs
 BabysitterSupport.cs
+Test.cs
+TestResult.cs
+TestMessage.cs

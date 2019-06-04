@@ -131,5 +131,8 @@ namespace System.Net.Http
 		{
 			return method;
 		}
+
+		// NS2.1:
+		public static System.Net.Http.HttpMethod Patch => throw new PlatformNotSupportedException ();
 	}
 }

@@ -634,9 +634,6 @@ namespace System.Windows.Forms.X11Internal {
 
 				ClearInvalidArea();
 
-				drawing_stack.Push (paint_event);
-				drawing_stack.Push (dc);
-
 				return paint_event;
 			}
 			else {
@@ -653,22 +650,16 @@ namespace System.Windows.Forms.X11Internal {
 
 				ClearNcInvalidArea ();
 
-				drawing_stack.Push (paint_event);
-				drawing_stack.Push (dc);
-
 				return paint_event;
 			}
 		}
 
-		public void PaintEventEnd (ref Message m, bool client)
+		public void PaintEventEnd (ref Message m, bool client, PaintEventEnd pevent)
 		{
-			Graphics dc = (Graphics)drawing_stack.Pop ();
-			dc.Flush();
-			dc.Dispose();
-			
-			PaintEventArgs pe = (PaintEventArgs)drawing_stack.Pop();
-			pe.SetGraphics (null);
-			pe.Dispose ();
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose();
+			pevent.SetGraphics(null);
+			pevent.Dispose();
 		}
 
 		public void DrawReversibleRectangle (Rectangle rect, int line_width)
@@ -1372,14 +1363,13 @@ namespace System.Windows.Forms.X11Internal {
 				return;
 			}
 
-			if (!zero_sized) {
-				//Hack?
-				X = x;
-				Y = y;
-				Width = width;
-				Height = height;
-				display.SendMessage (Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			X = x;
+			Y = y;
+			Width = width;
+			Height = height;
+			display.SendMessage (Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
+			if (!zero_sized) {
 				if (fixed_size) {
 					SetMinMax (Rectangle.Empty, new Size(width, height), new Size(width, height));
 				}
@@ -1432,6 +1422,7 @@ namespace System.Windows.Forms.X11Internal {
 
 		public bool SetOwner (X11Hwnd owner)
 		{
+			this.owner = owner;
 			if (owner != null) {
 				WINDOW_TYPE = display.Atoms._NET_WM_WINDOW_TYPE_NORMAL;
 				if (owner != null)

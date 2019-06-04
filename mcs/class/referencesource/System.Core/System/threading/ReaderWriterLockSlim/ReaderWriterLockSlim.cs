@@ -412,7 +412,7 @@ namespace System.Threading
                     continue;   // since we left the lock, start over. 
                 }
 
-                retVal = WaitOnEvent(readEvent, ref numReadWaiters, timeout);
+                retVal = WaitOnEvent(readEvent, ref numReadWaiters, timeout, isWriteWaiter: false);
                 if (!retVal)
                 {
                     return false;
@@ -586,7 +586,7 @@ namespace System.Threading
 
                     Debug.Assert(numWriteUpgradeWaiters == 0, "There can be at most one thread with the upgrade lock held.");
 
-                    retVal = WaitOnEvent(waitUpgradeEvent, ref numWriteUpgradeWaiters, timeout);
+                    retVal = WaitOnEvent(waitUpgradeEvent, ref numWriteUpgradeWaiters, timeout, isWriteWaiter: true);
 
                     //The lock is not held in case of failure.
                     if (!retVal)
@@ -601,7 +601,7 @@ namespace System.Threading
                         continue;   // since we left the lock, start over. 
                     }
 
-                    retVal = WaitOnEvent(writeEvent, ref numWriteWaiters, timeout);
+                    retVal = WaitOnEvent(writeEvent, ref numWriteWaiters, timeout, isWriteWaiter: true);
                     //The lock is not held in case of failure.
                     if (!retVal)
                         return false;
@@ -757,7 +757,7 @@ namespace System.Threading
                 }
 
                 //Only one thread with the upgrade lock held can proceed.
-                retVal = WaitOnEvent(upgradeEvent, ref numUpgradeWaiters, timeout);
+                retVal = WaitOnEvent(upgradeEvent, ref numUpgradeWaiters, timeout, isWriteWaiter: false);
                 if (!retVal)
                     return false;
             }
@@ -956,7 +956,11 @@ namespace System.Threading
         /// Waits on 'waitEvent' with a timeout  
         /// Before the wait 'numWaiters' is incremented and is restored before leaving this routine.
         /// </summary>
-        private bool WaitOnEvent(EventWaitHandle waitEvent, ref uint numWaiters, TimeoutTracker timeout)
+        private bool WaitOnEvent(
+            EventWaitHandle waitEvent,
+            ref uint numWaiters,
+            TimeoutTracker timeout,
+            bool isWriteWaiter)
         {
 #if DEBUG
             Debug.Assert(MyLockHeld);
@@ -991,8 +995,17 @@ namespace System.Threading
                 if (numWriteUpgradeWaiters == 0)
                     ClearUpgraderWaiting();
                 
-                if (!waitSuccessful)        // We may also be aboutto throw for some reason.  Exit myLock. 
-                    ExitMyLock();
+                if (!waitSuccessful)        // We may also be about to throw for some reason.  Exit myLock.
+                {
+                    if (isWriteWaiter)
+                    {
+                        // Write waiters block read waiters from acquiring the lock. Since this was the last write waiter, try
+                        // to wake up the appropriate read waiters.
+                        ExitAndWakeUpAppropriateReadWaiters();
+                    }
+                    else
+                        ExitMyLock();
+                }
             }
             return waitSuccessful;
         }
@@ -1016,8 +1029,6 @@ namespace System.Threading
 
         private void ExitAndWakeUpAppropriateWaitersPreferringWriters()
         {
-            bool setUpgradeEvent = false;
-            bool setReadEvent = false;
             uint readercount = GetNumReaders();
 
             //We need this case for EU->ER->EW case, as the read count will be 2 in
@@ -1046,31 +1057,36 @@ namespace System.Threading
                 ExitMyLock();      // Exit before signaling to improve efficiency (wakee will need the lock)
                 writeEvent.Set();   // release one writer. 
             }
-            else if (readercount >= 0)
-            {
-                if (numReadWaiters != 0 || numUpgradeWaiters != 0)
-                {
-                    if (numReadWaiters != 0)
-                        setReadEvent = true;
-
-                    if (numUpgradeWaiters != 0 && upgradeLockOwnerId == -1)
-                    {
-                        setUpgradeEvent = true;
-                    }
-
-                    ExitMyLock();    // Exit before signaling to improve efficiency (wakee will need the lock)
-
-                    if (setReadEvent)
-                        readEvent.Set();  // release all readers. 
-
-                    if (setUpgradeEvent)
-                        upgradeEvent.Set(); //release one upgrader.
-                }
-                else
-                    ExitMyLock();
-            }
             else
+            {
+                ExitAndWakeUpAppropriateReadWaiters();
+            }
+        }
+
+        private void ExitAndWakeUpAppropriateReadWaiters()
+        {
+#if DEBUG
+            Debug.Assert(MyLockHeld);
+#endif
+
+            if (numWriteWaiters != 0 || numWriteUpgradeWaiters != 0 || fNoWaiters)
+            {
                 ExitMyLock();
+                return;
+            }
+
+            Debug.Assert(numReadWaiters != 0 || numUpgradeWaiters != 0);
+
+            bool setReadEvent = numReadWaiters != 0;
+            bool setUpgradeEvent = numUpgradeWaiters != 0 && upgradeLockOwnerId == -1;
+
+            ExitMyLock();    // Exit before signaling to improve efficiency (wakee will need the lock)
+
+            if (setReadEvent)
+                readEvent.Set();  // release all readers. 
+
+            if (setUpgradeEvent)
+                upgradeEvent.Set(); //release one upgrader.
         }
 
         private bool IsWriterAcquired()
@@ -1122,7 +1138,7 @@ namespace System.Threading
 
         private void EnterMyLockSpin()
         {
-            int pc = Environment.ProcessorCount;
+            int pc = PlatformHelper.ProcessorCount;
             for (int i = 0; ; i++)
             {
                 if (i < LockSpinCount && pc > 1)
@@ -1156,7 +1172,7 @@ namespace System.Threading
         private static void SpinWait(int SpinCount)
         {
             //Exponential backoff
-            if ((SpinCount < 5) && (Environment.ProcessorCount > 1))
+            if ((SpinCount < 5) && (PlatformHelper.ProcessorCount > 1))
             {
                 Thread.SpinWait(LockSpinCycles * SpinCount);
             }

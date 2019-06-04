@@ -1,3 +1,4 @@
+../../build/common/Consts.cs
 ../../build/common/SR.cs
 ../../build/common/MonoTODOAttribute.cs
 
@@ -10,29 +11,29 @@ Microsoft.Win32.SafeHandles/SafeMemoryMappedViewHandle.cs
 System.Security.Cryptography/AesCng.cs
 System.Security.Cryptography/TripleDESCng.cs
 System.Security.Cryptography.X509Certificates/ECDsaCertificateExtensions.cs
+System.Security.Cryptography.X509Certificates/DSACertificateExtensions.cs
 System.Security.Cryptography.X509Certificates/RSACertificateExtensions.cs
 Microsoft.Win32.SafeHandles/SafeNCryptHandle.cs
 Microsoft.Win32.SafeHandles/SafeNCryptKeyHandle.cs
 Microsoft.Win32.SafeHandles/SafeNCryptProviderHandle.cs
 Microsoft.Win32.SafeHandles/SafeNCryptSecretHandle.cs
-Microsoft.Win32.SafeHandles/SafePipeHandle.cs
 
-System.IO.Pipes/AnonymousPipeClientStream.cs
-System.IO.Pipes/AnonymousPipeServerStream.cs
-System.IO.Pipes/NamedPipeClientStream.cs
-System.IO.Pipes/NamedPipeServerStream.cs
-System.IO.Pipes/PipeAccessRights.cs
-System.IO.Pipes/PipeAccessRule.cs
-System.IO.Pipes/PipeAuditRule.cs
-System.IO.Pipes/PipeDirection.cs
-System.IO.Pipes/PipeInterfaces.cs
-System.IO.Pipes/PipeOptions.cs
-System.IO.Pipes/PipeSecurity.cs
 System.IO.Pipes/PipeStream.cs
-System.IO.Pipes/PipeStreamImpersonationWorker.cs
-System.IO.Pipes/PipeTransmissionMode.cs
-
-ReferenceSources/SR.cs
+../../../external/corefx/src/System.IO.Pipes/src/Microsoft/Win32/SafeHandles/SafePipeHandle.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Error.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/AnonymousPipeClientStream.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/AnonymousPipeServerStream.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeDirection.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeOptions.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeTransmissionMode.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/NamedPipeClientStream.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/NamedPipeServerStream.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeState.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeStream.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeAccessRights.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeAccessRule.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeAuditRule.cs
+../../../external/corefx/src/System.IO.Pipes/src/System/IO/Pipes/PipeSecurity.cs
 
 corefx/LambdaExpression.cs
 corefx/SR.cs
@@ -71,18 +72,22 @@ corefx/SR.missing.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellmanPublicKey.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDsa.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDsaCng.cs
+../referencesource/System.Core/System/Security/Cryptography/ECKeyXmlFormat.cs
 ../referencesource/System.Core/System/Security/Cryptography/NCryptNative.cs
 ../referencesource/System.Core/System/Security/Cryptography/RsaCng.cs
+../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellman.cs
 
 ../referencesource/System.Core/System/threading/ReaderWriterLockSlim/ReaderWriterLockSlim.cs
 
-../referencesource/System.Core/System/threading/Tasks/TaskExtensions.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Threading/Tasks/TaskExtensions.cs
 
 System.Runtime.InteropServices/ComAwareEventInfo.cs
 
-System.Security.Cryptography/ECCurve.cs
-System.Security.Cryptography/ECPoint.cs
-System.Security.Cryptography/ECParameters.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECCurve.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECCurve.ECCurveType.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECCurve.NamedCurves.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECPoint.cs
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/ECParameters.cs
 System.Security.Cryptography/SHA256CryptoServiceProvider.cs
 System.Security.Cryptography/SHA384CryptoServiceProvider.cs
 System.Security.Cryptography/SHA512CryptoServiceProvider.cs
@@ -288,3 +293,13 @@ System.Security.Cryptography/SHA512CryptoServiceProvider.cs
 
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.cs
 ../../../external/corefx/src/System.Linq.Expressions/src/System/Linq/Expressions/Compiler/DelegateHelpers.Generated.cs
+
+../../../external/corefx/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/IncrementalHash.net46.cs
+
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.cs
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.Unix.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetDomainSocketSizes.cs
+../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
+
+../../../external/corefx/src/System.Reflection.DispatchProxy/src/System/Reflection/DispatchProxyGenerator.cs
+../../../external/corefx/src/System.Reflection.DispatchProxy/src/System/Reflection/DispatchProxy.cs

@@ -241,7 +241,7 @@ namespace System.Globalization {
         {
             return InternalTryFindStringOrdinalIgnoreCase(searchFlags, source, count, startIndex, value, value.Length, ref foundIndex);
         }
-#endif
+
         // This function doesn't check arguments. Please do check in the caller.
         // The underlying unmanaged code will assert the sanity of arguments.
         [System.Security.SecuritySafeCritical]  // auto-generated
@@ -252,7 +252,7 @@ namespace System.Globalization {
             // Compare the whole string and ignore case.
             return InternalCompareStringOrdinalIgnoreCase(str1, 0, str2, 0, str1.Length, str2.Length);
         }
-
+#endif
         // This function doesn't check arguments. Please do check in the caller.
         // The underlying unmanaged code will assert the sanity of arguments.
         [System.Security.SecuritySafeCritical]  // auto-generated
@@ -617,7 +617,7 @@ namespace System.Globalization {
 #endif
         }
 
-        static private Char ToUpperAsciiInvariant(Char c)
+        static internal Char ToUpperAsciiInvariant(Char c)
         {
             if ('a' <= c && c <= 'z')
             {

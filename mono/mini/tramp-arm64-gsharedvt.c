@@ -84,7 +84,7 @@ mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 			case GSHAREDVT_ARG_BYREF_TO_BYVAL:
 				src_slot = src & 0x3f;
 				dst_slot = dst & 0xffff;
-				src_ptr = caller [src_slot];
+				src_ptr = (guint8*)caller [src_slot];
 				dst_ptr = (guint8*)(callee + dst_slot) + dst_offset;
 				break;
 			case GSHAREDVT_ARG_BYVAL_TO_BYREF_HFAR4:
@@ -156,7 +156,7 @@ mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 			int nslots = (src >> 6) & 0xff;
 			int src_slot = src & 0x3f;
 			int j;
-			gpointer *addr = caller [src_slot];
+			gpointer *addr = (gpointer*)caller [src_slot];
 
 			for (j = 0; j < nslots; ++j)
 				callee [dst + j] = addr [j];
@@ -186,7 +186,7 @@ mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 	}
 
 	if (info->vcall_offset != -1) {
-		MonoObject *this_obj = caller [0];
+		MonoObject *this_obj = (MonoObject*)caller [0];
 
 		if (G_UNLIKELY (!this_obj))
 			return NULL;
@@ -277,8 +277,8 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	/* Allocate callee register area just below the callee area so it can be accessed from start_gsharedvt_call using negative offsets */
 	/* The + 8 is for alignment */
 	callee_reg_area_offset = 8;
-	callee_stack_area_offset = callee_reg_area_offset + (n_arg_regs * sizeof (gpointer));
-	arm_subx_imm (code, ARMREG_SP, ARMREG_SP, ((n_arg_regs + n_arg_fregs) * sizeof (gpointer)) + 8);
+	callee_stack_area_offset = callee_reg_area_offset + (n_arg_regs * sizeof (target_mgreg_t));
+	arm_subx_imm (code, ARMREG_SP, ARMREG_SP, ((n_arg_regs + n_arg_fregs) * sizeof (target_mgreg_t)) + 8);
 
 	/*
 	 * The stack now looks like this:
@@ -300,7 +300,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	arm_ldrx (code, ARMREG_R3, ARMREG_FP, rgctx_arg_reg_offset);
 
 	if (aot)
-		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_arm_start_gsharedvt_call");
+		code = mono_arm_emit_aotconst (&ji, code, buf, ARMREG_IP0, MONO_PATCH_INFO_JIT_ICALL_ADDR, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arm_start_gsharedvt_call));
 	else
 		code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)mono_arm_start_gsharedvt_call);
 	arm_blrx (code, ARMREG_IP0);
@@ -318,7 +318,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	for (i = 0; i < n_arg_fregs; ++i)
 		arm_ldrfpx (code, i, ARMREG_SP, callee_reg_area_offset + ((n_arg_regs + i) * 8));
 	/* Clear callee reg area */
-	arm_addx_imm (code, ARMREG_SP, ARMREG_SP, ((n_arg_regs + n_arg_fregs) * sizeof (gpointer)) + 8);
+	arm_addx_imm (code, ARMREG_SP, ARMREG_SP, ((n_arg_regs + n_arg_fregs) * sizeof (target_mgreg_t)) + 8);
 	/* Make the call */
 	arm_blrx (code, ARMREG_IP1);
 

@@ -65,7 +65,6 @@
 ./Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
 ./Mono.Security.X509.Extensions/SubjectKeyIdentifierExtension.cs
 ./Mono.Security.Cryptography/TlsHMAC.cs
-./Mono.Security.Cryptography/MD5SHA1.cs
 ./Mono.Security.Protocol.Ntlm/ChallengeResponse.cs
 ./Mono.Security.Protocol.Ntlm/ChallengeResponse2.cs
 ./Mono.Security.Protocol.Ntlm/MessageBase.cs
@@ -89,6 +88,7 @@
 ./Mono.Security.Protocol.Tls/ExchangeAlgorithmType.cs
 ./Mono.Security.Protocol.Tls/HandshakeState.cs
 ./Mono.Security.Protocol.Tls/HashAlgorithmType.cs
+./Mono.Security.Protocol.Tls/MD5SHA1.cs
 ./Mono.Security.Protocol.Tls/HttpsClientStream.cs
 ./Mono.Security.Protocol.Tls/RecordProtocol.cs
 ./Mono.Security.Protocol.Tls/RSASslSignatureDeformatter.cs
@@ -142,8 +142,7 @@
 ./Mono.Security.Interface/CipherSuiteCode.cs
 ./Mono.Security.Interface/ExchangeAlgorithmType.cs
 ./Mono.Security.Interface/HashAlgorithmType.cs
-./Mono.Security.Interface/IBufferOffsetSize.cs
-./Mono.Security.Interface/IMonoTlsEventSink.cs
+./Mono.Security.Interface/IMonoAuthenticationOptions.cs
 ./Mono.Security.Interface/IMonoSslStream.cs
 ./Mono.Security.Interface/MonoTlsConnectionInfo.cs
 ./Mono.Security.Interface/MonoTlsProvider.cs
@@ -153,8 +152,3 @@
 ./Mono.Security.Interface/TlsProtocolCode.cs
 ./Mono.Security.Interface/TlsProtocols.cs
 
-./Mono.Security.Interface/BufferOffsetSize.cs
-./Mono.Security.Interface/SecretParameters.cs
-./Mono.Security.Interface/SecureBuffer.cs
-./Mono.Security.Interface/TlsBuffer.cs
-./Mono.Security.Interface/TlsMultiBuffer.cs

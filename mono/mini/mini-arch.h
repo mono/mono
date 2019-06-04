@@ -25,6 +25,10 @@
 #include "mini-arm64.h"
 #elif defined(__mips__)
 #include "mini-mips.h"
+#elif defined (TARGET_RISCV)
+#include "mini-riscv.h"
+#elif TARGET_WASM
+#include "mini-wasm.h"
 #else
 #error add arch specific include file in mini-arch.h
 #endif

@@ -188,10 +188,18 @@ namespace System.Windows.Forms {
 
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
+			Size size;
+
 			if (this.AutoSize)
-				return ThemeEngine.Current.CalculateButtonAutoSize (this);
-				
-			return base.GetPreferredSizeCore (proposedSize);
+				size = ThemeEngine.Current.CalculateButtonAutoSize (this);
+			else
+				size = base.GetPreferredSizeCore (proposedSize);
+
+			// Button has a special legacy behavior and implements AutoSizeMode itself
+			if (AutoSizeMode == AutoSizeMode.GrowOnly)
+				size = new Size (Math.Max (size.Width, Width), Math.Max (size.Height, Height));
+
+			return size;
 		}
 		#endregion	// Internal methods
 	}

@@ -70,12 +70,13 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncConnect_StringIntAsyncCallbackObject ()
 		{
 			TcpClient s = new TcpClient ();
 			message = "AsyncConnect";
 			reset.Reset ();
-			IAsyncResult r = s.BeginConnect ("www.google.com", 80, new AsyncCallback (ConnectCallback), s);
+			IAsyncResult r = s.BeginConnect ("www.example.com", 80, new AsyncCallback (ConnectCallback), s);
 			Assert.IsNotNull (r, "IAsyncResult");
 			if (!reset.WaitOne (timeout, true))
 				Assert.Ignore ("Timeout");
@@ -84,9 +85,10 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncConnect_IPAddressIntAsyncCallbackObject ()
 		{
-			IPHostEntry host = Dns.Resolve ("www.google.com");
+			IPHostEntry host = Dns.Resolve ("www.example.com");
 			TcpClient s = new TcpClient ();
 			message = "AsyncConnect";
 			reset.Reset ();
@@ -99,9 +101,10 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncConnect_IPAddressArrayIntAsyncCallbackObject ()
 		{
-			IPHostEntry host = Dns.Resolve ("www.google.com");
+			IPHostEntry host = Dns.Resolve ("www.example.com");
 			TcpClient s = new TcpClient ();
 			message = "AsyncConnect";
 			reset.Reset ();

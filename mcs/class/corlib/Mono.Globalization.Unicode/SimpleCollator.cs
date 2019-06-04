@@ -75,15 +75,16 @@ using COpt = System.Globalization.CompareOptions;
 
 namespace Mono.Globalization.Unicode
 {
-	internal class SimpleCollator
+	internal class SimpleCollator : ISimpleCollator
 	{
+/*
 		// this environment variable is for debugging quick check.
 #pragma warning disable 169, 414
 		static bool QuickCheckDisabled =
 			Environment.internalGetEnvironmentVariable (
 			"MONO_COLLATION_QUICK_CHECK_DISABLED") == "yes";
 #pragma warning restore 169, 414		
-
+*/
 		unsafe internal struct Context
 		{
 			public Context (CompareOptions opt, byte* alwaysMatchFlags, byte* neverMatchFlags, byte* buffer1, byte* buffer2, byte* prev1/*, bool quickCheckPossible*/)
@@ -755,6 +756,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				len1 == min ? - 1 : 1;
 		}
 */
+
+		int ISimpleCollator.Compare (string s1, int idx1, int len1,
+			string s2, int idx2, int len2, CompareOptions options)
+		{
+			return Compare (s1, idx1, len1, s2, idx2, len2, options);
+		}
+
 		internal unsafe int Compare (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, CompareOptions options)
 		{
@@ -1660,7 +1668,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		public unsafe int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
 			if (opt == CompareOptions.Ordinal)
-				return LastIndexOfOrdinal (s, target, start, length);
+				throw new NotSupportedException ("Should not be reached");
 			if (opt == CompareOptions.OrdinalIgnoreCase)
 				throw new NotSupportedException ("Should not be reached");
 			byte* alwaysMatchFlags = stackalloc byte [16];

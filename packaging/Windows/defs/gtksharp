@@ -1,6 +1,7 @@
 #!/bin/bash -xe
 
-REPO="https://dl.xamarin.com/GTKforWindows/Windows/gtk-sharp-2.12.44.msi"
+GTKSHARP_VERSION=2.12.45
+REPO="https://dl.xamarin.com/GTKforWindows/Windows/gtk-sharp-$GTKSHARP_VERSION.msi"
 REPODIR=$(dirname $(realpath $0))/../repos/gtksharp
 
 error()
@@ -46,6 +47,9 @@ build()
 	mv gtksharp/SourceDir/PFiles/GtkSharp/2.12/* ../gtksharp
 	rm -rf gtksharp
 	popd
+	rm -rf gtksharp/bin/MonoPosixHelper.dll
+	rm -rf gtksharp/lib/Mono.Posix
+	rm -rf gtksharp/lib/Mono.Cairo gtksharp/lib/Mono.Cairo.dll
 	popd
 }
 

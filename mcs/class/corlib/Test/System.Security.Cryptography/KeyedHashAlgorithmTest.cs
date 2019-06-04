@@ -19,7 +19,7 @@ namespace MonoTests.System.Security.Cryptography {
 // be tested here (but will be in its descendants).
 
 [TestFixture]
-public class KeyedHashAlgorithmTest : HashAlgorithmTest {
+public class KeyedHashAlgorithmTest : HashAlgorithmTestBase {
 
 	[SetUp]
 	public override void SetUp () 

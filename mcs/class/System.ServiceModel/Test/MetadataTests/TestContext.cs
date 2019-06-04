@@ -23,7 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.IO;
 using System.Text;
@@ -38,6 +38,8 @@ using System.ServiceModel.Configuration;
 using System.ServiceModel.Description;
 
 using SysConfig = System.Configuration.Configuration;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel.MetadataTests {
 
@@ -111,20 +113,12 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 
 		public static MetadataSet LoadMetadata (string name)
 		{
-#if USE_EMBEDDED_METADATA
-			return LoadMetadataFromResource (name);
-#else
 			return LoadMetadataFromFile (name);
-#endif
 		}
 
 		public static XmlDocument LoadConfiguration (string name)
 		{
-#if USE_EMBEDDED_METADATA
-			return LoadConfigurationFromResource (name);
-#else
 			return LoadConfigurationFromFile (name);
-#endif
 		}
 
 		public static void SaveMetadata (string name, MetadataSet metadata)
@@ -137,29 +131,9 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var asm = Assembly.GetExecutingAssembly ();
 			if (!name.EndsWith (".xml"))
 				name = name + ".xml";
-			var uri = new Uri (asm.CodeBase);
-			var path = Path.GetDirectoryName (uri.AbsolutePath);
-			path = Path.Combine (path, "Test");
-			path = Path.Combine (path, "MetadataTests");
-			path = Path.Combine (path, "Resources");
-			var filename = Path.Combine (path, name);
-			using (var stream = new StreamReader (filename)) {
-				var reader = new XmlTextReader (stream);
-				return MetadataSet.ReadFrom (reader);
-			}
-		}
 
-		public static MetadataSet LoadMetadataFromResource (string name)
-		{
-			var asm = Assembly.GetExecutingAssembly ();
-			if (!name.EndsWith (".xml"))
-				name = name + ".xml";
-			
-			var resname = "MetadataTests.Resources." + name;
-			using (var stream = asm.GetManifestResourceStream (resname)) {
-				if (stream == null)
-					throw new InvalidOperationException (
-						"No such resource: " + name);
+			var filename = TestResourceHelper.GetFullPathOfResource ("Test/MetadataTests/Resources/" + name);
+			using (var stream = new StreamReader (filename)) {
 				var reader = new XmlTextReader (stream);
 				return MetadataSet.ReadFrom (reader);
 			}
@@ -170,30 +144,9 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 			var asm = Assembly.GetExecutingAssembly ();
 			if (!name.EndsWith (".config"))
 				name = name + ".config";
-			var uri = new Uri (asm.CodeBase);
-			var path = Path.GetDirectoryName (uri.AbsolutePath);
-			path = Path.Combine (path, "Test");
-			path = Path.Combine (path, "MetadataTests");
-			path = Path.Combine (path, "Resources");
-			var filename = Path.Combine (path, name);
-			using (var stream = new StreamReader (filename)) {
-				var xml = new XmlDocument ();
-				xml.Load (stream);
-				return xml;
-			}
-		}
 
-		public static XmlDocument LoadConfigurationFromResource (string name)
-		{
-			var asm = Assembly.GetExecutingAssembly ();
-			if (!name.EndsWith (".config"))
-				name = name + ".config";
-			
-			var resname = "MetadataTests.Resources." + name;
-			using (var stream = asm.GetManifestResourceStream (resname)) {
-				if (stream == null)
-					throw new InvalidOperationException (
-						"No such resource: " + name);
+			var filename = TestResourceHelper.GetFullPathOfResource ("Test/MetadataTests/Resources/" + name);
+			using (var stream = new StreamReader (filename)) {
 				var xml = new XmlDocument ();
 				xml.Load (stream);
 				return xml;
@@ -317,4 +270,6 @@ namespace MonoTests.System.ServiceModel.MetadataTests {
 		#endregion
 	}
 }
+#endif
+
 

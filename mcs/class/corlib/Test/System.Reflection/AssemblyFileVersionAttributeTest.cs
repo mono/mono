@@ -5,8 +5,6 @@
 // (C) 2004 Ximian, Inc. http://www.ximian.com
 //
 
-#if !MOBILE
-
 using System;
 using System.Threading;
 using System.Reflection;
@@ -21,6 +19,7 @@ namespace MonoTests.System.Reflection {
 	[TestFixture]
 	public class AssemblyFileVersionAttributeTest {
 
+#if !MOBILE
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
 		AssemblyFileVersionAttribute attr;
@@ -87,7 +86,13 @@ namespace MonoTests.System.Reflection {
 				attr.Match (new AssemblyFileVersionAttribute ("Descrptn")),
 				false, "#1");
 		}
+#endif
+		[Test]
+		public void CtorTest ()
+		{
+			var a = new AssemblyFileVersionAttribute ("1.2.3.4");
+			Assert.AreEqual ("1.2.3.4", a.Version);
+		}
 	}
 }
 
-#endif

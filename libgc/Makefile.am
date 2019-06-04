@@ -49,7 +49,7 @@ obj_map.c os_dep.c pcr_interface.c ptr_chck.c real_malloc.c reclaim.c \
 solaris_pthreads.c solaris_threads.c specific.c stubborn.c typd_mlc.c \
 backgraph.c win32_threads.c \
 pthread_support.c pthread_stop_world.c darwin_stop_world.c \
-openbsd_stop_world.c mach_dep.c $(asm_libgc_sources)
+mach_dep.c $(asm_libgc_sources)
 
 # Include THREADDLLIBS here to ensure that the correct versions of
 # linuxthread semaphore functions get linked:
@@ -185,3 +185,6 @@ EXTRA_DIST += configure.host
 .S.s:
 	if $(CPP) $< >$@ ; then :; else rm -f $@; fi
 
+test:
+
+test-bundle:

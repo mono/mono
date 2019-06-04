@@ -49,7 +49,6 @@
 #
 label: len:0
 break: len:64
-jmp: len:64
 br: len:8
 
 throw: src1:i len:64
@@ -61,9 +60,9 @@ endfilter: src1:i len:64
 ckfinite: dest:f src1:f len:40
 ceq: dest:i len:64
 cgt: dest:i len:64
-cgt.un: dest:i len:64
+cgt_un: dest:i len:64
 clt: dest:i len:64
-clt.un: dest:i len:64
+clt_un: dest:i len:64
 localloc: dest:i src1:i len:64
 localloc_imm: dest:i len:64
 compare: src1:i src2:i len:4
@@ -73,8 +72,8 @@ icompare_imm: src1:i len:64
 fcompare: src1:f src2:f len:64
 lcompare: src1:i src2:i len:4
 setfret: dest:f src1:f len:8
-checkthis: src1:b len:4
-oparglist: src1:i len:64
+check_this: src1:b len:4
+arglist: src1:i len:64
 call: dest:o clob:c len:40
 call_reg: dest:o src1:i len:64 clob:c
 call_membase: dest:o src1:b len:64 clob:c
@@ -183,7 +182,7 @@ float_clt: dest:i src1:f src2:f len:64
 float_clt_un: dest:i src1:f src2:f len:64
 float_conv_to_u: dest:i src1:f len:64
 call_handler: len:64 clob:c
-aot_const: dest:i len:64
+aotconst: dest:i len:64
 adc: dest:i src1:i src2:i len:4
 addcc: dest:i src1:i src2:i len:4
 subcc: dest:i src1:i src2:i len:4
@@ -290,7 +289,10 @@ relaxed_nop: len:0
 # Linear IR opcodes
 nop: len:0
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -317,4 +319,6 @@ vcall2: len:40 clob:c
 vcall2_reg: src1:i len:64 clob:c
 vcall2_membase: src1:b len:64 clob:c
 
+liverange_start: len:0
+liverange_end: len:0
 gc_safe_point: len:0

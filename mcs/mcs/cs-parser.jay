@@ -34,13 +34,16 @@ namespace Mono.CSharp
 			Params	= 1 << 4,
 			Arglist	= 1 << 5,
 			DefaultValue = 1 << 6,
+			ReadOnly = 1 << 7,
 			
-			All = Ref | Out | This | Params | Arglist | DefaultValue,
+			All = Ref | Out | This | Params | Arglist | DefaultValue | ReadOnly,
 			PrimaryConstructor = Ref | Out | Params | DefaultValue
 		}
 		
 		static readonly object ModifierNone = 0;
-	
+		static readonly object RefStructToken = new object ();
+		static readonly object RefPartialStructToken = new object ();
+
 		NamespaceContainer current_namespace;
 		TypeContainer current_container;
 		TypeDefinition current_type;
@@ -169,7 +172,8 @@ namespace Mono.CSharp
 %token CONST	
 %token CONTINUE	
 %token DECIMAL	
-%token DEFAULT	
+%token DEFAULT
+%token DEFAULT_VALUE
 %token DELEGATE	
 %token DO	
 %token DOUBLE	
@@ -336,6 +340,8 @@ namespace Mono.CSharp
 %token DEFAULT_COLON
 %token OPEN_BRACKET_EXPR
 %token OPEN_PARENS_DECONSTRUCT
+%token REF_STRUCT
+%token REF_PARTIAL
 
 // Make the parser go into eval mode parsing (statements and compilation units).
 %token EVAL_STATEMENT_PARSER
@@ -646,8 +652,8 @@ namespace_or_type_declaration
 			TypeContainer ds = (TypeContainer)$1;
 
 			if ((ds.ModFlags & (Modifiers.PRIVATE | Modifiers.PROTECTED)) != 0){
-				report.Error (1527, ds.Location, 
-				"Namespace elements cannot be explicitly declared as private, protected or protected internal");
+				report.Error (1527, ds.Location,
+				"Namespace elements cannot be explicitly declared as private, protected, protected internal, or private protected");
 			}
 
 			// Here is a trick, for explicit attributes we don't know where they belong to until
@@ -863,7 +869,7 @@ attribute_arguments
 		}
 		
 		Arguments args = ((Arguments) o [0]);
-		if (args.Count > 0 && !($3 is NamedArgument) && args [args.Count - 1] is NamedArgument)
+		if (lang_version < LanguageVersion.V_7_2 && args.Count > 0 && !($3 is NamedArgument) && args [args.Count - 1] is NamedArgument)
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 		
 		args.Add ((Argument) $3);
@@ -1015,18 +1021,51 @@ primary_constructor_body
 	  }
 	;
 
+struct_keyword
+	: STRUCT
+	  {
+		$$ = null;
+	  }
+	| REF_STRUCT
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($1), "ref structs");
+		}
+
+		$$ = RefStructToken;
+	  }
+	| REF_PARTIAL STRUCT
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($1), "ref structs");
+		}
+
+		$$ = RefPartialStructToken;
+	  }
+	;
+
 struct_declaration
 	: opt_attributes
 	  opt_modifiers
 	  opt_partial
-	  STRUCT
-	  {
-	  }
+	  struct_keyword
 	  type_declaration_name
-	  { 
+	  {
+		var mods = (Modifiers) $2;
+		if ((mods & Modifiers.READONLY) != 0 && lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($4), "readonly structs");
+		}
+		if ($4 != null) {
+			mods |= Modifiers.REF;
+			if ($4 == RefPartialStructToken) {
+				mods |= Modifiers.PARTIAL;
+				$3 = $4;
+			}
+		}
+
 		lexer.ConstraintsParsing = true;
 		valid_param_mod = ParameterModifierType.PrimaryConstructor;
-		push_current_container (new Struct (current_container, (MemberName) $6, (Modifiers) $2, (Attributes) $1), $3);
+		push_current_container (new Struct (current_container, (MemberName) $5, mods, (Attributes) $1), $3);
 	  }
 	  opt_primary_parameters
 	  opt_class_base
@@ -1035,11 +1074,11 @@ struct_declaration
 		valid_param_mod = 0;
 		lexer.ConstraintsParsing = false;
 
-		if ($8 != null)
-			current_type.PrimaryConstructorParameters = (ParametersCompiled) $8;
+		if ($7 != null)
+			current_type.PrimaryConstructorParameters = (ParametersCompiled) $7;
 
-		if ($10 != null)
-			current_container.SetConstraints ((List<Constraints>) $10);
+		if ($9 != null)
+			current_container.SetConstraints ((List<Constraints>) $9);
 
 		if (doc_support)
 			current_container.PartialContainer.DocComment = Lexer.consume_doc_comment ();
@@ -1061,14 +1100,14 @@ struct_declaration
 	  }
 	  opt_semicolon
 	  {
-		if ($16 == null) {
-			lbag.AppendToMember (current_container, GetLocation ($12), GetLocation ($15));
+		if ($15 == null) {
+			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($14));
 		} else {
-			lbag.AppendToMember (current_container, GetLocation ($12), GetLocation ($15), GetLocation ($17));
+			lbag.AppendToMember (current_container, GetLocation ($11), GetLocation ($14), GetLocation ($16));
 		}
 		$$ = pop_current_class ();
 	  }
-	| opt_attributes opt_modifiers opt_partial STRUCT error
+	| opt_attributes opt_modifiers opt_partial struct_keyword error
 	  {
 		Error_SyntaxError (yyToken);
 	  }
@@ -1161,7 +1200,7 @@ constant_initializer_expr
 field_declaration
 	: opt_attributes
 	  opt_modifiers
-	  member_type IDENTIFIER
+	  ref_member_type IDENTIFIER
 	  {
 	  	lexer.parsing_generic_declaration = false;
 
@@ -1364,10 +1403,41 @@ method_declaration
 	  }
 	;
 
+ref_member_type
+	: member_type
+	  {
+	  	$$ = $1;
+	  }
+	| REF
+	  {
+		lexer.parsing_generic_declaration = true;
+	  }
+	  type
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "byref locals and returns");
+		}
+
+		$$ = new ReferenceTypeExpr ((FullNamedExpression) $3, GetLocation ($1));
+	  }
+	| REF READONLY
+	  {
+		lexer.parsing_generic_declaration = true;
+	  }
+	  type
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($2), "readonly references");
+		}
+
+		$$ = new ReferenceTypeExpr ((FullNamedExpression) $4, true, GetLocation ($1));
+	  }
+	;
+
 method_header
 	: opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  method_declaration_name OPEN_PARENS
 	  {
 		valid_param_mod = ParameterModifierType.All;
@@ -1416,7 +1486,7 @@ method_header
 	  OPEN_PARENS
 	  {
 		lexer.parsing_generic_declaration = false;
-	  	valid_param_mod = ParameterModifierType.All;
+		valid_param_mod = ParameterModifierType.All;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS 
 	  {
@@ -1452,7 +1522,7 @@ method_header
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  modifiers method_declaration_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		MemberName name = (MemberName) $5;
@@ -1473,7 +1543,7 @@ method_header
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  method_declaration_name error
 	  {
 		Error_SyntaxError (yyToken);
@@ -1516,7 +1586,7 @@ constructor_body
 	 expression SEMICOLON
 	 {
 		lexer.parsing_block = 0;
-		current_block.AddStatement (new ContextualReturn ((Expression) $3));
+		current_block.AddStatement (CreateExpressionBodiedStatement ((Expression) $3));
 		var b = end_block (GetLocation ($4));
 		b.IsCompilerGenerated = true;
 		$$ = b;
@@ -1534,10 +1604,10 @@ expression_block
 		++lexer.parsing_block;
 		start_block (GetLocation ($1));
 	 }
-	 expression SEMICOLON
+	 lambda_arrow_expression SEMICOLON
 	 {
 		lexer.parsing_block = 0;
-		current_block.AddStatement (new ContextualReturn ((Expression) $3));
+		current_block.AddStatement (CreateExpressionBodiedStatement ((Expression) $3));
 		var b = end_block (GetLocation ($4));
 		b.IsCompilerGenerated = true;
 		$$ = b;
@@ -1741,7 +1811,9 @@ parameter_modifiers
   		Parameter.Modifier mod = (Parameter.Modifier)$1 | p2;
   		if (((Parameter.Modifier)$1 & p2) == p2) {
   			Error_DuplicateParameterModifier (lexer.Location, p2);
-  		} else {
+		} else if ((mod & ~(Parameter.Modifier.This | Parameter.Modifier.ReadOnly)) == 0) {
+			// ok
+		} else {
 	  		switch (mod & ~Parameter.Modifier.This) {
   				case Parameter.Modifier.REF:
 					report.Error (1101, lexer.Location, "The parameter modifiers `this' and `ref' cannot be used altogether");
@@ -1783,6 +1855,13 @@ parameter_modifier
 	  			
 		$$ = Parameter.Modifier.This;
 	  }
+	| IN
+	  {
+		if (lang_version < LanguageVersion.V_7_2)
+			FeatureIsNotAvailable (GetLocation ($1), "readonly references");
+
+		$$ = Parameter.Modifier.ReadOnly;
+	  }
 	;
 
 parameter_array
@@ -1818,7 +1897,7 @@ params_modifier
 		if ((mod & Parameter.Modifier.This) != 0) {
 			report.Error (1104, GetLocation ($1), "The parameter modifiers `this' and `params' cannot be used altogether");
 		} else {
-			report.Error (1611, GetLocation ($1), "The params parameter cannot be declared as ref or out");
+			report.Error (1611, GetLocation ($1), "The params parameter cannot be declared as ref, out or in");
 		}	  
 	  }
 	| PARAMS params_modifier
@@ -1838,7 +1917,7 @@ arglist_modifier
 property_declaration
 	: opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  member_declaration_name
 	  {
 		lexer.parsing_generic_declaration = false;
@@ -1865,6 +1944,16 @@ property_declaration
 
 		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();
+
+		if ($3 is ReferenceTypeExpr) {
+			if (current_property.Get == null) {
+				report.Error (8146, GetLocation ($4), "`{0}': property and indexer which return by reference must have a get accessor", current_property.GetSignatureForError ());
+			}
+
+			if (current_property.Set != null) {
+				report.Error (8147, GetLocation ($4), "`{0}': property and indexer which return by reference cannot have set accessors", current_property.GetSignatureForError ());
+			}
+		}
 	  }
 	  CLOSE_BRACE
 	  {
@@ -1877,7 +1966,7 @@ property_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  member_type
+	  ref_member_type
 	  member_declaration_name
 	  {
 		lexer.parsing_generic_declaration = false;
@@ -1939,9 +2028,9 @@ property_initializer
 
 indexer_declaration
 	: opt_attributes opt_modifiers
-	  member_type indexer_declaration_name OPEN_BRACKET
+	  ref_member_type indexer_declaration_name OPEN_BRACKET
 	  {
-	  	valid_param_mod = ParameterModifierType.Params | ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.Params | ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_BRACKET 
 	  {
@@ -1979,6 +2068,16 @@ indexer_declaration
 	  
 		if (doc_support)
 			current_property.DocComment = ConsumeStoredComment ();
+
+		if ($3 is ReferenceTypeExpr) {
+			if (current_property.Get == null) {
+				report.Error (8146, GetLocation ($4), "`{0}': property and indexer which return by reference must have a get accessor", current_property.GetSignatureForError ());
+			}
+
+			if (current_property.Set != null) {
+				report.Error (8147, GetLocation ($4), "`{0}': property and indexer which return by reference cannot have set accessors", current_property.GetSignatureForError ());
+			}
+		}
 			
 		current_property = null;		
 	  }
@@ -2108,6 +2207,11 @@ set_accessor_declaration
 accessor_body
 	: block
 	| expression_block
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "expression body property accessor");
+		}
+	  }
 	| SEMICOLON
 	  {
 		// TODO: lbag
@@ -2258,7 +2362,7 @@ operator_type
 operator_declarator
 	: operator_type OPERATOR overloadable_operator OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 		if ((Operator.OpType) $3 == Operator.OpType.Is)
 			valid_param_mod |= ParameterModifierType.Out;
 	  }
@@ -2345,7 +2449,7 @@ overloadable_operator
 conversion_operator_declarator
 	: IMPLICIT OPERATOR type OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
@@ -2368,7 +2472,7 @@ conversion_operator_declarator
 	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
@@ -2777,6 +2881,11 @@ event_accessor_block
 	  }
 	| block
 	| expression_block
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "expression body event accessor");
+		}
+	  }
 	;
 
 attributes_without_members
@@ -2938,10 +3047,10 @@ delegate_declaration
 	: opt_attributes
 	  opt_modifiers
 	  DELEGATE
-	  member_type type_declaration_name
+	  ref_member_type type_declaration_name
 	  OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.Params | ParameterModifierType.DefaultValue;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.Params | ParameterModifierType.DefaultValue | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
@@ -3406,6 +3515,7 @@ primary_expression
 	| anonymous_method_expression
 	| undocumented_expressions
 	| interpolated_string
+	| default_literal
 	;
 
 type_name_expression
@@ -3782,7 +3892,7 @@ argument_list
 	| argument_list COMMA argument
 	  {
 		Arguments list = (Arguments) $1;
-		if (list [list.Count - 1] is NamedArgument)
+		if (lang_version < LanguageVersion.V_7_2 && list [list.Count - 1] is NamedArgument)
 			Error_NamedArgumentExpected ((NamedArgument) list [list.Count - 1]);
 		
 		list.Add ((Argument) $3);
@@ -3853,7 +3963,15 @@ non_simple_argument
 	  {
 		$$ = new Argument (new Arglist (GetLocation ($1)));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($3));
-	  }	  
+	  }
+	| IN variable_reference
+	  {
+		if (lang_version < LanguageVersion.V_7_2)
+			FeatureIsNotAvailable (GetLocation ($1), "readonly references");
+
+		$$ = new Argument ((Expression) $2, Argument.AType.Readonly);
+		lbag.AddLocation ($$, GetLocation ($1));
+	  }
 	;
 
 out_variable_declaration
@@ -3927,7 +4045,7 @@ expression_list_arguments
 	| expression_list_arguments COMMA expression_list_argument
 	  {
 		Arguments args = (Arguments) $1;
-		if (args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
+		if (lang_version < LanguageVersion.V_7_2 && args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 	  
 		args.Add ((Argument) $3);
@@ -4334,7 +4452,7 @@ opt_anonymous_method_signature
 anonymous_method_signature
 	: OPEN_PARENS
 	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
@@ -4344,13 +4462,23 @@ anonymous_method_signature
 	;
 
 default_value_expression
-	: DEFAULT open_parens_any type CLOSE_PARENS
+	: DEFAULT_VALUE open_parens_any type CLOSE_PARENS
 	  {
 		if (lang_version < LanguageVersion.ISO_2)
 			FeatureIsNotAvailable (GetLocation ($1), "default value expression");
 
 		$$ = new DefaultValueExpression ((Expression) $3, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+	  }
+	;
+
+default_literal
+	: DEFAULT
+	  {
+		if (lang_version < LanguageVersion.V_7_1)
+			FeatureIsNotAvailable (GetLocation ($1), "default literal");
+
+		$$ = new DefaultLiteralExpression (GetLocation ($1));
 	  }
 	;
 
@@ -4572,7 +4700,7 @@ additive_expression
 			var lt = (LocatedToken) $4;
 			var lv = new LocalVariable (current_block, lt.Value, lt.Location);
 			is_expr.Variable = lv;
-			current_block.AddLocalName (lv);
+			current_block.AddLocalName (lv.Name, lv, true);
 		}
 
 		$$ = is_expr;
@@ -4708,7 +4836,7 @@ pattern_list
 	| pattern_list COMMA pattern_argument
 	  {
 		Arguments args = (Arguments) $1;
-		if (args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
+		if (lang_version < LanguageVersion.V_7_2 && args [args.Count - 1] is NamedArgument && !($3 is NamedArgument))
 			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
 
 		args.Add ((Argument) $3);
@@ -4930,36 +5058,47 @@ null_coalescing_expression
 	  }
 	;
 
+
+conditional_oper_expr
+	: expression
+	| stackalloc_expression
+	;
+
 conditional_expression
 	: null_coalescing_expression
-	| null_coalescing_expression INTERR expression COLON expression
+	| null_coalescing_expression INTERR conditional_oper_expr COLON conditional_oper_expr
 	  {
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
-	| null_coalescing_expression INTERR expression COLON THROW prefixed_unary_expression
+	| null_coalescing_expression INTERR conditional_oper_expr COLON THROW prefixed_unary_expression
 	  {
 		if (lang_version < LanguageVersion.V_7)
-			FeatureIsNotAvailable (lexer.Location, "throw expression");
+			FeatureIsNotAvailable (GetLocation ($5), "throw expression");
 
 		var expr = new ThrowExpression ((Expression) $6, GetLocation ($5));
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, expr, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
-	| null_coalescing_expression INTERR expression error
+	| null_coalescing_expression INTERR reference_expression COLON reference_expression
+	  {
+		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
+		lbag.AddLocation ($$, GetLocation ($4));
+	  }
+	| null_coalescing_expression INTERR conditional_oper_expr error
 	  {
 		Error_SyntaxError (yyToken);
 
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
 	  }
-	| null_coalescing_expression INTERR expression COLON error
+	| null_coalescing_expression INTERR conditional_oper_expr COLON error
 	  {
 		Error_SyntaxError (yyToken);
 
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
 	  }
-	| null_coalescing_expression INTERR expression COLON CLOSE_BRACE
+	| null_coalescing_expression INTERR conditional_oper_expr COLON CLOSE_BRACE
 	  {
 		Error_SyntaxError (Token.CLOSE_BRACE);
 
@@ -5025,17 +5164,25 @@ assignment_expression
 		$$ = new CompoundAssign (Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
-	| OPEN_PARENS_DECONSTRUCT deconstruct_exprs CLOSE_PARENS ASSIGN expression
+	| OPEN_PARENS_DECONSTRUCT deconstruct_assignment CLOSE_PARENS ASSIGN expression
 	  {
 		if (lang_version < LanguageVersion.V_7)
 			FeatureIsNotAvailable (GetLocation ($1), "tuples");
 
-	  	var exprs = (List<Expression>) $2;
+		var exprs = (List<Expression>) $2;
+		$$ = new TupleDeconstruct (exprs, (Expression) $5, GetLocation ($4));
+	  }
+	| OPEN_PARENS_DECONSTRUCT deconstruct_declaration CLOSE_PARENS ASSIGN expression
+	  {
+		if (lang_version < LanguageVersion.V_7)
+			FeatureIsNotAvailable (GetLocation ($1), "tuples");
+
+		var exprs = (List<BlockVariable>) $2;
 		$$ = new TupleDeconstruct (exprs, (Expression) $5, GetLocation ($4));
 	  }
 	;
 
-deconstruct_exprs
+deconstruct_assignment
 	: expression COMMA expression
 	  {
 		$$ = new List<Expression> () {
@@ -5043,10 +5190,47 @@ deconstruct_exprs
 			(Expression) $3
 	  	};
 	  }
-	| deconstruct_exprs COMMA expression
+	| deconstruct_assignment COMMA expression
 	  {
 		var src = (List<Expression>) $1;
 		src.Add ((Expression) $3);
+		$$ = src;
+	  }
+	;
+
+deconstruct_declaration
+	: variable_type identifier_inside_body
+	  {
+		var lt = (LocatedToken) $2;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (li);
+		$$ = new List<BlockVariable> (2) {
+			new BlockVariable ((FullNamedExpression) $1, li)
+		};
+	  }
+	| deconstruct_declaration COMMA variable_type identifier_inside_body
+	  {
+		var lt = (LocatedToken) $4;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+		current_block.AddLocalName (li);
+
+		var src = (List<BlockVariable>) $1;
+		src.Add (new BlockVariable ((FullNamedExpression) $3, li));
+		$$ = src;
+	  }
+	| deconstruct_declaration COMMA identifier_inside_body
+	  {
+		var lt = (LocatedToken) $3;
+		var li = new LocalVariable (current_block, lt.Value, lt.Location);
+
+		if (lt.Value != "_") {
+			report.Error (8184, lt.Location, "A deconstruction cannot mix declarations and expressions on the left-hand-side");
+		} else {
+			li.Type = InternalType.Discard;
+		}
+
+		var src = (List<BlockVariable>) $1;
+		src.Add (new BlockVariable (new TypeExpression (li.Type, lt.Location), li));
 		$$ = src;
 	  }
 	;
@@ -5109,7 +5293,7 @@ lambda_expression_body
 	: {
 		start_block (Location.Null);
 	  }
-	  expression	// All expressions must handle error or current block won't be restored and breaking ast completely
+	  lambda_arrow_expression	// All expressions must handle error or current block won't be restored and breaking ast completely
 	  {
 		Block b = end_block (Location.Null);
 		b.IsCompilerGenerated = true;
@@ -5127,6 +5311,11 @@ lambda_expression_body
 		Error_SyntaxError (yyToken);
 		$$ = null;
 	  }
+	;
+
+lambda_arrow_expression
+	: expression
+	| reference_expression
 	;
 
 expression_or_error
@@ -5174,7 +5363,7 @@ lambda_expression
 	  }
 	| OPEN_PARENS_LAMBDA
 	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
 	  {
@@ -5188,7 +5377,7 @@ lambda_expression
 	  }
 	| ASYNC OPEN_PARENS_LAMBDA
 	  {
-	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;	  
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_lambda_parameter_list CLOSE_PARENS ARROW 
 	  {
@@ -5388,10 +5577,17 @@ modifiers
 		if ((m1 & m2) != 0) {
 			report.Error (1004, lexer.Location - ModifiersExtensions.Name (m2).Length,
 				"Duplicate `{0}' modifier", ModifiersExtensions.Name (m2));
-		} else if ((m2 & Modifiers.AccessibilityMask) != 0 && (m1 & Modifiers.AccessibilityMask) != 0 &&
-			((m2 | m1 & Modifiers.AccessibilityMask) != (Modifiers.PROTECTED | Modifiers.INTERNAL))) {
-			report.Error (107, lexer.Location - ModifiersExtensions.Name (m2).Length,
-				"More than one protection modifier specified");
+		} else if ((m2 & Modifiers.AccessibilityMask) != 0 && (m1 & Modifiers.AccessibilityMask) != 0) {
+			var accessibility = (m2 | m1 & Modifiers.AccessibilityMask);
+
+			if (accessibility == (Modifiers.PRIVATE | Modifiers.PROTECTED)) {
+				if (lang_version < LanguageVersion.V_7_2) {
+					FeatureIsNotAvailable (lexer.Location, "private protected");
+				}
+			} else if (accessibility != (Modifiers.PROTECTED | Modifiers.INTERNAL)) {
+				report.Error (107, lexer.Location - ModifiersExtensions.Name (m2).Length,
+					"More than one protection modifier specified");
+			}
 		}
 		
 		$$ = m1 | m2;
@@ -5939,6 +6135,50 @@ block_variable_declaration
 		current_variable = null;
 		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($7));
 	  }
+	| REF variable_type identifier_inside_body
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "byref locals and returns");
+		}
+
+		var lt = (LocatedToken) $3;
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ByRef, lt.Location);
+		current_block.AddLocalName (li);
+		current_variable = new BlockVariable ((FullNamedExpression) $2, li);
+	  }
+	  opt_local_variable_initializer opt_variable_declarators SEMICOLON
+	  {
+		$$ = current_variable;
+		current_variable = null;
+		if ($5 != null) {
+			lbag.AddLocation ($$, PopLocation (), GetLocation ($7));
+		} else {
+			report.Error (8174, GetLocation ($3), "A declaration of a by-reference variable must have an initializer");
+			lbag.AddLocation ($$, GetLocation ($7));
+		}
+	  }
+	| REF READONLY variable_type identifier_inside_body
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($2), "readonly references");
+		}
+
+		var lt = (LocatedToken) $4;
+		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ByRef | LocalVariable.Flags.ReadonlyMask, lt.Location);
+		current_block.AddLocalName (li);
+		current_variable = new BlockVariable ((FullNamedExpression) $3, li);
+	  }
+	  opt_local_variable_initializer opt_variable_declarators SEMICOLON
+	  {
+		$$ = current_variable;
+		current_variable = null;
+		if ($6 != null) {
+			lbag.AddLocation ($$, PopLocation (), GetLocation ($8));
+		} else {
+			report.Error (8174, GetLocation ($3), "A declaration of a by-reference variable must have an initializer");
+			lbag.AddLocation ($$, GetLocation ($8));
+		}
+	  }
 	;
 
 opt_local_variable_initializer
@@ -6045,7 +6285,36 @@ block_variable_initializer
 	| STACKALLOC simple_type
 	  {
 		report.Error (1575, GetLocation ($1), "A stackalloc expression requires [] after type");
-		$$ = new StackAlloc ((Expression) $2, null, GetLocation ($1));		
+		$$ = new StackAlloc ((Expression) $2, null, GetLocation ($1));
+	  }
+	| reference_expression
+	;
+
+stackalloc_expression
+	: STACKALLOC simple_type OPEN_BRACKET_EXPR expression CLOSE_BRACKET
+	  {
+		if (lang_version < LanguageVersion.V_7_2) {
+			FeatureIsNotAvailable (GetLocation ($1), "ref structs");
+		}
+
+		$$ = new SpanStackAlloc ((Expression) $2, (Expression) $4, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
+	  }
+	| STACKALLOC simple_type
+	  {
+		report.Error (1575, GetLocation ($1), "A stackalloc expression requires [] after type");
+		$$ = new StackAlloc ((Expression) $2, null, GetLocation ($1));
+	  }
+	;
+
+reference_expression
+	: REF expression
+	  {
+		if (lang_version < LanguageVersion.V_7) {
+			FeatureIsNotAvailable (GetLocation ($1), "byref locals and returns");
+		}
+
+		$$ = new ReferenceExpression ((Expression) $2, GetLocation ($1));
 	  }
 	;
 
@@ -6518,6 +6787,11 @@ goto_statement
 
 return_statement
 	: RETURN opt_expression SEMICOLON
+	  {
+		$$ = new Return ((Expression) $2, GetLocation ($1));
+		lbag.AddStatement ($$, GetLocation ($3));
+	  }
+	| RETURN reference_expression SEMICOLON
 	  {
 		$$ = new Return ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
@@ -7504,7 +7778,7 @@ doc_cref
 	  }
 	| doc_type_declaration_name DOT THIS OPEN_BRACKET
 	  {
-		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_doc_parameters CLOSE_BRACKET
 	  {
@@ -7548,7 +7822,7 @@ opt_doc_method_sig
 	: /* empty */
 	| OPEN_PARENS
 	  {
-		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
+		valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out | ParameterModifierType.ReadOnly;
 	  }
 	  opt_doc_parameters CLOSE_PARENS
 	  {
@@ -7645,7 +7919,7 @@ void Warning_EmptyStatement (Location loc)
 
 void Error_NamedArgumentExpected (NamedArgument a)
 {
-	report.Error (1738, a.Location, "Named arguments must appear after the positional arguments");
+	report.Error (1738, a.Location, "Named arguments must appear after the positional arguments when using language version older than 7.2");
 }
 
 void Error_MissingInitializer (Location loc)
@@ -7754,6 +8028,14 @@ static bool IsUnaryOperator (Operator.OpType op)
 		return true;
 	}
 	return false;
+}
+
+static Statement CreateExpressionBodiedStatement (Expression expr)
+{
+	if (expr is ThrowExpression te)
+		return new StatementExpression (te);
+
+	return new ContextualReturn (expr);
 }
 
 void syntax_error (Location l, string msg)
@@ -8169,6 +8451,7 @@ static string GetTokenName (int token)
 	case Token.CONTINUE:
 		return "continue";
 	case Token.DEFAULT:
+	case Token.DEFAULT_VALUE:
 		return "default";
 	case Token.DELEGATE:
 		return "delegate";
@@ -8234,6 +8517,8 @@ static string GetTokenName (int token)
 	case Token.READONLY:
 		return "readonly";
 	case Token.REF:
+	case Token.REF_STRUCT:
+	case Token.REF_PARTIAL:
 		return "ref";
 	case Token.RETURN:
 		return "return";

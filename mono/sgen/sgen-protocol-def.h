@@ -332,7 +332,7 @@ IS_VTABLE_MATCH (FALSE)
 END_PROTOCOL_ENTRY_HEAVY
 
 BEGIN_PROTOCOL_ENTRY_HEAVY3 (binary_protocol_dislink_update, TYPE_POINTER, link, TYPE_POINTER, obj, TYPE_BOOL, track)
-CUSTOM_PRINT(entry->obj ? printf ("link 0x%"MWORD_FORMAT_SPEC_P" obj 0x%"MWORD_FORMAT_SPEC_P" track %d", entry->link, entry->obj, entry->track) : printf ("link 0x%"MWORD_FORMAT_SPEC_P" obj 0x%"MWORD_FORMAT_SPEC_P, entry->link, entry->obj))
+CUSTOM_PRINT(entry->obj ? printf ("link 0x%" MWORD_FORMAT_SPEC_P " obj 0x%" MWORD_FORMAT_SPEC_P " track %d", entry->link, entry->obj, entry->track) : printf ("link 0x%" MWORD_FORMAT_SPEC_P " obj 0x%" MWORD_FORMAT_SPEC_P, entry->link, entry->obj))
 IS_ALWAYS_MATCH (FALSE)
 MATCH_INDEX (ptr == entry->link ? 0 : ptr == entry->obj ? 1 : BINARY_PROTOCOL_NO_MATCH)
 IS_VTABLE_MATCH (FALSE)
@@ -470,6 +470,13 @@ IS_ALWAYS_MATCH (TRUE)
 MATCH_INDEX (BINARY_PROTOCOL_MATCH)
 IS_VTABLE_MATCH (FALSE)
 END_PROTOCOL_ENTRY
+
+BEGIN_PROTOCOL_ENTRY_HEAVY3 (binary_protocol_ephemeron_ref, TYPE_POINTER, list, TYPE_POINTER, key, TYPE_POINTER, value)
+DEFAULT_PRINT ()
+IS_ALWAYS_MATCH (FALSE)
+MATCH_INDEX (ptr == entry->list ? 0 : ptr == entry->key ? 1 : ptr == entry->value ? 2 : BINARY_PROTOCOL_NO_MATCH)
+IS_VTABLE_MATCH (FALSE)
+END_PROTOCOL_ENTRY_HEAVY
 
 #undef BEGIN_PROTOCOL_ENTRY0
 #undef BEGIN_PROTOCOL_ENTRY1

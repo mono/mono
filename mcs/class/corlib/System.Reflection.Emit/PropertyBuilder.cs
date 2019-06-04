@@ -31,7 +31,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -40,11 +40,37 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_PropertyBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class PropertyBuilder : _PropertyBuilder
+	{
+		void _PropertyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _PropertyBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _PropertyBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _PropertyBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class PropertyBuilder : PropertyInfo, _PropertyBuilder {
+	public sealed partial class PropertyBuilder : PropertyInfo {
 
 // Managed version of MonoReflectionPropertyBuilder
 #pragma warning disable 169, 414
@@ -80,7 +106,7 @@ namespace System.Reflection.Emit {
 				System.Array.Copy (parameterTypes, this.parameters, this.parameters.Length);
 			}
 			typeb = tb;
-			table_idx = tb.get_next_table_index (this, 0x17, true);
+			table_idx = tb.get_next_table_index (this, 0x17, 1);
 		}
 
 		public override PropertyAttributes Attributes {
@@ -177,26 +203,6 @@ namespace System.Reflection.Emit {
 				return base.Module;
 			}
 		}
-
-                void _PropertyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                void _PropertyBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                void _PropertyBuilder.GetTypeInfoCount (out uint pcTInfo)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                void _PropertyBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-                {
-                        throw new NotImplementedException ();
-                }
 
 		private Exception not_supported ()
 		{

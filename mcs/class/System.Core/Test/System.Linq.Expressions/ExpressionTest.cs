@@ -38,6 +38,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Linq.Expressions {
 
 	[TestFixture]
+	[Category("SRE")]
 	public class ExpressionTest {
 
 		[Test]
@@ -194,20 +195,6 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (typeof (Func<string, string>), identity.GetType ());
 			Assert.IsNotNull (identity.Target);
 		}
-
-		class Foo {
-			public string gazonk;
-		}
-
-		struct Bar {
-			public int baz;
-
-			public override string ToString ()
-			{
-				return baz.ToString ();
-			}
-		}
-
 
 		[Test]
 		public void SimpleHoistedParameter ()

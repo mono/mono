@@ -40,7 +40,6 @@ using System.Web.Security;
 using System.Text.RegularExpressions;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
-using MonoTests.Common;
 
 using NUnit.Framework;
 using System.Collections.Specialized;
@@ -879,7 +878,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			using (var sw = new StringWriter ()) {
 				using (var w = new HtmlTextWriter (sw)) {
 					if (shouldFail)
-						AssertExtensions.Throws<InvalidOperationException> (() => {
+						Assert.Throws<InvalidOperationException> (() => {
 							cp.RenderControl (w);
 						}, message);
 					else {

@@ -805,6 +805,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsNull (t.MarkupExtensionReturnType, "#29");
 
 			var l = t.GetAllMembers ().ToArray ();
+
 			Assert.AreEqual (0, l.Length, "#31");
 		}
 

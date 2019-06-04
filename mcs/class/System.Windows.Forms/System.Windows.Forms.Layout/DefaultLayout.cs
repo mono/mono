@@ -29,31 +29,47 @@
 
 using System;
 using System.Drawing;
+using System.Collections;
 
 namespace System.Windows.Forms.Layout
 {
 	class DefaultLayout : LayoutEngine
 	{
-		void LayoutDockedChildren (Control parent, Control[] controls)
+		internal static readonly DefaultLayout Instance = new DefaultLayout();
+
+		private DefaultLayout ()
+		{
+		}
+	
+		public override void InitLayout (object child, BoundsSpecified specified)
+		{
+			IArrangedElement control = (IArrangedElement)child;
+			IArrangedElement parent = control.Parent;
+			if (parent != null) {
+				Rectangle bounds = control.Bounds;
+				if ((specified & (BoundsSpecified.Width | BoundsSpecified.X)) != BoundsSpecified.None)
+					control.DistanceRight = parent.DisplayRectangle.Right - bounds.X - bounds.Width;
+				if ((specified & (BoundsSpecified.Height | BoundsSpecified.Y)) != BoundsSpecified.None)
+					control.DistanceBottom = parent.DisplayRectangle.Bottom - bounds.Y - bounds.Height;
+			}		
+		}
+
+		static void LayoutDockedChildren (IArrangedElement parent, IList controls)
 		{
 			Rectangle space = parent.DisplayRectangle;
-			MdiClient mdi = null;
+			IArrangedElement mdi = null;
 			
 			// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
-			for (int i = controls.Length - 1; i >= 0; i--) {
-				Control child = controls[i];
-				Size child_size = child.Size;
+			for (int i = controls.Count - 1; i >= 0; i--) {
+				IArrangedElement child = (IArrangedElement)controls[i];
+				Size child_size = child.Bounds.Size;
 
-				if (child.AutoSize)
-					child_size = GetPreferredControlSize (child);
-
-				if (!child.VisibleInternal
-				    || child.ControlLayoutType == Control.LayoutType.Anchor)
+				if (!child.Visible || child.Dock == DockStyle.None)
 					continue;
 
 				// MdiClient never fills the whole area like other controls, have to do it later
 				if (child is MdiClient) {
-					mdi = (MdiClient)child;
+					mdi = child;
 					continue;
 				}
 				
@@ -63,193 +79,144 @@ namespace System.Windows.Forms.Layout
 					break;
 
 				case DockStyle.Left:
-					child.SetBoundsInternal (space.Left, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
-					space.X += child.Width;
-					space.Width -= child.Width;
+					if (child.AutoSize)
+						child_size = child.GetPreferredSize(new Size(0, space.Height));
+					child.SetBounds (space.Left, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
+					space.X += child_size.Width;
+					space.Width -= child_size.Width;
 					break;
 
 				case DockStyle.Top:
-					child.SetBoundsInternal (space.Left, space.Y, space.Width, child_size.Height, BoundsSpecified.None);
-					space.Y += child.Height;
-					space.Height -= child.Height;
+					if (child.AutoSize)
+						child_size = child.GetPreferredSize(new Size(space.Width, 0));
+					child.SetBounds (space.Left, space.Y, space.Width, child_size.Height, BoundsSpecified.None);
+					space.Y += child_size.Height;
+					space.Height -= child_size.Height;
 					break;
 
 				case DockStyle.Right:
-					child.SetBoundsInternal (space.Right - child_size.Width, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
-					space.Width -= child.Width;
+					if (child.AutoSize)
+						child_size = child.GetPreferredSize(new Size(0, space.Height));
+					child.SetBounds (space.Right - child_size.Width, space.Y, child_size.Width, space.Height, BoundsSpecified.None);
+					space.Width -= child_size.Width;
 					break;
 
 				case DockStyle.Bottom:
-					child.SetBoundsInternal (space.Left, space.Bottom - child_size.Height, space.Width, child_size.Height, BoundsSpecified.None);
-					space.Height -= child.Height;
+					if (child.AutoSize)
+						child_size = child.GetPreferredSize(new Size(space.Width, 0));
+					child.SetBounds (space.Left, space.Bottom - child_size.Height, space.Width, child_size.Height, BoundsSpecified.None);
+					space.Height -= child_size.Height;
 					break;
 					
 				case DockStyle.Fill:
-					child.SetBoundsInternal (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
+					child.SetBounds (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
 					break;
 				}
 			}
 
 			// MdiClient gets whatever space is left
 			if (mdi != null)
-				mdi.SetBoundsInternal (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
+				mdi.SetBounds (space.Left, space.Top, space.Width, space.Height, BoundsSpecified.None);
 		}
 
-		void LayoutAnchoredChildren (Control parent, Control[] controls)
+		static void LayoutAnchoredChildren (IArrangedElement parent, IList controls)
 		{
-			Rectangle space = parent.ClientRectangle;
+			Rectangle space = parent.DisplayRectangle;
 
-			for (int i = 0; i < controls.Length; i++) {
-				int left;
-				int top;
-				int width;
-				int height;
-
-				Control child = controls[i];
-
-				if (!child.VisibleInternal
-				    || child.ControlLayoutType == Control.LayoutType.Dock)
+			foreach (IArrangedElement child in controls) {
+				if (!child.Visible || child.Dock != DockStyle.None)
 					continue;
 
 				AnchorStyles anchor = child.Anchor;
-
-				left = child.Left;
-				top = child.Top;
-				
-				width = child.Width;
-				height = child.Height;
+				Rectangle bounds = child.Bounds;
+				int left = bounds.Left;
+				int top = bounds.Top;
+				int width = bounds.Width;
+				int height = bounds.Height;
 
 				if ((anchor & AnchorStyles.Right) != 0) {
 					if ((anchor & AnchorStyles.Left) != 0)
-						width = space.Width - child.dist_right - left;
+						width = space.Right - child.DistanceRight - left;
 					else
-						left = space.Width - child.dist_right - width;
+						left = space.Right - child.DistanceRight - width;
 				}
 				else if ((anchor & AnchorStyles.Left) == 0) {
 					// left+=diff_width/2 will introduce rounding errors (diff_width removed from svn after r51780)
 					// This calculates from scratch every time:
-					left = left + (space.Width - (left + width + child.dist_right)) / 2;
-					child.dist_right = space.Width - (left + width);
+					left += (space.Width - (left + width + child.DistanceRight)) / 2;
+					child.DistanceRight = space.Width - (left + width);
 				}
 
 				if ((anchor & AnchorStyles.Bottom) != 0) {
 					if ((anchor & AnchorStyles.Top) != 0)
-						height = space.Height - child.dist_bottom - top;
+						height = space.Bottom - child.DistanceBottom - top;
 					else
-						top = space.Height - child.dist_bottom - height;
+						top = space.Bottom - child.DistanceBottom - height;
 				}
 				else if ((anchor & AnchorStyles.Top) == 0) {
 					// top += diff_height/2 will introduce rounding errors (diff_height removed from after r51780)
 					// This calculates from scratch every time:
-					top = top + (space.Height - (top + height + child.dist_bottom)) / 2;
-					child.dist_bottom = space.Height - (top + height);
+					top += (space.Height - (top + height + child.DistanceBottom)) / 2;
+					child.DistanceBottom = space.Height - (top + height);
 				}
 
 				// Sanity
 				if (width < 0)
 					width = 0;
-
 				if (height < 0)
 					height = 0;
 
-				child.SetBoundsInternal (left, top, width, height, BoundsSpecified.None);
+				if (child.AutoSize) {
+					Size proposed_size = Size.Empty;
+					if ((anchor & (AnchorStyles.Left | AnchorStyles.Right)) == (AnchorStyles.Left | AnchorStyles.Right))
+						proposed_size.Width = width;
+					if ((anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == (AnchorStyles.Top | AnchorStyles.Bottom))
+						proposed_size.Height = height;
+
+					Size preferred_size = GetPreferredControlSize (child, proposed_size);
+
+					if ((anchor & (AnchorStyles.Left | AnchorStyles.Right)) != AnchorStyles.Right)
+						child.DistanceRight += width - preferred_size.Width;
+					else
+						left += width - preferred_size.Width;
+					if ((anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) != AnchorStyles.Bottom)
+						child.DistanceBottom += height - preferred_size.Height;
+					else
+						top += height - preferred_size.Height;
+
+					child.SetBounds (left, top, preferred_size.Width, preferred_size.Height, BoundsSpecified.None);
+				} else {
+					child.SetBounds (left, top, width, height, BoundsSpecified.None);
+				}
 			}
-		}
-		
-		void LayoutAutoSizedChildren (Control parent, Control[] controls)
-		{
-			for (int i = 0; i < controls.Length; i++) {
-				int left;
-				int top;
-
-				Control child = controls[i];
-				if (!child.VisibleInternal
-				    || child.ControlLayoutType == Control.LayoutType.Dock
-				    || !child.AutoSize)
-					continue;
-
-				AnchorStyles anchor = child.Anchor;
-				left = child.Left;
-				top = child.Top;
-				
-				Size preferredsize = GetPreferredControlSize (child);
-
-				if (((anchor & AnchorStyles.Left) != 0) || ((anchor & AnchorStyles.Right) == 0))
-					child.dist_right += child.Width - preferredsize.Width;
-				if (((anchor & AnchorStyles.Top) != 0) || ((anchor & AnchorStyles.Bottom) == 0))
-					child.dist_bottom += child.Height - preferredsize.Height;
-
-				child.SetBoundsInternal (left, top, preferredsize.Width, preferredsize.Height, BoundsSpecified.None);
-			}
-		}
-
-		void LayoutAutoSizeContainer (Control container)
-		{
-			int left;
-			int top;
-			int width;
-			int height;
-
-			if (!container.VisibleInternal || container.ControlLayoutType == Control.LayoutType.Dock || !container.AutoSize)
-				return;
-
-			left = container.Left;
-			top = container.Top;
-
-			Size preferredsize = container.PreferredSize;
-
-			if (container.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink) {
-				width = preferredsize.Width;
-				height = preferredsize.Height;
-			} else {
-				width = container.ExplicitBounds.Width;
-				height = container.ExplicitBounds.Height;
-				if (preferredsize.Width > width)
-					width = preferredsize.Width;
-				if (preferredsize.Height > height)
-					height = preferredsize.Height;
-			}
-
-			// Sanity
-			if (width < container.MinimumSize.Width)
-				width = container.MinimumSize.Width;
-
-			if (height < container.MinimumSize.Height)
-				height = container.MinimumSize.Height;
-
-			if (container.MaximumSize.Width != 0 && width > container.MaximumSize.Width)
-				width = container.MaximumSize.Width;
-
-			if (container.MaximumSize.Height != 0 && height > container.MaximumSize.Height)
-				height = container.MaximumSize.Height;
-
-			container.SetBoundsInternal (left, top, width, height, BoundsSpecified.None);
 		}
 
 		public override bool Layout (object container, LayoutEventArgs args)
 		{
-			Control parent = container as Control;
+			IArrangedContainer parent = (IArrangedContainer)container;
 
-			Control[] controls = parent.Controls.GetAllControls ();
+			if (parent.Controls is Control.ControlCollection controlCollection) {
+				LayoutDockedChildren (parent, controlCollection.GetAllControls());
+				LayoutAnchoredChildren (parent, controlCollection.GetAllControls());
+			} else {
+				LayoutDockedChildren (parent, parent.Controls);
+				LayoutAnchoredChildren (parent, parent.Controls);
+			}
 
-			LayoutDockedChildren (parent, controls);
-			LayoutAnchoredChildren (parent, controls);
-			LayoutAutoSizedChildren (parent, controls);
-			if (parent is Form) LayoutAutoSizeContainer (parent);
-
-			return false;
+			return parent.AutoSize;
 		}
 
-		private Size GetPreferredControlSize (Control child)
+		static private Size GetPreferredControlSize (IArrangedElement child, Size proposed)
 		{
-			int width;
-			int height;
-			Size preferredsize = child.PreferredSize;
-
-			if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink || (child.Dock != DockStyle.None && !(child is Button) && !(child is FlowLayoutPanel))) {
+			var preferredsize = child.GetPreferredSize (proposed);
+			int width, height;
+			if (child.GetAutoSizeMode () == AutoSizeMode.GrowAndShrink)
+			{
 				width = preferredsize.Width;
 				height = preferredsize.Height;
-			} else {
+			}
+			else
+			{
 				width = child.ExplicitBounds.Width;
 				height = child.ExplicitBounds.Height;
 				if (preferredsize.Width > width)
@@ -257,34 +224,64 @@ namespace System.Windows.Forms.Layout
 				if (preferredsize.Height > height)
 					height = preferredsize.Height;
 			}
-			if (child.AutoSize && child is FlowLayoutPanel && child.Dock != DockStyle.None) {
-				switch (child.Dock) {
-				case DockStyle.Left:
-				case DockStyle.Right:
-					if (preferredsize.Width < child.ExplicitBounds.Width && preferredsize.Height < child.Parent.PaddingClientRectangle.Height)
-						width = preferredsize.Width;
-					break;
-				case DockStyle.Top:
-				case DockStyle.Bottom:
-					if (preferredsize.Height < child.ExplicitBounds.Height && preferredsize.Width < child.Parent.PaddingClientRectangle.Width)
-						height = preferredsize.Height;
-					break;
+			return new Size(width, height);
+		}
+
+		internal override Size GetPreferredSize (object container, Size proposedConstraints)
+		{
+			IArrangedContainer parent = (IArrangedContainer)container;
+			IList controls = parent.Controls;
+			Size retsize = Size.Empty;
+
+			// Add up the requested sizes for Docked controls
+			for (int i = controls.Count - 1; i >= 0; i--) {
+				IArrangedElement child = (IArrangedElement)controls[i];
+				if (!child.Visible || child.Dock == DockStyle.None)
+					continue;
+
+				if (child.Dock == DockStyle.Left || child.Dock == DockStyle.Right) {
+					Size sz = child.AutoSize ? child.GetPreferredSize (new Size(0, proposedConstraints.Height)) : child.Bounds.Size;
+					retsize.Width += sz.Width;
+				} else if (child.Dock == DockStyle.Top || child.Dock == DockStyle.Bottom) {
+					Size sz = child.AutoSize ? child.GetPreferredSize (new Size(proposedConstraints.Width, 0)) : child.Bounds.Size;
+					retsize.Height += sz.Height;
+				} else if (child.Dock == DockStyle.Fill && child.AutoSize) {
+					Size sz = child.GetPreferredSize (proposedConstraints);
+					retsize += sz;
 				}
 			}
-			// Sanity
-			if (width < child.MinimumSize.Width)
-				width = child.MinimumSize.Width;
 
-			if (height < child.MinimumSize.Height)
-				height = child.MinimumSize.Height;
+			// See if any non-Docked control is positioned lower or more right than our size
+			foreach (IArrangedElement child in parent.Controls) {
+				if (!child.Visible || child.Dock != DockStyle.None)
+					continue;
+					
+				// If its anchored to the bottom or right, that doesn't really count
+				if ((child.Anchor & (AnchorStyles.Bottom | AnchorStyles.Top)) == AnchorStyles.Bottom ||
+				    (child.Anchor & (AnchorStyles.Right | AnchorStyles.Left)) == AnchorStyles.Right)
+					continue;
 
-			if (child.MaximumSize.Width != 0 && width > child.MaximumSize.Width)
-				width = child.MaximumSize.Width;
+				Rectangle child_bounds = child.Bounds;
+				if (child.AutoSize) {
+					Size proposed_child_size = Size.Empty;
+					if ((child.Anchor & (AnchorStyles.Left | AnchorStyles.Right)) == (AnchorStyles.Left | AnchorStyles.Right)) {
+						proposed_child_size.Width = proposedConstraints.Width - child.DistanceRight - (child_bounds.Left - parent.DisplayRectangle.Left);
+					}
+					if ((child.Anchor & (AnchorStyles.Top | AnchorStyles.Bottom)) == (AnchorStyles.Top | AnchorStyles.Bottom)) {
+						proposed_child_size.Height = proposedConstraints.Height - child.DistanceBottom - (child_bounds.Top - parent.DisplayRectangle.Top);
+					}
+					Size preferred_size = GetPreferredControlSize (child, proposed_child_size);
+					child_bounds = new Rectangle (child_bounds.Location, preferred_size);
+				}
 
-			if (child.MaximumSize.Height != 0 && height > child.MaximumSize.Height)
-				height = child.MaximumSize.Height;
-				
-			return new Size (width, height);
-		}
+				// This is the non-sense Microsoft uses (Padding vs DisplayRectangle)
+				retsize.Width = Math.Max (retsize.Width, child_bounds.Right - parent.Padding.Left + child.Margin.Right);
+				retsize.Height = Math.Max (retsize.Height, child_bounds.Bottom - parent.Padding.Top + child.Margin.Bottom);
+				//retsize.Width = Math.Max (retsize.Width, child_bounds.Right - parent.DisplayRectangle.Left + child.Margin.Right);
+				//retsize.Height = Math.Max (retsize.Height, child_bounds.Bottom - parent.DisplayRectangle.Top + child.Margin.Bottom);
+			}
+
+			return retsize;
+		}		
 	}
 }

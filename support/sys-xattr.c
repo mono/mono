@@ -11,7 +11,12 @@
 
 #include <config.h>
 
-#if defined(HAVE_SYS_XATTR_H) || defined(HAVE_ATTR_ATTR_H) || defined(HAVE_SYS_EXTATTR_H)
+//If we're compiling to API level < 16 this won't be available
+#if defined (HOST_ANDROID) && __ANDROID_API__ < 16
+#define ANDROID_NO_XATTR
+#endif
+
+#if (defined(HAVE_SYS_XATTR_H) || defined(HAVE_ATTR_ATTR_H) || defined(HAVE_SYS_EXTATTR_H)) && !defined (ANDROID_NO_XATTR)
 
 #include <sys/types.h>
 

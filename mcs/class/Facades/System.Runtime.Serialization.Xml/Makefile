@@ -11,12 +11,10 @@ LIBRARY = System.Runtime.Serialization.Xml.dll
 
 KEYFILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /nowarn:1616,1699
-LIB_REFS = System System.Runtime.Serialization System.Xml Facades/System.Runtime.Serialization.Primitives
+LIB_REFS = System System.Runtime.Serialization System.Xml
 LIB_MCS_FLAGS = $(SIGN_FLAGS) 
 
-ifeq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += /d:NO_CODEDOM
-endif
+PLATFORM_DEBUG_FLAGS =
 
 NO_TEST = yes
 

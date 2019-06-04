@@ -14,10 +14,10 @@
     <p>@description@</p>
     <p>Download <a id="patchdownload" href="#">changes.patch</a> which can be applied with <code>git apply changes.patch</code>.</p>
 
-    <div id="diffsource" style="display:none"><!--<![CDATA[
+    <script type="text/javascript" id="diffsource">/*<![CDATA[
 @diffdata@
-]]>-->
-    </div>
+]]>*/
+    </script>
     <div id="diff">Loading ...</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
@@ -33,7 +33,7 @@
     $(document).ready(function() {
         var diffText = $("#diffsource")[0].childNodes[0].nodeValue;
         $("#diffsource").remove();
-        diffText = diffText.substring(10, diffText.length - 3);
+        diffText = diffText.substring(12, diffText.length - 10);
         if (diffText.length == 0) {
           $("#diff").text("No changes found.");
           return;
@@ -41,7 +41,7 @@
 
         $("#patchdownload").click(function() {
           var blob = new Blob([diffText], { type: "text/plain;charset=utf-8;" });
-          saveAs(blob, "changes.patch");
+          saveAs(blob, "changes.patch", true);
         });
 
         var diff2htmlUi = new Diff2HtmlUI({diff: diffText});

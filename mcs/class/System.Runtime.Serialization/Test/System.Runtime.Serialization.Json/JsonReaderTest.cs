@@ -879,5 +879,30 @@ namespace MonoTests.System.Runtime.Serialization.Json
 				Assert.AreEqual (typeof (string []), result.GetType ());
 			}
 		}
+
+		[Test] //https://github.com/mono/mono/issues/9332
+		public void SimpleStringDictionaryTest ()
+		{
+			string json = "{\"key\": \"value\"}";
+
+			// Dictionary<string, string>:
+			using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (json))) {
+				var serializer = new DataContractJsonSerializer (typeof (Dictionary<string, string>), 
+					new DataContractJsonSerializerSettings { UseSimpleDictionaryFormat = true });
+				
+				var obj = serializer.ReadObject (stream) as Dictionary<string, string>;
+				Assert.AreEqual ("value", obj ["key"]);
+			}
+
+			// Dictionary<int, string>:
+			json = "{\"42\": \"value\"}";
+			using (var stream = new MemoryStream (Encoding.UTF8.GetBytes (json))) {
+				var serializer = new DataContractJsonSerializer (typeof (Dictionary<int, string>), 
+					new DataContractJsonSerializerSettings { UseSimpleDictionaryFormat = true });
+				
+				var obj = serializer.ReadObject (stream) as Dictionary<int, string>;
+				Assert.AreEqual ("value", obj [42]);
+			}
+		}
 	}
 }

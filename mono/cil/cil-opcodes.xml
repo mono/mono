@@ -1,18 +1,18 @@
 <opdesc>
 <opcode name="nop" input="Pop0" output="Push0" args="InlineNone" o1="0xFF" o2="0x00" flow="next" type="Primitive" />
 <opcode name="break" input="Pop0" output="Push0" args="InlineNone" o1="0xFF" o2="0x01" flow="break" type="Primitive" />
-<opcode name="ldarg.0" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x02" flow="next" type="Macro" />
-<opcode name="ldarg.1" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x03" flow="next" type="Macro" />
-<opcode name="ldarg.2" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x04" flow="next" type="Macro" />
-<opcode name="ldarg.3" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x05" flow="next" type="Macro" />
-<opcode name="ldloc.0" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x06" flow="next" type="Macro" />
-<opcode name="ldloc.1" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x07" flow="next" type="Macro" />
-<opcode name="ldloc.2" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x08" flow="next" type="Macro" />
-<opcode name="ldloc.3" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x09" flow="next" type="Macro" />
-<opcode name="stloc.0" input="Pop1" output="Push0" args="InlineNone" o1="0xFF" o2="0x0A" flow="next" type="Macro" />
-<opcode name="stloc.1" input="Pop1" output="Push0" args="InlineNone" o1="0xFF" o2="0x0B" flow="next" type="Macro" />
-<opcode name="stloc.2" input="Pop1" output="Push0" args="InlineNone" o1="0xFF" o2="0x0C" flow="next" type="Macro" />
-<opcode name="stloc.3" input="Pop1" output="Push0" args="InlineNone" o1="0xFF" o2="0x0D" flow="next" type="Macro" />
+<opcode name="ldarg.0" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x02" flow="next" type="Macro" constant="0" />
+<opcode name="ldarg.1" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x03" flow="next" type="Macro" constant="1" />
+<opcode name="ldarg.2" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x04" flow="next" type="Macro" constant="2" />
+<opcode name="ldarg.3" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x05" flow="next" type="Macro" constant="3" />
+<opcode name="ldloc.0" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x06" flow="next" type="Macro" constant="0" />
+<opcode name="ldloc.1" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x07" flow="next" type="Macro" constant="1" />
+<opcode name="ldloc.2" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x08" flow="next" type="Macro" constant="2" />
+<opcode name="ldloc.3" input="Pop0" output="Push1" args="InlineNone" o1="0xFF" o2="0x09" flow="next" type="Macro" constant="3" />
+<opcode name="stloc.0" input="Pop1" output="Push0" args="InlineNone" o1="0xFF" o2="0x0A" flow="next" type="Macro" constant="0" />
+<opcode name="stloc.1" input="Pop1" output="Push0" args="InlineNone" o1="0xFF" o2="0x0B" flow="next" type="Macro" constant="1" />
+<opcode name="stloc.2" input="Pop1" output="Push0" args="InlineNone" o1="0xFF" o2="0x0C" flow="next" type="Macro" constant="2" />
+<opcode name="stloc.3" input="Pop1" output="Push0" args="InlineNone" o1="0xFF" o2="0x0D" flow="next" type="Macro" constant="3" />
 <opcode name="ldarg.s" input="Pop0" output="Push1" args="ShortInlineVar" o1="0xFF" o2="0x0E" flow="next" type="Macro" />
 <opcode name="ldarga.s" input="Pop0" output="PushI" args="ShortInlineVar" o1="0xFF" o2="0x0F" flow="next" type="Macro" />
 <opcode name="starg.s" input="Pop1" output="Push0" args="ShortInlineVar" o1="0xFF" o2="0x10" flow="next" type="Macro" />
@@ -20,16 +20,16 @@
 <opcode name="ldloca.s" input="Pop0" output="PushI" args="ShortInlineVar" o1="0xFF" o2="0x12" flow="next" type="Macro" />
 <opcode name="stloc.s" input="Pop1" output="Push0" args="ShortInlineVar" o1="0xFF" o2="0x13" flow="next" type="Macro" />
 <opcode name="ldnull" input="Pop0" output="PushRef" args="InlineNone" o1="0xFF" o2="0x14" flow="next" type="Primitive" />
-<opcode name="ldc.i4.m1" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x15" flow="next" type="Macro" />
-<opcode name="ldc.i4.0" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x16" flow="next" type="Macro" />
-<opcode name="ldc.i4.1" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x17" flow="next" type="Macro" />
-<opcode name="ldc.i4.2" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x18" flow="next" type="Macro" />
-<opcode name="ldc.i4.3" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x19" flow="next" type="Macro" />
-<opcode name="ldc.i4.4" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1A" flow="next" type="Macro" />
-<opcode name="ldc.i4.5" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1B" flow="next" type="Macro" />
-<opcode name="ldc.i4.6" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1C" flow="next" type="Macro" />
-<opcode name="ldc.i4.7" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1D" flow="next" type="Macro" />
-<opcode name="ldc.i4.8" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1E" flow="next" type="Macro" />
+<opcode name="ldc.i4.m1" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x15" flow="next" type="Macro" constant="-1" />
+<opcode name="ldc.i4.0" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x16" flow="next" type="Macro" constant="0" />
+<opcode name="ldc.i4.1" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x17" flow="next" type="Macro" constant="1" />
+<opcode name="ldc.i4.2" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x18" flow="next" type="Macro" constant="2" />
+<opcode name="ldc.i4.3" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x19" flow="next" type="Macro" constant="3" />
+<opcode name="ldc.i4.4" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1A" flow="next" type="Macro" constant="4" />
+<opcode name="ldc.i4.5" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1B" flow="next" type="Macro" constant="5" />
+<opcode name="ldc.i4.6" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1C" flow="next" type="Macro" constant="6" />
+<opcode name="ldc.i4.7" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1D" flow="next" type="Macro" constant="7" />
+<opcode name="ldc.i4.8" input="Pop0" output="PushI" args="InlineNone" o1="0xFF" o2="0x1E" flow="next" type="Macro" constant="8" />
 <opcode name="ldc.i4.s" input="Pop0" output="PushI" args="ShortInlineI" o1="0xFF" o2="0x1F" flow="next" type="Macro" />
 <opcode name="ldc.i4" input="Pop0" output="PushI" args="InlineI" o1="0xFF" o2="0x20" flow="next" type="Primitive" />
 <opcode name="ldc.i8" input="Pop0" output="PushI8" args="InlineI8" o1="0xFF" o2="0x21" flow="next" type="Primitive" />
@@ -292,7 +292,7 @@
 <opcode name="unused70" input="Pop0" output="Push0" args="InlineNone" o1="0xFE" o2="0x22" flow="next" />
 <opcode name="illegal" input="Pop0" output="Push0" args="InlineNone" o1="0x00" o2="0x00" flow="meta" />
 <opcode name="endmac" input="Pop0" output="Push0" args="InlineNone" o1="0x00" o2="0x00" flow="meta" />
-<opcode name="mono_icall" input="VarPop" output="VarPush" args="ShortInlineI" o1="0xF0" o2="0x00" flow="next" />
+<opcode name="mono_icall" input="VarPop" output="VarPush" args="InlineI" o1="0xF0" o2="0x00" flow="next" />
 <opcode name="mono_objaddr" input="Pop1" output="PushI" args="InlineNone" o1="0xF0" o2="0x01" flow="next" />
 <opcode name="mono_ldptr" input="Pop0" output="PushI" args="InlineI" o1="0xF0" o2="0x02" flow="next" />
 <opcode name="mono_vtaddr" input="Pop1" output="PushI" args="InlineNone" o1="0xF0" o2="0x03" flow="next" />
@@ -307,10 +307,10 @@
 <opcode name="mono_not_taken" input="Pop0" output="Push0" args="InlineNone" o1="0xF0" o2="0x0C" flow="next" />
 <opcode name="mono_tls" input="Pop0" output="PushI" args="InlineI" o1="0xF0" o2="0x0D" flow="next" />
 <opcode name="mono_icall_addr" input="Pop0" output="PushI" args="InlineI" o1="0xF0" o2="0x0E" flow="next" />
-<opcode name="mono_dyn_call" input="Pop0" output="PushI" args="InlineI" o1="0xF0" o2="0x0F" flow="next" />
+<opcode name="mono_dyn_call" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x0F" flow="next" />
 <opcode name="mono_memory_barrier" input="Pop0" output="Push0" args="InlineI" o1="0xF0" o2="0x10" flow="next" />
-<opcode name="mono_jit_attach" input="Pop0" output="Push0" args="InlineNone" o1="0xF0" o2="0x11" flow="next" />
-<opcode name="mono_jit_detach" input="Pop0" output="Push0" args="InlineNone" o1="0xF0" o2="0x12" flow="next" />
+<opcode name="unused71" input="Pop0" output="Push0" args="InlineNone" o1="0xF0" o2="0x11" flow="next" />
+<opcode name="unused72" input="Pop0" output="Push0" args="InlineNone" o1="0xF0" o2="0x12" flow="next" />
 <opcode name="mono_jit_icall_addr" input="Pop0" output="PushI" args="InlineI" o1="0xF0" o2="0x13" flow="next" />
 <opcode name="mono_ldptr_int_req_flag" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x14" flow="next" />
 <opcode name="mono_ldptr_card_table" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x15" flow="next" />
@@ -322,4 +322,6 @@
 <opcode name="mono_get_last_error" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x1B" flow="next" />
 <opcode name="mono_get_rgctx_arg" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x1C" flow="next" />
 <opcode name="mono_ldptr_profiler_allocation_count" input="Pop0" output="PushI" args="InlineNone" o1="0xF0" o2="0x1D" flow="next" />
+<opcode name="mono_ld_delegate_method_ptr" input="Pop1" output="PushI" args="InlineNone" o1="0xF0" o2="0x1E" flow="next" />
+<opcode name="mono_rethrow" input="PopRef" output="Push0" args="InlineNone" o1="0xF0" o2="0x1F" flow="throw" type="Objmodel" />
 </opdesc>

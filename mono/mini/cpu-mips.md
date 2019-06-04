@@ -55,7 +55,6 @@ memory_barrier: len:4
 nop: len:4
 relaxed_nop: len:4
 break: len:16
-jmp: len:92
 call: dest:v clob:c len:20
 br: len:16
 switch: src1:i len:40
@@ -70,16 +69,16 @@ start_handler: len:16
 endfinally: len:12
 ceq: dest:i len:16
 cgt: dest:i len:16
-cgt.un: dest:i len:16
+cgt_un: dest:i len:16
 clt: dest:i len:16
-clt.un: dest:i len:16
+clt_un: dest:i len:16
 localloc: dest:i src1:i len:60
 compare: src1:i src2:i len:20
 compare_imm: src1:i len:20
 fcompare: src1:f src2:f len:12
-oparglist: src1:i len:12
+arglist: src1:i len:12
 setlret: src1:i src2:i len:12
-checkthis: src1:b len:4
+check_this: src1:b len:4
 
 voidcall: len:20 clob:c
 voidcall_reg: src1:i len:20 clob:c
@@ -172,7 +171,10 @@ shr_un_imm: dest:i src1:i len:8
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -384,7 +386,7 @@ float_clt_un: dest:i src1:f src2:f len:20
 float_conv_to_u: dest:i src1:f len:36
 call_handler: len:20 clob:c
 endfilter: src1:i len:16
-aot_const: dest:i len:8
+aotconst: dest:i len:8
 sqrt: dest:f src1:f len:4
 adc: dest:i src1:i src2:i len:4
 addcc: dest:i src1:i src2:i len:4
@@ -455,4 +457,6 @@ mips_cond_exc_ino: src1:i src2:i len:44
 mips_cond_exc_ic: src1:i src2:i len:44
 mips_cond_exc_inc: src1:i src2:i len:44
 
+liverange_start: len:0
+liverange_end: len:0
 gc_safe_point: len:0

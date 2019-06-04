@@ -38,6 +38,7 @@ using System.Security.Cryptography.X509Certificates;
 
 using System;
 using System.Net;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -83,6 +84,8 @@ namespace Mono.Net.Security
 				if (initialized)
 					return;
 
+				SystemDependencyProvider.Initialize ();
+
 				InitializeProviderRegistration ();
 
 				MSI.MonoTlsProvider provider;
@@ -98,8 +101,6 @@ namespace Mono.Net.Security
 				if (!providerCache.ContainsKey (provider.ID))
 					providerCache.Add (provider.ID, provider);
 
-				X509Helper2.Initialize ();
-
 				defaultProvider = provider;
 				initialized = true;
 			}
@@ -111,9 +112,10 @@ namespace Mono.Net.Security
 				if (initialized)
 					throw new NotSupportedException ("TLS Subsystem already initialized.");
 
+				SystemDependencyProvider.Initialize ();
+
 				defaultProvider = LookupProvider (provider, true);
 
-				X509Helper2.Initialize ();
 				initialized = true;
 			}
 		}
@@ -192,6 +194,22 @@ namespace Mono.Net.Security
 			}
 		}
 
+		static bool enableDebug;
+
+		[Conditional ("MONO_TLS_DEBUG")]
+		static void InitializeDebug ()
+		{
+			if (Environment.GetEnvironmentVariable ("MONO_TLS_DEBUG") != null)
+				enableDebug = true;
+		}
+
+		[Conditional ("MONO_TLS_DEBUG")]
+		internal static void Debug (string message, params object[] args)
+		{
+			if (enableDebug)
+				Console.Error.WriteLine (message, args);
+		}
+
 #endregion
 
 		internal static readonly Guid AppleTlsId = new Guid ("981af8af-a3a3-419a-9f01-a518e3a17c1c");
@@ -203,48 +221,85 @@ namespace Mono.Net.Security
 			lock (locker) {
 				if (providerRegistration != null)
 					return;
+
+				InitializeDebug ();
+
 				providerRegistration = new Dictionary<string,Tuple<Guid,string>> ();
 				providerCache = new Dictionary<Guid,MSI.MonoTlsProvider> ();
 
-				var appleTlsEntry = new Tuple<Guid,String> (AppleTlsId, "Mono.AppleTls.AppleTlsProvider");
-
-#if ONLY_APPLETLS || MONOTOUCH || XAMMAC
-				providerRegistration.Add ("default", appleTlsEntry);
-				providerRegistration.Add ("apple", appleTlsEntry);
-#else
-				var legacyEntry = new Tuple<Guid,String> (LegacyId, "Mono.Net.Security.LegacyTlsProvider");
-				providerRegistration.Add ("legacy", legacyEntry);
-
-				Tuple<Guid,String> btlsEntry = null;
-#if MONO_FEATURE_BTLS
-				if (IsBtlsSupported ()) {
-					btlsEntry = new Tuple<Guid,String> (BtlsId, "Mono.Btls.MonoBtlsProvider");
-					providerRegistration.Add ("btls", btlsEntry);
-				}
-#endif
-
-				if (Platform.IsMacOS)
-					providerRegistration.Add ("default", appleTlsEntry);
-				else if (btlsEntry != null)
-					providerRegistration.Add ("default", btlsEntry);
-				else
-					providerRegistration.Add ("default", legacyEntry);
-
-				providerRegistration.Add ("apple", appleTlsEntry);
-#endif
+				PopulateProviders ();
 			}
 		}
 
-#region Platform-Specific code
+#if ONLY_APPLETLS || MONOTOUCH || XAMMAC
+		// TODO: Should be redundant
+		static void PopulateProviders ()
+		{
+			var appleTlsEntry = new Tuple<Guid,String> (AppleTlsId, typeof (Mono.AppleTls.AppleTlsProvider).FullName);
+
+			providerRegistration.Add ("default", appleTlsEntry);
+			providerRegistration.Add ("apple", appleTlsEntry);
+		}
+#elif MONODROID
+		// TODO: Should be redundant		
+		static void PopulateProviders ()
+		{
+			var legacyEntry = new Tuple<Guid,String> (LegacyId, typeof (Mono.Net.Security.LegacyTlsProvider).FullName);
+
+			providerRegistration.Add ("legacy", legacyEntry);
+
+	#if MONO_FEATURE_BTLS
+			var btlsEntry = new Tuple<Guid,String> (BtlsId, typeof (Mono.Btls.MonoBtlsProvider).FullName);
+			if (btlsEntry != null)
+				providerRegistration.Add ("default", btlsEntry);
+			else
+	#endif
+			providerRegistration.Add ("default", legacyEntry);
+		}
+#else
+		static void PopulateProviders ()
+		{
+#if MONO_FEATURE_APPLETLS
+			var appleTlsEntry = new Tuple<Guid,String> (AppleTlsId, typeof (Mono.AppleTls.AppleTlsProvider).FullName);
+#endif
+			var legacyEntry = new Tuple<Guid,String> (LegacyId, typeof (Mono.Net.Security.LegacyTlsProvider).FullName);
+			providerRegistration.Add ("legacy", legacyEntry);
+
+			Tuple<Guid,String> btlsEntry = null;
+#if MONO_FEATURE_BTLS
+			if (IsBtlsSupported ()) {
+				btlsEntry = new Tuple<Guid,String> (BtlsId, typeof (Mono.Btls.MonoBtlsProvider).FullName);
+				providerRegistration.Add ("btls", btlsEntry);
+			}
+#endif
+
+#if MONO_FEATURE_APPLETLS
+			if (Platform.IsMacOS)
+				providerRegistration.Add ("default", appleTlsEntry);
+			else
+#endif
+#if MONO_FEATURE_BTLS
+			if (btlsEntry != null)
+				providerRegistration.Add ("default", btlsEntry);
+			else
+#endif
+				providerRegistration.Add ("default", legacyEntry);
+
+#if MONO_FEATURE_APPLETLS
+			providerRegistration.Add ("apple", appleTlsEntry);
+#endif
+		}
+#endif
+
 
 #if MONO_FEATURE_BTLS
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		internal extern static bool IsBtlsSupported ();
 #endif
 
-#if MONODROID
 		static MSI.MonoTlsProvider CreateDefaultProviderImpl ()
 		{
+#if MONODROID
 			MSI.MonoTlsProvider provider = null;
 			var type = Environment.GetEnvironmentVariable ("XA_TLS_PROVIDER");
 			switch (type) {
@@ -261,24 +316,40 @@ namespace Mono.Net.Security
 			default:
 				throw new NotSupportedException (string.Format ("Invalid TLS Provider: `{0}'.", provider));
 			}
-		}
+
 #elif ONLY_APPLETLS || MONOTOUCH || XAMMAC
-		static MSI.MonoTlsProvider CreateDefaultProviderImpl ()
-		{
 			return new AppleTlsProvider ();
-		}
 #else
-		static MSI.MonoTlsProvider CreateDefaultProviderImpl ()
-		{
-			var variable = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
-			if (string.IsNullOrEmpty (variable))
-				variable = "default";
+			var type = Environment.GetEnvironmentVariable ("MONO_TLS_PROVIDER");
+			if (string.IsNullOrEmpty (type))
+				type = "default";
 
-			return LookupProvider (variable, true);
-		}
+			switch (type) {
+			case "default":
+#if MONO_FEATURE_APPLETLS
+				if (Platform.IsMacOS)
+					goto case "apple";
 #endif
+#if MONO_FEATURE_BTLS
+				if (IsBtlsSupported ())
+					goto case "btls";
+#endif
+				goto case "legacy";
+#if MONO_FEATURE_APPLETLS
+			case "apple":
+				return new AppleTlsProvider ();
+#endif
+#if MONO_FEATURE_BTLS
+			case "btls":
+				return new MonoBtlsProvider ();
+#endif
+			case "legacy":
+				return new Mono.Net.Security.LegacyTlsProvider ();
+			}
 
-#endregion
+			return LookupProvider (type, true);
+#endif
+		}
 
 #region Mono.Security visible API
 

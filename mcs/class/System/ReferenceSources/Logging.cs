@@ -3,7 +3,12 @@ using System.Diagnostics;
 namespace System.Net {
 	static class Logging
 	{
-		internal static readonly bool On = false;
+
+		internal static bool On {
+			get {
+				return false;
+			    }
+		}
 
 		internal static TraceSource Web {
 			get {

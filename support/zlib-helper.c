@@ -29,6 +29,7 @@
 #define BUFFER_SIZE 4096
 #define ARGUMENT_ERROR -10
 #define IO_ERROR -11
+#define MONO_EXCEPTION -12
 
 #define z_malloc(size)          ((gpointer) malloc(size))
 #define z_malloc0(size)         ((gpointer) calloc(1,size))
@@ -121,6 +122,10 @@ CloseZStream (ZStream *zstream)
 			do {
 				status = deflate (zstream->stream, Z_FINISH);
 				flush_status = flush_internal (zstream, TRUE);
+				if (flush_status == MONO_EXCEPTION) {
+					status = flush_status;
+					break;
+				}
 			} while (status == Z_OK); /* We want Z_STREAM_END or error here here */
 			if (status == Z_STREAM_END)
 				status = flush_status;
@@ -147,6 +152,8 @@ write_to_managed (ZStream *stream)
 		n = stream->func (stream->buffer, BUFFER_SIZE - zs->avail_out, stream->gchandle);
 		zs->next_out = stream->buffer;
 		zs->avail_out = BUFFER_SIZE;
+		if (n == MONO_EXCEPTION)
+			return n;
 		if (n < 0)
 			return IO_ERROR;
 	}
@@ -208,7 +215,9 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 			stream->eof = TRUE;
 			break;
 		} else if (status == Z_BUF_ERROR && stream->total_in == zs->total_in) {
-			stream->eof = TRUE;
+			if (zs->avail_in != 0) {
+				stream->eof = TRUE;
+			}
 			break;
 		} else if (status != Z_OK) {
 			return status;

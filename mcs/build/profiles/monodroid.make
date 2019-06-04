@@ -8,7 +8,7 @@ MCS = $(BOOTSTRAP_MCS)
 profile-check:
 	@:
 
-DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+DEFAULT_REFERENCES = mscorlib
 
 PROFILE_MCS_FLAGS = \
 	-d:NET_1_1 \
@@ -24,9 +24,9 @@ PROFILE_MCS_FLAGS = \
 	-d:ANDROID \
 	-nowarn:1699 \
 	-nostdlib \
-	$(DEFAULT_REFERENCES) \
 	$(PLATFORM_DEBUG_FLAGS)
 
+API_BIN_PROFILE = build/monodroid
 FRAMEWORK_VERSION = 2.1
 
 # the tuner takes care of the install
@@ -34,3 +34,9 @@ NO_INSTALL = yes
 MOBILE_DYNAMIC = yes
 MOBILE_PROFILE = yes
 NO_CONSOLE = yes
+
+ifdef PLATFORM_WIN32
+PROFILE_MCS_FLAGS += -d:MOBILE_DESKTOP_HOST -d:WIN_PLATFORM
+endif
+
+PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking PKITS InetAccess AndroidNotWorking

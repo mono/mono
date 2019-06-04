@@ -453,7 +453,8 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
-	public void core0008M()
+        [Ignore(".NET DOM implementation does not match W3C DOM specification.")]
+        public void core0008M()
         {
             string computedValue = "";
             string expectedValue = "False";

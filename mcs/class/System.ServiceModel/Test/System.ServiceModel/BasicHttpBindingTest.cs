@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.Net;
@@ -36,6 +37,8 @@ using NUnit.Framework;
 using System.ServiceModel.Configuration;
 using System.Configuration;
 using System.Text;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel
 {
@@ -315,7 +318,7 @@ namespace MonoTests.System.ServiceModel
 
 		private BasicHttpBinding CreateBindingFromConfig ()
 		{
-			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/basicHttpBinding").GetSectionGroup ("system.serviceModel");
+			ServiceModelSectionGroup config = (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/basicHttpBinding")).GetSectionGroup ("system.serviceModel");
 			BindingsSection section = (BindingsSection) config.Bindings;
 			BasicHttpBindingElement el = section.BasicHttpBinding.Bindings ["BasicHttpBinding2_Service"];
 
@@ -326,3 +329,4 @@ namespace MonoTests.System.ServiceModel
 		}
 	}
 }
+#endif

@@ -14,20 +14,18 @@ include ../../build/executable.make
 XBUILD_DIR=.
 include $(XBUILD_DIR)/xbuild_test.make
 
-ifeq (4.0, $(FRAMEWORK_VERSION))
-install-local: xbuild-net4-fail
-else
 install-local: install-extras
-endif
 
 PORTABLE_TARGETS_SRC:=data/Portable/Targets
 PCL5_FX_SRC:=data/Portable/Frameworks/v5.0
+DENIED_ASSEMBLY_LIST_SRC=data/deniedAssembliesList.txt
 
 NETFRAMEWORK_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETFramework
 PCL5_FX_DIR=$(mono_libdir)/mono/xbuild-frameworks/.NETPortable/v5.0
 VS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/VisualStudio
 PORTABLE_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/Portable
 NUGET_BUILDTASKS_TARGETS_DIR = $(mono_libdir)/mono/xbuild/Microsoft/NuGet
+MSBUILD_EXTENSIONS_CURRENT_DIR=$(mono_libdir)/mono/xbuild/Current
 
 ifeq (14.0, $(XBUILD_VERSION))
 install-extras: install-versioned-files install-global-files
@@ -39,7 +37,7 @@ endif
 install-versioned-files: install-bin-data install-nuget-imports
 
 #install files that are only installed once across all xbuild versions
-install-global-files: install-frameworks install-web-targets install-pcl-targets install-pcl5-framework install-nuget-targets
+install-global-files: install-frameworks install-web-targets install-pcl-targets install-pcl5-framework install-nuget-targets install-msbuild-specific-files
 
 install-bin-data:
 	$(MKINSTALLDIRS) $(DESTDIR)$(XBUILD_BIN_DIR)/MSBuild
@@ -81,6 +79,10 @@ install-frameworks:
 	$(INSTALL_DATA) frameworks/net_4.6.2.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.6.2/RedistList/FrameworkList.xml
 	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7/RedistList
 	$(INSTALL_DATA) frameworks/net_4.7.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7/RedistList/FrameworkList.xml
+	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7.1/RedistList
+	$(INSTALL_DATA) frameworks/net_4.7.1.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7.1/RedistList/FrameworkList.xml
+	$(MKINSTALLDIRS) $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7.2/RedistList
+	$(INSTALL_DATA) frameworks/net_4.7.2.xml $(DESTDIR)$(NETFRAMEWORK_DIR)/v4.7.2/RedistList/FrameworkList.xml
 
 install-pcl-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(PORTABLE_TARGETS_DIR)
@@ -95,7 +97,7 @@ install-pcl-targets:
 	done
 
 install-web-targets:
-	for VERSION in v9.0 v10.0 v11.0 v12.0 v14.0 v15.0; do \
+	for VERSION in v9.0 v10.0 v11.0 v12.0 v14.0 v15.0 v16.0; do \
 		$(MKINSTALLDIRS) $(DESTDIR)$(VS_TARGETS_DIR)/$$VERSION/WebApplications; \
 		$(INSTALL_DATA) targets/Microsoft.WebApplication.targets $(DESTDIR)$(VS_TARGETS_DIR)/$$VERSION/WebApplications; \
 	done
@@ -104,8 +106,12 @@ NUGET_BUILDTASKS_REPO_DIR=$(topdir)/../external/nuget-buildtasks
 
 install-nuget-targets:
 	$(MKINSTALLDIRS) $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+	$(MKINSTALLDIRS) $(DESTDIR)$(MSBUILD_EXTENSIONS_CURRENT_DIR)/Imports/Microsoft.Common.props/ImportBefore
+	$(MKINSTALLDIRS) $(DESTDIR)$(MSBUILD_EXTENSIONS_CURRENT_DIR)/Microsoft.Common.targets/ImportAfter
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.targets $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
 	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/Microsoft.NuGet.props $(DESTDIR)$(NUGET_BUILDTASKS_TARGETS_DIR)
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props $(DESTDIR)$(MSBUILD_EXTENSIONS_CURRENT_DIR)/Imports/Microsoft.Common.props/ImportBefore
+	$(INSTALL_DATA) $(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets $(DESTDIR)$(MSBUILD_EXTENSIONS_CURRENT_DIR)/Microsoft.Common.targets/ImportAfter
 
 install-nuget-imports:
 ifeq (14.0, $(XBUILD_VERSION))
@@ -125,6 +131,10 @@ install-pcl5-framework:
 	$(INSTALL_DATA) "$(PCL5_FX_SRC)/.NET Framework 4.6.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/.NET Framework 4.6.xml"
 	$(INSTALL_DATA) "$(PCL5_FX_SRC)/ASP.NET Core 1.0.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/ASP.NET Core 1.0.xml"
 	$(INSTALL_DATA) "$(PCL5_FX_SRC)/Windows Universal 10.0.xml" "$(DESTDIR)$(PCL5_FX_DIR)/SupportedFrameworks/Windows Universal 10.0.xml"
+
+install-msbuild-specific-files:
+	$(MKINSTALLDIRS) $(DESTDIR)$(mono_libdir)/mono/xbuild
+	$(INSTALL_DATA) $(DENIED_ASSEMBLY_LIST_SRC) $(DESTDIR)$(mono_libdir)/mono/xbuild
 
 EXTRA_DISTFILES = \
 	data/xbuild.rsp \
@@ -168,6 +178,7 @@ EXTRA_DISTFILES = \
 	"data/Portable/Frameworks/v5.0/ASP.NET Core 1.0.xml" \
 	"data/Portable/Frameworks/v5.0/FrameworkList.xml" \
 	"data/Portable/Frameworks/v5.0/Windows Universal 10.0.xml" \
+	data/deniedAssembliesList.txt \
 	frameworks/net_2.0.xml \
 	frameworks/net_3.0.xml \
 	frameworks/net_3.5.xml \
@@ -180,6 +191,8 @@ EXTRA_DISTFILES = \
 	frameworks/net_4.6.1.xml \
 	frameworks/net_4.6.2.xml \
 	frameworks/net_4.7.xml \
+	frameworks/net_4.7.1.xml \
+	frameworks/net_4.7.2.xml \
 	targets/Microsoft.WebApplication.targets	\
 	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportBefore.props	\
 	$(NUGET_BUILDTASKS_REPO_DIR)/src/Microsoft.NuGet.Build.Tasks/ImportBeforeAfter/Microsoft.NuGet.ImportAfter.targets	\

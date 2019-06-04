@@ -1,3 +1,4 @@
+// Compiler options: -langversion:latest
 using System;
 
 //
@@ -173,6 +174,11 @@ public class ConditionalParsing
 	void Test_22 (bool args)
 	{
 		var x = args ?.2f : -.2f;
+	}
+
+	void Test_23 (string args)
+	{
+		var x = args == null ? default : 1;
 	}
 
 	static void Helper<T> (T arg)

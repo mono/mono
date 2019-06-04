@@ -20,6 +20,10 @@
 #include <mono/metadata/method-builder.h>
 #include <mono/metadata/remoting.h>
 #include <mono/utils/mono-error.h>
+#include <mono/metadata/icalls.h>
+
+typedef gunichar2 *mono_bstr;
+typedef const gunichar2 *mono_bstr_const;
 
 #define mono_marshal_find_bitfield_offset(type, elem, byte_offset, bitmask) \
 	do { \
@@ -28,6 +32,10 @@
 		tmp.elem = 1; \
 		mono_marshal_find_nonzero_bit_offset ((guint8*)&tmp, sizeof (tmp), (byte_offset), (bitmask)); \
 	} while (0)
+
+
+GENERATE_TRY_GET_CLASS_WITH_CACHE_DECL(stringbuilder)
+
 
 /*
  * This structure holds the state kept by the emit_ marshalling functions.
@@ -90,7 +98,7 @@ typedef enum {
 	WRAPPER_SUBTYPE_STRING_CTOR,
 	/* Subtypes of MONO_WRAPPER_STELEMREF */
 	WRAPPER_SUBTYPE_VIRTUAL_STELEMREF,
-	/* Subtypes of MONO_WRAPPER_UNKNOWN */
+	/* Subtypes of MONO_WRAPPER_OTHER */
 	WRAPPER_SUBTYPE_FAST_MONITOR_ENTER,
 	WRAPPER_SUBTYPE_FAST_MONITOR_ENTER_V4,
 	WRAPPER_SUBTYPE_FAST_MONITOR_EXIT,
@@ -105,10 +113,10 @@ typedef enum {
 	WRAPPER_SUBTYPE_RUNTIME_INVOKE_DIRECT,
 	WRAPPER_SUBTYPE_RUNTIME_INVOKE_VIRTUAL,
 	/* Subtypes of MONO_WRAPPER_MANAGED_TO_NATIVE */
-	WRAPPER_SUBTYPE_ICALL_WRAPPER,
+	WRAPPER_SUBTYPE_ICALL_WRAPPER, // specifically JIT icalls
 	WRAPPER_SUBTYPE_NATIVE_FUNC_AOT,
 	WRAPPER_SUBTYPE_PINVOKE,
-	/* Subtypes of MONO_WRAPPER_UNKNOWN */
+	/* Subtypes of MONO_WRAPPER_OTHER */
 	WRAPPER_SUBTYPE_SYNCHRONIZED_INNER,
 	WRAPPER_SUBTYPE_GSHAREDVT_IN,
 	WRAPPER_SUBTYPE_GSHAREDVT_OUT,
@@ -118,10 +126,12 @@ typedef enum {
 	/* Subtypes of MONO_WRAPPER_DELEGATE_INVOKE */
 	WRAPPER_SUBTYPE_DELEGATE_INVOKE_VIRTUAL,
 	WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND,
-	/* Subtypes of MONO_WRAPPER_UNKNOWN */
+	/* Subtypes of MONO_WRAPPER_OTHER */
 	WRAPPER_SUBTYPE_GSHAREDVT_IN_SIG,
 	WRAPPER_SUBTYPE_GSHAREDVT_OUT_SIG,
-	WRAPPER_SUBTYPE_INTERP_IN
+	WRAPPER_SUBTYPE_INTERP_IN,
+	WRAPPER_SUBTYPE_INTERP_LMF,
+	WRAPPER_SUBTYPE_AOT_INIT
 } WrapperSubtype;
 
 typedef struct {
@@ -164,7 +174,7 @@ typedef struct {
 } GenericArrayHelperWrapperInfo;
 
 typedef struct {
-	gpointer func;
+	MonoJitICallId jit_icall_id;
 } ICallWrapperInfo;
 
 typedef struct {
@@ -199,6 +209,20 @@ typedef struct {
 typedef struct {
 	MonoMethodSignature *sig;
 } InterpInWrapperInfo;
+
+typedef enum {
+	AOT_INIT_METHOD = 0,
+	AOT_INIT_METHOD_GSHARED_MRGCTX = 1,
+	AOT_INIT_METHOD_GSHARED_THIS = 2,
+	AOT_INIT_METHOD_GSHARED_VTABLE = 3
+} MonoAotInitSubtype;
+
+typedef struct {
+	// We emit this code when we init the module,
+	// and later match up the native code with this method
+	// using the name.
+	MonoAotInitSubtype subtype;
+} AOTInitWrapperInfo;
 
 /*
  * This structure contains additional information to uniquely identify a given wrapper
@@ -244,15 +268,78 @@ typedef struct {
 		DelegateInvokeWrapperInfo delegate_invoke;
 		/* INTERP_IN */
 		InterpInWrapperInfo interp_in;
+		/* AOT_INIT */
+		AOTInitWrapperInfo aot_init;
 	} d;
 } WrapperInfo;
 
-G_BEGIN_DECLS
+typedef enum {
+	STELEMREF_OBJECT, /*no check at all*/
+	STELEMREF_SEALED_CLASS, /*check vtable->klass->element_type */
+	STELEMREF_CLASS, /*only the klass->parents check*/
+	STELEMREF_CLASS_SMALL_IDEPTH, /* like STELEMREF_CLASS bit without the idepth check */
+	STELEMREF_INTERFACE, /*interfaces without variant generic arguments. */
+	STELEMREF_COMPLEX, /*arrays, MBR or types with variant generic args - go straight to icalls*/
+	STELEMREF_KIND_COUNT
+} MonoStelemrefKind;
+
+
+#define MONO_MARSHAL_CALLBACKS_VERSION 4
+
+typedef struct {
+	int version;
+	int (*emit_marshal_array) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_boolean) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_ptr) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_char) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_scalar) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+
+	int (*emit_marshal_custom) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_asany) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_vtype) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_string) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_safehandle) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_handleref) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_object) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	int (*emit_marshal_variant) (EmitMarshalContext *m, int argnum, MonoType *t, MonoMarshalSpec *spec, int conv_arg, MonoType **conv_arg_type, MarshalAction action);
+	void (*emit_castclass) (MonoMethodBuilder *mb);
+	void (*emit_struct_to_ptr) (MonoMethodBuilder *mb, MonoClass *klass);
+	void (*emit_ptr_to_struct) (MonoMethodBuilder *mb, MonoClass *klass);
+	void (*emit_isinst) (MonoMethodBuilder *mb);
+	void (*emit_virtual_stelemref) (MonoMethodBuilder *mb, const char **param_names, MonoStelemrefKind kind);
+	void (*emit_stelemref) (MonoMethodBuilder *mb);
+	void (*emit_array_address) (MonoMethodBuilder *mb, int rank, int elem_size);
+	void (*emit_native_wrapper) (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodPInvoke *piinfo, MonoMarshalSpec **mspecs, gpointer func, gboolean aot, gboolean check_exceptions, gboolean func_param);
+	void (*emit_managed_wrapper) (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, uint32_t target_handle);
+	void (*emit_runtime_invoke_body) (MonoMethodBuilder *mb, const char **param_names, MonoImage *image, MonoMethod *method, MonoMethodSignature *sig, MonoMethodSignature *callsig, gboolean virtual_, gboolean need_direct_wrapper);
+	void (*emit_runtime_invoke_dynamic) (MonoMethodBuilder *mb);
+	void (*emit_delegate_begin_invoke) (MonoMethodBuilder *mb, MonoMethodSignature *sig);
+	void (*emit_delegate_end_invoke) (MonoMethodBuilder *mb, MonoMethodSignature *sig);
+	void (*emit_delegate_invoke_internal) (MonoMethodBuilder *mb, MonoMethodSignature *sig, MonoMethodSignature *invoke_sig, gboolean static_method_with_first_arg_bound, gboolean callvirt, gboolean closed_over_null, MonoMethod *method, MonoMethod *target_method, MonoClass *target_class, MonoGenericContext *ctx, MonoGenericContainer *container);
+	void (*emit_synchronized_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoGenericContext *ctx, MonoGenericContainer *container, MonoMethod *enter_method, MonoMethod *exit_method, MonoMethod *gettypefromhandle_method);
+	void (*emit_unbox_wrapper) (MonoMethodBuilder *mb, MonoMethod *method);
+	void (*emit_array_accessor_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *sig, MonoGenericContext *ctx);
+	void (*emit_generic_array_helper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig);
+	void (*emit_thunk_invoke_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig);
+	void (*emit_create_string_hack) (MonoMethodBuilder *mb, MonoMethodSignature *csig, MonoMethod *res);
+	void (*emit_native_icall_wrapper) (MonoMethodBuilder *mb, MonoMethod *method, MonoMethodSignature *csig, gboolean check_exceptions, gboolean aot, MonoMethodPInvoke *pinfo);
+	void (*emit_icall_wrapper) (MonoMethodBuilder *mb, MonoJitICallInfo *callinfo, MonoMethodSignature *csig2, gboolean check_exceptions);
+	void (*emit_return) (MonoMethodBuilder *mb);
+	void (*emit_vtfixup_ftnptr) (MonoMethodBuilder *mb, MonoMethod *method, int param_count, guint16 type);
+	void (*mb_skip_visibility) (MonoMethodBuilder *mb);
+	void (*mb_set_dynamic) (MonoMethodBuilder *mb);
+	void (*mb_emit_exception) (MonoMethodBuilder *mb, const char *exc_nspace, const char *exc_name, const char *msg);
+	void (*mb_emit_exception_for_error) (MonoMethodBuilder *mb, const MonoError *emitted_error);
+	void (*mb_emit_byte) (MonoMethodBuilder *mb, guint8 op);
+} MonoMarshalCallbacks;
 
 /*type of the function pointer of methods returned by mono_marshal_get_runtime_invoke*/
 typedef MonoObject *(*RuntimeInvokeFunction) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
 
 typedef void (*RuntimeInvokeDynamicFunction) (void *args, MonoObject **exc, void* compiled_method);
+
+void
+mono_install_marshal_callbacks (MonoMarshalCallbacks *cb);
 
 /* marshaling helper functions */
 
@@ -278,18 +365,15 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 int            
 mono_type_native_stack_size (MonoType *type, guint32 *alignment);
 
-gpointer
-mono_string_to_ansibstr (MonoString *string_obj);
-
-gpointer
-mono_ptr_to_bstr (gpointer ptr, int slen);
-
-gpointer
-mono_string_to_bstr(MonoString* str);
+mono_bstr
+mono_ptr_to_bstr (const gunichar2* ptr, int slen);
 
 void mono_delegate_free_ftnptr (MonoDelegate *delegate);
 
 void
+mono_marshal_ftnptr_eh_callback (guint32 gchandle);
+
+MONO_PAL_API void
 mono_marshal_set_last_error (void);
 
 guint
@@ -310,7 +394,7 @@ void
 mono_marshal_set_wrapper_info (MonoMethod *method, WrapperInfo *info);
 
 WrapperInfo*
-mono_marshal_get_wrapper_info (MonoMethod *wrapper);
+mono_marshal_get_wrapper_info (MonoMethod *wrapper) MONO_LLVM_INTERNAL;
 
 MonoMethod *
 mono_marshal_get_delegate_begin_invoke (MonoMethod *method);
@@ -346,7 +430,13 @@ gpointer
 mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type);
 
 MonoMethod *
-mono_marshal_get_icall_wrapper (MonoMethodSignature *sig, const char *name, gconstpointer func, gboolean check_exceptions);
+mono_marshal_get_icall_wrapper (MonoJitICallInfo *callinfo, gboolean check_exceptions);
+
+MonoMethod *
+mono_marshal_get_aot_init_wrapper (MonoAotInitSubtype subtype) MONO_LLVM_INTERNAL;
+
+const char *
+mono_marshal_get_aot_init_wrapper_name (MonoAotInitSubtype subtype) MONO_LLVM_INTERNAL;
 
 MonoMethod *
 mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, gboolean aot);
@@ -394,7 +484,7 @@ MonoMethod *
 mono_marshal_get_array_accessor_wrapper (MonoMethod *method);
 
 MonoMethod *
-mono_marshal_get_generic_array_helper (MonoClass *klass, gchar *name, MonoMethod *method);
+mono_marshal_get_generic_array_helper (MonoClass *klass, const gchar *name, MonoMethod *method);
 
 MonoMethod *
 mono_marshal_get_thunk_invoke_wrapper (MonoMethod *method);
@@ -429,141 +519,98 @@ gboolean
 mono_marshal_free_ccw (MonoObject* obj);
 
 void
-cominterop_release_all_rcws (void); 
+mono_cominterop_release_all_rcws (void); 
+
+MONO_API void *
+mono_marshal_string_to_utf16 (MonoString *s);
 
 void
-ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArray *src, gint32 start_index,
-								    gpointer dest, gint32 length);
+mono_marshal_set_last_error_windows (int error);
 
-void
-ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gpointer src, gint32 start_index,
-								      MonoArray *dest, gint32 length);
+void 
+mono_struct_delete_old (MonoClass *klass, char *ptr);
 
-MonoStringHandle
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (char *ptr, MonoError *error);
+MonoObject*
+mono_object_isinst_icall (MonoObject *obj, MonoClass *klass);
 
-MonoString *
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (char *ptr, gint32 len);
+int
+mono_emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t, 
+	      MonoMarshalSpec *spec, int conv_arg, 
+	      MonoType **conv_arg_type, MarshalAction action);
 
-MonoString *
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (guint16 *ptr);
+MonoObject *
+mono_marshal_isinst_with_cache (MonoObject *obj, MonoClass *klass, uintptr_t *cache);
 
-MonoString *
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (guint16 *ptr, gint32 len);
+MonoAsyncResult *
+mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params);
 
-MonoString *
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringBSTR (gpointer ptr);
+MonoObject *
+mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params);
 
-guint32
-ves_icall_System_Runtime_InteropServices_Marshal_GetComSlotForMethodInfoInternal (MonoReflectionMethod *m);
+MonoMarshalNative
+mono_marshal_get_string_encoding (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
 
+MonoMarshalConv
+mono_marshal_get_string_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
+
+MonoMarshalConv
+mono_marshal_get_stringbuilder_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
+
+MonoMarshalConv
+mono_marshal_get_ptr_to_stringbuilder_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec, gboolean *need_free);
+
+MonoMarshalConv
+mono_marshal_get_ptr_to_string_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec, gboolean *need_free);
+
+MonoType*
+mono_marshal_boolean_conv_in_get_local_type (MonoMarshalSpec *spec, guint8 *ldc_op /*out*/);
+
+MonoClass*
+mono_marshal_boolean_managed_conv_in_get_conv_arg_class (MonoMarshalSpec *spec, guint8 *ldop/*out*/);
+
+gboolean
+mono_pinvoke_is_unicode (MonoMethodPInvoke *piinfo);
+
+gboolean
+mono_marshal_need_free (MonoType *t, MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
+
+MonoObject* mono_marshal_get_type_object (MonoClass *klass);
+
+ICALL_EXPORT
 guint32 
 ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void);
 
-guint32 
-ves_icall_System_Runtime_InteropServices_Marshal_SizeOf (MonoReflectionTypeHandle rtype, MonoError *error);
+ICALL_EXPORT
+mono_bstr
+ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (const gunichar2 *ptr, int len);
 
-void
-ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr (MonoObject *obj, gpointer dst, MonoBoolean delete_old);
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure (gpointer src, MonoObject *dst);
-
-MonoObject *
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gpointer src, MonoReflectionType *type);
-
-int
-ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHandle type, MonoStringHandle field_name, MonoError *error);
-
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_StringToBSTR (MonoString *string);
-
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_BufferToBSTR (MonoArray *ptr, int len);
-
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (MonoString *string);
-
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (MonoString *string);
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src, MonoReflectionType *type);
-
-void*
-ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMem (int size);
-
-void*
-ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gulong size);
-
+ICALL_EXPORT
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeCoTaskMem (void *ptr);
 
-gpointer 
-ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr, int size);
-
-void*
-ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (gpointer size);
-
-gpointer 
-ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal (gpointer ptr, gpointer size);
-
+ICALL_EXPORT
 void
 ves_icall_System_Runtime_InteropServices_Marshal_FreeHGlobal (void *ptr);
 
+ICALL_EXPORT
 void
-ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (void *ptr);
+ves_icall_System_Runtime_InteropServices_Marshal_FreeBSTR (mono_bstr_const ptr);
 
+ICALL_EXPORT
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement (MonoArray *arrayobj, int index);
 
-MonoDelegateHandle
-ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal (void *ftn, MonoReflectionTypeHandle type, MonoError *error);
-
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_GetFunctionPointerForDelegateInternal (MonoDelegateHandle delegate, MonoError *error);
-
+ICALL_EXPORT
 int
-ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (gpointer pUnk);
+ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk);
 
+ICALL_EXPORT
 int
-ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (gpointer pUnk, gpointer riid, gpointer* ppv);
+ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUnknown *pUnk, gconstpointer riid, gpointer* ppv);
 
+ICALL_EXPORT
 int
-ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (gpointer pUnk);
-
-void*
-ves_icall_System_Runtime_InteropServices_Marshal_GetIUnknownForObjectInternal (MonoObject* object);
-
-MonoObject*
-ves_icall_System_Runtime_InteropServices_Marshal_GetObjectForCCW (void* pUnk);
-
-void*
-ves_icall_System_Runtime_InteropServices_Marshal_GetIDispatchForObjectInternal (MonoObject* object);
-
-void*
-ves_icall_System_Runtime_InteropServices_Marshal_GetCCW (MonoObject* object, MonoReflectionType* type);
-
-MonoBoolean
-ves_icall_System_Runtime_InteropServices_Marshal_IsComObject (MonoObject* object);
-
-gint32
-ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoObject* object);
-
-MonoObject *
-ves_icall_System_ComObject_CreateRCW (MonoReflectionType *type);
-
-void
-ves_icall_System_ComObject_ReleaseInterfaces(MonoComObject* obj);
-
-gpointer
-ves_icall_System_ComObject_GetInterfaceInternal (MonoComObject* obj, MonoReflectionType* type, MonoBoolean throw_exception);
-
-void
-ves_icall_Mono_Interop_ComInteropProxy_AddProxy (gpointer pUnk, MonoComInteropProxy* proxy);
-
-MonoComInteropProxy*
-ves_icall_Mono_Interop_ComInteropProxy_FindProxy (gpointer pUnk);
+ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk);
 
 MONO_API void
 mono_win32_compat_CopyMemory (gpointer dest, gconstpointer source, gsize length);
@@ -610,12 +657,6 @@ mono_marshal_emit_thread_force_interrupt_checkpoint (MonoMethodBuilder *mb);
 void
 mono_marshal_use_aot_wrappers (gboolean use);
 
-MonoObject *
-mono_marshal_xdomain_copy_value (MonoObject *val, MonoError *error);
-
-MonoObject *
-ves_icall_mono_marshal_xdomain_copy_value (MonoObject *val);
-
 int
 mono_mb_emit_save_args (MonoMethodBuilder *mb, MonoMethodSignature *sig, gboolean save_this);
 
@@ -631,13 +672,4 @@ mono_mb_create_and_cache_full (GHashTable *cache, gpointer key,
 							   MonoMethodBuilder *mb, MonoMethodSignature *sig,
 							   int max_stack, WrapperInfo *info, gboolean *out_found);
 
-typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
-
-MONO_API void
-mono_install_ftnptr_eh_callback (MonoFtnPtrEHCallback callback);
-
-G_END_DECLS
-
 #endif /* __MONO_MARSHAL_H__ */
-
-

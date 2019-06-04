@@ -317,11 +317,11 @@ namespace System.Windows.Forms {
 		internal abstract bool IsEnabled(IntPtr handle);
 		internal virtual bool IsKeyLocked (VirtualKeys key) { return false; }
 		internal abstract IntPtr SetParent(IntPtr handle, IntPtr parent);
-		internal abstract IntPtr GetParent(IntPtr handle);
+		internal abstract IntPtr GetParent(IntPtr handle, bool with_owner);
 
 		internal abstract void UpdateWindow(IntPtr handle);
 		internal abstract PaintEventArgs PaintEventStart (ref Message msg, IntPtr handle, bool client);
-		internal abstract void PaintEventEnd (ref Message msg, IntPtr handle, bool client);
+		internal abstract void PaintEventEnd (ref Message msg, IntPtr handle, bool client, PaintEventArgs pevent);
 
 		internal abstract void SetWindowPos(IntPtr handle, int x, int y, int width, int height);
 		internal abstract void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height);

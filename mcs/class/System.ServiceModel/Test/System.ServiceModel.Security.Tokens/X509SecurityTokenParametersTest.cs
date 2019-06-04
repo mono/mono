@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -36,6 +37,8 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel
 {
@@ -108,7 +111,7 @@ namespace MonoTests.System.ServiceModel
 			MyX509SecurityTokenParameters p =
 				new MyX509SecurityTokenParameters ();
 			X509SecurityToken token = new X509SecurityToken (
-				new X509Certificate2 ("Test/Resources/test.pfx", "mono"));
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono"));
 			clause = p.CallCreateKeyIdentifierClause (
 				token, SecurityTokenReferenceStyle.External);
 			Assert.AreEqual (typeof (X509IssuerSerialKeyIdentifierClause), clause.GetType (), "#1");
@@ -124,3 +127,4 @@ namespace MonoTests.System.ServiceModel
 		}
 	}
 }
+#endif

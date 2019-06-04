@@ -163,7 +163,8 @@ namespace System.ServiceModel.Channels
         internal const int MaxPoolSize = 8;
         internal const MsmqAuthenticationMode MsmqAuthenticationMode = System.ServiceModel.MsmqAuthenticationMode.WindowsDomain;
         internal const MsmqEncryptionAlgorithm MsmqEncryptionAlgorithm = System.ServiceModel.MsmqEncryptionAlgorithm.RC4Stream;
-        internal const MsmqSecureHashAlgorithm MsmqSecureHashAlgorithm = System.ServiceModel.MsmqSecureHashAlgorithm.Sha1;
+        internal const MsmqSecureHashAlgorithm DefaultMsmqSecureHashAlgorithm = System.ServiceModel.MsmqSecureHashAlgorithm.Sha256;
+        internal static MsmqSecureHashAlgorithm MsmqSecureHashAlgorithm { get { return LocalAppContextSwitches.UseSha1InMsmqEncryptionAlgorithm ? MsmqSecureHashAlgorithm.Sha1 : DefaultMsmqSecureHashAlgorithm; } }
         internal const ProtectionLevel MsmqProtectionLevel = ProtectionLevel.Sign;
         internal const ReceiveErrorHandling ReceiveErrorHandling = System.ServiceModel.ReceiveErrorHandling.Fault;
         internal const int ReceiveRetryCount = 5;
@@ -202,10 +203,26 @@ namespace System.ServiceModel.Channels
         internal const bool RequireClientCertificate = false;
         internal const int MaxFaultSize = MaxBufferSize;
         internal const int MaxSecurityFaultSize = 16384;
+        
+        internal const SslProtocols OldDefaultSslProtocols = System.Security.Authentication.SslProtocols.Tls |
+                        System.Security.Authentication.SslProtocols.Tls11 |
+                        System.Security.Authentication.SslProtocols.Tls12;
 
-        internal const SslProtocols SslProtocols = System.Security.Authentication.SslProtocols.Tls |
-                                                   System.Security.Authentication.SslProtocols.Tls11 |
-                                                   System.Security.Authentication.SslProtocols.Tls12;
+        internal static SslProtocols SslProtocols
+        {
+            get
+            {
+                if (LocalAppContextSwitches.DontEnableSystemDefaultTlsVersions)
+                {
+                    return OldDefaultSslProtocols;
+                }
+                else
+                {
+                    // SslProtocols.None uses the default SSL protocol from the OS.
+                    return System.Security.Authentication.SslProtocols.None;
+                }
+            }
+        }
 
         // Calling CreateFault on an incoming message can expose some DoS-related security 
         // vulnerabilities when a service is in streaming mode.  See MB 47592 for more details. 

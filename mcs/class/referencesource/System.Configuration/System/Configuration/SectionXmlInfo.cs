@@ -28,6 +28,7 @@ namespace System.Configuration {
         private object  _configSourceStreamVersion; // version of the configSource filestream
         private bool    _skipInChildApps;           // skip inheritence by child apps?                             
         private string  _rawXml;                    // raw xml input of the section
+        private string  _configBuilderName;          // name of the configuration provider
         private string  _protectionProviderName;    // name of the protection provider
 
         private OverrideModeSetting _overrideMode;  // override mode for child config paths
@@ -36,7 +37,7 @@ namespace System.Configuration {
                 string configKey, string definitionConfigPath, string targetConfigPath, string subPath,
                 string filename, int lineNumber, object streamVersion, 
                 string rawXml, string configSource, string configSourceStreamName, object configSourceStreamVersion,
-                string protectionProviderName, OverrideModeSetting overrideMode, bool skipInChildApps) {
+                string configBuilderName, string protectionProviderName, OverrideModeSetting overrideMode, bool skipInChildApps) {
 
             _configKey = configKey;
             _definitionConfigPath = definitionConfigPath;
@@ -49,6 +50,7 @@ namespace System.Configuration {
             _configSource = configSource;
             _configSourceStreamName = configSourceStreamName;
             _configSourceStreamVersion = configSourceStreamVersion;
+            _configBuilderName = configBuilderName;
             _protectionProviderName = protectionProviderName;
             _overrideMode = overrideMode;
             _skipInChildApps = skipInChildApps;
@@ -109,6 +111,11 @@ namespace System.Configuration {
         internal string RawXml {
             get {return _rawXml;}
             set {_rawXml = value;}
+        }
+
+        internal string ConfigBuilderName {
+            get { return _configBuilderName; }
+            set { _configBuilderName = value; }
         }
 
         internal string ProtectionProviderName {

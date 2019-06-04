@@ -48,14 +48,16 @@ namespace System
 		// ,+*&*[]\ in the identifier portions of the names
 		// have been escaped with a leading backslash (\)
 		public string full_name;
-		public MonoCMethod default_ctor;
+		public RuntimeConstructorInfo default_ctor;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
 	partial class RuntimeType
 	{
+#region keep in sync with object-internals.h
 		[NonSerialized]
 		MonoTypeInfo type_info;
+#endregion
 
 		internal Object GenericCache;
 
@@ -64,9 +66,9 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
-		internal MonoCMethod GetDefaultConstructor ()
+		internal RuntimeConstructorInfo GetDefaultConstructor ()
 		{
-			MonoCMethod ctor = null;
+			RuntimeConstructorInfo ctor = null;
 
 			if (type_info == null)
 				type_info = new MonoTypeInfo ();
@@ -78,7 +80,7 @@ namespace System
 
 				for (int i = 0; i < ctors.Length; ++i) {
 					if (ctors [i].GetParametersCount () == 0) {
-						type_info.default_ctor = ctor = (MonoCMethod) ctors [i];
+						type_info.default_ctor = ctor = (RuntimeConstructorInfo) ctors [i];
 						break;
 					}
 				}
@@ -94,17 +96,17 @@ namespace System
 		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
 
 		internal override MethodInfo GetMethod (MethodInfo fromNoninstanciated)
-                {
+		{
 			if (fromNoninstanciated == null)
 				throw new ArgumentNullException ("fromNoninstanciated");
-                        return GetCorrespondingInflatedMethod (fromNoninstanciated);
-                }
+			return GetCorrespondingInflatedMethod (fromNoninstanciated);
+		}
 
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
 			if (fromNoninstanciated == null)
 				throw new ArgumentNullException ("fromNoninstanciated");
-                        return GetCorrespondingInflatedConstructor (fromNoninstanciated);
+			return GetCorrespondingInflatedConstructor (fromNoninstanciated);
 		}
 
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
@@ -138,7 +140,7 @@ namespace System
 			return m_serializationCtor;
 		}
 
-		internal Object CreateInstanceSlow(bool publicOnly, bool skipCheckThis, bool fillCache, ref StackCrawlMark stackMark)
+		internal Object CreateInstanceSlow(bool publicOnly, bool wrapExceptions, bool skipCheckThis, bool fillCache)
 		{
 			//bool bNeedSecurityCheck = true;
 			//bool bCanBeCached = false;
@@ -150,14 +152,18 @@ namespace System
 			//if (!fillCache)
 			//	bSecurityCheckOff = true;
 
-			return CreateInstanceMono (!publicOnly);
+			return CreateInstanceMono (!publicOnly, wrapExceptions);
 		}
 
-		object CreateInstanceMono (bool nonPublic)
+		object CreateInstanceMono (bool nonPublic, bool wrapExceptions)
 		{
 			var ctor = GetDefaultConstructor ();
 			if (!nonPublic && ctor != null && !ctor.IsPublic) {
+#if NETCORE
+				throw new MissingMethodException(SR.Format(SR.Arg_NoDefCTor, FullName));
+#else
 				ctor = null;
+#endif
 			}
 
 			if (ctor == null) {
@@ -168,15 +174,15 @@ namespace System
 				if (IsValueType)
 					return CreateInstanceInternal (this);
 
-				throw new MissingMethodException (Locale.GetText ("Default constructor not found for type " + FullName));
+				throw new MissingMethodException ("Default constructor not found for type " + FullName);
 			}
 
 			// TODO: .net does more checks in unmanaged land in RuntimeTypeHandle::CreateInstance
 			if (IsAbstract) {
-				throw new MissingMethodException (Locale.GetText ("Cannot create an abstract class '{0}'.", FullName));
+				throw new MissingMethodException ("Cannot create an abstract class '{0}'.", FullName);
 			}
 
-			return ctor.InternalInvoke (null, null);
+			return ctor.InternalInvoke (null, null, wrapExceptions);
 		}
 
 		internal Object CheckValue (Object value, Binder binder, CultureInfo culture, BindingFlags invokeAttr)
@@ -419,12 +425,18 @@ namespace System
 
 		public override Type MakePointerType ()
 		{
+			if (IsByRef)
+				throw new TypeLoadException ($"Could not load type '{GetType()}' from assembly '{AssemblyQualifiedName}");			
 			return MakePointerType (this);
 		}
 
 		public override StructLayoutAttribute StructLayoutAttribute {
 			get {
+#if NETCORE
+				return GetStructLayoutAttribute ();
+#else
 				return StructLayoutAttribute.GetCustomAttribute (this);
+#endif
 			}
 		}
 
@@ -465,32 +477,32 @@ namespace System
 		{
 			var gt = (RuntimeType) MakeGenericType (genericType, new Type [] { genericArgument });
 			var ctor = gt.GetDefaultConstructor ();
-			return ctor.InternalInvoke (null, null);
+			return ctor.InternalInvoke (null, null, wrapExceptions: true);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern IntPtr GetMethodsByName_native (IntPtr namePtr, BindingFlags bindingAttr, bool ignoreCase);
+		internal extern IntPtr GetMethodsByName_native (IntPtr namePtr, BindingFlags bindingAttr, MemberListType listType);
 
-		internal RuntimeMethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, RuntimeType reflectedType)
+		internal RuntimeMethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, MemberListType listType, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
 			using (var namePtr = new Mono.SafeStringMarshal (name))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetMethodsByName_native (namePtr.Value, bindingAttr, ignoreCase))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetMethodsByName_native (namePtr.Value, bindingAttr, listType))) {
 				var n = h.Length;
 				var a = new RuntimeMethodInfo [n];
 				for (int i = 0; i < n; i++) {
 					var mh = new RuntimeMethodHandle (h[i]);
-					a[i] = (RuntimeMethodInfo) MethodBase.GetMethodFromHandleNoGenericCheck (mh, refh);
+					a[i] = (RuntimeMethodInfo) RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (mh, refh);
 				}
 				return a;
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetPropertiesByName_native (IntPtr name, BindingFlags bindingAttr, bool icase);		
+		extern IntPtr GetPropertiesByName_native (IntPtr name, BindingFlags bindingAttr, MemberListType listType);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern IntPtr GetConstructors_native (BindingFlags bindingAttr);
@@ -503,22 +515,22 @@ namespace System
 				var a = new RuntimeConstructorInfo [n];
 				for (int i = 0; i < n; i++) {
 					var mh = new RuntimeMethodHandle (h[i]);
-					a[i] = (RuntimeConstructorInfo) MethodBase.GetMethodFromHandleNoGenericCheck (mh, refh);
+					a[i] = (RuntimeConstructorInfo) RuntimeMethodInfo.GetMethodFromHandleNoGenericCheck (mh, refh);
 				}
 				return a;
 			}
 		}
 
-		RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, RuntimeType reflectedType)
+		RuntimePropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, MemberListType listType, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
 			using (var namePtr = new Mono.SafeStringMarshal (name))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetPropertiesByName_native (namePtr.Value, bindingAttr, icase))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetPropertiesByName_native (namePtr.Value, bindingAttr, listType))) {
 				var n = h.Length;
 				var a = new RuntimePropertyInfo [n];
 				for (int i = 0; i < n; i++) {
 					var ph = new Mono.RuntimePropertyHandle (h[i]);
-					a[i] = (RuntimePropertyInfo) PropertyInfo.GetPropertyFromHandle (ph, refh);
+					a[i] = (RuntimePropertyInfo) RuntimePropertyInfo.GetPropertyFromHandle (ph, refh);
 				}
 				return a;
 			}
@@ -540,14 +552,14 @@ namespace System
 
 			InterfaceMapping res;
 			if (!ifaceType.IsInterface)
-				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "ifaceType");
+				throw new ArgumentException ("Argument must be an interface.", "ifaceType");
 			if (IsInterface)
 				throw new ArgumentException ("'this' type cannot be an interface itself");
 			res.TargetType = this;
 			res.InterfaceType = ifaceType;
 			GetInterfaceMapData (this, ifaceType, out res.TargetMethods, out res.InterfaceMethods);
 			if (res.TargetMethods == null)
-				throw new ArgumentException (Locale.GetText ("Interface not found"), "ifaceType");
+				throw new ArgumentException ("Interface not found", "ifaceType");
 
 			return res;
 		}
@@ -592,8 +604,10 @@ namespace System
 				{
 					AssemblyName assemblyname = new AssemblyName ();
 					assemblyname.Name = "GetTypeFromCLSIDDummyAssembly";
-					clsid_assemblybuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (
-						assemblyname, AssemblyBuilderAccess.Run);
+					/* Dynamically created assembly is marked internal to corlib to allow
+					  __ComObject access for dynamic types. */
+					clsid_assemblybuilder = new AssemblyBuilder (assemblyname, null,
+						AssemblyBuilderAccess.Run, true);
 				}
 				ModuleBuilder modulebuilder = clsid_assemblybuilder.DefineDynamicModule (
 					clsid.ToString ());
@@ -671,16 +685,16 @@ namespace System
 		extern int GetGenericParameterPosition ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetEvents_native (IntPtr name, BindingFlags bindingAttr);
+		extern IntPtr GetEvents_native (IntPtr name,  MemberListType listType);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetFields_native (IntPtr name, BindingFlags bindingAttr);
+		extern IntPtr GetFields_native (IntPtr name, BindingFlags bindingAttr, MemberListType listType);
 
-		RuntimeFieldInfo[] GetFields_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
+		RuntimeFieldInfo[] GetFields_internal (string name, BindingFlags bindingAttr, MemberListType listType, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
 			using (var namePtr = new Mono.SafeStringMarshal (name))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetFields_native (namePtr.Value, bindingAttr))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetFields_native (namePtr.Value, bindingAttr, listType))) {
 				int n = h.Length;
 				var a = new RuntimeFieldInfo[n];
 				for (int i = 0; i < n; i++) {
@@ -691,16 +705,20 @@ namespace System
 			}
 		}
 
-		RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, RuntimeType reflectedType)
+		RuntimeEventInfo[] GetEvents_internal (string name, BindingFlags bindingAttr, MemberListType listType, RuntimeType reflectedType)
 		{
 			var refh = new RuntimeTypeHandle (reflectedType);
 			using (var namePtr = new Mono.SafeStringMarshal (name))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (namePtr.Value, bindingAttr))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetEvents_native (namePtr.Value, listType))) {
 				int n = h.Length;
 				var a = new RuntimeEventInfo[n];
 				for (int i = 0; i < n; i++) {
 					var eh = new Mono.RuntimeEventHandle (h[i]);
+#if NETCORE
+					a[i] = (RuntimeEventInfo) RuntimeEventInfo.GetEventFromHandle (eh, refh);
+#else
 					a[i] = (RuntimeEventInfo) EventInfo.GetEventFromHandle (eh, refh);
+#endif
 				}
 				return a;
 			}
@@ -710,15 +728,20 @@ namespace System
 		public extern override Type[] GetInterfaces();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr GetNestedTypes_native (IntPtr name, BindingFlags bindingAttr);
+		extern IntPtr GetNestedTypes_native (IntPtr name, BindingFlags bindingAttr, MemberListType listType);
 
-		RuntimeType[] GetNestedTypes_internal (string displayName, BindingFlags bindingAttr)
+		RuntimeType[] GetNestedTypes_internal (string displayName, BindingFlags bindingAttr, MemberListType listType)
 		{
 			string internalName = null;
+#if NETCORE
+			if (displayName != null)
+				internalName = displayName;
+#else
 			if (displayName != null)
 				internalName = TypeIdentifiers.FromDisplay (displayName).InternalName;
+#endif
 			using (var namePtr = new Mono.SafeStringMarshal (internalName))
-			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (namePtr.Value, bindingAttr))) {
+			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (namePtr.Value, bindingAttr, listType))) {
 				int n = h.Length;
 				var a = new RuntimeType [n];
 				for (int i = 0; i < n; i++) {
@@ -750,7 +773,19 @@ namespace System
 			get;
 		}
 
-#if MOBILE
+#if NETCORE
+		public override bool IsSecurityTransparent {
+			get { return false; }
+		}
+
+		public override bool IsSecurityCritical {
+			get { return true; }
+		}
+
+		public override bool IsSecuritySafeCritical {
+			get { return false; }
+		}
+#elif MOBILE
 		static int get_core_clr_security_level ()
 		{
 			return 1;
@@ -773,6 +808,7 @@ namespace System
 		}
 #endif
 
+#if !NETCORE
 		public override int GetHashCode()
 		{
 			Type t = UnderlyingSystemType;
@@ -780,9 +816,14 @@ namespace System
 				return t.GetHashCode ();
 			return (int)_impl.Value;
 		}
+#endif
 
 		public override string FullName {
 			get {
+				// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
+				if (IsGenericType && ContainsGenericParameters && !IsGenericTypeDefinition)
+					return null;
+
 				string fullName;
 				// This doesn't need locking
 				if (type_info == null)
@@ -793,6 +834,8 @@ namespace System
 				return fullName;
 			}
 		}
+
+		public sealed override bool HasSameMetadataDefinitionAs (MemberInfo other) => HasSameMetadataDefinitionAsCore<RuntimeType> (other);	
 
 		public override bool IsSZArray {
 			get {
@@ -806,5 +849,66 @@ namespace System
 				return false;
 			}
 		}
+
+		[System.Runtime.InteropServices.ComVisible(true)]
+		[Pure]
+		public override bool IsSubclassOf(Type type)
+		{
+			if ((object)type == null)
+				throw new ArgumentNullException("type");
+			Contract.EndContractBlock();
+			RuntimeType rtType = type as RuntimeType;
+			if (rtType == null)
+				return false;
+
+			return RuntimeTypeHandle.IsSubclassOf (this, rtType);
+		}
+
+		public override bool IsByRefLike {
+			get {
+				return RuntimeTypeHandle.IsByRefLike (this);
+			}
+		}
+
+		public override bool IsTypeDefinition => RuntimeTypeHandle.IsTypeDefinition (this);
+
+#if NETCORE
+        private const int DEFAULT_PACKING_SIZE = 8;
+
+        internal StructLayoutAttribute GetStructLayoutAttribute ()
+        {
+            if (IsInterface || HasElementType || IsGenericParameter)
+                return null;
+
+            int pack = 0, size = 0;
+            LayoutKind layoutKind = LayoutKind.Auto;
+            switch (Attributes & TypeAttributes.LayoutMask)
+            {
+                case TypeAttributes.ExplicitLayout: layoutKind = LayoutKind.Explicit; break;
+                case TypeAttributes.AutoLayout: layoutKind = LayoutKind.Auto; break;
+                case TypeAttributes.SequentialLayout: layoutKind = LayoutKind.Sequential; break;
+                default: Contract.Assume(false); break;
+            }
+
+            CharSet charSet = CharSet.None;
+            switch (Attributes & TypeAttributes.StringFormatMask)
+            {
+                case TypeAttributes.AnsiClass: charSet = CharSet.Ansi; break;
+                case TypeAttributes.AutoClass: charSet = CharSet.Auto; break;
+                case TypeAttributes.UnicodeClass: charSet = CharSet.Unicode; break;
+                default: Contract.Assume(false); break;
+            }
+
+            GetPacking (out pack, out size);
+
+            // Metadata parameter checking should not have allowed 0 for packing size.
+            // The runtime later converts a packing size of 0 to 8 so do the same here
+            // because it's more useful from a user perspective. 
+            if (pack == 0)
+                pack = DEFAULT_PACKING_SIZE;
+
+            return new StructLayoutAttribute (layoutKind) { Pack = pack, Size = size, CharSet = charSet };
+        }
+#endif // NETCORE
 	}
 }

@@ -95,7 +95,7 @@ enum {
 	SIMD_EMIT_PREFETCH
 };
 
-#ifdef HAVE_ARRAY_ELEM_INIT
+// This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
 #define MSGSTRFIELD(line) MSGSTRFIELD1(line)
 #define MSGSTRFIELD1(line) str##line
 static const struct msgstr_t {
@@ -113,23 +113,6 @@ enum {
 #include "simd-methods.h"
 };
 #define method_name(idx) ((const char*)&method_names + (idx))
-
-#else
-#define SIMD_METHOD(str,name) str,
-static const char * const method_names [] = {
-#include "simd-methods.h"
-	NULL
-};
-#undef SIMD_METHOD
-#define SIMD_METHOD(str,name) name,
-enum {
-#include "simd-methods.h"
-	SN_LAST
-};
-
-#define method_name(idx) (method_names [(idx)])
-
-#endif
 
 typedef struct {
 	guint16 name;
@@ -605,7 +588,7 @@ static MonoInst* emit_sys_numerics_vectors_intrinsics (MonoCompile *cfg, MonoMet
 static int
 simd_intrinsic_compare_by_name (const void *key, const void *value)
 {
-	return strcmp (key, method_name (((SimdIntrinsic *)value)->name));
+	return strcmp ((const char*)key, method_name (((SimdIntrinsic *)value)->name));
 }
 
 typedef enum {
@@ -671,7 +654,7 @@ mono_simd_simplify_indirection (MonoCompile *cfg)
 
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoInst *var = cfg->varinfo [i];
-		if (var->klass->simd_type) {
+		if (m_class_is_simd_type (var->klass)) {
 			var->flags &= ~MONO_INST_INDIRECT;
 			max_vreg = MAX (var->dreg, max_vreg);
 		}
@@ -683,7 +666,7 @@ mono_simd_simplify_indirection (MonoCompile *cfg)
 		for (ins = bb->code; ins; ins = ins->next) {
 			if (ins->opcode == OP_LDADDR) {
 				MonoInst *var = (MonoInst*)ins->inst_p0;
-				if (var->klass->simd_type) {
+				if (m_class_is_simd_type (var->klass)) {
 					var->flags |= MONO_INST_INDIRECT;
 				}
 			}
@@ -696,7 +679,7 @@ mono_simd_simplify_indirection (MonoCompile *cfg)
 
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoInst *var = cfg->varinfo [i];
-		if (var->klass->simd_type && !(var->flags & (MONO_INST_INDIRECT|MONO_INST_VOLATILE))) {
+		if (m_class_is_simd_type (var->klass) && !(var->flags & (MONO_INST_INDIRECT|MONO_INST_VOLATILE))) {
 			vreg_flags [var->dreg] = VREG_USED;
 			DEBUG (printf ("[simd-simplify] processing var %d with vreg %d\n", i, var->dreg));
 		}
@@ -728,7 +711,7 @@ mono_simd_simplify_indirection (MonoCompile *cfg)
 	if (IS_DEBUG_ON (cfg)) {
 		for (i = 0; i < cfg->num_varinfo; i++) {
 			MonoInst *var = cfg->varinfo [i];
-			if (var->klass->simd_type) {
+			if (m_class_is_simd_type (var->klass)) {
 				if ((vreg_flags [var->dreg] & VREG_HAS_XZERO_BB0))
 					DEBUG (printf ("[simd-simplify] R%d has xzero only\n", var->dreg));
 				if ((vreg_flags [var->dreg] & VREG_HAS_OTHER_OP_BB0))
@@ -770,7 +753,7 @@ mono_simd_simplify_indirection (MonoCompile *cfg)
 
 	for (i = 0; i < cfg->num_varinfo; i++) {
 		MonoInst *var = cfg->varinfo [i];
-		if (!var->klass->simd_type)
+		if (!m_class_is_simd_type (var->klass))
 			continue;
 		if ((vreg_flags [var->dreg] & VREG_SINGLE_BB_USE))
 			DEBUG (printf ("[simd-simplify] R%d has single bb use\n", var->dreg));
@@ -799,7 +782,7 @@ mono_simd_simplify_indirection (MonoCompile *cfg)
 				MONO_INST_NEW (cfg, tmp, OP_XZERO);
 				tmp->dreg = var->dreg;
 				tmp->type = STACK_VTYPE;
-		        tmp->klass = var->klass;
+				tmp->klass = var->klass;
 				mono_bblock_insert_before_ins (target_bb [var->dreg], ins, tmp);
 				break;
 			}
@@ -816,6 +799,97 @@ mono_simd_simplify_indirection (MonoCompile *cfg)
 	g_free (vreg_flags);
 	g_free (target_bb);
 }
+
+/*
+* Windows x64 value type ABI uses reg/stack references (ArgValuetypeAddrInIReg/ArgValuetypeAddrOnStack)
+* for function arguments. When using SIMD intrinsics arguments optimized into OP_ARG needs to be decomposed
+* into correspondig SIMD LOADX/STOREX instructions.
+*/
+#if defined(TARGET_WIN32) && defined(TARGET_AMD64)
+static gboolean
+decompose_vtype_opt_uses_simd_intrinsics (MonoCompile *cfg, MonoInst *ins)
+{
+	if (cfg->uses_simd_intrinsics & MONO_CFG_USES_SIMD_INTRINSICS_DECOMPOSE_VTYPE)
+		return TRUE;
+
+	switch (ins->opcode) {
+	case OP_XMOVE:
+	case OP_XZERO:
+	case OP_LOADX_MEMBASE:
+	case OP_LOADX_ALIGNED_MEMBASE:
+	case OP_STOREX_MEMBASE:
+	case OP_STOREX_ALIGNED_MEMBASE_REG:
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
+
+static void
+decompose_vtype_opt_load_arg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, gint32 *sreg_int32)
+{
+	guint32 *sreg = (guint32*)sreg_int32;
+	MonoInst *src_var = get_vreg_to_inst (cfg, *sreg);
+	if (src_var && src_var->opcode == OP_ARG && src_var->klass && MONO_CLASS_IS_SIMD (cfg, src_var->klass)) {
+		MonoInst *varload_ins, *load_ins;
+		NEW_VARLOADA (cfg, varload_ins, src_var, src_var->inst_vtype);
+		mono_bblock_insert_before_ins (bb, ins, varload_ins);
+		MONO_INST_NEW (cfg, load_ins, OP_LOADX_MEMBASE);
+		load_ins->klass = src_var->klass;
+		load_ins->type = STACK_VTYPE;
+		load_ins->sreg1 = varload_ins->dreg;
+		load_ins->dreg = alloc_xreg (cfg);
+		mono_bblock_insert_after_ins (bb, varload_ins, load_ins);
+		*sreg = load_ins->dreg;
+	}
+}
+
+void
+mono_simd_decompose_intrinsic (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins)
+{
+	if (cfg->opt & MONO_OPT_SIMD && decompose_vtype_opt_uses_simd_intrinsics (cfg, ins)) {
+		decompose_vtype_opt_load_arg (cfg, bb, ins, &(ins->sreg1));
+		decompose_vtype_opt_load_arg (cfg, bb, ins, &(ins->sreg2));
+		decompose_vtype_opt_load_arg (cfg, bb, ins, &(ins->sreg3));
+		MonoInst *dest_var = get_vreg_to_inst (cfg, ins->dreg);
+		if (dest_var && dest_var->opcode == OP_ARG && dest_var->klass && MONO_CLASS_IS_SIMD (cfg, dest_var->klass)) {
+			MonoInst *varload_ins, *store_ins;
+			ins->dreg = alloc_xreg (cfg);
+			NEW_VARLOADA (cfg, varload_ins, dest_var, dest_var->inst_vtype);
+			mono_bblock_insert_after_ins (bb, ins, varload_ins);
+			MONO_INST_NEW (cfg, store_ins, OP_STOREX_MEMBASE);
+			store_ins->klass = dest_var->klass;
+			store_ins->type = STACK_VTYPE;
+			store_ins->sreg1 = ins->dreg;
+			store_ins->dreg = varload_ins->dreg;
+			mono_bblock_insert_after_ins (bb, varload_ins, store_ins);
+		}
+	}
+}
+
+void
+mono_simd_decompose_intrinsics (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb;
+	MonoInst *ins;
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		for (ins = bb->code; ins; ins = ins->next) {
+			mono_simd_decompose_intrinsic (cfg, bb, ins);
+		}
+	}
+}
+#else
+void
+mono_simd_decompose_intrinsic (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins)
+{
+}
+
+void
+mono_simd_decompose_intrinsics (MonoCompile *cfg)
+{
+}
+#endif /*defined(TARGET_WIN32) && defined(TARGET_AMD64)*/
 
 /*
  * This function expect that src be a value.
@@ -852,7 +926,6 @@ load_simd_vreg_class (MonoCompile *cfg, MonoClass *klass, MonoInst *src, gboolea
 		return src->sreg1;
 	} else if (src->opcode == OP_LDADDR) {
 		int res = ((MonoInst*)src->inst_p0)->dreg;
-		NULLIFY_INS (src);
 		return res;
 	} else if (spec [MONO_INST_DEST] == 'x') {
 		return src->dreg;
@@ -885,7 +958,7 @@ static MonoInst*
 get_double_spill_area (MonoCompile *cfg)
 {
 	if (!cfg->fconv_to_r8_x_var) {
-		cfg->fconv_to_r8_x_var = mono_compile_create_var (cfg, &mono_defaults.double_class->byval_arg, OP_LOCAL);
+		cfg->fconv_to_r8_x_var = mono_compile_create_var (cfg, m_class_get_byval_arg (mono_defaults.double_class), OP_LOCAL);
 		cfg->fconv_to_r8_x_var->flags |= MONO_INST_VOLATILE; /*FIXME, use the don't regalloc flag*/
 	}	
 	return cfg->fconv_to_r8_x_var;
@@ -894,7 +967,7 @@ static MonoInst*
 get_simd_ctor_spill_area (MonoCompile *cfg, MonoClass *avector_klass)
 {
 	if (!cfg->simd_ctor_var) {
-		cfg->simd_ctor_var = mono_compile_create_var (cfg, &avector_klass->byval_arg, OP_LOCAL);
+		cfg->simd_ctor_var = mono_compile_create_var (cfg, m_class_get_byval_arg (avector_klass), OP_LOCAL);
 		cfg->simd_ctor_var->flags |= MONO_INST_VOLATILE; /*FIXME, use the don't regalloc flag*/
 	}	
 	return cfg->simd_ctor_var;
@@ -1158,7 +1231,7 @@ get_simd_vreg_or_expanded_scalar (MonoCompile *cfg, MonoClass *klass, MonoType *
 	MonoInst *ins;
 	int expand_op;
 
-	if (mono_class_from_mono_type (param_type)->simd_type)
+	if (m_class_is_simd_type (mono_class_from_mono_type_internal (param_type)))
 		return get_simd_vreg (cfg, NULL, src);
 
 	expand_op = mono_type_to_expand_op (param_type);
@@ -1207,7 +1280,7 @@ simd_intrinsic_emit_binary_op (MonoCompile *cfg, int opcode, int flags, MonoClas
 static MonoInst*
 simd_intrinsic_emit_binary (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
 {
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
 
 	g_assert (sig->param_count == 2);
 
@@ -1326,7 +1399,7 @@ static MonoInst*
 simd_intrinsic_emit_setter (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
 {
 	MonoInst *ins;
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
 	int size, align;
 	gboolean indirect;
 	int dreg;
@@ -1455,7 +1528,7 @@ simd_intrinsic_emit_getter_op (MonoCompile *cfg, int index, MonoClass *klass, Mo
 static MonoInst*
 simd_intrinsic_emit_getter (const SimdIntrinsic *intrinsic, MonoCompile *cfg, MonoMethod *cmethod, MonoInst **args)
 {
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
 
 	return simd_intrinsic_emit_getter_op (cfg, intrinsic->opcode, cmethod->klass, sig->ret, args [0]);
 }
@@ -1465,7 +1538,7 @@ simd_intrinsic_emit_long_getter (const SimdIntrinsic *intrinsic, MonoCompile *cf
 {
 	MonoInst *ins;
 	int vreg;
-	gboolean is_r8 = mono_method_signature (cmethod)->ret->type == MONO_TYPE_R8;
+	gboolean is_r8 = mono_method_signature_internal (cmethod)->ret->type == MONO_TYPE_R8;
 
 	vreg = load_simd_vreg (cfg, cmethod, args [0], NULL);
 
@@ -1479,7 +1552,7 @@ simd_intrinsic_emit_long_getter (const SimdIntrinsic *intrinsic, MonoCompile *cf
 		ins->backend.spill_var = get_double_spill_area (cfg);
 	} else {
 		ins->type = STACK_I8;
-		ins->dreg = alloc_lreg (cfg);		
+		ins->dreg = alloc_lreg (cfg);
 	}
 	MONO_ADD_INS (cfg->cbb, ins);
 
@@ -1491,8 +1564,8 @@ simd_intrinsic_emit_ctor (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mono
 {
 	MonoInst *ins = NULL;
 	int i, addr_reg;
-	gboolean is_ldaddr = args [0]->opcode == OP_LDADDR;
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
+	gboolean is_ldaddr = (args [0]->opcode == OP_LDADDR && args [0]->inst_left->opcode != OP_ARG);
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
 	int store_op = mono_type_to_store_membase (cfg, sig->params [0]);
 	int arg_size = mono_type_size (sig->params [0], &i);
 	int opcode;
@@ -1517,7 +1590,6 @@ simd_intrinsic_emit_ctor (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mono
 		ins->sreg1 = args [1]->dreg;
 		ins->type = STACK_VTYPE;
 		ins->dreg = dreg;
-
 		MONO_ADD_INS (cfg->cbb, ins);
 		if (sig->params [0]->type == MONO_TYPE_R4)
 			ins->backend.spill_var = mini_get_int_to_float_spill_area (cfg);
@@ -1585,7 +1657,7 @@ simd_intrinsic_emit_cast (const SimdIntrinsic *intrinsic, MonoCompile *cfg, Mono
 
 	if (cmethod->is_inflated)
 		/* Vector<T> */
-		klass = mono_class_from_mono_type (mono_method_signature (cmethod)->ret);
+		klass = mono_class_from_mono_type_internal (mono_method_signature_internal (cmethod)->ret);
 	else
 		klass = cmethod->klass;
 
@@ -1689,7 +1761,7 @@ simd_intrinsic_emit_shuffle (const SimdIntrinsic *intrinsic, MonoCompile *cfg, M
 {
 	MonoInst *ins;
 	int vreg, vreg2 = -1;
-	int param_count = mono_method_signature (cmethod)->param_count;
+	int param_count = mono_method_signature_internal (cmethod)->param_count;
 
 	if (args [param_count - 1]->opcode != OP_ICONST) {
 		/*TODO Shuffle with non literals is not yet supported */
@@ -1819,12 +1891,12 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 {
 	const SimdIntrinsic *result = (const SimdIntrinsic *)mono_binary_search (cmethod->name, intrinsics, size, sizeof (SimdIntrinsic), &simd_intrinsic_compare_by_name);
 	if (!result) {
-		DEBUG (printf ("function doesn't have a simd intrinsic %s::%s/%d\n", cmethod->klass->name, cmethod->name, fsig->param_count));
+		DEBUG (printf ("function doesn't have a simd intrinsic %s::%s/%d\n", m_class_get_name (cmethod->klass), cmethod->name, fsig->param_count));
 		return NULL;
 	}
 	if (IS_DEBUG_ON (cfg)) {
 		int i, max;
-		printf ("found call to intrinsic %s::%s/%d -> %s\n", cmethod->klass->name, cmethod->name, fsig->param_count, method_name (result->name));
+		printf ("found call to intrinsic %s::%s/%d -> %s\n", m_class_get_name (cmethod->klass), cmethod->name, fsig->param_count, method_name (result->name));
 		max = fsig->param_count + fsig->hasthis;
 		for (i = 0; i < max; ++i) {
 			printf ("param %d:  ", i);
@@ -1834,7 +1906,7 @@ emit_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsi
 	if (result->simd_version_flags && !(result->simd_version_flags & simd_supported_versions)) {
 		if (IS_DEBUG_ON (cfg)) {
 			int x;
-			printf ("function %s::%s/%d requires one of unsuported SIMD instruction set(s): ", cmethod->klass->name, cmethod->name, fsig->param_count);
+			printf ("function %s::%s/%d requires one of unsuported SIMD instruction set(s): ", m_class_get_name (cmethod->klass), cmethod->name, fsig->param_count);
 			for (x = 1; x <= SIMD_VERSION_INDEX_END; x++)
 				if (result->simd_version_flags & (1 << x))
 					printf ("%s ", simd_version_name (1 << x));
@@ -1884,12 +1956,12 @@ mono_emit_vector_ldelema (MonoCompile *cfg, MonoType *array_type, MonoInst *arr,
 	guint32 size;
 	int mult_reg, add_reg, array_reg, index_reg, index2_reg, index3_reg;
 
-	size = mono_array_element_size (mono_class_from_mono_type (array_type));
+	size = mono_array_element_size (mono_class_from_mono_type_internal (array_type));
 	mult_reg = alloc_preg (cfg);
 	array_reg = arr->dreg;
 	index_reg = index->dreg;
 
-#if SIZEOF_VOID_P == 8
+#if TARGET_SIZEOF_VOID_P == 8
 	/* The array reg is 64 bits but the index reg is only 32 */
 	index2_reg = alloc_preg (cfg);
 	MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, index2_reg, index_reg);
@@ -1985,69 +2057,105 @@ MonoInst*
 mono_emit_simd_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	const char *class_name;
+	MonoInst *simd_inst = NULL;
 
-	if (is_sys_numerics_assembly (cmethod->klass->image->assembly))
-		return emit_sys_numerics_intrinsics (cfg, cmethod, fsig, args);
+	if (is_sys_numerics_assembly (m_class_get_image (cmethod->klass)->assembly)) {
+		simd_inst = emit_sys_numerics_intrinsics (cfg, cmethod, fsig, args);
+		goto on_exit;
+	}
 
-	if (is_sys_numerics_vectors_assembly (cmethod->klass->image->assembly))
-		return emit_sys_numerics_vectors_intrinsics (cfg, cmethod, fsig, args);
+	if (is_sys_numerics_vectors_assembly (m_class_get_image (cmethod->klass)->assembly)) {
+		simd_inst = emit_sys_numerics_vectors_intrinsics (cfg, cmethod, fsig, args);
+		goto on_exit;
+	}
 
-	if (strcmp ("Mono.Simd", cmethod->klass->image->assembly->aname.name) ||
-	    strcmp ("Mono.Simd", cmethod->klass->name_space))
-		return NULL;
+	if (strcmp ("Mono.Simd", m_class_get_image (cmethod->klass)->assembly->aname.name) ||
+	    strcmp ("Mono.Simd", m_class_get_name_space (cmethod->klass))) {
+		goto on_exit;
+	}
 
-	class_name = cmethod->klass->name;
-	if (!strcmp ("SimdRuntime", class_name))
-		return emit_simd_runtime_intrinsics (cfg, cmethod, fsig, args);
+	class_name = m_class_get_name (cmethod->klass);
+	if (!strcmp ("SimdRuntime", class_name)) {
+		simd_inst = emit_simd_runtime_intrinsics (cfg, cmethod, fsig, args);
+		goto on_exit;
+	}
 
-	if (!strcmp ("ArrayExtensions", class_name))
-		return emit_array_extension_intrinsics (cfg, cmethod, fsig, args);
+	if (!strcmp ("ArrayExtensions", class_name)) {
+		simd_inst = emit_array_extension_intrinsics (cfg, cmethod, fsig, args);
+		goto on_exit;
+	}
 	
 	if (!strcmp ("VectorOperations", class_name)) {
 		if (!(cmethod->flags & METHOD_ATTRIBUTE_STATIC))
-			return NULL;
-		class_name = mono_class_from_mono_type (mono_method_signature (cmethod)->params [0])->name;
-	} else if (!cmethod->klass->simd_type)
-		return NULL;
+			goto on_exit;
+		class_name = m_class_get_name (mono_class_from_mono_type_internal (mono_method_signature_internal (cmethod)->params [0]));
+	} else if (!m_class_is_simd_type (cmethod->klass))
+		goto on_exit;
 
-	cfg->uses_simd_intrinsics = 1;
-	if (!strcmp ("Vector2d", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector2d_intrinsics, sizeof (vector2d_intrinsics) / sizeof (SimdIntrinsic));
-	if (!strcmp ("Vector4f", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector4f_intrinsics, sizeof (vector4f_intrinsics) / sizeof (SimdIntrinsic));
-	if (!strcmp ("Vector2ul", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector2ul_intrinsics, sizeof (vector2ul_intrinsics) / sizeof (SimdIntrinsic));
-	if (!strcmp ("Vector2l", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector2l_intrinsics, sizeof (vector2l_intrinsics) / sizeof (SimdIntrinsic));
-	if (!strcmp ("Vector4ui", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector4ui_intrinsics, sizeof (vector4ui_intrinsics) / sizeof (SimdIntrinsic));
-	if (!strcmp ("Vector4i", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector4i_intrinsics, sizeof (vector4i_intrinsics) / sizeof (SimdIntrinsic));
-	if (!strcmp ("Vector8us", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector8us_intrinsics, sizeof (vector8us_intrinsics) / sizeof (SimdIntrinsic));
-	if (!strcmp ("Vector8s", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector8s_intrinsics, sizeof (vector8s_intrinsics) / sizeof (SimdIntrinsic));
-	if (!strcmp ("Vector16b", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector16b_intrinsics, sizeof (vector16b_intrinsics) / sizeof (SimdIntrinsic));
-	if (!strcmp ("Vector16sb", class_name))
-		return emit_intrinsics (cfg, cmethod, fsig, args, vector16sb_intrinsics, sizeof (vector16sb_intrinsics) / sizeof (SimdIntrinsic));
+	cfg->uses_simd_intrinsics |= MONO_CFG_USES_SIMD_INTRINSICS_SIMPLIFY_INDIRECTION;
+	if (!strcmp ("Vector2d", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector2d_intrinsics, sizeof (vector2d_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
+	if (!strcmp ("Vector4f", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector4f_intrinsics, sizeof (vector4f_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
+	if (!strcmp ("Vector2ul", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector2ul_intrinsics, sizeof (vector2ul_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
+	if (!strcmp ("Vector2l", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector2l_intrinsics, sizeof (vector2l_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
+	if (!strcmp ("Vector4ui", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector4ui_intrinsics, sizeof (vector4ui_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
+	if (!strcmp ("Vector4i", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector4i_intrinsics, sizeof (vector4i_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
+	if (!strcmp ("Vector8us", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector8us_intrinsics, sizeof (vector8us_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
+	if (!strcmp ("Vector8s", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector8s_intrinsics, sizeof (vector8s_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
+	if (!strcmp ("Vector16b", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector16b_intrinsics, sizeof (vector16b_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
+	if (!strcmp ("Vector16sb", class_name)) {
+		simd_inst = emit_intrinsics (cfg, cmethod, fsig, args, vector16sb_intrinsics, sizeof (vector16sb_intrinsics) / sizeof (SimdIntrinsic));
+		goto on_exit;
+	}
 
-	return NULL;
+on_exit:
+	if (simd_inst != NULL) {
+		cfg->uses_simd_intrinsics |= MONO_CFG_USES_SIMD_INTRINSICS;
+		cfg->uses_simd_intrinsics |= MONO_CFG_USES_SIMD_INTRINSICS_DECOMPOSE_VTYPE;
+	}
+
+	return simd_inst;
 }
 
 static void
 assert_handled (MonoCompile *cfg, MonoMethod *method)
 {
 	MonoCustomAttrInfo *cattr;
-	MonoError error;
+	ERROR_DECL (error);
 
 	if (cfg->verbose_level > 1) {
-		cattr = mono_custom_attrs_from_method_checked (method, &error);
+		cattr = mono_custom_attrs_from_method_checked (method, error);
 
 		if (cattr) {
 			gboolean has_attr = FALSE;
 			for (int i = 0; i < cattr->num_attrs; ++i)
-				if (cattr->attrs [i].ctor && (!strcmp (cattr->attrs [i].ctor->klass->name, "JitIntrinsicAttribute")))
+				if (cattr->attrs [i].ctor && (!strcmp (m_class_get_name (cattr->attrs [i].ctor->klass), "JitIntrinsicAttribute")))
 					has_attr = TRUE;
 			if (has_attr) {
 				printf ("SIMD intrinsic unhandled: %s\n", mono_method_get_name_full (method, TRUE, TRUE, MONO_TYPE_NAME_FORMAT_IL));
@@ -2079,8 +2187,11 @@ static MonoInst*
 emit_vector_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
 	const SimdIntrinsic *intrins;
-	MonoMethodSignature *sig = mono_method_signature (cmethod);
-	MonoType *type = &cmethod->klass->byval_arg;
+	MonoMethodSignature *sig = mono_method_signature_internal (cmethod);
+	MonoType *type = m_class_get_byval_arg (cmethod->klass);
+
+	if (!m_class_is_simd_type (cmethod->klass))
+		return NULL;
 
 	/*
 	 * Vector2/3/4 are handled the same way, since the underlying SIMD type is the same (4 * r4).
@@ -2123,7 +2234,7 @@ emit_vector_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 
 			ins = simd_intrinsic_emit_binary (intrins, cfg, cmethod, args);
 			/* The end result is in the lowest element */
-			return simd_intrinsic_emit_getter_op (cfg, 0, cmethod->klass, mono_method_signature (cmethod)->ret, ins);
+			return simd_intrinsic_emit_getter_op (cfg, 0, cmethod->klass, mono_method_signature_internal (cmethod)->ret, ins);
 		}
 		break;
 	case SN_Abs: {
@@ -2218,9 +2329,9 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		return NULL;
 	}
 
-	type = &cmethod->klass->byval_arg;
+	type = m_class_get_byval_arg (cmethod->klass);
 	etype = mono_class_get_context (cmethod->klass)->class_inst->type_argv [0];
-	size = mono_class_value_size (mono_class_from_mono_type (etype), NULL);
+	size = mono_class_value_size (mono_class_from_mono_type_internal (etype), NULL);
 	g_assert (size);
 	len = 16 / size;
 
@@ -2279,9 +2390,9 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 			MONO_EMIT_BOUNDS_CHECK (cfg, array_ins->dreg, MonoArray, max_length, end_index_reg);
 
 			/* Load the array slice into the simd reg */
-			ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type (etype), array_ins, index_ins, TRUE);
+			ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type_internal (etype), array_ins, index_ins, TRUE);
 			g_assert (args [0]->opcode == OP_LDADDR);
-			var = args [0]->inst_p0;
+			var = (MonoInst*)args [0]->inst_p0;
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADX_MEMBASE, var->dreg, ldelema_ins->dreg, 0);
 			ins->klass = cmethod->klass;
 			return args [0];
@@ -2423,9 +2534,9 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 		MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "ArgumentException");
 
 		/* Load the simd reg into the array slice */
-		ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type (etype), array_ins, index_ins, TRUE);
+		ldelema_ins = mini_emit_ldelema_1_ins (cfg, mono_class_from_mono_type_internal (etype), array_ins, index_ins, TRUE);
 		g_assert (args [0]->opcode == OP_LDADDR);
-		var = args [0]->inst_p0;
+		var = (MonoInst*)args [0]->inst_p0;
 		EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREX_MEMBASE, ldelema_ins->dreg, 0, var->dreg);
 		ins->klass = cmethod->klass;
 		return args [0];
@@ -2454,8 +2565,8 @@ emit_vector_t_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSigna
 static MonoInst*
 emit_sys_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	const char *nspace = cmethod->klass->name_space;
-	const char *class_name = cmethod->klass->name;
+	const char *nspace = m_class_get_name_space (cmethod->klass);
+	const char *class_name = m_class_get_name (cmethod->klass);
 
 	if (!strcmp ("Vector2", class_name) || !strcmp ("Vector4", class_name) || !strcmp ("Vector3", class_name))
 		return emit_vector_intrinsics (cfg, cmethod, fsig, args);
@@ -2471,8 +2582,8 @@ emit_sys_numerics_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodS
 static MonoInst*
 emit_sys_numerics_vectors_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	const char *nspace = cmethod->klass->name_space;
-	const char *class_name = cmethod->klass->name;
+	const char *nspace = m_class_get_name_space (cmethod->klass);
+	const char *class_name = m_class_get_name (cmethod->klass);
 
 	if (!strcmp (class_name, "Vector`1"))
 		return emit_vector_t_intrinsics (cfg, cmethod, fsig, args);
@@ -2488,12 +2599,15 @@ emit_sys_numerics_vectors_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, Mon
 MonoInst*
 mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *addr)
 {
-	if (is_sys_numerics_assembly (field->parent->image->assembly)) {
+	MonoInst * simd_inst = NULL;
+
+	if (is_sys_numerics_assembly (m_class_get_image (field->parent)->assembly)) {
 		int index = -1;
 
-		if (!strcmp (field->parent->name, "Vector2") ||
-			!strcmp (field->parent->name, "Vector3") ||
-			!strcmp (field->parent->name, "Vector4")) {
+		const char *parent_name = m_class_get_name (field->parent);
+		if (!strcmp (parent_name, "Vector2") ||
+			!strcmp (parent_name, "Vector3") ||
+			!strcmp (parent_name, "Vector4")) {
 			if (!strcmp (field->name, "X"))
 				index = 0;
 			else if (!strcmp (field->name, "Y"))
@@ -2508,20 +2622,20 @@ mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *ad
 			if (cfg->verbose_level > 1)
 				printf ("  SIMD intrinsic field access: %s\n", field->name);
 
-			return simd_intrinsic_emit_getter_op (cfg, index, field->parent, mono_field_get_type (field), addr);
+			simd_inst = simd_intrinsic_emit_getter_op (cfg, index, field->parent, mono_field_get_type_internal (field), addr);
+			goto on_exit;
 		}
 	}
-	return NULL;
+
+on_exit:
+
+	if (simd_inst != NULL) {
+		cfg->uses_simd_intrinsics |= MONO_CFG_USES_SIMD_INTRINSICS;
+		cfg->uses_simd_intrinsics |= MONO_CFG_USES_SIMD_INTRINSICS_DECOMPOSE_VTYPE;
+	}
+
+	return simd_inst;
 }
 
 #endif /* DISABLE_JIT */
-
-#else
-
-MonoInst*
-mono_emit_simd_field_load (MonoCompile *cfg, MonoClassField *field, MonoInst *addr)
-{
-	return NULL;
-}
-
 #endif /* MONO_ARCH_SIMD_INTRINSICS */

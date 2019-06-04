@@ -36,8 +36,8 @@ namespace System.Reflection.Emit {
 
 	[ComVisible (true)]
 	[Serializable]
-	public struct Label {
-		internal int label;
+	public readonly struct Label : IEquatable<Label> {
+		internal readonly int label;
 
 		internal Label (int val) {
 			label = val;

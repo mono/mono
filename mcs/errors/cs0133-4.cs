@@ -1,4 +1,4 @@
-// CS0133: The expression being assigned to `S.pathName' must be constant
+// CS0133: The expression being assigned to `S.pathName' must be a constant or default value
 // Line: 12
 // Compiler options: -unsafe
 

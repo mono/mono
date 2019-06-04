@@ -1,0 +1,39 @@
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderGetGenericArguments.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderGetGenericMethodDefinition.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderGetHashCode.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderIsGenericMethod.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderSetReturnType.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/MethodBuilder/MethodBuilderSetSignature.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderDeclaringMethod.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderGenericParameterAttributes.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderGenericParameterPosition.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderGetGenericTypeDefinition.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderIsGenericTypeDefinition.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderMakeGenericType.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderName.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderNamespace.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderPackingSize.cs
+../../../external/corefx/src/System.Reflection.Emit/tests/TypeBuilder/TypeBuilderSize.cs
+
+# FileSystem Helper (not used on Windows)
+../../../external/corefx/src/System.IO.FileSystem/tests/FileSystemTest.Unix.cs
+
+# System.IO.FileInfo
+../../../external/corefx/src/Common/tests/System/IO/TempFile.cs
+../../../external/corefx/src/Common/tests/System/IO/PathFeatures.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/TestData.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FSAssert.cs
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AdminHelpers.cs
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TheoryExtensions.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/Base/*.cs:StaticGetSetTimes.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/File/*.cs:GetSetTimes.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileStream/ctor_*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/PortedCommon/*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileSystemTest.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileInfo/*.cs:GetSetTimes.cs
+
+# System.IO.Directory
+../../../external/corefx/src/System.IO.FileSystem/tests/Directory/*.cs:GetSetTimes.cs
+
+# System.IO.DirectoryInfo
+../../../external/corefx/src/System.IO.FileSystem/tests/DirectoryInfo/*.cs:GetSetTimes.cs

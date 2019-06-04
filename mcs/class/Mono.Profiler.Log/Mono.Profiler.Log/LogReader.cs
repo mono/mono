@@ -3,27 +3,22 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace Mono.Profiler.Log {
 
-	public sealed class LogReader : IDisposable {
+	sealed class LogReader : IDisposable {
 
-		public static Encoding Encoding { get; } = Encoding.UTF8;
-
-		public LogStream BaseStream => (LogStream) _reader.BaseStream;
-
-		public long Position { get; private set; }
+		static readonly Encoding _encoding = Encoding.UTF8;
 
 		readonly BinaryReader _reader;
 
 		byte[] _stringBuffer = new byte [1024];
 
-		public LogReader (LogStream stream, bool leaveOpen)
+		public LogReader (Stream stream, bool leaveOpen)
 		{
-			_reader = new BinaryReader (stream, Encoding, leaveOpen);
+			_reader = new BinaryReader (stream, _encoding, leaveOpen);
 		}
 
 		public void Dispose ()
@@ -31,73 +26,54 @@ namespace Mono.Profiler.Log {
 			_reader.Dispose ();
 		}
 
-		internal byte ReadByte ()
+		public byte[] ReadBytes (int count)
 		{
-			var b = _reader.ReadByte ();
+			var bytes = new byte [count];
 
-			Position += sizeof (byte);
-
-			return b;
-		}
-
-		internal ushort ReadUInt16 ()
-		{
-			var i = _reader.ReadUInt16 ();
-
-			Position += sizeof (ushort);
-
-			return i;
-		}
-
-		internal int ReadInt32 ()
-		{
-			var i = _reader.ReadInt32 ();
-
-			Position += sizeof (int);
-
-			return i;
-		}
-
-		internal long ReadInt64 ()
-		{
-			var i = _reader.ReadInt64 ();
-
-			Position += sizeof (long);
-
-			return i;
-		}
-
-		internal ulong ReadUInt64 ()
-		{
-			var i = _reader.ReadUInt64 ();
-
-			Position += sizeof (ulong);
-
-			return i;
-		}
-
-		internal double ReadDouble ()
-		{
-			var d = _reader.ReadDouble ();
-
-			Position += sizeof (double);
-
-			return d;
-		}
-
-		internal string ReadHeaderString ()
-		{
-			var bytes = new byte [ReadInt32 ()];
-
-			// ReadBytes doesn't necessarily read the specified amount of
-			// bytes, so just do it this way.
+			// BinaryReader.ReadBytes doesn't necessarily read the specified
+			// amount of bytes, so just do it this way.
 			for (var i = 0; i < bytes.Length; i++)
 				bytes [i] = ReadByte ();
 
-			return Encoding.GetString (bytes);
+			return bytes;
 		}
 
-		internal string ReadCString ()
+		public byte ReadByte ()
+		{
+			return _reader.ReadByte ();
+		}
+
+		public ushort ReadUInt16 ()
+		{
+			return _reader.ReadUInt16 ();
+		}
+
+		public int ReadInt32 ()
+		{
+			return _reader.ReadInt32 ();
+		}
+
+		public long ReadInt64 ()
+		{
+			return _reader.ReadInt64 ();
+		}
+
+		public ulong ReadUInt64 ()
+		{
+			return _reader.ReadUInt64 ();
+		}
+
+		public double ReadDouble ()
+		{
+			return _reader.ReadDouble ();
+		}
+
+		public string ReadHeaderString ()
+		{
+			return _encoding.GetString (ReadBytes (ReadInt32 ()));
+		}
+
+		public string ReadCString ()
 		{
 			var pos = 0;
 
@@ -110,10 +86,10 @@ namespace Mono.Profiler.Log {
 				_stringBuffer [pos++] = val;
 			}
 
-			return Encoding.GetString (_stringBuffer, 0, pos);
+			return _encoding.GetString (_stringBuffer, 0, pos);
 		}
 
-		internal long ReadSLeb128 ()
+		public long ReadSLeb128 ()
 		{
 			long result = 0;
 			var shift = 0;
@@ -135,7 +111,7 @@ namespace Mono.Profiler.Log {
 			return result;
 		}
 
-		internal ulong ReadULeb128 ()
+		public ulong ReadULeb128 ()
 		{
 			ulong result = 0;
 			var shift = 0;

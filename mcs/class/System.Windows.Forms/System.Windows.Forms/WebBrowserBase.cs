@@ -320,9 +320,9 @@ namespace System.Windows.Forms
 			get { return webHost; }
 		}
 
-		internal override void SetBoundsCoreInternal (int x, int y, int width, int height, BoundsSpecified specified)
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			base.SetBoundsCoreInternal (x, y, width, height, specified);
+			base.SetBoundsCore (x, y, width, height, specified);
 			this.webHost.Resize (width, height);
 		}
 

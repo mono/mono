@@ -26,6 +26,9 @@
 
 using System;
 using System.ComponentModel;
+#if !MOBILE && !XAMMAC_4_5
+using System.Drawing;
+#endif
 using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel {
@@ -58,5 +61,21 @@ namespace MonoTests.System.ComponentModel {
 
 			Assert.AreEqual (1, dvat.GetHashCode (), "GetHashCode");
 		}
+
+#if !MOBILE && !XAMMAC_4_5
+		[DefaultValue (typeof (Color), "Black")]
+		public Color Bar { get; set; }
+
+		// https://github.com/mono/mono/issues/12362
+		[Test]
+		public void Bug_12362 ()
+		{
+			var prop = typeof (DefaultValueAttributeTest).GetProperty ("Bar");
+			var attr = (DefaultValueAttribute)prop.GetCustomAttributes (true) [0];
+			var value = attr.Value;
+			Assert.IsNotNull (value);
+			Assert.AreEqual (typeof (Color), value.GetType ());
+		}
+#endif
 	}
 }

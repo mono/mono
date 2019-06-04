@@ -60,7 +60,7 @@ namespace System.Threading
 #if !FEATURE_CORECLR
     [SecurityPermissionAttribute(SecurityAction.InheritanceDemand, Flags =SecurityPermissionFlag.ControlPolicy|SecurityPermissionFlag.ControlEvidence)]
 #endif
-    public class SynchronizationContext
+    public partial class SynchronizationContext
     {
 #if FEATURE_SYNCHRONIZATIONCONTEXT_WAIT
         SynchronizationContextProperties _props = SynchronizationContextProperties.None;
@@ -173,7 +173,11 @@ namespace System.Threading
 #if MONO
         protected static int WaitHelper(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
         {
-            throw new NotImplementedException ();
+            unsafe {
+                fixed (IntPtr * pWaitHandles = waitHandles) {
+                    return System.Threading.WaitHandle.Wait_internal (pWaitHandles, waitHandles.Length, waitAll, millisecondsTimeout);
+                }
+            }
         }
 #else
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -288,7 +292,7 @@ namespace System.Threading
                 context = GetWinRTContext();
 #endif
 
-#if MONODROID
+#if MONODROID && !MOBILE_DESKTOP_HOST
             if (context == null)
                 context = AndroidPlatform.GetDefaultSyncContext ();
 #endif

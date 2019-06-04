@@ -53,7 +53,7 @@ namespace Mono.Security.X509.Extensions {
 	 */
 	// note: because nothing is simple in ASN.1 bits are reversed
 	[Flags]
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 
@@ -71,7 +71,7 @@ namespace Mono.Security.X509.Extensions {
 		none = 0x0
 	}
 
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 

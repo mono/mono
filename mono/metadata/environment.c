@@ -20,12 +20,10 @@
 #include <mono/metadata/handle.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/w32api.h>
-
-extern MonoStringHandle ves_icall_System_Environment_GetOSVersionString (MonoError *error);
-
 #if !defined(HOST_WIN32) && defined(HAVE_SYS_UTSNAME_H)
 #include <sys/utsname.h>
 #endif
+#include "icall-decl.h"
 
 static gint32 exitcode=0;
 
@@ -67,8 +65,23 @@ ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 				 verinfo.wServicePackMajor << 16);
 		return mono_string_new_handle (mono_domain_get (), version, error);
 	}
+#elif defined(HAVE_SYS_UTSNAME_H) && defined(_AIX)
+	/*
+	 * AIX puts the major version number in .version and minor in .release; so make a
+	 * version string based on that; other Unices seem to cram everything in .release
+	 * and .version is for things like kernel variants.
+	 */
+	struct utsname name;
+	char version [sizeof(name)];
+
+	if (uname (&name) >= 0) {
+		sprintf (version, "%s.%s", name.version, name.release);
+		return mono_string_new_handle (mono_domain_get (), version, error);
+	}
 #elif defined(HAVE_SYS_UTSNAME_H)
 	struct utsname name;
+
+	memset (&name, 0, sizeof (name)); // WSL does not always nul terminate.
 
 	if (uname (&name) >= 0) {
 		return mono_string_new_handle (mono_domain_get (), name.release, error);

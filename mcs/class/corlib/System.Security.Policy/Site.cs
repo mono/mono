@@ -53,10 +53,10 @@ namespace System.Security.Policy {
 				throw new ArgumentException (Locale.GetText ("name is not valid"));
 			
 			origin_site = name;
-                }
+		}
 
-                public static Site CreateFromUrl (string url)
-                {
+		public static Site CreateFromUrl (string url)
+		{
 			if (url == null)
 				throw new ArgumentNullException ("url");
 			if (url.Length == 0)
@@ -68,45 +68,45 @@ namespace System.Security.Policy {
 				throw new ArgumentException (msg, "url");
 			}
 
-                        return new Site (site);
-                }
+			return new Site (site);
+		}
 
-                public object Copy ()
-                {
-                        return new Site (origin_site);
-                }
+		public object Copy ()
+		{
+			return new Site (origin_site);
+		}
 
-                public IPermission CreateIdentityPermission (Evidence evidence)
-                {
-                        return new SiteIdentityPermission (origin_site);
-                }
+		public IPermission CreateIdentityPermission (Evidence evidence)
+		{
+			return new SiteIdentityPermission (origin_site);
+		}
 
-                public override bool Equals (object o)
-                {
+		public override bool Equals (object o)
+		{
 			Site s = (o as System.Security.Policy.Site);
 			if (s == null)
 				return false;
 			return (String.Compare (s.Name, origin_site, true, CultureInfo.InvariantCulture) == 0);
-                }
+		}
 
-                public override int GetHashCode ()
-                {
-                        return origin_site.GetHashCode ();
-                }
+		public override int GetHashCode ()
+		{
+			return origin_site.GetHashCode ();
+		}
 
-                public override string ToString ()
-                {
+		public override string ToString ()
+		{
 			SecurityElement element = new SecurityElement ("System.Security.Policy.Site");
 			element.AddAttribute ("version", "1");
 			element.AddChild (new SecurityElement ("Name", origin_site));
 			return element.ToString ();
-                }
+		}
 
 		// properties
 
-                public string Name {
-                        get { return origin_site; }
-                }
+		public string Name {
+			get { return origin_site; }
+		}
 
 		// interface IBuiltInEvidence
 
@@ -129,8 +129,8 @@ namespace System.Security.Policy {
 
 		// internals
 
-                internal static bool IsValid (string name)
-                {
+		internal static bool IsValid (string name)
+		{
 			if (name == String.Empty)
 				return false;
 			if ((name.Length == 1) && (name == "."))		// split would remove .
@@ -154,8 +154,8 @@ namespace System.Security.Policy {
 						return false;
 				}
 			}
-                        return true;
-                }
+			return true;
+		}
 
 		// no exception - we return null if a site couldn't be created
 		// this is useful for creating the default evidence as the majority of URL will be local (file://)
@@ -171,5 +171,5 @@ namespace System.Security.Policy {
 			string site = uri.Host;
 			return IsValid (site) ? site : null;
 		}
-        }
+	}
 }

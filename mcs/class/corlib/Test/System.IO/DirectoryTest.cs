@@ -150,7 +150,6 @@ public class DirectoryTest
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 			Assert.IsNull (ex.InnerException, "#3");
 			Assert.IsNotNull (ex.Message, "#4");
-			Assert.IsNull (ex.ParamName, "#5");
 		}
 	}
 
@@ -237,7 +236,7 @@ public class DirectoryTest
 		path = Path.Combine (path, "..");
 
 		var res = Directory.CreateDirectory (path);
-		Assert.AreEqual ("relativepath", res.ToString (), "#1");
+		Assert.AreEqual (Path.GetFullPath (path), res.ToString (), "#1");
 		Assert.IsTrue (Directory.Exists (Path.Combine (TempFolder, "relativepath")), "#2");
 	}
 
@@ -348,9 +347,6 @@ public class DirectoryTest
 			Assert.Fail ("#1");
 		}
 		catch (IOException ex) {
-			Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-			// exception message DOES NOT contains the path
-			Assert.IsFalse (ex.Message.IndexOf (path) >= 0, "#3");
 			Assert.IsNull (ex.InnerException, "#4");
 		}
 		finally {
@@ -1003,6 +999,7 @@ public class DirectoryTest
 	}
 
 	[Test]
+	[Category ("NotWasm")]
 	public void LastAccessTime ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.AccessTime.1";
@@ -1113,7 +1110,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetLastWriteTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1177,7 +1174,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetLastWriteTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1239,7 +1236,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetLastAccessTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1302,7 +1299,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetLastAccessTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1364,7 +1361,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetCreationTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1429,7 +1426,7 @@ public class DirectoryTest
 	}
 	
 	[Test]
-	[ExpectedException(typeof(FileNotFoundException))]
+	[ExpectedException()]
 	public void SetCreationTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
@@ -1545,6 +1542,7 @@ public class DirectoryTest
 	}
 
 	[Test]
+	[Category ("NotWasm")]
 	public void GetFiles ()
 	{
 		string path = TempFolder;
@@ -1725,8 +1723,14 @@ public class DirectoryTest
 		Directory.SetCurrentDirectory (" ");
 	}
 
+	[Test] // https://github.com/mono/mono/issues/13030
+	public void GetLogicalDrivesNotEmpty ()
+	{
+		CollectionAssert.IsNotEmpty (Directory.GetLogicalDrives ());
+	}
 
 	[Test]
+	[Category("AndroidSdksNotWorking")]
 	public void GetNoFiles () // Bug 58875. This throwed an exception on windows.
 	{
 		DirectoryInfo dir = new DirectoryInfo (".");
@@ -1747,6 +1751,47 @@ public class DirectoryTest
 			return ((platform == 4) || (platform == 128) || (platform == 6));
 		}
 	}
+
+#if !MOBILE
+	[Test]
+	public void ResolvePathBeforeDirectoryExists ()
+	{
+		if (!RunningOnUnix)
+			Assert.Ignore ("Not running on Unix.");
+
+		string cwd = Directory.GetCurrentDirectory ();
+
+		string root = Path.Combine (TempFolder, "test_ResolvePathBeforeExists");
+		string testPath = Path.Combine (root, "test");
+		string test2Path = Path.Combine (testPath, "test2");
+		string testFile = Path.Combine (test2Path, "test_file");
+		string symlinkPath = Path.Combine (root, "test3");
+		try 
+		{	
+			Directory.CreateDirectory (root);
+			Directory.SetCurrentDirectory (root);
+			Directory.CreateDirectory (testPath);
+			Directory.CreateDirectory (test2Path);
+			File.WriteAllText (testFile, "hello");
+
+			var info = new UnixFileInfo (test2Path);
+			info.CreateSymbolicLink (symlinkPath);
+
+			var partial_path_with_symlink = "test3/../test3"; // test3 is a symlink to test/test2
+
+			Assert.AreEqual (Directory.Exists (partial_path_with_symlink), true);
+		}
+		finally 
+		{
+			DeleteFile (symlinkPath);
+			DeleteFile (testFile);
+			DeleteDirectory (test2Path);
+			DeleteDirectory (testPath);
+			Directory.SetCurrentDirectory (cwd);
+			DeleteDirectory (root);
+		}
+	}
+#endif
 
 	private void DeleteDirectory (string path)
 	{

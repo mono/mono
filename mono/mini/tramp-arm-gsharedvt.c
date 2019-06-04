@@ -21,8 +21,7 @@
 
 #include "mini.h"
 #include "mini-arm.h"
-
-#define ALIGN_TO(val,align) ((((guint64)val) + ((align) - 1)) & ~((align) - 1))
+#include "mini-runtime.h"
 
 #ifdef MONO_ARCH_GSHAREDVT_SUPPORTED
 
@@ -70,7 +69,7 @@ mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 			int nslots = (src >> 8) & 0xff;
 			int src_slot = src & 0xff;
 			int j;
-			gpointer *addr = caller [src_slot];
+			gpointer *addr = (gpointer*)caller [src_slot];
 
 			for (j = 0; j < nslots; ++j)
 				callee [dst + j] = addr [j];
@@ -78,28 +77,28 @@ mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_I1: {
 			int src_slot = src & 0xff;
-			gpointer *addr = caller [src_slot];
+			gpointer *addr = (gpointer*)caller [src_slot];
 
 			callee [dst] = GINT_TO_POINTER ((int)*(gint8*)addr);
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_I2: {
 			int src_slot = src & 0xff;
-			gpointer *addr = caller [src_slot];
+			gpointer *addr = (gpointer*)caller [src_slot];
 
 			callee [dst] = GINT_TO_POINTER ((int)*(gint16*)addr);
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U1: {
 			int src_slot = src & 0xff;
-			gpointer *addr = caller [src_slot];
+			gpointer *addr = (gpointer*)caller [src_slot];
 
 			callee [dst] = GUINT_TO_POINTER ((guint)*(guint8*)addr);
 			break;
 		}
 		case GSHAREDVT_ARG_BYREF_TO_BYVAL_U2: {
 			int src_slot = src & 0xff;
-			gpointer *addr = caller [src_slot];
+			gpointer *addr = (gpointer*)caller [src_slot];
 
 			callee [dst] = GUINT_TO_POINTER ((guint)*(guint16*)addr);
 			break;
@@ -171,7 +170,7 @@ mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoint
 	}
 
 	if (info->vcall_offset != -1) {
-		MonoObject *this_obj = caller [0];
+		MonoObject *this_obj = (MonoObject*)caller [0];
 
 		if (G_UNLIKELY (!this_obj))
 			return NULL;
@@ -211,10 +210,10 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 
 	// ios abi compatible frame
 	fp = ARMREG_R7;
-	cfa_offset = npushed * sizeof (gpointer);
+	cfa_offset = npushed * TARGET_SIZEOF_VOID_P;
 	mono_add_unwind_op_def_cfa (unwind_ops, code, buf, ARMREG_SP, cfa_offset);
 	ARM_PUSH (code, (1 << fp) | (1 << ARMREG_LR));
-	cfa_offset += 2 * sizeof (gpointer);
+	cfa_offset += 2 * TARGET_SIZEOF_VOID_P;
 	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, cfa_offset);
 	mono_add_unwind_op_offset (unwind_ops, code, buf, fp, (- cfa_offset));
 	mono_add_unwind_op_offset (unwind_ops, code, buf, ARMREG_LR, ((- cfa_offset) + 4));
@@ -235,7 +234,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	offset += 8 * 8;
 	callee_freg_area_offset = -offset;
 
-	caller_reg_area_offset = cfa_offset - (npushed * sizeof (gpointer));
+	caller_reg_area_offset = cfa_offset - (npushed * TARGET_SIZEOF_VOID_P);
 	lr_offset = 4;
 	/* Save info struct which is in r0 */
 	ARM_STR_IMM (code, arg_reg, fp, info_offset);
@@ -245,7 +244,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	ARM_LDR_IMM (code, ARMREG_IP, arg_reg, MONO_STRUCT_OFFSET (GSharedVtCallInfo, stack_usage));
 	ARM_SUB_REG_REG (code, ARMREG_SP, ARMREG_SP, ARMREG_IP);
 	/* Allocate callee register area just below the callee area so the slots are correct */
-	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 4 * sizeof (gpointer));
+	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 4 * TARGET_SIZEOF_VOID_P);
 	if (mono_arm_is_hard_float ()) {
 		/* Save caller fregs */
 		ARM_SUB_REG_IMM8 (code, ARMREG_IP, fp, -caller_freg_area_offset);
@@ -265,12 +264,12 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 
 	/* Call start_gsharedvt_call () */
 	/* 6 arguments, needs 2 stack slot, need to clean it up after the call */
-	args_size = 2 * sizeof (gpointer);
+	args_size = 2 * TARGET_SIZEOF_VOID_P;
 	ARM_SUB_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, args_size);
 	/* arg1 == info */
 	ARM_LDR_IMM (code, ARMREG_R0, fp, info_offset);
 	/* arg2 == caller stack area */
-	ARM_ADD_REG_IMM8 (code, ARMREG_R1, fp, cfa_offset - 4 * sizeof (gpointer));
+	ARM_ADD_REG_IMM8 (code, ARMREG_R1, fp, cfa_offset - 4 * TARGET_SIZEOF_VOID_P);
 	/* arg3 == callee stack area */
 	ARM_ADD_REG_IMM8 (code, ARMREG_R2, ARMREG_SP, args_size);
 	/* arg4 == mrgctx reg */
@@ -283,7 +282,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	ARM_STR_IMM (code, ARMREG_IP, ARMREG_SP, 4);
 	/* Make the call */
 	if (aot) {
-		ji = mono_patch_info_list_prepend (ji, code - buf, MONO_PATCH_INFO_JIT_ICALL_ADDR, "mono_arm_start_gsharedvt_call");
+		ji = mono_patch_info_list_prepend (ji, code - buf, MONO_PATCH_INFO_JIT_ICALL_ADDR, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arm_start_gsharedvt_call));
 		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
 		ARM_B (code, 0);
 		*(gpointer*)code = NULL;
@@ -292,7 +291,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 	} else {
 		ARM_LDR_IMM (code, ARMREG_IP, ARMREG_PC, 0);
 		ARM_B (code, 0);
-		*(gpointer*)code = mono_arm_start_gsharedvt_call;
+		*(gpointer*)code = (gpointer)mono_arm_start_gsharedvt_call;
 		code += 4;
 	}
 	ARM_MOV_REG_REG (code, ARMREG_LR, ARMREG_PC);
@@ -312,7 +311,7 @@ mono_arch_get_gsharedvt_trampoline (MonoTrampInfo **info, gboolean aot)
 			ARM_FLDD (code, i * 2, ARMREG_LR, (i * sizeof (double)));
 	}
 	/* Pop callee register area */
-	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 4 * sizeof (gpointer));
+	ARM_ADD_REG_IMM8 (code, ARMREG_SP, ARMREG_SP, 4 * TARGET_SIZEOF_VOID_P);
 	/* Load rgctx */
 	ARM_LDR_IMM (code, MONO_ARCH_RGCTX_REG, fp, mrgctx_offset);
 	/* Make the call */

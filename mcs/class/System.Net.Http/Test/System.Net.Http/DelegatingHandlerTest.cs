@@ -30,6 +30,7 @@ using System;
 using NUnit.Framework;
 using System.Net.Http;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MonoTests.System.Net.Http
@@ -41,6 +42,13 @@ namespace MonoTests.System.Net.Http
 		{
 		}
 
+		class CustomHandler : DelegatingHandler
+		{
+			protected override async Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
+			{
+				return await base.SendAsync (request, cancellationToken);
+			}
+		}
 
 		[Test]
 		public void DisposeTest ()
@@ -57,6 +65,20 @@ namespace MonoTests.System.Net.Http
 				handler.InnerHandler = null;
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException) {
+			}
+		}
+
+		[Test]
+		public async void InnerHandler_NotAssigned ()
+		{
+			var httpRequestMessage = new HttpRequestMessage (HttpMethod.Get, "http://contoso.com");
+			var handler = new CustomHandler ();
+
+			var invoker = new HttpMessageInvoker (handler);
+			try {
+				await invoker.SendAsync (httpRequestMessage, new CancellationToken ());
+				Assert.Fail ();
+			} catch (InvalidOperationException) {
 			}
 		}
 	}

@@ -24,6 +24,8 @@ LIB_REFS = monodoc System System.Xml System.Core Mono.Cecil ICSharpCode.SharpZip
 LOCAL_MCS_FLAGS = $(MDOC_RESOURCES_COMMAND) $(MONODOC_RESOURCES_COMMAND)
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/mdoc.exe
 PROGRAM_DEPS = $(topdir)/class/lib/$(PROFILE)/monodoc.dll
+MSCORLIB = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+
 
 MDOC_TEST_FILES = \
 	Test/CLILibraryTypes.dtd				  \
@@ -55,6 +57,11 @@ DIFF = diff -rupZ
 DIFF_QUIET = diff --brief -Z
 endif
 
+ifdef MCS_MODE
+DIFF = echo "WARNING: running in mcs mode, tests are specific to roslyn and would fail. Skipping diff check."
+DIFF_QUIET = $(DIFF)
+endif
+
 dist-local: dist-default dist-tests
 
 dist-tests:
@@ -72,51 +79,51 @@ cleanup:
 	-rm -f monodocer1.exe*
 
 Test/DocTest-addNonGeneric.dll:
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-addNonGeneric.cs
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-addNonGeneric.cs
 
 Test/DocTest-addNonGeneric-v2.dll:
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-addNonGeneric.cs /define:V2
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-addNonGeneric.cs /define:V2
 
 Test/DocTest-DropNS-classic-secondary.dll:
 	@echo $(value @)
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic-secondary.cs
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic-secondary.cs
 
 Test/DocTest-DropNS-classic.dll:
 	@echo $(value @)
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs
 
 Test/DocTest-DropNS-unified.dll:
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs
 
 Test/DocTest-DropNS-unified-multitest.dll:
 	rm -f $@
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs /define:MULTITEST
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs /define:MULTITEST
 
 Test/DocTest-DropNS-classic-multitest.dll:
 	rm -f $@
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs /define:MULTITEST
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs /define:MULTITEST
 
 Test/DocTest-DropNS-unified-deletetest.dll:
 	rm -f Test/DocTest-DropNS-unified-deletetest.dll
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs /define:DELETETEST
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-DropNS-unified.cs /define:DELETETEST
 
 Test/DocTest-DropNS-unified-deletetest-V2.dll:
 	rm -f Test/DocTest-DropNS-unified-deletetest.dll
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:Test/DocTest-DropNS-unified-deletetest.dll Test/DocTest-DropNS-unified.cs /define:DELETETEST,V2
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:Test/DocTest-DropNS-unified-deletetest.dll Test/DocTest-DropNS-unified.cs /define:DELETETEST,V2
 
 Test/DocTest-DropNS-classic-deletetest.dll:
 	rm -f Test/DocTest-DropNS-classic-deletetest.dll
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs /define:DELETETEST
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-DropNS-classic.cs /define:DELETETEST
 
 Test/DocTest-DropNS-classic-deletetest-V2.dll:
 	rm -f Test/DocTest-DropNS-classic-deletetest.dll
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:Test/DocTest-DropNS-classic-deletetest.dll Test/DocTest-DropNS-classic.cs /define:DELETETEST,V2
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:Test/DocTest-DropNS-classic-deletetest.dll Test/DocTest-DropNS-classic.cs /define:DELETETEST,V2
 
 Test/DocTest.dll: 
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest.cs -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/Microsoft.CSharp.dll
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest.cs -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/Microsoft.CSharp.dll
 
 Test/DocTest-InternalInterface.dll: 
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-InternalInterface.cs
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-InternalInterface.cs
 
 Test/DocTest.dll-v1: 
 	-rm -f Test/DocTest.cs
@@ -132,7 +139,7 @@ Test/DocTest.dll-v2:
 	$(MAKE) TEST_CSCFLAGS=$(TEST_CSCFLAGS) Test/DocTest.dll
 
 Test/DocTest-enumerations.dll: 
-	$(CSCOMPILE) $(TEST_CSCFLAGS) -unsafe -target:library -out:$@ Test/DocTest-enumerations.cs
+	$(CSCOMPILE) $(TEST_CSCFLAGS) $(MSCORLIB) -unsafe -target:library -out:$@ Test/DocTest-enumerations.cs
 
 check-monodocer-addNonGeneric: $(PROGRAM)
 	-rm -Rf Test/en.actual

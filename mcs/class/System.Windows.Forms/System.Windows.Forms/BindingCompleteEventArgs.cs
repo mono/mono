@@ -45,12 +45,12 @@ namespace System.Windows.Forms
 		}
 
 		public BindingCompleteEventArgs(Binding binding, BindingCompleteState state, BindingCompleteContext context, string errorText)
-			: this (binding, state, context, errorText, null, false)
+			: this (binding, state, context, errorText, null, true)
 		{
 		}
 
 		public BindingCompleteEventArgs(Binding binding, BindingCompleteState state, BindingCompleteContext context, string errorText, Exception exception)
-			: this (binding, state, context, errorText, exception, false)
+			: this (binding, state, context, errorText, exception, true)
 		{
 		}
 

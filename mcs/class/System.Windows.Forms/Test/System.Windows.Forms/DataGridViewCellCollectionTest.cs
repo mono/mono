@@ -239,6 +239,8 @@ namespace MonoTests.System.Windows.Forms
 				Assert.IsNotNull (ex.ParamName, "#B5");
 				Assert.AreEqual ("index", ex.ParamName, "#B6");
 			}
+
+			form.Close();
 		}
 
 		[Test]

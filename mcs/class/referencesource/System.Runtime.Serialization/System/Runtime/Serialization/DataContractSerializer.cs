@@ -426,6 +426,11 @@ namespace System.Runtime.Serialization
             }
         }
 
+        internal void SetDataContractSurrogate(IDataContractSurrogate adapter)
+        {
+            dataContractSurrogate = adapter;
+        }
+
         internal override void InternalWriteEndObject(XmlWriterDelegator writer)
         {
             if (!IsRootXmlAny(rootName, RootContract))

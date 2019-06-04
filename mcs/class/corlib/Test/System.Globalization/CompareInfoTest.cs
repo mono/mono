@@ -15,6 +15,7 @@ namespace MonoTests.System.Globalization
 {
 
 [TestFixture]
+[Category ("ManagedCollator")]
 public class CompareInfoTest
 {
 	static bool doTest = Environment.GetEnvironmentVariable ("MONO_DISABLE_MANAGED_COLLATION") != "yes";

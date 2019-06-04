@@ -26,6 +26,7 @@ class Tests
 
 	public delegate void ArrayDelegate (int[,] arr);
 
+	[Category ("!WASM")] //Requires a working threadpool
 	static int test_0_array_delegate_full_aot () {
 		ArrayDelegate d = delegate (int[,] arr) {
 		};
@@ -54,6 +55,13 @@ class Tests
 			return t;
 		}
 		public static T Get_T2 (double d, int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, T t) {
+			return t;
+		}
+		public static T Get_T3 (double d, int i, T t) {
+			return t;
+		}
+		public static T Get_T4 (int i, double d, T t)
+		{
 			return t;
 		}
 	}
@@ -85,7 +93,54 @@ class Tests
 	}
 
 	[Category ("DYNCALL")]
-	[Category ("!FULLAOT-AMD64")]
+	static int test_0_amd64_dyncall_double_int_double ()
+	{
+		double arg1 = 1.0f;
+		int arg2 = 1;
+		double s = 2.0f;
+		var res = (double)typeof (Foo2<double>).GetMethod ("Get_T3").Invoke (null, new object [] { arg1, arg2, s });
+		if (res != 2.0f)
+			return 1;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
+	static int test_0_amd64_dyncall_double_int_float ()
+	{
+		double arg1 = 1.0f;
+		int arg2 = 1;
+		float s = 2.0f;
+		var res = (float)typeof (Foo2<float>).GetMethod ("Get_T3").Invoke (null, new object [] { arg1, arg2, s });
+		if (res != 2.0f)
+			return 1;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
+	static int test_0_amd64_dyncall_int_double_int ()
+	{
+		int arg1 = 1;
+		double arg2 = 1.0f;
+		int s = 2;
+		var res = (int)typeof (Foo2<int>).GetMethod ("Get_T4").Invoke (null, new object [] { arg1, arg2, s });
+		if (res != 2)
+			return 1;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
+	static int test_0_amd64_dyncall_int_double_ref ()
+	{
+		int arg1 = 1;
+		double arg2 = 1.0f;
+		object s = new object ();
+		var res = (object)typeof (Foo2<object>).GetMethod ("Get_T4").Invoke (null, new object [] { arg1, arg2, s });
+		if (res != s)
+			return 1;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
 	static int test_0_arm64_dyncall_hfa_double () {
 		double arg1 = 1.0f;
 		// HFA with double members
@@ -99,7 +154,6 @@ class Tests
 	}
 
 	[Category ("DYNCALL")]
-	[Category ("!FULLAOT-AMD64")]
 	static int test_0_arm64_dyncall_hfa_float () {
 		double arg1 = 1.0f;
 		var s = new Struct2 ();
@@ -112,8 +166,59 @@ class Tests
 	}
 
 	[Category ("DYNCALL")]
+	static int test_0_amd64_dyncall_use_stack_float ()
+	{
+		float s = 10.0f;
+		var res = (float)typeof (Foo2<float>).GetMethod ("Get_T2").Invoke (null, new object [] { 1.0f, 2, 3, 4, 5, 6, 7, 8, 9, s });
+		if (res != s)
+			return 1;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
+	static int test_0_amd64_dyncall_use_stack_double ()
+	{
+		double s = 10.0f;
+		var res = (double)typeof (Foo2<double>).GetMethod ("Get_T2").Invoke (null, new object [] { 1.0f, 2, 3, 4, 5, 6, 7, 8, 9, s });
+		if (res != s)
+			return 1;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
+	static int test_0_amd64_dyncall_use_stack_int ()
+	{
+		int s = 10;
+		var res = (int)typeof (Foo2<int>).GetMethod ("Get_T2").Invoke (null, new object [] { 1.0f, 2, 3, 4, 5, 6, 7, 8, 9, s });
+		if (res != s)
+			return 1;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
+	static int test_0_amd64_dyncall_use_stack_ref ()
+	{
+		object s = new object ();
+		var res = (object)typeof (Foo2<object>).GetMethod ("Get_T2").Invoke (null, new object [] { 1.0f, 2, 3, 4, 5, 6, 7, 8, 9, s });
+		if (res != s)
+			return 1;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
+	static int test_0_amd64_dyncall_use_stack_struct ()
+	{
+		Struct1 s = new Struct1 ();
+		s.a = 10.0f;
+		s.b = 11.0f;
+		var res = (Struct1)typeof (Foo2<Struct1>).GetMethod ("Get_T2").Invoke (null, new object [] { 1.0f, 2, 3, 4, 5, 6, 7, 8, 9, s });
+		if (res.a != s.a || res.b != s.b)
+			return 1;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
 	[Category ("GSHAREDVT")]
-	[Category ("!FULLAOT-AMD64")]
 	static int test_0_arm64_dyncall_gsharedvt_out_hfa_double () {
 		/* gsharedvt out trampoline with double hfa argument */
 		double arg1 = 1.0f;
@@ -133,7 +238,6 @@ class Tests
 
 	[Category ("DYNCALL")]
 	[Category ("GSHAREDVT")]
-	[Category ("!FULLAOT-AMD64")]
 	static int test_0_arm64_dyncall_gsharedvt_out_hfa_float () {
 		/* gsharedvt out trampoline with double hfa argument */
 		double arg1 = 1.0f;
@@ -192,11 +296,14 @@ class Tests
 		public static T Get_T (object o) {
 			return (T)o;
 		}
+
+		public static long vtype_by_val<T1, T2, T3, T4, T5> (T1 t1, T2 t2, T3 t3, T4 t4, long? t5) {
+			return (long)t5;
+		}
 	}
 
 	[Category ("DYNCALL")]
 	[Category ("GSHAREDVT")]
-	[Category ("!FULLAOT-AMD64")]
 	static int test_0_arm64_dyncall_vtypebyref_ret () {
 		var s = new VTypeByRefStruct () { o1 = 1, o2 = 2, o3 = 3 };
 		Type t = typeof (Foo5<>).MakeGenericType (new Type [] { typeof (VTypeByRefStruct) });
@@ -209,6 +316,32 @@ class Tests
 			return 2;
 		}
 		return 0;
+	}
+
+	[Category ("DYNCALL")]
+	[Category ("GSHAREDVT")]
+	static int test_42_arm64_dyncall_vtypebyval () {
+		var method = typeof (Foo5<string>).GetMethod ("vtype_by_val").MakeGenericMethod (new Type [] { typeof (int), typeof (long?), typeof (long?), typeof (long?), typeof (long?) });
+		long res = (long)method.Invoke (null, new object [] { 1, 2L, 3L, 4L, 42L });
+		return (int)res;
+	}
+
+	struct Struct7 {
+		public string value;
+	}
+
+	class Foo7 {
+		public static string vtypeonstack_align (string s1, string s2, string s3, string s4, string s5, string s6, string s7, string s8, bool b, Struct7 s) {
+			return s.value;
+		}
+	}
+
+	[Category ("DYNCALL")]
+	static int test_0_arm64_ios_dyncall_vtypeonstack_align () {
+		var m = typeof (Foo7).GetMethod ("vtypeonstack_align");
+
+		string s = (string)m.Invoke (null, new object [] { null, null, null, null, null, null, null, null, true, new Struct7 () { value = "ABC" } });
+		return s == "ABC" ? 0 : 1;
 	}
 
 	class Foo6 {
@@ -253,13 +386,26 @@ class Tests
 		}
 
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static int NullableMany(long? i1, long? i2, long? i3, long? i4, long? i5, long? i6, long? i7, long? i8,
+										long? i11, long? i12, long? i13, long? i14, long? i15, long? i16, long? i17, long? i18,
+										long? i21, long? i22, long? i23, long? i24, long? i25, long? i26, long? i27, long? i28,
+										long? i31, long? i32, long? i33, long? i34, long? i35, long? i36, long? i37, long? i38) {
+			return (int)((i1 + i8 + i11 + i18 + i21 + i28 + i31 + i38).Value);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public static Nullable<T> GetNull<T>() where T : struct {
 			return null;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static bool GetHasValueManyArgs<T>(int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, T? value) where T : struct
+		{
+			return value.HasValue;
 		}
 	}
 
 	[Category ("DYNCALL")]
-	[Category ("!FULLAOT-AMD64")]
 	public static int test_0_dyncall_nullable () {
 		int? v;
 
@@ -286,6 +432,28 @@ class Tests
 		res2 = (int?)typeof (NullableMethods).GetMethod ("GetNull").MakeGenericMethod (new Type [] { typeof (int) }).Invoke (null, new object [] { });
 		if (res2.HasValue)
 			return 5;
+
+		NullableMethods.NullableMany (1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8);
+		res2 = (int?)typeof (NullableMethods).GetMethod ("NullableMany").Invoke (null, new object [] { 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L });
+		if (res2 != 36)
+			return 6;
+		return 0;
+	}
+
+	[Category ("DYNCALL")]
+	public static int test_0_arm64_dyncall_vtypebyrefonstack () {
+		var s = new LargeStruct () { a = 1, b = 2, c = 3, d = 4 };
+
+		NullableMethods.GetHasValueManyArgs<LargeStruct> (1, 2, 3, 4, 5, 6, 7, 8, s);
+
+		Type type = typeof (LargeStruct?).GetGenericArguments () [0];
+		var m = typeof(NullableMethods).GetMethod("GetHasValueManyArgs", BindingFlags.Static | BindingFlags.Public);
+		bool b1 = (bool)m.MakeGenericMethod (new Type[] {type}).Invoke (null, new object[] { 1, 2, 3, 4, 5, 6, 7, 8, s });
+		if (!b1)
+			return 1;
+		bool b2 = (bool)m.MakeGenericMethod (new Type[] {type}).Invoke (null, new object[] { 1, 2, 3, 4, 5, 6, 7, 8, null });
+		if (b2)
+			return 2;
 		return 0;
 	}
 
@@ -409,17 +577,13 @@ class Tests
 	}
 
 	[Category ("DYNCALL")]
-	[Category ("!FULLAOT-AMD64")]
+	[Category ("!WASM")] //Interp fails	
 	public static int test_0_large_nullable_invoke () {
 		var s = new LargeStruct () { a = 1, b = 2, c = 3, d = 4 };
 
-		GetHasValue<LargeStruct> (s);
+		NullableMethods.GetHasValue<LargeStruct> (s);
 
-#if __MOBILE__
-		var m = typeof(AotTests).GetMethod("GetHasValue", BindingFlags.Static | BindingFlags.Public);
-#else
-		var m = typeof(Tests).GetMethod("GetHasValue", BindingFlags.Static | BindingFlags.Public);
-#endif
+		var m = typeof(NullableMethods).GetMethod("GetHasValue", BindingFlags.Static | BindingFlags.Public);
 
 		Type type = typeof (LargeStruct?).GetGenericArguments () [0];
 		bool b1 = (bool)m.MakeGenericMethod (new Type[] {type}).Invoke (null, new object[] { s });
@@ -494,8 +658,49 @@ class Tests
 		try {
 			Action d = delegate () { data.Cast<IEnumerable> ().GetEnumerator ().MoveNext (); };
 			d ();
-		} catch (Exception ex) {
+		} catch (Exception) {
 		}
 		return 0;
 	}
+
+	public static int test_0_regress_gh_7364 () {
+		var map1 = new Dictionary <Type, IntPtr> (EqualityComparer<Type>.Default);
+		var map2 = new Dictionary <IntPtr, WeakReference> (EqualityComparer<IntPtr>.Default);
+		return 0;
+	}
+
+	// Requires c# 7.2
+#if !__MonoCS__
+	public interface GameComponent {
+	}
+
+	public struct Components<T> {
+        public T[] Collection;
+        public int Count;
+    }
+
+	struct AStruct : GameComponent {
+	}
+
+	public class ReadonlyTest<T> where T: GameComponent {
+		private static Components<T> _components;
+
+        public static T[] GetArray()
+		{
+			ref readonly Components<T> components = ref GetComponents();
+			return components.Collection;
+		}
+
+		public static ref readonly Components<T> GetComponents()
+		{
+			return ref _components;
+		}
+	}
+
+	// gh #8701
+	public static int test_0_readonly_modopt () {
+		typeof (ReadonlyTest<>).MakeGenericType (new Type[] { typeof (AStruct) }).GetMethod ("GetArray").Invoke (null, null);
+		return 0;
+	}
+#endif
 }

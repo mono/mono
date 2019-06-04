@@ -4,98 +4,65 @@ include ../../build/rules.make
 
 LIBRARY = System.Data.dll
 
-LIB_REFS = System System.Xml System.Core System.Numerics
+LIB_REFS = System System.Xml System.Core System.Numerics System.Transactions
 KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS = \
-	-nowarn:219,414,649 \
+	-nowarn:219,414,649,619,436 \
 	-d:COREFX	\
 	-d:PLATFORM_UNIX \
 	-d:USEOFFSET \
 	-d:MONO_PARTIAL_DATA_IMPORT \
+	-resource:../../../external/corefx/src/System.Data.SqlClient/src/Resources/System.Data.SqlClient.SqlMetaData.xml	\
 	-unsafe
 
-ifdef NO_MONO_SECURITY
-MONO_DATA_TDS=
-else
-MONO_DATA_TDS=Mono.Data.Tds
-endif
-
 ifdef MOBILE_PROFILE
-LIB_REFS += $(MONO_DATA_TDS) System.Transactions
 LIB_MCS_FLAGS += -d:NO_CODEDOM -d:NO_OLEDB -d:NO_ODBC -d:NO_CONFIGURATION
 else
-LIB_REFS += System.EnterpriseServices $(MONO_DATA_TDS) System.Configuration System.Transactions
-BUILT_SOURCES = \
-	gen_OdbcConnection.cs \
-	gen_OleDbConnection.cs \
-	gen_OdbcParameter.cs \
-	gen_OleDbParameter.cs \
-	gen_OdbcParameterCollection.cs \
-	gen_OleDbParameterCollection.cs
+LIB_REFS += System.EnterpriseServices System.Configuration
+endif
+
+ifndef NO_MONO_SECURITY
+LIB_REFS += Mono.Security
+endif
+
+ifdef MONO_FEATURE_APPLETLS
+LIB_MCS_FLAGS += -d:MONO_FEATURE_APPLETLS
+endif
+
+ifndef PROFILE_DISABLE_BTLS
+ifdef HAVE_BTLS
+LIB_MCS_FLAGS += -d:MONO_FEATURE_BTLS
+endif
 endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System.Data/system.data.txt
-
 RESX_RESOURCE_STRING = \
-	../../../external/corefx/src/System.Data.Common/src/Resources/Strings.resx
+	../../../external/corefx/src/System.Data.Common/src/Resources/Strings.resx	\
+	../../../external/corefx/src/System.Data.SqlClient/src/Resources/Strings.resx	\
+	../../../external/corefx/src/System.Data.Odbc/src/Resources/Strings.resx
 
-TEST_LIB_REFS = System.Core Mono.Data.Sqlite
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168
-
-TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
-
-TEST_MONO_PATH = .
-
-EXTRA_DISTFILES = \
+TEST_RESOURCE_FILES = \
 	$(wildcard Test/System.Data/*.xml)		\
 	$(wildcard Test/System.Data/*.xsd)		\
 	$(wildcard Test/System.Xml/*.xml)		\
 	$(wildcard Test/System.Xml/*.xsd)		\
+	$(wildcard Test/System.Data/schemas/*.xml)		\
 	$(wildcard Test/System.Data/schemas/*.xsd)		\
-	Test/test-config-file			\
-	Test/System.Data/binserialize/*.bin	\
-	Test/ProviderTests/sql/*.sql	\
-	SqliteTest.db	\
-	corefx.common.sources
+	$(wildcard Test/System.Data/binserialize/*.bin)	\
+	$(wildcard Test/ProviderTests/sql/*.sql)	\
+	Test/Mono.Data.SqlExpressions/dateComparisonTest.xml	\
+	Test/System.Data.Common/SqliteTest.db
 
-gen_OdbcConnection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
-	sed -e "s/NAMESPACE/System.Data.Odbc/g" $< |\
-	sed -e "s/CONNECTIONFACTORYOBJECTNAME/OdbcConnectionFactory.SingletonInstance/g" |\
-	sed -e "s/CONNECTIONOBJECTNAME/OdbcConnection/g" >$@
-gen_OleDbConnection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
-	sed -e s/NAMESPACE/System.Data.OleDb/g $< |\
-	sed -e s/CONNECTIONFACTORYOBJECTNAME/OleDbConnectionFactory.SingletonInstance/g |\
-	sed -e s/CONNECTIONOBJECTNAME/OleDbConnection/g >$@
-gen_SqlConnection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbConnectionHelper.cs
-	sed -e s/NAMESPACE/System.Data.SqlClient/g $< |\
-	sed -e s/CONNECTIONFACTORYOBJECTNAME/SqlConnectionFactory.SingletonInstance/g |\
-	sed -e s/CONNECTIONOBJECTNAME/SqlConnection/g >$@
-gen_OdbcParameter.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.Odbc/g |\
-	sed -e s/PARAMETEROBJECTNAME/OdbcParameter/g >$@
-gen_OleDbParameter.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.OleDb/g |\
-	sed -e s/PARAMETEROBJECTNAME/OleDbParameter/g >$@
-gen_SqlParameter.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.SqlClient/g |\
-	sed -e s/PARAMETEROBJECTNAME/SqlParameter/g >$@
-gen_OdbcParameterCollection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterCollectionHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.Odbc/g |\
-	sed -e s/PARAMETERCOLLECTIONOBJECTNAME/OdbcParameterCollection/g |\
-	sed -e s/PARAMETEROBJECTNAME/OdbcParameter/g >$@
-gen_OleDbParameterCollection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterCollectionHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.OleDb/g |\
-	sed -e s/PARAMETERCOLLECTIONOBJECTNAME/OleDbParameterCollection/g |\
-	sed -e s/PARAMETEROBJECTNAME/OleDbParameter/g >$@
-gen_SqlParameterCollection.cs: ../referencesource/System.Data/System/Data/ProviderBase/DbParameterCollectionHelper.cs
-	sed -e s/RESNAMESPACE/System.Data/g $< |\
-	sed -e s/NAMESPACE/System.Data.SqlClient/g |\
-	sed -e s/PARAMETERCOLLECTIONOBJECTNAME/SqlParameterCollection/g |\
-	sed -e s/PARAMETEROBJECTNAME/SqlParameter/g >$@
+TEST_LIB_REFS = System.Core Mono.Data.Sqlite
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:618,169,612,219,168 $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
+
+TEST_NUNITLITE_APP_CONFIG_GLOBAL=Test/test-config-file
+
+USE_XTEST_REMOTE_EXECUTOR = YES
+XTEST_LIB_REFS = System System.Core System.Xml Facades/System.Text.Encoding.CodePages Facades/System.Threading.Tasks Facades/System.Runtime.InteropServices.RuntimeInformation Facades/System.Text.RegularExpressions
+
+EXTRA_DISTFILES = \
+	$(TEST_RESOURCE_FILES)	\
+	Test/test-config-file
 
 include ../../build/library.make

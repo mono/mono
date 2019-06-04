@@ -54,7 +54,9 @@ namespace System.Data.Odbc {
         }
         
         override protected void Activate(SysTx.Transaction transaction) {
+#if !COREFX
             OdbcConnection.ExecutePermission.Demand();
+#endif
         }
 
         override public DbTransaction BeginTransaction(IsolationLevel isolevel) {
@@ -78,7 +80,9 @@ namespace System.Data.Odbc {
         }
           
         override public void EnlistTransaction(SysTx.Transaction transaction) {
+#if !COREFX
             OuterConnection.Open_EnlistTransaction(transaction);
+#endif
         }
     }
 }

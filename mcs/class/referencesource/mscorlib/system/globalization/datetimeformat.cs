@@ -357,6 +357,22 @@ namespace System {
             return ((int)format[pos+1]);
         }
 
+#if MONO // internal Span API 
+        internal static int ParseNextChar(ReadOnlySpan<char> format, int pos)
+        {
+            return ParseNextChar(new string(format), pos);
+        }
+    
+        internal static int ParseQuoteString(ReadOnlySpan<char> format, int pos, StringBuilder result)
+        {
+            return ParseQuoteString(new string(format), pos, result);
+        }
+
+        internal static int ParseRepeatPattern(ReadOnlySpan<char> format, int pos, char patternChar)
+        {
+            return ParseRepeatPattern(new string(format), pos, patternChar);
+        }
+#endif
         //
         //  IsUseGenitiveForm
         //

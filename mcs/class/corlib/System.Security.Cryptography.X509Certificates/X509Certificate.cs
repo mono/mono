@@ -28,103 +28,632 @@
 //
 
 using System.IO;
+using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Diagnostics;
 using System.Text;
+using Internal.Cryptography;
+using Microsoft.Win32.SafeHandles;
 
 using Mono.Security;
-using Mono.Security.X509;
 
-using System.Runtime.Serialization;
-using Mono.Security.Authenticode;
-
-namespace System.Security.Cryptography.X509Certificates {
-
+namespace System.Security.Cryptography.X509Certificates
+{
 	// References:
 	// a.	Internet X.509 Public Key Infrastructure Certificate and CRL Profile
 	//	http://www.ietf.org/rfc/rfc3280.txt
-	
+
 	// LAMESPEC: the MSDN docs always talks about X509v3 certificates
 	// and/or Authenticode certs. However this class works with older
 	// X509v1 certificates and non-authenticode (code signing) certs.
 	[Serializable]
-#if MOBILE
-	public partial class X509Certificate {
-#else
-	public partial class X509Certificate : IDeserializationCallback, ISerializable {
-#endif
+	public partial class X509Certificate : IDisposable, IDeserializationCallback, ISerializable
+	{
+#region CoreFX Implementation
+
 		X509CertificateImpl impl;
+		volatile byte[] lazyCertHash;
+		volatile byte[] lazySerialNumber;
+		volatile string lazyIssuer;
+		volatile string lazySubject;
+		volatile string lazyKeyAlgorithm;
+		volatile byte[] lazyKeyAlgorithmParameters;
+		volatile byte[] lazyPublicKey;
+		DateTime lazyNotBefore = DateTime.MinValue;
+		DateTime lazyNotAfter = DateTime.MinValue;
 
-		private bool hideDates;
-	
-		// static methods
-	
-		public static X509Certificate CreateFromCertFile (string filename) 
+		public virtual void Reset ()
 		{
-			byte[] data = File.ReadAllBytes (filename);
-			return new X509Certificate (data);
+			if (impl != null) {
+				impl.Dispose ();
+				impl = null;
+			}
+
+			lazyCertHash = null;
+			lazyIssuer = null;
+			lazySubject = null;
+			lazySerialNumber = null;
+			lazyKeyAlgorithm = null;
+			lazyKeyAlgorithmParameters = null;
+			lazyPublicKey = null;
+			lazyNotBefore = DateTime.MinValue;
+			lazyNotAfter = DateTime.MinValue;
 		}
 
-		[MonoTODO ("Incomplete - minimal validation in this version")]
-		public static X509Certificate CreateFromSignedFile (string filename)
-		{
-			try {
-				AuthenticodeDeformatter a = new AuthenticodeDeformatter (filename);
-				if (a.SigningCertificate != null) {
-					return new X509Certificate (a.SigningCertificate.RawData);
-				}
-			}
-			catch (SecurityException) {
-				// don't wrap SecurityException into a COMException
-				throw;
-			}
-			catch (Exception e) {
-				string msg = Locale.GetText ("Couldn't extract digital signature from {0}.", filename);
-				throw new COMException (msg, e);
-			}
-			throw new CryptographicException (Locale.GetText ("{0} isn't signed.", filename));
-		}
+#endregion
 
-		// constructors
-	
-		// special constructor for Publisher (and related classes).
-		// Dates strings are null
-		internal X509Certificate (byte[] data, bool dates) 
-		{
-			if (data != null) {
-				Import (data, (string)null, X509KeyStorageFlags.DefaultKeySet);
-				hideDates = !dates;
-			}
-		}
-	
-		public X509Certificate (byte[] data) : this (data, true)
+#region CoreFX Implementation - with X509Helper
+
+		public X509Certificate ()
 		{
 		}
 
-		public X509Certificate (IntPtr handle) 
+		public X509Certificate (byte[] data)
 		{
-			if (handle == IntPtr.Zero)
-				throw new ArgumentException ("Invalid handle.");
+			if (data != null && data.Length != 0)
+				impl = X509Helper.Import (data);
+		}
 
-			impl = X509Helper.InitFromHandle (handle);
+		public X509Certificate (byte[] rawData, string password)
+			: this (rawData, password, X509KeyStorageFlags.DefaultKeySet)
+		{
+		}
+
+		[CLSCompliantAttribute (false)]
+		public X509Certificate (byte[] rawData, SecureString password)
+			: this (rawData, password, X509KeyStorageFlags.DefaultKeySet)
+		{
+		}
+
+		public X509Certificate (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+			if (rawData == null || rawData.Length == 0)
+				throw new ArgumentException (SR.Arg_EmptyOrNullArray, nameof (rawData));
+
+			ValidateKeyStorageFlags (keyStorageFlags);
+
+			using (var safePasswordHandle = new SafePasswordHandle (password))
+				impl = X509Helper.Import (rawData, safePasswordHandle, keyStorageFlags);
+		}
+
+		[CLSCompliantAttribute (false)]
+		public X509Certificate (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
+		{
+			if (rawData == null || rawData.Length == 0)
+				throw new ArgumentException (SR.Arg_EmptyOrNullArray, nameof (rawData));
+
+			ValidateKeyStorageFlags (keyStorageFlags);
+
+			using (var safePasswordHandle = new SafePasswordHandle (password))
+				impl = X509Helper.Import (rawData, safePasswordHandle, keyStorageFlags);
+		}
+
+		public X509Certificate (IntPtr handle)
+		{
+			throw new PlatformNotSupportedException ("Initializing `X509Certificate` from native handle is not supported.");
 		}
 
 		internal X509Certificate (X509CertificateImpl impl)
 		{
-			if (impl == null)
-				throw new ArgumentNullException ("impl");
-
+			Debug.Assert (impl != null);
 			this.impl = X509Helper.InitFromCertificate (impl);
 		}
 
-		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
+		public X509Certificate (string fileName)
+			: this (fileName, (string)null, X509KeyStorageFlags.DefaultKeySet)
+		{
+		}
+
+		public X509Certificate (string fileName, string password)
+			: this (fileName, password, X509KeyStorageFlags.DefaultKeySet)
+		{
+		}
+
+		[CLSCompliantAttribute(false)]
+		public X509Certificate (string fileName, SecureString password)
+			: this (fileName, password, X509KeyStorageFlags.DefaultKeySet)
+		{
+		}
+
+		public X509Certificate (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+			if (fileName == null)
+				throw new ArgumentNullException (nameof (fileName));
+
+			ValidateKeyStorageFlags (keyStorageFlags);
+
+			var rawData = File.ReadAllBytes (fileName);
+			using (var safePasswordHandle = new SafePasswordHandle (password))
+				impl = X509Helper.Import (rawData, safePasswordHandle, keyStorageFlags);
+		}
+
+		[CLSCompliantAttribute (false)]
+		public X509Certificate (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags) : this ()
+		{
+			if (fileName == null)
+				throw new ArgumentNullException (nameof (fileName));
+
+			ValidateKeyStorageFlags (keyStorageFlags);
+
+			var rawData = File.ReadAllBytes (fileName);
+			using (var safePasswordHandle = new SafePasswordHandle (password))
+				impl = X509Helper.Import (rawData, safePasswordHandle, keyStorageFlags);
+		}
+
+		public X509Certificate (X509Certificate cert)
 		{
 			if (cert == null)
-				throw new ArgumentNullException ("cert");
+				throw new ArgumentNullException (nameof (cert));
 
 			impl = X509Helper.InitFromCertificate (cert);
-			hideDates = false;
 		}
+
+#endregion
+
+#region CoreFX Implementation
+
+		[System.Diagnostics.CodeAnalysis.SuppressMessage ("Microsoft.Usage", "CA2229", Justification = "Public API has already shipped.")]
+		public X509Certificate (SerializationInfo info, StreamingContext context) : this ()
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public static X509Certificate CreateFromCertFile (string filename)
+		{
+			return new X509Certificate (filename);
+		}
+
+		public static X509Certificate CreateFromSignedFile (string filename)
+		{
+			return new X509Certificate (filename);
+		}
+
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public IntPtr Handle {
+			get {
+				if (X509Helper.IsValid (impl))
+					return impl.Handle;
+				return IntPtr.Zero;
+			}
+		}
+
+		public string Issuer {
+			get {
+				ThrowIfInvalid ();
+
+				string issuer = lazyIssuer;
+				if (issuer == null)
+					issuer = lazyIssuer = Impl.Issuer;
+				return issuer;
+			}
+		}
+
+		public string Subject {
+			get {
+				ThrowIfInvalid ();
+
+				string subject = lazySubject;
+				if (subject == null)
+					subject = lazySubject = Impl.Subject;
+				return subject;
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				Reset ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			X509Certificate other = obj as X509Certificate;
+			if (other == null)
+				return false;
+			return Equals (other);
+		}
+
+		public virtual bool Equals (X509Certificate other)
+		{
+			if (other == null)
+				return false;
+
+			if (Impl == null)
+				return other.Impl == null;
+
+			if (!Issuer.Equals (other.Issuer))
+				return false;
+
+			byte[] thisSerialNumber = GetRawSerialNumber ();
+			byte[] otherSerialNumber = other.GetRawSerialNumber ();
+
+			if (thisSerialNumber.Length != otherSerialNumber.Length)
+				return false;
+			for (int i = 0; i < thisSerialNumber.Length; i++) {
+				if (thisSerialNumber[i] != otherSerialNumber[i])
+					return false;
+			}
+
+			return true;
+		}
+
+#endregion
+
+#region CoreFX Implementation - With X509Helper
+
+		public virtual byte[] Export (X509ContentType contentType)
+		{
+			return Export (contentType, (string)null);
+		}
+
+		public virtual byte[] Export (X509ContentType contentType, string password)
+		{
+			VerifyContentType (contentType);
+
+			if (Impl == null)
+				throw new CryptographicException (ErrorCode.E_POINTER);  // Not the greatest error, but needed for backward compat.
+
+			using (var safePasswordHandle = new SafePasswordHandle (password))
+				return Impl.Export (contentType, safePasswordHandle);
+		}
+
+		[System.CLSCompliantAttribute (false)]
+		public virtual byte[] Export (X509ContentType contentType, SecureString password)
+		{
+			VerifyContentType (contentType);
+
+			if (Impl == null)
+				throw new CryptographicException (ErrorCode.E_POINTER);  // Not the greatest error, but needed for backward compat.
+
+			using (var safePasswordHandle = new SafePasswordHandle (password))
+				return Impl.Export (contentType, safePasswordHandle);
+		}
+
+#endregion
+
+#region CoreFX Implementation
+
+		public virtual string GetRawCertDataString ()
+		{
+			ThrowIfInvalid ();
+			return GetRawCertData ().ToHexStringUpper ();
+		}
+
+		public virtual byte[] GetCertHash ()
+		{
+			ThrowIfInvalid ();
+			return GetRawCertHash ().CloneByteArray ();
+		}
+
+		public virtual byte[] GetCertHash (HashAlgorithmName hashAlgorithm)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public virtual bool TryGetCertHash (HashAlgorithmName hashAlgorithm, Span<byte> destination, out int bytesWritten)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public virtual string GetCertHashString ()
+		{
+			ThrowIfInvalid ();
+			return GetRawCertHash ().ToHexStringUpper ();
+		}
+
+		public virtual string GetCertHashString (HashAlgorithmName hashAlgorithm)
+		{
+			ThrowIfInvalid ();
+
+			return GetCertHash (hashAlgorithm).ToHexStringUpper ();
+		}
+
+		// Only use for internal purposes when the returned byte[] will not be mutated
+		byte[] GetRawCertHash ()
+		{
+			return lazyCertHash ?? (lazyCertHash = Impl.Thumbprint);
+		}
+
+		public virtual string GetEffectiveDateString ()
+		{
+			return GetNotBefore ().ToString ();
+		}
+
+		public virtual string GetExpirationDateString ()
+		{
+			return GetNotAfter ().ToString ();
+		}
+
+		public virtual string GetFormat ()
+		{
+			return "X509";
+		}
+
+		public virtual string GetPublicKeyString ()
+		{
+			return GetPublicKey ().ToHexStringUpper ();
+		}
+
+		public virtual byte[] GetRawCertData ()
+		{
+			ThrowIfInvalid ();
+
+			return Impl.RawData.CloneByteArray ();
+		}
+
+		public override int GetHashCode ()
+		{
+			if (Impl == null)
+				return 0;
+
+			byte[] thumbPrint = GetRawCertHash ();
+			int value = 0;
+			for (int i = 0; i < thumbPrint.Length && i < 4; ++i) {
+				value = value << 8 | thumbPrint[i];
+			}
+			return value;
+		}
+
+		public virtual string GetKeyAlgorithm ()
+		{
+			ThrowIfInvalid ();
+
+			string keyAlgorithm = lazyKeyAlgorithm;
+			if (keyAlgorithm == null)
+				keyAlgorithm = lazyKeyAlgorithm = Impl.KeyAlgorithm;
+			return keyAlgorithm;
+		}
+
+		public virtual byte[] GetKeyAlgorithmParameters ()
+		{
+			ThrowIfInvalid ();
+
+			byte[] keyAlgorithmParameters = lazyKeyAlgorithmParameters;
+			if (keyAlgorithmParameters == null)
+				keyAlgorithmParameters = lazyKeyAlgorithmParameters = Impl.KeyAlgorithmParameters;
+			return keyAlgorithmParameters.CloneByteArray ();
+		}
+
+		public virtual string GetKeyAlgorithmParametersString ()
+		{
+			ThrowIfInvalid ();
+
+			byte[] keyAlgorithmParameters = GetKeyAlgorithmParameters ();
+			return keyAlgorithmParameters.ToHexStringUpper ();
+		}
+
+		public virtual byte[] GetPublicKey ()
+		{
+			ThrowIfInvalid ();
+
+			byte[] publicKey = lazyPublicKey;
+			if (publicKey == null)
+				publicKey = lazyPublicKey = Impl.PublicKeyValue;
+			return publicKey.CloneByteArray ();
+		}
+
+		public virtual byte[] GetSerialNumber ()
+		{
+			ThrowIfInvalid ();
+			byte[] serialNumber = GetRawSerialNumber ().CloneByteArray ();
+			// PAL always returns big-endian, GetSerialNumber returns little-endian
+			Array.Reverse (serialNumber);
+			return serialNumber;
+		}
+
+		public virtual string GetSerialNumberString ()
+		{
+			ThrowIfInvalid ();
+			// PAL always returns big-endian, GetSerialNumberString returns big-endian too
+			return GetRawSerialNumber ().ToHexStringUpper ();
+		}
+
+		// Only use for internal purposes when the returned byte[] will not be mutated
+		byte[] GetRawSerialNumber ()
+		{
+			return lazySerialNumber ?? (lazySerialNumber = Impl.SerialNumber);
+		}
+
+		// See https://github.com/dotnet/corefx/issues/30544
+		[Obsolete ("This method has been deprecated.  Please use the Subject property instead.  http://go.microsoft.com/fwlink/?linkid=14202")]
+		public virtual string GetName ()
+		{
+			ThrowIfInvalid ();
+			return Impl.LegacySubject;
+		}
+
+		// See https://github.com/dotnet/corefx/issues/30544
+		[Obsolete ("This method has been deprecated.  Please use the Issuer property instead.  http://go.microsoft.com/fwlink/?linkid=14202")]
+		public virtual string GetIssuerName ()
+		{
+			ThrowIfInvalid ();
+			return Impl.LegacyIssuer;
+		}
+
+		public override string ToString ()
+		{
+			return ToString (fVerbose: false);
+		}
+
+		public virtual string ToString (bool fVerbose)
+		{
+			if (!fVerbose || !X509Helper.IsValid (impl))
+				return base.ToString ();
+
+			StringBuilder sb = new StringBuilder ();
+
+			// Subject
+			sb.AppendLine ("[Subject]");
+			sb.Append ("  ");
+			sb.AppendLine (Subject);
+
+			// Issuer
+			sb.AppendLine ();
+			sb.AppendLine ("[Issuer]");
+			sb.Append ("  ");
+			sb.AppendLine (Issuer);
+
+			// Serial Number
+			sb.AppendLine ();
+			sb.AppendLine ("[Serial Number]");
+			sb.Append ("  ");
+			byte[] serialNumber = GetSerialNumber ();
+			Array.Reverse (serialNumber);
+			sb.Append (serialNumber.ToHexArrayUpper ());
+			sb.AppendLine ();
+
+			// NotBefore
+			sb.AppendLine ();
+			sb.AppendLine ("[Not Before]");
+			sb.Append ("  ");
+			sb.AppendLine (FormatDate (GetNotBefore ()));
+
+			// NotAfter
+			sb.AppendLine ();
+			sb.AppendLine ("[Not After]");
+			sb.Append ("  ");
+			sb.AppendLine (FormatDate (GetNotAfter ()));
+
+			// Thumbprint
+			sb.AppendLine ();
+			sb.AppendLine ("[Thumbprint]");
+			sb.Append ("  ");
+			sb.Append (GetRawCertHash ().ToHexArrayUpper ());
+			sb.AppendLine ();
+
+			return sb.ToString ();
+		}
+
+		[ComVisible (false)]
+		public virtual void Import (byte[] rawData)
+		{
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
+		}
+
+		[ComVisible (false)]
+		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
+		}
+
+		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
+		{
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
+		}
+
+		[ComVisible (false)]
+		public virtual void Import (string fileName)
+		{
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
+		}
+
+		[ComVisible (false)]
+		public virtual void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
+		}
+
+		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
+		{
+			throw new PlatformNotSupportedException (SR.NotSupported_ImmutableX509Certificate);
+		}
+
+		internal DateTime GetNotAfter ()
+		{
+			ThrowIfInvalid ();
+
+			DateTime notAfter = lazyNotAfter;
+			if (notAfter == DateTime.MinValue)
+				notAfter = lazyNotAfter = impl.NotAfter;
+			return notAfter;
+		}
+
+		internal DateTime GetNotBefore ()
+		{
+			ThrowIfInvalid ();
+
+			DateTime notBefore = lazyNotBefore;
+			if (notBefore == DateTime.MinValue)
+				notBefore = lazyNotBefore = impl.NotBefore;
+			return notBefore;
+		}
+
+		/// <summary>
+		///     Convert a date to a string.
+		/// 
+		///     Some cultures, specifically using the Um-AlQura calendar cannot convert dates far into
+		///     the future into strings.  If the expiration date of an X.509 certificate is beyond the range
+		///     of one of these cases, we need to fall back to a calendar which can express the dates
+		/// </summary>
+		protected static string FormatDate (DateTime date)
+		{
+			CultureInfo culture = CultureInfo.CurrentCulture;
+
+			if (!culture.DateTimeFormat.Calendar.IsValidDay (date.Year, date.Month, date.Day, 0)) {
+				// The most common case of culture failing to work is in the Um-AlQuara calendar. In this case,
+				// we can fall back to the Hijri calendar, otherwise fall back to the invariant culture.
+#if !MOBILE
+				if (culture.DateTimeFormat.Calendar is UmAlQuraCalendar) {
+					culture = culture.Clone () as CultureInfo;
+					culture.DateTimeFormat.Calendar = new HijriCalendar ();
+				} else
+#endif
+				{
+					culture = CultureInfo.InvariantCulture;
+				}
+			}
+
+			return date.ToString (culture);
+		}
+
+		internal static void ValidateKeyStorageFlags (X509KeyStorageFlags keyStorageFlags)
+		{
+			if ((keyStorageFlags & ~KeyStorageFlagsAll) != 0)
+				throw new ArgumentException (SR.Argument_InvalidFlag, nameof (keyStorageFlags));
+
+			const X509KeyStorageFlags EphemeralPersist =
+			    X509KeyStorageFlags.EphemeralKeySet | X509KeyStorageFlags.PersistKeySet;
+
+			X509KeyStorageFlags persistenceFlags = keyStorageFlags & EphemeralPersist;
+
+			if (persistenceFlags == EphemeralPersist) {
+				throw new ArgumentException (
+				    SR.Format (SR.Cryptography_X509_InvalidFlagCombination, persistenceFlags),
+				    nameof (keyStorageFlags));
+			}
+		}
+
+		void VerifyContentType (X509ContentType contentType)
+		{
+			if (!(contentType == X509ContentType.Cert || contentType == X509ContentType.SerializedCert || contentType == X509ContentType.Pkcs12))
+				throw new CryptographicException (SR.Cryptography_X509_InvalidContentType);
+		}
+
+		internal const X509KeyStorageFlags KeyStorageFlagsAll =
+		    X509KeyStorageFlags.UserKeySet |
+		    X509KeyStorageFlags.MachineKeySet |
+		    X509KeyStorageFlags.Exportable |
+		    X509KeyStorageFlags.UserProtected |
+		    X509KeyStorageFlags.PersistKeySet |
+		    X509KeyStorageFlags.EphemeralKeySet;
+
+#endregion // CoreFX Implementation
 
 		internal void ImportHandle (X509CertificateImpl impl)
 		{
@@ -134,7 +663,6 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		internal X509CertificateImpl Impl {
 			get {
-				X509Helper.ThrowIfContextInvalid (impl);
 				return impl;
 			}
 		}
@@ -143,166 +671,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			get { return X509Helper.IsValid (impl); }
 		}
 
-		internal void ThrowIfContextInvalid ()
+		internal void ThrowIfInvalid ()
 		{
 			X509Helper.ThrowIfContextInvalid (impl);
-		}
-
-		// public methods
-	
-		public virtual bool Equals (System.Security.Cryptography.X509Certificates.X509Certificate other)
-		{
-			if (other == null) {
-				return false;
-			} else {
-				if (!X509Helper.IsValid (other.impl)) {
-					if (!X509Helper.IsValid (impl))
-						return true;
-					throw new CryptographicException (Locale.GetText ("Certificate instance is empty."));
-				}
-
-				return X509CertificateImpl.Equals (impl, other.impl);
-			}
-		}
-
-		// LAMESPEC: This is the equivalent of the "thumbprint" that can be seen
-		// in the certificate viewer of Windows. This is ALWAYS the SHA1 hash of
-		// the certificate (i.e. it has nothing to do with the actual hash 
-		// algorithm used to sign the certificate).
-		public virtual byte[] GetCertHash () 
-		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return impl.GetCertHash ();
-		}
-	
-		public virtual string GetCertHashString () 
-		{
-			// must call GetCertHash (not variable) or optimization wont work
-			return X509Helper.ToHexString (GetCertHash ());
-		}
-	
-		// strangly there are no DateTime returning function
-		public virtual string GetEffectiveDateString ()
-		{
-			if (hideDates)
-				return null;
-			X509Helper.ThrowIfContextInvalid (impl);
-
-			return impl.GetValidFrom ().ToLocalTime ().ToString ();
-		}
-	
-		// strangly there are no DateTime returning function
-		public virtual string GetExpirationDateString () 
-		{
-			if (hideDates)
-				return null;
-			X509Helper.ThrowIfContextInvalid (impl);
-
-			return impl.GetValidUntil ().ToLocalTime ().ToString ();
-		}
-	
-		// well maybe someday there'll be support for PGP or SPKI ?
-		public virtual string GetFormat () 
-		{
-			return "X509";	// DO NOT TRANSLATE
-		}
-	
-		public override int GetHashCode ()
-		{
-			if (!X509Helper.IsValid (impl))
-				return 0;
-			return impl.GetHashCode ();
-		}
-
-		[Obsolete ("Use the Issuer property.")]
-		public virtual string GetIssuerName () 
-		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return impl.GetIssuerName (true);
-		}
-	
-		public virtual string GetKeyAlgorithm () 
-		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return impl.GetKeyAlgorithm ();
-		}
-	
-		public virtual byte[] GetKeyAlgorithmParameters () 
-		{
-			X509Helper.ThrowIfContextInvalid (impl);
-
-			byte[] kap = impl.GetKeyAlgorithmParameters ();
-			if (kap == null)
-				throw new CryptographicException (Locale.GetText ("Parameters not part of the certificate"));
-
-			return kap;
-		}
-	
-		public virtual string GetKeyAlgorithmParametersString () 
-		{
-			return X509Helper.ToHexString (GetKeyAlgorithmParameters ());
-		}
-	
-		[Obsolete ("Use the Subject property.")]
-		public virtual string GetName ()
-		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return impl.GetSubjectName (true);
-		}
-	
-		public virtual byte[] GetPublicKey () 
-		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return impl.GetPublicKey ();
-		}
-	
-		public virtual string GetPublicKeyString () 
-		{
-			return X509Helper.ToHexString (GetPublicKey ());
-		}
-	
-		public virtual byte[] GetRawCertData () 
-		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return impl.GetRawCertData ();
-		}
-	
-		public virtual string GetRawCertDataString () 
-		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return X509Helper.ToHexString (impl.GetRawCertData ());
-		}
-	
-		public virtual byte[] GetSerialNumber () 
-		{
-			X509Helper.ThrowIfContextInvalid (impl);
-			return impl.GetSerialNumber ();
-		}
-	
-		public virtual string GetSerialNumberString () 
-		{
-			byte[] sn = GetSerialNumber ();
-			Array.Reverse (sn);
-			return X509Helper.ToHexString (sn);
-		}
-	
-		// to please corcompare ;-)
-		public override string ToString () 
-		{
-			return base.ToString ();
-		}
-	
-		public virtual string ToString (bool fVerbose) 
-		{
-			if (!fVerbose || !X509Helper.IsValid (impl))
-				return base.ToString ();
-
-			return impl.ToString (true);
-		}
-
-		protected static string FormatDate (DateTime date)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

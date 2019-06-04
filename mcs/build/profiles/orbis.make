@@ -8,7 +8,7 @@ MCS = $(BOOTSTRAP_MCS)
 profile-check:
 	@:
 
-DEFAULT_REFERENCES = -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll
+DEFAULT_REFERENCES = mscorlib
 
 PROFILE_MCS_FLAGS = \
 	-d:NET_1_1 \
@@ -22,23 +22,23 @@ PROFILE_MCS_FLAGS = \
 	-d:FULL_AOT_DESKTOP	\
 	-d:FULL_AOT_RUNTIME \
 	-d:ORBIS \
-	-d:DISABLE_REMOTING \
 	-d:DISABLE_COM \
 	-nowarn:1699 \
 	-nostdlib \
-	$(DEFAULT_REFERENCES) \
 	$(PLATFORM_DEBUG_FLAGS)
 
+API_BIN_PROFILE = build/monotouch
 FRAMEWORK_VERSION = 2.1
 
 # the tuner takes care of the install
 NO_INSTALL = yes
 AOT_FRIENDLY_PROFILE = yes
-ALWAYS_AOT = yes
+ALWAYS_AOT_BCL = yes
+ALWAYS_AOT_TESTS = yes
 MOBILE_PROFILE = yes
 NO_VTS_TEST = yes
 NO_CONSOLE = yes
 PROFILE_DISABLE_BTLS = yes
+NO_SRE = yes
 
-# Note need for trailing comma. If you add, keep it
-PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking,PKITS,
+PROFILE_TEST_HARNESS_EXCLUDES = MobileNotWorking PKITS SRE NotWorkingLinqInterpreter

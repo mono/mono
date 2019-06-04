@@ -25,6 +25,7 @@
 // THE SOFTWARE.
 #if SECURITY_DEP && MONO_FEATURE_BTLS
 using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -86,15 +87,25 @@ namespace Mono.Btls
 		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_ssl_ctx_set_verify_param (IntPtr handle, IntPtr param);
 
+		[DllImport (BTLS_DYLIB)]
+		extern static int mono_btls_ssl_ctx_set_client_ca_list (IntPtr handle, int count, IntPtr sizes, IntPtr data);
+
+		[DllImport (BTLS_DYLIB)]
+		extern static void mono_btls_ssl_ctx_set_server_name_callback (IntPtr handle, IntPtr func);
+
 		delegate int NativeVerifyFunc (IntPtr instance, int preverify_ok, IntPtr ctx);
-		delegate int NativeSelectFunc (IntPtr instance);
+		delegate int NativeSelectFunc (IntPtr instance, int count, IntPtr sizes, IntPtr data);
+		delegate int NativeServerNameFunc (IntPtr instance);
 
 		NativeVerifyFunc verifyFunc;
 		NativeSelectFunc selectFunc;
+		NativeServerNameFunc serverNameFunc;
 		IntPtr verifyFuncPtr;
 		IntPtr selectFuncPtr;
+		IntPtr serverNameFuncPtr;
 		MonoBtlsVerifyCallback verifyCallback;
 		MonoBtlsSelectCallback selectCallback;
+		MonoBtlsServerNameCallback serverNameCallback;
 		MonoBtlsX509Store store;
 		GCHandle instance;
 		IntPtr instancePtr;
@@ -114,8 +125,10 @@ namespace Mono.Btls
 
 			verifyFunc = NativeVerifyCallback;
 			selectFunc = NativeSelectCallback;
+			serverNameFunc = NativeServerNameCallback;
 			verifyFuncPtr = Marshal.GetFunctionPointerForDelegate (verifyFunc);
 			selectFuncPtr = Marshal.GetFunctionPointerForDelegate (selectFunc);
+			serverNameFuncPtr = Marshal.GetFunctionPointerForDelegate (serverNameFunc);
 
 			store = new MonoBtlsX509Store (Handle);
 		}
@@ -151,23 +164,40 @@ namespace Mono.Btls
 			return 0;
 		}
 
-		int SelectCallback ()
-		{
-			if (selectCallback != null)
-				return selectCallback ();
-			return 1;
-		}
-
 		[Mono.Util.MonoPInvokeCallback (typeof (NativeSelectFunc))]
-		static int NativeSelectCallback (IntPtr instance)
+		static int NativeSelectCallback (IntPtr instance, int count, IntPtr sizes, IntPtr data)
 		{
 			var c = (MonoBtlsSslCtx)GCHandle.FromIntPtr (instance).Target;
 			try {
-				return c.SelectCallback ();
+				var acceptableIssuers = CopyIssuers (count, sizes, data);
+				if (c.selectCallback != null)
+					return c.selectCallback (acceptableIssuers);
+				return 1;
 			} catch (Exception ex) {
 				c.SetException (ex);
 				return 0;
 			}
+		}
+
+		static string[] CopyIssuers (int count, IntPtr sizesPtr, IntPtr dataPtr)
+		{
+			if (count == 0 || sizesPtr == IntPtr.Zero || dataPtr == IntPtr.Zero)
+				return null;
+			var sizes = new int [count];
+			Marshal.Copy (sizesPtr, sizes, 0, count);
+			var data = new IntPtr [count];
+			Marshal.Copy (dataPtr, data, 0, count);
+
+			var issuers = new string [count];
+
+			for (int i = 0; i < count; i++) {
+				var buffer = new byte [sizes [i]];
+				Marshal.Copy (data[i], buffer, 0, buffer.Length);
+				using (var xname = MonoBtlsX509Name.CreateFromData (buffer, false))
+					issuers[i] = MonoBtlsUtils.FormatName (xname, true, ", ", true);
+			}
+
+			return issuers;
 		}
 
 		public void SetDebugBio (MonoBtlsBio bio)
@@ -235,6 +265,69 @@ namespace Mono.Btls
 				Handle.DangerousGetHandle (),
 				param.Handle.DangerousGetHandle ());
 			CheckError (ret);
+		}
+
+		public void SetClientCertificateIssuers (string[] acceptableIssuers)
+		{
+			CheckThrow ();
+			if (acceptableIssuers == null || acceptableIssuers.Length == 0)
+				return;
+
+			var count = acceptableIssuers.Length;
+			var buffers = new byte[count][];
+			var sizes = new int[count];
+			var pointers = new IntPtr[count];
+
+			var sizeData = IntPtr.Zero;
+			var pointerData = IntPtr.Zero;
+
+			try {
+				for (int i = 0; i < count; i++) {
+					var data = new X500DistinguishedName (acceptableIssuers[i]).RawData;
+					sizes[i] = data.Length;
+					pointers[i] = Marshal.AllocHGlobal (data.Length);
+					Marshal.Copy (data, 0, pointers[i], data.Length);
+				}
+
+				sizeData = Marshal.AllocHGlobal (count * 4);
+				Marshal.Copy (sizes, 0, sizeData, count);
+
+				pointerData = Marshal.AllocHGlobal (count * 8);
+				Marshal.Copy (pointers, 0, pointerData, count);
+
+				var ret = mono_btls_ssl_ctx_set_client_ca_list (Handle.DangerousGetHandle (), count, sizeData, pointerData);
+				CheckError (ret);
+			} finally {
+				for (int i = 0; i < count; i++) {
+					if (pointers[i] != IntPtr.Zero)
+						Marshal.FreeHGlobal (pointers [i]);
+				}
+				if (sizeData != IntPtr.Zero)
+					Marshal.FreeHGlobal (sizeData);
+				if (pointerData != IntPtr.Zero)
+					Marshal.FreeHGlobal (pointerData);
+			}
+		}
+
+		public void SetServerNameCallback (MonoBtlsServerNameCallback callback)
+		{
+			CheckThrow ();
+
+			serverNameCallback = callback;
+			mono_btls_ssl_ctx_set_server_name_callback (
+				Handle.DangerousGetHandle (), serverNameFuncPtr);
+		}
+
+		[Mono.Util.MonoPInvokeCallback (typeof (NativeServerNameFunc))]
+		static int NativeServerNameCallback (IntPtr instance)
+		{
+			var c = (MonoBtlsSslCtx)GCHandle.FromIntPtr (instance).Target;
+			try {
+				return c.serverNameCallback ();
+			} catch (Exception ex) {
+				c.SetException (ex);
+				return 0;
+			}
 		}
 
 		protected override void Close ()

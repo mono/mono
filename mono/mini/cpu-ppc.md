@@ -51,8 +51,11 @@ relaxed_nop: len:4
 break: len:32
 seq_point: len:24
 il_seq_point: len:0
-jmp: len:108
 tailcall: len:120 clob:c
+
+# PowerPC outputs a nice fixed size memcpy loop for larger stack_usage, so 0.
+tailcall_parameter: len:0
+
 call: dest:a clob:c len:16
 br: len:4
 throw: src1:i len:20
@@ -67,16 +70,16 @@ start_handler: len:32
 endfinally: len:28
 ceq: dest:i len:12
 cgt: dest:i len:12
-cgt.un: dest:i len:12
+cgt_un: dest:i len:12
 clt: dest:i len:12
-clt.un: dest:i len:12
+clt_un: dest:i len:12
 localloc: dest:i src1:i len:60
 compare: src1:i src2:i len:4
 compare_imm: src1:i len:12
 fcompare: src1:f src2:f len:12
-oparglist: src1:i len:12
+arglist: src1:i len:12
 setlret: src1:i src2:i len:12
-checkthis: src1:b len:4
+check_this: src1:b len:4
 voidcall: len:16 clob:c
 voidcall_reg: src1:i len:16 clob:c
 voidcall_membase: src1:b len:16 clob:c
@@ -198,12 +201,21 @@ float_cgt_un: dest:i src1:f src2:f len:20
 float_clt: dest:i src1:f src2:f len:16
 float_clt_un: dest:i src1:f src2:f len:20
 float_conv_to_u: dest:i src1:f len:36
+float_cneq: dest:i src1:f src2:f len:16
+float_cge: dest:i src1:f src2:f len:16
+float_cle: dest:i src1:f src2:f len:16
 call_handler: len:12 clob:c
 endfilter: src1:i len:32
-aot_const: dest:i len:8
+aotconst: dest:i len:8
 load_gotaddr: dest:i len:32
 got_entry: dest:i src1:b len:32
+abs: dest:f src1:f len:4
 sqrt: dest:f src1:f len:4
+sqrtf: dest:f src1:f len:4
+round: dest:f src1:f len:4
+ppc_trunc: dest:f src1:f len:4
+ppc_ceil: dest:f src1:f len:4
+ppc_floor: dest:f src1:f len:4
 adc: dest:i src1:i src2:i len:4
 addcc: dest:i src1:i src2:i len:4
 subcc: dest:i src1:i src2:i len:4
@@ -217,7 +229,9 @@ bigmul_un: len:12 dest:l src1:i src2:i
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -289,6 +303,12 @@ int_cgt_un: dest:i len:12
 int_clt: dest:i len:12
 int_clt_un: dest:i len:12
 
+int_cneq: dest:i len:12
+int_cge: dest:i len:12
+int_cle: dest:i len:12
+int_cge_un: dest:i len:12
+int_cle_un: dest:i len:12
+
 cond_exc_ieq: len:8
 cond_exc_ine_un: len:8
 cond_exc_ilt: len:8
@@ -309,6 +329,16 @@ icompare_imm: src1:i len:12
 
 long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:32
 
+# shouldn't use long stuff on ppc32
+#long_min: dest:i src1:i src2:i len:8 clob:1
+#long_min_un: dest:i src1:i src2:i len:8 clob:1
+#long_max: dest:i src1:i src2:i len:8 clob:1
+#long_max_un: dest:i src1:i src2:i len:8 clob:1
+int_min: dest:i src1:i src2:i len:8 clob:1
+int_max: dest:i src1:i src2:i len:8 clob:1
+int_min_un: dest:i src1:i src2:i len:8 clob:1
+int_max_un: dest:i src1:i src2:i len:8 clob:1
+
 vcall2: len:20 clob:c
 vcall2_reg: src1:i len:8 clob:c
 vcall2_membase: src1:b len:16 clob:c
@@ -318,4 +348,6 @@ jump_table: dest:i len:8
 atomic_add_i4: src1:b src2:i dest:i len:28
 atomic_cas_i4: src1:b src2:i src3:i dest:i len:38
 
+liverange_start: len:0
+liverange_end: len:0
 gc_safe_point: len:0

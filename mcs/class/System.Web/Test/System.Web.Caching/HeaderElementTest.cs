@@ -33,7 +33,6 @@ using System.Web;
 using System.Web.Caching;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Web.Caching
 {
@@ -45,11 +44,11 @@ namespace MonoTests.System.Web.Caching
 		{
 			HeaderElement he;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				he = new HeaderElement (null, String.Empty);
 			}, "#A1");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				he = new HeaderElement ("Header", null);
 			}, "#A2");
 

@@ -1,0 +1,617 @@
+# --------------------------------------------------------------------------- #
+#   mono/eglib                                                                #
+# --------------------------------------------------------------------------- #
+
+# ghashtable.c #
+
+fun:monoeg_g_hash_table_iter_next
+fun:monoeg_g_hash_table_lookup_extended
+
+# gslist.c #
+
+fun:monoeg_g_slist_nth_data
+
+# sort.frag.h #
+
+fun:init_sort_info
+fun:insert_list
+fun:merge_lists
+
+# --------------------------------------------------------------------------- #
+#   mono/metadata                                                             #
+# --------------------------------------------------------------------------- #
+
+# class-accessors.c #
+
+fun:mono_class_get_field_count
+fun:mono_class_get_first_method_idx
+fun:mono_class_get_flags
+fun:mono_class_get_generic_class
+fun:mono_class_get_method_count
+fun:mono_class_get_field_count
+fun:mono_class_set_first_method_idx
+fun:mono_class_set_flags
+fun:mono_class_set_method_count
+
+# class-inlines.h #
+
+fun:mono_class_has_static_metadata
+fun:mono_class_is_ginst
+fun:mono_class_is_gtd
+
+# class-internals.h #
+
+fun:mono_class_has_parent
+fun:mono_class_has_parent_fast
+
+# class.c #
+
+fun:can_access_type
+fun:inflate_generic_context
+fun:inflate_generic_type
+fun:init_sizes_with_info
+fun:make_generic_param_class
+fun:mono_array_element_size
+fun:mono_bounded_array_class_get
+fun:mono_class_create_from_typedef
+fun:mono_class_enum_basetype
+fun:mono_class_from_generic_parameter_internal
+fun:mono_class_from_mono_type
+fun:mono_class_from_name_checked_aux
+fun:mono_class_get_cctor
+fun:mono_class_get_inflated_method
+fun:mono_class_get_method_from_name_flags
+fun:mono_class_get_methods
+fun:mono_class_get_vtable_entry
+fun:mono_class_has_failure
+fun:mono_class_has_finalizer
+fun:mono_class_inflate_generic_method_full_checked
+fun:mono_class_inflate_generic_type_with_mempool
+fun:mono_class_init
+fun:mono_class_instance_size
+fun:mono_class_is_assignable_from
+fun:mono_class_layout_fields
+fun:mono_class_setup_basic_field_info
+fun:mono_class_setup_fields
+fun:mono_class_setup_interfaces
+fun:mono_class_setup_methods
+fun:mono_class_setup_mono_type
+fun:mono_class_setup_parent
+fun:mono_class_setup_supertypes
+fun:mono_class_setup_vtable_full
+fun:mono_class_setup_vtable_general
+fun:mono_class_value_size
+fun:mono_field_get_type_checked
+fun:mono_field_resolve_type
+fun:mono_generic_class_get_class
+fun:mono_ldtoken_checked
+fun:mono_method_get_context_general
+fun:mono_method_get_method_definition
+fun:mono_type_get_basic_type_from_generic
+fun:mono_type_get_checked
+fun:mono_type_get_underlying_type
+fun:mono_type_has_exceptions
+
+# gc.c #
+
+fun:finalize_domain_objects
+fun:finalizer_thread
+fun:mono_domain_finalize
+fun:mono_gc_cleanup
+fun:object_register_finalizer
+
+# handle.c #
+
+fun:mono_handle_new
+fun:mono_handle_stack_scan
+
+# handle.h #
+
+fun:mono_stack_mark_init
+fun:mono_stack_mark_pop
+
+# icall.c #
+
+fun:is_generic_parameter
+fun:vell_icall_get_method_attributes
+fun:ves_icall_InternalInvoke
+fun:ves_icall_RuntimeTypeHandle_GetBaseType
+fun:ves_icall_RuntimeTypeHandle_HasInstantiation
+fun:ves_icall_RuntimeTypeHandle_IsArray
+fun:ves_icall_RuntimeTypeHandle_IsGenericVariable
+fun:ves_icall_RuntimeType_GetConstructors_native
+fun:ves_icall_System_Array_ClearInternal
+fun:ves_icall_System_Array_FastCopy
+fun:ves_icall_System_Reflection_MonoMethodInfo_get_parameter_info
+
+# jit-info.c #
+
+fun:jit_info_table_add
+fun:jit_info_table_chunk_index
+fun:jit_info_table_copy_and_split_chunk
+fun:jit_info_table_find
+fun:jit_info_table_index
+fun:jit_info_table_split_chunk
+fun:mono_jit_info_init
+fun:mono_jit_info_table_free
+
+# loader.c #
+
+fun:inflate_generic_signature_checked
+fun:mono_field_from_token_checked
+fun:mono_get_method_checked
+fun:mono_get_method_from_token
+fun:mono_method_get_header_checked
+fun:mono_method_signature_checked
+
+# marshal.c #
+
+fun:mono_icall_start
+fun:mono_marshal_get_native_wrapper
+fun:mono_marshal_get_runtime_invoke_full
+fun:mono_marshal_isinst_with_cache
+
+# metadata.c #
+
+fun:_mono_metadata_generic_class_equal
+fun:add_image
+fun:collect_data_init
+fun:collect_ginst_images
+fun:collect_method_images
+fun:collect_type_images
+fun:do_mono_metadata_parse_type
+fun:get_image_set
+fun:mono_metadata_decode_row
+fun:mono_metadata_get_canonical_generic_inst
+fun:mono_metadata_lookup_generic_class
+fun:mono_metadata_parse_mh_full
+fun:mono_metadata_parse_type_internal
+fun:mono_method_get_header_summary
+fun:mono_type_get_class
+fun:mono_type_get_type
+fun:mono_type_is_struct
+fun:typedef_locator
+
+# monitor.c #
+
+fun:mon_new
+fun:mono_monitor_ensure_owned
+fun:mono_monitor_enter_v4_fast
+fun:mono_monitor_exit
+fun:mono_monitor_exit_inflated
+fun:mono_monitor_inflate
+fun:mono_monitor_try_enter_inflated
+fun:mono_monitor_try_enter_internal
+fun:mono_object_hash
+fun:ves_icall_System_Threading_Monitor_Monitor_pulse_all
+fun:ves_icall_System_Threading_Monitor_Monitor_test_synchronised
+fun:ves_icall_System_Threading_Monitor_Monitor_try_enter_with_atomic_var
+fun:ves_icall_System_Threading_Monitor_Monitor_wait
+
+# mono-basic-block.c #
+
+fun:bb_formation_il_pass
+fun:mono_basic_block_split
+fun:mono_opcode_value_and_size
+
+# mono-conc-hash.c #
+
+fun:conc_table_new
+fun:expand_table
+fun:mono_conc_g_hash_table_lookup_extended
+fun:set_key
+
+# mono-hash.c #
+
+fun:mono_g_hash_table_find_slot
+
+# object.c #
+
+fun:class_get_virtual_method
+fun:mono_class_compute_gc_descriptor
+fun:mono_class_create_runtime_vtable
+fun:mono_class_try_get_vtable
+fun:mono_class_vtable_full
+fun:mono_delegate_ctor_with_method
+fun:mono_object_handle_get_virtual_method
+fun:mono_object_handle_isinst
+fun:mono_object_isinst_checked
+fun:mono_object_new_alloc_specific_checked
+fun:mono_object_new_mature
+fun:mono_object_new_specific_checked
+fun:mono_runtime_class_init_full
+fun:mono_runtime_invoke_array_checked
+fun:mono_runtime_try_invoke_array
+fun:mono_string_new_size_checked
+
+# reflection-cache.h #
+
+fun:cache_object_handle
+
+# reflection.c #
+
+fun:method_object_construct
+fun:mono_type_get_object_checked
+fun:reflected_equal
+
+# sgen-client-mono.h #
+
+fun:sgen_client_par_object_get_size
+fun:SGEN_LOAD_VTABLE_UNCHECKED
+fun:sgen_mono_array_size
+
+# sgen-mono.c #
+
+fun:mono_gchandle_free
+fun:mono_gc_alloc_string
+fun:mono_gc_alloc_vector
+fun:mono_gc_get_nursery
+fun:mono_gc_thread_in_critical_region
+fun:mono_gc_wbarrier_set_arrayref
+
+# threadpool-worker-default.c #
+
+fun:heuristic_adjust
+fun:heuristic_notify_work_completed
+fun:heuristic_should_adjust
+fun:hill_climbing_change_thread_count
+fun:hill_climbing_force_change
+fun:hill_climbing_update
+fun:monitor_should_keep_running
+fun:monitor_sufficient_delay_since_last_dequeue
+fun:monitor_thread
+
+# threadpool.c #
+
+fun:try_invoke_perform_wait_callback
+fun:worker_callback
+
+# threads.c #
+
+fun:build_wait_tids
+fun:create_thread
+fun:mono_thread_clr_state
+fun:mono_thread_create_internal
+fun:mono_thread_detach_internal
+fun:mono_thread_set_name_internal
+fun:remove_and_abort_threads
+fun:request_thread_abort
+
+# w32handle.c #
+
+fun:mono_w32handle_lookup
+fun:mono_w32handle_lookup_data
+fun:mono_w32handle_new_internal
+fun:mono_w32handle_ref_core
+fun:mono_w32handle_unref_core
+
+# --------------------------------------------------------------------------- #
+#   mono/mini                                                                 #
+# --------------------------------------------------------------------------- #
+
+# alias-analysis.c #
+
+fun:lower_memory_access
+
+# aot-runtime.c #
+
+fun:mono_aot_get_cached_class_info
+fun:mono_aot_get_method_checked
+fun:mono_aot_get_method_from_vt_slot
+
+# branch-opts.c #
+
+fun:mono_if_conversion
+fun:mono_optimize_branches
+
+# cfold.c #
+
+fun:mono_constant_fold_ins
+
+# decompose.c #
+
+fun:mono_decompose_vtype_opts
+
+# dominators.c #
+
+fun:compute_dominators
+fun:mono_compute_natural_loops
+
+# jit-icalls.c #
+
+fun:ldvirtfn_internal
+
+# linear-scan.c #
+
+fun:mono_linear_scan
+
+# liveness.c #
+
+fun:mono_analyze_liveness
+fun:mono_liveness_handle_exception_clauses
+
+# lldb.c #
+
+fun:mono_lldb_save_method_info
+
+# local-propagation.c #
+
+fun:mono_local_cprop
+fun:mono_local_deadce
+
+# memory-access.c #
+
+fun:mini_emit_memory_copy_internal
+
+# method-to-ir.c #
+
+fun:check_call_signature
+fun:check_method_sharing
+fun:emit_init_rvar
+fun:emit_stloc_ir
+fun:get_basic_blocks
+fun:inline_method
+fun:link_bblock
+fun:mini_emit_inst_for_method
+fun:mini_field_access_needs_cctor_run
+fun:mono_emit_call_args
+fun:mono_emit_method_call_full
+fun:mono_handle_global_vregs
+fun:mono_method_check_inlining
+fun:mono_method_to_ir
+fun:mono_spill_global_vars
+fun:target_type_is_incompatible
+
+# mini-amd64.c #
+
+fun:add_outarg_reg
+fun:get_call_info
+fun:mono_arch_emit_call
+fun:mono_arch_emit_epilog
+fun:mono_arch_emit_exceptions
+fun:mono_arch_emit_inst_for_method
+fun:mono_arch_emit_outarg_vt
+fun:mono_arch_emit_prolog
+fun:mono_arch_get_delegate_invoke_impl
+fun:mono_arch_lowering_pass
+fun:mono_arch_output_basic_block
+fun:mono_arch_peephole_pass_2
+
+# mini-codegen.c #
+
+fun:create_spilled_store
+fun:mono_local_regalloc
+fun:mono_peephole_ins
+
+# mini-exceptions.c #
+
+fun:mono_thread_state_init_from_sigctx
+
+# mini-generic-sharing.c #
+
+fun:class_get_rgctx_template_oti
+fun:get_info_templates
+fun:inflate_info
+fun:inst_check_context_used
+fun:mini_get_basic_type_from_generic
+fun:mini_is_gsharedvt_type
+fun:mini_type_get_underlying_type
+fun:mono_class_fill_runtime_generic_context
+fun:mono_class_get_method_generic
+fun:mono_generic_context_check_used
+fun:mono_method_check_context_used
+fun:mono_method_fill_runtime_generic_context
+fun:mono_method_get_declaring_generic_method
+fun:mono_method_is_generic_impl
+fun:mono_method_needs_static_rgctx_invoke
+fun:rgctx_template_set_slot
+fun:set_info_templates
+
+# mini-native-types.c #
+
+fun:mini_native_type_replace_type
+
+# mini-runtime.c #
+
+fun:create_runtime_invoke_info
+fun:mini_imt_entry_inited
+fun:mono_jit_compile_method_with_opt
+fun:mono_jit_runtime_invoke
+fun:mono_resolve_patch_target
+
+# mini-trampolines.c #
+
+fun:common_call_trampoline
+fun:is_generic_method_definition
+fun:mini_add_method_trampoline
+fun:mini_resolve_imt_method
+fun:mono_create_delegate_trampoline_info
+fun:mono_create_jit_trampoline
+fun:mono_create_jump_trampoline
+fun:mono_create_static_rgctx_trampoline
+fun:mono_delegate_trampoline
+fun:mono_magic_trampoline
+fun:mono_rgctx_lazy_fetch_trampoline
+fun:mono_vcall_trampoline
+
+# mini.c #
+
+fun:create_jit_info
+fun:mini_method_compile
+fun:mono_allocate_stack_slots
+fun:mono_bb_ordering
+fun:mono_codegen
+fun:mono_compile_create_vars
+fun:mono_compile_create_var_for_vreg
+fun:mono_handle_out_of_line_bblock
+fun:mono_insert_branches_between_bblocks
+fun:mono_jit_compile_method_inner
+fun:mono_type_to_load_membase
+fun:mono_type_to_store_membase
+fun:mono_unlink_bblock
+
+# seq-points.c #
+
+fun:mono_save_seq_point_info
+
+# tramp-amd64.c #
+
+fun:mono_arch_create_specific_trampoline
+fun:mono_arch_patch_callsite
+
+# unwind.c #
+
+fun:mono_unwind_ops_encode_full
+
+# --------------------------------------------------------------------------- #
+#   mono/sgen                                                                 #
+# --------------------------------------------------------------------------- #
+
+# sgen-alloc.c #
+
+fun:sgen_alloc_obj
+fun:sgen_clear_tlabs
+fun:sgen_try_alloc_obj_nolock
+
+# sgen-array-list.c #
+
+fun:sgen_array_list_add
+fun:sgen_array_list_find_unset
+
+# sgen-array-list.h #
+
+fun:sgen_array_list_bucketize
+
+# sgen-cardtable.c #
+
+fun:sgen_card_table_wbarrier_range_copy
+fun:sgen_get_card_table_configuration
+
+# sgen-cardtable.h #
+
+fun:sgen_card_table_mark_address
+
+# sgen-copy-object.h #
+
+fun:copy_object_no_checks
+
+# sgen-fin-weak-hash.c #
+
+fun:add_stage_entry
+
+# sgen-gc.c #
+
+fun:mono_gc_wbarrier_generic_store
+fun:pin_objects_from_nursery_pin_queue
+fun:sgen_conservatively_pin_objects_from
+
+# sgen-gc.h #
+
+fun:sgen_set_nursery_scan_start
+
+# sgen-gchandles.c #
+
+fun:is_slot_set
+fun:link_get
+fun:sgen_gchandle_free
+fun:sgen_gchandle_iterate
+
+# sgen-marksweep.c #
+
+fun:alloc_obj
+fun:ensure_block_is_checked_for_sweeping
+fun:ensure_can_access_block_free_list
+fun:major_finish_sweep_checking
+fun:ms_alloc_block
+fun:set_block_state
+fun:sweep_block
+fun:sweep_block_for_size
+fun:unlink_slot_from_free_list_uncontested
+
+# sgen-minor-copy-object.h #
+
+fun:simple_nursery_serial_copy_object_from_obj
+
+# sgen-nursery-allocator.c #
+
+fun:fragment_list_reverse
+fun:par_alloc_from_fragment
+fun:sgen_fragment_allocator_add
+fun:sgen_fragment_allocator_alloc
+fun:sgen_fragment_allocator_par_alloc
+fun:sgen_fragment_allocator_par_range_alloc
+fun:sgen_fragment_allocator_release
+
+# --------------------------------------------------------------------------- #
+#   mono/utils                                                                #
+# --------------------------------------------------------------------------- #
+
+# hazard-pointer.c #
+
+fun:is_pointer_hazardous
+fun:mono_get_hazardous_pointer
+fun:mono_thread_small_id_alloc
+
+# lock-free-alloc.c #
+
+fun:alloc_from_new_sb
+
+# lock-free-array-queue.c #
+
+fun:mono_lock_free_array_queue_pop
+fun:mono_lock_free_array_queue_push
+
+# memfuncs.c #
+
+fun:mono_gc_bzero_aligned
+fun:mono_gc_memmove_aligned
+
+# mono-codeman.c #
+
+fun:mono_code_manager_reserve_align
+
+# mono-conc-hashtable.c #
+
+fun:conc_table_new
+fun:expand_table
+fun:mono_conc_hashtable_insert
+fun:mono_conc_hashtable_lookup
+
+# mono-context.c #
+
+fun:mono_sigctx_to_monoctx
+
+# mono-error.c #
+
+fun:mono_error_cleanup
+
+# mono-lazy-init.h #
+
+fun:mono_lazy_initialize
+
+# mono-linked-list-set.c #
+
+fun:mono_lls_find
+fun:mono_lls_get_hazardous_pointer_with_mask
+
+# mono-threads-posix-signals.c #
+
+fun:restart_signal_handler
+fun:suspend_signal_handler
+
+# mono-threads-state-machine.c #
+
+fun:check_thread_state
+fun:mono_threads_transition_finish_async_suspend
+
+# mono-threads.c #
+
+fun:mono_thread_info_uninstall_interrupt
+
+# os-event-unix.c #
+
+fun:mono_os_event_set
+
+# refcount.h #
+
+fun:mono_refcount_decrement

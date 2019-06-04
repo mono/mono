@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.Net;
@@ -49,8 +50,8 @@ namespace MonoTests.System.ServiceModel.Security
 	[TestFixture]
 	public class SecurityMessagePropertyTest
 	{
-		static X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-		static X509Certificate2 cert2 = new X509Certificate2 ("Test/Resources/test2.pfx", "mono");
+		static X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
+		static X509Certificate2 cert2 = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test2.pfx"), "mono");
 
 		[ServiceContract]
 		public interface ICalc
@@ -295,3 +296,4 @@ namespace MonoTests.System.ServiceModel.Security
 		}
 	}
 }
+#endif

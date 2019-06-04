@@ -70,17 +70,17 @@ get_ex_obj: dest:i len:16
 ckfinite: dest:f src1:f len:112
 ceq: dest:i len:12
 cgt: dest:i len:12
-cgt.un: dest:i len:12
+cgt_un: dest:i len:12
 clt: dest:i len:12
-clt.un: dest:i len:12
+clt_un: dest:i len:12
 localloc: dest:i src1:i len:60
 compare: src1:i src2:i len:4
 compare_imm: src1:i len:12
 fcompare: src1:f src2:f len:12
 rcompare: src1:f src2:f len:12
-oparglist: src1:i len:12
+arglist: src1:i len:12
 setlret: src1:i src2:i len:12
-checkthis: src1:b len:4
+check_this: src1:b len:4
 call: dest:a clob:c len:20
 call_reg: dest:a src1:i len:8 clob:c
 call_membase: dest:a src1:b len:30 clob:c
@@ -99,7 +99,25 @@ lcall_membase: dest:l src1:b len:24 clob:c
 vcall: len:64 clob:c
 vcall_reg: src1:i len:64 clob:c
 vcall_membase: src1:b len:70 clob:c
-tailcall: len:160 clob:c
+
+tailcall: len:255 clob:c # FIXME len
+tailcall_membase: src1:b len:255 clob:c # FIXME len
+tailcall_reg: src1:b len:255 clob:c # FIXME len
+
+# tailcall_parameter models the size of moving one parameter,
+# so that the required size of a branch around a tailcall can
+# be accurately estimated; something like:
+# void f1(volatile long *a)
+# {
+# a[large] = a[another large]
+# }
+#
+# In current implementation with 4K limit this is typically
+# two full instructions, howevever raising the limit some
+# can lead two instructions and two thumb instructions.
+# FIXME A fixed size sequence to move parameters would moot this.
+tailcall_parameter: len:12
+
 iconst: dest:i len:16
 r4const: dest:f len:24
 r8const: dest:f len:20
@@ -230,7 +248,7 @@ r4_cge: dest:y src1:f src2:f len:20
 r4_cle: dest:y src1:f src2:f len:20
 
 setfret: src1:f len:12
-aot_const: dest:i len:16
+aotconst: dest:i len:16
 objc_get_selector: dest:i len:32
 sqrt: dest:f src1:f len:4
 adc: dest:i src1:i src2:i len:4
@@ -298,9 +316,9 @@ arm_rsc_imm: dest:i src1:i len:4
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
 dummy_iconst: dest:i len:0
 dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 

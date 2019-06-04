@@ -63,6 +63,12 @@ namespace System.Web.Security {
                 hashAlgorithm = CryptoAlgorithms.CreateSHA1();
             else if (StringUtil.EqualsIgnoreCase(passwordFormat, "md5"))
                 hashAlgorithm = CryptoAlgorithms.CreateMD5();
+            else if (StringUtil.EqualsIgnoreCase(passwordFormat, "sha256"))
+                hashAlgorithm = CryptoAlgorithms.CreateSHA256();
+            else if (StringUtil.EqualsIgnoreCase(passwordFormat, "sha384"))
+                hashAlgorithm = CryptoAlgorithms.CreateSHA384();
+            else if (StringUtil.EqualsIgnoreCase(passwordFormat, "sha512"))
+                hashAlgorithm = CryptoAlgorithms.CreateSHA512();
             else
                 throw new ArgumentException(SR.GetString(SR.InvalidArgumentValue, "passwordFormat"));
 
@@ -346,6 +352,15 @@ namespace System.Web.Security {
 #pragma warning disable 618 // HashPasswordForStorignInConfigFile is now obsolete
             switch (settings.Forms.Credentials.PasswordFormat)
             {
+                case FormsAuthPasswordFormat.SHA256:
+                    encPassword = HashPasswordForStoringInConfigFile(password, "sha256");
+                    break;
+                case FormsAuthPasswordFormat.SHA384:
+                    encPassword = HashPasswordForStoringInConfigFile(password, "sha384");
+                    break;
+                case FormsAuthPasswordFormat.SHA512:
+                    encPassword = HashPasswordForStoringInConfigFile(password, "sha512");
+                    break;
                 case FormsAuthPasswordFormat.SHA1:
                     encPassword = HashPasswordForStoringInConfigFile(password, "sha1");
                     break;

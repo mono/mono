@@ -12,7 +12,8 @@ STANDALONE_RUNNER_SOURCES = \
 STANDALONE_RUNNER_REFERENCES = \
 	-r:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) \
 	-r:$(CLASSLIB_DIR)/System.Web.dll \
-	-r:$(CLASSLIB_DIR)/System.dll
+	-r:$(CLASSLIB_DIR)/System.dll \
+	-r:$(CLASSLIB_DIR)/mscorlib.dll	
 
 CACHE_PQ_TEST_GENERATOR_SOURCES = \
 	CachePQTestGenerator/CacheItemComparer.cs \

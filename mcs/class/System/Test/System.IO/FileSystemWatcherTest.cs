@@ -12,6 +12,8 @@ using NUnit.Framework;
 using System;
 using System.IO;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IO
 {
 	[TestFixture]
@@ -22,7 +24,7 @@ namespace MonoTests.System.IO
 		{
 			FileSystemWatcher fw = new FileSystemWatcher ();
 			Assert.AreEqual (fw.EnableRaisingEvents, false, "#01");
-			Assert.AreEqual (fw.Filter, "*.*", "#02");
+			Assert.AreEqual (fw.Filter, "*", "#02");
 			Assert.AreEqual (fw.IncludeSubdirectories, false, "#03");
 			Assert.AreEqual (fw.InternalBufferSize, 8192, "#04");
 			Assert.AreEqual (fw.NotifyFilter, NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite, "#05");
@@ -54,7 +56,9 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void CheckCtor4 ()
 		{
-			FileSystemWatcher fw = new FileSystemWatcher (Path.GetTempPath (), null);
+			using (var tmp = new TempDirectory ()) {
+				FileSystemWatcher fw = new FileSystemWatcher (tmp.Path, null);
+			}
 		}
 
 		[Test]
@@ -62,8 +66,12 @@ namespace MonoTests.System.IO
 		// [ExpectedException (typeof (ArgumentException))]
 		public void CheckCtor5 ()
 		{
-			FileSystemWatcher fw = new FileSystemWatcher (Path.GetTempPath (), "invalidpath|");
-			fw = new FileSystemWatcher (Path.GetTempPath (), "*");
+			using (var tmp1 = new TempDirectory ()) {
+				using (var tmp2 = new TempDirectory ()) {
+					FileSystemWatcher fw = new FileSystemWatcher (tmp1.Path, "invalidpath|");
+					fw = new FileSystemWatcher (tmp2.Path, "*");
+				}
+			}
 		}
 
 		[Test]
@@ -71,8 +79,10 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void CheckInvalidPath ()
 		{
-			FileSystemWatcher fw = new FileSystemWatcher (Path.GetTempPath (), "invalidpath|");
-			fw.Path = "invalidpath|";
+			using (var tmp = new TempDirectory ()) {
+				FileSystemWatcher fw = new FileSystemWatcher (tmp.Path, "invalidpath|");
+				fw.Path = "invalidpath|";
+			}
 		}
 
 		[Test]
@@ -80,8 +90,10 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (ArgumentException))]
 		public void CheckPathWildcard ()
 		{
-			FileSystemWatcher fw = new FileSystemWatcher (Path.GetTempPath (), "*");
-			fw.Path = "*";
+			using (var tmp = new TempDirectory ()) {
+				FileSystemWatcher fw = new FileSystemWatcher (tmp.Path, "*");
+				fw.Path = "*";
+			}
 		}
 	}
 }

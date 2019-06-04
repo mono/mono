@@ -29,12 +29,14 @@
 //
 
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D {
 
 	public sealed class LinearGradientBrush : Brush
 	{
 		RectangleF rectangle;
+		private bool _interpolationColorsWasSet;
 		
 		internal LinearGradientBrush (IntPtr native)
 		{
@@ -67,6 +69,14 @@ namespace System.Drawing.Drawing2D {
 
 		public LinearGradientBrush (Rectangle rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
 		{
+			if (linearGradientMode < LinearGradientMode.Horizontal || linearGradientMode > LinearGradientMode.BackwardDiagonal) {
+				throw new InvalidEnumArgumentException (nameof (linearGradientMode), unchecked ((int)linearGradientMode), typeof (LinearGradientMode));
+			}
+
+			if (rect.Width == 0 || rect.Height == 0) {
+				throw new ArgumentException( string.Format ("Rectangle '{0}' cannot have a width or height equal to 0.", rect.ToString ()));
+			}
+
 			IntPtr nativeObject;
 			Status status = GDIPlus.GdipCreateLineBrushFromRectI (ref rect, color1.ToArgb (), color2.ToArgb (), linearGradientMode, WrapMode.Tile, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -81,6 +91,14 @@ namespace System.Drawing.Drawing2D {
 
 		public LinearGradientBrush (RectangleF rect, Color color1, Color color2, LinearGradientMode linearGradientMode)
 		{
+			if (linearGradientMode < LinearGradientMode.Horizontal || linearGradientMode > LinearGradientMode.BackwardDiagonal) {
+				throw new InvalidEnumArgumentException (nameof (linearGradientMode), unchecked ((int)linearGradientMode), typeof (LinearGradientMode));
+			}
+
+			if (rect.Width == 0.0 || rect.Height == 0.0) {
+				throw new ArgumentException (string.Format ("Rectangle '{0}' cannot have a width or height equal to 0.", rect.ToString ()));
+			}
+
 			IntPtr nativeObject;
 			Status status = GDIPlus.GdipCreateLineBrushFromRect (ref rect, color1.ToArgb (), color2.ToArgb (), linearGradientMode, WrapMode.Tile, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -95,6 +113,10 @@ namespace System.Drawing.Drawing2D {
 
 		public LinearGradientBrush (Rectangle rect, Color color1, Color color2, float angle, bool isAngleScaleable)
 		{
+			if (rect.Width == 0 || rect.Height == 0) {
+				throw new ArgumentException (string.Format ("Rectangle '{0}' cannot have a width or height equal to 0.", rect.ToString ()));
+			}
+
 			IntPtr nativeObject;
 			Status status = GDIPlus.GdipCreateLineBrushFromRectWithAngleI (ref rect, color1.ToArgb (), color2.ToArgb (), angle, isAngleScaleable, WrapMode.Tile, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -105,6 +127,10 @@ namespace System.Drawing.Drawing2D {
 
 		public LinearGradientBrush (RectangleF rect, Color color1, Color color2, float angle, bool isAngleScaleable)
 		{
+			if (rect.Width == 0 || rect.Height == 0) {
+				throw new ArgumentException (string.Format ("Rectangle '{0}' cannot have a width or height equal to 0.", rect.ToString ()));
+			}
+
 			IntPtr nativeObject;
 			Status status = GDIPlus.GdipCreateLineBrushFromRectWithAngle (ref rect, color1.ToArgb (), color2.ToArgb (), angle, isAngleScaleable, WrapMode.Tile, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -117,6 +143,14 @@ namespace System.Drawing.Drawing2D {
 
 		public Blend Blend {
 			get {
+				// Interpolation colors and blends don't work together very well. Getting the Blend when InterpolationColors
+				// is set set puts the Brush into an unusable state afterwards.
+				// Bail out here to avoid that.
+				if (_interpolationColorsWasSet)
+				{
+					return null;
+				}
+
 				int count;
 				Status status = GDIPlus.GdipGetLineBlendCount (NativeBrush, out count);
 				GDIPlus.CheckStatus (status);
@@ -171,6 +205,11 @@ namespace System.Drawing.Drawing2D {
 
 		public ColorBlend InterpolationColors {
 			get {
+				if (!_interpolationColorsWasSet)
+				{
+					throw new ArgumentException("Property must be set to a valid ColorBlend object to use interpolation colors.");
+				}
+
 				int count;
 				Status status = GDIPlus.GdipGetLinePresetBlendCount (NativeBrush, out count);
 				GDIPlus.CheckStatus (status);
@@ -214,6 +253,8 @@ namespace System.Drawing.Drawing2D {
 
 				Status status = GDIPlus.GdipSetLinePresetBlend (NativeBrush, blend, positions, count);
 				GDIPlus.CheckStatus (status);
+
+				_interpolationColorsWasSet = true;
 			}
 		}
 
@@ -332,6 +373,8 @@ namespace System.Drawing.Drawing2D {
 
 			Status status = GDIPlus.GdipSetLineLinearBlend (NativeBrush, focus, scale);
 			GDIPlus.CheckStatus (status);
+
+			_interpolationColorsWasSet = false;
 		}
 
 		public void SetSigmaBellShape (float focus)
@@ -346,6 +389,8 @@ namespace System.Drawing.Drawing2D {
 
 			Status status = GDIPlus.GdipSetLineSigmaBlend (NativeBrush, focus, scale);
 			GDIPlus.CheckStatus (status);
+			
+			_interpolationColorsWasSet = false;
 		}
 
 		public void TranslateTransform (float dx, float dy)
@@ -362,7 +407,7 @@ namespace System.Drawing.Drawing2D {
 		public override object Clone ()
 		{
 			IntPtr clonePtr;
-			Status status = GDIPlus.GdipCloneBrush (NativeBrush, out clonePtr);
+			Status status = (Status) GDIPlus.GdipCloneBrush (new HandleRef (this, NativeBrush), out clonePtr);
 			GDIPlus.CheckStatus (status);
 
 			return new LinearGradientBrush (clonePtr);

@@ -43,6 +43,7 @@ namespace ICSharpCode.SharpZipLib.Checksums
 	/// <summary>
 	/// Bzip2 checksum algorithm
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class StrangeCRC : IChecksum
 	{
 		readonly static uint[] crc32Table = {

@@ -17,6 +17,7 @@ ClassInitGenerator
 csc
 csharp
 csharp2
+csi
 dbsessmgr
 dbsessmgr2
 dbsessmgr4
@@ -41,6 +42,7 @@ gmcs
 httpcfg
 ikdasm
 ilasm
+illinkanalyzer
 installvst
 ipy
 ipy64
@@ -85,7 +87,6 @@ monodocs2slashdoc
 mono-find-provides
 mono-find-requires
 mono-gdb.py
-monograph
 mono-heapviz
 monolinker
 monop
@@ -102,14 +103,10 @@ mprof-report
 msbuild
 nant
 nuget
-nunit-console
-nunit-console2
-nunit-console4
 pdb2mdb
 pedump
 permview
 peverify
-prj2make
 resgen
 resgen2
 secutil
@@ -121,6 +118,7 @@ soapsuds
 sqlmetal
 sqlsharp
 svcutil
+vbc
 vbnc
 vbnc2
 wsdl

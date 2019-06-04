@@ -53,10 +53,13 @@ enum {
 #define READ64(x) (*(guint64 *)(x))
 #endif
 
+#define MINT_SWITCH_LEN(n) (3 + (n) * 2)
+
 extern const char *mono_interp_opname[];
 extern unsigned char mono_interp_oplen[];
 extern MintOpArgType mono_interp_opargtype[];
-extern const guint16 *mono_interp_dis_mintop(const unsigned short *base, const guint16 *ip);
+extern char* mono_interp_dis_mintop(const unsigned short *base, const guint16 *ip);
+extern const guint16* mono_interp_dis_mintop_len (const guint16 *ip);
 
 #endif
 

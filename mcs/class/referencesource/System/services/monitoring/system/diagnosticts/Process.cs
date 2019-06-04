@@ -23,6 +23,8 @@ namespace System.Diagnostics {
     using Microsoft.Win32;        
     using Microsoft.Win32.SafeHandles;
     using System.Collections.Specialized;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Security;
     using System.Security.Permissions;
@@ -230,7 +232,7 @@ namespace System.Diagnostics {
             get {
                 EnsureState(State.Exited);
 #if MONO
-                if (exitCode == -1)
+                if (exitCode == -1 && !RuntimeInformation.IsOSPlatform (OSPlatform.Windows))
                     throw new InvalidOperationException ("Cannot get the exit code from a non-child process on Unix");
 #endif
                 return exitCode;
@@ -2100,6 +2102,9 @@ namespace System.Diagnostics {
                 throw new InvalidOperationException(SR.GetString(SR.StandardErrorEncodingNotAllowed));
             }            
             
+            if (!string.IsNullOrEmpty(startInfo.Arguments) && startInfo.ArgumentList.Count > 0)
+                throw new InvalidOperationException(SR.ArgumentAndArgumentListInitialized);
+
             // See knowledge base article Q190351 for an explanation of the following code.  Noteworthy tricky points:
             //    * The handles are duplicated as non-inheritable before they are passed to CreateProcess so
             //      that the child process can not close them
@@ -2111,7 +2116,17 @@ namespace System.Diagnostics {
                 throw new ObjectDisposedException(GetType().Name);
             }
 
-            StringBuilder commandLine = BuildCommandLine(startInfo.FileName, startInfo.Arguments);
+            string arguments;
+            if (startInfo.ArgumentList.Count > 0) {
+                StringBuilder sb = new StringBuilder ();
+                Process.AppendArguments (sb, startInfo.ArgumentList);
+                arguments = sb.ToString ();
+            }
+            else {
+                arguments = startInfo.Arguments;
+            }
+
+            StringBuilder commandLine = BuildCommandLine(startInfo.FileName, arguments);
 
             NativeMethods.STARTUPINFO startupInfo = new NativeMethods.STARTUPINFO();
             SafeNativeMethods.PROCESS_INFORMATION processInfo = new SafeNativeMethods.PROCESS_INFORMATION();

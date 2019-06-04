@@ -59,7 +59,7 @@
     !(defined(FREEBSD) && defined(__ELF__)) && \
     !(defined(OPENBSD) && (defined(__ELF__) || defined(M68K))) && \
     !(defined(NETBSD) && defined(__ELF__)) && !defined(HURD) && \
-    !defined(DARWIN)
+    !defined(DARWIN) && !defined(HAIKU)
  --> We only know how to find data segments of dynamic libraries for the
  --> above.  Additional SVR4 variants might not be too
  --> hard to add.
@@ -396,7 +396,8 @@ GC_bool GC_register_main_static_data()
 
 # if (defined(LINUX) || defined (__GLIBC__) || defined(NACL)) /* Are others OK here, too? */ \
      && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 2) \
-         || (__GLIBC__ == 2 && __GLIBC_MINOR__ == 2 && defined(DT_CONFIG))) 
+         || (__GLIBC__ == 2 && __GLIBC_MINOR__ == 2 && defined(DT_CONFIG))) \
+	 || defined(OPENBSD)
 
 /* We have the header files for a glibc that includes dl_iterate_phdr.	*/
 /* It may still not be available in the library on the target system.   */
@@ -1257,6 +1258,23 @@ GC_bool GC_register_main_static_data()
 }
 
 #endif /* DARWIN */
+
+#if defined(HAIKU)
+
+#include <kernel/image.h>
+
+void GC_register_dynamic_libraries()
+{
+    image_info info;
+    int32 cookie = 0;
+    while (get_next_image_info(0, &cookie, &info) == B_OK)
+    {
+        void *data = info.data;
+	GC_add_roots_inner(data, data + info.data_size, TRUE);
+    }
+}
+
+#endif /* HAIKU */
 
 #else /* !DYNAMIC_LOADING */
 

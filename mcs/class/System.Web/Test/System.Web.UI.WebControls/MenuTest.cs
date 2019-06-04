@@ -47,8 +47,6 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Xml;
 
-using MonoTests.Common;
-
 namespace MonoTests.System.Web.UI.WebControls
 {
 	class MenuTable : Menu
@@ -1774,11 +1772,11 @@ namespace MonoTests.System.Web.UI.WebControls
 					maxValue = value;
 			}
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				m.RenderingMode = (MenuRenderingMode) (minValue - 1);
 			}, "#A2-1");
 
-			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => {
+			Assert.Throws<ArgumentOutOfRangeException> (() => {
 				m.RenderingMode = (MenuRenderingMode) (maxValue + 1);
 			}, "#A2-2");
 		}

@@ -25,7 +25,7 @@ namespace MonoTests.System.Security.Cryptography {
 	// same results (hence should run a common set of unit tests).
 
 	[TestFixture]
-	public class SHA384CryptoServiceProviderTest : SHA384Test {
+	public class SHA384CryptoServiceProviderTest : SHA384TestBase {
 
 		[SetUp]
 		public override void SetUp ()

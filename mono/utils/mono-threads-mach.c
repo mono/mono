@@ -24,6 +24,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/hazard-pointer.h>
+#include <mono/utils/mono-threads-coop.h>
 #include <mono/utils/mono-threads-debug.h>
 
 void
@@ -32,7 +33,7 @@ mono_threads_suspend_init (void)
 	mono_threads_init_dead_letter ();
 }
 
-#if defined(HOST_WATCHOS) || defined(HOST_TVOS)
+#if defined(HOST_WATCHOS)
 
 gboolean
 mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
@@ -57,7 +58,7 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 {
 }
 
-#else /* defined(HOST_WATCHOS) || defined(HOST_TVOS) */
+#else /* defined(HOST_WATCHOS) */
 
 gboolean
 mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interrupt_kernel)
@@ -75,19 +76,23 @@ mono_threads_suspend_begin_async_suspend (MonoThreadInfo *info, gboolean interru
 	if (ret != KERN_SUCCESS)
 		return FALSE;
 
-	/* We're in the middle of a self-suspend, resume and register */
 	if (!mono_threads_transition_finish_async_suspend (info)) {
-		mono_threads_add_to_pending_operation_set (info);
+		/* We raced with self-suspend and lost.  Resume the native
+		 * thread.  It is still self-suspended, waiting to be resumed.
+		 * So suspend can continue.
+		 */
 		do {
 			ret = thread_resume (info->native_handle);
 		} while (ret == KERN_ABORTED);
 		g_assert (ret == KERN_SUCCESS);
-		THREADS_SUSPEND_DEBUG ("FAILSAFE RESUME/1 %p -> %d\n", (gpointer)(gsize)info->native_handle, 0);
+		info->suspend_can_continue = TRUE;
+		THREADS_SUSPEND_DEBUG ("\tlost race with self suspend %p\n", (gpointer)(gsize)info->native_handle);
+		g_assert (mono_threads_is_hybrid_suspension_enabled ());
 		//XXX interrupt_kernel doesn't make sense in this case as the target is not in a syscall
 		return TRUE;
 	}
 	info->suspend_can_continue = mono_threads_get_runtime_callbacks ()->
-		thread_state_init_from_handle (&info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], info);
+		thread_state_init_from_handle (&info->thread_saved_state [ASYNC_SUSPEND_STATE_INDEX], info, NULL);
 	THREADS_SUSPEND_DEBUG ("thread state %p -> %d\n", (gpointer)(gsize)info->native_handle, ret);
 	if (info->suspend_can_continue) {
 		if (interrupt_kernel)
@@ -187,7 +192,7 @@ mono_threads_suspend_abort_syscall (MonoThreadInfo *info)
 	g_assert (ret == KERN_SUCCESS);
 }
 
-#endif /* defined(HOST_WATCHOS) || defined(HOST_TVOS) */
+#endif /* defined(HOST_WATCHOS) */
 
 void
 mono_threads_suspend_register (MonoThreadInfo *info)
@@ -260,4 +265,9 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	*staddr -= *stsize;
 }
 
+gboolean
+mono_threads_platform_is_main_thread (void)
+{
+	return pthread_main_np () == 1;
+}
 #endif

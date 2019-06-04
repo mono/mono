@@ -423,6 +423,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("{Width=0, Height=0}", mycmbbox.MinimumSize.ToString (), "#27");
 			Assert.AreEqual ("{Left=0,Top=0,Right=0,Bottom=0}", mycmbbox.Padding.ToString (), "#28");
 			
+			Assert.AreEqual (SystemColors.Window, mycmbbox.BackColor, "#29");
+			Assert.AreEqual (SystemColors.WindowText, mycmbbox.ForeColor, "#30");
 		}
 
 		[Test]
@@ -1498,7 +1500,25 @@ namespace MonoTests.System.Windows.Forms
 			cmb.Items.Add (new ComboVal ("A"));
 			cmb.Sorted = true;
 		}
-	}
+
+        [Test]
+        public void SetTextAfterDisposeTest()
+        {
+            var comboBox = new ComboBox();
+            comboBox.Dispose();
+            comboBox.Text = "1";
+        }
+
+        [Test]
+        public void SetNullTextDropDownTest()
+        {
+            var comboBox = new ComboBox();
+            comboBox.DropDownStyle = ComboBoxStyle.DropDown;
+            comboBox.SelectedIndex = -1;
+            comboBox.Dispose();
+            comboBox.Text = null;
+        }
+    }
 
 	[TestFixture]
 	public class ComboBoxObjectCollectionTest : TestHelper

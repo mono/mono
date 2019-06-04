@@ -29,8 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if SECURITY_DEP
-
 #if MONO_SECURITY_ALIAS
 extern alias MonoSecurity;
 using MonoSecurity::Mono.Security;
@@ -45,17 +43,15 @@ using MX = Mono.Security.X509;
 using System.IO;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 
 namespace System.Security.Cryptography.X509Certificates
 {
-	internal class X509Certificate2ImplMono : X509Certificate2Impl
+	internal class X509Certificate2ImplMono : X509Certificate2ImplUnix
 	{
-		bool _archived;
-		X509ExtensionCollection _extensions;
 		PublicKey _publicKey;
-		X500DistinguishedName issuer_name;
-		X500DistinguishedName subject_name;
-		Oid signature_algorithm;
 		X509CertificateImplCollection intermediateCerts;
 
 		MX.X509Certificate _cert;
@@ -77,7 +73,7 @@ namespace System.Security.Cryptography.X509Certificates
 			return IntPtr.Zero;
 		}
 
-		X509Certificate2ImplMono (MX.X509Certificate cert)
+		public X509Certificate2ImplMono (MX.X509Certificate cert)
 		{
 			this._cert = cert;
 		}
@@ -89,55 +85,44 @@ namespace System.Security.Cryptography.X509Certificates
 				intermediateCerts = other.intermediateCerts.Clone ();
 		}
 
+		public X509Certificate2ImplMono (byte[] rawData, SafePasswordHandle password, X509KeyStorageFlags keyStorageFlags)
+		{
+			switch (X509Certificate2.GetCertContentType (rawData)) {
+			case X509ContentType.Pkcs12:
+				_cert = ImportPkcs12 (rawData, password);
+				break;
+
+			case X509ContentType.Cert:
+			case X509ContentType.Pkcs7:
+				_cert = new MX.X509Certificate (rawData);
+				break;
+
+			default:
+				string msg = Locale.GetText ("Unable to decode certificate.");
+				throw new CryptographicException (msg);
+			}
+		}
+
 		public override X509CertificateImpl Clone ()
 		{
 			ThrowIfContextInvalid ();
 			return new X509Certificate2ImplMono (this);
 		}
 
-#region Implemented X509CertificateImpl members
-
-		public override string GetIssuerName (bool legacyV1Mode)
-		{
-			ThrowIfContextInvalid ();
-			if (legacyV1Mode)
-				return _cert.IssuerName;
-			else
-				return MX.X501.ToString (_cert.GetIssuerName (), true, ", ", true);
+		MX.X509Certificate Cert {
+			get {
+				ThrowIfContextInvalid ();
+				return _cert;
+			}
 		}
 
-		public override string GetSubjectName (bool legacyV1Mode)
-		{
-			ThrowIfContextInvalid ();
-			if (legacyV1Mode)
-				return _cert.SubjectName;
-			else
-				return MX.X501.ToString (_cert.GetSubjectName (), true, ", ", true);
-		}
 
-		public override byte[] GetRawCertData ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.RawData;
-		}
+		#region Implemented X509CertificateImpl members
 
-		protected override byte[] GetCertHash (bool lazy)
+		protected override byte[] GetRawCertData ()
 		{
 			ThrowIfContextInvalid ();
-			SHA1 sha = SHA1.Create ();
-			return sha.ComputeHash (_cert.RawData);
-		}
-
-		public override DateTime GetValidFrom ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.ValidFrom;
-		}
-
-		public override DateTime GetValidUntil ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.ValidUntil;
+			return Cert.RawData;
 		}
 
 		public override bool Equals (X509CertificateImpl other, out bool result)
@@ -145,49 +130,6 @@ namespace System.Security.Cryptography.X509Certificates
 			// Use default implementation
 			result = false;
 			return false;
-		}
-
-		public override string GetKeyAlgorithm () 
-		{
-			ThrowIfContextInvalid ();
-			return _cert.KeyAlgorithm;
-		}
-
-		public override byte[] GetKeyAlgorithmParameters () 
-		{
-			ThrowIfContextInvalid ();
-			return _cert.KeyAlgorithmParameters;
-		}
-
-		public override byte[] GetPublicKey ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.PublicKey;
-		}
-
-		public override byte[] GetSerialNumber ()
-		{
-			ThrowIfContextInvalid ();
-			return _cert.SerialNumber;
-		}
-
-		public override byte[] Export (X509ContentType contentType, byte[] password)
-		{
-			ThrowIfContextInvalid ();
-
-			switch (contentType) {
-			case X509ContentType.Cert:
-				return GetRawCertData ();
-			case X509ContentType.Pfx: // this includes Pkcs12
-				// TODO
-				throw new NotSupportedException ();
-			case X509ContentType.SerializedCert:
-				// TODO
-				throw new NotSupportedException ();
-			default:
-				string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
-				throw new CryptographicException (msg);
-			}
 		}
 
 #endregion
@@ -201,70 +143,38 @@ namespace System.Security.Cryptography.X509Certificates
 
 		// properties
 
-		public override bool Archived {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				return _archived;
-			}
-			set {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				_archived = value;
-			}
-		}
-
-		public override X509ExtensionCollection Extensions {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				if (_extensions == null)
-					_extensions = new X509ExtensionCollection (_cert);
-				return _extensions;
-			}
-		}
-
 		// FIXME - Could be more efficient
 		public override bool HasPrivateKey {
 			get { return PrivateKey != null; }
 		}
-
-		public override X500DistinguishedName IssuerName {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				if (issuer_name == null)
-					issuer_name = new X500DistinguishedName (_cert.GetIssuerName ().GetBytes ());
-				return issuer_name;
-			}
-		} 
 
 		public override AsymmetricAlgorithm PrivateKey {
 			get {
 				if (_cert == null)
 					throw new CryptographicException (empty_error);
 				try {
-					if (_cert.RSA != null) {
-						RSACryptoServiceProvider rcsp = _cert.RSA as RSACryptoServiceProvider;
-						if (rcsp != null)
-							return rcsp.PublicOnly ? null : rcsp;
-
-						RSAManaged rsam = _cert.RSA as RSAManaged;
-						if (rsam != null)
-							return rsam.PublicOnly ? null : rsam;
-
-						_cert.RSA.ExportParameters (true);
-						return _cert.RSA;
-					} else if (_cert.DSA != null) {
-						DSACryptoServiceProvider dcsp = _cert.DSA as DSACryptoServiceProvider;
-						if (dcsp != null)
-							return dcsp.PublicOnly ? null : dcsp;
-
-						_cert.DSA.ExportParameters (true);
-						return _cert.DSA;
+					if (_cert.RSA is RSACryptoServiceProvider rcsp) {
+						if (rcsp.PublicOnly)
+							return null;
+						var key = new RSACryptoServiceProvider ();
+						key.ImportParameters (_cert.RSA.ExportParameters (true));
+						return key;
 					}
-				}
-				catch {
+					if (_cert.RSA is RSAManaged rsam) {
+						if (rsam.PublicOnly)
+							return null;
+						var key = new RSAManaged ();
+						key.ImportParameters (_cert.RSA.ExportParameters (true));
+						return key;
+					}
+					if (_cert.DSA is DSACryptoServiceProvider dcsp) {
+						if (dcsp.PublicOnly)
+							return null;
+						var key = new DSACryptoServiceProvider ();
+						key.ImportParameters (_cert.DSA.ExportParameters (true));
+						return key;
+					}
+				} catch {
 				}
 				return null;
 			}
@@ -277,25 +187,34 @@ namespace System.Security.Cryptography.X509Certificates
 				if (value == null) {
 					_cert.RSA = null;
 					_cert.DSA = null;
-				} else 	if (value is RSA)
-					_cert.RSA = (RSA) value;
+				} else if (value is RSA)
+					_cert.RSA = (RSA)value;
 				else if (value is DSA)
-					_cert.DSA = (DSA) value;
+					_cert.DSA = (DSA)value;
 				else
 					throw new NotSupportedException ();
 			}
-		} 
+		}
+
+		public override RSA GetRSAPrivateKey ()
+		{
+			return PrivateKey as RSA;
+		}
+
+		public override DSA GetDSAPrivateKey ()
+		{
+			return PrivateKey as DSA;
+		}
 
 		public override PublicKey PublicKey {
-			get { 
+			get {
 				if (_cert == null)
 					throw new CryptographicException (empty_error);
 
 				if (_publicKey == null) {
 					try {
 						_publicKey = new PublicKey (_cert);
-					}
-					catch (Exception e) {
+					} catch (Exception e) {
 						string msg = Locale.GetText ("Unable to decode public key.");
 						throw new CryptographicException (msg, e);
 					}
@@ -304,130 +223,17 @@ namespace System.Security.Cryptography.X509Certificates
 			}
 		}
 
-		public override Oid SignatureAlgorithm {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-
-				if (signature_algorithm == null)
-					signature_algorithm = new Oid (_cert.SignatureAlgorithm);
-				return signature_algorithm;
-			}
-		} 
-
-		public override X500DistinguishedName SubjectName {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-
-				if (subject_name == null)
-					subject_name = new X500DistinguishedName (_cert.GetSubjectName ().GetBytes ());
-				return subject_name;
-			}
-		} 
-
-		public override int Version {
-			get {
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				return _cert.Version;
-			}
-		}
-
 		// methods
 
-		[MonoTODO ("always return String.Empty for UpnName, DnsFromAlternativeName and UrlName")]
-		public override string GetNameInfo (X509NameType nameType, bool forIssuer) 
+		MX.X509Certificate ImportPkcs12 (byte[] rawData, SafePasswordHandle password)
 		{
-			switch (nameType) {
-			case X509NameType.SimpleName:
-				if (_cert == null)
-					throw new CryptographicException (empty_error);
-				// return CN= or, if missing, the first part of the DN
-				ASN1 sn = forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ();
-				ASN1 dn = Find (commonName, sn);
-				if (dn != null)
-					return GetValueAsString (dn);
-				if (sn.Count == 0)
-					return String.Empty;
-				ASN1 last_entry = sn [sn.Count - 1];
-				if (last_entry.Count == 0)
-					return String.Empty;
-				return GetValueAsString (last_entry [0]);
-			case X509NameType.EmailName:
-				// return the E= part of the DN (if present)
-				ASN1 e = Find (email, forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ());
-				if (e != null)
-					return GetValueAsString (e);
-				return String.Empty;
-			case X509NameType.UpnName:
-				// FIXME - must find/create test case
-				return String.Empty;
-			case X509NameType.DnsName:
-				// return the CN= part of the DN (if present)
-				ASN1 cn = Find (commonName, forIssuer ? _cert.GetIssuerName () : _cert.GetSubjectName ());
-				if (cn != null)
-					return GetValueAsString (cn);
-				return String.Empty;
-			case X509NameType.DnsFromAlternativeName:
-				// FIXME - must find/create test case
-				return String.Empty;
-			case X509NameType.UrlName:
-				// FIXME - must find/create test case
-				return String.Empty;
-			default:
-				throw new ArgumentException ("nameType");
-			}
+			if (password == null || password.IsInvalid)
+				return ImportPkcs12 (rawData, (string)null);
+			var passwordString = password.Mono_DangerousGetString ();
+			return ImportPkcs12 (rawData, passwordString);
 		}
 
-		static byte[] commonName = { 0x55, 0x04, 0x03 };
-		static byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
-
-		private ASN1 Find (byte[] oid, ASN1 dn)
-		{
-			if (dn.Count == 0)
-				return null;
-
-			// process SET
-			for (int i = 0; i < dn.Count; i++) {
-				ASN1 set = dn [i];
-				for (int j = 0; j < set.Count; j++) {
-					ASN1 pair = set [j];
-					if (pair.Count != 2)
-						continue;
-
-					ASN1 poid = pair [0];
-					if (poid == null)
-						continue;
-
-					if (poid.CompareValue (oid))
-						return pair;
-				}
-			}
-			return null;
-		}
-
-		private string GetValueAsString (ASN1 pair)
-		{
-			if (pair.Count != 2)
-				return String.Empty;
-
-			ASN1 value = pair [1];
-			if ((value.Value == null) || (value.Length == 0))
-				return String.Empty;
-
-			if (value.Tag == 0x1E) {
-				// BMPSTRING
-				StringBuilder sb = new StringBuilder ();
-				for (int j = 1; j < value.Value.Length; j += 2)
-					sb.Append ((char)value.Value [j]);
-				return sb.ToString ();
-			} else {
-				return Encoding.UTF8.GetString (value.Value);
-			}
-		}
-
-		private MX.X509Certificate ImportPkcs12 (byte[] rawData, string password)
+		MX.X509Certificate ImportPkcs12 (byte[] rawData, string password)
 		{
 			MX.PKCS12 pfx = null;
 			if (string.IsNullOrEmpty (password)) {
@@ -479,157 +285,13 @@ namespace System.Security.Cryptography.X509Certificates
 			}
 		}
 
-		[MonoTODO ("missing KeyStorageFlags support")]
-		public override void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
-		{
-			Reset ();
-			MX.X509Certificate cert = null;
-			if (password == null) {
-				try {
-					cert = new MX.X509Certificate (rawData);
-				}
-				catch (Exception e) {
-					try {
-						cert = ImportPkcs12 (rawData, null);
-					}
-					catch {
-						string msg = Locale.GetText ("Unable to decode certificate.");
-						// inner exception is the original (not second) exception
-						throw new CryptographicException (msg, e);
-					}
-				}
-			} else {
-				// try PKCS#12
-				try {
-					cert = ImportPkcs12 (rawData, password);
-				}
-				catch {
-					// it's possible to supply a (unrequired/unusued) password
-					// fix bug #79028
-					cert = new MX.X509Certificate (rawData);
-				}
-			}
-			_cert = cert;
-		}
-
-		[MonoTODO ("X509ContentType.SerializedCert is not supported")]
-		public override byte[] Export (X509ContentType contentType, string password)
-		{
-			if (_cert == null)
-				throw new CryptographicException (empty_error);
-
-			switch (contentType) {
-			case X509ContentType.Cert:
-				return _cert.RawData;
-			case X509ContentType.Pfx: // this includes Pkcs12
-				return ExportPkcs12 (password);
-			case X509ContentType.SerializedCert:
-				// TODO
-				throw new NotSupportedException ();
-			default:
-				string msg = Locale.GetText ("This certificate format '{0}' cannot be exported.", contentType);
-				throw new CryptographicException (msg);
-			}
-		}
-
-		byte[] ExportPkcs12 (string password)
-		{
-			var pfx = new MX.PKCS12 ();
-			try {
-				var attrs = new Hashtable ();
-				var localKeyId = new ArrayList ();
-				localKeyId.Add (new byte[] { 1, 0, 0, 0 });
-				attrs.Add (MX.PKCS9.localKeyId, localKeyId);
-
-				if (password != null)
-					pfx.Password = password;
-				pfx.AddCertificate (_cert, attrs);
-				var privateKey = PrivateKey;
-				if (privateKey != null)
-					pfx.AddPkcs8ShroudedKeyBag (privateKey, attrs);
-				return pfx.GetBytes ();
-			} finally {
-				pfx.Password = null;
-			}
-		}
-
 		public override void Reset () 
 		{
 			_cert = null;
-			_archived = false;
-			_extensions = null;
 			_publicKey = null;
-			issuer_name = null;
-			subject_name = null;
-			signature_algorithm = null;
 			if (intermediateCerts != null) {
 				intermediateCerts.Dispose ();
 				intermediateCerts = null;
-			}
-		}
-
-		public override string ToString ()
-		{
-			if (_cert == null)
-				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
-
-			return ToString (true);
-		}
-
-		public override string ToString (bool verbose)
-		{
-			if (_cert == null)
-				return "System.Security.Cryptography.X509Certificates.X509Certificate2";
-
-			string nl = Environment.NewLine;
-			StringBuilder sb = new StringBuilder ();
-
-			// the non-verbose X509Certificate2 == verbose X509Certificate
-			if (!verbose) {
-				sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
-				sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
-				sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
-				sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
-				sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));
-				sb.Append (nl);
-				return sb.ToString ();
-			}
-
-			sb.AppendFormat ("[Version]{0}  V{1}{0}{0}", nl, Version);
-			sb.AppendFormat ("[Subject]{0}  {1}{0}{0}", nl, GetSubjectName (false));
-			sb.AppendFormat ("[Issuer]{0}  {1}{0}{0}", nl, GetIssuerName (false));
-			sb.AppendFormat ("[Serial Number]{0}  {1}{0}{0}", nl, GetSerialNumber ());
-			sb.AppendFormat ("[Not Before]{0}  {1}{0}{0}", nl, GetValidFrom ().ToLocalTime ());
-			sb.AppendFormat ("[Not After]{0}  {1}{0}{0}", nl, GetValidUntil ().ToLocalTime ());
-			sb.AppendFormat ("[Thumbprint]{0}  {1}{0}", nl, X509Helper.ToHexString (GetCertHash ()));
-			sb.AppendFormat ("[Signature Algorithm]{0}  {1}({2}){0}{0}", nl, SignatureAlgorithm.FriendlyName, 
-				SignatureAlgorithm.Value);
-
-			AsymmetricAlgorithm key = PublicKey.Key;
-			sb.AppendFormat ("[Public Key]{0}  Algorithm: ", nl);
-			if (key is RSA)
-				sb.Append ("RSA");
-			else if (key is DSA)
-				sb.Append ("DSA");
-			else
-				sb.Append (key.ToString ());
-			sb.AppendFormat ("{0}  Length: {1}{0}  Key Blob: ", nl, key.KeySize);
-			AppendBuffer (sb, PublicKey.EncodedKeyValue.RawData);
-			sb.AppendFormat ("{0}  Parameters: ", nl);
-			AppendBuffer (sb, PublicKey.EncodedParameters.RawData);
-			sb.Append (nl);
-
-			return sb.ToString ();
-		}
-
-		private static void AppendBuffer (StringBuilder sb, byte[] buffer)
-		{
-			if (buffer == null)
-				return;
-			for (int i=0; i < buffer.Length; i++) {
-				sb.Append (buffer [i].ToString ("x2"));
-				if (i < buffer.Length - 1)
-					sb.Append (" ");
 			}
 		}
 
@@ -723,5 +385,3 @@ namespace System.Security.Cryptography.X509Certificates
 		}
 	}
 }
-
-#endif

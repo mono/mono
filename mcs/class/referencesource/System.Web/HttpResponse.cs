@@ -2399,6 +2399,11 @@ namespace System.Web {
                 Write("</BODY>");
             }
             else {
+                // VSO bug 360276
+                if(HttpRuntime.UseIntegratedPipeline) {
+                    this.ContentType = "text/html";
+                }
+
                 this.StatusCode = permanent ? 301 : 302;
                 RedirectLocation = url;
                 // DevDivBugs 158137: 302 Redirect vulnerable to XSS
@@ -3286,7 +3291,8 @@ namespace System.Web {
         }
 
         private String ConvertToFullyQualifiedRedirectUrlIfRequired(String url) {
-            HttpRuntimeSection runtimeConfig = RuntimeConfig.GetConfig(_context).HttpRuntime;
+            HttpRuntimeSection runtimeConfig = _context.IsRuntimeErrorReported ?
+                RuntimeConfig.GetLKGConfig(_context).HttpRuntime : RuntimeConfig.GetConfig(_context).HttpRuntime;
             if (    runtimeConfig.UseFullyQualifiedRedirectUrl ||
                     (Request != null && (string)Request.Browser["requiresFullyQualifiedRedirectUrl"] == "true")) {
                 return (new Uri(Request.Url, url)).AbsoluteUri ;

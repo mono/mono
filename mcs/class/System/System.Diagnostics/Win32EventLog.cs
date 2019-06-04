@@ -734,6 +734,9 @@ namespace System.Diagnostics
 
 		private void NotifyEventThread (ManualResetEvent resetEvent)
 		{
+			if (resetEvent == null)
+				return;
+
 			while (true) {
 				try {
 					resetEvent.WaitOne ();

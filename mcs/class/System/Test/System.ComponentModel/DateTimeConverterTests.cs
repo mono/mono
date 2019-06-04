@@ -12,10 +12,10 @@ using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 
-using NUnit.Framework;
-
 namespace MonoTests.System.ComponentModel
 {
+	using NUnit.Framework;
+
 	[TestFixture]
 	public class DateTimeConverterTests
 	{
@@ -146,7 +146,8 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		[SetCulture("en-GB")]
+		[SetCulture ("en-GB")]
+		[Category ("Calendars")]
 		public void ConvertToString ()
 		{
 			CultureInfo culture = new MyCultureInfo ();

@@ -296,10 +296,50 @@ namespace MonoTests.System
 		{
 		}
 
+		private void GenericMethod2<A, B, C, D> ()
+			where C : Duper
+			where A : B, IFace
+			where B : C
+			where D : Baz<object>
+		{
+		}
+
 		public class Nested
 		{
 
 		}
+
+		public class DummyReflectionWildcardClass {
+			public DummyReflectionWildcardClass() { }
+			public DummyReflectionWildcardClass(string p) { }
+
+			public event EventHandler<string> DummyEvent;
+			public event EventHandler<string> DummyEvent2;
+
+			public string DummyField = "dummy";
+			public string DummyField2 = "dummy2";
+			public string AlternateField = "Alt";
+
+			public string DummyProperty {
+				get; set;
+			}
+
+			public string DummyProperty2 {
+				get; set;
+			}
+
+			public void DummyMethod() { }
+			public void DummyMethod2() { }
+
+			public class DummyNested {
+				public void Go() { }
+			}
+
+			public class DummyNested2 {
+				public void Go() { }
+			}
+		}
+
 
 		[Test]
 		public void TestIsAssignableFrom ()
@@ -369,6 +409,54 @@ namespace MonoTests.System
 			// Tests for parameters with generic constraints
 			mi = typeof (TypeTest).GetMethod ("GenericMethod", BindingFlags.Instance|BindingFlags.NonPublic);
 			Assert.IsTrue (typeof (IFace).IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
+
+			// Transitivity of IsAssignableFrom for type parameters
+			mi = typeof (TypeTest).GetMethod ("GenericMethod2", BindingFlags.Instance|BindingFlags.NonPublic);
+			var gparams = mi.GetGenericArguments ();
+			// B : Duper since B : C and C : Duper
+			Assert.IsTrue (typeof (Duper).IsAssignableFrom (gparams[1]), "#36");
+			// A : Duper since A : B and B : Duper
+			Assert.IsTrue (typeof (Duper).IsAssignableFrom (gparams[0]), "#37a");
+			// A : IFace since A : IFace
+			Assert.IsTrue (typeof (IFace).IsAssignableFrom (gparams[0]), "#37b");
+			// B : Super since B : Duper and Duper : Super
+			Assert.IsTrue (typeof (Super).IsAssignableFrom (gparams[1]), "#38");
+			// A : Super since A : B and B : Super
+			Assert.IsTrue (typeof (Super).IsAssignableFrom (gparams[0]), "#39");
+			// D : IBar<object> since D : Baz<object> and Baz<object> : IBar<object>
+			Assert.IsTrue (typeof (IBar<object>).IsAssignableFrom (gparams [3]), "#40");
+			// A not assignable from B since A : B
+			Assert.IsFalse (gparams[0].IsAssignableFrom (gparams [1]), "#41");
+			Assert.IsFalse (gparams[0].IsAssignableFrom (gparams [2]), "#42");
+
+			// A is not assignable from Array and Delegate and vice versa
+			Assert.IsFalse (gparams[0].IsAssignableFrom (typeof (Array)), "#43");
+			Assert.IsFalse (gparams[0].IsAssignableFrom (typeof (Delegate)), "#44");
+			Assert.IsFalse (typeof (Array).IsAssignableFrom (gparams[0]), "#45");
+			Assert.IsFalse (typeof (Delegate).IsAssignableFrom (gparams[0]), "#46");
+
+		}
+
+		[Test]
+		public void GenericParameterBaseType ()
+		{
+			var mi = typeof (TypeTest).GetMethod ("GenericMethod2", BindingFlags.Instance|BindingFlags.NonPublic);
+			var gparams = mi.GetGenericArguments ();
+
+			// From the .NET documentation: BaseType property of a
+			// gparam is "object" if its only constraints are other
+			// gparams or interfaces, otherwise if it has a class
+			// constraint that class is the BaseType.
+
+			// A : B where B is a gparam, and A : IFace which is an
+			// interface, so A.BaseType is object
+			Assert.AreEqual (typeof (object), gparams[0].BaseType, "#1");
+			// B : C where C is a gparam, so B.BaseType is object
+			Assert.AreEqual (typeof (object), gparams[1].BaseType, "#2");
+			// C : Duper where Duper is a class, so A.BaseType is Duper
+			Assert.AreEqual (typeof (Duper), gparams[2].BaseType, "#3");
+			// D : Baz<object>
+			Assert.AreEqual (typeof (Baz<object>), gparams[3].BaseType, "#4");
 		}
 
 		[Test]
@@ -389,6 +477,11 @@ namespace MonoTests.System
 			Assert.IsNull (paramType.BaseType, "#02-b");
 			Assert.IsTrue (paramType.IsSubclassOf (typeof (Object)), "#03");
 			Assert.IsFalse (paramType.IsSubclassOf (paramType), "#04");
+
+			// IsSubclassOf is not reflexive
+			Assert.IsFalse (typeof (string).IsSubclassOf (typeof (string)), "#05");
+			Assert.IsFalse (typeof (int).IsSubclassOf (typeof (int)), "#06");
+			Assert.IsFalse (typeof (object).IsSubclassOf (typeof (object)), "#07");
 		}
 
 		[Test]
@@ -2699,7 +2792,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
+				Assert.AreEqual ("typeName", ex.ParamName, "#5");
 			}
 		}
 
@@ -2713,7 +2806,7 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
+				Assert.AreEqual ("typeName", ex.ParamName, "#5");
 			}
 		}
 
@@ -2727,8 +2820,43 @@ namespace MonoTests.System
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
+				Assert.AreEqual ("typeName", ex.ParamName, "#5");
 			}
+		}
+
+		[Test]
+		public void GetType1_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("");
+			Assert.IsNull (t);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void GetType2_TypeName_Empty ()
+		{
+			Type.GetType ("", true);
+		}
+
+		[Test]
+		public void GetType2_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("", false);
+			Assert.IsNull (t);
+		}
+
+		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void GetType3_TypeName_Empty ()
+		{
+			Type.GetType ("", true, false);
+		}
+
+		[Test]
+		public void GetType3_TypeName_Empty_nothrow ()
+		{
+			var t = Type.GetType ("", false, false);
+			Assert.IsNull (t);
 		}
 
 		[Test]
@@ -3166,11 +3294,9 @@ namespace MonoTests.System
 			Type t = Type.ReflectionOnlyGetType (typeof (int).AssemblyQualifiedName.ToString (), true, true);
 			Assert.AreEqual ("System.Int32", t.FullName);
 		}
-
+/*
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void MakeGenericType_UserDefinedType ()
 		{
 			Type ut = new UserType (typeof (int));
@@ -3185,9 +3311,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void MakeGenericType_NestedUserDefinedType ()
 		{
 			Type ut = new UserType (new UserType (typeof (int)));
@@ -3202,9 +3326,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void TestMakeGenericType_UserDefinedType_DotNet20SP1 () 
 		{
 			Type ut = new UserType(typeof(int));
@@ -3215,9 +3337,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-#if MONOTOUCH || FULL_AOT_RUNTIME
-		[ExpectedException (typeof (NotSupportedException))]
-#endif
+		[Category("SRE")]
 		public void MakeGenericType_BadUserType ()
 		{
 			Type ut = new UserType (null);
@@ -3225,7 +3345,7 @@ namespace MonoTests.System
 			var g0 = t.GetGenericArguments () [0];
 			Assert.AreSame (g0, ut, "#1");
 		}
-
+*/
 		[Test]
 		public void MakeGenericType_WrongNumOfArguments ()
 		{
@@ -3265,6 +3385,7 @@ namespace MonoTests.System
 		}
 
 		[Test] //bug #471255
+		[Category("StackWalks")]
 		public void GetTypeCalledUsingReflection ()
 		{
 			Type expectedType = Type.GetType ("NoNamespaceClass");
@@ -3347,33 +3468,62 @@ namespace MonoTests.System
 		Assert.IsTrue (new UserType(null).GenericParameterPosition == 0);
 	}
 
-		[Test]
-		public void TypeGetMemberReturnTypeTest ()
-		{
-			object obj;
-			MemberTypes memtype;
-			Type testtype;
-			object [] flagsandtypes = new object [] {
-				MemberTypes.All, typeof (MemberInfo []),
-				MemberTypes.Constructor, typeof (ConstructorInfo []),
-				MemberTypes.Custom, typeof (MemberInfo []),
-				MemberTypes.Event, typeof (EventInfo []),
-				MemberTypes.Field, typeof (FieldInfo []),
-				MemberTypes.Method, typeof (MethodInfo []),
-				MemberTypes.NestedType, typeof (Type []),
-				MemberTypes.Property, typeof (PropertyInfo []),
-				MemberTypes.TypeInfo, typeof (Type [])};
+	[Test]
+	public void TypeGetMemberReturnTypeTest ()
+	{
+		object obj;
+		MemberTypes memtype;
+		Type testtype;
 
-			for (int i=0; i < flagsandtypes.Length; i+=2) {
-				memtype = (MemberTypes)flagsandtypes [i];
-				testtype = (Type)flagsandtypes [i+1];
-				obj = GetType ().GetMember ("DummyMember", memtype,
-						BindingFlags.Public | BindingFlags.Instance);
-				Assert.AreEqual (testtype.GetHashCode (), obj.GetType ().GetHashCode (),
-						"Expected #" + i + " " + testtype.FullName);
-			}
+		Tuple<MemberTypes, Type>[] flagsandtypes = new Tuple<MemberTypes, Type>[] {
+			Tuple.Create<MemberTypes, Type>(MemberTypes.All, typeof (MemberInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Constructor, typeof (ConstructorInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Custom, typeof (MemberInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Event, typeof (EventInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Field, typeof (FieldInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Method, typeof (MethodInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.NestedType, typeof (Type [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.Property, typeof (PropertyInfo [])),
+			Tuple.Create<MemberTypes, Type>(MemberTypes.TypeInfo, typeof (Type []))
+		};
 
+		for (int i=0; i < flagsandtypes.Length; i++) {
+			memtype = (MemberTypes)flagsandtypes[i].Item1;
+			testtype = (Type)flagsandtypes[i].Item2;
+			obj = GetType ().GetMember ("DummyMember", memtype,
+					BindingFlags.Public | BindingFlags.Instance);
+			Assert.AreEqual (testtype.GetHashCode (), obj.GetType ().GetHashCode (),
+					"Expected #" + i + " " + testtype.FullName);
 		}
+	}
+
+	[Test]
+	public void TypeGetMemberWildcardTypeTest() {
+		MemberInfo[] obj;
+		MemberTypes memType;
+		string wildcard;
+		Type testType = typeof(FieldInfo[]);
+
+		Tuple<MemberTypes, Type, string>[] flagsandtypes = new Tuple<MemberTypes, Type, string>[] {
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.Field, typeof (FieldInfo []), "Fi*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.Event, typeof (EventInfo []), "Ev*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.Method, typeof (MethodInfo []), "Me*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.Property, typeof (PropertyInfo []), "Pr*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.NestedType, typeof (Type []), "Ne*"),
+			Tuple.Create<MemberTypes, Type, string>(MemberTypes.TypeInfo, typeof (Type[]), "Ne*")
+		};
+		
+		for (int i=0; i < flagsandtypes.Length; i++) {
+			memType = (MemberTypes)flagsandtypes[i].Item1;
+			testType = (Type)flagsandtypes[i].Item2;
+			wildcard = flagsandtypes[i].Item3.ToString();
+
+			obj = typeof(DummyReflectionWildcardClass).GetMember("Dummy" + wildcard, memType, BindingFlags.Public | BindingFlags.Instance);
+
+			Assert.AreEqual(testType.GetHashCode(), obj.GetType().GetHashCode(), "Expected #" + i + " A1: " + testType.FullName);
+			Assert.AreEqual(2, obj.Length, "Expected #" + i + " B1: Member Length = 2");
+		}
+	}
  
  		[Test]
  		public void TypeNameStartsWithSpace ()
@@ -3391,8 +3541,9 @@ namespace MonoTests.System
 		}
 #endif
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 		[Test]
+		[Category("SRE")]
 		public void Bug506757 ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();
@@ -3437,6 +3588,7 @@ namespace MonoTests.System
 				Assert.IsTrue (m.DeclaringType == typeof (object), String.Format ("{0}::{1}", m.DeclaringType, m.Name));
 		}
 #endif
+
 		[Test]
 		public void MakeArrayTypeOfOneDimension ()
 		{
@@ -3617,6 +3769,80 @@ namespace MonoTests.System
 
 		public struct Size4b {
 			public int field;
+		}
+
+		[Test]
+		public void IsAssignableFromGenericArgumentsWithConstraints ()
+		{
+			// Regression test for #58809
+
+			// Generic Parameters of a gtd should have their
+			// constraints respected even when those constraints
+			// are other generic parameters themselves.
+
+			var ps = typeof (GenericWithParamConstraints<,,>).GetGenericArguments ();
+
+			var a = ps[0];
+			var b = ps[1];
+			var c = ps[2];
+
+			// Foo<C>
+			var fooOfC = typeof (Foo<>).MakeGenericType (c);
+
+			// constraint B : Foo <C>
+			Assert.IsTrue (fooOfC.IsAssignableFrom (b), "#1");
+
+			// constraint A : B
+			Assert.IsTrue (b.IsAssignableFrom (a), "#2");
+
+			// A : Foo<C> since A : B and B : Foo<C>
+			Assert.IsTrue (fooOfC.IsAssignableFrom (a), "#3");
+		}
+
+		class GenericWithParamConstraints<A, B, C> where B : Foo<C> where A : B
+		{
+		}
+
+		[Test]
+		public void IsAssignableFromArraySpecialInterfaceGtd ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7095
+			// An "array special interface" is a Mono name for some
+			// interfaces that are implemented by arrays.
+			// Check that an array special interface GTD (ie, IList<> not IList<Foo>) work
+			// correctly with IsAssignableFrom.
+			var il = typeof (IList<>);
+			var ie = typeof (IEnumerable<>);
+			var ilparam = il.GetTypeInfo ().GenericTypeParameters [0];
+			var ilparr = ilparam.MakeArrayType ();
+
+			Assert.IsTrue (ie.IsAssignableFrom (ie), "IList<> ---> IEnumerable<>");
+			Assert.IsTrue (il.IsAssignableFrom (ilparr), "!0[] ---> IList<>");
+
+			var ilparrarr = ilparr.MakeArrayType ();
+
+			Assert.IsFalse (il.IsAssignableFrom (ilparrarr), "!0[][] -!-> IList<>");
+
+			Assert.IsFalse (il.IsAssignableFrom (typeof (Array)), "System.Array -!-> IList<>");
+		}
+
+		[Test]
+		public void IsAssignableFromArrayEnumerator ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7093
+			// An array does not implement IEnumerator`1
+
+			var arrStr = typeof (string[]);
+			var ieStr = typeof (IEnumerator<string>);
+			var ieEqStr = typeof (IEnumerator<IEquatable<string>>);
+			Assert.IsFalse (ieStr.IsAssignableFrom (arrStr), "string[] -!-> IEnumerator<string>");
+			Assert.IsFalse (ieEqStr.IsAssignableFrom (arrStr), "string[] -!-> IEnumerator<IEquatable<string>>");
+
+			var arrInt = typeof (int[]);
+			var ieInt = typeof (IEnumerator<int>);
+			var ieEqInt = typeof (IEnumerator<IEquatable<int>>);
+			Assert.IsFalse (ieInt.IsAssignableFrom (arrInt), "int[] -!-> IEnumerator<int>");
+			Assert.IsFalse (ieEqInt.IsAssignableFrom (arrInt), "int[] -!-> IEnumerator<IEquatable<int>>");
 		}
 
 		[Test] // Bug #612780
@@ -4203,6 +4429,7 @@ namespace MonoTests.System
 		[Test]
 		public void NewGetTypeErrors () {
 			MustANE (null);
+			MustTLE ("");
 			MustAE ("!@#$%^&*");
 			MustAE (string.Format ("{0}[{1}&]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
 			MustAE (string.Format ("{0}[{1}*]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
@@ -4332,7 +4559,7 @@ namespace MonoTests.System
 
 		}
 
-#if !MONOTOUCH && !FULL_AOT_RUNTIME && !MONOMAC
+#if !MONOTOUCH && !FULL_AOT_RUNTIME
 		[Test]
 		[Category ("AndroidNotWorking")] // requires symbol writer
 		public void FullNameGetTypeParseEscapeRoundtrip () // bug #26384
@@ -4730,6 +4957,114 @@ namespace MonoTests.System
 			{
 			}
 		}
+
+		// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
+		[Test]
+		public void NullFullNameForSpecificGenericTypes()
+		{
+			var expected = new [] {
+				(
+					typeof(Bug59738Class<>).GetFields()[0].FieldType,
+					"Bug59738Interface`1", (string)null, 
+					"MonoTests.System.TypeTest+Bug59738Interface`1[U]"
+				),
+				(
+					typeof(Bug59738Derived<>).BaseType,
+					"Bug59738Class`1", (string)null, 
+					"MonoTests.System.TypeTest+Bug59738Class`1[U]"
+				),
+				(
+					typeof(Bug59738Class<int>),
+					"Bug59738Class`1", 
+					$"MonoTests.System.TypeTest+Bug59738Class`1[[System.Int32, {typeof (int).Assembly.FullName}]]",
+					"MonoTests.System.TypeTest+Bug59738Class`1[System.Int32]"
+				)
+			};
+
+			for (var i = 0; i < expected.Length; i++) {
+				var (t, name, fullname, tostring) = expected[i];
+				Assert.AreEqual(name, t.Name, $"{i}.Name");
+				Assert.AreEqual(fullname, t.FullName, $"{i}.FullName");
+				Assert.AreEqual(tostring, t.ToString(), $"{i}.ToString()");
+			}
+		}
+
+		// https://github.com/mono/mono/issues/6579
+		[Test]
+		public void GetInterfaceCaseInsensitiveTest()
+		{
+			var type = typeof(Dictionary<string, object>);
+
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.IDictionary", false),
+				"strict named interface must be found (ignoreCase = false)"
+			);
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.IDictionary", true),
+				"strict named interface must be found (ignoreCase = true)"
+			);
+			Assert.Null (
+				type.GetInterface ("System.Collections.Idictionary", false),
+				"interface, named in mixed case, must not be found (ignoreCase = false)"
+			);
+			Assert.NotNull (
+				type.GetInterface ("System.Collections.Idictionary", true),
+				"interface, named in mixed case, must be found (ignoreCase = true)"
+			);
+		}
+
+		interface Bug59738Interface<T> {
+		}
+
+		class Bug59738Class<U> {
+			public Bug59738Interface<U> Iface;
+		}
+
+		class Bug59738Derived<U> : Bug59738Class<U> {
+		}
+
+		ref struct UserByRefLikeStruct {
+			object u;
+			IntPtr i;
+		}
+
+		[Test]
+		public void IsByRefLike_positive ()
+		{
+			Assert.IsTrue (typeof(Span<int>).IsByRefLike, "#1");
+			Assert.IsTrue (typeof(RuntimeArgumentHandle).IsByRefLike, "#2");
+			Assert.IsTrue (typeof(TypedReference).IsByRefLike, "#3");
+			Assert.IsTrue (typeof(UserByRefLikeStruct).IsByRefLike, "#4");
+		}
+
+		[Test]
+		public void IsByRefLike_negative ()
+		{
+			Assert.IsFalse (typeof (int).IsByRefLike, "#1");
+			Assert.IsFalse (typeof (object).IsByRefLike, "#2");
+			Assert.IsFalse (typeof (int).MakeByRefType ().IsByRefLike, "#3");
+			Assert.IsFalse (typeof (string).MakeByRefType ().IsByRefLike, "#4");
+			Assert.IsFalse (typeof (Span<int>).MakeByRefType ().IsByRefLike, "#5");
+			Assert.IsFalse (typeof (UserByRefLikeStruct).MakeByRefType ().IsByRefLike, "#6");
+			Assert.IsFalse (typeof (int).MakePointerType ().IsByRefLike, "#7");
+			Assert.IsFalse (typeof (Span<int>).MakePointerType ().IsByRefLike, "#8");
+			Assert.IsFalse (typeof (UserByRefLikeStruct).MakePointerType ().IsByRefLike, "#9");
+		}
+
+		[Test]
+		[ExpectedException("System.TypeLoadException")]
+		public void IsByRefLike_ArrayOfSpan_TLE ()
+		{
+			typeof(Span<int>).MakeArrayType ();
+		}
+
+		[Test]
+		[ExpectedException("System.TypeLoadException")]
+		public void IsByRefLike_ArrayOfByrefLike_TLE ()
+		{
+			typeof(UserByRefLikeStruct).MakeArrayType ();
+		}
+
 	}
 
 	class UserType : Type

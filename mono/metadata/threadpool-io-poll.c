@@ -107,22 +107,22 @@ poll_remove_fd (gint fd)
 }
 
 static inline gint
-poll_mark_bad_fds (mono_pollfd *poll_fds, gint poll_fds_size)
+poll_mark_bad_fds (mono_pollfd *fds, gint size)
 {
 	gint i, ready = 0;
 
-	for (i = 0; i < poll_fds_size; i++) {
-		if (poll_fds [i].fd == -1)
+	for (i = 0; i < size; i++) {
+		if (fds [i].fd == -1)
 			continue;
 
-		switch (mono_poll (&poll_fds [i], 1, 0)) {
+		switch (mono_poll (&fds [i], 1, 0)) {
 		case 1:
 			ready++;
 			break;
 		case -1:
 			if (errno == EBADF)
 			{
-				poll_fds [i].revents |= MONO_POLLNVAL;
+				fds [i].revents |= MONO_POLLNVAL;
 				ready++;
 			}
 			break;
@@ -140,13 +140,13 @@ poll_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), gp
 	for (i = 0; i < poll_fds_size; ++i)
 		poll_fds [i].revents = 0;
 
-	mono_gc_set_skip_thread (TRUE);
+	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC);
 
 	MONO_ENTER_GC_SAFE;
 	ready = mono_poll (poll_fds, poll_fds_size, -1);
 	MONO_EXIT_GC_SAFE;
 
-	mono_gc_set_skip_thread (FALSE);
+	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NONE);
 
 	if (ready == -1) {
 		/*
@@ -213,8 +213,8 @@ poll_event_wait (void (*callback) (gint fd, gint events, gpointer user_data), gp
 }
 
 static ThreadPoolIOBackend backend_poll = {
-	.init = poll_init,
-	.register_fd = poll_register_fd,
-	.remove_fd = poll_remove_fd,
-	.event_wait = poll_event_wait,
+	poll_init,
+	poll_register_fd,
+	poll_remove_fd,
+	poll_event_wait,
 };

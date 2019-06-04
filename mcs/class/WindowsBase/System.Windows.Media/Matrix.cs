@@ -25,6 +25,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Markup;
 using System.Windows.Media.Converters;
 using System.Windows.Threading;
@@ -109,7 +110,16 @@ namespace System.Windows.Media {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			unchecked
+			{
+				var hashCode = _m11.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _m12.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _m21.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _m22.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _offsetX.GetHashCode ();
+				hashCode = (hashCode * 397) ^ _offsetY.GetHashCode ();
+				return hashCode;
+			}
 		}
 
 		public void Invert ()
@@ -167,7 +177,41 @@ namespace System.Windows.Media {
 
 		public static Matrix Parse (string source)
 		{
-			throw new NotImplementedException ();
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			Matrix value;
+			if (source.Trim () == "Identity")
+			{
+				value = Identity;
+			}
+			else
+			{
+				var tokenizer = new NumericListTokenizer (source, CultureInfo.InvariantCulture);
+				double m11;
+				double m12;
+				double m21;
+				double m22;
+				double offsetX;
+				double offsetY;
+				if (double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out m11)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out m12)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out m21)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out m22)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out offsetX)
+				    && double.TryParse (tokenizer.GetNextToken (), NumberStyles.Float, CultureInfo.InvariantCulture, out offsetY))
+				{
+					if (!tokenizer.HasNoMoreTokens ())
+					{
+						throw new InvalidOperationException ("Invalid Matrix format: " + source);
+					}
+					value = new Matrix (m11, m12, m21, m22, offsetX, offsetY);
+				}
+				else
+				{
+					throw new FormatException (string.Format ("Invalid Matrix format: {0}", source));
+				}
+			}
+			return value;
 		}
 
 		public void Prepend (Matrix matrix)
@@ -294,24 +338,40 @@ namespace System.Windows.Media {
 			Prepend (m);
 		}
 
-		string IFormattable.ToString (string format,
-					      IFormatProvider provider)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override string ToString ()
 		{
-			if (IsIdentity)
-				return "Identity";
-			else
-				return string.Format ("{0},{1},{2},{3},{4},{5}",
-						      _m11, _m12, _m21, _m22, _offsetX, _offsetY);
+			return ToString (null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ToString (null, provider);
+		}
+
+		string IFormattable.ToString (string format,
+			IFormatProvider provider)
+		{
+			return ToString (provider);
+		}
+
+		private string ToString (string format, IFormatProvider provider)
+		{
+			if (IsIdentity)
+				return "Identity";
+
+			if (provider == null)
+				provider = CultureInfo.CurrentCulture;
+
+			if (format == null)
+				format = string.Empty;
+
+			var separator = NumericListTokenizer.GetSeparator (provider);
+
+			var matrixFormat = string.Format (
+				"{{0:{0}}}{1}{{1:{0}}}{1}{{2:{0}}}{1}{{3:{0}}}{1}{{4:{0}}}{1}{{5:{0}}}",
+				format, separator);
+			return string.Format (provider, matrixFormat,
+				_m11, _m12, _m21, _m22, _offsetX, _offsetY);
 		}
 
 		public Point Transform (Point point)

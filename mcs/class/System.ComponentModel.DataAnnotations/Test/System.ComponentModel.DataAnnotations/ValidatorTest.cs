@@ -29,7 +29,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.ComponentModel.DataAnnotations
 {
@@ -43,11 +42,11 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			var ctx = new ValidationContext (dummy, null, null);
 			var results = new List<ValidationResult> ();
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.TryValidateObject (null, ctx, results);
 			}, "#A1-1");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.TryValidateObject (dummy, null, results);
 			}, "#A1-2");
 
@@ -70,7 +69,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			dummy = new Dummy {
 				NameField = null
 			};
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				// The instance provided must match the ObjectInstance on the ValidationContext supplied.
 				valid = Validator.TryValidateObject (dummy, ctx, results);
 			}, "#A2");
@@ -133,11 +132,11 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			var ctx = new ValidationContext (dummy, null, null);
 			var results = new List<ValidationResult> ();
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.TryValidateObject (null, ctx, results, false);
 			}, "#A1-1");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.TryValidateObject (dummy, null, results, false);
 			}, "#A1-2");
 
@@ -168,12 +167,12 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			dummy = new Dummy {
 				NameField = null
 			};
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				// The instance provided must match the ObjectInstance on the ValidationContext supplied.
 				valid = Validator.TryValidateObject (dummy, ctx, results, false);
 			}, "#A2-1");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				// The instance provided must match the ObjectInstance on the ValidationContext supplied.
 				valid = Validator.TryValidateObject (dummy, ctx, results, true);
 			}, "#A2-2");
@@ -269,7 +268,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 
 			var dummy2 = new DummyWithException ();
 			ctx = new ValidationContext (dummy2, null, null);
-			AssertExtensions.Throws<ApplicationException> (() => {
+			Assert.Throws<ApplicationException> (() => {
 				Validator.TryValidateObject (dummy2, ctx, results, true);
 			}, "#A9");
 		}
@@ -283,7 +282,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			};
 			var results = new List<ValidationResult> ();
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.ValidatorTest.TryValidateProperty:
 				// System.ArgumentException : The type 'DummyNoAttributes' does not contain a public property named 'NameProperty'.
 				// Parameter name: propertyName
@@ -297,7 +296,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}, "#A1-1");
 			Assert.AreEqual (0, results.Count, "#A1-2");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.TryValidateProperty ("dummy", null, results);
 			}, "#A1-2");
 
@@ -314,12 +313,12 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				MemberName = "MinMaxProperty"
 			};
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				Validator.TryValidateProperty (null, ctx, results);
 			}, "#A1-5");
 
 			ctx = new ValidationContext (dummy2, null, null);
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.ValidatorTest.TryValidateProperty:
 				// System.ArgumentNullException : Value cannot be null.
 				// Parameter name: propertyName
@@ -338,7 +337,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				MemberName = String.Empty
 			};
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.ValidatorTest.TryValidateProperty:
 				// System.ArgumentNullException : Value cannot be null.
 				// Parameter name: propertyName
@@ -358,7 +357,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				MemberName = "NameProperty"
 			};
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				// MonoTests.System.ComponentModel.DataAnnotations.ValidatorTest.TryValidateProperty:
 				// System.ArgumentException : The value for property 'NameProperty' must be of type 'System.String'.
 				// Parameter name: value
@@ -429,7 +428,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsTrue (valid, "#A1-1");
 			Assert.AreEqual (0, results.Count, "#A1-2");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.TryValidateValue ("dummy", null, results, attributes);
 			}, "#A2");
 
@@ -437,7 +436,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsTrue (valid, "#A3-1");
 			Assert.AreEqual (0, results.Count, "#A3-2");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.TryValidateValue ("dummy", ctx, results, null);
 			}, "#A4");
 		}
@@ -464,7 +463,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			results.Clear ();
 			log.Clear ();
 
-			AssertExtensions.Throws<InvalidCastException> (() => {
+			Assert.Throws<InvalidCastException> (() => {
 				// Thrown by StringValidatorAttribute
 				Validator.TryValidateValue (1234, ctx, results, attributes);
 			}, "#A2-1");
@@ -490,7 +489,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			attributes.RemoveAt (2);
 			attributes.RemoveAt (2);
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.TryValidateValue ("dummy", null, results, attributes);
 			}, "#B1");
 
@@ -498,7 +497,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsTrue (valid, "#B2-1");
 			Assert.AreEqual (0, results.Count, "#B2-2");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.TryValidateValue ("dummy", ctx, results, null);
 			}, "#B3");
 		}
@@ -509,11 +508,11 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			var dummy = new DummyNoAttributes ();
 			var ctx = new ValidationContext (dummy, null, null);
 			
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateObject (null, ctx);
 			}, "#A1-1");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateObject (dummy, null);
 			}, "#A1-2");
 
@@ -539,7 +538,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			dummy = new Dummy {
 				NameField = null
 			};
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				// The instance provided must match the ObjectInstance on the ValidationContext supplied.
 				Validator.ValidateObject (dummy, ctx);
 			}, "#A2");
@@ -566,7 +565,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				RequiredDummyProperty = null
 			};
 			ctx = new ValidationContext (dummy, null, null);
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateObject (dummy, ctx);
 			}, "#A5");
 
@@ -595,7 +594,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				FailValidation = true
 			};
 			ctx = new ValidationContext (dummy, null, null);
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateObject (dummy, ctx);
 			}, "#A8");
 
@@ -614,11 +613,11 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			var dummy = new DummyNoAttributes ();
 			var ctx = new ValidationContext (dummy, null, null);
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateObject (null, ctx, false);
 			}, "#A1-1");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateObject (dummy, null, false);
 			}, "#A1-2");
 
@@ -656,12 +655,12 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			dummy = new Dummy {
 				NameField = null
 			};
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				// The instance provided must match the ObjectInstance on the ValidationContext supplied.
 				Validator.ValidateObject (dummy, ctx, false);
 			}, "#A3-1");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				// The instance provided must match the ObjectInstance on the ValidationContext supplied.
 				Validator.ValidateObject (dummy, ctx, true);
 			}, "#A3-2");
@@ -701,11 +700,11 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				RequiredDummyProperty = null
 			};
 			ctx = new ValidationContext (dummy, null, null);
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateObject (dummy, ctx, false);
 			}, "#A6-1");
 
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateObject (dummy, ctx, true);
 			}, "#A6-2");
 
@@ -727,12 +726,12 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			}
 
 			dummy.NameProperty = "0";
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateObject (dummy, ctx, true);
 			}, "#A9");
 
 			dummy.NameProperty = "name too long (invalid value)";
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateObject (dummy, ctx, true);
 			}, "#A10");
 
@@ -746,7 +745,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				Assert.Fail ("#A11 (exception {0} thrown: {1})", ex.GetType (), ex.Message);
 			}
 
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateObject (dummy, ctx, true);
 			}, "#A12");
 
@@ -754,17 +753,17 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				FailValidation = true
 			};
 			ctx = new ValidationContext (dummy, null, null);
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateObject (dummy, ctx, false);
 			}, "#A13-1");
 
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateObject (dummy, ctx, true);
 			}, "#A13-2");
 
 			var dummy2 = new DummyWithException ();
 			ctx = new ValidationContext (dummy2, null, null);
-			AssertExtensions.Throws<ApplicationException> (() => {
+			Assert.Throws<ApplicationException> (() => {
 				Validator.ValidateObject (dummy2, ctx, true);
 			}, "#A14");
 
@@ -793,11 +792,11 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				MemberName = "NameProperty"
 			};
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				Validator.ValidateProperty ("dummy", ctx);
 			}, "#A1-1");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateProperty ("dummy", null);
 			}, "#A1-2");
 
@@ -816,12 +815,12 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				MemberName = "MinMaxProperty"
 			};
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				Validator.ValidateProperty (null, ctx);
 			}, "#A3");
 
 			ctx = new ValidationContext (dummy2, null, null);
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateProperty ("dummy", ctx);
 			}, "#A4");
 
@@ -829,7 +828,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				MemberName = String.Empty
 			};
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateProperty ("dummy", ctx);
 			}, "#A5");
 
@@ -838,7 +837,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				MemberName = "NameProperty"
 			};
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				Validator.ValidateProperty (1234, ctx);
 			}, "#A6");
 
@@ -847,11 +846,11 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				MemberName = "NameProperty"
 			};
 
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateProperty (String.Empty, ctx);
 			}, "#A7");
 
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateProperty ("this value is way too long", ctx);
 			}, "#A8");
 
@@ -866,15 +865,15 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				MemberName = "CustomValidatedProperty"
 			};
 
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateProperty (String.Empty, ctx);
 			}, "#A10");
 
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateProperty ("fail", ctx);
 			}, "#A11");
 
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateProperty ("f", ctx);
 			}, "#A12");
 
@@ -900,7 +899,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				Assert.Fail ("#A1 (exception {0} thrown: {1})", ex.GetType (), ex.Message);
 			}
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateValue ("dummy", null, attributes);
 			}, "#A2");
 
@@ -910,7 +909,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				Assert.Fail ("#A3 (exception {0} thrown: {1})", ex.GetType (), ex.Message);
 			}
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateValue ("dummy", ctx, null);
 			}, "#A4");
 		}
@@ -928,14 +927,14 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				new RequiredAttributePoker (log)
 			};
 
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateValue (null, ctx, attributes);
 			}, "#A1-1");
 			Assert.AreEqual (1, log.Count, "#A1-2");
 			Assert.IsTrue (log[0].StartsWith ("RequiredAttributePoker.IsValid (object)"), "#A1-3");
 			log.Clear ();
 
-			AssertExtensions.Throws<InvalidCastException> (() => {
+			Assert.Throws<InvalidCastException> (() => {
 				// Thrown by StringValidatorAttribute
 				Validator.ValidateValue (1234, ctx, attributes);
 			}, "#A2-1");;
@@ -946,7 +945,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 
 			attributes.Add (new CustomValidationAttribute (typeof (ValidatorTest), "ValueValidationMethod"));
 			attributes.Add (new CustomValidationAttribute (typeof (ValidatorTest), "ValueValidationMethod"));
-			AssertExtensions.Throws<ValidationException> (() => {
+			Assert.Throws<ValidationException> (() => {
 				Validator.ValidateValue ("test", ctx, attributes);
 			}, "#A3-1");
 			Assert.AreEqual (2, log.Count, "#A3-2");
@@ -956,7 +955,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			attributes.RemoveAt (2);
 			attributes.RemoveAt (2);
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateValue ("dummy", null, attributes);
 			}, "#B1");
 
@@ -966,7 +965,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 				Assert.Fail ("#B2 (exception {0} thrown: {1})", ex.GetType (), ex.Message);
 			}
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				Validator.ValidateValue ("dummy", ctx, null);
 			}, "#B3");
 		}

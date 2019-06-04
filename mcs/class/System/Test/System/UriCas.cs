@@ -124,7 +124,7 @@ namespace MonoCasTests.System {
 			Type[] types = new Type[1] { typeof (string) };
 			ConstructorInfo ci = typeof (Uri).GetConstructor (types);
 			Assert.IsNotNull (ci, ".ctor(string)");
-			Assert.IsNotNull (ci.Invoke (new object[1] { "http://www.mono-project.com/" }), "invoke");
+			Assert.IsNotNull (ci.Invoke (new object[1] { "http://www.example.com/" }), "invoke");
 		}
 	}
 }

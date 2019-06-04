@@ -394,16 +394,33 @@ namespace System.Threading
 #endif
 
 #if MONO
+        internal unsafe static IntPtr CreateSemaphore_internal (int initialCount, int maximumCount,
+		string name, out int errorCode)
+	{
+		// FIXME Check for embedded nuls in name.
+		fixed (char *fixed_name = name)
+			return CreateSemaphore_icall (initialCount, maximumCount,
+				fixed_name, name?.Length ?? 0, out errorCode);
+	}
+
+        private unsafe static IntPtr OpenSemaphore_internal (string name, SemaphoreRights rights, out int errorCode)
+	{
+		// FIXME Check for embedded nuls in name.
+		fixed (char *fixed_name = name)
+			return OpenSemaphore_icall (fixed_name, name?.Length ?? 0, rights, out errorCode);
+	}
+
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern IntPtr CreateSemaphore_internal (
-            int initialCount, int maximumCount, string name, out int errorCode);
+        private unsafe static extern IntPtr CreateSemaphore_icall (
+            int initialCount, int maximumCount, char *name, int name_length, out int errorCode);
+
+        [MethodImplAttribute (MethodImplOptions.InternalCall)]
+        private unsafe static extern IntPtr OpenSemaphore_icall (char *name, int name_length,
+		SemaphoreRights rights, out int errorCode);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern bool ReleaseSemaphore_internal (
             IntPtr handle, int releaseCount, out int previousCount);
-
-        [MethodImplAttribute (MethodImplOptions.InternalCall)]
-        private static extern IntPtr OpenSemaphore_internal (string name, SemaphoreRights rights, out int errorCode);
 #endif
     }
 }

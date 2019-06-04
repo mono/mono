@@ -188,8 +188,8 @@ namespace Mono.CSharp {
 
 			CheckProtectedModifier ();
 
-			if (Compiler.Settings.StdLib && ret_type.IsSpecialRuntimeType) {
-				Method.Error1599 (Location, ret_type, Report);
+			if (ret_type.IsSpecialRuntimeType && Compiler.Settings.StdLib) {
+				Method.Error_ReturnTypeCantBeRefAny (Location, ret_type, Report);
 				return false;
 			}
 
@@ -338,6 +338,8 @@ namespace Mono.CSharp {
 					Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder);
 				} else if (rtype.HasDynamicElement) {
 					Module.PredefinedAttributes.Dynamic.EmitAttribute (CreateReturnBuilder ().Builder, rtype, Location);
+				} else if (rtype is ReadOnlyReferenceContainer) {
+					Module.PredefinedAttributes.IsReadOnly.EmitAttribute (CreateReturnBuilder ().Builder);
 				}
 
 				if (rtype.HasNamedTupleElement) {
@@ -587,8 +589,7 @@ namespace Mono.CSharp {
 				rt = ec.BuiltinTypes.Object;
 
 			if (!Delegate.IsTypeCovariant (ec, rt, invoke_method.ReturnType)) {
-				Expression ret_expr = new TypeExpression (delegate_method.ReturnType, loc);
-				Error_ConversionFailed (ec, delegate_method, ret_expr);
+				Error_ConversionFailed (ec, delegate_method, delegate_method.ReturnType);
 			}
 
 			if (method_group.IsConditionallyExcluded) {
@@ -604,8 +605,14 @@ namespace Mono.CSharp {
 			}
 
 			var expr = method_group.InstanceExpression;
-			if (expr != null && (expr.Type.IsGenericParameter || !TypeSpec.IsReferenceType (expr.Type)))
+			if (expr != null && (expr.Type.IsGenericParameter || !TypeSpec.IsReferenceType (expr.Type))) {
+				if (expr.Type.IsByRefLike || expr.Type.IsSpecialRuntimeType) {
+					// CSC: Should be better error code
+					Error_ConversionFailed (ec, delegate_method, null);
+				}
+
 				method_group.InstanceExpression = new BoxedCast (expr, ec.BuiltinTypes.Object);
+			}
 
 			eclass = ExprClass.Value;
 			return this;
@@ -639,7 +646,7 @@ namespace Mono.CSharp {
 			method_group.FlowAnalysis (fc);
 		}
 
-		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, Expression return_type)
+		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, TypeSpec return_type)
 		{
 			var invoke_method = Delegate.GetInvokeMethod (type);
 			string member_name = method_group.InstanceExpression != null ?
@@ -658,6 +665,12 @@ namespace Mono.CSharp {
 			if (return_type == null) {
 				ec.Report.Error (123, loc, "A method or delegate `{0}' parameters do not match delegate `{1}' parameters",
 					member_name, Delegate.FullDelegateDesc (invoke_method));
+				return;
+			}
+
+			if (invoke_method.ReturnType.Kind == MemberKind.ByRef) {
+				ec.Report.Error (8189, loc, "By reference return delegate does not match `{0}' return type",
+					Delegate.FullDelegateDesc (invoke_method));
 				return;
 			}
 

@@ -7,7 +7,8 @@ LIB_REFS = System System.Xml System.Data System.EnterpriseServices System.Drawin
 KEYFILE = ../ecma.pub
 LIB_MCS_FLAGS =
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
+TEST_MCS_FLAGS = /nowarn:618
+TEST_LIB_REFS = System System.Xml System.Data
 
 EXTRA_DISTFILES = Test/*.cs
 

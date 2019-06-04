@@ -14,6 +14,8 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
@@ -46,7 +48,7 @@ namespace MonoTests.System.Windows.Forms
 			
 			// B
 			Assert.AreEqual ("Control", myToolBar.BackColor.Name, "#B1");
-			myToolBar.BackgroundImage = Image.FromFile ("M.gif");
+			myToolBar.BackgroundImage = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif"));
 			Assert.AreEqual (60, myToolBar.BackgroundImage.Height, "#B3");
 			Assert.AreEqual (BorderStyle.None, myToolBar.BorderStyle, "#B4");
 			myToolBar.BorderStyle = BorderStyle.Fixed3D;
@@ -64,7 +66,7 @@ namespace MonoTests.System.Windows.Forms
 	
 			// I
 			ImageList myImageList = new ImageList ();
-			myImageList.Images.Add (Image.FromFile ("M.gif"));
+			myImageList.Images.Add (Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif")));
 			myToolBar.ImageList = myImageList;
 			Assert.AreEqual (1, myToolBar.ImageList.Images.Count, "#I1");
 			Assert.AreEqual (16, myToolBar.ImageSize.Height, "#I2");

@@ -6,8 +6,7 @@ LIBRARY = System.Numerics.Vectors.dll
 LIB_REFS = System System.Numerics
 KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = -unsafe
-
-RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Numerics.Vectors/src/Resources/Strings.resx
+LIBRARY_WARN_AS_ERROR = yes
 
 EXTRA_DISTFILES =
 

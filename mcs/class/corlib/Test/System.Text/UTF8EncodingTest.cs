@@ -19,6 +19,8 @@ using DecoderException = System.Text.DecoderFallbackException;
 
 using AssertType = NUnit.Framework.Assert;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Text
 {
 	[TestFixture]
@@ -1043,7 +1045,7 @@ namespace MonoTests.System.Text
 		[Category ("MobileNotWorking")]
 		public void Bug415628 ()
 		{
-			using (var f = File.Open (Path.Combine (Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location), "Test/resources/415628.bin"), FileMode.Open)) {
+			using (var f = File.Open (TestResourceHelper.GetFullPathOfResource ("Test/resources/415628.bin"), FileMode.Open)) {
 				BinaryReader br = new BinaryReader (f);
 				byte [] buf = br.ReadBytes (8000);
 				Encoding.UTF8.GetString(buf);

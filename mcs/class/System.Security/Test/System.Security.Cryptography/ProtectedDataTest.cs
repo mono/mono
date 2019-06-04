@@ -67,6 +67,7 @@ namespace MonoTests.System.Security.Cryptography {
 			ProtectUnprotect (notMuchEntropy, DataProtectionScope.LocalMachine);
 		}
 
+#if !MOBILE // System.PlatformNotSupportedException: Operation is not supported on this platform.
 		[Test] // https://bugzilla.xamarin.com/show_bug.cgi?id=38933
 		public void ProtectCurrentUserMultiThread ()
 		{
@@ -91,6 +92,7 @@ namespace MonoTests.System.Security.Cryptography {
 			foreach (var t in tasks) t.Start ();
 			Task.WaitAll (tasks.ToArray ());
 		}
+#endif
 
 		[Test]
 		public void DataProtectionScope_All ()
@@ -115,22 +117,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotDotNet")]
-		public void Protect_InvalidDataProtectionScope ()
-		{
-			try {
-				byte[] data = new byte[16];
-				ProtectedData.Protect (data, notMuchEntropy, (DataProtectionScope) Int32.MinValue);
-				// MS doesn't throw an ArgumentException but returning from
-				// this method will throw an UnhandledException in NUnit
-			}
-			catch (PlatformNotSupportedException) {
-				Assert.Ignore ("Only supported under Windows 2000 and later");
-			}
-		}
-
-		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ProtectNull () 
 		{
@@ -146,7 +132,6 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicException))]
 		public void UnprotectNotProtectedData () 
 		{
 			try {
@@ -156,23 +141,9 @@ namespace MonoTests.System.Security.Cryptography {
 			catch (PlatformNotSupportedException) {
 				Assert.Ignore ("Only supported under Windows 2000 and later");
 			}
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotDotNet")]
-		public void Unprotect_InvalidDataProtectionScope ()
-		{
-			try {
-				byte[] data = new byte[16];
-				byte[] encdata = ProtectedData.Protect (data, notMuchEntropy, DataProtectionScope.CurrentUser);
-				ProtectedData.Unprotect (encdata, notMuchEntropy, (DataProtectionScope) Int32.MinValue);
-				// MS doesn't throw an ArgumentException but returning from
-				// this method will throw an UnhandledException in NUnit
-			}
-			catch (PlatformNotSupportedException) {
-				Assert.Ignore ("Only supported under Windows 2000 and later");
-			}
+			catch (CryptographicException) {
+				Assert.Pass ();
+			}			
 		}
 
 		[Test]
@@ -183,4 +154,3 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 	}
 }
-

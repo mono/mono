@@ -31,9 +31,7 @@
 
 using System;
 using System.Configuration;
-#if WEBSERVICES_DEP
 using System.Web.Services.Configuration;
-#endif
 
 namespace System.Web.Configuration
 {
@@ -205,12 +203,10 @@ namespace System.Web.Configuration
 			get { return (WebPartsSection)Sections ["webParts"]; }
 		}
 
-#if WEBSERVICES_DEP
 		[ConfigurationProperty ("webServices")]
 		public WebServicesSection WebServices {
 			get { return (WebServicesSection)Sections ["webServices"]; }
 		}
-#endif
 
 		[ConfigurationProperty ("xhtmlConformance")]
 		public XhtmlConformanceSection XhtmlConformance {

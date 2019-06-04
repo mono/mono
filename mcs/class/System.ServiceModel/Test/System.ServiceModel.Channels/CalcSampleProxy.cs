@@ -32,8 +32,10 @@ using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+#if !MOBILE
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
+#endif
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;

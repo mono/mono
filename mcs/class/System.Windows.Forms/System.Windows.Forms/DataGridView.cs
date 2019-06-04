@@ -174,7 +174,7 @@ namespace System.Windows.Forms {
 			columnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
 			columnHeadersDefaultCellStyle = new DataGridViewCellStyle();
 			columnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
-			columnHeadersDefaultCellStyle.ForeColor = SystemColors.WindowText;
+			columnHeadersDefaultCellStyle.ForeColor = SystemColors.ControlText;
 			columnHeadersDefaultCellStyle.SelectionBackColor = SystemColors.Highlight;
 			columnHeadersDefaultCellStyle.SelectionForeColor = SystemColors.HighlightText;
 			columnHeadersDefaultCellStyle.Font = this.Font;
@@ -189,7 +189,7 @@ namespace System.Windows.Forms {
 			dataMember = String.Empty;
 			defaultCellStyle = new DataGridViewCellStyle();
 			defaultCellStyle.BackColor = SystemColors.Window;
-			defaultCellStyle.ForeColor = SystemColors.ControlText;
+			defaultCellStyle.ForeColor = SystemColors.WindowText;
 			defaultCellStyle.SelectionBackColor = SystemColors.Highlight;
 			defaultCellStyle.SelectionForeColor = SystemColors.HighlightText;
 			defaultCellStyle.Font = this.Font;
@@ -512,6 +512,8 @@ namespace System.Windows.Forms {
 							border.All = DataGridViewAdvancedCellBorderStyle.Single;
 							break;
 						case DataGridViewCellBorderStyle.Raised:
+							border.All = DataGridViewAdvancedCellBorderStyle.Outset;
+							break;
 						case DataGridViewCellBorderStyle.RaisedVertical:
 							border.Bottom = DataGridViewAdvancedCellBorderStyle.None;
 							border.Top = DataGridViewAdvancedCellBorderStyle.None;
@@ -537,6 +539,9 @@ namespace System.Windows.Forms {
 							border.Right = DataGridViewAdvancedCellBorderStyle.Inset;
 							break;
 						case DataGridViewCellBorderStyle.SingleHorizontal:
+							border.All = DataGridViewAdvancedCellBorderStyle.None;
+							border.Bottom = DataGridViewAdvancedCellBorderStyle.Single;
+							break;
 						case DataGridViewCellBorderStyle.SunkenHorizontal:
 							border.Bottom = DataGridViewAdvancedCellBorderStyle.Inset;
 							border.Top = DataGridViewAdvancedCellBorderStyle.Inset;
@@ -3399,6 +3404,12 @@ namespace System.Windows.Forms {
 				foreach (DataGridViewRow row in Rows)
 					row.Dispose();
 				Rows.Clear();
+
+				if (tooltip_timer != null)
+					tooltip_timer.Dispose();
+
+				if (tooltip_window != null)
+					tooltip_window.Dispose();
 			}
 			editingControl = null;
 
@@ -5137,27 +5148,28 @@ namespace System.Windows.Forms {
 			if (RowsLeft < 0)
 				RowsLeft = 0;
 
-			if (first_row_index > RowsLeft - 1)
-				first_row_index = RowsLeft - 1;
-
-			if (first_row_index < 0)
-				first_row_index = 0;
-
 			if (RowsLeft == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
 				hover_cell = null;
 			} else if (Columns.Count == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
 				hover_cell = null;
-			} else if (currentCell != null && currentCell.RowIndex == e.RowIndex) {
-				int nextRowIndex = e.RowIndex;
-				if (nextRowIndex >= RowsLeft)
-					nextRowIndex = RowsLeft - 1;
-				MoveCurrentCell (currentCell != null ? currentCell.ColumnIndex : 0, nextRowIndex, 
-						 true, false, false, true);
+			} else {
+				if (currentCell != null && currentCell.RowIndex >= e.RowIndex && currentCell.RowIndex < e.RowIndex + e.RowCount) {
+					int nextRowIndex = e.RowIndex + e.RowCount;
+					if (nextRowIndex >= Rows.Count)
+						nextRowIndex = e.RowIndex - 1;
+					MoveCurrentCell (currentCell.ColumnIndex, nextRowIndex, true, false, false, true);
+				}
 				if (hover_cell != null && hover_cell.RowIndex >= e.RowIndex)
 					hover_cell = null;
 			}
+
+			if (first_row_index > RowsLeft - 1)
+				first_row_index = RowsLeft - 1;
+
+			if (first_row_index < 0)
+				first_row_index = 0;
 		}
 
 		internal void OnRowsPostRemovedInternal (DataGridViewRowsRemovedEventArgs e)

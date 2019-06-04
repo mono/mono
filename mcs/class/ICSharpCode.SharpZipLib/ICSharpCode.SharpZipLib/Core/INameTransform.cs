@@ -38,6 +38,7 @@ namespace ICSharpCode.SharpZipLib.Core
 	/// <summary>
 	/// INameTransform defines how file system names are transformed for use with archives.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public interface INameTransform
 	{
 		/// <summary>

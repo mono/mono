@@ -17,18 +17,6 @@
 #include "utils/mono-sigcontext.h"
 #include "mach-support.h"
 
-void *
-mono_mach_arch_get_ip (thread_state_t state)
-{
-	g_assert_not_reached ();
-}
-
-void *
-mono_mach_arch_get_sp (thread_state_t state)
-{
-	g_assert_not_reached ();
-}
-
 int
 mono_mach_arch_get_mcontext_size ()
 {
@@ -74,18 +62,7 @@ mono_mach_arch_get_thread_states (thread_port_t thread, thread_state_t state, ma
 kern_return_t
 mono_mach_arch_set_thread_states (thread_port_t thread, thread_state_t state, mach_msg_type_number_t count, thread_state_t fpstate, mach_msg_type_number_t fpcount)
 {
-	g_assert_not_reached ();	
-}
-
-void *
-mono_mach_arch_get_tls_value_from_thread (pthread_t thread, guint32 key)
-{
-	g_assert_not_reached ();
-}
-
-void
-mono_mach_init (pthread_key_t key)
-{
+       g_assert_not_reached ();
 }
 
 #endif

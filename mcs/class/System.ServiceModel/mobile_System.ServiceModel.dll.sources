@@ -1,5 +1,7 @@
 ../../build/common/Consts.cs
 ../../build/common/MonoTODOAttribute.cs
+../../build/common/SR.cs
+ReferenceSources/SR.cs
 Assembly/AssemblyInfo.cs
 Mono.CodeGeneration/CodeAdd.cs
 Mono.CodeGeneration/CodeAnd.cs
@@ -49,10 +51,10 @@ Mono.CodeGeneration/CodeWhen.cs
 Mono.CodeGeneration/CodeWhile.cs
 Mono.CodeGeneration/CodeWriter.cs
 Mono.CodeGeneration/Exp.cs
-System.Collections.Generic/KeyedByTypeCollection.cs
-System.Collections.Generic/SynchronizedCollection.cs
-System.Collections.Generic/SynchronizedKeyedCollection.cs
-System.Collections.Generic/SynchronizedReadOnlyCollection.cs
+../referencesource/System.ServiceModel/System/ServiceModel/KeyedByTypeCollection.cs
+../referencesource/System.ServiceModel/System/ServiceModel/SynchronizedCollection.cs
+../referencesource/System.ServiceModel/System/ServiceModel/SynchronizedKeyedCollection.cs
+../referencesource/System.ServiceModel/System/ServiceModel/SynchronizedReadOnlyCollection.cs
 System.ServiceModel.Channels/AddressHeader.cs
 System.ServiceModel.Channels/AddressHeaderCollection.cs
 System.ServiceModel.Channels/AddressingVersion.cs

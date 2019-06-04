@@ -44,6 +44,7 @@ namespace ICSharpCode.SharpZipLib.BZip2
 	/// Sets up the streams and file header characters.
 	/// Uses multiply overloaded methods to call for the compress/decompress.
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public sealed class BZip2
 	{
 		/// <summary>

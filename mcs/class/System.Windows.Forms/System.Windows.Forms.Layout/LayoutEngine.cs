@@ -26,6 +26,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace System.Windows.Forms.Layout {
 
@@ -38,6 +39,11 @@ namespace System.Windows.Forms.Layout {
 		public virtual bool Layout (object container, LayoutEventArgs layoutEventArgs)
 		{
 			return false;
+		}
+
+		internal virtual Size GetPreferredSize (object container, Size proposedSize)
+		{
+			return Size.Empty;
 		}
 	}
 }

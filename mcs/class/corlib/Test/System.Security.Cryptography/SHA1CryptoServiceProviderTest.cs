@@ -23,7 +23,7 @@ namespace MonoTests.System.Security.Cryptography {
 // same results (hence should run a common set of unit tests).
 
 [TestFixture]
-public class SHA1CryptoServiceProviderTest : SHA1Test {
+public class SHA1CryptoServiceProviderTest : SHA1TestBase {
 
 	[SetUp]
 	public override void SetUp () 

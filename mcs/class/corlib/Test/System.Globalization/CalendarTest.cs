@@ -123,6 +123,7 @@ sealed class Date {
 } // class Date
 
 [TestFixture]
+[Category ("Calendars")]
 public class CalendarTest {
 	private Calendar[] acal;
 	private GregorianCalendar gcal;
@@ -823,6 +824,17 @@ public class CalendarTest {
 				y1++; y2--; y3++;
 			}
 		}
+	}
+
+
+	[Test]
+	public void TestJapaneseCalendarDateParsing ()
+	{
+		CultureInfo ciJapanese = new CultureInfo ("ja-JP") { DateTimeFormat = { Calendar = new JapaneseCalendar () } };
+
+		DateTime dt = new DateTime (1970, 1, 1);
+		string eraName = dt.ToString ("gg", ciJapanese);
+		Assert.AreEqual (new DateTime (1995, 1, 1), DateTime.Parse (eraName + " 70/1/1 0:00:00", ciJapanese));
 	}
 
 	// TODO: more tests :-)

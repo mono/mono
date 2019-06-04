@@ -53,7 +53,7 @@ add_ovf_carry: dest:i src1:1 src2:i len:28
 add_ovf_un_carry: dest:i src1:1 src2:i len:12
 addcc: dest:i src1:i src2:i len:12
 and_imm: dest:i src1:i len:24
-aot_const: dest:i len:8
+aotconst: dest:i len:8
 atomic_add_i4: src1:b src2:i dest:i len:28
 atomic_add_i8: src1:b src2:i dest:i len:30
 atomic_exchange_i4: src1:b src2:i dest:i len:18
@@ -66,11 +66,11 @@ call_handler: len:12 clob:c
 call_membase: dest:o src1:b len:12 clob:c
 call_reg: dest:o src1:i len:8 clob:c
 ceq: dest:i len:12
-cgt.un: dest:i len:12
+cgt_un: dest:i len:12
 cgt: dest:i len:12
-checkthis: src1:b len:16
+check_this: src1:b len:16
 ckfinite: dest:f src1:f len:22
-clt.un: dest:i len:12
+clt_un: dest:i len:12
 clt: dest:i len:12
 compare: src1:i src2:i len:4
 compare_imm: src1:i len:20
@@ -88,14 +88,16 @@ cond_exc_nc: len:8
 cond_exc_ne_un: len:8
 cond_exc_no: len:8
 cond_exc_ov: len:8
-div_imm: dest:i src1:i src2:i len:24
-div_un_imm: dest:i src1:i src2:i len:24
+div_imm: dest:i src1:i len:24
+div_un_imm: dest:i src1:i len:24
 endfinally: len:8
 fcall: dest:g len:26 clob:c
 fcall_membase: dest:g src1:b len:14 clob:c
 fcall_reg: dest:g src1:i len:10 clob:c
 fcompare: src1:f src2:f len:14
+rcompare: src1:f src2:f len:14
 float_add: dest:f src1:f src2:f len:6
+
 float_beq: len:10
 float_bge: len:10
 float_bge_un: len:8
@@ -106,11 +108,16 @@ float_blt: len:10
 float_blt_un: len:8
 float_bne_un: len:8
 float_bgt_un: len:8
+
 float_ceq: dest:i src1:f src2:f len:16
 float_cgt: dest:i src1:f src2:f len:16
 float_cgt_un: dest:i src1:f src2:f len:16
 float_clt: dest:i src1:f src2:f len:16
 float_clt_un: dest:i src1:f src2:f len:16
+float_cneq: dest:y src1:f src2:f len:16
+float_cge: dest:y src1:f src2:f len:16
+float_cle: dest:y src1:f src2:f len:16
+
 float_conv_to_i1: dest:i src1:f len:50
 float_conv_to_i2: dest:i src1:f len:50
 float_conv_to_i4: dest:i src1:f len:50
@@ -130,6 +137,31 @@ float_not: dest:f src1:f len:6
 float_rem: dest:f src1:f src2:f len:16
 float_rem_un: dest:f src1:f src2:f len:16
 float_sub: dest:f src1:f src2:f len:6
+
+# R4 opcodes
+r4_conv_to_i1: dest:i src1:f len:32
+r4_conv_to_u1: dest:i src1:f len:32
+r4_conv_to_i2: dest:i src1:f len:32
+r4_conv_to_u2: dest:i src1:f len:32
+r4_conv_to_i4: dest:i src1:f len:16
+r4_conv_to_u4: dest:i src1:f len:32
+r4_conv_to_i8: dest:i src1:f len:32
+r4_conv_to_r8: dest:f src1:f len:17
+r4_conv_to_r4: dest:f src1:f len:17
+r4_add: dest:f src1:f src2:f clob:1 len:5
+r4_sub: dest:f src1:f src2:f clob:1 len:5
+r4_mul: dest:f src1:f src2:f clob:1 len:5
+r4_div: dest:f src1:f src2:f clob:1 len:5
+r4_neg: dest:f src1:f clob:1 len:23
+r4_ceq: dest:i src1:f src2:f len:35
+r4_cgt: dest:i src1:f src2:f len:35
+r4_cgt_un: dest:i src1:f src2:f len:48
+r4_clt: dest:i src1:f src2:f len:35
+r4_clt_un: dest:i src1:f src2:f len:42
+r4_cneq: dest:i src1:f src2:f len:42
+r4_cge: dest:i src1:f src2:f len:35
+r4_cle: dest:i src1:f src2:f len:35
+
 fmove: dest:f src1:f len:4
 move_f_to_i4: dest:i src1:f len:14
 move_i4_to_f: dest:f src1:i len:14
@@ -139,7 +171,6 @@ i8const: dest:i len:20
 icompare: src1:i src2:i len:4
 icompare_imm: src1:i len:18
 iconst: dest:i len:40
-jmp: len:50
 label: len:0
 lcall: dest:o len:22 clob:c
 lcall_membase: dest:o src1:b len:12 clob:c
@@ -157,12 +188,12 @@ loadu2_membase: dest:i src1:b len:30
 loadu4_mem: dest:i len:8
 loadu4_membase: dest:i src1:b len:30
 localloc: dest:i src1:i len:106
-memory_barrier: len: 10
+memory_barrier: len:10
 move: dest:i src1:i len:4
 mul_imm: dest:i src1:i len:24
 nop: len:4
 relaxed_nop: len:4
-oparglist: src1:i len:28
+arglist: src1:i len:28
 bigmul: len:2 dest:i src1:a src2:i
 bigmul_un: len:2 dest:i src1:a src2:i
 endfilter: src1:i len:28
@@ -170,9 +201,12 @@ rethrow: src1:i len:26
 or_imm: dest:i src1:i len:24
 r4const: dest:f len:26
 r8const: dest:f len:24
-rem_imm: dest:i src1:i src2:i len:24
-rem_un_imm: dest:i src1:i src2:i len:24
-s390_bkchain: len: 8 dest:i src1:i
+rem_imm: dest:i src1:i len:24
+rcall: dest:f len:26 clob:c
+rcall_reg: dest:f src1:i len:8 clob:c
+rcall_membase: dest:f src1:b len:12 clob:c
+rem_un_imm: dest:i src1:i len:24
+s390_bkchain: len:8 dest:i src1:i
 s390_move: len:48 dest:b src1:b
 s390_setf4ret: dest:f src1:f len:4
 sbb: dest:i src1:i src2:i len:6
@@ -202,6 +236,14 @@ sub_imm: dest:i src1:i len:18
 sub_ovf_carry: dest:i src1:1 src2:i len:28
 sub_ovf_un_carry: dest:i src1:1 src2:i len:12
 subcc: dest:i src1:i src2:i len:12
+tailcall: len:120 clob:c
+tailcall_membase: src1:b len:120 clob:c
+
+# Tailcall parameters are moved with one instruction per 256 bytes,
+# of stacked parameters. Zero and six are the most common
+# totals. Division is not possible. Allocate an instruction per parameter.
+tailcall_parameter: len:6
+
 throw: src1:i len:26
 tls_get: dest:1 len:32
 tls_set: src1:1 len:32
@@ -231,11 +273,19 @@ int_ble_un: len:8
 int_blt: len:8
 int_blt_un: len:8
 int_bne_un: len:8
+
 int_ceq: dest:i len:12
 int_cgt: dest:i len:12
 int_cgt_un: dest:i len:12
 int_clt: dest:i len:12
 int_clt_un: dest:i len:12
+
+int_cneq: dest:i len:12
+int_cge: dest:i len:12
+int_cle: dest:i len:12
+int_cge_un: dest:i len:12
+int_cle_un: dest:i len:12
+
 int_div: dest:a src1:i src2:i len:16
 int_div_imm: dest:a src1:i len:24
 int_div_un: dest:a src1:i src2:i len:16
@@ -289,7 +339,7 @@ long_xor: dest:i src1:i src2:i len:8
 long_neg: dest:i src1:i len:6
 long_not: dest:i src1:i len:12
 long_rem: dest:i src1:i src2:i len:12
-long_rem_imm: dest:i src1:i src2:i len:12
+long_rem_imm: dest:i src1:i len:12
 long_rem_un: dest:i src1:i src2:i len:16
 long_shl: dest:i src1:i src2:i len:14
 long_shl_imm: dest:i src1:i len:14
@@ -306,7 +356,7 @@ long_conv_to_i2: dest:i src1:i len:12
 long_conv_to_i4: dest:i src1:i len:4
 long_conv_to_i8: dest:i src1:i len:4
 long_conv_to_i: dest:i src1:i len:4
-long_conv_to_ovf_i: dest:i src1:i src2:i len:44
+long_conv_to_ovf_i: dest:i src1:i len:44
 long_conv_to_ovf_i4_un: dest:i src1:i len:50
 long_conv_to_ovf_u4: dest:i src1:i len:48
 long_conv_to_ovf_u8_un: dest:i src1:i len:4
@@ -332,7 +382,10 @@ long_bne_un: len:8
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -340,11 +393,11 @@ jump_table: dest:i len:24
 
 int_conv_to_i1: dest:i src1:i len:12
 int_conv_to_i2: dest:i src1:i len:12
-int_conv_to_i4: dest:i src1:i len:2
-int_conv_to_i: dest:i src1:i len:2
+int_conv_to_i4: dest:i src1:i len:4
+int_conv_to_i: dest:i src1:i len:4
 int_conv_to_u1: dest:i src1:i len:10
 int_conv_to_u2: dest:i src1:i len:16
-int_conv_to_u4: dest:i src1:i
+int_conv_to_u4: dest:i src1:i len:4
 int_conv_to_r_un: dest:f src1:i len:37 
 
 cond_exc_ic: len:8
@@ -386,6 +439,8 @@ s390_long_add_ovf_un: dest:i src1:i src2:i len:32
 s390_long_sub_ovf: dest:i src1:i src2:i len:32
 s390_long_sub_ovf_un: dest:i src1:i src2:i len:32
 
+liverange_start: len:0
+liverange_end: len:0
 gc_liveness_def: len:0
 gc_liveness_use: len:0
 gc_spill_slot_liveness_def: len:0
@@ -393,3 +448,12 @@ gc_param_slot_liveness_def: len:0
 gc_safe_point: clob:c src1:i len:32
 
 generic_class_init: src1:A len:32 clob:c
+
+s390_crj: src1:i src2:i len:24
+s390_crj_un: src1:i src2:i len:24
+s390_cgrj: src1:i src2:i len:24
+s390_cgrj_un: src1:i src2:i len:24
+s390_cij: len:24
+s390_cij_un: src1:i len:24
+s390_cgij: len:24
+s390_cgij_un: len:24

@@ -41,6 +41,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Data.Connected
 {
 	public class ConnectionManager
@@ -48,13 +50,13 @@ namespace MonoTests.System.Data.Connected
 		private static ConnectionManager instance;
 		private ConnectionHolder<SqlConnection> sql;
 
-		private const string OdbcEnvVar = "SYSTEM_DATA_ODBC_V2";
-		private const string SqlEnvVar = "SYSTEM_DATA_MSSQL_V2";
+		private const string OdbcEnvVar = "SYSTEM_DATA_ODBC_V3";
+		private const string SqlEnvVar = "SYSTEM_DATA_MSSQL_V3";
 
 		private ConnectionManager ()
 		{
 			//Environment.SetEnvironmentVariable(OdbcEnvVar, @"Driver={MySQL ODBC 5.3 Unicode Driver};server=127.0.0.1;uid=sa;pwd=qwerty123;");
-			//Environment.SetEnvironmentVariable(SqlEnvVar, @"server=127.0.0.1;database=master;user id=sa;password=qwerty123");
+			//Environment.SetEnvironmentVariable(SqlEnvVar, @"Server=.\SQLEXPRESS;Database=master;User Id=sa;Password=qwerty123;");
 
 			// Generate a random db name
 			DatabaseName = "monotest" + Guid.NewGuid().ToString().Substring(0, 7);
@@ -102,9 +104,12 @@ namespace MonoTests.System.Data.Connected
 			string connectionString = Environment.GetEnvironmentVariable (envVarName);
 			if (string.IsNullOrEmpty (connectionString))
 				return null;
-
+#if MOBILE
+			connection = new OdbcConnection ();
+#else
 			DbProviderFactory factory = DbProviderFactories.GetFactory ("System.Data.Odbc");
 			var connection = (OdbcConnection)factory.CreateConnection ();
+#endif
 
 			var engine = new EngineConfig {
 				Type = EngineType.MySQL,
@@ -125,7 +130,7 @@ namespace MonoTests.System.Data.Connected
 			sql.ConnectionString = sql.ConnectionString.Replace(sql.Connection.Database, DatabaseName);
 			sql.CloseConnection();
 
-			string query = File.ReadAllText(@"Test/ProviderTests/sql/sqlserver.sql");
+			string query = File.ReadAllText(TestResourceHelper.GetFullPathOfResource ("Test/ProviderTests/sql/sqlserver.sql"));
 
 			var queries = SplitSqlStatements(query);
 			foreach (var subQuery in queries)
@@ -141,7 +146,7 @@ namespace MonoTests.System.Data.Connected
 			odbc.Connection.ChangeDatabase(DatabaseName);
 			odbc.ConnectionString += $"database={DatabaseName}";
 
-			string query = File.ReadAllText("Test/ProviderTests/sql/MySQL_5.sql");
+			string query = File.ReadAllText(TestResourceHelper.GetFullPathOfResource ("Test/ProviderTests/sql/MySQL_5.sql"));
 
 			var groups = query.Replace("delimiter ", "")
 				.Split(new[] { "//\n" }, StringSplitOptions.RemoveEmptyEntries);
@@ -171,8 +176,7 @@ namespace MonoTests.System.Data.Connected
 		// Split SQL script by "GO" statements
 		private static IEnumerable<string> SplitSqlStatements(string sqlScript)
 		{
-			var statements = Regex.Split(sqlScript,
-					$@"^[\t ]*GO[\t ]*\d*[\t ]*(?:--.*)?$",
+			var statements = Regex.Split(sqlScript,	@"^\s*GO.*$",
 					RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase);
 			return statements.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim(' ', '\r', '\n'));
 		}
@@ -247,6 +251,8 @@ namespace MonoTests.System.Data.Connected
 			EngineConfig = engineConfig;
 			this.connection = connection;
 			ConnectionString = connectionString;
+			if (!ConnectionString.EndsWith(";"))
+				ConnectionString += ";";
 		}
 
 		public bool IsAzure => ConnectionString.ToLower().Contains("database.windows.net");

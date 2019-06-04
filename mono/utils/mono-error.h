@@ -33,8 +33,10 @@ enum {
 	MONO_ERROR_OUT_OF_MEMORY = 6,
 	MONO_ERROR_ARGUMENT = 7,
 	MONO_ERROR_ARGUMENT_NULL = 11,
+	MONO_ERROR_ARGUMENT_OUT_OF_RANGE = 14,
 	MONO_ERROR_NOT_VERIFIABLE = 8,
 	MONO_ERROR_INVALID_PROGRAM = 12,
+	MONO_ERROR_MEMBER_ACCESS = 13,
 
 	/*
 	 * This is a generic error mechanism is you need to raise an arbitrary corlib exception.
@@ -48,21 +50,33 @@ enum {
 	MONO_ERROR_CLEANUP_CALLED_SENTINEL = 0xffff
 };
 
-/*Keep in sync with MonoErrorInternal*/
-typedef struct _MonoError {
-	unsigned short error_code;
-    unsigned short hidden_0; /*DON'T TOUCH */
+#ifdef _MSC_VER
+__pragma(warning (push))
+__pragma(warning (disable:4201))
+#endif
 
-	void *hidden_1 [12]; /*DON'T TOUCH */
+/*Keep in sync with MonoErrorInternal*/
+typedef union _MonoError {
+	// Merge two uint16 into one uint32 so it can be initialized
+	// with one instruction instead of two.
+	uint32_t init;
+	struct {
+		uint16_t error_code;
+		uint16_t private_flags; /*DON'T TOUCH */
+		void *hidden_1 [12]; /*DON'T TOUCH */
+	};
 } MonoError;
+
+#ifdef _MSC_VER
+__pragma(warning (pop))
+#endif
 
 /* Mempool-allocated MonoError.*/
 typedef struct _MonoErrorBoxed MonoErrorBoxed;
 
 MONO_BEGIN_DECLS
 
-MONO_RT_EXTERNAL_ONLY
-MONO_API void
+MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_error_init (MonoError *error);
 
 MONO_API void

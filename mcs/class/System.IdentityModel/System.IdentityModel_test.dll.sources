@@ -1,3 +1,4 @@
+../../test-helpers/TestResourceHelper.cs
 System.IdentityModel.Claims/ClaimSetTest.cs
 System.IdentityModel.Claims/ClaimTest.cs
 System.IdentityModel.Claims/ClaimTypesTest.cs
@@ -10,6 +11,7 @@ System.IdentityModel.Selectors/SamlSecurityTokenAuthenticatorTest.cs
 System.IdentityModel.Selectors/SecurityTokenRequirementTest.cs
 System.IdentityModel.Selectors/SecurityTokenResolverTest.cs
 System.IdentityModel.Selectors/TestEvaluationContext.cs
+System.IdentityModel.Selectors/X509CertificateValidatorTest.cs
 System.IdentityModel.Selectors/X509SecurityTokenAuthenticatorTest.cs
 System.IdentityModel.Selectors/X509SecurityTokenProviderTest.cs
 System.IdentityModel.Tokens/BootstrapContextTest.cs

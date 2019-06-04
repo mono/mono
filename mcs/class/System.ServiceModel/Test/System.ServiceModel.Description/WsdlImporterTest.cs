@@ -26,7 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -45,6 +45,8 @@ using NUnit.Framework;
 using WSServiceDescription = System.Web.Services.Description.ServiceDescription;
 using SMBinding = System.ServiceModel.Channels.Binding;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Description
 {
 	[TestFixture]
@@ -58,7 +60,7 @@ namespace MonoTests.System.ServiceModel.Description
 		{
 			XmlReaderSettings xs = new XmlReaderSettings ();
 			xs.IgnoreWhitespace = true;
-			xtr = XmlTextReader.Create ("Test/System.ServiceModel.Description/dump.xml", xs);
+			xtr = XmlTextReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/Resources/dump.xml"), xs);
 
 			xtr.Read ();
 
@@ -188,7 +190,7 @@ namespace MonoTests.System.ServiceModel.Description
 		{
 			XmlReaderSettings xs = new XmlReaderSettings ();
 			xs.IgnoreWhitespace = true;
-			xtr = XmlTextReader.Create ("Test/System.ServiceModel.Description/dump.xml", xs);
+			xtr = XmlTextReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/Resources/dump.xml"), xs);
 
 			xtr.Read ();
 
@@ -473,7 +475,7 @@ namespace MonoTests.System.ServiceModel.Description
 			XmlReaderSettings xs = new XmlReaderSettings ();
 			xs.IgnoreWhitespace = true;
 			//xtr = XmlTextReader.Create ("Test/System.ServiceModel.Description/test2a.xml", xs);
-			xtr = XmlTextReader.Create ("Test/System.ServiceModel.Description/dump.xml", xs);
+			xtr = XmlTextReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/Resources/dump.xml"), xs);
 
 			xtr.Read ();
 
@@ -546,7 +548,7 @@ namespace MonoTests.System.ServiceModel.Description
 		[Ignore ("Until make dist gets fixed I won't enable any of new external-source-dependent tests")]
 		public void ImportMethodWithArrayOfint ()
 		{
-			var ms = GetMetadataSetFromWsdl ("Test/Resources/xml/service1.wsdl");
+			var ms = GetMetadataSetFromWsdl (TestResourceHelper.GetFullPathOfResource ("Test/Resources/xml/service1.wsdl"));
 			var imp = new WsdlImporter (ms);
 			var cg = new ServiceContractGenerator ();
 			var cd = imp.ImportAllContracts () [0];
@@ -566,7 +568,7 @@ namespace MonoTests.System.ServiceModel.Description
 			var mset = new MetadataSet ();
 			WSServiceDescription sd = null;
 
-			sd = WSServiceDescription.Read (XmlReader.Create ("Test/XmlFiles/670945.wsdl"));
+			sd = WSServiceDescription.Read (XmlReader.Create (TestResourceHelper.GetFullPathOfResource (TestResourceHelper.GetFullPathOfResource ("Test/Resources/670945.wsdl"))));
 			mset.MetadataSections.Add (new MetadataSection () {
 				Dialect = MetadataSection.ServiceDescriptionDialect,
 				Metadata = sd });
@@ -581,7 +583,7 @@ namespace MonoTests.System.ServiceModel.Description
 		[Ignore ("FIXME: Using external source")]
 		public void ImportMethodWithDateTime ()
 		{
-			var ms = GetMetadataSetFromWsdl ("Test/Resources/DateTime.wsdl");
+			var ms = GetMetadataSetFromWsdl (TestResourceHelper.GetFullPathOfResource ("Test/Resources/DateTime.wsdl"));
 			var imp = new WsdlImporter (ms);
 			var cg = new ServiceContractGenerator ();
 			var cd = imp.ImportAllContracts () [0];
@@ -594,3 +596,4 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 	}
 }
+#endif

@@ -1,3 +1,5 @@
+#include unix_build_corlib.dll.exclude.sources
+../../../external/corefx/src/Common/src/CoreLib/System/Guid.Unix.cs
 System.Security.Cryptography/MD5CryptoServiceProvider.cs
 System.Security.Cryptography/SHA1CryptoServiceProvider.cs
 System.Security.Cryptography/SHA1CryptoServiceProvider.cs

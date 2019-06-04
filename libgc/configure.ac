@@ -104,6 +104,10 @@ case "$THREADS" in
 	AC_DEFINE(GC_AIX_THREADS)
 	AC_DEFINE(_REENTRANT)
 	;;
+     *-*-haiku*)
+	AC_DEFINE(GC_HAIKU_THREADS)
+	AC_DEFINE(_REENTRANT)
+	;;
      *-*-hpux*)
 	AC_MSG_WARN("Only HP/UX 11 threads are supported.")
 	AC_DEFINE(GC_HPUX_THREADS)

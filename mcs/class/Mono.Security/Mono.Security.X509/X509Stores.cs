@@ -36,7 +36,7 @@ using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
 
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSTEM
 	internal
 #else
 	public 

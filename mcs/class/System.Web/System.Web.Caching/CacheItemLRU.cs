@@ -151,6 +151,8 @@ namespace System.Web.Caching
 		}
 		
 		public CacheItem this [string key] {
+			// Must ALWAYS be called with the owner's write lock held
+			// (Since every retrieval from LRU cache modifies shared LRU list)
 			get {
 				if (key == null)
 					return null;
@@ -171,6 +173,7 @@ namespace System.Web.Caching
 				return null;
 			}
 
+			// Must ALWAYS be called with the owner's write lock held
 			set {
 				LinkedListNode<CacheItem> node;
 	

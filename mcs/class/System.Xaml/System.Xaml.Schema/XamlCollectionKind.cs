@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace System.Xaml.Schema
 {
-	public enum XamlCollectionKind
+	public enum XamlCollectionKind : byte
 	{
 		None,
 		Collection,

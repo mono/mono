@@ -58,6 +58,7 @@ namespace System.Windows.Forms
 		protected ToolStripDropDownItem (string text, Image image, EventHandler onClick, string name)
 			: base (text, image, onClick, name)
 		{
+			this.drop_down_direction = ToolStripDropDownDirection.Default;
 		}
 		#endregion
 
@@ -80,7 +81,11 @@ namespace System.Windows.Forms
 
 		[Browsable (false)]
 		public ToolStripDropDownDirection DropDownDirection {
-			get { return this.drop_down_direction; }
+			get {
+				if (this.drop_down_direction == ToolStripDropDownDirection.Default && Parent != null)
+					return Parent.DefaultDropDownDirection;
+				return this.drop_down_direction;
+			}
 			set {
 				if (!Enum.IsDefined (typeof (ToolStripDropDownDirection), value))
 					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for ToolStripDropDownDirection", value));
@@ -111,13 +116,10 @@ namespace System.Windows.Forms
 			get {
 				Point p;
 
-				if (this.IsOnDropDown) {
-					p = Parent.PointToScreen (new Point (this.Bounds.Left, this.Bounds.Top - 1));
-					p.X += this.Bounds.Width;
-					p.Y += this.Bounds.Left;
-					return p;
+				if (DropDownDirection == ToolStripDropDownDirection.Right) {
+					p = new Point (this.Bounds.Left + this.Bounds.Width - 1, this.Bounds.Top);
 				}
-				else
+				else // TODO: Other directions;
 					p = new Point (this.Bounds.Left, this.Bounds.Bottom - 1);
 
 				return Parent.PointToScreen (p);

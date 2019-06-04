@@ -391,6 +391,10 @@ namespace System {
 
 		void ChangeColor (string format, ConsoleColor color)
 		{
+			if (String.IsNullOrEmpty (format))
+				// the terminal doesn't support colors
+				return;
+
 			int ccValue = (int)color;
 			if ((ccValue & ~0xF) != 0)
 				throw new ArgumentException("Invalid Console Color");
@@ -1103,6 +1107,16 @@ namespace System {
 
 		public string ReadLine ()
  		{
+			return ReadUntilConditionInternal (true);
+ 		}
+
+		public string ReadToEnd ()
+ 		{
+			return ReadUntilConditionInternal (false);
+ 		}
+
+		private string ReadUntilConditionInternal (bool haltOnNewLine)
+ 		{
 			if (!inited)
 				Init ();
 
@@ -1120,6 +1134,8 @@ namespace System {
 			rl_starty = cursorTop;
 			char eof = (char) control_characters [ControlCharacters.EOF];
 
+			bool treatAsEnterKey;
+
 			do {
 				key = ReadKeyInternal (out fresh);
 				echo = echo || fresh;
@@ -1128,7 +1144,9 @@ namespace System {
 				if (c == eof && c != 0 && builder.Length == 0)
 					return null;
 
-				if (key.Key != ConsoleKey.Enter) {
+				treatAsEnterKey = haltOnNewLine && (key.Key == ConsoleKey.Enter);
+
+				if (!treatAsEnterKey) {
 					if (key.Key != ConsoleKey.Backspace) {
 						builder.Append (c);
 					} else if (builder.Length > 0) {
@@ -1142,7 +1160,7 @@ namespace System {
 				// echo fresh keys back to the console
 				if (echo)
 					Echo (key);
-			} while (key.Key != ConsoleKey.Enter);
+			} while (!treatAsEnterKey);
 
 			EchoFlush ();
 

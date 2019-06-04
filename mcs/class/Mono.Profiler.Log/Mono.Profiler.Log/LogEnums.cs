@@ -54,6 +54,8 @@ namespace Mono.Profiler.Log {
 		HeapEnd = 1 << 4,
 		HeapObject = 2 << 4,
 		HeapRoots = 3 << 4,
+		HeapRootRegister = 4 << 4,
+		HeapRootUnregister = 5 << 4,
 
 		SampleHit = 0 << 4,
 		SampleUnmanagedSymbol = 1 << 4,
@@ -64,6 +66,7 @@ namespace Mono.Profiler.Log {
 		RuntimeJitHelper = 1 << 4,
 
 		MetaSynchronizationPoint = 0 << 4,
+		MetaAotId = 1 << 4,
 	}
 
 	// mono/profiler/log.h : TYPE_*
@@ -74,6 +77,7 @@ namespace Mono.Profiler.Log {
 		AppDomain = 4,
 		Thread = 5,
 		Context = 6,
+		VTable = 7,
 	}
 
 	// mono/utils/mono-counters.h : MONO_COUNTER_*
@@ -119,33 +123,55 @@ namespace Mono.Profiler.Log {
 
 	// mono/metadata/profiler.h : MonoProfilerCodeBufferType
 	public enum LogJitHelper {
-		Unknown = 0,
-		Method = 1,
-		MethodTrampoline = 2,
-		UnboxTrampoline = 3,
-		ImtTrampoline = 4,
-		GenericsTrampoline = 5,
-		SpecificTrampoline = 6,
-		Helper = 7,
-		Monitor = 8,
-		DelegateInvoke = 9,
-		ExceptionHandling = 10,
+		Method = 0,
+		[Obsolete ("This value is no longer produced.")]
+		MethodTrampoline = 1,
+		UnboxTrampoline = 2,
+		ImtTrampoline = 3,
+		GenericsTrampoline = 4,
+		SpecificTrampoline = 5,
+		Helper = 6,
+		[Obsolete ("This value is no longer produced.")]
+		Monitor = 7,
+		DelegateInvoke = 8,
+		ExceptionHandling = 9,
 	}
 
 	// mono/metadata/profiler.h : MonoProfilerGCRootType
 	[Flags]
+	[Obsolete ("The event field using this enum is no longer produced.")]
 	public enum LogHeapRootAttributes {
 		Pinning = 1 << 8,
 		WeakReference = 2 << 8,
 		Interior = 4 << 8,
 
-		Stack = 0,
-		Finalizer = 1,
-		Handle = 2,
-		Other = 3,
-		Miscellaneous = 4,
+		Stack = 1 << 0,
+		Finalizer = 1 << 1,
+		Handle = 1 << 2,
+		Other = 1 << 3,
+		Miscellaneous = 1 << 4,
 
 		TypeMask = 0xff,
+	}
+
+	// mono/metadata/mono-gc.h : MonoGCRootSource
+	public enum LogHeapRootSource {
+		External = 0,
+		Stack = 1,
+		FinalizerQueue = 2,
+		Static = 3,
+		ThreadStatic = 4,
+		ContextStatic = 5,
+		GCHandle = 6,
+		Jit = 7,
+		Threading = 8,
+		AppDomain = 9,
+		Reflection = 10,
+		Marshal = 11,
+		ThreadPool = 12,
+		Debugger = 13,
+		Handle = 14,
+		Ephemeron = 15,
 	}
 
 	// mono/profiler/log.h : MonoProfilerMonitorEvent
@@ -173,6 +199,15 @@ namespace Mono.Profiler.Log {
 		PreStartWorld = 8,
 		PostStartWorld = 9,
 		PostStartWorldUnlocked = 11,
+		// Following are v13 and older only
+		[Obsolete ("This event is no longer produced.")]
+		MarkBegin = 1,
+		[Obsolete ("This event is no longer produced.")]
+		MarkEnd = 2,
+		[Obsolete ("This event is no longer produced.")]
+		ReclaimBegin = 3,
+		[Obsolete ("This event is no longer produced.")]
+		ReclaimEnd = 4
 	}
 
 	// mono/metadata/mono-gc.h : MonoGCHandleType

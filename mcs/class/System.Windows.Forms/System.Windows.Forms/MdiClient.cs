@@ -52,6 +52,7 @@ namespace System.Windows.Forms {
 		private string form_text;
 		private bool setting_form_text;
 		private Form active_child;
+		private Point next_child_stack_location;
 
 		#endregion	// Local Variables
 
@@ -173,7 +174,7 @@ namespace System.Windows.Forms {
 				clip = new Rectangle (0, 0, Width, Height);
 
 				ControlPaint.DrawBorder3D (pe.Graphics, clip, Border3DStyle.Sunken);
-				XplatUI.PaintEventEnd (ref m, Handle, false);
+				XplatUI.PaintEventEnd (ref m, Handle, false, pe);
 				m.Result = IntPtr.Zero;
 				return ;
 			}
@@ -996,6 +997,16 @@ namespace System.Windows.Forms {
 					return;
 				}
 			}
+		}
+
+		internal Point GetNextStackedFormLocation (CreateParams cp)
+		{
+			Point previous = next_child_stack_location;
+			next_child_stack_location = new Point (previous.X + 22, previous.Y + 22);
+			if (!ClientRectangle.Contains (next_child_stack_location.X * 3, next_child_stack_location.Y * 3)) {
+				next_child_stack_location = Point.Empty;
+			}
+			return previous;
 		}
 	}
 }

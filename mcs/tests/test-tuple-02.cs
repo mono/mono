@@ -26,6 +26,11 @@ class TupleConversions
 		(string v1, object v2) b = ("a", "b");
 
 		(int v1, long v2)? x = null;
+
+        var array = new [] {
+            (name: "A", offset: 0),
+            (name: "B", size: 4)
+        };		
 	}
 
 	static void Foo<T> (T arg)

@@ -1,4 +1,4 @@
-﻿//
+//
 // WSSecurityTokenSerializerTest.cs
 //
 // Author:
@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -41,6 +42,8 @@ using System.IdentityModel.Tokens;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Security
 {
 	[TestFixture]
@@ -49,7 +52,7 @@ namespace MonoTests.System.ServiceModel.Security
 		const string wssNS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
 		const string wsuNS = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
 
-		static X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+		static X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 
 		const string derived_key_token1 = @"<c:DerivedKeyToken u:Id='_1' xmlns:u='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd' xmlns:c='http://schemas.xmlsoap.org/ws/2005/02/sc'>
         <o:SecurityTokenReference xmlns:o='http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd'>
@@ -167,7 +170,7 @@ namespace MonoTests.System.ServiceModel.Security
 			StringWriter sw = new StringWriter ();
 
 			XmlElement xml = new XmlDocument ().CreateElement ("foo");
-			SecurityToken token = new X509SecurityToken (new X509Certificate2 ("Test/Resources/test.pfx", "mono"));
+			SecurityToken token = new X509SecurityToken (new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono"));
 			SecurityKeyIdentifierClause intref =
 				token.CreateKeyIdentifierClause<X509IssuerSerialKeyIdentifierClause> ();
 			SecurityKeyIdentifierClause extref =
@@ -970,3 +973,5 @@ throw new Exception ("3");
 		}
 	}
 }
+#endif
+

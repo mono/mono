@@ -1,3 +1,4 @@
+// Compiler options: -langversion:latest
 // Cloning tests
 
 using System;
@@ -103,7 +104,11 @@ public class C : B
 			default:
 				break;
 			}
-		});		
+		});
+
+		Test (() => {
+			char ch = default;
+		});
 		
 		var c = new C ();
 		c.InstanceTests ();

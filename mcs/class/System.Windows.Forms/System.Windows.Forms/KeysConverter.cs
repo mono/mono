@@ -27,11 +27,33 @@
 // COMPLETE
 
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
 namespace System.Windows.Forms {
 	public class KeysConverter : TypeConverter, IComparer {
+		private static Dictionary<string, Keys> key_names;
+
+		static KeysConverter() {
+			key_names = new Dictionary<string, Keys>(15);
+			key_names.Add("Ctrl", Keys.Control);
+			key_names.Add("Del", Keys.Delete);
+			key_names.Add("Enter", Keys.Return);
+			key_names.Add("PgDn", Keys.PageDown);
+			key_names.Add("PgUp", Keys.PageUp);
+			key_names.Add("0", Keys.D0);
+			key_names.Add("1", Keys.D1);
+			key_names.Add("2", Keys.D2);
+			key_names.Add("3", Keys.D3);
+			key_names.Add("4", Keys.D4);
+			key_names.Add("5", Keys.D5);
+			key_names.Add("6", Keys.D6);
+			key_names.Add("7", Keys.D7);
+			key_names.Add("8", Keys.D8);
+			key_names.Add("9", Keys.D9);
+		}
+
 		#region Public Constructors
 		public KeysConverter() {
 		}
@@ -63,22 +85,22 @@ namespace System.Windows.Forms {
 		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) {
 			if (value is string) {
 				string[]	keys;
-				Keys		key;
+				Keys		key, special_key;
 
 				keys = ((string)value).Split(new char[] {'+'});
 				key = Keys.None;
 
 				if (keys.Length > 1) {
 					for (int i = 0; i < keys.Length - 1; i++) {
-						if (keys[i].Equals("Ctrl")) {
-							key |= Keys.Control;
+						if (key_names.TryGetValue (keys[i], out special_key)) {
+							key |= special_key;
 						} else {
 							key |= (Keys)Enum.Parse(typeof(Keys), keys[i], true);
 						}
 					}
 				}
-				if (keys [keys.Length - 1].Equals ("Ctrl"))
-					key |= Keys.Control;
+				if (key_names.TryGetValue (keys[keys.Length - 1], out special_key))
+					key |= special_key;
 				else
 					key |= (Keys)Enum.Parse(typeof(Keys), keys[keys.Length - 1], true);
 				return key;

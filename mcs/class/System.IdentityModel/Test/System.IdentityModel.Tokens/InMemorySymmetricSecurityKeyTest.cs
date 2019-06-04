@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE
 using System;
 using System.IO;
 using System.Text;
@@ -37,6 +38,8 @@ using NUnit.Framework;
 using Key = System.IdentityModel.Tokens.InMemorySymmetricSecurityKey;
 using AES = System.Security.Cryptography.RijndaelManaged;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IdentityModel.Tokens
 {
 	[TestFixture]
@@ -48,7 +51,7 @@ namespace MonoTests.System.IdentityModel.Tokens
 
 		static InMemorySymmetricSecurityKeyTest ()
 		{
-			cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			// randomly generated with RijndaelManaged
 			// GenerateIV() and GenerateKey().
 			raw = Convert.FromBase64String ("eX2EeE969RCv/5Lx8OIGLHtJrSD5PzVzO3tTy9JxU58=");
@@ -275,5 +278,23 @@ namespace MonoTests.System.IdentityModel.Tokens
 			Assert.IsFalse (key.IsSymmetricAlgorithm (SecurityAlgorithms.RsaOaepKeyWrap), "#3");
 			Assert.IsTrue (key.IsSymmetricAlgorithm (SecurityAlgorithms.Psha1KeyDerivation), "#4");
 		}
+
+		[Test]
+		public void GetKeyedHashAlgorithm()
+		{
+			InMemorySymmetricSecurityKey key = new InMemorySymmetricSecurityKey(new byte[0]);
+
+			Assert.That(() => key.GetKeyedHashAlgorithm(SecurityAlgorithms.HmacSha256Signature), Throws.Nothing);
+		}
+
+		[Test]
+		public void IsSupportedAlgorithm()
+		{
+			InMemorySymmetricSecurityKey key = new InMemorySymmetricSecurityKey(new byte[0]);
+
+			Assert.That(() => key.IsSupportedAlgorithm(SecurityAlgorithms.HmacSha256Signature), Is.True);
+		}
+	    
 	}
 }
+#endif

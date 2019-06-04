@@ -82,6 +82,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void QueueUserWorkItem ()
 		{
 			int n = 100000;
@@ -102,6 +103,7 @@ namespace MonoTests.System.Threading
 		event WaitCallback e;
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void UnsafeQueueUserWorkItem_MulticastDelegate ()
 		{
 			CountdownEvent ev = new CountdownEvent (2);
@@ -119,6 +121,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void SetAndGetMinThreads ()
 		{
 			int workerThreads, completionPortThreads;
@@ -138,6 +141,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void SetAndGetMaxThreads ()
 		{
 			int cpuCount = Environment.ProcessorCount;
@@ -156,26 +160,50 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (workerThreads == workerThreads_new, "#3");
 			Assert.IsTrue (completionPortThreads == completionPortThreads_new, "#4");
 		}
+		
+		[Test]
+		[Category ("MultiThreaded")]
+		public void SetMaxPossibleThreads ()
+		{
+			var maxPossibleThreads = 0x7fff;
+			int maxWt, macCpt;
+
+			ThreadPool.SetMaxThreads (maxPossibleThreads, maxPossibleThreads);
+			ThreadPool.GetMaxThreads (out maxWt, out macCpt);
+			Assert.AreEqual (maxPossibleThreads, maxWt);
+			Assert.AreEqual (maxPossibleThreads, macCpt);
+
+			ThreadPool.SetMaxThreads (maxPossibleThreads + 1, maxPossibleThreads + 1);
+			ThreadPool.GetMaxThreads (out maxWt, out macCpt);
+			Assert.AreEqual (maxPossibleThreads, maxWt);
+			Assert.AreEqual (maxPossibleThreads, macCpt);
+		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void GetAvailableThreads ()
 		{
+			int cpuCount = Environment.ProcessorCount;
+
+			if (cpuCount > 16)
+				Assert.Inconclusive ("This test doesn't work well with a high number of processor cores.");
+
 			ManualResetEvent mre = new ManualResetEvent (false);
 			var sw = Stopwatch.StartNew ();
 			int i, workerThreads, completionPortThreads;
 
 			try {
-				Assert.IsTrue (ThreadPool.SetMaxThreads (Environment.ProcessorCount, Environment.ProcessorCount));
+				Assert.IsTrue (ThreadPool.SetMaxThreads (cpuCount, cpuCount));
 
 				while (true) {
 					ThreadPool.GetAvailableThreads (out workerThreads, out completionPortThreads);
 					if (workerThreads == 0)
 						break;
 
-					Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
-
-					if (sw.Elapsed.TotalSeconds >= 10)
+					if (sw.Elapsed.TotalSeconds >= 30) {
+						Console.WriteLine ("workerThreads = {0}, completionPortThreads = {1}", workerThreads, completionPortThreads);
 						Assert.Fail ("did not reach 0 available threads");
+					}
 
 					ThreadPool.QueueUserWorkItem (GetAvailableThreads_Callback, mre);
 					Thread.Sleep (1);
@@ -198,6 +226,85 @@ namespace MonoTests.System.Threading
 			ThreadPool.QueueUserWorkItem (GetAvailableThreads_Callback, mre);
 
 			mre.WaitOne ();
+		}
+
+		[Test]
+		[Category ("MultiThreaded")]
+		public void AsyncLocalCapture ()
+		{
+			var asyncLocal = new AsyncLocal<int>();
+			asyncLocal.Value = 1;
+			int var_0, var_1, var_2, var_3;
+			var_0 = var_1 = var_2 = var_3 = 99;
+			var cw = new CountdownEvent (4);
+
+			var evt = new AutoResetEvent (false);
+			ThreadPool.QueueUserWorkItem(state => {
+				var_0 = asyncLocal.Value;
+				cw.Signal ();
+			}, null);
+
+			ThreadPool.UnsafeQueueUserWorkItem(state => {
+				var_1 = asyncLocal.Value;
+				cw.Signal ();
+			}, null);
+
+			ThreadPool.RegisterWaitForSingleObject (evt, (state, to) => {
+				var_2 = asyncLocal.Value;
+				cw.Signal ();
+			}, null, millisecondsTimeOutInterval: 1, executeOnlyOnce: true);
+
+			ThreadPool.UnsafeRegisterWaitForSingleObject (evt, (state, to) => {
+				var_3 = asyncLocal.Value;
+				cw.Signal ();
+			}, null, millisecondsTimeOutInterval: 1, executeOnlyOnce: true);
+
+			Assert.IsTrue (cw.Wait (2000), "cw_wait");
+
+			Assert.AreEqual (1, var_0, "var_0");
+			Assert.AreEqual (0, var_1, "var_1");
+			Assert.AreEqual (1, var_2, "var_2");
+			Assert.AreEqual (0, var_3, "var_3");
+		}
+
+#if !MOBILE
+		// This is test related to bug https://bugzilla.xamarin.com/show_bug.cgi?id=41294.
+		// The bug is that the performance counters return 0.
+		// "Work Items Added" and "# of Threads" are fixed, the others are not.
+		[Test]
+		public  void PerformanceCounter_WorkItems ()
+		{
+			var workItems = new PerformanceCounter ("Mono Threadpool", "Work Items Added");
+			var threads   = new PerformanceCounter ("Mono Threadpool", "# of Threads");
+
+			var workItems0 = workItems.NextValue();
+
+			int N = 99;
+			for (var i = 0; i < N; i++)
+				ThreadPool.QueueUserWorkItem (_ => {});
+
+			var workItems1 = workItems.NextValue();
+			var threads0 = threads.NextValue();
+
+			//Console.WriteLine ("workItems0:{0} workItems1:{1}", workItems0, workItems1);
+			//Console.WriteLine ("threads:{0}",  threads0);
+
+			AssertHelper.GreaterOrEqual ((int)(workItems1 - workItems0), N, "#1");
+			Assert.IsTrue (threads0 > 0, "#2");
+		}
+#endif
+
+		[Test]
+		[Category ("MultiThreaded")]
+		public void SetMinThreads ()
+		{
+			int workerThreads, cpThreads;
+			int expectedWt = 64, expectedCpt = 64;
+			bool set = ThreadPool.SetMinThreads (expectedWt, expectedCpt);
+			ThreadPool.GetMinThreads (out workerThreads, out cpThreads);
+			Assert.IsTrue (set, "#1");
+			Assert.AreEqual (expectedWt, workerThreads, "#2");
+			Assert.AreEqual (expectedCpt, cpThreads, "#3");
 		}
 	}
 }

@@ -1,0 +1,126 @@
+../test-helpers/Configuration.Http.cs
+../test-helpers/Configuration.Certificates.cs
+../test-helpers/TestConfiguration.cs
+
+../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
+
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+System/RemoteExecutorTests.cs
+../../../external/corefx/src/Common/tests/System/Collections/ICollection.NonGeneric.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IList.NonGeneric.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/TestBase.NonGeneric.cs
+../../../external/corefx/src/Common/tests/System/IO/DelegateStream.cs
+../../../external/corefx/src/Common/tests/System/Net/Capability.Security.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.Security.cs
+../../../external/corefx/src/Common/tests/System/Net/HttpsTestClient.cs
+../../../external/corefx/src/Common/tests/System/Net/HttpsTestServer.cs
+../../../external/corefx/src/Common/tests/System/Net/SslStreamCertificatePolicy.cs
+../../../external/corefx/src/Common/tests/System/Net/VirtualNetwork/*.cs
+../../../external/corefx/src/Common/tests/System/Net/WebSockets/WebSocketCreateTest.cs
+../../../external/corefx/src/Common/tests/System/Runtime/Serialization/Formatters/BinaryFormatterHelpers.cs
+
+# System.CodeDom
+../../../external/corefx/src/System.CodeDom/tests/CodeCollections/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeExpressions/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeObjects/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeStatements/*.cs
+../../../external/corefx/src/System.CodeDom/tests/CodeTypeMembers/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Compiler/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Other/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Microsoft/CSharp/*.cs
+../../../external/corefx/src/System.CodeDom/tests/Microsoft/VisualBasic/*.cs
+../../../external/corefx/src/System.CodeDom/tests/*.cs:CodeGenerationTests.cs,CSharpCodeGenerationTests.cs,VBCodeGenerationTests.cs
+
+# System.Net.Requests
+../../../external/corefx/src/Common/tests/System/Net/Http/LoopbackServer.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.Http.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.WebSockets.cs
+../../../external/corefx/src/System.Net.Requests/tests/FtpWebRequestTest.cs
+#../../../external/corefx/src/System.Net.Requests/tests/*.cs:AuthenticationManagerTest.cs
+
+# System.Net.WebHeaderCollection
+#../../../external/corefx/src/System.Net.WebHeaderCollection/tests/*.cs
+
+# System.Net.NameResolution
+#../../../external/corefx/src/System.Net.NameResolution/tests/FunctionalTests/*.cs
+
+# System.Net.WebClient
+../../../external/corefx/src/System.Net.WebClient/tests/*.cs
+
+# System.Net.Security
+../../../external/corefx/src/Common/tests/System/Net/SslProtocolSupport.cs
+#../../../external/corefx/src/System.Net.Security/tests/UnitTests/*.cs:TlsAlertsMatchWindowsInterop.cs
+#../../../external/corefx/src/System.Net.Security/tests/UnitTests/System/Security/Authentication/ExtendedProtection/*.cs
+../../../external/corefx/src/System.Net.Security/tests/UnitTests/Fakes/*.cs:FakeSslState.cs,FakeLazyAsyncResult.cs
+../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
+../../../external/corefx/src/Common/src/System/Net/InternalException.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/SniHelper.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsAlertMessage.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/TlsAlertType.cs
+
+../../../external/corefx/src/System.Net.Security/tests/FunctionalTests/*.cs:IdentityValidator.Windows.cs,NegotiateStreamTest.Linux.cs,TestConfiguration.cs,UnixGssFakeNegotiateStream.cs,UnixGssFakeStreamFramer.cs
+
+# System.Net.Ping
+../../../external/corefx/src/Common/src/System/Net/NetworkInformation/UnixCommandLinePing.cs
+../../../external/corefx/src/Common/tests/System/Net/Capability.RawSocketPermissions.cs
+../../../external/corefx/src/Common/src/System/Net/RawSocketPermissions.cs
+#../../../external/corefx/src/System.Net.Ping/tests/FunctionalTests/*.cs
+
+# System.Net.WebSockets
+../../../external/corefx/src/System.Net.WebSockets/tests/*.cs
+
+# System.Net.WebProxy
+#../../../external/corefx/src/System.Net.WebProxy/tests/*.cs
+
+# System.Net.ServicePoint
+#../../../external/corefx/src/System.Net.ServicePoint/tests/*.cs
+
+# System.Net.Sockets
+../../../external/corefx/src/Common/tests/System/Diagnostics/Tracing/TestEventListener.cs
+../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
+../../../external/corefx/src/Common/tests/System/Net/Capability.Sockets.cs
+../../../external/corefx/src/Common/tests/System/Net/EventSourceTestLogging.cs
+../../../external/corefx/src/Common/tests/System/Net/TestLogging.cs
+../../../external/corefx/src/Common/tests/System/Net/VerboseTestLogging.cs
+../../../external/corefx/src/Common/src/System/Threading/Tasks/TaskToApm.cs
+../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.cs
+../../../external/corefx/src/Common/tests/System/Net/Configuration.Sockets.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/Fletcher32.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketImplementationType.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestExtensions.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServer.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServerAPM.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServerAsync.cs
+../../../external/corefx/src/Common/tests/System/Net/Sockets/TestSettings.cs
+#../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/*.cs:NetworkStreamTest.netcoreapp.cs,SocketTestHelper.netcoreapp.cs,SendReceive.netcoreapp.cs,SocketAsyncEventArgsTest.cs,LoggingTest.cs,SendReceive.cs
+
+# System.Net.Primitives
+../../../external/corefx/src/System.Net.Primitives/tests/FunctionalTests/CookieTest/*.cs
+#../../../external/corefx/src/System.Net.Primitives/tests/FunctionalTests/*.cs:IPAddressParsingSpan.cs,IPAddressSpanTest.cs
+
+# System.Net.Http
+# Lots of stuff here need Spans
+../../../external/corefx/src/Common/src/System/Net/UriScheme.cs
+../../../external/corefx/src/Common/src/System/SerializableAttribute.cs
+../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
+
+# System.IO.FileSystemWatcher
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Utility/*.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.unit.cs
+../../../external/corefx/src/Common/tests/System/IO/TempFile.cs
+../../../external/corefx/src/Common/tests/System/IO/TempDirectory.cs
+
+# System.Text.RegularExpressions
+../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
+../../../external/corefx/src/System.Text.RegularExpressions/tests/*.cs:Regex.Serialization.cs,MatchCollectionTests.cs,MatchCollectionTests2.cs
+
+# System.Security.Cryptography
+#../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/AsnEncodedData.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/AsnEncodedDataCollectionTests.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/Oid.cs
+../../../external/corefx/src/System.Security.Cryptography.Encoding/tests/OidCollectionTests.cs

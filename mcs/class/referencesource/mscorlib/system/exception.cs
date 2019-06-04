@@ -23,7 +23,9 @@ namespace System {
     using System.Runtime.Serialization;
     using System.Runtime.Versioning;
     using System.Diagnostics;
+#if !MONO
     using System.Security.Permissions;
+#endif
     using System.Security;
     using System.IO;
     using System.Text;
@@ -31,16 +33,21 @@ namespace System {
     using System.Collections;
     using System.Globalization;
     using System.Diagnostics.Contracts;
+#if NETCORE
+    using __HResults = System.HResults;
+#endif
 
+#if !MONO
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(_Exception))]
+#endif
     [Serializable]
     [ComVisible(true)]
 #if MONO
     [StructLayout (LayoutKind.Sequential)]
 #endif
-    public class Exception : ISerializable
-#if !(MONO && MOBILE)
+    public partial class Exception : ISerializable
+#if !MOBILE && !NETCORE
         , _Exception
 #endif
 {
@@ -144,7 +151,6 @@ namespace System {
             }
         }
         
-        
         public virtual String Message {
                get {  
                 if (_message == null) {
@@ -162,12 +168,15 @@ namespace System {
         public virtual IDictionary Data { 
             [System.Security.SecuritySafeCritical]  // auto-generated
             get {
-                if (_data == null)
+                if (_data == null) {
+#if !MONO
                     if (IsImmutableAgileException(this))
                         _data = new EmptyReadOnlyDictionaryInternal();
                     else
+#endif
                         _data = new ListDictionaryInternal();
-                
+                }
+
                 return _data;
             }
         }
@@ -210,7 +219,9 @@ namespace System {
             }
         }
 
+#if !MONO
         [FriendAccessAllowed]
+#endif
         internal void AddExceptionDataForRestrictedErrorInfo(
             string restrictedError, 
             string restrictedErrorReference, 
@@ -281,13 +292,12 @@ namespace System {
             get { return _innerException; }
         }
 
-
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         static extern private IRuntimeMethodInfo GetMethodFromStackTrace(Object stackTrace);
 
-#if !MONO
         [System.Security.SecuritySafeCritical]  // auto-generated
         private MethodBase GetExceptionMethodFromStackTrace()
         {
@@ -391,8 +401,10 @@ namespace System {
             String tempStackTraceString = Environment.GetStackTrace(this, needFileInfo);
             return remoteStackTraceString + tempStackTraceString;
          }
-    
+
+#if !MONO
         [FriendAccessAllowed]
+#endif
         internal void SetErrorCode(int hr)
         {
             HResult = hr;
@@ -644,7 +656,7 @@ namespace System {
                 // this assert to ensure that it fails when that exception's _safeSerializationManager is NULL 
                 Contract.Assert(((_safeSerializationManager != null) || (this.GetType().Assembly == typeof(object).Assembly)), 
                                 "User defined exceptions must have a valid _safeSerializationManager");
-            
+
                 // Handle serializing any transparent or partial trust subclass data
                 _safeSerializationManager.CompleteSerialization(this, info, context);
             }
@@ -749,7 +761,14 @@ namespace System {
             _stackTrace = null;
             _stackTraceString = null;
         }
-        
+
+#if MONO
+        // This is only needed for Watson support
+        private string StripFileInfo(string stackTrace, bool isRemoteStackTrace) {
+            return stackTrace;
+        }
+#endif
+ 
 #if FEATURE_EXCEPTIONDISPATCHINFO
 
         // This is the object against which a lock will be taken
@@ -786,12 +805,7 @@ namespace System {
             }
         }
 
-#if MONO
-        // This is only needed for Watson support
-        private string StripFileInfo(string stackTrace, bool isRemoteStackTrace) {
-            return stackTrace;
-        }
-#else
+#if !MONO
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -950,7 +964,10 @@ namespace System {
             {
                 return _HResult;
             }
-            protected set
+#if !NETCORE
+            protected
+#endif
+             set
             {
                 _HResult = value;
             }
@@ -979,6 +996,8 @@ namespace System {
 
         // Mono addition: Used on iPhone
         IntPtr[] native_trace_ips;
+
+        int caught_in_unmanaged;
 #endif
 
     // See clr\src\vm\excep.h's EXCEPTION_COMPLUS definition:
@@ -1036,11 +1055,16 @@ namespace System {
             }
         }
 
+#if MONO
+        private static bool nIsTransient(int hr) {
+			throw new NotImplementedException ();
+		}
+#else
         [System.Security.SecurityCritical]  // auto-generated
         [ResourceExposure(ResourceScope.None)]
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private extern static bool nIsTransient(int hr);
-
+#endif
 
         // This piece of infrastructure exists to help avoid deadlocks 
         // between parts of mscorlib that might throw an exception while 
@@ -1065,11 +1089,11 @@ namespace System {
 #if MONO
             switch (kind) {
             case ExceptionMessageKind.ThreadAbort:
-                return "";
+                return "Thread was being aborted.";
             case ExceptionMessageKind.ThreadInterrupted:
-                return "";
+                return "Thread was interrupted from a waiting state.";
             case ExceptionMessageKind.OutOfMemory:
-                return "Out of memory";
+                return "Insufficient memory to continue the execution of the program.";
             }
             return "";
 #else
@@ -1103,8 +1127,8 @@ namespace System {
         internal Exception FixRemotingException ()
         {
             string message = (0 == _remoteStackIndex) ?
-                Locale.GetText ("{0}{0}Server stack trace: {0}{1}{0}{0}Exception rethrown at [{2}]: {0}") :
-                Locale.GetText ("{1}{0}{0}Exception rethrown at [{2}]: {0}");
+                "{0}{0}Server stack trace: {0}{1}{0}{0}Exception rethrown at [{2}]: {0}" :
+                "{1}{0}{0}Exception rethrown at [{2}]: {0}";
             string tmp = String.Format (message, Environment.NewLine, StackTrace, _remoteStackIndex);
 
             _remoteStackTraceString = tmp;

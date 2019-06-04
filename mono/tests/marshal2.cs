@@ -35,7 +35,8 @@ public class Tests {
 		public SimpleObj emb2;
 		public string s2;
 		public double x;
-		[MarshalAs (UnmanagedType.ByValArray, SizeConst=2)] public char[] a2;
+		[MarshalAs (UnmanagedType.ByValArray, SizeConst=2)]
+		public char[] a2;
 	}
 
 	[StructLayout (LayoutKind.Sequential, CharSet=CharSet.Ansi)]
@@ -59,6 +60,26 @@ public class Tests {
 	public struct PackStruct2 {
 		byte b;
 		PackStruct1 s;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	struct InvalidArrayForMarshalingStruct
+	{
+		// Missing the following needed directive
+		// [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+		public readonly char[] CharArray;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	struct TwoDimensionalArrayStruct
+	{
+		public TwoDimensionalArrayStruct(int[,] vals)
+		{
+			TwoDimensionalArray = vals;
+		}
+
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+		public readonly int[,] TwoDimensionalArray;
 	}
 	
 	public unsafe static int Main (String[] args) {
@@ -292,5 +313,62 @@ public class Tests {
 		if (s.b != 2)
 			return 2;
 		return 0;
+	}
+
+	public static int test_0_invalid_array_throws () {
+		var ptr = Marshal.AllocHGlobal(Marshal.SizeOf (typeof (InvalidArrayForMarshalingStruct)));
+		try {
+			Marshal.PtrToStructure (ptr, typeof (InvalidArrayForMarshalingStruct));
+		}
+		catch (MarshalDirectiveException e) {
+			return 0;
+		}
+		return 1;
+	}
+
+	public static int test_0_multidimentional_arrays () {
+		var structToMarshal = new TwoDimensionalArrayStruct (new[, ] { {1, 2, 3}, {4, 5, 6} });
+		var ptr = Marshal.AllocHGlobal (Marshal.SizeOf (structToMarshal));
+		Marshal.StructureToPtr (structToMarshal, ptr, false);
+		unsafe {
+			if(((int*)ptr)[4] == 5)
+				return 0;
+		}
+		return 1;
+	}
+
+	struct GenericStruct<T>
+	{
+		public T t1;
+		public T t2;
+		public bool b; // make struct non-blittable
+	}
+
+	struct NonGenericStruct
+	{
+		public int t1;
+		public int t2;
+		public bool b; // make struct non-blittable
+	}
+
+	struct StructWithGenericField
+	{
+		public GenericStruct<int> gs;
+	}
+
+	struct StructWithNonGenericField
+	{
+		public NonGenericStruct ngs;
+	}
+
+	public static int test_0_marshal_generic_struct () {
+		var structToMarshal = new StructWithNonGenericField () { ngs = new NonGenericStruct {t1 = 1, t2 =2} };
+		var ptr = Marshal.AllocHGlobal (Marshal.SizeOf (structToMarshal));
+		Marshal.StructureToPtr(structToMarshal, ptr, false);
+		var genericStruct = (StructWithGenericField)Marshal.PtrToStructure(ptr, typeof(StructWithGenericField));
+		if (genericStruct.gs.t1 == 1)
+			return 0;
+
+		return 1;
 	}
 }

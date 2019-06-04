@@ -10,9 +10,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Text;
 
 using NUnit.Framework;
 using CategoryAttribute = NUnit.Framework.CategoryAttribute;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -35,7 +38,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TextBoxBasePropertyTest ()
 		{
 			Assert.AreEqual (false, textBox.AcceptsTab, "#1a");
@@ -45,7 +47,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, textBox.AcceptsTab, "#1b");
 			Assert.AreEqual (true, textBox.AutoSize, "#2");
 			Assert.AreEqual (null, textBox.BackgroundImage, "#4a");
-			string gif = "M.gif";
+			string gif = TestResourceHelper.GetFullPathOfResource ("Test/resources/M.gif");
 			textBox.BackgroundImage = Image.FromFile (gif);
 			// comparing image objects fails on MS .Net so using Size property
 			Assert.AreEqual (Image.FromFile(gif, true).Size, textBox.BackgroundImage.Size, "#4b");
@@ -206,7 +208,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void BackColorTest ()
 		{
-			Assert.AreEqual (SystemColors.Control, textBox.BackColor, "#A1");
+			Assert.AreEqual (SystemColors.Window, textBox.BackColor, "#A1");
 			textBox.BackColor = Color.Red;
 			Assert.AreEqual (Color.Red, textBox.BackColor, "#A2");
 			textBox.BackColor = Color.White;
@@ -349,6 +351,18 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void PreferredSizeTest ()
+		{
+			textBox.Size = new Size (1, textBox.PreferredHeight);
+			textBox.Text = "Text";
+			Size saved_preferred_size = textBox.PreferredSize;
+			// Ensure that the preferred size reflects the Text
+			Assert.AreNotEqual (saved_preferred_size, textBox.Size);
+			textBox.Text = "Long Text";
+			Assert.AreNotEqual (saved_preferred_size, textBox.PreferredSize);
+		}
+
+		[Test]
 		public void SelectTest ()
 		{
 			textBox.Text = "This is a sample test.";
@@ -414,8 +428,7 @@ namespace MonoTests.System.Windows.Forms
 			form.Dispose ();
 		}
 
-		[Test]
-		[Category ("NotWorking")]
+		[Test]		
 		public void ForeColorTest ()
 		{
 			Assert.AreEqual (SystemColors.WindowText, textBox.ForeColor, "#A1");
@@ -446,6 +459,8 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (Color.Blue, textBox.ForeColor, "#B10");
 			Assert.AreEqual (2, _invalidated, "#B11");
 			Assert.AreEqual (0, _paint, "#B12");
+
+			form.Close ();
 		}
 
 		[Test]
@@ -712,6 +727,52 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 		
+		[Test]
+		public void Bug6357 ()
+		{
+			Form f = new Form (); 
+			f.ShowInTaskbar = false;
+			f.Visible = true;
+			f.ClientSize = new Size (300, 130);
+			textBox.Visible = true;
+			textBox.AppendText(
+				"Achtung! Passwort für URL angepasst! Anführungszeichen im Passwort funktionieren in URL nur mit Escape.\r\n" +
+				"\r\n" +
+				"{S:fileFilepath} -> {S:##volumeDriveLetter}:\\\r\n" +
+				"\r\n" +
+				"Verschlüsselter Kontainer (VeraCrypt).\r\n" +
+				"\r\n" +
+				"URL-Anmerkungen:\r\n" +
+				"- nur für Windows\r\n" +
+				"- volumeDriveLetter muss frei sein\r\n" +
+				"\r\n" +
+				"veracrypt --mount /media/NAS_container_flo/test.vc -p '1 1' --fs-options=X-mount.mkdir=0700 /media/vera\r\n" +
+				"\r\n" +
+				"cmd://veracrypt --mount {S:fFilepath} -p '{PASSWORD}' --pim='{S:#pim}' --fs-options=X-mount.mkdir=0700 {S:mPoint}" +
+				"\r\n" +
+				"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\r\n" +
+				"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+			textBox.Multiline = true;
+			textBox.ScrollBars = ScrollBars.Vertical;
+			textBox.Dock = DockStyle.Fill;			
+			f.Controls.Add (textBox);
+
+			Assert.AreEqual (textBox.TextLength, textBox.SelectionStart);
+
+			textBox.Focus ();
+			// Select a bit of the text
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("+{UP}");
+			SendKeys.SendWait ("{BS}"); // Remove the text with Backspace
+			Assert.AreEqual (0, textBox.SelectionLength);
+
+			f.Dispose ();
+		}
+
+
 		[Test]
 		public void ModifiedEventTest ()
 		{

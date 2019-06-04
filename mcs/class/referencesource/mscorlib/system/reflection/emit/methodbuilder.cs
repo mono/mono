@@ -1403,7 +1403,7 @@ namespace System.Reflection.Emit
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     [ComVisible(false)]
-    public struct ExceptionHandler : IEquatable<ExceptionHandler>
+    public readonly struct ExceptionHandler : IEquatable<ExceptionHandler>
     {
         // Keep in sync with unmanged structure. 
         internal readonly int m_exceptionClass;

@@ -24,7 +24,6 @@
 *.tlh
 *.bak
 *.ilk
-*.log
 *.lib
 *.sbr
 *.sdf
@@ -40,10 +39,12 @@ Ankh.NoLoad
 *.gpState
 .vscode/
 *.exp
+.vs/
 
 # Tooling
 _ReSharper*/
 *.resharper
+.idea/*
 [Tt]est[Rr]esult*
 *.orig
 *.rej
@@ -87,7 +88,9 @@ stamp-h.in
 *~
 *.swp
 *.o
+*.dylib
 .deps
+.libs
 
 # Libtool
 libtool.m4
@@ -125,7 +128,22 @@ docs/perlmod*
 compile
 mono.h
 mono-*.tar.*
+mono_crash*
 tmpinst-dir.stamp
 msvc/scripts/inputs/
 extensions-config.h
+*.dylib.dSYM
+*.mlpd
+llvm/build/
+llvm/usr/
+sdks/builds/llvm-*/
+sdks/builds/android-*/
 
+
+##############################################################################
+# Arcade output directories
+##############################################################################
+
+.packages
+artifacts
+.dotnet

@@ -71,8 +71,6 @@ namespace System.ServiceModel
 				return new RsaSecurityTokenAuthenticator ();
 			else if (tokenRequirement.TokenType == SecurityTokenTypes.X509Certificate)
 				return CreateX509Authenticator (tokenRequirement);
-			else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.Spnego)
-				return new SspiClientSecurityTokenAuthenticator (this, tokenRequirement);
 			else
 				throw new NotImplementedException ("Security token type " + tokenRequirement.TokenType);
 
@@ -114,16 +112,8 @@ namespace System.ServiceModel
 				return CreateX509SecurityTokenProvider (tokenRequirement);
 			else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.SecureConversation)
 				return CreateSecureConversationProvider (tokenRequirement);
-			else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.AnonymousSslnego) {
-				if (tokenRequirement.TryGetProperty<bool> (ReqType.IsInitiatorProperty, out isInitiator) && isInitiator)
-					return CreateSslnegoProvider (tokenRequirement);
-			} else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.MutualSslnego) {
-				if (tokenRequirement.TryGetProperty<bool> (ReqType.IsInitiatorProperty, out isInitiator) && isInitiator)
-					return CreateSslnegoProvider (tokenRequirement);
-			} else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.SecurityContext) {
+			else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.SecurityContext) {
 				// FIXME: implement
-			} else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.Spnego) {
-				return CreateSpnegoProvider (tokenRequirement);
 			} else if (tokenRequirement.TokenType == ServiceModelSecurityTokenTypes.SspiCredential) {
 				// FIXME: implement
 			} else if (tokenRequirement.TokenType == SecurityTokenTypes.Rsa) {
@@ -274,22 +264,6 @@ SecurityTokenRequirement requirement)
 
 			// FIXME: use it somewhere.
 			int keySize = r.KeySize;
-
-			return p;
-		}
-
-		SecurityTokenProvider CreateSslnegoProvider (SecurityTokenRequirement r)
-		{
-			SslSecurityTokenProvider p = new SslSecurityTokenProvider (this, r.TokenType == ServiceModelSecurityTokenTypes.MutualSslnego);
-			InitializeProviderCommunicationObject (p.Communication, r);
-
-			return p;
-		}
-
-		SecurityTokenProvider CreateSpnegoProvider (SecurityTokenRequirement r)
-		{
-			SpnegoSecurityTokenProvider p = new SpnegoSecurityTokenProvider (this, r);
-			InitializeProviderCommunicationObject (p.Communication, r);
 
 			return p;
 		}

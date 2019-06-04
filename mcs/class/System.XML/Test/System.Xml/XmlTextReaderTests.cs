@@ -15,6 +15,8 @@ using System.Text;
 
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -651,7 +653,7 @@ namespace MonoTests.System.Xml
 		public void ExternalDocument ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			doc.Load ("Test/XmlFiles/nested-dtd-test.xml");
+			doc.Load (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/nested-dtd-test.xml"));
 		}
 
 		[Test]
@@ -868,7 +870,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void CloseIsNotAlwaysEOF2 ()
 		{
-			XmlTextReader xtr = new XmlTextReader ("Test/XmlFiles/simple.xml");
+			XmlTextReader xtr = new XmlTextReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/simple.xml"));
 			xtr.Close ();
 			Assert.IsTrue (!xtr.EOF); // Close() != EOF
 		}
@@ -1119,7 +1121,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlTextReader xtr = null;
 			try {
-				xtr = new XmlTextReader (File.OpenText ("Test/XmlFiles/76102.xml"));
+				xtr = new XmlTextReader (File.OpenText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/76102.xml")));
 				while (!xtr.EOF)
 					xtr.Read ();
 			} finally {

@@ -53,7 +53,7 @@ namespace MonoTests.System.Threading
 		public void Constructor_Defaults ()
 		{
 			Assert.IsFalse (mre.IsSet, "#1");
-			Assert.AreEqual (Environment.ProcessorCount == 1 ? 1 : 10, mre.SpinCount, "#2");
+			Assert.AreEqual (Environment.ProcessorCount == 1 ? 1 : 35, mre.SpinCount, "#2");
 		}
 
 		[Test]
@@ -83,6 +83,7 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitTest()
 		{
 			int count = 0;
@@ -108,6 +109,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void Wait_SetConcurrent ()
 		{
 			for (int i = 0; i < 10000; ++i) {
@@ -128,6 +130,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void Wait_DisposeWithCancel ()
 		{
 			var token = new CancellationTokenSource ();
@@ -158,6 +161,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void SetAfterDisposeTest ()
 		{
 			ParallelTestHelper.Repeat (delegate {
@@ -220,6 +224,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitHandleConsistencyTest ()
 		{
 			var mre = new ManualResetEventSlim ();
@@ -229,16 +234,17 @@ namespace MonoTests.System.Threading
 				int count = 2;
 				SpinWait wait = new SpinWait ();
 
-				ThreadPool.QueueUserWorkItem (_ => { while (count > 1) wait.SpinOnce (); mre.Set (); Interlocked.Decrement (ref count); });
+				ThreadPool.QueueUserWorkItem (_ => { while (count > 1) wait.SpinOnce (100); mre.Set (); Interlocked.Decrement (ref count); });
 				ThreadPool.QueueUserWorkItem (_ => { mre.Reset (); Interlocked.Decrement (ref count); });
 
 				while (count > 0)
-					wait.SpinOnce ();
+					wait.SpinOnce (100);
 				Assert.AreEqual (mre.IsSet, mre.WaitHandle.WaitOne (0));
 			}
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitWithCancellationTokenAndNotImmediateSetTest ()
 		{
 			var mres = new ManualResetEventSlim ();
@@ -248,6 +254,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void WaitWithCancellationTokenAndCancel ()
 		{
 			var mres = new ManualResetEventSlim ();

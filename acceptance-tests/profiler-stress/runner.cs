@@ -57,21 +57,21 @@ namespace Mono.Profiling.Tests.Stress {
 			"jit",
 		};
 
-		static readonly TimeSpan _timeout = TimeSpan.FromHours (8);
+		static readonly TimeSpan _timeout = TimeSpan.FromHours (6);
+
+		const RegexOptions _regexOptions = RegexOptions.Compiled | RegexOptions.Singleline;
 
 		static readonly Dictionary<string, Predicate<Benchmark>> _filters = new Dictionary<string, Predicate<Benchmark>> {
-			{ "ironjs-v8", FilterArmArchitecture },
+			{ "ironjs-v8", FilterNotOnArm },
+			{ "msbiology", FilterNever },
 		};
 
-		static readonly Dictionary<string, Action<TestResult>> _processors = new Dictionary<string, Action<TestResult>> {
-			{ "msbiology", Process32BitOutOfMemory },
-		};
-
-		static string FilterInvalidXmlChars (string text) {
-			return Regex.Replace (text, @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]", string.Empty);
+		static bool FilterNever (Benchmark benchmark)
+		{
+			return false;
 		}
 
-		static bool FilterArmArchitecture (Benchmark benchmark)
+		static bool FilterNotOnArm (Benchmark benchmark)
 		{
 #if ARCH_arm || ARCH_arm64
 			return false;
@@ -80,44 +80,65 @@ namespace Mono.Profiling.Tests.Stress {
 #endif
 		}
 
-		static void Process32BitOutOfMemory (TestResult result)
-		{
-			if (Environment.Is64BitProcess)
-				return;
-
-			if (result.ExitCode == null || result.ExitCode == 0)
-				return;
-
-			if (result.StandardError.Contains ("OutOfMemoryException"))
-				result.ExitCode = 0;
-		}
-
 		static bool IsSupported (Benchmark benchmark)
 		{
 			return _filters.TryGetValue (benchmark.Name, out var filter) ? filter (benchmark) : true;
 		}
 
+		static string ReplaceInvalidXmlChars (string text) {
+			return Regex.Replace (text, @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]", string.Empty);
+		}
+
 		static int Main ()
 		{
+			var regex = new Regex (".*", _regexOptions);
+
+			if (Environment.GetEnvironmentVariable ("MONO_PROFILER_STRESS_REGEX") is string envRegex)
+				regex = new Regex (envRegex, _regexOptions);
+
 			var depDir = Path.Combine ("..", "external", "benchmarker");
 			var benchDir = Path.Combine (depDir, "benchmarks");
 			var testDir = Path.Combine (depDir, "tests");
 
 			var benchmarks = Directory.EnumerateFiles (benchDir, "*.benchmark")
 			                 .Select (Benchmark.Load)
-			                 .Where (b => !b.OnlyExplicit && b.ClientCommandLine == null && IsSupported (b))
+			                 .Where (b => !b.OnlyExplicit && b.ClientCommandLine == null && IsSupported (b) && regex.IsMatch (b.Name))
 			                 .OrderBy (b => b.Name)
 			                 .ToArray ();
 
 			var monoPath = Path.GetFullPath (Path.Combine ("..", "..", "runtime", "mono-wrapper"));
 			var classDir = Path.GetFullPath (Path.Combine ("..", "..", "mcs", "class", "lib", "net_4_x"));
 
-			var rand = new Random ();
+			var seed = Environment.TickCount;
+
+			if (Environment.GetEnvironmentVariable ("MONO_PROFILER_STRESS_SEED") is string envSeed)
+				seed = int.Parse (envSeed);
+
+			var timeout = (int) _timeout.TotalMilliseconds;
+
+			if (Environment.GetEnvironmentVariable ("MONO_PROFILER_STRESS_TIMEOUT") is string envTimeout)
+				timeout = (int) TimeSpan.Parse (envTimeout).TotalMilliseconds;
+
+			string options = null;
+
+			if (Environment.GetEnvironmentVariable ("MONO_PROFILER_STRESS_OPTIONS") is string envOptions)
+				options = envOptions;
+
+			var suspend = false;
+
+			if (Environment.GetEnvironmentVariable ("MONO_PROFILER_STRESS_SUSPEND") is string envSuspend)
+				suspend = bool.Parse (envSuspend);
+
+			var rand = new Random (seed);
 			var cpus = Environment.ProcessorCount;
 
-			var results = new List<TestResult> (benchmarks.Length);
-
 			var sw = Stopwatch.StartNew ();
+
+			Console.ForegroundColor = ConsoleColor.Magenta;
+			Console.WriteLine ($"[{sw.Elapsed.ToString ("G")}] Starting test session with seed: {seed}");
+			Console.ResetColor ();
+
+			var results = new List<TestResult> (benchmarks.Length);
 
 			for (var i = 0; i < benchmarks.Length; i++) {
 				var bench = benchmarks [i];
@@ -127,17 +148,24 @@ namespace Mono.Profiling.Tests.Stress {
 				var maxSamples = rand.Next (0, cpus * 2000 + 1);
 				var heapShotFreq = rand.Next (-10, 11);
 				var maxFrames = rand.Next (0, 33);
-				var options = _options.ToDictionary (x => x, _ => rand.Next (0, 2) == 1)
-				                      .Select (x => (x.Value ? string.Empty : "no") + x.Key)
-				                      .ToArray ();
+				var flags = _options.ToDictionary (x => x, _ => rand.Next (0, 2) == 1)
+				                    .Select (x => (x.Value ? string.Empty : "no") + x.Key)
+				                    .ToArray ();
 
-				var profOptions = $"maxframes={maxFrames},{string.Join (",", options)},output=/dev/null";
+				var profOptions = "nodefaults,output=/dev/null,";
 
-				if (sampleFreq > 0)
-					profOptions += $",sample{sampleMode}={sampleFreq},maxsamples={maxSamples}";
+				if (options == null) {
+					profOptions += $"maxframes={maxFrames},";
 
-				if (heapShotFreq > 0)
-					profOptions += $",heapshot={heapShotFreq}gc";
+					if (sampleFreq > 0)
+						profOptions += $"sample{sampleMode}={sampleFreq},maxsamples={maxSamples},";
+
+					if (heapShotFreq > 0)
+						profOptions += $"heapshot={heapShotFreq}gc,";
+
+					profOptions += string.Join (",", flags);
+				} else
+					profOptions += options;
 
 				var info = new ProcessStartInfo {
 					UseShellExecute = false,
@@ -150,6 +178,9 @@ namespace Mono.Profiling.Tests.Stress {
 
 				info.EnvironmentVariables.Clear ();
 				info.EnvironmentVariables.Add ("MONO_PATH", classDir);
+
+				if (suspend)
+					info.EnvironmentVariables.Add ("MONO_DEBUG", "suspend-on-native-crash,suspend-on-unhandled");
 
 				var progress = $"({i + 1}/{benchmarks.Length})";
 
@@ -187,7 +218,7 @@ namespace Mono.Profiling.Tests.Stress {
 					proc.BeginOutputReadLine ();
 					proc.BeginErrorReadLine ();
 
-					if (!proc.WaitForExit ((int) _timeout.TotalMilliseconds)) {
+					if (!proc.WaitForExit (timeout)) {
 						// Force a thread dump.
 						Syscall.kill (proc.Id, Signum.SIGQUIT);
 						Thread.Sleep (1000);
@@ -227,9 +258,6 @@ namespace Mono.Profiling.Tests.Stress {
 					Console.WriteLine (result.StandardError);
 				}
 
-				if (_processors.TryGetValue (bench.Name, out var processor))
-					processor (result);
-
 				results.Add (result);
 			}
 
@@ -246,7 +274,7 @@ namespace Mono.Profiling.Tests.Stress {
 
 			using (var writer = XmlWriter.Create ("TestResult-profiler-stress.xml", settings)) {
 				writer.WriteStartDocument ();
-				writer.WriteComment ("This file represents the results of running a test suite");
+				writer.WriteComment ($"This file represents the results of running a test suite (seed: {seed})");
 
 				writer.WriteStartElement ("test-results");
 				writer.WriteAttributeString ("name", "profiler-stress-tests.dummy");
@@ -307,11 +335,11 @@ namespace Mono.Profiling.Tests.Stress {
 						writer.WriteStartElement ("failure");
 
 						writer.WriteStartElement ("message");
-						writer.WriteCData (FilterInvalidXmlChars (result.StandardOutput));
+						writer.WriteCData (ReplaceInvalidXmlChars (result.StandardOutput));
 						writer.WriteEndElement ();
 
 						writer.WriteStartElement ("stack-trace");
-						writer.WriteCData (FilterInvalidXmlChars (result.StandardError));
+						writer.WriteCData (ReplaceInvalidXmlChars (result.StandardError));
 						writer.WriteEndElement ();
 
 						writer.WriteEndElement ();

@@ -52,7 +52,6 @@
 nop: len:4
 relaxed_nop: len:4
 break: len:20
-jmp: len:92
 br: len:16
 switch: src1:i len:12
 # See the comment in resume_from_signal_handler, we can't copy the fp regs from sigctx to MonoContext on linux,
@@ -71,17 +70,17 @@ get_ex_obj: dest:i len:16
 ckfinite: dest:f src1:f len:64
 ceq: dest:i len:12
 cgt: dest:i len:12
-cgt.un: dest:i len:12
+cgt_un: dest:i len:12
 clt: dest:i len:12
-clt.un: dest:i len:12
+clt_un: dest:i len:12
 localloc: dest:i src1:i len:96
 compare: src1:i src2:i len:4
 compare_imm: src1:i len:20
 fcompare: src1:f src2:f len:12
 rcompare: src1:f src2:f len:12
-oparglist: src1:i len:12
+arglist: src1:i len:12
 setlret: src1:i src2:i len:12
-checkthis: src1:b len:4
+check_this: src1:b len:4
 call: dest:a clob:c len:32
 call_reg: dest:a src1:i len:32 clob:c
 call_membase: dest:a src1:b len:32 clob:c
@@ -100,7 +99,23 @@ lcall_membase: dest:l src1:b len:32 clob:c
 vcall: len:32 clob:c
 vcall_reg: src1:i len:32 clob:c
 vcall_membase: src1:b len:32 clob:c
-tailcall: len:64 clob:c
+
+tailcall: len:255 clob:c # FIXME len
+tailcall_membase: src1:b len:255 clob:c # FIXME len
+tailcall_reg: src1:b len:255 clob:c # FIXME len
+
+# tailcall_parameter models the size of moving one parameter,
+# so that the required size of a branch around a tailcall can
+# be accurately estimated; something like:
+# void f1(volatile long *a)
+# {
+# a[large] = a[another large]
+# }
+#
+# This is two instructions typically, but can be 6 for frames larger than 32K.
+# FIXME A fixed size sequence to move parameters would moot this.
+tailcall_parameter: len:24
+
 iconst: dest:i len:16
 r4const: dest:f len:24
 r8const: dest:f len:20
@@ -232,7 +247,7 @@ r4_cneq: dest:i src1:f src2:f len:20
 r4_cge: dest:i src1:f src2:f len:20
 r4_cle: dest:i src1:f src2:f len:20
 
-aot_const: dest:i len:16
+aotconst: dest:i len:16
 objc_get_selector: dest:i len:32
 sqrt: dest:f src1:f len:4
 adc: dest:i src1:i src2:i len:4
@@ -300,7 +315,10 @@ arm_rsc_imm: dest:i src1:i len:4
 
 # Linear IR opcodes
 dummy_use: src1:i len:0
-dummy_store: len:0
+dummy_iconst: dest:i len:0
+dummy_i8const: dest:i len:0
+dummy_r8const: dest:f len:0
+dummy_r4const: dest:f len:0
 not_reached: len:0
 not_null: src1:i len:0
 
@@ -360,7 +378,7 @@ long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:36
 vcall2: len:40 clob:c
 vcall2_reg: src1:i len:40 clob:c
 vcall2_membase: src1:b len:40 clob:c
-dyn_call: src1:i src2:i len:192 clob:c
+dyn_call: src1:i src2:i len:216 clob:c
 
 # This is different from the original JIT opcodes
 float_beq: len:32
@@ -440,7 +458,7 @@ long_conv_to_u2: dest:i src1:i len:4
 long_conv_to_r8: dest:f src1:i len:8
 long_conv_to_r4: dest:f src1:i len:12
 loadi8_membase: dest:i src1:b len:12
-storei8_membase_imm: dest:b  len:20
+storei8_membase_imm: dest:b len:20
 storei8_membase_reg: dest:b src1:i len:12
 long_conv_to_r_un: dest:f src1:i len:8
 arm_setfreg_r4: dest:f src1:f len:8

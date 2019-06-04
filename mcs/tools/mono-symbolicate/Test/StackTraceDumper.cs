@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 class StackTraceDumper {
 
@@ -53,6 +55,10 @@ class StackTraceDumper {
 			var d = new Dictionary<string, string> ();
 			d.ContainsKey (null); // ArgumentNullException
 		});
+
+		Catch (() => TestAsync ().Wait ());
+
+		Catch (() => TestIterator ().ToArray ());
 
 		/*
 		The following test include ambiguous methods we can't resolve. Testing this is hard, so I'm leaving a test behind but disabling it for the time being
@@ -124,6 +130,19 @@ class StackTraceDumper {
 	public static void ThrowExceptionGeneric<T1,T2> (string message)
 	{
 		throw new Exception (message);
+	}
+
+	public static async Task TestAsync ()
+	{
+		await Task.Yield ();
+		throw new ApplicationException ();
+	}
+
+	public static IEnumerable<int> TestIterator ()
+	{
+		yield return 1;
+		yield return 3;
+		throw new ApplicationException ();
 	}
 
 	class InnerClass {

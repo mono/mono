@@ -194,6 +194,8 @@ namespace System.Windows.Forms {
 			this.owner = owner;
 			this.is_visible = false;
 			this.Size = this.DefaultSize;
+			if (owner != null)
+				SetTopLevel (true);
 		}
 
 		#endregion	// Public Constructors
@@ -1029,11 +1031,15 @@ namespace System.Windows.Forms {
 
 		// Handle arrow keys
 		protected override bool IsInputKey (Keys keyData) {
-			switch (keyData) {
+			switch (keyData & ~Keys.Shift) {
 				case Keys.Up:
 				case Keys.Down:
 				case Keys.Right:
 				case Keys.Left:
+				case Keys.PageUp:
+				case Keys.PageDown:
+				case Keys.Home:
+				case Keys.End:
 					return true;
 				default:
 					break;
@@ -1299,15 +1305,23 @@ namespace System.Windows.Forms {
 		internal DateTime CurrentMonth {
 			set {
 				// only interested in if the month (not actual date) has change
-				if (value < MinDate || value > MaxDate) {
+				if (value < new DateTime(MinDate.Year, MinDate.Month, 1) || value > MaxDate) {
 					return;
 				}
 				
 				if (value.Month != current_month.Month ||
 					value.Year != current_month.Year) {
-					this.SelectionRange = new SelectionRange(
-						this.SelectionStart.Add(value.Subtract(current_month)),
-						this.SelectionEnd.Add(value.Subtract(current_month)));
+					DateTime start = this.SelectionStart.Add(value.Subtract(current_month));
+					if (start < MinDate)
+						start = MinDate;
+					else if (start > MaxDate)
+						start = MaxDate;
+					DateTime end = this.SelectionEnd.Add (value.Subtract (current_month));
+					if (end < MinDate)
+						end = MinDate;
+					else if (end > MaxDate)
+						end = MaxDate;
+					this.SelectionRange = new SelectionRange (start, end);
 					current_month = value;
 					UpdateBoldedDates();
 					this.Invalidate();
@@ -1574,6 +1588,12 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			// validate range
+			if (range.Start < MinDate)
+				range.Start = MinDate;
+			if (range.End > MaxDate)
+				range.End = MaxDate;
+
 			// Avoid re-setting SelectionRange to the same value and fire an extra DateChanged event
 			if (range.Start != selection_range.Start || range.End != selection_range.End)
 				SelectionRange = range;
@@ -1581,6 +1601,8 @@ namespace System.Windows.Forms {
 
 		// attempts to add the date to the selection without throwing exception
 		private void SelectDate (DateTime date) {
+			if (date < MinDate || date > MaxDate)
+				return;
 			// try and add the new date to the selction range
 			SelectionRange range = null;
 			if (is_shift_pressed || (click_state [0])) {
@@ -1594,14 +1616,12 @@ namespace System.Windows.Forms {
 					}
 				}
 			} else {
-				if (date >= MinDate && date <= MaxDate) {
-					range = new SelectionRange (date, date);
-					first_select_start_date = date;
-				}
+				range = new SelectionRange (date, date);
+				first_select_start_date = date;
 			}
 				
 			// Only set if we re actually getting a different range (avoid an extra DateChanged event)
-			if (range != null && range.Start != selection_range.Start || range.End != selection_range.End)
+			if (range.Start != selection_range.Start || range.End != selection_range.End)
 				SelectionRange = range;
 		}
 
@@ -1723,7 +1743,10 @@ namespace System.Windows.Forms {
 		// called when today context menu is clicked
 		private void TodayMenuItemClickHandler (object sender, EventArgs e)
 		{
-			this.SetSelectionRange (DateTime.Now.Date, DateTime.Now.Date);
+			DateTime date = DateTime.Now.Date;
+			if (date < MinDate || date > MaxDate)
+				return;
+			this.SetSelectionRange (date, date);
 			this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 		}
 
@@ -2010,10 +2033,14 @@ namespace System.Windows.Forms {
 						ShowYearUpDown = true;
 					}
 					break;
-				case HitArea.TodayLink:
-					this.SetSelectionRange (DateTime.Now.Date, DateTime.Now.Date);
-					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+				case HitArea.TodayLink: {
+					DateTime date = DateTime.Now.Date;
+					if (date >= MinDate && date <= MaxDate) {
+						this.SetSelectionRange (date, date);
+						this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+					}
 					break;
+				}
 				default:
 					this.is_previous_clicked = false;
 					this.is_next_clicked = false;
@@ -2055,9 +2082,13 @@ namespace System.Windows.Forms {
 							if (date < first_select_start_date.AddDays ((MaxSelectionCount-1)*-1)) {
 								date = first_select_start_date.AddDays ((MaxSelectionCount-1)*-1);
 							}
+							if (date < MinDate)
+								date = MinDate;
 							this.SetSelectionRange (date, first_select_start_date);
 						} else {
 							DateTime date = GetFirstDateInMonth (this.SelectionStart);
+							if (date < MinDate)
+								date = MinDate;
 							this.SetSelectionRange (date, date);
 						}
 						e.Handled = true;
@@ -2069,9 +2100,13 @@ namespace System.Windows.Forms {
 							if (date > first_select_start_date.AddDays (MaxSelectionCount-1)) {
 								date = first_select_start_date.AddDays (MaxSelectionCount-1);
 							}
+							if (date > MaxDate)
+								date = MaxDate;
 							this.SetSelectionRange (date, first_select_start_date);
 						} else {
 							DateTime date = GetLastDateInMonth (this.SelectionStart);
+							if (date > MaxDate)
+								date = MaxDate;
 							this.SetSelectionRange (date, date);
 						}
 						e.Handled = true;
@@ -2082,6 +2117,8 @@ namespace System.Windows.Forms {
 							this.AddTimeToSelection (-1, false);
 						} else {
 							DateTime date = this.SelectionStart.AddMonths (-1);
+							if (date < MinDate)
+								date = MinDate;
 							this.SetSelectionRange (date, date);
 						}
 						e.Handled = true;
@@ -2092,6 +2129,8 @@ namespace System.Windows.Forms {
 							this.AddTimeToSelection (1, false);
 						} else {
 							DateTime date = this.SelectionStart.AddMonths (1);
+							if (date > MaxDate)
+								date = MaxDate;
 							this.SetSelectionRange (date, date);
 						}
 						e.Handled = true;
@@ -2102,6 +2141,8 @@ namespace System.Windows.Forms {
 							this.AddTimeToSelection (-7, true);
 						} else {
 							DateTime date = this.SelectionStart.AddDays (-7);
+							if (date < MinDate)
+								date = MinDate;
 							this.SetSelectionRange (date, date);
 						}
 						e.Handled = true;
@@ -2112,6 +2153,8 @@ namespace System.Windows.Forms {
 							this.AddTimeToSelection (7, true);
 						} else {
 							DateTime date = this.SelectionStart.AddDays (7);
+							if (date > MaxDate)
+								date = MaxDate;
 							this.SetSelectionRange (date, date);
 						}
 						e.Handled = true;
@@ -2122,7 +2165,8 @@ namespace System.Windows.Forms {
 							this.AddTimeToSelection (-1, true);
 						} else {
 							DateTime date = this.SelectionStart.AddDays (-1);
-							this.SetSelectionRange (date, date);
+							if (date >= MinDate)
+								this.SetSelectionRange (date, date);
 						}
 						e.Handled = true;
 						break;
@@ -2132,7 +2176,8 @@ namespace System.Windows.Forms {
 							this.AddTimeToSelection (1, true);
 						} else {
 							DateTime date = this.SelectionStart.AddDays (1);
-							this.SetSelectionRange (date, date);
+							if (date <= MaxDate)
+								this.SetSelectionRange (date, date);
 						}
 						e.Handled = true;
 						break;

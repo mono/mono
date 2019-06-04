@@ -343,6 +343,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void EnterReadLock_MultiRead ()
 		{
 			var v = new ReaderWriterLockSlim ();
@@ -371,6 +372,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void TryEnterWriteLock_WhileReading ()
 		{
 			var v = new ReaderWriterLockSlim ();
@@ -395,6 +397,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void EnterWriteLock_MultiRead ()
 		{
 			var v = new ReaderWriterLockSlim ();
@@ -449,7 +452,9 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (v.TryEnterWriteLock (100));
 			v.ExitWriteLock ();
 		}
+
 		[Test]
+		[Category ("MultiThreaded")]
 		public void EnterWriteLockWhileInUpgradeAndOtherWaiting ()
 		{
 			var v = new ReaderWriterLockSlim ();
@@ -559,6 +564,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void RecursiveReadPropertiesTest ()
 		{
 			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
@@ -588,6 +594,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void RecursiveUpgradePropertiesTest ()
 		{
 			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
@@ -620,6 +627,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void RecursiveWritePropertiesTest ()
 		{
 			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);
@@ -739,6 +747,7 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void RecursiveWriteReadAcquisitionInterleaving ()
 		{
 			var v = new ReaderWriterLockSlim (LockRecursionPolicy.SupportsRecursion);

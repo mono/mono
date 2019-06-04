@@ -33,7 +33,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Resources;
 
-[assembly: AssemblyVersion (Consts.VsVersion)]
+[assembly: AssemblyVersion ("10.0.0.0")]
 
 /* TODO COMPLETE INFORMATION
 

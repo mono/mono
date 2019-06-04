@@ -1,5 +1,5 @@
 ../../test-helpers/NunitHelpers.cs
-../../System.Web.DynamicData/Test/Common/AssertExtensions.cs
+../../test-helpers/TestResourceHelper.cs
 mainsoft/MainsoftWebTest/HtmlAgilityPack/AssemblyInfo.cs
 mainsoft/MainsoftWebTest/HtmlAgilityPack/crc32.cs
 mainsoft/MainsoftWebTest/HtmlAgilityPack/Header.cs

@@ -1542,6 +1542,7 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void BeginWrite_Recursive ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "temp";

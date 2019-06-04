@@ -98,6 +98,7 @@ namespace MonoTests.System.Net.Sockets
 
 		[Test]
 		[Category("Test")]
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

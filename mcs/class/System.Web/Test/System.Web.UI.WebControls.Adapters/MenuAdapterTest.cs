@@ -116,7 +116,7 @@ namespace MonoTests.System.Web.UI.WebControls.Adapters
 			// This has to stay to work around event validation errors. If it's removed,
 			// then RenderItem will eventually attempt to register for event validation,
 			// which can only be done during the Render phase.
-			item.NavigateUrl = "http://google.com/";
+			item.NavigateUrl = "http://example.com/";
 			a.RenderItem (w, item, 0);
 			Assert.IsTrue (sw.ToString ().IndexOf("menu item text") != -1, "RenderItem #1");
 		}

@@ -1808,27 +1808,27 @@ namespace System.Windows.Forms {
 
 					// Seems that some apps support asking for supported types
 					if (format_atom == TARGETS) {
-						int[]	atoms;
+						IntPtr[]	atoms;
 						int	atom_count;
 
-						atoms = new int[5];
+						atoms = new IntPtr[5];
 						atom_count = 0;
 
 						if (Clipboard.IsSourceText) {
-							atoms[atom_count++] = (int)Atom.XA_STRING;
-							atoms[atom_count++] = (int)OEMTEXT;
-							atoms[atom_count++] = (int)UTF8_STRING;
-							atoms[atom_count++] = (int)UTF16_STRING;
-							atoms[atom_count++] = (int)RICHTEXTFORMAT;
+							atoms[atom_count++] = (IntPtr)Atom.XA_STRING;
+							atoms[atom_count++] = (IntPtr)OEMTEXT;
+							atoms[atom_count++] = (IntPtr)UTF8_STRING;
+							atoms[atom_count++] = (IntPtr)UTF16_STRING;
+							atoms[atom_count++] = (IntPtr)RICHTEXTFORMAT;
 						} else if (Clipboard.IsSourceImage) {
-							atoms[atom_count++] = (int)Atom.XA_PIXMAP;
-							atoms[atom_count++] = (int)Atom.XA_BITMAP;
+							atoms[atom_count++] = (IntPtr)Atom.XA_PIXMAP;
+							atoms[atom_count++] = (IntPtr)Atom.XA_BITMAP;
 						} else {
 							// FIXME - handle other types
 						}
 
 						XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, 
-								(IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
+								(IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
 						sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 					} else if (format_atom == (IntPtr)RICHTEXTFORMAT) {
 						string rtf_text = Clipboard.GetRtfText ();
@@ -2922,9 +2922,8 @@ namespace System.Windows.Forms {
 			}
 
 			// Set the default location location for forms.
-			Point next;
-			if (cp.control is Form) {
-				next = Hwnd.GetNextStackedFormLocation (cp, parent_hwnd);
+			if (cp.control is Form && cp.X == int.MinValue && cp.Y == int.MinValue) {
+				Point next = Hwnd.GetNextStackedFormLocation (cp);
 				X = next.X;
 				Y = next.Y;
 			}
@@ -3048,7 +3047,7 @@ namespace System.Windows.Forms {
 					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
 			}
 
-			return hwnd.Handle;
+			return hwnd.zombie ? IntPtr.Zero : hwnd.Handle;
 		}
 
 		internal override IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height)
@@ -3894,13 +3893,18 @@ namespace System.Windows.Forms {
 			return new SizeF(width, font.Height);
 		}
 
-		internal override IntPtr GetParent(IntPtr handle)
+		internal override IntPtr GetParent(IntPtr handle, bool with_owner)
 		{
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (hwnd != null && hwnd.parent != null) {
-				return hwnd.parent.Handle;
+			if (hwnd != null) {
+				if (hwnd.parent != null) {
+					return hwnd.parent.Handle;
+				}
+				if (hwnd.owner != null && with_owner) {
+					return hwnd.owner.Handle;
+				}
 			}
 			return IntPtr.Zero;
 		}
@@ -5111,9 +5115,6 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearInvalidArea();
 
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
 				return paint_event;
 			} else {
 				dc = Graphics.FromHwnd (paint_hwnd.whole_window);
@@ -5128,26 +5129,16 @@ namespace System.Windows.Forms {
 
 				hwnd.ClearNcInvalidArea ();
 
-				hwnd.drawing_stack.Push (paint_event);
-				hwnd.drawing_stack.Push (dc);
-
 				return paint_event;
 			}
 		}
 
-		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client)
+		internal override void PaintEventEnd(ref Message msg, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle (msg.HWnd);
-
-			Graphics dc = (Graphics)hwnd.drawing_stack.Pop ();
-			dc.Flush();
-			dc.Dispose();
-			
-			PaintEventArgs pe = (PaintEventArgs)hwnd.drawing_stack.Pop();
-			pe.SetGraphics (null);
-			pe.Dispose ();
+			if (pevent.Graphics != null)
+				pevent.Graphics.Dispose();
+			pevent.SetGraphics(null);
+			pevent.Dispose();
 
 			if (Caret.Visible == true) {
 				ShowCaret();
@@ -5840,12 +5831,11 @@ namespace System.Windows.Forms {
 		internal override bool SetOwner(IntPtr handle, IntPtr handle_owner)
 		{
 			Hwnd hwnd;
-			Hwnd hwnd_owner;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (handle_owner != IntPtr.Zero) {
-				hwnd_owner = Hwnd.ObjectFromHandle(handle_owner);
+				hwnd.owner = Hwnd.ObjectFromHandle(handle_owner);
 				lock (XlibLock) {
 					int[]	atoms;
 
@@ -5854,13 +5844,14 @@ namespace System.Windows.Forms {
 					atoms[0] = _NET_WM_WINDOW_TYPE_NORMAL.ToInt32();
 					XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_TYPE, (IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, 1);
 
-					if (hwnd_owner != null) {
-						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd_owner.whole_window);
+					if (hwnd.owner != null) {
+						XSetTransientForHint(DisplayHandle, hwnd.whole_window, hwnd.owner.whole_window);
 					} else {
 						XSetTransientForHint(DisplayHandle, hwnd.whole_window, RootWindow);
 					}
 				}
 			} else {
+				hwnd.owner = null;
 				lock (XlibLock) {
 					XDeleteProperty(DisplayHandle, hwnd.whole_window, (IntPtr)Atom.XA_WM_TRANSIENT_FOR);
 				}
@@ -5995,14 +5986,13 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (!hwnd.zero_sized) {
-				//Hack?
-				hwnd.x = x;
-				hwnd.y = y;
-				hwnd.width = width;
-				hwnd.height = height;
-				SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+			hwnd.x = x;
+			hwnd.y = y;
+			hwnd.width = width;
+			hwnd.height = height;
+			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
+			if (!hwnd.zero_sized) {
 				if (hwnd.fixed_size) {
 					SetWindowMinMax(handle, Rectangle.Empty, new Size(width, height), new Size(width, height));
 				}

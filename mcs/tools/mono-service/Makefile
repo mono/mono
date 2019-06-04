@@ -6,10 +6,10 @@ PROGRAM = mono-service.exe
 
 PROGRAM_SNK = ../../class/mono.snk
 
-include ../../build/executable.make
-
 LOCAL_MCS_FLAGS = -unsafe -publicsign -keyfile:../../class/mono.snk
 LIB_REFS = System.ServiceProcess Mono.Posix System
+
+include ../../build/executable.make
 
 # Copied from library.make
 

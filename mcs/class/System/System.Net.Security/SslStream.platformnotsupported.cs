@@ -48,262 +48,73 @@ namespace System.Net.Security
 		X509Certificate remoteCertificate,
 		string[] acceptableIssuers);
 
-	public class SslStream : AuthenticatedStream
+	public partial class SslStream : System.Net.Security.AuthenticatedStream
 	{
-		const string EXCEPTION_MESSAGE = "System.Net.Security.SslStream is not supported on the current platform.";
-
-		public SslStream (Stream innerStream)
-			: this (innerStream, false)
-		{
-		}
-
-		public SslStream (Stream innerStream, bool leaveInnerStreamOpen)
-			: base (innerStream, leaveInnerStreamOpen)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback)
-			: this (innerStream, leaveInnerStreamOpen)
-		{
-		}
-
-		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
-			: this (innerStream, leaveInnerStreamOpen)
-		{
-		}
-
-		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback, EncryptionPolicy encryptionPolicy)
-			: this (innerStream, leaveInnerStreamOpen)
-		{
-		}
-
-		public virtual void AuthenticateAsClient (string targetHost)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual void AuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, AsyncCallback asyncCallback, object asyncState)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual IAsyncResult BeginAuthenticateAsClient (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual void EndAuthenticateAsClient (IAsyncResult asyncResult)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual void AuthenticateAsServer (X509Certificate serverCertificate)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual void AuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, AsyncCallback asyncCallback, object asyncState)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual IAsyncResult BeginAuthenticateAsServer (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation, AsyncCallback asyncCallback, object asyncState)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual void EndAuthenticateAsServer (IAsyncResult asyncResult)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public TransportContext TransportContext {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual Task AuthenticateAsClientAsync (string targetHost)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual Task AuthenticateAsClientAsync (string targetHost, X509CertificateCollection clientCertificates, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual Task AuthenticateAsServerAsync (X509Certificate serverCertificate, bool clientCertificateRequired, SslProtocols enabledSslProtocols, bool checkCertificateRevocation)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public virtual Task ShutdownAsync ()
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public override bool IsAuthenticated {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override bool IsMutuallyAuthenticated {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override bool IsEncrypted {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override bool IsSigned {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override bool IsServer {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual SslProtocols SslProtocol {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual bool CheckCertRevocationStatus {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual X509Certificate LocalCertificate {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual X509Certificate RemoteCertificate {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual CipherAlgorithmType CipherAlgorithm {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual int CipherStrength {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual HashAlgorithmType HashAlgorithm {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual int HashStrength {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual ExchangeAlgorithmType KeyExchangeAlgorithm {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public virtual int KeyExchangeStrength {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override bool CanSeek {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override bool CanRead {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override bool CanTimeout {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override bool CanWrite {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override int ReadTimeout {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override int WriteTimeout {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override long Length {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override long Position {
-			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
-		}
-
-		public override void SetLength (long value)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public override long Seek (long offset, SeekOrigin origin)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public override void Flush ()
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		protected override void Dispose (bool disposing)
-		{
-		}
-
-		public override int Read (byte[] buffer, int offset, int count)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public void Write (byte[] buffer)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public override void Write (byte[] buffer, int offset, int count)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public override int EndRead (IAsyncResult asyncResult)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
-
-		public override void EndWrite (IAsyncResult asyncResult)
-		{
-			throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
-		}
+		public SslStream(System.IO.Stream innerStream) : base (default(System.IO.Stream), default(bool)) => throw new PlatformNotSupportedException ();
+		public SslStream(System.IO.Stream innerStream, bool leaveInnerStreamOpen) : base (default(System.IO.Stream), default(bool)) => throw new PlatformNotSupportedException ();
+		public SslStream(System.IO.Stream innerStream, bool leaveInnerStreamOpen, System.Net.Security.RemoteCertificateValidationCallback userCertificateValidationCallback) : base (default(System.IO.Stream), default(bool)) => throw new PlatformNotSupportedException ();
+		public SslStream(System.IO.Stream innerStream, bool leaveInnerStreamOpen, System.Net.Security.RemoteCertificateValidationCallback userCertificateValidationCallback, System.Net.Security.LocalCertificateSelectionCallback userCertificateSelectionCallback) : base (default(System.IO.Stream), default(bool)) => throw new PlatformNotSupportedException ();
+		public SslStream(System.IO.Stream innerStream, bool leaveInnerStreamOpen, System.Net.Security.RemoteCertificateValidationCallback userCertificateValidationCallback, System.Net.Security.LocalCertificateSelectionCallback userCertificateSelectionCallback, System.Net.Security.EncryptionPolicy encryptionPolicy) : base (default(System.IO.Stream), default(bool)) => throw new PlatformNotSupportedException ();
+		public override bool CanRead { get { throw new PlatformNotSupportedException (); } }
+		public override bool CanSeek { get { throw new PlatformNotSupportedException (); } }
+		public override bool CanTimeout { get { throw new PlatformNotSupportedException (); } }
+		public override bool CanWrite { get { throw new PlatformNotSupportedException (); } }
+		public virtual bool CheckCertRevocationStatus { get { throw new PlatformNotSupportedException (); } }
+		public virtual System.Security.Authentication.CipherAlgorithmType CipherAlgorithm { get { throw new PlatformNotSupportedException (); } }
+		public virtual int CipherStrength { get { throw new PlatformNotSupportedException (); } }
+		public virtual System.Security.Authentication.HashAlgorithmType HashAlgorithm { get { throw new PlatformNotSupportedException (); } }
+		public virtual int HashStrength { get { throw new PlatformNotSupportedException (); } }
+		public override bool IsAuthenticated { get { throw new PlatformNotSupportedException (); } }
+		public override bool IsEncrypted { get { throw new PlatformNotSupportedException (); } }
+		public override bool IsMutuallyAuthenticated { get { throw new PlatformNotSupportedException (); } }
+		public override bool IsServer { get { throw new PlatformNotSupportedException (); } }
+		public override bool IsSigned { get { throw new PlatformNotSupportedException (); } }
+		public virtual System.Security.Authentication.ExchangeAlgorithmType KeyExchangeAlgorithm { get { throw new PlatformNotSupportedException (); } }
+		public virtual int KeyExchangeStrength { get { throw new PlatformNotSupportedException (); } }
+		public override long Length { get { throw new PlatformNotSupportedException (); } }
+		public virtual System.Security.Cryptography.X509Certificates.X509Certificate LocalCertificate { get { throw new PlatformNotSupportedException (); } }
+		public System.Net.Security.SslApplicationProtocol NegotiatedApplicationProtocol { get { throw new PlatformNotSupportedException (); } }
+		public override long Position { get { throw new PlatformNotSupportedException (); } set { throw new PlatformNotSupportedException (); } }
+		public override int ReadTimeout { get { throw new PlatformNotSupportedException (); } set { throw new PlatformNotSupportedException (); } }
+		public virtual System.Security.Cryptography.X509Certificates.X509Certificate RemoteCertificate { get { throw new PlatformNotSupportedException (); } }
+		public virtual System.Security.Authentication.SslProtocols SslProtocol { get { throw new PlatformNotSupportedException (); } }
+		public System.Net.TransportContext TransportContext { get { throw new PlatformNotSupportedException (); } }
+		public override int WriteTimeout { get { throw new PlatformNotSupportedException (); } set { throw new PlatformNotSupportedException (); } }
+		public virtual void AuthenticateAsClient(string targetHost) { throw new PlatformNotSupportedException (); }
+		public virtual void AuthenticateAsClient(string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, bool checkCertificateRevocation) { throw new PlatformNotSupportedException (); }
+		public virtual void AuthenticateAsClient(string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation) { throw new PlatformNotSupportedException (); }
+		public System.Threading.Tasks.Task AuthenticateAsClientAsync(System.Net.Security.SslClientAuthenticationOptions sslClientAuthenticationOptions, System.Threading.CancellationToken cancellationToken) { throw new PlatformNotSupportedException (); }
+		public virtual System.Threading.Tasks.Task AuthenticateAsClientAsync(string targetHost) { throw new PlatformNotSupportedException (); }
+		public virtual System.Threading.Tasks.Task AuthenticateAsClientAsync(string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, bool checkCertificateRevocation) { throw new PlatformNotSupportedException (); }
+		public virtual System.Threading.Tasks.Task AuthenticateAsClientAsync(string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation) { throw new PlatformNotSupportedException (); }
+		public virtual void AuthenticateAsServer(System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate) { throw new PlatformNotSupportedException (); }
+		public virtual void AuthenticateAsServer(System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation) { throw new PlatformNotSupportedException (); }
+		public virtual void AuthenticateAsServer(System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation) { throw new PlatformNotSupportedException (); }
+		public System.Threading.Tasks.Task AuthenticateAsServerAsync(System.Net.Security.SslServerAuthenticationOptions sslServerAuthenticationOptions, System.Threading.CancellationToken cancellationToken) { throw new PlatformNotSupportedException (); }
+		public virtual System.Threading.Tasks.Task AuthenticateAsServerAsync(System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate) { throw new PlatformNotSupportedException (); }
+		public virtual System.Threading.Tasks.Task AuthenticateAsServerAsync(System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation) { throw new PlatformNotSupportedException (); }
+		public virtual System.Threading.Tasks.Task AuthenticateAsServerAsync(System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation) { throw new PlatformNotSupportedException (); }
+		public virtual System.IAsyncResult BeginAuthenticateAsClient(string targetHost, System.AsyncCallback asyncCallback, object asyncState) { throw new PlatformNotSupportedException (); }
+		public virtual System.IAsyncResult BeginAuthenticateAsClient(string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, bool checkCertificateRevocation, System.AsyncCallback asyncCallback, object asyncState) { throw new PlatformNotSupportedException (); }
+		public virtual System.IAsyncResult BeginAuthenticateAsClient(string targetHost, System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, System.AsyncCallback asyncCallback, object asyncState) { throw new PlatformNotSupportedException (); }
+		public virtual System.IAsyncResult BeginAuthenticateAsServer(System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, System.AsyncCallback asyncCallback, object asyncState) { throw new PlatformNotSupportedException (); }
+		public virtual System.IAsyncResult BeginAuthenticateAsServer(System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, bool checkCertificateRevocation, System.AsyncCallback asyncCallback, object asyncState) { throw new PlatformNotSupportedException (); }
+		public virtual System.IAsyncResult BeginAuthenticateAsServer(System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate, bool clientCertificateRequired, System.Security.Authentication.SslProtocols enabledSslProtocols, bool checkCertificateRevocation, System.AsyncCallback asyncCallback, object asyncState) { throw new PlatformNotSupportedException (); }
+		public override System.IAsyncResult BeginRead(byte[] buffer, int offset, int count, System.AsyncCallback asyncCallback, object asyncState) { throw new PlatformNotSupportedException (); }
+		public override System.IAsyncResult BeginWrite(byte[] buffer, int offset, int count, System.AsyncCallback asyncCallback, object asyncState) { throw new PlatformNotSupportedException (); }
+		protected override void Dispose(bool disposing) { throw new PlatformNotSupportedException (); }
+		public override System.Threading.Tasks.ValueTask DisposeAsync() { throw new PlatformNotSupportedException (); }
+		public virtual void EndAuthenticateAsClient(System.IAsyncResult asyncResult) { throw new PlatformNotSupportedException (); }
+		public virtual void EndAuthenticateAsServer(System.IAsyncResult asyncResult) { throw new PlatformNotSupportedException (); }
+		public override int EndRead(System.IAsyncResult asyncResult) { throw new PlatformNotSupportedException (); }
+		public override void EndWrite(System.IAsyncResult asyncResult) { throw new PlatformNotSupportedException (); }
+		public override void Flush() { throw new PlatformNotSupportedException (); }
+		public override System.Threading.Tasks.Task FlushAsync(System.Threading.CancellationToken cancellationToken) { throw new PlatformNotSupportedException (); }
+		public override int Read(byte[] buffer, int offset, int count) { throw new PlatformNotSupportedException (); }
+		public override long Seek(long offset, System.IO.SeekOrigin origin) { throw new PlatformNotSupportedException (); }
+		public override void SetLength(long value) { throw new PlatformNotSupportedException (); }
+		public virtual System.Threading.Tasks.Task ShutdownAsync() { throw new PlatformNotSupportedException (); }
+		public void Write(byte[] buffer) { throw new PlatformNotSupportedException (); }
+		public override void Write(byte[] buffer, int offset, int count) { throw new PlatformNotSupportedException (); }
 	}
 }

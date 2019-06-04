@@ -13,6 +13,8 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Windows.Forms
 {
 
@@ -286,7 +288,7 @@ public class MyScrollBar : HScrollBar
 		       // B
 		       myscrlbar.BackColor = Color.Red;
 		       Assert.AreEqual (255, myscrlbar.BackColor.R, "B2");
-		       myscrlbar.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
+		       myscrlbar.BackgroundImage = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/System.Windows.Forms/bitmaps/a.png"));
 		       Assert.AreEqual (16, myscrlbar.BackgroundImage.Height, "B3");
 
 		       // F
@@ -551,7 +553,7 @@ public class MyScrollBar : HScrollBar
 		       ScrollBar myHscrlbar = new HScrollBar ();
 		       myform.Controls.Add (myHscrlbar);
 		       myHscrlbar.BackgroundImageChanged += new EventHandler (ScrollBar_EventHandler);
-		       myHscrlbar.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
+		       myHscrlbar.BackgroundImage = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/System.Windows.Forms/bitmaps/a.png"));
 		       Assert.AreEqual (true, eventhandled, "B5");
 		       eventhandled = false;
 		       myform.Dispose ();
@@ -585,21 +587,6 @@ public class MyScrollBar : HScrollBar
 		       myHscrlbar.ForeColorChanged += new EventHandler (ScrollBar_EventHandler);
 		       myHscrlbar.ForeColor = Color.Azure;
 		       Assert.AreEqual (true, eventhandled, "F3");
-		       eventhandled = false;
-		       myform.Dispose ();
-	       }
-
-	    [Test]
-	    public void ImeModehangedTest ()
-	       {
-		       Form myform = new Form ();
-		       myform.ShowInTaskbar = false;
-		       myform.Visible = true;
-		       ScrollBar myHscrlbar = new HScrollBar ();
-		       myform.Controls.Add (myHscrlbar);
-		       myHscrlbar.ImeModeChanged += new EventHandler (ScrollBar_EventHandler);
-		       myHscrlbar.ImeMode = ImeMode.Katakana;
-		       Assert.AreEqual (true, eventhandled, "I2");
 		       eventhandled = false;
 		       myform.Dispose ();
 	       }
@@ -835,7 +822,7 @@ public class MyVScrollBar : VScrollBar
 		       myform.Visible = true;
 		       MyScrollBar s = new MyScrollBar ();
 		       myform.Controls.Add (s);
-		       s.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
+		       s.BackgroundImage = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/System.Windows.Forms/bitmaps/a.png"));
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
 		       myform.Dispose ();
@@ -1391,7 +1378,7 @@ public class MyScrollBar2 : HScrollBar
 		       myform.Visible = true;
 		       MyScrollBar2 s = new MyScrollBar2 ();
 		       myform.Controls.Add (s);
-		       s.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
+		       s.BackgroundImage = Image.FromFile (TestResourceHelper.GetFullPathOfResource ("Test/System.Windows.Forms/bitmaps/a.png"));
 
 		       Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
 		       myform.Dispose ();

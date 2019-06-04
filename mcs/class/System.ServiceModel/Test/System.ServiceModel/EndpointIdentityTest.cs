@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE
 using System;
 using System.IO;
 using System.IdentityModel.Claims;
@@ -35,12 +36,14 @@ using System.ServiceModel;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
 	public class EndpointIdentityTest
 	{
-		static readonly X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.cer");
+		static readonly X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 
 		[Test]
 		public void CreateX509CertificateIdentity ()
@@ -71,3 +74,5 @@ namespace MonoTests.System.ServiceModel
 		}
 	}
 }
+#endif
+

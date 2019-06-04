@@ -30,15 +30,16 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class NamespaceComparer : Comparer {
+	class NamespaceComparer : Comparer {
 
 		ClassComparer comparer;
 
-		public NamespaceComparer ()
+		public NamespaceComparer (State state)
+			: base (state)
 		{
-			comparer =  new ClassComparer ();
+			comparer =  new ClassComparer (state);
 		}
 
 		public void Compare (XElement source, XElement target)
@@ -57,18 +58,18 @@ namespace Xamarin.ApiDiff {
 
 		public override void Added (XElement target, bool wasParentAdded)
 		{
-			string name = target.Attribute ("name").Value;
-			if (State.IgnoreNew.Any (re => re.IsMatch (name)))
+			var namespaceDescription  = $"{State.Namespace}: Added namespace";
+			State.LogDebugMessage ($"Possible -n value: {namespaceDescription}");
+			if (State.IgnoreNew.Any (re => re.IsMatch (namespaceDescription)))
 				return;
 
-			Output.WriteLine ("<!-- start namespace {0} --> <div> ", name);
-			Output.WriteLine ("<h2>New Namespace {0}</h2>", name);
-			Output.WriteLine ();
+			Formatter.BeginNamespace (Output, "New ");
 			// list all new types
-			foreach (var addedType in target.Element ("classes").Elements ("class"))
+			foreach (var addedType in target.Element ("classes").Elements ("class")) {
+				State.Type = addedType.Attribute ("name").Value;
 				comparer.Added (addedType, true);
-			Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
-			Output.WriteLine ();
+			}
+			Formatter.EndNamespace (Output);
 		}
 
 		public override void Modified (XElement source, XElement target, ApiChanges differences)
@@ -81,24 +82,29 @@ namespace Xamarin.ApiDiff {
 			State.Output = output;
 			if (s.Length > 0) {
 				var name = target.Attribute ("name").Value;
-				Output.WriteLine ("<!-- start namespace {0} --> <div> ", name);
-				Output.WriteLine ("<h2>Namespace {0}</h2>", name);
+				Formatter.BeginNamespace (Output);
 				Output.WriteLine (s);
-				Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
+				Formatter.EndNamespace (Output);
 			}
 		}
 
 		public override void Removed (XElement source)
 		{
 			var name = source.Attribute ("name").Value;
-			Output.WriteLine ("<!-- start namespace {0} --> <div>", name);
-			Output.WriteLine ("<h2>Removed Namespace {0}</h2>", name);
+
+			var namespaceDescription  = $"{name}: Removed namespace";
+			State.LogDebugMessage ($"Possible -r value: {namespaceDescription}");
+			if (State.IgnoreRemoved.Any (re => re.IsMatch (namespaceDescription)))
+				return;
+
+			Formatter.BeginNamespace (Output, "Removed ");
 			Output.WriteLine ();
 			// list all removed types
-			foreach (var removedType in source.Element ("classes").Elements ("class"))
+			foreach (var removedType in source.Element ("classes").Elements ("class")) {
+				State.Type = comparer.GetTypeName (removedType);
 				comparer.Removed (removedType);
-			Output.WriteLine ("</div> <!-- end namespace {0} -->", name);
-			Output.WriteLine ();
+			}
+			Formatter.EndNamespace (Output);
 		}
 	}
 }

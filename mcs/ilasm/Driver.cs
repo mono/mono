@@ -14,7 +14,9 @@ using System.IO;
 using System.Reflection;
 using System.Collections;
 using System.Security.Cryptography;
+#if HAS_MONO_SECURITY
 using Mono.Security;
+#endif
 
 namespace Mono.ILASM {
 
@@ -52,7 +54,10 @@ namespace Mono.ILASM {
                         private CodeGen codegen;
 			private bool keycontainer = false;
 			private string keyname;
+#if HAS_MONO_SECURITY
 			private StrongName sn;
+#endif
+                        bool noautoinherit;
 
                         public DriverMain (string[] args)
                         {
@@ -67,7 +72,7 @@ namespace Mono.ILASM {
                                 if (output_file == null)
                                         output_file = CreateOutputFilename ();
                                 try {
-                                        codegen = new CodeGen (output_file, target == Target.Dll, debugging_info);
+                                        codegen = new CodeGen (output_file, target == Target.Dll, debugging_info, noautoinherit);
                                         foreach (string file_path in il_file_list) {
                                                 Report.FilePath = file_path;
                                                 ProcessFile (file_path);
@@ -83,9 +88,13 @@ namespace Mono.ILASM {
 
 					// if we have a key and aren't assembling a netmodule
 					if ((keyname != null) && !codegen.IsThisAssembly (null)) {
+#if HAS_MONO_SECURITY
 						LoadKey ();
 						// this overrides any attribute or .publickey directive in the source
 						codegen.ThisAssembly.SetPublicKey (sn.PublicKey);
+#else
+                                                throw new NotSupportedException ();
+#endif
 					}
 
                                         try {
@@ -102,6 +111,7 @@ namespace Mono.ILASM {
                                         return false;
                                 } 
 
+#if HAS_MONO_SECURITY
                                 try {
 					if (sn != null) {
 						Report.Message ("Signing assembly with the specified strongname keypair");
@@ -110,6 +120,7 @@ namespace Mono.ILASM {
                                 } catch {
                                         return false;
                                 }
+#endif
 
                                 return true;
                         }
@@ -120,6 +131,7 @@ namespace Mono.ILASM {
                                 Console.WriteLine ("***** FAILURE *****\n");
                         }
 
+#if HAS_MONO_SECURITY
 			private void LoadKey ()
 			{
 				if (keycontainer) {
@@ -145,6 +157,7 @@ namespace Mono.ILASM {
 				// exists
 				return sn.Sign (filename);
 			}
+#endif
 
                         private void ProcessFile (string file_path)
                         {
@@ -270,6 +283,9 @@ namespace Mono.ILASM {
 						else
 							keyname = command_arg;
 						break;
+                                        case "noautoinherit":
+                                                noautoinherit = true;
+                                                break;
                                         case "scan_only":
                                                 scan_only = true;
                                                 break;
@@ -336,16 +352,17 @@ namespace Mono.ILASM {
 
                         private void Usage ()
                         {
-                                Console.WriteLine ("Mono ILasm compiler\n" +
+                                Console.WriteLine ("Mono IL assembler compiler\n" +
                                         "ilasm [options] source-files\n" +
-                                        "   --about            About the Mono ILasm compiler\n" +
-                                        "   --version          Print the version number of the Mono ILasm compiler\n" +
+                                        "   --about            About the Mono IL assembler compiler\n" +
+                                        "   --version          Print the version number of the compiler\n" +
                                         "   /output:file_name  Specifies output file.\n" +
                                         "   /exe               Compile to executable.\n" +
                                         "   /dll               Compile to library.\n" +
                                         "   /debug             Include debug information.\n" +
 					"   /key:keyfile       Strongname using the specified key file\n" +
 					"   /key:@container    Strongname using the specified key container\n" +
+                                        "   /noautoinherit     Disable inheriting from System.Object by default\n" +
                                         "Options can be of the form -option or /option\n");
                                 Environment.Exit (1);
                         }
@@ -354,14 +371,14 @@ namespace Mono.ILASM {
                         {
                                 Console.WriteLine (
                                         "For more information on Mono, visit the project Web site\n" +
-                                        "   http://www.go-mono.com\n\n");
+                                        "   http://www.mono-project.com\n\n");
                                 Environment.Exit (0);
                         }
 
                         private void Version ()
                         {
                                 string version = System.Reflection.Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
-                                Console.WriteLine ("Mono ILasm compiler version {0}", version);
+                                Console.WriteLine ("Mono IL assembler compiler version {0}", version);
                                 Environment.Exit (0);
                         }
 

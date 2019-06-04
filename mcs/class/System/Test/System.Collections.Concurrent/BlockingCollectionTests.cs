@@ -194,6 +194,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void TakeAnyFromSecondCollection ()
 		{
 			var a = new BlockingCollection<string> ();
@@ -213,6 +214,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void TakeAnyCancellable ()
 		{
 			var a = new BlockingCollection<string> ();

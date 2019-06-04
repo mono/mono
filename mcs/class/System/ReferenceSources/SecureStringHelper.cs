@@ -14,7 +14,18 @@ namespace System.Net
 
                 if (secureString == null || secureString.Length == 0)
                     return String.Empty;
-
+#if MONO
+                try
+                {
+                    bstr = Marshal.SecureStringToGlobalAllocUnicode(secureString);
+                    plainString = Marshal.PtrToStringUni(bstr);
+                }
+                finally
+                {
+                    if (bstr != IntPtr.Zero)
+                        Marshal.ZeroFreeGlobalAllocUnicode(bstr);
+                }
+#else
                 try
                 {
                     bstr = Marshal.SecureStringToBSTR(secureString);
@@ -25,6 +36,7 @@ namespace System.Net
                     if (bstr != IntPtr.Zero)
                         Marshal.ZeroFreeBSTR(bstr);
                 }
+#endif
                 return plainString;
             }
 

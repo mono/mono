@@ -40,7 +40,6 @@ namespace System.Diagnostics
 	/// Enables communication with a debugger.
 	/// </summary>
 	[ComVisible (true)]
-	[MonoTODO ("The Debugger class is not functional")]
 	public sealed class Debugger
 	{
 
@@ -83,7 +82,6 @@ namespace System.Diagnostics
 		/// <summary>
 		/// Launches and attaches a debugger to the process.
 		/// </summary>
-		[MonoTODO ("Not implemented")]
 		public static bool Launch()
 		{
 			throw new NotImplementedException();

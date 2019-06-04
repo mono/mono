@@ -11,7 +11,7 @@ LIBRARY = System.Reflection.DispatchProxy.dll
 
 KEYFILE = ../../msfinal.pub
 SIGN_FLAGS = /delaysign /nowarn:1616,1699
-LIB_REFS = System
+LIB_REFS = System System.Core
 LIB_MCS_FLAGS = $(SIGN_FLAGS) /unsafe
 
 NO_TEST = yes

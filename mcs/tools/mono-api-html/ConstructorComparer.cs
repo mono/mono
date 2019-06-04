@@ -30,10 +30,15 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
 	// MethodComparer inherits from this one
-	public class ConstructorComparer : MemberComparer {
+	class ConstructorComparer : MemberComparer {
+
+		public ConstructorComparer (State state)
+			: base (state)
+		{
+		}
 
 		public override string GroupName {
 			get { return "constructors"; }
@@ -50,8 +55,8 @@ namespace Xamarin.ApiDiff {
 
 		void RenderReturnType (XElement source, XElement target, ApiChange change)
 		{
-			var srcType = source.GetTypeName ("returntype");
-			var tgtType = target.GetTypeName ("returntype");
+			var srcType = source.GetTypeName ("returntype", State);
+			var tgtType = target.GetTypeName ("returntype", State);
 
 			if (srcType != tgtType) {
 				change.AppendModified (srcType, tgtType, true);
@@ -68,7 +73,7 @@ namespace Xamarin.ApiDiff {
 			if (base.Equals (source, target, changes))
 				return true;
 				
-			var change = new ApiChange ();
+			var change = new ApiChange (GetDescription (source), State);
 			change.Header = "Modified " + GroupName;
 			RenderMethodAttributes (source, target, change);
 			RenderReturnType (source, target, change);
@@ -106,7 +111,7 @@ namespace Xamarin.ApiDiff {
 
 			string name = e.GetAttribute ("name");
 
-			var r = e.GetTypeName ("returntype");
+			var r = e.GetTypeName ("returntype", State);
 			if (r != null) {
 				// ctor dont' have a return type
 				sb.Append (r).Append (' ');
@@ -123,9 +128,9 @@ namespace Xamarin.ApiDiff {
 			if (genericp != null) {
 				var list = new List<string> ();
 				foreach (var p in genericp.Elements ("generic-parameter")) {
-					list.Add (p.GetTypeName ("name"));
+					list.Add (p.GetTypeName ("name", State));
 				}
-				sb.Append ("&lt;").Append (String.Join (", ", list)).Append ("&gt;");
+				sb.Append (Formatter.LesserThan).Append (String.Join (", ", list)).Append (Formatter.GreaterThan);
 			}
 
 			sb.Append (" (");
@@ -133,10 +138,15 @@ namespace Xamarin.ApiDiff {
 			if (parameters != null) {
 				var list = new List<string> ();
 				foreach (var p in parameters.Elements ("parameter")) {
-					var pTypeName   = p.GetTypeName ("type");
-					list.Add (State.IgnoreParameterNameChanges
-						? pTypeName
-						: pTypeName + " " + p.GetAttribute ("name"));
+					var param = p.GetTypeName ("type", State);
+					if (!State.IgnoreParameterNameChanges)
+						param += " " + p.GetAttribute ("name");
+
+					var direction = p.GetAttribute ("direction");
+					if (direction?.Length > 0)
+						param = direction + " " + param;
+						
+					list.Add (param);
 				}
 				sb.Append (String.Join (", ", list));
 			}

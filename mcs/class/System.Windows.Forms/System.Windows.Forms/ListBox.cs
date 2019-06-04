@@ -2125,7 +2125,7 @@ namespace System.Windows.Forms
 		private void UpdateListBoxBounds ()
 		{
 			if (IsHandleCreated)
-				SetBoundsInternal (bounds.X, bounds.Y, bounds.Width, IntegralHeight ? SnapHeightToIntegral (requested_height) : requested_height, BoundsSpecified.None);
+				SetBoundsCore (bounds.X, bounds.Y, bounds.Width, IntegralHeight ? SnapHeightToIntegral (requested_height) : requested_height, BoundsSpecified.None);
 		}
 
 		private void UpdateScrollBars ()
@@ -2681,7 +2681,7 @@ namespace System.Windows.Forms
 			}
 
 			// we receive the index to be removed
-			void UpdateSelection (int removed_index)
+			internal virtual void UpdateSelection (int removed_index)
 			{
 				owner.selected_indices.Remove (removed_index);
 

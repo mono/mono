@@ -56,7 +56,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cn.Site, "#8");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#9");
 			Assert.IsFalse (cn.StatisticsEnabled, "#10");
-			Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#11");
+			// https://github.com/dotnet/corefx/issues/22871
+			//Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#11");
 		}
 
 		[Test] // SqlConnection (string)
@@ -78,7 +79,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cn.Site, "#A8");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#A9");
 			Assert.IsFalse (cn.StatisticsEnabled, "#A10");
-			Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#A11");
+			// https://github.com/dotnet/corefx/issues/22871
+			//Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#A11");
 
 			cn = new SqlConnection ((string) null);
 			Assert.AreEqual (string.Empty, cn.ConnectionString, "#B1");
@@ -91,7 +93,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cn.Site, "#B8");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#B9");
 			Assert.IsFalse (cn.StatisticsEnabled, "#B10");
-			Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#B11");
+			// https://github.com/dotnet/corefx/issues/22871
+			//Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#B11");
 		}
 
 		[Test]
@@ -279,6 +282,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/11958
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -297,6 +301,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/11958
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -333,6 +338,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/11958
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -355,6 +361,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/11958
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -457,7 +464,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (cmd.Container, "#6");
 			Assert.IsTrue (cmd.DesignTimeVisible, "#7");
 			Assert.IsNull (cmd.Notification, "#8");
-			Assert.IsTrue (cmd.NotificationAutoEnlist, "#9");
+			// not implemented in corefx yet
+			// Assert.IsTrue (cmd.NotificationAutoEnlist, "#9");
 			Assert.IsNotNull (cmd.Parameters, "#10");
 			Assert.AreEqual (0, cmd.Parameters.Count, "#11");
 			Assert.IsNull (cmd.Site, "#12");
@@ -479,7 +487,8 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (string.Empty, cn.Database, "#3");
 			Assert.AreEqual (string.Empty, cn.DataSource, "#4");
 			Assert.AreEqual (8000, cn.PacketSize, "#5");
-			Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#6");
+			// https://github.com/dotnet/corefx/issues/22871
+			// Assert.IsTrue (string.Compare (Environment.MachineName, cn.WorkstationId, true) == 0, "#6");
 			Assert.AreEqual (ConnectionState.Closed, cn.State, "#7");
 			cn.Dispose ();
 
@@ -488,6 +497,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] //https://github.com/dotnet/corefx/issues/22882
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -567,6 +577,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22474
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -578,6 +589,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22879
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -904,6 +916,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22474
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -916,6 +929,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22879
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1055,6 +1069,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		[Category("NotWorking")] // https://github.com/dotnet/corefx/issues/22474
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

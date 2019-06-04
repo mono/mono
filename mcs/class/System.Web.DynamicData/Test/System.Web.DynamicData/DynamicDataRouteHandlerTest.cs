@@ -87,17 +87,17 @@ namespace MonoTests.System.Web.DynamicData
 			var handler = route.RouteHandler = new DynamicDataRouteHandler ();
 
 			// No null check is made, of course - throws from some internal method
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				handler.CreateHandler (null, t, PageAction.Details);
 			}, "#A1");
 
 			// No null check again - this time throws from GetCustomPageVirtualPath
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				handler.CreateHandler (route, null, PageAction.Details);
 			}, "#A2");
 
 			// And once again, no null check and thrown from GetCustomPageVirtualPath as well
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				handler.CreateHandler (route, t, null);
 			}, "#A3");
 		}
@@ -152,13 +152,13 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNotNull (handler, "#A2");
 
 			// Lack of null check (for table)
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				handler.DoGetCustomPageVirtualPath (null, null);
 			}, "#A2-1");
 
 			// Another missing null check (this time for Model)... Are null checks
 			// out of fashion?
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				handler.DoGetCustomPageVirtualPath (t, String.Empty);
 			}, "#A2-2");
 
@@ -193,7 +193,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetRequestContext ()
 		{
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				DynamicDataRouteHandler.GetRequestContext (null);
 			}, "#A1");
 
@@ -220,7 +220,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNotNull (t, "#A1");
 
 			// Surprise! A null check is present!
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				DynamicDataRouteHandler.GetRequestMetaTable (null);
 			}, "#A2");
 			
@@ -248,13 +248,13 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNotNull (handler, "#A2");
 
 			// Lack of null check (for table)
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				handler.DoGetScaffoldPageVirtualPath (null, null);
 			}, "#A2-1");
 
 			// Another missing null check (this time for Model)... Are null checks
 			// out of fashion?
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				handler.DoGetScaffoldPageVirtualPath (t, String.Empty);
 			}, "#A2-2");
 
@@ -343,7 +343,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNotNull (t, "#A1");
 
 			// And following the tradition... [drum roll] - NO NULL CHECK!
-			AssertExtensions.Throws<NullReferenceException> (() => {
+			Assert.Throws<NullReferenceException> (() => {
 				DynamicDataRouteHandler.SetRequestMetaTable (null, t);
 			}, "#A2");
 

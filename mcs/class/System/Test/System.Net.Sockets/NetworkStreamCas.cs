@@ -55,7 +55,7 @@ namespace MonoCasTests.System.Net.Sockets {
 		{
 			reset = new ManualResetEvent (false);
 
-			IPHostEntry host = Dns.Resolve ("www.google.com");
+			IPHostEntry host = Dns.Resolve ("www.example.com");
 			IPAddress ip = host.AddressList[0];
 			socket = new Socket (ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 			socket.Connect (new IPEndPoint (ip, 80));
@@ -97,6 +97,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncRead ()
 		{
 			message = "AsyncRead";
@@ -135,6 +136,7 @@ namespace MonoCasTests.System.Net.Sockets {
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "USERNAME")]
+		[Category ("InetAccess")]
 		public void AsyncWrite ()
 		{
 			message = "AsyncWrite";

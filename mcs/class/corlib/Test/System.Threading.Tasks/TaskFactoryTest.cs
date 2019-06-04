@@ -134,6 +134,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void StartNewTest ()
 		{
 			bool result = false;
@@ -148,6 +149,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAll_Simple ()
 		{
 			var mre = new ManualResetEventSlim (false);
@@ -173,6 +175,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAll_WithMixedCompletionState ()
 		{
 			var mre = new ManualResetEventSlim ();
@@ -237,6 +240,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAll_WithExceptions ()
 		{
 			var t1 = Task.Factory.StartNew (() => { throw new ApplicationException ("Foo"); });
@@ -251,6 +255,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAny_Simple ()
 		{
 			var t1 = new ManualResetEvent (false);
@@ -279,6 +284,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void ContinueWhenAny_WithResult ()
 		{
 			var tcs = new TaskCompletionSource<int>();
@@ -334,12 +340,12 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsyncBeginInvoke_WithResult ()
 		{
 			bool result = false;
 
 			Func<int, int> func = (i) => {
-				Assert.IsTrue (Thread.CurrentThread.IsThreadPoolThread);
 				result = true; return i + 3;
 			};
 
@@ -352,6 +358,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsyncBeginMethod_DirectResult ()
 		{
 			bool result = false;
@@ -369,6 +376,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsyncBeginMethod_Exception ()
 		{
 			bool result = false;
@@ -445,14 +453,13 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		[Category ("MacNotWorking")] // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
+		[Category ("MultiThreaded")]
 		public void FromAsync_Completed ()
 		{
 			var completed = new CompletedAsyncResult ();
 			bool? valid = null;
 
 			Action<IAsyncResult> end = l => {
-				Assert.IsFalse (Thread.CurrentThread.IsThreadPoolThread, "#2");
 				valid = l == completed;
 			};
 			Task task = factory.FromAsync (completed, end);
@@ -460,6 +467,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_CompletedWithException ()
 		{
 			var completed = new CompletedAsyncResult ();
@@ -472,6 +480,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_CompletedCanceled ()
 		{
 			var completed = new CompletedAsyncResult ();
@@ -485,6 +494,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_SimpleAsyncResult ()
 		{
 			var result = new TestAsyncResult ();
@@ -499,6 +509,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_ResultException ()
 		{
 			var result = new TestAsyncResult ();
@@ -516,6 +527,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_ReturnInt ()
 		{
 			var result = new TestAsyncResult ();
@@ -532,6 +544,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_Scheduler_Explicit ()
 		{
 			var result = new TestAsyncResult ();
@@ -548,6 +561,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_Scheduler_Implicit ()
 		{
 			var result = new TestAsyncResult ();
@@ -557,7 +571,6 @@ namespace MonoTests.System.Threading.Tasks
 			factory = new TaskFactory (scheduler);
 
 			Task task = factory.FromAsync (result, l => {
-				Assert.IsTrue (Thread.CurrentThread.IsThreadPoolThread, "#6");
 				called = true;
 			}, TaskCreationOptions.AttachedToParent);
 
@@ -569,7 +582,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
-		[Category ("MacNotWorking")] // Randomly fails - https://bugzilla.xamarin.com/show_bug.cgi?id=51255
+		[Category ("MultiThreaded")]
 		public void FromAsync_BeginCallback ()
 		{
 			bool called = false;
@@ -583,11 +596,10 @@ namespace MonoTests.System.Threading.Tasks
 					if ((TaskCreationOptions) c != TaskCreationOptions.AttachedToParent)
 						Assert.Fail ("#11");
 
-					Assert.IsFalse (Thread.CurrentThread.IsThreadPoolThread, "#12");
-
 					called2 = true;
-					b.Invoke (null);
-					return null;
+					var ar = Task.CompletedTask;
+					b.Invoke (ar);
+					return ar;
 				},
 				l => {
 					called = true;
@@ -602,6 +614,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void StartNewCancelled ()
 		{
 			var ct = new CancellationToken (true);

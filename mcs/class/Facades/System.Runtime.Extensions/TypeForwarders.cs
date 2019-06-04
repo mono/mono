@@ -26,6 +26,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Environment))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.IO.Path))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Math))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.MathF))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.MidpointRounding))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Net.WebUtility))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Progress<>))]

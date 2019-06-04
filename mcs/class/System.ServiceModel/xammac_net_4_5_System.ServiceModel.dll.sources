@@ -1,4 +1,6 @@
 #include mobile_System.ServiceModel.dll.sources
+../../build/common/SR.cs
+corefx/SR.cs
 System.ServiceModel.Channels/IChannelListener.cs
 System.ServiceModel.Channels/IReplyChannel.cs
 System.ServiceModel.Channels/IReplySessionChannel.cs

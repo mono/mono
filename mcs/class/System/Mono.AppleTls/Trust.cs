@@ -1,4 +1,3 @@
-#if SECURITY_DEP && MONO_FEATURE_APPLETLS
 // 
 // Trust.cs: Implements the managed SecTrust wrapper.
 //
@@ -61,16 +60,21 @@ namespace Mono.AppleTls {
 			if (certificates == null)
 				throw new ArgumentNullException ("certificates");
 
-			SecCertificate[] array = new SecCertificate [certificates.Count];
+			var array = new SafeSecCertificateHandle [certificates.Count];
 			int i = 0;
 			foreach (var certificate in certificates)
-				array [i++] = new SecCertificate (certificate);
+				array [i++] = MonoCertificatePal.FromOtherCertificate (certificate);
 			Initialize (array, policy);
+			for (i = 0; i < array.Length; i++)
+				array [i].Dispose ();
 		}
 
-		void Initialize (SecCertificate[] array, SecPolicy policy)
+		void Initialize (SafeSecCertificateHandle[] array, SecPolicy policy)
 		{
-			using (var certs = CFArray.CreateArray (array)) {
+			var handles = new IntPtr [array.Length];
+			for (int i = 0; i < array.Length; i++)
+				handles [i] = array [i].DangerousGetHandle ();
+			using (var certs = CFArray.CreateArray (handles)) {
 				Initialize (certs.Handle, policy);
 			}
 		}
@@ -111,15 +115,16 @@ namespace Mono.AppleTls {
 		[DllImport (AppleTlsContext.SecurityLibrary)]
 		extern static IntPtr /* SecCertificateRef */ SecTrustGetCertificateAtIndex (IntPtr /* SecTrustRef */ trust, IntPtr /* CFIndex */ ix);
 
-		public SecCertificate this [IntPtr index] {
-			get {
-				if (handle == IntPtr.Zero)
-					throw new ObjectDisposedException ("SecTrust");
-				if (((long)index < 0) || ((long)index >= Count))
-					throw new ArgumentOutOfRangeException ("index");
+		internal X509Certificate2 GetCertificate (int index)
+		{
+			if (handle == IntPtr.Zero)
+				throw new ObjectDisposedException ("SecTrust");
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException ("index");
 
-				return new SecCertificate (SecTrustGetCertificateAtIndex (handle, index));
-			}
+			var ptr = SecTrustGetCertificateAtIndex (handle, (IntPtr)index);
+			var impl = new X509CertificateImplApple (ptr, false);
+			return new X509Certificate2 (impl);
 		}
 
 		[DllImport (AppleTlsContext.SecurityLibrary)]
@@ -132,18 +137,21 @@ namespace Mono.AppleTls {
 			if (certificates == null)
 				return SecTrustSetAnchorCertificates (handle, IntPtr.Zero);
 
-			SecCertificate[] array = new SecCertificate [certificates.Count];
+			var array = new SafeSecCertificateHandle [certificates.Count];
 			int i = 0;
 			foreach (var certificate in certificates)
-				array [i++] = new SecCertificate (certificate);
+				array [i++] = MonoCertificatePal.FromOtherCertificate (certificate);
 			return SetAnchorCertificates (array);
 		}
 
-		public SecStatusCode SetAnchorCertificates (SecCertificate[] array)
+		public SecStatusCode SetAnchorCertificates (SafeSecCertificateHandle[] array)
 		{
 			if (array == null)
 				return SecTrustSetAnchorCertificates (handle, IntPtr.Zero);
-			using (var certs = CFArray.FromNativeObjects (array)) {
+			var handles = new IntPtr [array.Length];
+			for (int i = 0; i < array.Length; i++)
+				handles [i] = array [i].DangerousGetHandle ();
+			using (var certs = CFArray.CreateArray (handles)) {
 				return SecTrustSetAnchorCertificates (handle, certs.Handle);
 			}
 		}
@@ -192,4 +200,3 @@ namespace Mono.AppleTls {
 		}
 	}
 }
-#endif

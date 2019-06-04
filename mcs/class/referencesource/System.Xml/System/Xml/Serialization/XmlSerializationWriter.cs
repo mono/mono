@@ -197,17 +197,19 @@ namespace System.Xml.Serialization {
                 typeNs = UrtTypes.Namespace;
                 break;
             default:
-                if (type == typeof(XmlQualifiedName)) typeName = "QName";
-                else if (type == typeof(byte[])) typeName = "base64Binary";
-                else if (type == typeof(Guid)) {
-                    typeName = "guid";
-                    typeNs = UrtTypes.Namespace;
-                }
-                else if (type == typeof(XmlNode[])){
-                    typeName = Soap.UrType;
-                }
-                else
-                    return null;
+                    if (type == typeof(XmlQualifiedName)) typeName = "QName";
+                    else if (type == typeof(byte[])) typeName = "base64Binary";
+                    else if (type == typeof(TimeSpan) && LocalAppContextSwitches.EnableTimeSpanSerialization)
+                        typeName = "TimeSpan";
+                    else if (type == typeof(Guid)) {
+                        typeName = "guid";
+                        typeNs = UrtTypes.Namespace;
+                    }
+                    else if (type == typeof(XmlNode[])) {
+                        typeName = Soap.UrType;
+                    }
+                    else
+                        return null;
                 break;
             }
             return new XmlQualifiedName(typeName, typeNs);
@@ -308,6 +310,10 @@ namespace System.Xml.Serialization {
                     value = XmlConvert.ToString((Guid)o);
                     type = "guid";
                     typeNs = UrtTypes.Namespace;
+                }
+                else if (t == typeof(TimeSpan) && LocalAppContextSwitches.EnableTimeSpanSerialization) {
+                    value = XmlConvert.ToString((TimeSpan)o);
+                    type = "TimeSpan";
                 }
                 else if (typeof(XmlNode[]).IsAssignableFrom(t)){
                     if (name == null)
@@ -3113,6 +3119,13 @@ namespace System.Xml.Serialization {
                     if (type.IsEnum) {
                         Writer.Write(((int)value).ToString(null, NumberFormatInfo.InvariantInfo));
                     }
+                    else if(type == typeof(TimeSpan) && LocalAppContextSwitches.EnableTimeSpanSerialization) {
+                            Writer.Write(" new ");
+                            Writer.Write(type.FullName);
+                            Writer.Write("(");
+                            Writer.Write(((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture));
+                            Writer.Write(")");
+                     }
                     else {
                         throw new InvalidOperationException(Res.GetString(Res.XmlUnsupportedDefaultType, type.FullName));
                     }

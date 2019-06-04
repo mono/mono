@@ -7,9 +7,12 @@
  *   Ben Woods (woodsb02@gmail.com)
  */
 
-#if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD)
-
 #include <config.h>
+
+#include <mono/metadata/object.h>
+#include <mono/metadata/mono-route.h>
+
+#if defined(HOST_DARWIN) || defined(HOST_BSD)
 #include <sys/socket.h>
 #include <net/if.h>
 #include <net/if_dl.h>
@@ -18,12 +21,10 @@
 #include <sys/sysctl.h>
 #include <stdlib.h>
 #include <string.h>
-#include <mono/metadata/object.h>
-#include <mono/metadata/mono-route.h>
 
 extern MonoBoolean ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal(MonoString *iface, MonoArray **gw_addr_list)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	size_t needed;
 	in_addr_t in;
 	int mib[6];
@@ -34,8 +35,8 @@ extern MonoBoolean ves_icall_System_Net_NetworkInformation_MacOsIPInterfacePrope
 
 	MonoDomain *domain = mono_domain_get ();
 
-	ifacename = mono_string_to_utf8_checked(iface, &error);
-	if (mono_error_set_pending_exception (&error))
+	ifacename = mono_string_to_utf8_checked_internal (iface, error);
+	if (mono_error_set_pending_exception (error))
 		return FALSE;
 
 	if ((ifindex = if_nametoindex(ifacename)) == 0)
@@ -76,9 +77,8 @@ extern MonoBoolean ves_icall_System_Net_NetworkInformation_MacOsIPInterfacePrope
 		num_gws++;
 	}
 
-	*gw_addr_list = mono_array_new_checked (domain, mono_get_string_class (), num_gws, &error);
-	if (!is_ok (&error))
-		goto leave;
+	*gw_addr_list = mono_array_new_checked (domain, mono_get_string_class (), num_gws, error);
+	goto_if_nok (error, leave);
 
 	for (next = buf; next < lim; next += rtm->rtm_msglen) {
 		rtm = (struct rt_msghdr *)next;
@@ -104,15 +104,14 @@ extern MonoBoolean ves_icall_System_Net_NetworkInformation_MacOsIPInterfacePrope
 			// snprintf output truncated
 			continue;
 
-		addr_string = mono_string_new_checked (domain, addr, &error);
-		if (!is_ok (&error))
-			goto leave;
-		mono_array_setref (*gw_addr_list, gwnum, addr_string);
+		addr_string = mono_string_new_checked (domain, addr, error);
+		goto_if_nok (error, leave);
+		mono_array_setref_internal (*gw_addr_list, gwnum, addr_string);
 		gwnum++;
 	}
 leave:
 	g_free (buf);
-	return is_ok (&error);
+	return is_ok (error);
 }
 
 in_addr_t gateway_from_rtm(struct rt_msghdr *rtm)
@@ -134,4 +133,13 @@ in_addr_t gateway_from_rtm(struct rt_msghdr *rtm)
 	return 0;
 }
 
-#endif /* #if defined(PLATFORM_MACOSX) || defined(PLATFORM_BSD) */
+#else
+
+MonoBoolean
+ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal(MonoString *iface, MonoArray **gw_addr_list)
+{
+	g_assert_not_reached ();
+	return FALSE;
+}
+
+#endif /* #if defined(HOST_DARWIN) || defined(HOST_BSD) */

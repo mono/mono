@@ -12,6 +12,7 @@
 
 #include "config.h"
 #include "mini-gc.h"
+#include "mini-runtime.h"
 #include <mono/metadata/gc-internals.h>
 
 static gboolean
@@ -42,8 +43,10 @@ get_provenance_func (void)
 #include <mono/metadata/sgen-conf.h>
 #include <mono/metadata/gc-internals.h>
 #include <mono/utils/mono-counters.h>
+#include <mono/utils/unlocked.h>
 
-#define SIZEOF_SLOT ((int)sizeof (mgreg_t))
+//#define SIZEOF_SLOT ((int)sizeof (host_mgreg_t))
+//#define SIZEOF_SLOT ((int)sizeof (target_mgreg_t))
 
 #define GC_BITS_PER_WORD (sizeof (mword) * 8)
 
@@ -94,8 +97,6 @@ typedef struct {
 	guint8 *reg_pin_bitmap;
 } MonoCompileGC;
 
-#define ALIGN_TO(val,align) ((((mgreg_t)val) + ((align) - 1)) & ~((align) - 1))
-
 #undef DEBUG
 
 #if 0
@@ -145,7 +146,7 @@ typedef struct {
 	MonoThreadUnwindState unwind_state;
 	MonoThreadInfo *info;
 	/* For debugging */
-	mgreg_t tid;
+	host_mgreg_t tid;
 	gpointer ref_to_track;
 	/* Number of frames collected during the !precise pass */
 	int nframes;
@@ -254,27 +255,27 @@ static gboolean precise_frame_limit_inited;
 
 /* Stats */
 typedef struct {
-	int scanned_stacks;
-	int scanned;
-	int scanned_precisely;
-	int scanned_conservatively;
-	int scanned_registers;
-	int scanned_native;
-	int scanned_other;
+	gint32 scanned_stacks;
+	gint32 scanned;
+	gint32 scanned_precisely;
+	gint32 scanned_conservatively;
+	gint32 scanned_registers;
+	gint32 scanned_native;
+	gint32 scanned_other;
 	
-	int all_slots;
-	int noref_slots;
-	int ref_slots;
-	int pin_slots;
+	gint32 all_slots;
+	gint32 noref_slots;
+	gint32 ref_slots;
+	gint32 pin_slots;
 
-	int gc_maps_size;
-	int gc_callsites_size;
-	int gc_callsites8_size;
-	int gc_callsites16_size;
-	int gc_callsites32_size;
-	int gc_bitmaps_size;
-	int gc_map_struct_size;
-	int tlsdata_size;
+	gint32 gc_maps_size;
+	gint32 gc_callsites_size;
+	gint32 gc_callsites8_size;
+	gint32 gc_callsites16_size;
+	gint32 gc_callsites32_size;
+	gint32 gc_bitmaps_size;
+	gint32 gc_map_struct_size;
+	gint32 tlsdata_size;
 } JITGCStats;
 
 static JITGCStats stats;
@@ -408,6 +409,11 @@ encode_frame_reg (int frame_reg)
 		return 0;
 	else if (frame_reg == S390_FP)
 		return 1;
+#elif defined (TARGET_RISCV)
+	if (frame_reg == RISCV_SP)
+		return 0;
+	else if (frame_reg == RISCV_FP)
+		return 1;
 #else
 	NOT_IMPLEMENTED;
 #endif
@@ -438,6 +444,11 @@ decode_frame_reg (int encoded)
 		return S390_SP;
 	else if (encoded == 1)
 		return S390_FP;
+#elif defined (TARGET_RISCV)
+	if (encoded == 0)
+		return RISCV_SP;
+	else if (encoded == 1)
+		return RISCV_FP;
 #else
 	NOT_IMPLEMENTED;
 #endif
@@ -469,6 +480,11 @@ static int callee_saved_regs [] = {
   ppc_r29, ppc_r30, ppc_r31 };
 #elif defined(TARGET_POWERPC)
 static int callee_saved_regs [] = { ppc_r6, ppc_r7, ppc_r8, ppc_r9, ppc_r10, ppc_r11, ppc_r12, ppc_r13, ppc_r14 };
+#elif defined (TARGET_RISCV)
+static int callee_saved_regs [] = {
+	RISCV_S0, RISCV_S1, RISCV_S2, RISCV_S3, RISCV_S4, RISCV_S5,
+	RISCV_S6, RISCV_S7, RISCV_S8, RISCV_S9, RISCV_S10, RISCV_S11,
+};
 #endif
 
 static guint32
@@ -601,7 +617,7 @@ thread_attach_func (void)
 	tls = g_new0 (TlsData, 1);
 	tls->tid = mono_native_thread_id_get ();
 	tls->info = mono_thread_info_current ();
-	stats.tlsdata_size += sizeof (TlsData);
+	UnlockedAdd (&stats.tlsdata_size, sizeof (TlsData));
 
 	return tls;
 }
@@ -634,17 +650,13 @@ thread_suspend_func (gpointer user_data, void *sigctx, MonoContext *ctx)
 #ifdef TARGET_WIN32
 		return;
 #else
-		res = mono_thread_state_init_from_handle (&tls->unwind_state, tls->info);
+		res = mono_thread_state_init_from_handle (&tls->unwind_state, tls->info, NULL);
 #endif
 	} else {
 		tls->unwind_state.unwind_data [MONO_UNWIND_DATA_LMF] = mono_get_lmf ();
 		if (sigctx) {
-#ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 			mono_sigctx_to_monoctx (sigctx, &tls->unwind_state.ctx);
 			tls->unwind_state.valid = TRUE;
-#else
-			tls->unwind_state.valid = FALSE;
-#endif
 		} else if (ctx) {
 			memcpy (&tls->unwind_state.ctx, ctx, sizeof (MonoContext));
 			tls->unwind_state.valid = TRUE;
@@ -698,7 +710,7 @@ slot_type_to_string (GCSlotType type)
 	}
 }
 
-static inline mgreg_t
+static inline host_mgreg_t
 get_frame_pointer (MonoContext *ctx, int frame_reg)
 {
 #if defined(TARGET_AMD64)
@@ -713,14 +725,19 @@ get_frame_pointer (MonoContext *ctx, int frame_reg)
 			return ctx->ebp;
 #elif defined(TARGET_ARM)
 		if (frame_reg == ARMREG_SP)
-			return (mgreg_t)MONO_CONTEXT_GET_SP (ctx);
+			return (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 		else if (frame_reg == ARMREG_FP)
-			return (mgreg_t)MONO_CONTEXT_GET_BP (ctx);
+			return (host_mgreg_t)MONO_CONTEXT_GET_BP (ctx);
 #elif defined(TARGET_S390X)
 		if (frame_reg == S390_SP)
-			return (mgreg_t)MONO_CONTEXT_GET_SP (ctx);
+			return (host_mgreg_t)MONO_CONTEXT_GET_SP (ctx);
 		else if (frame_reg == S390_FP)
-			return (mgreg_t)MONO_CONTEXT_GET_BP (ctx);
+			return (host_mgreg_t)MONO_CONTEXT_GET_BP (ctx);
+#elif defined (TARGET_RISCV)
+		if (frame_reg == RISCV_SP)
+			return MONO_CONTEXT_GET_SP (ctx);
+		else if (frame_reg == RISCV_FP)
+			return MONO_CONTEXT_GET_BP (ctx);
 #endif
 		g_assert_not_reached ();
 		return 0;
@@ -748,8 +765,8 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 	int scanned = 0, scanned_precisely, scanned_conservatively, scanned_registers;
 	gboolean res;
 	StackFrameInfo frame;
-	mgreg_t *reg_locations [MONO_MAX_IREGS];
-	mgreg_t *new_reg_locations [MONO_MAX_IREGS];
+	host_mgreg_t *reg_locations [MONO_MAX_IREGS];
+	host_mgreg_t *new_reg_locations [MONO_MAX_IREGS];
 	guint8 *bitmaps;
 	FrameInfo *fi;
 	guint32 precise_regmask;
@@ -762,7 +779,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 	/* tls == NULL can happen during startup */
 	if (mono_thread_internal_current () == NULL || !tls) {
 		mono_gc_conservatively_scan_area (stack_start, stack_end);
-		stats.scanned_stacks += stack_end - stack_start;
+		UnlockedAdd (&stats.scanned_stacks, stack_end - stack_start);
 		return;
 	}
 
@@ -814,7 +831,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 			}
 		}
 
-		g_assert ((mgreg_t)stack_limit % SIZEOF_SLOT == 0);
+		g_assert ((gsize)stack_limit % SIZEOF_SLOT == 0);
 
 		res = mono_find_jit_info_ext (frame.domain ? frame.domain : tls->unwind_state.unwind_data [MONO_UNWIND_DATA_DOMAIN], tls->unwind_state.unwind_data [MONO_UNWIND_DATA_JIT_TLS], NULL, &ctx, &new_ctx, NULL, &lmf, new_reg_locations, &frame);
 		if (!res)
@@ -919,7 +936,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 		}
 
 		/* The embedded callsite table requires this */
-		g_assert (((mgreg_t)emap % 4) == 0);
+		g_assert (((gsize)emap % 4) == 0);
 
 		/*
 		 * Debugging aid to control the number of frames scanned precisely
@@ -993,7 +1010,7 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 			/* This scans the previously skipped frames as well */
 			DEBUG (fprintf (logfile, "\tscan area %p-%p (%d).\n", stack_limit, real_frame_start, (int)(real_frame_start - stack_limit)));
 			mono_gc_conservatively_scan_area (stack_limit, real_frame_start);
-			stats.scanned_other += real_frame_start - stack_limit;
+			UnlockedAdd (&stats.scanned_other, real_frame_start - stack_limit);
 		}
 
 		/* Mark stack slots */
@@ -1119,16 +1136,16 @@ conservative_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end)
 	if (stack_limit < stack_end) {
 		DEBUG (fprintf (logfile, "\tscan remaining stack %p-%p (%d).\n", stack_limit, stack_end, (int)(stack_end - stack_limit)));
 		mono_gc_conservatively_scan_area (stack_limit, stack_end);
-		stats.scanned_native += stack_end - stack_limit;
+		UnlockedAdd (&stats.scanned_native, stack_end - stack_limit);
 	}
 
 	DEBUG (fprintf (logfile, "Marked %d bytes, p=%d,c=%d out of %d.\n", scanned, scanned_precisely, scanned_conservatively, (int)(stack_end - stack_start)));
 
-	stats.scanned_stacks += stack_end - stack_start;
-	stats.scanned += scanned;
-	stats.scanned_precisely += scanned_precisely;
-	stats.scanned_conservatively += scanned_conservatively;
-	stats.scanned_registers += scanned_registers;
+	UnlockedAdd (&stats.scanned_stacks, stack_end - stack_start);
+	UnlockedAdd (&stats.scanned, scanned);
+	UnlockedAdd (&stats.scanned_precisely, scanned_precisely);
+	UnlockedAdd (&stats.scanned_conservatively, scanned_conservatively);
+	UnlockedAdd (&stats.scanned_registers, scanned_registers);
 
 	//mono_gc_conservatively_scan_area (stack_start, stack_end);
 }
@@ -1231,10 +1248,10 @@ precise_pass (TlsData *tls, guint8 *stack_start, guint8 *stack_end, void *gc_dat
 	 * Debugging aid to check for missed refs.
 	 */
 	if (tls->ref_to_track) {
-		mgreg_t *p;
+		gpointer *p;
 
-		for (p = (mgreg_t*)stack_start; p < (mgreg_t*)stack_end; ++p)
-			if (*p == (mgreg_t)tls->ref_to_track)
+		for (p = (gpointer*)stack_start; p < (gpointer*)stack_end; ++p)
+			if (*p == tls->ref_to_track)
 				printf ("REF AT %p.\n", p);
 	}
 }
@@ -1597,7 +1614,7 @@ process_other_slots (MonoCompile *cfg)
 static gsize*
 get_vtype_bitmap (MonoType *t, int *numbits)
 {
-	MonoClass *klass = mono_class_from_mono_type (t);
+	MonoClass *klass = mono_class_from_mono_type_internal (t);
 
 	if (klass->generic_container || mono_class_is_open_constructed_type (t)) {
 		/* FIXME: Generic sharing */
@@ -1625,7 +1642,7 @@ static void
 process_variables (MonoCompile *cfg)
 {
 	MonoCompileGC *gcfg = cfg->gc_info;
-	MonoMethodSignature *sig = mono_method_signature (cfg->method);
+	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 	int i, locals_min_slot, locals_max_slot, cindex;
 	MonoBasicBlock *bb;
 	MonoInst *tmp;
@@ -1677,7 +1694,7 @@ process_variables (MonoCompile *cfg)
 
 		/* For some reason, 'this' is byref */
 		if (sig->hasthis && ins == cfg->args [0] && !cfg->method->klass->valuetype) {
-			t = &cfg->method->klass->byval_arg;
+			t = m_class_get_byval_arg (cfg->method->klass);
 			is_this = TRUE;
 		}
 
@@ -1785,7 +1802,7 @@ process_variables (MonoCompile *cfg)
 						for (j = 0; j < numbits; ++j) {
 							if (bitmap [j / GC_BITS_PER_WORD] & ((gsize)1 << (j % GC_BITS_PER_WORD))) {
 								/* The descriptor is for the boxed object */
-								set_slot (gcfg, (pos + j - (sizeof (MonoObject) / SIZEOF_SLOT)), cindex, pin ? SLOT_PIN : SLOT_REF);
+								set_slot (gcfg, (pos + j - (MONO_ABI_SIZEOF (MonoObject) / SIZEOF_SLOT)), cindex, pin ? SLOT_PIN : SLOT_REF);
 							}
 						}
 					}
@@ -1794,7 +1811,7 @@ process_variables (MonoCompile *cfg)
 				if (cfg->verbose_level > 1) {
 					for (j = 0; j < numbits; ++j) {
 						if (bitmap [j / GC_BITS_PER_WORD] & ((gsize)1 << (j % GC_BITS_PER_WORD)))
-							printf ("\t\t%s slot at 0x%x(fp) (slot = %d)\n", pin ? "pin" : "ref", (int)(ins->inst_offset + (j * SIZEOF_SLOT)), (int)(pos + j - (sizeof (MonoObject) / SIZEOF_SLOT)));
+							printf ("\t\t%s slot at 0x%x(fp) (slot = %d)\n", pin ? "pin" : "ref", (int)(ins->inst_offset + (j * SIZEOF_SLOT)), (int)(pos + j - (MONO_ABI_SIZEOF (MonoObject) / SIZEOF_SLOT)));
 					}
 				}
 			} else {
@@ -1848,7 +1865,7 @@ process_variables (MonoCompile *cfg)
 			set_slot_everywhere (gcfg, pos, SLOT_NOREF);
 			if (cfg->verbose_level > 1)
 				printf ("\tnoref%s at %s0x%x(fp) (R%d, slot = %d): %s\n", (is_arg ? " arg" : ""), ins->inst_offset < 0 ? "-" : "", (ins->inst_offset < 0) ? -(int)ins->inst_offset : (int)ins->inst_offset, vmv->vreg, pos, mono_type_full_name (ins->inst_vtype));
-			if (!t->byref && sizeof (mgreg_t) == 4 && (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8 || t->type == MONO_TYPE_R8)) {
+			if (!t->byref && sizeof (host_mgreg_t) == 4 && (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8 || t->type == MONO_TYPE_R8)) {
 				set_slot_everywhere (gcfg, pos + 1, SLOT_NOREF);
 				if (cfg->verbose_level > 1)
 					printf ("\tnoref at %s0x%x(fp) (R%d, slot = %d): %s\n", ins->inst_offset < 0 ? "-" : "", (ins->inst_offset < 0) ? -(int)(ins->inst_offset + 4) : (int)ins->inst_offset + 4, vmv->vreg, pos + 1, mono_type_full_name (ins->inst_vtype));
@@ -1950,10 +1967,10 @@ process_param_area_slots (MonoCompile *cfg)
 			if (MONO_TYPE_ISSTRUCT (t)) {
 				size = mini_type_stack_size_full (t, &align, FALSE);
 			} else {
-				size = sizeof (mgreg_t);
+				size = sizeof (target_mgreg_t);
 			}
 
-			for (i = 0; i < size / sizeof (mgreg_t); ++i) {
+			for (i = 0; i < size / sizeof (target_mgreg_t); ++i) {
 				g_assert (slot + i >= 0 && slot + i < gcfg->nslots);
 				is_param [slot + i] = TRUE;
 			}
@@ -1967,7 +1984,7 @@ process_param_area_slots (MonoCompile *cfg)
 	}
 
 	/*
-	 * We treat param area slots as being part of the callee's frame, to be able to handle tail calls which overwrite
+	 * We treat param area slots as being part of the callee's frame, to be able to handle tailcalls which overwrite
 	 * the argument area of the caller.
 	 */
 }
@@ -2036,7 +2053,7 @@ compute_frame_size (MonoCompile *cfg)
 	int i, locals_min_offset, locals_max_offset, cfa_min_offset, cfa_max_offset;
 	int min_offset, max_offset;
 	MonoCompileGC *gcfg = cfg->gc_info;
-	MonoMethodSignature *sig = mono_method_signature (cfg->method);
+	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
 	GSList *l;
 
 	/* Compute min/max offsets from the fp */
@@ -2418,22 +2435,22 @@ create_map (MonoCompile *cfg)
 		p += encoded_size;
 
 		/* Callsite table */
-		p = (guint8*)ALIGN_TO ((mgreg_t)p, map->callsite_entry_size);
+		p = (guint8*)ALIGN_TO ((gsize)p, map->callsite_entry_size);
 		if (map->callsite_entry_size == 1) {
 			guint8 *offsets = p;
 			for (i = 0; i < ncallsites; ++i)
 				offsets [i] = callsites [i]->pc_offset;
-			stats.gc_callsites8_size += ncallsites * sizeof (guint8);
+			UnlockedAdd (&stats.gc_callsites8_size, ncallsites * sizeof (guint8));
 		} else if (map->callsite_entry_size == 2) {
 			guint16 *offsets = (guint16*)p;
 			for (i = 0; i < ncallsites; ++i)
 				offsets [i] = callsites [i]->pc_offset;
-			stats.gc_callsites16_size += ncallsites * sizeof (guint16);
+			UnlockedAdd (&stats.gc_callsites16_size, ncallsites * sizeof (guint16));
 		} else {
 			guint32 *offsets = (guint32*)p;
 			for (i = 0; i < ncallsites; ++i)
 				offsets [i] = callsites [i]->pc_offset;
-			stats.gc_callsites32_size += ncallsites * sizeof (guint32);
+			UnlockedAdd (&stats.gc_callsites32_size, ncallsites * sizeof (guint32));
 		}
 		p += ncallsites * map->callsite_entry_size;
 
@@ -2443,10 +2460,10 @@ create_map (MonoCompile *cfg)
 
 		g_assert ((guint8*)p - (guint8*)emap <= alloc_size);
 
-		stats.gc_maps_size += alloc_size;
-		stats.gc_callsites_size += ncallsites * map->callsite_entry_size;
-		stats.gc_bitmaps_size += bitmaps_size;
-		stats.gc_map_struct_size += sizeof (GCEncodedMap) + encoded_size;
+		UnlockedAdd (&stats.gc_maps_size, alloc_size);
+		UnlockedAdd (&stats.gc_callsites_size, ncallsites * map->callsite_entry_size);
+		UnlockedAdd (&stats.gc_bitmaps_size, bitmaps_size);
+		UnlockedAdd (&stats.gc_map_struct_size, sizeof (GCEncodedMap) + encoded_size);
 
 		cfg->jit_info->gc_info = emap;
 
@@ -2454,10 +2471,10 @@ create_map (MonoCompile *cfg)
 		cfg->gc_map_size = alloc_size;
 	}
 
-	stats.all_slots += nslots;
-	stats.ref_slots += ntypes [SLOT_REF];
-	stats.noref_slots += ntypes [SLOT_NOREF];
-	stats.pin_slots += ntypes [SLOT_PIN];
+	UnlockedAdd (&stats.all_slots, nslots);
+	UnlockedAdd (&stats.ref_slots, ntypes [SLOT_REF]);
+	UnlockedAdd (&stats.noref_slots, ntypes [SLOT_NOREF]);
+	UnlockedAdd (&stats.pin_slots, ntypes [SLOT_PIN]);
 }
 
 void

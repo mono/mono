@@ -88,6 +88,8 @@
 ../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XmlSerializableWriter.cs
 ../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XmlWriterDelegator.cs
 ../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/XPathQueryGenerator.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/SchemaHelper.cs
+../referencesource/System.Runtime.Serialization/System/Runtime/Serialization/SchemaExporter.cs
 ../referencesource/System.Runtime.Serialization/System/Text/Base64Encoding.cs
 ../referencesource/System.Runtime.Serialization/System/Text/BinHexEncoding.cs
 ../referencesource/System.Runtime.Serialization/System/Text/SurrogateChar.cs

@@ -18,21 +18,46 @@
 #include <mono/metadata/environment.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/exception-internals.h>
-
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/appdomain.h>
+#include <mono/metadata/domain-internals.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <string.h>
-
 #ifdef HAVE_EXECINFO_H
 #include <execinfo.h>
 #endif
+#include "class-init.h"
+#include "icall-decl.h"
 
 static MonoUnhandledExceptionFunc unhandled_exception_hook = NULL;
 static gpointer unhandled_exception_hook_data = NULL;
+
+static MonoExceptionHandle
+mono_exception_new_by_name_domain (MonoDomain *domain, MonoImage *image,
+				const char* name_space, const char *name, MonoError *error);
+
+static MonoExceptionHandle
+mono_exception_new_argument_internal (const char *type, const char *arg, const char *msg, MonoError *error);
+
+/**
+ * mono_exception_new_by_name:
+ * \param image the Mono image where to look for the class
+ * \param name_space the namespace for the class
+ * \param name class name
+ *
+ * Creates an exception of the given namespace/name class in the
+ * current domain.
+ *
+ * \returns the initialized exception instance.
+ */
+static MonoExceptionHandle
+mono_exception_new_by_name (MonoImage *image, const char *name_space, const char *name, MonoError *error)
+{
+	return mono_exception_new_by_name_domain (mono_domain_get (), image, name_space, name, error);
+}
 
 /**
  * mono_exception_from_name:
@@ -53,6 +78,48 @@ mono_exception_from_name (MonoImage *image, const char *name_space,
 }
 
 /**
+ * mono_exception_new_by_name_domain:
+ * \param domain Domain where the return object will be created.
+ * \param image the Mono image where to look for the class
+ * \param name_space the namespace for the class
+ * \param name class name
+ *
+ * Creates an exception object of the given namespace/name class on
+ * the given domain.
+ *
+ * \returns the initialized exception instance.
+ */
+static MonoExceptionHandle
+mono_exception_new_by_name_domain (MonoDomain *domain, MonoImage *image,
+				 const char* name_space, const char *name, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoDomain * const caller_domain = mono_domain_get ();
+
+	MonoClass * const klass = mono_class_load_from_name (image, name_space, name);
+
+	MonoObjectHandle o = mono_object_new_handle (domain, klass, error);
+	goto_if_nok (error, return_null);
+
+	if (domain != caller_domain)
+		mono_domain_set_internal_with_options (domain, TRUE);
+
+	mono_runtime_object_init_handle (o, error);
+	mono_error_assert_ok (error);
+
+	// Restore domain in success and error path.
+	if (domain != caller_domain)
+		mono_domain_set_internal_with_options (caller_domain, TRUE);
+
+	goto_if_ok (error, exit);
+return_null:
+	MONO_HANDLE_ASSIGN (o, NULL_HANDLE);
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, MONO_HANDLE_CAST (MonoException, o));
+}
+
+/**
  * mono_exception_from_name_domain:
  * \param domain Domain where the return object will be created.
  * \param image the Mono image where to look for the class
@@ -68,27 +135,12 @@ MonoException *
 mono_exception_from_name_domain (MonoDomain *domain, MonoImage *image, 
 				 const char* name_space, const char *name)
 {
-	MonoError error;
-	MonoClass *klass;
-	MonoObject *o;
-	MonoDomain *caller_domain = mono_domain_get ();
-
-	klass = mono_class_load_from_name (image, name_space, name);
-
-	o = mono_object_new_checked (domain, klass, &error);
-	mono_error_assert_ok (&error);
-
-	if (domain != caller_domain)
-		mono_domain_set_internal (domain);
-	mono_runtime_object_init_checked (o, &error);
-	mono_error_assert_ok (&error);
-
-	if (domain != caller_domain)
-		mono_domain_set_internal (caller_domain);
-
-	return (MonoException *)o;
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MonoExceptionHandle ret = mono_exception_new_by_name_domain (domain, image, name_space, name, error);
+	mono_error_assert_ok (error);
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
-
 
 /**
  * mono_exception_from_token:
@@ -102,37 +154,33 @@ mono_exception_from_name_domain (MonoDomain *domain, MonoImage *image,
 MonoException *
 mono_exception_from_token (MonoImage *image, guint32 token)
 {
-	MonoError error;
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
 	MonoClass *klass;
-	MonoObject *o;
 
-	klass = mono_class_get_checked (image, token, &error);
-	mono_error_assert_ok (&error);
+	klass = mono_class_get_checked (image, token, error);
+	mono_error_assert_ok (error);
 
-	o = mono_object_new_checked (mono_domain_get (), klass, &error);
-	mono_error_assert_ok (&error);
-	
-	mono_runtime_object_init_checked (o, &error);
-	mono_error_assert_ok (&error);
+	MonoObjectHandle o = mono_object_new_handle (mono_domain_get (), klass, error);
+	mono_error_assert_ok (error);
 
-	return (MonoException *)o;
+	mono_runtime_object_init_handle (o, error);
+	mono_error_assert_ok (error);
+
+	HANDLE_FUNCTION_RETURN_OBJ (MONO_HANDLE_CAST (MonoException, o));
 }
 
-static MonoException *
-create_exception_two_strings (MonoClass *klass, MonoString *a1, MonoString *a2, MonoError *error)
+static MonoExceptionHandle
+create_exception_two_strings (MonoClass *klass, MonoStringHandle a1, MonoStringHandle a2, MonoError *error)
 {
-	MonoDomain *domain = mono_domain_get ();
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoMethod *method = NULL;
-	MonoObject *o;
-	int count = 1;
-	gpointer args [2];
+	int const count = 1 + !MONO_HANDLE_IS_NULL (a2);
 	gpointer iter;
 	MonoMethod *m;
-
-	if (a2 != NULL)
-		count++;
 	
-	o = mono_object_new_checked (domain, klass, error);
+	MonoObjectHandle o = mono_object_new_handle (mono_domain_get (), klass, error);
 	mono_error_assert_ok (error);
 
 	iter = NULL;
@@ -141,7 +189,7 @@ create_exception_two_strings (MonoClass *klass, MonoString *a1, MonoString *a2, 
 		
 		if (strcmp (".ctor", mono_method_get_name (m)))
 			continue;
-		sig = mono_method_signature (m);
+		sig = mono_method_signature_internal (m);
 		if (sig->param_count != count)
 			continue;
 
@@ -153,13 +201,13 @@ create_exception_two_strings (MonoClass *klass, MonoString *a1, MonoString *a2, 
 		break;
 	}
 
-	args [0] = a1;
-	args [1] = a2;
+	gpointer args [ ] = { MONO_HANDLE_RAW (a1), MONO_HANDLE_RAW (a2) };
 
-	mono_runtime_invoke_checked (method, o, args, error);
-	return_val_if_nok (error, NULL);
+	mono_runtime_invoke_handle_void (method, o, args, error);
+	if (!is_ok (error))
+		o = mono_new_null ();
 
-	return (MonoException *) o;
+	HANDLE_FUNCTION_RETURN_REF (MonoException, MONO_HANDLE_CAST (MonoException, o));
 }
 
 /**
@@ -177,14 +225,15 @@ create_exception_two_strings (MonoClass *klass, MonoString *a1, MonoString *a2, 
  */
 MonoException *
 mono_exception_from_name_two_strings (MonoImage *image, const char *name_space,
-				      const char *name, MonoString *a1, MonoString *a2)
+				      const char *name, MonoString *a1_raw, MonoString *a2_raw)
 {
-	MonoError error;
-	MonoException *ret;
-
-	ret = mono_exception_from_name_two_strings_checked (image, name_space, name, a1, a2, &error);
-	mono_error_cleanup (&error);
-	return ret;
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MONO_HANDLE_DCL (MonoString, a1);
+	MONO_HANDLE_DCL (MonoString, a2);
+	MonoExceptionHandle ret = mono_exception_from_name_two_strings_checked (image, name_space, name, a1, a2, error);
+	mono_error_cleanup (error);
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
 /**
@@ -202,17 +251,53 @@ mono_exception_from_name_two_strings (MonoImage *image, const char *name_space,
  * \returns the initialized exception instance. On failure returns
  * NULL and sets \p error.
  */
-MonoException *
+MonoExceptionHandle
 mono_exception_from_name_two_strings_checked (MonoImage *image, const char *name_space,
-					      const char *name, MonoString *a1, MonoString *a2,
+					      const char *name, MonoStringHandle a1, MonoStringHandle a2,
 					      MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
 
 	error_init (error);
 	klass = mono_class_load_from_name (image, name_space, name);
 
-	return create_exception_two_strings (klass, a1, a2, error);
+	HANDLE_FUNCTION_RETURN_REF (MonoException, create_exception_two_strings (klass, a1, a2, error));
+}
+
+/**
+ * mono_exception_new_by_name_msg:
+ * \param image the Mono image where to look for the class
+ * \param name_space the namespace for the class
+ * \param name class name
+ * \param msg the message to embed inside the exception
+ *
+ * Creates an exception and initializes its message field.
+ *
+ * \returns the initialized exception instance.
+ */
+MonoExceptionHandle
+mono_exception_new_by_name_msg (MonoImage *image, const char *name_space,
+			      const char *name, const char *msg, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoExceptionHandle ex = mono_exception_new_by_name (image, name_space, name, error);
+	goto_if_nok (error, return_null);
+
+	if (msg) {
+		MonoStringHandle msg_str = mono_string_new_handle (MONO_HANDLE_DOMAIN (ex), msg, error);
+		// FIXME? Maybe just ignore this error, the exception is close to correct.
+		goto_if_nok (error, return_null);
+		// ex->message = msg_str;
+		MONO_HANDLE_SET (ex, message, msg_str);
+	}
+	goto exit;
+return_null:
+	MONO_HANDLE_ASSIGN (ex, NULL_HANDLE);
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, ex)
 }
 
 /**
@@ -230,18 +315,14 @@ MonoException *
 mono_exception_from_name_msg (MonoImage *image, const char *name_space,
 			      const char *name, const char *msg)
 {
-	MonoError error;
-	MonoException *ex;
-
-	ex = mono_exception_from_name (image, name_space, name);
-
-	if (msg) {
-		MonoString  *msg_str = mono_string_new_checked (mono_object_get_domain ((MonoObject*)ex), msg, &error);
-		mono_error_assert_ok (&error);
-		MONO_OBJECT_SETREF (ex, message, msg_str);
-	}
-
-	return ex;
+	HANDLE_FUNCTION_ENTER ();
+	MonoExceptionHandle ex;
+	MONO_ENTER_GC_UNSAFE;
+	ERROR_DECL (error);
+	ex = mono_exception_new_by_name_msg (image, name_space, name, msg, error);
+	mono_error_cleanup (error);
+	MONO_EXIT_GC_UNSAFE;
+	HANDLE_FUNCTION_RETURN_OBJ (ex);
 }
 
 /**
@@ -251,14 +332,15 @@ mono_exception_from_name_msg (MonoImage *image, const char *name_space,
  * IMAGE and TOKEN.
  */
 MonoException *
-mono_exception_from_token_two_strings (MonoImage *image, guint32 token,
-									   MonoString *a1, MonoString *a2)
+mono_exception_from_token_two_strings (MonoImage *image, guint32 token, MonoString *arg1_raw, MonoString *arg2_raw)
 {
-	MonoError error;
-	MonoException *ret;
-	ret = mono_exception_from_token_two_strings_checked (image, token, a1, a2, &error);
-	mono_error_cleanup (&error);
-	return ret;
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MONO_HANDLE_DCL (MonoString, arg1);
+	MONO_HANDLE_DCL (MonoString, arg2);
+	MonoExceptionHandle ret = mono_exception_from_token_two_strings_checked (image, token, arg1, arg2, error);
+	mono_error_cleanup (error);
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
 /**
@@ -267,11 +349,13 @@ mono_exception_from_token_two_strings (MonoImage *image, guint32 token,
  *   Same as mono_exception_from_name_two_strings, but lookup the exception class using
  * IMAGE and TOKEN.
  */
-MonoException *
+MonoExceptionHandle
 mono_exception_from_token_two_strings_checked (MonoImage *image, guint32 token,
-					       MonoString *a1, MonoString *a2,
+					       MonoStringHandle a1, MonoStringHandle a2,
 					       MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
 
 	error_init (error);
@@ -279,7 +363,7 @@ mono_exception_from_token_two_strings_checked (MonoImage *image, guint32 token,
 	klass = mono_class_get_checked (image, token, error);
 	mono_error_assert_ok (error); /* FIXME handle the error. */
 
-	return create_exception_two_strings (klass, a1, a2, error);
+	HANDLE_FUNCTION_RETURN_REF (MonoException, create_exception_two_strings (klass, a1, a2, error));
 }
 
 /**
@@ -287,7 +371,7 @@ mono_exception_from_token_two_strings_checked (MonoImage *image, guint32 token,
  * \returns a new instance of the \c System.DivideByZeroException
  */
 MonoException *
-mono_get_exception_divide_by_zero ()
+mono_get_exception_divide_by_zero (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System",
 					 "DivideByZeroException");
@@ -298,10 +382,20 @@ mono_get_exception_divide_by_zero ()
  * \returns a new instance of the \c System.Security.SecurityException
  */
 MonoException *
-mono_get_exception_security ()
+mono_get_exception_security (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System.Security",
 					 "SecurityException");
+}
+
+/**
+ * mono_exception_new_thread_abort:
+ * \returns a new instance of the \c System.Threading.ThreadAbortException
+ */
+MonoExceptionHandle
+mono_exception_new_thread_abort (MonoError *error)
+{
+	return mono_exception_new_by_name (mono_get_corlib (), "System.Threading", "ThreadAbortException", error);
 }
 
 /**
@@ -309,10 +403,20 @@ mono_get_exception_security ()
  * \returns a new instance of the \c System.Threading.ThreadAbortException
  */
 MonoException *
-mono_get_exception_thread_abort ()
+mono_get_exception_thread_abort (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System.Threading",
 					 "ThreadAbortException");
+}
+
+/**
+ * mono_exception_new_thread_interrupted:
+ * \returns a new instance of the \c System.Threading.ThreadInterruptedException
+ */
+MonoExceptionHandle
+mono_exception_new_thread_interrupted (MonoError *error)
+{
+	return mono_exception_new_by_name (mono_get_corlib (), "System.Threading", "ThreadInterruptedException", error);
 }
 
 /**
@@ -320,7 +424,7 @@ mono_get_exception_thread_abort ()
  * \returns a new instance of the \c System.Threading.ThreadInterruptedException
  */
 MonoException *
-mono_get_exception_thread_interrupted ()
+mono_get_exception_thread_interrupted (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System.Threading",
 					 "ThreadInterruptedException");
@@ -331,7 +435,7 @@ mono_get_exception_thread_interrupted ()
  * \returns a new instance of the \c System.ArithmeticException
  */
 MonoException *
-mono_get_exception_arithmetic ()
+mono_get_exception_arithmetic (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System",
 					 "ArithmeticException");
@@ -342,7 +446,7 @@ mono_get_exception_arithmetic ()
  * \returns a new instance of the \c System.OverflowException
  */
 MonoException *
-mono_get_exception_overflow ()
+mono_get_exception_overflow (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System",
 					 "OverflowException");
@@ -353,7 +457,7 @@ mono_get_exception_overflow ()
  * \returns a new instance of the \c System.NullReferenceException
  */
 MonoException *
-mono_get_exception_null_reference ()
+mono_get_exception_null_reference (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System",
 					 "NullReferenceException");
@@ -367,7 +471,11 @@ mono_get_exception_null_reference ()
 MonoException *
 mono_get_exception_execution_engine (const char *msg)
 {
-	return mono_exception_from_name_msg (mono_get_corlib (), "System", "ExecutionEngineException", msg);
+	MonoException *result;
+	MONO_ENTER_GC_UNSAFE;
+	result = mono_exception_from_name_msg (mono_get_corlib (), "System", "ExecutionEngineException", msg);
+	MONO_EXIT_GC_UNSAFE;
+	return result;
 }
 
 /**
@@ -403,6 +511,13 @@ mono_get_exception_invalid_operation (const char *msg)
 					"InvalidOperationException", msg);
 }
 
+MonoExceptionHandle
+mono_exception_new_invalid_operation (const char *msg, MonoError *error)
+{
+	return mono_exception_new_by_name_msg (mono_get_corlib (), "System",
+					"InvalidOperationException", msg, error);
+}
+
 /**
  * mono_get_exception_index_out_of_range:
  * \returns a new instance of the \c System.IndexOutOfRangeException
@@ -419,7 +534,7 @@ mono_get_exception_index_out_of_range ()
  * \returns a new instance of the \c System.ArrayTypeMismatchException
  */
 MonoException *
-mono_get_exception_array_type_mismatch ()
+mono_get_exception_array_type_mismatch (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System",
 					 "ArrayTypeMismatchException");
@@ -432,20 +547,23 @@ mono_get_exception_array_type_mismatch ()
  * \returns a new instance of the \c System.TypeLoadException
  */
 MonoException *
-mono_get_exception_type_load (MonoString *class_name, char *assembly_name)
+mono_get_exception_type_load (MonoString *class_name_raw, char *assembly_name)
 {
-	MonoError error;
-	MonoString *s = NULL;
+	ERROR_DECL (error);
+	HANDLE_FUNCTION_ENTER ();
+	MONO_HANDLE_DCL (MonoString, class_name);
+	MonoStringHandle s = NULL_HANDLE_STRING;
+	MonoDomain * const domain = mono_domain_get ();
 	if (assembly_name) {
-		s = mono_string_new_checked (mono_domain_get (), assembly_name, &error);
-		mono_error_assert_ok (&error);
+		s = mono_string_new_handle (domain, assembly_name, error);
+		mono_error_assert_ok (error);
 	} else
-		s = mono_string_empty (mono_domain_get ());
+		s = mono_string_empty_handle (domain);
 
-	MonoException *ret = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System",
-								   "TypeLoadException", class_name, s, &error);
-	mono_error_assert_ok (&error);
-	return ret;
+	MonoExceptionHandle ret = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System",
+								   "TypeLoadException", class_name, s, error);
+	mono_error_assert_ok (error);
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
 /**
@@ -471,6 +589,30 @@ mono_get_exception_not_supported (const char *msg)
 }
 
 /**
+ * mono_get_exception_missing_member:
+ * \param exception_type the specific exception type for the specific member type, i.e. field or method
+ * \param class_name the class where the lookup was performed.
+ * \param member_name the name of the missing method.
+ * \returns a new instance of the \c exception_type (MissingFieldException or MissingMethodException)
+ */
+static MonoException*
+mono_get_exception_missing_member (const char *exception_type, const char *class_name, const char *member_name)
+{
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MonoDomain * const domain = mono_domain_get ();
+	MonoStringHandle s1 = mono_string_new_handle (domain, class_name, error);
+	mono_error_assert_ok (error);
+	MonoStringHandle s2 = mono_string_new_handle (domain, member_name, error);
+	mono_error_assert_ok (error);
+
+	MonoExceptionHandle ret = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System",
+									   exception_type, s1, s2, error);
+	mono_error_assert_ok (error);
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
+}
+
+/**
  * mono_get_exception_missing_method:
  * \param class_name the class where the lookup was performed.
  * \param member_name the name of the missing method.
@@ -479,37 +621,36 @@ mono_get_exception_not_supported (const char *msg)
 MonoException *
 mono_get_exception_missing_method (const char *class_name, const char *member_name)
 {
-	MonoError error;
-	MonoString *s1 = mono_string_new_checked (mono_domain_get (), class_name, &error);
-	mono_error_assert_ok (&error);
-	MonoString *s2 = mono_string_new_checked (mono_domain_get (), member_name, &error);
-	mono_error_assert_ok (&error);
-
-	MonoException *ret = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System",
-									   "MissingMethodException", s1, s2, &error);
-	mono_error_assert_ok (&error);
-	return ret;
+	return mono_get_exception_missing_member ("MissingMethodException", class_name, member_name);
 }
 
 /**
  * mono_get_exception_missing_field:
  * \param class_name the class where the lookup was performed
- * \param member_name the name of the missing method.
+ * \param member_name the name of the missing field.
  * \returns a new instance of the \c System.MissingFieldException
  */
 MonoException *
 mono_get_exception_missing_field (const char *class_name, const char *member_name)
 {
-	MonoError error;
-	MonoString *s1 = mono_string_new_checked (mono_domain_get (), class_name, &error);
-	mono_error_assert_ok (&error);
-	MonoString *s2 = mono_string_new_checked (mono_domain_get (), member_name, &error);
-	mono_error_assert_ok (&error);
+	return mono_get_exception_missing_member ("MissingFieldException", class_name, member_name);
+}
 
-	MonoException *ret = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System",
-								   "MissingFieldException", s1, s2, &error);
-	mono_error_assert_ok (&error);
-	return ret;
+/**
+ * mono_get_exception_argument_internal:
+ * \param type the actual type
+ * \param arg the name of the argument that is invalid or null, etc.
+ * \param msg optional message
+ * \returns a new instance of the \c System.ArgumentException or derived
+ */
+static MonoException*
+mono_get_exception_argument_internal (const char *type, const char *arg, const char *msg)
+{
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MonoExceptionHandle ex = mono_exception_new_argument_internal (type, arg, msg, error);
+	mono_error_cleanup (error);
+	HANDLE_FUNCTION_RETURN_OBJ (ex);
 }
 
 /**
@@ -521,18 +662,9 @@ MonoException*
 mono_get_exception_argument_null (const char *arg)
 {
 	MonoException *ex;
-
-	ex = mono_exception_from_name ( 
-		mono_get_corlib (), "System", "ArgumentNullException");
-
-	if (arg) {
-		MonoError error;
-		MonoArgumentException *argex = (MonoArgumentException *)ex;
-		MonoString *arg_str = mono_string_new_checked (mono_object_get_domain ((MonoObject*)ex), arg, &error);
-		mono_error_assert_ok (&error);
-		MONO_OBJECT_SETREF (argex, param_name, arg_str);
-	}
-	
+	MONO_ENTER_GC_UNSAFE;
+	ex = mono_get_exception_argument_internal ("ArgumentNullException", arg, NULL);
+	MONO_EXIT_GC_UNSAFE;
 	return ex;
 }
 
@@ -544,20 +676,60 @@ mono_get_exception_argument_null (const char *arg)
 MonoException *
 mono_get_exception_argument (const char *arg, const char *msg)
 {
-	MonoException *ex;
+	return mono_get_exception_argument_internal ("ArgumentException", arg, msg);
+}
 
-	ex = mono_exception_from_name_msg (
-		mono_get_corlib (), "System", "ArgumentException", msg);
+#ifndef ENABLE_NETCORE
+TYPED_HANDLE_DECL (MonoArgumentException);
+#endif
 
-	if (arg) {
-		MonoError error;
-		MonoArgumentException *argex = (MonoArgumentException *)ex;
-		MonoString *arg_str = mono_string_new_checked (mono_object_get_domain ((MonoObject*)ex), arg, &error);
-		mono_error_assert_ok (&error);
-		MONO_OBJECT_SETREF (argex, param_name, arg_str);
+static MonoExceptionHandle
+mono_exception_new_argument_internal (const char *type, const char *arg, const char *msg, MonoError *error)
+{
+#ifdef ENABLE_NETCORE
+	MonoStringHandle arg_str = arg ? mono_string_new_handle (mono_domain_get (), arg, error) : NULL_HANDLE_STRING;
+	MonoStringHandle msg_str = msg ? mono_string_new_handle (mono_domain_get (), msg, error) : NULL_HANDLE_STRING;
+
+	if (!strcmp (type, "ArgumentException"))
+		return mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System", type, msg_str, arg_str, error);
+	else
+		return mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System", type, arg_str, msg_str, error);
+#else
+	MonoExceptionHandle ex = mono_exception_new_by_name_msg (mono_get_corlib (), "System", type, msg, error);
+
+	if (arg && !MONO_HANDLE_IS_NULL (ex)) {
+		MonoArgumentExceptionHandle argex = MONO_HANDLE_CAST (MonoArgumentException, ex);
+		MonoStringHandle arg_str = mono_string_new_handle (MONO_HANDLE_DOMAIN (ex), arg, error);
+		MONO_HANDLE_SET (argex, param_name, arg_str);
 	}
-	
 	return ex;
+#endif
+}
+
+MonoExceptionHandle
+mono_exception_new_argument (const char *arg, const char *msg, MonoError *error)
+{
+	return mono_exception_new_argument_internal ("ArgumentException", arg, msg, error);
+}
+
+MonoExceptionHandle
+mono_exception_new_argument_null (const char *arg, MonoError *error)
+{
+	return mono_exception_new_argument_internal ("ArgumentNullException", arg, NULL, error);
+}
+
+MonoExceptionHandle
+mono_exception_new_argument_out_of_range(const char *arg, const char *msg, MonoError *error)
+{
+	return mono_exception_new_argument_internal ("ArgumentOutOfRangeException", arg, msg, error);
+}
+
+MonoExceptionHandle
+mono_exception_new_serialization (const char *msg, MonoError *error)
+{
+	return mono_exception_new_by_name_msg (mono_get_corlib (),
+		"System.Runtime.Serialization", "SerializationException",
+		"Could not serialize unhandled exception.", error);
 }
 
 /**
@@ -568,20 +740,13 @@ mono_get_exception_argument (const char *arg, const char *msg)
 MonoException *
 mono_get_exception_argument_out_of_range (const char *arg)
 {
-	MonoException *ex;
+	return mono_get_exception_argument_internal ("ArgumentOutOfRangeException", arg, NULL);
+}
 
-	ex = mono_exception_from_name (
-		mono_get_corlib (), "System", "ArgumentOutOfRangeException");
-
-	if (arg) {
-		MonoError error;
-		MonoArgumentException *argex = (MonoArgumentException *)ex;
-		MonoString *arg_str = mono_string_new_checked (mono_object_get_domain ((MonoObject*)ex), arg, &error);
-		mono_error_assert_ok (&error);
-		MONO_OBJECT_SETREF (argex, param_name, arg_str);
-	}
-	
-	return ex;
+static MonoExceptionHandle
+mono_new_exception_argument_out_of_range (const char *arg, MonoError *error)
+{
+	return mono_exception_new_argument_internal ("ArgumentOutOfRangeException", arg, NULL, error);
 }
 
 /**
@@ -604,7 +769,7 @@ mono_get_exception_thread_state (const char *msg)
 MonoException *
 mono_get_exception_io (const char *msg)
 {
-	return mono_exception_from_name_msg ( 
+	return mono_exception_from_name_msg (
 		mono_get_corlib (), "System.IO", "IOException", msg);
 }
 
@@ -614,13 +779,14 @@ mono_get_exception_io (const char *msg)
  * \returns a new instance of the \c System.IO.FileNotFoundException
  */
 MonoException *
-mono_get_exception_file_not_found (MonoString *fname)
+mono_get_exception_file_not_found (MonoString *fname_raw)
 {
-	MonoError error;
-	MonoException *ret = mono_exception_from_name_two_strings_checked (
-		mono_get_corlib (), "System.IO", "FileNotFoundException", fname, fname, &error);
-	mono_error_assert_ok (&error);
-	return ret;
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MONO_HANDLE_DCL (MonoString, fname);
+	MonoExceptionHandle ret = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System.IO", "FileNotFoundException", fname, fname, error);
+	mono_error_assert_ok (error);
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
 /**
@@ -630,19 +796,19 @@ mono_get_exception_file_not_found (MonoString *fname)
  * \returns a new instance of the \c System.IO.FileNotFoundException
  */
 MonoException *
-mono_get_exception_file_not_found2 (const char *msg, MonoString *fname)
+mono_get_exception_file_not_found2 (const char *msg, MonoString *fname_raw)
 {
-	MonoError error;
-	MonoString *s = NULL;
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MONO_HANDLE_DCL (MonoString, fname);
+	MonoStringHandle s = NULL_HANDLE_STRING;
 	if (msg) {
-		s = mono_string_new_checked (mono_domain_get (), msg, &error);
-		mono_error_assert_ok (&error);
+		s = mono_string_new_handle (mono_domain_get (), msg, error);
+		mono_error_assert_ok (error);
 	}
-
-	MonoException *ret = mono_exception_from_name_two_strings_checked (
-		mono_get_corlib (), "System.IO", "FileNotFoundException", s, fname, &error);
-	mono_error_assert_ok (&error);
-	return ret;
+	MonoExceptionHandle ret = mono_exception_from_name_two_strings_checked (mono_get_corlib (), "System.IO", "FileNotFoundException", s, fname, error);
+	mono_error_assert_ok (error);
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
 /**
@@ -652,24 +818,25 @@ mono_get_exception_file_not_found2 (const char *msg, MonoString *fname)
  * \returns a new instance of the \c System.TypeInitializationException
  */
 MonoException *
-mono_get_exception_type_initialization (const gchar *type_name, MonoException *inner)
+mono_get_exception_type_initialization (const gchar *type_name, MonoException* inner_raw)
 {
-	MonoError error;
-	MonoException *ret = mono_get_exception_type_initialization_checked (type_name, inner, &error);
-	if (!is_ok (&error)) {
-		mono_error_cleanup (&error);
-		return NULL;
+	HANDLE_FUNCTION_ENTER ();
+	MONO_HANDLE_DCL (MonoException, inner);
+	ERROR_DECL (error);
+	MonoExceptionHandle ret = mono_get_exception_type_initialization_handle (type_name, inner, error);
+	if (!is_ok (error)) {
+		ret = MONO_HANDLE_CAST (MonoException, mono_new_null ());
+		mono_error_cleanup (error);
 	}
-
-	return ret;
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
-MonoException *
-mono_get_exception_type_initialization_checked (const gchar *type_name, MonoException *inner, MonoError *error)
+MonoExceptionHandle
+mono_get_exception_type_initialization_handle (const gchar *type_name, MonoExceptionHandle inner, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
-	gpointer args [2];
-	MonoObject *exc;
 	MonoMethod *method;
 	gpointer iter;
 
@@ -677,32 +844,35 @@ mono_get_exception_type_initialization_checked (const gchar *type_name, MonoExce
 
 	klass = mono_class_load_from_name (mono_get_corlib (), "System", "TypeInitializationException");
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	iter = NULL;
 	while ((method = mono_class_get_methods (klass, &iter))) {
 		if (!strcmp (".ctor", mono_method_get_name (method))) {
-			MonoMethodSignature *sig = mono_method_signature (method);
+			MonoMethodSignature *sig = mono_method_signature_internal (method);
 
-			if (sig->param_count == 2 && sig->params [0]->type == MONO_TYPE_STRING && mono_class_from_mono_type (sig->params [1]) == mono_defaults.exception_class)
+			if (sig->param_count == 2 && sig->params [0]->type == MONO_TYPE_STRING && mono_class_from_mono_type_internal (sig->params [1]) == mono_defaults.exception_class)
 				break;
 		}
 		method = NULL;
 	}
 	g_assert (method);
 
-	MonoString *type_name_str = mono_string_new_checked (mono_domain_get (), type_name, error);
+	MonoDomain * const domain = mono_domain_get ();
+	MonoStringHandle type_name_str = mono_string_new_handle (domain, type_name, error);
 	mono_error_assert_ok (error);
-	args [0] = type_name_str;
-	args [1] = inner;
+	gpointer args [ ] = { MONO_HANDLE_RAW (type_name_str), MONO_HANDLE_RAW (inner) };
 
-	exc = mono_object_new_checked (mono_domain_get (), klass, error);
+	MonoObjectHandle exc = mono_object_new_handle (domain, klass, error);
 	mono_error_assert_ok (error);
 
-	mono_runtime_invoke_checked (method, exc, args, error);
-	return_val_if_nok (error, NULL);
-
-	return (MonoException *) exc;
+	mono_runtime_invoke_handle_void (method, exc, args, error);
+	goto_if_nok (error, return_null);
+	goto exit;
+return_null:
+	exc = mono_new_null ();
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, MONO_HANDLE_CAST (MonoException, exc));
 }
 
 /**
@@ -755,20 +925,22 @@ mono_get_exception_bad_image_format (const char *msg)
  * \returns a new instance of the \c System.BadImageFormatException
  */
 MonoException *
-mono_get_exception_bad_image_format2 (const char *msg, MonoString *fname)
+mono_get_exception_bad_image_format2 (const char *msg, MonoString *fname_raw)
 {
-	MonoError error;
-	MonoString *s = NULL;
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MonoStringHandle s = NULL_HANDLE_STRING;
+	MONO_HANDLE_DCL (MonoString, fname);
 
 	if (msg) {
-		s = mono_string_new_checked (mono_domain_get (), msg, &error);
-		mono_error_assert_ok (&error);
+		s = mono_string_new_handle (mono_domain_get (), msg, error);
+		mono_error_assert_ok (error);
 	}
 
-	MonoException *ret = mono_exception_from_name_two_strings_checked (
-		mono_get_corlib (), "System", "BadImageFormatException", s, fname, &error);
-	mono_error_assert_ok (&error);
-	return ret;
+	MonoExceptionHandle ret = mono_exception_from_name_two_strings_checked (
+		mono_get_corlib (), "System", "BadImageFormatException", s, fname, error);
+	mono_error_assert_ok (error);
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
 /**
@@ -789,6 +961,12 @@ MonoException *
 mono_get_exception_out_of_memory (void)
 {
 	return mono_exception_from_name (mono_get_corlib (), "System", "OutOfMemoryException");
+}
+
+MonoExceptionHandle
+mono_get_exception_out_of_memory_handle (void)
+{
+	return MONO_HANDLE_NEW (MonoException, mono_exception_from_name (mono_get_corlib (), "System", "OutOfMemoryException"));
 }
 
 /**
@@ -843,24 +1021,21 @@ MonoException *
 mono_get_exception_reflection_type_load (MonoArray *types_raw, MonoArray *exceptions_raw)
 {
 	HANDLE_FUNCTION_ENTER ();
-	MonoError error;
+	ERROR_DECL (error);
 	MONO_HANDLE_DCL (MonoArray, types);
 	MONO_HANDLE_DCL (MonoArray, exceptions);
-	MonoExceptionHandle ret = mono_get_exception_reflection_type_load_checked (types, exceptions, &error);
-	if (is_ok (&error)) {
-		mono_error_cleanup (&error);
-		ret = MONO_HANDLE_CAST (MonoException, NULL_HANDLE);
-		goto leave;
-	}
-
-leave:
+	MonoExceptionHandle ret = mono_get_exception_reflection_type_load_checked (types, exceptions, error);
+	if (!is_ok (error))
+		ret = MONO_HANDLE_CAST (MonoException, mono_new_null ());
+	mono_error_cleanup (error);
 	HANDLE_FUNCTION_RETURN_OBJ (ret);
-
 }
 
 MonoExceptionHandle
 mono_get_exception_reflection_type_load_checked (MonoArrayHandle types, MonoArrayHandle exceptions, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
 	MonoMethod *method;
 	gpointer iter;
@@ -869,13 +1044,13 @@ mono_get_exception_reflection_type_load_checked (MonoArrayHandle types, MonoArra
 
 	klass = mono_class_load_from_name (mono_get_corlib (), "System.Reflection", "ReflectionTypeLoadException");
 
-	mono_class_init (klass);
+	mono_class_init_internal (klass);
 
 	/* Find the Type[], Exception[] ctor */
 	iter = NULL;
 	while ((method = mono_class_get_methods (klass, &iter))) {
 		if (!strcmp (".ctor", mono_method_get_name (method))) {
-			MonoMethodSignature *sig = mono_method_signature (method);
+			MonoMethodSignature *sig = mono_method_signature_internal (method);
 
 			if (sig->param_count == 2 && sig->params [0]->type == MONO_TYPE_SZARRAY && sig->params [1]->type == MONO_TYPE_SZARRAY)
 				break;
@@ -884,64 +1059,70 @@ mono_get_exception_reflection_type_load_checked (MonoArrayHandle types, MonoArra
 	}
 	g_assert (method);
 
-	MonoExceptionHandle exc = MONO_HANDLE_NEW (MonoException, mono_object_new_checked (mono_domain_get (), klass, error));
+	MonoExceptionHandle exc = MONO_HANDLE_CAST (MonoException, MONO_HANDLE_NEW (MonoObject, mono_object_new_checked (mono_domain_get (), klass, error)));
 	mono_error_assert_ok (error);
 
-	gpointer args [2];
-	args [0] = MONO_HANDLE_RAW (types);
-	args [1] = MONO_HANDLE_RAW (exceptions);
+	gpointer args [ ] = { MONO_HANDLE_RAW (types), MONO_HANDLE_RAW (exceptions) };
 
 	mono_runtime_invoke_checked (method, MONO_HANDLE_RAW (exc), args, error);
-	return_val_if_nok (error, MONO_HANDLE_CAST (MonoException, NULL_HANDLE));
-
-	return exc;
+	goto_if_nok (error, return_null);
+	goto exit;
+return_null:
+	exc = MONO_HANDLE_CAST (MonoException, mono_new_null ());
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, exc);
 }
 
 /**
  * mono_get_exception_runtime_wrapped:
  */
 MonoException *
-mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception)
+mono_get_exception_runtime_wrapped (MonoObject *wrapped_exception_raw)
 {
-	MonoError error;
-	MonoException *ret = mono_get_exception_runtime_wrapped_checked (wrapped_exception, &error);
-	if (!is_ok (&error)) {
-		mono_error_cleanup (&error);
-		return NULL;
+	HANDLE_FUNCTION_ENTER ();
+	ERROR_DECL (error);
+	MONO_HANDLE_DCL (MonoObject, wrapped_exception);
+	MonoExceptionHandle ret = mono_get_exception_runtime_wrapped_handle (wrapped_exception, error);
+	if (!is_ok (error)) {
+		mono_error_cleanup (error);
+		ret = MONO_HANDLE_CAST (MonoException, mono_new_null ());
 	}
-
-	return ret;
+	HANDLE_FUNCTION_RETURN_OBJ (ret);
 }
 
-MonoException *
-mono_get_exception_runtime_wrapped_checked (MonoObject *wrapped_exception, MonoError *error)
+MonoExceptionHandle
+mono_get_exception_runtime_wrapped_handle (MonoObjectHandle wrapped_exception, MonoError *error)
 {
+	HANDLE_FUNCTION_ENTER ();
+
 	MonoClass *klass;
-	MonoObject *o;
 	MonoMethod *method;
-	MonoDomain *domain = mono_domain_get ();
-	gpointer params [16];
 
 	klass = mono_class_load_from_name (mono_get_corlib (), "System.Runtime.CompilerServices", "RuntimeWrappedException");
 
-	o = mono_object_new_checked (domain, klass, error);
+	MonoObjectHandle o = mono_object_new_handle (mono_domain_get (), klass, error);
 	mono_error_assert_ok (error);
-	g_assert (o != NULL);
+	g_assert (!MONO_HANDLE_IS_NULL (o));
 
-	method = mono_class_get_method_from_name (klass, ".ctor", 1);
+	method = mono_class_get_method_from_name_checked (klass, ".ctor", 1, 0, error);
+	mono_error_assert_ok (error);
 	g_assert (method);
 
-	params [0] = wrapped_exception;
+	gpointer args [ ] = { MONO_HANDLE_RAW (wrapped_exception) };
 
-	mono_runtime_invoke_checked (method, o, params, error);
-	return_val_if_nok (error, NULL);
-
-	return (MonoException *)o;
-}	
+	mono_runtime_invoke_handle_void (method, o, args, error);
+	goto_if_nok (error, return_null);
+	goto exit;
+return_null:
+	o = mono_new_null ();
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, MONO_HANDLE_CAST (MonoException, o));
+}
 
 static gboolean
 append_frame_and_continue (MonoMethod *method, gpointer ip, size_t native_offset, gboolean managed, gpointer user_data)
 {
+	MONO_ENTER_GC_UNSAFE;
 	MonoDomain *domain = mono_domain_get ();
 	GString *text = (GString*)user_data;
 
@@ -950,9 +1131,9 @@ append_frame_and_continue (MonoMethod *method, gpointer ip, size_t native_offset
 		g_string_append_printf (text, "%s\n", msg);
 		g_free (msg);
 	} else {
-		g_string_append_printf (text, "<unknown native frame 0x%x>\n", ip);
+		g_string_append_printf (text, "<unknown native frame 0x%p>\n", ip);
 	}
-
+	MONO_EXIT_GC_UNSAFE;
 	return FALSE;
 }
 
@@ -987,16 +1168,16 @@ mono_exception_handle_get_native_backtrace (MonoExceptionHandle exc)
 	len = mono_array_handle_length (arr);
 	text = g_string_new_len (NULL, len * 20);
 	uint32_t gchandle;
-	void *addr = MONO_ARRAY_HANDLE_PIN (arr, gpointer, 0, &gchandle);
+	gpointer *addr = MONO_ARRAY_HANDLE_PIN (arr, gpointer, 0, &gchandle);
 	MONO_ENTER_GC_SAFE;
 	messages = backtrace_symbols (addr, len);
 	MONO_EXIT_GC_SAFE;
-	mono_gchandle_free (gchandle);
+	mono_gchandle_free_internal (gchandle);
 
 	for (i = 0; i < len; ++i) {
 		gpointer ip;
 		MONO_HANDLE_ARRAY_GETVAL (ip, arr, gpointer, i);
-		MonoJitInfo *ji = mono_jit_info_table_find (mono_domain_get (), (char *)ip);
+		MonoJitInfo *ji = mono_jit_info_table_find (domain, ip);
 		if (ji) {
 			char *msg = mono_debug_print_stack_frame (mono_jit_info_get_method (ji), (char*)ip - (char*)ji->code_start, domain);
 			g_string_append_printf (text, "%s\n", msg);
@@ -1020,7 +1201,7 @@ ves_icall_Mono_Runtime_GetNativeStackTrace (MonoExceptionHandle exc, MonoError *
 	MonoStringHandle res;
 	error_init (error);
 
-	if (!exc) {
+	if (MONO_HANDLE_IS_NULL (exc)) {
 		mono_error_set_argument_null (error, "exception", "");
 		return NULL_HANDLE_STRING;
 	}
@@ -1032,7 +1213,7 @@ ves_icall_Mono_Runtime_GetNativeStackTrace (MonoExceptionHandle exc, MonoError *
 }
 
 /**
- * mono_error_raise_exception:
+ * mono_error_raise_exception_deprecated:
  * \param target_error the exception to raise
  *
  * Raises the exception of \p target_error.
@@ -1042,15 +1223,15 @@ ves_icall_Mono_Runtime_GetNativeStackTrace (MonoExceptionHandle exc, MonoError *
  * The error object \p target_error is cleaned up.
 */
 void
-mono_error_raise_exception (MonoError *target_error)
+mono_error_raise_exception_deprecated (MonoError *target_error)
 {
 	MonoException *ex = mono_error_convert_to_exception (target_error);
 	if (ex)
-		mono_raise_exception (ex);
+		mono_raise_exception_deprecated (ex);
 }
 
 /**
- * mono_error_set_pending_exception:
+ * mono_error_set_pending_exception_slow:
  * \param error The error
  * If \p error is set, convert it to an exception and set the pending exception for the current icall.
  * \returns TRUE if \p error was set, or FALSE otherwise, so that you can write:
@@ -1059,16 +1240,21 @@ mono_error_raise_exception (MonoError *target_error)
  *      return;
  *    }
  */
+// For efficiency, call mono_error_set_pending_exception instead of mono_error_set_pending_exception_slow.
 gboolean
-mono_error_set_pending_exception (MonoError *error)
+mono_error_set_pending_exception_slow (MonoError *error)
 {
-	MonoException *ex = mono_error_convert_to_exception (error);
-	if (ex) {
-		mono_set_pending_exception (ex);
-		return TRUE;
-	} else {
+	if (is_ok (error))
 		return FALSE;
-	}
+
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoExceptionHandle ex = mono_error_convert_to_exception_handle (error);
+	gboolean const result = !MONO_HANDLE_IS_NULL (ex);
+	if (result)
+		mono_set_pending_exception_handle (ex);
+
+	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
 void
@@ -1084,16 +1270,16 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	if (unhandled_exception_hook) {
 		unhandled_exception_hook (exc, unhandled_exception_hook_data);
 	} else {
-		MonoError inner_error;
+		ERROR_DECL (inner_error);
 		MonoObject *other = NULL;
-		MonoString *str = mono_object_try_to_string (exc, &other, &inner_error);
+		MonoString *str = mono_object_try_to_string (exc, &other, inner_error);
 		char *msg = NULL;
 		
-		if (str && is_ok (&inner_error)) {
-			msg = mono_string_to_utf8_checked (str, &inner_error);
-			if (!is_ok (&inner_error)) {
+		if (str && is_ok (inner_error)) {
+			msg = mono_string_to_utf8_checked_internal (str, inner_error);
+			if (!is_ok (inner_error)) {
 				msg = g_strdup_printf ("Nested exception while formatting original exception");
-				mono_error_cleanup (&inner_error);
+				mono_error_cleanup (inner_error);
 			}
 		} else if (other) {
 			char *original_backtrace = mono_exception_get_managed_backtrace ((MonoException*)exc);
@@ -1117,4 +1303,215 @@ mono_invoke_unhandled_exception_hook (MonoObject *exc)
 	}
 
 	g_assert_not_reached ();
+}
+
+MonoExceptionHandle
+mono_corlib_exception_new_with_args (const char *name_space, const char *name, const char *arg_0, const char *arg_1, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+
+	MonoStringHandle str_0 = NULL_HANDLE_STRING;
+	MonoStringHandle str_1 = NULL_HANDLE_STRING;
+	MonoExceptionHandle ex = MONO_HANDLE_CAST (MonoException, NULL_HANDLE);
+	MonoDomain * const domain = mono_domain_get ();
+
+	str_0 = arg_0 ? mono_string_new_handle (domain, arg_0, error) : NULL_HANDLE_STRING;
+	goto_if_nok (error, return_null);
+
+	str_1 = arg_1 ? mono_string_new_handle (domain, arg_1, error) : NULL_HANDLE_STRING;
+	goto_if_nok (error, return_null);
+
+	ex = mono_exception_from_name_two_strings_checked (mono_defaults.corlib, name_space, name, str_0, str_1, error);
+	goto exit;
+return_null:
+	ex = MONO_HANDLE_CAST (MonoException, mono_new_null ());
+exit:
+	HANDLE_FUNCTION_RETURN_REF (MonoException, ex);
+}
+
+void
+mono_error_set_field_missing (MonoError *error, MonoClass *klass, const char *field_name, MonoType *sig, const char *reason, ...)
+{
+	char *result;
+	GString *res;
+
+	res = g_string_new ("Field not found: ");
+
+
+	if (sig) {
+		mono_type_get_desc (res, sig, TRUE);
+		g_string_append_c (res, ' ');
+	}
+
+	if (klass) {
+		if (m_class_get_name_space (klass)) {
+			g_string_append (res, m_class_get_name_space (klass));
+			g_string_append_c (res, '.');
+		}
+		g_string_append (res, m_class_get_name (klass));
+	}
+	else {
+		g_string_append (res, "<unknown type>");
+	}
+
+	g_string_append_c (res, '.');
+
+	if (field_name)
+		g_string_append (res, field_name);
+	else
+		g_string_append (res, "<unknown field>");
+
+	if (reason && *reason) {
+		va_list args;
+		va_start (args, reason);
+
+		g_string_append (res, " Due to: ");
+		g_string_append_vprintf (res, reason, args);
+		va_end (args);
+	}
+	result = res->str;
+	g_string_free (res, FALSE);
+
+	mono_error_set_specific (error, MONO_ERROR_MISSING_FIELD, result);
+}
+
+/*
+ * Sets @error to a method missing error.
+ */
+void
+mono_error_set_method_missing (MonoError *error, MonoClass *klass, const char *method_name, MonoMethodSignature *sig, const char *reason, ...)
+{
+	int i;
+	char *result;
+	GString *res;
+
+	res = g_string_new ("Method not found: ");
+
+	if (sig) {
+		mono_type_get_desc (res, sig->ret, TRUE);
+
+		g_string_append_c (res, ' ');
+	}
+
+	if (klass) {
+		if (m_class_get_name_space (klass)) {
+			g_string_append (res, m_class_get_name_space (klass));
+			g_string_append_c (res, '.');
+		}
+		g_string_append (res, m_class_get_name (klass));
+	}
+	else {
+		g_string_append (res, "<unknown type>");
+	}
+
+	g_string_append_c (res, '.');
+
+	if (method_name)
+		g_string_append (res, method_name);
+	else
+		g_string_append (res, "<unknown method>");
+
+	if (sig) {
+		if (sig->generic_param_count) {
+			g_string_append_c (res, '<');
+			for (i = 0; i < sig->generic_param_count; ++i) {
+				if (i > 0)
+					g_string_append (res, ",");
+				g_string_append_printf (res, "!%d", i);
+			}
+			g_string_append_c (res, '>');
+		}
+
+		g_string_append_c (res, '(');
+		for (i = 0; i < sig->param_count; ++i) {
+			if (i > 0)
+				g_string_append_c (res, ',');
+			mono_type_get_desc (res, sig->params [i], TRUE);
+		}
+		g_string_append_c (res, ')');
+	}
+
+	if (reason && *reason) {
+		va_list args;
+		va_start (args, reason);
+
+		g_string_append (res, " Due to: ");
+		g_string_append_vprintf (res, reason, args);
+		va_end (args);
+	}
+	result = res->str;
+	g_string_free (res, FALSE);
+
+	mono_error_set_specific (error, MONO_ERROR_MISSING_METHOD, result);
+}
+
+#define SET_ERROR_MSG(STR_VAR, FMT_STR) do {	\
+	va_list __args;	\
+	va_start (__args, FMT_STR);	\
+	STR_VAR = g_strdup_vprintf (FMT_STR, __args);	\
+	va_end(__args);	\
+} while (0);
+
+/**
+ * \p image_name argument will be g_strdup'd. Called must free passed value
+ */
+void
+mono_error_set_bad_image_by_name (MonoError *error, const char *image_name, const char *msg_format, ...)
+{
+	char *str;
+	SET_ERROR_MSG (str, msg_format);
+
+	mono_error_set_specific (error, MONO_ERROR_BAD_IMAGE, str);
+	if (image_name)
+		mono_error_set_first_argument (error, image_name);
+}
+
+void
+mono_error_set_bad_image (MonoError *error, MonoImage *image, const char *msg_format, ...)
+{
+	char *str;
+	SET_ERROR_MSG (str, msg_format);
+
+	mono_error_set_specific (error, MONO_ERROR_BAD_IMAGE, str);
+	if (image)
+		mono_error_set_first_argument (error, mono_image_get_name (image));
+}
+
+void
+mono_error_set_file_not_found (MonoError *error, const char *file_name, const char *msg_format, ...)
+{
+	char *str;
+	SET_ERROR_MSG (str, msg_format);
+
+	mono_error_set_specific (error, MONO_ERROR_FILE_NOT_FOUND, str);
+	if (file_name)
+		mono_error_set_first_argument (error, file_name);
+}
+
+void
+mono_error_set_simple_file_not_found (MonoError *error, const char *file_name, gboolean refection_only)
+{
+	if (refection_only)
+		mono_error_set_file_not_found (error, file_name, "Cannot resolve dependency to assembly because it has not been preloaded. When using the ReflectionOnly APIs, dependent assemblies must be pre-loaded or loaded on demand through the ReflectionOnlyAssemblyResolve event.");
+	else
+		mono_error_set_file_not_found (error, file_name, "Could not load file or assembly '%s' or one of its dependencies.", file_name);
+}
+
+void
+mono_error_set_argument_out_of_range (MonoError *error, const char *param_name, const char *msg_format, ...)
+{
+	char *str;
+	SET_ERROR_MSG (str, msg_format);
+	mono_error_set_specific (error, MONO_ERROR_ARGUMENT_OUT_OF_RANGE, str);
+	if (param_name)
+		mono_error_set_first_argument (error, param_name);
+}
+
+MonoExceptionHandle
+mono_error_convert_to_exception_handle (MonoError *error)
+{
+	//FIXMEcoop mono_error_convert_to_exception is raw pointer
+	// The "optimization" here is important to significantly reduce handle usage.
+	return mono_error_ok (error) ? MONO_HANDLE_CAST (MonoException, NULL_HANDLE)
+		: MONO_HANDLE_NEW (MonoException, mono_error_convert_to_exception (error));
 }

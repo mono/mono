@@ -59,7 +59,8 @@ public class SslStreamTest {
 	}
 
 	[Test] //bug https://bugzilla.novell.com/show_bug.cgi?id=457120
-	[Category ("MacNotWorking")] // Works but launches a prompt on 10.12 that will fail if you don't click in a few seconds
+	[Category ("NotOnMac")] // Works but launches a prompt on 10.12 that will fail if you don't click in a few seconds
+	[Category ("NotWorking")] // https://github.com/mono/mono/issues/8450
 #if FEATURE_NO_BSD_SOCKETS
 	[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -70,11 +71,9 @@ public class SslStreamTest {
 
 	void AuthenticateClientAndServer (bool server, bool client)
 	{
-		IPEndPoint endPoint = new IPEndPoint (IPAddress.Parse ("127.0.0.1"), NetworkHelpers.FindFreePort ());
 		ClientServerState state = new ClientServerState ();
 		state.Client = new TcpClient ();
-		state.Listener = new TcpListener (endPoint);
-		state.Listener.Start ();
+		state.Listener = NetworkHelpers.CreateAndStartTcpListener (IPAddress.Loopback, out IPEndPoint endPoint);
 		state.ServerAuthenticated = new AutoResetEvent (false);
 		state.ClientAuthenticated = new AutoResetEvent (false);
 		state.ServerIOException = !server;
@@ -128,7 +127,7 @@ public class SslStreamTest {
 		} catch (ObjectDisposedException) { /* this can happen when closing connection it's irrelevant for the test result*/
 		} catch (IOException) {
 			// The authentication or decryption has failed.
-			// ---> Mono.Security.Protocol.Tls.TlsException: Insuficient Security
+			// ---> TlsException: Insuficient Security
 			// that's fine for MismatchedCipherSuites
 			if (!state.ServerIOException)
 				throw;

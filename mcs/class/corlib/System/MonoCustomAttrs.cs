@@ -54,7 +54,7 @@ namespace System
 		{
 			Type type = obj as Type;
 #if !FULL_AOT_RUNTIME
-			if ((type is RuntimeType) || (type is TypeBuilder))
+			if ((type is RuntimeType) || (RuntimeFeature.IsDynamicCodeSupported && type is TypeBuilder))
 #else
 			if (type is RuntimeType)
 #endif
@@ -71,16 +71,15 @@ namespace System
 
 		internal static object[] GetPseudoCustomAttributes (ICustomAttributeProvider obj, Type attributeType) {
 			object[] pseudoAttrs = null;
-
 			/* FIXME: Add other types */
-			if (obj is MonoMethod)
-				pseudoAttrs = ((MonoMethod)obj).GetPseudoCustomAttributes ();
-			else if (obj is FieldInfo)
-				pseudoAttrs = ((FieldInfo)obj).GetPseudoCustomAttributes ();
-			else if (obj is ParameterInfo)
-				pseudoAttrs = ((ParameterInfo)obj).GetPseudoCustomAttributes ();
-			else if (obj is Type)
-				pseudoAttrs = GetPseudoCustomAttributes (((Type)obj));
+			if (obj is RuntimeMethodInfo monoMethod)
+				pseudoAttrs = monoMethod.GetPseudoCustomAttributes ();
+			else if (obj is RuntimeFieldInfo fieldInfo)
+				pseudoAttrs = fieldInfo.GetPseudoCustomAttributes ();
+			else if (obj is RuntimeParameterInfo monoParamInfo)
+				pseudoAttrs = monoParamInfo.GetPseudoCustomAttributes ();
+			else if (obj is Type t)
+				pseudoAttrs = GetPseudoCustomAttributes (t);
 
 			if ((attributeType != null) && (pseudoAttrs != null)) {
 				for (int i = 0; i < pseudoAttrs.Length; ++i)
@@ -89,7 +88,7 @@ namespace System
 							return pseudoAttrs;
 						else
 							return new object [] { pseudoAttrs [i] };
-				return EmptyArray<object>.Value;
+				return Array.Empty<object> ();
 			}
 
 			return pseudoAttrs;
@@ -122,6 +121,7 @@ namespace System
 		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)
 		{
 			object[] attrs;
+
 			if (IsUserCattrProvider (obj))
 				attrs = obj.GetCustomAttributes (attributeType, true);
 			else
@@ -147,13 +147,18 @@ namespace System
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
 			if (obj == null)
-				throw new ArgumentNullException ("obj");
+				throw new ArgumentNullException (nameof (obj));
 			if (attributeType == null)
-				throw new ArgumentNullException ("attributeType");	
+				throw new ArgumentNullException (nameof (attributeType));	
 
 			if (attributeType == typeof (MonoCustomAttrs))
 				attributeType = null;
-			
+
+#if NETCORE
+			if (attributeType == typeof (Attribute))
+				attributeType = null;
+#endif
+
 			object[] r;
 			object[] res = GetCustomAttributesBase (obj, attributeType, false);
 			// shortcut
@@ -293,15 +298,224 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		[PreserveDependency(".ctor(System.Reflection.ConstructorInfo,System.Reflection.Assembly,System.IntPtr,System.UInt32)", "System.Reflection.CustomAttributeData")]
+		[PreserveDependency(".ctor(System.Reflection.MemberInfo,System.Object)", "System.Reflection.CustomAttributeNamedArgument")]
+		[PreserveDependency(".ctor(System.Type,System.Object)", "System.Reflection.CustomAttributeTypedArgument")]
 		static extern CustomAttributeData [] GetCustomAttributesDataInternal (ICustomAttributeProvider obj);
 
-		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj)
+		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj, bool inherit = false)
 		{
 			if (obj == null)
-				throw new ArgumentNullException ("obj");
+				throw new ArgumentNullException (nameof (obj));
 
-			CustomAttributeData [] attrs = GetCustomAttributesDataInternal (obj);
-			return Array.AsReadOnly<CustomAttributeData> (attrs);
+			if (!inherit)
+				return GetCustomAttributesDataBase (obj, null, false);
+
+			return GetCustomAttributesData (obj, typeof (MonoCustomAttrs), inherit);
+		}
+
+		internal static IList<CustomAttributeData> GetCustomAttributesData (ICustomAttributeProvider obj, Type attributeType, bool inherit)
+		{
+			if (obj == null)
+				throw new ArgumentNullException (nameof (obj));
+			if (attributeType == null)
+				throw new ArgumentNullException (nameof (attributeType));
+
+			if (attributeType == typeof (MonoCustomAttrs))
+				attributeType = null;
+
+			const string Message = "Invalid custom attribute data format";
+			IList<CustomAttributeData> r;
+			IList<CustomAttributeData> res = GetCustomAttributesDataBase (obj, attributeType, false);
+			// shortcut
+			if (!inherit && res.Count == 1) {
+				if (res [0] == null)
+					throw new CustomAttributeFormatException (Message);
+				if (attributeType != null) {
+					if (attributeType.IsAssignableFrom (res [0].AttributeType))
+						r = new CustomAttributeData[] { res [0] };
+					else
+						r = Array.Empty<CustomAttributeData> ();
+				} else {
+					r = new CustomAttributeData[] { res [0] };
+				}
+
+				return r;
+			}
+
+			if (inherit && GetBase (obj) == null)
+				inherit = false;
+
+			// if AttributeType is sealed, and Inherited is set to false, then 
+			// there's no use in scanning base types 
+			if ((attributeType != null && attributeType.IsSealed) && inherit) {
+				var usageAttribute = RetrieveAttributeUsage (attributeType);
+				if (!usageAttribute.Inherited)
+					inherit = false;
+			}
+
+			var initialSize = Math.Max (res.Count, 16);
+			List<CustomAttributeData> a = null;
+			ICustomAttributeProvider btype = obj;
+
+			/* Non-inherit case */
+			if (!inherit) {
+				if (attributeType == null) {
+					foreach (CustomAttributeData attrData in res) {
+						if (attrData == null)
+							throw new CustomAttributeFormatException (Message);
+					}
+
+					var result = new CustomAttributeData [res.Count];
+					res.CopyTo (result, 0);
+					return result;
+				} else {
+					a = new List<CustomAttributeData> (initialSize);
+					foreach (CustomAttributeData attrData in res) {
+						if (attrData == null)
+							throw new CustomAttributeFormatException (Message);
+						if (!attributeType.IsAssignableFrom (attrData.AttributeType))
+							continue;
+						a.Add (attrData);
+					}
+
+					return a.ToArray ();
+				}
+			}
+
+			/* Inherit case */
+			var attributeInfos = new Dictionary<Type, AttributeInfo> (initialSize);
+			int inheritanceLevel = 0;
+			a = new List<CustomAttributeData> (initialSize);
+
+			do {
+				foreach (CustomAttributeData attrData in res) {
+					AttributeUsageAttribute usage;
+					if (attrData == null)
+						throw new CustomAttributeFormatException (Message);
+
+					Type attrType = attrData.AttributeType;
+					if (attributeType != null) {
+						if (!attributeType.IsAssignableFrom (attrType))
+							continue;
+					}
+
+					AttributeInfo firstAttribute;
+					if (attributeInfos.TryGetValue (attrType, out firstAttribute))
+						usage = firstAttribute.Usage;
+					else
+						usage = RetrieveAttributeUsage (attrType);
+
+					// The same as for CustomAttributes.
+					//
+					// Only add attribute to the list of attributes if 
+					// - we are on the first inheritance level, or the attribute can be inherited anyway
+					// and (
+					// - multiple attributes of the type are allowed
+					// or (
+					// - this is the first attribute we've discovered
+					// or
+					// - the attribute is on same inheritance level than the first 
+					//   attribute that was discovered for this attribute type ))
+					if ((inheritanceLevel == 0 || usage.Inherited) && (usage.AllowMultiple ||
+						(firstAttribute == null || (firstAttribute != null
+							&& firstAttribute.InheritanceLevel == inheritanceLevel))))
+						a.Add(attrData);
+
+					if (firstAttribute == null)
+						attributeInfos.Add (attrType, new AttributeInfo (usage, inheritanceLevel));
+				}
+
+				if ((btype = GetBase (btype)) != null) {
+					inheritanceLevel++;
+					res = GetCustomAttributesDataBase (btype, attributeType, true);
+				}
+			} while (inherit && btype != null);
+
+			return a.ToArray ();
+		}
+
+		internal static IList<CustomAttributeData> GetCustomAttributesDataBase (ICustomAttributeProvider obj, Type attributeType, bool inheritedOnly)
+		{
+			CustomAttributeData[] attrsData;
+			if (IsUserCattrProvider (obj)) {
+				//FIXME resolve this case if it makes sense. Assign empty array for now.
+				//attrsData = obj.GetCustomAttributesData(attributeType, true);
+				attrsData = Array.Empty<CustomAttributeData> ();
+			} else
+				attrsData = GetCustomAttributesDataInternal (obj);
+
+			//
+			// All pseudo custom attributes are Inherited = false hence we can avoid
+			// building attributes data array which would be discarded by inherited checks
+			//
+			if (!inheritedOnly) {
+				CustomAttributeData[] pseudoAttrsData = GetPseudoCustomAttributesData (obj, attributeType);
+				if (pseudoAttrsData != null) {
+					if (attrsData.Length == 0)
+						return Array.AsReadOnly (pseudoAttrsData);
+					CustomAttributeData[] res = new CustomAttributeData [attrsData.Length + pseudoAttrsData.Length];
+					Array.Copy (attrsData, res, attrsData.Length);
+					Array.Copy (pseudoAttrsData, 0, res, attrsData.Length, pseudoAttrsData.Length);
+					return Array.AsReadOnly (res);
+				}
+			}
+
+			return Array.AsReadOnly (attrsData);
+		}
+
+		internal static CustomAttributeData[] GetPseudoCustomAttributesData (ICustomAttributeProvider obj, Type attributeType)
+		{
+			CustomAttributeData[] pseudoAttrsData = null;
+
+			/* FIXME: Add other types */
+			if (obj is RuntimeMethodInfo monoMethod)
+				pseudoAttrsData = monoMethod.GetPseudoCustomAttributesData ();
+			else if (obj is RuntimeFieldInfo fieldInfo)
+				pseudoAttrsData = fieldInfo.GetPseudoCustomAttributesData ();
+			else if (obj is RuntimeParameterInfo monoParamInfo)
+				pseudoAttrsData = monoParamInfo.GetPseudoCustomAttributesData ();
+			else if (obj is Type t)
+				pseudoAttrsData = GetPseudoCustomAttributesData (t);
+
+			if ((attributeType != null) && (pseudoAttrsData != null)) {
+				for (int i = 0; i < pseudoAttrsData.Length; ++i) {
+					if (attributeType.IsAssignableFrom (pseudoAttrsData [i].AttributeType)) {
+						if (pseudoAttrsData.Length == 1)
+							return pseudoAttrsData;
+						else
+							return new CustomAttributeData[] { pseudoAttrsData[i] };
+					}
+				}
+
+				return Array.Empty<CustomAttributeData> ();
+			}
+
+			return pseudoAttrsData;
+		}
+
+		static CustomAttributeData[] GetPseudoCustomAttributesData (Type type)
+		{
+			int count = 0;
+			var Attributes = type.Attributes;
+
+			/* IsSerializable returns true for delegates/enums as well */
+			if ((Attributes & TypeAttributes.Serializable) != 0)
+				count++;
+			if ((Attributes & TypeAttributes.Import) != 0)
+				count++;
+
+			if (count == 0)
+				return null;
+			CustomAttributeData[] attrsData = new CustomAttributeData [count];
+			count = 0;
+
+			if ((Attributes & TypeAttributes.Serializable) != 0)
+				attrsData [count++] = new CustomAttributeData ((typeof (SerializableAttribute)).GetConstructor (Type.EmptyTypes));
+			if ((Attributes & TypeAttributes.Import) != 0)
+				attrsData [count++] = new CustomAttributeData ((typeof (ComImportAttribute)).GetConstructor (Type.EmptyTypes));
+
+			return attrsData;
 		}
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
@@ -342,7 +556,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern bool IsDefinedInternal (ICustomAttributeProvider obj, Type AttributeType);
 
-		static PropertyInfo GetBasePropertyDefinition (MonoProperty property)
+		static PropertyInfo GetBasePropertyDefinition (RuntimePropertyInfo property)
 		{
 			MethodInfo method = property.GetGetMethod (true);
 			if (method == null || !method.IsVirtual)
@@ -350,7 +564,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseMethod ();
+			MethodInfo baseMethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				ParameterInfo[] parameters = property.GetIndexParameters ();
 				if (parameters != null && parameters.Length > 0) {
@@ -367,7 +581,7 @@ namespace System
 
 		}
 
-		static EventInfo GetBaseEventDefinition (MonoEvent evt)
+		static EventInfo GetBaseEventDefinition (RuntimeEventInfo evt)
 		{
 			MethodInfo method = evt.GetAddMethod (true);
 			if (method == null || !method.IsVirtual)
@@ -377,7 +591,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseMethod ();
+			MethodInfo baseMethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				BindingFlags flags = method.IsPublic ? BindingFlags.Public : BindingFlags.NonPublic;
 				flags |= method.IsStatic ? BindingFlags.Static : BindingFlags.Instance;
@@ -387,8 +601,8 @@ namespace System
 			return null;
 		}
 
-		// Handles Type, MonoProperty and MonoMethod.
-		// The runtime has also cases for MonoEvent, MonoField, Assembly and ParameterInfo,
+		// Handles Type, RuntimePropertyInfo and RuntimeMethodInfo.
+		// The runtime has also cases for RuntimeEventInfo, RuntimeFieldInfo, Assembly and ParameterInfo,
 		// but for those we return null here.
 		static ICustomAttributeProvider GetBase (ICustomAttributeProvider obj)
 		{
@@ -399,23 +613,32 @@ namespace System
 				return ((Type) obj).BaseType;
 
 			MethodInfo method = null;
-			if (obj is MonoProperty)
-				return GetBasePropertyDefinition ((MonoProperty) obj);
-			else if (obj is MonoEvent)
-				return GetBaseEventDefinition ((MonoEvent)obj);
-			else if (obj is MonoMethod)
+			if (obj is RuntimePropertyInfo)
+				return GetBasePropertyDefinition ((RuntimePropertyInfo) obj);
+			else if (obj is RuntimeEventInfo)
+				return GetBaseEventDefinition ((RuntimeEventInfo)obj);
+			else if (obj is RuntimeMethodInfo)
 				method = (MethodInfo) obj;
-
+			if (obj is RuntimeParameterInfo parinfo) {
+				var member = parinfo.Member;
+				if (member is MethodInfo) {
+					method = (MethodInfo)member;
+					MethodInfo bmethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
+					if (bmethod == method)
+						return null;
+					return bmethod.GetParameters ()[parinfo.Position];
+				}
+			}
 			/**
 			 * ParameterInfo -> null
 			 * Assembly -> null
-			 * MonoEvent -> null
-			 * MonoField -> null
+			 * RuntimeEventInfo -> null
+			 * RuntimeFieldInfo -> null
 			 */
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseMethod ();
+			MethodInfo baseMethod = ((RuntimeMethodInfo)method).GetBaseMethod ();
 			if (baseMethod == method)
 				return null;
 

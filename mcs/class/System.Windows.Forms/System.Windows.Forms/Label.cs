@@ -57,7 +57,6 @@ namespace System.Windows.Forms
 		internal ContentAlignment image_align;
 		internal StringFormat string_format;
 		internal ContentAlignment text_align;
-		static SizeF req_witdthsize = new SizeF (0,0);
 
 		#region Events
 		static object AutoSizeChangedEvent = new object ();
@@ -147,8 +146,8 @@ namespace System.Windows.Forms
 				ControlStyles.SupportsTransparentBackColor |
 				ControlStyles.OptimizedDoubleBuffer
 				, true);
-			
-			HandleCreated += new EventHandler (OnHandleCreatedLB);
+
+			can_cache_preferred_size = true;
 		}
 
 		#region Public Properties
@@ -384,48 +383,46 @@ namespace System.Windows.Forms
 			set { base.ImeMode = value; }
 		}
 
-		internal virtual Size InternalGetPreferredSize (Size proposed)
+		internal override Size GetPreferredSizeCore (Size proposed)
 		{
+			Size borders_and_paddings = new Size(Padding.Horizontal, Padding.Vertical);
 			Size size;
+
+			if (use_compatible_text_rendering) {
+				borders_and_paddings.Height += border_style == BorderStyle.None ? 3 : 6;
+			}
 
 			if (Text == string.Empty) {
 				size = new Size (0, Font.Height);
 			} else {
-				size = Size.Ceiling (TextRenderer.MeasureString (Text, Font, req_witdthsize, string_format));
+				int proposed_width = proposed.Width <= 1 ? int.MaxValue : (proposed.Width - borders_and_paddings.Width);
+				size = Size.Ceiling (TextRenderer.MeasureString (Text, Font, proposed_width, string_format));
 				size.Width += 3;
 			}
-
-			size.Width += Padding.Horizontal;
-			size.Height += Padding.Vertical;
 			
-			if (!use_compatible_text_rendering)
-				return size;
-
-			if (border_style == BorderStyle.None)
-				size.Height += 3;
-			else
-				size.Height += 6;
-			
-			return size;
+			return size + borders_and_paddings;
 		}
 
 		public override	Size GetPreferredSize (Size proposedSize)
 		{
-			return InternalGetPreferredSize (proposedSize);
+			// This is consistent with GetPreferredSizeCore and enables caching.
+			if (proposedSize.Width == 1)
+				proposedSize.Width = 0;
+			return base.GetPreferredSize(proposedSize);
 		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredHeight {
-			get { return InternalGetPreferredSize (Size.Empty).Height; }
+			get { return GetPreferredSizeCore (Size.Empty).Height; }
 		}
 
 		[Browsable(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int PreferredWidth {
-			get { return InternalGetPreferredSize (Size.Empty).Width; }
+			get { return GetPreferredSizeCore (Size.Empty).Width; }
 		}
 
 		[Obsolete ("This property has been deprecated.  Use BackColor instead.")]
@@ -586,7 +583,7 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
-			if (autosize)
+			if (SelfSizing)
 				CalcAutoSize();
 			Invalidate ();
 		}
@@ -605,6 +602,8 @@ namespace System.Windows.Forms
 		protected override void OnParentChanged (EventArgs e)
 		{
 			base.OnParentChanged (e);
+			if (SelfSizing)
+				CalcAutoSize();
 		}
 
 		protected override void OnRightToLeftChanged (EventArgs e)
@@ -622,8 +621,10 @@ namespace System.Windows.Forms
 		protected override void OnTextChanged (EventArgs e)
 		{
 			base.OnTextChanged (e);
-			if (autosize)
+			if (SelfSizing)
 				CalcAutoSize ();
+			else if (Parent != null)
+				Parent.PerformLayout (this, "Text");
 			Invalidate ();
 		}
 
@@ -646,6 +647,11 @@ namespace System.Windows.Forms
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
+			if (SelfSizing) {
+				Size preferredSize = PreferredSize;
+				width = preferredSize.Width;
+				height = preferredSize.Height;
+			}
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
@@ -668,6 +674,16 @@ namespace System.Windows.Forms
 
 		#endregion Public Methods
 
+		#region Private Properties
+
+		bool SelfSizing	{
+			get {
+				return AutoSize && Parent != null && Parent.LayoutEngine is Layout.DefaultLayout;
+			}
+		}
+
+		#endregion
+
 		#region Private Methods
 
 		private void CalcAutoSize ()
@@ -675,15 +691,9 @@ namespace System.Windows.Forms
 			if (!AutoSize)
 				return;
 
-			Size s = InternalGetPreferredSize (Size.Empty);
-			
+			cached_preferred_size = Size.Empty;
+			Size s = PreferredSize;			
 			SetBounds (Left, Top, s.Width, s.Height, BoundsSpecified.Size);
-		}
-
-		private void OnHandleCreatedLB (Object o, EventArgs e)
-		{
-			if (autosize)
-				CalcAutoSize ();
 		}
 
 		private void SetUseMnemonic (bool use)

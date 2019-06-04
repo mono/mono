@@ -17,6 +17,9 @@
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
 #ifdef HAVE_NET_IF_H
 #include <net/if.h>
 #endif
@@ -36,8 +39,10 @@ get_address_from_sockaddr (struct sockaddr *sa)
 	switch (sa->sa_family) {
 	case AF_INET:
 		return &((struct sockaddr_in*)sa)->sin_addr;
+#ifdef HAVE_STRUCT_SOCKADDR_IN6
 	case AF_INET6:
 		return &((struct sockaddr_in6*)sa)->sin6_addr;
+#endif
 	}
 	return NULL;
 }
@@ -70,7 +75,7 @@ mono_get_address_info (const char *hostname, int port, int flags, MonoAddressInf
 /* Some ancient libc don't define AI_ADDRCONFIG */
 #ifdef AI_ADDRCONFIG
 	if (flags & MONO_HINT_CONFIGURED_ONLY)
-		hints.ai_flags = AI_ADDRCONFIG;
+		hints.ai_flags |= AI_ADDRCONFIG;
 #endif
 	sprintf (service_name, "%d", port);
 
@@ -92,9 +97,11 @@ mono_get_address_info (const char *hostname, int port, int flags, MonoAddressInf
 		if (cur->family == PF_INET) {
 			cur->address_len = sizeof (struct in_addr);
 			cur->address.v4 = ((struct sockaddr_in*)res->ai_addr)->sin_addr;
+#ifdef HAVE_STRUCT_SOCKADDR_IN6			
 		} else if (cur->family == PF_INET6) {
 			cur->address_len = sizeof (struct in6_addr);
 			cur->address.v6 = ((struct sockaddr_in6*)res->ai_addr)->sin6_addr;
+#endif
 		} else {
 			g_warning ("Cannot handle address family %d", cur->family);
 			res = res->ai_next;
@@ -120,7 +127,24 @@ mono_get_address_info (const char *hostname, int port, int flags, MonoAddressInf
 
 #endif
 
-#ifdef HAVE_GETPROTOBYNAME
+#if defined(__linux__) && defined(HAVE_GETPROTOBYNAME_R)
+
+static int
+fetch_protocol (const char *proto_name, int *cache, int *proto, int default_val)
+{
+	if (!*cache) {
+		struct protoent protoent_buf = { 0 };
+		struct protoent *pent = NULL;
+		char buf[1024];
+
+		getprotobyname_r (proto_name, &protoent_buf, buf, 1024, &pent);
+		*proto = pent ? pent->p_proto : default_val;
+		*cache = 1;
+	}
+	return *proto;
+}
+
+#elif HAVE_GETPROTOBYNAME
 
 static int
 fetch_protocol (const char *proto_name, int *cache, int *proto, int default_val)
@@ -134,6 +158,8 @@ fetch_protocol (const char *proto_name, int *cache, int *proto, int default_val)
 	}
 	return *proto;
 }
+
+#endif
 
 int
 mono_networking_get_tcp_protocol (void)
@@ -155,8 +181,6 @@ mono_networking_get_ipv6_protocol (void)
 	static int cache, proto;
 	return fetch_protocol ("ipv6", &cache, &proto, 41); //41 is SOL_IPV6 on linux
 }
-
-#endif
 
 #if defined (HAVE_SIOCGIFCONF)
 

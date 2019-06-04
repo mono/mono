@@ -6,9 +6,3 @@ corefx/SR.cs
 ../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
 ../../../external/corefx/src/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFile.cs
 ../../../external/corefx/src/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFileExtensions.cs
-
-../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPool.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/ArrayPoolEventSource.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPool.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/DefaultArrayPoolBucket.cs
-../../../external/corefx/src/System.Buffers/src/System/Buffers/Utilities.cs

@@ -95,23 +95,31 @@ namespace System.Windows.Forms {
 			if (RunningOnUnix) {
 				//if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null) {
 				//        driver=XplatUIX11_new.GetInstance ();
-				//} else 
-				if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
-					driver = XplatUIX11.GetInstance ();
+				//} else
+				var loadable = Environment.GetEnvironmentVariable ("MONO_MWF_DRIVER");
+				if (loadable != null){
+					var a = System.Reflection.Assembly.LoadFile (loadable);
+					var mi = a?.GetType ("Bootstrap")?.GetMethod ("CreateInstance");
+					if (mi != null)
+						driver = (XplatUIDriver) mi.Invoke (null, null);
 				} else {
-					IntPtr buf = Marshal.AllocHGlobal (8192);
-					// This is a hacktastic way of getting sysname from uname ()
-					if (uname (buf) != 0) {
-						// WTF: We cannot run uname
-						driver=XplatUIX11.GetInstance ();
+					if (Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
+						driver = XplatUIX11.GetInstance ();
 					} else {
-						string os = Marshal.PtrToStringAnsi (buf);
-						if (os == "Darwin")
-							driver=XplatUICarbon.GetInstance ();
-						else
+						IntPtr buf = Marshal.AllocHGlobal (8192);
+						// This is a hacktastic way of getting sysname from uname ()
+						if (uname (buf) != 0) {
+							// WTF: We cannot run uname
 							driver=XplatUIX11.GetInstance ();
+						} else {
+							string os = Marshal.PtrToStringAnsi (buf);
+							if (os == "Darwin")
+								driver=XplatUICarbon.GetInstance ();
+							else
+								driver=XplatUIX11.GetInstance ();
+						}
+						Marshal.FreeHGlobal (buf);
 					}
-					Marshal.FreeHGlobal (buf);
 				}
 			} else {
 				driver=XplatUIWin32.GetInstance ();
@@ -716,10 +724,10 @@ namespace System.Windows.Forms {
 			return driver.GetMessage (queue_id, ref msg, hWnd, wFilterMin, wFilterMax);
 		}
 
-		internal static IntPtr GetParent (IntPtr handle)
+		internal static IntPtr GetParent (IntPtr handle, bool with_owner)
 		{
-			DriverDebug ("GetParent ({0}): Called", Window (handle));
-			return driver.GetParent (handle);
+			DriverDebug ("GetParent ({0}, {1}): Called", Window (handle), with_owner);
+			return driver.GetParent (handle, with_owner);
 		}
 
 		internal static IntPtr GetPreviousWindow (IntPtr handle)
@@ -823,12 +831,12 @@ namespace System.Windows.Forms {
 			driver.OverrideCursor (cursor);
 		}
 
-		internal static void PaintEventEnd (ref Message msg, IntPtr handle, bool client)
+		internal static void PaintEventEnd (ref Message msg, IntPtr handle, bool client, PaintEventArgs pevent)
 		{
 			#if DriverDebug || DriverDebugPaint
 				Console.WriteLine ("PaintEventEnd ({0}, {1}, {2}): Called from thread {3}", msg, Window (handle), client, Thread.CurrentThread.GetHashCode ());
 			#endif
-			driver.PaintEventEnd (ref msg, handle, client);
+			driver.PaintEventEnd (ref msg, handle, client, pevent);
 		}
 
 		internal static PaintEventArgs PaintEventStart (ref Message msg, IntPtr handle, bool client)

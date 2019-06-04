@@ -195,6 +195,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_SimpleAsyncResult ()
 		{
 			var result = new TestAsyncResult ();
@@ -217,6 +218,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_CompletedSynchronously ()
 		{
 			var factory = new TaskFactory<string> ();
@@ -239,6 +241,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 		
 		[Test]
+		[Category ("MultiThreaded")]
 		public void FromAsync_CompletedSynchronously_with_Callback ()
 		{
 			var factory = new TaskFactory<string> ();
@@ -249,6 +252,7 @@ namespace MonoTests.System.Threading.Tasks
 		}
 
 		[Test]
+		[Category ("MultiThreaded")]
 		public void StartNewCancelled ()
 		{
 			var ct = new CancellationToken (true);

@@ -31,6 +31,7 @@ using System;
 using System.Drawing;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Windows.Forms.Layout;
 
 namespace System.Windows.Forms
 {
@@ -39,7 +40,7 @@ namespace System.Windows.Forms
 	[DesignTimeVisible (false)]
 	[ToolboxItem (false)]
 	[Designer ("System.Windows.Forms.Design.ToolStripItemDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public abstract class ToolStripItem : Component, IDropTarget, IComponent, IDisposable
+	public abstract class ToolStripItem : Component, IDropTarget, IComponent, IDisposable, IArrangedElement
 	{
 		#region Private Variables
 		private AccessibleObject accessibility_object;
@@ -411,7 +412,7 @@ namespace System.Windows.Forms
 				if (Parent != null)
 					return Parent.Font;
 					
-				return DefaultFont;
+				return ToolStripManager.DefaultFont;
 			}
 			set { 
 				if (this.font != value) {
@@ -569,9 +570,10 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		public bool IsOnDropDown {
 			get {
-				if (this.parent != null && this.parent is ToolStripDropDown)
-					return true;
-
+				if (this.parent != null)
+					return this.parent is ToolStripDropDown;
+				if (this.owner != null)
+					return this.owner is ToolStripDropDown;
 				return false;
 			}
 		}
@@ -1282,8 +1284,11 @@ namespace System.Windows.Forms
 		protected internal virtual void SetBounds (Rectangle bounds)
 		{
 			if (this.bounds != bounds) {
+				Point old_location = bounds.Location;
 				this.bounds = bounds;
 				OnBoundsChanged ();
+				if (old_location != bounds.Location)
+					OnLocationChanged (EventArgs.Empty);
 			}
 		}
 		
@@ -1657,8 +1662,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private static Font DefaultFont { get { return new Font ("Tahoma", 8.25f); } }
-		
 		internal virtual ToolStripTextDirection DefaultTextDirection { get { return ToolStripTextDirection.Inherit; } }
 
 		internal virtual void Dismiss (ToolStripDropDownCloseReason reason)
@@ -1880,7 +1883,7 @@ namespace System.Windows.Forms
 					return true;
 
 				if (!(this.Owner is ToolStripDropDownMenu))
-					return false;
+					return true;
 
 				ToolStripDropDownMenu tsddm = (ToolStripDropDownMenu)this.Owner;
 
@@ -1936,6 +1939,47 @@ namespace System.Windows.Forms
 		
 		internal int Right { get { return this.bounds.Right; } }
 		internal int Bottom { get { return this.bounds.Bottom; } }
+
+		bool IArrangedElement.Visible {
+			get { return InternalVisible; }
+		}
+
+		Rectangle IArrangedElement.DisplayRectangle {
+			get { return this.Bounds; }
+		}
+		
+		int IArrangedElement.DistanceRight {
+			get { throw new NotSupportedException(); }
+			set { throw new NotSupportedException(); }
+		}
+
+		int IArrangedElement.DistanceBottom {
+			get { throw new NotSupportedException(); }
+			set { throw new NotSupportedException(); }
+		}
+
+		AutoSizeMode IArrangedElement.GetAutoSizeMode ()
+		{
+			return AutoSizeMode.GrowAndShrink;
+		}
+
+		Rectangle IArrangedElement.ExplicitBounds {
+			get { return this.bounds; }
+		}
+
+		Size IArrangedElement.MinimumSize {
+			get { return Size.Empty; }
+		}
+
+		void IArrangedElement.SetBounds (int left, int top, int width, int height, BoundsSpecified specified)
+		{
+			SetBounds (new Rectangle (left, top, width, height));
+		}
+
+		IArrangedContainer IArrangedElement.Parent {
+			get { return this.Parent ?? this.Owner; }
+		}
+
 		#endregion
 
 		#region IDropTarget Members

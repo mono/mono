@@ -221,12 +221,13 @@ namespace Mono.CSharp {
 			REF = 1 << 1,
 			OUT = 1 << 2,
 			This = 1 << 3,
-			CallerMemberName = 1 << 4,
-			CallerLineNumber = 1 << 5,
-			CallerFilePath = 1 << 6,
+			ReadOnly = 1 << 4,
+			CallerMemberName = 1 << 5,
+			CallerLineNumber = 1 << 6,
+			CallerFilePath = 1 << 7,
 
 			RefOutMask = REF | OUT,
-			ModifierMask = PARAMS | REF | OUT | This,
+			ModifierMask = PARAMS | REF | OUT | This | ReadOnly,
 			CallerMask = CallerMemberName | CallerLineNumber | CallerFilePath
 		}
 
@@ -1447,7 +1448,7 @@ namespace Mono.CSharp {
 
 			expr = Child;
 
-			if (!(expr is Constant || expr is DefaultValueExpression || (expr is New && ((New) expr).IsGeneratedStructConstructor))) {
+			if (!(expr is Constant || expr is DefaultValueExpression || expr is DefaultLiteralExpression || (expr is New && ((New) expr).IsGeneratedStructConstructor))) {
 				if (!(expr is ErrorExpression)) {
 					rc.Report.Error (1736, Location,
 						"The expression being assigned to optional parameter `{0}' must be a constant or default value",
@@ -1474,9 +1475,9 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!expr.IsNull && TypeSpec.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
+				if (!res.IsNull && TypeSpec.IsReferenceType (parameter_type) && parameter_type.BuiltinType != BuiltinTypeSpec.Type.String) {
 					rc.Report.Error (1763, Location,
-						"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
+						"Optional parameter `{0}' of type `{1}' can only be initialized with default value",
 						p.Name, parameter_type.GetSignatureForError ());
 
 					return;

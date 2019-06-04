@@ -87,6 +87,24 @@ namespace Mono.Security.Interface
 		}
 
 		/*
+		 * This is only supported if MonoTlsProvider.SupportsCleanShutdown is true.
+		 */
+		internal bool SendCloseNotify {
+			get; set;
+		}
+
+		/*
+		 * Client Certificate Support.
+		 */
+		public string[] ClientCertificateIssuers {
+			get; set;
+		}
+
+		public bool DisallowUnauthenticatedCertificateRequest {
+			get; set;
+		}
+
+		/*
 		 * If you set this here, then it will override 'ServicePointManager.SecurityProtocol'.
 		 */
 		public TlsProtocols? EnabledProtocols {
@@ -173,6 +191,9 @@ namespace Mono.Security.Interface
 			EnabledProtocols = other.EnabledProtocols;
 			EnabledCiphers = other.EnabledCiphers;
 			CertificateValidationTime = other.CertificateValidationTime;
+			SendCloseNotify = other.SendCloseNotify;
+			ClientCertificateIssuers = other.ClientCertificateIssuers;
+			DisallowUnauthenticatedCertificateRequest = other.DisallowUnauthenticatedCertificateRequest;
 			if (other.TrustAnchors != null)
 				TrustAnchors = new X509CertificateCollection (other.TrustAnchors);
 			if (other.CertificateSearchPaths != null) {

@@ -26,7 +26,9 @@ typedef enum {
 	FRAME_TYPE_INTERP = 4,
 	/* Frame for transitioning from interpreter to managed code */
 	FRAME_TYPE_INTERP_TO_MANAGED = 5,
-	FRAME_TYPE_NUM = 6
+	/* same, but with MonoContext */
+	FRAME_TYPE_INTERP_TO_MANAGED_WITH_CTX = 6,
+	FRAME_TYPE_NUM = 7
 } MonoStackFrameType;
 
 typedef enum {
@@ -84,12 +86,21 @@ typedef struct {
 	/* For FRAME_TYPE_INTERP */
 	gpointer interp_frame;
 
+	/*
+	 * A stack address associated with the frame which can be used
+	 * to compare frames.
+	 * This is needed because ctx is not changed when unwinding through
+	 * interpreter frames, it still refers to the last native interpreter
+	 * frame.
+	 */
+	gpointer frame_addr;
+
 	/* The next fields are only useful for the jit */
 	gpointer lmf;
 	guint32 unwind_info_len;
 	guint8 *unwind_info;
 
-	mgreg_t **reg_locations;
+	host_mgreg_t **reg_locations;
 } MonoStackFrameInfo;
 
 /*Index into MonoThreadState::unwind_data. */

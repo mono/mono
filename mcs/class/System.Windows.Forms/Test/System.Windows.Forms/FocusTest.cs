@@ -1293,6 +1293,8 @@ OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
 			
 			Assert.IsTrue (t2.Focused, "#A1");
 			Assert.AreSame (t2, c.ActiveControl, "#A2");
+
+			form.Close();
 		}
 	}
 }

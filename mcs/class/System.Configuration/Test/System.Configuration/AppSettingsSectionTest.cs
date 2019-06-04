@@ -67,7 +67,7 @@ namespace MonoTests.System.Configuration
 
 			var currentAssembly = TestUtil.ThisApplicationPath;
 			var config = ConfigurationManager.OpenExeConfiguration (currentAssembly);
-			Assert.AreEqual ("Test-appSettings.config", config.AppSettings.File, "#A01");
+			Assert.AreEqual ("System.Configuration-appSettings.config", config.AppSettings.File, "#A01");
 			Assert.AreEqual ("foo", ConfigurationSettings.AppSettings["TestKey1"], "#A02");
 			Assert.AreEqual ("bar", ConfigurationSettings.AppSettings["TestKey2"], "#A03");
 		}

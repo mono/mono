@@ -288,6 +288,7 @@ namespace Mono.ILASM {
 /* Keywords */
 %token K_AT
 %token K_AS
+%token K_AGGRESSIVEINLINING
 %token K_IMPLICITCOM
 %token K_IMPLICITRES
 %token K_NOAPPDOMAIN
@@ -389,6 +390,7 @@ namespace Mono.ILASM {
 %token K_LPSTR
 %token K_LPWSTR
 %token K_LPTSTR
+%token K_VBBYREFSTR
 %token K_OBJECTREF
 %token K_IUNKNOWN
 %token K_IDISPATCH
@@ -650,7 +652,7 @@ impl_class_refs		: K_IMPLEMENTS generic_class_ref
                           {
                                 ArrayList al = (ArrayList) $1;
 
-                                al.Insert (0, $3);
+                                al.Add ($3);
                                 $$ = al;
                           }
  			;
@@ -1317,6 +1319,10 @@ native_type		: /* EMPTY */
                           {
                                 $$ = NativeType.LPTStr;
                           }
+		  	| K_VBBYREFSTR
+			  {
+				$$ = NativeType.ByValStr;
+			  }
 			| K_OBJECTREF
 			| K_IUNKNOWN
                           {
@@ -2016,6 +2022,7 @@ impl_attr		: /* EMPTY */                   { $$ = new ImplAttr (); }
 			| impl_attr K_SYNCHRONIZED      { $$ = (ImplAttr) $1 | ImplAttr.Synchronised; }
 			| impl_attr K_NOINLINING        { $$ = (ImplAttr) $1 | ImplAttr.NoInLining; }
 			| impl_attr K_NOOPTIMIZATION    { $$ = (ImplAttr) $1 | ImplAttr.NoOptimization; }
+			| impl_attr K_AGGRESSIVEINLINING{ $$ = (ImplAttr) $1 | ImplAttr.AggressiveInlining; }
 			;
 
 sig_args		: /* EMPTY */

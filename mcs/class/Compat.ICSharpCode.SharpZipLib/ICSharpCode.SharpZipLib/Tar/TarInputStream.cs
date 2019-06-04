@@ -45,6 +45,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 	/// the archive, and the read each entry as a normal input stream
 	/// using read().
 	/// </summary>
+	[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 	public class TarInputStream : Stream
 	{
 		protected bool debug;
@@ -598,6 +599,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 		/// the programmer to have their own TarEntry subclass instantiated for the
 		/// entries return from getNextEntry().
 		/// </summary>
+		[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 		public interface IEntryFactory
 		{
 			TarEntry CreateEntry(string name);
@@ -607,6 +609,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 			TarEntry CreateEntry(byte[] headerBuf);
 		}
 		
+		[System.ObsoleteAttribute("This assembly has been deprecated. Please use https://www.nuget.org/packages/SharpZipLib/ instead.")]
 		public class EntryFactoryAdapter : IEntryFactory
 		{
 			public TarEntry CreateEntry(string name)

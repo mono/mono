@@ -173,6 +173,17 @@ namespace System.Security.Cryptography {
             internal int cbSalt;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        private struct BCRYPT_KEY_DATA_BLOB_HEADER
+        {
+            public uint dwMagic;
+            public uint dwVersion;
+            public uint cbKeyData;
+
+            public const uint BCRYPT_KEY_DATA_BLOB_MAGIC = 0x4d42444b;
+            public const uint BCRYPT_KEY_DATA_BLOB_VERSION1 = 0x1;
+        }
+
         /// <summary>
         ///     Well known KDF names
         /// </summary>
@@ -295,6 +306,120 @@ namespace System.Security.Cryptography {
                                                    [In] int dwFlags,
                                                    [In] IntPtr pvAuxInfo,
                                                    [Out] out SafeBCryptKeyHandle phKey);
+
+            [DllImport("bcrypt.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+            internal static extern ErrorCode BCryptImportKey(
+                SafeBCryptAlgorithmHandle hAlgorithm,
+                IntPtr hImportKey,
+                string pszBlobType,
+                out SafeBCryptKeyHandle hKey,
+                IntPtr pbKeyObject,
+                int cbKeyObject,
+                byte[] pbInput,
+                int cbInput,
+                int dwFlags);
+
+            [DllImport("bcrypt.dll", SetLastError = true)]
+            public static extern unsafe ErrorCode BCryptEncrypt(
+                SafeBCryptKeyHandle hKey,
+                byte* pbInput,
+                int cbInput,
+                IntPtr paddingInfo,
+                [In, Out] byte[] pbIV,
+                int cbIV,
+                byte* pbOutput,
+                int cbOutput,
+                out int cbResult,
+                int dwFlags);
+
+            [DllImport("bcrypt.dll", SetLastError = true)]
+            public static extern unsafe ErrorCode BCryptDecrypt(
+                SafeBCryptKeyHandle hKey,
+                byte* pbInput,
+                int cbInput,
+                IntPtr paddingInfo,
+                [In, Out] byte[] pbIV,
+                int cbIV,
+                byte* pbOutput,
+                int cbOutput,
+                out int cbResult,
+                int dwFlags);
+
+            [DllImport("bcrypt.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+            public static extern ErrorCode BCryptSetProperty(
+                SafeBCryptAlgorithmHandle hObject,
+                string pszProperty,
+                string pbInput,
+                int cbInput,
+                int dwFlags);
+        }
+
+        [SecuritySafeCritical]
+        internal static class AesBCryptModes
+        {
+            [SecurityCritical]
+            private static readonly SafeBCryptAlgorithmHandle s_hAlgCbc = OpenAesAlgorithm(Interop.BCrypt.BCRYPT_CHAIN_MODE_CBC);
+
+            [SecurityCritical]
+            private static readonly SafeBCryptAlgorithmHandle s_hAlgEcb = OpenAesAlgorithm(Interop.BCrypt.BCRYPT_CHAIN_MODE_ECB);
+
+            internal static SafeBCryptAlgorithmHandle GetSharedHandle(CipherMode cipherMode)
+            {
+                // Windows 8 added support to set the CipherMode value on a key,
+                // but Windows 7 requires that it be set on the algorithm before key creation.
+                switch (cipherMode)
+                {
+                    case CipherMode.CBC:
+                        return s_hAlgCbc;
+                    case CipherMode.ECB:
+                        return s_hAlgEcb;
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+
+            private static SafeBCryptAlgorithmHandle OpenAesAlgorithm(string cipherMode)
+            {
+                const string BCRYPT_AES_ALGORITHM = "AES";
+                SafeBCryptAlgorithmHandle hAlg = OpenAlgorithm(BCRYPT_AES_ALGORITHM, null);
+                SetCipherMode(hAlg, cipherMode);
+
+                return hAlg;
+            }
+        }
+
+        [SecuritySafeCritical]
+        internal static class TripleDesBCryptModes
+        {
+            [SecurityCritical]
+            private static readonly SafeBCryptAlgorithmHandle s_hAlgCbc = OpenAesAlgorithm(Interop.BCrypt.BCRYPT_CHAIN_MODE_CBC);
+
+            [SecurityCritical]
+            private static readonly SafeBCryptAlgorithmHandle s_hAlgEcb = OpenAesAlgorithm(Interop.BCrypt.BCRYPT_CHAIN_MODE_ECB);
+
+            internal static SafeBCryptAlgorithmHandle GetSharedHandle(CipherMode cipherMode)
+            {
+                // Windows 8 added support to set the CipherMode value on a key,
+                // but Windows 7 requires that it be set on the algorithm before key creation.
+                switch (cipherMode)
+                {
+                    case CipherMode.CBC:
+                        return s_hAlgCbc;
+                    case CipherMode.ECB:
+                        return s_hAlgEcb;
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+
+            private static SafeBCryptAlgorithmHandle OpenAesAlgorithm(string cipherMode)
+            {
+                const string BCRYPT_3DES_ALGORITHM = "3DES";
+                SafeBCryptAlgorithmHandle hAlg = OpenAlgorithm(BCRYPT_3DES_ALGORITHM, null);
+                SetCipherMode(hAlg, cipherMode);
+
+                return hAlg;
+            }
         }
 
         //
@@ -492,6 +617,163 @@ namespace System.Security.Cryptography {
                 throw new CryptographicException(Marshal.GetLastWin32Error());
             }
             return keyBlob;
+        }
+
+
+        [SecuritySafeCritical]
+        internal static SafeBCryptKeyHandle BCryptImportKey(SafeBCryptAlgorithmHandle hAlg, byte[] key)
+        {
+            unsafe
+            {
+                const String BCRYPT_KEY_DATA_BLOB = "KeyDataBlob";
+                int keySize = key.Length;
+                int blobSize = sizeof(BCRYPT_KEY_DATA_BLOB_HEADER) keySize;
+                byte[] blob = new byte[blobSize];
+                fixed (byte* pbBlob = blob)
+                {
+                    BCRYPT_KEY_DATA_BLOB_HEADER* pBlob = (BCRYPT_KEY_DATA_BLOB_HEADER*)pbBlob;
+                    pBlob->dwMagic = BCRYPT_KEY_DATA_BLOB_HEADER.BCRYPT_KEY_DATA_BLOB_MAGIC;
+                    pBlob->dwVersion = BCRYPT_KEY_DATA_BLOB_HEADER.BCRYPT_KEY_DATA_BLOB_VERSION1;
+                    pBlob->cbKeyData = (uint)keySize;
+                }
+                Buffer.BlockCopy(key, 0, blob, sizeof(BCRYPT_KEY_DATA_BLOB_HEADER), keySize);
+                SafeBCryptKeyHandle hKey;
+
+                ErrorCode error = UnsafeNativeMethods.BCryptImportKey(
+                    hAlg,
+                    IntPtr.Zero,
+                    BCRYPT_KEY_DATA_BLOB,
+                    out hKey,
+                    IntPtr.Zero,
+                    0,
+                    blob,
+                    blobSize,
+                    0);
+
+                if (error != ErrorCode.Success)
+                    throw new CryptographicException((int)error);
+
+                return hKey;
+            }
+        }
+
+        // Note: input and output are allowed to be the same buffer.
+        // BCryptEncrypt will correctly do the encryption in place according to CNG documentation.
+        [SecuritySafeCritical]
+        public static int BCryptEncrypt(
+            SafeBCryptKeyHandle hKey,
+            byte[] input,
+            int inputOffset,
+            int inputCount,
+            byte[] iv,
+            byte[] output,
+            int outputOffset,
+            int outputCount)
+        {
+            Debug.Assert(input != null);
+            Debug.Assert(inputOffset >= 0);
+            Debug.Assert(inputCount >= 0);
+            Debug.Assert(inputCount <= input.Length - inputOffset);
+            Debug.Assert(output != null);
+            Debug.Assert(outputOffset >= 0);
+            Debug.Assert(outputCount >= 0);
+            Debug.Assert(outputCount <= output.Length - outputOffset);
+
+            unsafe
+            {
+                fixed (byte* pbInput = input)
+                {
+                    fixed (byte* pbOutput = output)
+                    {
+                        int cbResult;
+                        ErrorCode error = UnsafeNativeMethods.BCryptEncrypt(
+                            hKey,
+                            pbInput inputOffset,
+                            inputCount,
+                            IntPtr.Zero,
+                            iv,
+                            iv == null ? 0 : iv.Length,
+                            pbOutput outputOffset,
+                            outputCount,
+                            out cbResult,
+                            0);
+
+                        if (error != ErrorCode.Success)
+                            throw new CryptographicException((int)error);
+
+                        return cbResult;
+                    }
+                }
+            }
+        }
+
+        // Note: input and output are allowed to be the same buffer.
+        // BCryptDecrypt will correctly do the decryption in place according to CNG documentation.
+        [SecuritySafeCritical]
+        public static int BCryptDecrypt(
+            SafeBCryptKeyHandle hKey,
+            byte[] input,
+            int inputOffset,
+            int inputCount,
+            byte[] iv,
+            byte[] output,
+            int outputOffset,
+            int outputCount)
+        {
+            Debug.Assert(input != null);
+            Debug.Assert(inputOffset >= 0);
+            Debug.Assert(inputCount >= 0);
+            Debug.Assert(inputCount <= input.Length - inputOffset);
+            Debug.Assert(output != null);
+            Debug.Assert(outputOffset >= 0);
+            Debug.Assert(outputCount >= 0);
+            Debug.Assert(outputCount <= output.Length - outputOffset);
+
+            unsafe
+            {
+                fixed (byte* pbInput = input)
+                {
+                    fixed (byte* pbOutput = output)
+                    {
+                        int cbResult;
+                        ErrorCode error = UnsafeNativeMethods.BCryptDecrypt(
+                            hKey,
+                            pbInput inputOffset,
+                            inputCount,
+                            IntPtr.Zero,
+                            iv,
+                            iv == null ? 0 : iv.Length,
+                            pbOutput outputOffset,
+                            outputCount,
+                            out cbResult,
+                             0);
+ 
+                        if (error != ErrorCode.Success)
+                            throw new CryptographicException((int)error);
+ 
+                        return cbResult;
+                    }
+                }
+            }
+        }
+ 
+        [SecurityCritical]
+        public static void SetCipherMode(SafeBCryptAlgorithmHandle hAlg, string cipherMode)
+        {
+            const string BCRYPT_CHAINING_MODE = "ChainingMode";
+ 
+            ErrorCode error = UnsafeNativeMethods.BCryptSetProperty(
+                hAlg,
+                BCRYPT_CHAINING_MODE,
+                cipherMode,
+                // Explicit \0 terminator, UCS-2
+                (cipherMode.Length 1) * 2,
+                0);
+ 
+            if (error != ErrorCode.Success)
+            {
+                throw new CryptographicException((int)error);
+            }
         }
 #endif
     }

@@ -70,6 +70,8 @@ update_current_thread_stack (void *start)
 
 #if !defined(MONO_CROSS_COMPILE) && MONO_ARCH_HAS_MONO_CONTEXT
 	MONO_CONTEXT_GET_CURRENT (info->client_info.ctx);
+#elif defined (HOST_WASM)
+	//nothing
 #else
 	g_error ("Sgen STW requires a working mono-context");
 #endif
@@ -100,20 +102,20 @@ static guint64 time_restart_world;
 
 /* LOCKING: assumes the GC lock is held */
 void
-sgen_client_stop_world (int generation)
+sgen_client_stop_world (int generation, gboolean serial_collection)
 {
 	TV_DECLARE (end_handshake);
 
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_STOP_WORLD, generation));
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_STOP_WORLD, generation, serial_collection));
 
 	acquire_gc_locks ();
 
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, generation));
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_STOP_WORLD_LOCKED, generation, serial_collection));
+
+	update_current_thread_stack (&generation);
 
 	/* We start to scan after locks are taking, this ensures we won't be interrupted. */
 	sgen_process_togglerefs ();
-
-	update_current_thread_stack (&generation);
 
 	sgen_global_stop_count++;
 	SGEN_LOG (3, "stopping world n %d from %p %p", sgen_global_stop_count, mono_thread_info_current (), (gpointer) (gsize) mono_native_thread_id_get ());
@@ -123,7 +125,7 @@ sgen_client_stop_world (int generation)
 
 	SGEN_LOG (3, "world stopped");
 
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_STOP_WORLD, generation));
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_STOP_WORLD, generation, serial_collection));
 
 	TV_GETTIME (end_handshake);
 	time_stop_world += TV_ELAPSED (stop_world_time, end_handshake);
@@ -135,7 +137,7 @@ sgen_client_stop_world (int generation)
 
 /* LOCKING: assumes the GC lock is held */
 void
-sgen_client_restart_world (int generation, gint64 *stw_time)
+sgen_client_restart_world (int generation, gboolean serial_collection, gint64 *stw_time)
 {
 	TV_DECLARE (end_sw);
 	TV_DECLARE (start_handshake);
@@ -146,9 +148,12 @@ sgen_client_restart_world (int generation, gint64 *stw_time)
 	if (MONO_PROFILER_ENABLED (gc_moves))
 		mono_sgen_gc_event_moves ();
 
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_START_WORLD, generation));
+	if (MONO_PROFILER_ENABLED (gc_resize))
+		mono_sgen_gc_event_resize ();
 
-	FOREACH_THREAD (info) {
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_PRE_START_WORLD, generation, serial_collection));
+
+	FOREACH_THREAD_ALL (info) {
 		info->client_info.stack_start = NULL;
 		memset (&info->client_info.ctx, 0, sizeof (MonoContext));
 	} FOREACH_THREAD_END
@@ -165,7 +170,7 @@ sgen_client_restart_world (int generation, gint64 *stw_time)
 
 	SGEN_LOG (2, "restarted (pause time: %d usec, max: %d)", (int)usec, (int)max_pause_usec);
 
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_START_WORLD, generation));
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_START_WORLD, generation, serial_collection));
 
 	/*
 	 * We must release the thread info suspend lock after doing
@@ -179,7 +184,7 @@ sgen_client_restart_world (int generation, gint64 *stw_time)
 	 */
 	release_gc_locks ();
 
-	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, generation));
+	MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, generation, serial_collection));
 
 	*stw_time = usec;
 }
@@ -197,15 +202,9 @@ static gboolean
 sgen_is_thread_in_current_stw (SgenThreadInfo *info, int *reason)
 {
 	/*
-	A thread explicitly asked to be skiped because it holds no managed state.
-	This is used by TP and finalizer threads.
-	FIXME Use an atomic variable for this to avoid everyone taking the GC LOCK.
-	*/
-	if (info->client_info.gc_disabled) {
-		if (reason)
-			*reason = 1;
-		return FALSE;
-	}
+	 * No need to check MONO_THREAD_INFO_FLAGS_NO_GC here as we rely on the
+	 * FOREACH_THREAD_EXCLUDE macro to skip such threads for us.
+	 */
 
 	/*
 	We have detected that this thread is failing/dying, ignore it.
@@ -254,31 +253,60 @@ sgen_unified_suspend_stop_world (void)
 {
 	int sleep_duration = -1;
 
+	// we can't lead STW if we promised not to safepoint.
+	g_assert (!mono_thread_info_will_not_safepoint (mono_thread_info_current ()));
+
 	mono_threads_begin_global_suspend ();
 	THREADS_STW_DEBUG ("[GC-STW-BEGIN][%p] *** BEGIN SUSPEND *** \n", mono_thread_info_get_tid (mono_thread_info_current ()));
 
-	FOREACH_THREAD (info) {
-		info->client_info.skip = FALSE;
-		info->client_info.suspend_done = FALSE;
+	for (MonoThreadSuspendPhase phase = MONO_THREAD_SUSPEND_PHASE_INITIAL; phase < MONO_THREAD_SUSPEND_PHASE_COUNT; phase++) {
+		gboolean need_next_phase = FALSE;
+		FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
+			/* look at every thread in the first phase. */
+			if (phase == MONO_THREAD_SUSPEND_PHASE_INITIAL) {
+				info->client_info.skip = FALSE;
+				info->client_info.suspend_done = FALSE;
+			} else {
+				/* skip threads suspended by previous phase. */
+				/* threads with info->client_info->skip set to TRUE will be skipped by sgen_is_thread_in_current_stw. */
+				if (info->client_info.suspend_done)
+					continue;
+			}
 
-		int reason;
-		if (!sgen_is_thread_in_current_stw (info, &reason)) {
-			THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND] IGNORE thread %p skip %s reason %d\n", mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false", reason);
-			continue;
-		}
+			int reason;
+			if (!sgen_is_thread_in_current_stw (info, &reason)) {
+				THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND-%d] IGNORE thread %p skip %s reason %d\n", (int)phase, mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false", reason);
+				continue;
+			}
 
-		info->client_info.skip = !mono_thread_info_begin_suspend (info);
+			switch (mono_thread_info_begin_suspend (info, phase)) {
+			case MONO_THREAD_BEGIN_SUSPEND_SUSPENDED:
+				info->client_info.skip = FALSE;
+				break;
+			case MONO_THREAD_BEGIN_SUSPEND_SKIP:
+				info->client_info.skip = TRUE;
+				break;
+			case MONO_THREAD_BEGIN_SUSPEND_NEXT_PHASE:
+				need_next_phase = TRUE;
+				break;
+			default:
+				g_assert_not_reached ();
+			}
 
-		THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND] SUSPEND thread %p skip %s\n", mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false");
-	} FOREACH_THREAD_END
+			THREADS_STW_DEBUG ("[GC-STW-BEGIN-SUSPEND-%d] SUSPEND thread %p skip %s\n", (int)phase, mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false");
+		} FOREACH_THREAD_END;
 
-	mono_thread_info_current ()->client_info.suspend_done = TRUE;
-	mono_threads_wait_pending_operations ();
+		mono_thread_info_current ()->client_info.suspend_done = TRUE;
+		mono_threads_wait_pending_operations ();
+
+		if (!need_next_phase)
+			break;
+	}
 
 	for (;;) {
 		gint restart_counter = 0;
 
-		FOREACH_THREAD (info) {
+		FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
 			gint suspend_count;
 
 			int reason = 0;
@@ -304,7 +332,7 @@ sgen_unified_suspend_stop_world (void)
 			if (!(suspend_count == 1))
 				g_error ("[%p] suspend_count = %d, but should be 1", mono_thread_info_get_tid (info), suspend_count);
 
-			info->client_info.skip = !mono_thread_info_begin_resume (info);
+			info->client_info.skip = !mono_thread_info_begin_pulse_resume_and_request_suspension (info);
 			if (!info->client_info.skip)
 				restart_counter += 1;
 
@@ -324,7 +352,7 @@ sgen_unified_suspend_stop_world (void)
 			sleep_duration += 10;
 		}
 
-		FOREACH_THREAD (info) {
+		FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
 			int reason = 0;
 			if (info->client_info.suspend_done || !sgen_is_thread_in_current_stw (info, &reason)) {
 				THREADS_STW_DEBUG ("[GC-STW-RESTART] IGNORE SUSPEND thread %p not been processed done %d current %d reason %d\n", mono_thread_info_get_tid (info), info->client_info.suspend_done, !sgen_is_thread_in_current_stw (info, NULL), reason);
@@ -336,7 +364,18 @@ sgen_unified_suspend_stop_world (void)
 				continue;
 			}
 
-			info->client_info.skip = !mono_thread_info_begin_suspend (info);
+			switch (mono_thread_info_begin_suspend (info, MONO_THREAD_SUSPEND_PHASE_MOPUP)) {
+			case MONO_THREAD_BEGIN_SUSPEND_SUSPENDED:
+				info->client_info.skip = FALSE;
+				break;
+			case MONO_THREAD_BEGIN_SUSPEND_SKIP:
+				info->client_info.skip = TRUE;
+				break;
+			case MONO_THREAD_BEGIN_SUSPEND_NEXT_PHASE:
+				g_assert_not_reached ();
+			default:
+				g_assert_not_reached ();
+			}
 
 			THREADS_STW_DEBUG ("[GC-STW-RESTART] SUSPEND thread %p skip %s\n", mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false");
 		} FOREACH_THREAD_END
@@ -344,7 +383,7 @@ sgen_unified_suspend_stop_world (void)
 		mono_threads_wait_pending_operations ();
 	}
 
-	FOREACH_THREAD (info) {
+	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
 		gpointer stopped_ip;
 
 		int reason = 0;
@@ -374,7 +413,7 @@ sgen_unified_suspend_stop_world (void)
 
 		stopped_ip = (gpointer) (MONO_CONTEXT_GET_IP (&info->client_info.ctx));
 
-		binary_protocol_thread_suspend ((gpointer) mono_thread_info_get_tid (info), stopped_ip);
+		sgen_binary_protocol_thread_suspend ((gpointer) mono_thread_info_get_tid (info), stopped_ip);
 
 		THREADS_STW_DEBUG ("[GC-STW-SUSPEND-END] thread %p is suspended, stopped_ip = %p, stack = %p -> %p\n",
 			mono_thread_info_get_tid (info), stopped_ip, info->client_info.stack_start, info->client_info.stack_start ? info->client_info.info.stack_end : NULL);
@@ -385,13 +424,13 @@ static void
 sgen_unified_suspend_restart_world (void)
 {
 	THREADS_STW_DEBUG ("[GC-STW-END] *** BEGIN RESUME ***\n");
-	FOREACH_THREAD (info) {
+	FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
 		int reason = 0;
 		if (sgen_is_thread_in_current_stw (info, &reason)) {
 			g_assert (mono_thread_info_begin_resume (info));
 			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] RESUME thread %p\n", mono_thread_info_get_tid (info));
 
-			binary_protocol_thread_restart ((gpointer) mono_thread_info_get_tid (info));
+			sgen_binary_protocol_thread_restart ((gpointer) mono_thread_info_get_tid (info));
 		} else {
 			THREADS_STW_DEBUG ("[GC-STW-RESUME-WORLD] IGNORE thread %p, reason %d\n", mono_thread_info_get_tid (info), reason);
 		}

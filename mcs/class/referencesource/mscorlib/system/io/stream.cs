@@ -40,7 +40,7 @@ namespace System.IO {
     [ContractClass(typeof(StreamContract))]
 #endif
 #if FEATURE_REMOTING || MONO
-    public abstract class Stream : MarshalByRefObject, IDisposable {
+    public abstract partial class Stream : MarshalByRefObject, IDisposable {
 #else // FEATURE_REMOTING
     public abstract class Stream : IDisposable {
 #endif // FEATURE_REMOTING
@@ -195,6 +195,9 @@ namespace System.IO {
             InternalCopyTo(destination, _DefaultCopyBufferSize);
         }
 
+#if MONO
+        virtual
+#endif
         public void CopyTo(Stream destination, int bufferSize)
         {
             if (destination == null)
@@ -222,10 +225,26 @@ namespace System.IO {
             Contract.Requires(destination.CanWrite);
             Contract.Requires(bufferSize > 0);
             
+#if MONO
+            byte[] buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(bufferSize);
+            try
+            {
+                int read;
+                while ((read = Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    destination.Write(buffer, 0, read);
+                }
+            }
+            finally
+            {
+                System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
+            }
+#else
             byte[] buffer = new byte[bufferSize];
             int read;
             while ((read = Read(buffer, 0, buffer.Length)) != 0)
                 destination.Write(buffer, 0, read);
+#endif
         }
 
 
@@ -515,14 +534,14 @@ namespace System.IO {
             // If the wait has already complete, run the task.
             if (asyncWaiter.IsCompleted)
             {
-                Contract.Assert(asyncWaiter.IsRanToCompletion, "The semaphore wait should always complete successfully.");
+                Contract.Assert(asyncWaiter.IsCompletedSuccessfully, "The semaphore wait should always complete successfully.");
                 RunReadWriteTask(readWriteTask);
             }                
             else  // Otherwise, wait for our turn, and then run the task.
             {
                 asyncWaiter.ContinueWith((t, state) =>
                     {
-                        Contract.Assert(t.IsRanToCompletion, "The semaphore wait should always complete successfully.");
+                        Contract.Assert(t.IsCompletedSuccessfully, "The semaphore wait should always complete successfully.");
                         var tuple = (Tuple<Stream,ReadWriteTask>)state;
                         tuple.Item1.RunReadWriteTask(tuple.Item2); // RunReadWriteTask(readWriteTask);
                     }, Tuple.Create<Stream,ReadWriteTask>(this, readWriteTask),
@@ -696,6 +715,8 @@ namespace System.IO {
                     using(context) ExecutionContext.Run(context, invokeAsyncCallback, this, true);
                 }
             }
+            
+            public bool InvokeMayRunArbitraryCode => true;
         }
 #endif
 

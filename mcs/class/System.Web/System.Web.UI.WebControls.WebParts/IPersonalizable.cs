@@ -35,9 +35,6 @@ namespace System.Web.UI.WebControls.WebParts
 {
 	public interface IPersonalizable
 	{
-		void Load (IDictionary sharedState, IDictionary userState);
-		void Save (IDictionary state);
-		
 		bool IsDirty { get; }
 	}
 }

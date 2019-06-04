@@ -15,6 +15,33 @@
 #ifdef HAVE_SGEN_GC
 #include <mono/sgen/sgen-gc.h>
 #endif
+#ifdef MONO_CLASS_DEF_PRIVATE
+/* Rationale: MonoClass field offsets are computed here.  Need to see the definition.
+ */
+#define REALLY_INCLUDE_CLASS_DEF 1
+#include <mono/metadata/class-private-definition.h>
+#undef REALLY_INCLUDE_CLASS_DEF
+#endif
+
+#ifdef MONO_GENERATING_OFFSETS
+/* The offsets tool uses this structure to compute basic type sizes/alignment */
+struct basic_types_struct {
+	gint8 gint8_f;
+	gint16 gint16_f;
+	gint32 gint32_f;
+	gint64 gint64_f;
+	float float_f;
+	double double_f;
+	gpointer gpointer_f;
+};
+typedef struct { gint8 i; } gint8_struct;
+typedef struct { gint16 i; } gint16_struct;
+typedef struct { gint32 i; } gint32_struct;
+typedef struct { gint64 i; } gint64_struct;
+typedef struct { float i; } float_struct;
+typedef struct { double i; } double_struct;
+typedef struct { gpointer i; } gpointer_struct;
+#endif
 
 static int
 dump_arch (void)
@@ -27,6 +54,10 @@ dump_arch (void)
 	g_print ("#ifdef TARGET_ARM\n");
 #elif defined (TARGET_ARM64)
 	g_print ("#ifdef TARGET_ARM64\n");
+#elif defined (TARGET_RISCV32)
+	g_print ("#ifdef TARGET_RISCV32\n");
+#elif defined (TARGET_RISCV64)
+	g_print ("#ifdef TARGET_RISCV64\n");
 #else
 	return 0;
 #endif
@@ -36,11 +67,11 @@ dump_arch (void)
 static int
 dump_os (void)
 {
-#if defined (PLATFORM_WIN32)
+#if defined (HOST_WIN32)
 	g_print ("#ifdef TARGET_WIN32\n");
-#elif defined (PLATFORM_ANDROID)
+#elif defined (HOST_ANDROID)
 	g_print ("#ifdef TARGET_ANDROID\n");
-#elif defined (PLATFORM_MACOSX)
+#elif defined (HOST_DARWIN)
 	g_print ("#ifdef TARGET_OSX\n");
 #elif defined (PLATFORM_IOS)
 	g_print ("#ifdef TARGET_IOS\n");

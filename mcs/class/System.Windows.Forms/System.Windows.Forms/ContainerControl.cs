@@ -57,6 +57,7 @@ namespace System.Windows.Forms {
 			ControlRemoved += new ControlEventHandler(OnControlRemoved);
 			auto_scale_dimensions = SizeF.Empty;
 			auto_scale_mode = AutoScaleMode.Inherit;
+			can_cache_preferred_size = true;
 		}
 		#endregion	// Public Constructors
 
@@ -542,6 +543,7 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose(bool disposing) {
 			base.Dispose(disposing);
+			active_control = null;
 		}
 
 		// LAMESPEC This used to be documented, but it's not in code
@@ -805,6 +807,15 @@ namespace System.Windows.Forms {
 		{
 			base.OnLayout (e);
 		}
+
+		internal override Size GetPreferredSizeCore (Size proposedSize)
+		{
+			// Translating 0,0 from ClientSize to actual Size tells us how much space
+			// is required for the borders.
+			Size borderSize = SizeFromClientSize(Size.Empty);
+			Size totalPadding = borderSize + Padding.Size;
+			return LayoutEngine.GetPreferredSize(this, proposedSize) + totalPadding;
+		}		
 		
 		AutoValidate auto_validate = AutoValidate.Inherit;
 

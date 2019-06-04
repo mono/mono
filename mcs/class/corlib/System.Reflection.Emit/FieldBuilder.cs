@@ -31,7 +31,7 @@
 // (C) 2001-2002 Ximian, Inc.  http://www.ximian.com
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -40,11 +40,37 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+
+#if !MOBILE
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_FieldBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class FieldBuilder : _FieldBuilder
+	{
+		void _FieldBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _FieldBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _FieldBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _FieldBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}		
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class FieldBuilder : FieldInfo, _FieldBuilder {
+	public sealed partial class FieldBuilder : FieldInfo {
 	
 #pragma warning disable 169, 414
 		private FieldAttributes attrs;
@@ -52,7 +78,6 @@ namespace System.Reflection.Emit {
 		private String name;
 		private object def_value;
 		private int offset;
-		private int table_idx;
 		internal TypeBuilder typeb;
 		private byte[] rva_data;
 		private CustomAttributeBuilder[] cattrs;
@@ -74,7 +99,6 @@ namespace System.Reflection.Emit {
 			this.modOpt = modOpt;
 			offset = -1;
 			typeb = tb;
-			table_idx = tb.get_next_table_index (this, 0x04, true);
 
 			((ModuleBuilder) tb.Module).RegisterToken (this, GetToken ().Token);
 		}
@@ -123,6 +147,8 @@ namespace System.Reflection.Emit {
 			else
 				throw CreateNotSupportedException ();
 		}
+
+		public override int MetadataToken { get { return ((ModuleBuilder) typeb.Module).GetToken (this); } }
 
 		public FieldToken GetToken() {
 			return new FieldToken (MetadataToken);
@@ -243,26 +269,6 @@ namespace System.Reflection.Emit {
 			get {
 				return base.Module;
 			}
-		}
-
-		void _FieldBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _FieldBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _FieldBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _FieldBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

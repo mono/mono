@@ -1331,6 +1331,48 @@ class Tests
 		return 0;
 	}
 
+	/* Github issue 13284 */
+	public static int test_0_ulong_ovf_spilling () {
+		checked {
+			ulong x = 2UL;
+			ulong y = 1UL;
+			ulong z = 3UL;
+			ulong t = x - y;
+
+			try {
+				var a = x - y >= z;
+				if (a)
+					return 1;
+				// Console.WriteLine ($"u64 ({x} - {y} >= {z}) => {a} [{(a == false ? "OK" : "NG")}]");
+			} catch (OverflowException) {
+				return 2;
+				// Console.WriteLine ($"u64 ({x} - {y} >= {z}) => overflow [NG]");
+			}
+
+			try {
+				var a = t >= z;
+				if (a)
+					return 3;
+				// Console.WriteLine ($"u64 ({t} >= {z}) => {a} [{(a == false ? "OK" : "NG")}]");
+			} catch (OverflowException) {
+				return 4;
+				// Console.WriteLine ($"u64 ({t} >= {z}) => overflow [NG]");
+			}
+
+			try {
+				var a = x - y - z >= 0;
+				if (a)
+					return 5;
+				else
+					return 6;
+				// Console.WriteLine ($"u64 ({x} - {y} - {z} >= 0) => {a} [NG]");
+			} catch (OverflowException) {
+				return 0;
+				// Console.WriteLine ($"u64 ({x} - {y} - {z} >= 0) => overflow [OK]");
+			}
+		}
+	}
+
 	public static int test_0_ulong_cast () {
 		ulong a;
 		bool failed;
@@ -1427,6 +1469,7 @@ class Tests
 		return 0;
 	}
 
+	[Category ("!WASM")] // reported as https://github.com/kripken/emscripten/issues/5603
 	public static int test_0_simple_double_casts () {
 
 		double d = 0xffffffff;
@@ -1663,7 +1706,7 @@ class Tests
 			val = d / q;
 		} catch (DivideByZeroException) {
 			/* wrong exception */
-		} catch (ArithmeticException) {
+		} catch (OverflowException) {
 			failed = false;
 		}
 		if (failed)
@@ -1676,7 +1719,7 @@ class Tests
 			val = d % q;
 		} catch (DivideByZeroException) {
 			/* wrong exception */
-		} catch (ArithmeticException) {
+		} catch (OverflowException) {
 			failed = false;
 		}
 		if (failed)
@@ -2930,6 +2973,61 @@ class Tests
         }
         catch (Exception) when (ExceptionFilter (default(byte), default (FooStruct))) {
         }
+		return 0;
+	}
+
+	public static int test_0_signed_ct_div () {
+		int n = 2147483647;
+		bool divide_by_zero = false;
+		bool overflow = false;
+
+		n = -n;
+		n--; /* MinValue */
+		try {
+			int r = n / (-1);
+		} catch (OverflowException) {
+			overflow = true;
+		}
+		if (!overflow)
+			return 7;
+
+		try {
+			int r = n / 0;
+		} catch (DivideByZeroException) {
+			divide_by_zero = true;
+		}
+		if (!divide_by_zero)
+			return 8;
+
+		if ((n / 35) != -61356675)
+			return 9;
+		if ((n / -35) != 61356675)
+			return 10;
+		n = -(n + 1);  /* MaxValue */
+		if ((n / 35) != 61356675)
+			return 11;
+		if ((n / -35) != -61356675)
+			return 12;
+
+		return 0;
+	}
+
+	public static int test_0_unsigned_ct_div () {
+		uint n = 4294967295;
+		bool divide_by_zero = false;
+
+		try {
+			uint a = n / 0;
+		} catch (DivideByZeroException) {
+			divide_by_zero = true;
+		}
+
+		if (!divide_by_zero)
+			return 5;
+
+		if ((n / 35) != 122713351)
+			return 9;
+
 		return 0;
 	}
 }

@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\config.h" />
-    <ClInclude Include="..\eglib\config.h" />
+    <ClInclude Include="..\winconfig.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92AE7622-5F58-4234-9A26-9EC71876B3F4}</ProjectGuid>
@@ -99,7 +99,8 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <PostBuildEvent>
-      <Command>winsetup.bat</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -109,7 +110,8 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <PostBuildEvent>
-      <Command>winsetup.bat</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +127,8 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>winsetup.bat</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -141,10 +144,48 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>winsetup.bat</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <Import Project="mono.external.targets" />
+  <Import Project="mono.winconfig.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+
+  <Target Name="AfterBuildWinSetup">
+    <PropertyGroup>
+      <_EnableDefines Condition="'$(MONO_ENABLE_LLVM)' == 'true'">$(_EnableDefines);ENABLE_LLVM;ENABLE_LLVM_RUNTIME</_EnableDefines>
+      <_EnableDefines Condition="'$(MONO_ENABLE_NETCORE)' == 'true'">$(_EnableDefines);ENABLE_NETCORE</_EnableDefines>
+      <_HaveDefines Condition="'$(MONO_ENABLE_BTLS)' == 'true'">$(_HaveDefines);HAVE_BTLS</_HaveDefines>
+      <_EnableDefines>$(_EnableDefines.Trim(';'))</_EnableDefines>
+      <_HaveDefines>$(_HaveDefines.Trim(';'))</_HaveDefines>
+    </PropertyGroup>
+    <WinConfigSetup ConfigFileRoot="$(MSBuildThisFileDirectory)..\"
+                    DisableDefines=""
+                    EnableDefines="$(_EnableDefines)"
+                    HaveDefines="$(_HaveDefines)"/>
+  </Target>
+
+  <Target Name="AfterBuild" DependsOnTargets="AfterBuildWinSetup" />
+
+  <Target Name="_BackupConfigFile" Condition="'$(_MonoConfigFileBackupExists)' != 'true' and Exists('$(MONO_DIR)/config.h')">
+    <Copy SourceFiles="$(MONO_DIR)/config.h" DestinationFiles="$(MONO_DIR)/cygconfig.h" />
+  </Target>
+
+  <Target Name="_CheckConfigFile">
+    <_CheckConfigurationProperty ConfFile="$(MONO_DIR)/config.h" ConfRegEx="#include.*cygconfig.h.*">
+      <Output TaskParameter="ConfPropertyFoundMatch" PropertyName="_MonoConfigFileBackupExists" />
+    </_CheckConfigurationProperty>
+  </Target>
+
+  <PropertyGroup>
+    <PrepareForBuildDependsOn>
+      _CheckConfigFile;
+      _BackupConfigFile;
+      $(PrepareForBuildDependsOn);
+    </PrepareForBuildDependsOn>
+  </PropertyGroup>
+
 </Project>

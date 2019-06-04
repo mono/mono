@@ -34,9 +34,6 @@ package module which drives the compilation of this directory.
 	mcs/
 		The Mono C# compiler
 
-	nunit24/
-		An old copy of the NUnit 2.4 library that we ship for historical reasons.
-
 	packages/
 		Integrates some packages from NuGet (like Roslyn) into the build system.
 

@@ -75,9 +75,20 @@ class InterpClass
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static int entry_deep_generic_vt (int i, decimal? b) {
+		return i;
+	}
+
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static StackTrace get_stacktrace_interp () {
 		var o = new object ();
 		return new StackTrace (true);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static StackTrace get_stacktrace_interp2 () {
+		return JitClass.get_stacktrace_jit ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -129,6 +140,9 @@ class JitClass
 		var ptr2 = InterpClass.entry_intptr_intptr (ptr);
 		if (ptr != ptr2)
 			return 10;
+		var edgvt_ret = InterpClass.entry_deep_generic_vt (1337, 2m);
+		if (edgvt_ret != 1337)
+			return 11;
 		return 0;
 	}
 
@@ -160,6 +174,11 @@ class JitClass
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static StackTrace get_stacktrace_jit () {
 		return InterpClass.get_stacktrace_interp ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static StackTrace get_stacktrace_jit2 () {
+		return InterpClass.get_stacktrace_interp2 ();
 	}
 }
 
@@ -244,20 +263,53 @@ class Tests
 		return 1;
 	}
 
+	[Category ("!WASM")] //Stack traces / EH are super broken on WASM + Interpreter
 	public static int test_0_stack_traces () {
 		//
 		// Get a stacktrace for an interp->jit->interp call stack
 		//
-		StackTrace st = JitClass.get_stacktrace_jit ();
-		var frame = st.GetFrame (0);
-		if (frame.GetMethod ().Name != "get_stacktrace_interp")
+		StackTrace st = JitClass.get_stacktrace_jit2 ();
+
+		var frame0 = st.GetFrame (0);
+		var frame1 = st.GetFrame (1);
+		var frame2 = st.GetFrame (2);
+		var frame3 = st.GetFrame (3);
+		var frame4 = st.GetFrame (4);
+
+		if (frame0.GetMethod ().Name != "get_stacktrace_interp")
 			return 1;
-		frame = st.GetFrame (1);
-		if (frame.GetMethod ().Name != "get_stacktrace_jit")
+
+		if (frame1.GetMethod ().Name != "get_stacktrace_jit")
 			return 2;
-		frame = st.GetFrame (2);
-		if (frame.GetMethod ().Name != "test_0_stack_traces")
+
+		if (frame2.GetMethod ().Name != "get_stacktrace_interp2")
 			return 3;
+
+		if (frame3.GetMethod ().Name != "get_stacktrace_jit2")
+			return 4;
+
+		if (frame4.GetMethod ().Name != "test_0_stack_traces")
+			return 5;
 		return 0;
 	}
+
+	// Finally exception will be thrown from this stack : interp -> jit -> eh -> interp
+	// Test that we propagate the finally exception over the jitted frames
+	public static int test_0_finex () {
+		bool called_finally = false;
+		try {
+			try {
+				JitClass.throw_ex ();
+				return 3;
+			} finally {
+				called_finally = true;
+				throw new Exception ("E2");
+			}
+		} catch (Exception) {
+			if (!called_finally)
+				return 1;
+			return 0;
+		}
+		return 2;
+        }
 }

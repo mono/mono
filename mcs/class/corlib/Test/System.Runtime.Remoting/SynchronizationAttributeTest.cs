@@ -341,7 +341,7 @@ namespace MonoTests.System.Runtime.Remoting
 			Thread tr = new Thread (new ThreadStart (CallbackThread));
 			tr.Start();
 			
-			bool terminated = tr.Join(2000);
+			bool terminated = tr.Join(10000);
 			Assert.IsTrue(terminated, "Thread didn't get lock of context bound object.");
 			
 			Assert.IsTrue (!otResult, "Concurrency detected in CallbackThread");

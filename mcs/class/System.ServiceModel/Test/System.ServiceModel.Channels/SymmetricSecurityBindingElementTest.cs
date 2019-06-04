@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -40,6 +41,8 @@ using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 using System.Xml;
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel.Channels
 {
@@ -149,7 +152,7 @@ namespace MonoTests.System.ServiceModel.Channels
 		EndpointAddress CreateX509EndpointAddress (string uri)
 		{
 			EndpointIdentity identity =
-				new X509CertificateEndpointIdentity (new X509Certificate2 ("Test/Resources/test.pfx", "mono"));
+				new X509CertificateEndpointIdentity (new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono"));
 			return new EndpointAddress (new Uri (uri), identity);
 		}
 
@@ -160,7 +163,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				new BindingParameterCollection ();
 			ServiceCredentials cred = new ServiceCredentials ();
 			cred.ServiceCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			IServiceBehavior sb = cred;
 			sb.AddBindingParameters (null, null, null, bpl);
 			IChannelListener<IReplyChannel> listener = rb.BuildChannelListener<IReplyChannel> (bpl);
@@ -238,7 +241,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				return null;
 				});
 			ClientCredentials cred = new ClientCredentials ();
-			cred.ServiceCertificate.DefaultCertificate = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			cred.ServiceCertificate.DefaultCertificate = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			BindingParameterCollection parameters =
 				new BindingParameterCollection ();
 			parameters.Add (cred);
@@ -485,7 +488,7 @@ namespace MonoTests.System.ServiceModel.Channels
 				new BindingParameterCollection ();
 			ServiceCredentials cred = new ServiceCredentials ();
 			cred.ServiceCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.cer");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			IServiceBehavior sb = cred;
 			sb.AddBindingParameters (null, null, null, bpl);
 			IChannelListener<IReplyChannel> listener = rb.BuildChannelListener<IReplyChannel> (bpl);
@@ -550,7 +553,7 @@ Console.Error.WriteLine ("Processing a reply.");
 		public void FullRequest ()
 		{
 			EndpointIdentity identity =
-				new X509CertificateEndpointIdentity (new X509Certificate2 ("Test/Resources/test.pfx", "mono"));
+				new X509CertificateEndpointIdentity (new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono"));
 			EndpointAddress address =
 				new EndpointAddress (new Uri ("stream:dummy"), identity);
 
@@ -663,3 +666,4 @@ settings.Indent = true;
 		}
 	}
 }
+#endif

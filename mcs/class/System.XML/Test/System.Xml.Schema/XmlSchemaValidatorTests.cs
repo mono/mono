@@ -15,6 +15,8 @@ using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -36,7 +38,7 @@ namespace MonoTests.System.Xml
 		{
 			// bug #358408
 			XmlSchemaSet schemas = new XmlSchemaSet ();
-			schemas.Add (null, "Test/XmlFiles/xsd/358408.xsd");
+			schemas.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/358408.xsd"));
 			XmlSchemaValidator v = new XmlSchemaValidator (
 				new NameTable (),
 				schemas,
@@ -83,12 +85,12 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void SkipInvolved () // bug #422581
 		{
-			XmlReader schemaReader = XmlReader.Create ("Test/XmlFiles/xsd/422581.xsd");
+			XmlReader schemaReader = XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/422581.xsd"));
 			XmlSchema schema = XmlSchema.Read (schemaReader, null);
 			XmlReaderSettings settings = new XmlReaderSettings ();
 			settings.ValidationType = ValidationType.Schema;
 			settings.Schemas.Add (schema);
-			XmlReader reader = XmlReader.Create ("Test/XmlFiles/xsd/422581.xml", settings);
+			XmlReader reader = XmlReader.Create (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/422581.xml"), settings);
 			while (reader.Read ());
 		}
 
@@ -149,8 +151,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void Bug496192_496205 ()
 		{
-			using (var xmlr = new StreamReader ("Test/XmlFiles/496192.xml"))
-				using (var xsdr = new StreamReader ("Test/XmlFiles/496192.xsd"))
+			using (var xmlr = new StreamReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/496192.xml")))
+				using (var xsdr = new StreamReader (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/496192.xsd")))
 					Validate (xmlr.ReadToEnd (), xsdr.ReadToEnd ());
 		}
 		
@@ -293,8 +295,8 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void Bug584664 ()
 		{
-			Validate (File.ReadAllText ("Test/XmlFiles/xsd/584664a.xml"), File.ReadAllText ("Test/XmlFiles/xsd/584664a.xsd"));
-			Validate (File.ReadAllText ("Test/XmlFiles/xsd/584664b.xml"), File.ReadAllText ("Test/XmlFiles/xsd/584664b.xsd"));
+			Validate (File.ReadAllText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/584664a.xml")), File.ReadAllText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/584664a.xsd")));
+			Validate (File.ReadAllText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/584664b.xml")), File.ReadAllText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/xsd/584664b.xsd")));
 		}
 
 		[Test]
@@ -332,7 +334,7 @@ namespace MonoTests.System.Xml
 		public void FacetsOnBaseSimpleContentRestriction ()
 		{
 			XmlReaderSettings settings = new XmlReaderSettings ();
-			settings.Schemas.Add (null, "Test/XmlFiles/595947.xsd");
+			settings.Schemas.Add (null, TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/595947.xsd"));
 			settings.ValidationType = ValidationType.Schema;
 			settings.Schemas.Compile ();
 
@@ -358,7 +360,7 @@ namespace MonoTests.System.Xml
 				XmlDocument document = new XmlDocument ();
 				document.Load (reader);
 				document.Validate (null);
-			} catch (Exception e) {
+			} catch (Exception) {
 				if (!shouldFail)
 					throw;
 				return;
@@ -370,7 +372,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void Bug676993 ()
 		{
-			Validate (File.ReadAllText ("Test/XmlFiles/676993.xml"), File.ReadAllText ("Test/XmlFiles/676993.xsd"));
+			Validate (File.ReadAllText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/676993.xml")), File.ReadAllText (TestResourceHelper.GetFullPathOfResource ("Test/XmlFiles/676993.xsd")));
 		}
 		
 		[Test]

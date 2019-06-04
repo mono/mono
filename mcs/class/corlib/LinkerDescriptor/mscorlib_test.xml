@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<linker>
+	<assembly fullname="mscorlib">
+		<!-- Internal interface, needed by System.Security.Permission tests -->
+		<type fullname="System.Security.Permissions.UIPermission">
+			<method name="System.Security.Permissions.IBuiltInPermission.GetTokenIndex"/>
+		</type>
+	</assembly>
+</linker>

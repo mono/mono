@@ -7,6 +7,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2005, 2009 Novell, Inc (http://www.novell.com)
 //
+#if !MOBILE
 
 using System;
 using System.Security.Cryptography;
@@ -50,8 +51,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		public void Properties () 
 		{
-			info.CanonicalizationMethod = "http://www.go-mono.com/";
-			Assert.AreEqual ("http://www.go-mono.com/", info.CanonicalizationMethod, "CanonicalizationMethod");
+			info.CanonicalizationMethod = "http://www.example.com/";
+			Assert.AreEqual ("http://www.example.com/", info.CanonicalizationMethod, "CanonicalizationMethod");
 			info.Id = "Mono::";
 			Assert.AreEqual ("Mono::", info.Id, "Id");
 		}
@@ -60,7 +61,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		public void References () 
 		{
 			Reference r1 = new Reference ();
-			r1.Uri = "http://www.go-mono.com/";
+			r1.Uri = "http://www.example.com/";
 			r1.AddTransform (new XmlDsigBase64Transform ());
 			info.AddReference (r1);
 			Assert.AreEqual (1, info.References.Count, "References.Count 1");
@@ -212,3 +213,4 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 	}
 }
+#endif

@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE
 using System;
 using System.IdentityModel.Claims;
 using System.IdentityModel.Selectors;
@@ -33,13 +34,15 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.IdentityModel.Selectors
 {
 	[TestFixture]
 	public class X509ThumbprintKeyIdentifierClauseTest
 	{
-		static readonly X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-		static readonly X509Certificate2 cert2 = new X509Certificate2 ("Test/Resources/test2.pfx", "mono");
+		static readonly X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
+		static readonly X509Certificate2 cert2 = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test2.pfx"), "mono");
 
 		[Test]
 		public void Properties ()
@@ -55,3 +58,4 @@ namespace MonoTests.System.IdentityModel.Selectors
 		}
 	}
 }
+#endif

@@ -15,6 +15,7 @@ using System.Collections;
 
 namespace MonoTests.System.Threading {
 	[TestFixture]
+	[Category ("MultiThreaded")]
 	public class TimerTest {
 		// this bucket is used to avoid non-theadlocal issues
 		class Bucket {
@@ -324,6 +325,15 @@ namespace MonoTests.System.Threading {
 			using (Timer t = new Timer (o => DoNothing (o), null, 0, 0)) {
 				t.Change (new TimeSpan (UInt32.MaxValue), new TimeSpan (UInt32.MaxValue));
 			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Change_After_Dispose ()
+		{
+			var t = new Timer (o => DoNothing (o), null, 0, 0);
+			t.Dispose ();
+			t.Change (1, 1);
 		}
 	}
 }

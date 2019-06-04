@@ -6,6 +6,8 @@ using System.Text;
 using NUnit.Framework;
 using Microsoft.Build.BuildEngine;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.Microsoft.Build.Tasks
 {
 	[TestFixture]
@@ -17,9 +19,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		public CreateCSharpManifestResourceNameTest ()
 		{
-			string sample_cs_path = Path.Combine ("Test", Path.Combine ("resources", "Sample.cs"));
-			string junk_file = Path.Combine ("Test", Path.Combine ("resources", "junk.txt"));
-			string curdir = Path.GetDirectoryName (Environment.CurrentDirectory);
+			string sample_cs_path = TestResourceHelper.GetFullPathOfResource ("Test/resources/Sample.cs");
+			string junk_file = TestResourceHelper.GetFullPathOfResource ("Test/resources/junk.txt");
 
 			/* {Include, LogicalName, DependentUpon, TargetPath} */
 			resx_no_culture_files = new string [,] {
@@ -31,9 +32,9 @@ namespace MonoTests.Microsoft.Build.Tasks
 				// can't find a C# class in the .vb file
 				{ "foo with space.resx", "RandomName", junk_file, "bar with space.resx" },
 
-				{ "Test/resources/foo with space.resx", null, "Sample.cs", null },
-				{ "Test/resources/foo with space.resx", "RandomName", "Sample.cs", null },
-				{ "Test/resources/foo with space.resx", "RandomName", "Sample.cs", "bar with space.resx"},
+				{ TestResourceHelper.GetFullPathOfResource ("Test/resources/foo with space.resx"), null, "Sample.cs", null },
+				{ TestResourceHelper.GetFullPathOfResource ("Test/resources/foo with space.resx"), "RandomName", "Sample.cs", null },
+				{ TestResourceHelper.GetFullPathOfResource ("Test/resources/foo with space.resx"), "RandomName", "Sample.cs", "bar with space.resx"},
 
 				// W/o dependent file
 				{ "foo with space.resx", null, null, null },
@@ -52,8 +53,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 				// can't find a C# class in the .vb file
 				{ "foo with space.de.resx", "RandomName", junk_file, "bar with space.fr.resx" },
 
-				{ "Test/resources/foo with space.de.resx", null, "Sample.cs", null },
-				{ "Test/resources/foo with space.de.resx", "RandomName", "Sample.cs", null},
+				{ TestResourceHelper.GetFullPathOfResource ("Test/resources/foo with space.de.resx"), null, "Sample.cs", null },
+				{ TestResourceHelper.GetFullPathOfResource ("Test/resources/foo with space.de.resx"), "RandomName", "Sample.cs", null},
 
 				// W/o dependent file
 				{ "foo with space.de.resx", null, null, null },

@@ -7,21 +7,12 @@
 
 #include <config.h>
 #include <glib.h>
-
 #include "object.h"
 #include "w32handle-namespace.h"
+#include <mono/metadata/icalls.h>
 
 void
 mono_w32semaphore_init (void);
-
-gpointer
-ves_icall_System_Threading_Semaphore_CreateSemaphore_internal (gint32 initialCount, gint32 maximumCount, MonoString *name, gint32 *error);
-
-MonoBoolean
-ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount);
-
-gpointer
-ves_icall_System_Threading_Semaphore_OpenSemaphore_internal (MonoString *name, gint32 rights, gint32 *error);
 
 typedef struct MonoW32HandleNamedSemaphore MonoW32HandleNamedSemaphore;
 

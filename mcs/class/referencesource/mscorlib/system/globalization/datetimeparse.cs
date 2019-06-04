@@ -3915,6 +3915,12 @@ new DS[] { DS.ERROR, DS.TX_NNN,  DS.TX_NNN,  DS.TX_NNN,  DS.ERROR,   DS.ERROR,  
             return (true);
         }
 
+#if MONO // internal Span API
+        internal static bool TryParseQuoteString(ReadOnlySpan<char> format, int pos, StringBuilder result, out int returnValue)
+        {
+            return TryParseQuoteString(new string(format), pos, result, out returnValue);
+        }
+#endif
         //
         // The pos should point to a quote character. This method will
         // get the string enclosed by the quote character.

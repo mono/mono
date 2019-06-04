@@ -555,7 +555,7 @@ namespace System.Net {
             res.Add(new WebRequestPrefixElement("http", http));
             res.Add(new WebRequestPrefixElement("https", http));
             res.Add(new WebRequestPrefixElement("file", new FileWebRequestCreator ()));
-            res.Add(new WebRequestPrefixElement("ftp", new FtpRequestCreator ()));
+            res.Add(new WebRequestPrefixElement("ftp", new FtpWebRequestCreator ()));
 #else
             object cfg = ConfigurationManager.GetSection ("system.net/webRequestModules");
             WebRequestModulesSection s = cfg as WebRequestModulesSection;
@@ -1046,13 +1046,6 @@ namespace System.Net {
             }
         }
 #endif  // !FEATURE_PAL
-
-        /// <summary>
-        ///    <para>Provides an abstract way of having Async code callback into the request (saves a delegate)</para>
-        /// </summary>
-        internal virtual void RequestCallback(object obj) {
-            throw ExceptionHelper.MethodNotImplementedException;
-        }
 
         //
         // Default Web Proxy implementation.

@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Claims;
@@ -35,6 +36,8 @@ using System.Security.Principal;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 using MonoTests.System.IdentityModel.Common;
 
@@ -100,7 +103,7 @@ namespace MonoTests.System.IdentityModel.Selectors
 			a.Statements.Add (statement);
 			a.Issuer = "my_hero";
 
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			X509AsymmetricSecurityKey key =
 				new X509AsymmetricSecurityKey (cert);
 			a.SigningCredentials =
@@ -118,3 +121,4 @@ Console.Error.WriteLine (doc.OuterXml);
 		}
 	}
 }
+#endif

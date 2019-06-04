@@ -24,6 +24,8 @@
 #include "mono/sgen/sgen-client.h"
 #include "mono/sgen/gc-internal-agnostic.h"
 #include "mono/utils/mono-membar.h"
+#include "mono/utils/atomic.h"
+#include "mono/utils/unlocked.h"
 
 #define ptr_in_nursery sgen_ptr_in_nursery
 
@@ -120,7 +122,7 @@ sgen_collect_bridge_objects (int generation, ScanCopyContext ctx)
 			continue;
 
 		/* Object is a bridge object and major heap says it's dead  */
-		if (major_collector.is_object_live (object))
+		if (sgen_major_collector.is_object_live (object))
 			continue;
 
 		/* Nursery says the object is dead. */
@@ -184,7 +186,7 @@ sgen_finalize_in_range (int generation, ScanCopyContext ctx)
 	SGEN_HASH_TABLE_FOREACH (hash_table, GCObject *, object, gpointer, dummy) {
 		int tag = tagged_object_get_tag (object);
 		object = tagged_object_get_object (object);
-		if (!major_collector.is_object_live (object)) {
+		if (!sgen_major_collector.is_object_live (object)) {
 			gboolean is_fin_ready = sgen_gc_is_object_ready_for_finalization (object);
 			GCObject *copy = object;
 			copy_func (&copy, queue);
@@ -229,7 +231,7 @@ sgen_finalize_in_range (int generation, ScanCopyContext ctx)
 }
 
 /* LOCKING: requires that the GC lock is held */
-static void
+static MONO_PERMIT (need (sgen_gc_locked)) void
 register_for_finalization (GCObject *obj, void *user_data, int generation)
 {
 	SgenHashTable *hash_table = get_finalize_entry_hash_table (generation);
@@ -342,11 +344,11 @@ try_lock_stage_for_processing (int num_entries, volatile gint32 *next_entry)
 	gint32 old = *next_entry;
 	if (old < num_entries)
 		return FALSE;
-	return InterlockedCompareExchange (next_entry, -1, old) == old;
+	return mono_atomic_cas_i32 (next_entry, -1, old) == old;
 }
 
 /* LOCKING: requires that the GC lock is held */
-static void
+static MONO_PERMIT (need (sgen_gc_locked)) void
 process_stage_entries (int num_entries, volatile gint32 *next_entry, StageEntry *entries, void (*process_func) (GCObject*, void*, int))
 {
 	int i;
@@ -378,7 +380,7 @@ process_stage_entries (int num_entries, volatile gint32 *next_entry, StageEntry 
 			 * the entry to `USED`, in which case we must process it, so we must
 			 * detect that eventuality.
 			 */
-			if (InterlockedCompareExchange (&entries [i].state, STAGE_ENTRY_INVALID, STAGE_ENTRY_BUSY) != STAGE_ENTRY_BUSY)
+			if (mono_atomic_cas_i32 (&entries [i].state, STAGE_ENTRY_INVALID, STAGE_ENTRY_BUSY) != STAGE_ENTRY_BUSY)
 				goto retry;
 			continue;
 		case STAGE_ENTRY_USED:
@@ -410,25 +412,25 @@ process_stage_entries (int num_entries, volatile gint32 *next_entry, StageEntry 
 }
 
 #ifdef HEAVY_STATISTICS
-static guint64 stat_overflow_abort = 0;
-static guint64 stat_wait_for_processing = 0;
-static guint64 stat_increment_other_thread = 0;
-static guint64 stat_index_decremented = 0;
-static guint64 stat_entry_invalidated = 0;
-static guint64 stat_success = 0;
+static gint64 stat_success = 0;
+static gint64 stat_overflow_abort = 0;
+static gint64 stat_wait_for_processing = 0;
+static gint64 stat_increment_other_thread = 0;
+static gint64 stat_index_decremented = 0;
+static gint64 stat_entry_invalidated = 0;
 #endif
 
 static int
-add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entries, GCObject *obj, void *user_data)
+add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entries, GCObject *obj, SGenFinalizationProc user_data)
 {
 	gint32 index, new_next_entry, old_next_entry;
 	gint32 previous_state;
 
  retry:
 	for (;;) {
-		index = *next_entry;
+		index = UnlockedRead (next_entry);
 		if (index >= num_entries) {
-			HEAVY_STAT (++stat_overflow_abort);
+			HEAVY_STAT (UnlockedIncrement64 (&stat_overflow_abort));
 			return -1;
 		}
 		if (index < 0) {
@@ -436,29 +438,29 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 			 * Backed-off waiting is way more efficient than even using a
 			 * dedicated lock for this.
 			 */
-			while ((index = *next_entry) < 0) {
+			while ((index = UnlockedRead (next_entry)) < 0) {
 				/*
 				 * This seems like a good value.  Determined by timing
 				 * sgen-weakref-stress.exe.
 				 */
 				mono_thread_info_usleep (200);
-				HEAVY_STAT (++stat_wait_for_processing);
+				HEAVY_STAT (UnlockedIncrement64 (&stat_wait_for_processing));
 			}
 			continue;
 		}
 		/* FREE -> BUSY */
-		if (entries [index].state != STAGE_ENTRY_FREE ||
-				InterlockedCompareExchange (&entries [index].state, STAGE_ENTRY_BUSY, STAGE_ENTRY_FREE) != STAGE_ENTRY_FREE) {
+		if (UnlockedRead (&entries [index].state) != STAGE_ENTRY_FREE ||
+				mono_atomic_cas_i32 (&entries [index].state, STAGE_ENTRY_BUSY, STAGE_ENTRY_FREE) != STAGE_ENTRY_FREE) {
 			/*
 			 * If we can't get the entry it must be because another thread got
 			 * it first.  We don't want to wait for that thread to increment
 			 * `next_entry`, so we try to do it ourselves.  Whether we succeed
 			 * or not, we start over.
 			 */
-			if (*next_entry == index) {
-				InterlockedCompareExchange (next_entry, index + 1, index);
+			if (UnlockedRead (next_entry) == index) {
+				mono_atomic_cas_i32 (next_entry, index + 1, index);
 				//g_print ("tried increment for other thread\n");
-				HEAVY_STAT (++stat_increment_other_thread);
+				HEAVY_STAT (UnlockedIncrement64 (&stat_increment_other_thread));
 			}
 			continue;
 		}
@@ -477,7 +479,7 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 		 * sets it to `-1`, that also takes care of the case that the drainer is
 		 * currently running.
 		 */
-		old_next_entry = InterlockedCompareExchange (next_entry, index + 1, index);
+		old_next_entry = mono_atomic_cas_i32 (next_entry, index + 1, index);
 		if (old_next_entry < index) {
 			/* BUSY -> FREE */
 			/* INVALID -> FREE */
@@ -486,8 +488,8 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 			 * to `INVALID`.  In either case, there's no point in CASing.  Set
 			 * it to `FREE` and start over.
 			 */
-			entries [index].state = STAGE_ENTRY_FREE;
-			HEAVY_STAT (++stat_index_decremented);
+			UnlockedWrite (&entries [index].state, STAGE_ENTRY_FREE);
+			HEAVY_STAT (UnlockedIncrement64 (&stat_index_decremented));
 			continue;
 		}
 		break;
@@ -495,12 +497,12 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 
 	SGEN_ASSERT (0, index >= 0 && index < num_entries, "Invalid index");
 
-	entries [index].obj = obj;
-	entries [index].user_data = user_data;
+	UnlockedWritePointer ((volatile gpointer*)&entries [index].obj, obj);
+	UnlockedWritePointer (&entries [index].user_data, (gpointer)user_data);
 
 	mono_memory_write_barrier ();
 
-	new_next_entry = *next_entry;
+	new_next_entry = UnlockedRead (next_entry);
 	mono_memory_read_barrier ();
 	/* BUSY -> USED */
 	/*
@@ -508,27 +510,27 @@ add_stage_entry (int num_entries, volatile gint32 *next_entry, StageEntry *entri
 	 * `INVALID`.  In the former case, we set it to `USED` and we're finished.  In the
 	 * latter case, we reset it to `FREE` and start over.
 	 */
-	previous_state = InterlockedCompareExchange (&entries [index].state, STAGE_ENTRY_USED, STAGE_ENTRY_BUSY);
+	previous_state = mono_atomic_cas_i32 (&entries [index].state, STAGE_ENTRY_USED, STAGE_ENTRY_BUSY);
 	if (previous_state == STAGE_ENTRY_BUSY) {
 		SGEN_ASSERT (0, new_next_entry >= index || new_next_entry < 0, "Invalid next entry index - as long as we're busy, other thread can only increment or invalidate it");
-		HEAVY_STAT (++stat_success);
+		HEAVY_STAT (UnlockedIncrement64 (&stat_success));
 		return index;
 	}
 
 	SGEN_ASSERT (0, previous_state == STAGE_ENTRY_INVALID, "Invalid state transition - other thread can only make busy state invalid");
-	entries [index].obj = NULL;
-	entries [index].user_data = NULL;
+	UnlockedWritePointer ((volatile gpointer*)&entries [index].obj, NULL);
+	UnlockedWritePointer (&entries [index].user_data, NULL);
 	mono_memory_write_barrier ();
 	/* INVALID -> FREE */
-	entries [index].state = STAGE_ENTRY_FREE;
+	UnlockedWrite (&entries [index].state, STAGE_ENTRY_FREE);
 
-	HEAVY_STAT (++stat_entry_invalidated);
+	HEAVY_STAT (UnlockedIncrement64 (&stat_entry_invalidated));
 
 	goto retry;
 }
 
 /* LOCKING: requires that the GC lock is held */
-static void
+static MONO_PERMIT (need (sgen_gc_locked)) void
 process_fin_stage_entry (GCObject *obj, void *user_data, int index)
 {
 	if (ptr_in_nursery (obj))
@@ -546,7 +548,7 @@ sgen_process_fin_stage_entries (void)
 }
 
 void
-sgen_object_register_for_finalization (GCObject *obj, void *user_data)
+sgen_object_register_for_finalization (GCObject *obj, SGenFinalizationProc user_data)
 {
 	while (add_stage_entry (NUM_FIN_STAGE_ENTRIES, &next_fin_stage_entry, fin_stage_entries, obj, user_data) == -1) {
 		if (try_lock_stage_for_processing (NUM_FIN_STAGE_ENTRIES, &next_fin_stage_entry)) {
@@ -558,7 +560,7 @@ sgen_object_register_for_finalization (GCObject *obj, void *user_data)
 }
 
 /* LOCKING: requires that the GC lock is held */
-static void
+static MONO_PERMIT (need (sgen_gc_locked)) void
 finalize_with_predicate (SgenObjectPredicateFunc predicate, void *user_data, SgenHashTable *hash_table)
 {
 	GCObject *object;
@@ -628,12 +630,12 @@ void
 sgen_init_fin_weak_hash (void)
 {
 #ifdef HEAVY_STATISTICS
-	mono_counters_register ("FinWeak Successes", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_success);
-	mono_counters_register ("FinWeak Overflow aborts", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_overflow_abort);
-	mono_counters_register ("FinWeak Wait for processing", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_wait_for_processing);
-	mono_counters_register ("FinWeak Increment other thread", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_increment_other_thread);
-	mono_counters_register ("FinWeak Index decremented", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_index_decremented);
-	mono_counters_register ("FinWeak Entry invalidated", MONO_COUNTER_GC | MONO_COUNTER_ULONG, &stat_entry_invalidated);
+	mono_counters_register ("FinWeak Successes", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_success);
+	mono_counters_register ("FinWeak Overflow aborts", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_overflow_abort);
+	mono_counters_register ("FinWeak Wait for processing", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_wait_for_processing);
+	mono_counters_register ("FinWeak Increment other thread", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_increment_other_thread);
+	mono_counters_register ("FinWeak Index decremented", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_index_decremented);
+	mono_counters_register ("FinWeak Entry invalidated", MONO_COUNTER_GC | MONO_COUNTER_LONG, &stat_entry_invalidated);
 #endif
 }
 

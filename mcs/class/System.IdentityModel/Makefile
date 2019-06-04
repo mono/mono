@@ -29,12 +29,19 @@ LIB_REFS += System.Web.ApplicationServices
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
-
-EXTRA_DISTFILES = \
+TEST_RESOURCE_FILES = \
 	Test/Resources/test.cer \
 	Test/Resources/test_neg_serial.cer \
 	Test/Resources/test.pfx \
 	Test/Resources/test2.pfx
+
+TEST_MCS_FLAGS = $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
+TEST_LIB_REFS = System System.Xml System.Security System.Runtime.Serialization
+
+ifdef MOBILE_PROFILE
+NO_TEST = yes
+endif
+
+EXTRA_DISTFILES = $(TEST_RESOURCE_FILES)
 
 include ../../build/library.make

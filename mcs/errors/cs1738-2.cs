@@ -1,4 +1,4 @@
-// CS1738: Named arguments must appear after the positional arguments
+// CS1738: Named arguments must appear after the positional arguments when using language version older than 7.2
 // Line: 13
 
 using System;

@@ -42,7 +42,7 @@ namespace System.Windows.Forms
 	[DefaultProperty ("Items")]
 	[Designer ("System.Windows.Forms.Design.ToolStripDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DesignerSerializer ("System.Windows.Forms.Design.ToolStripCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
-	public class ToolStrip : ScrollableControl, IComponent, IDisposable, IToolStripData
+	public class ToolStrip : ScrollableControl, IComponent, IDisposable, IToolStripData, IArrangedContainer
 	{
 		#region Private Variables
 		private bool allow_item_reorder;
@@ -108,7 +108,7 @@ namespace System.Windows.Forms
 			this.default_drop_down_direction = ToolStripDropDownDirection.BelowRight;
 			this.displayed_items = new ToolStripItemCollection (this, null, true);
 			this.Dock = this.DefaultDock;
-			base.Font = new Font ("Tahoma", 8.25f);
+			base.Font = ToolStripManager.DefaultFont;
 			this.fore_color = Control.DefaultForeColor;
 			this.grip_margin = this.DefaultGripMargin;
 			this.grip_style = ToolStripGripStyle.Visible;
@@ -122,7 +122,7 @@ namespace System.Windows.Forms
 			this.show_item_tool_tips = this.DefaultShowItemToolTips;
 			base.TabStop = false;
 			this.text_direction = ToolStripTextDirection.Horizontal;
-			this.ResumeLayout ();
+			this.ResumeLayout (false);
 			
 			// Register with the ToolStripManager
 			ToolStripManager.AddToolStrip (this);
@@ -425,7 +425,9 @@ namespace System.Windows.Forms
 					this.layout_style = value;
 
 					if (this.layout_style == ToolStripLayoutStyle.Flow)
-						this.layout_engine = new FlowLayout ();
+						this.layout_engine = FlowLayout.Instance;
+					else if (this.layout_style == ToolStripLayoutStyle.Table)
+						this.layout_engine = TableLayout.Instance;
 					else
 						this.layout_engine = new ToolStripSplitStackLayout ();
 
@@ -714,7 +716,7 @@ namespace System.Windows.Forms
 				case ToolStripLayoutStyle.Flow:
 					return new FlowLayoutSettings (this);
 				case ToolStripLayoutStyle.Table:
-					//return new TableLayoutSettings ();
+					return new TableLayoutSettings (this);
 				case ToolStripLayoutStyle.StackWithOverflow:
 				case ToolStripLayoutStyle.HorizontalStackWithOverflow:
 				case ToolStripLayoutStyle.VerticalStackWithOverflow:
@@ -731,7 +733,6 @@ namespace System.Windows.Forms
 					// Event Handler must be stopped before disposing Items.
 					Events.Dispose();
 
-					CloseToolTip (null);
 					// ToolStripItem.Dispose modifes the collection,
 					// so we iterate it in reverse order
 					for (int i = Items.Count - 1; i >= 0; i--)
@@ -741,6 +742,12 @@ namespace System.Windows.Forms
 						this.overflow_button.drop_down.Dispose ();
 
 					ToolStripManager.RemoveToolStrip (this);
+
+					if (tooltip_timer != null)
+						tooltip_timer.Dispose();
+
+					if (tooltip_window != null)
+						tooltip_window.Dispose();
 				}
 				base.Dispose (disposing);
 			}
@@ -840,7 +847,6 @@ namespace System.Windows.Forms
 		protected override void OnLayout (LayoutEventArgs e)
 		{
 			base.OnLayout (e);
-
 			this.SetDisplayedItems ();
 			this.OnLayoutCompleted (EventArgs.Empty);
 			this.Invalidate ();
@@ -1017,8 +1023,8 @@ namespace System.Windows.Forms
 			base.OnPaintBackground (e);
 
 			Rectangle affected_bounds = new Rectangle (Point.Empty, this.Size);
-			ToolStripRenderEventArgs tsrea = new ToolStripRenderEventArgs (e.Graphics, this, affected_bounds, SystemColors.Control);
-			
+			ToolStripRenderEventArgs tsrea = new ToolStripRenderEventArgs (e.Graphics, this, affected_bounds, BackColor);
+
 			this.Renderer.DrawToolStripBackground (tsrea);
 		}
 
@@ -1412,80 +1418,7 @@ namespace System.Windows.Forms
 
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
-			return GetToolStripPreferredSize (proposedSize);
-		}
-		
-		internal virtual Size GetToolStripPreferredSize (Size proposedSize)
-		{
-			Size new_size = Size.Empty;
-
-			// TODO: This is total duct tape.  We really have to call into the correct
-			// layout engine, do a dry run of the layout, and find out our true
-			// preferred dimensions.
-			if (this.LayoutStyle == ToolStripLayoutStyle.Flow) {
-				Point currentLocation = Point.Empty;
-				int tallest = 0;
-				
-				foreach (ToolStripItem tsi in items)
-					if (tsi.Available) {
-						Size tsi_preferred = tsi.GetPreferredSize (Size.Empty);
-
-						if ((DisplayRectangle.Width - currentLocation.X) < (tsi_preferred.Width + tsi.Margin.Horizontal)) {
-
-							currentLocation.Y += tallest;
-							tallest = 0;
-							
-							currentLocation.X = DisplayRectangle.Left;
-						}
-
-						// Offset the left margin and set the control to our point
-						currentLocation.Offset (tsi.Margin.Left, 0);
-						tallest = Math.Max (tallest, tsi_preferred.Height + tsi.Margin.Vertical);
-						
-						// Update our location pointer
-						currentLocation.X += tsi_preferred.Width + tsi.Margin.Right;
-					}
-
-				currentLocation.Y += tallest;
-				return new Size (currentLocation.X + this.Padding.Horizontal, currentLocation.Y + this.Padding.Vertical);
-			}
-				
-			if (this.orientation == Orientation.Vertical) {
-				foreach (ToolStripItem tsi in this.items)
-					if (tsi.Available)  {
-						Size tsi_preferred = tsi.GetPreferredSize (Size.Empty);
-						new_size.Height += tsi_preferred.Height + tsi.Margin.Top + tsi.Margin.Bottom;
-
-						if (new_size.Width < (this.Padding.Horizontal + tsi_preferred.Width + tsi.Margin.Horizontal))
-							new_size.Width = (this.Padding.Horizontal + tsi_preferred.Width + tsi.Margin.Horizontal);
-					}
-
-				new_size.Height += (this.GripRectangle.Height + this.GripMargin.Vertical + this.Padding.Vertical + 4);
-				
-				if (new_size.Width == 0)
-					new_size.Width = ExplicitBounds.Width;
-					
-				return new_size;
-			} else {
-				foreach (ToolStripItem tsi in this.items) 
-					if (tsi.Available) {
-						Size tsi_preferred = tsi.GetPreferredSize (Size.Empty);
-						new_size.Width += tsi_preferred.Width + tsi.Margin.Left + tsi.Margin.Right;
-						
-						if (new_size.Height < (this.Padding.Vertical + tsi_preferred.Height + tsi.Margin.Vertical))
-							new_size.Height = (this.Padding.Vertical + tsi_preferred.Height + tsi.Margin.Vertical);
-					}
-					
-				new_size.Width += (this.GripRectangle.Width + this.GripMargin.Horizontal + this.Padding.Horizontal + 4);
-
-				if (new_size.Height == 0)
-					new_size.Height = ExplicitBounds.Height;
-
-				if (this is StatusStrip)
-					new_size.Height = Math.Max (new_size.Height, 22);
-					
-				return new_size;
-			}
+			return LayoutEngine.GetPreferredSize (this, proposedSize - Padding.Size) + Padding.Size;
 		}
 		
 		internal virtual ToolStrip GetTopLevelToolStrip ()
@@ -1593,6 +1526,10 @@ namespace System.Windows.Forms
 			return next_item;
 		}
 
+		ArrangedElementCollection IArrangedContainer.Controls {
+			get { return Items; }
+		}
+
 		#region Stuff for ToolTips
 		private void MouseEnteredItem (ToolStripItem item)
 		{
@@ -1606,8 +1543,10 @@ namespace System.Windows.Forms
 	
 		private void CloseToolTip (ToolStripItem item)
 		{
-			ToolTipTimer.Stop ();
-			ToolTipWindow.Hide (this);
+			if (tooltip_timer != null)
+				tooltip_timer.Stop ();
+			if (tooltip_window != null)
+				tooltip_window.Hide (this);
 			tooltip_currently_showing = null;
 			tooltip_state = ToolTip.TipState.Down;
 		}

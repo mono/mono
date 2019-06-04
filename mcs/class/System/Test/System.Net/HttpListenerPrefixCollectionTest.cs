@@ -31,6 +31,8 @@ using System.Net;
 using NUnit.Framework;
 using HLPC=System.Net.HttpListenerPrefixCollection;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.Net {
 	[TestFixture]
 	public class HttpListenerPrefixCollectionTest {
@@ -68,10 +70,11 @@ namespace MonoTests.System.Net {
 #endif
 		public void AddOne ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			HttpListener listener = new HttpListener ();
 			HLPC coll = listener.Prefixes;
 			listener.Start ();
-			coll.Add ("http://127.0.0.1:8181/");
+			coll.Add ($"http://127.0.0.1:{port}/");
 			Assert.AreEqual (1, coll.Count, "Count");
 			Assert.IsFalse (coll.IsReadOnly, "IsReadOnly");
 			Assert.IsFalse (coll.IsSynchronized, "IsSynchronized");
@@ -84,10 +87,11 @@ namespace MonoTests.System.Net {
 #endif
 		public void Duplicate ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			HttpListener listener = new HttpListener ();
 			HLPC coll = listener.Prefixes;
-			coll.Add ("http://127.0.0.1:8181/");
-			coll.Add ("http://127.0.0.1:8181/");
+			coll.Add ($"http://127.0.0.1:{port}/");
+			coll.Add ($"http://127.0.0.1:{port}/");
 			listener.Start ();
 			Assert.AreEqual (1, coll.Count, "Count");
 			Assert.IsFalse (coll.IsReadOnly, "IsReadOnly");

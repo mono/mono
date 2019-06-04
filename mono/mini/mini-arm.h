@@ -93,7 +93,6 @@
 #endif
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 
 #define MONO_ARCH_INST_SREG2_MASK(ins) (0)
 
@@ -169,7 +168,8 @@ typedef struct {
 	int gsharedvt_in;
 	/* Whenever this call uses fp registers */
 	int have_fregs;
-	gpointer caller_cinfo, callee_cinfo;
+	CallInfo *caller_cinfo;
+	CallInfo *callee_cinfo;
 	/* Maps stack slots/registers in the caller to the stack slots/registers in the callee */
 	/* A negative value means a register, i.e. -1=r0, -2=r1 etc. */
 	int map [MONO_ZERO_LEN_ARRAY];
@@ -213,7 +213,7 @@ typedef struct {
 	guint8  size    : 4; /* 1, 2, 4, 8, or regs used by RegTypeStructByVal */
 } ArgInfo;
 
-typedef struct {
+struct CallInfo {
 	int nargs;
 	guint32 stack_usage;
 	/* The index of the vret arg in the argument list for RegTypeStructByAddr */
@@ -221,27 +221,37 @@ typedef struct {
 	ArgInfo ret;
 	ArgInfo sig_cookie;
 	ArgInfo args [1];
-} CallInfo;
+};
+
+#define PARAM_REGS 4
+#define FP_PARAM_REGS 8
+
+typedef struct {
+	/* General registers */
+	host_mgreg_t gregs [PARAM_REGS];
+	/* Floating registers */
+	float fregs [FP_PARAM_REGS * 2];
+	/* Stack usage, used for passing params on stack */
+	guint32 stack_size;
+	guint8 *stack;
+} CallContext;
 
 /* Structure used by the sequence points in AOTed code */
-typedef struct {
+struct SeqPointInfo {
 	gpointer ss_trigger_page;
 	gpointer bp_trigger_page;
 	gpointer ss_tramp_addr;
 	guint8* bp_addrs [MONO_ZERO_LEN_ARRAY];
-} SeqPointInfo;
-
-
-#define PARAM_REGS 4
-#define FP_PARAM_REGS 8
-#define DYN_CALL_STACK_ARGS 10
+};
 
 typedef struct {
-	mgreg_t regs [PARAM_REGS + FP_PARAM_REGS];
 	double fpregs [FP_PARAM_REGS];
-	mgreg_t res, res2;
+	host_mgreg_t res, res2;
 	guint8 *ret;
 	guint32 has_fpregs;
+	guint32 n_stackargs;
+	/* This should come last as the structure is dynamically extended */
+	host_mgreg_t regs [PARAM_REGS];
 } DynCallArgs;
 
 void arm_patch (guchar *code, const guchar *target);
@@ -249,7 +259,7 @@ guint8* mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val);
 int mono_arm_is_rotated_imm8 (guint32 val, gint *rot_amount);
 
 void
-mono_arm_throw_exception_by_token (guint32 type_token, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs);
+mono_arm_throw_exception_by_token (guint32 type_token, host_mgreg_t pc, host_mgreg_t sp, host_mgreg_t *int_regs, gdouble *fp_regs);
 
 gpointer
 mono_arm_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpointer *callee, gpointer mrgctx_reg, double *caller_fregs, double *callee_fregs);
@@ -270,9 +280,9 @@ struct MonoLMF {
 	gpointer    lmf_addr;
 	/* This is only set in trampoline LMF frames */
 	MonoMethod *method;
-	mgreg_t    sp;
-	mgreg_t    ip;
-	mgreg_t    fp;
+	host_mgreg_t sp;
+	host_mgreg_t ip;
+	host_mgreg_t fp;
 	/* Currently only used in trampolines on armhf to hold d0-d15. We don't really
 	 * need to put d0-d7 in the LMF, but it simplifies the trampoline code.
 	 */
@@ -281,17 +291,19 @@ struct MonoLMF {
 	 * 0-4 should be considered undefined (execpt in the magic tramp)
 	 * sp is saved at IP.
 	 */
-	mgreg_t    iregs [14];
+	host_mgreg_t iregs [14];
 };
 
 typedef struct MonoCompileArch {
-	gpointer seq_point_info_var, ss_trigger_page_var;
-	gpointer seq_point_ss_method_var;
-	gpointer seq_point_bp_method_var;
-	gpointer vret_addr_loc;
-	gboolean omit_fp, omit_fp_computed;
-	gpointer cinfo;
-	gpointer *vfp_scratch_slots [2];
+	MonoInst *seq_point_info_var;
+	MonoInst *ss_trigger_page_var;
+	MonoInst *seq_point_ss_method_var;
+	MonoInst *seq_point_bp_method_var;
+	MonoInst *vret_addr_loc;
+	gboolean omit_fp;
+	gboolean omit_fp_computed;
+	CallInfo *cinfo;
+	MonoInst *vfp_scratch_slots [2];
 	int atomic_tmp_offset;
 	guint8 *thunks;
 	int thunks_size;
@@ -322,12 +334,16 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
 
+#define MONO_ARCH_INTERPRETER_SUPPORTED 1
 #define MONO_ARCH_AOT_SUPPORTED 1
 #define MONO_ARCH_LLVM_SUPPORTED 1
 
 #define MONO_ARCH_GSHARED_SUPPORTED 1
 #define MONO_ARCH_DYN_CALL_SUPPORTED 1
-#define MONO_ARCH_DYN_CALL_PARAM_AREA (DYN_CALL_STACK_ARGS * sizeof (mgreg_t))
+#define MONO_ARCH_DYN_CALL_PARAM_AREA 0
+
+#define MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE 1
+#define MONO_ARCH_HAVE_OP_TAILCALL_REG 1
 
 #if !(defined(TARGET_ANDROID) && defined(MONO_CROSS_COMPILE))
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
@@ -336,7 +352,6 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_EXCEPTIONS_INIT 1
 #define MONO_ARCH_HAVE_GET_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
-#define MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX 1
 #define MONO_ARCH_GC_MAPS_SUPPORTED 1
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
@@ -345,12 +360,16 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
-#define MONO_ARCH_HAVE_OP_TAIL_CALL 1
-#define MONO_ARCH_HAVE_DUMMY_INIT 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_HAVE_OP_GENERIC_CLASS_INIT 1
-#define MONO_ARCH_HAVE_INIT_LMF_EXT 1
+#define MONO_ARCH_FLOAT32_SUPPORTED 1
+#define MONO_ARCH_LLVM_TARGET_LAYOUT "e-p:32:32-n32-S64"
+
+#define MONO_ARCH_HAVE_INTERP_ENTRY_TRAMPOLINE 1
+#define MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE 1
+#define MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP 1
+#define MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED 1
 
 #if defined(TARGET_WATCHOS) || (defined(__linux__) && !defined(TARGET_ANDROID))
 #define MONO_ARCH_DISABLE_HW_TRAPS 1
@@ -362,7 +381,10 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_IMT_REG MONO_ARCH_RGCTX_REG
 /* First argument reg */
 #define MONO_ARCH_VTABLE_REG ARMREG_R0
-#define MONO_ARCH_EXC_REG ARMREG_R0
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->regs [0] = (gsize)exc; } while (0)
 
@@ -375,13 +397,13 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf)
 
 void
-mono_arm_throw_exception (MonoObject *exc, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs);
+mono_arm_throw_exception (MonoObject *exc, host_mgreg_t pc, host_mgreg_t sp, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean preserve_ips);
 
 void
-mono_arm_throw_exception_by_token (guint32 type_token, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs);
+mono_arm_throw_exception_by_token (guint32 type_token, host_mgreg_t pc, host_mgreg_t sp, host_mgreg_t *int_regs, gdouble *fp_regs);
 
 void
-mono_arm_resume_unwind (guint32 dummy1, mgreg_t pc, mgreg_t sp, mgreg_t *int_regs, gdouble *fp_regs);
+mono_arm_resume_unwind (guint32 dummy1, host_mgreg_t pc, host_mgreg_t sp, host_mgreg_t *int_regs, gdouble *fp_regs);
 
 gboolean
 mono_arm_thumb_supported (void);

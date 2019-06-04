@@ -118,9 +118,9 @@ static int get_file_map_access (int access)
 	}
 }
 
-static int convert_win32_error (int error, int def)
+static int convert_win32_error (int win32error, int default_)
 {
-	switch (error) {
+	switch (win32error) {
 	case ERROR_FILE_NOT_FOUND:
 		return FILE_NOT_FOUND;
 	case ERROR_FILE_EXISTS:
@@ -129,66 +129,77 @@ static int convert_win32_error (int error, int def)
 	case ERROR_ACCESS_DENIED:
 		return ACCESS_DENIED;
 	}
-	return def;
+	return default_;
 }
 
-static void *open_handle (void *handle, MonoString *mapName, int mode, gint64 *capacity, int access, int options, int *error)
+static void*
+open_handle (void *handle, const gunichar2 *mapName, gint mapName_length, int mode, gint64 *capacity, int access, int options, int *ioerror, MonoError *error)
 {
 	g_assert (handle != NULL);
 
-	wchar_t *w_mapName = NULL;
-	HANDLE result = NULL;
+	// INVALID_HANDLE_VALUE (-1) is valid, to make named shared memory,
+	// backed by physical memory / pagefile.
 
 	if (handle == INVALID_HANDLE_VALUE) {
 		if (*capacity <= 0 && mode != FILE_MODE_OPEN) {
-			*error = CAPACITY_MUST_BE_POSITIVE;
+			*ioerror = CAPACITY_MUST_BE_POSITIVE;
 			return NULL;
 		}
 #if SIZEOF_VOID_P == 4
 		if (*capacity > UINT32_MAX) {
-			*error = CAPACITY_LARGER_THAN_LOGICAL_ADDRESS_SPACE;
+			*ioerror = CAPACITY_LARGER_THAN_LOGICAL_ADDRESS_SPACE;
 			return NULL;
 		}
 #endif
 		if (!(mode == FILE_MODE_CREATE_NEW || mode == FILE_MODE_OPEN_OR_CREATE || mode == FILE_MODE_OPEN)) {
-			*error = INVALID_FILE_MODE;
+			*ioerror = INVALID_FILE_MODE;
 			return NULL;
 		}
 	} else {
 		FILE_STANDARD_INFO info;
-		if (!GetFileInformationByHandleEx ((HANDLE) handle, FileStandardInfo, &info, sizeof (FILE_STANDARD_INFO))) {
-			*error = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
+		gboolean getinfo_success;
+		MONO_ENTER_GC_SAFE;
+		getinfo_success = GetFileInformationByHandleEx (handle, FileStandardInfo, &info, sizeof (FILE_STANDARD_INFO));
+		MONO_EXIT_GC_SAFE;
+		if (!getinfo_success) {
+			*ioerror = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
 			return NULL;
 		}
 		if (*capacity == 0) {
 			if (info.EndOfFile.QuadPart == 0) {
-				*error = CAPACITY_SMALLER_THAN_FILE_SIZE;
+				*ioerror = CAPACITY_SMALLER_THAN_FILE_SIZE;
 				return NULL;
 			}
 		} else if (*capacity < info.EndOfFile.QuadPart) {
-			*error = CAPACITY_SMALLER_THAN_FILE_SIZE;
+			*ioerror = CAPACITY_SMALLER_THAN_FILE_SIZE;
 			return NULL;
 		}
 	}
 
-	w_mapName = mapName ? mono_string_to_utf16 (mapName) : NULL;
+	HANDLE result = NULL;
 
 	if (mode == FILE_MODE_CREATE_NEW || handle != INVALID_HANDLE_VALUE) {
-		result = CreateFileMappingW ((HANDLE)handle, NULL, get_page_access (access) | options, (DWORD)(((guint64)*capacity) >> 32), (DWORD)*capacity, w_mapName);
+		MONO_ENTER_GC_SAFE;
+		result = CreateFileMappingW (handle, NULL, get_page_access (access) | options, (DWORD)(((guint64)*capacity) >> 32), (DWORD)*capacity, mapName);
+		MONO_EXIT_GC_SAFE;
 		if (result && GetLastError () == ERROR_ALREADY_EXISTS) {
+			MONO_ENTER_GC_SAFE;
 			CloseHandle (result);
+			MONO_EXIT_GC_SAFE;
 			result = NULL;
-			*error = FILE_ALREADY_EXISTS;
+			*ioerror = FILE_ALREADY_EXISTS;
 		} else if (!result && GetLastError () != NO_ERROR) {
-			*error = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
+			*ioerror = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
 		}
 	} else if (mode == FILE_MODE_OPEN || mode == FILE_MODE_OPEN_OR_CREATE && access == MMAP_FILE_ACCESS_WRITE) {
-		result = OpenFileMappingW (get_file_map_access (access), FALSE, w_mapName);
+		MONO_ENTER_GC_SAFE;
+		result = OpenFileMappingW (get_file_map_access (access), FALSE, mapName);
+		MONO_EXIT_GC_SAFE;
 		if (!result) {
 			if (mode == FILE_MODE_OPEN_OR_CREATE && GetLastError () == ERROR_FILE_NOT_FOUND) {
-				*error = INVALID_FILE_MODE;
+				*ioerror = INVALID_FILE_MODE;
 			} else {
-				*error = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
+				*ioerror = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
 			}
 		}
 	} else if (mode == FILE_MODE_OPEN_OR_CREATE) {
@@ -209,18 +220,22 @@ static void *open_handle (void *handle, MonoString *mapName, int mode, gint64 *c
 		guint32 waitSleep = 0;
 
 		while (waitRetries > 0) {
-			result = CreateFileMappingW ((HANDLE)handle, NULL, get_page_access (access) | options, (DWORD)(((guint64)*capacity) >> 32), (DWORD)*capacity, w_mapName);
+			MONO_ENTER_GC_SAFE;
+			result = CreateFileMappingW (handle, NULL, get_page_access (access) | options, (DWORD)(((guint64)*capacity) >> 32), (DWORD)*capacity, mapName);
+			MONO_EXIT_GC_SAFE;
 			if (result)
 				break;
 			if (GetLastError() != ERROR_ACCESS_DENIED) {
-				*error = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
+				*ioerror = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
 				break;
 			}
-			result = OpenFileMappingW (get_file_map_access (access), FALSE, w_mapName);
+			MONO_ENTER_GC_SAFE;
+			result = OpenFileMappingW (get_file_map_access (access), FALSE, mapName);
+			MONO_EXIT_GC_SAFE;
 			if (result)
 				break;
 			if (GetLastError () != ERROR_FILE_NOT_FOUND) {
-				*error = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
+				*ioerror = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
 				break;
 			}
 			// increase wait time
@@ -234,81 +249,97 @@ static void *open_handle (void *handle, MonoString *mapName, int mode, gint64 *c
 		}
 
 		if (!result) {
-			*error = COULD_NOT_OPEN;
+			*ioerror = COULD_NOT_OPEN;
 		}
 	}
 
-	if (w_mapName)
-		g_free (w_mapName);
 	return result;
 }
 
-void *mono_mmap_open_file (MonoString *path, int mode, MonoString *mapName, gint64 *capacity, int access, int options, int *error)
+void*
+mono_mmap_open_file (const gunichar2 *path, gint path_length, int mode, const gunichar2 *mapName, gint mapName_length, gint64 *capacity, int access, int options, int *ioerror, MonoError *error)
 {
 	g_assert (path != NULL || mapName != NULL);
 
-	wchar_t *w_path = NULL;
 	HANDLE hFile = INVALID_HANDLE_VALUE;
 	HANDLE result = NULL;
 	gboolean delete_on_error = FALSE;
 
 	if (path) {
-		w_path = mono_string_to_utf16 (path);
 		WIN32_FILE_ATTRIBUTE_DATA file_attrs;
-		gboolean existed = GetFileAttributesExW (w_path, GetFileExInfoStandard, &file_attrs);
+		gboolean existed;
+		MONO_ENTER_GC_SAFE;
+		existed = GetFileAttributesExW (path, GetFileExInfoStandard, &file_attrs);
+		MONO_EXIT_GC_SAFE;
 		if (!existed && mode == FILE_MODE_CREATE_NEW && *capacity == 0) {
-			*error = CAPACITY_SMALLER_THAN_FILE_SIZE;
+			*ioerror = CAPACITY_SMALLER_THAN_FILE_SIZE;
 			goto done;
 		}
-		hFile = CreateFileW (w_path, get_file_access (access), FILE_SHARE_READ, NULL, mode, FILE_ATTRIBUTE_NORMAL, NULL);
+		MONO_ENTER_GC_SAFE;
+		hFile = CreateFileW (path, get_file_access (access), FILE_SHARE_READ, NULL, mode, FILE_ATTRIBUTE_NORMAL, NULL);
+		MONO_EXIT_GC_SAFE;
 		if (hFile == INVALID_HANDLE_VALUE) {
-			*error = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
+			*ioerror = convert_win32_error (GetLastError (), COULD_NOT_OPEN);
 			goto done;
 		}
 		delete_on_error = !existed;
+	} else {
+		// INVALID_HANDLE_VALUE (-1) is valid, to make named shared memory,
+		// backed by physical memory / pagefile.
 	}
 
-	result = open_handle (hFile, mapName, mode, capacity, access, options, error);
+	result = open_handle (hFile, mapName, mapName_length, mode, capacity, access, options, ioerror, error);
 
 done:
+	MONO_ENTER_GC_SAFE;
 	if (hFile != INVALID_HANDLE_VALUE)
 		CloseHandle (hFile);
 	if (!result && delete_on_error)
-		DeleteFileW (w_path);
-	if (w_path)
-		g_free (w_path);
+		DeleteFileW (path);
+	MONO_EXIT_GC_SAFE;
 
 	return result;
 }
 
-void *mono_mmap_open_handle (void *handle, MonoString *mapName, gint64 *capacity, int access, int options, int *error)
+void*
+mono_mmap_open_handle (void *handle, const gunichar2 *mapName, gint mapName_length, gint64 *capacity, int access, int options, int *ioerror, MonoError *error)
 {
 	g_assert (handle != NULL);
 
-	return open_handle (handle, mapName, FILE_MODE_OPEN, capacity, access, options, error);
+	return open_handle (handle, mapName, mapName_length, FILE_MODE_OPEN, capacity, access, options, ioerror, error);
 }
 
-void mono_mmap_close (void *mmap_handle)
+void
+mono_mmap_close (void *mmap_handle, MonoError *error)
 {
 	g_assert (mmap_handle);
-	CloseHandle ((HANDLE) mmap_handle);
+	MONO_ENTER_GC_SAFE;
+	CloseHandle (mmap_handle);
+	MONO_EXIT_GC_SAFE;
 }
 
-void mono_mmap_configure_inheritability (void *mmap_handle, gboolean inheritability)
+void
+mono_mmap_configure_inheritability (void *mmap_handle, gint32 inheritability, MonoError *error)
 {
 	g_assert (mmap_handle);
-	if (!SetHandleInformation ((HANDLE) mmap_handle, HANDLE_FLAG_INHERIT, inheritability ? HANDLE_FLAG_INHERIT : 0)) {
+	if (!SetHandleInformation (mmap_handle, HANDLE_FLAG_INHERIT, inheritability ? HANDLE_FLAG_INHERIT : 0)) {
 		g_error ("mono_mmap_configure_inheritability: SetHandleInformation failed with error %d!", GetLastError ());
 	}
 }
 
-void mono_mmap_flush (void *mmap_handle)
+void
+mono_mmap_flush (void *mmap_handle, MonoError *error)
 {
 	g_assert (mmap_handle);
 	MmapInstance *h = (MmapInstance *)mmap_handle;
 
-	if (FlushViewOfFile (h->address, h->length))
+	gboolean flush_success;
+	MONO_ENTER_GC_SAFE;
+	flush_success = FlushViewOfFile (h->address, h->length);
+	MONO_EXIT_GC_SAFE;
+	if (flush_success)
 		return;
+
 
 	// This replicates how CoreFX does MemoryMappedView.Flush ().
 
@@ -328,7 +359,10 @@ void mono_mmap_flush (void *mmap_handle)
 		mono_thread_info_sleep (pause, NULL);
 
 		for (int r = 0; r < MAX_FLUSH_RETIRES_PER_WAIT; r++) {
-			if (FlushViewOfFile (h->address, h->length))
+			MONO_ENTER_GC_SAFE;
+			flush_success = FlushViewOfFile (h->address, h->length);
+			MONO_EXIT_GC_SAFE;
+			if (flush_success)
 				return;
 
 			if (GetLastError () != ERROR_LOCK_VIOLATION)
@@ -343,7 +377,8 @@ void mono_mmap_flush (void *mmap_handle)
 	// TODO: Propagate error to caller
 }
 
-int mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mmap_handle, void **base_address)
+int
+mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void **mmap_handle, void **base_address, MonoError *error)
 {
 	static DWORD allocationGranularity = 0;
 	if (allocationGranularity == 0) {
@@ -361,13 +396,18 @@ int mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void *
 		return CAPACITY_LARGER_THAN_LOGICAL_ADDRESS_SPACE;
 #endif
 	
-	void *address = MapViewOfFile ((HANDLE) handle, get_file_map_access (access), (DWORD) (newOffset >> 32), (DWORD) newOffset, (SIZE_T) nativeSize);
+	void *address;
+	MONO_ENTER_GC_SAFE;
+	address = MapViewOfFile (handle, get_file_map_access (access), (DWORD) (newOffset >> 32), (DWORD) newOffset, (SIZE_T) nativeSize);
+	MONO_EXIT_GC_SAFE;
 	if (!address)
 		return convert_win32_error (GetLastError (), COULD_NOT_MAP_MEMORY);
 
 	// Query the view for its size and allocation type
 	MEMORY_BASIC_INFORMATION viewInfo;
+	MONO_ENTER_GC_SAFE;
 	VirtualQuery (address, &viewInfo, sizeof (MEMORY_BASIC_INFORMATION));
+	MONO_EXIT_GC_SAFE;
 	guint64 viewSize = (guint64) viewInfo.RegionSize;
 
 	// Allocate the pages if we were using the MemoryMappedFileOptions.DelayAllocatePages option
@@ -381,12 +421,17 @@ int mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void *
 	// and size of the region of pages with matching attributes starting from base address.
 	// VirtualQueryEx: http://msdn.microsoft.com/en-us/library/windows/desktop/aa366907(v=vs.85).aspx
 	if (((viewInfo.State & MEM_RESERVE) != 0) || viewSize < (guint64) nativeSize) {
-		void *tempAddress = VirtualAlloc (address, nativeSize != 0 ? nativeSize : viewSize, MEM_COMMIT, get_page_access (access));
+		void *tempAddress;
+		MONO_ENTER_GC_SAFE;
+		tempAddress = VirtualAlloc (address, nativeSize != 0 ? nativeSize : viewSize, MEM_COMMIT, get_page_access (access));
+		MONO_EXIT_GC_SAFE;
 		if (!tempAddress) {
 			return convert_win32_error (GetLastError (), COULD_NOT_MAP_MEMORY);
 		}
 		// again query the view for its new size
+		MONO_ENTER_GC_SAFE;
 		VirtualQuery (address, &viewInfo, sizeof (MEMORY_BASIC_INFORMATION));
+		MONO_EXIT_GC_SAFE;
 		viewSize = (guint64) viewInfo.RegionSize;
 	}
 
@@ -402,13 +447,17 @@ int mono_mmap_map (void *handle, gint64 offset, gint64 *size, int access, void *
 	return 0;
 }
 
-gboolean mono_mmap_unmap (void *mmap_handle)
+MonoBoolean
+mono_mmap_unmap (void *mmap_handle, MonoError *error)
 {
 	g_assert (mmap_handle);
 
 	MmapInstance *h = (MmapInstance *) mmap_handle;
 
-	gboolean result = UnmapViewOfFile (h->address);
+	gboolean result;
+	MONO_ENTER_GC_SAFE;
+	result = UnmapViewOfFile (h->address);
+	MONO_EXIT_GC_SAFE;
 
 	g_free (h);
 	return result;

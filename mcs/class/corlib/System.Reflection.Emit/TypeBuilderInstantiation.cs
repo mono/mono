@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
@@ -83,12 +83,12 @@ namespace System.Reflection.Emit
 		// Called from the runtime to return the corresponding finished Type object
 		internal override Type RuntimeResolve ()
 		{
-			if (generic_type is TypeBuilder && !(generic_type as TypeBuilder).IsCreated ())
-				AppDomain.CurrentDomain.DoTypeResolve (generic_type);
+			if (generic_type is TypeBuilder type_builder && !type_builder.IsCreated ())
+				AppDomain.CurrentDomain.DoTypeBuilderResolve (type_builder);
 			for (int i = 0; i < type_arguments.Length; ++i) {
 				var t = type_arguments [i];
-				if (t is TypeBuilder && !(t as TypeBuilder).IsCreated ())
-					AppDomain.CurrentDomain.DoTypeResolve (t);
+				if (t is TypeBuilder tb && !tb.IsCreated ())
+					AppDomain.CurrentDomain.DoTypeBuilderResolve (tb);
 			}
 			return InternalResolve ();
 		}
@@ -490,6 +490,10 @@ namespace System.Reflection.Emit
 		{
 			return new TypeBuilderInstantiation (type, typeArguments);
 		}
+
+		public override bool IsTypeDefinition => false;
+
+		public override bool IsConstructedGenericType => true;
 	}
 }
 #else

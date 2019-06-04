@@ -37,7 +37,6 @@
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0
 
 #define MONO_ARCH_USE_FPSTACK FALSE
-#define MONO_ARCH_FPSTACK_SIZE 0
 #ifdef SPARCV9
 #define MONO_ARCH_INST_FIXED_REG(desc) ((desc == 'o') ? sparc_o0 : -1)
 #else
@@ -53,7 +52,7 @@
 #define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (((desc == 'l') ? sparc_o0 : (desc == 'L' ? (hreg1 + 1) : -1)))
 #endif
 
-#if SIZEOF_VOID_P == 8
+#if TARGET_SIZEOF_VOID_P == 8
 #define MONO_ARCH_FRAME_ALIGNMENT 16
 #else
 #define MONO_ARCH_FRAME_ALIGNMENT 8
@@ -83,7 +82,6 @@ typedef struct MonoCompileArch {
 } MonoCompileArch;
 
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,start_func) do {	\
-		mono_arch_flush_register_windows ();	\
 		MONO_CONTEXT_SET_IP ((ctx), (start_func));	\
 		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\
@@ -107,6 +105,10 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_IMT_REG sparc_g1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
 #define MONO_ARCH_HAVE_TLS_INIT 1
+
+// Does the ABI have a volatile non-parameter register, so tailcall
+// can pass context to generics or interfaces?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0 // FIXME?
 
 void mono_arch_tls_init (void);
 
@@ -160,8 +162,6 @@ static void * __builtin_frame_address(int depth)
 #endif
 
 gboolean mono_sparc_is_virtual_call (guint32 *code);
-
-gpointer* mono_sparc_get_vcall_slot_addr (guint32 *code, mgreg_t *regs);
 
 void mono_sparc_flushw (void);
 

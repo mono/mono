@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <Type Name="CommandSet" FullName="Mono.Options.CommandSet">
   <TypeSignature Language="C#" Value="public class CommandSet : System.Collections.ObjectModel.KeyedCollection&lt;string,Mono.Options.Command&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CommandSet extends System.Collections.ObjectModel.KeyedCollection`2&lt;string, class Mono.Options.Command&gt;" />
@@ -90,17 +89,28 @@ class CommandDemo {
 			new Command ("echo", "Echo arguments to the screen") {
 				Run = ca =&gt; Console.WriteLine ("{0}", string.Join (" ", ca)),
 			},
-			new RequiresArgs (),
+			new RequiresArgsCommand (),
+			"Commands with spaces are supported:",
+			new Command ("has spaces", "spaces?!") {
+				Run = ca =&gt; Console.WriteLine ("spaces, yo! {0}", string.Join (" ", ca)),
+			},
+			"Nested CommandSets are also supported. They're invoked similarly to commands with spaces.",
+			new CommandSet ("set") {
+				new Command ("file type", "Does something or other.") {
+					Run = ca =&gt; Console.WriteLine ("File type set to: {0}", string.Join (" ", ca)),
+				},
+			},
 		};
+		commands.Add (commands);
 		return commands.Run (args);
 	}
 
 	public static int Verbosity;
 }
 
-class RequiresArgs : Command {
+class RequiresArgsCommand : Command {
 
-	public RequiresArgs ()
+	public RequiresArgsCommand ()
 		: base ("requires-args", "Class-based Command subclass")
 	{
 		Options = new OptionSet () {
@@ -149,6 +159,7 @@ class RequiresArgs : Command {
 Use `commands help` for usage.
 
 $ mono commands.exe --help
+# HelpCommand.Invoke: arguments=
 usage: commands COMMAND [OPTIONS]
 
 Mono.Options.CommandSet sample app.
@@ -159,8 +170,14 @@ Global options:
 Available commands:
         echo                 Echo arguments to the screen
         requires-args        Class-based Command subclass
+Commands with spaces are supported:
+        has spaces           spaces?!
+Nested CommandSets are also supported. They're invoked similarly to commands
+with spaces.
+        set file type        Does something or other.
 
 $ mono commands.exe help
+# HelpCommand.Invoke: arguments=
 usage: commands COMMAND [OPTIONS]
 
 Mono.Options.CommandSet sample app.
@@ -171,18 +188,27 @@ Global options:
 Available commands:
         echo                 Echo arguments to the screen
         requires-args        Class-based Command subclass
+Commands with spaces are supported:
+        has spaces           spaces?!
+Nested CommandSets are also supported. They're invoked similarly to commands
+with spaces.
+        set file type        Does something or other.
 
 $ mono commands.exe help --help
+# HelpCommand.Invoke: arguments=--help
 Usage: commands COMMAND [OPTIONS]
 Use `commands help COMMAND` for help on a specific command.
 
 Available commands:
 
         echo                 Echo arguments to the screen
+        has spaces           spaces?!
         requires-args        Class-based Command subclass
+        set file type        Does something or other.
         help                 Show this message and exit
 
 $ mono commands.exe help echo
+# HelpCommand.Invoke: arguments=echo
 --help
 
 $ mono commands.exe echo --help
@@ -196,6 +222,7 @@ commands: Missing required argument `--name=NAME`.
 commands: Use `commands help requires-args` for details.
 
 $ mono commands.exe help requires-args
+# HelpCommand.Invoke: arguments=requires-args
 usage: commands requires-args [OPTIONS]
 
 Class-based Command subclass example.
@@ -217,8 +244,15 @@ commands: Unknown command: invalid-command
 commands: Use `commands help` for usage.
 
 $ mono commands.exe help invalid-command
+# HelpCommand.Invoke: arguments=invalid-command
 commands: Unknown command: invalid-command
 commands: Use `commands help` for usage.
+
+$ mono commands.exe has spaces
+spaces, yo! 
+
+$ mono commands.exe set file type whatever
+File type set to: whatever
 </code>
       <para>
         The <c>commands.exe</c> output is short, informing the user that
@@ -423,6 +457,40 @@ commands: Use `commands help` for usage.
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="value" /> is <see langword="null" />.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public Mono.Options.CommandSet Add (Mono.Options.CommandSet nestedCommands);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.CommandSet Add(class Mono.Options.CommandSet nestedCommands) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Options.CommandSet</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="nestedCommands" Type="Mono.Options.CommandSet" />
+      </Parameters>
+      <Docs>
+        <param name="nestedCommands">
+          The <see cref="T:Mono.Options.OptionSet" /> to register.
+        </param>
+        <summary>Adds <paramref name="nestedCommands" /> as a suite of sub-commands.</summary>
+        <returns>
+          The current <see cref="T:Mono.Options.CommandSet" /> instance.
+          This is to permit method chaining.
+        </returns>
+        <remarks>
+          <para>
+            When a <c>CommandSet</c> is a child of a <c>CommandSet</c>, the nested
+            <c>CommandSet</c> commands can be invoked by prefixing the command name
+            with the <c>CommandSet</c> suite name within the arguments array.
+          </para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="option" /> is <see langword="null" />.
         </exception>
       </Docs>
     </Member>

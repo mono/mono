@@ -74,7 +74,7 @@ namespace System {
                 throw new ArgumentNullException("type");
             Contract.EndContractBlock();
 #if !FULL_AOT_RUNTIME
-            if (type is System.Reflection.Emit.TypeBuilder)
+            if (RuntimeFeature.IsDynamicCodeSupported && type is System.Reflection.Emit.TypeBuilder)
                 throw new NotSupportedException(Environment.GetResourceString("NotSupported_CreateInstanceWithTypeBuilder"));
 #endif
             // If they didn't specify a lookup, then we will provide the default lookup.
@@ -184,9 +184,14 @@ namespace System {
                                   null,
                                   ref stackMark);
         }
-            
+
+        public static object CreateInstance(Type type, bool nonPublic)
+        {
+            return CreateInstance(type, nonPublic, wrapExceptions: true);
+        }
+
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
-        static public Object CreateInstance(Type type, bool nonPublic)
+        internal static object CreateInstance(Type type, bool nonPublic, bool wrapExceptions)
         {
             if ((object)type == null)
                 throw new ArgumentNullException("type");
@@ -198,7 +203,7 @@ namespace System {
                 throw new ArgumentException(Environment.GetResourceString("Arg_MustBeType"), "type");
 
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
-            return rt.CreateInstanceDefaultCtor(!nonPublic, false, true, ref stackMark);
+            return rt.CreateInstanceDefaultCtor(!nonPublic, false, true, wrapExceptions, ref stackMark);
         }
 
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
@@ -228,7 +233,7 @@ namespace System {
                 return (T)rt.CreateInstanceSlow(true /*publicOnly*/, true /*skipCheckThis*/, false /*fillCache*/, ref stackMark);
             else
 #endif // FEATURE_CORECLR
-            return (T)rt.CreateInstanceDefaultCtor(true /*publicOnly*/, true /*skipCheckThis*/, true /*fillCache*/, ref stackMark);
+            return (T)rt.CreateInstanceDefaultCtor(true /*publicOnly*/, true /*skipCheckThis*/, true /*fillCache*/, true /*wrapExceptions*/, ref stackMark);
         }
 
         [ResourceExposure(ResourceScope.Machine)]
@@ -694,7 +699,7 @@ namespace System {
         }
 #endif // FEATURE_COMINTEROP                                  
 
-#if FEATURE_REMOTING || MOBILE_LEGACY
+#if !DISABLE_REMOTING && (FEATURE_REMOTING || MOBILE_LEGACY)
         //  This method is a helper method and delegates to the remoting 
         //  services to do the actual work. 
         [System.Security.SecurityCritical]  // auto-generated_required

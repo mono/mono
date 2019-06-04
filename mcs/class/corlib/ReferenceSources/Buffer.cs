@@ -1,7 +1,23 @@
+#if BIT64
+using nuint = System.UInt64;
+#else
+using nuint = System.UInt32;
+#endif
+
+using System.Runtime.CompilerServices;
+using System.Runtime;
+
+#if NETCORE
+using Internal.Runtime.CompilerServices;
+#endif
+
 namespace System
 {
 	partial class Buffer
 	{
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern unsafe void InternalMemcpy (byte *dest, byte *src, int count);
+
 		public static int ByteLength (Array array)
 		{
 			// note: the other methods in this class also use ByteLength to test for
@@ -12,7 +28,7 @@ namespace System
 
 			int length = _ByteLength (array);
 			if (length < 0)
-				throw new ArgumentException (Locale.GetText ("Object must be an array of primitives."));
+				throw new ArgumentException ("Object must be an array of primitives.");
 
 			return length;
 		}
@@ -42,25 +58,22 @@ namespace System
 				throw new ArgumentNullException ("dst");
 
 			if (srcOffset < 0)
-				throw new ArgumentOutOfRangeException ("srcOffset", Locale.GetText(
-					"Non-negative number required."));
+				throw new ArgumentOutOfRangeException ("srcOffset", "Non-negative number required.");
 
 			if (dstOffset < 0)
-				throw new ArgumentOutOfRangeException ("dstOffset", Locale.GetText (
-					"Non-negative number required."));
+				throw new ArgumentOutOfRangeException ("dstOffset", "Non-negative number required.");
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", Locale.GetText (
-					"Non-negative number required."));
+				throw new ArgumentOutOfRangeException ("count", "Non-negative number required.");
 
 			// We do the checks in unmanaged code for performance reasons
 			bool res = InternalBlockCopy (src, srcOffset, dst, dstOffset, count);
 			if (!res) {
 				// watch for integer overflow
 				if ((srcOffset > ByteLength (src) - count) || (dstOffset > ByteLength (dst) - count))
-					throw new ArgumentException (Locale.GetText (
+					throw new ArgumentException (
 						"Offset and length were out of bounds for the array or count is greater than " + 
-						"the number of elements from index to the end of the source collection."));
+						"the number of elements from index to the end of the source collection.");
 			}
 		}
 
@@ -181,34 +194,65 @@ namespace System
 				((byte*)dest) [0] = ((byte*)src) [0];
 		}
 
-		internal static unsafe void Memcpy (byte *dest, byte *src, int size) {
+		internal static unsafe void Memcpy (byte *dest, byte *src, int len) {
+			// For bigger lengths, we use the heavily optimized native code
+			if (len > 32) {
+				InternalMemcpy (dest, src, len);
+				return;
+			}
 			// FIXME: if pointers are not aligned, try to align them
 			// so a faster routine can be used. Handle the case where
 			// the pointers can't be reduced to have the same alignment
 			// (just ignore the issue on x86?)
 			if ((((int)dest | (int)src) & 3) != 0) {
-				if (((int)dest & 1) != 0 && ((int)src & 1) != 0 && size >= 1) {
+				if (((int)dest & 1) != 0 && ((int)src & 1) != 0 && len >= 1) {
 					dest [0] = src [0];
 					++dest;
 					++src;
-					--size;
+					--len;
 				}
-				if (((int)dest & 2) != 0 && ((int)src & 2) != 0 && size >= 2) {
+				if (((int)dest & 2) != 0 && ((int)src & 2) != 0 && len >= 2) {
 					((short*)dest) [0] = ((short*)src) [0];
 					dest += 2;
 					src += 2;
-					size -= 2;
+					len -= 2;
 				}
 				if ((((int)dest | (int)src) & 1) != 0) {
-					memcpy1 (dest, src, size);
+					memcpy1 (dest, src, len);
 					return;
 				}
 				if ((((int)dest | (int)src) & 2) != 0) {
-					memcpy2 (dest, src, size);
+					memcpy2 (dest, src, len);
 					return;
 				}
 			}
-			memcpy4 (dest, src, size);
+			memcpy4 (dest, src, len);
+		}
+
+		internal static unsafe void Memmove (byte *dest, byte *src, uint len)
+		{
+            if (((nuint)dest - (nuint)src < len) || ((nuint)src - (nuint)dest < len))
+				goto PInvoke;
+			Memcpy (dest, src, (int) len);
+			return;
+
+            PInvoke:
+            RuntimeImports.Memmove(dest, src, len);
+		}
+
+		internal static void Memmove<T>(ref T destination, ref T source, nuint elementCount)
+		{
+            if (!RuntimeHelpers.IsReferenceOrContainsReferences<T>()) {
+                unsafe {
+                    fixed (byte* pDestination = &Unsafe.As<T, byte>(ref destination), pSource = &Unsafe.As<T, byte>(ref source))
+                        Memmove(pDestination, pSource, (uint)elementCount * (uint)Unsafe.SizeOf<T>());
+                }
+			} else {
+                unsafe {
+                    fixed (byte* pDestination = &Unsafe.As<T, byte>(ref destination), pSource = &Unsafe.As<T, byte>(ref source))
+                        RuntimeImports.Memmove_wbarrier(pDestination, pSource, (uint)elementCount, typeof(T).TypeHandle.Value);
+				}
+			}
 		}
 	}
 }

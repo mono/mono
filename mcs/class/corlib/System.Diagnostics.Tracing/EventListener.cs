@@ -71,6 +71,11 @@ namespace System.Diagnostics.Tracing
 		public virtual void Dispose()
 		{
 		}
+
+#pragma warning disable CS0067
+		public event EventHandler<EventSourceCreatedEventArgs> EventSourceCreated;
+		public event EventHandler<EventWrittenEventArgs> EventWritten;
+#pragma warning restore CS0067
 	}
 }
 

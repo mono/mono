@@ -10,6 +10,7 @@
 typedef struct {
 	const char *event_name;
 	const int mask;
+	const int compat_mask;
 } NameAndMask;
 
 static NameAndMask event_list[] = {
@@ -24,7 +25,8 @@ static NameAndMask event_list[] = {
 	{ "counter", PROFLOG_COUNTER_EVENTS },
 	{ "jit", PROFLOG_JIT_EVENTS },
 
-	{ "alloc", PROFLOG_ALLOC_ALIAS },
+	{ "counters", PROFLOG_COUNTER_EVENTS },
+	{ "alloc", PROFLOG_ALLOC_ALIAS, PROFLOG_ALLOC_ALIAS | PROFLOG_GC_ROOT_EVENTS },
 	{ "legacy", PROFLOG_LEGACY_ALIAS },
 };
 
@@ -52,21 +54,42 @@ match_option (const char *arg, const char *opt_name, const char **rval)
 	}
 }
 
+static gboolean compat_args_parsing;
+
 static void
 parse_arg (const char *arg, ProfilerConfig *config)
 {
 	const char *val;
 
+	static gboolean first_processed;
+
+	if (!first_processed) {
+		first_processed = TRUE;
+		if (match_option (arg, "nodefaults", NULL)) {
+			//enables new style of default events, IE, nothing.
+			return;
+		} else {
+			config->enable_mask = PROFLOG_EXCEPTION_EVENTS | PROFLOG_COUNTER_EVENTS;
+			config->always_do_root_report = TRUE;
+			compat_args_parsing = TRUE;
+		}
+	}
+
 	if (match_option (arg, "help", NULL)) {
 		usage ();
+	} else if (match_option (arg, "nodefaults", NULL)) {
+		mono_profiler_printf_err ("The nodefaults option can only be used as the first argument.");
 	} else if (match_option (arg, "report", NULL)) {
 		config->do_report = TRUE;
 	} else if (match_option (arg, "debug", NULL)) {
 		config->do_debug = TRUE;
 	} else if (match_option (arg, "heapshot", &val)) {
 		set_hsmode (config, val);
-		if (config->hs_mode != MONO_PROFILER_HEAPSHOT_NONE)
+		if (config->hs_mode != MONO_PROFILER_HEAPSHOT_NONE) {
 			config->enable_mask |= PROFLOG_HEAPSHOT_ALIAS;
+			if (compat_args_parsing)
+				config->enable_mask |= PROFLOG_GC_MOVE_EVENTS;
+		}
 	} else if (match_option (arg, "heapshot-on-shutdown", NULL)) {
 		config->hs_on_shutdown = TRUE;
 		config->enable_mask |= PROFLOG_HEAPSHOT_ALIAS;
@@ -74,14 +97,17 @@ parse_arg (const char *arg, ProfilerConfig *config)
 		set_sample_freq (config, val);
 		config->sampling_mode = MONO_PROFILER_SAMPLE_MODE_PROCESS;
 		config->enable_mask |= PROFLOG_SAMPLE_EVENTS;
-	} else if (match_option (arg, "sample-real", &val)) {
+	} else if (match_option (arg, "sample-real", &val) || (compat_args_parsing && match_option (arg, "sampling-real", &val))) {
 		set_sample_freq (config, val);
 		config->sampling_mode = MONO_PROFILER_SAMPLE_MODE_REAL;
 		config->enable_mask |= PROFLOG_SAMPLE_EVENTS;
 	} else if (match_option (arg, "calls", NULL)) {
 		config->enter_leave = TRUE;
+	} else if (match_option (arg, "nocalls", NULL)) {
+		if (!compat_args_parsing)
+			mono_profiler_printf_err ("Could not parse argument '%s'", arg);
 	} else if (match_option (arg, "coverage", NULL)) {
-		config->collect_coverage = TRUE;
+		mono_profiler_printf_err ("The log profiler no longer supports code coverage. Please use the dedicated coverage profiler instead. See mono-profilers(1) for more information.");
 	} else if (match_option (arg, "zip", NULL)) {
 		config->use_zip = TRUE;
 	} else if (match_option (arg, "output", &val)) {
@@ -103,25 +129,40 @@ parse_arg (const char *arg, ProfilerConfig *config)
 	} else if (match_option (arg, "calldepth", &val)) {
 		char *end;
 		config->max_call_depth = strtoul (val, &end, 10);
-	} else if (match_option (arg, "covfilter-file", &val)) {
-		if (config->cov_filter_files == NULL)
-			config->cov_filter_files = g_ptr_array_new ();
-		g_ptr_array_add (config->cov_filter_files, g_strdup (val));
+	} else if (match_option (arg, "callspec", &val)) {
+		if (!val)
+			val = "";
+		if (val[0] == '\"')
+			++val;
+		char *spec = g_strdup (val);
+		size_t speclen = strlen (val);
+		if (speclen > 0 && spec[speclen - 1] == '\"')
+			spec[speclen - 1] = '\0';
+		char *errstr;
+		if (!mono_callspec_parse (spec, &config->callspec, &errstr)) {
+			mono_profiler_printf_err ("Could not parse callspec '%s': %s", spec, errstr);
+			g_free (errstr);
+			mono_callspec_cleanup (&config->callspec);
+		}
+		g_free (spec);
 	} else {
 		int i;
 
 		for (i = 0; i < G_N_ELEMENTS (event_list); ++i){
+			int mask = event_list [i].mask;
+			if (compat_args_parsing && event_list [i].compat_mask)
+				mask = event_list [i].compat_mask;
 			if (!strcmp (arg, event_list [i].event_name)) {
-				config->enable_mask |= event_list [i].mask;
+				config->enable_mask |= mask;
 				break;
 			} else if (!strncmp (arg, "no", 2) && !strcmp (arg + 2, event_list [i].event_name)) {
-				config->disable_mask |= event_list [i].mask;
+				config->disable_mask |= mask;
 				break;
 			}
 		}
 
 		if (i == G_N_ELEMENTS (event_list))
-			mono_profiler_printf_err ("Could not parse argument: %s", arg);
+			mono_profiler_printf_err ("Could not parse argument '%s'", arg);
 	}
 }
 
@@ -144,7 +185,7 @@ proflog_parse_args (ProfilerConfig *config, const char *desc)
 	const char *p;
 	gboolean in_quotes = FALSE;
 	char quote_char = '\0';
-	char *buffer = malloc (strlen (desc));
+	char *buffer = g_malloc (strlen (desc) + 1);
 	int buffer_pos = 0;
 
 	load_args_from_env_or_default (config);
@@ -216,7 +257,7 @@ set_hsmode (ProfilerConfig *config, const char* val)
 	unsigned int count = strtoul (val, &end, 10);
 
 	if (val == end) {
-		usage ();
+		mono_profiler_printf_err ("Could not parse heapshot mode");
 		return;
 	}
 
@@ -227,25 +268,41 @@ set_hsmode (ProfilerConfig *config, const char* val)
 		config->hs_mode = MONO_PROFILER_HEAPSHOT_X_GC;
 		config->hs_freq_gc = count;
 	} else
-		usage ();
+		mono_profiler_printf_err ("Could not parse heapshot mode");
 }
 
 static void
 set_sample_freq (ProfilerConfig *config, const char *val)
 {
+	int freq;
+
 	if (!val)
 		return;
 
-	char *end;
+	const char *p = val;
 
-	int freq = strtoul (val, &end, 10);
+	// Is it only the frequency (new option style)?
+	if (isdigit (*p))
+		goto parse;
 
-	if (val == end) {
-		usage ();
-		return;
+	// Skip the sample type for backwards compatibility.
+	while (isalpha (*p))
+		p++;
+
+	// Skip the forward slash only if we got a sample type.
+	if (p != val && *p == '/') {
+		p++;
+
+		char *end;
+
+parse:
+		freq = strtoul (p, &end, 10);
+
+		if (p == end)
+			mono_profiler_printf_err ("Could not parse sample frequency");
+		else
+			config->sample_freq = freq;
 	}
-
-	config->sample_freq = freq;
 }
 
 static void
@@ -261,8 +318,9 @@ usage (void)
 	for (int i = 0; i < G_N_ELEMENTS (event_list); i++)
 		mono_profiler_printf ("\t                         %s", event_list [i].event_name);
 
+	mono_profiler_printf ("\tnodefaults           disable legacy rules for enabling extra events");
 	mono_profiler_printf ("\t[no]alloc            enable/disable recording allocation info");
-	mono_profiler_printf ("\t[no]legacy           enable/disable pre mono 5.4 default profiler events");
+	mono_profiler_printf ("\t[no]legacy           enable/disable pre Mono 5.6 default profiler events");
 	mono_profiler_printf ("\tsample[-real][=FREQ] enable/disable statistical sampling of threads");
 	mono_profiler_printf ("\t                     FREQ in Hz, 100 by default");
 	mono_profiler_printf ("\t                     the -real variant uses wall clock time instead of process time");
@@ -271,11 +329,6 @@ usage (void)
 	mono_profiler_printf ("\theapshot-on-shutdown do a heapshot on runtime shutdown");
 	mono_profiler_printf ("\t                     this option is independent of the above option");
 	mono_profiler_printf ("\tcalls                enable recording enter/leave method events (very heavy)");
-	mono_profiler_printf ("\tcoverage             enable collection of code coverage data");
-	mono_profiler_printf ("\tcovfilter=ASSEMBLY   add ASSEMBLY to the code coverage filters");
-	mono_profiler_printf ("\t                     prefix a + to include the assembly or a - to exclude it");
-	mono_profiler_printf ("\t                     e.g. covfilter=-mscorlib");
-	mono_profiler_printf ("\tcovfilter-file=FILE  use FILE to generate the list of assemblies to be filtered");
 	mono_profiler_printf ("\tmaxframes=NUM        collect up to NUM stack frames");
 	mono_profiler_printf ("\tcalldepth=NUM        ignore method events for call chain depth bigger than NUM");
 	mono_profiler_printf ("\toutput=FILENAME      write the data to file FILENAME (the file is always overwritten)");
@@ -285,4 +338,6 @@ usage (void)
 	mono_profiler_printf ("\treport               create a report instead of writing the raw data to a file");
 	mono_profiler_printf ("\tzip                  compress the output data");
 	mono_profiler_printf ("\tport=PORTNUM         use PORTNUM for the listening command server");
+
+	exit (0);
 }

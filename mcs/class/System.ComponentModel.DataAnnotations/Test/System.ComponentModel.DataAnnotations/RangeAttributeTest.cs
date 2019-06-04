@@ -31,7 +31,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 using DA = global::System.ComponentModel.DataAnnotations;
 
@@ -130,49 +129,49 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			Assert.IsFalse (attr.IsValid ("12"), "#A1-2");
 			Assert.IsTrue (attr.IsValid (null), "#A1-3");
 			Assert.IsTrue (attr.IsValid (String.Empty), "#A1-4");
-			AssertExtensions.Throws <Exception> (() => {
+			Assert.Throws <ArgumentException> (() => {
 				attr.IsValid ("zero");
 			}, "#A1-5");
 			Assert.IsTrue (attr.IsValid (null), "#A1-6");
 			attr = new DA.RangeAttribute (typeof (int), "minus ten", "ten");
-			AssertExtensions.Throws<Exception> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				attr.IsValid ("0");
 			}, "#A2-1");
-			AssertExtensions.Throws<Exception> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				attr.IsValid ("12");
 			}, "#A2-2");
-			AssertExtensions.Throws<Exception> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				attr.IsValid ("zero");
 			}, "#A2-3");
 
 			attr = new DA.RangeAttribute (typeof (RangeAttributeTest), "-10", "10");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid (null);
 			}, "#A3-1");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				attr.IsValid (String.Empty);
 			}, "#A3-2");
 
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// The type MonoTests.System.ComponentModel.DataAnnotations.RangeAttributeTest must implement System.IComparable.
 				attr.IsValid ("10");
 			}, "#A3-3");
 
 			attr = new DA.RangeAttribute (null, "-10", "10");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// The OperandType must be set when strings are used for minimum and maximum values.
 				attr.IsValid ("10");
 			}, "#A4");
 
 			attr = new DA.RangeAttribute (typeof (int), null, "10");
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// The minimum and maximum values must be set.
 				attr.IsValid (10);
 			}, "#A5-1");
 
 			attr = new DA.RangeAttribute (typeof (int), "10", null);
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				// The minimum and maximum values must be set.
 				attr.IsValid (10);
 			}, "#A5-2");
@@ -201,7 +200,7 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
 			attr.ErrorMessage = "Param 0: {0}; Param 1: {1}; Param 2: {2}";
 			Assert.AreEqual ("Param 0: MyField; Param 1: -10; Param 2: 10", attr.FormatErrorMessage ("MyField"), "#A2-3");
 			attr.ErrorMessage = "Param 0: {0}; Param 1: {1}; Param 2: {2}; Param 3: {3}";
-			AssertExtensions.Throws<FormatException> (() => {
+			Assert.Throws<FormatException> (() => {
 				attr.FormatErrorMessage ("MyField");
 			}, "#A2-1");
 		}

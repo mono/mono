@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,13 +35,15 @@ using System.Configuration;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel.Configuration
 {
 	[TestFixture]
 	public class MetadataElementTest
 	{
 		ServiceModelSectionGroup OpenConfig (string name) {
-			return (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration ("Test/config/" + name).GetSectionGroup ("system.serviceModel");
+			return (ServiceModelSectionGroup) ConfigurationManager.OpenExeConfiguration (TestResourceHelper.GetFullPathOfResource ("Test/config/" + name)).GetSectionGroup ("system.serviceModel");
 		}
 
 		[Test]
@@ -132,3 +134,4 @@ namespace MonoTests.System.ServiceModel.Configuration
 
 	}
 }
+#endif

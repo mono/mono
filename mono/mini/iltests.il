@@ -6,6 +6,13 @@
 .assembly extern TestDriver {}
 .assembly extern mscorlib {}
 
+  .class private sequential ansi sealed beforefieldinit FLSharedKeys
+  extends [mscorlib]System.ValueType
+  {
+	 .pack 0
+	 .size 1
+  }
+
 .class public auto ansi sealed beforefieldinit Tests {
 
 	.method static public int32 Main(string[] args) il managed {
@@ -2257,6 +2264,7 @@ HAS_VALUE:	ldc.i4.1
 		ret
 	}
 
+/*	   Disabled until they can be fixed to run on amd64
 	.method public static float32 GetFloat32() cil managed noinlining
 	{
 		.maxstack  8
@@ -2264,7 +2272,6 @@ HAS_VALUE:	ldc.i4.1
 		ret
 	}
 
-/*	   Disabled until they can be fixed to run on amd64
 	.method public static default int32 test_0_implicit_float_to_double_conversion () cil managed
 	{
 		.maxstack 16
@@ -2599,7 +2606,6 @@ END:
 
 	.method public static default int32 test_0_wrap_non_exception_throws () cil managed
 	{
-	  .custom instance void [TestDriver]CategoryAttribute::.ctor(string) = ( 01 00 0C 21 49 4E 54 45 52 50 52 45 54 45 52 00 00 )   // ...!INTERPRETER.
 	  .try {
 	  	    newobj instance void class [mscorlib]System.Object::'.ctor'()
 			throw
@@ -2896,4 +2902,274 @@ END:
     IL_0018:  ldloc.0
 	ret
 	}
+
+    .field  private static  int32 byte_val
+    .field  private static  int32 short_val
+
+    .method static int32 widen_arguments (unsigned int8 a, int8 b, int16 c, unsigned int16 d) cil managed noinlining
+    {
+		.maxstack 4
+		ldsfld int32 Tests::byte_val
+		starg.s 0
+		ldarg.0
+		ldc.i4 128 //0x80
+		beq L_0
+
+		ldc.i4.1
+		ret
+L_0:
+		ldsfld int32 Tests::byte_val
+		starg.s 1
+		ldarg.1
+		ldc.i4 -128 //-0x80
+		beq L_1
+
+		ldc.i4.2
+		ret
+
+L_1:
+		ldsfld int32 Tests::short_val
+		starg.s 2
+		ldarg.2
+		ldc.i4 -32768 //-0x8000
+		beq L_2
+
+		ldc.i4.3
+		ret
+
+L_2:
+		ldsfld int32 Tests::short_val
+		starg.s 3
+		ldarg.3
+		ldc.i4 32768 //0x8000
+		beq L_3
+
+		ldc.i4.4
+		ret
+
+L_3:
+		ldc.i4.0
+		ret
+    }
+
+	.method public static int32 test_0_implicit_widen_of_argument_stores () cil managed
+	{
+		.maxstack 5
+		/*
+		This test verifies that storing an I4 value from the evail stack into a local variable triggers proper widening.
+		The values are picked so storing them have different values depending on the sign'ness of the local variable.
+		*/
+		ldc.i4 0x180
+		stsfld int32 Tests::byte_val
+		ldc.i4 0x18000
+		stsfld int32 Tests::short_val
+
+		ldc.i4.0
+		ldc.i4.0
+		ldc.i4.0
+		ldc.i4.0
+		call int32 Tests::widen_arguments (unsigned int8 a, int8 b, int16 c, unsigned int16 d)
+		ret
+	}
+
+    .method public static int32 test_0_implicit_widen_of_local_stores () cil managed
+    {
+		.maxstack 4
+		.locals init (
+			unsigned int8	V_0,
+			int8	V_1,
+			int16	V_2,
+			unsigned int16	V_3)
+
+		/*
+		This test verifies that storing an I4 value from the evail stack into a local variable triggers proper widening.
+		The values are picked so storing them have different values depending on the sign'ness of the local variable.
+		*/
+		ldc.i4 0x180
+		stsfld int32 Tests::byte_val
+		ldc.i4 0x18000
+		stsfld int32 Tests::short_val
+
+		ldsfld int32 Tests::byte_val
+		stloc.0
+		ldloc.0
+		ldc.i4 128 //0x80
+		beq L_0
+
+		ldc.i4.1
+		ret
+L_0:
+		ldsfld int32 Tests::byte_val
+		stloc.1
+		ldloc.1
+		ldc.i4 -128 //-0x80
+		beq L_1
+
+		ldc.i4.2
+		ret
+L_1:
+		ldsfld int32 Tests::short_val
+		stloc.2
+		ldloc.2
+		ldc.i4 -32768 //-0x8000
+		beq L_2
+
+		ldc.i4.3
+		ret
+L_2:
+		ldsfld int32 Tests::short_val
+		stloc.3
+		ldloc.3
+		ldc.i4 32768 //0x8000
+		beq L_3
+
+		ldc.i4.4
+		ret
+L_3:
+		ldc.i4.0
+		ret
+    }
+
+	.method public static bool llvm_regress_59436 () {
+		// Code size	   41 (0x29)
+		.maxstack  3
+		.locals init (float64 V_0,
+					  float64 V_1,
+					  valuetype [mscorlib]System.Decimal V_2)
+		IL_0000:  ldc.r8	 1
+		IL_0009:  stloc.0
+		IL_000a:  ldc.r8	 2
+		IL_0013:  stloc.1
+		IL_0014:  ldloc.0
+		IL_0015:  newobj	 instance void [mscorlib]System.Decimal::.ctor(float64)
+		IL_001a:  ldloca.s   V_2
+		IL_001c:  ldloc.1
+		IL_001d:  call	   instance void [mscorlib]System.Decimal::.ctor(float64)
+		IL_0022:  ldloc.2
+		IL_0023:  call	   bool [mscorlib]System.Decimal::op_LessThanOrEqual(valuetype [mscorlib]System.Decimal,
+																			   valuetype [mscorlib]System.Decimal)
+		IL_0028:  ret
+	}
+
+  .method private hidebysig static void  fail_inline() cil managed
+  {
+    // Code size       9 (0x9)
+    .maxstack  8
+    IL_0000:  ldc.i4.s   16
+    IL_0002:  conv.u
+    IL_0003:  ldc.i4.1
+    IL_0004:  mul.ovf.un
+    IL_0005:  localloc
+    IL_0007:  pop
+    IL_0008:  ret
+  }
+
+  .method private hidebysig static int32
+          always_inline(int32 op) cil managed aggressiveinlining
+  {
+    // Code size       24 (0x18)
+    .maxstack  8
+    IL_0000:  ldarg.0
+    IL_0001:  brfalse.s  IL_0009
+
+    IL_0003:  ldarg.0
+    IL_0004:  ldc.i4.2
+    IL_0005:  beq.s      IL_000b
+
+    IL_0007:  br.s       IL_000d
+
+    IL_0009:  ldc.i4.0
+    IL_000a:  ret
+
+    IL_000b:  ldc.i4.3
+    IL_000c:  ret
+
+    IL_000d:  call       void Tests::fail_inline()
+    IL_0012:  newobj     instance void [mscorlib]System.Exception::.ctor()
+    IL_0017:  throw
+  }
+
+  .method public hidebysig static int32 test_3_regress_59608() cil managed
+  {
+    .maxstack  8
+    IL_0000:  ldc.i4.2
+    IL_0001:  call       int32 Tests::always_inline(int32)
+    IL_000c:  ret
+  }
+
+  .method public hidebysig static int32 test_104_conv_u_and_string() cil managed
+  {
+    .maxstack  8
+	ldstr "hello"
+	conv.u
+	call int32 [mscorlib]System.Runtime.CompilerServices.RuntimeHelpers::get_OffsetToStringData()
+	add
+	ldind.u2
+	ret
+  }
+
+  .field public static class FLSharedKeys* keys
+
+  .method public hidebysig static int32 test_0_regress_60634 () cil managed
+  {
+	.maxstack 8
+	ldsflda     class FLSharedKeys* Tests::keys
+	initobj    class FLSharedKeys*
+	ldc.i4.0
+	ret
+  }
+
+  .method public hidebysig static int32 test_0_github_issue_6721 () cil managed
+  {
+       .maxstack 8
+       ldc.i4.0
+       conv.i8
+       ldc.i4.m1
+       conv.ovf.i8.un
+       sub.ovf
+       ldc.i8 0xffffffff00000001
+       beq.s IL_success
+       ldc.i4.1
+       ret
+       IL_success:
+       ldc.i4.0
+       ret
+  }
+
+  .method public hidebysig static int32 test_1_box_r8_r4_autoconv () cil managed
+  {
+		ldc.r8 1.234
+		box float64
+		unbox float64
+		ldind.r8
+		box float32
+		unbox float32
+		ldind.r4
+		conv.r8
+		conv.i4
+		ret
+	}
+
+	.method public hidebysig static int32 test_1_dont_verify_ptr_byrefs () cil managed
+	 {
+		.locals init (int32 v_0, int32 *& v_1, int32 *v_2)
+
+		//v_0 = 1
+		ldc.i4.1
+		stloc.0
+
+		//v_1 = &v_0 < bad store of `int32&` to ìnt32*&` but must work
+		ldloca v_0
+		stloc.1
+
+		//v_2 = (intptr)v_1
+		ldloc.1
+		conv.u
+		stloc.2
+
+		//return *v_2
+		ldloc.2
+		ldind.i4
+		ret
+	 }
 }

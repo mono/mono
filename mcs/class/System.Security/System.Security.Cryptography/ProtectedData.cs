@@ -51,7 +51,7 @@ namespace System.Security.Cryptography {
 			if (userData == null)
 				throw new ArgumentNullException ("userData");
 
-			// on Windows this is supported only under 2000 and later OS
+			// on Windows this is supported by CoreFX implementation
 			Check (scope);
 
 			switch (impl) {
@@ -59,14 +59,6 @@ namespace System.Security.Cryptography {
 			case DataProtectionImplementation.ManagedProtection:
 				try {
 					return ManagedProtection.Protect (userData, optionalEntropy, scope);
-				}
-				catch (Exception e) {
-					string msg = Locale.GetText ("Data protection failed.");
-					throw new CryptographicException (msg, e);
-				}
-			case DataProtectionImplementation.Win32CryptoProtect:
-				try {
-					return NativeDapiProtection.Protect (userData, optionalEntropy, scope);
 				}
 				catch (Exception e) {
 					string msg = Locale.GetText ("Data protection failed.");
@@ -84,7 +76,7 @@ namespace System.Security.Cryptography {
 			if (encryptedData == null)
 				throw new ArgumentNullException ("encryptedData");
 
-			// on Windows this is supported only under 2000 and later OS
+			// on Windows this is supported by CoreFX implementation
 			Check (scope);
 
 			switch (impl) {
@@ -92,14 +84,6 @@ namespace System.Security.Cryptography {
 			case DataProtectionImplementation.ManagedProtection:
 				try {
 					return ManagedProtection.Unprotect (encryptedData, optionalEntropy, scope);
-				}
-				catch (Exception e) {
-					string msg = Locale.GetText ("Data unprotection failed.");
-					throw new CryptographicException (msg, e);
-				}
-			case DataProtectionImplementation.Win32CryptoProtect:
-				try {
-					return NativeDapiProtection.Unprotect (encryptedData, optionalEntropy, scope);
 				}
 				catch (Exception e) {
 					string msg = Locale.GetText ("Data unprotection failed.");
@@ -126,18 +110,10 @@ namespace System.Security.Cryptography {
 		{
 			OperatingSystem os = Environment.OSVersion;
 			switch (os.Platform) {
-			case PlatformID.Win32NT:
-				Version v = os.Version;
-				if (v.Major < 5) {
-					impl = DataProtectionImplementation.Unsupported;
-				} else {
-					// Windows 2000 (5.0) and later
-					impl = DataProtectionImplementation.Win32CryptoProtect;
-				}
-				break;
 			case PlatformID.Unix:
 				impl = DataProtectionImplementation.ManagedProtection;
 				break;
+			case PlatformID.Win32NT:
 			default:
 				impl = DataProtectionImplementation.Unsupported;
 				break;
@@ -146,12 +122,6 @@ namespace System.Security.Cryptography {
 
 		private static void Check (DataProtectionScope scope)
 		{
-			if ((scope < DataProtectionScope.CurrentUser) || (scope > DataProtectionScope.LocalMachine)) {
-				string msg = Locale.GetText ("Invalid enum value '{0}' for '{1}'.", 
-					scope, "DataProtectionScope");
-				throw new ArgumentException (msg, "scope");
-			}
-
 			switch (impl) {
 			case DataProtectionImplementation.Unknown:
 				Detect ();

@@ -13,14 +13,19 @@
 
 #include <config.h>
 #include <glib.h>
-
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/icalls.h>
 
+#ifndef HOST_WIN32
 #define INVALID_SOCKET ((SOCKET)(guint32)(~0))
 #define SOCKET_ERROR (-1)
 
-#ifndef HOST_WIN32
 typedef gint SOCKET;
+
+typedef struct {
+	guint32 len;
+	gpointer buf;
+} WSABUF, *LPWSABUF;
 #endif
 
 /* This is a copy of System.Net.Sockets.SocketType */
@@ -169,128 +174,9 @@ typedef struct
 /* Safely access Mono.Posix.PeerCredData from native code */
 TYPED_HANDLE_DECL (MonoPeerCredData);
 
-gpointer
-ves_icall_System_Net_Sockets_Socket_Socket_internal (MonoObjectHandle this_obj, gint32 family, gint32 type,
-						     gint32 proto, gint32 *werror, MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_Close_internal (gsize sock, gint32 *werror, MonoError *error);
-
+ICALL_EXPORT
 gint32
 ves_icall_System_Net_Sockets_SocketException_WSAGetLastError_internal (void);
-
-gint32
-ves_icall_System_Net_Sockets_Socket_Available_internal (gsize sock, gint32 *werror, MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_Blocking_internal (gsize sock, gboolean block, gint32 *werror, MonoError *error);
-
-gpointer
-ves_icall_System_Net_Sockets_Socket_Accept_internal (gsize sock, gint32 *werror, gboolean blocking, MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_Listen_internal (gsize sock, guint32 backlog, gint32 *werror, MonoError *error);
-
-MonoObjectHandle
-ves_icall_System_Net_Sockets_Socket_LocalEndPoint_internal (gsize sock, gint32 af, gint32 *werror, MonoError *error);
-
-MonoObjectHandle
-ves_icall_System_Net_Sockets_Socket_RemoteEndPoint_internal (gsize sock, gint32 af, gint32 *werror, MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_Bind_internal (gsize sock, MonoObjectHandle sockaddr, gint32 *werror, MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_Connect_internal (gsize sock, MonoObjectHandle sockaddr, gint32 *werror, gboolean blocking, MonoError *error);
-
-gint32
-ves_icall_System_Net_Sockets_Socket_Receive_internal (gsize sock, MonoArrayHandle buffer, gint32 offset, gint32 count,
-						      gint32 flags, gint32 *werror, gboolean blocking, MonoError *error);
-
-gint32
-ves_icall_System_Net_Sockets_Socket_Receive_array_internal (gsize sock, MonoArrayHandle buffers, gint32 flags,
-							    gint32 *werror, gboolean blocking, MonoError *error);
-
-/* gint32 */
-/* ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal (gsize sock, MonoArray *buffer, gint32 offset, gint32 count, */
-/* 							  gint32 flags, MonoObject **sockaddr, gint32 *werror, gboolean blocking); */
-
-gint32
-ves_icall_System_Net_Sockets_Socket_ReceiveFrom_internal (gsize sock, MonoArrayHandle buffer, gint32 offset, gint32 count,
-							  gint32 flags, MonoObjectHandle sockaddr, gint32 *werror, gboolean blocking, MonoError *error);
-
-
-gint32
-ves_icall_System_Net_Sockets_Socket_Send_internal (gsize sock, MonoArrayHandle buffer, gint32 offset, gint32 count,
-						   gint32 flags, gint32 *werror, gboolean blocking, MonoError *error);
-
-gint32
-ves_icall_System_Net_Sockets_Socket_Send_array_internal (gsize sock, MonoArrayHandle buffers, gint32 flags,
-							 gint32 *werror, gboolean blocking, MonoError *error);
-
-gint32
-ves_icall_System_Net_Sockets_Socket_SendTo_internal (gsize sock, MonoArrayHandle buffer, gint32 offset, gint32 count,
-						     gint32 flags, MonoObjectHandle sockaddr, gint32 *werror,
-						     gboolean blocking, MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_Select_internal (MonoArrayHandle sockets, gint32 timeout, gint32 *werror, MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_Shutdown_internal (gsize sock, gint32 how, gint32 *werror, MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal (gsize sock, gint32 level, gint32 name,
-								  MonoObjectHandle obj_val, gint32 *werror,
-								  MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_GetSocketOption_arr_internal (gsize sock, gint32 level, gint32 name,
-								  MonoArrayHandle byte_val, gint32 *werror,
-								  MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal (gsize sock, gint32 level, gint32 name,
-							      MonoObjectHandle obj_val, MonoArrayHandle byte_val,
-							      gint32 int_val, gint32 *werror, MonoError *error);
-
-int
-ves_icall_System_Net_Sockets_Socket_IOControl_internal (gsize sock, gint32 code,
-							MonoArrayHandle input, MonoArrayHandle output,
-							gint32 *werror, MonoError *error);
-
-MonoBoolean
-ves_icall_System_Net_Dns_GetHostByName_internal (MonoStringHandle host, MonoStringHandleOut h_name,
-						 MonoArrayHandleOut h_aliases, MonoArrayHandleOut h_addr_list,
-						 gint32 hint, MonoError *error);
-
-MonoBoolean
-ves_icall_System_Net_Dns_GetHostByAddr_internal (MonoStringHandle addr, MonoStringHandleOut h_name,
-						 MonoArrayHandleOut h_aliases, MonoArrayHandleOut h_addr_list,
-						 gint32 hint, MonoError *error);
-
-MonoBoolean
-ves_icall_System_Net_Dns_GetHostName_internal (MonoStringHandleOut h_name, MonoError *error);
-
-MonoBoolean
-ves_icall_System_Net_Sockets_Socket_Poll_internal (gsize sock, gint mode, gint timeout, gint32 *werror, MonoError *error);
-
-void
-ves_icall_System_Net_Sockets_Socket_Disconnect_internal (gsize sock, MonoBoolean reuse, gint32 *werror, MonoError *error);
-
-MonoBoolean
-ves_icall_System_Net_Sockets_Socket_Duplicate_internal (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle, gint32 *werror, MonoError *error);
-
-gboolean
-ves_icall_System_Net_Sockets_Socket_SendFile_internal (gsize sock, MonoStringHandle filename,
-						       MonoArrayHandle pre_buffer, MonoArrayHandle post_buffer,
-						       gint flags, gint32 *werror, gboolean blocking, MonoError *error);
-
-void
-icall_cancel_blocking_socket_operation (MonoThreadObjectHandle thread, MonoError *error);
-
-gboolean
-ves_icall_System_Net_Sockets_Socket_SupportPortReuse (MonoProtocolType proto, MonoError *error);
 
 void
 mono_network_init(void);

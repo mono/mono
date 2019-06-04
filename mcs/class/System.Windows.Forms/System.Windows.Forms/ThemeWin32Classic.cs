@@ -1564,8 +1564,8 @@ namespace System.Windows.Forms
 			Color back_color, fore_color;
 			Rectangle text_draw = e.Bounds;
 			StringFormat string_format = new StringFormat ();
-			string_format.FormatFlags = StringFormatFlags.LineLimit;
-			
+			string_format.FormatFlags = StringFormatFlags.LineLimit | StringFormatFlags.NoWrap;
+
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
 				back_color = ColorHighlight;
 				fore_color = ColorHighlightText;
@@ -3176,7 +3176,7 @@ namespace System.Windows.Forms
 			}
 
 			sformat.LineAlignment = StringAlignment.Near;
-			dc.DrawString (group.Header, font, SystemBrushes.ControlText, text_bounds, sformat);
+			dc.DrawString (group.Header, font, SystemBrushes.Highlight, text_bounds, sformat);
 			dc.DrawLine (pen, header_bounds.Left, header_bounds.Top + text_height, header_bounds.Left + ListViewGroupLineWidth, 
 					header_bounds.Top + text_height);
 
@@ -4211,25 +4211,23 @@ namespace System.Windows.Forms
 
 			page_y = off_y + padding - preview.vbar_value;
 
-			if (preview.StartPage > 0) {
-				int p = preview.StartPage - 1;
-				for (int py = 0; py < preview.Rows + 1; py ++) {
-					page_x = off_x + padding - preview.hbar_value;
-					for (int px = 0; px < preview.Columns; px ++) {
-						if (p >= pis.Length)
-							continue;
-						Image image = preview.image_cache[p];
-						if (image == null)
-							image = pis[p].Image;
-						Rectangle dest = new Rectangle (new Point (page_x, page_y), page_size);
+			int p = preview.StartPage;
+			for (int py = 0; py < preview.Rows + 1; py ++) {
+				page_x = off_x + padding - preview.hbar_value;
+				for (int px = 0; px < preview.Columns; px ++) {
+					if (p >= pis.Length)
+						continue;
+					Image image = preview.image_cache[p];
+					if (image == null)
+						image = pis[p].Image;
+					Rectangle dest = new Rectangle (new Point (page_x, page_y), page_size);
 
-						pe.Graphics.DrawImage (image, dest, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+					pe.Graphics.DrawImage (image, dest, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
 
-						page_x += padding + page_size.Width;
-						p++;
-					}
-					page_y += padding + page_size.Height;
+					page_x += padding + page_size.Width;
+					p++;
 				}
+				page_y += padding + page_size.Height;
 			}
 		}
 		#endregion      // PrintPreviewControl

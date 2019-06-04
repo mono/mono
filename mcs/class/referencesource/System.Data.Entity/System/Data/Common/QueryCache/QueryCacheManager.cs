@@ -17,6 +17,7 @@ namespace System.Data.Common.QueryCache
     using System.Diagnostics;
     using System.Threading;
     using System.Data.Common.Internal.Materialization;
+    using System.Data.Entity.Util;
 
     /// <summary>
     /// Provides Query Execution Plan Caching Service 
@@ -28,12 +29,6 @@ namespace System.Data.Common.QueryCache
     internal class QueryCacheManager : IDisposable
     {
         #region Constants/Default values for configuration parameters
-        
-        /// <summary>
-        /// Default Soft maximum number of entries in the cache
-        /// Default value: 1000
-        /// </summary>
-        const int DefaultMaxNumberOfEntries = 1000;
 
         /// <summary>
         /// Default high mark for starting sweeping process
@@ -85,7 +80,7 @@ namespace System.Data.Common.QueryCache
         /// <returns>A new instance of <see cref="QueryCacheManager"/> configured with default entry count, load factor and recycle period</returns>
         internal static QueryCacheManager Create()
         {
-            return new QueryCacheManager(DefaultMaxNumberOfEntries, DefaultHighMarkPercentageFactor, DefaultRecyclerPeriodInMilliseconds);
+            return new QueryCacheManager(AppSettings.QueryCacheSize, DefaultHighMarkPercentageFactor, DefaultRecyclerPeriodInMilliseconds);
         }
 
         /// <summary>

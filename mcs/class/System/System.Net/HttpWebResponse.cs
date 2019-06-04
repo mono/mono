@@ -39,6 +39,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Text;
 
 namespace System.Net 
@@ -59,17 +61,31 @@ namespace System.Net
 		bool disposed;
 		Stream stream;
 		
+		public HttpWebResponse() { } // Added for NS2.1, it's empty in CoreFX too
+
 		// Constructors
-		
-		internal HttpWebResponse (Uri uri, string method, WebConnectionData data, CookieContainer container)
+
+		internal HttpWebResponse (Uri uri, string method, HttpStatusCode status, WebHeaderCollection headers)
 		{
 			this.uri = uri;
 			this.method = method;
-			webHeaders = data.Headers;
-			version = data.Version;
-			statusCode = (HttpStatusCode) data.StatusCode;
-			statusDescription = data.StatusDescription;
-			stream = data.stream;
+			this.statusCode = status;
+			this.statusDescription = HttpStatusDescription.Get (status);
+			this.webHeaders = headers;
+			version = HttpVersion.Version10;
+			contentLength = -1;
+		}
+		
+		internal HttpWebResponse (Uri uri, string method, WebResponseStream stream, CookieContainer container)
+		{
+			this.uri = uri;
+			this.method = method;
+			this.stream = stream;
+
+			webHeaders = stream.Headers ?? new WebHeaderCollection ();
+			version = stream.Version;
+			statusCode = stream.StatusCode;
+			statusDescription = stream.StatusDescription ?? HttpStatusDescription.Get (statusCode);
 			contentLength = -1;
 
 			try {
@@ -86,12 +102,12 @@ namespace System.Net
 			}
 
 			string content_encoding = webHeaders ["Content-Encoding"];
-			if (content_encoding == "gzip" && (data.request.AutomaticDecompression & DecompressionMethods.GZip) != 0) {
-				stream = new GZipStream (stream, CompressionMode.Decompress);
+			if (content_encoding == "gzip" && (stream.Request.AutomaticDecompression & DecompressionMethods.GZip) != 0) {
+				this.stream = new GZipStream (stream, CompressionMode.Decompress);
 				webHeaders.Remove (HttpRequestHeader.ContentEncoding);
 			}
-			else if (content_encoding == "deflate" && (data.request.AutomaticDecompression & DecompressionMethods.Deflate) != 0) {
-				stream = new DeflateStream (stream, CompressionMode.Decompress);
+			else if (content_encoding == "deflate" && (stream.Request.AutomaticDecompression & DecompressionMethods.Deflate) != 0) {
+				this.stream = new DeflateStream (stream, CompressionMode.Decompress);
 				webHeaders.Remove (HttpRequestHeader.ContentEncoding);
 			}
 		}
@@ -154,6 +170,8 @@ namespace System.Net
 
 				if (contentType == null)
 					contentType = webHeaders ["Content-Type"];
+				if (contentType == null)
+					contentType = string.Empty;
 
 				return contentType;
 			}
@@ -263,17 +281,6 @@ namespace System.Net
 			return (value != null) ? value : "";
 		}
 
-		internal void ReadAll ()
-		{
-			WebConnectionStream wce = stream as WebConnectionStream;
-			if (wce == null)
-				return;
-				
-			try {
-				wce.ReadAll ();
-			} catch {}
-		}
-
 		public override Stream GetResponseStream ()
 		{
 			CheckDisposed ();
@@ -310,12 +317,9 @@ namespace System.Net
 
 		public override void Close ()
 		{
-			if (stream != null) {
-				Stream st = stream;
-				stream = null;
-				if (st != null)
-					st.Close ();
-			}
+			var st = Interlocked.Exchange (ref stream, null);
+			if (st != null)
+				st.Close ();
 		}
 		
 		void IDisposable.Dispose ()

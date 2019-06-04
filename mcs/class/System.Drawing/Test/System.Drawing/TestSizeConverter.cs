@@ -128,7 +128,7 @@ namespace MonoTests.System.Drawing
 					"*1, 1");
 				Assert.Fail ("CF#5-1: must throw Exception");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "CF#5-2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "CF#5-2");
 				Assert.IsNotNull (ex.InnerException, "CF#5-3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "CF#5-4");
 			}
@@ -320,7 +320,7 @@ namespace MonoTests.System.Drawing
 				szconv.ConvertFromInvariantString ("hello");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
@@ -357,7 +357,7 @@ namespace MonoTests.System.Drawing
 				szconv.ConvertFromString ("hello");
 				Assert.Fail ("#1");
 			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}

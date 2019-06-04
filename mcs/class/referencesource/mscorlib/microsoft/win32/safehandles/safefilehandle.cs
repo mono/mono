@@ -15,7 +15,9 @@
 
 using System;
 using System.Security;
+#if !MONO
 using System.Security.Permissions;
+#endif
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
@@ -36,8 +38,10 @@ namespace Microsoft.Win32.SafeHandles {
         }
 
         [System.Security.SecurityCritical]
+#if !MONO
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
+#endif
         override protected bool ReleaseHandle()
         {
 #if MONO

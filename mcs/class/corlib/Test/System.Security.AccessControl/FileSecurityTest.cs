@@ -85,7 +85,7 @@ namespace MonoTests.System.Security.AccessControl
 			}
 		}
 
-		[Test, ExpectedException (typeof (InvalidOperationException))]
+		[Test, ExpectedException (typeof (UnauthorizedAccessException))]
 		public void EveryoneMayNotBeOwner ()
 		{
 			FileSecurity security;

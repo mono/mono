@@ -26,7 +26,7 @@ namespace MonoTests.System.ComponentModel
 			SynchronizationContext sc1 = new SynchronizationContext ();
 			SynchronizationContext sc2 = new SynchronizationContext ();
 
-#if MONOTOUCH || XAMMAC
+#if MONOTOUCH
 			Assert.IsNotNull (SynchronizationContext.Current, "A1");
 #else
 			Assert.IsNull (SynchronizationContext.Current, "A1");

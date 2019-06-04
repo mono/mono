@@ -50,28 +50,28 @@ namespace MonoTests.System.Runtime.Caching
 				relPath
 			};
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A1");
 
 			paths.Clear ();
 			paths.Add (null);
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A2");
 
 			paths.Clear ();
 			paths.Add (String.Empty);
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A3");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				monitor = new HostFileChangeMonitor (null);
 			}, "#A4");
 
 			paths.Clear ();
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A5");
 		}
@@ -109,7 +109,7 @@ namespace MonoTests.System.Runtime.Caching
 			// at System.Runtime.Caching.HostFileChangeMonitor.InitDisposableMembers()
 			// at System.Runtime.Caching.HostFileChangeMonitor..ctor(IList`1 filePaths)
 			// at MonoTests.System.Runtime.Caching.HostFileChangeMonitorTest.Constructor_MissingFiles() in c:\users\grendel\documents\visual studio 2010\Projects\System.Runtime.Caching.Test\System.Runtime.Caching.Test\System.Runtime.Caching\HostFileChangeMonitorTest.cs:line 68
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				monitor = new HostFileChangeMonitor (paths);
 			}, "#A1");
 
@@ -262,48 +262,5 @@ namespace MonoTests.System.Runtime.Caching
 			}
 		}
 
-		[Test]
-		public void UniqueId ()
-		{
-			Tuple<string, string, string, IList<string>> setup = null;
-			try {
-				setup = SetupMonitoring ();
-				FileInfo fi;
-				var monitor = new HostFileChangeMonitor (setup.Item4);
-				var sb = new StringBuilder ();
-
-				fi = new FileInfo (setup.Item2);
-				sb.AppendFormat ("{0}{1:X}{2:X}",
-					setup.Item2,
-					fi.LastWriteTimeUtc.Ticks,
-					fi.Length);
-
-				fi = new FileInfo (setup.Item3);
-				sb.AppendFormat ("{0}{1:X}{2:X}",
-					setup.Item3,
-					fi.LastWriteTimeUtc.Ticks,
-					fi.Length);
-
-				Assert.AreEqual (sb.ToString (), monitor.UniqueId, "#A1");
-
-				var list = new List<string> (setup.Item4);
-				list.Add (setup.Item1);
-
-				monitor = new HostFileChangeMonitor (list);
-				var di = new DirectoryInfo (setup.Item1);
-				sb.AppendFormat ("{0}{1:X}{2:X}",
-					setup.Item1,
-					di.LastWriteTimeUtc.Ticks,
-					-1L);
-				Assert.AreEqual (sb.ToString (), monitor.UniqueId, "#A2");
-
-				list.Add (setup.Item1);
-				monitor = new HostFileChangeMonitor (list);
-				Assert.AreEqual (sb.ToString (), monitor.UniqueId, "#A3");
-				monitor.Dispose ();
-			} finally {
-				CleanupMonitoring (setup);
-			}
-		}
 	}
 }

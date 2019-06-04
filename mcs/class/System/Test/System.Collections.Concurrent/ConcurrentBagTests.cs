@@ -68,6 +68,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void BasicAddTakeFromOtherThread ()
 		{
 			var t = new Thread (() => bag.Add (1));
@@ -88,6 +89,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void AddFromMultipleThreadTakeFromOneThread ()
 		{
 			var threads = new Thread[10];
@@ -115,6 +117,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void AddFromOneThreadTakeFromMultiple ()
 		{
 			var threads = new Thread[10];
@@ -152,6 +155,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void BasicAddPeekFromOtherThread ()
 		{
 			var t = new Thread (() => bag.Add (1));
@@ -168,6 +172,7 @@ namespace MonoTests.System.Collections.Concurrent
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 		public void AddFromOneThreadPeekFromMultiple ()
 		{
 			var threads = new Thread[10];

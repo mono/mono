@@ -23,12 +23,15 @@
  */
 
 /*
-
-Usage: uni2tab
-
-Required files from ftp.unicode.org: Unihan.txt, CP932.TXT
-
-*/
+ *
+ * Usage: uni2tab
+ *
+ * Required files from ftp.unicode.org: Unihan.txt, CP932.TXT
+ *
+ * Unihan.txt and CP932.TXT can be found at:
+ * ftp://www.unicode.org/Public/5.0.0/ucd/Unihan.txt
+ * ftp://ftp.unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP932.TXT
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -320,6 +323,13 @@ static void convertSJISLine(char *buf)
 	{
 		/* Non-CJK characters within JIS */
 		processJis0208(code, (offset / 94) + 1, (offset % 94) + 1);
+	}
+	else if(code >= 0x00A7 && code <= 0x00F7)
+	{
+		/* Non-CJK characters within JIS for which unicodeToJis should not be
+		 * edited. In addition to this, do not track lowJis and highJis. */
+		jisx0208ToUnicode[offset] = (unsigned short)(code & 0xFF);
+		jisx0208ToUnicode[offset + 1] = (((unsigned short)(code & 0x00FF)) >> 8);
 	}
 }
 

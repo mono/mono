@@ -167,6 +167,27 @@ namespace Mono.Security.Interface
 		}
 
 		#endregion
+
+		#region Internal Version
+
+		/*
+		 * Internal version number (not in any way related to the TLS Version).
+		 *
+		 * Used by the web-tests to check whether
+		 * the current Mono contains certain features or bug fixes.
+		 *
+		 * Negative version numbers are reserved for martin work branches.
+		 *
+		 * Version History:
+		 *
+		 * - 1: everything up until May 2018
+		 * - 2: the new ServicePointScheduler changes have landed
+		 * - 3: full support for Client Certificates
+		 *
+		 */
+		internal const int InternalVersion = 3;
+
+		#endregion
 	}
 }
 

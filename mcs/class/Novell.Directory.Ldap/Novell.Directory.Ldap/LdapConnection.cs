@@ -34,7 +34,6 @@ using Novell.Directory.Ldap;
 using Novell.Directory.Ldap.Asn1;
 using Novell.Directory.Ldap.Rfc2251;
 using Novell.Directory.Ldap.Utilclass;
-using Mono.Security.Protocol.Tls;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Novell.Directory.Ldap

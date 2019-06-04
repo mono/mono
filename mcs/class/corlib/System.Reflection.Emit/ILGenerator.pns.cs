@@ -26,7 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if FULL_AOT_RUNTIME
+#if !MONO_FEATURE_SRE
+
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit
 {
@@ -36,7 +38,7 @@ namespace System.Reflection.Emit
 		{
 		}
 
-		public int ILOffset {
+		public virtual int ILOffset {
 			get	{
 				throw new PlatformNotSupportedException ();
 			}
@@ -183,6 +185,8 @@ namespace System.Reflection.Emit
 			throw new PlatformNotSupportedException ();
 		}
 
+		public virtual void EmitCalli (OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] parameterTypes) => throw new PlatformNotSupportedException ();
+
 		public virtual void EmitWriteLine (LocalBuilder localBuilder)
 		{
 			throw new PlatformNotSupportedException ();
@@ -209,6 +213,11 @@ namespace System.Reflection.Emit
 		}
 
 		public virtual void MarkLabel (Label loc)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+
+		public virtual void MarkSequencePoint (System.Diagnostics.SymbolStore.ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int endColumn)
 		{
 			throw new PlatformNotSupportedException ();
 		}

@@ -1,0 +1,378 @@
+.TH mono-profilers 1
+.SH NAME
+mono\-profilers \- Mono's bundled profiler modules
+.SH SYNOPSIS
+\fBmono\ \-\-profile=log\fR[:\fIoption\fR,...] \fIprogram.exe\fR [\fIargs\fR]...
+.PP
+\fBmono\ \-\-profile=coverage\fR[:\fIoption\fR,...] \fIprogram.exe\fR [\fIargs\fR]...
+.PP
+\fBmono\ \-\-profile=aot\fR[:\fIoption\fR,...] \fIprogram.exe\fR [\fIargs\fR]...
+.SH DESCRIPTION
+Mono ships with a few profiler modules that enable most typical
+profiling scenarios. This page describes each of them in the sections
+below.
+.SH LOG PROFILER
+The log profiler is Mono's general-purpose performance profiler. It
+can collect a wide variety of data that can be analyzed by tools such
+as \fBmprof\-report\fR(1) or the Xamarin Profiler.
+.PP
+By default, the log profiler writes its output to \fIoutput.mlpd\fR.
+Refer to the \fImono/profiler/log.h\fR file in the Mono source tree
+for documentation on the log profiler's file format.
+.PP
+A default invocation of the log profiler gathers only basic data:
+Metadata load and unload events, thread start and stop events,
+performance counter samples, exception throws, etc. Most users will
+want to enable some of the heavier features such as GC allocation
+recording, statistical sampling, heap snapshotting (heapshots), or
+method entry and exit instrumentation. See the \fBOptions\fR
+sub-section.
+.PP
+Note that, in most realistic scenarios, the log profiler will record
+a vast amount of data. This can lead to very large log files. (The
+\fBzip\fR and \fBreport\fR options can help deal with this.)
+.SS Options
+The log profiler supports the following options:
+.TP
+\fBhelp\fR
+Print usage instructions.
+.TP
+\fBoutput\fR=[\fI+\fR|\fI#\fR|\fI|\fR]\fIfile\fR
+Write log data to \fIfile\fR. The optional modifiers are:
+.RS
+.ne 8
+.TP
+\fB+\fR
+The program PID is appended to the file name. For example,
+\fBoutput=+out.mlpd\fR outputs to \fIout.mlpd.1234\fR if the PID is
+\fB1234\fR.
+.TP
+\fB#\fR
+\fIfile\fR is parsed as a file descriptor number, which is opened
+with \fBfdopen\fR(3). This is mainly useful in embedding scenarios.
+.TP
+\fB|\fR
+\fIfile\fR is treated as a program name. It will be started with
+\fBpopen\fR(3) and the log data will be piped to its standard input.
+.RE
+.TP
+\fBreport\fR
+Generate a report directly instead of writing the log data to a file.
+If this option is used together with the \fBoutput\fR option, the
+report will be written to the specified file instead of the log data.
+.TP
+\fBzip\fR
+Compress the output file with \fBgzip\fR(1).
+.TP
+\fBport\fR=\fIport\fR
+Use \fIport\fR to listen for command server connections. See the
+\fBCommand server\fR sub-section.
+.TP
+\fBnodefaults\fR
+Disables pre Mono 5.6 compatibility. In particular, this disables
+exception events and performance counter sampling by default. It also
+makes it so that GC move events won't be enabled by default when
+heapshots are enabled. To use this option, it must be the first
+option given to the log profiler.
+.IP
+This option will be the default in a future version of the log
+profiler.
+.TP
+[\fBno\fR]\fIevent\fR
+Enable or disable gathering data for \fIevent\fR, which can be one
+of:
+.RS
+.TP
+\fBexception\fR
+Exception throw and clause (\fBcatch\fR, \fBfinally\fR, etc)
+evaluation events. Enabled by default unless \fBnodefaults\fR is
+used.
+.TP
+\fBmonitor\fR
+Monitor lock contention, acquisition, and release events.
+.TP
+\fBgc\fR
+GC start, progress, stop, and resize events.
+.TP
+\fBgcalloc\fR
+GC allocation events.
+.TP
+\fBgcmove\fR
+GC move events.
+.TP
+\fBgcroot\fR
+GC root report events. Generated on every collection if enabled,
+unless \fBnodefaults\fR is used, in which case, they're only
+generated on heapshots.
+.TP
+\fBgchandle\fR
+GC handle creation and deletion events.
+.TP
+\fBfinalization\fR
+Object finalization events.
+.TP
+\fBcounter\fR
+Performance counter sample events. Enabled by default unless
+\fBnodefaults\fR is used.
+.TP
+\fBjit\fR
+JIT code buffer events.
+.TP
+\fBalloc\fR
+Alias for \fBgc\fR, \fBgcalloc\fR, and \fBgcmove\fR.
+.TP
+\fBlegacy\fR
+Alias for \fBexception\fR, \fBmonitor\fR, \fBgc\fR, \fBgcmove\fR,
+\fBgcroot\fR, \fBgchandle\fR, \fBfinalization\fR, and \fBcounter\fR.
+.RE
+.TP
+\fBsample\fR[\fB\-real\fR][=\fIfreq\fR]
+Enable statistical sampling. The default is to sample at a frequency
+of 100 Hz, but \fIfreq\fR can be used to override this.
+.IP
+By default, sampling uses process time (i.e., the more work a process
+does, the more samples are collected). The \fB-real\fR variant uses
+wall clock time instead. Wall clock time is better for programs that
+are I/O-bound.
+.TP
+\fBmaxsamples\fR=\fInum\fR
+Limit the number of reusable sample events to \fInum\fR allocations.
+A value of zero means no limit. By default, the value of this setting
+is based on the number of CPU cores. Some tinkering with this setting
+may be necessary for programs with an unusually high amount of
+threads.
+.TP
+\fBcalls\fR
+Enable method entry and exit instrumentation. This is an alternative
+to statistical sampling when you need more precise information. Note
+that this mode is extremely heavy and can slow most programs to a
+crawl.
+.TP
+\fBcallspec\fR=\fIspec\fR
+Limit method entry and exit instrumentation to methods matching the
+specified call spec. This uses the same syntax as the \fB--trace\fR
+option for \fBmono\fR(1), so refer to that page for more information.
+.TP
+\fBcalldepth\fR=\fInum\fR
+Limit method entry and exit event collection to a call depth of
+\fInum\fR.
+.TP
+\fBmaxframes\fR=\fInum\fR
+Limit backtraces in various events (including statistical samples) to
+\fInum\fR frames.
+.TP
+\fBheapshot\fR[=\fImode\fR]
+Enable heap snapshots. \fImode\fR, if given, can be one of:
+.RS
+.TP
+\fBondemand\fR
+Only perform a heapshot when receiving a command via the command
+server or when triggered through the managed library.
+.TP
+\fInum\fR\fBgc\fR
+Perform a heapshot on every \fInum\fR collections of the major
+generation.
+.TP
+\fInum\fR\fBms\fR
+Perform a heapshot on a major generation collection if \fInum\fR
+milliseconds have passed since the last heapshot.
+.RE
+.IP
+If \fImode\fR is not given, a heapshot will be performed on every
+collection of the major generation.
+.TP
+\fBheapshot-on-shutdown\fR
+In addition to any other heapshot settings, also perform a heapshot
+on runtime shutdown.
+.TP
+\fBdebug\fR
+Print detailed debugging information. Most users should not use this
+option.
+.SS Command server
+The log profiler features a simple command server that currently is
+only used to trigger manual heapshots (typcally when using the
+on-demand mode, but also usable with the other modes). A random port
+will be used to listen for connections unless the \fBport\fR option
+is used. To trigger a heapshot, open a TCP connection to the command
+server and send the C string \fB"heapshot\\n"\fR.
+.PP
+The command server supports multiple simultaneous connections.
+.SS Managed library
+The log profiler comes with a managed library called
+\fBMono.Profiler.Log\fR. This library allows easily reading log files
+in managed code (e.g., C#) as well as interacting with the profiler
+at run-time.
+.PP
+With the ability to easily read log files, users can write all sorts
+of interesting analyses that might not be provided by the standard
+tools (e.g., \fBmprof\-report\fR(1)).
+.PP
+The \fBLogProfiler\fR class allows users to reconfigure profiler
+settings at run-time. For example, certain event types can be toggled
+on or off, the mode and frequency of heapshots and sampling can be
+changed, etc. Heapshots can also be triggered manually.
+.PP
+To use this library, simply pass \fB\-r:Mono.Profiler.Log\fR when
+compiling your code.
+.SS Example
+Collect GC allocation and sampling data for a program, then generate
+a report:
+.PP
+.nf
+.RS
+mono \-\-profile=log:alloc,sample program.exe
+mprof\-report output.mlpd
+.RE
+.fi
+.PP
+Perform a heapshot on every 5th collection and generate a report
+directly:
+.PP
+.nf
+.RS
+mono \-\-profile=log:heapshot=5gc,report program.exe
+.RE
+.fi
+.PP
+.SH COVERAGE PROFILER
+The code coverage profiler collects information about how often code
+paths are executed. This is done by instrumenting JIT-compiled code
+at all sequence points. On program exit, the coverage profiler
+collects all execution count information and outputs it to an XML
+file. The main use case for the coverage profiler is unit testing: By
+running unit test suites with the coverage profiler, it is possible
+to determine whether the unit tests actually cover all the code that
+they should.
+.PP
+By default, the coverage profiler writes its output to
+\fIcoverage.xml\fR. Refer to the \fImono/profiler/coverage.c\fR file
+in the Mono source tree for documentation on the schema.
+.PP
+Please note that the coverage profiler currently does not support
+instrumenting AOT-compiled code. When collecting coverage data, one
+may wish to run Mono with the \fB-O=-aot\fR option to disable loading
+AOT-compiled code.
+.SS Options
+The coverage profiler supports the following options:
+.TP
+\fBhelp\fR
+Print usage instructions.
+.TP
+\fBoutput\fR=[\fI+\fR|\fI#\fR|\fI|\fR]\fIfile\fR
+Write coverage data to \fIfile\fR. The optional modifiers are:
+.RS
+.ne 8
+.TP
+\fB+\fR
+The program PID is appended to the file name. For example,
+\fBoutput=+cov.xml\fR outputs to \fIcov.xml.1234\fR if the PID is
+\fB1234\fR.
+.TP
+\fB#\fR
+\fIfile\fR is parsed as a file descriptor number, which is opened
+with \fBfdopen\fR(3). This is mainly useful in embedding scenarios.
+.TP
+\fB|\fR
+\fIfile\fR is treated as a program name. It will be started with
+\fBpopen\fR(3) and the coverage data will be piped to its standard
+input.
+.RE
+.TP
+\fBcovfilter-file\fR=\fIfile\fR
+Supply a coverage filter file. This option can be given multiple
+times. See the \fBFilter files\fR sub-section.
+.SS Filter files
+Filter files can be used to pick and choose which types should be
+considered for coverage instrumentation. A filter file consists of a
+series of lines of the form:
+.PP
+.nf
+.RS
+\fB+\fR|\fB\-\fR\fB[\fR\fIimage_name\fR\fB]\fR\fItype_name_prefix\fR
+.RE
+.fi
+.PP
+Here, \fIimage_name\fR is something like \fBmscorlib\fR.
+\fItype_name_prefix\fR can be something like \fBSystem.Int32\fR for
+a specific type or \fBSystem.App\fR to pick all types starting with
+\fBApp\fR in the \fBSystem\fR namespace.
+.PP
+Lines starting with \fB+\fR indicate that a type should be
+instrumented for coverage, whereas lines starting with \fB\-\fR
+indicate the opposite. Lines starting with \fB+\fR always override
+lines starting with \fB\-\fR regardless of the order they appear in.
+.PP
+Lines not starting with either character are ignored. This can be
+used to write comments. For example, this is a valid file:
+.PP
+.nf
+.RS
+# Ignore coverage in network-related code, except HTTP client code.
+-[MyProgram]MyProgram.Net
++[MyProgram]MyProgram.Net.Http.HttpClient
+.RE
+.fi
+.SS Example
+Coverage data for a program can be collected like this:
+.PP
+.nf
+.RS
+mono \-O=\-aot \-\-profile=coverage:output=cov.xml program.exe
+.RE
+.fi
+.PP
+\fIcov.xml\fR will now contain the coverage data.
+.SH AOT PROFILER
+The AOT profiler will record which generic instantiations a program
+makes use of and save the information to a specified file. This data
+can then be used by the AOT compiler to compile those generic
+instantiations ahead of time to reduce program startup time.
+.PP
+By default, the AOT profiler writes its output to
+\fIoutput.aotprofile\fR. Refer to the \fImono/profiler/aot.h\fR file
+in the Mono source tree for documentation on the AOT profiler's file
+format.
+.SS Options
+The AOT profiler supports the following options:
+.TP
+\fBduration\fR=\fInum\fR
+Profile only NUM seconds of runtime and then write the data.
+.TP
+\fBhelp\fR
+Print usage instructions.
+.TP
+\fBoutput\fR=[\fI+\fR|\fI#\fR|\fI|\fR]\fIfile\fR
+Write output data to \fIfile\fR. The optional modifiers are:
+.RS
+.ne 8
+.TP
+\fB+\fR
+The program PID is appended to the file name. For example,
+\fBoutput=+out.aotprofile\fR outputs to \fIout.aotprofile.1234\fR if
+the PID is \fB1234\fR.
+.TP
+\fB#\fR
+\fIfile\fR is parsed as a file descriptor number, which is opened
+with \fBfdopen\fR(3). This is mainly useful in embedding scenarios.
+.TP
+\fB|\fR
+\fIfile\fR is treated as a program name. It will be started with
+\fBpopen\fR(3) and the log data will be piped to its standard input.
+.RE
+.TP
+\fBverbose\fR
+Print detailed debugging information. Most users should not use this
+option.
+.SS Example
+A profile can be collected and used like this:
+.PP
+.nf
+.RS
+mono \-\-profile=aot:output=program.aotprofile program.exe
+mono \-\-aot=profile=program.aotprofile program.exe
+mono program.exe
+.RE
+.fi
+.PP
+.SH SEE ALSO
+\fBmono\fR(1), \fBmprof\-report\fR(1)

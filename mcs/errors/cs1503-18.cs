@@ -1,4 +1,4 @@
-// CS1503: Argument `#1' cannot convert `int?' expression to type `int'
+// CS1503: Argument `#1' cannot convert `int?' expression to type `System.Index'
 // Line: 11
 
 class X

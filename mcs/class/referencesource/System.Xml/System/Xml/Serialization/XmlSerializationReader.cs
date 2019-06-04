@@ -113,6 +113,7 @@ namespace System.Xml.Serialization {
 
         string charID;
         string guidID;
+        string timeSpanID;
 
         static bool checkDeserializeAdvances;
 #if CONFIGURATION_DEP
@@ -231,6 +232,10 @@ namespace System.Xml.Serialization {
             oldTimeInstantID = r.NameTable.Add("timeInstant");
             charID = r.NameTable.Add("char");
             guidID = r.NameTable.Add("guid");
+            if (LocalAppContextSwitches.EnableTimeSpanSerialization)
+            {
+                timeSpanID = r.NameTable.Add("TimeSpan");
+            }
             base64ID = r.NameTable.Add("base64");
 
             anyURIID = r.NameTable.Add("anyURI");
@@ -658,6 +663,8 @@ namespace System.Xml.Serialization {
                     value = ToChar(ReadStringValue());
                 else if ((object) type.Name == (object) guidID)
                     value = new Guid(CollapseWhitespace(ReadStringValue()));
+                else if ((object)type.Name == (object)timeSpanID && LocalAppContextSwitches.EnableTimeSpanSerialization)
+                    value = XmlConvert.ToTimeSpan(ReadStringValue());
                 else
                     value = ReadXmlNodes(elementCanBeType);
             }
@@ -749,7 +756,9 @@ namespace System.Xml.Serialization {
                     value = default(Nullable<char>);
                 else if ((object) type.Name == (object) guidID)
                     value = default(Nullable<Guid>);
-                        else
+                else if ((object)type.Name == (object)timeSpanID && LocalAppContextSwitches.EnableTimeSpanSerialization)
+                    value = default(Nullable<TimeSpan>);
+                else
                     value = null;
             }
             else
@@ -4285,26 +4294,51 @@ namespace System.Xml.Serialization {
                     Writer.WriteLine("{");
                 }
                 Writer.Indent++;
-
-                WriteSourceBegin(source);
-                if (element.Mapping.TypeDesc == QnameTypeDesc)
-                    Writer.Write("ReadElementQualifiedName()");
-                else {
-                    string readFunc; 
-                    switch (element.Mapping.TypeDesc.FormatterName) {
-                    case "ByteArrayBase64":
-                    case "ByteArrayHex": 
-                        readFunc = "false";
-                        break;
-                    default:              
-                        readFunc = "Reader.ReadElementString()";
-                        break;
+                //For backward compatibiity 
+                //When using old serializer, the serialized TimeSpan value is empty string
+                if (element.Mapping.TypeDesc.Type == typeof(TimeSpan) && LocalAppContextSwitches.EnableTimeSpanSerialization)
+                {
+                    Writer.WriteLine("if (Reader.IsEmptyElement) {");
+                    Writer.Indent++;
+                    Writer.WriteLine("Reader.Skip();");
+                    WriteSourceBegin(source);
+                    Writer.Write("default(System.TimeSpan)");
+                    WriteSourceEnd(source);
+                    Writer.WriteLine(";");
+                    Writer.Indent--;
+                    Writer.WriteLine("}");
+                    Writer.WriteLine("else {");
+                    Writer.Indent++;
+                    WriteSourceBegin(source);
+                    WritePrimitive(element.Mapping, "Reader.ReadElementString()");
+                    WriteSourceEnd(source);
+                    Writer.WriteLine(";");
+                    Writer.Indent--;
+                    Writer.WriteLine("}");
+                }
+                else
+                {
+                    WriteSourceBegin(source);
+                    if (element.Mapping.TypeDesc == QnameTypeDesc)
+                        Writer.Write("ReadElementQualifiedName()");
+                    else {
+                        string readFunc;
+                        switch (element.Mapping.TypeDesc.FormatterName) {
+                            case "ByteArrayBase64":
+                            case "ByteArrayHex":
+                                readFunc = "false";
+                                break;
+                            default:
+                                readFunc = "Reader.ReadElementString()";
+                                break;
+                        }
+                        WritePrimitive(element.Mapping, readFunc);
                     }
-                    WritePrimitive(element.Mapping, readFunc);
+
+                    WriteSourceEnd(source);
+                    Writer.WriteLine(";");
                 }
 
-                WriteSourceEnd(source);
-                Writer.WriteLine(";");
                 Writer.Indent--;
                 Writer.WriteLine("}");
             }

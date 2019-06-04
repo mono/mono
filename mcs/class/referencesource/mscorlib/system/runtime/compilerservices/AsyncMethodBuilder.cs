@@ -245,7 +245,7 @@ namespace System.Runtime.CompilerServices
         }
 
         // This property lazily instantiates the Task in a non-thread-safe manner.  
-        private Task Task 
+        internal Task Task 
         {
             get
             {
@@ -408,7 +408,7 @@ namespace System.Runtime.CompilerServices
         /// It must only be used by the debugger and tracing pruposes, and only in a single-threaded manner
         /// when no other threads are in the middle of accessing this property or this.Task.
         /// </remarks>
-        private object ObjectIdForDebugger { get { return this.Task; } }
+        internal object ObjectIdForDebugger { get { return this.Task; } }
     }
 
     /// <summary>
@@ -710,7 +710,10 @@ namespace System.Runtime.CompilerServices
         /// <param name="result">The result for which we need a task.</param>
         /// <returns>The completed task containing the result.</returns>
         [SecuritySafeCritical] // for JitHelpers.UnsafeCast
-        private Task<TResult> GetTaskForResult(TResult result)
+#if MONO
+        internal static
+#endif
+        Task<TResult> GetTaskForResult(TResult result)
         {
             Contract.Ensures(
                 EqualityComparer<TResult>.Default.Equals(result, Contract.Result<Task<TResult>>().Result),
@@ -775,7 +778,9 @@ namespace System.Runtime.CompilerServices
                     (typeof(TResult) == typeof(Byte) && default(Byte) == (Byte)(object)result) ||
                     (typeof(TResult) == typeof(SByte) && default(SByte) == (SByte)(object)result) ||
                     (typeof(TResult) == typeof(Char) && default(Char) == (Char)(object)result) ||
+#if !MONO
                     (typeof(TResult) == typeof(Decimal) && default(Decimal) == (Decimal)(object)result) ||
+#endif
                     (typeof(TResult) == typeof(Int64) && default(Int64) == (Int64)(object)result) ||
                     (typeof(TResult) == typeof(UInt64) && default(UInt64) == (UInt64)(object)result) ||
                     (typeof(TResult) == typeof(Int16) && default(Int16) == (Int16)(object)result) ||
@@ -845,7 +850,6 @@ namespace System.Runtime.CompilerServices
 
         // This method is copy&pasted into the public Start methods to avoid size overhead of valuetype generic instantiations.
         // Ideally, we would build intrinsics to get the raw ref address and raw code address of MoveNext, and just use the shared implementation.
-#if false
         /// <summary>Initiates the builder's execution with the associated state machine.</summary>
         /// <typeparam name="TStateMachine">Specifies the type of the state machine.</typeparam>
         /// <param name="stateMachine">The state machine instance, passed by reference.</param>
@@ -875,7 +879,6 @@ namespace System.Runtime.CompilerServices
                 ecs.Undo();
             }
         }
-#endif
 
         /// <summary>Associates the builder with the state machine it represents.</summary>
         /// <param name="stateMachine">The heap-allocated state machine object.</param>

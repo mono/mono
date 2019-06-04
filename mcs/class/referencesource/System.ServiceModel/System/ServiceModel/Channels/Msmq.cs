@@ -114,7 +114,7 @@ namespace System.ServiceModel.Channels
                         if (null == errorStrings)
                         {
 #pragma warning suppress 56523 // Callers (there is only one) handle an invalid handle returned from here.
-                            errorStrings = UnsafeNativeMethods.LoadLibrary("MQUTIL.DLL");
+                            errorStrings = UnsafeNativeMethods.LoadLibraryEx("MQUTIL.DLL", IntPtr.Zero, UnsafeNativeMethods.LOAD_LIBRARY_AS_DATAFILE | UnsafeNativeMethods.LOAD_LIBRARY_SEARCH_SYSTEM32);
                         }
                     }
                 }

@@ -1111,6 +1111,8 @@ public class AssemblyNameTest {
 
 	[Test]
 	[Category ("AndroidNotWorking")] // Accessing assemblies by asm.Location is not supported
+	[Category ("StaticLinkedAotNotWorking")] // Can't find .dll files when bundled in .exe
+	[Category ("NotWasm")]
 	public void GetAssemblyName_CodeBase ()
 	{
 		Assembly execAssembly = Assembly.GetExecutingAssembly ();
@@ -1861,6 +1863,36 @@ public class AssemblyNameTest {
 		an.CultureInfo = new CultureInfo (CultureInfo.InvariantCulture.LCID);
 
 		Assert.AreEqual ("", an.CultureName);
+	}
+
+	[Test]
+	public void TestDecodingEcmaKey ()
+	{
+        var x = new AssemblyName( "System, PublicKey=00000000000000000400000000000000" );
+		Assert.IsNull (x.GetPublicKey (), "#1");
+		Assert.IsNotNull (x.GetPublicKeyToken (), "#2");
+
+		var t = x.GetPublicKeyToken ();
+		Assert.AreEqual (8, t.Length, "#3");
+
+		Assert.AreEqual (0xB7, t [0], "#4.0");
+		Assert.AreEqual (0x7A, t [1], "#4.1");
+		Assert.AreEqual (0x5C, t [2], "#4.2");
+		Assert.AreEqual (0x56, t [3], "#4.3");
+		Assert.AreEqual (0x19, t [4], "#4.4");
+		Assert.AreEqual (0x34, t [5], "#4.5");
+		Assert.AreEqual (0xE0, t [6], "#4.6");
+		Assert.AreEqual (0x89, t [7], "#4.7");
+	}
+
+	[Test]
+	public void TestSettingCultureName ()
+	{
+	    AssemblyName aname = Assembly.GetExecutingAssembly ().GetName ();
+	    aname.CultureName = null;
+	    Assert.IsFalse(aname.ToString().Contains("en-US"));
+	    aname.CultureName = "en-US";
+	    Assert.IsTrue(aname.ToString().Contains("en-US"));
 	}
 }
 

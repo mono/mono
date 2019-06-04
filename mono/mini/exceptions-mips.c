@@ -28,6 +28,8 @@
 
 #include "mini.h"
 #include "mini-mips.h"
+#include "mini-runtime.h"
+#include "aot-runtime.h"
 
 #define GENERIC_EXCEPTION_SIZE 256
 
@@ -175,9 +177,9 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 }
 
 static void
-throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, gboolean rethrow)
+throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, gboolean rethrow, gboolean preserve_ips)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoContext ctx;
 
 #ifdef DEBUG_EXCEPTIONS
@@ -196,14 +198,16 @@ throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, gboolean
 	memset (&ctx.sc_fpregs, 0, sizeof (mips_freg) * MONO_SAVED_FREGS);
 	MONO_CONTEXT_SET_IP (&ctx, eip);
 
-	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, &error)) {
+	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
 		if (!rethrow) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
+		} if (preserve_ips) {
+			mono_ex->caught_in_unmanaged = TRUE;
 		}
 	}
-	mono_error_assert_ok (&error);
+	mono_error_assert_ok (error);
 	mono_handle_exception (&ctx, exc);
 #ifdef DEBUG_EXCEPTIONS
 	g_print ("throw_exception: restore to pc=%p sp=%p fp=%p ctx=%p\n",
@@ -225,7 +229,7 @@ throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp, gboolean
  *
  */
 static gpointer 
-mono_arch_get_throw_exception_generic (guint8 *start, int size, int corlib, gboolean rethrow)
+mono_arch_get_throw_exception_generic (guint8 *start, int size, int corlib, gboolean rethrow, gboolean preserve_ips)
 {
 	guint8 *code;
 	int alloc_size, pos, i;
@@ -310,7 +314,31 @@ mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 
 	if (inited)
 		return start;
-	mono_arch_get_throw_exception_generic (start, sizeof (start), FALSE, TRUE);
+	mono_arch_get_throw_exception_generic (start, sizeof (start), FALSE, TRUE, FALSE);
+	inited = 1;
+	return start;
+}
+
+/**
+ * mono_arch_get_rethrow_preserve_exception:
+ * \returns a function pointer which can be used to rethrow
+ * exceptions while avoiding modification of saved trace_ips.
+ * The returned function has the following 
+ * signature: void (*func) (MonoException *exc); 
+ */
+gpointer
+mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
+{
+	static guint8 start [GENERIC_EXCEPTION_SIZE];
+	static int inited = 0;
+
+	g_assert (!aot);
+	if (info)
+		*info = NULL;
+
+	if (inited)
+		return start;
+	mono_arch_get_throw_exception_generic (start, sizeof (start), FALSE, TRUE, TRUE);
 	inited = 1;
 	return start;
 }
@@ -339,7 +367,7 @@ mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 
 	if (inited)
 		return start;
-	mono_arch_get_throw_exception_generic (start, sizeof (start), FALSE, FALSE);
+	mono_arch_get_throw_exception_generic (start, sizeof (start), FALSE, FALSE, FALSE);
 	inited = 1;
 	return start;
 }
@@ -377,7 +405,7 @@ mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 
 	if (inited)
 		return start;
-	mono_arch_get_throw_exception_generic (start, sizeof (start), TRUE, FALSE);
+	mono_arch_get_throw_exception_generic (start, sizeof (start), TRUE, FALSE, FALSE);
 	inited = 1;
 	return start;
 }
@@ -394,7 +422,7 @@ gboolean
 mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls, 
 							 MonoJitInfo *ji, MonoContext *ctx, 
 							 MonoContext *new_ctx, MonoLMF **lmf, 
-							 mgreg_t **save_locations,
+							 host_mgreg_t **save_locations,
 							 StackFrameInfo *frame)
 {
 	memset (frame, 0, sizeof (StackFrameInfo));
@@ -405,7 +433,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 	if (ji != NULL) {
 		int i;
 		gpointer ip = MONO_CONTEXT_GET_IP (ctx);
-		mgreg_t regs [MONO_MAX_IREGS + 1];
+		host_mgreg_t regs [MONO_MAX_IREGS + 1];
 		guint8 *cfa;
 		guint32 unwind_info_len;
 		guint8 *unwind_info;
@@ -420,15 +448,18 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		for (i = 0; i < MONO_MAX_IREGS; ++i)
 			regs [i] = new_ctx->sc_regs [i];
 
-		mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
+		gboolean success = mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
 						   (guint8*)ji->code_start + ji->code_size,
 						   ip, NULL, regs, MONO_MAX_IREGS,
 						   save_locations, MONO_MAX_IREGS, &cfa);
 
+		if (!success)
+			return FALSE;
+
 		for (i = 0; i < MONO_MAX_IREGS; ++i)
 			new_ctx->sc_regs [i] = regs [i];
 		new_ctx->sc_pc = regs [mips_ra];
-		new_ctx->sc_regs [mips_sp] = (mgreg_t)cfa;
+		new_ctx->sc_regs [mips_sp] = (host_mgreg_t)(gsize)cfa;
 
 		/* we substract 8, so that the IP points into the call instruction */
 		MONO_CONTEXT_SET_IP (new_ctx, new_ctx->sc_pc - 8);
@@ -437,24 +468,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		g_assert (MONO_CONTEXT_GET_SP (new_ctx) != MONO_CONTEXT_GET_SP (ctx));
 		return TRUE;
 	} else if (*lmf) {
-
-		if (((mgreg_t)(*lmf)->previous_lmf) & 2) {
-			/* 
-			 * This LMF entry is created by the soft debug code to mark transitions to
-			 * managed code done during invokes.
-			 */
-			MonoLMFExt *ext = (MonoLMFExt*)(*lmf);
-
-			g_assert (ext->debugger_invoke);
-
-			memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
-
-			*lmf = (gpointer)(((gsize)(*lmf)->previous_lmf) & ~3);
-
-			frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
-
-			return TRUE;
-		}
+		g_assert ((((guint64)(*lmf)->previous_lmf) & 2) == 0);
 
 		if (!(*lmf)->method) {
 #ifdef DEBUG_EXCEPTIONS

@@ -26,21 +26,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Linq;
 
-namespace Xamarin.ApiDiff {
+namespace Mono.ApiTools {
 
-	public class AssemblyComparer : Comparer {
+	class AssemblyComparer : Comparer {
 
 		XDocument source;
 		XDocument target;
 		NamespaceComparer comparer;
 
-		public AssemblyComparer (string sourceFile, string targetFile)
+		public AssemblyComparer (string sourceFile, string targetFile, State state)
+			: this (XDocument.Load(sourceFile), XDocument.Load(targetFile), state)
 		{
-			source = XDocument.Load (sourceFile);
-			target = XDocument.Load (targetFile);
-			comparer =  new NamespaceComparer ();
+		}
+
+		public AssemblyComparer (Stream sourceFile, Stream targetFile, State state)
+			: this (XDocument.Load(sourceFile), XDocument.Load(targetFile), state)
+		{
+		}
+
+		public AssemblyComparer (XDocument sourceFile, XDocument targetFile, State state)
+			: base (state)
+		{
+			source = sourceFile;
+			target = targetFile;
+			comparer =  new NamespaceComparer (state);
 		}
 
 		public string SourceAssembly { get; private set; }

@@ -107,6 +107,12 @@ namespace System.ServiceModel.Channels.Http
 					if (m != null)
 						return m;
 				}
+
+				// Lastly, try to match the listener to the start of the current request path 
+				// This is to support WCF methods with path parameters in UriTemplate annotation
+				m = listeners.FirstOrDefault (p => absolutePath.StartsWith (p.Key.AbsolutePath, StringComparison.Ordinal)).Value;
+				if (m != null)
+					return m;
 			}
 			
 			if (m == null)
@@ -119,7 +125,7 @@ namespace System.ServiceModel.Channels.Http
 		{
 			HttpListenerManager m;
 			
-			if (ServiceHostingEnvironment.InAspNet)
+			if (ServiceHostingEnvironmentInternal.InAspNet)
 				m = new AspNetHttpListenerManager (uri);
 			else
 				m = new HttpStandaloneListenerManager (uri, element);

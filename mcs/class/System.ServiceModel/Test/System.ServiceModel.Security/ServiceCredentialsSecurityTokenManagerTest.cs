@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
@@ -39,6 +40,8 @@ using System.Xml;
 using NUnit.Framework;
 
 using ReqType = System.ServiceModel.Security.Tokens.ServiceModelSecurityTokenRequirement;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel.Security
 {
@@ -252,7 +255,7 @@ namespace MonoTests.System.ServiceModel.Security
 			SecurityTokenRequirement r =
 				new RecipientServiceModelSecurityTokenRequirement ();
 			r.TokenType = SecurityTokenTypes.X509Certificate;
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.cer");
+			X509Certificate2 cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.cer"));
 			def_c.ServiceCredentials.ServiceCertificate.Certificate = cert;
 			def_c.CreateSecurityTokenProvider (r);
 		}
@@ -264,7 +267,7 @@ namespace MonoTests.System.ServiceModel.Security
 				new RecipientServiceModelSecurityTokenRequirement ();
 			r.TokenType = SecurityTokenTypes.X509Certificate;
 			def_c.ServiceCredentials.ServiceCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			X509SecurityTokenProvider p =
 				def_c.CreateSecurityTokenProvider (r)
 				as X509SecurityTokenProvider;
@@ -281,93 +284,12 @@ namespace MonoTests.System.ServiceModel.Security
 			r.KeyUsage = SecurityKeyUsage.Exchange;
 			// ClientCredential is somehow required ...
 			def_c.ServiceCredentials.ServiceCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+				new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 
 			X509SecurityTokenProvider p =
 				def_c.CreateSecurityTokenProvider (r)
 				as X509SecurityTokenProvider;
 			Assert.IsNotNull (p, "#1");
-		}
-
-		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		public void CreateProviderAnonSslError ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				new RecipientServiceModelSecurityTokenRequirement ();
-			r.TokenType = ServiceModelSecurityTokenTypes.AnonymousSslnego;
-			r.ListenUri = new Uri ("http://localhost:8080");
-			r.SecurityBindingElement = new SymmetricSecurityBindingElement ();
-			r.Properties [ReqType.IssuerBindingContextProperty] =
-				new BindingContext (new CustomBinding (), new BindingParameterCollection ());
-			r.MessageSecurityVersion =
-				MessageSecurityVersion.Default.SecurityTokenVersion;
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
-		}
-
-		[Test]
-		[Ignore ("incomplete")]
-		[Category ("NotWorking")]
-		public void CreateProviderAnonSsl ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				new RecipientServiceModelSecurityTokenRequirement ();
-			new MySslSecurityTokenParameters ().InitRequirement (r);
-
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.ChannelParametersCollectionProperty), "#1");
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.EndpointFilterTableProperty), "#2");
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.HttpAuthenticationSchemeProperty), "#3");
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.IsOutOfBandTokenProperty), "#4");
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.IssuerAddressProperty), "#5");
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.MessageDirectionProperty), "#6");
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.MessageSecurityVersionProperty), "#7");
-			//Assert.IsTrue (r.Properties.ContainsKey (SecurityTokenRequirement.PeerAuthenticationMode), "#8");
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.SecurityAlgorithmSuiteProperty), "#9");
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.SecurityBindingElementProperty), "#10");
-			Assert.IsFalse (r.Properties.ContainsKey (ReqType.SupportingTokenAttachmentModeProperty), "#11");
-			Assert.AreEqual (null, r.TransportScheme, "#12");
-
-			r.TokenType = ServiceModelSecurityTokenTypes.AnonymousSslnego;
-			r.ListenUri = new Uri ("http://localhost:8080");
-			r.SecurityBindingElement = new SymmetricSecurityBindingElement ();
-			r.Properties [ReqType.IssuerBindingContextProperty] =
-				new BindingContext (new CustomBinding (), new BindingParameterCollection ());
-			r.MessageSecurityVersion =
-				MessageSecurityVersion.Default.SecurityTokenVersion;
-
-			r.Properties [ReqType.SecurityAlgorithmSuiteProperty] =
-				SecurityAlgorithmSuite.Default;
-			r.TransportScheme = "https";
-
-			r.Properties [ReqType.ChannelParametersCollectionProperty] = new ChannelParameterCollection ();
-			r.Properties [ReqType.EndpointFilterTableProperty] = null;
-			r.Properties [ReqType.HttpAuthenticationSchemeProperty] = AuthenticationSchemes.Anonymous;
-			r.Properties [ReqType.IsOutOfBandTokenProperty] = true;
-			r.Properties [ReqType.IssuerAddressProperty] = new EndpointAddress ("http://localhost:9090");
-//			r.Properties [ReqType.MessageDirectionProperty] = MessageDirection.Input;
-			r.Properties [ReqType.SecurityBindingElementProperty] = new SymmetricSecurityBindingElement ();
-			r.Properties [ReqType.SupportingTokenAttachmentModeProperty] = SecurityTokenAttachmentMode.Signed;
-
-			SecurityTokenProvider p =
-				def_c.CreateSecurityTokenProvider (r);
-			Assert.IsNotNull (p, "#1");
-		}
-
-		RecipientServiceModelSecurityTokenRequirement CreateAnonSslRequirement ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				new RecipientServiceModelSecurityTokenRequirement ();
-			MySslSecurityTokenParameters p = new MySslSecurityTokenParameters ();
-			p.InitRequirement (r);
-			r.SecurityBindingElement = new SymmetricSecurityBindingElement (new X509SecurityTokenParameters ());
-			r.Properties [ReqType.IssuedSecurityTokenParametersProperty] = p.Clone ();
-			r.Properties [ReqType.IssuerBindingContextProperty] =
-				new BindingContext (new CustomBinding (new HttpTransportBindingElement ()), new BindingParameterCollection ());
-			r.Properties [ReqType.MessageSecurityVersionProperty] =
-				MessageSecurityVersion.Default.SecurityTokenVersion;
-			return r;
 		}
 
 		RecipientServiceModelSecurityTokenRequirement CreateSecureConvRequirement ()
@@ -393,107 +315,6 @@ namespace MonoTests.System.ServiceModel.Security
 			r.MessageSecurityVersion =
 				MessageSecurityVersion.Default.SecurityTokenVersion;
 			return r;
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateAuthenticatorAnonSslNoSecurityBindingElement ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				CreateAnonSslRequirement ();
-			r.SecurityBindingElement = null;
-			SecurityTokenResolver resolver;
-			def_c.CreateSecurityTokenAuthenticator (r, out resolver);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateAuthenticatorAnonSslNoIssuedSecurityTokenParameters ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				CreateAnonSslRequirement ();
-			r.Properties.Remove (ReqType.IssuedSecurityTokenParametersProperty);
-			SecurityTokenResolver resolver;
-			def_c.CreateSecurityTokenAuthenticator (r, out resolver);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateAuthenticatorAnonSslNoIssuerBindingContext ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				CreateAnonSslRequirement ();
-			r.Properties.Remove (ReqType.IssuerBindingContextProperty);
-			SecurityTokenResolver resolver;
-			def_c.CreateSecurityTokenAuthenticator (r, out resolver);
-		}
-
-		[Test]
-		// The type of exception should not matter though.
-		[ExpectedException (typeof (NotSupportedException))]
-		[Category ("NotWorking")]
-		public void CreateAuthenticatorAnonSslNullMessageSecurityVersion ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				CreateAnonSslRequirement ();
-			r.MessageSecurityVersion = null;
-			SecurityTokenResolver resolver;
-			def_c.CreateSecurityTokenAuthenticator (r, out resolver);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateAuthenticatorAnonSslNoMessageSecurityVersion ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				CreateAnonSslRequirement ();
-			r.Properties.Remove (ReqType.MessageSecurityVersionProperty);
-			SecurityTokenResolver resolver;
-			def_c.CreateSecurityTokenAuthenticator (r, out resolver);
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
-		public void CreateAuthenticatorAnonSslNoServiceCertificate ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				CreateAnonSslRequirement ();
-			SecurityTokenResolver resolver;
-			def_c.CreateSecurityTokenAuthenticator (r, out resolver);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CreateAuthenticatorAnonSslCertPublicOnly ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				CreateAnonSslRequirement ();
-			SecurityTokenResolver resolver;
-			def_c.ServiceCredentials.ServiceCertificate.Certificate =
-				new X509Certificate2 ("Test/Resources/test.cer");
-			def_c.CreateSecurityTokenAuthenticator (r, out resolver);
-		}
-
-		[Test]
-		[Category ("NotWorking")]
-		public void CreateAuthenticatorAnonSsl ()
-		{
-			RecipientServiceModelSecurityTokenRequirement r =
-				CreateAnonSslRequirement ();
-			SecurityTokenResolver resolver;
-			X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.pfx", "mono");
-			def_c.ServiceCredentials.ServiceCertificate.Certificate = cert;
-			SecurityTokenAuthenticator a = def_c.CreateSecurityTokenAuthenticator (r, out resolver);
-			// non-standard authenticator type.
-			Assert.IsNotNull (resolver, "#1");
-			Assert.IsTrue (a is IIssuanceSecurityTokenAuthenticator, "#2");
-
-			try {
-				a.ValidateToken (new X509SecurityToken (cert));
-				Assert.Fail ("It cannot validate raw X509SecurityToken");
-			} catch (SecurityTokenValidationException) {
-			}
 		}
 
 		[Test]
@@ -578,3 +399,4 @@ namespace MonoTests.System.ServiceModel.Security
 		}
 	}
 }
+#endif

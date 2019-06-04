@@ -30,9 +30,13 @@ namespace Mono.CSharp {
 		V_5 = 5,
 		V_6 = 6,
 		V_7 = 7,
+		V_7_1 = 71,
+		V_7_2 = 72,
+		V_7_3 = 73,
 		Experimental = 100,
 
 		Default = V_7,
+		Latest = V_7_3
 	}
 
 	public enum RuntimeVersion
@@ -346,7 +350,7 @@ namespace Mono.CSharp {
 		void About ()
 		{
 			output.WriteLine (
-				"The Mono C# compiler is Copyright 2001-2011, Novell, Inc. 2011-2016 Xamarin Inc, 2016-2017 Microsoft Corp\n\n" +
+				"The Turbo C# compiler is Copyright 2001-2011, Novell, Inc. 2011-2016 Xamarin Inc, 2016-2017 Microsoft Corp\n\n" +
 				"The compiler source code is released under the terms of the \n" +
 				"MIT X11 or GNU GPL licenses\n\n" +
 
@@ -1143,36 +1147,57 @@ namespace Mono.CSharp {
 				switch (value.ToLowerInvariant ()) {
 				case "iso-1":
 				case "1":
+				case "1.0":
 					settings.Version = LanguageVersion.ISO_1;
 					return ParseResult.Success;
 				case "default":
 					settings.Version = LanguageVersion.Default;
 					return ParseResult.Success;
 				case "2":
+				case "2.0":
 				case "iso-2":
 					settings.Version = LanguageVersion.ISO_2;
 					return ParseResult.Success;
 				case "3":
+				case "3.0":
 					settings.Version = LanguageVersion.V_3;
 					return ParseResult.Success;
 				case "4":
+				case "4.0":
 					settings.Version = LanguageVersion.V_4;
 					return ParseResult.Success;
 				case "5":
+				case "5.0":
 					settings.Version = LanguageVersion.V_5;
 					return ParseResult.Success;
 				case "6":
+				case "6.0":
 					settings.Version = LanguageVersion.V_6;
 					return ParseResult.Success;
 				case "7":
+				case "7.0":
 					settings.Version = LanguageVersion.V_7;
+					return ParseResult.Success;
+				case "7.1":
+					settings.Version = LanguageVersion.V_7_1;
+					return ParseResult.Success;
+				case "7.2":
+					settings.Version = LanguageVersion.V_7_2;
+					return ParseResult.Success;
+				case "latest":
+					settings.Version = LanguageVersion.Latest;
 					return ParseResult.Success;
 				case "experimental":
 					settings.Version = LanguageVersion.Experimental;
 					return ParseResult.Success;
 				}
 
-				report.Error (1617, "Invalid -langversion option `{0}'. It must be `ISO-1', `ISO-2', Default or value in range 1 to 7", value);
+				if (value.StartsWith ("0", StringComparison.Ordinal)) {
+					report.Error (8303, "Specified language version `{0}' cannot have leading zeroes", value);
+				} else {
+					report.Error (1617, "Invalid -langversion option `{0}'. It must be `ISO-1', `ISO-2', Default, Latest or value in range 1 to 7.2", value);
+				}
+
 				return ParseResult.Error;
 
 			case "/codepage":
@@ -1246,6 +1271,7 @@ namespace Mono.CSharp {
 			case "/highentropyva+":
 			case "/highentropyva-":
 			case "/link":
+			case "/sourcelink":
 			case "/moduleassemblyname":
 			case "/nowin32manifest":
 			case "/pdb":
@@ -1603,7 +1629,7 @@ namespace Mono.CSharp {
 		void Usage ()
 		{
 			output.WriteLine (
-				"Mono C# compiler, Copyright 2001-2011 Novell, Inc., 2011-2016 Xamarin, Inc, 2016-2017 Microsoft Corp\n" +
+				"Turbo C# compiler, Copyright 2001-2011 Novell, Inc., 2011-2016 Xamarin, Inc, 2016-2017 Microsoft Corp\n" +
 				"mcs [options] source-files\n" +
 				"   --about              About the Mono C# compiler\n" +
 				"   -addmodule:M1[,Mn]   Adds the module to the generated assembly\n" +

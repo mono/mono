@@ -31,7 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !FULL_AOT_RUNTIME
+#if MONO_FEATURE_SRE
 using System;
 using System.Text;
 using System.Reflection;
@@ -48,11 +48,37 @@ using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit
 {
+#if !MOBILE
+	
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_TypeBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
+	partial class TypeBuilder : _TypeBuilder
+	{
+		void _TypeBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _TypeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _TypeBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _TypeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}		
+	}
+#endif
+
 	[StructLayout (LayoutKind.Sequential)]
-	public sealed class TypeBuilder : TypeInfo, _TypeBuilder
+	public sealed partial class TypeBuilder : TypeInfo
 	{
 #pragma warning disable 169		
 		#region Sync with reflection.h
@@ -94,6 +120,7 @@ namespace System.Reflection.Emit
 			return attrs;
 		}
 
+		[PreserveDependency ("DoTypeBuilderResolve", "System.AppDomain")]
 		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr, int table_idx)
 		{
 			this.parent = null;
@@ -138,7 +165,7 @@ namespace System.Reflection.Emit
 				this.parent = typeof (object);
 
 			// skip .<Module> ?
-			table_idx = mb.get_next_table_index (this, 0x02, true);
+			table_idx = mb.get_next_table_index (this, 0x02, 1);
 			fullname = GetFullName ();
 		}
 
@@ -765,7 +792,7 @@ namespace System.Reflection.Emit
 					if (!fb.IsStatic && (ft is TypeBuilder) && ft.IsValueType && (ft != this) && is_nested_in (ft)) {
 						TypeBuilder tb = (TypeBuilder)ft;
 						if (!tb.is_created) {
-							AppDomain.CurrentDomain.DoTypeResolve (tb);
+							AppDomain.CurrentDomain.DoTypeBuilderResolve (tb);
 							if (!tb.is_created) {
 								// FIXME: We should throw an exception here,
 								// but mcs expects that the type is created
@@ -1601,8 +1628,8 @@ namespace System.Reflection.Emit
 			this.parent = ResolveUserType (this.parent);
 		}
 
-		internal int get_next_table_index (object obj, int table, bool inc) {
-			return pmodule.get_next_table_index (obj, table, inc);
+		internal int get_next_table_index (object obj, int table, int count) {
+			return pmodule.get_next_table_index (obj, table, count);
 		}
 
 		[ComVisible (true)]
@@ -1868,27 +1895,6 @@ namespace System.Reflection.Emit
 				return res;
 		}
 
-
-		void _TypeBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _TypeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _TypeBuilder.GetTypeInfoCount (out uint pcTInfo)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void _TypeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
-		{
-			throw new NotImplementedException ();
-		}
-
 		internal override bool IsUserType {
 			get {
 				return false;
@@ -1903,6 +1909,127 @@ namespace System.Reflection.Emit
 		{
 			return base.IsAssignableFrom (typeInfo);
 		}
+
+		internal static bool SetConstantValue (Type destType, Object value, ref Object destValue)
+		{
+			// Mono: This is based on the CoreCLR
+			// TypeBuilder.SetConstantValue except it writes to an
+			// out argument instead of doing an icall, and it uses
+			// TypeCode instead of CorElementType (like
+			// MonoTypeEnum) which we don't have in our corlib and
+			// our member fields are different.
+
+			// This is a helper function that is used by ParameterBuilder, PropertyBuilder,
+			// and FieldBuilder to validate a default value and save it in the meta-data.
+
+			if (value != null) {
+				Type type = value.GetType ();
+
+				// We should allow setting a constant value on a ByRef parameter
+				if (destType.IsByRef)
+					destType = destType.GetElementType ();
+
+				// Convert nullable types to their underlying type.
+				// This is necessary for nullable enum types to pass the IsEnum check that's coming next.
+				destType = Nullable.GetUnderlyingType (destType) ?? destType;
+
+				if (destType.IsEnum)
+				{
+					//                                   |  UnderlyingSystemType     |  Enum.GetUnderlyingType() |  IsEnum
+					// ----------------------------------|---------------------------|---------------------------|---------
+					// runtime Enum Type                 |  self                     |  underlying type of enum  |  TRUE
+					// EnumBuilder                       |  underlying type of enum  |  underlying type of enum* |  TRUE
+					// TypeBuilder of enum types**       |  underlying type of enum  |  Exception                |  TRUE
+					// TypeBuilder of enum types (baked) |  runtime enum type        |  Exception                |  TRUE
+
+					//  *: the behavior of Enum.GetUnderlyingType(EnumBuilder) might change in the future
+					//     so let's not depend on it.
+					// **: created with System.Enum as the parent type.
+
+					// The above behaviors might not be the most consistent but we have to live with them.
+
+					Type underlyingType;
+					EnumBuilder enumBldr;
+					TypeBuilder typeBldr;
+					if ((enumBldr = destType as EnumBuilder) != null) {
+						underlyingType = enumBldr.GetEnumUnderlyingType ();
+
+						// The constant value supplied should match either the baked enum type or its underlying type
+						// we don't need to compare it with the EnumBuilder itself because you can never have an object of that type
+						if (!((enumBldr.GetTypeBuilder ().is_created && type == enumBldr.GetTypeBuilder ().created) ||
+						      type == underlyingType))
+							throw_argument_ConstantDoesntMatch ();
+					} else if ((typeBldr = destType as TypeBuilder) != null) {
+						underlyingType = typeBldr.underlying_type;
+
+						// The constant value supplied should match either the baked enum type or its underlying type
+						// typeBldr.m_enumUnderlyingType is null if the user hasn't created a "value__" field on the enum
+						if (underlyingType == null || (type != typeBldr.UnderlyingSystemType && type != underlyingType))
+							throw_argument_ConstantDoesntMatch ();
+					} else {
+						// must be a runtime Enum Type
+
+						// Debug.Assert(destType is RuntimeType, "destType is not a runtime type, an EnumBuilder, or a TypeBuilder.");
+
+						underlyingType = Enum.GetUnderlyingType (destType);
+
+						// The constant value supplied should match either the enum itself or its underlying type
+						if (type != destType && type != underlyingType)
+							throw_argument_ConstantDoesntMatch ();
+					}
+
+					type = underlyingType;
+				} else {
+					// Note that it is non CLS compliant if destType != type. But RefEmit never guarantees CLS-Compliance.
+					if (!destType.IsAssignableFrom (type))
+						throw_argument_ConstantDoesntMatch ();
+				}
+
+				TypeCode corType = Type.GetTypeCode (type);
+
+				switch (corType)
+				{
+					case TypeCode.Byte:
+					case TypeCode.SByte:
+					case TypeCode.Boolean:
+					case TypeCode.Int16:
+					case TypeCode.UInt16:
+					case TypeCode.Char:
+					case TypeCode.Int32:
+					case TypeCode.UInt32:
+					case TypeCode.Single:
+					case TypeCode.Int64:
+					case TypeCode.UInt64:
+					case TypeCode.Double:
+						destValue = value;
+						return true;
+					case TypeCode.String:
+						destValue = value;
+						return true;
+					case TypeCode.DateTime:
+						//date is a I8 representation
+						long ticks = ((DateTime)value).Ticks;
+						destValue = ticks;
+						return true;
+					default:
+						throw new ArgumentException(type.ToString() + " is not a supported constant type.");
+				}
+			} else {
+				// A null default value in metadata is permissible even for non-nullable value types.
+				// (See ECMA-335 II.15.4.1.4 "The .param directive" and II.22.9 "Constant" for details.)
+				// This is how the Roslyn compilers generally encode `default(TValueType)` default values.
+
+				destValue = null;
+				return true;
+			}
+		}		
+
+		private static void throw_argument_ConstantDoesntMatch ()
+		{
+			throw new ArgumentException("Constant does not match the defined type.");
+		}
+
+		public override bool IsTypeDefinition => true;
 	}
 }
 #endif

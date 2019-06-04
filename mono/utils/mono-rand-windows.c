@@ -7,62 +7,18 @@
 */
 #include <config.h>
 #include <glib.h>
+#ifdef HOST_WIN32
 #include "mono-error.h"
 #include "mono-error-internals.h"
 #include "mono-rand.h"
-
-#if defined(HOST_WIN32)
 #include <windows.h>
-#include "mono/utils/mono-rand-windows-internals.h"
+#include <bcrypt.h>
+#include <limits.h>
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
-#ifndef PROV_INTEL_SEC
-#define PROV_INTEL_SEC		22
-#endif
-#ifndef CRYPT_VERIFY_CONTEXT
-#define CRYPT_VERIFY_CONTEXT	0xF0000000
-#endif
+// This implementation requires Windows 7 or newer.
 
-MONO_WIN32_CRYPT_PROVIDER_HANDLE
-mono_rand_win_open_provider (void)
-{
-	MONO_WIN32_CRYPT_PROVIDER_HANDLE provider = 0;
-
-	/* There is no need to create a container for just random data,
-	 * so we can use CRYPT_VERIFY_CONTEXT (one call) see:
-	 * http://blogs.msdn.com/dangriff/archive/2003/11/19/51709.aspx */
-
-	/* We first try to use the Intel PIII RNG if drivers are present */
-	if (!CryptAcquireContext (&provider, NULL, NULL, PROV_INTEL_SEC, CRYPT_VERIFY_CONTEXT)) {
-		/* not a PIII or no drivers available, use default RSA CSP */
-		if (!CryptAcquireContext (&provider, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFY_CONTEXT)) {
-			/* exception will be thrown in managed code */
-			provider = 0;
-		}
-	}
-
-	return provider;
-}
-
-void
-mono_rand_win_close_provider (MONO_WIN32_CRYPT_PROVIDER_HANDLE provider)
-{
-	CryptReleaseContext (provider, 0);
-}
-
-gboolean
-mono_rand_win_gen (MONO_WIN32_CRYPT_PROVIDER_HANDLE provider, guchar *buffer, size_t buffer_size)
-{
-	return CryptGenRandom (provider, (DWORD) buffer_size, buffer);
-}
-
-gboolean
-mono_rand_win_seed (MONO_WIN32_CRYPT_PROVIDER_HANDLE provider, guchar *seed, size_t seed_size)
-{
-	/* add seeding material to the RNG */
-	return CryptGenRandom (provider, (DWORD) seed_size, seed);
-}
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+#define BCRYPT_USE_SYSTEM_PREFERRED_RNG 0x00000002
+const static char mono_rand_provider [ ] = "BCryptGenRandom";
 
 /**
  * mono_rand_open:
@@ -74,7 +30,7 @@ mono_rand_win_seed (MONO_WIN32_CRYPT_PROVIDER_HANDLE provider, guchar *seed, siz
 gboolean
 mono_rand_open (void)
 {
-	return FALSE;
+	return TRUE;
 }
 
 /**
@@ -85,29 +41,10 @@ mono_rand_open (void)
  * \returns On success, a non-NULL handle which can be used to fetch random data from \c mono_rand_try_get_bytes. On failure, NULL.
  */
 gpointer
-mono_rand_init (guchar *seed, gint seed_size)
+mono_rand_init (const guchar *seed, gssize seed_size)
 {
-	MONO_WIN32_CRYPT_PROVIDER_HANDLE provider = 0;
-
-	/* try to open crypto provider. */
-	provider = mono_rand_win_open_provider ();
-
-	/* seed the CSP with the supplied buffer (if present) */
-	if (provider != 0 && seed != NULL) {
-		/* the call we replace the seed with random - this isn't what is
-		 * expected from the class library user */
-		guchar *data = g_malloc (seed_size);
-		if (data != NULL) {
-			memcpy (data, seed, seed_size);
-			/* add seeding material to the RNG */
-			mono_rand_win_seed (provider, data, seed_size);
-			/* zeroize and free */
-			memset (data, 0, seed_size);
-			g_free (data);
-		}
-	}
-
-	return (gpointer) provider;
+	// NULL will be interpreted as failure; return arbitrary nonzero pointer
+	return (gpointer)mono_rand_provider;
 }
 
 /**
@@ -120,37 +57,26 @@ mono_rand_init (guchar *seed, gint seed_size)
  * \returns FALSE on failure and sets \p error, TRUE on success.
  */
 gboolean
-mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, MonoError *error)
+mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gssize buffer_size, MonoError *error)
 {
-	MONO_WIN32_CRYPT_PROVIDER_HANDLE provider;
-
+	g_assert (buffer || !buffer_size);
 	error_init (error);
-
 	g_assert (handle);
-	provider = (MONO_WIN32_CRYPT_PROVIDER_HANDLE) *handle;
-
-	/* generate random bytes */
-	if (!mono_rand_win_gen (provider, buffer, buffer_size)) {
-		mono_rand_win_close_provider (provider);
-		/* we may have lost our context with CryptoAPI, but all hope isn't lost yet! */
-		provider = mono_rand_win_open_provider ();
-		if (provider != 0) {
-
-			/* retry generate of random bytes */
-			if (!mono_rand_win_gen (provider, buffer, buffer_size)) {
-				/* failure, close provider */
-				mono_rand_win_close_provider (provider);
-				provider = 0;
-			}
-		}
-
-		/* make sure client gets new opened provider handle or NULL on failure */
-		*handle = (gpointer) provider;
-		if (*handle == 0) {
-			/* exception will be thrown in managed code */
-			mono_error_set_execution_engine (error, "Failed to gen random bytes (%d)", GetLastError ());
+	gpointer const handle_value = *handle;
+	g_assert (handle_value == 0 || handle_value == mono_rand_provider);
+	if (!handle_value)
+		return FALSE;
+	while (buffer_size > 0) {
+		ULONG const size = (ULONG)MIN (buffer_size, ULONG_MAX);
+		NTSTATUS const status = BCryptGenRandom (0, buffer, size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+		if (!BCRYPT_SUCCESS (status)) {
+			mono_error_set_execution_engine (error, "Failed to gen random bytes (%ld)", status);
+			// failure, clear provider for future attempts
+			*handle = 0;
 			return FALSE;
 		}
+		buffer += size;
+		buffer_size -= size;
 	}
 	return TRUE;
 }
@@ -163,6 +89,6 @@ mono_rand_try_get_bytes (gpointer *handle, guchar *buffer, gint buffer_size, Mon
 void
 mono_rand_close (gpointer handle)
 {
-	mono_rand_win_close_provider ((MONO_WIN32_CRYPT_PROVIDER_HANDLE) handle);
+	g_assert (handle == 0 || handle == mono_rand_provider);
 }
 #endif /* HOST_WIN32 */

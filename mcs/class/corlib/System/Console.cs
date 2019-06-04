@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 
 namespace System
 {
@@ -149,7 +150,7 @@ namespace System
 				stdout = TextWriter.Synchronized (new UnexceptionalStreamWriter (OpenStandardOutput (0), outputEncoding) { AutoFlush = true });
 				stderr = TextWriter.Synchronized (new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding) { AutoFlush = true });
 
-#if MONODROID
+#if MONODROID && !MOBILE_DESKTOP_HOST
 				if (LogcatTextWriter.IsRunningOnAndroid ()) {
 					stdout = TextWriter.Synchronized (new LogcatTextWriter ("mono-stdout", stdout));
 					stderr = TextWriter.Synchronized (new LogcatTextWriter ("mono-stderr", stderr));
@@ -242,7 +243,7 @@ namespace System
 			if (newError == null)
 				throw new ArgumentNullException ("newError");
 
-			stderr = newError;
+			stderr = TextWriter.Synchronized (newError);
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
@@ -251,7 +252,7 @@ namespace System
 			if (newIn == null)
 				throw new ArgumentNullException ("newIn");
 
-			stdin = newIn;
+			stdin = TextReader.Synchronized (newIn);
 		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
@@ -260,7 +261,7 @@ namespace System
 			if (newOut == null)
 				throw new ArgumentNullException ("newOut");
 
-			stdout = newOut;
+			stdout = TextWriter.Synchronized (newOut);
 		}
 
 		public static void Write (bool value)
@@ -595,7 +596,6 @@ namespace System
 			get { return ConsoleDriver.LargestWindowWidth; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static bool NumberLock {
 			get { return ConsoleDriver.NumberLock; }
 		}
@@ -610,25 +610,21 @@ namespace System
 			set { ConsoleDriver.TreatControlCAsInput = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowHeight {
 			get { return ConsoleDriver.WindowHeight; }
 			set { ConsoleDriver.WindowHeight = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowLeft {
 			get { return ConsoleDriver.WindowLeft; }
 			set { ConsoleDriver.WindowLeft = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowTop {
 			get { return ConsoleDriver.WindowTop; }
 			set { ConsoleDriver.WindowTop = value; }
 		}
 
-		[MonoLimitation ("Only works on windows")]
 		public static int WindowWidth {
 			get { return ConsoleDriver.WindowWidth; }
 			set { ConsoleDriver.WindowWidth = value; }
@@ -751,16 +747,12 @@ namespace System
 			}
 		}
 
-		delegate void InternalCancelHandler ();
-		
-#pragma warning disable 414
-		//
-		// Used by console-io.c
-		//
-		static readonly InternalCancelHandler cancel_handler = new InternalCancelHandler (DoConsoleCancelEvent);
-#pragma warning restore 414		
+		static void DoConsoleCancelEventInBackground ()
+		{
+			ThreadPool.UnsafeQueueUserWorkItem (_ => DoConsoleCancelEvent(), null);
+		}
 
-		internal static void DoConsoleCancelEvent ()
+		static void DoConsoleCancelEvent ()
 		{
 			bool exit = true;
 			if (cancel_event != null) {

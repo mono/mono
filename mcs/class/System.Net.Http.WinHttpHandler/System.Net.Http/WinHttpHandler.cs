@@ -85,7 +85,7 @@ namespace System.Net.Http
 
 		public WindowsProxyUsePolicy WindowsProxyUsePolicy { get { throw new PlatformNotSupportedException (); } set { throw new PlatformNotSupportedException (); } }
 
-		protected override void Dispose (bool disposing) { throw new PlatformNotSupportedException (); }
+		protected override void Dispose (bool disposing) { }
 
 		protected override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, Threading.CancellationToken cancellationToken) { throw new PlatformNotSupportedException (); }
 	}

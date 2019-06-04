@@ -39,6 +39,8 @@ namespace System.Configuration {
         private const int Flag_ProtectionProviderModified   = 0x00080000;
         private const int Flag_OverrideModeDefaultModified  = 0x00100000;
         private const int Flag_OverrideModeModified         = 0x00200000;   // Used only for modified tracking        
+        private const int Flag_ConfigBuilderDetermined       = 0x00400000;
+        private const int Flag_ConfigBuilderModified         = 0x00800000;
 
         private ConfigurationSection            _configurationSection;
         private SafeBitVector32                 _flags;
@@ -55,6 +57,8 @@ namespace System.Configuration {
         private string                          _configSourceStreamName;
         private ProtectedConfigurationProvider  _protectionProvider;
         private string                          _protectionProviderName;
+        private ConfigurationBuilder             _configBuilder;
+        private string                          _configBuilderName;
         private OverrideModeSetting             _overrideModeDefault;       // The default mode for the section in _configurationSection
         private OverrideModeSetting             _overrideMode;              // The override mode at the current config path
 
@@ -128,8 +132,10 @@ namespace System.Configuration {
             if (sectionRecord.HasFileInput) {
                 SectionInput fileInput = sectionRecord.FileInput;
 
-                _flags[ Flag_ProtectionProviderDetermined ] = fileInput.IsProtectionProviderDetermined;
-                _protectionProvider                         = fileInput.ProtectionProvider;
+                _flags[Flag_ConfigBuilderDetermined] = fileInput.IsConfigBuilderDetermined;
+                _configBuilder                       = fileInput.ConfigBuilder;
+                _flags[Flag_ProtectionProviderDetermined] = fileInput.IsProtectionProviderDetermined;
+                _protectionProvider                 = fileInput.ProtectionProvider;
                 
                 SectionXmlInfo sectionXmlInfo = fileInput.SectionXmlInfo;
 
@@ -137,10 +143,13 @@ namespace System.Configuration {
                 _configSourceStreamName             = sectionXmlInfo.ConfigSourceStreamName;
                 _overrideMode                       = sectionXmlInfo.OverrideModeSetting;
                 _flags[ Flag_InheritInChildApps ]   = !sectionXmlInfo.SkipInChildApps;
+                _configBuilderName             = sectionXmlInfo.ConfigBuilderName;
                 _protectionProviderName             = sectionXmlInfo.ProtectionProviderName;
             }
             else {
-                _flags[ Flag_ProtectionProviderDetermined ] = false;
+                _flags[Flag_ConfigBuilderDetermined] = false;
+                _configBuilder = null;
+                _flags[Flag_ProtectionProviderDetermined] = false;
                 _protectionProvider = null;
             }
 
@@ -597,6 +606,21 @@ namespace System.Configuration {
 
         public bool IsProtected {
             get {return (ProtectionProvider != null);}
+        }
+
+        internal string ConfigBuilderName {
+            get { return _configBuilderName; }
+        }
+
+        public ConfigurationBuilder ConfigurationBuilder {
+            get {
+                if (!_flags[Flag_ConfigBuilderDetermined] && _configRecord != null) {
+                    _configBuilder = _configRecord.GetConfigBuilderFromName(_configBuilderName);
+                    _flags[Flag_ConfigBuilderDetermined] = true;
+                }
+
+                return _configBuilder;
+            }
         }
 
         public ProtectedConfigurationProvider ProtectionProvider {

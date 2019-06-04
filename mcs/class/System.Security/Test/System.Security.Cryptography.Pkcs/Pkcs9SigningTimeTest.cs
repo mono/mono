@@ -75,14 +75,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		[ExpectedException (typeof (CryptographicException))]
 		public void Constructor_DateTime_MinValue () 
 		{
 			Pkcs9SigningTime st = new Pkcs9SigningTime (DateTime.MinValue);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		[ExpectedException (typeof (CryptographicException))]
 		public void Constructor_DateTime_1600 ()
 		{
 			DateTime dt = new DateTime (1600, 12, 31, 11, 59, 59);
@@ -102,54 +102,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void Constructor_DateTime_MaxValue ()
 		{
 			Pkcs9SigningTime st = new Pkcs9SigningTime (DateTime.MaxValue);
-		}
-
-		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void Constructor_DateTime_Before1950 ()
-		{
-			DateTime dt = new DateTime (1949, 12, 31, 11, 59, 59);
-			// UTCTIME (0x17), i.e. 2 digits years, limited to 1950-2050
-			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
-		}
-
-		[Test]
-		public void Constructor_DateTime_After1950 ()
-		{
-			DateTime dt = new DateTime (1950, 01, 01, 00, 00, 00);
-			// UTCTIME (0x17), i.e. 2 digits years, limited to 1950-2050
-			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
-			Assert.AreEqual (signingTimeName, st.Oid.FriendlyName, "Oid.FriendlyName");
-			Assert.AreEqual (signingTimeOid, st.Oid.Value, "Oid.Value");
-			Assert.AreEqual (15, st.RawData.Length, "RawData.Length");
-			Assert.AreEqual ("17-0D-35-30-30-31-30-31-30-30-30-30-30-30-5A", BitConverter.ToString (st.RawData));
-			Assert.AreEqual (dt, st.SigningTime, "st.SigningTime");
-			Assert.AreEqual ("17 0d 35 30 30 31 30 31 30 30 30 30 30 30 5a", st.Format (true), "Format(true)");
-			Assert.AreEqual ("17 0d 35 30 30 31 30 31 30 30 30 30 30 30 5a", st.Format (false), "Format(false)");
-		}
-
-		[Test]
-		public void Constructor_DateTime_Before2050 ()
-		{
-			DateTime dt = new DateTime (2049, 12, 31, 11, 59, 59);
-			// up to 2050 encoding should stay with UTCTIME (0x17), i.e. 2 digits years
-			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
-			Assert.AreEqual (signingTimeName, st.Oid.FriendlyName, "Oid.FriendlyName");
-			Assert.AreEqual (signingTimeOid, st.Oid.Value, "Oid.Value");
-			Assert.AreEqual (15, st.RawData.Length, "RawData.Length");
-			Assert.AreEqual ("17-0D-34-39-31-32-33-31-31-31-35-39-35-39-5A", BitConverter.ToString (st.RawData));
-			Assert.AreEqual (dt, st.SigningTime, "st.SigningTime");
-			Assert.AreEqual ("17 0d 34 39 31 32 33 31 31 31 35 39 35 39 5a", st.Format (true), "Format(true)");
-			Assert.AreEqual ("17 0d 34 39 31 32 33 31 31 31 35 39 35 39 5a", st.Format (false), "Format(false)");
-		}
-
-		[Test]
-		[ExpectedException (typeof (CryptographicException))]
-		public void Constructor_DateTime_After2050 ()
-		{
-			DateTime dt = new DateTime (2050, 01, 01, 00, 00, 00);
-			// in 2050 encoding should switch to GENERALIZEDTIME (0x18), i.e. 4 digits years
-			Pkcs9SigningTime st = new Pkcs9SigningTime (dt);
 		}
 
 		[Test]

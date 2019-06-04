@@ -13,6 +13,7 @@ man_MANS = \
 	genxs.1               \
 	httpcfg.1             \
 	ilasm.1               \
+	illinkanalyzer.1      \
 	lc.1		      \
 	macpack.1             \
 	makecert.1            \
@@ -58,6 +59,7 @@ man_MANS = \
 	mono-configuration-crypto.1 \
 	ccrewrite.1			\
 	cccheck.1			\
-	mono-symbolicate.1
+	mono-symbolicate.1			\
+	mono-profilers.1
 
 EXTRA_DIST = $(man_MANS)

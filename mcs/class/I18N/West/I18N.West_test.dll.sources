@@ -1,1 +1,4 @@
+../../../test-helpers/TestResourceHelper.cs
+../../EncodingTestBase.cs
+I18N.West.EncodingTest.cs
 I18N.West.Test.cs

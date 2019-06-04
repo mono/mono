@@ -12,6 +12,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include "mono/metadata/mono-security-windows-internals.h"
+#include <mono/metadata/handle.h>
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 #include <aclapi.h>
@@ -23,6 +24,7 @@
 #endif
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
 static gunichar2*
 GetSidName (gunichar2 *server, PSID sid, gint32 *size)
 {
@@ -69,7 +71,7 @@ GetSidName (gunichar2 *server, PSID sid, gint32 *size)
 }
 
 gpointer
-mono_security_principal_windows_identity_get_current_token (void)
+mono_security_principal_windows_identity_get_current_token (MonoError *error)
 {
 	gpointer token = NULL;
 
@@ -89,12 +91,11 @@ mono_security_principal_windows_identity_get_current_token (void)
 gpointer
 ves_icall_System_Security_Principal_WindowsIdentity_GetCurrentToken (MonoError *error)
 {
-	error_init (error);
-	return mono_security_principal_windows_identity_get_current_token ();
+	return mono_security_principal_windows_identity_get_current_token (error);
 }
 
 gint32
-mono_security_win_get_token_name (gpointer token, gunichar2 ** uniname)
+mono_security_win_get_token_name (gpointer token, gunichar2 ** uniname, MonoError *error)
 {
 	gint32 size = 0;
 
@@ -120,7 +121,9 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetTokenName (gpointer token
 
 	error_init (error);
 
-	size = mono_security_win_get_token_name (token, &uniname);
+	size = mono_security_win_get_token_name (token, &uniname, error);
+	if (size == 0 && !is_ok (error))
+		return NULL_HANDLE_STRING;
 
 	if (size > 0) {
 		result = mono_string_new_utf16_handle (mono_domain_get (), uniname, size, error);
@@ -152,7 +155,7 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetUserToken (MonoStringHand
 MonoArray*
 ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 {
-	MonoError error;
+	ERROR_DECL (error);
 	MonoArray *array = NULL;
 	MonoDomain *domain = mono_domain_get ();
 
@@ -165,8 +168,8 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 			int i=0;
 			int num = tg->GroupCount;
 
-			array = mono_array_new_checked (domain, mono_get_string_class (), num, &error);
-			if (mono_error_set_pending_exception (&error)) {
+			array = mono_array_new_checked (domain, mono_get_string_class (), num, error);
+			if (mono_error_set_pending_exception (error)) {
 				g_free (tg);
 				return NULL;
 			}
@@ -176,14 +179,14 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 				gunichar2 *uniname = GetSidName (NULL, tg->Groups [i].Sid, &size);
 
 				if (uniname) {
-					MonoString *str = mono_string_new_utf16_checked (domain, uniname, size, &error);
-					if (!is_ok (&error)) {
+					MonoString *str = mono_string_new_utf16_checked (domain, uniname, size, error);
+					if (!is_ok (error)) {
 						g_free (uniname);
 						g_free (tg);
-						mono_error_set_pending_exception (&error);
+						mono_error_set_pending_exception (error);
 						return NULL;
 					}
-					mono_array_setref (array, i, str);
+					mono_array_setref_internal (array, i, str);
 					g_free (uniname);
 				}
 			}
@@ -193,89 +196,82 @@ ves_icall_System_Security_Principal_WindowsIdentity_GetRoles (gpointer token)
 
 	if (!array) {
 		/* return empty array of string, i.e. string [0] */
-		array = mono_array_new_checked (domain, mono_get_string_class (), 0, &error);
-		mono_error_set_pending_exception (&error);
+		array = mono_array_new_checked (domain, mono_get_string_class (), 0, error);
+		mono_error_set_pending_exception (error);
 	}
 	return array;
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-gboolean
-ves_icall_System_Security_Principal_WindowsImpersonationContext_CloseToken (gpointer token)
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsImpersonationContext_CloseToken (gpointer token, MonoError *error)
 {
-	gboolean result = TRUE;
-	result = (CloseHandle (token) != 0);
-	return result;
+	return !!CloseHandle (token);
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
 gpointer
-ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (gpointer token)
+ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (gpointer token, MonoError *error)
 {
 	gpointer dupe = NULL;
-
-	if (DuplicateToken (token, SecurityImpersonation, &dupe) == 0) {
-		dupe = NULL;
-	}
-	return dupe;
+	return DuplicateToken (token, SecurityImpersonation, &dupe) ? dupe : NULL;
 }
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
-gboolean
-ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group)
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupId (gpointer user, gpointer group, MonoError *error)
 {
-	gboolean result = FALSE;
-
 	/* The convertion from an ID to a string is done in managed code for Windows */
 	g_warning ("IsMemberOfGroupId should never be called on Win32");
-	return result;
+	return FALSE;
 }
 
-gboolean
-ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, MonoString *group)
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsPrincipal_IsMemberOfGroupName (gpointer user, const gchar *group, MonoError *error)
 {
-	gboolean result = FALSE;
-
 	/* Windows version use a cache built using WindowsIdentity._GetRoles */
 	g_warning ("IsMemberOfGroupName should never be called on Win32");
-	return result;
+	return FALSE;
 }
 
 #if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+
+static PSID
+GetSidHelper (const SID_IDENTIFIER_AUTHORITY *authority, BYTE subAuthorityCount, DWORD subAuthority0, DWORD subAuthority1)
+{
+	PSID pSid = NULL;
+	// This SID must be freed with FreeSid ().
+	return AllocateAndInitializeSid ((PSID_IDENTIFIER_AUTHORITY)authority, subAuthorityCount,
+		subAuthority0, subAuthority1, 0/*2*/, 0/*3*/, 0/*4*/, 0/*5*/, 0/*6*/, 0/*7*/, &pSid) ? pSid : NULL;
+}
+
 static PSID
 GetAdministratorsSid (void)
 {
-	SID_IDENTIFIER_AUTHORITY admins = { SECURITY_NT_AUTHORITY };
-	PSID pSid = NULL;
-	if (!AllocateAndInitializeSid (&admins, 2, SECURITY_BUILTIN_DOMAIN_RID,
-		DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &pSid))
-		return NULL;
-	/* Note: this SID must be freed with FreeSid () */
-	return pSid;
+	const static SID_IDENTIFIER_AUTHORITY admins = { SECURITY_NT_AUTHORITY };
+	// This SID must be freed with FreeSid ().
+	return GetSidHelper (&admins, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS);
 }
 
 static PSID
 GetEveryoneSid (void)
 {
-	SID_IDENTIFIER_AUTHORITY everyone = { SECURITY_WORLD_SID_AUTHORITY };
-	PSID pSid = NULL;
-	if (!AllocateAndInitializeSid (&everyone, 1, SECURITY_WORLD_RID, 0, 0, 0, 0, 0, 0, 0, &pSid))
-		return NULL;
-	/* Note: this SID must be freed with FreeSid () */
-	return pSid;
+	const static SID_IDENTIFIER_AUTHORITY everyone = { SECURITY_WORLD_SID_AUTHORITY };
+	// This SID must be freed with FreeSid ().
+	return GetSidHelper (&everyone, 1, SECURITY_WORLD_RID, 0);
 }
 
 static PSID
-GetCurrentUserSid (void)
+GetCurrentUserSid (MonoError *error)
 {
 	PSID sid = NULL;
-	guint32 size = 0;
-	gpointer token = mono_security_principal_windows_identity_get_current_token ();
+	DWORD size = 0;
+	gpointer token = mono_security_principal_windows_identity_get_current_token (error);
 
-	GetTokenInformation (token, TokenUser, NULL, size, (PDWORD)&size);
+	GetTokenInformation (token, TokenUser, NULL, size, &size);
 	if (size > 0) {
 		TOKEN_USER *tu = g_malloc0 (size);
-		if (GetTokenInformation (token, TokenUser, tu, size, (PDWORD)&size)) {
+		if (GetTokenInformation (token, TokenUser, tu, size, &size)) {
 			DWORD length = GetLengthSid (tu->User.Sid);
 			sid = (PSID) g_malloc0 (length);
 			if (!CopySid (length, sid, tu->User.Sid)) {
@@ -303,21 +299,20 @@ GetRightsFromSid (PSID sid, PACL acl)
 }
 
 gboolean
-mono_security_win_is_machine_protected (gunichar2 *path)
+mono_security_win_is_machine_protected (const gunichar2 *path, MonoError *error)
 {
 	gboolean success = FALSE;
 	PACL pDACL = NULL;
 	PSECURITY_DESCRIPTOR pSD = NULL;
-	PSID pEveryoneSid = NULL;
 
-	DWORD dwRes = GetNamedSecurityInfoW (path, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, &pDACL, NULL, &pSD);
+	DWORD dwRes = GetNamedSecurityInfoW ((PWSTR)path, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, NULL, NULL, &pDACL, NULL, &pSD);
 	if (dwRes != ERROR_SUCCESS)
 		return FALSE;
 
 	/* We check that Everyone is still limited to READ-ONLY -
 	but not if new entries have been added by an Administrator */
 
-	pEveryoneSid = GetEveryoneSid ();
+	PSID const pEveryoneSid = GetEveryoneSid ();
 	if (pEveryoneSid) {
 		ACCESS_MASK rights = GetRightsFromSid (pEveryoneSid, pDACL);
 		/* http://msdn.microsoft.com/library/en-us/security/security/generic_access_rights.asp?frame=true */
@@ -327,21 +322,19 @@ mono_security_win_is_machine_protected (gunichar2 *path)
 	/* Note: we don't need to check our own access -
 	we'll know soon enough when reading the file */
 
-	if (pSD)
-		LocalFree (pSD);
+	LocalFree (pSD);
 
 	return success;
 }
 
 gboolean
-mono_security_win_is_user_protected (gunichar2 *path)
+mono_security_win_is_user_protected (const gunichar2 *path, MonoError *error)
 {
 	gboolean success = FALSE;
 	PACL pDACL = NULL;
-	PSID pEveryoneSid = NULL;
 	PSECURITY_DESCRIPTOR pSecurityDescriptor = NULL;
 
-	DWORD dwRes = GetNamedSecurityInfoW (path, SE_FILE_OBJECT,
+	DWORD dwRes = GetNamedSecurityInfoW ((PWSTR)path, SE_FILE_OBJECT,
 		DACL_SECURITY_INFORMATION, NULL, NULL, &pDACL, NULL, &pSecurityDescriptor);
 	if (dwRes != ERROR_SUCCESS)
 		return FALSE;
@@ -350,7 +343,7 @@ mono_security_win_is_user_protected (gunichar2 *path)
 	but not if new entries have been added by the user */
 
 	/* Everyone should be denied */
-	pEveryoneSid = GetEveryoneSid ();
+	PSID const pEveryoneSid = GetEveryoneSid ();
 	if (pEveryoneSid) {
 		ACCESS_MASK rights = GetRightsFromSid (pEveryoneSid, pDACL);
 		success = (rights == 0);
@@ -359,14 +352,13 @@ mono_security_win_is_user_protected (gunichar2 *path)
 	/* Note: we don't need to check our own access -
 	we'll know soon enough when reading the file */
 
-	if (pSecurityDescriptor)
-		LocalFree (pSecurityDescriptor);
+	LocalFree (pSecurityDescriptor);
 
 	return success;
 }
 
 gboolean
-mono_security_win_protect_machine (gunichar2 *path)
+mono_security_win_protect_machine (const gunichar2 *path, MonoError *error)
 {
 	PSID pEveryoneSid = GetEveryoneSid ();
 	PSID pAdminsSid = GetAdministratorsSid ();
@@ -375,7 +367,7 @@ mono_security_win_protect_machine (gunichar2 *path)
 	if (pEveryoneSid && pAdminsSid) {
 		PACL pDACL = NULL;
 		EXPLICIT_ACCESS ea [2];
-		ZeroMemory (&ea, 2 * sizeof (EXPLICIT_ACCESS));
+		ZeroMemory (&ea, sizeof (ea));
 
 		/* grant all access to the BUILTIN\Administrators group */
 		BuildTrusteeWithSidW (&ea [0].Trustee, pAdminsSid);
@@ -397,27 +389,26 @@ mono_security_win_protect_machine (gunichar2 *path)
 		if (retval == ERROR_SUCCESS) {
 			/* with PROTECTED_DACL_SECURITY_INFORMATION we */
 			/* remove any existing ACL (like inherited ones) */
-			retval = SetNamedSecurityInfo (path, SE_FILE_OBJECT,
+			retval = SetNamedSecurityInfoW ((PWSTR)path, SE_FILE_OBJECT,
 				DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION,
 				NULL, NULL, pDACL, NULL);
 		}
-		if (pDACL)
-			LocalFree (pDACL);
+		LocalFree (pDACL);
 	}
 
 	if (pEveryoneSid)
 		FreeSid (pEveryoneSid);
 	if (pAdminsSid)
 		FreeSid (pAdminsSid);
-	return (retval == ERROR_SUCCESS);
+	return retval == ERROR_SUCCESS;
 }
 
 gboolean
-mono_security_win_protect_user (gunichar2 *path)
+mono_security_win_protect_user (const gunichar2 *path, MonoError *error)
 {
 	DWORD retval = -1;
 
-	PSID pCurrentSid = GetCurrentUserSid ();
+	PSID const pCurrentSid = GetCurrentUserSid (error);
 	if (pCurrentSid) {
 		PACL pDACL = NULL;
 		EXPLICIT_ACCESS ea;
@@ -435,68 +426,57 @@ mono_security_win_protect_user (gunichar2 *path)
 		if (retval == ERROR_SUCCESS) {
 			/* with PROTECTED_DACL_SECURITY_INFORMATION we
 			   remove any existing ACL (like inherited ones) */
-			retval = SetNamedSecurityInfo (path, SE_FILE_OBJECT,
+			retval = SetNamedSecurityInfoW ((PWSTR)path, SE_FILE_OBJECT,
 				DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION,
 				NULL, NULL, pDACL, NULL);
 		}
 
-		if (pDACL)
-			LocalFree (pDACL);
+		LocalFree (pDACL);
 		g_free (pCurrentSid); /* g_malloc0 */
 	}
 
-	return (retval == ERROR_SUCCESS);
+	return retval == ERROR_SUCCESS;
 }
+
 #endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_CanSecure (MonoString *root)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_CanSecure (const gunichar2 *root, MonoError *error)
 {
-	gint32 flags;
+	DWORD flags = 0;
 
 	/* ACL are nice... unless you have FAT or other uncivilized filesystem */
-	if (!GetVolumeInformation (mono_string_chars (root), NULL, 0, NULL, NULL, (LPDWORD)&flags, NULL, 0))
+	if (!GetVolumeInformationW (root, NULL, 0, NULL, NULL, &flags, NULL, 0))
 		return FALSE;
-	return ((flags & FS_PERSISTENT_ACLS) == FS_PERSISTENT_ACLS);
+	return (flags & FS_PERSISTENT_ACLS) == FS_PERSISTENT_ACLS;
 }
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsMachineProtected (MonoString *path)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsMachineProtected (const gunichar2 *path, MonoError *error)
 {
-	gboolean ret = FALSE;
-
 	/* no one, but the owner, should have write access to the directory */
-	ret = mono_security_win_is_machine_protected (mono_string_chars (path));
-	return (MonoBoolean)ret;
+	return (MonoBoolean)mono_security_win_is_machine_protected (path, error);
 }
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (MonoString *path)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (const gunichar2 *path, MonoError *error)
 {
-	gboolean ret = FALSE;
-
 	/* no one, but the user, should have access to the directory */
-	ret = mono_security_win_is_user_protected (mono_string_chars (path));
-	return (MonoBoolean)ret;
+	return (MonoBoolean)mono_security_win_is_user_protected (path, error);
 }
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (MonoString *path)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (const gunichar2 *path, MonoError *error)
 {
-	gboolean ret = FALSE;
-
 	/* read/write to owner, read to everyone else */
-	ret = mono_security_win_protect_machine (mono_string_chars (path));
-	return (MonoBoolean)ret;
+	return (MonoBoolean)mono_security_win_protect_machine (path, error);
 }
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (MonoString *path)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (const gunichar2 *path, MonoError *error)
 {
-	gboolean ret = FALSE;
-
 	/* read/write to user, no access to everyone else */
-	ret = mono_security_win_protect_user (mono_string_chars (path));
-	return (MonoBoolean)ret;
+	return (MonoBoolean)mono_security_win_protect_user (path, error);
 }
+
 #endif /* HOST_WIN32 */

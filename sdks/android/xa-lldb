@@ -1,0 +1,113 @@
+#!/bin/bash
+
+set -xi
+
+PLATFORM_TOOLS_DIR=$HOME/android-toolchain/sdk/platform-tools
+
+shell()
+{
+  $PLATFORM_TOOLS_DIR/adb -s "$DEVICE" shell "$@"
+}
+
+while getopts "d:" option ; do
+    case "$option" in
+		d)
+			DEVICE=$OPTARG
+			shift 2
+			;;
+	esac
+done
+
+# Directory with lldb binaries/debug servers
+LLDB_MONO_DIR=`dirname $0`
+NOW=`date +%s`
+
+if [ "$DEVICE" = "" ]; then
+  DEVICE_COUNT=`$PLATFORM_TOOLS_DIR/adb devices | grep 'device$' | wc -l`
+  if [ $DEVICE_COUNT -eq 1 ]; then
+    DEVICE=`$PLATFORM_TOOLS_DIR/adb devices | grep 'device$' | awk -F"\t+" '{print $1}'`
+  fi
+fi
+echo "Device: $DEVICE"
+
+SOCK="platform-${NOW}.sock"
+ARCH=$(shell "getprop ro.product.cpu.abi" | tr -d '\r')
+
+LLDB_SERVER_ARCH=$ARCH
+if [ "$ARCH" = "armeabi-v7a" ]; then
+  LLDB_SERVER_ARCH="armeabi"
+fi
+
+echo "Architecture: $ARCH"
+
+#LLDB_DIR=$HOME/Library/Android/sdk/lldb/2.2/android
+LLDB_DIR=$LLDB_MONO_DIR/android
+
+R_TMP=/data/local/tmp
+LLDB=/data/data/org.mono.android.AndroidTestRunner/lldb
+LLDB_BIN=$LLDB/bin
+LLDB_SERVER=$LLDB_BIN/lldb-server
+START_SERVER=$LLDB_BIN/start_lldb_server.sh
+LLDB_LOCAL_SERVER=$LLDB_DIR/$LLDB_SERVER_ARCH/lldb-server
+
+if [ ! -f $LLDB_LOCAL_SERVER ]; then
+	echo "Unable to find llvm-server binary at $LLDB_LOCAL_SERVER."
+	exit 1
+fi
+
+echo "Copying lldb-server to device..."
+$PLATFORM_TOOLS_DIR/adb -s "$DEVICE" push $LLDB_DIR/$LLDB_SERVER_ARCH/lldb-server $R_TMP
+$PLATFORM_TOOLS_DIR/adb -s "$DEVICE" push $LLDB_DIR/start_lldb_server.sh $R_TMP
+
+$PLATFORM_TOOLS_DIR/adb -s "$DEVICE" shell 'setprop debug.mono.lldb wait:`date +%s`'
+$PLATFORM_TOOLS_DIR/adb -s "$DEVICE" shell 'setprop debug.mono.debug 1'
+# FIXME: Add to it
+$PLATFORM_TOOLS_DIR/adb -s "$DEVICE" shell 'setprop debug.mono.env MONO_LLDB=1'
+
+echo "Starting app..."
+shell "am instrument org.mono.android.AndroidTestRunner/org.mono.android.AndroidRunner "
+shell "run-as org.mono.android.AndroidTestRunner mkdir -p $LLDB_BIN"
+shell "rm -f $LLDB_SERVER"
+shell "cat $R_TMP/lldb-server | run-as org.mono.android.AndroidTestRunner sh -c \"cat > $LLDB_SERVER && chmod 700 $LLDB_SERVER\""
+shell "cat $R_TMP/start_lldb_server.sh | run-as org.mono.android.AndroidTestRunner sh -c \"cat > $START_SERVER && chmod 700 $START_SERVER\""
+
+echo "Waiting for app to start..."
+
+for i in 1 2 3 4 5; do
+	PID=$(shell "ps" | grep "org.mono.android.AndroidTestRunner\s*$" | awk -F' +' '{print $2}')
+
+	if [ "$PID" != "" ]; then
+		break
+	fi
+	sleep 1
+done
+
+if [ "$PID" == "" ]; then
+	echo "Can't find process pid."
+	exit 1
+fi
+echo "pid == $PID"
+
+START_FILE=/tmp/lldb_commands.$NOW
+echo "platform select remote-android
+platform connect unix-abstract-connect://[$DEVICE]$LLDB/tmp/$SOCK
+settings set auto-confirm true
+settings set plugin.symbol-file.dwarf.comp-dir-symlink-paths /proc/self/cwd
+process attach -p $PID
+p (void)monodroid_clear_lldb_wait()
+$COMMANDS" > $START_FILE
+
+echo -n "Starting lldb server in the background"
+shell "run-as org.mono.android.AndroidTestRunner $START_SERVER $LLDB unix-abstract $LLDB/tmp $SOCK \"lldb process:gdb-remote packets\""&
+for i in {1..5}; do
+  echo -n ' .'
+  sleep 1
+done
+echo " done."
+
+declare -a PIDS=( `pgrep -P $!` "$!" )
+
+$LLDB_MONO_DIR/lldb -s $START_FILE
+
+rm $START_FILE
+kill "${PIDS[@]}"

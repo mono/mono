@@ -298,7 +298,7 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 			
-			AssertExtensions.Throws <ArgumentException> (() => {
+			Assert.Throws <ArgumentException> (() => {
 				ddr.GetVirtualPath (new RequestContext (hc, rd), null);
 			}, "#A1");
 		}
@@ -444,7 +444,7 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				ddr.GetVirtualPath (new RequestContext (hc, rd), null);
 			}, "#A1");
 		}

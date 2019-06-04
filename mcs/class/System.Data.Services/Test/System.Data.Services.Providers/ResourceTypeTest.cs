@@ -29,7 +29,6 @@ using System.Collections.Generic;
 using System.Data.Services.Providers;
 
 using NUnit.Framework;
-using MonoTests.Common;
 
 namespace MonoTests.System.Data.Services.Providers
 {
@@ -42,31 +41,31 @@ namespace MonoTests.System.Data.Services.Providers
 			var dummy = new ResourceType (typeof (string), ResourceTypeKind.ComplexType, null, "System", "String", false);
 			ResourceType rt;
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				rt = new ResourceType (null, ResourceTypeKind.ComplexType, dummy, "System", "Null", false);
 			}, "#A1-1");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				rt = new ResourceType (typeof (string), ResourceTypeKind.ComplexType, dummy, "System", null, false);
 			}, "#A1-2");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				rt = new ResourceType (typeof (string), ResourceTypeKind.ComplexType, dummy, null, null, false);
 			}, "#A1-3");
 
-			AssertExtensions.Throws<ArgumentNullException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				rt = new ResourceType (typeof (string), ResourceTypeKind.ComplexType, dummy, "System", String.Empty, false);
 			}, "#A1-4");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				rt = new ResourceType (typeof (string), ResourceTypeKind.Primitive, null, "System", "String", false);
 			}, "#A2-1");
 			
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				rt = new ResourceType (typeof (bool), ResourceTypeKind.Primitive, null, "System", "Bool", false);
 			}, "#A2-2");
 
-			AssertExtensions.Throws<ArgumentException> (() => {
+			Assert.Throws<ArgumentException> (() => {
 				rt = new ResourceType (typeof (int), ResourceTypeKind.EntityType, null, "System", "Int32", true);
 			}, "#A2-3");
 

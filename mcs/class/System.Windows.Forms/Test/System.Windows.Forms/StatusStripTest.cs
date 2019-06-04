@@ -56,6 +56,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (ToolStripRenderMode.System, ts.RenderMode, "A11");
 			
 			Assert.AreEqual ("System.Windows.Forms.StatusStrip+StatusStripAccessibleObject", ts.AccessibilityObject.GetType ().ToString ());
+			Assert.AreEqual ("System.Windows.Forms.Layout.TableLayout", ts.LayoutEngine.ToString ());
 		}
 
 		[Test]
@@ -185,6 +186,34 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, ts.Stretch, "B1");
 		}
 		
+		[Test]
+		public void Layout ()
+		{
+			StatusStrip ss = new StatusStrip();
+			ToolStripStatusLabel label;
+
+			ss.SuspendLayout ();
+			ss.Items.Add ("");
+			ss.Items.Add (label = new ToolStripStatusLabel(""));
+			ss.Items.Add ("");
+			ss.ResumeLayout ();
+
+			Assert.AreEqual (new Rectangle (0, 0, 200, 22), ss.Bounds);
+			Assert.AreEqual (new Rectangle (188, 0, 12, 22), ss.SizeGripBounds);
+			Assert.AreEqual (new Size (0, 17), ss.Items[0].Size);
+			Assert.AreEqual (new Size (0, 17), label.Size);
+
+			Assert.AreEqual (new Rectangle (1, 3, 0, 17), ss.Items[0].Bounds);
+			Assert.AreEqual (new Rectangle (1, 3, 0, 17), ss.Items[1].Bounds);
+			Assert.AreEqual (new Rectangle (1, 3, 0, 17), ss.Items[2].Bounds);
+
+			label.Spring = true;
+
+			Assert.AreEqual (new Rectangle(1, 3, 0, 17), ss.Items[0].Bounds);
+			Assert.AreEqual (new Rectangle(1, 3, 185, 17), ss.Items[1].Bounds);
+			Assert.AreEqual (new Rectangle(186, 3, 0, 17), ss.Items[2].Bounds);
+		}
+
 		private class ExposeProtectedProperties : StatusStrip
 		{
 			public new DockStyle DefaultDock { get { return base.DefaultDock; } }

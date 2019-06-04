@@ -2840,10 +2840,20 @@ namespace System.ServiceModel.Channels
         [SuppressMessage("Microsoft.Security.Cryptography", "CA5354:DoNotUseSHA1", Justification = "Cannot change. It will cause compatibility issue. Not used for cryptographic purposes.")]
         static HashAlgorithm GetHashAlgorithm()
         {
-            if (SecurityUtilsEx.RequiresFipsCompliance)
-                return new SHA1CryptoServiceProvider();
+            if (!LocalAppContextSwitches.UseSha1InPipeConnectionGetHashAlgorithm)
+            {
+                if (SecurityUtilsEx.RequiresFipsCompliance)
+                    return new SHA256CryptoServiceProvider();
+                else
+                    return new SHA256Managed();
+            }
             else
-                return new SHA1Managed();
+            {
+                if (SecurityUtilsEx.RequiresFipsCompliance)
+                    return new SHA1CryptoServiceProvider();
+                else
+                    return new SHA1Managed();
+            }
         }
 
         public static string GetPath(Uri uri)

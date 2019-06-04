@@ -912,6 +912,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[Category ("NotWasm")]
 		public void NullFirstArgumentOnStaticMethod ()
 		{
 			CallTarget call = (CallTarget) Delegate.CreateDelegate (
@@ -1386,6 +1387,23 @@ namespace MonoTests.System
 				Delegate.CreateDelegate(typeof (Func<StringComparison, StringComparison, bool>), dm.Method) as
 				Func<StringComparison, StringComparison, bool>; 
 			Assert.IsTrue (d (0, 0));
+		}
+
+		[Test]
+		public void EnumBaseTypeConversion2 () {
+			Func<Enum22, int> dm = EnumArg;
+			var d = (Func<int, int>)Delegate.CreateDelegate (typeof (Func<int, int>), dm.Method);
+			Assert.AreEqual (1, d (1));
+		}
+
+		public enum Enum22 {
+			none,
+			one,
+			two
+		}
+
+		public static int EnumArg (Enum22 e) {
+			return (int)e;
 		}
 
 #if !MONOTOUCH && !FULL_AOT_RUNTIME

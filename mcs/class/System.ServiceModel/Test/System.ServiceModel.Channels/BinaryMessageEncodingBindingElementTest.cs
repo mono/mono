@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE && !XAMMAC_4_5
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -118,7 +119,7 @@ namespace MonoTests.System.ServiceModel.Channels
 		[Test]
 		public void ReadMessage ()
 		{
-			using (var ms = File.OpenRead ("Test/System.ServiceModel.Channels/binary-message.raw")) {
+			using (var ms = File.OpenRead (TestResourceHelper.GetFullPathOfResource ("Test/Resources/binary-message.raw"))) {
 
 				var session = new XmlBinaryReaderSession ();
 				byte [] rsbuf = new BinaryFrameSupportReader (ms).ReadSizedChunk ();
@@ -461,3 +462,4 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 	}
 }
+#endif

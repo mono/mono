@@ -42,7 +42,38 @@ static char sccsid[] = "@(#)verbose.c	5.3 (Berkeley) 1/20/91";
 
 static short *null_rules;
 
-verbose()
+static void
+print_gotos (int stateno);
+
+static void
+print_shifts (action *p);
+
+static void
+print_reductions (action *p, int defred);
+
+static void
+print_core (int state);
+
+static void
+print_actions (int stateno);
+
+static void
+print_nulls (int state);
+
+static void
+log_unused (void);
+
+static void
+print_conflicts (int state);
+
+static void
+print_state (int state);
+
+static void
+log_conflicts (void);
+
+void
+verbose (void)
 {
     register int i;
 
@@ -65,8 +96,8 @@ verbose()
     fprintf(verbose_file, "%d grammar rules, %d states\n", nrules - 2, nstates);
 }
 
-
-log_unused()
+static void
+log_unused (void)
 {
     register int i;
     register short *p;
@@ -84,8 +115,8 @@ log_unused()
     }
 }
 
-
-log_conflicts()
+static void
+log_conflicts (void)
 {
     register int i;
 
@@ -112,9 +143,8 @@ log_conflicts()
     }
 }
 
-
-print_state(state)
-int state;
+static void
+print_state (int state)
 {
     if (state)
 	fprintf(verbose_file, "\n\n");
@@ -126,9 +156,8 @@ int state;
     print_actions(state);
 }
 
-
-print_conflicts(state)
-int state;
+static void
+print_conflicts (int state)
 {
     register int symbol, act, number;
     register action *p;
@@ -174,9 +203,8 @@ int state;
     }
 }
 
-
-print_core(state)
-int state;
+static void
+print_core (int state)
 {
     register int i;
     register int k;
@@ -210,9 +238,8 @@ int state;
     }
 }
 
-
-print_nulls(state)
-int state;
+static void
+print_nulls (int state)
 {
     register action *p;
     register int i, j, k, nnulls;
@@ -254,9 +281,8 @@ int state;
     fprintf(verbose_file, "\n");
 }
 
-
-print_actions(stateno)
-int stateno;
+static void
+print_actions (int stateno)
 {
     register action *p;
     register shifts *sp;
@@ -281,9 +307,8 @@ int stateno;
     }
 }
 
-
-print_shifts(p)
-register action *p;
+static void
+print_shifts (action *p)
 {
     register int count;
     register action *q;
@@ -306,10 +331,8 @@ register action *p;
     }
 }
 
-
-print_reductions(p, defred)
-register action *p;
-register int defred;
+static void
+print_reductions (action *p, int defred)
 {
     register int k, anyreds;
     register action *q;
@@ -344,9 +367,8 @@ register int defred;
     }
 }
 
-
-print_gotos(stateno)
-int stateno;
+static void
+print_gotos (int stateno)
 {
     register int i, k;
     register int as;

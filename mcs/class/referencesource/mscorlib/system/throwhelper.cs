@@ -49,12 +49,18 @@ namespace System {
     using System.Runtime.CompilerServices;        
     using System.Runtime.Serialization;
     using System.Diagnostics.Contracts;
+    using System.Collections.Generic;
 
     [Pure]
-    internal static class ThrowHelper {    
+#if MONO
+    [System.Diagnostics.StackTraceHidden]
+#endif
+    internal static partial class ThrowHelper {
+#if !MONO
         internal static void ThrowArgumentOutOfRangeException() {        
             ThrowArgumentOutOfRangeException(ExceptionArgument.index, ExceptionResource.ArgumentOutOfRange_Index);            
         }
+#endif
 
         internal static void ThrowWrongKeyTypeArgumentException(object key, Type targetType) {
             throw new ArgumentException(Environment.GetResourceString("Arg_WrongType", key, targetType), "key");
@@ -76,6 +82,7 @@ namespace System {
             throw new ArgumentException(Environment.GetResourceString(GetResourceName(resource)), GetArgumentName(argument));
         }
 
+#if !MONO
         internal static void ThrowArgumentNullException(ExceptionArgument argument) {
             throw new ArgumentNullException(GetArgumentName(argument));
         }
@@ -83,6 +90,7 @@ namespace System {
         internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument) {
             throw new ArgumentOutOfRangeException(GetArgumentName(argument));
         }
+#endif
 
         internal static void ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource) {
                 
@@ -118,6 +126,115 @@ namespace System {
         internal static void ThrowObjectDisposedException(string objectName, ExceptionResource resource) {
             throw new ObjectDisposedException(objectName, Environment.GetResourceString(GetResourceName(resource)));
         }
+
+#if MONO
+        internal static void ThrowInvalidOperationException_InvalidOperation_EnumFailedVersion()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_EnumFailedVersion);
+        }
+
+        internal static void ThrowInvalidOperationException_InvalidOperation_EnumOpCantHappen()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_EnumOpCantHappen);
+        }
+
+        internal static void ThrowInvalidOperationException_InvalidOperation_EnumNotStarted()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_EnumNotStarted);
+        }
+
+        internal static void ThrowInvalidOperationException_InvalidOperation_EnumEnded()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_EnumEnded);
+        }
+
+        internal static void ThrowInvalidOperationException_InvalidOperation_NoValue()
+        {
+            throw new InvalidOperationException(SR.InvalidOperation_NoValue);
+        }
+
+        private static ArgumentOutOfRangeException GetArgumentOutOfRangeException(ExceptionArgument argument, string resource)
+        {
+            return new ArgumentOutOfRangeException(GetArgumentName(argument), resource);
+        }
+
+        internal static void ThrowArgumentOutOfRange_IndexException()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.index,
+                                                    SR.ArgumentOutOfRange_Index);
+        }
+
+        internal static void ThrowIndexArgumentOutOfRange_NeedNonNegNumException()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.index,
+                                                    SR.ArgumentOutOfRange_NeedNonNegNum);
+        }
+
+        internal static void ThrowArgumentException_Argument_InvalidArrayType()
+        {
+            throw new ArgumentException(SR.Argument_InvalidArrayType);
+        }
+
+        private static ArgumentException GetAddingDuplicateWithKeyArgumentException(object key)
+        {
+            return new ArgumentException(SR.Format(SR.Argument_AddingDuplicate, key));
+        }
+        internal static void ThrowAddingDuplicateWithKeyArgumentException(object key)
+        {
+            throw GetAddingDuplicateWithKeyArgumentException(key);
+        }
+
+        private static KeyNotFoundException GetKeyNotFoundException(object key)
+        {
+            throw new KeyNotFoundException(SR.Format(SR.Arg_KeyNotFoundWithKey, key.ToString()));
+        }
+        internal static void ThrowKeyNotFoundException(object key)
+        {
+            throw GetKeyNotFoundException(key);
+        }
+
+        internal static void ThrowInvalidTypeWithPointersNotSupported(Type targetType)
+        {
+            throw new ArgumentException(SR.Format(SR.Argument_InvalidTypeWithPointersNotSupported, targetType));
+        }
+
+        internal static void ThrowInvalidOperationException_ConcurrentOperationsNotSupported()
+        {
+            throw GetInvalidOperationException("Operations that change non-concurrent collections must have exclusive access. A concurrent update was performed on this collection and corrupted its state. The collection's state is no longer correct.");
+        }
+
+        internal static InvalidOperationException GetInvalidOperationException(string str)
+        {
+            return new InvalidOperationException(str);
+        }
+
+        internal static void ThrowArraySegmentCtorValidationFailedExceptions(Array array, int offset, int count)
+        {
+            throw GetArraySegmentCtorValidationFailedException(array, offset, count);
+        }
+
+        private static Exception GetArraySegmentCtorValidationFailedException(Array array, int offset, int count)
+        {
+            if (array == null)
+                return GetArgumentNullException(ExceptionArgument.array);
+            if (offset < 0)
+                return GetArgumentOutOfRangeException(ExceptionArgument.offset, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
+            if (count < 0)
+                return GetArgumentOutOfRangeException(ExceptionArgument.count, ExceptionResource.ArgumentOutOfRange_NeedNonNegNum);
+
+            return GetArgumentException(ExceptionResource.Argument_InvalidOffLen);
+        }
+
+        private static ArgumentException GetArgumentException(ExceptionResource resource)
+        {
+            return new ArgumentException(resource.ToString());
+        }
+
+        private static ArgumentNullException GetArgumentNullException(ExceptionArgument argument)
+        {
+            return new ArgumentNullException(GetArgumentName(argument));
+        }
+#endif
 
         // Allow nulls for reference types and Nullable<U>, but not for value types.
         internal static void IfNullAndNullsAreIllegalThenThrow<T>(object value, ExceptionArgument argName) {
@@ -235,6 +352,23 @@ namespace System {
             }
 
             return argumentName;
+        }
+
+        private static ArgumentOutOfRangeException GetArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
+        {
+            return new ArgumentOutOfRangeException(GetArgumentName(argument), resource.ToString());
+        }
+
+        internal static void ThrowStartIndexArgumentOutOfRange_ArgumentOutOfRange_Index()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.startIndex,
+                                                 ExceptionResource.ArgumentOutOfRange_Index);
+        }
+
+        internal static void ThrowCountArgumentOutOfRange_ArgumentOutOfRange_Count()
+        {
+            throw GetArgumentOutOfRangeException(ExceptionArgument.count,
+                                                 ExceptionResource.ArgumentOutOfRange_Count);
         }
 
         //
@@ -468,6 +602,35 @@ namespace System {
         options,
         view,
         sourceBytesToCopy,
+#if MONO
+        start,
+        pointer,
+        ownedMemory,
+        text,
+        length,
+        comparer,
+        comparable,
+        exceptions,
+        exception,
+        action,
+        comparison,
+        startSegment,
+        endSegment,
+        endIndex,
+        task,
+        source,
+        state,
+        culture,
+        destination,
+        byteOffset,
+        minimumBufferSize,
+        offset,
+        values,
+        comparisonType,
+        s,
+        input,
+        format
+#endif
     }
 
     //
@@ -521,7 +684,12 @@ namespace System {
         ObjectDisposed_RegKeyClosed,
         NotSupported_InComparableType,
         Argument_InvalidRegistryOptionsCheck,
-        Argument_InvalidRegistryViewCheck
+        Argument_InvalidRegistryViewCheck,
+        TaskT_TransitionToFinal_AlreadyCompleted,
+        TaskCompletionSourceT_TrySetException_NullException,
+        TaskCompletionSourceT_TrySetException_NoExceptions,
+        NotSupported_StringComparison,
+        InvalidOperation_NullArray,
     }
 }
 

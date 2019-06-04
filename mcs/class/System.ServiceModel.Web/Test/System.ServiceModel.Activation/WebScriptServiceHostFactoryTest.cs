@@ -1,4 +1,4 @@
-#if !MOBILE && !MONOMAC
+#if !MOBILE && !XAMMAC_4_5
 
 using System;
 using System.ServiceModel;
@@ -6,6 +6,8 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Web;
 using NUnit.Framework;
+
+using MonoTests.Helpers;
 
 namespace MonoTests.System.ServiceModel.Activation
 {
@@ -23,8 +25,9 @@ namespace MonoTests.System.ServiceModel.Activation
 		[Test]
 		public void CreateServiceHost ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var f = new MyHostFactory ();
-			var host = f.DoCreateServiceHost (typeof (TestService), new Uri [] {new Uri ("http://localhost:37564")});
+			var host = f.DoCreateServiceHost (typeof (TestService), new Uri [] {new Uri ($"http://localhost:{port}")});
 			Assert.IsFalse (host is WebServiceHost, "#1");
 			host.Open ();
 			host.Close ();
@@ -34,8 +37,9 @@ namespace MonoTests.System.ServiceModel.Activation
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ResponseWrappedIsInvalid ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var f = new MyHostFactory ();
-			var host = f.DoCreateServiceHost (typeof (TestService2), new Uri [] {new Uri ("http://localhost:37564")});
+			var host = f.DoCreateServiceHost (typeof (TestService2), new Uri [] {new Uri ($"http://localhost:{port}")});
 			host.Open (); // should raise an error here.
 		}
 
@@ -43,8 +47,9 @@ namespace MonoTests.System.ServiceModel.Activation
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void MultipleContract ()
 		{
+			var port = NetworkHelpers.FindFreePort ();
 			var f = new MyHostFactory ();
-			var host = f.DoCreateServiceHost (typeof (TestServiceMultiple), new Uri [] {new Uri ("http://localhost:37564")});
+			var host = f.DoCreateServiceHost (typeof (TestServiceMultiple), new Uri [] {new Uri ($"http://localhost:{port}")});
 			host.Open ();
 		}
 

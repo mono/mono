@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using NUnit.Framework;
@@ -136,13 +137,12 @@ namespace MonoTests.System.Windows {
 		public void ToStringTest ()
 		{
 			Int32Rect r = new Int32Rect (1, 2, 3, 4);
-			Assert.AreEqual ("1,2,3,4", r.ToString());
+			Assert.AreEqual ("1,2,3,4", r.ToString(CultureInfo.InvariantCulture));
 
 			Assert.AreEqual ("Empty", Int32Rect.Empty.ToString());
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Parse ()
 		{
 			Int32Rect r = Int32Rect.Parse ("1, 2, 3, 4");
@@ -150,7 +150,6 @@ namespace MonoTests.System.Windows {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ParseNegative ()
 		{
 			Int32Rect.Parse ("1, 2, -3, -4");

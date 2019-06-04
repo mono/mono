@@ -33,7 +33,7 @@ using System.Web.Compilation;
 using System.Web.Hosting;
 
 using NUnit.Framework;
-using MonoTests.Common;
+
 
 namespace MonoTests.System.Web.Compilation
 {
@@ -45,7 +45,7 @@ namespace MonoTests.System.Web.Compilation
 		[Ignore ("Pending investigation if it is indeed the correct test.")]
 		public void GetGlobalAsaxType ()
 		{
-			AssertExtensions.Throws<InvalidOperationException> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				BuildManager.GetGlobalAsaxType ();
 			}, "#A1");
 		}

@@ -65,10 +65,10 @@ class MonoMasterPackage(Package):
     def arch_build(self, arch):
         Package.profile.arch_build(arch, self)
         if arch == 'darwin-64':  # 64-bit build pass
-            self.local_configure_flags.extend (['--build=x86_64-apple-darwin11.2.0', '--disable-boehm'])
+            self.local_configure_flags.extend (['--build=x86_64-apple-darwin13.0.0', '--disable-boehm'])
 
         if arch == 'darwin-32':  # 32-bit build pass
-            self.local_configure_flags.extend (['--build=i386-apple-darwin11.2.0'])
+            self.local_configure_flags.extend (['--build=i386-apple-darwin13.0.0'])
 
         self.local_configure_flags.extend(
             ['--cache-file=%s/%s-%s.cache' % (self.profile.bockbuild.build_root, self.name, arch)])
@@ -84,16 +84,12 @@ class MonoMasterPackage(Package):
             "LocalMachine")
         ensure_dir(registry_dir)
 
-        # Add ImportBefore files from xbuild 14.0 toolsVersion directory to msbuild's
-        # 15.0 directory
-        xbuild_dir = os.path.join(self.staged_prefix, 'lib/mono/xbuild')
-        new_xbuild_tv_dir = os.path.join(xbuild_dir, '15.0')
-        os.makedirs(new_xbuild_tv_dir)
-
-        self.sh('cp -R %s/14.0/Imports %s' % (xbuild_dir, new_xbuild_tv_dir))
-
-        for dep in glob.glob("%s/Microsoft/NuGet/*" % xbuild_dir):
-            self.sh('ln -s %s %s' % (dep, xbuild_dir))
+        # LLVM build installs itself under the source tree; move tools to mono's install path
+        llvm_tools_path = os.path.join(self.workspace, 'llvm/usr/bin')
+        target = os.path.join(self.staged_prefix, 'bin')
+        ensure_dir(target)
+        for tool in ['opt','llc']:
+            shutil.move(os.path.join(llvm_tools_path, tool), target)
 
     def deploy(self):
         if bockbuild.cmd_options.arch == 'darwin-universal':

@@ -232,8 +232,8 @@ namespace System.IO {
 					conn = -1;
 				}
 
-				if (!thread.Join (2000))
-					thread.Abort ();
+				while (!thread.Join (2000))
+					thread.Interrupt ();
 
 				requestStop = false;
 				started = false;
@@ -736,8 +736,9 @@ namespace System.IO {
 			return true;
 		}
 
-		public void StartDispatching (FileSystemWatcher fsw)
+		public void StartDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			KqueueMonitor monitor;
 
 			if (watches.ContainsKey (fsw)) {
@@ -750,13 +751,19 @@ namespace System.IO {
 			monitor.Start ();
 		}
 
-		public void StopDispatching (FileSystemWatcher fsw)
+		public void StopDispatching (object handle)
 		{
+			var fsw = handle as FileSystemWatcher;
 			KqueueMonitor monitor = (KqueueMonitor)watches [fsw];
 			if (monitor == null)
 				return;
 
 			monitor.Stop ();
+		}
+
+		public void Dispose (object handle)
+		{
+			// does nothing
 		}
 			
 		[DllImport ("libc")]

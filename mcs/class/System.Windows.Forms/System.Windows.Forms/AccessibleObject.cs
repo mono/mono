@@ -125,17 +125,17 @@ namespace System.Windows.Forms {
 
 		public virtual AccessibleStates State {
 			get {
-#if not
 				if (owner!=null) {
 					if (owner.Focused) {
 						state |= AccessibleStates.Focused;
 					}
-
+					if (owner.CanFocus) {
+						state |= AccessibleStates.Focusable;
+					}
 					if (!owner.Visible) {
 						state |= AccessibleStates.Invisible;
 					}
 				}
-#endif
 				return state;
 			}
 		}

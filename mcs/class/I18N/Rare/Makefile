@@ -6,8 +6,12 @@ LIBRARY = I18N.Rare.dll
 LIB_REFS = I18N
 KEYFILE = ../../mono.pub
 LOCAL_MCS_FLAGS = /unsafe
-NO_TEST = yes
+TEST_LIB_REFS = I18N
 
-EXTRA_DISTFILES = $(wildcard *.ucm)
+TEST_RESOURCE_FILES = $(wildcard Test/texts/*.txt)
+TEST_MCS_FLAGS = $(foreach r, $(TEST_RESOURCE_FILES), -resource:$(r),$(r))
+
+EXTRA_DISTFILES = $(wildcard *.ucm) \
+	$(TEST_RESOURCE_FILES)
 
 include ../../../build/library.make

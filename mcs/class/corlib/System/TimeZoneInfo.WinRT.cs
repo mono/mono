@@ -242,7 +242,7 @@ namespace System
 			//
 
 			try {
-				if (GetDynamicTimeZoneInformationEffectiveYears (ref timeZoneInformation, out firstYear, out lastYear) == 0) {
+				if (GetDynamicTimeZoneInformationEffectiveYears (ref timeZoneInformation, out firstYear, out lastYear) != 0) {
 					firstYear = lastYear = 0;
 				}
 			} catch {
@@ -338,8 +338,17 @@ namespace System
 				// EnumDynamicTimeZoneInformation() might not be available.
 			}
 
-			if (result.Count == 0)
+			if (result.Count == 0) {
 				result.Add (Local);
+				result.Add (Utc);
+			}
+
+			result.Sort ((x, y) =>
+			{
+				int comparison = x.BaseUtcOffset.CompareTo(y.BaseUtcOffset);
+				return comparison == 0 ? string.CompareOrdinal(x.DisplayName, y.DisplayName) : comparison;
+			});
+
 			return result;
 		}
 	}

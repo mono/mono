@@ -1,26 +1,2 @@
 #include corlib.dll.sources
 
-corert/Interop.cs
-corert/Interop.MemAllocFree.cs
-
-../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.Errors.cs
-../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Interop.Libraries.cs
-
-../../../external/corert/src/System.Private.CoreLib/shared/Interop/Windows/Kernel32/Interop.FormatMessage.cs
-
-../../../external/corert/src/System.Private.CoreLib/shared/System/IO/Win32Marshal.cs
-
-../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.MemAllocFree.cs
-../../../external/corert/src/Common/src/Interop/Windows/mincore/Interop.ThreadPoolIO.cs
-
-../../../external/corert/src/Common/src/Interop/Windows/Interop.Libraries.cs
-
-../../../external/corert/src/Common/src/Interop/Unix/System.Private.CoreLib.Native/Interop.MemAllocFree.cs
-
-../../../external/corert/src/System.Private.CoreLib/src/Microsoft/Win32/SafeHandles/SafeThreadPoolIOHandle.cs
-
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolBoundHandle.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.ExecutionContextCallbackArgs.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolNativeOverlapped.OverlappedData.cs
-../../../external/corert/src/System.Private.CoreLib/src/System/Threading/Win32ThreadPoolPreAllocatedOverlapped.cs

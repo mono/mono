@@ -44,7 +44,7 @@ namespace System.Net.Http
 		long buffer_size;
 		TimeSpan timeout;
 
-#if !XAMARIN_MODERN
+#if !XAMARIN_MODERN && !WASM
 		public HttpClient ()
 			: this (new HttpClientHandler (), true)
 		{
@@ -96,7 +96,7 @@ namespace System.Net.Http
 				return timeout;
 			}
 			set {
-				if (value != System.Threading.Timeout.InfiniteTimeSpan && value < TimeSpan.Zero)
+				if (value != System.Threading.Timeout.InfiniteTimeSpan && (value <= TimeSpan.Zero || value.TotalMilliseconds > int.MaxValue))
 					throw new ArgumentOutOfRangeException ();
 
 				timeout = value;
@@ -115,6 +115,8 @@ namespace System.Net.Http
 			if (disposing && !disposed) {
 				disposed = true;
 
+				//We don't use CancelPendingRequests() because we don't want to create new CancellationTokenSource
+				cts.Cancel ();
 				cts.Dispose ();
 			}
 			
@@ -333,5 +335,11 @@ namespace System.Net.Http
 				return await resp.Content.ReadAsStringAsync ().ConfigureAwait (false);
 			}
 		}
+
+		// NS2.1 methods, added here while CoreFX HttpClient PR is not merged
+		public Task<HttpResponseMessage> PatchAsync(string requestUri, HttpContent content) => throw new PlatformNotSupportedException();
+		public Task<HttpResponseMessage> PatchAsync(string requestUri, HttpContent content, CancellationToken cancellationToken) => throw new PlatformNotSupportedException();
+		public Task<HttpResponseMessage> PatchAsync(Uri requestUri, HttpContent content) => throw new PlatformNotSupportedException();
+		public Task<HttpResponseMessage> PatchAsync(Uri requestUri, HttpContent content, CancellationToken cancellationToken) => throw new PlatformNotSupportedException();
 	}
 }

@@ -1,5 +1,4 @@
 Common/AppDomainTools.cs
-Common/AssertExtensions.cs
 Common/PokerChangeMonitor.cs
 Common/PokerMemoryCache.cs
 Common/PokerObjectCache.cs

@@ -7,7 +7,7 @@
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
-
+#if !MOBILE
 
 using NUnit.Framework;
 
@@ -140,4 +140,4 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 	}
 }
-
+#endif

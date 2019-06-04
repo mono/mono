@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if !MOBILE
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,13 +38,15 @@ using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 using NUnit.Framework;
 
+using MonoTests.Helpers;
+
 namespace MonoTests.System.ServiceModel
 {
 	[TestFixture]
 	public class WrappedKeySecurityTokenTest
 	{
 		static readonly X509Certificate2 cert =
-			new X509Certificate2 ("Test/Resources/test.pfx", "mono");
+			new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 
 		WrappedKeySecurityToken GetReferent ()
 		{
@@ -204,3 +207,4 @@ namespace MonoTests.System.ServiceModel
 		}
 	}
 }
+#endif

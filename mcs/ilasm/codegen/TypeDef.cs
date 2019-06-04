@@ -93,6 +93,8 @@ namespace Mono.ILASM {
                                 this.attr |= PEAPI.TypeAttr.Abstract;
                 }
 
+				public bool NoAutoInherit { get; set; }
+
                 public string Name {
                         get { return name; }
                 }
@@ -205,11 +207,6 @@ namespace Mono.ILASM {
 
                 public void AddMethodDef (MethodDef methoddef)
                 {
-                        if (IsInterface && !methoddef.IsStatic && (!methoddef.IsVirtual || !methoddef.IsAbstract)) {
-                                Report.Warning (methoddef.StartLocation, "Non-virtual or non-abstract instance method in interface, set to such");
-                                methoddef.Attributes |= PEAPI.MethAttr.Abstract | PEAPI.MethAttr.Virtual;
-                        }
-
                         if (method_table [methoddef.Signature] != null)
                                 Report.Error (methoddef.StartLocation, "Duplicate method declaration: " + methoddef.Signature);
 
@@ -389,7 +386,7 @@ namespace Mono.ILASM {
                                                         name_space, name);
                                         }
                                 }
-                                if (FullName == "System.Object")
+                                if (FullName == "System.Object" || NoAutoInherit)
                                         classdef.SpecialNoSuper ();
                         }
 

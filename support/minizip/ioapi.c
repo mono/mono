@@ -29,42 +29,49 @@
 #define SEEK_SET    0
 #endif
 
+static
 voidpf ZCALLBACK fopen_file_func OF((
    voidpf opaque,
    const char* filename,
    int mode));
 
+static
 uLong ZCALLBACK fread_file_func OF((
    voidpf opaque,
    voidpf stream,
    void* buf,
    uLong size));
 
+static
 uLong ZCALLBACK fwrite_file_func OF((
    voidpf opaque,
    voidpf stream,
    const void* buf,
    uLong size));
 
+static
 long ZCALLBACK ftell_file_func OF((
    voidpf opaque,
    voidpf stream));
 
+static
 long ZCALLBACK fseek_file_func OF((
    voidpf opaque,
    voidpf stream,
    uLong offset,
    int origin));
 
+static
 int ZCALLBACK fclose_file_func OF((
    voidpf opaque,
    voidpf stream));
 
+static
 int ZCALLBACK ferror_file_func OF((
    voidpf opaque,
    voidpf stream));
 
-
+static
 voidpf ZCALLBACK fopen_file_func (opaque, filename, mode)
    voidpf opaque;
    const char* filename;
@@ -86,7 +93,7 @@ voidpf ZCALLBACK fopen_file_func (opaque, filename, mode)
     return file;
 }
 
-
+static
 uLong ZCALLBACK fread_file_func (opaque, stream, buf, size)
    voidpf opaque;
    voidpf stream;
@@ -98,7 +105,7 @@ uLong ZCALLBACK fread_file_func (opaque, stream, buf, size)
     return ret;
 }
 
-
+static
 uLong ZCALLBACK fwrite_file_func (opaque, stream, buf, size)
    voidpf opaque;
    voidpf stream;
@@ -110,6 +117,7 @@ uLong ZCALLBACK fwrite_file_func (opaque, stream, buf, size)
     return ret;
 }
 
+static
 long ZCALLBACK ftell_file_func (opaque, stream)
    voidpf opaque;
    voidpf stream;
@@ -119,6 +127,7 @@ long ZCALLBACK ftell_file_func (opaque, stream)
     return ret;
 }
 
+static
 long ZCALLBACK fseek_file_func (opaque, stream, offset, origin)
    voidpf opaque;
    voidpf stream;
@@ -145,6 +154,7 @@ long ZCALLBACK fseek_file_func (opaque, stream, offset, origin)
     return ret;
 }
 
+static
 int ZCALLBACK fclose_file_func (opaque, stream)
    voidpf opaque;
    voidpf stream;
@@ -154,6 +164,7 @@ int ZCALLBACK fclose_file_func (opaque, stream)
     return ret;
 }
 
+static
 int ZCALLBACK ferror_file_func (opaque, stream)
    voidpf opaque;
    voidpf stream;

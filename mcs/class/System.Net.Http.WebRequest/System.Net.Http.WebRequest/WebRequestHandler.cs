@@ -24,141 +24,83 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Linq;
+using System.Threading;
 using System.Net.Cache;
 using System.Net.Security;
 using System.Security.Principal;
 using System.Security.Cryptography.X509Certificates;
+using System.Collections.Generic;
 
 namespace System.Net.Http
 {
 	public class WebRequestHandler : HttpClientHandler
 	{
-		bool allowPipelining;
-		RequestCachePolicy cachePolicy;
-		AuthenticationLevel authenticationLevel;
-		TimeSpan continueTimeout;
-		TokenImpersonationLevel impersonationLevel;
-		int maxResponseHeadersLength;
-		int readWriteTimeout;
-		RemoteCertificateValidationCallback serverCertificateValidationCallback;
-		bool unsafeAuthenticatedConnectionSharing;
-		X509CertificateCollection clientCertificates;
+		MonoWebRequestHandler handler;
+
+		bool disposed;
 
 		public WebRequestHandler ()
+			: this (new MonoWebRequestHandler ())
 		{
-			allowPipelining = true;
-			authenticationLevel = AuthenticationLevel.MutualAuthRequested;
-			cachePolicy = System.Net.WebRequest.DefaultCachePolicy;
-			continueTimeout = TimeSpan.FromMilliseconds (350);
-			impersonationLevel = TokenImpersonationLevel.Delegation;
-			maxResponseHeadersLength = HttpWebRequest.DefaultMaximumResponseHeadersLength;
-			readWriteTimeout = 300000;
-			serverCertificateValidationCallback = null;
-			unsafeAuthenticatedConnectionSharing = false;
-			clientCertificates = new X509CertificateCollection();
+		}
+
+		WebRequestHandler (MonoWebRequestHandler handler)
+			: base (handler)
+		{
+			this.handler = handler;
 		}
 
 		public bool AllowPipelining {
-			get { return allowPipelining; }
-			set {
- 				EnsureModifiability ();
- 				allowPipelining = value;
-			}
+			get => handler.AllowPipelining;
+			set => handler.AllowPipelining = value;
 		}
 
 		public RequestCachePolicy CachePolicy {
-			get { return cachePolicy; }
-			set {
-				EnsureModifiability ();
-				cachePolicy = value;
-			}
+			get => handler.CachePolicy;
+			set => handler.CachePolicy = value;
 		}
 
 		public AuthenticationLevel AuthenticationLevel {
-			get { return authenticationLevel; }
-			set {
-				EnsureModifiability ();
-				authenticationLevel = value;
-			}
-		}
-
-		public X509CertificateCollection ClientCertificates {
-			get {
-				if (this.ClientCertificateOptions != ClientCertificateOption.Manual) {
-					throw new InvalidOperationException("The ClientCertificateOptions property must be set to 'Manual' to use this property.");
-				}
-				
-				return clientCertificates;
-			}
+			get => handler.AuthenticationLevel;
+			set => handler.AuthenticationLevel = value;
 		}
 
 		[MonoTODO]
 		public TimeSpan ContinueTimeout {
-			get { return continueTimeout; }
-			set {
-				EnsureModifiability ();
-				continueTimeout = value;
-			}
+			get => handler.ContinueTimeout;
+			set => handler.ContinueTimeout = value;
 		}
 
 		public TokenImpersonationLevel ImpersonationLevel {
-			get { return impersonationLevel; }
-			set {
-				EnsureModifiability ();
-				impersonationLevel = value;
-			}
-		}
-
-		public int MaxResponseHeadersLength {
-			get { return maxResponseHeadersLength; }
-			set {
-				EnsureModifiability ();
-				maxResponseHeadersLength = value;
-			}
+			get => handler.ImpersonationLevel;
+			set => handler.ImpersonationLevel = value;
 		}
 
 		public int ReadWriteTimeout {
-			get { return readWriteTimeout; }
-			set {
-				EnsureModifiability ();
-				readWriteTimeout = value;
-			}
+			get => handler.ReadWriteTimeout;
+			set => handler.ReadWriteTimeout = value;
 		}
 
 		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
-			get { return serverCertificateValidationCallback; }
-			set {
-				EnsureModifiability ();
-				serverCertificateValidationCallback = value;
-			}
+			get => handler.ServerCertificateValidationCallback;
+			set => handler.ServerCertificateValidationCallback = value;
 		}
 
 		public bool UnsafeAuthenticatedConnectionSharing {
-			get { return unsafeAuthenticatedConnectionSharing; }
-			set {
-				EnsureModifiability ();
-				unsafeAuthenticatedConnectionSharing = value;
-			}
+			get => handler.UnsafeAuthenticatedConnectionSharing;
+			set => handler.UnsafeAuthenticatedConnectionSharing = value;
 		}
 
-		internal override HttpWebRequest CreateWebRequest (HttpRequestMessage request)
+		protected override void Dispose (bool disposing)
 		{
-			HttpWebRequest wr = base.CreateWebRequest (request);
-
-			wr.Pipelined = allowPipelining;
-			wr.AuthenticationLevel = authenticationLevel;
-			wr.CachePolicy = cachePolicy;
-			wr.ImpersonationLevel = impersonationLevel;
-			wr.MaximumResponseHeadersLength = maxResponseHeadersLength;
-			wr.ReadWriteTimeout = readWriteTimeout;
-			wr.UnsafeAuthenticatedConnectionSharing = unsafeAuthenticatedConnectionSharing;
-			wr.ServerCertificateValidationCallback = serverCertificateValidationCallback;
-			
-			if (this.ClientCertificateOptions == ClientCertificateOption.Manual) {
-				wr.ClientCertificates = clientCertificates;
+			if (disposing && !disposed) {
+				Volatile.Write (ref disposed, true);
+				handler.Dispose ();
+				handler = null;
 			}
 
-			return wr;
+			base.Dispose (disposing);
 		}
 	}
 }
