@@ -39,7 +39,7 @@ static MonoProfilerCallInstrumentationFlags
 testinline_instrumentation_filter(MonoProfiler *prof, MonoMethod *method)
 {
 	if (strcmp(mono_method_get_name(method), prof->method_name) == 0)
-		return MONO_PROFILER_CALL_INSTRUMENTATION_PROLOGUE;
+		return MONO_PROFILER_CALL_INSTRUMENTATION_ENTER;
 	return 0;
 }
 
