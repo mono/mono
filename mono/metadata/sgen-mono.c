@@ -2486,6 +2486,16 @@ mono_gc_get_los_limit (void)
 	return SGEN_MAX_SMALL_OBJ_SIZE;
 }
 
+int64_t
+mono_gc_get_allocated_bytes_for_current_thread (void)
+{
+	SgenThreadInfo* info;
+	info = mono_thread_info_current ();
+
+	/*There are some more allocated bytes in the current tlab that have not been recorded yet */
+	return info->total_bytes_allocated + info->tlab_temp_end - info->tlab_start;
+}
+
 gpointer
 sgen_client_default_metadata (void)
 {
