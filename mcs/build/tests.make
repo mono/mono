@@ -207,7 +207,7 @@ MKBUNDLE_EXE = $(topdir)/class/lib/$(PROFILE)/mkbundle.exe
 TEST_ASSEMBLIES:=$(sort $(patsubst .//%,%,$(filter-out %.exe.static %.dll.dll %.exe.dll %bare% %plaincore% %secxml% %Facades% %ilasm%,$(filter %.dll,$(wildcard $(topdir)/class/lib/$(PROFILE)/tests/*)))))
 
 $(MKBUNDLE_EXE): $(topdir)/tools/mkbundle/mkbundle.cs
-	make -C $(topdir)/tools/mkbundle
+	$(MAKE) -C $(topdir)/tools/mkbundle
 
 mkbundle-all-tests:
 	$(Q_AOT) $(MAKE) -C $(topdir)/class do-test
@@ -267,7 +267,7 @@ test_library = $(ASSEMBLY:$(ASSEMBLY_EXT)=)_test$(ASSEMBLY_EXT)
 
 test_sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).sources
 $(test_sourcefile): $(test_sourcefile_base) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources) $(depsdir)/.stamp
-	$(GENSOURCES) --trace:4 --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
+	$(GENSOURCES) --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 test_response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).response
 $(test_response): $(test_sourcefile) $(topdir)/build/tests.make $(depsdir)/.stamp

@@ -48,7 +48,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # There is no ordering of corlib versions, no old or new,
 # the runtime expects an exact match.
 #
-MONO_CORLIB_VERSION=9032116E-BB4E-4ED5-9C71-9E5E0B0230CA
+MONO_CORLIB_VERSION=d0aa6798-834d-11e9-b38a-3b0d70487d01
 
 #
 # Put a quoted #define in config.h.
@@ -5759,7 +5759,8 @@ fi
 AC_SUBST(mono_runtime)
 AC_SUBST(mono_runtime_wrapper)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/Microsoft.Net.Compilers.2.8.2/tools/csc.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.1.0/csc.exe
+VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.1.0/VBCSCompiler.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -5775,6 +5776,7 @@ if test x$host_win32 = xyes; then
     mono_cfg_dir=`cygpath -w -a $mono_cfg_root`\\etc
     CSC=`cygpath -m -a $CSC`
     CSC_LOCATION=`cygpath -m -a $CSC_LOCATION`
+    VBCS_LOCATION=`cygpath -m -a $VBCS_LOCATION`
   else
     mono_cfg_dir=`echo $mono_cfg_root | tr '/' '\\'`\\etc
   fi
@@ -6393,6 +6395,26 @@ if test x$host_darwin = xyes; then
    sed -e 's,lock_old_archive_extraction=yes,lock_old_archive_extraction=no,g' < libtool > libtool.new && mv libtool.new libtool && chmod +x libtool
 fi
 
+AC_MSG_CHECKING([compiler server])
+AC_ARG_WITH(compiler-server, [  --with-compiler-server=yes,no,default      Enables or disables compiler server],[
+   if test x$withval = xyes; then
+       enable_compiler_server=yes;
+   elif test x$withval = xno; then
+       enable_compiler_server=no;
+   elif test x$withval = xdefault; then
+       enable_compiler_server=no;
+   else
+       AC_MSG_ERROR([You must supply one of "yes", "no" or "default" to the --with-compiler-server option])
+   fi
+],[enable_compiler_server=no])
+
+if test x$enable_compiler_server = xyes; then
+   if test x$csc_compiler = xmcs; then
+       AC_MSG_WARN([mcs does not support the compiler server])
+       enable_compiler_server=no;
+   fi
+fi
+
 (
   case $prefix in
   NONE) prefix=$ac_default_prefix ;;
@@ -6485,7 +6507,7 @@ fi
 
     echo "STANDALONE_CSC_LOCATION=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
     echo "SERVER_CSC_LOCATION?=$CSC_LOCATION" >> $srcdir/$mcsdir/build/config.make
-    echo "VBCS_LOCATION?=" >> $srcdir/$mcsdir/build/config.make
+    echo "VBCS_LOCATION?=$VBCS_LOCATION" >> $srcdir/$mcsdir/build/config.make
 
     if test $csc_compiler = mcs; then
       echo "MCS_MODE = 1" >> $srcdir/$mcsdir/build/config.make
@@ -6553,7 +6575,7 @@ if test x$buildsgen = xyes; then
 fi
 	
 echo "
-        mcs source:    $mcsdir
+	mcs source:    $mcsdir
 	C# Compiler:   $csc_compiler
 
    Engine:

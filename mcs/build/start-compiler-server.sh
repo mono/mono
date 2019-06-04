@@ -7,7 +7,8 @@ set -e
 
 if [ -s "$VBCS_LOCATION" ]; then
     CMD="RoslynCommandLineLogFile=$2 $VBCS_RUNTIME --gc-params=nursery-size=64m \"$VBCS_LOCATION\" -pipename:$3 &"
-    echo . > "$2"
+    echo "Log location set to $2"
+    touch "$2"
     echo "cd $1; bash -c \"$CMD\""
     cd "$1"
     bash -c "$CMD"
