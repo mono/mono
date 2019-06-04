@@ -122,7 +122,7 @@ static MonoFreeDomainFunc free_domain_hook;
 static MonoAotCacheConfig aot_cache_config;
 
 static GSList*
-get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image, GSList *runtimes);
+get_runtimes_from_exe (const char *exe_file, MonoImage **exe_image);
 
 static const MonoRuntimeInfo*
 get_runtime_by_version (const char *version);
@@ -562,7 +562,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		 * that would mean it would be reloaded later. So instead, we save it to
 		 * exe_image, and close it during shutdown.
 		 */
-		runtimes = get_runtimes_from_exe (exe_filename, &exe_image, runtimes);
+		runtimes = get_runtimes_from_exe (exe_filename, &exe_image);
 #ifdef HOST_WIN32
 		if (!exe_image) {
 			exe_image = mono_assembly_open_from_bundle (exe_filename, NULL, FALSE);
@@ -1874,12 +1874,13 @@ get_runtime_by_version (const char *version)
 }
 
 static GSList*
-get_runtimes_from_exe (const char *file, MonoImage **out_image, GSList *runtimes)
+get_runtimes_from_exe (const char *file, MonoImage **out_image)
 {
 	AppConfigInfo* app_config;
 	char *version;
 	const MonoRuntimeInfo* runtime = NULL;
 	MonoImage *image = NULL;
+	GSList *runtimes = NULL;
 	
 	app_config = app_config_parse (file);
 	
