@@ -15,7 +15,7 @@
 	<PropertyGroup>
 		<CleanDependsOn>
 			$(CleanDependsOn);
-			CleanManaged;
+			_CleanManagedOutputDir;
 		</CleanDependsOn>
 	</PropertyGroup>
 
@@ -88,7 +88,7 @@
 			OutputFile="$(_MonoWasmRuntimeJs)"
 		/>
   </Target>
-	<Target Name = "CleanManaged">
+	<Target Name = "_CleanManagedOutputDir">
 		<ItemGroup>
 			<FilesToDelete Include="$(_MonoWasmManagedOutputDir)**\*"/>
 		</ItemGroup>   
