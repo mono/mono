@@ -1428,12 +1428,4 @@ class Tests
 
 		return k == -32768 ? 0 : 1;
 	}
-
-	static int variable_with_constant_address;
-
-	public static int test_cfold_with_non_constant_ternary_op () {
-		variable_with_constant_address = 0;
-		var old = System.Threading.Interlocked.CompareExchange(ref variable_with_constant_address, 1, 0);
-		return old == 0 && variable_with_constant_address == 1 ? 0 : 1;
-	}
 }
