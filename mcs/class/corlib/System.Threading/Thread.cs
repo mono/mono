@@ -321,10 +321,7 @@ namespace System.Threading {
 			}
 		}
 
-        [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        public static extern long GetAllocatedBytes();
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImpl*ttribute(MethodImplOptions.InternalCall)]
 		public extern static int GetDomainID();
 
 		// Returns the system thread handle

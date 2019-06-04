@@ -9174,7 +9174,8 @@ ves_icall_System_GC_GetMaxGeneration (void)
 gint64
 ves_icall_System_GC_GetAllocatedBytesForCurrentThread (void)
 {
-	return 0; // TODO: implement https://github.com/mono/mono/issues/8397
+	MonoThreadInfo *info = mono_thread_info_current();
+	return info->total_bytes_allocated;
 }
 
 void

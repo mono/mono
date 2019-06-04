@@ -1778,13 +1778,6 @@ ves_icall_System_Threading_Thread_Sleep_internal (gint32 ms, MonoError *error)
 	}
 }
 
-gint64
-ves_icall_System_Threading_Thread_GetAllocatedBytes_internal(MonoError *error)
-{
-	MonoThreadInfo *info = mono_thread_info_current();
-	return info->total_bytes_allocated;
-}
-
 void
 ves_icall_System_Threading_Thread_SpinWait_nop (MonoError *error)
 {
