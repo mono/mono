@@ -73,4 +73,12 @@ make runtime -j$(CPU_COUNT)
 # build System.Private.CoreLib (../mcs/class/System.Private.CoreLib)
 make bcl CORLIB_BUILD_FLAGS="$properties"
 
-make nupkg
+# create a nupkg with runtime and System.Private.CoreLib
+if [ "$pack" = "true" ]; then
+    make nupkg
+fi
+
+# run all xunit tests
+if [ "$test" = "true" ]; then
+    make xtestall
+fi
