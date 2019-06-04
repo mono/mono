@@ -321,7 +321,7 @@ namespace System.Threading {
 			}
 		}
 
-		[MethodImpl*ttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int GetDomainID();
 
 		// Returns the system thread handle
