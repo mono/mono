@@ -156,7 +156,7 @@ function Write-PipelinePrependPath {
 
 function InitializeDotNetCli([bool]$install) {
   if (Test-Path variable:global:_DotNetInstallDir) {
-      return $global:_DotNetInstallDir
+    return $global:_DotNetInstallDir
   }
 
   # Don't resolve runtime, shared framework, or SDK from other locations to ensure build determinism
