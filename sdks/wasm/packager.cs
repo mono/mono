@@ -75,6 +75,8 @@ class Driver {
 		public string src_path;
 		// Path of .bc file
 		public string bc_path;
+		// Path of the wasm object file
+		public string o_path;
 		// Path in appdir
 		public string app_path;
 		// Linker input path
@@ -587,6 +589,7 @@ class Driver {
 			dedup_asm = new AssemblyData () { name = "aot-dummy",
 					filename = "aot-dummy.dll",
 					bc_path = "$builddir/aot-dummy.dll.bc",
+					o_path = "$builddir/aot-dummy.dll.o",
 					app_path = "$appdir/$deploy_prefix/aot-dummy.dll",
 					linkout_path = "$builddir/linker-out/aot-dummy.dll",
 					aot = true
@@ -701,10 +704,10 @@ class Driver {
 
 		// Rules
 		ninja.WriteLine ("rule aot");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_args,{aot_args}llvmonly,asmonly,llvmopts=-O2,static,direct-icalls,llvm-outfile=$outfile $src_file");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_args,{aot_args}llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile $src_file");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		ninja.WriteLine ("rule aot-instances");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot={aot_args}llvmonly,asmonly,llvmopts=-O2,static,direct-icalls,llvm-outfile=$outfile,dedup-include=$dedup_image $src_files");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot={aot_args}llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile,dedup-include=$dedup_image $src_files");
 		ninja.WriteLine ("  description = [AOT-INSTANCES] $outfile");
 		ninja.WriteLine ("rule mkdir");
 		ninja.WriteLine ("  command = mkdir -p $out");
@@ -826,6 +829,7 @@ class Driver {
 				ninja.WriteLine ($"build $appdir/$deploy_prefix/{filename_pdb}: cpifdiff {infile_pdb}");
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
+				a.o_path = $"$builddir/{filename}.o";
 
 				ninja.WriteLine ($"build {a.bc_path}: aot {infile}");
 				ninja.WriteLine ($"  src_file={infile}");
@@ -834,7 +838,9 @@ class Driver {
 				if (enable_dedup)
 					ninja.WriteLine ($"  aot_args=dedup-skip");
 
-				ofiles += " " + ($"{a.bc_path}");
+				ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path}");
+
+				ofiles += " " + ($"{a.o_path}");
 				dedup_infiles += $" {a.linkout_path}";
 			}
 		}
