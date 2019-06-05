@@ -933,6 +933,15 @@ static void
 mono_native_state_add_process_map (MonoStateWriter *writer)
 {
 #if defined(__linux__) && !defined(HOST_ANDROID)
+	static gint32 handle_in_use;
+	gint32 old = mono_atomic_cas_i32 (&handle_in_use, TRUE /* set */, FALSE /* compare */);
+	if (old != FALSE) {
+		g_async_safe_printf ("Warning: Couldn't open /proc/self/maps for concurrent reads, crash report will lack it.\n");
+		return;
+	}
+
+	mono_memory_barrier ();
+
 	int handle = g_open ("/proc/self/maps", O_RDONLY, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
 	if (handle == -1) {
 		g_async_safe_printf ("Couldn't find /proc/self/maps on Linux system. Continuing.");
@@ -981,6 +990,9 @@ mono_native_state_add_process_map (MonoStateWriter *writer)
 	mono_state_writer_printf(writer, "],\n");
 
 	close (handle);
+
+	mono_atomic_store_i32 (&handle_in_use, FALSE);
+	mono_memory_barrier ();
 #endif
 }
 
