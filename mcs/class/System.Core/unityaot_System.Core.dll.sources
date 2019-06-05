@@ -1,3 +1,4 @@
 #include winaot_System.Core.dll.sources
 ../referencesource/System.Core/System/Linq/Enumerable.cs
 corefx/SR.cs
+System.IO.Pipes/PipeWin32.cs

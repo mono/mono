@@ -46,7 +46,7 @@ namespace System.IO.Pipes
 		// FIXME: not precise.
 		internal const int DefaultBufferSize = 0x400;
 
-#if !MOBILE
+#if !MOBILE || UNITY_AOT
 		internal static bool IsWindows {
 			get { return Win32Marshal.IsWindows; }
 		}
