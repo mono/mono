@@ -1157,9 +1157,13 @@ g_async_safe_fgets (char *str, int num, int handle, gboolean *newline)
 			str [i] = '\0';
 			*newline = TRUE;
 		}
+		
+		if (!isprint (str [i]))
+			str [i] = '\0';
 
 		if (str [i] == '\0')
 			break;
+
 		i++;
 	}
 

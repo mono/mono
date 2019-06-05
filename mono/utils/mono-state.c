@@ -952,12 +952,17 @@ mono_native_state_add_process_map (MonoStateWriter *writer)
 		mono_state_writer_printf (writer, "\t\"");
 
 		while (TRUE) {
-			char line [25];
+			char line [10];
 			gboolean newline = FALSE;
 			int charsCopied = g_async_safe_fgets (line, sizeof (line), handle, &newline);
 
 			if (charsCopied == 0)
 				break;
+
+			for (int i=0; i < charsCopied; i++)
+				g_assert (isprint (line [i]));
+
+			g_assert (line [charsCopied] == '\0');
 
 			mono_state_writer_printf (writer, "%s", line);
 
