@@ -259,7 +259,7 @@ var BindingSupportLib = {
 		js_to_mono_obj: function (js_obj) {
 	  		this.bindings_lazy_init ();
 
-			if (js_obj == null || js_obj == undefined)
+			if (js_obj === null || typeof js_obj === "undefined")
 				return 0;
 			if (typeof js_obj === 'number') {
 				if (parseInt(js_obj) == js_obj)
@@ -739,7 +739,11 @@ var BindingSupportLib = {
 		},
 		wasm_get_core_type: function (obj)
 		{
-			return this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
+			var coreType = this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
+			if (typeof coreType !== "undefined") {
+				coreType.is_wasm_type = true;
+			}
+			return coreType;
 		},
 		get_wasm_type: function(obj) {
 			var coreType = obj[Symbol.for("wasm type")];
@@ -821,6 +825,12 @@ var BindingSupportLib = {
 						coreType = this.wasm_get_core_type(obj);
 						if (typeof coreType !== "undefined") {
 							SharedArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
+						}
+						break;
+					case "Map":
+						coreType = this.wasm_get_core_type(obj);
+						if (typeof coreType !== "undefined") {
+							Map.prototype[Symbol.for("wasm type")] = coreType
 						}
 						break;
 				}
