@@ -1,0 +1,2 @@
+#include System.IO.Compression.dll.sources
+../../../external/corefx/src/System.IO.Compression.Brotli/src/Interop/*.cs
