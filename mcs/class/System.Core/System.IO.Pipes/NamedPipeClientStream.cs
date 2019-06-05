@@ -74,7 +74,7 @@ namespace System.IO.Pipes
 		}
 
 		public NamedPipeClientStream (string serverName, string pipeName, PipeDirection direction, PipeOptions options, TokenImpersonationLevel impersonationLevel, HandleInheritability inheritability)
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 			: base (direction, DefaultBufferSize)
 		{
 			throw new NotImplementedException ();
@@ -88,13 +88,17 @@ namespace System.IO.Pipes
 		public NamedPipeClientStream (PipeDirection direction, bool isAsync, bool isConnected, SafePipeHandle safePipeHandle)
 			: base (direction, DefaultBufferSize)
 		{
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 			throw new NotImplementedException ();
 #else
 			if (IsWindows)
 				impl = new Win32NamedPipeClient (this, safePipeHandle);
 			else
+#if UNITY_AOT
+				throw new NotImplementedException ();
+#else
 				impl = new UnixNamedPipeClient (this, safePipeHandle);
+#endif
 			IsConnected = isConnected;
 			InitializeHandle (safePipeHandle, true, isAsync);
 #endif
@@ -106,13 +110,17 @@ namespace System.IO.Pipes
 			if (impersonationLevel != TokenImpersonationLevel.None ||
 			    inheritability != HandleInheritability.None)
 				throw ThrowACLException ();
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 			throw new NotImplementedException ();
 #else
 			if (IsWindows)
 				impl = new Win32NamedPipeClient (this, serverName, pipeName, desiredAccessRights, options, inheritability);
 			else
+#if UNITY_AOT
+				throw new NotImplementedException ();
+#else
 				impl = new UnixNamedPipeClient (this, serverName, pipeName, desiredAccessRights, options, inheritability);
+#endif
 #endif
 
 		}
@@ -121,13 +129,13 @@ namespace System.IO.Pipes
 			Dispose (false);
 		}
 
-#if !MOBILE
+#if !MOBILE || UNITY_AOT
 		INamedPipeClient impl;
 #endif
 
 		public void Connect ()
 		{
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 			throw new NotImplementedException ();
 #else
 			impl.Connect ();
@@ -138,7 +146,7 @@ namespace System.IO.Pipes
 
 		public void Connect (int timeout)
 		{
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 			throw new NotImplementedException ();
 #else			
 			impl.Connect (timeout);
@@ -174,7 +182,7 @@ namespace System.IO.Pipes
 		public int NumberOfServerInstances {
 			get {
 				CheckPipePropertyOperations ();
-#if MOBILE
+#if MOBILE && !UNITY_AOT
 				throw new NotImplementedException ();
 #else
 				return impl.NumberOfServerInstances;
