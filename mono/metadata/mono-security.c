@@ -19,6 +19,7 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/security.h>
+#include <mono/utils/strenc-internals.h>
 #include <mono/utils/strenc.h>
 #include "reflection-internals.h"
 #include "icall-decl.h"
@@ -500,7 +501,7 @@ static gboolean
 IsProtected (const gunichar2 *path, gint32 protection)
 {
 	gboolean result = FALSE;
-	gchar *utf8_name = mono_unicode_to_external (path);
+	gchar *utf8_name = mono_unicode_to_external (path); // TODO: add check here
 	if (utf8_name) {
 		struct stat st;
 		if (stat (utf8_name, &st) == 0) {
@@ -516,7 +517,7 @@ static gboolean
 Protect (const gunichar2 *path, gint32 file_mode, gint32 add_dir_mode)
 {
 	gboolean result = FALSE;
-	gchar *utf8_name = mono_unicode_to_external (path);
+	gchar *utf8_name = mono_unicode_to_external (path); // TODO: add check here
 	if (utf8_name) {
 		struct stat st;
 		if (stat (utf8_name, &st) == 0) {
