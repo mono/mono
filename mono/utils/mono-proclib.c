@@ -22,6 +22,7 @@
 #endif
 
 #include <utils/mono-mmap.h>
+#include <utils/strenc-internals.h>
 #include <utils/strenc.h>
 #include <utils/mono-io-portability.h>
 #include <utils/mono-logger-internals.h>
@@ -1017,16 +1018,19 @@ mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
 	int fd = -1;
 	struct stat statbuf;
 	gpointer file_map = NULL;
+	GError *err = NULL;
 
 	/* According to the MSDN docs, a search path is applied to
 	 * filename.  FIXME: implement this, for now just pass it
 	 * straight to open
 	 */
 
-	filename_ext = mono_unicode_to_external (filename);
+	filename_ext = mono_unicode_to_external_error (filename, &err);
 	if (filename_ext == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL", __func__);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, err->message);
 
+		g_error_free (err);
+		
 		goto exit;
 	}
 
