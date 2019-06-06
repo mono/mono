@@ -36,7 +36,7 @@ jobs:
 
   - bash: |  
       sudo apt update
-      sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext
+      sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext
     displayName: 'Prepare Linux dependencies'
     condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
   
