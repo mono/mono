@@ -1147,12 +1147,11 @@ static inline int
 g_async_safe_fgets (char *str, int num, int handle, gboolean *newline)
 {
 	memset (str, 0, num);
-	// Make sure we always have null-termination
+	// Make sure we don't overwrite the last index so that we are
+	// guaranteed to be NULL-terminated
 	int without_padding = num - 1;
 	int i=0;
-	char scratch [2];
-	while (i < without_padding && g_read (handle, scratch, sizeof(char))) {
-		str [i] = scratch [0];
+	while (i < without_padding && g_read (handle, &str [i], sizeof(char))) {
 		if (str [i] == '\n') {
 			str [i] = '\0';
 			*newline = TRUE;
