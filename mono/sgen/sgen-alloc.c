@@ -67,6 +67,7 @@ static GCObject*
 alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 {
 	GCObject *p;
+	increment_thread_allocation_counter(size);
 
 	if (!for_mature) {
 		sgen_client_degraded_allocation ();
@@ -259,6 +260,10 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 				zero_tlab_if_necessary (p, size);
 			} else {
+				/* Subtract size because the size of the object we are trying to allocate
+				 * will either be counted in the next TLAB,
+				 *  or in alloc_degraded.
+				 */
 				increment_thread_allocation_counter(TLAB_NEXT - TLAB_START - size);
 
 				size_t alloc_size = 0;
@@ -330,6 +335,8 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 	if (G_UNLIKELY (size > sgen_tlab_size)) {
 		/* Allocate directly from the nursery */
+		increment_thread_allocation_counter (size);
+
 		p = (void **)sgen_nursery_alloc (size);
 		if (!p)
 			return NULL;
@@ -365,15 +372,19 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			if (!p)
 				return NULL;
 
+			increment_thread_allocation_counter(size);
 			zero_tlab_if_necessary (p, size);
 		} else {
 			size_t alloc_size = 0;
-
+			increment_thread_allocation_counter(TLAB_NEXT - TLAB_START - size);
+			
 			sgen_nursery_retire_region (p, available_in_tlab);
 			new_next = (char *)sgen_nursery_alloc_range (sgen_tlab_size, size, &alloc_size);
 			p = (void**)new_next;
 			if (!p)
 				return NULL;
+
+			
 
 			TLAB_START = (char*)new_next;
 			TLAB_NEXT = new_next + size;
