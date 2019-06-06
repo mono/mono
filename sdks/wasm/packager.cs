@@ -327,6 +327,7 @@ class Driver {
 		public bool LinkIcalls;
 		public bool ILStrip;
 		public bool LinkerVerbose;
+		public bool EnableZLib;
 	}
 
 	int Run (string[] args) {
@@ -350,6 +351,7 @@ class Driver {
 		bool enable_lto = false;
 		bool link_icalls = false;
 		bool gen_pinvoke = false;
+		bool enable_zlib = false;
 		var il_strip = false;
 		var runtimeTemplate = "runtime.js";
 		var assets = new List<string> ();
@@ -370,7 +372,8 @@ class Driver {
 				DebugRuntime = false,
 				Linker = false,
 				ILStrip = true,
-				LinkerVerbose = false
+				LinkerVerbose = false,
+				EnableZLib = false,
 			};
 
 		var p = new OptionSet () {
@@ -404,6 +407,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("link-icalls", "link away unused icalls", opts.LinkIcalls, b => opts.LinkIcalls = b));
 		AddFlag (p, new BoolFlag ("il-strip", "strip IL code from assemblies in AOT mode", opts.ILStrip, b => opts.ILStrip = b));
 		AddFlag (p, new BoolFlag ("linker-verbose", "set verbose option on linker", opts.LinkerVerbose, b => opts.LinkerVerbose = b));
+		AddFlag (p, new BoolFlag ("zlib", "enable the use of zlib for System.IO.Compression support", opts.EnableZLib, b => opts.EnableZLib = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -434,6 +438,7 @@ class Driver {
 		il_strip = opts.ILStrip;
 		linker_verbose = opts.LinkerVerbose;
 		gen_pinvoke = pinvoke_libs != "";
+		enable_zlib = opts.EnableZLib;
 
 		if (ee_mode == ExecMode.Aot || ee_mode == ExecMode.AotInterp)
 			enable_aot = true;
@@ -663,6 +668,8 @@ class Driver {
 		string emcc_flags = "";
 		if (enable_lto)
 			emcc_flags += "--llvm-lto 1 ";
+		if (enable_zlib)
+			emcc_flags += "-s USE_ZLIB=1 ";
 
 		var ninja = File.CreateText (Path.Combine (builddir, "build.ninja"));
 
@@ -755,6 +762,15 @@ class Driver {
 
 			ninja.WriteLine ($"build $builddir/driver.o: emcc $builddir/driver.c | $builddir/driver-gen.c {driver_deps}");
 			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0");
+
+			if (enable_zlib) {
+				var zlib_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "zlib-helper.c"));
+				ninja.WriteLine ($"build $builddir/zlib-helper.c: cpifdiff {zlib_source_file}");
+
+				ninja.WriteLine ($"build $builddir/zlib-helper.o: emcc $builddir/zlib-helper.c");
+				ninja.WriteLine ($"  flags = -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0 -I$mono_sdkdir/wasm-runtime-release/include/support");
+			}
+
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
 			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
@@ -859,7 +875,8 @@ class Driver {
 			ninja.WriteLine ($"  pinvoke_libs=System.Native,{pinvoke_libs}");
 		}
 		if (build_wasm) {
-			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
+			string zlibhelper = enable_zlib ? "$builddir/zlib-helper.o" : "";
+			ninja.WriteLine ($"build $appdir/mono.js: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
 		}
 		if (enable_linker) {
 			switch (linkMode) {
