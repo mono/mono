@@ -919,3 +919,22 @@
 
 -nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
 -nomethod System.Xml.Tests.CXmlResolverTest.TC_AbsolutePath_Transform
+
+####################################################################
+##  System.Globalization.Tests
+####################################################################
+
+-nomethod System.Globalization.Tests.RegionInfoPropertyTests.EnglishName
+
+####################################################################
+##  System.IO.FileSystem.Watcher.Tests
+####################################################################
+
+-nomethod System.IO.Tests.File_Move_Tests.File_Move_From_Unwatched_To_Watched
+
+####################################################################
+##  System.IO.MemoryMappedFiles.Tests
+####################################################################
+
+-nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewStreamTests.ValidAccessLevelCombinations
+-nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewAccessorTests.ValidAccessLevelCombinations
