@@ -91,8 +91,8 @@ jobs:
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - task: PublishTestResults@2
-    testRunTitle: $(poolname)
     inputs:
+      testRunTitle: $(poolname)
       testResultsFormat: 'XUnit'
       testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
     condition: ne(variables['poolname'], 'Hosted VS2017')
