@@ -577,23 +577,17 @@
 # throws ArgumentException
 -nomethod System.Reflection.Tests.PointerTests.PointerPropertyGetValue
 
-# TODO: ignore in CoreFX for mono runtime:
--nomethod System.Tests.StringTests.NormalizationTest
--nomethod System.Tests.GCTests.KeepAlive
--nomethod System.Tests.GCTests.LargeObjectHeapCompactionModeRoundTrips
--nomethod System.Tests.GCTests.GetGCMemoryInfo
--nomethod System.Tests.GCTests.Collect_CallsFinalizer
+# GC.GetTotalAllocatedBytes is not implemented
+-nomethod System.Tests.GCTests.GetTotalAllocatedBytes
+
+# GC.GetAllocatedBytesForCurrentThread is not implemented
 -nomethod System.Tests.GCTests.GetAllocatedBytesForCurrentThread
--nomethod System.Tests.GCTests.GetTotalMemoryTest_ForceCollection
--nomethod System.Tests.GCTests.LatencyRoundtrips    
--nomethod System.Tests.GCTests.KeepAlive_Null
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.GetOrCreateValue
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.Add
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.GetValue
--nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
--nomethod System.Tests.EnumTests.Parse
--nomethod System.Tests.EnumTests.Parse_NetCoreApp11
--nomethod System.Tests.ArgIteratorTests.ArgIterator_Throws_PlatformNotSupportedException
+
+# GCSettings.LatencyMode is not implemented
+-nomethod System.Tests.GCTests.LatencyRoundtrips
+
+# WeakReference.get_TrackResurrection is not implemented
+-nomethod System.Tests.WeakReferenceTests.NonGeneric
 
 ####################################################################
 ##  System.Text.Json.Tests
