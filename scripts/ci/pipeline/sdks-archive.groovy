@@ -110,8 +110,8 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                             throw new Exception("Unknown platform \"${platform}\"")
                         }
                     }
-                    // move Archive to the workspace root
-                    packageFileName = findFiles (glob: "${product}-${configuration}-${platform}-${commitHash}.zip")[0].name
+                    // find Archive in the workspace root
+                    packageFileName = findFiles (glob: "${product}-${configuration}-${platform}-${commitHash}.*")[0].name
                 }
                 stage('Upload Archive to Azure') {
                     azureUpload(storageCredentialId: "fbd29020e8166fbede5518e038544343",
