@@ -177,7 +177,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 	 */
 
 	if (real_size > SGEN_MAX_SMALL_OBJ_SIZE) {
-		THREAD_BYTES_ALLOCATED += size;
+		increment_thread_allocation_counter(size);
 		p = (void **)sgen_los_alloc_large_inner (vtable, ALIGN_UP (real_size));
 	} else {
 		/* tlab_next and tlab_temp_end are TLS vars so accessing them might be expensive */
