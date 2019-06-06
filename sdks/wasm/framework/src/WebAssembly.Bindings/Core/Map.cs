@@ -36,21 +36,8 @@ namespace WebAssembly.Core {
 		/// Gets an <see cref="T:System.Collections.ICollection"/> object containing the keys of the <see cref="T:WebAssembly.Core.Map"/> object.
 		/// </summary>
 		public ICollection Keys {
-			// TODO: Look at wrapping the Map Iterator for Keys in a ICollection implementaion
 			get {
-				var keyCollection = new ArrayList ();
-				using (var keysIterator = (JSObject)Invoke ("keys")) {
-					var done = false;
-					while (!done) {
-						using (var result = (JSObject)keysIterator.Invoke ("next")) {
-							done = (bool)result.GetObjectProperty ("done");
-							if (!done) {
-								keyCollection.Add (result.GetObjectProperty ("value"));
-							}
-						}
-					}
-				}
-				return keyCollection;
+				return new MapItemCollection (this, "keys");
 			}
 		}
 
@@ -58,21 +45,8 @@ namespace WebAssembly.Core {
 		/// Gets an <see cref="T:System.Collections.ICollection"/> object containing the values of the <see cref="T:WebAssembly.Core.Map"/> object.
 		/// </summary>
 		public ICollection Values {
-			// TODO: Look at wrapping the Map Iterator for Values in a ICollection implementaion
 			get {
-				var valueCollection = new ArrayList ();
-				using (var valuesIterator = (JSObject)Invoke ("values")) {
-					var done = false;
-					while (!done) {
-						using (var result = (JSObject)valuesIterator.Invoke ("next")) {
-							done = (bool)result.GetObjectProperty ("done");
-							if (!done) {
-								valueCollection.Add (result.GetObjectProperty ("value"));
-							}
-						}
-					}
-				}
-				return valueCollection;
+				return new MapItemCollection (this, "values");
 			}
 
 		}
@@ -192,11 +166,11 @@ namespace WebAssembly.Core {
 			}
 
 			//TODO: override a finalizer only if Dispose (bool disposing) above has code to free unmanaged resources.
-			// ~MapEnumerator ()
-			//{
-			//	// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-			//	Dispose (false);
-			//}
+			~MapEnumerator ()
+			{
+				// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+				Dispose (false);
+			}
 
 			// This code added to correctly implement the disposable pattern.
 			public void Dispose ()
@@ -204,10 +178,112 @@ namespace WebAssembly.Core {
 				// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
 				Dispose (true);
 				// TODO: uncomment the following line if the finalizer is overridden above.
-				//GC.SuppressFinalize(this);
+				GC.SuppressFinalize(this);
 			}
 			#endregion
 		}
 
+		/// <summary>
+		/// Class that implements an ICollection over the "keys" or "values"
+		/// </summary>
+		private sealed class MapItemCollection : ICollection {
+			readonly JSObject mapIterator;
+			readonly Map map;
+			public MapItemCollection (Map map, string iterator)
+			{
+				try {
+					mapIterator = (JSObject)map.Invoke (iterator);
+					this.map = map;
+				} catch (Exception ex) {
+					Console.WriteLine (ex.Message);
+				}
+			}
+			public int Count => map.Count;
+
+			public bool IsSynchronized => false;
+
+			public object SyncRoot => this;
+
+			public void CopyTo (System.Array array, int index)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public IEnumerator GetEnumerator ()
+			{
+				// Construct and return an enumerator.
+				return new MapItemEnumerator (this);
+			}
+
+			/// <summary>
+			/// The custom enumerator used by MapItemCollection
+			/// </summary>
+			private sealed class MapItemEnumerator : IEnumerator {
+
+				readonly MapItemCollection mapItemCollection;
+
+				public object Current { get; private set; }
+
+				public MapItemEnumerator (MapItemCollection mapCollection)
+				{
+
+					mapItemCollection = mapCollection;
+
+				}
+
+				public bool MoveNext ()
+				{
+					if (mapItemCollection.mapIterator == null)
+						return false;
+
+					var done = false;
+					using (var result = (JSObject)mapItemCollection.mapIterator.Invoke ("next")) {
+						done = (bool)result.GetObjectProperty ("done");
+						if (!done)
+							Current = result.GetObjectProperty ("value");
+						return !done;
+					}
+				}
+
+				public void Reset ()
+				{
+					throw new NotImplementedException ();
+				}
+
+				#region IDisposable Support
+				private bool disposedValue = false; // To detect redundant calls
+
+				void Dispose (bool disposing)
+				{
+					if (!disposedValue) {
+						if (disposing) {
+							// TODO: dispose managed state (managed objects).
+						}
+
+						// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+						// TODO: set large fields to null.
+						mapItemCollection.mapIterator.Dispose ();
+						disposedValue = true;
+					}
+				}
+
+				//TODO: override a finalizer only if Dispose (bool disposing) above has code to free unmanaged resources.
+				~MapItemEnumerator ()
+				{
+					// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+					Dispose (false);
+				}
+
+				// This code added to correctly implement the disposable pattern.
+				public void Dispose ()
+				{
+					// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+					Dispose (true);
+					// TODO: uncomment the following line if the finalizer is overridden above.
+					GC.SuppressFinalize(this);
+				}
+				#endregion
+			}
+		}
 	}
 }
