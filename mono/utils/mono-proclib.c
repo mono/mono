@@ -1043,23 +1043,23 @@ mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
 			mono_set_errno (saved_errno);
 
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Error opening file %s (3): %s", __func__, filename_ext, strerror (errno));
-			goto error;
+			goto exit;
 		}
 
 		fd = open (located_filename, O_RDONLY, 0);
 		if (fd == -1) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Error opening file %s (3): %s", __func__, filename_ext, strerror (errno));
-			goto error;
+			goto exit;
 		}
 	}
 	else if (fd == -1) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Error opening file %s (3): %s", __func__, filename_ext, strerror (errno));
-		goto error;
+		goto exit;
 	}
 
 	if (fstat (fd, &statbuf) == -1) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Error stat()ing file %s: %s", __func__, filename_ext, strerror (errno));
-		goto error;
+		goto exit;
 	}
 	*map_size = statbuf.st_size;
 
@@ -1073,7 +1073,7 @@ mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
 	file_map = mono_file_map (statbuf.st_size, MONO_MMAP_READ | MONO_MMAP_PRIVATE, fd, 0, handle);
 	if (file_map == NULL) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: Error mmap()int file %s: %s", __func__, filename_ext, strerror (errno));
-		goto error;
+		goto exit;
 	}
 exit:
 	if (fd != -1)
@@ -1081,8 +1081,6 @@ exit:
 	g_free (located_filename);
 	g_free (filename_ext);
 	return file_map;
-error:
-	goto exit;
 }
 
 void
