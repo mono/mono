@@ -88,6 +88,11 @@ jobs:
       make -C netcore xtestall
     displayName: 'Run tests'
 
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'XUnit'
+      testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
+
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     - powershell: |
         eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -ci -restore -projects $(Build.Repository.LocalPath)\eng\empty.proj
