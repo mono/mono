@@ -63,6 +63,14 @@ static guint64 stat_bytes_alloced_los = 0;
 #define TLAB_TEMP_END	(__thread_info__->tlab_temp_end)
 #define TLAB_REAL_END	(__thread_info__->tlab_real_end)
 
+static void 
+increment_thread_allocation_counter(size_t byte_size)
+{
+	SgenThreadInfo* info;
+	info = mono_thread_info_current ();
+	info->total_bytes_allocated += byte_size;
+}
+
 static GCObject*
 alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 {
@@ -108,16 +116,6 @@ zero_tlab_if_necessary (void *p, size_t size)
 		sgen_client_zero_array_fill_header (p, size);
 	}
 }
-
-static void 
-increment_thread_allocation_counter(size_t byte_size)
-{
-	SgenThreadInfo* info;
-	info = mono_thread_info_current ();
-	info->total_bytes_allocated += byte_size;
-}
-
-
 
 /*
  * Provide a variant that takes just the vtable for small fixed-size objects.
@@ -377,7 +375,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 		} else {
 			size_t alloc_size = 0;
 			increment_thread_allocation_counter(TLAB_NEXT - TLAB_START - size);
-			
+
 			sgen_nursery_retire_region (p, available_in_tlab);
 			new_next = (char *)sgen_nursery_alloc_range (sgen_tlab_size, size, &alloc_size);
 			p = (void**)new_next;
