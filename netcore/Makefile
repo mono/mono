@@ -95,13 +95,15 @@ run-aspnet-sample: prepare
 # COREHOST_TRACE=1 
 SHAREDRUNTIME := shared/Microsoft.NETCore.App/$(NETCOREAPP_VERSION)
 
-# CORLIB_BUILD_FLAGS="-c Debug" to compile System.Private.CoreLib.dll in debug mode
 bcl: update-roslyn
 	$(MAKE) -C ../mcs/build/ common/Consts.cs
 	$(DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:BuildArch=$(COREARCH) \
 	-p:OutputPath=bin/$(COREARCH) \
 	-p:RoslynPropsFile="../../../netcore/roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/build/Microsoft.Net.Compilers.Toolset.props" \
 	../mcs/class/System.Private.CoreLib/System.Private.CoreLib.csproj
+
+debug-bcl:
+	$(MAKE) bcl CORLIB_BUILD_FLAGS="-c Debug"
 
 runtime:
 	$(MAKE) -C ../mono
@@ -127,7 +129,6 @@ clean:
 #
 
 # e.g. `make xtest-System.Collections.Tests`
-# '-parallel none -verbose' and MONO_ENV_OPTIONS="--debug" for debug
 xtest-%: prepare update-corefx-tests
 	echo -n "***************** $* *********************"
 	cp corefx/restore/corefx-restore.deps.json corefx/tests/extracted/$*/xunit.console.deps.json
@@ -141,6 +142,9 @@ xtest-%: prepare update-corefx-tests
 		-html ../../TestResult-$*.html -nunit ../../TestResult-$*-netcore-xunit.xml \
 		$(XUNIT_FLAGS) @../../../../CoreFX.issues.rsp \
 		$(FIXTURE) || true
+
+debug-xtest-%:
+	MONO_ENV_OPTIONS="--debug" $(MAKE) xtest-$*
 
 # these tests won't be included in `xtestall`
 EXCLUDED_COREFX_TESTS =
