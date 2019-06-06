@@ -1146,7 +1146,7 @@ gchar *g_mkdtemp (gchar *tmpl);
 static inline int
 g_async_safe_fgets (char *str, int num, int handle, gboolean *newline)
 {
-	memset (str, '\0', sizeof(char) * num);
+	memset (str, 0, num);
 	// Make sure we always have null-termination
 	int without_padding = num - 1;
 	int i=0;
