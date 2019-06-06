@@ -96,16 +96,11 @@ namespace WebAssembly.Core {
 		}
 
 		private sealed class MapEnumerator : IDictionaryEnumerator, IDisposable {
-			readonly JSObject mapIterator;
-
+			JSObject mapIterator;
+			readonly Map map;
 			public MapEnumerator (Map map)
 			{
-				try {
-					mapIterator = (JSObject)map.Invoke ("entries");
-				} catch (Exception ex) {
-					Console.WriteLine (ex.Message);
-				}
-
+				this.map = map;
 			}
 
 			// Return the current item.
@@ -126,7 +121,7 @@ namespace WebAssembly.Core {
 			public bool MoveNext ()
 			{
 				if (mapIterator == null)
-					return false;
+					mapIterator = (JSObject)map.Invoke ("entries");
 
 				using (var result = (JSObject)mapIterator.Invoke ("next")) {
 					using (var resultValue = (Array)result.GetObjectProperty ("value")) {
@@ -145,7 +140,8 @@ namespace WebAssembly.Core {
 			// Reset the index to restart the enumeration.
 			public void Reset ()
 			{
-				throw new NotImplementedException ();
+				mapIterator?.Dispose ();
+				mapIterator = null;
 			}
 
 			#region IDisposable Support
@@ -160,7 +156,8 @@ namespace WebAssembly.Core {
 
 					// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
 					// TODO: set large fields to null.
-					mapIterator.Dispose ();
+					mapIterator?.Dispose ();
+					mapIterator = null;
 					disposedValue = true;
 				}
 			}
@@ -187,16 +184,14 @@ namespace WebAssembly.Core {
 		/// Class that implements an ICollection over the "keys" or "values"
 		/// </summary>
 		private sealed class MapItemCollection : ICollection {
-			readonly JSObject mapIterator;
 			readonly Map map;
+			readonly string iterator;  // "keys" or "values"
+
 			public MapItemCollection (Map map, string iterator)
 			{
-				try {
-					mapIterator = (JSObject)map.Invoke (iterator);
-					this.map = map;
-				} catch (Exception ex) {
-					Console.WriteLine (ex.Message);
-				}
+				this.map = map;
+				this.iterator = iterator;
+
 			}
 			public int Count => map.Count;
 
@@ -221,6 +216,7 @@ namespace WebAssembly.Core {
 			private sealed class MapItemEnumerator : IEnumerator {
 
 				readonly MapItemCollection mapItemCollection;
+				JSObject mapItemIterator;
 
 				public object Current { get; private set; }
 
@@ -233,11 +229,11 @@ namespace WebAssembly.Core {
 
 				public bool MoveNext ()
 				{
-					if (mapItemCollection.mapIterator == null)
-						return false;
+					if (mapItemIterator == null)
+						mapItemIterator = (JSObject)mapItemCollection.map.Invoke (mapItemCollection.iterator);
 
 					var done = false;
-					using (var result = (JSObject)mapItemCollection.mapIterator.Invoke ("next")) {
+					using (var result = (JSObject)mapItemIterator.Invoke ("next")) {
 						done = (bool)result.GetObjectProperty ("done");
 						if (!done)
 							Current = result.GetObjectProperty ("value");
@@ -247,7 +243,8 @@ namespace WebAssembly.Core {
 
 				public void Reset ()
 				{
-					throw new NotImplementedException ();
+					mapItemIterator?.Dispose ();
+					mapItemIterator = null;
 				}
 
 				#region IDisposable Support
@@ -262,7 +259,8 @@ namespace WebAssembly.Core {
 
 						// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
 						// TODO: set large fields to null.
-						mapItemCollection.mapIterator.Dispose ();
+						mapItemIterator?.Dispose ();
+						mapItemIterator = null;
 						disposedValue = true;
 					}
 				}
