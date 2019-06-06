@@ -589,6 +589,12 @@
 # WeakReference.get_TrackResurrection is not implemented
 -nomethod System.Tests.WeakReferenceTests.NonGeneric
 
+# Disabled in coreclr too: https://github.com/dotnet/coreclr/blob/master/tests/CoreFX/CoreFX.issues.rsp#L68-L71
+-nomethod System.Tests.StringTests.CasingNegativeTest
+-nomethod System.Tests.StringTests.ToLowerNullCulture
+-nomethod System.Tests.StringTests.CompareNegativeTest
+-nomethod System.Tests.StringTests.ToUpperNullCulture
+
 ####################################################################
 ##  System.Text.Json.Tests
 ####################################################################
