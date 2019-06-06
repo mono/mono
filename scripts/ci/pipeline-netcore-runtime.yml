@@ -76,10 +76,18 @@ jobs:
       ./autogen.sh --with-core=only
       make -C netcore all
       make -C netcore nupkg
-      make -C netcore xtestall
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
+
+  - bash: |
+      make -C netcore prepare
+      make -C netcore update-corefx-tests
+    displayName: 'Download tests'
   
+  - bash: |
+      make -C netcore xtestall
+    displayName: 'Run tests'
+
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     - powershell: |
         eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -ci -restore -projects $(Build.Repository.LocalPath)\eng\empty.proj
