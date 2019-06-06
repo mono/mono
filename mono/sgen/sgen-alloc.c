@@ -62,7 +62,6 @@ static guint64 stat_bytes_alloced_los = 0;
 #define TLAB_NEXT	(__thread_info__->tlab_next)
 #define TLAB_TEMP_END	(__thread_info__->tlab_temp_end)
 #define TLAB_REAL_END	(__thread_info__->tlab_real_end)
-#define THREAD_BYTES_ALLOCATED	( ((MonoThreadInfo*)__thread_info__)->total_bytes_allocated) 
 
 static GCObject*
 alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
@@ -108,6 +107,16 @@ zero_tlab_if_necessary (void *p, size_t size)
 		sgen_client_zero_array_fill_header (p, size);
 	}
 }
+
+static void 
+increment_thread_allocation_counter(size_t byte_size)
+{
+	SgenThreadInfo* info;
+	info = mono_thread_info_current ();
+	info->total_bytes_allocated += byte_size;
+}
+
+
 
 /*
  * Provide a variant that takes just the vtable for small fixed-size objects.
@@ -221,7 +230,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			available_in_tlab = (int)(TLAB_REAL_END - TLAB_NEXT);//We'll never have tlabs > 2Gb
 			if (size > sgen_tlab_size || available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
 				/* Allocate directly from the nursery */
-				THREAD_BYTES_ALLOCATED += size;
+				increment_thread_allocation_counter(size);
 				p = (void **)sgen_nursery_alloc (size);
 				if (!p) {
 					/*
@@ -250,7 +259,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 				zero_tlab_if_necessary (p, size);
 			} else {
-				THREAD_BYTES_ALLOCATED += TLAB_NEXT - TLAB_START - size;
+				increment_thread_allocation_counter(TLAB_NEXT - TLAB_START - size);
 
 				size_t alloc_size = 0;
 				if (TLAB_START)
@@ -440,6 +449,7 @@ GCObject*
 sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
 {
 	GCObject *p;
+	increment_thread_allocation_counter(size);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -466,6 +476,7 @@ GCObject*
 sgen_alloc_obj_mature (GCVTable vtable, size_t size)
 {
 	GCObject *res;
+	increment_thread_allocation_counter(size);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
