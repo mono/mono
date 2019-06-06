@@ -1556,8 +1556,9 @@ count_virtual_methods (MonoClass *klass)
 			flags = klass->methods [i]->flags;
 			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
 			{
-				if (m_class_get_image (klass)->dynamic || mono_class_is_ginst (klass) || !MONO_CLASS_IS_INTERFACE_INTERNAL (klass) || (MONO_CLASS_IS_INTERFACE_INTERNAL (klass) && flags & METHOD_ATTRIBUTE_NEW_SLOT))
-					++vcount;
+				if (!mono_class_is_gtd (klass) && (!(flags & METHOD_ATTRIBUTE_NEW_SLOT) && flags & METHOD_ATTRIBUTE_ABSTRACT)) //reabstraction
+					continue;
+				++vcount;
 			}
 		}
 	} else {
@@ -1568,8 +1569,9 @@ count_virtual_methods (MonoClass *klass)
 
 			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
 			{
-				if (m_class_get_image (klass)->dynamic || mono_class_is_ginst (klass) || !MONO_CLASS_IS_INTERFACE_INTERNAL (klass) || (MONO_CLASS_IS_INTERFACE_INTERNAL (klass) && flags & METHOD_ATTRIBUTE_NEW_SLOT))
-					++vcount;
+				if (!mono_class_is_gtd (klass) && (!(flags & METHOD_ATTRIBUTE_NEW_SLOT) && flags & METHOD_ATTRIBUTE_ABSTRACT)) //reabstraction
+					continue;
+				++vcount;
 			}
 		}
 	}
@@ -5001,8 +5003,9 @@ mono_class_setup_methods (MonoClass *klass)
 		for (i = 0; i < count; ++i) {
 			if (methods [i]->flags & METHOD_ATTRIBUTE_VIRTUAL )
 			{
-				if (methods [i]->flags & METHOD_ATTRIBUTE_NEW_SLOT)
-					methods [i]->slot = slot++;
+				if (!mono_class_is_gtd (klass) && (!(methods [i]->flags & METHOD_ATTRIBUTE_NEW_SLOT) && methods [i]->flags & METHOD_ATTRIBUTE_ABSTRACT)) //reabstraction
+					continue;
+				methods [i]->slot = slot++;
 			}
 		}
 	}
