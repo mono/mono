@@ -152,6 +152,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="TypeForwarders.cs" />
     <Compile Include="corefx\Crc32Helper.cs" />
+    <Compile Include="corefx\Interop.Libraries.cs" />
     <Compile Include="corefx\SR.cs" />
     <Compile Include="corefx\ZipArchiveEntry.Mono.cs" />
     <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
@@ -165,39 +166,6 @@
   <!--End of common files-->
   <!--Per-profile files-->
   <Choose>
-    <When Condition="'$(Platform)' == 'xammac'">
-      <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-        <Compile Include="corefx\Interop.Libraries.cs" />
-      </ItemGroup>
-    </When>
-    <When Condition="'$(Platform)' == 'winaot'">
-      <ItemGroup>
-        <Compile Include="corefx\BrotliStubs.cs" />
-      </ItemGroup>
-    </When>
-    <When Condition="'$(Platform)' == 'wasm'">
-      <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-        <Compile Include="corefx\Interop.Libraries.cs" />
-      </ItemGroup>
-    </When>
-    <When Condition="'$(Platform)' == 'unreal'">
-      <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-        <Compile Include="corefx\Interop.Libraries.cs" />
-      </ItemGroup>
-    </When>
-    <When Condition="'$(Platform)' == 'orbis'">
-      <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-        <Compile Include="corefx\Interop.Libraries.cs" />
-      </ItemGroup>
-    </When>
     <When Condition="'$(Platform)' == 'net_4_x'">
       <!--Per-host-platform files-->
       <Choose>
@@ -210,54 +178,28 @@
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-            <Compile Include="corefx\Interop.Libraries.cs" />
           </ItemGroup>
         </When>
         <When Condition="'$(HostPlatform)' == 'macos'">
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-            <Compile Include="corefx\Interop.Libraries.cs" />
           </ItemGroup>
         </When>
         <When Condition="'$(HostPlatform)' == 'linux'">
           <ItemGroup>
             <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-            <Compile Include="corefx\Interop.Libraries.cs" />
           </ItemGroup>
         </When>
       </Choose>
       <!--End of per-host-platform files-->
     </When>
-    <When Condition="'$(Platform)' == 'monotouch_watch'">
+    <Otherwise>
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-        <Compile Include="corefx\Interop.Libraries.cs" />
+        <Compile Include="corefx\BrotliStubs.cs" />
       </ItemGroup>
-    </When>
-    <When Condition="'$(Platform)' == 'monotouch_tv'">
-      <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-        <Compile Include="corefx\Interop.Libraries.cs" />
-      </ItemGroup>
-    </When>
-    <When Condition="'$(Platform)' == 'monotouch'">
-      <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-        <Compile Include="corefx\Interop.Libraries.cs" />
-      </ItemGroup>
-    </When>
-    <When Condition="'$(Platform)' == 'monodroid'">
-      <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-        <Compile Include="corefx\Interop.Libraries.cs" />
-      </ItemGroup>
-    </When>
+    </Otherwise>
   </Choose>
   <!--End of per-profile files-->
   <!-- @ALL_SOURCES@ -->
