@@ -1555,7 +1555,10 @@ count_virtual_methods (MonoClass *klass)
 		for (i = 0; i < mcount; ++i) {
 			flags = klass->methods [i]->flags;
 			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
-				++vcount;
+			{
+				if (m_class_get_image (klass)->dynamic || mono_class_is_ginst (klass) || !MONO_CLASS_IS_INTERFACE_INTERNAL (klass) || (MONO_CLASS_IS_INTERFACE_INTERNAL (klass) && flags & METHOD_ATTRIBUTE_NEW_SLOT))
+					++vcount;
+			}
 		}
 	} else {
 		int first_idx = mono_class_get_first_method_idx (klass);
@@ -1563,8 +1566,11 @@ count_virtual_methods (MonoClass *klass)
 		for (i = 0; i < mcount; ++i) {
 			flags = mono_metadata_decode_table_row_col (klass->image, MONO_TABLE_METHOD, first_idx + i, MONO_METHOD_FLAGS);
 
-			if ((flags & METHOD_ATTRIBUTE_VIRTUAL) && (flags & METHOD_ATTRIBUTE_NEW_SLOT))
-				++vcount;
+			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
+			{
+				if (m_class_get_image (klass)->dynamic || mono_class_is_ginst (klass) || !MONO_CLASS_IS_INTERFACE_INTERNAL (klass) || (MONO_CLASS_IS_INTERFACE_INTERNAL (klass) && flags & METHOD_ATTRIBUTE_NEW_SLOT))
+					++vcount;
+			}
 		}
 	}
 	return vcount;
@@ -4993,8 +4999,11 @@ mono_class_setup_methods (MonoClass *klass)
 		int slot = 0;
 		/*Only assign slots to virtual methods as interfaces are allowed to have static methods.*/
 		for (i = 0; i < count; ++i) {
-			if (methods [i]->flags & METHOD_ATTRIBUTE_VIRTUAL && methods [i]->flags & METHOD_ATTRIBUTE_NEW_SLOT)
-				methods [i]->slot = slot++;
+			if (methods [i]->flags & METHOD_ATTRIBUTE_VIRTUAL )
+			{
+				if (methods [i]->flags & METHOD_ATTRIBUTE_NEW_SLOT)
+					methods [i]->slot = slot++;
+			}
 		}
 	}
 
