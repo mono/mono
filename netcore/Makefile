@@ -117,7 +117,7 @@ nupkg:
 	$(DOTNET) pack roslyn-restore.csproj -p:NuspecFile=metapackage.nuspec -p:NuspecProperties=\"RID=$(RID)\;VERSION=$(VERSION)$(VERSTUB)\;PLATFORM_AOT_SUFFIX=$(PLATFORM_AOT_SUFFIX)\;COREARCH=$(COREARCH)\;PLATFORM_AOT_PREFIX=$(PLATFORM_AOT_PREFIX)\" --output ../artifacts/ --no-build
 
 clean:
-	rm -rf ../.dotnet sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) $(ASPNETCORESDK_FILE)
+	rm -rf .configured ../.dotnet sdk shared host dotnet tests obj corefx roslyn LICENSE.txt ThirdPartyNotices.txt $(NETCORESDK_FILE) $(ASPNETCORESDK_FILE)
 
 #
 # Running tests:
@@ -145,8 +145,11 @@ xtest-%: prepare update-corefx-tests
 # these tests won't be included in `xtestall`
 EXCLUDED_COREFX_TESTS =
 
-xtestall: update-corefx-tests $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
+xtestall-noload: $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
+
+xtestall: update-corefx-tests
+	$(MAKE) xtestall-noload
 
 # build a test assembly in COREFX_ROOT and copy it to corefx/tests/extracted
 # e.g. `make build-local-corefx-test-System.Runtime COREFX_ROOT=/prj/corefx-master`
