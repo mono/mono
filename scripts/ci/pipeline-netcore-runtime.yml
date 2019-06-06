@@ -74,8 +74,9 @@ jobs:
 
   - bash: |
       ./autogen.sh --with-core=only
-      make
+      make -C netcore all
       make -C netcore nupkg
+      make -C netcore xtestall
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
   
