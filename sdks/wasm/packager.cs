@@ -451,7 +451,7 @@ class Driver {
 			link_icalls = true;
 		if (!enable_linker || !enable_aot)
 			enable_dedup = false;
-		if (enable_aot || link_icalls || gen_pinvoke)
+		if (enable_aot || link_icalls || gen_pinvoke || profilers.Count > 0)
 			build_wasm = true;
 		if (!enable_aot && link_icalls)
 			enable_lto = true;
@@ -639,7 +639,7 @@ class Driver {
 		}
 
 		string runtime_libs = "";
-		if (ee_mode == ExecMode.AotInterp || link_icalls) {
+		if (ee_mode == ExecMode.Interp || ee_mode == ExecMode.AotInterp || link_icalls) {
 			runtime_libs += "$mono_sdkdir/wasm-runtime-release/lib/libmono-ee-interp.a $mono_sdkdir/wasm-runtime-release/lib/libmono-ilgen.a ";
 			// We need to link the icall table because the interpreter uses it to lookup icalls even if the aot-ed icall wrappers are available
 			if (!link_icalls)
@@ -656,8 +656,10 @@ class Driver {
 				profiler_aot_args += " ";
 			profiler_aot_args += $"--profile={profiler}";
 		}
-		if (ee_mode == ExecMode.AotInterp)
+		if (ee_mode == ExecMode.AotInterp) {
 			aot_args += "interp,";
+			enable_zlib = true;
+		}
 
 		runtime_dir = Path.GetFullPath (runtime_dir);
 		sdkdir = Path.GetFullPath (sdkdir);
