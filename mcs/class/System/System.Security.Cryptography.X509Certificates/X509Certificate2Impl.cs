@@ -83,6 +83,18 @@ namespace System.Security.Cryptography.X509Certificates
 
 		public abstract void AppendPrivateKeyInfo (StringBuilder sb);
 
+		public sealed override X509CertificateImpl CopyWithPrivateKey (RSA privateKey)
+		{
+			var impl = (X509Certificate2Impl)Clone ();
+			impl.PrivateKey = privateKey;
+			return impl;
+		}
+
+		public sealed override X509Certificate CreateCertificate ()
+		{
+			return new X509Certificate2 (this);
+		}
+
 		public abstract void Reset ();
 	}
 }
