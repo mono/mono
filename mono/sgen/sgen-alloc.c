@@ -64,18 +64,16 @@ static guint64 stat_bytes_alloced_los = 0;
 #define TLAB_REAL_END	(__thread_info__->tlab_real_end)
 
 static void 
-increment_thread_allocation_counter(size_t byte_size)
+increment_thread_allocation_counter (size_t byte_size)
 {
-	SgenThreadInfo* info;
-	info = mono_thread_info_current ();
-	info->total_bytes_allocated += byte_size;
+	mono_thread_info_current ()->total_bytes_allocated += byte_size;
 }
 
 static GCObject*
 alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 {
 	GCObject *p;
-	increment_thread_allocation_counter(size);
+	increment_thread_allocation_counter (size);
 
 	if (!for_mature) {
 		sgen_client_degraded_allocation ();
@@ -229,7 +227,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			available_in_tlab = (int)(TLAB_REAL_END - TLAB_NEXT);//We'll never have tlabs > 2Gb
 			if (size > sgen_tlab_size || available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
 				/* Allocate directly from the nursery */
-				increment_thread_allocation_counter(size);
+			
 				p = (void **)sgen_nursery_alloc (size);
 				if (!p) {
 					/*
@@ -252,17 +250,17 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 					sgen_ensure_free_space (real_size, GENERATION_NURSERY);
 					if (!sgen_degraded_mode)
 						p = (void **)sgen_nursery_alloc (size);
+					
+					if (p)
+						increment_thread_allocation_counter (size);
+					
 				}
 				if (!p)
 					return alloc_degraded (vtable, size, TRUE);
 
 				zero_tlab_if_necessary (p, size);
 			} else {
-				/* Subtract size because the size of the object we are trying to allocate
-				 * will either be counted in the next TLAB,
-				 *  or in alloc_degraded.
-				 */
-				increment_thread_allocation_counter(TLAB_NEXT - TLAB_START - size);
+				increment_thread_allocation_counter (TLAB_NEXT - TLAB_START);
 
 				size_t alloc_size = 0;
 				if (TLAB_START)
@@ -506,10 +504,12 @@ sgen_clear_tlabs (void)
 {
 	FOREACH_THREAD_ALL (info) {
 		/* A new TLAB will be allocated when the thread does its first allocation */
+		info->total_bytes_allocated += info->tlab_next - info->tlab_start;
 		info->tlab_start = NULL;
 		info->tlab_next = NULL;
 		info->tlab_temp_end = NULL;
 		info->tlab_real_end = NULL;
+		
 	} FOREACH_THREAD_END
 }
 
