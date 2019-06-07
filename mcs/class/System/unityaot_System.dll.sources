@@ -4,3 +4,10 @@
 ../System.Web/System.Web.Util/HttpEncoder.cs
 System.CodeDom/CodeCompileUnit.cs
 System.CodeDom/CodeTypeDeclaration.cs
+
+System.IO/DefaultWatcher.cs
+System.IO/FileAction.cs
+System.IO/FileSystemWatcher.cs
+System.IO/IFileWatcher.cs
+System.IO/NullFileWatcher.cs
+System.IO/SearchPattern.cs
