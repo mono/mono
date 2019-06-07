@@ -294,6 +294,16 @@ build-aot-bindings-interp-sample: packager.exe sample.dll
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-bindings-interp-sample --builddir=obj/aot-bindings-interp-sample --aot --template=runtime.js --link-mode=SdkOnly --linker --link-icalls --asset=sample.html sample.dll
 	ninja -v -C obj/aot-bindings-interp-sample
 
+aot-profile/main.exe: aot-profile/main.cs
+	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll aot-profile/main.cs
+
+build-aot-profile: packager.exe aot-profile/main.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-profile --builddir=obj/aot-profile --profile=aot --template=aot-profile/runtime.js --asset=aot-profile/index.html aot-profile/main.exe
+	ninja -C obj/aot-profile
+
+data.aotprofile: build-aot-profile
+	node aot-profile/gen-profile.js $@ bin/aot-profile
+
 ##
 # Parameters:
 # $(1) - make target suffix
