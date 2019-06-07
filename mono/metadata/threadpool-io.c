@@ -82,11 +82,19 @@ typedef struct {
 
 typedef struct {
 	ThreadPoolIOUpdateType type;
+	// consider struct instead of union as paranoia against bugs
 	union {
 		ThreadPoolIOUpdate_Add add;
 		ThreadPoolIOUpdate_RemoveSocket remove_socket;
 		ThreadPoolIOUpdate_RemoveDomain remove_domain;
 	} data;
+
+	struct {
+		MonoDomain *domain;
+	} debug;
+
+	// consider a small log of writers
+	const char* last_writer;
 } ThreadPoolIOUpdate;
 
 typedef struct {
@@ -365,7 +373,8 @@ selector_thread (gpointer data)
 				MonoIOSelectorJob *job;
 
 				fd = update->data.add.fd;
-				g_assert (fd >= 0);
+				const char* last_writer = update->last_writer;
+				g_assertf (fd >= 0, "fd:%X last_writer:%s domain:%p", fd, last_writer ? last_writer : "null", update->debug.domain);
 
 				job = update->data.add.job;
 				g_assert (job);
@@ -390,7 +399,8 @@ selector_thread (gpointer data)
 				MonoMList *list = NULL;
 
 				fd = update->data.remove_socket.fd;
-				g_assert (fd >= 0);
+				const char* last_writer = update->last_writer;
+				g_assertf (fd >= 0, "fd:%X last_writer:%s domain:%p", fd, last_writer ? last_writer : "null", update->debug.domain);
 
 				if (mono_g_hash_table_lookup_extended (states, GINT_TO_POINTER (fd), &k, (gpointer*) &list)) {
 					mono_g_hash_table_remove (states, GINT_TO_POINTER (fd));
@@ -474,7 +484,7 @@ selector_thread (gpointer data)
 
 /* Locking: threadpool_io->updates_lock must be held */
 static ThreadPoolIOUpdate*
-update_get_new (void)
+update_get_new (ThreadPoolIOUpdateType type, const char* writer)
 {
 	ThreadPoolIOUpdate *update = NULL;
 	g_assert (threadpool_io->updates_size <= UPDATES_CAPACITY);
@@ -489,6 +499,8 @@ update_get_new (void)
 	g_assert (threadpool_io->updates_size < UPDATES_CAPACITY);
 
 	update = &threadpool_io->updates [threadpool_io->updates_size ++];
+	update->last_writer = writer;
+	update->type = type;
 
 	return update;
 }
@@ -605,6 +617,8 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
 {
 	ThreadPoolIOUpdate *update;
 
+	const int fd = GPOINTER_TO_INT (handle);
+
 	g_assert (handle);
 
 	g_assert ((job->operation == EVENT_IN) ^ (job->operation == EVENT_OUT));
@@ -619,19 +633,18 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
 
 	mono_coop_mutex_lock (&threadpool_io->updates_lock);
 
-	if (!io_selector_running) {
-		mono_coop_mutex_unlock (&threadpool_io->updates_lock);
-		return;
+	if (io_selector_running) {
+
+		update = update_get_new (UPDATE_ADD, __func__);
+		g_assertf (fd >= 0, "%d %p", fd, handle);
+		update->data.add.fd = fd;
+		update->data.add.job = job;
+
+		// FIXME The locking would seem to make barrier not needed.
+		mono_memory_barrier (); /* Ensure this is safely published before we wake up the selector */
+
+		selector_thread_wakeup ();
 	}
-
-	update = update_get_new ();
-	update->type = UPDATE_ADD;
-	update->data.add.fd = GPOINTER_TO_INT (handle);
-	update->data.add.job = job;
-	mono_memory_barrier (); /* Ensure this is safely published before we wake up the selector */
-
-	selector_thread_wakeup ();
-
 	mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 }
 
@@ -651,20 +664,18 @@ mono_threadpool_io_remove_socket (int fd)
 
 	mono_coop_mutex_lock (&threadpool_io->updates_lock);
 
-	if (!io_selector_running) {
-		mono_coop_mutex_unlock (&threadpool_io->updates_lock);
-		return;
+	if (io_selector_running) {
+
+		update = update_get_new (UPDATE_REMOVE_SOCKET, __func__);
+		g_assertf (fd >= 0, "%d", fd);
+		update->data.remove_socket.fd = fd;
+		// FIXME The locking would seem to make barrier not needed.
+		mono_memory_barrier (); /* Ensure this is safely published before we wake up the selector */
+
+		selector_thread_wakeup ();
+
+		mono_coop_cond_wait (&threadpool_io->updates_cond, &threadpool_io->updates_lock);
 	}
-
-	update = update_get_new ();
-	update->type = UPDATE_REMOVE_SOCKET;
-	update->data.add.fd = fd;
-	mono_memory_barrier (); /* Ensure this is safely published before we wake up the selector */
-
-	selector_thread_wakeup ();
-
-	mono_coop_cond_wait (&threadpool_io->updates_cond, &threadpool_io->updates_lock);
-
 	mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 }
 
@@ -683,9 +694,10 @@ mono_threadpool_io_remove_domain_jobs (MonoDomain *domain)
 		return;
 	}
 
-	update = update_get_new ();
-	update->type = UPDATE_REMOVE_DOMAIN;
+	update = update_get_new (UPDATE_REMOVE_DOMAIN, __func__);
 	update->data.remove_domain.domain = domain;
+	update->debug.domain = domain;
+	// FIXME The locking would seem to make barrier not needed.
 	mono_memory_barrier (); /* Ensure this is safely published before we wake up the selector */
 
 	selector_thread_wakeup ();
