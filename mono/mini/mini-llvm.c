@@ -8109,6 +8109,10 @@ emit_method_inner (EmitContext *ctx)
 			mono_llvm_add_func_attr (method, LLVM_ATTR_NO_INLINE);
 	}
 
+	if (mini_get_debug_options ()->llvm_disable_inlining)
+		mono_llvm_add_func_attr (method, LLVM_ATTR_NO_INLINE);
+
+
 after_codegen:
 	if (cfg->compile_aot && !ctx->module->llvm_disable_self_init) {
 		g_ptr_array_add (ctx->module->cfgs, cfg);
