@@ -8068,13 +8068,13 @@ emit_method_inner (EmitContext *ctx)
 		}
 	}
 
+	ctx->module->max_method_idx = MAX (ctx->module->max_method_idx, cfg->method_index);
+
 	/* Initialize the method if needed */
 	if (cfg->compile_aot && !ctx->module->llvm_disable_self_init) {
 		// FIXME: Add more shared got entries
 		ctx->builder = create_builder (ctx);
 		LLVMPositionBuilderAtEnd (ctx->builder, ctx->init_bb);
-
-		ctx->module->max_method_idx = MAX (ctx->module->max_method_idx, cfg->method_index);
 
 		// FIXME: beforefieldinit
 		/*
@@ -8114,7 +8114,7 @@ emit_method_inner (EmitContext *ctx)
 
 
 after_codegen:
-	if (cfg->compile_aot && !ctx->module->llvm_disable_self_init) {
+	if (cfg->llvm_only) {
 		g_ptr_array_add (ctx->module->cfgs, cfg);
 
 		/*
@@ -8984,12 +8984,10 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	}
 
 	/* Add initialization array */
-	if (!llvm_disable_self_init) {
-		LLVMTypeRef inited_type = LLVMArrayType (LLVMInt8Type (), 0);
+	LLVMTypeRef inited_type = LLVMArrayType (LLVMInt8Type (), 0);
 
-		module->inited_var = LLVMAddGlobal (aot_module.lmodule, inited_type, "mono_inited_tmp");
-		LLVMSetInitializer (module->inited_var, LLVMConstNull (inited_type));
-	}
+	module->inited_var = LLVMAddGlobal (aot_module.lmodule, inited_type, "mono_inited_tmp");
+	LLVMSetInitializer (module->inited_var, LLVMConstNull (inited_type));
 
 
 	emit_gc_safepoint_poll (module);
@@ -8997,8 +8995,7 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	emit_llvm_code_start (module);
 
 	// Needs idx_to_lmethod
-	if (!llvm_disable_self_init)
-		emit_init_icall_wrappers (module);
+	emit_init_icall_wrappers (module);
 
 	/* Add a dummy personality function */
 	if (!use_mono_personality_debug) {
@@ -9261,7 +9258,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 	/* llc defines this directly */
 	if (!module->llvm_only) {
 		fields [tindex ++] = LLVMAddGlobal (lmodule, eltype, module->eh_frame_symbol);
-		fields [tindex ++] = module->get_method;
+		fields [tindex ++] = LLVMConstNull (eltype);
 		fields [tindex ++] = LLVMConstNull (eltype);
 	} else {
 		fields [tindex ++] = LLVMConstNull (eltype);
@@ -9617,7 +9614,9 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 		LLVMSetLinkage (real_inited, LLVMInternalLinkage);
 		mono_llvm_replace_uses_of (module->inited_var, real_inited);
 		LLVMDeleteGlobal (module->inited_var);
+	}
 
+	if (module->llvm_only) {
 		emit_get_method (&aot_module);
 		emit_get_unbox_tramp (&aot_module);
 	}
