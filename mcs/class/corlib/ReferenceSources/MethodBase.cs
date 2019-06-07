@@ -8,6 +8,7 @@ using System.Text;
 
 namespace System.Reflection
 {
+	[Serializable]
 	partial class MethodBase
 	{
 		//
