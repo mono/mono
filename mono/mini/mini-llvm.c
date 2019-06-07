@@ -9607,14 +9607,12 @@ mono_llvm_emit_aot_module (const char *filename, const char *cu_name)
 	/*
 	 * Same for the init_var
 	 */
-	if (!module->llvm_disable_self_init) {
-		inited_type = LLVMArrayType (LLVMInt8Type (), module->max_inited_idx + 1);
-		real_inited = LLVMAddGlobal (module->lmodule, inited_type, "mono_inited");
-		LLVMSetInitializer (real_inited, LLVMConstNull (inited_type));
-		LLVMSetLinkage (real_inited, LLVMInternalLinkage);
-		mono_llvm_replace_uses_of (module->inited_var, real_inited);
-		LLVMDeleteGlobal (module->inited_var);
-	}
+	inited_type = LLVMArrayType (LLVMInt8Type (), module->max_inited_idx + 1);
+	real_inited = LLVMAddGlobal (module->lmodule, inited_type, "mono_inited");
+	LLVMSetInitializer (real_inited, LLVMConstNull (inited_type));
+	LLVMSetLinkage (real_inited, LLVMInternalLinkage);
+	mono_llvm_replace_uses_of (module->inited_var, real_inited);
+	LLVMDeleteGlobal (module->inited_var);
 
 	if (module->llvm_only) {
 		emit_get_method (&aot_module);
