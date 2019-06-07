@@ -3614,21 +3614,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_FCALL: {
 			call = (MonoCallInst*)ins;
-			if (ins->flags & MONO_INST_HAS_METHOD)
-				mono_add_patch_info (cfg, code-cfg->native_code,
-						     MONO_PATCH_INFO_METHOD, 
-						     call->method);
-			else {
-				const MonoJitICallId jit_icall_id = call->jit_icall_id;
-				if (jit_icall_id)
-					mono_add_patch_info (cfg, code-cfg->native_code,
-							     MONO_PATCH_INFO_JIT_ICALL_ID,
-							     GUINT_TO_POINTER (jit_icall_id));
-				else
-					mono_add_patch_info (cfg, code-cfg->native_code,
-							     MONO_PATCH_INFO_ABS,
-							     call->fptr);
-			}
+
+			mono_call_add_patch_info (cfg, call, code - cfg->native_code);
 			S390_CALL_TEMPLATE (code, s390_r14);
 			if (!cfg->r4fp && call->signature->ret->type == MONO_TYPE_R4)
 				s390_ldebr (code, s390_f0, s390_f0);

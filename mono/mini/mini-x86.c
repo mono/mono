@@ -3082,17 +3082,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			case OP_VCALL:
 			case OP_VCALL2:
 			case OP_VOIDCALL:
-			case OP_CALL:
-				if (ins->flags & MONO_INST_HAS_METHOD)
-					code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method);
-				else {
-					const MonoJitICallId jit_icall_id = call->jit_icall_id;
-					if (jit_icall_id)
-						code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (jit_icall_id));
-					else
-						code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
-				}
+			case OP_CALL: {
+				const MonoJumpInfoPartial patch = mono_call_to_patch (call);
+				code = emit_call (cfg, code, patch.type, patch.target);
 				break;
+			}
 			case OP_FCALL_REG:
 			case OP_LCALL_REG:
 			case OP_VCALL_REG:

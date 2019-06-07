@@ -3052,7 +3052,7 @@ emit_call (MonoCompile *cfg, MonoCallInst *call, guint8 *code, MonoJumpInfoType 
 {
 	gboolean no_patch = FALSE;
 
-	g_assert (patch_type == MONO_PATCH_INFO_METHOD ||	// data is MonoMethod*; MONO_PATCH_INFO_METHOD_JUMP is already reasonable
+	g_assert (patch_type == MONO_PATCH_INFO_METHOD ||	// data is MonoMethod*; MONO_PATCH_INFO_METHOD_JUMP is also reasonable
 		  patch_type == MONO_PATCH_INFO_JIT_ICALL_ID ||	// data is function id
 		  patch_type == MONO_PATCH_INFO_ABS);		// data is code pointer, hashed to MonoJumpInfo* with additional patch type/data
 
@@ -3069,6 +3069,9 @@ emit_call (MonoCompile *cfg, MonoCallInst *call, guint8 *code, MonoJumpInfoType 
 		 */
 
 		if (patch_type != MONO_PATCH_INFO_ABS) {
+
+			g_assert (!call);
+
 			/* The target is in memory allocated using the code manager */
 			near_call = TRUE;
 
@@ -3114,17 +3117,14 @@ emit_call (MonoCompile *cfg, MonoCallInst *call, guint8 *code, MonoJumpInfoType 
 				}
 			} else {
 				MonoJitICallId jit_icall_id;
-				MonoJitICallInfo const *info;
+				MonoJitICallInfo const *info = NULL;
 
-				if (call && (jit_icall_id = call->jit_icall_id)) {
+				if (call && ((jit_icall_id = call->jit_icall_id))) {
 					info = mono_find_jit_icall_info (jit_icall_id);
 
-					// Change patch from ABS to JIT icall.
+					// Change patch from MONO_PATCH_INFO_ABS to MONO_PATCH_INFO_JIT_ICALL_ID.
 					patch_type = MONO_PATCH_INFO_JIT_ICALL_ID;
 					data = GUINT_TO_POINTER (jit_icall_id);
-				} else {
-					info = mono_find_jit_icall_by_addr (data);
-					g_assertf (!info, "%s", info->name);
 				}
 				if (info) {
 					if (info->func == info->wrapper) {

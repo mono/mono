@@ -21,26 +21,30 @@
 static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
 static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
 
+MonoJumpInfoPartial
+mono_call_to_patch (MonoCallInst *call)
+{
+	MonoJumpInfoPartial patch;
+	MonoJitICallId jit_icall_id;
+
+	if (call->inst.flags & MONO_INST_HAS_METHOD) {
+		patch.type = MONO_PATCH_INFO_METHOD;
+		patch.target = call->method;
+	} else if ((jit_icall_id = call->jit_icall_id)) {
+		patch.type = MONO_PATCH_INFO_JIT_ICALL_ID;
+		patch.target = GUINT_TO_POINTER (jit_icall_id);
+	} else {
+		patch.type = MONO_PATCH_INFO_ABS;
+		patch.target = call->fptr;
+	}
+	return patch;
+}
+
 void
 mono_call_add_patch_info (MonoCompile *cfg, MonoCallInst *call, int ip)
 {
-	MonoJumpInfoType type;
-	gconstpointer target;
-
-	if (call->inst.flags & MONO_INST_HAS_METHOD) {
-		type = MONO_PATCH_INFO_METHOD;
-		target = call->method;
-	} else {
-		const MonoJitICallId jit_icall_id = call->jit_icall_id;
-		if (jit_icall_id) {
-			type = MONO_PATCH_INFO_JIT_ICALL_ID;
-			target = GUINT_TO_POINTER (jit_icall_id);
-		} else {
-			type = MONO_PATCH_INFO_ABS;
-			target = call->fptr;
-		}
-	}
-	mono_add_patch_info (cfg, ip, type, target);
+	const MonoJumpInfoPartial patch = mono_call_to_patch (call);
+	mono_add_patch_info (cfg, ip, patch.type, patch.target);
 }
 
 void
