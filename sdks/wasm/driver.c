@@ -149,7 +149,7 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 		mono_register_symfile_for_assembly (new_name, data, size);
 		return;
 	}
-	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
+	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (WasmAssembly));
 	entry->assembly.name = m_strdup (name);
 	entry->assembly.data = data;
 	entry->assembly.size = size;
