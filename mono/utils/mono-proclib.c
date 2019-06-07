@@ -1026,6 +1026,8 @@ mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
 	 */
 
 	filename_ext = mono_unicode_to_external_error (filename, &err);
+	// Added to diagnose https://github.com/mono/mono/issues/14730, remove after resolved
+	g_assertf (filename_ext != NULL, "%s: unicode conversion returned NULL; %s; 0x%hx", __func__, err->message, filename);
 	if (filename_ext == NULL) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, err->message);
 
