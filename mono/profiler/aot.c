@@ -9,6 +9,7 @@
 #include <config.h>
 
 #include "aot.h"
+#include "helper.h"
 
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/profiler.h>
@@ -24,19 +25,22 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <sys/socket.h>
 #include <glib.h>
-#include <mono/utils/mono-error-internals.h>
 
 struct _MonoProfiler {
 	GHashTable *classes;
 	GHashTable *images;
 	GPtrArray *methods;
 	FILE *outfile;
+	FILE *savefile;
 	int id;
 	char *outfile_name;
 	mono_mutex_t mutex;
 	gboolean verbose;
 	int duration;
+	int command_port;
+	int server_socket;
 };
 
 static MonoProfiler aot_profiler;
@@ -67,6 +71,7 @@ usage (void)
 	mono_profiler_printf ("\tduration=NUM         profile only NUM seconds of runtime and write the data");
 	mono_profiler_printf ("\thelp                 show this usage info");
 	mono_profiler_printf ("\toutput=FILENAME      write the data to file FILENAME");
+	mono_profiler_printf ("\tport=PORT            use PORT to listen for command server connections");
 	mono_profiler_printf ("\tverbose              print diagnostic info");
 
 	exit (0);
@@ -104,6 +109,9 @@ parse_arg (const char *arg)
 		aot_profiler.duration = strtoul (val, &end, 10);
 	} else if (match_option (arg, "output", &val)) {
 		aot_profiler.outfile_name = g_strdup (val);
+	} else if (match_option (arg, "port", &val)) {
+		char *end;
+		aot_profiler.command_port = strtoul (val, &end, 10);
 	} else if (match_option (arg, "verbose", NULL)) {
 		aot_profiler.verbose = TRUE;
 	} else {
@@ -166,6 +174,8 @@ parse_args (const char *desc)
 	g_free (buffer);
 }
 
+static void prof_save (MonoProfiler *prof, FILE* file);
+
 static void *
 helper_thread (void *arg)
 {
@@ -182,7 +192,95 @@ helper_thread (void *arg)
 
 	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NO_GC | MONO_THREAD_INFO_FLAGS_NO_SAMPLE);
 
-	sleep (aot_profiler.duration);
+	if (aot_profiler.duration >= 0) {
+		sleep (aot_profiler.duration);
+	} else if (aot_profiler.command_port >= 0) {
+		GArray *command_sockets = g_array_new (FALSE, FALSE, sizeof (int));
+
+		while (1) {
+			fd_set rfds;
+			int max_fd = -1;
+			int quit_command_received = 0;
+
+			FD_ZERO (&rfds);
+
+			add_to_fd_set (&rfds, aot_profiler.server_socket, &max_fd);
+
+			for (gint i = 0; i < command_sockets->len; i++)
+				add_to_fd_set (&rfds, g_array_index (command_sockets, int, i), &max_fd);
+
+			struct timeval tv = { .tv_sec = 1, .tv_usec = 0 };
+
+			// Sleep for 1sec or until a file descriptor has data.
+			if (select (max_fd + 1, &rfds, NULL, NULL, &tv) == -1) {
+				if (errno == EINTR)
+					continue;
+
+				mono_profiler_printf_err ("Could not poll in aot profiler helper thread: %s", g_strerror (errno));
+				exit (1);
+			}
+
+			for (gint i = 0; i < command_sockets->len; i++) {
+				int fd = g_array_index (command_sockets, int, i);
+
+				if (!FD_ISSET (fd, &rfds))
+					continue;
+
+				char buf [64];
+				int len = read (fd, buf, sizeof (buf) - 1);
+
+				if (len == -1)
+					continue;
+
+				if (!len) {
+					// The other end disconnected.
+					g_array_remove_index (command_sockets, i);
+					i--;
+					close (fd);
+
+					continue;
+				}
+
+				buf [len] = 0;
+
+				if (!strcmp (buf, "save\n")) {
+					FILE* file = fdopen (fd, "w");
+
+					prof_save (&aot_profiler, file);
+
+					fclose (file);
+
+					mono_profiler_printf_err ("aot profiler data saved to the socket");
+
+					g_array_remove_index (command_sockets, i);
+					i--;
+
+					continue;
+				} else if (!strcmp (buf, "quit\n")) {
+					quit_command_received = 1;
+				}
+			}
+
+			if (quit_command_received)
+				break;
+
+			if (FD_ISSET (aot_profiler.server_socket, &rfds)) {
+				int fd = accept (aot_profiler.server_socket, NULL, NULL);
+
+				if (fd != -1) {
+					if (fd >= FD_SETSIZE)
+						close (fd);
+					else
+						g_array_append_val (command_sockets, fd);
+				}
+			}
+		}
+
+		for (gint i = 0; i < command_sockets->len; i++)
+			close (g_array_index (command_sockets, int, i));
+
+		g_array_free (command_sockets, TRUE);
+	}
 
 	prof_shutdown (&aot_profiler);
 
@@ -195,6 +293,9 @@ helper_thread (void *arg)
 static void
 start_helper_thread (void)
 {
+	if (aot_profiler.command_port >= 0)
+		setup_command_server (&aot_profiler.server_socket, &aot_profiler.command_port, "aot");
+
 	MonoNativeThreadId thread_id;
 
 	if (!mono_native_thread_create (&thread_id, helper_thread, NULL)) {
@@ -206,7 +307,7 @@ start_helper_thread (void)
 static void
 runtime_initialized (MonoProfiler *profiler)
 {
-	if (profiler->duration >= 0)
+	if (profiler->duration >= 0 || aot_profiler.command_port >= 0)
 		start_helper_thread ();
 }
 
@@ -226,6 +327,9 @@ mono_profiler_init_aot (const char *desc)
 	}
 
 	aot_profiler.duration = -1;
+	aot_profiler.command_port = -1;
+	aot_profiler.outfile_name = NULL;
+	aot_profiler.outfile = NULL;
 
 	parse_args (desc [strlen ("aot")] == ':' ? desc + strlen ("aot") + 1 : "");
 
@@ -241,7 +345,7 @@ mono_profiler_init_aot (const char *desc)
 	else
 		aot_profiler.outfile = fopen (aot_profiler.outfile_name, "w");
 
-	if (!aot_profiler.outfile) {
+	if (!aot_profiler.outfile && aot_profiler.outfile_name) {
 		mono_profiler_printf_err ("Could not create AOT profiler output file '%s': %s", aot_profiler.outfile_name, g_strerror (errno));
 		exit (1);
 	}
@@ -261,7 +365,7 @@ mono_profiler_init_aot (const char *desc)
 static void
 emit_byte (MonoProfiler *prof, guint8 value)
 {
-	fwrite (&value, sizeof (guint8), 1, prof->outfile);
+	fwrite (&value, sizeof (guint8), 1, prof->savefile);
 }
 
 static void
@@ -269,7 +373,7 @@ emit_int32 (MonoProfiler *prof, gint32 value)
 {
 	for (int i = 0; i < sizeof (gint32); ++i) {
 		guint8 b = value;
-		fwrite (&b, sizeof (guint8), 1, prof->outfile);
+		fwrite (&b, sizeof (guint8), 1, prof->savefile);
 		value >>= 8;
 	}
 }
@@ -280,7 +384,7 @@ emit_string (MonoProfiler *prof, const char *str)
 	int len = strlen (str);
 
 	emit_int32 (prof, len);
-	fwrite (str, len, 1, prof->outfile);
+	fwrite (str, len, 1, prof->savefile);
 }
 
 static void
@@ -453,9 +557,8 @@ add_method (MonoProfiler *prof, MonoMethod *m)
 		mono_profiler_printf ("%s %d", mono_method_full_name (m, 1), id);
 }
 
-/* called at the end of the program */
 static void
-prof_shutdown (MonoProfiler *prof)
+prof_save (MonoProfiler *prof, FILE* file)
 {
 	mono_os_mutex_lock (&prof->mutex);
 	int already_shutdown = prof->methods == NULL;
@@ -467,9 +570,11 @@ prof_shutdown (MonoProfiler *prof)
 	int mindex;
 	char magic [32];
 
+	aot_profiler.savefile = file;
+
 	gint32 version = (AOT_PROFILER_MAJOR_VERSION << 16) | AOT_PROFILER_MINOR_VERSION;
 	sprintf (magic, AOT_PROFILER_MAGIC);
-	fwrite (magic, strlen (magic), 1, prof->outfile);
+	fwrite (magic, strlen (magic), 1, file);
 	emit_int32 (prof, version);
 
 	GHashTable *all_methods = g_hash_table_new (NULL, NULL);
@@ -488,11 +593,26 @@ prof_shutdown (MonoProfiler *prof)
 	}
 	emit_record (prof, AOTPROF_RECORD_NONE, 0);
 
-	fclose (prof->outfile);
-
-	mono_profiler_printf ("AOT profiler data written to '%s'", prof->outfile_name);
-
 	g_hash_table_destroy (all_methods);
+
+	g_hash_table_remove_all (prof->classes);
+	g_hash_table_remove_all (prof->images);
+
+	mono_os_mutex_unlock (&prof->mutex);
+}
+
+/* called at the end of the program */
+static void
+prof_shutdown (MonoProfiler *prof)
+{
+	if (aot_profiler.outfile) {
+		prof_save (prof, prof->outfile);
+		fclose (prof->outfile);
+		mono_profiler_printf ("AOT profiler data written to '%s'", prof->outfile_name);
+	}
+
+	mono_os_mutex_lock (&prof->mutex);
+
 	g_hash_table_destroy (prof->classes);
 	g_hash_table_destroy (prof->images);
 	g_ptr_array_free (prof->methods, TRUE);
