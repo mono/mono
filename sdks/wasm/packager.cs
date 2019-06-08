@@ -79,6 +79,8 @@ class Driver {
 		public string o_path;
 		// Path in appdir
 		public string app_path;
+		// Path of the AOT depfile
+		public string aot_depfile_path;
 		// Linker input path
 		public string linkin_path;
 		// Linker output path
@@ -709,7 +711,7 @@ class Driver {
 
 		// Rules
 		ninja.WriteLine ("rule aot");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_args,$aot_base_args,llvm-outfile=$outfile $src_file");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_args,$aot_base_args,depfile=$depfile,llvm-outfile=$outfile $src_file");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		ninja.WriteLine ("rule aot-instances");
 		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_base_args,llvm-outfile=$outfile,dedup-include=$dedup_image $src_files");
@@ -817,6 +819,8 @@ class Driver {
 				linker_ofiles += $" {a.linkout_path}";
 				ninja.WriteLine ($"build {a.linkin_path}: cp {source_file_path}");
 				// FIXME: Make this work for all assemblies, requires recording aot dependencies
+				// - The aot image needs to depend on all referenced input assemblies
+				// - those assemblies need to be copied to aot-in
 				if (filename == "mscorlib.dll") {
 					a.aotin_path = $"$builddir/aot-in/{filename}";
 					ninja.WriteLine ($"build {a.aotin_path}: cpifdiff {a.linkout_path}");
@@ -845,11 +849,13 @@ class Driver {
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
 				a.o_path = $"$builddir/{filename}.o";
+				a.aot_depfile_path = $"$builddir/aot-in/{filename}.depfile";
 
 				ninja.WriteLine ($"build {a.bc_path}: aot {infile}");
 				ninja.WriteLine ($"  src_file={infile}");
 				ninja.WriteLine ($"  outfile={a.bc_path}");
 				ninja.WriteLine ($"  mono_path={aot_in_path}");
+				ninja.WriteLine ($"  depfile={a.aot_depfile_path}");
 				if (enable_dedup)
 					ninja.WriteLine ($"  aot_args=dedup-skip");
 
