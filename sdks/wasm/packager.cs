@@ -811,16 +811,17 @@ class Driver {
 			if (enable_linker) {
 				a.linkin_path = $"$builddir/linker-in/{filename}";
 				a.linkout_path = $"$builddir/linker-out/{filename}";
-				a.aotin_path = $"$builddir/aot-in/{filename}";
 				linker_infiles += $"{a.linkin_path} ";
 				linker_ofiles += $" {a.linkout_path}";
-				infile = $"{a.aotin_path}";
+				ninja.WriteLine ($"build {a.linkin_path}: cp {source_file_path}");
 				// FIXME: Make this work for all assemblies, requires recording aot dependencies
-				if (filename == "mscorlib.dll")
-					ninja.WriteLine ($"build {a.linkin_path}: cpifdiff {source_file_path}");
-				else
-					ninja.WriteLine ($"build {a.linkin_path}: cp {source_file_path}");
-				ninja.WriteLine ($"build {a.aotin_path}: cpifdiff {a.linkout_path}");
+				if (filename == "mscorlib.dll") {
+					a.aotin_path = $"$builddir/aot-in/{filename}";
+					ninja.WriteLine ($"build {a.aotin_path}: cpifdiff {a.linkout_path}");
+				} else {
+					a.aotin_path = a.linkout_path;
+				}
+				infile = $"{a.aotin_path}";
 			} else {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
