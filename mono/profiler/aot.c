@@ -561,7 +561,7 @@ prof_shutdown (MonoProfiler *prof)
 		ERROR_DECL (error);
 
 		g_hash_table_iter_init (&iter, prof->images);
-        while (g_hash_table_iter_next (&iter, (void**)&image, (void**)&id)) {
+		while (g_hash_table_iter_next (&iter, (void**)&image, (void**)&id)) {
 			send_method = mono_method_desc_search_in_image (prof->send_to, image);
 			if (send_method)
 				break;
