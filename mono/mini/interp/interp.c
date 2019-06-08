@@ -2856,8 +2856,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, FrameClause
 	MonoClass *c;
 #if USE_COMPUTED_GOTO
 	static void *in_labels[] = {
-#define OPDEF(a,b,c,d) \
-	&&LAB_ ## a,
+#define OPDEF(a,b,c,d) &&LAB_ ## a,
 #include "mintops.def"
 	0 };
 #endif

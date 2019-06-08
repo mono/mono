@@ -2802,8 +2802,8 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (1 << 30));
 
 	// valuetype parameters are the address of a local
-	const ArgInfo *ainfo;
-	ainfo = callee_info->args + callee_sig->hasthis;
+	// FIXME Why not check 'this'?
+	const ArgInfo *ainfo = callee_info->args + callee_sig->hasthis;
 	for (int i = 0; res && i < callee_sig->param_count; ++i) {
 		res = IS_SUPPORTED_TAILCALL (ainfo [i].storage != ArgVtypeByRef)
 			&& IS_SUPPORTED_TAILCALL (ainfo [i].storage != ArgVtypeByRefOnStack);

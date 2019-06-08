@@ -26,8 +26,7 @@ typedef enum
 	MintOpShortAndInt
 } MintOpArgType;
 
-#define OPDEF(a,b,c,d) \
-	a,
+#define OPDEF(a,b,c,d) a,
 enum {
 #include "mintops.def"
 	MINT_LASTOP

@@ -198,8 +198,7 @@ typedef MonoStackFrameInfo StackFrameInfo;
 /*
  * Pull the list of opcodes
  */
-#define OPDEF(a,b,c,d,e,f,g,h,i,j) \
-	a = i,
+#define OPDEF(a,b,c,d,e,f,g,h,i,j) a = i,
 
 enum {
 #include "mono/cil/opcode.def"

@@ -186,7 +186,7 @@ amd64_use_imm32 (gint64 val)
 }
 
 static void
-amd64_patch (unsigned char* code, gpointer target)
+amd64_patch (guint8* code, gpointer target)
 {
 	// NOTE: Sometimes code has just been generated, is not running yet,
 	// and has no alignment requirements. Sometimes it could be running while we patch it,
@@ -215,16 +215,16 @@ amd64_patch (unsigned char* code, gpointer target)
 	}
 	else if (code [0] == 0xe8 || code [0] == 0xe9) {
 		/* call or jmp <DISP> */
-		gint64 disp = (guint8*)target - (guint8*)code;
+		gint64 disp = (guint8*)target - code;
 		g_assert (amd64_is_imm32 (disp));
-		x86_patch (code, (unsigned char*)target);
+		x86_patch (code, (guint8*)target);
 	}
 	else
-		x86_patch (code, (unsigned char*)target);
+		x86_patch (code, (guint8*)target);
 }
 
 void 
-mono_amd64_patch (unsigned char* code, gpointer target)
+mono_amd64_patch (guint8* code, gpointer target)
 {
 	amd64_patch (code, target);
 }
@@ -1386,15 +1386,15 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	CallInfo *caller_info = get_call_info (NULL, caller_sig);
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
-                    && IS_SUPPORTED_TAILCALL (callee_info->ret.storage == caller_info->ret.storage);
+                    && IS_SUPPORTED_TAILCALL (callee_info->ret.storage == caller_info->ret.storage)
 
-	// Limit stack_usage to 1G. Assume 32bit limits when we move parameters.
-	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30));
-	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (1 << 30));
+		    // Limit stack_usage to 1G. Assume 32bit limits when we move parameters.
+		    && IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30))
+		    && IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (1 << 30));
 
 	// valuetype parameters are address of local
-	const ArgInfo *ainfo;
-	ainfo = callee_info->args + callee_sig->hasthis;
+	// FIXME Why not check 'this'?
+	const ArgInfo *ainfo = callee_info->args + callee_sig->hasthis;
 	for (int i = 0; res && i < callee_sig->param_count; ++i) {
 		res = IS_SUPPORTED_TAILCALL (ainfo [i].storage != ArgValuetypeAddrInIReg)
 			&& IS_SUPPORTED_TAILCALL (ainfo [i].storage != ArgValuetypeAddrOnStack);
@@ -1483,30 +1483,13 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 guint32
 mono_arch_cpu_enumerate_simd_versions (void)
 {
-	guint32 sse_opts = 0;
-
-	if (mono_hwcap_x86_has_sse1)
-		sse_opts |= SIMD_VERSION_SSE1;
-
-	if (mono_hwcap_x86_has_sse2)
-		sse_opts |= SIMD_VERSION_SSE2;
-
-	if (mono_hwcap_x86_has_sse3)
-		sse_opts |= SIMD_VERSION_SSE3;
-
-	if (mono_hwcap_x86_has_ssse3)
-		sse_opts |= SIMD_VERSION_SSSE3;
-
-	if (mono_hwcap_x86_has_sse41)
-		sse_opts |= SIMD_VERSION_SSE41;
-
-	if (mono_hwcap_x86_has_sse42)
-		sse_opts |= SIMD_VERSION_SSE42;
-
-	if (mono_hwcap_x86_has_sse4a)
-		sse_opts |= SIMD_VERSION_SSE4a;
-
-	return sse_opts;
+	return    (mono_hwcap_x86_has_sse1  ? SIMD_VERSION_SSE1  : 0)
+		| (mono_hwcap_x86_has_sse2  ? SIMD_VERSION_SSE2  : 0)
+		| (mono_hwcap_x86_has_sse3  ? SIMD_VERSION_SSE3  : 0)
+		| (mono_hwcap_x86_has_ssse3 ? SIMD_VERSION_SSSE3 : 0)
+		| (mono_hwcap_x86_has_sse41 ? SIMD_VERSION_SSE41 : 0)
+		| (mono_hwcap_x86_has_sse42 ? SIMD_VERSION_SSE42 : 0)
+		| (mono_hwcap_x86_has_sse4a ? SIMD_VERSION_SSE4a : 0);
 }
 
 #ifndef DISABLE_JIT
@@ -3502,7 +3485,7 @@ cc_signed_table [] = {
 
 /*#include "cprop.c"*/
 
-static unsigned char*
+static guint8*
 emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size, gboolean is_signed)
 {
 	if (size == 8)
@@ -3517,7 +3500,7 @@ emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size,
 	return code;
 }
 
-static unsigned char*
+static guint8*
 mono_emit_stack_alloc (MonoCompile *cfg, guchar *code, MonoInst* tree)
 {
 	int sreg = tree->sreg1;
@@ -6864,14 +6847,14 @@ mono_arch_register_lowlevel_calls (void)
 void
 mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gpointer target)
 {
-	unsigned char *ip = ji->ip.i + code;
+	guint8 *ip = ji->ip.i + code;
 
 	/*
 	 * Debug code to help track down problems where the target of a near call is
 	 * is not valid.
 	 */
 	if (amd64_is_near_call (ip)) {
-		gint64 disp = (guint8*)target - (guint8*)ip;
+		gint64 disp = (guint8*)target - ip;
 
 		if (!amd64_is_imm32 (disp)) {
 			printf ("TYPE: %d\n", ji->type);
@@ -6971,7 +6954,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	cfg->code_size = MAX (cfg->header->code_size * 4, 1024);
 
-	code = cfg->native_code = (unsigned char *)g_malloc (cfg->code_size);
+	code = cfg->native_code = (guint8 *)g_malloc (cfg->code_size);
 
 	/* Amount of stack space allocated by register saving code */
 	pos = 0;

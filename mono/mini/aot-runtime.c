@@ -174,12 +174,12 @@ static GHashTable *aot_modules;
 #define mono_aot_unlock() mono_os_mutex_unlock (&aot_mutex)
 static mono_mutex_t aot_mutex;
 
-/* 
+/*
  * Maps assembly names to the mono_aot_module_<NAME>_info symbols in the
  * AOT modules registered by mono_aot_register_module ().
  */
 static GHashTable *static_aot_modules;
-/* 
+/*
  * Same as above, but tracks module that must be loaded before others are
  * This allows us to have a "container" module which contains resources for
  * other modules. Since it doesn't provide methods for a managed assembly,
@@ -1325,8 +1325,8 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 		MonoGenericContext ctx;
 		guint32 token_index;
 
-		/* 
-		 * These methods do not have a token which resolves them, so we 
+		/*
+		 * These methods do not have a token which resolves them, so we
 		 * resolve them immediately.
 		 */
 		klass = decode_klass_ref (module, p, &p, error);
@@ -1353,7 +1353,7 @@ decode_method_ref_with_target (MonoAotModule *module, MethodRef *ref, MonoMethod
 		if (FALSE && mono_class_is_ginst (klass)) {
 			ctx.class_inst = mono_class_get_generic_class (klass)->context.class_inst;
 			ctx.method_inst = NULL;
- 
+
 			ref->method = mono_class_inflate_generic_method_full_checked (ref->method, klass, &ctx, error);
 			if (!ref->method)
 				return FALSE;
@@ -5116,16 +5116,21 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 	 * patches, so have to translate between the two.
 	 * FIXME: Clean this up, but how ?
 	 */
-	if (ji.type == MONO_PATCH_INFO_ABS || ji.type == MONO_PATCH_INFO_JIT_ICALL_ID
+	if (ji.type == MONO_PATCH_INFO_ABS
+		|| ji.type == MONO_PATCH_INFO_JIT_ICALL_ID
 		|| ji.type == MONO_PATCH_INFO_ICALL_ADDR
-		|| ji.type == MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR || ji.type == MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR
-		|| ji.type == MONO_PATCH_INFO_JIT_ICALL_ADDR || ji.type == MONO_PATCH_INFO_RGCTX_FETCH) {
+		|| ji.type == MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR
+		|| ji.type == MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR
+		|| ji.type == MONO_PATCH_INFO_JIT_ICALL_ADDR
+		|| ji.type == MONO_PATCH_INFO_RGCTX_FETCH) {
 		/* These should already have a function descriptor */
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		/* Our function descriptors have a 0 environment, gcc created ones don't */
 		if (ji.type != MONO_PATCH_INFO_JIT_ICALL_ID
-				&& ji.type != MONO_PATCH_INFO_JIT_ICALL_ADDR && ji.type != MONO_PATCH_INFO_ICALL_ADDR
-				&& ji.type != MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR && ji.type != MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR)
+				&& ji.type != MONO_PATCH_INFO_JIT_ICALL_ADDR
+				&& ji.type != MONO_PATCH_INFO_ICALL_ADDR
+				&& ji.type != MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR
+				&& ji.type != MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR)
 			g_assert (((gpointer*)target) [2] == 0);
 #endif
 		/* Empty */
@@ -5269,7 +5274,7 @@ mono_create_ftnptr_malloc (guint8 *code)
 /*
  * load_function_full:
  *
- *   Load the function named NAME from the aot image. 
+ *   Load the function named NAME from the aot image.
  */
 static gpointer
 load_function_full (MonoAotModule *amodule, const char *name, MonoTrampInfo **out_tinfo)

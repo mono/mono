@@ -10,16 +10,14 @@
 #include <stdio.h>
 #include "mintops.h"
 
-#define OPDEF(a,b,c,d) \
-	b,
+#define OPDEF(a,b,c,d) b,
 const char *mono_interp_opname[] = {
 #include "mintops.def"
 	""
 };
 #undef OPDEF
 
-#define OPDEF(a,b,c,d) \
-	c,
+#define OPDEF(a,b,c,d) c,
 unsigned char mono_interp_oplen[] = {
 #include "mintops.def"
 	0
@@ -27,8 +25,7 @@ unsigned char mono_interp_oplen[] = {
 #undef OPDEF
 
 
-#define OPDEF(a,b,c,d) \
-	d,
+#define OPDEF(a,b,c,d) d,
 MintOpArgType mono_interp_opargtype[] = {
 #include "mintops.def"
 	(MintOpArgType)0

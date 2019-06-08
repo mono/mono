@@ -2286,7 +2286,6 @@ static void
 emit_store_general (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref, int size, LLVMValueRef value, LLVMValueRef addr, LLVMValueRef base, gboolean is_faulting, BarrierKind barrier)
 {
 	const char *intrins_name;
-	LLVMValueRef args [16];
 	gboolean use_intrinsics = TRUE;
 
 #if LLVM_API_VERSION > 100
@@ -2339,12 +2338,14 @@ emit_store_general (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builde
 			addr = LLVMBuildBitCast (*builder_ref, addr, LLVMPointerType (LLVMIntType (size * 8), 0), "");
 		}
 
-		args [0] = value;
-		args [1] = addr;
-		args [2] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
-		args [3] = LLVMConstInt (LLVMInt1Type (), TRUE, FALSE);
-		args [4] = LLVMConstInt (LLVMInt32Type (), ordering, FALSE);
-		emit_call (ctx, bb, builder_ref, get_intrins_by_name (ctx, intrins_name), args, 5);
+		LLVMValueRef args [ ] = {
+			value,
+			addr,
+			LLVMConstInt (LLVMInt32Type (), 0, FALSE),
+			LLVMConstInt (LLVMInt1Type (), TRUE, FALSE),
+			LLVMConstInt (LLVMInt32Type (), ordering, FALSE)
+		};
+		emit_call (ctx, bb, builder_ref, get_intrins_by_name (ctx, intrins_name), args, G_N_ELEMENTS (args));
 	} else {
 		if (barrier != LLVM_BARRIER_NONE)
 			mono_llvm_build_aligned_store (*builder_ref, value, addr, barrier, size);
@@ -3759,7 +3760,6 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 	gboolean vretaddr;
 	LLVMTypeRef llvm_sig;
 	gpointer target;
-	gboolean is_virtual, calli, preserveall;
 	LLVMBuilderRef builder = *builder_ref;
 
 	/* If both imt and rgctx arg are required, only pass the imt arg, the rgctx trampoline will pass the rgctx */
@@ -3788,16 +3788,24 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 
 	int const opcode = ins->opcode;
 
-	is_virtual = opcode == OP_VOIDCALL_MEMBASE || opcode == OP_CALL_MEMBASE
-			|| opcode == OP_VCALL_MEMBASE || opcode == OP_LCALL_MEMBASE
-			|| opcode == OP_FCALL_MEMBASE || opcode == OP_RCALL_MEMBASE
-			|| opcode == OP_TAILCALL_MEMBASE;
-	calli = !call->fptr_is_patch && (opcode == OP_VOIDCALL_REG || opcode == OP_CALL_REG
-		|| opcode == OP_VCALL_REG || opcode == OP_LCALL_REG || opcode == OP_FCALL_REG
-		|| opcode == OP_RCALL_REG || opcode == OP_TAILCALL_REG);
+	const gboolean is_virtual = opcode == OP_VOIDCALL_MEMBASE
+				 || opcode == OP_CALL_MEMBASE
+				 || opcode == OP_VCALL_MEMBASE
+				 || opcode == OP_LCALL_MEMBASE
+				 || opcode == OP_FCALL_MEMBASE
+				 || opcode == OP_RCALL_MEMBASE
+				 || opcode == OP_TAILCALL_MEMBASE;
+	const gboolean calli = !call->fptr_is_patch
+				&& (opcode == OP_VOIDCALL_REG
+				||  opcode == OP_CALL_REG
+				||  opcode == OP_VCALL_REG
+				||  opcode == OP_LCALL_REG
+				||  opcode == OP_FCALL_REG
+				||  opcode == OP_RCALL_REG
+				||  opcode == OP_TAILCALL_REG);
 
 	/* Unused */
-	preserveall = FALSE;
+	const gboolean preserveall = FALSE;
 
 	/* FIXME: Avoid creating duplicate methods */
 

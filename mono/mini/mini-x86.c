@@ -143,9 +143,9 @@ mono_arch_xregname (int reg)
 }
 
 void 
-mono_x86_patch (unsigned char* code, gpointer target)
+mono_x86_patch (guint8* code, gpointer target)
 {
-	x86_patch (code, (unsigned char*)target);
+	x86_patch (code, (guint8*)target);
 }
 
 #define FLOAT_PARAM_REGS 0
@@ -1982,7 +1982,7 @@ cc_signed_table [] = {
 	FALSE, FALSE, FALSE, FALSE
 };
 
-static unsigned char*
+static guint8*
 emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int size, gboolean is_signed)
 {
 #define XMM_TEMP_REG 0
@@ -2030,7 +2030,7 @@ emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int size, gboolean 
 	return code;
 }
 
-static unsigned char*
+static guint8*
 mono_emit_stack_alloc (MonoCompile *cfg, guchar *code, MonoInst* tree)
 {
 	int sreg = tree->sreg1;
@@ -2041,7 +2041,7 @@ mono_emit_stack_alloc (MonoCompile *cfg, guchar *code, MonoInst* tree)
 #endif
 
 	if (need_touch) {
-		guint8* br[5];
+		guint8* br [5];
 
 		/*
 		 * Under Windows:
@@ -2058,9 +2058,9 @@ mono_emit_stack_alloc (MonoCompile *cfg, guchar *code, MonoInst* tree)
 		 * guard page and commits more pages when needed.
 		 */
 		x86_test_reg_imm (code, sreg, ~0xFFF);
-		br[0] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
+		br [0] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
 
-		br[2] = code; /* loop */
+		br [2] = code; /* loop */
 		x86_alu_reg_imm (code, X86_SUB, X86_ESP, 0x1000);
 		x86_test_membase_reg (code, X86_ESP, 0, X86_ESP);
 
@@ -2089,18 +2089,18 @@ mono_emit_stack_alloc (MonoCompile *cfg, guchar *code, MonoInst* tree)
 
 		x86_alu_reg_imm (code, X86_SUB, sreg, 0x1000);
 		x86_alu_reg_imm (code, X86_CMP, sreg, 0x1000);
-		br[3] = code; x86_branch8 (code, X86_CC_AE, 0, FALSE);
-		x86_patch (br[3], br[2]);
+		br [3] = code; x86_branch8 (code, X86_CC_AE, 0, FALSE);
+		x86_patch (br [3], br [2]);
 		x86_test_reg_reg (code, sreg, sreg);
-		br[4] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
+		br [4] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
 		x86_alu_reg_reg (code, X86_SUB, X86_ESP, sreg);
 
-		br[1] = code; x86_jump8 (code, 0);
+		br [1] = code; x86_jump8 (code, 0);
 
-		x86_patch (br[0], code);
+		x86_patch (br [0], code);
 		x86_alu_reg_reg (code, X86_SUB, X86_ESP, sreg);
-		x86_patch (br[1], code);
-		x86_patch (br[4], code);
+		x86_patch (br [1], code);
+		x86_patch (br [4], code);
 	}
 	else
 		x86_alu_reg_reg (code, X86_SUB, X86_ESP, tree->sreg1);
@@ -2549,7 +2549,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				x86_mov_reg_membase (code, X86_ECX, var->inst_basereg, var->inst_offset, sizeof (target_mgreg_t));
 				x86_mov_reg_membase (code, X86_ECX, X86_ECX, 0, sizeof (target_mgreg_t));
 				x86_alu_reg_imm (code, X86_CMP, X86_ECX, 0);
-				br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
+				br [0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
 				x86_call_reg (code, X86_ECX);
 				x86_patch (br [0], code);
 			}
@@ -4085,7 +4085,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_ATOMIC_EXCHANGE_I4: {
-			guchar *br[2];
+			guchar *br [2];
 			int sreg2 = ins->sreg2;
 			int breg = ins->inst_basereg;
 
@@ -4830,7 +4830,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			guint8 *br [1];
 
 			x86_test_membase_imm (code, ins->sreg1, 0, 1);
-			br[0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
+			br [0] = code; x86_branch8 (code, X86_CC_EQ, 0, FALSE);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_threads_state_poll));
 			x86_patch (br [0], code);
 
@@ -4885,7 +4885,7 @@ mono_arch_register_lowlevel_calls (void)
 void
 mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gpointer target)
 {
-	unsigned char *ip = ji->ip.i + code;
+	guint8 *ip = ji->ip.i + code;
 
 	switch (ji->type) {
 	case MONO_PATCH_INFO_IP:
@@ -4901,7 +4901,7 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
-		x86_patch (ip, (unsigned char*)target);
+		x86_patch (ip, (guint8*)target);
 		break;
 	case MONO_PATCH_INFO_NONE:
 		break;

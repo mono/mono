@@ -1709,11 +1709,10 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 		 */
 		EMIT_NEW_AOTCONST (cfg, addr, MONO_PATCH_INFO_GET_TLS_TRAMP, GUINT_TO_POINTER(key));
 		return mini_emit_calli (cfg, mono_icall_sig_ptr, NULL, addr, NULL, NULL);
-	} else {
-		g_static_assert (TLS_KEY_THREAD == 0);
-		const MonoJitICallId jit_icall_id = (MonoJitICallId)(MONO_JIT_ICALL_mono_tls_get_thread + key);
-		return mono_emit_jit_icall_id (cfg, jit_icall_id, NULL);
 	}
+	g_static_assert (TLS_KEY_THREAD == 0);
+	const MonoJitICallId jit_icall_id = (MonoJitICallId)(MONO_JIT_ICALL_mono_tls_get_thread + key);
+	return mono_emit_jit_icall_id (cfg, jit_icall_id, NULL);
 }
 
 /*

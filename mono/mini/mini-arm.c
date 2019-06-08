@@ -1815,12 +1815,11 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	 * the extra stack space would be left on the stack after the tailcall.
 	 */
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
-				&& IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage);
-
-	// FIXME The limit here is that moving the parameters requires addressing the parameters
-	// with 12bit (4K) immediate offsets. - 4 for TAILCALL_REG/MEMBASE
-	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (4096 - 4));
-	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (4096 - 4));
+		    && IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage)
+		    // FIXME The limit here is that moving the parameters requires addressing the parameters
+		    // with 12bit (4K) immediate offsets. - 4 for TAILCALL_REG/MEMBASE
+		    && IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (4096 - 4))
+		    && IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (4096 - 4));
 
 	g_free (caller_info);
 	g_free (callee_info);
