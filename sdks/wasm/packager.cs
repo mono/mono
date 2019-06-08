@@ -83,6 +83,8 @@ class Driver {
 		public string linkin_path;
 		// Linker output path
 		public string linkout_path;
+		// AOT input path
+		public string aotin_path;
 		// Finaly output path after IL strip
 		public string final_path;
 		// Whenever to AOT this assembly
@@ -711,6 +713,8 @@ class Driver {
 		ninja.WriteLine ("  description = [AOT-INSTANCES] $outfile");
 		ninja.WriteLine ("rule mkdir");
 		ninja.WriteLine ("  command = mkdir -p $out");
+		ninja.WriteLine ("rule cp");
+		ninja.WriteLine ("  command = cp $in $out");
 		// Copy $in to $out only if it changed
 		ninja.WriteLine ("rule cpifdiff");
 		ninja.WriteLine ("  command = if cmp -s $in $out ; then : ; else cp $in $out ; fi");
@@ -723,7 +727,7 @@ class Driver {
 		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' && $wasm_strip $out_wasm");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out_js");
 		ninja.WriteLine ("rule linker");
-		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /nologo /out:$$f /target:library empty.cs; fi; done");
+		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /nologo /out:$$f /target:library empty.cs; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
 		ninja.WriteLine ("rule aot-dummy");
 		ninja.WriteLine ("  command = echo > aot-dummy.cs; csc /out:$out /target:library aot-dummy.cs");
@@ -790,7 +794,7 @@ class Driver {
 			if (!Directory.Exists (path))
 				Directory.CreateDirectory (path);
 		}
-		string aot_in_path = enable_linker ? "$builddir/linker-out" : "$builddir";
+		string aot_in_path = enable_linker ? "$builddir/aot-in" : "$builddir";
 		foreach (var a in assemblies) {
 			var assembly = a.src_path;
 			if (assembly == null)
@@ -806,10 +810,16 @@ class Driver {
 			if (enable_linker) {
 				a.linkin_path = $"$builddir/linker-in/{filename}";
 				a.linkout_path = $"$builddir/linker-out/{filename}";
+				a.aotin_path = $"$builddir/aot-in/{filename}";
 				linker_infiles += $"{a.linkin_path} ";
 				linker_ofiles += $" {a.linkout_path}";
-				infile = $"{a.linkout_path}";
-				ninja.WriteLine ($"build {a.linkin_path}: cpifdiff {source_file_path}");
+				infile = $"{a.aotin_path}";
+				// FIXME: Make this work for all assemblies, requires recording aot dependencies
+				if (filename == "mscorlib.dll")
+					ninja.WriteLine ($"build {a.linkin_path}: cpifdiff {source_file_path}");
+				else
+					ninja.WriteLine ($"build {a.linkin_path}: cp {source_file_path}");
+				ninja.WriteLine ($"build {a.aotin_path}: cpifdiff {a.linkout_path}");
 			} else {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
@@ -843,7 +853,7 @@ class Driver {
 
 				ofiles += " " + $"{a.o_path}";
 				bc_files += " " + $"{a.bc_path}";
-				dedup_infiles += $" {a.linkout_path}";
+				dedup_infiles += $" {a.aotin_path}";
 			}
 		}
 		if (enable_dedup) {
