@@ -781,9 +781,6 @@ class Driver {
 				ninja.WriteLine ($"build $builddir/zlib-helper.o: emcc $builddir/zlib-helper.c");
 				ninja.WriteLine ($"  flags = -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0 -I$mono_sdkdir/wasm-runtime-release/include/support");
 			}
-
-			if (enable_aot)
-				ninja.WriteLine ("build $builddir/aot-in: mkdir");
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
 			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
@@ -799,7 +796,7 @@ class Driver {
 			if (!Directory.Exists (path))
 				Directory.CreateDirectory (path);
 		}
-		string aot_in_path = enable_linker ? "$builddir/aot-in" : "$builddir";
+		string aot_in_path = enable_linker ? "$builddir/linker-out" : "$builddir";
 		foreach (var a in assemblies) {
 			var assembly = a.src_path;
 			if (assembly == null)
@@ -818,15 +815,7 @@ class Driver {
 				linker_infiles += $"{a.linkin_path} ";
 				linker_ofiles += $" {a.linkout_path}";
 				ninja.WriteLine ($"build {a.linkin_path}: cp {source_file_path}");
-				// FIXME: Make this work for all assemblies, requires recording aot dependencies
-				// - The aot image needs to depend on all referenced input assemblies
-				// - those assemblies need to be copied to aot-in
-				if (filename == "mscorlib.dll") {
-					a.aotin_path = $"$builddir/aot-in/{filename}";
-					ninja.WriteLine ($"build {a.aotin_path}: cpifdiff {a.linkout_path}");
-				} else {
-					a.aotin_path = a.linkout_path;
-				}
+				a.aotin_path = a.linkout_path;
 				infile = $"{a.aotin_path}";
 			} else {
 				infile = $"$builddir/{filename}";
@@ -849,7 +838,7 @@ class Driver {
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
 				a.o_path = $"$builddir/{filename}.o";
-				a.aot_depfile_path = $"$builddir/aot-in/{filename}.depfile";
+				a.aot_depfile_path = $"$builddir/linker-out/{filename}.depfile";
 
 				ninja.WriteLine ($"build {a.bc_path}.tmp: aot {infile}");
 				ninja.WriteLine ($"  src_file={infile}");
