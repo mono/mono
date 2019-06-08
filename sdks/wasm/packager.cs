@@ -781,6 +781,7 @@ class Driver {
 		}
 
 		var ofiles = "";
+		var bc_files = "";
 		string linker_infiles = "";
 		string linker_ofiles = "";
 		string dedup_infiles = "";
@@ -840,7 +841,8 @@ class Driver {
 
 				ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path}");
 
-				ofiles += " " + ($"{a.o_path}");
+				ofiles += " " + $"{a.o_path}";
+				bc_files += " " + $"{a.bc_path}";
 				dedup_infiles += $" {a.linkout_path}";
 			}
 		}
@@ -855,14 +857,15 @@ class Driver {
 			 * The dedup process will read in the .dedup files created when running with dedup-skip, so add all the
 			 * .bc files as dependencies.
 			 */
-			ninja.WriteLine ($"build {a.bc_path}: aot-instances | {ofiles} {a.linkout_path}");
+			ninja.WriteLine ($"build {a.bc_path}: aot-instances | {bc_files} {a.linkout_path}");
 			ninja.WriteLine ($"  dedup_image={a.filename}");
 			ninja.WriteLine ($"  src_files={dedup_infiles} {a.linkout_path}");
 			ninja.WriteLine ($"  outfile={a.bc_path}");
 			ninja.WriteLine ($"  mono_path={aot_in_path}");
 			ninja.WriteLine ($"build {a.app_path}: cpifdiff {a.linkout_path}");
 			ninja.WriteLine ($"build {a.linkout_path}: aot-dummy");
-			ofiles += $" {a.bc_path}";
+			ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path}");
+			ofiles += $" {a.o_path}";
 		}
 		if (link_icalls) {
 			string icall_assemblies = "";
@@ -883,7 +886,7 @@ class Driver {
 		}
 		if (build_wasm) {
 			string zlibhelper = enable_zlib ? "$builddir/zlib-helper.o" : "";
-			ninja.WriteLine ($"build $appdir/mono.js $appdir/moon.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
+			ninja.WriteLine ($"build $appdir/mono.js $appdir/mono.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
 			ninja.WriteLine ("  out_js=$appdir/mono.js");
 			ninja.WriteLine ("  out_wasm=$appdir/mono.wasm");
 		}
