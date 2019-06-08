@@ -851,14 +851,15 @@ class Driver {
 				a.o_path = $"$builddir/{filename}.o";
 				a.aot_depfile_path = $"$builddir/aot-in/{filename}.depfile";
 
-				ninja.WriteLine ($"build {a.bc_path}: aot {infile}");
+				ninja.WriteLine ($"build {a.bc_path}.tmp: aot {infile}");
 				ninja.WriteLine ($"  src_file={infile}");
-				ninja.WriteLine ($"  outfile={a.bc_path}");
+				ninja.WriteLine ($"  outfile={a.bc_path}.tmp");
 				ninja.WriteLine ($"  mono_path={aot_in_path}");
 				ninja.WriteLine ($"  depfile={a.aot_depfile_path}");
 				if (enable_dedup)
 					ninja.WriteLine ($"  aot_args=dedup-skip");
 
+				ninja.WriteLine ($"build {a.bc_path}: cpifdiff {a.bc_path}.tmp");
 				ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path}");
 
 				ofiles += " " + $"{a.o_path}";
