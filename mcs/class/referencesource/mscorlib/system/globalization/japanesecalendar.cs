@@ -124,7 +124,7 @@ namespace System.Globalization {
                 if (japaneseEraInfo == null)
                 {
                     // We know about some built-in ranges
-                    EraInfo[] defaultEraRanges = new EraInfo[4];
+                    EraInfo[] defaultEraRanges = new EraInfo[5];
                     defaultEraRanges[0] = new EraInfo( 5, 2019,  5,  1, 2018, 1, GregorianCalendar.MaxYear - 2018,
                                                        "\x4ee4\x548c", "\x4ee4", "R");    // era #5 start year/month/day, yearOffset, minEraYear
                     defaultEraRanges[1] = new EraInfo( 4, 1989,  1,  8, 1988, 1, 2019-1988,
