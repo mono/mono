@@ -77,7 +77,7 @@ namespace MonoTests.System.Globalization
 			Assert.AreEqual (new DateTime (2002, 2, 11), kr.ToDateTime (2001, 13, 30, 0, 0, 0, 0), "kr5");
 
 			Assert.AreEqual (cn.MinSupportedDateTime, cn.ToDateTime (1901, 1, 1, 0, 0, 0, 0), "cn6");
-			Assert.AreEqual (jp.MinSupportedDateTime, jp.ToDateTime (35, 1, 1, 0, 0, 0, 0, 4), "jp6"); // 1960-1-1
+			Assert.AreEqual (jp.MinSupportedDateTime, jp.ToDateTime (35, 1, 1, 0, 0, 0, 0, 3), "jp6"); // 1960-1-1
 			Assert.AreEqual (tw.MinSupportedDateTime, tw.ToDateTime (1, 1, 1, 0, 0, 0, 0), "tw6"); // 1912
 			Assert.AreEqual (kr.MinSupportedDateTime, kr.ToDateTime (918, 1, 1, 0, 0, 0, 0), "kr6");
 
