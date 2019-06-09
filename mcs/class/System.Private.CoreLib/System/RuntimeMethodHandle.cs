@@ -7,7 +7,7 @@ using System.Text;
 namespace System
 {
 	[Serializable]
-	public readonly struct RuntimeMethodHandle : ISerializable
+	public struct RuntimeMethodHandle : ISerializable
 	{
 		readonly IntPtr value;
 

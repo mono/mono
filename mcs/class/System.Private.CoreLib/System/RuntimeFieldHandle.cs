@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace System
 {
 	[Serializable]
-	public readonly struct RuntimeFieldHandle : ISerializable
+	public struct RuntimeFieldHandle : ISerializable
 	{
 		readonly IntPtr value;
 

@@ -7,11 +7,7 @@ namespace System
 		bool trackResurrection;
 		GCHandle handle;
 
-		public virtual bool IsAlive {
-			get {
-				return Target != null;
-			}
-		}
+		public virtual bool IsAlive => Target != null;
 
 		public virtual object Target {
 			get {
@@ -23,6 +19,8 @@ namespace System
 				handle.Target = value;
 			}
 		}
+
+		public virtual bool TrackResurrection => IsTrackResurrection ();
 
 		~WeakReference ()
 		{
