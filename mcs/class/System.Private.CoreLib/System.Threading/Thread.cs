@@ -176,7 +176,7 @@ namespace System.Threading
 			return JoinInternal (this, millisecondsTimeout);
 		}
 
-		public void ResetThreadPoolThread ()
+		internal void ResetThreadPoolThread ()
 		{
 		}
 
@@ -255,7 +255,7 @@ namespace System.Threading
 			return YieldInternal ();
 		}
 
-		public bool TrySetApartmentStateUnchecked (ApartmentState state) => state == ApartmentState.Unknown;
+		bool TrySetApartmentStateUnchecked (ApartmentState state) => state == ApartmentState.Unknown;
 
 		ThreadState ValidateThreadState ()
 		{
