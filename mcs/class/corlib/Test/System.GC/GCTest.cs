@@ -1,5 +1,15 @@
 
-using NUnit.Framework
+//
+// GCTest.cs - NUnit test cases for System.GC
+//
+// Authors:
+// 	Nathan Ricci (naricc@microsoft.com)
+//
+// Copyright (C) 2019 Microsoft Corporation
+//
+
+
+using NUnit.Framework;
 using System;
 
 
@@ -22,9 +32,7 @@ namespace MonoTests.System.GC {
 
 			bytesAfter100kAlloc = GC.GetAllocatedBytesForCurrentThread();
 
-			Assert.AreEqual(bytesAfter100kAlloc - bytesBeforeObjectAlloc, numberOfObjectsToAllocate * sizeOfObject)
-			
-
+			Assert.AreEqual(bytesAfter100kAlloc - bytesBeforeObjectAlloc, numberOfObjectsToAllocate * sizeOfObject);
 		}
 
 	}
