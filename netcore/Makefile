@@ -21,7 +21,7 @@ UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extr
 XUNIT_FLAGS =
 TESTS_PLATFORM = Windows_NT.x64
 DOTNET := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
-DOTNET := $(subst \,/,$(DOTNET))
+DOTNET := "$(subst \,/,$(DOTNET))"
 endif
 
 ifeq ($(HOST_PLATFORM),macos)
