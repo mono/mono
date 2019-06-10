@@ -629,10 +629,8 @@ mono_icall_get_wrapper_full (MonoJitICallInfo* callinfo, gboolean do_compile)
 	gconstpointer addr, trampoline;
 	MonoDomain *domain = mono_get_root_domain ();
 
-	if (callinfo->wrapper) {
-		// FIXME partial barrier needed here?
+	if (callinfo->wrapper)
 		return callinfo->wrapper;
-	}
 
 	wrapper = mono_icall_get_wrapper_method (callinfo);
 
@@ -643,10 +641,8 @@ mono_icall_get_wrapper_full (MonoJitICallInfo* callinfo, gboolean do_compile)
 		callinfo->wrapper = addr;
 		return addr;
 	} else {
-		if (callinfo->trampoline) {
-			// FIXME partial barrier needed here?
+		if (callinfo->trampoline)
 			return callinfo->trampoline;
-		}
 		trampoline = mono_create_jit_trampoline (domain, wrapper, error);
 		mono_error_assert_ok (error);
 		trampoline = mono_create_ftnptr (domain, (gpointer)trampoline);
@@ -2469,7 +2465,7 @@ lookup_start:
 
 	if (callinfo) {
 		// FIXME Locking here is somewhat historical due to mono_register_jit_icall_wrapper taking loader lock.
-		// atomic_compare_exchange should suffice, and partial barriers on the readers?
+		// atomic_compare_exchange should suffice.
 		mono_loader_lock ();
 		mono_jit_lock ();
 		if (!callinfo->wrapper) {
