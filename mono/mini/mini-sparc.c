@@ -2876,7 +2876,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (!call->virtual);
 			code = emit_save_sp_to_lmf (cfg, code);
 
-			const MonoJumpInfoPartial patch = mono_call_to_patch (call);
+			const MonoJumpInfoTarget patch = mono_call_to_patch (call);
 			code = emit_call (cfg, code, patch.type, patch.target);
 			code = emit_vret_token (ins, code);
 			code = emit_move_return_value (ins, code);

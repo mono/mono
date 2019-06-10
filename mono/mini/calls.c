@@ -21,10 +21,10 @@
 static const gboolean debug_tailcall_break_compile = FALSE; // break in method_to_ir
 static const gboolean debug_tailcall_break_run = FALSE;     // insert breakpoint in generated code
 
-MonoJumpInfoPartial
+MonoJumpInfoTarget
 mono_call_to_patch (MonoCallInst *call)
 {
-	MonoJumpInfoPartial patch;
+	MonoJumpInfoTarget patch;
 	MonoJitICallId jit_icall_id;
 
 	if (call->inst.flags & MONO_INST_HAS_METHOD) {
@@ -43,7 +43,7 @@ mono_call_to_patch (MonoCallInst *call)
 void
 mono_call_add_patch_info (MonoCompile *cfg, MonoCallInst *call, int ip)
 {
-	const MonoJumpInfoPartial patch = mono_call_to_patch (call);
+	const MonoJumpInfoTarget patch = mono_call_to_patch (call);
 	mono_add_patch_info (cfg, ip, patch.type, patch.target);
 }
 

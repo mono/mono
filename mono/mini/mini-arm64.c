@@ -4327,7 +4327,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VCALL2: {
 
 			call = (MonoCallInst*)ins;
-			const MonoJumpInfoPartial patch = mono_call_to_patch (call);
+			const MonoJumpInfoTarget patch = mono_call_to_patch (call);
 			code = emit_call (cfg, code, patch.type, patch.target);
 			code = emit_move_return_value (cfg, code, ins);
 			break;
