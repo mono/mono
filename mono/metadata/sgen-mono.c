@@ -2493,7 +2493,7 @@ mono_gc_get_allocated_bytes_for_current_thread (void)
 	info = mono_thread_info_current ();
 
 	/*There are some more allocated bytes in the current tlab that have not been recorded yet */
-	return info->total_bytes_allocated + info->tlab_temp_end - info->tlab_start;
+	return info->total_bytes_allocated + info->tlab_next - info->tlab_start;
 }
 
 gpointer

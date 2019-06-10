@@ -372,7 +372,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			zero_tlab_if_necessary (p, size);
 		} else {
 			size_t alloc_size = 0;
-			increment_thread_allocation_counter(TLAB_NEXT - TLAB_START - size);
+			increment_thread_allocation_counter(TLAB_NEXT - TLAB_START);
 
 			sgen_nursery_retire_region (p, available_in_tlab);
 			new_next = (char *)sgen_nursery_alloc_range (sgen_tlab_size, size, &alloc_size);
