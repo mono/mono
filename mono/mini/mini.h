@@ -787,11 +787,7 @@ struct MonoCallInst {
 	guint tailcall : 1;
 	/* If this is TRUE, 'fptr' points to a MonoJumpInfo instead of an address. */
 	guint fptr_is_patch : 1;
-#if __cplusplus
-	MonoJitICallId jit_icall_id : 9; // 9 is checked in jit-icall-reg.h mono_find_jit_icall_info
-#else
-	guint jit_icall_id : 9; // 9 is checked in jit-icall-reg.h mono_find_jit_icall_info
-#endif
+	MonoJitICallId jit_icall_id;
 	/*
 	 * If this is true, then the call returns a vtype in a register using the same 
 	 * calling convention as OP_CALL.
