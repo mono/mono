@@ -27,6 +27,8 @@ mono_call_to_patch (MonoCallInst *call)
 	MonoJumpInfoTarget patch;
 	MonoJitICallId jit_icall_id;
 
+	// This is similar to amd64 emit_call.
+
 	if (call->inst.flags & MONO_INST_HAS_METHOD) {
 		patch.type = MONO_PATCH_INFO_METHOD;
 		patch.target = call->method;

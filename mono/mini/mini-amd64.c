@@ -3053,14 +3053,18 @@ emit_call (MonoCompile *cfg, MonoCallInst *call, guint8 *code, MonoJitICallId ji
 	gboolean no_patch = FALSE;
 	MonoJumpInfoTarget patch;
 
+	// FIXME? This is similar to mono_call_to_patch, except it favors MONO_PATCH_INFO_ABS over call->jit_icall_id.
+
 	if (jit_icall_id) {
 		g_assert (!call);
 		patch.type = MONO_PATCH_INFO_JIT_ICALL_ID;
 		patch.target = GUINT_TO_POINTER (jit_icall_id);
+	} else if (call->inst.flags & MONO_INST_HAS_METHOD) {
+		patch.type = MONO_PATCH_INFO_METHOD;
+		patch.target = call->method;
 	} else {
-		g_assert (!call->jit_icall_id);
-		patch = mono_call_to_patch (call);
-		g_assert (patch.type != MONO_PATCH_INFO_JIT_ICALL_ID);
+		patch.type = MONO_PATCH_INFO_ABS;
+		patch.target = call->fptr;
 	}
 
 	/* 
