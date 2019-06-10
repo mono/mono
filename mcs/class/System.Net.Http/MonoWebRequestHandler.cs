@@ -67,6 +67,7 @@ namespace System.Net.Http
 		bool unsafeAuthenticatedConnectionSharing;
 		bool sentRequest;
 		string connectionGroupName;
+		TimeSpan? timeout;
 		bool disposed;
 
 		internal MonoWebRequestHandler ()
@@ -446,6 +447,9 @@ namespace System.Net.Http
 			var wrequest = CreateWebRequest (request);
 			HttpWebResponse wresponse = null;
 
+			if (timeout != null)
+				wrequest.Timeout = (int)timeout.Value.TotalMilliseconds;
+
 			try {
 				using (cancellationToken.Register (l => ((HttpWebRequest)l).Abort (), wrequest)) {
 					var content = request.Content;
@@ -528,6 +532,11 @@ namespace System.Net.Http
 			get {
 				throw new NotImplementedException ();
 			}
+		}
+
+		void IMonoHttpClientHandler.MonoSetTimeout (TimeSpan timeout)
+		{
+			this.timeout = timeout;
 		}
 	}
 }

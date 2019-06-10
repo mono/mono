@@ -41,6 +41,7 @@ namespace System.Net.Http
 		CancellationTokenSource cts;
 		bool disposed;
 		HttpRequestHeaders headers;
+		HttpMessageHandler handler;
 		long buffer_size;
 		TimeSpan timeout;
 
@@ -59,6 +60,7 @@ namespace System.Net.Http
 		public HttpClient (HttpMessageHandler handler, bool disposeHandler)
 			: base (handler, disposeHandler)
 		{
+			this.handler = handler;
 			buffer_size = int.MaxValue;
 			timeout = TimeoutDefault;
 			cts = new CancellationTokenSource ();
@@ -269,6 +271,9 @@ namespace System.Net.Http
 		async Task<HttpResponseMessage> SendAsyncWorker (HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
 		{
 			using (var lcts = CancellationTokenSource.CreateLinkedTokenSource (cts.Token, cancellationToken)) {
+				// Hack to pass the timeout to the HttpWebRequest that's created by MonoWebRequestHandler; all other handlers ignore this.
+				if (handler is HttpClientHandler clientHandler)
+					clientHandler.MonoSetTimeout (timeout);
 				lcts.CancelAfter (timeout);
 
 				var task = base.SendAsync (request, lcts.Token);

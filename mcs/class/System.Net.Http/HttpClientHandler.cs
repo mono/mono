@@ -188,6 +188,12 @@ namespace System.Net.Http
 
 		public IDictionary<string, object> Properties => _delegatingHandler.Properties;
 
+		// Only used in MonoWebRequestHandler and ignored by the other handlers.
+		internal void MonoSetTimeout (TimeSpan timeout)
+		{
+			_delegatingHandler.MonoSetTimeout(timeout);
+		}
+
 		protected internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken) =>
 		    _delegatingHandler.SendAsync (request, cancellationToken);
 	}
