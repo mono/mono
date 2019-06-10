@@ -122,7 +122,7 @@
 
 	IL_001c:  ldloc.0 
 	IL_001d:  callvirt instance int32 class I1::M2()
-	IL_0022:  ldc.i4 200
+	IL_0022:  ldc.i4 0
 	IL_0027:  ceq 
 	IL_0029:  ldc.i4.0 
 	IL_002a:  ceq 
