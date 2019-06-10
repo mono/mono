@@ -1132,6 +1132,12 @@ typedef struct MonoJumpInfoRgctxEntry MonoJumpInfoRgctxEntry;
 typedef struct MonoJumpInfo MonoJumpInfo;
 typedef struct MonoJumpInfoGSharedVtCall MonoJumpInfoGSharedVtCall;
 
+// Subset of MonoJumpInfo.
+ typedef struct MonoJumpInfoTarget {
+	MonoJumpInfoType type;
+	gconstpointer   target;
+} MonoJumpInfoTarget;
+
 // This ordering is mimiced in MONO_JIT_ICALLS.
 typedef enum {
 	MONO_TRAMPOLINE_JIT      = 0,
@@ -2074,11 +2080,6 @@ guint     mini_type_to_stind                (MonoCompile* cfg, MonoType *type);
 MonoJitInfo* mini_lookup_method             (MonoDomain *domain, MonoMethod *method, MonoMethod *shared);
 guint32   mono_reverse_branch_op            (guint32 opcode);
 void      mono_disassemble_code             (MonoCompile *cfg, guint8 *code, int size, char *id);
-// Subset of MonoJumpInfo.
- typedef struct MonoJumpInfoTarget {
-	MonoJumpInfoType type;
-	gconstpointer   target;
-} MonoJumpInfoTarget;
 MonoJumpInfoTarget mono_call_to_patch       (MonoCallInst *call);
 void      mono_call_add_patch_info          (MonoCompile *cfg, MonoCallInst *call, int ip);
 void      mono_add_patch_info               (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target) MONO_LLVM_INTERNAL;
