@@ -1556,7 +1556,7 @@ count_virtual_methods (MonoClass *klass)
 			flags = klass->methods [i]->flags;
 			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
 			{
-				if (!mono_class_is_gtd (klass) && (!(flags & METHOD_ATTRIBUTE_NEW_SLOT) && flags & METHOD_ATTRIBUTE_ABSTRACT)) //reabstraction
+				if (!mono_class_is_gtd (klass) && (!(flags & METHOD_ATTRIBUTE_NEW_SLOT) && flags & METHOD_ATTRIBUTE_ABSTRACT  && flags & METHOD_ATTRIBUTE_FINAL)) //reabstraction
 					continue;
 				++vcount;
 			}
@@ -1569,7 +1569,7 @@ count_virtual_methods (MonoClass *klass)
 
 			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
 			{
-				if (!mono_class_is_gtd (klass) && (!(flags & METHOD_ATTRIBUTE_NEW_SLOT) && flags & METHOD_ATTRIBUTE_ABSTRACT)) //reabstraction
+				if (!mono_class_is_gtd (klass) && (!(flags & METHOD_ATTRIBUTE_NEW_SLOT) && flags & METHOD_ATTRIBUTE_ABSTRACT && flags & METHOD_ATTRIBUTE_FINAL)) //reabstraction
 					continue;
 				++vcount;
 			}
@@ -5003,7 +5003,7 @@ mono_class_setup_methods (MonoClass *klass)
 		for (i = 0; i < count; ++i) {
 			if (methods [i]->flags & METHOD_ATTRIBUTE_VIRTUAL )
 			{
-				if (!mono_class_is_gtd (klass) && (!(methods [i]->flags & METHOD_ATTRIBUTE_NEW_SLOT) && methods [i]->flags & METHOD_ATTRIBUTE_ABSTRACT)) //reabstraction
+				if (!mono_class_is_gtd (klass) && (!(methods [i]->flags & METHOD_ATTRIBUTE_NEW_SLOT) && methods [i]->flags & METHOD_ATTRIBUTE_ABSTRACT && methods [i]->flags & METHOD_ATTRIBUTE_FINAL)) //reabstraction
 					continue;
 				methods [i]->slot = slot++;
 			}
