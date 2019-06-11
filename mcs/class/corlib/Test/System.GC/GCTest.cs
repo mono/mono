@@ -13,15 +13,15 @@ using NUnit.Framework;
 using System;
 
 
-namespace MonoTests.System.GC {
+namespace MonoTests.System.GarbageCollector {
 
 	public interface SizedObject 
 	{
-		int ExpectedSize();
+		long ExpectedSize();
 	}
 
 	public class NoPointer : SizedObject {
-		public int ExpectedSize() {
+		public long ExpectedSize() {
 			return 2 * IntPtr.Size;
 		}
 	}
@@ -30,7 +30,7 @@ namespace MonoTests.System.GC {
 		public object field1;
 		public object field2;
 
-		public int ExpectedSize() 
+		public long ExpectedSize() 
 		{
 			return 4*IntPtr.Size;
 		}
@@ -43,8 +43,8 @@ namespace MonoTests.System.GC {
 		public object field3;
 		public object field4;
 
-		public int ExpectedSize() {
-			return 6*IntPtr.Size();
+		public long ExpectedSize() {
+			return 6*IntPtr.Size;
 		}
 	}
 
@@ -58,8 +58,8 @@ namespace MonoTests.System.GC {
 		public object field7;
 		public object field8;
 
-		public int ExpectedSize() {
-			10*IntPtr.Size();
+		public long ExpectedSize() {
+			return (long)(10*IntPtr.Size);
 		}
 		
 	}
@@ -72,10 +72,10 @@ namespace MonoTests.System.GC {
 		[Test]
 		public static void TestGetBytesAllocatedForCurrentThread()
 		{
-			Action<SizedObject>[] objectAllocators = {
-				() => new TwoPointerObject(),
-				() => new FourPointerObject(),
-				() => new EightPointerObject()
+			Func<SizedObject>[] objectAllocators = {
+				() => new TwoPointer(),
+				() => new FourPointer(),
+				() => new EightPointer()
 			};
 
 			Random r = new  Random();
@@ -84,12 +84,12 @@ namespace MonoTests.System.GC {
 			long bytesBeforeAlloc = GC.GetAllocatedBytesForCurrentThread();
 
 			for (int i = 0; i < 10000000; i++) {
-				expectedSize += objectAllocators[r.next() %  objectAlloctors.Size ]().ExpectedSize();
+				expectedSize += objectAllocators[r.Next(0, objectAllocators.Length) ]().ExpectedSize();
 			}
 
-			bytesAfterAlloc = GC.GetAllocatedBytesForCurrentThread();
+			long bytesAfterAlloc = GC.GetAllocatedBytesForCurrentThread();
 
-			Assert.AreEqual(bytesAfterAlloc - bytesBeforeObjectAlloc, expectedSize);
+			Assert.AreEqual(bytesAfterAlloc - bytesBeforeAlloc, expectedSize);
 		}
 
 	}
