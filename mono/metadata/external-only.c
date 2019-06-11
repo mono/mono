@@ -35,7 +35,7 @@
 uint32_t
 mono_gchandle_new (MonoObject *obj, mono_bool pinned)
 {
-	MONO_EXTERNAL_ONLY (uint32_t, mono_gchandle_new_internal (obj, pinned));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (uint32_t, mono_gchandle_new_internal (obj, pinned));
 }
 
 /**
@@ -62,7 +62,7 @@ mono_gchandle_new (MonoObject *obj, mono_bool pinned)
 uint32_t
 mono_gchandle_new_weakref (MonoObject *obj, mono_bool track_resurrection)
 {
-	MONO_EXTERNAL_ONLY (uint32_t, mono_gchandle_new_weakref_internal (obj, track_resurrection));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (uint32_t, mono_gchandle_new_weakref_internal (obj, track_resurrection));
 }
 
 /**
@@ -78,7 +78,7 @@ mono_gchandle_new_weakref (MonoObject *obj, mono_bool track_resurrection)
 MonoObject*
 mono_gchandle_get_target (uint32_t gchandle)
 {
-	MONO_EXTERNAL_ONLY (MonoObject*, mono_gchandle_get_target_internal (gchandle));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (MonoObject*, mono_gchandle_get_target_internal (gchandle));
 }
 
 /**
@@ -92,7 +92,7 @@ mono_gchandle_get_target (uint32_t gchandle)
 void
 mono_gchandle_free (uint32_t gchandle)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gchandle_free_internal (gchandle));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gchandle_free_internal (gchandle));
 }
 
 /* GC write barriers support */
@@ -103,7 +103,7 @@ mono_gchandle_free (uint32_t gchandle)
 void
 mono_gc_wbarrier_set_field (MonoObject *obj, void* field_ptr, MonoObject* value)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_set_field_internal (obj, field_ptr, value));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_set_field_internal (obj, field_ptr, value));
 }
 
 /**
@@ -112,13 +112,13 @@ mono_gc_wbarrier_set_field (MonoObject *obj, void* field_ptr, MonoObject* value)
 void
 mono_gc_wbarrier_set_arrayref (MonoArray *arr, void* slot_ptr, MonoObject* value)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_set_arrayref_internal (arr, slot_ptr, value));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_set_arrayref_internal (arr, slot_ptr, value));
 }
 
 void
 mono_gc_wbarrier_arrayref_copy (void* dest_ptr, void* src_ptr, int count)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_arrayref_copy_internal (dest_ptr, src_ptr, count));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_arrayref_copy_internal (dest_ptr, src_ptr, count));
 }
 
 /**
@@ -127,7 +127,7 @@ mono_gc_wbarrier_arrayref_copy (void* dest_ptr, void* src_ptr, int count)
 void
 mono_gc_wbarrier_generic_store (void* ptr, MonoObject* value)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_generic_store_internal (ptr, value));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_generic_store_internal (ptr, value));
 }
 
 /**
@@ -138,19 +138,19 @@ mono_gc_wbarrier_generic_store (void* ptr, MonoObject* value)
 void
 mono_gc_wbarrier_generic_store_atomic (void *ptr, MonoObject *value)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_generic_store_atomic_internal (ptr, value));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_generic_store_atomic_internal (ptr, value));
 }
 
 void
 mono_gc_wbarrier_generic_nostore (void* ptr)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_generic_nostore_internal (ptr));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_generic_nostore_internal (ptr));
 }
 
 void
 mono_gc_wbarrier_value_copy (void* dest, /*const*/ void* src, int count, MonoClass *klass)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_value_copy_internal (dest, src, count, klass));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_value_copy_internal (dest, src, count, klass));
 }
 
 /**
@@ -161,7 +161,7 @@ mono_gc_wbarrier_value_copy (void* dest, /*const*/ void* src, int count, MonoCla
 void
 mono_gc_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 {
-	MONO_EXTERNAL_ONLY_VOID (mono_gc_wbarrier_object_copy_internal (obj, src));
+	MONO_EXTERNAL_ONLY_GC_UNSAFE_VOID (mono_gc_wbarrier_object_copy_internal (obj, src));
 }
 
 /**
