@@ -2271,6 +2271,13 @@ mini_emit_storing_write_barrier (MonoCompile *cfg, MonoInst *ptr, MonoInst *valu
 {
 	MonoInst *store;
 
+	/*
+	 * Add a release memory barrier so the object contents are flushed
+	 * to memory before storing the reference into another object.
+	 */
+	if (mini_get_debug_options ()->clr_memory_model)
+		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+
 	EMIT_NEW_STORE_MEMBASE (cfg, store, OP_STORE_MEMBASE_REG, ptr->dreg, 0, value->dreg);
 
 	mini_emit_write_barrier (cfg, ptr, value);
