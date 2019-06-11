@@ -33,7 +33,7 @@ namespace System.Net.Http
 {
 	public class HttpMessageInvoker : IDisposable
 	{
-		protected readonly HttpMessageHandler handler;
+		protected private HttpMessageHandler handler;
 		readonly bool disposeHandler;
 		
 		public HttpMessageInvoker (HttpMessageHandler handler)
