@@ -157,8 +157,11 @@ EXCLUDED_COREFX_TESTS = \
 xtestall-noload: $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
 
-xtestall: update-corefx-tests
-	$(MAKE) xtestall-noload
+xtestall: update-corefx-tests 
+	$(MAKE) xtest-System.Net.NameResolution.Functional.Tests
+	$(MAKE) xtest-System.Net.NameResolution.Pal.Tests
+	$(MAKE) xtest-System.Net.NameResolution.Unit.Tests
+	$(MAKE) xtest-System.Net.NetworkInformation.Functional.Tests
 
 # build a test assembly in COREFX_ROOT and copy it to corefx/tests/extracted
 # e.g. `make build-local-corefx-test-System.Runtime COREFX_ROOT=/prj/corefx-master`
