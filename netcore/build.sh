@@ -87,7 +87,7 @@ done
 # run .././autogen.sh only once or if "--rebuild" argument is provided
 if [[ "$force_rebuild" == "true" || ! -f .configured ]]; then
   cd ..
-  ./autogen.sh --with-core=only --disable-interpreter
+  ./autogen.sh --with-core=only
   cd netcore
   touch .configured
 fi
