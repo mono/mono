@@ -87,6 +87,7 @@ jobs:
   - bash: |
      cd netcore && ./build.sh --skipnative --skipmscorlib --test
     displayName: 'Run tests'
+    timeoutInMinutes: 2h
     condition: eq(variables['poolname'], 'Hosted macOS')
 
   - task: PublishTestResults@2
