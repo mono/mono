@@ -26,7 +26,9 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
+#ifndef HOST_WIN32
 #include <sys/socket.h>
+#endif
 #include <glib.h>
 
 struct _MonoProfiler {
