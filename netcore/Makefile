@@ -156,7 +156,32 @@ EXCLUDED_COREFX_TESTS = \
 	System.Security.Cryptography.Pkcs.Tests	\
 	System.Security.Cryptography.Primitives.Tests	\
 	System.Security.Cryptography.X509Certificates.Tests	\
-	System.Security.Cryptography.Xml.Tests
+	System.Security.Cryptography.Xml.Tests \
+	System.Net.Http.Functional.Tests \
+	System.Net.Http.Unit.Tests \
+	System.Net.HttpListener.Tests \
+	System.Net.Mail.Functional.Tests \
+	System.Net.Mail.Unit.Tests \
+	System.Net.NameResolution.Functional.Tests \
+	System.Net.NameResolution.Pal.Tests \
+	System.Net.NameResolution.Unit.Tests \
+	System.Net.NetworkInformation.Functional.Tests \
+	System.Net.Ping.Functional.Tests \
+	System.Net.Primitives.Functional.Tests \
+	System.Net.Primitives.Pal.Tests \
+	System.Net.Primitives.UnitTests.Tests \
+	System.Net.Requests.Tests \
+	System.Net.Security.Tests \
+	System.Net.Security.Unit.Tests \
+	System.Net.ServicePoint.Tests \
+	System.Net.Sockets.Async.Stress.Tests \
+	System.Net.Sockets.Tests \
+	System.Net.WebClient.Tests \
+	System.Net.WebHeaderCollection.Tests \
+	System.Net.WebProxy.Tests \
+	System.Net.WebSockets.Client.Tests \
+	System.Net.WebSockets.Tests \
+	System.Net.WebSockets.WebSocketProtocol.Tests
 
 xtestall-noload: $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
