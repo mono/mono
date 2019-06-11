@@ -85,6 +85,7 @@
 #include <mono/utils/mono-io-portability.h>
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-errno.h>
+#include <mono/utils/mono-error-internals.h>
 #include "object-internals.h"
 #include "icall-decl.h"
 
@@ -1505,6 +1506,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 	int startup_pipe [2] = {-1, -1};
 	int dummy;
 	Process *process;
+	ERROR_DECL (err);
 
 #if HAVE_SIGACTION
 	mono_lazy_initialize (&process_sig_chld_once, process_add_sigchld_handler);
@@ -1537,12 +1539,12 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 	 * so crap, with an API like this :-(
 	 */
 	if (appname != NULL) {
-		cmd = mono_unicode_to_external_error (appname, &gerr);
+		cmd = mono_unicode_to_external_checked (appname, err);
 		if (cmd == NULL) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s",
-				   __func__, gerr->message);
+				   __func__, mono_error_get_message (err));
 
-			g_error_free (gerr);
+			mono_error_cleanup (err);
 			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
@@ -1551,22 +1553,22 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 	}
 
 	if (cmdline != NULL) {
-		args = mono_unicode_to_external_error (cmdline, &gerr);
+		args = mono_unicode_to_external_checked (cmdline, err);
 		if (args == NULL) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, gerr->message);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, mono_error_get_message (err));
 
-			g_error_free (gerr);
+			mono_error_cleanup (err);
 			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
 	}
 
 	if (cwd != NULL) {
-		dir = mono_unicode_to_external_error (cwd, &gerr);
+		dir = mono_unicode_to_external_checked (cwd, err);
 		if (dir == NULL) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, gerr->message);
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, mono_error_get_message (err));
 
-			g_error_free (gerr);
+			mono_error_cleanup (err);
 			mono_w32error_set_last (ERROR_PATH_NOT_FOUND);
 			goto free_strings;
 		}
