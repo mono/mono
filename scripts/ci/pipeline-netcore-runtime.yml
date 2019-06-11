@@ -74,7 +74,7 @@ jobs:
 
   - bash: |
       ./autogen.sh --with-core=only
-      ./build.sh --rebuild --pack
+      cd netcore && ./build.sh --rebuild --pack
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
@@ -85,7 +85,7 @@ jobs:
     condition: eq(variables['poolname'], 'Hosted macOS')
   
   - bash: |
-     ./build.sh --skipnative --skipmscorlib --test
+     cd netcore && ./build.sh --skipnative --skipmscorlib --test
     displayName: 'Run tests'
     condition: eq(variables['poolname'], 'Hosted macOS')
 
