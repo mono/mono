@@ -24,6 +24,7 @@
 #include <utils/mono-mmap.h>
 #include <utils/strenc-internals.h>
 #include <utils/strenc.h>
+#include <utils/mono-error-internals.h>
 #include <utils/mono-io-portability.h>
 #include <utils/mono-logger-internals.h>
 
@@ -1018,21 +1019,19 @@ mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
 	int fd = -1;
 	struct stat statbuf;
 	gpointer file_map = NULL;
-	GError *err = NULL;
+	ERROR_DECL (err);
 
 	/* According to the MSDN docs, a search path is applied to
 	 * filename.  FIXME: implement this, for now just pass it
 	 * straight to open
 	 */
 
-	filename_ext = mono_unicode_to_external_error (filename, &err);
-	// Added to diagnose https://github.com/mono/mono/issues/14730, remove after resolved
-	g_assertf (filename_ext != NULL, "%s: unicode conversion returned NULL; %s; 0x%hx", __func__, err->message, filename);
+	filename_ext = mono_unicode_to_external_checked (filename, err);
+	// Assert added to diagnose https://github.com/mono/mono/issues/14730, remove after resolved
+	g_assertf (filename_ext != NULL, "%s: unicode conversion returned NULL; %s; 0x%hx", __func__, mono_error_get_message (err), filename);
 	if (filename_ext == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, err->message);
-
-		g_error_free (err);
-		
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, mono_error_get_message (err));
+		mono_error_cleanup (err);
 		goto exit;
 	}
 

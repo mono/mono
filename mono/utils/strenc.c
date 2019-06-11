@@ -14,6 +14,8 @@
 
 #include "strenc.h"
 #include "strenc-internals.h"
+#include "mono-error.h"
+#include "mono-error-internals.h"
 
 static const char trailingBytesForUTF8[256] = {
 	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -174,19 +176,22 @@ gchar *mono_utf8_from_external (const gchar *in)
  */
 gchar *mono_unicode_to_external (const gunichar2 *uni)
 {
-	return mono_unicode_to_external_error (uni, NULL);
+	return mono_unicode_to_external_checked (uni, NULL);
 }
 
-gchar *mono_unicode_to_external_error (const gunichar2 *uni, GError **err)
+gchar *mono_unicode_to_external_checked (const gunichar2 *uni, MonoError *err)
 {
 	gchar *utf8;
 	gchar *encoding_list;
+	GError *gerr = NULL;
 	
 	/* Turn the unicode into utf8 to start with, because its
 	 * easier to work with gchar * than gunichar2 *
 	 */
-	utf8=g_utf16_to_utf8 (uni, -1, NULL, NULL, err);
+	utf8=g_utf16_to_utf8 (uni, -1, NULL, NULL, &gerr);
 	if (utf8 == NULL) {
+		mono_error_set_argument (err, "uni", gerr->message);
+		g_error_free (gerr);
 		return utf8;
 	}
 	
