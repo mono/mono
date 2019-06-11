@@ -148,7 +148,15 @@ debug-xtest-%:
 	MONO_ENV_OPTIONS="--debug" $(MAKE) xtest-$*
 
 # these tests won't be included in `xtestall`
-EXCLUDED_COREFX_TESTS =
+EXCLUDED_COREFX_TESTS = \
+	System.Security.Cryptography.Algorithms.Tests \
+	System.Security.Cryptography.Csp.Tests \
+	System.Security.Cryptography.Encoding.Tests \
+	System.Security.Cryptography.OpenSsl.Tests	\
+	System.Security.Cryptography.Pkcs.Tests	\
+	System.Security.Cryptography.Primitives.Tests	\
+	System.Security.Cryptography.X509Certificates.Tests	\
+	System.Security.Cryptography.Xml.Tests
 
 xtestall-noload: $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
 		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix xtest-, $(workingtest)))
