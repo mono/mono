@@ -369,6 +369,9 @@ namespace System.Net.Http
 
 			wr.ServicePoint.Expect100Continue = request.Headers.ExpectContinue == true;
 
+			if (timeout != null)
+				wr.Timeout = (int)timeout.Value.TotalMilliseconds;
+
 			// Add request headers
 			var headers = wr.Headers;
 			foreach (var header in request.Headers) {
@@ -446,9 +449,6 @@ namespace System.Net.Http
 			Volatile.Write (ref sentRequest, true);
 			var wrequest = CreateWebRequest (request);
 			HttpWebResponse wresponse = null;
-
-			if (timeout != null)
-				wrequest.Timeout = (int)timeout.Value.TotalMilliseconds;
 
 			try {
 				using (cancellationToken.Register (l => ((HttpWebRequest)l).Abort (), wrequest)) {
@@ -534,7 +534,7 @@ namespace System.Net.Http
 			}
 		}
 
-		void IMonoHttpClientHandler.MonoSetTimeout (TimeSpan timeout)
+		void IMonoHttpClientHandler.SetWebRequestTimeout (TimeSpan timeout)
 		{
 			this.timeout = timeout;
 		}

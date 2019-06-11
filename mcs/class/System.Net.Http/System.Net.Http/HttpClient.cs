@@ -41,7 +41,6 @@ namespace System.Net.Http
 		CancellationTokenSource cts;
 		bool disposed;
 		HttpRequestHeaders headers;
-		HttpMessageHandler handler;
 		long buffer_size;
 		TimeSpan timeout;
 
@@ -60,7 +59,6 @@ namespace System.Net.Http
 		public HttpClient (HttpMessageHandler handler, bool disposeHandler)
 			: base (handler, disposeHandler)
 		{
-			this.handler = handler;
 			buffer_size = int.MaxValue;
 			timeout = TimeoutDefault;
 			cts = new CancellationTokenSource ();
