@@ -41,7 +41,7 @@ namespace System.Net.Http
 		}
 
 		// This is only used by MonoWebRequestHandler.
-		void IMonoHttpClientHandler.MonoSetTimeout (TimeSpan timeout)
+		void IMonoHttpClientHandler.SetWebRequestTimeout (TimeSpan timeout)
 		{
 		}
 
