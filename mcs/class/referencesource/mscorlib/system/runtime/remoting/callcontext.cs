@@ -11,6 +11,7 @@ namespace System.Runtime.Remoting.Messaging{
     using System.Runtime.Remoting;
     using System.Security.Principal;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
     using System.Security.Permissions;    
     // This class exposes the API for the users of call context. All methods
@@ -191,7 +192,7 @@ namespace System.Runtime.Remoting.Messaging{
 
     internal class IllogicalCallContext
     {
-        private Hashtable m_Datastore;
+        private Dictionary<string, object> m_Datastore;
         private Object m_HostContext;
 
         internal struct Reader
@@ -208,14 +209,14 @@ namespace System.Runtime.Remoting.Messaging{
             public Object HostContext { get { return IsNull ? null : m_ctx.HostContext; } }
         }
 
-        private Hashtable Datastore
+        private Dictionary<string, object> Datastore
         {
             get 
             { 
                 if (null == m_Datastore)
                 {
                     // The local store has not yet been created for this thread.
-                    m_Datastore = new Hashtable();
+                    m_Datastore = new Dictionary<string, object>();
                 }
                 return m_Datastore;
             }
@@ -262,12 +263,8 @@ namespace System.Runtime.Remoting.Messaging{
             ilcc.HostContext = this.HostContext;
             if (HasUserData)
             {
-                IDictionaryEnumerator de = this.m_Datastore.GetEnumerator();
-                
-                while (de.MoveNext())
-                {
-                    ilcc.Datastore[(String)de.Key] = de.Value;    
-                }
+				foreach (var kvp in this.m_Datastore)
+					ilcc.Datastore [kvp.Key] = kvp.Value;
             }      
             return ilcc;
         }
@@ -294,7 +291,7 @@ namespace System.Runtime.Remoting.Messaging{
         =========================================================================*/
 
         // Private member data
-        private Hashtable m_Datastore;
+        private Dictionary<string, object> m_Datastore;
         private CallContextRemotingData m_RemotingData = null; 
         private CallContextSecurityData m_SecurityData = null;
         private Object m_HostContext = null;
@@ -393,12 +390,8 @@ namespace System.Runtime.Remoting.Messaging{
             }
             if (HasUserData)
             {
-                IDictionaryEnumerator de = m_Datastore.GetEnumerator();
-                
-                while (de.MoveNext())
-                {
-                    info.AddValue((String)de.Key, de.Value);
-                }
+				foreach (var kvp in m_Datastore)
+					info.AddValue(kvp.Key, kvp.Value);
             }
 
         }
@@ -425,28 +418,23 @@ namespace System.Runtime.Remoting.Messaging{
             lc.m_IsCorrelationMgr = m_IsCorrelationMgr;
             if (HasUserData)
             {
-                IDictionaryEnumerator de = m_Datastore.GetEnumerator();
-                
                 if (!m_IsCorrelationMgr) 
                 {
-                    while (de.MoveNext())
-                    {
-                        lc.Datastore[(String)de.Key] = de.Value;  
-                    }
+					foreach (var kvp in m_Datastore)
+						lc.Datastore [kvp.Key] = kvp.Value;
                 }
                 else 
                 {
-                    while (de.MoveNext())
-                    {
-                        String key = (String)de.Key;
+					foreach (var kvp in m_Datastore) {
+                        String key = kvp.Key;
 
                         // Deep clone "System.Diagnostics.Trace.CorrelationManagerSlot" 
                         if (key.Equals(s_CorrelationMgrSlotName))
                         {
-                            lc.Datastore[key] = ((ICloneable)de.Value).Clone();   
+                            lc.Datastore[key] = ((ICloneable)kvp.Value).Clone();   
                         }
                         else
-                            lc.Datastore[key] = de.Value;    
+                            lc.Datastore[key] = kvp.Value;
                     }
                 }
             }      
@@ -467,12 +455,8 @@ namespace System.Runtime.Remoting.Messaging{
             // and there is any userData in the callContext, do the merge
             if ((lc != null) && (this != lc) && lc.HasUserData)
             {
-                IDictionaryEnumerator de = lc.Datastore.GetEnumerator();
-                
-                while (de.MoveNext())
-                {
-                    Datastore[(String)de.Key] = de.Value;  
-                }                
+				foreach (var kvp in lc.Datastore)
+					Datastore [kvp.Key] = kvp.Value;
             }
         }
         
@@ -538,14 +522,14 @@ namespace System.Runtime.Remoting.Messaging{
             }
         }
 
-        private Hashtable Datastore
+        private Dictionary<string, object> Datastore
         {
             get 
             { 
                 if (null == m_Datastore)
                 {
                     // The local store has not yet been created for this thread.
-                    m_Datastore = new Hashtable();
+                    m_Datastore = new Dictionary<string, object>();
                 }
                 return m_Datastore;
             }
