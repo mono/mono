@@ -223,6 +223,9 @@
 # TODO: Hangs
 -nomethod System.Net.Sockets.Tests.CreateSocket.CtorAndAccept_SocketNotKeptAliveViaInheritance
 
+# flacky test
+-nomethod System.Net.Sockets.Tests.SocketOptionNameTest.MulticastInterface_Set_AnyInterface_Succeeds
+
 ####################################################################
 ##  System.Reflection.Emit.ILGeneration.Tests
 ####################################################################
@@ -650,6 +653,7 @@
 
 # flacky test - System.TypeLoadException : Could not load type '_proxy_System.ComponentModel.Composition.IStronglyTypedStructure_3b7f133d-79c7-449e-8f68-22aa093dbb8d' from assembly ''.
 -nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTest
+-nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTestWithTransparentViews
 
 ####################################################################
 ##  System.Composition.TypedParts.Tests

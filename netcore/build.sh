@@ -87,7 +87,7 @@ done
 # run .././autogen.sh only once or if "--rebuild" argument is provided
 if [[ "$force_rebuild" == "true" || ! -f .configured ]]; then
   cd ..
-  ./autogen.sh --with-core=only
+  ./autogen.sh --with-core=only --disable-interpreter
   cd netcore
   touch .configured
 fi
@@ -111,5 +111,7 @@ fi
 
 # run all xunit tests
 if [ "$test" = "true" ]; then
-  make xtestall
+  for testdir in corefx/tests/extracted/*; do
+    ../scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=15m make xtest-$(basename $testdir)
+  done
 fi
