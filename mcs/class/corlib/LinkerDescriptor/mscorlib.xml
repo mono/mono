@@ -364,6 +364,9 @@
 		
 		<!-- domain.c: mono_defaults.methodhandle_class -->
 		<type fullname="System.RuntimeMethodHandle" preserve="fields" />
+
+		<!-- domain.c: mono_defaults.runtimetype_class -->
+		<type fullname="System.RuntimeType" preserve="fields" />
 		
 		<!-- domain.c: mono_defaults.typehandle_class -->
 		<type fullname="System.RuntimeTypeHandle" preserve="fields" />
