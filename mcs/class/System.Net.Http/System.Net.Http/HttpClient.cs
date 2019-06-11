@@ -271,7 +271,7 @@ namespace System.Net.Http
 			using (var lcts = CancellationTokenSource.CreateLinkedTokenSource (cts.Token, cancellationToken)) {
 				// Hack to pass the timeout to the HttpWebRequest that's created by MonoWebRequestHandler; all other handlers ignore this.
 				if (handler is HttpClientHandler clientHandler)
-					clientHandler.MonoSetTimeout (timeout);
+					clientHandler.SetWebRequestTimeout (timeout);
 				lcts.CancelAfter (timeout);
 
 				var task = base.SendAsync (request, lcts.Token);
