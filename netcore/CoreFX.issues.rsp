@@ -62,6 +62,14 @@
 -nomethod System.Diagnostics.Tests.ProcessTests.GetProcesses_RemoteMachinePath_ReturnsExpected
 
 ####################################################################
+##  System.Diagnostics.Debug
+####################################################################
+
+# disabled in CoreCLR too
+-nomethod System.Diagnostics.Tests.DebugTestsNoListeners.Print
+-nomethod System.Diagnostics.Tests.DebugTestsUsingListeners.Print
+
+####################################################################
 ##  System.Diagnostics.TraceSource.Tests
 ####################################################################
 
@@ -890,6 +898,9 @@
 -nomethod System.Reflection.Tests.TypeTests.GetEnumUnderlyingType
 -nomethod System.Reflection.Tests.TypeTests_HiddenTestingOrder.HideDetectionHappensAfterPrivateInBaseClassChecks
 
+# flaky tests
+-nomethod System.Reflection.Tests.TypeInfoDeclaredImplementedInterfacesTests.*
+
 ####################################################################
 ##  System.Utf8String.Experimental.Tests
 ####################################################################
@@ -957,6 +968,9 @@
 ####################################################################
 
 -nomethod System.Security.Cryptography.X509Certificates.Tests.DynamicChainTests.TestInvalidAia
+
+# disabled in CoreCLR too
+-noclass System.Security.Cryptography.X509Certificates.Tests.X509Certificate2UITests
 
 ####################################################################
 ##  System.Runtime.Serialization.Json.Tests
