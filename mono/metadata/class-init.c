@@ -3173,7 +3173,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 	// it can happen (for injected generic array interfaces) that the same slot is
 	// processed multiple times (those interfaces have overlapping slots), and it
 	// will not always be the first pass the one that fills the slot.
-	// NOW is it okay to implement a class that is not abstract and implements a interface that has an abstract method?
+	// Now it is okay to implement a class that is not abstract and implements a interface that has an abstract method because it's reabstracted
 	if (!mono_class_is_abstract (klass)) {
 		for (i = 0; i < klass->interface_offsets_count; i++) {
 			int ic_offset;
@@ -3328,7 +3328,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 	g_assert (cur_slot <= max_vtsize);
 
 	/* Ensure that all vtable slots are filled with concrete instance methods */
-	//NOW is it okay to implement a class that is not abstract and implements a interface that has an abstract method?
+	// Now it is okay to implement a class that is not abstract and implements a interface that has an abstract method because it's reabstracted
 	if (!mono_class_is_abstract (klass)) {
 		for (i = 0; i < cur_slot; ++i) {
 			if (vtable [i] == NULL || (vtable [i]->flags & (METHOD_ATTRIBUTE_ABSTRACT | METHOD_ATTRIBUTE_STATIC))) {
