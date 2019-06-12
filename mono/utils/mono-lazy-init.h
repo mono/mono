@@ -62,8 +62,10 @@ mono_lazy_initialize (mono_lazy_init_t *lazy_init, void (*initialize) (void))
 
 	status = *lazy_init;
 
-	if (status >= MONO_LAZY_INIT_STATUS_INITIALIZED)
+	if (status >= MONO_LAZY_INIT_STATUS_INITIALIZED) {
+		mono_memory_read_barrier ();
 		return status == MONO_LAZY_INIT_STATUS_INITIALIZED;
+	}
 	if (status == MONO_LAZY_INIT_STATUS_INITIALIZING
 	     || mono_atomic_cas_i32 (lazy_init, MONO_LAZY_INIT_STATUS_INITIALIZING, MONO_LAZY_INIT_STATUS_NOT_INITIALIZED)
 	         != MONO_LAZY_INIT_STATUS_NOT_INITIALIZED
