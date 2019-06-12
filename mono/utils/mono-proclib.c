@@ -1019,19 +1019,19 @@ mono_pe_file_map (gunichar2 *filename, gint32 *map_size, void **handle)
 	int fd = -1;
 	struct stat statbuf;
 	gpointer file_map = NULL;
-	ERROR_DECL (err);
+	ERROR_DECL (error);
 
 	/* According to the MSDN docs, a search path is applied to
 	 * filename.  FIXME: implement this, for now just pass it
 	 * straight to open
 	 */
 
-	filename_ext = mono_unicode_to_external_checked (filename, err);
+	filename_ext = mono_unicode_to_external_checked (filename, error);
 	// Assert added to diagnose https://github.com/mono/mono/issues/14730, remove after resolved
-	g_assertf (filename_ext != NULL, "%s: unicode conversion returned NULL; %s; 0x%hx", __func__, mono_error_get_message (err), filename);
+	g_assertf (filename_ext != NULL, "%s: unicode conversion returned NULL; %s; 0x%hx", __func__, mono_error_get_message (error), filename);
 	if (filename_ext == NULL) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, mono_error_get_message (err));
-		mono_error_cleanup (err);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_PROCESS, "%s: unicode conversion returned NULL; %s", __func__, mono_error_get_message (error));
+		mono_error_cleanup (error);
 		goto exit;
 	}
 
