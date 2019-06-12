@@ -36,7 +36,7 @@ jobs:
 
   - bash: |  
       sudo apt update
-      sudo apt -y install nuget build-essential libtool libtool-bin cmake gettext
+      sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext
     displayName: 'Prepare Linux dependencies'
     condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
   
@@ -74,11 +74,29 @@ jobs:
 
   - bash: |
       ./autogen.sh --with-core=only
-      make
-      make -C netcore nupkg
+      cd netcore && ./build.sh --rebuild --pack
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
+
+  - bash: |
+      make -C netcore prepare
+      make -C netcore update-corefx-tests
+    displayName: 'Download tests'
+    condition: eq(variables['poolname'], 'Hosted macOS')
   
+  - bash: |
+     cd netcore && ./build.sh --skipnative --skipmscorlib --test
+    displayName: 'Run tests'
+    timeoutInMinutes: 150
+    condition: eq(variables['poolname'], 'Hosted macOS')
+
+  - task: PublishTestResults@2
+    inputs:
+      testRunTitle: $(poolname)
+      testResultsFormat: 'XUnit'
+      testResultsFiles: 'netcore/corefx/tests/TestResult-*.xml'
+    condition: ne(variables['poolname'], 'Hosted VS2017')
+
   - ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     - powershell: |
         eng\common\build.ps1 /p:DotNetPublishToBlobFeed=true -ci -restore -projects $(Build.Repository.LocalPath)\eng\empty.proj
