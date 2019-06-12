@@ -2674,7 +2674,7 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 		return (gpointer)no_llvmonly_interp_method_pointer;
 	return (gpointer)interp_no_native_to_managed;
 #else
-	gpointer addr, entry_func, entry_wrapper;
+	gpointer addr, entry_func, entry_wrapper = NULL;
 	MonoDomain *domain = mono_domain_get ();
 	MonoJitDomainInfo *info;
 	InterpMethod *imethod = mono_interp_get_imethod (domain, method, error);
@@ -2700,10 +2700,19 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 	if (method->wrapper_type && method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE)
 		return imethod;
 
+#ifndef MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE
+	/*
+	 * Interp in wrappers get the argument in the rgctx register. If
+	 * MONO_ARCH_HAVE_FTNPTR_ARG_TRAMPOLINE is defined it means that
+	 * on that arch the rgctx register is not scratch, so we use a
+	 * separate temp register. We should update the wrappers for this
+	 * if we really care about those architectures (arm).
+	 */
 	MonoMethod *wrapper = mini_get_interp_in_wrapper (sig);
 
 	entry_wrapper = mono_jit_compile_method_jit_only (wrapper, error);
-	if (mono_error_ok (error)) {
+#endif
+	if (entry_wrapper) {
 		if (sig->param_count > MAX_INTERP_ENTRY_ARGS) {
 			entry_func = (gpointer)interp_entry_general;
 		} else if (sig->hasthis) {
