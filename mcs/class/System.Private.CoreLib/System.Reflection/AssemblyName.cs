@@ -44,12 +44,12 @@ namespace System.Reflection
 			return token;
 		}
 
-		internal static AssemblyName Create (Assembly assembly, bool fillCodebase)
+		internal static AssemblyName Create (IntPtr monoAssembly, string codeBase)
 		{
 			AssemblyName aname = new AssemblyName ();
 			unsafe {
-				MonoAssemblyName *native = GetNativeName (assembly.MonoAssembly);
-				aname.FillName (native, fillCodebase ? assembly.CodeBase : null, true, true, true);
+				MonoAssemblyName *native = GetNativeName (monoAssembly);
+				aname.FillName (native, codeBase, true, true, true);
 			}
 			return aname;
 		}		

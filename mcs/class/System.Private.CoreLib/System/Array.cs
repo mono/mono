@@ -422,16 +422,21 @@ namespace System
 			return GetLowerBound (dimension) + GetLength (dimension) - 1;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		internal ref byte GetRawSzArrayData()
+		[MethodImpl (MethodImplOptions.AggressiveInlining)]
+		internal ref byte GetRawSzArrayData ()
 		{
 			return ref Unsafe.As<RawData>(this).Data;
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		internal ref byte GetRawArrayData ()
 		{
 			return ref Unsafe.As<RawData>(this).Data;
+		}
+
+		internal int GetElementSize ()
+		{
+			return Marshal.GetArrayElementSize (GetType ());
 		}
 
 		//
