@@ -1556,8 +1556,10 @@ count_virtual_methods (MonoClass *klass)
 			flags = klass->methods [i]->flags;
 			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
 			{
-				if (!mono_class_is_gtd (klass) && (!(flags & METHOD_ATTRIBUTE_NEW_SLOT) && flags & METHOD_ATTRIBUTE_ABSTRACT  && flags & METHOD_ATTRIBUTE_FINAL)) //reabstraction
+				if (!mono_class_is_gtd (klass) && (flags & METHOD_ATTRIBUTE_ABSTRACT  && flags & METHOD_ATTRIBUTE_FINAL)) //reabstraction
+				{
 					continue;
+				}
 				++vcount;
 			}
 		}
@@ -1569,8 +1571,10 @@ count_virtual_methods (MonoClass *klass)
 
 			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
 			{
-				if (!mono_class_is_gtd (klass) && (!(flags & METHOD_ATTRIBUTE_NEW_SLOT) && flags & METHOD_ATTRIBUTE_ABSTRACT && flags & METHOD_ATTRIBUTE_FINAL)) //reabstraction
+				if (!mono_class_is_gtd (klass) && (flags & METHOD_ATTRIBUTE_ABSTRACT && flags & METHOD_ATTRIBUTE_FINAL)) //reabstraction
+				{
 					continue;
+				}
 				++vcount;
 			}
 		}
@@ -3169,6 +3173,7 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 	// it can happen (for injected generic array interfaces) that the same slot is
 	// processed multiple times (those interfaces have overlapping slots), and it
 	// will not always be the first pass the one that fills the slot.
+	// NOW is it okay to implement a class that is not abstract and implements a interface that has an abstract method?
 	if (!mono_class_is_abstract (klass)) {
 		for (i = 0; i < klass->interface_offsets_count; i++) {
 			int ic_offset;
@@ -3183,6 +3188,8 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 				int im_slot = ic_offset + im->slot;
 				
 				if (im->flags & METHOD_ATTRIBUTE_STATIC)
+					continue;
+				if (im->iflags & METHOD_IMPL_ATTRIBUTE_REABSTRACTION)
 					continue;
 
 				TRACE_INTERFACE_VTABLE (printf ("      [class is not abstract, checking slot %d for interface '%s'.'%s', method %s, slot check is %d]\n",
@@ -3321,9 +3328,12 @@ mono_class_setup_vtable_general (MonoClass *klass, MonoMethod **overrides, int o
 	g_assert (cur_slot <= max_vtsize);
 
 	/* Ensure that all vtable slots are filled with concrete instance methods */
+	//NOW is it okay to implement a class that is not abstract and implements a interface that has an abstract method?
 	if (!mono_class_is_abstract (klass)) {
 		for (i = 0; i < cur_slot; ++i) {
 			if (vtable [i] == NULL || (vtable [i]->flags & (METHOD_ATTRIBUTE_ABSTRACT | METHOD_ATTRIBUTE_STATIC))) {
+				if (vtable [i]->iflags & METHOD_IMPL_ATTRIBUTE_REABSTRACTION)
+					continue;
 				char *type_name = mono_type_get_full_name (klass);
 				char *method_name = vtable [i] ? mono_method_full_name (vtable [i], TRUE) : g_strdup ("none");
 				mono_class_set_type_load_failure (klass, "Type %s has invalid vtable method slot %d with method %s", type_name, i, method_name);
@@ -5003,8 +5013,10 @@ mono_class_setup_methods (MonoClass *klass)
 		for (i = 0; i < count; ++i) {
 			if (methods [i]->flags & METHOD_ATTRIBUTE_VIRTUAL )
 			{
-				if (!mono_class_is_gtd (klass) && (!(methods [i]->flags & METHOD_ATTRIBUTE_NEW_SLOT) && methods [i]->flags & METHOD_ATTRIBUTE_ABSTRACT && methods [i]->flags & METHOD_ATTRIBUTE_FINAL)) //reabstraction
+				if (!mono_class_is_gtd (klass) && (methods [i]->flags & METHOD_ATTRIBUTE_ABSTRACT && methods [i]->flags & METHOD_ATTRIBUTE_FINAL)) { //reabstraction
+					methods [i]->iflags |= METHOD_IMPL_ATTRIBUTE_REABSTRACTION;
 					continue;
+				}
 				methods [i]->slot = slot++;
 			}
 		}
