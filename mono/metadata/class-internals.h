@@ -248,7 +248,7 @@ typedef enum {
 	MONO_CLASS_GINST, /* generic instantiation */
 	MONO_CLASS_GPARAM, /* generic parameter */
 	MONO_CLASS_ARRAY, /* vector or array, bounded or not */
-	MONO_CLASS_POINTER, /* pointer of function pointer*/
+	MONO_CLASS_POINTER, /* pointer or function pointer*/
 } MonoTypeKind;
 
 typedef struct _MonoClassDef MonoClassDef;
@@ -1089,12 +1089,6 @@ mono_register_jit_icall_info (MonoJitICallInfo *info, T func, const char *name, 
 #endif // __cplusplus
 
 #define mono_register_jit_icall(func, sig, no_wrapper) (mono_register_jit_icall_info (&mono_get_jit_icall_info ()->func, func, #func, (sig), (no_wrapper), NULL))
-
-void
-mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper);
-
-MonoJitICallInfo *
-mono_find_jit_icall_by_addr (gconstpointer addr) MONO_LLVM_INTERNAL;
 
 gboolean
 mono_class_set_type_load_failure (MonoClass *klass, const char * fmt, ...) MONO_ATTR_FORMAT_PRINTF(2,3);

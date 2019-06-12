@@ -40,6 +40,11 @@ namespace System.Net.Http
 			}
 		}
 
+		// This is only used by MonoWebRequestHandler.
+		void IMonoHttpClientHandler.SetWebRequestTimeout (TimeSpan timeout)
+		{
+		}
+
 		Task<HttpResponseMessage> IMonoHttpClientHandler.SendAsync (HttpRequestMessage request, CancellationToken cancellationToken) => SendAsync (request, cancellationToken);
 	}
 }

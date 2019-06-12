@@ -113,6 +113,8 @@
 /mono/utils/atomic* @lewurm @vargaz
 /mono/utils/mono-hwcap* @lewurm @vargaz
 /mono/utils/mono-mem* @lewurm @vargaz
+/mono/utils/mono-merp* @alexischr @lambdageek
+/mono/utils/mono-state* @alexischr @lambdageek
 /mono/utils/mono-threads* @lambdageek @vargaz
 /mono/utils/*-win* @lateralusX @lambdageek
 

@@ -56,16 +56,17 @@ mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *cb);
 int mono_regression_test_step (int verbose_level, char *image, char *method_name);
 void mono_trace_init (void);
 
+#define g_new(type, size)  ((type *) malloc (sizeof (type) * (size)))
+#define g_new0(type, size) ((type *) calloc (sizeof (type), (size)))
+
 static char*
 m_strdup (const char *str)
 {
 	if (!str)
 		return NULL;
 
-	int len = strlen (str) + 1;
-	char *res = malloc (len);
-	memcpy (res, str, len);
-	return res;
+	const size_t len = strlen (str) + 1;
+	return memcpy (g_new (char, len), str, len);
 }
 
 static MonoDomain *root_domain;
@@ -149,7 +150,7 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 		mono_register_symfile_for_assembly (new_name, data, size);
 		return;
 	}
-	WasmAssembly *entry = (WasmAssembly *)malloc(sizeof (MonoBundledAssembly));
+	WasmAssembly *entry = g_new0 (WasmAssembly, 1);
 	entry->assembly.name = m_strdup (name);
 	entry->assembly.data = data;
 	entry->assembly.size = size;
@@ -342,16 +343,15 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #endif
 
 	if (assembly_count) {
-		MonoBundledAssembly **bundle_array = (MonoBundledAssembly **)calloc (1, sizeof (MonoBundledAssembly*) * (assembly_count + 1));
+		const MonoBundledAssembly **bundle_array = g_new0 (MonoBundledAssembly*, assembly_count + 1);
 		WasmAssembly *cur = assemblies;
-		bundle_array [assembly_count] = NULL;
 		int i = 0;
 		while (cur) {
 			bundle_array [i] = &cur->assembly;
 			cur = cur->next;
 			++i;
 		}
-		mono_register_bundled_assemblies ((const MonoBundledAssembly**)bundle_array);
+		mono_register_bundled_assemblies (bundle_array);
 	}
 
 	mono_trace_init ();

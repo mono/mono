@@ -294,6 +294,11 @@ namespace System.Threading {
 				th.principal = value;
 			}
 		}
+#else
+		public static IPrincipal CurrentPrincipal {
+			get => throw new PlatformNotSupportedException ();
+			set => throw new PlatformNotSupportedException ();
+		}
 #endif
 
 		public static AppDomain GetDomain() {

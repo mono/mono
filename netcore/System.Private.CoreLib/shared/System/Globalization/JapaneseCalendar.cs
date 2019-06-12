@@ -10,7 +10,7 @@ namespace System.Globalization
     /// year based on the era.
     ///
     /// This system is adopted by Emperor Meiji in 1868. The year value is counted based on the reign of an emperor,
-    /// and the era begins on the day an emperor ascends the throne and continues until his death.
+    /// and the era begins on the day an emperor ascends the throne and continues until his death or his abdication.
     /// The era changes at 12:00AM.
     ///
     /// For example, the current era is Reiwa.  It started on 2019/5/1 A.D.  Therefore, Gregorian year 2019 is also Reiwa 1st.

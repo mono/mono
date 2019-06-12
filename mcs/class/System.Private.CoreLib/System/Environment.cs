@@ -41,6 +41,11 @@ namespace System
 			get;
 		}
 
+		public extern static long TickCount64 {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void Exit (int exitCode);
 

@@ -224,7 +224,6 @@
       <Compile Include="System.Runtime.CompilerServices\RuntimeFeature.cs" />
       <Compile Include="System.Runtime.InteropServices\CriticalHandle.cs" />
       <Compile Include="System.Runtime.InteropServices\GCHandle.cs" />
-      <Compile Include="System.Runtime.InteropServices\InteropExtensions.cs" />
       <Compile Include="System.Runtime.InteropServices\Marshal.cs" />
       <Compile Include="System.Runtime.InteropServices\MarshalAsAttribute.cs" />
       <Compile Include="System.Runtime.Loader\AssemblyLoadContext.cs" />

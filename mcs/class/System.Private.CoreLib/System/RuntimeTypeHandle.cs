@@ -6,7 +6,7 @@ using System.Threading;
 namespace System
 {
 	[Serializable]
-	public readonly struct RuntimeTypeHandle : ISerializable
+	public struct RuntimeTypeHandle : ISerializable
 	{
 		readonly IntPtr value;
 

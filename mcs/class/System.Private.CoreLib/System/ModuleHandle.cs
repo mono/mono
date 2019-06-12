@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace System
 {
-	public readonly struct ModuleHandle
+	public struct ModuleHandle
 	{
 		readonly IntPtr value;
 

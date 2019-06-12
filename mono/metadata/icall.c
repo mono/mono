@@ -7589,6 +7589,14 @@ ves_icall_System_Environment_get_TickCount (void)
 	return (gint32) (mono_msec_boottime () & 0xffffffff);
 }
 
+#if ENABLE_NETCORE
+gint64
+ves_icall_System_Environment_get_TickCount64 (void)
+{
+	return mono_msec_boottime ();
+}
+#endif
+
 gint32
 ves_icall_System_Runtime_Versioning_VersioningHelper_GetRuntimeId (MonoError *error)
 {
@@ -7721,7 +7729,7 @@ ves_icall_System_IO_get_temp_path (MonoError *error)
 
 #endif
 
-#if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH)
+#if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH) || defined(TARGET_WASM)
 
 G_EXTERN_C gpointer CreateZStream (gint32 compress, MonoBoolean gzip, gpointer feeder, gpointer data);
 G_EXTERN_C gint32   CloseZStream (gpointer stream);
@@ -8616,7 +8624,6 @@ ves_icall_System_IO_LogcatTextWriter_Log (const char *appname, gint32 level, con
 static const MonoIcallTableCallbacks *icall_table;
 static mono_mutex_t icall_mutex;
 static GHashTable *icall_hash = NULL;
-static GHashTable *jit_icall_hash_addr = NULL;
 
 typedef struct _MonoIcallHashTableValue {
 	gconstpointer method;
@@ -8656,7 +8663,6 @@ void
 mono_icall_cleanup (void)
 {
 	g_hash_table_destroy (icall_hash);
-	g_hash_table_destroy (jit_icall_hash_addr);
 	mono_os_mutex_destroy (&icall_mutex);
 }
 
@@ -9101,42 +9107,9 @@ mono_create_icall_signatures (void)
 	}
 }
 
-MonoJitICallInfo *
-mono_find_jit_icall_by_addr (gconstpointer addr)
-{
-	MonoJitICallInfo *info;
-	g_assert (jit_icall_hash_addr);
-
-	mono_icall_lock ();
-	info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_addr, (gpointer)addr);
-	mono_icall_unlock ();
-
-	return info;
-}
-
-void
-mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
-{
-	mono_icall_lock ();
-	g_hash_table_insert (jit_icall_hash_addr, (gpointer)wrapper, info);
-	mono_icall_unlock ();
-}
-
 void
 mono_register_jit_icall_info (MonoJitICallInfo *info, gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
 {
-	mono_icall_lock ();
-
-	if (!jit_icall_hash_addr) {
-		jit_icall_hash_addr = g_hash_table_new (NULL, NULL);
-	}
-
-	// Duplicate initialization is allowed, assuming it is equivalent.
-
-	g_hash_table_insert (jit_icall_hash_addr, (gpointer)func, info);
-
-	mono_icall_unlock ();
-
 	// Duplicate initialization is allowed and racy, assuming it is equivalent.
 
 	info->name = name;

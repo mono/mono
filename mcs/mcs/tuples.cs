@@ -447,6 +447,7 @@ namespace Mono.CSharp
 	{
 		Expression source;
 		List<Expression> targetExprs;
+		List<Expression> tempExprs;
 		List<BlockVariable> variables;
 		Expression instance;
 
@@ -455,6 +456,8 @@ namespace Mono.CSharp
 			this.source = source;
 			this.targetExprs = targetExprs;
 			this.loc = loc;
+
+			tempExprs = new List<Expression> ();
 		}
 
 		public TupleDeconstruct (List<BlockVariable> variables, Expression source, Location loc)
@@ -462,6 +465,8 @@ namespace Mono.CSharp
 			this.source = source;
 			this.variables = variables;
 			this.loc = loc;
+
+			tempExprs = new List<Expression> ();
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -507,6 +512,15 @@ namespace Mono.CSharp
 					instance = expr_variable.CreateReferenceExpression (rc, loc);
 				}
 
+				var element_srcs = new List<Expression> ();
+				var src_names = new List<string> ();
+				for (int i = 0; i < target_count; ++i) {
+					var element_src = tupleLiteral == null ? new MemberAccess (instance, NamedTupleSpec.GetElementPropertyName (i)) : tupleLiteral.Elements [i].Expr;
+					element_srcs.Add (element_src);
+					if (element_src is VariableReference)
+						src_names.Add ((element_src as VariableReference)?.Name);
+				}
+
 				for (int i = 0; i < target_count; ++i) {
 					var tle = src_type.TypeArguments [i];
 
@@ -537,8 +551,17 @@ namespace Mono.CSharp
 						variable.PrepareAssignmentAnalysis ((BlockContext)rc);
 					}
 
-					var element_src = tupleLiteral == null ? new MemberAccess (instance, NamedTupleSpec.GetElementPropertyName (i)) : tupleLiteral.Elements [i].Expr;
-					targetExprs [i] = new SimpleAssign (targetExprs [i], element_src).Resolve (rc);
+					var element_target = (targetExprs [i] as SimpleName)?.LookupNameExpression (rc, MemberLookupRestrictions.None);
+
+					if (element_target != null && src_names.Contains ((element_target as VariableReference)?.Name)) {
+						var tempType = element_target.Resolve (rc).Type;
+
+						var temp = new LocalTemporary (tempType);
+						tempExprs.Add (new SimpleAssign (temp, element_srcs [i]).Resolve (rc));
+						targetExprs [i] = new SimpleAssign (targetExprs [i], temp).Resolve (rc);
+					} else {
+						targetExprs [i] = new SimpleAssign (targetExprs [i], element_srcs [i]).Resolve (rc);
+					}
 				}
 
 				eclass = ExprClass.Value;
@@ -572,8 +595,23 @@ namespace Mono.CSharp
 			if (instance != null)
 				((ExpressionStatement)source).EmitStatement (ec);
 
-			foreach (ExpressionStatement expr in targetExprs)
+			foreach (ExpressionStatement expr in tempExprs) {
+				var temp = (expr as Assign)?.Target as LocalTemporary;
+				if (temp == null)
+					continue;
+
+				temp.AddressOf (ec, AddressOp.LoadStore);
+				ec.Emit (OpCodes.Initobj, temp.Type);
 				expr.Emit (ec);
+			}
+
+			foreach (ExpressionStatement expr in targetExprs) {
+				expr.Emit (ec);
+
+				var temp = (expr as Assign)?.Source as LocalTemporary;
+				if (temp != null)
+					temp.Release (ec);
+			}
 
 			var ctor = MemberCache.FindMember (type, MemberFilter.Constructor (null), BindingRestriction.DeclaredOnly | BindingRestriction.InstanceOnly) as MethodSpec;
 			ec.Emit (OpCodes.Newobj, ctor);
@@ -589,9 +627,24 @@ namespace Mono.CSharp
 			
 			if (instance != null)
 				((ExpressionStatement) source).EmitStatement (ec);
-			
-			foreach (ExpressionStatement expr in targetExprs)
+
+			foreach (ExpressionStatement expr in tempExprs) {
+				var temp = (expr as Assign)?.Target as LocalTemporary;
+				if (temp == null)
+					continue;
+
+				temp.AddressOf (ec, AddressOp.LoadStore);
+				ec.Emit (OpCodes.Initobj, temp.Type);
 				expr.EmitStatement (ec);
+			}
+
+			foreach (ExpressionStatement expr in targetExprs) {
+				expr.EmitStatement (ec);
+
+				var temp = (expr as Assign)?.Source as LocalTemporary;
+				if (temp != null)
+					temp.Release (ec);
+			}
 		}
 
 		public void Emit (EmitContext ec, bool leave_copy)

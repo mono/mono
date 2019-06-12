@@ -3135,6 +3135,42 @@ namespace MonoTests.System
 			Assert.AreEqual (expected.GetName ().CodeBase, codeBaseFromShadowCopy);
 		}
 
+		[Test]
+		public void CrossDomainProxyMethodWithIsByRefLikeArg ()
+		{
+			// Make sure we can create transparent proxies for
+			// classes that have methods that take IsByRefLike
+			// arguments (aka ref struct, aka Span<T>).
+			ad = AppDomain.CreateDomain ("ProxyIsByRefLike");
+			TestProxyItf it = (TestProxyItf)ad.CreateInstanceAndUnwrap (typeof (AppDomainTest).Assembly.FullName, typeof (TestMarshalByRefWithIsByRefLike).FullName);
+			Assert.IsNotNull (it, "#1");
+
+			Assert.IsTrue (it.NormalMethod (), "#2");
+
+			// This is just hardcoding Mono's existing behavior.
+			Assert.Throws<NotImplementedException> (() => {
+					TestRefStruct s;
+					s.i = 123;
+					it.MethodWithIsByRefLikeArg (s); // On Mono this throws, on .NET Framework this returns true.
+				});
+
+		}
+
+		public ref struct TestRefStruct {
+			public int i;
+		}
+
+		public interface TestProxyItf {
+			bool NormalMethod ();
+			bool MethodWithIsByRefLikeArg (TestRefStruct s);
+		}
+
+		public class TestMarshalByRefWithIsByRefLike : MarshalByRefObject, TestProxyItf {
+			public TestMarshalByRefWithIsByRefLike () { }
+			public virtual bool NormalMethod () { return true; }
+			public virtual bool MethodWithIsByRefLikeArg (TestRefStruct s) { return s.i == 123; }
+		}
+
 		private static AppDomain CreateTestDomain (string baseDirectory, bool assemblyResolver)
 		{
 			AppDomainSetup setup = new AppDomainSetup ();

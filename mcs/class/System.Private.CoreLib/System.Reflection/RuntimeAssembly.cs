@@ -164,9 +164,9 @@ namespace System.Reflection
 			return GetManifestResourceStream (resourceName);
 		}
 
-		public override AssemblyName GetName(bool copiedName)
+		public override AssemblyName GetName (bool copiedName)
 		{
-			return AssemblyName.Create (this, true);
+			return AssemblyName.Create (_mono_assembly, CodeBase);
 		}
 
 		public override Type GetType (string name, bool throwOnError, bool ignoreCase)
@@ -349,17 +349,6 @@ namespace System.Reflection
 		{
 			// TODO: Use assemblyLoadContext
 			return (RuntimeAssembly) InternalLoad (assemblyRef.FullName, ref stackMark, IntPtr.Zero);
-		}
-
-		public override Module LoadModule (string moduleName, byte[] rawModule, byte[] rawSymbolStore)
-		{
-			throw new NotImplementedException ();
-		}
-
-		internal override IntPtr MonoAssembly {
-			get {
-				return _mono_assembly;
-			}
 		}
 
 		// FIXME: Merge some of these

@@ -649,7 +649,6 @@ mono_icall_get_wrapper_full (MonoJitICallInfo* callinfo, gboolean do_compile)
 
 		mono_loader_lock ();
 		if (!callinfo->trampoline) {
-			mono_register_jit_icall_wrapper (callinfo, trampoline);
 			callinfo->trampoline = trampoline;
 		}
 		mono_loader_unlock ();
@@ -2465,17 +2464,18 @@ lookup_start:
 	p = mono_create_ftnptr (target_domain, code);
 
 	if (callinfo) {
-		/*mono_register_jit_icall_wrapper takes the loader lock, so we take it on the outside. */
+		// FIXME Locking here is somewhat historical due to mono_register_jit_icall_wrapper taking loader lock.
+		// atomic_compare_exchange should suffice.
 		mono_loader_lock ();
 		mono_jit_lock ();
 		if (!callinfo->wrapper) {
 			callinfo->wrapper = p;
-			mono_register_jit_icall_wrapper (callinfo, p);
 		}
 		mono_jit_unlock ();
 		mono_loader_unlock ();
 	}
 
+	// FIXME p or callinfo->wrapper or does not matter?
 	return p;
 }
 
@@ -3663,6 +3663,8 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.lldb = TRUE;
 	else if (!strcmp (option, "llvm-disable-self-init"))
 		mini_debug_options.llvm_disable_self_init = TRUE;
+	else if (!strcmp (option, "llvm-disable-inlining"))
+		mini_debug_options.llvm_disable_inlining = TRUE;
 	else if (!strcmp (option, "explicit-null-checks"))
 		mini_debug_options.explicit_null_checks = TRUE;
 	else if (!strcmp (option, "gen-seq-points"))
@@ -3731,7 +3733,7 @@ mini_parse_debug_options (void)
 			// test-tailcall-require is also accepted but not documented.
 			// empty string is also accepted and ignored as a consequence
 			// of appending ",foo" without checking for empty.
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb'.\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init'.\n");
 			exit (1);
 		}
 	}

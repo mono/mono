@@ -112,17 +112,17 @@ namespace System
 
 		internal virtual MethodInfo GetMethod (MethodInfo fromNoninstanciated)
 		{
-			throw new System.InvalidOperationException ("can only be called in generic type");
+			throw new InvalidOperationException ("can only be called in generic type");
 		}
 
 		internal virtual ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
-			throw new System.InvalidOperationException ("can only be called in generic type");
+			throw new InvalidOperationException ("can only be called in generic type");
 		}
 
 		internal virtual FieldInfo GetField (FieldInfo fromNoninstanciated)
 		{
-			throw new System.InvalidOperationException ("can only be called in generic type");
+			throw new InvalidOperationException ("can only be called in generic type");
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

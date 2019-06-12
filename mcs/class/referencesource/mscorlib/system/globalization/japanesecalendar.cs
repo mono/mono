@@ -22,14 +22,14 @@ namespace System.Globalization {
     ** year based on the era.
     **
     ** This system is adopted by Emperor Meiji in 1868. The year value is counted based on the reign of an emperor,
-    ** and the era begins on the day an emperor ascends the throne and continues until his death.
+    ** and the era begins on the day an emperor ascends the throne and continues until his death or his abdication.
     ** The era changes at 12:00AM.
     **
-    ** For example, the current era is Heisei.  It started on 1989/1/8 A.D.  Therefore, Gregorian year 1989 is also Heisei 1st.
-    ** 1989/1/8 A.D. is also Heisei 1st 1/8.
+    ** For example, the current era is Reiwa.  It started on 2019/5/1 A.D.  Therefore, Gregorian year 2019 is also Reiwa 1st.
+    ** 2019/5/1 A.D. is also Reiwa 1st 5/1.
     **
     ** Any date in the year during which era is changed can be reckoned in either era.  For example,
-    ** 1989/1/1 can be 1/1 Heisei 1st year or 1/1 Showa 64th year.
+    ** 2019/1/1 can be 1/1 Reiwa 1st year or 1/1 Heisei 31st year.
     **
     ** Note:
     **  The DateTime can be represented by the JapaneseCalendar are limited to two factors:
@@ -40,7 +40,7 @@ namespace System.Globalization {
     **      Calendar    Minimum     Maximum
     **      ==========  ==========  ==========
     **      Gregorian   1868/09/08  9999/12/31
-    **      Japanese    Meiji 01/01 Heisei 8011/12/31
+    **      Japanese    Meiji 01/01 Reiwa 7981/12/31
     ============================================================================*/
 
 
@@ -96,7 +96,7 @@ namespace System.Globalization {
         // should be the first element.
         // That is, m_EraInfo[0] contains the most recent era.
         //
-        // We know about 4 built-in eras, however users may add additional era(s) from the
+        // We know about 5 built-in eras, however users may add additional era(s) from the
         // registry, by adding values to HKLM\SYSTEM\CurrentControlSet\Control\Nls\Calendars\Japanese\Eras
         //
         // Registry values look like:
@@ -124,14 +124,16 @@ namespace System.Globalization {
                 if (japaneseEraInfo == null)
                 {
                     // We know about some built-in ranges
-                    EraInfo[] defaultEraRanges = new EraInfo[4];
-                    defaultEraRanges[0] = new EraInfo( 4, 1989,  1,  8, 1988, 1, GregorianCalendar.MaxYear - 1988,
+                    EraInfo[] defaultEraRanges = new EraInfo[5];
+                    defaultEraRanges[0] = new EraInfo( 5, 2019,  5,  1, 2018, 1, GregorianCalendar.MaxYear - 2018,
+                                                       "\x4ee4\x548c", "\x4ee4", "R");    // era #5 start year/month/day, yearOffset, minEraYear
+                    defaultEraRanges[1] = new EraInfo( 4, 1989,  1,  8, 1988, 1, 2019-1988,
                                                        "\x5e73\x6210", "\x5e73", "H");    // era #4 start year/month/day, yearOffset, minEraYear
-                    defaultEraRanges[1] = new EraInfo( 3, 1926, 12, 25, 1925, 1, 1989-1925,
+                    defaultEraRanges[2] = new EraInfo( 3, 1926, 12, 25, 1925, 1, 1989-1925,
                                                        "\x662d\x548c", "\x662d", "S");    // era #3,start year/month/day, yearOffset, minEraYear
-                    defaultEraRanges[2] = new EraInfo( 2, 1912,  7, 30, 1911, 1, 1926-1911,
+                    defaultEraRanges[3] = new EraInfo( 2, 1912,  7, 30, 1911, 1, 1926-1911,
                                                        "\x5927\x6b63", "\x5927", "T");    // era #2,start year/month/day, yearOffset, minEraYear
-                    defaultEraRanges[3] = new EraInfo( 1, 1868,  1,  1, 1867, 1, 1912-1867,
+                    defaultEraRanges[4] = new EraInfo( 1, 1868,  1,  1, 1867, 1, 1912-1867,
                                                        "\x660e\x6cbb", "\x660e", "M");    // era #1,start year/month/day, yearOffset, minEraYear
 
                     // Remember the ranges we built
@@ -221,9 +223,9 @@ namespace System.Globalization {
 
             //
             // If we didn't have valid eras, then fail
-            // should have at least 4 eras
+            // should have at least 5 eras
             //
-            if (iFoundEras < 4) return null;
+            if (iFoundEras < 5) return null;
 
             //
             // Now we have eras, clean them up.
