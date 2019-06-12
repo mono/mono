@@ -10,16 +10,17 @@ namespace System.Runtime.InteropServices
 		[DllImport (SystemLibrary)]
 		static extern IntPtr dlopen (string libName, int flags);
 
-		[DllImport(SystemLibrary)]
-		static extern IntPtr dlsym(IntPtr handle, string symbol);
+		[DllImport (SystemLibrary)]
+		static extern IntPtr dlsym (IntPtr handle, string symbol);
 
-		[DllImport(SystemLibrary)]
-		public static extern void dlclose(IntPtr handle);
+		[DllImport (SystemLibrary)]
+		static extern void dlclose (IntPtr handle);
 
 		static IntPtr LoadLibraryByName (string libraryName, Assembly assembly, DllImportSearchPath? searchPath, bool throwOnError)
 		{
-			if (searchPath != null)
+			if (searchPath != null) {
 				throw new NotImplementedException ($"LoadLibraryByName+DllImportSearchPath is not implemented");
+			}
 			return LoadFromPath (libraryName, throwOnError);
 		}
 
@@ -29,16 +30,22 @@ namespace System.Runtime.InteropServices
 			
 			IntPtr ptr = dlopen (libraryName, RTLD_LAZY);
 			if (ptr == IntPtr.Zero && throwOnError) {
-				throw new DllNotFoundException(":/");
+				throw new DllNotFoundException ();
 			}
 			return ptr;
 		}
 
-		static IntPtr LoadByName (string libraryName, RuntimeAssembly callingAssembly, bool hasDllImportSearchPathFlag, uint dllImportSearchPathFlag, bool throwOnError) => throw new NotImplementedException ("LoadByName");
+		static IntPtr LoadByName (string libraryName, RuntimeAssembly callingAssembly, bool hasDllImportSearchPathFlag, uint dllImportSearchPathFlag, bool throwOnError)
+		{
+			if (hasDllImportSearchPathFlag) {
+				throw new NotImplementedException ($"LoadByName+DllImportSearchPath is not implemented");
+			}
+			return LoadLibraryByName (libraryName, null, null, throwOnError);
+		}
 
-		static void FreeLib(IntPtr handle) => dlclose(handle);
+		static void FreeLib (IntPtr handle) => dlclose (handle);
 
-		static IntPtr GetSymbol(IntPtr handle, string symbolName, bool throwOnError)
+		static IntPtr GetSymbol (IntPtr handle, string symbolName, bool throwOnError)
 		{
 			IntPtr symbol = dlsym (handle, symbolName);
 			if (symbol == IntPtr.Zero && throwOnError) {

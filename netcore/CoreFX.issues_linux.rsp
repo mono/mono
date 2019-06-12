@@ -1,0 +1,11 @@
+# System.ArgumentException Arg_ObjObjEx
+-nomethod System.Drawing.Imaging.Tests.ImageAttributesTests.SetColorMatrix_InvalidFlags_ThrowsArgumentException
+
+# See TODO in AssemblyLoadContext.InternalLoadFromPath()
+-nomethod System.Tests.ActivatorTests.TestingCreateInstanceFromObjectHandleFullSignature
+-nomethod System.Tests.ActivatorTests.TestingCreateInstanceFromObjectHandle
+-nomethod System.Tests.AppDomainTests.TestingCreateInstanceFromObjectHandleFullSignature
+-nomethod System.Tests.AppDomainTests.TestingCreateInstanceFromObjectHandle
+
+# hangs 
+-nomethod System.Net.Http.Functional.Tests.HttpClientHandler_ServerCertificates_Test.HttpClientUsesSslCertEnvironmentVariables

@@ -36,8 +36,13 @@ jobs:
 
   - bash: |  
       sudo apt update
-      sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext
+      sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext libc6-dev
     displayName: 'Prepare Linux dependencies'
+    condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
+
+  - bash: |  
+      sudo locate libc.so.6
+    displayName: '(my tests)'
     condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
   
   - script: |
