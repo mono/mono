@@ -9,10 +9,5 @@ namespace System.Resources
 		{
 			return ((RuntimeAssembly)mainAssembly).InternalGetSatelliteAssembly (culture, version, throwOnFileNotFound: false);
 		}
-
-		static bool GetNeutralResourcesLanguageAttribute (Assembly assemblyHandle, ref string cultureName, out short fallbackLocation)
-		{
-			throw new NotImplementedException ();
-		}
 	}
 }

@@ -487,11 +487,12 @@ namespace System.Reflection.Emit
 
 		public override AssemblyName GetName (bool copiedName)
 		{
-			return AssemblyName.Create (this, false);
+			return AssemblyName.Create (_mono_assembly, null);
 		}
 
 		// FIXME: "This always returns an empty array"
-		public override AssemblyName[] GetReferencedAssemblies () {
+		public override AssemblyName[] GetReferencedAssemblies ()
+		{
 			throw new NotImplementedException ();
 #if FALSE
 			return GetReferencedAssemblies (this);
@@ -583,12 +584,6 @@ namespace System.Reflection.Emit
 		public override string FullName {
 			get {
 				return aname.ToString ();
-			}
-		}
-
-		internal override IntPtr MonoAssembly {
-			get {
-				return _mono_assembly;
 			}
 		}
 	}

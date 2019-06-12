@@ -44,6 +44,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern long GetAllocatedBytesForCurrentThread ();
 
+		// TODO: Implement
 		public static long GetTotalAllocatedBytes (bool precise = false) => 0;
 
 		public static void AddMemoryPressure (long bytesAllocated)
@@ -64,7 +65,7 @@ namespace System
 			RecordPressure (-bytesAllocated);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern int GetGeneration (object obj);
 
 		public static void Collect (int generation)
@@ -120,7 +121,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern void WaitForPendingFinalizers ();
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void _SuppressFinalize (object o);
 
 		public static void SuppressFinalize (object obj)
@@ -130,7 +131,7 @@ namespace System
 			_SuppressFinalize (obj);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void _ReRegisterForFinalize (object o);
 
 		public static void ReRegisterForFinalize (object obj)
@@ -143,7 +144,7 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static long GetTotalMemory (bool forceFullCollection);
 
-		static bool _RegisterForFullGCNotification(int maxGenerationPercentage, int largeObjectHeapPercentage)
+		static bool _RegisterForFullGCNotification (int maxGenerationPercentage, int largeObjectHeapPercentage)
 		{
 			throw new NotImplementedException ();
 		}
@@ -167,12 +168,12 @@ namespace System
 		{
 			if ((maxGenerationThreshold <= 0) || (maxGenerationThreshold >= 100))
 				throw new ArgumentOutOfRangeException (nameof (maxGenerationThreshold),
-													   String.Format (SR.ArgumentOutOfRange_Bounds_Lower_Upper, 1, 99));
+													   SR.Format (SR.ArgumentOutOfRange_Bounds_Lower_Upper, 1, 99));
 			if ((largeObjectHeapThreshold <= 0) || (largeObjectHeapThreshold >= 100))
 				throw new ArgumentOutOfRangeException (nameof (largeObjectHeapThreshold),
-													   String.Format (SR.ArgumentOutOfRange_Bounds_Lower_Upper, 1, 99));
+													   SR.Format (SR.ArgumentOutOfRange_Bounds_Lower_Upper, 1, 99));
 
-			if (!_RegisterForFullGCNotification(maxGenerationThreshold, largeObjectHeapThreshold))
+			if (!_RegisterForFullGCNotification (maxGenerationThreshold, largeObjectHeapThreshold))
 				throw new InvalidOperationException (SR.InvalidOperation_NotWithConcurrentGC);
 		}
 
@@ -184,7 +185,7 @@ namespace System
 
 		public static GCNotificationStatus WaitForFullGCApproach ()
 		{
-			return (GCNotificationStatus)_WaitForFullGCApproach (-1);
+			return (GCNotificationStatus) _WaitForFullGCApproach (-1);
 		}
 
 		public static GCNotificationStatus WaitForFullGCApproach (int millisecondsTimeout)
@@ -197,7 +198,7 @@ namespace System
 
 		public static GCNotificationStatus WaitForFullGCComplete ()
 		{
-			return _WaitForFullGCComplete(-1);
+			return _WaitForFullGCComplete (-1);
 		}
 
 		public static GCNotificationStatus WaitForFullGCComplete (int millisecondsTimeout)
@@ -233,11 +234,13 @@ namespace System
 
 		public static GCMemoryInfo GetGCMemoryInfo ()
 		{
+			// TODO: Implement
 			return default;
 		}
 
 		internal static T[] AllocateUninitializedArray<T> (int length)
 		{
+			// TODO: Implement
 			return new T [length];
 		}
 	}

@@ -332,7 +332,7 @@ namespace System.Runtime.InteropServices
 
 		public static IntPtr GetExceptionPointers ()
 		{
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ();
 		}
 
 		internal unsafe static IntPtr AllocBSTR (int length)

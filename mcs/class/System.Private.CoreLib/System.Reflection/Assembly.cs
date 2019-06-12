@@ -10,12 +10,6 @@ namespace System.Reflection
 	partial class Assembly
 	{
 		internal bool IsRuntimeImplemented () => this is RuntimeAssembly;
-
-		internal virtual IntPtr MonoAssembly {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
 		
 		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		public static Assembly? LoadWithPartialName (string partialName)
@@ -34,8 +28,7 @@ namespace System.Reflection
 			}
 		}
 
-		[System.Security.DynamicSecurityMethod]
-		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		[System.Security.DynamicSecurityMethod] // Methods containing StackCrawlMark local var has to be marked DynamicSecurityMethod
 		public static Assembly GetExecutingAssembly()
 		{
 			StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
