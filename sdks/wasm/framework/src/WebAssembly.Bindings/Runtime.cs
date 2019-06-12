@@ -581,5 +581,23 @@ namespace WebAssembly {
 			return contractName;
 		}
 
+		//
+		// Can be called by the app to stop profiling
+		//
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public static void StopProfile () {
+		}
+
+		// Called by the AOT profiler to save profile data into Module.aot_profile_data
+		internal unsafe static void DumpAotProfileData (ref byte buf, int len, string s) {
+			var arr = new byte [len];
+			fixed (void *p = &buf) {
+				var span = new ReadOnlySpan<byte> (p, len);
+
+				// Send it to JS
+				var js_dump = (JSObject)Runtime.GetGlobalObject ("Module");
+				js_dump.SetObjectProperty ("aot_profile_data", WebAssembly.Core.Uint8Array.From (span));
+			}
+		}
 	}
 }

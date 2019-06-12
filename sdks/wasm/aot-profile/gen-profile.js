@@ -29,7 +29,7 @@ server.listen(port);
 	page.on('console', msg => console.log('LOG:', msg.text()));
 	await page.goto ('http://localhost:' + port);
 	await page.waitFor(1000);
-	const data = await page.mainFrame ().evaluate('Array.from(AotProfileData.data)');
+	const data = await page.mainFrame ().evaluate('Array.from(Module.aot_profile_data)');
 	console.log (data.length);
 	fs.writeFile (output_file, Buffer.from (data), function(err) {
 		if (err)
