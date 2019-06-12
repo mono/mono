@@ -68,6 +68,10 @@ if INSTALL_WINAOT
 build_profiles += winaot
 endif
 
+if INSTALL_TESTING_WINAOT_INTERP
+build_profiles += testing_winaot_interp
+endif
+
 if INSTALL_XAMMAC
 build_profiles += xammac xammac_net_4_5
 endif
