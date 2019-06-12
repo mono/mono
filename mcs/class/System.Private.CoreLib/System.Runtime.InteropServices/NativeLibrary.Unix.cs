@@ -5,10 +5,23 @@ namespace System.Runtime.InteropServices
 {
 	partial class NativeLibrary
 	{
-		[DllImport ("libdl")]
+		const string SystemLibrary = "libdl";
+
+		[DllImport (SystemLibrary)]
 		static extern IntPtr dlopen (string libName, int flags);
-				
-		static IntPtr LoadLibraryByName (string libraryName, Assembly assembly, DllImportSearchPath? searchPath, bool throwOnError) => throw new NotImplementedException ();
+
+		[DllImport(SystemLibrary)]
+		static extern IntPtr dlsym(IntPtr handle, string symbol);
+
+		[DllImport(SystemLibrary)]
+		public static extern void dlclose(IntPtr handle);
+
+		static IntPtr LoadLibraryByName (string libraryName, Assembly assembly, DllImportSearchPath? searchPath, bool throwOnError)
+		{
+			if (searchPath != null)
+				throw new NotImplementedException ($"LoadLibraryByName+DllImportSearchPath is not implemented");
+			return LoadFromPath (libraryName, throwOnError);
+		}
 
 		static IntPtr LoadFromPath (string libraryName, bool throwOnError)
 		{
@@ -16,15 +29,22 @@ namespace System.Runtime.InteropServices
 			
 			IntPtr ptr = dlopen (libraryName, RTLD_LAZY);
 			if (ptr == IntPtr.Zero && throwOnError) {
-				throw new DllNotFoundException();
+				throw new DllNotFoundException(":/");
 			}
 			return ptr;
 		}
 
-		static IntPtr LoadByName (string libraryName, RuntimeAssembly callingAssembly, bool hasDllImportSearchPathFlag, uint dllImportSearchPathFlag, bool throwOnError) => throw new NotImplementedException ();
+		static IntPtr LoadByName (string libraryName, RuntimeAssembly callingAssembly, bool hasDllImportSearchPathFlag, uint dllImportSearchPathFlag, bool throwOnError) => throw new NotImplementedException ("LoadByName");
 
-		static void FreeLib (IntPtr handle) => throw new NotImplementedException ();
+		static void FreeLib(IntPtr handle) => dlclose(handle);
 
-		static IntPtr GetSymbol (IntPtr handle, string symbolName, bool throwOnError) => throw new NotImplementedException ();
+		static IntPtr GetSymbol(IntPtr handle, string symbolName, bool throwOnError)
+		{
+			IntPtr symbol = dlsym (handle, symbolName);
+			if (symbol == IntPtr.Zero && throwOnError) {
+				throw new Exception ($"{symbolName} was not found (handle={handle})");
+			}
+			return symbol;
+		}
 	}
 }
