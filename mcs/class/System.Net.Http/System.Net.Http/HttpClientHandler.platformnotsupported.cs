@@ -169,5 +169,8 @@ namespace System.Net.Http
 			get { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 			set { throw new PlatformNotSupportedException (EXCEPTION_MESSAGE); }
 		}
+
+		// Only used in MonoWebRequestHandler and ignored by the other handlers.
+		internal void SetWebRequestTimeout (TimeSpan timeout) => throw new PlatformNotSupportedException (EXCEPTION_MESSAGE);
 	}
 }

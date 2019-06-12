@@ -78,5 +78,8 @@ namespace System.Net.Http
 		}
 
 		Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken);
+
+		// Only used by MonoWebRequestHandler and ignored by the other handlers.
+		void SetWebRequestTimeout (TimeSpan timeout);
 	}
 }
