@@ -128,6 +128,26 @@ var MonoSupportLib = {
 			this.wasm_parse_runtime_options (options.length, argv);
 		},
 
+		//
+		// Initialize the AOT profiler with OPTIONS.
+		// Requires the AOT profiler to be linked into the app.
+		// options = { write_at: "<METHODNAME>", send_to: "<METHODNAME>" }
+		// <METHODNAME> should be in the format <CLASS>::<METHODNAME>.
+		// write_at defaults to 'WebAssembly.Runtime::StopProfile'.
+		// send_to defaults to 'WebAssembly.Runtime::DumpAotProfileData'.
+		// DumpAotProfileData stores the data into Module.aot_profile_data.
+		//
+		mono_wasm_init_aot_profiler: function (options) {
+			if (options == null)
+				options = {}
+			if (!('write_at' in options))
+				options.write_at = 'WebAssembly.Runtime::StopProfile';
+			if (!('send_to' in options))
+				options.send_to = 'WebAssembly.Runtime::DumpAotProfileData';
+			var arg = "aot:write-at-method=" + options.write_at + ",send-to-method=" + options.send_to;
+			Module.ccall ('mono_wasm_load_profiler_aot', 'void', ['string'], [arg]);
+		},
+
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
 			var pending = file_list.length;
 			var loaded_files = [];
