@@ -12,6 +12,7 @@ variables:
 
 jobs:
 - job: Build
+  timeoutInMinutes: 90
   strategy:
     matrix:
       Linux_x64:
