@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections;
 using WebAssembly.Core;
 using WebAssembly.Host;
 
@@ -176,29 +177,15 @@ namespace WebAssembly.Net.Http.HttpClient {
 				// View more information https://developers.google.com/web/updates/2015/03/introduction-to-fetch#response_types
 				//
 				// Note: Some of the headers may not even be valid header types in .NET thus we use TryAddWithoutValidation
-				using (var respHeaders = status.Headers) {
-					// Here we invoke the forEach on the headers object
-					// Note: the Action takes 3 objects and not two.  The other seems to be the Header object.
-					var foreachAction = new Action<object, object, object> ((value, name, other) => {
-
-						if (!httpresponse.Headers.TryAddWithoutValidation ((string)name, (string)value))
+				using (var respHeaders = new Headers(status.Headers)) {
+					foreach (DictionaryEntry entry in respHeaders) {
+						var name = (string)entry.Key;
+						var value = (string)entry.Value;
+						if (!httpresponse.Headers.TryAddWithoutValidation (name, value))
 							if (httpresponse.Content != null)
-								if (!httpresponse.Content.Headers.TryAddWithoutValidation ((string)name, (string)value))
+								if (!httpresponse.Content.Headers.TryAddWithoutValidation (name, value))
 									Console.WriteLine ($"Warning: Can not add response header for name: {name} value: {value}");
-						((JSObject)other).Dispose ();
-					});
-
-					try {
-
-						respHeaders.Invoke ("forEach", foreachAction);
-					} finally {
-						// Do not remove the following line of code.  The httpresponse is used in the lambda above when parsing the Headers.
-						// if a local is captured (used) by a lambda it becomes heap memory as we translate them into fields on an object.
-						// The foreachAction is allocated when marshalled to JavaScript.  Since we do not know when JS is finished with the
-						// Action we need to tell the Runtime to de-allocate the object and remove the instance from JS as well.
-						WebAssembly.Runtime.FreeObject (foreachAction);
 					}
-
 				}
 
 				tcs.SetResult (httpresponse);
@@ -434,6 +421,290 @@ namespace WebAssembly.Net.Http.HttpClient {
 			}
 		}
 
+		private sealed class Headers : IDictionary, IDisposable {
+
+			public readonly JSObject HeadersObject; // Wrapped object
+
+			internal Headers (JSObject jSObject)
+			{
+				HeadersObject = jSObject;
+			}
+
+			public bool IsFixedSize => false;
+
+			public bool IsReadOnly => false;
+
+			public ICollection Keys {
+				get {
+					return new HeadersKeyValueCollection (this, "keys");
+				}
+			}
+
+			public ICollection Values {
+				get {
+					return new HeadersKeyValueCollection (this, "values");
+				}
+
+			}
+
+			public int Count => (int)HeadersObject.GetObjectProperty ("size");
+
+			public bool IsSynchronized => false;
+
+			public object SyncRoot => false;
+
+			public void Add (object key, object value)
+			{
+				HeadersObject.Invoke ("set", key, value);
+			}
+
+			public void Clear () => HeadersObject.Invoke ("clear");
+
+			public bool Contains (object key) => (bool)HeadersObject.Invoke ("has", key);
+
+			public IDictionaryEnumerator GetEnumerator ()
+			{
+				// Construct and return an enumerator.
+				return new HeadersEnumerator (this);
+			}
+
+			public void Remove (object key) => HeadersObject.Invoke ("delete", key);
+
+			public void CopyTo (System.Array array, int index) => throw new NotImplementedException ();
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				// Construct and return an enumerator.
+				return ((IDictionary)this).GetEnumerator ();
+			}
+
+			public object this [object key] {
+				get {
+					return HeadersObject.Invoke ("get", key);
+				}
+				set {
+					HeadersObject.Invoke ("set", key, value);
+				}
+			}
+
+			#region IDisposable Support
+			private bool disposedValue = false; // To detect redundant calls
+
+			void Dispose (bool disposing)
+			{
+				if (!disposedValue) {
+					if (disposing) {
+						// TODO: dispose managed state (managed objects).
+					}
+
+					// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+					// TODO: set large fields to null.
+					HeadersObject?.Dispose ();
+					disposedValue = true;
+				}
+			}
+
+			// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+			~Headers ()
+			{
+				// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+				Dispose (false);
+			}
+
+			// This code added to correctly implement the disposable pattern.
+			public void Dispose ()
+			{
+				// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+				Dispose (true);
+				// TODO: uncomment the following line if the finalizer is overridden above.
+				GC.SuppressFinalize(this);
+			}
+			#endregion
+
+			private sealed class HeadersEnumerator : IDictionaryEnumerator, IDisposable {
+				JSObject headersIterator;
+				readonly Headers headers;
+				public HeadersEnumerator (Headers headers)
+				{
+					this.headers = headers;
+				}
+
+				// Return the current item.
+				public object Current => new DictionaryEntry (Key, Value);
+
+				// Return the current dictionary entry.
+				public DictionaryEntry Entry {
+					get { return (DictionaryEntry)Current; }
+				}
+
+				// Return the key of the current item.
+				public object Key { get; private set; }
+
+				// Return the value of the current item.
+				public object Value { get; private set; }
+
+				// Advance to the next item.
+				public bool MoveNext ()
+				{
+					if (headersIterator == null)
+						headersIterator = (JSObject)headers.HeadersObject.Invoke ("entries");
+
+					using (var result = (JSObject)headersIterator.Invoke ("next")) {
+						using (var resultValue = (Core.Array)result.GetObjectProperty ("value")) {
+							if (resultValue != null) {
+								Key = resultValue [0];
+								Value = resultValue [1];
+							} else {
+								Key = null;
+								Value = null;
+							}
+						}
+						return !(bool)result.GetObjectProperty ("done");
+					}
+				}
+
+				// Reset the index to restart the enumeration.
+				public void Reset ()
+				{
+					headersIterator?.Dispose ();
+					headersIterator = null;
+				}
+
+				#region IDisposable Support
+				private bool disposedValue = false; // To detect redundant calls
+
+				void Dispose (bool disposing)
+				{
+					if (!disposedValue) {
+						if (disposing) {
+							// TODO: dispose managed state (managed objects).
+						}
+
+						// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+						// TODO: set large fields to null.
+						headersIterator?.Dispose ();
+						headersIterator = null;
+						disposedValue = true;
+					}
+				}
+
+				//TODO: override a finalizer only if Dispose (bool disposing) above has code to free unmanaged resources.
+				~HeadersEnumerator ()
+				{
+					// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+					Dispose (false);
+				}
+
+				// This code added to correctly implement the disposable pattern.
+				public void Dispose ()
+				{
+					// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+					Dispose (true);
+					// TODO: uncomment the following line if the finalizer is overridden above.
+					GC.SuppressFinalize (this);
+				}
+				#endregion
+			}
+
+			private sealed class HeadersKeyValueCollection : ICollection {
+				readonly Headers headers;
+				readonly string iterator;  // "keys" or "values"
+
+				public HeadersKeyValueCollection (Headers headers, string iterator)
+				{
+					this.headers = headers;
+					this.iterator = iterator;
+
+				}
+				public int Count => headers.Count;
+
+				public bool IsSynchronized => false;
+
+				public object SyncRoot => this;
+
+				public void CopyTo (System.Array array, int index)
+				{
+					throw new NotImplementedException ();
+				}
+
+				public IEnumerator GetEnumerator ()
+				{
+					// Construct and return an enumerator.
+					return new KeyValueEnumerator (this);
+				}
+
+				private sealed class KeyValueEnumerator : IEnumerator {
+
+					readonly HeadersKeyValueCollection keyValueCollection;
+					JSObject keyValueIterator;
+
+					public object Current { get; private set; }
+
+					public KeyValueEnumerator (HeadersKeyValueCollection mapCollection)
+					{
+
+						keyValueCollection = mapCollection;
+
+					}
+
+					public bool MoveNext ()
+					{
+						if (keyValueIterator == null)
+							keyValueIterator = (JSObject)keyValueCollection.headers.HeadersObject.Invoke (keyValueCollection.iterator);
+
+						var done = false;
+						using (var result = (JSObject)keyValueIterator.Invoke ("next")) {
+							done = (bool)result.GetObjectProperty ("done");
+							if (!done)
+								Current = result.GetObjectProperty ("value");
+							return !done;
+						}
+					}
+
+					public void Reset ()
+					{
+						keyValueIterator?.Dispose ();
+						keyValueIterator = null;
+					}
+
+					#region IDisposable Support
+					private bool disposedValue = false; // To detect redundant calls
+
+					void Dispose (bool disposing)
+					{
+						if (!disposedValue) {
+							if (disposing) {
+								// TODO: dispose managed state (managed objects).
+							}
+
+							// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+							// TODO: set large fields to null.
+							keyValueIterator?.Dispose ();
+							keyValueIterator = null;
+							disposedValue = true;
+						}
+					}
+
+					//TODO: override a finalizer only if Dispose (bool disposing) above has code to free unmanaged resources.
+					~KeyValueEnumerator ()
+					{
+						// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+						Dispose (false);
+					}
+
+					// This code added to correctly implement the disposable pattern.
+					public void Dispose ()
+					{
+						// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+						Dispose (true);
+						// TODO: uncomment the following line if the finalizer is overridden above.
+						GC.SuppressFinalize (this);
+					}
+					#endregion
+				}
+			}
+
+		}
 	}
 
 	/// <summary>
@@ -535,5 +806,5 @@ namespace WebAssembly.Net.Http.HttpClient {
 		[Export (EnumValue = ConvertEnum.ToLower)]
 		Navigate,
 	}
-
+	
 }
