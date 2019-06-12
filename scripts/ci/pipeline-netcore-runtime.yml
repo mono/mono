@@ -82,13 +82,13 @@ jobs:
       make -C netcore prepare
       make -C netcore update-corefx-tests
     displayName: 'Download tests'
-    condition: eq(variables['poolname'], 'Hosted macOS')
+    condition: ne(variables['poolname'], 'Hosted VS2017')
   
   - bash: |
      cd netcore && ./build.sh --skipnative --skipmscorlib --test
     displayName: 'Run tests'
     timeoutInMinutes: 150
-    condition: eq(variables['poolname'], 'Hosted macOS')
+    condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - task: PublishTestResults@2
     inputs:
