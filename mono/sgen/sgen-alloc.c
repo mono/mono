@@ -265,8 +265,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 				zero_tlab_if_necessary (p, size);
 			} else {
-				increment_thread_allocation_counter (TLAB_NEXT - TLAB_START);
-				printf("sgen_alloc_nolock: retireing tlab: %d\n", TLAB_NEXT - TLAB_START);
+
 
 				size_t alloc_size = 0;
 				if (TLAB_START)
@@ -282,6 +281,10 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 				}
 				if (!p)
 					return alloc_degraded (vtable, size, TRUE);
+
+				
+				printf("sgen_alloc_nolock: retireing tlab: %d\n", TLAB_NEXT - TLAB_START);
+				increment_thread_allocation_counter (TLAB_NEXT - TLAB_START);
 
 				/* Allocate a new TLAB from the current nursery fragment */
 				TLAB_START = (char*)p;
@@ -395,6 +398,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 			printf("sgen_try_alloc_obj_no_lock: retireing tlab: %d\n", TLAB_NEXT - TLAB_START);
 			increment_thread_allocation_counter(TLAB_NEXT - TLAB_START);
+
 			TLAB_START = (char*)new_next;
 			TLAB_NEXT = new_next + size;
 			TLAB_REAL_END = new_next + alloc_size;
