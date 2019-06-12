@@ -437,7 +437,7 @@ if ($build)
 			if($windowsSubsystemForLinux)
 			{
 				#Windows subsystem needs to run bootstrap, and make needs to be run with -i due to one doc failing to build
-				system("./bootstrap.sh") eq 0 or die ("failed to bootstrap automake\n");
+				system("./bootstrap") eq 0 or die ("failed to bootstrap automake\n");
 				$automakeMakeFlags = "-i";
 			}
 			system("./configure --prefix=$builtToolsDir") eq 0 or die ("failed to configure automake\n");
