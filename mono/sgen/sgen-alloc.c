@@ -66,6 +66,7 @@ static guint64 stat_bytes_alloced_los = 0;
 static void 
 increment_thread_allocation_counter (size_t byte_size)
 {
+	printf("increment_allocation_counter: size: %d\n", byte_size);
 	mono_thread_info_current ()->total_bytes_allocated += byte_size;
 }
 
@@ -73,6 +74,7 @@ static GCObject*
 alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 {
 	GCObject *p;
+	printf("alloc_degraded: size: %d for_mature: %d\n", size, for_mature);
 	increment_thread_allocation_counter (size);
 
 	if (!for_mature) {
@@ -132,6 +134,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 	size_t real_size = size;
 	TLAB_ACCESS_INIT;
 	
+
 	CANARIFY_SIZE(size);
 
 	HEAVY_STAT (++stat_objects_alloced);
@@ -141,6 +144,8 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 		HEAVY_STAT (stat_bytes_alloced_los += size);
 
 	size = ALIGN_UP (size);
+
+	printf("sgen_alloc_obj_nolock: real_size: %d size: %d thread_info: %p\n", real_size, size, __thread_info__);
 
 	SGEN_ASSERT (6, sgen_vtable_get_descriptor (vtable), "VTable without descriptor");
 
@@ -261,6 +266,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 				zero_tlab_if_necessary (p, size);
 			} else {
 				increment_thread_allocation_counter (TLAB_NEXT - TLAB_START);
+				printf("sgen_alloc_nolock: retireing tlab: %d\n", TLAB_NEXT - TLAB_START);
 
 				size_t alloc_size = 0;
 				if (TLAB_START)
@@ -319,6 +325,8 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 	size_t real_size = size;
 	TLAB_ACCESS_INIT;
 
+	printf("sgen_alloc_obj_nolock: real_size: %d size: %d thread_info: %p\n", real_size, size, __thread_info__);
+
 	CANARIFY_SIZE(size);
 
 	size = ALIGN_UP (size);
@@ -326,16 +334,19 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 	SGEN_ASSERT (6, sgen_vtable_get_descriptor (vtable), "VTable without descriptor");
 
+	
 	if (real_size > SGEN_MAX_SMALL_OBJ_SIZE)
 		return NULL;
 
 	if (G_UNLIKELY (size > sgen_tlab_size)) {
 		/* Allocate directly from the nursery */
-		increment_thread_allocation_counter (size);
-
+		
+		printf("try_alloc: Allocating from nursery directly. Size: %d\n",  size);
 		p = (void **)sgen_nursery_alloc (size);
 		if (!p)
 			return NULL;
+
+		increment_thread_allocation_counter (size);
 		sgen_set_nursery_scan_start ((char*)p);
 
 		/*FIXME we should use weak memory ops here. Should help specially on x86. */
@@ -364,6 +375,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			}
 		} else if (available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
 			/* Allocate directly from the nursery */
+			printf("try_alloc: Allocating from nursery directly. B Size: %d\n",  size);
 			p = (void **)sgen_nursery_alloc (size);
 			if (!p)
 				return NULL;
@@ -372,7 +384,8 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			zero_tlab_if_necessary (p, size);
 		} else {
 			size_t alloc_size = 0;
-			increment_thread_allocation_counter(TLAB_NEXT - TLAB_START);
+			
+			
 
 			sgen_nursery_retire_region (p, available_in_tlab);
 			new_next = (char *)sgen_nursery_alloc_range (sgen_tlab_size, size, &alloc_size);
@@ -380,8 +393,8 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			if (!p)
 				return NULL;
 
-			
-
+			printf("sgen_try_alloc_obj_no_lock: retireing tlab: %d\n", TLAB_NEXT - TLAB_START);
+			increment_thread_allocation_counter(TLAB_NEXT - TLAB_START);
 			TLAB_START = (char*)new_next;
 			TLAB_NEXT = new_next + size;
 			TLAB_REAL_END = new_next + alloc_size;
@@ -410,6 +423,7 @@ sgen_alloc_obj (GCVTable vtable, size_t size)
 {
 	GCObject *res;
 	TLAB_ACCESS_INIT;
+	printf("sgen_alloc_obj: size: %d thread_info: %p\n", size, __thread_info__);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
