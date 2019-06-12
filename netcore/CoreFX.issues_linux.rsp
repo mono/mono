@@ -9,3 +9,8 @@
 
 # hangs 
 -nomethod System.Net.Http.Functional.Tests.HttpClientHandler_ServerCertificates_Test.HttpClientUsesSslCertEnvironmentVariables
+
+# dllmap is not working 
+-nonamespace System.IO.MemoryMappedFiles
+-nonamespace System.Diagnostics.Tests
+-nonamespace System.IO.Tests
