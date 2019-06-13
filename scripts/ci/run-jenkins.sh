@@ -327,17 +327,13 @@ if [[ ${CI_TAGS} == *'win-'* ]];
     ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen ${MSBUILD_CXX}"
 fi
 
-if [[ ${CI_TAGS} == *'winaot'* ]];
+if [[ ${CI_TAGS} == *'win-amd64'* ]];
     then
-
-    if [[ ${PLATFORM} == x64 ]];
-        then
-        # The AOT compiler on Windows requires Visual Studio's clang.exe and link.exe.
-        # Depending on codegen (JIT/LLVM) it might also need platform specific libraries.
-        # Use a wrapper script that will make sure to setup full VS MSVC environment if
-        # needed when running mono-sgen.exe as AOT compiler.
-        export MONO_EXECUTABLE_WRAPPER="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen-msvc.sh"
-    fi
+    # The AOT compiler on Windows requires Visual Studio's clang.exe and link.exe.
+    # Depending on codegen (JIT/LLVM) it might also need platform specific libraries.
+    # Use a wrapper script that will make sure to setup full VS MSVC environment if
+    # needed when running mono-sgen.exe as AOT compiler.
+    export MONO_EXECUTABLE_WRAPPER="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen-msvc.sh"
 fi
 
 if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
