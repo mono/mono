@@ -66,7 +66,6 @@ static guint64 stat_bytes_alloced_los = 0;
 static void 
 increment_thread_allocation_counter (size_t byte_size)
 {
-	printf("increment_allocation_counter: size: %d\n", byte_size);
 	mono_thread_info_current ()->total_bytes_allocated += byte_size;
 }
 
@@ -74,7 +73,6 @@ static GCObject*
 alloc_degraded (GCVTable vtable, size_t size, gboolean for_mature)
 {
 	GCObject *p;
-	printf("alloc_degraded: size: %d for_mature: %d\n", size, for_mature);
 	increment_thread_allocation_counter (size);
 
 	if (!for_mature) {
@@ -144,8 +142,6 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 		HEAVY_STAT (stat_bytes_alloced_los += size);
 
 	size = ALIGN_UP (size);
-
-	printf("sgen_alloc_obj_nolock: real_size: %d size: %d thread_info: %p\n", real_size, size, __thread_info__);
 
 	SGEN_ASSERT (6, sgen_vtable_get_descriptor (vtable), "VTable without descriptor");
 
@@ -265,8 +261,6 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 				zero_tlab_if_necessary (p, size);
 			} else {
-
-
 				size_t alloc_size = 0;
 				if (TLAB_START)
 					SGEN_LOG (3, "Retire TLAB: %p-%p [%ld]", TLAB_START, TLAB_REAL_END, (long)(TLAB_REAL_END - TLAB_NEXT - size));
@@ -282,8 +276,6 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 				if (!p)
 					return alloc_degraded (vtable, size, TRUE);
 
-				
-				printf("sgen_alloc_nolock: retireing tlab: %d\n", TLAB_NEXT - TLAB_START);
 				increment_thread_allocation_counter (TLAB_NEXT - TLAB_START);
 
 				/* Allocate a new TLAB from the current nursery fragment */
@@ -328,8 +320,6 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 	size_t real_size = size;
 	TLAB_ACCESS_INIT;
 
-	printf("sgen_alloc_obj_nolock: real_size: %d size: %d thread_info: %p\n", real_size, size, __thread_info__);
-
 	CANARIFY_SIZE(size);
 
 	size = ALIGN_UP (size);
@@ -344,7 +334,6 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 	if (G_UNLIKELY (size > sgen_tlab_size)) {
 		/* Allocate directly from the nursery */
 		
-		printf("try_alloc: Allocating from nursery directly. Size: %d\n",  size);
 		p = (void **)sgen_nursery_alloc (size);
 		if (!p)
 			return NULL;
@@ -378,7 +367,6 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			}
 		} else if (available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
 			/* Allocate directly from the nursery */
-			printf("try_alloc: Allocating from nursery directly. B Size: %d\n",  size);
 			p = (void **)sgen_nursery_alloc (size);
 			if (!p)
 				return NULL;
@@ -396,7 +384,6 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			if (!p)
 				return NULL;
 
-			printf("sgen_try_alloc_obj_no_lock: retireing tlab: %d\n", TLAB_NEXT - TLAB_START);
 			increment_thread_allocation_counter(TLAB_NEXT - TLAB_START);
 
 			TLAB_START = (char*)new_next;
@@ -427,7 +414,6 @@ sgen_alloc_obj (GCVTable vtable, size_t size)
 {
 	GCObject *res;
 	TLAB_ACCESS_INIT;
-	printf("sgen_alloc_obj: size: %d thread_info: %p\n", size, __thread_info__);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -474,7 +460,7 @@ GCObject*
 sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
 {
 	GCObject *p;
-	increment_thread_allocation_counter(size);
+
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -491,6 +477,7 @@ sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
 	}
 	if (G_LIKELY (p)) {
 		SGEN_LOG (6, "Allocated pinned object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
+		increment_thread_allocation_counter(size);
 		sgen_binary_protocol_alloc_pinned (p, vtable, size, sgen_client_get_provenance ());
 	}
 	UNLOCK_GC;
