@@ -75,20 +75,19 @@ jobs:
 
   - bash: |
       ./autogen.sh --with-core=only
-      cd netcore && ./build.sh --rebuild --pack
+      make -j 4
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - bash: |
-      make -C netcore prepare
-      make -C netcore update-corefx-tests
-    displayName: 'Download tests'
+      make -C netcore update-tests-corefx
+    displayName: 'Download CoreFX Tests'
     condition: ne(variables['poolname'], 'Hosted VS2017')
   
   - bash: |
-     cd netcore && ./build.sh --skipnative --skipmscorlib --test
-    displayName: 'Run tests'
-    timeoutInMinutes: 150
+      make -C netcore run-tests-corefx
+    displayName: 'Run CoreFX Tests'
+    timeoutInMinutes: 90
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - task: PublishTestResults@2
