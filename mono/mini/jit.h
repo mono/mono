@@ -104,7 +104,7 @@ MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_set_use_llvm (mono_bool use_llvm);
 
 MONO_API MONO_RT_EXTERNAL_ONLY void
-mono_aot_register_module (gpointer *aot_info);
+mono_aot_register_module (void **aot_info);
 
 MONO_API MONO_RT_EXTERNAL_ONLY
 MonoDomain* mono_jit_thread_attach (MonoDomain *domain);
