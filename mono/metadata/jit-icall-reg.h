@@ -38,6 +38,7 @@
 MONO_JIT_ICALL (ZeroIsReserved)	\
 	\
 /* These must be ordered like MonoTrampolineType. */	\
+/* See: #define MONO_JIT_ICALL_generic_trampoline_first MONO_JIT_ICALL_generic_trampoline_jit */ \
 MONO_JIT_ICALL (generic_trampoline_jit)	\
 MONO_JIT_ICALL (generic_trampoline_jump)	\
 MONO_JIT_ICALL (generic_trampoline_rgctx_lazy_fetch)	\
@@ -340,6 +341,7 @@ MONO_JIT_ICALL (ves_icall_thread_finish_async_abort) \
 MONO_JIT_ICALL (count) \
 
 #define MONO_JIT_ICALL_mono_get_lmf_addr MONO_JIT_ICALL_mono_tls_get_lmf_addr
+#define MONO_JIT_ICALL_generic_trampoline_first MONO_JIT_ICALL_generic_trampoline_jit
 
 #ifdef __cplusplus
 typedef enum MonoJitICallId : gsize // Widen to gsize for use in MonoJumpInfo union.
