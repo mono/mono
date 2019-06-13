@@ -9,6 +9,8 @@ namespace System.Net.Http
 
 #pragma warning disable 649
         private static Func<HttpMessageHandler> GetHttpMessageHandler;
+        // Used to skip the type lookup on later calls.
+        private static MethodInfo messageHandlerMethod;
 #pragma warning restore 649
 
         internal static HttpMessageHandler CreateDefaultHandler()
@@ -16,22 +18,30 @@ namespace System.Net.Http
 
             if (GetHttpMessageHandler == null)
             {
-                Type type = Type.GetType("WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler, WebAssembly.Net.Http");
-                if (type == null)
-                    return GetFallback ("Invalid WebAssembly Module? Cannot find WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
+                if (messageHandlerMethod == null) {
+                    try {
+                        Type type = Assembly.Load("WebAssembly.Net.Http")?.GetType("WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
+                        if (type == null)
+                            throw new PlatformNotSupportedException ("Invalid WebAssembly Module? Cannot find WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
 
-                MethodInfo method = type.GetMethod("GetHttpMessageHandler", BindingFlags.Static | BindingFlags.NonPublic);
-                if (method == null)
-                    return GetFallback ("Your WebAssembly version does not support obtaining of the custom HttpClientHandler");
+                        messageHandlerMethod = type.GetMethod("GetHttpMessageHandler", BindingFlags.Static | BindingFlags.NonPublic);
+                    }
+                    catch { 
+                        throw new PlatformNotSupportedException ("Invalid WebAssembly Module? Cannot find WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
+                    }
+                }
 
-                object ret = method.Invoke(null, null);
+                if (messageHandlerMethod == null)
+                    throw new PlatformNotSupportedException ("Your WebAssembly version does not support obtaining of the custom HttpClientHandler");
+
+                object ret = messageHandlerMethod.Invoke(null, null);
                 if (ret == null)
-                    return GetFallback ("WebAssembly returned no custom HttpClientHandler");
+                    throw new PlatformNotSupportedException ("WebAssembly returned no custom HttpClientHandler");
 
                 var handler = ret as HttpMessageHandler;
                 if (handler == null)
-                    return GetFallback ($"{ret?.GetType()} is not a valid HttpMessageHandler");
-                    
+                    throw new PlatformNotSupportedException ($"{ret?.GetType()} is not a valid HttpMessageHandler");
+
                 return handler;
 
             }
@@ -39,16 +49,10 @@ namespace System.Net.Http
             {
                 var handler = GetHttpMessageHandler();
                 if (handler == null)
-                    return GetFallback($"Custom HttpMessageHandler is not valid");
+                    throw new PlatformNotSupportedException ($"Custom HttpMessageHandler is not valid");
 
                 return handler;
-            }                
-        }
-
-        static HttpMessageHandler GetFallback(string message)
-        {
-            //Console.WriteLine(message + ". Defaulting to System.Net.Http.HttpClientHandler");
-            return new HttpClientHandler();
+            }
         }
     }
 }
