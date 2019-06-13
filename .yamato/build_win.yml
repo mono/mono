@@ -11,6 +11,6 @@ commands:
   - .yamato/build_win.bat
 
 artifacts: 
-  win64.zip:
+  win64:
     paths:
       - incomingbuilds\win64\**

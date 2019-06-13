@@ -11,6 +11,6 @@ commands:
   - .yamato/build_win_bare_minimum.bat
 
 artifacts: 
-  bareminimum.zip:
+  bareminimum:
     paths:
       - incomingbuilds\bareminimum\**

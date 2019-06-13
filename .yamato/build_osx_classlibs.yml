@@ -10,6 +10,6 @@ commands:
 
 
 artifacts: 
-  classlibs.zip:
+  classlibs:
     paths:
       - incomingbuilds/classlibs/**

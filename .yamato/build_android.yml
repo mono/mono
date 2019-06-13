@@ -9,6 +9,6 @@ commands:
   - .yamato/build_android.sh
 
 artifacts: 
-  android.zip:
+  android:
     paths:
       - incomingbuilds/android/**
