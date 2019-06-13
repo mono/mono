@@ -5386,9 +5386,7 @@ load_function_full (MonoAotModule *amodule, const char *name, MonoTrampInfo **ou
 				case MONO_JIT_ICALL_generic_trampoline_delegate:
 				case MONO_JIT_ICALL_generic_trampoline_generic_virtual_remoting:
 				case MONO_JIT_ICALL_generic_trampoline_vcall:
-					g_static_assert (MONO_TRAMPOLINE_JIT == 0);
-					g_static_assert (MONO_JIT_ICALL_generic_trampoline_jit == MONO_JIT_ICALL_generic_trampoline_first);
-					target = (gpointer)mono_get_trampoline_func ((MonoTrampolineType)(jit_icall_id - MONO_JIT_ICALL_generic_trampoline_first));
+					target = (gpointer)mono_get_trampoline_func (mono_jit_icall_id_to_trampoline_type (jit_icall_id));
 					break;
 				default:
 					target = mono_arch_load_function (jit_icall_id);
