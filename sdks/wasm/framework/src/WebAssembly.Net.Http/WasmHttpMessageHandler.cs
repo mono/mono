@@ -2,10 +2,13 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using WebAssembly.Core;
 using WebAssembly.Host;
+
+[assembly: InternalsVisibleTo ("System.Net.Http")]
 
 namespace WebAssembly.Net.Http.HttpClient {
 	public class WasmHttpMessageHandler : HttpMessageHandler {
@@ -47,7 +50,7 @@ namespace WebAssembly.Net.Http.HttpClient {
 			handlerInit ();
 		}
 
-		private static WasmHttpMessageHandler GetHttpMessageHandler ()
+		internal static HttpMessageHandler GetHttpMessageHandler ()
 		{
 			return new WasmHttpMessageHandler ();
 		}

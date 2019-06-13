@@ -37,6 +37,10 @@ LIB_MCS_FLAGS += -r:$(topdir)/../external/binary-reference-assemblies/build/mono
 LIB_MCS_FLAGS += -d:XAMARIN_MODERN
 endif
 
+ifeq (wasm,$(PROFILE))
+LIB_MCS_FLAGS += -r:$(topdir)/../external/binary-reference-assemblies/build/monowasm/WebAssembly.Net.Http.dll
+endif
+
 TEST_LIB_REFS = System System.Core
 TEST_MCS_FLAGS =
 
