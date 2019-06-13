@@ -9,6 +9,6 @@ commands:
   - .yamato/build_linux_x86.sh
 
 artifacts: 
-  linux32.zip:
+  linux32:
     paths:
       - incomingbuilds/linux32/**
