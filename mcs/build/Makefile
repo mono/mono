@@ -49,6 +49,7 @@ DISTFILES = \
 	library.make			\
 	rules.make			\
 	tests.make			\
+	start-compiler-server.sh	\
 	$(COMMON_SRCS:%=common/%)	\
 	$(PLATFORMS:%=platforms/%.make) $(PROFILES:%=profiles/%.make)
 
