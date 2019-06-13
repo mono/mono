@@ -1534,7 +1534,7 @@ print_implemented_interfaces (MonoClass *klass)
 }
 
 static gboolean 
-mono_method_is_reabstracted(MonoClass *klass, guint16 flags)
+method_is_reabstracted (guint16 flags)
 {
 	if ((flags & METHOD_ATTRIBUTE_ABSTRACT && flags & METHOD_ATTRIBUTE_FINAL))
 		return TRUE;
@@ -1564,7 +1564,7 @@ count_virtual_methods (MonoClass *klass)
 			flags = klass->methods [i]->flags;
 			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
 			{
-				if (mono_method_is_reabstracted(klass, flags))
+				if (method_is_reabstracted(flags))
 					continue;
 				++vcount;
 			}
@@ -1577,7 +1577,7 @@ count_virtual_methods (MonoClass *klass)
 
 			if ((flags & METHOD_ATTRIBUTE_VIRTUAL))
 			{
-				if (mono_method_is_reabstracted(klass, flags))
+				if (method_is_reabstracted(flags))
 					continue;
 				++vcount;
 			}
@@ -5015,9 +5015,9 @@ mono_class_setup_methods (MonoClass *klass)
 		int slot = 0;
 		/*Only assign slots to virtual methods as interfaces are allowed to have static methods.*/
 		for (i = 0; i < count; ++i) {
-			if (methods [i]->flags & METHOD_ATTRIBUTE_VIRTUAL )
+			if (methods [i]->flags & METHOD_ATTRIBUTE_VIRTUAL)
 			{
-				if (mono_method_is_reabstracted(klass, methods[i]->flags)) {
+				if (method_is_reabstracted(methods[i]->flags)) {
 					methods [i]->is_reabstracted = 1;
 					continue;
 				}
