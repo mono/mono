@@ -348,6 +348,7 @@ common_sources = \
 	w32process-internals.h		\
 	profiler.c		\
 	profiler-private.h	\
+	profiler-legacy.h	\
 	rand.h			\
 	rand.c			\
 	remoting.h		\
@@ -476,6 +477,7 @@ libmonoruntimeinclude_HEADERS = \
 	opcodes.h		\
 	profiler.h		\
 	profiler-events.h	\
+	profiler-legacy.h	\
 	reflection.h		\
 	row-indexes.h		\
 	sgen-bridge.h		\
