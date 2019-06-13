@@ -7,15 +7,11 @@ using System.Globalization;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using Mono;
 
 namespace System
 {
 	partial class Environment
 	{
-		// This is the version of the corlib-runtime interface (defined in configure.ac)
-		private const string mono_corlib_version = Consts.MonoCorlibVersion;
-
 		public static int CurrentManagedThreadId => Thread.CurrentThread.ManagedThreadId;
 
 		public extern static int ExitCode {

@@ -308,8 +308,6 @@ namespace System.Runtime.InteropServices
 
 		static void PtrToStructureHelper (IntPtr ptr, object structure, bool allowValueClasses)
 		{
-			if (ptr == null)
-				throw new ArgumentNullException (nameof (ptr));
 			if (structure == null)
 				throw new ArgumentNullException (nameof (structure));
 			PtrToStructureInternal (ptr, structure, allowValueClasses);
