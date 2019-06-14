@@ -83,6 +83,7 @@ jobs:
   - bash: |
       ./autogen.sh --with-core=only
       make -C mono -j4
+      make -C netcore bcl
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
