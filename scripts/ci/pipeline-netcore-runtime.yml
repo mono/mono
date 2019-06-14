@@ -82,7 +82,7 @@ jobs:
 
   - bash: |
       ./autogen.sh --with-core=only
-      make -j 4
+      make -C mono -j4
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
