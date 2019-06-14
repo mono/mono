@@ -132,7 +132,6 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 	size_t real_size = size;
 	TLAB_ACCESS_INIT;
 	
-
 	CANARIFY_SIZE(size);
 
 	HEAVY_STAT (++stat_objects_alloced);
@@ -228,7 +227,6 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			available_in_tlab = (int)(TLAB_REAL_END - TLAB_NEXT);//We'll never have tlabs > 2Gb
 			if (size > sgen_tlab_size || available_in_tlab > SGEN_MAX_NURSERY_WASTE) {
 				/* Allocate directly from the nursery */
-			
 				p = (void **)sgen_nursery_alloc (size);
 				if (!p) {
 					/*
@@ -327,7 +325,6 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 	SGEN_ASSERT (6, sgen_vtable_get_descriptor (vtable), "VTable without descriptor");
 
-	
 	if (real_size > SGEN_MAX_SMALL_OBJ_SIZE)
 		return NULL;
 
@@ -376,8 +373,6 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 		} else {
 			size_t alloc_size = 0;
 			
-			
-
 			sgen_nursery_retire_region (p, available_in_tlab);
 			new_next = (char *)sgen_nursery_alloc_range (sgen_tlab_size, size, &alloc_size);
 			p = (void**)new_next;
@@ -514,7 +509,6 @@ sgen_clear_tlabs (void)
 		info->tlab_next = NULL;
 		info->tlab_temp_end = NULL;
 		info->tlab_real_end = NULL;
-		
 	} FOREACH_THREAD_END
 }
 
