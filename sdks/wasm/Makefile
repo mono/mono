@@ -69,6 +69,7 @@ WASM_FRAMEWORK=$(TOP)/sdks/wasm/framework
 WASM_FRAMEWORK_SOURCE=$(TOP)/sdks/wasm/framework/src
 WASM_FRAMEWORK_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
 WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
+WASM_FRAMEWORK_REF_SOURCES=$(WASM_FRAMEWORK_SOURCE)/refs/**/*
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
@@ -179,6 +180,10 @@ binding_tests.dll: $(WASM_FRAMEWORK)/.stamp-framework $(BINDING_TEST_SOURCES)
 $(WASM_FRAMEWORK)/.stamp-framework: $(WASM_FRAMEWORK_SOURCES)
 	dotnet build $(WASM_FRAMEWORK_SOURCE)/WebAssembly.Framework.sln
 	cp -f $(WASM_FRAMEWORK)/netstandard2.0/* $(WASM_FRAMEWORK)
+	touch $@
+
+$(WASM_FRAMEWORK)/.stamp-framework-refs: $(WASM_FRAMEWORK_REF_SOURCES) $(WASM_FRAMEWORK_SOURCES)
+	dotnet build -c Release $(WASM_FRAMEWORK_SOURCE)/refs/WebAssembly.Framework.Refs.sln
 	touch $@
 
 Simple.Dependency.dll: dependency.cs $(WASM_FRAMEWORK)/.stamp-framework
@@ -407,6 +412,8 @@ clean:
 	$(RM) -r sdk/packages
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
+	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework-refs
+	$(RM) -r $(WASM_FRAMEWORK_SRC)/refs/**/obj $(WASM_FRAMEWORK_SRC)/refs/**/bin
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
@@ -492,3 +499,5 @@ clean-sdk:
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	dotnet build sdk/Mono.WebAssembly.Sdk
 	dotnet build sdk/MonoWasmSdkCLI.sln
+
+build-refs: $(WASM_FRAMEWORK)/.stamp-framework-refs
