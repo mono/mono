@@ -5,10 +5,10 @@ include config.make
 #
 
 # Extracted MicrosoftPrivateCoreFxNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L21
-NETCORETESTS_VERSION := 4.6.0-preview7.19311.1
+NETCORETESTS_VERSION := 4.6.0-preview7.19305.1
 
 # Extracted MicrosoftNETCoreAppVersion from https://github.com/dotnet/coreclr/blob/master/eng/Versions.props#L25
-NETCOREAPP_VERSION := 3.0.0-preview7-27812-11
+NETCOREAPP_VERSION := 3.0.0-preview7-27804-03
 
 # Extracted from https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/master/latest.version
 ASPNETCOREAPP_VERSION := 3.0.0-preview-18614-0151
@@ -82,7 +82,7 @@ update-roslyn: roslyn-restore.csproj
 
 run-sample: prepare
 	$(DOTNET) build sample/HelloWorld
-	MONO_ENV_OPTIONS="--debug" COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" sample/HelloWorld/bin/Debug/netcoreapp3.0/HelloWorld.dll
+	MONO_ENV_OPTIONS="--debug" COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" sample/HelloWorld/bin/netcoreapp3.0/HelloWorld.dll
 
 run-aspnet-sample: prepare
 	rm -rf sample/AspNetCore/{bin,obj}
