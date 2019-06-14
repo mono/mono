@@ -43,7 +43,7 @@
  *  - not be called concurrently (either 2+ initialize or 2+ cleanup, either initialize and cleanup)
  */
 
-typedef gint32 mono_lazy_init_t;
+typedef volatile gint32 mono_lazy_init_t;
 
 enum {
 	MONO_LAZY_INIT_STATUS_NOT_INITIALIZED,
@@ -64,6 +64,7 @@ mono_lazy_initialize (mono_lazy_init_t *lazy_init, void (*initialize) (void))
 
 	if (status >= MONO_LAZY_INIT_STATUS_INITIALIZED)
 		return status == MONO_LAZY_INIT_STATUS_INITIALIZED;
+
 	if (status == MONO_LAZY_INIT_STATUS_INITIALIZING
 	     || mono_atomic_cas_i32 (lazy_init, MONO_LAZY_INIT_STATUS_INITIALIZING, MONO_LAZY_INIT_STATUS_NOT_INITIALIZED)
 	         != MONO_LAZY_INIT_STATUS_NOT_INITIALIZED
@@ -71,7 +72,7 @@ mono_lazy_initialize (mono_lazy_init_t *lazy_init, void (*initialize) (void))
 		while (*lazy_init == MONO_LAZY_INIT_STATUS_INITIALIZING)
 			mono_thread_info_yield ();
 		g_assert (mono_atomic_load_i32 (lazy_init) >= MONO_LAZY_INIT_STATUS_INITIALIZED);
-		return status == MONO_LAZY_INIT_STATUS_INITIALIZED;
+		return *lazy_init == MONO_LAZY_INIT_STATUS_INITIALIZED;
 	}
 
 	initialize ();
