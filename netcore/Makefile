@@ -143,11 +143,10 @@ corefx/.stamp-dl-corefx-tests-$(NETCORETESTS_VERSION):
 # Running individual test: MONO_ENV_OPTIONS="--debug" make run-tests-corefx-System.Collections.Tests
 #
 
-# these tests won't be included in `run-tests-corefx-all`
-EXCLUDED_COREFX_TESTS :=
-
-run-tests-corefx: $(foreach workingtest, $(foreach test, $(wildcard corefx/tests/extracted/*), \
-		$(filter-out $(EXCLUDED_COREFX_TESTS), $(notdir $(test)))), $(addprefix run-tests-corefx-, $(workingtest)))
+run-tests-corefx: update-tests-corefx
+	for testdir in corefx/tests/extracted/*; do \
+		$(MAKE) run-tests-corefx-$$(basename $${testdir}); \
+	done
 
 run-tests-corefx-%: prepare update-tests-corefx
 	echo -n "***************** $* *********************"
