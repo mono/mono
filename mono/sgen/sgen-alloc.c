@@ -175,7 +175,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 	 */
 
 	if (real_size > SGEN_MAX_SMALL_OBJ_SIZE) {
-		increment_thread_allocation_counter(size);
+		increment_thread_allocation_counter (size);
 		p = (void **)sgen_los_alloc_large_inner (vtable, ALIGN_UP (real_size));
 	} else {
 		/* tlab_next and tlab_temp_end are TLS vars so accessing them might be expensive */
@@ -371,7 +371,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			if (!p)
 				return NULL;
 
-			increment_thread_allocation_counter(size);
+			increment_thread_allocation_counter (size);
 			zero_tlab_if_necessary (p, size);
 		} else {
 			size_t alloc_size = 0;
@@ -384,7 +384,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			if (!p)
 				return NULL;
 
-			increment_thread_allocation_counter(TLAB_NEXT - TLAB_START);
+			increment_thread_allocation_counter (TLAB_NEXT - TLAB_START);
 
 			TLAB_START = (char*)new_next;
 			TLAB_NEXT = new_next + size;
@@ -477,7 +477,7 @@ sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
 	}
 	if (G_LIKELY (p)) {
 		SGEN_LOG (6, "Allocated pinned object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
-		increment_thread_allocation_counter(size);
+		increment_thread_allocation_counter (size);
 		sgen_binary_protocol_alloc_pinned (p, vtable, size, sgen_client_get_provenance ());
 	}
 	UNLOCK_GC;
@@ -488,7 +488,7 @@ GCObject*
 sgen_alloc_obj_mature (GCVTable vtable, size_t size)
 {
 	GCObject *res;
-	increment_thread_allocation_counter(size);
+	increment_thread_allocation_counter (size);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
