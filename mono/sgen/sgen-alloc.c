@@ -51,7 +51,7 @@ static guint64 stat_bytes_alloced_los = 0;
 /*
  * Allocation is done from a Thread Local Allocation Buffer (TLAB). TLABs are allocated
  * from nursery fragments.
- * tlab_next is the pointer to the space inside the TLAB where the next object will 
+ * tlab_next is the pointer to the space inside the TLAB where the next object will
  * be allocated.
  * tlab_temp_end is the pointer to the end of the temporary space reserved for
  * the allocation: it allows us to set the scan starts at reasonable intervals.
@@ -63,7 +63,7 @@ static guint64 stat_bytes_alloced_los = 0;
 #define TLAB_TEMP_END	(__thread_info__->tlab_temp_end)
 #define TLAB_REAL_END	(__thread_info__->tlab_real_end)
 
-static void 
+static void
 increment_thread_allocation_counter (size_t byte_size)
 {
 	mono_thread_info_current ()->total_bytes_allocated += byte_size;
@@ -131,7 +131,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 	char *new_next;
 	size_t real_size = size;
 	TLAB_ACCESS_INIT;
-	
+
 	CANARIFY_SIZE(size);
 
 	HEAVY_STAT (++stat_objects_alloced);
@@ -199,7 +199,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 		/* Slow path */
 
 		/* there are two cases: the object is too big or we run out of space in the TLAB */
-		/* we also reach here when the thread does its first allocation after a minor 
+		/* we also reach here when the thread does its first allocation after a minor
 		 * collection, since the tlab_ variables are initialized to NULL.
 		 * there can be another case (from ORP), if we cooperate with the runtime a bit:
 		 * objects that need finalizers can have the high bit set in their size
@@ -209,7 +209,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 		 */
 		if (TLAB_NEXT >= TLAB_REAL_END) {
 			int available_in_tlab;
-			/* 
+			/*
 			 * Run out of space in the TLAB. When this happens, some amount of space
 			 * remains in the TLAB, but not enough to satisfy the current allocation
 			 * request. We keep the TLAB for future allocations if the remaining
@@ -249,10 +249,10 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 					sgen_ensure_free_space (real_size, GENERATION_NURSERY);
 					if (!sgen_degraded_mode)
 						p = (void **)sgen_nursery_alloc (size);
-					
+
 					if (p)
 						increment_thread_allocation_counter (size);
-					
+
 				}
 				if (!p)
 					return alloc_degraded (vtable, size, TRUE);
@@ -330,7 +330,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 
 	if (G_UNLIKELY (size > sgen_tlab_size)) {
 		/* Allocate directly from the nursery */
-		
+
 		p = (void **)sgen_nursery_alloc (size);
 		if (!p)
 			return NULL;
@@ -372,7 +372,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 			zero_tlab_if_necessary (p, size);
 		} else {
 			size_t alloc_size = 0;
-			
+
 			sgen_nursery_retire_region (p, available_in_tlab);
 			new_next = (char *)sgen_nursery_alloc_range (sgen_tlab_size, size, &alloc_size);
 			p = (void**)new_next;

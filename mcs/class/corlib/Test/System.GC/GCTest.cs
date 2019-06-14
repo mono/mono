@@ -15,7 +15,7 @@ using System;
 
 namespace MonoTests.System.GarbageCollector {
 
-	public interface SizedObject 
+	public interface SizedObject
 	{
 		long ExpectedSize();
 	}
@@ -30,7 +30,7 @@ namespace MonoTests.System.GarbageCollector {
 		public object field1;
 		public object field2;
 
-		public long ExpectedSize() 
+		public long ExpectedSize()
 		{
 			return 4*IntPtr.Size;
 		}
@@ -61,7 +61,7 @@ namespace MonoTests.System.GarbageCollector {
 		public long ExpectedSize() {
 			return (long)(10*IntPtr.Size);
 		}
-		
+
 	}
 
 	[TestFixture]
@@ -94,7 +94,7 @@ namespace MonoTests.System.GarbageCollector {
 			Assert.AreEqual(1L, 1L);
 
 			// End warmup
-						
+
 			long expectedSize = 0;
             long bytesBeforeAlloc = GC.GetAllocatedBytesForCurrentThread();
 
