@@ -98,7 +98,7 @@ namespace MonoTests.System.GarbageCollector {
 			long expectedSize = 0;
             long bytesBeforeAlloc = GC.GetAllocatedBytesForCurrentThread();
 
-            for (int i = 0; i < 1000000; i++)
+            for (int i = 0; i < 10000000; i++)
 			{
             	expectedSize += objectAllocators[r.Next(0, objectAllocators.Length) ]().ExpectedSize();
             }
