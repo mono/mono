@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using WebAssembly.Net.Http.HttpClient;
 
 namespace System.Net.Http
 {
@@ -16,7 +17,7 @@ namespace System.Net.Http
 
             if (GetHttpMessageHandler == null)
             {
-                return WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler.GetHttpMessageHandler();
+                return WasmHttpMessageHandler.GetHttpMessageHandler();
             }
             else
             {
