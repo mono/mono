@@ -35,6 +35,7 @@ using System.IO;
 using Mono.Security.X509.Extensions;
 
 using OpenFlags = System.Security.Cryptography.X509Certificates.OpenFlags;
+using StoreLocation = System.Security.Cryptography.X509Certificates.StoreLocation;
 
 namespace Mono.Security.X509 {
 
@@ -45,18 +46,16 @@ namespace Mono.Security.X509 {
 #endif
 	class X509Stores {
 
-		private string _storePath;
-		private bool _newFormat;
+		private StoreLocation _location;
 		private X509Store _personal;
 		private X509Store _other;
 		private X509Store _intermediate;
 		private X509Store _trusted;
 		private X509Store _untrusted;
 
-		internal X509Stores (string path, bool newFormat)
+		internal X509Stores (StoreLocation location)
 		{
-			_storePath = path;
-			_newFormat = newFormat;
+			_location = location;
 		}
 
 		// properties
@@ -64,8 +63,7 @@ namespace Mono.Security.X509 {
 		public X509Store Personal {
 			get { 
 				if (_personal == null) {
-					string path = Path.Combine (_storePath, Names.Personal);
-					_personal = new X509Store (path, false, false);
+					_personal = new X509Store (Names.Personal, _location, OpenFlags.ReadOnly);
 				}
 				return _personal; 
 			}
@@ -74,8 +72,7 @@ namespace Mono.Security.X509 {
 		public X509Store OtherPeople {
 			get { 
 				if (_other == null) {
-					string path = Path.Combine (_storePath, Names.OtherPeople);
-					_other = new X509Store (path, false, false);
+					_other = new X509Store (Names.OtherPeople, _location, OpenFlags.ReadOnly);
 				}
 				return _other; 
 			}
@@ -84,8 +81,7 @@ namespace Mono.Security.X509 {
 		public X509Store IntermediateCA {
 			get { 
 				if (_intermediate == null) {
-					string path = Path.Combine (_storePath, Names.IntermediateCA);
-					_intermediate = new X509Store (path, true, _newFormat);
+					_intermediate = new X509Store (Names.IntermediateCA, _location, OpenFlags.ReadOnly);
 				}
 				return _intermediate; 
 			}
@@ -94,8 +90,7 @@ namespace Mono.Security.X509 {
 		public X509Store TrustedRoot {
 			get { 
 				if (_trusted == null) {
-					string path = Path.Combine (_storePath, Names.TrustedRoot);
-					_trusted = new X509Store (path, true, _newFormat);
+					_trusted = new X509Store (Names.TrustedRoot, _location, OpenFlags.ReadOnly);
 				}
 				return _trusted; 
 			}
@@ -104,8 +99,7 @@ namespace Mono.Security.X509 {
 		public X509Store Untrusted {
 			get { 
 				if (_untrusted == null) {
-					string path = Path.Combine (_storePath, Names.Untrusted);
-					_untrusted = new X509Store (path, false, _newFormat);
+					_untrusted = new X509Store (Names.Untrusted, _location, OpenFlags.ReadOnly);
 				}
 				return _untrusted; 
 			}
@@ -135,19 +129,10 @@ namespace Mono.Security.X509 {
 
 		public X509Store Open (string storeName, OpenFlags flags)
 		{
-			return Open(storeName, (flags & OpenFlags.OpenExistingOnly) == 0);
-		}
-
-		public X509Store Open (string storeName, bool create)
-		{
 			if (storeName == null)
 				throw new ArgumentNullException ("storeName");
 
-			string path = Path.Combine (_storePath, storeName);
-			if (!create && !Directory.Exists (path))
-				return null;
-
-			return new X509Store (path, true, false);
+			return new X509Store (storeName, _location, flags);
 		}
 
 		// names

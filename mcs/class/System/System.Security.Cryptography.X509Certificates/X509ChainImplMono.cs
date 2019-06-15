@@ -283,7 +283,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				if (root_store == null) {
 					root_store = new X509Store (StoreName.Root, StoreLocation.LocalMachine);
 					try {
-						root_store.Open (OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
+						root_store.Open (OpenFlags.ReadOnly);
 					} catch {
 					}
 				}
@@ -296,7 +296,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				if (user_root_store == null) {
 					user_root_store = new X509Store (StoreName.Root, StoreLocation.CurrentUser);
 					try {
-						user_root_store.Open (OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
+						user_root_store.Open (OpenFlags.ReadOnly);
 					} catch {
 					}
 				}
@@ -309,7 +309,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				if (ca_store == null) {
 					ca_store = new X509Store (StoreName.CertificateAuthority, StoreLocation.LocalMachine);
 					try {
-						ca_store.Open (OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
+						ca_store.Open (OpenFlags.ReadOnly);
 					} catch {
 					}
 				}
@@ -322,7 +322,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				if (user_ca_store == null) {
 					user_ca_store = new X509Store (StoreName.CertificateAuthority, StoreLocation.CurrentUser);
 					try {
-						user_ca_store.Open (OpenFlags.OpenExistingOnly | OpenFlags.ReadOnly);
+						user_ca_store.Open (OpenFlags.ReadOnly);
 					} catch {
 					}
 				}

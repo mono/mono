@@ -10,6 +10,10 @@ LIB_MCS_FLAGS = -unsafe -nowarn:1030,3009
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:169,219,618,672
 LIBRARY_WARN_AS_ERROR = yes
 
+ifdef MX_WINCRYPTO
+LIB_MCS_FLAGS += -d:MX_WINCRYPTO
+endif
+
 CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))
 ifdef CC_PROFILE
 

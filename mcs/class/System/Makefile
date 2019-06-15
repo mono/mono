@@ -39,6 +39,10 @@ else
 LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
 endif
 
+ifdef MX_WINCRYPTO
+LIB_MCS_FLAGS += -d:MX_WINCRYPTO
+endif
+
 ifndef MOBILE_PROFILE
 LIB_MCS_FLAGS += -d:CODEDOM
 TEST_LIB_REFS = $(MONO_SECURITY) System.Data System.Xml System.Core System.Configuration

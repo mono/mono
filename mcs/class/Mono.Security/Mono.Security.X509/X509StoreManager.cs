@@ -34,6 +34,8 @@ using System.IO;
 
 using Mono.Security.X509.Extensions;
 
+using StoreLocation = System.Security.Cryptography.X509Certificates.StoreLocation;
+
 namespace Mono.Security.X509 {
 
 #if INSIDE_CORLIB || INSIDE_SYSTEM
@@ -43,19 +45,24 @@ namespace Mono.Security.X509 {
 #endif
 	sealed class X509StoreManager {
 
+#if !MX_WINCRYPTO
 		static private string _userPath;
 		static private string _localMachinePath;
 		static private string _newUserPath;
 		static private string _newLocalMachinePath;
+#endif
 		static private X509Stores _userStore;
 		static private X509Stores _machineStore;
+#if !MX_WINCRYPTO
 		static private X509Stores _newUserStore;
 		static private X509Stores _newMachineStore;
+#endif
 
 		private X509StoreManager ()
 		{
 		}
 
+#if !MX_WINCRYPTO
 		internal static string CurrentUserPath {
 			get {
 				if (_userPath == null) {
@@ -103,11 +110,16 @@ namespace Mono.Security.X509 {
 				return _newLocalMachinePath;
 			}
 		}
+#endif
 
 		static public X509Stores CurrentUser {
 			get { 
 				if (_userStore == null)
+#if MX_WINCRYPTO
+					_userStore = new X509Stores (StoreLocation.CurrentUser);
+#else
 					_userStore = new X509Stores (CurrentUserPath, false);
+#endif
 				
 				return _userStore;
 			}
@@ -116,7 +128,11 @@ namespace Mono.Security.X509 {
 		static public X509Stores LocalMachine {
 			get {
 				if (_machineStore == null) 
+#if MX_WINCRYPTO
+					_machineStore = new X509Stores (StoreLocation.LocalMachine);
+#else
 					_machineStore = new X509Stores (LocalMachinePath, false);
+#endif
 
 				return _machineStore;
 			}
@@ -124,19 +140,27 @@ namespace Mono.Security.X509 {
 
 		static public X509Stores NewCurrentUser {
 			get {
+#if MX_WINCRYPTO
+				return CurrentUser;
+#else
 				if (_newUserStore == null)
 					_newUserStore = new X509Stores (NewCurrentUserPath, true);
 
 				return _newUserStore;
+#endif
 			}
 		}
 
 		static public X509Stores NewLocalMachine {
 			get {
+#if MX_WINCRYPTO
+				return LocalMachine;
+#else
 				if (_newMachineStore == null)
 					_newMachineStore = new X509Stores (NewLocalMachinePath, true);
 
 				return _newMachineStore;
+#endif
 			}
 		}
 

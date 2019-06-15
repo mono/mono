@@ -1,0 +1,3 @@
+#include Mono.Security.dll.sources
+Mono.Security.X509/X509Store.wincrypto.cs
+Mono.Security.X509/X509Stores.wincrypto.cs

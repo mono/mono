@@ -126,6 +126,10 @@ namespace Mono.Security.X509 {
 			_crls = null;
 		}
 
+		public void Close ()
+		{
+		}
+
 		public void Import (X509Certificate certificate) 
 		{
 			CheckStore (_storePath, true);

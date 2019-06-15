@@ -70,7 +70,9 @@ namespace Mono.Btls
 
 		static void DoInitialize ()
 		{
-#if !MONODROID
+#if MX_WINCRYPTO
+			throw new NotImplementedException ("Mono.Btls.MonoBtlsX509StoreManager.DoInitialize");
+#elif !MONODROID
 			var userPath = MX.X509StoreManager.NewCurrentUserPath;
 			userTrustedRootPath = Path.Combine (userPath, MX.X509Stores.Names.TrustedRoot);
 			userIntermediateCAPath = Path.Combine (userPath, MX.X509Stores.Names.IntermediateCA);

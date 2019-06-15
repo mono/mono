@@ -215,7 +215,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		public void Close () 
 		{
-			store = null;
+			if (store != null)
+			{
+				store.Close ();
+				store = null;
+			}
 			if (list != null)
 				list.Clear ();
 		}
@@ -233,16 +237,17 @@ namespace System.Security.Cryptography.X509Certificates {
 			/* keep existing Mono installations (pre 2.0) compatible with new stuff */
 			string name;
 			switch (_name) {
+#if !MX_WINCRYPTO
 			case "Root":
 				name = "Trust";
 				break;
+#endif
 			default:
 				name = _name;
 				break;
 			}
 
-			bool create = ((flags & OpenFlags.OpenExistingOnly) != OpenFlags.OpenExistingOnly);
-			store = Factory.Open (name, create);
+			store = Factory.Open (name, flags);
 			if (store == null)
 				throw new CryptographicException (Locale.GetText ("Store {0} doesn't exists.", _name));
 			_flags = flags;
