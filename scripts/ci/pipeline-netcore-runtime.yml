@@ -82,8 +82,14 @@ jobs:
 
   - bash: |
       ./autogen.sh --with-core=only
-      make -j 4
+      make -C mono -j4
+      make -C netcore bcl
     displayName: 'Build (Make)'
+    condition: ne(variables['poolname'], 'Hosted VS2017')
+
+  - bash: |
+      make -C netcore nupkg
+    displayName: 'Build nupkg'
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - bash: |
@@ -92,7 +98,9 @@ jobs:
     condition: ne(variables['poolname'], 'Hosted VS2017')
   
   - bash: |
-      make -C netcore run-tests-corefx
+      for testdir in netcore/corefx/tests/extracted/*; do
+        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m make -C netcore run-tests-corefx-$(basename $testdir)
+      done
     displayName: 'Run CoreFX Tests'
     timeoutInMinutes: 90
     condition: ne(variables['poolname'], 'Hosted VS2017')
