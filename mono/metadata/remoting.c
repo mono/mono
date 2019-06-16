@@ -2131,6 +2131,8 @@ leave:
 	return result;
 }
 
+#ifndef DISABLE_REMOTING
+
 /* mono_marshal_xdomain_copy_value
  * Makes a copy of "val" suitable for the current domain.
  */
@@ -2143,6 +2145,8 @@ mono_marshal_xdomain_copy_value (MonoObject* val_raw, MonoError *error)
 	MonoObjectHandle result = mono_marshal_xdomain_copy_value_handle (val, error);
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
+
+#endif
 
 /* mono_marshal_xdomain_copy_value
  * Makes a copy of "val" suitable for the current domain.
