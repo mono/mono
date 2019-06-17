@@ -205,6 +205,11 @@ namespace System.Net.Sockets
 
 		protected virtual void OnCompleted (SocketAsyncEventArgs e)
 		{
+			if (e != this) {
+				Console.Error.WriteLine ($"MARTIN TEST: e = {e}, this = {this}");
+				throw new InvalidTimeZoneException ("I LIVE ON THE MOON!");
+			}
+
 			if (e == null)
 				return;
 			
