@@ -958,8 +958,12 @@ mono_gc_get_restart_signal (void)
 	return GC_get_thr_restart_signal ();
 }
 
-#if defined(USE_COMPILER_TLS) && defined(__linux__) && (defined(__i386__) || defined(__x86_64__))
+// This code might be close to working and a nice performance boost,
+// but is currently effectively dead, due to early "return NULL" and such.
+#if 0 // defined(USE_COMPILER_TLS) && defined(__linux__) && (defined(__i386__) || defined(__x86_64__))
+
 extern __thread void* GC_thread_tls;
+
 #include "metadata-internals.h"
 
 static int
@@ -992,7 +996,7 @@ create_allocator (int atype, int tls_key, gboolean slowpath)
 	const char *name = NULL;
 	WrapperInfo *info;
 
-	g_assert_not_reached ();
+	g_assert_not_reached (); // deadcode
 
 	if (atype == ATYPE_FREEPTR) {
 		name = slowpath ? "SlowAllocPtrfree" : "AllocPtrfree";
@@ -1073,7 +1077,8 @@ create_allocator (int atype, int tls_key, gboolean slowpath)
 	my_entry_var = mono_mb_add_local (mb, mono_get_int_type ());
 	/* my_fl = ((GC_thread)tsd) -> ptrfree_freelists + index; */
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_byte (mb, 0x0D); /* CEE_MONO_TLS */
+	mono_mb_emit_byte (mb, CEE_MONO_TLS);
+	g_assertf (tls_key >= 0 && tls_key < TLS_KEY_NUM, "%d", tls_key);
 	mono_mb_emit_i4 (mb, tls_key);
 	if (atype == ATYPE_FREEPTR || atype == ATYPE_FREEPTR_FOR_BOX || atype == ATYPE_STRING)
 		mono_mb_emit_icon (mb, G_STRUCT_OFFSET (struct GC_Thread_Rep, tlfs)
@@ -1238,7 +1243,7 @@ mono_gc_get_managed_allocator (MonoClass *klass, gboolean for_box, gboolean know
 	 * Tls implementation changed, we jump to tls native getters/setters.
 	 * Is boehm managed allocator ok with this ? Do we even care ?
 	 */
-	return NULL;
+	return NULL; // deadcode below
 
 	if (!SMALL_ENOUGH (m_class_get_instance_size (klass)))
 		return NULL;
@@ -1291,7 +1296,7 @@ mono_gc_get_managed_allocator_by_type (int atype, ManagedAllocatorVariant varian
 	gboolean slowpath = variant != MANAGED_ALLOCATOR_REGULAR;
 	MonoMethod **cache = slowpath ? slowpath_alloc_method_cache : alloc_method_cache;
 
-	return NULL;
+	return NULL; // deadcode below
 
 	res = cache [atype];
 	if (res)
