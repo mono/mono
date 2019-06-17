@@ -25,6 +25,8 @@ CSC?= MONO_PATH=$(TOP)/mcs/class/lib/build $(TOP)/sdks/builds/bcl/runtime/mono-w
 CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 MONO_SUPPORT=$(WASM_RUNTIME_DIR)/include/support
+MONO_API_SNAPSHOT_PATH := $(TOP)/external/api-snapshot/
+GENAPI := $(MONO_API_SNAPSHOT_PATH)tools/genapi/Microsoft.DotNet.GenAPI.exe
 
 ZLIB_HEADERS = \
 	$(MONO_SUPPORT)/crc32.h		\
@@ -69,7 +71,8 @@ WASM_FRAMEWORK=$(TOP)/sdks/wasm/framework
 WASM_FRAMEWORK_SOURCE=$(TOP)/sdks/wasm/framework/src
 WASM_FRAMEWORK_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
 WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
-WASM_FRAMEWORK_REF_SOURCES=$(WASM_FRAMEWORK_SOURCE)/refs/**/*
+WASM_FRAMEWORK_REF_SOURCE=$(WASM_FRAMEWORK_SOURCE)/refs
+WASM_FRAMEWORK_REF_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_SOURCES=$(BROWSER_TEST)/*
@@ -185,6 +188,14 @@ $(WASM_FRAMEWORK)/.stamp-framework: $(WASM_FRAMEWORK_SOURCES)
 $(WASM_FRAMEWORK)/.stamp-framework-refs: $(WASM_FRAMEWORK_REF_SOURCES) $(WASM_FRAMEWORK_SOURCES)
 	dotnet build -c Release $(WASM_FRAMEWORK_SOURCE)/refs/WebAssembly.Framework.Refs.sln
 	touch $@
+
+build-refs: $(WASM_FRAMEWORK)/.stamp-framework $(WASM_FRAMEWORK_REF_SOURCES) $(WASM_FRAMEWORK)/.stamp-framework-refs
+	mono $(GENAPI) -libpath:$(WASM_BCL_DIR),$(WASM_BCL_DIR)/Facades -out:$(WASM_FRAMEWORK_REF_SOURCE)/System.Memory.cs -assemblyAttributes -typeForwardedTo -assemblyVersion -assembly:$(WASM_BCL_DIR)/Facades/System.Memory.dll
+	mono $(GENAPI) -libpath:$(WASM_BCL_DIR),$(WASM_BCL_DIR)/Facades -out:$(WASM_FRAMEWORK_REF_SOURCE)/WebAssembly.Bindings.cs -assemblyAttributes -typeForwardedTo -assemblyVersion -assembly:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll
+	mono $(GENAPI) -libpath:$(WASM_BCL_DIR),$(WASM_BCL_DIR)/Facades,$(WASM_FRAMEWORK) -out:$(WASM_FRAMEWORK_REF_SOURCE)/WebAssembly.Net.Http.cs -assemblyAttributes -typeForwardedTo -assemblyVersion -assembly:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll
+	mono $(GENAPI) -libpath:$(WASM_BCL_DIR),$(WASM_BCL_DIR)/Facades,$(WASM_FRAMEWORK) -out:$(WASM_FRAMEWORK_REF_SOURCE)/WebAssembly.Net.WebSockets.cs -assemblyAttributes -typeForwardedTo -assemblyVersion -assembly:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
+	dotnet build -c Release $(WASM_FRAMEWORK_SOURCE)/refs/WebAssembly.Framework.Refs.sln
+	touch $(WASM_FRAMEWORK)/.stamp-framework-refs
 
 Simple.Dependency.dll: dependency.cs $(WASM_FRAMEWORK)/.stamp-framework
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ $(BCL_DEPS) dependency.cs
@@ -499,5 +510,3 @@ clean-sdk:
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	dotnet build sdk/Mono.WebAssembly.Sdk
 	dotnet build sdk/MonoWasmSdkCLI.sln
-
-build-refs: $(WASM_FRAMEWORK)/.stamp-framework-refs
