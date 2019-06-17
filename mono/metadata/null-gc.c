@@ -67,7 +67,7 @@ mono_gc_max_generation (void)
 	return 0;
 }
 
-gint64
+guint64
 mono_gc_get_allocated_bytes_for_current_thread (void)
 {
 	return 0;

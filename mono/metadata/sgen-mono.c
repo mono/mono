@@ -2486,7 +2486,7 @@ mono_gc_get_los_limit (void)
 	return SGEN_MAX_SMALL_OBJ_SIZE;
 }
 
-int64_t
+guint64
 mono_gc_get_allocated_bytes_for_current_thread (void)
 {
 	SgenThreadInfo* info;
