@@ -79,10 +79,14 @@ class Driver {
 		public string o_path;
 		// Path in appdir
 		public string app_path;
+		// Path of the AOT depfile
+		public string aot_depfile_path;
 		// Linker input path
 		public string linkin_path;
 		// Linker output path
 		public string linkout_path;
+		// AOT input path
+		public string aotin_path;
 		// Finaly output path after IL strip
 		public string final_path;
 		// Whenever to AOT this assembly
@@ -656,10 +660,10 @@ class Driver {
 				profiler_aot_args += " ";
 			profiler_aot_args += $"--profile={profiler}";
 		}
-		if (ee_mode == ExecMode.AotInterp) {
+		if (ee_mode == ExecMode.AotInterp)
 			aot_args += "interp,";
+		if (build_wasm)
 			enable_zlib = true;
-		}
 
 		runtime_dir = Path.GetFullPath (runtime_dir);
 		sdkdir = Path.GetFullPath (sdkdir);
@@ -703,16 +707,19 @@ class Driver {
 		ninja.WriteLine ("wasm_strip = $emscripten_sdkdir/upstream/bin/wasm-strip");
 		// -s ASSERTIONS=2 is very slow
 		ninja.WriteLine ($"emcc_flags = -Oz -g {emcc_flags}-s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s \"BINARYEN_TRAP_MODE=\'clamp\'\" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s \"EXTRA_EXPORTED_RUNTIME_METHODS=[\'ccall\', \'cwrap\', \'setValue\', \'getValue\', \'UTF8ToString\']\" -s \"EXPORTED_FUNCTIONS=[\'___cxa_is_pointer_type\', \'___cxa_can_catch\']\" -s \"DEFAULT_LIBRARY_FUNCS_TO_INCLUDE=[\'setThrew\', \'memset\']\"");
+		ninja.WriteLine ($"aot_base_args = llvmonly,asmonly,no-opt,static,direct-icalls,deterministic,{aot_args}");
 
 		// Rules
 		ninja.WriteLine ("rule aot");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_args,{aot_args}llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile $src_file");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_args,$aot_base_args,depfile=$depfile,llvm-outfile=$outfile $src_file");
 		ninja.WriteLine ("  description = [AOT] $src_file -> $outfile");
 		ninja.WriteLine ("rule aot-instances");
-		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot={aot_args}llvmonly,asmonly,no-opt,static,direct-icalls,llvm-outfile=$outfile,dedup-include=$dedup_image $src_files");
+		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross --debug {profiler_aot_args} --aot=$aot_base_args,llvm-outfile=$outfile,dedup-include=$dedup_image $src_files");
 		ninja.WriteLine ("  description = [AOT-INSTANCES] $outfile");
 		ninja.WriteLine ("rule mkdir");
 		ninja.WriteLine ("  command = mkdir -p $out");
+		ninja.WriteLine ("rule cp");
+		ninja.WriteLine ("  command = cp $in $out");
 		// Copy $in to $out only if it changed
 		ninja.WriteLine ("rule cpifdiff");
 		ninja.WriteLine ("  command = if cmp -s $in $out ; then : ; else cp $in $out ; fi");
@@ -725,10 +732,10 @@ class Driver {
 		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags -o $out_js --js-library $tool_prefix/library_mono.js --js-library $tool_prefix/dotnet_support.js {wasm_core_support_library} $in' && $wasm_strip $out_wasm");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out_js");
 		ninja.WriteLine ("rule linker");
-		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /nologo /out:$$f /target:library empty.cs; fi; done");
+		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --explicit-reflection --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; for f in $out; do if test ! -f $$f; then echo > empty.cs; csc /deterministic /nologo /out:$$f /target:library empty.cs; fi; done");
 		ninja.WriteLine ("  description = [IL-LINK]");
 		ninja.WriteLine ("rule aot-dummy");
-		ninja.WriteLine ("  command = echo > aot-dummy.cs; csc /out:$out /target:library aot-dummy.cs");
+		ninja.WriteLine ("  command = echo > aot-dummy.cs; csc /deterministic /out:$out /target:library aot-dummy.cs");
 		ninja.WriteLine ("rule gen-runtime-icall-table");
 		ninja.WriteLine ("  command = $cross --print-icall-table > $out");
 		ninja.WriteLine ("rule gen-icall-table");
@@ -776,13 +783,13 @@ class Driver {
 				ninja.WriteLine ($"build $builddir/zlib-helper.o: emcc $builddir/zlib-helper.c");
 				ninja.WriteLine ($"  flags = -I$mono_sdkdir/wasm-runtime-release/include/mono-2.0 -I$mono_sdkdir/wasm-runtime-release/include/support");
 			}
-
 		} else {
 			ninja.WriteLine ("build $appdir/mono.js: cpifdiff $wasm_runtime_dir/mono.js");
 			ninja.WriteLine ("build $appdir/mono.wasm: cpifdiff $wasm_runtime_dir/mono.wasm");
 		}
 
 		var ofiles = "";
+		var bc_files = "";
 		string linker_infiles = "";
 		string linker_ofiles = "";
 		string dedup_infiles = "";
@@ -809,8 +816,9 @@ class Driver {
 				a.linkout_path = $"$builddir/linker-out/{filename}";
 				linker_infiles += $"{a.linkin_path} ";
 				linker_ofiles += $" {a.linkout_path}";
-				infile = $"{a.linkout_path}";
-				ninja.WriteLine ($"build {a.linkin_path}: cpifdiff {source_file_path}");
+				ninja.WriteLine ($"build {a.linkin_path}: cp {source_file_path}");
+				a.aotin_path = a.linkout_path;
+				infile = $"{a.aotin_path}";
 			} else {
 				infile = $"$builddir/{filename}";
 				ninja.WriteLine ($"build $builddir/{filename}: cpifdiff {source_file_path}");
@@ -832,18 +840,22 @@ class Driver {
 			if (a.aot) {
 				a.bc_path = $"$builddir/{filename}.bc";
 				a.o_path = $"$builddir/{filename}.o";
+				a.aot_depfile_path = $"$builddir/linker-out/{filename}.depfile";
 
-				ninja.WriteLine ($"build {a.bc_path}: aot {infile}");
+				ninja.WriteLine ($"build {a.bc_path}.tmp: aot {infile}");
 				ninja.WriteLine ($"  src_file={infile}");
-				ninja.WriteLine ($"  outfile={a.bc_path}");
+				ninja.WriteLine ($"  outfile={a.bc_path}.tmp");
 				ninja.WriteLine ($"  mono_path={aot_in_path}");
+				ninja.WriteLine ($"  depfile={a.aot_depfile_path}");
 				if (enable_dedup)
 					ninja.WriteLine ($"  aot_args=dedup-skip");
 
+				ninja.WriteLine ($"build {a.bc_path}: cpifdiff {a.bc_path}.tmp");
 				ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path}");
 
-				ofiles += " " + ($"{a.o_path}");
-				dedup_infiles += $" {a.linkout_path}";
+				ofiles += " " + $"{a.o_path}";
+				bc_files += " " + $"{a.bc_path}";
+				dedup_infiles += $" {a.aotin_path}";
 			}
 		}
 		if (enable_dedup) {
@@ -857,14 +869,17 @@ class Driver {
 			 * The dedup process will read in the .dedup files created when running with dedup-skip, so add all the
 			 * .bc files as dependencies.
 			 */
-			ninja.WriteLine ($"build {a.bc_path}: aot-instances | {ofiles} {a.linkout_path}");
+			ninja.WriteLine ($"build {a.bc_path}.tmp: aot-instances | {bc_files} {a.linkout_path}");
 			ninja.WriteLine ($"  dedup_image={a.filename}");
 			ninja.WriteLine ($"  src_files={dedup_infiles} {a.linkout_path}");
-			ninja.WriteLine ($"  outfile={a.bc_path}");
+			ninja.WriteLine ($"  outfile={a.bc_path}.tmp");
 			ninja.WriteLine ($"  mono_path={aot_in_path}");
 			ninja.WriteLine ($"build {a.app_path}: cpifdiff {a.linkout_path}");
 			ninja.WriteLine ($"build {a.linkout_path}: aot-dummy");
-			ofiles += $" {a.bc_path}";
+			// The dedup image might not have changed
+			ninja.WriteLine ($"build {a.bc_path}: cpifdiff {a.bc_path}.tmp");
+			ninja.WriteLine ($"build {a.o_path}: emcc {a.bc_path}");
+			ofiles += $" {a.o_path}";
 		}
 		if (link_icalls) {
 			string icall_assemblies = "";
@@ -885,7 +900,7 @@ class Driver {
 		}
 		if (build_wasm) {
 			string zlibhelper = enable_zlib ? "$builddir/zlib-helper.o" : "";
-			ninja.WriteLine ($"build $appdir/mono.js $appdir/moon.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
+			ninja.WriteLine ($"build $appdir/mono.js $appdir/mono.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {runtime_libs} $mono_sdkdir/wasm-runtime-release/lib/libmono-native.a | $tool_prefix/library_mono.js $tool_prefix/dotnet_support.js {wasm_core_support}");
 			ninja.WriteLine ("  out_js=$appdir/mono.js");
 			ninja.WriteLine ("  out_wasm=$appdir/mono.wasm");
 		}

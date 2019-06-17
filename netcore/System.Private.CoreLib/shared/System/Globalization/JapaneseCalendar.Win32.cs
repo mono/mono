@@ -12,7 +12,7 @@ namespace System.Globalization
     {
         private const string JapaneseErasHive = @"System\CurrentControlSet\Control\Nls\Calendars\Japanese\Eras";
 
-        // We know about 4 built-in eras, however users may add additional era(s) from the
+        // We know about 5 built-in eras, however users may add additional era(s) from the
         // registry, by adding values to HKLM\SYSTEM\CurrentControlSet\Control\Nls\Calendars\Japanese\Eras
         //
         // Registry values look like:
@@ -81,9 +81,9 @@ namespace System.Globalization
 
             //
             // If we didn't have valid eras, then fail
-            // should have at least 4 eras
+            // should have at least 5 eras
             //
-            if (iFoundEras < 4) return null;
+            if (iFoundEras < 5) return null;
 
             //
             // Now we have eras, clean them up.

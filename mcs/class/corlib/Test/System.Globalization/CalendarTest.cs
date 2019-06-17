@@ -428,7 +428,7 @@ public class CalendarTest {
 			new Date(28,10,2038,1),
 			new Date(13,10,1460,1),
 			new Date(12,2,5799,1),
-			new Date(10,11,50,4),
+			new Date(10,11,20,5),
 			new Date(10,11,127,1),
 			new Date(10,11,4371,1),
 			new Date(10,11,2581,1));
@@ -436,7 +436,7 @@ public class CalendarTest {
 			new Date(5,7,2094,1),
 			new Date(6,3,1518,1),
 			new Date(5,11,5854,1),
-			new Date(18,7,106,4),
+			new Date(18,7,76,5),
 			new Date(18,7,183,1),
 			new Date(18,7,4427,1),
 			new Date(18,7,2637,1));
@@ -495,7 +495,7 @@ public class CalendarTest {
 		foreach (Calendar cal in acal) {
 			int check = 1;
 			if (cal is JapaneseCalendar)
-				check = 4;
+				check = 5;
 			Assert.AreEqual(check, cal.Eras.Length,
 						 String.Format("D01 {0}.Eras.Length", cal));
 			cal.Eras[0] = 29;
@@ -507,11 +507,12 @@ public class CalendarTest {
 	public void TestErasProperty2() {
 		Assert.AreEqual(1, clcal.Eras.Length, "cn");
 		Assert.AreEqual(1, tlcal.Eras.Length, "tw");
-		Assert.AreEqual(2, jlcal.Eras.Length, "jp");
+		Assert.AreEqual(3, jlcal.Eras.Length, "jp");
 		Assert.AreEqual(1, klcal.Eras.Length, "kr");
 
-		Assert.AreEqual(4, jlcal.Eras [0], "jp.1");
-		Assert.AreEqual(3, jlcal.Eras [1], "jp.2");
+		Assert.AreEqual(5, jlcal.Eras [0], "jp.1");
+		Assert.AreEqual(4, jlcal.Eras [1], "jp.2");
+		Assert.AreEqual(3, jlcal.Eras [2], "jp.3");
 	}
 
 	[Test]
