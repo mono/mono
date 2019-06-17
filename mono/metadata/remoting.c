@@ -590,9 +590,7 @@ mono_marshal_xdomain_copy_out_value (MonoObject *src, MonoObject *dst)
 	default:
 		break;
 	}
-
 }
-
 
 #if !defined (DISABLE_JIT)
 static void
@@ -2136,7 +2134,7 @@ leave:
 /* mono_marshal_xdomain_copy_value
  * Makes a copy of "val" suitable for the current domain.
  */
-MonoObject*
+static MonoObject*
 mono_marshal_xdomain_copy_value (MonoObject* val_raw, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
