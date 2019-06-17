@@ -343,7 +343,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #endif
 
 	if (assembly_count) {
-		const MonoBundledAssembly **bundle_array = g_new0 (MonoBundledAssembly*, assembly_count + 1);
+		MonoBundledAssembly **bundle_array = g_new0 (MonoBundledAssembly*, assembly_count + 1);
 		WasmAssembly *cur = assemblies;
 		int i = 0;
 		while (cur) {
@@ -351,7 +351,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 			cur = cur->next;
 			++i;
 		}
-		mono_register_bundled_assemblies (bundle_array);
+		mono_register_bundled_assemblies ((const MonoBundledAssembly **)bundle_array);
 	}
 
 	mono_trace_init ();

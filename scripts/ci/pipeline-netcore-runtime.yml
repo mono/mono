@@ -12,11 +12,19 @@ variables:
 
 jobs:
 - job: Build
+  timeoutInMinutes: 90
   strategy:
     matrix:
       Linux_x64:
         poolname: Hosted Ubuntu 1604
         manifest: linux-x64
+        sed: sed
+      Linux_ARM64:
+        ${{ if eq(variables['System.TeamProject'], 'public') }}:
+          poolname: Xamarin-ARM64
+        ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+          poolname: Xamarin-ARM64-Private
+        manifest: linux-arm64
         sed: sed
       Windows_x64:
         poolname: Hosted VS2017
@@ -36,7 +44,7 @@ jobs:
 
   - bash: |  
       sudo apt update
-      sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext
+      sudo apt -y install nuget libgdiplus build-essential libtool libtool-bin cmake gettext bc
     displayName: 'Prepare Linux dependencies'
     condition: eq(variables['poolname'], 'Hosted Ubuntu 1604')
   
@@ -74,21 +82,28 @@ jobs:
 
   - bash: |
       ./autogen.sh --with-core=only
-      cd netcore && ./build.sh --rebuild --pack
+      make -C mono -j4
+      make -C netcore bcl
     displayName: 'Build (Make)'
     condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - bash: |
-      make -C netcore prepare
-      make -C netcore update-corefx-tests
-    displayName: 'Download tests'
-    condition: eq(variables['poolname'], 'Hosted macOS')
+      make -C netcore nupkg
+    displayName: 'Build nupkg'
+    condition: ne(variables['poolname'], 'Hosted VS2017')
+
+  - bash: |
+      make -C netcore update-tests-corefx
+    displayName: 'Download CoreFX Tests'
+    condition: ne(variables['poolname'], 'Hosted VS2017')
   
   - bash: |
-     cd netcore && ./build.sh --skipnative --skipmscorlib --test
-    displayName: 'Run tests'
-    timeoutInMinutes: 150
-    condition: eq(variables['poolname'], 'Hosted macOS')
+      for testdir in netcore/corefx/tests/extracted/*; do
+        scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=10m make -C netcore run-tests-corefx-$(basename $testdir)
+      done
+    displayName: 'Run CoreFX Tests'
+    timeoutInMinutes: 90
+    condition: ne(variables['poolname'], 'Hosted VS2017')
 
   - task: PublishTestResults@2
     inputs:

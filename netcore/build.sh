@@ -83,16 +83,16 @@ while [[ $# > 0 ]]; do
   shift
 done
 
+CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
 
 # run .././autogen.sh only once or if "--rebuild" argument is provided
 if [[ "$force_rebuild" == "true" || ! -f .configured ]]; then
   cd ..
   ./autogen.sh --with-core=only
+  make -j$CPU_COUNT
   cd netcore
   touch .configured
 fi
-
-CPU_COUNT=$(getconf _NPROCESSORS_ONLN || echo 4)
 
 # build mono runtime
 if [ "$skipnative" = "false" ]; then
@@ -112,6 +112,6 @@ fi
 # run all xunit tests
 if [ "$test" = "true" ]; then
   for testdir in corefx/tests/extracted/*; do
-    ../scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=15m make xtest-$(basename $testdir)
+    ../scripts/ci/./run-step.sh --label=$(basename $testdir) --timeout=15m make run-tests-corefx-$(basename $testdir)
   done
 fi

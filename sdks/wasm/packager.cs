@@ -660,10 +660,10 @@ class Driver {
 				profiler_aot_args += " ";
 			profiler_aot_args += $"--profile={profiler}";
 		}
-		if (ee_mode == ExecMode.AotInterp) {
+		if (ee_mode == ExecMode.AotInterp)
 			aot_args += "interp,";
+		if (build_wasm)
 			enable_zlib = true;
-		}
 
 		runtime_dir = Path.GetFullPath (runtime_dir);
 		sdkdir = Path.GetFullPath (sdkdir);
