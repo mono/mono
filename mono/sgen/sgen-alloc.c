@@ -174,8 +174,10 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 	 */
 
 	if (real_size > SGEN_MAX_SMALL_OBJ_SIZE) {
-		increment_thread_allocation_counter (size);
 		p = (void **)sgen_los_alloc_large_inner (vtable, ALIGN_UP (real_size));
+		if (p) {
+			increment_thread_allocation_counter (size);
+		}
 	} else {
 		/* tlab_next and tlab_temp_end are TLS vars so accessing them might be expensive */
 
@@ -483,7 +485,6 @@ GCObject*
 sgen_alloc_obj_mature (GCVTable vtable, size_t size)
 {
 	GCObject *res;
-	increment_thread_allocation_counter (size);
 
 	if (!SGEN_CAN_ALIGN_UP (size))
 		return NULL;
@@ -492,6 +493,10 @@ sgen_alloc_obj_mature (GCVTable vtable, size_t size)
 	LOCK_GC;
 	res = alloc_degraded (vtable, size, TRUE);
 	UNLOCK_GC;
+
+	if (res) {
+		increment_thread_allocation_counter (size);
+	}
 
 	return res;
 }
