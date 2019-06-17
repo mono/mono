@@ -1450,7 +1450,8 @@ namespace System.Web.UI
 
 		static string SerializeScriptBlock (RegisteredScript scriptEntry) {
 			try {
-				XmlTextReader reader = new XmlTextReader (new StringReader (scriptEntry.Script));
+				string encodedScript = scriptEntry.Script.Replace ("&", "&#038;");
+				XmlTextReader reader = new XmlTextReader (new StringReader (encodedScript));
 				while (reader.Read ()) {
 					switch (reader.NodeType) {
 					case XmlNodeType.Element:
