@@ -86,7 +86,6 @@ System/EnumTest.cs
 System/EnvironmentTest.cs
 System/ExceptionTest.cs
 System/FloatingPointFormatterTest.cs
-System.GC/GCtest.cs
 System.Globalization/CalendarTest.cs
 System.Globalization/CompareInfoTest.cs
 System.Globalization/CultureInfoTest.cs
