@@ -215,7 +215,7 @@ namespace System.Net.Sockets
 				throw new InvalidTimeZoneException ($"I LIVE ON TITAN: e = {e}, this = {this}");
 			}
 
-			if (Interlocked.Increment (ref really_completed) != 0)
+			if (Interlocked.Increment (ref really_completed) != 1)
 				throw new InvalidTimeZoneException ($"I LIVE ON ENCELADUS: {really_completed}");
 
 			EventHandler<SocketAsyncEventArgs> handler = e.Completed;
