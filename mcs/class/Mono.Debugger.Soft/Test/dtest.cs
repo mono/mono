@@ -4240,6 +4240,24 @@ public class DebuggerTests
 	}
 
 	[Test]
+	public void UnhandledException3 () {
+		vm.Exit (0);
+
+		Start (dtest_app_path, "unhandled-exception-wrapper");
+
+		var req = vm.CreateExceptionRequest (null, false, true);
+		req.Enable ();
+
+		var e = run_until ("unhandled_exception_wrapper");
+		vm.Resume ();
+
+		var e2 = GetNextEvent ();
+		Assert.IsTrue (e2 is ExceptionEvent);
+		vm.Exit (0);
+		vm = null;
+	}
+
+	[Test]
 	public void GCWhileSuspended () {
 		// Check that objects are kept alive during suspensions
 		Event e = run_until ("gc_suspend_1");
