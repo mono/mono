@@ -110,7 +110,7 @@ namespace System.Configuration
 
 		public object SerializedValue {
 			get {
-				if ((needSerializedValue || IsDirty) && !UsingDefaultValue) {
+				if (needSerializedValue || IsDirty) {
 					switch (property.SerializeAs)
 					{
 					case SettingsSerializeAs.String:
