@@ -2642,7 +2642,7 @@ ves_icall_RuntimeMethodInfo_MakeGenericMethod_impl (MonoReflectionMethodHandle r
 	return_val_if_nok (error, MONO_HANDLE_CAST (MonoReflectionMethod, NULL_HANDLE));
 
 	MonoReflectionType *reftype = MONO_HANDLE_GETVAL (rmethod, reftype);
-	g_assert (reftype->type->type == MONO_TYPE_CLASS);
+	g_assert (reftype->type->type == MONO_TYPE_CLASS || reftype->type->type == MONO_TYPE_VALUETYPE);
 	MonoClass *refclass = reftype->type->data.klass;
 
 	/*FIXME but I think this is no longer necessary*/
