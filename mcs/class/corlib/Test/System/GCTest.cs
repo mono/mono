@@ -34,6 +34,60 @@ using NUnit.Framework;
 
 namespace MonoTests.System {
 
+	public interface SizedObject
+	{
+		long ExpectedSize();
+	}
+
+	public class NoPointer : SizedObject
+	{
+		public long ExpectedSize()
+		{
+			return 2 * IntPtr.Size;
+		}
+	}
+
+	public class TwoPointer : SizedObject
+	{
+		public object field1;
+		public object field2;
+
+		public long ExpectedSize()
+		{
+			return 4*IntPtr.Size;
+		}
+	}
+
+	public class FourPointer : SizedObject
+	{
+		public object field1;
+		public object field2;
+		public object field3;
+		public object field4;
+
+		public long ExpectedSize()
+		{
+			return 6*IntPtr.Size;
+		}
+	}
+
+	public class EightPointer : SizedObject
+	{
+		public object field1;
+		public object field2;
+		public object fiedl3;
+		public object field4;
+		public object field5;
+		public object field6;
+		public object field7;
+		public object field8;
+
+		public long ExpectedSize()
+		{
+			return (long)(10*IntPtr.Size);
+		}
+	}
+
 	[TestFixture]
 	public class GCTest {
 		class MyFinalizeObject
@@ -71,5 +125,45 @@ namespace MonoTests.System {
 
 			Assert.IsTrue (t.Wait (5000));
 		}
-	}
+
+
+		[Test]
+		public static void TestGetBytesAllocatedForCurrentThread()
+		{
+
+			Func<SizedObject>[] objectAllocators = {
+						  							() => new NoPointer(),
+						  							() => new TwoPointer(),
+						  							() => new FourPointer(),
+					  								() => new EightPointer()
+			     								};
+
+			Random r = new Random();
+
+			// Methods trigger allocation when first run.
+			// So this code warms up allocation before measuring.
+			for (int i = 0; i < objectAllocators.Length; i++)
+			{
+				Console.WriteLine(objectAllocators[i]().ExpectedSize());
+			}
+
+			Console.WriteLine(r.Next(1, 10));
+
+			Assert.AreEqual(1L, 1L);
+
+			// End warmup
+
+			long expectedSize = 0;
+			long bytesBeforeAlloc = GC.GetAllocatedBytesForCurrentThread();
+
+			for (int i = 0; i < 10000000; i++)
+			{
+				expectedSize += objectAllocators[r.Next(0, objectAllocators.Length) ]().ExpectedSize();
+			}
+
+			long bytesAfterAlloc = GC.GetAllocatedBytesForCurrentThread();
+
+			Assert.AreEqual(expectedSize, bytesAfterAlloc - bytesBeforeAlloc);
+		}
+	}	
 }
