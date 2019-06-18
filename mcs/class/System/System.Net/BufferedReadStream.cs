@@ -47,8 +47,19 @@ namespace System.Net
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			if (TryReadFromBuffer (buffer, offset, size, out var result))
-				return result;
+			var remaining = readBuffer?.Size ?? 0;
+			if (remaining > 0) {
+				int copy = (remaining > size) ? size : remaining;
+				Buffer.BlockCopy (readBuffer.Buffer, readBuffer.Offset, buffer, offset, copy);
+				readBuffer.Offset += copy;
+				readBuffer.Size -= copy;
+				offset += copy;
+				size -= copy;
+				return copy;
+			}
+
+			if (InnerStream == null)
+				return 0;
 
 			return await InnerStream.ReadAsync (
 				buffer, offset, size, cancellationToken).ConfigureAwait (false);
