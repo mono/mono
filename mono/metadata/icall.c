@@ -3555,6 +3555,10 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 #if ENABLE_NETCORE
 	if (sig->ret->byref) {
 		MonoType* ret_byval = m_class_get_byval_arg (mono_class_from_mono_type_internal (sig->ret));
+		if (ret_byval->type == MONO_TYPE_VOID) {
+			mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "ByRef to void return values are not supported in reflection invocation"));
+			return NULL;
+		}	
 		if (m_class_is_byreflike (mono_class_from_mono_type_internal (ret_byval))) {
 			mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "Cannot invoke method returning ByRef to ByRefLike type via reflection"));
 			return NULL;
