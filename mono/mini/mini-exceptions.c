@@ -2424,7 +2424,8 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 						MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
 					frame.native_offset = (char*)ei->handler_start - (char*)ji->code_start;
 					*catch_frame = frame;
-					result = MONO_FIRST_PASS_HANDLED;
+					if (method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) 
+						result = MONO_FIRST_PASS_HANDLED;
 					return result;
 				}
 				mono_error_cleanup (isinst_error);
