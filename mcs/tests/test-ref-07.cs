@@ -1,8 +1,13 @@
 // Compiler options: -langversion:latest
 
+public struct TestMain
+{
+	public static void Main () => Test.MainMethod();
+}
+
 public readonly ref partial struct Test
 {
-	public static void Main ()
+	public static void MainMethod ()
 	{
 		var m = new Test ();
 		m.Method ();
