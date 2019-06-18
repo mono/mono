@@ -3548,10 +3548,14 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 		}
 	}
 
+	if ((m->klass != NULL && m_class_is_byreflike (m->klass)) || m_class_is_byreflike (mono_class_from_mono_type_internal (sig->ret))) {
+		mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "Cannot invoke method with stack pointers via reflection"));
+		return NULL;
+	}
 #if ENABLE_NETCORE
-	if (sig->ret->byref || m_class_is_byreflike (mono_class_from_mono_type_internal (sig->ret))) {
+	if (sig->ret->byref) {
 		MonoType* ret_byval = m_class_get_byval_arg (mono_class_from_mono_type_internal (sig->ret));
-		if (ret_byval->byref || m_class_is_byreflike (mono_class_from_mono_type_internal (ret_byval))) {
+		if (m_class_is_byreflike (mono_class_from_mono_type_internal (ret_byval))) {
 			mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "Cannot invoke method returning ByRef to ByRefLike type via reflection"));
 			return NULL;
 		}
