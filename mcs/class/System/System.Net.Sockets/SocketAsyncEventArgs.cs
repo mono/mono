@@ -203,18 +203,21 @@ namespace System.Net.Sockets
 			OnCompleted (this);
 		}
 
+		int really_completed;
+
 		protected virtual void OnCompleted (SocketAsyncEventArgs e)
 		{
 			if (e == null)
-				throw new InvalidTimeZoneException ("I LIVE ON MARS!");
+				return;
+
 			if (e != this) {
 				Console.Error.WriteLine ($"MARTIN TEST: e = {e}, this = {this}");
-				throw new InvalidTimeZoneException ("I LIVE ON THE MOON!");
+				throw new InvalidTimeZoneException ($"I LIVE ON TITAN: e = {e}, this = {this}");
 			}
 
-			if (e == null)
-				return;
-			
+			if (Interlocked.Increment (ref really_completed) != 0)
+				throw new InvalidTimeZoneException ($"I LIVE ON ENCELADUS: {really_completed}");
+
 			EventHandler<SocketAsyncEventArgs> handler = e.Completed;
 			if (handler != null)
 				handler (e.current_socket, e);
