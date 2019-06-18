@@ -3226,14 +3226,14 @@ namespace System
         #endregion
 
 #if NETCORE
-        protected override MethodInfo GetMethodImpl(string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers)
+        protected override MethodInfo GetMethodImpl(string name, BindingFlags bindingAttr, Binder? binder, CallingConventions callConvention, Type[]? types, ParameterModifier[]? modifiers)
 		{
 			return GetMethodImpl (name, -1, bindingAttr, binder, callConvention, types, modifiers);
 		}
 
         protected override MethodInfo GetMethodImpl(String name, int genericParamCount,
-            BindingFlags bindingAttr, Binder binder, CallingConventions callConv, 
-            Type[] types, ParameterModifier[] modifiers) 
+            BindingFlags bindingAttr, Binder? binder, CallingConventions callConv, 
+            Type[]? types, ParameterModifier[]? modifiers) 
         {       
             ListBuilder<MethodInfo> candidates = GetMethodCandidates(name, bindingAttr, callConv, types, genericParamCount, false);
             if (candidates.Count == 0) 
@@ -3269,8 +3269,13 @@ namespace System
 #endif
 
         protected override ConstructorInfo GetConstructorImpl(
+#if NETCORE
+            BindingFlags bindingAttr, Binder? binder, CallingConventions callConvention, 
+            Type[] types, ParameterModifier[]? modifiers)
+#else
             BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, 
-            Type[] types, ParameterModifier[] modifiers) 
+            Type[] types, ParameterModifier[] modifiers)
+#endif
         {
             ListBuilder<ConstructorInfo> candidates = GetConstructorCandidates(null, bindingAttr, CallingConventions.Any, types, false);
 
@@ -3299,7 +3304,11 @@ namespace System
 
 
         protected override PropertyInfo GetPropertyImpl(
-            String name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) 
+#if NETCORE
+            String name, BindingFlags bindingAttr, Binder? binder, Type? returnType, Type[]? types, ParameterModifier[]? modifiers) 
+#else
+            String name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
+#endif
         {
             if (name == null) throw new ArgumentNullException();
             Contract.EndContractBlock();
@@ -3722,7 +3731,11 @@ namespace System
 
         #region Hierarchy
         [System.Security.SecuritySafeCritical]  // auto-generated
+#if NETCORE
+        public override bool IsInstanceOfType(Object? o)
+#else
         public override bool IsInstanceOfType(Object o)
+#endif
         {
             return RuntimeTypeHandle.IsInstanceOfType(this, o);
         }
@@ -3759,12 +3772,20 @@ namespace System
         }
 #endif
 
+#if NETCORE
+        public override bool IsAssignableFrom(System.Reflection.TypeInfo? typeInfo){
+#else
         public override bool IsAssignableFrom(System.Reflection.TypeInfo typeInfo){
+#endif
             if(typeInfo==null) return false;
             return IsAssignableFrom(typeInfo.AsType());
         }
 
+#if NETCORE
+        public override bool IsAssignableFrom(Type? c)
+#else
         public override bool IsAssignableFrom(Type c)
+#endif
         {
             if ((object)c == null)
                 return false;
@@ -3809,7 +3830,11 @@ namespace System
 
 #if !FEATURE_CORECLR
         // Reflexive, symmetric, transitive.
+#if NETCORE
+        public override bool IsEquivalentTo(Type? other)
+#else
         public override bool IsEquivalentTo(Type other)
+#endif
         {
             RuntimeType otherRtType = other as RuntimeType;
             if ((object)otherRtType == null)
@@ -4306,7 +4331,7 @@ namespace System
 #pragma warning disable 162
                     if (!RuntimeFeature.IsDynamicCodeSupported)
                         throw new PlatformNotSupportedException();
-                    return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
+                    return MakeTypeBuilderInstantiation(instantiation);
 #pragma warning restore 162
 #endif
                 }
@@ -4336,6 +4361,13 @@ namespace System
 #endif
             return ret;
         }
+
+#if !NETCORE
+        Type MakeTypeBuilderInstantiation(Type[] instantiation)
+        {
+            return System.Reflection.Emit.TypeBuilderInstantiation.MakeGenericType(this, instantiation);
+        }
+#endif
 
         public override bool IsGenericTypeDefinition
         {
@@ -4600,8 +4632,13 @@ namespace System
         [DebuggerStepThroughAttribute]
         [Diagnostics.DebuggerHidden]
         public override Object InvokeMember(
+#if NETCORE
+            String name, BindingFlags bindingFlags, Binder? binder, Object? target, 
+            Object?[]? providedArgs, ParameterModifier[]? modifiers, CultureInfo? culture, String[]? namedParams) 
+#else
             String name, BindingFlags bindingFlags, Binder binder, Object target, 
             Object[] providedArgs, ParameterModifier[] modifiers, CultureInfo culture, String[] namedParams) 
+#endif
         {
             if (IsGenericParameter)
                 throw new InvalidOperationException(Environment.GetResourceString("Arg_GenericParameter"));
@@ -5072,7 +5109,11 @@ namespace System
 
         #region Object Overrides
         [Pure]
+#if NETCORE
+        public override bool Equals(object? obj)
+#else
         public override bool Equals(object obj)
+#endif
         {
             // ComObjects are identified by the instance of the Type object and not the TypeHandle.
             return obj == (object)this;

@@ -787,6 +787,7 @@ struct MonoCallInst {
 	guint tailcall : 1;
 	/* If this is TRUE, 'fptr' points to a MonoJumpInfo instead of an address. */
 	guint fptr_is_patch : 1;
+	MonoJitICallId jit_icall_id;
 	/*
 	 * If this is true, then the call returns a vtype in a register using the same 
 	 * calling convention as OP_CALL.
@@ -1127,6 +1128,12 @@ typedef struct MonoJumpInfoRgctxEntry MonoJumpInfoRgctxEntry;
 typedef struct MonoJumpInfo MonoJumpInfo;
 typedef struct MonoJumpInfoGSharedVtCall MonoJumpInfoGSharedVtCall;
 
+// Subset of MonoJumpInfo.
+ typedef struct MonoJumpInfoTarget {
+	MonoJumpInfoType type;
+	gconstpointer   target;
+} MonoJumpInfoTarget;
+
 // This ordering is mimiced in MONO_JIT_ICALLS.
 typedef enum {
 	MONO_TRAMPOLINE_JIT      = 0,
@@ -1139,6 +1146,13 @@ typedef enum {
 	MONO_TRAMPOLINE_VCALL    = 7,
 	MONO_TRAMPOLINE_NUM      = 8,
 } MonoTrampolineType;
+
+// Assuming MONO_TRAMPOLINE_JIT / MONO_JIT_ICALL_generic_trampoline_jit are first.
+#if __cplusplus
+g_static_assert (MONO_TRAMPOLINE_JIT == 0);
+#endif
+#define mono_trampoline_type_to_jit_icall_id(a) ((a) + MONO_JIT_ICALL_generic_trampoline_jit)
+#define mono_jit_icall_id_to_trampoline_type(a) ((MonoTrampolineType)((a) - MONO_JIT_ICALL_generic_trampoline_jit))
 
 /* These trampolines return normally to their caller */
 #define MONO_TRAMPOLINE_TYPE_MUST_RETURN(t)		\
@@ -2069,6 +2083,7 @@ guint     mini_type_to_stind                (MonoCompile* cfg, MonoType *type);
 MonoJitInfo* mini_lookup_method             (MonoDomain *domain, MonoMethod *method, MonoMethod *shared);
 guint32   mono_reverse_branch_op            (guint32 opcode);
 void      mono_disassemble_code             (MonoCompile *cfg, guint8 *code, int size, char *id);
+MonoJumpInfoTarget mono_call_to_patch       (MonoCallInst *call);
 void      mono_call_add_patch_info          (MonoCompile *cfg, MonoCallInst *call, int ip);
 void      mono_add_patch_info               (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target) MONO_LLVM_INTERNAL;
 void      mono_add_patch_info_rel           (MonoCompile *cfg, int ip, MonoJumpInfoType type, gconstpointer target, int relocation) MONO_LLVM_INTERNAL;
@@ -2092,13 +2107,11 @@ gboolean mono_compile_is_broken (MonoCompile *cfg, MonoMethod *method, gboolean 
 MonoInst *mono_get_got_var (MonoCompile *cfg);
 void      mono_add_seq_point (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int native_offset);
 void      mono_add_var_location (MonoCompile *cfg, MonoInst *var, gboolean is_reg, int reg, int offset, int from, int to);
-MonoInst* mono_emit_jit_icall_info (MonoCompile *cfg, MonoJitICallInfo *jit_icall_info, MonoInst **args); // FIXME remove/reduce
 MonoInst* mono_emit_jit_icall_id (MonoCompile *cfg, MonoJitICallId jit_icall_id, MonoInst **args);
 #define mono_emit_jit_icall(cfg, name, args) (mono_emit_jit_icall_id ((cfg), MONO_JIT_ICALL_ ## name, (args)))
 
 MonoInst* mono_emit_jit_icall_by_info (MonoCompile *cfg, int il_offset, MonoJitICallInfo *info, MonoInst **args);
 MonoInst* mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoInst **args, MonoInst *this_ins);
-MonoInst* mono_emit_native_call (MonoCompile *cfg, gconstpointer func, MonoMethodSignature *sig, MonoInst **args);
 gboolean  mini_should_insert_breakpoint (MonoMethod *method);
 int mono_target_pagesize (void);
 
@@ -2820,5 +2833,8 @@ mini_safepoints_enabled (void)
 	return TRUE;
 #endif
 }
+
+gpointer
+mono_arch_load_function (MonoJitICallId jit_icall_id);
 
 #endif /* __MONO_MINI_H__ */

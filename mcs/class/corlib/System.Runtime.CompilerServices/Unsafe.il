@@ -365,4 +365,12 @@
         clt.un
         ret
   }
+
+  .method public hidebysig static !!T& Unbox<valuetype .ctor ([mscorlib]System.ValueType) T> (object 'box') cil managed aggressiveinlining
+  {
+        .maxstack 1
+        ldarg.0
+        unbox !!T
+        ret
+  }
 }

@@ -58,4 +58,41 @@ describe("The WebAssembly Issues Test Suite",function(){
       assert.equal(doublevalue, 20, "result doesn't match 20");
 
     }, DEFAULT_TIMEOUT);  
+
+    it('IssuesTestSuite: https://github.com/mono/mono/issues/14940 should not crash when issuing two fetchs back to back.', (done) => {
+      //karmaHTML.issuesspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.issuesspec.document;
+      _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:IssueDoubleFetch", []).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result.length, 2, "result does not match Fetch Issue of 2.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT);  
+
+    it('IssuesTestSuite: https://github.com/mono/mono/issues/14940 should not crash when retrieving headers issuing two fetchs back to back.', (done) => {
+      //karmaHTML.issuesspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.issuesspec.document;
+      _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:IssueDoubleFetchHeaders", []).then(
+        (result) => 
+        {
+            try {
+              assert.equal(result.length, 2, "result does not match number of headers 2.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_TIMEOUT);  
+
   });

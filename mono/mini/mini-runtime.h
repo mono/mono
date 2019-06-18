@@ -155,6 +155,9 @@ typedef struct {
 	int kind;
 	MonoContext ctx; /* valid if kind == DEBUGGER_INVOKE || kind == INTERP_EXIT_WITH_CTX */
 	gpointer interp_exit_data; /* valid if kind == INTERP_EXIT || kind == INTERP_EXIT_WITH_CTX */
+#if defined (_MSC_VER)
+	gboolean interp_exit_label_set;
+#endif
 } MonoLMFExt;
 
 typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
@@ -182,6 +185,10 @@ typedef struct MonoDebugOptions {
 	 * Enable this to debug problems with direct calls in llvm
 	 */
 	gboolean llvm_disable_self_init;
+	/*
+	 * Prevent LLVM from inlining any methods
+	 */
+	gboolean llvm_disable_inlining;
 	gboolean use_fallback_tls;
 	/*
 	 * Whenever data such as next sequence points and flags is required.
@@ -412,8 +419,12 @@ MONO_API int         mono_regression_test_step      (int verbose_level, const ch
 
 
 void                   mono_interp_stub_init         (void);
-void                   mini_install_interp_callbacks (MonoEECallbacks *cbs);
-MonoEECallbacks*       mini_get_interp_callbacks     (void);
+void                   mini_install_interp_callbacks (const MonoEECallbacks *cbs);
+
+extern const
+MonoEECallbacks*       mono_interp_callbacks_pointer;
+
+#define mini_get_interp_callbacks() (mono_interp_callbacks_pointer)
 
 typedef struct _MonoDebuggerCallbacks MonoDebuggerCallbacks;
 
@@ -444,8 +455,6 @@ void      mono_push_lmf                     (MonoLMFExt *ext);
 void      mono_pop_lmf                      (MonoLMF *lmf);
 #define mono_get_jit_tls mono_tls_get_jit_tls
 MonoJitTlsData* mono_get_jit_tls            (void);
-MONO_API MONO_RT_EXTERNAL_ONLY
-MonoDomain* mono_jit_thread_attach (MonoDomain *domain);
 MONO_API void      mono_jit_set_domain      (MonoDomain *domain);
 
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee);

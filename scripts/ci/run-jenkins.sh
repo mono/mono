@@ -82,6 +82,7 @@ elif [[ ${CI_TAGS} == *'bitcodeinterp'* ]];      then EXTRA_CONF_FLAGS="${EXTRA_
 elif [[ ${CI_TAGS} == *'bitcode'* ]];            then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=bitcode"; export PATH="$PATH:${MONO_REPO_ROOT}/llvm/usr/bin";
 elif [[ ${CI_TAGS} == *'acceptance-tests'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=${MONO_REPO_ROOT}/tmp/mono-acceptance-tests --with-sgen-default-concurrent=yes";
 elif [[ ${CI_TAGS} == *'all-profiles'* ]];       then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --with-runtime-preset=all";
+elif [[ ${CI_TAGS} == *'compile-msbuild-source'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --prefix=/tmp/mono-from-source";
 fi
 
 if [ -x "/usr/bin/dpkg-architecture" ];
@@ -326,17 +327,13 @@ if [[ ${CI_TAGS} == *'win-'* ]];
     ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "/p:PlatformToolset=v140 /p:MONO_TARGET_GC=sgen ${MSBUILD_CXX}"
 fi
 
-if [[ ${CI_TAGS} == *'winaot'* ]];
+if [[ ${CI_TAGS} == *'win-amd64'* ]];
     then
-
-    if [[ ${PLATFORM} == x64 ]];
-        then
-        # The AOT compiler on Windows requires Visual Studio's clang.exe and link.exe.
-        # Depending on codegen (JIT/LLVM) it might also need platform specific libraries.
-        # Use a wrapper script that will make sure to setup full VS MSVC environment if
-        # needed when running mono-sgen.exe as AOT compiler.
-        export MONO_EXECUTABLE_WRAPPER="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen-msvc.sh"
-    fi
+    # The AOT compiler on Windows requires Visual Studio's clang.exe and link.exe.
+    # Depending on codegen (JIT/LLVM) it might also need platform specific libraries.
+    # Use a wrapper script that will make sure to setup full VS MSVC environment if
+    # needed when running mono-sgen.exe as AOT compiler.
+    export MONO_EXECUTABLE_WRAPPER="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen-msvc.sh"
 fi
 
 if [[ ${CI_TAGS} == *'monolite'* ]]; then make get-monolite-latest; fi
@@ -373,7 +370,9 @@ elif [[ ${CI_TAGS} == *'interpreter'* ]];              then ${MONO_REPO_ROOT}/sc
 elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-mcs.sh;
 elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/scripts/ci/run-test-mac-sdk.sh;
 elif [[ ${CI_TAGS} == *'helix-tests'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-helix.sh;
+elif [[ ${CI_TAGS} == *'compile-msbuild-source'* ]];   then ${MONO_REPO_ROOT}/scripts/ci/run-test-msbuild.sh;
 elif [[ ${CI_TAGS} == *'make-install'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-make-install.sh;
+elif [[ ${CI_TAGS} == *'compiler-server-tests'* ]];          then ${MONO_REPO_ROOT}/scripts/ci/run-test-compiler-server.sh;
 elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then echo "Skipping tests.";
 else make check-ci;
 fi

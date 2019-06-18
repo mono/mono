@@ -199,7 +199,7 @@ emit_span_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature
 		/* Portable Span<T> */
 		return NULL;
 
-	if (!strcmp (cmethod->name, "get_Item") && fsig->params [0]->type != MONO_TYPE_VALUETYPE) {
+	if (!strcmp (cmethod->name, "get_Item")) {
 		MonoClassField *length_field = mono_class_get_field_from_name_full (cmethod->klass, "_length", NULL);
 
 		g_assert (length_field);
@@ -1521,7 +1521,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 			if (opcode) {
 				double *dest = (double *) mono_domain_alloc (cfg->domain, sizeof (double));
-				double result;
+				double result = 0;
 				MONO_INST_NEW (cfg, ins, OP_R8CONST);
 				ins->type = STACK_R8;
 				ins->dreg = mono_alloc_dreg (cfg, (MonoStackType) ins->type);
@@ -1576,6 +1576,8 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				case OP_TANH:
 					result = tanh (source);
 					break;
+				default:
+					g_error ("invalid opcode %d", (int)opcode);
 				}
 				*dest = result;
 				MONO_ADD_INS (cfg->cbb, ins);

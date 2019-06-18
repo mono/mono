@@ -228,5 +228,13 @@ namespace System.Security.Cryptography {
         {
             throw new NotSupportedException(SR.GetString(SR.NotSupported_SubclassOverride));
         }
+
+#if MONO 
+        public virtual byte[] ExportECPrivateKey () => throw new PlatformNotSupportedException ();
+
+        public virtual bool TryExportECPrivateKey (System.Span<byte> destination, out int bytesWritten) => throw new PlatformNotSupportedException ();
+
+        public virtual void ImportECPrivateKey (System.ReadOnlySpan<byte> source, out int bytesRead) => throw new PlatformNotSupportedException ();
+#endif
     }
 }

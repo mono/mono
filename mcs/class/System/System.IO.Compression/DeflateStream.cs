@@ -549,7 +549,7 @@ namespace System.IO.Compression
 		{
 			throw new PlatformNotSupportedException ();
 		}
-#elif MONOTOUCH || MONODROID
+#elif MONOTOUCH || MONODROID || WASM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern IntPtr CreateZStream (int compress, bool gzip, IntPtr feeder, IntPtr data);
 

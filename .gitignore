@@ -24,7 +24,6 @@
 *.tlh
 *.bak
 *.ilk
-*.log
 *.lib
 *.sbr
 *.sdf
@@ -139,6 +138,7 @@ llvm/build/
 llvm/usr/
 sdks/builds/llvm-*/
 sdks/builds/android-*/
+mcs/build/compiler-server.log
 
 
 ##############################################################################

@@ -746,12 +746,6 @@ mono_arch_init (void)
 
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();
-
-	mono_aot_register_jit_icall ("mono_x86_throw_exception", mono_x86_throw_exception);
-	mono_aot_register_jit_icall ("mono_x86_throw_corlib_exception", mono_x86_throw_corlib_exception);
-#if defined (MONO_ARCH_GSHAREDVT_SUPPORTED)
-	mono_aot_register_jit_icall ("mono_x86_start_gsharedvt_call", mono_x86_start_gsharedvt_call);
-#endif
 }
 
 /*
@@ -1733,7 +1727,6 @@ x86_align_and_patch (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstp
 	if (cfg->abs_patches) {
 		jinfo = (MonoJumpInfo*)g_hash_table_lookup (cfg->abs_patches, data);
 		if (jinfo && (jinfo->type == MONO_PATCH_INFO_JIT_ICALL_ADDR
-				|| jinfo->type == MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR
 				|| jinfo->type == MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR))
 			needs_paddings = FALSE;
 	}
@@ -3088,12 +3081,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			case OP_VCALL:
 			case OP_VCALL2:
 			case OP_VOIDCALL:
-			case OP_CALL:
-				if (ins->flags & MONO_INST_HAS_METHOD)
-					code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method);
-				else
-					code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
+			case OP_CALL: {
+				const MonoJumpInfoTarget patch = mono_call_to_patch (call);
+				code = emit_call (cfg, code, patch.type, patch.target);
 				break;
+			}
 			case OP_FCALL_REG:
 			case OP_LCALL_REG:
 			case OP_VCALL_REG:
@@ -4905,7 +4897,6 @@ mono_arch_patch_code_new (MonoCompile *cfg, MonoDomain *domain, guint8 *code, Mo
 	case MONO_PATCH_INFO_LABEL:
 	case MONO_PATCH_INFO_RGCTX_FETCH:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
-	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
 		x86_patch (ip, (unsigned char*)target);
 		break;
@@ -6393,4 +6384,18 @@ CallInfo*
 mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 {
 	return get_call_info (mp, sig);
+}
+
+gpointer
+mono_arch_load_function (MonoJitICallId jit_icall_id)
+{
+	gpointer target = NULL;
+	switch (jit_icall_id) {
+#undef MONO_AOT_ICALL
+#define MONO_AOT_ICALL(x) case MONO_JIT_ICALL_ ## x: target = (gpointer)x; break;
+	MONO_AOT_ICALL (mono_x86_start_gsharedvt_call)
+	MONO_AOT_ICALL (mono_x86_throw_corlib_exception)
+	MONO_AOT_ICALL (mono_x86_throw_exception)
+	}
+	return target;
 }

@@ -1863,11 +1863,14 @@
     <Compile Include="corefx\DefaultBinder.cs" />
     <Compile Include="corefx\Directory.cs" />
     <Compile Include="corefx\DirectoryInfo.cs" />
+    <Compile Include="corefx\EnumeratorCancellationAttribute.cs" />
     <Compile Include="corefx\File.cs" />
     <Compile Include="corefx\FileInfo.cs" />
     <Compile Include="corefx\GlobalizationMode.cs" />
     <Compile Include="corefx\MethodInfo.cs" />
     <Compile Include="corefx\MonoLinqHelper.cs" />
+    <Compile Include="corefx\PbeEncryptionAlgorithm.cs" />
+    <Compile Include="corefx\PbeParameters.cs" />
     <Compile Include="corefx\RandomNumberGenerator.cs" />
     <Compile Include="corefx\RuntimeFeature.cs" />
     <Compile Include="corefx\RuntimeImports.cs" />
@@ -1876,6 +1879,7 @@
     <Compile Include="corefx\Stream.cs" />
     <Compile Include="corefx\SwitchExpressionException.cs" />
     <Compile Include="corefx\SynchronizationContext.cs" />
+    <Compile Include="corefx\TaskAsyncEnumerableExtensions.cs" />
     <Compile Include="corefx\TextWriter.cs" />
     <Compile Include="corefx\ThrowHelper.cs" />
     <Compile Include="corefx\TimeSpanParse.cs" />
