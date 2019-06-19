@@ -55,8 +55,10 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\corlib\Mono\DataConverter.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
+    <Compile Include="Mono.Profiler.Aot\ProfileBase.cs" />
     <Compile Include="Mono.Profiler.Aot\ProfileData.cs" />
     <Compile Include="Mono.Profiler.Aot\ProfileReader.cs" />
+    <Compile Include="Mono.Profiler.Aot\ProfileWriter.cs" />
     <Compile Include="Mono.Profiler.Aot\Records.cs" />
     <Compile Include="Mono.Profiler.Log\LogBufferHeader.cs" />
     <Compile Include="Mono.Profiler.Log\LogEnums.cs" />
