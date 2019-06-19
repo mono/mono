@@ -440,7 +440,7 @@ selector_thread (gpointer data)
 
 		if (threadpool_io->updates_size > 0) {
 			threadpool_io->updates_size = 0;
-			memset (&threadpool_io->updates, 0, UPDATES_CAPACITY * sizeof (ThreadPoolIOUpdate));
+			memset (&threadpool_io->updates, 0, sizeof (threadpool_io->updates));
 		}
 
 		mono_coop_cond_broadcast (&threadpool_io->updates_cond);
