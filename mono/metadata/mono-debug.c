@@ -65,6 +65,8 @@ static mono_mutex_t debugger_lock_mutex;
 
 static gboolean is_attached = FALSE;
 
+static FindJitDebugInfoCb find_jit_debug_info_cb;
+
 static MonoDebugHandle     *mono_debug_open_image      (MonoImage *image, const guint8 *raw_contents, int size);
 
 static MonoDebugHandle     *mono_debug_get_image      (MonoImage *image);
@@ -153,6 +155,12 @@ mono_debug_init (MonoDebugFormat format)
 	mono_install_assembly_load_hook (mono_debug_add_assembly, NULL);
 
 	mono_debugger_unlock ();
+}
+
+void
+mono_debug_install_find_jit_debug_info_cb (FindJitDebugInfoCb cb)
+{
+	find_jit_debug_info_cb = cb;
 }
 
 void
@@ -710,8 +718,20 @@ find_method (MonoMethod *method, MonoDomain *domain, MonoDebugMethodJitInfo *jit
 	table = lookup_data_table (domain);
 	address = (MonoDebugMethodAddress *)g_hash_table_lookup (table->method_address_hash, method);
 
-	if (!address)
-		return NULL;
+	if (!address) {
+		/* Load on demand from AOT images */
+		if (find_jit_debug_info_cb) {
+			MonoDebugMethodJitInfo *tmp = find_jit_debug_info_cb (domain, method);
+			if (tmp) {
+				/* The caller expects the result to be copied to @jit */
+				memcpy (jit, tmp, sizeof (MonoDebugMethodJitInfo));
+				g_free (tmp);
+				return jit;
+			} else {
+				return NULL;
+			}
+		}
+	}
 
 	return mono_debug_read_method (address, jit);
 }
@@ -719,11 +739,10 @@ find_method (MonoMethod *method, MonoDomain *domain, MonoDebugMethodJitInfo *jit
 MonoDebugMethodJitInfo *
 mono_debug_find_method (MonoMethod *method, MonoDomain *domain)
 {
-	MonoDebugMethodJitInfo *res = g_new0 (MonoDebugMethodJitInfo, 1);
-
 	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
 		return NULL;
 
+	MonoDebugMethodJitInfo *res = g_new0 (MonoDebugMethodJitInfo, 1);
 	mono_debugger_lock ();
 	find_method (method, domain, res);
 	mono_debugger_unlock ();

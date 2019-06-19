@@ -69,6 +69,8 @@ typedef struct {
 	int end_line, end_column;
 } MonoSymSeqPoint;
 
+typedef MonoDebugMethodJitInfo* (*FindJitDebugInfoCb) (MonoDomain *domain, MonoMethod *method);
+
 void            mono_debugger_lock                          (void);
 void            mono_debugger_unlock                        (void);
 
@@ -91,5 +93,8 @@ mono_debug_lookup_source_location_by_il (MonoMethod *method, guint32 il_offset, 
 
 char*
 mono_debug_image_get_sourcelink (MonoImage *image);
+
+void
+mono_debug_install_find_jit_debug_info_cb (FindJitDebugInfoCb cb);
 
 #endif /* __DEBUG_INTERNALS_H__ */

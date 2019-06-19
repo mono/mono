@@ -15,6 +15,8 @@
 #include "mini.h"
 #include "ee.h"
 
+#include <mono/metadata/mono-debug.h>
+
 /* Per-domain information maintained by the JIT */
 typedef struct
 {
@@ -56,6 +58,8 @@ typedef struct
 	GHashTable *method_rgctx_hash;
 	/* Maps gpointer -> InterpMethod */
 	GHashTable *interp_method_pointer_hash;
+	/* Maps MonoMethod -> AotDebugInfo */
+	GHashTable *aot_debug_info_hash;
 } MonoJitDomainInfo;
 
 #define domain_jit_info(domain) ((MonoJitDomainInfo*)((domain)->runtime_info))
@@ -489,6 +493,7 @@ MONO_API void      mono_print_method_from_ip         (void *ip);
 MONO_API char     *mono_pmip                         (void *ip);
 MONO_API int mono_ee_api_version (void);
 gboolean  mono_debug_count                  (void);
+MonoDebugMethodJitInfo *mini_debug_find_jit_debug_info (MonoDomain *domain, MonoMethod *method);
 
 #ifdef __linux__
 #define XDEBUG_ENABLED 1

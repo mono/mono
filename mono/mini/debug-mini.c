@@ -35,6 +35,12 @@ typedef struct
 	guint32 breakpoint_id;
 } MiniDebugMethodInfo;
 
+typedef struct {
+	guint8 *code_start;
+	guint8 *debug_info;
+	guint32 debug_info_len;
+} AotDebugInfo;
+
 static inline void
 record_line_number (MiniDebugMethodInfo *info, guint32 address, guint32 offset)
 {
@@ -45,7 +51,6 @@ record_line_number (MiniDebugMethodInfo *info, guint32 address, guint32 offset)
 
 	g_array_append_val (info->line_numbers, lne);
 }
-
 
 void
 mono_debug_init_method (MonoCompile *cfg, MonoBasicBlock *start_block, guint32 breakpoint_id)
@@ -601,7 +606,7 @@ void
 mono_debug_add_aot_method (MonoDomain *domain, MonoMethod *method, guint8 *code_start, 
 			   guint8 *debug_info, guint32 debug_info_len)
 {
-	MonoDebugMethodJitInfo *jit;
+	MonoJitDomainInfo *domain_info;
 
 	if (!mono_debug_enabled ())
 		return;
@@ -616,13 +621,18 @@ mono_debug_add_aot_method (MonoDomain *domain, MonoMethod *method, guint8 *code_
 	if (debug_info_len == 0)
 		return;
 
-	jit = deserialize_debug_info (method, code_start, debug_info, debug_info_len);
+	/* Cache the data here, and decode it when its needed in mini_debug_find_jit_debug_info () */
+	AotDebugInfo *info = mono_domain_alloc0 (domain, sizeof (AotDebugInfo));
+	info->code_start = code_start;
+	info->debug_info = debug_info;
+	info->debug_info_len = debug_info_len;
 
-	mono_debug_add_method (method, jit, domain);
-
-	mono_debug_add_vg_method (method, jit);
-
-	mono_debug_free_method_jit_info (jit);
+	domain_info = domain_jit_info (domain);
+	mono_domain_lock (domain);
+	if (!domain_info->aot_debug_info_hash)
+		domain_info->aot_debug_info_hash = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, g_free);
+	g_hash_table_insert (domain_info->aot_debug_info_hash, method, info);
+	mono_domain_unlock (domain);
 }
 
 static void
@@ -754,4 +764,29 @@ mono_debugger_method_has_breakpoint (MonoMethod *method)
 	}
 
 	return 0;
+}
+
+/*
+ * mini_debug_find_jit_debug_info:
+ *
+ *   Lookup debug info from AOT images.
+ * The caller should free the result using mono_debug_free_method_jit_info ().
+ */
+MonoDebugMethodJitInfo *
+mini_debug_find_jit_debug_info (MonoDomain *domain, MonoMethod *method)
+{
+	MonoJitDomainInfo *domain_info;
+	MonoDebugMethodJitInfo *jit = NULL;
+	AotDebugInfo *info = NULL;
+
+	domain_info = domain_jit_info (domain);
+	mono_domain_lock (domain);
+	if (domain_info->aot_debug_info_hash)
+		info = g_hash_table_lookup (domain_info->aot_debug_info_hash, method);
+	mono_domain_unlock (domain);
+
+	// FIXME: We can't cache the jit structure because the caller frees it
+	if (info)
+		jit = deserialize_debug_info (method, info->code_start, info->debug_info, info->debug_info_len);
+	return jit;
 }

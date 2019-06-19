@@ -54,6 +54,7 @@
 #include <mono/metadata/monitor.h>
 #include <mono/metadata/icall-internals.h>
 #include <mono/metadata/loader-internals.h>
+#include <mono/metadata/debug-internals.h>
 #define MONO_MATH_DECLARE_ALL 1
 #include <mono/utils/mono-math.h>
 #include <mono/utils/mono-compiler.h>
@@ -3958,6 +3959,8 @@ mini_free_jit_domain_info (MonoDomain *domain)
 		g_hash_table_foreach (info->llvm_jit_callees, free_jit_callee_list, NULL);
 		g_hash_table_destroy (info->llvm_jit_callees);
 	}
+	if (info->aot_debug_info_hash)
+		g_hash_table_destroy (info->aot_debug_info_hash);
 	mono_internal_hash_table_destroy (&info->interp_code_hash);
 #ifdef ENABLE_LLVM
 	mono_llvm_free_domain_info (domain);
@@ -4180,6 +4183,8 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 
 	mono_install_callbacks (&callbacks);
+
+	mono_debug_install_find_jit_debug_info_cb (mini_debug_find_jit_debug_info);
 
 	memset (&ticallbacks, 0, sizeof (ticallbacks));
 	ticallbacks.setup_async_callback = mono_setup_async_callback;

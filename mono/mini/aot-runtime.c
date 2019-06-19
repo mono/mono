@@ -3375,6 +3375,7 @@ decode_exception_debug_info (MonoAotModule *amodule, MonoDomain *domain,
 
 	/* Load debug info */
 	buf_len = decode_value (p, &p);
+
 	if (!async)
 		mono_debug_add_aot_method (domain, method, code, p, buf_len);
 	p += buf_len;
