@@ -438,12 +438,12 @@ selector_thread (gpointer data)
 			}
 		}
 
-		mono_coop_cond_broadcast (&threadpool_io->updates_cond);
-
 		if (threadpool_io->updates_size > 0) {
 			threadpool_io->updates_size = 0;
 			memset (&threadpool_io->updates, 0, UPDATES_CAPACITY * sizeof (ThreadPoolIOUpdate));
 		}
+
+		mono_coop_cond_broadcast (&threadpool_io->updates_cond);
 
 		mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 
