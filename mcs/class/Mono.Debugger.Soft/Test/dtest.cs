@@ -4218,6 +4218,8 @@ public class DebuggerTests
 		var e = run_until ("unhandled_exception_endinvoke");
 		vm.Resume ();
 
+		var e1 = GetNextEvent (); //this should be the exception
+		vm.Resume ();
 		var e2 = GetNextEvent ();
 		Assert.IsFalse (e2 is ExceptionEvent);
 
