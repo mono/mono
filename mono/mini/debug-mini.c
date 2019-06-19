@@ -630,7 +630,7 @@ mono_debug_add_aot_method (MonoDomain *domain, MonoMethod *method, guint8 *code_
 	domain_info = domain_jit_info (domain);
 	mono_domain_lock (domain);
 	if (!domain_info->aot_debug_info_hash)
-		domain_info->aot_debug_info_hash = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, g_free);
+		domain_info->aot_debug_info_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	g_hash_table_insert (domain_info->aot_debug_info_hash, method, info);
 	mono_domain_unlock (domain);
 }
