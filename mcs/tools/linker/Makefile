@@ -5,6 +5,7 @@ include ../../build/rules.make
 PROGRAM = monolinker.exe
 
 LIB_REFS = System System.Core System.Xml Mono.Cecil
+LOCAL_MCS_FLAGS = -unsafe
 
 TEST_CASES := \
 	mscorlib/test-array.cs \
