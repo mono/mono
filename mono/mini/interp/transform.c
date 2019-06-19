@@ -5367,15 +5367,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				g_assert(m_class_is_valuetype (klass));
 				SET_SIMPLE_TYPE(td->sp - 1, STACK_TYPE_MP);
 				break;
-			case CEE_MONO_TLS: {
-				gint32 key = read32 (td->ip + 1);
-				td->ip += 5;
-				g_assert (key < TLS_KEY_NUM);
-				interp_add_ins (td, MINT_MONO_TLS);
-				WRITE32_INS (td->last_ins, 0, &key);
-				PUSH_SIMPLE_TYPE (td, STACK_TYPE_MP);
-				break;
-			}
 			case CEE_MONO_ATOMIC_STORE_I4:
 				CHECK_STACK (td, 2);
 				SIMPLE_OP (td, MINT_MONO_ATOMIC_STORE_I4);
