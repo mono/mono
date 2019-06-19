@@ -782,7 +782,7 @@ mini_debug_find_jit_debug_info (MonoDomain *domain, MonoMethod *method)
 	domain_info = domain_jit_info (domain);
 	mono_domain_lock (domain);
 	if (domain_info->aot_debug_info_hash)
-		info = g_hash_table_lookup (domain_info->aot_debug_info_hash, method);
+		info = (AotDebugInfo*)g_hash_table_lookup (domain_info->aot_debug_info_hash, method);
 	mono_domain_unlock (domain);
 
 	// FIXME: We can't cache the jit structure because the caller frees it
