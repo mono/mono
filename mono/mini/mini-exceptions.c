@@ -2420,8 +2420,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 						MONO_CONTEXT_SET_IP (ctx, ei->handler_start);
 					frame.native_offset = (char*)ei->handler_start - (char*)ji->code_start;
 					*catch_frame = frame;
-					if (method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE) 
-						result = MONO_FIRST_PASS_HANDLED;
+					result = MONO_FIRST_PASS_HANDLED;
 					return result;
 				}
 				mono_error_cleanup (isinst_error);
@@ -2665,6 +2664,10 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 			if (unhandled)
 				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
+			else if (jinfo_get_method (ji)->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE) {
+				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
+				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
+			}
 			else if (res != MONO_FIRST_PASS_CALLBACK_TO_NATIVE)
 				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
 		}
