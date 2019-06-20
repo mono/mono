@@ -80,7 +80,8 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                 // remove old stuff
                 sh 'git reset --hard HEAD'
-                sh 'git submodule foreach --recursive git reset --hard HEAD'
+                // revert using the git-reset-hard shell script once all the bots have the git foreach bug fixed
+                sh 'git submodule foreach --recursive `pwd`/scripts/ci/git-reset-hard.sh HEAD'
                 sh 'git clean -xdff'
                 sh 'git submodule foreach --recursive git clean -xdff'
 
