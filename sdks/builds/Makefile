@@ -1,8 +1,6 @@
 TOP=$(realpath $(CURDIR)/../..)
 -include $(TOP)/sdks/Make.config
 
-all: package
-
 MAKEFLAGS += --no-builtin-rules
 
 CONFIGURATION?=release
@@ -68,8 +66,6 @@ ifeq (, $(shell which glibtoolize))
 EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
 endif
-
-all: package
 
 ## Common Mono targets
 
@@ -173,9 +169,6 @@ setup-$(1)-$(2):
 
 .PHONY: package-$(1)-$(2)
 package-$(1)-$(2): setup-$(1)-$(2) build-$(1)-$(2)
-
-.PHONY: package
-package: package-$(1)-$(2)
 
 .PHONY: clean-$(1)-$(2)
 clean-$(1)-$(2):
