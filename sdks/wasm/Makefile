@@ -385,7 +385,7 @@ test-debugger: build-debugger-test-app build-dbg-testsuite
 run-browser-tests: $(BROWSER_TEST)/.stamp-browser-test-suite
 	(cd $(BROWSER_TEST) && npm test)
 
-clean:
+clean: clean-sdk
 	$(RM) -r *.o
 	$(RM) -r ./obj
 	$(RM) -r ./bin
@@ -400,16 +400,14 @@ clean:
 	$(RM) -r mini_tests.dll
 	$(RM) -r main.exe
 	$(RM) -r binding-tests.dll
-	$(RM) -r sdk/**/bin
-	$(RM) -r sdk/**/obj
-	$(RM) -r sdk/**/**/bin
-	$(RM) -r sdk/**/**/obj
-	$(RM) -r sdk/packages
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
+	$(RM) -r debug
+	$(RM) -r release
+	$(RM) -r release-dynamic
 
 package: build build-dbg-proxy build-sdk
 	rm -rf tmp
