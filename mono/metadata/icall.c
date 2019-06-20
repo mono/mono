@@ -7410,7 +7410,7 @@ ves_icall_System_Environment_FailFast (MonoStringHandle message, MonoExceptionHa
 	// information in the error dump that CoreCLR would. On Windows 7+ we should call
 	// RaiseFailFastException directly instead of relying on the C runtime doing it
 	// for us and pass it as much information as possible. On Windows 8+ we can also
-	// use the __failfast intrinsic.
+	// use the __fastfail intrinsic.
 	abort ();
 }
 
