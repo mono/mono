@@ -45,6 +45,13 @@ namespace TestSuite
             return k;        
         }
 
+        // https://github.com/dotnet/try/issues/290 Mysterious phenomenon of using Math.Truncate.
+        public static double IssueTry290 ()
+        {
+            var k  = Math.Round(11.1, MidpointRounding.AwayFromZero);
+            return k;        
+        }
+
         static WebAssembly.Core.Array fetchResponse = new WebAssembly.Core.Array();
         public static async Task<object> IssueDoubleFetch ()
         {
