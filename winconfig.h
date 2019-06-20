@@ -37,7 +37,7 @@
 
 #if defined(ENABLE_HYBRID_SUSPEND)
 /* Windows MSVC builds defaults to preemptive suspend. Disable ENABLE_HYBRID_SUSPEND defines. */
-//#undef ENABLE_HYBRID_SUSPEND
+#undef ENABLE_HYBRID_SUSPEND
 #endif
 
 /* No ENABLE_DEFINES below this point */

@@ -448,10 +448,6 @@ register_thread (MonoThreadInfo *info)
 	info->small_id = mono_thread_info_register_small_id ();
 	mono_thread_info_set_tid (info, mono_native_thread_id_get ());
 
-	// NOTE, JUST FOR TESTING ON CI, WILL BE REMOVED IN FINAL COMMIT.
-	if (info->small_id % 2 == 0)
-		info->coop_aware_thread = TRUE;
-
 	info->handle = g_new0 (MonoThreadHandle, 1);
 	mono_refcount_init (info->handle, thread_handle_destroy);
 	mono_os_event_init (&info->handle->event, FALSE);
