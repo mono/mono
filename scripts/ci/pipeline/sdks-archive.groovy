@@ -80,7 +80,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                 // remove old stuff
                 sh 'git reset --hard HEAD'
-                sh 'git submodule foreach --recursive git reset --hard HEAD'
+                sh 'git submodule foreach --recursive `pwd`/scripts/ci/git-reset-hard.sh HEAD'
                 sh 'git clean -xdff'
                 sh 'git submodule foreach --recursive git clean -xdff'
 
