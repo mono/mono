@@ -175,16 +175,6 @@
 # https://github.com/mono/mono/blob/18f0bf055eb2bfa8981062bdad3af2fb4bbc9be4/netcore/System.Private.CoreLib/shared/System/String.cs#L811-L821
 -nomethod System.Tests.StringTests.NormalizationTest
 
-# Environment.FailFast is not implemented
--nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_C20
--nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_C20
--nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_N20
--nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_P20
--nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_N20
--nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_F20
--nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_P20
--nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_F20
-
 -nomethod System.SpanTests.SpanTests.ReadOnlyMemory_PropertyReturningReadOnlySpan
 -nomethod System.SpanTests.SpanTests.Span_StaticOperator
 -nomethod System.SpanTests.SpanTests.ReadOnlySpan_Constructor
@@ -801,11 +791,6 @@
 ####################################################################
 ##  System.Runtime.Extensions.Tests
 ####################################################################
-
-# Environment.FailFast is not implemented
--nomethod System.Tests.EnvironmentTests.FailFast_ExceptionStackTrace_InnerException
--nomethod System.Tests.EnvironmentTests.FailFast_ExceptionStackTrace_ArgumentException
--nomethod System.Tests.EnvironmentTests.FailFast_ExceptionStackTrace_StackOverflowException
 
 # GC.GetGCMemoryInfo is not implemented
 -nomethod System.Tests.AppDomainTests.MonitoringIsEnabled
