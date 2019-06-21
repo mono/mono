@@ -534,5 +534,28 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       assert.equal(view.getUint8(1), 123, "result does not match value 123.");
     }, DEFAULT_TIMEOUT);  
 
+    it('BindingTestSuite: Should return instance of Map.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestCtor1", []);
+      assert.isNotNull(map, "result is null.");
+      assert.equal(map.size, 0, "result does not match size of 0.");
+      assert.equal(map.constructor.name, "Map", "Result is not a Map type." )
+    }, DEFAULT_TIMEOUT);  
+    it('BindingTestSuite: Should return same map count.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestCount1", [100]);
+      assert.equal(map.size, 100, "result does not match size of 100.");
+    }, DEFAULT_TIMEOUT);  
+    it('BindingTestSuite: Should not change map count.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var map = _document.Module.BINDING.call_static_method("[BindingsTestSuite]TestSuite.Program:MapTestCount2", [100]);
+      assert.equal(map.size, 100, "result does not match size of 100.  Count should not change.");
+    }, DEFAULT_TIMEOUT);  
 
   });

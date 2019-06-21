@@ -255,5 +255,30 @@ namespace TestSuite
             return x;
         }
 
+        private static Map MapTestCtor1 () 
+        {
+            return new Map();
+        }
+
+        public Map MapTestCount1(int max) {
+            Map h = new Map();
+            
+            for (int i = 1; i <= max; i++) {
+                h[i] = i;
+            }
+
+            return h;
+        }
+        public Map MapTestCount2(int max) {
+            Map h = new Map();
+            for (int i = 1; i <= max; i++) {
+                h[i] = i;
+            }
+            for (int i = 1; i <= max; i++) {
+                h[i] = i * 2;
+            }
+            return h;
+        }
+
     }
 }
