@@ -376,7 +376,7 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-tls.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClInclude>
-    <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-tls.c">
+    <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-tls-cpp.cpp">
       <Filter>Source Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClCompile>
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\linux_magic.h">

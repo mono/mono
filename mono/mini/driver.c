@@ -1626,7 +1626,7 @@ mono_get_version_info (void)
 	GString *output;
 	output = g_string_new ("");
 
-#ifdef MONO_KEYWORD_THREAD
+#ifdef MONO_KEYWORD_THREAD // FIXME Change to thread_local when all are converted.
 	g_string_append_printf (output, "\tTLS:           __thread\n");
 #else
 	g_string_append_printf (output, "\tTLS:           \n");

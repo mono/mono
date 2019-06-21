@@ -2,6 +2,7 @@ include $(top_srcdir)/mk/common.mk
 
 noinst_LTLIBRARIES = \
 	libmonomath.la \
+	libmonotls.la \
 	libmonoutils.la
 
 if ENABLE_LLVM
@@ -189,7 +190,6 @@ monoutils_sources = \
 	mono-utility-thread.c	\
 	mono-utility-thread.h	\
 	mono-tls.h	\
-	mono-tls.c	\
 	mono-utils-debug.c \
 	mono-utils-debug.h \
 	linux_magic.h	\
@@ -309,14 +309,20 @@ arch_sources += mono-hwcap-cross.c
 
 endif
 
+libmonotls_la_SOURCES = mono-tls.c
+
+# Code that is always C++.
+libmonotls_la_CFLAGS = @CXXFLAGS_COMMON@ $(filter-out @CXXFLAGS_REMOVE@, @CFLAGS@)
+
 libmonoutils_la_SOURCES = $(monoutils_sources) $(arch_sources)
-libmonoutils_la_CFLAGS = $(JEMALLOC_CFLAGS) @CXX_ADD_CFLAGS@
+libmonoutils_la_CFLAGS = @CXX_ADD_CFLAGS@ $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
 libmonoutils_la_LDFLAGS = $(JEMALLOC_LDFLAGS)
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
-libmonoutils_la_LIBADD = mono-math-c.lo
+libmonoutils_la_LIBADD = libmonomath_la-mono-math-c.lo libmonotls_la-mono-tls.lo
 
+# mono-math-c is always C.
 libmonomath_la_SOURCES = mono-math-c.c
-libmonomath_la_CFLAGS = @CXX_REMOVE_CFLAGS@
+libmonomath_la_CFLAGS = @CXX_REMOVE_CFLAGS@ @CFLAGS@ # CXX_REMOVE_CFLAGS should be redundant here.
 
 # These are public headers.
 # They should not use glib.h, G_BEGIN_DECLS, guint, etc.
@@ -338,4 +344,6 @@ if MONO_JEMALLOC_ENABLED
 SUBDIRS = jemalloc
 endif
 
-CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+# CFLAGS must be almost emptied here, and added back with modifications elsewhere.
+# Because it has C-specific flags that are warnings or errors for C++.
+CFLAGS = $(JEMALLOC_CFLAGS)

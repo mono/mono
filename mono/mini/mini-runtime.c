@@ -4795,8 +4795,6 @@ mini_cleanup (MonoDomain *domain)
 	if (mono_inject_async_exc_method)
 		mono_method_desc_free (mono_inject_async_exc_method);
 
-	mono_tls_free_keys ();
-
 	mono_os_mutex_destroy (&jit_mutex);
 
 	mono_code_manager_cleanup ();

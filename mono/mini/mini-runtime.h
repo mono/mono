@@ -449,12 +449,12 @@ gboolean          mono_running_on_valgrind (void);
 
 MonoLMF * mono_get_lmf                      (void);
 #define mono_get_lmf_addr mono_tls_get_lmf_addr
-MonoLMF** mono_get_lmf_addr                 (void);
+G_EXTERN_C MonoLMF** (mono_get_lmf_addr)    (void); // parens to suppress macro
 void      mono_set_lmf                      (MonoLMF *lmf);
 void      mono_push_lmf                     (MonoLMFExt *ext);
 void      mono_pop_lmf                      (MonoLMF *lmf);
 #define mono_get_jit_tls mono_tls_get_jit_tls
-MonoJitTlsData* mono_get_jit_tls            (void);
+G_EXTERN_C MonoJitTlsData* (mono_get_jit_tls) (void); // parens to suppress macro
 MONO_API void      mono_jit_set_domain      (MonoDomain *domain);
 
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee);

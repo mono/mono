@@ -165,7 +165,7 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-threads-coop.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-threads-coop.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-tls.h" />
-    <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-tls.c" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-tls-cpp.cpp" />
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\linux_magic.h" />
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-memory-model.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\atomic.c" />

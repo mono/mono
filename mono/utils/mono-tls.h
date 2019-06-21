@@ -80,14 +80,13 @@ mono_native_tls_set_value (MonoNativeTlsKey key, gpointer value)
 
 #endif /* HOST_WIN32 */
 
-void mono_tls_init_gc_keys (void);
-void mono_tls_init_runtime_keys (void);
-void mono_tls_free_keys (void);
-gint32 mono_tls_get_tls_offset (MonoTlsKey key);
+G_EXTERN_C void mono_tls_init_gc_keys (void);
+G_EXTERN_C void mono_tls_init_runtime_keys (void);
+G_EXTERN_C gint32 mono_tls_get_tls_offset (MonoTlsKey key);
 
 typedef gpointer (*MonoTlsGetter)(void);
 
-MonoTlsGetter mono_tls_get_tls_getter (MonoTlsKey key);
+G_EXTERN_C MonoTlsGetter mono_tls_get_tls_getter (MonoTlsKey key);
 
 G_EXTERN_C MonoInternalThread *mono_tls_get_thread (void);
 G_EXTERN_C MonoJitTlsData     *mono_tls_get_jit_tls (void);
@@ -100,5 +99,76 @@ G_EXTERN_C void mono_tls_set_jit_tls 	   (MonoJitTlsData     *value);
 G_EXTERN_C void mono_tls_set_domain 	   (MonoDomain         *value);
 G_EXTERN_C void mono_tls_set_sgen_thread_info (SgenThreadInfo     *value);
 G_EXTERN_C void mono_tls_set_lmf_addr 	   (MonoLMF           **value);
+
+#if __cplusplus
+
+/* tls attribute */
+#if HAVE_TLS_MODEL_ATTR
+
+#if defined(__PIC__) && !defined(PIC)
+/*
+ * Must be compiling -fPIE, for executables.  Build PIC
+ * but with initial-exec.
+ * http://bugs.gentoo.org/show_bug.cgi?id=165547
+ */
+#define PIC
+#define PIC_INITIAL_EXEC
+#endif
+
+/*
+ * Define this if you want a faster libmono, which cannot be loaded dynamically as a
+ * module.
+ */
+//#define PIC_INITIAL_EXEC
+
+#if defined(PIC)
+
+#ifdef PIC_INITIAL_EXEC
+#define MONO_TLS_FAST __attribute__ ((__tls_model__("initial-exec")))
+#else
+#if defined (__powerpc__)
+/* local dynamic requires a call to __tls_get_addr to look up the
+   TLS block address via the Dynamic Thread Vector. In this case Thread
+   Pointer relative offsets can't be used as this modules TLS was
+   allocated separately (none contiguoiusly) from the initial TLS
+   block.
+
+   For now we will disable this. */
+#define MONO_TLS_FAST
+#else
+#define MONO_TLS_FAST __attribute__ ((__tls_model__("local-dynamic")))
+#endif
+#endif
+
+#else
+
+#define MONO_TLS_FAST __attribute__ ((__tls_model__("local-exec")))
+
+#endif
+
+#else
+#define MONO_TLS_FAST /* nothing */
+#endif
+
+// Tls variables and macros to get/set them.
+extern thread_local MonoInternalThread *mono_tls_thread MONO_TLS_FAST;
+extern thread_local MonoJitTlsData     *mono_tls_jit_tls MONO_TLS_FAST;
+extern thread_local MonoDomain         *mono_tls_domain MONO_TLS_FAST;
+extern thread_local SgenThreadInfo     *mono_tls_sgen_thread_info MONO_TLS_FAST;
+extern thread_local MonoLMF           **mono_tls_lmf_addr MONO_TLS_FAST;
+
+#define mono_tls_get_thread()                   (mono_tls_thread)
+#define mono_tls_get_jit_tls()                  (mono_tls_jit_tls)
+#define mono_tls_get_domain()                   (mono_tls_domain)
+#define mono_tls_get_sgen_thread_info()         (mono_tls_sgen_thread_info)
+#define mono_tls_get_lmf_addr()                 (mono_tls_lmf_addr)
+
+#define mono_tls_set_thread(value)              (mono_tls_thread = (value))
+#define mono_tls_set_jit_tls(value)             (mono_tls_jit_tls = (value))
+#define mono_tls_set_domain(value)              (mono_tls_domain = (value))
+#define mono_tls_set_sgen_thread_info(value)    (mono_tls_sgen_thread_info = (value))
+#define mono_tls_set_lmf_addr(value)            (mono_tls_lmf_addr = (value))
+
+#endif
 
 #endif /* __MONO_TLS_H__ */

@@ -61,7 +61,7 @@ MonoCallSpec *mono_trace_set_options (const char *options)
 }
 
 static
-#ifdef MONO_KEYWORD_THREAD
+#ifdef MONO_KEYWORD_THREAD // FIXME Move this to mono-tls.
 MONO_KEYWORD_THREAD
 #endif
 int indent_level = 0;
