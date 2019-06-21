@@ -51,8 +51,10 @@ MONO_JIT_ICALL (generic_trampoline_vcall)	\
 MONO_JIT_ICALL (mono_tls_get_domain) \
 MONO_JIT_ICALL (mono_tls_get_jit_tls) \
 MONO_JIT_ICALL (mono_tls_get_lmf_addr) \
+MONO_JIT_ICALL (mono_tls_get_marshal_last_error) \
 MONO_JIT_ICALL (mono_tls_get_sgen_thread_info) \
 MONO_JIT_ICALL (mono_tls_get_thread) \
+MONO_JIT_ICALL (mono_tls_get_thread_small_id) \
 	\
 MONO_JIT_ICALL (__emul_fadd)	\
 MONO_JIT_ICALL (__emul_fcmp_ceq)	\

@@ -66,11 +66,6 @@ static size_t thread_info_size;
 static MonoThreadInfoCallbacks threads_callbacks;
 static MonoThreadInfoRuntimeCallbacks runtime_callbacks;
 static MonoNativeTlsKey thread_info_key, thread_exited_key;
-#ifdef MONO_KEYWORD_THREAD
-static MONO_KEYWORD_THREAD gint32 tls_small_id = -1;
-#else
-static MonoNativeTlsKey small_id_key;
-#endif
 static MonoLinkedListSet thread_list;
 static gboolean mono_threads_inited = FALSE;
 
@@ -419,11 +414,7 @@ mono_thread_info_register_small_id (void)
 		return small_id;
 
 	small_id = mono_thread_small_id_alloc ();
-#ifdef MONO_KEYWORD_THREAD
-	tls_small_id = small_id;
-#else
-	mono_native_tls_set_value (small_id_key, GUINT_TO_POINTER (small_id + 1));
-#endif
+	mono_tls_set_thread_small_id (small_id + 1);
 	return small_id;
 }
 
@@ -540,9 +531,8 @@ unregister_thread (void *arg)
 	 * before us.
 	 */
 #ifndef MONO_KEYWORD_THREAD
-	mono_native_tls_set_value (small_id_key, GUINT_TO_POINTER (info->small_id + 1));
+	mono_tls_set_thread_small_id (info->small_id + 1);
 #endif
-
 	/* we need to duplicate it, as the info->handle is going
 	 * to be closed when unregistering from the platform */
 	handle = mono_threads_open_thread_handle (info->handle);
@@ -658,14 +648,7 @@ mono_thread_info_current (void)
 int
 mono_thread_info_get_small_id (void)
 {
-#ifdef MONO_KEYWORD_THREAD
-	return tls_small_id;
-#else
-	gpointer val = mono_native_tls_get_value (small_id_key);
-	if (!val)
-		return -1;
-	return GPOINTER_TO_INT (val) - 1;
-#endif
+	return mono_tls_get_thread_small_id () - 1;
 }
 
 MonoLinkedListSet*
@@ -907,7 +890,8 @@ mono_thread_info_init (size_t info_size)
 	g_assert (res);
 
 #ifndef MONO_KEYWORD_THREAD
-	res = mono_native_tls_alloc (&small_id_key, NULL);
+	// FIXME This thread local is leaked.
+	res = mono_native_tls_alloc (&mono_tls_key_thread_small_id, NULL);
 #endif
 	g_assert (res);
 

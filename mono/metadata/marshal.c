@@ -89,8 +89,6 @@ enum {
 static MonoCoopMutex marshal_mutex;
 static gboolean marshal_mutex_initialized;
 
-static MonoNativeTlsKey last_error_tls_id;
-
 static MonoNativeTlsKey load_type_info_tls_id;
 
 static gboolean use_aot_wrappers;
@@ -141,7 +139,9 @@ mono_signature_no_pinvoke (MonoMethod *method)
 void
 mono_marshal_init_tls (void)
 {
-	mono_native_tls_alloc (&last_error_tls_id, NULL);
+#ifndef MONO_KEYWORD_THREAD
+	mono_native_tls_alloc (&mono_tls_key_marshal_last_error, NULL);
+#endif
 	mono_native_tls_alloc (&load_type_info_tls_id, NULL);
 }
 
@@ -269,7 +269,9 @@ mono_marshal_cleanup (void)
 	mono_cominterop_cleanup ();
 
 	mono_native_tls_free (load_type_info_tls_id);
-	mono_native_tls_free (last_error_tls_id);
+#ifndef MONO_KEYWORD_THREAD
+	mono_native_tls_free (mono_tls_key_marshal_last_error);
+#endif
 	mono_coop_mutex_destroy (&marshal_mutex);
 	marshal_mutex_initialized = FALSE;
 }
@@ -5001,9 +5003,9 @@ mono_marshal_set_last_error (void)
 	 * wrapper transitions the runtime back to running mode. */
 #ifdef WIN32
 	MONO_REQ_GC_SAFE_MODE;
-	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (GetLastError ()));
+	mono_tls_set_marshal_last_error (GetLastError ());
 #else
-	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (errno));
+	mono_tls_set_marshal_last_error (errno);
 #endif
 }
 
@@ -5014,7 +5016,7 @@ mono_marshal_set_last_error_windows (int error)
 	/* This icall is called just after a P/Invoke call before the P/Invoke
 	 * wrapper transitions the runtime back to running mode. */
 	MONO_REQ_GC_SAFE_MODE;
-	mono_native_tls_set_value (last_error_tls_id, GINT_TO_POINTER (error));
+	mono_tls_set_marshal_last_error (error);
 #endif
 }
 
@@ -5125,7 +5127,7 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const gunic
 guint32 
 ves_icall_System_Runtime_InteropServices_Marshal_GetLastWin32Error (void)
 {
-	return GPOINTER_TO_INT (mono_native_tls_get_value (last_error_tls_id));
+	return mono_tls_get_marshal_last_error ();
 }
 
 guint32 
