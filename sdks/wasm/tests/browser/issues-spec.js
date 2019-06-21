@@ -57,7 +57,17 @@ describe("The WebAssembly Issues Test Suite",function(){
       var doublevalue = _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:Issue13428", []);
       assert.equal(doublevalue, 20, "result doesn't match 20");
 
-    }, DEFAULT_TIMEOUT);  
+    }, DEFAULT_TIMEOUT); 
+    
+    it('IssuesTestSuite: https://github.com/dotnet/try/issues/290 try.net Math.Truncate.', () => {
+      //karmaHTML.issuesspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.issuesspec.document;
+
+
+      var doublevalue = _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:IssueTry290", []);
+      assert.equal(doublevalue, 11, "result doesn't match 11");
+
+    }, DEFAULT_TIMEOUT);
 
     it('IssuesTestSuite: https://github.com/mono/mono/issues/14940 should not crash when issuing two fetchs back to back.', (done) => {
       //karmaHTML.issuesspec.document gives the access to the Document object of 'http-spec.html' file
