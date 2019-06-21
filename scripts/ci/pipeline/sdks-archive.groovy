@@ -80,10 +80,12 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
 
                 // remove old stuff
                 sh 'git reset --hard HEAD'
-                // revert using the git-reset-hard shell script once all the bots have the git foreach bug fixed
-                sh 'git submodule foreach --recursive `pwd`/scripts/ci/git-reset-hard.sh HEAD'
+                // homebrew Git 2.22.0 misparses the submodule command and passes arguments like --hard and -xdff
+                // to git-submodule instead of to git-reset or git-clean.  Passing the entire command as a single
+                // argument seems to help.
+                sh 'git submodule foreach --recursive "git reset --hard HEAD"'
                 sh 'git clean -xdff'
-                sh 'git submodule foreach --recursive git clean -xdff'
+                sh 'git submodule foreach --recursive "git clean -xdff"'
 
                 // get current commit sha
                 commitHash = sh (script: 'git rev-parse HEAD', returnStdout: true).trim()
