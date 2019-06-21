@@ -35,21 +35,12 @@ namespace WebAssembly.Core {
 		/// <summary>
 		/// Gets an <see cref="T:System.Collections.ICollection"/> object containing the keys of the <see cref="T:WebAssembly.Core.Map"/> object.
 		/// </summary>
-		public ICollection Keys {
-			get {
-				return new MapItemCollection (this, "keys");
-			}
-		}
+		public ICollection Keys => new MapItemCollection (this, "keys");
 
 		/// <summary>
 		/// Gets an <see cref="T:System.Collections.ICollection"/> object containing the values of the <see cref="T:WebAssembly.Core.Map"/> object.
 		/// </summary>
-		public ICollection Values {
-			get {
-				return new MapItemCollection (this, "values");
-			}
-
-		}
+		public ICollection Values => new MapItemCollection (this, "values");
 
 		public int Count => (int)GetObjectProperty ("size");
 
@@ -58,29 +49,19 @@ namespace WebAssembly.Core {
 		public object SyncRoot => false;
 
 		public void Add (object key, object value) => Invoke ("set", key, value);
-		{
-			Invoke ("set", key, value);
-		}
 
 		public void Clear () => Invoke ("clear");
 
 		public bool Contains (object key) => (bool)Invoke ("has", key);
 
-		public IDictionaryEnumerator GetEnumerator ()
-		{
-			// Construct and return an enumerator.
-			return new MapEnumerator (this);
-		}
+		public IDictionaryEnumerator GetEnumerator () => new MapEnumerator(this);
 
 		public void Remove (object key) => Invoke ("delete", key);
 
 		public void CopyTo (System.Array array, int index) => throw new NotImplementedException ();
 
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			// Construct and return an enumerator.
-			return ((IDictionary)this).GetEnumerator ();
-		}
+		// Construct and return an enumerator.
+		IEnumerator IEnumerable.GetEnumerator () => new MapEnumerator(this);
 
 		/// <summary>
 		/// Gets or sets the <see cref="T:WebAssembly.Core.Map"/> with the key specified by <paramref name="key" />.
@@ -107,9 +88,7 @@ namespace WebAssembly.Core {
 			public object Current => new DictionaryEntry (Key, Value);
 
 			// Return the current dictionary entry.
-			public DictionaryEntry Entry {
-				get { return (DictionaryEntry)Current; }
-			}
+			public DictionaryEntry Entry => (DictionaryEntry)Current;
 
 			// Return the key of the current item.
 			public object Key { get; private set; }
@@ -204,11 +183,8 @@ namespace WebAssembly.Core {
 				throw new NotImplementedException ();
 			}
 
-			public IEnumerator GetEnumerator ()
-			{
-				// Construct and return an enumerator.
-				return new MapItemEnumerator (this);
-			}
+			// Construct and return an enumerator.
+			public IEnumerator GetEnumerator () => new MapItemEnumerator (this);
 
 			/// <summary>
 			/// The custom enumerator used by MapItemCollection
