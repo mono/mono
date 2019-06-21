@@ -57,7 +57,7 @@ namespace WebAssembly.Core {
 
 		public object SyncRoot => false;
 
-		public void Add (object key, object value)
+		public void Add (object key, object value) => Invoke ("set", key, value);
 		{
 			Invoke ("set", key, value);
 		}
