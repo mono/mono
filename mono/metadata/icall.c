@@ -882,7 +882,7 @@ ves_icall_System_Array_FastCopy (MonoArrayHandle source, int source_idx, MonoArr
 			return FALSE;
 
 		/* It's only safe to copy between arrays if we can ensure the source will always have a subtype of the destination. We bail otherwise. */
-		if (!mono_class_is_subclass_of (src_class, dest_class, FALSE))
+		if (!mono_class_is_subclass_of_internal (src_class, dest_class, FALSE))
 			return FALSE;
 
 		if (m_class_is_native_pointer (src_class) || m_class_is_native_pointer (dest_class))
@@ -1957,13 +1957,13 @@ ves_icall_RuntimeTypeHandle_is_subclass_of (MonoType *childType, MonoType *baseT
 				break;
 			}
 			if (!is_generic_parameter (m_class_get_byval_arg (c))) {
-				result = mono_class_is_subclass_of (c, baseClass, FALSE);
+				result = mono_class_is_subclass_of_internal (c, baseClass, FALSE);
 				break;
 			} else
 				c = mono_generic_param_get_base_type (c);
 		}
 	} else {
-		result = mono_class_is_subclass_of (childClass, baseClass, FALSE);
+		result = mono_class_is_subclass_of_internal (childClass, baseClass, FALSE);
 	}
 done:
 	mono_error_set_pending_exception (error);
@@ -3548,18 +3548,28 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this_arg, Mo
 		}
 	}
 
-	if (sig->ret->byref) {
+	if ((m->klass != NULL && m_class_is_byreflike (m->klass)) || m_class_is_byreflike (mono_class_from_mono_type_internal (sig->ret))) {
+		mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "Cannot invoke method with stack pointers via reflection"));
+		return NULL;
+	}
 #if ENABLE_NETCORE
+	if (sig->ret->byref) {
 		MonoType* ret_byval = m_class_get_byval_arg (mono_class_from_mono_type_internal (sig->ret));
-		if (ret_byval->byref) {
+		if (ret_byval->type == MONO_TYPE_VOID) {
+			mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "ByRef to void return values are not supported in reflection invocation"));
+			return NULL;
+		}	
+		if (m_class_is_byreflike (mono_class_from_mono_type_internal (ret_byval))) {
 			mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "Cannot invoke method returning ByRef to ByRefLike type via reflection"));
 			return NULL;
 		}
+	}
 #else
+	if (sig->ret->byref) {
 		mono_gc_wbarrier_generic_store_internal (exc, (MonoObject*) mono_exception_from_name_msg (mono_defaults.corlib, "System", "NotSupportedException", "Cannot invoke method returning ByRef type via reflection"));
 		return NULL;
-#endif
 	}
+#endif
 
 	pcount = params? mono_array_length_internal (params): 0;
 	if (pcount != sig->param_count) {
@@ -7381,6 +7391,29 @@ ves_icall_System_Environment_Exit (int result)
 	exit (result);
 }
 
+void
+ves_icall_System_Environment_FailFast (MonoStringHandle message, MonoExceptionHandle exception, MonoStringHandle errorSource, MonoError *error)
+{
+	if (MONO_HANDLE_IS_NULL (message)) {
+		g_warning ("CLR: Managed code called FailFast without specifying a reason.");
+	} else {
+		char *msg = mono_string_handle_to_utf8 (message, error);
+		g_warning ("CLR: Managed code called FailFast, saying \"%s\"", msg);
+		g_free (msg);
+	}
+
+	if (!MONO_HANDLE_IS_NULL (exception)) {
+		mono_print_unhandled_exception_internal ((MonoObject *) MONO_HANDLE_RAW (exception));
+	}
+
+	// NOTE: While this does trigger WER on Windows it doesn't quite provide all the
+	// information in the error dump that CoreCLR would. On Windows 7+ we should call
+	// RaiseFailFastException directly instead of relying on the C runtime doing it
+	// for us and pass it as much information as possible. On Windows 8+ we can also
+	// use the __fastfail intrinsic.
+	abort ();
+}
+
 MonoStringHandle
 ves_icall_System_Environment_GetGacPath (MonoError *error)
 {
@@ -7589,6 +7622,14 @@ ves_icall_System_Environment_get_TickCount (void)
 	return (gint32) (mono_msec_boottime () & 0xffffffff);
 }
 
+#if ENABLE_NETCORE
+gint64
+ves_icall_System_Environment_get_TickCount64 (void)
+{
+	return mono_msec_boottime ();
+}
+#endif
+
 gint32
 ves_icall_System_Runtime_Versioning_VersioningHelper_GetRuntimeId (MonoError *error)
 {
@@ -7636,7 +7677,7 @@ ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 		return ret;
 
 	if ((method->flags & METHOD_ATTRIBUTE_FINAL) || !(method->flags & METHOD_ATTRIBUTE_VIRTUAL)) {
-		if (klass == method->klass || mono_class_is_subclass_of (klass, method->klass, FALSE))
+		if (klass == method->klass || mono_class_is_subclass_of_internal (klass, method->klass, FALSE))
 			ret = rmethod;
 		return ret;
 	}
@@ -7652,7 +7693,7 @@ ves_icall_Remoting_RemotingServices_GetVirtualMethod (
 		if (offs >= 0)
 			res = vtable [offs + method->slot];
 	} else {
-		if (!(klass == method->klass || mono_class_is_subclass_of (klass, method->klass, FALSE)))
+		if (!(klass == method->klass || mono_class_is_subclass_of_internal (klass, method->klass, FALSE)))
 			return ret;
 
 		if (method->slot != -1)
@@ -7721,7 +7762,7 @@ ves_icall_System_IO_get_temp_path (MonoError *error)
 
 #endif
 
-#if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH)
+#if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH) || defined(TARGET_WASM)
 
 G_EXTERN_C gpointer CreateZStream (gint32 compress, MonoBoolean gzip, gpointer feeder, gpointer data);
 G_EXTERN_C gint32   CloseZStream (gpointer stream);
@@ -8613,11 +8654,9 @@ ves_icall_System_IO_LogcatTextWriter_Log (const char *appname, gint32 level, con
 
 #endif
 
-static MonoIcallTableCallbacks icall_table;
+static const MonoIcallTableCallbacks *icall_table;
 static mono_mutex_t icall_mutex;
 static GHashTable *icall_hash = NULL;
-static GHashTable *jit_icall_hash_name = NULL;
-static GHashTable *jit_icall_hash_addr = NULL;
 
 typedef struct _MonoIcallHashTableValue {
 	gconstpointer method;
@@ -8625,10 +8664,10 @@ typedef struct _MonoIcallHashTableValue {
 } MonoIcallHashTableValue;
 
 void
-mono_install_icall_table_callbacks (MonoIcallTableCallbacks *cb)
+mono_install_icall_table_callbacks (const MonoIcallTableCallbacks *cb)
 {
 	g_assert (cb->version == MONO_ICALL_TABLE_CALLBACKS_VERSION);
-	memcpy (&icall_table, cb, sizeof (MonoIcallTableCallbacks));
+	icall_table = cb;
 }
 
 void
@@ -8657,8 +8696,6 @@ void
 mono_icall_cleanup (void)
 {
 	g_hash_table_destroy (icall_hash);
-	g_hash_table_destroy (jit_icall_hash_name);
-	g_hash_table_destroy (jit_icall_hash_addr);
 	mono_os_mutex_destroy (&icall_mutex);
 }
 
@@ -8888,14 +8925,15 @@ mono_lookup_internal_call_full_with_flags (MonoMethod *method, gboolean warn_on_
 		return res;
 	}
 
-	if (!icall_table.lookup) {
+	if (!icall_table) {
 		mono_icall_unlock ();
 		g_free (classname);
 		/* Fail only when the result is actually used */
 		return (gconstpointer)no_icall_table;
 	} else {
 		gboolean uses_handles = FALSE;
-		res = icall_table.lookup (method, classname, sigstart - mlen, sigstart, &uses_handles);
+		g_assert (icall_table->lookup);
+		res = icall_table->lookup (method, classname, sigstart - mlen, sigstart, &uses_handles);
 		if (res && flags && uses_handles)
 			*flags = *flags | MONO_ICALL_FLAGS_USES_HANDLES;
 		mono_icall_unlock ();
@@ -8963,14 +9001,15 @@ mono_lookup_internal_call (MonoMethod *method)
 const char*
 mono_lookup_icall_symbol (MonoMethod *m)
 {
-	if (!icall_table.lookup_icall_symbol)
+	if (!icall_table)
 		return NULL;
 
+	g_assert (icall_table->lookup_icall_symbol);
 	gpointer func;
 	func = (gpointer)mono_lookup_internal_call_full (m, FALSE, NULL, NULL);
 	if (!func)
 		return NULL;
-	return icall_table.lookup_icall_symbol (func);
+	return icall_table->lookup_icall_symbol (func);
 }
 
 #if defined(TARGET_WIN32) && defined(TARGET_X86)
@@ -9101,99 +9140,11 @@ mono_create_icall_signatures (void)
 	}
 }
 
-MonoJitICallInfo *
-mono_find_jit_icall_by_name (const char *name)
-{
-	MonoJitICallInfo *info;
-	g_assert (jit_icall_hash_name);
-
-	mono_icall_lock ();
-	info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name);
-	mono_icall_unlock ();
-	return info;
-}
-
-MonoJitICallInfo *
-mono_find_jit_icall_by_addr (gconstpointer addr)
-{
-	MonoJitICallInfo *info;
-	g_assert (jit_icall_hash_addr);
-
-	mono_icall_lock ();
-	info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_addr, (gpointer)addr);
-	mono_icall_unlock ();
-
-	return info;
-}
-
-/*
- * mono_lookup_jit_icall_symbol:
- *
- *   Given the jit icall NAME, returns its C symbol if possible, or NULL.
- */
-const char*
-mono_lookup_jit_icall_symbol (const char *name)
-{
-	MonoJitICallInfo *info;
-	const char *res = NULL;
-
-	mono_icall_lock ();
-	info = (MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name);
-	if (info)
-		res = info->c_symbol;
-	mono_icall_unlock ();
-	return res;
-}
-
-void
-mono_register_jit_icall_wrapper (MonoJitICallInfo *info, gconstpointer wrapper)
-{
-	mono_icall_lock ();
-	g_hash_table_insert (jit_icall_hash_addr, (gpointer)wrapper, info);
-	mono_icall_unlock ();
-}
-
-// Function that is registered multiple times needs to be known here.
-
-void
-mono_no_trampolines (void); // prototype to avoid warning
-
-void
-mono_no_trampolines (void)
-{
-	g_assert_not_reached ();
-}
-
 void
 mono_register_jit_icall_info (MonoJitICallInfo *info, gconstpointer func, const char *name, MonoMethodSignature *sig, gboolean avoid_wrapper, const char *c_symbol)
 {
-	g_assert (func);
-	g_assert (name);
-	mono_check_jit_icall_info (info);
+	// Duplicate initialization is allowed and racy, assuming it is equivalent.
 
-	mono_icall_lock ();
-
-	if (!jit_icall_hash_name) {
-		jit_icall_hash_name = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, NULL);
-		jit_icall_hash_addr = g_hash_table_new (NULL, NULL);
-	}
-
-	// Do not allow duplicate registration, either name or function or info,
-	// except the function mono_no_trampolines is reused.
-
-	MonoJitICallInfo const * const existing_infos [ ] = {
-		(MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_name, name),
-		(MonoJitICallInfo *)g_hash_table_lookup (jit_icall_hash_addr, (gpointer)func),
-	};
-	for (int i = 0; i < 2; ++i) {
-		MonoJitICallInfo const * const existing_info = existing_infos [i];
-
-		g_assertf (!existing_info || func == (gpointer)mono_no_trampolines,
-			"jit icall info already hashed name:%s existing_name:%s func:%p existing_func:%p i:%d\n",
-			name, existing_info->name, func, existing_info->func, i);
-	}
-
-	g_assertf (!info->name && !info->func, "%s", name);
 	info->name = name;
 	info->func = func;
 	info->sig = sig;
@@ -9201,12 +9152,11 @@ mono_register_jit_icall_info (MonoJitICallInfo *info, gconstpointer func, const 
 
 	// Fill in wrapper ahead of time, to just be func, to avoid
 	// later initializing it to anything else. So therefore, no wrapper.
-	info->wrapper = avoid_wrapper ? func : NULL;
-
-	g_hash_table_insert (jit_icall_hash_name, (gpointer)info->name, info);
-	g_hash_table_insert (jit_icall_hash_addr, (gpointer)func, info);
-
-	mono_icall_unlock ();
+	if (avoid_wrapper) {
+		info->wrapper = func;
+	} else {
+		// Leave it alone in case of a race.
+	}
 }
 
 int
@@ -9230,7 +9180,7 @@ ves_icall_System_GC_GetMaxGeneration (void)
 gint64
 ves_icall_System_GC_GetAllocatedBytesForCurrentThread (void)
 {
-	return 0; // TODO: implement https://github.com/mono/mono/issues/8397
+	return mono_gc_get_allocated_bytes_for_current_thread ();
 }
 
 void

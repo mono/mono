@@ -199,7 +199,7 @@ emit_span_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature
 		/* Portable Span<T> */
 		return NULL;
 
-	if (!strcmp (cmethod->name, "get_Item") && fsig->params [0]->type != MONO_TYPE_VALUETYPE) {
+	if (!strcmp (cmethod->name, "get_Item")) {
 		MonoClassField *length_field = mono_class_get_field_from_name_full (cmethod->klass, "_length", NULL);
 
 		g_assert (length_field);
@@ -323,7 +323,7 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 
 		dreg = alloc_ireg (cfg);
 		EMIT_NEW_BIALU (cfg, ins, OP_COMPARE, -1, args [0]->dreg, args [1]->dreg);
-		EMIT_NEW_UNALU (cfg, ins, OP_PCLT, dreg, -1);
+		EMIT_NEW_UNALU (cfg, ins, OP_PCLT_UN, dreg, -1);
 		return ins;
 	} else if (!strcmp (cmethod->name, "IsAddressGreaterThan")) {
 		g_assert (ctx);
@@ -333,7 +333,7 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 
 		dreg = alloc_ireg (cfg);
 		EMIT_NEW_BIALU (cfg, ins, OP_COMPARE, -1, args [0]->dreg, args [1]->dreg);
-		EMIT_NEW_UNALU (cfg, ins, OP_PCGT, dreg, -1);
+		EMIT_NEW_UNALU (cfg, ins, OP_PCGT_UN, dreg, -1);
 		return ins;
 	} else if (!strcmp (cmethod->name, "Add")) {
 		g_assert (ctx);
@@ -464,12 +464,25 @@ emit_jit_helpers_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSi
 			return NULL;
 
 		gboolean is_i8 = (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8);
+		gboolean is_unsigned = (t->type == MONO_TYPE_U1 || t->type == MONO_TYPE_U2 || t->type == MONO_TYPE_U4 || t->type == MONO_TYPE_U8 || t->type == MONO_TYPE_U);
+		int cmp_op, ceq_op, cgt_op, clt_op;
 
-		// FIXME: Sign/zero extend
+		if (is_i8) {
+			cmp_op = OP_LCOMPARE;
+			ceq_op = OP_LCEQ;
+			cgt_op = is_unsigned ? OP_LCGT_UN : OP_LCGT;
+			clt_op = is_unsigned ? OP_LCLT_UN : OP_LCLT;
+		} else {
+			cmp_op = OP_ICOMPARE;
+			ceq_op = OP_ICEQ;
+			cgt_op = is_unsigned ? OP_ICGT_UN : OP_ICGT;
+			clt_op = is_unsigned ? OP_ICLT_UN : OP_ICLT;
+		}
+
 		if (!strcmp (cmethod->name, "EnumEquals")) {
 			dreg = alloc_ireg (cfg);
-			EMIT_NEW_BIALU (cfg, ins, is_i8 ? OP_LCOMPARE : OP_ICOMPARE, -1, args [0]->dreg, args [1]->dreg);
-			EMIT_NEW_UNALU (cfg, ins, is_i8 ? OP_LCEQ : OP_ICEQ, dreg, -1);
+			EMIT_NEW_BIALU (cfg, ins, cmp_op, -1, args [0]->dreg, args [1]->dreg);
+			EMIT_NEW_UNALU (cfg, ins, ceq_op, dreg, -1);
 		} else {
 			// Use the branchless code (a > b) - (a < b)
 			int reg1, reg2;
@@ -478,10 +491,10 @@ emit_jit_helpers_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSi
 			reg2 = alloc_ireg (cfg);
 			dreg = alloc_ireg (cfg);
 
-			EMIT_NEW_BIALU (cfg, ins, is_i8 ? OP_LCOMPARE : OP_ICOMPARE, -1, args [0]->dreg, args [1]->dreg);
-			EMIT_NEW_UNALU (cfg, ins, is_i8 ? OP_LCGT : OP_ICGT, reg1, -1);
-			EMIT_NEW_BIALU (cfg, ins, is_i8 ? OP_LCOMPARE : OP_ICOMPARE, -1, args [0]->dreg, args [1]->dreg);
-			EMIT_NEW_UNALU (cfg, ins, is_i8 ? OP_LCLT : OP_ICLT, reg2, -1);
+			EMIT_NEW_BIALU (cfg, ins, cmp_op, -1, args [0]->dreg, args [1]->dreg);
+			EMIT_NEW_UNALU (cfg, ins, cgt_op, reg1, -1);
+			EMIT_NEW_BIALU (cfg, ins, cmp_op, -1, args [0]->dreg, args [1]->dreg);
+			EMIT_NEW_UNALU (cfg, ins, clt_op, reg2, -1);
 			EMIT_NEW_BIALU (cfg, ins, OP_ISUB, dreg, reg1, reg2);
 		}
 		return ins;
@@ -1508,7 +1521,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 			if (opcode) {
 				double *dest = (double *) mono_domain_alloc (cfg->domain, sizeof (double));
-				double result;
+				double result = 0;
 				MONO_INST_NEW (cfg, ins, OP_R8CONST);
 				ins->type = STACK_R8;
 				ins->dreg = mono_alloc_dreg (cfg, (MonoStackType) ins->type);
@@ -1563,6 +1576,8 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				case OP_TANH:
 					result = tanh (source);
 					break;
+				default:
+					g_error ("invalid opcode %d", (int)opcode);
 				}
 				*dest = result;
 				MONO_ADD_INS (cfg->cbb, ins);
@@ -1644,9 +1659,9 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			   !strcmp (cmethod_klass_name_space, "Internal.Runtime.CompilerServices") &&
 			   !strcmp (cmethod_klass_name, "Unsafe")) {
 		return emit_unsafe_intrinsics (cfg, cmethod, fsig, args);
-	} else if (in_corlib &&
-			   !strcmp (cmethod_klass_name_space, "System.Runtime.CompilerServices") &&
-			   !strcmp (cmethod_klass_name, "Unsafe")) {
+	} else if (!strcmp (cmethod_klass_name_space, "System.Runtime.CompilerServices") &&
+			   !strcmp (cmethod_klass_name, "Unsafe") &&
+			   (in_corlib || !strcmp (cmethod_klass_image->assembly->aname.name, "System.Runtime.CompilerServices.Unsafe"))) {
 		return emit_unsafe_intrinsics (cfg, cmethod, fsig, args);
 	} else if (in_corlib &&
 			   !strcmp (cmethod_klass_name_space, "System.Runtime.CompilerServices") &&

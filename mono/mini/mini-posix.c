@@ -249,7 +249,7 @@ MONO_SIG_HANDLER_FUNC (static, sigterm_signal_handler)
 	// Will return when the dumping is done, so this thread can continue
 	// running. Returns FALSE on unrecoverable error.
 	if (!mono_threads_summarize_execute (&mctx, &output, &hashes, FALSE, NULL, 0))
-		g_assert_not_reached ();
+		g_error ("Crash reporter dumper exited due to fatal error.");
 #endif
 
 	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
@@ -893,7 +893,7 @@ dump_memory_around_ip (MonoContext *mctx)
 		return;
 
 	g_async_safe_printf ("\n=================================================================\n");
-	g_async_safe_printf ("\tBasic Fault Adddress Reporting\n");
+	g_async_safe_printf ("\tBasic Fault Address Reporting\n");
 	g_async_safe_printf ("=================================================================\n");
 
 	gpointer native_ip = MONO_CONTEXT_GET_IP (mctx);
@@ -903,37 +903,6 @@ dump_memory_around_ip (MonoContext *mctx)
 	} else {
 		g_async_safe_printf ("instruction pointer is NULL, skip dumping");
 	}
-}
-
-static void
-print_process_map (void)
-{
-#ifdef __linux__
-	FILE *fp = fopen ("/proc/self/maps", "r");
-	char line [256];
-
-	if (fp == NULL) {
-		mono_runtime_printf_err ("no /proc/self/maps, not on linux?\n");
-		return;
-	}
-
-	mono_runtime_printf_err ("/proc/self/maps:");
-	const int max_lines = 25;
-	int i = 0;
-
-	while (fgets (line, sizeof (line), fp) && i++ < max_lines) {
-		// strip newline
-		size_t len = strlen (line);
-		if (len > 0 && line [len - 1] == '\n')
-			line [len - 1] = '\0';
-
-		mono_runtime_printf_err ("%s", line);
-	}
-
-	fclose (fp);
-#else
-	/* do nothing */
-#endif
 }
 
 static void
@@ -1106,9 +1075,14 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 			g_async_safe_printf ("=================================================================\n");
 			mono_gdb_render_native_backtraces (crashed_pid);
 			_exit (1);
+		} else if (pid > 0) {
+			waitpid (pid, &status, 0);
+		} else {
+			// If we can't fork, do as little as possible before exiting
+#ifndef DISABLE_CRASH_REPORTING
+			output = NULL;
+#endif
 		}
-
-		waitpid (pid, &status, 0);
 
 		if (double_faulted) {
 			g_async_safe_printf("\nExiting early due to double fault.\n");
@@ -1148,8 +1122,6 @@ dump_native_stacktrace (const char *signal, MonoContext *mctx)
 void
 mono_dump_native_crash_info (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info)
 {
-	print_process_map ();
-
 	dump_native_stacktrace (signal, mctx);
 
 	dump_memory_around_ip (mctx);

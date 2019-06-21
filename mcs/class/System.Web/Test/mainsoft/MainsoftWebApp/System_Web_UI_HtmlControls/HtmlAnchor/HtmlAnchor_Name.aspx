@@ -25,20 +25,20 @@
 		<form id="Form1" method="post" runat="server">
 			<P>
 				<cc1:GHTSubTest id="GHTSubTest1" runat="server" Width="553px" Height="56px" Description="HTMLAnchor_Name_1">
-					<A id="anchor1" href="http://www.google.com" name="anchor1" runat="server">Anchor1</A>
+					<A id="anchor1" href="http://www.example.com" name="anchor1" runat="server">Anchor1</A>
 				</cc1:GHTSubTest></P>
 			<P>
 				<cc1:GHTSubTest id="Ghtsubtest2" runat="server" Width="553px" Height="56px" Description="HTMLAnchor_Name_2">
-					<A id="anchor2" href="http://www.google.com" name="anchor2_!@#$%^&amp;*()" runat="server">
+					<A id="anchor2" href="http://www.example.com" name="anchor2_!@#$%^&amp;*()" runat="server">
 						Anchor2</A>
 				</cc1:GHTSubTest></P>
 			<P>
 				<cc1:GHTSubTest id="Ghtsubtest3" runat="server" Width="553px" Height="59px" Description="HTMLAnchor_Name_3">
-					<A id="anchor3" href="http://www.google.com" name="anchor3" runat="server">Anchor3</A>
+					<A id="anchor3" href="http://www.example.com" name="anchor3" runat="server">Anchor3</A>
 				</cc1:GHTSubTest></P>
 			<P>
 				<cc1:GHTSubTest id="Ghtsubtest4" runat="server" Width="553px" Height="59px" Description="HTMLAnchor_Name_4">
-					<A id="anchor4" href="http://www.google.com" name="anchor4" runat="server">Anchor4</A>
+					<A id="anchor4" href="http://www.example.com" name="anchor4" runat="server">Anchor4</A>
 				</cc1:GHTSubTest></P>
 		</form>
 		<br>

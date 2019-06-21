@@ -1,0 +1,2 @@
+#include winaot_corlib.dll.exclude.sources
+#include testing_aot_common_corlib.dll.exclude.sources

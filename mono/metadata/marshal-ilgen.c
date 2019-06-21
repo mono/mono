@@ -6567,7 +6567,6 @@ emit_vtfixup_ftnptr_ilgen (MonoMethodBuilder *mb, MonoMethod *method, int param_
 static void
 emit_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoJitICallInfo *callinfo, MonoMethodSignature *csig2, gboolean check_exceptions)
 {
-	gconstpointer const func = callinfo->func;
 	MonoMethodSignature *const sig = callinfo->sig;
 
 	if (sig->hasthis)
@@ -6577,7 +6576,8 @@ emit_icall_wrapper_ilgen (MonoMethodBuilder *mb, MonoJitICallInfo *callinfo, Mon
 		mono_mb_emit_ldarg (mb, i + sig->hasthis);
 
 	mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-	mono_mb_emit_op (mb, CEE_MONO_JIT_ICALL_ADDR, (gpointer)func);
+	mono_mb_emit_byte (mb, CEE_MONO_JIT_ICALL_ADDR);
+	mono_mb_emit_i4 (mb, mono_jit_icall_info_index (callinfo));
 	mono_mb_emit_calli (mb, csig2);
 	if (check_exceptions)
 		emit_thread_interrupt_checkpoint (mb);

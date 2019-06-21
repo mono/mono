@@ -119,7 +119,7 @@ namespace MonoTests.System {
 		[Test]
 		public void Httpx ()
 		{
-			Uri uri = new Uri ("httpx://www.mono-project.com/CAS");
+			Uri uri = new Uri ("httpx://www.example.com/CAS");
 			Assert.AreEqual (8080, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}
@@ -127,7 +127,7 @@ namespace MonoTests.System {
 		[Test]
 		public void Httpx_Methods ()
 		{
-			Uri uri = new Uri ("httpx://www.mono-project.com/CAS");
+			Uri uri = new Uri ("httpx://www.example.com/CAS");
 			Assert.AreEqual ("CAS", uri.GetComponents (UriComponents.Path, UriFormat.SafeUnescaped), "GetComponents");
 			Assert.IsTrue (uri.IsBaseOf (uri), "IsBaseOf");
 			Assert.IsTrue (uri.IsWellFormedOriginalString (), "IsWellFormedOriginalString");
@@ -137,7 +137,7 @@ namespace MonoTests.System {
 		[Test]
 		public void SecureHttpx ()
 		{
-			Uri uri = new Uri ("shttpx://www.mono-project.com/CAS");
+			Uri uri = new Uri ("shttpx://www.example.com/CAS");
 			Assert.AreEqual (-1, uri.Port, "Port");
 			// OnRegister cannot be used to change the registering informations
 		}

@@ -1,6 +1,27 @@
 /**
  * \file
- *   Enum and static storage for JIT icalls.
+ *   Enum for JIT icalls: MonoJitICallId MONO_JIT_ICALL_mono_foo, etc.
+ *   Static storage for JIT icall info: mono_get_jit_icall_info().
+ *
+ *   mono_find_jit_icall_info (MonoJitICallId)
+ *     Convert enum to pointer.
+ *
+ *   mono_find_jit_icall_info ((MonoJitICallId)int)
+ *     Convert int to pointer.
+ *
+ *  mono_jit_icall_info_id (MonoJitICallInfo*)
+ *     Convert pointer to enum.
+ *
+ *   mono_jit_icall_info_index (MonoJitICallInfo*)
+ *     Convert pointer to int.
+ *
+ *   &mono_get_icall_info ()->name
+ *     Convert name to pointer.
+ *
+ *   MONO_JIT_ICALL_ ## name
+ *     Convert name to enum.
+ *
+ *   All conversions are just a few instructions.
  *
  * Author:
  *   Jay Krell (jaykrell@microsoft.com)
@@ -11,8 +32,7 @@
 
 // No include guard needed.
 
-// Eventually, changes within MONO_JIT_ICALLS might require revising MONO_AOT_FILE_VERSION.
-// i.e. if AOT persists enum/int instead of string. For now, this is not the case.
+// Changes within MONO_JIT_ICALLS require revising MONO_AOT_FILE_VERSION.
 #define MONO_JIT_ICALLS \
 	\
 MONO_JIT_ICALL (ZeroIsReserved)	\
@@ -282,11 +302,6 @@ MONO_JIT_ICALL (mono_threads_exit_gc_unsafe_region_unbalanced) \
 MONO_JIT_ICALL (mono_threads_state_poll) \
 MONO_JIT_ICALL (mono_throw_exception) \
 MONO_JIT_ICALL (mono_throw_method_access) \
-MONO_JIT_ICALL (mono_tls_set_domain) \
-MONO_JIT_ICALL (mono_tls_set_jit_tls) \
-MONO_JIT_ICALL (mono_tls_set_lmf_addr) \
-MONO_JIT_ICALL (mono_tls_set_sgen_thread_info) \
-MONO_JIT_ICALL (mono_tls_set_thread) \
 MONO_JIT_ICALL (mono_trace_enter_method) \
 MONO_JIT_ICALL (mono_trace_leave_method) \
 MONO_JIT_ICALL (mono_upgrade_remote_class_wrapper) \
@@ -319,7 +334,14 @@ MONO_JIT_ICALL (ves_icall_thread_finish_async_abort) \
 	\
 MONO_JIT_ICALL (count) \
 
-typedef enum MonoJitICallId {
+#define MONO_JIT_ICALL_mono_get_lmf_addr MONO_JIT_ICALL_mono_tls_get_lmf_addr
+
+#ifdef __cplusplus
+typedef enum MonoJitICallId : gsize // Widen to gsize for use in MonoJumpInfo union.
+#else
+typedef enum MonoJitICallId
+#endif
+{
 #define MONO_JIT_ICALL(x) MONO_JIT_ICALL_ ## x,
 MONO_JIT_ICALLS
 #undef MONO_JIT_ICALL
@@ -334,6 +356,8 @@ MONO_JIT_ICALLS
 	MonoJitICallInfo array [MONO_JIT_ICALL_count];
 } MonoJitICallInfos;
 
+// Indirect mono_jit_icall_info access through a function or macro due to loaded LLVM.
+//
 #if MONO_LLVM_LOADED
 
 MonoJitICallInfos*
@@ -347,30 +371,20 @@ extern MonoJitICallInfos mono_jit_icall_info;
 
 #endif
 
-#define mono_jit_icall_info_index(x) ((int)((x) - mono_get_jit_icall_info ()->array))
+// Convert MonoJitICallInfo* to an int or enum.
+//
+#define mono_jit_icall_info_index(x) ((x) - mono_get_jit_icall_info ()->array)
 #define mono_jit_icall_info_id(x) ((MonoJitICallId)mono_jit_icall_info_index(x))
 
+// Given an enum/id, get the MonoJitICallInfo*.
+//
 static inline MonoJitICallInfo*
-mono_check_jit_icall_info (gconstpointer jit_icall_info)
+mono_find_jit_icall_info (MonoJitICallId id)
 {
-	// All pointers to MonoJitICallInfo must be within mono_jit_icall_info.
-	// This enables converting to and from a small integer or enum.
-	g_assert ((char*)jit_icall_info >= (char*)mono_get_jit_icall_info () && (char*)jit_icall_info < (char*)(mono_get_jit_icall_info () + 1));
+	const guint index = (guint)id;
 
-	// Allow encoding in 16 bits, and maybe 9 (but not 8). FIXME static_assert.
-	g_assert (MONO_JIT_ICALL_count < 0x200);
+	g_assert (index < MONO_JIT_ICALL_count);
+	g_static_assert (MONO_JIT_ICALL_count < 0x200); // fits in 9 bits
 
-	return (MonoJitICallInfo*)jit_icall_info;
-}
-
-static inline MonoJitICallInfo*
-mono_find_jit_icall_info (MonoJitICallId index)
-{
-	g_assert (index && (guint)index < MONO_JIT_ICALL_count);
-
-	MonoJitICallInfo *info = &mono_get_jit_icall_info ()->array [index];
-
-	g_assert (info->func);
-
-	return info;
+	return &mono_get_jit_icall_info ()->array [index];
 }

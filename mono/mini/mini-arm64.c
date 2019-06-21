@@ -236,9 +236,6 @@ mono_arch_cpu_init (void)
 void
 mono_arch_init (void)
 {
-	mono_aot_register_jit_icall ("mono_arm_throw_exception", mono_arm_throw_exception);
-	mono_aot_register_jit_icall ("mono_arm_resume_unwind", mono_arm_resume_unwind);
-
 	if (!mono_aot_only)
 		bp_trampoline = mini_get_breakpoint_trampoline ();
 
@@ -1436,7 +1433,7 @@ arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
 void
 mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
+	const MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	gpointer storage;
 	ArgInfo *ainfo;
@@ -1484,7 +1481,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 void
 mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb;
+	const MonoEECallbacks *interp_cb;
 	CallInfo *cinfo;
 	gpointer storage;
 	ArgInfo *ainfo;
@@ -1516,7 +1513,7 @@ mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 void
 mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
+	const MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	gpointer storage;
 	ArgInfo *ainfo;
@@ -1549,7 +1546,7 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 void
 mono_arch_get_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
-	MonoEECallbacks *interp_cb;
+	const MonoEECallbacks *interp_cb;
 	CallInfo *cinfo;
 	ArgInfo *ainfo;
 	gpointer storage;
@@ -3262,7 +3259,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * So instead of emitting a trap, we emit a call a C function and place a 
 			 * breakpoint there.
 			 */
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, (gpointer)"mono_break");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_break));
 			break;
 		case OP_LOCALLOC: {
 			guint8 *buf [16];
@@ -3358,7 +3355,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 				arm_ldrx (code, ARMREG_IP1, info_var->inst_basereg, info_var->inst_offset);
 				/* Add the offset */
-				val = ((offset / 4) * sizeof (guint8*)) + MONO_STRUCT_OFFSET (SeqPointInfo, bp_addrs);
+				val = ((offset / 4) * sizeof (target_mgreg_t)) + MONO_STRUCT_OFFSET (SeqPointInfo, bp_addrs);
 				/* Load the info->bp_addrs [offset], which is either 0 or the address of the bp trampoline */
 				code = emit_ldrx (code, ARMREG_IP1, ARMREG_IP1, val);
 				/* Skip the load if its 0 */
@@ -4327,14 +4324,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LCALL:
 		case OP_FCALL:
 		case OP_RCALL:
-		case OP_VCALL2:
+		case OP_VCALL2: {
+
 			call = (MonoCallInst*)ins;
-			if (ins->flags & MONO_INST_HAS_METHOD)
-				code = emit_call (cfg, code, MONO_PATCH_INFO_METHOD, call->method);
-			else
-				code = emit_call (cfg, code, MONO_PATCH_INFO_ABS, call->fptr);
+			const MonoJumpInfoTarget patch = mono_call_to_patch (call);
+			code = emit_call (cfg, code, patch.type, patch.target);
 			code = emit_move_return_value (cfg, code, ins);
 			break;
+		}
 		case OP_VOIDCALL_REG:
 		case OP_CALL_REG:
 		case OP_LCALL_REG:
@@ -4544,8 +4541,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			/* Slowpath */
 			g_assert (sreg1 == ARMREG_R0);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL,
-							  (gpointer)"mono_generic_class_init");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID,
+							  GUINT_TO_POINTER (MONO_JIT_ICALL_mono_generic_class_init));
 
 			mono_arm_patch (jump, code, MONO_R_ARM64_CBZ);
 			break;
@@ -4600,14 +4597,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_THROW:
 			if (sreg1 != ARMREG_R0)
 				arm_movx (code, ARMREG_R0, sreg1);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, 
-							  (gpointer)"mono_arch_throw_exception");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID,
+							  GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_throw_exception));
 			break;
 		case OP_RETHROW:
 			if (sreg1 != ARMREG_R0)
 				arm_movx (code, ARMREG_R0, sreg1);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, 
-							  (gpointer)"mono_arch_rethrow_exception");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID,
+							  GUINT_TO_POINTER (MONO_JIT_ICALL_mono_arch_rethrow_exception));
 			break;
 		case OP_CALL_HANDLER:
 			mono_add_patch_info_rel (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_target_bb, MONO_R_ARM64_BL);
@@ -4669,7 +4666,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* Call it if it is non-null */
 			buf [0] = code;
 			arm_cbzx (code, ARMREG_IP1, 0);
-			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL, "mono_threads_state_poll");
+			code = emit_call (cfg, code, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (MONO_JIT_ICALL_mono_threads_state_poll));
 			mono_arm_patch (buf [0], code, MONO_R_ARM64_CBZ);
 			break;
 		}
@@ -5244,8 +5241,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 		arm_movx (code, ARMREG_R1, ARMREG_IP1);
 		/* Branch to the corlib exception throwing trampoline */
 		ji->ip.i = code - cfg->native_code;
-		ji->type = MONO_PATCH_INFO_JIT_ICALL;
-		ji->data.name = "mono_arch_throw_corlib_exception";
+		ji->type = MONO_PATCH_INFO_JIT_ICALL_ID;
+		ji->data.jit_icall_id = MONO_JIT_ICALL_mono_arch_throw_corlib_exception;
 		ji->relocation = MONO_R_ARM64_BL;
 		arm_bl (code, 0);
 		cfg->thunk_area += THUNK_SIZE;
@@ -5559,4 +5556,18 @@ CallInfo*
 mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 {
 	return get_call_info (mp, sig);
+}
+
+gpointer
+mono_arch_load_function (MonoJitICallId jit_icall_id)
+{
+	gpointer target = NULL;
+	switch (jit_icall_id) {
+#undef MONO_AOT_ICALL
+#define MONO_AOT_ICALL(x) case MONO_JIT_ICALL_ ## x: target = (gpointer)x; break;
+	MONO_AOT_ICALL (mono_arm_resume_unwind)
+	MONO_AOT_ICALL (mono_arm_start_gsharedvt_call)
+	MONO_AOT_ICALL (mono_arm_throw_exception)
+	}
+	return target;
 }

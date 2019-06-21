@@ -128,7 +128,7 @@ namespace MonoTests.System {
 	[TestFixture]
 	public class UriParserTest {
 
-		private const string full_http = "http://www.mono-project.com/Main_Page#FAQ?Edit";
+		private const string full_http = "http://www.example.com/Main_Page#FAQ?Edit";
 
 		private string prefix;
 		private Uri http;
@@ -139,10 +139,10 @@ namespace MonoTests.System {
 		{
 			prefix = "unit.test.";
 			http = new Uri (full_http);
-			ftp = new Uri ("ftp://username:password@ftp.go-mono.com:21/with some spaces/mono.tgz");
+			ftp = new Uri ("ftp://username:password@ftp.example.com:21/with some spaces/mono.tgz");
 
 			// Uses percent encoding on the username and password
-			ftp2 = new Uri ("ftp://%75sername%3a%70assword@ftp.go-mono.com:21/with some spaces/mono.tgz");
+			ftp2 = new Uri ("ftp://%75sername%3a%70assword@ftp.example.com:21/with some spaces/mono.tgz");
 		}
 
 		public string Prefix
@@ -163,23 +163,23 @@ namespace MonoTests.System {
 			UnitTestUriParser p = new UnitTestUriParser ();
 			Assert.AreEqual ("http", p._GetComponents (http, UriComponents.Scheme, UriFormat.SafeUnescaped), "http.Scheme");
 			Assert.AreEqual (String.Empty, p._GetComponents (http, UriComponents.UserInfo, UriFormat.SafeUnescaped), "http.UserInfo");
-			Assert.AreEqual ("www.mono-project.com", p._GetComponents (http, UriComponents.Host, UriFormat.SafeUnescaped), "http.Host");
+			Assert.AreEqual ("www.example.com", p._GetComponents (http, UriComponents.Host, UriFormat.SafeUnescaped), "http.Host");
 			Assert.AreEqual (String.Empty, p._GetComponents (http, UriComponents.Port, UriFormat.SafeUnescaped), "http.Port");
 			Assert.AreEqual ("Main_Page", p._GetComponents (http, UriComponents.Path, UriFormat.SafeUnescaped), "http.Path");
 			Assert.AreEqual (String.Empty, p._GetComponents (http, UriComponents.Query, UriFormat.SafeUnescaped), "http.Query");
 			Assert.AreEqual ("FAQ?Edit", p._GetComponents (http, UriComponents.Fragment, UriFormat.SafeUnescaped), "http.Fragment");
 			Assert.AreEqual ("80", p._GetComponents (http, UriComponents.StrongPort, UriFormat.SafeUnescaped), "http.StrongPort");
 			Assert.AreEqual (String.Empty, p._GetComponents (http, UriComponents.KeepDelimiter, UriFormat.SafeUnescaped), "http.KeepDelimiter");
-			Assert.AreEqual ("www.mono-project.com:80", p._GetComponents (http, UriComponents.HostAndPort, UriFormat.SafeUnescaped), "http.HostAndPort");
-			Assert.AreEqual ("www.mono-project.com:80", p._GetComponents (http, UriComponents.StrongAuthority, UriFormat.SafeUnescaped), "http.StrongAuthority");
+			Assert.AreEqual ("www.example.com:80", p._GetComponents (http, UriComponents.HostAndPort, UriFormat.SafeUnescaped), "http.HostAndPort");
+			Assert.AreEqual ("www.example.com:80", p._GetComponents (http, UriComponents.StrongAuthority, UriFormat.SafeUnescaped), "http.StrongAuthority");
 			Assert.AreEqual (full_http, p._GetComponents (http, UriComponents.AbsoluteUri, UriFormat.SafeUnescaped), "http.AbsoluteUri");
 			Assert.AreEqual ("/Main_Page", p._GetComponents (http, UriComponents.PathAndQuery, UriFormat.SafeUnescaped), "http.PathAndQuery");
-			Assert.AreEqual ("http://www.mono-project.com/Main_Page", p._GetComponents (http, UriComponents.HttpRequestUrl, UriFormat.SafeUnescaped), "http.HttpRequestUrl");
-			Assert.AreEqual ("http://www.mono-project.com", p._GetComponents (http, UriComponents.SchemeAndServer, UriFormat.SafeUnescaped), "http.SchemeAndServer");
+			Assert.AreEqual ("http://www.example.com/Main_Page", p._GetComponents (http, UriComponents.HttpRequestUrl, UriFormat.SafeUnescaped), "http.HttpRequestUrl");
+			Assert.AreEqual ("http://www.example.com", p._GetComponents (http, UriComponents.SchemeAndServer, UriFormat.SafeUnescaped), "http.SchemeAndServer");
 			Assert.AreEqual (full_http, p._GetComponents (http, UriComponents.SerializationInfoString, UriFormat.SafeUnescaped), "http.SerializationInfoString");
 			// strange mixup
 			Assert.AreEqual ("http://", p._GetComponents (http, UriComponents.Scheme | UriComponents.Port, UriFormat.SafeUnescaped), "http.Scheme+Port");
-			Assert.AreEqual ("www.mono-project.com#FAQ?Edit", p._GetComponents (http, UriComponents.Host | UriComponents.Fragment, UriFormat.SafeUnescaped), "http.Scheme+Port");
+			Assert.AreEqual ("www.example.com#FAQ?Edit", p._GetComponents (http, UriComponents.Host | UriComponents.Fragment, UriFormat.SafeUnescaped), "http.Scheme+Port");
 			Assert.AreEqual ("/Main_Page", p._GetComponents (http, UriComponents.Port | UriComponents.Path, UriFormat.SafeUnescaped), "http.Scheme+Port");
 			Assert.AreSame (p, p._OnNewUri (), "OnNewUri");
 		}
@@ -190,7 +190,7 @@ namespace MonoTests.System {
 			UnitTestUriParser p = new UnitTestUriParser ();
 			Assert.AreEqual ("ftp", p._GetComponents (ftp, UriComponents.Scheme, UriFormat.Unescaped), "ftp.Scheme");
 			Assert.AreEqual ("username:password", p._GetComponents (ftp, UriComponents.UserInfo, UriFormat.Unescaped), "ftp.UserInfo");
-			Assert.AreEqual ("ftp.go-mono.com", p._GetComponents (ftp, UriComponents.Host, UriFormat.Unescaped), "ftp.Host");
+			Assert.AreEqual ("ftp.example.com", p._GetComponents (ftp, UriComponents.Host, UriFormat.Unescaped), "ftp.Host");
 			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.Port, UriFormat.Unescaped), "ftp.Port");
 			Assert.AreEqual ("with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path, UriFormat.Unescaped), "ftp.Path");
 			Assert.AreEqual ("with%20some%20spaces/mono.tgz", p._GetComponents (ftp, UriComponents.Path, UriFormat.UriEscaped), "ftp.Path-UriEscaped");
@@ -199,13 +199,13 @@ namespace MonoTests.System {
 			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.Fragment, UriFormat.Unescaped), "ftp.Fragment");
 			Assert.AreEqual ("21", p._GetComponents (ftp, UriComponents.StrongPort, UriFormat.Unescaped), "ftp.StrongPort");
 			Assert.AreEqual (String.Empty, p._GetComponents (ftp, UriComponents.KeepDelimiter, UriFormat.Unescaped), "http.KeepDelimiter");
-			Assert.AreEqual ("ftp.go-mono.com:21", p._GetComponents (ftp, UriComponents.HostAndPort, UriFormat.Unescaped), "http.HostAndPort");
-			Assert.AreEqual ("username:password@ftp.go-mono.com:21", p._GetComponents (ftp, UriComponents.StrongAuthority, UriFormat.Unescaped), "http.StrongAuthority");
-			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.AbsoluteUri, UriFormat.Unescaped), "http.AbsoluteUri");
+			Assert.AreEqual ("ftp.example.com:21", p._GetComponents (ftp, UriComponents.HostAndPort, UriFormat.Unescaped), "http.HostAndPort");
+			Assert.AreEqual ("username:password@ftp.example.com:21", p._GetComponents (ftp, UriComponents.StrongAuthority, UriFormat.Unescaped), "http.StrongAuthority");
+			Assert.AreEqual ("ftp://username:password@ftp.example.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.AbsoluteUri, UriFormat.Unescaped), "http.AbsoluteUri");
 			Assert.AreEqual ("/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.PathAndQuery, UriFormat.Unescaped), "http.PathAndQuery");
-			Assert.AreEqual ("ftp://ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.HttpRequestUrl, UriFormat.Unescaped), "http.HttpRequestUrl");
-			Assert.AreEqual ("ftp://ftp.go-mono.com", p._GetComponents (ftp, UriComponents.SchemeAndServer, UriFormat.Unescaped), "http.SchemeAndServer");
-			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.SerializationInfoString, UriFormat.Unescaped), "http.SerializationInfoString");
+			Assert.AreEqual ("ftp://ftp.example.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.HttpRequestUrl, UriFormat.Unescaped), "http.HttpRequestUrl");
+			Assert.AreEqual ("ftp://ftp.example.com", p._GetComponents (ftp, UriComponents.SchemeAndServer, UriFormat.Unescaped), "http.SchemeAndServer");
+			Assert.AreEqual ("ftp://username:password@ftp.example.com/with some spaces/mono.tgz", p._GetComponents (ftp, UriComponents.SerializationInfoString, UriFormat.Unescaped), "http.SerializationInfoString");
 			Assert.AreSame (p, p._OnNewUri (), "OnNewUri");
 			// strange mixup
 			Assert.AreEqual ("ftp://username:password@", p._GetComponents (ftp, UriComponents.Scheme | UriComponents.UserInfo, UriFormat.Unescaped), "ftp.Scheme+UserInfo");
@@ -218,7 +218,7 @@ namespace MonoTests.System {
 			UnitTestUriParser p = new UnitTestUriParser ();
 			Assert.AreEqual ("ftp", p._GetComponents (ftp2, UriComponents.Scheme, UriFormat.Unescaped), "ftp.Scheme");
 			Assert.AreEqual ("username:password", p._GetComponents (ftp2, UriComponents.UserInfo, UriFormat.Unescaped), "ftp.UserInfo");
-			Assert.AreEqual ("ftp.go-mono.com", p._GetComponents (ftp2, UriComponents.Host, UriFormat.Unescaped), "ftp.Host");
+			Assert.AreEqual ("ftp.example.com", p._GetComponents (ftp2, UriComponents.Host, UriFormat.Unescaped), "ftp.Host");
 			Assert.AreEqual (String.Empty, p._GetComponents (ftp2, UriComponents.Port, UriFormat.Unescaped), "ftp.Port");
 			Assert.AreEqual ("with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.Path, UriFormat.Unescaped), "ftp.Path");
 			Assert.AreEqual ("with%20some%20spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.Path, UriFormat.UriEscaped), "ftp.Path-UriEscaped");
@@ -227,13 +227,13 @@ namespace MonoTests.System {
 			Assert.AreEqual (String.Empty, p._GetComponents (ftp2, UriComponents.Fragment, UriFormat.Unescaped), "ftp.Fragment");
 			Assert.AreEqual ("21", p._GetComponents (ftp2, UriComponents.StrongPort, UriFormat.Unescaped), "ftp.StrongPort");
 			Assert.AreEqual (String.Empty, p._GetComponents (ftp2, UriComponents.KeepDelimiter, UriFormat.Unescaped), "http.KeepDelimiter");
-			Assert.AreEqual ("ftp.go-mono.com:21", p._GetComponents (ftp2, UriComponents.HostAndPort, UriFormat.Unescaped), "http.HostAndPort");
-			Assert.AreEqual ("username:password@ftp.go-mono.com:21", p._GetComponents (ftp2, UriComponents.StrongAuthority, UriFormat.Unescaped), "http.StrongAuthority");
-			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.AbsoluteUri, UriFormat.Unescaped), "http.AbsoluteUri");
+			Assert.AreEqual ("ftp.example.com:21", p._GetComponents (ftp2, UriComponents.HostAndPort, UriFormat.Unescaped), "http.HostAndPort");
+			Assert.AreEqual ("username:password@ftp.example.com:21", p._GetComponents (ftp2, UriComponents.StrongAuthority, UriFormat.Unescaped), "http.StrongAuthority");
+			Assert.AreEqual ("ftp://username:password@ftp.example.com/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.AbsoluteUri, UriFormat.Unescaped), "http.AbsoluteUri");
 			Assert.AreEqual ("/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.PathAndQuery, UriFormat.Unescaped), "http.PathAndQuery");
-			Assert.AreEqual ("ftp://ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.HttpRequestUrl, UriFormat.Unescaped), "http.HttpRequestUrl");
-			Assert.AreEqual ("ftp://ftp.go-mono.com", p._GetComponents (ftp2, UriComponents.SchemeAndServer, UriFormat.Unescaped), "http.SchemeAndServer");
-			Assert.AreEqual ("ftp://username:password@ftp.go-mono.com/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.SerializationInfoString, UriFormat.Unescaped), "http.SerializationInfoString");
+			Assert.AreEqual ("ftp://ftp.example.com/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.HttpRequestUrl, UriFormat.Unescaped), "http.HttpRequestUrl");
+			Assert.AreEqual ("ftp://ftp.example.com", p._GetComponents (ftp2, UriComponents.SchemeAndServer, UriFormat.Unescaped), "http.SchemeAndServer");
+			Assert.AreEqual ("ftp://username:password@ftp.example.com/with some spaces/mono.tgz", p._GetComponents (ftp2, UriComponents.SerializationInfoString, UriFormat.Unescaped), "http.SerializationInfoString");
 			Assert.AreSame (p, p._OnNewUri (), "OnNewUri");
 			// strange mixup
 			Assert.AreEqual ("ftp://username:password@", p._GetComponents (ftp2, UriComponents.Scheme | UriComponents.UserInfo, UriFormat.Unescaped), "ftp.Scheme+UserInfo");
@@ -298,59 +298,59 @@ namespace MonoTests.System {
 			UnitTestUriParser p = new UnitTestUriParser ();
 			Assert.IsTrue (p._IsBaseOf (http, http), "http-http");
 
-			Uri u = new Uri ("http://www.mono-project.com/Main_Page#FAQ");
+			Uri u = new Uri ("http://www.example.com/Main_Page#FAQ");
 			Assert.IsTrue (p._IsBaseOf (u, http), "http-1a");
 			Assert.IsTrue (p._IsBaseOf (http, u), "http-1b");
 
-			u = new Uri ("http://www.mono-project.com/Main_Page");
+			u = new Uri ("http://www.example.com/Main_Page");
 			Assert.IsTrue (p._IsBaseOf (u, http), "http-2a");
 			Assert.IsTrue (p._IsBaseOf (http, u), "http-2b");
 
-			u = new Uri ("http://www.mono-project.com/");
+			u = new Uri ("http://www.example.com/");
 			Assert.IsTrue (p._IsBaseOf (u, http), "http-3a");
 			Assert.IsTrue (p._IsBaseOf (http, u), "http-3b");
 
-			u = new Uri ("http://www.mono-project.com/Main_Page/");
+			u = new Uri ("http://www.example.com/Main_Page/");
 			Assert.IsFalse (p._IsBaseOf (u, http), "http-4a");
 			Assert.IsTrue (p._IsBaseOf (http, u), "http-4b");
 
 			// docs says the UserInfo isn't evaluated, but...
-			u = new Uri ("http://username:password@www.mono-project.com/Main_Page");
+			u = new Uri ("http://username:password@www.example.com/Main_Page");
 			Assert.IsFalse (p._IsBaseOf (u, http), "http-5a");
 			Assert.IsFalse (p._IsBaseOf (http, u), "http-5b");
 
 			// scheme case sensitive ? no
-			u = new Uri ("HTTP://www.mono-project.com/Main_Page");
+			u = new Uri ("HTTP://www.example.com/Main_Page");
 			Assert.IsTrue (p._IsBaseOf (u, http), "http-6a");
 			Assert.IsTrue (p._IsBaseOf (http, u), "http-6b");
 
 			// host case sensitive ? no
-			u = new Uri ("http://www.Mono-Project.com/Main_Page");
+			u = new Uri ("http://www.Example.com/Main_Page");
 			Assert.IsTrue (p._IsBaseOf (u, http), "http-7a");
 			Assert.IsTrue (p._IsBaseOf (http, u), "http-7b");
 
 			// path case sensitive ? no
-			u = new Uri ("http://www.Mono-Project.com/MAIN_Page");
+			u = new Uri ("http://www.Example.com/MAIN_Page");
 			Assert.IsTrue (p._IsBaseOf (u, http), "http-8a");
 			Assert.IsTrue (p._IsBaseOf (http, u), "http-8b");
 
 			// different scheme
-			u = new Uri ("ftp://www.mono-project.com/Main_Page");
+			u = new Uri ("ftp://www.example.com/Main_Page");
 			Assert.IsFalse (p._IsBaseOf (u, http), "http-9a");
 			Assert.IsFalse (p._IsBaseOf (http, u), "http-9b");
 
 			// different host
-			u = new Uri ("http://www.go-mono.com/Main_Page");
+			u = new Uri ("http://www.example.org/Main_Page");
 			Assert.IsFalse (p._IsBaseOf (u, http), "http-10a");
 			Assert.IsFalse (p._IsBaseOf (http, u), "http-10b");
 
 			// different port
-			u = new Uri ("http://www.mono-project.com:8080/");
+			u = new Uri ("http://www.example.com:8080/");
 			Assert.IsFalse (p._IsBaseOf (u, http), "http-11a");
 			Assert.IsFalse (p._IsBaseOf (http, u), "http-11b");
 
 			// specify default port
-			u = new Uri ("http://www.mono-project.com:80/");
+			u = new Uri ("http://www.example.com:80/");
 			Assert.IsTrue (p._IsBaseOf (u, http), "http-12a");
 			Assert.IsTrue (p._IsBaseOf (http, u), "http-12b");
 		}
@@ -396,7 +396,7 @@ namespace MonoTests.System {
 			UriParser.Register (p, scheme, 1999);
 
 			Assert.IsFalse (p.OnNewUriCalled, "!Called");
-			Uri uri = new Uri (scheme + "://www.mono-project.com");
+			Uri uri = new Uri (scheme + "://www.example.com");
 			Assert.IsTrue (p.OnNewUriCalled, "Called");
 		}
 

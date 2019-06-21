@@ -904,6 +904,12 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #define g_assert(x) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x), 0))
 #endif
 
+#ifdef __cplusplus
+#define g_static_assert(x) static_assert (x, "")
+#else
+#define g_static_assert(x) g_assert (x)
+#endif
+
 #define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); eg_unreachable(); } G_STMT_END
 
 /* f is format -- like printf and scanf
@@ -1117,6 +1123,12 @@ gboolean   g_file_test (const gchar *filename, GFileTest test);
 #else
 #define g_write write
 #endif
+#ifdef G_OS_WIN32
+#define g_read _read
+#else
+#define g_read read
+#endif
+
 #define g_fopen fopen
 #define g_lstat lstat
 #define g_rmdir rmdir
@@ -1127,10 +1139,36 @@ gboolean   g_file_test (const gchar *filename, GFileTest test);
 
 gchar *g_mkdtemp (gchar *tmpl);
 
-
 /*
  * Low-level write-based printing functions
  */
+
+static inline int
+g_async_safe_fgets (char *str, int num, int handle, gboolean *newline)
+{
+	memset (str, 0, num);
+	// Make sure we don't overwrite the last index so that we are
+	// guaranteed to be NULL-terminated
+	int without_padding = num - 1;
+	int i=0;
+	while (i < without_padding && g_read (handle, &str [i], sizeof(char))) {
+		if (str [i] == '\n') {
+			str [i] = '\0';
+			*newline = TRUE;
+		}
+		
+		if (!isprint (str [i]))
+			str [i] = '\0';
+
+		if (str [i] == '\0')
+			break;
+
+		i++;
+	}
+
+	return i;
+}
+
 static inline gint
 g_async_safe_vfprintf (int handle, gchar const *format, va_list args)
 {

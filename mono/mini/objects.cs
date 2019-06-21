@@ -841,6 +841,48 @@ class Tests {
 		return 0;
 	}
 
+	public static unsafe int test_0_pointer_array() {
+		int*[] ipa = new int* [0];
+		Array a = ipa;
+
+		
+		if (a is object[])
+			return 1;
+		if (!(a is int*[]))
+			return 2;
+		if (a is ValueType[])
+			return 3;
+		if (a is Enum[])
+			return 4;
+		if (a is char*[])
+			return 5;
+
+		return 0;
+	}
+
+	public static string[] StringValues = { "Val1", "Val2", "Val3" };
+
+	public static IEnumerable<string> GetStringValues ()
+	{
+		foreach (string val in StringValues)
+			yield return val;
+	}
+
+	public static int test_0_cast_special_iface () {
+		try {
+			IEnumerable<string> strings = GetStringValues ();
+			IList<string> stringIList = (IList<string>) strings;
+
+			// No exception thrown. Maybe it's an actual IList ?
+			// Make sure it's not bluffing
+			if (!"Val2".Equals (stringIList [1]))
+				return 1;
+		} catch (InvalidCastException) {
+		}
+
+		return 0;
+	}
+
 	private static int[] daysmonthleap = { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 	private static int AbsoluteDays (int year, int month, int day)
@@ -2001,6 +2043,13 @@ ncells ) {
 		return gh_11378_inner_3 (new Vec3(0, 2, -20));
 	}
 
+	static int variable_with_constant_address;
+
+	public static int test_0_cfold_with_non_constant_ternary_op () {
+		variable_with_constant_address = 0;
+		var old = System.Threading.Interlocked.CompareExchange(ref variable_with_constant_address, 1, 0);
+		return old == 0 && variable_with_constant_address == 1 ? 0 : 1;
+	}
 }
 
 #if __MOBILE__

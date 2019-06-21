@@ -82,7 +82,12 @@
   <PropertyGroup Condition=" '$(Platform)' == 'winaot' ">
     <OutputPath>./../../class/lib/winaot</OutputPath>
     <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-winaot</IntermediateOutputPath>
-    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;DISABLE_COM;WIN_PLATFORM;WINAOT;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_DESKTOP;FULL_AOT_RUNTIME;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;NO_FEATURE_STATIC_DELEGATE;FEATURE_MAKE_RUN_METHODS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <OutputPath>./../../class/lib/testing_winaot_interp</OutputPath>
+    <IntermediateOutputPath>./../../class/obj/$(AssemblyName)-testing_winaot_interp</IntermediateOutputPath>
+    <DefineConstants>NET_1_1;NET_2_0;NET_2_1;NET_3_5;NET_4_0;NET_4_5;MONO;MOBILE;MOBILE_LEGACY;DISABLE_COM;WIN_PLATFORM;WINAOT;FULL_AOT_INTERP;DISABLE_SECURITY;DISABLE_REMOTING;FEATURE_PAL;PFX_LEGACY_3_5;FEATURE_NETCORE;INSIDE_SYSCORE;LIBC;FEATURE_COMPILE;FEATURE_COMPILE_TO_METHODBUILDER</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'xammac' ">
     <OutputPath>./../../class/lib/xammac</OutputPath>
@@ -594,8 +599,6 @@
     </When>
     <When Condition="'$(Platform)' == 'winaot'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\Interop.Libraries.cs" />
-        <Compile Include="..\..\..\external\corefx\src\Common\src\Interop\Unix\System.Native\Interop.GetDomainSocketSizes.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AddInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\AndInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\ArrayOperations.cs" />
@@ -641,7 +644,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\SubInstruction.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\TypeOperations.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Linq.Expressions\src\System\Linq\Expressions\Interpreter\Utilities.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Unix.cs" />
+        <Compile Include="..\..\..\external\corefx\src\System.Net.Sockets\src\System\Net\Sockets\UnixDomainSocketEndPoint.Windows.cs" />
         <Compile Include="..\referencesource\System.Core\System\Security\Cryptography\AesManaged.cs" />
         <Compile Include="System.IO.Pipes\AnonymousPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\NamedPipeClientStream.NotSupported.cs" />
@@ -1196,6 +1199,8 @@
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
+        <Compile Include="System.Linq.Expressions\LambdaExpression.NotSupported.cs" />
+        <Compile Include="System.Runtime.CompilerServices\RuntimeOps.NotSupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch_tv'">
@@ -1253,6 +1258,8 @@
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
+        <Compile Include="System.Linq.Expressions\LambdaExpression.NotSupported.cs" />
+        <Compile Include="System.Runtime.CompilerServices\RuntimeOps.NotSupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monotouch'">
@@ -1310,6 +1317,8 @@
         <Compile Include="System.IO.Pipes\NamedPipeServerStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\PipeStream.NotSupported.cs" />
         <Compile Include="System.IO.Pipes\SafePipeHandle.NotSupported.cs" />
+        <Compile Include="System.Linq.Expressions\LambdaExpression.NotSupported.cs" />
+        <Compile Include="System.Runtime.CompilerServices\RuntimeOps.NotSupported.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'monodroid'">
@@ -1649,6 +1658,12 @@
   <ItemGroup Condition=" '$(Platform)' == 'testing_aot_full' ">
     <Reference Include="nunitlite">
       <HintPath>..\lib\testing_aot_full\nunitlite.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'testing_winaot_interp' ">
+    <Reference Include="nunitlite">
+      <HintPath>..\lib\testing_winaot_interp\nunitlite.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

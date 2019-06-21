@@ -12,7 +12,7 @@ namespace System.Globalization
     {
         private const string JapaneseErasHive = @"System\CurrentControlSet\Control\Nls\Calendars\Japanese\Eras";
 
-        // We know about 4 built-in eras, however users may add additional era(s) from the
+        // We know about 5 built-in eras, however users may add additional era(s) from the
         // registry, by adding values to HKLM\SYSTEM\CurrentControlSet\Control\Nls\Calendars\Japanese\Eras
         //
         // Registry values look like:
@@ -81,9 +81,9 @@ namespace System.Globalization
 
             //
             // If we didn't have valid eras, then fail
-            // should have at least 4 eras
+            // should have at least 5 eras
             //
-            if (iFoundEras < 4) return null;
+            if (iFoundEras < 5) return null;
 
             //
             // Now we have eras, clean them up.
@@ -92,10 +92,10 @@ namespace System.Globalization
             Array.Resize(ref registryEraRanges, iFoundEras);
 
             // Sort them
-            Array.Sort(registryEraRanges!, CompareEraRanges); // TODO-NULLABLE: https://github.com/dotnet/roslyn/issues/26761
+            Array.Sort(registryEraRanges, CompareEraRanges);
 
             // Clean up era information
-            for (int i = 0; i < registryEraRanges!.Length; i++) // TODO-NULLABLE: https://github.com/dotnet/roslyn/issues/26761
+            for (int i = 0; i < registryEraRanges.Length; i++)
             {
                 // eras count backwards from length to 1 (and are 1 based indexes into string arrays)
                 registryEraRanges[i].era = registryEraRanges.Length - i;

@@ -50,8 +50,8 @@ namespace MonoTests.System.Web.UI
 		public void CssStyleCollection_BackgroundImage () {
 			WebControl c = new WebControl (HtmlTextWriterTag.A);
 			CssStyleCollection css = c.Style;
-			string url = "http://www.go-mono.com/space here?key1=val1&key2=val2";
-			string url_encoded = "http://www.go-mono.com/space%20here?key1=val1&key2=val2";
+			string url = "http://www.example.com/space here?key1=val1&key2=val2";
+			string url_encoded = "http://www.example.com/space%20here?key1=val1&key2=val2";
 			
 			css.Add (HtmlTextWriterStyle.BackgroundImage, url);
 
@@ -64,8 +64,8 @@ namespace MonoTests.System.Web.UI
 		public void CssStyleCollection_BackgroundImage2 () {
 			WebControl c = new WebControl (HtmlTextWriterTag.A);
 			CssStyleCollection css = c.Style;
-			string url = "http://www.go-mono.com/space here?key1=val1&key2=val2";
-			string url_encoded = "http://www.go-mono.com/space%20here?key1=val1&key2=val2";
+			string url = "http://www.example.com/space here?key1=val1&key2=val2";
+			string url_encoded = "http://www.example.com/space%20here?key1=val1&key2=val2";
 
 			css.Add ("background-image", url);
 
@@ -78,8 +78,8 @@ namespace MonoTests.System.Web.UI
 		public void CssStyleCollection_BackgroundImage3 () {
 			WebControl c = new WebControl (HtmlTextWriterTag.A);
 			CssStyleCollection css = c.Style;
-			string url = "http://www.go-mono.com/space here?key1=val1&key2=val2";
-			string url_encoded = "http://www.go-mono.com/space%20here?key1=val1&key2=val2";
+			string url = "http://www.example.com/space here?key1=val1&key2=val2";
+			string url_encoded = "http://www.example.com/space%20here?key1=val1&key2=val2";
 
 			css.Add ("background-image", "url(" + url_encoded + ")");
 
@@ -92,8 +92,8 @@ namespace MonoTests.System.Web.UI
 		public void CssStyleCollection_BackgroundImage4 () {
 			WebControl c = new WebControl (HtmlTextWriterTag.A);
 			CssStyleCollection css = c.Style;
-			string url = "http://www.go-mono.com/space here?key1=val1&key2=val2";
-			string url_encoded = "http://www.go-mono.com/space%20here?key1=val1&key2=val2";
+			string url = "http://www.example.com/space here?key1=val1&key2=val2";
+			string url_encoded = "http://www.example.com/space%20here?key1=val1&key2=val2";
 
 			c.Attributes ["style"] = "background-image:url(" + url_encoded + ");";
 

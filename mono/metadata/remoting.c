@@ -22,6 +22,7 @@
 #include "mono/metadata/tabledefs.h"
 #include "mono/metadata/exception.h"
 #include "mono/metadata/debug-helpers.h"
+#include "mono/metadata/domain-internals.h"
 #include "mono/metadata/reflection-internals.h"
 #include "mono/metadata/assembly.h"
 #include "icall-decl.h"
@@ -589,9 +590,7 @@ mono_marshal_xdomain_copy_out_value (MonoObject *src, MonoObject *dst)
 	default:
 		break;
 	}
-
 }
-
 
 #if !defined (DISABLE_JIT)
 static void
@@ -624,7 +623,7 @@ mono_marshal_set_domain_by_id (gint32 id, MonoBoolean push)
 	MonoDomain *current_domain = mono_domain_get ();
 	MonoDomain *domain = mono_domain_get_by_id (id);
 
-	if (!domain || !mono_domain_set (domain, FALSE)) {
+	if (!domain || !mono_domain_set_fast (domain, FALSE)) {
 		mono_set_pending_exception (mono_get_exception_appdomain_unloaded ());
 		return 0;
 	}
@@ -1007,6 +1006,7 @@ mono_marshal_get_xappdomain_invoke (MonoMethod *method, MonoError *error)
 
 	marshal_types = g_newa (int, sig->param_count);
 	complex_count = complex_out_count = 0;
+	gboolean has_byreflike = FALSE;
 	for (i = 0; i < sig->param_count; i++) {
 		MonoType *ptype = sig->params[i];
 		int mt = mono_get_xdomain_marshal_type (ptype);
@@ -1021,6 +1021,10 @@ mono_marshal_get_xappdomain_invoke (MonoMethod *method, MonoError *error)
 			if (ptype->byref) complex_out_count++;
 		}
 		marshal_types [i] = mt;
+		/* Can't make a xdomain wrapper for a method with an IsByRefLike result */
+		if (!ptype->byref && m_class_is_byreflike (mono_class_from_mono_type_internal (ptype))) {
+			has_byreflike = TRUE;
+		}
 	}
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
@@ -1029,9 +1033,25 @@ mono_marshal_get_xappdomain_invoke (MonoMethod *method, MonoError *error)
 		copy_return = ret_marshal_type != MONO_MARSHAL_SERIALIZE;
 	}
 	
+	/* Can't make a xdomain wrapper for a method with an IsByRefLike result */
+	if (!sig->ret->byref && m_class_is_byreflike (mono_class_from_mono_type_internal (sig->ret))) {
+		has_byreflike = TRUE;
+	}
+
 	/* Locals */
 
 #ifndef DISABLE_JIT
+	if (has_byreflike) {
+		/* Make a wrapper that throws a NotImplementedException if it's ever called */
+		mono_mb_emit_exception (mb, "NotImplementedException", "Cross AppDomain calls with IsByRefLike parameter or return types are not implemented");
+		info = mono_wrapper_info_create (mb, WRAPPER_SUBTYPE_NONE);
+		info->d.remoting.method = method;
+		res = mono_remoting_mb_create_and_cache (method, mb, sig, sig->param_count + 16, info);
+		mono_mb_free (mb);
+		return res;
+	}
+
+
 	MonoType *object_type = mono_get_object_type ();
 	MonoType *byte_array_type = m_class_get_byval_arg (byte_array_class);
 	MonoType *int32_type = mono_get_int32_type ();
@@ -2109,10 +2129,12 @@ leave:
 	return result;
 }
 
+#ifndef DISABLE_REMOTING
+
 /* mono_marshal_xdomain_copy_value
  * Makes a copy of "val" suitable for the current domain.
  */
-MonoObject*
+static MonoObject*
 mono_marshal_xdomain_copy_value (MonoObject* val_raw, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
@@ -2121,6 +2143,8 @@ mono_marshal_xdomain_copy_value (MonoObject* val_raw, MonoError *error)
 	MonoObjectHandle result = mono_marshal_xdomain_copy_value_handle (val, error);
 	HANDLE_FUNCTION_RETURN_OBJ (result);
 }
+
+#endif
 
 /* mono_marshal_xdomain_copy_value
  * Makes a copy of "val" suitable for the current domain.

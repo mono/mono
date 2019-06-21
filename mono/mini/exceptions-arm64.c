@@ -96,7 +96,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	fregs_offset = offset;
 	offset += num_fregs * 8;
 	ctx_offset = offset;
-	ctx_offset += 8;
+	offset += 8;
 	frame_size = ALIGN_TO (offset, MONO_ARCH_FRAME_ALIGNMENT);
 
 	/*
@@ -230,14 +230,14 @@ get_throw_trampoline (int size, gboolean corlib, gboolean rethrow, gboolean llvm
 
 	/* Call the function */
 	if (aot) {
-		const char *icall_name;
+		MonoJitICallId icall_id;
 
 		if (resume_unwind)
-			icall_name = "mono_arm_resume_unwind";
+			icall_id = MONO_JIT_ICALL_mono_arm_resume_unwind;
 		else
-			icall_name = "mono_arm_throw_exception";
+			icall_id = MONO_JIT_ICALL_mono_arm_throw_exception;
 
-		code = mono_arm_emit_aotconst (&ji, code, start, ARMREG_LR, MONO_PATCH_INFO_JIT_ICALL_ADDR, icall_name);
+		code = mono_arm_emit_aotconst (&ji, code, start, ARMREG_LR, MONO_PATCH_INFO_JIT_ICALL_ADDR, GUINT_TO_POINTER (icall_id));
 	} else {
 		gpointer icall_func;
 

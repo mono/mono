@@ -329,7 +329,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void WrongExtension_X509Extension ()
 		{
 			X509Extension ex = new X509Extension ("1.2.3", new byte[0], true);
-			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension ("www.go-mono.com", false); // odd length
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension ("www.example.com", false); // odd length
 			Assert.IsFalse (ski.Critical, "Critical");
 			Assert.AreEqual ("FFFFFFFFFFFFFF", ski.SubjectKeyIdentifier, "SubjectKeyIdentifier");
 			Assert.AreEqual ("ff ff ff ff ff ff ff" + Environment.NewLine, ski.Format (true), "Format(true)");
@@ -360,7 +360,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		public void WrongAsnEncodedData ()
 		{
 			AsnEncodedData aed = new AsnEncodedData (new byte[0]);
-			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension ("www.mono-project.com", false);
+			X509SubjectKeyIdentifierExtension ski = new X509SubjectKeyIdentifierExtension ("www.example.com", false);
 			ski.CopyFrom (aed); // note: not the same behaviour than using the constructor!
 		}
 

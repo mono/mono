@@ -5,8 +5,8 @@
 			<MenuNode url="http://bugzilla.novell.com" title="Novell Bugzilla" description="Includes Mono bugs interface"/>
 		</MenuNode>
 	</MenuNode>
-	<MenuNode url="http://google.com" title="Google" description="Main page of the Google search engine">
-		<MenuNode url="http://translate.google.com" title="Translator" description="Google language translation interface"/>
-		<MenuNode url="http://google.com/codesearch" title="Code Search" description="Google code search engine"/>
+	<MenuNode url="http://www.example" title="Example" description="Main page of the Example page">
+		<MenuNode url="http://translate.example" title="Translator" description="Example language translation interface"/>
+		<MenuNode url="http://codesearch.example.com" title="Code Search" description="Example code search engine"/>
 	</MenuNode>
 </MenuRoot>

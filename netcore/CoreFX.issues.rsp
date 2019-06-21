@@ -37,8 +37,7 @@
 ####################################################################
 
 # Mono currently supports Array.Copy from object[] array containing boxed ints to float[] array with primitive widening
--nomethod *ICollection_NonGeneric_CopyTo_ArrayOfIncorrectValueType*
--nomethod *ICollection_NonGeneric_CopyTo_ArrayOfEnumType*
+-nomethod System.Collections.Tests.*.ICollection_NonGeneric_CopyTo_ArrayOfEnumType
 
 ####################################################################
 ##  System.Collections.Specialized.Tests
@@ -61,6 +60,14 @@
 -nomethod System.Diagnostics.Tests.ProcessTests.Kill_EntireProcessTree_True_CalledOnTreeContainingCallingProcess_ThrowsInvalidOperationException
 -nomethod System.Diagnostics.Tests.ProcessTests.ProcessStart_UseShellExecute_ExecuteOrder
 -nomethod System.Diagnostics.Tests.ProcessTests.GetProcesses_RemoteMachinePath_ReturnsExpected
+
+####################################################################
+##  System.Diagnostics.Debug
+####################################################################
+
+# disabled in CoreCLR too
+-nomethod System.Diagnostics.Tests.DebugTestsNoListeners.Print
+-nomethod System.Diagnostics.Tests.DebugTestsUsingListeners.Print
 
 ####################################################################
 ##  System.Diagnostics.TraceSource.Tests
@@ -93,6 +100,7 @@
 
 # Depends on precise GC
 -nomethod System.IO.Tests.FileStream_Dispose.FinalizeFlushesWriteBuffer
+-nomethod System.IO.Tests.FileStream_Dispose.NoDispose_CallsVirtualDisposeFalseArg_ThrowsDuringFlushWriteBuffer_FinalizerWontThrow
 # TODO: Hangs
 -nomethod System.IO.Tests.Directory_SetCurrentDirectory+Directory_SetCurrentDirectory_SymLink.SetToPathContainingSymLink
 
@@ -134,6 +142,7 @@
 -nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertNullableFloatToNullableUIntTest
 -nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertFloatToNullableUIntTest
 -noclass System.Linq.Expressions.Tests.LambdaTests
+-noclass System.Linq.Expressions.Tests.LambdaDivideNullableTests
 -nomethod System.Linq.Expressions.Tests.BinaryCoalesceTests.VerifyIL_NullableIntCoalesceToNullableInt
 -nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToULongTest
 -nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToNullableULongTest
@@ -146,6 +155,10 @@
 -nomethod System.Linq.Expressions.Tests.ArrayIndexTests.NonZeroBasedOneDimensionalArrayIndex
 -nomethod System.Linq.Expressions.Tests.ArrayIndexTests.NonZeroBasedOneDimensionalArrayIndexMethod
 -nomethod System.Linq.Expressions.Tests.CompilerTests.VerifyIL_*
+
+# flaky tests - Invalid IL code in (wrapper dynamic-method)
+-nomethod System.Linq.Expressions.Tests.LambdaMultiplyTests.LambdaMultiplyFloatTest
+-nomethod System.Linq.Expressions.Tests.LambdaDivideTests.LambdaDivideFloatTest
 
 ####################################################################
 ##  System.Linq.Parallel.Tests
@@ -162,13 +175,18 @@
 # https://github.com/mono/mono/blob/18f0bf055eb2bfa8981062bdad3af2fb4bbc9be4/netcore/System.Private.CoreLib/shared/System/String.cs#L811-L821
 -nomethod System.Tests.StringTests.NormalizationTest
 
--nomethod System.SpanTests.SpanTests.MemoryMarshal_GenericStaticReturningSpan
--nomethod System.SpanTests.SpanTests.Span_Property
--nomethod System.SpanTests.SpanTests.ReadOnlySpan_Property
+# Hits Debug.Assert in debug configuration for floating point precision on round-tripping
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_C20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_C20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_N20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_P20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_N20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_F20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_P20
+-nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_F20
+
 -nomethod System.SpanTests.SpanTests.ReadOnlyMemory_PropertyReturningReadOnlySpan
--nomethod System.SpanTests.SpanTests.MemoryExtensions_StaticReturningReadOnlySpan
 -nomethod System.SpanTests.SpanTests.Span_StaticOperator
--nomethod System.SpanTests.SpanTests.MemoryManager_MethodReturningSpan
 -nomethod System.SpanTests.SpanTests.ReadOnlySpan_Constructor
 -nomethod System.SpanTests.SpanTests.ReadOnlySpan_Operator
 -nomethod System.SpanTests.SpanTests.Span_Constructor
@@ -212,6 +230,9 @@
 -nomethod System.Net.Sockets.Tests.UdpClientTest.Finalize_NoExceptionsThrown
 # TODO: Hangs
 -nomethod System.Net.Sockets.Tests.CreateSocket.CtorAndAccept_SocketNotKeptAliveViaInheritance
+
+# flaky test
+-nomethod System.Net.Sockets.Tests.SocketOptionNameTest.MulticastInterface_Set_AnyInterface_Succeeds
 
 ####################################################################
 ##  System.Reflection.Emit.ILGeneration.Tests
@@ -380,9 +401,6 @@
 -nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_ValidArchitectureName_Succeeds
 -nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs__CornerCase_HasElementTypes
 -nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs_GenericTypeParameters
--nomethod System.Reflection.Tests.MemberInfoTests.GenericMethodsInheritTheReflectedTypeOfTheirTemplate
--nomethod System.Reflection.Tests.AssemblyNameTests.SetPublicKeyToken_GetPublicKeyToken
--nomethod System.Reflection.Tests.AssemblyNameTests.FullName
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFile
 -nomethod System.Reflection.Tests.AssemblyTests.GetType_DoesntSearchMscorlib
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFrom_SameIdentityAsAssemblyWithDifferentPath_ReturnsEqualAssemblies
@@ -503,6 +521,7 @@
 -nomethod System.Runtime.InteropServices.Tests.StructureToPtrTests.StructureToPtr_InvalidLengthByValArrayInStruct_ThrowsArgumentException
 
 -nomethod System.Runtime.InteropServices.Tests.GetDelegateForFunctionPointerTests.GetDelegateForFunctionPointer_CantCast_ThrowsInvalidCastException
+-nomethod System.Runtime.InteropServices.Tests.GetDelegateForFunctionPointerTests.GetDelegateForFunctionPointer_CollectibleType_ReturnsExpected
 
 ####################################################################
 ##  System.Runtime.Numerics.Tests
@@ -531,11 +550,6 @@
 ##  System.Runtime.Tests
 ####################################################################
 
-# Mono for some reason returns true for `(Array)(new int*[0]) is object[]` while .NET Core returns false
--nomethod System.Tests.ArrayTests.LastIndexOf_ArrayOfPointers_ThrowsNotSupportedException
--nomethod System.Tests.ArrayTests.Reverse_ArrayOfPointers_ThrowsNotSupportedException
--nomethod System.Tests.ArrayTests.IndexOf_ArrayOfPointers_ThrowsNotSupportedException
-
 # https://github.com/mono/mono/issues/14291 incorrect line numbers
 -nomethod System.Tests.ExceptionTests.ThrowStatementDoesNotResetExceptionStackLineSameMethod
 -nomethod System.Tests.ExceptionTests.ThrowStatementDoesNotResetExceptionStackLineOtherMethod
@@ -547,18 +561,8 @@
 -nomethod System.Reflection.Tests.IsCollectibleTests.Assembly_IsCollectibleFalse_WhenUsingAssemblyLoad
 -nomethod System.Reflection.Tests.IsCollectibleTests.Assembly_IsCollectibleFalse_WhenUsingAssemblyLoadContext
 
-# Mono ignores attributes defined on parameters in delegates
--nomethod System.Tests.DelegateTests.DynamicInvoke_DefaultParameter_DecimalParameterWithMissingValue
--nomethod System.Tests.DelegateTests.DynamicInvoke_DefaultParameter_ReferenceTypeParameterWithMissingValue
+# Mono ignores [Optional] attribute defined on parameters in delegates
 -nomethod System.Tests.DelegateTests.DynamicInvoke_OptionalParameterUnassingableFromMissing_WithMissingValue
--nomethod System.Tests.DelegateTests.DynamicInvoke_DefaultParameter_ValueTypeParameterWithMissingValue
--nomethod System.Tests.DelegateTests.DynamicInvoke_MissingTypeForDefaultParameter_Succeeds
--nomethod System.Tests.DelegateTests.DynamicInvoke_DefaultParameter_NullableIntWithMissingValue
--nomethod System.Tests.DelegateTests.DynamicInvoke_DefaultParameter_StringParameterWithMissingValue
--nomethod System.Tests.DelegateTests.DynamicInvoke_DefaultParameter_DecimalParameterWithAttributeAndMissingValue
--nomethod System.Tests.DelegateTests.DynamicInvoke_DefaultParameter_DateTimeParameterWithMissingValue
--nomethod System.Tests.DelegateTests.DynamicInvoke_DefaultParameter_AllPrimitiveParametersWithSomeExplicitValues
--nomethod System.Tests.DelegateTests.DynamicInvoke_DefaultParameter_AllPrimitiveParametersWithMissingValues
 -nomethod System.Tests.DelegateTests.DynamicInvoke_OptionalParameter_WithMissingValue
 -nomethod System.Tests.DelegateTests.DynamicInvoke_ParameterSpecification_ArrayOfMissing
 
@@ -573,24 +577,29 @@
 # Boxed pointers are not supported? https://github.com/mono/mono/blob/ced517784b2a07fb851e2227dac04e0df2262d57/mcs/class/corlib/ReferenceSources/RuntimeType.cs#L229
 -nomethod System.Reflection.Tests.InvokeRefReturnNetcoreTests.TestByRefLikeRefReturn
 
-# TODO: ignore in CoreFX for mono runtime:
--nomethod System.Reflection.Tests.PointerTests.*
--nomethod System.Tests.StringTests.NormalizationTest
--nomethod System.Tests.GCTests.KeepAlive
--nomethod System.Tests.GCTests.LargeObjectHeapCompactionModeRoundTrips
--nomethod System.Tests.GCTests.GetGCMemoryInfo
--nomethod System.Tests.GCTests.Collect_CallsFinalizer
+# throws ArgumentException
+-nomethod System.Reflection.Tests.PointerTests.PointerPropertyGetValue
+
+# GC.GetTotalAllocatedBytes is not implemented
+-nomethod System.Tests.GCTests.GetTotalAllocatedBytes
+
+# GC.GetAllocatedBytesForCurrentThread is not implemented
 -nomethod System.Tests.GCTests.GetAllocatedBytesForCurrentThread
--nomethod System.Tests.GCTests.GetTotalMemoryTest_ForceCollection
--nomethod System.Tests.GCTests.LatencyRoundtrips    
--nomethod System.Tests.GCTests.KeepAlive_Null
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.GetOrCreateValue
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.Add
--nomethod System.Runtime.CompilerServices.Tests.ConditionalWeakTableTests.GetValue
+
+# GCSettings.LatencyMode is not implemented
+-nomethod System.Tests.GCTests.LatencyRoundtrips
+
+# WeakReference.get_TrackResurrection is not implemented
+-nomethod System.Tests.WeakReferenceTests.NonGeneric
+
+# Could not load type 'System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]' from assembly 'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
 -nomethod System.Tests.ActivatorTests.TestingCreateInstanceObjectHandleFullSignature
--nomethod System.Tests.EnumTests.Parse
--nomethod System.Tests.EnumTests.Parse_NetCoreApp11
--nomethod System.Tests.ArgIteratorTests.ArgIterator_Throws_PlatformNotSupportedException
+
+# Disabled in coreclr too: https://github.com/dotnet/coreclr/blob/master/tests/CoreFX/CoreFX.issues.rsp#L68-L71
+-nomethod System.Tests.StringTests.CasingNegativeTest
+-nomethod System.Tests.StringTests.ToLowerNullCulture
+-nomethod System.Tests.StringTests.CompareNegativeTest
+-nomethod System.Tests.StringTests.ToUpperNullCulture
 
 ####################################################################
 ##  System.Text.Json.Tests
@@ -604,6 +613,9 @@
 ####################################################################
 ##  System.Threading.Tests
 ####################################################################
+
+# Monitor.LockContentionCount is not implemented
+-nomethod System.Threading.Tests.MonitorTests.Enter_HasToWait_LockContentionCountTest
 
 -nomethod System.Threading.Tests.MutexTests.CrossProcess_NamedMutex_ProtectedFileAccessAtomic
 -nomethod System.Threading.Tests.SemaphoreSlimTests.RunSemaphoreSlimTest1_WaitAsync_NegativeCases
@@ -626,6 +638,9 @@
 -nomethod System.Threading.ThreadPools.Tests.ThreadPoolTests.SetMinThreadsTo0Test
 -nomethod System.Threading.ThreadPools.Tests.ThreadPoolTests.SetMinMaxThreadsTest_ChangedInDotNetCore
 
+# ThreadPool.CompletedWorkItemCount is not implemented
+-nomethod System.Threading.ThreadPools.Tests.ThreadPoolTests.MetricsTest
+
 ####################################################################
 ##  System.Xml.XmlSchemaSet.Tests
 ####################################################################
@@ -636,9 +651,14 @@
 ##  System.ComponentModel.Composition.Tests
 ####################################################################
 
+-nomethod System.ComponentModel.Composition.MetadataTests.TestOptionalMetadataValueTypeMismatch
 -nomethod System.ComponentModel.Composition.CompositionServicesTests.GetDefaultContractNameTest
 -nomethod System.ComponentModel.Composition.MetadataViewProviderTests.GetMetadataView_InterfaceWithIndexer_ShouldThrowNotSupportedException
 -nomethod Tests.Integration.ExportFactoryTests.ExportFactoryStandardImports_ShouldWorkProperly
+
+# flaky test - System.TypeLoadException : Could not load type '_proxy_System.ComponentModel.Composition.IStronglyTypedStructure_3b7f133d-79c7-449e-8f68-22aa093dbb8d' from assembly ''.
+-nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTest
+-nomethod System.ComponentModel.Composition.MetadataAttributeTests.StronglyTypedStructureTestWithTransparentViews
 
 ####################################################################
 ##  System.Composition.TypedParts.Tests
@@ -781,10 +801,8 @@
 ##  System.Runtime.Extensions.Tests
 ####################################################################
 
-# Environment.FailFast is not implemented
--nomethod System.Tests.EnvironmentTests.FailFast_ExceptionStackTrace_InnerException
--nomethod System.Tests.EnvironmentTests.FailFast_ExceptionStackTrace_ArgumentException
--nomethod System.Tests.EnvironmentTests.FailFast_ExceptionStackTrace_StackOverflowException
+# GC.GetGCMemoryInfo is not implemented
+-nomethod System.Tests.AppDomainTests.MonitoringIsEnabled
 
 # Mono expands generic Types in stacktraces unlike the .NET Core (sounds more like a feature: https://gist.github.com/EgorBo/3abb37d2ff4fc904bc7472c62498f933)
 -nomethod System.Tests.EnvironmentStackTrace.StackTraceTest
@@ -798,6 +816,7 @@
 -nomethod System.Tests.AppDomainTests.ResourceResolve
 -nomethod System.Tests.AppDomainTests.AssemblyLoad
 -nomethod System.Tests.AppDomainTests.FirstChanceException_Called
+-nomethod System.Tests.AppDomainTests.AssemblyResolve_FirstChanceException
 
 # AssemblyLoadContext.SetProfileOptimizationRoot is no-op (not implemented)
 -nomethod System.Runtime.Tests.ProfileOptimizationTest.ProfileOptimization_CheckFileExists
@@ -871,6 +890,9 @@
 -nomethod System.Reflection.Tests.TypeTests.GetEnumUnderlyingType
 -nomethod System.Reflection.Tests.TypeTests_HiddenTestingOrder.HideDetectionHappensAfterPrivateInBaseClassChecks
 
+# flaky tests
+-nomethod System.Reflection.Tests.TypeInfoDeclaredImplementedInterfacesTests.*
+
 ####################################################################
 ##  System.Utf8String.Experimental.Tests
 ####################################################################
@@ -906,3 +928,62 @@
 
 -nomethod System.Xml.Tests.CTransformResolverTest.TC_AbsolutePath_Transform
 -nomethod System.Xml.Tests.CXmlResolverTest.TC_AbsolutePath_Transform
+
+####################################################################
+##  System.Globalization.Tests
+####################################################################
+
+-nomethod System.Globalization.Tests.RegionInfoPropertyTests.EnglishName
+
+####################################################################
+##  System.IO.FileSystem.Watcher.Tests
+####################################################################
+
+-nomethod System.IO.Tests.File_Move_Tests.File_Move_From_Unwatched_To_Watched
+
+####################################################################
+##  System.IO.MemoryMappedFiles.Tests
+####################################################################
+
+-nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewStreamTests.ValidAccessLevelCombinations
+-nomethod System.IO.MemoryMappedFiles.Tests.MemoryMappedViewAccessorTests.ValidAccessLevelCombinations
+
+####################################################################
+##  System.Net.Requests.Tests
+####################################################################
+
+# hangs:
+-nomethod System.Net.Tests.HttpWebRequestTest.HttpWebRequest_SetHostHeader_ContainsPortNumber
+
+####################################################################
+##  System.Security.Cryptography.X509Certificates.Tests
+####################################################################
+
+-nomethod System.Security.Cryptography.X509Certificates.Tests.DynamicChainTests.TestInvalidAia
+
+# disabled in CoreCLR too
+-noclass System.Security.Cryptography.X509Certificates.Tests.X509Certificate2UITests
+
+####################################################################
+##  System.Runtime.Serialization.Json.Tests
+####################################################################
+
+-nomethod DataContractJsonSerializerTests.DCJS_VerifyDateTimeForDateTimeFormat
+-nomethod DataContractJsonSerializerTests.DCJS_VerifyDateTimeForFormatStringDCJsonSerSettings
+
+
+# requires corefx test updates https://github.com/dotnet/corefx/pull/38452
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthIndexOfAny_ManyInteger
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthIndexOfAny_ManyString
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthIndexOfMany_Byte
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthIndexOfMany_Char
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthLastIndexOfAny_Byte_ManyByte
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthLastIndexOfAny_ManyByte
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthLastIndexOfAny_String_ManyByte
+-nomethod System.SpanTests.SpanTests.ZeroLengthIndexOfAny_ManyInteger
+-nomethod System.SpanTests.SpanTests.ZeroLengthIndexOfAny_ManyString
+-nomethod System.SpanTests.SpanTests.ZeroLengthIndexOfMany_Byte
+-nomethod System.SpanTests.SpanTests.ZeroLengthIndexOfMany_Char
+-nomethod System.SpanTests.SpanTests.ZeroLengthLastIndexOfAny_Byte_ManyByte
+-nomethod System.SpanTests.SpanTests.ZeroLengthLastIndexOfAny_ManyByte
+-nomethod System.SpanTests.SpanTests.ZeroLengthLastIndexOfAny_String_ManyByte
