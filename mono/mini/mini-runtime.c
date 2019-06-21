@@ -163,6 +163,13 @@ mono_running_on_valgrind (void)
 		return FALSE;
 }
 
+void
+mono_set_use_llvm (mono_bool use_llvm)
+{
+	mono_use_llvm = (gboolean)use_llvm;
+}
+
+
 typedef struct {
 	void *ip;
 	MonoMethod *method;
@@ -1212,7 +1219,6 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_METHOD_CODE_SLOT:
 	case MONO_PATCH_INFO_AOT_JIT_INFO:
 	case MONO_PATCH_INFO_GET_TLS_TRAMP:
-	case MONO_PATCH_INFO_SET_TLS_TRAMP:
 		return hash | (gssize)ji->data.target;
 	case MONO_PATCH_INFO_GSHAREDVT_CALL:
 		return hash | (gssize)ji->data.gsharedvt->method;
@@ -1241,7 +1247,6 @@ mono_patch_info_hash (gconstpointer data)
 	case MONO_PATCH_INFO_JIT_ICALL_ID:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 	case MONO_PATCH_INFO_JIT_ICALL_ADDR_NOCALL:
-	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		return hash | ji->data.index;
 	case MONO_PATCH_INFO_SWITCH:
@@ -1317,7 +1322,6 @@ mono_patch_info_equal (gconstpointer ka, gconstpointer kb)
 		return ji1->data.del_tramp->klass == ji2->data.del_tramp->klass && ji1->data.del_tramp->method == ji2->data.del_tramp->method && ji1->data.del_tramp->is_virtual == ji2->data.del_tramp->is_virtual;
 	case MONO_PATCH_INFO_SPECIFIC_TRAMPOLINE_LAZY_FETCH_ADDR:
 		return ji1->data.uindex == ji2->data.uindex;
-	case MONO_PATCH_INFO_TRAMPOLINE_FUNC_ADDR:
 	case MONO_PATCH_INFO_CASTCLASS_CACHE:
 		return ji1->data.index == ji2->data.index;
 	case MONO_PATCH_INFO_JIT_ICALL_ID:
@@ -1641,9 +1645,6 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 		break;
 	case MONO_PATCH_INFO_GET_TLS_TRAMP: // FIXME replace with MONO_PATCH_INFO_JIT_ICALL?
 		target = (gpointer)mono_tls_get_tls_getter ((MonoTlsKey)patch_info->data.index);
-		break;
-	case MONO_PATCH_INFO_SET_TLS_TRAMP: // FIXME replace with MONO_PATCH_INFO_JIT_ICALL?
-		target = (gpointer)mono_tls_get_tls_setter ((MonoTlsKey)patch_info->data.index);
 		break;
 	case MONO_PATCH_INFO_PROFILER_ALLOCATION_COUNT: {
 		target = (gpointer) &mono_profiler_state.gc_allocation_count;
@@ -3702,6 +3703,8 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.test_tailcall_require = TRUE;
 	else if (!strcmp (option, "verbose-gdb"))
 		mini_debug_options.verbose_gdb = TRUE;
+	else if (!strcmp (option, "clr-memory-model"))
+		mini_debug_options.clr_memory_model = TRUE;
 	else if (!strncmp (option, "thread-dump-dir=", 16))
 		mono_set_thread_dump_dir(g_strdup(option + 16));
 	else if (!strncmp (option, "aot-skip=", 9)) {
@@ -3733,7 +3736,7 @@ mini_parse_debug_options (void)
 			// test-tailcall-require is also accepted but not documented.
 			// empty string is also accepted and ignored as a consequence
 			// of appending ",foo" without checking for empty.
-			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init'.\n");
+			fprintf (stderr, "Available options: 'handle-sigint', 'keep-delegates', 'reverse-pinvoke-exceptions', 'collect-pagefault-stats', 'break-on-unverified', 'no-gdb-backtrace', 'suspend-on-native-crash', 'suspend-on-sigsegv', 'suspend-on-exception', 'suspend-on-unhandled', 'dont-free-domains', 'dyn-runtime-invoke', 'gdb', 'explicit-null-checks', 'gen-seq-points', 'no-compact-seq-points', 'single-imm-size', 'init-stacks', 'casts', 'soft-breakpoints', 'check-pinvoke-callconv', 'use-fallback-tls', 'debug-domain-unload', 'partial-sharing', 'align-small-structs', 'native-debugger-break', 'thread-dump-dir=DIR', 'no-verbose-gdb', 'llvm_disable_inlining', 'llvm-disable-self-init', 'clr-memory-model'.\n");
 			exit (1);
 		}
 	}
@@ -4029,18 +4032,12 @@ mini_add_profiler_argument (const char *desc)
 }
 
 
-static MonoEECallbacks interp_cbs = {0};
+const MonoEECallbacks *mono_interp_callbacks_pointer;
 
 void
-mini_install_interp_callbacks (MonoEECallbacks *cbs)
+mini_install_interp_callbacks (const MonoEECallbacks *cbs)
 {
-	memcpy (&interp_cbs, cbs, sizeof (MonoEECallbacks));
-}
-
-MonoEECallbacks *
-mini_get_interp_callbacks (void)
-{
-	return &interp_cbs;
+	mono_interp_callbacks_pointer = cbs;
 }
 
 static MonoDebuggerCallbacks dbg_cbs;
@@ -4651,11 +4648,6 @@ register_icalls (void)
 	register_icall_no_wrapper (mono_tls_get_domain, mono_icall_sig_ptr);
 	register_icall_no_wrapper (mono_tls_get_sgen_thread_info, mono_icall_sig_ptr);
 	register_icall_no_wrapper (mono_tls_get_lmf_addr, mono_icall_sig_ptr);
-	register_icall_no_wrapper (mono_tls_set_thread, mono_icall_sig_void_ptr);
-	register_icall_no_wrapper (mono_tls_set_jit_tls, mono_icall_sig_void_ptr);
-	register_icall_no_wrapper (mono_tls_set_domain, mono_icall_sig_void_ptr);
-	register_icall_no_wrapper (mono_tls_set_sgen_thread_info, mono_icall_sig_void_ptr);
-	register_icall_no_wrapper (mono_tls_set_lmf_addr, mono_icall_sig_void_ptr);
 
 	register_icall_no_wrapper (mono_interp_entry_from_trampoline, mono_icall_sig_void_ptr_ptr);
 	register_icall_no_wrapper (mono_interp_to_native_trampoline, mono_icall_sig_void_ptr_ptr);

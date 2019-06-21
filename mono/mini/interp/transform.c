@@ -3328,15 +3328,21 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->last_ins->flags = INTERP_INST_FLAG_SEQ_POINT_METHOD_EXIT;
 			}
 
-			if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
+			if (mono_jit_trace_calls != NULL && mono_trace_eval (method)) {
+				/* This does the return as well */
 				interp_add_ins (td, MINT_TRACE_EXIT);
-
-			if (vt_size == 0)
-				SIMPLE_OP(td, ult->type == MONO_TYPE_VOID ? MINT_RET_VOID : MINT_RET);
-			else {
-				interp_add_ins (td, MINT_RET_VT);
+				if (ult->type == MONO_TYPE_VOID)
+					vt_size = -1;
 				WRITE32_INS (td->last_ins, 0, &vt_size);
 				++td->ip;
+			} else {
+				if (vt_size == 0)
+					SIMPLE_OP(td, ult->type == MONO_TYPE_VOID ? MINT_RET_VOID : MINT_RET);
+				else {
+					interp_add_ins (td, MINT_RET_VT);
+					WRITE32_INS (td->last_ins, 0, &vt_size);
+					++td->ip;
+				}
 			}
 			break;
 		}
@@ -5370,9 +5376,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			case CEE_MONO_TLS: {
 				gint32 key = read32 (td->ip + 1);
 				td->ip += 5;
-				g_assert (key < TLS_KEY_NUM);
-				interp_add_ins (td, MINT_MONO_TLS);
-				WRITE32_INS (td->last_ins, 0, &key);
+				g_assertf (key == TLS_KEY_SGEN_THREAD_INFO, "%d", key);
+				interp_add_ins (td, MINT_MONO_SGEN_THREAD_INFO);
 				PUSH_SIMPLE_TYPE (td, STACK_TYPE_MP);
 				break;
 			}

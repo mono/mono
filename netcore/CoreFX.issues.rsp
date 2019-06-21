@@ -142,6 +142,7 @@
 -nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertNullableFloatToNullableUIntTest
 -nomethod System.Linq.Expressions.Tests.ConvertTests.ConvertFloatToNullableUIntTest
 -noclass System.Linq.Expressions.Tests.LambdaTests
+-noclass System.Linq.Expressions.Tests.LambdaDivideNullableTests
 -nomethod System.Linq.Expressions.Tests.BinaryCoalesceTests.VerifyIL_NullableIntCoalesceToNullableInt
 -nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToULongTest
 -nomethod System.Linq.Expressions.Tests.ConvertCheckedTests.ConvertCheckedDoubleToNullableULongTest
@@ -184,13 +185,8 @@
 -nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterDouble_P20
 -nomethod System.Buffers.Text.Tests.RealFormatterTests.TestFormatterSingle_F20
 
--nomethod System.SpanTests.SpanTests.MemoryMarshal_GenericStaticReturningSpan
--nomethod System.SpanTests.SpanTests.Span_Property
--nomethod System.SpanTests.SpanTests.ReadOnlySpan_Property
 -nomethod System.SpanTests.SpanTests.ReadOnlyMemory_PropertyReturningReadOnlySpan
--nomethod System.SpanTests.SpanTests.MemoryExtensions_StaticReturningReadOnlySpan
 -nomethod System.SpanTests.SpanTests.Span_StaticOperator
--nomethod System.SpanTests.SpanTests.MemoryManager_MethodReturningSpan
 -nomethod System.SpanTests.SpanTests.ReadOnlySpan_Constructor
 -nomethod System.SpanTests.SpanTests.ReadOnlySpan_Operator
 -nomethod System.SpanTests.SpanTests.Span_Constructor
@@ -405,9 +401,6 @@
 -nomethod System.Reflection.Tests.AssemblyNameTests.Ctor_ValidArchitectureName_Succeeds
 -nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs__CornerCase_HasElementTypes
 -nomethod System.Reflection.Tests.MemberInfoNetCoreAppTests.HasSameMetadataDefinitionAs_GenericTypeParameters
--nomethod System.Reflection.Tests.MemberInfoTests.GenericMethodsInheritTheReflectedTypeOfTheirTemplate
--nomethod System.Reflection.Tests.AssemblyNameTests.SetPublicKeyToken_GetPublicKeyToken
--nomethod System.Reflection.Tests.AssemblyNameTests.FullName
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFile
 -nomethod System.Reflection.Tests.AssemblyTests.GetType_DoesntSearchMscorlib
 -nomethod System.Reflection.Tests.AssemblyTests.LoadFrom_SameIdentityAsAssemblyWithDifferentPath_ReturnsEqualAssemblies
@@ -982,3 +975,20 @@
 
 -nomethod DataContractJsonSerializerTests.DCJS_VerifyDateTimeForDateTimeFormat
 -nomethod DataContractJsonSerializerTests.DCJS_VerifyDateTimeForFormatStringDCJsonSerSettings
+
+
+# requires corefx test updates https://github.com/dotnet/corefx/pull/38452
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthIndexOfAny_ManyInteger
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthIndexOfAny_ManyString
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthIndexOfMany_Byte
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthIndexOfMany_Char
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthLastIndexOfAny_Byte_ManyByte
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthLastIndexOfAny_ManyByte
+-nomethod System.SpanTests.ReadOnlySpanTests.ZeroLengthLastIndexOfAny_String_ManyByte
+-nomethod System.SpanTests.SpanTests.ZeroLengthIndexOfAny_ManyInteger
+-nomethod System.SpanTests.SpanTests.ZeroLengthIndexOfAny_ManyString
+-nomethod System.SpanTests.SpanTests.ZeroLengthIndexOfMany_Byte
+-nomethod System.SpanTests.SpanTests.ZeroLengthIndexOfMany_Char
+-nomethod System.SpanTests.SpanTests.ZeroLengthLastIndexOfAny_Byte_ManyByte
+-nomethod System.SpanTests.SpanTests.ZeroLengthLastIndexOfAny_ManyByte
+-nomethod System.SpanTests.SpanTests.ZeroLengthLastIndexOfAny_String_ManyByte

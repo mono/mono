@@ -1150,7 +1150,8 @@ var BindingSupportLib = {
 		return gc_handle;
 	},
 	mono_wasm_new: function (core_name, args, is_exception) {
-		
+		BINDING.bindings_lazy_init ();
+
 		var js_name = BINDING.conv_string (core_name);
 
 		if (!js_name) {

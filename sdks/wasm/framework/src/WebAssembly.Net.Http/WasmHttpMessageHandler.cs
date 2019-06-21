@@ -176,29 +176,29 @@ namespace WebAssembly.Net.Http.HttpClient {
 				// View more information https://developers.google.com/web/updates/2015/03/introduction-to-fetch#response_types
 				//
 				// Note: Some of the headers may not even be valid header types in .NET thus we use TryAddWithoutValidation
-				using (var respHeaders = status.Headers) {
-					// Here we invoke the forEach on the headers object
-					// Note: the Action takes 3 objects and not two.  The other seems to be the Header object.
-					var foreachAction = new Action<object, object, object> ((value, name, other) => {
-
-						if (!httpresponse.Headers.TryAddWithoutValidation ((string)name, (string)value))
-							if (httpresponse.Content != null)
-								if (!httpresponse.Content.Headers.TryAddWithoutValidation ((string)name, (string)value))
-									Console.WriteLine ($"Warning: Can not add response header for name: {name} value: {value}");
-						((JSObject)other).Dispose ();
-					});
-
-					try {
-
-						respHeaders.Invoke ("forEach", foreachAction);
-					} finally {
-						// Do not remove the following line of code.  The httpresponse is used in the lambda above when parsing the Headers.
-						// if a local is captured (used) by a lambda it becomes heap memory as we translate them into fields on an object.
-						// The foreachAction is allocated when marshalled to JavaScript.  Since we do not know when JS is finished with the
-						// Action we need to tell the Runtime to de-allocate the object and remove the instance from JS as well.
-						WebAssembly.Runtime.FreeObject (foreachAction);
+				using (var respHeaders = (JSObject)status.Headers) {
+					if (respHeaders != null) {
+						using (var entriesIterator = (JSObject)respHeaders.Invoke ("entries")) {
+							JSObject nextResult = null;
+							try {
+								nextResult = (JSObject)entriesIterator.Invoke ("next");
+								while (!(bool)nextResult.GetObjectProperty ("done")) {
+									using (var resultValue = (WebAssembly.Core.Array)nextResult.GetObjectProperty ("value")) {
+										var name = (string)resultValue [0];
+										var value = (string)resultValue [1];
+										if (!httpresponse.Headers.TryAddWithoutValidation (name, value))
+											if (httpresponse.Content != null)
+												if (!httpresponse.Content.Headers.TryAddWithoutValidation (name, value))
+													Console.WriteLine ($"Warning: Can not add response header for name: {name} value: {value}");
+									}
+									nextResult?.Dispose ();
+									nextResult = (JSObject)entriesIterator.Invoke ("next");
+								}
+							} finally {
+								nextResult?.Dispose ();
+							}
+						}
 					}
-
 				}
 
 				tcs.SetResult (httpresponse);
@@ -433,7 +433,6 @@ namespace WebAssembly.Net.Http.HttpClient {
 				throw new NotSupportedException ();
 			}
 		}
-
 	}
 
 	/// <summary>
@@ -535,5 +534,5 @@ namespace WebAssembly.Net.Http.HttpClient {
 		[Export (EnumValue = ConvertEnum.ToLower)]
 		Navigate,
 	}
-
+	
 }

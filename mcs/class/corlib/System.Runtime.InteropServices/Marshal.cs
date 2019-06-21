@@ -30,6 +30,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if FULL_AOT_INTERP && DISABLE_COM
+#define FULL_AOT_RUNTIME
+#endif
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;

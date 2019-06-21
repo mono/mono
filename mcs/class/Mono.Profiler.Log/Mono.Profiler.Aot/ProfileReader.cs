@@ -9,26 +9,8 @@ namespace Mono.Profiler.Aot
 	// Read the contents of a .aotprofile created by the AOT profiler
 	// See mono-profiler-aot.h for a description of the file format
 	//
-	public sealed class ProfileReader
+	public sealed class ProfileReader : ProfileBase
 	{
-		enum RecordType
-		{
-			NONE = 0,
-			IMAGE = 1,
-			TYPE = 2,
-			GINST = 3,
-			METHOD = 4
-		}
-
-		enum MonoTypeEnum
-		{
-			MONO_TYPE_CLASS      = 0x12,
-		}
-
-		const string MAGIC = "AOTPROFILE";
-		const int MAJOR_VERSION = 1;
-		const int MINOR_VERSION = 0;
-
 		DataConverter conv;
 		byte[] data;
 		int pos;

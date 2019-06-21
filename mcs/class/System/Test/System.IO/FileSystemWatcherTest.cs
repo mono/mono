@@ -95,6 +95,20 @@ namespace MonoTests.System.IO
 				fw.Path = "*";
 			}
 		}
+
+		[Test]
+		[Category ("NotOnMac")] // creates resource exhaustion issues
+		public void LargeNumberOfInstances ()
+		{
+			using (var tmp = new TempDirectory ()) {
+				var watchers = new FileSystemWatcher [256];
+				for (int x = 0; x < watchers.Length; x++)
+				{
+					watchers[x] = new FileSystemWatcher (tmp.Path, "*");
+					watchers[x].EnableRaisingEvents = true;
+				}
+			}
+		}
 	}
 }
 

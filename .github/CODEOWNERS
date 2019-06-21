@@ -31,16 +31,16 @@
 /external/bockbuild @akoeplinger @alexischr
 /external/boringssl @baulig
 /external/cecil @marek-safar @akoeplinger
-/external/corefx @akoeplinger @marek-safar @egorbo @alexischr
-/external/corert @akoeplinger @marek-safar @egorbo @alexischr
+/external/corefx @akoeplinger @marek-safar @egorbo @steveisok
+/external/corert @akoeplinger @marek-safar @egorbo @steveisok
 /external/linker @marek-safar
-/external/llvm @alexanderkyte @vargaz
+/external/llvm @SamMonoRT @vargaz
 /external/nuget-buildtasks @radical @akoeplinger
-/external/roslyn-binaries @kg @marek-safar @akoeplinger
+/external/roslyn-binaries @kg @marek-safar @akoeplinger @lewing
 
-/libgc @BrzVlad @vargaz
+/libgc @BrzVlad @vargaz @naricc
 
-/llvm @vargaz @alexanderkyte
+/llvm @vargaz @SamMonoRT
 
 /man @marek-safar @miguel
 /man/*prof* @alexrp
@@ -49,21 +49,21 @@
 
 /mcs/build @marek-safar @akoeplinger
 
-/mcs/class @marek-safar @akoeplinger
+/mcs/class @steveisok @akoeplinger
 /mcs/class/corlib/System.Reflection*/ @vargaz @lambdageek
-/mcs/class/corlib/System.Security.Cryptography.X509Certificates @baulig @marek-safar
-/mcs/class/Mono.Btls.Interface @bauligg @marek-safar
+/mcs/class/corlib/System.Security.Cryptography.X509Certificates @baulig @steveisok
+/mcs/class/Mono.Btls.Interface @baulig @steveisok
 /mcs/class/Mono.Data.Tds @egorbo
 /mcs/class/Mono.Debugger.Soft @vargaz @thaystg
 /mcs/class/Mono.Options @jonpryor @marek-safar
 /mcs/class/Mono.Profiler.Log @lambdageek
-/mcs/class/Mono.Security/Mono.Security/Interface @baulig @marek-safar
+/mcs/class/Mono.Security/Mono.Security/Interface @baulig @steveisok
 /mcs/class/System/Mono.AppleTls @baulig @rolf
-/mcs/class/System/Mono.Btls @baulig  @marek-safar
-/mcs/class/System/Mono.Net.Security @baulig  @marek-safar
-/mcs/class/System/Mono.Security.Interface @baulig  @marek-safar
-/mcs/class/System/System.Security.Cryptography.X509Certificates @baulig  @marek-safar
-/mcs/class/System.Data* @egorbo  @marek-safar
+/mcs/class/System/Mono.Btls @baulig @marek-safar
+/mcs/class/System/Mono.Net.Security @baulig @steveisok
+/mcs/class/System/Mono.Security.Interface @baulig @steveisok
+/mcs/class/System/System.Security.Cryptography.X509Certificates @baulig @steveisok
+/mcs/class/System.Data* @egorbo @steveisok
 
 /mcs/errors @marek-safar @lewurm
 /mcs/ilasm @marek-safar @lewurm
@@ -71,10 +71,10 @@
 /mcs/mcs @marek-safar @lewurm
 /mcs/tests @marek-safar @lewurm
 
-/mcs/tools @marek-safar @akoeplinger
+/mcs/tools @marek-safar @akoeplinger @steveisok
 /mcs/tools/gensources @kg @akoeplinger
 /mcs/tools/resx2sr @baulig
-/mcs/tools/upload-to-sentry @alexanderkyte @akoeplinger
+/mcs/tools/upload-to-sentry @directhex @akoeplinger
 
 /mono/arch @vargaz @lewurm
 
@@ -82,18 +82,18 @@
 /mono/dis @lambdageek @vargaz
 /mono/eglib @vargaz @lambdageek
 
-/mono/benchmark @alexanderkyte @lewurm
+/mono/benchmark @SamMonoRT @lewurm
 
 /mono/metadata @vargaz @lambdageek @thaystg
 /mono/metadata/*profiler* @lambdageek
 /mono/metadata/handle* @lambdageek @vargaz
 /mono/metadata/monitor* @brzvlad @vargaz
-/mono/metadata/sgen* @brzvlad @vargaz
+/mono/metadata/sgen* @brzvlad @vargaz @naricc
 /mono/metadata/thread* @lateralusX @lambdageek
 /mono/metadata/w32* @lateralusX @lambdageek
 /mono/metadata/*-win* @lateralusX @lambdageek
 
-/mono/mini @vargaz @lewurm @lambdageek
+/mono/mini @vargaz @lewurm @lambdageek @SamMonoRT
 /mono/mini/*cfgdump* @lewurm @vargaz
 /mono/mini/*exceptions* @lewurm @vargaz
 /mono/mini/*ppc* @lewurm @vargaz
@@ -101,7 +101,7 @@
 /mono/mini/*type-check* @lewurm @lambdageek
 /mono/mini/interp/* @lewurm @BrzVlad
 /mono/mini/*profiler* @alexrp @lambdageek
-/mono/mini/debugger-agent.c @vargaz @thaystg @DavidKarlas
+/mono/mini/debugger-agent.c @vargaz @thaystg @DavidKarlas @lambdageek
 
 /mono/native @baulig @egorbo @alexischr @marek-safar
 
@@ -121,7 +121,7 @@
 /msvc @lateralusX @kg @akoeplinger
 /msvc/scripts @akoeplinger @kg
 
-/netcore @marek-safar @akoeplinger @egorbo
+/netcore @marek-safar @akoeplinger @egorbo @vargaz
 
 /packaging @alexischr @akoeplinger @directhex
 /packaging/MacSDK/msbuild.py @radical @akoeplinger
@@ -135,7 +135,7 @@
 /scripts @akoeplinger @directhex
 /scripts/ci @akoeplinger @directhex
 
-/sdks @marek-safar @lewurm @vargaz
+/sdks @marek-safar @lewurm @vargaz @lambdageek
 /sdks/builds/android* @alexischr @jonpryor
 /sdks/builds/mxe* @alexischr @jonpryor
 /sdks/builds/ios* @vargaz @rolfbjarne
@@ -151,4 +151,4 @@
 /tools/nuget-hash-extractor @marek-safar @radical @akoeplinger
 /tools/offsets-tool @lewurm @rolfbjarne
 /tools/pedump @lambdageek @lewurm
-/tools/sgen @brzvlad @vargaz
+/tools/sgen @brzvlad @vargaz @naricc

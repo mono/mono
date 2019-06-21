@@ -629,7 +629,7 @@ namespace System
 					return bmethod.GetParameters ()[parinfo.Position];
 				}
 			}
-			/**
+			/*
 			 * ParameterInfo -> null
 			 * Assembly -> null
 			 * RuntimeEventInfo -> null

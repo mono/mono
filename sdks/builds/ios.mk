@@ -144,7 +144,7 @@ endef
 ios_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$(IOS_VERSION).sdk
 tvos_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS$(TVOS_VERSION).sdk
 watchos_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS_VERSION).sdk
-watchos5_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS5_VERSION).sdk
+watchos64_32_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchOS.platform/Developer/SDKs/WatchOS$(WATCHOS64_32_VERSION).sdk
 
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes
@@ -156,7 +156,7 @@ ios-target32s_SYSROOT = $(ios_sysroot) -miphoneos-version-min=$(IOS_VERSION_MIN)
 ios-target64_SYSROOT = $(ios_sysroot) -miphoneos-version-min=$(IOS_VERSION_MIN)
 ios-targettv_SYSROOT = $(tvos_sysroot) -mtvos-version-min=$(TVOS_VERSION_MIN)
 ios-targetwatch_SYSROOT = $(watchos_sysroot) -mwatchos-version-min=$(WATCHOS_VERSION_MIN)
-ios-targetwatch64_32_SYSROOT = $(watchos5_sysroot) -mwatchos-version-min=$(WATCHOS5_VERSION_MIN)
+ios-targetwatch64_32_SYSROOT = $(watchos64_32_sysroot) -mwatchos-version-min=$(WATCHOS64_32_VERSION_MIN)
 
 ios-target32_CPPFLAGS = -DHOST_IOS
 ios-target32s_CPPFLAGS = -DHOST_IOS

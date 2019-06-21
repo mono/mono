@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Net.Http;
 using WebAssembly;
 using WebAssembly.Core;
 
@@ -43,6 +44,68 @@ namespace TestSuite
             var k = Math.Truncate(20d); // a print window pops up
             return k;        
         }
+
+        // https://github.com/dotnet/try/issues/290 Mysterious phenomenon of using Math.Truncate.
+        public static double IssueTry290 ()
+        {
+            var k  = Math.Round(11.1, MidpointRounding.AwayFromZero);
+            return k;        
+        }
+
+        static WebAssembly.Core.Array fetchResponse = new WebAssembly.Core.Array();
+        public static async Task<object> IssueDoubleFetch ()
+        {
+            await Fetch();
+            await Fetch();
+            return fetchResponse;
+        } 
+
+        private static async Task Fetch()
+        {
+            var client = CreateHttpClient();
+            var response = await client.GetStringAsync("base/publish/NowIsTheTime.txt");
+            fetchResponse.Push(response);
+        }   
+
+        static WebAssembly.Core.Array fetchHeadersResponse = new WebAssembly.Core.Array();
+        public static async Task<object> IssueDoubleFetchHeaders ()
+        {
+            
+            await FetchHeaders();
+            await FetchHeaders();
+            return fetchHeadersResponse;
+        } 
+
+        private static async Task FetchHeaders()
+        {
+            var client = CreateHttpClient();
+            var response = await client.GetAsync("base/publish/NowIsTheTime.txt");
+            // Raise exception if fails
+            response.EnsureSuccessStatusCode();
+            // On success, return sign in results from the server response packet
+            var responseContent = await response.Content.ReadAsStringAsync();
+            fetchHeadersResponse.Push(response.Headers.ToString());
+        }   
+
+        static HttpClient CreateHttpClient()
+        {
+            //Console.WriteLine("Create  HttpClient");
+            string BaseApiUrl = string.Empty;
+            var window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
+            using (var location = (JSObject)window.GetObjectProperty("location"))
+            {
+                BaseApiUrl = (string)location.GetObjectProperty("origin");
+            }
+            // WasmHttpMessageHandler.StreamingEnabled = true;
+            //                 var client = new System.Net.Http.HttpClient()
+            //     {
+            //         DefaultRequestHeaders = { { "origin", "WindowsCalculator" } }
+            //     };
+
+            return new HttpClient() { BaseAddress = new Uri(BaseApiUrl), DefaultRequestHeaders = { { "origin", "WindowsCalculator" } } };
+        }
+
+
     }
 
     [Flags]
@@ -177,4 +240,5 @@ namespace TestSuite
         [Description("64 bits")]
         enum64 = unchecked((long)0x8000000000000000L)
     }
+
 }
