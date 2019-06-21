@@ -477,7 +477,6 @@ libmonoruntimeinclude_HEADERS = \
 	opcodes.h		\
 	profiler.h		\
 	profiler-events.h	\
-	profiler-legacy.h	\
 	reflection.h		\
 	row-indexes.h		\
 	sgen-bridge.h		\
