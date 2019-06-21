@@ -831,8 +831,8 @@ var BindingSupportLib = {
 						coreType = this.wasm_get_core_type(obj);
 						if (typeof coreType !== "undefined") {
 							Map.prototype[Symbol.for("wasm type")] = coreType
-            }
-            break;
+						}
+						break;
 					case "DataView":
 						coreType = this.wasm_get_core_type(obj);
 						if (typeof coreType !== "undefined") {
