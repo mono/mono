@@ -67,6 +67,9 @@ EXTRA_PATH=$(wildcard /usr/local/Cellar/libtool/*/bin/)
 endif
 endif
 
+.PHONY: all
+all:
+
 ## Common Mono targets
 
 .PHONY: configure-mono
