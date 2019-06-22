@@ -748,6 +748,7 @@ describe_array_values (guint64 objectId)
 	}
 	return TRUE;
 }
+
 static gboolean
 describe_async_method_locals (MonoStackFrameInfo *info, MonoContext *ctx, gpointer ud)
 {
