@@ -38,12 +38,15 @@ var MonoSupportLib = {
 
 		mono_wasm_get_variables: function(scope, var_list) {
 			if (!this.mono_wasm_get_var_info)
-				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", 'void', [ 'number', 'number']);
+				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", 'void', [ 'number', 'number', 'number']);
 
 			//FIXME it would be more efficient to do a single call passing an array with var_list as argument instead
 			this.var_info = [];
-			for (var i = 0; i <  var_list.length; ++i)
-				this.mono_wasm_get_var_info (scope, var_list [i]);
+			var typedArray = new Int32Array(var_list.length);
+			for (let i=0; i<var_list.length; i++) {
+				typedArray[i] = var_list[i]
+			}
+			this.mono_wasm_get_var_info (scope, typedArray, var_list.length);
 
 			var res = this.var_info;
 			this.var_info = []
