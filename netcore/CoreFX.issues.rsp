@@ -101,15 +101,11 @@
 -nomethod ManagedTests.DynamicCSharp.Conformance.dynamic.overloadResolution.Methods.Oneclass2methods.twoprms004.twoprms004.Test.DynamicCSharpRunTest
 
 ####################################################################
-##  System.IO.FileSystem.Tests
+##  System.IO.Tests
 ####################################################################
 
 # TODO: Hangs
 -nomethod System.IO.Tests.Directory_SetCurrentDirectory+Directory_SetCurrentDirectory_SymLink.SetToPathContainingSymLink
-
-####################################################################
-##  System.IO.Tests
-####################################################################
 
 ####################################################################
 ##  System.Linq.Expressions.Tests
@@ -316,8 +312,7 @@
 ##  System.Reflection.Emit.ILGeneration.Tests
 ####################################################################
 
-# SP - TO DO re: issues
-
+# System.Reflection implementation to do.
 -noclass System.Reflection.Emit.Tests.CustomAttributeBuilderTests
 -nomethod System.Reflection.Emit.Tests.SignatureHelperAddArgument.*
 -nomethod System.Reflection.Emit.Tests.SignatureHelperGetPropertySigHelper.*
