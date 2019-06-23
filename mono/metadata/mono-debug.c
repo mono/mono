@@ -47,7 +47,7 @@ typedef struct {
 } DebugDomainInfo;
 
 /* This contains JIT debugging information about a method in serialized format */
-typedef struct _MonoDebugMethodAddress {
+struct _MonoDebugMethodAddress {
 	const guint8 *code_start;
 	guint32 code_size;
 	guint8 data [MONO_ZERO_LEN_ARRAY];
@@ -66,8 +66,7 @@ static gboolean is_attached = FALSE;
 static MonoDebugHandle     *mono_debug_open_image      (MonoImage *image, const guint8 *raw_contents, int size);
 
 static MonoDebugHandle     *mono_debug_get_image      (MonoImage *image);
-static void                 mono_debug_add_assembly    (MonoAssembly *assembly,
-							gpointer user_data);
+static void                 add_assembly    (MonoAssembly *assembly, gpointer user_data);
 
 static MonoDebugHandle     *open_symfile_from_bundle   (MonoImage *image);
 
@@ -115,7 +114,7 @@ mono_debug_init (MonoDebugFormat format)
 	mono_debug_handles = g_hash_table_new_full
 		(NULL, NULL, NULL, (GDestroyNotify) free_debug_handle);
 
-	mono_install_assembly_load_hook (mono_debug_add_assembly, NULL);
+	mono_install_assembly_load_hook (add_assembly, NULL);
 
 	mono_debugger_unlock ();
 }
@@ -246,7 +245,7 @@ mono_debug_open_image (MonoImage *image, const guint8 *raw_contents, int size)
 }
 
 static void
-mono_debug_add_assembly (MonoAssembly *assembly, gpointer user_data)
+add_assembly (MonoAssembly *assembly, gpointer user_data)
 {
 	MonoDebugHandle *handle;
 	MonoImage *image;
@@ -281,7 +280,7 @@ lookup_method_func (gpointer key, gpointer value, gpointer user_data)
 }
 
 static MonoDebugMethodInfo *
-mono_debug_lookup_method_internal (MonoMethod *method)
+lookup_method (MonoMethod *method)
 {
 	struct LookupMethodData data;
 
@@ -311,7 +310,7 @@ mono_debug_lookup_method (MonoMethod *method)
 		return NULL;
 
 	mono_debugger_lock ();
-	minfo = mono_debug_lookup_method_internal (method);
+	minfo = lookup_method (method);
 	mono_debugger_unlock ();
 	return minfo;
 }
@@ -583,7 +582,7 @@ read_variable (MonoDebugVarInfo *var, guint8 *ptr, guint8 **rptr)
 }
 
 static void
-mono_debug_free_method_jit_info_full (MonoDebugMethodJitInfo *jit, gboolean stack)
+free_method_jit_info (MonoDebugMethodJitInfo *jit, gboolean stack)
 {
 	if (!jit)
 		return;
@@ -600,7 +599,7 @@ mono_debug_free_method_jit_info_full (MonoDebugMethodJitInfo *jit, gboolean stac
 void
 mono_debug_free_method_jit_info (MonoDebugMethodJitInfo *jit)
 {
-	return mono_debug_free_method_jit_info_full (jit, FALSE);
+	return free_method_jit_info (jit, FALSE);
 }
 
 static MonoDebugMethodJitInfo *
@@ -704,13 +703,13 @@ il_offset_from_address (MonoMethod *method, MonoDomain *domain, guint32 native_o
 		MonoDebugLineNumberEntry lne = jit->line_numbers [i];
 
 		if (lne.native_offset <= native_offset) {
-			mono_debug_free_method_jit_info_full (jit, TRUE);
+			free_method_jit_info (jit, TRUE);
 			return lne.il_offset;
 		}
 	}
 
 cleanup_and_fail:
-	mono_debug_free_method_jit_info_full (jit, TRUE);
+	free_method_jit_info (jit, TRUE);
 	return -1;
 }
 
@@ -754,7 +753,7 @@ mono_debug_lookup_source_location (MonoMethod *method, guint32 address, MonoDoma
 		return NULL;
 
 	mono_debugger_lock ();
-	minfo = mono_debug_lookup_method_internal (method);
+	minfo = lookup_method (method);
 	if (!minfo || !minfo->handle) {
 		mono_debugger_unlock ();
 		return NULL;
@@ -794,7 +793,7 @@ mono_debug_lookup_source_location_by_il (MonoMethod *method, guint32 il_offset, 
 		return NULL;
 
 	mono_debugger_lock ();
-	minfo = mono_debug_lookup_method_internal (method);
+	minfo = lookup_method (method);
 	if (!minfo || !minfo->handle) {
 		mono_debugger_unlock ();
 		return NULL;
@@ -843,7 +842,7 @@ mono_debug_lookup_locals (MonoMethod *method)
 		return NULL;
 
 	mono_debugger_lock ();
-	minfo = mono_debug_lookup_method_internal (method);
+	minfo = lookup_method (method);
 	if (!minfo || !minfo->handle) {
 		mono_debugger_unlock ();
 		return NULL;
@@ -895,7 +894,7 @@ mono_debug_lookup_method_async_debug_info (MonoMethod *method)
 		return NULL;
 
 	mono_debugger_lock ();
-	minfo = mono_debug_lookup_method_internal (method);
+	minfo = lookup_method (method);
 	if (!minfo || !minfo->handle) {
 		mono_debugger_unlock ();
 		return NULL;
