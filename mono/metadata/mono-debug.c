@@ -413,8 +413,6 @@ mono_debug_add_method (MonoMethod *method, MonoDebugMethodJitInfo *jit, MonoDoma
 	guint8 *ptr, *oldptr;
 	guint32 i, size, total_size, max_size;
 
-	info = get_domain_info (domain);
-
 	max_size = (5 * LEB128_MAX_SIZE) + 1 + (2 * LEB128_MAX_SIZE * jit->num_line_numbers);
 	if (jit->has_var_info) {
 		/* this */
@@ -472,6 +470,8 @@ mono_debug_add_method (MonoMethod *method, MonoDebugMethodJitInfo *jit, MonoDoma
 	size = ptr - oldptr;
 	g_assert (size < max_size);
 	total_size = size + sizeof (MonoDebugMethodAddress);
+
+	info = get_domain_info (domain);
 
 	mono_debugger_lock ();
 
@@ -582,7 +582,7 @@ read_variable (MonoDebugVarInfo *var, guint8 *ptr, guint8 **rptr)
 }
 
 static void
-free_method_jit_info (MonoDebugMethodJitInfo *jit, gboolean stack)
+free_method_jit_info (MonoDebugMethodJitInfo *jit)
 {
 	if (!jit)
 		return;
@@ -592,14 +592,13 @@ free_method_jit_info (MonoDebugMethodJitInfo *jit, gboolean stack)
 	g_free (jit->locals);
 	g_free (jit->gsharedvt_info_var);
 	g_free (jit->gsharedvt_locals_var);
-	if (!stack)
-		g_free (jit);
 }
 
 void
 mono_debug_free_method_jit_info (MonoDebugMethodJitInfo *jit)
 {
-	return free_method_jit_info (jit, FALSE);
+	free_method_jit_info (jit);
+	g_free (jit);
 }
 
 static MonoDebugMethodJitInfo *
@@ -690,26 +689,19 @@ mono_debug_lookup_method_addresses (MonoMethod *method)
 }
 
 static gint32
-il_offset_from_address (MonoMethod *method, MonoDomain *domain, guint32 native_offset)
+il_offset_from_address (MonoDebugMethodJitInfo *jit, guint32 native_offset)
 {
-	MonoDebugMethodJitInfo mem;
 	int i;
 
-	MonoDebugMethodJitInfo *jit = find_method (method, domain, &mem);
 	if (!jit || !jit->line_numbers)
-		goto cleanup_and_fail;
+		return -1;
 
 	for (i = jit->num_line_numbers - 1; i >= 0; i--) {
 		MonoDebugLineNumberEntry lne = jit->line_numbers [i];
 
-		if (lne.native_offset <= native_offset) {
-			free_method_jit_info (jit, TRUE);
+		if (lne.native_offset <= native_offset)
 			return lne.il_offset;
-		}
 	}
-
-cleanup_and_fail:
-	free_method_jit_info (jit, TRUE);
 	return -1;
 }
 
@@ -722,13 +714,16 @@ cleanup_and_fail:
 gint32
 mono_debug_il_offset_from_address (MonoMethod *method, MonoDomain *domain, guint32 native_offset)
 {
+	MonoDebugMethodJitInfo mem;
+	MonoDebugMethodJitInfo *jit;
 	gint32 res;
 
 	mono_debugger_lock ();
-
-	res = il_offset_from_address (method, domain, native_offset);
-
+	jit = find_method (method, domain, &mem);
 	mono_debugger_unlock ();
+
+	res = il_offset_from_address (jit, native_offset);
+	free_method_jit_info (jit);
 
 	return res;
 }
@@ -752,23 +747,13 @@ mono_debug_lookup_source_location (MonoMethod *method, guint32 address, MonoDoma
 	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
 		return NULL;
 
-	mono_debugger_lock ();
-	minfo = lookup_method (method);
-	if (!minfo || !minfo->handle) {
-		mono_debugger_unlock ();
+	minfo = mono_debug_lookup_method (method);
+	if (!minfo->handle->ppdb && (!minfo->handle->symfile || !mono_debug_symfile_is_loaded (minfo->handle->symfile)))
 		return NULL;
-	}
 
-	if (!minfo->handle->ppdb && (!minfo->handle->symfile || !mono_debug_symfile_is_loaded (minfo->handle->symfile))) {
-		mono_debugger_unlock ();
+	offset = mono_debug_il_offset_from_address (method, domain, address);
+	if (offset < 0)
 		return NULL;
-	}
-
-	offset = il_offset_from_address (method, domain, address);
-	if (offset < 0) {
-		mono_debugger_unlock ();
-		return NULL;
-	}
 
 	if (minfo->handle->ppdb)
 		location = mono_ppdb_lookup_location (minfo, offset);
@@ -967,13 +952,10 @@ mono_debug_print_stack_frame (MonoMethod *method, guint32 native_offset, MonoDom
 	location = mono_debug_lookup_source_location (method, native_offset, domain);
 
 	if (!location) {
-		if (mono_debug_initialized) {
-			mono_debugger_lock ();
-			offset = il_offset_from_address (method, domain, native_offset);
-			mono_debugger_unlock ();
-		} else {
+		if (mono_debug_initialized)
+			offset = mono_debug_il_offset_from_address (method, domain, native_offset);
+		else
 			offset = -1;
-		}
 
 		if (offset < 0 && get_seq_point)
 			offset = get_seq_point (domain, method, native_offset);
