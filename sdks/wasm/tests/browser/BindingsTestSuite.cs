@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebAssembly;
@@ -260,7 +261,7 @@ namespace TestSuite
             return new Map();
         }
 
-        public Map MapTestCount1(int max) {
+        public static Map MapTestCount1(int max) {
             Map h = new Map();
             
             for (int i = 1; i <= max; i++) {
@@ -269,7 +270,7 @@ namespace TestSuite
 
             return h;
         }
-        public Map MapTestCount2(int max) {
+        public static Map MapTestCount2(int max) {
             Map h = new Map();
             for (int i = 1; i <= max; i++) {
                 h[i] = i;
@@ -279,6 +280,184 @@ namespace TestSuite
             }
             return h;
         }
+        public static bool MapTestIsFixedSize() {
+            Map h = new Map();
+            return h.IsFixedSize;
+        }
+        public static bool MapTestIsReadOnly() {
+            Map h = new Map();
+            return h.IsReadOnly;
+        }
+        public static bool MapTestIsSynchronized() {
+            Map h = new Map();
+            return h.IsSynchronized;
+        }
+        public static object MapTestItem() {
+            Map h = new Map();
+            Object o = h[null];
+            return o;
+        }
+        public static JSObject MapTestKeys1() {
+            string[] keys = {"this", "is", "a", "test"};
+            string[] values1 = {"a", "b", "c", "d"};
+            var h1 = new Map();
+            for (int i = 0; i < keys.Length; i++) {
+                h1[keys[i]] = values1[i];
+            }
+            var obj = new JSObject();
+            obj.SetObjectProperty("keysLength", keys.Length);
+            obj.SetObjectProperty("mapKeysLength", h1.Keys.Count);
+            return obj;
+        }
+        public static JSObject MapTestKeys2() {
+            string[] keys = {"this", "is", "a", "test"};
+		    string[] keys2 = {"new", "keys"};            
+            string[] values1 = {"a", "b", "c", "d"};
+            string[] values2 = {"e", "f", "g", "h"};
+            var h1 = new Map();
+            for (int i = 0; i < keys.Length; i++) {
+                h1[keys[i]] = values1[i];
+            }
 
+            ICollection keysReference;
+            keysReference = h1.Keys;
+
+            for (int i = 0; i < keys2.Length; i++) 
+            {
+                h1[keys2[i]] = values2[i];
+            }
+
+            var obj = new JSObject();
+            obj.SetObjectProperty("keysLength", keys.Length+keys2.Length);
+            obj.SetObjectProperty("h1.Keys.Count", h1.Keys.Count);
+            obj.SetObjectProperty("keysReference.Count", keysReference.Count);
+            return obj;
+        }
+        public static JSObject MapTestValues1() {
+            string[] keys = {"this", "is", "a", "test"};
+            string[] values1 = {"a", "b", "c", "d"};
+            var h1 = new Map();
+            for (int i = 0; i < keys.Length; i++) {
+                h1[keys[i]] = values1[i];
+            }
+            var obj = new JSObject();
+            obj.SetObjectProperty("keysLength", keys.Length);
+            obj.SetObjectProperty("valuesLength", values1.Length);
+            obj.SetObjectProperty("mapValuesCount", h1.Values.Count);
+            return obj;
+        }
+
+        public static JSObject MapTestValues2() {
+            string[] keys = {"this", "is", "a", "test"};
+            string[] values1 = {"a", "b", "c", "d"};
+            string[] values2 = {"e", "f", "g", "h"};
+            var h1 = new Map();
+            for (int i = 0; i < keys.Length; i++) {
+                h1[keys[i]] = values1[i];
+            }
+
+            for (int i = 0; i < keys.Length; i++) {
+                h1[keys[i]] = values2[i];
+            }
+
+            ICollection keysReference, valuesReference;
+            keysReference = h1.Keys;
+            valuesReference = h1.Values;
+
+            var obj = new JSObject();
+            obj.SetObjectProperty("keysLength", keys.Length);
+            obj.SetObjectProperty("valuesLength", values2.Length);
+            obj.SetObjectProperty("h1.Values.Count", h1.Values.Count);
+            obj.SetObjectProperty("valuesReference.Count", valuesReference.Count);
+            return obj;
+        }
+        public static Map MapTestAddNullKey() {
+            var map = new Map();
+            // Null key is valid in JS Map
+            map.Add(null, "huh?");
+            return map;
+        }
+
+        public static Map MapTestAddDuplicateKey() {
+            var map = new Map();
+            // Add duplicate key is valid in JS Map
+            map.Add("a", 1);
+            map.Add("a", 2);
+            return map;
+        }
+        public static Map MapTestClear() {
+            Map h = new Map();
+            int max = 500;
+            for (int i = 1; i <= max; i++) {
+                h[i] = i;
+            }
+            h.Clear();
+            return h;
+        }
+
+        public string MapTestGetEnumerator() {
+            String[] s1 = {"this", "is", "a", "test"};
+            string[] c1 = {"a", "b", "c", "d"};
+            Map h1 = new Map();
+            for (int i = 0; i < s1.Length; i++) {
+                h1[s1[i]] = c1[i];
+            }
+            IDictionaryEnumerator en = h1.GetEnumerator();
+            if (en == null) {
+                return "Can not get Enumerator over Map";
+            }
+            
+            for (int i = 0; i < s1.Length; i++) {
+                en.MoveNext();
+                if (System.Array.IndexOf(s1, en.Key) < 0) {
+                    return $"Not enumerating for {en.Key}";
+                }
+                if (System.Array.IndexOf(c1, en.Value) < 0) {
+                    return $"Not enumerating for {en.Value}";
+                }
+            }
+
+            return null;
+        }  
+        public bool MapTestEnumerator ()
+        {
+            Map ht = new Map();
+            ht.Add("k1","another");
+            ht.Add("k2","yet");
+            ht.Add("k3","hashtable");
+
+
+            IEnumerator e = ht.GetEnumerator ();
+
+            while (e.MoveNext ()) {}
+
+            return !e.MoveNext ();
+
+        }              
+        public Map MapTestRemove ()
+        {
+            Map ht = new Map();
+            ht.Add("k1","another");
+            ht.Add("k2","yet");
+            ht.Add("k3","hashtable");
+
+            ht.Remove("k2");
+            return ht;
+        }              
+
+        public string MapTestContains ()
+        {
+            Map ht = new Map();
+            for (int i = 0; i < 10000; i += 2) 
+                ht[i] = i;
+            for (int i = 0; i < 10000; i += 2) {
+                if (!ht.Contains(i))
+                    return $"Map must contain {i}";
+                if (ht.Contains(i+1))
+                    return $"Map must not contain {i+1}";
+            }            
+            return null;
+
+        }
     }
 }
