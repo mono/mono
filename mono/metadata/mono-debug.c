@@ -670,10 +670,10 @@ find_method (MonoMethod *method, MonoDomain *domain, MonoDebugMethodJitInfo *jit
 MonoDebugMethodJitInfo *
 mono_debug_find_method (MonoMethod *method, MonoDomain *domain)
 {
-	MonoDebugMethodJitInfo *res = g_new0 (MonoDebugMethodJitInfo, 1);
-
 	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
 		return NULL;
+
+	MonoDebugMethodJitInfo *res = g_new0 (MonoDebugMethodJitInfo, 1);
 
 	mono_debugger_lock ();
 	find_method (method, domain, res);
@@ -759,7 +759,6 @@ mono_debug_lookup_source_location (MonoMethod *method, guint32 address, MonoDoma
 		location = mono_ppdb_lookup_location (minfo, offset);
 	else
 		location = mono_debug_symfile_lookup_location (minfo, offset);
-	mono_debugger_unlock ();
 	return location;
 }
 
