@@ -770,6 +770,10 @@ mono_thread_set_coop_aware (void)
 	MONO_ENTER_GC_UNSAFE;
 	MonoThreadInfo *info = mono_thread_info_current_unchecked ();
 	if (info)
+		/* NOTE, this flag should only be changed while in unsafe mode. */
+		/* It will make sure we won't get an async preemptive suspend */
+		/* request against this thread while in the process of changing the flag */
+		/* affecting the threads suspend/resume behavior. */
 		mono_atomic_store_i32 (&(info->coop_aware_thread), TRUE);
 	MONO_EXIT_GC_UNSAFE;
 }
