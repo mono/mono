@@ -1,7 +1,7 @@
 **aotprofile-tool** is a tool to inspect AOT profiler files
 
 ```
-Usage: aotprofile-tool.exe OPTIONS* <aotprofile-file>
+Usage: aotprof-tool.exe OPTIONS* <aotprofile-file>
 
 Processes AOTPROFILE files created by Mono's AOT Profiler
 
@@ -29,7 +29,7 @@ It can be use to show and filter the profiler file content in readable text form
 
 Display modules and summary of XA startup profile
 ```
-mono aotprofile-tool.exe -sd startup.aotprofile
+mono aotprof-tool.exe -sd startup.aotprofile
 Modules:
 	41C38B0A-2032-45CE-8638-0299CED65330 mscorlib
 	0326DF03-2158-4F7A-9A2B-B7A9419F021D Mono.Android
@@ -55,7 +55,7 @@ Summary:
 
 Filter Java.Interop.Runtime type in XA startup profile:
 ```
-mono aotprofile-tool.exe --filter-type Java.Interop.Runtime -sa startup.aotprofile
+mono aotprof-tool.exe --filter-type Java.Interop.Runtime -sa startup.aotprofile
 Modules:
 	0326DF03-2158-4F7A-9A2B-B7A9419F021D Mono.Android
 Types:
