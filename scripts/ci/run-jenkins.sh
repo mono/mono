@@ -139,7 +139,7 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         export IOS_VERSION=12.1
         export TVOS_VERSION=12.1
         export WATCHOS_VERSION=5.1
-        export WATCHOS5_VERSION=5.1
+        export WATCHOS64_32_VERSION=5.1
 
         # make sure we embed the correct path into the PDBs
         export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
