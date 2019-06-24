@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Mono.Profiler.Aot
 {
 	//
@@ -31,6 +33,11 @@ namespace Mono.Profiler.Aot
 		public string Mvid {
 			get; set;
 		}
+
+		public override string ToString ()
+		{
+			return Name;
+		}
 	}
 
 	public class GenericInstRecord : ProfileRecord
@@ -42,6 +49,27 @@ namespace Mono.Profiler.Aot
 
 		public TypeRecord[] Types {
 			get; set;
+		}
+
+		public override string ToString ()
+		{
+			if (Types == null || Types.Length <= 0)
+				return "";
+
+			var sb = new StringBuilder ("<");
+			var first = true;
+			foreach (var type in Types) {
+				if (!first)
+					sb.Append (", ");
+				else
+					first = false;
+
+				sb.Append (type.ToString ());
+			}
+
+			sb.Append (">");
+
+			return sb.ToString ();
 		}
 	}
 
@@ -62,8 +90,26 @@ namespace Mono.Profiler.Aot
 			get; set;
 		}
 
+		public string FullName {
+			get {
+				string prefix;
+
+				if (Name.Length > 0 && Name [0] == '.')
+					prefix = Module.ToString ();
+				else
+					prefix = "";
+
+				return $"{prefix}{Name}{GenericInst}";
+			}
+		}
+
 		public GenericInstRecord GenericInst {
 			get; set;
+		}
+
+		public override string ToString ()
+		{
+			return FullName;
 		}
 	}
 
@@ -96,6 +142,11 @@ namespace Mono.Profiler.Aot
 
 		public int ParamCount {
 			get; set;
+		}
+
+		public override string ToString ()
+		{
+			return $"{Signature.Replace ("(", $" {Type}:{Name} (")}";
 		}
 	}
 }
