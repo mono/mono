@@ -160,7 +160,7 @@ mono_debug_domain_create (MonoDomain *domain)
 void
 mono_debug_domain_unload (MonoDomain *domain)
 {
-	DebugDomainInfo *info = domain->debug_info;
+	DebugDomainInfo *info = (DebugDomainInfo*)domain->debug_info;
 
 	if (!info)
 		return;
