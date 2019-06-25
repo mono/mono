@@ -17,6 +17,7 @@
 #include <mono/metadata/mono-conc-hash.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-internal-hash.h>
+#include <mono/metadata/loader-internals.h>
 #include <mono/metadata/mempool-internals.h>
 #include <mono/metadata/handle-decl.h>
 
@@ -454,6 +455,12 @@ struct _MonoDomain {
 	gboolean throw_unobserved_task_exceptions;
 
 	guint32 execution_context_field_offset;
+
+#ifdef ENABLE_NETCORE
+	GSList *alcs;
+	MonoAssemblyLoadContext *default_alc;
+	MonoCoopMutex alcs_lock; /* Used when accessing 'alcs' */
+#endif
 };
 
 typedef struct  {
