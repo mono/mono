@@ -3,9 +3,9 @@
 #include <glib.h>
 
 G_BEGIN_DECLS
-int CreateNLSocket (void);
+gpointer CreateNLSocket (void);
 int ReadEvents (gpointer sock, gpointer buffer, gint32 count, gint32 size);
-int CloseNLSocket (gpointer sock);
+gpointer CloseNLSocket (gpointer sock);
 G_END_DECLS
 
 #endif
