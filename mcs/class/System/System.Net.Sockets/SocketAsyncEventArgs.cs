@@ -197,8 +197,14 @@ namespace System.Net.Sockets
 			LastOperation = op;
 		}
 
+		string completed;
+
 		internal void Complete ()
 		{
+			var old = Interlocked.CompareExchange(ref completed, Environment.StackTrace, null);
+			if (old != null)
+				throw new InvalidTimeZoneException ($"I LIVE ON ENCELADUS!\n{old}\n\n");
+
 			in_progress = 0;
 			OnCompleted (this);
 		}

@@ -138,12 +138,18 @@ namespace System.Net.Sockets
 			Complete ();
 		}
 
+		string completed;
+
 		public void Complete ()
 		{
 			if (operation != SocketOperation.Receive && socket.CleanedUp)
 				DelayedException = new ObjectDisposedException (socket.GetType ().ToString ());
 
 			IsCompleted = true;
+
+			var old = Interlocked.CompareExchange(ref completed, Environment.StackTrace, null);
+			if (old != null)
+				throw new InvalidTimeZoneException ($"I LIVE ON TITAN!\n{old}\n\n");
 
 			/* It is possible that this.socket is modified by this.Init which has been called by the callback. This
 			 * would lead to inconsistency, as we would for example not release the correct socket.ReadSem or
