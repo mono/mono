@@ -199,9 +199,6 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 packager.exe: release/.stamp-build debug/.stamp-build packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
-tuner.exe: tuner.cs Mono.Cecil.dll System.Json.dll
-	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll /r:System.Json.dll tuner.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
-
 .stamp-build-debug-sample: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
 	mono --debug packager.exe --copy=always -debug -out=debug_sample --asset=debug.html sample.dll
 	touch $@	
@@ -275,6 +272,16 @@ build-interp-sample: packager.exe hello.exe
 
 run-interp-sample: build-interp-sample
 	(cd bin/interp-sample && $(SM) runtime.js --run hello.exe)
+
+threads.exe: threads.cs
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs
+
+build-threads-sample: packager.exe threads.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/threads-sample --nobinding --builddir=obj/threads-sample --template=runtime-tests.js threads.exe
+	ninja -v -C obj/threads-sample
+
+run-threads-sample: build-threads-sample
+	(cd bin/threads-sample && $(D8) --experimental-wasm-threads --stack-trace-limit=1000 runtime.js -- --run threads.exe)
 
 build-aot-mini: packager.exe mini_tests.dll main.exe runtime.js
 	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDKDIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-mini --nobinding --builddir=obj/aot-mini --aot --template=runtime-tests.js mini_tests.dll
