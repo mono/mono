@@ -262,5 +262,17 @@ namespace MonoTests.System.Windows.Forms
 			dgv.Columns.Add (dvc);
 			Assert.IsNull (dvc.CellTemplate.DataGridView, "#1");
 		}
+
+		[Test]
+		public void SetNewHeaderCell ()
+		{
+			var dgv = new DataGridView ();
+			var dvc = new DataGridViewTextBoxColumn ();
+			var dch = new DataGridViewColumnHeaderCell ();
+			dgv.Columns.Add (dvc);
+			dvc.HeaderCell = dch;
+			Assert.IsNotNull (dch.DataGridView, "#1");
+			Assert.True (dch.ColumnIndex >= 0, "#2");
+		}
 	}
 }
