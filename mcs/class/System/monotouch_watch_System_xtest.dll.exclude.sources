@@ -18,3 +18,4 @@
 ../../../external/corefx/src/System.Net.WebClient/tests/WebClientTest.cs
 
 ../../../external/corefx/src/Common/tests/System/Net/WebSockets/WebSocketCreateTest.cs
+../../../external/corefx/src/System.Net.WebSockets/tests/WebSocketTests.netcoreapp.cs
