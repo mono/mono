@@ -296,7 +296,7 @@ namespace System.Net {
 		{
 			ArrayList current;
 			ArrayList future;
-			if (prefix.Host == "*") {
+			if ((prefix.Host == "*") || (prefix.Host == "::")) {
 				do {
 					current = unhandled;
 					future = (current != null) ? (ArrayList) current.Clone () : new ArrayList ();
@@ -334,7 +334,7 @@ namespace System.Net {
 		{
 			ArrayList current;
 			ArrayList future;
-			if (prefix.Host == "*") {
+			if ((prefix.Host == "*") || (prefix.Host == "::")) {
 				do {
 					current = unhandled;
 					future = (current != null) ? (ArrayList) current.Clone () : new ArrayList ();

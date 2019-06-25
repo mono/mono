@@ -213,7 +213,7 @@ namespace System.Net {
 			if (raw_uri != null)
 				host = raw_uri.Host;
 	
-			int colon = host.IndexOf (':');
+			int colon = host.LastIndexOf (':');
 			if (colon >= 0)
 				host = host.Substring (0, colon);
 
