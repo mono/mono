@@ -15,3 +15,6 @@
 
 ../../../external/corefx/src/System.Net.Security/tests/FunctionalTests/*.cs
 
+../../../external/corefx/src/System.Net.WebClient/tests/WebClientTest.cs
+
+../../../external/corefx/src/Common/tests/System/Net/WebSockets/WebSocketCreateTest.cs
