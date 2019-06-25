@@ -239,6 +239,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--enable-monodroid \
 	--with-mcs-docs=no \
 	--without-ikvm-native \
+	--with-static_mono=no \
 	--disable-crash-reporting
 
 .stamp-android-$(1)-toolchain:
@@ -294,6 +295,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--enable-maintainer-mode \
 	--enable-monodroid \
 	--with-monodroid \
+	--with-static_mono=no \
 	--disable-crash-reporting
 
 ifeq ($(UNAME),Darwin)
