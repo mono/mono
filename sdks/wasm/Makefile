@@ -196,25 +196,25 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
 
 # Should use .csproj file and msbuild
-packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS)
+packager.exe: release/.stamp-build debug/.stamp-build packager.cs Mono.Cecil.dll $(OPTIONS_CS)
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
 tuner.exe: tuner.cs Mono.Cecil.dll System.Json.dll
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll /r:System.Json.dll tuner.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
-.stamp-build-debug-sample: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
+.stamp-build-debug-sample: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
 	mono --debug packager.exe --copy=always -debug -out=debug_sample --asset=debug.html sample.dll
 	touch $@	
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
-bin/test-suite/mono.js: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
+bin/test-suite/mono.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
 	mono packager.exe --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
 	ninja -v -C obj/test-suite
 
 build-test-suite: bin/test-suite/mono.js
 
-$(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES)
+$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES)
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/HttpTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/HttpTestSuite.cs 
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/WebSocketTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) $(BROWSER_TEST)/WebSocketTestSuite.cs 
 	$(CSC) $(CSC_FLAGS) /target:library -out:$(BROWSER_TEST)/BindingsTestSuite.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll $(BROWSER_TEST)/BindingsTestSuite.cs 
@@ -224,7 +224,7 @@ $(BROWSER_TEST)/.stamp-browser-test-suite: $(DRIVER_CONF)/.stamp-build packager.
 	(cd $(BROWSER_TEST) && npm install)
 	touch $@
 
-.stamp-build-debugger-test-app: $(DRIVER_CONF)/.stamp-build packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
+.stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
 	mono packager.exe --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
