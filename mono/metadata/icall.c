@@ -536,30 +536,13 @@ array_set_value_impl (MonoArrayHandle arr_handle, MonoObjectHandle value_handle,
 		vt = mono_class_enum_basetype_internal (m_class_get_byval_arg (vc)->data.klass)->type;
 
 #if ENABLE_NETCORE
+	// Treat MONO_TYPE_U/I as MONO_TYPE_U8/I8/U4/I4
 #if SIZEOF_VOID_P == 8
-	if (vt == MONO_TYPE_U) {
-		vt = MONO_TYPE_U8;
-	} else if (vt == MONO_TYPE_I) {
-		vt = MONO_TYPE_I8;
-	}
-
-	if (et == MONO_TYPE_U) {
-		et = MONO_TYPE_U8;
-	} else if (et == MONO_TYPE_I) {
-		et = MONO_TYPE_I8;
-	}
+	vt = vt == MONO_TYPE_U ? MONO_TYPE_U8 : (vt == MONO_TYPE_I ? MONO_TYPE_I8 : vt);
+	et = et == MONO_TYPE_U ? MONO_TYPE_U8 : (et == MONO_TYPE_I ? MONO_TYPE_I8 : et);
 #else
-	if (vt == MONO_TYPE_U) {
-		vt = MONO_TYPE_U4;
-	} else if (vt == MONO_TYPE_I) {
-		vt = MONO_TYPE_I4;
-	}
-	
-	if (et == MONO_TYPE_U) {
-		et = MONO_TYPE_U8;
-	} else if (et == MONO_TYPE_I) {
-		et = MONO_TYPE_I8;
-	}
+	vt = vt == MONO_TYPE_U ? MONO_TYPE_U4 : (vt == MONO_TYPE_I ? MONO_TYPE_I4 : vt);
+	et = et == MONO_TYPE_U ? MONO_TYPE_U4 : (et == MONO_TYPE_I ? MONO_TYPE_I4 : et);
 #endif
 #endif
 
