@@ -286,6 +286,7 @@ ves_icall_System_Array_SetValueRelaxedImpl (MonoArrayHandle arr, MonoObjectHandl
 	array_set_value_impl (arr, value, pos, FALSE, FALSE, error);
 }
 
+// Copied from CoreCLR: https://github.com/dotnet/coreclr/blob/d3e39bc2f81e3dbf9e4b96347f62b49d8700336c/src/vm/invokeutil.cpp#L33
 #define PRIMITIVE_TABLE_SIZE  MONO_TYPE_STRING
 #define PT_Primitive          0x01000000
 
@@ -306,6 +307,7 @@ static const guint32 primitive_conversions [PRIMITIVE_TABLE_SIZE] = {
 	PT_Primitive | 0x2000,	// MONO_TYPE_R8   (W = R8) 
 };
 
+// Copied from CoreCLR: https://github.com/dotnet/coreclr/blob/030a3ea9b8dbeae89c90d34441d4d9a1cf4a7de6/src/vm/invokeutil.h#L176
 inline static 
 gboolean can_primitive_widen (MonoTypeEnum src_type, MonoTypeEnum dest_type)
 {
@@ -319,6 +321,7 @@ gboolean can_primitive_widen (MonoTypeEnum src_type, MonoTypeEnum dest_type)
 	return ((1 << dest_type) & primitive_conversions [src_type]) != 0;
 }
 
+// Copied from CoreCLR: https://github.com/dotnet/coreclr/blob/eafa8648ebee92de1380278b15cd5c2b6ef11218/src/vm/array.cpp#L1406
 inline static MonoTypeEnum
 get_normalized_integral_array_element_type (MonoTypeEnum elementType)
 {
