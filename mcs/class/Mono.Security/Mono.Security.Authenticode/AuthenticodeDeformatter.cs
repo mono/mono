@@ -87,11 +87,9 @@ namespace Mono.Security.Authenticode {
 				filename = value;
 				try {
 					CheckSignature ();
-				}
-				catch (SecurityException) {
+				} catch (SecurityException) {
 					throw;
-				}
-				catch (Exception) {
+				} catch {
 					reason = 1;
 				}
 			}
@@ -104,11 +102,9 @@ namespace Mono.Security.Authenticode {
 				rawdata = value;
 				try {
 					CheckSignature ();
-				}
-				catch (SecurityException) {
+				} catch (SecurityException) {
 					throw;
-				}
-				catch (Exception) {
+				} catch {
 					reason = 1;
 				}
 			}

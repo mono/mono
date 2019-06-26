@@ -175,7 +175,7 @@ namespace Mono.Security.Authenticode {
 		{
 			if (fs != null)
 				Close ();
-			fs = new MemoryStream(rawdata, false);
+			fs = new MemoryStream (rawdata, false);
 			blockNo = 0;
 		}
 
