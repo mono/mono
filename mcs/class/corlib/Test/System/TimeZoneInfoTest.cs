@@ -72,6 +72,10 @@ namespace MonoTests.System
 					return "W. Europe Standard Time";
 				case "Canada/Eastern":
 					return "Eastern Standard Time";
+				case "Iran":
+					return "Iran Standard Time";
+				case "Europe/Guernsey":
+					return "GMT Standard Time";
 				default:
 					Assert.Fail ($"No mapping defined for zone id '{id}'");
 					return null;
@@ -459,6 +463,22 @@ namespace MonoTests.System
 				date = new DateTime (2019, 3, 10, 3, 0, 0);
 				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (-5, 0, 0), tzi.GetUtcOffset (date));
+
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Vatican"));
+				date = new DateTime (2018, 10, 28, 2, 15, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (1, 0, 0), tzi.GetUtcOffset (date));
+
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Iran"));
+				date = new DateTime (2018, 9, 21, 23, 15, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (3, 30, 0), tzi.GetUtcOffset (date));
+
+				// for Greenwitch Mean Time (Guernsey)
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Guernsey"));
+				date = new DateTime (2019, 10, 27, 1, 15, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (0, 0, 0), tzi.GetUtcOffset (date));
 			}
 		}
 
