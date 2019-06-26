@@ -2243,6 +2243,12 @@ emit_method_access_failure (MonoCompile *cfg, MonoMethod *caller, MonoMethod *ca
 	mono_emit_jit_icall (cfg, mono_throw_method_access, args);
 }
 
+static void
+emit_bad_image_failure (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee)
+{
+	mono_emit_jit_icall (cfg, mono_throw_bad_image, NULL);
+}
+
 static MonoMethod*
 get_method_nofail (MonoClass *klass, const char *method_name, int num_params, int flags)
 {
@@ -7038,8 +7044,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				ensure_method_is_allowed_to_call_method (cfg, method, cil_method);
 
 			if (!virtual_ && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
-				/* MS.NET seems to silently convert this to a callvirt */
-				virtual_ = TRUE;
+				emit_bad_image_failure (cfg, method, cil_method);
 
 			{
 				/*
@@ -7810,7 +7815,6 @@ calli_end:
 				}
 				emit_seq_point (cfg, method, next_ip, FALSE, TRUE);
 			}
-
 			break;
 		}
 		case MONO_CEE_RET:
