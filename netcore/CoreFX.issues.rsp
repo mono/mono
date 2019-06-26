@@ -1249,7 +1249,7 @@
 -nomethod System.ComponentModel.Composition.Registration.Tests.PartBuilderInheritanceTests.*
 
 # System.ComponentModel.Composition.Registration APIs are not supported on this platform.
--method System.ComponentModel.Composition.Registration.Tests.RegistrationBuilderTests.*
+-nomethod System.ComponentModel.Composition.Registration.Tests.RegistrationBuilderTests.*
 -nomethod System.ComponentModel.Composition.Registration.Tests.PartBuilderUnitTests.*
 -nomethod System.ComponentModel.Composition.Registration.Tests.PartBuilderOfTInheritanceTests.*
 -nomethod System.ComponentModel.Composition.Registration.Tests.ExportBuilderUnitTests.*
