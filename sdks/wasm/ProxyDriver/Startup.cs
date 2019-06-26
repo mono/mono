@@ -65,7 +65,7 @@ namespace WsProxy {
 		
 		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, ProxyOptions options, Func<DevToolsTab, HttpContext, Uri, DevToolsTab> rewriteFunc)
 		{
-			var devToolsHost = new Uri (options.DevToolsUrl);
+			var devToolsHost = options.DevToolsUrl;
 			app.Use (async (context, next) => {
 				var request = context.Request;
 

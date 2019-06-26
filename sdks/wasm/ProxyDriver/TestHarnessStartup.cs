@@ -133,7 +133,7 @@ namespace WsProxy {
 				ContentTypeProvider = provider
 			});
 
-			var devToolsUrl = new Uri (options.DevToolsUrl);
+			var devToolsUrl = options.DevToolsUrl;
 			var psi = new ProcessStartInfo ();
 			psi.Arguments = $"--headless --disable-gpu --remote-debugging-port={devToolsUrl.Port} http://localhost:9300/{options.PagePath}";
 			psi.UseShellExecute = false;
