@@ -22,6 +22,7 @@ namespace WsProxy
 		public string ChromePath { get; set; }
 		public string AppPath { get; set; }
 		public string PagePath { get; set; }
+		public string NodeApp { get; set; }
 	}
 
 	public class Program

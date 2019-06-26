@@ -21,7 +21,6 @@ using WsProxy;
 
 namespace WsProxy {
 	public class TestHarnessStartup {
-		
 		public TestHarnessStartup (IConfiguration configuration)
 		{
 			Configuration = configuration;
@@ -120,19 +119,15 @@ namespace WsProxy {
 			app.UseStaticFiles ();
 
 			TestHarnessOptions options = optionsAccessor.CurrentValue;
-			var chromePath = options.ChromePath;
-			var filesPath = options.AppPath;
-			var pagePath = options.PagePath;
-
-			Console.WriteLine ("Chrome from: '{0}'", chromePath);
-			Console.WriteLine ("Files from: '{0}'", filesPath);
-			Console.WriteLine ("Using page : '{0}'", pagePath);
+			Console.WriteLine ($"Chrome from: '{options.ChromePath}'");
+			Console.WriteLine ($"Files from: '{options.AppPath}'");
+			Console.WriteLine ($"Using page : '{options.PagePath}'");
 
 			var provider = new FileExtensionContentTypeProvider();
 			provider.Mappings [".wasm"] = "application/wasm";
 
 			app.UseStaticFiles (new StaticFileOptions {
-				FileProvider = new PhysicalFileProvider (filesPath),
+				FileProvider = new PhysicalFileProvider (options.AppPath),
 				ServeUnknownFileTypes = true, //Cuz .wasm is not a known file type :cry:
 				RequestPath = "",
 				ContentTypeProvider = provider
@@ -140,9 +135,9 @@ namespace WsProxy {
 
 			var devToolsUrl = new Uri (options.DevToolsUrl);
 			var psi = new ProcessStartInfo ();
-			psi.Arguments = $"--headless --disable-gpu --remote-debugging-port={devToolsUrl.Port} http://localhost:9300/{pagePath}";
+			psi.Arguments = $"--headless --disable-gpu --remote-debugging-port={devToolsUrl.Port} http://localhost:9300/{options.PagePath}";
 			psi.UseShellExecute = false;
-			psi.FileName = chromePath;
+			psi.FileName = options.ChromePath;
 			psi.RedirectStandardError = true;
 			psi.RedirectStandardOutput = true;
 
@@ -172,11 +167,11 @@ namespace WsProxy {
 				});
 			});
 
-			if (Configuration ["NodeApp"] != null) {
-				var nodeApp = Configuration ["NodeApp"];
-				Console.WriteLine($"Doing the nodejs: {nodeApp}");
-				Console.WriteLine (Path.GetFullPath (nodeApp));
-				var nodeFullPath = Path.GetFullPath (nodeApp);
+			if (options.NodeApp != null) {
+				Console.WriteLine($"Doing the nodejs: {options.NodeApp}");
+				var nodeFullPath = Path.GetFullPath (options.NodeApp);
+				Console.WriteLine (nodeFullPath);
+
 				psi.Arguments = $"--inspect-brk=localhost:0 {nodeFullPath}";
 				psi.FileName = "node";
 

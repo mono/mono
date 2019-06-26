@@ -33,9 +33,6 @@ namespace WsProxy {
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure (IApplicationBuilder app, IOptionsMonitor<ProxyOptions> optionsAccessor, IHostingEnvironment env)
 		{
-			//loggerFactory.AddConsole();
-			//loggerFactory.AddDebug(
-
 			var options  = 	optionsAccessor.CurrentValue;
 			app.UseDeveloperExceptionPage ()
 				.UseWebSockets ()
@@ -64,16 +61,11 @@ namespace WsProxy {
 		}
 
 		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, ProxyOptions options)
-			=> UseDebugProxy (app, new Uri (options.DevToolsUrl));
-
-		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, string debuggerHost)
-			=> UseDebugProxy (app, new Uri (debuggerHost));
-
-		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, Uri devToolsHost)
-			=> UseDebugProxy (app, devToolsHost, DefaultTabMapper);
+			=> UseDebugProxy (app, options, DefaultTabMapper);
 		
-		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, Uri devToolsHost,Func<DevToolsTab, HttpContext, Uri, DevToolsTab> rewriteFunc)
+		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, ProxyOptions options, Func<DevToolsTab, HttpContext, Uri, DevToolsTab> rewriteFunc)
 		{
+			var devToolsHost = new Uri (options.DevToolsUrl);
 			app.Use (async (context, next) => {
 				var request = context.Request;
 
