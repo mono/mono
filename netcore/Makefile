@@ -1,3 +1,5 @@
+ifneq ($(wildcard config.make),)
+
 include config.make
 
 #
@@ -174,5 +176,7 @@ build-test-corefx-%:
 
 xunit-summary:
 	python xunit-summary.py "corefx/tests"
+
+endif
 
 distdir:
