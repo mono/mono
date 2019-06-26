@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
 using System.Net.WebSockets;
 using System.Net.Http;
 using System.Threading;
@@ -20,18 +22,24 @@ namespace WsProxy {
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices (IServiceCollection services)
-		{
-			services.AddRouting ();
-		}
+			=> services.AddRouting ()
+				.Configure<ProxyOptions> (Configuration);
+
+		public Startup (IConfiguration configuration)
+			=> Configuration = configuration;
+
+		public IConfiguration Configuration { get; }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure (IApplicationBuilder app, IHostingEnvironment env)
+		public void Configure (IApplicationBuilder app, IOptionsMonitor<ProxyOptions> optionsAccessor, IHostingEnvironment env)
 		{
 			//loggerFactory.AddConsole();
 			//loggerFactory.AddDebug(
+
+			var options  = 	optionsAccessor.CurrentValue;
 			app.UseDeveloperExceptionPage ()
 				.UseWebSockets ()
-				.UseDebugProxy ();
+				.UseDebugProxy (options);
 		}
 	}
 
@@ -55,19 +63,18 @@ namespace WsProxy {
 			};
 		}
 
-		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app)
-		{
-			return UseDebugProxy (app, new DebugSettings {
-				DevToolsHost = new Uri ("http://localhost:9222"),
-				TabMapper = DefaultTabMapper
-			});
-		}
+		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, ProxyOptions options)
+			=> UseDebugProxy (app, new Uri (options.DevToolsUrl));
 
-		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, DebugSettings settings)
+		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, string debuggerHost)
+			=> UseDebugProxy (app, new Uri (debuggerHost));
+
+		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, Uri devToolsHost)
+			=> UseDebugProxy (app, devToolsHost, DefaultTabMapper);
+		
+		public static IApplicationBuilder UseDebugProxy (this IApplicationBuilder app, Uri devToolsHost,Func<DevToolsTab, HttpContext, Uri, DevToolsTab> rewriteFunc)
 		{
-			app.Use(async (context, next) => {
-				var rewriteFunc = settings.TabMapper;
-				var devToolsHost = settings.DevToolsHost;
+			app.Use (async (context, next) => {
 				var request = context.Request;
 
 				var requestPath = request.Path;
@@ -118,7 +125,6 @@ namespace WsProxy {
 							return;
 						}
 
-						var devToolsHost = settings.DevToolsHost;
 						var endpoint = new Uri ($"ws://{devToolsHost.Authority}{context.Request.Path.ToString()}");
 						try {
 							var proxy = new MonoProxy ();
@@ -142,11 +148,6 @@ namespace WsProxy {
 			public string devtoolsFrontendUrl { get; set; }
 			public string webSocketDebuggerUrl { get; set; }
 			public string faviconUrl { get; set; }
-		}
-
-		public class DebugSettings {
-			public Uri DevToolsHost { get; set; }
-			public Func<DevToolsTab, HttpContext, Uri, DevToolsTab> TabMapper { get; set; }
 		}
 
 		private static async Task<T> ProxyGetJsonAsync<T> (string url)
